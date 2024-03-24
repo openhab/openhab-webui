@@ -154,6 +154,7 @@ export default {
     startScripting (language) {
       const contentType = (language === 'blockly') ? 'application/javascript' : language
       this.$set(this.ruleModule.configuration, 'type', contentType)
+      this.$set(this.ruleModule.configuration, 'script', '')
       if (language === 'blockly') {
         // initialize an empty blockly source
         this.$set(this.ruleModule.configuration, 'blockSource', '<xml xmlns="https://developers.google.com/blockly/xml"></xml>')
