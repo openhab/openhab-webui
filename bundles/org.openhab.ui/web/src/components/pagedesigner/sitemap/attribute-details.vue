@@ -3,7 +3,7 @@
     <f7-card-content v-if="attributes.length">
       <f7-list inline-labels sortable sortable-opposite sortable-enabled @sortable:sort="onSort">
         <f7-list-item v-for="(attr, idx) in attributes" :key="attr.key">
-          <f7-input v-if="!fields" type="text" :placeholder="placeholder" :value="attr.value" @change="updateAttribute($event, idx, attr)" />
+          <f7-input v-if="!fields" style="width: inherit" type="text" :placeholder="placeholder" :value="attr.value" @change="updateAttribute($event, idx, attr)" />
           <f7-input v-for="(field, fieldidx) in fieldDefs" :key="JSON.stringify(field)"
                     :style="fieldStyle(field, fieldidx)"
                     :inputStyle="inputFieldStyle(field, fieldidx)"
@@ -13,7 +13,7 @@
                     :placeholder="fieldProp(field, 'placeholder')"
                     :value="attr.value[Object.keys(field)[0]]"
                     validate @change="updateAttribute($event, idx, attr, Object.keys(field)[0])" />
-          <f7-button text="" icon-material="clear" small @click="removeAttribute(idx)" />
+          <f7-button style="padding-left: 5px; padding-right: 0" text="" icon-material="clear" small @click="removeAttribute(idx)" />
         </f7-list-item>
       </f7-list>
     </f7-card-content>
@@ -24,14 +24,6 @@
     </f7-card-footer>
   </f7-card>
 </template>
-
-<style lang="stylus">
-.button
-  padding-left 5px
-  padding-right 0px
-.input
-  width inherit
-</style>
 
 <script>
 export default {
@@ -77,6 +69,7 @@ export default {
     },
     inputFieldStyle (field, fieldidx) {
       let style = {}
+      style.width = 'inherit'
       if (this.fieldProp(field, 'type') === 'number') {
         style.textAlign = 'end'
       }
