@@ -191,6 +191,8 @@ export default {
         let copy = Object.assign({}, p)
         delete (copy.channel)
         delete (copy.channelType)
+        delete (copy.unit)
+        delete (copy.stateDescriptionPattern)
         return copy
       })]
       if (this.createEquipment) payload.unshift(this.newEquipmentItem)

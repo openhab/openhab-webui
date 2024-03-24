@@ -207,6 +207,7 @@ export default {
           category: (channelType) ? channelType.category : '',
           type: channel.itemType,
           unit: this.channelUnit(channel, channelType),
+          stateDescriptionPattern: '',
           tags: (defaultTags.find((t) => this.$store.getters.semanticClasses.Points.indexOf(t) >= 0)) ? defaultTags : [...defaultTags, 'Point']
         }
         this.newItems.push(newItem)
