@@ -98,7 +98,7 @@ import uomMixin from '@/components/item/uom-mixin'
 
 export default {
   mixins: [ItemMixin, uomMixin],
-  props: ['item', 'items', 'createMode', 'hideCategory', 'hideType', 'hideSemantics', 'forceSemantics', 'unitHint'],
+  props: ['item', 'items', 'createMode', 'hideCategory', 'hideType', 'hideSemantics', 'forceSemantics', 'unitHint', 'stateDescription'],
   components: {
     SemanticsPicker,
     ItemPicker,
@@ -149,7 +149,6 @@ export default {
         const dimension = this.dimensions.find((d) => d.name === newDimension)
         this.$set(this.item, 'type', 'Number:' + dimension.name)
         this.itemUnit = (this.unitHint ? this.unitHint : this.getUnitHint(dimension.name))
-        this.$set(this.item, 'stateDescription', this.getStateDescription())
       }
     },
     itemUnit: {
@@ -171,7 +170,7 @@ export default {
     stateDescriptionPattern: {
       get () {
         if (this.item.stateDescriptionPattern) return this.item.stateDescriptionPattern
-        return this.item.metadata?.stateDescription?.config.pattern || '%.0f %unit%'
+        return this.item.metadata?.stateDescription?.config.pattern || this.stateDescription || (this.createMode ? '%.0f %unit%' : '')
       },
       set (newPattern) {
         this.$set(this.item, 'stateDescriptionPattern', newPattern)

@@ -43,7 +43,7 @@
 
         <!-- Create new item -->
         <f7-col v-else>
-          <item-form ref="itemForm" :item="newItem" :items="items" :createMode="true" :unitHint="linkUnit()" />
+          <item-form ref="itemForm" :item="newItem" :items="items" :createMode="true" :unitHint="linkUnit()" :stateDescription="stateDescription()" />
         </f7-col>
       </template>
 
@@ -206,6 +206,9 @@ export default {
     linkUnit () {
       const dimension = this.channel.itemType.startsWith('Number:') ? this.channel.itemType.split(':')[1] : ''
       return dimension ? this.getUnitHint(dimension, this.channelType) : ''
+    },
+    stateDescription () {
+      return this.channelType?.stateDescription?.pattern
     },
     loadProfileTypes (channel) {
       this.ready = false

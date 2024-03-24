@@ -77,17 +77,15 @@ export default {
           return Promise.resolve()
         }
       }).then(() => {
-        // Save state description if Item is an UoM Item and if state description changed from the default value
+        // Save state description if Item is an UoM Item
         if ((item.type.startsWith('Number:') || item.groupType?.startsWith('Number:')) && stateDescriptionPattern) {
-          if (stateDescriptionPattern !== '%.0f %unit%') {
-            const metadata = {
-              value: ' ',
-              config: {
-                pattern: stateDescriptionPattern
-              }
+          const metadata = {
+            value: ' ',
+            config: {
+              pattern: stateDescriptionPattern
             }
-            return this.$oh.api.put('/rest/items/' + item.name + '/metadata/stateDescription', metadata)
           }
+          return this.$oh.api.put('/rest/items/' + item.name + '/metadata/stateDescription', metadata)
         } else {
           return Promise.resolve()
         }
