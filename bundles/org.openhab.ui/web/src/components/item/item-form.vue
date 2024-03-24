@@ -5,7 +5,7 @@
         <f7-list-input label="Name" type="text" placeholder="A unique identifier for the Item." :value="item.name"
                        :disabled="!createMode" :info="(createMode) ? 'Required. Note: cannot be changed after the creation' : ''"
                        required :error-message="nameErrorMessage" :error-message-force="!!nameErrorMessage"
-                       @input="onNameInput" :clear-button="createMode" />
+                       @input="item.name = $event.target.value" :clear-button="createMode" />
         <f7-list-input label="Label" type="text" placeholder="Item label for display purposes" :value="item.label"
                        @input="item.label = $event.target.value" :disabled="!editable" :clear-button="editable" />
       </f7-list-group>
@@ -110,7 +110,6 @@ export default {
       types,
       unitAutocomplete: null,
       categoryAutocomplete: null,
-      nameErrorMessage: '',
       oldItemType: !this.createMode ? this.item.type.split(':')[0] : '',
       oldItemDimension: (!this.createMode && this.item.type.split(':').length > 1) ? this.item.type.split(':')[1] : '',
       oldItemUnit: !this.createMode ? (this.item.unitSymbol || '') : ''
@@ -167,6 +166,9 @@ export default {
       set (newCategory) {
         this.$set(this.item, 'category', newCategory)
       }
+    },
+    nameErrorMessage () {
+      return this.validateItemName(this.item.name)
     },
     stateDescriptionPattern: {
       get () {
@@ -258,10 +260,6 @@ export default {
           }
         }
       })
-    },
-    onNameInput (event) {
-      this.item.name = event.target.value
-      this.$set(this, 'nameErrorMessage', this.validateItemName(this.item.name))
     },
     deleteGroup (event) {
       const group = event.target.previousSibling.innerText
