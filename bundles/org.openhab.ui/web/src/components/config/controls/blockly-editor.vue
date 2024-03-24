@@ -1083,6 +1083,8 @@
   border-color var(--blockly-ws-search-border-color)
   box-shadow none
   color var(--blockly-ws-search-text-color)
+textarea.blocklyHtmlTextAreaInput
+  background #fff
 </style>
 
 <script>
