@@ -21,9 +21,6 @@ describe('ConfigParameter', () => {
     }
   })
 
-  it('is a Vue instance', () => {
-    expect(wrapper.isVueInstance()).toBeTruthy()
-  })
   it('is an option control', () => {
     expect(wrapper.vm.control).toBeDefined()
     console.log(wrapper.vm.control.data())
