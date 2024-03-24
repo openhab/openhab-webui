@@ -56,12 +56,10 @@ public class MapviewRenderer extends AbstractWidgetRenderer {
     @Override
     public EList<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException {
         Mapview mapview = (Mapview) w;
-        String snippet = getSnippet("mapview");
-
         boolean showHeaderRow = w.getLabel() != null;
-        snippet = snippet.replace("%header_visibility_class%",
-                showHeaderRow ? "%visibility_class%" : "mdl-form__row--hidden");
-        snippet = snippet.replace("%header_row%", Boolean.valueOf(showHeaderRow).toString());
+        String snippet = (showHeaderRow ? getSnippet("header_row") : "") + getSnippet("mapview");
+
+        snippet = snippet.replace("%header_row%", showHeaderRow ? "true" : "");
 
         snippet = preprocessSnippet(snippet, mapview, true);
 

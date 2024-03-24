@@ -208,7 +208,7 @@ const seriesTypeParameter = (...types) => {
     name: 'type',
     type: 'TEXT',
     label: 'Type',
-    description: 'The type of the series.<br/><em>Note: heatmap needs a configured visual map and is not supported for time series</em>',
+    description: 'The type of the series.<br/><em>Note: <code>heatmap</code> needs a configured visual map or uses the default and is not supported for time series!</em>',
     limitToOptions: true,
     options: types.map((o) => { return { value: o, label: seriesTypesLabels[o] } })
   }

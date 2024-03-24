@@ -57,7 +57,6 @@ public class VideoRenderer extends AbstractWidgetRenderer {
     @Override
     public EList<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException {
         Video videoWidget = (Video) w;
-        String snippet = null;
 
         String widgetId = itemUIRegistry.getWidgetId(w);
 
@@ -65,12 +64,12 @@ public class VideoRenderer extends AbstractWidgetRenderer {
         String snippetName = (videoWidget.getEncoding() != null
                 && videoWidget.getEncoding().toLowerCase().contains("mjpeg")) ? "image" : "video";
 
-        snippet = getSnippet(snippetName);
-
         boolean showHeaderRow = w.getLabel() != null;
-        snippet = snippet.replace("%header_visibility_class%",
-                showHeaderRow ? "%visibility_class%" : "mdl-form__row--hidden");
-        snippet = snippet.replace("%header_row%", Boolean.valueOf(showHeaderRow).toString());
+        String snippet = (("video".equals(snippetName) && showHeaderRow) ? getSnippet("header_row") : "")
+                + getSnippet(snippetName);
+
+        snippet = snippet.replace("%header_row%",
+                ("image".equals(snippetName) || showHeaderRow) ? Boolean.valueOf(showHeaderRow).toString() : "");
 
         snippet = preprocessSnippet(snippet, w, true);
 

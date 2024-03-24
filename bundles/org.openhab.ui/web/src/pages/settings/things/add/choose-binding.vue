@@ -37,7 +37,7 @@
             :link="binding.id"
             :title="binding.label"
             :header="binding.uid"
-            :badge="inbox.filter((e) => e.thingTypeUID.split(':')[0] === binding.id && e.flag !== 'IGNORED').length || undefined"
+            :badge="inbox.filter((e) => e.thingTypeUID.split(':')[0] === binding.id).length || undefined"
             badge-color="red"
             :footer="(binding.description && binding.description.indexOf('<br>') >= 0) ?
               binding.description.split('<br>')[0] : binding.description" />
@@ -88,7 +88,7 @@ export default {
           }
         })
       })
-      this.$oh.api.get('/rest/inbox').then((data) => {
+      this.$oh.api.get('/rest/inbox?includeIgnored=false').then((data) => {
         this.inbox = data
       })
     }
