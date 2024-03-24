@@ -70,7 +70,15 @@
 
       <f7-col v-else-if="things.length > 0">
         <f7-block-title class="searchbar-hide-on-search">
-          {{ things.length }} Things
+          <span>{{ thingsCount }} Things</span>
+          <template v-if="groupBy === 'location'">
+            <div v-if="!$device.desktop" style="text-align:right; color:var(--f7-block-text-color); font-weight: normal" class="float-right">
+              <f7-checkbox :checked="showNoLocation" @change="toggleShowNoLocation" /> <label @click="toggleShowNoLocation" style="cursor:pointer">Show no location</label>
+            </div>
+            <div v-else style="text-align:right; color:var(--f7-block-text-color); font-weight: normal" class="float-right">
+              <label @click="toggleShowNoLocation" style="cursor:pointer">Show no location</label> <f7-checkbox :checked="showNoLocation" @change="toggleShowNoLocation" />
+            </div>
+          </template>
         </f7-block-title>
         <div class="searchbar-found padding-left padding-right">
           <f7-segmented strong tag="p">
@@ -169,6 +177,7 @@ export default {
       selectedItems: [],
       showCheckboxes: false,
       groupBy: 'alphabetical',
+      showNoLocation: false,
       eventSource: null
     }
   },
@@ -203,6 +212,7 @@ export default {
         }, {})
       } else {
         const locationGroups = this.things.reduce((prev, thing, i, things) => {
+          if (!this.showNoLocation) return prev
           const location = thing.location || '- No location -'
           if (!prev[location]) {
             prev[location] = []
@@ -216,6 +226,13 @@ export default {
           return objEntries
         }, {})
       }
+    },
+    thingsCount () {
+      let sum = 0
+      Object.keys(this.indexedThings).forEach(key => {
+        sum = sum + this.indexedThings[key].length
+      })
+      return sum
     },
     inboxCount () {
       return this.inbox.length
@@ -259,6 +276,9 @@ export default {
         }
         if (groupBy === 'alphabetical') this.$refs.listIndex.update()
       })
+    },
+    toggleShowNoLocation () {
+      this.showNoLocation = !this.showNoLocation
     },
     toggleCheck () {
       this.showCheckboxes = !this.showCheckboxes
