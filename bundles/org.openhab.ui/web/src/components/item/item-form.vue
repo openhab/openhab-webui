@@ -277,7 +277,7 @@ export default {
     if (this.createMode && this.stateDescription && (this.stateDescription !== this.item.stateDescriptionPattern)) {
       // If there is a state description from the channel type that is different from the default,
       // set it as the item state description
-      this.$set(this, 'item.stateDescriptionPattern', this.stateDescription)
+      this.item.stateDescriptionPattern = this.stateDescription
     }
   },
   beforeDestroy () {
