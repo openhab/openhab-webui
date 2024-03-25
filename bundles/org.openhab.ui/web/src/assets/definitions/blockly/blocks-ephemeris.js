@@ -2,7 +2,7 @@
 * Ephemeris provides calendar related information
 * @author stefan.hoehn
 *
-* See more background info on openHAB ephemeris here: https://www.openhab.org/docs/configuration/actions.html#ephemeris
+* See more background info on openHAB ephemeris here: https://v34.openhab.org/docs/configuration/actions.html#ephemeris
 * See usage discussion here: https://community.openhab.org/t/wip-ephemeris-documentation/84536
 */
 import Blockly from 'blockly'
@@ -28,7 +28,7 @@ export default function (f7) {
       this.setInputsInline(true)
       this.setTooltip('checks if the given day is a holiday, weekend or weekday')
       this.setOutput(true, null)
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-ephemeris.html#holiday-weekend-or-weekday-check')
+      this.setHelpUrl('https://v34.openhab.org/docs/configuration/blockly/rules-blockly-ephemeris.html#holiday-weekend-or-weekday-check')
     }
   }
 
@@ -71,7 +71,7 @@ export default function (f7) {
       this.setInputsInline(true)
       this.setTooltip('name of the holiday for the given day')
       this.setOutput(true, null)
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-ephemeris.html#get-the-holiday-name-for-a-particular-date')
+      this.setHelpUrl('https://v34.openhab.org/docs/configuration/blockly/rules-blockly-ephemeris.html#get-the-holiday-name-for-a-particular-date')
     }
   }
 
@@ -99,7 +99,7 @@ export default function (f7) {
       this.setInputsInline(true)
       this.setTooltip('days from today until the given bank holiday name')
       this.setOutput(true, null)
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-ephemeris.html#get-the-number-of-days-until-a-specific-holiday')
+      this.setHelpUrl('https://v34.openhab.org/docs/configuration/blockly/rules-blockly-ephemeris.html#get-the-number-of-days-until-a-specific-holiday')
     }
   }
 

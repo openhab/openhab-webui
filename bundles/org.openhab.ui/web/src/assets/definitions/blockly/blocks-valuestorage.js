@@ -20,7 +20,7 @@ export default function defineOHBlocks_Variables (f7) {
       this.setNextStatement(true, null)
       this.setColour(0)
       this.setTooltip('stores a value with a variable name that can be retrieved on subsequent runs of this rule/script')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-value-storage.html#store-value')
+      this.setHelpUrl('https://v34.openhab.org/docs/configuration/blockly/rules-blockly-value-storage.html#store-value')
     }
   }
 
@@ -42,7 +42,7 @@ export default function defineOHBlocks_Variables (f7) {
       this.setOutput(true, null)
       this.setColour(0)
       this.setTooltip('retrieves the value that was previously stored for that particular script/rule')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-value-storage.html#get-stored-value')
+      this.setHelpUrl('https://v34.openhab.org/docs/configuration/blockly/rules-blockly-value-storage.html#get-stored-value')
     }
   }
 
@@ -61,7 +61,7 @@ export default function defineOHBlocks_Variables (f7) {
       this.setOutput(true, null)
       this.setColour(0)
       this.setTooltip('returns whether the given value is undefined')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-value-storage.html#check-if-value-is-undefined')
+      this.setHelpUrl('https://v34.openhab.org/docs/configuration/blockly/rules-blockly-value-storage.html#check-if-value-is-undefined')
     }
   }
 

@@ -2,7 +2,7 @@
 * Dropdown field populated with audio sinks found in the system.
 * CURRENTLY UNUSED
 *
-* See more background info on openHAB multimedia here: https://www.openhab.org/docs/configuration/multimedia.html
+* See more background info on openHAB multimedia here: https://v34.openhab.org/docs/configuration/multimedia.html
 */
 
 import Blockly from 'blockly'

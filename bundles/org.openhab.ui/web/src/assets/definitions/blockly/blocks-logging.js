@@ -13,7 +13,7 @@ export default function (f7) {
       this.setNextStatement(true, null)
       this.setColour(0)
       this.setTooltip('Print a message on the console')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-logging.html#print-statement')
+      this.setHelpUrl('https://v34.openhab.org/docs/configuration/blockly/rules-blockly-logging.html#print-statement')
     }
   }
 
@@ -32,7 +32,7 @@ export default function (f7) {
       this.setNextStatement(true, null)
       this.setColour(0)
       this.setTooltip('Write a message in the openHAB log')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-logging.html#log-statement')
+      this.setHelpUrl('https://v34.openhab.org/docs/configuration/blockly/rules-blockly-logging.html#log-statement')
     }
   }
 

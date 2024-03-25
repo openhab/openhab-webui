@@ -273,12 +273,12 @@
             "addItem": {
                 "!doc": "Creates a new Item within openHAB (see JS Scripting docs/Standard Library/Items).",
                 "!type": "fn(itemConfig: ItemConfig) -> Item",
-                "!url": "https://openhab.org/addons/automation/jsscripting/#itemconfig"
+                "!url": "https:/v34.openhab.org/addons/automation/jsscripting/#itemconfig"
             },
             "replaceItem": {
                 "!doc": "Replaces (upserts) an item. If an Item does not exist with this name, a new Item will be created with the supplied configuration (see JS Scripting docs/Standard Library/Items).",
                 "!type": "fn(itemConfig: ItemConfig) -> Item",
-                "!url": "https://openhab.org/addons/automation/jsscripting/#itemconfig"
+                "!url": "https:/v34.openhab.org/addons/automation/jsscripting/#itemconfig"
             },
             "removeItem": {
                 "!doc": "Removes an Item from openHAB. The Item is removed immediately and cannot be recovered.",

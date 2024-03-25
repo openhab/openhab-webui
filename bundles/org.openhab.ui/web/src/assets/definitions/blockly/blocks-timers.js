@@ -19,7 +19,7 @@ export default function defineOHBlocks_Timers (f7) {
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
       this.setColour(0)
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-timers-and-delays.html#wait-for')
+      this.setHelpUrl('https://v34.openhab.org/docs/configuration/blockly/rules-blockly-timers-and-delays.html#wait-for')
       this.setTooltip('Waits for the specified milliseconds')
     }
   }
@@ -60,7 +60,7 @@ export default function defineOHBlocks_Timers (f7) {
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
       this.setTooltip('Create a named timer')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-timers-and-delays.html#after-period-of-time-do-with-timer')
+      this.setHelpUrl('https://v34.openhab.org/docs/configuration/blockly/rules-blockly-timers-and-delays.html#after-period-of-time-do-with-timer')
     }
   }
 
@@ -110,7 +110,7 @@ export default function defineOHBlocks_Timers (f7) {
       this.setNextStatement(true, null)
       this.setColour(0)
       this.setTooltip('Simple Timer creation with control over rule retriggering action')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-timers-and-delays.html#after-period-of-time-do-with-timer-with-options-on-retriggering-rule')
+      this.setHelpUrl('https://v34.openhab.org/docs/configuration/blockly/rules-blockly-timers-and-delays.html#after-period-of-time-do-with-timer-with-options-on-retriggering-rule')
     }
   }
 
@@ -169,7 +169,7 @@ export default function defineOHBlocks_Timers (f7) {
       this.setOutput(true, 'Boolean')
       this.setColour(0)
       this.setTooltip('returns true if the timer will be executed as scheduled, i.e. it has not been cancelled or completed')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-timers-and-delays.html#timer-is-active')
+      this.setHelpUrl('https://v34.openhab.org/docs/configuration/blockly/rules-blockly-timers-and-delays.html#timer-is-active')
     }
   }
 
@@ -202,7 +202,7 @@ export default function defineOHBlocks_Timers (f7) {
       this.setOutput(true, 'Boolean')
       this.setColour(0)
       this.setTooltip('returns true if the code is currently executing (i.e. the timer activated the code but it is not done running)')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-timers-and-delays.html#timer-is-running')
+      this.setHelpUrl('https://v34.openhab.org/docs/configuration/blockly/rules-blockly-timers-and-delays.html#timer-is-running')
     }
   }
 
@@ -234,7 +234,7 @@ export default function defineOHBlocks_Timers (f7) {
       this.setOutput(true, 'Boolean')
       this.setColour(0)
       this.setTooltip('returns true if the code has run and completed.')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-timers-and-delays.html#timer-has-terminated')
+      this.setHelpUrl('https://v34.openhab.org/docs/configuration/blockly/rules-blockly-timers-and-delays.html#timer-has-terminated')
     }
   }
 
@@ -264,7 +264,7 @@ export default function defineOHBlocks_Timers (f7) {
       this.setNextStatement(true, null)
       this.setColour(0)
       this.setTooltip('Cancels a named timer')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-timers-and-delays.html#cancel-timer')
+      this.setHelpUrl('https://v34.openhab.org/docs/configuration/blockly/rules-blockly-timers-and-delays.html#cancel-timer')
     }
   }
 
@@ -304,7 +304,7 @@ export default function defineOHBlocks_Timers (f7) {
       this.setNextStatement(true, null)
       this.setColour(0)
       this.setTooltip('reschedules the timer to execute at the new time. If the Timer has terminated this method does nothing.')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-timers-and-delays.html#reschedule-timer')
+      this.setHelpUrl('https://v34.openhab.org/docs/configuration/blockly/rules-blockly-timers-and-delays.html#reschedule-timer')
     }
   }
 

@@ -18,7 +18,7 @@ export default function (f7) {
       this.setOutput(true, 'String')
       this.setColour('%{BKY_COLOUR_HUE}')
       this.setTooltip('converts a colour\'s hex rgb representation to openHAB\'s hue-saturation-brightness string')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-standard-ext.html#create-hsb-color-from-rgb-color-openhabblocks-color.js')
+      this.setHelpUrl('https://v34.openhab.org/docs/configuration/blockly/rules-blockly-standard-ext.html#create-hsb-color-from-rgb-color-openhabblocks-color.js')
     }
   }
 

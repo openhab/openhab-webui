@@ -16,7 +16,7 @@ export default function defineOHBlocks_Notifications (f7) {
       this.setInputsInline(false)
       this.setColour(0)
       this.setTooltip('Send a notification message to a specific openhab user')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-notifications.html#send-notification-to-specific-cloud-email-user')
+      this.setHelpUrl('https://v34.openhab.org/docs/configuration/blockly/rules-blockly-notifications.html#send-notification-to-specific-cloud-email-user')
     }
   }
 
@@ -43,7 +43,7 @@ export default function defineOHBlocks_Notifications (f7) {
       this.setInputsInline(false)
       this.setColour(0)
       this.setTooltip('send a notification to all clients. Provide icon name without prefix')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-notifications.html#send-notification-to-all-devices-and-users')
+      this.setHelpUrl('https://v34.openhab.org/docs/configuration/blockly/rules-blockly-notifications.html#send-notification-to-all-devices-and-users')
     }
   }
 
@@ -71,7 +71,7 @@ export default function defineOHBlocks_Notifications (f7) {
       this.setInputsInline(false)
       this.setColour(0)
       this.setTooltip('Sends a notification to the log only not to any device')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-notifications.html#send-notification-to-log-only')
+      this.setHelpUrl('https://v34.openhab.org/docs/configuration/blockly/rules-blockly-notifications.html#send-notification-to-log-only')
     }
   }
 

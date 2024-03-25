@@ -15,7 +15,7 @@ export default function (f7) {
       this.setOutput(true, 'DayOffset')
       this.setColour(70)
       this.setTooltip('today\'s date for Ephemeris check block')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html#today')
+      this.setHelpUrl('https://v34.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html#today')
     }
   }
 
@@ -42,7 +42,7 @@ export default function (f7) {
       this.setOutput(true, 'DayOffset')
       this.setColour(70)
       this.setTooltip('today with a positive or negative day offset for Ephemeris check block')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html#today-x-days')
+      this.setHelpUrl('https://v34.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html#today-x-days')
     }
   }
 
@@ -67,7 +67,7 @@ export default function (f7) {
       this.setOutput(true, 'ZonedDateTime')
       this.setColour(70)
       this.setTooltip('Obtains the current date-time from the system clock in the default time-zone.\nReturns: ZonedDateTime')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html#get-datetime-now')
+      this.setHelpUrl('https://v34.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html#get-datetime-now')
     }
   }
 
@@ -101,7 +101,7 @@ export default function (f7) {
       this.setOutput(true, 'ZonedDateTime')
       this.setColour(70)
       this.setTooltip('Obtains the current date-time from the system clock in the default time-zone with a simple positive or negative offset.\nReturns: ZonedDateTime')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html#get-date-now-with-offset')
+      this.setHelpUrl('https://v34.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html#get-date-now-with-offset')
     }
   }
 
@@ -129,7 +129,7 @@ export default function (f7) {
       this.setOutput(true, 'ZonedDateTime')
       this.setColour(70)
       this.setTooltip('Creates a ZonedDateTime based on the given input for date and time with nanos set to 0 and the system\'s time-zone. The values need to be valid.\nReturns: ZonedDateTime')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html#datetime-with-date-and-time-values')
+      this.setHelpUrl('https://v34.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html#datetime-with-date-and-time-values')
     },
     updateShape_: function () {
       let year = this.appendValueInput('year')
@@ -184,7 +184,7 @@ export default function (f7) {
       this.setOutput(true, 'ZonedDateTime')
       this.setColour(70)
       this.setTooltip('A ZonedDateTime with time set to zero')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html#date-picker')
+      this.setHelpUrl('https://v34.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html#date-picker')
     }
   }
 
@@ -227,7 +227,7 @@ export default function (f7) {
         'returns ZonedDateTime"\n'
 
       this.setTooltip(tooltip)
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html#get-date')
+      this.setHelpUrl('https://v34.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html#get-date')
     }
   }
 
@@ -255,7 +255,7 @@ export default function (f7) {
       this.setOutput(true, 'ZonedDateTime')
       this.setColour(70)
       this.setTooltip('ZonedDateTime from a datetime item')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html#datetime-from-item')
+      this.setHelpUrl('https://v34.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html#datetime-from-item')
     }
   }
 
@@ -290,7 +290,7 @@ export default function (f7) {
       this.setOutput(true, 'zdtTemporalUnit')
       this.setColour(120)
       this.setTooltip('click arrow to scroll through year, month, day, hour, minute, second, milli, nano, day of year')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html#create-datetime-based-on-a-specific-date-copy-of')
+      this.setHelpUrl('https://v34.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html#create-datetime-based-on-a-specific-date-copy-of')
     },
     onClick (nextField) {
       let block = this.getSourceBlock()
@@ -359,7 +359,7 @@ export default function (f7) {
       this.setOutput(true, 'zdtTemporalUnit')
       this.setColour(120)
       this.setTooltip('click arrow to scroll through year, month, day, hour, minute, second, milli, nano, day of year')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html#create-datetime-based-on-a-specific-date-copy-of')
+      this.setHelpUrl('https://v34.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html#create-datetime-based-on-a-specific-date-copy-of')
     },
     onClick (nextField) {
       let block = this.getSourceBlock()
@@ -429,7 +429,7 @@ export default function (f7) {
 
       this.setMutator(new Blockly.Mutator(['oh_zdt_amend_item']))
       this.setTooltip('Use a ZonedDateTime as a basis and amend it via particular temporal blocks')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html#create-datetime-based-on-a-specific-date-copy-of')
+      this.setHelpUrl('https://v34.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html#create-datetime-based-on-a-specific-date-copy-of')
     },
     mutationToDom: function () {
       let container = Blockly.utils.xml.createElement('mutation')
@@ -611,7 +611,7 @@ export default function (f7) {
       this.setOutput(true, 'String')
       this.setColour(160)
       this.setTooltip('converts an ZonedDateTime into a date string')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html#get-string-representation-of-date')
+      this.setHelpUrl('https://v34.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html#get-string-representation-of-date')
     }
   }
 
@@ -660,7 +660,7 @@ export default function (f7) {
       this.setInputsInline(true)
       this.setColour('%{BKY_LOGIC_HUE}')
       this.setTooltip('Compares two ZonedDateTimes with each other')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html#date-comparison')
+      this.setHelpUrl('https://v34.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html#date-comparison')
     }
   }
 
@@ -704,7 +704,7 @@ export default function (f7) {
       this.setInputsInline(true)
       this.setColour('%{BKY_LOGIC_HUE}')
       this.setTooltip('Compares two ZonedDateTimes with each other')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html#date-comparison-between')
+      this.setHelpUrl('https://v34.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html#date-comparison-between')
     }
   }
 
@@ -741,7 +741,7 @@ export default function (f7) {
       this.setOutput(true, 'Number')
       this.setColour(230)
       this.setTooltip('Returns the selected field as Number.')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html#get-part-of-datetime')
+      this.setHelpUrl('https://v34.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html#get-part-of-datetime')
     }
   }
 
@@ -790,7 +790,7 @@ export default function (f7) {
       this.setOutput(true, 'Number')
       this.setColour(230)
       this.setTooltip('Returns the selected field as Number.')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html#get-difference-between-datetimes')
+      this.setHelpUrl('https://v34.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html#get-difference-between-datetimes')
     }
   }
 

@@ -10,8 +10,8 @@
             <h2 v-if="$store.state.runtimeInfo" class="block-title-medium">
               openHAB {{ $store.state.runtimeInfo.version }}<br><small>{{ $store.state.runtimeInfo.buildString }}</small>
             </h2>
-            <p><f7-link external target="_blank" href="https://www.openhab.org/" v-t="'about.homePage'" /></p>
-            <p><f7-link external target="_blank" href="https://www.openhab.org/docs/" v-t="'about.documentation'" /></p>
+            <p><f7-link external target="_blank" href="https://v34.openhab.org/" v-t="'about.homePage'" /></p>
+            <p><f7-link external target="_blank" href="https://v34.openhab.org/docs/" v-t="'about.documentation'" /></p>
             <p><f7-link external target="_blank" href="https://community.openhab.org/" v-t="'about.communityForum'" /></p>
           </f7-block>
         </f7-col>

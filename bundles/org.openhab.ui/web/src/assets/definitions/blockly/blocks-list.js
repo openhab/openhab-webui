@@ -20,7 +20,7 @@ export default function (f7) {
       this.setOutput(true, 'Array')
       this.setColour('%{BKY_LISTS_HUE}')
       this.setTooltip('concatenate two arrays returning a new array')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-standard-ext.html#concatenate-list')
+      this.setHelpUrl('https://v34.openhab.org/docs/configuration/blockly/rules-blockly-standard-ext.html#concatenate-list')
     }
   }
 

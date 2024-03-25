@@ -12,7 +12,7 @@ export default function (f7) {
       this.updateShape_()
       this.setOutput(true, 'Dictionary')
       this.setMutator(new Blockly.Mutator(['dicts_create_with_item']))
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-standard-ext.html#dictionary-for-managing-key-value-pairs')
+      this.setHelpUrl('https://v34.openhab.org/docs/configuration/blockly/rules-blockly-standard-ext.html#dictionary-for-managing-key-value-pairs')
       this.setTooltip('Create a key/value dictionary')
     },
     /**
@@ -188,7 +188,7 @@ export default function (f7) {
         .setCheck('String')
       this.setInputsInline(true)
       this.setOutput(true, 'String')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-standard-ext.html#get-value-of-key-from-dictionary')
+      this.setHelpUrl('https://v34.openhab.org/docs/configuration/blockly/rules-blockly-standard-ext.html#get-value-of-key-from-dictionary')
       this.setTooltip('Retrieve a specified attribute from the context that could be set from a calling rule or script')
     }
   }
