@@ -91,7 +91,7 @@ export default {
 
             // Perform a few replaces on HTML body for Markdown readmes on GitHub
             body = body.replace(/<p>{% include base.html %}<\/p>\n/gm, '')
-            body = body.replace(/<h1 .*$/gm, '') // Remove h1 headings
+            body = body.replace(/<h1.*$/gm, '') // Remove h1 headings
             body = body.replace(/<img src=".*$/gm, '') // Remove images
 
             // Fix {{base}} and /docs anchor href for doc pages
