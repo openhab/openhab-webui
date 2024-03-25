@@ -1084,7 +1084,8 @@
   box-shadow none
   color var(--blockly-ws-search-text-color)
 textarea.blocklyHtmlTextAreaInput
-  background #fff
+  background #ffffff
+  color #000000
 </style>
 
 <script>
