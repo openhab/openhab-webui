@@ -27,7 +27,7 @@ export default {
       const newValuesSet = (this.value) ? new Set([...this.value]) : new Set()
       if (value) newValuesSet.add(day)
       if (!value) newValuesSet.delete(day)
-      let newValues = new Array(...newValuesSet).sort((a, b) => this.values.indexOf(a) < this.values.indexOf(b))
+      let newValues = [...newValuesSet].sort((a, b) => this.values.indexOf(a) < this.values.indexOf(b))
       newValues.sort((a, b) => this.values.indexOf(a) - this.values.indexOf(b))
       this.$emit('input', newValues)
     }
