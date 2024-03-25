@@ -274,7 +274,7 @@ export default {
                       config: {
                         template:
                           '/* Incomplete example skeleton, check out\n' +
-                          '   https:/v34.openhab.org/link/blocklib-tutorial\n' +
+                          '   https://v34.openhab.org/link/blocklib-tutorial\n' +
                           '   to learn how to build block libraries */\n'
                       }
                     }
