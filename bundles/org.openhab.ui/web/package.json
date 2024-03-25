@@ -145,7 +145,6 @@
     "jest-serializer-vue": "^3.1.0",
     "jest-transform-nearley": "^2.0.0",
     "jest-transform-stub": "^2.0.0",
-    "jest-vue-preprocessor": "^1.7.1",
     "marked": "^4.2.12",
     "mini-css-extract-plugin": "^2.7.7",
     "nearley-loader": "^2.0.0",
