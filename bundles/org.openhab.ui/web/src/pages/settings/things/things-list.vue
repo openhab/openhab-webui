@@ -212,7 +212,7 @@ export default {
         }, {})
       } else {
         const locationGroups = this.things.reduce((prev, thing, i, things) => {
-          if (!this.showNoLocation) return prev
+          if (!thing.location && !this.showNoLocation) return prev
           const location = thing.location || '- No location -'
           if (!prev[location]) {
             prev[location] = []
