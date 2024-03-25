@@ -286,7 +286,7 @@ export default {
 
                 // perform a few replaces on HTML body for Markdown readmes on GitHub
                 body = body.replace(/<p>{% include base.html %}<\/p>\n/gm, '')
-                body = body.replace(/<h1 .*$/gm, '')
+                body = body.replace(/<h1.*$/gm, '')
                 body = body.replace(/<pre>/gm, '<div class="block block-strong no-padding"><pre class="padding-half">')
                 body = body.replace(/<\/pre>/gm, '</pre></div>')
                 body = body.replace(/<table>/gm, '<div class="data-table"><table>')
