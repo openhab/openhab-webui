@@ -18,7 +18,7 @@
         </f7-nav-right>
       </f7-navbar>
       <f7-block v-if="ruleModule" class="no-margin no-padding">
-        <f7-col v-if="!currentRuleModuleType" class="margin-top">
+        <f7-col v-if="currentRuleModuleType" class="margin-top">
           <f7-list inline-labels no-hairlines-md class="no-margin">
             <f7-list-input type="text" :placeholder="moduleTitleSuggestion" :value="ruleModule.label" required
                            @input="ruleModule.label = $event.target.value" clear-button />
