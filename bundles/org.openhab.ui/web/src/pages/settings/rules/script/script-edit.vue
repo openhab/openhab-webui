@@ -269,12 +269,29 @@ export default {
     }
   },
   methods: {
+    /**
+     * Calculates the value of `this.dirty` from the individual dirty states.
+     */
     calculateDirty () {
       this.dirty = this.scriptDirty || this.modeDirty || this.ruleDirty || this.currentModuleDirty
     },
+    /**
+     * Calls {@link initDirty} and resets `this.dirty` and all individual dirty states to `false`.
+     */
     resetDirty () {
-      this.scriptDirty = this.modeDirty = this.ruleDirty = this.currentModuleDirty = false
-      this.calculateDirty()
+      this.initDirty()
+      this.dirty = this.scriptDirty = this.modeDirty = this.ruleDirty = this.currentModuleDirty = false
+    },
+    /**
+     * Stores the current state of tracked objects as the saved state of those, e.g. `this.rule` is cloned to `this.savedRule`.
+     */
+    initDirty () {
+      this.savedRule = cloneDeep(this.rule)
+      if (this.currentModule) {
+        this.savedCurrentModule = cloneDeep(this.currentModule)
+        this.savedMode = this.mode = this.currentModule.configuration.type
+        this.savedScript = this.script = this.currentModule.configuration.script || ''
+      }
     },
     onPageAfterIn () {
       if (this.ready) return
@@ -379,7 +396,6 @@ export default {
       Promise.all([this.$oh.api.get('/rest/module-types?type=trigger'), this.$oh.api.get('/rest/rules/' + this.ruleId)]).then((data) => {
         this.$set(this.moduleTypes, 'triggers', data[0])
         this.$set(this, 'rule', data[1])
-        this.savedRule = cloneDeep(this.rule)
 
         if (this.moduleId) {
           this.$set(this, 'currentModule', this.rule.actions.concat(this.rule.conditions).find((m) => m.id === this.moduleId))
@@ -388,11 +404,7 @@ export default {
           this.isScriptRule = true
         }
 
-        if (this.currentModule) {
-          this.savedCurrentModule = cloneDeep(this.currentModule)
-          this.savedMode = this.mode = this.currentModule.configuration.type
-          this.savedScript = this.script = this.currentModule.configuration.script || ''
-        }
+        this.initDirty()
 
         if (!this.rule.editable) {
           const commentChar = (this.mode === 'application/x-ruby' ? '#' : '//')
