@@ -107,7 +107,7 @@ export default {
         const dimension = this.dimensions.find((d) => d.name === newDimension)
         this.$set(this.item, 'groupType', 'Number:' + dimension.name)
         this.groupUnit = this.getUnitHint(dimension.name)
-        this.$set(this.item, 'stateDescriptionPattern', this.getStateDescription())
+        this.$set(this.item, 'stateDescriptionPattern', this.stateDescriptionPattern)
       }
     },
     groupUnit: {

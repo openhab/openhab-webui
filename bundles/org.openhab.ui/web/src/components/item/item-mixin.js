@@ -64,36 +64,42 @@ export default {
       const stateDescriptionPattern = item.stateDescriptionPattern
       delete item.stateDescriptionPattern
 
-      // TODO: Add support for saving metadata
       return this.$oh.api.put('/rest/items/' + item.name, item).then(() => {
-        // Save unit metadata if Item is an UoM Item
-        if ((item.type.startsWith('Number:') || item.groupType?.startsWith('Number:')) && unit) {
-          const metadata = {
-            value: unit,
-            config: {}
-          }
-          return this.$oh.api.put('/rest/items/' + item.name + '/metadata/unit', metadata)
-        } else {
-          return Promise.resolve()
-        }
+        return this.saveUnit(item, unit)
       }).then(() => {
-        // Save state description if Item is an UoM Item and if state description changed from the default value
-        if ((item.type.startsWith('Number:') || item.groupType?.startsWith('Number:')) && stateDescriptionPattern) {
-          if (stateDescriptionPattern !== '%.0f %unit%') {
-            const metadata = {
-              value: ' ',
-              config: {
-                pattern: stateDescriptionPattern
-              }
-            }
-            return this.$oh.api.put('/rest/items/' + item.name + '/metadata/stateDescription', metadata)
-          }
-        } else {
-          return Promise.resolve()
-        }
+        return this.saveStateDescription(item, stateDescriptionPattern)
       }).catch((err) => {
         return Promise.reject(err)
       })
+    },
+    saveUnit (item, unit) {
+      // Save unit metadata if Item is an UoM Item
+      if ((item.type.startsWith('Number:') || item.groupType?.startsWith('Number:')) && unit) {
+        const metadata = {
+          value: unit,
+          config: {}
+        }
+        return this.saveMetaData(item, 'unit', metadata)
+      } else {
+        return Promise.resolve()
+      }
+    },
+    saveStateDescription (item, stateDescriptionPattern) {
+      // Save state description if Item is an UoM Item
+      if ((item.type.startsWith('Number:') || item.groupType?.startsWith('Number:')) && stateDescriptionPattern) {
+        const metadata = {
+          value: ' ',
+          config: {
+            pattern: stateDescriptionPattern
+          }
+        }
+        return this.saveMetaData(item, 'stateDescription', metadata)
+      } else {
+        return Promise.resolve()
+      }
+    },
+    saveMetaData (item, value, metadata) {
+      return this.$oh.api.put('/rest/items/' + item.name + '/metadata/' + value, metadata)
     }
   }
 }
