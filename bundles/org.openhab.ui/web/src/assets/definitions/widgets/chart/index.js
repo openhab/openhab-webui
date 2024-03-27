@@ -199,7 +199,9 @@ const seriesParameters = [
 const seriesTypesLabels = {
   line: 'Line',
   bar: 'Bar',
+  gauge: 'Gauge',
   heatmap: 'Heatmap',
+  pie: 'Pie',
   scatter: 'Scatter'
 }
 
