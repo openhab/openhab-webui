@@ -207,6 +207,7 @@ export default {
       addonsServices: [],
       systemServices: [],
       objectsSubtitles: {
+        health: 'Manage detected system health issues',
         things: 'Manage the physical layer',
         model: 'The semantic model of your home',
         items: 'Manage the functional layer',
