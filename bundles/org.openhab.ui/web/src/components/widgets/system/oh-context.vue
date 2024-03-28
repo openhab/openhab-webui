@@ -15,25 +15,33 @@ export default {
     Fragment
   },
   beforeMount () {
-    const evaluateConstants = () => {
-      if (!this.context || !this.context.component || !this.context.component.config || !this.context.component.config.constants) return {}
-      let evalConst = {}
+    const evaluateDefaults = () => {
+      if (!this.context || !this.context.component || !this.context.component.config) return {}
+
+      this.const = {}
       const sourceConst = this.context.component.config.constants || {}
       if (sourceConst) {
         if (typeof sourceConst !== 'object') return {}
         for (const key in sourceConst) {
-          this.$set(evalConst, key, this.evaluateExpression(key, sourceConst[key]))
+          this.$set(this.const, key, this.evaluateExpression(key, sourceConst[key]))
         }
       }
-      return evalConst
-    }
 
-    this.const = evaluateConstants()
+      this.context.localVars = {}
+      const sourceLVars = this.context.component.config.localVars || {}
+      if (sourceLVars) {
+        if (typeof sourceLVars !== 'object') return {}
+        for (const key in sourceLVars) {
+          this.$set(this.context.localVars, key, this.evaluateExpression(key, sourceLVars[key]))
+        }
+      }
+    }
+    evaluateDefaults()
   },
   widget: OhContextDefinition,
   computed: {
-    func () {
-      if (!this.context || !this.context.component || !this.context.component.config || !this.context.component.config.functions) return {}
+    fn () {
+      if (!this.context || !this.context.component || !this.context.component.config) return {}
       let evalFunc = {}
       const sourceFunc = this.context.component.config.functions || {}
       if (sourceFunc) {
@@ -43,27 +51,44 @@ export default {
         }
       }
       return evalFunc
+    },
+    gVars () {
+      if (!this.context || !this.context.component || !this.context.component.config) return {}
+      let evalVars = {}
+      const sourceVars = this.context.component.config.globalVars || {}
+      if (sourceVars) {
+        if (typeof sourceVars !== 'object') return {}
+        for (const key in sourceVars) {
+          this.$set(evalVars, key, this.evaluateExpression(key, sourceVars[key]))
+        }
+      }
+      return evalVars
     }
   },
   methods: {
     childrenContexts (childComp) {
       const ctx = this.childContext(childComp)
-      const ctxFunctions = this.func
-      if (ctx.func) {
-        for (const funcKey in this.context.func) {
-          if (!ctxFunctions[funcKey]) this.$set(ctxFunctions, funcKey, this.context.func[funcKey])
+      const ctxFunctions = this.fn
+      if (this.context.fn) {
+        for (const funcKey in this.context.fn) {
+          if (!ctxFunctions[funcKey]) this.$set(ctxFunctions, funcKey, this.context.fn[funcKey])
         }
       }
-      this.$set(ctx, 'func', ctxFunctions)
+      this.$set(ctx, 'fn', ctxFunctions)
 
-      //const ctxConstants = (this.context.component.config && this.context.component.config.constants) || {}
       const ctxConstants = this.const
-      if (ctx.const) {
+      if (this.context.const) {
         for (const constKey in this.context.const) {
           if (!ctxConstants[constKey]) this.$set(ctxConstants, constKey, this.context.const[constKey])
         }
       }
       this.$set(ctx, 'const', ctxConstants)
+
+      if (this.context.localVars) {
+        for (const lVarKey in this.context.localVars) {
+          this.$set(ctx.vars, lVarKey, this.context.localVars[lVarKey])
+        }
+      }
 
       return ctx
     }
