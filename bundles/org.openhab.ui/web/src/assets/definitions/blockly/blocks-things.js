@@ -15,7 +15,7 @@ export default function defineOHBlocks (f7) {
       this.setColour(160)
       this.setInputsInline(true)
       this.setTooltip('Pick a thing from the Thing List')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-items-things.html#thing')
+      this.setHelpUrl('https://v34.openhab.org/docs/configuration/blockly/rules-blockly-items-things.html#thing')
       this.setOutput(true, null)
     }
   }
@@ -35,7 +35,7 @@ export default function defineOHBlocks (f7) {
       this.setOutput(true, 'String')
       this.setColour(0)
       this.setTooltip('Gets status information of the given thing, e.g. if the thing is online')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-items-things.html#get-thing-status')
+      this.setHelpUrl('https://v34.openhab.org/docs/configuration/blockly/rules-blockly-items-things.html#get-thing-status')
     }
   }
 

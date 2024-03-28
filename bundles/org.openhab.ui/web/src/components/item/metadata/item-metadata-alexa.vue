@@ -88,7 +88,7 @@ export default {
       multiple: !!this.metadata.value && this.metadata.value.indexOf(',') > 0,
       classSelectKey: this.$f7.utils.id(),
       docUrl:
-        `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org` +
+        'https://v34.openhab.org' +
         '/link/alexa',
       ready: false
     }

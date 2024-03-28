@@ -17,7 +17,7 @@ export default function (f7) {
       this.setOutput(true, 'String')
       this.setColour('%{BKY_TEXTS_HUE}')
       this.setTooltip('Returns a carriage return line feed (\\r\\n).')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-standard-ext.html#crlf')
+      this.setHelpUrl('https://v34.openhab.org/docs/configuration/blockly/rules-blockly-standard-ext.html#crlf')
     }
   }
 
@@ -47,7 +47,7 @@ export default function (f7) {
       this.setOutput(true, 'String')
       this.setColour('%{BKY_TEXTS_HUE}')
       this.setTooltip('returns a new string with one, some, or all matches of a pattern replaced by a replacement. The pattern can be a string or a RegEx. If it is a string, all occurences are replaced.')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-standard-ext.html#text-replace')
+      this.setHelpUrl('https://v34.openhab.org/docs/configuration/blockly/rules-blockly-standard-ext.html#text-replace')
     }
   }
 

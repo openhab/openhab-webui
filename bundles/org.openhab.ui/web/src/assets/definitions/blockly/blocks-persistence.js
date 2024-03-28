@@ -47,7 +47,7 @@ export default function defineOHBlocks_Persistence (f7) {
         }
         return TIP[methodName]
       })
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-persistence.html#get-statistical-value-of-an-item')
+      this.setHelpUrl('https://v34.openhab.org/docs/configuration/blockly/rules-blockly-persistence.html#get-statistical-value-of-an-item')
     },
     handleTypeSelection: function (methodName) {
       if (this.methodName !== methodName) {
@@ -148,7 +148,7 @@ export default function defineOHBlocks_Persistence (f7) {
         return TIP[methodName]
       })
 
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-persistence.html#check-item-change-update-since-a-point-in-time')
+      this.setHelpUrl('https://v34.openhab.org/docs/configuration/blockly/rules-blockly-persistence.html#check-item-change-update-since-a-point-in-time')
     }
   }
 
@@ -180,7 +180,7 @@ export default function defineOHBlocks_Persistence (f7) {
       this.setOutput(true, 'ZonedDateTime')
       this.setColour(0)
       this.setTooltip('Get the last update time of the provided item')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-persistence.html#provide-last-updated-date-of-an-item')
+      this.setHelpUrl('https://v34.openhab.org/docs/configuration/blockly/rules-blockly-persistence.html#provide-last-updated-date-of-an-item')
     }
   }
 

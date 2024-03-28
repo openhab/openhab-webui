@@ -215,8 +215,7 @@ export default {
     imageUrl () {
       if (!this.addon) return null
       if (this.addon.imageLink) return this.addon.imageLink.replace(/^\/\//, 'https://')
-      let docsBranch = 'final'
-      if (this.$store.state.runtimeInfo.buildString === 'Release Build') docsBranch = 'final-stable'
+      let docsBranch = 'final-3.4.x'
       return `https://raw.githubusercontent.com/openhab/openhab-docs/${docsBranch}/images/addons/${this.addon.id.substring(this.addon.id.indexOf('-') + 1)}.png`
     },
     addonDescription () {
@@ -234,7 +233,7 @@ export default {
       if (!this.addon) return ''
       if (this.serviceId && this.serviceId !== 'karaf' && this.addon.link) return this.addon.link
       if (this.addon.id.indexOf('-') > 0) {
-        let url = `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org` +
+        let url = 'https://v34.openhab.org' +
           `/addons/${this.addon.type.replace('misc', 'integrations').replace('binding', 'bindings').replace('transformation', 'transformations')}` +
           `/${this.addon.id.split('-')[1]}`
         return url
@@ -288,13 +287,12 @@ export default {
     processDescription () {
       if (!this.addon.description && this.addon.author === 'openHAB') {
         // assuming the add-on is an official one (distribution), try to fetch the documentation from GitHub
-        let docsBranch = 'final'
-        if (this.$store.state.runtimeInfo.buildString === 'Release Build') docsBranch = 'final-stable'
+        let docsBranch = 'final-3.4.x'
         let addonTypeFolder = '_addons_' + this.addon.type
         if (this.addon.type === 'misc') addonTypeFolder = '_addons_io'
         if (this.addon.type !== 'automation') addonTypeFolder += 's'
         let addonId = this.addon.id.split('-')[1]
-        let docUrl = (this.$store.state.runtimeInfo.buildString === 'Release Build') ? 'https://www.openhab.org' : 'https://next.openhab.org'
+        let docUrl = (this.$store.state.runtimeInfo.buildString === 'Release Build') ? 'https://v34.openhab.org' : 'https://next.openhab.org'
         docUrl += `/addons/${this.addon.type}/${addonId}`
         let docSrcUrl = `https://raw.githubusercontent.com/openhab/openhab-docs/${docsBranch}/${addonTypeFolder}/${addonId}`
 

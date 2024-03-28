@@ -28,7 +28,7 @@ export const OhMapPageDefinition = () => new WidgetDefinition('oh-map-page', 'Ma
 export const OhMapMarkerDefinition = () => new WidgetDefinition('oh-map-marker', 'Map Marker', 'An icon on a map', 'map_pin')
   .paramGroup(pg('marker', 'Marker', 'General marker settings'), [
     LabelParam(),
-    pt('icon', 'Icon', 'Use <code>oh:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://www.openhab.org/link/icons">openHAB icon</a>)')
+    pt('icon', 'Icon', 'Use <code>oh:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://v34.openhab.org/link/icons">openHAB icon</a>)')
   ])
   .paramGroup(pg('position', 'Position', 'Position'), [
     ItemParam(),

@@ -123,7 +123,7 @@ export default {
           id: 'documentationLink',
           title: 'Documentation',
           afterIcon: 'question_circle_fill',
-          linkUrl: `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/addons/${this.addon.type.replace('misc', 'integrations').replace('binding', 'bindings').replace('transformation', 'transformations')}/${this.addon.id.split('-')[1]}` // this.addon.link
+          linkUrl: `https://v34.openhab.org/addons/${this.addon.type.replace('misc', 'integrations').replace('binding', 'bindings').replace('transformation', 'transformations')}/${this.addon.id.split('-')[1]}` // this.addon.link
         })
 
         let repository
