@@ -8,7 +8,7 @@
   "things.nobindings.title": "Keine Bindings",
   "things.nobindings.text": "Um Things zum System hinzuzufügen, musst du zunächst Binding-Add-ons installieren.",
   "transformations.title": "Noch keine Transformationen",
-  "transformations.text": "Transformationen werden verwendet, um Rohdaten in eine überarbeitete menschenlesbare Darstellung zu übersetzen.",
+  "transformations.text": "Transformationen werden verwendet, um Rohdaten in eine menschenlesbare Darstellung zu übersetzen.",
   "model.title": "Beginne den Startbildschirm zu gestalten",
   "model.text": "Baue ein Modell aus Items auf, um sie zu organisieren und sie semantisch miteinander in Beziehung zu setzen<br><br>Beginne mit einer Hierarchie der Standorte: Gebäude, Außenbereiche, Stockwerke und Räume, je nach Bedarf. Füge dann Geräte und Punkte aus den Things (oder manuell) hinzu.",
   "items.title": "Noch keine Items",
@@ -30,5 +30,7 @@
   "addons.title": "Keine Add-ons installiert",
   "addons.text": "Add-ons fügen Ihrem openHAB-System Funktionalität hinzu.<br><br>Installiere diese mit der Schaltfläche unten.",
   "page.unavailable.title": "Seite nicht verfügbar",
-  "page.unavailable.text": "Aufgrund von Sichtbarkeitseinschränkungen ist es dir nicht erlaubt, diese Seite anzusehen."
+  "page.unavailable.text": "Aufgrund von Sichtbarkeitseinschränkungen ist es dir nicht erlaubt, diese Seite anzusehen.",
+  "persistence.title": "Noch kein Persistence Add-on installiert",
+  "persistence.text": "Mit Hilfe von Persistence können Sie Item-Zustände im Zeitverlauf archivieren, sowohl für die Vergangenheit als für die Zukunft. Um Persistence zu konfigurieren, müssen Sie mindestens ein Persistence Add-on installieren."
 }
