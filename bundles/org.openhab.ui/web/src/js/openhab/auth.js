@@ -30,21 +30,20 @@ if (document.cookie.indexOf('X-OPENHAB-AUTH-HEADER') >= 0) tokenInCustomHeader =
 
 export function authorize (setup) {
   import('pkce-challenge').then((PkceChallenge) => {
-    PkceChallenge.default().then((challenge) => {
-      const authState = (setup ? 'setup-' : '') + Framework7.utils.id()
+    const pkceChallenge = PkceChallenge.default()
+    const authState = (setup ? 'setup-' : '') + Framework7.utils.id()
 
-      sessionStorage.setItem('openhab.ui:codeVerifier', challenge.code_verifier)
-      sessionStorage.setItem('openhab.ui:authState', authState)
+    sessionStorage.setItem('openhab.ui:codeVerifier', pkceChallenge.code_verifier)
+    sessionStorage.setItem('openhab.ui:authState', authState)
 
-      window.location = '/auth' +
-        '?response_type=code' +
-        '&client_id=' + encodeURIComponent(window.location.origin) +
-        '&redirect_uri=' + encodeURIComponent(window.location.origin) +
-        '&scope=admin' +
-        '&code_challenge_method=S256' +
-        '&code_challenge=' + encodeURIComponent(challenge.code_challenge) +
-        '&state=' + authState
-    })
+    window.location = '/auth' +
+      '?response_type=code' +
+      '&client_id=' + encodeURIComponent(window.location.origin) +
+      '&redirect_uri=' + encodeURIComponent(window.location.origin) +
+      '&scope=admin' +
+      '&code_challenge_method=S256' +
+      '&code_challenge=' + encodeURIComponent(pkceChallenge.code_challenge) +
+      '&state=' + authState
   })
 }
 
