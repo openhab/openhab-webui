@@ -227,7 +227,9 @@
   --f7-theme-color-tint var(--f7-color-blue-tint)
   z-index 11000
 .analyzer-content
-  .analyzer-chart.sheet-opened
+  .analyzer-chart
+    position fixed !important
+  &.sheet-opened
     .oh-chart-page-chart
       height calc(100% - var(--f7-navbar-height) - var(--f7-sheet-height)) !important
 .md .analyzer-controls .toolbar .link
