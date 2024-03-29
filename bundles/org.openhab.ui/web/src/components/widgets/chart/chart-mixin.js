@@ -106,7 +106,7 @@ export default {
       if (!this.context.component.slots) return undefined
       if (this.context.component.slots.visualMap) {
         return this.context.component.slots.visualMap.map((c) => OhChartVisualMap.get(c, this.startTime, this.endTime, this, this.$device))
-      } else if (JSON.stringify(this.context.component.slots.series).includes('heatmap')) { // heatmap needs a visualMap, therefore fall back to a default
+      } else if (JSON.stringify(this.context.component.slots.series)?.includes('heatmap')) { // heatmap needs a visualMap, therefore fall back to a default
         const config = {
           calculable: true,
           presetPalette: 'bluered',
