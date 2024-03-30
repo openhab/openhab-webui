@@ -72,7 +72,7 @@
         <f7-block-title class="searchbar-hide-on-search">
           <span>{{ thingsCount }} Things</span>
           <template v-if="groupBy === 'location'">
-            <div v-if="!$device.desktop" style="text-align:right; color:var(--f7-block-text-color); font-weight: normal" class="float-right">
+            <div v-if="!$device.desktop && $f7.width < 1024" style="text-align:right; color:var(--f7-block-text-color); font-weight: normal" class="float-right">
               <f7-checkbox :checked="showNoLocation" @change="toggleShowNoLocation" /> <label @click="toggleShowNoLocation" style="cursor:pointer">Show no location</label>
             </div>
             <div v-else style="text-align:right; color:var(--f7-block-text-color); font-weight: normal" class="float-right">
