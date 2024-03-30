@@ -48,7 +48,7 @@
       <f7-col>
         <f7-block-title>
           <span v-if="ready">{{ inboxCount }} entries</span>
-          <div v-if="!$device.desktop" style="text-align:right; color:var(--f7-block-text-color); font-weight: normal" class="float-right">
+          <div v-if="!$device.desktop && $f7.width < 1024" style="text-align:right; color:var(--f7-block-text-color); font-weight: normal" class="float-right">
             <f7-checkbox :checked="showIgnored" @change="toggleIgnored" /> <label @click="toggleIgnored" style="cursor:pointer">Show ignored</label>
           </div>
           <div v-else style="text-align:right; color:var(--f7-block-text-color); font-weight: normal" class="float-right">
