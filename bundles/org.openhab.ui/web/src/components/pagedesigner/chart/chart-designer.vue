@@ -272,13 +272,11 @@ export default {
     skeletonCalendarOptions (calendar, calendarIdx) {
       let options = {}
       let calendarOptions = Object.assign({}, calendar.config)
-      calendarOptions.dayLabel = {
-        firstDay: 1,
-        margin: 5
-      }
-      calendarOptions.monthName = {
-        margin: 5
-      }
+      if (!calendarOptions.dayLabel) calendarOptions.dayLabel = {}
+      if (calendarOptions.dayLabel.firstDay === undefined) calendarOptions.dayLabel.firstDay = 1
+      if (calendarOptions.dayLabel.margin === undefined) calendarOptions.dayLabel.margin = 5
+      if (!calendarOptions.monthName) calendarOptions.monthName = {}
+      if (calendarOptions.monthName.margin === undefined) calendarOptions.monthName.margin = 5
 
       // calculate range based on chart type and/or initial period
       const chartType = this.context.component.config.chartType
