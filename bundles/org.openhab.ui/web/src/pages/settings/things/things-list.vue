@@ -40,6 +40,7 @@
     </f7-toolbar>
 
     <f7-list-index
+      v-if="ready"
       ref="listIndex"
       v-show="groupBy === 'alphabetical' && !$device.desktop"
       list-el=".things-list"
