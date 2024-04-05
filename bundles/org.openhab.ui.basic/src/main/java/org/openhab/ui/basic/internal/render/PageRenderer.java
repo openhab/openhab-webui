@@ -113,8 +113,6 @@ public class PageRenderer extends AbstractWidgetRenderer {
         snippet = snippet.replace("%icon_type%", ICON_TYPE);
         snippet = snippet.replace("%inline%", config.isInlineSvgEnabled() ? "true" : "false");
         snippet = snippet.replace("%sitemapquery%", String.format("?sitemap=%s", sitemap));
-        snippet = snippet.replace("%primarycolor%", PRIMARY_COLOR);
-        snippet = snippet.replace("%secondarycolor%", SECONDARY_COLOR);
 
         String[] parts = snippet.split("%children%");
 
@@ -299,6 +297,10 @@ public class PageRenderer extends AbstractWidgetRenderer {
         renderSwitchSetting(localizeText("@text/ui.config.basic.biggerFontSize.label"),
                 localizeText("@text/ui.config.basic.biggerFontSize.description"), "biggerFontSize",
                 "openhab.ui.basic:biggerFontSize", "enabled", "disabled", false, sb);
+
+        renderSwitchSetting(localizeText("@text/ui.config.basic.adjustedColors.label"),
+                localizeText("@text/ui.config.basic.adjustedColors.description"), "adjustedColors",
+                "openhab.ui.basic:adjustedColors", "enabled", "disabled", true, sb);
 
         buttons = new StringBuilder();
         buildButton("1", "1", buttons);

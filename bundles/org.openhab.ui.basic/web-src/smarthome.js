@@ -373,6 +373,9 @@
 			_t.iconContainer = _t.formRow.querySelector(o.formIcon);
 			_t.label = _t.formRow.querySelector(o.formLabel);
 		}
+		_t.labelColor = _t.parentNode.getAttribute(o.labelColorAttribute);
+		_t.valueColor = _t.parentNode.getAttribute(o.valueColorAttribute);
+		_t.iconColor = _t.parentNode.getAttribute(o.iconColorAttribute);
 
 		_t.findIcon = function() {
 			var
@@ -633,18 +636,21 @@
 		};
 
 		_t.setLabelColor = function(color) {
+			_t.labelColor = color === null ? "" : color;
 			if (_t.label !== null) {
-				_t.label.style.color = color;
+				_t.label.style.color = smarthome.UI.adjustColorToTheme(_t.labelColor);
 			}
 		};
 
 		_t.setValueColor = function(color) {
-			_t.parentNode.style.color = color;
+			_t.valueColor = color === null ? "" : color;
+			_t.parentNode.style.color = smarthome.UI.adjustColorToTheme(_t.valueColor);
 		};
 
 		_t.setIconColor = function(color) {
+			_t.iconColor = color === null ? "" : color;
 			if (_t.iconContainer !== null) {
-				_t.iconContainer.style.color = color;
+				_t.iconContainer.style.color = smarthome.UI.adjustColorToTheme(_t.iconColor);
 				_t.iconContainer.style.colorScheme = "";
 			}
 		};
@@ -684,6 +690,9 @@
 				}
 			}
 
+			_t.setLabelColor(_t.labelColor);
+			_t.setValueColor(_t.valueColor);
+			_t.setIconColor(_t.iconColor);
 			setIconColorScheme(smarthome.UI.theme);
 
 			_t.applyLocalSettingsPrivate();
@@ -714,6 +723,8 @@
 		} else if (_t.icon !== null && _t.iconSource === "if" && !smarthome.UI.iconify) {
 			_t.reloadIcon("", _t.iconSource + ":" + _t.iconSet + ":" + _t.iconName);
 		}
+		_t.setLabelColor(_t.labelColor);
+		_t.setIconColor(_t.iconColor);
 		setIconColorScheme(smarthome.UI.theme);
 	}
 
@@ -1131,6 +1142,8 @@
 				parentNode.innerHTML = value;
 			}
 		};
+
+		_t.setValueColor(_t.valueColor);
 	}
 
 	/* class ControlSelection extends Control */
@@ -1168,8 +1181,10 @@
 			}));
 			_t.suppressUpdateButtons = true;
 		};
+
 		_t.valueMap = {};
 		_t.buttons = [].slice.call(_t.parentNode.querySelectorAll(o.controlButton));
+
 		_t.setValuePrivate = function(value, itemState) {
 			if (_t.ignoreState) {
 				return;
@@ -1194,8 +1209,9 @@
 		};
 
 		_t.setValueColor = function(color) {
+			_t.valueColor = color === null ? "" : color;
 			if (_t.hasValue) {
-				_t.value.style.color = color;
+				_t.value.style.color = smarthome.UI.adjustColorToTheme(_t.valueColor);
 			}
 		};
 
@@ -1299,6 +1315,8 @@
 			});
 			componentHandler.downgradeElements(_t.buttons);
 		};
+
+		_t.setValueColor(_t.valueColor);
 	}
 
 	/* class ControlRadio extends Control */
@@ -1391,13 +1409,15 @@
 		};
 
 		_t.setValueColor = function(color) {
-			_t.valueNode.style.color = color;
+			_t.valueColor = color === null ? "" : color;
+			_t.valueNode.style.color = smarthome.UI.adjustColorToTheme(_t.valueColor);
 		};
 
 		_t.destroy = function() {
 			_t.parentNode.parentNode.removeEventListener("click", _t.showModal);
 		};
 
+		_t.setValueColor(_t.valueColor);
 		_t.parentNode.parentNode.addEventListener("click", _t.showModal);
 	}
 
@@ -1431,7 +1451,8 @@
 		};
 
 		_t.setValueColor = function(color) {
-			_t.valueNode.style.color = color;
+			_t.valueColor = color === null ? "" : color;
+			_t.valueNode.style.color = smarthome.UI.adjustColorToTheme(_t.valueColor);
 		};
 
 		function emitEvent(value) {
@@ -1515,6 +1536,7 @@
 			smarthome.eventMapper.unmap(eventMap);
 		};
 
+		_t.setValueColor(_t.valueColor);
 		smarthome.eventMapper.map(eventMap);
 	}
 
@@ -1556,7 +1578,8 @@
 		};
 
 		_t.setValueColor = function(color) {
-			_t.valueNode.style.color = color;
+			_t.valueColor = color === null ? "" : color;
+			_t.valueNode.style.color = smarthome.UI.adjustColorToTheme(_t.valueColor);
 		};
 
 		function onMouseDown(up, event) {
@@ -1604,6 +1627,7 @@
 			smarthome.eventMapper.unmap(eventMap);
 		};
 
+		_t.setValueColor(_t.valueColor);
 		smarthome.eventMapper.map(eventMap);
 	}
 
@@ -2101,7 +2125,8 @@
 		};
 
 		_t.setValueColor = function(color) {
-			_t.valueNode.style.color = color;
+			_t.valueColor = color === null ? "" : color;
+			_t.valueNode.style.color = smarthome.UI.adjustColorToTheme(_t.valueColor);
 		};
 
 		_t.destroy = function() {
@@ -2109,6 +2134,7 @@
 			componentHandler.downgradeElements([ _t.parentNode ]);
 		};
 
+		_t.setValueColor(_t.valueColor);
 		_t.input.addEventListener("change", onChange);
 	}
 
@@ -2310,10 +2336,15 @@
 		};
 
 		_t.setValueColor = function(color) {
-			setColor(_t.input, color);
-			setColor(_t.unitField, color);
-			setColor(_t.prefixField, color);
-			setColor(_t.postfixField, color);
+			var
+				adjustedColor;
+
+			_t.valueColor = color === null ? "" : color;
+			adjustedColor = smarthome.UI.adjustColorToTheme(_t.valueColor);
+			setColor(_t.input, adjustedColor);
+			setColor(_t.unitField, adjustedColor);
+			setColor(_t.prefixField, adjustedColor);
+			setColor(_t.postfixField, adjustedColor);
 		};
 
 		_t.destroy = function() {
@@ -2321,6 +2352,7 @@
 			componentHandler.downgradeElements([ _t.parentNode ]);
 		};
 
+		_t.setValueColor(_t.valueColor);
 		_t.input.addEventListener("change", onChange);
 	}
 
@@ -2389,7 +2421,8 @@
 		};
 
 		_t.setValueColor = function(color) {
-			_t.valueNode.style.color = color;
+			_t.valueColor = color === null ? "" : color;
+			_t.valueNode.style.color = smarthome.UI.adjustColorToTheme(_t.valueColor);
 		};
 
 		var
@@ -2434,6 +2467,7 @@
 			componentHandler.downgradeElements([ _t.input ]);
 		};
 
+		_t.setValueColor(_t.valueColor);
 		smarthome.eventMapper.map(eventMap);
 	}
 
@@ -2449,13 +2483,16 @@
 		_t.container = parentNode.parentNode.querySelector(o.formValue);
 
 		_t.setValuePrivate = function(value) {
-			if (_t.hasValue) {
+			if (_t.hasValue && _t.container !== null) {
 				_t.container.innerHTML = value;
 			}
 		};
 
 		_t.setValueColor = function(color) {
-			_t.container.style.color = color;
+			_t.valueColor = color === null ? "" : color;
+			if (_t.container !== null) {
+				_t.container.style.color = smarthome.UI.adjustColorToTheme(_t.valueColor);
+			}
 		};
 
 		function onClick() {
@@ -2466,6 +2503,7 @@
 			parentNode.parentNode.removeEventListener("click", onClick);
 		};
 
+		_t.setValueColor(_t.valueColor);
 		parentNode.parentNode.addEventListener("click", onClick);
 	}
 
@@ -2540,8 +2578,6 @@
 		_t.layoutTitle = document.querySelector(o.layoutTitle);
 		_t.iconType = document.body.getAttribute(o.iconTypeAttribute);
 		_t.inlineSVG = document.body.getAttribute(o.inlineSvgAttribute) === "true";
-		_t.primaryColor = document.body.getAttribute(o.primaryColorAttribute);
-		_t.secondaryColor = document.body.getAttribute(o.secondaryColorAttribute);
 		_t.notification = document.querySelector(o.notify);
 		_t.iconifyScript = null;
 
@@ -2704,6 +2740,18 @@
 					}
 				}
 			}
+
+			if (param === null || param === "openhab.ui.basic:adjustedColors") {
+				oldValue = _t.adjustedColors;
+				newValue = window.localStorage.getItem("openhab.ui.basic:adjustedColors") === null ||
+						window.localStorage.getItem("openhab.ui.basic:adjustedColors") === "enabled";
+				_t.adjustedColors = newValue;
+				if (oldValue !== newValue) {
+					for (id in smarthome.dataModel) {
+						smarthome.dataModel[id].applyLocalSettings();
+					}
+				}
+			}
 		};
 
 		function replaceContent(xmlResponse) {
@@ -2759,6 +2807,42 @@
 					break;
 				}
 			});
+		};
+
+		_t.adjustColorToTheme = function(color) {
+			var
+				colorsLightTheme = {
+					yellow: "#fdd835",
+					pink: "#ff1493",
+					white: "#000000",
+					lime: "#827717",
+					aqua: "#0097a7",
+					silver: "#838996",
+					gold: "#daa520"
+				},
+				colorsDarkTheme = {
+					maroon: "#b23939",
+					purple: "#ce93d8",
+					green: "#4CAF50",
+					navy: "#3F51B5",
+					blue: "#2196F3",
+					black: "#ffffff",
+					gold: "#daa520"
+				},
+				correctedColor;
+
+			if (color === "primary") {
+				correctedColor = "#3f51b5";
+			} else if (color === "secondary") {
+				correctedColor = "#ff4081";
+			} else  if (_t.adjustedColors) {
+				if (_t.theme === "light") {
+					correctedColor = colorsLightTheme[color];
+				} else if (_t.theme === "dark") {
+					correctedColor = colorsDarkTheme[color];
+				}
+			}
+			return correctedColor === undefined ? color : correctedColor;
 		};
 
 		_t.showLoadingBar = function() {
@@ -3002,24 +3086,6 @@
 					value = update.state;
 				}
 				widget.setValue(smarthome.UI.escapeHtml(value), update.state, update.visibility, update.icon);
-			}
-
-			if (labelColor === "primary") {
-				labelColor = smarthome.UI.primaryColor;
-			} else if (labelColor === "secondary") {
-				labelColor = smarthome.UI.secondaryColor;
-			}
-
-			if (valueColor === "primary") {
-				valueColor = smarthome.UI.primaryColor;
-			} else if (valueColor === "secondary") {
-				valueColor = smarthome.UI.secondaryColor;
-			}
-
-			if (iconColor === "primary") {
-				iconColor = smarthome.UI.primaryColor;
-			} else if (iconColor === "secondary") {
-				iconColor = smarthome.UI.secondaryColor;
 			}
 
 			[{
@@ -3445,8 +3511,9 @@
 	iconTypeAttribute: "data-icon-type",
 	iconWithStateAttribute: "data-icon-with-state",
 	inlineSvgAttribute: "data-inline-svg",
-	primaryColorAttribute: "data-primary-color",
-	secondaryColorAttribute: "data-secondary-color",
+	labelColorAttribute: "data-label-color",
+	valueColorAttribute: "data-value-color",
+	iconColorAttribute: "data-icon-color",
 	controlButton: "button",
 	buttonActiveClass: "mdl-button--accent",
 	buttonIcon: ".mdl-button-icon",

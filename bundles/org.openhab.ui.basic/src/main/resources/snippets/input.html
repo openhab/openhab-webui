@@ -1,8 +1,8 @@
 <div class="mdl-form__row mdl-cell mdl-cell--%cells%-col mdl-cell--%cells_tablet%-col-tablet %visibility_class%">
-	<span %iconstyle% class="mdl-form__icon">
+	<span class="mdl-form__icon">
 		%icon_snippet%
 	</span>
-	<span %labelstyle% class="mdl-form__label">
+	<span class="mdl-form__label">
 		%label%
 	</span>
 	<div
@@ -20,9 +20,12 @@
 			data-item-state="%item_state%"
 			data-item-unit="%item_unit%"
 			for="oh-input-%item%"
+			data-label-color="%label_color%"
+			data-value-color="%value_color%"
+			data-icon-color="%icon_color%"
 		>
 			<input
-				%valuestyle% type="%input_type%" %input_pattern%
+				type="%input_type%" %input_pattern%
 				autocomplete="off"
 				step="any"
 				id="oh-input-%item%"
