@@ -22,6 +22,7 @@ import org.openhab.core.items.GroupItem;
 import org.openhab.core.items.Item;
 import org.openhab.core.items.ItemNotFoundException;
 import org.openhab.core.library.items.NumberItem;
+import org.openhab.core.library.items.PlayerItem;
 import org.openhab.core.library.items.RollershutterItem;
 import org.openhab.core.library.items.SwitchItem;
 import org.openhab.core.library.types.OnOffType;
@@ -79,6 +80,7 @@ public class SwitchRenderer extends AbstractWidgetRenderer {
         String snippetName = null;
         Item item = null;
         int nbButtons = 0;
+        boolean multiline = false;
         try {
             item = itemUIRegistry.getItem(w.getItem());
             if (s.getMappings().isEmpty()) {
@@ -96,6 +98,7 @@ public class SwitchRenderer extends AbstractWidgetRenderer {
                         // Render with buttons only when a max of MAX_BUTTONS options are defined
                         snippetName = "buttons";
                         nbButtons = optsSize;
+                        multiline = true;
                     } else {
                         snippetName = "switch";
                     }
@@ -103,6 +106,7 @@ public class SwitchRenderer extends AbstractWidgetRenderer {
             } else {
                 snippetName = "buttons";
                 nbButtons = s.getMappings().size();
+                multiline = !(item instanceof PlayerItem);
             }
         } catch (ItemNotFoundException e) {
             logger.debug("Failed to retrieve item during widget rendering: {}", e.getMessage());
@@ -121,6 +125,9 @@ public class SwitchRenderer extends AbstractWidgetRenderer {
                 snippet = snippet.replaceAll("%checked%", "");
             }
         } else {
+            snippet = snippet.replaceAll("%height_auto%", multiline ? "mdl-form__row--height-auto" : "");
+            snippet = snippet.replaceAll("%buttons_class%",
+                    multiline ? "mdl-form__buttons-multiline" : "mdl-form__buttons");
             StringBuilder buttons = new StringBuilder();
             if (s.getMappings().isEmpty() && item != null) {
                 final CommandDescription commandDescription = item.getCommandDescription();

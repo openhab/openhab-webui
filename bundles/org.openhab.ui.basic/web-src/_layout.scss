@@ -489,6 +489,9 @@
 		width: 100%;
 	}
 	&__buttons {
+		padding-top: 2px;
+	}
+	&__buttons-multiline {
 		margin: 6px 0;
 		html.ui-layout-condensed & {
 			margin: 0;
