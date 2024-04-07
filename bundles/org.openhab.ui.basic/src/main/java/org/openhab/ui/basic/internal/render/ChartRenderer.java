@@ -129,13 +129,21 @@ public class ChartRenderer extends AbstractWidgetRenderer {
             snippet = snippet.replace("%url%", URL_NONE_ICON);
             snippet = snippet.replace("%legend%", Boolean.valueOf(legend).toString());
 
-            List<List<String>> periods = List.of(List.of("Last hour", "h"), List.of("Last 2 hours", "2h"),
-                    List.of("Last 4 hours", "4h"), List.of("Last 8 hours", "8h"), List.of("Last 12 hours", "12h"),
-                    List.of("Last day", "D"), List.of("Last 2 days", "2D"), List.of("Last 3 days", "3D"),
-                    List.of("Last week", "W"), List.of("Last 2 weeks", "2W"), List.of("Last month", "M"),
-                    List.of("Last 2 months", "2M"), List.of("Last 3 months", "3M"), List.of("Last 4 months", "4M"),
-                    List.of("Last 6 months", "6M"), List.of("Last 9 months", "9M"), List.of("Last year", "Y"),
-                    List.of("Last 2 years", "2Y"));
+            List<List<String>> periods = List.of(//
+                    // Periods in the past
+                    List.of("Last 2 years", "2Y"), List.of("Last year", "Y"), List.of("Last 9 months", "9M"),
+                    List.of("Last 6 months", "6M"), List.of("Last 4 months", "4M"), List.of("Last 3 months", "3M"),
+                    List.of("Last 2 months", "2M"), List.of("Last month", "M"), List.of("Last 2 weeks", "2W"),
+                    List.of("Last week", "W"), List.of("Last 3 days", "3D"), List.of("Last 2 days", "2D"),
+                    List.of("Last day", "D"), List.of("Last 12 hours", "12h"), List.of("Last 8 hours", "8h"),
+                    List.of("Last 4 hours", "4h"), List.of("Last 2 hours", "2h"), List.of("Last hour", "h"),
+                    // Periods in the future
+                    List.of("Next hour", "-h"), List.of("Next 2 hours", "-2h"), List.of("Next 4 hours", "-4h"),
+                    List.of("Next 8 hours", "-8h"), List.of("Next 12 hours", "-12h"), List.of("Next day", "-D"),
+                    List.of("Next 2 days", "-2D"), List.of("Next 3 days", "-3D"), List.of("Next week", "-W"),
+                    List.of("Next 2 weeks", "-2W"), List.of("Next month", "-M"), List.of("Next 2 months", "-2M"),
+                    List.of("Next 3 months", "-3M"), List.of("Next 4 months", "-4M"), List.of("Next 6 months", "-6M"),
+                    List.of("Next 9 months", "-9M"), List.of("Next year", "-Y"), List.of("Next 2 years", "-2Y"));
             StringBuilder rowSB = new StringBuilder();
             for (List<String> period : periods) {
                 buildRow(chart, period.get(0), period.get(1), chart.getPeriod(), rowSB);
