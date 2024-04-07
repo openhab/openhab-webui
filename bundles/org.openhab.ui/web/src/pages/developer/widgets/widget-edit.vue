@@ -124,6 +124,8 @@ export default {
       split: 'vertical',
       props: {},
       vars: {},
+      localVars: {},
+      globalVars: {},
       blockKey: this.$f7.utils.id(),
       widgetKey: this.$f7.utils.id(),
       widgetPropsOpened: false,
@@ -146,7 +148,9 @@ export default {
           : this.widget,
         store: this.$store.getters.trackedItems,
         props: this.props,
-        vars: this.vars
+        vars: this.vars,
+        localVars: this.localVars,
+        globalVar: this.globalVars
       }
     },
     widget () {
@@ -301,6 +305,7 @@ export default {
       this.$store.dispatch('sendCommand', { itemName, cmd })
     },
     redrawWidget () {
+      this.localVars = {}
       this.widgetKey = this.$f7.utils.id()
       // const wd = this.widgetDefinition
       // this.widgetDefinition = 'component: Label\nnconfig: { text: "Redrawing..."}'

@@ -271,10 +271,23 @@ export const actionsMixin = {
           const actionVariable = actionConfig[prefix + 'actionVariable']
           let actionVariableValue = actionConfig[prefix + 'actionVariableValue']
           const actionVariableKey = actionConfig[prefix + 'actionVariableKey']
-          if (actionVariableKey) {
-            actionVariableValue = this.setVariableKeyValues(context.vars[actionVariable], actionVariableKey, actionVariableValue)
+          console.log(actionVariable)
+          console.log(context.vars)
+          console.log(context.localVars)
+          console.log(context.globalVars)
+          let actionVariableType = 'vars'
+          let actionVariableScope = this.getVariableScope (context.localVars,context.varScope,actionVariable)
+          if (actionVariableScope) {
+            actionVariableType = 'localVars'
+          } else if (context.globalVars && globalVars[actionVariable]) {
+            actionVariableType = 'globalVars'
           }
-          this.$set(context.vars, actionVariable, actionVariableValue)
+          console.log(actionVariableScope)
+          let actionVariableLocation = (actionVariableScope) ? context[actionVariableType][actionVariableScope] : context[actionVariableType]
+          if (actionVariableKey) {
+            actionVariableValue = this.setVariableKeyValues(actionVariableLocation[actionVariable], actionVariableKey, actionVariableValue)
+          }
+          this.$set(actionVariableLocation, actionVariable, actionVariableValue)
           break
         default:
           console.log('Invalid action: ' + action)

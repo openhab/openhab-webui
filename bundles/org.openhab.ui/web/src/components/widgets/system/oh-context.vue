@@ -10,6 +10,11 @@ import { OhContextDefinition } from '@/assets/definitions/widgets/system'
 import { Fragment } from 'vue-fragment'
 
 export default {
+  data () {
+    return {
+      varScope: (this.context.varScope || 'varScope') + '-' + this.$f7.utils.id()
+    }
+  },
   mixins: [mixin],
   components: {
     Fragment
@@ -27,12 +32,12 @@ export default {
         }
       }
 
-      this.context.localVars = {}
+      this.localVars = {}
       const sourceLVars = this.context.component.config.localVars || {}
       if (sourceLVars) {
         if (typeof sourceLVars !== 'object') return {}
         for (const key in sourceLVars) {
-          this.$set(this.context.localVars, key, this.evaluateExpression(key, sourceLVars[key]))
+          this.$set(this.localVars, key, this.evaluateExpression(key, sourceLVars[key]))
         }
       }
     }
@@ -84,11 +89,17 @@ export default {
       }
       this.$set(ctx, 'const', ctxConstants)
 
-      if (this.context.localVars) {
-        for (const lVarKey in this.context.localVars) {
-          this.$set(ctx.vars, lVarKey, this.context.localVars[lVarKey])
+      this.$set(ctx.localVars, this.varScope, this.localVars)
+
+      /*
+      const ctxLocalVars = this.context.localVars
+      if (this.localVars) {
+        for (const lVarKey in this.localVars) {
+          if (!ctxLocalVars[lVarKey]) { this.$set(ctxLocalVars, lVarKey, this.context.localVars[lVarKey])}
         }
       }
+      this.$set(ctx, 'localVars', ctxLocalVars)
+      */
 
       return ctx
     }

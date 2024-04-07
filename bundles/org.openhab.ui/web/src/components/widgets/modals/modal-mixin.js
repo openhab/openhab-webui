@@ -12,6 +12,8 @@ export default {
     return {
       currentTab: 0,
       vars: {},
+      localVars: {},
+      globalVars: {},
       tabVars: {}
     }
   },
@@ -24,6 +26,7 @@ export default {
         store: this.$store.getters.trackedItems,
         props: this.modalConfig,
         vars: this.vars,
+        localVars: this.localVars,
         modalConfig: this.modalConfig // For configuration of oh- components
       }
     },
@@ -67,6 +70,7 @@ export default {
     onTabChange (idx) {
       this.currentTab = idx
       this.$set(this, 'vars', {})
+      this.$set(this, 'localVars', {})
     },
     tabContext (tab) {
       const page = this.$store.getters.page(tab.config.page.replace('page:', ''))
