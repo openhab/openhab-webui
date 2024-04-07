@@ -72,9 +72,6 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
     private static final int DEFAULT_NB_COLUMNS_DESKTOP = 3;
     private static final int DEFAULT_NB_COLUMNS_TABLET = 2;
 
-    public static final String PRIMARY_COLOR = "#3f51b5";
-    public static final String SECONDARY_COLOR = "#ff4081";
-
     private final Logger logger = LoggerFactory.getLogger(AbstractWidgetRenderer.class);
 
     private final BundleContext bundleContext;
@@ -352,7 +349,6 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
      * @return The updated snippet
      */
     protected String processColor(Widget w, String originalSnippet) {
-        String style = "";
         String color = "";
         String snippet = originalSnippet;
 
@@ -366,41 +362,20 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
             }
         }
 
-        color = itemUIRegistry.getLabelColor(w);
-        color = convertSpecialColors(color, itemState);
+        color = convertSpecialColors(itemUIRegistry.getLabelColor(w), itemState);
+        snippet = snippet.replace("%label_color%", color != null ? color : "");
 
-        if (color != null) {
-            style = "style=\"color:" + color + "\"";
-        }
-        snippet = snippet.replace("%labelstyle%", style);
+        color = convertSpecialColors(itemUIRegistry.getValueColor(w), itemState);
+        snippet = snippet.replace("%value_color%", color != null ? color : "");
 
-        style = "";
-        color = itemUIRegistry.getValueColor(w);
-        color = convertSpecialColors(color, itemState);
-
-        if (color != null) {
-            style = "style=\"color:" + color + "\"";
-        }
-        snippet = snippet.replace("%valuestyle%", style);
-
-        style = "";
-        color = itemUIRegistry.getIconColor(w);
-        color = convertSpecialColors(color, itemState);
-
-        if (color != null) {
-            style = "style=\"color:" + color + "\"";
-        }
-        snippet = snippet.replace("%iconstyle%", style);
+        color = convertSpecialColors(itemUIRegistry.getIconColor(w), itemState);
+        snippet = snippet.replace("%icon_color%", color != null ? color : "");
 
         return snippet;
     }
 
     private @Nullable String convertSpecialColors(@Nullable String color, @Nullable State itemState) {
-        if ("primary".equals(color)) {
-            return PRIMARY_COLOR;
-        } else if ("secondary".equals(color)) {
-            return SECONDARY_COLOR;
-        } else if ("itemValue".equals(color)) {
+        if ("itemValue".equals(color)) {
             return getRGBHexCodeFromItemState(itemState);
         }
         return color;

@@ -136,11 +136,8 @@ public class InputRenderer extends AbstractWidgetRenderer {
         String prefix = getPrefix(w);
         boolean hasUnit = item instanceof NumberItem && (((NumberItem) item).getDimension() != null);
         String postfix = hasUnit ? "" : getPostfix(w);
-        String prefixSnippet = !prefix.isBlank()
-                ? "<span %valuestyle% class=\"mdl-form__input-prefix\">" + prefix + "</span>"
-                : "";
-        String postfixSnippet = !postfix.isBlank()
-                ? "<span %valuestyle% class=\"mdl-form__input-postfix\">" + postfix + "</span>"
+        String prefixSnippet = !prefix.isBlank() ? "<span class=\"mdl-form__input-prefix\">" + prefix + "</span>" : "";
+        String postfixSnippet = !postfix.isBlank() ? "<span class=\"mdl-form__input-postfix\">" + postfix + "</span>"
                 : "";
         snippet = snippet.replace("%prefix_snippet%", prefixSnippet);
         snippet = snippet.replace("%postfix_snippet%", postfixSnippet);
@@ -185,7 +182,7 @@ public class InputRenderer extends AbstractWidgetRenderer {
             if (numberItem.getDimension() != null) {
                 unit = getUnit(w, numberItem);
                 if ("number".equals(inputHint)) {
-                    unitSnippet = "<span %valuestyle% class=\"mdl-form__input-unit\">" + unit + "</span>";
+                    unitSnippet = "<span class=\"mdl-form__input-unit\">" + unit + "</span>";
                 }
             }
         }
