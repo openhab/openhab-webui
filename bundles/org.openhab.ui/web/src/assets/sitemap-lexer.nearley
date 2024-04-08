@@ -9,7 +9,7 @@
     item:             'item=',
     staticIcon:       'staticIcon=',
     icon:             'icon=',
-    widgetattr:       ['url=', 'refresh=', 'service=', 'period=', 'height=', 'minValue=', 'maxValue=', 'step=', 'encoding=', 'yAxisDecimalPattern=', 'inputHint=', 'columns='],
+    widgetattr:       ['url=', 'refresh=', 'service=', 'height=', 'minValue=', 'maxValue=', 'step=', 'encoding=', 'yAxisDecimalPattern=', 'inputHint=', 'columns='],
     widgetboolattr:   ['legend='],
     widgetfreqattr:   'sendFrequency=',
     widgetfrcitmattr: 'forceasitem=',
@@ -19,6 +19,7 @@
     widgetcolorattr:  ['labelcolor=', 'valuecolor=', 'iconcolor='],
     widgetswitchattr: 'switchSupport',
     widgetronlyattr:  'releaseOnly',
+    widgetperiodattr: 'period=',
     nlwidget:         ['Switch ', 'Selection ', 'Slider ', 'Setpoint ', 'Input ', 'Video ', 'Chart ', 'Webview ', 'Colorpicker ', 'Mapview ', 'Buttongrid ', 'Default '],
     lwidget:          ['Text ', 'Group ', 'Image ', 'Frame '],
     lparen:           '(',
@@ -40,10 +41,10 @@
     ML_COMMENT:       /\/\*[\s\S]*?\*\//,
     boolean:          /(?:true)|(?:false)/,
     identifier:       /(?:[A-Za-z_][A-Za-z0-9_]*)|(?:[0-9]+[A-Za-z_][A-Za-z0-9_]*)/,
-    number:           /-?[0-9]+(?:\.[0-9]*)?/,
     comma:            ',',
     colon:            ':',
     hyphen:           '-',
+    number:           /-?[0-9]+(?:\.[0-9]*)?/,
     string:           { match: /"(?:\\["\\]|[^\n"\\])*"/, value: x => x.slice(1, -1) }
   })
   const requiresItem = ['Group', 'Chart', 'Switch', 'Mapview', 'Slider', 'Selection', 'Setpoint', 'Input ', 'Colorpicker', 'Default']
@@ -116,6 +117,7 @@ WidgetAttr -> %widgetswitchattr                                                 
   | %widgetfrcitmattr _ WidgetBooleanAttrValue                                    {% (d) => ['forceAsItem', d[2]] %}
   | %widgetboolattr _ WidgetBooleanAttrValue                                      {% (d) => [d[0].value, d[2]] %}
   | %widgetfreqattr _ WidgetAttrValue                                             {% (d) => ['frequency', d[2]] %}
+  | %widgetperiodattr _ WidgetPeriodAttrValue                                     {% (d) => ['period', d[2]] %}
   | %icon _ WidgetIconRulesAttrValue                                              {% (d) => ['iconrules', d[2]] %}
   | %icon _ WidgetIconAttrValue                                                   {% (d) => [d[0].value, d[2].join("")] %}
   | %staticIcon _ WidgetIconAttrValue                                             {% (d) => [d[0].value, d[2].join("")] %}
@@ -134,6 +136,10 @@ WidgetIconAttrValue -> %string
 WidgetIconRulesAttrValue -> %lbracket _ IconRules _ %rbracket                     {% (d) => d[2] %}
 WidgetIconName -> %identifier
   | WidgetIconName %hyphen %identifier                                            {% (d) => d[0] + "-" + d[2].value %}
+WidgetPeriodAttrValue -> %identifier %hyphen %identifier                          {% (d) => d[0].value + "-" + d[2].value %}
+  | %hyphen %identifier                                                           {% (d) => "-" + d[1].value %}
+  | %identifier                                                                   {% (d) => d[0].value %}
+  | %string                                                                       {% (d) => d[0].value %}
 WidgetAttrValue -> %number                                                        {% (d) => { return parseFloat(d[0].value) } %}
   | %identifier                                                                   {% (d) => d[0].value %}
   | %string                                                                       {% (d) => d[0].value %}
