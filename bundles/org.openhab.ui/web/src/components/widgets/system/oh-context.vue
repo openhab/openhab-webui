@@ -32,12 +32,12 @@ export default {
         }
       }
 
-      this.localVars = {}
-      const sourceLVars = this.context.component.config.localVars || {}
-      if (sourceLVars) {
-        if (typeof sourceLVars !== 'object') return {}
-        for (const key in sourceLVars) {
-          this.$set(this.localVars, key, this.evaluateExpression(key, sourceLVars[key]))
+      this.ctxVars = {}
+      const sourceCtxVars = this.context.component.config.variables || {}
+      if (sourceCtxVars) {
+        if (typeof sourceCtxVars !== 'object') return {}
+        for (const key in sourceCtxVars) {
+          this.$set(this.ctxVars, key, this.evaluateExpression(key, sourceCtxVars[key]))
         }
       }
     }
@@ -56,18 +56,6 @@ export default {
         }
       }
       return evalFunc
-    },
-    gVars () {
-      if (!this.context || !this.context.component || !this.context.component.config) return {}
-      let evalVars = {}
-      const sourceVars = this.context.component.config.globalVars || {}
-      if (sourceVars) {
-        if (typeof sourceVars !== 'object') return {}
-        for (const key in sourceVars) {
-          this.$set(evalVars, key, this.evaluateExpression(key, sourceVars[key]))
-        }
-      }
-      return evalVars
     }
   },
   methods: {
@@ -89,17 +77,7 @@ export default {
       }
       this.$set(ctx, 'const', ctxConstants)
 
-      this.$set(ctx.localVars, this.varScope, this.localVars)
-
-      /*
-      const ctxLocalVars = this.context.localVars
-      if (this.localVars) {
-        for (const lVarKey in this.localVars) {
-          if (!ctxLocalVars[lVarKey]) { this.$set(ctxLocalVars, lVarKey, this.context.localVars[lVarKey])}
-        }
-      }
-      this.$set(ctx, 'localVars', ctxLocalVars)
-      */
+      this.$set(ctx.ctxVars, this.varScope, this.ctxVars)
 
       return ctx
     }
