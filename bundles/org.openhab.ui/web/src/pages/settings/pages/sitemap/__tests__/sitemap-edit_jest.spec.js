@@ -200,11 +200,35 @@ describe('SitemapEdit', () => {
     wrapper.vm.validateWidgets()
     expect(lastDialogConfig).toBeFalsy()
 
+    // configure a future period for the Chart and check that there are no validation errors
+    lastDialogConfig = null
+    wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0], wrapper.vm.sitemap])
+    await wrapper.vm.$nextTick()
+    localVue.set(wrapper.vm.selectedWidget.config, 'period', '-4h')
+    wrapper.vm.validateWidgets()
+    expect(lastDialogConfig).toBeFalsy()
+
+    // configure a combined past and future period for the Chart and check that there are no validation errors
+    lastDialogConfig = null
+    wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0], wrapper.vm.sitemap])
+    await wrapper.vm.$nextTick()
+    localVue.set(wrapper.vm.selectedWidget.config, 'period', '4h-4h')
+    wrapper.vm.validateWidgets()
+    expect(lastDialogConfig).toBeFalsy()
+
     // configure an ISO-8601 period for the Chart and check that there are no validation errors
     lastDialogConfig = null
     wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0], wrapper.vm.sitemap])
     await wrapper.vm.$nextTick()
     localVue.set(wrapper.vm.selectedWidget.config, 'period', 'P10M2W1DT12H30M')
+    wrapper.vm.validateWidgets()
+    expect(lastDialogConfig).toBeFalsy()
+
+    // configure a combined past and future ISO-8601 and classic period for the Chart and check that there are no validation errors
+    lastDialogConfig = null
+    wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0], wrapper.vm.sitemap])
+    await wrapper.vm.$nextTick()
+    localVue.set(wrapper.vm.selectedWidget.config, 'period', '4h-P10M2W1DT12H30M')
     wrapper.vm.validateWidgets()
     expect(lastDialogConfig).toBeFalsy()
   })
