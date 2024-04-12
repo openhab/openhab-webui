@@ -54,7 +54,7 @@
   "analyzer.aggregations.min": "Minimo",
   "analyzer.aggregations.max": "Massimo",
   "analyzer.aggregations.first": "Primo (più recente)",
-  "analyzer.aggregations.last": "Ultimo (dopo)",
+  "analyzer.aggregations.last": "Ultimo (ultimo)",
   "analyzer.aggregations.diffFirst": "Differenza dei primi",
   "analyzer.aggregations.diffLast": "Differenza degli ultimi",
   "analyzer.dialogs.header.markers": "Marcatori",
