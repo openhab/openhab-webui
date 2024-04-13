@@ -53,7 +53,6 @@ export default {
       if (sourceFunc) {
         if (typeof sourceFunc !== 'object') return {}
         for (const key in sourceFunc) {
-          //this.$set(evalFunc, key, this.evaluateExpression(key, sourceFunc[key]))
           evalFunc[key] = this.evaluateExpression(key, sourceFunc[key])
         }
       }
