@@ -2,7 +2,7 @@
 title: oh-context - Widget Context
 component: oh-context
 label: Widget Context
-description: Add functions and constants for use by widget components
+description: Non-rendered component with functions, constants, and local variables for widgets
 source: https://github.com/openhab/openhab-webui/edit/main/bundles/org.openhab.ui/doc/components/oh-context.md
 prev: /docs/ui/components/
 ---
@@ -18,7 +18,7 @@ prev: /docs/ui/components/
 <!-- Note: you can overwrite the definition-provided description and add your own intro/additional sections instead -->
 <!-- DO NOT REMOVE the following comments if you intend to keep the definition-provided description -->
 <!-- GENERATED componentDescription -->
-Add functions and constants for use by widget components
+Non-rendered component with functions, constants, and local variables for widgets
 <!-- GENERATED /componentDescription -->
 
 ## Configuration
@@ -33,9 +33,14 @@ Add functions and constants for use by widget components
     An heading that contains keys mapped to arrow function expressions which will be available to all child components via the func object in expressions.
   </PropDescription>
 </PropBlock>
-<PropBlock type="TEXT" name="constants" label="Source type">
+<PropBlock type="TEXT" name="constants" label="Widget constants">
   <PropDescription>
     An heading that contains keys mapped to constant values which will be available to all child components via the const object in expressions.
+  </PropDescription>
+</PropBlock>
+<PropBlock type="TEXT" name="variables" label="Widget local variables">
+  <PropDescription>
+    An heading that contains names and default values for variables that will be available only to descendents of the oh-context component.
   </PropDescription>
 </PropBlock>
 </PropGroup>

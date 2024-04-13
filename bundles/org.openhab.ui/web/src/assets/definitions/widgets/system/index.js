@@ -21,7 +21,7 @@ export const OhColorpickerDefinition = () => new WidgetDefinition('oh-colorpicke
   .params(ColorpickerParameters())
 
 import ContextParameters from './context.js'
-export const OhContextDefinition = () => new WidgetDefinition('oh-context', 'Context', 'Non-rendered component with functions and constants for widgets')
+export const OhContextDefinition = () => new WidgetDefinition('oh-context', 'Context', 'Non-rendered component with functions, constants, and local variables for widgets')
   .params(ContextParameters())
 
 import GaugeParameters from './gauge.js'
