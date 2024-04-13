@@ -92,12 +92,12 @@ export default {
       return obj
     },
     getVariableScope (varObj,scopeObj,key) {
+      if (!scopeObj) return null
       const scopeIDs = scopeObj.split('-')
       for (let scope_idx = scopeIDs.length; scope_idx > 1; scope_idx--) {
         let scopeKey = scopeIDs.slice(0,scope_idx).join('-')
-        if (varObj[scopeKey][key]) return scopeKey
+        if (Object.keys(varObj[scopeKey]).includes(key)) return scopeKey
       }
-      console.warn(`varable ${key} not found in any component scope.`)
       return null
     }
   }

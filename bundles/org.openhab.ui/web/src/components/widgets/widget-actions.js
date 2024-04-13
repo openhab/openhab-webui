@@ -272,8 +272,7 @@ export const actionsMixin = {
           let actionVariableValue = actionConfig[prefix + 'actionVariableValue']
           const actionVariableKey = actionConfig[prefix + 'actionVariableKey']
           let actionVariableScope = this.getVariableScope (context.ctxVars,context.varScope,actionVariable)
-          let actionVariableType = actionVariableScope ? 'ctxVars' : 'vars'
-          let actionVariableLocation = (actionVariableScope) ? context[actionVariableType][actionVariableScope] : context[actionVariableType]
+          let actionVariableLocation = (actionVariableScope) ? context.ctxVars[actionVariableScope] : context.vars
           if (actionVariableKey) {
             actionVariableValue = this.setVariableKeyValues(actionVariableLocation[actionVariable], actionVariableKey, actionVariableValue)
           }

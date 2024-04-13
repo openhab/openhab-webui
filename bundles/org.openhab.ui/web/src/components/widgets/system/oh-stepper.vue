@@ -24,10 +24,12 @@ export default {
     value () {
       const applyOffset = (num) => (!isNaN(this.config.offset)) ? Number(this.toStepFixed(num + Number(this.config.offset))) : num
       if (this.config.variable) {
+        let variableScope = this.getVariableScope (this.context.ctxVars,this.context.varScope,this.config.variable)
+        let variableLocation = (variableScope) ? this.context.ctxVars[variableScope] : this.context.vars
         if (this.config.variableKey) {
-          return applyOffset(this.getLastVariableKeyValue(this.context.vars[this.config.variable], this.config.variableKey))
+          return applyOffset(this.getLastVariableKeyValue(variableLocation[this.config.variable], this.config.variableKey))
         }
-        return applyOffset(this.context.vars[this.config.variable])
+        return applyOffset(variableLocation[this.config.variable])
       }
       let value = applyOffset(parseFloat(this.context.store[this.config.item].state))
       if (this.config.min !== undefined) value = Math.max(value, this.config.min)
@@ -71,10 +73,12 @@ export default {
       if (isNaN(newValue)) newValue = this.config.min || this.config.max || 0
       if (newValue === this.value) return
       if (this.config.variable) {
+        let variableScope = this.getVariableScope (this.context.ctxVars,this.context.varScope,this.config.variable)
+        let variableLocation = (variableScope) ? this.context.ctxVars[variableScope] : this.context.vars
         if (this.config.variableKey) {
-          newValue = applyOffset(this.setVariableKeyValues(this.context.vars[this.config.variable], this.config.variableKey, value))
+          newValue = applyOffset(this.setVariableKeyValues(variableLocation[this.config.variable], this.config.variableKey, value))
         }
-        this.$set(this.context.vars, this.config.variable, newValue)
+        this.$set(variableLocation, this.config.variable, newValue)
       } else if (this.config.item) {
         this.$store.dispatch('sendCommand', { itemName: this.config.item, cmd: newValue.toString() })
       }
