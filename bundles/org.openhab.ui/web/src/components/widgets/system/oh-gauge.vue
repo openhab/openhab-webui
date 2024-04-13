@@ -12,7 +12,7 @@ export default {
   computed: {
     value () {
       if (this.config.variable) {
-        let variableScope = this.getVariableScope (this.context.ctxVars,this.context.varScope,this.config.variable)
+        let variableScope = this.getVariableScope(this.context.ctxVars, this.context.varScope, this.config.variable)
         let variableLocation = (variableScope) ? this.context.ctxVars[variableScope] : this.context.vars
         return variableLocation[this.config.variable]
       }

@@ -91,11 +91,11 @@ export default {
       }
       return obj
     },
-    getVariableScope (varObj,scopeObj,key) {
+    getVariableScope (varObj, scopeObj, key) {
       if (!scopeObj) return null
       const scopeIDs = scopeObj.split('-')
       for (let scope_idx = scopeIDs.length; scope_idx > 1; scope_idx--) {
-        let scopeKey = scopeIDs.slice(0,scope_idx).join('-')
+        let scopeKey = scopeIDs.slice(0, scope_idx).join('-')
         if (Object.keys(varObj[scopeKey]).includes(key)) return scopeKey
       }
       return null

@@ -39,7 +39,7 @@ export default {
     value () {
       let variableLocation = this.context.vars
       if (this.config.variable) {
-        let variableScope = this.getVariableScope (this.context.ctxVars,this.context.varScope,this.config.variable)
+        let variableScope = this.getVariableScope(this.context.ctxVars, this.context.varScope, this.config.variable)
         if (variableScope) { variableLocation = this.context.ctxVars[variableScope] }
       }
       if (this.config.variable && this.config.variableKey) {
@@ -113,7 +113,7 @@ export default {
       }
       if (this.config.variable) {
         let variableLocation = this.context.vars
-        let variableScope = this.getVariableScope (this.context.ctxVars,this.context.varScope,this.config.variable)
+        let variableScope = this.getVariableScope(this.context.ctxVars, this.context.varScope, this.config.variable)
         if (variableScope) { variableLocation = this.context.ctxVars[variableScope] }
         if (this.config.variableKey) {
           value = this.setVariableKeyValues(variableLocation[this.config.variable], this.config.variableKey, value)

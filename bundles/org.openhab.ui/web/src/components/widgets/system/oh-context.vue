@@ -49,12 +49,15 @@ export default {
       if (!this.context || !this.context.component || !this.context.component.config) return {}
       let evalFunc = {}
       const sourceFunc = this.context.component.config.functions || {}
+      console.log(sourceFunc)
       if (sourceFunc) {
         if (typeof sourceFunc !== 'object') return {}
         for (const key in sourceFunc) {
-          this.$set(evalFunc, key, this.evaluateExpression(key, sourceFunc[key]))
+          //this.$set(evalFunc, key, this.evaluateExpression(key, sourceFunc[key]))
+          evalFunc[key] = this.evaluateExpression(key, sourceFunc[key])
         }
       }
+      console.log(evalFunc)
       return evalFunc
     }
   },

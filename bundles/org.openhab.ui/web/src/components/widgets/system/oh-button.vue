@@ -23,12 +23,12 @@ export default {
       if (this.config.clearVariable && !this.config.clearVariableKey) {
         if (Array.isArray(this.config.clearVariable)) {
           this.config.clearVariable.forEach((v) => {
-            let clearVariableScope = this.getVariableScope (this.context.ctxVars, this.context.varScope,v)
+            let clearVariableScope = this.getVariableScope(this.context.ctxVars, this.context.varScope, v)
             let clearVariableLocation = (clearVariableScope) ? this.context.ctxVars[clearVariableScope] : this.context.vars
             this.$set(clearVariableLocation, v, undefined)
           })
         } else if (typeof this.config.clearVariable === 'string') {
-          let clearVariableScope = this.getVariableScope (this.context.ctxVars,this.context.varScope, this.config.clearVariable)
+          let clearVariableScope = this.getVariableScope(this.context.ctxVars, this.context.varScope, this.config.clearVariable)
           let clearVariableLocation = (clearVariableScope) ? this.context.ctxVars[clearVariableScope] : this.context.vars
           this.$set(clearVariableLocation, this.config.clearVariable, undefined)
         }
@@ -37,12 +37,12 @@ export default {
         let value = this.context.vars[this.config.clearVariable]
         if (Array.isArray(this.config.clearVariableKey)) {
           this.config.clearVariableKey.forEach((key) => {
-            let clearVariableScope = this.getVariableScope (this.context.ctxVars,this.context.varScope, this.config.clearVariable)
+            let clearVariableScope = this.getVariableScope(this.context.ctxVars, this.context.varScope, this.config.clearVariable)
             let clearVariableLocation = (clearVariableScope) ? this.context.ctxVars[clearVariableScope] : this.context.vars
             value = this.setVariableKeyValues(clearVariableLocation, key, undefined)
           })
         } else if (typeof this.config.clearVariableKey === 'string') {
-          let clearVariableScope = this.getVariableScope (this.context.ctxVars,this.context.varScope, this.config.clearVariable)
+          let clearVariableScope = this.getVariableScope(this.context.ctxVars, this.context.varScope, this.config.clearVariable)
           let clearVariableLocation = (clearVariableScope) ? this.context.ctxVars[clearVariableScope] : this.context.vars
           value = this.setVariableKeyValues(clearVariableLocation, this.config.clearVariableKey, undefined)
         }

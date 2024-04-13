@@ -17,7 +17,7 @@ export default {
     value () {
       if (this.config.variable) {
         let variableLocation = this.context.vars
-        let variableScope = this.getVariableScope (this.context.ctxVars,this.context.varScope,this.config.variable)
+        let variableScope = this.getVariableScope(this.context.ctxVars, this.context.varScope, this.config.variable)
         if (variableScope) { variableLocation = this.context.ctxVars[variableScope] }
         if (this.config.variableKey) {
           return this.getLastVariableKeyValue(variableLocation[this.config.variable], this.config.variableKey)
@@ -43,7 +43,7 @@ export default {
       if ((value === this.value && !stop) || value === this.lastValueSent) return
 
       if (this.config.variable) {
-        let variableScope = this.getVariableScope (this.context.ctxVars,this.context.varScope,this.config.variable)
+        let variableScope = this.getVariableScope(this.context.ctxVars, this.context.varScope, this.config.variable)
         let variableLocation = (variableScope) ? this.context.ctxVars[variableScope] : this.context.vars
         if (this.config.variableKey) {
           value = this.setVariableKeyValues(variableLocation[this.config.variable], this.config.variableKey, value)
