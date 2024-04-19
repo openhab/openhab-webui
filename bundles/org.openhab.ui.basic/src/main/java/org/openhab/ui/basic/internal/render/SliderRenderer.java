@@ -83,6 +83,7 @@ public class SliderRenderer extends AbstractWidgetRenderer {
 
         snippet = preprocessSnippet(snippet, w);
         snippet = snippet.replace("%frequency%", frequency);
+        snippet = snippet.replace("%release_only%", s.isReleaseOnly() ? "true" : "flase");
         snippet = snippet.replace("%switch%", s.isSwitchEnabled() ? "1" : "0");
         snippet = snippet.replace("%unit%", unit == null ? "" : unit);
         snippet = snippet.replace("%minValue%", minValueOf(s));
