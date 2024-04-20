@@ -20,13 +20,18 @@
             Items
           </f7-block-title>
           <f7-list>
-            <item-picker title="Select groups" name="groupItems" multiple="true"
-                         filterType="Group" :value="groupItems" @input="selectGroupItems" />
+            <f7-list-item title="Persist all Items">
+              <f7-toggle slot="after" :checked="allItemsSelected" @toggle:change="allItemsSelected = $event" />
+            </f7-list-item>
+          </f7-list>
+          <f7-list>
+            <item-picker :key="'groups-' + groupItems.length" title="Select groups" name="groupItems" multiple="true" filterType="Group"
+                         :disabled="allItemsSelected" :value="groupItems" @input="groupItems = $event" />
             <f7-list-item>... whose members are to be persisted.</f7-list-item>
           </f7-list>
           <f7-list>
-            <item-picker title="Select Items" name="items" multiple="true" :value="items"
-                         @input="selectItems" />
+            <item-picker :key="'items-' + items.length" title="Select Items" name="items" multiple="true"
+                         :disabled="allItemsSelected" :value="items" @input="items = $event" />
             <f7-list-item>... to be persisted.</f7-list-item>
           </f7-list>
         </f7-col>
@@ -72,20 +77,32 @@ export default {
     }
   },
   computed: {
-    groupItems () {
-      return this.currentConfiguration.items.filter((i) => i.endsWith('*')).map((i) => i.slice(0, -1))
+    groupItems: {
+      get () {
+        return this.currentConfiguration.items.filter((i) => i.length > 1 && i.endsWith('*')).map((i) => i.slice(0, -1))
+      },
+      set (newGroupItems) {
+        this.$set(this.currentConfiguration, 'items', newGroupItems.sort((a, b) => a.localeCompare(b)).map((i) => i + '*').concat(this.items))
+      }
     },
-    items () {
-      return this.currentConfiguration.items.filter((i) => !i.endsWith('*'))
+    items: {
+      get () {
+        return this.currentConfiguration.items.filter((i) => !i.endsWith('*'))
+      },
+      set (newItems) {
+        this.$set(this.currentConfiguration, 'items', this.groupItems.map((i) => i + '*').concat(newItems.sort((a, b) => a.localeCompare(b))))
+      }
+    },
+    allItemsSelected: {
+      get () {
+        return this.currentConfiguration.items.length === 1 && this.currentConfiguration.items[0] === '*'
+      },
+      set (value) {
+        this.$set(this.currentConfiguration, 'items', value ? ['*'] : [])
+      }
     }
   },
   methods: {
-    selectGroupItems (ev) {
-      this.currentConfiguration.items = ev.sort((a, b) => a.localeCompare(b)).map((i) => i + '*').concat(this.items)
-    },
-    selectItems (ev) {
-      this.currentConfiguration.items = this.groupItems.map((i) => i + '*').concat(ev.sort((a, b) => a.localeCompare(b)))
-    },
     updateModuleConfig () {
       if (this.currentConfiguration.items.length === 0) {
         this.$f7.dialog.alert('Please select Items')
