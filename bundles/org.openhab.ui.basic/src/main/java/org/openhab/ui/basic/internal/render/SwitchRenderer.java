@@ -134,13 +134,14 @@ public class SwitchRenderer extends AbstractWidgetRenderer {
                 if (commandDescription != null) {
                     for (CommandOption option : commandDescription.getCommandOptions()) {
                         // Truncate the button label to MAX_LABEL_SIZE characters
-                        buildButton(s, option.getLabel(), option.getCommand(), null, MAX_LABEL_SIZE, item, state,
+                        buildButton(s, option.getLabel(), option.getCommand(), null, null, MAX_LABEL_SIZE, item, state,
                                 buttons);
                     }
                 }
             } else {
                 for (Mapping mapping : s.getMappings()) {
-                    buildButton(s, mapping.getLabel(), mapping.getCmd(), mapping.getIcon(), -1, item, state, buttons);
+                    buildButton(s, mapping.getLabel(), mapping.getCmd(), mapping.getReleaseCmd(), mapping.getIcon(), -1,
+                            item, state, buttons);
                 }
             }
             snippet = snippet.replace("%buttons%", buttons.toString());
@@ -153,17 +154,22 @@ public class SwitchRenderer extends AbstractWidgetRenderer {
         return ECollections.emptyEList();
     }
 
-    private void buildButton(Switch w, @Nullable String lab, String cmd, @Nullable String icon, int maxLabelSize,
-            @Nullable Item item, @Nullable State state, StringBuilder buttons) throws RenderException {
+    private void buildButton(Switch w, @Nullable String lab, String cmd, @Nullable String releaseCmd,
+            @Nullable String icon, int maxLabelSize, @Nullable Item item, @Nullable State state, StringBuilder buttons)
+            throws RenderException {
         String button = getSnippet("button");
 
         String command = cmd;
+        String releaseCommand = releaseCmd;
         String label = lab == null ? cmd : lab;
 
         if (item instanceof NumberItem && ((NumberItem) item).getDimension() != null) {
             String unit = getUnitForWidget(w);
             if (unit != null) {
                 command = command.replace(UnitUtils.UNIT_PLACEHOLDER, unit);
+                if (releaseCommand != null) {
+                    releaseCommand = releaseCommand.replace(UnitUtils.UNIT_PLACEHOLDER, unit);
+                }
                 label = label.replace(UnitUtils.UNIT_PLACEHOLDER, unit);
             }
         }
@@ -173,6 +179,7 @@ public class SwitchRenderer extends AbstractWidgetRenderer {
         }
 
         button = button.replace("%cmd%", escapeHtml(command));
+        button = button.replace("%release_cmd%", releaseCommand == null ? "" : escapeHtml(releaseCommand));
         String buttonClass = "";
         button = button.replace("%label%", escapeHtml(label));
         if (icon == null) {

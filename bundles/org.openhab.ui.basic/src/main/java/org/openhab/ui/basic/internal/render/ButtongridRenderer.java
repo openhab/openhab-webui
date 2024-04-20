@@ -186,6 +186,7 @@ public class ButtongridRenderer extends AbstractWidgetRenderer {
 
         button = button.replace("%item%", item);
         button = button.replace("%cmd%", escapeHtml(cmd));
+        button = button.replace("%release_cmd%", "");
         String buttonClass = "buttongrid-button";
 
         button = button.replace("%label%", escapeHtml(label));
