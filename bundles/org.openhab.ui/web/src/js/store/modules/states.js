@@ -16,9 +16,10 @@ const handler = (context) => {
   return {
     get (obj, prop) {
       if (prop === '_keys') return Object.keys(context.state.itemStates)
+      if (prop === '__ob__') return obj.__ob__
 
       // to avoid the Vue devtools requesting invalid items in development
-      if (['state', 'getters', '_vm', 'toJSON'].indexOf(prop.toString()) >= 0) return {}
+      if (['state', 'getters', '_vm', 'toJSON', '__v_isRef'].indexOf(prop.toString()) >= 0) return {}
       if (typeof prop !== 'string') return {}
 
       const itemName = prop
