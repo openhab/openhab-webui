@@ -1,0 +1,30 @@
+<template>
+  <div>
+    <f7-list>
+      <f7-list-input
+        label="Android App: Link To More"
+        name="value"
+        ref="value"
+        type="text"
+        :value="metadata.value"
+        @input="updateValue" />
+      <f7-block-footer class="param-description" slot="after-list">
+        <small>
+          Enter a valid URL, e.g. <code>https://www.openhab.org</code> or <code>/locations</code>, to open when you long-press of an Item on the openHAB Android app.
+          <f7-link external color="blue" target="_blank" :href="$store.state.websiteUrl + '/docs/apps/android.html#quick-access-device-controls'">Read the docs.</f7-link>
+        </small>
+      </f7-block-footer>
+    </f7-list>
+  </div>
+</template>
+
+<script>
+export default {
+  props: ['itemName', 'metadata', 'namespace'],
+  methods: {
+    updateValue (ev) {
+      this.metadata.value = ev.target.value
+    }
+  }
+}
+</script>
