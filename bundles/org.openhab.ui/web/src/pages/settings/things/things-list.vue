@@ -142,7 +142,7 @@
         <f7-fab-button label="Add thing manually">M</f7-fab-button>
       </f7-fab-buttons> -->
     </f7-fab>
-    <f7-fab v-show="inbox.length > 0" position="center-bottom" :text="`Inbox (${inboxCount})`" slot="fixed" :color="inboxCount > 0 ? 'red' : 'gray'" href="inbox">
+    <f7-fab position="center-bottom" :text="`Inbox (${inboxCount})`" slot="fixed" :color="inboxCount > 0 ? 'red' : 'gray'" href="inbox">
       <f7-icon f7="tray" />
     </f7-fab>
   </f7-page>
