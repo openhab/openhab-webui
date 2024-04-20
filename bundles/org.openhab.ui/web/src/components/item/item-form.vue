@@ -40,11 +40,11 @@
         <f7-list-input v-show="itemDimension"
                        label="State Description Pattern"
                        type="text"
-                       :info="(createMode) ? 'Pattern or transformation applied to the state for display purposes. Only saved if you change the pre-filled default value.' : ''"
-                       :disabled="!editable"
+                       :info="(createMode) ? 'Pattern or transformation applied to the state for display purposes. Only saved if you change the pre-filled default value.' : 'Pattern can only be changed from the state description metadata page after Item creation!'"
+                       :disabled="!createMode"
                        :value="stateDescriptionPattern"
                        @input="stateDescriptionPattern = $event.target.value"
-                       :clear-button="editable" />
+                       :clear-button="createMode" />
 
         <!-- Group Item Form -->
         <group-form ref="groupForm" v-if="itemType === 'Group'" :item="item" :createMode="createMode" />
