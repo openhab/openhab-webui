@@ -296,10 +296,10 @@
 				callback.apply(null, args);
 				_t.lock = true;
 				setTimeout(function() {
-					if (!finished) {
-						callback.apply(null, args);
-					}
 					_t.lock = false;
+					if (!finished) {
+						_t.call(callback, callInterval);
+					}
 				}, callInterval);
 			}
 		};
@@ -1627,7 +1627,8 @@
 	/* class Colorpicker */
 	function Colorpicker(parentNode, color, callback) {
 		var
-			_t = this;
+			_t = this,
+			lastBrightnessSent = null;
 
 		/* rgb2hsv and hsv2rgb are modified versions from http://axonflux.com/handy-rgb-to-hsl-and-rgb-to-hsv-color-model-c */
 		function rgb2hsv(rgbColor) {
@@ -1838,7 +1839,10 @@
 		}
 
 		_t.debounceProxy = new DebounceProxy(function() {
-			callback(_t.hsvValue);
+			if (_t.hsvValue.v !== lastBrightnessSent) {
+				callback(_t.hsvValue);
+				lastBrightnessSent = _t.hsvValue.v;
+			}
 		}, 200);
 
 		_t.updateColor = function(c) {
@@ -1849,26 +1853,30 @@
 			setColor(c);
 		};
 
-		// Some browsers fire onchange while the slider handle is being moved.
-		// This is incorrect, according to the specs, but it's impossible to detect,
-		// so DebounceProxy is used
-		function onSliderChange() {
-			_t.hsvValue.v = _t.slider.value / 100;
-			_t.debounceProxy.call();
+		function onSliderChangeStart() {
+			lastBrightnessSent = null;
 		}
 
-		function onSliderFinish() {
-			_t.hsvValue.v = _t.slider.value / 100;
-
-			_t.debounceProxy.call();
+		function onSliderChange() {
 			_t.debounceProxy.finish();
+			_t.hsvValue.v = _t.slider.value / 100;
+			if (_t.hsvValue.v !== lastBrightnessSent) {
+				callback(_t.hsvValue);
+				lastBrightnessSent = _t.hsvValue.v;
+			}
+		}
+
+		function onSliderInput() {
+			_t.hsvValue.v = _t.slider.value / 100;
+			_t.debounceProxy.call();
 		}
 
 		var
 			eventMap = [
+				[ _t.slider, "touchstart", onSliderChangeStart ],
+				[ _t.slider, "mousedown",  onSliderChangeStart ],
+				[ _t.slider, "input",      onSliderInput ],
 				[ _t.slider, "change",     onSliderChange ],
-				[ _t.slider, "touchend",   onSliderFinish ],
-				[ _t.slider, "mouseup",    onSliderFinish ],
 				[ _t.image,  "mousedown",  onMove ],
 				[ _t.image,  "mousemove",  onMove ],
 				[ _t.image,  "touchmove",  onMove ],
@@ -2354,9 +2362,12 @@
 		Control.call(this, parentNode);
 
 		var
-			_t = this;
+			_t = this,
+			unlockTimeout = null,
+			lastSentCmd = null;
 
 		_t.input = _t.parentNode.querySelector("input[type=range]");
+		_t.releaseOnly = _t.input.getAttribute("data-release-only") === "true";
 		_t.hasValue = _t.parentNode.getAttribute("data-has-value") === "true";
 		_t.valueNode = _t.parentNode.parentNode.querySelector(o.formValue);
 		_t.locked = false;
@@ -2379,7 +2390,14 @@
 		})();
 
 		function emitEvent() {
-			var command = _t.input.value;
+			var
+				value = _t.input.value,
+				command = value;
+
+			if (value === lastSentCmd) {
+				return;
+			}
+
 			if (_t.unit) {
 				command = command + " " + _t.unit;
 			}
@@ -2387,6 +2405,7 @@
 				item: _t.item,
 				value: command
 			}));
+			lastSentCmd = value;
 		}
 
 		_t.debounceProxy = new DebounceProxy(function() {
@@ -2418,11 +2437,15 @@
 			_t.valueNode.style.color = smarthome.UI.adjustColorToTheme(_t.valueColor);
 		};
 
-		var
-			unlockTimeout = null;
-
 		function onChange() {
-			_t.debounceProxy.call();
+			_t.debounceProxy.finish();
+			emitEvent();
+		}
+
+		function onInput() {
+			if (!_t.releaseOnly) {
+				_t.debounceProxy.call();
+			}
 		}
 
 		function onChangeStart() {
@@ -2430,20 +2453,13 @@
 				clearTimeout(unlockTimeout);
 			}
 			_t.locked = true;
-			smarthome.changeListener.pause();
+			lastSentCmd = null;
 		}
 
 		function onChangeEnd() {
-			// mouseUp is fired earlier than the value is changed
-			// quite a dirty hack, but I don't see any other way
-			_t.debounceProxy.call();
-			setTimeout(function() {
-				smarthome.changeListener.resume();
-			}, 5);
 			unlockTimeout = setTimeout(function() {
 				_t.locked = false;
 			}, 300);
-			_t.debounceProxy.finish();
 		}
 
 		var
@@ -2452,6 +2468,7 @@
 				[ _t.input, "mousedown",  onChangeStart ],
 				[ _t.input, "touchend",   onChangeEnd ],
 				[ _t.input, "mouseup",    onChangeEnd ],
+				[ _t.input, "input",      onInput ],
 				[ _t.input, "change",     onChange ]
 			];
 

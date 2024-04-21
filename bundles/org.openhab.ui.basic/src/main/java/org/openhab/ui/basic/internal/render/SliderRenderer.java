@@ -65,9 +65,6 @@ public class SliderRenderer extends AbstractWidgetRenderer {
         String snippetName = "slider";
         String snippet = getSnippet(snippetName);
 
-        // set the default send-update frequency to 200ms
-        String frequency = s.getFrequency() == 0 ? "200" : Integer.toString(s.getFrequency());
-
         String unit = getUnitForWidget(w);
         if (unit == null) {
             // Search the unit in the item state
@@ -82,7 +79,7 @@ public class SliderRenderer extends AbstractWidgetRenderer {
         }
 
         snippet = preprocessSnippet(snippet, w);
-        snippet = snippet.replace("%frequency%", frequency);
+        snippet = snippet.replace("%release_only%", s.isReleaseOnly() ? "true" : "false");
         snippet = snippet.replace("%switch%", s.isSwitchEnabled() ? "1" : "0");
         snippet = snippet.replace("%unit%", unit == null ? "" : unit);
         snippet = snippet.replace("%minValue%", minValueOf(s));
