@@ -2374,7 +2374,6 @@
 			lastSentCmd = null;
 
 		_t.input = _t.parentNode.querySelector("input[type=range]");
-		_t.sendFrequency = parseInt(_t.input.getAttribute("data-send-frequency"), 10);
 		_t.releaseOnly = _t.input.getAttribute("data-release-only") === "true";
 		_t.hasValue = _t.parentNode.getAttribute("data-has-value") === "true";
 		_t.valueNode = _t.parentNode.parentNode.querySelector(o.formValue);
@@ -2418,7 +2417,7 @@
 
 		_t.debounceProxy = new DebounceProxy(function() {
 			emitEvent();
-		}, _t.sendFrequency);
+		}, 200);
 
 		_t.setValuePrivate = function(value, itemState) {
 			if (_t.hasValue) {
