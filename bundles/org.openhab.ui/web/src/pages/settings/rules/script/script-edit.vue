@@ -276,10 +276,9 @@ export default {
       this.dirty = this.scriptDirty || this.modeDirty || this.ruleDirty || this.currentModuleDirty
     },
     /**
-     * Calls {@link initDirty} and resets `this.dirty` and all individual dirty states to `false`.
+     * Resets `this.dirty` and all individual dirty states to `false`.
      */
     resetDirty () {
-      this.initDirty()
       this.dirty = this.scriptDirty = this.modeDirty = this.ruleDirty = this.currentModuleDirty = false
     },
     /**
@@ -462,6 +461,7 @@ export default {
       this.currentModule.configuration.script = this.script
       this.currentModule.configuration.type = this.mode
       return this.$oh.api.put('/rest/rules/' + this.rule.uid, this.rule).then((data) => {
+        this.initDirty()
         this.resetDirty()
         if (!noToast) {
           this.$f7.toast.create({

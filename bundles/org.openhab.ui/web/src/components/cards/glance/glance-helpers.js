@@ -24,9 +24,7 @@ export function allEquipmentPoints (equipment) {
  * @param {String} property return only points also related to this property
  */
 export function findPoints (arr, value, partial, property) {
-  console.debug(arr)
   const points = arr.filter((p) => (partial) ? p.metadata.semantics.value.indexOf(value) === 0 : p.metadata.semantics.value === value)
   if (!property) return points
-  console.debug('found1' + points)
   return points.filter((p) => p.metadata.semantics.config.relatesTo === property)
 }
