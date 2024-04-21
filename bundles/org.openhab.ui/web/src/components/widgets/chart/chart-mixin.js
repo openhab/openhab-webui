@@ -22,6 +22,8 @@ import OhChartLegend from './misc/oh-chart-legend'
 import OhChartTitle from './misc/oh-chart-title'
 import OhChartToolbox from './misc/oh-chart-toolbox'
 
+const DEFAULT_PERIOD = 'D'
+
 const axisComponents = {
   'oh-time-axis': OhTimeAxis,
   'oh-value-axis': OhValueAxis,
@@ -40,11 +42,13 @@ export default {
   data () {
     const config = this.context.component.config || {}
     const chartType = config.chartType
-    const period = config.period || 'D'
-    let endTime = (chartType) ? this.addOrSubtractPeriod(dayjs().startOf(chartType), 1) : dayjs()
+    const endTime = (chartType)
+      ? this.addOrSubtractPeriod(dayjs().startOf(chartType), 1 + (config.future ? 1 : 0))
+      : this.addOrSubtractPeriod(dayjs(), config.future ? 1 : 0)
+
     return {
       items: {},
-      speriod: period,
+      speriod: config.period || DEFAULT_PERIOD,
       endTime,
       orient: null
     }
@@ -159,15 +163,15 @@ export default {
       })
 
       const combinedPromises = neededItems.map((neededItem) => {
-        let url = `/rest/persistence/items/${neededItem}`
+        const url = `/rest/persistence/items/${neededItem}`
         let seriesStartTime = this.startTime
         let seriesEndTime = this.endTime
         if (component.config.offsetAmount && component.config.offsetUnit) {
           seriesStartTime = seriesStartTime.subtract(component.config.offsetAmount, component.config.offsetUnit)
           seriesEndTime = seriesEndTime.subtract(component.config.offsetAmount, component.config.offsetUnit)
         }
-        let serviceId = component.config.service ? this.evaluateExpression('.serviceId', component.config.service) : undefined
-        let query = {
+        const serviceId = component.config.service ? this.evaluateExpression('.serviceId', component.config.service) : undefined
+        const query = {
           serviceId: serviceId,
           starttime: seriesStartTime.toISOString(),
           endtime: seriesEndTime.subtract(1, 'millisecond').toISOString(),
@@ -181,7 +185,7 @@ export default {
     },
     setPeriod (period) {
       this.speriod = period
-      this.endTime = dayjs()
+      this.endTime = this.addOrSubtractPeriod(dayjs(), this.config.future ? 1 : 0)
     },
     setDate (date) {
       const chartType = this.context.component.config.chartType
@@ -196,13 +200,15 @@ export default {
     },
     addOrSubtractPeriod (day, direction) {
       if (!this.context.component.config) return
+      if (direction === 0) return day
       const fn = (direction < 0) ? day.subtract : day.add
       const chartType = this.context.component.config.chartType
       for (let i = 0; i < Math.abs(direction); i++) {
         if (chartType) {
           day = fn.apply(day, [1, chartType === 'isoWeek' ? 'week' : chartType])
         } else {
-          let span = this.period.match(/^([\d]*)([smhdDwWMQyY])$/)
+          const period = this.period || DEFAULT_PERIOD
+          let span = period.match(/^([\d]*)([smhdDwWMQyY])$/)
           if (span) {
             day = fn.apply(day, [parseInt(span[1]) || 1, span[2].replace(/[DWY]/, (x) => x.toLowerCase())])
           }
