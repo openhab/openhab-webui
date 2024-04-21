@@ -1,23 +1,14 @@
 // definitions for the chart widgets
-// TODO: migrate to WidgetDefinition & use helpers
+// TODO: migrate to WidgetDefinition
 
 import { actionGroup, actionParams } from '../actions.js'
+import { pg, pb, pt, pn, pi } from '../helpers.js'
 
-const positionGroup = {
-  name: 'position',
-  label: 'Position',
-  description: 'Each parameter accepts pixel values or percentages. Additionally, top accepts "top", "middle" and "bottom" to align the component vertically, and left accepts "left", "center" and "right" to align the component horizontally'
-}
+const positionGroup = pg('position', 'Position', 'Each parameter accepts pixel values or percentages. Additionally, top accepts "top", "middle" and "bottom" to align the component vertically, and left accepts "left", "center" and "right" to align the component horizontally')
 
-const componentRelationsGroup = {
-  name: 'componentRelations',
-  label: 'Axis and Coordinate System Assignments'
-}
+const componentRelationsGroup = pg('componentRelations', 'Axis and Coordinate System Assignments', '')
 
-const nameDisplayGroup = {
-  name: 'nameDisplay',
-  label: 'Name Display'
-}
+const nameDisplayGroup = pg('nameDisplay', 'Name Display', '')
 
 const positionParameters = [
   { name: 'top', type: 'TEXT', label: 'Top', groupName: 'position' },
@@ -28,153 +19,62 @@ const positionParameters = [
   { name: 'height', type: 'TEXT', label: 'Height', groupName: 'position' }
 ]
 
-const orientParameter = {
-  name: 'orient',
-  type: 'TEXT',
-  label: 'Orientation',
-  limitToOptions: true,
-  options: [
+const orientParameter = pt('orient', 'Orientation', '')
+  .o([
     { value: 'horizontal', label: 'Horizontal' },
     { value: 'vertical', label: 'Vertical' }
-  ]
-}
+  ], true)
 
-const showParameter = {
-  name: 'show',
-  type: 'BOOLEAN',
-  label: 'Show',
-  description: 'Whether to show or not this component'
-}
+const showParameter = pb('show', 'Show', 'Whether to show or not this component')
 
-const nameParameter = {
-  name: 'name',
-  type: 'TEXT',
-  label: 'Name',
-  description: 'A name which will appear on tooltips and labels'
-}
+const nameParameter = pt('name', 'Name', 'A name which will appear on tooltips and labels')
 
-const itemParameter = {
-  name: 'item',
-  type: 'TEXT',
-  context: 'item',
-  label: 'Item',
-  description: 'The item whose persisted data to display'
-}
+const itemParameter = pi('item', 'Item', 'The item whose persisted data to display')
 
-const nameLocationParameter = {
-  name: 'nameLocation',
-  type: 'TEXT',
-  label: 'Name Location',
-  groupName: 'nameDisplay',
-  description: 'Location of axis name',
-  limitToOptions: true,
-  options: [
+const nameLocationParameter = pt('nameLocation', 'Name Location', 'Location of axis name')
+  .g('nameDisplay')
+  .o([
     { value: 'start', label: 'Start' },
     { value: 'center', label: 'Center' },
     { value: 'end', label: 'End (default)' }
-  ]
-}
+  ], true)
 
-const nameGapParameter = {
-  name: 'nameGap',
-  type: 'INTEGER',
-  label: 'Name Gap',
-  groupName: 'nameDisplay',
-  description: 'Gap between axis name and axis line.'
-}
+const nameGapParameter = pn('nameGap', 'Name Gap', 'Gap between axis name and axis line.').g('nameDisplay')
 
-const nameRotateParameter = {
-  name: 'nameRotate',
-  type: 'TEXT',
-  label: 'Name Rotate',
-  groupName: 'nameDisplay',
-  description: 'Rotation of axis name'
-}
+const nameRotateParameter = pt('nameRotate', 'Name Rotate', 'Rotation of axis name').g('nameDisplay')
 
-const minParameter = {
-  name: 'min',
-  type: 'TEXT',
-  label: 'Min',
-  description: 'Minimum boundary'
-}
+const minParameter = pt('min', 'Min', 'Minimum boundary')
 
-const maxParameter = {
-  name: 'max',
-  type: 'TEXT',
-  label: 'Max',
-  description: 'Maximum boundary'
-}
+const maxParameter = pt('max', 'Max', 'Maximum boundary')
 
-const gridIndexParameter = {
-  name: 'gridIndex',
-  type: 'INTEGER',
-  context: 'chartGrid',
-  label: 'Grid Index',
-  groupName: 'componentRelations',
-  description: 'The index of the grid for this axis'
-}
+const gridIndexParameter = pn('gridIndex', 'Grid Index', 'The index of the grid for this axis')
+  .c('chartGrid').g('componentRelations')
 
-const calendarIndexParameter = {
-  name: 'calendarIndex',
-  type: 'INTEGER',
-  context: 'chartCalendar',
-  label: 'Calendar Index',
-  groupName: 'componentRelations',
-  description: 'The index of the calendar for this series'
-}
+const calendarIndexParameter = pn('calendarIndex', 'Calendar Index', 'The index of the calendar for this series')
+  .c('chartCalendar').g('componentRelations')
 
-const xAxisIndexParameter = {
-  name: 'xAxisIndex',
-  type: 'INTEGER',
-  context: 'xAxis',
-  label: 'X Axis Index',
-  groupName: 'componentRelations',
-  description: 'The index of the X axis for this series'
-}
+const xAxisIndexParameter = pn('xAxisIndex', 'X Axis Index', 'The index of the X axis for this series')
+  .c('xAxis').g('componentRelations')
 
-const yAxisIndexParameter = {
-  name: 'yAxisIndex',
-  type: 'INTEGER',
-  context: 'yAxis',
-  label: 'Y Axis Index',
-  groupName: 'componentRelations',
-  description: 'The index of the Y axis for this series'
-}
+const yAxisIndexParameter = pn('yAxisIndex', 'Y Axis Index', 'The index of the Y axis for this series')
+  .c('yAxis').g('componentRelations')
 
-const persistenceServiceParameter = {
-  name: 'service',
-  type: 'TEXT',
-  context: 'persistenceService',
-  label: 'Persistence Service',
-  advanced: true,
-  description: 'The identifier of the persistence service to retrieve the data from. Leave blank to the use the default.'
-}
+const persistenceServiceParameter = pt('service', 'Persistence Service', 'The identifier of the persistence service to retrieve the data from. Leave blank to the use the default.')
+  .c('persistenceService').a()
 
-const offsetAmountParameter = {
-  name: 'offsetAmount',
-  type: 'INTEGER',
-  label: 'Offset Amount',
-  advanced: true,
-  description: 'Offset to <em>subtract</em> from the displayed period, use if you want to do period comparisons (see also Offset Unit).'
-}
+const offsetAmountParameter = pn('offsetAmount', 'Offset Amount', 'Offset to <em>subtract</em> from the displayed period, use if you want to do period comparisons (see also Offset Unit).').a()
 
-const offsetUnitParameter = {
-  name: 'offsetUnit',
-  type: 'STRING',
-  context: 'offsetUnit',
-  label: 'Offset Unit',
-  advanced: true,
-  description: 'Offset to <em>subtract</em> from the displayed period, use if you want to do period comparisons (see also Offset Amount).',
-  limitToOptions: true,
-  options: [
+const offsetUnitParameter = pt('offsetUnit', 'Offset Unit', 'Offset to <em>subtract</em> from the displayed period, use if you want to do period comparisons (see also Offset Amount).')
+  .a()
+  .c('offsetUnit')
+  .o([
     { value: 'hour', label: 'Hour' },
     { value: 'minute', label: 'Minute' },
     { value: 'day', label: 'Day' },
     { value: 'week', label: 'Week' },
     { value: 'month', label: 'Month' },
     { value: 'year', label: 'Year' }
-  ]
-}
+  ], true)
 
 const axisNameParameters = [
   nameParameter,
@@ -216,13 +116,8 @@ const seriesTypeParameter = (...types) => {
   }
 }
 
-const aggregationFunctionParameter = {
-  name: 'aggregationFunction',
-  type: 'TEXT',
-  label: 'Aggregation Function',
-  description: 'How to reduce the data points in a same aggregation cluster to a single value. If not specified, the average function will be used.',
-  limitToOptions: true,
-  options: [
+const aggregationFunctionParameter = pt('aggregationFunction', 'Aggregation Function', 'How to reduce the data points in a same aggregation cluster to a single value. If not specified, the average function will be used.')
+  .o([
     { value: 'average', label: 'Average' },
     { value: 'sum', label: 'Sum' },
     { value: 'min', label: 'Minimum' },
@@ -231,8 +126,7 @@ const aggregationFunctionParameter = {
     { value: 'last', label: 'Last (latest)' },
     { value: 'diff_first', label: 'Difference of firsts' },
     { value: 'diff_last', label: 'Difference of lasts' }
-  ]
-}
+  ], true)
 
 const dimensionTypesOptions = [
   { value: 'minute', label: 'Minute of Hour' },
