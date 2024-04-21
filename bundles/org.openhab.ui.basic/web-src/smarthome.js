@@ -1156,7 +1156,6 @@
 		_t.ignoreState = _t.parentNode.getAttribute("data-ignore-state") === "true";
 		_t.hasValue = _t.parentNode.getAttribute("data-has-value") === "true";
 		_t.value = _t.parentNode.parentNode.querySelector(o.formValue);
-		_t.suppressUpdateButtons = false;
 
 		_t.reset = function() {
 			_t.buttons.forEach(function(button) {
@@ -1179,7 +1178,6 @@
 					item: _t.item,
 					value: value
 			}));
-			_t.suppressUpdateButtons = true;
 		};
 
 		_t.valueMap = {};
@@ -1192,11 +1190,6 @@
 
 			if (_t.hasValue) {
 				_t.value.innerHTML = value;
-			}
-
-			if (_t.suppressUpdateButtons) {
-				_t.suppressUpdateButtons = false;
-				return;
 			}
 
 			_t.reset();
