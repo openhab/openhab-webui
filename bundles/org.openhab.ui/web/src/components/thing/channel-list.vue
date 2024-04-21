@@ -48,7 +48,14 @@
                               @channel-updated="(e) => $emit('channels-updated', e)" />
               </template>
               <template #default="{ channelType, channel }" v-else-if="multipleLinksMode">
-                <item-form v-if="isChecked(channel)" :item="newItem(channel)" :items="items" :createMode="true" :channel="channel" :checked="isChecked(channel)" :unitHint="getUnitHint(channel, channelType)" />
+                <item-form v-if="isChecked(channel)"
+                           :item="newItem(channel)"
+                           :items="items"
+                           :createMode="true"
+                           :channel="channel"
+                           :checked="isChecked(channel)"
+                           :unitHint="getUnitHint(channel, channelType)"
+                           :stateDescription="stateDescription(channelType)" />
               </template>
               <!-- <channel-link #default="{ channelId }" /> -->
             </channel-group>
@@ -200,6 +207,7 @@ export default {
           category: (channelType) ? channelType.category : '',
           type: channel.itemType,
           unit: this.channelUnit(channel, channelType),
+          stateDescriptionPattern: '',
           tags: (defaultTags.find((t) => this.$store.getters.semanticClasses.Points.indexOf(t) >= 0)) ? defaultTags : [...defaultTags, 'Point']
         }
         this.newItems.push(newItem)
@@ -208,6 +216,9 @@ export default {
     channelUnit (channel, channelType) {
       const dimension = channel.itemType.startsWith('Number:') ? channel.itemType.split(':')[1] : ''
       return dimension ? this.getUnitHint(dimension, channelType) : ''
+    },
+    stateDescription (channelType) {
+      return channelType?.stateDescription?.pattern
     },
     toggleAllChecks (checked) {
       this.thing.channels.forEach((c) => {

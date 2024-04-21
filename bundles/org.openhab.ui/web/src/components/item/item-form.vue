@@ -40,11 +40,11 @@
         <f7-list-input v-show="itemDimension"
                        label="State Description Pattern"
                        type="text"
-                       :info="(createMode) ? 'Pattern or transformation applied to the state for display purposes. Only saved if you change the pre-filled default value.' : ''"
-                       :disabled="!editable"
+                       :info="(createMode) ? 'Pattern or transformation applied to the state for display purposes. Only saved if you change the pre-filled default value.' : 'Pattern can only be changed from the state description metadata page after Item creation!'"
+                       :disabled="!createMode"
                        :value="stateDescriptionPattern"
                        @input="stateDescriptionPattern = $event.target.value"
-                       :clear-button="editable" />
+                       :clear-button="createMode" />
 
         <!-- Group Item Form -->
         <group-form ref="groupForm" v-if="itemType === 'Group'" :item="item" :createMode="createMode" />
@@ -98,7 +98,7 @@ import uomMixin from '@/components/item/uom-mixin'
 
 export default {
   mixins: [ItemMixin, uomMixin],
-  props: ['item', 'items', 'createMode', 'hideCategory', 'hideType', 'hideSemantics', 'forceSemantics', 'unitHint'],
+  props: ['item', 'items', 'createMode', 'hideCategory', 'hideType', 'hideSemantics', 'forceSemantics', 'unitHint', 'stateDescription'],
   components: {
     SemanticsPicker,
     ItemPicker,
@@ -148,7 +148,6 @@ export default {
         const dimension = this.dimensions.find((d) => d.name === newDimension)
         this.$set(this.item, 'type', 'Number:' + dimension.name)
         this.itemUnit = (this.unitHint ? this.unitHint : this.getUnitHint(dimension.name))
-        this.$set(this.item, 'stateDescription', this.getStateDescription())
       }
     },
     itemUnit: {
@@ -173,7 +172,7 @@ export default {
     stateDescriptionPattern: {
       get () {
         if (this.item.stateDescriptionPattern) return this.item.stateDescriptionPattern
-        return this.item.metadata?.stateDescription?.config.pattern || '%.0f %unit%'
+        return this.item.metadata?.stateDescription?.config.pattern || this.stateDescription || (this.createMode ? '%.0f %unit%' : '')
       },
       set (newPattern) {
         this.$set(this.item, 'stateDescriptionPattern', newPattern)
@@ -273,6 +272,11 @@ export default {
     if (!this.item) return
     this.initializeAutocompleteCategory()
     if (this.dimensionsReady) this.initializeAutocompleteUnit()
+    if (this.createMode && this.stateDescription && (this.stateDescription !== this.item.stateDescriptionPattern)) {
+      // If there is a state description from the channel type that is different from the default,
+      // set it as the item state description
+      this.item.stateDescriptionPattern = this.stateDescription
+    }
   },
   beforeDestroy () {
     if (this.unitAutocomplete) {
