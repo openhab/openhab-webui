@@ -13,5 +13,5 @@ export default [
   { name: 'alexa', label: 'Amazon Alexa' },
   { name: 'homekit', label: 'Apple HomeKit' },
   { name: 'ga', label: 'Google Assistant' },
-  { name: 'link_to_more', label: 'Android App: Link to More' }
+  { name: 'link_to_more', label: 'Android App: Device Controls' }
 ]
