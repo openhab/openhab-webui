@@ -167,7 +167,7 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
         try {
             switch (iconSource.toLowerCase()) {
                 case ICON_SOURCE_OH:
-                    if (ICON_SET_OH_CLASSIC.equals(iconSet) && ICON_NAME_NONE.equals(iconName)) {
+                    if (ICON_NAME_NONE.equals(iconName)) {
                         iconSnippet = getSnippet("icon_none");
                     } else {
                         iconSnippet = getSnippet(ignoreState ? "icon_oh_no_state" : "icon_oh");

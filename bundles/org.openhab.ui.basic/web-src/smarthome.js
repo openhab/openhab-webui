@@ -571,7 +571,7 @@
 			if (iconSrc === _t.iconSource) {
 				if (iconSrc === "oh") {
 					if (iconSet !== _t.iconSet || iconName !== _t.iconName) {
-						if (iconName === "none" && iconSet === "classic") {
+						if (iconName === "none") {
 							src = "<svg data-icon=\"" + iconSet + ":" + iconName + "\" viewBox=\"0 0 1 1\" xmlns=\"http://www.w3.org/2000/svg\" />";
 						} else {
 							src = "<img data-icon=\"" + iconSet + ":" + iconName + "\" src=\".." + imgURL + "\" />";
@@ -594,7 +594,7 @@
 				// Different icon source => DOM element to be be replaced
 
 				if (iconSrc === "oh") {
-					if (iconName === "none" && iconSet === "classic") {
+					if (iconName === "none") {
 						src = "<svg data-icon=\"" + iconSet + ":" + iconName + "\" viewBox=\"0 0 1 1\" xmlns=\"http://www.w3.org/2000/svg\" />";
 					} else {
 						src = "<img data-icon=\"" + iconSet + ":" + iconName + "\" src=\".." + imgURL + "\" />";
