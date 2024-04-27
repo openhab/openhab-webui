@@ -349,8 +349,7 @@
 	function Control(parentNode) {
 		var
 			_t = this,
-			suppress = false,
-			noneImageSrc = "images/none.png";
+			suppress = false;
 
 		_t.parentNode = parentNode;
 		if (_t.formRow === undefined) {
@@ -438,7 +437,10 @@
 		_t.replaceImageWithNone = function() {
 			this.removeEventListener("load", _t.convertToInlineSVG);
 			this.removeEventListener("error", _t.replaceImageWithNone);
-			this.src = noneImageSrc;
+			if (this === _t.icon) {
+				_t.iconError = true;
+			}
+			_t.replaceIconWithInlineSVG(this, "<svg viewBox=\"0 0 1 1\" xmlns=\"http://www.w3.org/2000/svg\" />");
 		};
 
 		_t.replaceIconWithInlineSVG = function(iconElement, svgText) {
@@ -497,16 +499,18 @@
 			doc = parser.parseFromString(htmlText, "text/html");
 			newIconElement = doc.body.firstChild;
 
-			if (_t.iconSource === "oh") {
+			if (_t.icon.tagName.toLowerCase() === "img" && _t.iconSource === "oh") {
 				_t.icon.removeEventListener("load", _t.convertToInlineSVG);
 				_t.icon.removeEventListener("error", _t.replaceImageWithNone);
 			}
+
+			_t.iconError = false;
 
 			// Replace the current icon element
 			_t.iconContainer.replaceChild(newIconElement, _t.icon);
 
 			_t.findIcon();
-			if (_t.iconSource === "oh") {
+			if (_t.icon.tagName.toLowerCase() === "img" && _t.iconSource === "oh") {
 				_t.icon.addEventListener("load", _t.convertToInlineSVG);
 				_t.icon.addEventListener("error", _t.replaceImageWithNone);
 			}
@@ -567,13 +571,19 @@
 			if (iconSrc === _t.iconSource) {
 				if (iconSrc === "oh") {
 					if (iconSet !== _t.iconSet || iconName !== _t.iconName) {
-						src = "<img data-icon=\"" + iconSet + ":" + iconName + "\" src=\".." + imgURL + "\" />";
+						if (iconName === "none") {
+							src = "<svg data-icon=\"" + iconSet + ":" + iconName + "\" viewBox=\"0 0 1 1\" xmlns=\"http://www.w3.org/2000/svg\" />";
+						} else {
+							src = "<img data-icon=\"" + iconSet + ":" + iconName + "\" src=\".." + imgURL + "\" />";
+						}
 						_t.replaceIcon(src);
-					} else if (_t.icon.tagName.toLowerCase() === "img" && !_t.icon.src.endsWith(noneImageSrc)) {
-						_t.icon.addEventListener("error", _t.replaceImageWithNone);
-						_t.icon.setAttribute("src", imgURL);
-					} else if (_t.icon.tagName.toLowerCase() === "svg" && smarthome.UI.inlineSVG) {
-						_t.getSVGIconAndReplaceWithInline(_t.icon, imgURL, false, "<svg/>");
+					} else if (iconName !== "none" && !_t.iconError) {
+						if (_t.icon.tagName.toLowerCase() === "img") {
+							_t.icon.addEventListener("error", _t.replaceImageWithNone);
+							_t.icon.setAttribute("src", imgURL);
+						} else if (_t.icon.tagName.toLowerCase() === "svg" && smarthome.UI.inlineSVG) {
+							_t.getSVGIconAndReplaceWithInline(_t.icon, imgURL, false, "<svg viewBox=\"0 0 1 1\" xmlns=\"http://www.w3.org/2000/svg\" />");
+						}
 					}
 				} else if (iconSrc === "if") {
 					_t.icon.setAttribute("icon", encodeURIComponent(iconSet) + ":" + encodeURIComponent(iconName));
@@ -584,7 +594,11 @@
 				// Different icon source => DOM element to be be replaced
 
 				if (iconSrc === "oh") {
-					src = "<img data-icon=\"" + iconSet + ":" + iconName + "\" src=\".." + imgURL + "\" />";
+					if (iconName === "none") {
+						src = "<svg data-icon=\"" + iconSet + ":" + iconName + "\" viewBox=\"0 0 1 1\" xmlns=\"http://www.w3.org/2000/svg\" />";
+					} else {
+						src = "<img data-icon=\"" + iconSet + ":" + iconName + "\" src=\".." + imgURL + "\" />";
+					}
 				} else if (iconSrc === "if") {
 					src = "<iconify-icon icon=\"" +
 						encodeURIComponent(iconSet) + ":" + encodeURIComponent(iconName) +
@@ -701,7 +715,7 @@
 		_t.applyLocalSettingsPrivate = function() {};
 
 		_t.destroy = function() {
-			if (_t.icon !== null && _t.iconSource === "oh") {
+			if (_t.icon !== null && _t.icon.tagName.toLowerCase() === "img" && _t.iconSource === "oh") {
 				_t.icon.removeEventListener("load", _t.convertToInlineSVG);
 				_t.icon.removeEventListener("error", _t.replaceImageWithNone);
 			}
@@ -716,8 +730,9 @@
 		setCellSize(smarthome.UI.cellSizeTablet, smarthome.UI.cellSizeDesktop);
 
 		_t.findIcon();
+		_t.iconError = false;
 		_t.iconifyIconReplaced = false;
-		if (_t.icon !== null && _t.iconSource === "oh") {
+		if (_t.icon !== null && _t.icon.tagName.toLowerCase() === "img" && _t.iconSource === "oh") {
 			_t.icon.addEventListener("load", _t.convertToInlineSVG);
 			_t.icon.addEventListener("error", _t.replaceImageWithNone);
 		} else if (_t.icon !== null && _t.iconSource === "if" && !smarthome.UI.iconify) {
