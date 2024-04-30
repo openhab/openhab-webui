@@ -32,29 +32,32 @@
     margin-top: 0.5rem
     margin-bottom: 0.5rem
     padding: 0
-    .logo-square
-      position relative
-      background #fff
-      width 80%
-      margin-top 0.2em
+    .addon-description
+      width 100%
       display flex
-      align-items center
-      &:after
-        content ' '
-        display block
-        padding-bottom 100%
-      .logo
-        position absolute
-        top 0px
-        left 0px
-        width calc(100% - 2px)
-        height calc(100% - 2px)
-        object-fit contain
+      .logo-square
+        background white
+        border-radius 10%
+        width 64px
+        height 64px
+        margin-top 6.5px
+        display flex
+        justify-content center
+        align-items center
+        .logo
+          margin-left 0
+          max-height 54px
+          max-width 54px
+      .text
+        margin-left 0.5rem
+        max-width calc(100% - 64px - 0.5rem)
 </style>
 
 <script>
-import { loadLocaleMessages } from '@/js/i18n'
 import AddonLogo from '@/components/addons/addon-logo.vue'
+
+import { loadLocaleMessages } from '@/js/i18n'
+
 export default {
   model: {
     prop: 'selected',
