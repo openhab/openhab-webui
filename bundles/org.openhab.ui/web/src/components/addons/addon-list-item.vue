@@ -11,7 +11,7 @@
     <div v-else-if="addon.properties && addon.properties.views" slot="subtitle">
       <addon-stats-line :addon="addon" :iconSize="15" />
     </div>
-    <addon-logo slot="media" class="logo-square" :addon="addon" size="64" />
+    <addon-logo slot="media" class="logo-square" :lazy="true" :addon="addon" size="64" />
     <div v-if="showInstallActions" slot="after">
       <f7-preloader v-if="addon.pending" color="blue" />
       <f7-button v-else-if="addon.installed" class="install-button prevent-active-state-propagation" text="Remove" color="red" round small @click="buttonClicked" />
