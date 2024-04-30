@@ -13,7 +13,7 @@
             <f7-link icon-f7="doc_text_search" :external="true" color="gray" target="_blank" :href="addon.link" />
           </f7-col>
         </f7-row>
-        <f7-row no-gap style="margin-top: 0.5rem, margin-bottom: 0rem">
+        <f7-row no-gap style="margin-top: 0.5rem; margin-bottom: 0rem">
           <f7-col width="15">
             <addon-logo class="logo-square" :addon="addon" size="40" />
           </f7-col>
