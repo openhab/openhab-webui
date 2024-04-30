@@ -152,7 +152,7 @@
           </f7-login-screen-title>
         </f7-block>
         <f7-block strong>
-          {{ $t('setupwizard.persistence.header1') }} {{ $t('setupwizard.persistence.header2') }}<br><br>
+          {{ $t('setupwizard.persistence.header1') }} {{ $t('setupwizard.persistence.header2') }}
         </f7-block>
         <f7-block style="margin-top: 0em; margin-bottom: 2em">
           <f7-row v-if="!addonSuggestionsReady">
@@ -305,13 +305,14 @@
 <script>
 import i18n from '@/components/i18n-mixin'
 import { loadLocaleMessages } from '@/js/i18n'
-import addonsSetupWizard from '@/components/addons/addons-setup-wizard'
+
+import AddonsSetupWizard from '@/components/addons/addons-setup-wizard'
 
 export default {
   mixins: [i18n],
   components: {
     'parameter-location': () => import('@/components/config/controls/parameter-location.vue'),
-    addonsSetupWizard
+    AddonsSetupWizard
   },
   data () {
     return {
