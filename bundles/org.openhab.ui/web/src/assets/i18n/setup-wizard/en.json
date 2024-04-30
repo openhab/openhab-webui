@@ -7,7 +7,7 @@
   "setupwizard.skipSetup.confirm.title": "Skip Setup",
   "setupwizard.skipSetup.confirm.message": "Are you sure? Setup saves you time by performing just a few basic configuration tasks. You should only skip it if you know what you're doing.",
   "setupwizard.location.title": "Set your Location",
-  "setupwizard.location.header1": "Would you like to share your home's location?",
+  "setupwizard.location.header1": "Would you like to set your home's location?",
   "setupwizard.location.header2": "It will help determining data dependent on your position, like sunrise/sunset times or the weather.",
   "setupwizard.location.parameterLabel": "Location of your home",
   "setupwizard.location.placeholder": "<latitude>,<longitude>[,<altitude>]",
