@@ -155,12 +155,12 @@
           {{ $t('setupwizard.persistence.header1') }} {{ $t('setupwizard.persistence.header2') }}<br><br>
         </f7-block>
         <f7-block style="margin-top: 0em; margin-bottom: 2em">
-          <f7-row v-if="!addonSuggestionsReady">
+          <f7-block v-if="!addonSuggestionsReady">
             <div class="display-flex justify-content-center margin-bottom">
-              <f7-progressbar id="suggestions-progress-bar-persistence" />
+              <f7-progressbar id="suggestions-progress-bar-persistence" :progress="0" />
             </div>
             <div v-t="'setupwizard.addons.suggestionsWaitMessage'" />
-          </f7-row>
+          </f7-block>
           <addons-setup-wizard v-if="addonSuggestionsReady && recommendedAddonsByType('persistence').length"
                                :addons="recommendedAddonsByType('persistence')"
                                @update="updateAddonSelection(recommendedAddonsByType('persistence'), $event)" />
@@ -198,12 +198,12 @@
           <a class="text-color-blue external" target="_blank" href="https://www.openhab.org/addons/" v-t="'setupwizard.addons.browseAddonsOnWebsite'" />
         </f7-block>
         <f7-block class="padding">
-          <f7-row v-if="!addonSuggestionsReady">
+          <f7-block v-if="!addonSuggestionsReady">
             <div class="display-flex justify-content-center margin-bottom">
-              <f7-progressbar id="suggestions-progress-bar-addons" />
+              <f7-progressbar id="suggestions-progress-bar-addons" :progress="0" />
             </div>
             <div v-t="'setupwizard.addons.suggestionsWaitMessage'" />
-          </f7-row>
+          </f7-block>
           <f7-row v-if="addonSuggestionsReady">
             <f7-col width="100">
               <f7-button ref="selectAddons" large icon-f7="bag_fill_badge_plus" icon-size="24" @click="selectAddons" :text="$t('setupwizard.addons.selectAddons')" />
