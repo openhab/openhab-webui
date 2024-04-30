@@ -86,13 +86,12 @@ export default {
       this.$emit('update', this.selected)
     },
     description (addon) {
-      let line1 = this.$t('setupwizard.addon.' + addon.uid + '.line1')
+      const line1 = this.$t('setupwizard.addon.' + addon.uid + '.line1')
+      const line2 = this.$t('setupwizard.addon.' + addon.uid + '.line2')
       const hasLine1 = (line1 !== 'setupwizard.addon.' + addon.uid + '.line1')
-      line1 = hasLine1 ? line1 : addon.uid
-      let line2 = this.$t('setupwizard.addon.' + addon.uid + '.line2')
       const hasLine2 = (line2 !== 'setupwizard.addon.' + addon.uid + '.line2')
-      line2 = hasLine1 ? (hasLine2 ? line2 : '') : addon.version
-      return line1 + (line2 ? '<br>' + line2 : '')
+      let descr = (hasLine1 ? line1 : '') + (hasLine2 ? ('<br>' + line2) : '')
+      return descr || addon.description || (addon.uid + '<br>' + addon.version)
     }
   },
   mounted () {
