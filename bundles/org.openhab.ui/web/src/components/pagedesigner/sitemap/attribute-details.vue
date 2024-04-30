@@ -3,7 +3,7 @@
     <f7-card-content v-if="attributes.length">
       <f7-list inline-labels sortable sortable-opposite sortable-enabled @sortable:sort="onSort">
         <f7-list-item v-for="(attr, idx) in attributes" :key="attr.key">
-          <f7-input v-if="!fields" style="width: inherit" type="text" :placeholder="placeholder" :value="attr.value" @change="updateAttribute($event, idx, attr)" />
+          <f7-input v-if="!fields" inputStyle="width: 100%" type="text" :placeholder="placeholder" :value="attr.value" @change="updateAttribute($event, idx, attr)" />
           <f7-input v-for="(field, fieldidx) in fieldDefs" :key="JSON.stringify(field)"
                     :style="fieldStyle(field, fieldidx)"
                     :inputStyle="inputFieldStyle(field, fieldidx)"
@@ -69,7 +69,7 @@ export default {
     },
     inputFieldStyle (field, fieldidx) {
       let style = {}
-      style.width = 'inherit'
+      style.width = '100%'
       if (this.fieldProp(field, 'type') === 'number') {
         style.textAlign = 'end'
       }
