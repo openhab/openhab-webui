@@ -92,7 +92,7 @@
             <small v-t="'setupwizard.location.footer'" />
           </f7-block-footer>
         </f7-block>
-        <f7-block class="display-flex flex-direction-column padding" v-if="networksReady">
+        <f7-block class="display-flex flex-direction-column padding">
           <div>
             <f7-button v-if="location" large fill color="blue" :text="$t('setupwizard.location.setLocation')" @click="setLocation" />
             <f7-button large color="blue" :text="$t('setupwizard.location.configureLater')" class="margin-top" @click="skipLocation" />
@@ -100,7 +100,7 @@
         </f7-block>
       </f7-tab>
 
-      <f7-tab id="network" ref="network">
+      <f7-tab id="persistence" ref="persistence">
         <f7-block>
           <f7-link
             icon-ios="f7:arrow_left"
@@ -113,65 +113,21 @@
             <div class="padding">
               <f7-icon size="48" color="blue" f7="download_circle" />
             </div>
-            {{ $t('setupwizard.network.title') }}
-          </f7-login-screen-title>
-        </f7-block>
-        <f7-block strong>
-          {{ $t('setupwizard.network.header1') }} {{ $t('setupwizard.network.header2') }}<br><br>
-        </f7-block>
-        <f7-list form style="margin-top: 2rem" v-if="networksReady">
-          <f7-list-item v-for="option in availableNetworks"
-                        checkbox
-                        :key="option.value"
-                        :title="option.label"
-                        :checked="network === option.value"
-                        @change="(evt) => network = (evt.target.checked ? option.value : undefined)" />
-        </f7-list>
-        <f7-block class="display-flex flex-direction-column padding">
-          <div>
-            <f7-button large fill color="blue" :text="$t('setupwizard.network.setNetwork')" @click="setNetwork" />
-            <f7-button large color="blue" :text="$t('setupwizard.network.configureLater')" class="margin-top" @click="skipNetwork" />
-          </div>
-        </f7-block>
-      </f7-tab>
-
-      <f7-tab id="persistence" ref="persistence">
-        <f7-block>
-          <f7-link
-            icon-ios="f7:arrow_left"
-            icon-aurora="f7:arrow_left"
-            icon-md="material:arrow_back"
-            :tab-link="(availableNetworks && availableNetworks.length > 1) ? '#network' : '#location'"
-            color="blue"
-            tab-link-active />
-          <f7-login-screen-title>
-            <div class="padding">
-              <f7-icon size="48" color="blue" f7="download_circle" />
-            </div>
             {{ $t('setupwizard.persistence.title') }}
           </f7-login-screen-title>
         </f7-block>
         <f7-block strong>
           {{ $t('setupwizard.persistence.header1') }} {{ $t('setupwizard.persistence.header2') }}<br><br>
         </f7-block>
-        <f7-block style="margin-top: 0em; margin-bottom: 2em">
-          <f7-row v-if="!addonSuggestionsReady">
-            <div class="display-flex justify-content-center margin-bottom">
-              <f7-progressbar id="suggestions-progress-bar-persistence" />
-            </div>
-            <div v-t="'setupwizard.addons.suggestionsWaitMessage'" />
-          </f7-row>
-          <addons-setup-wizard v-if="addonSuggestionsReady && recommendedAddonsByType('persistence').length"
+        <f7-block style="margin-top: 0em, margin-bottom: 2em">
+          <addons-setup-wizard v-if="recommendedAddonsByType('persistence').length"
                                :addons="recommendedAddonsByType('persistence')"
                                @update="updateAddonSelection(recommendedAddonsByType('persistence'), $event)" />
           <f7-block-footer class="margin-bottom">
             <small v-t="'setupwizard.persistence.footer'" />
           </f7-block-footer>
           <div>
-            <f7-button v-if="addonSuggestionsReady && (selectedAddons.length > 0)"
-                       large fill color="blue"
-                       :text="$t('setupwizard.persistence.install')"
-                       @click="selectPersistence" />
+            <f7-button v-if="selectedAddons.length > 0" large fill color="blue" :text="$t('setupwizard.persistence.install')" @click="selectPersistence" />
             <f7-button large color="blue" :text="$t('setupwizard.persistence.installLater')" class="margin-top" @click="skipPersistence" />
           </div>
         </f7-block>
@@ -193,23 +149,17 @@
             {{ $t('setupwizard.addons.title') }}
           </f7-login-screen-title>
         </f7-block>
-        <f7-block strong v-if="addonSuggestionsReady">
+        <f7-block strong>
           {{ $t('setupwizard.addons.header1') }}<br>{{ $t('setupwizard.addons.header2') }}<br>{{ $t('setupwizard.addons.header3') }}<br><br>
           <a class="text-color-blue external" target="_blank" href="https://www.openhab.org/addons/" v-t="'setupwizard.addons.browseAddonsOnWebsite'" />
         </f7-block>
         <f7-block class="padding">
-          <f7-row v-if="!addonSuggestionsReady">
-            <div class="display-flex justify-content-center margin-bottom">
-              <f7-progressbar id="suggestions-progress-bar-addons" />
-            </div>
-            <div v-t="'setupwizard.addons.suggestionsWaitMessage'" />
-          </f7-row>
-          <f7-row v-if="addonSuggestionsReady">
+          <f7-row>
             <f7-col width="100">
               <f7-button ref="selectAddons" large icon-f7="bag_fill_badge_plus" icon-size="24" @click="selectAddons" :text="$t('setupwizard.addons.selectAddons')" />
             </f7-col>
           </f7-row>
-          <addons-setup-wizard v-if="addonSuggestionsReady && addonSelectionList.length"
+          <addons-setup-wizard v-if="addonSelectionList.length"
                                :addons="addonSelectionList"
                                :selectedAddons="toInstallAddons.filter(a => addonSelectionList.includes(a))"
                                @update="updateAddonSelection(addonSelectionList, $event)" />
@@ -217,7 +167,7 @@
             <small v-t="'setupwizard.addons.footer'" />
           </f7-block-footer>
           <div>
-            <f7-button v-if="addonSuggestionsReady && (toInstallAddons.filter(a => (!preSelectedAddon(a) && !a.installed)).length > 0)"
+            <f7-button v-if="toInstallAddons.filter(a => (!preSelectedAddon(a) && !a.installed)).length > 0"
                        large fill color="blue"
                        :text="$tc('setupwizard.addons.installAddons', toInstallAddons.filter(a => (!preSelectedAddon(a) && !a.installed)).length)"
                        @click="installAddons" />
@@ -323,10 +273,6 @@ export default {
       region: null,
       timezone: null,
       location: null,
-      networksReady: false,
-      availableNetworks: null,
-      network: null,
-      addonSuggestionsReady: false,
       autocompleteAddons: null,
       addons: [],
       // all recommended addons, pre-defined
@@ -420,30 +366,10 @@ export default {
       this.$oh.api.put('/rest/services/org.openhab.i18n/config', {
         location: this.location
       }).then(() => {
-        this.showNetwork()
-      })
-    },
-    skipLocation () {
-      this.showNetwork()
-    },
-    showNetwork () {
-      if (this.availableNetworks.length > 1) {
-        this.$refs.network.show()
-      } else {
-        this.skipNetwork()
-      }
-    },
-    setNetwork () {
-      this.$oh.api.put('/rest/services/org.openhab.network/config', {
-        primaryAddress: this.network
-      }).then(() => {
-        this.addonSuggestionsReady = false
-        this.getSuggestedAddons()
         this.showPersistence()
       })
     },
-    skipNetwork () {
-      this.getSuggestedAddons()
+    skipLocation () {
       this.showPersistence()
     },
     showPersistence () {
@@ -460,35 +386,6 @@ export default {
     showAddons () {
       this.updateAddonSelection([], this.selectedAddons.filter(a => !this.preSelectedAddon(a)))
       this.$refs.addons.show()
-    },
-    getSuggestedAddons () {
-      if (this.addonSuggestionsReady) return
-      // wait 10 seconds for suggestions to refresh after network scan
-      const suggestionsPromise = new Promise(() => {
-        this.$f7.progressbar.set('#suggestions-progress-bar-persistence', 0)
-        this.$f7.progressbar.set('#suggestions-progress-bar-addons', 0)
-        let progress = 0
-        let self = this
-        function loading () {
-          setTimeout(() => {
-            const progressBefore = progress
-            progress += 10
-            self.$f7.progressbar.set('#suggestions-progress-bar-persistence', progress)
-            self.$f7.progressbar.set('#suggestions-progress-bar-addons', progress)
-            if (progressBefore < 100) {
-              loading() // keep loading
-            } else {
-              self.$oh.api.get('/rest/addons/suggestions').then((suggestions) => {
-                let suggestedAddons = suggestions.flatMap(s => s.id)
-                self.selectedAddons = self.addons.filter(a => (self.recommendedAddons.includes(a.uid) || suggestedAddons.includes(a.id)))
-                  .sort((a, b) => a.uid.toUpperCase().localeCompare(b.uid.toUpperCase()))
-                self.addonSuggestionsReady = true
-              })
-            }
-          }, 1000)
-        }
-        loading()
-      })
     },
     preSelectedAddon (addon) {
       return (this.preSelectingAddonTypes.includes(addon.type) || this.preSelectingAddons.includes(addon.uid))
@@ -627,35 +524,36 @@ export default {
         this.i18nReady = true
       }
     })
-    this.$oh.api.get('/rest/config-descriptions/system:network').then((data) => {
-      this.availableNetworks = data.parameters.find(p => p.name === 'primaryAddress').options
-      this.networksReady = true
-    })
-    this.$oh.api.get('/rest/addons').then(data => {
-      this.addons = data.sort((a, b) => a.label.toUpperCase().localeCompare(b.label.toUpperCase()))
-      const self = this
-      this.autocompleteAddons = this.$f7.autocomplete.create({
-        openIn: 'popup',
-        pageTitle: self.$t('setupwizard.addons.selectAddons'),
-        searchbarPlaceholder: self.$t('setupwizard.addons.selectAddons.placeholder'),
-        openerEl: self.$refs.selectAddons,
-        multiple: true,
-        requestSourceOnOpen: true,
-        source: (query, render) => {
-          if (query.length === 0) {
-            render(self.selectableAddons.map((a) => a.label))
-          } else {
-            render(self.selectableAddons.filter(a => (a.label.toLowerCase().indexOf(query.toLowerCase()) >= 0 || a.uid.toLowerCase().indexOf(query.toLowerCase()) >= 0)).map(a => a.label))
+    this.$oh.api.get('/rest/addons/suggestions').then((suggestedAddons) => {
+      let suggestions = suggestedAddons.flatMap(s => s.id)
+      this.$oh.api.get('/rest/addons').then(data => {
+        this.addons = data.sort((a, b) => a.label.toUpperCase().localeCompare(b.label.toUpperCase()))
+        this.selectedAddons = this.addons.filter(a => (this.recommendedAddons.includes(a.uid) || suggestions.includes(a.id)))
+          .sort((a, b) => a.uid.toUpperCase().localeCompare(b.uid.toUpperCase()))
+        const self = this
+        this.autocompleteAddons = this.$f7.autocomplete.create({
+          openIn: 'popup',
+          pageTitle: self.$t('setupwizard.addons.selectAddons'),
+          searchbarPlaceholder: self.$t('setupwizard.addons.selectAddons.placeholder'),
+          openerEl: self.$refs.selectAddons,
+          multiple: true,
+          requestSourceOnOpen: true,
+          source: (query, render) => {
+            if (query.length === 0) {
+              render(self.selectableAddons.map((a) => a.label))
+            } else {
+              render(self.selectableAddons.filter(a => (a.label.toLowerCase().indexOf(query.toLowerCase()) >= 0 || a.uid.toLowerCase().indexOf(query.toLowerCase()) >= 0)).map(a => a.label))
+            }
+          },
+          on: {
+            change (value) {
+              const selected = value.map(label => self.addons.find(a => (a.label === label)))
+              // if we added addons, keep it visible on the main list, even if we deselect again later
+              self.selectedAddons = [...new Set(self.selectedAddons.concat(selected))]
+              self.updateAddonSelection(self.selectableAddons, selected)
+            }
           }
-        },
-        on: {
-          change (value) {
-            const selected = value.map(label => self.addons.find(a => (a.label === label)))
-            // if we added addons, keep it visible on the main list, even if we deselect again later
-            self.selectedAddons = [...new Set(self.selectedAddons.concat(selected))]
-            self.updateAddonSelection(self.selectableAddons, selected)
-          }
-        }
+        })
       })
     })
   }
