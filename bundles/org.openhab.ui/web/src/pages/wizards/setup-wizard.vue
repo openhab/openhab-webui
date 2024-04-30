@@ -216,6 +216,11 @@
         </f7-block>
         <f7-block class="display-flex flex-direction-column padding" style="margin-top: 4rem">
           <div>
+            <f7-row v-if="$f7.width < 1280" class="display-flex justify-content-center" style="height: 8em">
+              <f7-button large fill color="blue" external :href="`${$store.state.websiteUrl}/link/tutorial`" target="_blank" v-t="'home.overview.button.tutorial'" />
+              <span style="width: 8px" />
+              <f7-button large color="blue" external :href="`${$store.state.websiteUrl}/link/docs`" target="_blank" v-t="'home.overview.button.documentation'" />
+            </f7-row>
             <f7-button large color="blue" :text="$t('setupwizard.welcome.getStarted')" @click="finish" />
           </div>
         </f7-block>
@@ -475,6 +480,9 @@ export default {
       this.$f7.panel.get('left').enableVisibleBreakpoint()
       this.$nextTick(() => {
         this.$f7.views.main.router.navigate('/', { transition: 'f7-circle', clearPreviousHistory: true })
+        if (this.$f7.width >= 1280) {
+          this.$f7.emit('selectDeveloperDock', { dock: 'help', helpTab: 'quick' })
+        }
       })
     },
     pageBeforeIn () {
