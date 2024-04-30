@@ -25,8 +25,6 @@
   "setupwizard.addon.persistence-rrd4j.line2": "It is recommended if you want to have charts of the historic state of numerical items.",
   "setupwizard.addon.persistence-mapdb.line1": "Service that always stores the last state of an item. It allows restoring the state of all items when starting openHAB.",
   "setupwizard.addon.persistence-mapdb.line2": "It is recommended if you want openHAB to always remember the last state before shutdown.",
-  "setupwizard.addon.persistence-inmemory.line1": "Service that keeps future values for time series, such as weather forecasts, in memory. The values will not survive a system restart.",
-  "setupwizard.addon.persistence-inmemory.line2": "It is recommended if you want to be able to graph or query future values.",
   "setupwizard.persistence.footer": "Other advanced persistence services and configurations are possible and can be configured later.",
   "setupwizard.persistence.install": "Install Selected Persistence Add-ons",
   "setupwizard.persistence.installLater": "Install Persistence Add-ons Later",
