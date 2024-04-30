@@ -4,7 +4,7 @@
       <f7-block class="addon display-flex flex-direction-column">
         <f7-row no-gap class="item-title">
           <f7-col width="10">
-            <f7-checkbox checked :disabled="addon.installed" @change="$event.target.value ? selectAddon(addon) : unSelectAddon(addon)" />
+            <f7-checkbox :checked="selectedAddon(addon)" :disabled="addon.installed" @change="changeAddonSelection(addon, $event)" />
           </f7-col>
           <f7-col width="70">
             {{ addon.label }}
@@ -15,7 +15,7 @@
         </f7-row>
         <f7-row no-gap style="margin-top: 0.5rem, margin-bottom: 0rem">
           <f7-col width="15">
-            <addon-logo class="logo-square" :addon="addon" size="50" />
+            <addon-logo class="logo-square" :addon="addon" size="40" />
           </f7-col>
           <f7-col width="85">
             <span v-html="description(addon)" />
@@ -31,10 +31,11 @@
   .addon
     margin-top: 0.5rem
     margin-bottom: 0.5rem
+    padding: 0
     .logo-square
       position relative
       background #fff
-      width 100%
+      width 80%
       margin-top 0.2em
       display flex
       align-items center
@@ -55,7 +56,11 @@
 import { loadLocaleMessages } from '@/js/i18n'
 import AddonLogo from '@/components/addons/addon-logo.vue'
 export default {
-  props: ['addons'],
+  model: {
+    prop: 'selected',
+    event: 'update'
+  },
+  props: ['addons', 'selectedAddons'],
   components: {
     AddonLogo
   },
@@ -68,13 +73,17 @@ export default {
     messages: loadLocaleMessages(require.context('@/assets/i18n/setup-wizard'))
   },
   methods: {
-    selectAddon (addon) {
-      this.selected = [...new Set(this.selected.concat(addon))]
-      this.$emit('updated', this.selected)
+    selectedAddon (addon) {
+      if (typeof this.selectedAddons === 'undefined') return true
+      return this.selectedAddons.includes(addon)
     },
-    unSelectedAddon (addon) {
-      this.selected = this.selected.filter(a => (a.uid !== addon.uid))
-      this.$emit('updated', this.selected)
+    changeAddonSelection (addon, event) {
+      if (event.target.checked) {
+        this.$set(this, 'selected', [...new Set(this.selected.concat(addon))])
+      } else {
+        this.$set(this, 'selected', this.selected.filter(a => (a.uid !== addon.uid)))
+      }
+      this.$emit('update', this.selected)
     },
     description (addon) {
       let line1 = this.$t('setupwizard.addon.' + addon.uid + '.line1')

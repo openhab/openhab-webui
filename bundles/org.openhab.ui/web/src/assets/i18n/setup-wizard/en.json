@@ -33,7 +33,7 @@
   "setupwizard.addons.header2": "Choose which add-ons you would like to install now.",
   "setupwizard.addons.header3": "A recommended set of add-ons have been pre-selected.",
   "setupwizard.addons.browseAddonsOnWebsite": "Browse Add-ons on openhab.org",
-  "setupwizard.addons.selectAddons": "Select Add-ons to Install",
+  "setupwizard.addons.selectAddons": "Select More Add-ons to Install",
   "setupwizard.addons.selectAddons.placeholder": "Try: astro, mqtt, hue, knx...",
   "setupwizard.addons.footer": "To optimize your system resources, install only the add-ons you need! Installing add-ons can take a while. Please be patient and stay on this page until the operation finishes.",
   "setupwizard.addons.installAddons": "Install 1 add-on | Install {n} add-ons",
