@@ -119,9 +119,10 @@
         <f7-block strong>
           {{ $t('setupwizard.persistence.header1') }} {{ $t('setupwizard.persistence.header2') }}
         </f7-block>
-        <f7-block style="margin-top: 0em, margin-bottom: 2em">
-          <addons-setup-wizard v-if="recommendedAddonsByType('persistence').length"
+        <f7-block style="margin-top: 0; margin-bottom: 2em">
+          <addons-setup-wizard v-if="addonsReady && recommendedAddonsByType('persistence').length"
                                :addons="recommendedAddonsByType('persistence')"
+                               :preSelectedAddons="selectedAddons"
                                @update="updateAddonSelection(recommendedAddonsByType('persistence'), $event)" />
           <f7-block-footer class="margin-bottom">
             <small v-t="'setupwizard.persistence.footer'" />
@@ -154,15 +155,11 @@
           <a class="text-color-blue external" target="_blank" href="https://www.openhab.org/addons/" v-t="'setupwizard.addons.browseAddonsOnWebsite'" />
         </f7-block>
         <f7-block class="padding">
-          <f7-row>
-            <f7-col width="100">
-              <f7-button ref="selectAddons" large icon-f7="bag_fill_badge_plus" icon-size="24" @click="selectAddons" :text="$t('setupwizard.addons.selectAddons')" />
-            </f7-col>
-          </f7-row>
-          <addons-setup-wizard v-if="addonSelectionList.length"
-                               :addons="addonSelectionList"
-                               :selectedAddons="toInstallAddons.filter(a => addonSelectionList.includes(a))"
-                               @update="updateAddonSelection(addonSelectionList, $event)" />
+          <addons-setup-wizard v-if="addonsReady"
+                               :enableAddonSelection="true"
+                               :addons="mainAddons"
+                               :preSelectedAddons="selectedAddons"
+                               @update="updateAddonSelection(mainAddonSelection, $event)" />
           <f7-block-footer class="margin-bottom">
             <small v-t="'setupwizard.addons.footer'" />
           </f7-block-footer>
@@ -262,6 +259,7 @@ export default {
   data () {
     return {
       i18nReady: false,
+      addonsReady: false,
       availableLanguages: null,
       availableRegions: null,
       availableTimezones: null,
@@ -294,16 +292,19 @@ export default {
       if (!this.region) return this.language
       return this.language + '-' + this.region.toLowerCase()
     },
-    selectableAddons () {
-      // addons that can be selected in wizard main selection step, with recommended or suggested ones first in list
-      return this.selectedAddons
-        .concat(this.addons.filter(a => !this.selectedAddons.includes(a)))
-        .filter(a => (!a.installed && !this.preSelectedAddon(a)))
+    /**
+     * Add-ons that can be selected in the main add-on selection step, with add-on types handled before the main selection step excluded.
+     * @returns {*[]}
+     */
+    mainAddons () {
+      return this.addons.filter(a => !this.preSelectingAddonTypes.includes(a.type))
     },
-    addonSelectionList () {
-      const addons = this.selectedAddons
-        .concat(this.toInstallAddons)
-        .filter(a => (!a.installed && !this.preSelectedAddon(a)))
+    /**
+     * Add-ons that are currently selected in the main add-on selection step, with installed and pre-selected add-ons excluded.
+     * @returns {*[]}
+     */
+    mainAddonSelection () {
+      const addons = this.selectedAddons.concat(this.toInstallAddons).filter(a => (!a.installed && !this.preSelectedAddon(a)))
       return [...new Set(addons)]
     }
   },
@@ -390,14 +391,10 @@ export default {
       return this.addons.filter(a => ((a.type === type) && this.recommendedAddons.includes(a.uid)))
     },
     updateAddonSelection (oldSelected, newSelected) {
+      console.debug('Updating add-on selection:', oldSelected.map(a => a.uid), newSelected.map(a => a.uid))
       const addons = this.toInstallAddons.filter(a => !oldSelected.includes(a)).concat(newSelected)
       this.$set(this, 'toInstallAddons', [...new Set(addons)])
-    },
-    selectAddons () {
-      if (this.autocompleteAddons) {
-        this.autocompleteAddons.value = this.toInstallAddons.filter(a => !this.preSelectedAddon(a)).map(a => a.label)
-        this.autocompleteAddons.open()
-      }
+      console.log('Add-ons to install:', this.toInstallAddons.map(a => a.uid))
     },
     installAddons () {
       const self = this
@@ -462,7 +459,7 @@ export default {
       installNextAddon()
     },
     skipAddons () {
-      this.updateAddonSelection(this.selectableAddons, [])
+      this.updateAddonSelection(this.mainAddons, [])
       if (this.toInstallAddons.filter(a => !a.installed).length) {
         this.installAddons()
         return
@@ -484,7 +481,7 @@ export default {
     pageBeforeIn () {
       this.$f7.panel.get('left').disableVisibleBreakpoint()
     },
-    pageBeforeOut (e, page) {
+    pageBeforeOut () {
       this.$f7.panel.get('left').enableVisibleBreakpoint()
       // create the overview page to prevent this setup wizard from being launched again
       this.$oh.api.post('/rest/ui/components/ui:page', {
@@ -521,35 +518,12 @@ export default {
       }
     })
     this.$oh.api.get('/rest/addons/suggestions').then((suggestedAddons) => {
-      let suggestions = suggestedAddons.flatMap(s => s.id)
+      const suggestions = suggestedAddons.flatMap(s => s.id)
       this.$oh.api.get('/rest/addons').then(data => {
         this.addons = data.sort((a, b) => a.label.toUpperCase().localeCompare(b.label.toUpperCase()))
         this.selectedAddons = this.addons.filter(a => (this.recommendedAddons.includes(a.uid) || suggestions.includes(a.id)))
           .sort((a, b) => a.uid.toUpperCase().localeCompare(b.uid.toUpperCase()))
-        const self = this
-        this.autocompleteAddons = this.$f7.autocomplete.create({
-          openIn: 'popup',
-          pageTitle: self.$t('setupwizard.addons.selectAddons'),
-          searchbarPlaceholder: self.$t('setupwizard.addons.selectAddons.placeholder'),
-          openerEl: self.$refs.selectAddons,
-          multiple: true,
-          requestSourceOnOpen: true,
-          source: (query, render) => {
-            if (query.length === 0) {
-              render(self.selectableAddons.map((a) => a.label))
-            } else {
-              render(self.selectableAddons.filter(a => (a.label.toLowerCase().indexOf(query.toLowerCase()) >= 0 || a.uid.toLowerCase().indexOf(query.toLowerCase()) >= 0)).map(a => a.label))
-            }
-          },
-          on: {
-            change (value) {
-              const selected = value.map(label => self.addons.find(a => (a.label === label)))
-              // if we added addons, keep it visible on the main list, even if we deselect again later
-              self.selectedAddons = [...new Set(self.selectedAddons.concat(selected))]
-              self.updateAddonSelection(self.selectableAddons, selected)
-            }
-          }
-        })
+        this.addonsReady = true
       })
     })
   }
