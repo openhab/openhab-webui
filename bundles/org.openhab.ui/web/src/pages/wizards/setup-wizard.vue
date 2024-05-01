@@ -100,13 +100,46 @@
         </f7-block>
       </f7-tab>
 
-      <f7-tab id="addons" ref="addons">
+      <f7-tab id="persistence" ref="persistence">
         <f7-block>
           <f7-link
             icon-ios="f7:arrow_left"
             icon-aurora="f7:arrow_left"
             icon-md="material:arrow_back"
             tab-link="#location"
+            color="blue"
+            tab-link-active />
+          <f7-login-screen-title>
+            <div class="padding">
+              <f7-icon size="48" color="blue" f7="download_circle" />
+            </div>
+            {{ $t('setupwizard.persistence.title') }}
+          </f7-login-screen-title>
+        </f7-block>
+        <f7-block strong>
+          {{ $t('setupwizard.persistence.header1') }} {{ $t('setupwizard.persistence.header2') }}
+        </f7-block>
+        <f7-block style="margin-top: 0em, margin-bottom: 2em">
+          <addons-setup-wizard v-if="recommendedAddonsByType('persistence').length"
+                               :addons="recommendedAddonsByType('persistence')"
+                               @update="updateAddonSelection(recommendedAddonsByType('persistence'), $event)" />
+          <f7-block-footer class="margin-bottom">
+            <small v-t="'setupwizard.persistence.footer'" />
+          </f7-block-footer>
+          <div>
+            <f7-button v-if="selectedAddons.length > 0" large fill color="blue" :text="$t('setupwizard.persistence.install')" @click="selectPersistence" />
+            <f7-button large color="blue" :text="$t('setupwizard.persistence.installLater')" class="margin-top" @click="skipPersistence" />
+          </div>
+        </f7-block>
+      </f7-tab>
+
+      <f7-tab id="addons" ref="addons">
+        <f7-block>
+          <f7-link
+            icon-ios="f7:arrow_left"
+            icon-aurora="f7:arrow_left"
+            icon-md="material:arrow_back"
+            tab-link="#persistence"
             color="blue"
             tab-link-active />
           <f7-login-screen-title>
@@ -126,17 +159,18 @@
               <f7-button ref="selectAddons" large icon-f7="bag_fill_badge_plus" icon-size="24" @click="selectAddons" :text="$t('setupwizard.addons.selectAddons')" />
             </f7-col>
           </f7-row>
-          <f7-list class="search-list searchbar-found" ref="selectAddons" media-list v-show="!installingAddons">
-            <f7-list-item media-item v-for="addon in selectedAddons" :key="addon.uid"
-                          :header="addon.uid" :title="addon.label" :footer="addon.version">
-              <f7-link slot="after" v-if="addon.link" icon-f7="doc_text_search" :external="true" color="gray" target="_blank" :href="addon.link" />
-            </f7-list-item>
-          </f7-list>
+          <addons-setup-wizard v-if="addonSelectionList.length"
+                               :addons="addonSelectionList"
+                               :selectedAddons="toInstallAddons.filter(a => addonSelectionList.includes(a))"
+                               @update="updateAddonSelection(addonSelectionList, $event)" />
           <f7-block-footer class="margin-bottom">
             <small v-t="'setupwizard.addons.footer'" />
           </f7-block-footer>
           <div>
-            <f7-button v-if="selectedAddons.length > 0" large fill color="blue" :text="$tc('setupwizard.addons.installAddons', selectedAddons.length)" @click="installAddons" />
+            <f7-button v-if="toInstallAddons.filter(a => (!preSelectedAddon(a) && !a.installed)).length > 0"
+                       large fill color="blue"
+                       :text="$tc('setupwizard.addons.installAddons', toInstallAddons.filter(a => (!preSelectedAddon(a) && !a.installed)).length)"
+                       @click="installAddons" />
             <f7-button large color="blue" :text="$t('setupwizard.addons.installLater')" class="margin-top" @click="skipAddons" />
           </div>
         </f7-block>
@@ -177,7 +211,9 @@
                 ></f7-link>-->
           <f7-login-screen-title>{{ $t('setupwizard.welcome.title') }}</f7-login-screen-title>
         </f7-block>
-
+        <f7-block v-if="bindingInstalled">
+          {{ $t('setupwizard.welcome.bindingsInstalled') }}
+        </f7-block>
         <f7-block class="display-flex flex-direction-column padding" style="margin-top: 4rem">
           <div>
             <f7-button large color="blue" :text="$t('setupwizard.welcome.getStarted')" @click="finish" />
@@ -196,8 +232,11 @@
     width 240px
   .page-content
     margin-top inherit
-  .tabs-animated-wrap
-    overflow-y auto !important
+
+.tab-active
+  scroll-snap-align start
+  overflow-y auto
+  overscroll-behavior-y contain
 
 .view-master-detail
   .setup-wizard
@@ -211,10 +250,14 @@
 <script>
 import i18n from '@/components/i18n-mixin'
 import { loadLocaleMessages } from '@/js/i18n'
+
+import AddonsSetupWizard from '@/components/addons/addons-setup-wizard'
+
 export default {
   mixins: [i18n],
   components: {
-    'parameter-location': () => import('@/components/config/controls/parameter-location.vue')
+    'parameter-location': () => import('@/components/config/controls/parameter-location.vue'),
+    AddonsSetupWizard
   },
   data () {
     return {
@@ -228,9 +271,18 @@ export default {
       location: null,
       autocompleteAddons: null,
       addons: [],
+      // all recommended addons, pre-defined
+      recommendedAddons: ['persistence-rrd4j', 'persistence-mapdb', 'automation-jsscripting', 'ui-basic', 'binding-astro'],
+      // addon types that can be selected in wizard before main addon selection step, to be excluded from main selection step, pre-defined
+      preSelectingAddonTypes: ['persistence'],
+      // addons that can be selected in wizard before main addon selection step, to be excluded from main selection step, pre-defined
+      preSelectingAddons: [],
+      // all recommended and suggested addons, list created in code
       selectedAddons: [],
-      recommendedAddons: ['automation-jsscripting', 'persistence-rrd4j', 'ui-basic'],
-      installingAddons: false
+      // final list of addons to install
+      toInstallAddons: [],
+      installingAddons: false,
+      bindingInstalled: false
     }
   },
   i18n: {
@@ -241,6 +293,18 @@ export default {
       if (!this.language) return null
       if (!this.region) return this.language
       return this.language + '-' + this.region.toLowerCase()
+    },
+    selectableAddons () {
+      // addons that can be selected in wizard main selection step, with recommended or suggested ones first in list
+      return this.selectedAddons
+        .concat(this.addons.filter(a => !this.selectedAddons.includes(a)))
+        .filter(a => (!a.installed && !this.preSelectedAddon(a)))
+    },
+    addonSelectionList () {
+      const addons = this.selectedAddons
+        .concat(this.toInstallAddons)
+        .filter(a => (!a.installed && !this.preSelectedAddon(a)))
+      return [...new Set(addons)]
     }
   },
   watch: {
@@ -298,23 +362,53 @@ export default {
       this.$oh.api.put('/rest/services/org.openhab.i18n/config', {
         location: this.location
       }).then(() => {
-        this.$refs.addons.show()
+        this.showPersistence()
       })
     },
     skipLocation () {
+      this.showPersistence()
+    },
+    showPersistence () {
+      this.updateAddonSelection([], this.recommendedAddonsByType('persistence'))
+      this.$refs.persistence.show()
+    },
+    selectPersistence () {
+      this.showAddons()
+    },
+    skipPersistence () {
+      this.updateAddonSelection(this.recommendedAddonsByType('persistence'), [])
+      this.showAddons()
+    },
+    showAddons () {
+      this.updateAddonSelection([], this.selectedAddons.filter(a => !this.preSelectedAddon(a)))
       this.$refs.addons.show()
     },
+    preSelectedAddon (addon) {
+      return (this.preSelectingAddonTypes.includes(addon.type) || this.preSelectingAddons.includes(addon.uid))
+    },
+    recommendedAddonsByType (type) {
+      return this.addons.filter(a => ((a.type === type) && this.recommendedAddons.includes(a.uid)))
+    },
+    updateAddonSelection (oldSelected, newSelected) {
+      const addons = this.toInstallAddons.filter(a => !oldSelected.includes(a)).concat(newSelected)
+      this.$set(this, 'toInstallAddons', [...new Set(addons)])
+    },
     selectAddons () {
-      if (this.autocompleteAddons) this.autocompleteAddons.open()
+      if (this.autocompleteAddons) {
+        this.autocompleteAddons.value = this.toInstallAddons.filter(a => !this.preSelectedAddon(a)).map(a => a.label)
+        this.autocompleteAddons.open()
+      }
     },
     installAddons () {
       const self = this
       const checkInterval = 2 // check the add-ons statuses every 2 seconds
 
+      this.$set(this, 'toInstallAddons', this.toInstallAddons.filter(a => !a.installed))
       this.installingAddons = true
       this.$refs.wait.show(false)
 
-      const addonsCount = this.selectedAddons.length
+      this.bindingInstalled = this.toInstallAddons.find(a => (a.type === 'binding'))
+      const addonsCount = this.toInstallAddons.length
       let progress = 0
 
       const progressDialog = this.$f7.dialog.progress(this.$t('setupwizard.addons.installing'), progress)
@@ -338,17 +432,17 @@ export default {
 
       const installNextAddon = function () {
         // no more add-ons to install => go to next screen
-        if (!self.selectedAddons.length) {
+        if (!self.toInstallAddons.length) {
           progressDialog.close()
           progressDialog.destroy()
-          self.$refs.finish.show()
+          self.showFinish()
           return
         }
 
         // install next add-on
-        progressDialog.setText(self.$t('setupwizard.addons.progress', { current: addonsCount - self.selectedAddons.length + 1, total: addonsCount }))
-        progressDialog.setProgress(((addonsCount - self.selectedAddons.length + 1) / addonsCount) * 100)
-        const addon = self.selectedAddons.shift()
+        progressDialog.setText(self.$t('setupwizard.addons.progress', { current: addonsCount - self.toInstallAddons.length + 1, total: addonsCount }))
+        progressDialog.setProgress(((addonsCount - self.toInstallAddons.length + 1) / addonsCount) * 100)
+        const addon = self.toInstallAddons.shift()
         console.log('Installing add-on: ' + addon.uid)
         progressDialog.setTitle(self.$t('setupwizard.addons.installingAddon', { addon: addon.label }))
 
@@ -368,12 +462,23 @@ export default {
       installNextAddon()
     },
     skipAddons () {
+      this.updateAddonSelection(this.selectableAddons, [])
+      if (this.toInstallAddons.filter(a => !a.installed).length) {
+        this.installAddons()
+        return
+      }
+      this.showFinish()
+    },
+    showFinish () {
       this.$refs.finish.show()
     },
     finish () {
       this.$f7.panel.get('left').enableVisibleBreakpoint()
       this.$nextTick(() => {
         this.$f7.views.main.router.navigate('/', { transition: 'f7-circle', clearPreviousHistory: true })
+        if (this.$f7.width >= 1280) {
+          this.$f7.emit('selectDeveloperDock', { dock: 'help', helpTab: 'quick' })
+        }
       })
     },
     pageBeforeIn () {
@@ -416,33 +521,34 @@ export default {
       }
     })
     this.$oh.api.get('/rest/addons/suggestions').then((suggestedAddons) => {
-      let suggestions = suggestedAddons.flatMap((s) => s.id)
-      this.$oh.api.get('/rest/addons').then((data) => {
+      let suggestions = suggestedAddons.flatMap(s => s.id)
+      this.$oh.api.get('/rest/addons').then(data => {
         this.addons = data.sort((a, b) => a.label.toUpperCase().localeCompare(b.label.toUpperCase()))
-        this.selectedAddons = this.addons.filter((a) => (this.recommendedAddons.includes(a.uid) || suggestions.includes(a.id)) && !a.installed).sort((a, b) => a.label.toUpperCase().localeCompare(b.label.toUpperCase()))
-        const sortedAddons = this.selectedAddons.concat(this.addons.filter((a) => (!this.selectedAddons.includes(a))))
+        this.selectedAddons = this.addons.filter(a => (this.recommendedAddons.includes(a.uid) || suggestions.includes(a.id)))
+          .sort((a, b) => a.uid.toUpperCase().localeCompare(b.uid.toUpperCase()))
         const self = this
         this.autocompleteAddons = this.$f7.autocomplete.create({
           openIn: 'popup',
-          pageTitle: this.$t('setupwizard.addons.selectAddons'),
-          searchbarPlaceholder: this.$t('setupwizard.addons.selectAddons.placeholder'),
-          openerEl: this.$refs.selectAddons,
+          pageTitle: self.$t('setupwizard.addons.selectAddons'),
+          searchbarPlaceholder: self.$t('setupwizard.addons.selectAddons.placeholder'),
+          openerEl: self.$refs.selectAddons,
           multiple: true,
           requestSourceOnOpen: true,
           source: (query, render) => {
             if (query.length === 0) {
-              render(sortedAddons.filter((a) => !a.installed).map((a) => a.label))
+              render(self.selectableAddons.map((a) => a.label))
             } else {
-              render(sortedAddons.filter((a) => !a.installed && (a.label.toLowerCase().indexOf(query.toLowerCase()) >= 0 || a.uid.toLowerCase().indexOf(query.toLowerCase()) >= 0)).map((a) => a.label))
+              render(self.selectableAddons.filter(a => (a.label.toLowerCase().indexOf(query.toLowerCase()) >= 0 || a.uid.toLowerCase().indexOf(query.toLowerCase()) >= 0)).map(a => a.label))
             }
           },
           on: {
             change (value) {
-              const selected = value.map((label) => self.addons.find((a) => a.label === label))
-              self.$set(self, 'selectedAddons', selected)
+              const selected = value.map(label => self.addons.find(a => (a.label === label)))
+              // if we added addons, keep it visible on the main list, even if we deselect again later
+              self.selectedAddons = [...new Set(self.selectedAddons.concat(selected))]
+              self.updateAddonSelection(self.selectableAddons, selected)
             }
-          },
-          value: this.addons.filter((a) => this.recommendedAddons.includes(a.uid) || suggestions.includes(a.id)).map((a) => a.label)
+          }
         })
       })
     })
