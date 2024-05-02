@@ -173,7 +173,7 @@ public class WebAppServlet extends HttpServlet {
                 // we are at the homepage, so we render the children of the sitemap root node
                 if (subscriptionId != null) {
                     if (subscriptions.exists(subscriptionId)) {
-                        subscriptions.setPageId(subscriptionId, sitemap.getName(), sitemapName);
+                        subscriptions.updateSubscriptionLocation(subscriptionId, sitemap.getName(), sitemapName);
                     } else {
                         logger.debug("Basic UI requested a non-existing event subscription id ({})", subscriptionId);
                     }
@@ -185,7 +185,7 @@ public class WebAppServlet extends HttpServlet {
                 // we are on some subpage, so we have to render the children of the widget that has been selected
                 if (subscriptionId != null) {
                     if (subscriptions.exists(subscriptionId)) {
-                        subscriptions.setPageId(subscriptionId, sitemap.getName(), widgetId);
+                        subscriptions.updateSubscriptionLocation(subscriptionId, sitemap.getName(), widgetId);
                     } else {
                         logger.debug("Basic UI requested a non-existing event subscription id ({})", subscriptionId);
                     }
