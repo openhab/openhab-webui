@@ -501,10 +501,12 @@ export default {
     }
   },
   mounted () {
-    this.$oh.api.get('/rest/config-descriptions/system:i18n').then((data) => {
-      this.availableLanguages = data.parameters.find(p => p.name === 'language').options
-      this.availableRegions = data.parameters.find(p => p.name === 'region').options
-      this.availableTimezones = data.parameters.find(p => p.name === 'timezone').options
+    Promise.all([this.$oh.api.get('/rest/config-descriptions/system:i18n'), this.$oh.api.get('/rest/services/org.openhab.i18n/config')]).then((data) => {
+      this.availableLanguages = data[0].parameters.find(p => p.name === 'language').options
+      this.availableRegions = data[0].parameters.find(p => p.name === 'region').options
+      this.availableTimezones = data[0].parameters.find(p => p.name === 'timezone').options
+      if (data[1].region) this.region = data[1].region
+      if (data[1].location) this.location = data[1].location
       if (Intl && Intl.DateTimeFormat().resolvedOptions()) {
         const intlOptions = Intl.DateTimeFormat().resolvedOptions()
         if (intlOptions.locale) {
