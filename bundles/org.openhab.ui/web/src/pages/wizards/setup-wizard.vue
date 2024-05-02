@@ -505,8 +505,7 @@ export default {
       this.availableLanguages = data[0].parameters.find(p => p.name === 'language').options
       this.availableRegions = data[0].parameters.find(p => p.name === 'region').options
       this.availableTimezones = data[0].parameters.find(p => p.name === 'timezone').options
-      if (data[1].region) this.region = data[1].region
-      if (data[1].location) this.location = data[1].location
+
       if (Intl && Intl.DateTimeFormat().resolvedOptions()) {
         const intlOptions = Intl.DateTimeFormat().resolvedOptions()
         if (intlOptions.locale) {
@@ -516,8 +515,14 @@ export default {
         if (intlOptions.timeZone) {
           if (this.availableTimezones.find((tz) => tz.value === intlOptions.timeZone)) this.timezone = intlOptions.timeZone
         }
-        this.i18nReady = true
       }
+
+      if (data[1].language) this.language = data[1].language
+      if (data[1].location) this.location = data[1].location
+      if (data[1].region) this.region = data[1].region
+      if (data[1].timezone) this.timezone = data[1].timezone
+
+      this.i18nReady = true
     })
     this.$oh.api.get('/rest/addons/suggestions').then((suggestedAddons) => {
       const suggestions = suggestedAddons.flatMap(s => s.id)
