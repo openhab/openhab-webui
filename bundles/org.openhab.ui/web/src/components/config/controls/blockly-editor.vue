@@ -502,6 +502,21 @@
               <shadow type="oh_thing" />
             </value>
           </block>
+          <block type="oh_getthing_attribute">
+            <value name="thing">
+              <shadow type="oh_getthing">
+                <value name="thingUid">
+                  <shadow type="oh_thing" />
+                </value>
+              </shadow>
+            </value>
+          </block>
+          <block type="oh_getthing">
+            <value name="thingUid">
+              <shadow type="oh_thing" />
+            </value>
+          </block>
+          <block type="oh_things" />
           <block type="oh_thing" />
         </category>
 
