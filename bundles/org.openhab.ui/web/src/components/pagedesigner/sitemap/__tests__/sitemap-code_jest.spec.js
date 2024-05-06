@@ -219,10 +219,10 @@ describe('SitemapCode', () => {
         item: 'Scene_General',
         buttons: [
           { row: 1, column: 1, command: '1=Morning' },
-          { row: 1, column: 2, command: '2=Evening' },
-          { row: 1, column: 3, command: '10=Cinéma' },
+          { row: 1, column: 2, command: '2="Evening"' },
+          { row: 1, column: 3, command: '10="Cinéma"' },
           { row: 2, column: 1, command: '11=TV' },
-          { row: 2, column: 2, command: '3=Bed time' },
+          { row: 2, column: 2, command: '3="Bed time"' },
           { row: 2, column: 3, command: '4=Night=moon' }
         ]
       }
@@ -259,10 +259,10 @@ describe('SitemapCode', () => {
         item: 'Scene_General',
         mappings: [
           '1=Morning',
-          '2=Evening',
-          '10=Cinéma',
+          '2="Evening"',
+          '10="Cinéma"',
           '11=TV',
-          '3=Bed time',
+          '3="Bed time"',
           '4=Night=moon'
         ]
       }
@@ -298,9 +298,79 @@ describe('SitemapCode', () => {
       config: {
         item: 'Echos',
         mappings: [
-          'EchoDot1=Echo 1',
-          'EchoDot2=Echo 2',
-          'EchoDot1,EchoDot2=Alle'
+          'EchoDot1="Echo 1"',
+          'EchoDot2="Echo 2"',
+          '"EchoDot1,EchoDot2"=Alle'
+        ]
+      }
+    })
+  })
+
+  it('parses a mapping with release command', async () => {
+    expect(wrapper.vm.sitemapDsl).toBeDefined()
+    // simulate updating the sitemap in code
+    const sitemap = [
+      'sitemap test label="Test" {',
+      '    Switch item=PressAndRelease mappings=[ON:OFF=ON]',
+      '}',
+      ''
+    ].join('\n')
+    wrapper.vm.updateSitemap(sitemap)
+    expect(wrapper.vm.sitemapDsl).toMatch(/^sitemap test label="Test"/)
+    expect(wrapper.vm.parsedSitemap.error).toBeFalsy()
+
+    await wrapper.vm.$nextTick()
+
+    // check whether an 'updated' event was emitted and its payload
+    // (should contain the parsing result for the new sitemap definition)
+    const events = wrapper.emitted().updated
+    expect(events).toBeTruthy()
+    expect(events.length).toBe(1)
+    const payload = events[0][0]
+    expect(payload.slots).toBeDefined()
+    expect(payload.slots.widgets).toBeDefined()
+    expect(payload.slots.widgets.length).toBe(1)
+    expect(payload.slots.widgets[0]).toEqual({
+      component: 'Switch',
+      config: {
+        item: 'PressAndRelease',
+        mappings: [
+          'ON:OFF=ON'
+        ]
+      }
+    })
+  })
+
+  it('parses a mapping with release command and string commands', async () => {
+    expect(wrapper.vm.sitemapDsl).toBeDefined()
+    // simulate updating the sitemap in code
+    const sitemap = [
+      'sitemap test label="Test" {',
+      '    Switch item=PressAndRelease mappings=["ON command":"OFF command"="ON"]',
+      '}',
+      ''
+    ].join('\n')
+    wrapper.vm.updateSitemap(sitemap)
+    expect(wrapper.vm.sitemapDsl).toMatch(/^sitemap test label="Test"/)
+    expect(wrapper.vm.parsedSitemap.error).toBeFalsy()
+
+    await wrapper.vm.$nextTick()
+
+    // check whether an 'updated' event was emitted and its payload
+    // (should contain the parsing result for the new sitemap definition)
+    const events = wrapper.emitted().updated
+    expect(events).toBeTruthy()
+    expect(events.length).toBe(1)
+    const payload = events[0][0]
+    expect(payload.slots).toBeDefined()
+    expect(payload.slots.widgets).toBeDefined()
+    expect(payload.slots.widgets.length).toBe(1)
+    expect(payload.slots.widgets[0]).toEqual({
+      component: 'Switch',
+      config: {
+        item: 'PressAndRelease',
+        mappings: [
+          '"ON command":"OFF command"="ON"'
         ]
       }
     })

@@ -29,11 +29,11 @@ function writeWidget (widget, indent) {
           dsl += widget.config[key]
         } else if (key === 'mappings') {
           dsl += '[' + widget.config[key].filter(Boolean).map(mapping => {
-            return writeCommand(mapping)
+            return mapping
           }).join(', ') + ']'
         } else if (key === 'buttons') {
           dsl += '[' + widget.config[key].filter(Boolean).map(button => {
-            return button.row + ':' + button.column + ':' + writeCommand(button.command)
+            return button.row + ':' + button.column + ':' + button.command
           }).join(', ') + ']'
         } else if (key === 'visibility') {
           dsl += '[' + widget.config[key].filter(Boolean).map(rule => {
@@ -59,15 +59,6 @@ function writeWidget (widget, indent) {
   dsl += '\n'
 
   return dsl
-}
-
-function writeCommand (command) {
-  return command.split('=').map(value => {
-    if (/^.*\W.*$/.test(value) && /^[^"'].*[^"']$/.test(value)) {
-      return '"' + value + '"'
-    }
-    return value
-  }).join('=')
 }
 
 function writeCondition (rule, hasArgument = false) {
