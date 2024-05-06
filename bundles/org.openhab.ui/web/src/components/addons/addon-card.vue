@@ -25,7 +25,7 @@
           <addon-stats-line :addon="addon" :iconSize="15" />
         </div>
       </div>
-      <addon-logo class="logo-square" :addon="addon" :size="150" />
+      <addon-logo class="logo-square" :lazy="true" :addon="addon" :size="150" />
     </div>
   </f7-link>
 </template>

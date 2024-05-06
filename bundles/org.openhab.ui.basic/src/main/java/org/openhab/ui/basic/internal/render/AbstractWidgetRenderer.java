@@ -63,9 +63,10 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
     private static final String ICON_SOURCE_MATERIAL = "material";
     private static final String ICON_SOURCE_FRAMEWORK7 = "f7";
     private static final String ICON_SET_OH_CLASSIC = "classic";
+    private static final String ICON_NAME_NONE = "none";
     private static final String DEFAULT_ICON_SOURCE = ICON_SOURCE_OH;
     private static final String DEFAULT_ICON_SET = ICON_SET_OH_CLASSIC;
-    private static final String DEFAULT_ICON_NAME = "none";
+    private static final String DEFAULT_ICON_NAME = ICON_NAME_NONE;
 
     public static final String ICON_TYPE = "svg";
 
@@ -166,7 +167,11 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
         try {
             switch (iconSource.toLowerCase()) {
                 case ICON_SOURCE_OH:
-                    iconSnippet = getSnippet(ignoreState ? "icon_oh_no_state" : "icon_oh");
+                    if (ICON_NAME_NONE.equals(iconName)) {
+                        iconSnippet = getSnippet("icon_none");
+                    } else {
+                        iconSnippet = getSnippet(ignoreState ? "icon_oh_no_state" : "icon_oh");
+                    }
                     break;
                 case ICON_SOURCE_IF:
                 case ICON_SOURCE_ICONIFY:
@@ -182,10 +187,10 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
                     break;
             }
             if (iconSnippet == null) {
-                iconSnippet = getSnippet("icon_oh_no_state");
-                iconSource = DEFAULT_ICON_SOURCE;
-                iconSet = DEFAULT_ICON_SET;
-                iconName = DEFAULT_ICON_NAME;
+                iconSnippet = getSnippet("icon_none");
+                iconSource = ICON_SOURCE_OH;
+                iconSet = ICON_SET_OH_CLASSIC;
+                iconName = ICON_NAME_NONE;
             }
         } catch (RenderException e) {
             iconSnippet = "";

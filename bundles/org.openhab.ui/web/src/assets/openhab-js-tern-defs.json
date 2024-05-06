@@ -26,9 +26,9 @@
                 "!doc": "Item state as Quantity or null if state is not Quantity-compatible",
                 "!type": "QuantityClass|null"
             },
-            "history": {
-                "!doc": "Access historical states for this item",
-                "!type": "ItemHistory"
+            "persistence": {
+                "!doc": "Access persisted states for this item",
+                "!type": "ItemPersistence"
             },
             "semantics": {
                 "!doc": "Access the semantic features for this Item",
@@ -99,14 +99,18 @@
                 "!type": "fn(...groupNamesOrItems: ?)"
             }
         },
-        "ItemHistory": {
+        "ItemPersistence": {
             "averageBetween": {
-                "!doc": "Gets the average value of the state of a given Item between two certain points in time.",
-                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
+              "!doc": "Gets the average value of the state of a given Item between two certain points in time.",
+              "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> PersistedState|null"
             },
             "averageSince": {
                 "!doc": "Gets the average value of the state of a given Item since a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> PersistedState|null"
+            },
+            "averageUntil": {
+                "!doc": "Gets the average value of the state of a given Item until a certain point in time.",
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> PersistedState|null"
             },
             "changedBetween": {
                 "!doc": "Checks if the state of a given Item has changed between two certain points in time.",
@@ -116,37 +120,57 @@
                 "!doc": "Checks if the state of a given Item has changed since a certain point in time.",
                 "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> boolean"
             },
+            "changedUntil": {
+                "!doc": "Checks if the state of a given Item will have changed until a certain point in time.",
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> boolean"
+            },
             "countBetween": {
-                "!doc": "Gets the number of available historic data points of a given Item between two certain points in time.",
+                "!doc": "Gets the number of available persisted data points of a given Item between two certain points in time.",
                 "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> number"
             },
             "countSince": {
                 "!doc": "Gets the number of available historic data points of a given Item since a certain point in time.",
                 "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
             },
+            "countUntil": {
+                "!doc": "Gets the number of available future data points of a given Item until a certain point in time.",
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
+            },
             "countStateChangesBetween": {
-                "!doc": "Gets the number of changes in historic data points of a given Item between two certain points in time.",
+                "!doc": "Gets the number of changes in persisted data points of a given Item between two certain points in time.",
                 "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> number"
             },
             "countStateChangesSince": {
                 "!doc": "Gets the number of changes in historic data points of a given Item since a certain point in time.",
                 "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
             },
+            "countStateChangesUntil": {
+                "!doc": "Gets the number of changes in future data points of a given Item since a certain point in time.",
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
+            },
             "deltaBetween": {
                 "!doc": "Gets the difference value of the state of a given Item between two certain points in time.",
-                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
+                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> PersistedState|null"
             },
             "deltaSince": {
                 "!doc": "Gets the difference value of the state of a given Item since a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> PersistedState|null"
+            },
+            "deltaUntil": {
+                "!doc": "Gets the difference value of the state of a given Item until a certain point in time.",
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> PersistedState|null"
             },
             "deviationBetween": {
                 "!doc": "Gets the standard deviation of the state of the given Item between two certain points in time.",
-                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
+                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> PersistedState|null"
             },
             "deviationSince": {
                 "!doc": "Gets the standard deviation of the state of the given Item since a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> PersistedState|null"
+            },
+            "deviationUntil": {
+                "!doc": "Gets the standard deviation of the state of the given Item until a certain point in time.",
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> PersistedState|null"
             },
             "evolutionRateBetween": {
                 "!doc": "Gets the evolution rate of the state of a given Item between two certain points in time.",
@@ -156,41 +180,53 @@
                 "!doc": "Gets the evolution rate of the state of a given Item since a certain point in time.",
                 "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
             },
+            "evolutionRateUntil": {
+                "!doc": "Gets the evolution rate of the state of a given Item until a certain point in time.",
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
+            },
             "getAllStatesBetween": {
                 "!doc": "Retrieves persisted data for a given Item between two certain points in time.",
-                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> [HistoricItem]"
+                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> [PersistedItem]"
             },
             "getAllStatesSince": {
                 "!doc": "Retrieves persisted data for a given Item since a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> [HistoricItem]"
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> [PersistedItem]"
             },
-            "historicState": {
-                "!doc": "Retrieves the historic Item state for a given Item at a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> HistoricItem"
+            "getAllStatesUntil": {
+                "!doc": "Retrieves persisted data for a given Item until a certain point in time.",
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> [PersistedItem]"
             },
             "lastUpdate": {
                 "!doc": "Query the last update time of a given item.",
                 "!type": "fn(serviceId?: string) -> ZonedDateTime|null"
             },
-            "latestState": {
-                "!doc": "Retrieves the historic Item state for a given Item at the current point in time.",
-                "!type": "fn(serviceId?: string) -> string|null"
+            "nextUpdate": {
+                "!doc": "Query the next update time of a given item.",
+                "!type": "fn(serviceId?: string) -> ZonedDateTime|null"
             },
             "maximumBetween": {
-                "!doc": "Gets the maximum value of the historic state of a given Item between two certain points in time.",
-                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> HistoricItem"
+                "!doc": "Gets the maximum value of the persisted states of a given Item between two certain points in time.",
+                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> PersistedItem|null"
             },
             "maximumSince": {
                 "!doc": "Gets the historic Item with the maximum value of the state of a given Item since a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> HistoricItem"
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> PersistedItem|null"
+            },
+            "maximumUntil": {
+                "!doc": "Gets the future Item with the maximum value of the state of a given Item until a certain point in time.",
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> PersistedItem|null"
             },
             "minimumBetween": {
-                "!doc": "Gets the minimum value of the historic state of a given Item between two certain points in time.",
-                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> HistoricItem"
+                "!doc": "Gets the minimum value of the persisted states of a given Item between two certain points in time.",
+                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> PersistedItem"
             },
             "minimumSince": {
                 "!doc": "Gets the historic Item with the minimum value of the state of a given Item since a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> HistoricItem"
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> PersistedItem"
+            },
+            "minimumUntil": {
+                "!doc": "Gets the future Item with the minimum value of the state of a given Item until a certain point in time.",
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> PersistedItem"
             },
             "persist": {
                 "!doc": "Persists the state of a given item",
@@ -198,15 +234,23 @@
             },
             "previousState": {
                 "!doc": "Returns the previous state of a given item.",
-                "!type": "fn(skipEqual?: boolean, serviceId?: string) -> HistoricItem"
+                "!type": "fn(skipEqual?: boolean, serviceId?: string) -> PersistedItem"
+            },
+            "nextState": {
+                "!doc": "Returns the next state of a given item.",
+                "!type": "fn(skipEqual?: boolean, serviceId?: string) -> PersistedItem"
             },
             "sumBetween": {
                 "!doc": "Gets the sum of the states of a given Item between two certain points in time.",
-                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
+                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> PersistedItem|null"
             },
             "sumSince": {
                 "!doc": "Gets the sum of the state of a given Item since a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> PersistedItem|null"
+            },
+            "sumUntil": {
+                "!doc": "Gets the sum of the state of a given Item until a certain point in time.",
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> PersistedItem|null"
             },
             "updatedBetween": {
                 "!doc": "Checks if the state of a given Item has been updated between two certain points in time.",
@@ -216,16 +260,24 @@
                 "!doc": "Checks if the state of a given Item has been updated since a certain point in time.",
                 "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> boolean"
             },
+            "updatedUntil": {
+                "!doc": "Checks if the state of a given Item will have been updated until a certain point in time.",
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> boolean"
+            },
             "varianceBetween": {
                 "!doc": "Gets the variance of the state of the given Item between two certain points in time.",
-                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
+                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> PersistedItem|null"
             },
             "varianceSince": {
                 "!doc": "Gets the variance of the state of the given Item since a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> PersistedItem|null"
+            },
+            "varianceUntil": {
+                "!doc": "Gets the variance of the state of the given Item until a certain point in time.",
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> PersistedItem|null"
             }
         },
-        "HistoricItem": {
+        "PersistedItem": {
             "state": {
                 "!doc": "Item state",
                 "!type": "string"
@@ -241,6 +293,20 @@
             "timestamp": {
                 "!doc": "timestamp of historic Item",
                 "!type": "ZonedDateTime"
+            }
+        },
+        "PersistedState": {
+            "state": {
+                "!doc": "Item state",
+                "!type": "string"
+            },
+            "numericState": {
+                "!doc": "Numeric representation of Item state, or null if state is not numeric",
+                "!type": "number|null"
+            },
+            "quantityState": {
+                "!doc": "Item state as Quantity or null if state is not Quantity-compatible",
+                "!type": "QuantityClass|null"
             }
         },
         "ItemSemantics": {
@@ -623,15 +689,11 @@
             "playStream": { "!type": "fn(sink?: string, url: string)" },
             "setMasterVolume": { "!type": "fn(percent: float)" }
         },
-        "BusEventActions": {
-            "postUpdate": {
-                "!doc": "Posts a status update for a specified Item to the event bus.",
-                "!type": "fn(itemName: string, state: ?)"
-            },
-            "sendCommand": {
-                "!doc": "Sends a command for a specified Item to the event bus.",
-                "!type": "fn(itemName: string, command: ?)"
-            }
+        "CoreUtilActions": {
+            "hsbToRgb": { "!type": "fn(hsb: HSBType) -> [number]" },
+            "hsbTosRgb": { "!type": "fn(hsb: HSBType) -> number" },
+            "hsbToRgbw": { "!type": "fn(hsb: HSBType) -> [number]" },
+            "rgbToHsb": { "!type": "fn(rgb: [number]) -> HSBType" }
         },
         "EphemerisActions": {
             "getBankHolidayName": { "!type": "fn(offsetOrDay?: ?, filename?: string) -> string" },
@@ -650,12 +712,6 @@
             "sendHttpPostRequest": { "!type": "fn(url: string, contentType?: string, content?: string, headers?: object, timeout?: int) -> string" },
             "sendHttpPutRequest": { "!type": "fn(url: string, contentType?: string, content?: string, headers?: object, timeout?: int) -> string" },
             "sendHttpDeleteRequest": { "!type": "fn(url: string, headers?: object, timeout?: int) -> string" }
-        },
-        "LogActions": {
-            "logDebug": { "!type": "fn(loggerName?: string, message: string, args?: ?)" },
-            "logInfo": { "!type": "fn(loggerName?: string, message: string, args?: ?)" },
-            "logWarn": { "!type": "fn(loggerName?: string, message: string, args?: ?)" },
-            "logError": { "!type": "fn(loggerName?: string, message: string, args?: ?)" }
         },
         "NotificationAction": {
             "sendNotification": {
@@ -681,21 +737,6 @@
                 "!type": "fn(identifier?: string, zonedDateTime: time.ZonedDateTime, function: fn()) -> Timer"
               }
         },
-        "SemanticsActions": {
-            "getEquipment": { "!type": "fn(rawItem: ?) -> ?" },
-            "getEquipmentType": { "!type": "fn(rawItem: ?) -> string" },
-            "getLocation": { "!type": "fn(rawItem: ?) -> ?" },
-            "getLocationType": { "!type": "fn(rawItem: ?) -> string" },
-            "getPointType": { "!type": "fn(rawItem: ?) -> string" },
-            "getPropertyType": { "!type": "fn(rawItem: ?) -> string" },
-            "isEquipment": { "!type": "fn(rawItem: ?) -> boolean" },
-            "isLocation": { "!type": "fn(rawItem: ?) -> isLocation" },
-            "isPoint": { "!type": "fn(rawItem: ?) -> isLocation" }
-        },
-        "ThingsActions": {
-            "getActions": { "!type": "fn(scope: string, thingUid: string) -> ?" },
-            "getThingStatusInfo": { "!type": "fn(thingUid: string) -> ?" }
-        },
         "TransformationActions": {
             "transform": {
                 "!doc": "Applies a transformation of a given type with some function to a value. Returns the original value if the transformation fails.",
@@ -716,13 +757,13 @@
                 "!doc": "Audio Actions. The static methods of this class are made available as functions in the scripts. This allows a script to use audio features.",
                 "!type": "AudioActions"
             },
-            "BusEvent": {
-                "!doc": "BusEvent Actions. The static methods of this class are made available as functions in the scripts. This gives direct write access to the openHAB event bus from within scripts. Items should not be updated directly (setting the state property), but updates should be sent to the bus, so that all interested bundles are notified.",
-                "!type": "BusEventActions"
-            },
             "Ephemeris": {
                 "!doc": "Ephemeris Actions. The static methods of this class are made available as functions in the scripts. This allows a script to use ephemeris features.",
                 "!type": "EphemerisActions"
+            },
+            "CoreUtil": {
+                "!doc": "CoreUtil Actions. This class provides static mapping methods from package org.openhab.core.util. Read the docs.",
+                "!type": "CoreUtilActions"
             },
             "Exec": {
                 "!doc": "Exec Actions. This class provides static methods that can be used in automation rules for executing commands on command line.",
@@ -731,10 +772,6 @@
             "HTTP": {
                 "!doc": "HTTP Actions. This class provides static methods that can be used in automation rules for sending HTTP requests.",
                 "!type": "HTTPActions"
-            },
-            "Log": {
-                "!doc": "Log Actions. The static methods of this class are made available as functions in the scripts. This allows a script to log to the SLF4J-Log.",
-                "!type": "LogActions"
             },
             "NotificationAction": {
                 "!doc": "Notification Actions. If the openHAB Cloud Connector is installed, notifications can be sent to registered users/devices.",
@@ -747,14 +784,6 @@
             "ScriptExecution": {
                 "!doc": "ScriptExecution Actions. The static methods of this class are made available as functions in the scripts. This allows a script to call another script, which is available as a file.",
                 "!type": "ScriptExecutionActions"
-            },
-            "Semantics": {
-                "!doc": "Semantics Actions. The static methods of this class are made available as functions in the scripts. This allows a script to use Semantics features.\nInstead of using the Semantics actions, it is recommended to use the ItemSemantics available through the \"semantics\" property of an Item.",
-                "!type": "SemanticsActions"
-            },
-            "Things": {
-                "!doc": "Things Actions. This class provides static methods that can be used in automation rules for getting thing's status info.",
-                "!type": "ThingsActions"
             },
             "Transformation": {
                 "!doc": "Transformation Actions. The static methods of this class allow rules to execute transformations using one of the various data transformation services.",

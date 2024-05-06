@@ -207,8 +207,8 @@ export default {
         if (chartType) {
           day = fn.apply(day, [1, chartType === 'isoWeek' ? 'week' : chartType])
         } else {
-          const period = this.period || DEFAULT_PERIOD
-          let span = period.match(/^([\d]*)([smhdDwWMQyY])$/)
+          const period = this.period || this.context.component.config.period || DEFAULT_PERIOD
+          const span = period.match(/^([\d]*)([smhdDwWMQyY])$/)
           if (span) {
             day = fn.apply(day, [parseInt(span[1]) || 1, span[2].replace(/[DWY]/, (x) => x.toLowerCase())])
           }

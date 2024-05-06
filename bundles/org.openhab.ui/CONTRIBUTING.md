@@ -8,7 +8,8 @@ The repository for web user interfaces, including this project, is located at <h
 
 This project is built using [Vue.js](https://vuejs.org/), [webpack](https://webpack.js.org/) and [Framework7](https://framework7.io).
 
-You need Node 18.18.0 or later and npm 9.8.1 or later installed.
+You need Node v20.12.2 or later and npm 10.5.0 or later installed.
+If you use a Node version manager like [nvm](https://github.com/nvm-sh/nvm), change to the `web` directory and run `nvm use`.
 
 Change to the `web` directory, gather the necessary dependencies with `npm install` then the scripts below will be available.
 
