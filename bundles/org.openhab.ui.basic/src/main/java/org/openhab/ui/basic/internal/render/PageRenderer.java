@@ -378,6 +378,7 @@ public class PageRenderer extends AbstractWidgetRenderer {
     private void buildButton(String label, String cmd, StringBuilder buttons) throws RenderException {
         buttons.append(getSnippet("button") //
                 .replace("%cmd%", escapeHtml(cmd)) //
+                .replace("%release_cmd%", "") //
                 .replace("%label%", escapeHtml(label)) //
                 .replace("%textclass%", "mdl-button-text") //
                 .replace("%icon_snippet%", "") //

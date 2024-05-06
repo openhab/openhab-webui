@@ -1178,7 +1178,16 @@
 			});
 		};
 
-		_t.onclick = function() {
+		function emitEvent(value) {
+			window.console.log("send " + value);
+			_t.parentNode.dispatchEvent(createEvent(
+				"control-change", {
+					item: _t.item,
+					value: value
+			}));
+		}
+
+		_t.onClick = function() {
 			/* HTMLButtonElement this */
 			var
 				value = this.getAttribute("data-value") + "";
@@ -1188,11 +1197,14 @@
 				this.classList.add(o.buttonActiveClass);
 			}
 
-			_t.parentNode.dispatchEvent(createEvent(
-				"control-change", {
-					item: _t.item,
-					value: value
-			}));
+			emitEvent(value);
+		};
+
+		_t.onRelease = function() {
+			var
+				value = this.getAttribute("data-release-value") + "";
+
+			emitEvent(value);
 		};
 
 		_t.valueMap = {};
@@ -1296,10 +1308,18 @@
 		_t.buttons.forEach.call(_t.buttons, function(button) {
 			var
 				icon,
-				value = button.getAttribute("data-value") + "";
+				value = button.getAttribute("data-value") + "",
+				releaseValue = button.getAttribute("data-release-value") + "";
 
 			_t.valueMap[value] = button;
-			button.addEventListener("click", _t.onclick);
+			if (releaseValue !== "") {
+				button.addEventListener("touchstart", _t.onClick);
+				button.addEventListener("mousedown", _t.onClick);
+				button.addEventListener("touchend", _t.onRelease);
+				button.addEventListener("mouseup", _t.onRelease);
+			} else {
+				button.addEventListener("click", _t.onClick);
+			}
 
 			icon = button.querySelector("img");
 			if (icon !== null) {
@@ -1311,9 +1331,17 @@
 		_t.destroy = function() {
 			_t.buttons.forEach(function(button) {
 				var
+					releaseValue = button.getAttribute("data-release-value") + "",
 					icon;
 
-				button.removeEventListener("click", _t.onclick);
+				if (releaseValue !== "") {
+					button.removeEventListener("touchstart", _t.onClick);
+					button.removeEventListener("mousedown", _t.onClick);
+					button.removeEventListener("touchend", _t.onRelease);
+					button.removeEventListener("mouseup", _t.onRelease);
+				} else {
+					button.removeEventListener("click", _t.onClick);
+				}
 
 				icon = button.querySelector("img");
 				if (icon !== null) {
