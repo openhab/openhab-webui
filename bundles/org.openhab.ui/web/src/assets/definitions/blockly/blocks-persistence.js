@@ -221,7 +221,11 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
   Blockly.Blocks['oh_get_persistence_lastupdate'] = {
     init: function () {
       this.appendDummyInput()
-        .appendField('last updated date of')
+        .appendField(new Blockly.FieldDropdown([
+          ['last', 'lastUpdate'], ['next', 'nextUpdate']
+        ]), 'methodName')
+      this.appendDummyInput()
+        .appendField(' updated date of')
       this.appendValueInput('itemName')
         .setCheck(['String', 'oh_item', 'oh_itemtype'])
       const persistenceNameInput = this.appendValueInput('persistenceName')
@@ -234,8 +238,16 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
       this.setInputsInline(true)
       this.setOutput(true, 'ZonedDateTime')
       this.setColour(0)
-      this.setTooltip('Get the last update time of the provided item')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-persistence.html#provide-last-updated-date-of-an-item')
+
+      this.setTooltip(() => {
+        const methodName = this.getFieldValue('methodName')
+        const TIP = {
+          'lastUpdate': 'Get the last update time of the provided item',
+          'nextUpdate': 'Get the next update time of the provided item'
+        }
+        return TIP[methodName]
+      })
     }
   }
 
@@ -244,6 +256,7 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
   * Code part
   */
   javascriptGenerator.forBlock['oh_get_persistence_lastupdate'] = function (block) {
+    const methodName = block.getFieldValue('methodName')
     const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
     const inputType = blockGetCheckedInputType(block, 'itemName')
     const persistenceName = javascriptGenerator.valueToCode(block, 'persistenceName', javascriptGenerator.ORDER_NONE)
@@ -252,11 +265,11 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
     let itemCode = generateItemCode(itemName, inputType)
 
     if (isGraalJs) {
-      return [`${itemCode}.history.lastUpdate(${persistenceExtension})`, 0]
+      return [`${itemCode}.persistence.${methodName}(${persistenceExtension})`, 0]
     } else {
       const { dtf, zdt, getZonedDatetime } = addDateSupport()
       const persistence = addPersistence()
-      let code = `${persistence}.lastUpdate(${itemCode}${persistenceExtension})`
+      let code = `${persistence}.${methodName}(${itemCode}${persistenceExtension})`
       return [code, 0]
     }
   }
