@@ -520,7 +520,7 @@ export default {
                   if (!param.column || isNaN(param.column)) {
                     validationWarnings.push(widget.component + ' widget ' + label + ', invalid column configured: ' + param.column)
                   }
-                  if (!this.validateMapping(param.command)) {
+                  if (!this.validateMapping(widget.component, param.command)) {
                     validationWarnings.push(widget.component + ' widget ' + label + ', syntax error in button command: ' + param.command)
                   }
                 }
