@@ -44,7 +44,7 @@
     comma:            ',',
     colon:            ':',
     hyphen:           '-',
-    number:           /-?[0-9]+(?:\.[0-9]*)?/,
+    number:           /[+-]?[0-9]+(?:\.[0-9]*)?/,
     string:           { match: /"(?:\\["\\]|[^\n"\\])*"/, value: x => x.slice(1, -1) }
   })
   const requiresItem = ['Group', 'Chart', 'Switch', 'Mapview', 'Slider', 'Selection', 'Setpoint', 'Input ', 'Colorpicker', 'Default']
