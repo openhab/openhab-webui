@@ -623,15 +623,11 @@
             "playStream": { "!type": "fn(sink?: string, url: string)" },
             "setMasterVolume": { "!type": "fn(percent: float)" }
         },
-        "BusEventActions": {
-            "postUpdate": {
-                "!doc": "Posts a status update for a specified Item to the event bus.",
-                "!type": "fn(itemName: string, state: ?)"
-            },
-            "sendCommand": {
-                "!doc": "Sends a command for a specified Item to the event bus.",
-                "!type": "fn(itemName: string, command: ?)"
-            }
+        "CoreUtilActions": {
+            "hsbToRgb": { "!type": "fn(hsb: HSBType) -> [number]" },
+            "hsbTosRgb": { "!type": "fn(hsb: HSBType) -> number" },
+            "hsbToRgbw": { "!type": "fn(hsb: HSBType) -> [number]" },
+            "rgbToHsb": { "!type": "fn(rgb: [number]) -> HSBType" }
         },
         "EphemerisActions": {
             "getBankHolidayName": { "!type": "fn(offsetOrDay?: ?, filename?: string) -> string" },
@@ -650,12 +646,6 @@
             "sendHttpPostRequest": { "!type": "fn(url: string, contentType?: string, content?: string, headers?: object, timeout?: int) -> string" },
             "sendHttpPutRequest": { "!type": "fn(url: string, contentType?: string, content?: string, headers?: object, timeout?: int) -> string" },
             "sendHttpDeleteRequest": { "!type": "fn(url: string, headers?: object, timeout?: int) -> string" }
-        },
-        "LogActions": {
-            "logDebug": { "!type": "fn(loggerName?: string, message: string, args?: ?)" },
-            "logInfo": { "!type": "fn(loggerName?: string, message: string, args?: ?)" },
-            "logWarn": { "!type": "fn(loggerName?: string, message: string, args?: ?)" },
-            "logError": { "!type": "fn(loggerName?: string, message: string, args?: ?)" }
         },
         "NotificationAction": {
             "sendNotification": {
@@ -681,21 +671,6 @@
                 "!type": "fn(identifier?: string, zonedDateTime: time.ZonedDateTime, function: fn()) -> Timer"
               }
         },
-        "SemanticsActions": {
-            "getEquipment": { "!type": "fn(rawItem: ?) -> ?" },
-            "getEquipmentType": { "!type": "fn(rawItem: ?) -> string" },
-            "getLocation": { "!type": "fn(rawItem: ?) -> ?" },
-            "getLocationType": { "!type": "fn(rawItem: ?) -> string" },
-            "getPointType": { "!type": "fn(rawItem: ?) -> string" },
-            "getPropertyType": { "!type": "fn(rawItem: ?) -> string" },
-            "isEquipment": { "!type": "fn(rawItem: ?) -> boolean" },
-            "isLocation": { "!type": "fn(rawItem: ?) -> isLocation" },
-            "isPoint": { "!type": "fn(rawItem: ?) -> isLocation" }
-        },
-        "ThingsActions": {
-            "getActions": { "!type": "fn(scope: string, thingUid: string) -> ?" },
-            "getThingStatusInfo": { "!type": "fn(thingUid: string) -> ?" }
-        },
         "TransformationActions": {
             "transform": {
                 "!doc": "Applies a transformation of a given type with some function to a value. Returns the original value if the transformation fails.",
@@ -716,13 +691,13 @@
                 "!doc": "Audio Actions. The static methods of this class are made available as functions in the scripts. This allows a script to use audio features.",
                 "!type": "AudioActions"
             },
-            "BusEvent": {
-                "!doc": "BusEvent Actions. The static methods of this class are made available as functions in the scripts. This gives direct write access to the openHAB event bus from within scripts. Items should not be updated directly (setting the state property), but updates should be sent to the bus, so that all interested bundles are notified.",
-                "!type": "BusEventActions"
-            },
             "Ephemeris": {
                 "!doc": "Ephemeris Actions. The static methods of this class are made available as functions in the scripts. This allows a script to use ephemeris features.",
                 "!type": "EphemerisActions"
+            },
+            "CoreUtil": {
+                "!doc": "CoreUtil Actions. This class provides static mapping methods from package org.openhab.core.util. Read the docs.",
+                "!type": "CoreUtilActions"
             },
             "Exec": {
                 "!doc": "Exec Actions. This class provides static methods that can be used in automation rules for executing commands on command line.",
@@ -731,10 +706,6 @@
             "HTTP": {
                 "!doc": "HTTP Actions. This class provides static methods that can be used in automation rules for sending HTTP requests.",
                 "!type": "HTTPActions"
-            },
-            "Log": {
-                "!doc": "Log Actions. The static methods of this class are made available as functions in the scripts. This allows a script to log to the SLF4J-Log.",
-                "!type": "LogActions"
             },
             "NotificationAction": {
                 "!doc": "Notification Actions. If the openHAB Cloud Connector is installed, notifications can be sent to registered users/devices.",
@@ -747,14 +718,6 @@
             "ScriptExecution": {
                 "!doc": "ScriptExecution Actions. The static methods of this class are made available as functions in the scripts. This allows a script to call another script, which is available as a file.",
                 "!type": "ScriptExecutionActions"
-            },
-            "Semantics": {
-                "!doc": "Semantics Actions. The static methods of this class are made available as functions in the scripts. This allows a script to use Semantics features.\nInstead of using the Semantics actions, it is recommended to use the ItemSemantics available through the \"semantics\" property of an Item.",
-                "!type": "SemanticsActions"
-            },
-            "Things": {
-                "!doc": "Things Actions. This class provides static methods that can be used in automation rules for getting thing's status info.",
-                "!type": "ThingsActions"
             },
             "Transformation": {
                 "!doc": "Transformation Actions. The static methods of this class allow rules to execute transformations using one of the various data transformation services.",
