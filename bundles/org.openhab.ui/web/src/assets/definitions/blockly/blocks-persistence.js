@@ -166,7 +166,7 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
         persistenceNameInput.setShadowDom(Blockly.utils.xml.textToDom('<shadow type="oh_persistence_dropdown" />'))
       }
       this.appendValueInput('dayInfo')
-        .appendField(new Blockly.FieldDropdown([['has changed since', 'changedSince'], ['has been updated since', 'updatedSince']]), 'methodName')
+        .appendField(new Blockly.FieldDropdown([['has changed since', 'changedSince'], ['will have changed until', 'changedUntil'], ['has been updated since', 'updatedSince'], ['will have been updated until', 'updatedUntil']]), 'methodName')
         .setAlign(Blockly.ALIGN_RIGHT)
         .setCheck(['ZonedDateTime'])
 
@@ -179,7 +179,9 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
         let methodName = thisBlock.getFieldValue('methodName')
         let TIP = {
           'changedSince': 'Checks if the State of the Item has (ever) changed since a certain point in time',
-          'updatedSince': 'Checks if the State of the Item has been updated since a certain point in time'
+          'changedUntil': 'Checks if the State of the Item will have (ever) changed until a certain point in time',
+          'updatedSince': 'Checks if the State of the Item has been updated since a certain point in time',
+          'updatedUntil': 'Checks if the State of the Item will have been updated until a certain point in time'
         }
         return TIP[methodName]
       })
@@ -194,19 +196,17 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
   */
   javascriptGenerator.forBlock['oh_persist_changed'] = function (block) {
     const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
-
     const inputType = blockGetCheckedInputType(block, 'itemName')
-
-    let itemCode = generateItemCode(itemName, inputType)
 
     const methodName = block.getFieldValue('methodName')
     const dayInfo = javascriptGenerator.valueToCode(block, 'dayInfo', javascriptGenerator.ORDER_NONE)
-
     const persistenceName = javascriptGenerator.valueToCode(block, 'persistenceName', javascriptGenerator.ORDER_NONE)
     const persistenceExtension = (persistenceName === '\'default\'') ? '' : `, ${persistenceName}`
 
+    let itemCode = generateItemCode(itemName, inputType)
+
     if (isGraalJs) {
-      return [`${itemCode}.history.${methodName}(${dayInfo}${persistenceExtension})`, javascriptGenerator.ORDER_NONE]
+      return [`${itemCode}.persistence.${methodName}(${dayInfo}${persistenceExtension})`, javascriptGenerator.ORDER_NONE]
     } else {
       const { dtf, zdt, getZonedDatetime } = addDateSupport()
       const persistence = addPersistence()
