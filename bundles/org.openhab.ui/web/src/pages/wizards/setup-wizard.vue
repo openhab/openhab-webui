@@ -111,7 +111,7 @@
             tab-link-active />
           <f7-login-screen-title>
             <div class="padding">
-              <f7-icon size="48" color="blue" f7="download_circle" />
+              <f7-icon size="48" color="blue" f7="wifi" />
             </div>
             {{ $t('setupwizard.network.title') }}
           </f7-login-screen-title>
