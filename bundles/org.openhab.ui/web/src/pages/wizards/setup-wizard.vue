@@ -415,7 +415,7 @@ export default {
       this.showNetwork()
     },
     showNetwork () {
-      if (this.availableNetworks.length > 1) {
+      if (this.networkConfigDescription?.options?.length > 1) {
         this.$refs.network.show()
       } else {
         this.skipNetwork()
@@ -435,28 +435,52 @@ export default {
       this.showPersistence()
     },
     showPersistence () {
-      this.updateAddonSelection([], this.recommendedAddonsByType('persistence'))
+      if (this.addonSuggestionsReady) {
+        this.updateAddonSelection([], this.recommendedAddonsByType('persistence'))
+      } else {
+        this.$f7.once('addon-suggestions-ready', () => {
+          this.updateAddonSelection([], this.recommendedAddonsByType('persistence'))
+        })
+      }
       this.$refs.persistence.show()
     },
     selectPersistence () {
       this.showAddons()
     },
     skipPersistence () {
-      this.updateAddonSelection(this.recommendedAddonsByType('persistence'), [])
+      if (this.addonSuggestionsReady) {
+        this.updateAddonSelection(this.recommendedAddonsByType('persistence'), [])
+      } else {
+        this.$f7.once('addon-suggestions-ready', () => {
+          this.updateAddonSelection(this.recommendedAddonsByType('persistence'), [])
+        })
+      }
       this.showAddons()
     },
     showAddons () {
-      this.updateAddonSelection([], this.selectedAddons.filter(a => !this.preSelectedAddon(a)))
+      if (this.addonSuggestionsReady) {
+        this.updateAddonSelection([], this.selectedAddons.filter(a => !this.preSelectedAddon(a)))
+      } else {
+        this.$f7.once('addon-suggestions-ready', () => {
+          this.updateAddonSelection([], this.selectedAddons.filter(a => !this.preSelectedAddon(a)))
+        })
+      }
       this.$refs.addons.show()
     },
+    /**
+     * Load the list of suggested add-ons.
+     * Emits <code>addon-suggestions-ready</code> event once add-on suggestions are ready.
+     *
+     * @returns {Promise} resolves quickly if <code>this.addonSuggestionsReady</code> is <code>true</code>
+     */
     getSuggestedAddons () {
-      if (this.addonSuggestionsReady) return
+      if (this.addonSuggestionsReady) return Promise.resolve()
       // wait 10 seconds for suggestions to refresh after network scan
-      const suggestionsPromise = new Promise(() => {
+      return new Promise(() => {
         this.$f7.progressbar.set('#suggestions-progress-bar-persistence', 0)
         this.$f7.progressbar.set('#suggestions-progress-bar-addons', 0)
         let progress = 0
-        let self = this
+        const self = this
         function loading () {
           setTimeout(() => {
             const progressBefore = progress
@@ -467,10 +491,12 @@ export default {
               loading() // keep loading
             } else {
               self.$oh.api.get('/rest/addons/suggestions').then((suggestions) => {
-                let suggestedAddons = suggestions.flatMap(s => s.id)
+                const suggestedAddons = suggestions.flatMap(s => s.id)
                 self.selectedAddons = self.addons.filter(a => (self.recommendedAddons.includes(a.uid) || suggestedAddons.includes(a.id)))
                   .sort((a, b) => a.uid.toUpperCase().localeCompare(b.uid.toUpperCase()))
                 self.addonSuggestionsReady = true
+                self.$f7.emit('addon-suggestions-ready')
+                return Promise.resolve()
               })
             }
           }, 1000)
@@ -537,9 +563,9 @@ export default {
         console.log('Installing add-on: ' + addon.uid)
         progressDialog.setTitle(self.$t('setupwizard.addons.installingAddon', { addon: addon.label }))
 
-        self.$oh.api.post('/rest/addons/' + addon.uid + '/install', {}, 'text').then((data) => {
+        self.$oh.api.post('/rest/addons/' + addon.uid + '/install', {}, 'text').then(() => {
           const checkTimer = setInterval(() => {
-            checkAddonStatus(addon).then((addon) => {
+            checkAddonStatus(addon).then(() => {
               clearInterval(checkTimer)
               installNextAddon()
             }).catch(() => {
@@ -588,7 +614,7 @@ export default {
           default: [],
           masonry: null
         }
-      }).then((data) => {
+      }).then(() => {
         // this will force the pages to be refreshed
         this.$f7.emit('sidebarRefresh', null)
       })
