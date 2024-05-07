@@ -143,7 +143,6 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
       case 'maximumUntil':
       case 'minimumSince':
       case 'minimumUntil':
-      case 'historicState':
       case 'persistedState':
         dayInfo = javascriptGenerator.valueToCode(block, 'dayInfo', javascriptGenerator.ORDER_NONE)
         code = (isGraalJs) ? `${itemCode}.persistence.${methodName}(${dayInfo}${persistenceExtension})?.state` : `${persistence}.${methodName}(${itemCode}, ${dayInfo}${persistenceExtension}).getState()`
