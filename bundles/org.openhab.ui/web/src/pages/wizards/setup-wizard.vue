@@ -95,7 +95,7 @@
         <f7-block class="display-flex flex-direction-column padding" v-if="networksReady">
           <div>
             <f7-button v-if="location" large fill color="blue" :text="$t('setupwizard.location.setLocation')" @click="setLocation" />
-            <f7-button large color="blue" :text="$t('setupwizard.location.configureLater')" class="margin-top" @click="skipLocation" />
+            <f7-button large color="blue" :text="$t('setupwizard.configureLater')" class="margin-top" @click="skipLocation" />
           </div>
         </f7-block>
       </f7-tab>
@@ -130,7 +130,7 @@
         <f7-block class="display-flex flex-direction-column padding">
           <div>
             <f7-button large fill color="blue" :text="$t('setupwizard.network.setNetwork')" @click="setNetwork" />
-            <f7-button large color="blue" :text="$t('setupwizard.network.configureLater')" class="margin-top" @click="skipNetwork" />
+            <f7-button large color="blue" :text="$t('setupwizard.configureLater')" class="margin-top" @click="skipNetwork" />
           </div>
         </f7-block>
       </f7-tab>
