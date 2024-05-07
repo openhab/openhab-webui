@@ -173,6 +173,18 @@ export default {
         }
       }
     })
+
+    // Add event listener for locale change
+    this.$f7.on('localeChange', () => {
+      if (this.autocompleteAddons) {
+        this.autocompleteAddons.params.pageTitle = this.$t('setupwizard.addons.selectAddons')
+        this.autocompleteAddons.params.searchbarPlaceholder = this.$t('setupwizard.addons.selectAddons.placeholder')
+        this.autocompleteAddons.params.searchbarDisableText = this.$t('dialogs.cancel')
+        this.autocompleteAddons.params.popupCloseLinkText = this.$t('dialogs.close')
+        this.autocompleteAddons.params.pageBackLinkText = this.$t('dialogs.back')
+        this.autocompleteAddons.params.notFoundText = this.$t('dialogs.search.nothingFound')
+      }
+    })
   }
 }
 </script>
