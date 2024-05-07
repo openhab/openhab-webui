@@ -319,7 +319,6 @@ export default {
       availableNetworks: null,
       network: null,
       addonSuggestionsReady: false,
-      autocompleteAddons: null,
       addons: [],
       // all recommended addons, pre-defined
       recommendedAddons: ['persistence-rrd4j', 'persistence-mapdb', 'automation-jsscripting', 'ui-basic', 'binding-astro'],
@@ -375,14 +374,6 @@ export default {
         timezone: this.timezone
       }).then(() => {
         this.$f7.emit('localeChange')
-        if (this.autocompleteAddons) {
-          this.autocompleteAddons.params.pageTitle = this.$t('setupwizard.addons.selectAddons')
-          this.autocompleteAddons.params.searchbarPlaceholder = this.$t('setupwizard.addons.selectAddons.placeholder')
-          this.autocompleteAddons.params.searchbarDisableText = this.$t('dialogs.cancel')
-          this.autocompleteAddons.params.popupCloseLinkText = this.$t('dialogs.close')
-          this.autocompleteAddons.params.pageBackLinkText = this.$t('dialogs.back')
-          this.autocompleteAddons.params.notFoundText = this.$t('dialogs.search.nothingFound')
-        }
         this.$refs.location.show()
       })
     },
@@ -631,30 +622,6 @@ export default {
     })
     this.$oh.api.get('/rest/addons').then(data => {
       this.addons = data.sort((a, b) => a.label.toUpperCase().localeCompare(b.label.toUpperCase()))
-      const self = this
-      this.autocompleteAddons = this.$f7.autocomplete.create({
-        openIn: 'popup',
-        pageTitle: self.$t('setupwizard.addons.selectAddons'),
-        searchbarPlaceholder: self.$t('setupwizard.addons.selectAddons.placeholder'),
-        openerEl: self.$refs.selectAddons,
-        multiple: true,
-        requestSourceOnOpen: true,
-        source: (query, render) => {
-          if (query.length === 0) {
-            render(self.selectableAddons.map((a) => a.label))
-          } else {
-            render(self.selectableAddons.filter(a => (a.label.toLowerCase().indexOf(query.toLowerCase()) >= 0 || a.uid.toLowerCase().indexOf(query.toLowerCase()) >= 0)).map(a => a.label))
-          }
-        },
-        on: {
-          change (value) {
-            const selected = value.map(label => self.addons.find(a => (a.label === label)))
-            // if we added addons, keep it visible on the main list, even if we deselect again later
-            self.selectedAddons = [...new Set(self.selectedAddons.concat(selected))]
-            self.updateAddonSelection(self.selectableAddons, selected)
-          }
-        }
-      })
     })
   }
 }
