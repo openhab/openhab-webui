@@ -8,7 +8,7 @@
     string:     { match: /"(?:\\["\\]|[^\n"\\])*"/, value: x => x.slice(1, -1) },
     itemtype:   ['Group ', 'Number ', 'Switch ', 'Rollershutter ', 'String ', 'Dimmer ', 'Contact ', 'DateTime ', 'Color ', 'Player ', 'Location ', 'Call ', 'Image '],
     membertype: [':Number', ':Switch', ':Rollershutter', ':String', ':Dimmer', ':Contact', ':DateTime', ':Color', ':Player', ':Location', ':Call', ':Image'],
-    aggfunc:    ['AVG', 'SUM', 'MIN', 'MAX', 'OR', 'AND', 'COUNT', 'LATEST', 'EARLIEST', 'EQUALITY'],
+    aggfunc:    ['AVG', 'SUM', 'MIN', 'MAX', 'OR', 'AND', 'NOR', 'NAND', 'COUNT', 'LATEST', 'EARLIEST', 'EQUALITY'],
     identifier: /(?:[A-Za-z_][A-Za-z0-9_]*)|(?:[0-9]+[A-Za-z_][A-Za-z0-9_]*)/,
     lparen:     '(',
     rparen:     ')',
