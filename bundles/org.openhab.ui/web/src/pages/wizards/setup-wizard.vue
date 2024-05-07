@@ -117,15 +117,10 @@
           </f7-login-screen-title>
         </f7-block>
         <f7-block strong>
-          {{ $t('setupwizard.network.header1') }} {{ $t('setupwizard.network.header2') }}<br><br>
+          {{ $t('setupwizard.network.header1') }} {{ $t('setupwizard.network.header2') }}
         </f7-block>
-        <f7-list form style="margin-top: 2rem" v-if="networksReady">
-          <f7-list-item v-for="option in availableNetworks"
-                        checkbox
-                        :key="option.value"
-                        :title="option.label"
-                        :checked="network === option.value"
-                        @change="(evt) => network = (evt.target.checked ? option.value : undefined)" />
+        <f7-list>
+          <parameter-options class="network" v-if="networksReady" :config-description="networkConfigDescription" :value="network" @input="(value) => network = value" />
         </f7-list>
         <f7-block class="display-flex flex-direction-column padding">
           <div>
@@ -141,7 +136,7 @@
             icon-ios="f7:arrow_left"
             icon-aurora="f7:arrow_left"
             icon-md="material:arrow_back"
-            :tab-link="(availableNetworks && availableNetworks.length > 1) ? '#network' : '#location'"
+            :tab-link="(networkConfigDescription && networkConfigDescription.options && networkConfigDescription.options.length > 1) ? '#network' : '#location'"
             color="blue"
             tab-link-active />
           <f7-login-screen-title>
@@ -279,6 +274,12 @@
     width 240px
   .page-content
     margin-top inherit
+  .network
+    .block-header
+      .item-label
+        text-align left
+        margin-left 0 !important
+        margin-right 0 !important
 
 .tab-active
   scroll-snap-align start
@@ -297,13 +298,14 @@
 <script>
 import i18n from '@/components/i18n-mixin'
 import { loadLocaleMessages } from '@/js/i18n'
-import addonsSetupWizard from '@/components/addons/addons-setup-wizard'
+import AddonsSetupWizard from '@/components/addons/addons-setup-wizard'
 
 export default {
   mixins: [i18n],
   components: {
     'parameter-location': () => import('@/components/config/controls/parameter-location.vue'),
-    addonsSetupWizard
+    'parameter-options': () => import('@/components/config/controls/parameter-options.vue'),
+    AddonsSetupWizard
   },
   data () {
     return {
@@ -316,7 +318,7 @@ export default {
       timezone: null,
       location: null,
       networksReady: false,
-      availableNetworks: null,
+      networkConfigDescription: null,
       network: null,
       addonSuggestionsReady: false,
       addons: [],
@@ -593,7 +595,16 @@ export default {
     }
   },
   mounted () {
-    Promise.all([this.$oh.api.get('/rest/config-descriptions/system:i18n'), this.$oh.api.get('/rest/services/org.openhab.i18n/config')]).then((data) => {
+    const promises = [
+      this.$oh.api.get('/rest/config-descriptions/system:i18n'),
+      this.$oh.api.get('/rest/services/org.openhab.i18n/config'),
+      this.$oh.api.get('/rest/config-descriptions/system:network'),
+      this.$oh.api.get('/rest/services/org.openhab.network/config'),
+      this.$oh.api.get('/rest/addons')
+    ]
+
+    Promise.all(promises).then((data) => {
+      // i18n config descriptions
       this.availableLanguages = data[0].parameters.find(p => p.name === 'language').options
       this.availableRegions = data[0].parameters.find(p => p.name === 'region').options
       this.availableTimezones = data[0].parameters.find(p => p.name === 'timezone').options
@@ -609,19 +620,21 @@ export default {
         }
       }
 
+      // i18n config
       if (data[1].language) this.language = data[1].language
       if (data[1].location) this.location = data[1].location
       if (data[1].region) this.region = data[1].region
       if (data[1].timezone) this.timezone = data[1].timezone
 
       this.i18nReady = true
-    })
-    this.$oh.api.get('/rest/config-descriptions/system:network').then((data) => {
-      this.availableNetworks = data.parameters.find(p => p.name === 'primaryAddress').options
+
+      // network config description & config
+      this.networkConfigDescription = data[2].parameters.find(p => p.name === 'primaryAddress')
+      this.network = data[3].primaryAddress
       this.networksReady = true
-    })
-    this.$oh.api.get('/rest/addons').then(data => {
-      this.addons = data.sort((a, b) => a.label.toUpperCase().localeCompare(b.label.toUpperCase()))
+
+      // addons
+      this.addons = data[4].sort((a, b) => a.label.toUpperCase().localeCompare(b.label.toUpperCase()))
     })
   }
 }
