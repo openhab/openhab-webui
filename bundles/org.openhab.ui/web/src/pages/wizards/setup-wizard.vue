@@ -92,10 +92,40 @@
             <small v-t="'setupwizard.location.footer'" />
           </f7-block-footer>
         </f7-block>
-        <f7-block class="display-flex flex-direction-column padding">
+        <f7-block class="display-flex flex-direction-column padding" v-if="networksReady">
           <div>
             <f7-button v-if="location" large fill color="blue" :text="$t('setupwizard.location.setLocation')" @click="setLocation" />
-            <f7-button large color="blue" :text="$t('setupwizard.location.configureLater')" class="margin-top" @click="skipLocation" />
+            <f7-button large color="blue" :text="$t('setupwizard.configureLater')" class="margin-top" @click="skipLocation" />
+          </div>
+        </f7-block>
+      </f7-tab>
+
+      <f7-tab id="network" ref="network">
+        <f7-block>
+          <f7-link
+            icon-ios="f7:arrow_left"
+            icon-aurora="f7:arrow_left"
+            icon-md="material:arrow_back"
+            tab-link="#location"
+            color="blue"
+            tab-link-active />
+          <f7-login-screen-title>
+            <div class="padding">
+              <f7-icon size="48" color="blue" f7="wifi" />
+            </div>
+            {{ $t('setupwizard.network.title') }}
+          </f7-login-screen-title>
+        </f7-block>
+        <f7-block strong>
+          {{ $t('setupwizard.network.header1') }} {{ $t('setupwizard.network.header2') }}
+        </f7-block>
+        <f7-list>
+          <parameter-options class="network" v-if="networksReady" :config-description="networkConfigDescription" :value="network" @input="(value) => network = value" />
+        </f7-list>
+        <f7-block class="display-flex flex-direction-column padding">
+          <div>
+            <f7-button large fill color="blue" :text="$t('setupwizard.network.setNetwork')" @click="setNetwork" />
+            <f7-button large color="blue" :text="$t('setupwizard.configureLater')" class="margin-top" @click="skipNetwork" />
           </div>
         </f7-block>
       </f7-tab>
@@ -106,7 +136,7 @@
             icon-ios="f7:arrow_left"
             icon-aurora="f7:arrow_left"
             icon-md="material:arrow_back"
-            tab-link="#location"
+            :tab-link="(networkConfigDescription && networkConfigDescription.options && networkConfigDescription.options.length > 1) ? '#network' : '#location'"
             color="blue"
             tab-link-active />
           <f7-login-screen-title>
@@ -120,7 +150,13 @@
           {{ $t('setupwizard.persistence.header1') }} {{ $t('setupwizard.persistence.header2') }}
         </f7-block>
         <f7-block style="margin-top: 0; margin-bottom: 2em">
-          <addons-setup-wizard v-if="addonsReady && recommendedAddonsByType('persistence').length"
+          <f7-block v-if="!addonSuggestionsReady">
+            <div class="display-flex justify-content-center margin-bottom">
+              <f7-progressbar id="suggestions-progress-bar-persistence" :progress="0" />
+            </div>
+            <div v-t="'setupwizard.addons.suggestionsWaitMessage'" />
+          </f7-block>
+          <addons-setup-wizard v-if="addonSuggestionsReady && recommendedAddonsByType('persistence').length"
                                :addons="recommendedAddonsByType('persistence')"
                                :preSelectedAddons="selectedAddons"
                                @update="updateAddonSelection(recommendedAddonsByType('persistence'), $event)" />
@@ -128,7 +164,10 @@
             <small v-t="'setupwizard.persistence.footer'" />
           </f7-block-footer>
           <div>
-            <f7-button v-if="selectedAddons.length > 0" large fill color="blue" :text="$t('setupwizard.persistence.install')" @click="selectPersistence" />
+            <f7-button v-if="addonSuggestionsReady && (selectedAddons.length > 0)"
+                       large fill color="blue"
+                       :text="$t('setupwizard.persistence.install')"
+                       @click="selectPersistence" />
             <f7-button large color="blue" :text="$t('setupwizard.persistence.installLater')" class="margin-top" @click="skipPersistence" />
           </div>
         </f7-block>
@@ -155,7 +194,13 @@
           <a class="text-color-blue external" target="_blank" href="https://www.openhab.org/addons/" v-t="'setupwizard.addons.browseAddonsOnWebsite'" />
         </f7-block>
         <f7-block class="padding">
-          <addons-setup-wizard v-if="addonsReady"
+          <f7-block v-if="!addonSuggestionsReady">
+            <div class="display-flex justify-content-center margin-bottom">
+              <f7-progressbar id="suggestions-progress-bar-addons" :progress="0" />
+            </div>
+            <div v-t="'setupwizard.addons.suggestionsWaitMessage'" />
+          </f7-block>
+          <addons-setup-wizard v-if="addonSuggestionsReady && mainAddons.length"
                                :enableAddonSelection="true"
                                :addons="mainAddons"
                                :preSelectedAddons="selectedAddons"
@@ -164,7 +209,7 @@
             <small v-t="'setupwizard.addons.footer'" />
           </f7-block-footer>
           <div>
-            <f7-button v-if="toInstallAddons.filter(a => (!preSelectedAddon(a) && !a.installed)).length > 0"
+            <f7-button v-if="addonSuggestionsReady && (toInstallAddons.filter(a => (!preSelectedAddon(a) && !a.installed)).length > 0)"
                        large fill color="blue"
                        :text="$tc('setupwizard.addons.installAddons', toInstallAddons.filter(a => (!preSelectedAddon(a) && !a.installed)).length)"
                        @click="installAddons" />
@@ -229,6 +274,12 @@
     width 240px
   .page-content
     margin-top inherit
+  .network
+    .block-header
+      .item-label
+        text-align left
+        margin-left 0 !important
+        margin-right 0 !important
 
 .tab-active
   scroll-snap-align start
@@ -247,19 +298,18 @@
 <script>
 import i18n from '@/components/i18n-mixin'
 import { loadLocaleMessages } from '@/js/i18n'
-
 import AddonsSetupWizard from '@/components/addons/addons-setup-wizard'
 
 export default {
   mixins: [i18n],
   components: {
     'parameter-location': () => import('@/components/config/controls/parameter-location.vue'),
+    'parameter-options': () => import('@/components/config/controls/parameter-options.vue'),
     AddonsSetupWizard
   },
   data () {
     return {
       i18nReady: false,
-      addonsReady: false,
       availableLanguages: null,
       availableRegions: null,
       availableTimezones: null,
@@ -267,7 +317,10 @@ export default {
       region: null,
       timezone: null,
       location: null,
-      autocompleteAddons: null,
+      networksReady: false,
+      networkConfigDescription: null,
+      network: null,
+      addonSuggestionsReady: false,
       addons: [],
       // all recommended addons, pre-defined
       recommendedAddons: ['persistence-rrd4j', 'persistence-mapdb', 'automation-jsscripting', 'ui-basic', 'binding-astro'],
@@ -323,14 +376,6 @@ export default {
         timezone: this.timezone
       }).then(() => {
         this.$f7.emit('localeChange')
-        if (this.autocompleteAddons) {
-          this.autocompleteAddons.params.pageTitle = this.$t('setupwizard.addons.selectAddons')
-          this.autocompleteAddons.params.searchbarPlaceholder = this.$t('setupwizard.addons.selectAddons.placeholder')
-          this.autocompleteAddons.params.searchbarDisableText = this.$t('dialogs.cancel')
-          this.autocompleteAddons.params.popupCloseLinkText = this.$t('dialogs.close')
-          this.autocompleteAddons.params.pageBackLinkText = this.$t('dialogs.back')
-          this.autocompleteAddons.params.notFoundText = this.$t('dialogs.search.nothingFound')
-        }
         this.$refs.location.show()
       })
     },
@@ -363,26 +408,101 @@ export default {
       this.$oh.api.put('/rest/services/org.openhab.i18n/config', {
         location: this.location
       }).then(() => {
-        this.showPersistence()
+        this.showNetwork()
       })
     },
     skipLocation () {
+      this.showNetwork()
+    },
+    showNetwork () {
+      if (this.networkConfigDescription?.options?.length > 1) {
+        this.$refs.network.show()
+      } else {
+        this.skipNetwork()
+      }
+    },
+    setNetwork () {
+      this.$oh.api.put('/rest/services/org.openhab.network/config', {
+        primaryAddress: this.network
+      }).then(() => {
+        this.addonSuggestionsReady = false
+        this.getSuggestedAddons()
+        this.showPersistence()
+      })
+    },
+    skipNetwork () {
+      this.getSuggestedAddons()
       this.showPersistence()
     },
     showPersistence () {
-      this.updateAddonSelection([], this.recommendedAddonsByType('persistence'))
+      if (this.addonSuggestionsReady) {
+        this.updateAddonSelection([], this.recommendedAddonsByType('persistence'))
+      } else {
+        this.$f7.once('addon-suggestions-ready', () => {
+          this.updateAddonSelection([], this.recommendedAddonsByType('persistence'))
+        })
+      }
       this.$refs.persistence.show()
     },
     selectPersistence () {
       this.showAddons()
     },
     skipPersistence () {
-      this.updateAddonSelection(this.recommendedAddonsByType('persistence'), [])
+      if (this.addonSuggestionsReady) {
+        this.updateAddonSelection(this.recommendedAddonsByType('persistence'), [])
+      } else {
+        this.$f7.once('addon-suggestions-ready', () => {
+          this.updateAddonSelection(this.recommendedAddonsByType('persistence'), [])
+        })
+      }
       this.showAddons()
     },
     showAddons () {
-      this.updateAddonSelection([], this.selectedAddons.filter(a => !this.preSelectedAddon(a)))
+      if (this.addonSuggestionsReady) {
+        this.updateAddonSelection([], this.selectedAddons.filter(a => !this.preSelectedAddon(a)))
+      } else {
+        this.$f7.once('addon-suggestions-ready', () => {
+          this.updateAddonSelection([], this.selectedAddons.filter(a => !this.preSelectedAddon(a)))
+        })
+      }
       this.$refs.addons.show()
+    },
+    /**
+     * Load the list of suggested add-ons.
+     * Emits <code>addon-suggestions-ready</code> event once add-on suggestions are ready.
+     *
+     * @returns {Promise} resolves quickly if <code>this.addonSuggestionsReady</code> is <code>true</code>
+     */
+    getSuggestedAddons () {
+      if (this.addonSuggestionsReady) return Promise.resolve()
+      // wait 10 seconds for suggestions to refresh after network scan
+      return new Promise(() => {
+        this.$f7.progressbar.set('#suggestions-progress-bar-persistence', 0)
+        this.$f7.progressbar.set('#suggestions-progress-bar-addons', 0)
+        let progress = 0
+        const self = this
+        function loading () {
+          setTimeout(() => {
+            const progressBefore = progress
+            progress += 10
+            self.$f7.progressbar.set('#suggestions-progress-bar-persistence', progress)
+            self.$f7.progressbar.set('#suggestions-progress-bar-addons', progress)
+            if (progressBefore < 100) {
+              loading() // keep loading
+            } else {
+              self.$oh.api.get('/rest/addons/suggestions').then((suggestions) => {
+                const suggestedAddons = suggestions.flatMap(s => s.id)
+                self.selectedAddons = self.addons.filter(a => (self.recommendedAddons.includes(a.uid) || suggestedAddons.includes(a.id)))
+                  .sort((a, b) => a.uid.toUpperCase().localeCompare(b.uid.toUpperCase()))
+                self.addonSuggestionsReady = true
+                self.$f7.emit('addon-suggestions-ready')
+                return Promise.resolve()
+              })
+            }
+          }, 1000)
+        }
+        loading()
+      })
     },
     preSelectedAddon (addon) {
       return (this.preSelectingAddonTypes.includes(addon.type) || this.preSelectingAddons.includes(addon.uid))
@@ -443,9 +563,9 @@ export default {
         console.log('Installing add-on: ' + addon.uid)
         progressDialog.setTitle(self.$t('setupwizard.addons.installingAddon', { addon: addon.label }))
 
-        self.$oh.api.post('/rest/addons/' + addon.uid + '/install', {}, 'text').then((data) => {
+        self.$oh.api.post('/rest/addons/' + addon.uid + '/install', {}, 'text').then(() => {
           const checkTimer = setInterval(() => {
-            checkAddonStatus(addon).then((addon) => {
+            checkAddonStatus(addon).then(() => {
               clearInterval(checkTimer)
               installNextAddon()
             }).catch(() => {
@@ -494,14 +614,23 @@ export default {
           default: [],
           masonry: null
         }
-      }).then((data) => {
+      }).then(() => {
         // this will force the pages to be refreshed
         this.$f7.emit('sidebarRefresh', null)
       })
     }
   },
   mounted () {
-    Promise.all([this.$oh.api.get('/rest/config-descriptions/system:i18n'), this.$oh.api.get('/rest/services/org.openhab.i18n/config')]).then((data) => {
+    const promises = [
+      this.$oh.api.get('/rest/config-descriptions/system:i18n'),
+      this.$oh.api.get('/rest/services/org.openhab.i18n/config'),
+      this.$oh.api.get('/rest/config-descriptions/system:network'),
+      this.$oh.api.get('/rest/services/org.openhab.network/config'),
+      this.$oh.api.get('/rest/addons')
+    ]
+
+    Promise.all(promises).then((data) => {
+      // i18n config descriptions
       this.availableLanguages = data[0].parameters.find(p => p.name === 'language').options
       this.availableRegions = data[0].parameters.find(p => p.name === 'region').options
       this.availableTimezones = data[0].parameters.find(p => p.name === 'timezone').options
@@ -517,21 +646,21 @@ export default {
         }
       }
 
+      // i18n config
       if (data[1].language) this.language = data[1].language
       if (data[1].location) this.location = data[1].location
       if (data[1].region) this.region = data[1].region
       if (data[1].timezone) this.timezone = data[1].timezone
 
       this.i18nReady = true
-    })
-    this.$oh.api.get('/rest/addons/suggestions').then((suggestedAddons) => {
-      const suggestions = suggestedAddons.flatMap(s => s.id)
-      this.$oh.api.get('/rest/addons').then(data => {
-        this.addons = data.sort((a, b) => a.label.toUpperCase().localeCompare(b.label.toUpperCase()))
-        this.selectedAddons = this.addons.filter(a => (this.recommendedAddons.includes(a.uid) || suggestions.includes(a.id)))
-          .sort((a, b) => a.uid.toUpperCase().localeCompare(b.uid.toUpperCase()))
-        this.addonsReady = true
-      })
+
+      // network config description & config
+      this.networkConfigDescription = data[2].parameters.find(p => p.name === 'primaryAddress')
+      this.network = data[3].primaryAddress
+      this.networksReady = true
+
+      // addons
+      this.addons = data[4].sort((a, b) => a.label.toUpperCase().localeCompare(b.label.toUpperCase()))
     })
   }
 }
