@@ -44,7 +44,7 @@
     comma:            ',',
     colon:            ':',
     hyphen:           '-',
-    number:           /-?[0-9]+(?:\.[0-9]*)?/,
+    number:           /[+-]?[0-9]+(?:\.[0-9]*)?/,
     string:           { match: /"(?:\\["\\]|[^\n"\\])*"/, value: x => x.slice(1, -1) }
   })
   const requiresItem = ['Group', 'Chart', 'Switch', 'Mapview', 'Slider', 'Selection', 'Setpoint', 'Input ', 'Colorpicker', 'Default']
@@ -154,17 +154,21 @@ WidgetColorAttrValue -> %lbracket _ Colors _ %rbracket                          
 
 Mappings -> Mapping                                                               {% (d) => [d[0]] %}
   | Mappings _ %comma _ Mapping                                                   {% (d) => d[0].concat([d[4]]) %}
-Mapping -> Command _ %equals _ Label                                              {% (d) => d[0][0].value + '=' + d[4][0].value %}
-  |  Command _ %equals _ Label _ %equals _ WidgetIconAttrValue                    {% (d) => d[0][0].value + '=' + d[4][0].value + '=' + d[8].join("") %}
+Mapping -> Command _ %colon _ Command _ %equals _ Label                           {% (d) => d[0] + ':' + d[4] + '=' + d[8] %}
+  | Command _ %equals _ Label                                                     {% (d) => d[0] + '=' + d[4] %}
+  | Command _ %colon _ Command _ %equals _ Label _ %equals _ WidgetIconAttrValue  {% (d) => d[0] + ':' + d[4] + '=' + d[8] + '=' + d[12].join("") %}
+  | Command _ %equals _ Label _ %equals _ WidgetIconAttrValue                     {% (d) => d[0] + '=' + d[4] + '=' + d[8].join("") %}
 
 Buttons -> Button                                                                 {% (d) => [d[0]] %}
   | Buttons _ %comma _ Button                                                     {% (d) => d[0].concat([d[4]]) %}
 Button -> %number _ %colon _ %number _ %colon _ ButtonValue                       {% (d) => { return { 'row':  parseInt(d[0].value), 'column': parseInt(d[4].value), 'command': d[8] } } %}
-ButtonValue -> Command _ %equals _ Label                                          {% (d) => d[0][0].value + '=' + d[4][0].value %}
-  | Command _ %equals _ Label _ %equals _ WidgetIconAttrValue                     {% (d) => d[0][0].value + '=' + d[4][0].value + '=' + d[8].join("") %}
+ButtonValue -> Command _ %equals _ Label                                          {% (d) => d[0][0].value + '=' + d[4] %}
+  | Command _ %equals _ Label _ %equals _ WidgetIconAttrValue                     {% (d) => d[0][0].value + '=' + d[4] + '=' + d[8].join("") %}
 
-Command -> %number | %identifier | %string
-Label -> %number | %identifier | %string
+Command -> %number | %identifier                                                  {% (d) => d[0].value %}
+  | %string                                                                       {% (d) => '"' + d[0].value + '"' %}
+Label -> %number | %identifier                                                    {% (d) => d[0].value %}
+  | %string                                                                       {% (d) => '"' + d[0].value + '"' %}
 
 Visibilities -> Conditions                                                        {% (d) => d[0] %}
   | Visibilities _ %comma _ Conditions                                            {% (d) => d[0].concat(d[4]) %}

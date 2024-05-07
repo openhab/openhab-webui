@@ -113,9 +113,9 @@ describe('dslUtil', () => {
       mappings: [
         '1=Morning',
         '2=Evening',
-        '10=Cinéma',
+        '10="Cinéma"',
         '11=TV',
-        '3=Bed time',
+        '3="Bed time"',
         '4=Night=moon'
       ]
     })
@@ -132,9 +132,9 @@ describe('dslUtil', () => {
       buttons: [
         { row: 1, column: 1, command: '1=Morning' },
         { row: 1, column: 2, command: '2=Evening' },
-        { row: 1, column: 3, command: '10=Cinéma' },
+        { row: 1, column: 3, command: '10="Cinéma"' },
         { row: 2, column: 1, command: '11=TV' },
-        { row: 2, column: 2, command: '3=Bed time' },
+        { row: 2, column: 2, command: '3="Bed time"' },
         { row: 2, column: 3, command: '4=Night=moon' }
       ]
     })
@@ -149,13 +149,37 @@ describe('dslUtil', () => {
     addWidget(component, 'Selection', {
       item: 'Echos',
       mappings: [
-        'EchoDot1=Echo 1',
-        'EchoDot2=Echo 2',
-        'EchoDot1,EchoDot2=Alle'
+        'EchoDot1="Echo 1"',
+        'EchoDot2="Echo 2"',
+        '"EchoDot1,EchoDot2"=Alle'
       ]
     })
     const sitemap = dslUtil.toDsl(component).split('\n')
     expect(sitemap[1]).toEqual('    Selection item=Echos mappings=[EchoDot1="Echo 1", EchoDot2="Echo 2", "EchoDot1,EchoDot2"=Alle]')
+  })
+
+  it('renders a widget with mappings and release command correctly', () => {
+    const component = createSitemapComponent('test', 'Test')
+    const widget = {
+    }
+    addWidget(component, 'Switch', {
+      item: 'pressAndRelease',
+      mappings: ['ON:OFF=ON']
+    })
+    const sitemap = dslUtil.toDsl(component).split('\n')
+    expect(sitemap[1]).toEqual('    Switch item=pressAndRelease mappings=[ON:OFF=ON]')
+  })
+
+  it('renders a widget with mappings and release command and string commands correctly', () => {
+    const component = createSitemapComponent('test', 'Test')
+    const widget = {
+    }
+    addWidget(component, 'Switch', {
+      item: 'pressAndRelease',
+      mappings: ['"ON command":"OFF command"="ON"']
+    })
+    const sitemap = dslUtil.toDsl(component).split('\n')
+    expect(sitemap[1]).toEqual('    Switch item=pressAndRelease mappings=["ON command":"OFF command"="ON"]')
   })
 
   it('renders a widget with 0 value parameter correctly', () => {

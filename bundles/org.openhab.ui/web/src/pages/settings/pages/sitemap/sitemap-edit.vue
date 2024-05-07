@@ -57,11 +57,14 @@
                                                             {column: {width: '10%', type: 'number', min: 1, placeholder: 'col'}},
                                                             {command: {}}])" />
               </f7-block>
-              <f7-block v-if="selectedWidget && ['Switch', 'Selection'].indexOf(selectedWidget.component) >= 0">
+              <f7-block v-if="selectedWidget && selectedWidget.component === 'Switch'">
+                <div><f7-block-title>Mappings</f7-block-title></div>
+                <attribute-details :widget="selectedWidget" attribute="mappings" placeholder="command:releaseCommand = label = icon" />
+              </f7-block>
+              <f7-block v-if="selectedWidget && selectedWidget.component === 'Selection'">
                 <div><f7-block-title>Mappings</f7-block-title></div>
                 <attribute-details :widget="selectedWidget" attribute="mappings" placeholder="command = label = icon" />
-              </f7-block>
-              <f7-block v-if="selectedWidget && selectedWidget.component !== 'Sitemap'">
+              </f7-block>              <f7-block v-if="selectedWidget && selectedWidget.component !== 'Sitemap'">
                 <div><f7-block-title>Icon Rules</f7-block-title></div>
                 <attribute-details :widget="selectedWidget" attribute="iconrules" placeholder="item_name operator value = icon" />
               </f7-block>
@@ -505,7 +508,7 @@ export default {
             let label = widget.config && widget.config.label ? widget.config.label : 'without label'
             Object.keys(widget.config).filter(attr => ['buttons', 'mappings', 'visibility', 'valuecolor', 'labelcolor', 'iconcolor', 'iconrules'].includes(attr)).forEach(attr => {
               widget.config[attr].forEach(param => {
-                if (((attr === 'mappings') && !this.validateMapping(param)) ||
+                if (((attr === 'mappings') && !this.validateMapping(widget.component, param)) ||
                     ((attr === 'visibility') && !this.validateRule(param)) ||
                     ((['valuecolor', 'labelcolor', 'iconcolor', 'iconrules'].includes(attr)) && !this.validateRule(param, true))) {
                   validationWarnings.push(widget.component + ' widget ' + label + ', syntax error in ' + attr + ': ' + param)
@@ -517,7 +520,7 @@ export default {
                   if (!param.column || isNaN(param.column)) {
                     validationWarnings.push(widget.component + ' widget ' + label + ', invalid column configured: ' + param.column)
                   }
-                  if (!this.validateMapping(param.command)) {
+                  if (!this.validateMapping(widget.component, param.command)) {
                     validationWarnings.push(widget.component + ' widget ' + label + ', syntax error in button command: ' + param.command)
                   }
                 }
@@ -542,7 +545,11 @@ export default {
         return true
       }
     },
-    validateMapping (mapping) {
+    validateMapping (component, mapping) {
+      if (component === 'Switch') {
+        // for Switch widget, also check for releaseCommand
+        return /^\s*("[^\n"]*"|[^\n="]+)\s*(:\s*("[^\n"]*"|[^\n="]+)\s*)?=\s*("[^\n"]*"|[^\n="]+)\s*(=\s*("[^\n"]*"|[^\n="]+))?$/u.test(mapping)
+      }
       return /^\s*("[^\n"]*"|[^\n="]+)\s*=\s*("[^\n"]*"|[^\n="]+)\s*(=\s*("[^\n"]*"|[^\n="]+))?$/u.test(mapping)
     },
     validateRule (rule, hasArgument = false) {
@@ -562,10 +569,6 @@ export default {
             widget.config[key] = widget.config[key].filter(Boolean)
             if (key === 'buttons') {
               widget.config[key].sort((value1, value2) => (value1.row - value2.row) || (value1.column - value2.column))
-              widget.config[key].forEach(value => this.removeQuotes(value.command))
-            }
-            if (['mappings', 'visibility', 'valuecolor', 'labelcolor', 'iconcolor', 'iconrules'].includes(key)) {
-              widget.config[key].forEach(this.removeQuotes)
             }
           }
           if (!widget.config[key] && widget.config[key] !== 0) {
@@ -575,17 +578,6 @@ export default {
       }
       if (widget.slots && widget.slots.widgets) {
         widget.slots.widgets.forEach(this.cleanConfig)
-      }
-    },
-    removeQuotes (value) {
-      if (value) {
-        if (typeof value === 'string') {
-          value = value.replace(/"|'/g, '')
-          return
-        } else if (typeof value === 'number') {
-          return
-        }
-        Object.keys(value).forEach(k => this.removeQuotes(value[k]))
       }
     },
     preProcessSitemapLoad (sitemap) {

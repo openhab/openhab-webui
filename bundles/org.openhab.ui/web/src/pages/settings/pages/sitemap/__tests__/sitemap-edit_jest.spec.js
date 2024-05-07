@@ -343,8 +343,58 @@ describe('SitemapEdit', () => {
       '2=Evening',
       '10=Cinéma',
       '11=TV',
-      '3=Bed time',
+      '"3 time"=Bed time',
       '4=Night=moon'
+    ])
+    wrapper.vm.validateWidgets()
+    expect(lastDialogConfig).toBeFalsy()
+  })
+
+  it('validates mappings with release command', async () => {
+    wrapper.vm.selectWidget([wrapper.vm.sitemap, null])
+    await wrapper.vm.$nextTick()
+    wrapper.vm.addWidget('Switch')
+    await wrapper.vm.$nextTick()
+    wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0], wrapper.vm.sitemap])
+    await wrapper.vm.$nextTick()
+    localVue.set(wrapper.vm.selectedWidget.config, 'item', 'Item1')
+    localVue.set(wrapper.vm.selectedWidget.config, 'label', 'Switch Test')
+    localVue.set(wrapper.vm.selectedWidget.config, 'mappings', [
+      'Morning'
+    ])
+
+    // should not validate as the mapping has a syntax error
+    lastDialogConfig = null
+    wrapper.vm.validateWidgets()
+    expect(lastDialogConfig).toBeTruthy()
+    expect(lastDialogConfig.content).toMatch(/Switch widget Switch Test, syntax error in mappings: Morning/)
+
+    // configure a correct mapping and check that there are no validation errors anymore
+    lastDialogConfig = null
+    wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0], wrapper.vm.sitemap])
+    await wrapper.vm.$nextTick()
+    localVue.set(wrapper.vm.selectedWidget.config, 'mappings', [
+      'ON="ON"'
+    ])
+    wrapper.vm.validateWidgets()
+    expect(lastDialogConfig).toBeFalsy()
+
+    // configure mapping for a press and release button and check that there are no validation errors
+    lastDialogConfig = null
+    wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0], wrapper.vm.sitemap])
+    await wrapper.vm.$nextTick()
+    localVue.set(wrapper.vm.selectedWidget.config, 'mappings', [
+      'ON:OFF="ON"'
+    ])
+    wrapper.vm.validateWidgets()
+    expect(lastDialogConfig).toBeFalsy()
+
+    // configure mapping for a press and release button with string commands and check that there are no validation errors
+    lastDialogConfig = null
+    wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0], wrapper.vm.sitemap])
+    await wrapper.vm.$nextTick()
+    localVue.set(wrapper.vm.selectedWidget.config, 'mappings', [
+      '"ON command":"OFF command"=ON=icon'
     ])
     wrapper.vm.validateWidgets()
     expect(lastDialogConfig).toBeFalsy()
