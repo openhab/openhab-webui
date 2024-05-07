@@ -77,7 +77,7 @@ export default function defineOHBlocks (f7, isGraalJs) {
     }
   }
 
-  Blockly.Blocks['oh_things'] = {
+  Blockly.Blocks['oh_getthings'] = {
     init: function () {
       this.appendDummyInput()
         .appendField('get things')
@@ -90,7 +90,7 @@ export default function defineOHBlocks (f7, isGraalJs) {
     }
   }
 
-  javascriptGenerator.forBlock['oh_things'] = function (block) {
+  javascriptGenerator.forBlock['oh_getthings'] = function (block) {
     if (isGraalJs) {
       return ['things.getThings()', 0]
     } else {
@@ -123,9 +123,8 @@ export default function defineOHBlocks (f7, isGraalJs) {
   Blockly.Blocks['oh_getthing_attribute'] = {
     init: function () {
       const block = this
-      const choices = [['uid', 'Uid'], ['label', 'Label'], ['status', 'Status'], ['status info', 'StatusInfo'], ['location', 'Location'], ['enabled', 'IsEnabled'], ['thing type UID', 'ThingTypeUID'], ['bridge UID', 'BridgeUID']]
       const dropdown = new Blockly.FieldDropdown(
-        choices,
+        [['UID', 'uid'], ['label', 'label'], ['status', 'status'], ['status info', 'statusInfo'], ['location', 'location'], ['is enabled', 'enabled'], ['thing type UID', 'thingTypeUID'], ['bridge UID', 'bridgeUID']],
         function (newMode) {
           block._updateType(newMode)
         })
@@ -142,14 +141,14 @@ export default function defineOHBlocks (f7, isGraalJs) {
       this.setTooltip(function () {
         const attributeName = block.getFieldValue('attributeName')
         let TIP = {
-          'Uid': 'unique id of the Thing (string)',
-          'Label': 'label of the Thing (string)',
-          'Status': 'status of the Thing (string)',
-          'StatusInfo': 'statusInfo of the Thing (string)',
-          'Location': 'location of the Thing (string)',
-          'Enabled': 'is the thing enabled (boolean)',
-          'ThingTypeUID': 'unique id of the Thing\'s type (string)',
-          'BridgeUID': 'unique id of the Thing\'s bridge (string)'
+          'uid': 'unique id of the Thing (string)',
+          'label': 'label of the Thing (string)',
+          'status': 'status of the Thing (string)',
+          'statusInfo': 'detailed status of the Thing (string)',
+          'location': 'location of the Thing (string)',
+          'enabled': 'is the thing enabled (boolean)',
+          'thingTypeUID': 'unique id of the Thing\'s type (string)',
+          'bridgeUID': 'unique id of the Thing\'s bridge (string)'
         }
         return TIP[attributeName] + ' \n Note: make sure to use "get thing xxx"-Block for the connected block when working with Variables, not "thing xxx"-Block'
       })
@@ -159,9 +158,9 @@ export default function defineOHBlocks (f7, isGraalJs) {
      * Modify this block to have the correct output type based on the attribute.
      */
     _updateType: function (newAttributeName) {
-      if (['Uid', 'Status', 'StatusInfo', 'Location', 'thingTypeUID', 'bridgeUID'].includes(newAttributeName)) {
+      if (['uid', 'status', 'statusInfo', 'location', 'thingTypeUID', 'bridgeUID'].includes(newAttributeName)) {
         this.outputConnection.setCheck('String')
-      } else if (newAttributeName === 'Enabled') {
+      } else if (newAttributeName === 'enabled') {
         this.outputConnection.setCheck('Boolean')
       } else {
         this.outputConnection.setCheck('String')
@@ -192,13 +191,12 @@ export default function defineOHBlocks (f7, isGraalJs) {
 * Code part
 */
   javascriptGenerator.forBlock['oh_getthing_attribute'] = function (block) {
-    const theThing = javascriptGenerator.valueToCode(block, 'thing', javascriptGenerator.ORDER_ATOMIC)
+    const thing = javascriptGenerator.valueToCode(block, 'thing', javascriptGenerator.ORDER_ATOMIC)
     const inputType = blockGetCheckedInputType(block, 'thing')
-    let attributeName = block.getFieldValue('attributeName')
+    const attributeName = block.getFieldValue('attributeName')
 
     if (isGraalJs) {
-      attributeName = attributeName.charAt(0).toLowerCase() + attributeName.slice(1)
-      let code = (inputType === 'oh_thing') ? `things.getThing(${theThing}).${attributeName}` : `${theThing}.${attributeName}`
+      let code = (inputType === 'oh_thing') ? `things.getThing(${thing}).${attributeName}` : `${thing}.${attributeName}`
       return [code, 0]
     } else {
       throw new Error(unavailMsg)

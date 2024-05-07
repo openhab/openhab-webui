@@ -516,7 +516,7 @@
               <shadow type="oh_thing" />
             </value>
           </block>
-          <block type="oh_things" />
+          <block type="oh_getthings" />
           <block type="oh_thing" />
         </category>
 
