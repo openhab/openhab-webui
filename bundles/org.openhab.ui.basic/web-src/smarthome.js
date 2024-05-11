@@ -1193,7 +1193,6 @@
 			if (_t.item === "") {
 				return;
 			}
-			window.console.log("send " + value);
 			_t.parentNode.dispatchEvent(createEvent(
 				"control-change", {
 					item: _t.item,
