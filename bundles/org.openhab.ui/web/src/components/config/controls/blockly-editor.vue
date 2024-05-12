@@ -551,6 +551,7 @@
               </shadow>
             </value>
           </block>
+          <block type="oh_timer_context" v-if="isGraalJs" />
           <block type="oh_timer_cancel">
             <value name="timerName">
               <shadow type="text">

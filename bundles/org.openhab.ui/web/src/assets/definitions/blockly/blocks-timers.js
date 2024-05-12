@@ -60,6 +60,8 @@ export default function defineOHBlocks_Timers (f7, isGraalJs) {
           .appendField('do with')
           .appendField(new Blockly.FieldDropdown([['private', 'private'], ['shared', 'shared']]), 'cache')
           .appendField('timer')
+        this.appendValueInput('context')
+          .appendField('with context')
       } else {
         tn.appendField('do with timer')
       }
@@ -68,7 +70,7 @@ export default function defineOHBlocks_Timers (f7, isGraalJs) {
         .setCheck(null)
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
-      this.setTooltip('Create a named timer')
+      this.setTooltip('Create a named timer.\nUse the timer-context block to access the provided context.')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-timers-and-delays.html#after-period-of-time-do-with-timer')
     }
   }
@@ -83,13 +85,14 @@ export default function defineOHBlocks_Timers (f7, isGraalJs) {
     const delay = javascriptGenerator.valueToCode(block, 'delay', javascriptGenerator.ORDER_ATOMIC)
     const timerName = javascriptGenerator.valueToCode(block, 'timerName', javascriptGenerator.ORDER_ATOMIC)
     const timerCode = javascriptGenerator.statementToCode(block, 'timerCode')
+    const context = javascriptGenerator.valueToCode(block, 'context', javascriptGenerator.ORDER_ATOMIC)
 
     if (isGraalJs) {
       const cacheType = getCacheType(this)
       let code = `if (cache.${cacheType}.exists(${timerName}) === false || cache.${cacheType}.get(${timerName}).hasTerminated()) {\n`
-      code += `  cache.${cacheType}.put(${timerName}, actions.ScriptExecution.createTimer(${timerName}, time.ZonedDateTime.now().${delayUnits}(${delay}), function () {\n`
+      code += `  cache.${cacheType}.put(${timerName}, actions.ScriptExecution.createTimer(${timerName}, time.ZonedDateTime.now().${delayUnits}(${delay}), function (timer_context) {\n`
       code += timerCode.replace(/^/gm, '  ')
-      code += '  }));\n'
+      code += `},${context}));\n`
       code += '};\n'
       return code
     } else {
@@ -103,6 +106,29 @@ export default function defineOHBlocks_Timers (f7, isGraalJs) {
       code += '}\n'
       return code
     }
+  }
+
+  /*
+  * Provided timer-context
+  * Blockly part
+  */
+  Blockly.Blocks['oh_timer_context'] = {
+    init: function () {
+      this.appendDummyInput()
+        .appendField('timer context')
+      this.setOutput(true)
+      this.setColour(0)
+      this.setTooltip('Returns the provided context of the timer to be used within the timer statement block.')
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-timers-and-delays.html#timer-context')
+    }
+  }
+
+  /*
+  * Provided timer-context
+  * Code part
+  */
+  javascriptGenerator.forBlock['oh_timer_context'] = function (block) {
+    return ['timer_context', javascriptGenerator.ORDER_NONE]
   }
 
   /*
@@ -124,6 +150,8 @@ export default function defineOHBlocks_Timers (f7, isGraalJs) {
           .appendField('do with')
           .appendField(new Blockly.FieldDropdown([['private', 'private'], ['shared', 'shared']]), 'cache')
           .appendField('timer')
+        this.appendValueInput('context')
+          .appendField('with context')
       } else {
         tn.appendField('do with timer')
       }
@@ -134,7 +162,7 @@ export default function defineOHBlocks_Timers (f7, isGraalJs) {
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
       this.setColour(0)
-      this.setTooltip('Simple Timer creation with control over rule retriggering action')
+      this.setTooltip('Simple Timer creation with control over rule retriggering action.\nUse the timer-context block to access the provided context.')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-timers-and-delays.html#after-period-of-time-do-with-timer-with-options-on-retriggering-rule')
     }
   }
@@ -150,13 +178,14 @@ export default function defineOHBlocks_Timers (f7, isGraalJs) {
     const timerName = javascriptGenerator.valueToCode(block, 'timerName', javascriptGenerator.ORDER_ATOMIC)
     const timerCode = javascriptGenerator.statementToCode(block, 'timerCode')
     const retrigger = block.getFieldValue('retrigger')
+    const context = javascriptGenerator.valueToCode(block, 'context', javascriptGenerator.ORDER_ATOMIC)
 
     if (isGraalJs) {
       const cacheType = getCacheType(this)
       let code = `if (cache.${cacheType}.exists(${timerName}) === false || cache.${cacheType}.get(${timerName}).hasTerminated()) {\n`
-      code += `  cache.${cacheType}.put(${timerName}, actions.ScriptExecution.createTimer(${timerName}, time.ZonedDateTime.now().${delayUnits}(${delay}), function () {\n`
+      code += `  cache.${cacheType}.put(${timerName}, actions.ScriptExecution.createTimer(${timerName}, time.ZonedDateTime.now().${delayUnits}(${delay}), function (timer_context) {\n`
       code += timerCode.replace(/^/gm, '  ')
-      code += '  }));\n'
+      code += `},${context}));\n`
       code += '} else {\n'
       switch (retrigger) {
         case 'reschedule':
