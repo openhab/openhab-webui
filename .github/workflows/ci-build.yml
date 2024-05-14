@@ -106,7 +106,7 @@ jobs:
           path: build.log
 
       - name: Upload SAT Summary Report
-        if: ${{ always() && ((steps.build.outcome == 'success') || (steps.build.outcome == 'failure') || (steps.build-j21.outcome == 'success') || (steps.build-j21.outcome == 'failure')) }}
+        if: ${{ matrix.java == '17' && always() && ((steps.build.outcome == 'success') || (steps.build.outcome == 'failure') || (steps.build-j21.outcome == 'success') || (steps.build-j21.outcome == 'failure')) }}
         uses: actions/upload-artifact@v4
         with:
           name: sat-summary-report
