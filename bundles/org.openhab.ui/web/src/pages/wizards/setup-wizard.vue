@@ -480,6 +480,13 @@ export default {
       }
       this.$refs.addons.show()
     },
+    /**
+     * Manages the loading process of suggested add-ons.
+     *
+     * If the network config has changed, first wait 10 seconds before loading add-on suggestions to give
+     * the server enough time to discover suggestions, otherwise load suggestions instantaneous.
+     * Also handle the loading progress bar.
+     */
     getSuggestedAddons () {
       if (this.addonSuggestionsReady) return
       const self = this
@@ -511,13 +518,16 @@ export default {
       }
     },
     /**
-     * Load the list of suggested add-ons.
-     * Emits <code>addon-suggestions-ready</code> event once add-on suggestions are ready.
+     * Load and process the list of suggested add-ons.
+     *
+     * Sets <code>this.addonSuggestionsReady</code> to <code>true</code> once addon-suggestions are ready.
+     *
+     * @emits addon-suggestions-ready once add-on suggestions are ready
      */
     getSuggestions () {
       const self = this
       self.$oh.api.get('/rest/addons/suggestions').then((suggestions) => {
-        let suggestedAddons = suggestions.flatMap(s => s.id)
+        const suggestedAddons = suggestions.flatMap(s => s.id)
         self.selectedAddons = self.addons.filter(a => (self.recommendedAddons.includes(a.uid) || suggestedAddons.includes(a.id)))
           .sort((a, b) => a.uid.toUpperCase().localeCompare(b.uid.toUpperCase()))
         self.addonSuggestionsReady = true
