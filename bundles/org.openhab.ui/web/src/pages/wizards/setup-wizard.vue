@@ -120,7 +120,7 @@
           {{ $t('setupwizard.network.header1') }} {{ $t('setupwizard.network.header2') }}
         </f7-block>
         <f7-list>
-          <parameter-options class="network" v-if="networksReady" :config-description="networkConfigDescription" :value="network" @input="(value) => network = value" />
+          <parameter-options class="network" v-if="networksReady" :config-description="networkConfigDescription" :value="network" @input="(value) => changeNetwork(value)" />
         </f7-list>
         <f7-block class="display-flex flex-direction-column padding">
           <div>
@@ -150,7 +150,7 @@
           {{ $t('setupwizard.persistence.header1') }} {{ $t('setupwizard.persistence.header2') }}
         </f7-block>
         <f7-block style="margin-top: 0; margin-bottom: 2em">
-          <f7-block v-if="!addonSuggestionsReady">
+          <f7-block v-if="waitingForAddonSuggestions">
             <div class="display-flex justify-content-center margin-bottom">
               <f7-progressbar id="suggestions-progress-bar-persistence" :progress="0" />
             </div>
@@ -194,7 +194,7 @@
           <a class="text-color-blue external" target="_blank" href="https://www.openhab.org/addons/" v-t="'setupwizard.addons.browseAddonsOnWebsite'" />
         </f7-block>
         <f7-block class="padding">
-          <f7-block v-if="!addonSuggestionsReady">
+          <f7-block v-if="waitingForAddonSuggestions">
             <div class="display-flex justify-content-center margin-bottom">
               <f7-progressbar id="suggestions-progress-bar-addons" :progress="0" />
             </div>
@@ -320,6 +320,9 @@ export default {
       networksReady: false,
       networkConfigDescription: null,
       network: null,
+      networkChanged: false,
+      waitingForAddonSuggestions: false,
+      waitingTimeout: null,
       addonSuggestionsReady: false,
       addons: [],
       // all recommended addons, pre-defined
@@ -421,14 +424,24 @@ export default {
         this.skipNetwork()
       }
     },
+    changeNetwork (newNetwork) {
+      if (newNetwork && (this.network !== newNetwork)) {
+        this.networkChanged = true
+        this.network = newNetwork
+      }
+    },
     setNetwork () {
-      this.$oh.api.put('/rest/services/org.openhab.network/config', {
-        primaryAddress: this.network
-      }).then(() => {
-        this.addonSuggestionsReady = false
-        this.getSuggestedAddons()
-        this.showPersistence()
-      })
+      if (this.networkChanged) {
+        this.$oh.api.put('/rest/services/org.openhab.network/config', {
+          primaryAddress: this.network
+        }).then(() => {
+          this.addonSuggestionsReady = false
+          this.getSuggestedAddons()
+          this.showPersistence()
+        })
+      } else {
+        this.skipNetwork()
+      }
     },
     skipNetwork () {
       this.getSuggestedAddons()
@@ -468,40 +481,57 @@ export default {
       this.$refs.addons.show()
     },
     /**
-     * Load the list of suggested add-ons.
-     * Emits <code>addon-suggestions-ready</code> event once add-on suggestions are ready.
+     * Manages the loading process of suggested add-ons.
      *
-     * @returns {Promise} resolves quickly if <code>this.addonSuggestionsReady</code> is <code>true</code>
+     * If the network config has changed, first wait 10 seconds before loading add-on suggestions to give
+     * the server enough time to discover suggestions, otherwise load suggestions instantaneous.
+     * Also handle the loading progress bar.
      */
     getSuggestedAddons () {
-      if (this.addonSuggestionsReady) return Promise.resolve()
-      // wait 10 seconds for suggestions to refresh after network scan
-      return new Promise(() => {
+      if (this.addonSuggestionsReady) return
+      const self = this
+      let progress = 0
+      function loading () {
+        self.waitingTimeout = setTimeout(() => {
+          const progressBefore = progress
+          progress += 10
+          self.$f7.progressbar.set('#suggestions-progress-bar-persistence', progress)
+          self.$f7.progressbar.set('#suggestions-progress-bar-addons', progress)
+          if (progressBefore < 100) {
+            loading()
+          } else {
+            self.getSuggestions()
+            self.waitingForAddonSuggestions = false
+          }
+        }, 1000)
+      }
+      if (this.networkChanged) {
+        // wait 10 seconds for suggestions to refresh after network scan
+        this.networkChanged = false
+        this.waitingForAddonSuggestions = true
         this.$f7.progressbar.set('#suggestions-progress-bar-persistence', 0)
         this.$f7.progressbar.set('#suggestions-progress-bar-addons', 0)
-        let progress = 0
-        const self = this
-        function loading () {
-          setTimeout(() => {
-            const progressBefore = progress
-            progress += 10
-            self.$f7.progressbar.set('#suggestions-progress-bar-persistence', progress)
-            self.$f7.progressbar.set('#suggestions-progress-bar-addons', progress)
-            if (progressBefore < 100) {
-              loading() // keep loading
-            } else {
-              self.$oh.api.get('/rest/addons/suggestions').then((suggestions) => {
-                const suggestedAddons = suggestions.flatMap(s => s.id)
-                self.selectedAddons = self.addons.filter(a => (self.recommendedAddons.includes(a.uid) || suggestedAddons.includes(a.id)))
-                  .sort((a, b) => a.uid.toUpperCase().localeCompare(b.uid.toUpperCase()))
-                self.addonSuggestionsReady = true
-                self.$f7.emit('addon-suggestions-ready')
-                return Promise.resolve()
-              })
-            }
-          }, 1000)
-        }
+        clearTimeout(this.waitingTimeout)
         loading()
+      } else if (!this.waitingForAddonSuggestions) {
+        this.getSuggestions()
+      }
+    },
+    /**
+     * Load and process the list of suggested add-ons.
+     *
+     * Sets <code>this.addonSuggestionsReady</code> to <code>true</code> once addon-suggestions are ready.
+     *
+     * @emits addon-suggestions-ready once add-on suggestions are ready
+     */
+    getSuggestions () {
+      const self = this
+      self.$oh.api.get('/rest/addons/suggestions').then((suggestions) => {
+        const suggestedAddons = suggestions.flatMap(s => s.id)
+        self.selectedAddons = self.addons.filter(a => (self.recommendedAddons.includes(a.uid) || suggestedAddons.includes(a.id)))
+          .sort((a, b) => a.uid.toUpperCase().localeCompare(b.uid.toUpperCase()))
+        self.addonSuggestionsReady = true
+        self.$f7.emit('addon-suggestions-ready')
       })
     },
     preSelectedAddon (addon) {
