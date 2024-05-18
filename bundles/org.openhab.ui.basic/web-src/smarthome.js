@@ -2459,7 +2459,6 @@
 				_t.valueNode.innerHTML = value;
 			}
 			if (_t.locked) {
-				_t.reloadIcon(itemState);
 				return;
 			}
 			if (value.indexOf(" ") > 0) {
