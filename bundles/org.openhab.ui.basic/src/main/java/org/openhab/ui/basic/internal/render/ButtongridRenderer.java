@@ -12,7 +12,9 @@
  */
 package org.openhab.ui.basic.internal.render;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.ECollections;
@@ -69,7 +71,7 @@ public class ButtongridRenderer extends AbstractWidgetRenderer {
         Buttongrid grid = (Buttongrid) w;
 
         Map<Integer, Map<Integer, ButtonDefinition>> rowsButtons = new HashMap<>();
-        Map<Integer, Map<Integer, Button>> rowsButtonWidgets = new HashMap<>();
+        Map<Integer, Map<Integer, List<Button>>> rowsButtonWidgets = new HashMap<>();
 
         int maxColumn = 0;
         int mawRow = 0;
@@ -123,16 +125,26 @@ public class ButtongridRenderer extends AbstractWidgetRenderer {
                             "Several buttons at row {} and column {} in \"buttons\" parameter and as \"Button\" element; only the first is considered",
                             row, column);
                 } else {
-                    Map<Integer, Button> columnsButtonWidgets = rowsButtonWidgets.get(row);
+                    Map<Integer, List<Button>> columnsButtonWidgets = rowsButtonWidgets.get(row);
                     if (columnsButtonWidgets == null) {
                         columnsButtonWidgets = new HashMap<>();
                         rowsButtonWidgets.put(row, columnsButtonWidgets);
                     }
-                    if (columnsButtonWidgets.get(column) != null) {
-                        logger.warn("Several \"Button\" elements at row {} and column {}; only the first is considered",
-                                row, column);
+                    List<Button> buttonWidgets = columnsButtonWidgets.get(column);
+                    if (buttonWidgets == null) {
+                        buttonWidgets = new ArrayList<>();
+                        buttonWidgets.add(button);
+                        columnsButtonWidgets.put(column, buttonWidgets);
+                    } else if (!buttonWidgets.get(0).getVisibility().isEmpty() && !button.getVisibility().isEmpty()) {
+                        buttonWidgets.add(button);
                     } else {
-                        columnsButtonWidgets.put(column, button);
+                        logger.warn(
+                                "Several \"Button\" elements at row {} and column {}; only the first button without visibility conditions is kept",
+                                row, column);
+                        if (!buttonWidgets.get(0).getVisibility().isEmpty() && button.getVisibility().isEmpty()) {
+                            buttonWidgets.clear();
+                            buttonWidgets.add(button);
+                        }
                     }
                 }
             }
@@ -164,7 +176,7 @@ public class ButtongridRenderer extends AbstractWidgetRenderer {
     }
 
     private void buildRow(int columns, @Nullable Map<Integer, ButtonDefinition> buttonsInRow,
-            @Nullable Map<Integer, Button> buttonWidgetsInRow, StringBuilder builder) throws RenderException {
+            @Nullable Map<Integer, List<Button>> buttonWidgetsInRow, StringBuilder builder) throws RenderException {
         // Add extra cells to fill the row
         // Try to center the grid at best with one extra cell at beginning of row and one at end of row
         int extraCellSizeDesktop = 12 % columns;
@@ -186,15 +198,18 @@ public class ButtongridRenderer extends AbstractWidgetRenderer {
         int sizePhone = Math.max(1, 4 / columns);
         for (int col = 1; col <= columns; col++) {
             ButtonDefinition button = buttonsInRow == null ? null : buttonsInRow.get(col);
-            Button buttonWidget = buttonWidgetsInRow == null ? null : buttonWidgetsInRow.get(col);
+            List<Button> buttonWidgets = buttonWidgetsInRow == null ? null : buttonWidgetsInRow.get(col);
             if (button != null) {
                 String buttonHtml = buildButton(null, button.getLabel(), button.getCmd(), "", button.getIcon(), true);
                 buildCell(false, sizeDessktop, col > 8, sizeTablet, col > 4, sizePhone, buttonHtml, builder);
-            } else if (buttonWidget != null) {
-                String icon = buttonWidget.getStaticIcon() != null || buttonWidget.getIcon() != null
-                        || !buttonWidget.getIconRules().isEmpty() ? getCategory(buttonWidget) : null;
-                String buttonHtml = buildButton(buttonWidget, buttonWidget.getLabel(), buttonWidget.getCmd(),
-                        buttonWidget.getReleaseCmd(), icon, buttonWidget.isStateless());
+            } else if (buttonWidgets != null) {
+                String buttonHtml = "";
+                for (Button b : buttonWidgets) {
+                    String icon = b.getStaticIcon() != null || b.getIcon() != null || !b.getIconRules().isEmpty()
+                            ? getCategory(b)
+                            : null;
+                    buttonHtml += buildButton(b, b.getLabel(), b.getCmd(), b.getReleaseCmd(), icon, b.isStateless());
+                }
                 buildCell(false, sizeDessktop, col > 8, sizeTablet, col > 4, sizePhone, buttonHtml, builder);
             } else {
                 buildEmptyCell(false, sizeDessktop, col > 8, sizeTablet, col > 4, sizePhone, builder);
