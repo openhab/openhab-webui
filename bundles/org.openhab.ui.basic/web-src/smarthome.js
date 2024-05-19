@@ -359,7 +359,9 @@
 		_t.id = _t.parentNode.getAttribute(o.idAttribute);
 		_t.iconWithState = _t.parentNode.getAttribute(o.iconWithStateAttribute) === "true";
 		_t.visible = !_t.formRow.classList.contains(o.formRowHidden);
-		_t.fillFullWidth = _t.formRow.classList.contains(o.cell12Col);
+		if (_t.fillFullWidth === undefined) {
+			_t.fillFullWidth = _t.formRow.classList.contains(o.cell12Col);
+		}
 		_t.cellSizeTablet = 4;
 		_t.cellSizeDesktop = 4;
 		_t.headerRow = _t.parentNode.getAttribute("data-header-row");
@@ -369,8 +371,12 @@
 			_t.label = _t.formHeaderRow.querySelector(o.formLabel);
 		} else {
 			_t.formHeaderRow = null;
-			_t.iconContainer = _t.formRow.querySelector(o.formIcon);
-			_t.label = _t.formRow.querySelector(o.formLabel);
+			if (_t.iconContainer === undefined) {
+				_t.iconContainer = _t.formRow.querySelector(o.formIcon);
+			}
+			if (_t.label === undefined) {
+				_t.label = _t.formRow.querySelector(o.formLabel);
+			}
 		}
 		_t.labelColor = _t.parentNode.getAttribute(o.labelColorAttribute);
 		_t.valueColor = _t.parentNode.getAttribute(o.valueColorAttribute);
@@ -378,15 +384,14 @@
 
 		_t.findIcon = function() {
 			var
-				splitIconAttr,
-				formRow = _t.formHeaderRow !== null ? _t.formHeaderRow : _t.formRow;
+				splitIconAttr;
 
 			_t.iconSource = null;
 			if (_t.iconContainer === null) {
 				_t.icon = null;
 				return;
 			}
-			_t.icon = formRow.querySelector(o.formIconImg);
+			_t.icon = _t.iconContainer.querySelector("img");
 			if (_t.icon !== null) {
 				_t.iconSource = "oh";
 				splitIconAttr = _t.icon.getAttribute(o.iconAttribute).split(":");
@@ -396,7 +401,7 @@
 				}
 				return;
 			}
-			_t.icon = formRow.querySelector(o.formIconSvg);
+			_t.icon = _t.iconContainer.querySelector("svg");
 			if (_t.icon !== null) {
 				_t.iconSource = "oh";
 				splitIconAttr = _t.icon.getAttribute(o.iconAttribute).split(":");
@@ -406,7 +411,7 @@
 				}
 				return;
 			}
-			_t.icon = formRow.querySelector(o.formIconIconify);
+			_t.icon = _t.iconContainer.querySelector(o.iconIconify);
 			if (_t.icon !== null) {
 				_t.iconSource = "if";
 				splitIconAttr = _t.icon.getAttribute("icon").split(":");
@@ -416,12 +421,12 @@
 				}
 				return;
 			}
-			_t.icon = formRow.querySelector(o.formIconMaterial);
+			_t.icon = _t.iconContainer.querySelector(o.iconMaterial);
 			if (_t.icon !== null) {
 				_t.iconSource = "material";
 				return;
 			}
-			_t.icon = formRow.querySelector(o.formIconFramework7);
+			_t.icon = _t.iconContainer.querySelector(o.iconFramework7);
 			if (_t.icon !== null) {
 				_t.iconSource = "f7";
 			}
@@ -523,7 +528,8 @@
 				splitIcon,
 				iconSrc = "oh",
 				iconSet = "classic",
-				iconName = "none";
+				iconName = "none",
+				prevIconifyIconReplaced = _t.iconifyIconReplaced;
 
 			// Some widgets don't have icons
 			if (_t.icon === null) {
@@ -600,9 +606,9 @@
 						src = "<img data-icon=\"" + iconSet + ":" + iconName + "\" src=\".." + imgURL + "\" />";
 					}
 				} else if (iconSrc === "if") {
-					src = "<iconify-icon icon=\"" +
+					src = "<" + o.iconIconify + " icon=\"" +
 						encodeURIComponent(iconSet) + ":" + encodeURIComponent(iconName) +
-						"\"></iconify-icon>";
+						"\"></" + o.iconIconify + ">";
 				} else if (iconSrc === "material") {
 					src = "<span class=\"material-icons\">" + iconName + "</span>";
 				} else if (iconSrc === "f7") {
@@ -614,7 +620,12 @@
 					_t.replaceIcon(src);
 				}
 			}
+			if (_t.iconifyIconReplaced !== prevIconifyIconReplaced) {
+				_t.handleIconifyIconReplaced(_t.iconifyIconReplaced);
+			}
 		};
+
+		_t.handleIconifyIconReplaced = function() {};
 
 		_t.setVisible = function(state) {
 			if (state) {
@@ -1179,6 +1190,9 @@
 		};
 
 		function emitEvent(value) {
+			if (_t.item === "") {
+				return;
+			}
 			_t.parentNode.dispatchEvent(createEvent(
 				"control-change", {
 					item: _t.item,
@@ -1207,7 +1221,7 @@
 		};
 
 		_t.valueMap = {};
-		_t.buttons = [].slice.call(_t.parentNode.querySelectorAll(o.controlButton));
+		_t.buttons = [].slice.call(_t.parentNode.querySelectorAll("button[data-no-element=true]"));
 
 		_t.setValuePrivate = function(value, itemState) {
 			if (_t.ignoreState) {
@@ -1236,11 +1250,10 @@
 
 		function checkIconifyInButtons() {
 			var
-				found = false,
-				buttons = [].slice.call(_t.parentNode.querySelectorAll(o.buttonIcon));
+				found = false;
 
-			buttons.forEach(function(button) {
-				if (button.querySelector("iconify-icon") !== null) {
+			_t.buttons.forEach(function(button) {
+				if (button.querySelector(o.iconIconify) !== null) {
 					found = true;
 				}
 			});
@@ -1249,21 +1262,21 @@
 
 		function removeIconifyFromButtons() {
 			var
-				removed = false,
-				buttons = [].slice.call(_t.parentNode.querySelectorAll(o.buttonIcon));
+				removed = false;
 
-			buttons.forEach(function(button) {
+			_t.buttons.forEach(function(button) {
 				var
-					icon = button.querySelector("iconify-icon"),
-					textNode = button.querySelector(o.buttonIconText);
+					icon = button.querySelector(o.iconIconify),
+					textNode;
 
 				if (icon !== null) {
-					button.classList.remove("mdl-button-icon");
+					button.classList.remove(o.buttonIconClass);
 					button.style.colorScheme = "";
 					button.removeChild(icon);
+					textNode = button.querySelector(o.buttonIconText);
 					if (textNode !== null) {
-						textNode.classList.remove("mdl-button-icon-text");
-						textNode.classList.add("mdl-button-text");
+						textNode.classList.remove(o.buttonIconTextClass);
+						textNode.classList.add(o.buttonTextClass);
 					}
 					removed = true;
 				}
@@ -1272,11 +1285,10 @@
 		}
 
 		function setButtonsColorScheme(value) {
-			var
-				buttons = [].slice.call(_t.parentNode.querySelectorAll(o.buttonIcon));
-
-			buttons.forEach(function(button) {
-				button.style.colorScheme = value;
+			_t.buttons.forEach(function(button) {
+				if (button.classList.contains(o.buttonIconClass)) {
+					button.style.colorScheme = value;
+				}
 			});
 		}
 
@@ -1352,6 +1364,115 @@
 		};
 
 		_t.setValueColor(_t.valueColor);
+	}
+
+	/* class ControlButton extends Control */
+	function ControlButton(parentNode) {
+		this.formRow = parentNode;
+		this.fillFullWidth = true;
+		this.iconContainer = parentNode;
+		this.label = parentNode.querySelector(o.buttonText);
+		Control.call(this, parentNode);
+
+		var
+			_t = this;
+
+		_t.ignoreState = _t.parentNode.getAttribute("data-ignore-state") === "true";
+		_t.cmd = _t.parentNode.getAttribute("data-value") + "";
+		_t.releaseCmd = _t.parentNode.getAttribute("data-release-value") + "";
+
+		function emitEvent(value) {
+			_t.parentNode.dispatchEvent(createEvent(
+				"control-change", {
+					item: _t.item,
+					value: value
+			}));
+		}
+
+		_t.onClick = function() {
+			if (!_t.ignoreState) {
+				this.classList.add(o.buttonActiveClass);
+			}
+			emitEvent(_t.cmd);
+		};
+
+		_t.onRelease = function() {
+			emitEvent(_t.releaseCmd);
+		};
+
+		_t.setValuePrivate = function(value, itemState) {
+			if (_t.ignoreState) {
+				return;
+			}
+
+			if (itemState === _t.cmd) {
+				_t.parentNode.classList.add(o.buttonActiveClass);
+			} else {
+				_t.parentNode.classList.remove(o.buttonActiveClass);
+			}
+		};
+
+		_t.handleIconifyIconReplaced = function(replaced) {
+			var
+				icon,
+				text;
+
+			if (replaced) {
+				// Switch to a button with text
+				_t.parentNode.classList.remove(o.buttonIconClass);
+				_t.parentNode.style.colorScheme = "";
+				// Hide the SVG icon that replaced the iconify icon
+				icon = _t.parentNode.querySelector("svg");
+				if (icon !== null) {
+					icon.style.display = "none";
+				}
+				text = _t.parentNode.querySelector(o.buttonIconText);
+				if (text !== null) {
+					text.classList.remove(o.buttonIconTextClass);
+					text.classList.add(o.buttonTextClass);
+					_t.label = text;
+				}
+			} else {
+				// Switch to a button with icon
+				_t.parentNode.classList.add(o.buttonIconClass);
+				text = _t.parentNode.querySelector(o.buttonText);
+				if (text !== null) {
+					text.classList.remove(o.buttonTextClass);
+					text.classList.add(o.buttonIconTextClass);
+					_t.label = null;
+				}
+			}
+		};
+
+		if (_t.iconifyIconReplaced) {
+			_t.handleIconifyIconReplaced(true);
+		}
+
+		if (_t.releaseCmd !== "") {
+			_t.parentNode.addEventListener("touchstart", _t.onClick);
+			_t.parentNode.addEventListener("mousedown", _t.onClick);
+			_t.parentNode.addEventListener("touchend", _t.onRelease);
+			_t.parentNode.addEventListener("mouseup", _t.onRelease);
+		} else {
+			_t.parentNode.addEventListener("click", _t.onClick);
+		}
+
+		_t.destroy = function() {
+			if (_t.releaseCmd !== "") {
+				_t.parentNode.removeEventListener("touchstart", _t.onClick);
+				_t.parentNode.removeEventListener("mousedown", _t.onClick);
+				_t.parentNode.removeEventListener("touchend", _t.onRelease);
+				_t.parentNode.removeEventListener("mouseup", _t.onRelease);
+			} else {
+				_t.parentNode.removeEventListener("click", _t.onClick);
+			}
+
+			if (_t.icon !== null && _t.icon.tagName.toLowerCase() === "img" && _t.iconSource === "oh") {
+				_t.icon.removeEventListener("load", _t.convertToInlineSVG);
+				_t.icon.removeEventListener("error", _t.replaceImageWithNone);
+			}
+			componentHandler.downgradeElements(_t.parentNode);
+		};
 	}
 
 	/* class ControlRadio extends Control */
@@ -2848,6 +2969,10 @@
 						upgrade(button, "MaterialRipple");
 					});
 					break;
+				case "button":
+					upgrade(e, "MaterialButton");
+					upgrade(e, "MaterialRipple");
+					break;
 				case "checkbox":
 					upgrade(e, "MaterialSwitch");
 					break;
@@ -2990,6 +3115,9 @@
 					break;
 				case "buttons":
 					appendControl(new ControlSelection(e));
+					break;
+				case "button":
+					appendControl(new ControlButton(e));
 					break;
 				case "selection":
 					appendControl(new ControlRadio(e));
@@ -3567,26 +3695,27 @@
 	iconColorAttribute: "data-icon-color",
 	controlButton: "button",
 	buttonActiveClass: "mdl-button--accent",
-	buttonIcon: ".mdl-button-icon",
+	buttonIconClass: "mdl-button-icon",
+	buttonText: ".mdl-button-text",
+	buttonTextClass: "mdl-button-text",
 	buttonIconText: ".mdl-button-icon-text",
+	buttonIconTextClass: "mdl-button-icon-text",
 	modal: ".mdl-modal",
 	modalContainer: ".mdl-modal__content",
 	selectionRows: ".mdl-form__selection-rows",
 	form: ".mdl-form",
 	formTitle: ".mdl-form__title",
 	formHidden: "mdl-form--hidden",
-	formControls: ".mdl-form__control",
+	formControls: ".mdl-form__control, .button-element",
 	formRowHidden: "mdl-form__row--hidden",
 	cell12Col: "mdl-cell--12-col",
 	formValue: ".mdl-form__value",
 	formRadio: ".mdl-radio",
 	formRadioControl: ".mdl-radio__button",
 	formIcon: ".mdl-form__icon",
-	formIconImg: ".mdl-form__icon img",
-	formIconSvg: ".mdl-form__icon svg",
-	formIconIconify: ".mdl-form__icon iconify-icon",
-	formIconMaterial: ".material-icons",
-	formIconFramework7: ".f7-icons",
+	iconIconify: "iconify-icon",
+	iconMaterial: ".material-icons",
+	iconFramework7: ".f7-icons",
 	formLabel: ".mdl-form__label",
 	uiLoadingBar: ".ui__loading",
 	layoutTitle: ".mdl-layout-title",
