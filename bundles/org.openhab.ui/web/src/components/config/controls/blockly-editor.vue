@@ -1100,6 +1100,13 @@
   border-color var(--blockly-ws-search-border-color)
   box-shadow none
   color var(--blockly-ws-search-text-color)
+.blocklyModalContainer
+  color black
+  .blocklyModalHeader
+    .blocklyModalHeaderTitle
+      width 100%
+    .blocklyModalBtnClose
+      visibility hidden
 textarea.blocklyHtmlTextAreaInput
   background #ffffff
   color #000000
