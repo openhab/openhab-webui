@@ -15,7 +15,7 @@ export default function (f7, isGraalJs) {
       this.appendDummyInput()
         .appendField('Qty ')
       this.appendValueInput('value')
-        .setCheck(['String', 'oh_itemtype', 'oh_item'])
+        .setCheck(['String', 'Number', 'oh_itemtype', 'oh_item'])
       this.appendValueInput('unit')
         .setCheck('String')
       this.setColour(58)
@@ -28,12 +28,14 @@ export default function (f7, isGraalJs) {
 
   javascriptGenerator.forBlock['oh_quantity_ext'] = function (block) {
     let value = javascriptGenerator.valueToCode(block, 'value', javascriptGenerator.ORDER_NONE)
+
     const unit = javascriptGenerator.valueToCode(block, 'unit', javascriptGenerator.ORDER_NONE)
     const inputType = blockGetCheckedInputType(block, 'value')
 
     let code
     switch (inputType) {
       case 'String':
+      case 'Number':
         code = `Quantity(${value} + ${unit})`
         break
       case 'oh_itemtype':
@@ -42,6 +44,9 @@ export default function (f7, isGraalJs) {
       case 'oh_item':
         value = `items.getItem(${value})`
         code = `(${value}.quantityState !== null) ? ${value}.quantityState.toUnit(${unit}) : Quantity(${value}.numericState + ${unit})`
+        break
+      default:
+        code = `Quantity(${value} + ${unit})`
         break
     }
 

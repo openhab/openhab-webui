@@ -1075,6 +1075,7 @@
 
       <sep />
 
+      <category name="Typed Variables" colour="%{BKY_VARIABLES_HUE}" custom="CREATE_TYPED_VARIABLE" />
       <category name="Variables" colour="%{BKY_VARIABLES_HUE}" custom="VARIABLE" />
       <category name="Functions" colour="%{BKY_PROCEDURES_HUE}" custom="PROCEDURE" />
       <category :name="libraryDefinitions ? 'This Library' : 'Libraries'" colour="gray" ref="libraryCategory" />
@@ -1112,6 +1113,7 @@ import DarkTheme from '@blockly/theme-dark'
 import { ZoomToFitControl } from '@blockly/zoom-to-fit'
 import { shadowBlockConversionChangeListener } from '@blockly/shadow-block-converter'
 import { Multiselect, MultiselectBlockDragger } from '@mit-app-inventor/blockly-plugin-workspace-multiselect'
+import { TypedVariableModal } from '@blockly/plugin-typed-variable-modal'
 
 import Vue from 'vue'
 
@@ -1258,6 +1260,35 @@ export default {
       this.workspace.addChangeListener(shadowBlockConversionChangeListener)
       const workspaceSearch = new WorkspaceSearch(this.workspace)
       workspaceSearch.init()
+
+      const createFlyout = function (workspace) {
+        let xmlList = []
+        const button = document.createElement('button')
+        button.setAttribute('text', 'Create Typed Variable: Do not forget to choose the type!')
+        button.setAttribute('callbackKey', 'callbackName')
+        xmlList.push(button)
+
+        const blockList = Blockly.VariablesDynamic.flyoutCategoryBlocks(workspace)
+        xmlList = xmlList.concat(blockList)
+        return xmlList
+      }
+      this.workspace.registerToolboxCategoryCallback(
+        'CREATE_TYPED_VARIABLE',
+        createFlyout
+      )
+      const typedVarModal = new TypedVariableModal(this.workspace, 'callbackName', [
+        ['Item name', 'oh_item'],
+        ['Item object', 'oh_itemtype'],
+        ['Thing name', 'oh_thing'],
+        ['Thing object', 'oh_thingtype'],
+        ['Quantity', 'oh_quantity'],
+        ['String', 'String'],
+        ['Number', 'Number'],
+        ['Dictionary', 'Dictionary'],
+        ['Colour', 'Colour']
+      ])
+
+      typedVarModal.init()
 
       Blockly.utils.colour.setHsvSaturation(0.45) // default
       Blockly.utils.colour.setHsvValue(0.65) // a little bit more contrast for the different colors

@@ -48,6 +48,7 @@
   ],
   "dependencies": {
     "@blockly/field-slider": "^6.1.4",
+    "@blockly/plugin-typed-variable-modal": "^7.0.15",
     "@blockly/plugin-workspace-search": "^8.1.2",
     "@blockly/shadow-block-converter": "^5.0.0",
     "@blockly/theme-dark": "^6.0.5",
