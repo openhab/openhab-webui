@@ -206,7 +206,7 @@ export default {
           { value: 'equipment', label: this.$t('home.equipment.tab') },
           { value: 'properties', label: this.$t('home.properties.tab') }
         ])
-        this.loadModel(this.page)
+        this.$store.dispatch('loadSemanticModel')
       }
     }
   },
