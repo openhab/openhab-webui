@@ -81,19 +81,20 @@ import cardGroups from './homecards-grouping'
 import LocationCard from '../../components/cards/location-card.vue'
 import EquipmentCard from '../../components/cards/equipment-card.vue'
 import PropertyCard from '../../components/cards/property-card.vue'
+import { mapState } from 'vuex'
 
 export default {
-  props: ['type', 'model', 'page'],
+  props: ['type', 'page'],
   components: {
     LocationCard,
     EquipmentCard,
     PropertyCard
   },
-  computed: {
-    groups () {
-      return cardGroups(this.model, this.type, this.page)
+  computed: mapState({
+    groups(state) {
+      return cardGroups(state.model.semanticModel, this.type, this.page)
     }
-  },
+  }),
   methods: {
     isCardExcluded (card) {
       if (!card.key) return

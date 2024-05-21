@@ -43,13 +43,13 @@
         <overview-tab v-if="currentTab === 'overview'" :context="context" :key="overviewPageKey" :allow-chat="allowChat" />
       </f7-tab>
       <f7-tab id="tab-locations" :tab-active="currentTab === 'locations'" @tab:show="() => this.currentTab = 'locations'">
-        <model-tab v-if="currentTab === 'locations'" :context="context" type="locations" :model="model" :page="homePageComponent" />
+        <model-tab v-if="currentTab === 'locations'" :context="context" type="locations" :page="homePageComponent" />
       </f7-tab>
       <f7-tab id="tab-equipment" :tab-active="currentTab === 'equipment'" @tab:show="() => this.currentTab = 'equipment'">
-        <model-tab v-if="currentTab === 'equipment'" :context="context" type="equipment" :model="model" :page="homePageComponent" />
+        <model-tab v-if="currentTab === 'equipment'" :context="context" type="equipment" :page="homePageComponent" />
       </f7-tab>
       <f7-tab id="tab-properties" :tab-active="currentTab === 'properties'" @tab:show="() => this.currentTab = 'properties'">
-        <model-tab v-if="currentTab === 'properties'" :context="context" type="properties" :model="model" :page="homePageComponent" />
+        <model-tab v-if="currentTab === 'properties'" :context="context" type="properties" :page="homePageComponent" />
       </f7-tab>
     </f7-tabs>
   </f7-page>
