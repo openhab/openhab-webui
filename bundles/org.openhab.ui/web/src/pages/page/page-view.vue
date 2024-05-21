@@ -57,7 +57,10 @@ export default {
     'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue'),
     'oh-map-page': () => import(/* webpackChunkName: "map-page" */ '@/components/widgets/map/oh-map-page.vue'),
     'oh-plan-page': () => import(/* webpackChunkName: "plan-page" */ '@/components/widgets/plan/oh-plan-page.vue'),
-    'oh-chart-page': () => import(/* webpackChunkName: "chart-page" */ '@/components/widgets/chart/oh-chart-page.vue')
+    'oh-chart-page': () => import(/* webpackChunkName: "chart-page" */ '@/components/widgets/chart/oh-chart-page.vue'),
+    'oh-locations-tab': () => import('@/components/tabs/locations-tab.vue'),
+    'oh-equipment-tab': () => import('@/components/tabs/equipment-tab.vue'),
+    'oh-properties-tab': () => import('@/components/tabs/properties-tab.vue'),
   },
   props: ['uid', 'initialTab', 'deep', 'defineVars'],
   data () {
@@ -146,16 +149,29 @@ export default {
       this.$store.dispatch('sendCommand', { itemName, command })
     },
     tabContext (tab) {
-      const page = this.$store.getters.page(tab.config.page.replace('page:', ''))
-      return {
+      const page = tab.config.page?this.$store.getters.page(tab.config.page.replace('page:', '')):tab.component
+      const context = {
         component: page,
         tab: tab,
         vars: this.vars,
         props: tab.config.pageConfig,
         store: this.$store.getters.trackedItems
       }
+      // mock some slots so that it works with current homeecard-grouping implementation
+      if (tab.component === 'oh-locations-tab') {
+        context.slots = {locations: [tab]}
+      } else if (tab.component === 'oh-equipment-tab') {
+        context.slots = {equipment: [tab]}
+      } else if (tab.component === 'oh-properties-tab') {
+        context.slots = {properties: [tab]}
+      }
+      return context
     },
     tabComponent (tab) {
+      if (tab.component === 'oh-locations-tab' || tab.component === 'oh-equipment-tab' || tab.component === 'oh-properties-tab') {
+        return tab.component
+      }
+
       const page = this.$store.getters.page(tab.config.page.replace('page:', ''))
       return page.component
     },

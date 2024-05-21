@@ -116,7 +116,7 @@
         </div>
 
         <div v-else :context="context" :key="pageKey">
-          <model-tab style="margin-bottom: 4rem" :context="context" :type="currentModelTab" :model="model" :page="page" />
+          <model-tab style="margin-bottom: 4rem" :context="context" :type="currentModelTab" :page="page" />
         </div>
       </f7-tab>
 
@@ -124,7 +124,7 @@
         <editor v-if="currentTab === 'code'" :style="{ opacity: previewMode ? '0' : '' }" class="page-code-editor" mode="application/vnd.openhab.uicomponent+yaml;type=home" :value="pageYaml" @input="onEditorInput" />
         <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
         <div v-if="ready && previewMode" :context="context" :key="pageKey">
-          <model-tab style="margin-bottom: 4rem" :context="context" :type="currentModelTab" :model="model" :page="page" />
+          <model-tab style="margin-bottom: 4rem" :context="context" :type="currentModelTab" :page="page" />
         </div>
       </f7-tab>
     </f7-tabs>
