@@ -110,6 +110,12 @@ const state = {
 const getters = {
   semanticModel: (state) => {
     return state.semanticModel
+  },
+  semanticModelElement: (state) => (key, type) => {
+    if (state.semanticModel == null) {
+      return null
+    }
+    return state.semanticModel[type === 'location'?'locations':type === 'equipment'?'equipment':'properties']?.find(e => e.key === key)
   }
 }
 

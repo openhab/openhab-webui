@@ -1,11 +1,14 @@
 /* Add any new widget to this file - the name of the export should be "OhSomething" */
 
+export { default as OhEquipmentCard} from './oh-equipment-card.vue'
 export { default as OhLabelCard } from './oh-label-card.vue'
 export { default as OhToggleCard } from './oh-toggle-card.vue'
 export { default as OhRollershutterCard } from './oh-rollershutter-card.vue'
 export { default as OhColorpickerCard } from './oh-colorpicker-card.vue'
 export { default as OhGaugeCard } from './oh-gauge-card.vue'
 export { default as OhKnobCard } from './oh-knob-card.vue'
+export { default as OhLocationCard} from './oh-location-card.vue'
+export { default as OhPropertyCard} from './oh-property-card.vue'
 export { default as OhSliderCard } from './oh-slider-card.vue'
 export { default as OhImageCard } from './oh-image-card.vue'
 export { default as OhVideoCard } from './oh-video-card.vue'

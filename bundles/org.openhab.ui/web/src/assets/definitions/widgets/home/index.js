@@ -96,7 +96,7 @@ const ModelCardParameters = () => [
 ]
 
 export const OhLocationCardParameters = () => new WidgetDefinition('oh-location-card', 'Location Card', 'A card showing model items in a certain location')
-  .paramGroup(ModelCardParameterGroup(), ModelCardParameters())
+  .paramGroup(ModelCardParameterGroup(),   [pi('item', 'Item', 'Location to display')].concat(ModelCardParameters()))
   .paramGroup(pg('glance', 'Card at-a-glance badges'), [
     pb('disableBadges', 'Disable badges', 'Do not examine items to display badges - can help with performance if you don\'t need them.'),
     pt('badges', 'Enabled badges', 'Select the badges you wish to show in the header of the card. Display all if none are selected.')
@@ -121,7 +121,97 @@ export const OhLocationCardParameters = () => new WidgetDefinition('oh-location-
   ])
 
 export const OhEquipmentCardParameters = () => new WidgetDefinition('oh-equipment-card', 'Equipment Class Card', 'A card showing model items belonging to a certain equipment class')
-  .paramGroup(ModelCardParameterGroup(), ModelCardParameters())
+  .paramGroup(ModelCardParameterGroup(), [
+    pt('item', 'Item', 'Equipment class to display')
+      .o([
+        { value: 'Equipment', label: 'Equipment' },
+        { value: 'AlarmSystem', label: 'Alarm System' },
+        { value: 'Battery', label: 'Battery' },
+        { value: 'Blinds', label: 'Blinds' },
+        { value: 'Boiler', label: 'Boiler' },
+        { color: 'Camera', label: 'Camera' },
+        { value: 'Car', label: 'Car' },
+        { value: 'CleaningRobot', label: 'Cleaning Robot' },
+        { value: 'Door', label: 'Door' },
+        { value: 'BackDoor', label: 'Back Door' },
+        { value: 'CellarDoor', label: 'Cellar Door' },
+        { value: 'FrontDoor', label: 'Front Door' },
+        { value: 'GarageDoor', label: 'Garage Door' },
+        { value: 'Gate', label: 'Gate' },
+        { value: 'InnerDoor', label: 'Inner Door' },
+        { value: 'SideDoor', label: 'Side Door' },
+        { value: 'Doorbell', label: 'Doorbell' },
+        { value: 'Fan', label: 'Fan' },
+        { value: 'CeilingFan', label: 'Ceiling Fan' },
+        { color: 'KitchenHood', label: 'Kitchen Hood' },
+        { value: 'HVAC', label: 'HVAC' },
+        { value: 'Inverter', label: 'Inverter' },
+        { value: 'LawnMower', label: 'Lawn Mower' },
+        { value: 'Lightbulb', label: 'Lightbulb' },
+        { value: 'LightStripe', label: 'Light Stripe' },
+        { value: 'Lock', label: 'Lock' },
+        { value: 'NetworkAppliance', label: 'Network Appliance' },
+        { value: 'PowerOutlet', label: 'Power Outlet' },
+        { value: 'Projector', label: 'Projector' },
+        { value: 'Pump', label: 'Pump' },
+        { value: 'RadiatorControl', label: 'Radiator Control' },
+        { value: 'Receiver', label: 'Receiver' },
+        { value: 'RemoteControl', label: 'Remote Control' },
+        { value: 'Screen', label: 'Screen' },
+        { value: 'Television', label: 'Television' },
+        { color: 'Sensor', label: 'Sensor' },
+        { value: 'MotionDetector', label: 'Motion Detector' },
+        { value: 'SmokeDetector', label: 'Smoke Detector' },
+        { value: 'Siren', label: 'Siren' },
+        { value: 'Smartphone', label: 'Smartphone' },
+        { value: 'Speaker', label: 'Speaker' },
+        { value: 'Valve', label: 'Valve' },
+        { value: 'VoiceAssistant', label: 'Voice Assistant' },
+        { value: 'WallSwitch', label: 'Wall Switch' },
+        { value: 'WebService', label: 'Web Service' },
+        { value: 'WeatherService', label: 'Weather Service' },
+        { value: 'WhiteGood', label: 'White Good' },
+        { value: 'Dishwasher', label: 'Dishwasher' },
+        { value: 'Dryer', label: 'Dryer' },
+        { value: 'Freezer', label: 'Freezer' },
+        { value: 'Oven', label: 'Oven' },
+        { value: 'Refrigerator', label: 'Refrigerator' },
+        { value: 'WashingMachine', label: 'Washing Machine' },
+        { value: 'Window', label: 'Window' }
+      ])
+  ].concat(ModelCardParameters()))
 
 export const OhPropertyCardParameters = () => new WidgetDefinition('oh-property-card', 'Property Card', 'A card showing model items related to a certain property')
-  .paramGroup(ModelCardParameterGroup(), ModelCardParameters())
+  .paramGroup(ModelCardParameterGroup(), [
+    pt('item', 'Item', 'Property to display')
+      .o([
+        {value: "Property", label: "Property"},
+        {value: "CO", label: "CO"},
+        {value: "CO2", label: "CO2"},
+        {value: "ColorTemperature", label: "Color Temperature"},
+        {value: "Current", label: "Current"},
+        {value: "Duration", label: "Duration"},
+        {value: "Energy", label: "Energy"},
+        {value: "Frequency", label: "Frequency"},
+        {value: "Gas", label: "Gas"},
+        {value: "Humidity", label: "Humidity"},
+        {value: "Level", label: "Level"},
+        {value: "Light", label: "Light"},
+        {value: "Noise", label: "Noise"},
+        {value: "Oil", label: "Oil"},
+        {value: "Opening", label: "Opening"},
+        {value: "Power", label: "Power"},
+        {value: "Presence", label: "Presence"},
+        {value: "Pressure", label: "Pressure"},
+        {value: "Rain", label: "Rain"},
+        {value: "Smoke", label: "Smoke"},
+        {value: "SoundVolume", label: "Sound Volume"},
+        {value: "Temperature", label: "Temperature"},
+        {value: "Timestamp", label: "Timestamp"},
+        {value: "Ultraviolet", label: "Ultraviolet"},
+        {value: "Vibration", label: "Vibration"},
+        {value: "Voltage", label: "Voltage"},
+        {value: "Water", label: "Water"},
+        {value: "Wind", label: "Wind"},
+      ])
+  ].concat(ModelCardParameters()))
