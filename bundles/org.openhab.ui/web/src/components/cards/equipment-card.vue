@@ -15,7 +15,7 @@
   </model-card>
 </template>
 
-<style lang="stylus">
+<style lang="stylus" scoped>
 .equipment-card
   height 150px
 .equipment-stats

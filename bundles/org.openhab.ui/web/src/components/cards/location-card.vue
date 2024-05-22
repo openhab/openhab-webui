@@ -34,7 +34,7 @@
   </model-card>
 </template>
 
-<style lang="stylus">
+<style lang="stylus" scoped>
 .location-card
   height 200px
 .location-stats
