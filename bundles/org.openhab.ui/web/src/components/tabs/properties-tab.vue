@@ -1,5 +1,5 @@
 <template>
-  <model-tab type="properties" :page="context"  />
+  <model-tab type="properties" :page="context" />
 </template>
 
 <script>

@@ -1,5 +1,5 @@
 <template>
- <equipment-card :element="element" :context="context" :tab-context="config" />
+  <equipment-card :element="element" :context="context" :tab-context="config" />
 </template>
 
 <script>
@@ -12,11 +12,10 @@ export default {
   mixins: [mixin],
   computed: {
     element () {
-      return this.$store.getters.semanticModelElement(this.config.item, 'equipment')
-        ||{defaultTitle: 'Equipment Card', item: {equipment: [], metadata: {semantics: {value: ""}}}, equipment: [], properties: []}
+      return this.$store.getters.semanticModelElement(this.config.item, 'equipment') ||
+        { defaultTitle: 'Equipment Card', item: { equipment: [], metadata: { semantics: { value: '' } } }, equipment: [], properties: [] }
     }
   },
   widget: OhEquipmentCardParameters
 }
 </script>
-

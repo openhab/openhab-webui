@@ -47,9 +47,9 @@ function buildPathInModel (item, items, filteredItems) {
     parent = (items.find((i) => i.name === item.metadata.semantics.config.isPartOf))
   }
   if (parent && parent.semanticLoopDetector) {
-    throw `A a loop has been detected in the semantic model: ${parent.name} is both descendant and parent of ${item.name}`
+    throw new Error(`A a loop has been detected in the semantic model: ${parent.name} is both descendant and parent of ${item.name}`)
   }
-  item.parent = parent?{ name: parent.name, label: parent.label, metadata: parent.metadata }:null
+  item.parent = parent ? { name: parent.name, label: parent.label, metadata: parent.metadata } : null
 
   item.semanticLoopDetector = true
   item.modelPath = parent ? [...(buildPathInModel(parent, items, filteredItems)), item.parent] : []
@@ -103,8 +103,8 @@ function sortModel (item) {
 }
 
 const state = {
-  semanticModel : null,
-  error : null
+  semanticModel: null,
+  error: null
 }
 
 const getters = {
@@ -115,7 +115,7 @@ const getters = {
     if (state.semanticModel == null) {
       return null
     }
-    return state.semanticModel[type === 'location'?'locations':type === 'equipment'?'equipment':'properties']?.find(e => e.key === key)
+    return state.semanticModel[type === 'location' ? 'locations' : type === 'equipment' ? 'equipment' : 'properties']?.find(e => e.key === key)
   }
 }
 
@@ -123,7 +123,7 @@ const mutations = {
   setSemanticModel (state, model) {
     state.semanticModel = model
   },
-  setError(state, error) {
+  setError (state, error) {
     state.error = error
   }
 }

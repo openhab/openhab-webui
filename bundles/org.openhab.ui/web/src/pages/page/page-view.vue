@@ -57,7 +57,7 @@ export default {
     'oh-chart-page': () => import(/* webpackChunkName: "chart-page" */ '@/components/widgets/chart/oh-chart-page.vue'),
     'oh-locations-tab': () => import('@/components/tabs/locations-tab.vue'),
     'oh-equipment-tab': () => import('@/components/tabs/equipment-tab.vue'),
-    'oh-properties-tab': () => import('@/components/tabs/properties-tab.vue'),
+    'oh-properties-tab': () => import('@/components/tabs/properties-tab.vue')
   },
   props: ['uid', 'deep', 'defineVars'],
   data () {
@@ -136,7 +136,7 @@ export default {
       this.$store.dispatch('sendCommand', { itemName, command })
     },
     tabContext (tab) {
-      const page = tab.config.page?this.$store.getters.page(tab.config.page.replace('page:', '')):tab.component
+      const page = tab.config.page ? this.$store.getters.page(tab.config.page.replace('page:', '')) : tab.component
       const context = {
         component: page,
         tab: tab,
@@ -146,11 +146,11 @@ export default {
       }
       // mock some slots so that it works with current homeecard-grouping implementation
       if (tab.component === 'oh-locations-tab') {
-        context.slots = {locations: [tab]}
+        context.slots = { locations: [tab] }
       } else if (tab.component === 'oh-equipment-tab') {
-        context.slots = {equipment: [tab]}
+        context.slots = { equipment: [tab] }
       } else if (tab.component === 'oh-properties-tab') {
-        context.slots = {properties: [tab]}
+        context.slots = { properties: [tab] }
       }
       return context
     },

@@ -91,7 +91,7 @@ export default {
     PropertyCard
   },
   computed: mapState({
-    groups(state) {
+    groups (state) {
       return cardGroups(state.model.semanticModel, this.type, this.page)
     }
   }),
