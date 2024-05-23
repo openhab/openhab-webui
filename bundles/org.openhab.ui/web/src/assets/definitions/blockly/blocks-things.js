@@ -20,7 +20,7 @@ export default function defineOHBlocks (f7, isGraalJs) {
       this.setInputsInline(true)
       this.setTooltip('Pick a thing from the Thing List')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-items-things.html#thing')
-      this.setOutput(true, null)
+      this.setOutput(true, 'oh_thing')
     }
   }
 

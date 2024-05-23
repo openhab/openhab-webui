@@ -116,18 +116,27 @@ public class SwitchRenderer extends AbstractWidgetRenderer {
         String snippet = getSnippet(snippetName);
         State state = itemUIRegistry.getState(w);
 
-        snippet = preprocessSnippet(snippet, w);
-
         if (nbButtons == 0) {
+            snippet = preprocessSnippet(snippet, w);
+
             if (OnOffType.ON.equals(state)) {
                 snippet = snippet.replaceAll("%checked%", "checked=true");
             } else {
                 snippet = snippet.replaceAll("%checked%", "");
             }
         } else {
+            // Show the value at left of all the buttons only if a state pattern is set on the sitemap widget
+            if (!hasValue(w.getLabel())) {
+                snippet = snippet.replace("%value%", "");
+                snippet = snippet.replace("%has_value%", "false");
+            }
+
+            snippet = preprocessSnippet(snippet, w);
+
             snippet = snippet.replaceAll("%height_auto%", multiline ? "mdl-form__row--height-auto" : "");
             snippet = snippet.replaceAll("%buttons_class%",
                     multiline ? "mdl-form__buttons-multiline" : "mdl-form__buttons");
+
             StringBuilder buttons = new StringBuilder();
             if (s.getMappings().isEmpty() && item != null) {
                 final CommandDescription commandDescription = item.getCommandDescription();
