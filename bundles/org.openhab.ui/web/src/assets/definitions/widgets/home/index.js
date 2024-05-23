@@ -96,7 +96,7 @@ const ModelCardParameters = () => [
 ]
 
 export const OhLocationCardParameters = () => new WidgetDefinition('oh-location-card', 'Location Card', 'A card showing model items in a certain location')
-  .paramGroup(ModelCardParameterGroup(),   [pi('item', 'Item', 'Location to display')].concat(ModelCardParameters()))
+  .paramGroup(ModelCardParameterGroup(), [pi('item', 'Item', 'Location to display')].concat(ModelCardParameters()))
   .paramGroup(pg('glance', 'Card at-a-glance badges'), [
     pb('disableBadges', 'Disable badges', 'Do not examine items to display badges - can help with performance if you don\'t need them.'),
     pt('badges', 'Enabled badges', 'Select the badges you wish to show in the header of the card. Display all if none are selected.')
@@ -185,33 +185,33 @@ export const OhPropertyCardParameters = () => new WidgetDefinition('oh-property-
   .paramGroup(ModelCardParameterGroup(), [
     pt('item', 'Item', 'Property to display')
       .o([
-        {value: "Property", label: "Property"},
-        {value: "CO", label: "CO"},
-        {value: "CO2", label: "CO2"},
-        {value: "ColorTemperature", label: "Color Temperature"},
-        {value: "Current", label: "Current"},
-        {value: "Duration", label: "Duration"},
-        {value: "Energy", label: "Energy"},
-        {value: "Frequency", label: "Frequency"},
-        {value: "Gas", label: "Gas"},
-        {value: "Humidity", label: "Humidity"},
-        {value: "Level", label: "Level"},
-        {value: "Light", label: "Light"},
-        {value: "Noise", label: "Noise"},
-        {value: "Oil", label: "Oil"},
-        {value: "Opening", label: "Opening"},
-        {value: "Power", label: "Power"},
-        {value: "Presence", label: "Presence"},
-        {value: "Pressure", label: "Pressure"},
-        {value: "Rain", label: "Rain"},
-        {value: "Smoke", label: "Smoke"},
-        {value: "SoundVolume", label: "Sound Volume"},
-        {value: "Temperature", label: "Temperature"},
-        {value: "Timestamp", label: "Timestamp"},
-        {value: "Ultraviolet", label: "Ultraviolet"},
-        {value: "Vibration", label: "Vibration"},
-        {value: "Voltage", label: "Voltage"},
-        {value: "Water", label: "Water"},
-        {value: "Wind", label: "Wind"},
+        { value: 'Property', label: 'Property' },
+        { value: 'CO', label: 'CO' },
+        { value: 'CO2', label: 'CO2' },
+        { value: 'ColorTemperature', label: 'Color Temperature' },
+        { value: 'Current', label: 'Current' },
+        { value: 'Duration', label: 'Duration' },
+        { value: 'Energy', label: 'Energy' },
+        { value: 'Frequency', label: 'Frequency' },
+        { value: 'Gas', label: 'Gas' },
+        { value: 'Humidity', label: 'Humidity' },
+        { value: 'Level', label: 'Level' },
+        { value: 'Light', label: 'Light' },
+        { value: 'Noise', label: 'Noise' },
+        { value: 'Oil', label: 'Oil' },
+        { value: 'Opening', label: 'Opening' },
+        { value: 'Power', label: 'Power' },
+        { value: 'Presence', label: 'Presence' },
+        { value: 'Pressure', label: 'Pressure' },
+        { value: 'Rain', label: 'Rain' },
+        { value: 'Smoke', label: 'Smoke' },
+        { value: 'SoundVolume', label: 'Sound Volume' },
+        { value: 'Temperature', label: 'Temperature' },
+        { value: 'Timestamp', label: 'Timestamp' },
+        { value: 'Ultraviolet', label: 'Ultraviolet' },
+        { value: 'Vibration', label: 'Vibration' },
+        { value: 'Voltage', label: 'Voltage' },
+        { value: 'Water', label: 'Water' },
+        { value: 'Wind', label: 'Wind' }
       ])
   ].concat(ModelCardParameters()))

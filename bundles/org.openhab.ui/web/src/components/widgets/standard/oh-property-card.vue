@@ -1,5 +1,5 @@
 <template>
- <property-card :element="element" :context="context" :tab-context="config" />
+  <property-card :element="element" :context="context" :tab-context="config" />
 </template>
 
 <script>
@@ -12,11 +12,10 @@ export default {
   mixins: [mixin],
   computed: {
     element () {
-      return this.$store.getters.semanticModelElement(this.config.item, 'property')
-        ||{defaultTitle: 'Property Card', item: {equipment: [], metadata: {semantics: {value: ""}}}, equipment: [], properties: [], points: []}
+      return this.$store.getters.semanticModelElement(this.config.item, 'property') ||
+        { defaultTitle: 'Property Card', item: { equipment: [], metadata: { semantics: { value: '' } } }, equipment: [], properties: [], points: [] }
     }
   },
   widget: OhPropertyCardParameters
 }
 </script>
-

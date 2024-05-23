@@ -10,6 +10,6 @@ export default {
   methods: {
     cardGroups (type, page) {
       return cardGroups(this.model, type, page)
-    },
+    }
   }
 }

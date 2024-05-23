@@ -1,5 +1,5 @@
 <template>
-  <model-tab type="locations" :page="context"  />
+  <model-tab type="locations" :page="context" />
 </template>
 
 <script>
