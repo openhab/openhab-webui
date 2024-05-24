@@ -78,6 +78,22 @@ export default {
         value: this.addon.type
       })
 
+      if (this.addon.connection) {
+        info.push({
+          id: 'connection',
+          title: 'Connection Type',
+          value: this.addon.connection
+        })
+      }
+
+      if (this.addon.countries && this.addon.countries.length > 0) {
+        info.push({
+          id: 'countries',
+          title: 'Regions/Countries',
+          value: this.addon.countries.join(',').toUpperCase()
+        })
+      }
+
       info.push({
         id: 'contentType',
         title: 'Content Type',
