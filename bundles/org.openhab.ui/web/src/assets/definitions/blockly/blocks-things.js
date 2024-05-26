@@ -124,7 +124,7 @@ export default function defineOHBlocks (f7, isGraalJs) {
     init: function () {
       const block = this
       const dropdown = new Blockly.FieldDropdown(
-        [['UID', 'uid'], ['label', 'label'], ['status', 'status'], ['status info', 'statusInfo'], ['location', 'location'], ['is enabled', 'enabled'], ['thing type UID', 'thingTypeUID'], ['bridge UID', 'bridgeUID']],
+        [['UID', 'uid'], ['label', 'label'], ['status', 'status'], ['status info', 'statusInfo'], ['location', 'location'], ['is enabled', 'isEnabled'], ['thing type UID', 'thingTypeUID'], ['bridge UID', 'bridgeUID']],
         function (newMode) {
           block._updateType(newMode)
         })
