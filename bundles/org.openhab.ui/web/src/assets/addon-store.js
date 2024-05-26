@@ -43,23 +43,23 @@ export const AddonSuggestionLabels = {
 
 export const AddonConnectionTypes = {
   cloud: {
-    label: 'Cloud connection',
+    label: 'Cloud allowed',
     values: ['none', 'local', 'hybrid', 'cloud']
   },
   cloudConfig: {
-    label: 'Cloud connection for configuration only',
+    label: 'Cloud configuration only',
     values: ['none', 'local', 'hybrid']
   },
   noCloud: {
-    label: 'No cloud connection',
+    label: 'No cloud allowed',
     values: ['none', 'local']
   }
 }
 
 export const AddonRegionTypes = {
-  exclude_other: 'Exclude addons not relevant for country/region',
-  only_region: 'Only show addons specific to your country/region',
-  all: 'Show all'
+  exclude_other: 'Exclude not for country',
+  only_region: 'Specific for country',
+  all: 'All'
 }
 
 export const ContentTypes = {
