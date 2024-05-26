@@ -23,15 +23,15 @@
         <f7-list-item accordion-item title="Filters">
           <f7-accordion-content>
             <f7-list>
-              <f7-list-item smart-select title="Allowed Connection Type">
-                <select @change="connectionType = $event.target.value">
+              <f7-list-item smart-select title="Allowed Connection Type" :smart-select-params="{ closeOnSelect: true }">
+                <select @change="updateFilter('connectionType', $event.target.value)">
                   <option v-for="type in Object.keys(AddonConnectionTypes)" :key="type" :value="type" :selected="type===connectionType">
                     {{ AddonConnectionTypes[type].label }}
                   </option>
                 </select>
               </f7-list-item>
-              <f7-list-item v-if="regionReady" smart-select title="Region/Country">
-                <select @change="regionType = $event.target.value">
+              <f7-list-item v-if="regionReady" smart-select title="Region/Country" :smart-select-params="{ closeOnSelect: true }">
+                <select @change="updateFilter('regionType', $event.target.value)">
                   <option v-for="type in Object.keys(AddonRegionTypes)" :key="type" :value="type" :selected="type===regionType">
                     {{ AddonRegionTypes[type] }}
                   </option>
@@ -262,6 +262,7 @@ export default {
       services: null,
       suggestions: [],
       ready: false,
+      query: null,
       searchResults: null,
       connectionType: 'cloud',
       regionType: 'exclude_other',
@@ -362,6 +363,7 @@ export default {
       query = query.toLowerCase()
       results = results.filter((a) => a.label.toLowerCase().indexOf(query) >= 0)
 
+      this.$set(this, 'query', query)
       this.$set(this, 'searchResults', results)
       setTimeout(() => {
         this.$f7.lazy.create('.page-addon-store')
@@ -369,10 +371,19 @@ export default {
     },
     clearSearch (searchbar, previousQuery) {
       this.$refs.storeSearchbar.f7Searchbar.$inputEl.val('')
+      this.$set(this, 'query', null)
       this.$set(this, 'searchResults', null)
       if (this.$device.desktop) {
         this.$nextTick(() => {
           this.$refs.storeSearchbar.f7Searchbar.$inputEl.focus()
+        })
+      }
+    },
+    updateFilter (filter, value) {
+      this.$set(this, filter, value)
+      if (this.query) {
+        this.$nextTick(() => {
+          this.search(undefined, this.query)
         })
       }
     },
