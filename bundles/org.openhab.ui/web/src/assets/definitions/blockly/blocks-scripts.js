@@ -285,7 +285,7 @@ export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
       if (type === 'asNumber') {
         return [`event.${contextInfo} !== undefined ? parseFloat(event.${contextInfo}.toString()) : undefined`, javascriptGenerator.ORDER_ATOMIC]
       } else if (type === 'asQuantity') {
-        return [`event.${contextInfo} !== undefined ? Quantity(event.${contextInfo}.toString() : undefined)`, javascriptGenerator.ORDER_ATOMIC]
+        return [`event.${contextInfo} !== undefined ? Quantity(event.${contextInfo}.toString()) : undefined`, javascriptGenerator.ORDER_ATOMIC]
       } else {
         return [`event.${contextInfo}?.toString()`, javascriptGenerator.ORDER_ATOMIC]
       }
