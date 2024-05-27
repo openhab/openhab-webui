@@ -152,13 +152,15 @@ export default {
     },
     toYaml () {
       this.pageYaml = YAML.stringify({
+        config: this.page.config,
         tabs: this.page.slots.default
       })
     },
     fromYaml () {
       try {
-        const updatedTabs = YAML.parse(this.pageYaml)
-        this.$set(this.page.slots, 'default', updatedTabs.tabs)
+        const updatedPage = YAML.parse(this.pageYaml)
+        this.$set(this.page, 'config', updatedPage.config)
+        this.$set(this.page.slots, 'default', updatedPage.tabs)
         this.forceUpdate()
         return true
       } catch (e) {
