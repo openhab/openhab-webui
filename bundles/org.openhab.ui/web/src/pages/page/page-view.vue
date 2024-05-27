@@ -19,7 +19,7 @@
 
     <!-- Tabbed Pages -->
     <f7-toolbar tabbar labels bottom v-if="page && pageType === 'tabs' && visibleToCurrentUser">
-      <f7-link v-for="(tab, idx) in page.slots.default" :key="idx" tab-link @click="onTabChange(idx)" :tab-link-active="currentTab === idx" :icon-ios="tabConfigEvaluateExpression(tab, idx, 'icon')" :icon-md="tabConfigEvaluateExpression(tab, idx, 'icon')" :icon-aurora="tabConfigEvaluateExpression(tab, idx, 'icon')" :text="tabConfigEvaluateExpression(tab, idx, 'title')" />
+      <f7-link v-for="(tab, idx) in page.slots.default" :key="idx" tab-link @click="onTabChange(idx)" :tab-link-active="currentTab === idx" :icon-ios="tabEvaluateExpression(tab, idx, 'icon')" :icon-md="tabEvaluateExpression(tab, idx, 'icon')" :icon-aurora="tabEvaluateExpression(tab, idx, 'icon')" :text="tabEvaluateExpression(tab, idx, 'title')" />
     </f7-toolbar>
     <f7-tabs v-if="page && pageType === 'tabs' && visibleToCurrentUser">
       <f7-tab v-for="(tab, idx) in page.slots.default" :key="idx" :tab-active="currentTab === idx">
@@ -149,7 +149,7 @@ export default {
       const page = this.$store.getters.page(tab.config.page.replace('page:', ''))
       return page.component
     },
-    tabConfigEvaluateExpression (tab, idx, key) {
+    tabEvaluateExpression (tab, idx, key) {
       const ctx = this.tabContext(tab)
       return this.evaluateExpression('tab-' + idx + '-' + key, tab.config[key], ctx, ctx.props)
     },

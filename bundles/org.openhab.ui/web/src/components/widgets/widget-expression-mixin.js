@@ -46,7 +46,7 @@ export default {
   methods: {
     /**
      * Evaluates a widget expression.
-     * Reads <code>this.props</code> and optionally <code>context</code>.
+     * May read <code>this.context</code> and <code>this.props</code> (see below).
      *
      * @param {string} key the key of the expression (used for abstract syntax tree caching)
      * @param {string} value the expression to evaluate
