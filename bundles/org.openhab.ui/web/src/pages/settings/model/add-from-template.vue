@@ -488,7 +488,7 @@ export default {
         .filter((i) => (!i.metadata.semantics.config || !i.metadata.semantics.config.isPartOf) && (i.templates & (1 << this.selectedTemplate)))
         .map(this.modelItem).sort(compareModelItems)
       newModel.forEach(this.getChildren)
-      this.currentModel = newModel
+      this.currentModel = newModel // eslint-disable-line vue/no-side-effects-in-computed-properties
 
       return newModel
     }
