@@ -12,8 +12,8 @@ export default {
   computed: {
     value () {
       if (this.config.variable) {
-        let variableScope = this.getVariableScope(this.context.ctxVars, this.context.varScope, this.config.variable)
-        let variableLocation = (variableScope) ? this.context.ctxVars[variableScope] : this.context.vars
+        const variableScope = this.getVariableScope(this.context.ctxVars, this.context.varScope, this.config.variable)
+        const variableLocation = (variableScope) ? this.context.ctxVars[variableScope] : this.context.vars
         return variableLocation[this.config.variable]
       }
       let value = (this.config.item) ? this.context.store[this.config.item].state : this.config.value

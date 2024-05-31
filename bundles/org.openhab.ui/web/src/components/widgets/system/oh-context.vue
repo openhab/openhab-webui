@@ -1,67 +1,44 @@
 <template>
   <fragment v-if="(context.component.slots && context.component.slots.default)">
-    <generic-widget-component :context="childrenContexts(slotComponent)" v-for="(slotComponent, idx) in context.component.slots.default" :key="'default-' + idx" />
+    <generic-widget-component v-for="(slotComponent, idx) in context.component.slots.default" :key="'default-' + idx" :context="childrenContext(slotComponent)" />
   </fragment>
 </template>
 
 <script>
 import mixin from '../widget-mixin'
 import { OhContextDefinition } from '@/assets/definitions/widgets/system'
+
 import { Fragment } from 'vue-fragment'
 
 export default {
+  mixins: [mixin],
+  components: {
+    Fragment
+  },
+  widget: OhContextDefinition,
   data () {
     return {
       varScope: (this.context.varScope || 'varScope') + '-' + this.$f7.utils.id()
     }
   },
-  mixins: [mixin],
-  components: {
-    Fragment
-  },
-  beforeMount () {
-    const evaluateDefaults = () => {
-      if (!this.context || !this.context.component || !this.context.component.config) return {}
-
-      this.const = {}
-      const sourceConst = this.context.component.config.constants || {}
-      if (sourceConst) {
-        if (typeof sourceConst !== 'object') return {}
-        for (const key in sourceConst) {
-          this.$set(this.const, key, this.evaluateExpression(key, sourceConst[key]))
-        }
-      }
-
-      this.ctxVars = {}
-      const sourceCtxVars = this.context.component.config.variables || {}
-      if (sourceCtxVars) {
-        if (typeof sourceCtxVars !== 'object') return {}
-        for (const key in sourceCtxVars) {
-          this.$set(this.ctxVars, key, this.evaluateExpression(key, sourceCtxVars[key]))
-        }
-      }
-    }
-    evaluateDefaults()
-  },
-  widget: OhContextDefinition,
   computed: {
     fn () {
       if (!this.context || !this.context.component || !this.context.component.config) return {}
       let evalFunc = {}
       const sourceFunc = this.context.component.config.functions || {}
-      console.log(sourceFunc)
+      console.debug('oh-context: sourceFunc =', sourceFunc)
       if (sourceFunc) {
         if (typeof sourceFunc !== 'object') return {}
         for (const key in sourceFunc) {
           evalFunc[key] = this.evaluateExpression(key, sourceFunc[key])
         }
       }
-      console.log(evalFunc)
+      console.debug('oh-context: evalFunc =', evalFunc)
       return evalFunc
     }
   },
   methods: {
-    childrenContexts (childComp) {
+    childrenContext (childComp) {
       const ctx = this.childContext(childComp)
       const ctxFunctions = this.fn
       if (this.context.fn) {
@@ -83,6 +60,30 @@ export default {
 
       return ctx
     }
+  },
+  beforeMount () {
+    const evaluateDefaults = () => {
+      if (!this.context || !this.context.component || !this.context.component.config) return
+
+      this.const = {}
+      const sourceConst = this.context.component.config.constants || {}
+      if (sourceConst) {
+        if (typeof sourceConst !== 'object') return
+        for (const key in sourceConst) {
+          this.$set(this.const, key, this.evaluateExpression(key, sourceConst[key]))
+        }
+      }
+
+      this.ctxVars = {}
+      const sourceCtxVars = this.context.component.config.variables || {}
+      if (sourceCtxVars) {
+        if (typeof sourceCtxVars !== 'object') return
+        for (const key in sourceCtxVars) {
+          this.$set(this.ctxVars, key, this.evaluateExpression(key, sourceCtxVars[key]))
+        }
+      }
+    }
+    evaluateDefaults()
   }
 }
 </script>

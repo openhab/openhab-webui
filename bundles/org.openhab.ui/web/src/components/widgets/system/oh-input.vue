@@ -39,8 +39,8 @@ export default {
     value () {
       let variableLocation = this.context.vars
       if (this.config.variable) {
-        let variableScope = this.getVariableScope(this.context.ctxVars, this.context.varScope, this.config.variable)
-        if (variableScope) { variableLocation = this.context.ctxVars[variableScope] }
+        const variableScope = this.getVariableScope(this.context.ctxVars, this.context.varScope, this.config.variable)
+        if (variableScope) variableLocation = this.context.ctxVars[variableScope]
       }
       if (this.config.variable && this.config.variableKey) {
         const keyValue = this.getLastVariableKeyValue(variableLocation[this.config.variable], this.config.variableKey)
@@ -112,9 +112,8 @@ export default {
         this.$set(this, 'pendingUpdate', value)
       }
       if (this.config.variable) {
-        let variableLocation = this.context.vars
-        let variableScope = this.getVariableScope(this.context.ctxVars, this.context.varScope, this.config.variable)
-        if (variableScope) { variableLocation = this.context.ctxVars[variableScope] }
+        const variableScope = this.getVariableScope(this.context.ctxVars, this.context.varScope, this.config.variable)
+        const variableLocation = (variableScope) ? this.context.ctxVars[variableScope] : this.context.vars
         if (this.config.variableKey) {
           value = this.setVariableKeyValues(variableLocation[this.config.variable], this.config.variableKey, value)
         }

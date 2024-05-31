@@ -24,8 +24,8 @@ export default {
     value () {
       const applyOffset = (num) => (!isNaN(this.config.offset)) ? Number(this.toStepFixed(num + Number(this.config.offset))) : num
       if (this.config.variable) {
-        let variableScope = this.getVariableScope(this.context.ctxVars, this.context.varScope, this.config.variable)
-        let variableLocation = (variableScope) ? this.context.ctxVars[variableScope] : this.context.vars
+        const variableScope = this.getVariableScope(this.context.ctxVars, this.context.varScope, this.config.variable)
+        const variableLocation = (variableScope) ? this.context.ctxVars[variableScope] : this.context.vars
         if (this.config.variableKey) {
           return applyOffset(this.getLastVariableKeyValue(variableLocation[this.config.variable], this.config.variableKey))
         }
@@ -73,8 +73,8 @@ export default {
       if (isNaN(newValue)) newValue = this.config.min || this.config.max || 0
       if (newValue === this.value) return
       if (this.config.variable) {
-        let variableScope = this.getVariableScope(this.context.ctxVars, this.context.varScope, this.config.variable)
-        let variableLocation = (variableScope) ? this.context.ctxVars[variableScope] : this.context.vars
+        const variableScope = this.getVariableScope(this.context.ctxVars, this.context.varScope, this.config.variable)
+        const variableLocation = (variableScope) ? this.context.ctxVars[variableScope] : this.context.vars
         if (this.config.variableKey) {
           newValue = applyOffset(this.setVariableKeyValues(variableLocation[this.config.variable], this.config.variableKey, value))
         }
