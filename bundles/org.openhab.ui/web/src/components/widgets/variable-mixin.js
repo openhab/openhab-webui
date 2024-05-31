@@ -91,6 +91,20 @@ export default {
       }
       return obj
     },
+    /**
+     * Get the oh-context variables scope for a given variable key.
+     *
+     * If no variable with the given key is found in the given scope, the parent context/scope is checked, and so on.
+     * If the variable is not found in any scope, <code>null</code> is returned.
+     *
+     * oh-context variables are local in scope to the oh-context and it's children and take precedence over other variables
+     * of the same name from higher contexts/scopes, including normal variables (which have global scope).
+     *
+     * @param {object} varObj the object containing the variables for each context/scope
+     * @param {string} scopeObj the key of the given variable context/scope
+     * @param {string} key the key of the variable
+     * @returns {string|null} the key of the variable context/scope to be used
+     */
     getVariableScope (varObj, scopeObj, key) {
       if (!scopeObj) return null
       const scopeIDs = scopeObj.split('-')
