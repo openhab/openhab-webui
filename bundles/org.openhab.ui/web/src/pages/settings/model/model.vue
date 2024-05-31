@@ -65,7 +65,7 @@
             <empty-state-placeholder icon="list_bullet_indent" title="model.title" text="model.text" />
             <f7-row class="display-flex justify-content-center">
               <f7-button color="blue" large raised fill @click="addFromLocationTemplate()">
-                Create Model from Template
+                Add Locations from Template
               </f7-button>
             </f7-row>
           </f7-block>
