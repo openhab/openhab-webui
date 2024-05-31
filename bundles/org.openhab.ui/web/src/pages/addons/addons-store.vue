@@ -9,7 +9,6 @@
       <f7-link tab-link :tab-link-active="$store.state.pagePath === '/addons/'" href="/addons/" icon-ios="f7:bag_fill" icon-aurora="f7:bag_fill" icon-md="material:shopping_bag" />
       <f7-link v-for="section in Object.keys(AddonTitles)" :key="section" tab-link :tab-link-active="$store.state.pagePath === `/addons/${section}/`" :href="`/addons/${section}`" :icon-ios="`f7:${AddonIcons[section]}`" :icon-aurora="`f7:${AddonIcons[section]}`" :icon-md="`f7:${AddonIcons[section]}`" />
     </f7-toolbar>
-
     <f7-block class="no-padding" style="margin-top: 0">
       <f7-searchbar
         ref="storeSearchbar"
@@ -20,6 +19,28 @@
         :disable-button="!$theme.aurora"
         @searchbar:search="search"
         @searchbar:clear="clearSearch" />
+      <f7-list accordion-list style="margin-top: 0px; margin-bottom: 0px">
+        <f7-list-item accordion-item title="Filters">
+          <f7-accordion-content>
+            <f7-list>
+              <f7-list-item smart-select title="Connection Type" :smart-select-params="{ closeOnSelect: true, openIn: 'sheet' }">
+                <select @change="updateFilter('connectionType', $event.target.value)">
+                  <option v-for="type in Object.keys(AddonConnectionTypes)" :key="type" :value="type" :selected="type===connectionType">
+                    {{ AddonConnectionTypes[type].label }}
+                  </option>
+                </select>
+              </f7-list-item>
+              <f7-list-item v-if="regionReady" smart-select title="Country" :smart-select-params="{ closeOnSelect: true, openIn: 'sheet' }">
+                <select @change="updateFilter('regionType', $event.target.value)">
+                  <option v-for="type in Object.keys(AddonRegionTypes)" :key="type" :value="type" :selected="type===regionType">
+                    {{ AddonRegionTypes[type] }}
+                  </option>
+                </select>
+              </f7-list-item>
+            </f7-list>
+          </f7-accordion-content>
+        </f7-list-item>
+      </f7-list>
     </f7-block>
     <f7-block v-if="!ready" class="text-align-center padding-top margin-top">
       <f7-block-title>
@@ -121,7 +142,7 @@
         <addons-section
           v-if="addons && addons.marketplace"
           @addonButtonClick="addonButtonClick"
-          :addons="addons.marketplace.filter((a) => a.type === 'ui' && a.contentType === 'application/vnd.openhab.uicomponent;type=widget')"
+          :addons="marketplaceAddons.filter((a) => a.type === 'ui' && a.contentType === 'application/vnd.openhab.uicomponent;type=widget')"
           :install-action-text="'Add'"
           :show-as-cards="true"
           :title="'Widgets for the Main UI'"
@@ -228,7 +249,7 @@
 <script>
 import AddonStoreMixin from './addon-store-mixin'
 import AddonsSection from '@/components/addons/addons-section.vue'
-import { AddonIcons, AddonTitles, AddonSuggestionLabels } from '@/assets/addon-store'
+import { AddonIcons, AddonTitles, AddonSuggestionLabels, AddonConnectionTypes, AddonRegionTypes } from '@/assets/addon-store'
 
 export default {
   mixins: [AddonStoreMixin],
@@ -241,34 +262,42 @@ export default {
       services: null,
       suggestions: [],
       ready: false,
-      searchResults: null
+      query: null,
+      searchResults: null,
+      connectionType: 'cloud',
+      regionType: 'exclude_other',
+      region: null,
+      regionReady: false
     }
   },
   computed: {
     allAddons () {
-      return Object.keys(this.addons).flatMap((k) => this.addons[k])
+      return Object.keys(this.addons).flatMap((k) => this.addons[k]).filter((a) => this.isInFilter(a))
     },
     installedAddons () {
       return this.allAddons.filter((a) => a.installed)
     },
     suggestedAddons () {
-      return this.allAddons.filter((a) => !a.installed && this.suggestions.some((s) => s.id === a.id))
+      return this.allAddons.filter((a) => !a.installed && this.suggestions.some((s) => s.id === a.id)).filter((a) => this.isInFilter(a))
     },
     unsuggestedAddons () {
-      return this.allAddons.filter((a) => !this.suggestedAddons.includes(a))
+      return this.allAddons.filter((a) => !this.suggestedAddons.includes(a)).filter((a) => this.isInFilter(a))
     },
     officialAddons () {
-      return Object.keys(this.addons).filter((k) => k === 'eclipse' || k === 'karaf').flatMap((k) => this.addons[k]).filter((a) => !this.suggestedAddons.includes(a))
+      return Object.keys(this.addons).filter((k) => k === 'eclipse' || k === 'karaf').flatMap((k) => this.addons[k]).filter((a) => this.isInFilter(a)).filter((a) => !this.suggestedAddons.includes(a))
     },
     marketplaceAddons () {
-      return this.addons.marketplace.filter((a) => !this.suggestedAddons.includes(a))
+      return this.addons.marketplace.filter((a) => !this.suggestedAddons.includes(a)).filter((a) => this.isInFilter(a))
     },
     otherAddons () {
-      return Object.keys(this.addons).filter((k) => k !== 'eclipse' && k !== 'karaf' && k !== 'marketplace').flatMap((k) => this.addons[k]).filter((a) => !this.suggestedAddons.includes(a))
+      return Object.keys(this.addons).filter((k) => k !== 'eclipse' && k !== 'karaf' && k !== 'marketplace').flatMap((k) => this.addons[k]).filter((a) => this.isInFilter(a)).filter((a) => !this.suggestedAddons.includes(a))
     },
     pageTitle () {
       if (!AddonTitles[this.currentTab]) return 'Add-on Store'
       return AddonTitles[this.currentTab].replace(/s$/, '') + ' Add-ons'
+    },
+    connectionTypes () {
+      return this.AddonConnectionTypes[this.connectionType].values
     }
   },
   methods: {
@@ -280,6 +309,10 @@ export default {
     },
     load () {
       this.stopEventSource()
+      this.$oh.api.get('/rest/services/org.openhab.i18n/config').then((data) => {
+        if (data.region) this.region = data.region
+        this.regionReady = true
+      })
       this.$oh.api.get('/rest/addons/suggestions').then((data) => {
         this.$set(this, 'suggestions', data)
       })
@@ -330,6 +363,7 @@ export default {
       query = query.toLowerCase()
       results = results.filter((a) => a.label.toLowerCase().indexOf(query) >= 0)
 
+      this.$set(this, 'query', query)
       this.$set(this, 'searchResults', results)
       setTimeout(() => {
         this.$f7.lazy.create('.page-addon-store')
@@ -337,18 +371,46 @@ export default {
     },
     clearSearch (searchbar, previousQuery) {
       this.$refs.storeSearchbar.f7Searchbar.$inputEl.val('')
+      this.$set(this, 'query', null)
       this.$set(this, 'searchResults', null)
       if (this.$device.desktop) {
         this.$nextTick(() => {
           this.$refs.storeSearchbar.f7Searchbar.$inputEl.focus()
         })
       }
+    },
+    updateFilter (filter, value) {
+      this.$set(this, filter, value)
+      if (this.query) {
+        this.$nextTick(() => {
+          this.search(undefined, this.query)
+        })
+      }
+    },
+    isInFilter (addon) {
+      // For now, we don't filter rule templates, UI widgets and block libraries, although there might be cases where they could use a cloud service,
+      // or be specific to a region/country.
+      // No connection or countries field is available for these addons.
+      const isLibraryContentType = ['application/vnd.openhab.ruletemplate', 'application/vnd.openhab.uicomponent'].includes(addon.contentType.split(';')[0])
+      // Note only the addons from the distribution currently have the connection attribute.
+      // Therefore marketplace or alternative store addons will only be visible with a selection that allows cloud connections.
+      const isInConnectionFilter = isLibraryContentType ? true : (this.connectionTypes.includes(addon.connection) || this.connectionTypes.includes('cloud'))
+      // Filter according to region/country
+      let isInRegionFilter = true
+      if (this.regionType === 'exclude_other') {
+        isInRegionFilter = addon.countries.length > 0 ? addon.countries.map(c => c.toUpperCase()).includes(this.region.toUpperCase()) : true
+      } else if (this.regionType === 'only_region') {
+        isInRegionFilter = addon.countries.map(c => c.toUpperCase()).includes(this.region.toUpperCase())
+      }
+      return isInConnectionFilter && isInRegionFilter
     }
   },
   created () {
     this.AddonIcons = AddonIcons
     this.AddonTitles = AddonTitles
     this.SuggestionLabels = AddonSuggestionLabels
+    this.AddonConnectionTypes = AddonConnectionTypes
+    this.AddonRegionTypes = AddonRegionTypes
   }
 }
 </script>
