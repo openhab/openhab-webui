@@ -47,18 +47,22 @@ export const AddonConnectionTypes = {
     values: ['none', 'local', 'hybrid', 'cloud']
   },
   cloudConfig: {
-    label: 'Cloud configuration only',
+    label: 'Optional cloud functionality',
     values: ['none', 'local', 'hybrid']
   },
   noCloud: {
     label: 'No cloud allowed',
     values: ['none', 'local']
+  },
+  noNetwork: {
+    label: 'No LAN access',
+    values: ['none']
   }
 }
 
 export const AddonRegionTypes = {
-  exclude_other: 'Exclude not for country',
-  only_region: 'Specific for country',
+  exclude_other: 'All applicable for you',
+  only_region: 'Only for your country',
   all: 'All'
 }
 

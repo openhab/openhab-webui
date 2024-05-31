@@ -23,14 +23,14 @@
         <f7-list-item accordion-item title="Filters">
           <f7-accordion-content>
             <f7-list>
-              <f7-list-item smart-select title="Connection Type" :smart-select-params="{ closeOnSelect: true }">
+              <f7-list-item smart-select title="Connection Type" :smart-select-params="{ closeOnSelect: true, openIn: 'sheet' }">
                 <select @change="updateFilter('connectionType', $event.target.value)">
                   <option v-for="type in Object.keys(AddonConnectionTypes)" :key="type" :value="type" :selected="type===connectionType">
                     {{ AddonConnectionTypes[type].label }}
                   </option>
                 </select>
               </f7-list-item>
-              <f7-list-item v-if="regionReady" smart-select title="Country" :smart-select-params="{ closeOnSelect: true }">
+              <f7-list-item v-if="regionReady" smart-select title="Country" :smart-select-params="{ closeOnSelect: true, openIn: 'sheet' }">
                 <select @change="updateFilter('regionType', $event.target.value)">
                   <option v-for="type in Object.keys(AddonRegionTypes)" :key="type" :value="type" :selected="type===regionType">
                     {{ AddonRegionTypes[type] }}

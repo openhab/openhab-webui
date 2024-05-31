@@ -90,7 +90,7 @@ export default {
         info.push({
           id: 'countries',
           title: 'Regions/Countries',
-          value: this.addon.countries.join(',').toUpperCase()
+          value: this.addon.countries.join(', ').toUpperCase()
         })
       }
 
