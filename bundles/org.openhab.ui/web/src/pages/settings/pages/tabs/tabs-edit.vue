@@ -39,9 +39,9 @@
 
             <f7-list media-list class="tabs-list">
               <f7-list-item media-item v-for="(tab, idx) in page.slots.default" :key="idx"
-                            :title="tab.config.title" :subtitle="tab.config.page"
+                            :title="tabEvaluateExpression(tab, idx, 'title')" :subtitle="tab.config.page"
                             link="#" @click.native="(ev) => configureTab(ev, tab, context)">
-                <f7-icon slot="media" :ios="tab.config.icon" :md="tab.config.icon" :aurora="tab.config.icon" color="gray" :size="32" />
+                <f7-icon slot="media" :ios="tabEvaluateExpression(tab, idx, 'icon')" :md="tabEvaluateExpression(tab, idx, 'icon')" :aurora="tabEvaluateExpression(tab, idx, 'icon')" color="gray" :size="32" />
                 <f7-menu slot="content-start" class="configure-layout-menu">
                   <f7-menu-item icon-f7="list_bullet" dropdown>
                     <f7-menu-dropdown>
@@ -91,7 +91,8 @@
 </style>
 
 <script>
-import PageDesigner from '../pagedesigner-mixin'
+import PageDesignerMixin from '@/pages/settings/pages/pagedesigner-mixin'
+import WidgetExpressionMixin from '@/components/widgets/widget-expression-mixin'
 
 import YAML from 'yaml'
 
@@ -102,7 +103,7 @@ import PageSettings from '@/components/pagedesigner/page-settings.vue'
 const ConfigurableWidgets = { OhTabDefinition }
 
 export default {
-  mixins: [PageDesigner],
+  mixins: [PageDesignerMixin, WidgetExpressionMixin],
   components: {
     'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue'),
     PageSettings
@@ -150,15 +151,20 @@ export default {
       }
       this.context.editmode.configureWidget(tab, context)
     },
+    tabEvaluateExpression (tab, idx, key) {
+      return this.evaluateExpression('tab-' + idx + '-' + key, tab.config[key], this.context, tab.config.pageConfig)
+    },
     toYaml () {
       this.pageYaml = YAML.stringify({
+        config: this.page.config,
         tabs: this.page.slots.default
       })
     },
     fromYaml () {
       try {
-        const updatedTabs = YAML.parse(this.pageYaml)
-        this.$set(this.page.slots, 'default', updatedTabs.tabs)
+        const updatedPage = YAML.parse(this.pageYaml)
+        this.$set(this.page, 'config', updatedPage.config)
+        this.$set(this.page.slots, 'default', updatedPage.tabs)
         this.forceUpdate()
         return true
       } catch (e) {
