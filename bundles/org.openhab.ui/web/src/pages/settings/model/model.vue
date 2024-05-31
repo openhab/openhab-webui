@@ -64,8 +64,8 @@
           <f7-block v-if="empty">
             <empty-state-placeholder icon="list_bullet_indent" title="model.title" text="model.text" />
             <f7-row class="display-flex justify-content-center">
-              <f7-button color="blue" large raised fill @click="addLocationTemplate()">
                 Get Started
+              <f7-button color="blue" large raised fill @click="addFromLocationTemplate()">
               </f7-button>
             </f7-row>
           </f7-block>
@@ -576,7 +576,6 @@ export default {
       this.load()
     },
     addFromThing (createEquipment) {
-      const self = this
       this.$f7router.navigate({
         url: 'add-thing',
         route: {
@@ -596,8 +595,7 @@ export default {
         }
       })
     },
-    addLocationTemplate () {
-      const self = this
+    addFromLocationTemplate () {
       this.$f7router.navigate({
         url: 'add-template',
         route: {

@@ -11,8 +11,8 @@
 
     <f7-block class="block-narrow">
       <f7-col>
-        <f7-block>
-          <f7-block-title>
+        <f7-block class="no-padding">
+          <f7-block-title class="padding-horizontal">
             Location Template
           </f7-block-title>
           <f7-list>
@@ -24,8 +24,8 @@
             Select the template that best matches the description of your property.
           </f7-block-footer>
         </f7-block>
-        <f7-block>
-          <f7-block-title>
+        <f7-block class="no-padding">
+          <f7-block-title class="padding-horizontal">
             Item Name Prefix
           </f7-block-title>
           <f7-list>
@@ -33,7 +33,7 @@
                            @input="onPrefixInput" clear-button :error-message="prefixErrorMessage"
                            :error-message-force="!!prefixErrorMessage" />
           </f7-list>
-          <f7-block-footer class="padding-left padding-right">
+          <f7-block-footer class="padding-horizontal">
             Add a prefix to each created item's name (optional: default is 'l')
           </f7-block-footer>
         </f7-block>
@@ -105,25 +105,25 @@ function compareModelItems (o1, o2) {
 }
 
 export default {
+  props: ['itemList'],
+  components: {
+    ModelTreeview
+  },
   data () {
     return {
       selectedItem: null,
       previousSelection: null,
       checkedItems: [],
       selectedTemplate: null,
-      currentModel: null,
+      currentModel: null, // cache for computed rootLocations
       prefix: null,
       prefixErrorMessage: null
     }
   },
-  props: ['itemList'],
-  components: {
-    ModelTreeview
-  },
   computed: {
     locations () {
-      let floor1 = (this.selectedTemplate === 0) ? 'lApartment' : (this.selectedTemplate === 1) ? 'lHouse' : 'lFloor_Ground'
-      let floor2 = (this.selectedTemplate === 0) ? 'lApartment' : (this.selectedTemplate === 1) ? 'lHouse' : 'lFloor_Second'
+      const floor1 = (this.selectedTemplate === 0) ? 'lApartment' : (this.selectedTemplate === 1) ? 'lHouse' : 'lFloor_Ground'
+      const floor2 = (this.selectedTemplate === 0) ? 'lApartment' : (this.selectedTemplate === 1) ? 'lHouse' : 'lFloor_Second'
 
       return [
         {
@@ -484,11 +484,11 @@ export default {
       if (this.currentModel) {
         return this.currentModel
       }
-      let newModel = this.locations
+      const newModel = this.locations
         .filter((i) => (!i.metadata.semantics.config || !i.metadata.semantics.config.isPartOf) && (i.templates & (1 << this.selectedTemplate)))
         .map(this.modelItem).sort(compareModelItems)
       newModel.forEach(this.getChildren)
-      this.setCurrentModel(newModel)
+      this.currentModel = newModel
 
       return newModel
     }
@@ -518,9 +518,6 @@ export default {
 
       return modelItem
     },
-    setCurrentModel (model) {
-      this.currentModel = model
-    },
     getChildren (parent) {
       // restore previous selection
       if (this.previousSelection && parent.item.name === this.previousSelection.item.name) {
@@ -544,7 +541,7 @@ export default {
         return searchNode
       } else if (searchNode.children.locations != null) {
         let foundNode = null
-        let childList = searchNode.children.locations
+        const childList = searchNode.children.locations
         for (let i = 0; i < childList.length; i++) {
           foundNode = this.findLocation(childList[i], name)
           if (foundNode) {
@@ -559,7 +556,7 @@ export default {
       if (check) {
         this.checkedItems.push(item)
         if (item.item.groupNames.length > 0) {
-          let parentNode = this.findLocation(this.rootLocations[0], item.item.groupNames[0])
+          const parentNode = this.findLocation(this.rootLocations[0], item.item.groupNames[0])
           if (parentNode && !parentNode.checked) {
             parentNode.checked = true
             this.checkItem(parentNode, true)
@@ -593,7 +590,7 @@ export default {
           }
         })
       }
-      let existingNames = this.itemList.map((i) => i.name)
+      const existingNames = this.itemList.map((i) => i.name)
       if (this.checkedItems.length === 0) {
         this.$f7.dialog.alert('Please select some locations')
       } else if (this.checkedItems.some((i) => existingNames.includes(i.item.name))) {
@@ -606,7 +603,7 @@ export default {
       }
     },
     doAdd () {
-      let dialog = this.$f7.dialog.progress('Creating template...')
+      const dialog = this.$f7.dialog.progress('Creating template...')
       const payload = this.checkedItems.map((i) => i.item)
 
       this.$oh.api.put('/rest/items/', payload).then((data) => {
@@ -632,13 +629,11 @@ export default {
       this.validatePrefix(this.prefix)
     },
     validatePrefix (prefix) {
-      let oldError = this.prefixErrorMessage
       if (prefix && (!/^[A-Za-z0-9_]+$/.test(prefix))) {
         this.prefixErrorMessage = 'A-Z,a-z,0-9,_ only'
       } else {
         this.prefixErrorMessage = ''
       }
-      if (oldError !== this.prefixErrorMessage) this.$emit('valid', !this.prefixErrorMessage)
     }
   }
 }
