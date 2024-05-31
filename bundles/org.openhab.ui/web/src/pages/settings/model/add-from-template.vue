@@ -34,7 +34,7 @@
                            :error-message-force="!!prefixErrorMessage" />
           </f7-list>
           <f7-block-footer class="padding-horizontal">
-            Add a prefix to each created item's name (optional: default is 'l')
+            Add a prefix to each created item's name (optional, default is 'l')
           </f7-block-footer>
         </f7-block>
         <f7-block v-if="selectedTemplate !== null" class="semantic-tree-wrapper">
@@ -138,7 +138,7 @@ export default {
           'type': 'Group',
           'name': 'lBathroom2',
           'label': 'Bathroom',
-          'category': '',
+          'category': 'bath',
           'tags': [
             'Bathroom'
           ],
@@ -159,7 +159,7 @@ export default {
           'type': 'Group',
           'name': 'lApartment',
           'label': 'Apartment',
-          'category': '',
+          'category': 'corridor',
           'tags': [
             'Building'
           ],
@@ -180,7 +180,7 @@ export default {
           'type': 'Group',
           'name': 'lHouse',
           'label': 'House',
-          'category': '',
+          'category': 'house',
           'tags': [
             'Building'
           ],
@@ -198,7 +198,7 @@ export default {
           'type': 'Group',
           'name': 'lProperty',
           'label': 'Property',
-          'category': '',
+          'category': 'none',
           'tags': [
             'Location'
           ],
@@ -217,7 +217,7 @@ export default {
           'type': 'Group',
           'name': 'lKitchen',
           'label': 'Kitchen',
-          'category': '',
+          'category': 'kitchen',
           'tags': [
             'Kitchen'
           ],
@@ -238,7 +238,7 @@ export default {
           'type': 'Group',
           'name': 'lGarage',
           'label': 'Garage',
-          'category': '',
+          'category': 'garage',
           'tags': [
             'Garage'
           ],
@@ -259,7 +259,7 @@ export default {
           'type': 'Group',
           'name': 'lBackYard',
           'label': 'Back Yard',
-          'category': '',
+          'category': 'garden',
           'tags': [
             'Location'
           ],
@@ -280,7 +280,7 @@ export default {
           'type': 'Group',
           'name': 'lEntry',
           'label': 'Entry',
-          'category': '',
+          'category': 'corridor',
           'tags': [
             'Entry'
           ],
@@ -301,7 +301,7 @@ export default {
           'type': 'Group',
           'name': 'lLivingRoom',
           'label': 'Living Room',
-          'category': '',
+          'category': 'sofa',
           'tags': [
             'LivingRoom'
           ],
@@ -322,7 +322,7 @@ export default {
           'type': 'Group',
           'name': 'lFloor_Ground',
           'label': 'Ground Floor',
-          'category': '',
+          'category': 'groundfloor',
           'tags': [
             'Floor'
           ],
@@ -343,7 +343,7 @@ export default {
           'type': 'Group',
           'name': 'lDiningRoom',
           'label': 'Dining Room',
-          'category': '',
+          'category': 'none',
           'tags': [
             'DiningRoom'
           ],
@@ -364,7 +364,7 @@ export default {
           'type': 'Group',
           'name': 'lOffice',
           'label': 'Office',
-          'category': '',
+          'category': 'office',
           'tags': [
             'Office'
           ],
@@ -385,7 +385,7 @@ export default {
           'type': 'Group',
           'name': 'lFrontYard',
           'label': 'Front Yard',
-          'category': '',
+          'category': 'lawnmower',
           'tags': [
             'Location'
           ],
@@ -406,7 +406,7 @@ export default {
           'type': 'Group',
           'name': 'lBedroom1',
           'label': 'Main Bedroom',
-          'category': '',
+          'category': 'bedroom_blue',
           'tags': [
             'Bedroom'
           ],
@@ -427,7 +427,7 @@ export default {
           'type': 'Group',
           'name': 'lBedroom2',
           'label': 'Second Bedroom',
-          'category': '',
+          'category': 'bedroom_red',
           'tags': [
             'Bedroom'
           ],
@@ -448,7 +448,7 @@ export default {
           'type': 'Group',
           'name': 'lBathroom1',
           'label': 'Bathroom',
-          'category': '',
+          'category': 'bath',
           'tags': [
             'Bathroom'
           ],
@@ -469,7 +469,7 @@ export default {
           'type': 'Group',
           'name': 'lFloor_Second',
           'label': 'Upstairs',
-          'category': '',
+          'category': 'firstfloor',
           'tags': [
             'Floor'
           ],
