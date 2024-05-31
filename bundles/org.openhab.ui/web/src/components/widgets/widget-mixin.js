@@ -9,6 +9,7 @@ export default {
   data () {
     return {
       vars: (this.context) ? this.context.vars : {},
+      ctxVars: (this.context) ? this.context.ctxVars : {},
       widgetVars: {}
     }
   },
@@ -32,7 +33,7 @@ export default {
       if (sourceConfig) {
         if (typeof sourceConfig !== 'object') return {}
         for (const key in sourceConfig) {
-          if (key === 'visible' || key === 'visibleTo' || key === 'stylesheet') continue
+          if (key === 'visible' || key === 'visibleTo' || key === 'stylesheet' || key === 'constants') continue
           this.$set(evalConfig, key, this.evaluateExpression(key, sourceConfig[key]))
         }
       }
@@ -69,7 +70,7 @@ export default {
     }
   },
   mounted () {
-    if (this.context && this.context.component.config && this.context.component.config.stylesheet) {
+    if (this.context && this.context.component && this.context.component.config && this.context.component.config.stylesheet) {
       this.cssUid = 'scoped-' + this.$f7.utils.id()
 
       this.$el.classList.add(this.cssUid)
@@ -92,7 +93,11 @@ export default {
         component: component,
         rootcomponent: this.context.root || this.context.component,
         props: this.props,
+        fn: this.context.fn,
+        const: this.context.const,
         vars: this.context.vars,
+        varScope: this.varScope || this.context.varScope,
+        ctxVars: this.context.ctxVars,
         loop: this.context.loop,
         store: this.context.store,
         config: this.context.config,
@@ -117,7 +122,11 @@ export default {
         component: widget,
         root: widget,
         props: this.config,
+        fn: this.context.fn,
+        const: this.context.const,
         vars: this.widgetVars,
+        varScope: this.varScope || this.context.varScope,
+        ctxVars: this.context.ctxVars,
         store: this.context.store,
         config: this.context.config,
         editmode: this.context.editmode,
