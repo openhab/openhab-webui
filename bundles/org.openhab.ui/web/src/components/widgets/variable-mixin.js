@@ -99,7 +99,7 @@ export default {
      *
      * oh-context variables are local in scope to the oh-context and it's children and take precedence over other variables
      * of the same name from higher contexts/scopes, including normal variables.
-     * Changes to oh-context variables done by children are propagated to the parent, which is not the case with normal variables.
+     * Changes to oh-context variables done by children are always propagated to the parent, which is not the case with normal variables used inside widgets.
      *
      * @param {object} varObj the object containing the variables for each context/scope
      * @param {string} scopeObj the key of the given variable context/scope
