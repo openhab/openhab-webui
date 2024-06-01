@@ -68,7 +68,9 @@ export default {
             items: ctx.store,
             props: props || this.props,
             config: ctx.component.config,
-            vars: ctx.vars,
+            fn: ctx.fn,
+            const: ctx.const,
+            vars: this.getAllVars(ctx),
             loop: ctx.loop,
             Math: Math,
             Number: Number,
@@ -114,6 +116,24 @@ export default {
         viewAreaWidth: pageContent.clientWidth - parseFloat(pageContentStyle.paddingLeft) - parseFloat(pageContentStyle.paddingRight),
         viewAreaHeight: pageContent.clientHeight - parseFloat(pageContentStyle.paddingTop) - parseFloat(pageContentStyle.paddingBottom)
       }
+    },
+    getAllVars (context) {
+      const vars = {}
+      if (context.vars) {
+        for (const varKey in context.vars) {
+          vars[varKey] = context.vars[varKey]
+        }
+      }
+      if (context.varScope) {
+        const scopeIDs = context.varScope.split('-')
+        for (let scope_idx = 1; scope_idx < scopeIDs.length; scope_idx++) {
+          let scopeKey = scopeIDs.slice(0, scope_idx + 1).join('-')
+          for (const varKey in context.ctxVars[scopeKey]) {
+            vars[varKey] = context.ctxVars[scopeKey][varKey]
+          }
+        }
+      }
+      return vars
     }
   }
 }

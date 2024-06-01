@@ -37,13 +37,18 @@ export default {
   },
   computed: {
     value () {
+      let variableLocation = this.context.vars
+      if (this.config.variable) {
+        const variableScope = this.getVariableScope(this.context.ctxVars, this.context.varScope, this.config.variable)
+        if (variableScope) variableLocation = this.context.ctxVars[variableScope]
+      }
       if (this.config.variable && this.config.variableKey) {
-        const keyValue = this.getLastVariableKeyValue(this.context.vars[this.config.variable], this.config.variableKey)
+        const keyValue = this.getLastVariableKeyValue(variableLocation[this.config.variable], this.config.variableKey)
         if (keyValue) {
           return keyValue
         }
-      } else if (this.config.variable && this.context.vars[this.config.variable] !== undefined) {
-        return this.context.vars[this.config.variable]
+      } else if (this.config.variable && variableLocation[this.config.variable] !== undefined) {
+        return variableLocation[this.config.variable]
       } else if (this.config.sendButton && this.pendingUpdate !== null) {
         return this.pendingUpdate
       } else if (this.config.item && this.context.store[this.config.item].state !== 'NULL' && this.context.store[this.config.item].state !== 'UNDEF' && this.context.store[this.config.item].state !== 'Invalid Date') {
@@ -107,10 +112,12 @@ export default {
         this.$set(this, 'pendingUpdate', value)
       }
       if (this.config.variable) {
+        const variableScope = this.getVariableScope(this.context.ctxVars, this.context.varScope, this.config.variable)
+        const variableLocation = (variableScope) ? this.context.ctxVars[variableScope] : this.context.vars
         if (this.config.variableKey) {
-          value = this.setVariableKeyValues(this.context.vars[this.config.variable], this.config.variableKey, value)
+          value = this.setVariableKeyValues(variableLocation[this.config.variable], this.config.variableKey, value)
         }
-        this.$set(this.context.vars, this.config.variable, value)
+        this.$set(variableLocation, this.config.variable, value)
       }
     },
     sendButtonClicked () {
