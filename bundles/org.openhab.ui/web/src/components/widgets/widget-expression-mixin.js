@@ -88,13 +88,13 @@ export default {
       } else if (typeof value === 'object' && !Array.isArray(value)) {
         const evalObj = {}
         for (const objKey in value) {
-          this.$set(evalObj, objKey, this.evaluateExpression(key + '.' + objKey, value[objKey]))
+          this.$set(evalObj, objKey, this.evaluateExpression(key + '.' + objKey, value[objKey], ctx, props || this.props))
         }
         return evalObj
       } else if (typeof value === 'object' && Array.isArray(value)) {
         const evalArr = []
         for (let i = 0; i < value.length; i++) {
-          this.$set(evalArr, i, this.evaluateExpression(key + '.' + i, value[i]))
+          this.$set(evalArr, i, this.evaluateExpression(key + '.' + i, value[i], ctx, props || this.props))
         }
         return evalArr
       } else {
