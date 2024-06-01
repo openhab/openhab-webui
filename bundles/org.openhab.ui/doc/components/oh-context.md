@@ -18,7 +18,7 @@ prev: /docs/ui/components/
 <!-- Note: you can overwrite the definition-provided description and add your own intro/additional sections instead -->
 <!-- DO NOT REMOVE the following comments if you intend to keep the definition-provided description -->
 <!-- GENERATED componentDescription -->
-Non-rendered component with functions, constants, and local variables for widgets
+Non-rendered component with functions, constants, and scoped variables for widgets
 <!-- GENERATED /componentDescription -->
 
 ## Configuration
@@ -28,19 +28,19 @@ Non-rendered component with functions, constants, and local variables for widget
 ### General
 <div class="props">
 <PropGroup label="General">
-<PropBlock type="TEXT" name="functions" label="Widget functions">
+<PropBlock type="TEXT" name="functions" label="Widget Functions">
   <PropDescription>
-    An heading that contains keys mapped to arrow function expressions which will be available to all child components via the func object in expressions.
+    Object with key:arrow-function pairs. Functions are available to expressions in all child components via the <code>fn</code> object.
   </PropDescription>
 </PropBlock>
-<PropBlock type="TEXT" name="constants" label="Widget constants">
+<PropBlock type="TEXT" name="constants" label="Widget Constants">
   <PropDescription>
-    An heading that contains keys mapped to constant values which will be available to all child components via the const object in expressions.
+    Object with key:constant pairs. Constants are available to expressions in all child components via the <code>const</code> object.
   </PropDescription>
 </PropBlock>
-<PropBlock type="TEXT" name="variables" label="Widget local variables">
+<PropBlock type="TEXT" name="variables" label="Widget Variables">
   <PropDescription>
-    An heading that contains names and default values for variables that will be available only to descendents of the oh-context component.
+    Object with key:variable default value pairs. Variables are available to expressions in all child components via the <code>vars</code> object and take precedence over variables with the same name from higher contexts.
   </PropDescription>
 </PropBlock>
 </PropGroup>
