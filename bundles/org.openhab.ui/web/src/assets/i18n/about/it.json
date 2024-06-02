@@ -15,7 +15,7 @@
   "about.reload": "Aggiorna",
   "about.reload.purgeExplanation1": "Le Cache e/o i service worker sono utilizzati per memorizzare le risorse localmente e caricare questa web app più velocemente, tuttavia potrebbe non venire riconosciuta la disponibilità di una nuova versione della web app.",
   "about.reload.purgeExplanation2": "Selezionare \"Svuota memoria cache e aggiorna\" qui sotto per cancellare tutte le cache, annullare la registrazione dei service worker e scaricare di nuovo la web app dal server.",
-  "about.reload.purgeCachesAndRefresh": "Svuota memoria cache e aggiorna",
+  "about.reload.purgeCachesAndRefresh": "Pulisci le Cache e Aggiorna",
   "about.reload.confirmPurge": "Svuotare la memoria cache di tutte le applicazioni e annullare la registrazione dei servizi attivi? Questo ricaricherà anche la pagina web dal server e potrebbe richiedere alcuni secondi.",
   "about.reload.reloadApp": "Ricarica App"
 }
