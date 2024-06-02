@@ -310,8 +310,10 @@ export default {
     load () {
       this.stopEventSource()
       this.$oh.api.get('/rest/services/org.openhab.i18n/config').then((data) => {
-        this.region = data.region ? data.region : ''
-        this.regionReady = true
+        if (data.region) {
+          this.region = data.region
+          this.regionReady = true
+        }
       })
       this.$oh.api.get('/rest/addons/suggestions').then((data) => {
         this.$set(this, 'suggestions', data)
@@ -395,12 +397,15 @@ export default {
       // Note only the addons from the distribution currently have the connection attribute.
       // Therefore marketplace or alternative store addons will only be visible with a selection that allows cloud connections.
       const isInConnectionFilter = isLibraryContentType ? true : (this.connectionTypes.includes(addon.connection) || this.connectionTypes.includes('cloud'))
-      // Filter according to region/country
+      // Filter according to region/country. Don't filter if no region/country set for OH.
+      // Note only the addons from the distribution currently have the countries attribute.
       let isInRegionFilter = true
-      if (this.regionType === 'exclude_other') {
-        isInRegionFilter = addon.countries.length > 0 ? addon.countries.map(c => c.toUpperCase()).includes(this.region.toUpperCase()) : true
-      } else if (this.regionType === 'only_region') {
-        isInRegionFilter = addon.countries.map(c => c.toUpperCase()).includes(this.region.toUpperCase())
+      if (this.regionReady) {
+        if (this.regionType === 'exclude_other') {
+          isInRegionFilter = addon.countries.length > 0 ? addon.countries.map(c => c.toUpperCase()).includes(this.region.toUpperCase()) : true
+        } else if (this.regionType === 'only_region') {
+          isInRegionFilter = addon.countries.map(c => c.toUpperCase()).includes(this.region.toUpperCase())
+        }
       }
       return isInConnectionFilter && isInRegionFilter
     }
