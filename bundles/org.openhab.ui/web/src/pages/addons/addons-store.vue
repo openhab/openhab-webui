@@ -310,7 +310,7 @@ export default {
     load () {
       this.stopEventSource()
       this.$oh.api.get('/rest/services/org.openhab.i18n/config').then((data) => {
-        if (data.region) this.region = data.region
+        this.region = data.region ? data.region : ''
         this.regionReady = true
       })
       this.$oh.api.get('/rest/addons/suggestions').then((data) => {
