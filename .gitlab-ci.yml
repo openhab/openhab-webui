@@ -4,7 +4,7 @@ stages:
   - install
 
 variables:
-  MAVEN_CLI_OPTS: "-s .maven/settings.xml --batch-mode --errors --fail-at-end --show-version"
+  MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version"
 
 before_script:
   - export MAVEN_OPTS="-Xmx512m"
