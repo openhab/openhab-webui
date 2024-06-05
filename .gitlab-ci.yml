@@ -1,0 +1,34 @@
+stages:
+  - build
+  - test
+  - deploy
+
+variables:
+  MAVEN_CLI_OPTS: "-s .maven/settings.xml --batch-mode --errors --fail-at-end --show-version"
+
+before_script:
+  - export MAVEN_OPTS="-Xmx512m"
+
+build_openhab_webui:
+  stage: build
+  script:
+    - mvn $MAVEN_CLI_OPTS clean install -DskipChecks -DskipTests -Dmaven.test.skip=true -Dfeatures.verify.skip=true -Dspotless.check.skip=true
+  only:
+    - master
+
+test_openhab_webui:
+  stage: test
+  script:
+    - mvn $MAVEN_CLI_OPTS test
+  only:
+    - master
+
+deploy_openhab_webui:
+  stage: deploy
+  script:
+    - mvn $MAVEN_CLI_OPTS deploy -DskipChecks -DskipTests -Dmaven.test.skip=true -Dfeatures.verify.skip=true -Dspotless.check.skip=true
+  only:
+    - master
+  dependencies:
+    - build_openhab_webui
+    - test_openhab_webui
