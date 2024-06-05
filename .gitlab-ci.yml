@@ -1,3 +1,5 @@
+image: circleci/openjdk:17-buster-node
+
 stages:
   - install
 
