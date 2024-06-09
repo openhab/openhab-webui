@@ -1,10 +1,14 @@
 image: circleci/openjdk:17-buster-node
 
+cache:
+  paths:
+    - .m2/repository
+
 stages:
   - install
 
 variables:
-  MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version"
+  MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
 
 before_script:
   - export MAVEN_OPTS="-Xmx512m"
