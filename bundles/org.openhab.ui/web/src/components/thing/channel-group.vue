@@ -14,16 +14,18 @@
       :checked="isSelected(c.channel)"
       name="channel-picker"
       media-item class="channel-item"
-      :footer="c.channel.description || c.channelType.description"
       :subtitle="c.channel.id + ' (' + getItemType(c.channelType) + ')'"
       :badge="getLinkedItems(c.channel).length || ''" badge-color="blue"
       @change="$emit('selected', c.channel, c.channelType)"
       @accordion:beforeopen="openedChannel = c.channelType.id"
       @accordion:close="openedChannel = ''"
       @accordion:open="opened(c.channel)">
+      <div slot="footer" v-html="c.channel.description || c.channelType.description" />
+      <!-- Icon or initial letter -->
       <oh-icon v-if="!c.extensible && c.channelType.category" slot="media" :icon="c.channelType.category" height="32" width="32" />
       <span v-else-if="c.extensible && c.channel.label" slot="media" class="item-initial">{{ c.channel.label[0] }}</span>
       <span v-else-if="!c.extensible && c.channelType.label" slot="media" class="item-initial">{{ c.channelType.label[0] }}</span>
+      <!-- Channel links -->
       <f7-accordion-content v-if="!pickerMode" class="searchbar-ignore">
         <slot :channelType="c.channelType" :channelId="c.channel.id" :channel="c.channel" :extensible="c.extensible" />
       </f7-accordion-content>
