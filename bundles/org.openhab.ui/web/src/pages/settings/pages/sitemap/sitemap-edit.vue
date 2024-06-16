@@ -30,14 +30,15 @@
         </f7-block>
         <f7-block v-else class="sitemap-tree-wrapper" :class="{ 'sheet-opened' : detailsOpened }">
           <f7-row v-if="currentTab === 'tree'">
-            <f7-col width="100" medium="50">
+            <!-- do not set column width as usual, instead use custom CSS because of https://github.com/openhab/openhab-webui/issues/2574 -->
+            <f7-col>
               <f7-block strong class="sitemap-tree" no-gap @click.native="clearSelection">
                 <f7-treeview>
                   <sitemap-treeview-item :widget="sitemap" @selected="selectWidget" :selected="selectedWidget" />
                 </f7-treeview>
               </f7-block>
             </f7-col>
-            <f7-col width="100" medium="50" class="details-pane">
+            <f7-col class="details-pane">
               <f7-block v-if="selectedWidget" no-gap>
                 <widget-details :widget="selectedWidget" :createMode="createMode" @remove="removeWidget" @movedown="moveWidgetDown" @moveup="moveWidgetUp" />
               </f7-block>
@@ -184,6 +185,8 @@
 .sitemap-tree-wrapper
   padding 0
   margin-bottom 0
+  .col
+    width 100% /* manually set column width because of https://github.com/openhab/openhab-webui/issues/2574 */
 .sitemap-tree
   padding 0
   border-right 1px solid var(--f7-block-strong-border-color)
@@ -209,7 +212,8 @@
     height 100%
     .row
       height 100%
-      .col-100
+      .col
+        width 50% /* manually set column width because of https://github.com/openhab/openhab-webui/issues/2574 */
         height 100%
         overflow auto
         .sitemap-tree
