@@ -19,7 +19,7 @@ before_script:
 install_openhab_webui:
   stage: install
   script:
-    - mvn $MAVEN_CLI_OPTS clean install -DskipChecks -DskipTests -Dmaven.test.skip=true -Dfeatures.verify.skip=true -Dspotless.check.skip=true
+    - mvn $MAVEN_CLI_OPTS clean install -DskipChecks -DskipTests -Dmaven.test.skip=true -Dfeatures.verify.skip=true -Dspotless.check.skip=true -s ci_settings.xml
   artifacts:
     paths:
       - bundles/org.openhab.*/target
