@@ -1,34 +1,47 @@
 <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
-          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
                               http://maven.apache.org/xsd/settings-1.0.0.xsd">
-  <mirrors>
-    <mirror>
-      <id>gitlab-repo</id>
-      <mirrorOf>*</mirrorOf>
-      <url>https://gitlab.com/tvision360/openhab-webui</url>
-    </mirror>
-  </mirrors>
+    <mirrors>
+        <mirror>
+            <id>gitlab-repo</id>
+            <mirrorOf>*</mirrorOf>
+            <url>https://gitlab.com/tvision360/openhab-webui</url>
+        </mirror>
+    </mirrors>
 
-  <profiles>
-    <profile>
-      <id>gitlab</id>
-      <repositories>
-        <repository>
-          <id>gitlab-repo</id>
-          <url>https://gitlab.com/tvision360/openhab-webui</url>
-          <releases>
-            <enabled>true</enabled>
-          </releases>
-          <snapshots>
-            <enabled>true</enabled>
-          </snapshots>
-        </repository>
-      </repositories>
-    </profile>
-  </profiles>
+    <profiles>
+        <profile>
+            <id>gitlab</id>
+            <repositories>
+                <repository>
+                    <id>gitlab-repo</id>
+                    <url>https://gitlab.com/tvision360/openhab-webui</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                </repository>
+            </repositories>
+        </profile>
+    </profiles>
 
-  <activeProfiles>
-    <activeProfile>gitlab</activeProfile>
-  </activeProfiles>
+    <activeProfiles>
+        <activeProfile>gitlab</activeProfile>
+    </activeProfiles>
+
+    <servers>
+        <server>
+            <id>maven</id>
+            <configuration>
+                <httpHeaders>
+                    <property>
+                        <name>Private-Token</name>
+                        <value>glpat-sBC8_ieL-ZByWb-79nKX</value>
+                    </property>
+                </httpHeaders>
+            </configuration>
+        </server>
+    </servers>
 </settings>
