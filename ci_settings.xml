@@ -33,7 +33,7 @@
 
     <servers>
         <server>
-            <id>maven</id>
+            <id>gitlab-repo</id>
             <configuration>
                 <httpHeaders>
                     <property>
