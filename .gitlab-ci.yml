@@ -12,6 +12,9 @@ variables:
 
 before_script:
   - export MAVEN_OPTS="-Xmx512m"
+  - 'echo "Private-Token: ${Deploy_Token}" "${CI_SERVER_URL}/api/v4/projects/${CI_PROJECT_ID}/packages/maven"'
+  - 'curl --header "Private-Token: ${Deploy_Token}" "${CI_SERVER_URL}/api/v4/projects/${CI_PROJECT_ID}/packages/maven"'
+
 
 install_openhab_webui:
   stage: install
