@@ -6,6 +6,6 @@
 image: circleci/openjdk:17-buster-node
 
 tasks:
-  - init: mvn install -DskipTests=false
+  - init: mvn install -DskipTests=false -s ci_settings.xml
 
 

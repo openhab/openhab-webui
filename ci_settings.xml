@@ -1,11 +1,12 @@
 <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
                               http://maven.apache.org/xsd/settings-1.0.0.xsd">
+
     <mirrors>
         <mirror>
             <id>gitlab-repo</id>
             <mirrorOf>*</mirrorOf>
-            <url>https://gitlab.com/tvision360/openhab-webui</url>
+            <url>https://gitlab.com/tvision360/</url>
         </mirror>
     </mirrors>
 
@@ -15,7 +16,7 @@
             <repositories>
                 <repository>
                     <id>gitlab-repo</id>
-                    <url>https://gitlab.com/tvision360/openhab-webui</url>
+                    <url>https://gitlab.com/tvision360/</url>
                     <releases>
                         <enabled>true</enabled>
                     </releases>
@@ -34,14 +35,8 @@
     <servers>
         <server>
             <id>gitlab-repo</id>
-            <configuration>
-                <httpHeaders>
-                    <property>
-                        <name>Private-Token</name>
-                        <value>glpat-sBC8_ieL-ZByWb-79nKX</value>
-                    </property>
-                </httpHeaders>
-            </configuration>
+            <username>gitlab+deploy-token-4401241</username>
+            <password>gldt-UZeECi2h666tFEiCz9Ee</password>
         </server>
     </servers>
 </settings>
