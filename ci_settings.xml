@@ -5,7 +5,7 @@
     <mirrors>
         <mirror>
             <id>gitlab-repo</id>
-            <mirrorOf>*</mirrorOf>
+            <mirrorOf>central</mirrorOf>
             <url>${MAVEN_REPO_URL}</url>
         </mirror>
     </mirrors>
