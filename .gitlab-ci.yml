@@ -15,7 +15,7 @@ variables:
 before_script:
   - export MAVEN_OPTS="-Xmx512m"
   - 'echo "Private-Token: ${Deploy_Token}" "${MAVEN_REPO_URL}"'
-  - 'curl --header "Private-Token: ${Deploy_Token}" "${MAVEN_REPO_URL}"'
+  - 'curl --header "Private-Token: ${Deploy_Token}" "${MAVEN_REPO_URL}/org/openhab/openhab-super-pom/maven-metadata.xml"'
 
 
 install_openhab_webui:
