@@ -10,7 +10,7 @@ stages:
 variables:
   MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version"
   TVISION360_GROUP_ID: "86358211"
-  MAVEN_REPO_URL: "${CI_SERVER_URL}/api/v4/groups/${TVISION360_GROUP_ID}/packages/maven"
+  MAVEN_REPO_URL: "${CI_SERVER_URL}/api/v4/groups/${TVISION360_GROUP_ID}/-/packages/maven"
 
 before_script:
   - export MAVEN_OPTS="-Xmx512m"
