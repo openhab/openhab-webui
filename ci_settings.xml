@@ -6,7 +6,7 @@
         <mirror>
             <id>gitlab-repo</id>
             <mirrorOf>*</mirrorOf>
-            <url>https://gitlab.com/tvision360/</url>
+            <url>${MAVEN_REPO_URL}</url>
         </mirror>
     </mirrors>
 
@@ -16,7 +16,7 @@
             <repositories>
                 <repository>
                     <id>gitlab-repo</id>
-                    <url>https://gitlab.com/tvision360/</url>
+                    <url>${MAVEN_REPO_URL}</url>
                     <releases>
                         <enabled>true</enabled>
                     </releases>
