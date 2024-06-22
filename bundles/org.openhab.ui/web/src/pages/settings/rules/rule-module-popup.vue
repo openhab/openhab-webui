@@ -62,7 +62,7 @@
             </select>
           </f7-list-item>
         </f7-list>
-        <f7-block-title v-if="ruleModule && currentRuleModuleType && (!ruleModule.new || advancedTypePicker)" style="margin-bottom: calc(var(--f7-block-title-margin-bottom) - var(--f7-list-margin-vertical))">
+        <f7-block-title v-if="ruleModule && currentRuleModuleType && (!ruleModule.new || advancedTypePicker)" style="margin-bottom: min(calc(var(--f7-block-title-margin-bottom) - var(--f7-list-margin-vertical)), 0px)">
           Configuration
         </f7-block-title>
         <f7-col v-if="ruleModule && currentRuleModuleType && (!ruleModule.new || advancedTypePicker)">
