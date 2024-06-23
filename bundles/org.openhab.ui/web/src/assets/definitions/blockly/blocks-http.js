@@ -275,7 +275,7 @@ export default function (f7, isGraalJs) {
       let elements = new Array(queryBlock.itemCount_)
       for (let i = 0; i < queryBlock.itemCount_; i++) {
         elements[i] = queryBlock.getFieldValue('KEY' + i) + '=\' + '
-        paramCode += 'let param' + i + '= encodeURIComponent(' + (javascriptGenerator.valueToCode(queryBlock, 'ADD' + i, javascriptGenerator.ORDER_NONE) || 'null') + ');\n'
+        paramCode += 'let param' + i + ' = encodeURIComponent(' + (javascriptGenerator.valueToCode(queryBlock, 'ADD' + i, javascriptGenerator.ORDER_NONE) || 'null') + ');\n'
         elements[i] += 'param' + i
       }
       query = elements.join(' + \'&')
@@ -296,11 +296,11 @@ export default function (f7, isGraalJs) {
     if ((contentType === 'application/x-www-form-urlencoded') && (payloadBlock?.type === 'dicts_create_with')) {
       let elements = new Array(payloadBlock.itemCount_)
       for (let i = 0; i < payloadBlock.itemCount_; i++) {
-        elements[i] = '\\\'' + payloadBlock.getFieldValue('KEY' + i) + '\\\':\' + '
-        paramCode += 'let param' + i + '= encodeURIComponent(' + (javascriptGenerator.valueToCode(payloadBlock, 'ADD' + i, javascriptGenerator.ORDER_NONE) || 'null') + ');\n'
+        elements[i] = '\\\'' + payloadBlock.getFieldValue('KEY' + i) + '\\\':\\\'\' + '
+        paramCode += 'let param' + i + ' = encodeURIComponent(' + (javascriptGenerator.valueToCode(payloadBlock, 'ADD' + i, javascriptGenerator.ORDER_NONE) || 'null') + ');\n'
         elements[i] += 'param' + i
       }
-      payload = '\'{' + elements.join(' + \',') + ' + \'}\''
+      payload = '\'{' + elements.join(' + \'\\\',') + ' + \'}\''
     } else {
       payload = javascriptGenerator.valueToCode(block, 'payload', javascriptGenerator.ORDER_ATOMIC)
     }
