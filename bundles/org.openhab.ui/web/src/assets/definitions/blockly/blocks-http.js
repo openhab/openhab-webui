@@ -4,6 +4,7 @@
 
 import Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript.js'
+import { NormalModuleReplacementPlugin } from 'webpack'
 
 export default function (f7, isGraalJs) {
   const timeoutImage = 'data:image/png;base64,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'
@@ -22,10 +23,14 @@ export default function (f7, isGraalJs) {
       const imageHeaderField = new Blockly.FieldImage(headerImage, 15, 15, undefined, this.onClickHeader)
       imageHeaderField.setTooltip('Add headers to the request.')
 
+      const imageQueryField = new Blockly.FieldImage(queryImage, 15, 15, undefined, this.onClickQuery)
+      imageQueryField.setTooltip('Add query to the request url.')
+
       this.appendValueInput('url')
         .setCheck('String')
         .appendField(imageTimeoutField, 'imgTimeout')
         .appendField(imageHeaderField, 'imgHeader')
+        .appendField(imageQueryField, 'imgHeader')
         .appendField('send', 'methodField')
         .appendField(new Blockly.FieldDropdown([
           ['HttpGetRequest', 'HttpGetRequest'],
@@ -46,42 +51,27 @@ export default function (f7, isGraalJs) {
     handleRequestTypeSelection: function (requestType) {
       if (this.requestType !== requestType) {
         this.requestType = requestType
-        const isGet = requestType === 'HttpGetRequest'
-        const isPost = requestType === 'HttpPostRequest'
-        const isPut = requestType === 'HttpPutRequest'
-        const isDelete = requestType === 'HttpDeleteRequest'
-        if (isPost || isPut) {
-          this.hasPayload = true
-        } else {
+        this.contentType = null
+        if (requestType === 'HttpGetRequest') {
           this.hasPayload = false
-          this.hasPayloadDict = false
-        }
-
-        const urlInput = this.getInput('url')
-        if (isGet || isDelete) {
-          if (urlInput.fieldRow[2].name !== 'imgQuery') {
-            const imageQueryField = new Blockly.FieldImage(queryImage, 15, 15, undefined, this.onClickQuery)
-            imageQueryField.setTooltip('Add query to the request.')
-            urlInput.insertFieldAt(2, imageQueryField, 'imgQuery')
-          }
-        } else {
-          if (urlInput.fieldRow[2].name === 'imgQuery') {
-            urlInput.removeField('imgQuery')
-          }
-          this.hasQuery = false
-        }
-
-        if (isPost || isPut) {
-          this.handleContentTypeSelection(this.getFieldValue('contentType'))
-        } else {
           this.updateShape(this.hasTimeout, this.hasHeader, this.hasQuery)
+        } else {
+          this.hasPayload = true
+          const contentType = this.getFieldValue('contentType')
+          this.handleContentTypeSelection(contentType)
         }
       }
     },
     handleContentTypeSelection: function (contentType) {
       if (this.contentType !== contentType) {
-        this.contentType = contentType
-        this.hasPayloadDict = (contentType === 'application/x-www-form-urlencoded')
+        if ((this.requestType === 'HttpDeleteRequest') && !contentType) {
+          // default content type for HttpDelete is none, normally no payload
+          this.contentType = 'none'
+        } else {
+          this.contentType = contentType
+        }
+        this.hasNoContent = (this.contentType === 'none')
+        this.isDictContent = ['application/json', 'application/x-www-form-urlencoded'].includeds(this.contentType)
         this.updateShape(this.hasTimeout, this.hasHeader, this.hasQuery)
       }
     },
@@ -137,11 +127,21 @@ export default function (f7, isGraalJs) {
         this.removeInput('query')
       }
 
+
       let payloadInput = this.getInput('payload')
       if (this.hasPayload) {
+        if (this.hasNoContent && payloadInput && (payloadInput.type === Blockly.inputs.inputTypes.VALUE)) {
+          this.removePayloadInput()
+        } else if (!this.hasNoContent && payloadInput && (payloadInput.type === Blockly.inputs.inputTypes.DUMMY)) {
+          this.removePayloadInput()
+        }
         if (!payloadInput) {
-          payloadInput = this.appendValueInput('payload')
-            .appendField('with Payload')
+          if (this.hasNoContent) {
+            payloadInput = this.appendDummyInput('payload')
+          } else {
+            payloadInput = this.appendValueInput('payload')
+          }
+          payloadInput.appendField('with Payload')
             .appendField(new Blockly.FieldDropdown([
               ['application/json', 'application/json'],
               ['none', 'none'],
@@ -154,17 +154,27 @@ export default function (f7, isGraalJs) {
               ['text/plain', 'text/plain'],
               ['text/xml', 'text/xml']], this.handleContentTypeSelection.bind(this)), 'contentType')
         }
-        if (payloadInput && this.hasPayloadDict && !payloadInput.connection.getCheck()?.includes('Dictionary')) {
-          payloadInput.setShadowDom(null)
-          payloadInput.setCheck('Dictionary')
-          this.addDictShadowBlock(payloadInput, 'param')
-        } else if (payloadInput && !this.hasPayloadDict && !payloadInput.connection.getCheck()?.includes('String')) {
-          payloadInput.setShadowDom(null)
-          payloadInput.setCheck('String')
-          payloadInput.setShadowDom(Blockly.utils.xml.textToDom('<shadow type="text"><field name="TEXT">payload</field></shadow>'))
+        if (this.contentType !== 'none') {
+          if (this.isDictContent && !payloadInput.connection.getCheck()?.includes('Dictionary')) {
+            payloadInput.setShadowDom(null)
+            payloadInput.setCheck(['Dictionary', 'String'])
+            this.addDictShadowBlock(payloadInput, 'param')
+          } else if (!this.isDictContent && !payloadInput.connection.getCheck()?.includes('String')) {
+            payloadInput.setShadowDom(null)
+            payloadInput.setCheck('String')
+            payloadInput.setShadowDom(Blockly.utils.xml.textToDom('<shadow type="text"><field name="TEXT">payload</field></shadow>'))
+          }
         }
-      } else if (payloadInput) {
-        payloadInput.setShadowDom(null)
+      } else {
+        this.removePayloadInput()
+      }
+    },
+    removePayloadInput () {
+      let payloadInput = this.getInput('payload')
+      if (payloadInput) {
+        if (payloadInput.type === Blockly.inputs.inputTypes.VALUE) {
+          payloadInput.setShadowDom(null)
+        }
         this.removeInput('payload')
       }
     },
@@ -216,88 +226,67 @@ export default function (f7, isGraalJs) {
   javascriptGenerator.forBlock['oh_httprequest'] = function (block, generator) {
     const requestType = block.getFieldValue('requestType')
 
-    let paramCode = ''
+    let url = javascriptGenerator.valueToCode(block, 'url', javascriptGenerator.ORDER_ATOMIC)
 
-    const url = javascriptGenerator.valueToCode(block, 'url', javascriptGenerator.ORDER_ATOMIC)
-    const queryBlock = block.getInput('query')?.connection?.targetBlock()
-    let query
-    if (queryBlock) {
-      let elements = new Array(queryBlock.itemCount_)
-      for (let i = 0; i < queryBlock.itemCount_; i++) {
-        elements[i] = queryBlock.getFieldValue('KEY' + i) + '=\' + '
-        const paramVar = javascriptGenerator.nameDB_.getDistinctName('param' + i, Blockly.Names.NameType.VARIABLE)
-        const paramContent = javascriptGenerator.valueToCode(queryBlock, 'ADD' + i, javascriptGenerator.ORDER_NONE) || 'null'
-        paramCode += `const ${paramVar} = encodeURIComponent(${paramContent});\n`
-        elements[i] += paramVar
-      }
-      query = elements.join(' + \'&')
-    }
-    const urlVar = generator.nameDB_.getDistinctName('url', Blockly.Names.NameType.VARIABLE)
-    paramCode += `const ${urlVar} = ${url}`
+    const query = javascriptGenerator.valueToCode(block, 'query', javascriptGenerator.ORDER_ATOMIC)
     if (query) {
-      paramCode += ' + \'?' + query
+      const queryEncodeFunction = encodeParams(query)
+      url = `${url} + '?' + ${queryEncodeFunction}(${query})`
     }
-    paramCode += ';\n'
 
     const contentType = block.getFieldValue('contentType')
-    const contentTypeVar = generator.nameDB_.getDistinctName('contentType', Blockly.Names.NameType.VARIABLE)
-    if (contentType) {
-      paramCode += `const ${contentTypeVar} = '${contentType}';\n`
-    }
 
-    const payloadBlock = block.getInput('payload')?.connection?.targetBlock()
-    let payload
-    const payloadVar = generator.nameDB_.getDistinctName('payload', Blockly.Names.NameType.VARIABLE)
-    if ((contentType === 'application/x-www-form-urlencoded') && (payloadBlock?.type === 'dicts_create_with')) {
-      let elements = new Array(payloadBlock.itemCount_)
-      for (let i = 0; i < payloadBlock.itemCount_; i++) {
-        elements[i] = '\\\'' + payloadBlock.getFieldValue('KEY' + i) + '\\\':\\\'\' + '
-        const paramVar = javascriptGenerator.nameDB_.getDistinctName('param' + i, Blockly.Names.NameType.VARIABLE)
-        const paramContent = javascriptGenerator.valueToCode(payloadBlock, 'ADD' + i, javascriptGenerator.ORDER_NONE) || 'null'
-        paramCode += `const ${paramVar} = encodeURIComponent(${paramContent});\n`
-        elements[i] += paramVar
-      }
-      payload = '\'{' + elements.join(' + \'\\\',') + ' + \'}\''
-    } else {
-      payload = javascriptGenerator.valueToCode(block, 'payload', javascriptGenerator.ORDER_ATOMIC)
-    }
+    let payload = javascriptGenerator.valueToCode(block, 'payload', javascriptGenerator.ORDER_ATOMIC)
     if (payload) {
-      paramCode += `const ${payloadVar} = ${payload};\n`
+      if (contentType === 'application/x-www-form-urlencoded') {
+        const payloadEncodeFunction = encodeParams(payload)
+        payload = `${payloadEncodeFunction}(${payload})`
+      } else if (contentType === 'application/json') {
+        const payloadToJSONStringFunction = toJSONString(payload)
+        payload = `${payloadToJSONStringFunction}(${payload})`
+      }
     }
 
     const headers = javascriptGenerator.valueToCode(block, 'requestHeader', javascriptGenerator.ORDER_ATOMIC)
-    const headersVar = javascriptGenerator.nameDB_.getDistinctName('headers', Blockly.Names.NameType.VARIABLE)
-    if (headers) {
-      paramCode += `const ${headersVar} = ${headers};\n`
-    }
-
     const timeout = javascriptGenerator.valueToCode(block, 'timeoutInput', javascriptGenerator.ORDER_ATOMIC) || 3000
 
-    const hasContent = (requestType !== 'HttpGetRequest' && requestType !== 'HttpDeleteRequest')
     let code = ''
-    if (hasContent) {
+    if (payload) {
       if (!headers) {
-        code = `actions.HTTP.send${requestType}(${urlVar}, ${contentTypeVar}, ${payloadVar}, ${timeout})`
+        code = `actions.HTTP.send${requestType}(${url}, '${contentType}', ${payload}, ${timeout})`
       } else {
-        code = `actions.HTTP.send${requestType}(${urlVar}, ${contentTypeVar}, ${payloadVar}, ${headersVar}, ${timeout})`
+        code = `actions.HTTP.send${requestType}(${url}, '${contentType}', ${payload}, ${headers}, ${timeout})`
       }
     } else {
       if (!headers) {
-        code = `actions.HTTP.send${requestType}(${urlVar}, ${timeout})`
+        code = `actions.HTTP.send${requestType}(${url}, ${timeout})`
       } else {
-        code = `actions.HTTP.send${requestType}(${urlVar}, ${headersVar}, ${timeout})`
+        code = `actions.HTTP.send${requestType}(${url}, ${headers}, ${timeout})`
       }
     }
     if (isGraalJs) {
-      addParamCode(paramCode)
       return [code, javascriptGenerator.ORDER_NONE]
     } else {
       throw new Error(unavailMsg)
     }
   }
 
-  function addParamCode (paramCode) {
-    const paramCodeVar = javascriptGenerator.nameDB_.getDistinctName('paramCode', Blockly.Names.NameType.VARIABLE)
-    return javascriptGenerator.provideFunction_(paramCodeVar, [paramCode])
+  function encodeParams (params) {
+    return javascriptGenerator.provideFunction_('encodeParams', [
+      'function encodeParams(params) {',
+      '    if (params instanceof String) return params',
+      '    const encodedParams = Object.entries(params).map(([key, value]) => [key, encodeURIComponent(value)]);',
+      '    return encodedParams.map(p => p.join(\'=\')).join(\'&\');',
+      '}'
+    ])
+  }
+
+  function toJSONString (params) {
+    return javascriptGenerator.provideFunction_('toJSONString', [
+      'function toJSONString(params) {',
+      '    if (params instanceof String) return params',
+      '    return JSON.stringify(params)',
+      '}'
+    ])
   }
 }
