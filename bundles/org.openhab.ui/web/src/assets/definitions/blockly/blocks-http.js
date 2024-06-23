@@ -74,7 +74,7 @@ export default function (f7, isGraalJs) {
         if (isPost || isPut) {
           this.handleContentTypeSelection(this.getFieldValue('contentType'))
         } else {
-          this.updateShape(this.hasTimeout, this.hasHeader, this.hasQuery, true)
+          this.updateShape(this.hasTimeout, this.hasHeader, this.hasQuery)
         }
       }
     },
@@ -82,84 +82,62 @@ export default function (f7, isGraalJs) {
       if (this.contentType !== contentType) {
         this.contentType = contentType
         this.hasPayloadDict = (contentType === 'application/x-www-form-urlencoded')
-        this.updateShape(this.hasTimeout, this.hasHeader, this.hasQuery, true)
+        this.updateShape(this.hasTimeout, this.hasHeader, this.hasQuery)
       }
     },
-    updateShape: function (hasTimeout, hasHeader, hasQuery, addBlocks) {
+    updateShape: function (hasTimeout, hasHeader, hasQuery) {
       this.hasTimeout = hasTimeout
       this.hasHeader = hasHeader
       this.hasQuery = hasQuery
 
+      let timeoutInput = this.getInput('timeoutInput')
       if (hasTimeout) {
-        if (!this.getInput('timeoutInput')) {
-          const timeoutInput = this.appendValueInput('timeoutInput')
+        if (!timeoutInput) {
+          timeoutInput = this.appendValueInput('timeoutInput')
             .setCheck('Number')
             .appendField('with Timeout (ms)')
-
-          const blockAfter = this.getInput('requestHeader') ? 'requestHeader' : (this.getInput('payload') ? 'payload' : (this.getInput('query') ? 'query' : undefined))
+          const blockAfter = this.getInput('requestHeader') ? 'requestHeader' : (this.getInput('query') ? 'query' : (this.getInput('payload') ? 'payload' : undefined))
           if (blockAfter) {
             this.moveInputBefore('timeoutInput', blockAfter)
           }
-          if (addBlocks) {
-            const parentConnection = timeoutInput.connection
-            const mathNumberBlock = this.workspace.newBlock('math_number')
-            mathNumberBlock.setFieldValue('3000', 'NUM')
-            parentConnection.connect(mathNumberBlock.outputConnection)
-            mathNumberBlock.initSvg()
-            if (this.rendered) {
-              mathNumberBlock.render()
-            }
-          }
+          timeoutInput.setShadowDom(Blockly.utils.xml.textToDom('<shadow type="math_number"><field name="NUM">3000</field></shadow>'))
         }
-      } else if (this.getInput('timeoutInput')) {
-        const parentConnection = this.getInput('timeoutInput').connection
-        const targetBlock = parentConnection.targetBlock()
-        if (targetBlock) {
-          targetBlock.unplug()
-          targetBlock.dispose()
-        }
+      } else if (timeoutInput) {
+        timeoutInput.setShadowDom(null)
         this.removeInput('timeoutInput')
       }
 
+      let headerInput = this.getInput('requestHeader')
       if (hasHeader) {
-        if (!this.getInput('requestHeader')) {
-          const headerInput = this.appendValueInput('requestHeader')
+        if (!headerInput) {
+          headerInput = this.appendValueInput('requestHeader')
             .setCheck('Dictionary')
             .appendField('with Headers')
-          const blockAfter = this.getInput('payload') ? 'payload' : (this.getInput('query') ? 'query' : undefined)
+          const blockAfter = this.getInput('query') ? 'query' : (this.getInput('payload') ? 'payload' : undefined)
           if (blockAfter) {
             this.moveInputBefore('requestHeader', blockAfter)
           }
-          if (addBlocks) {
-            this.addDict(headerInput, 'header')
-          }
+          this.addDictShadowBlock(headerInput, 'header')
         }
-      } else if (this.getInput('requestHeader')) {
-        const parentConnection = this.getInput('requestHeader').connection
-        const targetBlock = parentConnection.targetBlock()
-        this.disposeIfEmpty(targetBlock)
+      } else if (headerInput) {
+        headerInput.setShadowDom(null)
         this.removeInput('requestHeader')
       }
 
+      let queryInput = this.getInput('query')
       if (hasQuery) {
-        if (!this.getInput('query')) {
-          const queryInput = this.appendValueInput('query')
+        if (!queryInput) {
+          queryInput = this.appendValueInput('query')
             .setCheck('Dictionary')
             .appendField('with Query')
-          if (addBlocks) {
-            this.addDict(queryInput, 'param')
-          }
+          this.addDictShadowBlock(queryInput, 'param')
         }
-      } else if (this.getInput('query')) {
-        const parentConnection = this.getInput('query').connection
-        const targetBlock = parentConnection.targetBlock()
-        this.disposeIfEmpty(targetBlock)
+      } else if (queryInput) {
+        queryInput.setShadowDom(null)
         this.removeInput('query')
       }
 
       let payloadInput = this.getInput('payload')
-      const parentConnection = payloadInput?.connection
-      const targetBlock = parentConnection?.targetBlock()
       if (this.hasPayload) {
         if (!payloadInput) {
           payloadInput = this.appendValueInput('payload')
@@ -175,72 +153,44 @@ export default function (f7, isGraalJs) {
               ['text/javascript', 'text/javascript'],
               ['text/plain', 'text/plain'],
               ['text/xml', 'text/xml']], this.handleContentTypeSelection.bind(this)), 'contentType')
-            .setShadowDom(Blockly.utils.xml.textToDom('<shadow type="text" />'))
-            .setCheck(['String', 'Dictionary'])
-          if (addBlocks && this.hasPayloadDict) {
-            this.addDict(payloadInput, 'param')
-          }
-        } else if (this.hasPayloadDict) {
-          if (targetBlock && (targetBlock.type !== 'dicts_create_with') && !targetBlock.isShadow()) {
-            targetBlock.unplug()
-            targetBlock.moveBy(10, 10)
-          }
-          if (addBlocks && (!payloadInput.connection?.targetBlock() || payloadInput.connection.targetBlock().isShadow())) {
-            this.addDict(payloadInput, 'param')
-          }
-        } else if (targetBlock && (targetBlock.type === 'dicts_create_with')) {
-          this.disposeIfEmpty(targetBlock)
+        }
+        if (payloadInput && this.hasPayloadDict && !payloadInput.connection.getCheck()?.includes('Dictionary')) {
+          payloadInput.setShadowDom(null)
+          payloadInput.setCheck('Dictionary')
+          this.addDictShadowBlock(payloadInput, 'param')
+        } else if (payloadInput && !this.hasPayloadDict && !payloadInput.connection.getCheck()?.includes('String')) {
+          payloadInput.setShadowDom(null)
+          payloadInput.setCheck('String')
+          payloadInput.setShadowDom(Blockly.utils.xml.textToDom('<shadow type="text"><field name="TEXT">payload</field></shadow>'))
         }
       } else if (payloadInput) {
-        this.disposeIfEmpty(targetBlock)
+        payloadInput.setShadowDom(null)
         this.removeInput('payload')
       }
     },
-    addDict (input, param) {
-      const parentConnection = input.connection
-      const dictBlock = this.workspace.newBlock('dicts_create_with')
-      dictBlock.itemCount_ = 2
-      dictBlock.updateShape_()
-      for (let i = 0; i < dictBlock.itemCount_; i++) {
-        dictBlock.setFieldValue(`${param}${i}`, 'KEY' + i)
-        dictBlock.getInput('ADD' + i).setShadowDom(Blockly.utils.xml.textToDom('<shadow type="text" />'))
-      }
-      parentConnection.connect(dictBlock.outputConnection)
-      dictBlock.initSvg()
-      if (this.rendered) {
-        dictBlock.render()
-      }
-    },
-    disposeIfEmpty (targetBlock) {
-      if (targetBlock) {
-        targetBlock.unplug()
-        targetBlock.moveBy(10, 10)
-        let isEmpty = true
-        if (!targetBlock.isShadow() && !targetBlock.getChildren().length) {
-          isEmpty = false
-        }
-        let i = 0
-        while (isEmpty && targetBlock.getInput('ADD' + i)) {
-          isEmpty = targetBlock.getInput('ADD' + i).connection.targetBlock().isShadow()
-          i++
-        }
-        if (isEmpty) targetBlock.dispose()
-      }
+    addDictShadowBlock (input, param) {
+      input.setShadowDom(Blockly.utils.xml.textToDom(`<shadow type="dicts_create_with">
+          <mutation items="2" />
+          <field name="KEY0">${param}1</field>
+          <value name="ADD0"><shadow type="text"><field name="TEXT">${param}1</field></shadow></value>
+          <field name="KEY1">${param}2</field>
+          <value name="ADD1"><shadow type="text"><field name="TEXT">${param}2</field></shadow></value>
+        </shadow>`))
     },
     onClickTimeout () {
       let block = this.getSourceBlock()
       block.hasTimeout = !block.hasTimeout
-      block.updateShape(block.hasTimeout, block.hasHeader, block.hasQuery, true)
+      block.updateShape(block.hasTimeout, block.hasHeader, block.hasQuery)
     },
     onClickHeader () {
       let block = this.getSourceBlock()
       block.hasHeader = !block.hasHeader
-      block.updateShape(block.hasTimeout, block.hasHeader, block.hasQuery, true)
+      block.updateShape(block.hasTimeout, block.hasHeader, block.hasQuery)
     },
     onClickQuery () {
       let block = this.getSourceBlock()
       block.hasQuery = !block.hasQuery
-      block.updateShape(block.hasTimeout, block.hasHeader, block.hasQuery, true)
+      block.updateShape(block.hasTimeout, block.hasHeader, block.hasQuery)
     },
     mutationToDom: function () {
       let container = Blockly.utils.xml.createElement('mutation')
@@ -253,7 +203,7 @@ export default function (f7, isGraalJs) {
       let hasTimeout = xmlElement.getAttribute('hasTimeout') === 'true'
       let hasHeader = xmlElement.getAttribute('hasHeader') === 'true'
       let hasQuery = xmlElement.getAttribute('hasQuery') === 'true'
-      this.updateShape(hasTimeout, hasHeader, hasQuery, false)
+      this.updateShape(hasTimeout, hasHeader, hasQuery)
     }
   }
 
@@ -277,13 +227,13 @@ export default function (f7, isGraalJs) {
         elements[i] = queryBlock.getFieldValue('KEY' + i) + '=\' + '
         const paramVar = javascriptGenerator.nameDB_.getDistinctName('param' + i, Blockly.Names.NameType.VARIABLE)
         const paramContent = javascriptGenerator.valueToCode(queryBlock, 'ADD' + i, javascriptGenerator.ORDER_NONE) || 'null'
-        paramCode += `var ${paramVar} = encodeURIComponent(${paramContent});\n`
+        paramCode += `const ${paramVar} = encodeURIComponent(${paramContent});\n`
         elements[i] += paramVar
       }
       query = elements.join(' + \'&')
     }
     const urlVar = generator.nameDB_.getDistinctName('url', Blockly.Names.NameType.VARIABLE)
-    paramCode += `var ${urlVar} = ${url}`
+    paramCode += `const ${urlVar} = ${url}`
     if (query) {
       paramCode += ' + \'?' + query
     }
@@ -292,7 +242,7 @@ export default function (f7, isGraalJs) {
     const contentType = block.getFieldValue('contentType')
     const contentTypeVar = generator.nameDB_.getDistinctName('contentType', Blockly.Names.NameType.VARIABLE)
     if (contentType) {
-      paramCode += `var ${contentTypeVar} = ${contentType};\n`
+      paramCode += `const ${contentTypeVar} = '${contentType}';\n`
     }
 
     const payloadBlock = block.getInput('payload')?.connection?.targetBlock()
@@ -303,8 +253,8 @@ export default function (f7, isGraalJs) {
       for (let i = 0; i < payloadBlock.itemCount_; i++) {
         elements[i] = '\\\'' + payloadBlock.getFieldValue('KEY' + i) + '\\\':\\\'\' + '
         const paramVar = javascriptGenerator.nameDB_.getDistinctName('param' + i, Blockly.Names.NameType.VARIABLE)
-        const paramContent = javascriptGenerator.valueToCode(queryBlock, 'ADD' + i, javascriptGenerator.ORDER_NONE) || 'null'
-        paramCode += `var ${paramVar} = encodeURIComponent(${paramContent});\n`
+        const paramContent = javascriptGenerator.valueToCode(payloadBlock, 'ADD' + i, javascriptGenerator.ORDER_NONE) || 'null'
+        paramCode += `const ${paramVar} = encodeURIComponent(${paramContent});\n`
         elements[i] += paramVar
       }
       payload = '\'{' + elements.join(' + \'\\\',') + ' + \'}\''
@@ -312,13 +262,13 @@ export default function (f7, isGraalJs) {
       payload = javascriptGenerator.valueToCode(block, 'payload', javascriptGenerator.ORDER_ATOMIC)
     }
     if (payload) {
-      paramCode += `var ${payloadVar} = ${payload};\n`
+      paramCode += `const ${payloadVar} = ${payload};\n`
     }
 
     const headers = javascriptGenerator.valueToCode(block, 'requestHeader', javascriptGenerator.ORDER_ATOMIC)
     const headersVar = javascriptGenerator.nameDB_.getDistinctName('headers', Blockly.Names.NameType.VARIABLE)
     if (headers) {
-      paramCode += `var ${headersVar} = ${headers};\n`
+      paramCode += `const ${headersVar} = ${headers};\n`
     }
 
     const timeout = javascriptGenerator.valueToCode(block, 'timeoutInput', javascriptGenerator.ORDER_ATOMIC) || 3000
