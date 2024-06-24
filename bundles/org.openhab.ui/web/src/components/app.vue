@@ -633,11 +633,19 @@ export default {
 
     // special treatment for this option because it's needed to configure the app initialization
     this.themeOptions.pageTransitionAnimation = localStorage.getItem('openhab.ui:theme.pagetransition') || 'default'
-    // tell the app to go fullscreen (if the OHApp is supported)
-    if (window.OHApp && typeof window.OHApp.goFullscreen === 'function') {
-      try {
-        window.OHApp.goFullscreen()
-      } catch {}
+
+    // load 2-way communication for native wrappers
+    if (window.OHApp) {
+      // tell the app to go fullscreen (if the OHApp is supported)
+      if (typeof window.OHApp.goFullscreen === 'function') {
+        try {
+          window.OHApp.goFullscreen()
+        } catch {}
+        // expose navigation controls
+        window.MainUI = {
+          navigate: this.navigate
+        }
+      }
     }
 
     const refreshToken = this.getRefreshToken()
