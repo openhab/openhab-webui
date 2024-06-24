@@ -643,7 +643,7 @@ export default {
         } catch {}
         // expose navigation controls
         window.MainUI = {
-          navigate: this.navigate
+          handleCommand: this.handleCommand
         }
       }
     }
