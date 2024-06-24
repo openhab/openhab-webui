@@ -50,8 +50,7 @@ export default function (f7, isGraalJs) {
     handleRequestTypeSelection: function (requestType) {
       if (this.requestType !== requestType) {
         this.requestType = requestType
-        this.contentType = null
-        if (requestType === 'HttpGetRequest') {
+        if (['HttpGetRequest', 'HttpDeleteRequest'].includes(requestType)) {
           this.hasPayload = false
           this.updateShape(this.hasTimeout, this.hasHeader, this.hasQuery)
         } else {
@@ -63,14 +62,10 @@ export default function (f7, isGraalJs) {
     },
     handleContentTypeSelection: function (contentType) {
       if (this.contentType !== contentType) {
-        if ((this.requestType === 'HttpDeleteRequest') && !contentType) {
-          // default content type for HttpDelete is none, normally no payload
-          this.contentType = 'none'
-        } else {
-          this.contentType = contentType
-        }
-        this.hasNoContent = (this.contentType === 'none')
-        this.isDictContent = ['application/json', 'application/x-www-form-urlencoded'].includeds(this.contentType)
+        this.contentType = contentType
+        this.hasContent = (contentType !== 'none')
+        this.isJSONContent = (!contentType || (contentType === 'application/json'))
+        this.isEncodedContent = (contentType === 'application/x-www-form-urlencoded')
         this.updateShape(this.hasTimeout, this.hasHeader, this.hasQuery)
       }
     },
@@ -128,13 +123,15 @@ export default function (f7, isGraalJs) {
 
       let payloadInput = this.getInput('payload')
       if (this.hasPayload) {
-        if (this.hasNoContent && payloadInput && (payloadInput.type === Blockly.inputs.inputTypes.VALUE)) {
+        if (!this.hasContent && payloadInput && (payloadInput.type === Blockly.inputs.inputTypes.VALUE)) {
           this.removePayloadInput()
-        } else if (!this.hasNoContent && payloadInput && (payloadInput.type === Blockly.inputs.inputTypes.DUMMY)) {
+          payloadInput = null
+        } else if (this.hasContent && payloadInput && (payloadInput.type === Blockly.inputs.inputTypes.DUMMY)) {
           this.removePayloadInput()
+          payloadInput = null
         }
         if (!payloadInput) {
-          if (this.hasNoContent) {
+          if (!this.hasContent) {
             payloadInput = this.appendDummyInput('payload')
           } else {
             payloadInput = this.appendValueInput('payload')
@@ -152,14 +149,18 @@ export default function (f7, isGraalJs) {
               ['text/plain', 'text/plain'],
               ['text/xml', 'text/xml']], this.handleContentTypeSelection.bind(this)), 'contentType')
         }
-        if (this.contentType !== 'none') {
-          if (this.isDictContent && !payloadInput.connection.getCheck()?.includes('Dictionary')) {
+        if (this.hasContent) {
+          if (this.isEncodedContent) {
             payloadInput.setShadowDom(null)
             payloadInput.setCheck(['Dictionary', 'String'])
             this.addDictShadowBlock(payloadInput, 'param')
-          } else if (!this.isDictContent && !payloadInput.connection.getCheck()?.includes('String')) {
+          } else {
             payloadInput.setShadowDom(null)
-            payloadInput.setCheck('String')
+            if (this.isJSONContent) {
+              payloadInput.setCheck(null)
+            } else {
+              payloadInput.setCheck('String')
+            }
             payloadInput.setShadowDom(Blockly.utils.xml.textToDom('<shadow type="text"><field name="TEXT">payload</field></shadow>'))
           }
         }
@@ -272,7 +273,7 @@ export default function (f7, isGraalJs) {
   function encodeParams (params) {
     return javascriptGenerator.provideFunction_('encodeParams', [
       'function encodeParams(params) {',
-      '    if (params instanceof String) return params',
+      '    if ((typeof params === \'string\') || (params instanceof String)) return params;',
       '    const encodedParams = Object.entries(params).map(([key, value]) => [key, encodeURIComponent(value)]);',
       '    return encodedParams.map(p => p.join(\'=\')).join(\'&\');',
       '}'
@@ -282,8 +283,8 @@ export default function (f7, isGraalJs) {
   function toJSONString (params) {
     return javascriptGenerator.provideFunction_('toJSONString', [
       'function toJSONString(params) {',
-      '    if (params instanceof String) return params',
-      '    return JSON.stringify(params)',
+      '    if ((typeof params === \'string\') || (params instanceof String)) return params;',
+      '    return JSON.stringify(params).replace(/^"+/, \'["\').replace(/"+$/, \'"]\');',
       '}'
     ])
   }
