@@ -12,5 +12,7 @@
   "about.miscellaneous.home.hideChatInput": "Chat-invoervak op startpagina verbergen",
   "about.miscellaneous.home.disableCardExpansionAnimation": "Kaart animaties uitschakelen",
   "about.miscellaneous.theme.disablePageTransition": "Pagina-overgang animaties uitschakelen",
-  "about.miscellaneous.webaudio.enable": "Web Audio sink ondersteuning inschakelen"
+  "about.miscellaneous.webaudio.enable": "Web Audio sink ondersteuning inschakelen",
+  "about.miscellaneous.commandItem.title": "Luister voor UI commando's naar ",
+  "about.miscellaneous.commandItem.selectItem": "Item"
 }
