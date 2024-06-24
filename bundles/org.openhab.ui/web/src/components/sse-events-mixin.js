@@ -36,7 +36,7 @@ export default {
             break
           case topicCommand:
             const payload = JSON.parse(event.payload)
-            this.navigate(payload)
+            this.navigate(payload.value)
             break
         }
       })
