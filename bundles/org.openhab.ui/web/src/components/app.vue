@@ -641,7 +641,7 @@ export default {
         try {
           window.OHApp.goFullscreen()
         } catch {}
-        // expose navigation controls
+        // expose external calls
         window.MainUI = {
           handleCommand: this.handleCommand
         }
