@@ -36,7 +36,7 @@ export default {
             break
           case topicCommand:
             const payload = JSON.parse(event.payload)
-            this.navigate(payload.value)
+            this.handleCommand(payload.value)
             break
         }
       })
@@ -104,9 +104,9 @@ export default {
         this.$f7.sheet.close(sheetEl)
       }
     },
-    navigate (navigationString) {
-      console.log('Navigating: ' + navigationString)
-      const [command, ...segments] = navigationString.trim().split(':') // NOT use a RegEx lookbehind assertions here, because they are unsupported on Safari < 16.4, i.e. iOS 15.x
+    handleCommand (commandString) {
+      console.log('Navigating: ' + commandString)
+      const [command, ...segments] = commandString.trim().split(':') // NOT use a RegEx lookbehind assertions here, because they are unsupported on Safari < 16.4, i.e. iOS 15.x
       const combined = segments.join(':')
       switch (command) {
         case 'navigate':
