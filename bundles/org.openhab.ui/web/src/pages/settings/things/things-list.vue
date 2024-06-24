@@ -380,6 +380,7 @@ export default {
               break
             case 'added':
             case 'removed':
+            case 'updated':
               this.load()
               break
           }
