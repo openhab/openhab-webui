@@ -76,9 +76,9 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
           'sumBetween': 'Gets the sum of the States of the Item between two points in time',
           'previousState': 'Gets the previous State of the Item, with option to skip to different value as current',
           'nextState': 'Gets the next State of the Item, with option to skip to different value as current',
-          'getAllStatesSince': 'Gets Array of objects with timestamp and state fields of persisted items since a certain point in time',
-          'getAllStatesUntil': 'Gets Array of objects with timestamp and state fields of persisted items until a certain point in time',
-          'getAllStatesBetween': 'Gets Array of objects with timestamp and state fields of persisted items between two points in time',
+          'getAllStatesSince': 'Gets Array of timestamp and state pairs of persisted items since a certain point in time',
+          'getAllStatesUntil': 'Gets Array of timestamp and state pairs of persisted items until a certain point in time',
+          'getAllStatesBetween': 'Gets Array of timestamp and state pairs of persisted items between two points in time',
           'previousNumericState': 'Gets the previous State of the Item without the unit, with option to skip to different value as current',
           'nextNumericState': 'Gets the next State of the Item without the unit, with option to skip to different value as current',
           'previousStateTime': 'Gets the time when previous State of the Item last occurred, with option to skip to different value as current',
@@ -329,11 +329,11 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
         code = (isGraalJs) ? `${itemCode}.persistence.${methodName}(${dayInfo}${persistenceExtension})?.${returnTypeName}` : `parseFloat(${persistence}.${methodName}(${itemCode}, ${dayInfo}${persistenceExtension}).getState())`
         break
 
-      // Returning JS Array of objects with timestamp and state fields, whereby PersistedState is mapped to return type (GraalJS) or org.openhab.core.persistence.HistoricItem
+      // Returning JS Array of timestamp and state pairs, whereby PersistedState is mapped to return type (GraalJS) or org.openhab.core.persistence.HistoricItem
       case 'getAllStatesSince':
       case 'getAllStatesUntil':
       case 'getAllStatesBetween':
-        code = (isGraalJs) ? `${itemCode}.persistence.${methodName}(${dayInfo}${persistenceExtension}).map(v => ({'timestamp': v.timestamp, 'state': v.${returnTypeName}}))` : `${persistence}.${methodName}(${itemCode}, ${dayInfo}${persistenceExtension}.map(v => ({'timestamp': v.getTimestamp(), 'state': v.getState()}))`
+        code = (isGraalJs) ? `${itemCode}.persistence.${methodName}(${dayInfo}${persistenceExtension}).map(v => ([v.timestamp, v.${returnTypeName}]))` : `${persistence}.${methodName}(${itemCode}, ${dayInfo}${persistenceExtension}.map(v => ([v.getTimestamp(), v.getState()]))`
         break
 
       default:
@@ -535,7 +535,7 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
         const TIP = {
           'currentState': 'Persist a state to Item Persistence at current time (this does not update the state of the item)',
           'stateAt': 'Persist a state to Item Persistence at a given point in time',
-          'stateList': 'Persist a list of objects with timestamp and state fields to Item Persistence'
+          'stateList': 'Persist a list of timestamp and state pairs to Item Persistence'
         }
         return TIP[persistType]
       })
