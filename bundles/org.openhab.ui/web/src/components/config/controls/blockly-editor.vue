@@ -921,7 +921,7 @@
             <value name="itemName">
               <shadow type="oh_item" />
             </value>
-            <value name="dayInfo">
+            <value name="dayInfoSince">
               <shadow type="oh_zdt_plusminus">
                 <value name="offset">
                   <shadow type="math_number">
@@ -932,12 +932,23 @@
                 <field name="plusminus">minus</field>
               </shadow>
             </value>
+            <value name="dayInfoUntil">
+              <shadow type="oh_zdt_plusminus">
+                <value name="offset">
+                  <shadow type="math_number">
+                    <field name="NUM">1</field>
+                  </shadow>
+                </value>
+                <field name="period">Hours</field>
+                <field name="plusminus">plus</field>
+              </shadow>
+            </value>
           </block>
           <block type="oh_persist_changed">
             <value name="itemName">
               <shadow type="oh_item" />
             </value>
-            <value name="dayInfo">
+            <value name="dayInfoSince">
               <shadow type="oh_zdt_plusminus">
                 <value name="offset">
                   <shadow type="math_number">
@@ -946,6 +957,17 @@
                 </value>
                 <field name="period">Hours</field>
                 <field name="plusminus">minus</field>
+              </shadow>
+            </value>
+            <value name="dayInfoUntil">
+              <shadow type="oh_zdt_plusminus">
+                <value name="offset">
+                  <shadow type="math_number">
+                    <field name="NUM">1</field>
+                  </shadow>
+                </value>
+                <field name="period">Hours</field>
+                <field name="plusminus">plus</field>
               </shadow>
             </value>
           </block>

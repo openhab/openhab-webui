@@ -18,14 +18,16 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
         .appendField('get the')
         .appendField(new Blockly.FieldDropdown([
           ['persisted state', 'persistedState'],
-          ['historic state average', 'averageSince'], ['future state average', 'averageUntil'],
-          ['historic state delta', 'deltaSince'], ['future state delta', 'deltaUntil'],
-          ['historic state deviation', 'deviationSince'], ['future state deviation', 'deviationUntil'],
-          ['historic state variance', 'varianceSince'], ['future state variance', 'varianceUntil'],
-          ['historic evolution rate', 'evolutionRateSince'], ['future evolution rate', 'evolutionRateUntil'],
-          ['historic state minimum', 'minimumSince'], ['future state minimum', 'minimumUntil'],
-          ['historic state maximum', 'maximumSince'], ['future state maximum', 'maximumUntil'],
-          ['historic state sum', 'sumSince'], ['future state sum', 'sumUntil'],
+          ['historic state average', 'averageSince'], ['future state average', 'averageUntil'], ['state average between', 'averageBetween'],
+          ['historic state delta', 'deltaSince'], ['future state delta', 'deltaUntil'], ['state delta between', 'deltaBetween'],
+          ['historic state deviation', 'deviationSince'], ['future state deviation', 'deviationUntil'], ['state deviation between', 'deviationBetween'],
+          ['historic state variance', 'varianceSince'], ['future state variance', 'varianceUntil'], ['state variance between', 'varianceBetween'],
+          ['historic evolution rate', 'evolutionRateSince'], ['future evolution rate', 'evolutionRateUntil'], ['state evolution rate between', 'evolutionRateBetween'],
+          ['historic state minimum', 'minimumSince'], ['future state minimum', 'minimumUntil'], ['state minimum between', 'minimumBetween'],
+          ['historic state maximum', 'maximumSince'], ['future state maximum', 'maximumUntil'], ['state maximum between', 'maximumBetween'],
+          ['historic state sum', 'sumSince'], ['future state sum', 'sumUntil'], ['state sum between', 'sumBetween'],
+          ['historic state updates count', 'countSince'], ['future state updates count', 'countUntil'], ['state updates count between', 'countBetween'],
+          ['historic state changes count', 'countStateChangesSince'], ['future state changes count', 'countStateChangesUntil'], ['state changes count between', 'countStateChangesBetween'],
           ['previous state value', 'previousState'], ['next state value', 'nextState'],
           ['previous state numeric value', 'previousNumericState'], ['next state numeric value', 'nextNumericState'],
           ['previous state value time', 'previousStateTime'], ['next state value time', 'nextStateTime']
@@ -33,7 +35,7 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
         ), 'methodName')
       this.methodName = this.getFieldValue('methodName')
       this.appendValueInput('itemName')
-        .appendField('of item ')
+        .appendField('of item')
         .setAlign(Blockly.ALIGN_RIGHT)
         .setCheck(['String', 'oh_item', 'oh_itemtype'])
       this.appendValueInput('persistenceName')
@@ -47,29 +49,43 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
       this.setTooltip(() => {
         let methodName = this.getFieldValue('methodName')
         let TIP = {
-          'averageSince': 'Gets the average value of the State of a persisted Item since a certain point in time. This method uses a time-weighted average calculation',
-          'averageUntil': 'Gets the average value of the State of a persisted Item until a certain point in time. This method uses a time-weighted average calculation',
-          'deltaSince': 'Gets the difference in value of the State of a given Item since a certain point in time',
-          'deltaUntil': 'Gets the difference in value of the State of a given Item until a certain point in time',
-          'deviationSince': 'Gets the standard deviation of the state of the given Item since a certain point in time',
-          'deviationUntil': 'Gets the standard deviation of the state of the given Item until a certain point in time',
-          'varianceSince': 'Gets the variance of the state of the given Item since a certain point in time',
-          'varianceUntil': 'Gets the variance of the state of the given Item until a certain point in time',
-          'evolutionRateSince': 'Gets the evolution rate of the state of a given Item since a certain point in time',
-          'evolutionRateUntil': 'Gets the evolution rate of the state of a given Item until a certain point in time',
-          'minimumSince': 'Gets the minimum value of the State of a persisted Item since a certain point in time',
-          'minimumUntil': 'Gets the minimum value of the State of a persisted Item until a certain point in time',
-          'maximumSince': 'Gets the maximum value of the State of a persisted Item since a certain point in time',
-          'maximumUntil': 'Gets the maximum value of the State of a persisted Item until a certain point in time',
-          'sumSince': 'Gets the sum of the previous States of a persisted Item since a certain point in time',
-          'sumUntil': 'Gets the sum of the previous States of a persisted Item until a certain point in time',
-          'previousState': 'Gets the previous state with option to skip to different value as current',
-          'nextState': 'Gets the next state with option to skip to different value as current',
-          'previousNumericState': 'Gets the previous state without the unit with option to skip to different value as current',
-          'nextNumericState': 'Gets the next state without the unit with option to skip to different value as current',
-          'previousStateTime': 'Gets the time when previous state last occurred with option to skip to different value as current',
-          'nextStateTime': 'Gets the time when next state will occur with option to skip to different value as current',
-          'persisted': 'Gets the persisted state at a certain point in time'
+          'averageSince': 'Gets the average value of the State of the Item since a certain point in time. This method uses a time-weighted average calculation',
+          'averageUntil': 'Gets the average value of the State of the Item until a certain point in time. This method uses a time-weighted average calculation',
+          'averageBetween': 'Gets the average value of the State of the Item between two points in time. This method uses a time-weighted average calculation',
+          'deltaSince': 'Gets the difference in value of the State of the Item since a certain point in time',
+          'deltaUntil': 'Gets the difference in value of the State of the Item until a certain point in time',
+          'deltaBetween': 'Gets the difference in value of the State of the Item between two points in time',
+          'deviationSince': 'Gets the standard deviation of the State of the Item since a certain point in time',
+          'deviationUntil': 'Gets the standard deviation of the State of the Item until a certain point in time',
+          'deviationBetween': 'Gets the standard deviation of the State of the Item between two points in time',
+          'varianceSince': 'Gets the variance of the State of the Item since a certain point in time',
+          'varianceUntil': 'Gets the variance of the State of the Item until a certain point in time',
+          'varianceBetween': 'Gets the variance of the State of the Item between two points in time',
+          'evolutionRateSince': 'Gets the evolution rate of the State of the Item since a certain point in time',
+          'evolutionRateUntil': 'Gets the evolution rate of the State of the Item until a certain point in time',
+          'evolutionRateBetween': 'Gets the evolution rate of the State of the Item between two points in time',
+          'minimumSince': 'Gets the minimum value of the State of the Item since a certain point in time',
+          'minimumUntil': 'Gets the minimum value of the State of the Item until a certain point in time',
+          'minimumBetween': 'Gets the minimum value of the State of the Item between two points in time',
+          'maximumSince': 'Gets the maximum value of the State of the Item since a certain point in time',
+          'maximumUntil': 'Gets the maximum value of the State of the Item until a certain point in time',
+          'maximumBetween': 'Gets the maximum value of the State of the Item between two points in time',
+          'sumSince': 'Gets the sum of the previous States of the Item since a certain point in time',
+          'sumUntil': 'Gets the sum of the future States of the Item until a certain point in time',
+          'sumBetween': 'Gets the sum of the States of the Item between two points in time',
+          'previousState': 'Gets the previous State of the Item, with option to skip to different value as current',
+          'nextState': 'Gets the next State of the Item, with option to skip to different value as current',
+          'previousNumericState': 'Gets the previous State of the Item without the unit, with option to skip to different value as current',
+          'nextNumericState': 'Gets the next State of the Item without the unit, with option to skip to different value as current',
+          'previousStateTime': 'Gets the time when previous State of the Item last occurred, with option to skip to different value as current',
+          'nextStateTime': 'Gets the time when next State of the Item will occur, with option to skip to different value as current',
+          'countSince': 'Gets the number of stored State updates of the Item since a certain point in time',
+          'countUntil': 'Gets the number of stored State updates of the Item until a certain point in time',
+          'countBetween': 'Gets the number of stored State updates of the Item between two points in time',
+          'countStateChangesSince': 'Gets the number of State changes of the Item since a certain point in time',
+          'countStateChangesUntil': 'Gets the number of State changes of the Item until a certain point in time',
+          'countStateChangesBetween': 'Gets the number of State changes of the Item between two points in time',
+          'persistedState': 'Gets the State of the Item at a certain point in time'
         }
         return TIP[methodName]
       })
@@ -86,20 +102,35 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
       if (!persistenceNameInput.getShadowDom()) {
         persistenceNameInput.setShadowDom(Blockly.utils.xml.textToDom('<shadow type="oh_persistence_dropdown" />'))
       }
-      if (['evolutionRateSince', 'evolutionRateUntil', 'previousNumericState', 'nextNumericState', 'previousStateTime', 'nextStateTime'].includes(this.methodName)) {
-        if (this.getInput('returnTypeInput')) {
-          this.removeInput('returnTypeInput')
-        }
-      } else if (!this.getInput('returnTypeInput')) {
+
+      // Always remove when switching, so the sequence of the selection list gets updated
+      if (this.getInput('returnTypeInput')) {
+        this.removeInput('returnTypeInput')
+      }
+      if (isGraalJs && ![
+        'evolutionRateSince', 'evolutionRateUntil', 'evolutionRateBetween',
+        'countSince', 'countUntil', 'countBetween',
+        'countStateChangesSince', 'countStateChangesUntil', 'countStateChangesBetween',
+        'previousNumericState', 'nextNumericState', 'previousStateTime', 'nextStateTime'
+      ].includes(this.methodName)) {
         this.appendDummyInput('returnTypeInput')
-          .appendField(new Blockly.FieldDropDown(this.returnTypesNames()))
+          .appendField('as')
+          .appendField(new Blockly.FieldDropdown(this.returnTypeNames()), 'returnTypeName')
           .setAlign(Blockly.ALIGN_RIGHT)
         this.moveInputBefore('returnTypeInput', 'itemName')
       }
+
+      let hasSinceField = this.methodName.endsWith('Since') || this.methodName.endsWith('Between') || (this.methodName === 'persistedState')
+      let hasUntilField = this.methodName.endsWith('Until') || this.methodName.endsWith('Between')
+
+      if (this.getInput('dayInfoSince') && !hasSinceField) {
+        this.removeInput('dayInfoSince')
+      }
+      if (this.getInput('dayInfoUntil') && !hasUntilField) {
+        this.removeInput('dayInfoUntil')
+      }
+
       if (['previousState', 'nextState', 'previousNumericState', 'nextNumericState', 'previousStateTime', 'nextStateTime'].includes(this.methodName)) {
-        if (this.getInput('dayInfo')) {
-          this.removeInput('dayInfo')
-        }
         if (!this.getInput('skipPrevious')) {
           this.appendValueInput('skipPrevious')
             .appendField('skip same ')
@@ -111,55 +142,82 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
           this.removeInput('skipPrevious')
         }
 
-        const preposition = (this.methodName === 'persistedState') ? 'at' : (this.methodName.endsWith('Until') ? 'until' : 'since')
+        const prepositionSince = (this.methodName === 'persistedState') ? 'at' : (this.methodName.endsWith('Since') ? 'since' : 'between')
+        const prepositionUntil = this.methodName.endsWith('Until') ? 'until' : 'and'
 
-        if (!this.getInput('dayInfo')) {
-          this.appendValueInput('dayInfo')
-            .appendField(preposition, 'preposition')
-            .setCheck(['ZonedDateTime'])
-          this.moveInputBefore('dayInfo', 'persistenceName')
-        } else {
-          const prepositionField = this.getField('preposition')
-          if (prepositionField.getText() !== preposition) {
-            prepositionField.setValue(preposition)
+        if (hasSinceField) {
+          if (!this.getInput('dayInfoSince')) {
+            this.appendValueInput('dayInfoSince')
+              .appendField(prepositionSince, 'prepositionSince')
+              .setCheck(['ZonedDateTime'])
+            if (this.getInput('dayInfoUntil')) {
+              this.moveInputBefore('dayInfoSince', 'dayInfoUntil')
+            } else {
+              this.moveInputBefore('dayInfoSince', 'persistenceName')
+            }
+          } else {
+            const prepositionField = this.getField('prepositionSince')
+            if (prepositionField.getText() !== prepositionSince) {
+              prepositionField.setValue(prepositionSince)
+            }
+          }
+        }
+
+        if (hasUntilField) {
+          if (!this.getInput('dayInfoUntil')) {
+            this.appendValueInput('dayInfoUntil')
+              .appendField(prepositionUntil, 'prepositionUntil')
+              .setCheck(['ZonedDateTime'])
+            this.moveInputBefore('dayInfoUntil', 'persistenceName')
+          } else {
+            const prepositionField = this.getField('prepositionUntil')
+            if (prepositionField.getText() !== prepositionUntil) {
+              prepositionField.setValue(prepositionUntil)
+            }
           }
         }
       }
     },
-    returnTypesNames: function () {
+    returnTypeNames: function () {
       // use different list of return types and sequence to make sure first entry is old behaviour for backward compatibility
-      let returnTypes
+      let returnTypes = []
       switch (this.methodName) {
-        case 'maximumSince':
-        case 'maximumUntil':
-        case 'minimumSince':
-        case 'minimumUntil':
         case 'persistedState':
         case 'previousState':
         case 'nextState':
-          returnTypes = [['string state', 'state'],
-            ['quantity state', 'quantityState'],
-            ['numeric state', 'numericState'],
-            ['time', 'timestamp']]
+        case 'maximumSince':
+        case 'maximumUntil':
+        case 'maximumBetween':
+        case 'minimumSince':
+        case 'minimumUntil':
+        case 'minimumBetween':
+          returnTypes = [['String', 'state'],
+            ['Quantity', 'quantityState'],
+            ['Number', 'numericState'],
+            ['Timestamp', 'timestamp']]
           break
 
         case 'averageSince':
         case 'averageUntil':
+        case 'averageBetween':
         case 'deltaSince':
         case 'deltaUntil':
+        case 'deltaBetween':
         case 'deviationSince':
         case 'deviationUntil':
+        case 'deviationBetween':
         case 'sumSince':
         case 'sumUntil':
+        case 'sumBetween':
         case 'varianceSince':
         case 'varianceUntil':
-          returnTypes = [['numeric state', 'numericState'],
-            ['quantity state', 'quantityState'],
-            ['string state', 'state']]
+        case 'varianceBetween':
+          returnTypes = [['Number', 'numericState'],
+            ['Quantity', 'quantityState'],
+            ['String', 'state']]
           break
 
         default:
-          returnTypes = []
           break
       }
       return returnTypes
@@ -181,20 +239,23 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
 
     const itemCode = generateItemCode(itemName, inputType)
     let code = ''
-    let dayInfo = ''
+    const dayInfoSince = javascriptGenerator.valueToCode(block, 'dayInfoSince', javascriptGenerator.ORDER_NONE)
+    const dayInfoUntil = javascriptGenerator.valueToCode(block, 'dayInfoUntil', javascriptGenerator.ORDER_NONE)
+    const dayInfo = dayInfoSince + ((dayInfoSince && dayInfoUntil) ? ' ,' : '') + dayInfoUntil
     let skipPrevious = javascriptGenerator.valueToCode(block, 'skipPrevious', javascriptGenerator.ORDER_NONE)
     skipPrevious = ((skipPrevious === 'undefined') ? false : skipPrevious)
 
     const persistenceExtension = (persistenceName === '\'default\'') ? '' : `, ${persistenceName}`
 
     switch (methodName) {
-      // Returning JS PersistedItem (GraalJS) or org.openhab.core.persistence.HistoricItem
+      // Returning JS PersistedItem mapped to return type (GraalJS) or org.openhab.core.persistence.HistoricItem
+      case 'persistedState':
       case 'maximumSince':
       case 'maximumUntil':
+      case 'maximumBetween':
       case 'minimumSince':
       case 'minimumUntil':
-      case 'persistedState':
-        dayInfo = javascriptGenerator.valueToCode(block, 'dayInfo', javascriptGenerator.ORDER_NONE)
+      case 'minimumBetween':
         code = (isGraalJs) ? `${itemCode}.persistence.${methodName}(${dayInfo}${persistenceExtension})?.${returnTypeName}` : `${persistence}.${methodName}(${itemCode}, ${dayInfo}${persistenceExtension}).getState()`
         break
 
@@ -217,23 +278,26 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
         code = (isGraalJs) ? `${itemCode}.persistence.nextState(${skipPrevious}${persistenceExtension})?.timestamp` : `${persistence}.nextState(${itemCode}, ${skipPrevious}${persistenceExtension}).getTimestamp()`
         break
 
-      // Returning JS PersistedState (GraalJS) or org.openhab.core.types.State
+      // Returning JS PersistedState mapped to return type (GraalJS) or org.openhab.core.types.State cast to float
       case 'averageSince':
       case 'averageUntil':
+      case 'averageBetween':
       case 'deltaSince':
       case 'deltaUntil':
+      case 'deltaBetween':
       case 'deviationSince':
       case 'deviationUntil':
+      case 'deviationBetween':
       case 'sumSince':
       case 'sumUntil':
+      case 'sumBetween':
       case 'varianceSince':
       case 'varianceUntil':
-        dayInfo = javascriptGenerator.valueToCode(block, 'dayInfo', javascriptGenerator.ORDER_NONE)
+      case 'varianceBetween':
         code = (isGraalJs) ? `${itemCode}.persistence.${methodName}(${dayInfo}${persistenceExtension})?.${returnTypeName}` : `parseFloat(${persistence}.${methodName}(${itemCode}, ${dayInfo}${persistenceExtension}).getState())`
         break
 
       default:
-        dayInfo = javascriptGenerator.valueToCode(block, 'dayInfo', javascriptGenerator.ORDER_NONE)
         code = (isGraalJs) ? `${itemCode}.persistence.${methodName}(${dayInfo}${persistenceExtension})` : `${persistence}.${methodName}(${itemCode}, ${dayInfo}${persistenceExtension})`
         break
     }
@@ -258,9 +322,13 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
         persistenceNameInput.setShadowDom(Blockly.utils.xml.textToDom('<shadow type="oh_persistence_dropdown" />'))
       }
       this.appendValueInput('dayInfo')
-        .appendField(new Blockly.FieldDropdown([['has changed since', 'changedSince'], ['will have changed until', 'changedUntil'], ['has been updated since', 'updatedSince'], ['will have been updated until', 'updatedUntil']]), 'methodName')
+        .appendField(new Blockly.FieldDropdown([
+          ['has changed since', 'changedSince'], ['will have changed until', 'changedUntil'], ['changes between', 'changedBetween'],
+          ['has been updated since', 'updatedSince'], ['will have been updated until', 'updatedUntil'], ['is updated between', 'updatedBetween']
+        ], this.handleTypeSelection.bind(this)), 'methodName')
         .setAlign(Blockly.ALIGN_RIGHT)
         .setCheck(['ZonedDateTime'])
+      this.methodName = this.getFieldValue('methodName')
 
       this.setInputsInline(false)
       this.setOutput(true, null)
@@ -272,13 +340,32 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
         let TIP = {
           'changedSince': 'Checks if the State of the Item has (ever) changed since a certain point in time',
           'changedUntil': 'Checks if the State of the Item will have (ever) changed until a certain point in time',
+          'changedBetween': 'Checks if the State of the Item will have (ever) changed between two points in time',
           'updatedSince': 'Checks if the State of the Item has been updated since a certain point in time',
-          'updatedUntil': 'Checks if the State of the Item will have been updated until a certain point in time'
+          'updatedUntil': 'Checks if the State of the Item will have been updated until a certain point in time',
+          'updatedBetween': 'Checks if the State of the Item will have been updated between two points in time'
         }
         return TIP[methodName]
       })
 
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-persistence.html#check-item-change-update-since-a-point-in-time')
+    },
+    handleTypeSelection: function (methodName) {
+      if (this.methodName !== methodName) {
+        this.methodName = methodName
+        this.updateShape()
+      }
+    },
+    updateShape: function () {
+      if (this.methodName.endsWith('Between')) {
+        if (!this.getInput('dayInfo2')) {
+          this.appendValueInput('dayInfo2')
+            .appendField('and')
+            .setCheck(['ZonedDateTime'])
+        }
+      } else if (this.getInput('dayInfo2')) {
+        this.removeInput('dayInfo2')
+      }
     }
   }
 
@@ -291,7 +378,9 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
     const inputType = blockGetCheckedInputType(block, 'itemName')
 
     const methodName = block.getFieldValue('methodName')
-    const dayInfo = javascriptGenerator.valueToCode(block, 'dayInfo', javascriptGenerator.ORDER_NONE)
+    const dayInfo1 = javascriptGenerator.valueToCode(block, 'dayInfo', javascriptGenerator.ORDER_NONE)
+    const dayInfo2 = methodName.endsWith('Between') ? javascriptGenerator.valueToCode(block, 'dayInfo2', javascriptGenerator.ORDER_NONE) : undefined
+    const dayInfo = dayInfo2 ? `${dayInfo1}, ${dayInfo2}` : dayInfo1
     const persistenceName = javascriptGenerator.valueToCode(block, 'persistenceName', javascriptGenerator.ORDER_NONE)
     const persistenceExtension = (persistenceName === '\'default\'') ? '' : `, ${persistenceName}`
 
