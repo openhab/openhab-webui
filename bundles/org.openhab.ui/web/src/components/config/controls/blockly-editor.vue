@@ -954,6 +954,11 @@
               <shadow type="oh_item" />
             </value>
           </block>
+          <block type="oh_persist">
+            <value name="itemName">
+              <shadow type="oh_item" />
+            </value>
+          </block>
           <block type="oh_delete_persistedvalues">
             <value name="itemName">
               <shadow type="oh_item" />

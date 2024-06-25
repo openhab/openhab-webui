@@ -492,16 +492,163 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
     const persistenceName = javascriptGenerator.valueToCode(block, 'persistenceName', javascriptGenerator.ORDER_NONE)
     const persistenceExtension = (persistenceName === '\'default\'') ? '' : ((!isGraalJs) ? ',' : '') + ` ${persistenceName}`
 
-    let itemCode = generateItemCode(itemName, inputType)
+    const itemCode = generateItemCode(itemName, inputType)
 
     if (isGraalJs) {
       return [`${itemCode}.persistence.${methodName}(${persistenceExtension})`, 0]
     } else {
       const { dtf, zdt, getZonedDatetime } = addDateSupport()
       const persistence = addPersistence()
-      let code = `${persistence}.${methodName}(${itemCode}${persistenceExtension})`
+      let code = `${persistence}.${methodName}(${itemCode}, ${persistenceExtension})`
       return [code, 0]
     }
+  }
+
+  /*
+  * Persist a state or list of states
+  * Blockly part
+  */
+  Blockly.Blocks['oh_persist'] = {
+    init: function () {
+      this.appendDummyInput('persist')
+        .appendField('persist')
+        .appendField(new Blockly.FieldDropdown([
+          ['to current time', 'currentState'], ['to specific time', 'stateAt'], ['a list of states', 'stateList']
+        ]), 'persistType')
+      this.appendDummyInput()
+        .appendField('to')
+      this.appendValueInput('itemName')
+        .setCheck(['String', 'oh_item', 'oh_itemtype'])
+      const persistenceNameInput = this.appendValueInput('persistenceName')
+        .appendField('in')
+        .setCheck(null)
+      if (!persistenceNameInput.getShadowDom()) {
+        persistenceNameInput.setShadowDom(Blockly.utils.xml.textToDom('<shadow type="oh_persistence_dropdown" />'))
+      }
+
+      this.setInputsInline(false)
+      this.setColour(0)
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-persistence.html#persist-item')
+
+      this.setTooltip(() => {
+        const persistType = this.getFieldValue('persistType')
+        const TIP = {
+          'currentState': 'Persist a state to Item Persistence at current time (this does not update the state of the item)',
+          'stateAt': 'Persist a state to Item Persistence at a given point in time',
+          'stateList': 'Persist a list of objects with timestamp and state fields to Item Persistence'
+        }
+        return TIP[persistType]
+      })
+    },
+    handleTypeSelection: function (persistType) {
+      if (this.persistType !== persistType) {
+        this.persistType = persistType
+        this.updateShape()
+      }
+    },
+    updateShape: function () {
+      const persistenceNameInput = this.getInput('persistenceName')
+      if (!persistenceNameInput.getShadowDom()) {
+        persistenceNameInput.setShadowDom(Blockly.utils.xml.textToDom('<shadow type="oh_persistence_dropdown" />'))
+      }
+
+      let hasAtField = (this.persistType === 'stateAt')
+      if (this.getInput('at') && !hasAtField) {
+        this.removeInput('at')
+      }
+      if (hasAtField && !this.getInput('at')) {
+        this.appendValueInput('at')
+          .appendField('at')
+          .setCheck(['ZonedDateTime'])
+        this.getInput('at').setShadowDom(
+          Blockly.utils.xml.textToDom(`<shadow type="oh_zdt_plusminus">
+            <value name="offset">
+              <shadow type="math_number">
+                <field name="NUM">1</field>
+              </shadow>
+            </value>
+            <field name="period">Hours</field>
+            <field name="plusminus">minus</field>
+          </shadow>`))
+        this.moveInputBefore('at', 'persistenceName')
+      }
+
+      let hasStateListField = (this.persistType === 'stateList')
+      if (this.getInput('stateList') && !hasStateListField) {
+        this.removeInput('stateList')
+      }
+      if (this.getInput('state') && hasStateListField) {
+        this.removeInput('state')
+      }
+      if (!hasStateListField && !this.getInput('state')) {
+        this.appendValueInput('state')
+          .appendField('state')
+        this.getInput('state').setShadowDom(
+          Blockly.utils.xml.textToDom(`<shadow type="text">
+            <field name="TEXT">state</field>
+          </shadow>`))
+        this.moveInputAfter('state', 'persist')
+      }
+      if (hasStateListField) {
+        if (!this.getInput('stateList')) {
+          this.appendValueInput('stateList')
+            .appendField(new Blockly.FieldDropdown([
+              ['add to existing', 'ADD'], ['replace existing', 'REPLACE']
+            ]), 'policy')
+            .appendField(' states')
+            .setCheck(['Array'])
+          this.getInput('stateList').setShadowDom(
+            Blockly.utils.xml.textToDom(`<shadow type="list_create_with">
+              <mutation items="0" />
+            </shadow>`))
+          this.moveInputAfter('stateList', 'persist')
+        }
+      }
+    }
+  }
+
+  /*
+  * Persist a state or list of states
+  * Code part
+  */
+  javascriptGenerator.forBlock['oh_persist'] = function (block) {
+    const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
+    const inputType = blockGetCheckedInputType(block, 'itemName')
+    const itemCode = generateItemCode(itemName, inputType)
+
+    const persistType = block.getFieldValue('persistType')
+
+    const state = block.getFieldValue('state')
+    const stateList = block.getFieldValue('stateList')
+    const at = block.getFieldValue('at')
+
+    const policy = block.getFieldValue('policy')
+
+    const persistenceName = javascriptGenerator.valueToCode(block, 'persistenceName', javascriptGenerator.ORDER_NONE)
+    const persistenceExtension = (persistenceName === '\'default\'') ? '' : ((!isGraalJs) ? ',' : '') + ` ${persistenceName}`
+
+    let code = ''
+    let persistence
+    if (!isGraalJs) {
+      const { dtf, zdt, getZonedDatetime } = addDateSupport()
+      persistence = addPersistence()
+    }
+    switch (persistType) {
+      case 'currentState':
+        code += isGraalJs ? `${itemCode}.persistence.persist(${state}, ${persistenceExtension})` : `${persistence}.persist(${itemCode}, ${state}, ${persistenceExtension})`
+        break
+      case 'stateAt':
+        code += isGraalJs ? `${itemCode}.persistence.persist(${at}, ${state}, ${persistenceExtension})` : `${persistence}.persist(${itemCode}, ${at}, ${state}, ${persistenceExtension})`
+        break
+      case 'stateList':
+        code += `const timeSeries = new TimeSeries(${policy})\n`
+        code += `${stateList}.forEach(s => timeSeries.add(s[0], s[1]))\n`
+        code += isGraalJs ? `${itemCode}.persistence.persist(timeSeries, ${persistenceExtension})` : `${persistence}.persist(${itemCode}, timeSeries, ${persistenceExtension})`
+        break
+      default:
+        break
+    }
+    return [code, 0]
   }
 
   /*
