@@ -44,7 +44,7 @@
   "setupwizard.addons.selectAddons": "Wähle weitere zu installierende Add-ons",
   "setupwizard.addons.selectAddons.placeholder": "Versuche: astro, mqtt, hue, knx...",
   "setupwizard.addons.footer": "Zur optimalen Ausnutzung der Systemressourcen installiere bitte nur die Add-ons, die Du wirklich benötigst! Die Installation kann ein wenig Zeit in Anspruch nehmen. Bitte einen Moment Geduld und bleibe auf dieser Seite, bis die Installation abgeschlossen ist.",
-  "setupwizard.addons.installAddons": "Installiere 1 add-on | Installiere {n} add-ons",
+  "setupwizard.addons.installAddons": "Installiere 1 Add-on | Installiere {n} Add-ons",
   "setupwizard.addons.installLater": "Add-ons später installieren",
   "setupwizard.addons.installing": "Installiere Add-ons...",
   "setupwizard.addons.installingAddon": "Installiere Add-on: {addon}",
