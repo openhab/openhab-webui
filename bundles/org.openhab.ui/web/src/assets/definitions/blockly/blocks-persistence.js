@@ -150,6 +150,16 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
             this.appendValueInput('dayInfoSince')
               .appendField(prepositionSince, 'prepositionSince')
               .setCheck(['ZonedDateTime'])
+            this.getInput('dayInfoSince').setShadowDom(
+              Blockly.utils.xml.textToDom(`<shadow type="oh_zdt_plusminus">
+                <value name="offset">
+                  <shadow type="math_number">
+                    <field name="NUM">1</field>
+                  </shadow>
+                </value>
+                <field name="period">Hours</field>
+                <field name="plusminus">minus</field>
+              </shadow>`))
             if (this.getInput('dayInfoUntil')) {
               this.moveInputBefore('dayInfoSince', 'dayInfoUntil')
             } else {
@@ -168,6 +178,16 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
             this.appendValueInput('dayInfoUntil')
               .appendField(prepositionUntil, 'prepositionUntil')
               .setCheck(['ZonedDateTime'])
+            this.getInput('dayInfoUntil').setShadowDom(
+              Blockly.utils.xml.textToDom(`<shadow type="oh_zdt_plusminus">
+                <value name="offset">
+                  <shadow type="math_number">
+                    <field name="NUM">1</field>
+                  </shadow>
+                </value>
+                <field name="period">Hours</field>
+                <field name="plusminus">plus</field>
+              </shadow>`))
             this.moveInputBefore('dayInfoUntil', 'persistenceName')
           } else {
             const prepositionField = this.getField('prepositionUntil')
@@ -362,6 +382,16 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
           this.appendValueInput('dayInfo2')
             .appendField('and')
             .setCheck(['ZonedDateTime'])
+          this.getInput('dayInfo2').setShadowDom(
+            Blockly.utils.xml.textToDom(`<shadow type="oh_zdt_plusminus">
+              <value name="offset">
+                <shadow type="math_number">
+                  <field name="NUM">1</field>
+                </shadow>
+              </value>
+              <field name="period">Hours</field>
+              <field name="plusminus">plus</field>
+            </shadow>`))
         }
       } else if (this.getInput('dayInfo2')) {
         this.removeInput('dayInfo2')
