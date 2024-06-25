@@ -948,7 +948,7 @@
             <value name="itemName">
               <shadow type="oh_item" />
             </value>
-            <value name="dayInfoSince">
+            <value name="dayInfo">
               <shadow type="oh_zdt_plusminus">
                 <value name="offset">
                   <shadow type="math_number">
@@ -959,7 +959,7 @@
                 <field name="plusminus">minus</field>
               </shadow>
             </value>
-            <value name="dayInfoUntil">
+            <value name="dayInfo2">
               <shadow type="oh_zdt_plusminus">
                 <value name="offset">
                   <shadow type="math_number">
