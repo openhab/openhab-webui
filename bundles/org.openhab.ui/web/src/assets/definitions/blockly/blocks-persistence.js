@@ -452,10 +452,11 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
     init: function () {
       this.appendDummyInput()
         .appendField(new Blockly.FieldDropdown([
-          ['last', 'lastUpdate'], ['next', 'nextUpdate']
+          ['last updated', 'lastUpdate'], ['next updated', 'nextUpdate'],
+          ['last changed', 'lastChange'], ['next changed', 'nextChange']
         ]), 'methodName')
       this.appendDummyInput()
-        .appendField(' updated date of')
+        .appendField(' date of')
       this.appendValueInput('itemName')
         .setCheck(['String', 'oh_item', 'oh_itemtype'])
       const persistenceNameInput = this.appendValueInput('persistenceName')
@@ -473,8 +474,10 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
       this.setTooltip(() => {
         const methodName = this.getFieldValue('methodName')
         const TIP = {
-          'lastUpdate': 'Get the last update time of the provided item',
-          'nextUpdate': 'Get the next update time of the provided item'
+          'lastUpdate': 'Get the last update time of the provided item (null if the item state changed since last being persisted)',
+          'nextUpdate': 'Get the next update time of the provided item',
+          'lastChange': 'Get the last changed time of the provided item (null if the item state changed since last being persisted)',
+          'nextChange': 'Get the next changed time of the provided item'
         }
         return TIP[methodName]
       })
