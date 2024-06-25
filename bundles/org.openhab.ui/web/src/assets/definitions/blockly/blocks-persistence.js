@@ -5,6 +5,7 @@
 import Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript.js'
 import { addDateSupport, blockGetCheckedInputType } from './utils.js'
+import ThingGeneralSettings from '@/components/thing/thing-general-settings.vue'
 
 export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceServices) {
   /*
@@ -85,6 +86,16 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
       if (!persistenceNameInput.getShadowDom()) {
         persistenceNameInput.setShadowDom(Blockly.utils.xml.textToDom('<shadow type="oh_persistence_dropdown" />'))
       }
+      if (['evolutionRateSince', 'evolutionRateUntil', 'previousNumericState', 'nextNumericState', 'previousStateTime', 'nextStateTime'].includes(this.methodName)) {
+        if (this.getInput('returnTypeInput')) {
+          this.removeInput('returnTypeInput')
+        }
+      } else if (!this.getInput('returnTypeInput')) {
+        this.appendDummyInput('returnTypeInput')
+          .appendField(new Blockly.FieldDropDown(this.returnTypesNames()))
+          .setAlign(Blockly.ALIGN_RIGHT)
+        this.moveInputBefore('returnTypeInput', 'itemName')
+      }
       if (['previousState', 'nextState', 'previousNumericState', 'nextNumericState', 'previousStateTime', 'nextStateTime'].includes(this.methodName)) {
         if (this.getInput('dayInfo')) {
           this.removeInput('dayInfo')
@@ -114,6 +125,44 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
           }
         }
       }
+    },
+    returnTypesNames: function () {
+      // use different list of return types and sequence to make sure first entry is old behaviour for backward compatibility
+      let returnTypes
+      switch (this.methodName) {
+        case 'maximumSince':
+        case 'maximumUntil':
+        case 'minimumSince':
+        case 'minimumUntil':
+        case 'persistedState':
+        case 'previousState':
+        case 'nextState':
+          returnTypes = [['string state', 'state'],
+            ['quantity state', 'quantityState'],
+            ['numeric state', 'numericState'],
+            ['time', 'timestamp']]
+          break
+
+        case 'averageSince':
+        case 'averageUntil':
+        case 'deltaSince':
+        case 'deltaUntil':
+        case 'deviationSince':
+        case 'deviationUntil':
+        case 'sumSince':
+        case 'sumUntil':
+        case 'varianceSince':
+        case 'varianceUntil':
+          returnTypes = [['numeric state', 'numericState'],
+            ['quantity state', 'quantityState'],
+            ['string state', 'state']]
+          break
+
+        default:
+          returnTypes = []
+          break
+      }
+      return returnTypes
     }
   }
 
@@ -126,6 +175,7 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
     const inputType = blockGetCheckedInputType(block, 'itemName')
 
     const methodName = block.getFieldValue('methodName')
+    const returnTypeName = block.getFieldValue('returnTypeName')
     const persistenceName = javascriptGenerator.valueToCode(block, 'persistenceName', javascriptGenerator.ORDER_NONE)
     const persistence = (isGraalJs) ? null : addPersistence()
 
@@ -145,26 +195,26 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
       case 'minimumUntil':
       case 'persistedState':
         dayInfo = javascriptGenerator.valueToCode(block, 'dayInfo', javascriptGenerator.ORDER_NONE)
-        code = (isGraalJs) ? `${itemCode}.persistence.${methodName}(${dayInfo}${persistenceExtension})?.state` : `${persistence}.${methodName}(${itemCode}, ${dayInfo}${persistenceExtension}).getState()`
+        code = (isGraalJs) ? `${itemCode}.persistence.${methodName}(${dayInfo}${persistenceExtension})?.${returnTypeName}` : `${persistence}.${methodName}(${itemCode}, ${dayInfo}${persistenceExtension}).getState()`
         break
 
       case 'previousState':
       case 'nextState':
-        code = (isGraalJs) ? `${itemCode}.persistence.${methodName}(${skipPrevious}${persistenceExtension})?.state` : `${persistence}.${methodName}(${itemCode},${skipPrevious}${persistenceExtension}).getState()`
+        code = (isGraalJs) ? `${itemCode}.persistence.${methodName}(${skipPrevious}${persistenceExtension})?.${returnTypeName}` : `${persistence}.${methodName}(${itemCode}, ${skipPrevious}${persistenceExtension}).getState()`
         break
 
       case 'previousNumericState':
-        code = (isGraalJs) ? `${itemCode}.persistence.previousState(${skipPrevious}${persistenceExtension})?.numericState` : `${persistence}.previousState(${itemCode},${skipPrevious}${persistenceExtension}).getNumericState()`
+        code = (isGraalJs) ? `${itemCode}.persistence.previousState(${skipPrevious}${persistenceExtension})?.numericState` : `${persistence}.previousState(${itemCode}, ${skipPrevious}${persistenceExtension}).getNumericState()`
         break
       case 'nextNumericState':
-        code = (isGraalJs) ? `${itemCode}.persistence.nextState(${skipPrevious}${persistenceExtension})?.numericState` : `${persistence}.nextState(${itemCode},${skipPrevious}${persistenceExtension}).getNumericState()`
+        code = (isGraalJs) ? `${itemCode}.persistence.nextState(${skipPrevious}${persistenceExtension})?.numericState` : `${persistence}.nextState(${itemCode}, ${skipPrevious}${persistenceExtension}).getNumericState()`
         break
 
       case 'previousStateTime':
-        code = (isGraalJs) ? `${itemCode}.persistence.previousState(${skipPrevious}${persistenceExtension})?.timestamp` : `${persistence}.previousState(${itemCode},${skipPrevious}${persistenceExtension}).getTimestamp()`
+        code = (isGraalJs) ? `${itemCode}.persistence.previousState(${skipPrevious}${persistenceExtension})?.timestamp` : `${persistence}.previousState(${itemCode}, ${skipPrevious}${persistenceExtension}).getTimestamp()`
         break
       case 'nextStateTime':
-        code = (isGraalJs) ? `${itemCode}.persistence.nextState(${skipPrevious}${persistenceExtension})?.timestamp` : `${persistence}.nextState(${itemCode},${skipPrevious}${persistenceExtension}).getTimestamp()`
+        code = (isGraalJs) ? `${itemCode}.persistence.nextState(${skipPrevious}${persistenceExtension})?.timestamp` : `${persistence}.nextState(${itemCode}, ${skipPrevious}${persistenceExtension}).getTimestamp()`
         break
 
       // Returning JS PersistedState (GraalJS) or org.openhab.core.types.State
@@ -179,7 +229,7 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
       case 'varianceSince':
       case 'varianceUntil':
         dayInfo = javascriptGenerator.valueToCode(block, 'dayInfo', javascriptGenerator.ORDER_NONE)
-        code = (isGraalJs) ? `${itemCode}.persistence.${methodName}(${dayInfo}${persistenceExtension})?.numericState` : `parseFloat(${persistence}.${methodName}(${itemCode}, ${dayInfo}${persistenceExtension}).getState())`
+        code = (isGraalJs) ? `${itemCode}.persistence.${methodName}(${dayInfo}${persistenceExtension})?.${returnTypeName}` : `parseFloat(${persistence}.${methodName}(${itemCode}, ${dayInfo}${persistenceExtension}).getState())`
         break
 
       default:
