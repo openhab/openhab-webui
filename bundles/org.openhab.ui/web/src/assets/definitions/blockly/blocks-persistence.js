@@ -15,7 +15,7 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
   Blockly.Blocks['oh_get_persistvalue'] = {
     init: function () {
       this.appendDummyInput()
-        .appendField('get the')
+        .appendField('get')
         .appendField(new Blockly.FieldDropdown([
           ['persisted state', 'persistedState'],
           ['historic state average', 'averageSince'], ['future state average', 'averageUntil'], ['state average between', 'averageBetween'],
@@ -502,6 +502,143 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
       let code = `${persistence}.${methodName}(${itemCode}${persistenceExtension})`
       return [code, 0]
     }
+  }
+
+  /*
+  * Delete persisted values for an item
+  * Blockly part
+  */
+  Blockly.Blocks['oh_delete_persistedvalues'] = {
+    init: function () {
+      this.appendDummyInput()
+        .appendField('delete')
+        .appendField(new Blockly.FieldDropdown([
+          ['all states since', 'deleteAllStatesSince'], ['all states until', 'deleteAllStatesUntil'], ['all states between', 'deleteAllStatesBetween']
+        ], this.handleTypeSelection.bind(this)
+        ), 'methodName')
+      this.methodName = this.getFieldValue('methodName')
+      this.appendValueInput('itemName')
+        .appendField('of item')
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .setCheck(['String', 'oh_item', 'oh_itemtype'])
+      this.appendValueInput('persistenceName')
+        .appendField('from')
+        .setCheck(null)
+      this.updateShape()
+      this.setInputsInline(false)
+      this.setColour(0)
+
+      this.setTooltip(() => {
+        const methodName = this.getFieldValue('methodName')
+        const TIP = {
+          'deleteAllStatesSince': 'Delete all persisted states of an Item since a certain point in time',
+          'deleteAllStatesUntil': 'Delete all persisted states of an Item until a certain point in time',
+          'deleteAllStatesBetween': 'Delete all persisted states of an Item between two points in time'
+        }
+        return TIP[methodName]
+      })
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-persistence.html#delete_persisted_states_for_an_item')
+    },
+    handleTypeSelection: function (methodName) {
+      if (this.methodName !== methodName) {
+        this.methodName = methodName
+        this.updateShape()
+      }
+    },
+    updateShape: function () {
+      const persistenceNameInput = this.getInput('persistenceName')
+      if (!persistenceNameInput.getShadowDom()) {
+        persistenceNameInput.setShadowDom(Blockly.utils.xml.textToDom('<shadow type="oh_persistence_dropdown" />'))
+      }
+
+      let hasSinceField = this.methodName.endsWith('Since') || this.methodName.endsWith('Between')
+      let hasUntilField = this.methodName.endsWith('Until') || this.methodName.endsWith('Between')
+
+      if (this.getInput('dayInfoSince') && !hasSinceField) {
+        this.removeInput('dayInfoSince')
+      }
+      if (this.getInput('dayInfoUntil') && !hasUntilField) {
+        this.removeInput('dayInfoUntil')
+      }
+
+      const prepositionSince = this.methodName.endsWith('Since') ? 'since' : 'between'
+      const prepositionUntil = this.methodName.endsWith('Until') ? 'until' : 'and'
+
+      if (hasSinceField) {
+        if (!this.getInput('dayInfoSince')) {
+          this.appendValueInput('dayInfoSince')
+            .appendField(prepositionSince, 'prepositionSince')
+            .setCheck(['ZonedDateTime'])
+          this.getInput('dayInfoSince').setShadowDom(
+            Blockly.utils.xml.textToDom(`<shadow type="oh_zdt_plusminus">
+              <value name="offset">
+                <shadow type="math_number">
+                  <field name="NUM">1</field>
+                </shadow>
+              </value>
+              <field name="period">Hours</field>
+              <field name="plusminus">minus</field>
+            </shadow>`))
+          if (this.getInput('dayInfoUntil')) {
+            this.moveInputBefore('dayInfoSince', 'dayInfoUntil')
+          } else {
+            this.moveInputBefore('dayInfoSince', 'persistenceName')
+          }
+        } else {
+          const prepositionField = this.getField('prepositionSince')
+          if (prepositionField.getText() !== prepositionSince) {
+            prepositionField.setValue(prepositionSince)
+          }
+        }
+      }
+
+      if (hasUntilField) {
+        if (!this.getInput('dayInfoUntil')) {
+          this.appendValueInput('dayInfoUntil')
+            .appendField(prepositionUntil, 'prepositionUntil')
+            .setCheck(['ZonedDateTime'])
+          this.getInput('dayInfoUntil').setShadowDom(
+            Blockly.utils.xml.textToDom(`<shadow type="oh_zdt_plusminus">
+              <value name="offset">
+                <shadow type="math_number">
+                  <field name="NUM">1</field>
+                </shadow>
+              </value>
+              <field name="period">Hours</field>
+              <field name="plusminus">plus</field>
+            </shadow>`))
+          this.moveInputBefore('dayInfoUntil', 'persistenceName')
+        } else {
+          const prepositionField = this.getField('prepositionUntil')
+          if (prepositionField.getText() !== prepositionUntil) {
+            prepositionField.setValue(prepositionUntil)
+          }
+        }
+      }
+    }
+  }
+
+  /*
+  * Delete persisted values for an item
+  * Code part
+  */
+  javascriptGenerator.forBlock['oh_delete_persistedvalues'] = function (block) {
+    const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
+    const inputType = blockGetCheckedInputType(block, 'itemName')
+    const itemCode = generateItemCode(itemName, inputType)
+
+    const methodName = block.getFieldValue('methodName')
+
+    const dayInfoSince = javascriptGenerator.valueToCode(block, 'dayInfoSince', javascriptGenerator.ORDER_NONE)
+    const dayInfoUntil = javascriptGenerator.valueToCode(block, 'dayInfoUntil', javascriptGenerator.ORDER_NONE)
+    const dayInfo = dayInfoSince + ((dayInfoSince && dayInfoUntil) ? ' ,' : '') + dayInfoUntil
+
+    const persistence = (isGraalJs) ? null : addPersistence()
+    const persistenceName = javascriptGenerator.valueToCode(block, 'persistenceName', javascriptGenerator.ORDER_NONE)
+    const persistenceExtension = (persistenceName === '\'default\'') ? '' : `, ${persistenceName}`
+
+    let code = (isGraalJs) ? `${itemCode}.persistence.${methodName}(${dayInfo}${persistenceExtension})` : `${persistence}.${methodName}(${itemCode}, ${dayInfo}${persistenceExtension})`
+    return [code, javascriptGenerator.ORDER_CONDITIONAL]
   }
 
   function generateItemCode (itemName, inputType) {
