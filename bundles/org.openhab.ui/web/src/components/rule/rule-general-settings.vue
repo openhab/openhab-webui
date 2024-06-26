@@ -7,7 +7,7 @@
                          :disabled="!createMode" :info="(createMode) ? 'Required. Note: cannot be changed after the creation' : ''"
                          pattern="[A-Za-z0-9_\-]+" error-message="Required. A-Z,a-z,0-9,_,- only"
                          @input="rule.uid = $event.target.value" :clear-button="createMode" />
-          <f7-list-input label="Name" type="text" :placeholder="`${type} name for display purposes`" :info="(createMode) ? 'Required' : ''" :value="rule.name" required validate
+          <f7-list-input label="Label" type="text" :placeholder="`${type} label for display purposes`" :info="(createMode) ? 'Required' : ''" :value="rule.name" required validate
                          :disabled="!editable" @input="rule.name = $event.target.value" :clear-button="editable" />
           <f7-list-input label="Description" type="text" :value="rule.description"
                          :disabled="!editable" @input="rule.description = $event.target.value" :clear-button="editable" />
