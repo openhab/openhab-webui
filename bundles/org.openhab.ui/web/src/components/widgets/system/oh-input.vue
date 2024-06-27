@@ -78,7 +78,10 @@ export default {
         params.dateFormat.hour = 'numeric'
         params.dateFormat.minute = 'numeric'
       }
-      return params
+      return {
+        ...params,
+        ...this.config.calendarParams
+      }
     },
     valueForDatepicker () {
       const value = Array.isArray[this.value] ? this.value[0] : this.value
