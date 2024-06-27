@@ -1,11 +1,21 @@
 <template>
-  <f7-input v-if="!config.item || !config.sendButton" class="input-field" ref="input" v-bind="config" :value="((config.type && config.type.indexOf('date') === 0) || config.type === 'time') ? valueForDatepicker : value"
+  <f7-input v-if="!config.item || !config.sendButton" class="input-field" ref="input" v-bind="config" :style="config.style"
+            :value="((config.type && config.type.indexOf('date') === 0) || config.type === 'time') ? valueForDatepicker : value"
             :calendar-params="calendarParams" :step="config.step ? config.step : 'any'"
-            @input="$evt => updated($evt.target.value)" :change="updated" @calendar:change="updated" @texteditor:change="updated" @colorpicker:change="updated" />
-  <f7-row no-gap v-else class="oh-input-with-send-button">
-    <f7-input class="input-field col-90" ref="input" v-bind="config" :value="((config.type && config.type.indexOf('date') === 0) || config.type === 'time') ? valueForDatepicker : value"
+            @input="$evt => updated($evt.target.value)" :change="updated" @calendar:change="updated" @texteditor:change="updated" @colorpicker:change="updated">
+    <template v-if="context.component.slots && context.component.slots.default">
+      <generic-widget-component :context="childContext(slotComponent)" v-for="(slotComponent, idx) in context.component.slots.default" :key="'default-' + idx" />
+    </template>
+  </f7-input>
+  <f7-row no-gap v-else class="oh-input-with-send-button" :style="config.style">
+    <f7-input class="input-field col-90" ref="input" v-bind="config"
+              :value="((config.type && config.type.indexOf('date') === 0) || config.type === 'time') ? valueForDatepicker : value"
               :calendar-params="calendarParams" :step="config.step ? config.step : 'any'"
-              @input="$evt => updated($evt.target.value)" :change="updated" @calendar:change="updated" @texteditor:change="updated" @colorpicker:change="updated" />
+              @input="$evt => updated($evt.target.value)" :change="updated" @calendar:change="updated" @texteditor:change="updated" @colorpicker:change="updated">
+      <template v-if="context.component.slots && context.component.slots.default">
+        <generic-widget-component :context="childContext(slotComponent)" v-for="(slotComponent, idx) in context.component.slots.default" :key="'default-' + idx" />
+      </template>
+    </f7-input>
     <f7-button class="send-button col-10" v-if="this.config.sendButton" @click.stop="sendButtonClicked" v-bind="config.sendButtonConfig || { iconMaterial: 'done', iconColor: 'gray' }" />
   </f7-row>
 </template>
