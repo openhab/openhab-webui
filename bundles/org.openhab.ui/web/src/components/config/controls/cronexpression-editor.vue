@@ -191,7 +191,7 @@
               <f7-list-item radio :checked="day.cronEvery === 8" @change="day.cronEvery = 8">
                 {{ text.Day.lastWeek[0] }}
                 <select size="small" v-model="day.cronLastSpecificDomDay" style="max-width: 150px">
-                  <option v-for="val in 7" :key="val" :label="text.Week[val-1]" :value="val-1" />
+                  <option v-for="val in 7" :key="val" :label="text.Week[val-1]" :value="val" />
                 </select>
                 {{ text.Day.lastWeek[1]||'' }}
               </f7-list-item>
@@ -211,7 +211,7 @@
                 {{ text.Day.someWeekday[0] }}
                 <f7-stepper small :value="week.cronNthDayNth" @stepper:change="(v) => week.cronNthDayNth = v" :min="1" :max="5" />
                 <select size="small" v-model="week.cronNthDayDay" style="max-width: 150px">
-                  <option v-for="val in 7" :key="val" :label="text.Week[val-1]" :value="val-1" />
+                  <option v-for="val in 7" :key="val" :label="text.Week[val-1]" :value="val" />
                 </select>
                 {{ text.Day.someWeekday[1] }}
               </f7-list-item>
@@ -574,7 +574,8 @@ export default {
     },
     translation () {
       return cronstrue.toString(this.cron, {
-        use24HourTimeFormat: true
+        use24HourTimeFormat: true,
+        dayOfWeekStartIndexZero: false
       })
     }
   },
