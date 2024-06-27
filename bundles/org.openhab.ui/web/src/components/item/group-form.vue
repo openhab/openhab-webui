@@ -18,19 +18,15 @@
       </select>
     </f7-list-item>
     <!-- (Internal) Unit & State Description -->
-    <f7-list-input v-show="groupType && groupDimension && dimensionsReady"
+    <f7-list-input v-show="groupType && groupDimension && dimensionsReady" :disabled="!editable"
                    ref="groupUnit"
-                   label="Unit"
-                   type="text"
+                   label="Unit" type="text"
                    :info="(createMode) ? 'Type a valid unit for the dimension or select from the proposed units. Used internally, for persistence and external systems. Is independent from state visualization in the UI, which is defined through the state description pattern.' : ''"
-                   :value="groupDimension ? groupUnit : ''"
-                   @change="groupUnit = $event.target.value" :clear-button="editable" />
-    <f7-list-input v-show="groupType && groupDimension"
-                   label="State Description Pattern"
-                   type="text"
+                   :value="groupDimension ? groupUnit : ''" @change="groupUnit = $event.target.value" :clear-button="editable" />
+    <f7-list-input v-show="groupType && groupDimension" :disabled="!editable"
+                   label="State Description Pattern" type="text"
                    :info="(createMode) ? 'Pattern or transformation applied to the state for display purposes. Only saved if you change the pre-filled default value.' : ''"
-                   :value="stateDescriptionPattern"
-                   @input="stateDescriptionPattern = $event.target.value" :clear-button:="editable" />
+                   :value="stateDescriptionPattern" @input="stateDescriptionPattern = $event.target.value" :clear-button:="editable" />
     <!-- Aggregation Functions -->
     <f7-list-item v-if="aggregationFunctions" :disabled="!editable" title="Aggregation Function" class="aligned-smart-select" smart-select :smart-select-params="{openIn: 'popup', closeOnSelect: true}">
       <select name="select-function" @change="groupFunctionKey = $event.target.value">
@@ -39,6 +35,11 @@
         </option>
       </select>
     </f7-list-item>
+    <!-- COUNT aggregation function regular expression input -->
+    <f7-list-input v-if="aggregationFunctions && groupFunctionKey === 'COUNT'" :disabled="!editable"
+                   label="COUNT Expression" type="text"
+                   info="Specify the regular expression used to to match the states of the members."
+                   :value="groupFunctionParam" @input="groupFunctionParam = $event.target.value" :clear-button="editable" />
   </div>
 </template>
 
@@ -129,7 +130,7 @@ export default {
     },
     groupFunctionKey: {
       get () {
-        return this.item.functionKey
+        return this.item.functionKey.startsWith('COUNT') ? 'COUNT' : this.item.functionKey
       },
       set (newFunctionKey) {
         if (!newFunctionKey) {
@@ -148,22 +149,35 @@ export default {
         this.$set(this.item, 'function', func)
       }
     },
-    aggregationFunctions () {
-      switch (this.groupType) {
-        case 'Dimmer':
-        case 'Rollershutter':
-        case 'Number':
-          return types.ArithmeticFunctions
-        case 'Contact':
-          return types.LogicalOpenClosedFunctions
-        case 'Player':
-          return types.LogicalPlayPauseFunctions
-        case 'DateTime':
-          return types.DateTimeFunctions
-        case 'Switch':
-          return types.LogicalOnOffFunctions
+    groupFunctionParam: {
+      get () {
+        return this.item.function?.params?.length ? this.item.function.params[0] : null
+      },
+      set (newFunctionParam) {
+        this.$set(this.item.function, 'params', [newFunctionParam])
       }
-      return null
+    },
+    aggregationFunctions () {
+      if (this.groupType === 'None') return null
+
+      const specificAggregationFunctions = (groupType) => {
+        switch (this.groupType) {
+          case 'Dimmer':
+          case 'Rollershutter':
+          case 'Number':
+            return types.ArithmeticFunctions
+          case 'Contact':
+            return types.LogicalOpenClosedFunctions
+          case 'Player':
+            return types.LogicalPlayPauseFunctions
+          case 'DateTime':
+            return types.DateTimeFunctions
+          case 'Switch':
+            return types.LogicalOnOffFunctions
+        }
+        return []
+      }
+      return [...types.CommonFunctions, ...specificAggregationFunctions(this.groupType)]
     }
   },
   beforeMount () {
