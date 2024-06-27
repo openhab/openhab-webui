@@ -140,9 +140,11 @@
           </span>
           <f7-block>
             <f7-list>
+              <!-- Every day -->
               <f7-list-item radio :checked="day.cronEvery === 1" @change="day.cronEvery = 1">
                 {{ text.Day.every }}
               </f7-list-item>
+              <!-- Every 1 day(s) starting on Sunday -->
               <f7-list-item radio :checked="day.cronEvery === 2" @change="day.cronEvery = 2">
                 {{ text.Day.intervalWeek[0] }}
                 <f7-stepper small :value="week.incrementIncrement" @stepper:change="(v) => week.incrementIncrement = v" :min="1" :max="7" />
@@ -153,6 +155,7 @@
                 <!-- <f7-stepper small :value="week.incrementStart" @stepper:change="(v) => week.incrementStart = v" :min="0" :max="23"></f7-stepper> -->
                 {{ text.Day.intervalWeek[2]||'' }}
               </f7-list-item>
+              <!-- Every 1 day(s) starting on the 1 of the month -->
               <f7-list-item radio :checked="day.cronEvery === 3" @change="day.cronEvery = 3">
                 {{ text.Day.intervalDay[0] }}
                 <f7-stepper small :value="day.incrementIncrement" @stepper:change="(v) => day.incrementIncrement = v" :min="1" :max="31" />
@@ -160,6 +163,7 @@
                 <f7-stepper small :value="day.incrementStart" @stepper:change="(v) => day.incrementStart = v" :min="1" :max="31" />
                 {{ text.Day.intervalDay[2]||'' }}
               </f7-list-item>
+              <!-- Specific day of week -->
               <f7-list-item radio ref="specificDayOfWeek" :title="text.Day.specificWeek" smart-select no-chevron :smart-select-params="{ openIn: 'popover', view: $f7.views.main }" :checked="day.cronEvery === 4" @click="day.cronEvery = 4">
                 <select multiple @change="week.specificSpecific = $refs.specificDayOfWeek.f7SmartSelect.getValue()">
                   <option v-for="val in 7" :key="val" :value="['SUN','MON','TUE','WED','THU','FRI','SAT'][val-1]" :selected="week.specificSpecific.indexOf(['SUN','MON','TUE','WED','THU','FRI','SAT'][val-1]) >= 0">
@@ -167,6 +171,7 @@
                   </option>
                 </select>
               </f7-list-item>
+              <!-- Specific day of the month -->
               <f7-list-item radio ref="specificDayOfMonth" :title="text.Day.specificDay" smart-select no-chevron :smart-select-params="{ openIn: 'popover', view: $f7.views.main }" :checked="day.cronEvery === 5" @click="day.cronEvery = 5">
                 <select multiple @change="day.specificSpecific = $refs.specificDayOfMonth.f7SmartSelect.getValue()">
                   <option v-for="val in 31" :key="val" :value="val" :selected="day.specificSpecific.indexOf(val) >= 0">
@@ -174,12 +179,15 @@
                   </option>
                 </select>
               </f7-list-item>
+              <!-- On the last day of the month -->
               <f7-list-item radio :checked="day.cronEvery === 6" @change="day.cronEvery = 6">
                 {{ text.Day.lastDay }}
               </f7-list-item>
+              <!-- On the last weekday of the month -->
               <f7-list-item radio :checked="day.cronEvery === 7" @change="day.cronEvery = 7">
                 {{ text.Day.lastWeekday }}
               </f7-list-item>
+              <!-- On the last Sunday of the month -->
               <f7-list-item radio :checked="day.cronEvery === 8" @change="day.cronEvery = 8">
                 {{ text.Day.lastWeek[0] }}
                 <select size="small" v-model="day.cronLastSpecificDomDay" style="max-width: 150px">
@@ -187,15 +195,18 @@
                 </select>
                 {{ text.Day.lastWeek[1]||'' }}
               </f7-list-item>
+              <!-- 1 day(s) before the end of the month -->
               <f7-list-item radio :checked="day.cronEvery === 9" @change="day.cronEvery = 9">
                 <f7-stepper small :value="day.cronDaysBeforeEomMinus" @stepper:change="(v) => day.cronDaysBeforeEomMinus = v" :min="1" :max="31" />
                 {{ text.Day.beforeEndMonth[0] }}
               </f7-list-item>
+              <!-- Nearest weekday (Monday to Friday) to the 1 of the month -->
               <f7-list-item radio :checked="day.cronEvery === 10" @change="day.cronEvery = 10">
                 {{ text.Day.nearestWeekday[0] }}
                 <f7-stepper small :value="day.cronDaysNearestWeekday" @stepper:change="(v) => day.cronDaysNearestWeekday = v" :min="1" :max="31" />
                 {{ text.Day.nearestWeekday[1] }}
               </f7-list-item>
+              <!-- On the 1 Sunday of the month -->
               <f7-list-item radio :checked="day.cronEvery === 11" @change="day.cronEvery = 11">
                 {{ text.Day.someWeekday[0] }}
                 <f7-stepper small :value="week.cronNthDayNth" @stepper:change="(v) => week.cronNthDayNth = v" :min="1" :max="5" />
