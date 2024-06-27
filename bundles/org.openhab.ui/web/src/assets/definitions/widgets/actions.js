@@ -97,7 +97,7 @@ export const actionParams = (groupName, paramPrefix) => {
       .v((value, configuration, configDescription, parameters) => {
         return ['group'].indexOf(configuration[paramPrefix + 'action']) >= 0
       }),
-    pi(paramPrefix + 'actionAnalyzerItems', 'Item(s) to Analyze', 'Start analyzing with the specified (set of) Item(s)').m()
+    pi(paramPrefix + 'actionAnalyzerItems', 'Item(s) to Analyze', 'Start analyzing with the specified (set of) Item(s)').m().r()
       .v((value, configuration, configDescription, parameters) => {
         return ['analyzer'].indexOf(configuration[paramPrefix + 'action']) >= 0
       }),
