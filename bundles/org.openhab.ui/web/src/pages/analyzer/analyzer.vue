@@ -18,7 +18,7 @@
     </f7-toolbar>
 
     <oh-chart-page v-if="showChart" class="analyzer-chart" :class="{ 'sheet-opened': controlsOpened }" :key="chartKey" :context="context" />
-    <empty-state-placeholder v-else-if="configurationInvalid" icon="exclamationmark" :title="$t('analyzer.invalid-configuration.title')" :text="$t('analyzer.invalid-configuration.text')" />
+    <empty-state-placeholder v-else-if="invalidConfiguration" icon="exclamationmark" :title="$t('analyzer.invalid-configuration.title')" :text="$t('analyzer.invalid-configuration.text')" />
 
     <!-- analyzer controls -->
     <f7-sheet class="analyzer-controls" :backdrop="false" :close-on-escape="true" :opened="controlsOpened" @sheet:closed="controlsOpened = false">
@@ -262,7 +262,7 @@ export default {
   data () {
     return {
       showChart: false,
-      configurationInvalid: false,
+      invalidConfiguration: false,
       itemNames: [],
       items: null,
       seriesOptions: {},
@@ -330,7 +330,7 @@ export default {
     initChart () {
       if (this.$f7route.query.period) this.period = this.$f7route.query.period
       if (this.$f7route.query.items === '') {
-        this.configurationInvalid = true
+        this.invalidConfiguration = true
         return
       }
       this.updateItems(this.$f7route.query.items.split(',')).then(() => {
