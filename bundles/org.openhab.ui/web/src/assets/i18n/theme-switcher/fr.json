@@ -12,5 +12,7 @@
   "about.miscellaneous.home.hideChatInput": "Cacher la barre de chat sur la page d'accueil",
   "about.miscellaneous.home.disableCardExpansionAnimation": "Désactiver les animations d'expansion des cartes",
   "about.miscellaneous.theme.disablePageTransition": "Désactiver les animations de transition de page",
-  "about.miscellaneous.webaudio.enable": "Activer le support du lecteur audio Web"
+  "about.miscellaneous.webaudio.enable": "Activer le support du lecteur audio Web",
+  "about.miscellaneous.commandItem.title": "Écouter les commandes UI",
+  "about.miscellaneous.commandItem.selectItem": "Item"
 }
