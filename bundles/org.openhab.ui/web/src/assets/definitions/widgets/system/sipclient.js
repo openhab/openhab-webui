@@ -14,5 +14,7 @@ export default () => [
   pb('enableLocalVideo', 'Enable Local Video View', 'Display the local camera on video calls'),
   pt('defaultVideoAspectRatio', 'Default Aspect Ratio', 'Default video aspect ratio used to size the widget before video is loaded. Defaults to 4/3, 16/9 and 1 are common alternatives.').a(),
   pb('disableRegister', 'Disable REGISTER', 'SIP registration can be disabled in case you only want to initiate calls, but not receive calls with the SIP widgets.').a(),
+  pt('autoAnswer', 'Auto Answer', 'Automatically answer an incoming call from one of the comma delimited SIP addresses (userInfo@hostname, userInfo, ...) or use * for all incoming calls.').a(),
+  pt('autoDial', 'Auto Dial', 'Automatically dial the SIP address when loaded').a(),
   pb('enableSIPDebug', 'Enable SIP debugging to the browser console (dev tools)').a()
 ]
