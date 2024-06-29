@@ -5,7 +5,6 @@
 import Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript.js'
 import { addDateSupport, blockGetCheckedInputType } from './utils.js'
-import ThingGeneralSettings from '@/components/thing/thing-general-settings.vue'
 
 export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceServices) {
   /*
@@ -516,7 +515,7 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
       const statesInput = this.appendValueInput('states')
         .appendField('persist')
         .appendField(new Blockly.FieldDropdown([
-          ['state at current time', 'currentState'], ['state at specific time', 'stateAt'], ['list of states (adding)', 'statesListADD'], ['list of states (replacing)', 'statesListREPLACE']
+          ['state (at current time)', 'currentState'], ['state (at specific time)', 'stateAt'], ['list of states (adding)', 'statesListADD'], ['list of states (replacing)', 'statesListREPLACE']
         ], this.handleTypeSelection.bind(this)), 'persistType')
         .setCheck(['String', 'Array'])
       statesInput.setShadowDom(
