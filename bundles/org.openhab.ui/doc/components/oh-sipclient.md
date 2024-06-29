@@ -129,7 +129,7 @@ This can be achieved by configuring the widget as usual, but setting SIP usernam
 </PropBlock>
 <PropBlock type="TEXT" name="autoDial" label="Auto Dial">
   <PropDescription>
-    Automatically dial the SIP address when loaded (requires <code>disableRegister</code> to be enabled)
+    Automatically dial the SIP address when loaded
   </PropDescription>
 </PropBlock>
 <PropBlock type="BOOLEAN" name="enableSIPDebug" label="Enable SIP Debug">
