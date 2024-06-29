@@ -24,6 +24,17 @@
           <f7-block-title>Configuration</f7-block-title>
           <f7-list media-list class="search-list">
             <f7-list-item
+              v-if="$store.getters.apiEndpoint('links')"
+              media-item
+              link="health/"
+              title="Health check"
+              :badge="(healthCount > 0) ? healthCount : undefined"
+              :after="(healthCount > 0) ? undefined : 0"
+              badge-color="red"
+              :footer="objectsSubtitles.health">
+              <f7-icon slot="media" f7="heart" color="gray" />
+            </f7-list-item>
+            <f7-list-item
               v-if="$store.getters.apiEndpoint('things')"
               media-item
               link="things/"
@@ -207,6 +218,7 @@ export default {
       addonsServices: [],
       systemServices: [],
       objectsSubtitles: {
+        health: 'Manage detected system health issues',
         things: 'Manage the physical layer',
         model: 'The semantic model of your home',
         items: 'Manage the functional layer',
@@ -218,6 +230,7 @@ export default {
         scripts: 'Rules dedicated to running code',
         schedule: 'View upcoming time-based rules'
       },
+      healthCount: '',
       inboxCount: '',
       thingsCount: '',
       itemsCount: '',
@@ -291,6 +304,7 @@ export default {
     },
     loadCounters () {
       if (!this.apiEndpoints) return
+      if (this.$store.getters.apiEndpoint('links')) this.$oh.api.get('/rest/links/orphans').then((data) => { this.healthCount = data.length.toString() })
       if (this.$store.getters.apiEndpoint('inbox')) this.$oh.api.get('/rest/inbox?includeIgnored=false').then((data) => { this.inboxCount = data.filter((e) => e.flag === 'NEW').length.toString() })
       if (this.$store.getters.apiEndpoint('things')) this.$oh.api.get('/rest/things?staticDataOnly=true').then((data) => { this.thingsCount = data.length.toString() })
       if (this.$store.getters.apiEndpoint('items')) this.$oh.api.get('/rest/items?staticDataOnly=true').then((data) => { this.itemsCount = data.length.toString() })
