@@ -66,5 +66,7 @@
   "analyzer.dialogs.save.replace.message": "Une page avec l'ID {uid} existe déjà, voulez-vous l'écraser ?",
   "analyzer.dialogs.save.replace.title": "La page existe déjà",
   "analyzer.page.updated": "Page du graphique mise à jour",
-  "analyzer.page.created": "Page de graphique créée"
+  "analyzer.page.created": "Page de graphique créée",
+  "analyzer.invalid-configuration.title": "Configuration invalide",
+  "analyzer.invalid-configuration.text": "Veuillez vous assurer que tous les paramètres de requête requis sont passés/que la configuration est valide."
 }

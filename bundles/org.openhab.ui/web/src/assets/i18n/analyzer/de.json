@@ -66,5 +66,7 @@
   "analyzer.dialogs.save.replace.message": "Eine Seite mit der ID {uid} existiert bereits, möchtest du diese überschreiben?",
   "analyzer.dialogs.save.replace.title": "Seite existiert bereits",
   "analyzer.page.updated": "Diagrammseite aktualisiert",
-  "analyzer.page.created": "Diagrammseite erstellt"
+  "analyzer.page.created": "Diagrammseite erstellt",
+  "analyzer.invalid-configuration.title": "Ungültige Konfiguration",
+  "analyzer.invalid-configuration.text": "Bitte stelle sicher, dass alle erforderlichen Anfrageparameter übergeben werden/die Konfiguration gültig ist."
 }
