@@ -64,7 +64,7 @@ export default {
   data () {
     return {
       connected: false,
-      session: false,
+      session: null,
       remoteParty: '',
       phonebook: new Map(),
       loggerPrefix: 'oh-sipclient',
@@ -150,11 +150,21 @@ export default {
         // Update connected status on connection changes
         this.phone.on('connected', () => {
           this.connected = true
+          if (this.config.autoDial && this.config.disableRegister === true) {
+            this.autoDial()
+          }
           console.info(this.loggerPrefix + ': Connected to SIP server')
         })
         this.phone.on('disconnected', () => {
           this.connected = false
           console.info(this.loggerPrefix + ': Disconnected from SIP server')
+        })
+        this.phone.on('registered', () => {
+          console.info(this.loggerPrefix + ': SIP registration successful')
+          if (this.config.autoDial) {
+            // give a little time to account for an incoming call after registration before calling
+            setTimeout(() => this.autoDial(), 1000)
+          }
         })
 
         // Register event for new incoming or outgoing call event
@@ -176,6 +186,21 @@ export default {
             this.session.on('accepted', () => {
               console.info(this.loggerPrefix + ': Incoming call in progress')
             })
+            if (this.config.autoAnswer) {
+              const autoAnswer = this.config.autoAnswer.toString()
+              if (autoAnswer.trim() === '*') {
+                this.answer()
+              } else {
+                const userInfo = this.session.remote_identity.uri.user
+                const userInfoHost = `${this.session.remote_identity.uri.user}@${this.session.remote_identity.uri.host}`
+                const parts = autoAnswer.split(',')
+                parts.forEach(part => {
+                  if ((part.indexOf('@') > 0 && part === userInfoHost) || part === userInfo) {
+                    this.answer()
+                  }
+                })
+              }
+            }
           }
           // Handle ended call
           this.session.on('ended', () => {
@@ -325,6 +350,12 @@ export default {
         })
       } else {
         this.$f7.dialog.alert('Please configure phonebook entries')
+      }
+    },
+    autoDial () {
+      const session = this.session
+      if (!session || !(session.isInProgress() || session.isEstablished())) {
+        this.call(this.config.autoDial.toString())
       }
     }
   }
