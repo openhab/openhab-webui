@@ -108,7 +108,7 @@
           <f7-block-title class="padding-horizontal display-flex">
             <span>Pinned Scenes</span>
             <span style="margin-left:auto">
-              <f7-link color="gray" icon-f7="multiply" icon-size="14" @click="unpinAll('rules')" />
+              <f7-link color="gray" icon-f7="multiply" icon-size="14" @click="unpinAll('scenes')" />
             </span>
           </f7-block-title>
           <f7-list media-list>
@@ -136,7 +136,7 @@
           <f7-block-title class="padding-horizontal display-flex">
             <span>Pinned Scripts</span>
             <span style="margin-left:auto">
-              <f7-link color="gray" icon-f7="multiply" icon-size="14" @click="unpinAll('rules')" />
+              <f7-link color="gray" icon-f7="multiply" icon-size="14" @click="unpinAll('scripts')" />
             </span>
           </f7-block-title>
           <f7-list media-list>
