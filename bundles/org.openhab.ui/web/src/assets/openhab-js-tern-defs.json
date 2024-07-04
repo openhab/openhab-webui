@@ -752,18 +752,50 @@
             "sendHttpPutRequest": { "!type": "fn(url: string, contentType?: string, content?: string, headers?: object, timeout?: int) -> string" },
             "sendHttpDeleteRequest": { "!type": "fn(url: string, headers?: object, timeout?: int) -> string" }
         },
-        "NotificationAction": {
-            "sendNotification": {
-                "!doc": "Sends a notification to a specific cloud instance user.",
-                "!type": "fn(email: string, message: string)"
+        "NotificationBuilder": {
+            "logOnly": {
+                "!doc": "Send a log notification only.",
+                "!type": "fn() -> NotificationBuilder"
             },
-            "sendBroadcastNotification": {
-                "!doc": "Sends a notification to all devices of all users.",
-                "!type": "fn(message: string)"
+            "hide": {
+                "!doc": "Hides/Removes the notification with the specified referenceId or tag.",
+                "!type": "fn() -> NotificationBuilder"
             },
-            "sendLogNotification": {
-                "!doc": "Sends a log notification to the notifications list at your openHAB Cloud instance. Notifications are NOT sent to any registered device.",
-                "!type": "fn(message: string)"
+            "addUserId": {
+                "!doc": "By adding the email address(es) of specific openHAB Cloud user(s), the notification is only sent to this (these) users.",
+                "!type": "fn(userId: string) -> NotificationBuilder"
+            },
+            "withIcon": {
+                "!doc": "Sets the icon of the notification.",
+                "!type": "fn(icon: string) -> NotificationBuilder"
+            },
+            "withTag": {
+                "!doc": "Sets the tag of the notification.",
+                "!type": "fn(tag: string) -> NotificationBuilder"
+            },
+            "withTitle": {
+                "!doc": "Sets the title of the notification.",
+                "!type": "fn(title: string) -> NotificationBuilder"
+            },
+            "withReferenceId": {
+                "!doc": "Sets the referenceId of the notification. If none is set, but might be useful, a random UUID will be generated. The reference ID can be used to update or hide the notification later by using the same reference ID again.",
+                "!type": "fn(referenceId: string) -> NotificationBuilder"
+            },
+            "withOnClickAction": {
+                "!doc": "Sets the action to be executed when the notification is clicked.",
+                "!type": "fn(action: string) -> NotificationBuilder"
+            },
+            "withMediaAttachmentUrl": {
+                "!doc": "Sets the URL of a media attachment to be displayed with the notification. This URL must be reachable by the push notification client.",
+                "!type": "fn(mediaAttachmentUrl: string) -> NotificationBuilder"
+            },
+            "addActionButton": {
+                "!doc": "Adds an action button to the notification. Please note that due to Android and iOS limitations, only three action buttons are supported.",
+                "!type": "fn(label: string, action: string) -> NotificationBuilder"
+            },
+            "send": {
+                "!doc": "Sends the notification and returns the reference ID or null for log notifications and when hiding notifications.",
+                "!type": "fn() -> string|null"
             }
         },
         "PingActions": {
@@ -812,9 +844,9 @@
                 "!doc": "HTTP Actions. This class provides static methods that can be used in automation rules for sending HTTP requests.",
                 "!type": "HTTPActions"
             },
-            "NotificationAction": {
-                "!doc": "Notification Actions. If the openHAB Cloud Connector is installed, notifications can be sent to registered users/devices.",
-                "!type": "NotificationAction"
+            "notificationBuilder": {
+                "!doc": "Creates a new NotificationBuilder to send openHAB Cloud notifications. This requires the openHAB Cloud Connector to be installed.",
+                "!type": "fn(message: string) -> NotificationBuilder"
             },
             "Ping": {
                 "!doc": "Ping Actions. This Action checks the vitality of the given host.",
