@@ -11,8 +11,6 @@ const UserProfilePage = () => import(/* webpackChunkName: "profile-page" */ '../
 
 const SettingsMenuPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/menu/settings-menu.vue')
 const ServiceSettingsPage = () => import(/* webpackChunkName: "admin-base" */ '../pages/settings/services/service-settings.vue')
-const AddonsListPage = () => import(/* webpackChunkName: "admin-base" */ '@/pages/addons/addons-list.vue')
-const AddonsAddPage = () => import(/* webpackChunkName: "admin-base" */ '@/pages/addons/addons-add.vue')
 const AddonsConfigureBindingPage = () => import(/* webpackChunkName: "admin-base" */ '@/pages/addons/addon-config.vue')
 const AddonsStorePage = () => import(/* webpackChunkName: "admin-base" */ '@/pages/addons/addons-store.vue')
 const AddonDetailsPage = () => import(/* webpackChunkName: "admin-base" */ '@/pages/addons/addon-details.vue')
@@ -143,6 +141,10 @@ export default [
   },
   {
     path: '/page/:uid',
+    component: PageViewPage
+  },
+  {
+    path: '/page/:uid/:initialTab',
     component: PageViewPage
   },
   {

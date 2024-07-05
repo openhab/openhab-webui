@@ -59,11 +59,18 @@ export default {
     'oh-plan-page': () => import(/* webpackChunkName: "plan-page" */ '@/components/widgets/plan/oh-plan-page.vue'),
     'oh-chart-page': () => import(/* webpackChunkName: "chart-page" */ '@/components/widgets/chart/oh-chart-page.vue')
   },
-  props: ['uid', 'deep', 'defineVars'],
+  props: ['uid', 'initialTab', 'deep', 'defineVars'],
   data () {
     return {
-      currentTab: 0,
+      currentTab: this.initialTab ? Number(this.initialTab) : 0,
       fullscreen: this.$fullscreen.getState()
+    }
+  },
+  watch: {
+    pageType (newType, oldType) {
+      if (oldType === null && newType === 'tabs') {
+        this.onTabChange(this.currentTab)
+      }
     }
   },
   computed: {
@@ -131,6 +138,9 @@ export default {
     onTabChange (idx) {
       this.currentTab = idx
       this.$set(this, 'vars', {})
+      const url = '/page/' + this.uid + '/' + this.currentTab
+      this.$f7router.updateCurrentUrl(url)
+      this.$f7router.url = url
     },
     onCommand (itemName, command) {
       this.$store.dispatch('sendCommand', { itemName, command })
