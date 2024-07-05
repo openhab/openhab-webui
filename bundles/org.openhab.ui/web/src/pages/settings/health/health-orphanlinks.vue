@@ -9,7 +9,7 @@
     <f7-block class="block-narrow">
       <f7-col>
         <f7-block-footer class="padding-horizontal">
-          Orphan links are items pointing to non-existent thing channels or vica versa.
+          Orphan links are items pointing to non-existent thing channels or vice versa.
           <br>
           <br>
           Note that only the links of managed Items can be purged, not links defined
