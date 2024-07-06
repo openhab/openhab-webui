@@ -174,16 +174,20 @@ export default {
           this.remoteParty = (this.phonebook.size > 0) ? this.phonebook.get(this.session.remote_identity.uri.user) : this.session.remote_identity.uri.user
 
           if (this.session.direction === 'outgoing') {
+            this.updateStatusItem('outgoing')
             // Handle accepted call
             this.session.on('accepted', () => {
               this.stopTones()
+              this.updateStatusItem('outgoing-accepted')
               console.info(this.LOGGER_PREFIX + ': Outgoing call in progress')
             })
           } else if (this.session.direction === 'incoming') {
             console.info(this.LOGGER_PREFIX + ': Incoming call from ' + this.remoteParty)
             this.playTone(ringFile)
+            this.updateStatusItem('incoming')
             // Handle accepted call
             this.session.on('accepted', () => {
+              this.updateStatusItem('incoming-accepted')
               console.info(this.LOGGER_PREFIX + ': Incoming call in progress')
             })
             if (this.config.autoAnswer) {
@@ -205,12 +209,14 @@ export default {
           // Handle ended call
           this.session.on('ended', () => {
             this.stopMedia()
+            this.updateStatusItem('ended')
             console.info(this.LOGGER_PREFIX + ': Call ended')
           })
           // Handle failed call
           this.session.on('failed', (event) => {
             this.stopTones()
             this.stopMedia()
+            this.updateStatusItem('failed')
             console.info(this.LOGGER_PREFIX + ': Call failed. Reason: ' + event.cause)
           })
         })
@@ -357,6 +363,10 @@ export default {
       if (!session || !(session.isInProgress() || session.isEstablished())) {
         this.call(this.config.autoDial.toString())
       }
+    },
+    updateStatusItem (newStatus) {
+      if (!this.config.callStateItem) return
+      this.$store.dispatch('sendCommand', { itemName: this.config.callStateItem, cmd: newStatus })
     }
   },
   created () {
