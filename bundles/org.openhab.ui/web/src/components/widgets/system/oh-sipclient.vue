@@ -20,12 +20,13 @@
       </f7-button>
       <f7-button :style="computedButtonStyle" icon-f7="phone_down_fill" icon-color="red" :icon-size="config.iconSize" @click.stop="session.terminate()" />
     </f7-segmented>
+    <!-- Show hangup button and DTM button (if configured) for ongoing call -->
     <f7-segmented v-else style="width: 100%; height: 100%">
       <!-- Show hangup button for outgoing call -->
       <f7-button v-if="session && session.isInProgress()" :style="computedButtonStyle" icon-f7="phone_down_fill" icon-color="yellow" :icon-size="config.iconSize" @click.stop="session.terminate()" />
       <!-- Show hangup button for ongoing call -->
       <f7-button v-else-if="session && !session.isEnded()" :style="computedButtonStyle" icon-f7="phone_down_fill" icon-color="red" :icon-size="config.iconSize" @click.stop="session.terminate()" />
-      <!-- Show send dtmf button if in a call and feature is enabled-->
+      <!-- Show send DTMF button if in a call if DTMF string is configured -->
       <f7-button v-if="session && !session.isInProgress() && !session.isEnded() && config.dtmfString && config.dtmfString.length > 0" :style="computedButtonStyle" icon-f7="number_square" icon-color="orange" :icon-size="config.iconSize" @click.stop="sendDTMF()" />
     </f7-segmented>
   </div>
@@ -67,7 +68,6 @@ export default {
       session: null,
       remoteParty: '',
       phonebook: new Map(),
-      loggerPrefix: 'oh-sipclient',
       showLocalVideo: false,
       stream: null
     }
@@ -153,14 +153,14 @@ export default {
           if (this.config.autoDial && this.config.disableRegister === true) {
             this.autoDial()
           }
-          console.info(this.loggerPrefix + ': Connected to SIP server')
+          console.info(this.LOGGER_PREFIX + ': Connected to SIP server')
         })
         this.phone.on('disconnected', () => {
           this.connected = false
-          console.info(this.loggerPrefix + ': Disconnected from SIP server')
+          console.info(this.LOGGER_PREFIX + ': Disconnected from SIP server')
         })
         this.phone.on('registered', () => {
-          console.info(this.loggerPrefix + ': SIP registration successful')
+          console.info(this.LOGGER_PREFIX + ': SIP registration successful')
           if (this.config.autoDial) {
             // give a little time to account for an incoming call after registration before calling
             setTimeout(() => this.autoDial(), 1000)
@@ -177,14 +177,14 @@ export default {
             // Handle accepted call
             this.session.on('accepted', () => {
               this.stopTones()
-              console.info(this.loggerPrefix + ': Outgoing call in progress')
+              console.info(this.LOGGER_PREFIX + ': Outgoing call in progress')
             })
           } else if (this.session.direction === 'incoming') {
-            console.info(this.loggerPrefix + ': Incoming call from ' + this.remoteParty)
+            console.info(this.LOGGER_PREFIX + ': Incoming call from ' + this.remoteParty)
             this.playTone(ringFile)
             // Handle accepted call
             this.session.on('accepted', () => {
-              console.info(this.loggerPrefix + ': Incoming call in progress')
+              console.info(this.LOGGER_PREFIX + ': Incoming call in progress')
             })
             if (this.config.autoAnswer) {
               const autoAnswer = this.config.autoAnswer.toString()
@@ -205,13 +205,13 @@ export default {
           // Handle ended call
           this.session.on('ended', () => {
             this.stopMedia()
-            console.info(this.loggerPrefix + ': Call ended')
+            console.info(this.LOGGER_PREFIX + ': Call ended')
           })
           // Handle failed call
           this.session.on('failed', (event) => {
             this.stopTones()
             this.stopMedia()
-            console.info(this.loggerPrefix + ': Call failed. Reason: ' + event.cause)
+            console.info(this.LOGGER_PREFIX + ': Call failed. Reason: ' + event.cause)
           })
         })
         this.phone.start()
@@ -223,13 +223,13 @@ export default {
      */
     playTone (file) {
       if (this.config.enableTones === true) {
-        console.info(this.loggerPrefix + ': Starting to play tone')
+        console.info(this.LOGGER_PREFIX + ': Starting to play tone')
         this.audio = new Audio(file)
         // Play tone
         this.audio.loop = true
         this.audio.load()
         this.audio.play().catch(error => {
-          console.debug(this.loggerPrefix + ': Play tone: ' + error)
+          console.debug(this.LOGGER_PREFIX + ': Play tone: ' + error)
         })
       }
     },
@@ -238,7 +238,7 @@ export default {
      */
     stopTones () {
       if (this.config.enableTones === true) {
-        console.info(this.loggerPrefix + ': Stop playing tone')
+        console.info(this.LOGGER_PREFIX + ': Stop playing tone')
         this.audio.pause()
       }
     },
@@ -280,7 +280,7 @@ export default {
       }
     },
     call (target) {
-      console.info(this.loggerPrefix + ': Calling ' + this.remoteParty + ' ...')
+      console.info(this.LOGGER_PREFIX + ': Calling ' + this.remoteParty + ' ...')
       this.phone.call(target, { mediaConstraints: { audio: true, video: this.config.enableVideo } })
       this.attachMedia()
       this.playTone(ringBackFile)
@@ -298,7 +298,7 @@ export default {
       this.session.sendDTMF(this.config.dtmfString, options)
     },
     localSettingsPopup () {
-      console.info(this.loggerPrefix + ': Opening local settings popup.')
+      console.info(this.LOGGER_PREFIX + ': Opening local settings popup.')
       const popup = { component: WidgetConfigPopup }
       this.$f7router.navigate({ url: 'local-sip-settings', route: { path: 'local-sip-settings', popup } }, {
         props: {
@@ -358,6 +358,9 @@ export default {
         this.call(this.config.autoDial.toString())
       }
     }
+  },
+  created () {
+    this.LOGGER_PREFIX = 'oh-sipclient'
   }
 }
 </script>
