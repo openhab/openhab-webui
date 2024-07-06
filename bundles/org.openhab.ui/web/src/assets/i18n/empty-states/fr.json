@@ -7,6 +7,8 @@
   "things.text": "Les things sont les appareils et les services connectés à openHAB, ils sont fournis par des bindings liés.<br><br>Les bindings installées qui supportent la découverte automatique ajouteront des things potentiels à votre boîte de réception. Vous pouvez également lancer une analyse pour un binding en particulier ou ajouter votre premier thing manuellement avec le bouton ci-dessous.",
   "things.nobindings.title": "Pas de bindings",
   "things.nobindings.text": "Pour ajouter des things à votre système, vous devez au préalable installer des add-ons de bindings.",
+  "transformations.title": "Pas encore de transformations",
+  "transformations.text": "Les transformations sont utilisées pour traduire des données d'une valeur brute encombrée ou technique vers une représentation compréhensible par l'être humain.",
   "model.title": "Commencez à modéliser votre maison",
   "model.text": "Construisez un modèle à partir de vos items pour les organiser et les relier les uns aux autres sémantiquement.<br><br>Commencez par une hiérarchie de lieux : bâtiments, zones extérieures, étages et pièces, au besoin. Ensuite, insérez de l'équipement et des points depuis vos things (ou manuellement).",
   "items.title": "Pas encore d'items",
@@ -28,5 +30,7 @@
   "addons.title": "Aucun module installé",
   "addons.text": "Les modules ajoutent des fonctionnalités à votre système openHAB.<br><br>Installez les avec le bouton ci-dessous.",
   "page.unavailable.title": "Page non disponible",
-  "page.unavailable.text": "Vous n'êtes pas autorisé à voir cette page en raison de restrictions de visibilité."
+  "page.unavailable.text": "Vous n'êtes pas autorisé à voir cette page en raison de restrictions de visibilité.",
+  "persistence.title": "Aucun module de persistance installé",
+  "persistence.text": "Avec la persistance, vous pouvez stocker les états des items dans le temps, que les valeurs soient dans le passé ou le futur. Pour configurer la persistance, vous devez avoir au moins un module de persistance installé."
 }
