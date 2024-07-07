@@ -1,6 +1,6 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn">
-    <f7-navbar title="Health checks" back-link="Settings" back-link-url="/settings/" back-link-force>
+    <f7-navbar title="Health Checks" back-link="Settings" back-link-url="/settings/" back-link-force>
       <f7-nav-right>
         <developer-dock-icon />
       </f7-nav-right>
