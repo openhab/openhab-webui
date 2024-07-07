@@ -24,17 +24,6 @@
           <f7-block-title>Configuration</f7-block-title>
           <f7-list media-list class="search-list">
             <f7-list-item
-              v-if="$store.getters.apiEndpoint('links')"
-              media-item
-              link="health/"
-              title="Health check"
-              :badge="(healthCount > 0) ? healthCount : undefined"
-              :after="(healthCount > 0) ? undefined : 0"
-              badge-color="red"
-              :footer="objectsSubtitles.health">
-              <f7-icon slot="media" f7="heart" color="gray" />
-            </f7-list-item>
-            <f7-list-item
               v-if="$store.getters.apiEndpoint('things')"
               media-item
               link="things/"
@@ -199,6 +188,10 @@
         <small v-t="'admin.notTranslatedYet'" />
       </f7-block-footer>
     </f7-block>
+
+    <f7-fab v-if="healthCount > 0" position="center-bottom" :text="`Health Issues (${healthCount})`" slot="fixed" color="red" href="health/">
+      <f7-icon f7="heart" />
+    </f7-fab>
   </f7-page>
 </template>
 
