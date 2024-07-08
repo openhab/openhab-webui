@@ -128,20 +128,21 @@
 </template>
 
 <style lang="stylus">
-.page-code-editor.vue-codemirror
-  display block
-  top calc(var(--f7-navbar-height) + var(--f7-tabbar-height))
-  height calc(100% - 3*var(--f7-navbar-height))
-  width 100%
-.yaml-message
-  display block
-  position absolute
-  top 80%
-  white-space pre-wrap
-.homecards-list
-  .item-link
-    overflow inherit
-    z-index inherit !important
+.home-editor
+  .page-code-editor.vue-codemirror
+    display block
+    top calc(var(--f7-navbar-height) + var(--f7-tabbar-height))
+    height calc(100% - 3*var(--f7-navbar-height))
+    width 100%
+  .yaml-message
+    display block
+    position absolute
+    top 80%
+    white-space pre-wrap
+  .homecards-list
+    .item-link
+      overflow inherit
+      z-index inherit !important
 </style>
 
 <script>

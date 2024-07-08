@@ -74,20 +74,21 @@
 </template>
 
 <style lang="stylus">
-.page-code-editor.vue-codemirror
-  display block
-  top calc(var(--f7-navbar-height) + var(--f7-tabbar-height))
-  height calc(100% - 2*var(--f7-navbar-height))
-  width 100%
-.yaml-message
-  display block
-  position absolute
-  top 80%
-  white-space pre-wrap
-.tabs-list
-  .item-link
-    overflow inherit
-    z-index inherit !important
+.tabs-editor
+  .page-code-editor.vue-codemirror
+    display block
+    top calc(var(--f7-navbar-height) + var(--f7-tabbar-height))
+    height calc(100% - 2*var(--f7-navbar-height))
+    width 100%
+  .tabs-list
+    .item-link
+      overflow inherit
+      z-index inherit !important
+  .yaml-message
+    display block
+    position absolute
+    top 80%
+    white-space pre-wrap
 </style>
 
 <script>
