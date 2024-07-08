@@ -322,7 +322,7 @@ export default {
               pt('password', 'Local SIP Password', 'Used instead of the password from the widget settings and stored on the openHAB server.'),
               pt('ownSipAddress', 'Local SIP Address', 'SIP Address (phone number) of this local client. Used by the client to remove itself from the dial ' +
                 'popup, which is configured with the phonebook option in the widget settings.'),
-              pi('callStateItem', 'Call State Item', 'Used instead of the call state Item from the widget settings and stored on the openHAB server.').a()
+              pi('sipStateItem', 'State Item', 'Used instead of the SIP connection state Item from the widget settings and stored on the openHAB server.').a()
             ])
         }
       })
@@ -369,8 +369,8 @@ export default {
       }
     },
     updateStatusItem (newStatus) {
-      if (!this.config.callStateItem) return
-      this.$store.dispatch('sendCommand', { itemName: this.config.callStateItem, cmd: newStatus })
+      if (!this.config.sipStateItem) return
+      this.$store.dispatch('sendCommand', { itemName: this.config.sipStateItem, cmd: newStatus })
     }
   },
   created () {

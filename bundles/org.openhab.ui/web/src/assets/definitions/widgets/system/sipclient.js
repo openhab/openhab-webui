@@ -16,6 +16,6 @@ export default () => [
   pb('disableRegister', 'Disable REGISTER', 'SIP registration can be disabled in case you only want to initiate calls, but not receive calls with the SIP widgets.').a(),
   pt('autoAnswer', 'Auto Answer', 'Automatically answer an incoming call from one of the comma delimited SIP addresses (<code>userInfo@hostname</code>, <code>userInfo</code>, ...) or use * for all incoming calls.').a(),
   pt('autoDial', 'Auto Dial', 'Automatically dial the SIP address when loaded').a(),
-  pi('callStateItem', 'Call State Item', 'String Item to publish the current call state to the openHAB server and make it accessible from rules etc.').a(),
+  pi('sipStateItem', 'SIP State Item', 'String Item to publish the current SIP connection state to the openHAB server and make it accessible from rules etc.').a(),
   pb('enableSIPDebug', 'Enable SIP Debug', 'Enable SIP debugging to the browser console (dev tools)').a()
 ]
