@@ -97,7 +97,7 @@
 </template>
 
 <style lang="stylus">
-.sitemap-editor-tabs
+.layout-editor-tabs
   --f7-grid-gap 0px
   height calc(100% - var(--f7-toolbar-height))
   .tab
