@@ -54,7 +54,7 @@ import { OhSIPClientDefinition } from '@/assets/definitions/widgets/system'
 import foregroundService from '../widget-foreground-service'
 import { actionsMixin } from '../widget-actions'
 import WidgetConfigPopup from '@/components/pagedesigner/widget-config-popup.vue'
-import { WidgetDefinition, pg, pt } from '@/assets/definitions/widgets/helpers.js'
+import { WidgetDefinition, pg, pt, pi } from '@/assets/definitions/widgets/helpers.js'
 
 // Thanks to Joseph Sardin, https://bigsoundbank.com
 // ringFile source: https://bigsoundbank.com/detail-0375-phone-ring-5.html
@@ -318,7 +318,8 @@ export default {
               pt('username', 'Local SIP Username', 'Used instead of the username from widget settings and stored on the openHAB server.'),
               pt('password', 'Local SIP Password', 'Used instead of the password from the widget settings and stored on the openHAB server.'),
               pt('ownSipAddress', 'Local SIP Address', 'SIP Address (phone number) of this local client. Used by the client to remove itself from the dial ' +
-                'popup, which is configured with the phonebook option in the widget settings.')
+                'popup, which is configured with the phonebook option in the widget settings.'),
+              pi('callStateItem', 'Call State Item', 'Used instead of the call state Item from the widget settings and stored on the openHAB server.').a()
             ])
         }
       })
