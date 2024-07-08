@@ -170,24 +170,26 @@ export default {
         // Register event for new incoming or outgoing call event
         this.phone.on('newRTCSession', (data) => {
           this.session = data.session
+          const remoteParty = this.session.remote_identity.uri.user
+          const remotePartyWithHost = `${this.session.remote_identity.uri.user}@${this.session.remote_identity.uri.host}`
 
           this.remoteParty = (this.phonebook.size > 0) ? this.phonebook.get(this.session.remote_identity.uri.user) : this.session.remote_identity.uri.user
 
           if (this.session.direction === 'outgoing') {
-            this.updateStatusItem('outgoing')
+            this.updateStatusItem('outgoing:' + remotePartyWithHost)
             // Handle accepted call
             this.session.on('accepted', () => {
               this.stopTones()
-              this.updateStatusItem('outgoing-accepted')
+              this.updateStatusItem('outgoing-accepted:' + remotePartyWithHost)
               console.info(this.LOGGER_PREFIX + ': Outgoing call in progress')
             })
           } else if (this.session.direction === 'incoming') {
             console.info(this.LOGGER_PREFIX + ': Incoming call from ' + this.remoteParty)
             this.playTone(ringFile)
-            this.updateStatusItem('incoming')
+            this.updateStatusItem('incoming:' + remotePartyWithHost)
             // Handle accepted call
             this.session.on('accepted', () => {
-              this.updateStatusItem('incoming-accepted')
+              this.updateStatusItem('incoming-accepted:' + remotePartyWithHost)
               console.info(this.LOGGER_PREFIX + ': Incoming call in progress')
             })
             if (this.config.autoAnswer) {
@@ -195,11 +197,9 @@ export default {
               if (autoAnswer.trim() === '*') {
                 this.answer()
               } else {
-                const userInfo = this.session.remote_identity.uri.user
-                const userInfoHost = `${this.session.remote_identity.uri.user}@${this.session.remote_identity.uri.host}`
                 const parts = autoAnswer.split(',')
                 parts.forEach(part => {
-                  if ((part.indexOf('@') > 0 && part === userInfoHost) || part === userInfo) {
+                  if ((part.indexOf('@') > 0 && part === remotePartyWithHost) || part === remoteParty) {
                     this.answer()
                   }
                 })
