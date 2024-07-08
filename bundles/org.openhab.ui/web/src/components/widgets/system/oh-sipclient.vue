@@ -150,16 +150,19 @@ export default {
         // Update connected status on connection changes
         this.phone.on('connected', () => {
           this.connected = true
+          this.updateStatusItem('connected')
+          console.info(this.LOGGER_PREFIX + ': Connected to SIP server')
           if (this.config.autoDial && this.config.disableRegister === true) {
             this.autoDial()
           }
-          console.info(this.LOGGER_PREFIX + ': Connected to SIP server')
         })
         this.phone.on('disconnected', () => {
           this.connected = false
+          this.updateStatusItem('disconnected')
           console.info(this.LOGGER_PREFIX + ': Disconnected from SIP server')
         })
         this.phone.on('registered', () => {
+          this.updateStatusItem('registered')
           console.info(this.LOGGER_PREFIX + ': SIP registration successful')
           if (this.config.autoDial) {
             // give a little time to account for an incoming call after registration before calling
@@ -209,14 +212,14 @@ export default {
           // Handle ended call
           this.session.on('ended', () => {
             this.stopMedia()
-            this.updateStatusItem('ended')
+            this.updateStatusItem('ended:' + remotePartyWithHost)
             console.info(this.LOGGER_PREFIX + ': Call ended')
           })
           // Handle failed call
           this.session.on('failed', (event) => {
             this.stopTones()
             this.stopMedia()
-            this.updateStatusItem('failed')
+            this.updateStatusItem('failed:' + remotePartyWithHost)
             console.info(this.LOGGER_PREFIX + ': Call failed. Reason: ' + event.cause)
           })
         })
