@@ -97,32 +97,32 @@
 </template>
 
 <style lang="stylus">
-.layout-editor-tabs
-  --f7-grid-gap 0px
-  height calc(100% - var(--f7-toolbar-height))
-  .tab
-    height 100%
-.page-code-editor.vue-codemirror
-  display block
-  top calc(var(--f7-navbar-height) + var(--f7-tabbar-height))
-  height calc(100% - 3*var(--f7-navbar-height))
-  width 100%
-.yaml-message
-  display block
-  position absolute
-  top 80%
-  white-space pre-wrap
-.layout-editor-design-tab
-  .layout-page
-    margin-bottom calc(var(--f7-toolbar-height) + 1rem)
-    .oh-masonry
-      z-index inherit
 .layout-editor
   .page-content
     z-index inherit
   .toolbar-details
     .tab-link-highlight
       display none
+  .layout-editor-tabs
+    --f7-grid-gap 0px
+    height calc(100% - var(--f7-toolbar-height))
+    .tab
+      height 100%
+    .layout-editor-design-tab
+      .layout-page
+        margin-bottom calc(var(--f7-toolbar-height) + 1rem)
+        .oh-masonry
+          z-index inherit
+  .page-code-editor.vue-codemirror
+    display block
+    top calc(var(--f7-navbar-height) + var(--f7-tabbar-height))
+    height calc(100% - 3*var(--f7-navbar-height))
+    width 100%
+  .yaml-message
+    display block
+    position absolute
+    top 80%
+    white-space pre-wrap
 </style>
 
 <script>
