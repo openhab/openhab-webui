@@ -1,5 +1,5 @@
 <template>
-  <f7-card :no-border="config.noBorder" :no-shadow="config.noShadow" :outline="config.outline">
+  <f7-card :no-border="config.noBorder" :no-shadow="config.noShadow" :outline="config.outline" :style="config.style">
     <f7-card-header v-if="config.title">
       <div>{{ config.title }}</div>
     </f7-card-header>

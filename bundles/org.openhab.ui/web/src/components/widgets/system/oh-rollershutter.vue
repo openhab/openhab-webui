@@ -1,5 +1,5 @@
 <template>
-  <f7-segmented round outline strong class="rollershutter-controls">
+  <f7-segmented round outline strong class="rollershutter-controls" :style="config.buttonStyle">
     <f7-button @click.stop="up()" large :icon-ios="upIcon" :icon-md="upIcon" :icon-aurora="upIcon" icon-size="24" icon-color="gray" />
     <f7-button v-if="config.stateInCenter" @click.stop="stop()" large class="state">
       <small>{{ context.store[config.item].state }}</small>
