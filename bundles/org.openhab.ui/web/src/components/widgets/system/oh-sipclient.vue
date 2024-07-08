@@ -150,7 +150,7 @@ export default {
         // Update connected status on connection changes
         this.phone.on('connected', () => {
           this.connected = true
-          this.updateStatusItem('connected')
+          this.updateStateItem('connected')
           console.info(this.LOGGER_PREFIX + ': Connected to SIP server')
           if (this.config.autoDial && this.config.disableRegister === true) {
             this.autoDial()
@@ -158,11 +158,11 @@ export default {
         })
         this.phone.on('disconnected', () => {
           this.connected = false
-          this.updateStatusItem('disconnected')
+          this.updateStateItem('disconnected')
           console.info(this.LOGGER_PREFIX + ': Disconnected from SIP server')
         })
         this.phone.on('registered', () => {
-          this.updateStatusItem('registered')
+          this.updateStateItem('registered')
           console.info(this.LOGGER_PREFIX + ': SIP registration successful')
           if (this.config.autoDial) {
             // give a little time to account for an incoming call after registration before calling
@@ -179,20 +179,20 @@ export default {
           this.remoteParty = (this.phonebook.size > 0) ? this.phonebook.get(this.session.remote_identity.uri.user) : this.session.remote_identity.uri.user
 
           if (this.session.direction === 'outgoing') {
-            this.updateStatusItem('outgoing:' + remotePartyWithHost)
+            this.updateStateItem('outgoing:' + remotePartyWithHost)
             // Handle accepted call
             this.session.on('accepted', () => {
               this.stopTones()
-              this.updateStatusItem('outgoing-accepted:' + remotePartyWithHost)
+              this.updateStateItem('outgoing-accepted:' + remotePartyWithHost)
               console.info(this.LOGGER_PREFIX + ': Outgoing call in progress')
             })
           } else if (this.session.direction === 'incoming') {
             console.info(this.LOGGER_PREFIX + ': Incoming call from ' + this.remoteParty)
             this.playTone(ringFile)
-            this.updateStatusItem('incoming:' + remotePartyWithHost)
+            this.updateStateItem('incoming:' + remotePartyWithHost)
             // Handle accepted call
             this.session.on('accepted', () => {
-              this.updateStatusItem('incoming-accepted:' + remotePartyWithHost)
+              this.updateStateItem('incoming-accepted:' + remotePartyWithHost)
               console.info(this.LOGGER_PREFIX + ': Incoming call in progress')
             })
             if (this.config.autoAnswer) {
@@ -212,14 +212,14 @@ export default {
           // Handle ended call
           this.session.on('ended', () => {
             this.stopMedia()
-            this.updateStatusItem('ended:' + remotePartyWithHost)
+            this.updateStateItem('ended:' + remotePartyWithHost)
             console.info(this.LOGGER_PREFIX + ': Call ended')
           })
           // Handle failed call
           this.session.on('failed', (event) => {
             this.stopTones()
             this.stopMedia()
-            this.updateStatusItem('failed:' + remotePartyWithHost)
+            this.updateStateItem('failed:' + remotePartyWithHost)
             console.info(this.LOGGER_PREFIX + ': Call failed. Reason: ' + event.cause)
           })
         })
@@ -368,7 +368,7 @@ export default {
         this.call(this.config.autoDial.toString())
       }
     },
-    updateStatusItem (newStatus) {
+    updateStateItem (newStatus) {
       if (!this.config.sipStateItem) return
       this.$store.dispatch('sendCommand', { itemName: this.config.sipStateItem, cmd: newStatus })
     }
