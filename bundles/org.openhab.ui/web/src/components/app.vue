@@ -3,12 +3,12 @@
     <!-- Left Panel -->
     <f7-panel v-show="ready" left :cover="showSidebar" class="sidebar" :visible-breakpoint="1024">
       <f7-page>
-        <f7-link href="/" class="logo no-ripple" panel-close v-if="themeOptions.dark === 'dark'">
+        <f7-link href="/overview" class="logo no-ripple" panel-close v-if="themeOptions.dark === 'dark'">
           <div class="logo-inner">
             <img src="@/images/openhab-logo-white.svg" type="image/svg+xml" width="196px">
           </div>
         </f7-link>
-        <f7-link href="/" class="logo no-ripple" panel-close v-else>
+        <f7-link href="/overview" class="logo no-ripple" panel-close v-else>
           <div class="logo-inner">
             <img src="@/images/openhab-logo.svg" type="image/svg+xml" width="196px">
           </div>
