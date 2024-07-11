@@ -56,6 +56,7 @@ export default {
       }
       this.$set(ctx, 'const', ctxConstants)
 
+      if (typeof ctx.ctxVars !== 'object') this.$set(ctx, 'ctxVars', {})
       this.$set(ctx.ctxVars, this.varScope, this.ctxVars)
 
       return ctx
