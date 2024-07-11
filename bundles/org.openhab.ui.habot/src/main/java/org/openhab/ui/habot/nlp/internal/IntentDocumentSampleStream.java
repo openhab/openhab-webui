@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2023 Contributors to the openHAB project
+ * Copyright (c) 2010-2024 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -44,7 +44,7 @@ public class IntentDocumentSampleStream implements ObjectStream<DocumentSample> 
             String[] tokens = WhitespaceTokenizer.INSTANCE.tokenize(sampleString);
 
             // remove entities
-            Vector<String> vector = new Vector<String>(tokens.length);
+            Vector<String> vector = new Vector<>(tokens.length);
             // boolean skip = false;
             for (String token : tokens) {
                 if (!token.startsWith("<")) {

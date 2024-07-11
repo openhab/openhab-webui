@@ -2,6 +2,7 @@
   <f7-page @page:afterin="onPageAfterIn" @page:afterout="onPageAfterOut">
     <f7-navbar title="Pages" back-link="Settings" back-link-url="/settings/" back-link-force>
       <f7-nav-right>
+        <developer-dock-icon />
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
                  :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
       </f7-nav-right>
@@ -14,6 +15,7 @@
           search-container=".pages-list"
           search-item=".pagelist-item"
           search-in=".item-title, .item-subtitle, .item-header, .item-footer"
+          :placeholder="searchPlaceholder"
           :disable-button="!$theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
@@ -44,20 +46,8 @@
 
     <!-- skeleton for not ready -->
     <f7-block class="block-narrow">
-      <f7-col>
-        <f7-block-title class="searchbar-hide-on-search">
-          <span v-if="ready">{{ pages.length }} pages</span><span v-else>Loading...</span>
-        </f7-block-title>
-        <div class="padding-left padding-right searchbar-found" v-show="!ready || pages.length > 0">
-          <f7-segmented strong tag="p">
-            <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')">
-              Alphabetical
-            </f7-button>
-            <f7-button :active="groupBy === 'type'" @click="switchGroupOrder('type')">
-              By type
-            </f7-button>
-          </f7-segmented>
-        </div>
+      <f7-col v-if="!ready">
+        <f7-block-title>&nbsp;Loading...</f7-block-title>
         <f7-list v-if="!ready" contacts-list class="col wide pages-list">
           <f7-list-group>
             <f7-list-item
@@ -68,13 +58,29 @@
               title="Title of the page"
               subtitle="Page type"
               after="The item state"
-              footer="Page UID">
+              footer="Page ID">
               <f7-skeleton-block style="width: 32px; height: 32px; border-radius: 50%" slot="media" />
             </f7-list-item>
           </f7-list-group>
         </f7-list>
-        <f7-list v-else
-                 v-show="pages.length > 0"
+      </f7-col>
+
+      <f7-col v-else>
+        <f7-block-title class="searchbar-hide-on-search">
+          {{ pages.length }} pages
+        </f7-block-title>
+        <div class="searchbar-found padding-left padding-right" v-show="!ready || pages.length > 0">
+          <f7-segmented strong tag="p">
+            <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')">
+              Alphabetical
+            </f7-button>
+            <f7-button :active="groupBy === 'type'" @click="switchGroupOrder('type')">
+              By type
+            </f7-button>
+          </f7-segmented>
+        </div>
+
+        <f7-list v-show="pages.length > 0"
                  class="searchbar-found col pages-list"
                  ref="pagesList"
                  :contacts-list="groupBy === 'alphabetical'" media-list>
@@ -105,15 +111,15 @@
                 </f7-chip>
               </div>
               <!-- <span slot="media" class="item-initial">{{page.config.label[0].toUpperCase()}}</span> -->
-              <f7-icon slot="media" :color="page.config.sidebar || page.uid === 'overview' ? '' : 'gray'" :f7="getPageIcon(page)" :size="32" />
+              <oh-icon slot="media" :color="page.config.sidebar || page.uid === 'overview' ? '' : 'gray'" :icon="getPageIcon(page)" :height="32" :width="32" />
             </f7-list-item>
           </f7-list-group>
         </f7-list>
       </f7-col>
     </f7-block>
-    <f7-block v-if="ready && !pages.length" class="service-config block-narrow">
-      <empty-state-placeholder icon="tv" title="pages.title" text="pages.text" />
-    </f7-block>
+
+    <!-- empty-state-placeholder not needed because the overview page cannot be deleted, so there is at least 1 page -->
+
     <f7-fab v-show="ready && !showCheckboxes" position="right-bottom" slot="fixed" color="blue">
       <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
       <f7-icon ios="f7:multiply" md="material:close" aurora="f7:multiply" />
@@ -141,11 +147,15 @@
   </f7-page>
 </template>
 
+<style lang="stylus">
+.searchbar-found
+  @media (min-width 960px)
+    padding-left 0 !important
+    padding-right 0 !important
+</style>
+
 <script>
 export default {
-  components: {
-    'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue')
-  },
   data () {
     return {
       ready: false,
@@ -156,13 +166,13 @@ export default {
       groupBy: 'alphabetical',
       showCheckboxes: false,
       pageTypes: [
-        { type: 'sitemap', label: 'Sitemap', componentType: 'Sitemap', icon: 'menu' },
-        { type: 'layout', label: 'Layout', componentType: 'oh-layout-page', icon: 'rectangle_grid_2x2' },
-        { type: 'home', label: 'Home', componentType: 'oh-home-page', icon: 'house' },
-        { type: 'tabs', label: 'Tabbed', componentType: 'oh-tabs-page', icon: 'squares_below_rectangle' },
-        { type: 'map', label: 'Map', componentType: 'oh-map-page', icon: 'map' },
-        { type: 'plan', label: 'Floor plan', componentType: 'oh-plan-page', icon: 'square_stack_3d_up' },
-        { type: 'chart', label: 'Chart', componentType: 'oh-chart-page', icon: 'graph_square' }
+        { type: 'sitemap', label: 'Sitemap', componentType: 'Sitemap', icon: 'f7:menu' },
+        { type: 'layout', label: 'Layout', componentType: 'oh-layout-page', icon: 'f7:rectangle_grid_2x2' },
+        { type: 'home', label: 'Home', componentType: 'oh-home-page', icon: 'f7:house' },
+        { type: 'tabs', label: 'Tabbed', componentType: 'oh-tabs-page', icon: 'f7:squares_below_rectangle' },
+        { type: 'map', label: 'Map', componentType: 'oh-map-page', icon: 'f7:map' },
+        { type: 'plan', label: 'Floor plan', componentType: 'oh-plan-page', icon: 'f7:square_stack_3d_up' },
+        { type: 'chart', label: 'Chart', componentType: 'oh-chart-page', icon: 'f7:graph_square' }
       ]
     }
   },
@@ -180,7 +190,7 @@ export default {
           return prev
         }, {})
       } else {
-        return this.pages.reduce((prev, page, i, things) => {
+        const typeGroups = this.pages.reduce((prev, page, i, things) => {
           const type = this.getPageType(page).label
           if (!prev[type]) {
             prev[type] = []
@@ -189,7 +199,14 @@ export default {
 
           return prev
         }, {})
+        return Object.keys(typeGroups).sort((a, b) => a.localeCompare(b)).reduce((objEntries, key) => {
+          objEntries[key] = typeGroups[key]
+          return objEntries
+        }, {})
       }
+    },
+    searchPlaceholder () {
+      return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     }
   },
   methods: {
@@ -269,9 +286,10 @@ export default {
       return this.pageTypes.find(t => t.componentType === page.component)
     },
     getPageIcon (page) {
-      if (page.uid === 'overview') return 'house'
+      if (page.uid === 'overview') return 'f7:house'
+      if (page.config && page.config.icon) return page.config.icon
       const pageType = this.pageTypes.find(t => t.componentType === page.component)
-      return (pageType) ? pageType.icon : 'tv'
+      return (pageType) ? pageType.icon : 'f7:tv'
     },
     removeSelected () {
       const vm = this

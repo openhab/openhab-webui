@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2023 Contributors to the openHAB project
+ * Copyright (c) 2010-2024 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
@@ -60,9 +59,7 @@ public class ClassicIconProvider extends AbstractResourceIconProvider implements
 
     @Override
     public Set<IconSet> getIconSets(@Nullable Locale locale) {
-        Set<Format> formats = new HashSet<>(2);
-        formats.add(Format.PNG);
-        formats.add(Format.SVG);
+        Set<Format> formats = Set.of(Format.SVG);
 
         String label = i18nProvider.getText(context.getBundle(), "iconset.label", DEFAULT_LABEL, locale);
         label = label == null ? DEFAULT_LABEL : label;

@@ -6,8 +6,8 @@
 * supports jsscripting
 */
 import Blockly from 'blockly'
-import { javascriptGenerator } from 'blockly/javascript'
-import { addOSGiService } from './utils'
+import { javascriptGenerator } from 'blockly/javascript.js'
+import { addOSGiService } from './utils.js'
 
 export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
   /*
@@ -32,7 +32,7 @@ export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
   * Calls a script that is provided in openHABs scripts folder
   * Code part
   */
-  javascriptGenerator['oh_callscriptfile'] = function (block) {
+  javascriptGenerator.forBlock['oh_callscriptfile'] = function (block) {
     let scriptfile = javascriptGenerator.valueToCode(block, 'scriptfile', javascriptGenerator.ORDER_ATOMIC)
     if (isGraalJs) {
       return `actions.ScriptExecution.callScript(${scriptfile});\n`
@@ -71,7 +71,7 @@ export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
   * Parameters can be provided with the special parameter block oh_scriptparam
   * Code part
   */
-  javascriptGenerator['oh_runrule'] = function (block) {
+  javascriptGenerator.forBlock['oh_runrule'] = function (block) {
     const ruleUID = javascriptGenerator.valueToCode(block, 'ruleUID', javascriptGenerator.ORDER_ATOMIC)
     const scriptParameters = javascriptGenerator.valueToCode(block, 'parameters', javascriptGenerator.ORDER_ATOMIC)
     if (isGraalJs) {
@@ -123,11 +123,11 @@ export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
         const type = thisBlock.getFieldValue('type')
         switch (type) {
           case 'MAP':
-            return 'transforms an input via a map file. Specify the file as the function.\nREGEX und JSONPATH are also valid.'
+            return 'transforms an input via a map file. Specify the file as the function.\nREGEX and JSONPATH are also valid.'
           case 'REGEX':
-            return 'transforms / filters an input by applying the provided regular expression.\nMAP und JSONPATH are also valid.'
+            return 'transforms / filters an input by applying the provided regular expression.\nMAP and JSONPATH are also valid.'
           case 'JSONPATH':
-            return 'transforms / filters an JSON input by executing the provided JSONPath query.\nMAP und REGEX are also valid.'
+            return 'transforms / filters a JSON input by executing the provided JSONPath query.\nMAP and REGEX are also valid.'
           default:
             return 'transforms the input with the ' + type + ' transformation.'
         }
@@ -143,7 +143,7 @@ export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
   * Allow transformations via different methods
   * Code part
   */
-  javascriptGenerator['oh_transformation'] = function (block) {
+  javascriptGenerator.forBlock['oh_transformation'] = function (block) {
     const transformationType = block.getFieldValue('type')
     const transformationFunction = javascriptGenerator.valueToCode(block, 'function', javascriptGenerator.ORDER_ATOMIC)
     const transformationValue = javascriptGenerator.valueToCode(block, 'value', javascriptGenerator.ORDER_ATOMIC)
@@ -164,6 +164,7 @@ export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
         .appendField('contextual info')
         .appendField(new Blockly.FieldDropdown([
           ['rule UID', 'ruleUID'],
+          ['event available', 'eventAvailable'],
           ['event type', 'type'],
           ['new state of item', 'itemState'],
           ['previous state of item', 'oldItemState'],
@@ -171,8 +172,9 @@ export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
           ['received command', 'itemCommand'],
           ['triggered channel', 'channel'],
           ['triggered event', 'event']
-        ]),
+        ], this.handleTypeSelection.bind(this)),
         'contextInfo')
+      this.contextInfo = this.getFieldValue('contextInfo')
       this.setInputsInline(true)
       this.setOutput(true, null)
       this.setColour(0)
@@ -181,6 +183,7 @@ export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
         const contextData = thisBlock.getFieldValue('contextInfo')
         const TIP = {
           'ruleUID': 'The current rule\'s UID',
+          'eventAvailable': 'check if the event information is available',
           'type': 'the event type name',
           'itemState': 'the new item state (only applicable for rules with triggers related to changed and updated items)',
           'oldItemState': 'the old item state (only applicable for rules with triggers related to changed and updated items)',
@@ -192,12 +195,101 @@ export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
         return TIP[contextData]
       })
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-run-and-process.html#retrieve-rule-context-information')
+    },
+    onchange: function (event) {
+      const contextInfo = this.getFieldValue('contextInfo')
+      const asType = this.getFieldValue('asType')
+
+      if (this.contextInfo !== contextInfo) {
+        this.contextInfo = contextInfo
+        if (contextInfo === 'eventAvailable') {
+          this.setOutput(true, 'Boolean')
+          return
+        }
+        if (contextInfo === 'itemName') {
+          this.setOutput(true, 'oh_item')
+        } else {
+          this.setOutput(true, 'String')
+        }
+      }
+
+      if (this.asType !== asType) {
+        this.asType = asType
+        if (this.methodName === 'itemState' || this.methodName === 'oldItemState' || this.methodName === 'itemCommand') {
+          if (asType === 'asNumber') {
+            this.setOutput(true, 'Number')
+          } else if (asType === 'asQuantity') {
+            this.setOutput(true, 'oh_quantity')
+          } else {
+            this.setOutput(true, 'String')
+          }
+        }
+      }
+    },
+    handleTypeSelection: function (methodName) {
+      if (this.methodName !== methodName) {
+        this.methodName = methodName
+        this.updateShape()
+      }
+    },
+    mutationToDom: function () {
+      let container = Blockly.utils.xml.createElement('mutation')
+      container.setAttribute('asType', this.asType)
+      container.setAttribute('contextInfo', this.contextInfo)
+      return container
+    },
+    domToMutation: function (xmlElement) {
+      this.contextInfo = xmlElement.getAttribute('contextInfo')
+      if (this.contextInfo === 'eventAvailable') {
+        this.setOutput(true, 'Boolean')
+        return
+      }
+      if (this.contextInfo === 'itemName') {
+        this.setOutput(true, 'oh_item')
+      } else {
+        this.setOutput(true, 'String')
+      }
+      this.asType = xmlElement.getAttribute('asType')
+      if (this.asType === 'asNumber') {
+        this.setOutput(true, 'Number')
+      } else if (this.asType === 'asQuantity') {
+        this.setOutput(true, 'oh_quantity')
+      } else {
+        this.setOutput(true, 'String')
+      }
+    },
+    updateShape: function () {
+      if (this.methodName === 'itemState' || this.methodName === 'oldItemState' || this.methodName === 'itemCommand') {
+        if (!this.getInput('asTypeInput')) {
+          this.appendDummyInput('asTypeInput').appendField(new Blockly.FieldDropdown([
+            ['as String', 'asString'],
+            ['as Number', 'asNumber'],
+            ['as Quantity', 'asQuantity']
+          ]),
+          'asType')
+        }
+      } else {
+        if (this.getInput('asTypeInput')) {
+          this.removeInput('asTypeInput')
+        }
+      }
     }
   }
 
-  javascriptGenerator['oh_context_info'] = function (block) {
+  javascriptGenerator.forBlock['oh_context_info'] = function (block) {
     const contextInfo = block.getFieldValue('contextInfo')
+    const type = block.getFieldValue('asType')
+    if (contextInfo === 'eventAvailable') return ['(event !== undefined)', javascriptGenerator.ORDER_ATOMIC]
     if (contextInfo === 'ruleUID') return ['ctx.ruleUID', javascriptGenerator.ORDER_ATOMIC]
+    if (contextInfo === 'itemState' || contextInfo === 'oldItemState' || contextInfo === 'itemCommand') {
+      if (type === 'asNumber') {
+        return [`event.${contextInfo} !== undefined ? parseFloat(event.${contextInfo}.toString()) : undefined`, javascriptGenerator.ORDER_ATOMIC]
+      } else if (type === 'asQuantity') {
+        return [`event.${contextInfo} !== undefined ? Quantity(event.${contextInfo}.toString()) : undefined`, javascriptGenerator.ORDER_ATOMIC]
+      } else {
+        return [`event.${contextInfo}?.toString()`, javascriptGenerator.ORDER_ATOMIC]
+      }
+    }
     return [`event.${contextInfo}`, javascriptGenerator.ORDER_ATOMIC]
   }
 
@@ -222,7 +314,7 @@ export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
   * Allows retrieving parameters provided by a rule
   * Code part
   */
-  javascriptGenerator['oh_context_attribute'] = function (block) {
+  javascriptGenerator.forBlock['oh_context_attribute'] = function (block) {
     const key = javascriptGenerator.valueToCode(block, 'key', javascriptGenerator.ORDER_ATOMIC)
     let code = `ctx[${key}]`
     return [code, 0]
@@ -257,7 +349,7 @@ export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
   * Allows inlining arbitrary code
   * Code part
   */
-  javascriptGenerator['oh_script_inline'] = function (block) {
+  javascriptGenerator.forBlock['oh_script_inline'] = function (block) {
     const code = block.getFieldValue('inlineScript') + '\n'
     return code
   }

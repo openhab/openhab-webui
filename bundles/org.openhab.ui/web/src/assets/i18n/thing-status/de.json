@@ -9,5 +9,6 @@
   "CONFIGURATION_ERROR": "Fehler: Konfiguration",
   "BRIDGE_OFFLINE": "Fehler: Bridge OFFLINE",
   "FIRMWARE_UPDATING": "FIRMWARE AKTUALISIEREN",
-  "GONE": "Entfernt"
+  "GONE": "Entfernt",
+  "NOT_YET_READY": "NOCH NICHT BEREIT"
 }

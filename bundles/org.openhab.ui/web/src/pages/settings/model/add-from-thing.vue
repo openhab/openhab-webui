@@ -60,7 +60,7 @@
           <div>Loading...</div>
         </f7-block>
         <div v-else-if="selectedThing.UID && selectedThingType.UID">
-          <item-form v-if="createEquipment" :item="newEquipmentItem" :items="items" :enable-name="true" :hide-type="true" :force-semantics="true" />
+          <item-form v-if="createEquipment" :item="newEquipmentItem" :items="items" :createMode="true" :hide-type="true" :force-semantics="true" />
           <f7-block-title>Channels</f7-block-title>
           <f7-block-footer class="padding-left padding-right">
             Check the channels you wish to create as new Point items.
@@ -97,11 +97,12 @@ import ItemForm from '@/components/item/item-form.vue'
 import Item from '@/components/item/item.vue'
 
 import ThingStatus from '@/components/thing/thing-status-mixin'
+import ItemMixin from '@/components/item/item-mixin'
 
 import generateTextualDefinition from './generate-textual-definition'
 
 export default {
-  mixins: [ThingStatus],
+  mixins: [ThingStatus, ItemMixin],
   components: {
     Item,
     ThingPicker,
@@ -190,33 +191,47 @@ export default {
         let copy = Object.assign({}, p)
         delete (copy.channel)
         delete (copy.channelType)
+        delete (copy.unit)
+        delete (copy.stateDescriptionPattern)
         return copy
       })]
       if (this.createEquipment) payload.unshift(this.newEquipmentItem)
 
       this.$oh.api.put('/rest/items/', payload).then((data) => {
-        dialog.setText('Creating links...')
-        dialog.setProgress(50)
-        const linkPromises = this.newPointItems.map((p) => {
-          return this.$oh.api.put(`/rest/links/${p.name}/${encodeURIComponent(p.channel.uid)}`, {
-            itemName: p.name,
-            channelUID: p.channel.uid,
-            configuration: {}
-          })
+        dialog.setText('Updating unit metadata...')
+        dialog.setProgress(40)
+        const unitPromises = this.newPointItems.map((p) => {
+          return this.saveUnit(p, p.unit).then(() => { return this.saveStateDescription(p, p.stateDescriptionPattern) })
         })
-        Promise.all(linkPromises).then((data) => {
-          dialog.setProgress(100)
-          this.$f7.toast.create({
-            text: 'Items created and linked',
-            destroyOnClose: true,
-            closeTimeout: 2000
-          }).open()
-          dialog.close()
-          this.$f7router.back()
+        Promise.all(unitPromises).then((data) => {
+          dialog.setText('Creating links...')
+          dialog.setProgress(60)
+          const linkPromises = this.newPointItems.map((p) => {
+            return this.$oh.api.put(`/rest/links/${p.name}/${encodeURIComponent(p.channel.uid)}`, {
+              itemName: p.name,
+              channelUID: p.channel.uid,
+              configuration: {}
+            })
+          })
+
+          Promise.all(linkPromises).then((data) => {
+            dialog.setProgress(100)
+            this.$f7.toast.create({
+              text: 'Items created and linked',
+              destroyOnClose: true,
+              closeTimeout: 2000
+            }).open()
+            dialog.close()
+            this.$f7router.back()
+          }).catch((err) => {
+            dialog.close()
+            console.error(err)
+            this.$f7.dialog.alert('An error occurred while creating the links: ' + err)
+          })
         }).catch((err) => {
           dialog.close()
           console.error(err)
-          this.$f7.dialog.alert('An error occurred while creating the links: ' + err)
+          this.$f7.dialog.alert('An error occurred while creating unit metadata: ' + err)
         })
       }).catch((err) => {
         dialog.close()

@@ -7,6 +7,8 @@
   "things.text": "Dolgoknak hívjuk az openHAB-el kapcsolatban álló eszközök és szolgáltatások összességét, melyeket a telepített kötések biztosítanak.<br><br>Az automatikus felderítést támogató telepített kötések a lehetséges dolgokat a Bejövő mappában sorolják fel. A lenti gomb segítségével kezdeményezhet egy kötéssel kapcsolatos keresést vagy kézzel adhat hozzá dolgot.",
   "things.nobindings.title": "Nincsenek kötések",
   "things.nobindings.text": "Új dolog hozzáadásához először a megfelelő kötés telepítése szükséges.",
+  "transformations.title": "Nincs átalakító megadva",
+  "transformations.text": "Az átalakító a technikai vagy ömlesztett nyers adatok könnyen értelmezhetővé átalakítását végzi.",
   "model.title": "Az otthon modelljének felépítése",
   "model.text": "A modellt az egyes elemek szemantikus kapcsolatba szervezésével építheti fel.<br><br>Kezdje egy hely alapú szerkezet megadásával: épületek, külső területek, szintek, szobák, stb. Ezután illessze be az eszközöket és a pontokat a kiválasztott dolgokból (esetleg kézi szerkesztéssel).",
   "items.title": "Nincsenek még elemek",
@@ -17,6 +19,8 @@
   "pages.text": "Szerkesszen oldalakat bizonyos információk megjelenítéséhez és elemek kezeléséhez. Sokféle oldalt hozhat létre: diagram, térkép, emelet terv...<br><br>Klikkeljen az alsó gombra az első oldal létrehozásához.",
   "rules.title": "Nincsenek még szabályok",
   "rules.text": "Otthona automatizálásának alapvető építőkövei a szabályok - megadják, mely akciók kerülnek végrehajtásra bizonyos események bekövetkeztekor. <br><br>A lenti gombbal hozhatja létre az első szabályt; bonyolultabb forgatókönyv megadásához létrehozhat programokat a beállító mappában is.",
+  "scenes.title": "Nincsenek még jelenetek",
+  "scenes.text": "A jelenetek olyan szabályok, amelyek parancsokat küldenek az elemek egy halmazának a kívánt állapotba való visszaállításához.<br />Igény szerint futtathatja őket, vagy meghívhatja őket más szabályokból.<br><br>Hozza létre első jelenetét az alábbi gombbal.",
   "scripts.title": "Nincsenek még programok",
   "scripts.text": "A programok speciális szabályok, melyek nincsenek eseményhez kötve és modul szerűen hajtanak végre utasításokat.<br />Más szabályokból szükség szerint futtathatja őket.<br><br>Adja hozzá az első programot a lenti gombra klikkelve.",
   "schedule.title": "Nincs a ütemezőben semmi",
@@ -26,5 +30,7 @@
   "addons.title": "Nincs kiegészítő telepítve",
   "addons.text": "A kiegészítők további funkciókkal egészítik ki az openHAB rendszert. <br><br>A lenti gombbal telepíthető őket.",
   "page.unavailable.title": "Az oldal nem elérhető",
-  "page.unavailable.text": "Az Ön számára az oldal korlátozások miatt nem elérhető."
+  "page.unavailable.text": "Az Ön számára az oldal korlátozások miatt nem elérhető.",
+  "persistence.title": "Nincs tárolási kiegészítő telepítve",
+  "persistence.text": "A tárolókkal az elemek állapotainak idő alapú mentésére van lehetőség, függetlenül a régi vagy új értékektől. A tárolók beállítását egy tároló kiegészítő telepítése után végezheti el."
 }

@@ -16,15 +16,14 @@ module.exports = {
     }]
   ],
   plugins: [
-    'transform-vue-jsx',
-    // "@babel/plugin-transform-runtime",
-    '@babel/plugin-syntax-dynamic-import'
+    '@babel/plugin-syntax-dynamic-import',
+    '@babel/plugin-syntax-jsx'
   ],
   env: {
     test: {
       plugins: [
         '@babel/plugin-transform-modules-commonjs',
-        'babel-plugin-dynamic-import-node-babel-7'
+        'babel-plugin-dynamic-import-node'
       ],
       presets: [
         [

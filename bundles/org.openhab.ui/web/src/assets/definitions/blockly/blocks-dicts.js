@@ -3,7 +3,7 @@
  */
 
 import Blockly from 'blockly'
-import { javascriptGenerator } from 'blockly/javascript'
+import { javascriptGenerator } from 'blockly/javascript.js'
 
 export default function (f7, isGraalJs) {
   Blockly.Blocks['dicts_create_with'] = {
@@ -16,7 +16,7 @@ export default function (f7, isGraalJs) {
       this.itemCount_ = 3
       this.updateShape_()
       this.setOutput(true, 'Dictionary')
-      this.setMutator(new Blockly.Mutator(['dicts_create_with_item']))
+      this.setMutator(new Blockly.icons.MutatorIcon(['dicts_create_with_item'], this))
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-standard-ext.html#dictionary-for-managing-key-value-pairs')
       this.setTooltip('Create a key/value dictionary')
     },
@@ -84,7 +84,7 @@ export default function (f7, isGraalJs) {
       this.updateShape_()
       // Reconnect any child blocks.
       for (let i = 0; i < this.itemCount_; i++) {
-        Blockly.Mutator.reconnect(connections[i], this, 'ADD' + i)
+        Blockly.icons.MutatorIcon.reconnect(connections[i], this, 'ADD' + i)
       }
     },
     /**
@@ -166,7 +166,7 @@ export default function (f7, isGraalJs) {
     }
   }
 
-  javascriptGenerator['dicts_create_with'] = function (block) {
+  javascriptGenerator.forBlock['dicts_create_with'] = function (block) {
     // Create an object with any number of elements of any type.
     let elements = new Array(block.itemCount_)
     for (let i = 0; i < block.itemCount_; i++) {
@@ -200,12 +200,77 @@ export default function (f7, isGraalJs) {
 
   /*
   * Allows retrieving parameters provided by a rule
+  * Either a map can be directly used and an intermediate variable is created or a variable is directly provided
   * Code part
   */
-  javascriptGenerator['dicts_get'] = function (block) {
+  javascriptGenerator.forBlock['dicts_get'] = function (block) {
     const key = javascriptGenerator.valueToCode(block, 'key', javascriptGenerator.ORDER_ATOMIC)
     const varName = javascriptGenerator.valueToCode(block, 'varName', javascriptGenerator.ORDER_ATOMIC).replace(/'/g, '')
     let code = `${varName}[${key}]`
     return [code, 0]
   }
+
+  /*
+    * creates a loop for dictionaries
+    *
+    * Block type definition
+    */
+  Blockly.Blocks['dicts_for'] = {
+    init: function () {
+      this.appendDummyInput()
+        .appendField('foreach')
+      this.appendDummyInput()
+        .appendField(new Blockly.FieldVariable('dictValue'), 'loopVar')
+        .appendField('in map')
+      this.appendValueInput('dict')
+      // allow Dictionary or Variable (type=null)
+      // in case of a variable we need to trust that it is a Dictionary
+        .setCheck(['Dictionary', null])
+
+      this.setInputsInline(true)
+      this.setColour('%{BKY_LOOPS_HUE}')
+      this.appendStatementInput('dictForCode')
+        .setCheck(null)
+      this.setPreviousStatement(true, null)
+      this.setNextStatement(true, null)
+      this.setTooltip('Create a named timer')
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-timers-and-delays.html#after-period-of-time-do-with-timer')
+    }
+  }
+
+  /*
+    * creates a loop for dictionaries
+    * Code part
+    */
+  javascriptGenerator.forBlock['dicts_for'] = function (block) {
+    const loopVar = block.getField('loopVar').getVariable().name
+    const dict = javascriptGenerator.valueToCode(block, 'dict', javascriptGenerator.ORDER_ATOMIC)
+    const dictForCode = javascriptGenerator.statementToCode(block, 'dictForCode')
+
+    const dictCheck = block.getInput('dict').connection.targetBlock().outputConnection.getCheck()
+    const dictType = (dictCheck) ? block.getInput('dict').connection.targetBlock().outputConnection.getCheck()[0] : ''
+
+    let code = ''
+    let dictVar
+
+    if (dictType === 'Dictionary') {
+      // Dictionary used directly, so we create an intermediate var
+      dictVar = addDict()
+      code += `${dictVar}=${dict};\n`
+    } else {
+      dictVar = dict
+    }
+
+    code += `for (var ${loopVar}Key in ${dictVar}) {\n`
+    code += `  ${loopVar} = ${dictVar}[${loopVar}Key];\n`
+    code += dictForCode
+    code += '}\n'
+    return code
+  }
+}
+
+function addDict () {
+  return javascriptGenerator.provideFunction_(
+    'dictionary',
+    ['var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ';'])
 }

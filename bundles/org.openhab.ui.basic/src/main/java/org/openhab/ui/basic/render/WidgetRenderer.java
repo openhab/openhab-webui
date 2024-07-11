@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2023 Contributors to the openHAB project
+ * Copyright (c) 2010-2024 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -32,7 +32,7 @@ public interface WidgetRenderer {
      * @param w the widget to check
      * @return true, if this renderer can handle the widget
      */
-    public boolean canRender(Widget w);
+    boolean canRender(Widget w);
 
     /**
      * Produces HTML code for a given widget and writes it to a string builder.
@@ -43,12 +43,12 @@ public interface WidgetRenderer {
      *         a "%children%" placeholder for them.
      * @throws RenderException if an error occurs during rendering
      */
-    public EList<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException;
+    EList<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException;
 
     /**
      * Applies a servlet configuration to the renderer
      *
      * @param config servlet configuration
      */
-    public void setConfig(WebAppConfig config);
+    void setConfig(WebAppConfig config);
 }

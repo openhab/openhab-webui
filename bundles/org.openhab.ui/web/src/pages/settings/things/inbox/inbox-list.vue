@@ -48,11 +48,14 @@
       <f7-col>
         <f7-block-title>
           <span v-if="ready">{{ inboxCount }} entries</span>
-          <div style="text-align:right; color:var(--f7-block-text-color); font-weight: normal" class="float-right">
+          <div v-if="!$device.desktop && $f7.width < 1024" style="text-align:right; color:var(--f7-block-text-color); font-weight: normal" class="float-right">
+            <f7-checkbox :checked="showIgnored" @change="toggleIgnored" /> <label @click="toggleIgnored" style="cursor:pointer">Show ignored</label>
+          </div>
+          <div v-else style="text-align:right; color:var(--f7-block-text-color); font-weight: normal" class="float-right">
             <label @click="toggleIgnored" style="cursor:pointer">Show ignored</label> <f7-checkbox :checked="showIgnored" @change="toggleIgnored" />
           </div>
         </f7-block-title>
-        <div class="padding-left padding-right searchbar-found" v-show="!ready || inboxCount > 0">
+        <div class="searchbar-found padding-left padding-right" v-show="!ready || inboxCount > 0">
           <f7-segmented strong tag="p">
             <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')">
               Alphabetical
@@ -62,6 +65,8 @@
             </f7-button>
           </f7-segmented>
         </div>
+
+        <!-- skeleton for not ready -->
         <f7-list v-if="!ready" contacts-list class="col inbox-list">
           <f7-list-group>
             <f7-list-item
@@ -74,6 +79,7 @@
               footer="binding:thingUID" />
           </f7-list-group>
         </f7-list>
+
         <f7-list v-else class="searchbar-found col" :contacts-list="groupBy === 'alphabetical'">
           <f7-list-group v-for="(inboxWithInitial, initial) in indexedInbox" :key="initial">
             <f7-list-item v-if="inboxWithInitial.length" :title="initial" group-title />
@@ -102,9 +108,11 @@
         </f7-list>
       </f7-col>
     </f7-block>
+
     <f7-block v-if="ready && inboxCount === 0" class="block-narrow">
       <empty-state-placeholder icon="tray" title="inbox.title" text="inbox.text" />
     </f7-block>
+
     <f7-fab v-show="!showCheckboxes" position="right-bottom" slot="fixed" color="blue" href="/settings/things/add">
       <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
       <f7-icon ios="f7:close" md="material:close" aurora="f7:close" />
@@ -115,6 +123,13 @@
     </f7-fab>
   </f7-page>
 </template>
+
+<style lang="stylus">
+.searchbar-found
+  @media (min-width 960px)
+    padding-left 0 !important
+    padding-right 0 !important
+</style>
 
 <script>
 export default {
@@ -153,7 +168,7 @@ export default {
           return prev
         }, {})
       } else {
-        return filteredInbox.reduce((prev, entry, i, inbox) => {
+        const bindingGroups = filteredInbox.reduce((prev, entry, i, inbox) => {
           const binding = entry.thingUID.split(':')[0]
           if (!prev[binding]) {
             prev[binding] = []
@@ -162,13 +177,17 @@ export default {
 
           return prev
         }, {})
+        return Object.keys(bindingGroups).sort((a, b) => a.localeCompare(b)).reduce((objEntries, key) => {
+          objEntries[key] = bindingGroups[key]
+          return objEntries
+        }, {})
       }
     }
   },
   methods: {
     load () {
       this.loading = true
-      this.$oh.api.get('/rest/inbox').then((data) => {
+      this.$oh.api.get('/rest/inbox?includeIgnored=true').then((data) => {
         this.inbox = data.sort((a, b) => a.label.localeCompare(b.label))
         this.initSearchbar = true
         this.loading = false

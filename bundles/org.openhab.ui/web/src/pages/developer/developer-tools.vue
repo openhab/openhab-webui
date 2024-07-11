@@ -1,6 +1,10 @@
 <template>
   <f7-page name="devtools" @page:beforeremove="onPageBeforeRemove">
-    <f7-navbar title="Developer Tools" back-link="Back" back-link-url="/" back-link-force no-hairline />
+    <f7-navbar title="Developer Tools" back-link="Back" back-link-url="/" back-link-force no-hairline>
+      <f7-nav-right>
+        <developer-dock-icon />
+      </f7-nav-right>
+    </f7-navbar>
     <f7-toolbar tabbar position="top">
       <f7-link @click="currentTab = 'menu'" :tab-link-active="currentTab === 'menu'" class="tab-link">
         Expert Features
@@ -8,7 +12,6 @@
       <f7-link @click="currentTab = 'debug'" :tab-link-active="currentTab === 'debug'" class="tab-link">
         Debug
       </f7-link>
-      <f7-nav-right />
     </f7-toolbar>
 
     <f7-tabs>
@@ -32,10 +35,10 @@
             <f7-col width="100" medium="50">
               <f7-block-title>Maintenance Tools</f7-block-title>
               <f7-list media-item>
-                <f7-list-item media-item title="Developer Sidebar" class="developer-sidebar-toggle" footer="Show a panel with various tools" link="" no-chevron @click="$f7.emit('toggleDeveloperSidebar')">
+                <f7-list-item media-item title="Developer Sidebar" class="developer-sidebar-toggle" footer="Show a panel with various tools and help" link="" no-chevron @click="$f7.emit('toggleDeveloperDock')">
                   <f7-icon slot="media" f7="wrench" color="gray" />
                   <div slot="header" style="height: 100%; height: 32px" class="display-flex float-right flex-direction-column justify-content-center">
-                    <f7-toggle color="blue" :checked="$store.state.developerSidebar" />
+                    <f7-toggle color="blue" :checked="$store.state.developerDock" />
                   </div>
                 </f7-list-item>
                 <f7-list-item media-item title="API Explorer" footer="Discover and access the REST API directly" link="api-explorer">

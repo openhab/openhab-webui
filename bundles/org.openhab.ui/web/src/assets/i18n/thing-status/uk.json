@@ -9,5 +9,6 @@
   "CONFIGURATION_ERROR": "ПОМИЛКА: CONFIG",
   "BRIDGE_OFFLINE": "ПОМИЛКА: BRIDGE",
   "FIRMWARE_UPDATING": "ОНОВЛЕННЯ ПРОШИВКИ",
-  "GONE": "ВТРАЧЕНО"
+  "GONE": "ВТРАЧЕНО",
+  "NOT_YET_READY": "ЩЕ НЕ ГОТОВИЙ"
 }

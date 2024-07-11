@@ -179,7 +179,7 @@ export const actionsMixin = {
           const actionModal = actionConfig[prefix + 'actionModal']
           const actionModalConfig = actionConfig[prefix + 'actionModalConfig']
           if (actionModal.indexOf('page:') !== 0 && actionModal.indexOf('widget:') !== 0 && actionModal.indexOf('oh-') !== 0) {
-            console.log('Action target is not of the format page:uid or widget:uid')
+            console.log('Action target is not of the format page:uid or widget:uid or oh-')
             return
           }
 
@@ -196,7 +196,7 @@ export const actionsMixin = {
             props: {
               uid: actionModal,
               el: (evt && evt.target && evt.target._icon) ? evt.target._icon : (evt) ? evt.target : null,
-              modalParams: actionModalConfig || {}
+              modalConfig: actionModalConfig || {}
             }
           }
           this.$f7.views.main.router.navigate(modalRoute, modalProps)
@@ -253,10 +253,13 @@ export const actionsMixin = {
           break
         case 'analyze':
         case 'analyzer':
-          const actionAnalyzerItems = actionConfig[prefix + 'actionAnalyzerItems']
+          let actionAnalyzerItems = actionConfig[prefix + 'actionAnalyzerItems']
           const actionAnalyzerChartType = actionConfig[prefix + 'actionAnalyzerChartType']
           const actionAnalyzerCoordSystem = actionConfig[prefix + 'actionAnalyzerCoordSystem']
-          this.$f7.views.main.router.navigate(`/analyzer/?items=${actionAnalyzerItems.join(',')}&chartType=${actionAnalyzerChartType || ''}&coordSystem=${actionAnalyzerCoordSystem || ''}`)
+          if (Array.isArray(actionAnalyzerItems)) {
+            actionAnalyzerItems = actionAnalyzerItems.join(',')
+          }
+          this.$f7.views.main.router.navigate(`/analyzer/?items=${actionAnalyzerItems || ''}&chartType=${actionAnalyzerChartType || ''}&coordSystem=${actionAnalyzerCoordSystem || ''}`)
           console.log('Opening the analyzer')
           break
         case 'url':
@@ -268,10 +271,12 @@ export const actionsMixin = {
           const actionVariable = actionConfig[prefix + 'actionVariable']
           let actionVariableValue = actionConfig[prefix + 'actionVariableValue']
           const actionVariableKey = actionConfig[prefix + 'actionVariableKey']
+          const actionVariableScope = this.getVariableScope(context.ctxVars, context.varScope, actionVariable)
+          const actionVariableLocation = (actionVariableScope) ? context.ctxVars[actionVariableScope] : context.vars
           if (actionVariableKey) {
-            actionVariableValue = this.setVariableKeyValues(context.vars[actionVariable], actionVariableKey, actionVariableValue)
+            actionVariableValue = this.setVariableKeyValues(actionVariableLocation[actionVariable], actionVariableKey, actionVariableValue)
           }
-          this.$set(context.vars, actionVariable, actionVariableValue)
+          this.$set(actionVariableLocation, actionVariable, actionVariableValue)
           break
         default:
           console.log('Invalid action: ' + action)

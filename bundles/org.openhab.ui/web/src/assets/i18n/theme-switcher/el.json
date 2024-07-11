@@ -1,7 +1,7 @@
 {
   "about.theme": "Θέμα",
   "about.theme.auto": "Αυτόματο",
-  "about.darkMode": "Σκούρα εμφάνιση",
+  "about.darkMode": "Σκοτεινό θέμα",
   "about.darkMode.auto": "Αυτόματο",
   "about.darkMode.light": "Φωτεινό",
   "about.darkMode.dark": "Σκοτεινό",
@@ -11,5 +11,6 @@
   "about.miscellaneous.home.background": "Τυπικό χρώμα φόντου αρχικής σελίδας",
   "about.miscellaneous.home.hideChatInput": "Απόκρυψη πλαισίου συνομιλίας στην αρχική σελίδα",
   "about.miscellaneous.home.disableCardExpansionAnimation": "Απενεργοποίηση εφέ επέκτασης καρτών",
-  "about.miscellaneous.theme.disablePageTransition": "Απενεργοποίηση εφέ μετάβασης σελίδας"
+  "about.miscellaneous.theme.disablePageTransition": "Απενεργοποίηση εφέ μετάβασης σελίδας",
+  "about.miscellaneous.webaudio.enable": "Ενεργοποίηση υποστήριξης Web Audio sink"
 }

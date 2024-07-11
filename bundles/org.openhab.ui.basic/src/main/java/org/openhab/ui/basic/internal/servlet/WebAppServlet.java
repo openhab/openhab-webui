@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2023 Contributors to the openHAB project
+ * Copyright (c) 2010-2024 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -57,7 +57,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Kai Kreuzer - Initial contribution and API
  * @author Vlad Ivanov - Basic UI changes
- *
+ * @author Laurent Garnier - New page /basicui/app/settings
  */
 @Component(immediate = true, service = Servlet.class, configurationPid = "org.openhab.basicui", //
         property = Constants.SERVICE_PID + "=org.openhab.basicui")
@@ -125,6 +125,14 @@ public class WebAppServlet extends HttpServlet {
         res.setContentType(CONTENT_TYPE);
     }
 
+    private void showSettings(ServletResponse res) throws IOException, RenderException {
+        PrintWriter resWriter;
+        resWriter = res.getWriter();
+        resWriter.append(renderer.renderSettings());
+
+        res.setContentType(CONTENT_TYPE);
+    }
+
     @Override
     protected void service(@NonNullByDefault({}) HttpServletRequest req, @NonNullByDefault({}) HttpServletResponse res)
             throws ServletException, IOException {
@@ -151,6 +159,11 @@ public class WebAppServlet extends HttpServlet {
         }
 
         try {
+            if ("/settings".equals(req.getPathInfo())) {
+                showSettings(res);
+                return;
+            }
+
             if (sitemap == null) {
                 showSitemapList(res);
                 return;
@@ -160,7 +173,7 @@ public class WebAppServlet extends HttpServlet {
                 // we are at the homepage, so we render the children of the sitemap root node
                 if (subscriptionId != null) {
                     if (subscriptions.exists(subscriptionId)) {
-                        subscriptions.setPageId(subscriptionId, sitemap.getName(), sitemapName);
+                        subscriptions.updateSubscriptionLocation(subscriptionId, sitemap.getName(), sitemapName);
                     } else {
                         logger.debug("Basic UI requested a non-existing event subscription id ({})", subscriptionId);
                     }
@@ -172,7 +185,7 @@ public class WebAppServlet extends HttpServlet {
                 // we are on some subpage, so we have to render the children of the widget that has been selected
                 if (subscriptionId != null) {
                     if (subscriptions.exists(subscriptionId)) {
-                        subscriptions.setPageId(subscriptionId, sitemap.getName(), widgetId);
+                        subscriptions.updateSubscriptionLocation(subscriptionId, sitemap.getName(), widgetId);
                     } else {
                         logger.debug("Basic UI requested a non-existing event subscription id ({})", subscriptionId);
                     }

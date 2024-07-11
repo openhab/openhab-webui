@@ -2,6 +2,7 @@
   <f7-page @page:afterin="onPageAfterIn" @page:afterout="stopEventSource">
     <f7-navbar title="Things" back-link="Settings" back-link-url="/settings/" back-link-force>
       <f7-nav-right>
+        <developer-dock-icon />
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
                  :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
       </f7-nav-right>
@@ -13,6 +14,7 @@
           :init="initSearchbar"
           search-container=".contacts-list"
           search-in=".item-inner"
+          :placeholder="searchPlaceholder"
           :disable-button="!$theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
@@ -38,6 +40,7 @@
     </f7-toolbar>
 
     <f7-list-index
+      v-if="ready"
       ref="listIndex"
       v-show="groupBy === 'alphabetical' && !$device.desktop"
       list-el=".things-list"
@@ -47,22 +50,12 @@
     <f7-list class="searchbar-not-found">
       <f7-list-item title="Nothing found" />
     </f7-list>
+
     <f7-block class="block-narrow">
-      <f7-col>
-        <f7-block-title class="searchbar-hide-on-search">
-          <span v-if="ready">{{ things.length }} things</span><span v-else>Loading...</span>
-        </f7-block-title>
-        <div class="searchbar-found padding-left padding-right" v-show="!ready || things.length > 0">
-          <f7-segmented strong tag="p">
-            <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')">
-              Alphabetical
-            </f7-button>
-            <f7-button :active="groupBy === 'binding'" @click="switchGroupOrder('binding')">
-              By binding
-            </f7-button>
-          </f7-segmented>
-        </div>
-        <f7-list v-if="!ready" contacts-list class="col things-list">
+      <!-- skeleton for not ready -->
+      <f7-col v-if="!ready">
+        <f7-block-title>&nbsp;Loading...</f7-block-title>
+        <f7-list contacts-list class="col things-list">
           <f7-list-group>
             <f7-list-item
               media-item
@@ -74,7 +67,34 @@
               after="status badge" />
           </f7-list-group>
         </f7-list>
-        <f7-list v-else class="searchbar-found col things-list" :contacts-list="groupBy === 'alphabetical'">
+      </f7-col>
+
+      <f7-col v-else-if="things.length > 0">
+        <f7-block-title class="searchbar-hide-on-search">
+          <span>{{ thingsCount }} Things</span>
+          <template v-if="groupBy === 'location'">
+            <div v-if="!$device.desktop && $f7.width < 1024" style="text-align:right; color:var(--f7-block-text-color); font-weight: normal" class="float-right">
+              <f7-checkbox :checked="showNoLocation" @change="toggleShowNoLocation" /> <label @click="toggleShowNoLocation" style="cursor:pointer">Show no location</label>
+            </div>
+            <div v-else style="text-align:right; color:var(--f7-block-text-color); font-weight: normal" class="float-right">
+              <label @click="toggleShowNoLocation" style="cursor:pointer">Show no location</label> <f7-checkbox :checked="showNoLocation" @change="toggleShowNoLocation" />
+            </div>
+          </template>
+        </f7-block-title>
+        <div class="searchbar-found padding-left padding-right">
+          <f7-segmented strong tag="p">
+            <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')">
+              Alphabetical
+            </f7-button>
+            <f7-button :active="groupBy === 'binding'" @click="switchGroupOrder('binding')">
+              By binding
+            </f7-button>
+            <f7-button :active="groupBy === 'location'" @click="switchGroupOrder('location')">
+              By location
+            </f7-button>
+          </f7-segmented>
+        </div>
+        <f7-list class="searchbar-found col things-list" :contacts-list="groupBy === 'alphabetical'">
           <f7-list-group v-for="(thingsWithInitial, initial) in indexedThings" :key="initial">
             <f7-list-item v-if="thingsWithInitial.length" :title="initial" group-title />
             <f7-list-item
@@ -93,6 +113,11 @@
                 {{ thing.UID }}
                 <clipboard-icon :value="thing.UID" tooltip="Copy UID" />
               </div>
+
+              <div slot="subtitle" v-if="thing.location && groupBy !== 'location'">
+                {{ thing.location }}
+                <f7-icon f7="placemark" color="gray" style="font-size: 16px; width: 16px; height: 16px;" />
+              </div>
               <f7-badge slot="after" :color="thingStatusBadgeColor(thing.statusInfo)" :tooltip="thing.statusInfo.description">
                 {{ thingStatusBadgeText(thing.statusInfo) }}
               </f7-badge>
@@ -102,9 +127,14 @@
         </f7-list>
       </f7-col>
     </f7-block>
+
     <f7-block v-if="ready && !things.length" class="block-narrow">
       <empty-state-placeholder icon="lightbulb" title="things.title" text="things.text" />
+      <f7-row v-if="$f7.width < 1280" class="display-flex justify-content-center">
+        <f7-button large fill color="blue" external :href="`${$store.state.websiteUrl}/link/thing`" target="_blank" v-t="'home.overview.button.documentation'" />
+      </f7-row>
     </f7-block>
+
     <f7-fab position="right-bottom" slot="fixed" color="blue" href="add">
       <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
       <!-- <f7-fab-buttons position="top">
@@ -112,7 +142,7 @@
         <f7-fab-button label="Add thing manually">M</f7-fab-button>
       </f7-fab-buttons> -->
     </f7-fab>
-    <f7-fab v-show="inbox.length > 0" position="center-bottom" :text="`Inbox (${inboxCount})`" slot="fixed" :color="inboxCount > 0 ? 'red' : 'gray'" href="inbox">
+    <f7-fab position="center-bottom" :text="`Inbox (${inboxCount})`" slot="fixed" :color="inboxCount > 0 ? 'red' : 'gray'" href="inbox">
       <f7-icon f7="tray" />
     </f7-fab>
   </f7-page>
@@ -121,6 +151,11 @@
 <style lang="stylus">
 .things-list
   margin-bottom calc(var(--f7-fab-size) + 2 * calc(var(--f7-fab-margin) + var(--f7-safe-area-bottom)))
+
+.searchbar-found
+  @media (min-width 960px)
+    padding-left 0 !important
+    padding-right 0 !important
 </style>
 
 <script>
@@ -143,6 +178,7 @@ export default {
       selectedItems: [],
       showCheckboxes: false,
       groupBy: 'alphabetical',
+      showNoLocation: false,
       eventSource: null
     }
   },
@@ -161,8 +197,8 @@ export default {
 
           return prev
         }, {})
-      } else {
-        return this.things.reduce((prev, thing, i, things) => {
+      } else if (this.groupBy === 'binding') {
+        const bindingGroups = this.things.reduce((prev, thing, i, things) => {
           const binding = thing.thingTypeUID.split(':')[0]
           if (!prev[binding]) {
             prev[binding] = []
@@ -171,10 +207,39 @@ export default {
 
           return prev
         }, {})
+        return Object.keys(bindingGroups).sort((a, b) => a.localeCompare(b)).reduce((objEntries, key) => {
+          objEntries[key] = bindingGroups[key]
+          return objEntries
+        }, {})
+      } else {
+        const locationGroups = this.things.reduce((prev, thing, i, things) => {
+          if (!thing.location && !this.showNoLocation) return prev
+          const location = thing.location || '- No location -'
+          if (!prev[location]) {
+            prev[location] = []
+          }
+          prev[location].push(thing)
+
+          return prev
+        }, {})
+        return Object.keys(locationGroups).sort((a, b) => a.localeCompare(b)).reduce((objEntries, key) => {
+          objEntries[key] = locationGroups[key]
+          return objEntries
+        }, {})
       }
     },
+    thingsCount () {
+      let sum = 0
+      Object.keys(this.indexedThings).forEach(key => {
+        sum = sum + this.indexedThings[key].length
+      })
+      return sum
+    },
     inboxCount () {
-      return this.inbox.filter((e) => e.flag !== 'IGNORED').length
+      return this.inbox.length
+    },
+    searchPlaceholder () {
+      return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     }
   },
   methods: {
@@ -197,7 +262,7 @@ export default {
       this.loadInbox()
     },
     loadInbox () {
-      this.$oh.api.get('/rest/inbox').then((data) => {
+      this.$oh.api.get('/rest/inbox?includeIgnored=false').then((data) => {
         this.inbox = data
       })
     },
@@ -212,6 +277,9 @@ export default {
         }
         if (groupBy === 'alphabetical') this.$refs.listIndex.update()
       })
+    },
+    toggleShowNoLocation () {
+      this.showNoLocation = !this.showNoLocation
     },
     toggleCheck () {
       this.showCheckboxes = !this.showCheckboxes
@@ -312,6 +380,7 @@ export default {
               break
             case 'added':
             case 'removed':
+            case 'updated':
               this.load()
               break
           }

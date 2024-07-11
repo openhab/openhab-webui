@@ -55,6 +55,9 @@
         </f7-navbar>
         <f7-block v-if="widget.props">
           <f7-col>
+            <f7-block-footer>
+              Please note that expressions in properties are not evaluated inside the widget editor, but are evaluated when the widget is used on pages.
+            </f7-block-footer>
             <config-sheet
               :parameterGroups="widget.props.parameterGroups || []"
               :parameters="widget.props.parameters || []"
@@ -98,14 +101,13 @@
 
 <script>
 import YAML from 'yaml'
-import { strOptions } from 'yaml/types'
 
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import DirtyMixin from '@/pages/settings/dirty-mixin'
 
 import * as StandardListWidgets from '@/components/widgets/standard/list'
 
-strOptions.fold.lineWidth = 0
+const toStringOptions = { toStringDefaults: { lineWidth: 0 } }
 
 export default {
   mixins: [DirtyMixin],
@@ -122,6 +124,7 @@ export default {
       split: 'vertical',
       props: {},
       vars: {},
+      ctxVars: {},
       blockKey: this.$f7.utils.id(),
       widgetKey: this.$f7.utils.id(),
       widgetPropsOpened: false,
@@ -144,13 +147,14 @@ export default {
           : this.widget,
         store: this.$store.getters.trackedItems,
         props: this.props,
-        vars: this.vars
+        vars: this.vars,
+        ctxVars: this.ctxVars
       }
     },
     widget () {
       try {
         if (!this.widgetDefinition) return {}
-        return YAML.parse(this.widgetDefinition, { prettyErrors: true })
+        return YAML.parse(this.widgetDefinition, { prettyErrors: true, toStringOptions })
       } catch (e) {
         return { component: 'Error', config: { error: e.message } }
       }
@@ -233,14 +237,14 @@ export default {
             footer: '=props.prop1',
             content: '=items[props.item].displayState || items[props.item].state'
           }
-        })
+        }, { toStringOptions })
         this.$nextTick(() => {
           this.loading = false
           this.ready = true
         })
       } else {
         this.$oh.api.get('/rest/ui/components/ui:widget/' + this.uid).then((data) => {
-          this.$set(this, 'widgetDefinition', YAML.stringify(data))
+          this.$set(this, 'widgetDefinition', YAML.stringify(data, { toStringOptions }))
           this.$nextTick(() => {
             this.loading = false
             this.ready = true
@@ -252,8 +256,8 @@ export default {
       if (!this.widget.uid) {
         this.$f7.dialog.alert('Please give an UID to the widget')
         return
-      } else if (!/^[A-Za-z0-9_]+$/.test(this.widget.uid)) {
-        this.$f7.dialog.alert('Widget UID is only allowed to contain A-Z,a-z,0-9,_')
+      } else if (!/^[A-Za-z0-9_-]+$/.test(this.widget.uid)) {
+        this.$f7.dialog.alert('Widget UID is only allowed to contain A-Z,a-z,0-9,_,-')
         return
       }
       // if (!this.widget.config.label) {
@@ -299,6 +303,7 @@ export default {
       this.$store.dispatch('sendCommand', { itemName, cmd })
     },
     redrawWidget () {
+      this.ctxVars = {}
       this.widgetKey = this.$f7.utils.id()
       // const wd = this.widgetDefinition
       // this.widgetDefinition = 'component: Label\nnconfig: { text: "Redrawing..."}'

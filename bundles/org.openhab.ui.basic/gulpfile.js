@@ -9,15 +9,16 @@
 
 	var
 		sources = {
-			js: "web-src/smarthome.js",
+			js: [ "web-src/smarthome.js", "web-src/static.js", "web-src/settings.js" ],
 			sass: "web-src/smarthome.scss"
 		};
 
 	
 	var paths = {
 	        FontLibs: [
-			'./node_modules/material-design-icons/iconfont/MaterialIcons-Regular.woff*',
-			'./node_modules/material-design-icons/iconfont/MaterialIcons-Regular.ttf'
+			'./node_modules/material-icons/iconfont/material-icons.woff*',
+			'./node_modules/framework7-icons/fonts/Framework7Icons-Regular.woff*',
+			'./node_modules/framework7-icons/fonts/Framework7Icons-Regular.ttf'
 	        ]
 	    };
 	

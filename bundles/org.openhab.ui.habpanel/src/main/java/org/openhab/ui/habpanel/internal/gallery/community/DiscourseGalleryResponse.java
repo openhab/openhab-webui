@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2023 Contributors to the openHAB project
+ * Copyright (c) 2010-2024 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -24,19 +24,19 @@ public class DiscourseGalleryResponse {
     public DiscourseUser[] users;
     public DiscourseTopicList topic_list;
 
-    public class DiscourseUser {
+    public static class DiscourseUser {
         public Integer id;
         public String username;
         public String avatar_template;
     }
 
-    public class DiscourseTopicList {
+    public static class DiscourseTopicList {
         public String more_topics_url;
         public Integer per_page;
         public DiscourseTopic[] topics;
     }
 
-    public class DiscourseTopic {
+    public static class DiscourseTopic {
         public Integer id;
         public String title;
         public String slug;

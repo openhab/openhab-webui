@@ -9,5 +9,6 @@
   "CONFIGURATION_ERROR": "ОШИБКА: КОНФИГУРАЦИИ",
   "BRIDGE_OFFLINE": "ОШИБКА: МОСТА",
   "FIRMWARE_UPDATING": "ОБНОВЛЕНИЕ ПРОШИВКИ",
-  "GONE": "УШЕЛ"
+  "GONE": "УШЕЛ",
+  "NOT_YET_READY": "ЕЩЁ НЕ ГОТОВО"
 }

@@ -34,6 +34,7 @@ export default {
       badgeConfigs: {
         temperature: { icon: 'f7:thermometer', unit: '°' },
         humidity: { icon: 'f7:drop', unit: '%' },
+        co2: { icon: 'f7:wind', unit: 'ppm' },
         luminance: { icon: 'f7:sun_min', unit: 'lx' }
       }
     }
@@ -59,6 +60,10 @@ export default {
           direct = findPoints(this.element.properties, 'Point_Measurement', true, 'Property_Humidity')
           if (direct.length) return direct
           return findPoints(allEquipmentPoints(this.element.equipment), 'Point_Measurement', true, 'Property_Humidity')
+        case 'co2':
+          direct = findPoints(this.element.properties, 'Point_Measurement', true, 'Property_CO2')
+          if (direct.length) return direct
+          return findPoints(allEquipmentPoints(this.element.equipment), 'Point_Measurement', true, 'Property_CO2')
         case 'luminance':
           direct = findPoints(this.element.properties, 'Point_Measurement', true, 'Property_Light')
           if (direct.length) return direct
@@ -74,6 +79,10 @@ export default {
           direct = findPoints(this.element.properties, 'Point_Setpoint', true, 'Property_Temperature')
           if (direct.length) return direct
           return findPoints(allEquipmentPoints(this.element.equipment), 'Point_Setpoint', true, 'Property_Temperature')
+        case 'humidity':
+          direct = findPoints(this.element.properties, 'Point_Setpoint', true, 'Property_Humidity')
+          if (direct.length) return direct
+          return findPoints(allEquipmentPoints(this.element.equipment), 'Point_Setpoint', true, 'Property_Humidity')
         default:
           return []
       }
@@ -96,7 +105,7 @@ export default {
       return (this.type === 'temperature') ? Math.round(ret * 10) / 10 : Math.round(ret)
     },
     reduceAux () {
-      if (this.type !== 'temperature') return undefined
+      if (this.type !== 'temperature' && this.type !== 'humidity') return undefined
       const ret = this.mapAux.reduce((avg, state, arr, { length }) => {
         const value = Number.parseFloat(state)
         if (Number.isFinite(value)) {

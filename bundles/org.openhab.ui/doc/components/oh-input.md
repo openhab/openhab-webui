@@ -35,7 +35,7 @@ Displays an input field, used to set a variable
 </PropBlock>
 <PropBlock type="TEXT" name="type" label="Type">
   <PropDescription>
-    Type of input (see <a class="external text-color-blue" target="_blank" href="https://framework7.io/docs/inputs.html#supported-inputs">f7 input docs</a> or datepicker)
+    Type of input (see <a class="external text-color-blue" target="_blank" href="https://framework7.io/docs/inputs.html#supported-inputs">f7 input docs</a>, <code>date</code> or <code>datepicker</code>)
   </PropDescription>
 </PropBlock>
 <PropBlock type="TEXT" name="inputmode" label="Input Mode">
@@ -133,35 +133,37 @@ The contents of the oh-input.
 
 -->
 
-<!-- Add as many examples as desired - put the YAML in a details container when it becomes too long (~150/200+ lines):
 ## Examples
 
-### Example 1
+### Select with Options
 
-![](./images/oh-input/example1.jpg)
+![](./images/oh-input/select-options.png)
 
 ```yaml
 component: oh-input
 config:
-  prop1: value1
-  prop2: value2
+  type: select
+  style:
+    margin-left: 15px
+slots:
+  default:
+    - component: option
+      config:
+        value: foo
+      slots:
+        default:
+          - component: Content
+            config:
+              text: foo
+    - component: option
+      config:
+        value: bar
+      slots:
+        default:
+          - component: Content
+            config:
+              text: bar
 ```
-
-### Example 2
-
-![](./images/oh-input/example2.jpg)
-
-::: details YAML
-```yaml
-component: oh-input
-config:
-  prop1: value1
-  prop2: value2
-slots
-```
-:::
-
--->
 
 <!-- Try to clean up URLs to the forum (https://community.openhab.org/t/<threadID>[/<postID>] should suffice)
 ## Community Resources

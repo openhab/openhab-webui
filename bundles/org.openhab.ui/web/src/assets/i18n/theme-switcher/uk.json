@@ -11,5 +11,8 @@
   "about.miscellaneous.home.background": "Стандартний колір фону домашньої сторінки",
   "about.miscellaneous.home.hideChatInput": "Приховати поле вводу чату на головній сторінці",
   "about.miscellaneous.home.disableCardExpansionAnimation": "Вимкнути анімацію розширення карт",
-  "about.miscellaneous.theme.disablePageTransition": "Вимкнути анімацію переходу між сторінками"
+  "about.miscellaneous.theme.disablePageTransition": "Вимкнути анімацію переходу між сторінками",
+  "about.miscellaneous.webaudio.enable": "Увімкнути підтримку потокового звуку Web Audio",
+  "about.miscellaneous.commandItem.title": "Прослухати команди UI для ",
+  "about.miscellaneous.commandItem.selectItem": "Елемент"
 }

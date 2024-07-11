@@ -55,12 +55,14 @@ export default {
         value: sourceName
       })
 
-      info.push({
-        id: 'author',
-        title: 'Provided By',
-        value: this.addon.author,
-        afterIcon: (this.addon.verifiedAuthor) ? 'checkmark_seal_fill' : ''
-      })
+      if (this.addon.author) {
+        info.push({
+          id: 'author',
+          title: 'Provided By',
+          value: this.addon.author,
+          afterIcon: (this.addon.verifiedAuthor) ? 'checkmark_seal_fill' : ''
+        })
+      }
 
       if (this.addon.version) {
         info.push({
@@ -76,6 +78,22 @@ export default {
         value: this.addon.type
       })
 
+      if (this.addon.connection) {
+        info.push({
+          id: 'connection',
+          title: 'Connection Type',
+          value: this.addon.connection
+        })
+      }
+
+      if (this.addon.countries && this.addon.countries.length > 0) {
+        info.push({
+          id: 'countries',
+          title: 'Regions/Countries',
+          value: this.addon.countries.join(', ').toUpperCase()
+        })
+      }
+
       info.push({
         id: 'contentType',
         title: 'Content Type',
@@ -85,7 +103,7 @@ export default {
       let format
       if (source === 'eclipse') {
         format = Formats.eclipse
-      } else if (source === 'karaf') {
+      } else if (source === 'karaf' || source === 'jar') {
         format = Formats.karaf
       } else if (Object.keys(this.addon.properties).length > 0) {
         for (const property in this.addon.properties) {
@@ -127,7 +145,7 @@ export default {
           id: 'documentationLink',
           title: 'Documentation',
           afterIcon: 'question_circle_fill',
-          linkUrl: `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org/addons/${this.addon.type.replace('misc', 'integrations').replace('binding', 'bindings').replace('transformation', 'transformations')}/${this.addon.id}` // this.addon.link
+          linkUrl: `${this.$store.state.websiteUrl}/addons/${this.addon.type.replace('misc', 'integrations').replace('binding', 'bindings').replace('transformation', 'transformations')}/${this.addon.id}` // this.addon.link
         })
 
         let repository
@@ -157,7 +175,7 @@ export default {
           afterIcon: 'chat_bubble_2_fill',
           linkUrl: 'https://community.openhab.org/search?q=' + this.addon.id
         })
-      } else {
+      } else if (this.addon.link) {
         info.push({
           id: 'documentationLink',
           title: 'Documentation',

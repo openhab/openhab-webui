@@ -11,5 +11,6 @@
   "about.miscellaneous.home.background": "Standarta sākumlapas fona krāsa",
   "about.miscellaneous.home.hideChatInput": "Nerādīt sarunas ievades logu sākumlapā",
   "about.miscellaneous.home.disableCardExpansionAnimation": "Nerādīt kartiņu atvēšanas animācijas",
-  "about.miscellaneous.theme.disablePageTransition": "Nerādīt lapu pārejas animācijas"
+  "about.miscellaneous.theme.disablePageTransition": "Nerādīt lapu pārejas animācijas",
+  "about.miscellaneous.webaudio.enable": "Iespējot Web Audio saņēmēju atbalstu"
 }

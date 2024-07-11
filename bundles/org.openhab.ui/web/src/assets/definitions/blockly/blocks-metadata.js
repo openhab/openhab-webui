@@ -4,8 +4,8 @@
 */
 
 import Blockly from 'blockly'
-import { javascriptGenerator } from 'blockly/javascript'
-import { addGetItemMetaConfigValue } from './utils'
+import { javascriptGenerator } from 'blockly/javascript.js'
+import { addGetItemMetaConfigValue } from './utils.js'
 
 const unavailMsg = 'Metadata blocks aren\'t supported in "application/javascript;version=ECMAScript-5.1"'
 
@@ -30,7 +30,7 @@ export default function (f7, isGraalJs) {
     }
   }
 
-  javascriptGenerator['oh_get_meta_value'] = function (block) {
+  javascriptGenerator.forBlock['oh_get_meta_value'] = function (block) {
     const theItem = javascriptGenerator.valueToCode(block, 'theItem', javascriptGenerator.ORDER_ATOMIC)
     const namespace = javascriptGenerator.valueToCode(block, 'namespace', javascriptGenerator.ORDER_ATOMIC)
 
@@ -65,7 +65,7 @@ export default function (f7, isGraalJs) {
     }
   }
 
-  javascriptGenerator['oh_get_meta_config'] = function (block) {
+  javascriptGenerator.forBlock['oh_get_meta_config'] = function (block) {
     const configKey = javascriptGenerator.valueToCode(block, 'configKey', javascriptGenerator.ORDER_ATOMIC)
     const theItem = javascriptGenerator.valueToCode(block, 'theItem', javascriptGenerator.ORDER_ATOMIC)
     const namespace = javascriptGenerator.valueToCode(block, 'namespace', javascriptGenerator.ORDER_ATOMIC)
@@ -105,7 +105,7 @@ export default function (f7, isGraalJs) {
     }
   }
 
-  javascriptGenerator['oh_store_meta_value'] = function (block) {
+  javascriptGenerator.forBlock['oh_store_meta_value'] = function (block) {
     const value = javascriptGenerator.valueToCode(block, 'value', javascriptGenerator.ORDER_ATOMIC)
     const theItem = javascriptGenerator.valueToCode(block, 'theItem', javascriptGenerator.ORDER_ATOMIC)
     const namespace = javascriptGenerator.valueToCode(block, 'namespace', javascriptGenerator.ORDER_ATOMIC)
@@ -152,7 +152,7 @@ export default function (f7, isGraalJs) {
     }
   }
 
-  javascriptGenerator['oh_store_meta_config'] = function (block) {
+  javascriptGenerator.forBlock['oh_store_meta_config'] = function (block) {
     const value = javascriptGenerator.valueToCode(block, 'value', javascriptGenerator.ORDER_ATOMIC)
     const configKey = javascriptGenerator.valueToCode(block, 'configKey', javascriptGenerator.ORDER_ATOMIC).replaceAll('\'', '')
     const theItem = javascriptGenerator.valueToCode(block, 'theItem', javascriptGenerator.ORDER_ATOMIC)

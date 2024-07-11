@@ -1,4 +1,5 @@
-import { Points } from '@/assets/semantics'
+import store from '@/js/store'
+
 import utils from '@/js/openhab/utils'
 
 /**
@@ -40,7 +41,7 @@ export default (thing, channelTypes, newEquipmentItem, parentGroupsForEquipment,
       groupNames: parentGroupsForPoints,
       category: (channelType) ? channelType.category : '',
       type: channel.itemType,
-      tags: (defaultTags.find((t) => Points.indexOf(t) >= 0)) ? defaultTags : [...defaultTags, 'Point']
+      tags: (defaultTags.find((t) => store.getters.semanticClasses.Points.indexOf(t) >= 0)) ? defaultTags : [...defaultTags, 'Point']
     }
 
     let line = []

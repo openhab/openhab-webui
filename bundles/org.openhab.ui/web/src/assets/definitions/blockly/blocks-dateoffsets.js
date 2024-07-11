@@ -2,9 +2,9 @@
  * supports jsscripting
  */
 import Blockly from 'blockly'
-import { javascriptGenerator } from 'blockly/javascript'
-import { FieldDatePicker } from './fields/date-field'
-import { addDateSupport, addDateComparisonSupportNashorn, addDateComparisonSupportGraalVM, addGetZdtComponent, addChrono } from './utils'
+import { javascriptGenerator } from 'blockly/javascript.js'
+import { FieldDatePicker } from './fields/date-field.js'
+import { addDateSupport, addDateComparisonSupportNashorn, addDateComparisonSupportGraalVM, addGetZdtComponent, addChrono } from './utils.js'
 
 export default function (f7, isGraalJs) {
   /*
@@ -27,7 +27,7 @@ export default function (f7, isGraalJs) {
   * Typed block that can be used with Ephemeris check block
   * Code part
   */
-  javascriptGenerator['oh_dayoffset_today'] = function (block) {
+  javascriptGenerator.forBlock['oh_dayoffset_today'] = function (block) {
     let code = '0'
     return [code, javascriptGenerator.ORDER_NONE]
   }
@@ -54,7 +54,7 @@ export default function (f7, isGraalJs) {
   * Typed (DayOffset) block with a day positve or negative offset
   * Code part
   */
-  javascriptGenerator['oh_dayoffset'] = function (block) {
+  javascriptGenerator.forBlock['oh_dayoffset'] = function (block) {
     let offsetValue = javascriptGenerator.valueToCode(block, 'offset', javascriptGenerator.ORDER_ATOMIC)
     let code = `${offsetValue}`
     return [code, javascriptGenerator.ORDER_NONE]
@@ -79,7 +79,7 @@ export default function (f7, isGraalJs) {
   * Typed (DayOffset) block with a day positve or negative offset that can be used with the Ephemeris check block
   * Code part
   */
-  javascriptGenerator['oh_zdt_now'] = function (block) {
+  javascriptGenerator.forBlock['oh_zdt_now'] = function (block) {
     const zdt = (isGraalJs) ? 'time.ZonedDateTime' : addDateSupport()[1]
     return [`${zdt}.now()`, javascriptGenerator.ORDER_NONE]
   }
@@ -109,10 +109,10 @@ export default function (f7, isGraalJs) {
   }
 
   /*
-  * Typed (DayOffset) block with a day positve or negative offset that can be used with the Ephemeris check block
+  * Typed (DayOffset) block with a day positive or negative offset that can be used with the Ephemeris check block
   * Code part
   */
-  javascriptGenerator['oh_zdt_plusminus'] = function (block) {
+  javascriptGenerator.forBlock['oh_zdt_plusminus'] = function (block) {
     const offsetValue = javascriptGenerator.valueToCode(block, 'offset', javascriptGenerator.ORDER_ATOMIC)
     const plusMinus = block.getFieldValue('plusminus')
     const period = block.getFieldValue('period')
@@ -160,7 +160,7 @@ export default function (f7, isGraalJs) {
   * ZonedDateTime block with preset date and time
   * Code part
   */
-  javascriptGenerator['oh_zdt_create'] = function (block) {
+  javascriptGenerator.forBlock['oh_zdt_create'] = function (block) {
     const year = javascriptGenerator.valueToCode(block, 'year', javascriptGenerator.ORDER_ATOMIC)
     const month = javascriptGenerator.valueToCode(block, 'month', javascriptGenerator.ORDER_ATOMIC)
     const day = javascriptGenerator.valueToCode(block, 'day', javascriptGenerator.ORDER_ATOMIC)
@@ -200,7 +200,7 @@ export default function (f7, isGraalJs) {
   * Typed (ZonedDateTime) block that can be used with the Ephemeris check block
   * Code part
   */
-  javascriptGenerator['oh_zdt'] = function (block) {
+  javascriptGenerator.forBlock['oh_zdt'] = function (block) {
     const day = block.getFieldValue('day')
     const getZonedDateTime = (isGraalJs) ? 'time.toZDT' : addDateSupport()[2]
     return [`${getZonedDateTime}('${day}')`, javascriptGenerator.ORDER_NONE]
@@ -208,7 +208,7 @@ export default function (f7, isGraalJs) {
 
   /*
   * Typed (ZonedDateTime) block that can be used with the Ephemeris check block
-  * Allows input as string in the pattern yyyy-MM-dd or yyyy-MM-dd HH:mm:ss or yyyy-MM-dd HH:mm:ss +HH:mm
+  * Allows input as string in many different patterns e.g. yyyy-MM-dd or yyyy-MM-dd HH:mm:ss or yyyy-MM-dd HH:mm:ss +HH:mm
   * Blockly part
   */
   Blockly.Blocks['oh_zdt_fromText'] = {
@@ -242,7 +242,7 @@ export default function (f7, isGraalJs) {
   * Typed (ZonedDateTime) block that can be used with the Ephemeris check block
   * Code part
   */
-  javascriptGenerator['oh_zdt_fromText'] = function (block) {
+  javascriptGenerator.forBlock['oh_zdt_fromText'] = function (block) {
     const day = javascriptGenerator.valueToCode(block, 'day', javascriptGenerator.ORDER_ATOMIC)
     const getZonedDateTime = (isGraalJs) ? 'time.toZDT' : addDateSupport()[2]
     return [`${getZonedDateTime}(${day})`, javascriptGenerator.ORDER_NONE]
@@ -269,7 +269,7 @@ export default function (f7, isGraalJs) {
   * Typed (ZonedDateTime) block that can be used with the Ephemeris check block
   * Code part
   */
-  javascriptGenerator['oh_zdt_fromItem'] = function (block) {
+  javascriptGenerator.forBlock['oh_zdt_fromItem'] = function (block) {
     const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
     if (isGraalJs) {
       return [`time.toZDT(items.getItem(${itemName}))`, javascriptGenerator.ORDER_NONE]
@@ -331,7 +331,7 @@ export default function (f7, isGraalJs) {
   * A temporal unit that can be used to amend a ZonedDateTime
   * Code part
   */
-  javascriptGenerator['oh_zdt_temporal_unit'] = function (block) {
+  javascriptGenerator.forBlock['oh_zdt_temporal_unit'] = function (block) {
     const value = block.getFieldValue('value')
     return [`(${value})`, javascriptGenerator.ORDER_NONE]
   }
@@ -370,7 +370,7 @@ export default function (f7, isGraalJs) {
       this.setTooltip('click arrow to scroll through year, month, day, hour, minute, second, milli, nano, day of year')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html#create-datetime-based-on-a-specific-date-copy-of')
     },
-    onClick (nextField) {
+    onClick () {
       let block = this.getSourceBlock()
       let currentBlockType = block.currentBlockType
       let blockTypes = block.blockTypes
@@ -406,7 +406,7 @@ export default function (f7, isGraalJs) {
   * A temporal unit that can be used to amend a ZonedDateTime
   * Code part
   */
-  javascriptGenerator['oh_zdt_temporal_unit_input'] = function (block) {
+  javascriptGenerator.forBlock['oh_zdt_temporal_unit_input'] = function (block) {
     const value = javascriptGenerator.valueToCode(block, 'value', javascriptGenerator.ORDER_ATOMIC)
     return [`(${value})`, javascriptGenerator.ORDER_NONE]
   }
@@ -434,7 +434,7 @@ export default function (f7, isGraalJs) {
       this.setColour(70)
       this.setInputsInline(true)
 
-      this.setMutator(new Blockly.Mutator(['oh_zdt_amend_item']))
+      this.setMutator(new Blockly.icons.MutatorIcon(['oh_zdt_amend_item'], this))
       this.setTooltip('Use a ZonedDateTime as a basis and amend it via particular temporal blocks')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html#create-datetime-based-on-a-specific-date-copy-of')
     },
@@ -481,7 +481,7 @@ export default function (f7, isGraalJs) {
       this.updateShape_()
       // Reconnect any child blocks.
       for (let i = 0; i < this.itemCount_; i++) {
-        Blockly.Mutator.reconnect(connections[i], this, 'ADD' + i)
+        Blockly.icons.MutatorIcon.reconnect(connections[i], this, 'ADD' + i)
       }
     },
     saveConnections: function (containerBlock) {
@@ -532,7 +532,7 @@ export default function (f7, isGraalJs) {
       }
   }
 
-  javascriptGenerator['oh_zdt_amend'] = function (block) {
+  javascriptGenerator.forBlock['oh_zdt_amend'] = function (block) {
     const baseZdt = javascriptGenerator.valueToCode(block, 'baseZdt', javascriptGenerator.ORDER_ATOMIC)
     const operation = block.getFieldValue('operation')
 
@@ -608,16 +608,33 @@ export default function (f7, isGraalJs) {
   */
   Blockly.Blocks['oh_zdt_toText'] = {
     init: function () {
+      const block = this
       this.appendValueInput('date')
         .appendField('text of')
         .setCheck('ZonedDateTime')
+
+      const dropDown = new Blockly.FieldDropdown(
+        [['without time', 'without'], ['with time', 'with'], ['as OH-Time', 'asOHTime'], ['with pattern', 'withPattern']],
+        function (newMode) {
+          block._updateType(newMode)
+        })
       this.appendDummyInput()
-        .appendField(new Blockly.FieldDropdown([['without time', 'without'], ['with time', 'with'], ['as OH-Time', 'asOHTime']]), 'withtime')
+        .appendField(dropDown, 'withtime')
 
       this.setOutput(true, 'String')
       this.setColour(160)
       this.setTooltip('converts an ZonedDateTime into a date string')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html#get-string-representation-of-date')
+    },
+    _updateType: function (type) {
+      if (type === 'withPattern') {
+        if (this.getInput('pattern')) return
+        this.appendValueInput('pattern')
+          .setCheck('String')
+          .setShadowDom(Blockly.utils.xml.textToDom('<shadow type="text"><field name="TEXT">yyyy-MM-dd</field></shadow>'))
+      } else if (this.getInput('pattern')) {
+        this.removeInput('pattern')
+      }
     }
   }
 
@@ -625,7 +642,7 @@ export default function (f7, isGraalJs) {
   * Returns a string representation of an ephemeris date
   * Code part
   */
-  javascriptGenerator['oh_zdt_toText'] = function (block) {
+  javascriptGenerator.forBlock['oh_zdt_toText'] = function (block) {
     const date = javascriptGenerator.valueToCode(block, 'date', javascriptGenerator.ORDER_ATOMIC)
     const withtime = block.getFieldValue('withtime')
     const dtf = (isGraalJs) ? 'time.DateTimeFormatter' : addDateSupport()[0]
@@ -635,6 +652,9 @@ export default function (f7, isGraalJs) {
       code = `${date}.format(${dtf}.ofPattern('yyyy-MM-dd HH:mm:ss'))`
     } else if (withtime === 'without') {
       code = `${date}.format(${dtf}.ofPattern('yyyy-MM-dd'))`
+    } else if (withtime === 'withPattern') {
+      const pattern = javascriptGenerator.valueToCode(block, 'pattern', javascriptGenerator.ORDER_ATOMIC)
+      code = `${date}.format(${dtf}.ofPattern(${pattern}))`
     } else {
       code = `${date}.format(${dtf}.ofPattern('yyyy-MM-dd\\'T\\'HH:mm:ss.SSSZ'))`
     }
@@ -674,7 +694,7 @@ export default function (f7, isGraalJs) {
   * Returns a string representation of an ephemeris date
   * Code part
   */
-  javascriptGenerator['oh_zdt_compare'] = function (block) {
+  javascriptGenerator.forBlock['oh_zdt_compare'] = function (block) {
     const zdtOne = javascriptGenerator.valueToCode(block, 'zdtOne', javascriptGenerator.ORDER_ATOMIC)
     const zdtTwo = javascriptGenerator.valueToCode(block, 'zdtTwo', javascriptGenerator.ORDER_ATOMIC)
     const operation = block.getFieldValue('operation')
@@ -716,8 +736,8 @@ export default function (f7, isGraalJs) {
   * Returns a string representation of an ephemeris date
   * Code part
   */
-  javascriptGenerator['oh_zdt_between'] = function (block) {
-    let zdtCompare = addDateComparisonSupportNashorn()
+  javascriptGenerator.forBlock['oh_zdt_between'] = function (block) {
+    let zdtCompare = (isGraalJs) ? addDateComparisonSupportGraalVM() : addDateComparisonSupportNashorn()
     let zdtOne = javascriptGenerator.valueToCode(block, 'zdtOne', javascriptGenerator.ORDER_ATOMIC)
     let zdtTwo = javascriptGenerator.valueToCode(block, 'zdtTwo', javascriptGenerator.ORDER_ATOMIC)
     let zdtThree = javascriptGenerator.valueToCode(block, 'zdtThree', javascriptGenerator.ORDER_ATOMIC)
@@ -757,7 +777,7 @@ export default function (f7, isGraalJs) {
   * Returns a temporal part of a ZonedDateTime as a Number
   * Code part
   */
-  javascriptGenerator['oh_get_zdt_part'] = function (block) {
+  javascriptGenerator.forBlock['oh_get_zdt_part'] = function (block) {
     const zdt = javascriptGenerator.valueToCode(block, 'zdt', javascriptGenerator.ORDER_ATOMIC)
     let temporalPart = block.getFieldValue('temporalPart')
 
@@ -822,7 +842,7 @@ export default function (f7, isGraalJs) {
   * Computes the number of temporal units between two zonedDateTimes
   * Code part
   */
-  javascriptGenerator['oh_get_time_between'] = function (block) {
+  javascriptGenerator.forBlock['oh_get_time_between'] = function (block) {
     const temporalPart = block.getFieldValue('temporalPart')
     const zdtOne = javascriptGenerator.valueToCode(block, 'zdtOne', javascriptGenerator.ORDER_ATOMIC)
     const zdtTwo = javascriptGenerator.valueToCode(block, 'zdtTwo', javascriptGenerator.ORDER_ATOMIC)

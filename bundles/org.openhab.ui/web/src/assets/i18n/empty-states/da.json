@@ -7,6 +7,8 @@
   "things.text": "Ting er de enheder og tjenester, der er tilsluttet openHAB, de leveres af bindings tilføjelser.<br><br>Installerede bindinger der understøtter auto-opdagelse vil automatisk tilføje ting til din indbakke. Du kan også starte en scanning for en bestemt binding eller tilføje din første ting manuelt med knappen nedenfor.",
   "things.nobindings.title": "Ingen bindinger",
   "things.nobindings.text": "For at tilføje ting til dit system, skal du først installere bindings tilføjelser.",
+  "transformations.title": "Ingen transformationer endnu",
+  "transformations.text": "Transformationer bruges til at oversætte data fra en rodet eller teknisk råværdi til en behandlet menneskeligt læsbar repræsentation.",
   "model.title": "Start modellering af dit hjem",
   "model.text": "Byg en model fra dine elementer til at organisere dem og relatere dem til hinanden semantisk.<br><br>Begynd med et hierarki af placeringer: bygninger, områder udenfor, gulve og værelser, efter behov. Indsæt derefter udstyr og punkter fra dine ting (eller manuelt).",
   "items.title": "Ingen elementer endnu",
@@ -17,6 +19,8 @@
   "pages.text": "Design sider til at vise oplysninger på forskellige måder og interagere med dine elementer. Du kan oprette flere slags sider: diagrammer, sitemaps, gulvplaner...<br><br>Klik på knappen nedenfor for at oprette din første side.",
   "rules.title": "Ingen regler endnu",
   "rules.text": "Regler er de grundlæggende byggesten til at automatisere dit hjem - de definerer, hvilke handlinger der skal udføres, når visse begivenheder indtræffer.<br><br>Opret din første regel med knappen nedenfor; for mere avancerede scenarier, kan du også skrive scriptfiler i din konfigurationsmappe.",
+  "scenes.title": "Ingen scener endnu",
+  "scenes.text": "Scener er regler der afsender kommandoer for at genoprette et sæt af Items til en ønsket tilstand.<br />Du kan køre dem on-demand eller kalde dem fra andre regler.<br><br>Opret din første scene med knappen nedenfor.",
   "scripts.title": "Ingen scripts endnu",
   "scripts.text": "Scripts er en særlig slags regler, uden udløsere og et enkelt actionmodul til at udføre kode.<br />Du kan køre dem on-demand eller ringe til dem fra andre regler.<br><br>Opret dit første script med knappen nedenfor.",
   "schedule.title": "Intet i tidsplanen",
@@ -26,5 +30,7 @@
   "addons.title": "Ingen tilføjelser installeret",
   "addons.text": "Tilføjelser tilføjer funktionalitet til dit openHAB system.<br><br>Installer dem med knappen nedenfor.",
   "page.unavailable.title": "Siden er utilgængelig",
-  "page.unavailable.text": "Du har ikke tilladelse til at se denne side på grund af begrænsninger for synlighed."
+  "page.unavailable.text": "Du har ikke tilladelse til at se denne side på grund af begrænsninger for synlighed.",
+  "persistence.title": "Ingen persistenstilføjelse installeret",
+  "persistence.text": "Med persistens kan du gemme Item-tilstande over tid, uanset om de er historiske eller fremtidige værider. For at konfigurere persistens, skal du have mindst én persistenstilføjelse installeret."
 }

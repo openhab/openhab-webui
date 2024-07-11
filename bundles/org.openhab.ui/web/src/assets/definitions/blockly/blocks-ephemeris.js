@@ -7,7 +7,7 @@
 * supports jsscripting
 */
 import Blockly from 'blockly'
-import { javascriptGenerator } from 'blockly/javascript'
+import { javascriptGenerator } from 'blockly/javascript.js'
 
 export default function (f7, isGraalJs) {
   /*
@@ -37,7 +37,7 @@ export default function (f7, isGraalJs) {
   * Checks if the provided day is a bank holiday, weekend or weekday
   * Code part
   */
-  javascriptGenerator['oh_ephemeris_check'] = function (block) {
+  javascriptGenerator.forBlock['oh_ephemeris_check'] = function (block) {
     const ephemeris = (isGraalJs) ? 'actions.Ephemeris' : addEphemeris()
     const dayInfo = javascriptGenerator.valueToCode(block, 'dayInfo', javascriptGenerator.ORDER_NONE)
     const checkType = block.getFieldValue('checkType')
@@ -79,7 +79,7 @@ export default function (f7, isGraalJs) {
   * Retrieve the current bonk holiday name
   * Code part
   */
-  javascriptGenerator['oh_ephemeris_getHolidayName'] = function (block) {
+  javascriptGenerator.forBlock['oh_ephemeris_getHolidayName'] = function (block) {
     const ephemeris = (isGraalJs) ? 'actions.Ephemeris' : addEphemeris()
     const dayInfo = javascriptGenerator.valueToCode(block, 'dayInfo', javascriptGenerator.ORDER_NONE)
     return [`${ephemeris}.getBankHolidayName(${dayInfo})`, javascriptGenerator.ORDER_NONE]
@@ -106,7 +106,7 @@ export default function (f7, isGraalJs) {
   * Retrieve the number of days from today until the given bank holiday name
   * Code part
   */
-  javascriptGenerator['oh_ephemeris_getDaysUntilHoliday'] = function (block) {
+  javascriptGenerator.forBlock['oh_ephemeris_getDaysUntilHoliday'] = function (block) {
     const ephemeris = (isGraalJs) ? 'actions.Ephemeris' : addEphemeris()
     const holidayName = javascriptGenerator.valueToCode(block, 'holidayName', javascriptGenerator.ORDER_NONE)
     return [`${ephemeris}.getDaysUntil(${holidayName})`, javascriptGenerator.ORDER_NONE]

@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language-Team: Portuguese, Brazilian\n"
 "Language: pt_BR\n"
-"PO-Revision-Date: 2022-12-11 11:15\n"
+"PO-Revision-Date: 2024-06-23 16:57\n"
 
 #. Common term
 msgctxt "OK"

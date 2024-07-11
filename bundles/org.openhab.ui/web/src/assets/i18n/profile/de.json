@@ -3,7 +3,7 @@
   "profile.changePassword": "Passwort ändern",
   "profile.sessions": "Sitzungen",
   "profile.sessions.header": "Achtung, eine gelöschte Sitzung kann aktiv bleiben, bis alle gültigen Zugriffstoken abgelaufen sind.",
-  "profile.sessions.signOut": "Von aktiver Sitzung abmelden",
+  "profile.sessions.signOut": "Von dieser Sitzung abmelden",
   "profile.sessions.created": "Erstellt: ",
   "profile.sessions.lastRefreshed": "Letzte Aktualisierung: ",
   "profile.sessions.delete.success": "Sitzung gelöscht",
@@ -13,7 +13,7 @@
   "profile.apiTokens.header": " Erstelle API Tokens um externen Anwendungen und Diensten ohne OAuth2 Unterstützung dauerhaften Zugriff zu gewähren.",
   "profile.apiTokens.created": "Erstellt: ",
   "profile.apiTokens.validForScope": "Gültig für Anwendung: ",
-  "profile.apiTokens.create": "Erstelle neuen API Token",
+  "profile.apiTokens.create": "Erstelle ein neues API Token",
   "profile.apiTokens.delete.success": "API Token gelöscht",
   "profile.apiTokens.delete.error": "Fehler beim Löschen des API Token: "
 }

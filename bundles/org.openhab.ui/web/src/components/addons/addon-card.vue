@@ -1,5 +1,5 @@
 <template>
-  <f7-link v-if="addon" class="addon-card padding-right-half" :href="addon.uid">
+  <f7-link v-if="addon" class="addon-card padding-right-half" :href="`/addons/${addon.type}/${addon.uid}`">
     <div class="addon-card-inner card">
       <div class="addon-card-headline">
         <div>{{ headline || autoHeadline || "&nbsp;" }}</div>
@@ -25,11 +25,7 @@
           <addon-stats-line :addon="addon" :iconSize="15" />
         </div>
       </div>
-      <div class="logo-square">
-        <f7-icon v-show="!logoLoaded" size="150" color="gray" :f7="addonIcon" class="card-default-icon" />
-        <img v-if="!logoError" class="lazy logo" :style="{ visibility: logoLoaded ? 'visible': 'hidden' }" ref="logo"
-             :data-src="imageUrl">
-      </div>
+      <addon-logo class="logo-square" :lazy="true" :addon="addon" :size="150" />
     </div>
   </f7-link>
 </template>
@@ -96,9 +92,6 @@
     background #fff
     width 100%
     margin-top 5px
-    // height 220px
-    // border 1px solid var(--f7-list-item-border-color)
-    // border-radius 5px
     display flex
     justify-content center
     align-items center
@@ -106,33 +99,24 @@
       content ' '
       display block
       padding-bottom 100%
-  .card-default-icon
-    opacity 0.2
-    position absolute
-  .logo
-    position absolute
-    top 3px
-    left 3px
-    width calc(100% - 6px)
-    height calc(100% - 6px)
-    object-fit contain
+    .logo
+      position absolute
+      top 3px
+      left 3px
+      width calc(100% - 6px)
+      height calc(100% - 6px)
+      object-fit contain
 </style>
 
 <script>
-import { AddonIcons } from '@/assets/addon-store'
 import AddonStatsLine from './addon-stats-line.vue'
+import AddonLogo from '@/components/addons/addon-logo.vue'
 
 export default {
   props: ['addon', 'headline', 'installActionText'],
   components: {
+    AddonLogo,
     AddonStatsLine
-  },
-  data () {
-    return {
-      logoLoaded: false,
-      logoError: false,
-      addonIcon: null
-    }
   },
   computed: {
     autoHeadline () {
@@ -141,25 +125,10 @@ export default {
       if (this.addon.properties && this.addon.properties.posts_count && this.addon.properties.posts_count >= 15) return 'Hot'
       return ''
     },
-    imageUrl () {
-      if (this.addon.imageLink) return this.addon.imageLink.replace(/^\/\//, 'https://')
-      let docsBranch = 'final'
-      if (this.$store.state.runtimeInfo.buildString === 'Release Build') docsBranch = 'final-stable'
-      return `https://raw.githubusercontent.com/openhab/openhab-docs/${docsBranch}/images/addons/${this.addon.id.substring(this.addon.id.indexOf('-') + 1)}.png`
-    },
     showInstallActions () {
       let splitted = this.addon.uid.split(':')
       return splitted.length < 2 || splitted[0] !== 'eclipse'
     }
-  },
-  mounted () {
-    this.addonIcon = AddonIcons[this.addon.type]
-    this.$$(this.$refs.logo).once('lazy:loaded', (e) => {
-      this.logoLoaded = true
-    })
-    this.$$(this.$refs.logo).once('lazy:error', (e) => {
-      this.logoError = true
-    })
   },
   methods: {
     buttonClicked () {

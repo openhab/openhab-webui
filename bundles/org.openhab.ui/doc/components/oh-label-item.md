@@ -67,7 +67,7 @@ Display the state of an item in a list
 </PropBlock>
 <PropBlock type="BOOLEAN" name="iconUseState" label="Icon depends on state">
   <PropDescription>
-    Use the state of the item to get a dynamic icon (for openHAB icons only)
+    Use the state of the Item to get a dynamic icon (enabled by default for <code>Contact</code>, <code>Dimmer</code>, <code>Rollershutter</code> & <code>Switch</code> Item types) (for openHAB icons only)
   </PropDescription>
 </PropBlock>
 </PropGroup>
@@ -182,7 +182,7 @@ Display the state of an item in a list
     Group Item whose members to show in a popup
   </PropDescription>
 </PropBlock>
-<PropBlock type="TEXT" name="actionAnalyzerItems" label="Item(s) to Analyze" context="item">
+<PropBlock type="TEXT" name="actionAnalyzerItems" label="Item(s) to Analyze" required="true" context="item">
   <PropDescription>
     Start analyzing with the specified (set of) Item(s)
   </PropDescription>

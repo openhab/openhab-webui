@@ -37,7 +37,7 @@
             :link="binding.id"
             :title="binding.label"
             :header="binding.uid"
-            :badge="inbox.filter((e) => e.thingTypeUID.split(':')[0] === binding.id && e.flag !== 'IGNORED').length || undefined"
+            :badge="inbox.filter((e) => e.thingTypeUID.split(':')[0] === binding.id).length || undefined"
             badge-color="red"
             :footer="(binding.description && binding.description.indexOf('<br>') >= 0) ?
               binding.description.split('<br>')[0] : binding.description" />
@@ -47,11 +47,11 @@
     <f7-block class="block-narrow" v-if="$store.getters.apiEndpoint('addons')">
       <f7-col v-if="bindings.length">
         <f7-list>
-          <f7-list-button color="blue" title="Install More Bindings" href="/settings/addons" />
+          <f7-list-button color="blue" title="Install More Bindings" href="/addons/binding/" />
         </f7-list>
       </f7-col>
       <f7-row v-else-if="ready" class="display-flex justify-content-center">
-        <f7-button large fill color="blue" href="/settings/addons">
+        <f7-button large fill color="blue" href="/addons/binding/">
           Install Bindings
         </f7-button>
       </f7-row>
@@ -88,7 +88,7 @@ export default {
           }
         })
       })
-      this.$oh.api.get('/rest/inbox').then((data) => {
+      this.$oh.api.get('/rest/inbox?includeIgnored=false').then((data) => {
         this.inbox = data
       })
     }

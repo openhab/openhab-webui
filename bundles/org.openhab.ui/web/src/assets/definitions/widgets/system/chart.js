@@ -1,4 +1,4 @@
-import { po } from '../helpers.js'
+import { po, pb } from '../helpers.js'
 
 export default () => [
   po('chartType', 'Chart Type', 'Define a fixed period for the chart, aligned at the beginning of the period, e.g. January 1st at midnight for a year chart. If not set (or set to dynamic), the length of the period will be configurable but certain combinations like aggregated series might not work', [
@@ -23,8 +23,12 @@ export default () => [
     { value: '2M', label: '2M' },
     { value: '4M', label: '4M' },
     { value: '6M', label: '6M' },
-    { value: 'Y', label: 'Y' }
+    { value: 'Y', label: 'Y' },
+    { value: '3Y', label: '3Y' },
+    { value: '5Y', label: '5Y' },
+    { value: '10Y', label: '10Y' }
   ]).v((value, configuration, configDescription, parameters) => {
     return !configuration.chartType
-  })
+  }),
+  pb('future', 'Future Period', 'Whether the period should extend to the future instead of the past')
 ]

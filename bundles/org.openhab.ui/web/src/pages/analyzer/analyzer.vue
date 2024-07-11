@@ -7,6 +7,7 @@
         </f7-link>
       </f7-nav-right>
     </f7-navbar>
+
     <f7-toolbar bottom>
       <span />
       <f7-link class="right controls-link padding-right" ref="detailsLink" @click="openControls">
@@ -15,7 +16,11 @@
       <f7-link v-if="coordSystem !== 'time'" color="blue" icon-f7="crop_rotate" @click="orientation = (orientation === 'horizontal') ? 'vertical' : 'horizontal'" />
       <span v-else />
     </f7-toolbar>
+
     <oh-chart-page v-if="showChart" class="analyzer-chart" :class="{ 'sheet-opened': controlsOpened }" :key="chartKey" :context="context" />
+    <empty-state-placeholder v-else-if="invalidConfiguration" icon="exclamationmark" :title="$t('analyzer.invalid-configuration.title')" :text="$t('analyzer.invalid-configuration.text')" />
+
+    <!-- analyzer controls -->
     <f7-sheet class="analyzer-controls" :backdrop="false" :close-on-escape="true" :opened="controlsOpened" @sheet:closed="controlsOpened = false">
       <f7-page>
         <f7-toolbar tabbar :bottom="true">
@@ -28,6 +33,8 @@
             </f7-link>
           </div>
         </f7-toolbar>
+
+        <!-- series controls tab -->
         <f7-block class="no-margin no-padding" v-show="controlsTab === 'series'">
           <f7-row>
             <f7-col :width="100" />
@@ -98,6 +105,7 @@
           </f7-row>
         </f7-block>
 
+        <!-- coordinates control tab -->
         <f7-block class="no-margin" v-show="controlsTab === 'coords'">
           <f7-row>
             <f7-col :width="100" :medium="50" class="margin-bottom">
@@ -133,6 +141,7 @@
           </f7-row>
         </f7-block>
 
+        <!-- ranges control tab -->
         <f7-block class="no-margin no-padding" v-show="controlsTab === 'ranges'">
           <f7-row v-if="(coordSystem === 'aggregate' && aggregateDimensions === 2) || coordSystem === 'calendar'">
             <f7-col :width="100" :medium="50">
@@ -227,7 +236,9 @@
   --f7-theme-color-tint var(--f7-color-blue-tint)
   z-index 11000
 .analyzer-content
-  .analyzer-chart.sheet-opened
+  .analyzer-chart
+    position fixed !important
+  &.sheet-opened
     .oh-chart-page-chart
       height calc(100% - var(--f7-navbar-height) - var(--f7-sheet-height)) !important
 .md .analyzer-controls .toolbar .link
@@ -236,6 +247,7 @@
 
 <script>
 import ItemPicker from '@/components/config/controls/item-picker.vue'
+import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 import ChartTime from './chart-time'
 import ChartAggregate from './chart-aggregate'
 import ChartCalendar from './chart-calendar'
@@ -244,11 +256,13 @@ import { loadLocaleMessages } from '@/js/i18n'
 export default {
   components: {
     'oh-chart-page': () => import(/* webpackChunkName: "chart-page" */ '../../components/widgets/chart/oh-chart-page.vue'),
-    ItemPicker
+    ItemPicker,
+    EmptyStatePlaceholder
   },
   data () {
     return {
       showChart: false,
+      invalidConfiguration: false,
       itemNames: [],
       items: null,
       seriesOptions: {},
@@ -265,42 +279,64 @@ export default {
 
       controlsOpened: false,
       controlsTab: 'series',
-      itemsPickerKey: null,
-      chartKey: this.$f7.utils.id(),
-
-      aggregations: [
-        { value: 'average', label: this.$t('analyzer.aggregations.average') },
-        { value: 'sum', label: this.$t('analyzer.aggregations.sum') },
-        { value: 'min', label: this.$t('analyzer.aggregations.min') },
-        { value: 'max', label: this.$t('analyzer.aggregations.max') },
-        { value: 'first', label: this.$t('analyzer.aggregations.first') },
-        { value: 'last', label: this.$t('analyzer.aggregations.last') },
-        { value: 'diff_first', label: this.$t('analyzer.aggregations.diffFirst') },
-        { value: 'diff_last', label: this.$t('analyzer.aggregations.diffLast') }
-      ]
+      itemsPickerKey: this.$f7.utils.id(),
+      chartKey: this.$f7.utils.id()
     }
   },
   i18n: {
     messages: loadLocaleMessages(require.context('@/assets/i18n/analyzer'))
   },
-  mounted () {
-    this.initChart()
+
+  computed: {
+    titleDisplayText () {
+      if (!this.items || !this.items.length) return 'Analyze'
+      if (this.items.length === 1) return (this.items[0].label) ? this.items[0].label : this.items[0].name
+      return ((this.items[0].label) ? this.items[0].label : this.items[0].name) + ' + ' + (this.items.length - 1)
+    },
+    context () {
+      return {
+        component: this.page,
+        analyzer: true
+      }
+    },
+    page () {
+      switch (this.coordSystem) {
+        case 'time':
+          return ChartTime.getChartPage(this)
+        case 'aggregate':
+          return ChartAggregate.getChartPage(this)
+        case 'calendar':
+          return ChartCalendar.getChartPage(this)
+        default:
+          return {
+            component: 'oh-chart-page',
+            config: {
+              chartType: this.chartType,
+              period: this.period
+            },
+            slots: {
+              title: [
+                { component: 'oh-chart-title', config: { subtext: `Invalid coordinate system: ${this.coordSystem}`, top: 'center', left: 'center' } }
+              ]
+            }
+          }
+      }
+    }
   },
   methods: {
-    onOpen () {
-      // this.$store.dispatch('startTrackingStates')
-    },
     onClose () {
       this.controlsOpened = false
-      // this.$store.dispatch('stopTrackingStates')
     },
     initChart () {
       if (this.$f7route.query.period) this.period = this.$f7route.query.period
+      if (this.$f7route.query.items === '') {
+        this.invalidConfiguration = true
+        return
+      }
       this.updateItems(this.$f7route.query.items.split(',')).then(() => {
         if (this.$f7route.query.chartType) this.changeChartType(this.$f7route.query.chartType)
         if (this.$f7route.query.coordSystem) this.changeCoordSystem(this.$f7route.query.coordSystem)
       })
-      this.itemsPickerKey = this.$f7.utils.id()
     },
     updateItems (itemNames) {
       this.itemNames = itemNames
@@ -341,14 +377,21 @@ export default {
             this.$delete(this.seriesOptions, item)
           }
         }
-        this.showChart = true
+
+        this.$nextTick(() => {
+          this.showChart = true
+        })
+
+        return Promise.resolve()
       })
     },
     initializeSeriesOptions (item) {
-      let seriesOptions = {}
-      seriesOptions.name = item.label || item.name
-      seriesOptions.type = 'line'
-      seriesOptions.discrete = true
+      const seriesOptions = {
+        name: item.label || item.name,
+        type: 'line',
+        discrete: true
+      }
+
       if (item.type.indexOf('Number') === 0 || item.type === 'Dimmer') seriesOptions.discrete = false
       if (item.groupType && (item.groupType.indexOf('Number') === 0 || item.groupType === 'Dimmer')) seriesOptions.discrete = false
       if (!seriesOptions.discrete && this.coordSystem === 'aggregate' && this.aggregateDimensions === 1) seriesOptions.type = 'bar'
@@ -441,7 +484,7 @@ export default {
       }).open()
     },
     chooseAggregation (opt) {
-      const actions = this.aggregations.map((a) => {
+      const actions = this.Aggregations.map((a) => {
         return {
           text: a.label,
           color: 'blue',
@@ -480,14 +523,8 @@ export default {
         ]
       }).open()
     },
-    updateChart () {
-      this.chartKey = this.$f7.utils.id()
-    },
     openControls () {
       this.controlsOpened = true
-    },
-    closeControls () {
-      this.controlsOpened = false
     },
     savePage () {
       if (!this.$store.getters.isAdmin) return // shouldn't get here if not an admin
@@ -539,45 +576,20 @@ export default {
       })
     }
   },
-  computed: {
-    titleDisplayText () {
-      if (!this.items || !this.items.length) return 'Analyze'
-      if (this.items.length === 1) return (this.items[0].label) ? this.items[0].label : this.items[0].name
-      return ((this.items[0].label) ? this.items[0].label : this.items[0].name) + ' + ' + (this.items.length - 1)
-    },
-    context () {
-      return {
-        component: this.page,
-        analyzer: true
-      }
-    },
-    page () {
-      try {
-        switch (this.coordSystem) {
-          case 'time':
-            return ChartTime.getChartPage(this)
-          case 'aggregate':
-            return ChartAggregate.getChartPage(this)
-          case 'calendar':
-            return ChartCalendar.getChartPage(this)
-          default:
-            throw new Error('Invalid coordinate system')
-        }
-      } catch (e) {
-        return {
-          component: 'oh-chart-page',
-          config: {
-            chartType: this.chartType,
-            period: this.period
-          },
-          slots: {
-            title: [
-              { component: 'oh-chart-title', config: { subtext: e, top: 'center', left: 'center' } }
-            ]
-          }
-        }
-      }
-    }
+  created () {
+    this.Aggregations = [
+      { value: 'average', label: this.$t('analyzer.aggregations.average') },
+      { value: 'sum', label: this.$t('analyzer.aggregations.sum') },
+      { value: 'min', label: this.$t('analyzer.aggregations.min') },
+      { value: 'max', label: this.$t('analyzer.aggregations.max') },
+      { value: 'first', label: this.$t('analyzer.aggregations.first') },
+      { value: 'last', label: this.$t('analyzer.aggregations.last') },
+      { value: 'diff_first', label: this.$t('analyzer.aggregations.diffFirst') },
+      { value: 'diff_last', label: this.$t('analyzer.aggregations.diffLast') }
+    ]
+  },
+  mounted () {
+    this.initChart()
   }
 }
 </script>

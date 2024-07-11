@@ -2,12 +2,13 @@ const SharedTypes = ['Call', 'Color', 'Contact', 'DateTime', 'Dimmer', 'Image', 
 
 export const ItemTypes = SharedTypes.concat(['Group'])
 export const GroupTypes = ['None'].concat(SharedTypes)
-export const Dimensions = ['Area', 'Length', 'Mass', 'Pressure', 'Speed', 'Temperature', 'Volume', 'Dimensionless', 'Acceleration', 'AmountOfSubstance', 'Angle', 'ArealDensity', 'CatalyticActivity', 'DataAmount', 'DataTransferRate', 'Density', 'ElectricCapacitance', 'ElectricCharge', 'ElectricConductance', 'ElectricCurrent', 'ElectricInductance', 'ElectricPotential', 'ElectricResistance', 'Energy', 'Force', 'Frequency', 'Illuminance', 'Intensity', 'LuminousFlux', 'LuminousIntensity', 'MagneticFlux', 'MagneticFluxDensity', 'Power', 'RadiationDoseAbsorbed', 'RadiationDoseEffective', 'Radioactivity', 'SolidAngle', 'Time', 'VolumetricFlowRate']
 
-export const ArithmeticFunctions = [{
+export const CommonFunctions = [{
   name: '',
   value: 'None'
-}, {
+}]
+
+export const ArithmeticFunctions = [{
   name: 'AVG',
   value: 'AVG'
 }, {
@@ -19,12 +20,12 @@ export const ArithmeticFunctions = [{
 }, {
   name: 'SUM',
   value: 'SUM'
+}, {
+  name: 'COUNT',
+  value: 'COUNT'
 }]
 
 export const LogicalOnOffFunctions = [{
-  name: '',
-  value: 'None'
-}, {
   name: 'AND_ON_OFF',
   value: 'All ON then ON else OFF'
 }, {
@@ -51,9 +52,6 @@ export const LogicalOnOffFunctions = [{
 }]
 
 export const LogicalOpenClosedFunctions = [{
-  name: '',
-  value: 'None'
-}, {
   name: 'AND_OPEN_CLOSED',
   value: 'All OPEN then OPEN else CLOSED'
 }, {
@@ -80,9 +78,6 @@ export const LogicalOpenClosedFunctions = [{
 }]
 
 export const LogicalPlayPauseFunctions = [{
-  name: '',
-  value: 'None'
-}, {
   name: 'AND_PLAY_PAUSE',
   value: 'All PLAY then PLAY else PAUSE'
 }, {
@@ -97,9 +92,6 @@ export const LogicalPlayPauseFunctions = [{
 }]
 
 export const DateTimeFunctions = [{
-  name: '',
-  value: 'None'
-}, {
   name: 'EARLIEST',
   value: 'EARLIEST'
 }, {

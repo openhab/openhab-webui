@@ -1,46 +1,15 @@
 // Import into widget components as a mixin!
 
-import expr from 'jse-eval'
-import dayjs from 'dayjs'
-import relativeTime from 'dayjs/plugin/relativeTime'
-import calendar from 'dayjs/plugin/calendar'
-import localizedFormat from 'dayjs/plugin/localizedFormat'
-import isoWeek from 'dayjs/plugin/isoWeek'
-import isToday from 'dayjs/plugin/isToday'
-import isYesterday from 'dayjs/plugin/isYesterday'
-import isTomorrow from 'dayjs/plugin/isTomorrow'
 import scope from 'scope-css'
-import store from '@/js/store'
-
-import jsepRegex from '@jsep-plugin/regex'
-import jsepArrow from '@jsep-plugin/arrow'
-import jsepObject from '@jsep-plugin/object'
-import jsepTemplate from '@jsep-plugin/template'
-expr.jsep.plugins.register(jsepRegex, jsepArrow, jsepObject, jsepTemplate)
-
-expr.addUnaryOp('@', (itemName) => {
-  const itemState = store.getters.trackedItems[itemName]
-  if (itemState.displayState === undefined) return itemState.state
-  return itemState.displayState
-})
-expr.addUnaryOp('@@', (itemName) => {
-  return store.getters.trackedItems[itemName].state
-})
-
-dayjs.extend(relativeTime)
-dayjs.extend(calendar)
-dayjs.extend(localizedFormat)
-dayjs.extend(isoWeek)
-dayjs.extend(isToday)
-dayjs.extend(isYesterday)
-dayjs.extend(isTomorrow)
+import WidgetExpressionMixin from '@/components/widgets/widget-expression-mixin'
 
 export default {
+  mixins: [WidgetExpressionMixin],
   props: ['context'],
   data () {
     return {
-      exprAst: {},
       vars: (this.context) ? this.context.vars : {},
+      ctxVars: (this.context) ? this.context.ctxVars : {},
       widgetVars: {}
     }
   },
@@ -59,11 +28,12 @@ export default {
     config () {
       if (!this.context || !this.context.component) return null
       let evalConfig = {}
-      if (this.context.component.config) {
-        const sourceConfig = this.context.component.config
+      // Fallback to modelConfig for oh- components to allow configuring them in modals
+      const sourceConfig = this.context.component.config || (this.componentType.startsWith('oh-') ? this.context.modalConfig : {})
+      if (sourceConfig) {
         if (typeof sourceConfig !== 'object') return {}
         for (const key in sourceConfig) {
-          if (key === 'visible' || key === 'visibleTo' || key === 'stylesheet') continue
+          if (key === 'visible' || key === 'visibleTo' || key === 'stylesheet' || key === 'constants') continue
           this.$set(evalConfig, key, this.evaluateExpression(key, sourceConfig[key]))
         }
       }
@@ -100,7 +70,7 @@ export default {
     }
   },
   mounted () {
-    if (this.context && this.context.component.config && this.context.component.config.stylesheet) {
+    if (this.context && this.context.component && this.context.component.config && this.context.component.config.stylesheet) {
       this.cssUid = 'scoped-' + this.$f7.utils.id()
 
       this.$el.classList.add(this.cssUid)
@@ -118,73 +88,16 @@ export default {
     }
   },
   methods: {
-    evaluateExpression (key, value, context) {
-      if (value === null) return null
-      const ctx = context || this.context
-      if (typeof value === 'string' && value.startsWith('=')) {
-        try {
-          // we cache the parsed abstract tree to prevent it from being parsed again at runtime
-          // in we're edit mode according to the context do not cache because the expression is subject to change
-          if (!this.exprAst[key] || ctx.editmode) {
-            this.exprAst[key] = expr.parse(value.substring(1))
-          }
-          return expr.evaluate(this.exprAst[key], {
-            items: ctx.store,
-            props: this.props,
-            config: ctx.component.config,
-            vars: ctx.vars,
-            loop: ctx.loop,
-            Math: Math,
-            Number: Number,
-            theme: this.$theme,
-            themeOptions: this.$f7.data.themeOptions,
-            device: this.$device,
-            screen: this.getScreenInfo(),
-            JSON: JSON,
-            dayjs: dayjs,
-            user: this.$store.getters.user
-          })
-        } catch (e) {
-          return e
-        }
-      } else if (typeof value === 'object' && !Array.isArray(value)) {
-        const evalObj = {}
-        for (const objKey in value) {
-          this.$set(evalObj, objKey, this.evaluateExpression(key + '.' + objKey, value[objKey]))
-        }
-        return evalObj
-      } else if (typeof value === 'object' && Array.isArray(value)) {
-        const evalArr = []
-        for (let i = 0; i < value.length; i++) {
-          this.$set(evalArr, i, this.evaluateExpression(key + '.' + i, value[i]))
-        }
-        return evalArr
-      } else {
-        return value
-      }
-    },
-    getScreenInfo () {
-      const pageCurrent = document.getElementsByClassName('page-current').item(0)
-      const pageContent = pageCurrent.getElementsByClassName('page-content').item(0)
-      const pageContentStyle = window.getComputedStyle(pageContent)
-
-      return {
-        width: window.screen.width,
-        height: window.screen.height,
-        availWidth: window.screen.availWidth,
-        availHeight: window.screen.availHeight,
-        colorDepth: window.screen.colorDepth,
-        pixelDepth: window.screen.pixelDepth,
-        viewAreaWidth: pageContent.clientWidth - parseFloat(pageContentStyle.paddingLeft) - parseFloat(pageContentStyle.paddingRight),
-        viewAreaHeight: pageContent.clientHeight - parseFloat(pageContentStyle.paddingTop) - parseFloat(pageContentStyle.paddingBottom)
-      }
-    },
     childContext (component) {
       return {
         component: component,
         rootcomponent: this.context.root || this.context.component,
         props: this.props,
+        fn: this.context.fn,
+        const: this.context.const,
         vars: this.context.vars,
+        varScope: this.varScope || this.context.varScope,
+        ctxVars: this.context.ctxVars,
         loop: this.context.loop,
         store: this.context.store,
         config: this.context.config,
@@ -209,7 +122,11 @@ export default {
         component: widget,
         root: widget,
         props: this.config,
+        fn: this.context.fn,
+        const: this.context.const,
         vars: this.widgetVars,
+        varScope: this.varScope || this.context.varScope,
+        ctxVars: this.context.ctxVars,
         store: this.context.store,
         config: this.context.config,
         editmode: this.context.editmode,

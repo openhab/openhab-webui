@@ -1,7 +1,8 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:afterout="stopEventSource">
-    <f7-navbar :title="(showScripts) ? 'Scripts' : ((showScenes) ? 'Scenes' : 'Rules')" back-link="Settings" back-link-url="/settings/" back-link-force>
+    <f7-navbar :title="type" back-link="Settings" back-link-url="/settings/" back-link-force>
       <f7-nav-right>
+        <developer-dock-icon />
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
                  :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
       </f7-nav-right>
@@ -14,6 +15,7 @@
           search-container=".rules-list"
           search-item=".rulelist-item"
           search-in=".item-title, .item-text, .item-after, .item-subtitle, .item-header, .item-footer"
+          :placeholder="searchPlaceholder"
           :disable-button="!$theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
@@ -52,8 +54,8 @@
 
     <empty-state-placeholder v-if="noRuleEngine" icon="exclamationmark_triangle" title="rules.missingengine.title" text="rules.missingengine.text" />
 
-    <!-- skeleton for not ready -->
     <f7-block class="block-narrow" v-show="!noRuleEngine">
+      <!-- skeleton for not ready -->
       <f7-col v-if="!ready">
         <f7-block-title>&nbsp;Loading...</f7-block-title>
         <f7-list contacts-list class="col rules-list">
@@ -70,17 +72,29 @@
           </f7-list-group>
         </f7-list>
       </f7-col>
-      <f7-col v-else>
-        <f7-block-title v-if="showScripts" class="searchbar-hide-on-search">
-          {{ rules.length }} scripts
-        </f7-block-title>
-        <f7-block-title v-else-if="showScenes" class="searchbar-hide-on-search">
-          {{ rules.length }} scenes
-        </f7-block-title>
-        <f7-block-title v-else class="searchbar-hide-on-search">
-          {{ rules.length }} rules
+
+      <f7-col v-else-if="rules.length > 0">
+        <f7-block-title class="searchbar-hide-on-search">
+          {{ filteredRules.length }} {{ type.toLowerCase() }} {{ selectedTags.length > 0 ? ' - ' : '' }}
+          <f7-link v-if="selectedTags.length > 0" @click="selectedTags = []">
+            Reset filter(s)
+          </f7-link>
         </f7-block-title>
 
+        <f7-list v-if="uniqueTags.length > 0">
+          <f7-list-item accordion-item title="Filter by tags">
+            <f7-accordion-content>
+              <div class="block block-strong-ios block-outline-ios padding-bottom" ref="filterTags">
+                <f7-chip v-for="tag in uniqueTags" :key="tag" :text="tag" media-bg-color="blue"
+                         :color="isTagSelected(tag) ? 'blue' : ''"
+                         style="margin-right: 6px; cursor: pointer;"
+                         @click="(e) => toggleSearchTag(e, tag)">
+                  <f7-icon v-if="isTagSelected(tag)" slot="media" ios="f7:checkmark_circle_fill" md="material:check_circle" aurora="f7:checkmark_circle_fill" />
+                </f7-chip>
+              </div>
+            </f7-accordion-content>
+          </f7-list-item>
+        </f7-list>
         <f7-list
           v-show="rules.length > 0"
           class="searchbar-found col rules-list"
@@ -102,8 +116,8 @@
               :title="rule.name"
               :text="rule.uid"
               :footer="rule.description"
-              :badge="showScenes ? '' : ruleStatusBadgeText(rule.status)"
-              :badge-color="ruleStatusBadgeColor(rule.status)">
+              :badge="showScenes ? '' : ruleStatusBadgeText(ruleStatuses[rule.uid])"
+              :badge-color="ruleStatusBadgeColor(ruleStatuses[rule.uid])">
               <div slot="footer">
                 <f7-chip v-for="tag in rule.tags.filter((t) => t !== 'Script' && t !== 'Scene')" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
                   <f7-icon slot="media" ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
@@ -116,11 +130,16 @@
         </f7-list>
       </f7-col>
     </f7-block>
-    <f7-block v-if="ready && !noRuleEngine && !rules.length" class="service-config block-narrow">
+
+    <f7-block v-if="ready && !noRuleEngine && !rules.length" class="block-narrow">
       <empty-state-placeholder v-if="showScripts" icon="doc_plaintext" title="scripts.title" text="scripts.text" />
       <empty-state-placeholder v-else-if="showScenes" icon="film" title="scenes.title" text="scenes.text" />
       <empty-state-placeholder v-else icon="wand_stars" title="rules.title" text="rules.text" />
+      <f7-row v-if="$f7.width < 1280" class="display-flex justify-content-center">
+        <f7-button large fill color="blue" external :href="`${$store.state.websiteUrl}/link/${type.toLowerCase()}`" target="_blank" v-t="'home.overview.button.documentation'" />
+      </f7-row>
     </f7-block>
+
     <f7-fab v-show="ready && !showCheckboxes" position="right-bottom" slot="fixed" color="blue" href="add">
       <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
       <f7-icon ios="f7:close" md="material:close" aurora="f7:close" />
@@ -143,6 +162,9 @@ export default {
       loading: false,
       noRuleEngine: false,
       rules: [],
+      ruleStatuses: {},
+      uniqueTags: [],
+      selectedTags: [],
       initSearchbar: false,
       selectedItems: [],
       showCheckboxes: false,
@@ -150,8 +172,20 @@ export default {
     }
   },
   computed: {
+    type () {
+      return this.showScripts ? 'Scripts' : (this.showScenes ? 'Scenes' : 'Rules')
+    },
+    filteredRules () {
+      if (this.selectedTags.length === 0) return this.rules
+      return this.rules.filter((r) => {
+        for (const t of this.selectedTags) {
+          if (r.tags.includes(t)) return true
+        }
+        return false
+      })
+    },
     indexedRules () {
-      return this.rules.reduce((prev, rule, i, rules) => {
+      return this.filteredRules.reduce((prev, rule, i, rules) => {
         const initial = rule.name.substring(0, 1).toUpperCase()
         if (!prev[initial]) {
           prev[initial] = []
@@ -160,6 +194,9 @@ export default {
 
         return prev
       }, {})
+    },
+    searchPlaceholder () {
+      return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     }
   },
   methods: {
@@ -178,6 +215,7 @@ export default {
       if (this.showScenes) {
         filter = '&tags=Scene'
       }
+
       this.$oh.api.get('/rest/rules?summary=true' + filter).then(data => {
         this.rules = data.sort((a, b) => {
           return a.name.localeCompare(b.name)
@@ -190,6 +228,18 @@ export default {
         if (!this.showScenes) {
           this.rules = this.rules.filter((r) => !r.tags || r.tags.indexOf('Scene') < 0)
         }
+
+        this.rules.forEach(rule => {
+          this.ruleStatuses[rule.uid] = rule.status
+
+          rule.tags.forEach(t => {
+            if (t === 'Scene' || t === 'Script') return
+            if (t.startsWith('marketplace:')) t = 'Marketplace'
+            if (!this.uniqueTags.includes(t)) this.uniqueTags.push(t)
+          })
+        })
+
+        this.uniqueTags.sort()
 
         this.loading = false
         this.ready = true
@@ -220,12 +270,13 @@ export default {
             this.load()
             break
           case 'state':
-            const rule = this.rules.find((r) => r.uid === topicParts[2])
+            const uid = topicParts[2]
             const newStatus = JSON.parse(event.payload)
-            if (!rule) break
-            if (rule.status.status !== newStatus.status) rule.status.status = newStatus.status
-            if (rule.status.statusDetail !== newStatus.statusDetail) rule.status.statusDetail = newStatus.statusDetail
-            if (rule.status.description !== newStatus.description) rule.status.description = newStatus.description
+            // skip status updates for RUNNING for performance reasons (can be easily skipped as it was never really shown due to the short execution time of rules)
+            if (newStatus.status === 'RUNNING') return
+
+            this.ruleStatuses[uid].status = newStatus.status
+            this.ruleStatuses[uid].statusDetail = newStatus.statusDetail
         }
       })
     },
@@ -313,6 +364,19 @@ export default {
         console.error(err)
         this.$f7.dialog.alert('An error occurred while enabling/disabling: ' + err)
       })
+    },
+    toggleSearchTag (e, item) {
+      const idx = this.selectedTags.indexOf(item)
+      if (idx !== -1) {
+        this.selectedTags.splice(idx, 1)
+      } else {
+        this.selectedTags.push(item)
+      }
+      // update rules list
+      this.$refs.listIndex.update()
+    },
+    isTagSelected (tag) {
+      return this.selectedTags.includes(tag)
     }
   }
 }

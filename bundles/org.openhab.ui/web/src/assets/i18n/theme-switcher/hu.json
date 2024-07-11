@@ -12,5 +12,7 @@
   "about.miscellaneous.home.hideChatInput": "Chat ablak elrejtése a honéapon",
   "about.miscellaneous.home.disableCardExpansionAnimation": "Kártya megnyitás animációk tiltása",
   "about.miscellaneous.theme.disablePageTransition": "Áttűnési animációk letiltása",
-  "about.miscellaneous.webaudio.enable": "Webes audio végpont támogatás bekapcsolása"
+  "about.miscellaneous.webaudio.enable": "Webes audio végpont támogatás bekapcsolása",
+  "about.miscellaneous.commandItem.title": "A felhasználói felület parancsaira hallgat ",
+  "about.miscellaneous.commandItem.selectItem": "Elem"
 }

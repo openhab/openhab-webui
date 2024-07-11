@@ -36,7 +36,7 @@
             <f7-list media-list swipeout>
               <f7-list-item
                 media-item swipeout
-                v-for="session in sessions"
+                v-for="session in filteredSessions"
                 :key="session.sessionId"
                 :title="session.clientId"
                 :subtitle="$t('profile.sessions.created') + new Date(session.createdTime).toLocaleString($store.getters.locale)"
@@ -48,6 +48,9 @@
                   </f7-swipeout-button>
                 </f7-swipeout-actions>
               </f7-list-item>
+              <f7-list-button v-if="!expandedTypes.sessions && sessions.length > 10" color="blue" @click="$set(expandedTypes, 'sessions', true)">
+                {{ $t('dialogs.showAll') }}
+              </f7-list-button>
               <f7-list-button color="red" @click="logout()">
                 {{ $t('profile.sessions.signOut') }}
               </f7-list-button>
@@ -140,11 +143,20 @@ export default {
     return {
       user: this.$store.getters.user,
       sessions: [],
-      apiTokens: []
+      apiTokens: [],
+
+      expandedTypes: {
+        sessions: false
+      }
     }
   },
   i18n: {
     messages: loadLocaleMessages(require.context('@/assets/i18n/profile'))
+  },
+  computed: {
+    filteredSessions () {
+      return (this.expandedTypes.sessions) ? this.sessions : (this.sessions ? this.sessions.slice(this.sessions.length - 10, this.sessions.length) : [])
+    }
   },
   methods: {
     onPageBeforeIn () {
@@ -217,9 +229,6 @@ export default {
         this.loggedIn = false
         this.$f7.views.main.router.navigate('/', { animate: false, clearPreviousHistory: true })
         window.location = window.location.origin
-        if (this.$device.cordova) {
-          this.loginScreenOpened = true
-        }
       }).catch((err) => {
         this.$f7.preloader.hide()
         this.$f7.dialog.alert(this.$t('profile.sessions.signOut.error') + err)

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2023 Contributors to the openHAB project
+ * Copyright (c) 2010-2024 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -22,6 +22,7 @@ import org.openhab.core.items.GroupItem;
 import org.openhab.core.items.Item;
 import org.openhab.core.items.ItemNotFoundException;
 import org.openhab.core.library.items.NumberItem;
+import org.openhab.core.library.items.PlayerItem;
 import org.openhab.core.library.items.RollershutterItem;
 import org.openhab.core.library.items.SwitchItem;
 import org.openhab.core.library.types.OnOffType;
@@ -49,6 +50,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Kai Kreuzer - Initial contribution and API
  * @author Vlad Ivanov - BasicUI changes
+ * @author Laurent Garnier - Use icon instead of label for button if icon is set
  */
 @Component(service = WidgetRenderer.class)
 @NonNullByDefault
@@ -56,8 +58,8 @@ public class SwitchRenderer extends AbstractWidgetRenderer {
 
     private final Logger logger = LoggerFactory.getLogger(SwitchRenderer.class);
 
-    private static final int MAX_BUTTONS = 4;
-    private static final int MAX_LABEL_SIZE = 9;
+    private static final int MAX_BUTTONS = 20;
+    private static final int MAX_LABEL_SIZE = 15;
     private static final String ELLIPSIS = "\u2026";
 
     @Activate
@@ -78,6 +80,7 @@ public class SwitchRenderer extends AbstractWidgetRenderer {
         String snippetName = null;
         Item item = null;
         int nbButtons = 0;
+        boolean multiline = false;
         try {
             item = itemUIRegistry.getItem(w.getItem());
             if (s.getMappings().isEmpty()) {
@@ -95,6 +98,7 @@ public class SwitchRenderer extends AbstractWidgetRenderer {
                         // Render with buttons only when a max of MAX_BUTTONS options are defined
                         snippetName = "buttons";
                         nbButtons = optsSize;
+                        multiline = true;
                     } else {
                         snippetName = "switch";
                     }
@@ -102,6 +106,7 @@ public class SwitchRenderer extends AbstractWidgetRenderer {
             } else {
                 snippetName = "buttons";
                 nbButtons = s.getMappings().size();
+                multiline = !(item instanceof PlayerItem);
             }
         } catch (ItemNotFoundException e) {
             logger.debug("Failed to retrieve item during widget rendering: {}", e.getMessage());
@@ -111,31 +116,44 @@ public class SwitchRenderer extends AbstractWidgetRenderer {
         String snippet = getSnippet(snippetName);
         State state = itemUIRegistry.getState(w);
 
-        snippet = preprocessSnippet(snippet, w);
-
         if (nbButtons == 0) {
+            snippet = preprocessSnippet(snippet, w);
+
             if (OnOffType.ON.equals(state)) {
                 snippet = snippet.replaceAll("%checked%", "checked=true");
             } else {
                 snippet = snippet.replaceAll("%checked%", "");
             }
         } else {
+            // Show the value at left of all the buttons only if a state pattern is set on the sitemap widget
+            if (!hasValue(w.getLabel())) {
+                snippet = snippet.replace("%value%", "");
+                snippet = snippet.replace("%has_value%", "false");
+            }
+
+            snippet = preprocessSnippet(snippet, w);
+
+            snippet = snippet.replaceAll("%height_auto%", multiline ? "mdl-form__row--height-auto" : "");
+            snippet = snippet.replaceAll("%buttons_class%",
+                    multiline ? "mdl-form__buttons-multiline" : "mdl-form__buttons");
+
             StringBuilder buttons = new StringBuilder();
             if (s.getMappings().isEmpty() && item != null) {
                 final CommandDescription commandDescription = item.getCommandDescription();
                 if (commandDescription != null) {
                     for (CommandOption option : commandDescription.getCommandOptions()) {
                         // Truncate the button label to MAX_LABEL_SIZE characters
-                        buildButton(s, option.getLabel(), option.getCommand(), MAX_LABEL_SIZE, item, state, buttons);
+                        buildButton(s, option.getLabel(), option.getCommand(), null, null, MAX_LABEL_SIZE, item, state,
+                                buttons);
                     }
                 }
             } else {
                 for (Mapping mapping : s.getMappings()) {
-                    buildButton(s, mapping.getLabel(), mapping.getCmd(), -1, item, state, buttons);
+                    buildButton(s, mapping.getLabel(), mapping.getCmd(), mapping.getReleaseCmd(), mapping.getIcon(), -1,
+                            item, state, buttons);
                 }
             }
             snippet = snippet.replace("%buttons%", buttons.toString());
-            snippet = snippet.replace("%count%", Integer.toString(nbButtons));
         }
 
         // Process the color tags
@@ -145,17 +163,22 @@ public class SwitchRenderer extends AbstractWidgetRenderer {
         return ECollections.emptyEList();
     }
 
-    private void buildButton(Switch w, @Nullable String lab, String cmd, int maxLabelSize, @Nullable Item item,
-            @Nullable State state, StringBuilder buttons) throws RenderException {
+    private void buildButton(Switch w, @Nullable String lab, String cmd, @Nullable String releaseCmd,
+            @Nullable String icon, int maxLabelSize, @Nullable Item item, @Nullable State state, StringBuilder buttons)
+            throws RenderException {
         String button = getSnippet("button");
 
         String command = cmd;
+        String releaseCommand = releaseCmd;
         String label = lab == null ? cmd : lab;
 
         if (item instanceof NumberItem && ((NumberItem) item).getDimension() != null) {
             String unit = getUnitForWidget(w);
             if (unit != null) {
                 command = command.replace(UnitUtils.UNIT_PLACEHOLDER, unit);
+                if (releaseCommand != null) {
+                    releaseCommand = releaseCommand.replace(UnitUtils.UNIT_PLACEHOLDER, unit);
+                }
                 label = label.replace(UnitUtils.UNIT_PLACEHOLDER, unit);
             }
         }
@@ -164,11 +187,19 @@ public class SwitchRenderer extends AbstractWidgetRenderer {
             label = label.substring(0, maxLabelSize - 1) + ELLIPSIS;
         }
 
-        button = button.replace("%item%", w.getItem());
         button = button.replace("%cmd%", escapeHtml(command));
+        button = button.replace("%release_cmd%", releaseCommand == null ? "" : escapeHtml(releaseCommand));
+        String buttonClass = "";
         button = button.replace("%label%", escapeHtml(label));
+        if (icon == null) {
+            button = button.replace("%textclass%", "mdl-button-text");
+            button = button.replace("%icon_snippet%", "");
+        } else {
+            button = button.replace("%textclass%", "mdl-button-icon-text");
+            button = preprocessIcon(button, icon, true);
+            buttonClass = "mdl-button-icon";
+        }
 
-        String buttonClass;
         State compareMappingState = state;
         if (state instanceof QuantityType) { // convert the item state to the command value for proper
                                              // comparison and buttonClass calculation
@@ -176,9 +207,7 @@ public class SwitchRenderer extends AbstractWidgetRenderer {
         }
 
         if (compareMappingState != null && compareMappingState.toString().equals(command)) {
-            buttonClass = "mdl-button--accent";
-        } else {
-            buttonClass = "mdl-button";
+            buttonClass += " mdl-button--accent";
         }
         button = button.replace("%class%", buttonClass);
 

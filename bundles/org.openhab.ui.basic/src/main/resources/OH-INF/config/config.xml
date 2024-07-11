@@ -6,56 +6,16 @@
 	https://openhab.org/schemas/config-description-1.0.0.xsd">
 
 	<config-description uri="ui:basic">
-		<parameter name="theme" type="text" required="true">
-			<label>Theme</label>
-			<description>Defines the UI theme.</description>
-			<options>
-				<option value="default">Default</option>
-				<option value="dark">Dark</option>
-			</options>
-			<default>default</default>
-		</parameter>
-		<parameter name="enableIcons" type="text" required="true">
-			<label>Enable Icons</label>
-			<description>Defines whether UI renders icons for the widgets or not.</description>
-			<options>
-				<option value="true">Enable</option>
-				<option value="false">Disable</option>
-			</options>
-			<default>true</default>
-		</parameter>
-		<parameter name="enableIconify" type="text">
-			<label>Enable Iconify Icons</label>
-			<description>If enabled, the UI will render iconify icons directly by downloading them from the Internet and caching
-				them in the WEB browser. If disabled, the UI will use the standard method by requesting the server icon proxy and
-				assuming iconify icons are installed on the server. Default is disabled.</description>
-			<options>
-				<option value="true">Enable</option>
-				<option value="false">Disable</option>
-			</options>
-			<default>false</default>
-		</parameter>
-		<parameter name="condensedLayout" type="text" required="true">
-			<label>Condensed Layout</label>
-			<description>When enabled, changes the layout so that more widgets can fit on the screen.</description>
-			<options>
-				<option value="true">Enable</option>
-				<option value="false">Disable</option>
-			</options>
-			<default>false</default>
-		</parameter>
-		<parameter name="capitalizeValues" type="text" required="true">
-			<label>Capitalize Values</label>
-			<description>Displays all widget states in uppercase.</description>
-			<options>
-				<option value="true">Enable</option>
-				<option value="false">Disable</option>
-			</options>
-			<default>false</default>
-		</parameter>
-		<parameter name="webAudio" type="text" required="true">
-			<label>Web Audio</label>
-			<description>Play audio sent to the web audio sink.</description>
+		<parameter name="inlineSvg" type="text" required="true">
+			<label>Inline SVG</label>
+			<description>If enabled, any SVG icon provided by the openHAB icon server will automatically be converted to an
+				inline SVG in the WEB page, allowing control of its color with the sitemap widget property "iconcolor" in
+				the case
+				where the SVG icon sets "currentColor" as the fill color. Note that this will work with custom SVG icons but not
+				with all the packaged icons from the classic iconset since they are defined with a hard-coded color palette. This
+				feature is disabled by default due to additional non-standard processing required leading to a larger page size and
+				because it is unnecessary if you only use Material/framework7/iconify icons or openHAB icons from the classic icon
+				set.</description>
 			<options>
 				<option value="true">Enable</option>
 				<option value="false">Disable</option>

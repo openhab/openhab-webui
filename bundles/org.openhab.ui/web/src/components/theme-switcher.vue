@@ -36,13 +36,13 @@
     </f7-row>
     <f7-block-title v-t="'about.navigationBarsStyle'" />
     <f7-row>
-      <f7-col width="50" class="nav-bars-picker nav-bars-picker-fill" @click="setBarsStyle('filled')">
-        <div class="demo-navbar" />
-        <f7-checkbox checked disabled v-if="barsStyle === 'filled'" />
-      </f7-col>
       <f7-col width="50" class="nav-bars-picker nav-bars-picker-empty" @click="setBarsStyle('light')">
         <div class="demo-navbar" />
         <f7-checkbox checked disabled v-if="barsStyle === 'light'" />
+      </f7-col>
+      <f7-col width="50" class="nav-bars-picker nav-bars-picker-fill" @click="setBarsStyle('filled')">
+        <div class="demo-navbar" />
+        <f7-checkbox checked disabled v-if="barsStyle === 'filled'" />
       </f7-col>
     </f7-row>
 
@@ -74,6 +74,7 @@
             <span v-t="'about.miscellaneous.webaudio.enable'" />
             <f7-toggle :checked="webAudio === 'enabled'" @toggle:change="setWebAudio" />
           </f7-list-item>
+          <item-picker :title="$t('about.miscellaneous.commandItem.title')" :multiple="false" :value="commandItem" @input="setCommandItem" />
         </f7-list>
       </f7-col>
     </f7-row>
@@ -81,7 +82,12 @@
 </template>
 <script>
 import { loadLocaleMessages } from '@/js/i18n'
+import ItemPicker from '@/components/config/controls/item-picker.vue'
+
 export default {
+  components: {
+    ItemPicker
+  },
   i18n: {
     messages: loadLocaleMessages(require.context('@/assets/i18n/theme-switcher'))
   },
@@ -127,6 +133,10 @@ export default {
     setWebAudio (value) {
       localStorage.setItem('openhab.ui:webaudio.enable', (value) ? 'enabled' : 'default')
       location.reload()
+    },
+    setCommandItem (value) {
+      localStorage.setItem('openhab.ui:commandItem', value)
+      setTimeout(() => { location.reload() }, 50) // Delay reload, otherwise it doesn't work
     }
   },
   computed: {
@@ -137,7 +147,7 @@ export default {
       return localStorage.getItem('openhab.ui:theme.dark') || 'auto'
     },
     barsStyle () {
-      return localStorage.getItem('openhab.ui:theme.bars') || ((this.$theme.ios || this.$f7.darkTheme || this.darkMode === 'dark') ? 'light' : 'filled')
+      return localStorage.getItem('openhab.ui:theme.bars') || 'light'
     },
     homePageNavbarStyle () {
       return localStorage.getItem('openhab.ui:theme.home.navbar') || 'default'
@@ -156,6 +166,9 @@ export default {
     },
     webAudio () {
       return localStorage.getItem('openhab.ui:webaudio.enable') || 'default'
+    },
+    commandItem () {
+      return localStorage.getItem('openhab.ui:commandItem') || ''
     }
   }
 }

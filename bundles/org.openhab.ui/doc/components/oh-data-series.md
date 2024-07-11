@@ -30,11 +30,11 @@ prev: /docs/ui/components/
 <PropGroup label="General">
 <PropBlock type="TEXT" name="type" label="Type">
   <PropDescription>
-    The type of the series.<br/><em>Note: heatmap needs a configured visual map and is not supported for time series</em>
+    The type of the series.<br/><em>Note: <code>heatmap</code> needs a configured visual map or uses the default and is not supported for time series!</em>
   </PropDescription>
   <PropOptions>
-    <PropOption value="gauge" label="undefined" />
-    <PropOption value="pie" label="undefined" />
+    <PropOption value="gauge" label="Gauge" />
+    <PropOption value="pie" label="Pie" />
   </PropOptions>
 </PropBlock>
 </PropGroup>
@@ -149,7 +149,7 @@ prev: /docs/ui/components/
     Group Item whose members to show in a popup
   </PropDescription>
 </PropBlock>
-<PropBlock type="TEXT" name="actionAnalyzerItems" label="Item(s) to Analyze" context="item">
+<PropBlock type="TEXT" name="actionAnalyzerItems" label="Item(s) to Analyze" required="true" context="item">
   <PropDescription>
     Start analyzing with the specified (set of) Item(s)
   </PropDescription>

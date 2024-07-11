@@ -1,4 +1,5 @@
 export default [
+  { name: 'unit', label: 'Unit' },
   { name: 'stateDescription', label: 'State Description' },
   { name: 'commandDescription', label: 'Command Options' },
   { name: 'synonyms', label: 'Synonyms' },
@@ -8,7 +9,9 @@ export default [
   { name: 'widgetOrder', label: 'Default Widget Order Index' },
   { name: 'autoupdate', label: 'Auto-update' },
   { name: 'expire', label: 'Expiration Timer' },
+  { name: 'voiceSystem', label: 'Voice System' },
   { name: 'alexa', label: 'Amazon Alexa' },
   { name: 'homekit', label: 'Apple HomeKit' },
-  { name: 'ga', label: 'Google Assistant' }
+  { name: 'ga', label: 'Google Assistant' },
+  { name: 'link_to_more', label: 'Android App: Device Controls' }
 ]

@@ -22,6 +22,9 @@
 		}
 	}
 	&-title {
+		html.ui-bigger-font & {
+			font-size: 24px;
+		}
 		white-space: nowrap;
 		text-overflow: ellipsis;
 		overflow: hidden;
@@ -37,6 +40,11 @@
 			display: none;
 		}
 	}
+	&__button-settings {
+		.navigation-page & {
+			display: none;
+		}
+	}
 	&__button-back {
 		.navigation-home & {
 			display: none;
@@ -46,6 +54,9 @@
 
 .page-content {
 	max-width: 1080px;
+	html.ui-large-window & {
+		max-width: 1620px;
+	}
 	@media screen and (max-width: $layout-tablet-size-threshold) {
 		padding: 0;
 	}
@@ -67,6 +78,9 @@
 		@include align-items-2011(center);
 		white-space: nowrap;
 		height: $form-row-desktop-height;
+		html.ui-layout-condensed & {
+			height: $form-row-desktop-height-condensed;
+		}
 		box-sizing: content-box;
 		padding: 4px 0;
 		margin: 0 $mdl-grid-spacing;
@@ -76,7 +90,7 @@
 			padding: 4px $mdl-grid-spacing;
 			margin: 0;
 			html.ui-layout-condensed & {
-				height: $form-row-desktop-height-condensed;
+				height: $form-row-mobile-height-condensed;
 			}
 		}
 		@media screen and (min-width: $layout-tablet-size-threshold) {
@@ -95,11 +109,33 @@
 				height: auto;
 			}
 		}
+		&--header {
+			border-bottom: none;
+			padding-bottom: 0;
+			padding-left: 48px;
+			padding-right: 48px;
+			@media screen and (max-width: $layout-tablet-size-threshold) {
+				padding-left: $mdl-grid-spacing + 16px;
+				padding-right: $mdl-grid-spacing + 16px;
+			}
+		}
+		&--setting {
+			height: $form-row-desktop-height-condensed;
+			border-bottom: none;
+			html.ui-bigger-font & {
+				font-size: 18px;
+			}
+		}
+		&--setting-descr {
+			white-space: normal;
+			height: 100%;
+			font-size: 11px;
+			html.ui-bigger-font & {
+				font-size: 15px;
+			}
+		}
 		&--hidden {
 			display: none;
-		}
-		html.ui-layout-condensed & {
-			height: $form-row-desktop-height-condensed;
 		}
 	}
 	&__image {
@@ -111,11 +147,7 @@
 				max-width: 100%;
 			}
 		}
-		@media screen and (max-width: $layout-tablet-size-threshold) {
-			&.mdl-form__control {
-				padding-left: 0;
-				padding-right: 0;
-			}
+		&-upscale {
 			width: 100%;
 			img {
 				height: auto;
@@ -151,9 +183,29 @@
 				height: 28px;
 			}
 		}
+		svg {
+			width: 32px;
+			height: 32px;
+			object-fit: contain;
+			html.ui-layout-condensed & {
+				width: 28px;
+				height: 28px;
+			}
+		}
 		iconify-icon {
 			font-size: 32px;
 			vertical-align: middle;
+			html.ui-layout-condensed & {
+				font-size: 28px;
+			}
+		}
+		.material-icons,
+		.f7-icons {
+			font-size: 32px;
+			vertical-align: middle;
+			html:not(.ui-icons-enabled) & {
+				display: none;
+			}
 			html.ui-layout-condensed & {
 				font-size: 28px;
 			}
@@ -176,6 +228,9 @@
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
+		html.ui-bigger-font & {
+			font-size: 18px;
+		}
 	}
 	&__control {
 		@media screen and (max-width: $layout-tablet-size-threshold) {
@@ -212,10 +267,75 @@
 				left: 0;
 			}
 		}
+		.buttongrid-cell {
+			height: 36px;
+			.buttongrid-button {
+				min-width: 100%;
+				text-transform: none;
+			}
+		}
 		.mdl-button,
 		.mdl-button:focus {
 			box-shadow: none;
 			-webkit-box-shadow: none;
+		}
+		.mdl-button-text {
+			html.ui-bigger-font & {
+				font-size: 18px;
+			}
+		}
+		.mdl-button-icon {
+			min-width: 0;
+			&-text {
+				html.ui-bigger-font & {
+					font-size: 18px;
+				}
+				html.ui-icons-enabled & {
+					display: none;
+				}
+			}
+			img,
+			svg {
+				width: 24px;
+				height: 24px;
+				object-fit: contain;
+				html:not(.ui-icons-enabled) & {
+					display: none;
+				}
+			}
+			iconify-icon {
+				font-size: 24px;
+				vertical-align: middle;
+				html:not(.ui-icons-enabled) & {
+					display: none;
+				}
+			}
+			.material-icons,
+			.f7-icons {
+				font-size: 24px;
+				vertical-align: middle;
+				html:not(.ui-icons-enabled) & {
+					display: none;
+				}
+			}
+		}
+		.mdl-textfield {
+			&__input,
+			&__label {
+				font-family: "Helvetica","Arial",sans-serif;
+				font-size: 14px;
+				html.ui-bigger-font & {
+					font-size: 18px;
+				}
+				text-align: right;
+			}
+			&__input {
+				font-weight: 700;
+			}
+			&__label {
+				margin: 0;
+				padding: 0;
+			}
 		}
 	}
 	&__setpoint,
@@ -224,6 +344,22 @@
 		.mdl-button {
 			min-width: 0;
 			padding-top: 6px;
+		}
+	}
+	&__header {
+		padding-left: 8px;
+		padding-right: $form-row-desktop-padding;
+		@media screen and (max-width: $layout-tablet-size-threshold) {
+			padding-right: $form-row-mobile-padding;
+		}
+		.mdl-button {
+			box-shadow: none;
+			-webkit-box-shadow: none;
+			min-width: 0;
+			padding-top: 6px;
+		}
+		&-rows {
+			display: none;
 		}
 	}
 	&__group {
@@ -243,6 +379,57 @@
 	}
 	&__slider {
 		width: 140px;
+	}
+	&__input {
+		width: 60%;
+		display: flex;
+		align-items: center;
+		box-sizing: border-box;
+		padding: 0 16px 0 0;
+		@media screen and (max-width: $layout-tablet-size-threshold) {
+			padding: 0 12px 0 0;
+		}
+		&-container {
+			flex-grow: 1;
+			width: auto;
+			padding-right: 0;
+		}
+		&-unit {
+			display: inline-block;
+			box-sizing: border-box;
+			font-family: "Helvetica","Arial",sans-serif;
+			font-size: 14px;
+			html.ui-bigger-font & {
+				font-size: 18px;
+			}
+			font-weight: 700;
+			text-align: right;
+			padding-left: 8px;
+		}
+		&-prefix {
+			display: inline-block;
+			box-sizing: border-box;
+			font-family: "Helvetica","Arial",sans-serif;
+			font-size: 14px;
+			html.ui-bigger-font & {
+				font-size: 18px;
+			}
+			font-weight: 700;
+			text-align: right;
+			padding-right: 8px;
+		}
+		&-postfix {
+			display: inline-block;
+			box-sizing: border-box;
+			font-family: "Helvetica","Arial",sans-serif;
+			font-size: 14px;
+			html.ui-bigger-font & {
+				font-size: 18px;
+			}
+			font-weight: 700;
+			text-align: right;
+			padding-left: 8px;
+		}
 	}
 	&__title {
 		margin: 0;
@@ -264,6 +451,9 @@
 		}
 	}
 	&__value {
+		html.ui-bigger-font & {
+			font-size: 18px;
+		}
 		font-weight: 700;
 		html.ui-capitalize-values & {
 			text-transform: uppercase;
@@ -285,6 +475,9 @@
 		}
 	}
 	&__text {
+		html.ui-bigger-font & {
+			font-size: 18px;
+		}
 		overflow: hidden;
 		flex-shrink: 2;
 		text-overflow: ellipsis;
@@ -297,6 +490,21 @@
 	}
 	&__buttons {
 		padding-top: 2px;
+	}
+	&__buttons-multiline {
+		margin: 6px 0;
+		html.ui-layout-condensed & {
+			margin: 0;
+		}
+		max-width: 60%;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 4px;
+	}
+	&__buttongrid {
+		padding: 0;
+		display: flex;
+		width: 100%;
 	}
 	&--no-label {
 		.mdl-form__title {
@@ -344,6 +552,9 @@
 	&__item {
 		border-bottom: 1px solid $item-separator-color;
 		padding-left: 20px;
+		&:last-child {
+			border: none;
+		}
 	}
 	&__group &__label {
 		padding-top: 17px;
@@ -354,6 +565,11 @@
 	}
 	&__group & {
 		padding-left: 35px;
+	}
+	&__label {
+		html.ui-bigger-font & {
+			font-size: 20px;
+		}
 	}
 	&__outer-circle,
 	&__inner-circle,
@@ -540,6 +756,18 @@ $colorpicker-mobile-size: 270px;
 	position: relative;
 }
 
+h4 {
+	html.ui-bigger-font & {
+		font-size: 28px;
+	}
+}
+
+h5 {
+	html.ui-bigger-font & {
+		font-size: 24px;
+	}
+}
+
 .page {
 	&-static {
 		&__content {
@@ -552,6 +780,9 @@ $colorpicker-mobile-size: 270px;
 }
 
 .welcome-sitemaps {
+	html.ui-bigger-font & {
+		font-size: 18px;
+	}
 	&__sitemap {
 		padding: 5px 0;
 		.material-icons {
@@ -560,7 +791,7 @@ $colorpicker-mobile-size: 270px;
 			padding-right: 6px;
 		}
 		a {
-			text-transform: capitalize;
+			// text-transform: capitalize;
 		}
 	}
 	&__empty {
@@ -602,6 +833,47 @@ $colorpicker-mobile-size: 270px;
 	&--hidden {
 		display: none;
 	}
+}
+
+// Some extra formatting for input widget on webkit browsers
+input[type=date],
+input[type=time],
+input[type=datetime-local],
+input[type=number] {
+	-webkit-align-items: center;
+	align-items: center;
+	overflow: hidden;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	appearance: none;
+	display: none;
+	margin: 0;
+}
+/* Works for Firefox */
+input[type="number"] {
+	-moz-appearance: textfield;
+}
+input::-webkit-datetime-edit {
+	-webkit-flex: 1;
+	flex: 1;
+	display: inline-block;
+	min-width: 0;
+	overflow: hidden;
+}
+input::-webkit-datetime-edit-fields-wrapper {
+	display: inline-block;
+	padding: 1px 8px 1px 0px;
+	white-space: pre;
+}
+input[type=time]::-webkit-datetime-edit-fields-wrapper {
+	padding: 1px 0px;
+}
+input::-webkit-calendar-picker-indicator {
+	display: inline-block;
+	width: 1.2em;
+	height: 1.2em;
 }
 
 // MS Edge hacks

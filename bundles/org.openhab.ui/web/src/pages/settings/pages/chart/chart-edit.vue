@@ -52,24 +52,24 @@
 </template>
 
 <style lang="stylus">
-.page-code-editor.vue-codemirror
-  display block
-  top calc(var(--f7-navbar-height) + var(--f7-tabbar-height))
-  height calc(100% - 3*var(--f7-navbar-height))
-  width 100%
-.yaml-message
-  display block
-  position absolute
-  top 80%
-  white-space pre-wrap
-.code-editor-docs-link
-  position absolute
-  top calc(80% - var(--f7-navbar-height))
-  width 100%
 .chart-editor
   .oh-chart-page-chart
     top calc(var(--f7-navbar-height) + var(--f7-toolbar-height)) !important
     height calc(100% - var(--f7-navbar-height) - 2 * var(--f7-toolbar-height)) !important
+  .page-code-editor.vue-codemirror
+    display block
+    top calc(var(--f7-navbar-height) + var(--f7-tabbar-height))
+    height calc(100% - 3*var(--f7-navbar-height))
+    width 100%
+  .yaml-message
+    display block
+    position absolute
+    top 80%
+    white-space pre-wrap
+  .code-editor-docs-link
+    position absolute
+    top calc(80% - var(--f7-navbar-height))
+    width 100%
 </style>
 
 <script>
@@ -105,6 +105,7 @@ export default {
         uid: 'page_' + this.$f7.utils.id(),
         component: 'oh-chart-page',
         config: {},
+        tags: [],
         slots: { grid: [], xAxis: [], yAxis: [], series: [] }
       },
       currentSlot: null,

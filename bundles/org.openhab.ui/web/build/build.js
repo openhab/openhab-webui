@@ -1,19 +1,16 @@
 const webpack = require('webpack');
 const ora = require('ora');
-const rm = require('rimraf');
+const rm = require('rimraf').rimraf;
 const chalk = require('chalk');
 const config = require('./webpack.config.js');
 
 const env = process.env.NODE_ENV || 'development';
 const target = process.env.TARGET || 'web';
-const isCordova = target === 'cordova'
 
-const spinner = ora(env === 'production' ? 'building for production...' : 'building development version...');
+const spinner = ora(env === 'production' ? chalk.cyan('Building for production...') : chalk.cyan('Building development version...'));
 spinner.start();
 
-rm(isCordova ? './cordova/www' : './www/', (removeErr) => {
-  if (removeErr) throw removeErr;
-
+rm('./www/').then(() => {
   webpack(config, (err, stats) => {
     if (err) throw err;
     spinner.stop();
@@ -33,4 +30,6 @@ rm(isCordova ? './cordova/www' : './www/', (removeErr) => {
 
     console.log(chalk.cyan('Build complete.\n'));
   });
+}).catch((e) => {
+  throw e;
 });

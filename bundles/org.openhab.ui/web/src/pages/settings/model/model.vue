@@ -1,6 +1,9 @@
 <template>
   <f7-page name="Model" :stacked="true" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" @click="selectItem(null)">
     <f7-navbar title="Semantic Model" back-link="Settings" back-link-url="/settings/" back-link-force>
+      <f7-nav-right>
+        <developer-dock-icon />
+      </f7-nav-right>
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
           v-if="initSearchbar"
@@ -8,19 +11,49 @@
           search-container=".semantic-tree"
           search-item=".treeview-item"
           search-in=".treeview-item-label"
+          :placeholder="searchPlaceholder"
           :disable-button="!$theme.aurora" />
+        <div class="expand-button">
+          <f7-button v-if="!expanded" icon-size="24" tooltip="Expand" icon-f7="rectangle_expand_vertical" @click="toggleExpanded()" />
+          <f7-button v-else color="gray" icon-size="24" tooltip="Collapse" icon-f7="rectangle_compress_vertical" @click="toggleExpanded()" />
+        </div>
       </f7-subnavbar>
     </f7-navbar>
-    <f7-toolbar bottom class="toolbar-details">
+
+    <!-- Toolbar -->
+    <f7-toolbar bottom class="toolbar-details" v-if="$f7.width >= 500">
       <f7-link :disabled="selectedItem != null" class="left" @click="selectedItem = null">
         Clear
       </f7-link>
       <div class="padding-right text-align-right">
         <f7-checkbox :checked="includeNonSemantic" @change="toggleNonSemantic" />
         <label @click="toggleNonSemantic" class="advanced-label">Show non-semantic</label>
+        <f7-checkbox style="margin-left: 5px" :checked="includeItemName" @change="toggleItemName" />
+        <label @click="toggleItemName" class="advanced-label">Show name</label>
+        <f7-checkbox style="margin-left: 5px" :checked="includeItemTags" @change="toggleItemTags" />
+        <label @click="toggleItemTags" class="advanced-label">Show tags</label>
       </div>
       <f7-link class="right details-link padding-right" ref="detailsLink" @click="detailsOpened = true" icon-f7="chevron_up" />
     </f7-toolbar>
+    <f7-toolbar bottom class="toolbar-details" v-else style="height: 50px">
+      <f7-link :disabled="selectedItem != null" class="left" @click="selectedItem = null">
+        Clear
+      </f7-link>
+      <div class="padding-left padding-right text-align-center" style="font-size: 12px">
+        <div>
+          <f7-checkbox :checked="includeNonSemantic" @change="toggleNonSemantic" />
+          <label @click="toggleNonSemantic" class="advanced-label">Show non-semantic</label>
+        </div>
+        <div>
+          <f7-checkbox :checked="includeItemName" @change="toggleItemName" />
+          <label @click="toggleItemName" class="advanced-label">Show name</label>
+          <f7-checkbox style="margin-left: 5px" :checked="includeItemTags" @change="toggleItemTags" />
+          <label @click="toggleItemTags" class="advanced-label">Show tags</label>
+        </div>
+      </div>
+      <f7-link class="right details-link padding-right" ref="detailsLink" @click="detailsOpened = true" icon-f7="chevron_up" />
+    </f7-toolbar>
+
     <f7-block v-if="!ready" class="text-align-center">
       <f7-preloader />
       <div>Loading...</div>
@@ -28,12 +61,21 @@
     <f7-block v-else class="semantic-tree-wrapper" :class="{ 'sheet-opened' : detailsOpened }">
       <f7-row>
         <f7-col width="100" medium="50">
-          <empty-state-placeholder v-if="empty" icon="list_bullet_indent" title="model.title" text="model.text" />
+          <f7-block v-if="empty">
+            <empty-state-placeholder icon="list_bullet_indent" title="model.title" text="model.text" />
+            <f7-row class="display-flex justify-content-center">
+              <f7-button color="blue" large raised fill @click="addFromLocationTemplate()">
+                Add Locations from Template
+              </f7-button>
+            </f7-row>
+          </f7-block>
+
           <f7-block v-show="!empty" strong class="semantic-tree" no-gap @click.native="clearSelection">
             <!-- <empty-state-placeholder v-if="empty" icon="list_bullet_indent" title="model.title" text="model.text" /> -->
             <f7-treeview>
               <model-treeview-item v-for="node in [rootLocations, rootEquipment, rootPoints, rootGroups, rootItems].flat()"
                                    :key="node.item.name" :model="node"
+                                   :includeItemName="includeItemName" :includeItemTags="includeItemTags"
                                    @selected="selectItem" :selected="selectedItem" />
             </f7-treeview>
           </f7-block>
@@ -181,11 +223,19 @@
     margin-bottom var(--f7-sheet-height)
   .details-sheet
     height calc(1.4*var(--f7-sheet-height))
+
+.expand-button
+  margin-right 8px
+  text-overflow unset
+  align-self center
+  .icon
+    margin-bottom 2.75px !important
 </style>
 
 <script>
 import ModelDetailsPane from '@/components/model/details-pane.vue'
 import AddFromThing from './add-from-thing.vue'
+import AddFromTemplate from './add-from-template.vue'
 
 import ItemStatePreview from '@/components/item/item-state-preview.vue'
 import ItemDetails from '@/components/model/item-details.vue'
@@ -208,10 +258,14 @@ export default {
     LinkDetails
   },
   data () {
+    if (!this.$f7.data.model) this.$f7.data.model = {}
     return {
       ready: false,
       loading: false,
       includeNonSemantic: false,
+      includeItemName: this.$f7.data.model.includeItemName || false,
+      includeItemTags: this.$f7.data.model.includeItemTags || false,
+      expanded: this.$f7.data.model.expanded || false,
       items: [],
       links: [],
       locations: [],
@@ -244,6 +298,9 @@ export default {
       return {
         store: this.$store.getters.trackedItems
       }
+    },
+    searchPlaceholder () {
+      return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     }
   },
   methods: {
@@ -288,7 +345,7 @@ export default {
     load (update) {
       // if (this.ready) return
       this.loading = true
-      const items = this.$oh.api.get('/rest/items?metadata=.+')
+      const items = this.$oh.api.get('/rest/items?staticDataOnly=true&metadata=.+')
       const links = this.$oh.api.get('/rest/links')
       Promise.all([items, links]).then((data) => {
         this.items = data[0]
@@ -326,7 +383,10 @@ export default {
 
         this.loading = false
         this.ready = true
-        this.$nextTick(() => { this.initSearchbar = true })
+        this.$nextTick(() => {
+          this.initSearchbar = true
+          this.applyExpandedOption()
+        })
         if (!this.eventSource) this.startEventSource()
       })
     },
@@ -431,6 +491,34 @@ export default {
       this.includeNonSemantic = !this.includeNonSemantic
       this.load()
     },
+    toggleItemName () {
+      this.includeItemName = !this.includeItemName
+      this.$f7.data.model.includeItemName = this.includeItemName
+      this.load()
+    },
+    toggleItemTags () {
+      this.includeItemTags = !this.includeItemTags
+      this.$f7.data.model.includeItemTags = this.includeItemTags
+      this.load()
+    },
+    toggleExpanded () {
+      this.expanded = !this.expanded
+      this.$f7.data.model.expanded = this.expanded
+      this.applyExpandedOption()
+    },
+    applyExpandedOption () {
+      const treeviewItems = document.querySelectorAll('.treeview-item')
+
+      treeviewItems.forEach(item => {
+        if (item.classList.contains('treeview-item')) {
+          if (this.expanded) {
+            item.classList.add('treeview-item-opened')
+          } else {
+            item.classList.remove('treeview-item-opened')
+          }
+        }
+      })
+    },
     addSemanticItem (semanticType) {
       this.newItem = {
         type: (semanticType === 'Point') ? 'Switch' : 'Group',
@@ -488,7 +576,6 @@ export default {
       this.load()
     },
     addFromThing (createEquipment) {
-      const self = this
       this.$f7router.navigate({
         url: 'add-thing',
         route: {
@@ -505,6 +592,21 @@ export default {
         props: {
           parent: this.selectedItem,
           createEquipment
+        }
+      })
+    },
+    addFromLocationTemplate () {
+      this.$f7router.navigate({
+        url: 'add-template',
+        route: {
+          component: AddFromTemplate,
+          path: 'add-template',
+          props: {
+          }
+        }
+      }, {
+        props: {
+          itemList: this.items
         }
       })
     }

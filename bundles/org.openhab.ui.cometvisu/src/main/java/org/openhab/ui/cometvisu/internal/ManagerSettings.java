@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2023 Contributors to the openHAB project
+ * Copyright (c) 2010-2024 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -112,8 +112,8 @@ public class ManagerSettings implements IConfigChangeListener {
                 String[] parts = value.split(":");
                 String source = parts[0];
                 if (!source.contains("..") || (allowLookup && lookupMount.matcher(source).find())) {
-                    boolean writeable = parts.length > 1 ? parts[1].contains("w") : false;
-                    boolean showSubDirs = parts.length > 1 ? parts[1].contains("s") : false;
+                    boolean writeable = parts.length > 1 && parts[1].contains("w");
+                    boolean showSubDirs = parts.length > 1 && parts[1].contains("s");
                     if (source.startsWith(File.separator)) {
                         source = source.substring(1);
                     }

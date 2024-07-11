@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2023 Contributors to the openHAB project
+ * Copyright (c) 2010-2024 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -13,7 +13,6 @@
 package org.openhab.ui.habot.test;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 import java.io.InputStream;
@@ -39,7 +38,7 @@ public class AbstractTrainerTest {
     protected IntentTrainer trainer = createUninitializedTrainer();
     protected List<Skill> skills = new ArrayList<>();
 
-    public class Skills {
+    public static class Skills {
         public static final String GET_STATUS = "get-status";
         public static final String ACTIVATE_OBJECT = "activate-object";
         public static final String DEACTIVATE_OBJECT = "deactivate-object";
@@ -76,7 +75,7 @@ public class AbstractTrainerTest {
         return trainerMock;
     }
 
-    public class MockSkill implements Skill {
+    public static class MockSkill implements Skill {
 
         private String intent;
 
@@ -103,9 +102,9 @@ public class AbstractTrainerTest {
     protected Intent interpret(String query) {
         System.out.println("----");
         System.out.println("\"" + query + "\"");
-        System.out.println(new TreeMap<>(trainer.getScoreMap(query)).descendingMap().toString());
+        System.out.println(new TreeMap<>(trainer.getScoreMap(query)).descendingMap());
         Intent intent = trainer.interpret(query);
-        System.out.println(intent.toString());
+        System.out.println(intent);
         return intent;
     }
 

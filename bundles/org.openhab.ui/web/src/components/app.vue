@@ -1,14 +1,14 @@
 <template>
-  <f7-app v-if="init" :style="{ visibility: (($store.getters.user || $store.getters.page('overview')) || loginScreenOpened) ? '' : 'hidden' }" :params="f7params" :class="{ 'theme-dark': this.themeOptions.dark === 'dark', 'theme-filled': this.themeOptions.bars === 'filled' }">
+  <f7-app v-if="init" :style="{ visibility: (($store.getters.user || $store.getters.page('overview')) || communicationFailureMsg) ? '' : 'hidden' }" :params="f7params" :class="{ 'theme-dark': this.themeOptions.dark === 'dark', 'theme-filled': this.themeOptions.bars === 'filled' }">
     <!-- Left Panel -->
     <f7-panel v-show="ready" left :cover="showSidebar" class="sidebar" :visible-breakpoint="1024">
       <f7-page>
-        <f7-link href="/" class="logo no-ripple" panel-close v-if="themeOptions.dark === 'dark'">
+        <f7-link href="/overview" class="logo no-ripple" panel-close v-if="themeOptions.dark === 'dark'">
           <div class="logo-inner">
             <img src="@/images/openhab-logo-white.svg" type="image/svg+xml" width="196px">
           </div>
         </f7-link>
-        <f7-link href="/" class="logo no-ripple" panel-close v-else>
+        <f7-link href="/overview" class="logo no-ripple" panel-close v-else>
           <div class="logo-inner">
             <img src="@/images/openhab-logo.svg" type="image/svg+xml" width="196px">
           </div>
@@ -24,76 +24,93 @@
           <f7-icon slot="media" ios="f7:menu" aurora="f7:menu" md="material:list"></f7-icon>
         </f7-list-item> -->
           <f7-list-item v-for="page in pages" :animate="false" :key="page.uid"
-                        :class="{ currentsection: currentUrl.indexOf('/page/' + page.uid) >= 0 }"
+                        :class="{ currentsection: currentUrl === '/page/' + page.uid || currentUrl.indexOf('/page/' + page.uid + '/') === 0 }"
                         :link="'/page/' + page.uid"
                         :title="page.config.label" view=".view-main" panel-close>
-            <f7-icon slot="media" :f7="pageIcon(page)" />
+            <oh-icon slot="media" :icon="pageIcon(page)" height="18" width="18" />
           </f7-list-item>
         </f7-list>
         <f7-block-title v-if="$store.getters.isAdmin" v-t="'sidebar.administration'" />
+        <!-- Settings -->
         <f7-list class="admin-links" v-if="$store.getters.isAdmin">
           <f7-list-item link="/settings/" :title="$t('sidebar.settings')" view=".view-main" panel-close :animate="false"
-                        :class="{ currentsection: currentUrl === '/settings/' || currentUrl.indexOf('/settings/addons/') >= 0 || currentUrl.indexOf('/settings/services/') >= 0 }">
+                        :class="{ currentsection: currentUrl === '/settings/' || currentUrl.indexOf('/settings/services/') === 0 || currentUrl.indexOf('/settings/addons/') === 0 || currentUrl.indexOf('/settings/persistence/') === 0 }">
             <f7-icon slot="media" ios="f7:gear_alt_fill" aurora="f7:gear_alt_fill" md="material:settings" color="gray" />
           </f7-list-item>
           <li v-if="showSettingsSubmenu">
             <ul class="menu-sublinks">
               <f7-list-item v-if="$store.getters.apiEndpoint('things')" link="/settings/things/" title="Things" view=".view-main" panel-close :animate="false" no-chevron
-                            :class="{ currentsection: currentUrl.indexOf('/settings/things') >= 0 }">
+                            :class="{ currentsection: currentUrl.indexOf('/settings/things') === 0 }">
                 <f7-icon slot="media" f7="lightbulb" color="gray" />
               </f7-list-item>
               <f7-list-item v-if="$store.getters.apiEndpoint('items')" link="/settings/model/" title="Model" view=".view-main" panel-close :animate="false" no-chevron
-                            :class="{ currentsection: currentUrl.indexOf('/settings/model') >= 0 }">
+                            :class="{ currentsection: currentUrl.indexOf('/settings/model') === 0 }">
                 <f7-icon slot="media" f7="list_bullet_indent" color="gray" />
               </f7-list-item>
               <f7-list-item v-if="$store.getters.apiEndpoint('items')" link="/settings/items/" title="Items" view=".view-main" panel-close :animate="false" no-chevron
-                            :class="{ currentsection: currentUrl.indexOf('/settings/items') >= 0 }">
+                            :class="{ currentsection: currentUrl.indexOf('/settings/items') === 0 }">
                 <f7-icon slot="media" f7="square_on_circle" color="gray" />
               </f7-list-item>
               <f7-list-item v-if="$store.getters.apiEndpoint('ui')" link="/settings/pages/" title="Pages" view=".view-main" panel-close :animate="false" no-chevron
-                            :class="{ currentsection: currentUrl.indexOf('/settings/pages') >= 0 }">
+                            :class="{ currentsection: currentUrl.indexOf('/settings/pages') === 0 }">
                 <f7-icon slot="media" f7="tv" color="gray" />
               </f7-list-item>
               <f7-list-item v-if="$store.getters.apiEndpoint('rules')" link="/settings/rules/" title="Rules" view=".view-main" panel-close :animate="false" no-chevron
-                            :class="{ currentsection: currentUrl.indexOf('/settings/rules') >= 0 }">
+                            :class="{ currentsection: currentUrl.indexOf('/settings/rules') === 0 }">
                 <f7-icon slot="media" f7="wand_stars" color="gray" />
               </f7-list-item>
               <f7-list-item v-if="$store.getters.apiEndpoint('rules')" link="/settings/scenes/" title="Scenes" view=".view-main" panel-close :animate="false" no-chevron
-                            :class="{ currentsection: currentUrl.indexOf('/settings/scenes') >= 0 }">
+                            :class="{ currentsection: currentUrl.indexOf('/settings/scenes') === 0 }">
                 <f7-icon slot="media" f7="film" color="gray" />
               </f7-list-item>
               <f7-list-item v-if="$store.getters.apiEndpoint('rules')" link="/settings/scripts/" title="Scripts" view=".view-main" panel-close :animate="false" no-chevron
-                            :class="{ currentsection: currentUrl.indexOf('/settings/scripts') >= 0 }">
+                            :class="{ currentsection: currentUrl.indexOf('/settings/scripts') === 0 }">
                 <f7-icon slot="media" f7="doc_plaintext" color="gray" />
               </f7-list-item>
               <f7-list-item v-if="$store.getters.apiEndpoint('rules')" link="/settings/schedule/" title="Schedule" view=".view-main" panel-close :animate="false" no-chevron
-                            :class="{ currentsection: currentUrl.indexOf('/settings/schedule') >= 0 }">
+                            :class="{ currentsection: currentUrl.indexOf('/settings/schedule') === 0 }">
                 <f7-icon slot="media" f7="calendar" color="gray" />
               </f7-list-item>
             </ul>
           </li>
 
+          <!-- Add-on Store -->
+          <f7-list-item link="/addons/" :title="$t('sidebar.addOnStore')" view=".view-main" panel-close :animate="false"
+                        :class="{ currentsection: currentUrl === '/addons/' }">
+            <f7-icon slot="media" ios="f7:bag_fill" aurora="f7:bag_fill" md="material:shopping_bag" color="gray" />
+          </f7-list-item>
+          <li v-if="showAddonsSubmenu && $store.getters.apiEndpoint('addons')">
+            <ul class="menu-sublinks">
+              <f7-list-item v-for="section in Object.keys(AddonTitles)" :key="section" :link="`/addons/${section}/`"
+                            :title="AddonTitles[section]" view=".view-main" panel-close :animate="false" no-chevron
+                            :class="{ currentsection: currentUrl.indexOf(`/addons/${section}`) === 0 }">
+                <f7-icon slot="media" :f7="AddonIcons[section]" color="gray" />
+              </f7-list-item>
+            </ul>
+          </li>
+
+          <!-- Developer Tools -->
           <f7-list-item link="/developer/" :title="$t('sidebar.developerTools')" panel-close :animate="false"
-                        :class="{ currentsection: currentUrl.indexOf('/developer/') >= 0 && currentUrl.indexOf('/developer/widgets') < 0 &&
+                        :class="{ currentsection: currentUrl.indexOf('/developer/') === 0 && currentUrl.indexOf('/developer/widgets') < 0 &&
                           currentUrl.indexOf('/developer/blocks') < 0 && currentUrl.indexOf('/developer/api-explorer') < 0 }">
-            <f7-icon slot="media" ios="f7:exclamationmark_shield_fill" aurora="f7:exclamationmark_shield_fill" md="material:extension" color="gray" />
+            <f7-icon slot="media" ios="f7:wrench_fill" aurora="f7:wrench_fill" md="material:construction" color="gray" />
           </f7-list-item>
           <li v-if="showDeveloperSubmenu">
             <ul class="menu-sublinks">
               <f7-list-item v-if="$store.getters.apiEndpoint('ui')" link="/developer/widgets/" title="Widgets" view=".view-main" panel-close :animate="false" no-chevron
-                            :class="{ currentsection: currentUrl.indexOf('/developer/widgets') >= 0 }">
+                            :class="{ currentsection: currentUrl.indexOf('/developer/widgets') === 0 }">
                 <f7-icon slot="media" f7="rectangle_on_rectangle_angled" color="gray" />
               </f7-list-item>
               <f7-list-item v-if="$store.getters.apiEndpoint('ui')" link="/developer/blocks/" title="Block Libraries" view=".view-main" panel-close :animate="false" no-chevron
-                            :class="{ currentsection: currentUrl.indexOf('/developer/blocks') >= 0 }">
+                            :class="{ currentsection: currentUrl.indexOf('/developer/blocks') === 0 }">
                 <f7-icon slot="media" f7="ticket" color="gray" />
               </f7-list-item>
               <f7-list-item link="/developer/api-explorer" title="API Explorer" view=".view-main" panel-close :animate="false" no-chevron
-                            :class="{ currentsection: currentUrl.indexOf('/developer/api-explorer') >= 0 }">
+                            :class="{ currentsection: currentUrl.indexOf('/developer/api-explorer') === 0 }">
                 <f7-icon slot="media" f7="burn" color="gray" />
               </f7-list-item>
-              <!-- <f7-list-item link="" @click="$f7.emit('toggleDeveloperSidebar')" title="Sidebar" view=".view-main" panel-close :animate="false" no-chevron>
-                <f7-icon slot="media" :f7="$store.state.developerSidebar ? 'wrench_fill' : 'wrench'" color="gray" />
+              <!-- <f7-list-item link="" @click="$f7.emit('toggleDeveloperDock')" title="Dock" view=".view-main" panel-close :animate="false" no-chevron>
+                <f7-icon slot="media" :f7="$store.state.developerDock ? 'wrench_fill' : 'wrench'" color="gray" />
               </f7-list-item> -->
             </ul>
           </li>
@@ -132,48 +149,28 @@
     <!-- <f7-view url="/panel-right/"></f7-view> -->
     </f7-panel>
 
-    <f7-panel v-if="showDeveloperSidebar" right :visible-breakpoint="1280" resizable>
-      <developer-sidebar />
+    <f7-panel v-if="showDeveloperDock" right :visible-breakpoint="1280" resizable>
+      <developer-dock :dock="activeDock" :helpTab="activeHelpTab" :toolTab="activeToolTab" />
     </f7-panel>
 
-    <f7-view main v-show="ready" class="safe-areas" url="/" :master-detail-breakpoint="960" :animate="themeOptions.pageTransitionAnimation !== 'disabled'" />
-
-  <!-- <f7-login-screen id="my-login-screen" :opened="loginScreenOpened">
-    <f7-view name="login" v-if="$device.cordova">
-      <f7-page login-screen>
-        <f7-login-screen-title><img src="@/images/openhab-logo.svg" type="image/svg+xml" width="200px"><br>Login</f7-login-screen-title>
-        <f7-list form>
-          <f7-list-input
-            type="text"
-            name="serverUrl"
-            placeholder="openHAB server URL"
-            :value="serverUrl"
-            @input="serverUrl = $event.target.value"
-          ></f7-list-input>
-          <f7-list-input
-            type="text"
-            name="username"
-            placeholder="Username (optional)"
-            :value="username"
-            @input="username = $event.target.value"
-          ></f7-list-input>
-          <f7-list-input
-            type="password"
-            name="password"
-            placeholder="Password (optional)"
-            :value="password"
-            @input="password = $event.target.value"
-          ></f7-list-input>
-        </f7-list>
+    <f7-block v-if="!ready && communicationFailureMsg" class="block-narrow">
+      <empty-state-placeholder icon="wifi_slash" :title="$t('error.notReachable.title')" :text="$t('error.notReachable.msg') + '<br/><br/>Error: ' + communicationFailureMsg" />
+      <f7-col>
         <f7-list>
-          <f7-list-button title="Sign In" @click="login"></f7-list-button>
-          <f7-block-footer>
-            Some text about login information.
-          </f7-block-footer>
+          <f7-list-button color="blue" @click="loadData">
+            {{ $t('dialogs.retry') }}
+          </f7-list-button>
+          <f7-list-button color="blue" @click="reload">
+            {{ $t('about.reload.reloadApp') }}
+          </f7-list-button>
+          <f7-list-button v-if="showCachePurgeOption" color="red" @click="purgeServiceWorkerAndCaches">
+            {{ $t('about.reload.purgeCachesAndRefresh') }}
+          </f7-list-button>
         </f7-list>
-      </f7-page>
-    </f7-view>
-  </f7-login-screen> -->
+      </f7-col>
+    </f7-block>
+
+    <f7-view main v-show="ready" class="safe-areas" url="/" :master-detail-breakpoint="960" :animate="themeOptions.pageTransitionAnimation !== 'disabled'" />
   </f7-app>
 </template>
 
@@ -257,22 +254,28 @@
 <script>
 import Framework7 from 'framework7/framework7-lite.esm.bundle.js'
 
-import cordovaApp from '../js/cordova-app.js'
-import routes from '../js/routes.js'
-import PanelRight from '../pages/panel-right.vue'
-import DeveloperSidebar from './developer/developer-sidebar.vue'
+import routes from '@/js/routes.js'
+import PanelRight from '@/pages/panel-right.vue'
+import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 
-import auth from './auth-mixin.js'
-import i18n from './i18n-mixin.js'
+import { loadLocaleMessages } from '@/js/i18n'
+
+import auth from './auth-mixin'
+import i18n from './i18n-mixin'
+import connectionHealth from './connection-health-mixin'
+import sseEvents from './sse-events-mixin'
 
 import dayjs from 'dayjs'
 import dayjsLocales from 'dayjs/locale.json'
 
+import { AddonIcons, AddonTitles } from '@/assets/addon-store'
+
 export default {
-  mixins: [auth, i18n],
+  mixins: [auth, i18n, connectionHealth, sseEvents],
   components: {
+    EmptyStatePlaceholder,
     PanelRight,
-    DeveloperSidebar
+    DeveloperDock: () => import(/* webpackChunkName: "admin-base" */ '@/components/developer/developer-dock.vue')
   },
   data () {
     let theme = localStorage.getItem('openhab.ui:theme')
@@ -289,8 +292,6 @@ export default {
     return {
       init: false,
       ready: false,
-      eventSource: null,
-      audioContext: null,
 
       // Framework7 Parameters
       f7params: {
@@ -311,10 +312,10 @@ export default {
         // App routes
         routes: routes,
         view: {
-          // disable f7 swipeback on iOS (if not in cordova) because it's handled natively by Safari
-          iosSwipeBack: !this.$device.ios || this.$device.cordova,
-          auroraSwipeBack: !this.$device.ios || this.$device.cordova,
-          pushState: true, // !this.$device.cordova
+          // disable f7 swipeback on iOS because it's handled natively by Safari
+          iosSwipeBack: !this.$device.ios,
+          auroraSwipeBack: !this.$device.ios,
+          pushState: true,
           pushStateSeparator: ''
         },
         // Enable panel left visibility breakpoint
@@ -324,20 +325,14 @@ export default {
         },
 
         // Register service worker
-        serviceWorker: (this.$device.cordova || location.hostname === 'localhost') ? {} : {
-          path: '/service-worker.js'
-        },
-        // Input settings
-        input: {
-          scrollIntoViewOnFocus: !!this.$device.cordova,
-          scrollIntoViewCentered: !!this.$device.cordova
+        serviceWorker: (location.hostname === 'localhost') ? {} : {
+          path: './service-worker.js'
         },
         card: {
           swipeToClose: true
         },
-        // Cordova Statusbar settings
         statusbar: {
-          overlay: (this.$device.cordova && this.$device.ios) || 'auto',
+          overlay: 'auto',
           iosOverlaysWebView: true,
           androidOverlaysWebView: false
         },
@@ -369,7 +364,6 @@ export default {
       pages: null,
       showSidebar: true,
       visibleBreakpointDisabled: false,
-      loginScreenOpened: false,
       loggedIn: false,
 
       themeOptions: {
@@ -378,10 +372,17 @@ export default {
       },
 
       showSettingsSubmenu: false,
+      showAddonsSubmenu: false,
       showDeveloperSubmenu: false,
-      showDeveloperSidebar: false,
+      showDeveloperDock: false,
+      activeDock: 'tools',
+      activeToolTab: 'pin',
+      activeHelpTab: 'current',
       currentUrl: ''
     }
+  },
+  i18n: {
+    messages: loadLocaleMessages(require.context('@/assets/i18n/about'))
   },
   computed: {
     isAdmin () {
@@ -419,7 +420,6 @@ export default {
               this.loadData(true)
               return Promise.reject()
             }
-            this.loginScreenOpened = true
             this.$nextTick(() => {
               this.$f7.dialog.login(
                 window.location.host,
@@ -467,7 +467,9 @@ export default {
               })
             }
           } else {
-            this.$f7.dialog.alert('openHAB REST API connection failed with error ' + err.message || err.status)
+            // Make sure this is set to a value, otherwise the page won't show up
+            this.communicationFailureMsg = err.message || err.status || 'Unknown Error'
+            return Promise.reject('openHAB REST API connection failed with error: ' + err.message || err.status)
           }
         })
         .then((res) => res.data)
@@ -490,7 +492,8 @@ export default {
             ...this.$store.getters.apiEndpoint('ui')
               ? [this.$oh.api.get('/rest/ui/components/ui:page'), this.$oh.api.get('/rest/ui/components/ui:widget')]
               : [Promise.resolve([]), Promise.resolve([])],
-            dayjsLocalePromise
+            dayjsLocalePromise,
+            this.$store.dispatch('loadSemantics')
           ])
         }).then((data) => {
           // store the pages & widgets
@@ -505,6 +508,7 @@ export default {
 
           if (data[2]) dayjs.locale(data[2].key)
 
+          // finished with loading
           this.ready = true
           return Promise.resolve()
         })
@@ -519,30 +523,29 @@ export default {
       return false
     },
     pageIcon (page) {
+      if (page.config && page.config.icon) return page.config.icon
       switch (page.component) {
         case 'Sitemap':
-          return 'menu'
+          return 'f7:menu'
         case 'oh-layout-page':
-          return 'rectangle_grid_2x2'
+          return 'f7:rectangle_grid_2x2'
         case 'oh-tabs-page':
-          return 'squares_below_rectangle'
+          return 'f7:squares_below_rectangle'
         case 'oh-map-page':
-          return 'map'
+          return 'f7:map'
         case 'oh-plan-page':
-          return 'square_stack_3d_up'
+          return 'f7:square_stack_3d_up'
         case 'oh-chart-page':
-          return 'graph_square'
+          return 'f7:graph_square'
         default:
-          return 'tv'
+          return 'f7:tv'
       }
     },
     login () {
       localStorage.setItem('openhab.ui:serverUrl', this.serverUrl)
       localStorage.setItem('openhab.ui:username', this.username)
       localStorage.setItem('openhab.ui:password', this.password)
-      this.loadData().then((data) => {
-        // this.sitemaps = data
-        this.loginScreenOpened = false
+      this.loadData().then(() => {
         this.loggedIn = true
       }).catch((err) => {
         localStorage.removeItem('openhab.ui:serverUrl')
@@ -565,9 +568,6 @@ export default {
         this.loggedIn = false
         this.$f7.views.main.router.navigate('/', { animate: false, clearPreviousHistory: true })
         window.location = window.location.origin
-        if (this.$device.cordova) {
-          this.loginScreenOpened = true
-        }
       }).catch((err) => {
         this.$f7.preloader.hide()
         this.$f7.dialog.alert('Error while signing out: ' + err)
@@ -575,7 +575,7 @@ export default {
     },
     updateThemeOptions () {
       this.themeOptions.dark = localStorage.getItem('openhab.ui:theme.dark') || ((window.OHApp && window.OHApp.preferDarkMode) ? window.OHApp.preferDarkMode().toString() : (this.$f7.darkTheme ? 'dark' : 'light'))
-      this.themeOptions.bars = localStorage.getItem('openhab.ui:theme.bars') || ((this.$theme.ios || this.$f7.darkTheme || this.themeOptions.dark === 'dark') ? 'light' : 'filled')
+      this.themeOptions.bars = localStorage.getItem('openhab.ui:theme.bars') || 'light'
       this.themeOptions.homeNavbar = localStorage.getItem('openhab.ui:theme.home.navbar') || 'default'
       this.themeOptions.homeBackground = localStorage.getItem('openhab.ui:theme.home.background') || 'default'
       this.themeOptions.expandableCardAnimation = localStorage.getItem('openhab.ui:theme.home.cardanimation') || 'default'
@@ -591,12 +591,21 @@ export default {
         this.visibleBreakpointDisabled = true
         this.$nextTick(() => this.$f7.panel.get('left').disableVisibleBreakpoint())
       }
+      this.themeOptions.blocklyRenderer = localStorage.getItem('openhab.ui:blockly.renderer')
     },
-    toggleDeveloperSidebar () {
+    toggleDeveloperDock () {
       if (!this.$store.getters.isAdmin) return
-      this.showDeveloperSidebar = !this.showDeveloperSidebar
-      if (this.showDeveloperSidebar) this.$store.dispatch('startTrackingStates')
-      this.$store.commit('setDeveloperSidebar', this.showDeveloperSidebar)
+      this.showDeveloperDock = !this.showDeveloperDock
+      if (this.showDeveloperDock) this.$store.dispatch('startTrackingStates')
+      this.$store.commit('setDeveloperDock', this.showDeveloperDock)
+    },
+    selectDeveloperDock (dockOpts) {
+      if (dockOpts) {
+        if (dockOpts.dock) this.activeDock = dockOpts.dock
+        if (dockOpts.helpTab) this.activeHelpTab = dockOpts.helpTab
+        if (dockOpts.toolTab) this.activeToolTab = dockOpts.toolTab
+      }
+      if (!this.showDeveloperDock) this.toggleDeveloperDock()
     },
     toggleVisibleBreakpoint () {
       this.$f7.panel.get('left').toggleVisibleBreakpoint()
@@ -605,73 +614,44 @@ export default {
     },
     keyDown (ev) {
       if (ev.keyCode === 68 && ev.shiftKey && ev.altKey) {
-        this.toggleDeveloperSidebar()
+        this.toggleDeveloperDock()
         ev.stopPropagation()
         ev.preventDefault()
       }
     },
-    startEventSource () {
-      this.eventSource = this.$oh.sse.connect('/rest/events?topics=openhab/webaudio/playurl', null, (event) => {
-        const topicParts = event.topic.split('/')
-        switch (topicParts[2]) {
-          case 'playurl':
-            this.playAudioUrl(JSON.parse(event.payload))
-            break
-        }
-      })
-    },
-    stopEventSource () {
-      this.$oh.sse.close(this.eventSource)
-      this.eventSource = null
-    },
-    playAudioUrl (audioUrl) {
-      try {
-        if (!this.audioContext) {
-          window.AudioContext = window.AudioContext || window.webkitAudioContext
-          if (typeof (window.AudioContext) !== 'undefined') {
-            this.audioContext = new AudioContext()
-            unlockAudioContext(this.audioContext)
-          }
-        }
-        console.log('Playing audio URL: ' + audioUrl)
-        this.$oh.api.getPlain(audioUrl, '', '*/*', 'arraybuffer').then((data) => {
-          this.audioContext.decodeAudioData(data, (buffer) => {
-            let source = this.audioContext.createBufferSource()
-            source.buffer = buffer
-            source.connect(this.audioContext.destination)
-            source.start(0)
-          })
-        })
-      } catch (e) {
-        console.warn('Error while playing audio URL: ' + e.toString())
-      }
-      // Safari requires a touch event after the stream has started, hence this workaround
-      // Credit: https://www.mattmontag.com/web/unlock-web-audio-in-safari-for-ios-and-macos
-      function unlockAudioContext (audioContext) {
-        if (audioContext.state !== 'suspended') return
-        const b = document.body
-        const events = ['touchstart', 'touchend', 'mousedown', 'keydown']
-        events.forEach(e => b.addEventListener(e, unlock, false))
-        function unlock () { audioContext.resume().then(clean) }
-        function clean () { events.forEach(e => b.removeEventListener(e, unlock)) }
-      }
+    updateUrl (newUrl) {
+      this.showSettingsSubmenu = newUrl.indexOf('/settings/') === 0
+      this.showAddonsSubmenu = newUrl.indexOf('/addons/') === 0
+      this.showDeveloperSubmenu = newUrl.indexOf('/developer/') === 0
+      this.currentUrl = newUrl
+      this.$store.commit('setPagePath', this.currentUrl)
     }
   },
   created () {
+    this.AddonIcons = AddonIcons
+    this.AddonTitles = AddonTitles
+
     // special treatment for this option because it's needed to configure the app initialization
     this.themeOptions.pageTransitionAnimation = localStorage.getItem('openhab.ui:theme.pagetransition') || 'default'
-    // tell the app to go fullscreen (if the OHApp is supported)
-    if (window.OHApp && typeof window.OHApp.goFullscreen === 'function') {
-      try {
-        window.OHApp.goFullscreen()
-      } catch {}
+
+    // load 2-way communication for native wrappers
+    if (window.OHApp) {
+      // tell the app to go fullscreen (if the OHApp is supported)
+      if (typeof window.OHApp.goFullscreen === 'function') {
+        try {
+          window.OHApp.goFullscreen()
+        } catch {}
+        // expose external calls
+        window.MainUI = {
+          handleCommand: this.handleCommand
+        }
+      }
     }
-    // this.loginScreenOpened = true
+
     const refreshToken = this.getRefreshToken()
     if (refreshToken) {
       this.refreshAccessToken().then(() => {
         this.loggedIn = true
-        // this.loadData()
         this.init = true
       }).catch((err) => {
         console.warn('Error while using the stored refresh_token to get a new access_token: ' + err + '. Logging out & cleaning session.')
@@ -686,18 +666,6 @@ export default {
     this.$f7ready((f7) => {
       this.updateThemeOptions()
       this.$f7.data.themeOptions = this.themeOptions
-
-      // Init cordova APIs (see cordova-app.js)
-      if (f7.device.cordova) {
-        cordovaApp.init(f7)
-
-        if (!localStorage.getItem('openhab.ui:serverUrl')) {
-          this.loginScreenOpened = true
-          return
-        }
-
-        this.loggedIn = true
-      }
 
       if (!this.user) {
         this.tryExchangeAuthorizationCode().then((user) => {
@@ -721,10 +689,13 @@ export default {
 
       this.$f7.on('pageBeforeIn', (page) => {
         if (page.route && page.route.url) {
-          this.showSettingsSubmenu = page.route.url.indexOf('/settings/') === 0
-          this.showDeveloperSubmenu = page.route.url.indexOf('/developer/') === 0
-          this.currentUrl = page.route.url
+          this.updateUrl(page.route.url)
         }
+      })
+
+      // needed by updateCurrentUrl() inside addon-store onTabShow()
+      this.$f7.on('routeUrlUpdate', (newRoute, router) => {
+        this.updateUrl(newRoute.url)
       })
 
       this.$f7.on('sidebarRefresh', () => {
@@ -743,8 +714,12 @@ export default {
         this.updateThemeOptions()
       })
 
-      this.$f7.on('toggleDeveloperSidebar', () => {
-        this.toggleDeveloperSidebar()
+      this.$f7.on('toggleDeveloperDock', () => {
+        this.toggleDeveloperDock()
+      })
+
+      this.$f7.on('selectDeveloperDock', (opts) => {
+        this.selectDeveloperDock(opts)
       })
 
       this.$f7.on('smartSelectOpened', (smartSelect) => {
@@ -757,9 +732,7 @@ export default {
         window.addEventListener('keydown', this.keyDown)
       }
 
-      if (localStorage.getItem('openhab.ui:webaudio.enable') === 'enabled') {
-        this.startEventSource()
-      }
+      this.startEventSource()
     })
   }
 }

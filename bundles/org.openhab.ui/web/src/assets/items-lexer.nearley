@@ -8,8 +8,8 @@
     string:     { match: /"(?:\\["\\]|[^\n"\\])*"/, value: x => x.slice(1, -1) },
     itemtype:   ['Group ', 'Number ', 'Switch ', 'Rollershutter ', 'String ', 'Dimmer ', 'Contact ', 'DateTime ', 'Color ', 'Player ', 'Location ', 'Call ', 'Image '],
     membertype: [':Number', ':Switch', ':Rollershutter', ':String', ':Dimmer', ':Contact', ':DateTime', ':Color', ':Player', ':Location', ':Call', ':Image'],
-    aggfunc:    ['AVG', 'SUM', 'MIN', 'MAX', 'OR', 'AND', 'COUNT', 'LATEST', 'EARLIEST', 'EQUALITY'],
-    identifier: /[A-Za-z0-9_-]+/,
+    aggfunc:    ['AVG', 'SUM', 'MIN', 'MAX', 'OR', 'AND', 'NOR', 'NAND', 'COUNT', 'LATEST', 'EARLIEST', 'EQUALITY'],
+    identifier: /(?:[A-Za-z_][A-Za-z0-9_]*)|(?:[0-9]+[A-Za-z_][A-Za-z0-9_]*)/,
     lparen:     '(',
     rparen:     ')',
     colon:      ':',
@@ -21,6 +21,8 @@
     gt:         '>',
     comma:      ',',
     equals:     '=',
+    colon:      ':',
+    hyphen:     '-',
     NL:         { match: /\n/, lineBreaks: true },
   })
 %}
@@ -54,7 +56,7 @@ Type -> %itemtype                                   {% (d) => [d[0].text.trim()]
   | "Group" %membertype                             {% (d) => ['Group', d[1].text.substring(1)] %}
   | "Group" %membertype ":" %aggfunc AggArgs        {% (d) => ['Group', d[1].text.substring(1), {name: d[3].text, params: d[4]}] %}
   | "Group" %membertype ":" %identifier             {% (d) => ['Group', 'Number:' + d[3].text] %}
-  | "Group" %membertype ":" %identifier ":" %aggfunc AggArgs     {% (d) => ['Group', 'Number:' + d[3].text, {name: d[5].text, params: d[6]}] %}
+  | "Group" %membertype ":" %identifier ":" %aggfunc AggArgs   {% (d) => ['Group', 'Number:' + d[3].text, {name: d[5].text, params: d[6]}] %}
 # group function aggregation arguments
 AggArgs -> null                                     {% (d) => undefined %}
   | "(" %identifier ")"                             {% (d) => [d[1].text] %}
@@ -69,7 +71,13 @@ Label -> null                                       {% (d) => undefined %}
 
 # Icon (category)
 Icon -> null                                        {% (d) => undefined %}
-  | __ "<" _ %identifier _ ">"                      {% (d) => d[3].text %}
+  | __ "<" _ IconValue _ ">"                        {% (d) => d[3].join("") %}
+IconValue -> %string
+  | IconName
+  | %identifier %colon IconName
+  | %identifier %colon %identifier %colon IconName
+IconName -> %identifier
+  | %identifier %hyphen IconName                    {% (d) => d[0].value + "-" + d[2] %}
 
 # Groups
 Groups -> null                                      {% (d) => undefined %}
@@ -107,14 +115,14 @@ MetadataConfigValue -> %string                      {% (d) => d[0].value %}
   | %number                                         {% (d) => parseInt(d[0].value) %}
 
 
-_ -> null {% () => null %}
-  | _ %WS  {% () => null %}
-  | _ %NL  {% () => null %}
+_ -> null      {% () => null %}
+  | _ %WS      {% () => null %}
+  | _ %NL      {% () => null %}
   | _ %comment {% () => null %}
 
-__ -> %WS      {% () => null %}
-  | %NL      {% () => null %}
+__ -> %WS       {% () => null %}
+  | %NL         {% () => null %}
   | %comment    {% () => null %}
   | __ %WS      {% () => null %}
   | __ %NL      {% () => null %}
-  | __ %comment   {% () => null %}
+  | __ %comment {% () => null %}

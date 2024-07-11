@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2023 Contributors to the openHAB project
+ * Copyright (c) 2010-2024 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -48,7 +48,7 @@ public class Intent {
     /**
      * Sets the intent's entities
      *
-     * @param slots the map of entities
+     * @param entities the map of entities
      */
     public void setEntities(Map<String, String> entities) {
         this.entities = entities;
@@ -66,6 +66,6 @@ public class Intent {
      */
     public Intent(String name) {
         this.name = name;
-        this.entities = new HashMap<String, String>();
+        this.entities = new HashMap<>();
     }
 }

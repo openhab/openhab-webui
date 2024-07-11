@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2023 Contributors to the openHAB project
+ * Copyright (c) 2010-2024 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -31,12 +31,11 @@ import org.openhab.ui.cometvisu.internal.backend.model.StateBean;
 public class SseUtil {
 
     /**
-     * Creates a new {@link OutboundEvent} object containing an
+     * Creates a new {@link OutboundSseEvent} object containing an
      * {@link StateBean} created for the given eventType, objectIdentifier,
      * eventObject.
      *
-     * @param eventType the event type for the event
-     * @param objectIdentifier the identifier for the main event object
+     * @param eventBuilder the builder used for building the event
      * @param eventObject the eventObject to be included
      * @return a new OutboundSseEvent
      */
@@ -51,12 +50,7 @@ public class SseUtil {
      * Used to mark our current thread(request processing) that SSE blocking
      * should be enabled.
      */
-    private static ThreadLocal<Boolean> blockingSseEnabled = new ThreadLocal<>() {
-        @Override
-        protected Boolean initialValue() {
-            return false;
-        }
-    };
+    private static ThreadLocal<Boolean> blockingSseEnabled = ThreadLocal.withInitial(() -> false);
 
     /**
      * Returns true if the current thread is processing an SSE request that

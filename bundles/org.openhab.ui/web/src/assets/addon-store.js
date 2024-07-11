@@ -1,11 +1,69 @@
 export const AddonIcons = {
-  automation: 'wand_stars',
   binding: 'circle_grid_hex_fill',
-  persistence: 'download_circle',
+  automation: 'wand_stars',
   transformation: 'function',
-  misc: 'rectangle_3_offgrid',
+  persistence: 'download_circle',
   ui: 'play_rectangle',
+  misc: 'rectangle_3_offgrid',
   voice: 'chat_bubble_2_fill'
+}
+
+export const AddonTitles = {
+  binding: 'Bindings',
+  automation: 'Automation',
+  transformation: 'Transformations',
+  persistence: 'Persistence',
+  ui: 'User Interfaces',
+  misc: 'System Integrations',
+  voice: 'Voice & Speech'
+}
+
+export const AddonSuggestionLabels = {
+  binding: {
+    title: 'Suggested Bindings',
+    subtitle: 'Suggested bindings, identified from network scan'
+  },
+  misc: {
+    title: 'Suggested System Integration Add-ons',
+    subtitle: 'Suggested system integrations, identified from network scan'
+  },
+  persistence: {
+    title: 'Suggested Persistence Services',
+    subtitle: 'Suggested backend connectors to store historical data, identified from network scan'
+  },
+  transformation: {
+    title: 'Suggested Transformation Add-ons',
+    subtitle: 'Suggested transformation add-ons to translate raw values into processed or human-readable representations, identified from network scan'
+  },
+  voice: {
+    title: 'Suggested Voice &amp; Speech Add-ons',
+    subtitle: 'Convert between text and speech, interpret human language queries'
+  }
+}
+
+export const AddonConnectionTypes = {
+  cloud: {
+    label: 'Cloud allowed',
+    values: ['none', 'local', 'hybrid', 'cloud']
+  },
+  cloudConfig: {
+    label: 'Optional cloud functionality',
+    values: ['none', 'local', 'hybrid']
+  },
+  noCloud: {
+    label: 'No cloud allowed',
+    values: ['none', 'local']
+  },
+  noNetwork: {
+    label: 'No LAN access',
+    values: ['none']
+  }
+}
+
+export const AddonRegionTypes = {
+  exclude_other: 'All applicable for you',
+  only_region: 'Only for your country',
+  all: 'All'
 }
 
 export const ContentTypes = {
@@ -28,33 +86,6 @@ export const Formats = {
   'eclipse': 'Eclipse',
   'karaf': 'Karaf'
 }
-
-export const AddonStoreTabShortcuts = [
-  {
-    id: 'bindings',
-    label: 'Bindings',
-    icon: 'circle_grid_hex',
-    subtitle: 'Connect and control hardware and online services'
-  },
-  {
-    id: 'automation',
-    label: 'Automation',
-    icon: 'sparkles',
-    subtitle: 'Scripting languages, templates and module types'
-  },
-  {
-    id: 'ui',
-    label: 'User Interfaces',
-    icon: 'play_rectangle',
-    subtitle: 'Community widgets & alternative frontends'
-  },
-  {
-    id: 'other',
-    label: 'Other Add-ons',
-    icon: 'ellipsis',
-    subtitle: 'System integrations, persistence, voice & more'
-  }
-]
 
 export function compareAddons (a1, a2) {
   if (a1.installed && !a2.installed) return -1

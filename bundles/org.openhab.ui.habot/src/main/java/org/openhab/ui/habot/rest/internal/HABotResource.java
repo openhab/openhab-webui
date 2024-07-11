@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2023 Contributors to the openHAB project
+ * Copyright (c) 2010-2024 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -170,8 +170,8 @@ public class HABotResource implements RESTResource {
 
         itemResolver.setLocale(locale);
         Map<String, Set<ItemNamedAttribute>> attributesByItemName = new HashMap<>();
-        itemResolver.getAllItemNamedAttributes().entrySet().stream()
-                .forEach(entry -> attributesByItemName.put(entry.getKey().getName(), entry.getValue()));
+        itemResolver.getAllItemNamedAttributes()
+                .forEach((key, value) -> attributesByItemName.put(key.getName(), value));
 
         return Response.ok(attributesByItemName).build();
     }

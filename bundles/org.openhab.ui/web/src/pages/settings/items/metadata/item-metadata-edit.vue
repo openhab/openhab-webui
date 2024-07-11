@@ -66,14 +66,17 @@ import YAML from 'yaml'
 import MetadataNamespaces from '@/assets/definitions/metadata/namespaces.js'
 
 import ItemMetadataItemDescription from '@/components/item/metadata/item-metadata-itemdescription.vue'
+import ItemMetadataUnit from '@/components/item/metadata/item-metadata-unit.vue'
 import ItemMetadataSynonyms from '@/components/item/metadata/item-metadata-synonyms.vue'
 import ItemMetadataWidget from '@/components/item/metadata/item-metadata-widget.vue'
 import ItemMetadataWidgetOrder from '@/components/item/metadata/item-metadata-widgetorder.vue'
 import ItemMetadataAutoUpdate from '@/components/item/metadata/item-metadata-autoupdate.vue'
 import ItemMetadataExpire from '@/components/item/metadata/item-metadata-expire.vue'
+import ItemMetadataVoiceSystem from '@/components/item/metadata/item-metadata-voicesystem.vue'
 import ItemMetadataAlexa from '@/components/item/metadata/item-metadata-alexa.vue'
 import ItemMetadataHomeKit from '@/components/item/metadata/item-metadata-homekit.vue'
 import ItemMetadataGa from '@/components/item/metadata/item-metadata-ga.vue'
+import ItemMetadataLinktomore from '@/components/item/metadata/item-metadata-linktomore.vue'
 import DirtyMixin from '../../dirty-mixin'
 
 export default {
@@ -109,6 +112,8 @@ export default {
         case 'stateDescription':
         case 'commandDescription':
           return ItemMetadataItemDescription
+        case 'unit':
+          return ItemMetadataUnit
         case 'synonyms':
           return ItemMetadataSynonyms
         case 'widget':
@@ -121,12 +126,16 @@ export default {
           return ItemMetadataAutoUpdate
         case 'expire':
           return ItemMetadataExpire
+        case 'voiceSystem':
+          return ItemMetadataVoiceSystem
         case 'alexa':
           return ItemMetadataAlexa
         case 'homekit':
           return ItemMetadataHomeKit
         case 'ga':
           return ItemMetadataGa
+        case 'link_to_more':
+          return ItemMetadataLinktomore
         default:
           return null
       }

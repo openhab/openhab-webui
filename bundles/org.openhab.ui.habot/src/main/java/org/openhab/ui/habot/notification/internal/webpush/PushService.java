@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2023 Contributors to the openHAB project
+ * Copyright (c) 2010-2024 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -154,7 +154,7 @@ public class PushService {
         byte[] salt = encrypted.getSalt();
 
         Invocation.Builder invocationBuilder = ClientBuilder.newClient().target(notification.getEndpoint()).request();
-        MultivaluedMap<String, Object> headers = new MultivaluedHashMap<String, Object>();
+        MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();
         headers.add("TTL", String.valueOf(notification.getTTL()));
 
         if (notification.hasPayload()) {

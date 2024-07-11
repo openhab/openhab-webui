@@ -19,7 +19,7 @@ export const docLink = (title, anchor) => {
   return `<a class="external text-color-blue" target="_blank" href="${link}">${title}</a>`
 }
 
-export const getGroupParameter = (parameter, groups) => {
+export const getGroupParameter = (parameter, groups = []) => {
   for (const group of groups) {
     const config = group.metadata.alexa.config || {}
     if (parameter in config) return config[parameter]
@@ -39,25 +39,36 @@ export const getSemanticFormat = (type, format) =>
     ''
   )
 
-export const getTemperatureScale = (item) => {
+export const getSupportedRange = (item, config, defaultValue) => {
+  const { minimum, maximum, step, pattern } = item.stateDescription || {}
+  if (!isNaN(minimum) && !isNaN(maximum) && !isNaN(step)) return `${minimum}:${maximum}:${step}`
   const itemType = item.groupType || item.type
-  const state = (item.state !== 'NULL' && item.state !== 'UNDEF' && item.state) || ''
-  const statePresentation = (item.stateDescription && item.stateDescription.pattern) || ''
-  const format = (itemType === 'Number:Temperature' && state) || statePresentation
-  if (format.endsWith('°C')) return 'CELSIUS'
-  if (format.endsWith('°F')) return 'FAHRENHEIT'
-  const { measurementSystem } = (item.settings && item.settings.regional) || {}
+  if (itemType.startsWith('Number') && config.nonControllable) {
+    const { precision, specifier } = pattern?.match(/%\d*(?:\.(?<precision>\d+))?(?<specifier>[df])/)?.groups || {}
+    const [minimum, maximum] = defaultValue.split(':', 2)
+    if (specifier === 'd') return `${minimum}:${maximum}:1`
+    if (precision <= 16) return `${minimum}:${maximum}:${1 / 10 ** precision}`
+  }
+  return defaultValue
+}
+
+export const getTemperatureScale = (item) => {
+  const scale = getGroupParameter('scale', item.groups)
+  if (scale) return scale
+  const itemType = item.groupType || item.type
+  const format = (itemType === 'Number:Temperature' && item.unitSymbol) || item.stateDescription?.pattern
+  if (format?.endsWith('°C')) return 'CELSIUS'
+  if (format?.endsWith('°F')) return 'FAHRENHEIT'
+  const measurementSystem = item.settings?.regional?.measurementSystem
   if (measurementSystem === 'SI') return 'CELSIUS'
   if (measurementSystem === 'US') return 'FAHRENHEIT'
 }
 
 export const getUnitOfMeasure = (item) => {
   const itemType = item.groupType || item.type
-  const state = (item.state !== 'NULL' && item.state !== 'UNDEF' && item.state) || ''
-  const statePresentation = (item.stateDescription && item.stateDescription.pattern) || ''
   const format =
     ((itemType === 'Dimmer' || itemType === 'Rollershutter') && '%') ||
-    (itemType.startsWith('Number:') && state) ||
-    statePresentation
-  return Object.keys(UNITS_OF_MEASURE).find((id) => format.endsWith(UNITS_OF_MEASURE[id]))
+    (itemType.startsWith('Number:') && item.unitSymbol) ||
+    item.stateDescription?.pattern
+  return Object.keys(UNITS_OF_MEASURE).find((id) => format?.endsWith(UNITS_OF_MEASURE[id]))
 }

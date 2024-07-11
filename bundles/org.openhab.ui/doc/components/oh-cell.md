@@ -176,7 +176,7 @@ A regular or expandable cell
     Group Item whose members to show in a popup
   </PropDescription>
 </PropBlock>
-<PropBlock type="TEXT" name="actionAnalyzerItems" label="Item(s) to Analyze" context="item">
+<PropBlock type="TEXT" name="actionAnalyzerItems" label="Item(s) to Analyze" required="true" context="item">
   <PropDescription>
     Start analyzing with the specified (set of) Item(s)
   </PropDescription>
@@ -261,7 +261,7 @@ A regular or expandable cell
     <PropOption value="right" label="right" />
   </PropOptions>
 </PropBlock>
-<PropBlock type="TEXT" name="trendSampling" label="Trend Line Sampling">
+<PropBlock type="INTEGER" name="trendSampling" label="Trend Line Sampling">
   <PropDescription>
     Amount of minutes between each point of the trendline (default: 60). Affected by persistence strategies different from "every minute"
   </PropDescription>

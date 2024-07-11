@@ -54,6 +54,7 @@
     "colorlight",
     "smoke",
     "soundvolume",
+    "soundvolume_mute",
     "pressure",
     "fire",
     "motion",

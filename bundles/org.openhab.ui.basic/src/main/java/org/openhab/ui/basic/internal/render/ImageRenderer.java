@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2023 Contributors to the openHAB project
+ * Copyright (c) 2010-2024 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -59,7 +59,12 @@ public class ImageRenderer extends AbstractWidgetRenderer {
     @Override
     public EList<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException {
         Image image = (Image) w;
-        String snippet = (image.getChildren().size() > 0) ? getSnippet("image_link") : getSnippet("image");
+        String snippet = (!image.getChildren().isEmpty()) ? getSnippet("image_link") : getSnippet("image");
+
+        boolean showHeaderRow = image.getLabel() != null;
+        snippet = snippet.replace("%header_visibility_class%",
+                showHeaderRow ? "%visibility_class%" : "mdl-form__row--hidden");
+        snippet = snippet.replace("%header_row%", Boolean.valueOf(showHeaderRow).toString());
 
         if (image.getRefresh() > 0) {
             snippet = snippet.replace("%update_interval%", Integer.toString(image.getRefresh()));
@@ -69,7 +74,10 @@ public class ImageRenderer extends AbstractWidgetRenderer {
 
         String widgetId = itemUIRegistry.getWidgetId(w);
         snippet = snippet.replace("%id%", widgetId);
-        snippet = preprocessSnippet(snippet, w);
+        snippet = preprocessSnippet(snippet, w, true);
+
+        // Process the color tags
+        snippet = processColor(w, snippet);
 
         boolean validUrl = isValidURL(image.getUrl());
         String proxiedUrl = "../proxy?sitemap=" + sitemap + "&amp;widgetId=" + widgetId;

@@ -1,9 +1,10 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="thing-details-page">
-    <f7-navbar :title="thing.label || thing.UID" back-link="Back" no-hairline>
-      <f7-nav-right v-show="!error">
-        <f7-link @click="save()" v-if="$theme.md && thing.editable" icon-md="material:save" icon-only />
-        <f7-link @click="save()" v-if="!$theme.md && thing.editable">
+    <f7-navbar :title="pageTitle" back-link="Back" no-hairline>
+      <f7-nav-right v-show="!error && ready">
+        <f7-link v-if="!editable" icon-f7="lock_fill" icon-only tooltip="This Thing is not editable through the UI" />
+        <f7-link v-else-if="$theme.md" icon-md="material:save" icon-only @click="save()" />
+        <f7-link v-else @click="save()">
           Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
         </f7-link>
       </f7-nav-right>
@@ -54,11 +55,11 @@
 
         <f7-block v-if="ready && !error" class="block-narrow">
           <f7-col>
-            <thing-general-settings :thing="thing" :thing-type="thingType" @updated="thingDirty = true" :ready="true" :read-only="thing.editable === false" />
+            <thing-general-settings :thing="thing" :thing-type="thingType" :ready="true" :read-only="!editable" />
             <f7-block-title v-if="thingType && thingType.UID" medium style="margin-bottom: var(--f7-list-margin-vertical)">
               Information
             </f7-block-title>
-            <f7-block-footer v-if="thing.editable === false" class="no-margin padding-left">
+            <f7-block-footer v-if="!editable" class="no-margin padding-left">
               <f7-icon f7="lock_fill" size="12" color="gray" />&nbsp;Note: {{ notEditableMsg }}
             </f7-block-footer>
             <f7-list accordion-opposite>
@@ -90,14 +91,13 @@
                           :configuration="thing.configuration"
                           :status="configStatusInfo"
                           :set-empty-config-as-null="true"
-                          :read-only="thing.editable === false"
-                          @updated="configDirty = true" />
+                          :read-only="!editable" />
           </f7-col>
         </f7-block>
         <!-- skeletons for not ready -->
         <f7-block v-else-if="!error" class="block-narrow skeleton-text skeleton-effect-blink">
           <f7-col>
-            <thing-general-settings :thing="thing" :thing-type="thingType" @updated="thingDirty = true" :ready="false" />
+            <thing-general-settings :thing="thing" :thing-type="thingType" :ready="false" />
             <f7-block-title medium>
               ____ _______
             </f7-block-title>
@@ -124,7 +124,7 @@
           </f7-block>
         </div>
 
-        <f7-block class="block-narrow" v-if="ready && thing.editable">
+        <f7-block class="block-narrow" v-if="ready && editable">
           <f7-col>
             <f7-list>
               <f7-list-button color="red" title="Delete Thing" @click="deleteThing" />
@@ -139,7 +139,7 @@
                         @channels-updated="onChannelsUpdated" :context="context" />
           <f7-col v-if="isExtensible || thing.channels.length > 0">
             <f7-list>
-              <f7-list-button class="searchbar-ignore" color="blue" title="Add Channel" v-if="isExtensible && thing.editable" @click="addChannel()" />
+              <f7-list-button class="searchbar-ignore" color="blue" title="Add Channel" v-if="isExtensible && editable" @click="addChannel()" />
               <f7-list-button class="searchbar-ignore" color="blue" title="Add Equipment to Model" @click="addToModel(true)" />
               <f7-list-button class="searchbar-ignore" color="blue" title="Add Points to Model" @click="addToModel(false)" />
               <f7-list-button class="searchbar-ignore" color="red" title="Unlink all Items" @click="unlinkAll(false)" />
@@ -150,8 +150,8 @@
       </f7-tab>
 
       <f7-tab id="code" :tab-active="currentTab === 'code'">
-        <f7-icon v-if="thing && !thing.editable" f7="lock" class="float-right margin" style="opacity:0.5; z-index: 4000; user-select: none;" size="50" color="gray" :tooltip="notEditableMsg" />
-        <editor v-if="currentTab === 'code'" class="thing-code-editor" mode="application/vnd.openhab.thing+yaml" :value="thingYaml" :hint-context="{ thingType: thingType, channelTypes: channelTypes }" @input="(value) => thingYaml = value" :read-only="thing && !thing.editable" />
+        <f7-icon v-if="!editable" f7="lock" class="float-right margin" style="opacity:0.5; z-index: 4000; user-select: none;" size="50" color="gray" :tooltip="notEditableMsg" />
+        <editor v-if="ready" class="thing-code-editor" mode="application/vnd.openhab.thing+yaml" :value="thingYaml" :hint-context="{ thingType: thingType, channelTypes: channelTypes }" @input="onEditorInput" :read-only="!editable" />
         <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
       </f7-tab>
     </f7-tabs>
@@ -246,6 +246,8 @@ p.action-description
 
 <script>
 import YAML from 'yaml'
+import cloneDeep from 'lodash/cloneDeep'
+import fastDeepEqual from 'fast-deep-equal/es6'
 import groupBy from 'lodash/groupBy'
 import map from 'lodash/map'
 
@@ -285,6 +287,7 @@ export default {
       thingDirty: false,
       currentTab: 'thing',
       thing: {},
+      savedThing: {},
       thingType: {},
       channelTypes: {},
       configDescriptions: {},
@@ -304,6 +307,13 @@ export default {
     })
   },
   computed: {
+    editable () {
+      return this.thing && this.thing.editable
+    },
+    pageTitle () {
+      if (!this.ready) return ''
+      return this.thing.label || this.thing.UID
+    },
     isExtensible () {
       if (!this.thingType || !this.thingType.extensibleChannelTypeIds) return false
       return this.thingType.extensibleChannelTypeIds.length > 0
@@ -329,7 +339,22 @@ export default {
   },
   watch: {
     configDirty: function () { this.dirty = this.configDirty || this.thingDirty },
-    thingDirty: function () { this.dirty = this.configDirty || this.thingDirty }
+    thingDirty: function () { this.dirty = this.configDirty || this.thingDirty },
+    thing: {
+      handler () {
+        if (!this.loading) { // ignore changes during loading
+          // create rule object clone in order to be able to delete status part
+          // which can change from eventsource but doesn't mean a rule modification
+          let thingClone = cloneDeep(this.thing)
+          delete thingClone.statusInfo
+          delete this.savedThing.statusInfo
+
+          this.configDirty = !fastDeepEqual(thingClone.configuration, this.savedThing.configuration)
+          this.thingDirty = !fastDeepEqual(thingClone, this.savedThing)
+        }
+      },
+      deep: true
+    }
   },
   methods: {
     onPageAfterIn (event) {
@@ -350,6 +375,9 @@ export default {
         window.removeEventListener('keydown', this.keyDown)
       }
     },
+    onEditorInput (value) {
+      this.thingYaml = value
+    },
     switchTab (tab) {
       if (this.currentTab === tab) return
       if (this.currentTab === 'code') {
@@ -367,6 +395,15 @@ export default {
       // if (this.ready) return
       if (this.loading) return
       this.loading = true
+
+      const loadingFinished = () => {
+        this.$nextTick(() => {
+          this.savedThing = cloneDeep(this.thing)
+          this.ready = true
+          this.loading = false
+        })
+      }
+
       this.$oh.api.get('/rest/things/' + this.thingId).then(data => {
         this.$set(this, 'thing', data)
 
@@ -379,10 +416,6 @@ export default {
 
           this.$oh.api.get('/rest/config-descriptions/thing:' + this.thingId).then(data3 => {
             this.configDescriptions = data3
-            this.ready = true
-            this.loading = false
-            this.configDirty = false
-            this.thingDirty = false
 
             // gather actions (rendered as buttons at the bottom)
             let bindingActionsGrouped = this.getBindingActions(this.configDescriptions)
@@ -405,18 +438,16 @@ export default {
             })
             this.configActionsByGroup = allActions
 
+            loadingFinished()
             if (!this.eventSource) this.startEventSource()
           }).catch(err => {
             console.log('No config descriptions for this thing, using those on the thing type: ' + err)
-            this.ready = true
-            this.loading = false
-            this.configDirty = false
-            this.thingDirty = false
             this.configDescriptions = {
               parameterGroups: this.thingType.parameterGroups,
               parameters: this.thingType.configParameters
             }
 
+            loadingFinished()
             if (!this.eventSource) this.startEventSource()
           })
 
@@ -427,7 +458,7 @@ export default {
         }).catch((err) => {
           console.warn('Cannot load the related info: ' + err)
           this.error = true
-          this.ready = true
+          loadingFinished()
         })
       })
     },
@@ -470,7 +501,7 @@ export default {
       })
     },
     save (saveThing) {
-      if (!this.ready) return
+      if (!this.ready || !this.editable) return
 
       if (this.currentTab === 'code') {
         if (!this.fromYaml()) {
@@ -478,13 +509,13 @@ export default {
         }
       }
 
-      // if set dirty flag is set, assume the config has to be saved with PUT /rest/things/:thingId/config
-      // otherwise (for example, channels or label) use the regular PUT /rest/thing/:thingId
       let endpoint, payload, successMessage
+      // if configDirty flag is set, assume the config has to be saved with PUT /rest/things/:thingId/config
       if (this.configDirty && !this.thingDirty && !saveThing) {
         endpoint = '/rest/things/' + this.thingId + '/config'
         payload = this.thing.configuration
         successMessage = 'Thing configuration updated'
+        // otherwise (for example, channels or label) use the regular PUT /rest/thing/:thingId
       } else {
         endpoint = '/rest/things/' + this.thingId
         payload = this.thing
@@ -528,7 +559,6 @@ export default {
         this.thing.label,
         () => {
           thing.configuration[action.name] = true
-          this.configDirty = true
           save()
         }
       )
@@ -563,6 +593,7 @@ export default {
         'Delete Thing',
         () => {
           this.$oh.api.delete(url).then(() => {
+            this.dirty = false
             this.$f7router.back('/settings/things/', { force: true })
           })
         }
@@ -758,23 +789,15 @@ export default {
 
       const editableChannels = []
 
-      const isExtensible = (channel, thingType) => {
-        const bindingId = thingType.UID.split(':')[0]
-        return thingType.extensibleChannelTypeIds.map((t) => bindingId + ':' + t).indexOf(channel.channelTypeUID) >= 0
-      }
-
       for (const channel of this.thing.channels) {
-        if (isExtensible(channel, this.thingType)) {
-          console.debug(`Adding ${channel.uid} to code because it is extensible`)
-          const editableChannel = {
-            id: channel.id,
-            channelTypeUID: channel.channelTypeUID,
-            label: channel.label,
-            description: channel.description,
-            configuration: channel.configuration
-          }
-          editableChannels.push(editableChannel)
+        const editableChannel = {
+          id: channel.id,
+          channelTypeUID: channel.channelTypeUID,
+          label: channel.label,
+          description: channel.description,
+          configuration: channel.configuration
         }
+        editableChannels.push(editableChannel)
       }
 
       if (editableChannels.length > 0) editableThing.channels = editableChannels
@@ -783,7 +806,6 @@ export default {
     },
     fromYaml () {
       const updatedThing = YAML.parse(this.thingYaml)
-      let dirty = false
 
       const isExtensible = (channel, thingType) => {
         if (!channel || !channel.channelTypeUID) return false
@@ -794,13 +816,12 @@ export default {
       try {
         if (updatedThing.UID !== this.thing.UID) throw new Error('Changing the thing UID is not supported')
         if (updatedThing.thingTypeUID !== this.thing.thingTypeUID) throw new Error('Changing the thing type is not supported')
-        if (updatedThing.label) { this.$set(this.thing, 'label', updatedThing.label); this.thingDirty = dirty = true }
-        if (updatedThing.location) { this.$set(this.thing, 'location', updatedThing.location); this.thingDirty = dirty = true }
-        if (updatedThing.bridgeUID) { this.$set(this.thing, 'bridgeUID', updatedThing.bridgeUID); this.thingDirty = dirty = true }
+        if (updatedThing.label) this.$set(this.thing, 'label', updatedThing.label)
+        if (updatedThing.location) this.$set(this.thing, 'location', updatedThing.location)
+        if (updatedThing.bridgeUID) this.$set(this.thing, 'bridgeUID', updatedThing.bridgeUID)
 
         if (updatedThing.configuration && JSON.stringify(this.thing.configuration) !== JSON.stringify(updatedThing.configuration)) {
           this.$set(this.thing, 'configuration', updatedThing.configuration)
-          this.configDirty = dirty = true
         }
 
         if (updatedThing.channels && Array.isArray(updatedThing.channels)) {
@@ -834,7 +855,6 @@ export default {
               }
               if (!isExtensible(newChannel, this.thingType)) continue
               this.thing.channels.push(newChannel)
-              this.thingDirty = dirty = true
             }
           }
 
@@ -850,13 +870,11 @@ export default {
                   continue
                 }
                 this.thing.channels.splice(this.thing.channels.findIndex((c) => c.id === existingChannel.id), 1)
-                this.thingDirty = dirty = true
               }
             }
           }
         }
-
-        return dirty
+        return true
       } catch (e) {
         this.$f7.dialog.alert(e).open()
         return false

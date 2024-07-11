@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2023 Contributors to the openHAB project
+ * Copyright (c) 2010-2024 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -22,13 +22,12 @@ import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -188,21 +187,18 @@ public class CometVisuServlet extends HttpServlet {
             if (requestedFile.endsWith("/")) {
                 requestedFile = requestedFile.substring(0, requestedFile.length() - 1);
             }
-            file = new File(userFileFolder, URLDecoder.decode(requestedFile, "UTF-8"));
+            file = new File(userFileFolder, URLDecoder.decode(requestedFile, StandardCharsets.UTF_8));
         }
         // serve the file from the cometvisu src directory
         if (file == null || !file.exists() || file.isDirectory()) {
-            file = requestedFile != null ? new File(rootFolder, URLDecoder.decode(requestedFile, "UTF-8")) : rootFolder;
+            file = requestedFile != null
+                    ? new File(rootFolder, URLDecoder.decode(requestedFile, StandardCharsets.UTF_8))
+                    : rootFolder;
         }
         if (file.isDirectory()) {
             // search for an index file
-            FilenameFilter filter = new FilenameFilter() {
-                @Override
-                public boolean accept(@Nullable File dir, @Nullable String name) {
-                    return name != null && name.startsWith("index.")
-                            && (name.endsWith(".php") || name.endsWith(".html"));
-                }
-            };
+            FilenameFilter filter = (dir, name) -> name != null && name.startsWith("index.")
+                    && (name.endsWith(".php") || name.endsWith(".html"));
             for (String dirFile : file.list(filter)) {
                 // take the first one found
                 file = new File(file, dirFile);
@@ -363,14 +359,7 @@ public class CometVisuServlet extends HttpServlet {
                     if ("rrd4j".equals(persistenceService.getId())
                             && FilterCriteria.Ordering.DESCENDING.equals(filter.getOrdering())) {
                         // the RRD4j PersistenceService does not support descending ordering so we do it manually
-                        Collections.sort(feed.entries,
-                                new Comparator<org.openhab.ui.cometvisu.internal.backend.model.rss.Entry>() {
-                                    @Override
-                                    public int compare(org.openhab.ui.cometvisu.internal.backend.model.rss.Entry o1,
-                                            org.openhab.ui.cometvisu.internal.backend.model.rss.Entry o2) {
-                                        return Long.compare(o2.publishedDate, o1.publishedDate);
-                                    }
-                                });
+                        feed.entries.sort((o1, o2) -> Long.compare(o2.publishedDate, o1.publishedDate));
                     }
                     logger.debug("querying {} item from {} to {} => {} results on service {}", filter.getItemName(),
                             filter.getBeginDate(), filter.getEndDate(), i, persistenceService.getId());
@@ -447,7 +436,7 @@ public class CometVisuServlet extends HttpServlet {
             // URL-decode the file name (might contain spaces and on) and
             // prepare
             // file object.
-            processFile = new File(rootFolder, URLDecoder.decode(requestedFile, "UTF-8"));
+            processFile = new File(rootFolder, URLDecoder.decode(requestedFile, StandardCharsets.UTF_8));
         } else {
             processFile = file;
         }
@@ -459,7 +448,7 @@ public class CometVisuServlet extends HttpServlet {
         if (!processFile.exists()) {
             // show installation hints if the CometVisu-Clients main index.html is requested but cannot be found
             if (processFile.getParentFile().equals(rootFolder)
-                    && (processFile.getName().equalsIgnoreCase("index.html") || processFile.getName().length() == 0)) {
+                    && (processFile.getName().equalsIgnoreCase("index.html") || processFile.getName().isEmpty())) {
                 // looking for CometVisu clients index.html file
                 String path = null;
                 File folder = processFile.isDirectory() ? processFile : processFile.getParentFile();
@@ -657,15 +646,14 @@ public class CometVisuServlet extends HttpServlet {
 
             if (ranges.isEmpty() || ranges.get(0).equals(full)) {
                 // Return full file.
-                Range r = full;
                 response.setContentType(contentType);
-                response.setHeader("Content-Range", "bytes " + r.start + "-" + r.end + "/" + r.total);
+                response.setHeader("Content-Range", "bytes " + full.start + "-" + full.end + "/" + full.total);
 
                 if (content) {
-                    response.setHeader("HA", String.valueOf(r.length));
+                    response.setHeader("HA", String.valueOf(full.length));
 
                     // Copy full range.
-                    copy(input, output, r.start, r.length);
+                    copy(input, output, full.start, full.length);
                 }
             } else if (ranges.size() == 1) {
                 // Return single part of file.
@@ -801,7 +789,7 @@ public class CometVisuServlet extends HttpServlet {
      */
     private static long sublong(String value, int beginIndex, int endIndex) {
         String substring = value.substring(beginIndex, endIndex);
-        return (substring.length() > 0) ? Long.parseLong(substring) : -1;
+        return (!substring.isEmpty()) ? Long.parseLong(substring) : -1;
     }
 
     /**
@@ -863,7 +851,7 @@ public class CometVisuServlet extends HttpServlet {
     /**
      * This class represents a byte range.
      */
-    protected class Range {
+    protected static class Range {
         long start;
         long end;
         long length;

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2023 Contributors to the openHAB project
+ * Copyright (c) 2010-2024 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -15,7 +15,7 @@ package org.openhab.ui.habot.nlp.internal;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Comparator;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -142,7 +142,7 @@ public class OpenNLPInterpreter implements HumanLanguageInterpreter {
         StringBuilder nameSamplesDoc = new StringBuilder();
         Map<Item, Set<ItemNamedAttribute>> itemAttributes = itemResolver.getAllItemNamedAttributes();
 
-        Stream<ItemNamedAttribute> attributes = itemAttributes.values().stream().flatMap(a -> a.stream());
+        Stream<ItemNamedAttribute> attributes = itemAttributes.values().stream().flatMap(Collection::stream);
 
         attributes.forEach(attribute -> {
             if (attribute.getType() == AttributeType.LOCATION) {
@@ -168,20 +168,15 @@ public class OpenNLPInterpreter implements HumanLanguageInterpreter {
         if (!locale.equals(currentLocale) || intentTrainer == null) {
             try {
                 itemResolver.setLocale(locale);
-                intentTrainer = new IntentTrainer(locale.getLanguage(),
-                        skills.values().stream().sorted(new Comparator<>() {
-
-                            @Override
-                            public int compare(Skill o1, Skill o2) {
-                                if (o1.getIntentId().equals("get-status")) {
-                                    return -1;
-                                }
-                                if (o2.getIntentId().equals("get-status")) {
-                                    return 1;
-                                }
-                                return o1.getIntentId().compareTo(o2.getIntentId());
-                            }
-                        }).collect(Collectors.toList()), getNameSamples(), this.tokenizerId);
+                intentTrainer = new IntentTrainer(locale.getLanguage(), skills.values().stream().sorted((o1, o2) -> {
+                    if (o1.getIntentId().equals("get-status")) {
+                        return -1;
+                    }
+                    if (o2.getIntentId().equals("get-status")) {
+                        return 1;
+                    }
+                    return o1.getIntentId().compareTo(o2.getIntentId());
+                }).collect(Collectors.toList()), getNameSamples(), this.tokenizerId);
                 this.intentTrainer = intentTrainer;
                 currentLocale = locale;
             } catch (Exception e) {
@@ -223,8 +218,8 @@ public class OpenNLPInterpreter implements HumanLanguageInterpreter {
                     reply.setHint(intentInterpretation.getHint());
                 }
                 if (intentInterpretation.getMatchedItems() != null) {
-                    reply.setMatchedItems(intentInterpretation.getMatchedItems().stream().map(i -> i.getName())
-                            .collect(Collectors.toList()).toArray(new String[0]));
+                    reply.setMatchedItems(
+                            intentInterpretation.getMatchedItems().stream().map(Item::getName).toArray(String[]::new));
                 }
                 if (intentInterpretation.getCard() != null) {
                     reply.setCard(intentInterpretation.getCard());

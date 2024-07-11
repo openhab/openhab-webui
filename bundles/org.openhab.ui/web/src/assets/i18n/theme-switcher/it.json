@@ -12,5 +12,7 @@
   "about.miscellaneous.home.hideChatInput": "Nascondi casella della chat su Home page",
   "about.miscellaneous.home.disableCardExpansionAnimation": "Disabilita animazione espansione card",
   "about.miscellaneous.theme.disablePageTransition": "Disabilita animazioni transizione di pagina",
-  "about.miscellaneous.webaudio.enable": "Abilita il supporto per l'audio web sink"
+  "about.miscellaneous.webaudio.enable": "Abilita il supporto per l'audio web sink",
+  "about.miscellaneous.commandItem.title": "Ricezione per i comandi UI ",
+  "about.miscellaneous.commandItem.selectItem": "Item"
 }

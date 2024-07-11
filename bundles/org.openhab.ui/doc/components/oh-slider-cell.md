@@ -117,7 +117,12 @@ A cell expanding to a big vertical slider
 </PropBlock>
 <PropBlock type="TEXT" name="unit" label="Unit">
   <PropDescription>
-    Text to append to the label while dragging the cursor
+    Unit for the command sent and also append to the label while dragging the cursor, leave empty to use Item's unit
+  </PropDescription>
+</PropBlock>
+<PropBlock type="BOOLEAN" name="ignoreDisplayState" label="Ignore Display State">
+  <PropDescription>
+    Ignore the display state if available and always use the raw state.
   </PropDescription>
 </PropBlock>
 <PropBlock type="BOOLEAN" name="releaseOnly" label="Send command only on release">
@@ -247,7 +252,7 @@ A cell expanding to a big vertical slider
     Group Item whose members to show in a popup
   </PropDescription>
 </PropBlock>
-<PropBlock type="TEXT" name="actionAnalyzerItems" label="Item(s) to Analyze" context="item">
+<PropBlock type="TEXT" name="actionAnalyzerItems" label="Item(s) to Analyze" required="true" context="item">
   <PropDescription>
     Start analyzing with the specified (set of) Item(s)
   </PropDescription>

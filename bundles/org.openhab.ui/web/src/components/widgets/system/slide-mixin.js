@@ -16,17 +16,25 @@ export default {
   computed: {
     value () {
       if (this.config.variable) {
+        const variableScope = this.getVariableScope(this.context.ctxVars, this.context.varScope, this.config.variable)
+        const variableLocation = (variableScope) ? this.context.ctxVars[variableScope] : this.context.vars
         if (this.config.variableKey) {
-          return this.getLastVariableKeyValue(this.context.vars[this.config.variable], this.config.variableKey)
+          return this.getLastVariableKeyValue(variableLocation[this.config.variable], this.config.variableKey)
         } else {
-          return this.context.vars[this.config.variable]
+          return variableLocation[this.config.variable]
         }
       }
       if (this.pendingCommand !== null) return this.pendingCommand // to keep the control reactive when operating
-      const value = this.context.store[this.config.item].state
+      const value = (this.config.ignoreDisplayState === true) ? this.context.store[this.config.item].state : this.context.store[this.config.item].displayState || this.context.store[this.config.item].state
       // use as a brightness control for HSB values
       if (value.split && value.split(',').length === 3) return parseFloat(value.split(',')[2])
       return parseFloat(value)
+    },
+    unit () {
+      if (this.config.unit) return this.config.unit
+      if (this.context.store[this.config.item].displayState && this.context.store[this.config.item].displayState.split(' ').length === 2) return this.context.store[this.config.item].displayState.split(' ')[1]
+      if (this.config.ignoreDisplayState === true) return this.context.store[this.config.item].state.split(' ')[1]
+      return undefined
     }
   },
   methods: {
@@ -34,10 +42,12 @@ export default {
       if ((value === this.value && !stop) || value === this.lastValueSent) return
 
       if (this.config.variable) {
+        const variableScope = this.getVariableScope(this.context.ctxVars, this.context.varScope, this.config.variable)
+        const variableLocation = (variableScope) ? this.context.ctxVars[variableScope] : this.context.vars
         if (this.config.variableKey) {
-          value = this.setVariableKeyValues(this.context.vars[this.config.variable], this.config.variableKey, value)
+          value = this.setVariableKeyValues(variableLocation[this.config.variable], this.config.variableKey, value)
         }
-        this.$set(this.context.vars, this.config.variable, value)
+        this.$set(variableLocation, this.config.variable, value)
         return
       }
 
@@ -56,8 +66,12 @@ export default {
       }
       if (!this.sendCommandTimer) {
         if (this.displayLockTimer) clearTimeout(this.displayLockTimer)
+        const stateType = this.context.store[this.config.item].type
         this.sendCommandTimer = setTimeout(() => {
-          this.$store.dispatch('sendCommand', { itemName: this.config.item, cmd: this.pendingCommand.toString() })
+          this.$store.dispatch('sendCommand', {
+            itemName: this.config.item,
+            cmd: (this.unit && stateType === 'Quantity') ? this.pendingCommand + ' ' + this.unit : this.pendingCommand.toString()
+          })
           this.lastValueSent = this.pendingCommand
           this.lastDateSent = Date.now()
           this.sendCommandTimer = null

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2023 Contributors to the openHAB project
+ * Copyright (c) 2010-2024 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -14,11 +14,12 @@ package org.openhab.ui.basic.internal.render;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
+import java.util.List;
 
 import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.core.i18n.LocaleProvider;
 import org.openhab.core.i18n.TranslationProvider;
 import org.openhab.core.items.GroupItem;
@@ -27,7 +28,6 @@ import org.openhab.core.items.ItemNotFoundException;
 import org.openhab.core.model.sitemap.sitemap.Chart;
 import org.openhab.core.model.sitemap.sitemap.Widget;
 import org.openhab.core.ui.items.ItemUIRegistry;
-import org.openhab.ui.basic.internal.WebAppConfig;
 import org.openhab.ui.basic.render.RenderException;
 import org.openhab.ui.basic.render.WidgetRenderer;
 import org.osgi.framework.BundleContext;
@@ -43,6 +43,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Kai Kreuzer - Initial contribution and API
  * @author Vlad Ivanov - BasicUI changes
+ * @author Laurent Garnier - Delegate the definition of certain chart URL parameters to the frontend (smarthome.js)
  */
 @Component(service = WidgetRenderer.class)
 @NonNullByDefault
@@ -91,39 +92,27 @@ public class ChartRenderer extends AbstractWidgetRenderer {
             }
 
             // if legend parameter is given, add corresponding GET parameter
+            boolean legend = item instanceof GroupItem && !forceAsItem;
             if (chart.getLegend() != null) {
+                legend = chart.getLegend();
                 if (chart.getLegend()) {
                     chartUrl += "&legend=true";
                 } else {
                     chartUrl += "&legend=false";
                 }
             }
-            // add theme GET parameter
-            String chartTheme = null;
-            switch (config.getTheme()) {
-                case WebAppConfig.THEME_NAME_DEFAULT:
-                    chartTheme = "bright";
-                    break;
-                case WebAppConfig.THEME_NAME_DARK:
-                    chartTheme = "dark";
-                    break;
-            }
-            if (chartTheme != null) {
-                chartUrl += "&theme=" + chartTheme;
-            }
-            String url;
-            boolean ignoreRefresh;
-            if (!itemUIRegistry.getVisiblity(w)) {
-                url = URL_NONE_ICON;
-                ignoreRefresh = true;
-            } else {
-                // add timestamp to circumvent browser cache
-                url = chartUrl + "&t=" + (new Date()).getTime();
-                ignoreRefresh = false;
-            }
 
             String snippet = getSnippet("chart");
-            snippet = preprocessSnippet(snippet, w);
+
+            boolean showHeaderRow = chart.getLabel() != null;
+            snippet = snippet.replace("%header_visibility_class%",
+                    showHeaderRow ? "%visibility_class%" : "mdl-form__row--hidden");
+            snippet = snippet.replace("%header_row%", Boolean.valueOf(showHeaderRow).toString());
+
+            snippet = preprocessSnippet(snippet, w, true);
+
+            // Process the color tags
+            snippet = processColor(w, snippet);
 
             if (chart.getRefresh() > 0) {
                 snippet = snippet.replace("%update_interval%", Integer.toString(chart.getRefresh()));
@@ -134,13 +123,57 @@ public class ChartRenderer extends AbstractWidgetRenderer {
             snippet = snippet.replace("%id%", itemUIRegistry.getWidgetId(w));
             snippet = snippet.replace("%proxied_url%", chartUrl);
             snippet = snippet.replace("%valid_url%", "true");
-            snippet = snippet.replace("%ignore_refresh%", ignoreRefresh ? "true" : "false");
-            snippet = snippet.replace("%url%", url);
+            // Let the frontend set the final URL with additional parameters depending on browser settings
+            // and schedule the refresh
+            snippet = snippet.replace("%ignore_refresh%", "true");
+            snippet = snippet.replace("%url%", URL_NONE_ICON);
+            snippet = snippet.replace("%legend%", Boolean.valueOf(legend).toString());
+
+            List<List<String>> periods = List.of(//
+                    // Periods in the past
+                    List.of("Last 2 years", "2Y"), List.of("Last year", "Y"), List.of("Last 9 months", "9M"),
+                    List.of("Last 6 months", "6M"), List.of("Last 4 months", "4M"), List.of("Last 3 months", "3M"),
+                    List.of("Last 2 months", "2M"), List.of("Last month", "M"), List.of("Last 2 weeks", "2W"),
+                    List.of("Last week", "W"), List.of("Last 3 days", "3D"), List.of("Last 2 days", "2D"),
+                    List.of("Last day", "D"), List.of("Last 12 hours", "12h"), List.of("Last 8 hours", "8h"),
+                    List.of("Last 4 hours", "4h"), List.of("Last 2 hours", "2h"), List.of("Last hour", "h"),
+                    // Periods in the future
+                    List.of("Next hour", "-h"), List.of("Next 2 hours", "-2h"), List.of("Next 4 hours", "-4h"),
+                    List.of("Next 8 hours", "-8h"), List.of("Next 12 hours", "-12h"), List.of("Next day", "-D"),
+                    List.of("Next 2 days", "-2D"), List.of("Next 3 days", "-3D"), List.of("Next week", "-W"),
+                    List.of("Next 2 weeks", "-2W"), List.of("Next month", "-M"), List.of("Next 2 months", "-2M"),
+                    List.of("Next 3 months", "-3M"), List.of("Next 4 months", "-4M"), List.of("Next 6 months", "-6M"),
+                    List.of("Next 9 months", "-9M"), List.of("Next year", "-Y"), List.of("Next 2 years", "-2Y"));
+            StringBuilder rowSB = new StringBuilder();
+            for (List<String> period : periods) {
+                buildRow(chart, period.get(0), period.get(1), chart.getPeriod(), rowSB);
+            }
+            snippet = snippet.replace("%period_rows%", rowSB.toString());
 
             sb.append(snippet);
         } catch (ItemNotFoundException e) {
             logger.warn("Chart cannot be rendered as item '{}' does not exist.", chart.getItem());
         }
         return ECollections.emptyEList();
+    }
+
+    private void buildRow(Chart w, @Nullable String lab, String cmd, String current, StringBuilder rowSB)
+            throws RenderException {
+        String rowSnippet = getSnippet("selection_row");
+
+        String command = cmd;
+        String label = lab == null ? cmd : lab;
+
+        rowSnippet = rowSnippet.replace("%item%", w.getItem() != null ? w.getItem() : "");
+        rowSnippet = rowSnippet.replace("%cmd%", escapeHtml(command));
+        rowSnippet = rowSnippet.replace("%label%", escapeHtml(label));
+
+        if (command.equals(current)) {
+            rowSnippet = rowSnippet.replace("%checked%", "checked=\"true\"");
+        } else {
+            rowSnippet = rowSnippet.replace("%checked%", "");
+        }
+
+        rowSB.append(rowSnippet);
     }
 }

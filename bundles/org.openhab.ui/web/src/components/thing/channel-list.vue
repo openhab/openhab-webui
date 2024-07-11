@@ -47,8 +47,15 @@
                               :thing="thing" :channelId="channelId" :channelType="channelType" :channel="channel" :extensible="extensible" :context="context"
                               @channel-updated="(e) => $emit('channels-updated', e)" />
               </template>
-              <template #default="{ channel }" v-else-if="multipleLinksMode">
-                <item-form v-if="isChecked(channel)" :item="newItem(channel)" :items="items" :enable-name="true" :channel="channel" :checked="isChecked(channel)" />
+              <template #default="{ channelType, channel }" v-else-if="multipleLinksMode">
+                <item-form v-if="isChecked(channel)"
+                           :item="newItem(channel)"
+                           :items="items"
+                           :createMode="true"
+                           :channel="channel"
+                           :checked="isChecked(channel)"
+                           :unitHint="getUnitHint(channel, channelType)"
+                           :stateDescription="stateDescription(channelType)" />
               </template>
               <!-- <channel-link #default="{ channelId }" /> -->
             </channel-group>
@@ -93,9 +100,10 @@ import ChannelGroup from './channel-group.vue'
 import ChannelLink from './channel-link.vue'
 import ItemForm from '@/components/item/item-form.vue'
 
-import { Points } from '@/assets/semantics'
+import uomMixin from '@/components/item/uom-mixin'
 
 export default {
+  mixins: [uomMixin],
   props: ['thingType', 'thing', 'channelTypes', 'items', 'pickerMode', 'multipleLinksMode', 'itemTypeFilter', 'newItemsPrefix', 'newItems', 'context'],
   components: {
     ChannelGroup,
@@ -198,10 +206,19 @@ export default {
           label: channel.label || channelType.label,
           category: (channelType) ? channelType.category : '',
           type: channel.itemType,
-          tags: (defaultTags.find((t) => Points.indexOf(t) >= 0)) ? defaultTags : [...defaultTags, 'Point']
+          unit: this.channelUnit(channel, channelType),
+          stateDescriptionPattern: '',
+          tags: (defaultTags.find((t) => this.$store.getters.semanticClasses.Points.indexOf(t) >= 0)) ? defaultTags : [...defaultTags, 'Point']
         }
         this.newItems.push(newItem)
       }
+    },
+    channelUnit (channel, channelType) {
+      const dimension = channel.itemType.startsWith('Number:') ? channel.itemType.split(':')[1] : ''
+      return dimension ? this.getUnitHint(dimension, channelType) : ''
+    },
+    stateDescription (channelType) {
+      return channelType?.stateDescription?.pattern
     },
     toggleAllChecks (checked) {
       this.thing.channels.forEach((c) => {

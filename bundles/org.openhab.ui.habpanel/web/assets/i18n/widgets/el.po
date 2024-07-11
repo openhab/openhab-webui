@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language-Team: Greek\n"
 "Language: el_GR\n"
-"PO-Revision-Date: 2022-12-11 11:15\n"
+"PO-Revision-Date: 2023-05-06 18:25\n"
 
 #. Common term in widget settings dialogs
 msgctxt "widget.common.min"
@@ -410,7 +410,7 @@ msgstr "Μορφή ψηφίων"
 #. Color picker header
 msgctxt "widget.clock.digital_color"
 msgid "Digital Color"
-msgstr ""
+msgstr "Ψηφιακό Χρώμα"
 
 #. Textbox header
 msgctxt "widget.clock.font_size"
@@ -480,17 +480,17 @@ msgstr "Διάταξη"
 #. Color picker header
 msgctxt "widget.dummy.value_color"
 msgid "Value color"
-msgstr ""
+msgstr "Τιμή χρώματος"
 
 #. Checkboxes header
 msgctxt "widget.dummy.state"
 msgid "State"
-msgstr ""
+msgstr "Κατάσταση"
 
 #. Checkbox label
 msgctxt "widget.dummy.state.description"
 msgid "Use state description"
-msgstr ""
+msgstr "Χρήση περιγραφής κατάστασης"
 
 #. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
 msgctxt "widget.frame"

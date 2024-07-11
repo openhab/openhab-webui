@@ -1,27 +1,19 @@
 <template>
-  <f7-page class="developer-sidebar">
-    <f7-navbar title="Developer Sidebar" subtitle="(Shift+Alt+D)" :color="$f7.data.themeOptions.dark === 'dark' ? '' : 'black'">
-      <f7-subnavbar :inner="false" v-if="!$theme.md">
-        <f7-searchbar custom-search placeholder="Search and Pin" :backdrop="false" @searchbar:search="search" @searchbar:clear="clearSearch" />
-      </f7-subnavbar>
-    </f7-navbar>
-    <f7-subnavbar :inner="false" v-if="$theme.md">
+  <f7-block class="developer-sidebar">
+    <f7-row :inner="false" v-if="!$theme.md">
+      <f7-searchbar style="width: 100%" custom-search placeholder="Search and Pin" :backdrop="false" @searchbar:search="search" @searchbar:clear="clearSearch" />
+    </f7-row>
+    <f7-row style="width: 100%" :inner="false" v-if="$theme.md">
       <f7-searchbar custom-search placeholder="Search and Pin" :backdrop="false" @searchbar:search="search" @searchbar:clear="clearSearch" />
-    </f7-subnavbar>
+    </f7-row>
     <div v-if="!searching" class="developer-sidebar-content">
-      <f7-segmented strong tag="p" style="margin-right: calc(var(--f7-searchbar-inner-padding-right) + var(--f7-safe-area-right)); margin-left: calc(var(--f7-searchbar-inner-padding-left) + var(--f7-safe-area-left))">
-        <f7-button :active="activeTab === 'pin'" icon-f7="pin_fill" icon-size="18" @click="activeTab = 'pin'" />
-        <f7-button :active="activeTab === 'events'" icon-f7="bolt_horizontal_fill" icon-size="18" @click="activeTab = 'events'" />
-        <f7-button :active="activeTab === 'scripting'" icon-f7="pencil_ellipsis_rectangle" icon-size="18" @click="activeTab = 'scripting'" />
-        <f7-button :active="activeTab === 'tools'" icon-f7="rectangle_stack_badge_plus" icon-size="18" @click="activeTab = 'tools'" />
-      </f7-segmented>
-      <div v-if="activeTab === 'pin'">
+      <div v-if="activeToolTab === 'pin'">
         <f7-block class="no-margin no-padding">
           <f7-block-title class="padding-horizontal" medium>
             Pinned Objects
           </f7-block-title>
         </f7-block>
-        <f7-block class="no-margin no-padding" v-if="!pinnedObjects.items.length && !pinnedObjects.things.length && !pinnedObjects.rules.length && !pinnedObjects.pages.length">
+        <f7-block class="no-margin no-padding" v-if="!pinnedObjects.items.length && !pinnedObjects.things.length && !pinnedObjects.rules.length && !pinnedObjects.scenes.length && !pinnedObjects.scripts.length && !pinnedObjects.pages.length && !pinnedObjects.transformations.length">
           <p class="padding-horizontal">
             Use the search box above or the button below to temporarily pin objects here for quick access.
           </p>
@@ -31,6 +23,7 @@
             </f7-button>
           </p>
         </f7-block>
+        <!-- Pinned Items -->
         <f7-block class="no-margin no-padding" v-if="pinnedObjects.items.length">
           <f7-block-title class="padding-horizontal display-flex">
             <span>Pinned Items</span>
@@ -42,8 +35,11 @@
           </f7-block-title>
           <f7-list>
             <ul>
-              <item v-for="item in pinnedObjects.items" :key="item.name" link="" :item="item" :context="context" :no-icon="true" :no-type="true" @click="(evt) => showItem(evt, item)">
+              <item v-for="item in pinnedObjects.items" :key="item.name" link="" :item="item" :context="context" :no-icon="true" :no-type="true" :no-tags="true" @click="(evt) => showItem(evt, item)">
                 <div class="display-flex align-items-flex-end justify-content-flex-end" style="margin-top: 3px" slot="footer">
+                  <f7-link color="gray" class="margin-right itemlist-actions">
+                    <clipboard-icon :value="item.name" size="18" tooltip="Copy Item name" />
+                  </f7-link>
                   <f7-link class="margin-right itemlist-actions" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/settings/items/' + item.name" :animate="false" />
                   <f7-link class="itemlist-actions" color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" @click="unpin('items', item, 'name')" />
                 </div>
@@ -52,6 +48,7 @@
             <!-- <f7-list-button title="Pick Items" @click="modelPickerOpened = true"></f7-list-button> -->
           </f7-list>
         </f7-block>
+        <!-- Pinned Things -->
         <f7-block class="no-margin no-padding" v-if="pinnedObjects.things.length">
           <f7-block-title class="padding-horizontal display-flex">
             <span>Pinned Things</span>
@@ -67,6 +64,9 @@
                   {{ thingStatusBadgeText(thing.statusInfo) }}
                 </f7-badge>
                 <div class="display-flex align-items-flex-end justify-content-flex-end" style="margin-top: 3px" slot="footer">
+                  <f7-link color="gray" class="margin-right">
+                    <clipboard-icon :value="thing.UID" size="18" tooltip="Copy Thing UID" />
+                  </f7-link>
                   <f7-link class="margin-right" :icon-color="(thing.statusInfo.statusDetail === 'DISABLED') ? 'orange' : 'gray'" :tooltip="(thing.statusInfo.statusDetail === 'DISABLED') ? 'Enable' : 'Disable'" icon-f7="pause_circle" icon-size="18" @click="toggleThingDisabled(thing)" />
                   <f7-link class="margin-right" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/settings/things/' + thing.UID" :animate="false" />
                   <f7-link color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" @click="unpin('things', thing, 'UID')" />
@@ -75,6 +75,7 @@
             </ul>
           </f7-list>
         </f7-block>
+        <!-- Pinned Rules -->
         <f7-block class="no-margin no-padding" v-if="pinnedObjects.rules.length">
           <f7-block-title class="padding-horizontal display-flex">
             <span>Pinned Rules</span>
@@ -90,6 +91,9 @@
                   {{ ruleStatusBadgeText(rule.status) }}
                 </f7-badge>
                 <div class="display-flex align-items-flex-end justify-content-flex-end" style="margin-top: 3px" slot="footer">
+                  <f7-link color="gray" class="margin-right">
+                    <clipboard-icon :value="rule.uid" size="18" tooltip="Copy Rule UID" />
+                  </f7-link>
                   <f7-link class="margin-right" :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'" :tooltip="(rule.status.statusDetail === 'DISABLED') ? 'Enable' : 'Disable'" icon-f7="pause_circle" icon-size="18" @click="toggleRuleDisabled(rule)" />
                   <f7-link class="margin-right" color="blue" icon-f7="play" icon-size="18" tooltip="Run" @click="runRuleNow(rule)" />
                   <f7-link class="margin-right" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/settings/' + (rule.tags.indexOf('Script') >= 0 ? 'scripts' : 'rules') + '/' + rule.uid" :animate="false" />
@@ -99,6 +103,63 @@
             </ul>
           </f7-list>
         </f7-block>
+        <!-- Pinned Scenes -->
+        <f7-block class="no-margin no-padding" v-if="pinnedObjects.scenes.length">
+          <f7-block-title class="padding-horizontal display-flex">
+            <span>Pinned Scenes</span>
+            <span style="margin-left:auto">
+              <f7-link color="gray" icon-f7="multiply" icon-size="14" @click="unpinAll('scenes')" />
+            </span>
+          </f7-block-title>
+          <f7-list media-list>
+            <ul>
+              <f7-list-item v-for="rule in pinnedObjects.scenes" :key="rule.uid" media-item
+                            :title="rule.name" :footer="rule.uid">
+                <f7-badge slot="after" :color="ruleStatusBadgeColor(rule.status)" :tooltip="rule.status.description">
+                  {{ ruleStatusBadgeText(rule.status) }}
+                </f7-badge>
+                <div class="display-flex align-items-flex-end justify-content-flex-end" style="margin-top: 3px" slot="footer">
+                  <f7-link color="gray" class="margin-right">
+                    <clipboard-icon :value="rule.uid" size="18" tooltip="Copy Rule UID" />
+                  </f7-link>
+                  <f7-link class="margin-right" :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'" :tooltip="(rule.status.statusDetail === 'DISABLED') ? 'Enable' : 'Disable'" icon-f7="pause_circle" icon-size="18" @click="toggleRuleDisabled(rule)" />
+                  <f7-link class="margin-right" color="blue" icon-f7="play" icon-size="18" tooltip="Run" @click="runRuleNow(rule)" />
+                  <f7-link class="margin-right" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/settings/' + (rule.tags.indexOf('Script') >= 0 ? 'scripts' : 'rules') + '/' + rule.uid" :animate="false" />
+                  <f7-link color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" @click="unpin('scenes', rule, 'uid')" />
+                </div>
+              </f7-list-item>
+            </ul>
+          </f7-list>
+        </f7-block>
+        <!-- Pinned Scripts -->
+        <f7-block class="no-margin no-padding" v-if="pinnedObjects.scripts.length">
+          <f7-block-title class="padding-horizontal display-flex">
+            <span>Pinned Scripts</span>
+            <span style="margin-left:auto">
+              <f7-link color="gray" icon-f7="multiply" icon-size="14" @click="unpinAll('scripts')" />
+            </span>
+          </f7-block-title>
+          <f7-list media-list>
+            <ul>
+              <f7-list-item v-for="rule in pinnedObjects.scripts" :key="rule.uid" media-item
+                            :title="rule.name" :footer="rule.uid">
+                <f7-badge slot="after" :color="ruleStatusBadgeColor(rule.status)" :tooltip="rule.status.description">
+                  {{ ruleStatusBadgeText(rule.status) }}
+                </f7-badge>
+                <div class="display-flex align-items-flex-end justify-content-flex-end" style="margin-top: 3px" slot="footer">
+                  <f7-link color="gray" class="margin-right">
+                    <clipboard-icon :value="rule.uid" size="18" tooltip="Copy Rule UID" />
+                  </f7-link>
+                  <f7-link class="margin-right" :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'" :tooltip="(rule.status.statusDetail === 'DISABLED') ? 'Enable' : 'Disable'" icon-f7="pause_circle" icon-size="18" @click="toggleRuleDisabled(rule)" />
+                  <f7-link class="margin-right" color="blue" icon-f7="play" icon-size="18" tooltip="Run" @click="runRuleNow(rule)" />
+                  <f7-link class="margin-right" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/settings/' + (rule.tags.indexOf('Script') >= 0 ? 'scripts' : 'rules') + '/' + rule.uid" :animate="false" />
+                  <f7-link color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" @click="unpin('scripts', rule, 'uid')" />
+                </div>
+              </f7-list-item>
+            </ul>
+          </f7-list>
+        </f7-block>
+        <!-- Pinned Pages -->
         <f7-block class="no-margin no-padding" v-if="pinnedObjects.pages.length">
           <f7-block-title class="padding-horizontal display-flex">
             <span>Pinned Pages</span>
@@ -111,6 +172,9 @@
               <f7-list-item v-for="page in pinnedObjects.pages" :key="page.uid" media-item
                             :title="page.config.label" :footer="page.uid">
                 <div class="display-flex align-items-flex-end justify-content-flex-end" style="margin-top: 3px" slot="footer">
+                  <f7-link color="gray" class="margin-right">
+                    <clipboard-icon :value="page.uid" size="18" tooltip="Copy Page UID" />
+                  </f7-link>
                   <!-- <f7-link class="margin-right" color="blue" icon-f7="rectangle_on_rectangle" icon-size="18" tooltip="Open in Popup" /> -->
                   <f7-link class="margin-right" color="blue" icon-f7="play" icon-size="18" tooltip="View" :href="'/page/' + page.uid" :animate="false" />
                   <f7-link class="margin-right" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/settings/pages/' + getPageType(page).type + '/' + page.uid" :animate="false" />
@@ -120,9 +184,55 @@
             </ul>
           </f7-list>
         </f7-block>
+        <!-- Pinned Transformations -->
+        <f7-block class="no-margin no-padding" v-if="pinnedObjects.transformations.length">
+          <f7-block-title class="padding-horizontal display-flex">
+            <span>Pinned Transformations</span>
+            <span style="margin-left:auto">
+              <f7-link color="gray" icon-f7="multiply" icon-size="14" @click="unpinAll('transformations')" />
+            </span>
+          </f7-block-title>
+          <f7-list media-list>
+            <ul>
+              <f7-list-item v-for="transformation in pinnedObjects.transformations" :key="transformation.uid" media-item
+                            :title="transformation.label" :footer="transformation.uid">
+                <div class="display-flex align-items-flex-end justify-content-flex-end" style="margin-top: 3px" slot="footer">
+                  <f7-link color="gray" class="margin-right">
+                    <clipboard-icon :value="transformation.uid" size="18" tooltip="Copy Transformation UID" />
+                  </f7-link>
+                  <f7-link class="margin-right" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/settings/transformations/' + transformation.uid" :animate="false" />
+                  <f7-link color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" @click="unpin('transformations', transformation, 'uid')" />
+                </div>
+              </f7-list-item>
+            </ul>
+          </f7-list>
+        </f7-block>
+        <!-- Pinned Persistence configs -->
+        <f7-block class="no-margin no-padding" v-if="pinnedObjects.persistenceConfigs.length">
+          <f7-block-title class="padding-horizontal display-flex">
+            <span>Pinned Persistence Configs</span>
+            <span style="margin-left:auto">
+              <f7-link color="gray" icon-f7="multiply" icon-size="14" @click="unpinAll('persistenceConfigs')" />
+            </span>
+          </f7-block-title>
+          <f7-list media-list>
+            <ul>
+              <f7-list-item v-for="persistenceConfig in pinnedObjects.persistenceConfigs" :key="persistenceConfig.serviceId" media-item
+                            :title="persistenceConfig.label" :footer="persistenceConfig.serviceId">
+                <div class="display-flex align-items-flex-end justify-content-flex-end" style="margin-top: 3px" slot="footer">
+                  <f7-link color="gray" class="margin-right">
+                    <clipboard-icon :value="persistenceConfig.serviceId" size="18" tooltip="Copy Service ID" />
+                  </f7-link>
+                  <f7-link class="margin-right" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/settings/persistence/' + persistenceConfig.serviceId" :animate="false" />
+                  <f7-link color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" @click="unpin('persistenceConfig', persistenceConfig, 'serviceId')" />
+                </div>
+              </f7-list-item>
+            </ul>
+          </f7-list>
+        </f7-block>
       </div>
 
-      <div v-else-if="activeTab === 'events'">
+      <div v-else-if="activeToolTab === 'events'">
         <f7-block class="no-margin no-padding">
           <f7-block-title class="padding-horizontal display-flex" medium>
             <span>Event Monitor</span>
@@ -148,7 +258,7 @@
         </f7-block>
       </div>
 
-      <div v-else-if="activeTab === 'scripting'">
+      <div v-else-if="activeToolTab === 'scripting'">
         <f7-block class="no-margin no-padding">
           <f7-block-title class="padding-horizontal" medium>
             Code Tools
@@ -167,7 +277,7 @@
         </f7-block>
       </div>
 
-      <div v-else-if="activeTab === 'tools'">
+      <div v-else-if="activeToolTab === 'tools'">
         <f7-block class="no-margin no-padding">
           <f7-block-title class="padding-horizontal" medium>
             Create Shortcuts
@@ -236,28 +346,21 @@
     <f7-popover ref="itemPopover" class="item-popover">
       <item-standalone-control v-if="openedItem" :item="openedItem" :context="context" :no-border="true" />
     </f7-popover>
-    <search-results v-if="searching" :searchResults="searchResults" :pinnedObjects="pinnedObjects" @pin="pin" @unpin="unpin" :cachedObjects="cachedObjects" :loading="searchResultsLoading" />
-  </f7-page>
+    <search-results v-if="searching" class="margin-top" :searchResults="searchResults" :pinnedObjects="pinnedObjects" @pin="pin" @unpin="unpin" :cachedObjects="cachedObjects" :loading="searchResultsLoading" />
+  </f7-block>
 </template>
 
 <style lang="stylus">
-.panel-right.panel-in-breakpoint:before
-  position absolute
-  left 0
-  top 0
-  height 100%
-  width 1px
-  background rgba(0,0,0,0.1)
-  content ''
-  z-index 6000
-
 .developer-sidebar
   scrollbar-width none /* Firefox */
   -ms-overflow-style none  /* IE 10+ */
+  margin 0 !important
+  padding 0
+  padding-top 0.3rem
+  width 100%
 
   .developer-sidebar-content
-    margin-top var(--f7-subnavbar-height)
-    padding-top 0.3rem
+    margin-top 1rem
 
   &.page
     background #e7e7e7 !important
@@ -278,6 +381,7 @@ import ItemStandaloneControl from '@/components/item/item-standalone-control.vue
 import ModelPickerPopup from '@/components/model/model-picker-popup.vue'
 import SearchResults from './search-results.vue'
 import ExpressionTester from './expression-tester.vue'
+import ClipboardIcon from '@/components/util/clipboard-icon.vue'
 
 import RuleStatus from '@/components/rule/rule-status-mixin'
 import ThingStatus from '@/components/thing/thing-status-mixin'
@@ -285,17 +389,18 @@ import ThingStatus from '@/components/thing/thing-status-mixin'
 export default {
   mixins: [RuleStatus, ThingStatus],
   components: {
+    ClipboardIcon,
     Item,
     ItemStandaloneControl,
     SearchResults,
     ExpressionTester
   },
+  props: ['activeToolTab'],
   data () {
     return {
       searchQuery: '',
       searchResultsLoading: false,
       searching: false,
-      activeTab: 'pin',
       monitoredItems: [],
       sseClient: null,
       eventTopicFilter: '',
@@ -305,13 +410,21 @@ export default {
         items: [],
         things: [],
         rules: [],
-        pages: []
+        scenes: [],
+        scripts: [],
+        pages: [],
+        transformations: [],
+        persistenceConfigs: []
       },
       pinnedObjects: {
         items: [],
         things: [],
         rules: [],
-        pages: []
+        scenes: [],
+        scripts: [],
+        pages: [],
+        transformations: [],
+        persistenceConfigs: []
       },
       sseEvents: [],
       openedItem: null,
@@ -377,6 +490,158 @@ export default {
         this.$f7.off('itemsPicked', this.addItemsFromModel)
       })
     },
+    /**
+     * Search for the query string inside a single Item.
+     * All searches are non case-intensive.
+     *
+     * Checks:
+     *  - name
+     *  - label
+     *  - metadata
+     *  - tags (requires exact match)
+     *
+     * @param i Item
+     * @param query search query (as typed, not in lowercase)
+     * @returns {boolean}
+     */
+    searchItem (i, query) {
+      query = query.toLowerCase()
+      if (i.name.toLowerCase().indexOf(query) >= 0) return true
+      if (i.label && i.label.toLowerCase().indexOf(query) >= 0) return true
+      if (i.metadata && JSON.stringify(i.metadata).toLowerCase().indexOf(query) >= 0) return true
+      if (i.tags && i.tags.map(t => t.toLowerCase()).includes(query)) return true
+      return false
+    },
+    /**
+     * Search for the query string inside a single rule.
+     * All searches are non case-intensive.
+     *
+     * Checks:
+     *  - name
+     *  - label
+     *  - description
+     *  - tags (requires exact match)
+     *  - itemName & thingUID of triggers, actions & conditions
+     *  - script content (e.g. JavaScript or Rule DSL)
+     *  - script MIME types (requires exact match)
+     *  - Blockly scripts when lowercase search term is 'block', 'blockly' or 'blocksource'
+     *
+     * @param r rule
+     * @param query query (as typed, not in lowercase)
+     * @returns {boolean}
+     */
+    searchRule (r, query) {
+      query = query.toLowerCase()
+      if (r.uid.toLowerCase().indexOf(query) >= 0) return true
+      if (r.name.toLowerCase().indexOf(query) >= 0) return true
+      if (r.description && r.description.toLowerCase().indexOf(query) >= 0) return true
+      if (r.tags && r.tags.map(t => t.toLowerCase()).includes(query)) return true
+      const searchItemOrThing = (m) => {
+        // Match Item names non case-intensive
+        if (m.configuration.itemName && m.configuration.itemName.toLowerCase().indexOf(query) >= 0) {
+          return true
+        }
+        // Match Thing names non case-intensive
+        if (m.configuration.thingUID && m.configuration.thingUID.toLowerCase().indexOf(query) >= 0) {
+          return true
+        }
+      }
+      const searchScript = (m) => {
+        // MIME types require exact match
+        if (m.configuration.type && m.configuration.type.toLowerCase() === query) {
+          return true
+        }
+        if (['block', 'blockly', 'blocksource'].includes(query) && m.configuration.blockSource !== undefined) {
+          return true
+        }
+        if (m.configuration.script && m.configuration.script.toLowerCase().indexOf(query) >= 0) {
+          return true
+        }
+      }
+      for (let i = 0; i < r.triggers.length; i++) {
+        const t = r.triggers[i]
+        if (searchItemOrThing(t)) return true
+      }
+      for (let i = 0; i < r.actions.length; i++) {
+        const a = r.actions[i]
+        if (searchItemOrThing(a)) return true
+        if (searchScript(a)) return true
+      }
+      for (let i = 0; i < r.conditions.length; i++) {
+        const c = r.conditions[i]
+        if (searchItemOrThing(c)) return true
+        if (searchScript(c)) return true
+      }
+      return false
+    },
+    /**
+     * Search for the query string inside a single page or sitemap.
+     * All searches are non case-intensive.
+     *
+     * Checks:
+     *  - uid
+     *  - label
+     *  - slots
+     *
+     * @param p page
+     * @param query search query (as typed, not in lowercase)
+     * @returns {boolean}
+     */
+    searchPage (p, query) {
+      query = query.toLowerCase()
+      if (p.uid.toLowerCase().indexOf(query) >= 0) return true
+      if (p.config && p.config.label && p.config.label.toLowerCase().indexOf(query) >= 0) return true
+      if (p.slots && JSON.stringify(p.slots).toLowerCase().indexOf(query) >= 0) return true
+      return false
+    },
+    /**
+     * Search for the query string inside a persistence configuration.
+     * All searches are non case-intensive.
+     *
+     * Checks:
+     *  - serviceId
+     *  - label
+     *  - Items
+     *
+     * @param pc persistence config
+     * @param query search query (as typed, not in lowercase)
+     * @returns {boolean}
+     */
+    searchPersistenceConfigs (pc, query) {
+      query = query.toLowerCase()
+      if (pc.serviceId.toLowerCase().indexOf(query) >= 0) return true
+      if (pc.label.toLowerCase().indexOf(query) >= 0) return true
+      for (const conf of pc.configs) {
+        if (conf.items.toString().toLowerCase().indexOf(query) >= 0) return true
+      }
+      return false
+    },
+    /**
+     * Load all persistence configs and extend them with the persistence service label.
+     *
+     * @returns {Promise} load promise
+     */
+    loadPersistenceConfigs () {
+      return this.$oh.api.get('/rest/persistence').then((data) => {
+        const labels = {}
+        data.forEach((p) => {
+          labels[p.id] = p.label
+        })
+        const loadPromises = data.map(p => this.$oh.api.get('/rest/persistence/' + p.id))
+        const configs = []
+
+        Promise.allSettled(loadPromises).then((results) => {
+          for (const result of results) {
+            if (result.value) {
+              result.value.label = labels[result.value.serviceId]
+              configs.push(result.value)
+            }
+          }
+        })
+
+        return configs
+      })
+    },
     search (searchbar, query, previousQuery) {
       if (!query) {
         this.clearSearch()
@@ -392,28 +657,68 @@ export default {
           Promise.resolve(this.cachedObjects[0]),
           Promise.resolve(this.cachedObjects[1]),
           Promise.resolve(this.cachedObjects[2]),
-          Promise.resolve(this.cachedObjects[3])
+          Promise.resolve(this.cachedObjects[3]),
+          Promise.resolve(this.cachedObjects[4]),
+          Promise.resolve(this.cachedObjects[5]),
+          Promise.resolve(this.cachedObjects[6])
         ] : [
-          this.$oh.api.get('/rest/items'),
+          this.$oh.api.get('/rest/items?staticDataOnly=true&metadata=.*'),
           this.$oh.api.get('/rest/things?summary=true'),
-          this.$oh.api.get('/rest/rules?summary=true'),
-          Promise.resolve(this.$store.getters.pages)
+          this.$oh.api.get('/rest/rules?summary=false'),
+          Promise.resolve(this.$store.getters.pages),
+          this.$oh.api.get('/rest/transformations'),
+          this.$oh.api.get('/rest/ui/components/system:sitemap'),
+          this.loadPersistenceConfigs()
         ]
 
       this.searchResultsLoading = true
       Promise.all(promises).then((data) => {
         this.$set(this, 'cachedObjects', data)
-        this.searchResultsLoading = false
-        const items = data[0].filter((i) => i.name.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0 || (i.label && i.label.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0))
-        const things = data[1].filter((t) => t.UID.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0 || t.label.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0)
-        const rules = data[2].filter((r) => r.uid.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0 || r.name.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0)
-        const pages = data[3].filter((p) => p.uid.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0)
+        const items = data[0].filter((i) => this.searchItem(i, this.searchQuery)).sort((a, b) => {
+          const labelA = a.name
+          const labelB = b.name
+          return (labelA) ? labelA.localeCompare(labelB) : 0
+        })
+        const things = data[1].filter((t) => t.UID.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0 ||
+          (t.label && t.label.toLowerCase().indexOf(this.searchQuery.toLowerCase())) >= 0).sort((a, b) => {
+          const labelA = a.name
+          const labelB = b.name
+          return (labelA) ? labelA.localeCompare(labelB) : 0
+        })
+        const rulesScenesScripts = data[2].filter((r) => this.searchRule(r, this.searchQuery)).sort((a, b) => {
+          const labelA = a.name
+          const labelB = b.name
+          return (labelA) ? labelA.localeCompare(labelB) : 0
+        })
+        const rules = rulesScenesScripts.filter((r) => r.tags.indexOf('Scene') < 0 && r.tags.indexOf('Script') < 0)
+        const scenes = rulesScenesScripts.filter((r) => r.tags.indexOf('Scene') >= 0)
+        const scripts = rulesScenesScripts.filter((r) => r.tags.indexOf('Script') >= 0)
+        const pages = [...data[3], ...data[5]].filter((p) => this.searchPage(p, this.searchQuery)).sort((a, b) => {
+          const labelA = a.name
+          const labelB = b.name
+          return (labelA) ? labelA.localeCompare(labelB) : 0
+        })
+        const transformations = data[4].filter((t) => t.uid.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0 || t.label.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0).sort((a, b) => {
+          const labelA = a.name
+          const labelB = b.name
+          return (labelA) ? labelA.localeCompare(labelB) : 0
+        })
+        const persistenceConfigs = data[6].filter((pc) => this.searchPersistenceConfigs(pc, this.searchQuery)).sort((a, b) => {
+          const idA = a.id
+          const idB = b.id
+          return (idA) ? idA.localeCompare(idB) : 0
+        })
         this.$set(this, 'searchResults', {
           items,
           things,
           rules,
-          pages
+          scenes,
+          scripts,
+          pages,
+          transformations,
+          persistenceConfigs
         })
+        this.searchResultsLoading = false
       })
     },
     clearSearch () {
@@ -421,7 +726,7 @@ export default {
       this.searchResultsLoading = false
       this.searchSuery = ''
       this.$set(this, 'cachedObjects', null)
-      this.$set(this, 'searchResults', { items: [], things: [], rules: [], pages: [] })
+      this.$set(this, 'searchResults', { items: [], things: [], rules: [], scenes: [], scripts: [], pages: [], transformations: [], persistenceConfigs: [] })
     },
     pin (type, obj) {
       this.pinnedObjects[type].push(obj)
@@ -636,7 +941,9 @@ export default {
                 this.unpin('rules', { uid: topicParts[2] }, 'uid')
                 break
               case 'state':
-                const rule = this.pinnedObjects.rules.find((r) => r.uid === topicParts[2])
+                let rule = this.pinnedObjects.rules.find((r) => r.uid === topicParts[2])
+                if (!rule) rule = this.pinnedObjects.scenes.find((r) => r.uid === topicParts[2])
+                if (!rule) rule = this.pinnedObjects.scripts.find((r) => r.uid === topicParts[2])
                 if (!rule) break
                 this.$set(rule, 'status', JSON.parse(event.payload))
             }

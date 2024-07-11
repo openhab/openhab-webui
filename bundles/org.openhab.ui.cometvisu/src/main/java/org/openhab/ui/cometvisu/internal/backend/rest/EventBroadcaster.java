@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2023 Contributors to the openHAB project
+ * Copyright (c) 2010-2024 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -30,10 +30,9 @@ public interface EventBroadcaster {
      * Broadcasts an event described by the given parameters to all currently
      * listening clients.
      *
-     * @param item the item that should be broadcasted
      * @param eventObject bean that can be converted to a JSON object.
      */
-    public void broadcastEvent(final Object eventObject);
+    void broadcastEvent(final Object eventObject);
 
     /**
      * listens to state changes of the given item, if it is part of the
@@ -41,7 +40,7 @@ public interface EventBroadcaster {
      *
      * @param item the new item, that should be listened to
      */
-    public void registerItem(Item item);
+    void registerItem(Item item);
 
     /**
      * listens to state changes of the given item, if it is part of the
@@ -49,12 +48,12 @@ public interface EventBroadcaster {
      *
      * @param item the new item, that should be listened to
      */
-    public void unregisterItem(Item item);
+    void unregisterItem(Item item);
 
     /**
      * listen for state changes from the requested items
      */
-    public void registerItems();
+    void registerItems();
 
     /**
      * lists all client item names and the associated type which must be notified
@@ -63,5 +62,5 @@ public interface EventBroadcaster {
      * @param item the item that is listened to
      * @return
      */
-    public Map<String, @Nullable Class<? extends State>> getClientItems(Item item);
+    Map<String, @Nullable Class<? extends State>> getClientItems(Item item);
 }

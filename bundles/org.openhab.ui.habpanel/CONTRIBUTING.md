@@ -14,8 +14,10 @@ redirect you, if necessary.
 
 ## Build Environment
 
-It is assumed you have ```npm```, ```bower``` and ```gulp``` available; if not,
-check their respective docs.
+You need NodeJS 16.14 or later and npm 8.6 or later installed.
+
+It is assumed you have `npm`, `bower` and `gulp` available;
+if not, check their respective docs.
 
 To build the Javascript part of HABPanel, navigate to the ```web/``` subfolder, then:
 1. Run ```npm install```

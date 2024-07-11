@@ -4,7 +4,7 @@
 */
 
 import Blockly from 'blockly'
-import { javascriptGenerator } from 'blockly/javascript'
+import { javascriptGenerator } from 'blockly/javascript.js'
 
 export default function (f7, isGraalJs) {
   Blockly.Blocks['oh_print'] = {
@@ -19,7 +19,7 @@ export default function (f7, isGraalJs) {
     }
   }
 
-  javascriptGenerator['oh_print'] = function (block) {
+  javascriptGenerator.forBlock['oh_print'] = function (block) {
     const message = javascriptGenerator.valueToCode(block, 'message', javascriptGenerator.ORDER_ATOMIC)
     if (isGraalJs) {
       return `console.log(${message});\n`
@@ -41,7 +41,7 @@ export default function (f7, isGraalJs) {
     }
   }
 
-  javascriptGenerator['oh_log'] = function (block) {
+  javascriptGenerator.forBlock['oh_log'] = function (block) {
     const message = javascriptGenerator.valueToCode(block, 'message', javascriptGenerator.ORDER_ATOMIC)
     const severity = block.getFieldValue('severity')
     if (isGraalJs) {

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2023 Contributors to the openHAB project
+ * Copyright (c) 2010-2024 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -57,7 +57,6 @@ public class VideoRenderer extends AbstractWidgetRenderer {
     @Override
     public EList<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException {
         Video videoWidget = (Video) w;
-        String snippet = null;
 
         String widgetId = itemUIRegistry.getWidgetId(w);
 
@@ -65,8 +64,17 @@ public class VideoRenderer extends AbstractWidgetRenderer {
         String snippetName = (videoWidget.getEncoding() != null
                 && videoWidget.getEncoding().toLowerCase().contains("mjpeg")) ? "image" : "video";
 
-        snippet = getSnippet(snippetName);
-        snippet = preprocessSnippet(snippet, w);
+        boolean showHeaderRow = w.getLabel() != null;
+        String snippet = (("video".equals(snippetName) && showHeaderRow) ? getSnippet("header_row") : "")
+                + getSnippet(snippetName);
+
+        snippet = snippet.replace("%header_row%",
+                ("image".equals(snippetName) || showHeaderRow) ? Boolean.valueOf(showHeaderRow).toString() : "");
+
+        snippet = preprocessSnippet(snippet, w, true);
+
+        // Process the color tags
+        snippet = processColor(w, snippet);
 
         State state = itemUIRegistry.getState(w);
         String url;

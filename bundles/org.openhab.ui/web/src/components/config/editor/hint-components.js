@@ -52,7 +52,7 @@ function getWidgetDefinitions (cm) {
 
 function hintItems (cm, line, replaceAfterColon, addStatePropertySuffix, addQuotes) {
   const cursor = cm.getCursor()
-  const promise = (itemsCache) ? Promise.resolve(itemsCache) : cm.state.$oh.api.get('/rest/items')
+  const promise = (itemsCache) ? Promise.resolve(itemsCache) : cm.state.$oh.api.get('/rest/items?staticDataOnly=true')
   return promise.then((data) => {
     if (!itemsCache) itemsCache = data
     let ret = {
@@ -107,6 +107,8 @@ function hintExpression (cm, line) {
         { text: 'props.', displayText: 'props', description: 'Access to the props of the parent root component' },
         { text: 'config.', displayText: 'config', description: 'Access to the configuration of the current component' },
         { text: 'vars.', displayText: 'vars', description: 'Access to context vars' },
+        { text: 'fn.', displayText: 'fn', description: 'Access to oh-context functions' },
+        { text: 'const.', displayText: 'const', description: 'Access to oh-context constants' },
         { text: 'loop.', displayText: 'loop', description: 'Access to oh-repeater loop variables' },
         { text: 'JSON.', displayText: 'JSON', description: 'Access to the JSON object functions' },
         { text: 'Math.', displayText: 'Math', description: 'Access to the Math object functions' },

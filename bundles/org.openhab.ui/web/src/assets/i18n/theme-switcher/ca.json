@@ -11,5 +11,8 @@
   "about.miscellaneous.home.background": "Color de fons estàndard de la pàgina d'inici",
   "about.miscellaneous.home.hideChatInput": "Amaga el quadre del xat a la pàgina d'inici",
   "about.miscellaneous.home.disableCardExpansionAnimation": "Desactiva les animacions d'expansió de les Cards",
-  "about.miscellaneous.theme.disablePageTransition": "Desactiva les animacions de transició de pàgina"
+  "about.miscellaneous.theme.disablePageTransition": "Desactiva les animacions de transició de pàgina",
+  "about.miscellaneous.webaudio.enable": "Habilita Web Audio sink support",
+  "about.miscellaneous.commandItem.title": "Escolta ordres per a la UI",
+  "about.miscellaneous.commandItem.selectItem": "Item"
 }

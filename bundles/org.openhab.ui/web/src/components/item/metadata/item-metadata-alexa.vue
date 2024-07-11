@@ -87,9 +87,7 @@ export default {
       itemType: this.item.groupType || this.item.type,
       multiple: !!this.metadata.value && this.metadata.value.indexOf(',') > 0,
       classSelectKey: this.$f7.utils.id(),
-      docUrl:
-        `https://${this.$store.state.runtimeInfo.buildString === 'Release Build' ? 'www' : 'next'}.openhab.org` +
-        '/link/alexa',
+      docUrl: `${this.$store.state.websiteUrl}/link/alexa`,
       ready: false
     }
   },
@@ -126,7 +124,7 @@ export default {
     parameters () {
       return this.classes.reduce((parameters, cl) => {
         const { parameters: params = [] } = this.getDefinition(cl)
-        for (const p of params.map((p) => p(this.item, this.metadata.config)).flat()) {
+        for (const p of params.map((p) => p(this.itemType, this.item, this.metadata.config)).flat()) {
           if (p.description) p.description = p.description.replace('%DOC_URL%', this.docUrl)
           if (!parameters.find((e) => e.name === p.name)) parameters.push(p)
         }

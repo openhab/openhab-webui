@@ -24,12 +24,12 @@ module.exports = {
     '@babel',
     'import',
     'cypress',
-    'vue'
+    'vue',
+    'es'
   ],
 
   globals: {
     'ga': true, // Google Analytics
-    'cordova': true,
     '__statics': true,
     'process': true
   },
@@ -57,6 +57,7 @@ module.exports = {
     'no-case-declarations': 'off',
     'no-console': 'off',
     'no-debugger': 'off',
+    'es/no-regexp-lookbehind-assertions': 'error', // Supported in Safari  >= 16.4, which breaks iOS 15.x.
     'no-trailing-spaces': 'error',
     'no-unsafe-optional-chaining': 'error',
     'no-whitespace-before-property': 'error',
@@ -68,6 +69,7 @@ module.exports = {
     'vue/attribute-hyphenation': 'off',
     'vue/attributes-order': 'off',
     'vue/component-definition-name-casing': 'off',
+    'vue/first-attribute-linebreak': 'off',
     'vue/html-closing-bracket-newline': ['error', { 'singleline': 'never', 'multiline': 'never' }],
     'vue/html-closing-bracket-spacing': 'error',
     'vue/html-indent': 'error',
@@ -75,6 +77,7 @@ module.exports = {
     'vue/html-self-closing': 'error',
     'vue/max-attributes-per-line': 'off',
     'vue/multiline-html-element-content-newline': 'error',
+    'vue/multi-word-component-names': 'off',
     'vue/mustache-interpolation-spacing': 'error',
     'vue/no-multi-spaces': 'error',
     'vue/no-v-html': 'off',

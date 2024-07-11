@@ -4,7 +4,8 @@
 */
 
 import Blockly from 'blockly'
-import { javascriptGenerator } from 'blockly/javascript'
+import { javascriptGenerator } from 'blockly/javascript.js'
+import { blockGetCheckedInputType } from '@/assets/definitions/blockly/utils.js'
 
 export default function (f7, isGraalJs) {
   /*
@@ -28,10 +29,52 @@ export default function (f7, isGraalJs) {
   * converts a hex color string in to an openHAB hue-saturation-brightness string
   * Code generation
   */
-  javascriptGenerator['oh_color_to_hsb'] = function (block) {
+  javascriptGenerator.forBlock['oh_color_to_hsb'] = function (block) {
     let conversionFunction = addConvertColourHexToHSB()
     const hexColor = javascriptGenerator.valueToCode(block, 'hexColor', javascriptGenerator.ORDER_ATOMIC)
     let code = `${conversionFunction}(${hexColor})`
+    return [code, 0]
+  }
+
+  Blockly.Blocks['oh_color_item'] = {
+    init: function () {
+      const dropDown = new Blockly.FieldDropdown([
+        ['hue', 'Hue'],
+        ['saturation', 'Saturation'],
+        ['brightness', 'Brightness']
+      ])
+      this.appendValueInput('item')
+        .setCheck(['oh_itemtype', 'oh_item'])
+        .appendField(dropDown, 'attributeName')
+        .appendField(' of ')
+
+      this.setInputsInline(false)
+      let thisBlock = this
+      this.setTooltip(function () {
+        const operand = thisBlock.getFieldValue('attributeName')
+        switch (operand) {
+          case 'Hue': return 'Return Hue of the color item'
+          case 'Saturation': return 'Return Saturation of a color item'
+          case 'Brightness': return 'Return Brightness of a color item'
+        }
+      })
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-standard-ext.html#item-color')
+      this.setOutput(true, 'Number')
+      this.setColour('%{BKY_COLOUR_HUE}')
+    }
+  }
+
+  javascriptGenerator.forBlock['oh_color_item'] = function (block) {
+    const theItem = javascriptGenerator.valueToCode(block, 'item', javascriptGenerator.ORDER_ATOMIC)
+    const inputType = blockGetCheckedInputType(block, 'item')
+    let attributeName = block.getFieldValue('attributeName')
+
+    let code = ''
+    if (isGraalJs) {
+      code = (inputType === 'oh_item') ? `items.getItem(${theItem}).rawState.get${attributeName}()` : `${theItem}.rawState.get${attributeName}()`
+    } else {
+      code = (inputType === 'oh_item') ? `itemRegistry.getItem(${theItem}).getRawState().get${attributeName}()` : `${theItem}.getRawState().get${attributeName}()`
+    }
     return [code, 0]
   }
 

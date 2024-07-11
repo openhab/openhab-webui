@@ -2,6 +2,7 @@
   <f7-page @page:afterin="onPageAfterIn" @page:afterout="stopEventSource">
     <f7-navbar title="Schedule" back-link="Settings" back-link-url="/settings/" back-link-force>
       <f7-nav-right>
+        <developer-dock-icon />
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
                  :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
       </f7-nav-right>
@@ -13,6 +14,7 @@
           search-container=".timeline"
           search-item=".timeline-item-inner"
           search-in=".timeline-item-title"
+          :placeholder="searchPlaceholder"
           :disable-button="!$theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
@@ -211,6 +213,11 @@ export default {
         console.error(err)
         this.$f7.dialog.alert('An error occurred while deleting: ' + err)
       })
+    }
+  },
+  computed: {
+    searchPlaceholder () {
+      return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     }
   }
 }

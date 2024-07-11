@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2023 Contributors to the openHAB project
+ * Copyright (c) 2010-2024 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -154,7 +154,7 @@ public class DataProviderResource implements RESTResource {
         // all designs
         File designDir = ManagerSettings.getInstance().getDesignFolder();
         File[] designs = designDir.listFiles();
-        List<String> res = new ArrayList<String>();
+        List<String> res = new ArrayList<>();
         if (designs != null) {
             Arrays.sort(designs);
             for (File design : designs) {

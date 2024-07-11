@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2023 Contributors to the openHAB project
+ * Copyright (c) 2010-2024 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -56,14 +56,18 @@ public class MapviewRenderer extends AbstractWidgetRenderer {
     @Override
     public EList<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException {
         Mapview mapview = (Mapview) w;
-        String snippet = getSnippet("mapview");
+        boolean showHeaderRow = w.getLabel() != null;
+        String snippet = (showHeaderRow ? getSnippet("header_row") : "") + getSnippet("mapview");
+
+        snippet = snippet.replace("%header_row%", showHeaderRow ? "true" : "");
+
         snippet = preprocessSnippet(snippet, mapview, true);
+
         // Process the color tags
         snippet = processColor(w, snippet);
 
         State state = itemUIRegistry.getState(mapview);
-        if (state instanceof PointType) {
-            PointType pointState = (PointType) state;
+        if (state instanceof PointType pointState) {
             double latitude = pointState.getLatitude().doubleValue();
             double longitude = pointState.getLongitude().doubleValue();
             snippet = snippet.replace("%url%", MAP_URL);

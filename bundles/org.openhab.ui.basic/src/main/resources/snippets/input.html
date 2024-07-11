@@ -1,0 +1,42 @@
+<div class="mdl-form__row mdl-cell mdl-cell--%cells%-col mdl-cell--%cells_tablet%-col-tablet %visibility_class%">
+	<span class="mdl-form__icon">
+		%icon_snippet%
+	</span>
+	<span class="mdl-form__label">
+		%label%
+	</span>
+	<div
+		class="mdl-form__input"
+	>
+		%prefix_snippet%
+		<div
+			class="mdl-form__control mdl-form__input-container mdl-textfield mdl-js-textfield"
+			data-control-type="input"
+			data-item="%item%"
+			data-widget-id="%widget_id%"
+			data-icon-with-state="%icon_with_state%"
+			data-item-type="%data_type%"
+			data-input-hint="%input_hint%"
+			data-item-state="%item_state%"
+			data-item-unit="%item_unit%"
+			for="oh-input-%item%"
+			data-label-color="%label_color%"
+			data-value-color="%value_color%"
+			data-icon-color="%icon_color%"
+		>
+			<input
+				type="%input_type%" %input_pattern%
+				autocomplete="off"
+				step="any"
+				id="oh-input-%item%"
+				class="mdl-textfield__input"
+				value="%data_state%"
+			/>
+			<label for="oh-input-%item%" class="mdl-textfield__label">
+				%undef_state%
+			</label>
+		</div>
+		%unit_snippet%
+		%postfix_snippet%
+	</div>
+</div>

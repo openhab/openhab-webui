@@ -28,9 +28,10 @@ export function remove (node) {
   if (p) p.removeChild(node)
 }
 
-export function filterPartialCompletions (cm, line, completions, property = 'text') {
+export function filterPartialCompletions (cm, line, completions, property = 'text', remover) {
   const cursor = cm.getCursor()
-  const lineBeforeCursor = line.substring(0, cursor.ch)
+  let lineBeforeCursor = line.substring(0, cursor.ch)
+  if (remover) lineBeforeCursor = lineBeforeCursor.replace(remover, '')
   const completionBeginPos = Math.max(lineBeforeCursor.lastIndexOf(' '), lineBeforeCursor.lastIndexOf('.'), lineBeforeCursor.lastIndexOf('@'))
   const partialCompletion = lineBeforeCursor.substring(completionBeginPos + 1)
   return completions.filter((c) => c[property] && c[property].toLowerCase().indexOf(partialCompletion.toLowerCase()) >= 0)

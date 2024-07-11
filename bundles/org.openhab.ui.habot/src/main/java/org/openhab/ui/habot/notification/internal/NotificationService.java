@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2023 Contributors to the openHAB project
+ * Copyright (c) 2010-2024 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -193,9 +193,7 @@ public class NotificationService {
                 generateVAPIDKeyPair();
             } catch (InvalidAlgorithmParameterException | NoSuchProviderException | NoSuchAlgorithmException
                     | IOException e1) {
-                RuntimeException ex = new RuntimeException("Cannot get the VAPID keypair for push notifications");
-                ex.initCause(e1);
-                throw ex;
+                throw new RuntimeException("Cannot get the VAPID keypair for push notifications", e1);
             }
         }
     }

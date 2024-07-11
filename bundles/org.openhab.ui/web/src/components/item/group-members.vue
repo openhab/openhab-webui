@@ -4,13 +4,12 @@
       <f7-list>
         <ul v-if="!editMembers">
           <item
-            v-for="member in groupItem.members" :key="member.name"
+            v-for="member in sortedGroupMembers" :key="member.name"
             :item="member" :link="'/settings/items/' + member.name"
-            :context="context"
-            :ignore-editable="true" />
+            :context="context" />
           <!-- <f7-list-button @click="enableEditMode" color="blue" title="Add or Remove Members" /> -->
         </ul>
-        <item-picker v-if="editMembers" :multiple="true" name="groupMembers" :value="memberNames" title="Members" @input="(members) => memberNames = members" />
+        <item-picker v-if="editMembers" :multiple="true" name="groupMembers" :value="pickedMemberNames" title="Members" :editableOnly="true" @input="(members) => pickedMemberNames = members" />
       </f7-list>
     </f7-card-content>
     <f7-card-footer>
@@ -44,21 +43,28 @@ export default {
   data () {
     return {
       editMembers: false,
-      memberNames: [],
-      newMemberNames: []
+      pickedMemberNames: []
+    }
+  },
+  computed: {
+    editableMemberNames () {
+      return this.groupItem.members.filter((m) => m.editable).map((m) => m.name)
+    },
+    sortedGroupMembers () {
+      return this.groupItem.members.toSorted((a, b) => (a.label || a.name).localeCompare(b.label || b.name))
     }
   },
   methods: {
     enableEditMode () {
-      this.memberNames = this.groupItem.members.map((m) => m.name)
+      this.pickedMemberNames = this.editableMemberNames
       this.editMembers = true
     },
     cancelEditMode () {
       this.editMembers = false
     },
     updateMembers () {
-      const itemsToAdd = this.memberNames.filter((n) => this.groupItem.members.findIndex((m) => m.name === n) < 0)
-      const itemsToRemove = this.groupItem.members.filter((m) => (this.memberNames.indexOf(m.name) < 0)).map((m) => m.name)
+      const itemsToAdd = this.pickedMemberNames.filter((m) => !this.editableMemberNames.includes(m))
+      const itemsToRemove = this.editableMemberNames.filter((m) => !this.pickedMemberNames.includes(m))
 
       if (!itemsToAdd.length && !itemsToRemove.length) {
         this.$f7.dialog.alert('Nothing to change')

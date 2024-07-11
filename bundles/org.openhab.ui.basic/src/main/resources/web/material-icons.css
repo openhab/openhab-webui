@@ -4,9 +4,8 @@
   font-weight: 400;
   src: local('Material Icons'),
        local('MaterialIcons-Regular'),
-       url(fonts/MaterialIcons-Regular.woff2) format('woff2'),
-       url(fonts/MaterialIcons-Regular.woff) format('woff'),
-       url(fonts/MaterialIcons-Regular.ttf) format('truetype');
+       url(fonts/material-icons.woff2) format('woff2'),
+       url(fonts/material-icons.woff) format('woff');
 }
 
 .material-icons {
@@ -21,6 +20,8 @@
   text-transform: none;
   letter-spacing: normal;
   word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
 
   /* Support for all WebKit browsers. */
   -webkit-font-smoothing: antialiased;
@@ -32,15 +33,4 @@
 
   /* Support for IE. */
   font-feature-settings: 'liga';
-}
-
-.material-icons.md-oh {
-	font-size: 32px;
-	vertical-align: middle;
-	html:not(.ui-icons-enabled) & {
-		display: none;
-	}
-	html.ui-layout-condensed & {
-		font-size: 28px;
-	}
 }

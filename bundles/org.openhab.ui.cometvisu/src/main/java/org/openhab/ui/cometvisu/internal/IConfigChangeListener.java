@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2023 Contributors to the openHAB project
+ * Copyright (c) 2010-2024 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -25,5 +25,5 @@ public interface IConfigChangeListener {
      *
      * @param key the key of the configuration option that has been changed
      */
-    public void handleConfigChange(String key);
+    void handleConfigChange(String key);
 }

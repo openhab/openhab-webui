@@ -1,5 +1,5 @@
 <!doctype html>
-<html class="%htmlclass%">
+<html>
 	<head>
 		<title>%label%</title>
 
@@ -25,12 +25,11 @@
 
 		<link rel="stylesheet" type="text/css" href="mdl/material.min.css" />
 		<link rel="stylesheet" type="text/css" href="material-icons.css" />
+		<link rel="stylesheet" type="text/css" href="framework7-icons.css" />
 		<link rel="stylesheet" type="text/css" href="smarthome.css" />
 
-		<script type="application/json" id="config">{"webAudio":%config.web-audio%}</script>
 		<script src="smarthome.js"></script>
 		<script src="mdl/material.min.js"></script>
-		<script src="iconify/iconify-icon.min.js"></script>
 		<script type="text/html" id="template-modal">
 			<div class="mdl-modal">
 				<div class="mdl-modal__wrapper">
@@ -69,7 +68,7 @@
 			</div>
 		</script>
 	</head>
-	<body class="mdl-color-text--grey-700" data-sitemap="%sitemap%" data-page-id="%id%" data-theme="%theme%" data-icon-type="%icon_type%" data-primary-color="%primarycolor%" data-secondary-color="%secondarycolor%">
+	<body class="mdl-color-text--grey-700" data-sitemap="%sitemap%" data-page-id="%id%" data-icon-type="%icon_type%" data-inline-svg="%inline%">
 	<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
 		<header class="mdl-layout__header mdl-layout__header--scroll navigation navigation-home">
 			<div class="mdl-layout__header-row">
@@ -77,9 +76,9 @@
 					<!-- arrow_back -->
 					<i class="material-icons">&#xE5C4;</i>
 				</div>
-				<div class="mdl-layout__header-button navigation__button-home">
-					<!-- home -->
-					<i class="material-icons">&#xE88A;</i>
+				<div class="mdl-layout__header-button navigation__button-settings">
+					<!-- settings -->
+					<i class="material-icons">&#xe8b8;</i>
 				</div>
 				<span class="mdl-layout-title">%label%</span>
 				<div class="mdl-layout-spacer"></div>

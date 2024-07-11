@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language-Team: Hebrew\n"
 "Language: he_IL\n"
-"PO-Revision-Date: 2022-12-11 11:15\n"
+"PO-Revision-Date: 2024-04-07 12:35\n"
 
 #. Common term
 msgctxt "OK"
@@ -151,12 +151,12 @@ msgstr "שמור על השרת openHAB בסיום!"
 #. Displayed when no default panel configuration has been set and editing is locked (because there was no refresh token found)
 msgctxt "tutorial.nodefaultpanel"
 msgid "No default panel configuration!"
-msgstr ""
+msgstr "אין תצורת פאנל ברירת מחדל!"
 
 #. Displayed when no dashboard is present and editing is locked in the service configuration
 msgctxt "tutorial.setdefault"
 msgid "Sign in with the main UI to enable editing in HABPanel and set a default panel configuration."
-msgstr ""
+msgstr "היכנס עם ממשק המשתמש הראשי כדי לאפשר עריכה ב-HABPanel ולהגדיר תצורת פאנל ברירת מחדל."
 
 #. Label of the bottom-left link in edit mode - please also test with phone resolutions!
 msgctxt "menu.addnewdashboard"

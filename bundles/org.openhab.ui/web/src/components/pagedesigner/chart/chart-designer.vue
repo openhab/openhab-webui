@@ -67,7 +67,7 @@
             </f7-list>
           </f7-card>
         </div>
-        <chart-skeleton :options="skeletonGridOptions(grid, gridIdx)" style="height: 400px; width: 100%" :autoresize="true" />
+        <chart-skeleton :option="skeletonGridOptions(grid, gridIdx)" style="height: 400px; width: 100%" :autoresize="true" />
       </div>
       <div>
         <f7-menu v-if="context.editmode" class="configure-layout-menu">
@@ -121,7 +121,7 @@
             </f7-list>
           </f7-card>
         </div>
-        <chart-skeleton :options="skeletonCalendarOptions(calendar, calendarIdx)" style="height: 400px; width: 100%" :autoresize="true" />
+        <chart-skeleton :option="skeletonCalendarOptions(calendar, calendarIdx)" style="height: 400px; width: 100%" :autoresize="true" />
       </div>
     </f7-block>
 
@@ -221,7 +221,18 @@
 import widget from '@/components/widgets/widget-mixin'
 import EditContextMenu from '@/components/pagedesigner/edit-menu.vue'
 
-import ECharts from 'vue-echarts/components/ECharts'
+import { use } from 'echarts/core'
+import { CanvasRenderer } from 'echarts/renderers'
+import { LineChart, BarChart, GaugeChart, HeatmapChart, PieChart, ScatterChart } from 'echarts/charts'
+import {
+  TitleComponent, LegendComponent, LegendScrollComponent, GridComponent, SingleAxisComponent, ToolboxComponent, TooltipComponent,
+  DataZoomComponent, MarkLineComponent, MarkPointComponent, MarkAreaComponent, VisualMapComponent, CalendarComponent
+} from 'echarts/components'
+import VChart from 'vue-echarts'
+
+use([CanvasRenderer, LineChart, BarChart, GaugeChart, HeatmapChart, PieChart, ScatterChart, TitleComponent,
+  LegendComponent, LegendScrollComponent, GridComponent, SingleAxisComponent, ToolboxComponent, TooltipComponent, DataZoomComponent,
+  MarkLineComponent, MarkPointComponent, MarkAreaComponent, VisualMapComponent, CalendarComponent])
 
 import * as dayjs from 'dayjs'
 import IsoWeek from 'dayjs/plugin/isoWeek'
@@ -239,7 +250,7 @@ const defaultSlotComponentType = {
 export default {
   mixins: [widget],
   components: {
-    'chart-skeleton': ECharts,
+    'chart-skeleton': VChart,
     EditContextMenu
   },
   methods: {
@@ -261,13 +272,11 @@ export default {
     skeletonCalendarOptions (calendar, calendarIdx) {
       let options = {}
       let calendarOptions = Object.assign({}, calendar.config)
-      calendarOptions.dayLabel = {
-        firstDay: 1,
-        margin: 5
-      }
-      calendarOptions.monthName = {
-        margin: 5
-      }
+      if (!calendarOptions.dayLabel) calendarOptions.dayLabel = {}
+      if (calendarOptions.dayLabel.firstDay === undefined) calendarOptions.dayLabel.firstDay = 1
+      if (calendarOptions.dayLabel.margin === undefined) calendarOptions.dayLabel.margin = 5
+      if (!calendarOptions.monthName) calendarOptions.monthName = {}
+      if (calendarOptions.monthName.margin === undefined) calendarOptions.monthName.margin = 5
 
       // calculate range based on chart type and/or initial period
       const chartType = this.context.component.config.chartType

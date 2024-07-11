@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2023 Contributors to the openHAB project
+ * Copyright (c) 2010-2024 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -127,9 +127,6 @@ public class ReadResource implements EventBroadcaster, RESTResource {
      * Subscribes the connecting client to the stream of events filtered by the
      * given eventFilter.
      *
-     * @param eventFilter
-     * @return {@link EventOutput} object associated with the incoming
-     *         connection.
      * @throws IOException
      * @throws InterruptedException
      */
@@ -238,7 +235,6 @@ public class ReadResource implements EventBroadcaster, RESTResource {
      * Broadcasts an event described by the given parameters to all currently
      * listening clients.
      *
-     * @param item the item which has changed
      * @param eventObject bean that can be converted to a JSON object.
      */
     @Override
@@ -248,9 +244,7 @@ public class ReadResource implements EventBroadcaster, RESTResource {
             return;
         }
 
-        executorService.execute(() -> {
-            broadcaster.send(SseUtil.buildEvent(sse.newEventBuilder(), eventObject));
-        });
+        executorService.execute(() -> broadcaster.send(SseUtil.buildEvent(sse.newEventBuilder(), eventObject)));
     }
 
     @Override

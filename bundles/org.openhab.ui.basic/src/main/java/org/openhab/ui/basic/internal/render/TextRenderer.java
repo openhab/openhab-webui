@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2023 Contributors to the openHAB project
+ * Copyright (c) 2010-2024 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -52,7 +52,7 @@ public class TextRenderer extends AbstractWidgetRenderer {
     @Override
     public EList<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException {
         Text text = (Text) w;
-        String snippet = (text.getChildren().size() > 0) ? getSnippet("text_link") : getSnippet("text");
+        String snippet = (!text.getChildren().isEmpty()) ? getSnippet("text_link") : getSnippet("text");
 
         snippet = preprocessSnippet(snippet, w);
         snippet = snippet.replace("%id%", itemUIRegistry.getWidgetId(w));

@@ -66,5 +66,7 @@
   "analyzer.dialogs.save.replace.message": "Er bestaat al een pagina met het ID {uid}, wilt u deze overschrijven?",
   "analyzer.dialogs.save.replace.title": "Pagina bestaat al",
   "analyzer.page.updated": "Grafiek pagina bijgewerkt",
-  "analyzer.page.created": "Grafiek pagina aangemaakt"
+  "analyzer.page.created": "Grafiek pagina aangemaakt",
+  "analyzer.invalid-configuration.title": "Ongeldige configuratie",
+  "analyzer.invalid-configuration.text": "Controleer of alle vereiste query parameters zijn doorgegeven/de configuratie geldig is."
 }

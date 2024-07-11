@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2023 Contributors to the openHAB project
+ * Copyright (c) 2010-2024 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -51,8 +51,13 @@ public class WebviewRenderer extends AbstractWidgetRenderer {
     @Override
     public EList<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException {
         Webview webview = (Webview) w;
-        String snippet = getSnippet("webview");
+        boolean showHeaderRow = w.getLabel() != null;
+        String snippet = (showHeaderRow ? getSnippet("header_row") : "") + getSnippet("webview");
+
+        snippet = snippet.replace("%header_row%", showHeaderRow ? "true" : "");
+
         snippet = preprocessSnippet(snippet, webview, true);
+
         // Process the color tags
         snippet = processColor(w, snippet);
 

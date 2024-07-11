@@ -5,13 +5,11 @@ export default {
     let calendar = chartWidget.evaluateExpression(ComponentId.get(component), component.config)
     calendar.range = [startTime.toDate(), endTime.subtract(1, 'day').toDate()]
     if (orient) calendar.orient = orient
-    calendar.dayLabel = {
-      firstDay: 1,
-      margin: 5
-    }
-    calendar.monthName = {
-      margin: 5
-    }
+    if (!calendar.dayLabel) calendar.dayLabel = {}
+    if (calendar.dayLabel.firstDay === undefined) calendar.dayLabel.firstDay = 1
+    if (calendar.dayLabel.margin === undefined) calendar.dayLabel.margin = 5
+    if (!calendar.monthName) calendar.monthName = {}
+    if (calendar.monthName.margin === undefined) calendar.monthName.margin = 5
 
     if (!calendar.top) calendar.top = 100
     if (!calendar.bottom) calendar.bottom = 50

@@ -58,20 +58,13 @@ const thermostatAttributes = [
   ...genericAttributes
 ]
 
-const blindParameters = (item) => {
+const blindParameters = (_, item) => {
   const attributes = ['PositionState', 'TiltAngle']
-  const metadata = item.members.map((mbr) => mbr.metadata && mbr.metadata.alexa.value).join(',')
+  const metadata = item.members.map((mbr) => mbr.metadata?.alexa?.value).filter(Boolean).join(',')
   return attributes.every((attr) => metadata.includes(attr)) ? [p.primaryControl()] : []
 }
 
-const networkParameters = (item) => {
-  const deviceTypes = ['NetworkHardware', 'Router']
-  const connection = item.groups.find((g) => deviceTypes.includes(g.metadata.alexa.value))
-  return connection ? [p.connectedTo(connection.label || connection.name), p.hostname(), p.macAddress()] : []
-}
-
-export const defaultParameters = (item) => {
-  const itemType = item.groupType || item.type
+export const defaultParameters = (itemType, item) => {
   return itemType === 'Group' || !item.groups.length
     ? [p.deviceName(item.label), p.deviceDescription(`${itemType} ${item.name}`)]
     : []
@@ -93,6 +86,9 @@ export default {
   AirPurifier: {
     defaultAttributes: ['PowerState', 'FanSpeed'],
     supportedAttributes: fanAttributes
+  },
+  AirQualityMonitor: {
+    supportedAttributes: ['CurrentTemperature', 'CurrentHumidity', ...sensorAttributes]
   },
   Automobile: {
     supportedAttributes: [
@@ -136,8 +132,7 @@ export default {
   },
   Computer: {
     defaultAttributes: ['PowerState'],
-    supportedAttributes: networkDeviceAttributes,
-    groupParameters: networkParameters
+    supportedAttributes: networkDeviceAttributes
   },
   ContactSensor: {
     defaultAttributes: ['ContactDetectionState'],
@@ -170,8 +165,7 @@ export default {
   },
   GameConsole: {
     defaultAttributes: ['PowerState'],
-    supportedAttributes: networkDeviceAttributes,
-    groupParameters: networkParameters
+    supportedAttributes: networkDeviceAttributes
   },
   GarageDoor: {
     defaultAttributes: ['OpenState'],
@@ -187,8 +181,7 @@ export default {
   },
   Laptop: {
     defaultAttributes: ['PowerState'],
-    supportedAttributes: mobileDeviceAttributes,
-    groupParameters: networkParameters
+    supportedAttributes: mobileDeviceAttributes
   },
   Light: {
     defaultAttributes: ['PowerState', 'Brightness', 'Color'],
@@ -204,8 +197,7 @@ export default {
   },
   MobilePhone: {
     defaultAttributes: ['PowerState'],
-    supportedAttributes: mobileDeviceAttributes,
-    groupParameters: networkParameters
+    supportedAttributes: mobileDeviceAttributes
   },
   MotionSensor: {
     defaultAttributes: ['MotionDetectionState'],
@@ -232,6 +224,10 @@ export default {
     supportedAttributes: genericDeviceAttributes
   },
   Printer: {
+    defaultAttributes: ['PowerState'],
+    supportedAttributes: genericDeviceAttributes
+  },
+  Remote: {
     defaultAttributes: ['PowerState'],
     supportedAttributes: genericDeviceAttributes
   },
@@ -283,8 +279,7 @@ export default {
   },
   Tablet: {
     defaultAttributes: ['PowerState'],
-    supportedAttributes: mobileDeviceAttributes,
-    groupParameters: networkParameters
+    supportedAttributes: mobileDeviceAttributes
   },
   Television: {
     defaultAttributes: ['PowerState', 'Channel'],
@@ -297,7 +292,7 @@ export default {
   Thermostat: {
     defaultAttributes: ['HeatingCoolingMode'],
     supportedAttributes: thermostatAttributes,
-    groupParameters: (item) => [p.scale(item, true)]
+    groupParameters: (_, item) => [p.scale(item, true)]
   },
   VacuumCleaner: {
     defaultAttributes: ['PowerState', 'VacuumMode'],
@@ -313,10 +308,9 @@ export default {
   },
   Wearable: {
     defaultAttributes: ['PowerState'],
-    supportedAttributes: mobileDeviceAttributes,
-    groupParameters: networkParameters
+    supportedAttributes: mobileDeviceAttributes
   },
   Other: {
-    supportedAttributes: Object.keys(attributes).filter((attr) => attr !== 'NetworkAccess' && attr !== 'Scene')
+    supportedAttributes: Object.keys(attributes).filter((attr) => attr !== 'Scene')
   }
 }

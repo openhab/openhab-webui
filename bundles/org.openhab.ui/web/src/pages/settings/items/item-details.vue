@@ -1,14 +1,17 @@
 <template>
   <f7-page class="item-details-page" @page:beforein="onPageBeforeIn" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar :title="item.name" back-link="Back" no-shadow no-hairline class="item-details-navbar">
-      <f7-nav-right>
-        <f7-link icon-md="material:edit" href="edit">
+      <f7-nav-right v-if="ready">
+        <f7-link v-if="item.editable" icon-md="material:edit" href="edit">
           {{ $theme.md ? '' : 'Edit' }}
+        </f7-link>
+        <f7-link v-else icon-f7="lock_fill" tooltip="This Item is not editable through the UI" href="edit">
+          Details
         </f7-link>
       </f7-nav-right>
       <f7-subnavbar sliding class="item-header">
         <div class="item-icon" v-if="item.name">
-          <oh-icon v-if="item.category" :icon="item.category" height="60" width="60" />
+          <oh-icon v-if="item.category" :icon="item.category" :state="item.type === 'Image' ? null : (context.store[item.name].state || item.state)" height="60" width="60" />
           <span v-else>
             {{ item.label ? item.label[0] : item.name[0] }}
           </span>
@@ -16,7 +19,7 @@
         <h2>{{ item.label }}</h2>
         <!-- <h4 v-show="item.label">{{item.name}}</h4> -->
         <h5 v-show="item.type">
-          <small>{{ item.type }}</small>
+          <small>{{ getItemTypeLabel(item) }}</small>
         </h5>
       </f7-subnavbar>
     </f7-navbar>
@@ -81,13 +84,16 @@
           <link-details :item="item" :links="links" />
         </f7-col>
       </f7-row>
-      <f7-row v-if="item.editable">
+      <f7-row>
         <f7-col>
           <f7-list>
-            <f7-list-button color="red" @click="deleteItem">
+            <f7-list-button v-if="item.editable" color="red" @click="deleteItem">
               Remove Item
             </f7-list-button>
           </f7-list>
+          <p class="developer-sidebar-tip text-align-center">
+            Tip: Use the developer sidebar (Shift+Alt+D) to search for usages of this Item
+          </p>
         </f7-col>
       </f7-row>
     </f7-block>
@@ -104,7 +110,7 @@
       width 60px
       padding 10px
       border-radius 40px
-      background white
+      border 1px solid white
       img
         height 60px
         width 60px
@@ -139,6 +145,11 @@
   .chip
     margin-left 3px
     margin-right 3px
+.developer-sidebar-tip
+    visibility visible
+@media(max-width: 1279px)
+  .developer-sidebar-tip
+    visibility hidden
 </style>
 
 <script>
@@ -146,8 +157,10 @@ import ItemStatePreview from '@/components/item/item-state-preview.vue'
 import LinkDetails from '@/components/model/link-details.vue'
 import GroupMembers from '@/components/item/group-members.vue'
 import MetadataMenu from '@/components/item/metadata/item-metadata-menu.vue'
+import ItemMixin from '@/components/item/item-mixin'
 
 export default {
+  mixins: [ItemMixin],
   props: ['itemName'],
   components: {
     LinkDetails,
@@ -158,7 +171,8 @@ export default {
   data () {
     return {
       item: {},
-      links: []
+      links: [],
+      ready: false
     }
   },
   computed: {
@@ -184,6 +198,7 @@ export default {
     load () {
       this.$oh.api.get(`/rest/items/${this.itemName}?metadata=.+`).then((data) => {
         this.item = data
+        this.ready = true
         this.iconUrl = (localStorage.getItem('openhab.ui:serverUrl') || '') + '/icon/' + this.item.category + '?format=svg'
       })
     },

@@ -46,11 +46,15 @@ import _CodeMirror from 'codemirror'
 import 'codemirror/lib/codemirror.css'
 
 // language js
-import 'codemirror/mode/javascript/javascript.js'
 import 'codemirror/mode/clike/clike.js'
 import 'codemirror/mode/groovy/groovy.js'
+import 'codemirror/mode/jinja2/jinja2.js'
+import 'codemirror/mode/javascript/javascript.js'
+import 'codemirror/mode/properties/properties.js'
 import 'codemirror/mode/python/python.js'
 import 'codemirror/mode/ruby/ruby.js'
+import 'codemirror/mode/shell/shell.js'
+import 'codemirror/mode/xml/xml.js'
 import 'codemirror/mode/yaml/yaml.js'
 
 // theme css
@@ -58,6 +62,8 @@ import 'codemirror/theme/gruvbox-dark.css'
 
 import 'codemirror/addon/edit/matchbrackets.js'
 import 'codemirror/addon/edit/closebrackets.js'
+
+import 'codemirror/addon/comment/comment.js'
 
 // for autocomplete
 import 'codemirror/addon/hint/show-hint.js'
@@ -94,6 +100,7 @@ import NashornDefs from '@/assets/nashorn-tern-defs.json'
 import OpenhabJsDefs from '@/assets/openhab-js-tern-defs.json'
 
 import componentsHint from '../editor/hint-components'
+import itemsHint from '../editor/hint-items'
 import rulesHint from '../editor/hint-rules'
 import thingsHint from '../editor/hint-things'
 import pythonHint from '../editor/hint-python'
@@ -167,14 +174,16 @@ export default {
   },
   methods: {
     translateMode (mode) {
-      if (this.mode && this.mode.indexOf('yaml') >= 0) return 'text/x-yaml'
-      if (this.mode && this.mode.indexOf('application/javascript') === 0) return 'text/javascript'
-      if (this.mode && this.mode === 'application/vnd.openhab.dsl.rule') return 'text/x-java'
-      if (this.mode && this.mode.indexOf('python') >= 0) return 'text/x-python'
-      if (this.mode && this.mode.indexOf('ruby') >= 0) return 'text/x-ruby'
-      if (this.mode && this.mode.indexOf('groovy') >= 0) return 'text/x-groovy'
-      if (this.mode && this.mode === 'rb') return 'text/x-ruby'
-      return this.mode
+      // Translations required for some special modes used in MainUI
+      // See https://codemirror.net/5/mode/index.html for supported language names & MIME types
+      if (!mode) return mode
+      if (mode.indexOf('yaml') >= 0) return 'text/x-yaml'
+      if (mode.indexOf('application/javascript') === 0 || mode === 'js') return 'text/javascript'
+      if (mode === 'application/vnd.openhab.dsl.rule') return 'text/x-java'
+      if (mode === 'py') return 'text/x-python'
+      if (mode === 'rb' || mode === 'application/x-ruby') return 'text/x-ruby'
+      if (mode.indexOf('jinja') >= 0) return 'text/jinja2'
+      return mode
     },
     ternComplete (file, query) {
       let pos = tern.resolvePos(file, query.end)
@@ -228,7 +237,7 @@ export default {
             }
             server.on('completion', this.ternComplete)
           })
-          this.$oh.api.get('/rest/items').then((data) => { this.$set(this, 'itemsCache', data) })
+          this.$oh.api.get('/rest/items?staticDataOnly=true').then((data) => { this.$set(this, 'itemsCache', data) })
         }
         const server = new _CodeMirror.TernServer({
           defs: (this.mode.indexOf('version=ECMAScript-5.1') > 0) ? [EcmascriptDefs, NashornDefs] : [EcmascriptDefs, OpenhabJsDefs],
@@ -267,6 +276,8 @@ export default {
           hint (cm, option) {
             if (self.mode.indexOf('application/vnd.openhab.uicomponent') === 0) {
               return componentsHint(cm, option, self.mode)
+            } else if (self.mode === 'application/vnd.openhab.item+yaml') {
+              return itemsHint(cm, option, self.mode)
             } else if (self.mode === 'application/vnd.openhab.rule+yaml') {
               return rulesHint(cm, option, self.mode)
             } else if (self.mode === 'application/vnd.openhab.thing+yaml') {
@@ -285,11 +296,10 @@ export default {
           if (parsed.errors.length > 0) {
             parsed.errors.forEach((e) => {
               const message = e.message
-              e.makePretty()
               found.push({
                 message: message,
-                from: (e.linePos.end) ? { line: e.linePos.start.line - 1, ch: e.linePos.start.col - 1 } : undefined,
-                to: (e.linePos.end) ? { line: e.linePos.end.line - 1, ch: e.linePos.end.col - 1 } : undefined
+                from: (e.linePos[0]) ? { line: e.linePos[0].line - 1, ch: e.linePos[0].col - 1 } : undefined,
+                to: (e.linePos[1]) ? { line: e.linePos[1].line - 1, ch: e.linePos[1].col - 1 } : undefined
               })
             })
           }
@@ -309,6 +319,8 @@ export default {
         }
       }
       extraKeys['Shift-Tab'] = 'indentLess'
+      extraKeys['Cmd-/'] = 'toggleComment'
+      extraKeys['Ctrl-/'] = 'toggleComment'
       cm.setOption('extraKeys', extraKeys)
       cm.addOverlay(indentGuidesOverlay)
       cm.refresh()

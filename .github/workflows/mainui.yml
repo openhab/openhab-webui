@@ -1,15 +1,20 @@
 name: Main UI
 
 on:
+  push:
+    branches: [ main ]
+    paths: bundles/org.openhab.ui/web/**
   pull_request:
     branches: [ main ]
     paths: bundles/org.openhab.ui/web/**
-
   workflow_dispatch:
 
 defaults:
   run:
     working-directory: bundles/org.openhab.ui/web
+
+env:
+  NODE_VERSION: '20.12.2'
 
 jobs:
   checks:
@@ -18,14 +23,14 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: '12.x'
+          node-version: ${{ env.NODE_VERSION }}
 
       - name: Cache node modules
         id: cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: node_modules # npm cache files are stored in `~/.npm` on Linux/macOS
           key: ${{ runner.os }}-node_modules-${{ hashFiles('**/package-lock.json') }}
@@ -41,20 +46,23 @@ jobs:
       - name: Run ESLint
         run: npm run lint
 
+      - name: Run Unit Tests
+        run: npm run test:unit
+
   webpack-stats:
     runs-on: ubuntu-latest
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: '12.x'
+          node-version: ${{ env.NODE_VERSION }}
 
       - name: Cache node modules
         id: cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: node_modules # npm cache files are stored in `~/.npm` on Linux/macOS
           key: ${{ runner.os }}-node_modules-${{ hashFiles('**/package-lock.json') }}
@@ -70,17 +78,13 @@ jobs:
       - name: Build and generate report
         run: npm run webpack-analyzer-report-stats
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: report
           path: /home/runner/work/openhab-webui/openhab-webui/bundles/org.openhab.ui/web/report.html
-
-      - name: Upload stats to RelativeCI
-        run: npx relative-ci-agent
-        env:
-          # was: RELATIVE_CI_KEY: ${{ secrets.RELATIVE_CI_KEY }}
-          # but wouldn't work for PRs made from forks...
-          # Bad practice (!), however since the service itself as well as
-          # what can be done with the key (add new bundle stats) is not
-          # critical, not hiding the key is deemed acceptable for now!
-          RELATIVE_CI_KEY: f8e0e450-804c-11eb-b7f5-510e2634a5c9
+      
+      # Upload bundle stats to use on relative-ci.yaml workflow
+      - name: Upload webpack stats artifact
+        uses: relative-ci/agent-upload-artifact-action@v2
+        with:
+          webpackStatsFile: ./bundles/org.openhab.ui/web/stats.json

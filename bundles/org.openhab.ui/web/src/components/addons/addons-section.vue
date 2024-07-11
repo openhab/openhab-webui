@@ -12,7 +12,10 @@
     <div class="addons-cards">
       <addon-card v-for="addon in featuredAddons" :key="addon.uid" :addon="addon" :install-action-text="installActionText" :headline="'Featured'" @addonButtonClick="addonButtonClick" />
     </div>
-    <div v-if="showAsCards" class="addons-cards">
+    <div v-if="suggested" class="addons-cards">
+      <addon-card v-for="addon in addonsList" :key="addon.uid" :addon="addon" :install-action-text="installActionText" :headline="'Suggested'" @addonButtonClick="addonButtonClick" />
+    </div>
+    <div v-else-if="showAsCards" class="addons-cards">
       <addon-card v-for="addon in addonsList" :key="addon.uid" :addon="addon" :install-action-text="installActionText" @addonButtonClick="addonButtonClick" />
     </div>
     <f7-list v-else media-list ref="addonlist" class="addons-table-list" no-chevron no-hairlines>
@@ -95,7 +98,7 @@ import AddonCard from './addon-card.vue'
 import { compareAddons } from '@/assets/addon-store'
 
 export default {
-  props: ['addons', 'title', 'subtitle', 'showAll', 'featured', 'showAsCards', 'installActionText'],
+  props: ['addons', 'title', 'subtitle', 'showAll', 'featured', 'showAsCards', 'suggested', 'installActionText'],
   components: {
     AddonListItem,
     AddonCard

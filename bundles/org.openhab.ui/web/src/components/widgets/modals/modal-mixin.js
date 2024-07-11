@@ -7,11 +7,12 @@ export default {
     'oh-plan-page': () => import('@/components/widgets/plan/oh-plan-page.vue'),
     'oh-chart-page': () => import('@/components/widgets/chart/oh-chart-page.vue')
   },
-  props: ['uid', 'el', 'modalParams'],
+  props: ['uid', 'el', 'modalConfig'],
   data () {
     return {
       currentTab: 0,
       vars: {},
+      ctxVars: {},
       tabVars: {}
     }
   },
@@ -22,8 +23,10 @@ export default {
         component: component,
         root: component,
         store: this.$store.getters.trackedItems,
-        props: this.modalParams,
-        vars: this.vars
+        props: this.modalConfig,
+        vars: this.vars,
+        ctxVars: this.ctxVars,
+        modalConfig: this.modalConfig // For configuration of oh- components
       }
     },
     modalStyle () {
@@ -66,6 +69,7 @@ export default {
     onTabChange (idx) {
       this.currentTab = idx
       this.$set(this, 'vars', {})
+      this.$set(this, 'ctxVars', {})
     },
     tabContext (tab) {
       const page = this.$store.getters.page(tab.config.page.replace('page:', ''))

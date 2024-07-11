@@ -1,20 +1,14 @@
 import cardGroups from './homecards-grouping'
 import { compareItems } from '@/components/widgets/widget-order'
-import { loadLocaleMessages } from '@/js/i18n'
 import { authorize } from '@/js/openhab/auth'
 
 export default {
-  i18n: {
-    messages: loadLocaleMessages(require.context('@/assets/i18n/semantics'))
-  },
   data () {
     return {
       model: {},
       modelReady: false,
       loopError: null
     }
-  },
-  computed: {
   },
   methods: {
     cardGroups (type, page) {
@@ -120,7 +114,8 @@ export default {
       item.children.forEach(child => this.sortModel(child))
     },
     loadModel (page) {
-      this.$oh.api.get('/rest/items?metadata=semantics,listWidget,widgetOrder')
+      console.debug('Loading semantic model and building semantic homepages ...')
+      this.$oh.api.get('/rest/items?staticDataOnly=true&metadata=semantics,listWidget,widgetOrder')
         .then((data) => {
           this.items = data
           let filteredItems = {
@@ -173,6 +168,7 @@ export default {
           this.model.equipment = Object.keys(equipment).sort((a, b) => this.$t(a).localeCompare(this.$t(b))).map(k => this.buildModelCard('equipment', equipment[k], k, page))
           this.model.properties = Object.keys(properties).sort((a, b) => this.$t(a).localeCompare(this.$t(b))).map(k => this.buildModelCard('property', properties[k], k, page))
           this.modelReady = true
+          console.debug('Successfully loaded semantic model and build semantic homepages.')
         })
         .catch((err) => {
           console.log('Error while loading model: ' + err)

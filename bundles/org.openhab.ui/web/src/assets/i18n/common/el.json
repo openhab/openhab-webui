@@ -7,6 +7,7 @@
   "dialogs.close": "Κλείσιμο",
   "dialogs.copy": "Αντιγραφή",
   "dialogs.delete": "Διαγραφή",
+  "dialogs.reload": "Επαναφόρτωση",
   "dialogs.search": "Αναζήτηση",
   "dialogs.search.items": "Αναζήτηση αντικειμένων",
   "dialogs.search.things": "Αναζήτηση πραγμάτων",
@@ -39,5 +40,7 @@
   "sidebar.tip.signIn": "Συνδεθείτε σαν διαχειριστής για να προσπελάσετε τις ρυθμίσεις",
   "page.navbar.back": "Πίσω",
   "page.navbar.edit": "Επεξ/σία",
-  "admin.notTranslatedYet": "Η περιοχή του διαχειριστή δεν έχει μεταφραστεί ακόμα."
+  "admin.notTranslatedYet": "Η περιοχή του διαχειριστή δεν έχει μεταφραστεί ακόμα.",
+  "error.communicationFailure": "Αποτυχία επικοινωνίας",
+  "error.itemNotFound": "Το %s δε βρέθηκε"
 }

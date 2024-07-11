@@ -9,6 +9,7 @@ import OHIconComponent from '../components/widgets/system/oh-icon.vue'
 import ModelTreeviewItem from '../components/model/treeview-item.vue'
 import SitemapTreeviewItem from '../components/pagedesigner/sitemap/treeview-item.vue'
 import GenericWidgetComponent from '../components/widgets/generic-widget-component.vue'
+import DeveloperDockIcon from '../components/developer/developer-dock-icon.vue'
 
 // Import Framework7
 import Framework7 from 'framework7/framework7-lite.esm.bundle.js'
@@ -55,7 +56,7 @@ import i18n from './i18n'
 import Trend from 'vuetrend'
 Vue.use(Trend)
 
-// Import Fulscreen Plugin
+// Import Fullscreen Plugin
 import fullscreen from 'vue-fullscreen'
 Vue.use(fullscreen)
 
@@ -80,3 +81,4 @@ Vue.component('oh-icon', OHIconComponent)
 Vue.component('model-treeview-item', ModelTreeviewItem)
 Vue.component('sitemap-treeview-item', SitemapTreeviewItem)
 Vue.component('generic-widget-component', GenericWidgetComponent)
+Vue.component('developer-dock-icon', DeveloperDockIcon)

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2023 Contributors to the openHAB project
+ * Copyright (c) 2010-2024 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -13,7 +13,6 @@
 package org.openhab.ui.basic.internal.render;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -35,6 +34,7 @@ import org.openhab.core.library.types.QuantityType;
 import org.openhab.core.model.sitemap.sitemap.Widget;
 import org.openhab.core.types.State;
 import org.openhab.core.ui.items.ItemUIRegistry;
+import org.openhab.core.util.ColorUtil;
 import org.openhab.ui.basic.internal.WebAppConfig;
 import org.openhab.ui.basic.render.RenderException;
 import org.openhab.ui.basic.render.WidgetRenderer;
@@ -61,14 +61,17 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
     private static final String ICON_SOURCE_IF = "if";
     private static final String ICON_SOURCE_ICONIFY = "iconify";
     private static final String ICON_SOURCE_MATERIAL = "material";
+    private static final String ICON_SOURCE_FRAMEWORK7 = "f7";
+    private static final String ICON_SET_OH_CLASSIC = "classic";
+    private static final String ICON_NAME_NONE = "none";
     private static final String DEFAULT_ICON_SOURCE = ICON_SOURCE_OH;
-    private static final String DEFAULT_ICON_SET = "classic";
-    private static final String DEFAULT_ICON_NAME = "none";
+    private static final String DEFAULT_ICON_SET = ICON_SET_OH_CLASSIC;
+    private static final String DEFAULT_ICON_NAME = ICON_NAME_NONE;
 
     public static final String ICON_TYPE = "svg";
 
-    public static final String PRIMARY_COLOR = "#3f51b5";
-    public static final String SECONDARY_COLOR = "#ff4081";
+    private static final int DEFAULT_NB_COLUMNS_DESKTOP = 3;
+    private static final int DEFAULT_NB_COLUMNS_TABLET = 2;
 
     private final Logger logger = LoggerFactory.getLogger(AbstractWidgetRenderer.class);
 
@@ -104,26 +107,29 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
     /**
      * Replace some common values in the widget template
      *
-     * @param snippet snippet HTML code
+     * @param originalSnippet snippet HTML code
      * @param w corresponding widget
      * @return HTML code
      */
     protected String preprocessSnippet(String originalSnippet, Widget w) {
-        return preprocessSnippet(originalSnippet, w, false);
+        return preprocessSnippet(originalSnippet, w, w.getStaticIcon() != null || !w.getIconRules().isEmpty());
     }
 
     /**
      * Replace some common values in the widget template
      *
-     * @param snippet snippet HTML code
+     * @param originalSnippet snippet HTML code
      * @param w corresponding widget
      * @param ignoreStateForIcon true if state has to be ignored when requesting the icon
      * @return HTML code
      */
     protected String preprocessSnippet(String originalSnippet, Widget w, boolean ignoreStateForIcon) {
-        String snippet = preprocessIcon(originalSnippet, w, ignoreStateForIcon);
+        String snippet = preprocessIcon(originalSnippet, getCategory(w), ignoreStateForIcon);
 
+        snippet = snippet.replace("%cells%", String.valueOf(12 / DEFAULT_NB_COLUMNS_DESKTOP));
+        snippet = snippet.replace("%cells_tablet%", String.valueOf(8 / DEFAULT_NB_COLUMNS_TABLET));
         snippet = snippet.replace("%widget_id%", itemUIRegistry.getWidgetId(w));
+        snippet = snippet.replace("%icon_with_state%", Boolean.valueOf(!ignoreStateForIcon).toString());
         snippet = snippet.replace("%item%", w.getItem() != null ? w.getItem() : "");
         // Optimization: avoid calling 3 times itemUIRegistry.getLabel(w)
         String text = itemUIRegistry.getLabel(w);
@@ -139,17 +145,16 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
         return snippet;
     }
 
-    private String preprocessIcon(String originalSnippet, Widget w, boolean ignoreState) {
-        String category = getCategory(w);
+    protected String preprocessIcon(String originalSnippet, @Nullable String icon, boolean ignoreState) {
         String iconSource = DEFAULT_ICON_SOURCE;
         String iconSet = DEFAULT_ICON_SET;
         String iconName = DEFAULT_ICON_NAME;
-        if (category != null) {
-            String[] segments = category.split(":", 3);
+        if (icon != null) {
+            String[] segments = icon.split(":", 3);
             if (segments.length == 1) {
                 iconName = segments[0];
             } else if (segments.length == 2) {
-                iconSet = segments[0];
+                iconSource = segments[0];
                 iconName = segments[1];
             } else if (segments.length == 3) {
                 iconSource = segments[0];
@@ -162,25 +167,30 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
         try {
             switch (iconSource.toLowerCase()) {
                 case ICON_SOURCE_OH:
-                    iconSnippet = getSnippet(ignoreState ? "icon_oh_no_state" : "icon_oh");
+                    if (ICON_NAME_NONE.equals(iconName)) {
+                        iconSnippet = getSnippet("icon_none");
+                    } else {
+                        iconSnippet = getSnippet(ignoreState ? "icon_oh_no_state" : "icon_oh");
+                    }
                     break;
                 case ICON_SOURCE_IF:
                 case ICON_SOURCE_ICONIFY:
-                    if (config.isIconifyEnabled()) {
-                        iconSnippet = getSnippet("icon_iconify");
-                    }
+                    iconSnippet = getSnippet("icon_iconify");
                     break;
                 case ICON_SOURCE_MATERIAL:
                     iconSnippet = getSnippet("icon_material");
+                    break;
+                case ICON_SOURCE_FRAMEWORK7:
+                    iconSnippet = getSnippet("icon_framework7");
                     break;
                 default:
                     break;
             }
             if (iconSnippet == null) {
-                iconSnippet = getSnippet("icon_oh_no_state");
-                iconSource = DEFAULT_ICON_SOURCE;
-                iconSet = DEFAULT_ICON_SET;
-                iconName = DEFAULT_ICON_NAME;
+                iconSnippet = getSnippet("icon_none");
+                iconSource = ICON_SOURCE_OH;
+                iconSet = ICON_SET_OH_CLASSIC;
+                iconName = ICON_NAME_NONE;
             }
         } catch (RenderException e) {
             iconSnippet = "";
@@ -331,12 +341,7 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
             return "";
         }
 
-        try {
-            return URLEncoder.encode(string, "UTF-8");
-        } catch (UnsupportedEncodingException use) {
-            logger.warn("Cannot escape string '{}'. Returning unmodified string.", string);
-            return string;
-        }
+        return URLEncoder.encode(string, StandardCharsets.UTF_8);
     }
 
     /**
@@ -344,12 +349,11 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
      *
      * @param w
      *            The widget to process
-     * @param snippet
+     * @param originalSnippet
      *            The snippet to translate
      * @return The updated snippet
      */
     protected String processColor(Widget w, String originalSnippet) {
-        String style = "";
         String color = "";
         String snippet = originalSnippet;
 
@@ -363,50 +367,28 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
             }
         }
 
-        color = itemUIRegistry.getLabelColor(w);
-        color = convertSpecialColors(color, itemState);
+        color = convertSpecialColors(itemUIRegistry.getLabelColor(w), itemState);
+        snippet = snippet.replace("%label_color%", color != null ? color : "");
 
-        if (color != null) {
-            style = "style=\"color:" + color + "\"";
-        }
-        snippet = snippet.replace("%labelstyle%", style);
+        color = convertSpecialColors(itemUIRegistry.getValueColor(w), itemState);
+        snippet = snippet.replace("%value_color%", color != null ? color : "");
 
-        style = "";
-        color = itemUIRegistry.getValueColor(w);
-        color = convertSpecialColors(color, itemState);
-
-        if (color != null) {
-            style = "style=\"color:" + color + "\"";
-        }
-        snippet = snippet.replace("%valuestyle%", style);
-
-        style = "";
-        color = itemUIRegistry.getIconColor(w);
-        color = convertSpecialColors(color, itemState);
-
-        if (color != null) {
-            style = "style=\"color:" + color + "\"";
-        }
-        snippet = snippet.replace("%iconstyle%", style);
+        color = convertSpecialColors(itemUIRegistry.getIconColor(w), itemState);
+        snippet = snippet.replace("%icon_color%", color != null ? color : "");
 
         return snippet;
     }
 
     private @Nullable String convertSpecialColors(@Nullable String color, @Nullable State itemState) {
-        if ("primary".equals(color)) {
-            return PRIMARY_COLOR;
-        } else if ("secondary".equals(color)) {
-            return SECONDARY_COLOR;
-        } else if ("itemValue".equals(color)) {
+        if ("itemValue".equals(color)) {
             return getRGBHexCodeFromItemState(itemState);
         }
         return color;
     }
 
     protected @Nullable String getRGBHexCodeFromItemState(@Nullable State itemState) {
-        if (itemState instanceof HSBType) {
-            HSBType hsbState = (HSBType) itemState;
-            return "#" + Integer.toHexString(hsbState.getRGB()).substring(2);
+        if (itemState instanceof HSBType hsbState) {
+            return "#" + Integer.toHexString(ColorUtil.hsbTosRgb(hsbState)).substring(2);
         }
         return null;
     }
@@ -425,7 +407,9 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
     }
 
     protected String escapeHtml(@Nullable String s) {
-        return StringEscapeUtils.escapeHtml4(s);
+        String result = StringEscapeUtils.escapeHtml4(s);
+        // Also replace non printable characters by the unicode replacement character
+        return result != null ? result.replaceAll("[\\p{C}]", "\uFFFD") : "";
     }
 
     @Override
@@ -433,13 +417,13 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
         this.config = config;
     }
 
-    protected @Nullable String localizeText(String key) {
+    protected String localizeText(String key) {
         String result = "";
         if (I18nUtil.isConstant(key)) {
             result = i18nProvider.getText(bundleContext.getBundle(), I18nUtil.stripConstant(key), "",
                     localeProvider.getLocale());
         }
-        return result;
+        return result != null ? result : "";
     }
 
     protected @Nullable String getUnitForWidget(Widget widget) {

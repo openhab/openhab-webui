@@ -56,7 +56,7 @@ Display an input field in a list
 </PropBlock>
 <PropBlock type="BOOLEAN" name="iconUseState" label="Icon depends on state">
   <PropDescription>
-    Use the state of the item to get a dynamic icon (for openHAB icons only)
+    Use the state of the Item to get a dynamic icon (enabled by default for <code>Contact</code>, <code>Dimmer</code>, <code>Rollershutter</code> & <code>Switch</code> Item types) (for openHAB icons only)
   </PropDescription>
 </PropBlock>
 </PropGroup>
@@ -72,7 +72,7 @@ Display an input field in a list
 </PropBlock>
 <PropBlock type="TEXT" name="type" label="Type">
   <PropDescription>
-    Type of input (see <a class="external text-color-blue" target="_blank" href="https://framework7.io/docs/inputs.html#supported-inputs">f7 input docs</a> or datepicker)
+    Type of input (see <a class="external text-color-blue" target="_blank" href="https://framework7.io/docs/inputs.html#supported-inputs">f7 input docs</a>, <code>date</code> or <code>datepicker</code>)
   </PropDescription>
 </PropBlock>
 <PropBlock type="TEXT" name="inputmode" label="Input Mode">

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2023 Contributors to the openHAB project
+ * Copyright (c) 2010-2024 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -60,8 +60,7 @@ public abstract class AbstractItemIntentInterpreter implements Skill {
 
         // expand group items
         for (Item item : items.toArray(new Item[0])) {
-            if (item instanceof GroupItem) {
-                GroupItem gItem = (GroupItem) item;
+            if (item instanceof GroupItem gItem) {
                 items.addAll(gItem.getMembers());
             }
         }

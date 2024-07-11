@@ -1,6 +1,6 @@
 <template>
   <ul class="item-picker-container">
-    <f7-list-item :title="title" smart-select :smart-select-params="smartSelectParams" v-if="ready" ref="smartSelect" class="item-picker">
+    <f7-list-item :title="title" :disabled="disabled" smart-select :smart-select-params="smartSelectParams" v-if="ready" ref="smartSelect" class="item-picker">
       <select :name="name" :multiple="multiple" @change="select" :required="required">
         <option value="" v-if="!multiple" />
         <option v-for="item in preparedItems" :value="item.name" :key="item.name" :selected="(multiple) ? Array.isArray(value) && value.indexOf(item.name) >= 0 : value === item.name">
@@ -10,7 +10,7 @@
       <f7-button slot="media" icon-f7="list_bullet_indent" @click.native="pickFromModel" />
     </f7-list-item>
     <!-- for placeholder purposes before items are loaded -->
-    <f7-list-item link v-show="!ready" :title="title">
+    <f7-list-item link v-show="!ready" :title="title" disabled no-chevron>
       <f7-button slot="media" icon-f7="list_bullet_indent" @click.native="pickFromModel" />
     </f7-list-item>
   </ul>
@@ -30,7 +30,7 @@
 import ModelPickerPopup from '@/components/model/model-picker-popup.vue'
 
 export default {
-  props: ['title', 'name', 'value', 'items', 'multiple', 'filterType', 'required', 'editableOnly'],
+  props: ['title', 'name', 'value', 'items', 'multiple', 'filterType', 'required', 'editableOnly', 'disabled', 'setValueText'],
   data () {
     return {
       ready: false,
@@ -48,9 +48,9 @@ export default {
   },
   created () {
     this.smartSelectParams.closeOnSelect = !(this.multiple)
+    if (this.setValueText === false) this.smartSelectParams.setValueText = false
     if (!this.items || !this.items.length) {
-      // TODO use a Vuex store
-      this.$oh.api.get('/rest/items').then((items) => {
+      this.$oh.api.get('/rest/items?staticDataOnly=true').then((items) => {
         this.sortAndFilterItems(items)
       })
     } else {
@@ -110,7 +110,8 @@ export default {
           multiple: this.multiple,
           allowEmpty: true,
           popupTitle: this.title,
-          groupsOnly: this.filterType && this.filterType === 'Group'
+          groupsOnly: this.filterType && this.filterType === 'Group',
+          editableOnly: this.editableOnly
         }
       })
 

@@ -60,7 +60,15 @@ Visualize historical series
     <PropOption value="4M" label="4M" />
     <PropOption value="6M" label="6M" />
     <PropOption value="Y" label="Y" />
+    <PropOption value="3Y" label="3Y" />
+    <PropOption value="5Y" label="5Y" />
+    <PropOption value="10Y" label="10Y" />
   </PropOptions>
+</PropBlock>
+<PropBlock type="BOOLEAN" name="future" label="Future Period">
+  <PropDescription>
+    Whether the period should extend to the future instead of the past
+  </PropDescription>
 </PropBlock>
 </PropGroup>
 </div>

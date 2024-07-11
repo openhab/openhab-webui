@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2023 Contributors to the openHAB project
+ * Copyright (c) 2010-2024 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -46,7 +46,7 @@ public class Component {
     public Component(String componentName) {
         super();
         this.component = componentName;
-        this.config = new HashMap<String, Object>();
+        this.config = new HashMap<>();
     }
 
     /**
@@ -94,9 +94,9 @@ public class Component {
      */
     public List<Component> addSlot(String slotName) {
         if (slots == null) {
-            slots = new HashMap<String, List<Component>>();
+            slots = new HashMap<>();
         }
-        List<Component> newSlot = new ArrayList<Component>();
+        List<Component> newSlot = new ArrayList<>();
         this.slots.put(slotName, newSlot);
 
         return newSlot;

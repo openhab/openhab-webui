@@ -4,7 +4,7 @@
 */
 
 import Blockly from 'blockly'
-import { javascriptGenerator } from 'blockly/javascript'
+import { javascriptGenerator } from 'blockly/javascript.js'
 
 // TODO: Add options to set icon and level (argument order should be the same as for broadcast notification etc.)
 export default function defineOHBlocks_Notifications (f7, isGraalJs) {
@@ -23,7 +23,7 @@ export default function defineOHBlocks_Notifications (f7, isGraalJs) {
     }
   }
 
-  javascriptGenerator['oh_sendNotification'] = function (block) {
+  javascriptGenerator.forBlock['oh_sendNotification'] = function (block) {
     let email = javascriptGenerator.valueToCode(block, 'email', javascriptGenerator.ORDER_ATOMIC)
     let message = javascriptGenerator.valueToCode(block, 'message', javascriptGenerator.ORDER_ATOMIC)
     if (isGraalJs) {
@@ -53,7 +53,7 @@ export default function defineOHBlocks_Notifications (f7, isGraalJs) {
     }
   }
 
-  javascriptGenerator['oh_sendBroadcastNotification'] = function (block) {
+  javascriptGenerator.forBlock['oh_sendBroadcastNotification'] = function (block) {
     let message = javascriptGenerator.valueToCode(block, 'message', javascriptGenerator.ORDER_ATOMIC)
     let icon = javascriptGenerator.valueToCode(block, 'icon', javascriptGenerator.ORDER_ATOMIC)
     let severity = block.getFieldValue('severity')
@@ -84,7 +84,7 @@ export default function defineOHBlocks_Notifications (f7, isGraalJs) {
     }
   }
 
-  javascriptGenerator['oh_sendLogNotification'] = function (block) {
+  javascriptGenerator.forBlock['oh_sendLogNotification'] = function (block) {
     let message = javascriptGenerator.valueToCode(block, 'message', javascriptGenerator.ORDER_ATOMIC)
     let icon = javascriptGenerator.valueToCode(block, 'icon', javascriptGenerator.ORDER_ATOMIC)
     let severity = block.getFieldValue('severity')

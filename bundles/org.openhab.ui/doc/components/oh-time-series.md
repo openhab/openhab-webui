@@ -48,7 +48,7 @@ prev: /docs/ui/components/
     Offset to <em>subtract</em> from the displayed period, use if you want to do period comparisons (see also Offset Unit).
   </PropDescription>
 </PropBlock>
-<PropBlock type="STRING" name="offsetUnit" label="Offset Unit" context="offsetUnit">
+<PropBlock type="TEXT" name="offsetUnit" label="Offset Unit" context="offsetUnit">
   <PropDescription>
     Offset to <em>subtract</em> from the displayed period, use if you want to do period comparisons (see also Offset Amount).
   </PropDescription>
@@ -63,7 +63,7 @@ prev: /docs/ui/components/
 </PropBlock>
 <PropBlock type="TEXT" name="type" label="Type">
   <PropDescription>
-    The type of the series.<br/><em>Note: heatmap needs a configured visual map and is not supported for time series</em>
+    The type of the series.<br/><em>Note: <code>heatmap</code> needs a configured visual map or uses the default and is not supported for time series!</em>
   </PropDescription>
   <PropOptions>
     <PropOption value="line" label="Line" />
@@ -200,7 +200,7 @@ prev: /docs/ui/components/
     Group Item whose members to show in a popup
   </PropDescription>
 </PropBlock>
-<PropBlock type="TEXT" name="actionAnalyzerItems" label="Item(s) to Analyze" context="item">
+<PropBlock type="TEXT" name="actionAnalyzerItems" label="Item(s) to Analyze" required="true" context="item">
   <PropDescription>
     Start analyzing with the specified (set of) Item(s)
   </PropDescription>

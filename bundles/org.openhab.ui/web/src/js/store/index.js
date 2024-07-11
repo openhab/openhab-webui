@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 
 import components from './modules/components'
 import states from './modules/states'
+import semantics from './modules/semantics'
 import user from './modules/user'
 import { convertJavaLocale } from '@/js/i18n'
 
@@ -13,15 +14,19 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   modules: {
     components,
+    semantics,
     states,
     user
   },
   state: {
     apiVersion: null,
+    measurementSystem: null,
     apiEndpoints: null,
     locale: null,
     runtimeInfo: null,
-    developerSidebar: false
+    websiteUrl: null,
+    developerDock: false,
+    pagePath: null
   },
   getters: {
     apiEndpoint: (state) => (type) => (!state.apiEndpoints) ? null : state.apiEndpoints.find((e) => e.type === type),
@@ -30,15 +35,20 @@ const store = new Vuex.Store({
   mutations: {
     setRootResource (state, { rootResponse }) {
       state.apiVersion = rootResponse.version
+      state.measurementSystem = rootResponse.measurementSystem
       state.runtimeInfo = rootResponse.runtimeInfo
       state.apiEndpoints = rootResponse.links
+      state.websiteUrl = `https://${rootResponse.runtimeInfo?.buildString !== 'Release Build' ? 'next' : 'www'}.openhab.org`
     },
     setLocale (state, locale) {
       state.locale = locale
     },
-    setDeveloperSidebar (state, value) {
-      state.developerSidebar = value
+    setDeveloperDock (state, value) {
+      state.developerDock = value
       state.states.keepConnectionOpen = value
+    },
+    setPagePath (state, value) {
+      state.pagePath = value
     }
   },
   actions: {

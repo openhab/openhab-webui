@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2023 Contributors to the openHAB project
+ * Copyright (c) 2010-2024 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -89,7 +89,7 @@ public class MultipartRequestMap extends HashMap<String, List<Object>> {
         tempFile.deleteOnExit();
 
         try (BufferedInputStream input = new BufferedInputStream(part.getInputStream(), 8192);
-                BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(tempFile), 8192);) {
+                BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(tempFile), 8192)) {
             byte[] buffer = new byte[8192];
             for (int length = 0; ((length = input.read(buffer)) > 0);) {
                 output.write(buffer, 0, length);

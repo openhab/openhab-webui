@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language-Team: Hebrew\n"
 "Language: he_IL\n"
-"PO-Revision-Date: 2022-12-11 11:15\n"
+"PO-Revision-Date: 2024-04-07 12:35\n"
 
 #. Save button in the dashboard designer
 msgctxt "designer.save"
@@ -270,17 +270,17 @@ msgstr "אנא בחר שם עבור תצורת לוח חדש (אותיות וס�
 #. Title of the dialog box when deleting a new panel configuration
 msgctxt "settings.storage.panelconfiguration.dialog.remove.title"
 msgid "Remove panel configuration"
-msgstr ""
+msgstr "הסר את תצורת הפאנל"
 
 #. Message of the dialog box when deleting a new panel configuration
 msgctxt "settings.storage.panelconfiguration.dialog.remove.message"
 msgid "Please confirm you wish to delete this panel configuration from the server's registry: {{name}}. Make sure no other instances are using this panel configuration!"
-msgstr ""
+msgstr "אנא אשר שברצונך למחוק את תצורת הפאנל הזו מהרישום של השרת: {{name}}. ודא שאין מופעים אחרים המשתמשים בתצורת הפאנל הזו!"
 
 #. Message of the dialog box when switching from local storage to a server-based panel configuration
 msgctxt "settings.storage.panelconfiguration.dialog.switch.message"
 msgid "Switching from local storage to a panel configuration will overwrite your local configuration! Are you sure?"
-msgstr ""
+msgstr "מעבר מאחסון מקומי לתצורת פאנל ידרוס את התצורה המקומית שלך! האם אתה בטוח?"
 
 #. Panel name (section header)
 msgctxt "settings.panel.name"
@@ -335,7 +335,7 @@ msgstr "מגירת תמונת כותרת (אופציונלי)"
 #. Placeholder inside the text box
 msgctxt "settings.panel.appearance.drawer_heading_image.hint"
 msgid "Example: //via.placeholder.com/265x95"
-msgstr ""
+msgstr "דוגמה: //via.placeholder.com/265x95"
 
 #. Checkbox
 msgctxt "settings.panel.appearance.prevent_scrolling"
@@ -830,7 +830,7 @@ msgstr "הפופולרי ביותר"
 #. Link to change the sort criteria - keep the non breaking spaces (&nbsp;)
 msgctxt "widgetgallery.toolbar.sortby.mostdiscussed"
 msgid "most&nbsp;discussed"
-msgstr ""
+msgstr "הנדונים&nbsp;ביותר"
 
 #. Prefix before the author's name
 msgctxt "widgetgallery.details.authorby"
@@ -840,7 +840,7 @@ msgstr "מאת"
 #. Suffix displayed after a number, i.e. "24 posts on this topic"
 msgctxt "widgetgallery.details.forumposts"
 msgid "post(s) on this topic - discuss on community.openhab.org"
-msgstr ""
+msgstr "פוסטים בנושא זה - דנו באתר community.openhab.org"
 
 #. Label of the big green button when nothing to import
 msgctxt "widgetgallery.details.nothingtoimport"

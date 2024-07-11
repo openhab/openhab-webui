@@ -1,9 +1,9 @@
 const webpack = require('webpack')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const VueLoaderPlugin = require('vue-loader/lib/plugin')
+const { VueLoaderPlugin } = require('vue-loader')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin')
 const WorkboxPlugin = require('workbox-webpack-plugin')
 const WebpackAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
@@ -12,47 +12,59 @@ const CompressionPlugin = require('compression-webpack-plugin')
 
 const path = require('path')
 
-function resolvePath (dir) {
+function resolvePath(dir) {
   return path.join(__dirname, '..', dir)
 }
 
 const env = process.env.NODE_ENV || 'development'
 const target = process.env.TARGET || 'web'
 const buildSourceMaps = process.env.SOURCE_MAPS || false
-const isCordova = target === 'cordova'
 
 const apiBaseUrl = process.env.OH_APIBASE || 'http://localhost:8080'
 
+/**
+ * @type {import('webpack').Configuration}
+ */
 module.exports = {
   mode: env,
   entry: [
     './src/js/app.js'
   ],
   output: {
-    path: resolvePath(isCordova ? 'cordova/www' : 'www'),
-    filename: 'js/app.[hash].js',
+    path: resolvePath('www'),
+    filename: 'js/app.[contenthash].js',
     publicPath: '/',
-    hotUpdateChunkFilename: 'hot/hot-update.js',
-    hotUpdateMainFilename: 'hot/hot-update.json'
+    hotUpdateChunkFilename: 'hot/[id].[fullhash].hot-update.js',
+    hotUpdateMainFilename: 'hot/[runtime].hot-update.json'
   },
   resolve: {
+    fallback: {
+      "crypto": require.resolve("crypto-browserify"),
+      "stream": require.resolve("stream-browserify"),
+      "path": require.resolve("path-browserify"),
+    },
     extensions: ['.mjs', '.js', '.vue', '.json'],
     alias: {
       vue$: 'vue/dist/vue.esm.js',
       '@': resolvePath('src')
     }
   },
-  devtool: env === 'production' ? (buildSourceMaps) ? 'source-map' : 'none' : 'eval-source-map',
+  devtool: env === 'production' ? (buildSourceMaps ? 'source-map' : false) : 'eval-source-map',
   devServer: {
     hot: true,
-    // open: true,
-    // compress: true,
-    contentBase: '/www/',
-    disableHostCheck: true,
+    compress: false, // disable compression as this seems to break the SSE event stream
+    client: {
+      overlay: {
+        errors: true,
+        runtimeErrors: false,
+        warnings: false
+      }
+    },
+    static: [
+      path.resolve(__dirname, 'www'),
+    ],
+    allowedHosts: "all",
     historyApiFallback: true,
-    // watchOptions: {
-    //   poll: 1000,
-    // },
     proxy: [{
       context: ['/auth', '/rest', '/chart', '/proxy', '/icon', '/static', '/changePassword', '/createApiToken', '/audio'],
       target: apiBaseUrl
@@ -63,9 +75,22 @@ module.exports = {
     maxEntrypointSize: 2500000
   },
   optimization: {
-    minimizer: [new TerserPlugin({
-      sourceMap: true
-    })]
+    moduleIds: env === 'production' ? undefined : 'named',
+    minimizer: [
+      new TerserPlugin({
+        terserOptions: {
+          sourceMap: true
+        }
+      }),
+      new CssMinimizerPlugin({
+        minimizerOptions: {
+          processorOptions: {
+            safe: true,
+            map: { inline: false, annotation: env !== 'production' }
+          },
+        },
+      }),
+    ]
   },
   module: {
     rules: [
@@ -86,11 +111,6 @@ module.exports = {
           resolvePath('node_modules/dom7'),
           resolvePath('node_modules/ssr-window')
         ]
-      },
-      {
-        test: /(blockly\/.*\.js)$/,
-        enforce: "pre",
-        use: (buildSourceMaps) ? ["source-map-loader"] : [],
       },
       {
         test: /\.vue$/,
@@ -153,26 +173,38 @@ module.exports = {
       },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
-        loader: 'url-loader',
-        options: {
-          limit: 10000,
-          name: 'images/[name].[ext]'
+        type: 'asset',
+        parser: {
+          dataUrlCondition: {
+            maxSize: 10000
+          }
+        },
+        generator: {
+          filename: 'images/[name][ext]'
         }
       },
       {
         test: /\.(mp4|webm|ogg|mp3|wav|flac|aac|m4a)(\?.*)?$/,
-        loader: 'url-loader',
-        options: {
-          limit: 10000,
-          name: 'media/[name].[ext]'
+        type: 'asset',
+        parser: {
+          dataUrlCondition: {
+            maxSize: 10000
+          }
+        },
+        generator: {
+          filename: 'media/[name][ext]'
         }
       },
       {
         test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
-        loader: 'url-loader',
-        options: {
-          limit: 10000,
-          name: 'fonts/[name].[ext]'
+        type: 'asset',
+        parser: {
+          dataUrlCondition: {
+            maxSize: 10000
+          }
+        },
+        generator: {
+          filename: 'fonts/[name][ext]'
         }
       },
       {
@@ -185,6 +217,9 @@ module.exports = {
     ]
   },
   plugins: [
+    new webpack.ProvidePlugin({
+      process: 'process/browser.js',
+  }),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(env),
       'process.env.TARGET': JSON.stringify(target)
@@ -193,18 +228,9 @@ module.exports = {
     ...(env === 'production' ? [
       new ESLintPlugin({
         extensions: ['js', 'vue']
-      }),
-      new OptimizeCSSPlugin({
-        cssProcessorOptions: {
-          safe: true,
-          map: { inline: false }
-        }
-      }),
-      new webpack.optimize.ModuleConcatenationPlugin()
+      })
     ] : [
       // Development only plugins
-      new webpack.HotModuleReplacementPlugin(),
-      new webpack.NamedModulesPlugin()
     ]),
     new HtmlWebpackPlugin({
       filename: './index.html',
@@ -220,25 +246,32 @@ module.exports = {
       } : false
     }),
     new MiniCssExtractPlugin({
-      filename: 'css/app.[hash].css'
+      filename: 'css/app.[contenthash].css'
     }),
-    new CopyWebpackPlugin([
-      {
-        from: resolvePath('src/res'),
-        to: resolvePath(isCordova ? 'cordova/www/res' : 'www/res')
-      },
-      {
-        from: resolvePath('src/manifest.json'),
-        to: resolvePath('www/manifest.json')
-      },
-      {
-        from: resolvePath('src/robots.txt'),
-        to: resolvePath('www/robots.txt')
-      }
-    ]),
-    ...(!isCordova ? [
-      new WorkboxPlugin.InjectManifest({
-        swSrc: resolvePath('src/service-worker.js')
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: resolvePath('src/res'),
+          to: resolvePath('www/res')
+        },
+        {
+          from: resolvePath('src/manifest.json'),
+          to: resolvePath('www/manifest.json')
+        },
+        {
+          from: resolvePath('src/robots.txt'),
+          to: resolvePath('www/robots.txt')
+        }
+      ]
+    }),
+    ...(env === 'production' ? [
+      new WorkboxPlugin.GenerateSW({
+        swDest: 'service-worker.js',
+        maximumFileSizeToCacheInBytes: 100000000,
+        // these options encourage the ServiceWorkers to get in there fast
+        // and not allow any straggling "old" SWs to hang around
+        clientsClaim: true,
+        skipWaiting: true
       })
     ] : []),
     ...(env === 'production' ? [
