@@ -44,6 +44,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.core.OpenHAB;
 import org.openhab.core.items.Item;
@@ -71,6 +72,7 @@ import com.google.gson.Gson;
  *
  * @author Tobias Bräutigam - Initial contribution
  */
+@NonNullByDefault
 public class CometVisuServlet extends HttpServlet {
     private static final long serialVersionUID = 4448918908615003303L;
     private final Logger logger = LoggerFactory.getLogger(CometVisuServlet.class);
@@ -181,7 +183,7 @@ public class CometVisuServlet extends HttpServlet {
         }
     }
 
-    protected File getRequestedFile(HttpServletRequest req) throws IOException {
+    protected @Nullable File getRequestedFile(HttpServletRequest req) throws IOException {
         String requestedFile = req.getPathInfo();
         File file = null;
 
