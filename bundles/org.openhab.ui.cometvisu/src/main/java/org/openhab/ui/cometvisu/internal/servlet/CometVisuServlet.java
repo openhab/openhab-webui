@@ -20,7 +20,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.RandomAccessFile;
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
@@ -138,6 +137,10 @@ public class CometVisuServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         File requestedFile = getRequestedFile(req);
+        if (requestedFile == null) {
+            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
 
         String path = req.getPathInfo();
         if (path == null) {
@@ -178,7 +181,7 @@ public class CometVisuServlet extends HttpServlet {
         }
     }
 
-    protected File getRequestedFile(HttpServletRequest req) throws UnsupportedEncodingException {
+    protected File getRequestedFile(HttpServletRequest req) throws IOException {
         String requestedFile = req.getPathInfo();
         File file = null;
 
@@ -188,12 +191,18 @@ public class CometVisuServlet extends HttpServlet {
                 requestedFile = requestedFile.substring(0, requestedFile.length() - 1);
             }
             file = new File(userFileFolder, URLDecoder.decode(requestedFile, StandardCharsets.UTF_8));
+            if (!file.getCanonicalPath().startsWith(userFileFolder.getCanonicalPath() + File.separator)) {
+                return null;
+            }
         }
         // serve the file from the cometvisu src directory
         if (file == null || !file.exists() || file.isDirectory()) {
             file = requestedFile != null
                     ? new File(rootFolder, URLDecoder.decode(requestedFile, StandardCharsets.UTF_8))
                     : rootFolder;
+            if (!file.getCanonicalPath().startsWith(rootFolder.getCanonicalPath() + File.separator)) {
+                return null;
+            }
         }
         if (file.isDirectory()) {
             // search for an index file
