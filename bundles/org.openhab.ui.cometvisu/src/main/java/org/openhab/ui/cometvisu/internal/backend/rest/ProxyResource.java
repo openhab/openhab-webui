@@ -21,6 +21,9 @@ import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.time.Duration;
 import java.util.Base64;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -86,9 +89,9 @@ public class ProxyResource implements RESTResource {
             @Parameter(description = "use information from hidden config section", content = @Content(schema = @Schema(implementation = String.class, defaultValue = ""))) @QueryParam("config-section") @Nullable String configSection) {
         ConfigSection sec = null;
         String queryUrl = url != null ? url : "";
+        HiddenConfig config = ConfigResource.loadHiddenConfig();
         if (configSection != null && !configSection.isBlank()) {
             // read URI and further information
-            HiddenConfig config = ConfigResource.loadHiddenConfig();
             sec = config.get(configSection);
             if (sec != null) {
                 String configUrl = sec.get("uri");
@@ -101,6 +104,29 @@ public class ProxyResource implements RESTResource {
             }
         } else if (url == null || url.isBlank()) {
             return Response.status(Status.BAD_REQUEST).build();
+        } else {
+            ConfigSection whiteList = config.get("proxy.whitelist");
+            boolean allowed = false;
+            if (whiteList != null) {
+                for (Map.Entry<String, String> entry : whiteList.entrySet()) {
+                    String value = entry.getValue();
+                    if (value.startsWith("/") && value.endsWith("/")) {
+                        Pattern pattern = Pattern.compile(value.substring(1, value.length() - 1),
+                                Pattern.CASE_INSENSITIVE);
+                        Matcher matcher = pattern.matcher(queryUrl);
+                        if (matcher.find()) {
+                            allowed = true;
+                            break;
+                        }
+                    } else if (value.equalsIgnoreCase(queryUrl)) {
+                        allowed = true;
+                        break;
+                    }
+                }
+            }
+            if (!allowed) {
+                return Response.status(Status.FORBIDDEN).build();
+            }
         }
         logger.info("proxying request to {}", queryUrl);
 
