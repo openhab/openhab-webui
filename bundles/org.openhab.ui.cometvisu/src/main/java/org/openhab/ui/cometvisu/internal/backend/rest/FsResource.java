@@ -19,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
+import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -36,6 +37,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.openhab.core.auth.Role;
 import org.openhab.core.io.rest.RESTConstants;
 import org.openhab.core.io.rest.RESTResource;
 import org.openhab.ui.cometvisu.internal.Config;
@@ -79,6 +81,7 @@ public class FsResource implements RESTResource {
     private final Logger logger = LoggerFactory.getLogger(FsResource.class);
 
     @POST
+    @RolesAllowed({ Role.USER, Role.ADMIN })
     @Consumes("text/*")
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Create a text file", responses = { @ApiResponse(responseCode = "200", description = "OK"),
@@ -153,6 +156,7 @@ public class FsResource implements RESTResource {
 
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({ Role.USER, Role.ADMIN })
     @Operation(summary = "Deletes a file/folder", responses = { @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "403", description = "not allowed"),
             @ApiResponse(responseCode = "404", description = "File/Folder not found"),
@@ -242,6 +246,7 @@ public class FsResource implements RESTResource {
     }
 
     @PUT
+    @RolesAllowed({ Role.USER, Role.ADMIN })
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes({ MediaType.TEXT_PLAIN, MediaType.TEXT_XML })
     @Operation(summary = "Update an existing file", responses = {
