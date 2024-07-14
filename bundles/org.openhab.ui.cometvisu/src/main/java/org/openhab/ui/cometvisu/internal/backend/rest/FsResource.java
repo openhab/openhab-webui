@@ -251,29 +251,32 @@ public class FsResource implements RESTResource {
     @Consumes({ MediaType.TEXT_PLAIN, MediaType.TEXT_XML })
     @Operation(summary = "Update an existing file", responses = {
             @ApiResponse(responseCode = "200", description = "OK"),
-            @ApiResponse(responseCode = "403", description = "not allowed"),
+            @ApiResponse(responseCode = "403", description = "forbidden"),
             @ApiResponse(responseCode = "404", description = "File does not exist") })
     public Response update(
             @Parameter(description = "Relative path inside the config folder", required = true) @QueryParam("path") String path,
             @Parameter(description = "file content") String body,
             @Parameter(description = "CRC32 hash value of the file content", content = @Content(schema = @Schema(implementation = String.class, defaultValue = "ignore"))) @DefaultValue("ignore") @QueryParam("hash") String hash) {
-        File target = new File(
-                ManagerSettings.getInstance().getConfigFolder().getAbsolutePath() + File.separator + path);
-        if (target.exists()) {
-            if (target.canWrite()) {
-                try {
-                    FsUtil.getInstance().saveFile(target, body, hash);
-                    return Response.ok().build();
-                } catch (FileOperationException e) {
-                    return FsUtil.createErrorResponse(e);
-                } catch (Exception e) {
+        try {
+            MountedFile target = new MountedFile(path);
+            if (target.exists()) {
+                if (target.canWrite()) {
+                    try {
+                        FsUtil.getInstance().saveFile(target.toFile(), body, hash);
+                        return Response.ok().build();
+                    } catch (FileOperationException e) {
+                        return FsUtil.createErrorResponse(e);
+                    } catch (Exception e) {
+                        return FsUtil.createErrorResponse(Status.FORBIDDEN, "forbidden");
+                    }
+                } else {
                     return FsUtil.createErrorResponse(Status.FORBIDDEN, "forbidden");
                 }
             } else {
-                return FsUtil.createErrorResponse(Status.FORBIDDEN, "forbidden");
+                return FsUtil.createErrorResponse(Status.NOT_FOUND, "not found");
             }
-        } else {
-            return FsUtil.createErrorResponse(Status.NOT_FOUND, "not found");
+        } catch (FileOperationException e) {
+            return FsUtil.createErrorResponse(e);
         }
     }
 }

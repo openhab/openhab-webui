@@ -81,7 +81,9 @@ public class ProxyResource implements RESTResource {
     @Produces({ MediaType.APPLICATION_JSON, MediaType.MEDIA_TYPE_WILDCARD })
     @Operation(summary = "proxy a request", responses = { @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Bad request"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
             @ApiResponse(responseCode = "404", description = "Not found"),
+            @ApiResponse(responseCode = "406", description = "Not Acceptable"),
             @ApiResponse(responseCode = "500", description = "Internal server error") })
     public Response proxy(
             @Parameter(description = "URL this request should be sent to", content = @Content(schema = @Schema(implementation = String.class, defaultValue = ""))) @QueryParam("url") @Nullable String url,
