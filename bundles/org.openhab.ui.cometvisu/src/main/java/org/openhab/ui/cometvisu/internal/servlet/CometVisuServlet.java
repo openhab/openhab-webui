@@ -173,6 +173,10 @@ public class CometVisuServlet extends HttpServlet {
                 }
             }
         }
+        if (requestedFile.getName().equalsIgnoreCase("version")) {
+            // tell client that its been served by openhab
+            resp.setHeader("X-CometVisu-Backend-Name", "openhab");
+        }
         if (requestedFile.getName().equalsIgnoreCase("hidden.php")) {
             // do not deliver the hidden php
             resp.sendError(HttpServletResponse.SC_FORBIDDEN);
