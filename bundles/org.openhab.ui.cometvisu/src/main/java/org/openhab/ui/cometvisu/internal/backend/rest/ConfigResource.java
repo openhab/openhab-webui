@@ -57,6 +57,7 @@ import com.google.gson.GsonBuilder;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
@@ -71,7 +72,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @JaxrsName(Config.COMETVISU_BACKEND_ALIAS + "/" + Config.COMETVISU_BACKEND_CONFIG_ALIAS)
 @JaxrsApplicationSelect("(" + JaxrsWhiteboardConstants.JAX_RS_NAME + "=" + RESTConstants.JAX_RS_NAME + ")")
 @JSONRequired
-@RolesAllowed({ Role.USER, Role.ADMIN })
+@RolesAllowed({ Role.ADMIN })
+@SecurityRequirement(name = "oauth2", scopes = { "admin" })
 @Path(Config.COMETVISU_BACKEND_ALIAS + "/" + Config.COMETVISU_BACKEND_CONFIG_ALIAS)
 @Tag(name = Config.COMETVISU_BACKEND_ALIAS + "/" + Config.COMETVISU_BACKEND_CONFIG_ALIAS)
 @NonNullByDefault
@@ -266,18 +268,7 @@ public class ConfigResource implements RESTResource {
             java.nio.file.Path hiddenConfigPath = ManagerSettings.getInstance().getConfigPath().resolve("hidden.php");
             if (hiddenConfigPath.toFile().exists()) {
                 List<String> content = Files.readAllLines(hiddenConfigPath);
-                boolean isPhpVersion = true;
-                for (int i = content.size() - 1; i >= 0; i++) {
-                    if (content.get(i).contains("json_decode")) {
-                        isPhpVersion = false;
-                        break;
-                    }
-                }
-                if (isPhpVersion) {
-                    return loadPhpConfig(config, content);
-                } else {
-                    return loadJson(String.join("\n", content));
-                }
+                return loadJson(String.join("\n", content));
             }
         } catch (IOException e) {
         }
@@ -292,41 +283,15 @@ public class ConfigResource implements RESTResource {
         return Objects.requireNonNull(gson.fromJson(rawContent, HiddenConfig.class));
     }
 
-    private static HiddenConfig loadPhpConfig(HiddenConfig config, List<String> content) {
-        boolean inHidden = false;
-
-        for (final String line : content) {
-            if (!inHidden) {
-                if ("$hidden = array(".equalsIgnoreCase(line)) {
-                    inHidden = true;
-                }
-            } else if (");".equalsIgnoreCase(line)) {
-                break;
-            } else {
-                Matcher m = sectionPattern.matcher(line);
-                if (m.find()) {
-                    boolean commented = m.group(1) != null;
-                    if (!commented) {
-                        String options = m.group(3);
-                        Matcher om = optionPattern.matcher(options);
-                        ConfigSection section = new ConfigSection();
-                        while (om.find()) {
-                            section.put(om.group(1), om.group(2));
-                        }
-                        config.put(m.group(2), section);
-                    }
-                }
-            }
-        }
-        return config;
-    }
-
     private void writeHiddenConfig(HiddenConfig hidden) throws IOException {
         java.nio.file.Path hiddenConfigPath = ManagerSettings.getInstance().getConfigPath().resolve("hidden.php");
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         StringBuilder content = new StringBuilder().append("<?php\n")
                 .append("// File for configurations that shouldn't be shared with the user\n").append("$data = '")
-                .append(gson.toJson(hidden)).append("';\n").append("$hidden = json_decode($data, true);\n");
+                .append(gson.toJson(hidden)).append("';\n").append("try {\n")
+                .append("  $hidden = json_decode($data, true, 512, JSON_THROW_ON_ERROR);\n")
+                .append("} catch (JsonException $e) {\n")
+                .append("  $hidden = [\"error\" => $e->getMessage(), \"data\" => $data];\n").append("}\n");
         Files.writeString(hiddenConfigPath, content);
     }
 }
