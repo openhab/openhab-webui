@@ -6,7 +6,6 @@
 import Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript.js'
 
-// TODO: Add options to set icon and level (argument order should be the same as for broadcast notification etc.)
 export default function defineOHBlocks_Notifications (f7, isGraalJs) {
   const unavailMsg = 'This notification block isn\'t supported in "application/javascript;version=ECMAScript-5.1"'
 
@@ -29,7 +28,7 @@ export default function defineOHBlocks_Notifications (f7, isGraalJs) {
     let email = javascriptGenerator.valueToCode(block, 'email', javascriptGenerator.ORDER_ATOMIC)
     let message = javascriptGenerator.valueToCode(block, 'message', javascriptGenerator.ORDER_ATOMIC)
     if (isGraalJs) {
-      return `actions.NotificationAction.sendNotification(${email}, ${message});\n`
+      return `actions.notificationBuilder(${message}).addUserId(${email}).send();\n`
     } else {
       const notifications = addNotificationAction()
       return `${notifications}.sendNotification(${email}, ${message});\n`
@@ -89,7 +88,7 @@ export default function defineOHBlocks_Notifications (f7, isGraalJs) {
     let icon = javascriptGenerator.valueToCode(block, 'icon', javascriptGenerator.ORDER_ATOMIC)
     let severity = block.getFieldValue('severity')
     if (isGraalJs) {
-      return `actions.NotificationAction.sendLogNotification(${message}, ${icon}, '${severity}');\n`
+      return `actions.notificationBuilder(${message}).withIcon(${icon}).withTag('${severity}').send();\n`
     } else {
       const notifications = addNotificationAction()
       return `${notifications}.sendLogNotification(${message}, ${icon}, '${severity}');\n`
