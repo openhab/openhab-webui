@@ -853,6 +853,25 @@
             helpUrl="configuration/blockly/rules-blockly-notifications.html"
             text="Help"
             callbackKey="ohBlocklyHelp" />
+          <block type="oh_sendCloudNotification">
+            <value name="message">
+              <shadow type="text">
+                <field name="TEXT">message</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="oh_hideCloudNotification">
+            <value name="reference">
+              <shadow type="text">
+                <field name="TEXT">reference id</field>
+              </shadow>
+            </value>
+            <value name="tag">
+              <shadow type="text">
+                <field name="TEXT">tag</field>
+              </shadow>
+            </value>
+          </block>
           <block type="oh_sendNotification">
             <value name="email">
               <shadow type="text">
