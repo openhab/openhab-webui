@@ -8,7 +8,6 @@ import { javascriptGenerator } from 'blockly/javascript.js'
 
 // TODO: Add options to set icon and level (argument order should be the same as for broadcast notification etc.)
 export default function defineOHBlocks_Notifications (f7, isGraalJs) {
-
   const unavailMsg = 'This notification block isn\'t supported in "application/javascript;version=ECMAScript-5.1"'
 
   Blockly.Blocks['oh_sendNotification'] = {
