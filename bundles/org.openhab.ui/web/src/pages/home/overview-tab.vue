@@ -78,7 +78,7 @@ export default {
       return {
         component: this.overviewPage,
         store: this.context.store,
-        vars: {}
+        vars: (this.overviewPage && this.overviewPage.config && this.overviewPage.config.defineVars) ? this.overviewPage.config.defineVars : {}
       }
     },
     pageStyle () {
