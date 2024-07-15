@@ -41,6 +41,31 @@ export const AddonSuggestionLabels = {
   }
 }
 
+export const AddonConnectionTypes = {
+  cloud: {
+    label: 'Cloud allowed',
+    values: ['none', 'local', 'hybrid', 'cloud']
+  },
+  cloudConfig: {
+    label: 'Optional cloud functionality',
+    values: ['none', 'local', 'hybrid']
+  },
+  noCloud: {
+    label: 'No cloud allowed',
+    values: ['none', 'local']
+  },
+  noNetwork: {
+    label: 'No LAN access',
+    values: ['none']
+  }
+}
+
+export const AddonRegionTypes = {
+  exclude_other: 'All applicable for you',
+  only_region: 'Only for your country',
+  all: 'All'
+}
+
 export const ContentTypes = {
   'application/java-archive': 'Java Archive',
   'application/vnd.openhab.bundle': 'OSGi Bundle',

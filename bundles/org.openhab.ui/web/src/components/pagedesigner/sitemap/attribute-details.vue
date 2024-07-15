@@ -3,7 +3,7 @@
     <f7-card-content v-if="attributes.length">
       <f7-list inline-labels sortable sortable-opposite sortable-enabled @sortable:sort="onSort">
         <f7-list-item v-for="(attr, idx) in attributes" :key="attr.key">
-          <f7-input v-if="!fields" inputStyle="width: 100%" type="text" :placeholder="placeholder" :value="attr.value" @change="updateAttribute($event, idx, attr)" />
+          <f7-input v-if="!fields" style="flex: 1" inputStyle="width: 100%" type="text" :placeholder="placeholder" :value="attr.value" @change="updateAttribute($event, idx, attr)" />
           <f7-input v-for="(field, fieldidx) in fieldDefs" :key="JSON.stringify(field)"
                     :style="fieldStyle(field, fieldidx)"
                     :inputStyle="inputFieldStyle(field, fieldidx)"
@@ -13,7 +13,7 @@
                     :placeholder="fieldProp(field, 'placeholder')"
                     :value="attr.value[Object.keys(field)[0]]"
                     validate @change="updateAttribute($event, idx, attr, Object.keys(field)[0])" />
-          <f7-button style="padding-left: 5px; padding-right: 0" text="" icon-material="clear" small @click="removeAttribute(idx)" />
+          <f7-button style="padding-left: 5px; padding-right: 0; flex-shrink: 0" text="" icon-material="clear" small @click="removeAttribute(idx)" />
         </f7-list-item>
       </f7-list>
     </f7-card-content>
@@ -60,7 +60,11 @@ export default {
     fieldStyle (field, fieldidx) {
       let style = {}
       if (this.fieldProp(field, 'width') !== undefined) {
-        style.width = this.fieldProp(field, 'width')
+        style.flexGrow = '0'
+        style.flexShrink = '0'
+        style.flexBasis = this.fieldProp(field, 'width')
+      } else {
+        style.flex = 1
       }
       if (fieldidx > 0) {
         style.paddingLeft = '5px'

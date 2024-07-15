@@ -188,6 +188,10 @@
         <small v-t="'admin.notTranslatedYet'" />
       </f7-block-footer>
     </f7-block>
+
+    <f7-fab v-if="healthCount > 0" position="center-bottom" :text="`Health Issues (${healthCount})`" slot="fixed" color="red" href="health/">
+      <f7-icon f7="heart" />
+    </f7-fab>
   </f7-page>
 </template>
 
@@ -207,6 +211,7 @@ export default {
       addonsServices: [],
       systemServices: [],
       objectsSubtitles: {
+        health: 'Manage detected system health issues',
         things: 'Manage the physical layer',
         model: 'The semantic model of your home',
         items: 'Manage the functional layer',
@@ -218,6 +223,7 @@ export default {
         scripts: 'Rules dedicated to running code',
         schedule: 'View upcoming time-based rules'
       },
+      healthCount: '',
       inboxCount: '',
       thingsCount: '',
       itemsCount: '',
@@ -291,6 +297,7 @@ export default {
     },
     loadCounters () {
       if (!this.apiEndpoints) return
+      if (this.$store.getters.apiEndpoint('links')) this.$oh.api.get('/rest/links/orphans').then((data) => { this.healthCount = data.length.toString() })
       if (this.$store.getters.apiEndpoint('inbox')) this.$oh.api.get('/rest/inbox?includeIgnored=false').then((data) => { this.inboxCount = data.filter((e) => e.flag === 'NEW').length.toString() })
       if (this.$store.getters.apiEndpoint('things')) this.$oh.api.get('/rest/things?staticDataOnly=true').then((data) => { this.thingsCount = data.length.toString() })
       if (this.$store.getters.apiEndpoint('items')) this.$oh.api.get('/rest/items?staticDataOnly=true').then((data) => { this.itemsCount = data.length.toString() })

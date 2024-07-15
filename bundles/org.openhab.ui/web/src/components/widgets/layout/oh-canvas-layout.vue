@@ -89,6 +89,7 @@
           : '#444 0px 0px 4px',
       }">
       <div
+        v-if="config.imageUrl || config.imageSrcSet"
         style="
           height: inherit;
           width: inherit;

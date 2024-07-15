@@ -29,7 +29,7 @@
         <!-- <f7-block-footer class="no-margin padding-left"><small>Tip: leave fields blank to set automatically to the suggested name and description. <f7-link @click="ruleModule.label = null; ruleModule.description = null">Clear</f7-link></small></f7-block-footer> -->
 
         <!-- module type picker -->
-        <div v-if="ruleModule.new">
+        <f7-col v-if="ruleModule.new">
           <f7-block-title class="no-margin padding-horizontal margin-vertical" v-if="!advancedTypePicker" medium>
             {{ SectionLabels[currentSection][0] }}
           </f7-block-title>
@@ -46,26 +46,28 @@
           <trigger-module-wizard v-else-if="!advancedTypePicker && currentSection === 'triggers'" :current-module="ruleModule" :current-module-type="currentRuleModuleType" @typeSelect="setModuleType" @showAdvanced="advancedTypePicker = true" />
           <condition-module-wizard v-else-if="!advancedTypePicker && currentSection === 'conditions'" :current-module="ruleModule" :current-module-type="currentRuleModuleType" @typeSelect="setModuleType" @showAdvanced="advancedTypePicker = true" @startScript="startScripting" />
           <action-module-wizard v-else-if="!advancedTypePicker && currentSection === 'actions'" :current-module="ruleModule" :current-module-type="currentRuleModuleType" @typeSelect="setModuleType" @showAdvanced="advancedTypePicker = true" @startScript="startScripting" />
-        </div>
+        </f7-col>
 
         <!-- module configuration -->
-        <f7-list v-if="ruleModule.type && (!ruleModule.new || advancedTypePicker)">
-          <f7-list-item :title="SectionLabels[currentSection][0]" ref="ruleModuleTypeSmartSelect" smart-select :smart-select-params="{ view: $f7.views.main, openIn: 'popup', closeOnSelect: true }">
-            <select name="ruleModuleType"
-                    @change="setModuleType(moduleTypes[currentSection].find((t) => t.uid === $refs.ruleModuleTypeSmartSelect.f7SmartSelect.getValue()), true)">
-              <optgroup v-for="(mt, scope) in groupedModuleTypes(currentSection)" :key="scope" :label="scope">
-                <option v-for="moduleType in mt"
-                        :value="moduleType.uid" :key="moduleType.uid" :selected="currentRuleModuleType.uid === moduleType.uid">
-                  {{ moduleType.label }}
-                </option>
-              </optgroup>
-            </select>
-          </f7-list-item>
-        </f7-list>
-        <f7-block-title v-if="ruleModule && currentRuleModuleType && (!ruleModule.new || advancedTypePicker)" style="margin-bottom: calc(var(--f7-block-title-margin-bottom) - var(--f7-list-margin-vertical))">
-          Configuration
-        </f7-block-title>
-        <f7-col v-if="ruleModule && currentRuleModuleType && (!ruleModule.new || advancedTypePicker)">
+        <f7-col v-if="ruleModule.type && (!ruleModule.new || advancedTypePicker)" class="margin-top">
+          <f7-list>
+            <f7-list-item :title="SectionLabels[currentSection][0]" ref="ruleModuleTypeSmartSelect" smart-select :smart-select-params="{ view: $f7.views.main, openIn: 'popup', closeOnSelect: true }">
+              <select name="ruleModuleType"
+                      @change="setModuleType(moduleTypes[currentSection].find((t) => t.uid === $refs.ruleModuleTypeSmartSelect.f7SmartSelect.getValue()), true)">
+                <optgroup v-for="(mt, scope) in groupedModuleTypes(currentSection)" :key="scope" :label="scope">
+                  <option v-for="moduleType in mt"
+                          :value="moduleType.uid" :key="moduleType.uid" :selected="currentRuleModuleType.uid === moduleType.uid">
+                    {{ moduleType.label }}
+                  </option>
+                </optgroup>
+              </select>
+            </f7-list-item>
+          </f7-list>
+        </f7-col>
+        <f7-col v-if="ruleModule && currentRuleModuleType && (!ruleModule.new || advancedTypePicker)" class="margin-top">
+          <f7-block-title style="margin-bottom: 0">
+            Configuration
+          </f7-block-title>
           <config-sheet v-if="!(ruleModule.configuration && ruleModule.configuration.blockSource)"
                         :key="currentSection + ruleModule.id"
                         ref="parameters"

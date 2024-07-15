@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
-"PO-Revision-Date: 2022-12-11 11:15\n"
+"PO-Revision-Date: 2024-06-25 10:53\n"
 
 #. Common term in widget settings dialogs
 msgctxt "widget.common.min"
@@ -410,7 +410,7 @@ msgstr "Digitaal formaat"
 #. Color picker header
 msgctxt "widget.clock.digital_color"
 msgid "Digital Color"
-msgstr ""
+msgstr "Kleur Digitaal"
 
 #. Textbox header
 msgctxt "widget.clock.font_size"
@@ -480,17 +480,17 @@ msgstr "Opmaak"
 #. Color picker header
 msgctxt "widget.dummy.value_color"
 msgid "Value color"
-msgstr ""
+msgstr "Klearu Waarde"
 
 #. Checkboxes header
 msgctxt "widget.dummy.state"
 msgid "State"
-msgstr ""
+msgstr "Status"
 
 #. Checkbox label
 msgctxt "widget.dummy.state.description"
 msgid "Use state description"
-msgstr ""
+msgstr "Gebruik state description"
 
 #. Display name of the widget (appears in the Add Widget dropdown menu in the designer)
 msgctxt "widget.frame"

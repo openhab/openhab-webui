@@ -16,10 +16,11 @@
       <f7-link v-if="!page.config.hideSidebarIcon" class="sidebar-icon" icon-ios="f7:menu" icon-aurora="f7:menu" icon-md="material:menu" panel-open="left" />
       <f7-link v-if="fullscreenIcon" class="fullscreen-icon" :icon-f7="fullscreenIcon" @click="toggleFullscreen" />
     </template>
-    <f7-toolbar tabbar labels bottom v-if="page && pageType === 'tabs' && visibleToCurrentUser">
-      <f7-link v-for="(tab, idx) in page.slots.default" :key="idx" tab-link @click="onTabChange(idx)" :tab-link-active="currentTab === idx" :icon-ios="tab.config.icon" :icon-md="tab.config.icon" :icon-aurora="tab.config.icon" :text="tab.config.title" />
-    </f7-toolbar>
 
+    <!-- Tabbed Pages -->
+    <f7-toolbar tabbar labels bottom v-if="page && pageType === 'tabs' && visibleToCurrentUser">
+      <f7-link v-for="(tab, idx) in page.slots.default" :key="idx" tab-link @click="onTabChange(idx)" :tab-link-active="currentTab === idx" :icon-ios="tabEvaluateExpression(tab, idx, 'icon')" :icon-md="tabEvaluateExpression(tab, idx, 'icon')" :icon-aurora="tabEvaluateExpression(tab, idx, 'icon')" :text="tabEvaluateExpression(tab, idx, 'title')" :icon-badge="tabEvaluateExpression(tab, idx, 'badge')" :badge-color="tabEvaluateExpression(tab, idx, 'badgeColor')" />
+    </f7-toolbar>
     <f7-tabs v-if="page && pageType === 'tabs' && visibleToCurrentUser">
       <f7-tab v-for="(tab, idx) in page.slots.default" :key="idx" :tab-active="currentTab === idx">
         <component v-if="currentTab === idx" :is="tabComponent(tab)" :context="tabContext(tab)" @command="onCommand" />
@@ -47,8 +48,10 @@
 
 <script>
 import OhLayoutPage from '@/components/widgets/layout/oh-layout-page.vue'
+import WidgetExpressionMixin from '@/components/widgets/widget-expression-mixin'
 
 export default {
+  mixins: [WidgetExpressionMixin],
   components: {
     'oh-layout-page': OhLayoutPage,
     'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue'),
@@ -56,11 +59,18 @@ export default {
     'oh-plan-page': () => import(/* webpackChunkName: "plan-page" */ '@/components/widgets/plan/oh-plan-page.vue'),
     'oh-chart-page': () => import(/* webpackChunkName: "chart-page" */ '@/components/widgets/chart/oh-chart-page.vue')
   },
-  props: ['uid', 'deep', 'defineVars'],
+  props: ['uid', 'initialTab', 'deep', 'defineVars'],
   data () {
     return {
-      currentTab: 0,
+      currentTab: this.initialTab ? Number(this.initialTab) : 0,
       fullscreen: this.$fullscreen.getState()
+    }
+  },
+  watch: {
+    pageType (newType, oldType) {
+      if (oldType === null && newType === 'tabs') {
+        this.onTabChange(this.currentTab)
+      }
     }
   },
   computed: {
@@ -128,6 +138,9 @@ export default {
     onTabChange (idx) {
       this.currentTab = idx
       this.$set(this, 'vars', {})
+      const url = '/page/' + this.uid + '/' + this.currentTab
+      this.$f7router.updateCurrentUrl(url)
+      this.$f7router.url = url
     },
     onCommand (itemName, command) {
       this.$store.dispatch('sendCommand', { itemName, command })
@@ -145,6 +158,10 @@ export default {
     tabComponent (tab) {
       const page = this.$store.getters.page(tab.config.page.replace('page:', ''))
       return page.component
+    },
+    tabEvaluateExpression (tab, idx, key) {
+      const ctx = this.tabContext(tab)
+      return this.evaluateExpression('tab-' + idx + '-' + key, tab.config[key], ctx, ctx.props)
     },
     toggleFullscreen () {
       this.$fullscreen.toggle(document.body, {

@@ -53,7 +53,7 @@
         <f7-list-input ref="category" label="Category" autocomplete="off" type="text" placeholder="temperature, firstfloor..." :value="itemCategory"
                        @input="itemCategory = $event.target.value" :disabled="!editable" :clear-button="editable">
           <div slot="root-end" style="margin-left: calc(35% + 14px)">
-            <oh-icon :icon="itemCategory" :state="(createMode) ? null : item.state" height="32" width="32" />
+            <oh-icon :icon="itemCategory" :state="(createMode || itemType === 'Image') ? null : item.state" height="32" width="32" />
           </div>
         </f7-list-input>
       </f7-list-group>

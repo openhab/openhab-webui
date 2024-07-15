@@ -162,15 +162,15 @@ Mapping -> Command _ %colon _ Command _ %equals _ Label                         
 Buttons -> Button                                                                 {% (d) => [d[0]] %}
   | Buttons _ %comma _ Button                                                     {% (d) => d[0].concat([d[4]]) %}
 Button -> %number _ %colon _ %number _ %colon _ ButtonValue                       {% (d) => { return { 'row':  parseInt(d[0].value), 'column': parseInt(d[4].value), 'command': d[8] } } %}
-ButtonValue -> Command _ %equals _ Label                                          {% (d) => d[0][0].value + '=' + d[4] %}
-  | Command _ %equals _ Label _ %equals _ WidgetIconAttrValue                     {% (d) => d[0][0].value + '=' + d[4] + '=' + d[8].join("") %}
+ButtonValue -> Command _ %equals _ Label                                          {% (d) => d[0] + '=' + d[4] %}
+  | Command _ %equals _ Label _ %equals _ WidgetIconAttrValue                     {% (d) => d[0] + '=' + d[4] + '=' + d[8].join("") %}
 
 Command -> %number | %identifier                                                  {% (d) => d[0].value %}
   | %string                                                                       {% (d) => '"' + d[0].value + '"' %}
 Label -> %number | %identifier                                                    {% (d) => d[0].value %}
   | %string                                                                       {% (d) => '"' + d[0].value + '"' %}
 
-Visibilities -> Conditions                                                        {% (d) => d[0] %}
+Visibilities -> Conditions                                                        {% (d) => [d[0]] %}
   | Visibilities _ %comma _ Conditions                                            {% (d) => d[0].concat(d[4]) %}
 
 Colors -> Color                                                                   {% (d) => [d[0]] %}
@@ -184,7 +184,7 @@ IconRules -> IconRule                                                           
 IconRule -> Conditions _ %equals _ WidgetIconAttrValue                            {% (d) => d[0] + '=' + d[4].join("") %}
   | WidgetIconAttrValue                                                           {% (d) => d[0].join("") %}
 
-Conditions -> Condition
+Conditions -> Condition                                                           {% (d) => d[0] %}
   | Conditions _ %and _ Condition                                                 {% (d) => d[0] + ' AND ' + d[4] %}
 Condition -> ConditionCommand _ ConditionComparator _ ConditionValue              {% (d) => d[0][0].value + d[2][0].value + d[4][0].value %}
   | ConditionComparator _ ConditionValue                                          {% (d) => d[0][0].value + d[2][0].value %}

@@ -36,68 +36,7 @@ export default {
             break
           case topicCommand:
             const payload = JSON.parse(event.payload)
-            const [command, ...segments] = payload.value.trim().split(':') // NOT use a RegEx lookbehind assertions here, because they are unsupported on Safari < 16.4, i.e. iOS 15.x
-            const combined = segments.join(':')
-            switch (command) {
-              case 'navigate':
-                this.$f7.views.main.router.navigate(combined)
-                break
-              case 'popup':
-              case 'popover':
-              case 'sheet':
-                if (combined.indexOf('page:') !== 0 && combined.indexOf('widget:') !== 0 && combined.indexOf('oh-') !== 0) {
-                  console.error('Action target is not of the format page:uid or widget:uid or oh-')
-                  return
-                }
-                console.debug(`Opening ${combined} in ${command} modal`)
-                let modalRoute = {
-                  url: combined + '/' + command,
-                  route: {
-                  }
-                }
-                if (command === 'popup') modalRoute.route.popup = { component: OhPopup }
-                if (command === 'popover') modalRoute.route.popup = { component: OhPopover }
-                if (command === 'sheet') modalRoute.route.popup = { component: OhSheet }
-                let modalProps = {
-                  props: {
-                    uid: combined,
-                    modalParams: {}
-                  }
-                }
-                this.closePopups()
-                this.$f7.views.main.router.navigate(modalRoute, modalProps)
-                break
-              case 'close':
-                this.closePopups()
-                break
-              case 'back':
-                this.$f7.views.main.router.back()
-                break
-              case 'reload':
-                window.location.reload()
-                break
-              case 'notification':
-                const payload = {
-                  text: segments[0],
-                  closeButton: true,
-                  swipeToClose: true,
-                  closeTimeout: 5000
-                }
-                if (segments.length > 1) {
-                  payload.title = segments[1]
-                }
-                if (segments.length > 2) {
-                  payload.subtitle = segments[2]
-                }
-                if (segments.length > 3) {
-                  payload.titleRightText = segments[3]
-                }
-                if (segments.length > 4) {
-                  payload.closeTimeout = parseInt(segments[4])
-                }
-                this.$f7.notification.create(payload).open()
-                break
-            }
+            this.handleCommand(payload.value)
             break
         }
       })
@@ -163,6 +102,71 @@ export default {
       const sheetEl = this.$el.querySelector('.sheet-modal')
       if (sheetEl) {
         this.$f7.sheet.close(sheetEl)
+      }
+    },
+    handleCommand (commandString) {
+      console.log('Handling command: ' + commandString)
+      const [command, ...segments] = commandString.trim().split(':') // NOT use a RegEx lookbehind assertions here, because they are unsupported on Safari < 16.4, i.e. iOS 15.x
+      const combined = segments.join(':')
+      switch (command) {
+        case 'navigate':
+          this.$f7.views.main.router.navigate(combined)
+          break
+        case 'popup':
+        case 'popover':
+        case 'sheet':
+          if (combined.indexOf('page:') !== 0 && combined.indexOf('widget:') !== 0 && combined.indexOf('oh-') !== 0) {
+            console.error('Action target is not of the format page:uid or widget:uid or oh-')
+            return
+          }
+          console.debug(`Opening ${combined} in ${command} modal`)
+          const modalRoute = {
+            url: combined + '/' + command,
+            route: {
+            }
+          }
+          if (command === 'popup') modalRoute.route.popup = { component: OhPopup }
+          if (command === 'popover') modalRoute.route.popup = { component: OhPopover }
+          if (command === 'sheet') modalRoute.route.popup = { component: OhSheet }
+          const modalProps = {
+            props: {
+              uid: combined,
+              modalParams: {}
+            }
+          }
+          this.closePopups()
+          this.$f7.views.main.router.navigate(modalRoute, modalProps)
+          break
+        case 'close':
+          this.closePopups()
+          break
+        case 'back':
+          this.$f7.views.main.router.back()
+          break
+        case 'reload':
+          window.location.reload()
+          break
+        case 'notification':
+          const payload = {
+            text: segments[0],
+            closeButton: true,
+            swipeToClose: true,
+            closeTimeout: 5000
+          }
+          if (segments.length > 1) {
+            payload.title = segments[1]
+          }
+          if (segments.length > 2) {
+            payload.subtitle = segments[2]
+          }
+          if (segments.length > 3) {
+            payload.titleRightText = segments[3]
+          }
+          if (segments.length > 4) {
+            payload.closeTimeout = parseInt(segments[4])
+          }
+          this.$f7.notification.create(payload).open()
+          break
       }
     }
   }

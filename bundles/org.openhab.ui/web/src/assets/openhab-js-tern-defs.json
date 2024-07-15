@@ -204,6 +204,14 @@
                 "!doc": "Query the next update time of a given item.",
                 "!type": "fn(serviceId?: string) -> ZonedDateTime|null"
             },
+            "lastChange": {
+                "!doc": "Query the last change time of a given item.",
+                "!type": "fn(serviceId?: string) -> ZonedDateTime|null"
+            },
+            "nextChange": {
+              "!doc": "Query the next change time of a given item.",
+              "!type": "fn(serviceId?: string) -> ZonedDateTime|null"
+            },
             "maximumBetween": {
                 "!doc": "Gets the maximum value of the persisted states of a given Item between two certain points in time.",
                 "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> PersistedItem|null"
@@ -229,8 +237,8 @@
                 "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> PersistedItem"
             },
             "persist": {
-                "!doc": "Persists the state of a given item",
-                "!type": "fn(serviceId?: string)"
+                "!doc": "Persists the current state of a given item or the given state at a given timestamp or a TimeSeries (see JavaScript Scripting docs/Standard Library/Items)",
+                "!type": "fn(timestamp?: +Date|+ZonedDateTime, state?: ?, timeSeries?: TimeSeries, serviceId?: string)"
             },
             "previousState": {
                 "!doc": "Returns the previous state of a given item.",
@@ -307,6 +315,32 @@
             "quantityState": {
                 "!doc": "Item state as Quantity or null if state is not Quantity-compatible",
                 "!type": "QuantityClass|null"
+            }
+        },
+        "TimeSeries": {
+            "policy": {
+                "!doc": "Policy of the TimeSeries",
+                "!type": "string"
+            },
+            "begin": {
+                "!doc": "Timestamp of the first element in the TimeSeries",
+                "!type": "+Instant"
+            },
+            "end": {
+                "!doc": "Timestamp of the last element in the TimeSeries",
+                "!type": "+Instant"
+            },
+            "size": {
+                "!doc": "Number of elements in the TimeSeries",
+                "!type": "number"
+            },
+            "states": {
+                "!doc": "Array of states in the TimeSeries",
+                "!type": "[?]"
+            },
+            "add": {
+                "!doc": "Adds a new element to the TimeSeries",
+                "!type": "fn(timestamp: ?, state: ?)"
             }
         },
         "ItemSemantics": {
@@ -415,6 +449,11 @@
             "safeItemName": {
                 "!doc": "Helper function to ensure an Item name is valid. All invalid characters are replaced with an underscore.",
                 "!type": "fn(s: string) -> string"
+            },
+            "TimeSeries": {
+                "!doc":  "A TimeSeries is used to transport a set of states together with their timestamp.",
+                "!type": "fn(policy: string)",
+                "prototype": "TimeSeries"
             },
             "NAME": {
                 "!doc": "Gets an Item using it's name on the items namespace, e.g. items.Hallway_Light",
@@ -713,18 +752,50 @@
             "sendHttpPutRequest": { "!type": "fn(url: string, contentType?: string, content?: string, headers?: object, timeout?: int) -> string" },
             "sendHttpDeleteRequest": { "!type": "fn(url: string, headers?: object, timeout?: int) -> string" }
         },
-        "NotificationAction": {
-            "sendNotification": {
-                "!doc": "Sends a notification to a specific cloud instance user.",
-                "!type": "fn(email: string, message: string)"
+        "NotificationBuilder": {
+            "logOnly": {
+                "!doc": "Send a log notification only.",
+                "!type": "fn() -> NotificationBuilder"
             },
-            "sendBroadcastNotification": {
-                "!doc": "Sends a notification to all devices of all users.",
-                "!type": "fn(message: string)"
+            "hide": {
+                "!doc": "Hides/Removes the notification with the specified referenceId or tag.",
+                "!type": "fn() -> NotificationBuilder"
             },
-            "sendLogNotification": {
-                "!doc": "Sends a log notification to the notifications list at your openHAB Cloud instance. Notifications are NOT sent to any registered device.",
-                "!type": "fn(message: string)"
+            "addUserId": {
+                "!doc": "By adding the email address(es) of specific openHAB Cloud user(s), the notification is only sent to this (these) users.",
+                "!type": "fn(userId: string) -> NotificationBuilder"
+            },
+            "withIcon": {
+                "!doc": "Sets the icon of the notification.",
+                "!type": "fn(icon: string) -> NotificationBuilder"
+            },
+            "withTag": {
+                "!doc": "Sets the tag of the notification.",
+                "!type": "fn(tag: string) -> NotificationBuilder"
+            },
+            "withTitle": {
+                "!doc": "Sets the title of the notification.",
+                "!type": "fn(title: string) -> NotificationBuilder"
+            },
+            "withReferenceId": {
+                "!doc": "Sets the referenceId of the notification. If none is set, but might be useful, a random UUID will be generated. The reference ID can be used to update or hide the notification later by using the same reference ID again.",
+                "!type": "fn(referenceId: string) -> NotificationBuilder"
+            },
+            "withOnClickAction": {
+                "!doc": "Sets the action to be executed when the notification is clicked.",
+                "!type": "fn(action: string) -> NotificationBuilder"
+            },
+            "withMediaAttachmentUrl": {
+                "!doc": "Sets the URL of a media attachment to be displayed with the notification. This URL must be reachable by the push notification client.",
+                "!type": "fn(mediaAttachmentUrl: string) -> NotificationBuilder"
+            },
+            "addActionButton": {
+                "!doc": "Adds an action button to the notification. Please note that due to Android and iOS limitations, only three action buttons are supported.",
+                "!type": "fn(label: string, action: string) -> NotificationBuilder"
+            },
+            "send": {
+                "!doc": "Sends the notification and returns the reference ID or null for log notifications and when hiding notifications.",
+                "!type": "fn() -> string|null"
             }
         },
         "PingActions": {
@@ -773,9 +844,9 @@
                 "!doc": "HTTP Actions. This class provides static methods that can be used in automation rules for sending HTTP requests.",
                 "!type": "HTTPActions"
             },
-            "NotificationAction": {
-                "!doc": "Notification Actions. If the openHAB Cloud Connector is installed, notifications can be sent to registered users/devices.",
-                "!type": "NotificationAction"
+            "notificationBuilder": {
+                "!doc": "Creates a new NotificationBuilder to send openHAB Cloud notifications. This requires the openHAB Cloud Connector to be installed.",
+                "!type": "fn(message: string) -> NotificationBuilder"
             },
             "Ping": {
                 "!doc": "Ping Actions. This Action checks the vitality of the given host.",

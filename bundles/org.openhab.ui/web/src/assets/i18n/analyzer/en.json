@@ -66,5 +66,7 @@
   "analyzer.dialogs.save.replace.message": "A page with the ID {uid} already exists, would you like to overwrite it?",
   "analyzer.dialogs.save.replace.title": "Page already exists",
   "analyzer.page.updated": "Chart page updated",
-  "analyzer.page.created": "Chart page created"
+  "analyzer.page.created": "Chart page created",
+  "analyzer.invalid-configuration.title": "Invalid configuration",
+  "analyzer.invalid-configuration.text": "Please make sure all required query parameters are passed/the configuration is valid."
 }

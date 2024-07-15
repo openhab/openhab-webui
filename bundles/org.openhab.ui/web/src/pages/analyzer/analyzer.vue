@@ -18,6 +18,7 @@
     </f7-toolbar>
 
     <oh-chart-page v-if="showChart" class="analyzer-chart" :class="{ 'sheet-opened': controlsOpened }" :key="chartKey" :context="context" />
+    <empty-state-placeholder v-else-if="invalidConfiguration" icon="exclamationmark" :title="$t('analyzer.invalid-configuration.title')" :text="$t('analyzer.invalid-configuration.text')" />
 
     <!-- analyzer controls -->
     <f7-sheet class="analyzer-controls" :backdrop="false" :close-on-escape="true" :opened="controlsOpened" @sheet:closed="controlsOpened = false">
@@ -246,6 +247,7 @@
 
 <script>
 import ItemPicker from '@/components/config/controls/item-picker.vue'
+import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 import ChartTime from './chart-time'
 import ChartAggregate from './chart-aggregate'
 import ChartCalendar from './chart-calendar'
@@ -254,11 +256,13 @@ import { loadLocaleMessages } from '@/js/i18n'
 export default {
   components: {
     'oh-chart-page': () => import(/* webpackChunkName: "chart-page" */ '../../components/widgets/chart/oh-chart-page.vue'),
-    ItemPicker
+    ItemPicker,
+    EmptyStatePlaceholder
   },
   data () {
     return {
       showChart: false,
+      invalidConfiguration: false,
       itemNames: [],
       items: null,
       seriesOptions: {},
@@ -325,6 +329,10 @@ export default {
     },
     initChart () {
       if (this.$f7route.query.period) this.period = this.$f7route.query.period
+      if (this.$f7route.query.items === '') {
+        this.invalidConfiguration = true
+        return
+      }
       this.updateItems(this.$f7route.query.items.split(',')).then(() => {
         if (this.$f7route.query.chartType) this.changeChartType(this.$f7route.query.chartType)
         if (this.$f7route.query.coordSystem) this.changeCoordSystem(this.$f7route.query.coordSystem)

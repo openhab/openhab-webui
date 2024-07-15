@@ -116,8 +116,8 @@
               :title="rule.name"
               :text="rule.uid"
               :footer="rule.description"
-              :badge="showScenes ? '' : ruleStatusBadgeText(rule.status)"
-              :badge-color="ruleStatusBadgeColor(rule.status)">
+              :badge="showScenes ? '' : ruleStatusBadgeText(ruleStatuses[rule.uid])"
+              :badge-color="ruleStatusBadgeColor(ruleStatuses[rule.uid])">
               <div slot="footer">
                 <f7-chip v-for="tag in rule.tags.filter((t) => t !== 'Script' && t !== 'Scene')" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
                   <f7-icon slot="media" ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
@@ -162,6 +162,7 @@ export default {
       loading: false,
       noRuleEngine: false,
       rules: [],
+      ruleStatuses: {},
       uniqueTags: [],
       selectedTags: [],
       initSearchbar: false,
@@ -214,6 +215,7 @@ export default {
       if (this.showScenes) {
         filter = '&tags=Scene'
       }
+
       this.$oh.api.get('/rest/rules?summary=true' + filter).then(data => {
         this.rules = data.sort((a, b) => {
           return a.name.localeCompare(b.name)
@@ -228,6 +230,8 @@ export default {
         }
 
         this.rules.forEach(rule => {
+          this.ruleStatuses[rule.uid] = rule.status
+
           rule.tags.forEach(t => {
             if (t === 'Scene' || t === 'Script') return
             if (t.startsWith('marketplace:')) t = 'Marketplace'
@@ -266,12 +270,13 @@ export default {
             this.load()
             break
           case 'state':
-            const rule = this.rules.find((r) => r.uid === topicParts[2])
+            const uid = topicParts[2]
             const newStatus = JSON.parse(event.payload)
-            if (!rule) break
-            if (rule.status.status !== newStatus.status) rule.status.status = newStatus.status
-            if (rule.status.statusDetail !== newStatus.statusDetail) rule.status.statusDetail = newStatus.statusDetail
-            if (rule.status.description !== newStatus.description) rule.status.description = newStatus.description
+            // skip status updates for RUNNING for performance reasons (can be easily skipped as it was never really shown due to the short execution time of rules)
+            if (newStatus.status === 'RUNNING') return
+
+            this.ruleStatuses[uid].status = newStatus.status
+            this.ruleStatuses[uid].statusDetail = newStatus.statusDetail
         }
       })
     },

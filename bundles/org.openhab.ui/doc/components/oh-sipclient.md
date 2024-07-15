@@ -59,6 +59,27 @@ This can be achieved by configuring the widget as usual, but setting SIP usernam
 1. Insert your SIP account credentials, they are used instead of those stored on the openHAB server.
 1. Insert the SIP address/phone number of your SIP account, it is used to hide your local identity from the call dial.
 
+## SIP Connection State Item
+
+The advanced `sipStateItem` property allows to define a String Item to publish the current SIP connection state to the openHAB server.
+
+There are the following basic states:
+
+- `connected`: The SIP client has connected to the SIP server and ready to make outgoing calls.
+- `registered`: The SIP client has registered at the SIP server and ready to receive calls.
+- `disconnected`: The SIP client has disconnected from the SIP server.
+
+In addition, there are the following call states, which provide the caller ID of the remote party, e.g. `**620@fritz.box` after a colon:
+
+- `incoming`: An incoming call is received, e.g. `incoming:**620@fritz.box`.
+- `incoming-accepted`: An incoming call has been accepted and is now active, e.g. `incoming-accepted:**620@fritz.box`.
+- `outgoing`: An outgoing call is started.
+- `outgoing-accepted`: An outgoing call has been accepted and is now active.
+- `ended`: The call has been ended.
+- `failed`: The call has failed.
+
+The `sipStateItem` is useful to track the SIP connection state on the openHAB server and work with it, e.g. in rules.
+
 ## Configuration
 
 <!-- DO NOT REMOVE the following comments -->
@@ -73,7 +94,7 @@ This can be achieved by configuring the widget as usual, but setting SIP usernam
 </PropBlock>
 <PropBlock type="TEXT" name="websocketUrl" label="Websocket URL" required="true">
   <PropDescription>
-    Full URL of the WebRTC SIP websocket, e.g. 'wss://siphost:8089/ws' or relative path, e.g. '/ws', for Android & iOS, you need wss (WebSocket secured)
+    Full URL of the WebRTC SIP websocket, e.g. <code>wss://siphost:8089/ws</code> or relative path, e.g. <code>/ws</code>, for Android & iOS, you need <code>wss</code> (WebSocket secured)
   </PropDescription>
 </PropBlock>
 <PropBlock type="TEXT" name="domain" label="SIP Domain" required="true">
@@ -89,7 +110,7 @@ This can be achieved by configuring the widget as usual, but setting SIP usernam
 </PropBlock>
 <PropBlock type="TEXT" name="phonebook" label="Phonebook" required="true">
   <PropDescription>
-    Single SIP Address (phone number) for a single call target or a comma-separated list of 'phoneNumber=name' for multiple call targets. Used as well to display a name instead of the number for incoming calls.
+    Single SIP Address (phone number) for a single call target or a comma-separated list of <code>phoneNumber=name</code> for multiple call targets. Used as well to display a name instead of the number for incoming calls.
   </PropDescription>
 </PropBlock>
 <PropBlock type="TEXT" name="dtmfString" label="DTMF String">
@@ -122,7 +143,25 @@ This can be achieved by configuring the widget as usual, but setting SIP usernam
     SIP registration can be disabled in case you only want to initiate calls, but not receive calls with the SIP widgets.
   </PropDescription>
 </PropBlock>
-<PropBlock type="BOOLEAN" name="enableSIPDebug" label="Enable SIP debugging to the browser console (dev tools)">
+<PropBlock type="TEXT" name="autoAnswer" label="Auto Answer">
+  <PropDescription>
+    Automatically answer an incoming call from one of the comma delimited SIP addresses (<code>userInfo@hostname</code>, <code>userInfo</code>, ...) or use * for all incoming calls.
+  </PropDescription>
+</PropBlock>
+<PropBlock type="TEXT" name="autoDial" label="Auto Dial">
+  <PropDescription>
+    Automatically dial the SIP address when loaded
+  </PropDescription>
+</PropBlock>
+<PropBlock type="TEXT" name="sipStateItem" label="SIP State Item" context="item">
+  <PropDescription>
+    String Item to publish the current SIP connection state to the openHAB server and make it accessible from rules etc.
+  </PropDescription>
+</PropBlock>
+<PropBlock type="BOOLEAN" name="enableSIPDebug" label="Enable SIP Debug">
+  <PropDescription>
+    Enable SIP debugging to the browser console (dev tools)
+  </PropDescription>
 </PropBlock>
 </PropGroup>
 </div>

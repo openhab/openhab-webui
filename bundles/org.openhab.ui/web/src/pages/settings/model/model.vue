@@ -61,7 +61,15 @@
     <f7-block v-else class="semantic-tree-wrapper" :class="{ 'sheet-opened' : detailsOpened }">
       <f7-row>
         <f7-col width="100" medium="50">
-          <empty-state-placeholder v-if="empty" icon="list_bullet_indent" title="model.title" text="model.text" />
+          <f7-block v-if="empty">
+            <empty-state-placeholder icon="list_bullet_indent" title="model.title" text="model.text" />
+            <f7-row class="display-flex justify-content-center">
+              <f7-button color="blue" large raised fill @click="addFromLocationTemplate()">
+                Add Locations from Template
+              </f7-button>
+            </f7-row>
+          </f7-block>
+
           <f7-block v-show="!empty" strong class="semantic-tree" no-gap @click.native="clearSelection">
             <!-- <empty-state-placeholder v-if="empty" icon="list_bullet_indent" title="model.title" text="model.text" /> -->
             <f7-treeview>
@@ -227,6 +235,7 @@
 <script>
 import ModelDetailsPane from '@/components/model/details-pane.vue'
 import AddFromThing from './add-from-thing.vue'
+import AddFromTemplate from './add-from-template.vue'
 
 import ItemStatePreview from '@/components/item/item-state-preview.vue'
 import ItemDetails from '@/components/model/item-details.vue'
@@ -567,7 +576,6 @@ export default {
       this.load()
     },
     addFromThing (createEquipment) {
-      const self = this
       this.$f7router.navigate({
         url: 'add-thing',
         route: {
@@ -584,6 +592,21 @@ export default {
         props: {
           parent: this.selectedItem,
           createEquipment
+        }
+      })
+    },
+    addFromLocationTemplate () {
+      this.$f7router.navigate({
+        url: 'add-template',
+        route: {
+          component: AddFromTemplate,
+          path: 'add-template',
+          props: {
+          }
+        }
+      }, {
+        props: {
+          itemList: this.items
         }
       })
     }

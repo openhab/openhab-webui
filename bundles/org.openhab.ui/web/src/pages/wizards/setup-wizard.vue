@@ -326,7 +326,7 @@ export default {
       addonSuggestionsReady: false,
       addons: [],
       // all recommended addons, pre-defined
-      recommendedAddons: ['persistence-rrd4j', 'persistence-mapdb', 'automation-jsscripting', 'ui-basic', 'binding-astro'],
+      recommendedAddons: ['persistence-rrd4j', 'persistence-mapdb', 'persistence-inmemory', 'automation-jsscripting', 'ui-basic', 'binding-astro'],
       // addon types that can be selected in wizard before main addon selection step, to be excluded from main selection step, pre-defined
       preSelectingAddonTypes: ['persistence'],
       // addons that can be selected in wizard before main addon selection step, to be excluded from main selection step, pre-defined

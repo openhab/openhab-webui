@@ -7,6 +7,8 @@
   "things.text": "Things zijn de apparaten of services verbonden met openHAB. Ze worden door binding add-ons aangemaakt.<br><br>Geïnstalleerde bindings die auto-discovery ondersteunen plaatsen kandidaat things in de inbox. Je kan ook een scan starten voor een bepaalde binding of je eerste thing manueel toevoegen met onderstaande knop.",
   "things.nobindings.title": "Geen bindings",
   "things.nobindings.text": "Om Things toe te voegen aan uw systeem, dient u eerst binding add-ons te installeren.",
+  "transformations.title": "Nog geen transformaties",
+  "transformations.text": "Transformaties worden gebruikt om gegevens van een gefragmenteerde of technische ruwe waarde te vertalen naar een verwerkte mens-leesbare representatie.",
   "model.title": "Start met het modelleren van uw huis",
   "model.text": "Bouw een model van je Items om ze te organiseren en semantisch met elkaar te verbinden.<br><br>Begin met een hiërarchie van locaties: gebouwen, buiten gebieden, verdiepingen en kamers, naar behoefte. Voeg vervolgens apparatuur en Points toe vanaf uw Things (of handmatig).",
   "items.title": "Nog geen items",
@@ -17,6 +19,8 @@
   "pages.text": "Ontwerp pagina's om informatie op verschillende manieren weer te geven en uw items te bedienen. Je kunt verschillende soorten pagina's maken: grafieken, sitemaps, plattegronden...<br><br>Klik op de knop hieronder om uw eerste pagina aan te maken.",
   "rules.title": "Nog geen rules",
   "rules.text": "Rules zijn de basisbouwstenen voor het automatiseren van uw woning - ze bepalen welke acties worden uitgevoerd wanneer bepaalde gebeurtenissen plaatsvinden.<br><br>Maak uw eerste rule met de knop hieronder; voor meer geavanceerde scenario's kunt u ook scriptbestanden schrijven in uw configuratiemap.",
+  "scenes.title": "Nog geen scènes",
+  "scenes.text": "Scènes zijn regels die opdrachten sturen om een set items te herstellen naar een gewenste staat.<br />Je kunt ze op aanvraag uitvoeren of oproepen vanuit andere rules.<br><br>Maak je eerste scène met de knop hieronder.",
   "scripts.title": "Nog geen scripts",
   "scripts.text": "Scripts zijn een speciaal soort rules, zonder triggers en één enkele actie module om code uit te voeren.<br />Je kunt ze op aanvraag uitvoeren of oproepen vanuit andere rules.<br><br>Maak uw eerste script aan met de knop hieronder.",
   "schedule.title": "Niets in het tijdsplan",
@@ -26,5 +30,7 @@
   "addons.title": "Geen add-ons geïnstalleerd",
   "addons.text": "Add-ons voegen functionaliteit toe aan uw openHAB systeem.<br><br>Installeer ze met de knop hieronder.",
   "page.unavailable.title": "Pagina niet beschikbaar",
-  "page.unavailable.text": "U heeft geen toestemming om deze pagina te bekijken vanwege gebruikersprofiel beperkingen."
+  "page.unavailable.text": "U heeft geen toestemming om deze pagina te bekijken vanwege gebruikersprofiel beperkingen.",
+  "persistence.title": "Geen persistence add-on geïnstalleerd",
+  "persistence.text": "Met persistence kunt u item states in de loop van de tijd opslaan, ongeacht of het gaat om historische of toekomstige states. Om persistence te configureren, moet ten minste één persistence -add-on geïnstalleerd zijn."
 }

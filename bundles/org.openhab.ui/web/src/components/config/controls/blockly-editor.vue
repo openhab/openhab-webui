@@ -940,7 +940,7 @@
             <value name="itemName">
               <shadow type="oh_item" />
             </value>
-            <value name="dayInfo">
+            <value name="dayInfoSince">
               <shadow type="oh_zdt_plusminus">
                 <value name="offset">
                   <shadow type="math_number">
@@ -971,6 +971,27 @@
           <block type="oh_get_persistence_lastupdate">
             <value name="itemName">
               <shadow type="oh_item" />
+            </value>
+          </block>
+          <block type="oh_persist">
+            <value name="itemName">
+              <shadow type="oh_item" />
+            </value>
+          </block>
+          <block type="oh_delete_persistedvalues">
+            <value name="itemName">
+              <shadow type="oh_item" />
+            </value>
+            <value name="dayInfoSince">
+              <shadow type="oh_zdt_plusminus">
+                <value name="offset">
+                  <shadow type="math_number">
+                    <field name="NUM">1</field>
+                  </shadow>
+                </value>
+                <field name="period">Hours</field>
+                <field name="plusminus">minus</field>
+              </shadow>
             </value>
           </block>
         </category>
