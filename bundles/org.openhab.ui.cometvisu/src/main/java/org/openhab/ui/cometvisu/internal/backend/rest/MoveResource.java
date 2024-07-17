@@ -15,6 +15,7 @@ package org.openhab.ui.cometvisu.internal.backend.rest;
 import java.io.IOException;
 import java.nio.file.Files;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -24,6 +25,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.openhab.core.auth.Role;
 import org.openhab.core.io.rest.RESTConstants;
 import org.openhab.core.io.rest.RESTResource;
 import org.openhab.ui.cometvisu.internal.Config;
@@ -56,6 +58,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @JaxrsName(Config.COMETVISU_BACKEND_ALIAS + "/fs/move")
 @JaxrsApplicationSelect("(" + JaxrsWhiteboardConstants.JAX_RS_NAME + "=" + RESTConstants.JAX_RS_NAME + ")")
 @JSONRequired
+@RolesAllowed({ Role.USER, Role.ADMIN })
 @Path(Config.COMETVISU_BACKEND_ALIAS + "/fs/move")
 @Tag(name = Config.COMETVISU_BACKEND_ALIAS + "/fs/move")
 @NonNullByDefault

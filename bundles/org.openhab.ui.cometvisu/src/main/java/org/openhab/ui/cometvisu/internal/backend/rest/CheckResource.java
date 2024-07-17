@@ -60,7 +60,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class CheckResource implements RESTResource {
 
     /**
-     * Checks some files and folders for existance and access rights.
+     * Checks some files and folders for existence and access rights.
      *
      * @return the check result that contains a bitfield with check results for each entity
      */
