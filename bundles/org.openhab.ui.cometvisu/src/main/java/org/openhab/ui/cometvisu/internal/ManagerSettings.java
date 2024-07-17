@@ -109,16 +109,18 @@ public class ManagerSettings implements IConfigChangeListener {
         for (final String target : Config.mountPoints.keySet()) {
             if (!target.contains("..") && !"demo".equalsIgnoreCase(target)) {
                 String value = (String) Config.mountPoints.get(target);
-                String[] parts = value.split(":");
-                String source = parts[0];
-                if (!source.contains("..") || (allowLookup && lookupMount.matcher(source).find())) {
-                    boolean writeable = parts.length > 1 && parts[1].contains("w");
-                    boolean showSubDirs = parts.length > 1 && parts[1].contains("s");
-                    if (source.startsWith(File.separator)) {
-                        source = source.substring(1);
+                if (value != null) {
+                    String[] parts = value.split(":");
+                    String source = parts[0];
+                    if (!source.contains("..") || (allowLookup && lookupMount.matcher(source).find())) {
+                        boolean writeable = parts.length > 1 && parts[1].contains("w");
+                        boolean showSubDirs = parts.length > 1 && parts[1].contains("s");
+                        if (source.startsWith(File.separator)) {
+                            source = source.substring(1);
+                        }
+                        MountPoint mount = new MountPoint(Paths.get(target), Paths.get(source), showSubDirs, writeable);
+                        mounts.add(mount);
                     }
-                    MountPoint mount = new MountPoint(Paths.get(target), Paths.get(source), showSubDirs, writeable);
-                    mounts.add(mount);
                 }
             }
         }
