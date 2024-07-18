@@ -238,9 +238,6 @@
 .analyzer-content
   .analyzer-chart
     position fixed !important
-  &.sheet-opened
-    .oh-chart-page-chart
-      height calc(100% - var(--f7-navbar-height) - var(--f7-sheet-height)) !important
 .md .analyzer-controls .toolbar .link
   width 28%
 </style>
@@ -377,10 +374,7 @@ export default {
             this.$delete(this.seriesOptions, item)
           }
         }
-
-        this.$nextTick(() => {
-          this.showChart = true
-        })
+        this.showChart = true
 
         return Promise.resolve()
       })
