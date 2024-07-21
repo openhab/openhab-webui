@@ -124,13 +124,13 @@ export default function defineOHBlocks_Notifications (f7, isGraalJs) {
       const actionImageField = new Blockly.FieldImage(actionImage, 15, 15, undefined, this.onClickAction)
       actionImageField.setTooltip('Action command to be sent')
       const actionButton1ImageField = new Blockly.FieldImage(actionButton1Image, 15, 15, undefined, this.onClickActionButton1)
-      actionButton1ImageField.setTooltip('Action Button 1 command and action')
+      actionButton1ImageField.setTooltip('Action Button 1 command and on-click action')
       const actionButton2ImageField = new Blockly.FieldImage(actionButton2Image, 15, 15, undefined, this.onClickActionButton2)
-      actionButton2ImageField.setTooltip('Action Button 2 command and action')
+      actionButton2ImageField.setTooltip('Action Button 2 command and on-click action')
       const actionButton3ImageField = new Blockly.FieldImage(actionButton3Image, 15, 15, undefined, this.onClickActionButton3)
-      actionButton3ImageField.setTooltip('Action Button 3 command and action')
+      actionButton3ImageField.setTooltip('Action Button 3 command and on-click action')
       const mediaImageField = new Blockly.FieldImage(mediaImage, 15, 15, undefined, this.onClickMedia)
-      mediaImageField.setTooltip('A Media URL that can be accessed publicly to be shown with the notification')
+      mediaImageField.setTooltip('A Media URL that can be clicked and can be accessed publicly to be shown with the notification')
 
       this.appendValueInput('message')
         .setCheck('String')
@@ -360,7 +360,7 @@ export default function defineOHBlocks_Notifications (f7, isGraalJs) {
     let headerTitleCode = (headerTitle === '') ? '' : `.withTitle(${headerTitle})`
     let referenceCode = (reference === '') ? '' : `.withReferenceId(${reference})`
     let mediaCode = (media === '') ? '' : `.withMediaAttachmentUrl(${media})`
-    let actionCode = (action === '') ? '' : (actionType === 'String') ? `.withOnClickAction(${action})` : `.withOnClickAction('${action}')`
+    let actionCode = (action === '') ? '' : `.withOnClickAction(${action})`
     let usersCode = (users === '') ? '' : `.addUserId(...${users}.split(','))`
 
     let actionButton1Code = getActionButtonCode(actionButton1, actionButton1Type)
@@ -383,11 +383,11 @@ export default function defineOHBlocks_Notifications (f7, isGraalJs) {
         .appendField('label')
         .setCheck('String')
       this.appendValueInput('action')
-        .appendField('action')
+        .appendField('on-click action')
         .setCheck(['String', 'oh_notificationAction'])
       this.setInputsInline(false)
       this.setColour(0)
-      this.setTooltip('Notification Button with label and command')
+      this.setTooltip('Notification Button with label and action')
       this.setOutput(true, 'oh_actionbutton')
 
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-notifications.html#cloudNotificationButton')

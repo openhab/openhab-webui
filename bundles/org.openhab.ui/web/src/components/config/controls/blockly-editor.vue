@@ -901,6 +901,10 @@
               </shadow>
             </value>
           </block>
+          <sep gap="48" />
+          <button helpUrl="configuration/blockly/rules-blockly-notifications.html#deprecated"
+                  text="These blocks are deprecated. Use the one's above instead."
+                  callbackKey="ohBlocklyHelp" />
           <block type="oh_sendNotification">
             <value name="email">
               <shadow type="text">
