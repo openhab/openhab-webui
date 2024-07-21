@@ -360,7 +360,7 @@ export default function defineOHBlocks_Notifications (f7, isGraalJs) {
     let headerTitleCode = (headerTitle === '') ? '' : `.withTitle(${headerTitle})`
     let referenceCode = (reference === '') ? '' : `.withReferenceId(${reference})`
     let mediaCode = (media === '') ? '' : `.withMediaAttachmentUrl(${media})`
-    let actionCode = (action === '') ? '' : `.withOnClickAction(${action})`
+    let actionCode = (action === '') ? '' : (actionType === 'String') ? `.withOnClickAction(${action})` : `.withOnClickAction('${action}')`
     let usersCode = (users === '') ? '' : `.addUserId(...${users}.split(','))`
 
     let actionButton1Code = getActionButtonCode(actionButton1, actionButton1Type)
@@ -369,7 +369,7 @@ export default function defineOHBlocks_Notifications (f7, isGraalJs) {
     let logOnlyCode = (type === 'cloud') ? '' : '.logOnly()'
 
     if (isGraalJs) {
-      return `actions.notificationBuilder(${message})${usersCode}${headerTitleCode}${iconCode}${tagCode}${referenceCode}${mediaCode}${actionCode}${actionButton1Code}${actionButton2Code}${actionButton3Code}${logOnlyCode}.send()`
+      return `actions.notificationBuilder(${message})${usersCode}${headerTitleCode}${iconCode}${tagCode}${referenceCode}${mediaCode}${actionCode}${actionButton1Code}${actionButton2Code}${actionButton3Code}${logOnlyCode}.send()\n`
     } else {
       throw new Error(unavailMsg)
     }
