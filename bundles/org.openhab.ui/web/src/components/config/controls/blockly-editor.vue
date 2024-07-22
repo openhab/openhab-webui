@@ -901,46 +901,6 @@
               </shadow>
             </value>
           </block>
-          <sep gap="48" />
-          <button helpUrl="configuration/blockly/rules-blockly-notifications.html#deprecated"
-                  text="These blocks are deprecated. Use the one's above instead."
-                  callbackKey="ohBlocklyHelp" />
-          <block type="oh_sendNotification">
-            <value name="email">
-              <shadow type="text">
-                <field name="TEXT">test@example.org</field>
-              </shadow>
-            </value>
-            <value name="message">
-              <shadow type="text">
-                <field name="TEXT">message</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="oh_sendBroadcastNotification">
-            <value name="message">
-              <shadow type="text">
-                <field name="TEXT">message</field>
-              </shadow>
-            </value>
-            <value name="icon">
-              <shadow type="text">
-                <field name="TEXT">temperature_cold</field>
-              </shadow>
-            </value>
-          </block>
-          <block type="oh_sendLogNotification">
-            <value name="message">
-              <shadow type="text">
-                <field name="TEXT">message</field>
-              </shadow>
-            </value>
-            <value name="icon">
-              <shadow type="text">
-                <field name="TEXT">temperature_hot</field>
-              </shadow>
-            </value>
-          </block>
         </category>
 
         <category name="Persistence">
