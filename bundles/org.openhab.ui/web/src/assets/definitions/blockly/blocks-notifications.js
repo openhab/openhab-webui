@@ -6,10 +6,9 @@
 import Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript.js'
 import { blockGetCheckedInputType } from './utils.js'
-import { underline } from 'chalk'
 
 export default function defineOHBlocks_Notifications (f7, isGraalJs) {
-  const unavailMsg = 'This notification block isn\'t supported in "application/javascript;version=ECMAScript-5.1"'
+  const unavailMsg = 'Extended notification blocks aren\'t supported in "application/javascript;version=ECMAScript-5.1"'
 
   Blockly.Blocks['oh_sendNotification'] = {
     init: function () {
@@ -72,6 +71,8 @@ export default function defineOHBlocks_Notifications (f7, isGraalJs) {
     init: function () {
       this.appendValueInput('message')
         .appendField('send notification')
+      this.appendValueInput('icon')
+        .appendField('with icon')
       this.appendDummyInput()
         .appendField('as')
         .appendField(new Blockly.FieldDropdown([['info', 'info'], ['warning', 'warn'], ['highly important', 'high']]), 'severity')
@@ -124,11 +125,11 @@ export default function defineOHBlocks_Notifications (f7, isGraalJs) {
       const actionImageField = new Blockly.FieldImage(actionImage, 15, 15, undefined, this.onClickAction)
       actionImageField.setTooltip('Action command to be sent')
       const actionButton1ImageField = new Blockly.FieldImage(actionButton1Image, 15, 15, undefined, this.onClickActionButton1)
-      actionButton1ImageField.setTooltip('Action Button 1 command and on-click action')
+      actionButton1ImageField.setTooltip('Action Button 1 command and action')
       const actionButton2ImageField = new Blockly.FieldImage(actionButton2Image, 15, 15, undefined, this.onClickActionButton2)
-      actionButton2ImageField.setTooltip('Action Button 2 command and on-click action')
+      actionButton2ImageField.setTooltip('Action Button 2 command and action')
       const actionButton3ImageField = new Blockly.FieldImage(actionButton3Image, 15, 15, undefined, this.onClickActionButton3)
-      actionButton3ImageField.setTooltip('Action Button 3 command and on-click action')
+      actionButton3ImageField.setTooltip('Action Button 3 command and action')
       const mediaImageField = new Blockly.FieldImage(mediaImage, 15, 15, undefined, this.onClickMedia)
       mediaImageField.setTooltip('A Media URL that can be clicked and can be accessed publicly to be shown with the notification')
 
@@ -144,7 +145,7 @@ export default function defineOHBlocks_Notifications (f7, isGraalJs) {
         .appendField(actionButton1ImageField, 'actionButton1Icon')
         .appendField(actionButton2ImageField, 'actionButton2Icon')
         .appendField(actionButton3ImageField, 'actionButton3Icon')
-        .appendField(new Blockly.FieldDropdown([['send notification', 'cloud'], ['send log', 'log']]), 'type')
+        .appendField(new Blockly.FieldDropdown([['send notification', 'push'], ['send log', 'log']]), 'type')
 
       this.updateShape(this.hasUser, true, this.hasIconInfo, this.hasTag, this.hasHeaderTitle, this.hasReferenceId, this.hasAction, this.hasActionButton1, this.hasMedia)
 
@@ -169,8 +170,12 @@ export default function defineOHBlocks_Notifications (f7, isGraalJs) {
 
       const blockSequence = ['usersInput', 'headerTitle', 'icon', 'tag', 'reference', 'media', 'action', 'actionButton1', 'actionButton2', 'actionButton3']
 
-      /*
-       * adds a "shadow" text input to the parent block
+      /**
+       * Adds a "shadow" text input to the parent block
+       *
+       * @param {Input} parentConnection
+       * @param {string} tooltip
+       * @param {String} [blockType=text|
        */
       function addBlockInput (parentConnection, tooltip, blockType = 'text') {
         const textUsersBlock = this.workspace.newBlock(blockType)
@@ -180,8 +185,10 @@ export default function defineOHBlocks_Notifications (f7, isGraalJs) {
         parentConnection.connect(textUsersBlock.outputConnection)
       }
 
-      /*
-       * removes the block "shadow" text input from the block
+      /**
+       * Removes the block "shadow" text input from the block
+       *
+       * @param {Input} parentConnection
        */
       function removeTextInput (parentConnection) {
         const targetBlock = parentConnection.targetBlock()
@@ -191,12 +198,15 @@ export default function defineOHBlocks_Notifications (f7, isGraalJs) {
         }
       }
 
-      /*
-       * show or hide this particular block
-       * toggleOn : show (true) / hide (false) block
-       * blockName: name of the block to be toggled
-       * label: label for the preceding label block
-       * tooltip: tooltip for the input block
+      /**
+       * Show or hide this particular block
+       *
+       * @paramtoggleOn {boolean}: show (true) / hide (false) block
+       * @param {string} blockName: name of the block to be toggled
+       * @param {string} label: label for the preceding label block
+       * @param {string} tooltip: tooltip for the input block
+       * @param {string} [blockTypeCheck=String]: checks the input by this block type
+       * @param {string} [shadowBlock=text]: default shadowblock
        */
       function toogleBlock (toggleOn, blockName, label, tooltip, blockTypeCheck = 'String', shadowBlock = 'text') {
         if (toggleOn) {
@@ -236,9 +246,9 @@ export default function defineOHBlocks_Notifications (f7, isGraalJs) {
       toogleBlock.call(this, hasHeaderTitle, 'headerTitle', 'with Header Title ', 'Provide title', 'String')
       toogleBlock.call(this, hasIconInfo, 'icon', 'with Icon ', 'Provide icon name', 'String')
       toogleBlock.call(this, hasTag, 'tag', 'with Tag ', 'Provide tag', 'String')
-      toogleBlock.call(this, hasReferenceId, 'reference', 'with Reference ', 'Provide message reference id', 'String')
+      toogleBlock.call(this, hasReferenceId, 'reference', 'with Reference ', 'Provide message reference ID', 'String')
       toogleBlock.call(this, hasMedia, 'media', 'with Media URL ', 'Provide a public Media URL that should be shown as part of the notification', 'String')
-      toogleBlock.call(this, hasAction, 'action', 'with Action ', 'Provide cloud-notification-action', ['oh_notificationAction', 'String'], 'oh_cloudNotification_commandAction')
+      toogleBlock.call(this, hasAction, 'action', 'with On-Click Action ', 'Provide cloud-notification-action', ['oh_notificationAction', 'String'], 'oh_cloudNotification_commandAction')
       toogleBlock.call(this, hasActionButton1, 'actionButton1', 'with Action Button 1', 'Action Button 1: Title = cloud-notification-action', ['oh_actionbutton', 'String'], 'oh_cloudNotificationButton')
       toogleBlock.call(this, hasActionButton2, 'actionButton2', 'with Action Button 2', 'Action Button 2: Title = cloud-notification-action', ['oh_actionbutton', 'String'], 'oh_cloudNotificationButton')
       toogleBlock.call(this, hasActionButton3, 'actionButton3', 'with Action Button 3', 'Action Button 3: Title = cloud-notification-action', ['oh_actionbutton', 'String'], 'oh_cloudNotificationButton')
@@ -323,22 +333,22 @@ export default function defineOHBlocks_Notifications (f7, isGraalJs) {
   }
 
   javascriptGenerator.forBlock['oh_sendCloudNotification'] = function (block) {
-    let message = javascriptGenerator.valueToCode(block, 'message', javascriptGenerator.ORDER_ATOMIC)
-    let type = block.getFieldValue('type')
-    let icon = javascriptGenerator.valueToCode(block, 'icon', javascriptGenerator.ORDER_ATOMIC)
-    let tag = javascriptGenerator.valueToCode(block, 'tag', javascriptGenerator.ORDER_ATOMIC)
-    let headerTitle = javascriptGenerator.valueToCode(block, 'headerTitle', javascriptGenerator.ORDER_ATOMIC)
-    let reference = javascriptGenerator.valueToCode(block, 'reference', javascriptGenerator.ORDER_ATOMIC)
-    let media = javascriptGenerator.valueToCode(block, 'media', javascriptGenerator.ORDER_ATOMIC)
-    let action = javascriptGenerator.valueToCode(block, 'action', javascriptGenerator.ORDER_ATOMIC)
+    const message = javascriptGenerator.valueToCode(block, 'message', javascriptGenerator.ORDER_ATOMIC)
+    const type = block.getFieldValue('type')
+    const icon = javascriptGenerator.valueToCode(block, 'icon', javascriptGenerator.ORDER_ATOMIC)
+    const tag = javascriptGenerator.valueToCode(block, 'tag', javascriptGenerator.ORDER_ATOMIC)
+    const headerTitle = javascriptGenerator.valueToCode(block, 'headerTitle', javascriptGenerator.ORDER_ATOMIC)
+    const reference = javascriptGenerator.valueToCode(block, 'reference', javascriptGenerator.ORDER_ATOMIC)
+    const media = javascriptGenerator.valueToCode(block, 'media', javascriptGenerator.ORDER_ATOMIC)
+    const action = javascriptGenerator.valueToCode(block, 'action', javascriptGenerator.ORDER_ATOMIC)
     const actionType = (action !== '') ? blockGetCheckedInputType(block, 'action') : undefined
-    let actionButton1 = javascriptGenerator.valueToCode(block, 'actionButton1', javascriptGenerator.ORDER_ATOMIC)
+    const actionButton1 = javascriptGenerator.valueToCode(block, 'actionButton1', javascriptGenerator.ORDER_ATOMIC)
     const actionButton1Type = (actionButton1 !== '') ? blockGetCheckedInputType(block, 'actionButton1') : undefined
-    let actionButton2 = javascriptGenerator.valueToCode(block, 'actionButton2', javascriptGenerator.ORDER_ATOMIC)
+    const actionButton2 = javascriptGenerator.valueToCode(block, 'actionButton2', javascriptGenerator.ORDER_ATOMIC)
     const actionButton2Type = (actionButton2 !== '') ? blockGetCheckedInputType(block, 'actionButton2') : undefined
-    let actionButton3 = javascriptGenerator.valueToCode(block, 'actionButton3', javascriptGenerator.ORDER_ATOMIC)
+    const actionButton3 = javascriptGenerator.valueToCode(block, 'actionButton3', javascriptGenerator.ORDER_ATOMIC)
     const actionButton3Type = (actionButton3 !== '') ? blockGetCheckedInputType(block, 'actionButton3') : undefined
-    let users = javascriptGenerator.valueToCode(block, 'usersInput', javascriptGenerator.ORDER_ATOMIC)
+    const users = javascriptGenerator.valueToCode(block, 'usersInput', javascriptGenerator.ORDER_ATOMIC)
 
     function getActionButtonCode (titleAndAction, buttonActionType) {
       let actionButtonCode
@@ -355,18 +365,18 @@ export default function defineOHBlocks_Notifications (f7, isGraalJs) {
       return actionButtonCode
     }
 
-    let iconCode = (icon === '') ? '' : `.withIcon(${icon})`
-    let tagCode = (tag === '') ? '' : `.withTag(${tag})`
-    let headerTitleCode = (headerTitle === '') ? '' : `.withTitle(${headerTitle})`
-    let referenceCode = (reference === '') ? '' : `.withReferenceId(${reference})`
-    let mediaCode = (media === '') ? '' : `.withMediaAttachmentUrl(${media})`
-    let actionCode = (action === '') ? '' : (actionType === 'String') ? `.withOnClickAction(${action})` : `.withOnClickAction('${action}')`
-    let usersCode = (users === '') ? '' : `.addUserId(...${users}.split(','))`
+    const iconCode = (icon === '') ? '' : `.withIcon(${icon})`
+    const tagCode = (tag === '') ? '' : `.withTag(${tag})`
+    const headerTitleCode = (headerTitle === '') ? '' : `.withTitle(${headerTitle})`
+    const referenceCode = (reference === '') ? '' : `.withReferenceId(${reference})`
+    const mediaCode = (media === '') ? '' : `.withMediaAttachmentUrl(${media})`
+    const actionCode = (action === '') ? '' : (actionType === 'String') ? `.withOnClickAction(${action})` : `.withOnClickAction('${action}')`
+    const usersCode = (users === '') ? '' : `.addUserId(...${users}.split(','))`
 
-    let actionButton1Code = getActionButtonCode(actionButton1, actionButton1Type)
-    let actionButton2Code = getActionButtonCode(actionButton2, actionButton2Type)
-    let actionButton3Code = getActionButtonCode(actionButton3, actionButton3Type)
-    let logOnlyCode = (type === 'cloud') ? '' : '.logOnly()'
+    const actionButton1Code = getActionButtonCode(actionButton1, actionButton1Type)
+    const actionButton2Code = getActionButtonCode(actionButton2, actionButton2Type)
+    const actionButton3Code = getActionButtonCode(actionButton3, actionButton3Type)
+    const logOnlyCode = (type === 'push') ? '' : '.logOnly()'
 
     if (isGraalJs) {
       return `actions.notificationBuilder(${message})${usersCode}${headerTitleCode}${iconCode}${tagCode}${referenceCode}${mediaCode}${actionCode}${actionButton1Code}${actionButton2Code}${actionButton3Code}${logOnlyCode}.send()\n`
@@ -383,7 +393,7 @@ export default function defineOHBlocks_Notifications (f7, isGraalJs) {
         .appendField('label')
         .setCheck('String')
       this.appendValueInput('action')
-        .appendField('on-click action')
+        .appendField('action')
         .setCheck(['String', 'oh_notificationAction'])
       this.setInputsInline(false)
       this.setColour(0)
@@ -476,25 +486,23 @@ export default function defineOHBlocks_Notifications (f7, isGraalJs) {
   Blockly.Blocks['oh_hideCloudNotification'] = {
     init: function () {
       this.appendValueInput('reference')
-        .appendField('hide notification by reference ')
+        .appendField('hide notification by reference ID')
       this.appendValueInput('tag')
         .appendField('or tag ')
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
       this.setInputsInline(false)
       this.setColour(0)
-      this.setTooltip('Hides the notification with the given reference id')
+      this.setTooltip('Hides the notification with the given reference ID or tag')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-notifications.html#hide-notification')
     }
   }
 
   javascriptGenerator.forBlock['oh_hideCloudNotification'] = function (block) {
-    let reference = javascriptGenerator.valueToCode(block, 'reference', javascriptGenerator.ORDER_ATOMIC)
-    let tag = javascriptGenerator.valueToCode(block, 'tag', javascriptGenerator.ORDER_ATOMIC)
-    let action = javascriptGenerator.valueToCode(block, 'action', javascriptGenerator.ORDER_ATOMIC)
-    action = (action) || ''
-    let tagCode = (tag === '') ? '' : `.withTag(${tag})`
-    let referenceCode = (reference === '') ? '' : `.withReferenceId(${reference})`
+    const reference = javascriptGenerator.valueToCode(block, 'reference', javascriptGenerator.ORDER_ATOMIC)
+    const tag = javascriptGenerator.valueToCode(block, 'tag', javascriptGenerator.ORDER_ATOMIC)
+    const tagCode = (tag === '') ? '' : `.withTag(${tag})`
+    const referenceCode = (reference === '') ? '' : `.withReferenceId(${reference})`
     if (isGraalJs) {
       return `actions.notificationBuilder("hide notification")${referenceCode}${tagCode}.hide().send();\n`
     } else {

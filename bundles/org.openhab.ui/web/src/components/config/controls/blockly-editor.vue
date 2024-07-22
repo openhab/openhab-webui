@@ -866,9 +866,28 @@
                 <field name="TEXT">label</field>
               </shadow>
             </value>
-            <value name="command">
+            <value name="action">
               <shadow type="text">
-                <field name="TEXT">command</field>
+                <field name="TEXT">action</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="oh_cloudNotificationButton">
+            <value name="label">
+              <shadow type="text">
+                <field name="TEXT">label</field>
+              </shadow>
+            </value>
+            <value name="action">
+              <shadow type="oh_cloudNotification_commandAction">
+                <value name="command">
+                  <shadow type="text">
+                    <field name="TEXT">command</field>
+                  </shadow>
+                </value>
+                <value name="itemName">
+                  <shadow type="oh_item" />
+                </value>
               </shadow>
             </value>
           </block>
