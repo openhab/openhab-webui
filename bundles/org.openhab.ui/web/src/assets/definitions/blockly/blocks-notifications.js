@@ -173,7 +173,7 @@ export default function defineOHBlocks_Notifications (f7, isGraalJs) {
       /**
        * Adds a "shadow" text input to the parent block
        *
-       * @param {Input} parentConnection
+       * @param {*} parentConnection
        * @param {string} tooltip
        * @param {String} [blockType=text|
        */
@@ -201,12 +201,12 @@ export default function defineOHBlocks_Notifications (f7, isGraalJs) {
       /**
        * Show or hide this particular block
        *
-       * @paramtoggleOn {boolean}: show (true) / hide (false) block
-       * @param {string} blockName: name of the block to be toggled
-       * @param {string} label: label for the preceding label block
-       * @param {string} tooltip: tooltip for the input block
-       * @param {string} [blockTypeCheck=String]: checks the input by this block type
-       * @param {string} [shadowBlock=text]: default shadowblock
+       * @param {boolean} toggleOn show (true) / hide (false) block
+       * @param {string} blockName name of the block to be toggled
+       * @param {string} label label for the preceding label block
+       * @param {string} tooltip tooltip for the input block
+       * @param {string} [blockTypeCheck=String] checks the input by this block type
+       * @param {string} [shadowBlock=text] shadow block
        */
       function toogleBlock (toggleOn, blockName, label, tooltip, blockTypeCheck = 'String', shadowBlock = 'text') {
         if (toggleOn) {
@@ -246,12 +246,12 @@ export default function defineOHBlocks_Notifications (f7, isGraalJs) {
       toogleBlock.call(this, hasHeaderTitle, 'headerTitle', 'with Header Title ', 'Provide title', 'String')
       toogleBlock.call(this, hasIconInfo, 'icon', 'with Icon ', 'Provide icon name', 'String')
       toogleBlock.call(this, hasTag, 'tag', 'with Tag ', 'Provide tag', 'String')
-      toogleBlock.call(this, hasReferenceId, 'reference', 'with Reference ', 'Provide message reference ID', 'String')
+      toogleBlock.call(this, hasReferenceId, 'reference', 'with Reference ID ', 'Provide message reference ID', 'String')
       toogleBlock.call(this, hasMedia, 'media', 'with Media URL ', 'Provide a public Media URL that should be shown as part of the notification', 'String')
       toogleBlock.call(this, hasAction, 'action', 'with On-Click Action ', 'Provide cloud-notification-action', ['oh_notificationAction', 'String'], 'oh_cloudNotification_commandAction')
-      toogleBlock.call(this, hasActionButton1, 'actionButton1', 'with Action Button 1', 'Action Button 1: Title = cloud-notification-action', ['oh_actionbutton', 'String'], 'oh_cloudNotificationButton')
-      toogleBlock.call(this, hasActionButton2, 'actionButton2', 'with Action Button 2', 'Action Button 2: Title = cloud-notification-action', ['oh_actionbutton', 'String'], 'oh_cloudNotificationButton')
-      toogleBlock.call(this, hasActionButton3, 'actionButton3', 'with Action Button 3', 'Action Button 3: Title = cloud-notification-action', ['oh_actionbutton', 'String'], 'oh_cloudNotificationButton')
+      toogleBlock.call(this, hasActionButton1, 'actionButton1', 'with Action Button 1', 'Action Button 1: Title = cloud-notification-action', ['oh_notificationActionButton', 'String'], 'oh_cloudNotificationButton')
+      toogleBlock.call(this, hasActionButton2, 'actionButton2', 'with Action Button 2', 'Action Button 2: Title = cloud-notification-action', ['oh_notificationActionButton', 'String'], 'oh_cloudNotificationButton')
+      toogleBlock.call(this, hasActionButton3, 'actionButton3', 'with Action Button 3', 'Action Button 3: Title = cloud-notification-action', ['oh_notificationActionButton', 'String'], 'oh_cloudNotificationButton')
     },
     onClickUser () {
       let block = this.getSourceBlock()
@@ -398,7 +398,7 @@ export default function defineOHBlocks_Notifications (f7, isGraalJs) {
       this.setInputsInline(false)
       this.setColour(0)
       this.setTooltip('Notification Button with label and action')
-      this.setOutput(true, 'oh_actionbutton')
+      this.setOutput(true, 'oh_notificationActionButton')
 
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-notifications.html#cloudNotificationButton')
     }
