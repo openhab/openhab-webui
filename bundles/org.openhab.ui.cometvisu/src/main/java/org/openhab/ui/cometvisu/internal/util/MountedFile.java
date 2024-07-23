@@ -82,6 +82,10 @@ public class MountedFile {
         return toFile().exists();
     }
 
+    public boolean canWrite() {
+        return toFile().canWrite();
+    }
+
     public boolean isDirectory() {
         return toFile().isDirectory();
     }

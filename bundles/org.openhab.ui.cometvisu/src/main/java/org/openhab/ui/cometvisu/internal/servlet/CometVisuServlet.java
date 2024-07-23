@@ -20,7 +20,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.RandomAccessFile;
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
@@ -45,6 +44,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.core.OpenHAB;
 import org.openhab.core.items.Item;
@@ -72,6 +72,7 @@ import com.google.gson.Gson;
  *
  * @author Tobias Bräutigam - Initial contribution
  */
+@NonNullByDefault
 public class CometVisuServlet extends HttpServlet {
     private static final long serialVersionUID = 4448918908615003303L;
     private final Logger logger = LoggerFactory.getLogger(CometVisuServlet.class);
@@ -138,6 +139,10 @@ public class CometVisuServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         File requestedFile = getRequestedFile(req);
+        if (requestedFile == null) {
+            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
 
         String path = req.getPathInfo();
         if (path == null) {
@@ -168,6 +173,10 @@ public class CometVisuServlet extends HttpServlet {
                 }
             }
         }
+        if (requestedFile.getName().equalsIgnoreCase("version")) {
+            // tell client that its been served by openhab
+            resp.setHeader("X-CometVisu-Backend-Name", "openhab");
+        }
         if (requestedFile.getName().equalsIgnoreCase("hidden.php")) {
             // do not deliver the hidden php
             resp.sendError(HttpServletResponse.SC_FORBIDDEN);
@@ -178,7 +187,7 @@ public class CometVisuServlet extends HttpServlet {
         }
     }
 
-    protected File getRequestedFile(HttpServletRequest req) throws UnsupportedEncodingException {
+    protected @Nullable File getRequestedFile(HttpServletRequest req) throws IOException {
         String requestedFile = req.getPathInfo();
         File file = null;
 
@@ -188,12 +197,18 @@ public class CometVisuServlet extends HttpServlet {
                 requestedFile = requestedFile.substring(0, requestedFile.length() - 1);
             }
             file = new File(userFileFolder, URLDecoder.decode(requestedFile, StandardCharsets.UTF_8));
+            if (!file.getCanonicalPath().startsWith(userFileFolder.getCanonicalPath() + File.separator)) {
+                return null;
+            }
         }
         // serve the file from the cometvisu src directory
         if (file == null || !file.exists() || file.isDirectory()) {
             file = requestedFile != null
                     ? new File(rootFolder, URLDecoder.decode(requestedFile, StandardCharsets.UTF_8))
                     : rootFolder;
+            if (!file.getCanonicalPath().startsWith(rootFolder.getCanonicalPath() + File.separator)) {
+                return null;
+            }
         }
         if (file.isDirectory()) {
             // search for an index file

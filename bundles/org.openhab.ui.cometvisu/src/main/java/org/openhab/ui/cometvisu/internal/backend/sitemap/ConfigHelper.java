@@ -767,7 +767,7 @@ public class ConfigHelper {
     public void addSeparatorToNavbar(Page page, NavbarPositionType position, boolean ifNotEmpty) {
         Navbar navbar = getNavbar(page, position);
         if (navbar != null) {
-            if (!ifNotEmpty || navbar.getPageOrGroupOrLine().size() > 0) {
+            if (!ifNotEmpty || !navbar.getPageOrGroupOrLine().isEmpty()) {
                 Line line = new Line();
                 line.setLayout(createLayout(0));
                 navbar.getPageOrGroupOrLine().add(factory.createNavbarLine(line));

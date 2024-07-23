@@ -44,8 +44,9 @@ public class UIErrorPageServlet extends HttpServlet {
     private static final long serialVersionUID = 6472170444750947727L;
 
     private static final String INDEX_FILE = "/app/index.html";
-    private static final Set<String> VALID_ROUTE_SEGMENTS = Set.of("about", "analyzer", "developer", "home", "page",
-            "profile", "res", "settings", "setup-wizard");
+    private static final Set<String> VALID_ROUTE_SEGMENTS = Set.of("about", "addons", "analyzer", "developer",
+            "equipment", "home", "locations", "overview", "page", "profile", "properties", "res", "settings",
+            "setup-wizard");
 
     private final Logger logger = LoggerFactory.getLogger(UIErrorPageServlet.class);
 

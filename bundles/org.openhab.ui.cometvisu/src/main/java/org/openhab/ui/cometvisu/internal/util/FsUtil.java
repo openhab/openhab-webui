@@ -287,7 +287,7 @@ public class FsUtil {
     }
 
     public static Response createErrorResponse(FileOperationException e) {
-        return FsUtil.createErrorResponse(e.getStatus(), e.getCause().toString());
+        return FsUtil.createErrorResponse(e.getStatus(), e.getMessage());
     }
 
     public static Response createErrorResponse(Status status, String message) {

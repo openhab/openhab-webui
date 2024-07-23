@@ -12,6 +12,7 @@
  */
 package org.openhab.ui.cometvisu.internal.backend.model.rest;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.core.OpenHAB;
 
 /**
@@ -21,16 +22,18 @@ import org.openhab.core.OpenHAB;
  * @author Tobias Bräutigam - Initial contribution
  *
  */
+@NonNullByDefault
 public class RestBackendEnvironmentState {
     // as we are just simulating we use a fixed version here to tell that we are compatible
     public int PHP_VERSION_ID = 80100;
     public String phpversion = "8.1.0";
 
-    public String SERVER_SIGNATURE;
-    public String SERVER_SOFTWARE;
+    public String SERVER_SIGNATURE = "";
+    public String SERVER_SOFTWARE = "";
     public String required_php_version = ">=7.4";
 
     // openHAB specific values
     public boolean isOpenHab = true;
+    public boolean requiresAuth = true;
     public String server_release = "openHAB " + OpenHAB.getVersion();
 }

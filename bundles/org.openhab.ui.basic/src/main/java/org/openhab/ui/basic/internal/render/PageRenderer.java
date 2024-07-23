@@ -367,7 +367,7 @@ public class PageRenderer extends AbstractWidgetRenderer {
                 "enabled", "", false, sb);
 
         return getSnippet("main_static") //
-                .replace("%title%", "Basic UI Settings") //
+                .replace("%title%", localizeText("@text/preferences.title")) //
                 .replace("%htmlclass%", "") //
                 .replace("%relpath%", "../") //
                 .replace("%script%", "settings.js") //
