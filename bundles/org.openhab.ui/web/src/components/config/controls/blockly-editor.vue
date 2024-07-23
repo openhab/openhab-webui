@@ -853,39 +853,70 @@
             helpUrl="configuration/blockly/rules-blockly-notifications.html"
             text="Help"
             callbackKey="ohBlocklyHelp" />
-          <block type="oh_sendNotification">
-            <value name="email">
-              <shadow type="text">
-                <field name="TEXT">test@example.org</field>
-              </shadow>
-            </value>
+          <block type="oh_sendCloudNotification">
             <value name="message">
               <shadow type="text">
                 <field name="TEXT">message</field>
               </shadow>
             </value>
           </block>
-          <block type="oh_sendBroadcastNotification">
-            <value name="message">
+          <block type="oh_cloudNotificationButton">
+            <value name="label">
               <shadow type="text">
-                <field name="TEXT">message</field>
+                <field name="TEXT">label</field>
               </shadow>
             </value>
-            <value name="icon">
+            <value name="action">
               <shadow type="text">
-                <field name="TEXT">temperature_cold</field>
+                <field name="TEXT">action</field>
               </shadow>
             </value>
           </block>
-          <block type="oh_sendLogNotification">
-            <value name="message">
+          <block type="oh_cloudNotificationButton">
+            <value name="label">
               <shadow type="text">
-                <field name="TEXT">message</field>
+                <field name="TEXT">label</field>
               </shadow>
             </value>
-            <value name="icon">
+            <value name="action">
+              <shadow type="oh_cloudNotification_commandAction">
+                <value name="command">
+                  <shadow type="text">
+                    <field name="TEXT">command</field>
+                  </shadow>
+                </value>
+                <value name="itemName">
+                  <shadow type="oh_item" />
+                </value>
+              </shadow>
+            </value>
+          </block>
+          <block type="oh_cloudNotification_commandAction">
+            <value name="command">
               <shadow type="text">
-                <field name="TEXT">temperature_hot</field>
+                <field name="TEXT">command</field>
+              </shadow>
+            </value>
+            <value name="itemName">
+              <shadow type="oh_item" />
+            </value>
+          </block>
+          <block type="oh_cloudNotification_uiAction">
+            <value name="path">
+              <shadow type="text">
+                <field name="TEXT">path</field>
+              </shadow>
+            </value>
+          </block>
+          <block type="oh_hideCloudNotification">
+            <value name="reference">
+              <shadow type="text">
+                <field name="TEXT">reference id</field>
+              </shadow>
+            </value>
+            <value name="tag">
+              <shadow type="text">
+                <field name="TEXT">tag</field>
               </shadow>
             </value>
           </block>
