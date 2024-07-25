@@ -408,7 +408,7 @@ export default function defineOHBlocks_Notifications (f7, isGraalJs) {
     let label = javascriptGenerator.valueToCode(block, 'label', javascriptGenerator.ORDER_ATOMIC).replace(/'/g, '')
     let action = javascriptGenerator.valueToCode(block, 'action', javascriptGenerator.ORDER_ATOMIC)
     if (isGraalJs) {
-      return [`.addActionButton('${label}',${action})`, javascriptGenerator.ORDER_ATOMIC]
+      return [`.addActionButton('${label}', ${action})`, javascriptGenerator.ORDER_ATOMIC]
     } else {
       throw new Error(unavailMsg)
     }
@@ -439,7 +439,7 @@ export default function defineOHBlocks_Notifications (f7, isGraalJs) {
     let itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC).replace(/'/g, '')
     const itemType = (itemName !== '') ? blockGetCheckedInputType(block, 'itemName') : undefined
     let commandCode = '\'command:' +
-      ((itemType === '') ? '\' + ' + itemName + '+ \':\' ' : `${itemName}:'`) +
+      ((itemType === '') ? '\' + ' + itemName + ' + \':\' ' : `${itemName}:'`) +
       ((commandType === '') ? ' + ' + command : ` + ${command}`)
     if (isGraalJs) {
       return [commandCode, javascriptGenerator.ORDER_ATOMIC]
