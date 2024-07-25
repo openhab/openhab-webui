@@ -152,7 +152,7 @@ export default function defineOHBlocks_Notifications (f7, isGraalJs) {
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
       this.setInputsInline(false)
-      this.setColour(0)
+      this.setColour(40)
       this.setTooltip('Sends a notification to the cloud log only, not to any device (requires openHAB Cloud Connector)')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-notifications.html#sendCloudNotification')
     },
@@ -370,7 +370,7 @@ export default function defineOHBlocks_Notifications (f7, isGraalJs) {
     const headerTitleCode = (headerTitle === '') ? '' : `.withTitle(${headerTitle})`
     const referenceCode = (reference === '') ? '' : `.withReferenceId(${reference})`
     const mediaCode = (media === '') ? '' : `.withMediaAttachmentUrl(${media})`
-    const actionCode = (action === '') ? '' : (actionType === 'String') ? `.withOnClickAction(${action})` : `.withOnClickAction('${action}')`
+    const actionCode = (action === '') ? '' : `.withOnClickAction(${action})`
     const usersCode = (users === '') ? '' : `.addUserId(...${users}.split(','))`
 
     const actionButton1Code = getActionButtonCode(actionButton1, actionButton1Type)
@@ -396,7 +396,7 @@ export default function defineOHBlocks_Notifications (f7, isGraalJs) {
         .appendField('action')
         .setCheck(['String', 'oh_notificationAction'])
       this.setInputsInline(false)
-      this.setColour(0)
+      this.setColour(40)
       this.setTooltip('Notification Button with label and action')
       this.setOutput(true, 'oh_notificationActionButton')
 
@@ -406,9 +406,9 @@ export default function defineOHBlocks_Notifications (f7, isGraalJs) {
 
   javascriptGenerator.forBlock['oh_cloudNotificationButton'] = function (block) {
     let label = javascriptGenerator.valueToCode(block, 'label', javascriptGenerator.ORDER_ATOMIC).replace(/'/g, '')
-    let action = javascriptGenerator.valueToCode(block, 'action', javascriptGenerator.ORDER_ATOMIC).replace(/'/g, '')
+    let action = javascriptGenerator.valueToCode(block, 'action', javascriptGenerator.ORDER_ATOMIC)
     if (isGraalJs) {
-      return [`.addActionButton('${label}','${action}')`, javascriptGenerator.ORDER_ATOMIC]
+      return [`.addActionButton('${label}', ${action})`, javascriptGenerator.ORDER_ATOMIC]
     } else {
       throw new Error(unavailMsg)
     }
@@ -425,7 +425,7 @@ export default function defineOHBlocks_Notifications (f7, isGraalJs) {
         .appendField('to item ')
         .setCheck('oh_item')
       this.setInputsInline(false)
-      this.setColour(0)
+      this.setColour(40)
       this.setTooltip('An action that sends a command to an item, like ON to KitchenLights')
       this.setOutput(true, 'oh_notificationAction')
 
@@ -434,10 +434,15 @@ export default function defineOHBlocks_Notifications (f7, isGraalJs) {
   }
 
   javascriptGenerator.forBlock['oh_cloudNotification_commandAction'] = function (block) {
-    let command = javascriptGenerator.valueToCode(block, 'command', javascriptGenerator.ORDER_ATOMIC).replace(/'/g, '')
+    let command = javascriptGenerator.valueToCode(block, 'command', javascriptGenerator.ORDER_ATOMIC)
+    const commandType = (command !== '') ? blockGetCheckedInputType(block, 'command') : undefined
     let itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC).replace(/'/g, '')
+    const itemType = (itemName !== '') ? blockGetCheckedInputType(block, 'itemName') : undefined
+    let commandCode = '\'command:' +
+      ((itemType === '') ? '\' + ' + itemName + ' + \':\' ' : `${itemName}:'`) +
+      ((commandType === '') ? ' + ' + command : ` + ${command}`)
     if (isGraalJs) {
-      return [`command:${itemName}:${command}`, javascriptGenerator.ORDER_ATOMIC]
+      return [commandCode, javascriptGenerator.ORDER_ATOMIC]
     } else {
       throw new Error(unavailMsg)
     }
@@ -454,7 +459,7 @@ export default function defineOHBlocks_Notifications (f7, isGraalJs) {
         .appendField('with ')
         .setCheck('String')
       this.setInputsInline(false)
-      this.setColour(0)
+      this.setColour(40)
 
       this.setTooltip(() => {
         const commandType = this.getFieldValue('command')
@@ -476,8 +481,11 @@ export default function defineOHBlocks_Notifications (f7, isGraalJs) {
   javascriptGenerator.forBlock['oh_cloudNotification_uiAction'] = function (block) {
     const command = block.getFieldValue('command')
     let path = javascriptGenerator.valueToCode(block, 'path', javascriptGenerator.ORDER_ATOMIC).replace(/'/g, '')
+    const pathType = (path !== '') ? blockGetCheckedInputType(block, 'path') : undefined
+    let pathCode = (pathType === '') ? ' + ' + path : ` + '${path}'`
     if (isGraalJs) {
-      return [`${command}${path}`, javascriptGenerator.ORDER_ATOMIC]
+      let uiActionCode = `'${command}'${pathCode}`
+      return [uiActionCode, javascriptGenerator.ORDER_ATOMIC]
     } else {
       throw new Error(unavailMsg)
     }
@@ -492,7 +500,7 @@ export default function defineOHBlocks_Notifications (f7, isGraalJs) {
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
       this.setInputsInline(false)
-      this.setColour(0)
+      this.setColour(40)
       this.setTooltip('Hides the notification with the given reference ID or tag')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-notifications.html#hide-notification')
     }
