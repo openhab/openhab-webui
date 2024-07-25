@@ -136,8 +136,11 @@ public class InputRenderer extends AbstractWidgetRenderer {
         String prefix = getPrefix(w);
         boolean hasUnit = item instanceof NumberItem && (((NumberItem) item).getDimension() != null);
         String postfix = hasUnit ? "" : getPostfix(w);
-        String prefixSnippet = !prefix.isBlank() ? "<span class=\"mdl-form__input-prefix\">" + prefix + "</span>" : "";
-        String postfixSnippet = !postfix.isBlank() ? "<span class=\"mdl-form__input-postfix\">" + postfix + "</span>"
+        String prefixSnippet = !prefix.isBlank()
+                ? "<span class=\"mdl-form__input-prefix\">" + escapeHtml(prefix) + "</span>"
+                : "";
+        String postfixSnippet = !postfix.isBlank()
+                ? "<span class=\"mdl-form__input-postfix\">" + escapeHtml(postfix) + "</span>"
                 : "";
         snippet = snippet.replace("%prefix_snippet%", prefixSnippet);
         snippet = snippet.replace("%postfix_snippet%", postfixSnippet);
@@ -174,7 +177,7 @@ public class InputRenderer extends AbstractWidgetRenderer {
             }
         }
         snippet = snippet.replace("%data_state%", dataState);
-        snippet = snippet.replace("%item_state%", itemState);
+        snippet = snippet.replace("%item_state%", escapeHtml(itemState));
 
         String unitSnippet = "";
         String unit = "";
@@ -182,11 +185,11 @@ public class InputRenderer extends AbstractWidgetRenderer {
             if (numberItem.getDimension() != null) {
                 unit = getUnit(w, numberItem);
                 if ("number".equals(inputHint)) {
-                    unitSnippet = "<span class=\"mdl-form__input-unit\">" + unit + "</span>";
+                    unitSnippet = "<span class=\"mdl-form__input-unit\">" + escapeHtml(unit) + "</span>";
                 }
             }
         }
-        snippet = snippet.replace("%item_unit%", unit);
+        snippet = snippet.replace("%item_unit%", escapeHtml(unit));
         snippet = snippet.replace("%unit_snippet%", unitSnippet);
 
         // Process the color tags
