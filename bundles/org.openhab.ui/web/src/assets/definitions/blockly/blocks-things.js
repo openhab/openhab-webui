@@ -56,7 +56,7 @@ export default function defineOHBlocks (f7, isGraalJs) {
     init: function () {
       this.appendValueInput('thingUid')
         .appendField('get thing status')
-        .setCheck(['String', 'oh_thing'])
+        .setCheck(['String', 'oh_thing', 'oh_thingtype'])
       this.setInputsInline(false)
       this.setOutput(true, 'String')
       this.setColour(0)
@@ -67,8 +67,10 @@ export default function defineOHBlocks (f7, isGraalJs) {
 
   javascriptGenerator.forBlock['oh_getthing_state'] = function (block) {
     const thingUid = javascriptGenerator.valueToCode(block, 'thingUid', javascriptGenerator.ORDER_ATOMIC)
+    const inputType = blockGetCheckedInputType(block, 'thingUid')
     if (isGraalJs) {
-      return [`things.getThing(${thingUid}).status`, 0]
+      let code = (inputType === 'oh_thingtype') ? `${thingUid}.status` : `things.getThing(${thingUid}).status`
+      return [code, 0]
     } else {
       const things = javascriptGenerator.provideFunction_(
         'things',
