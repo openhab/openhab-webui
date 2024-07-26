@@ -4,6 +4,13 @@ export default {
       dirty: false
     }
   },
+  computed: {
+    dirtyIndicator () {
+      if (this.dirty) {
+        return ' ●' // &#9679;
+      }
+    }
+  },
   methods: {
     confirmLeaveWithoutSaving (callbackLeave, callbackCancel) {
       this.$f7.dialog.confirm(

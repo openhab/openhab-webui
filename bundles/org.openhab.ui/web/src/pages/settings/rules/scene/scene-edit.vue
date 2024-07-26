@@ -1,6 +1,10 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:afterout="onPageAfterOut">
-    <f7-navbar :title="(createMode) ? 'Create scene' : rule.name" back-link="Back" no-hairline>
+    <f7-navbar back-link="Back" no-hairline>
+      <template slot="title">
+        {{ createMode ? 'Create scene' : rule.name }}
+        {{ dirtyIndicator }}
+      </template>
       <f7-nav-right v-if="isEditable">
         <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only />
         <f7-link @click="save()" v-if="!$theme.md">

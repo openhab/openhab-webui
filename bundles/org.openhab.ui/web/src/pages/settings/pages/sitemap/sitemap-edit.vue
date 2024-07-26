@@ -1,6 +1,10 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
-    <f7-navbar :title="(!ready) ? '' : (createMode) ? 'Create sitemap' : 'Sitemap: ' + sitemap.config.label" back-link="Back" no-hairline>
+    <f7-navbar back-link="Back" no-hairline>
+      <template slot="title" v-if="ready">
+        {{ createMode ? 'Create sitemap' : 'Sitemap: ' + sitemap.config.label }}
+        {{ dirtyIndicator }}
+      </template>
       <f7-nav-right>
         <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only />
         <f7-link @click="save()" v-if="!$theme.md">

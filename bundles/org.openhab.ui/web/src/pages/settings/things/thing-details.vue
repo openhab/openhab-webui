@@ -1,6 +1,10 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="thing-details-page">
-    <f7-navbar :title="pageTitle" back-link="Back" no-hairline>
+    <f7-navbar back-link="Back" no-hairline>
+      <template slot="title">
+        {{ pageTitle }}
+        {{ dirtyIndicator }}
+      </template>
       <f7-nav-right v-show="!error && ready">
         <f7-link v-if="!editable" icon-f7="lock_fill" icon-only tooltip="This Thing is not editable through the UI" />
         <f7-link v-else-if="$theme.md" icon-md="material:save" icon-only @click="save()" />
