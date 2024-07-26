@@ -83,7 +83,7 @@
         </f7-block-footer>
         <f7-list class="profile-list profile-disabled">
           <f7-list-item radio v-for="profileType in profileTypes" class="profile-item"
-                        :checked="!currentProfileType && profileType.uid === 'system:default' || currentProfileType && profileType.uid === currentProfileType.uid"
+                        :checked="(!currentProfileType && profileType.uid === 'system:default' && !isNumberChannelButNoNumberItem) || (currentProfileType && profileType.uid === currentProfileType.uid)"
                         :disabled="!compatibleProfileTypes.includes(profileType)"
                         :class="{ 'profile-disabled': !compatibleProfileTypes.includes(profileType) }"
                         @change="onProfileTypeChange(profileType.uid)"
@@ -178,11 +178,18 @@ export default {
   },
   computed: {
     currentItem () {
-      return this.item ? this.item : this.createMode ? this.newItem : this.items ? this.items.find(item => item.name === this.selectedItemName) : null
+      return this.item ? this.item : (this.createMode ? this.newItem : (this.items ? this.items.find(item => item.name === this.selectedItemName) : null))
     },
     compatibleProfileTypes () {
       let currentItemType = this.currentItem && this.currentItem.type ? this.currentItem.type : ''
-      return this.profileTypes.filter(p => !p.supportedItemTypes.length || p.supportedItemTypes.includes(currentItemType.split(':', 1)[0]))
+      return this.profileTypes
+        .filter(p => !p.supportedItemTypes.length || p.supportedItemTypes.includes(currentItemType.split(':', 1)[0]))
+        .filter(p => this.isNumberChannelButNoNumberItem && (p.uid !== 'system:default' && p.uid !== 'system:follow'))
+    },
+    isNumberChannelButNoNumberItem () {
+      if (!this.channel || !this.channel.itemType) return false
+      if (!this.currentItem || !this.currentItem.type) return false
+      return this.channel.itemType.startsWith('Number') && !this.currentItem.type.startsWith('Number')
     }
   },
   methods: {
@@ -245,7 +252,7 @@ export default {
       let compatibleItemTypes = []
       if (this.channel.itemType) {
         compatibleItemTypes.push(this.channel.itemType)
-        if (this.channel.itemType.indexOf('Number:') === 0) { compatibleItemTypes.push('Number') }
+        if (this.channel.itemType.startsWith('Number')) { compatibleItemTypes.push('Number', 'Switch') }
         if (this.channel.itemType === 'Color') { compatibleItemTypes.push('Switch', 'Dimmer') }
         if (this.channel.itemType === 'Dimmer') { compatibleItemTypes.push('Switch') }
       }
@@ -296,6 +303,10 @@ export default {
           this.$f7.dialog.alert('Please configure a valid profile')
           return
         }
+      }
+      if (this.isNumberChannelButNoNumberItem && (!this.currentProfileType || !this.compatibleProfileTypes.includes(this.currentProfileType))) {
+        this.$f7.dialog.alert('Please configure a valid profile')
+        return
       }
 
       if (this.createMode) {
