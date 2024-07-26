@@ -186,7 +186,7 @@ export default {
     }
   },
   methods: {
-    onPageAfterIn (event) {
+    onPageAfterIn () {
       if (!this.channel) return
       this.loadProfileTypes(this.channel)
       let newItemName = this.$oh.utils.normalizeLabel(this.thing.label)
@@ -204,7 +204,7 @@ export default {
       })
     },
     linkUnit () {
-      const dimension = this.channel.itemType.startsWith('Number:') ? this.channel.itemType.split(':')[1] : ''
+      const dimension = (this.channel && this.channel.itemType && this.channel.itemType.startsWith('Number:')) ? this.channel.itemType.split(':')[1] : ''
       return dimension ? this.getUnitHint(dimension, this.channelType) : ''
     },
     stateDescription () {
