@@ -73,10 +73,10 @@ export const accessories = {
   ],
   'GarageDoorOpener': [
     { label: 'CurrentDoorState', mandatory: true },
-    { label: 'ObstructionStatus', mandatory: true },
     { label: 'TargetDoorState', mandatory: true },
     { label: 'LockCurrentState', mandatory: false },
     { label: 'LockTargetState', mandatory: false },
+    { label: 'ObstructionStatus', mandatory: false },
     { label: 'Name', mandatory: false }
   ],
   'HeaterCooler': [
@@ -201,7 +201,7 @@ export const accessories = {
     { label: 'CurrentHeatingCoolingMode', mandatory: true },
     { label: 'CurrentTemperature', mandatory: true },
     { label: 'TargetHeatingCoolingMode', mandatory: true },
-    { label: 'TargetTemperature', mandatory: true },
+    { label: 'TargetTemperature', mandatory: false },
     { label: 'CoolingThresholdTemperature', mandatory: false },
     { label: 'HeatingThresholdTemperature', mandatory: false },
     { label: 'RelativeHumidity', mandatory: false }
