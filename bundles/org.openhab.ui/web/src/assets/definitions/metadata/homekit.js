@@ -12,6 +12,11 @@ export const accessories = {
     { label: 'TamperedStatus', mandatory: false },
     { label: 'VOCDensity', mandatory: false }
   ],
+  'BasicFan': [
+    { label: 'OnState', mandatory: true },
+    { label: 'RotationDirection', mandatory: false },
+    { label: 'RotationSpeed', mandatory: false }
+  ],
   'Battery': [
     { label: 'BatteryLevel', mandatory: true },
     { label: 'BatteryLowStatus', mandatory: true },
@@ -97,6 +102,22 @@ export const accessories = {
     { label: 'FaultStatus', mandatory: false },
     { label: 'TamperedStatus', mandatory: false },
     { label: 'Name', mandatory: false }
+  ],
+  'InputSource': [
+    { label: 'ConfiguredName', mandatory: false },
+    { label: 'Configured', mandatory: false },
+    { label: 'CurrentVisibility', mandatory: false },
+    { label: 'Identifier', mandatory: false },
+    { label: 'InputDeviceType', mandatory: false },
+    { label: 'InputSourceType', mandatory: false },
+    { label: 'TargetVisibilityState', mandatory: false }
+  ],
+  'IrrigationSystem': [
+    { label: 'Active', mandatory: true },
+    { label: 'InUseStatus', mandatory: true },
+    { label: 'ProgramMode', mandatory: true },
+    { label: 'FaultStatus', mandatory: false },
+    { label: 'RemainingDuration', mandatory: false }
   ],
   'LeakSensor': [
     { label: 'LeakDetectedState', mandatory: true },
@@ -185,9 +206,32 @@ export const accessories = {
     { label: 'Active', mandatory: false },
     { label: 'Volume', mandatory: false }
   ],
+  'StatelessProgrammableSwitch': [
+    { label: 'ProgrammableSwitchEvent', mandatory: true }
+  ],
   'Switchable': [
     { label: 'OnState', mandatory: true },
     { label: 'Name', mandatory: false }
+  ],
+  'Television': [
+    { label: 'Active', mandatory: true },
+    { label: 'ActiveIdentifier', mandatory: false },
+    { label: 'Brightness', mandatory: false },
+    { label: 'ClosedCaptions', mandatory: false },
+    { label: 'ConfiguredName', mandatory: false },
+    { label: 'CurrentMediaState', mandatory: false },
+    { label: 'PictureMode', mandatory: false },
+    { label: 'PowerMode', mandatory: false },
+    { label: 'RemoteKey', mandatory: false },
+    { label: 'SleepDiscoveryMode', mandatory: false },
+    { label: 'TargetMediaState', mandatory: false }
+  ],
+  'TelevisionSpeaker': [
+    { label: 'Mute', mandatory: true },
+    { label: 'Active', mandatory: false },
+    { label: 'Volume', mandatory: false },
+    { label: 'VolumeControlType', mandatory: false },
+    { label: 'VolumeSelector', mandatory: false }
   ],
   'TemperatureSensor': [
     { label: 'CurrentTemperature', mandatory: true },
