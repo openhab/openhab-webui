@@ -277,7 +277,7 @@ const dimmerFilterType = {
 }
 
 const instanceParameter = {
-  name: 'Instance',
+  name: 'instance',
   label: 'Instance',
   description: 'HomeKit bridge instance number in case of multiple bridge instances. if unsure, leave empty',
   type: 'INTEGER'
