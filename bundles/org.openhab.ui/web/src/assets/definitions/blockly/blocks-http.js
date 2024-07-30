@@ -118,8 +118,6 @@ export default function (f7, isGraalJs) {
       if (['HttpPostRequest', 'HttpPutRequest'].includes(this.requestType)) {
         let payloadInput = this.getInput('payload')
         let hasPayload = (this.contentType !== 'none')
-        let isJSONPayload = (!this.contentType || (this.contentType === 'application/json'))
-        let isEncodedPayload = (this.contentType === 'application/x-www-form-urlencoded')
         if (!hasPayload && payloadInput && (payloadInput.type === Blockly.inputs.inputTypes.VALUE)) {
           this.removePayloadInput()
           payloadInput = null
@@ -150,16 +148,16 @@ export default function (f7, isGraalJs) {
           }
         }
         if (hasPayload) {
-          if (isEncodedPayload) {
+          if (this.contentType === 'application/x-www-form-urlencoded') {
             payloadInput.setShadowDom(null)
             payloadInput.setCheck(['Dictionary', 'String'])
             this.addDictShadowBlock(payloadInput, 'param')
           } else {
             payloadInput.setShadowDom(null)
-            if (isJSONPayload) {
-              payloadInput.setCheck(null)
-            } else {
+            if (this.contentType && (this.contentType !== 'application/json')) {
               payloadInput.setCheck('String')
+            } else {
+              payloadInput.setCheck(null)
             }
             payloadInput.setShadowDom(Blockly.utils.xml.textToDom('<shadow type="text"><field name="TEXT">payload</field></shadow>'))
           }
