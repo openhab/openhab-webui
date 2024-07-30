@@ -1,4 +1,5 @@
 export const accessories = {
+  'AccessoryGroup': [],
   'AirQualitySensor': [
     { label: 'AirQuality', mandatory: true },
     { label: 'ActiveStatus', mandatory: false },
@@ -656,6 +657,7 @@ const targetMediaStateEnum = [
 ]
 
 export const homekitParameters = {
+  'AccessoryGroup': [instanceParameter],
   'AirQualitySensor': [instanceParameter].concat(airQualityEnum),
   'AirQualitySensor.AirQuality': airQualityEnum,
   'AirQualitySensor.BatteryLowStatus': [batteryLowThreshold, invertedParameter],
