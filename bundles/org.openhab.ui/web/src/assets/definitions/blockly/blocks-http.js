@@ -45,30 +45,24 @@ export default function (f7, isGraalJs) {
       this.setTooltip('Send HTTP requests')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-http.html#requests')
 
-      this.updateShape(this.hasTimeout, this.hasHeader, this.hasQuery, this.hasPayload)
+      this.updateShape(this.hasTimeout, this.hasHeader, this.hasQuery)
     },
     handleRequestTypeSelection: function (requestType) {
       if (this.requestType !== requestType) {
         this.requestType = requestType
-        if (['HttpGetRequest', 'HttpDeleteRequest'].includes(requestType)) {
-          this.hasPayload = false
-        } else {
-          this.hasPayload = true
-        }
-        this.updateShape(this.hasTimeout, this.hasHeader, this.hasQuery, this.hasPayload)
+        this.updateShape(this.hasTimeout, this.hasHeader, this.hasQuery)
       }
     },
     handleContentTypeSelection: function (contentType) {
       if (this.contentType !== contentType) {
         this.contentType = contentType
-        this.updateShape(this.hasTimeout, this.hasHeader, this.hasQuery, this.hasPayload)
+        this.updateShape(this.hasTimeout, this.hasHeader, this.hasQuery)
       }
     },
-    updateShape: function (hasTimeout, hasHeader, hasQuery, hasPayload) {
+    updateShape: function (hasTimeout, hasHeader, hasQuery) {
       this.hasTimeout = hasTimeout
       this.hasHeader = hasHeader
       this.hasQuery = hasQuery
-      this.hasPayload = hasPayload
 
       let timeoutInput = this.getInput('timeoutInput')
       if (hasTimeout) {
@@ -121,20 +115,20 @@ export default function (f7, isGraalJs) {
         this.removeInput('query')
       }
 
-      let payloadInput = this.getInput('payload')
-      if (this.hasPayload) {
-        this.hasContent = (this.contentType !== 'none')
-        this.isJSONContent = (!this.contentType || (this.contentType === 'application/json'))
-        this.isEncodedContent = (this.contentType === 'application/x-www-form-urlencoded')
-        if (!this.hasContent && payloadInput && (payloadInput.type === Blockly.inputs.inputTypes.VALUE)) {
+      if (['HttpPostRequest', 'HttpPutRequest'].includes(this.requestType)) {
+        let payloadInput = this.getInput('payload')
+        let hasContent = (this.contentType !== 'none')
+        let isJSONContent = (!this.contentType || (this.contentType === 'application/json'))
+        let isEncodedContent = (this.contentType === 'application/x-www-form-urlencoded')
+        if (!hasContent && payloadInput && (payloadInput.type === Blockly.inputs.inputTypes.VALUE)) {
           this.removePayloadInput()
           payloadInput = null
-        } else if (this.hasContent && payloadInput && (payloadInput.type === Blockly.inputs.inputTypes.DUMMY)) {
+        } else if (hasContent && payloadInput && (payloadInput.type === Blockly.inputs.inputTypes.DUMMY)) {
           this.removePayloadInput()
           payloadInput = null
         }
         if (!payloadInput) {
-          if (!this.hasContent) {
+          if (!hasContent) {
             payloadInput = this.appendDummyInput('payload')
           } else {
             payloadInput = this.appendValueInput('payload')
@@ -155,14 +149,14 @@ export default function (f7, isGraalJs) {
             this.setFieldValue(this.contentType, 'contentType')
           }
         }
-        if (this.hasContent) {
-          if (this.isEncodedContent) {
+        if (hasContent) {
+          if (isEncodedContent) {
             payloadInput.setShadowDom(null)
             payloadInput.setCheck(['Dictionary', 'String'])
             this.addDictShadowBlock(payloadInput, 'param')
           } else {
             payloadInput.setShadowDom(null)
-            if (this.isJSONContent) {
+            if (isJSONContent) {
               payloadInput.setCheck(null)
             } else {
               payloadInput.setCheck('String')
@@ -195,32 +189,30 @@ export default function (f7, isGraalJs) {
     onClickTimeout () {
       let block = this.getSourceBlock()
       block.hasTimeout = !block.hasTimeout
-      block.updateShape(block.hasTimeout, block.hasHeader, block.hasQuery, block.hasPayload)
+      block.updateShape(block.hasTimeout, block.hasHeader, block.hasQuery)
     },
     onClickHeader () {
       let block = this.getSourceBlock()
       block.hasHeader = !block.hasHeader
-      block.updateShape(block.hasTimeout, block.hasHeader, block.hasQuery, block.hasPayload)
+      block.updateShape(block.hasTimeout, block.hasHeader, block.hasQuery)
     },
     onClickQuery () {
       let block = this.getSourceBlock()
       block.hasQuery = !block.hasQuery
-      block.updateShape(block.hasTimeout, block.hasHeader, block.hasQuery, block.hasPayload)
+      block.updateShape(block.hasTimeout, block.hasHeader, block.hasQuery)
     },
     mutationToDom: function () {
       let container = Blockly.utils.xml.createElement('mutation')
       container.setAttribute('hasTimeout', this.hasTimeout)
       container.setAttribute('hasHeader', this.hasHeader)
       container.setAttribute('hasQuery', this.hasQuery)
-      container.setAttribute('hasPayload', this.hasPayload)
       return container
     },
     domToMutation: function (xmlElement) {
       let hasTimeout = xmlElement.getAttribute('hasTimeout') === 'true'
       let hasHeader = xmlElement.getAttribute('hasHeader') === 'true'
       let hasQuery = xmlElement.getAttribute('hasQuery') === 'true'
-      let hasPayload = xmlElement.getAttribute('hasPayload') === 'true'
-      this.updateShape(hasTimeout, hasHeader, hasQuery, hasPayload)
+      this.updateShape(hasTimeout, hasHeader, hasQuery)
     }
   }
 
