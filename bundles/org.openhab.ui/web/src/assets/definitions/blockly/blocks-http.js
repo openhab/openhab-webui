@@ -148,12 +148,11 @@ export default function (f7, isGraalJs) {
           }
         }
         if (hasPayload) {
+          payloadInput.setShadowDom(null)
           if (this.contentType === 'application/x-www-form-urlencoded') {
-            payloadInput.setShadowDom(null)
             payloadInput.setCheck(['Dictionary', 'String'])
             this.addDictShadowBlock(payloadInput, 'param')
           } else {
-            payloadInput.setShadowDom(null)
             if (this.contentType && (this.contentType !== 'application/json')) {
               payloadInput.setCheck('String')
             } else {
