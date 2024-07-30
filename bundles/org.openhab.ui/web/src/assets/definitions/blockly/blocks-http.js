@@ -117,18 +117,18 @@ export default function (f7, isGraalJs) {
 
       if (['HttpPostRequest', 'HttpPutRequest'].includes(this.requestType)) {
         let payloadInput = this.getInput('payload')
-        let hasContent = (this.contentType !== 'none')
-        let isJSONContent = (!this.contentType || (this.contentType === 'application/json'))
-        let isEncodedContent = (this.contentType === 'application/x-www-form-urlencoded')
-        if (!hasContent && payloadInput && (payloadInput.type === Blockly.inputs.inputTypes.VALUE)) {
+        let hasPayload = (this.contentType !== 'none')
+        let isJSONPayload = (!this.contentType || (this.contentType === 'application/json'))
+        let isEncodedPayload = (this.contentType === 'application/x-www-form-urlencoded')
+        if (!hasPayload && payloadInput && (payloadInput.type === Blockly.inputs.inputTypes.VALUE)) {
           this.removePayloadInput()
           payloadInput = null
-        } else if (hasContent && payloadInput && (payloadInput.type === Blockly.inputs.inputTypes.DUMMY)) {
+        } else if (hasPayload && payloadInput && (payloadInput.type === Blockly.inputs.inputTypes.DUMMY)) {
           this.removePayloadInput()
           payloadInput = null
         }
         if (!payloadInput) {
-          if (!hasContent) {
+          if (!hasPayload) {
             payloadInput = this.appendDummyInput('payload')
           } else {
             payloadInput = this.appendValueInput('payload')
@@ -149,14 +149,14 @@ export default function (f7, isGraalJs) {
             this.setFieldValue(this.contentType, 'contentType')
           }
         }
-        if (hasContent) {
-          if (isEncodedContent) {
+        if (hasPayload) {
+          if (isEncodedPayload) {
             payloadInput.setShadowDom(null)
             payloadInput.setCheck(['Dictionary', 'String'])
             this.addDictShadowBlock(payloadInput, 'param')
           } else {
             payloadInput.setShadowDom(null)
-            if (isJSONContent) {
+            if (isJSONPayload) {
               payloadInput.setCheck(null)
             } else {
               payloadInput.setCheck('String')
