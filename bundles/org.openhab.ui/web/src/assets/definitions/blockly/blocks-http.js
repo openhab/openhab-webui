@@ -263,7 +263,7 @@ export default function (f7, isGraalJs) {
    * @param block
    * @returns {[string,number]}
    */
-  javascriptGenerator.forBlock['oh_httprequest'] = function (block) {
+  javascriptGenerator.forBlock['oh_httprequest'] = function (block, generator) {
     const requestType = block.getFieldValue('requestType')
 
     let paramCode = ''
@@ -275,42 +275,50 @@ export default function (f7, isGraalJs) {
       let elements = new Array(queryBlock.itemCount_)
       for (let i = 0; i < queryBlock.itemCount_; i++) {
         elements[i] = queryBlock.getFieldValue('KEY' + i) + '=\' + '
-        paramCode += 'let param' + i + ' = encodeURIComponent(' + (javascriptGenerator.valueToCode(queryBlock, 'ADD' + i, javascriptGenerator.ORDER_NONE) || 'null') + ');\n'
-        elements[i] += 'param' + i
+        const paramVar = javascriptGenerator.nameDB_.getDistinctName('param' + i, Blockly.Names.NameType.VARIABLE)
+        const paramContent = javascriptGenerator.valueToCode(queryBlock, 'ADD' + i, javascriptGenerator.ORDER_NONE) || 'null'
+        paramCode += `var ${paramVar} = encodeURIComponent(${paramContent});\n`
+        elements[i] += paramVar
       }
       query = elements.join(' + \'&')
     }
-    paramCode += 'let url = ' + url
+    const urlVar = generator.nameDB_.getDistinctName('url', Blockly.Names.NameType.VARIABLE)
+    paramCode += `var ${urlVar} = ${url}`
     if (query) {
       paramCode += ' + \'?' + query
     }
     paramCode += ';\n'
 
     const contentType = block.getFieldValue('contentType')
+    const contentTypeVar = generator.nameDB_.getDistinctName('contentType', Blockly.Names.NameType.VARIABLE)
     if (contentType) {
-      paramCode += 'let contentType = ' + contentType + ';\n'
+      paramCode += `var ${contentTypeVar} = ${contentType};\n`
     }
 
     const payloadBlock = block.getInput('payload')?.connection?.targetBlock()
     let payload
+    const payloadVar = generator.nameDB_.getDistinctName('payload', Blockly.Names.NameType.VARIABLE)
     if ((contentType === 'application/x-www-form-urlencoded') && (payloadBlock?.type === 'dicts_create_with')) {
       let elements = new Array(payloadBlock.itemCount_)
       for (let i = 0; i < payloadBlock.itemCount_; i++) {
         elements[i] = '\\\'' + payloadBlock.getFieldValue('KEY' + i) + '\\\':\\\'\' + '
-        paramCode += 'let param' + i + ' = encodeURIComponent(' + (javascriptGenerator.valueToCode(payloadBlock, 'ADD' + i, javascriptGenerator.ORDER_NONE) || 'null') + ');\n'
-        elements[i] += 'param' + i
+        const paramVar = javascriptGenerator.nameDB_.getDistinctName('param' + i, Blockly.Names.NameType.VARIABLE)
+        const paramContent = javascriptGenerator.valueToCode(queryBlock, 'ADD' + i, javascriptGenerator.ORDER_NONE) || 'null'
+        paramCode += `var ${paramVar} = encodeURIComponent(${paramContent});\n`
+        elements[i] += paramVar
       }
       payload = '\'{' + elements.join(' + \'\\\',') + ' + \'}\''
     } else {
       payload = javascriptGenerator.valueToCode(block, 'payload', javascriptGenerator.ORDER_ATOMIC)
     }
     if (payload) {
-      paramCode += 'let payload = ' + payload + ';\n'
+      paramCode += `var ${payloadVar} = ${payload};\n`
     }
 
     const headers = javascriptGenerator.valueToCode(block, 'requestHeader', javascriptGenerator.ORDER_ATOMIC)
+    const headersVar = javascriptGenerator.nameDB_.getDistinctName('headers', Blockly.Names.NameType.VARIABLE)
     if (headers) {
-      paramCode += 'let headers = ' + headers + ';\n'
+      paramCode += `var ${headersVar} = ${headers};\n`
     }
 
     const timeout = javascriptGenerator.valueToCode(block, 'timeoutInput', javascriptGenerator.ORDER_ATOMIC) || 3000
@@ -319,21 +327,27 @@ export default function (f7, isGraalJs) {
     let code = ''
     if (hasContent) {
       if (!headers) {
-        code = `actions.HTTP.send${requestType}(url, contentType, payload, ${timeout})`
+        code = `actions.HTTP.send${requestType}(${urlVar}, ${contentTypeVar}, ${payloadVar}, ${timeout})`
       } else {
-        code = `actions.HTTP.send${requestType}(url, contentType, payload, headers, ${timeout})`
+        code = `actions.HTTP.send${requestType}(${urlVar}, ${contentTypeVar}, ${payloadVar}, ${headersVar}, ${timeout})`
       }
     } else {
       if (!headers) {
-        code = `actions.HTTP.send${requestType}(url, ${timeout})`
+        code = `actions.HTTP.send${requestType}(${urlVar}, ${timeout})`
       } else {
-        code = `actions.HTTP.send${requestType}(url, headers, ${timeout})`
+        code = `actions.HTTP.send${requestType}(${urlVar}, ${headersVar}, ${timeout})`
       }
     }
     if (isGraalJs) {
-      return [paramCode + code, javascriptGenerator.ORDER_NONE]
+      addParamCode(paramCode)
+      return [code, javascriptGenerator.ORDER_NONE]
     } else {
       throw new Error(unavailMsg)
     }
+  }
+
+  function addParamCode (paramCode) {
+    const paramCodeVar = javascriptGenerator.nameDB_.getDistinctName('paramCode', Blockly.Names.NameType.VARIABLE)
+    return javascriptGenerator.provideFunction_(paramCodeVar, [paramCode])
   }
 }
