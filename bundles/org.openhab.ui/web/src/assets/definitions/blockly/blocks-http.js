@@ -127,7 +127,6 @@ export default function (f7, isGraalJs) {
         this.removeInput('query')
       }
 
-
       let payloadInput = this.getInput('payload')
       if (this.hasPayload) {
         if (this.hasNoContent && payloadInput && (payloadInput.type === Blockly.inputs.inputTypes.VALUE)) {
