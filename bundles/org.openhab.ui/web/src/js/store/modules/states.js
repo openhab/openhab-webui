@@ -24,7 +24,6 @@ const handler = (context) => {
 
       const itemName = prop
       if (!context.getters.isItemTracked(itemName)) {
-        console.debug(`Proxy: need ${itemName.toString()}`)
         context.commit('addToTrackingList', itemName.toString())
 
         // Return the previous state anyway even if it might be outdated (it will be refreshed quickly after)
@@ -37,7 +36,6 @@ const handler = (context) => {
       return context.state.itemStates[itemName]
     },
     set (obj, prop, value) {
-      console.debug(`Proxy: setting ${prop.toString()} to ${value}`)
       context.commit('setItemState', { itemName: prop.toString(), itemState: value })
       return true
     }
@@ -73,8 +71,8 @@ const actions = {
         // only one state tracker at any given time!
         context.commit('setTrackerConnectionId', connectionId)
         const trackingListJson = JSON.stringify(context.state.trackingList)
-        console.debug('Setting initial tracking list: ' + trackingListJson)
-        this._vm.$oh.api.postPlain('/rest/events/states/' + connectionId, JSON.stringify(context.state.trackingList), 'text/plain', 'application/json')
+        console.debug(`Setting initial tracking list (${context.state.trackingList.length} tracked Items): ` + trackingListJson)
+        this._vm.$oh.api.postPlain('/rest/events/states/' + connectionId, trackingListJson, 'text/plain', 'application/json')
         context.commit('sseConnected', true)
       },
       (updates) => {
@@ -101,22 +99,19 @@ const actions = {
   },
   updateTrackingList (context, payload) {
     if (!context.state.trackerConnectionId) {
-      console.debug('updateTrackingList: No connection id, not calling the API')
       return
     }
     if (context.state.pendingTrackingListUpdate) {
-      console.debug('updateTrackingList: Pending tracking list update, not calling the API')
       return
     }
     context.commit('setPendingTrackingListUpdate', true)
     Vue.nextTick(() => {
       context.commit('setPendingTrackingListUpdate', false)
       if (!context.state.trackerConnectionId) {
-        console.debug('updateTrackingList: No connection id, not calling the API')
         return
       }
       const trackingListJson = JSON.stringify(context.state.trackingList)
-      console.debug('Updating tracking list: ' + trackingListJson)
+      console.debug(`Updating tracking list (${context.state.trackingList.length} tracked Items): ` + trackingListJson)
       this._vm.$oh.api.postPlain('/rest/events/states/' + context.state.trackerConnectionId, trackingListJson, 'text/plain', 'application/json')
     })
   },
