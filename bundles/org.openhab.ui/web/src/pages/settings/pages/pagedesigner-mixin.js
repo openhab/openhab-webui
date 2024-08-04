@@ -1,4 +1,6 @@
 import YAML from 'yaml'
+import cloneDeep from 'lodash/cloneDeep'
+import fastDeepEqual from 'fast-deep-equal/es6'
 
 import WidgetConfigPopup from '@/components/pagedesigner/widget-config-popup.vue'
 import WidgetCodePopup from '@/components/pagedesigner/widget-code-popup.vue'
@@ -10,6 +12,7 @@ export default {
     return {
       pageReady: false,
       loading: false,
+      savedPage: {},
       pageKey: this.$f7.utils.id(),
       pageYaml: null,
       props: {},
@@ -63,8 +66,8 @@ export default {
   watch: {
     page: {
       handler: function () {
-        if (!this.loading) {
-          this.dirty = true
+        if (!this.loading) { // ignore changes during loading
+          this.dirty = !fastDeepEqual(this.page, this.savedPage)
         }
       },
       deep: true
@@ -102,18 +105,19 @@ export default {
     },
     onEditorInput (value) {
       this.pageYaml = value
-      this.dirty = true
     },
     load () {
       if (this.loading) return
       this.loading = true
 
       if (this.createMode) {
+        this.savedPage = cloneDeep(this.page)
         this.loading = false
         this.pageReady = true
       } else {
         this.$oh.api.get('/rest/ui/components/ui:page/' + this.uid).then((data) => {
           this.$set(this, 'page', data)
+          this.savedPage = cloneDeep(this.page)
           this.$nextTick(() => {
             this.pageReady = true
             this.loading = false
@@ -144,6 +148,7 @@ export default {
         : this.$oh.api.put('/rest/ui/components/ui:page/' + this.page.uid, this.page)
       promise.then((data) => {
         this.dirty = false
+        this.savedPage = cloneDeep(this.page)
         if (this.createMode) {
           this.$f7.toast.create({
             text: 'Page created',
