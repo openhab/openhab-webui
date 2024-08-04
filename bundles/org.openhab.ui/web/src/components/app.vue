@@ -353,11 +353,6 @@ export default {
         // }
       },
 
-      // Login screen data
-      serverUrl: '',
-      username: '',
-      password: '',
-
       user: null,
 
       sitemaps: null,
@@ -385,12 +380,8 @@ export default {
     messages: loadLocaleMessages(require.context('@/assets/i18n/about'))
   },
   computed: {
-    isAdmin () {
-      if (!this.$store.getters.apiEndpoint('auth')) return true
-      return this.ready && this.user && this.user.roles && this.user.roles.indexOf('administrator') >= 0
-    },
     serverDisplayUrl () {
-      return (this.serverUrl || window.location.origin)
+      return window.location.origin
     }
   },
   watch: {
@@ -540,38 +531,6 @@ export default {
         default:
           return 'f7:tv'
       }
-    },
-    login () {
-      localStorage.setItem('openhab.ui:serverUrl', this.serverUrl)
-      localStorage.setItem('openhab.ui:username', this.username)
-      localStorage.setItem('openhab.ui:password', this.password)
-      this.loadData().then(() => {
-        this.loggedIn = true
-      }).catch((err) => {
-        localStorage.removeItem('openhab.ui:serverUrl')
-        localStorage.removeItem('openhab.ui:username')
-        localStorage.removeItem('openhab.ui:password')
-        this.$f7.dialog.alert('Cannot login, please try again: ' + err)
-      })
-    },
-    logout () {
-      this.$f7.preloader.show()
-      this.ready = false
-      localStorage.removeItem('openhab.ui:serverUrl')
-      localStorage.removeItem('openhab.ui:username')
-      localStorage.removeItem('openhab.ui:password')
-      this.user = null
-      this.serverUrl = ''
-      this.username = ''
-      this.password = ''
-      this.cleanSession().then(() => {
-        this.loggedIn = false
-        this.$f7.views.main.router.navigate('/', { animate: false, clearPreviousHistory: true })
-        window.location = window.location.origin
-      }).catch((err) => {
-        this.$f7.preloader.hide()
-        this.$f7.dialog.alert('Error while signing out: ' + err)
-      })
     },
     updateThemeOptions () {
       this.themeOptions.dark = localStorage.getItem('openhab.ui:theme.dark') || ((window.OHApp && window.OHApp.preferDarkMode) ? window.OHApp.preferDarkMode().toString() : (this.$f7.darkTheme ? 'dark' : 'light'))

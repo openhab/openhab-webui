@@ -199,7 +199,7 @@ export default {
       this.$oh.api.get(`/rest/items/${this.itemName}?metadata=.+`).then((data) => {
         this.item = data
         this.ready = true
-        this.iconUrl = (localStorage.getItem('openhab.ui:serverUrl') || '') + '/icon/' + this.item.category + '?format=svg'
+        this.iconUrl = '/icon/' + this.item.category + '?format=svg'
       })
     },
     deleteItem () {

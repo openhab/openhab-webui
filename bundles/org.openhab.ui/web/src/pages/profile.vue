@@ -222,9 +222,6 @@ export default {
     },
     logout () {
       this.$f7.preloader.show()
-      localStorage.removeItem('openhab.ui:serverUrl')
-      localStorage.removeItem('openhab.ui:username')
-      localStorage.removeItem('openhab.ui:password')
       this.cleanSession().then(() => {
         this.loggedIn = false
         this.$f7.views.main.router.navigate('/', { animate: false, clearPreviousHistory: true })
