@@ -167,8 +167,8 @@ export default {
         tags: [],
         slots: {
           default: [],
-          grid: [],
           masonry: [],
+          grid: [],
           canvas: []
         }
       },
