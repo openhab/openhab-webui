@@ -167,6 +167,7 @@ export default {
         tags: [],
         slots: {
           default: [],
+          masonry: [],
           grid: [],
           canvas: []
         }
@@ -344,10 +345,11 @@ export default {
     toYaml () {
       this.pageYaml = YAML.stringify({
         config: this.page.config,
-        blocks: this.page.slots.default,
-        masonry: this.page.slots.masonry,
-        grid: this.page.slots.grid,
-        canvas: this.page.slots.canvas
+        // make sure array is available for existing pages, where the prop might be undefined, by falling back to empty array
+        blocks: this.page.slots.default || [],
+        masonry: this.page.slots.masonry || [],
+        grid: this.page.slots.grid || [],
+        canvas: this.page.slots.canvas || []
       })
     },
     fromYaml () {
