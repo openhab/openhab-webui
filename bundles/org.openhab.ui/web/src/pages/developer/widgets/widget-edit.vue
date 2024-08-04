@@ -1,6 +1,10 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
-    <f7-navbar :title="(!ready) ? '' : (createMode) ? 'Create Widget' : 'Widget: ' + widget.uid" back-link="Back">
+    <f7-navbar back-link="Back">
+      <template slot="title" v-if="ready">
+        {{ createMode ? 'Create Widget' : 'Widget: ' + widget.uid }}
+        {{ dirtyIndicator }}
+      </template>
       <f7-nav-right>
         <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only />
         <f7-link @click="save()" v-if="!$theme.md">

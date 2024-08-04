@@ -1,6 +1,10 @@
 <template>
   <f7-page @page:beforein="onPageBeforeIn" @page:afterin="onPageAfterIn">
-    <f7-navbar :title="'Edit Item Metadata: ' + namespace" back-link="Cancel" no-hairline>
+    <f7-navbar back-link="Cancel" no-hairline>
+      <template slot="title">
+        Edit Item Metadata: {{ namespace }}
+        {{ dirtyIndicator }}
+      </template>
       <f7-nav-right>
         <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only />
         <f7-link @click="save()" v-if="!$theme.md">
