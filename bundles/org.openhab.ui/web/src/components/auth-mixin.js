@@ -52,7 +52,7 @@ export default {
               resolve(resp.user)
             })
           }).catch((err) => {
-            console.log(err)
+            console.log('Exchanging authorization code failed', err)
             reject(err)
           })
         } else {
@@ -83,7 +83,7 @@ export default {
             resolve(resp)
           })
         }).catch((err) => {
-          console.log(err)
+          console.log('Refreshing access token failed', err)
           reject(err)
         })
       })
@@ -107,7 +107,7 @@ export default {
           this.$store.commit('setUser', { user: null })
           resolve()
         }).catch((err) => {
-          console.log(err)
+          console.log('Failed to log out', err)
           this.$oh.auth.clearAccessToken()
           this.$store.commit('setUser', { user: null })
           reject(err)
