@@ -140,16 +140,18 @@ public class FsUtil {
 
             // 1. check if we need to create a backup
             boolean backup = false;
-            for (final Pattern pattern : settings.getBackupOnChange()) {
-                if (pattern.matcher(file.getName()).find()) {
-                    backup = true;
-                    break;
+            String name = file.getName();
+            if (name.length() < 100) {
+                for (final Pattern pattern : settings.getBackupOnChange()) {
+                    if (pattern.matcher(name).find()) {
+                        backup = true;
+                        break;
+                    }
                 }
             }
             boolean exists = file.exists();
             File backupFile = null;
             if (backup && exists) {
-                String name = file.getName();
                 int lastIndexOf = name.lastIndexOf(".");
                 String extension = lastIndexOf >= 0 ? name.substring(lastIndexOf) : "";
                 String filename = lastIndexOf == -1 ? name : name.substring(0, lastIndexOf);
