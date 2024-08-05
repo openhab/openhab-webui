@@ -144,6 +144,7 @@ public class VisuConfig {
             classes[0] = bean.getClass();
             JAXBContext jaxbContext = JAXBContext.newInstance(bean.getClass());
             SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+            schemaFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
             Schema schema = (xsdSchema == null || xsdSchema.trim().isEmpty()) ? null
                     : schemaFactory.newSchema(new File(xsdSchema));
             Marshaller marshaller = jaxbContext.createMarshaller();
