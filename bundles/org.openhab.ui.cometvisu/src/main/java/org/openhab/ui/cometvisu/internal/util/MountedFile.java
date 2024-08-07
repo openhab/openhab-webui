@@ -106,7 +106,7 @@ public class MountedFile {
         if (normalizedPath.contains(".." + File.separator) || normalizedPath.contains(File.separator + "..")) {
             throw new FileOperationException("path not allowed", Status.NOT_ACCEPTABLE);
         }
-        if (File.separator == "\\") {
+        if (File.separator.equals("\\")) {
             // special case for windows that also supports "/" beneath the official file separator
             if (normalizedPath.contains("../") || normalizedPath.contains("/..")) {
                 throw new FileOperationException("path not allowed", Status.NOT_ACCEPTABLE);
