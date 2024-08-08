@@ -278,6 +278,7 @@
 		.mdl-button:focus {
 			box-shadow: none;
 			-webkit-box-shadow: none;
+			text-transform: unset;
 		}
 		.mdl-button-text {
 			html.ui-bigger-font & {
