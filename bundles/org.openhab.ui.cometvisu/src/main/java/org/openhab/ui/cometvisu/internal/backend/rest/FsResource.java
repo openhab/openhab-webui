@@ -116,6 +116,7 @@ public class FsResource implements RESTResource {
     }
 
     @POST
+    @RolesAllowed({ Role.USER, Role.ADMIN })
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Create a binary file", responses = { @ApiResponse(responseCode = "200", description = "OK"),
