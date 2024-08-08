@@ -455,6 +455,10 @@ public class CometVisuServlet extends HttpServlet {
         } else {
             processFile = file;
         }
+        if (!processFile.getCanonicalPath().startsWith(rootFolder.getCanonicalPath() + File.separator)) {
+            response.sendError(HttpServletResponse.SC_NOT_ACCEPTABLE);
+            return;
+        }
         if (processFile.equals(rootFolder) || (processFile.exists() && processFile.isDirectory())) {
             processFile = new File(file, "index.html");
         }
