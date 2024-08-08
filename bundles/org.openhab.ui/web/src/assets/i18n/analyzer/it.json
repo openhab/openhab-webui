@@ -66,5 +66,7 @@
   "analyzer.dialogs.save.replace.message": "Una pagina con l'ID {uid} esiste già, vuoi sovrascriverla?",
   "analyzer.dialogs.save.replace.title": "La pagina è già esistente",
   "analyzer.page.updated": "Pagina grafico aggiornata",
-  "analyzer.page.created": "Pagina grafico creata"
+  "analyzer.page.created": "Pagina grafico creata",
+  "analyzer.invalid-configuration.title": "Configurazione non valida",
+  "analyzer.invalid-configuration.text": "Si prega di verificare che tutti i parametri richiesti dalla query siano impostati/che la configurazione sia valida."
 }
