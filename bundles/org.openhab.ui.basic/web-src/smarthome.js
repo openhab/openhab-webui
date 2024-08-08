@@ -2348,15 +2348,13 @@
 			}
 		}
 
-		function parseNumber(value, unit, keepExponentChar) {
+		function parseNumber(value, unit) {
 			var newValue = value.trim();
 			var numberMatch = newValue.match(numberPattern);
 			if (numberMatch && (numberMatch.length > 0)) {
 				var numberValue = numberMatch[0];
 				var unitValue = newValue.substring(numberValue.length).trim();
 				newValue = numberValue.replace(/^\+/, "");
-				// when sending updates, only uppercase E for exponent is accepted, don't change when only parsing for visualisation
-				newValue = keepExponentChar ? newValue : newValue.replace("e", "E");
 				if (commaSeparatorPattern.test(newValue)) {
 					newValue = newValue.replace(/\./g, "").replace(",", ".");
 				}
@@ -2461,7 +2459,7 @@
 
 			if (_t.inputHint === "number") {
 				if (newValue !== "") {
-					newValue = parseNumber(newValue, _t.unit, true).value;
+					newValue = parseNumber(newValue, _t.unit).value;
 					var valueArray = newValue.trim().split(" ");
 					newValue = valueArray[0];
 					if (valueArray.length > 1) {
