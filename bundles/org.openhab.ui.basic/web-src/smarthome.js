@@ -2318,7 +2318,7 @@
 		_t.prefixField = _t.parentNode.parentNode.querySelector(".mdl-form__input-prefix");
 		_t.postfixField = _t.parentNode.parentNode.querySelector(".mdl-form__input-postfix");
 		_t.prefix = _t.prefixField ? smarthome.UI.unEscapeHtml(_t.prefixField.innerHTML) : null;
-		_t.postfix = _t.prefixField ? smarthome.UI.unEscapeHtml(_t.postfixField.innerHTML) : null;
+		_t.postfix = _t.postfixField ? smarthome.UI.unEscapeHtml(_t.postfixField.innerHTML) : null;
 		_t.unitField =  _t.parentNode.parentNode.querySelector(".mdl-form__input-unit");
 		_t.verify = undefined;
 
@@ -2772,6 +2772,7 @@
 			return escapedText;
 		};
 
+		// See discussion at https://stackoverflow.com/questions/1912501/unescape-html-entities-in-javascript
 		_t.unEscapeHtml = function(html) {
 			var text = document.createElement("textarea");
 			text.innerHTML = html;
