@@ -434,19 +434,17 @@
 	&__title {
 		margin: 0;
 		padding-left: $form-row-desktop-padding + $mdl-grid-spacing;
-		html.ui-layout-condensed & {
-			padding-left: $form-row-desktop-padding-condensed + $mdl-grid-spacing;
-		}
 		padding-top: 25px;
 		padding-bottom: 10px;
 		html.ui-layout-condensed & {
+			padding-left: $form-row-desktop-padding-condensed + $mdl-grid-spacing;
 			padding-top: 15px;
 			padding-bottom: 5px;
 		}
 		@media screen and (max-width: $layout-tablet-size-threshold) {
 			padding-left: $form-row-mobile-padding + $mdl-grid-spacing;
 			html.ui-layout-condensed & {
-				padding-left: $form-row-desktop-padding-condensed + $mdl-grid-spacing;
+				padding-left: $form-row-mobile-padding-condensed + $mdl-grid-spacing;
 			}
 		}
 	}
