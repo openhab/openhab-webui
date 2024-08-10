@@ -237,9 +237,13 @@
 		padding-left: 4px;
 		html.ui-layout-condensed & {
 			padding-left: 0;
+			padding-right: $form-row-desktop-padding-condensed;
 		}
 		@media screen and (max-width: $layout-tablet-size-threshold) {
 			padding-right: $form-row-mobile-padding;
+			html.ui-layout-condensed & {
+				padding-right: $form-row-mobile-padding-condensed;
+			}
 		}
 		font-weight: 700;
 		html.ui-capitalize-values & {
@@ -503,7 +507,8 @@
 		width: 100%;
 	}
 	&__buttons {
-		padding: 2px;
+		padding-top: 2px;
+		padding-bottom: 2px;
 	}
 	&__buttons-multiline {
 		margin: 6px 0;
@@ -511,7 +516,8 @@
 			margin: 0;
 			gap: 2px;
 		}
-		padding: 2px;
+		padding-top: 2px;
+		padding-bottom: 2px;
 		max-width: 70%;
 		display: flex;
 		flex-wrap: wrap;
