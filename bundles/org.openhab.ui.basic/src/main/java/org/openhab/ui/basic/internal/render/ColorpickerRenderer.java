@@ -62,9 +62,6 @@ public class ColorpickerRenderer extends AbstractWidgetRenderer {
 
         String snippet = getSnippet("colorpicker");
 
-        // set the default send-update frequency to 200ms
-        String frequency = cp.getFrequency() == 0 ? "200" : Integer.toString(cp.getFrequency());
-
         // get RGB hex value
         State state = itemUIRegistry.getState(cp);
         String hexValue = getRGBHexCodeFromItemState(state);
@@ -84,7 +81,6 @@ public class ColorpickerRenderer extends AbstractWidgetRenderer {
         if (purelabel != null) {
             snippet = snippet.replace("%purelabel%", purelabel);
         }
-        snippet = snippet.replace("%frequency%", frequency);
         snippet = snippet.replace("%servletname%", WebAppServlet.SERVLET_PATH);
 
         // Process the color tags
