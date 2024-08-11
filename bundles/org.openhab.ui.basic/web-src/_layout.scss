@@ -225,6 +225,7 @@
 		@include flex-shrink(0);
 		@include flex-grow(2);
 		@include flex-2011(2 2 auto);
+		min-width: 5em;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -518,7 +519,6 @@
 		}
 		padding-top: 2px;
 		padding-bottom: 2px;
-		max-width: 70%;
 		display: flex;
 		flex-wrap: wrap;
 		justify-content: end;

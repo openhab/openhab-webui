@@ -1347,13 +1347,14 @@
 
 		if (_t.buttons.length > 1 && _t.parentNode.classList.contains(o.buttonsMultilineClass)) {
 			_t.minimizeWidth = function() {
+				var labelLength = _t.label.textContent.trim().length;
+				_t.label.style.paddingLeft = labelLength === 0 ? 0 : null; // null reverts it to the css
+				_t.label.style.minWidth = labelLength < 6 ? "min-content" : null;
+
 				// Minimize the width taken by the buttons without adding extra rows.
 				// Start from the maximum width (limited by `mdl-form__buttons-multiline.max-width`),
 				// then shrink it down to the minimum without causing additional wrapping.
 				var buttons = _t.parentNode;
-				if (_t.label.textContent.trim() === "") {
-					buttons.style.maxWidth = "100%";
-				}
 				var width = buttons.parentElement.offsetWidth + 100; // start wider than max-width allows
 				buttons.style.width = width + "px";
 				var height = buttons.offsetHeight;
