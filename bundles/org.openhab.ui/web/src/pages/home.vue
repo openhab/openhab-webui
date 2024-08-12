@@ -101,9 +101,7 @@ export default {
       showPinToHome: false,
       showExitToApp: false,
       currentTab: this.initialTab || 'overview',
-      overviewPageKey: this.$utils.id(),
-
-      unsubscribeFn: () => {}
+      overviewPageKey: this.$utils.id()
     }
   },
   computed: {
@@ -176,21 +174,13 @@ export default {
     },
     onPageAfterIn () {
       if (this.ready) {
-        this.$store.dispatch('loadSemanticModel')
         this.$store.dispatch('startTrackingStates')
       }
     },
     onPageBeforeOut () {
-      this.unsubscribeFn()
       this.$store.dispatch('stopTrackingStates')
     },
     onPageInit () {
-      this.unsubscribeFn = this.$store.subscribe((mutation, state) => {
-        if (mutation.type === 'setSemantics') {
-          console.debug('Semantic tags were updated, reloading semantic model ...')
-          this.$store.dispatch('loadSemanticModel')
-        }
-      })
       if (window.OHApp) {
         if (window.OHApp.pinToHome) this.showPinToHome = true
         if (window.OHApp.exitToApp) this.showExitToApp = true

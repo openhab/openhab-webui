@@ -157,7 +157,7 @@ export default {
         props: tab.config.pageConfig,
         store: this.$store.getters.trackedItems
       }
-      // mock some slots so that it works with current homeecard-grouping implementation
+      // mock some slots so that it works with current homecard-grouping implementation
       if (tab.component === 'oh-locations-tab') {
         context.slots = { locations: [tab] }
       } else if (tab.component === 'oh-equipment-tab') {
