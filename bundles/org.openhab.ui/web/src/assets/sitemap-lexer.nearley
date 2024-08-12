@@ -11,7 +11,6 @@
     icon:             'icon=',
     widgetattr:       ['url=', 'refresh=', 'service=', 'height=', 'minValue=', 'maxValue=', 'step=', 'encoding=', 'yAxisDecimalPattern=', 'inputHint=', 'columns='],
     widgetboolattr:   ['legend='],
-    widgetfreqattr:   'sendFrequency=',
     widgetfrcitmattr: 'forceasitem=',
     widgetmapattr:    'mappings=',
     widgetbuttonattr: 'buttons=',
@@ -116,7 +115,6 @@ WidgetAttr -> %widgetswitchattr                                                 
   | %widgetronlyattr                                                              {% (d) => ['releaseOnly', true] %}
   | %widgetfrcitmattr _ WidgetBooleanAttrValue                                    {% (d) => ['forceAsItem', d[2]] %}
   | %widgetboolattr _ WidgetBooleanAttrValue                                      {% (d) => [d[0].value, d[2]] %}
-  | %widgetfreqattr _ WidgetAttrValue                                             {% (d) => ['frequency', d[2]] %}
   | %widgetperiodattr _ WidgetPeriodAttrValue                                     {% (d) => ['period', d[2]] %}
   | %icon _ WidgetIconRulesAttrValue                                              {% (d) => ['iconrules', d[2]] %}
   | %icon _ WidgetIconAttrValue                                                   {% (d) => [d[0].value, d[2].join("")] %}
