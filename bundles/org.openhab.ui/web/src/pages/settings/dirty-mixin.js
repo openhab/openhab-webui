@@ -25,11 +25,11 @@ export default {
         this.confirmLeaveWithoutSaving(
           function () { resolve() },
           function () {
-            const { pushStateRoot = '', pushStateSeparator } = router.params
-            let url = routeFrom.url
-            history.pushState({ 'view_main': { 'url': url } }, '', pushStateRoot + pushStateSeparator + url)
+            //const { pushStateRoot = '', pushStateSeparator } = router.params
+            //let url = routeFrom.url
+            //history.pushState({ 'view_main': { 'url': url } }, '', pushStateRoot + pushStateSeparator + url)
             reject()
-            router.allowPageChange = true
+            //router.allowPageChange = true
           }
         )
       } else {
