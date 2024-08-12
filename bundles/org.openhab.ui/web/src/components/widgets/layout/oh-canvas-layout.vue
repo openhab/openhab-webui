@@ -301,7 +301,7 @@ export default {
         this.context.component.slots.canvas.forEach((item) => {
           if (item.component === 'oh-canvas-layer') {
             layout.push({
-              item: item,
+              item,
               id: Math.random().toString(36).substring(2)
             })
           } else {

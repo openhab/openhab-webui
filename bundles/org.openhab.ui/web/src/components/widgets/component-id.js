@@ -1,4 +1,3 @@
-
 const ids = new WeakMap()
 let index = 1
 

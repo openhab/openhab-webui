@@ -156,7 +156,7 @@ const actions = {
             properties: l.points,
             equipment: l.equipment.map((item) => {
               return {
-                item: item,
+                item,
                 points: item.points,
                 equipment: item.equipment
               }

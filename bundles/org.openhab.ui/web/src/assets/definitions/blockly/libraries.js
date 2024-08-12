@@ -166,8 +166,8 @@ export const defineLibraries = (libraryDefinitions) => {
             this.jsonInit(block.config)
           },
           openhab: {
-            blockTypeId: blockTypeId,
-            library: library,
+            blockTypeId,
+            library,
             definition: block
           }
         }

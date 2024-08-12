@@ -41,7 +41,7 @@ export default {
           title: this.configDescription.label,
           // use the "type" parameter as the mode if found (for rule modules)
           mode: (this.configuration && this.configuration.type) ? this.configuration.type : '',
-          fullscreen: fullscreen,
+          fullscreen,
           value: this.value
         }
       })

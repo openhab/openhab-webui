@@ -141,7 +141,7 @@ export default {
           }
           if ((this.showAdvanced || !channelType.advanced)) {
             if ((this.showLinked === undefined || (this.showLinked === true && this.hasLinks(c)) || (this.showLinked === false && !this.hasLinks(c)))) {
-              groups[groupIndex].channels.push({ channel: c, channelType: channelType, extensible: this.thingType.extensibleChannelTypeIds.indexOf(c.channelTypeUID.split(':')[1]) >= 0 })
+              groups[groupIndex].channels.push({ channel: c, channelType, extensible: this.thingType.extensibleChannelTypeIds.indexOf(c.channelTypeUID.split(':')[1]) >= 0 })
             }
           }
           if (channelType.advanced) groups[groupIndex].hasAdvanced = true
@@ -200,8 +200,8 @@ export default {
         newItemName += this.$oh.utils.normalizeLabel(suffix)
         const defaultTags = (channel.defaultTags.length > 0) ? channel.defaultTags : channelType.tags
         const newItem = {
-          channel: channel,
-          channelType: channelType,
+          channel,
+          channelType,
           name: newItemName,
           label: channel.label || channelType.label,
           category: (channelType) ? channelType.category : '',

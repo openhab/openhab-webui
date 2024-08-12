@@ -152,7 +152,7 @@ export default {
       const page = tab.config.page ? this.$store.getters.page(tab.config.page.replace('page:', '')) : tab.component
       const context = {
         component: page,
-        tab: tab,
+        tab,
         vars: this.vars,
         props: tab.config.pageConfig,
         store: this.$store.getters.trackedItems

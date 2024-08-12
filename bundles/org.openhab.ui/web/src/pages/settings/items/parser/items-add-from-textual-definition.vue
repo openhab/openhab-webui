@@ -221,7 +221,7 @@ export default {
               const url = `/rest/links/${item.name}/${encodeURIComponent(channelUID)}`
               const linkPayload = {
                 itemName: item.name,
-                channelUID: channelUID,
+                channelUID,
                 configuration: config
               }
               console.debug(`PUT ${url}: ` + JSON.stringify(linkPayload))
@@ -238,8 +238,8 @@ export default {
               }
               const url = `/rest/items/${item.name}/metadata/${m.key}`
               const metadataPayload = {
-                value: value,
-                config: config
+                value,
+                config
               }
               console.debug(`PUT ${url}` + JSON.stringify(metadataPayload))
               linksAndMetadataPromises.push(this.$oh.api.put(url, metadataPayload))

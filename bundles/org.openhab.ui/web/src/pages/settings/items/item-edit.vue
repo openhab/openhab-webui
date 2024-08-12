@@ -190,8 +190,8 @@ export default {
         const title = 'WARNING: ' + (typeChange ? 'Type' : (dimensionChange ? 'Dimension' : 'Unit')) + ' Changed'
         const text = (typeChange || dimensionChange) ? `Existing links to channels ${dimensionChange ? 'with dimensions ' : ''}may no longer be valid!` : 'Changing the internal unit can corrupt your persisted data and affect rules!'
         return this.$f7.dialog.create({
-          title: title,
-          text: text,
+          title,
+          text,
           buttons: [
             { text: 'Cancel', color: 'gray', close: true, onClick: () => this.$refs.itemForm.revertChange() },
             { text: 'Save Anyway', color: 'red', close: true, onClick: () => this.doSave() }

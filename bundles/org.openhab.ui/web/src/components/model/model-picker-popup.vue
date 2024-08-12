@@ -138,7 +138,7 @@ export default {
     },
     modelItem (item) {
       const modelItem = {
-        item: item,
+        item,
         opened: (item.type.indexOf('Group') === 0) ? false : undefined,
         checked: undefined,
         class: (item.metadata && item.metadata.semantics) ? item.metadata.semantics.value : '',

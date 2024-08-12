@@ -63,8 +63,8 @@ export default {
               const channel = thing.channels.find((c) => c.uid === l.channelUID)
               return {
                 link: l,
-                thing: thing,
-                channel: channel
+                thing,
+                channel
               }
             } else {
               return {

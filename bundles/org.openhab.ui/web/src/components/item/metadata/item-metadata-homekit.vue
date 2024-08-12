@@ -71,7 +71,7 @@ export default {
   },
   data () {
     return {
-      accessories: accessories,
+      accessories,
       classesDefs: accessoriesAndCharacteristics,
       multiple: !!this.metadata.value && this.metadata.value.indexOf(',') > 0,
       classSelectKey: this.$f7.utils.id(),

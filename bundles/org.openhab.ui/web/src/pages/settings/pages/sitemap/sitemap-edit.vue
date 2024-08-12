@@ -605,7 +605,7 @@ export default {
                 const row = vArray[0]
                 const column = vArray[1]
                 const command = vArray.slice(2).join(':')
-                widget.config[key][index] = { 'row': row, 'column': column, 'command': command }
+                widget.config[key][index] = { row, column, command }
               })
             }
           }

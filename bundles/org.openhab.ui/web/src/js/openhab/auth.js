@@ -50,7 +50,7 @@ export function authorize (setup) {
 export function setBasicCredentials (username, password) {
   if (username && password) {
     console.log('Using passed credentials')
-    basicCredentials = { id: username, password: password }
+    basicCredentials = { id: username, password }
     tokenInCustomHeader = true
     return Promise.resolve()
   } else if (window.OHApp && window.OHApp.getBasicCredentialsUsername) {

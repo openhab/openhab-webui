@@ -81,7 +81,7 @@ export default {
     opened (channel) {
       this.$emit('channel-opened', {
         channelId: channel.id,
-        channel: channel
+        channel
       })
     },
     isItemTypeCompatible (channelType) {

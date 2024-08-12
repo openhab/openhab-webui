@@ -124,7 +124,7 @@ export default {
         url: path,
         route: {
           component: ConfigureLinkPage,
-          path: path,
+          path,
           props: {
           },
           on: {
@@ -149,7 +149,7 @@ export default {
         url: path,
         route: {
           component: ConfigureChannelPage,
-          path: path,
+          path,
           context: {
             operation: 'edit-channel'
           },
@@ -184,7 +184,7 @@ export default {
         url: path,
         route: {
           component: CopyChannelPage,
-          path: path,
+          path,
           context: {
             operation: 'copy-channel'
           },

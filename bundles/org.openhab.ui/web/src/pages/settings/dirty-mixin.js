@@ -27,7 +27,7 @@ export default {
           function () {
             const { pushStateRoot = '', pushStateSeparator } = router.params
             let url = routeFrom.url
-            history.pushState({ 'view_main': { 'url': url } }, '', pushStateRoot + pushStateSeparator + url)
+            history.pushState({ 'view_main': { url } }, '', pushStateRoot + pushStateSeparator + url)
             reject()
             router.allowPageChange = true
           }

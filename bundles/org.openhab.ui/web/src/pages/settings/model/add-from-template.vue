@@ -496,7 +496,7 @@ export default {
   methods: {
     modelItem (item) {
       const modelItem = {
-        item: item,
+        item,
         opened: true,
         checked: true,
         checkable: true,

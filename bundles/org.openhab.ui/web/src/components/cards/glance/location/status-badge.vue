@@ -187,7 +187,7 @@ export default {
     reduce () {
       const ast = this.overrideExpression()
       if (ast) {
-        return this.map.filter((state) => expr.evaluate(ast, { state: state, Number: Number })).length
+        return this.map.filter((state) => expr.evaluate(ast, { state, Number })).length
       }
       switch (this.type) {
         case 'blinds':

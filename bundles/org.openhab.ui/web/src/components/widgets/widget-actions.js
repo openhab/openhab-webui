@@ -124,7 +124,7 @@ export const actionsMixin = {
                   text: label || cmd,
                   color: 'blue',
                   onClick: () => {
-                    this.$store.dispatch('sendCommand', { itemName: actionCommandOptionsItem, cmd: cmd })
+                    this.$store.dispatch('sendCommand', { itemName: actionCommandOptionsItem, cmd })
                       .then(() => this.showActionFeedback(prefix, actionConfig))
                   }
                 }

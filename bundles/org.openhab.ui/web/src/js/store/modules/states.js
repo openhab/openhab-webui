@@ -28,7 +28,7 @@ const handler = (context) => {
 
         // Return the previous state anyway even if it might be outdated (it will be refreshed quickly after)
         if (!context.state.itemStates[itemName]) {
-          context.commit('setItemState', { itemName: itemName, itemState: { state: '-' } })
+          context.commit('setItemState', { itemName, itemState: { state: '-' } })
         }
 
         context.dispatch('updateTrackingList')
