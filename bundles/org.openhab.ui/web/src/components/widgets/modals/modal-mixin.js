@@ -20,7 +20,7 @@ export default {
     context () {
       const component = this.page || this.widget || this.standard
       return {
-        component: component,
+        component,
         root: component,
         store: this.$store.getters.trackedItems,
         props: this.modalConfig,
@@ -76,7 +76,7 @@ export default {
       return {
         component: page,
         root: page,
-        tab: tab,
+        tab,
         props: tab.config.pageConfig,
         store: this.$store.getters.trackedItems
       }

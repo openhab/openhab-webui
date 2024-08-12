@@ -72,14 +72,14 @@ export default {
             const: ctx.const,
             vars: this.getAllVars(ctx),
             loop: ctx.loop,
-            Math: Math,
-            Number: Number,
+            Math,
+            Number,
             theme: this.$theme,
             themeOptions: this.$f7.data.themeOptions,
             device: this.$device,
             screen: this.getScreenInfo(),
-            JSON: JSON,
-            dayjs: dayjs,
+            JSON,
+            dayjs,
             user: this.$store.getters.user
           })
         } catch (e) {

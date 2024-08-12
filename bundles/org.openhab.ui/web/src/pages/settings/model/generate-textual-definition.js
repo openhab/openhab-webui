@@ -34,8 +34,8 @@ export default (thing, channelTypes, newEquipmentItem, parentGroupsForEquipment,
     newItemName += utils.normalizeLabel(suffix)
     const defaultTags = (channel.defaultTags.length > 0) ? channel.defaultTags : channelType.tags
     const newItem = {
-      channel: channel,
-      channelType: channelType,
+      channel,
+      channelType,
       name: newItemName,
       label: channel.label || channelType.label,
       groupNames: parentGroupsForPoints,

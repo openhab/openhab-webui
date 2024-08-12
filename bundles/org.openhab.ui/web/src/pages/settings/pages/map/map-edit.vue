@@ -193,7 +193,7 @@ export default {
     overlayTileProviderParam.options = overlayTileLayerProviderOptions
 
     return {
-      pageWidgetDefinition: pageWidgetDefinition,
+      pageWidgetDefinition,
       forceEditMode: true,
       page: {
         uid: 'page_' + this.$f7.utils.id(),

@@ -37,7 +37,7 @@ export default {
       data,
       processData: false,
       contentType: contentType || 'text/plain',
-      xhrFields: typeof responseType !== 'undefined' ? { responseType: responseType } : null
+      xhrFields: typeof responseType !== 'undefined' ? { responseType } : null
     }))
   },
   post (uri, data, dataType) {

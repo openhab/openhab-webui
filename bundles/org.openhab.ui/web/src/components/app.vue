@@ -310,7 +310,7 @@ export default {
         },
 
         // App routes
-        routes: routes,
+        routes,
         view: {
           // disable f7 swipeback on iOS because it's handled natively by Safari
           iosSwipeBack: !this.$device.ios,

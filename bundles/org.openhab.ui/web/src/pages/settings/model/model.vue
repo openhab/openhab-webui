@@ -319,7 +319,7 @@ export default {
     },
     modelItem (item) {
       const modelItem = {
-        item: item,
+        item,
         opened: null,
         class: (item.metadata && item.metadata.semantics) ? item.metadata.semantics.value : '',
         children: {

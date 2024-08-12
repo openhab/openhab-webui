@@ -200,7 +200,7 @@ import AddonSection from './addon-section.vue'
 
 export default {
   components: {
-    AddonSection: AddonSection
+    AddonSection
   },
   data () {
     return {

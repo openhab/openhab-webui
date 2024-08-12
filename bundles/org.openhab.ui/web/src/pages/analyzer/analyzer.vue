@@ -544,7 +544,7 @@ export default {
     },
     doSavePage (uid, overwrite) {
       let chartPage = Object.assign({
-        uid: uid
+        uid
       }, this.page)
       chartPage.config.label = this.titleDisplayText
 

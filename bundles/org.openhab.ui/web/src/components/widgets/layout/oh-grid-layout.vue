@@ -96,7 +96,7 @@ export default {
   widget: OhGridLayoutDefinition,
   components: {
     'grid-layout': () => import('vue-grid-layout').then((mod) => mod.GridLayout),
-    OhGridItem: OhGridItem
+    OhGridItem
   },
   data () {
     return {
@@ -163,7 +163,7 @@ export default {
           if (!this.layout.some((item) => item.x + item.w > x && item.x < x + size && item.y + item.h > y && item.y < y + size)) {
             const newItem = {
               component: 'oh-grid-item',
-              config: { x: x, y: y, h: size, w: size },
+              config: { x, y, h: size, w: size },
               slots: { default: [] }
             }
             this.context.component.slots['grid'].push(newItem)

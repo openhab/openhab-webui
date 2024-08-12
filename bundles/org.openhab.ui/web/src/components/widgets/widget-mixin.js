@@ -90,7 +90,7 @@ export default {
   methods: {
     childContext (component) {
       return {
-        component: component,
+        component,
         rootcomponent: this.context.root || this.context.component,
         props: this.props,
         fn: this.context.fn,

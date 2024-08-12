@@ -496,7 +496,7 @@ export default {
       }, {
         props: {
           filter: this.currentFilter,
-          filterType: filterType,
+          filterType,
           filterConfigDescriptionParameters: filterType.configDescriptionParameters
         }
       })

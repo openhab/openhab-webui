@@ -1,4 +1,3 @@
-
 if (!Array.prototype.flat) {
   // eslint-disable-next-line no-extend-native
   Array.prototype.flat = function (depth = 1) {

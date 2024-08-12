@@ -297,7 +297,7 @@ export default {
             parsed.errors.forEach((e) => {
               const message = e.message
               found.push({
-                message: message,
+                message,
                 from: (e.linePos[0]) ? { line: e.linePos[0].line - 1, ch: e.linePos[0].col - 1 } : undefined,
                 to: (e.linePos[1]) ? { line: e.linePos[1].line - 1, ch: e.linePos[1].col - 1 } : undefined
               })

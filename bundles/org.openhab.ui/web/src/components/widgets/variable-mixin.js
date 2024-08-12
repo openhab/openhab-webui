@@ -16,7 +16,7 @@ export default {
         setValue = this.getVariableKeyValue(setValue, keyArray[i])
         valueArray.push(setValue)
       }
-      return { keyArray: keyArray, valueArray: valueArray }
+      return { keyArray, valueArray }
     },
     getVariableKeyValue (obj, key) {
       if (obj === undefined) return undefined

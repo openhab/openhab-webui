@@ -172,10 +172,10 @@ export default {
         }
         const serviceId = component.config.service ? this.evaluateExpression('.serviceId', component.config.service) : undefined
         const query = {
-          serviceId: serviceId,
+          serviceId,
           starttime: seriesStartTime.toISOString(),
           endtime: seriesEndTime.subtract(1, 'millisecond').toISOString(),
-          boundary: boundary
+          boundary
         }
 
         return Promise.all([itemPromises[neededItem], this.$oh.api.get(url, query)])
