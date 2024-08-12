@@ -6,7 +6,7 @@
     "build": "gulp default"
   },
   "dependencies": {
-    "gulp": "^4.0.2",
+    "gulp": "^5.0.0",
     "gulp-eslint": "^6.0.0",
     "gulp-sass": "^5.0.0",
     "gulp-uglify": "^3.0.2",
