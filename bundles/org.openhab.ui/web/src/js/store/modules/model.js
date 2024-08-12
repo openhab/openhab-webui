@@ -189,13 +189,14 @@ const actions = {
         context.commit('setSemanticModel', model)
         return Promise.resolve()
       })
-      .catch((err) => {
-        console.error('Error while loading model: ' + err, err)
-        if (err === 'Unauthorized' || err === 401) {
+      .catch((e) => {
+        console.error('Error while loading model:')
+        console.error(e)
+        if (e === 'Unauthorized' || e === 401) {
           authorize()
         }
-        context.commit('setError', err)
-        Promise.reject()
+        context.commit('setError', e)
+        Promise.reject('Failed to load semantic model: ' + e)
       })
   }
 }

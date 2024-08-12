@@ -484,8 +484,7 @@ export default {
               ? [this.$oh.api.get('/rest/ui/components/ui:page'), this.$oh.api.get('/rest/ui/components/ui:widget')]
               : [Promise.resolve([]), Promise.resolve([])],
             dayjsLocalePromise,
-            this.$store.dispatch('loadSemantics'),
-            this.$store.dispatch('loadSemanticModel')
+            this.$store.dispatch('loadSemantics')
           ])
         }).then((data) => {
           // store the pages & widgets
