@@ -9,8 +9,6 @@ function writeWidget (widget, indent) {
         dsl += ' switchSupport'
       } else if (key === 'releaseOnly') {
         dsl += ' releaseOnly'
-      } else if (key === 'frequency') {
-        dsl += ' sendFrequency=' + widget.config[key]
       } else if (key === 'forceAsItem') {
         dsl += ' forceasitem=' + widget.config[key]
       } else if (key === 'icon') {
