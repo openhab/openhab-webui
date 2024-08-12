@@ -1,5 +1,6 @@
 <template>
   <oh-chart
+    v-if="!rerender"
     class="oh-chart-page-chart"
     :class="{ 'with-tabbar': context.tab, 'with-toolbar': context.analyzer }"
     :style="(this.$f7.data.themeOptions.dark === 'dark') ? 'background-color: black;' : 'background-color: white;'"
@@ -31,6 +32,25 @@ export default {
   components: {
     OhChart
   },
-  widget: OhChartPageDefinition
+  widget: OhChartPageDefinition,
+  data () {
+    return {
+      rerender: false
+    }
+  },
+  methods: {
+    onOrientationChange () {
+      this.rerender = true
+      this.$nextTick(() => {
+        this.rerender = false
+      })
+    }
+  },
+  mounted () {
+    window.addEventListener('orientationchange', this.onOrientationChange)
+  },
+  beforeUnmount () {
+    window.removeEventListener('orientationchange', this.onOrientationChange)
+  }
 }
 </script>
