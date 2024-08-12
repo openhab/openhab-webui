@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 import components from './modules/components'
+import model from './modules/model'
 import states from './modules/states'
 import semantics from './modules/semantics'
 import user from './modules/user'
@@ -14,6 +15,7 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   modules: {
     components,
+    model,
     semantics,
     states,
     user

@@ -479,6 +479,7 @@ export default {
             dayjsLocalePromise = (dayjsLocale) ? import('dayjs/locale/' + dayjsLocale.key + '.js').then(() => Promise.resolve(dayjsLocale)) : Promise.resolve(null)
           }
           // load the pages & widgets, only if the 'ui' endpoint exists (or empty arrays otherwise)
+          // load the semantic tags
           return Promise.all([
             ...this.$store.getters.apiEndpoint('ui')
               ? [this.$oh.api.get('/rest/ui/components/ui:page'), this.$oh.api.get('/rest/ui/components/ui:widget')]
@@ -499,6 +500,9 @@ export default {
 
           if (data[2]) dayjs.locale(data[2].key)
 
+          // load & build the semantic model
+          return this.$store.dispatch('loadSemanticModel')
+        }).then(() => {
           // finished with loading
           this.ready = true
           return Promise.resolve()

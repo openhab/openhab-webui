@@ -96,7 +96,7 @@ const ModelCardParameters = () => [
 ]
 
 export const OhLocationCardParameters = () => new WidgetDefinition('oh-location-card', 'Location Card', 'A card showing model items in a certain location')
-  .paramGroup(ModelCardParameterGroup(), ModelCardParameters())
+  .paramGroup(ModelCardParameterGroup(), [pi('item', 'Item', 'Location to display')].concat(ModelCardParameters()))
   .paramGroup(pg('glance', 'Card at-a-glance badges'), [
     pb('disableBadges', 'Disable badges', 'Do not examine items to display badges - can help with performance if you don\'t need them.'),
     pt('badges', 'Enabled badges', 'Select the badges you wish to show in the header of the card. Display all if none are selected.')
@@ -120,8 +120,14 @@ export const OhLocationCardParameters = () => new WidgetDefinition('oh-location-
       ], true, true)
   ])
 
-export const OhEquipmentCardParameters = () => new WidgetDefinition('oh-equipment-card', 'Equipment Class Card', 'A card showing model items belonging to a certain equipment class')
-  .paramGroup(ModelCardParameterGroup(), ModelCardParameters())
+export const OhEquipmentCardParameters = () => new WidgetDefinition('oh-equipment-card', 'Equipment Card', 'A card showing model items belonging to a certain equipment class')
+  .paramGroup(ModelCardParameterGroup(), [
+    pt('item', 'Item', 'Equipment class to display')
+      .o([]) // inject semantic equipment tags at runtime
+  ].concat(ModelCardParameters()))
 
 export const OhPropertyCardParameters = () => new WidgetDefinition('oh-property-card', 'Property Card', 'A card showing model items related to a certain property')
-  .paramGroup(ModelCardParameterGroup(), ModelCardParameters())
+  .paramGroup(ModelCardParameterGroup(), [
+    pt('item', 'Item', 'Property to display')
+      .o([]) // inject semantic property tags at runtime
+  ].concat(ModelCardParameters()))

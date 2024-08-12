@@ -20,7 +20,7 @@
   </model-card>
 </template>
 
-<style lang="stylus">
+<style lang="stylus" scoped>
 .property-card
   height 150px
 .property-stats
