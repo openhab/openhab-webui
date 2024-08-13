@@ -1,6 +1,6 @@
 <template>
   <oh-chart
-    v-if="!rerender"
+    ref="chart"
     class="oh-chart-page-chart"
     :class="{ 'with-tabbar': context.tab, 'with-toolbar': context.analyzer }"
     :style="(this.$f7.data.themeOptions.dark === 'dark') ? 'background-color: black;' : 'background-color: white;'"
@@ -33,17 +33,9 @@ export default {
     OhChart
   },
   widget: OhChartPageDefinition,
-  data () {
-    return {
-      rerender: false
-    }
-  },
   methods: {
     onOrientationChange () {
-      this.rerender = true
-      this.$nextTick(() => {
-        this.rerender = false
-      })
+      this.$refs.chart.forceRerender()
     }
   },
   mounted () {
