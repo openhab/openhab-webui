@@ -26,16 +26,30 @@ export const actionParams = (groupName, paramPrefix) => {
       { value: 'photos', label: 'Open photo browser' },
       { value: 'group', label: 'Group details' },
       { value: 'analyzer', label: 'Analyze item(s)' },
-      { value: 'url', label: 'External URL' },
+      { value: 'url', label: 'Navigate to external URL' },
+      { value: 'http', label: 'Send HTTP request' },
       { value: 'variable', label: 'Set Variable' }
     ]),
-    pt(paramPrefix + 'actionUrl', 'Action URL', 'URL to navigate to').c('url')
+    pt(paramPrefix + 'actionUrl', 'Action URL', 'URL to navigate to or to send HTTP request to').c('url')
       .v((value, configuration, configDescription, parameters) => {
-        return ['url'].indexOf(configuration[paramPrefix + 'action']) >= 0
+        return ['url', 'http'].indexOf(configuration[paramPrefix + 'action']) >= 0
       }),
     pb(paramPrefix + 'actionUrlSameWindow', 'Open in same tab/window', 'Open the URL in the same tab/window instead of a new one. This will exit the app.')
       .v((value, configuration, configDescription, parameters) => {
         return ['url'].indexOf(configuration[paramPrefix + 'action']) >= 0
+      }),
+    po(paramPrefix + 'actionHttpMethod', 'HTTP Method', 'HTTP method to use for the request', [
+      { value: 'GET', label: 'GET' },
+      { value: 'POST', label: 'POST' },
+      { value: 'PUT', label: 'PUT' },
+      { value: 'DELETE', label: 'DELETE' }
+    ])
+      .v((value, configuration, configDescription, parameters) => {
+        return ['http'].indexOf(configuration[paramPrefix + 'action']) >= 0
+      }),
+    pt(paramPrefix + 'actionHttpBody', 'HTTP Body', 'Body to send with the request')
+      .v((value, configuration, configDescription, parameters) => {
+        return ['http'].indexOf(configuration[paramPrefix + 'action']) >= 0
       }),
     pi(paramPrefix + 'actionItem', 'Action Item', 'Item to perform the action on')
       .v((value, configuration, configDescription, parameters) => {
@@ -119,7 +133,7 @@ export const actionParams = (groupName, paramPrefix) => {
     }),
     pt(paramPrefix + 'actionFeedback', 'Action feedback', 'Shows a toast popup when the action has been executed. Can either be a text to show or a JSON object including some of the <a class="external text-color-blue" target="_blank" href="https://framework7.io/docs/toast.html#toast-parameters">supported parameters</a>').a()
       .v((value, configuration, configDescription, parameters) => {
-        return ['command', 'toggle', 'options', 'rule'].indexOf(configuration[paramPrefix + 'action']) >= 0
+        return ['command', 'toggle', 'options', 'rule', 'http'].indexOf(configuration[paramPrefix + 'action']) >= 0
       }),
     pt(paramPrefix + 'actionVariable', 'Variable', 'The variable name to set')
       .v((value, configuration, configDescription, parameters) => {
