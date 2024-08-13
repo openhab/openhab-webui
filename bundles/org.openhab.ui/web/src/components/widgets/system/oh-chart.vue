@@ -1,5 +1,5 @@
 <template>
-  <oh-chart-component :context="this.context" />
+  <oh-chart-component ref="chart" :context="this.context" />
 </template>
 
 <script>
@@ -11,6 +11,11 @@ export default {
   components: {
     'oh-chart-component': () => import(/* webpackChunkName: "oh-chart-component" */ './oh-chart-component.vue')
   },
-  widget: OhChartDefinition
+  widget: OhChartDefinition,
+  methods: {
+    forceRerender () {
+      this.$refs.chart.forceRerender()
+    }
+  }
 }
 </script>

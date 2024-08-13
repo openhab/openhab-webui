@@ -130,6 +130,12 @@ export default {
         }
       })
       this.calendarPicker.open()
+    },
+    forceRerender () {
+      this.ready = false
+      this.$nextTick(() => {
+        this.ready = true
+      })
     }
   }
 }
