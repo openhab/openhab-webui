@@ -267,6 +267,17 @@ export const actionsMixin = {
           const actionUrlSameWindow = actionConfig[prefix + 'actionUrlSameWindow']
           window.open(actionUrl, (actionUrlSameWindow) ? '_top' : '_blank')
           break
+        case 'http':
+          const actionHttpUrl = actionConfig[prefix + 'actionUrl']
+          const actionHttpMethod = actionConfig[prefix + 'actionHttpMethod'] || 'GET'
+          const actionHttpBody = actionConfig[prefix + 'actionHttpBody']
+          fetch(actionHttpUrl, {
+            mode: 'no-cors',
+            method: actionHttpMethod,
+            body: actionHttpBody
+          }).then(() => this.showActionFeedback(prefix, actionConfig))
+            .catch((e) => this.showActionFeedback(prefix, actionConfig, `Failed to perform HTTP request: ${e.message}`))
+          break
         case 'variable':
           const actionVariable = actionConfig[prefix + 'actionVariable']
           let actionVariableValue = actionConfig[prefix + 'actionVariableValue']
