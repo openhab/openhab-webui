@@ -49,7 +49,7 @@ export const actionsMixin = {
           })
         } // else use dialog
         return new Promise((resolve, reject) => {
-          this.$f7.dialog.confirm(confirmConfig.text, confirmConfig.title, () => resolve(), () => reject()).open()
+          this.$f7.dialog.confirm(confirmConfig.text, confirmConfig.title || 'openHAB', () => resolve(), () => reject()).open()
         })
       }
       return Promise.resolve()
