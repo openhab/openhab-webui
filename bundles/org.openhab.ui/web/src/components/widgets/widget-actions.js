@@ -47,7 +47,7 @@ export const actionsMixin = {
               ]
             }).open()
           })
-        } // else use confirm
+        } // else use dialog
         return new Promise((resolve, reject) => {
           this.$f7.dialog.confirm(confirmConfig.text, confirmConfig.title, () => resolve(), () => reject()).open()
         })
