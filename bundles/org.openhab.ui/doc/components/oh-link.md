@@ -246,7 +246,7 @@ Link performing an action
 </PropBlock>
 <PropBlock type="TEXT" name="actionConfirmation" label="Action Confirmation">
   <PropDescription>
-    Shows a confirm popup or sheet to ask for confirmation before the action is executed. Can either be a text to show or a JSON object <code>{ type: "sheet", text: "Confirm", color: "green" }</code> or <code>{ type: "dialog", title: "Confirm", text: "Are you sure?" }</code>
+    Shows a dialog or sheet to ask for confirmation before the action is executed. Can either be a text to show in the dialog or a JSON object <code>{ type: "dialog", title: "Confirm", text: "Are you sure?" }</code> or <code>{ type: "sheet", text: "Confirm", color: "green" }</code>
   </PropDescription>
 </PropBlock>
 <PropBlock type="TEXT" name="actionFeedback" label="Action Feedback">
