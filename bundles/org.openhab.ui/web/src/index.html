@@ -21,7 +21,9 @@
     * allow loading media from any source, and data:, blob: and media: URIs
     * allow connecting (through fetch(), XMLHttpRequest, WebSocket etc.) to the same origin, raw.githubusercontent.com (add-on logos etc.), Iconify icon sources, and any source
   -->
+  <% if (process.env.NODE_ENV !== 'development') { %>
   <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src * data:; media-src * data: blob: media:; connect-src 'self' raw.githubusercontent.com api.iconify.design api.unisvg.com api.simplesvg.com *;">
+  <% } %>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui, viewport-fit=cover">
 
   <meta name="theme-color" content="#e64a19">
