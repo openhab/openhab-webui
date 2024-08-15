@@ -13,13 +13,18 @@
   overflow hidden
   top calc(var(--f7-safe-area-top) + var(--f7-navbar-height))
   width 100%
-  height calc(100dvh - var(--f7-safe-area-top) - var(--f7-navbar-height)) !important
+  --oh-chart-page-height calc(100% - var(--f7-safe-area-top) - var(--f7-safe-area-bottom) - var(--f7-navbar-height))
+  height var(--oh-chart-page-height) !important
   &.with-tabbar
-    height calc(100dvh - var(--f7-safe-area-top) - var(--f7-safe-area-bottom) - var(--f7-navbar-height) - var(--f7-tabbar-labels-height)) !important
+    height calc(var(--oh-chart-page-height) - var(--f7-tabbar-labels-height)) !important
   &.with-toolbar
-    height calc(100dvh - var(--f7-safe-area-top) - var(--f7-safe-area-bottom) - var(--f7-navbar-height) - var(--f7-toolbar-height)) !important
+    height calc(var(--oh-chart-page-height) - var(--f7-toolbar-height)) !important
   &.sheet-opened
-    height calc(100dvh - var(--f7-safe-area-top) - var(--f7-safe-area-bottom) - var(--f7-navbar-height) - var(--f7-sheet-height)) !important
+    height calc(var(--oh-chart-page-height) - var(--f7-sheet-height)) !important
+
+.device-ios /* fix chart rendering issues on iOS >= 17.4 */
+  .oh-chart-page-chart
+    --oh-chart-page-height calc(100dvh - var(--f7-safe-area-top) - var(--f7-safe-area-bottom) - var(--f7-navbar-height)) /* use dvh because with % the height is calculated to 0px and ECharts fails to render */
 </style>
 
 <script>
@@ -39,10 +44,14 @@ export default {
     }
   },
   mounted () {
-    window.addEventListener('orientationchange', this.onOrientationChange)
+    if (this.$device.ios) {
+      window.addEventListener('orientationchange', this.onOrientationChange)
+    }
   },
   beforeUnmount () {
-    window.removeEventListener('orientationchange', this.onOrientationChange)
+    if (this.$device.ios) {
+      window.removeEventListener('orientationchange', this.onOrientationChange)
+    }
   }
 }
 </script>

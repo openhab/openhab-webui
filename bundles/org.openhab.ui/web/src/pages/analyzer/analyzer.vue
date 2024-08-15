@@ -235,9 +235,6 @@
   --f7-theme-color-rgb var(--f7-color-blue-rgb)
   --f7-theme-color-tint var(--f7-color-blue-tint)
   z-index 11000
-.analyzer-content
-  .analyzer-chart
-    position fixed !important
 .md .analyzer-controls .toolbar .link
   width 28%
 </style>
