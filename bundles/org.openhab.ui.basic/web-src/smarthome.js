@@ -2313,10 +2313,12 @@
 		_t.input = _t.parentNode.querySelector("input");
 		_t.itemType = _t.parentNode.getAttribute(o.itemTypeAttribute);
 		_t.inputHint = _t.parentNode.getAttribute(o.inputHintAttribute);
-		_t.itemState = _t.parentNode.getAttribute(o.itemStateAttribute);
-		_t.unit = _t.parentNode.getAttribute(o.unitAttribute);
+		_t.itemState = smarthome.UI.unEscapeHtml(_t.parentNode.getAttribute(o.itemStateAttribute));
+		_t.unit = smarthome.UI.unEscapeHtml(_t.parentNode.getAttribute(o.unitAttribute));
 		_t.prefixField = _t.parentNode.parentNode.querySelector(".mdl-form__input-prefix");
 		_t.postfixField = _t.parentNode.parentNode.querySelector(".mdl-form__input-postfix");
+		_t.prefix = _t.prefixField ? smarthome.UI.unEscapeHtml(_t.prefixField.innerHTML) : null;
+		_t.postfix = _t.postfixField ? smarthome.UI.unEscapeHtml(_t.postfixField.innerHTML) : null;
 		_t.unitField =  _t.parentNode.parentNode.querySelector(".mdl-form__input-unit");
 		_t.verify = undefined;
 
@@ -2370,10 +2372,8 @@
 		}
 
 		function cleanValue(value) {
-			var prefix = _t.prefixField !== null ? _t.prefixField.innerHTML : "";
-			var postfix = _t.postfixField !== null ? _t.postfixField.innerHTML : "";
-			var newValue = value.startsWith(prefix) ? value.substr(prefix.length) : value;
-			newValue = value.endsWith(postfix) ? newValue.substr(0, newValue.lastIndexOf(postfix)) : newValue;
+			var newValue = (_t.prefix && value.startsWith(_t.prefix)) ? value.substr(_t.prefix.length) : value;
+			newValue = (_t.postfix && value.endsWith(_t.postfix)) ? newValue.substr(0, newValue.lastIndexOf(_t.postfix)) : newValue;
 			return newValue.trim();
 		}
 
@@ -2421,7 +2421,7 @@
 					date = ((lastItemState !== "NULL") && (lastItemState !== "UNDEF")) ? lastItemState.split("T")[0] : (new Date(0)).toISOString();
 					lastValue = date.split("T")[0] + "T" + lastValue;
 				}
-				_t.setValuePrivate(lastValue, lastItemState);
+				_t.setValuePrivate(smarthome.UI.escapeHtml(lastValue), lastItemState);
 			} else {
 				_t.parentNode.dispatchEvent(createEvent("control-change", {
 					item: _t.item,
@@ -2430,7 +2430,7 @@
 				// We don't know if the sent value is a valid command and will update the item state.
 				// If we don't receive an update in 1s, revert to the previous value.
 				_t.verify = new WaitingTimer(function() {
-					_t.setValuePrivate(lastValue);
+					_t.setValuePrivate(smarthome.UI.escapeHtml(lastValue));
 				}, 1000);
 				_t.verify.wait();
 			}
@@ -2441,7 +2441,7 @@
 				_t.verify.cancel();
 			}
 
-			var newValue = cleanValue(value);
+			var newValue = cleanValue(smarthome.UI.unEscapeHtml(value));
 			var undefValue = "";
 			if (itemState === undefined) {
 				undefValue = lastUndef;
@@ -2768,6 +2768,13 @@
 			}
 
 			return escapedText;
+		};
+
+		// See discussion at https://stackoverflow.com/questions/1912501/unescape-html-entities-in-javascript
+		_t.unEscapeHtml = function(html) {
+			var text = document.createElement("textarea");
+			text.innerHTML = html;
+			return text.value;
 		};
 
 		_t.setTitle = function(title) {
