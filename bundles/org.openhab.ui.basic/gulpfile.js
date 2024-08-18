@@ -12,7 +12,7 @@
 		sources = {
 			js: [ "web-src/smarthome.js", "web-src/static.js", "web-src/settings.js" ],
 			sass: "web-src/smarthome.scss",
-			html: {
+			snippets: {
 				all: "snippets-src/**",
 				versioned: [ "snippets-src/main.html", "snippets-src/main_static.html" ]
 			}
@@ -52,19 +52,19 @@
 			.pipe(gulp.dest("./src/main/resources/web"));
 	});
 
-	gulp.task("htmlAll", function() {
-		return gulp.src(sources.html.all)
+	gulp.task("snippetsAll", function() {
+		return gulp.src(sources.snippets.all)
 			.pipe(gulp.dest("./src/main/resources/snippets"))
 	});
 
-	gulp.task("htmlVersioned", function() {
+	gulp.task("snippetsVersioned", function() {
 		// Convert ISO String "2011-10-05T14:48:00.000Z" -> "YYYYMMDDHHmm"
 		var buildVersion = new Date().toISOString().slice(0, 16).replaceAll(/[T:-]/g, "");
-		return gulp.src(sources.html.versioned)
+		return gulp.src(sources.snippets.versioned)
 			.pipe(replace("%version%", buildVersion))
 			.pipe(gulp.dest("./src/main/resources/snippets"))
 	});
 
 	gulp.task("default", gulp.parallel("css", "copyFontLibs", gulp.series("eslint", "js"), 
-		gulp.series("htmlAll", "htmlVersioned")));
+		gulp.series("snippetsAll", "snippetsVersioned")));
 })();
