@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "gulp": "^4.0.2",
+    "gulp-replace": "^1.1.4",
     "gulp-eslint": "^6.0.0",
     "gulp-sass": "^5.0.0",
     "gulp-uglify": "^3.0.2",
