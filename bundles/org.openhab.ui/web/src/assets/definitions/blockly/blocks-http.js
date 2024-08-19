@@ -29,7 +29,7 @@ export default function (f7, isGraalJs) {
         .setCheck('String')
         .appendField(imageTimeoutField, 'imgTimeout')
         .appendField(imageHeaderField, 'imgHeader')
-        .appendField(imageQueryField, 'imgHeader')
+        .appendField(imageQueryField, 'imgQuery')
         .appendField('send', 'methodField')
         .appendField(new Blockly.FieldDropdown([
           ['HttpGetRequest', 'HttpGetRequest'],
