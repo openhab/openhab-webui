@@ -193,11 +193,12 @@ public class CometVisuServlet extends HttpServlet {
 
         // check services folder if a file exists there
         if (requestedFile != null) {
-            if (requestedFile.endsWith("/")) {
+            if (requestedFile.endsWith(File.separator)) {
                 requestedFile = requestedFile.substring(0, requestedFile.length() - 1);
             }
             file = new File(userFileFolder, URLDecoder.decode(requestedFile, StandardCharsets.UTF_8));
-            if (!file.getCanonicalPath().startsWith(userFileFolder.getCanonicalPath() + File.separator)) {
+            if (!file.getCanonicalPath().startsWith(userFileFolder.getCanonicalPath())
+                    && !file.getCanonicalPath().equals(userFileFolder.getCanonicalPath())) {
                 return null;
             }
         }
@@ -206,7 +207,8 @@ public class CometVisuServlet extends HttpServlet {
             file = requestedFile != null
                     ? new File(rootFolder, URLDecoder.decode(requestedFile, StandardCharsets.UTF_8))
                     : rootFolder;
-            if (!file.getCanonicalPath().startsWith(rootFolder.getCanonicalPath() + File.separator)) {
+            if (!file.getCanonicalPath().startsWith(rootFolder.getCanonicalPath())
+                    && !file.getCanonicalPath().equals(rootFolder.getCanonicalPath())) {
                 return null;
             }
         }
@@ -455,7 +457,8 @@ public class CometVisuServlet extends HttpServlet {
         } else {
             processFile = file;
         }
-        if (!processFile.getCanonicalPath().startsWith(rootFolder.getCanonicalPath() + File.separator)) {
+        if (!processFile.getCanonicalPath().startsWith(rootFolder.getCanonicalPath() + File.separator)
+                && !processFile.getCanonicalPath().startsWith(userFileFolder.getCanonicalPath() + File.separator)) {
             response.sendError(HttpServletResponse.SC_NOT_ACCEPTABLE);
             return;
         }
