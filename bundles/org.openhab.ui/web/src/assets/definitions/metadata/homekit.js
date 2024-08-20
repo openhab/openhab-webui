@@ -243,9 +243,9 @@ export const accessories = {
     { label: 'Name', mandatory: false }
   ],
   'Thermostat': [
-    { label: 'CurrentHeatingCoolingMode', mandatory: true },
     { label: 'CurrentTemperature', mandatory: true },
     { label: 'TargetHeatingCoolingMode', mandatory: true },
+    { label: 'CurrentHeatingCoolingMode', mandatory: false },
     { label: 'TargetTemperature', mandatory: false },
     { label: 'CoolingThresholdTemperature', mandatory: false },
     { label: 'HeatingThresholdTemperature', mandatory: false },
