@@ -1,6 +1,8 @@
 node_modules
 node
 npm_cache
+src/main/resources/snippets/*
+!src/main/resources/snippets/readme.txt
 src/main/resources/web/smarthome.css
 src/main/resources/web/smarthome.js
 src/main/resources/web/settings.js
