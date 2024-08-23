@@ -27,7 +27,7 @@
 	    };
 	
 	gulp.task("copyFontLibs", function () {
-	    return gulp.src(paths.FontLibs)
+	    return gulp.src(paths.FontLibs, { encoding: false })
 	        .pipe(gulp.dest('./src/main/resources/web/fonts'));
 	});
 
