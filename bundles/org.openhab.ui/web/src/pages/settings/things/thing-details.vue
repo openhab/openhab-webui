@@ -353,12 +353,12 @@ export default {
           let savedThingClone = cloneDeep(this.savedThing)
 
           // check if the configuration has changed between the thing and the original/saved version
-          delete thingClone.statusInfo
-          delete savedThingClone.statusInfo
           this.configDirty = !fastDeepEqual(thingClone.configuration, savedThingClone.configuration)
 
           // check if the rest of the thing has changed between the thing and the original/saved version
+          delete thingClone.statusInfo
           delete thingClone.configuration
+          delete savedThingClone.statusInfo
           delete savedThingClone.configuration
           this.thingDirty = !fastDeepEqual(thingClone, savedThingClone)
         }
