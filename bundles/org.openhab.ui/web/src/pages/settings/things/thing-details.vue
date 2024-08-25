@@ -346,11 +346,17 @@ export default {
           // create rule object clone in order to be able to delete status part
           // which can change from eventsource but doesn't mean a rule modification
           let thingClone = cloneDeep(this.thing)
-          delete thingClone.statusInfo
-          delete this.savedThing.statusInfo
+          let savedThingClone = cloneDeep(this.savedThing)
 
-          this.configDirty = !fastDeepEqual(thingClone.configuration, this.savedThing.configuration)
-          this.thingDirty = !fastDeepEqual(thingClone, this.savedThing)
+          // check if the configuration has changed between the thing and the original/saved version
+          this.configDirty = !fastDeepEqual(thingClone.configuration, savedThingClone.configuration)
+
+          // check if the rest of the thing has changed between the thing and the original/saved version
+          delete thingClone.statusInfo
+          delete thingClone.configuration
+          delete savedThingClone.statusInfo
+          delete savedThingClone.configuration
+          this.thingDirty = !fastDeepEqual(thingClone, savedThingClone)
         }
       },
       deep: true
