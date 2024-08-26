@@ -1,10 +1,10 @@
 <template>
   <f7-block class="developer-sidebar">
     <f7-row :inner="false" v-if="!$theme.md">
-      <f7-searchbar style="width: 100%" custom-search placeholder="Search and Pin" :backdrop="false" @searchbar:search="search" @searchbar:clear="clearSearch" />
+      <f7-searchbar ref="searchbar" style="width: 100%" custom-search placeholder="Search and Pin" :backdrop="false" @searchbar:search="search" @searchbar:clear="clearSearch" />
     </f7-row>
-    <f7-row style="width: 100%" :inner="false" v-if="$theme.md">
-      <f7-searchbar custom-search placeholder="Search and Pin" :backdrop="false" @searchbar:search="search" @searchbar:clear="clearSearch" />
+    <f7-row style="width: 100%" :inner="false" v-else>
+      <f7-searchbar ref="searchbar" custom-search placeholder="Search and Pin" :backdrop="false" @searchbar:search="search" @searchbar:clear="clearSearch" />
     </f7-row>
     <div v-if="!searching" class="developer-sidebar-content">
       <div v-if="activeToolTab === 'pin'">
@@ -450,6 +450,9 @@ export default {
   },
   mounted () {
     this.startEventSource()
+    setTimeout(() => {
+      this.$refs.searchbar.f7Searchbar.$inputEl.focus()
+    }, 200)
   },
   beforeDestroy () {
     this.stopEventSource()
