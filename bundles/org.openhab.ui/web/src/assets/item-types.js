@@ -12,6 +12,9 @@ export const ArithmeticFunctions = [{
   name: 'AVG',
   value: 'AVG'
 }, {
+  name: 'MEDIAN',
+  value: 'MEDIAN'
+}, {
   name: 'MAX',
   value: 'MAX'
 }, {
