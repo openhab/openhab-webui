@@ -450,9 +450,11 @@ export default {
   },
   mounted () {
     this.startEventSource()
-    setTimeout(() => {
-      this.$refs.searchbar.f7Searchbar.$inputEl.focus()
-    }, 200)
+    this.$nextTick(() => {
+      if (this.$device.desktop && this.$refs.searchbar) {
+        this.$refs.searchbar.f7Searchbar.$inputEl.focus()
+      }
+    })
   },
   beforeDestroy () {
     this.stopEventSource()
