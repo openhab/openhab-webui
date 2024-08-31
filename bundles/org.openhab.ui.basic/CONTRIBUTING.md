@@ -1,6 +1,6 @@
 ## Contributing
 
-You need NodeJS 18.17.0 or later and npm 9.8.1 or later installed.
+You need NodeJS 20.16.0 or later and npm 10.8.1 or later installed.
 
 Javascript linting, compressing and LESS compilation is handled through Gulp.
 Therefore, please run `gulp` instead of changing compressed CSS/JS manually.
