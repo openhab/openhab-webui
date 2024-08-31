@@ -6,13 +6,13 @@
     "build": "gulp default"
   },
   "dependencies": {
-    "gulp": "^4.0.2",
+    "gulp": "^5.0.0",
     "gulp-replace": "^1.1.4",
     "gulp-eslint": "^6.0.0",
-    "gulp-sass": "^5.0.0",
+    "gulp-sass": "^5.1.0",
     "gulp-uglify": "^3.0.2",
     "material-icons": "^1.13.12",
     "framework7-icons": "^5.0.5",
-    "node-sass": "^8.0.0"
+    "node-sass": "^9.0.0"
   }
 }
