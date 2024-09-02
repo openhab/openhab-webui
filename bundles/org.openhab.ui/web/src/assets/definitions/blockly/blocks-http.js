@@ -30,14 +30,12 @@ export default function (f7, isGraalJs) {
         .appendField(imageTimeoutField, 'imgTimeout')
         .appendField(imageHeaderField, 'imgHeader')
         .appendField(imageQueryField, 'imgQuery')
-        .appendField('send', 'methodField')
         .appendField(new Blockly.FieldDropdown([
-          ['HttpGetRequest', 'HttpGetRequest'],
-          ['HttpPostRequest', 'HttpPostRequest'],
-          ['HttpPutRequest', 'HttpPutRequest'],
-          ['HttpDeleteRequest', 'HttpDeleteRequest']
+          ['send HTTP GET request to', 'HttpGetRequest'],
+          ['send HTTP POST request to', 'HttpPostRequest'],
+          ['send HTTP PUT request to', 'HttpPutRequest'],
+          ['send HTTP DELETE request to', 'HttpDeleteRequest']
         ], this.handleRequestTypeSelection.bind(this)), 'requestType')
-        .appendField('to')
 
       this.setInputsInline(false)
       this.setOutput(true, null)
