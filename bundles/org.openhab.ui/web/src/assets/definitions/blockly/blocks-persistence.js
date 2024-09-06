@@ -139,6 +139,10 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
             .appendField('skip same ')
             .setAlign(Blockly.ALIGN_RIGHT)
             .setCheck(['Boolean'])
+          this.getInput('skipPrevious').setShadowDom(
+            Blockly.utils.xml.textToDom(`<shadow type="logic_boolean">
+              <field name="BOOL">FALSE</field>
+            </shadow>`))
         }
       } else {
         if (this.getInput('skipPrevious')) {
