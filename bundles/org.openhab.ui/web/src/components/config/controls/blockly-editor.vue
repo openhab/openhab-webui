@@ -1072,9 +1072,9 @@
               </shadow>
             </value>
             <value name="parameters">
-              <block type="dicts_create_with">
+              <shadow type="dicts_create_with">
                 <mutation items="0" />
-              </block>
+              </shadow>
             </value>
           </block>
           <sep gap="48" />
