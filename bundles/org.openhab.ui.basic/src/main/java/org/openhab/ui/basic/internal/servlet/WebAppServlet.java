@@ -13,7 +13,6 @@
 package org.openhab.ui.basic.internal.servlet;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -118,19 +117,13 @@ public class WebAppServlet extends HttpServlet {
     }
 
     private void showSitemapList(ServletResponse res) throws IOException, RenderException {
-        PrintWriter resWriter;
-        resWriter = res.getWriter();
-        resWriter.append(renderer.renderSitemapList(sitemapProviders));
-
         res.setContentType(CONTENT_TYPE);
+        res.getWriter().append(renderer.renderSitemapList(sitemapProviders));
     }
 
     private void showSettings(ServletResponse res) throws IOException, RenderException {
-        PrintWriter resWriter;
-        resWriter = res.getWriter();
-        resWriter.append(renderer.renderSettings());
-
         res.setContentType(CONTENT_TYPE);
+        res.getWriter().append(renderer.renderSettings());
     }
 
     @Override
