@@ -461,11 +461,6 @@ export default {
     if (this.addThingAutocomplete) this.addThingAutocomplete.destroy()
   },
   methods: {
-    itemContext (item) {
-      return {
-
-      }
-    },
     addItemsFromModel (value) {
       this.$set(this.pinnedObjects, 'items', [...value])
     },
@@ -789,7 +784,13 @@ export default {
       })
     },
     runRuleNow (rule) {
-      if (rule.status === 'RUNNING') return
+      if (rule.status.status === 'RUNNING' || rule.status.status === 'UNINITIALIZED') {
+        return this.$f7.toast.create({
+          text: `Rule cannot be run ${(rule.status.status === 'RUNNING') ? 'while already running, please wait' : 'if it is uninitialized'}!`,
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
+      }
       this.$f7.toast.create({
         text: 'Running rule',
         destroyOnClose: true,
