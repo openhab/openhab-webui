@@ -36,7 +36,7 @@ export default function (f7, libraryDefinitions, data, isGraalJs) {
   defineTimerBlocks(f7, isGraalJs)
   defineValueStorageBlocks(f7, isGraalJs)
   defineEphemerisBlocks(f7, isGraalJs)
-  defineScriptsBlocks(f7, isGraalJs)
+  defineScriptsBlocks(f7, isGraalJs, data.transformationServices)
   definePersistenceBlocks(f7, isGraalJs, data.persistenceServices)
   defineColorBlocks(f7, isGraalJs)
   defineTextBlocks(f7, isGraalJs)

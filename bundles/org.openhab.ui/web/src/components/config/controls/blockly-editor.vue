@@ -1072,9 +1072,9 @@
               </shadow>
             </value>
             <value name="parameters">
-              <block type="dicts_create_with">
+              <shadow type="dicts_create_with">
                 <mutation items="0" />
-              </block>
+              </shadow>
             </value>
           </block>
           <sep gap="48" />
@@ -1200,6 +1200,7 @@ export default {
       scripts: [],
       rules: [],
       persistenceServices: [],
+      transformationServices: [],
       loading: true,
       ready: false
     }
@@ -1229,7 +1230,8 @@ export default {
         this.$oh.api.get('/rest/audio/sinks'),
         this.$oh.api.get('/rest/voice/voices'),
         this.libraryDefinitions ? Promise.resolve(this.libraryDefinitions) : this.$oh.api.get('/rest/ui/components/ui:blocks'),
-        this.$oh.api.get('/rest/persistence')
+        this.$oh.api.get('/rest/persistence'),
+        this.$oh.api.get('/rest/transformations/services')
       ]
       Promise.all(dataPromises)
         .then((data) => {
@@ -1266,6 +1268,12 @@ export default {
             return labelA.localeCompare(labelB)
           })
 
+          this.transformationServices = data[5].sort((a, b) => {
+            const labelA = a
+            const labelB = b
+            return labelA.localeCompare(labelB)
+          })
+
           this.initBlockly(this.blockLibraries)
         })
         .catch((err, status) => {
@@ -1276,7 +1284,8 @@ export default {
       defineOHBlocks(this.$f7, libraryDefinitions, {
         sinks: this.sinks,
         voices: this.voices,
-        persistenceServices: this.persistenceServices
+        persistenceServices: this.persistenceServices,
+        transformationServices: this.transformationServices
       }, this.isGraalJs)
       this.addLibraryToToolbox(libraryDefinitions || [])
 

@@ -9,7 +9,7 @@ import Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript.js'
 import { addOSGiService } from './utils.js'
 
-export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
+export default function defineOHBlocks_Scripts (f7, isGraalJs, transformationServices, scripts) {
   /*
   * Calls a script that is provided in openHABs scripts folder
   * Blockly part
@@ -111,8 +111,9 @@ export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
         .appendField('transform')
       this.appendValueInput('function')
         .appendField('apply')
-        .appendField(new Blockly.FieldTextInput('MAP'), 'type')
+        .appendField(new Blockly.FieldDropdown(transformationOptions()), 'type')
         .appendField('with')
+        .setCheck(null)
 
       this.setInputsInline(false)
       this.setOutput(true, null)
@@ -122,12 +123,14 @@ export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
       this.setTooltip(function () {
         const type = thisBlock.getFieldValue('type')
         switch (type) {
+          case '':
+            return 'select from the installed transformations. The list is empty if no transformation addons have been installed.'
           case 'MAP':
-            return 'transforms an input via a map file. Specify the file as the function.\nREGEX and JSONPATH are also valid.'
+            return 'transforms an input via a map file. Specify the file as the function.'
           case 'REGEX':
-            return 'transforms / filters an input by applying the provided regular expression.\nMAP and JSONPATH are also valid.'
+            return 'transforms / filters an input by applying the provided regular expression.'
           case 'JSONPATH':
-            return 'transforms / filters a JSON input by executing the provided JSONPath query.\nMAP and REGEX are also valid.'
+            return 'transforms / filters a JSON input by executing the provided JSONPath query.'
           default:
             return 'transforms the input with the ' + type + ' transformation.'
         }
@@ -137,6 +140,13 @@ export default function defineOHBlocks_Scripts (f7, isGraalJs, scripts) {
         return 'https://www.openhab.org/docs/configuration/blockly/rules-blockly-run-and-process.html#transform-values-via-map-regex-or-jsonpath-and-others' + type.toLowerCase() + '/'
       })
     }
+  }
+
+  function transformationOptions () {
+    if (transformationServices && transformationServices.length > 0) {
+      return transformationServices.map((service) => [service, service])
+    }
+    return [['', '']]
   }
 
   /*

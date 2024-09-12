@@ -62,6 +62,9 @@ export default function defineOHBlocks_Timers (f7, isGraalJs) {
           .appendField('timer')
         this.appendValueInput('context')
           .appendField('with context')
+        this.getInput('context').setShadowDom(
+          Blockly.utils.xml.textToDom(`<shadow type="oh_logic_undefined">
+          </shadow>`))
       } else {
         tn.appendField('do with timer')
       }
@@ -152,6 +155,9 @@ export default function defineOHBlocks_Timers (f7, isGraalJs) {
           .appendField('timer')
         this.appendValueInput('context')
           .appendField('with context')
+        this.getInput('context').setShadowDom(
+          Blockly.utils.xml.textToDom(`<shadow type="oh_logic_undefined">
+          </shadow>`))
       } else {
         tn.appendField('do with timer')
       }
