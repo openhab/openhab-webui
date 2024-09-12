@@ -26,8 +26,8 @@
       <f7-toolbar v-if="!createMode" position="bottom">
         <span class="display-flex flex-direction-row align-items-center">
           <f7-link :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'" :tooltip="((rule.status.statusDetail === 'DISABLED') ? 'Enable' : 'Disable') + (($device.desktop) ? ' (Ctrl-D)' : '')" icon-ios="f7:pause_circle" icon-md="f7:pause_circle" icon-aurora="f7:pause_circle" color="orange" @click="toggleDisabled" />
-          <f7-link v-if="!$theme.aurora" :tooltip="'Run Now' + (($device.desktop) ? ' (Ctrl-R)' : '')" icon-ios="f7:play_round" icon-md="f7:play_round" icon-aurora="f7:play_round" color="blue" @click="runNow" />
-          <f7-link v-else class="margin-left" :text="($device.desktop) ? 'Run Now (Ctrl-R)' : ''" icon-ios="f7:play_round" icon-md="f7:play_round" icon-aurora="f7:play_round" color="blue" @click="runNow" />
+          <f7-link v-if="!$theme.aurora" :tooltip="'Run Now' + (($device.desktop) ? ' (Ctrl-R)' : '')" icon-ios="f7:play_round" icon-md="f7:play_round" icon-aurora="f7:play_round" :color="(rule.status.status === 'IDLE') ? 'blue' : 'gray'" @click="runNow" />
+          <f7-link v-else class="margin-left" :text="($device.desktop) ? 'Run Now (Ctrl-R)' : ''" icon-ios="f7:play_round" icon-md="f7:play_round" icon-aurora="f7:play_round" :color="(rule.status.status === 'IDLE') ? 'blue' : 'gray'" @click="runNow" />
           <f7-chip class="margin-left" v-if="currentModule && currentModule.configuration.script"
                    :text="ruleStatusBadgeText(rule.status)"
                    :color="ruleStatusBadgeColor(rule.status)"
@@ -110,9 +110,9 @@
               </f7-link>
             </div>
           </f7-toolbar>
-          <f7-block class="block-narrow">
-            <script-general-settings :createMode="createMode" :rule="rule" :module="currentModule" :module-type="scriptModuleType" :module-types="moduleTypes" :isScriptRule="isScriptRule" :mode="mode" :languages="languages" @newLanguage="changeLanguage" />
-            <f7-col v-if="editable && isScriptRule">
+          <script-general-settings :createMode="createMode" :rule="rule" :module="currentModule" :module-type="scriptModuleType" :module-types="moduleTypes" :isScriptRule="isScriptRule" :mode="mode" :languages="languages" @newLanguage="changeLanguage" />
+          <f7-block class="block-narrow" v-if="editable && isScriptRule">
+            <f7-col>
               <f7-list>
                 <f7-list-button color="red" @click="deleteRule">
                   Remove Script
