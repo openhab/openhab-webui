@@ -1375,8 +1375,8 @@
 				// Start from the maximum width (limited by `mdl-form__buttons-multiline.max-width`),
 				// then shrink it down to the minimum without causing additional wrapping.
 				var buttons = _t.parentNode;
-				var width = buttons.parentElement.offsetWidth + 100; // start wider than max-width allows
-				buttons.style.width = width + "px";
+				buttons.style.width = "100%";
+				var width = buttons.offsetWidth;
 				var height = buttons.offsetHeight;
 				while (buttons.offsetHeight === height && width >= maxButtonWidth) {
 					buttons.style.width = --width + "px";
