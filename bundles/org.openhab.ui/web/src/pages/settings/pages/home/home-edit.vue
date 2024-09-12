@@ -45,12 +45,14 @@
             </f7-col>
           </f7-block>
 
-          <f7-block>
+          <f7-block class="no-margin-bottom">
             <f7-segmented strong tag="p">
               <f7-button v-for="tab in modelTabs" :key="tab.value" @click="showCardControls = false; currentModelTab = tab.value" :active="currentModelTab === tab.value" :text="tab.label" />
             </f7-segmented>
 
-            <f7-block-title>Cards</f7-block-title>
+            <f7-block-title class="no-margin-bottom">
+              Cards
+            </f7-block-title>
             <div>
               <div class="display-block padding">
                 <div class="no-padding float-right">
@@ -84,7 +86,7 @@
             </div>
           </f7-block>
 
-          <f7-block style="z-index: -1">
+          <f7-block class="homecards-settings">
             <div v-if="currentModelTab === 'locations'">
               <config-sheet
                 :parameterGroups="locationsTabParameters.props.parameterGroups || []"
@@ -140,9 +142,17 @@
     top 80%
     white-space pre-wrap
   .homecards-list
+    margin-bottom 0
+    padding-bottom calc(5rem + var(--f7-block-margin-vertical))
     .item-link
       overflow inherit
       z-index inherit !important
+  .homecards-settings
+    margin-top 0
+    .parameter-group
+      margin-top 0
+    .parameter-group-title
+      margin-top 0
 </style>
 
 <script>
