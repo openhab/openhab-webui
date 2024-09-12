@@ -95,7 +95,7 @@
                     <clipboard-icon :value="rule.uid" size="18" tooltip="Copy Rule UID" />
                   </f7-link>
                   <f7-link class="margin-right" :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'" :tooltip="(rule.status.statusDetail === 'DISABLED') ? 'Enable' : 'Disable'" icon-f7="pause_circle" icon-size="18" @click="toggleRuleDisabled(rule)" />
-                  <f7-link class="margin-right" color="blue" icon-f7="play" icon-size="18" tooltip="Run" @click="runRuleNow(rule)" />
+                  <f7-link class="margin-right" :color="(rule.status.status === 'IDLE') ? 'blue' : 'gray'" icon-f7="play" icon-size="18" tooltip="Run" @click="runRuleNow(rule)" />
                   <f7-link class="margin-right" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/settings/' + (rule.tags.indexOf('Script') >= 0 ? 'scripts' : 'rules') + '/' + rule.uid" :animate="false" />
                   <f7-link color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" @click="unpin('rules', rule, 'uid')" />
                 </div>
@@ -122,8 +122,8 @@
                   <f7-link color="gray" class="margin-right">
                     <clipboard-icon :value="rule.uid" size="18" tooltip="Copy Rule UID" />
                   </f7-link>
-                  <f7-link class="margin-right" :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'" :tooltip="(rule.status.statusDetail === 'DISABLED') ? 'Enable' : 'Disable'" icon-f7="pause_circle" icon-size="18" @click="toggleRuleDisabled(rule)" />
-                  <f7-link class="margin-right" color="blue" icon-f7="play" icon-size="18" tooltip="Run" @click="runRuleNow(rule)" />
+                  <f7-link class="margin-right" :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'" :tooltip="(rule.status.statusDetail === 'DISABLED') ? 'Enable' : 'Disable'" icon-f7="pause_circle" icon-size="18" @click="toggleRuleDisabled(rule, 'Scene')" />
+                  <f7-link class="margin-right" :color="(rule.status.status === 'IDLE') ? 'blue' : 'gray'" icon-f7="play" icon-size="18" tooltip="Run" @click="runRuleNow(rule, 'Scene')" />
                   <f7-link class="margin-right" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/settings/' + (rule.tags.indexOf('Script') >= 0 ? 'scripts' : 'rules') + '/' + rule.uid" :animate="false" />
                   <f7-link color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" @click="unpin('scenes', rule, 'uid')" />
                 </div>
@@ -150,8 +150,8 @@
                   <f7-link color="gray" class="margin-right">
                     <clipboard-icon :value="rule.uid" size="18" tooltip="Copy Rule UID" />
                   </f7-link>
-                  <f7-link class="margin-right" :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'" :tooltip="(rule.status.statusDetail === 'DISABLED') ? 'Enable' : 'Disable'" icon-f7="pause_circle" icon-size="18" @click="toggleRuleDisabled(rule)" />
-                  <f7-link class="margin-right" color="blue" icon-f7="play" icon-size="18" tooltip="Run" @click="runRuleNow(rule)" />
+                  <f7-link class="margin-right" :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'" :tooltip="(rule.status.statusDetail === 'DISABLED') ? 'Enable' : 'Disable'" icon-f7="pause_circle" icon-size="18" @click="toggleRuleDisabled(rule, 'Script')" />
+                  <f7-link class="margin-right" :color="(rule.status.status === 'IDLE') ? 'blue' : 'gray'" icon-f7="play" icon-size="18" tooltip="Run" @click="runRuleNow(rule, 'Script')" />
                   <f7-link class="margin-right" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/settings/' + (rule.tags.indexOf('Script') >= 0 ? 'scripts' : 'rules') + '/' + rule.uid" :animate="false" />
                   <f7-link color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" @click="unpin('scripts', rule, 'uid')" />
                 </div>
@@ -767,38 +767,38 @@ export default {
         }).open()
       })
     },
-    toggleRuleDisabled (rule) {
+    toggleRuleDisabled (rule, type = 'Rule') {
       const enable = (rule.status.statusDetail === 'DISABLED')
       this.$oh.api.postPlain('/rest/rules/' + rule.uid + '/enable', enable.toString()).then((data) => {
         this.$f7.toast.create({
-          text: (enable) ? 'Rule enabled' : 'Rule disabled',
+          text: (enable) ? `${type} enabled` : `${type} disabled`,
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
       }).catch((err) => {
         this.$f7.toast.create({
-          text: 'Error while disabling or enabling: ' + err,
+          text: `Error while disabling or enabling ${type.toLowerCase()}: ` + err,
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
       })
     },
-    runRuleNow (rule) {
+    runRuleNow (rule, type = 'Rule') {
       if (rule.status.status === 'RUNNING' || rule.status.status === 'UNINITIALIZED') {
         return this.$f7.toast.create({
-          text: `Rule cannot be run ${(rule.status.status === 'RUNNING') ? 'while already running, please wait' : 'if it is uninitialized'}!`,
+          text: `${type} cannot be run ${(rule.status.status === 'RUNNING') ? 'while already running, please wait' : 'if it is uninitialized'}!`,
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
       }
       this.$f7.toast.create({
-        text: 'Running rule',
+        text: `Running ${type.toLowerCase()}`,
         destroyOnClose: true,
         closeTimeout: 2000
       }).open()
       this.$oh.api.postPlain('/rest/rules/' + rule.uid + '/runnow', '').catch((err) => {
         this.$f7.toast.create({
-          text: 'Error while running rule: ' + err,
+          text: `Error while running ${type.toLowerCase()}: ` + err,
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
