@@ -143,14 +143,10 @@ export default function defineOHBlocks_Scripts (f7, isGraalJs, transformationSer
   }
 
   function transformationOptions () {
-    let options = []
     if (transformationServices && transformationServices.length > 0) {
-      for (let key in transformationServices) {
-        let transformationOption = transformationServices[key]
-        options.push([transformationOption, transformationOption])
-      }
+      return transformationServices.map((service) => [service, service])
     }
-    return options.length > 0 ? options : [['', '']]
+    return [['', '']]
   }
 
   /*
