@@ -514,6 +514,7 @@
 	}
 	&__buttons-multiline {
 		margin: 6px 0;
+		gap: 4px;
 		html.ui-layout-condensed & {
 			margin: 0;
 			gap: 2px;
@@ -523,7 +524,6 @@
 		display: flex;
 		flex-wrap: wrap;
 		justify-content: end;
-		gap: 4px;
 	}
 	&__buttongrid {
 		padding: 0;
