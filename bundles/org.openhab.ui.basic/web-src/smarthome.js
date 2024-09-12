@@ -1346,18 +1346,31 @@
 		});
 
 		if (_t.buttons.length > 1 && _t.parentNode.classList.contains(o.buttonsMultilineClass)) {
-			_t.minimizeWidth = function() {
-				var labelLength = _t.label.textContent.trim().length;
-				_t.label.style.paddingLeft = labelLength === 0 ? 0 : null; // null reverts it to the css
+			if (_t.label.textContent.trim().length === 0) {
+				_t.label.style.paddingLeft = 0;
+				_t.label.style.minWidth = 0;
+			} else {
+				// Try to see if setting min-width: min-content would result in a narrower min-width
+				// than the one set in _layout.scss, e.g. when the label is short.
+				// If it does make it narrower, it frees up more space for the buttons.
+				// If it is not narrower, un-set it, so that the min-width from _layout.scss can take effect.
 
-				var labelWidth = _t.label.offsetWidth;
-				// Try and see if min-content could make the label narrower.
-				// If not, undo it so it uses the fixed min-width set in the css.
+				// To measure the min-width using offsetWidth,
+				// we need to make the neighbouring element (buttons) as wide as possible
+				// to force the label to shrink to its min-width
+				// Note that _t.parentNode.style.width will get readjusted inside minimizeWidth()
+				// so setting it to 100% here wouldn't affect the final layout.
+				_t.parentNode.style.width = "100%";
+
+				var defaultMinWidth = parseFloat(getComputedStyle(_t.label).minWidth);
 				_t.label.style.minWidth = "min-content";
-				if (labelWidth <= _t.label.offsetWidth) {
-					_t.label.style.removeProperty("minWidth");
+				var minContentWidth = _t.label.offsetWidth;
+				if (minContentWidth > defaultMinWidth) {
+					_t.label.style.removeProperty("min-width");
 				}
+			}
 
+			_t.minimizeWidth = function() {
 				// Minimize the width taken by the buttons without adding extra rows.
 				// Start from the maximum width (limited by `mdl-form__buttons-multiline.max-width`),
 				// then shrink it down to the minimum without causing additional wrapping.
