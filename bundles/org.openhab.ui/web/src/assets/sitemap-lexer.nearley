@@ -166,7 +166,7 @@ ButtonValue -> Command _ %equals _ Label                                        
 Command -> %number | %identifier                                                  {% (d) => d[0].value %}
   | %string                                                                       {% (d) => '"' + d[0].value + '"' %}
 Label -> %number | %identifier                                                    {% (d) => d[0].value %}
-  | %string                                                                       {% (d) => d[0].value %}
+  | %string                                                                       {% (d) => '"' + d[0].value + '"' %}
 
 Visibilities -> Conditions                                                        {% (d) => [d[0]] %}
   | Visibilities _ %comma _ Conditions                                            {% (d) => d[0].concat(d[4]) %}
