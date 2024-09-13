@@ -42,8 +42,8 @@ export default {
   computed: {
     stateDescriptionParameters () {
       const options = this.transformations
-        .map((t) => { return { value: `${t.type.toUpperCase()}(${t.uid}):%s` } })
-        .sort((a, b) => (a.value).localeCompare(b.value))
+        .map((t) => { return { label: t.label, value: `${t.type.toUpperCase()}(${t.uid}):%s` } })
+        .sort((a, b) => (a.label).localeCompare(b.label))
       return [
         { type: 'BOOLEAN', name: 'readOnly', label: 'Read only', description: 'Item is read-only and should not accept commands' },
         { type: 'TEXT', name: 'pattern', label: 'Pattern', description: 'Pattern or transformation applied to the state for display purposes', options, limitToOptions: false },
