@@ -5,8 +5,9 @@
 *       @openhab/webui-maintainers
 
 # Add-on maintainers:
+/bundles/org.openhab.ui/ @ghys @florian-h05
 /bundles/org.openhab.ui.iconset.classic/ @kaikreuzer
-/bundles/org.openhab.ui.basic/ @openhab/webui-maintainers
+/bundles/org.openhab.ui.basic/ @kaikreuzer @lolodomo
 /bundles/org.openhab.ui.cometvisu/ @peuter
 /bundles/org.openhab.ui.habot/ @ghys
 /bundles/org.openhab.ui.habpanel/ @ghys
