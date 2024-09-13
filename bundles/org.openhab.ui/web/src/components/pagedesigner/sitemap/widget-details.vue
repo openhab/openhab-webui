@@ -16,22 +16,32 @@
           <f7-list-item title="Static icon">
             <f7-toggle slot="after" :checked="widget.config.staticIcon" @toggle:change="widget.config.staticIcon = $event" />
           </f7-list-item>
+          <div />
         </ul>
         <ul>
           <!-- additional controls -->
           <f7-list-input v-if="supports('url')" label="URL" type="url" :value="widget.config.url" @input="updateParameter('url', $event)" clear-button />
-          <f7-list-input v-if="supports('refresh')" label="Refresh interval" type="number" :value="widget.config.refresh" @input="updateParameter('refresh', $event)" clear-button />
-          <f7-list-input v-if="supports('encoding')" label="Encoding" type="text" :value="widget.config.encoding" @input="updateParameter('encoding', $event)" clear-button />
-          <f7-list-input v-if="supports('service')" label="Service" type="text" :value="widget.config.service" @input="updateParameter('service', $event)" clear-button />
+          <f7-list-input v-if="supports('refresh')" label="Refresh interval (ms)" type="number" min="1" :value="widget.config.refresh" @input="updateParameter('refresh', $event)" clear-button />
+          <f7-list-item v-if="supports('encoding')" title="Encoding" smart-select :smart-select-params="{openIn: 'popover', closeOnSelect: true}">
+            <select name="encodings" :value="widget.config.encoding" @change="updateParameter('encoding', $event)">
+              <option v-for="def in encodingDefs" :key="def.key" :value="def.key">
+                {{ def.value }}
+              </option>
+            </select>
+          </f7-list-item>
+          <persistence-picker v-if="supports('service')" style="padding-left:0" title="Persistence service" :value="widget.config.service" @input="(value) => widget.config.service = value" />
           <f7-list-input v-if="supports('period')" label="Period" type="text"
                          placeholder="PnYnMnDTnHnMnS-PnYnMnDTnHnMnS"
                          validate pattern="^((P(\d+Y)?(\d+M)?(\d+W)?(\d+D)?(T(\d+H)?(\d+M)?(\d+S)?)?|\d*[YMWDh])-)?-?(P(\d+Y)?(\d+M)?(\d+W)?(\d+D)?(T(\d+H)?(\d+M)?(\d+S)?)?|\d*[YMWDh])$"
                          :value="widget.config.period" @input="updateParameter('period', $event)" clear-button />
-          <f7-list-input v-if="supports('height')" label="Height" type="number" :value="widget.config.height" @input="updateParameter('height', $event)" clear-button />
+          <f7-list-input v-if="supports('height')" label="Height" type="number" min="1" :value="widget.config.height" @input="updateParameter('height', $event)" clear-button />
           <f7-list-input v-if="supports('minValue')" label="Minimum" type="number" :value="widget.config.minValue" @input="updateParameter('minValue', $event)" clear-button />
           <f7-list-input v-if="supports('maxValue')" label="Maximum" type="number" :value="widget.config.maxValue" @input="updateParameter('maxValue', $event)" clear-button />
-          <f7-list-input v-if="supports('step')" label="Step" type="number" :value="widget.config.step" @input="updateParameter('step', $event)" clear-button />
-          <f7-list-input v-if="supports('yAxisDecimalPattern')" label="Y-axis decimal pattern" type="text" :value="widget.config.separator" @input="updateParameter('yAxisDecimalPattern', $event)" clear-button />
+          <f7-list-input v-if="supports('step')" label="Step" type="number" min="0" :value="widget.config.step" @input="updateParameter('step', $event)" clear-button />
+          <f7-list-input v-if="supports('yAxisDecimalPattern')" label="Y-axis decimal pattern" type="text"
+                         placeholder="##0.0"
+                         validate pattern="^(?:'[0#.,;E]?'|[^0#.,;E'])*((#[,#]*|0)[,0]*)(\.(0+#*|#+))?(?:E0+)?(?:';'|[^;])*(?:;(?:'[0#.,;E]?'|[^0#.,;E'])*((#[,#]*|0)[,0]*)(\.(0+#*|#+))?(?:E0+)?.*)?$"
+                         :value="widget.config.yAxisDecimalPattern" @input="updateParameter('yAxisDecimalPattern', $event)" clear-button />
           <f7-list-item v-if="supports('switchEnabled')" title="Switch enabled">
             <f7-toggle slot="after" :checked="widget.config.switchEnabled" @toggle:change="widget.config.switchEnabled = $event" />
           </f7-list-item>
@@ -67,17 +77,15 @@
   </f7-card>
 </template>
 
-<style>
-
-</style>
-
 <script>
 import { Categories } from '@/assets/categories.js'
 import ItemPicker from '@/components/config/controls/item-picker.vue'
+import PersistencePicker from '@/components/config/controls/persistence-picker.vue'
 
 export default {
   components: {
-    ItemPicker
+    ItemPicker,
+    PersistencePicker
   },
   props: ['widget', 'createMode'],
   data () {
@@ -95,6 +103,10 @@ export default {
         Input: ['inputHint'],
         Default: ['height']
       },
+      encodingDefs: [
+        { key: 'mjpeg', value: 'MJPEG Video' },
+        { key: 'HLS', value: 'HTTP Live Streaming' }
+      ],
       inputHintDefs: [
         { key: 'text', value: 'Text' },
         { key: 'number', value: 'Number' },
