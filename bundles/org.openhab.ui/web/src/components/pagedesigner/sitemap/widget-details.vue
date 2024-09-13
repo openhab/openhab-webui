@@ -79,7 +79,7 @@
 <style lang="stylus">
 .widget-detail
   .item-inner:after
-    height 0px !important /* remove all lines between params */
+    height 0 !important /* remove all lines between params */
   .additional-controls:before
     display block !important
 #additional:before
