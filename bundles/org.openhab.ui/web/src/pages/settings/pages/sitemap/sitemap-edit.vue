@@ -483,7 +483,7 @@ export default {
             let label = widget.config && widget.config.label ? widget.config.label : 'without label'
             validationWarnings.push(widget.component + ' widget ' + label + ', invalid period configured: ' + widget.config.period)
           }
-          if (!(widget.config && widget.config.yAxisDecimalPattern && this.regexDecimalPattern.test(widget.config.yAxisDecimalPattern))) {
+          if (widget.config && widget.config.yAxisDecimalPattern && !this.regexDecimalPattern.test(widget.config.yAxisDecimalPattern)) {
             let label = widget.config && widget.config.label ? widget.config.label : 'without label'
             validationWarnings.push(widget.component + ' widget ' + label + ', invalid Y-axis decimal pattern configured: ' + widget.config.yAxisDecimalPattern)
           }
