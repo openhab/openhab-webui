@@ -53,8 +53,7 @@
               </f7-block>
               <f7-block v-if="selectedWidget && selectedWidget.component !== 'Sitemap'">
                 <div><f7-block-title>Visibility</f7-block-title></div>
-                <attribute-details :widget="selectedWidget" attribute="visibility" placeholder="item_name operator value"
-                                   :pattern="regexRuleVisibility.source" />
+                <attribute-details :widget="selectedWidget" attribute="visibility" placeholder="item_name operator value" />
               </f7-block>
               <f7-block v-if="selectedWidget && selectedWidget.component === 'Buttongrid'">
                 <div><f7-block-title>Buttons</f7-block-title></div>
@@ -65,33 +64,27 @@
               </f7-block>
               <f7-block v-if="selectedWidget && selectedWidget.component === 'Switch'">
                 <div><f7-block-title>Mappings</f7-block-title></div>
-                <attribute-details :widget="selectedWidget" attribute="mappings" placeholder="command:releaseCommand = label = icon"
-                                   :pattern="regexMappingSwitch.source" />
+                <attribute-details :widget="selectedWidget" attribute="mappings" placeholder="command:releaseCommand = label = icon" />
               </f7-block>
               <f7-block v-if="selectedWidget && selectedWidget.component === 'Selection'">
                 <div><f7-block-title>Mappings</f7-block-title></div>
-                <attribute-details :widget="selectedWidget" attribute="mappings" placeholder="command = label = icon"
-                                   :pattern="regexMapping.source" />
+                <attribute-details :widget="selectedWidget" attribute="mappings" placeholder="command = label = icon" />
               </f7-block>
               <f7-block v-if="selectedWidget && selectedWidget.component !== 'Sitemap'">
                 <div><f7-block-title>Icon Rules</f7-block-title></div>
-                <attribute-details :widget="selectedWidget" attribute="iconrules" placeholder="item_name operator value = icon"
-                                   :pattern="regexRule.source" />
+                <attribute-details :widget="selectedWidget" attribute="iconrules" placeholder="item_name operator value = icon" />
               </f7-block>
               <f7-block v-if="selectedWidget && selectedWidget.component !== 'Sitemap'">
                 <div><f7-block-title>Label Color</f7-block-title></div>
-                <attribute-details :widget="selectedWidget" attribute="labelcolor" placeholder="item_name operator value = color"
-                                   :pattern="regexRule.source" />
+                <attribute-details :widget="selectedWidget" attribute="labelcolor" placeholder="item_name operator value = color" />
               </f7-block>
               <f7-block v-if="selectedWidget && selectedWidget.component !== 'Sitemap'">
                 <div><f7-block-title>Value Color</f7-block-title></div>
-                <attribute-details :widget="selectedWidget" attribute="valuecolor" placeholder="item_name operator value = color"
-                                   :pattern="regexRule.source" />
+                <attribute-details :widget="selectedWidget" attribute="valuecolor" placeholder="item_name operator value = color" />
               </f7-block>
               <f7-block v-if="selectedWidget && selectedWidget.component !== 'Sitemap'">
                 <div><f7-block-title>Icon Color</f7-block-title></div>
-                <attribute-details :widget="selectedWidget" attribute="iconcolor" placeholder="item_name operator value = color"
-                                   :pattern="regexRule.source" />
+                <attribute-details :widget="selectedWidget" attribute="iconcolor" placeholder="item_name operator value = color" />
               </f7-block>
               <f7-block v-if="selectedWidget && canAddChildren">
                 <div><f7-block-title>Add Child Widget</f7-block-title></div>
@@ -157,8 +150,7 @@
           <widget-details :widget="selectedWidget" :createMode="createMode" @remove="removeWidget" @movedown="moveWidgetDown" @moveup="moveWidgetUp" />
         </f7-block>
         <f7-block style="margin-bottom: 6rem" v-if="selectedWidget && detailsTab === 'visibility'">
-          <attribute-details :widget="selectedWidget" attribute="visibility" placeholder="item_name operator value"
-                             :pattern="regexRuleVisibility.source" />
+          <attribute-details :widget="selectedWidget" attribute="visibility" placeholder="item_name operator value" />
         </f7-block>
         <f7-block style="margin-bottom: 6rem" v-if="selectedWidget && detailsTab === 'buttons'">
           <attribute-details :widget="selectedWidget" attribute="buttons" placeholder="command = label = icon"
@@ -168,23 +160,18 @@
         </f7-block>
         <f7-block style="margin-bottom: 6rem" v-if="selectedWidget && detailsTab === 'mappings'">
           <attribute-details :widget="selectedWidget" attribute="mappings"
-                             :placeholder="selectedWidget.component === 'Switch' ? 'cmd:releaseCmd = label = icon' : 'command = label = icon'"
-                             :pattern="(selectedWidget.component === 'Switch' ? regexMappingSwitch : regexMapping).source" />
+                             :placeholder="selectedWidget.component === 'Switch' ? 'cmd:releaseCmd = label = icon' : 'command = label = icon'" />
         </f7-block>
         <f7-block style="margin-bottom: 6rem" v-if="selectedWidget && detailsTab === 'icons'">
-          <attribute-details :widget="selectedWidget" attribute="iconrules" placeholder="item_name operator value = icon"
-                             :pattern="regexRule.source" />
+          <attribute-details :widget="selectedWidget" attribute="iconrules" placeholder="item_name operator value = icon" />
         </f7-block>
         <f7-block style="margin-bottom: 6rem" v-if="selectedWidget && detailsTab === 'colors'">
           <div><f7-block-title>Label Color</f7-block-title></div>
-          <attribute-details :widget="selectedWidget" attribute="labelcolor" placeholder="item_name operator value = color"
-                             :pattern="regexRule.source" />
+          <attribute-details :widget="selectedWidget" attribute="labelcolor" placeholder="item_name operator value = color" />
           <div><f7-block-title>Value Color</f7-block-title></div>
-          <attribute-details :widget="selectedWidget" attribute="valuecolor" placeholder="item_name operator value = color"
-                             :pattern="regexRule.source" />
+          <attribute-details :widget="selectedWidget" attribute="valuecolor" placeholder="item_name operator value = color" />
           <div><f7-block-title>Icon Color</f7-block-title></div>
-          <attribute-details :widget="selectedWidget" attribute="iconcolor" placeholder="item_name operator value = color"
-                             :pattern="regexRule.source" />
+          <attribute-details :widget="selectedWidget" attribute="iconcolor" placeholder="item_name operator value = color" />
         </f7-block>
       </f7-page>
     </f7-sheet>
@@ -315,6 +302,7 @@ export default {
       linkableWidgetTypes: ['Sitemap', 'Text', 'Frame', 'Group', 'Image'],
       widgetTypesRequiringItem: ['Group', 'Chart', 'Switch', 'Mapview', 'Slider', 'Selection', 'Setpoint', 'Input', 'Colorpicker', 'Buttongrid', 'Default'],
       regexPeriod: /^((P(\d+Y)?(\d+M)?(\d+W)?(\d+D)?(T(\d+H)?(\d+M)?(\d+S)?)?|\d*[YMWDh])-)?-?(P(\d+Y)?(\d+M)?(\d+W)?(\d+D)?(T(\d+H)?(\d+M)?(\d+S)?)?|\d*[YMWDh])$/,
+      regexDecimalPattern: /^(?:'[0#.,;E]?'|[^0#.,;E'])*((#[,#]*|0)[,0]*)(\.(0+#*|#+))?(?:E0+)?(?:';'|[^;])*(?:;(?:'[0#.,;E]?'|[^0#.,;E'])*((#[,#]*|0)[,0]*)(\.(0+#*|#+))?(?:E0+)?.*)?$/,
       regexMapping: /^\s*("[^\n"]*"|\w+)\s*=\s*("[^\n"]*"|\w+)\s*(=\s*("[^\n"]*"|\w+))?$/u,
       regexMappingSwitch: /^\s*("[^\n"]*"|\w+)\s*(:\s*("[^\n"]*"|\w+)\s*)?=\s*("[^\n"]*"|\w+)\s*(=\s*("[^\n"]*"|\w+))?$/u,
       regexRuleVisibility: /^(\s*((\w+\s*)?(==|>=|<=|!=|>|<)\s*)?("[^\n"]*"|\w+)\s*AND)*\s*((\w+\s*)?(==|>=|<=|!=|>|<)\s*)?("[^\n"]*"|\w+)\s*$/u,
@@ -494,6 +482,10 @@ export default {
           if (!(widget.config && widget.config.period && this.regexPeriod.test(widget.config.period))) {
             let label = widget.config && widget.config.label ? widget.config.label : 'without label'
             validationWarnings.push(widget.component + ' widget ' + label + ', invalid period configured: ' + widget.config.period)
+          }
+          if (!(widget.config && widget.config.yAxisDecimalPattern && this.regexDecimalPattern.test(widget.config.yAxisDecimalPattern))) {
+            let label = widget.config && widget.config.label ? widget.config.label : 'without label'
+            validationWarnings.push(widget.component + ' widget ' + label + ', invalid Y-axis decimal pattern configured: ' + widget.config.yAxisDecimalPattern)
           }
         })
         widgetList.filter(widget => widget.component === 'Input').forEach(widget => {
