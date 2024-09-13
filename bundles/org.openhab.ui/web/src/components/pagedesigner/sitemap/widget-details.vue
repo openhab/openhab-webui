@@ -17,7 +17,7 @@
             <f7-toggle slot="after" :checked="widget.config.staticIcon" @toggle:change="widget.config.staticIcon = $event" />
           </f7-list-item>
         </ul>
-        <ul id="additional" class="additional-controls" >
+        <ul id="additional" class="additional-controls">
           <!-- additional controls -->
           <f7-list-input v-if="supports('url')" label="URL" type="url" :value="widget.config.url" @input="updateParameter('url', $event)" clear-button />
           <f7-list-input v-if="supports('refresh')" label="Refresh interval (ms)" type="number" min="1" :value="widget.config.refresh" @input="updateParameter('refresh', $event)" clear-button />
@@ -114,11 +114,11 @@ export default {
       Setpoint: ['minValue', 'maxValue', 'step'],
       Input: ['inputHint'],
       Default: ['height']
-    },
+    }
     this.ENCODING_DEFS = [
       { key: 'mjpeg', value: 'MJPEG Video' },
       { key: 'HLS', value: 'HTTP Live Streaming' }
-    ],
+    ]
     this.INPUT_HINT_DEFS = [
       { key: 'text', value: 'Text' },
       { key: 'number', value: 'Number' },
