@@ -1,13 +1,13 @@
 <template>
   <f7-card v-if="widget">
     <f7-card-content>
-      <f7-list inline-labels>
+      <f7-list class="widget-detail" inline-labels>
         <f7-list-input v-if="widget.component === 'Sitemap'" label="Widget ID" type="text" placeholder="Widget ID" :value="widget.uid" @input="widget.uid = $event.target.value"
                        required validate pattern="[A-Za-z0-9_]+" error-message="Required. Alphanumeric &amp; underscores only" :disabled="!createMode" />
         <f7-list-input label="Label" type="text" placeholder="Label" :value="widget.config.label" @input="updateParameter('label', $event)" clear-button />
         <item-picker v-if="widget.component !== 'Sitemap' && widget.component !== 'Frame'" title="Item" :value="widget.config.item" @input="(value) => widget.config.item = value" />
         <ul v-if="widget.component !== 'Sitemap'">
-          <f7-list-input class="icon-select" ref="icon" label="Icon" autocomplete="off" type="text" placeholder="temperature, firstfloor..." :value="widget.config.icon"
+          <f7-list-input ref="icon" label="Icon" autocomplete="off" type="text" placeholder="temperature, firstfloor..." :value="widget.config.icon"
                          @input="updateParameter('icon', $event)" clear-button>
             <div slot="root-end" style="margin-left: calc(35% + 8px)">
               <oh-icon :icon="widget.config.icon" height="32" width="32" />
@@ -16,15 +16,14 @@
           <f7-list-item title="Static icon">
             <f7-toggle slot="after" :checked="widget.config.staticIcon" @toggle:change="widget.config.staticIcon = $event" />
           </f7-list-item>
-          <div />
         </ul>
-        <ul>
+        <ul id="additional" class="additional-controls" >
           <!-- additional controls -->
           <f7-list-input v-if="supports('url')" label="URL" type="url" :value="widget.config.url" @input="updateParameter('url', $event)" clear-button />
           <f7-list-input v-if="supports('refresh')" label="Refresh interval (ms)" type="number" min="1" :value="widget.config.refresh" @input="updateParameter('refresh', $event)" clear-button />
           <f7-list-item v-if="supports('encoding')" title="Encoding" smart-select :smart-select-params="{openIn: 'popover', closeOnSelect: true}">
             <select name="encodings" :value="widget.config.encoding" @change="updateParameter('encoding', $event)">
-              <option v-for="def in encodingDefs" :key="def.key" :value="def.key">
+              <option v-for="def in ENCODING_DEFS" :key="def.key" :value="def.key">
                 {{ def.value }}
               </option>
             </select>
@@ -56,7 +55,7 @@
           </f7-list-item>
           <f7-list-item v-if="supports('inputHint')" title="Hint" smart-select :smart-select-params="{openIn: 'popover', closeOnSelect: true}">
             <select name="inputHints" required :value="widget.config.inputHint" @change="updateParameter('inputHint', $event)">
-              <option v-for="def in inputHintDefs" :key="def.key" :value="def.key">
+              <option v-for="def in INPUT_HINT_DEFS" :key="def.key" :value="def.key">
                 {{ def.value }}
               </option>
             </select>
@@ -78,8 +77,13 @@
 </template>
 
 <style lang="stylus">
-.icon-select .item-inner:after
-  height 0px !important /* remove line between icon selection and icon image */
+.widget-detail
+  .item-inner:after
+    height 0px !important /* remove all lines between params */
+  .additional-controls:before
+    display block !important
+#additional:before
+  display block !important /* need two selectors to override the important Vue card css */
 </style>
 
 <script>
@@ -96,30 +100,32 @@ export default {
   data () {
     return {
       iconInputId: '',
-      iconAutocomplete: null,
-      additionalControls: {
-        Image: ['url', 'refresh'],
-        Video: ['url', 'encoding'],
-        Chart: ['service', 'period', 'refresh', 'legend', 'forceAsItem', 'yAxisDecimalPattern'],
-        Webview: ['url', 'height'],
-        Mapview: ['height'],
-        Slider: ['switchEnabled', 'releaseOnly', 'minValue', 'maxValue', 'step'],
-        Setpoint: ['minValue', 'maxValue', 'step'],
-        Input: ['inputHint'],
-        Default: ['height']
-      },
-      encodingDefs: [
-        { key: 'mjpeg', value: 'MJPEG Video' },
-        { key: 'HLS', value: 'HTTP Live Streaming' }
-      ],
-      inputHintDefs: [
-        { key: 'text', value: 'Text' },
-        { key: 'number', value: 'Number' },
-        { key: 'date', value: 'Date' },
-        { key: 'time', value: 'Time' },
-        { key: 'datetime', value: 'Date and Time' }
-      ]
+      iconAutocomplete: null
     }
+  },
+  created () {
+    this.ADDITIONAL_CONTROLS = {
+      Image: ['url', 'refresh'],
+      Video: ['url', 'encoding'],
+      Chart: ['service', 'period', 'refresh', 'legend', 'forceAsItem', 'yAxisDecimalPattern'],
+      Webview: ['url', 'height'],
+      Mapview: ['height'],
+      Slider: ['switchEnabled', 'releaseOnly', 'minValue', 'maxValue', 'step'],
+      Setpoint: ['minValue', 'maxValue', 'step'],
+      Input: ['inputHint'],
+      Default: ['height']
+    },
+    this.ENCODING_DEFS = [
+      { key: 'mjpeg', value: 'MJPEG Video' },
+      { key: 'HLS', value: 'HTTP Live Streaming' }
+    ],
+    this.INPUT_HINT_DEFS = [
+      { key: 'text', value: 'Text' },
+      { key: 'number', value: 'Number' },
+      { key: 'date', value: 'Date' },
+      { key: 'time', value: 'Time' },
+      { key: 'datetime', value: 'Date and Time' }
+    ]
   },
   methods: {
     initializeAutocomplete (inputElement) {
@@ -136,8 +142,8 @@ export default {
       })
     },
     supports (parameter) {
-      if (!this.additionalControls[this.widget.component]) return false
-      return (this.additionalControls[this.widget.component].indexOf(parameter) >= 0)
+      if (!this.ADDITIONAL_CONTROLS[this.widget.component]) return false
+      return (this.ADDITIONAL_CONTROLS[this.widget.component].indexOf(parameter) >= 0)
     },
     updateParameter (parameter, $event) {
       let value = $event.target.value

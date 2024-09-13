@@ -1,9 +1,9 @@
 <template>
   <ul class="persistence-picker-container">
     <f7-list-item :title="title || 'Persistence'" smart-select :smart-select-params="smartSelectParams" ref="smartSelect" v-if="ready">
-      <select :name="name" :multiple="multiple" @change="select" :required="required">
-        <option v-if="!multiple" value="" />
-        <option v-for="service in services" :value="service.id" :key="service.id" :selected="(multiple) ? value.indexOf(service.id) >= 0 : value === service.id">
+      <select :name="name" @change="select" :required="required">
+        <option value="" />
+        <option v-for="service in services" :value="service.id" :key="service.id" :selected="value === service.id">
           {{ service.label ? service.label + ' (' + service.id + ')' : service.id }}
         </option>
       </select>
@@ -14,39 +14,33 @@
 </template>
 
 <style lang="stylus">
-.item-picker-container
-  .item-content
-    padding-left calc(var(--f7-list-item-padding-horizontal)/2 + var(--f7-safe-area-left))
-  .item-media
-    padding 0
+.persistence-picker-container
   .item-inner:after
     display none
 </style>
 
 <script>
 export default {
-  props: ['title', 'name', 'value', 'multiple', 'required', 'filterType', 'openOnReady'],
+  props: ['title', 'name', 'value', 'required', 'filterType', 'openOnReady'],
+  emits: ['persistencePicked'],
   data () {
     return {
       ready: false,
       services: [],
-      icons: {},
       smartSelectParams: {
         view: this.$f7.view.main,
         openIn: 'popup',
         searchbar: true,
-        searchbarPlaceholder: this.$t('dialogs.search.persistence'),
-        virtualList: true,
-        virtualListHeight: (this.$theme.aurora) ? 32 : undefined
+        searchbarPlaceholder: this.$t('dialogs.search.persistence')
       }
     }
   },
   created () {
-    this.smartSelectParams.closeOnSelect = !(this.multiple)
+    this.smartSelectParams.closeOnSelect = true
     this.$oh.api.get('/rest/persistence').then((data) => {
       this.services = data.sort((a, b) => {
-        const labelA = a.label || a.UID
-        const labelB = b.label || b.UID
+        const labelA = a.label || a.id
+        const labelB = b.label || b.id
         return labelA.localeCompare(labelB)
       })
       if (this.filterType) {

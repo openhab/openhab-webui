@@ -280,61 +280,60 @@ export default {
       detailsOpened: false,
       detailsTab: 'widget',
       currentTab: 'tree',
-      eventSource: null,
-      widgetTypes: [
-        { type: 'Text', icon: 'textformat' },
-        { type: 'Switch', icon: 'power' },
-        { type: 'Selection', icon: 'text_justify' },
-        { type: 'Slider', icon: 'slider_horizontal_3' },
-        { type: 'Frame', icon: 'macwindow' },
-        { type: 'Setpoint', icon: 'plus_slash_minus' },
-        { type: 'Input', icon: 'text_cursor' },
-        { type: 'Buttongrid', icon: 'square_grid_3x2' },
-        { type: 'Default', icon: 'rectangle' },
-        { type: 'Group', icon: 'square_stack_3d_down_right' },
-        { type: 'Chart', icon: 'chart_bar_square' },
-        { type: 'Webview', icon: 'globe' },
-        { type: 'Colorpicker', icon: 'drop' },
-        { type: 'Mapview', icon: 'map' },
-        { type: 'Image', icon: 'photo' },
-        { type: 'Video', icon: 'videocam' }
-      ],
-      linkableWidgetTypes: ['Sitemap', 'Text', 'Frame', 'Group', 'Image'],
-      widgetTypesRequiringItem: ['Group', 'Chart', 'Switch', 'Mapview', 'Slider', 'Selection', 'Setpoint', 'Input', 'Colorpicker', 'Buttongrid', 'Default'],
-      regexPeriod: /^((P(\d+Y)?(\d+M)?(\d+W)?(\d+D)?(T(\d+H)?(\d+M)?(\d+S)?)?|\d*[YMWDh])-)?-?(P(\d+Y)?(\d+M)?(\d+W)?(\d+D)?(T(\d+H)?(\d+M)?(\d+S)?)?|\d*[YMWDh])$/,
-      regexDecimalPattern: /^(?:'[0#.,;E]?'|[^0#.,;E'])*((#[,#]*|0)[,0]*)(\.(0+#*|#+))?(?:E0+)?(?:';'|[^;])*(?:;(?:'[0#.,;E]?'|[^0#.,;E'])*((#[,#]*|0)[,0]*)(\.(0+#*|#+))?(?:E0+)?.*)?$/,
-      regexMapping: /^\s*("[^\n"]*"|\w+)\s*=\s*("[^\n"]*"|\w+)\s*(=\s*("[^\n"]*"|\w+))?$/u,
-      regexMappingSwitch: /^\s*("[^\n"]*"|\w+)\s*(:\s*("[^\n"]*"|\w+)\s*)?=\s*("[^\n"]*"|\w+)\s*(=\s*("[^\n"]*"|\w+))?$/u,
-      regexRuleVisibility: /^(\s*((\w+\s*)?(==|>=|<=|!=|>|<)\s*)?("[^\n"]*"|\w+)\s*AND)*\s*((\w+\s*)?(==|>=|<=|!=|>|<)\s*)?("[^\n"]*"|\w+)\s*$/u,
-      regexRule: /^(((\s*((\w+\s*)?(==|>=|<=|!=|>|<)\s*)?("[^\n"]*"|\w+)\s*AND)*\s*((\w+\s*)?(==|>=|<=|!=|>|<)\s*)?("[^\n"]*"|\w+)\s*)?\s*=)?\s*("#?(\w|:|-)+"|#?(\w|:|-)+)$/u
+      eventSource: null
     }
   },
   created () {
-
+    this.WIDGET_TYPES = [
+      { type: 'Text', icon: 'textformat' },
+      { type: 'Switch', icon: 'power' },
+      { type: 'Selection', icon: 'text_justify' },
+      { type: 'Slider', icon: 'slider_horizontal_3' },
+      { type: 'Frame', icon: 'macwindow' },
+      { type: 'Setpoint', icon: 'plus_slash_minus' },
+      { type: 'Input', icon: 'text_cursor' },
+      { type: 'Buttongrid', icon: 'square_grid_3x2' },
+      { type: 'Default', icon: 'rectangle' },
+      { type: 'Group', icon: 'square_stack_3d_down_right' },
+      { type: 'Chart', icon: 'chart_bar_square' },
+      { type: 'Webview', icon: 'globe' },
+      { type: 'Colorpicker', icon: 'drop' },
+      { type: 'Mapview', icon: 'map' },
+      { type: 'Image', icon: 'photo' },
+      { type: 'Video', icon: 'videocam' }
+    ],
+    this.LINKABLE_WIDGET_TYPES = ['Sitemap', 'Text', 'Frame', 'Group', 'Image'],
+    this.WIDGET_TYPES_REQUIRING_ITEM = ['Group', 'Chart', 'Switch', 'Mapview', 'Slider', 'Selection', 'Setpoint', 'Input', 'Colorpicker', 'Buttongrid', 'Default'],
+    this.REGEX_PERIOD = /^((P(\d+Y)?(\d+M)?(\d+W)?(\d+D)?(T(\d+H)?(\d+M)?(\d+S)?)?|\d*[YMWDh])-)?-?(P(\d+Y)?(\d+M)?(\d+W)?(\d+D)?(T(\d+H)?(\d+M)?(\d+S)?)?|\d*[YMWDh])$/,
+    this.REGEX_DECIMAL_PATTERN = /^(?:'[0#.,;E]?'|[^0#.,;E'])*((#[,#]*|0)[,0]*)(\.(0+#*|#+))?(?:E0+)?(?:';'|[^;])*(?:;(?:'[0#.,;E]?'|[^0#.,;E'])*((#[,#]*|0)[,0]*)(\.(0+#*|#+))?(?:E0+)?.*)?$/,
+    this.REGEX_MAPPING = /^\s*("[^\n"]*"|\w+)\s*=\s*("[^\n"]*"|\w+)\s*(=\s*("[^\n"]*"|\w+))?$/u,
+    this.REGEX_MAPPING_SWITCH = /^\s*("[^\n"]*"|\w+)\s*(:\s*("[^\n"]*"|\w+)\s*)?=\s*("[^\n"]*"|\w+)\s*(=\s*("[^\n"]*"|\w+))?$/u,
+    this.REGEX_RULE_VISIBILITY = /^(\s*((\w+\s*)?(==|>=|<=|!=|>|<)\s*)?("[^\n"]*"|\w+)\s*AND)*\s*((\w+\s*)?(==|>=|<=|!=|>|<)\s*)?("[^\n"]*"|\w+)\s*$/u,
+    this.REGEX_RULE = /^(((\s*((\w+\s*)?(==|>=|<=|!=|>|<)\s*)?("[^\n"]*"|\w+)\s*AND)*\s*((\w+\s*)?(==|>=|<=|!=|>|<)\s*)?("[^\n"]*"|\w+)\s*)?\s*=)?\s*("#?(\w|:|-)+"|#?(\w|:|-)+)$/u
   },
   computed: {
     canAddChildren () {
       if (!this.selectedWidget) return false
-      if (this.linkableWidgetTypes.indexOf(this.selectedWidget.component) < 0) return false
+      if (this.LINKABLE_WIDGET_TYPES.indexOf(this.selectedWidget.component) < 0) return false
       return true
     },
     addableWidgetTypes () {
       if (!this.selectedWidget) return
       // No frames in frame
-      if (this.selectedWidget.component === 'Frame') return this.widgetTypes.filter(w => w.type !== 'Frame')
+      if (this.selectedWidget.component === 'Frame') return this.WIDGET_TYPES.filter(w => w.type !== 'Frame')
       // Linkable widget types only contain frames or none at all
-      if (this.linkableWidgetTypes.includes(this.selectedWidget.component)) {
+      if (this.LINKABLE_WIDGET_TYPES.includes(this.selectedWidget.component)) {
         if (this.selectedWidget.slots && this.selectedWidget.slots.widgets && this.selectedWidget.slots.widgets.length > 0) {
           if (this.selectedWidget.slots.widgets.find(w => w.component === 'Frame')) {
-            return this.widgetTypes.filter(w => w.type === 'Frame')
+            return this.WIDGET_TYPES.filter(w => w.type === 'Frame')
           } else {
-            return this.widgetTypes.filter(w => w.type !== 'Frame')
+            return this.WIDGET_TYPES.filter(w => w.type !== 'Frame')
           }
         } else {
-          return this.widgetTypes
+          return this.WIDGET_TYPES
         }
       }
-      return this.widgetTypes
+      return this.WIDGET_TYPES
     }
   },
   watch: {
@@ -466,7 +465,7 @@ export default {
             siblingIsFrame.pop()
           }
         })
-        widgetList.filter(widget => this.widgetTypesRequiringItem.includes(widget.component)).forEach(widget => {
+        widgetList.filter(widget => this.WIDGET_TYPES_REQUIRING_ITEM.includes(widget.component)).forEach(widget => {
           if (!(widget.config && widget.config.item)) {
             let label = widget.config && widget.config.label ? widget.config.label : 'without label'
             validationWarnings.push(widget.component + ' widget ' + label + ', no item configured')
@@ -479,11 +478,11 @@ export default {
           }
         })
         widgetList.filter(widget => widget.component === 'Chart').forEach(widget => {
-          if (!(widget.config && widget.config.period && this.regexPeriod.test(widget.config.period))) {
+          if (!(widget.config && widget.config.period && this.REGEX_PERIOD.test(widget.config.period))) {
             let label = widget.config && widget.config.label ? widget.config.label : 'without label'
             validationWarnings.push(widget.component + ' widget ' + label + ', invalid period configured: ' + widget.config.period)
           }
-          if (widget.config && widget.config.yAxisDecimalPattern && !this.regexDecimalPattern.test(widget.config.yAxisDecimalPattern)) {
+          if (widget.config && widget.config.yAxisDecimalPattern && !this.REGEX_DECIMAL_PATTERN.test(widget.config.yAxisDecimalPattern)) {
             let label = widget.config && widget.config.label ? widget.config.label : 'without label'
             validationWarnings.push(widget.component + ' widget ' + label + ', invalid Y-axis decimal pattern configured: ' + widget.config.yAxisDecimalPattern)
           }
@@ -567,15 +566,15 @@ export default {
     validateMapping (component, mapping) {
       if (component === 'Switch') {
         // for Switch widget, also check for releaseCommand
-        return this.regexMappingSwitch.test(mapping)
+        return this.REGEX_MAPPING_SWITCH.test(mapping)
       }
-      return this.regexMapping.test(mapping)
+      return this.REGEX_MAPPING.test(mapping)
     },
     validateRule (attr, rule) {
       if (attr === 'visibility') {
-        return this.regexRuleVisibility.test(rule)
+        return this.REGEX_RULE_VISIBILITY.test(rule)
       }
-      return this.regexRule.test(rule)
+      return this.REGEX_RULE.test(rule)
     },
     cleanConfig (widget) {
       if (widget.config) {
