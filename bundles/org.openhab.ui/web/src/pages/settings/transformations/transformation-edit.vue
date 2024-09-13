@@ -68,7 +68,7 @@
               </f7-list-button>
             </f7-list>
             <p class="text-align-center">
-              Tip: Use <code>{{ itemStateTransformationCode }}</code> <clipboard-icon :value="itemStateTransformationCode" tooltip="Copy transformation" /> for Item state transformations.
+              Tip: Use <code>{{ itemStateTransformationCode }}</code> <clipboard-icon :value="itemStateTransformationCode" tooltip="Copy transformation" /> as pattern for Item state description metadata.
             </p>
           </f7-col>
         </f7-block>
@@ -123,7 +123,7 @@ export default {
       return false
     },
     itemStateTransformationCode () {
-      return `${this.transformation.type.toUpperCase()}(${this.transformationId.replace(/:([A-Z][a-z]{1,2}-)?([a-z]{2,3})(-[A-Z]{2,3})?$/, '')})`
+      return `${this.transformation.type.toUpperCase()}(${this.transformation.uid}):%s`
     }
   },
   methods: {
