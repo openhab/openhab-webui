@@ -184,12 +184,14 @@ IconRule -> Conditions _ %equals _ WidgetIconAttrValue                          
 
 Conditions -> Condition                                                           {% (d) => d[0] %}
   | Conditions _ %and _ Condition                                                 {% (d) => d[0] + ' AND ' + d[4] %}
-Condition -> ConditionCommand _ ConditionComparator _ ConditionValue              {% (d) => d[0][0].value + d[2][0].value + d[4][0].value %}
-  | ConditionComparator _ ConditionValue                                          {% (d) => d[0][0].value + d[2][0].value %}
-  | ConditionValue                                                                {% (d) => d[0][0].value %}
+Condition -> ConditionCommand _ ConditionComparator _ ConditionValue              {% (d) => d[0][0].value + d[2][0].value + d[4] %}
+  | ConditionComparator _ ConditionValue                                          {% (d) => d[0][0].value + d[2] %}
+  | ConditionValue                                                                {% (d) => d[0] %}
 ConditionCommand -> %identifier
 ConditionComparator -> %eq | %noteq | %lteq | %gteq | %lt | %gt
-ConditionValue -> %number | %identifier | %string
+ConditionValue -> %number                                                         {% (d) => parseFloat(d[0].value) %}
+  | %identifier                                                                   {% (d) => d[0].value %}
+  | %string                                                                       {% (d) => '"' + d[0].value + '"' %}
 
 _ -> null               {% () => null %}
 	| __                  {% () => null %}

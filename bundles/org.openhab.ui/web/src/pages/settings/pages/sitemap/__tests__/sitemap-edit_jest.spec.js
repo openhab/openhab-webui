@@ -341,9 +341,9 @@ describe('SitemapEdit', () => {
     localVue.set(wrapper.vm.selectedWidget.config, 'mappings', [
       '1=Morning',
       '2=Evening',
-      '10=Cinéma',
+      '10="Cinéma"',
       '11=TV',
-      '"3 time"=Bed time',
+      '"3 time"="Bed time"',
       '4=Night=moon'
     ])
     wrapper.vm.validateWidgets()
@@ -467,9 +467,9 @@ describe('SitemapEdit', () => {
     localVue.set(wrapper.vm.selectedWidget.config, 'buttons', [
       { row: 1, column: 1, command: '1=Morning' },
       { row: 1, column: 3, command: '2=Evening' },
-      { row: 2, column: 1, command: '10=Cinéma' },
+      { row: 2, column: 1, command: '10="Cinéma"' },
       { row: 2, column: 2, command: '11=TV' },
-      { row: 2, column: 3, command: '3=Bed time' },
+      { row: 2, column: 3, command: '3="Bed time"' },
       { row: 3, column: 2, command: '4=night=moon' }
     ])
     wrapper.vm.validateWidgets()
@@ -500,7 +500,7 @@ describe('SitemapEdit', () => {
     wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0], wrapper.vm.sitemap])
     await wrapper.vm.$nextTick()
     localVue.set(wrapper.vm.selectedWidget.config, 'visibility', [
-      'Day_time==Morning Time',
+      'Day_time=="Morning Time"',
       'Battery<30',
       'Battery>50',
       'Battery_Level>=20'
@@ -533,10 +533,10 @@ describe('SitemapEdit', () => {
     wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0], wrapper.vm.sitemap])
     await wrapper.vm.$nextTick()
     localVue.set(wrapper.vm.selectedWidget.config, 'valuecolor', [
-      'Heat_Warning==It is hot=gray',
+      'Heat_Warning=="It is hot"=gray',
       'Last_Update==Uninitialized=gray',
       '>=25=orange',
-      '==15 AND Heat_Warning==It is a nice temperature=green',
+      '==15 AND Heat_Warning=="It is a nice temperature"=green',
       '0=white',
       'blue'
     ])

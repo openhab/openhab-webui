@@ -1,7 +1,7 @@
 <template>
   <f7-card v-if="widget">
     <f7-card-content>
-      <f7-list inline-labels>
+      <f7-list class="widget-detail" inline-labels>
         <f7-list-input v-if="widget.component === 'Sitemap'" label="Widget ID" type="text" placeholder="Widget ID" :value="widget.uid" @input="widget.uid = $event.target.value"
                        required validate pattern="[A-Za-z0-9_]+" error-message="Required. Alphanumeric &amp; underscores only" :disabled="!createMode" />
         <f7-list-input label="Label" type="text" placeholder="Label" :value="widget.config.label" @input="updateParameter('label', $event)" clear-button />
@@ -17,21 +17,30 @@
             <f7-toggle slot="after" :checked="widget.config.staticIcon" @toggle:change="widget.config.staticIcon = $event" />
           </f7-list-item>
         </ul>
-        <ul>
+        <ul id="additional" class="additional-controls">
           <!-- additional controls -->
           <f7-list-input v-if="supports('url')" label="URL" type="url" :value="widget.config.url" @input="updateParameter('url', $event)" clear-button />
-          <f7-list-input v-if="supports('refresh')" label="Refresh interval" type="number" :value="widget.config.refresh" @input="updateParameter('refresh', $event)" clear-button />
-          <f7-list-input v-if="supports('encoding')" label="Encoding" type="text" :value="widget.config.encoding" @input="updateParameter('encoding', $event)" clear-button />
-          <f7-list-input v-if="supports('service')" label="Service" type="text" :value="widget.config.service" @input="updateParameter('service', $event)" clear-button />
+          <f7-list-input v-if="supports('refresh')" label="Refresh interval (ms)" type="number" min="1" :value="widget.config.refresh" @input="updateParameter('refresh', $event)" clear-button />
+          <f7-list-item v-if="supports('encoding')" title="Encoding" smart-select :smart-select-params="{openIn: 'popover', closeOnSelect: true}">
+            <select name="encodings" :value="widget.config.encoding" @change="updateParameter('encoding', $event)">
+              <option v-for="def in ENCODING_DEFS" :key="def.key" :value="def.key">
+                {{ def.value }}
+              </option>
+            </select>
+          </f7-list-item>
+          <persistence-picker v-if="supports('service')" style="padding-left:0" title="Persistence service" :value="widget.config.service" @input="(value) => widget.config.service = value" />
           <f7-list-input v-if="supports('period')" label="Period" type="text"
                          placeholder="PnYnMnDTnHnMnS-PnYnMnDTnHnMnS"
                          validate pattern="^((P(\d+Y)?(\d+M)?(\d+W)?(\d+D)?(T(\d+H)?(\d+M)?(\d+S)?)?|\d*[YMWDh])-)?-?(P(\d+Y)?(\d+M)?(\d+W)?(\d+D)?(T(\d+H)?(\d+M)?(\d+S)?)?|\d*[YMWDh])$"
                          :value="widget.config.period" @input="updateParameter('period', $event)" clear-button />
-          <f7-list-input v-if="supports('height')" label="Height" type="number" :value="widget.config.height" @input="updateParameter('height', $event)" clear-button />
+          <f7-list-input v-if="supports('height')" label="Height" type="number" min="1" :value="widget.config.height" @input="updateParameter('height', $event)" clear-button />
           <f7-list-input v-if="supports('minValue')" label="Minimum" type="number" :value="widget.config.minValue" @input="updateParameter('minValue', $event)" clear-button />
           <f7-list-input v-if="supports('maxValue')" label="Maximum" type="number" :value="widget.config.maxValue" @input="updateParameter('maxValue', $event)" clear-button />
-          <f7-list-input v-if="supports('step')" label="Step" type="number" :value="widget.config.step" @input="updateParameter('step', $event)" clear-button />
-          <f7-list-input v-if="supports('yAxisDecimalPattern')" label="Y-axis decimal pattern" type="text" :value="widget.config.separator" @input="updateParameter('yAxisDecimalPattern', $event)" clear-button />
+          <f7-list-input v-if="supports('step')" label="Step" type="number" min="0" :value="widget.config.step" @input="updateParameter('step', $event)" clear-button />
+          <f7-list-input v-if="supports('yAxisDecimalPattern')" label="Y-axis decimal pattern" type="text"
+                         placeholder="##0.0"
+                         validate pattern="^(?:'[0#.,;E]?'|[^0#.,;E'])*((#[,#]*|0)[,0]*)(\.(0+#*|#+))?(?:E0+)?(?:';'|[^;])*(?:;(?:'[0#.,;E]?'|[^0#.,;E'])*((#[,#]*|0)[,0]*)(\.(0+#*|#+))?(?:E0+)?.*)?$"
+                         :value="widget.config.yAxisDecimalPattern" @input="updateParameter('yAxisDecimalPattern', $event)" clear-button />
           <f7-list-item v-if="supports('switchEnabled')" title="Switch enabled">
             <f7-toggle slot="after" :checked="widget.config.switchEnabled" @toggle:change="widget.config.switchEnabled = $event" />
           </f7-list-item>
@@ -46,7 +55,7 @@
           </f7-list-item>
           <f7-list-item v-if="supports('inputHint')" title="Hint" smart-select :smart-select-params="{openIn: 'popover', closeOnSelect: true}">
             <select name="inputHints" required :value="widget.config.inputHint" @change="updateParameter('inputHint', $event)">
-              <option v-for="def in inputHintDefs" :key="def.key" :value="def.key">
+              <option v-for="def in INPUT_HINT_DEFS" :key="def.key" :value="def.key">
                 {{ def.value }}
               </option>
             </select>
@@ -67,42 +76,56 @@
   </f7-card>
 </template>
 
-<style>
-
+<style lang="stylus">
+.widget-detail
+  .item-inner:after
+    height 0 !important /* remove all lines between params */
+  .additional-controls:before
+    display block !important
+#additional:before
+  display block !important /* need two selectors to override the important Vue card css */
 </style>
 
 <script>
 import { Categories } from '@/assets/categories.js'
 import ItemPicker from '@/components/config/controls/item-picker.vue'
+import PersistencePicker from '@/components/config/controls/persistence-picker.vue'
 
 export default {
   components: {
-    ItemPicker
+    ItemPicker,
+    PersistencePicker
   },
   props: ['widget', 'createMode'],
   data () {
     return {
       iconInputId: '',
-      iconAutocomplete: null,
-      additionalControls: {
-        Image: ['url', 'refresh'],
-        Video: ['url', 'encoding'],
-        Chart: ['service', 'period', 'refresh', 'legend', 'forceAsItem', 'yAxisDecimalPattern'],
-        Webview: ['url', 'height'],
-        Mapview: ['height'],
-        Slider: ['switchEnabled', 'releaseOnly', 'minValue', 'maxValue', 'step'],
-        Setpoint: ['minValue', 'maxValue', 'step'],
-        Input: ['inputHint'],
-        Default: ['height']
-      },
-      inputHintDefs: [
-        { key: 'text', value: 'Text' },
-        { key: 'number', value: 'Number' },
-        { key: 'date', value: 'Date' },
-        { key: 'time', value: 'Time' },
-        { key: 'datetime', value: 'Date and Time' }
-      ]
+      iconAutocomplete: null
     }
+  },
+  created () {
+    this.ADDITIONAL_CONTROLS = {
+      Image: ['url', 'refresh'],
+      Video: ['url', 'encoding'],
+      Chart: ['service', 'period', 'refresh', 'legend', 'forceAsItem', 'yAxisDecimalPattern'],
+      Webview: ['url', 'height'],
+      Mapview: ['height'],
+      Slider: ['switchEnabled', 'releaseOnly', 'minValue', 'maxValue', 'step'],
+      Setpoint: ['minValue', 'maxValue', 'step'],
+      Input: ['inputHint'],
+      Default: ['height']
+    }
+    this.ENCODING_DEFS = [
+      { key: 'mjpeg', value: 'MJPEG Video' },
+      { key: 'HLS', value: 'HTTP Live Streaming' }
+    ]
+    this.INPUT_HINT_DEFS = [
+      { key: 'text', value: 'Text' },
+      { key: 'number', value: 'Number' },
+      { key: 'date', value: 'Date' },
+      { key: 'time', value: 'Time' },
+      { key: 'datetime', value: 'Date and Time' }
+    ]
   },
   methods: {
     initializeAutocomplete (inputElement) {
@@ -119,8 +142,8 @@ export default {
       })
     },
     supports (parameter) {
-      if (!this.additionalControls[this.widget.component]) return false
-      return (this.additionalControls[this.widget.component].indexOf(parameter) >= 0)
+      if (!this.ADDITIONAL_CONTROLS[this.widget.component]) return false
+      return (this.ADDITIONAL_CONTROLS[this.widget.component].indexOf(parameter) >= 0)
     },
     updateParameter (parameter, $event) {
       let value = $event.target.value
