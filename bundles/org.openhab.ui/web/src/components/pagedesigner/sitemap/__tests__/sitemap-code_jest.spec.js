@@ -182,7 +182,7 @@ describe('SitemapCode', () => {
         item: 'Item_Icon',
         iconrules: [
           '>5=iconify:wi:day-sunny-overcast',
-          '<=5 AND Test_Item==check error=error'
+          '<=5 AND Test_Item=="check error"=error'
         ]
       }
     })
@@ -442,7 +442,7 @@ describe('SitemapCode', () => {
       config: {
         item: 'Test',
         visibility: [
-          'Day_Time==Morning Time',
+          'Day_Time=="Morning Time"',
           'Temperature>19'
         ]
       }
@@ -517,7 +517,7 @@ describe('SitemapCode', () => {
       config: {
         item: 'Temperature',
         valuecolor: [
-          'Heat_Warning==It is hot=gray'
+          'Heat_Warning=="It is hot"=gray'
         ]
       }
     })
