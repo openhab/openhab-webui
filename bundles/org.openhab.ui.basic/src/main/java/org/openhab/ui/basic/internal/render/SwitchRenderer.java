@@ -133,9 +133,17 @@ public class SwitchRenderer extends AbstractWidgetRenderer {
 
             snippet = preprocessSnippet(snippet, w);
 
-            snippet = snippet.replaceAll("%height_auto%", multiline ? "mdl-form__row--height-auto" : "");
-            snippet = snippet.replaceAll("%buttons_class%",
-                    multiline ? "mdl-form__buttons-multiline" : "mdl-form__buttons");
+            if (multiline) {
+                snippet = snippet //
+                        .replaceAll("%height_auto%", "mdl-form__row--height-auto")
+                        .replaceAll("%buttons_class%", "mdl-form__buttons-multiline")
+                        .replaceAll("%label_class%", "mdl-form__label-multiline");
+            } else {
+                snippet = snippet //
+                        .replaceAll("%height_auto%", "") //
+                        .replaceAll("%buttons_class%", "mdl-form__buttons") //
+                        .replaceAll("%label_class%", "");
+            }
 
             StringBuilder buttons = new StringBuilder();
             if (s.getMappings().isEmpty() && item != null) {
