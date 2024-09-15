@@ -141,26 +141,37 @@ export default {
   asyncComputed: {
     series () {
       if (!this.context.component.slots || !this.context.component.slots.series) return Promise.resolve([])
-      return Promise.all(this.context.component.slots.series.map((s) => this.getSeriesPromises(s)))
+      const arraySeries = []
+      Promise.all(this.context.component.slots.series.map((s) => this.getSeriesPromises(s))).then(a => a.forEach(a => arraySeries.push(...a)))
+      return arraySeries
     }
   },
   methods: {
-    getSeriesPromises (component) {
+    async getSeriesPromises (component) {
       const getter = (data) => seriesComponents[component.component].get(component, data.map((d) => d[1]), this.startTime, this.endTime, this)
 
-      const neededItems = seriesComponents[component.component].neededItems(component, this).filter(i => !!i)
+      let neededItems = seriesComponents[component.component].neededItems(component, this).filter(i => !!i)
       if (neededItems.length === 0) {
         return Promise.resolve(getter([]))
       }
 
       let boundary = seriesComponents[component.component].includeBoundary?.(component)
       const itemPromises = neededItems.map((neededItem) => {
-        if (this.items[neededItem]) return Promise.resolve(this.items[neededItem])
+        if (this.items[neededItem]) {
+          return Promise.resolve(this.items[neededItem])
+        }
         return this.$oh.api.get(`/rest/items/${neededItem}`).then((item) => {
           this.items[neededItem] = item
           return item
         })
       })
+
+      if(component.config.groupItems && this.evaluateExpression(".groupItems", component.config.groupItems)) {
+        (await Promise.all(itemPromises)).filter(i => i.type == "Group").map(i => i.members.map(i => neededItems.push(i.name)))
+        console.log(neededItems)
+        neededItems = neededItems.filter(i => i !== component.config.item)
+        console.log(neededItems)
+      }
 
       const combinedPromises = neededItems.map((neededItem) => {
         const url = `/rest/persistence/items/${neededItem}`

@@ -17,22 +17,30 @@ export default {
     ]
   },
   get (component, points, startTime, endTime, chart) {
+    let serieses = []
     let series = chart.evaluateExpression(ComponentId.get(component), component.config)
-    series.data = []
 
-    if (series.item) {
-      const itemPoints = points.find(p => p.name === series.item).data
+    if(series.item) {
+      points.map(item => {
+        let series = chart.evaluateExpression(ComponentId.get(component), component.config)
+        series.name = item.name
+        series.item = item.name
+        series.data = []
 
-      const formatter = new Intl.NumberFormat('en', { useGrouping: false, maximumFractionDigits: 3 })
-      const data = itemPoints.map((p) => {
-        return [new Date(p.time), formatter.format(p.state)]
+        const itemPoints = item.data
+
+        const formatter = new Intl.NumberFormat('en', { useGrouping: false, maximumFractionDigits: 3 })
+        const data = itemPoints.map((p) => {
+          return [new Date(p.time), formatter.format(p.state)]
+        })
+
+        series.data = data
+        series.id = `oh-time-series#${series.item}#${Framework7.utils.id()}`
+
+        serieses.push(series)
       })
-
-      series.data = data
-      series.id = `oh-time-series#${series.item}#${Framework7.utils.id()}`
     }
 
-    // other things
     if (component.slots && component.slots.markArea) {
       series.markArea = MarkArea.get(component.slots.markArea[0], points, startTime, endTime, chart)
     }
@@ -42,6 +50,6 @@ export default {
       series.tooltip = { show: true }
     }
 
-    return series
+    return serieses;
   }
 }
