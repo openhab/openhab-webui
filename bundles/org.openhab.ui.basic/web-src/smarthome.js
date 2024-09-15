@@ -168,6 +168,12 @@
 		});
 	}
 
+	function getElementWidth(element) {
+		var style = getComputedStyle(element);
+		return element.offsetWidth + parseFloat(style.marginLeft) + parseFloat(style.marginRight) +
+			parseFloat(style.paddingLeft) + parseFloat(style.paddingRight);
+	}
+
 	function EventMapper() {
 		var
 			_t = this;
@@ -1346,6 +1352,7 @@
 		});
 
 		if (_t.buttons.length > 1 && _t.parentNode.classList.contains(o.buttonsMultilineClass)) {
+			var labelMinWidth = 0;
 			if (_t.label.textContent.trim().length === 0) {
 				_t.label.style.paddingLeft = 0;
 				_t.label.style.minWidth = 0;
@@ -1367,16 +1374,28 @@
 				var minContentWidth = _t.label.offsetWidth;
 				if (minContentWidth > defaultMinWidth) {
 					_t.label.style.removeProperty("min-width");
+					labelMinWidth = defaultMinWidth;
+				} else {
+					labelMinWidth = minContentWidth;
 				}
 			}
 
 			_t.minimizeWidth = function() {
 				// Minimize the width taken by the buttons without adding extra rows.
-				// Start from the maximum width (limited by `mdl-form__buttons-multiline.max-width`),
+				// Start from the maximum width the buttons can take,
 				// then shrink it down to the minimum without causing additional wrapping.
 				var buttons = _t.parentNode;
-				buttons.style.width = "100%";
-				var width = buttons.offsetWidth;
+				var buttonsStyle = getComputedStyle(buttons);
+				var labelStyle = getComputedStyle(_t.label);
+				// Calculate the maximum width the buttons can take
+				var width = buttons.parentElement.offsetWidth -
+					parseFloat(buttonsStyle.paddingLeft) - parseFloat(buttonsStyle.paddingRight) -
+					getElementWidth(_t.iconContainer) - getElementWidth(_t.value);
+				if (labelMinWidth) {
+					width -= labelMinWidth + parseFloat(labelStyle.paddingLeft) + parseFloat(labelStyle.paddingRight);
+				}
+				buttons.style.width = width + "px";
+				width = buttons.offsetWidth;
 				var height = buttons.offsetHeight;
 				while (buttons.offsetHeight === height && width >= maxButtonWidth) {
 					buttons.style.width = --width + "px";
