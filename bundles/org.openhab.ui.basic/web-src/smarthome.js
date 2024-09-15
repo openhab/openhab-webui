@@ -1384,7 +1384,8 @@
 				buttons.style.width = (width+1) + "px";
 			};
 
-			_t.minimizeWidth();
+			// Wait until after all the icons are loaded before running minimizeWidth()
+			window.addEventListener("load", _t.minimizeWidth);
 			window.addEventListener("resize", _t.minimizeWidth);
 		} else {
 			_t.minimizeWidth = function() {};
@@ -1412,6 +1413,7 @@
 				}
 			});
 			componentHandler.downgradeElements(_t.buttons);
+			window.removeEventListener("load", _t.minimizeWidth);
 			window.removeEventListener("resize", _t.minimizeWidth);
 		};
 
