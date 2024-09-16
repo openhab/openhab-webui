@@ -55,8 +55,8 @@
             </f7-link>
           </div>
         </f7-toolbar>
+        <transformation-general-settings :createMode="createMode" :transformation="transformation" />
         <f7-block class="block-narrow">
-          <transformation-general-settings :createMode="createMode" :transformation="transformation" />
           <f7-col>
             <f7-list v-if="isEditable">
               <f7-list-button color="red" @click="deleteTransformation">
@@ -82,6 +82,9 @@
 </style>
 
 <script>
+import cloneDeep from 'lodash/cloneDeep'
+import fastDeepEqual from 'fast-deep-equal/es6'
+
 import DirtyMixin from '../dirty-mixin'
 import TransformationGeneralSettings from '@/pages/settings/transformations/transformation-general-settings'
 import { CodeSnippets, EditorModes } from '@/assets/definitions/transformations.js'
@@ -101,12 +104,23 @@ export default {
       ready: false,
       loading: false,
       transformation: {},
+      savedTransformation: {},
       types: [],
       languages: [],
       language: '',
       detailsOpened: false,
       editorMode: '',
       blocklyCodePreview: false
+    }
+  },
+  watch: {
+    transformation: {
+      handler: function () {
+        if (!this.loading) { // ignore changes during loading
+          this.dirty = !fastDeepEqual(this.transformation, this.savedTransformation)
+        }
+      },
+      deep: true
     }
   },
   computed: {
@@ -150,6 +164,7 @@ export default {
         },
         editable: true
       }
+      this.savedTransformation = cloneDeep(this.transformation)
       Promise.all([this.$oh.api.get('/rest/transformations/services'), this.$oh.api.get('/rest/config-descriptions/system:i18n')]).then((data) => {
         this.$set(this, 'types', data[0])
 
@@ -183,6 +198,7 @@ export default {
       if (CodeSnippets[this.transformation.type.toLowerCase()]) this.transformation.configuration.function = CodeSnippets[this.transformation.type.toLowerCase()]
 
       this.$oh.api.put('/rest/transformations/' + this.transformation.uid, this.transformation).then(() => {
+        this.dirty = false
         this.$f7.toast.create({
           text: 'Transformation created',
           destroyOnClose: true,
@@ -197,6 +213,7 @@ export default {
 
       this.$oh.api.get('/rest/transformations/' + this.transformationId).then((data) => {
         this.$set(this, 'transformation', data)
+        this.savedTransformation = cloneDeep(this.transformation)
         this.editorMode = EditorModes[this.transformation.type.toLowerCase()] || this.transformation.type
         this.loading = false
         this.ready = true
@@ -215,6 +232,7 @@ export default {
       }
       return this.$oh.api.put('/rest/transformations/' + this.transformation.uid, this.transformation).then((data) => {
         this.dirty = false
+        this.savedTransformation = cloneDeep(this.transformation)
         if (!noToast) {
           this.$f7.toast.create({
             text: 'Transformation updated',
@@ -257,7 +275,6 @@ export default {
     },
     onEditorInput (value) {
       this.transformation.configuration.function = value
-      this.dirty = true
     },
     keyDown (ev) {
       if ((ev.ctrlKey || ev.metaKey) && !(ev.altKey || ev.shiftKey)) {
