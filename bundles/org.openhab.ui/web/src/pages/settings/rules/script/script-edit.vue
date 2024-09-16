@@ -156,6 +156,7 @@ import RuleStatus from '@/components/rule/rule-status-mixin'
 import ScriptGeneralSettings from './script-general-settings.vue'
 import ModuleDescriptionSuggestions from '../module-description-suggestions'
 import DirtyMixin from '../../dirty-mixin'
+import { AddonNames } from '@/assets/definitions/automation-languages'
 
 export default {
   mixins: [RuleStatus, ModuleDescriptionSuggestions, DirtyMixin],
@@ -385,11 +386,7 @@ export default {
       return this.languages.map(l => l.contentType).includes(mimeType)
     },
     mimeTypeDescription (mode) {
-      if (mode === this.GRAALJS_MIME_TYPE) return 'JS Scripting'
-      if (mode === this.NASHORNJS_MIME_TYPE) return 'JS Scripting (Nashorn)'
-      if (mode === 'py') return 'Jython Scripting'
-      if (mode === 'rb' || mode === 'application/x-ruby') return 'JRuby Scripting'
-      return mode
+      return AddonNames[mode] || mode
     },
     /**
      * Load the script module type, i.e. the available script languages
@@ -701,7 +698,6 @@ export default {
   },
   created () {
     this.GRAALJS_MIME_TYPE = 'application/javascript'
-    this.NASHORNJS_MIME_TYPE = 'application/javascript;version=ECMAScript-5.1'
   }
 }
 </script>
