@@ -34,7 +34,7 @@
         </f7-segmented>
         <f7-link v-if="DocumentationLinks[editorMode]"
                  icon-color="blue"
-                 :text="$device.desktop ? 'Documentation' : 'Docs'"
+                 :text="$device.desktop ? 'Open Documentation' : 'Docs'"
                  tooltip="Open documentation"
                  icon-ios="f7:question_circle" icon-md="f7:question_circle" icon-aurora="f7:question_circle"
                  color="blue"
