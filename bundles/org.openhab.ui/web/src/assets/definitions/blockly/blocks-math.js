@@ -6,7 +6,7 @@ import Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript.js'
 import { blockGetCheckedInputType } from './utils.js'
 
-export default function (f7, isGraalJs) {
+export default function (f7) {
   Blockly.Blocks['oh_toNumber'] = {
     init: function () {
       this.appendValueInput('valueAsText')
