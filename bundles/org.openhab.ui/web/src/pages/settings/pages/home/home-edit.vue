@@ -1,10 +1,6 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="home-editor">
-    <f7-navbar back-link="Back" no-hairline>
-      <template slot="title">
-        Edit Home Page
-        {{ dirtyIndicator }}
-      </template>
+    <f7-navbar :title="'Edit Home Page' + dirtyIndicator" back-link="Back" no-hairline>
       <f7-nav-right>
         <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only />
         <f7-link @click="save()" v-if="!$theme.md">

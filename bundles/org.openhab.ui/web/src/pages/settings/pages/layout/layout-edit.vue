@@ -1,10 +1,10 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="layout-editor">
-    <f7-navbar v-if="!(previewMode && page.config.hideNavbar) && !fullscreen" back-link="Back" no-hairline>
-      <template slot="title" v-if="ready">
-        {{ createMode ? 'Create layout page' : page.config.label }}
-        {{ dirtyIndicator }}
-      </template>
+    <f7-navbar
+      v-if="!(previewMode && page.config.hideNavbar) && !fullscreen"
+      :title="!ready ? '' : ((createMode ? 'Create layout page' : page.config.label) + dirtyIndicator)"
+      back-link="Back"
+      no-hairline>
       <f7-nav-right>
         <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only />
         <f7-link @click="save()" v-if="!$theme.md">

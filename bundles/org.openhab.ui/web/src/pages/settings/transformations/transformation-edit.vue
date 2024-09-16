@@ -1,10 +1,6 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
-    <f7-navbar :subtitle="(!createMode && transformation) ? editorMode : ''" back-link="Back">
-      <template slot="title">
-        {{ createMode ? 'Create Transformation' : 'Edit Transformation' }}
-        {{ dirtyIndicator }}
-      </template>
+    <f7-navbar :title="(createMode ? 'Create' : 'Edit') + ' Transformation' + dirtyIndicator" :subtitle="(!createMode && transformation) ? editorMode : ''" back-link="Back">
       <f7-nav-right>
         <f7-link v-if="createMode" @click="createTransformation" icon-md="material:save">
           {{ $theme.md ? '' : 'Create' }}

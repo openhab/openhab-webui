@@ -9,6 +9,7 @@ export default {
       if (this.dirty) {
         return ' ●' // &#9679;
       }
+      return ''
     }
   },
   methods: {
