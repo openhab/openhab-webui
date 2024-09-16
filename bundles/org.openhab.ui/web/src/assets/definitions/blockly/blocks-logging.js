@@ -6,7 +6,7 @@
 import Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript.js'
 
-export default function (f7, isGraalJs) {
+export default function (f7) {
   Blockly.Blocks['oh_print'] = {
     init: function () {
       this.appendValueInput('message')
@@ -21,11 +21,7 @@ export default function (f7, isGraalJs) {
 
   javascriptGenerator.forBlock['oh_print'] = function (block) {
     const message = javascriptGenerator.valueToCode(block, 'message', javascriptGenerator.ORDER_ATOMIC)
-    if (isGraalJs) {
-      return `console.log(${message});\n`
-    } else {
-      return `print(${message});\n`
-    }
+    return `console.log(${message});\n`
   }
 
   Blockly.Blocks['oh_log'] = {
@@ -44,13 +40,6 @@ export default function (f7, isGraalJs) {
   javascriptGenerator.forBlock['oh_log'] = function (block) {
     const message = javascriptGenerator.valueToCode(block, 'message', javascriptGenerator.ORDER_ATOMIC)
     const severity = block.getFieldValue('severity')
-    if (isGraalJs) {
-      return `console.${severity}(${message});\n`
-    } else {
-      const logger = javascriptGenerator.provideFunction_(
-        'logger',
-        ['var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.slf4j.LoggerFactory\').getLogger(\'org.openhab.rule.\' + ctx.ruleUID);'])
-      return `${logger}.${severity}(${message});\n`
-    }
+    return `console.${severity}(${message});\n`
   }
 }

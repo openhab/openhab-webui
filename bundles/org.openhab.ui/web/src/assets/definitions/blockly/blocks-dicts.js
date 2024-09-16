@@ -5,7 +5,7 @@
 import Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript.js'
 
-export default function (f7, isGraalJs) {
+export default function (f7) {
   Blockly.Blocks['dicts_create_with'] = {
     /**
      * Block for creating a list with any number of elements of any type.

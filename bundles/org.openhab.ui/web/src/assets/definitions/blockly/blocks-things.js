@@ -8,9 +8,7 @@ import { javascriptGenerator } from 'blockly/javascript.js'
 import { FieldThingPicker } from './fields/thing-field.js'
 import { blockGetCheckedInputType } from './utils.js'
 
-const unavailMsg = 'Advanced Thing blocks aren\'t supported in "application/javascript;version=ECMAScript-5.1"'
-
-export default function defineOHBlocks (f7, isGraalJs) {
+export default function defineOHBlocks (f7) {
   Blockly.Blocks['oh_thing'] = {
     init: function () {
       this.appendDummyInput()
@@ -45,11 +43,7 @@ export default function defineOHBlocks (f7, isGraalJs) {
 
   javascriptGenerator.forBlock['oh_getthing'] = function (block) {
     const thingUid = javascriptGenerator.valueToCode(block, 'thingUid', javascriptGenerator.ORDER_ATOMIC)
-    if (isGraalJs) {
-      return [`things.getThing(${thingUid})`, 0]
-    } else {
-      throw new Error(unavailMsg)
-    }
+    return [`things.getThing(${thingUid})`, 0]
   }
 
   Blockly.Blocks['oh_getthing_state'] = {
@@ -68,15 +62,8 @@ export default function defineOHBlocks (f7, isGraalJs) {
   javascriptGenerator.forBlock['oh_getthing_state'] = function (block) {
     const thingUid = javascriptGenerator.valueToCode(block, 'thingUid', javascriptGenerator.ORDER_ATOMIC)
     const inputType = blockGetCheckedInputType(block, 'thingUid')
-    if (isGraalJs) {
-      let code = (inputType === 'oh_thingtype') ? `${thingUid}.status` : `things.getThing(${thingUid}).status`
-      return [code, 0]
-    } else {
-      const things = javascriptGenerator.provideFunction_(
-        'things',
-        ['var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Things")'])
-      return [`things.getThingStatusInfo(${thingUid}).getStatus()`, 0]
-    }
+    const code = (inputType === 'oh_thingtype') ? `${thingUid}.status` : `things.getThing(${thingUid}).status`
+    return [code, 0]
   }
 
   Blockly.Blocks['oh_getthings'] = {
@@ -93,11 +80,7 @@ export default function defineOHBlocks (f7, isGraalJs) {
   }
 
   javascriptGenerator.forBlock['oh_getthings'] = function (block) {
-    if (isGraalJs) {
-      return ['things.getThings()', 0]
-    } else {
-      throw new Error(unavailMsg)
-    }
+    return ['things.getThings()', 0]
   }
 
   Blockly.Blocks['oh_getthing'] = {
@@ -115,11 +98,7 @@ export default function defineOHBlocks (f7, isGraalJs) {
 
   javascriptGenerator.forBlock['oh_getthing'] = function (block) {
     const thingUid = javascriptGenerator.valueToCode(block, 'thingUid', javascriptGenerator.ORDER_ATOMIC)
-    if (isGraalJs) {
-      return [`things.getThing(${thingUid})`, 0]
-    } else {
-      throw new Error(unavailMsg)
-    }
+    return [`things.getThing(${thingUid})`, 0]
   }
 
   Blockly.Blocks['oh_getthing_attribute'] = {
@@ -196,12 +175,7 @@ export default function defineOHBlocks (f7, isGraalJs) {
     const thing = javascriptGenerator.valueToCode(block, 'thing', javascriptGenerator.ORDER_ATOMIC)
     const inputType = blockGetCheckedInputType(block, 'thing')
     const attributeName = block.getFieldValue('attributeName')
-
-    if (isGraalJs) {
-      let code = (inputType === 'oh_thing') ? `things.getThing(${thing}).${attributeName}` : `${thing}.${attributeName}`
-      return [code, 0]
-    } else {
-      throw new Error(unavailMsg)
-    }
+    const code = (inputType === 'oh_thing') ? `things.getThing(${thing}).${attributeName}` : `${thing}.${attributeName}`
+    return [code, 0]
   }
 }

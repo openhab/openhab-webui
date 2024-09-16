@@ -7,7 +7,7 @@ import Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript.js'
 import { blockGetCheckedInputType } from './utils.js'
 
-export default function (f7, isGraalJs) {
+export default function (f7) {
   /*
     Send a command or post an update
     itemName: provide the name of the item ('String', 'oh_item') or even directly the item object ('oh_itemtype')
@@ -38,10 +38,6 @@ export default function (f7, isGraalJs) {
     const inputType = blockGetCheckedInputType(block, 'itemName')
 
     // Expect oh_itemtype as default because oh_groupmembers & oh_taggeditems return them
-    if (isGraalJs) {
-      return (inputType === 'oh_item' || inputType === 'String') ? `items.getItem(${itemName}).${eventType}(${value});\n` : `${itemName}.${eventType}(${value});\n`
-    } else {
-      return (inputType === 'oh_item' || inputType === 'String') ? `events.${eventType}(${itemName}, ${value});\n` : `events.${eventType}(${itemName}.getName(), ${value});\n`
-    }
+    return (inputType === 'oh_item' || inputType === 'String') ? `items.getItem(${itemName}).${eventType}(${value});\n` : `${itemName}.${eventType}(${value});\n`
   }
 }

@@ -9,7 +9,7 @@
 import Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript.js'
 
-export default function (f7, isGraalJs) {
+export default function (f7) {
   /*
   * Checks if the provided day is a
   * - bank holiday (needs to be configured in openHAB
@@ -38,20 +38,19 @@ export default function (f7, isGraalJs) {
   * Code part
   */
   javascriptGenerator.forBlock['oh_ephemeris_check'] = function (block) {
-    const ephemeris = (isGraalJs) ? 'actions.Ephemeris' : addEphemeris()
     const dayInfo = javascriptGenerator.valueToCode(block, 'dayInfo', javascriptGenerator.ORDER_NONE)
     const checkType = block.getFieldValue('checkType')
     let code = ''
 
     switch (checkType) {
       case 'weekend':
-        code += `${ephemeris}.isWeekend(${dayInfo})`
+        code += `actions.Ephemeris.isWeekend(${dayInfo})`
         break
       case 'weekday':
-        code += `!${ephemeris}.isWeekend(${dayInfo})`
+        code += `!actions.Ephemeris.isWeekend(${dayInfo})`
         break
       case 'holiday':
-        code += `${ephemeris}.isBankHoliday(${dayInfo})`
+        code += `actions.Ephemeris.isBankHoliday(${dayInfo})`
         break
     }
     return [code, javascriptGenerator.ORDER_FUNCTION_CALL]
@@ -80,9 +79,8 @@ export default function (f7, isGraalJs) {
   * Code part
   */
   javascriptGenerator.forBlock['oh_ephemeris_getHolidayName'] = function (block) {
-    const ephemeris = (isGraalJs) ? 'actions.Ephemeris' : addEphemeris()
     const dayInfo = javascriptGenerator.valueToCode(block, 'dayInfo', javascriptGenerator.ORDER_NONE)
-    return [`${ephemeris}.getBankHolidayName(${dayInfo})`, javascriptGenerator.ORDER_NONE]
+    return [`actions.Ephemeris.getBankHolidayName(${dayInfo})`, javascriptGenerator.ORDER_NONE]
   }
 
   /*
@@ -107,17 +105,7 @@ export default function (f7, isGraalJs) {
   * Code part
   */
   javascriptGenerator.forBlock['oh_ephemeris_getDaysUntilHoliday'] = function (block) {
-    const ephemeris = (isGraalJs) ? 'actions.Ephemeris' : addEphemeris()
     const holidayName = javascriptGenerator.valueToCode(block, 'holidayName', javascriptGenerator.ORDER_NONE)
-    return [`${ephemeris}.getDaysUntil(${holidayName})`, javascriptGenerator.ORDER_NONE]
-  }
-
-  /*
-  * Add ephemeris support to rule
-  */
-  function addEphemeris () {
-    return javascriptGenerator.provideFunction_(
-      'ephemeris',
-      ['var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Ephemeris");'])
+    return [`actions.Ephemeris.getDaysUntil(${holidayName})`, javascriptGenerator.ORDER_NONE]
   }
 }

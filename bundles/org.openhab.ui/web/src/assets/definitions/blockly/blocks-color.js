@@ -7,7 +7,7 @@ import Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript.js'
 import { blockGetCheckedInputType } from '@/assets/definitions/blockly/utils.js'
 
-export default function (f7, isGraalJs) {
+export default function (f7) {
   /*
   * converts a hex color string in to an openHAB hue-saturation-brightness string
   * Block
@@ -69,12 +69,7 @@ export default function (f7, isGraalJs) {
     const inputType = blockGetCheckedInputType(block, 'item')
     let attributeName = block.getFieldValue('attributeName')
 
-    let code = ''
-    if (isGraalJs) {
-      code = (inputType === 'oh_item') ? `items.getItem(${theItem}).rawState.get${attributeName}()` : `${theItem}.rawState.get${attributeName}()`
-    } else {
-      code = (inputType === 'oh_item') ? `itemRegistry.getItem(${theItem}).getRawState().get${attributeName}()` : `${theItem}.getRawState().get${attributeName}()`
-    }
+    const code = (inputType === 'oh_item') ? `items.getItem(${theItem}).rawState.get${attributeName}()` : `${theItem}.rawState.get${attributeName}()`
     return [code, 0]
   }
 

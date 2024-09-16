@@ -451,7 +451,7 @@
               <shadow type="oh_item" />
             </value>
           </block>
-          <block type="oh_get_meta_value" v-if="isGraalJs">
+          <block type="oh_get_meta_value">
             <value name="theItem">
               <shadow type="oh_item" />
             </value>
@@ -459,7 +459,7 @@
               <shadow type="text" />
             </value>
           </block>
-          <block type="oh_get_meta_config" v-if="isGraalJs">
+          <block type="oh_get_meta_config">
             <value name="configKey">
               <shadow type="text" />
             </value>
@@ -470,7 +470,7 @@
               <shadow type="text" />
             </value>
           </block>
-          <block type="oh_store_meta_value" v-if="isGraalJs">
+          <block type="oh_store_meta_value">
             <value name="value">
               <shadow type="text" />
             </value>
@@ -481,7 +481,7 @@
               <shadow type="text" />
             </value>
           </block>
-          <block type="oh_store_meta_config" v-if="isGraalJs">
+          <block type="oh_store_meta_config">
             <value name="value">
               <shadow type="text" />
             </value>
@@ -551,7 +551,7 @@
               </shadow>
             </value>
           </block>
-          <block type="oh_timer_context" v-if="isGraalJs" />
+          <block type="oh_timer_context" />
           <block type="oh_timer_cancel">
             <value name="timerName">
               <shadow type="text">
@@ -654,7 +654,7 @@
             </value>
           </block>
         </category>
-        <category name="Units of Measurement" v-if="isGraalJs">
+        <category name="Units of Measurement">
           <button
             helpUrl="configuration/blockly/rules-blockly-uom.html"
             text="Help"
@@ -1040,7 +1040,7 @@
             </value>
           </block>
         </category>
-        <category name="HTTP" v-if="isGraalJs">
+        <category name="HTTP">
           <button
             helpUrl="configuration/blockly/rules-blockly-http.html"
             text="Help"
@@ -1190,7 +1190,8 @@ Vue.config.ignoredElements = [
 ]
 
 export default {
-  props: ['blocks', 'libraryDefinitions', 'isGraalJs'],
+  props: ['blocks', 'libraryDefinitions'],
+  emits: ['mounted', 'ready', 'change'],
   data () {
     return {
       blockLibraries: null,
@@ -1203,11 +1204,6 @@ export default {
       transformationServices: [],
       loading: true,
       ready: false
-    }
-  },
-  watch: {
-    isGraalJs: function () {
-      this.initBlockly(this.blockLibraries)
     }
   },
   computed: {
@@ -1286,7 +1282,7 @@ export default {
         voices: this.voices,
         persistenceServices: this.persistenceServices,
         transformationServices: this.transformationServices
-      }, this.isGraalJs)
+      })
       this.addLibraryToToolbox(libraryDefinitions || [])
 
       const options = {
@@ -1432,6 +1428,7 @@ export default {
     onChange (event) {
       if (event.type === Blockly.Events.FINISHED_LOADING) {
         this.loading = false
+        this.$emit('ready')
       } else if (!this.loading && !event.isUiEvent) {
         this.$emit('change')
       }
