@@ -10,7 +10,7 @@ import { blockGetCheckedInputType } from './utils.js'
 
 import api from '@/js/openhab/api'
 
-export default function (f7, isGraalJs) {
+export default function (f7) {
   /* Helper block to allow selecting an item */
   Blockly.Blocks['oh_item'] = {
     fieldPicker: null,
@@ -80,12 +80,7 @@ export default function (f7, isGraalJs) {
 
   javascriptGenerator.forBlock['oh_groupmembers'] = function (block) {
     const groupName = javascriptGenerator.valueToCode(block, 'groupName', javascriptGenerator.ORDER_ATOMIC)
-
-    if (isGraalJs) {
-      return [`items.getItem(${groupName}).members`, 0]
-    } else {
-      return [`Java.from(itemRegistry.getItem(${groupName}).members)`, 0]
-    }
+    return [`items.getItem(${groupName}).members`, 0]
   }
 
   /* retrieve items via their tags */
@@ -114,11 +109,7 @@ export default function (f7, isGraalJs) {
       tags += tagNames[i]
     }
 
-    if (isGraalJs) {
-      return [`items.getItemsByTag(${tags})`, 0]
-    } else {
-      return [`Java.from(itemRegistry.getItemsByTag(${tags}))`, 0]
-    }
+    return [`items.getItemsByTag(${tags})`, 0]
   }
 
   Blockly.Blocks['oh_getitem'] = {
@@ -136,11 +127,7 @@ export default function (f7, isGraalJs) {
 
   javascriptGenerator.forBlock['oh_getitem'] = function (block) {
     const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
-    if (isGraalJs) {
-      return [`items.getItem(${itemName})`, 0]
-    } else {
-      return [`itemRegistry.getItem(${itemName})`, 0]
-    }
+    return [`items.getItem(${itemName})`, 0]
   }
 
   /* get info from items */
@@ -159,11 +146,7 @@ export default function (f7, isGraalJs) {
 
   javascriptGenerator.forBlock['oh_getitem_state'] = function (block) {
     const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
-    if (isGraalJs) {
-      return [`items.getItem(${itemName}).state`, 0]
-    } else {
-      return [`itemRegistry.getItem(${itemName}).getState()`, 0]
-    }
+    return [`items.getItem(${itemName}).state`, 0]
   }
 
   /*
@@ -181,10 +164,8 @@ export default function (f7, isGraalJs) {
     init: function () {
       const block = this
       const choices = [['name', 'Name'], ['label', 'Label'], ['state', 'State'], ['category', 'Category'], ['tags', 'Tags'], ['groups', 'GroupNames'], ['type', 'Type']]
-      if (isGraalJs) {
-        choices.splice(3, 0, ['numeric state', 'NumericState'])
-        choices.splice(4, 0, ['quantity state', 'QuantityState'])
-      }
+      choices.splice(3, 0, ['numeric state', 'NumericState'])
+      choices.splice(4, 0, ['quantity state', 'QuantityState'])
       const dropdown = new Blockly.FieldDropdown(
         choices,
         function (newMode) {
@@ -260,16 +241,8 @@ export default function (f7, isGraalJs) {
     const inputType = blockGetCheckedInputType(block, 'item')
     let attributeName = block.getFieldValue('attributeName')
 
-    if (isGraalJs) {
-      attributeName = attributeName.charAt(0).toLowerCase() + attributeName.slice(1)
-      let code = (inputType === 'oh_item') ? `items.getItem(${theItem}).${attributeName}` : `${theItem}.${attributeName}`
-      return [code, 0]
-    } else {
-      if (attributeName === 'Tags' || attributeName === 'GroupNames') {
-        return [`Java.from(${theItem}.get${attributeName}())`, 0]
-      } else {
-        return [`${theItem}.get${attributeName}()`, 0]
-      }
-    }
+    attributeName = attributeName.charAt(0).toLowerCase() + attributeName.slice(1)
+    const code = (inputType === 'oh_item') ? `items.getItem(${theItem}).${attributeName}` : `${theItem}.${attributeName}`
+    return [code, 0]
   }
 }
