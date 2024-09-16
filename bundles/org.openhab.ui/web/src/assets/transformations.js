@@ -24,6 +24,14 @@ export const EditorModes = {
 }
 
 export const DocumentationLinks = {
+  exec: '/addons/transformations/exec/',
+  jinja: '/addons/transformations/jinja/',
   js: '/link/jsscripting-transform',
-  rb: '/link/jrubyscripting-transform'
+  jsonpath: '/addons/transformations/jsonpath/',
+  map: '/addons/transformations/map/',
+  rb: '/link/jrubyscripting-transform',
+  regex: '/addons/transformations/regex/',
+  scale: '/addons/transformations/scale/',
+  xpath: '/addons/transformations/xpath/',
+  xslt: '/addons/transformations/xslt/'
 }
