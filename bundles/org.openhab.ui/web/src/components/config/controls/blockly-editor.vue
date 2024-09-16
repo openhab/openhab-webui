@@ -1191,6 +1191,7 @@ Vue.config.ignoredElements = [
 
 export default {
   props: ['blocks', 'libraryDefinitions'],
+  emits: ['mounted', 'ready', 'change'],
   data () {
     return {
       blockLibraries: null,
