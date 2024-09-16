@@ -18,6 +18,7 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
         .appendField(new Blockly.FieldDropdown([
           ['persisted state', 'persistedState'],
           ['historic state average', 'averageSince'], ['future state average', 'averageUntil'], ['state average between', 'averageBetween'],
+          ['historic state median', 'medianSince'], ['future state median', 'medianUntil'], ['state median between', 'medianBetween'],
           ['historic state delta', 'deltaSince'], ['future state delta', 'deltaUntil'], ['state delta between', 'deltaBetween'],
           ['historic state deviation', 'deviationSince'], ['future state deviation', 'deviationUntil'], ['state deviation between', 'deviationBetween'],
           ['historic state variance', 'varianceSince'], ['future state variance', 'varianceUntil'], ['state variance between', 'varianceBetween'],
@@ -52,6 +53,9 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
           'averageSince': 'Gets the average value of the State of the Item since a certain point in time. This method uses a time-weighted average calculation',
           'averageUntil': 'Gets the average value of the State of the Item until a certain point in time. This method uses a time-weighted average calculation',
           'averageBetween': 'Gets the average value of the State of the Item between two points in time. This method uses a time-weighted average calculation',
+          'medianSince': 'Gets the median value of the State of the Item since a certain point in time',
+          'medianUntil': 'Gets the median value of the State of the Item until a certain point in time',
+          'medianBetween': 'Gets the median value of the State of the Item between two points in time',
           'deltaSince': 'Gets the difference in value of the State of the Item since a certain point in time',
           'deltaUntil': 'Gets the difference in value of the State of the Item until a certain point in time',
           'deltaBetween': 'Gets the difference in value of the State of the Item between two points in time',
@@ -227,6 +231,9 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
         case 'averageSince':
         case 'averageUntil':
         case 'averageBetween':
+        case 'medianSince':
+        case 'medianUntil':
+        case 'medianBetween':
         case 'deltaSince':
         case 'deltaUntil':
         case 'deltaBetween':
@@ -317,6 +324,9 @@ export default function defineOHBlocks_Persistence (f7, isGraalJs, persistenceSe
       case 'averageSince':
       case 'averageUntil':
       case 'averageBetween':
+      case 'medianSince':
+      case 'medianUntil':
+      case 'medianBetween':
       case 'deltaSince':
       case 'deltaUntil':
       case 'deltaBetween':
