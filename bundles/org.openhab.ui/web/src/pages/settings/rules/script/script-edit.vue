@@ -85,7 +85,7 @@
             <f7-list-item media-item radio radio-icon="start"
                           title="Design with Blockly"
                           text="A beginner-friendly way to build scripts visually by assembling blocks"
-                          :footer="!isJSAvailable ? 'You need to install the JavaScript Scripting addon before you will be able to run' : undefined"
+                          :footer="!isJsAvailable ? 'You need to install the JavaScript Scripting addon before you will be able to run' : undefined"
                           :value="'application/javascript+blockly'" :checked="mode === 'application/javascript+blockly'"
                           @change="mode = 'application/javascript+blockly'">
               <img src="@/images/blockly.svg" height="32" width="32" slot="media">
@@ -230,7 +230,7 @@ export default {
     isBlockly () {
       return this.currentModule && this.currentModule.configuration && this.currentModule.configuration.blockSource
     },
-    isJSAvailable () {
+    isJsAvailable () {
       return this.isMimeTypeAvailable(this.GRAALJS_MIME_TYPE)
     }
   },
@@ -619,7 +619,7 @@ export default {
       }
 
       // Check if JS Scripting is installed
-      if (!this.isJSAvailable) message += (message ? ' and' : 'You do not have JS Scripting installed. Please') + ' install the JS Scripting addon'
+      if (!this.isJsAvailable) message += (message ? ' and' : 'You do not have JS Scripting installed. Please') + ' install the JS Scripting addon'
 
       if (message) this.$f7.dialog.alert(message + '.')
     },
