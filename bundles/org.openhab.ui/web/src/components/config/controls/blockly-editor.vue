@@ -1427,6 +1427,7 @@ export default {
     onChange (event) {
       if (event.type === Blockly.Events.FINISHED_LOADING) {
         this.loading = false
+        this.$emit('ready')
       } else if (!this.loading && !event.isUiEvent) {
         this.$emit('change')
       }
