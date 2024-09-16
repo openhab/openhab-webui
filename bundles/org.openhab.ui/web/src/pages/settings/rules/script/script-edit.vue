@@ -25,9 +25,22 @@
     <template v-if="ready">
       <f7-toolbar v-if="!createMode" position="bottom">
         <span class="display-flex flex-direction-row align-items-center">
-          <f7-link :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'" :tooltip="((rule.status.statusDetail === 'DISABLED') ? 'Enable' : 'Disable') + (($device.desktop) ? ' (Ctrl-D)' : '')" icon-ios="f7:pause_circle" icon-md="f7:pause_circle" icon-aurora="f7:pause_circle" color="orange" @click="toggleDisabled" />
-          <f7-link v-if="!$theme.aurora" :tooltip="'Run Now' + (($device.desktop) ? ' (Ctrl-R)' : '')" icon-ios="f7:play_round" icon-md="f7:play_round" icon-aurora="f7:play_round" :color="(rule.status.status === 'IDLE') ? 'blue' : 'gray'" @click="runNow" />
-          <f7-link v-else class="margin-left" :text="($device.desktop) ? 'Run Now (Ctrl-R)' : ''" icon-ios="f7:play_round" icon-md="f7:play_round" icon-aurora="f7:play_round" :color="(rule.status.status === 'IDLE') ? 'blue' : 'gray'" @click="runNow" />
+          <f7-link :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'"
+                   :tooltip="((rule.status.statusDetail === 'DISABLED') ? 'Enable' : 'Disable') + (($device.desktop) ? ' (Ctrl-D)' : '')"
+                   icon-ios="f7:pause_circle" icon-md="f7:pause_circle" icon-aurora="f7:pause_circle"
+                   color="orange"
+                   @click="toggleDisabled" />
+          <f7-link v-if="!$theme.aurora"
+                   :tooltip="isMimeTypeAvailable(mode) ? ('Run Now' + (($device.desktop) ? ' (Ctrl-R)' : '')) : (isScriptRule ? 'Script' : 'Rule') + ' cannot be run, scripting addon for ' + mimeTypeDescription(mode) + ' is not installed'"
+                   icon-ios="f7:play_round" icon-md="f7:play_round" icon-aurora="f7:play_round"
+                   :color="((rule.status.status === 'IDLE') && isMimeTypeAvailable(mode)) ? 'blue' : 'gray'"
+                   @click="runNow" />
+          <f7-link v-else class="margin-left"
+                   :text="'Run Now' + (($device.desktop) ? ' (Ctrl-R)' : '')"
+                   :tooltip="!isMimeTypeAvailable(mode) ? (isScriptRule ? 'Script' : 'Rule') + ' cannot be run, scripting addon for ' + mimeTypeDescription(mode) + ' is not installed' : undefined"
+                   icon-ios="f7:play_round" icon-md="f7:play_round" icon-aurora="f7:play_round"
+                   :color="(rule.status.status === 'IDLE') && isMimeTypeAvailable(mode) ? 'blue' : 'gray'"
+                   @click="runNow" />
           <f7-chip class="margin-left" v-if="currentModule && currentModule.configuration.script"
                    :text="ruleStatusBadgeText(rule.status)"
                    :color="ruleStatusBadgeColor(rule.status)"
@@ -71,7 +84,8 @@
           <f7-list media-list>
             <f7-list-item media-item radio radio-icon="start"
                           title="Design with Blockly"
-                          footer="A beginner-friendly way to build scripts visually by assembling blocks"
+                          text="A beginner-friendly way to build scripts visually by assembling blocks"
+                          :footer="!isJSAvailable ? 'You need to install the JavaScript Scripting addon before you will be able to run' : undefined"
                           :value="'application/javascript+blockly'" :checked="mode === 'application/javascript+blockly'"
                           @change="mode = 'application/javascript+blockly'">
               <img src="@/images/blockly.svg" height="32" width="32" slot="media">
@@ -215,6 +229,9 @@ export default {
     },
     isBlockly () {
       return this.currentModule && this.currentModule.configuration && this.currentModule.configuration.blockSource
+    },
+    isJSAvailable () {
+      return this.isMimeTypeAvailable(this.GRAALJS_MIME_TYPE) || this.isMimeTypeAvailable(this.NASHORNJS_MIME_TYPE)
     }
   },
   watch: {
@@ -351,8 +368,11 @@ export default {
       if (this.mode === 'application/javascript+blockly') {
         if (this.isMimeTypeAvailable(this.GRAALJS_MIME_TYPE)) {
           actionModule.configuration.type = this.GRAALJS_MIME_TYPE
-        } else {
+        } else if (this.isMimeTypeAvailable(this.NASHORNJS_MIME_TYPE)) {
           actionModule.configuration.type = this.NASHORNJS_MIME_TYPE
+        } else {
+          // default to GraalJS
+          actionModule.configuration.type = this.GRAALJS_MIME_TYPE
         }
         actionModule.configuration.blockSource = '<xml xmlns="https://developers.google.com/blockly/xml"></xml>'
       }
@@ -370,6 +390,13 @@ export default {
     },
     isMimeTypeAvailable (mimeType) {
       return this.languages.map(l => l.contentType).includes(mimeType)
+    },
+    mimeTypeDescription (mode) {
+      if (mode === this.GRAALJS_MIME_TYPE) return 'JS Scripting'
+      if (mode === this.NASHORNJS_MIME_TYPE) return 'JS Scripting (Nashorn)'
+      if (mode === 'py') return 'Jython Scripting'
+      if (mode === 'rb' || mode === 'application/x-ruby') return 'JRuby Scripting'
+      return mode
     },
     /**
      * Load the script module type, i.e. the available script languages
@@ -508,6 +535,13 @@ export default {
     },
     runNow () {
       if (this.createMode) return
+      if (!this.isMimeTypeAvailable(this.mode)) {
+        return this.$f7.toast.create({
+          text: `${this.isScriptRule ? 'Script' : 'Rule'} cannot be run, scripting addon for ${this.mimeTypeDescription(this.mode)} is not installed`,
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
+      }
       if (this.rule.status.status === 'RUNNING' || this.rule.status.status === 'UNINITIALIZED') {
         return this.$f7.toast.create({
           text: `${this.isScriptRule ? 'Script' : 'Rule'} cannot be run ${(this.rule.status.status === 'RUNNING') ? 'while already running, please wait' : 'if it is uninitialized'}!`,
@@ -587,7 +621,7 @@ export default {
       }
     },
     convertToBlockly () {
-      if (this.script || this.isBlockly || this.mode !== 'application/javascript') return
+      if (this.script || this.isBlockly || this.mode !== this.GRAALJS_MIME_TYPE) return
       this.$set(this.currentModule.configuration, 'blockSource', '<xml xmlns="https://developers.google.com/blockly/xml"></xml>')
     },
     onEditorInput (value) {

@@ -91,7 +91,8 @@
     <f7-list media-list>
       <f7-list-item media-item
                     title="Design with Blockly"
-                    footer="A beginner-friendly way to build scripts visually by assembling blocks"
+                    text="A beginner-friendly way to build scripts visually by assembling blocks"
+                    :footer="!isJSAvailable ? 'You need to install the JavaScript Scripting addon before you will be able to run' : undefined"
                     link="" @click="scriptLanguagePicked('blockly')">
         <img src="@/images/blockly.svg" height="32" width="32" slot="media">
       </f7-list-item>
@@ -187,6 +188,9 @@ export default {
       }
 
       return []
+    },
+    isJSAvailable () {
+      return this.isMimeTypeAvailable(this.GRAALJS_MIME_TYPE) || this.isMimeTypeAvailable(this.NASHORNJS_MIME_TYPE)
     }
   },
   methods: {
@@ -278,6 +282,13 @@ export default {
       this.currentItem = value
       this.$set(this.currentModule.configuration, 'itemName', value.name)
       this.$emit('typeSelect', 'core.ItemCommandAction')
+    },
+    isMimeTypeAvailable (mimeType) {
+      return this.languages.map(l => l.contentType).includes(mimeType)
+    },
+    created () {
+      this.GRAALJS_MIME_TYPE = 'application/javascript'
+      this.NASHORNJS_MIME_TYPE = 'application/javascript;version=ECMAScript-5.1'
     }
   }
 }
