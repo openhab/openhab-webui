@@ -1,10 +1,6 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
-    <f7-navbar back-link="Back">
-      <template slot="title">
-        {{ pageTitle }}
-        {{ dirtyIndicator }}
-      </template>
+    <f7-navbar :title="pageTitle + dirtyIndicator" back-link="Back">
       <f7-nav-right v-show="ready">
         <f7-link v-if="!editable" icon-f7="lock_fill" icon-only tooltip="This persistence configuration is not editable through the UI" />
         <f7-link v-else-if="$theme.md" icon-md="material:save" icon-only @click="save()" />

@@ -1,10 +1,6 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
-    <f7-navbar :subtitle="(!createMode) ? mode : undefined" back-link="Back">
-      <template slot="title">
-        {{ pageTitle }}
-        {{ dirtyIndicator }}
-      </template>
+    <f7-navbar :title="pageTitle + dirtyIndicator" :subtitle="(!createMode) ? mode : undefined" back-link="Back">
       <f7-nav-right>
         <developer-dock-icon />
         <template v-if="editable && !createMode">

@@ -1,10 +1,6 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:afterout="onPageAfterOut">
-    <f7-navbar back-link="Back" no-hairline>
-      <template slot="title">
-        {{ isNewRule ? 'Create rule' : rule.name }}
-        {{ dirtyIndicator }}
-      </template>
+    <f7-navbar :title="(isNewRule ? 'Create rule' : rule.name) + dirtyIndicator" back-link="Back" no-hairline>
       <f7-nav-right>
         <developer-dock-icon />
         <template v-if="isEditable">
