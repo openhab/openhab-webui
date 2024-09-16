@@ -14,7 +14,7 @@ import Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript.js'
 import { FieldSlider } from '@blockly/field-slider'
 
-export default function (f7, isGraalJs, sinks, voices) {
+export default function (f7, sinks, voices) {
   Blockly.Blocks['oh_volumeslider'] = {
     init: function () {
       this.appendDummyInput()
@@ -60,8 +60,7 @@ export default function (f7, isGraalJs, sinks, voices) {
     let fileName = javascriptGenerator.valueToCode(block, 'fileName', javascriptGenerator.ORDER_ATOMIC)
     let sinkName = javascriptGenerator.valueToCode(block, 'sinkName', javascriptGenerator.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
 
-    const audio = (isGraalJs) ? 'actions.Audio' : addAudio()
-    return `${audio}.playSound(${sinkName}, ${fileName});\n`
+    return `actions.Audio.playSound(${sinkName}, ${fileName});\n`
   }
 
   /*
@@ -98,12 +97,7 @@ export default function (f7, isGraalJs, sinks, voices) {
     let sinkName = javascriptGenerator.valueToCode(block, 'sinkName', javascriptGenerator.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
     let volume = javascriptGenerator.valueToCode(block, 'volume', javascriptGenerator.ORDER_ATOMIC).replace(/'/g, '')
 
-    if (isGraalJs) {
-      return `actions.Audio.playSound(${sinkName}, ${fileName}, (${volume}/100));\n`
-    } else {
-      const audio = addAudio()
-      return `${audio}.playSound(${sinkName}, ${fileName}, new PercentType(${volume}));\n`
-    }
+    return `actions.Audio.playSound(${sinkName}, ${fileName}, (${volume}/100));\n`
   }
 
   /*
@@ -135,8 +129,7 @@ export default function (f7, isGraalJs, sinks, voices) {
     let url = javascriptGenerator.valueToCode(block, 'url', javascriptGenerator.ORDER_ATOMIC)
     let sinkName = javascriptGenerator.valueToCode(block, 'sinkName', javascriptGenerator.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
 
-    const audio = (isGraalJs) ? 'actions.Audio' : addAudio()
-    return `${audio}.playStream(${sinkName}, ${url});\n`
+    return `actions.Audio.playStream(${sinkName}, ${url});\n`
   }
 
   /*
@@ -165,8 +158,7 @@ export default function (f7, isGraalJs, sinks, voices) {
     let url = block.getFieldValue('url')
     let sinkName = javascriptGenerator.valueToCode(block, 'sinkName', javascriptGenerator.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
 
-    const audio = (isGraalJs) ? 'actions.Audio' : addAudio()
-    return `${audio}.playStream(${sinkName}, null);\n`
+    return `actions.Audio.playStream(${sinkName}, null);\n`
   }
 
   /*
@@ -201,8 +193,7 @@ export default function (f7, isGraalJs, sinks, voices) {
     const voiceName = javascriptGenerator.valueToCode(block, 'voice', javascriptGenerator.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
     const deviceSink = javascriptGenerator.valueToCode(block, 'deviceSink', javascriptGenerator.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
 
-    const voice = (isGraalJs) ? 'actions.Voice' : addVoice()
-    return `${voice}.say(${textToSay}, ${voiceName}, ${deviceSink});\n`
+    return `actions.Voice.say(${textToSay}, ${voiceName}, ${deviceSink});\n`
   }
 
   /*
@@ -262,17 +253,5 @@ export default function (f7, isGraalJs, sinks, voices) {
   javascriptGenerator.forBlock['oh_voices_dropdown'] = function (block) {
     let voiceName = block.getFieldValue('voiceName')
     return [`'${voiceName}'`, javascriptGenerator.ORDER_NONE]
-  }
-
-  function addAudio () {
-    return javascriptGenerator.provideFunction_(
-      'audio',
-      ['var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.core.model.script.actions.Audio\');'])
-  }
-
-  function addVoice () {
-    return javascriptGenerator.provideFunction_(
-      'voice',
-      ['var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.core.model.script.actions.Voice\');'])
   }
 }
