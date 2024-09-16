@@ -24,6 +24,6 @@ export const EditorModes = {
 }
 
 export const DocumentationLinks = {
-  js: '/addons/automation/jsscripting/#js-transformation',
-  rb: '/addons/automation/jrubyscripting/#transformations'
+  js: '/link/jsscripting-transform',
+  rb: '/link/jrubyscripting-transform'
 }
