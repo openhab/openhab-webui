@@ -5,3 +5,8 @@ export const AddonNames = {
   'application/x-python': 'Jython Scripting',
   'application/x-ruby': 'JRuby Scripting'
 }
+
+export const DocumentationLinks = {
+  'application/javascript': '/link/jsscripting-script',
+  'application/x-ruby': '/link/jrubyscripting-script'
+}

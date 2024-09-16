@@ -22,3 +22,16 @@ export const EditorModes = {
   scale: 'text/x-properties',
   xslt: 'application/xml'
 }
+
+export const DocumentationLinks = {
+  exec: '/addons/transformations/exec/',
+  jinja: '/addons/transformations/jinja/',
+  js: '/link/jsscripting-transform',
+  jsonpath: '/addons/transformations/jsonpath/',
+  map: '/addons/transformations/map/',
+  rb: '/link/jrubyscripting-transform',
+  regex: '/addons/transformations/regex/',
+  scale: '/addons/transformations/scale/',
+  xpath: '/addons/transformations/xpath/',
+  xslt: '/addons/transformations/xslt/'
+}
