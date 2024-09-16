@@ -116,50 +116,7 @@ export function addChrono () {
   return chrono
 }
 
-export function addDateComparisonSupportNashorn () {
-  let zdtCompare = javascriptGenerator.provideFunction_(
-    'zdtCompare', [
-      '// Nashorn',
-      'function ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + '(zdt1, zdt2, compareOp, precision, compDate) {',
-      '  switch (precision) {',
-      '    case \'years\':',
-      '     zdt2 = zdt2.withMonth(zdt1.getMonthValue());',
-      '    case \'months\':',
-      '     zdt2 = zdt2.withDayOfMonth(zdt1.getDayOfMonth());',
-      '    case \'days\':',
-      '     zdt2 = zdt2.withHour(zdt1.getHour());',
-      '    case \'hours\':',
-      '     zdt2 = zdt2.withMinute(zdt1.getMinute());',
-      '    case \'minutes\':',
-      '     zdt2 = zdt2.withSecond(zdt1.getSecond());',
-      '    case \'seconds\':',
-      '     zdt2 = zdt2.withNano(zdt1.getNano());',
-      '  }',
-      '  if (compDate === \'date\') {',
-      '    zdt1 = zdt1.toLocalDate();',
-      '    zdt2 = zdt2.toLocalDate();',
-      '  } else if (compDate === \'time\') {',
-      '    zdt1 = zdt1.toLocalTime();',
-      '    zdt2 = zdt2.toLocalTime();',
-      '  }',
-      '  switch (compareOp) {',
-      '    case \'before\':',
-      '      return zdt1.isBefore(zdt2);',
-      '    case \'equal\':',
-      '      return zdt1.equals(zdt2);',
-      '    case \'after\':',
-      '      return zdt1.isAfter(zdt2);',
-      '    case \'beforeEqual\':',
-      '      return zdt1.isBefore(zdt2) || zdt1.equals(zdt2);',
-      '    case \'afterEqual\':',
-      '      return zdt1.isAfter(zdt2) || zdt1.equals(zdt2);',
-      '  }',
-      '}'
-    ])
-  return zdtCompare
-}
-
-export function addDateComparisonSupportGraalVM () {
+export function addDateComparisonSupport () {
   const graalZdtCompare = javascriptGenerator.provideFunction_(
     'zdtCompare', [
       '// graalVM',

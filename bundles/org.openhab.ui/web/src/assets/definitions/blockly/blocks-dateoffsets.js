@@ -4,9 +4,9 @@
 import Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript.js'
 import { FieldDatePicker } from './fields/date-field.js'
-import { addDateSupport, addDateComparisonSupportNashorn, addDateComparisonSupportGraalVM, addGetZdtComponent, addChrono } from './utils.js'
+import { addDateComparisonSupport } from './utils.js'
 
-export default function (f7, isGraalJs) {
+export default function (f7) {
   /*
   * Typed (DayOffset) block that can be used with the Ephemeris check block
   * Note that the block basically returns a zero day offset for the check
@@ -80,8 +80,7 @@ export default function (f7, isGraalJs) {
   * Code part
   */
   javascriptGenerator.forBlock['oh_zdt_now'] = function (block) {
-    const zdt = (isGraalJs) ? 'time.ZonedDateTime' : addDateSupport()[1]
-    return [`${zdt}.now()`, javascriptGenerator.ORDER_NONE]
+    return ['time.ZonedDateTime.now()', javascriptGenerator.ORDER_NONE]
   }
 
   /*
@@ -117,8 +116,7 @@ export default function (f7, isGraalJs) {
     const plusMinus = block.getFieldValue('plusminus')
     const period = block.getFieldValue('period')
 
-    const zdt = (isGraalJs) ? 'time.ZonedDateTime' : addDateSupport()[1]
-    return [`${zdt}.now().${plusMinus}${period}(${offsetValue})`, javascriptGenerator.ORDER_ATOMIC]
+    return [`time.ZonedDateTime.now().${plusMinus}${period}(${offsetValue})`, javascriptGenerator.ORDER_ATOMIC]
   }
 
   /*
@@ -168,15 +166,8 @@ export default function (f7, isGraalJs) {
     const minute = javascriptGenerator.valueToCode(block, 'minute', javascriptGenerator.ORDER_ATOMIC)
     const second = javascriptGenerator.valueToCode(block, 'second', javascriptGenerator.ORDER_ATOMIC)
 
-    if (isGraalJs) {
-      const code = `time.ZonedDateTime.now().withYear(${year}).withMonth(${month}).withDayOfMonth(${day}).withHour(${hour}).withMinute(${minute}).withSecond(${second}).withNano(0)`
-      return [code, javascriptGenerator.ORDER_ATOMIC]
-    } else {
-      let [dtf, zdt, gzdt, czdt] = addDateSupport()
-      let stringToParse = `${czdt}(${year}, ${month} ,${day}, ${hour}, ${minute}, ${second}, 0, ${zdt}.now().getOffset().getId(), ${zdt}.now().getZone().getId())`
-      let code = `${zdt}.parse(${stringToParse}, ${dtf}.ISO_ZONED_DATE_TIME)`
-      return [code, javascriptGenerator.ORDER_ATOMIC]
-    }
+    const code = `time.ZonedDateTime.now().withYear(${year}).withMonth(${month}).withDayOfMonth(${day}).withHour(${hour}).withMinute(${minute}).withSecond(${second}).withNano(0)`
+    return [code, javascriptGenerator.ORDER_ATOMIC]
   }
 
   /*
@@ -202,8 +193,7 @@ export default function (f7, isGraalJs) {
   */
   javascriptGenerator.forBlock['oh_zdt'] = function (block) {
     const day = block.getFieldValue('day')
-    const getZonedDateTime = (isGraalJs) ? 'time.toZDT' : addDateSupport()[2]
-    return [`${getZonedDateTime}('${day}')`, javascriptGenerator.ORDER_NONE]
+    return [`time.toZDT('${day}')`, javascriptGenerator.ORDER_NONE]
   }
 
   /*
@@ -244,8 +234,7 @@ export default function (f7, isGraalJs) {
   */
   javascriptGenerator.forBlock['oh_zdt_fromText'] = function (block) {
     const day = javascriptGenerator.valueToCode(block, 'day', javascriptGenerator.ORDER_ATOMIC)
-    const getZonedDateTime = (isGraalJs) ? 'time.toZDT' : addDateSupport()[2]
-    return [`${getZonedDateTime}(${day})`, javascriptGenerator.ORDER_NONE]
+    return [`time.toZDT(${day})`, javascriptGenerator.ORDER_NONE]
   }
 
   /*
@@ -271,11 +260,7 @@ export default function (f7, isGraalJs) {
   */
   javascriptGenerator.forBlock['oh_zdt_fromItem'] = function (block) {
     const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
-    if (isGraalJs) {
-      return [`time.toZDT(items.getItem(${itemName}))`, javascriptGenerator.ORDER_NONE]
-    } else {
-      return [`itemRegistry.getItem(${itemName}).getState().getZonedDateTime()`, javascriptGenerator.ORDER_NONE]
-    }
+    return [`time.toZDT(items.getItem(${itemName}))`, javascriptGenerator.ORDER_NONE]
   }
 
   const nextImage =
@@ -645,18 +630,17 @@ export default function (f7, isGraalJs) {
   javascriptGenerator.forBlock['oh_zdt_toText'] = function (block) {
     const date = javascriptGenerator.valueToCode(block, 'date', javascriptGenerator.ORDER_ATOMIC)
     const withtime = block.getFieldValue('withtime')
-    const dtf = (isGraalJs) ? 'time.DateTimeFormatter' : addDateSupport()[0]
 
     let code = ''
     if (withtime === 'with') {
-      code = `${date}.format(${dtf}.ofPattern('yyyy-MM-dd HH:mm:ss'))`
+      code = `${date}.format(time.DateTimeFormatter.ofPattern('yyyy-MM-dd HH:mm:ss'))`
     } else if (withtime === 'without') {
-      code = `${date}.format(${dtf}.ofPattern('yyyy-MM-dd'))`
+      code = `${date}.format(time.DateTimeFormatter.ofPattern('yyyy-MM-dd'))`
     } else if (withtime === 'withPattern') {
       const pattern = javascriptGenerator.valueToCode(block, 'pattern', javascriptGenerator.ORDER_ATOMIC)
-      code = `${date}.format(${dtf}.ofPattern(${pattern}))`
+      code = `${date}.format(time.DateTimeFormatter.ofPattern(${pattern}))`
     } else {
-      code = `${date}.format(${dtf}.ofPattern('yyyy-MM-dd\\'T\\'HH:mm:ss.SSSZ'))`
+      code = `${date}.format(time.DateTimeFormatter.ofPattern('yyyy-MM-dd\\'T\\'HH:mm:ss.SSSZ'))`
     }
 
     return [code, javascriptGenerator.ORDER_NONE]
@@ -701,7 +685,7 @@ export default function (f7, isGraalJs) {
     const precision = block.getFieldValue('precision')
     const dateComparison = block.getFieldValue('dateComparison')
 
-    const zdtCompare = (isGraalJs) ? addDateComparisonSupportGraalVM() : addDateComparisonSupportNashorn()
+    const zdtCompare = addDateComparisonSupport()
     return [`${zdtCompare}(${zdtOne}, ${zdtTwo}, '${operation}', '${precision}', '${dateComparison}')`, javascriptGenerator.ORDER_NONE]
   }
 
@@ -737,21 +721,14 @@ export default function (f7, isGraalJs) {
   * Code part
   */
   javascriptGenerator.forBlock['oh_zdt_between'] = function (block) {
-    let zdtCompare = (isGraalJs) ? addDateComparisonSupportGraalVM() : addDateComparisonSupportNashorn()
+    let zdtCompare = addDateComparisonSupport()
     let zdtOne = javascriptGenerator.valueToCode(block, 'zdtOne', javascriptGenerator.ORDER_ATOMIC)
     let zdtTwo = javascriptGenerator.valueToCode(block, 'zdtTwo', javascriptGenerator.ORDER_ATOMIC)
     let zdtThree = javascriptGenerator.valueToCode(block, 'zdtThree', javascriptGenerator.ORDER_ATOMIC)
     let dateComparison = block.getFieldValue('dateComparison')
 
-    if (isGraalJs) {
-      const op = new Map([['dateandtime', 'isBetweenDateTimes'], ['date', 'isBetweenDates'], ['time', 'isBetweenTimes']]).get(dateComparison)
-      return [`${zdtOne}.${op}(${zdtTwo}, ${zdtThree})`, javascriptGenerator.ORDER_NONE]
-    } else {
-      let codeLow = `${zdtCompare}(${zdtTwo}, ${zdtOne}, 'beforeEqual', 'nanos', '${dateComparison}')`
-      let codeHigh = `${zdtCompare}(${zdtOne}, ${zdtThree}, 'beforeEqual', 'nanos', '${dateComparison}')`
-      let code = `(${codeLow} && ${codeHigh})`
-      return [code, javascriptGenerator.ORDER_NONE]
-    }
+    const op = new Map([['dateandtime', 'isBetweenDateTimes'], ['date', 'isBetweenDates'], ['time', 'isBetweenTimes']]).get(dateComparison)
+    return [`${zdtOne}.${op}(${zdtTwo}, ${zdtThree})`, javascriptGenerator.ORDER_NONE]
   }
 
   /*
@@ -781,39 +758,18 @@ export default function (f7, isGraalJs) {
     const zdt = javascriptGenerator.valueToCode(block, 'zdt', javascriptGenerator.ORDER_ATOMIC)
     let temporalPart = block.getFieldValue('temporalPart')
 
-    if (isGraalJs) {
-      const op = new Map([['getYear', 'year'], ['getMonthValue', 'monthValue'], ['getDayOfMonth', 'dayOfMonth'], ['getDayOfWeek', 'dayOfWeek().value'], ['getDayOfYear', 'dayOfYear'], ['getHour', 'hour'], ['getMinute', 'minute'], ['getSecond', 'second'], ['getNano', 'nano']])
-      switch (temporalPart) {
-        case 'getMilli':
-          temporalPart = 'getLong(time.ChronoField.MILLI_OF_SECOND)'
-          break
-        case 'getMicro':
-          temporalPart = 'getLong(time.ChronoField.MICRO_OF_SECOND) % 1000'
-          break
-        default:
-          temporalPart = op.get(temporalPart) + '()'
-      }
-      return [`${zdt}.${temporalPart}`, javascriptGenerator.ORDER_NONE]
-    } else {
-      const getZdtComponent = addGetZdtComponent()
-      const chrono = addChrono()
-      switch (temporalPart) {
-        case 'getMilli':
-          temporalPart = `getLong(${chrono}.MILLI_OF_SECOND)`
-          break
-        case 'getMicro':
-          temporalPart = `getLong(${chrono}.MICRO_OF_SECOND) % 1000`
-          break
-        case 'getNano':
-          temporalPart = `getLong(${chrono}.NANO_OF_SECOND) % 1000`
-          break
-        default:
-          temporalPart += '()'
-      }
-
-      let code = `${getZdtComponent}(${zdt}.${temporalPart})`
-      return [code, javascriptGenerator.ORDER_NONE]
+    const op = new Map([['getYear', 'year'], ['getMonthValue', 'monthValue'], ['getDayOfMonth', 'dayOfMonth'], ['getDayOfWeek', 'dayOfWeek().value'], ['getDayOfYear', 'dayOfYear'], ['getHour', 'hour'], ['getMinute', 'minute'], ['getSecond', 'second'], ['getNano', 'nano']])
+    switch (temporalPart) {
+      case 'getMilli':
+        temporalPart = 'getLong(time.ChronoField.MILLI_OF_SECOND)'
+        break
+      case 'getMicro':
+        temporalPart = 'getLong(time.ChronoField.MICRO_OF_SECOND) % 1000'
+        break
+      default:
+        temporalPart = op.get(temporalPart) + '()'
     }
+    return [`${zdt}.${temporalPart}`, javascriptGenerator.ORDER_NONE]
   }
 
   /*
@@ -847,11 +803,7 @@ export default function (f7, isGraalJs) {
     const zdtOne = javascriptGenerator.valueToCode(block, 'zdtOne', javascriptGenerator.ORDER_ATOMIC)
     const zdtTwo = javascriptGenerator.valueToCode(block, 'zdtTwo', javascriptGenerator.ORDER_ATOMIC)
 
-    const chronoUnit = (isGraalJs) ? 'time.ChronoUnit' : javascriptGenerator.provideFunction_(
-      'chronoUnit',
-      ['var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("java.time.temporal.ChronoUnit");'])
-
-    let code = `${chronoUnit}.${temporalPart}.between(${zdtOne},${zdtTwo})`
+    const code = `time.ChronoUnit.${temporalPart}.between(${zdtOne},${zdtTwo})`
     return [code, javascriptGenerator.ORDER_NONE]
   }
 }
