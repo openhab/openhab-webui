@@ -45,6 +45,9 @@ export default {
       }
 
       return ['ON', 'OFF'].map((c) => { return { value: c, label: c } })
+    },
+    isJSAvailable () {
+      return this.isMimeTypeAvailable(this.GRAALJS_MIME_TYPE)
     }
   },
   methods: {
@@ -69,6 +72,12 @@ export default {
       this.$f7.once('modelPickerClosed', () => {
         this.$f7.off('itemsPicked', this.itemPicked)
       })
+    },
+    isMimeTypeAvailable (mimeType) {
+      return this.languages.map(l => l.contentType).includes(mimeType)
+    },
+    created () {
+      this.GRAALJS_MIME_TYPE = 'application/javascript'
     }
   }
 }

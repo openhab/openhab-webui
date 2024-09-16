@@ -188,9 +188,6 @@ export default {
       }
 
       return []
-    },
-    isJSAvailable () {
-      return this.isMimeTypeAvailable(this.GRAALJS_MIME_TYPE) || this.isMimeTypeAvailable(this.NASHORNJS_MIME_TYPE)
     }
   },
   methods: {
@@ -282,13 +279,6 @@ export default {
       this.currentItem = value
       this.$set(this.currentModule.configuration, 'itemName', value.name)
       this.$emit('typeSelect', 'core.ItemCommandAction')
-    },
-    isMimeTypeAvailable (mimeType) {
-      return this.languages.map(l => l.contentType).includes(mimeType)
-    },
-    created () {
-      this.GRAALJS_MIME_TYPE = 'application/javascript'
-      this.NASHORNJS_MIME_TYPE = 'application/javascript;version=ECMAScript-5.1'
     }
   }
 }
