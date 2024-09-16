@@ -7,9 +7,7 @@ import Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript.js'
 import { addGetItemMetaConfigValue } from './utils.js'
 
-const unavailMsg = 'Metadata blocks aren\'t supported in "application/javascript;version=ECMAScript-5.1"'
-
-export default function (f7, isGraalJs) {
+export default function (f7) {
   /*
    Get the main value from the metadata namespace
    item: either the item name string or the item object
@@ -33,12 +31,7 @@ export default function (f7, isGraalJs) {
   javascriptGenerator.forBlock['oh_get_meta_value'] = function (block) {
     const theItem = javascriptGenerator.valueToCode(block, 'theItem', javascriptGenerator.ORDER_ATOMIC)
     const namespace = javascriptGenerator.valueToCode(block, 'namespace', javascriptGenerator.ORDER_ATOMIC)
-
-    if (isGraalJs) {
-      return [`(items.metadata.getMetadata(${theItem}, ${namespace}) !== null) ? (items.metadata.getMetadata(${theItem}, ${namespace}).value) : 'undefined'`, javascriptGenerator.ORDER_CONDITIONAL]
-    } else {
-      throw new Error(unavailMsg)
-    }
+    return [`(items.metadata.getMetadata(${theItem}, ${namespace}) !== null) ? (items.metadata.getMetadata(${theItem}, ${namespace}).value) : 'undefined'`, javascriptGenerator.ORDER_CONDITIONAL]
   }
 
   /*
@@ -70,12 +63,7 @@ export default function (f7, isGraalJs) {
     const theItem = javascriptGenerator.valueToCode(block, 'theItem', javascriptGenerator.ORDER_ATOMIC)
     const namespace = javascriptGenerator.valueToCode(block, 'namespace', javascriptGenerator.ORDER_ATOMIC)
     addGetItemMetaConfigValue()
-
-    if (isGraalJs) {
-      return [`getItemMetaConfigValue(${theItem}, ${namespace}, ${configKey})`, javascriptGenerator.ORDER_CONDITIONAL]
-    } else {
-      throw new Error(unavailMsg)
-    }
+    return [`getItemMetaConfigValue(${theItem}, ${namespace}, ${configKey})`, javascriptGenerator.ORDER_CONDITIONAL]
   }
 
   /*
@@ -115,11 +103,7 @@ export default function (f7, isGraalJs) {
     code += `${itemMeta} = (${itemMeta} === null) ? { value: '', configuration: {} } : ${itemMeta};\n`
     code += `${itemMeta}.value = ${value};\n`
     code += `items.metadata.replaceMetadata(${theItem}, ${namespace}, ${itemMeta}.value, ${itemMeta}.configuration);\n`
-    if (isGraalJs) {
-      return code
-    } else {
-      throw new Error(unavailMsg)
-    }
+    return code
   }
 
   /*
@@ -163,20 +147,12 @@ export default function (f7, isGraalJs) {
     code += `${itemMeta} = (${itemMeta} === null) ? { value: '', configuration: {} } : ${itemMeta};\n`
     code += `${itemMeta}.configuration.${configKey} = ${value};\n`
     code += `items.metadata.replaceMetadata(${theItem}, ${namespace}, ${itemMeta}.value, ${itemMeta}.configuration);\n`
-    if (isGraalJs) {
-      return code
-    } else {
-      throw new Error(unavailMsg)
-    }
+    return code
   }
 
   function addItemMeta () {
-    if (isGraalJs) {
-      return javascriptGenerator.provideFunction_(
-        'itemMetadata',
-        ['var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ';'])
-    } else {
-      throw new Error(unavailMsg)
-    }
+    return javascriptGenerator.provideFunction_(
+      'itemMetadata',
+      ['var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ';'])
   }
 }
