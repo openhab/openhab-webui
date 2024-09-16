@@ -7,9 +7,7 @@ import Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript.js'
 import { blockGetCheckedInputType } from './utils.js'
 
-const unavailMsg = 'Units of Measurements blocks aren\'t supported in "application/javascript;version=ECMAScript-5.1"'
-
-export default function (f7, isGraalJs) {
+export default function (f7) {
   Blockly.Blocks['oh_quantity_ext'] = {
     init: function () {
       this.appendDummyInput()
@@ -49,12 +47,7 @@ export default function (f7, isGraalJs) {
         code = `Quantity(${value} + ${unit})`
         break
     }
-
-    if (isGraalJs) {
-      return [code, 0]
-    } else {
-      throw new Error(unavailMsg)
-    }
+    return [code, 0]
   }
 
   Blockly.Blocks['oh_quantity'] = {
@@ -72,11 +65,7 @@ export default function (f7, isGraalJs) {
   }
 
   javascriptGenerator.forBlock['oh_quantity'] = function (block) {
-    if (isGraalJs) {
-      return [generateQuantityCode(block, 'quantity'), 0]
-    } else {
-      throw new Error(unavailMsg)
-    }
+    return [generateQuantityCode(block, 'quantity'), 0]
   }
 
   Blockly.Blocks['oh_quantity_arithmetic'] = {
@@ -101,18 +90,12 @@ export default function (f7, isGraalJs) {
   }
 
   javascriptGenerator.forBlock['oh_quantity_arithmetic'] = function (block) {
-    if (isGraalJs) {
-      const operand = block.getFieldValue('operand')
-
-      const first = generateQuantityCode(block, 'first')
-      const second = (blockGetCheckedInputType(block, 'second') !== 'Number')
-        ? generateQuantityCode(block, 'second')
-        : javascriptGenerator.valueToCode(block, 'second', javascriptGenerator.ORDER_NONE)
-
-      return [`${first}.${operand}(${second})`, javascriptGenerator.ORDER_NONE]
-    } else {
-      throw new Error(unavailMsg)
-    }
+    const operand = block.getFieldValue('operand')
+    const first = generateQuantityCode(block, 'first')
+    const second = (blockGetCheckedInputType(block, 'second') !== 'Number')
+      ? generateQuantityCode(block, 'second')
+      : javascriptGenerator.valueToCode(block, 'second', javascriptGenerator.ORDER_NONE)
+    return [`${first}.${operand}(${second})`, javascriptGenerator.ORDER_NONE]
   }
 
   Blockly.Blocks['oh_quantity_compare'] = {
@@ -141,16 +124,10 @@ export default function (f7, isGraalJs) {
   }
 
   javascriptGenerator.forBlock['oh_quantity_compare'] = function (block) {
-    if (isGraalJs) {
-      const operand = block.getFieldValue('operand')
-
-      const first = generateQuantityCode(block, 'first')
-      const second = generateQuantityCode(block, 'second')
-
-      return [`${first}.${operand}(${second})`, javascriptGenerator.ORDER_NONE]
-    } else {
-      throw new Error(unavailMsg)
-    }
+    const operand = block.getFieldValue('operand')
+    const first = generateQuantityCode(block, 'first')
+    const second = generateQuantityCode(block, 'second')
+    return [`${first}.${operand}(${second})`, javascriptGenerator.ORDER_NONE]
   }
 
   Blockly.Blocks['oh_quantity_to_unit'] = {
@@ -171,11 +148,7 @@ export default function (f7, isGraalJs) {
   javascriptGenerator.forBlock['oh_quantity_to_unit'] = function (block) {
     const quantity = javascriptGenerator.valueToCode(block, 'quantity', javascriptGenerator.ORDER_NONE)
     const unit = javascriptGenerator.valueToCode(block, 'unit', javascriptGenerator.ORDER_NONE)
-    if (isGraalJs) {
-      return [`${quantity}.toUnit(${unit})`, javascriptGenerator.ORDER_NONE]
-    } else {
-      throw new Error(unavailMsg)
-    }
+    return [`${quantity}.toUnit(${unit})`, javascriptGenerator.ORDER_NONE]
   }
 }
 
