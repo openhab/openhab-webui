@@ -178,10 +178,11 @@ export default {
       // See https://codemirror.net/5/mode/index.html for supported language names & MIME types
       if (!mode) return mode
       if (mode.indexOf('yaml') >= 0) return 'text/x-yaml'
-      if (mode.indexOf('application/javascript') === 0 || mode === 'js') return 'text/javascript'
+      if (mode.startsWith('application/javascript') || mode === 'js') return 'text/javascript'
       if (mode === 'application/vnd.openhab.dsl.rule') return 'text/x-java'
-      if (mode === 'py') return 'text/x-python'
-      if (mode === 'rb' || mode === 'application/x-ruby') return 'text/x-ruby'
+      if (mode === 'application/x-groovy' || mode === 'groovy') return 'text/x-groovy'
+      if (mode === 'application/x-python' || mode === 'py') return 'text/x-python'
+      if (mode === 'application/x-ruby' || mode === 'rb') return 'text/x-ruby'
       if (mode.indexOf('jinja') >= 0) return 'text/jinja2'
       return mode
     },
