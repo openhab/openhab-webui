@@ -63,7 +63,14 @@
               <f7-button outline small :active="blocklyCodePreview" icon-f7="doc_text" :icon-size="($theme.aurora) ? 20 : 22" class="no-ripple" @click="showBlocklyCode" tooltip="Show generated code" />
             </f7-segmented>
           </template>
-          <f7-link class="right details-link padding-right" ref="detailsLink" @click="detailsOpened = true" icon-f7="chevron_up" />
+          <f7-link v-if="DocumentationLinks[mode] && !isBlockly"
+                   icon-color="blue"
+                   :text="$device.desktop ? 'Documentation' : 'Docs'"
+                   tooltip="Open documentation"
+                   icon-ios="f7:question_circle" icon-md="f7:question_circle" icon-aurora="f7:question_circle"
+                   color="blue"
+                   :href="$store.state.websiteUrl + DocumentationLinks[mode]" target="_blank" external />
+          <f7-link class="right details-link margin-left padding-right" ref="detailsLink" @click="detailsOpened = true" icon-f7="chevron_up" />
         </span>
       </f7-toolbar>
 
@@ -152,7 +159,7 @@ import RuleStatus from '@/components/rule/rule-status-mixin'
 import ScriptGeneralSettings from './script-general-settings.vue'
 import ModuleDescriptionSuggestions from '../module-description-suggestions'
 import DirtyMixin from '../../dirty-mixin'
-import { AddonNames } from '@/assets/definitions/automation-languages'
+import { AddonNames, DocumentationLinks } from '@/assets/automation-languages'
 
 export default {
   mixins: [RuleStatus, ModuleDescriptionSuggestions, DirtyMixin],
@@ -694,6 +701,7 @@ export default {
   },
   created () {
     this.GRAALJS_MIME_TYPE = 'application/javascript'
+    this.DocumentationLinks = DocumentationLinks
   }
 }
 </script>

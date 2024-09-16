@@ -5,3 +5,8 @@ export const AddonNames = {
   'application/x-python': 'Jython Scripting',
   'application/x-ruby': 'JRuby Scripting'
 }
+
+export const DocumentationLinks = {
+  'application/javascript': '/addons/automation/jsscripting/#standard-library',
+  'application/x-ruby': '/addons/automation/jrubyscripting/#library-details'
+}

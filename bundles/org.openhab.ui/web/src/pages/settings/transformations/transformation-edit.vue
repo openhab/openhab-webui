@@ -32,7 +32,14 @@
           <f7-button outline small :active="!blocklyCodePreview" icon-f7="ticket" :icon-size="($theme.aurora) ? 20 : 22" class="no-ripple" @click="blocklyCodePreview = false" />
           <f7-button outline small :active="blocklyCodePreview" icon-f7="doc_text" :icon-size="($theme.aurora) ? 20 : 22" class="no-ripple" @click="showBlocklyCode" />
         </f7-segmented>
-        <f7-link class="right details-link padding-right" ref="detailsLink" @click="detailsOpened = true" icon-f7="chevron_up" />
+        <f7-link v-if="DocumentationLinks[editorMode]"
+                 icon-color="blue"
+                 :text="$device.desktop ? 'Documentation' : 'Docs'"
+                 tooltip="Open documentation"
+                 icon-ios="f7:question_circle" icon-md="f7:question_circle" icon-aurora="f7:question_circle"
+                 color="blue"
+                 :href="$store.state.websiteUrl + DocumentationLinks[editorMode]" target="_blank" external />
+        <f7-link class="right details-link margin-left padding-right" ref="detailsLink" @click="detailsOpened = true" icon-f7="chevron_up" />
       </span>
     </f7-toolbar>
     <f7-icon v-if="!createMode && ready && (!isBlockly && !isEditable) || (blocklyCodePreview && isBlockly)" f7="lock" class="float-right margin" style="opacity:0.5; z-index: 4000; user-select: none;" size="50" color="gray"
@@ -87,7 +94,7 @@ import fastDeepEqual from 'fast-deep-equal/es6'
 
 import DirtyMixin from '../dirty-mixin'
 import TransformationGeneralSettings from '@/pages/settings/transformations/transformation-general-settings'
-import { CodeSnippets, EditorModes } from '@/assets/definitions/transformations.js'
+import { CodeSnippets, EditorModes, DocumentationLinks } from '@/assets/transformations.js'
 import ClipboardIcon from '@/components/util/clipboard-icon.vue'
 
 export default {
@@ -300,6 +307,9 @@ export default {
         }
       }
     }
+  },
+  created () {
+    this.DocumentationLinks = DocumentationLinks
   }
 }
 </script>

@@ -75,13 +75,21 @@ After editing those definitions, it is required to regenerate the component docs
 
 * Blocks are defined within [blockly-editor.vue](web/src/components/config/controls/blockly-editor.vue).
 * Blocks are implemented inside the [web/src/assets/definitions/blockly](web/src/assets/definitions/blockly) directory.
-* Each block requires a _Blockly.Blocks_ section that defines the visual representation and a _javascriptGenerator_ section that implements the code generation of the block.
+* Each block requires a _Blockly.Blocks_ section that defines the visual representation and a _javascriptGenerator.forBlock_ section that implements the code generation of the block.
 * Please refer to the [visualisation](https://developers.google.com/blockly/guides/create-custom-blocks/define-blocks) and [code generation](https://developers.google.com/blockly/guides/create-custom-blocks/code-generation/overview) documentation on how to define blocks.
 * Also follow the [Blockly Best Practices](https://developers.google.com/blockly/guides/app-integration/best-practices) and [Blockly Style guide](https://developers.google.com/blockly/guides/create-custom-blocks/style-guide).
 
 ### Update the FAQ or Quick Start of the developer sidebar's help?
 
 The "How do I..." and "Quick Start" sections are created from JSON definitions located at the [web/src/assets/definitions/help](web/src/assets/definitions/help) directory.
+
+### Update the add-on names and documentation links for automation languages?
+
+Edit the [web/src/assets/automation-languages.js](web/src/assets/automation-languages.js) file.
+
+### Update the code snippets, editor mode assignment and documentation links for transformations?
+
+Edit the [web/src/assets/transformations.js](web/src/assets/transformations.js) file.
 
 ## PWA
 

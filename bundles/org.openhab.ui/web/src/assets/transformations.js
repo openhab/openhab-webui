@@ -22,3 +22,8 @@ export const EditorModes = {
   scale: 'text/x-properties',
   xslt: 'application/xml'
 }
+
+export const DocumentationLinks = {
+  js: '/addons/automation/jsscripting/#js-transformation',
+  rb: '/addons/automation/jrubyscripting/#transformations'
+}
