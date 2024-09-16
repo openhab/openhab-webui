@@ -594,8 +594,11 @@ export default {
       }
     },
     onBlocklyReady () {
+      if (!this.isBlockly) return
+      let message = ''
+
       // Make sure the MIME type is set correctly for Blockly rules and the saved script is up to date
-      if (this.isBlockly && this.script) {
+      if (this.script) {
         let oldRule = false
         if (this.mode !== this.GRAALJS_MIME_TYPE) {
           this.mode = this.GRAALJS_MIME_TYPE
@@ -612,10 +615,13 @@ export default {
             this.$f7.dialog.alert(e)
           }
         }
-        if (oldRule) {
-          this.$f7.dialog.alert('Your Blockly script was created with a previous version of openHAB. Please save your script again and make sure the JS Scripting addon is installed.')
-        }
+        if (oldRule) message += 'Your Blockly script was created with a previous version of openHAB. Please save your script'
       }
+
+      // Check if JS Scripting is installed
+      if (!this.isJSAvailable) message += (message ? ' and' : 'You do not have JS Scripting installed. Please') + ' install the JS Scripting addon'
+
+      if (message) this.$f7.dialog.alert(message + '.')
     },
     setBlocklyRenderer (newRenderer) {
       this.blocklyRenderer = newRenderer
