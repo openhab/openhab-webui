@@ -46,8 +46,8 @@ export default {
 
       return ['ON', 'OFF'].map((c) => { return { value: c, label: c } })
     },
-    isJSAvailable () {
-      return this.isMimeTypeAvailable(this.GRAALJS_MIME_TYPE)
+    isJsAvailable () {
+      return this.isMimeTypeAvailable('application/javascript')
     }
   },
   methods: {
@@ -75,9 +75,6 @@ export default {
     },
     isMimeTypeAvailable (mimeType) {
       return this.languages.map(l => l.contentType).includes(mimeType)
-    },
-    created () {
-      this.GRAALJS_MIME_TYPE = 'application/javascript'
     }
   }
 }

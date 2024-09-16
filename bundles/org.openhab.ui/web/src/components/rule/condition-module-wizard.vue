@@ -63,7 +63,7 @@
       <f7-list-item media-item
                     title="Design with Blockly"
                     text="A beginner-friendly way to build scripts visually by assembling blocks"
-                    :footer="!isJSAvailable ? 'You need to install the JavaScript Scripting addon before you will be able to run' : undefined"
+                    :footer="!isJsAvailable ? 'You need to install the JavaScript Scripting addon before you will be able to run' : undefined"
                     link="" @click="scriptLanguagePicked('blockly')">
         <img src="@/images/blockly.svg" height="32" width="32" slot="media">
       </f7-list-item>
