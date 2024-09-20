@@ -1,0 +1,28 @@
+name: TVision WebUI CI
+
+on:
+  push:
+    branches: [ main, '*' ]  # Run on all branches
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: localstack/java-maven-node-python
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Build with Maven
+      run: mvn clean install -DskipTests
+        
+    - name: Run tests
+      run: mvn test
+        
+    - name: Deploy to Maven repository
+      run: |
+        echo "PACKAGE_TOKEN: $(echo ${{ secrets.PACKAGE_TOKEN }} | cut -c1-8)..."
+        mvn deploy -DskipTests -s ci_settings.xml
+      env:
+        PACKAGE_TOKEN: ${{ secrets.PACKAGE_TOKEN }}

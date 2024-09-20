@@ -1,46 +1,29 @@
-<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+<settings xmlns="http://maven.apache.org/SETTINGS/1.1.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
-
-    <mirrors>
-        <mirror>
-            <id>gitlab-repo</id>
-            <mirrorOf>central</mirrorOf>
-            <url>${MAVEN_REPO_URL}</url>
-        </mirror>
-    </mirrors>
-
-    <profiles>
-        <profile>
-            <id>gitlab</id>
-            <repositories>
-                <repository>
-                    <id>gitlab-repo</id>
-                    <url>${MAVEN_REPO_URL}</url>
-                    <releases>
-                        <enabled>true</enabled>
-                    </releases>
-                    <snapshots>
-                        <enabled>true</enabled>
-                    </snapshots>
-                </repository>
-                <repository>
-                    <id>central</id>
-                    <url>https://repo.maven.apache.org/maven2</url>
-                </repository>
-            </repositories>
-        </profile>
-    </profiles>
-
-    <activeProfiles>
-        <activeProfile>gitlab</activeProfile>
-    </activeProfiles>
+    xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.1.0 http://maven.apache.org/xsd/settings-1.1.0.xsd">
 
     <servers>
         <server>
-            <id>gitlab-repo</id>
-            <username>gitlab+deploy-token-4401241</username>
-            <password>gldt-UZeECi2h666tFEiCz9Ee</password>
+            <id>tvision360-releases</id>
+            <configuration>
+                <httpHeaders>
+                    <property>
+                        <name>Authorization</name>
+                        <value>token ${env.PACKAGE_TOKEN}</value>
+                    </property>
+                </httpHeaders>
+            </configuration>
+        </server>
+        <server>
+            <id>tvision360-snapshots</id>
+            <configuration>
+                <httpHeaders>
+                    <property>
+                        <name>Authorization</name>
+                        <value>token ${env.PACKAGE_TOKEN}</value>
+                    </property>
+                </httpHeaders>
+            </configuration>
         </server>
     </servers>
 </settings>
