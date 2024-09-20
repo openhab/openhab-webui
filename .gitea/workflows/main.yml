@@ -27,10 +27,19 @@ jobs:
 
     - name: Build with Maven
       run: mvn clean install -DskipTests
-        
+
+    - name: Run static code analysis
+      run: mvn checkstyle:check findbugs:check
+
+    - name: Run Spotless code style check
+      run: mvn spotless:check
+
     - name: Run tests
       run: mvn test
-        
+
+    - name: Verify Karaf features
+      run: mvn verify -Dfeatures.verify.skip=false
+
     - name: Deploy to Maven repository
       run: |
         echo "PACKAGE_TOKEN: $(echo ${{ secrets.PACKAGE_TOKEN }} | cut -c1-8)..."
