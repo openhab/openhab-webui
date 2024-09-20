@@ -9,9 +9,14 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: localstack/java-maven-node-python
+    container: maven:3.9.9-amazoncorretto-17
 
     steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 'latest'
+
     - uses: actions/checkout@v3
 
     - name: Build with Maven
