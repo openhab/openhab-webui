@@ -9,13 +9,19 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: maven:3.9.9-amazoncorretto-17
+    container: maven:3.9.9-amazoncorretto-17-debian
 
     steps:
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: 'latest'
+    - name: Install latest Git
+      run: |
+        apt-get update
+        apt-get install -y git
+
+    - name: Install Node.js
+      run: |
+        apt-get install -y curl
+        curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+        apt-get install -y nodejs
 
     - uses: actions/checkout@v3
 
