@@ -68,6 +68,8 @@ public class VideoRenderer extends AbstractWidgetRenderer {
         String snippet = (("video".equals(snippetName) && showHeaderRow) ? getSnippet("header_row") : "")
                 + getSnippet(snippetName);
 
+        snippet = snippet.replace("%header_visibility_class%",
+                showHeaderRow ? "%visibility_class%" : "mdl-form__row--hidden");
         snippet = snippet.replace("%header_row%",
                 ("image".equals(snippetName) || showHeaderRow) ? Boolean.valueOf(showHeaderRow).toString() : "");
 
