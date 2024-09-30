@@ -112,7 +112,7 @@ export default {
       // - a default value is defined and the actual value differs from the default value
       // - no default value is defined and the param has a value
       return finalParameters.filter((p) => !p.advanced ||
-        (p.default !== undefined && this.configuration[p.name] !== undefined ? this.configuration[p.name].toString() !== p.default : this.configuration[p.name] !== undefined))
+        (p.default !== undefined && this.configuration[p.name] !== undefined && this.configuration[p.name] !== null ? this.configuration[p.name].toString() !== p.default : this.configuration[p.name] !== undefined))
     }
   },
   methods: {
