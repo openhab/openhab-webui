@@ -22,7 +22,11 @@
             </f7-button>
           </div>
         </div>
-        <p class="margin-left margin-right" style="height: 30px" id="scan-progress" />
+        <p class="margin-left margin-right no-margin-bottom" style="height: 30px" id="scan-progress" />
+        <f7-block-title v-if="inputSupported" style="margin-bottom: calc(var(--f7-block-title-margin-bottom) - var(--f7-list-margin-vertical))">
+          Scan Input
+        </f7-block-title>
+        <config-sheet v-if="inputSupported" :parameter-groups="[]" :parameters="inputParameters" :configuration="inputConfig" />
         <f7-block-title v-if="discoverySupported && scanResults.length">
           Discovered Things
         </f7-block-title>
@@ -74,7 +78,10 @@
 </template>
 
 <script>
+import ConfigSheet from '@/components/config/config-sheet.vue'
+
 export default {
+  components: { ConfigSheet },
   props: ['bindingId'],
   data () {
     return {
@@ -83,6 +90,9 @@ export default {
       initSearchbar: false,
       thingTypes: [],
       discoverySupported: false,
+      inputSupported: null,
+      inputParameters: [],
+      inputConfig: {},
       scanning: false,
       scanResults: [],
       scanTimeout: 0,
@@ -102,7 +112,6 @@ export default {
       }
     },
     onPageAfterIn () {
-      this.loading = true
       this.$oh.api.get('/rest/thing-types?bindingId=' + this.bindingId).then((data) => {
         this.thingTypes = data.filter((tt) => tt.UID.split(':')[0] === this.bindingId && tt.listed)
           .sort((a, b) => {
@@ -110,15 +119,11 @@ export default {
             if (b.bridge && !a.bridge) return 1
             return a.label.localeCompare(b.label)
           })
-        this.loading = false
-        this.initSearchbar = true
-        this.ready = true
-        this.loadInbox()
-        this.$oh.api.get('/rest/discovery').then((data) => {
-          if (data.indexOf(this.bindingId) >= 0) {
-            this.discoverySupported = true
-            // this.scan()
-          }
+        return Promise.resolve()
+      }).then(() => {
+        Promise.all([this.loadDiscoveryInfo(), this.loadInbox()]).then(() => {
+          this.initSearchbar = true
+          this.ready = true
         })
       })
     },
@@ -137,7 +142,8 @@ export default {
         return
       }
       this.scanning = true
-      this.$oh.api.postPlain('/rest/discovery/bindings/' + this.bindingId + '/scan', null, 'text/plain', 'text/plain').then((data) => {
+      const query = this.inputConfig.input ? `?input=${encodeURIComponent(this.inputConfig.input)}` : ''
+      this.$oh.api.postPlain(`/rest/discovery/bindings/${this.bindingId}/scan${query}`, null, 'text/plain', 'text/plain').then((data) => {
         try {
           this.scanTimeout = parseInt(data)
           this.scanProgress = 0
@@ -153,20 +159,62 @@ export default {
         }
       })
     },
+    /**
+     * Load discovery information for the binding.
+     *
+     * @returns {Promise<void>}
+     */
+    loadDiscoveryInfo () {
+      return this.$oh.api.get(`/rest/discovery/bindings/${this.bindingId}/info`).then((data) => {
+        this.discoverySupported = true
+        this.inputSupported = data.inputSupported
+        if (this.inputSupported) {
+          this.inputParameters = [
+            {
+              advanced: false,
+              description: data.inputDescription,
+              label: data.inputLabel,
+              name: 'input',
+              required: false,
+              type: 'TEXT'
+            }
+          ]
+        }
+        return Promise.resolve()
+      }).catch((e) => {
+        if (e === 404 || e === 'Not Found') {
+          this.discoverySupported = false
+          return Promise.resolve()
+        } else {
+          return Promise.reject(e)
+        }
+      })
+    },
+    /**
+     * Load discovery inbox entries for the binding.
+     *
+     * @returns {Promise<void>}
+     */
     loadInbox () {
       if (this.loading) return
       this.loading = true
-      this.$oh.api.get('/rest/inbox?includeIgnored=false').then((data) => {
+      return this.$oh.api.get('/rest/inbox?includeIgnored=false').then((data) => {
         this.loading = false
         this.scanResults = data.filter((e) => e.thingTypeUID.split(':')[0] === this.bindingId)
-        const searchbar = this.$refs.searchbar.$el.f7Searchbar
-        const filterQuery = searchbar.query
+        const filterQuery = this.$refs.searchbar?.f7Searchbar.query
         this.initSearchbar = false
         this.$nextTick(() => {
           this.initSearchbar = true
-          searchbar.clear()
-          searchbar.search(filterQuery)
+          if (!filterQuery) return
+          this.$nextTick(() => {
+            const searchbar = this.$refs.searchbar?.f7Searchbar
+            searchbar.clear()
+            searchbar.search(filterQuery)
+          })
         })
+        Promise.resolve()
+      }).catch((e) => {
+        Promise.reject('Failed to load inbox: ' + e)
       })
     },
     approve (entry) {
@@ -224,6 +272,3 @@ export default {
   }
 }
 </script>
-
-<style>
-</style>
