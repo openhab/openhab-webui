@@ -17,10 +17,11 @@
   &.vertical
     transform rotate(90deg)
     transform-origin center
-  .icon
-    margin-bottom 2px
-    margin-left 2px
-
+    .icon
+      margin-top 2px
+    .state
+      margin-top 2px
+      transform rotate(-90deg)
 </style>
 
 <script>
