@@ -62,6 +62,8 @@
 
 <script>
 import YAML from 'yaml'
+import fastDeepEqual from 'fast-deep-equal/es6'
+import cloneDeep from 'lodash/cloneDeep'
 
 import MetadataNamespaces from '@/assets/definitions/metadata/namespaces.js'
 
@@ -93,6 +95,7 @@ export default {
       generic: false,
       item: {},
       metadata: { value: '', config: {} },
+      savedMetadata: {},
       yaml: null
     }
   },
@@ -100,7 +103,7 @@ export default {
     metadata: {
       handler: function () {
         if (this.ready) {
-          this.dirty = true
+          this.dirty = !fastDeepEqual(this.metadata, this.savedMetadata)
         }
       },
       deep: true
@@ -153,13 +156,12 @@ export default {
   methods: {
     onPageBeforeIn () {
       this.generic = MetadataNamespaces.map((n) => n.name).indexOf(this.namespace) < 0
-      this.ready = false
     },
     onPageAfterIn () {
-      this.$oh.api.get(`/rest/items/${this.itemName}?metadata=${this.namespace}`).then((data) => {
-        this.item = data
-        if (this.item.metadata) {
-          this.metadata = this.item.metadata[this.namespace]
+      this.$oh.api.get(`/rest/items/${this.itemName}?metadata=${this.namespace}`).then((item) => {
+        this.item = item
+        if (item.metadata) {
+          this.metadata = item.metadata[this.namespace]
           if (!this.metadata.config) this.$set(this.metadata, 'config', {})
           this.creationMode = false
         }
@@ -167,6 +169,7 @@ export default {
           this.currentTab = 'code'
           this.toYaml()
         }
+        this.savedMetadata = cloneDeep(this.metadata)
         this.$nextTick(() => {
           this.ready = true
         })
@@ -174,7 +177,6 @@ export default {
     },
     onEditorInput (value) {
       this.yaml = value
-      this.dirty = true
     },
     save () {
       if (this.currentTab === 'code' && !this.fromYaml()) return
@@ -193,6 +195,7 @@ export default {
             closeTimeout: 2000
           }).open()
         }
+        this.savedMetadata = cloneDeep(this.metadata)
         this.dirty = false
         this.$f7router.back()
       }).catch((err) => {

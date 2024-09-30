@@ -203,7 +203,7 @@ export default {
     },
     updateComponent () {
       const value = this.$refs.widgets.f7SmartSelect.getValue()
-      this.metadata.value = value
+      this.metadata.value = value || ' ' // ' ' is used to indicate the default widget
       this.setCurrentComponent()
       this.setConfigDescriptions()
       this.setPreviewContext()
