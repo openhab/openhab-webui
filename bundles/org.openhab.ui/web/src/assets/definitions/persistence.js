@@ -43,7 +43,7 @@ export const FilterTypes = [
         label: 'Unit',
         name: 'unit',
         required: false,
-        type: 'STRING'
+        type: 'TEXT'
       }
     ],
     footerFn: (f) => f.relative ? f.value + ' %' : (f.unit ? f.value + ' ' + f.unit : f.value)
@@ -74,7 +74,7 @@ export const FilterTypes = [
           { label: 'days', value: 'd' }
         ],
         required: false,
-        type: 'STRING'
+        type: 'TEXT'
       }
     ],
     footerFn: (f) => f.value + ' ' + (f.unit || 's')
@@ -121,7 +121,7 @@ export const FilterTypes = [
         label: 'Unit',
         name: 'unit',
         required: false,
-        type: 'STRING'
+        type: 'TEXT'
       },
       filterInvertedParameter
     ],
