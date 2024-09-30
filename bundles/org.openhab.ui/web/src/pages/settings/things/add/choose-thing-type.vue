@@ -1,5 +1,5 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
+  <f7-page class="choose-thing-type" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar :title="`Add a new Thing: ${bindingId}`" back-link="Back">
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
@@ -23,10 +23,10 @@
           </div>
         </div>
         <p class="margin-left margin-right no-margin-bottom" style="height: 30px" id="scan-progress" />
-        <f7-block-title v-if="inputSupported" style="margin-bottom: calc(var(--f7-block-title-margin-bottom) - var(--f7-list-margin-vertical))">
+        <f7-block-title v-if="inputSupported">
           Scan Input
         </f7-block-title>
-        <config-sheet v-if="inputSupported" :parameter-groups="[]" :parameters="inputParameters" :configuration="inputConfig" />
+        <config-sheet v-if="inputSupported" class="scan-input" :parameter-groups="[]" :parameters="inputParameters" :configuration="inputConfig" />
         <f7-block-title v-if="discoverySupported && scanResults.length">
           Discovered Things
         </f7-block-title>
@@ -76,6 +76,13 @@
     </f7-block>
   </f7-page>
 </template>
+
+<style lang="stylus">
+.choose-thing-type
+  .scan-input
+    .list
+      margin-top 0
+</style>
 
 <script>
 import ConfigSheet from '@/components/config/config-sheet.vue'
