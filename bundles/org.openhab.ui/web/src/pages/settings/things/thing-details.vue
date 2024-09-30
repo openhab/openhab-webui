@@ -547,8 +547,6 @@ export default {
       })
     },
     doConfigAction (action) {
-      let thing = this.thing
-      let save = this.save
       if (action.type !== 'BOOLEAN') {
         console.warn('Invalid action type', action)
         return
@@ -564,8 +562,15 @@ export default {
         prompt,
         this.thing.label,
         () => {
-          thing.configuration[action.name] = true
-          save()
+          const name = action.name
+          // Make sure Vue reactivity notices the change
+          this.$set(this.thing, 'configuration', ({
+            name: true,
+            ...this.thing.configuration
+          }))
+          // Vue reactivity is too slow to recognize config change before the API call, manually mark the config dirty
+          this.configDirty = true
+          this.save()
         }
       )
     },
