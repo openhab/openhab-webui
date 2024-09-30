@@ -25,10 +25,10 @@
 import { use } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { GraphChart } from 'echarts/charts'
-import { ToolboxComponent } from 'echarts/components'
+import { TooltipComponent, ToolboxComponent } from 'echarts/components'
 import VChart from 'vue-echarts'
 
-use([CanvasRenderer, GraphChart, ToolboxComponent])
+use([CanvasRenderer, GraphChart, TooltipComponent, ToolboxComponent])
 
 import ThingStatus from '@/components/thing/thing-status-mixin'
 
@@ -67,9 +67,7 @@ export default {
         data: [],
         links: [],
         label: {
-          textStyle: {
-            fontSize: 16
-          },
+          fontSize: 16,
           show: true
         },
         // label: {
@@ -81,21 +79,19 @@ export default {
         // },
         roam: true,
         lineStyle: {
-          normal: {
-            width: 1,
-            curveness: 0.3,
-            opacity: 0.7
-          },
-          emphasis: {
+          width: 1,
+          curveness: 0.3,
+          opacity: 0.7
+        },
+        emphasis: {
+          lineStyle: {
             width: 6,
             focus: 'adjacency'
           }
         },
         symbolSize: 28,
         itemStyle: {
-          normal: {
-            color: 'blue'
-          }
+          color: 'blue'
         }
       }
       return this.$oh.api.get('/rest/things').then((data) => {
