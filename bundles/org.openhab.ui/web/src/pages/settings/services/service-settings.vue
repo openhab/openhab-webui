@@ -1,6 +1,6 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
-    <f7-navbar :title="service.label" back-link="Settings">
+    <f7-navbar :title="service.label + dirtyIndicator" back-link="Settings">
       <f7-nav-right>
         <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only />
         <f7-link @click="save()" v-if="!$theme.md">
@@ -21,6 +21,9 @@
 </template>
 
 <script>
+import fastDeepEqual from 'fast-deep-equal/es6'
+import cloneDeep from 'lodash/cloneDeep'
+
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import DirtyMixin from '../dirty-mixin'
 
@@ -35,6 +38,7 @@ export default {
       service: {},
       configDescriptions: null,
       config: null,
+      savedConfig: {},
       loading: true
     }
   },
@@ -42,7 +46,7 @@ export default {
     config: {
       handler: function () {
         if (!this.loading) {
-          this.dirty = true
+          this.dirty = !fastDeepEqual(this.config, this.savedConfig)
         }
       },
       deep: true
@@ -60,6 +64,7 @@ export default {
       if (this.serviceId === 'org.openhab.i18n') {
         this.$f7.emit('sidebarRefresh', this.config.locale)
       }
+      this.savedConfig = cloneDeep(this.config)
       this.dirty = false
       this.$f7router.back()
     },
@@ -91,6 +96,7 @@ export default {
 
           this.$oh.api.get('/rest/services/' + this.serviceId + '/config').then(data3 => {
             this.config = data3
+            this.savedConfig = cloneDeep(this.config)
             this.$nextTick(() => {
               this.loading = false
             })
