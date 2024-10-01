@@ -159,13 +159,15 @@ export function pt (name, label, description) {
  * @param {string} name the name of the widget (in kebab case)
  * @param {string} label the untranslated (English) name of the widget
  * @param {string} description the untranslated (English) description of the widget
- * @param {string} icon an optional icon to illustrate the widget, used for map/plan markers
+ * @param {string} [icon] an optional icon to illustrate the widget, used for map/plan markers
+ * @param {boolean} [hidden=false] whether the widget is hidden and should not be shown in the widget picker
  */
-export function WidgetDefinition (name, label, description, icon) {
+export function WidgetDefinition (name, label, description, icon, hidden = false) {
   this.name = name
   this.label = label
   this.description = description
   if (icon) this.icon = icon
+  this.hidden = hidden
   this.props = {
     parameterGroups: [],
     parameters: []

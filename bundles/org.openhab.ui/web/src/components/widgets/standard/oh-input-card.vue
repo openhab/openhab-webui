@@ -1,17 +1,12 @@
 <template>
-  <f7-card :no-border="config.noBorder" :no-shadow="config.noShadow" :outline="config.outline">
-    <f7-card-header v-if="config.title">
-      <div>{{ config.title }}</div>
-    </f7-card-header>
-    <f7-card-content class="padding">
+  <oh-card :context="context">
+    <template #content>
       <oh-input class="input-card-content" :context="childContext(context.component)" @command="onCommand" />
-    </f7-card-content>
-    <oh-card-footer v-if="config.footer" :texts="config.footer" />
-  </f7-card>
+    </template>
+  </oh-card>
 </template>
 
 <style lang="stylus">
-
 .input-card-content
   width calc(100% - 2*var(--f7-card-content-padding)) !important
   .input-field
@@ -20,15 +15,15 @@
 
 <script>
 import mixin from '../widget-mixin'
-import OhInput from '../system/oh-input.vue'
-import OhCardFooter from '../system/oh-card-footer.vue'
+import OhCard from '@/components/widgets/standard/oh-card.vue'
+import { OhInput } from '@/components/widgets/system'
 import { OhInputCardDefinition } from '@/assets/definitions/widgets/standard/cards'
 
 export default {
   mixins: [mixin],
   components: {
-    OhInput,
-    OhCardFooter
+    OhCard,
+    OhInput
   },
   widget: OhInputCardDefinition
 }

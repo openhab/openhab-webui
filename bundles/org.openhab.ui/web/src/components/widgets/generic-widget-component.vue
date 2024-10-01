@@ -8,6 +8,12 @@
       <generic-widget-component v-else :context="childContext(slotComponent)" v-for="(slotComponent, idx) in slotComponents" :slot="slotName" :key="slotName + '-' + idx" @command="onCommand" />
     </template>
   </component>
+  <oh-card v-else-if="componentType && componentType === 'oh-card' && visible" :context="context">
+    <!-- eslint-disable-next-line vue/no-unused-vars -->
+    <template v-for="(slotComponents, slotName) in context.component.slots" #[slotName]>
+      <generic-widget-component :context="childContext(slotComponent)" v-for="(slotComponent, idx) in slotComponents" :slot="slotName" :key="slotName + '-' + idx" @command="onCommand" />
+    </template>
+  </oh-card>
   <generic-widget-component v-else-if="componentType && componentType.startsWith('widget:') && visible" :context="childWidgetContext()" @command="onCommand" />
   <component v-else-if="componentType && componentType.startsWith('oh-') && visible" :is="componentType" :context="context" @command="onCommand" />
   <div v-else-if="componentType && componentType === 'Label' && visible" :class="config.class" :style="config.style">

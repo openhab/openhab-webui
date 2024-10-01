@@ -1,25 +1,23 @@
 <template>
-  <f7-card :no-border="config.noBorder" :no-shadow="config.noShadow" :outline="config.outline">
-    <f7-card-header v-if="config.title">
-      <div>{{ config.title }}</div>
-    </f7-card-header>
-    <f7-card-content ref="cardContent" @click.native="performAction" @taphold.native="onTaphold($event)" @contextmenu.native="onContextMenu($event)" class="label-card-content" :style="{ background: config.background }" :class="{ 'vertical-arrangement': config.vertical }">
-      <oh-trend v-if="config.trendItem" :key="'trend' + config.item" class="trend" :width="($refs.cardContent) ? $refs.cardContent.$el.clientWidth : 0" :context="context" />
-      <f7-list>
-        <f7-list-item :link="config.action ? true : false" no-chevron>
-          <oh-icon slot="media" v-if="config.icon" :icon="config.icon" :height="config.iconSize || 32" :width="config.iconSize || 32" :state="(config.item && config.iconUseState) ? context.store[config.item].state : null" :color="config.iconColor" />
-          <div :class="config.class">
-            <span :style="{ 'font-size': config.fontSize || '24px', 'font-weight': config.fontWeight || 'normal' }">
-              {{ label }}
-            </span>
-          </div>
-        </f7-list-item>
-      </f7-list>
-      <!-- <f7-link class="label-link" v-if="config.action">{{context.store[config.item].displayState || context.store[config.item].state}}</f7-link> -->
-      <!-- <h2>{{context.store[config.item].displayState || context.store[config.item].state}}</h2> -->
-    </f7-card-content>
-    <oh-card-footer v-if="config.footer" :texts="config.footer" />
-  </f7-card>
+  <oh-card :context="context">
+    <template #content-root>
+      <f7-card-content ref="cardContent" @click.native="performAction" @taphold.native="onTaphold($event)" @contextmenu.native="onContextMenu($event)" :class="['label-card-content', (config.vertical ? 'vertical-arrangement' : ''), ...(Array.isArray(config.contentClass) ? config.contentClass : [])]" :style="{ background: config.background, ...config.contentStyle }">
+        <oh-trend v-if="config.trendItem" :key="'trend' + config.item" class="trend" :width="($refs.cardContent) ? $refs.cardContent.$el.clientWidth : 0" :context="context" />
+        <f7-list>
+          <f7-list-item :link="config.action ? true : false" no-chevron>
+            <oh-icon slot="media" v-if="config.icon" :icon="config.icon" :height="config.iconSize || 32" :width="config.iconSize || 32" :state="(config.item && config.iconUseState) ? context.store[config.item].state : null" :color="config.iconColor" />
+            <div :class="config.class">
+              <span :style="{ 'font-size': config.fontSize || '24px', 'font-weight': config.fontWeight || 'normal' }">
+                {{ label }}
+              </span>
+            </div>
+          </f7-list-item>
+        </f7-list>
+        <!-- <f7-link class="label-link" v-if="config.action">{{context.store[config.item].displayState || context.store[config.item].state}}</f7-link> -->
+        <!-- <h2>{{context.store[config.item].displayState || context.store[config.item].state}}</h2> -->
+      </f7-card-content>
+    </template>
+  </oh-card>
 </template>
 
 <style lang="stylus">
@@ -48,16 +46,15 @@
 <script>
 import mixin from '../widget-mixin'
 import { actionsMixin } from '../widget-actions'
-import { OhLabelCardDefinition } from '@/assets/definitions/widgets/standard/cards'
-
+import OhCard from '@/components/widgets/standard/oh-card.vue'
 import OhTrend from '../system/oh-trend'
-import OhCardFooter from '../system/oh-card-footer.vue'
+import { OhLabelCardDefinition } from '@/assets/definitions/widgets/standard/cards'
 
 export default {
   mixins: [mixin, actionsMixin],
   components: {
-    OhTrend,
-    OhCardFooter
+    OhCard,
+    OhTrend
   },
   widget: OhLabelCardDefinition,
   computed: {

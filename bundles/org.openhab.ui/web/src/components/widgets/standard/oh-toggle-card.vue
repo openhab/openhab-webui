@@ -1,13 +1,9 @@
 <template>
-  <f7-card :no-border="config.noBorder" :no-shadow="config.noShadow" :outline="config.outline">
-    <f7-card-header v-if="config.title">
-      <div>{{ config.title }}</div>
-    </f7-card-header>
-    <f7-card-content class="display-flex justify-content-center" style="height: calc(2 * var(--f7-toggle-width))">
+  <oh-card :context="context" :content-class="['display-flex', 'justify-content-center']" :content-style="{ height: 'calc(2 * var(--f7-toggle-width))' }">
+    <template #content>
       <oh-toggle class="large-vertical-toggle" :context="context" @command="onCommand" />
-    </f7-card-content>
-    <oh-card-footer v-if="config.footer" :texts="config.footer" />
-  </f7-card>
+    </template>
+  </oh-card>
 </template>
 
 <style lang="stylus">
@@ -18,15 +14,15 @@
 
 <script>
 import mixin from '../widget-mixin'
+import OhCard from '@/components/widgets/standard/oh-card.vue'
 import OhToggle from '../system/oh-toggle.vue'
-import OhCardFooter from '../system/oh-card-footer.vue'
 import { OhToggleCardDefinition } from '@/assets/definitions/widgets/standard/cards'
 
 export default {
   mixins: [mixin],
   components: {
-    OhToggle,
-    OhCardFooter
+    OhCard,
+    OhToggle
   },
   widget: OhToggleCardDefinition,
   data () {
