@@ -1,9 +1,6 @@
 <template>
-  <f7-card :no-border="config.noBorder" :no-shadow="config.noShadow" :outline="config.outline" :style="{ background: config.background }">
-    <f7-card-header v-if="config.title">
-      <div>{{ config.title }}</div>
-    </f7-card-header>
-    <f7-card-content @click.native="performAction" class="clock-card-content text-align-center">
+  <oh-card :context="context" :content-class="['clock-card-content', 'text-align-center']">
+    <template #content>
       <f7-row v-if="config.showDate && config.datePos !== 'below'">
         <f7-col>
           <oh-clock :context="{ component: { component: 'oh-clock', config: {} }}" :style="{ 'font-size': config.dateFontSize || '1vw', 'font-weight': config.dateFontWeight || 'normal' }" :format="config.dateFormat" />
@@ -19,23 +16,22 @@
           <oh-clock :context="{ component: { component: 'oh-clock', config: {} }}" :style="{ 'font-size': config.dateFontSize || '1vw', 'font-weight': config.dateFontWeight || 'normal' }" :format="config.dateFormat" />
         </f7-col>
       </f7-row>
-    </f7-card-content>
-    <oh-card-footer v-if="config.footer" :texts="config.footer" />
-  </f7-card>
+    </template>
+  </oh-card>
 </template>
 
 <script>
 import mixin from '../widget-mixin'
 import { actionsMixin } from '../widget-actions'
+import OhCard from '@/components/widgets/standard/oh-card.vue'
 import OhClock from '../system/oh-clock.vue'
-import OhCardFooter from '../system/oh-card-footer.vue'
 import { OhClockCardDefinition } from '@/assets/definitions/widgets/standard/cards'
 
 export default {
   mixins: [mixin, actionsMixin],
   components: {
-    OhClock,
-    OhCardFooter
+    OhCard,
+    OhClock
   },
   widget: OhClockCardDefinition
 }
