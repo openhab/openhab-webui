@@ -230,7 +230,7 @@ export default {
           this.$nextTick(() => actions.destroy())
         }
         const stdWidgets = (isList) ? StandardListWidgets : (isCells) ? StandardCellWidgets : StandardWidgets
-        const standardWidgetOptions = Object.keys(stdWidgets).map((k) => {
+        const standardWidgetOptions = Object.keys(stdWidgets).filter((k) => !stdWidgets[k].widget().hidden).map((k) => {
           return {
             text: stdWidgets[k].widget().label,
             color: 'blue',

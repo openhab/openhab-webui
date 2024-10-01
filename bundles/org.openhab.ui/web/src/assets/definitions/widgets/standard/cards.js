@@ -13,6 +13,12 @@ export const CardParameters = () => [
   pb('outline', 'Outline', 'Show the card outline').a()
 ]
 
+// OhCard
+export const OhCardDefinition = () => new WidgetDefinition('oh-card', 'Card', 'The basic structure of all card widgets, providing title and footer and requiring a content slot', undefined, true)
+  .paramGroup(CardParameterGroup(), CardParameters())
+  .paramGroup(actionGroup(), actionParams())
+  .paramGroup(actionGroup('Tap Hold', 'Action performed when tapping and holding card (or calling contextual menu on desktop)', 'taphold'), actionParams(null, 'taphold'), true)
+
 // OhLabelCard
 import TrendParameters from '../system/trend.js'
 export const OhLabelCardDefinition = () => new WidgetDefinition('oh-label-card', 'Label Card', 'Display the state of an item in a card')

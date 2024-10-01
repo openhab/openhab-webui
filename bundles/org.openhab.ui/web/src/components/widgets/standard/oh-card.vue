@@ -26,9 +26,11 @@
 <script>
 import mixin from '../widget-mixin'
 import { actionsMixin } from '@/components/widgets/widget-actions'
+import { OhCardDefinition } from '@/assets/definitions/widgets/standard/cards'
 
 export default {
   mixins: [mixin, actionsMixin],
+  widget: OhCardDefinition,
   props: ['context', 'contentStyle', 'contentClass'],
   slotProps: ['header', 'content', 'content-root', 'footer']
 }
