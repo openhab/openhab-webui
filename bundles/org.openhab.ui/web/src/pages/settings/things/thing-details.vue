@@ -562,11 +562,10 @@ export default {
         prompt,
         this.thing.label,
         () => {
-          const name = action.name
           // Make sure Vue reactivity notices the change
           this.$set(this.thing, 'configuration', ({
-            name: true,
-            ...this.thing.configuration
+            ...this.thing.configuration,
+            [action.name]: true
           }))
           // Vue reactivity is too slow to recognize config change before the API call, manually mark the config dirty
           this.configDirty = true
