@@ -5,10 +5,10 @@
         <f7-list-item>
           <div class="display-block">
             <div class="no-padding no-margin font-weight-normal">
-              {{ this.context.store[config.artistItem].state }}
+              {{ context.store[config.artistItem].state }}
             </div>
             <h3 class="no-padding no-margin">
-              {{ this.context.store[config.trackItem].state }}
+              {{ context.store[config.trackItem].state }}
             </h3>
           </div>
         </f7-list-item>
