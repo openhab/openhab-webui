@@ -11,7 +11,14 @@
       </f7-card-content>
     </slot>
     <slot name="footer">
-      <oh-card-footer v-if="config.footer" :texts="config.footer" :style="config.footerStyle" :class="config.footerClass" />
+      <f7-card-footer v-if="config.footer && !Array.isArray(config.footer)">
+        {{ config.footer }}
+      </f7-card-footer>
+      <f7-card-footer v-else-if="config.footer && Array.isArray(config.footer)">
+        <span v-for="text in config.footer" :key="text">
+          {{ text }}
+        </span>
+      </f7-card-footer>
     </slot>
   </f7-card>
 </template>
@@ -19,11 +26,9 @@
 <script>
 import mixin from '../widget-mixin'
 import { actionsMixin } from '@/components/widgets/widget-actions'
-import OhCardFooter from '@/components/widgets/system/oh-card-footer.vue'
 
 export default {
   mixins: [mixin, actionsMixin],
-  components: { OhCardFooter },
   props: ['context', 'contentStyle', 'contentClass'],
   slotProps: ['header', 'content', 'content-root', 'footer']
 }
