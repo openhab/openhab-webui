@@ -87,6 +87,7 @@
         '--oh-canvas-item-text-shadow': config.textShadow
           ? config.textShadow
           : '#444 0px 0px 4px',
+        ...config.style
       }">
       <div
         v-if="config.imageUrl || config.imageSrcSet"
