@@ -85,7 +85,7 @@ export function OhCanvasLayoutDefinition () {
     ])
     .paramGroup(pg('screenSettings', 'Screen Settings'), [
       pn('screenWidth', 'Screen Width', 'Screen width in pixels (default 1280)'),
-      pn('screenHeight', 'Screen Height', 'Screen width in pixels (default 720)'),
+      pn('screenHeight', 'Screen Height', 'Screen height in pixels (default 720)'),
       pb('scale', 'Scaling', 'Scale content to screen width (can lead to unexpected styling issues) (default false)'),
       pt('imageUrl', 'Image URL', 'The URL of the image to display as background').c('url'),
       pt('imageSrcSet', 'Image Source Set', 'The src-set attribute of background image element to take into account multiple device resolutions. For example: "/static/floorplans/floor-0.jpg, /static/floorplans/floor-0@2x.jpg 2x"')
