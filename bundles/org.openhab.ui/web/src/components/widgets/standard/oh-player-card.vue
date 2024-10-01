@@ -1,5 +1,5 @@
 <template>
-  <oh-card>
+  <oh-card :context="context">
     <template #content>
       <f7-list v-if="config.artistItem && config.trackItem">
         <f7-list-item>
