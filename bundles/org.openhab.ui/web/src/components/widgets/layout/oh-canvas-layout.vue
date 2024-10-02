@@ -220,8 +220,114 @@ export default {
     // Chrome reports a wrong size in fullscreen, store initial resolution and use non-dynamically.
     this.windowWidth = window.screen.width
     this.windowHeight = window.screen.height
+    this.setupSVGTracking()
   },
   methods: {
+    // copies all attributes from the source to the target
+    copyElementAttributes (sourceElementStyles, targetElement) {
+      for (let i = 0; i < sourceElementStyles.length; i++) {
+        const styleName = sourceElementStyles[i]
+        const styleValue = sourceElementStyles.getPropertyValue(styleName)
+        targetElement.style.setProperty(styleName, styleValue)
+      }
+    },
+    startSVGListener (svg) {
+      // Only handle SVG elements that are marked with openhab.
+      const subElements = svg.querySelectorAll('[openhab]')
+
+      // add listeners to these elements
+      for (const subElement of subElements) {
+        /*
+         * Mouse Over / Click
+         *
+         * Distinguish Edit / Run Mode
+         *
+         * In Edit mode:
+         * - flashes the element when hovering over it
+         * - Click should open up configuration dialog
+         *   - configure the item that should be toggled (ON/OFF)
+         *
+         * In Run mode
+         * - No mouse over action
+         * - Click should send the command (maybe Toggle only in the beginning)
+         * - Status should be reflected (ON/OFF, OPEN/CLOSE...) by using the below approach of highlighting the element
+         *   - if not <g> then fill with color (e.g. red)
+         *   - if <g> we expect an element in that group that is marked with an attribute flash, use this element by setting opacity to 1 / 0
+         */
+        subElement.addEventListener('mouseover', function () {
+          console.log(`Detected openhab element in SVG: id = ${subElement.id}`) // Log the element
+          // TODO: flash only in trigger mode
+          const tagName = this.tagName
+          if (tagName !== 'g') {
+            const oldFill = this.style.fill
+            this.style.fill = 'rgb(255, 0, 0)'
+            const that = this
+            setTimeout(() => {
+              that.style.fill = oldFill
+            }, 200)
+          } else { // groups cannot be filled, so we need to a special flash element
+            const flashElement = this.querySelector('[flash]')
+            if (flashElement && !flashElement.flashing) {
+              const oldFill = flashElement.style.fill
+              const oldOpacity = flashElement.style.opacity
+              flashElement.style.fill = 'rgb(255, 0, 0)'
+              flashElement.style.opacity = 1
+              const that = flashElement
+              flashElement.flashing = true
+              setTimeout(() => {
+                that.style.fill = oldFill
+                that.style.opacity = oldOpacity
+                flashElement.flashing = false
+              }, 200)
+            }
+          }
+        })
+
+        subElement.addEventListener('click', function () {
+          // TODO: Code to be executed when the element is clicked
+          // if state = ON, use fill or flash file to highlight element (see mouseover)
+          console.log(`Element ${this.id} with openhab attribute clicked!`)
+        })
+      }
+    },
+    setupSVGTracking () {
+      // replace the SVG img by an embedded SVG image, so we have all elements available in the HTML
+      //  Todo: make this feature configurable
+
+      // search the background image
+      const svgImg = document.body.querySelector('img.oh-canvas-background')
+      let outerDiv = svgImg.parentElement
+
+      if (outerDiv) {
+        const img = outerDiv.querySelector('img')
+        // prevent svg embedding on multiple mounting
+        if (img.getAttribute('embeddedSVG') === null) {
+          img.setAttribute('embeddedSVG', 'true')
+
+          const src = img.src
+
+          // Load the real SVG content
+          fetch(src)
+            .then(response => response.text())
+            .then(svgCode => {
+              const originalImage = outerDiv.querySelector('img')  // FIXME : replace by img-var?
+
+              // remember style of img to allowing the copy to the embedded svg
+              const sourceStyles = originalImage.style
+              outerDiv.innerHTML = svgCode
+              let svg = outerDiv.querySelector('svg')
+              this.copyElementAttributes(sourceStyles, svg)
+              // svg.setAttribute('id', 'backgroundSVG') // maybe we require this later
+
+              svg.style.zIndex = '1000' // probably not necessary
+              this.startSVGListener(svg)
+            })
+            .catch(error => {
+              console.error('Error embedding SVG:', error)
+            })
+        }
+      }
+    },
     isRetina () {
       return window.devicePixelRatio > 1
     },
