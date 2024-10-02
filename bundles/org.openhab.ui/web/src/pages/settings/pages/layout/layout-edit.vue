@@ -178,6 +178,12 @@ export default {
       fullscreen: this.$fullscreen.getState()
     }
   },
+  created () {
+    this.$f7.on('svgOnClickConfigUpdate', this.onSvgOnClickConfigUpdate)
+  },
+  beforeDestroy () {
+    this.$f7.off('svgOnClickConfigUpdate', this.onSvgOnClickConfigUpdate)
+  },
   methods: {
     addWidget (component, widgetType, parentContext, slot) {
       const isList = component.component.indexOf('oh-list') === 0
@@ -388,6 +394,12 @@ export default {
           this.forceUpdate()
         }
       })
+    },
+    onSvgOnClickConfigUpdate (event) {
+      if (!this.page.config.embeddedSvgActions) {
+        this.$set(this.page.config, 'embeddedSvgActions', {})
+      }
+      this.page.config.embeddedSvgActions[event.id] = event.config
     }
   }
 }
