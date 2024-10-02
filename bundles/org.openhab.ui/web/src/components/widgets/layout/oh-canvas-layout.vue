@@ -310,7 +310,7 @@ export default {
           fetch(src)
             .then(response => response.text())
             .then(svgCode => {
-              const originalImage = outerDiv.querySelector('img')  // FIXME : replace by img-var?
+              const originalImage = outerDiv.querySelector('img') // FIXME : replace by img-var?
 
               // remember style of img to allowing the copy to the embedded svg
               const sourceStyles = originalImage.style
