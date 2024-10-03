@@ -18,7 +18,7 @@
         </div>
         <h2>{{ item.label }}</h2>
         <!-- <h4 v-show="item.label">{{item.name}}</h4> -->
-        <h5 v-show="item.type">
+        <h5 v-show="item.type" style="margin-top: 10px; margin-bottom: 15px;">
           <small>{{ getItemTypeLabel(item) }}</small>
         </h5>
       </f7-subnavbar>
