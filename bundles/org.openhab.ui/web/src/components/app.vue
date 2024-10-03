@@ -539,7 +539,7 @@ export default {
     updateThemeOptions () {
       this.themeOptions.dark = localStorage.getItem('openhab.ui:theme.dark') || ((window.OHApp && window.OHApp.preferDarkMode) ? window.OHApp.preferDarkMode().toString() : (this.$f7.darkTheme ? 'dark' : 'light'))
       this.themeOptions.bars = localStorage.getItem('openhab.ui:theme.bars') || 'light'
-      this.themeOptions.homeNavbar = localStorage.getItem('openhab.ui:theme.home.navbar') || 'default'
+      this.themeOptions.homeNavbar = localStorage.getItem('openhab.ui:theme.home.navbar') || (this.$f7.device.desktop ? 'large' : 'simple')
       this.themeOptions.homeBackground = localStorage.getItem('openhab.ui:theme.home.background') || 'default'
       this.themeOptions.expandableCardAnimation = localStorage.getItem('openhab.ui:theme.home.cardanimation') || 'default'
       if (this.themeOptions.dark === 'dark') {
