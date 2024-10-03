@@ -21,6 +21,11 @@
           style="margin-left: auto"
           text="Grid" />
         <f7-menu-item
+          v-if="config.embedSvg"
+          @click="flashEmbeddedSvgComponents()"
+          icon="margin-left-half"
+          icon-f7="bolt" />
+        <f7-menu-item
           dropdown
           icon-f7="rectangle_3_offgrid">
           <f7-menu-dropdown right>
@@ -294,6 +299,14 @@ export default {
         subElement.removeEventListener('mouseover', () => { this.svgOnMouseOver(subElement) })
 
         subElement.removeEventListener('click', () => { return this.svgOnClick(subElement) })
+      }
+    },
+    flashEmbeddedSvgComponents () {
+      const svg = this.$refs.canvasBackground.querySelector('svg')
+      const subElements = svg.querySelectorAll('[openhab]')
+
+      for (const subElement of subElements) {
+        this.svgOnMouseOver(subElement)
       }
     },
     /**
