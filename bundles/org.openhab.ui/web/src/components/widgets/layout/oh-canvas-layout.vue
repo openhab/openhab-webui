@@ -275,15 +275,12 @@ export default {
 
       for (const subElement of subElements) {
         /*
-         * Mouse Over / Click
-         *
-         * Distinguish Edit / Run Mode
-         *
          * In Run mode
          * - Status should be reflected (ON/OFF, OPEN/CLOSE...) by using the below approach of highlighting the element
          *   - if not <g> then fill with color (e.g. red)
          *   - if <g> we expect an element in that group that is marked with an attribute flash, use this element by setting opacity to 1 / 0
          */
+        subElement.setAttribute('cursor', 'pointer')
         subElement.addEventListener('mouseover', () => { this.svgOnMouseOver(subElement) })
 
         subElement.addEventListener('click', () => { return this.svgOnClick(subElement) })
@@ -291,7 +288,6 @@ export default {
     },
     unsubscribeEmbeddedSvgListeners () {
       const svg = this.$refs.canvasBackground.querySelector('svg')
-      // Only handle SVG elements that are marked with openhab.
       const subElements = svg.querySelectorAll('[openhab]')
 
       for (const subElement of subElements) {
@@ -309,28 +305,30 @@ export default {
      * @param {HTMLElement} el
      */
     svgOnMouseOver (el) {
-      const tagName = el.tagName
-      if (tagName !== 'g' && !el.flashing) {
-        const oldFill = el.style.fill
-        el.style.fill = 'rgb(255, 0, 0)'
-        el.flashing = true
-        setTimeout(() => {
-          el.flashing = false
-          el.style.fill = oldFill
-        }, 200)
-      } else { // groups cannot be filled, so we need to fill special element marked as "flash"
-        const flashElement = el.querySelector('[flash]')
-        if (flashElement && !flashElement.flashing) {
-          const oldFill = flashElement.style.fill
-          const oldOpacity = flashElement.style.opacity
-          flashElement.style.fill = 'rgb(255, 0, 0)'
-          flashElement.style.opacity = 1
-          flashElement.flashing = true
+      if (this.context.editmode || (!this.context.editmode && this.config.embedSvgFlashing)) {
+        const tagName = el.tagName
+        if (tagName !== 'g' && !el.flashing) {
+          const oldFill = el.style.fill
+          el.style.fill = 'rgb(255, 0, 0)'
+          el.flashing = true
           setTimeout(() => {
-            flashElement.style.fill = oldFill
-            flashElement.style.opacity = oldOpacity
-            flashElement.flashing = false
+            el.flashing = false
+            el.style.fill = oldFill
           }, 200)
+        } else { // groups cannot be filled, so we need to fill special element marked as "flash"
+          const flashElement = el.querySelector('[flash]')
+          if (flashElement && !flashElement.flashing) {
+            const oldFill = flashElement.style.fill
+            const oldOpacity = flashElement.style.opacity
+            flashElement.style.fill = 'rgb(255, 0, 0)'
+            flashElement.style.opacity = 1
+            flashElement.flashing = true
+            setTimeout(() => {
+              flashElement.style.fill = oldFill
+              flashElement.style.opacity = oldOpacity
+              flashElement.flashing = false
+            }, 200)
+          }
         }
       }
     },

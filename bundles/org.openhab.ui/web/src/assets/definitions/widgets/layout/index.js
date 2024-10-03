@@ -88,8 +88,11 @@ export function OhCanvasLayoutDefinition () {
       pn('screenHeight', 'Screen Height', 'Screen height in pixels (default 720)'),
       pb('scale', 'Scaling', 'Scale content to screen width (can lead to unexpected styling issues) (default false)'),
       pt('imageUrl', 'Image URL', 'The URL of the image to display as background').c('url'),
-      pt('imageSrcSet', 'Image Source Set', 'The src-set attribute of background image element to take into account multiple device resolutions. For example: "/static/floorplans/floor-0.jpg, /static/floorplans/floor-0@2x.jpg 2x"'),
-      pb('embedSvg', 'Embed SVG', 'Embed SVG image directly into the page (default false)')
+      pt('imageSrcSet', 'Image Source Set', 'The src-set attribute of background image element to take into account multiple device resolutions. For example: "/static/floorplans/floor-0.jpg, /static/floorplans/floor-0@2x.jpg 2x"')
+    ])
+    .paramGroup(pg('svgEmbedding', 'SVG Embedding'), [
+      pb('embedSvg', 'Embed SVG', 'Embed SVG image directly into the page (default false)'),
+      pb('embedSvgFlashing', 'Embed SVG Flashing in Run-Mode', 'flashes the svg element on hovering even in run-mode (default false)')
     ])
     .paramGroup(pg('appearance', 'Appearance'), [
       pb('hideNavbar', 'Hide Navigation bar', 'Hide navigation bar on top when page is displayed (You can additionally hide the sidebar using its pin icon) (default false)')
