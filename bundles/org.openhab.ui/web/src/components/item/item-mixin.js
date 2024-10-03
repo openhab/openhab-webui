@@ -6,7 +6,12 @@ export default {
     getItemTypeLabel (item) {
       let ret = item.type
       if (item.type === 'Group' && item.groupType) {
-        ret += ` (${item.groupType})`
+        ret += ` (${item.groupType}`
+        if (item.function.name) {
+          ret += `:${item.function.name}`
+          if (item.function.params) ret += `(${item.function.params.join(',')})`
+        }
+        ret += ')'
       }
       return ret
     },
