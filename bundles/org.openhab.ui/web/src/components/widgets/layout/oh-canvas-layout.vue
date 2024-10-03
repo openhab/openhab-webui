@@ -309,16 +309,16 @@ export default {
      * @param {HTMLElement} el
      */
     svgOnMouseOver (el) {
-      console.log(`Detected openhab element in SVG: id = ${el.id}`) // Log the element
-      // TODO: flash only in trigger mode
       const tagName = el.tagName
-      if (tagName !== 'g') {
+      if (tagName !== 'g' && !el.flashing) {
         const oldFill = el.style.fill
         el.style.fill = 'rgb(255, 0, 0)'
+        el.flashing = true
         setTimeout(() => {
+          el.flashing = false
           el.style.fill = oldFill
         }, 200)
-      } else { // groups cannot be filled, so we need to a special flash element
+      } else { // groups cannot be filled, so we need to fill special element marked as "flash"
         const flashElement = el.querySelector('[flash]')
         if (flashElement && !flashElement.flashing) {
           const oldFill = flashElement.style.fill
