@@ -297,7 +297,7 @@ export default {
       f7params: {
         id: 'org.openhab.ui', // App bundle ID
         name: 'openHAB', // App name
-        version: '3.0.0', // App version, TODO retrieve from the server (with the build information)
+        version: '%VERSION%', // App version, replaced during production build
         theme: theme || 'auto',
         // theme: (document.documentURI && document.documentURI.indexOf('?theme=ios') > 0) ? 'ios'
         //   : (document.documentURI && document.documentURI.indexOf('?theme=md') > 0) ? 'md'

@@ -26,6 +26,9 @@ const store = new Vuex.Store({
     apiEndpoints: null,
     locale: null,
     runtimeInfo: null,
+    uiInfo: {
+      commit: '%GIT_COMMIT_HASH%' // replaced during production build
+    },
     websiteUrl: null,
     developerDock: false,
     pagePath: null
