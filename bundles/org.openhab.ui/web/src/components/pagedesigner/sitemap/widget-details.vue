@@ -41,6 +41,13 @@
                          placeholder="##0.0"
                          validate pattern="^(?:'[0#.,;E]?'|[^0#.,;E'])*((#[,#]*|0)[,0]*)(\.(0+#*|#+))?(?:E0+)?(?:';'|[^;])*(?:;(?:'[0#.,;E]?'|[^0#.,;E'])*((#[,#]*|0)[,0]*)(\.(0+#*|#+))?(?:E0+)?.*)?$"
                          :value="widget.config.yAxisDecimalPattern" @input="updateParameter('yAxisDecimalPattern', $event)" clear-button />
+          <f7-list-input v-if="supports('row')" label="Row" type="number" required validate min="1" :value="widget.config.row" @input="updateParameter('row', $event)" clear-button />
+          <f7-list-input v-if="supports('column')" label="Column" type="number" required validate min="1" max="12" :value="widget.config.column" @input="updateParameter('column', $event)" clear-button />
+          <f7-list-input v-if="supports('cmd')" label="Click command" type="text" required validate :value="widget.config.cmd" @input="updateParameter('cmd', $event)" clear-button />
+          <f7-list-input v-if="supports('releaseCmd')" label="Release command" type="text" :value="widget.config.releaseCmd" @input="updateParameter('releaseCmd', $event)" clear-button />
+          <f7-list-item v-if="supports('stateless')" title="Stateless">
+            <f7-toggle slot="after" :checked="widget.config.stateless" @toggle:change="widget.config.stateless = $event" />
+          </f7-list-item>
           <f7-list-item v-if="supports('switchEnabled')" title="Switch enabled">
             <f7-toggle slot="after" :checked="widget.config.switchEnabled" @toggle:change="widget.config.switchEnabled = $event" />
           </f7-list-item>
@@ -113,6 +120,7 @@ export default {
       Slider: ['switchEnabled', 'releaseOnly', 'minValue', 'maxValue', 'step'],
       Setpoint: ['minValue', 'maxValue', 'step'],
       Input: ['inputHint'],
+      Button: ['row', 'column', 'stateless', 'cmd', 'releaseCmd'],
       Default: ['height']
     }
     this.ENCODING_DEFS = [

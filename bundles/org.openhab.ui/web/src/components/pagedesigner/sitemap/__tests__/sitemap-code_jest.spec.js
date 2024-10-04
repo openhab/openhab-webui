@@ -229,6 +229,67 @@ describe('SitemapCode', () => {
     })
   })
 
+  it('parses a Buttongrid with Button components correctly', async () => {
+    expect(wrapper.vm.sitemapDsl).toBeDefined()
+    // simulate updating the sitemap in code
+    const sitemap = [
+      'sitemap test label="Test" {',
+      '    Buttongrid label="Scenes" staticIcon=screen {',
+      '        Button row=1 column=1 item=Scene_General label=Morning stateless click=1',
+      '        Button row=1 column=2 item=Scene_General label="Cinéma" click="10" release="11"',
+      '    }',
+      '}',
+      ''
+    ].join('\n')
+    wrapper.vm.updateSitemap(sitemap)
+    expect(wrapper.vm.sitemapDsl).toMatch(/^sitemap test label="Test"/)
+    expect(wrapper.vm.parsedSitemap.error).toBeFalsy()
+
+    await wrapper.vm.$nextTick()
+
+    // check whether an 'updated' event was emitted and its payload
+    // (should contain the parsing result for the new sitemap definition)
+    const events = wrapper.emitted().updated
+    expect(events).toBeTruthy()
+    expect(events.length).toBe(1)
+    const payload = events[0][0]
+    expect(payload.slots).toBeDefined()
+    expect(payload.slots.widgets).toBeDefined()
+    expect(payload.slots.widgets.length).toBe(1)
+    expect(payload.slots.widgets[0]).toEqual({
+      component: 'Buttongrid',
+      config: {
+        label: "Scenes",
+        staticIcon: true,
+        icon: "screen"
+      },
+      slots: {
+        widgets: [{
+          component: "Button",
+          config: {
+            row: 1,
+            column: 1,
+            item: "Scene_General",
+            label: "Morning",
+            stateless: true,
+            cmd: 1
+          }
+        },
+        {
+          component: "Button",
+          config: {
+            row: 1,
+            column: 2,
+            item: "Scene_General",
+            label: "Cinéma",
+            cmd: "10",
+            releaseCmd: "11"
+          }
+        }]
+      }
+    })
+  })
+
   it('parses a mapping code back to a mapping on a component', async () => {
     expect(wrapper.vm.sitemapDsl).toBeDefined()
     // simulate updating the sitemap in code

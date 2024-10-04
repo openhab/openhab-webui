@@ -11,6 +11,8 @@ function writeWidget (widget, indent) {
         dsl += ' releaseOnly'
       } else if (key === 'forceAsItem') {
         dsl += ' forceasitem=' + widget.config[key]
+      } else if (key === 'stateless') {
+        dsl += ' stateless'
       } else if (key === 'icon') {
         if (widget.config.staticIcon) {
           dsl += ' staticIcon=' + widget.config[key]
@@ -20,6 +22,10 @@ function writeWidget (widget, indent) {
       } else if (key !== 'staticIcon') {
         if (key === 'iconrules') {
           dsl += ' icon='
+        } else if (key === 'cmd') {
+          dsl += ' click='
+        } else if (key === 'releaseCmd') {
+          dsl += ' release='
         } else {
           dsl += ` ${key}=`
         }

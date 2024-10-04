@@ -1,5 +1,5 @@
 <template>
-  <f7-treeview-item selectable :label="widget.config.label"
+  <f7-treeview-item selectable :label="widget.config.label ? widget.config.label : ((widget.component === 'Button') ? widget.config.cmd : '')"
                     :icon-ios="icon('ios')" :icon-aurora="icon('aurora')" :icon-md="icon('md')"
                     :textColor="iconColor" :color="'blue'"
                     :selected="selected && selected === widget"
@@ -44,6 +44,8 @@ export default {
           return 'f7:map'
         case 'Buttongrid':
           return 'f7:square_grid_3x2'
+        case 'Button':
+          return 'f7:square_fill_line_vertical_square'
         case 'Default':
           return 'f7:rectangle'
         case 'Text':
@@ -59,7 +61,8 @@ export default {
       }
     },
     subtitle () {
-      return this.widget.component + ((this.widget.config && this.widget.config.item) ? ': ' + this.widget.config.item : '')
+      const buttonPosition = this.widget.component === 'Button' ? ' (' + (this.widget.config?.row ?? '-') + ',' + (this.widget.config?.column ?? '-') + ')' : ''
+      return this.widget.component + ((this.widget.config && this.widget.config.item) ? ': ' + this.widget.config.item : '') + buttonPosition
     },
     select (event) {
       let self = this

@@ -35,8 +35,6 @@ describe('dslUtil', () => {
 
   it('renders a single simple widget correctly', () => {
     const component = createSitemapComponent('test', 'Test')
-    const widget = {
-    }
     addWidget(component, 'Switch', {
       item: 'TestItem',
       label: 'Test Switch'
@@ -52,8 +50,6 @@ describe('dslUtil', () => {
 
   it('renders a widget with icon correctly', () => {
     const component = createSitemapComponent('test', 'Test')
-    const widget = {
-    }
     addWidget(component, 'Switch', {
       item: 'TestItem',
       label: 'Test Switch',
@@ -70,8 +66,6 @@ describe('dslUtil', () => {
 
   it('renders a widget with static icon correctly', () => {
     const component = createSitemapComponent('test', 'Test')
-    const widget = {
-    }
     addWidget(component, 'Switch', {
       item: 'TestItem',
       label: 'Test Switch',
@@ -106,8 +100,6 @@ describe('dslUtil', () => {
 
   it('renders a widget with mappings correctly', () => {
     const component = createSitemapComponent('test', 'Test')
-    const widget = {
-    }
     addWidget(component, 'Selection', {
       item: 'Scene_General',
       mappings: [
@@ -125,8 +117,6 @@ describe('dslUtil', () => {
 
   it('renders a Buttongrid widget correctly', () => {
     const component = createSitemapComponent('test', 'Test')
-    const widget = {
-    }
     addWidget(component, 'Buttongrid', {
       item: 'Scene_General',
       buttons: [
@@ -142,10 +132,37 @@ describe('dslUtil', () => {
     expect(sitemap[1]).toEqual('    Buttongrid item=Scene_General buttons=[1:1:1=Morning, 1:2:2=Evening, 1:3:10="Cinéma", 2:1:11=TV, 2:2:3="Bed time", 2:3:4=Night=moon]')
   })
 
+  it('renders a Buttongrid with Buttons widget correctly', () => {
+    const component = createSitemapComponent('test', 'Test')
+    const widget = addWidget(component, 'Buttongrid', {
+      label: "Scenes",
+      staticIcon: true,
+      icon: "screen"
+    })
+    addWidget(widget, "Button", {
+      row: 1,
+      column: 1,
+      item: "Scene_General",
+      label: "Morning",
+      stateless: true,
+      cmd: 1
+    })
+    addWidget(widget, "Button", {
+      row: 1,
+      column: 2,
+      item: "Scene_General",
+      label: "Cinéma",
+      cmd: "10",
+      releaseCmd: "test 11"
+    })
+    const sitemap = dslUtil.toDsl(component).split('\n')
+    expect(sitemap[1]).toEqual('    Buttongrid label="Scenes" staticIcon=screen {')
+    expect(sitemap[2]).toEqual('        Button row=1 column=1 item=Scene_General label="Morning" stateless click=1')
+    expect(sitemap[3]).toEqual('        Button row=1 column=2 item=Scene_General label="Cinéma" click="10" release="test 11"')
+  })
+
   it('renders a widget with mappings and string keys correctly', () => {
     const component = createSitemapComponent('test', 'Test')
-    const widget = {
-    }
     addWidget(component, 'Selection', {
       item: 'Echos',
       mappings: [
@@ -160,8 +177,6 @@ describe('dslUtil', () => {
 
   it('renders a widget with mappings and release command correctly', () => {
     const component = createSitemapComponent('test', 'Test')
-    const widget = {
-    }
     addWidget(component, 'Switch', {
       item: 'pressAndRelease',
       mappings: ['ON:OFF=ON']
@@ -172,8 +187,6 @@ describe('dslUtil', () => {
 
   it('renders a widget with mappings and release command and string commands correctly', () => {
     const component = createSitemapComponent('test', 'Test')
-    const widget = {
-    }
     addWidget(component, 'Switch', {
       item: 'pressAndRelease',
       mappings: ['"ON command":"OFF command"="ON"']
@@ -184,8 +197,6 @@ describe('dslUtil', () => {
 
   it('renders a widget with 0 value parameter correctly', () => {
     const component = createSitemapComponent('test', 'Test')
-    const widget = {
-    }
     addWidget(component, 'Slider', {
       item: 'Dimmer1',
       minValue: 0,
@@ -198,8 +209,6 @@ describe('dslUtil', () => {
 
   it('renders widget with visibility correctly', () => {
     const component = createSitemapComponent('test', 'Test')
-    const widget = {
-    }
     addWidget(component, 'Text', {
       item: 'Test',
       visibility: [
@@ -214,8 +223,6 @@ describe('dslUtil', () => {
 
   it('renders widget with visibility and text condition correctly', () => {
     const component = createSitemapComponent('test', 'Test')
-    const widget = {
-    }
     addWidget(component, 'Switch', {
       item: 'Test',
       visibility: [
@@ -229,8 +236,6 @@ describe('dslUtil', () => {
 
   it('renders widget with valuecolor correctly', () => {
     const component = createSitemapComponent('test', 'Test')
-    const widget = {
-    }
     addWidget(component, 'Text', {
       item: 'Temperature',
       valuecolor: [
@@ -247,8 +252,6 @@ describe('dslUtil', () => {
 
   it('renders widget with valuecolor and text condition correctly', () => {
     const component = createSitemapComponent('test', 'Test')
-    const widget = {
-    }
     addWidget(component, 'Text', {
       item: 'Temperature',
       valuecolor: [
@@ -261,8 +264,6 @@ describe('dslUtil', () => {
 
   it('renders widget with valuecolor and AND condition correctly', () => {
     const component = createSitemapComponent('test', 'Test')
-    const widget = {
-    }
     addWidget(component, 'Text', {
       item: 'Temperature',
       valuecolor: [

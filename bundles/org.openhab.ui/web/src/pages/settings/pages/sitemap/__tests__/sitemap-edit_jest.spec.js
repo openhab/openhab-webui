@@ -400,7 +400,7 @@ describe('SitemapEdit', () => {
     expect(lastDialogConfig).toBeFalsy()
   })
 
-  it('validates buttons', async () => {
+  it('validates a buttongrid with buttons argument', async () => {
     wrapper.vm.selectWidget([wrapper.vm.sitemap, null])
     await wrapper.vm.$nextTick()
     wrapper.vm.addWidget('Buttongrid')
@@ -472,6 +472,99 @@ describe('SitemapEdit', () => {
       { row: 2, column: 3, command: '3="Bed time"' },
       { row: 3, column: 2, command: '4=night=moon' }
     ])
+    wrapper.vm.validateWidgets()
+    expect(lastDialogConfig).toBeFalsy()
+  })
+
+  it('validates a buttongrid with button components', async () => {
+    wrapper.vm.selectWidget([wrapper.vm.sitemap, null])
+    await wrapper.vm.$nextTick()
+    wrapper.vm.addWidget('Buttongrid')
+    await wrapper.vm.$nextTick()
+    wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0], wrapper.vm.sitemap])
+    await wrapper.vm.$nextTick()
+    localVue.set(wrapper.vm.selectedWidget.config, 'label', 'Buttongrid Test')
+    await wrapper.vm.$nextTick()
+
+    // should not validate as no item and buttons defined
+    lastDialogConfig = null
+    wrapper.vm.validateWidgets()
+    expect(lastDialogConfig).toBeTruthy()
+    expect(lastDialogConfig.content).toMatch(/Buttongrid widget Buttongrid Test, no item configured/)
+    expect(lastDialogConfig.content).toMatch(/Buttongrid widget Buttongrid Test, no buttons defined/)
+
+    // add button, should not validate as the button has no row defined
+    lastDialogConfig = null
+    await wrapper.vm.$nextTick()
+    wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0], wrapper.vm.sitemap])
+    await wrapper.vm.$nextTick()
+    wrapper.vm.addWidget('Button')
+    await wrapper.vm.$nextTick()
+    localVue.set(wrapper.vm.selectedWidget.config, 'label', 'Morning')
+    localVue.set(wrapper.vm.selectedWidget.config, 'column', 1)
+    await wrapper.vm.$nextTick()
+    wrapper.vm.validateWidgets()
+    expect(lastDialogConfig).toBeTruthy()
+    expect(lastDialogConfig.content).toMatch(/Button widget Morning, invalid row configured: undefined/)
+
+    // configure a correct row, should not validate as wrong column set
+    lastDialogConfig = null
+    localVue.set(wrapper.vm.selectedWidget.config, 'row', 1)
+    localVue.set(wrapper.vm.selectedWidget.config, 'column', 'column')
+    await wrapper.vm.$nextTick()
+    wrapper.vm.validateWidgets()
+    expect(lastDialogConfig).toBeTruthy()
+    expect(lastDialogConfig.content).toMatch(/Button widget Morning, invalid column configured: column/)
+
+    // configure a correct column, should not validate as no item set
+    lastDialogConfig = null
+    localVue.set(wrapper.vm.selectedWidget.config, 'column', 1)
+    await wrapper.vm.$nextTick()
+    wrapper.vm.validateWidgets()
+    expect(lastDialogConfig).toBeTruthy()
+    expect(lastDialogConfig.content).toMatch(/Button widget Morning, no item configured/)
+
+    // configure an item, should not validate as no command set
+    lastDialogConfig = null
+    localVue.set(wrapper.vm.selectedWidget.config, 'item', 'Item1')
+    await wrapper.vm.$nextTick()
+    wrapper.vm.validateWidgets()
+    expect(lastDialogConfig).toBeTruthy()
+    expect(lastDialogConfig.content).toMatch(/Button widget Morning, no click command defined/)
+
+    // configure correct commands, should not validate as duplicate positions
+    lastDialogConfig = null
+    localVue.set(wrapper.vm.selectedWidget.config, 'cmd', 1)
+    await wrapper.vm.$nextTick()
+    wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0], wrapper.vm.sitemap])
+    await wrapper.vm.$nextTick()
+    wrapper.vm.addWidget('Button')
+    await wrapper.vm.$nextTick()
+    localVue.set(wrapper.vm.selectedWidget.config, 'label', 'Evening')
+    localVue.set(wrapper.vm.selectedWidget.config, 'item', 'Item1')
+    localVue.set(wrapper.vm.selectedWidget.config, 'row', 1)
+    localVue.set(wrapper.vm.selectedWidget.config, 'column', 1)
+    localVue.set(wrapper.vm.selectedWidget.config, 'cmd', 2)
+    await wrapper.vm.$nextTick()
+    wrapper.vm.validateWidgets()
+    expect(lastDialogConfig).toBeTruthy()
+    expect(lastDialogConfig.content).toMatch(/Buttongrid widget Buttongrid Test, duplicate button position : row 1 column 1/)
+
+    // configure a correct command and check that there are no validation errors anymore
+    lastDialogConfig = null
+    localVue.set(wrapper.vm.selectedWidget.config, 'row', 1)
+    localVue.set(wrapper.vm.selectedWidget.config, 'column', 3)
+    await wrapper.vm.$nextTick()
+    wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0], wrapper.vm.sitemap])
+    await wrapper.vm.$nextTick()
+    wrapper.vm.addWidget('Button')
+    await wrapper.vm.$nextTick()
+    localVue.set(wrapper.vm.selectedWidget.config, 'label', 'Cinéma')
+    localVue.set(wrapper.vm.selectedWidget.config, 'item', 'Item1')
+    localVue.set(wrapper.vm.selectedWidget.config, 'row', 2)
+    localVue.set(wrapper.vm.selectedWidget.config, 'column', 1)
+    localVue.set(wrapper.vm.selectedWidget.config, 'cmd', 10)
+    await wrapper.vm.$nextTick()
     wrapper.vm.validateWidgets()
     expect(lastDialogConfig).toBeFalsy()
   })

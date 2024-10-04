@@ -9,7 +9,7 @@
     item:             'item=',
     staticIcon:       'staticIcon=',
     icon:             'icon=',
-    widgetattr:       ['url=', 'refresh=', 'service=', 'height=', 'minValue=', 'maxValue=', 'step=', 'encoding=', 'yAxisDecimalPattern=', 'inputHint=', 'columns=', 'row=', 'column=', 'click=', 'release='],
+    widgetattr:       ['url=', 'refresh=', 'service=', 'height=', 'minValue=', 'maxValue=', 'step=', 'encoding=', 'yAxisDecimalPattern=', 'inputHint=', 'columns=', 'row=', 'column='],
     widgetboolattr:   ['legend='],
     widgetfrcitmattr: 'forceasitem=',
     widgetmapattr:    'mappings=',
@@ -86,13 +86,6 @@
       widget.config.icon = widget.config.staticIcon
       widget.config.staticIcon = true
     }
-
-    // reject widgets with missing parameters
-    if (requiresItem.includes(widget.component) && !widget.config.item) return reject
-    if ((widget.component === 'Video' || widget.component === 'Webview') && !widget.config.url) return reject
-    if (widget.component === 'Chart' && !widget.config.period) return reject
-    if (widget.component === 'Button' && !(widget.config.row && widget.config.column && widget.config.cmd)) return reject
-
     return widget
   }
 %}
@@ -121,8 +114,8 @@ WidgetAttr -> %widgetswitchattr                                                 
   | %widgetfrcitmattr _ WidgetBooleanAttrValue                                    {% (d) => ['forceAsItem', d[2]] %}
   | %widgetboolattr _ WidgetBooleanAttrValue                                      {% (d) => [d[0].value, d[2]] %}
   | %widgetperiodattr _ WidgetPeriodAttrValue                                     {% (d) => ['period', d[2]] %}
-  | %widgetclickattr _ Command                                                    {% (d) => ['cmd', d[2]] %}
-  | %widgetreleaseattr _ Command                                                  {% (d) => ['releaseCmd', d[2]] %}
+  | %widgetclickattr _ WidgetAttrValue                                            {% (d) => ['cmd', d[2]] %}
+  | %widgetreleaseattr _ WidgetAttrValue                                          {% (d) => ['releaseCmd', d[2]] %}
   | %icon _ WidgetIconRulesAttrValue                                              {% (d) => ['iconrules', d[2]] %}
   | %icon _ WidgetIconAttrValue                                                   {% (d) => [d[0].value, d[2].join("")] %}
   | %staticIcon _ WidgetIconAttrValue                                             {% (d) => [d[0].value, d[2].join("")] %}
@@ -181,8 +174,8 @@ Visibilities -> Conditions                                                      
 Colors -> Color                                                                   {% (d) => [d[0]] %}
   | Colors _ %comma _ Color                                                       {% (d) => d[0].concat([d[4]]) %}
 Color -> Conditions _ %equals _ ColorName                                         {% (d) => d[0] + '=' + d[4][0].value %}
-  | ColorName                                                                     {% (d) => d[0] %}
-ColorName ->  %identifier | %string                                               {% (d) => d[0].value %}
+  | ColorName                                                                     {% (d) => d[0][0].value %}
+ColorName ->  %identifier | %string
 
 IconRules -> IconRule                                                             {% (d) => [d[0]] %}
   | IconRules _ %comma _ IconRule                                                 {% (d) => d[0].concat([d[4]]) %}
