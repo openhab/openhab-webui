@@ -330,7 +330,7 @@ export default {
   computed: {
     hasChildren () {
       if (!this.selectedWidget) return false
-      return (this.selectedWidget.slots && Array.isArray(this.selectedWidget.slots.widgets) && this.selectedWidget.slots.widgets.length)
+      return (Array.isArray(this.selectedWidget.slots?.widgets) && this.selectedWidget.slots.widgets.length)
     },
     canAddChildren () {
       if (!this.selectedWidget) return false
@@ -353,7 +353,7 @@ export default {
       if (this.selectedWidget.component === 'Frame') return types.filter(w => w.type !== 'Frame')
       // Linkable widget types only contain frames or none at all
       if (this.LINKABLE_WIDGET_TYPES.includes(this.selectedWidget.component)) {
-        if (this.selectedWidget.slots && this.selectedWidget.slots.widgets && this.selectedWidget.slots.widgets.length > 0) {
+        if (this.selectedWidget.slots?.widgets?.length > 0) {
           if (this.selectedWidget.slots.widgets.find(w => w.component === 'Frame')) {
             return types.filter(w => w.type === 'Frame')
           } else {
@@ -463,11 +463,11 @@ export default {
     },
     validateWidgets (stay) {
       let scope = this
-      if (this.sitemap.slots && Array.isArray(this.sitemap.slots.widgets) && this.sitemap.slots.widgets.length) {
+      if (Array.isArray(this.sitemap.slots?.widgets) && this.sitemap.slots.widgets.length) {
         let validationWarnings = []
         const widgetList = this.sitemap.slots.widgets.reduce(function iter (widgets, widget) {
           widgets.push(widget)
-          if (widget.slots && Array.isArray(widget.slots.widgets)) {
+          if (Array.isArray(widget.slots?.widgets)) {
             return widget.slots.widgets.reduce(iter, widgets)
           }
           return widgets
@@ -485,7 +485,7 @@ export default {
             }
           }
           siblingIsFrame.push(siblingIsFrame.pop() || widget.component === 'Frame')
-          if (widget.slots && Array.isArray(widget.slots.widgets)) {
+          if (Array.isArray(widget.slots?.widgets)) {
             isFrame.push(widget.component === 'Frame')
             siblingIsFrame.push(undefined)
             widget.slots.widgets.forEach(iter)
@@ -494,54 +494,54 @@ export default {
           }
         })
         widgetList.filter(widget => this.WIDGET_TYPES_REQUIRING_ITEM.includes(widget.component)).forEach(widget => {
-          if (!(widget.config && widget.config.item)) {
+          if (!widget.config?.item) {
             let label = scope.widgetErrorLabel(widget.config)
             validationWarnings.push(widget.component + ' widget ' + label + ', no item configured')
           }
         })
         widgetList.filter(widget => widget.component === 'Video' || widget.component === 'Webview').forEach(widget => {
-          if (!(widget.config && widget.config.url)) {
+          if (!widget.config?.url) {
             let label = scope.widgetErrorLabel(widget.config)
             validationWarnings.push(widget.component + ' widget ' + label + ', no url configured')
           }
         })
         widgetList.filter(widget => widget.component === 'Chart').forEach(widget => {
-          if (!(widget.config && widget.config.period && this.REGEX_PERIOD.test(widget.config.period))) {
+          if (!(widget.config?.period && this.REGEX_PERIOD.test(widget.config.period))) {
             let label = scope.widgetErrorLabel(widget.config)
-            validationWarnings.push(widget.component + ' widget ' + label + ', invalid period configured: ' + widget.config.period)
+            validationWarnings.push(widget.component + ' widget ' + label + ', invalid period configured: ' + widget.config?.period)
           }
-          if (widget.config && widget.config.yAxisDecimalPattern && !this.REGEX_DECIMAL_PATTERN.test(widget.config.yAxisDecimalPattern)) {
-            let label = widget.config && widget.config.label ? widget.config.label : 'without label'
-            validationWarnings.push(widget.component + ' widget ' + label + ', invalid Y-axis decimal pattern configured: ' + widget.config.yAxisDecimalPattern)
+          if (widget.config?.yAxisDecimalPattern && !this.REGEX_DECIMAL_PATTERN.test(widget.config.yAxisDecimalPattern)) {
+            let label = scope.widgetErrorLabel(widget.config)
+            validationWarnings.push(widget.component + ' widget ' + label + ', invalid Y-axis decimal pattern configured: ' + widget.config?.yAxisDecimalPattern)
           }
         })
         widgetList.filter(widget => widget.component === 'Input').forEach(widget => {
-          if (widget.config && widget.config.inputHint && !['text', 'number', 'date', 'time', 'datetime'].includes(widget.config.inputHint)) {
+          if (widget.config?.inputHint && !['text', 'number', 'date', 'time', 'datetime'].includes(widget.config.inputHint)) {
             let label = scope.widgetErrorLabel(widget.config)
-            validationWarnings.push(widget.component + ' widget ' + label + ', invalid inputHint configured: ' + widget.config.inputHint)
+            validationWarnings.push(widget.component + ' widget ' + label + ', invalid inputHint configured: ' + widget.config?.inputHint)
           }
         })
         widgetList.filter(widget => widget.component === 'Slider' || widget.component === 'Setpoint').forEach(widget => {
           let label = scope.widgetErrorLabel(widget.config)
-          if (widget.config && (widget.config.step !== undefined) && (widget.config.step <= 0)) {
+          if (widget.config?.step <= 0) {
             validationWarnings.push(widget.component + ' widget ' + label + ', step size cannot be 0 or negative: ' + widget.config.step)
           }
-          if (widget.config && (widget.config.minValue !== undefined) && (widget.config.maxValue !== undefined) && (widget.config.minValue > widget.config.maxValue)) {
+          if (widget.config?.minValue > widget.config?.maxValue) {
             validationWarnings.push(widget.component + ' widget ' + label + ', minValue must be less than or equal maxValue: ' + widget.config.minValue + ' > ' + widget.config.maxValue)
           }
         })
         widgetList.filter(widget => widget.component === 'Buttongrid').forEach(widget => {
           let label = scope.widgetErrorLabel(widget.config)
-          if (!(widget.config && widget.config.item) && !(widget.slots && widget.slots.widgets && widget.slots.widgets.length)) {
+          if (!widget.config?.item && !widget.slots?.widgets?.length) {
             validationWarnings.push(widget.component + ' widget ' + label + ', no item configured')
           }
-          if (!((widget.config && widget.config.buttons && widget.config.buttons.length) || (widget.slots && widget.slots.widgets && widget.slots.widgets.length))) {
+          if (!(widget.config?.buttons?.length || widget.slots?.widgets?.length)) {
             validationWarnings.push(widget.component + ' widget ' + label + ', no buttons defined')
           }
           let positions = []
-          if (widget.config && widget.config.buttons && widget.config.buttons.length) {
+          if (widget.config?.buttons?.length) {
             positions = widget.config.buttons.map(param => { return { row: param.row, column: param.column } })
-          } else if (widget.slots && widget.slots.widgets && widget.slots.widgets.length) {
+          } else if (widget.slots?.widgets?.length) {
             positions = widget.slots.widgets.filter(widget => widget.config).map(widget => { return { row: widget.config.row, column: widget.config.column } })
           }
           let occurrences = {}
@@ -622,7 +622,7 @@ export default {
       }
     },
     widgetErrorLabel (config) {
-      return (config && config.label) ? config.label : (config && config.item ? 'for item ' + config.item : 'without label')
+      return config?.label ?? (config?.item ? 'for item ' + config.item : 'without label')
     },
     validateMapping (component, mapping) {
       if (component === 'Switch') {
@@ -679,15 +679,11 @@ export default {
           }
         }
       }
-      if (widget.slots && widget.slots.widgets) {
-        widget.slots.widgets.forEach(this.preProcessWidgetLoad)
-      }
+      widget.slots?.widgets?.forEach(this.preProcessWidgetLoad)
     },
     preProcessSitemapSave (sitemap) {
       const processed = JSON.parse(JSON.stringify(sitemap))
-      if (processed.slots && processed.slots.widgets) {
-        processed.slots.widgets.forEach(this.preProcessWidgetSave)
-      }
+      processed.slots?.widgets?.forEach(this.preProcessWidgetSave)
       return processed
     },
     preProcessWidgetSave (widget) {
@@ -700,8 +696,8 @@ export default {
           }
         }
       }
-      if ((widget.component === 'Buttongrid') && widget.config && widget.config.item) {
-        if (!widget.config.buttons && widget.slots && widget.slots.widgets) {
+      if ((widget.component === 'Buttongrid') && widget.config?.item) {
+        if (!widget.config.buttons && widget.slots?.widgets) {
           widget.slots.widgets.forEach(w => {
             if (!w.config) w.config = {}
             if (!w.config.item) w.config.item = widget.config.item
@@ -709,9 +705,7 @@ export default {
           delete widget.config.item
         }
       }
-      if (widget.slots && widget.slots.widgets) {
-        widget.slots.widgets.forEach(this.preProcessWidgetSave)
-      }
+      widget.slots?.widgets?.forEach(this.preProcessWidgetSave)
     },
     update (value) {
       this.selectedWidget = null
