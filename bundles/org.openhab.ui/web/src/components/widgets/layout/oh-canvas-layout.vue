@@ -149,6 +149,9 @@
         @ociDragStop="ociDragStop"
         @ociSelected="ociSelected"
         @ociDeselected="ociDeselected" />
+      <div>
+        {{ trackStateChange }}
+      </div>
     </div>
   </div>
 </template>
@@ -173,7 +176,7 @@ import mixin from '../widget-mixin'
 import OhCanvasLayer from './oh-canvas-layer'
 import { OhCanvasLayoutDefinition } from '@/assets/definitions/widgets/layout'
 import WidgetConfigPopup from '@/components/pagedesigner/widget-config-popup.vue'
-import { WidgetDefinition } from '@/assets/definitions/widgets/helpers'
+import { pb, pt, WidgetDefinition } from '@/assets/definitions/widgets/helpers'
 import { actionGroup, actionParams } from '@/assets/definitions/widgets/actions'
 import { basicActionsMixin } from '@/components/widgets/widget-basic-actions'
 
@@ -213,6 +216,28 @@ export default {
     },
     layerToolsVisible () {
       return this.context.component.slots.canvas.length > 1
+    },
+    trackStateChange () {
+      if (this.embeddedSvgReady) {
+        /* const embeddedSvgActions = this.config.embeddedSvgActions
+        for (const [key, value] of Object.entries(embeddedSvgActions)) {
+          const actionItem = this.config.embeddedSvgActions[key].actionItem
+          const actionItemStatus = this.context.store[actionItem].state
+          console.warn(`id: ${actionItem} -> ${actionItemStatus}`)
+        } */
+        const svg = this.$refs.canvasBackground.querySelector('svg')
+        const subElements = svg.querySelectorAll('[openhab]')
+
+        for (const subElement of subElements) {
+          const actionItem = this.config.embeddedSvgActions[subElement.id]?.actionItem
+          if (actionItem !== undefined) {
+            this.applyStateToSvgElement(subElement, this.context.store[actionItem].state, this.config.embeddedSvgActions[subElement.id])
+          } else {
+            console.log(`svg configuration for ${subElement.id} not yet defined`)
+          }
+        }
+      }
+      return true
     }
   },
   created () {
@@ -279,12 +304,6 @@ export default {
       const subElements = svg.querySelectorAll('[openhab]')
 
       for (const subElement of subElements) {
-        /*
-         * In Run mode
-         * - Status should be reflected (ON/OFF, OPEN/CLOSE...) by using the below approach of highlighting the element
-         *   - if not <g> then fill with color (e.g. red)
-         *   - if <g> we expect an element in that group that is marked with an attribute flash, use this element by setting opacity to 1 / 0
-         */
         subElement.setAttribute('cursor', 'pointer')
         subElement.addEventListener('mouseover', () => { this.svgOnMouseOver(subElement) })
 
@@ -307,6 +326,87 @@ export default {
 
       for (const subElement of subElements) {
         this.svgOnMouseOver(subElement)
+      }
+    },
+    /*
+         * In Run mode
+         * - Status should be reflected (ON/OFF, OPEN/CLOSE...) by using the below approach of highlighting the element
+         *   - if not <g> then fill with color (e.g. red)
+         *   - if <g> we expect an element in that group that is marked with an attribute flash, use this element by setting opacity to 1 / 0
+         *
+         *  To be fixed
+         *   - we need to be able to choose an Item even if we don't want to have an action (e.g. only showing the state)
+         *   - formulas in input fields are not evaluated but directly converted to config with the current value ... e.g. =item.mysItem.state (where item type is Color)
+         *
+         *  Options
+         *   - Define OFF / ON colors (maybe state to color mapping?) -> stateOnColor (defaults to #00FF##) / stateOffColor (defaults to svg color)
+         *   - use state value for opacity
+         *   - invert opacity value
+         *  Status types and how to handle them
+         *  - Switch: ON = activate element (via coloring of element or opacity / color of flash element)
+         *  - Contact: OPEN = activate element (via coloring of element or opacity / color of flash element)
+         *  - Color: use the color to fill the element
+         *  - Rollershutter:
+         *    - Use percentage to control brightness of color of that element
+         *    - write State-Text to element if element has a <tspan>
+         *  - Image: Expect the element to be an image element in SVG. Set the xlink:href ot the image data from the state -> data:image/png:base64,...
+         *  - String -> State-Text: expects a group that has one <tspan>. Writes the information to that <tspan>
+         *  - DateTime -> State-Text: expects a group that has one <tspan>. Writes the information to that <tspan>
+         *  - Dimmer -> State-Text: expects a group that has one <tspan>. Writes the information to that <tspan>
+         *  - Group -> State-Text: expects a group that has one <tspan>. Writes the information to that <tspan>
+         *  - Location -> State-Text: expects a group that has one <tspan>. Writes the information to that <tspan>
+         *  - Number -> State-Text: expects a group that has one <tspan>. Writes the information to that <tspan>
+         *  - Number:<dimension> -> State-Text: expects a group that has one <tspan>. Writes the information to that <tspan>
+         *  - Player -> State-Text: expects a group that has one <tspan>. Writes the information to that <tspan>
+         *  - Player -> State-Text: expects a group that has one <tspan>. Writes the information to that <tspan>
+         *
+         * Allow NOT to send a command in run-mode when clicking on that icon (e.g. a window or door)
+         */
+    applyStateToSvgElement (el, state, itemConfig) {
+      console.log(`Set ${el.id} -> ${state}`)
+      const tagName = el.tagName
+      if (tagName !== 'g') {
+        if (state === 'ON' || state === 'OPEN') {
+          el.oldFill = el.style.fill
+          el.style.fill = (itemConfig.stateOnColor) ? itemConfig.stateOnColor : 'rgb(0, 255, 0)'
+        } else if (state === 'OFF' || state === 'CLOSED') {
+          const updateColor = (itemConfig.stateOffColor) ? itemConfig.stateOffColor : (el.oldFill !== 'undefined') ? el.oldFill : 'undefinded'
+          if (updateColor !== 'undefined') { el.style.fill = updateColor }
+        } else { // state opacity -> needs to be checked against state type?
+          if (itemConfig.stateAsOpacity && state) {
+            // we expect that number between 0 - 100
+            if (!isNaN(state)) {
+              let opacity = parseFloat(state) / 100.0
+              el.style.opacity = (itemConfig.invertStateOpacity) ? 1 - opacity : opacity
+            }
+          }
+        }
+      } else { // groups cannot be filled, so we need to fill special element marked as "flash"
+        const flashElement = el.querySelector('[flash]')
+        if (flashElement) {
+          if (state === 'ON') {
+            el.oldFill = flashElement.style.fill
+            el.oldOpacity = flashElement.style.opacity
+            flashElement.style.fill = (itemConfig.stateOnColor) ? itemConfig.stateOnColor : 'rgb(0, 255, 0)'
+            flashElement.style.opacity = 1
+            flashElement.flashing = true
+          } else if (state === 'OFF' || state === 'CLOSED') {
+            if (el.oldFill) {
+              flashElement.style.fill = el.oldFill
+            }
+            if (el.oldOpacity) {
+              flashElement.style.opacity = el.oldOpacity
+            }
+          } else { // state opacity -> needs to be checked against state type?
+            if (itemConfig.stateAsOpacity && state) {
+              // we expect that number between 0 - 100
+              if (!isNaN(state)) {
+                let opacity = parseFloat(state) / 100.0
+                flashElement.style.opacity = (itemConfig.invertStateOpacity) ? 1 - opacity : opacity
+              }
+            }
+          }
+        }
       }
     },
     /**
@@ -370,12 +470,31 @@ export default {
         actionCommandAlt: 'OFF'
       }
       const popup = { component: WidgetConfigPopup }
+      const that = this
       this.$f7router.navigate({ url: 'on-svg-click-settings', route: { path: 'on-svg-click-settings', popup } }, {
         props: {
           component: {
             config: (this.config.embeddedSvgActions ? this.config.embeddedSvgActions[id] || defaultActionConfig : defaultActionConfig)
           },
           widget: new WidgetDefinition('onSvgClickSettings', 'SVG onClick Action', '')
+            .params([
+              pt('stateOnColor', 'State ON Color', 'Color that should to be used when State is ON').a()
+                .v((value, configuration, configDescription, parameters) => {
+                  return that.config.embedSvg === true
+                }),
+              pt('stateOffColor', 'State OFF Color', 'Color that should to be used when State is OFF').a()
+                .v((value, configuration, configDescription, parameters) => {
+                  return that.config.embedSvg === true
+                }),
+              pb('stateAsOpacity', 'Use State as Opacity', 'Use the state from 0 - 100 as element opacity').a()
+                .v((value, configuration, configDescription, parameters) => {
+                  return that.config.embedSvg === true
+                }),
+              pb('invertStateOpacity', 'Invert state opacity', '1 - opacity').a()
+                .v((value, configuration, configDescription, parameters) => {
+                  return that.config.embedSvg === true
+                })
+            ])
             .paramGroup(actionGroup(), actionParams())
         }
       })
