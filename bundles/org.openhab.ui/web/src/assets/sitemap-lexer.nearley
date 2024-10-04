@@ -9,18 +9,21 @@
     item:             'item=',
     staticIcon:       'staticIcon=',
     icon:             'icon=',
-    widgetattr:       ['url=', 'refresh=', 'service=', 'height=', 'minValue=', 'maxValue=', 'step=', 'encoding=', 'yAxisDecimalPattern=', 'inputHint=', 'columns='],
+    widgetattr:       ['url=', 'refresh=', 'service=', 'height=', 'minValue=', 'maxValue=', 'step=', 'encoding=', 'yAxisDecimalPattern=', 'inputHint=', 'columns=', 'row=', 'column='],
     widgetboolattr:   ['legend='],
     widgetfrcitmattr: 'forceasitem=',
     widgetmapattr:    'mappings=',
-    widgetbuttonattr: 'buttons=',
+    widgetbuttonsattr:'buttons=',
     widgetvisiattr:   'visibility=',
     widgetcolorattr:  ['labelcolor=', 'valuecolor=', 'iconcolor='],
     widgetswitchattr: 'switchSupport',
     widgetronlyattr:  'releaseOnly',
+    widgetstatelattr: 'stateless',
+    widgetclickattr:  'click=',
+    widgetreleaseattr:'release=',
     widgetperiodattr: 'period=',
-    nlwidget:         ['Switch ', 'Selection ', 'Slider ', 'Setpoint ', 'Input ', 'Video ', 'Chart ', 'Webview ', 'Colorpicker ', 'Mapview ', 'Buttongrid ', 'Default '],
-    lwidget:          ['Text ', 'Group ', 'Image ', 'Frame '],
+    nlwidget:         ['Switch ', 'Selection ', 'Slider ', 'Setpoint ', 'Input ', 'Video ', 'Chart ', 'Webview ', 'Colorpicker ', 'Mapview ', 'Button ', 'Default '],
+    lwidget:          ['Text ', 'Group ', 'Image ', 'Frame ', 'Buttongrid '],
     lparen:           '(',
     rparen:           ')',
     lbrace:           '{',
@@ -46,7 +49,7 @@
     number:           /[+-]?[0-9]+(?:\.[0-9]*)?/,
     string:           { match: /"(?:\\["\\]|[^\n"\\])*"/, value: x => x.slice(1, -1) }
   })
-  const requiresItem = ['Group', 'Chart', 'Switch', 'Mapview', 'Slider', 'Selection', 'Setpoint', 'Input ', 'Colorpicker', 'Default']
+  const requiresItem = ['Group', 'Chart', 'Switch', 'Mapview', 'Slider', 'Selection', 'Setpoint', 'Input ', 'Colorpicker', 'Button', 'Default']
 
   function getSitemap(d) {
     return {
@@ -75,7 +78,7 @@
       }
     }
 
-    // if icon exists remove staticIcon, if not set icon to staticIcon and make saticIcon=true
+    // if icon exists remove staticIcon, if not set icon to staticIcon and make staticIcon=true
     if (widget.config.icon) {
      delete widget.config.staticIcon
     }
@@ -83,12 +86,6 @@
       widget.config.icon = widget.config.staticIcon
       widget.config.staticIcon = true
     }
-
-    // reject widgets with missing parameters
-    if (requiresItem.includes(widget.component) && !widget.config.item) return reject
-    if ((widget.component === 'Video' || widget.component === 'Webview') && !widget.config.url) return reject
-    if (widget.component === 'Chart' && !widget.config.period) return reject
-
     return widget
   }
 %}
@@ -113,9 +110,12 @@ WidgetAttrs -> WidgetAttr                                                       
   | WidgetAttrs _ WidgetAttr                                                      {% (d) => d[0].concat([d[2]]) %}
 WidgetAttr -> %widgetswitchattr                                                   {% (d) => ['switchEnabled', true] %}
   | %widgetronlyattr                                                              {% (d) => ['releaseOnly', true] %}
+  | %widgetstatelattr                                                             {% (d) => ['stateless', true] %}
   | %widgetfrcitmattr _ WidgetBooleanAttrValue                                    {% (d) => ['forceAsItem', d[2]] %}
   | %widgetboolattr _ WidgetBooleanAttrValue                                      {% (d) => [d[0].value, d[2]] %}
   | %widgetperiodattr _ WidgetPeriodAttrValue                                     {% (d) => ['period', d[2]] %}
+  | %widgetclickattr _ WidgetAttrValue                                            {% (d) => ['cmd', d[2]] %}
+  | %widgetreleaseattr _ WidgetAttrValue                                          {% (d) => ['releaseCmd', d[2]] %}
   | %icon _ WidgetIconRulesAttrValue                                              {% (d) => ['iconrules', d[2]] %}
   | %icon _ WidgetIconAttrValue                                                   {% (d) => [d[0].value, d[2].join("")] %}
   | %staticIcon _ WidgetIconAttrValue                                             {% (d) => [d[0].value, d[2].join("")] %}
@@ -143,7 +143,7 @@ WidgetAttrValue -> %number                                                      
   | %string                                                                       {% (d) => d[0].value %}
 WidgetMappingsAttrName -> %widgetmapattr
 WidgetMappingsAttrValue -> %lbracket _ Mappings _ %rbracket                       {% (d) => d[2] %}
-WidgetButtonsAttrName -> %widgetbuttonattr
+WidgetButtonsAttrName -> %widgetbuttonsattr
 WidgetButtonsAttrValue -> %lbracket _ Buttons _ %rbracket                         {% (d) => d[2] %}
 WidgetVisibilityAttrName -> %widgetvisiattr
 WidgetVisibilityAttrValue -> %lbracket _ Visibilities _ %rbracket                 {% (d) => d[2] %}
@@ -157,9 +157,9 @@ Mapping -> Command _ %colon _ Command _ %equals _ Label                         
   | Command _ %colon _ Command _ %equals _ Label _ %equals _ WidgetIconAttrValue  {% (d) => d[0] + ':' + d[4] + '=' + d[8] + '=' + d[12].join("") %}
   | Command _ %equals _ Label _ %equals _ WidgetIconAttrValue                     {% (d) => d[0] + '=' + d[4] + '=' + d[8].join("") %}
 
-Buttons -> Button                                                                 {% (d) => [d[0]] %}
-  | Buttons _ %comma _ Button                                                     {% (d) => d[0].concat([d[4]]) %}
-Button -> %number _ %colon _ %number _ %colon _ ButtonValue                       {% (d) => { return { 'row':  parseInt(d[0].value), 'column': parseInt(d[4].value), 'command': d[8] } } %}
+Buttons -> ButtonDef                                                              {% (d) => [d[0]] %}
+  | Buttons _ %comma _ ButtonDef                                                  {% (d) => d[0].concat([d[4]]) %}
+ButtonDef -> %number _ %colon _ %number _ %colon _ ButtonValue                    {% (d) => { return { 'row':  parseInt(d[0].value), 'column': parseInt(d[4].value), 'command': d[8] } } %}
 ButtonValue -> Command _ %equals _ Label                                          {% (d) => d[0] + '=' + d[4] %}
   | Command _ %equals _ Label _ %equals _ WidgetIconAttrValue                     {% (d) => d[0] + '=' + d[4] + '=' + d[8].join("") %}
 
