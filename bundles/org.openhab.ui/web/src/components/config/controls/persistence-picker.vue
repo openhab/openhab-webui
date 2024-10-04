@@ -14,6 +14,7 @@
 </template>
 
 <style lang="stylus">
+
 .persistence-picker-container
   .item-inner:after
     display none

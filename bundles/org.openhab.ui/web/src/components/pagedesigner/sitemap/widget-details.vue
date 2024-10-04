@@ -16,6 +16,7 @@
           <f7-list-item title="Static icon">
             <f7-toggle slot="after" :checked="widget.config.staticIcon" @toggle:change="widget.config.staticIcon = $event" />
           </f7-list-item>
+          <div />
         </ul>
         <ul id="additional" class="additional-controls">
           <!-- additional controls -->
