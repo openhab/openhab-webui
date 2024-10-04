@@ -135,25 +135,25 @@ describe('dslUtil', () => {
   it('renders a Buttongrid with Buttons widget correctly', () => {
     const component = createSitemapComponent('test', 'Test')
     const widget = addWidget(component, 'Buttongrid', {
-      label: "Scenes",
+      label: 'Scenes',
       staticIcon: true,
-      icon: "screen"
+      icon: 'screen'
     })
-    addWidget(widget, "Button", {
+    addWidget(widget, 'Button', {
       row: 1,
       column: 1,
-      item: "Scene_General",
-      label: "Morning",
+      item: 'Scene_General',
+      label: 'Morning',
       stateless: true,
       cmd: 1
     })
-    addWidget(widget, "Button", {
+    addWidget(widget, 'Button', {
       row: 1,
       column: 2,
-      item: "Scene_General",
-      label: "Cinéma",
-      cmd: "10",
-      releaseCmd: "test 11"
+      item: 'Scene_General',
+      label: 'Cinéma',
+      cmd: '10',
+      releaseCmd: 'test 11'
     })
     const sitemap = dslUtil.toDsl(component).split('\n')
     expect(sitemap[1]).toEqual('    Buttongrid label="Scenes" staticIcon=screen {')

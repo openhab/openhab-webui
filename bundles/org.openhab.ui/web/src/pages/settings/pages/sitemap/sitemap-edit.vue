@@ -82,7 +82,7 @@
                 <div><f7-block-title>Icon Color</f7-block-title></div>
                 <attribute-details :widget="selectedWidget" attribute="iconcolor" placeholder="item_name operator value = color" />
               </f7-block>
-              <f7-block v-if="selectedWidget &&  canAddChildren && selectedWidget.component !== 'Buttongrid'">
+              <f7-block v-if="selectedWidget && canAddChildren && selectedWidget.component !== 'Buttongrid'">
                 <div><f7-block-title>Add Child Widget</f7-block-title></div>
                 <f7-card>
                   <f7-card-content>
@@ -145,7 +145,7 @@
             Visibility
           </f7-link>
           <f7-link class="padding-left padding-right" :tab-link-active="detailsTab === 'buttons'" @click="detailsTab = 'buttons'"
-            v-if="selectedWidget && selectedWidget.component === 'Buttongrid' && !hasChildren">
+                   v-if="selectedWidget && selectedWidget.component === 'Buttongrid' && !hasChildren">
             Buttons
           </f7-link>
           <f7-link class="padding-left padding-right" :tab-link-active="detailsTab === 'mappings'" @click="detailsTab = 'mappings'" v-if="selectedWidget && ['Switch', 'Selection'].includes(selectedWidget.component) >= 0">
@@ -180,7 +180,9 @@
         <f7-block style="margin-bottom: 6rem" v-if="selectedWidget && detailsTab === 'colors'">
           <div><f7-block-title>Label Color</f7-block-title></div>
           <attribute-details :widget="selectedWidget" attribute="labelcolor" placeholder="item_name operator value = color" />
-          <div v-if="canShowValue"><f7-block-title>Value Color</f7-block-title></div>
+          <div v-if="canShowValue">
+            <f7-block-title>Value Color</f7-block-title>
+          </div>
           <attribute-details v-if="canShowValue" :widget="selectedWidget" attribute="valuecolor" placeholder="item_name operator value = color" />
           <div><f7-block-title>Icon Color</f7-block-title></div>
           <attribute-details :widget="selectedWidget" attribute="iconcolor" placeholder="item_name operator value = color" />
@@ -555,23 +557,26 @@ export default {
         })
         widgetList.filter(widget => widget.component === 'Button').forEach(widget => {
           let label = scope.widgetErrorLabel(widget.config)
-          let parentWidget = widgetList.find(w => { if (w.slots && w.slots.widgets && w.slots.widgets.includes(widget)) return w })
-          if (!(parentWidget && (parentWidget.component === 'Buttongrid'))) {
+          let parentWidget = widgetList.find(w => {
+            if (w.slots?.widgets?.includes(widget)) return w
+            return undefined
+          })
+          if (!(parentWidget?.component === 'Buttongrid')) {
             validationWarnings.push(widget.component + ' widget ' + label + ', can only be defined inside a Buttongrid component')
           }
-          if (!(widget.config && widget.config.item)) {
+          if (!(widget.config?.item)) {
             // if there is an item configured on the Buttongrid level, we will use that when saving
-            if (!(parentWidget && (parentWidget.component === 'Buttongrid') && parentWidget.config && parentWidget.config.item)) {
+            if (!((parentWidget?.component === 'Buttongrid') && parentWidget?.config?.item)) {
               validationWarnings.push(widget.component + ' widget ' + label + ', no item configured')
             }
           }
-          if (!(widget.config && widget.config.row) || isNaN(widget.config.row) || (widget.config.row <= 0) || (widget.config.row > 12)) {
+          if (!(widget.config?.row) || isNaN(widget.config?.row) || (widget.config?.row <= 0) || (widget.config?.row > 12)) {
             validationWarnings.push(widget.component + ' widget ' + label + ', invalid row configured: ' + widget.config.row)
           }
-          if (!(widget.config && widget.config.column) || isNaN(widget.config.column) || (widget.config.column <= 0)) {
+          if (!(widget.config?.column) || isNaN(widget.config?.column) || (widget.config?.column <= 0)) {
             validationWarnings.push(widget.component + ' widget ' + label + ', invalid column configured: ' + widget.config.column)
           }
-          if (!(widget.config && widget.config.cmd)) {
+          if (!(widget.config?.cmd)) {
             validationWarnings.push(widget.component + ' widget ' + label + ', no click command defined')
           }
         })

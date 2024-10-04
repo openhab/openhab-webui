@@ -259,31 +259,31 @@ describe('SitemapCode', () => {
     expect(payload.slots.widgets[0]).toEqual({
       component: 'Buttongrid',
       config: {
-        label: "Scenes",
+        label: 'Scenes',
         staticIcon: true,
-        icon: "screen"
+        icon: 'screen'
       },
       slots: {
         widgets: [{
-          component: "Button",
+          component: 'Button',
           config: {
             row: 1,
             column: 1,
-            item: "Scene_General",
-            label: "Morning",
+            item: 'Scene_General',
+            label: 'Morning',
             stateless: true,
             cmd: 1
           }
         },
         {
-          component: "Button",
+          component: 'Button',
           config: {
             row: 1,
             column: 2,
-            item: "Scene_General",
-            label: "Cinéma",
-            cmd: "10",
-            releaseCmd: "11"
+            item: 'Scene_General',
+            label: 'Cinéma',
+            cmd: '10',
+            releaseCmd: '11'
           }
         }]
       }
