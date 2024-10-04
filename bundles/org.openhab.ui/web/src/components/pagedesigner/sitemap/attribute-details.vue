@@ -3,23 +3,13 @@
     <f7-card-content v-if="attributes.length">
       <f7-list inline-labels sortable sortable-opposite sortable-enabled @sortable:sort="onSort">
         <f7-list-item v-for="(attr, idx) in attributes" :key="attr.key">
-          <f7-input v-if="!fields"
-                    style="flex: 1"
-                    :inputStyle="inputStyle || 'width: 100%'"
-                    :type="type || 'text'"
-                    :min="min"
-                    :max="max"
-                    :pattern="pattern"
-                    :placeholder="placeholder"
-                    :value="attr.value"
-                    validate @change="updateAttribute($event, idx, attr)" />
+          <f7-input v-if="!fields" style="flex: 1" inputStyle="width: 100%" type="text" :placeholder="placeholder" :value="attr.value" @change="updateAttribute($event, idx, attr)" />
           <f7-input v-for="(field, fieldidx) in fieldDefs" :key="JSON.stringify(field)"
                     :style="fieldStyle(field, fieldidx)"
                     :inputStyle="inputFieldStyle(field, fieldidx)"
                     :type="fieldProp(field, 'type')"
                     :min="fieldProp(field, 'min')"
                     :max="fieldProp(field, 'max')"
-                    :pattern="fieldProp(field, 'pattern')"
                     :placeholder="fieldProp(field, 'placeholder')"
                     :value="attr.value[Object.keys(field)[0]]"
                     validate @change="updateAttribute($event, idx, attr, Object.keys(field)[0])" />
@@ -37,7 +27,7 @@
 
 <script>
 export default {
-  props: ['widget', 'attribute', 'placeholder', 'fields', 'inputStyle', 'type', 'min', 'max', 'pattern'],
+  props: ['widget', 'attribute', 'placeholder', 'fields'],
   data () {
     return {
       fieldDefaults: {

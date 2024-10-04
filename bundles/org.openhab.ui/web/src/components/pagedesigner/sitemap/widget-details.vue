@@ -7,7 +7,7 @@
         <f7-list-input label="Label" type="text" placeholder="Label" :value="widget.config.label" @input="updateParameter('label', $event)" clear-button />
         <item-picker v-if="widget.component !== 'Sitemap' && widget.component !== 'Frame'" title="Item" :value="widget.config.item" @input="(value) => widget.config.item = value" />
         <ul v-if="widget.component !== 'Sitemap'">
-          <f7-list-input ref="icon" label="Icon" autocomplete="off" type="text" placeholder="temperature, firstfloor..." :value="widget.config.icon"
+          <f7-list-input class="icon-select" ref="icon" label="Icon" autocomplete="off" type="text" placeholder="temperature, firstfloor..." :value="widget.config.icon"
                          @input="updateParameter('icon', $event)" clear-button>
             <div slot="root-end" style="margin-left: calc(35% + 8px)">
               <oh-icon :icon="widget.config.icon" height="32" width="32" />
