@@ -346,9 +346,9 @@ export default {
     },
     addableWidgetTypes () {
       if (!this.selectedWidget) return
-      if (this.selectedWidget.component === 'Buttongrid') return this.WIDGET_TYPES.filter(w => w.type  === 'Button')
+      if (this.selectedWidget.component === 'Buttongrid') return this.WIDGET_TYPES.filter(w => w.type === 'Button')
       // Button only allowed inside Buttongrid
-      let types = this.WIDGET_TYPES.filter(w => w.type  !== 'Button')
+      let types = this.WIDGET_TYPES.filter(w => w.type !== 'Button')
       // No frames in frame
       if (this.selectedWidget.component === 'Frame') return types.filter(w => w.type !== 'Frame')
       // Linkable widget types only contain frames or none at all
