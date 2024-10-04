@@ -618,8 +618,8 @@ export default {
           }).open()
           return false
         }
-        return true
       }
+      return true
     },
     widgetErrorLabel (config) {
       return config?.label ?? (config?.item ? 'for item ' + config.item : 'without label')
