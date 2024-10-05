@@ -79,7 +79,7 @@ export const actionsMixin = {
             this.$f7.views.main.router.navigate(modalRoute, modalProps)
             break
           default:
-            this.performBasicAction(evt, action, actionConfig, context)
+            this.performBasicAction(evt, prefix, config, context)
             break
         }
         return true
