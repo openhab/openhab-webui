@@ -23,7 +23,6 @@
         <f7-menu-item
           v-if="config.embedSvg"
           @click="flashEmbeddedSvgComponents()"
-          icon="margin-left-half"
           icon-f7="bolt" />
         <f7-menu-item
           dropdown
