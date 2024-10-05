@@ -92,7 +92,7 @@ export function OhCanvasLayoutDefinition () {
     ])
     .paramGroup(pg('svgEmbedding', 'SVG Embedding'), [
       pb('embedSvg', 'Embed SVG', 'Embed SVG image directly into the page (default false)'),
-      pb('embedSvgFlashing', 'Embed SVG Flashing in Run-Mode', 'flashes the svg element on hovering even in run-mode (default false)')
+      pb('embedSvgFlashing', 'Embed SVG Flashing in Run-Mode', 'Flashes SVG elements on hovering in run-mode as well (default false)')
     ])
     .paramGroup(pg('appearance', 'Appearance'), [
       pb('hideNavbar', 'Hide Navigation bar', 'Hide navigation bar on top when page is displayed (You can additionally hide the sidebar using its pin icon) (default false)')
