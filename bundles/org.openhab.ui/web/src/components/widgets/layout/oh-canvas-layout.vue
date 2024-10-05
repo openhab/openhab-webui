@@ -175,7 +175,7 @@ import mixin from '../widget-mixin'
 import OhCanvasLayer from './oh-canvas-layer'
 import { OhCanvasLayoutDefinition } from '@/assets/definitions/widgets/layout'
 import WidgetConfigPopup from '@/components/pagedesigner/widget-config-popup.vue'
-import { pb, pt, WidgetDefinition } from '@/assets/definitions/widgets/helpers'
+import { pb, pg, pi, pt, WidgetDefinition } from '@/assets/definitions/widgets/helpers'
 import { actionGroup, actionParams } from '@/assets/definitions/widgets/actions'
 import { basicActionsMixin } from '@/components/widgets/widget-basic-actions'
 
@@ -476,23 +476,12 @@ export default {
             config: (this.config.embeddedSvgActions ? this.context.component.config.embeddedSvgActions[id] || defaultActionConfig : defaultActionConfig)
           },
           widget: new WidgetDefinition('onSvgClickSettings', 'SVG onClick Action', '')
-            .params([
-              pt('stateOnColor', 'State ON Color', 'Color that should to be used when State is ON').a()
-                .v((value, configuration, configDescription, parameters) => {
-                  return that.config.embedSvg === true
-                }),
-              pt('stateOffColor', 'State OFF Color', 'Color that should to be used when State is OFF').a()
-                .v((value, configuration, configDescription, parameters) => {
-                  return that.config.embedSvg === true
-                }),
-              pb('stateAsOpacity', 'Use State as Opacity', 'Use the state from 0 - 100 as element opacity').a()
-                .v((value, configuration, configDescription, parameters) => {
-                  return that.config.embedSvg === true
-                }),
+            .paramGroup(pg('state', 'State', 'Defines if and how the state is represented in the SVG'), [
+              pi('stateItem', 'State Item', 'Item that should be used to determine the state').a(),
+              pt('stateOnColor', 'State ON Color', 'Color that should to be used when State is ON').a(),
+              pt('stateOffColor', 'State OFF Color', 'Color that should to be used when State is OFF').a(),
+              pb('stateAsOpacity', 'Use State as Opacity', 'Use the state from 0 - 100 as element opacity').a(),
               pb('invertStateOpacity', 'Invert state opacity', '1 - opacity').a()
-                .v((value, configuration, configDescription, parameters) => {
-                  return that.config.embedSvg === true
-                })
             ])
             .paramGroup(actionGroup(), actionParams())
         }
