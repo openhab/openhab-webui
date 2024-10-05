@@ -148,9 +148,6 @@
         @ociDragStop="ociDragStop"
         @ociSelected="ociSelected"
         @ociDeselected="ociDeselected" />
-      <div>
-        {{ trackStateChange }}
-      </div>
     </div>
   </div>
 </template>
@@ -189,6 +186,7 @@ export default {
   data () {
     return {
       embeddedSvgReady: false,
+      embeddedSvgStateTrackingUnsubscribes: [],
 
       layout: [],
       screenWidth: Number,
@@ -215,28 +213,6 @@ export default {
     },
     layerToolsVisible () {
       return this.context.component.slots.canvas.length > 1
-    },
-    trackStateChange () {
-      if (this.embeddedSvgReady) {
-        /* const embeddedSvgActions = this.config.embeddedSvgActions
-        for (const [key, value] of Object.entries(embeddedSvgActions)) {
-          const actionItem = this.config.embeddedSvgActions[key].actionItem
-          const actionItemStatus = this.context.store[actionItem].state
-          console.warn(`id: ${actionItem} -> ${actionItemStatus}`)
-        } */
-        const svg = this.$refs.canvasBackground.querySelector('svg')
-        const subElements = svg.querySelectorAll('[openhab]')
-
-        for (const subElement of subElements) {
-          const actionItem = this.config.embeddedSvgActions[subElement.id]?.actionItem
-          if (actionItem !== undefined) {
-            this.applyStateToSvgElement(subElement, this.context.store[actionItem].state, this.config.embeddedSvgActions[subElement.id])
-          } else {
-            console.log(`svg configuration for ${subElement.id} not yet defined`)
-          }
-        }
-      }
-      return true
     }
   },
   created () {
@@ -264,16 +240,19 @@ export default {
       if (!this.embeddedSvgReady) {
         this.embedSvg().then(() => {
           this.subscribeEmbeddedSvgListeners()
+          this.setupEmbeddedSvgStateTracking()
           this.embeddedSvgReady = true
         })
       } else {
         this.subscribeEmbeddedSvgListeners()
+        this.setupEmbeddedSvgStateTracking()
       }
     }
   },
   beforeDestroy () {
     if (this.config.embedSvg && this.embeddedSvgReady) {
       this.unsubscribeEmbeddedSvgListeners()
+      this.unsubscribeEmbeddedSvgStateTracking()
     }
   },
   methods: {
@@ -297,9 +276,43 @@ export default {
           return Promise.reject(error)
         })
     },
+    /**
+     * Setups the state tracking for the Items linked to embedded SVG elements.
+     *
+     * This method adds the stateItem or actionItem to the tracking list and subscribes to the Item state mutations.
+     * Remember to unsubscribe from the mutations using {@link unsubscribeEmbeddedSvgStateTracking} when the component is destroyed.
+     */
+    setupEmbeddedSvgStateTracking () {
+      const svg = this.$refs.canvasBackground.querySelector('svg')
+      const subElements = svg.querySelectorAll('[openhab]')
+
+      for (const subElement of subElements) {
+        const item = this.config.embeddedSvgActions[subElement.id]?.stateItem || this.config.embeddedSvgActions[subElement.id]?.actionItem
+        if (!item) continue
+        if (!this.$store.getters.isItemTracked(item)) this.$store.commit('addToTrackingList', item)
+        const unsubscribe = this.$store.subscribe((mutation, state) => {
+          if (mutation.type === 'setItemState' && mutation.payload.itemName === item) {
+            this.applyStateToSvgElement(subElement, state.states.itemStates[item].state, this.config.embeddedSvgActions[subElement.id])
+          }
+        })
+        this.embeddedSvgStateTrackingUnsubscribes.push(unsubscribe)
+      }
+
+      this.$store.dispatch('updateTrackingList')
+    },
+    /**
+     * Unsubscribes from the state tracking for the Items linked to embedded SVG elements.
+     */
+    unsubscribeEmbeddedSvgStateTracking () {
+      for (const unsubscribe of this.embeddedSvgStateTrackingUnsubscribes) {
+        unsubscribe()
+      }
+    },
+    /**
+     * Subscribes to the mouseover and click events for the embedded SVG elements with the `openhab` attribute.
+     */
     subscribeEmbeddedSvgListeners () {
       const svg = this.$refs.canvasBackground.querySelector('svg')
-      // Only handle SVG elements that are marked with openhab.
       const subElements = svg.querySelectorAll('[openhab]')
 
       for (const subElement of subElements) {
@@ -309,6 +322,9 @@ export default {
         subElement.addEventListener('click', () => { return this.svgOnClick(subElement) })
       }
     },
+    /**
+     * Unsubscribes from the mouseover and click events for the embedded SVG elements with the `openhab` attribute.
+     */
     unsubscribeEmbeddedSvgListeners () {
       const svg = this.$refs.canvasBackground.querySelector('svg')
       const subElements = svg.querySelectorAll('[openhab]')
@@ -319,6 +335,9 @@ export default {
         subElement.removeEventListener('click', () => { return this.svgOnClick(subElement) })
       }
     },
+    /**
+     * Flashes all embedded SVG components with the `openhab` attribute.
+     */
     flashEmbeddedSvgComponents () {
       const svg = this.$refs.canvasBackground.querySelector('svg')
       const subElements = svg.querySelectorAll('[openhab]')
