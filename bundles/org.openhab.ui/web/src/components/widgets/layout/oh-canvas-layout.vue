@@ -473,7 +473,7 @@ export default {
       this.$f7router.navigate({ url: 'on-svg-click-settings', route: { path: 'on-svg-click-settings', popup } }, {
         props: {
           component: {
-            config: (this.config.embeddedSvgActions ? this.config.embeddedSvgActions[id] || defaultActionConfig : defaultActionConfig)
+            config: (this.config.embeddedSvgActions ? this.context.component.config.embeddedSvgActions[id] || defaultActionConfig : defaultActionConfig)
           },
           widget: new WidgetDefinition('onSvgClickSettings', 'SVG onClick Action', '')
             .params([
