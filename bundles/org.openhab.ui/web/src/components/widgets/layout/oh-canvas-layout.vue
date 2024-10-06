@@ -287,15 +287,19 @@ export default {
       const subElements = svg.querySelectorAll('[openhab]')
 
       for (const subElement of subElements) {
-        const item = this.config.embeddedSvgActions[subElement.id]?.stateItem || this.config.embeddedSvgActions[subElement.id]?.actionItem
-        if (!item) continue
-        if (!this.$store.getters.isItemTracked(item)) this.$store.commit('addToTrackingList', item)
-        const unsubscribe = this.$store.subscribe((mutation, state) => {
-          if (mutation.type === 'setItemState' && mutation.payload.itemName === item) {
-            this.applyStateToSvgElement(subElement, state.states.itemStates[item].state, state.states.itemStates[item].type, this.config.embeddedSvgActions[subElement.id])
-          }
-        })
-        this.embeddedSvgStateTrackingUnsubscribes.push(unsubscribe)
+        const stateItems = this.config.embeddedSvgActions[subElement.id]?.stateItems
+        const actionItem = this.config.embeddedSvgActions[subElement.id]?.actionItem
+        const items = stateItems || (actionItem ? [actionItem] : [])
+        if (items.length === 0) continue
+        for (const item of items) {
+          if (!this.$store.getters.isItemTracked(item)) this.$store.commit('addToTrackingList', item)
+          const unsubscribe = this.$store.subscribe((mutation, state) => {
+            if (mutation.type === 'setItemState' && mutation.payload.itemName === item) {
+              this.applyStateToSvgElement(subElement, state.states.itemStates[item].state, state.states.itemStates[item].type, this.config.embeddedSvgActions[subElement.id])
+            }
+          })
+          this.embeddedSvgStateTrackingUnsubscribes.push(unsubscribe)
+        }
       }
 
       this.$store.dispatch('updateTrackingList')
@@ -524,7 +528,7 @@ export default {
           },
           widget: new WidgetDefinition('onSvgClickSettings', 'SVG onClick Action', '')
             .paramGroup(pg('state', 'State', 'Defines if and how the state is represented in the SVG'), [
-              pi('stateItem', 'State Item', 'Item that should be used to determine the state').a(),
+              pi('stateItems', 'State Item(s)', 'Item(s) that should be used to determine the state').m().a(),
               pt('stateOnColor', 'State ON Color', 'Color that should to be used when State is ON').a(),
               pt('stateOffColor', 'State OFF Color', 'Color that should to be used when State is OFF').a(),
               pb('stateAsOpacity', 'Use State as Opacity', 'Use the state from 0 - 100 as element opacity').a(),
