@@ -276,6 +276,17 @@ export default {
           return Promise.reject(error)
         })
     },
+    subscribe (store, subElement, item) {
+      if (item) {
+        if (!store.getters.isItemTracked(item)) store.commit('addToTrackingList', item)
+        const unsubscribe = store.subscribe((mutation, state) => {
+          if (mutation.type === 'setItemState' && mutation.payload.itemName === item) {
+            this.applyStateToSvgElement(subElement, state.states.itemStates[item].state, state.states.itemStates[item].type, this.config.embeddedSvgActions[subElement.id])
+          }
+        })
+        this.embeddedSvgStateTrackingUnsubscribes.push(unsubscribe)
+      }
+    },
     /**
      * Setups the state tracking for the Items linked to embedded SVG elements.
      *
@@ -287,17 +298,9 @@ export default {
       const subElements = svg.querySelectorAll('[openhab]')
 
       for (const subElement of subElements) {
-        const item = this.config.embeddedSvgActions[subElement.id]?.stateItem || this.config.embeddedSvgActions[subElement.id]?.actionItem
-        if (!item) continue
-        if (!this.$store.getters.isItemTracked(item)) this.$store.commit('addToTrackingList', item)
-        const unsubscribe = this.$store.subscribe((mutation, state) => {
-          if (mutation.type === 'setItemState' && mutation.payload.itemName === item) {
-            this.applyStateToSvgElement(subElement, state.states.itemStates[item].state, state.states.itemStates[item].type, this.config.embeddedSvgActions[subElement.id])
-          }
-        })
-        this.embeddedSvgStateTrackingUnsubscribes.push(unsubscribe)
+        this.subscribe(this.$store, subElement, this.config.embeddedSvgActions[subElement.id]?.stateItem)
+        this.subscribe(this.$store, subElement, this.config.embeddedSvgActions[subElement.id]?.actionItem)
       }
-
       this.$store.dispatch('updateTrackingList')
     },
     /**
