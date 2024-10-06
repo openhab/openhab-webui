@@ -1,5 +1,5 @@
 <template>
-  <f7-card :no-border="config.noBorder" :no-shadow="config.noShadow" :outline="config.outline" :style="config.style" :class="config.class">
+  <f7-card :no-border="config.noBorder" :no-shadow="config.noShadow" :outline="config.outline" :style="config.style" :class="['oh-card', ...(Array.isArray(config.class) ? config.class : [])]">
     <slot name="header">
       <f7-card-header v-if="config.title" :style="config.headerStyle" :class="config.headerClass">
         <div>{{ config.title }}</div>
@@ -22,6 +22,17 @@
     </slot>
   </f7-card>
 </template>
+
+<style lang="stylus">
+// Fix safe-area issues where oh-card is used inside a block or masonry layout, where the safe areas are already respected by the parent block
+.oh-col >
+.oh-masonry-item >
+  .oh-card
+    --f7-safe-area-left 0px
+    --f7-safe-area-right 0px
+    --f7-safe-area-top 0px
+    --f7-safe-area-bottom 0px
+</style>
 
 <script>
 import mixin from '../widget-mixin'
