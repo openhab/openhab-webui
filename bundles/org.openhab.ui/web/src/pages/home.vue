@@ -1,10 +1,10 @@
 <template>
   <f7-page stacked name="HomePage" class="page-home" :class="{ 'standard-background': $f7.data.themeOptions.homeBackground === 'standard' }" @page:init="onPageInit" @page:beforein="onPageBeforeIn" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
-    <f7-navbar :large="navbarLarge" :large-transparent="navbarLarge" class="home-nav disable-user-select">
+    <f7-navbar :large="$f7.data.themeOptions.homeNavbar !== 'simple'" :large-transparent="$f7.data.themeOptions.homeNavbar !== 'simple'" class="home-nav disable-user-select">
       <f7-nav-left>
         <f7-link icon-ios="f7:menu" icon-aurora="f7:menu" icon-md="material:menu" panel-open="left" />
       </f7-nav-left>
-      <f7-nav-title-large v-if="navbarLarge" class="home-title-large">
+      <f7-nav-title-large v-if="$f7.data.themeOptions.homeNavbar !== 'simple'" class="home-title-large">
         <span class="today">{{ new Date().toLocaleString($store.getters.locale, { weekday: 'long', day: 'numeric', month: 'long' }) }}</span>
         {{ title }}
       </f7-nav-title-large>
@@ -107,9 +107,6 @@ export default {
   computed: {
     ready () {
       return this.$store.state.apiVersion > 0
-    },
-    navbarLarge () {
-      return this.$f7.data.themeOptions.homeNavbar === 'large'
     },
     context () {
       return {

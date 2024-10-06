@@ -111,7 +111,7 @@ export default {
       location.reload()
     },
     setHomePageNavbarStyle (value) {
-      localStorage.setItem('openhab.ui:theme.home.navbar', (value) ? 'simple' : 'large')
+      localStorage.setItem('openhab.ui:theme.home.navbar', (value) ? 'simple' : 'default')
       location.reload()
     },
     setHomePageBackground (value) {
@@ -150,7 +150,7 @@ export default {
       return localStorage.getItem('openhab.ui:theme.bars') || 'light'
     },
     homePageNavbarStyle () {
-      return localStorage.getItem('openhab.ui:theme.home.navbar') || (this.$f7.device.desktop ? 'large' : 'simple')
+      return localStorage.getItem('openhab.ui:theme.home.navbar') || 'default'
     },
     homePageBackground () {
       return localStorage.getItem('openhab.ui:theme.home.background') || 'default'
