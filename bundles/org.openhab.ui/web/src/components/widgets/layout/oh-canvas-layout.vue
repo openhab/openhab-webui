@@ -292,7 +292,7 @@ export default {
         if (!this.$store.getters.isItemTracked(item)) this.$store.commit('addToTrackingList', item)
         const unsubscribe = this.$store.subscribe((mutation, state) => {
           if (mutation.type === 'setItemState' && mutation.payload.itemName === item) {
-            this.applyStateToSvgElement(subElement, state.states.itemStates[item].state, this.config.embeddedSvgActions[subElement.id])
+            this.applyStateToSvgElement(subElement, state.states.itemStates[item].state, state.states.itemStates[item].type, this.config.embeddedSvgActions[subElement.id])
           }
         })
         this.embeddedSvgStateTrackingUnsubscribes.push(unsubscribe)
@@ -346,6 +346,42 @@ export default {
         this.svgOnMouseOver(subElement)
       }
     },
+    hsbToRgb (h, s, b) {
+      h = h / 360 // Convert hue to a fraction between 0 and 1
+      s = s / 100 // Convert saturation to a fraction between 0 and 1
+      b = b / 100 // Convert brightness to a fraction between 0 and 1
+
+      if (s === 0) {
+        // Grayscale
+        return [b * 255, b * 255, b * 255]
+      }
+
+      const i = Math.floor(h * 6)
+      const f = h * 6 - i
+      const p = b * (1 - s)
+      const q = b * (1 - s * f)
+      const t = b * (1 - s * (1 - f))
+
+      switch (i % 6) {
+        case 0: return [b * 255, t * 255, p * 255]
+        case 1: return [q * 255, b * 255, p * 255]
+        case 2: return [p * 255, b * 255, t * 255]
+        case 3: return [p * 255, q * 255, b * 255]
+        case 4: return [t * 255, p * 255, b * 255]
+        case 5: return [b * 255, p * 255, q * 255]
+      }
+    },
+    toRGBStyle: function (itemConfig) {
+      if (itemConfig.stateOnColor) {
+        if (itemConfig.stateOnColor.trim().startsWith('#')) {
+          return itemConfig.stateOnColor
+        } else {
+          const rgbNumbers = itemConfig.stateOnColor.split(',')
+          const rgb = this.hsbToRgb(rgbNumbers[0], rgbNumbers[1], rgbNumbers[2])
+          return `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`
+        }
+      }
+    },
     /*
          * In Run mode
          * - Status should be reflected (ON/OFF, OPEN/CLOSE...) by using the below approach of highlighting the element
@@ -380,51 +416,38 @@ export default {
          *
          * Allow NOT to send a command in run-mode when clicking on that icon (e.g. a window or door)
          */
-    applyStateToSvgElement (el, state, itemConfig) {
-      console.log(`Set ${el.id} -> ${state}`)
+    applyStateToSvgElement (el, state, stateType, itemConfig) {
+      console.log(`Set ${el.id} -> ${state} ${stateType} stateColor: ${itemConfig.stateOnColor}`)
       const tagName = el.tagName
-      if (tagName !== 'g') {
-        if (state === 'ON' || state === 'OPEN') {
-          el.oldFill = el.style.fill
-          el.style.fill = (itemConfig.stateOnColor) ? itemConfig.stateOnColor : 'rgb(0, 255, 0)'
-        } else if (state === 'OFF' || state === 'CLOSED') {
-          const updateColor = (itemConfig.stateOffColor) ? itemConfig.stateOffColor : (el.oldFill !== 'undefined') ? el.oldFill : 'undefinded'
-          if (updateColor !== 'undefined') { el.style.fill = updateColor }
-        } else { // state opacity -> needs to be checked against state type?
-          if (itemConfig.stateAsOpacity && state) {
-            // we expect that number between 0 - 100
-            if (!isNaN(state)) {
-              let opacity = parseFloat(state) / 100.0
-              el.style.opacity = (itemConfig.invertStateOpacity) ? 1 - opacity : opacity
+      let stateOnColorRgbStyle = this.toRGBStyle(itemConfig)
+
+      switch (stateType) {
+        case 'HSB':
+          break
+        case 'Percent':
+          break
+        case 'OnOff':
+          const element = (tagName !== 'g') ? el : el.querySelector('[flash]')
+          if (state === 'ON' || state === 'OPEN') {
+            element.oldFill = element.style.fill
+            element.style.fill = (itemConfig.stateOnColor) ? stateOnColorRgbStyle : 'rgb(0, 255, 0)'
+            if (tagName === 'g') {
+              element.oldOpacity = element.style.opacity
+              element.style.opacity = 1
             }
-          }
-        }
-      } else { // groups cannot be filled, so we need to fill special element marked as "flash"
-        const flashElement = el.querySelector('[flash]')
-        if (flashElement) {
-          if (state === 'ON') {
-            el.oldFill = flashElement.style.fill
-            el.oldOpacity = flashElement.style.opacity
-            flashElement.style.fill = (itemConfig.stateOnColor) ? itemConfig.stateOnColor : 'rgb(0, 255, 0)'
-            flashElement.style.opacity = 1
-            flashElement.flashing = true
           } else if (state === 'OFF' || state === 'CLOSED') {
-            if (el.oldFill) {
-              flashElement.style.fill = el.oldFill
-            }
-            if (el.oldOpacity) {
-              flashElement.style.opacity = el.oldOpacity
-            }
+            const updateColor = (itemConfig.stateOffColor) ? itemConfig.stateOffColor : (element.oldFill !== 'undefined') ? element.oldFill : 'undefined'
+            if (updateColor !== 'undefined') { element.style.fill = updateColor }
           } else { // state opacity -> needs to be checked against state type?
             if (itemConfig.stateAsOpacity && state) {
               // we expect that number between 0 - 100
               if (!isNaN(state)) {
                 let opacity = parseFloat(state) / 100.0
-                flashElement.style.opacity = (itemConfig.invertStateOpacity) ? 1 - opacity : opacity
+                element.style.opacity = (itemConfig.invertStateOpacity) ? 1 - opacity : opacity
               }
             }
           }
-        }
+          break
       }
     },
     /**
@@ -438,24 +461,29 @@ export default {
     svgOnMouseOver (el) {
       if (this.context.editmode || (!this.context.editmode && this.config.embedSvgFlashing)) {
         const tagName = el.tagName
+        // fill green if item config is available, red if config is still missing
+        const fillColor = (this.config.embeddedSvgActions[el.id]) ? 'rgb(0, 255, 0)' : 'rgb(255, 0, 0)'
         if (tagName !== 'g' && !el.flashing) {
-          const oldFill = el.style.fill
-          el.style.fill = 'rgb(255, 0, 0)'
+          // sometimes instead of fill, stroke colors are used, so if fill = none, then we use stroke instead
+          const attributeName = (el.style.fill !== 'none') ? 'fill' : 'stroke'
+          const oldFill = el.style.getPropertyValue(attributeName)
+          el.style.setProperty(attributeName, fillColor)
           el.flashing = true
           setTimeout(() => {
             el.flashing = false
-            el.style.fill = oldFill
+            el.style.setProperty(attributeName, oldFill)
           }, 200)
         } else { // groups cannot be filled, so we need to fill special element marked as "flash"
           const flashElement = el.querySelector('[flash]')
           if (flashElement && !flashElement.flashing) {
-            const oldFill = flashElement.style.fill
+            const attributeName = (flashElement.style.fill !== 'none') ? 'fill' : 'stroke'
+            const oldFill = flashElement.style.getPropertyValue(attributeName)
             const oldOpacity = flashElement.style.opacity
-            flashElement.style.fill = 'rgb(255, 0, 0)'
+            flashElement.style.setProperty(attributeName, fillColor)
             flashElement.style.opacity = 1
             flashElement.flashing = true
             setTimeout(() => {
-              flashElement.style.fill = oldFill
+              flashElement.style.setProperty(attributeName, oldFill)
               flashElement.style.opacity = oldOpacity
               flashElement.flashing = false
             }, 200)
