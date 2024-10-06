@@ -311,9 +311,12 @@ html
       color var(--f7-input-text-color)
 
 // Fix safe area issues inside f7-card components, where safe areas are already respected by the f7-card itself
-.card >
-  div
-    --f7-safe-area-left 0px
-    --f7-safe-area-right 0px
-    --f7-safe-area-top 0px
-    --f7-safe-area-bottom 0px
+.card
+  .block
+    padding-left var(--f7-block-padding-horizontal) !important
+    padding-right var(--f7-block-padding-horizontal) !important
+  .media-item
+    .item-content
+      padding-left var(--f7-list-item-padding-horizontal)
+      .item-inner
+        padding-right var(--f7-list-item-padding-horizontal)

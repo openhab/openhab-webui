@@ -28,10 +28,8 @@
 .oh-col >
 .oh-masonry-item >
   .oh-card
-    --f7-safe-area-left 0px
-    --f7-safe-area-right 0px
-    --f7-safe-area-top 0px
-    --f7-safe-area-bottom 0px
+    margin-left var(--f7-card-margin-horizontal)
+    margin-right var(--f7-card-margin-horizontal)
 </style>
 
 <script>
