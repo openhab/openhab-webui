@@ -426,13 +426,12 @@ export default {
       let stateOnColorRgbStyle = this.toRGBStyle(itemConfig)
 
       switch (stateType) {
-        case 'HSB':
-          break
         case 'Percent':
           break
+        case 'HSB':
         case 'OnOff':
           const element = (tagName !== 'g') ? el : el.querySelector('[flash]')
-          if (state === 'ON' || state === 'OPEN') {
+          if (state === 'ON' || state === 'OPEN' || stateType === 'HSB') {
             element.oldFill = element.style.fill
             element.style.fill = (itemConfig.stateOnColor) ? stateOnColorRgbStyle : 'rgb(0, 255, 0)'
             if (tagName === 'g') {
