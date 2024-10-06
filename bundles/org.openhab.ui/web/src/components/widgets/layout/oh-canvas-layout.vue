@@ -95,6 +95,7 @@
       }">
       <div
         v-if="config.imageUrl || config.imageSrcSet"
+        v-show="!config.embedSvg || embeddedSvgReady"
         ref="canvasBackground"
         style="
           height: inherit;
@@ -169,10 +170,10 @@
 
 <script>
 import mixin from '../widget-mixin'
-import OhCanvasLayer from './oh-canvas-layer'
-import { OhCanvasLayoutDefinition } from '@/assets/definitions/widgets/layout'
 import { basicActionsMixin } from '@/components/widgets/widget-basic-actions'
 import embeddedSvgMixin from '@/components/widgets/layout/oh-canvas-embedded-svg-mixin'
+import OhCanvasLayer from './oh-canvas-layer'
+import { OhCanvasLayoutDefinition } from '@/assets/definitions/widgets/layout'
 
 export default {
   emits: ['svgOnClickConfigUpdate'],
@@ -225,27 +226,26 @@ export default {
     this.$fullscreen.support = true
     this.canvasLayoutStyle()
     this.computeLayout()
+
+    if (this.config.embedSvg) {
+      this.embedSvg().then(() => {
+        this.subscribeEmbeddedSvgListeners()
+        this.setupEmbeddedSvgStateTracking()
+        this.embeddedSvgReady = true
+      })
+    }
   },
   mounted () {
     // Chrome reports a wrong size in fullscreen, store initial resolution and use non-dynamically.
     this.windowWidth = window.screen.width
     this.windowHeight = window.screen.height
-
-    if (this.config.embedSvg) {
-      if (!this.embeddedSvgReady) {
-        this.embedSvg().then(() => {
-          this.subscribeEmbeddedSvgListeners()
-          this.setupEmbeddedSvgStateTracking()
-          this.embeddedSvgReady = true
-        })
-      } else {
-        this.subscribeEmbeddedSvgListeners()
-        this.setupEmbeddedSvgStateTracking()
-      }
-    }
   },
   beforeDestroy () {
+    if (!this.context.editmode) {
+      window.removeEventListener('resize', this.setDimensions)
+    }
     if (this.config.embedSvg && this.embeddedSvgReady) {
+      this.embeddedSvgReady = false
       this.unsubscribeEmbeddedSvgListeners()
       this.unsubscribeEmbeddedSvgStateTracking()
     }
