@@ -45,18 +45,20 @@ export default {
       const that = this
       this.$f7router.navigate({ url: 'on-svg-click-settings', route: { path: 'on-svg-click-settings', popup } }, {
         props: {
-          component: {
-            config: (this.config.embeddedSvgActions ? this.context.component.config.embeddedSvgActions[id] || defaultActionConfig : defaultActionConfig)
-          },
           widget: new WidgetDefinition('onSvgClickSettings', 'SVG onClick Action', '')
             .paramGroup(pg('state', 'State', 'Defines if and how the state is represented in the SVG'), [
               pi('stateItems', 'State Item(s)', 'Item(s) that should be used to determine the state').m().a(),
+              pb('useProxyElementForState', 'Use State Proxy Element', 'Use "flash" element to highlight the active state. The element is marked with the attribute flash: true and must be part of the elements group').a(),
               pt('stateOnColor', 'State ON Color', 'Color that should to be used when State is ON').a(),
               pt('stateOffColor', 'State OFF Color', 'Color that should to be used when State is OFF').a(),
               pb('stateAsOpacity', 'Use State as Opacity', 'Use the state from 0 - 100 as element opacity').a(),
-              pb('invertStateOpacity', 'Invert state opacity', '1 - opacity').a()
+              pt('stateMinOpacity', 'Minimum Opacity applied', 'This allows an opacity to be kept above this value.').a(),
+              pb('invertStateOpacity', 'Invert State opacity', '1 - opacity').a()
             ])
-            .paramGroup(actionGroup(), actionParams())
+            .paramGroup(actionGroup(), actionParams()),
+          component: {
+            config: (this.config.embeddedSvgActions ? this.context.component.config.embeddedSvgActions[id] || defaultActionConfig : defaultActionConfig)
+          }
         }
       })
       this.$f7.once('widgetConfigUpdate', (config) => {

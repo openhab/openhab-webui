@@ -301,10 +301,15 @@ export default {
          *   - Define OFF / ON colors (maybe state to color mapping?) -> stateOnColor (defaults to #00FF##) / stateOffColor (defaults to svg color)
          *   - use state value for opacity
          *   - invert opacity value
+         * State Types
+         *  - onOff -> Apply Color to Element. Set to original color of element on OFF. Use StateOnColor if defined for ON/OFF. Set opacity to 1 (ON) /  (0) OFF to show hide that element is active
+         *  - HSB -> Apply Color to element style >fill<
+         *  - Percent -> Apply Percent to element opacity
+         *
          *  Status types and how to handle them
          *  - Switch: ON = activate element (via coloring of element or opacity / color of flash element)
          *  - Contact: OPEN = activate element (via coloring of element or opacity / color of flash element)
-         *  - Color: use the color to fill the element
+         *  - Color: use the color to fill the element (set opacity) open = 0 / closed = 1
          *  - Rollershutter:
          *    - Use percentage to control brightness of color of that element
          *    - write State-Text to element if element has a <tspan>
@@ -327,28 +332,53 @@ export default {
       let stateOnColorRgbStyle = this.toRGBStyle(itemConfig)
 
       switch (stateType) {
+        case 'OpenClosed':
         case 'Percent':
-          break
         case 'HSB':
         case 'OnOff':
-          const element = (tagName !== 'g') ? el : el.querySelector('[flash]')
-          if (state === 'ON' || state === 'OPEN' || stateType === 'HSB') {
-            element.oldFill = element.style.fill
-            element.style.fill = (itemConfig.stateOnColor) ? stateOnColorRgbStyle : 'rgb(0, 255, 0)'
-            if (tagName === 'g') {
-              element.oldOpacity = element.style.opacity
-              element.style.opacity = 1
+          const useProxy = tagName === 'g' && itemConfig.useProxyElementForState
+          const element = (useProxy) ? el.querySelector('[flash]') : el
+          if (!element) {
+            console.error(`Element ${el} is a group element but has no containing element marked as >flash<`)
+            return
+          }
+          if (state === 'ON' || stateType === 'HSB') {
+            if (useProxy && itemConfig.stateAsOpacity) { // we use the flash element
+              // element.oldOpacity = element.style.opacity
+              // element.style.opacity = 1
+              let opacity = (state === 'ON') ? 1 : 0
+              opacity = (itemConfig.invertStateOpacity) ? 1 - opacity : opacity
+              opacity = (opacity < itemConfig.stateMinOpacity) ? itemConfig.stateMinOpacity : opacity
+              // Todo: use fill-opacity if fill not available
+              element.style.opacity = opacity
+            } else {
+              element.oldFill = element.style.fill
+              element.style.fill = (itemConfig.stateOnColor) ? stateOnColorRgbStyle : 'rgb(0, 255, 0)'
             }
-          } else if (state === 'OFF' || state === 'CLOSED') {
-            const updateColor = (itemConfig.stateOffColor) ? itemConfig.stateOffColor : (element.oldFill !== 'undefined') ? element.oldFill : 'undefined'
-            if (updateColor !== 'undefined') { element.style.fill = updateColor }
-          } else { // state opacity -> needs to be checked against state type?
+          } else if (state === 'OFF') {
+            const updateColor = (itemConfig.stateOffColor) ? itemConfig.stateOffColor : (element?.oldFill !== 'undefined') ? element?.oldFill : 'undefined'
+            if (updateColor !== 'undefined') {
+              element.style.fill = updateColor
+            }
+            if (itemConfig.stateAsOpacity) { // we use the flash element
+              // element.oldOpacity = element.style.opacity
+              // element.style.opacity = 1
+              let opacity = (itemConfig.invertStateOpacity) ? 1 : 0
+              opacity = (opacity < itemConfig.stateMinOpacity) ? itemConfig.stateMinOpacity : opacity
+              element.style.opacity = opacity
+            }
+          } else { // Percent, OpenClosed
             if (itemConfig.stateAsOpacity && state) {
               // we expect that number between 0 - 100
-              if (!isNaN(state)) {
-                let opacity = parseFloat(state) / 100.0
-                element.style.opacity = (itemConfig.invertStateOpacity) ? 1 - opacity : opacity
+              let opacity
+              if (stateType === 'OpenClosed') {
+                opacity = (state === 'OPEN') ? 1 : 0
+              } else if (stateType === 'Percent' && !isNaN(state)) {
+                opacity = parseFloat(state) / 100.0
               }
+              opacity = (itemConfig.invertStateOpacity) ? 1 - opacity : opacity
+              opacity = (opacity < itemConfig.stateMinOpacity) ? itemConfig.stateMinOpacity : opacity
+              element.style.opacity = opacity
             }
           }
           break
