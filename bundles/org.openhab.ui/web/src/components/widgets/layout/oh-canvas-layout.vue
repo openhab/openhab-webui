@@ -278,13 +278,19 @@ export default {
     },
     toRGBStyle: function (itemConfig) {
       if (itemConfig.stateOnColor) {
-        if (itemConfig.stateOnColor.trim().startsWith('#')) {
+        if (itemConfig.stateOnColor?.trim().startsWith('#')) {
           return itemConfig.stateOnColor
         } else {
           const rgbNumbers = itemConfig.stateOnColor.split(',')
+          if (rgbNumbers.length !== 3) {
+            console.log(`invalid rgb values in stateOnColor: ${itemConfig.stateOnColor}`)
+            return '#ff0000' // not valid returns red
+          }
           const rgb = this.hsbToRgb(rgbNumbers[0], rgbNumbers[1], rgbNumbers[2])
           return `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`
         }
+      } else {
+        return undefined
       }
     },
     /*
@@ -358,17 +364,23 @@ export default {
               element.oldFill = element.style.fill
               element.style.fill = (itemConfig.stateOnColor) ? stateOnColorRgbStyle : 'rgb(0, 255, 0)'
             }
+            if (itemConfig.stateAsStyleClass) {
+              const elementClassInfo = itemConfig.stateAsStyleClass.split(':')
+              document.getElementById(elementClassInfo[0]).classList.add(elementClassInfo[1])
+            }
           } else if (state === 'OFF') {
             const updateColor = (itemConfig.stateOffColor) ? itemConfig.stateOffColor : (element?.oldFill !== 'undefined') ? element?.oldFill : 'undefined'
             if (updateColor !== 'undefined') {
               element.style.fill = updateColor
             }
             if (itemConfig.stateAsOpacity) { // we use the flash element
-              // element.oldOpacity = element.style.opacity
-              // element.style.opacity = 1
               let opacity = (itemConfig.invertStateOpacity) ? 1 : 0
               opacity = (opacity < itemConfig.stateMinOpacity) ? itemConfig.stateMinOpacity : opacity
               element.style.opacity = opacity
+            }
+            if (itemConfig.stateAsStyleClass) {
+              let elementClassInfo = itemConfig.stateAsStyleClass.split(':')
+              document.getElementById(elementClassInfo[0]).classList.remove(elementClassInfo[1])
             }
           } else { // Percent, OpenClosed
             if (itemConfig.stateAsOpacity && state) {
