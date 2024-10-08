@@ -326,12 +326,17 @@ export default {
          *
          * Allow NOT to send a command in run-mode when clicking on that icon (e.g. a window or door)
          */
-    applyStateToSvgElement (el, state, stateType, itemConfig) {
-      console.log(`Set ${el.id} -> ${state} ${stateType} stateColor: ${itemConfig.stateOnColor}`)
+    applyStateToSvgElement (el, item, state, stateType, itemConfig) {
+      console.log(`Set ${el.id} for ${item} -> ${state} ${stateType} stateColor: ${itemConfig.stateOnColor}`)
       const tagName = el.tagName
       let stateOnColorRgbStyle = this.toRGBStyle(itemConfig)
 
       switch (stateType) {
+        case 'Quantity':
+          if (el.tagName === 'tspan') {
+            el.innerHTML = state
+          }
+          break
         case 'OpenClosed':
         case 'Percent':
         case 'HSB':
@@ -344,8 +349,6 @@ export default {
           }
           if (state === 'ON' || stateType === 'HSB') {
             if (useProxy && itemConfig.stateAsOpacity) { // we use the flash element
-              // element.oldOpacity = element.style.opacity
-              // element.style.opacity = 1
               let opacity = (state === 'ON') ? 1 : 0
               opacity = (itemConfig.invertStateOpacity) ? 1 - opacity : opacity
               opacity = (opacity < itemConfig.stateMinOpacity) ? itemConfig.stateMinOpacity : opacity

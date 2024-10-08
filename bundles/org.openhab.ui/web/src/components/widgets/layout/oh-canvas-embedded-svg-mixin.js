@@ -84,7 +84,7 @@ export default {
           if (!this.$store.getters.isItemTracked(item)) this.$store.commit('addToTrackingList', item)
           const unsubscribe = this.$store.subscribe((mutation, state) => {
             if (mutation.type === 'setItemState' && mutation.payload.itemName === item) {
-              this.applyStateToSvgElement(subElement, state.states.itemStates[item].state, state.states.itemStates[item].type, this.config.embeddedSvgActions[subElement.id])
+              this.applyStateToSvgElement(subElement, item, state.states.itemStates[item].state, state.states.itemStates[item].type, this.config.embeddedSvgActions[subElement.id])
             }
           })
           this.embeddedSvgStateTrackingUnsubscribes.push(unsubscribe)
