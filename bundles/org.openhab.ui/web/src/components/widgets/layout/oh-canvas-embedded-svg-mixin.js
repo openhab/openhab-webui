@@ -54,7 +54,8 @@ export default {
               pb('stateAsOpacity', 'Use State as Opacity', 'Use the state from 0 - 100 as element opacity').a(),
               pt('stateMinOpacity', 'Minimum Opacity applied', 'This allows an opacity to be kept above this value.').a(),
               pb('invertStateOpacity', 'Invert State opacity', '1 - opacity').a(),
-              pt('stateAsStyleClass', 'Set Style Class based on OnOff State ', 'Provide element-id:classname. ON sets the class, OFF removes the class of given element').a()
+              pt('stateOnAsStyleClass', 'Set Style Class based on On State ', 'Provide element-id:classname, separate multiple entries with comma. ON sets the class, if OFF is not provided, OFF removes the class of given element').a(),
+              pt('stateOffAsStyleClass', 'Set Style Class based on Off State ', 'Provide element-id:classname, separate multiple entries with comma. OFF sets the class').a()
             ])
             .paramGroup(actionGroup(), actionParams()),
           component: {
