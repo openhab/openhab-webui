@@ -364,9 +364,19 @@ export default {
               element.oldFill = element.style.fill
               element.style.fill = (itemConfig.stateOnColor) ? stateOnColorRgbStyle : 'rgb(0, 255, 0)'
             }
-            if (itemConfig.stateAsStyleClass) {
-              const elementClassInfo = itemConfig.stateAsStyleClass.split(':')
-              document.getElementById(elementClassInfo[0]).classList.add(elementClassInfo[1])
+            if (itemConfig.stateOnAsStyleClass) {
+              if (itemConfig.stateOffAsStyleClass) { // if offStates are provided add OffStates
+                let offStatesArray = itemConfig.stateOffAsStyleClass.split(',')
+                for (const offState of offStatesArray) {
+                  const elementClassInfo = offState.split(':')
+                  document.getElementById(elementClassInfo[0].trim()).classList.remove(elementClassInfo[1].trim())
+                }
+              }
+              let onStatesArray = itemConfig.stateOnAsStyleClass.split(',')
+              for (const onState of onStatesArray) {
+                const elementClassInfo = onState.split(':')
+                document.getElementById(elementClassInfo[0].trim()).classList.add(elementClassInfo[1].trim())
+              }
             }
           } else if (state === 'OFF') {
             const updateColor = (itemConfig.stateOffColor) ? itemConfig.stateOffColor : (element?.oldFill !== 'undefined') ? element?.oldFill : 'undefined'
@@ -378,9 +388,20 @@ export default {
               opacity = (opacity < itemConfig.stateMinOpacity) ? itemConfig.stateMinOpacity : opacity
               element.style.opacity = opacity
             }
-            if (itemConfig.stateAsStyleClass) {
-              let elementClassInfo = itemConfig.stateAsStyleClass.split(':')
-              document.getElementById(elementClassInfo[0]).classList.remove(elementClassInfo[1])
+            if (itemConfig.stateOnAsStyleClass) {
+              // remove OnState-Styles first
+              let onStatesArray = itemConfig.stateOnAsStyleClass.split(',')
+              for (const onState of onStatesArray) {
+                const elementClassInfo = onState.split(':')
+                document.getElementById(elementClassInfo[0].trim()).classList.remove(elementClassInfo[1].trim())
+              }
+              if (itemConfig.stateOffAsStyleClass) { // if offStates are provided add OffStates
+                let offStatesArray = itemConfig.stateOffAsStyleClass.split(',')
+                for (const offState of offStatesArray) {
+                  const elementClassInfo = offState.split(':')
+                  document.getElementById(elementClassInfo[0].trim()).classList.add(elementClassInfo[1].trim())
+                }
+              }
             }
           } else { // Percent, OpenClosed
             if (itemConfig.stateAsOpacity && state) {
