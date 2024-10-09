@@ -3,6 +3,8 @@ import { actionGroup, actionParams } from '../actions.js'
 
 export const OhHomePageDefinition = () => new WidgetDefinition('oh-home-page', 'Home page')
   .params([
+    pb('simpleNavbarMobileDefault', 'Default to Simple Navbar on Mobile', 'Use the simple navbar by default on mobile devices'),
+    pb('simpleNavbarDesktopDefault', 'Default to Simple Navbar on Desktop', 'Use the simple navbar by default on desktop devices'),
     pt('displayModelCardsTo', 'Display model cards to', 'Restrict who sees the Locations/Equipment/Properties tabs with the model cards')
       .o([
         { value: 'role:administrator', label: 'Administrators' },
