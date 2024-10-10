@@ -175,7 +175,8 @@ export default {
           serviceId,
           starttime: seriesStartTime.toISOString(),
           endtime: seriesEndTime.subtract(1, 'millisecond').toISOString(),
-          boundary
+          boundary,
+          itemState: true
         }
 
         return Promise.all([itemPromises[neededItem], this.$oh.api.get(url, query)])
