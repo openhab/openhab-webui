@@ -309,8 +309,10 @@ export default {
          *   - invert opacity value
          * State Types
          *  - onOff -> Apply Color to Element. Set to original color of element on OFF. Use StateOnColor if defined for ON/OFF. Set opacity to 1 (ON) /  (0) OFF to show hide that element is active
+         *  - OpenClosed ->
          *  - HSB -> Apply Color to element style >fill<
          *  - Percent -> Apply Percent to element opacity
+         *  - Quantity -> Applied to element body, if element is tspan
          *
          *  Status types and how to handle them
          *  - Switch: ON = activate element (via coloring of element or opacity / color of flash element)
