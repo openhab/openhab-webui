@@ -153,7 +153,7 @@ export default {
         return Promise.resolve(getter([]))
       }
 
-      let boundary = seriesComponents[component.component].includeBoundary?.(component)
+      const boundary = seriesComponents[component.component].includeBoundary?.(component) || component.config.noBoundary !== true
       const itemPromises = neededItems.map((neededItem) => {
         if (this.items[neededItem]) return Promise.resolve(this.items[neededItem])
         return this.$oh.api.get(`/rest/items/${neededItem}`).then((item) => {
@@ -176,7 +176,7 @@ export default {
           starttime: seriesStartTime.toISOString(),
           endtime: seriesEndTime.subtract(1, 'millisecond').toISOString(),
           boundary,
-          itemState: true
+          itemState: component.config.noItemState !== true
         }
 
         return Promise.all([itemPromises[neededItem], this.$oh.api.get(url, query)])
