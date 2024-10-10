@@ -21,6 +21,10 @@
           style="margin-left: auto"
           text="Grid" />
         <f7-menu-item
+          v-if="config.embedSvg"
+          @click="flashEmbeddedSvgComponents()"
+          icon-f7="bolt" />
+        <f7-menu-item
           dropdown
           icon-f7="rectangle_3_offgrid">
           <f7-menu-dropdown right>
@@ -91,14 +95,18 @@
       }">
       <div
         v-if="config.imageUrl || config.imageSrcSet"
+        v-show="!config.embedSvg || embeddedSvgReady"
+        ref="canvasBackground"
         style="
           height: inherit;
           width: inherit;
           position: absolute;
           top: 0;
           left: 0;
+          overflow: hidden;
         ">
         <img
+          v-if="!config.embedSvg"
           class="oh-canvas-background disable-user-drag"
           :src="config.imageUrl"
           :srcset="config.imageSrcSet">
@@ -162,11 +170,14 @@
 
 <script>
 import mixin from '../widget-mixin'
+import { basicActionsMixin } from '@/components/widgets/widget-basic-actions'
+import embeddedSvgMixin from '@/components/widgets/layout/oh-canvas-embedded-svg-mixin'
 import OhCanvasLayer from './oh-canvas-layer'
 import { OhCanvasLayoutDefinition } from '@/assets/definitions/widgets/layout'
 
 export default {
-  mixins: [mixin],
+  emits: ['svgOnClickConfigUpdate'],
+  mixins: [mixin, basicActionsMixin, embeddedSvgMixin],
   widget: OhCanvasLayoutDefinition,
   components: {
     OhCanvasLayer
@@ -215,13 +226,202 @@ export default {
     this.$fullscreen.support = true
     this.canvasLayoutStyle()
     this.computeLayout()
+
+    if (this.config.embedSvg) {
+      this.embedSvg().then(() => {
+        this.subscribeEmbeddedSvgListeners()
+        this.setupEmbeddedSvgStateTracking()
+        this.embeddedSvgReady = true
+      })
+    }
   },
   mounted () {
     // Chrome reports a wrong size in fullscreen, store initial resolution and use non-dynamically.
     this.windowWidth = window.screen.width
     this.windowHeight = window.screen.height
   },
+  beforeDestroy () {
+    if (!this.context.editmode) {
+      window.removeEventListener('resize', this.setDimensions)
+    }
+    if (this.config.embedSvg && this.embeddedSvgReady) {
+      this.embeddedSvgReady = false
+      this.unsubscribeEmbeddedSvgListeners()
+      this.unsubscribeEmbeddedSvgStateTracking()
+    }
+  },
   methods: {
+    hsbToRgb (h, s, b) {
+      h = h / 360 // Convert hue to a fraction between 0 and 1
+      s = s / 100 // Convert saturation to a fraction between 0 and 1
+      b = b / 100 // Convert brightness to a fraction between 0 and 1
+
+      if (s === 0) {
+        // Grayscale
+        return [b * 255, b * 255, b * 255]
+      }
+
+      const i = Math.floor(h * 6)
+      const f = h * 6 - i
+      const p = b * (1 - s)
+      const q = b * (1 - s * f)
+      const t = b * (1 - s * (1 - f))
+
+      switch (i % 6) {
+        case 0: return [b * 255, t * 255, p * 255]
+        case 1: return [q * 255, b * 255, p * 255]
+        case 2: return [p * 255, b * 255, t * 255]
+        case 3: return [p * 255, q * 255, b * 255]
+        case 4: return [t * 255, p * 255, b * 255]
+        case 5: return [b * 255, p * 255, q * 255]
+      }
+    },
+    toRGBStyle: function (itemConfig) {
+      if (itemConfig.stateOnColor) {
+        if (itemConfig.stateOnColor?.trim().startsWith('#')) {
+          return itemConfig.stateOnColor
+        } else {
+          const rgbNumbers = itemConfig.stateOnColor.split(',')
+          if (rgbNumbers.length !== 3) {
+            console.log(`invalid rgb values in stateOnColor: ${itemConfig.stateOnColor}`)
+            return '#ff0000' // not valid returns red
+          }
+          const rgb = this.hsbToRgb(rgbNumbers[0], rgbNumbers[1], rgbNumbers[2])
+          return `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`
+        }
+      } else {
+        return undefined
+      }
+    },
+    /*
+         * In Run mode
+         * - Status should be reflected (ON/OFF, OPEN/CLOSE...) by using the below approach of highlighting the element
+         *   - if not <g> then fill with color (e.g. red)
+         *   - if <g> we expect an element in that group that is marked with an attribute flash, use this element by setting opacity to 1 / 0
+         *
+         *  To be fixed
+         *   - we need to be able to choose an Item even if we don't want to have an action (e.g. only showing the state)
+         *   - formulas in input fields are not evaluated but directly converted to config with the current value ... e.g. =item.mysItem.state (where item type is Color)
+         *
+         *  Options
+         *   - Define OFF / ON colors (maybe state to color mapping?) -> stateOnColor (defaults to #00FF##) / stateOffColor (defaults to svg color)
+         *   - use state value for opacity
+         *   - invert opacity value
+         * State Types
+         *  - onOff -> Apply Color to Element. Set to original color of element on OFF. Use StateOnColor if defined for ON/OFF. Set opacity to 1 (ON) /  (0) OFF to show hide that element is active
+         *  - OpenClosed ->
+         *  - HSB -> Apply Color to element style >fill<
+         *  - Percent -> Apply Percent to element opacity
+         *  - Quantity -> Applied to element body, if element is tspan
+         *
+         *  Status types and how to handle them
+         *  - Switch: ON = activate element (via coloring of element or opacity / color of flash element)
+         *  - Contact: OPEN = activate element (via coloring of element or opacity / color of flash element)
+         *  - Color: use the color to fill the element (set opacity) open = 0 / closed = 1
+         *  - Rollershutter:
+         *    - Use percentage to control brightness of color of that element
+         *    - write State-Text to element if element has a <tspan>
+         *  - Image: Expect the element to be an image element in SVG. Set the xlink:href ot the image data from the state -> data:image/png:base64,...
+         *  - String -> State-Text: expects a group that has one <tspan>. Writes the information to that <tspan>
+         *  - DateTime -> State-Text: expects a group that has one <tspan>. Writes the information to that <tspan>
+         *  - Dimmer -> State-Text: expects a group that has one <tspan>. Writes the information to that <tspan>
+         *  - Group -> State-Text: expects a group that has one <tspan>. Writes the information to that <tspan>
+         *  - Location -> State-Text: expects a group that has one <tspan>. Writes the information to that <tspan>
+         *  - Number -> State-Text: expects a group that has one <tspan>. Writes the information to that <tspan>
+         *  - Number:<dimension> -> State-Text: expects a group that has one <tspan>. Writes the information to that <tspan>
+         *  - Player -> State-Text: expects a group that has one <tspan>. Writes the information to that <tspan>
+         *  - Player -> State-Text: expects a group that has one <tspan>. Writes the information to that <tspan>
+         *
+         * Allow NOT to send a command in run-mode when clicking on that icon (e.g. a window or door)
+         */
+    applyStateToSvgElement (el, item, state, stateType, itemConfig) {
+      console.log(`Set ${el.id} for ${item} -> ${state} ${stateType} stateColor: ${itemConfig.stateOnColor}`)
+      const tagName = el.tagName
+      let stateOnColorRgbStyle = this.toRGBStyle(itemConfig)
+
+      switch (stateType) {
+        case 'Quantity':
+          if (el.tagName === 'tspan') {
+            el.innerHTML = state
+          }
+          break
+        case 'OpenClosed':
+        case 'Percent':
+        case 'HSB':
+        case 'OnOff':
+          const useProxy = tagName === 'g' && itemConfig.useProxyElementForState
+          const element = (useProxy) ? el.querySelector('[flash]') : el
+          if (!element) {
+            console.error(`Element ${el} is a group element but has no containing element marked as >flash<`)
+            return
+          }
+          if (state === 'ON' || stateType === 'HSB') {
+            if (useProxy && itemConfig.stateAsOpacity) { // we use the flash element
+              let opacity = (state === 'ON') ? 1 : 0
+              opacity = (itemConfig.invertStateOpacity) ? 1 - opacity : opacity
+              opacity = (opacity < itemConfig.stateMinOpacity) ? itemConfig.stateMinOpacity : opacity
+              // Todo: use fill-opacity if fill not available
+              element.style.opacity = opacity
+            } else {
+              element.oldFill = element.style.fill
+              element.style.fill = (itemConfig.stateOnColor) ? stateOnColorRgbStyle : 'rgb(0, 255, 0)'
+            }
+            if (itemConfig.stateOnAsStyleClass) {
+              if (itemConfig.stateOffAsStyleClass) { // if offStates are provided add OffStates
+                let offStatesArray = itemConfig.stateOffAsStyleClass.split(',')
+                for (const offState of offStatesArray) {
+                  const elementClassInfo = offState.split(':')
+                  document.getElementById(elementClassInfo[0].trim()).classList.remove(elementClassInfo[1].trim())
+                }
+              }
+              let onStatesArray = itemConfig.stateOnAsStyleClass.split(',')
+              for (const onState of onStatesArray) {
+                const elementClassInfo = onState.split(':')
+                document.getElementById(elementClassInfo[0].trim()).classList.add(elementClassInfo[1].trim())
+              }
+            }
+          } else if (state === 'OFF') {
+            const updateColor = (itemConfig.stateOffColor) ? itemConfig.stateOffColor : (element?.oldFill !== 'undefined') ? element?.oldFill : 'undefined'
+            if (updateColor !== 'undefined') {
+              element.style.fill = updateColor
+            }
+            if (itemConfig.stateAsOpacity) { // we use the flash element
+              let opacity = (itemConfig.invertStateOpacity) ? 1 : 0
+              opacity = (opacity < itemConfig.stateMinOpacity) ? itemConfig.stateMinOpacity : opacity
+              element.style.opacity = opacity
+            }
+            if (itemConfig.stateOnAsStyleClass) {
+              // remove OnState-Styles first
+              let onStatesArray = itemConfig.stateOnAsStyleClass.split(',')
+              for (const onState of onStatesArray) {
+                const elementClassInfo = onState.split(':')
+                document.getElementById(elementClassInfo[0].trim()).classList.remove(elementClassInfo[1].trim())
+              }
+              if (itemConfig.stateOffAsStyleClass) { // if offStates are provided add OffStates
+                let offStatesArray = itemConfig.stateOffAsStyleClass.split(',')
+                for (const offState of offStatesArray) {
+                  const elementClassInfo = offState.split(':')
+                  document.getElementById(elementClassInfo[0].trim()).classList.add(elementClassInfo[1].trim())
+                }
+              }
+            }
+          } else { // Percent, OpenClosed
+            if (itemConfig.stateAsOpacity && state) {
+              // we expect that number between 0 - 100
+              let opacity
+              if (stateType === 'OpenClosed') {
+                opacity = (state === 'OPEN') ? 1 : 0
+              } else if (stateType === 'Percent' && !isNaN(state)) {
+                opacity = parseFloat(state) / 100.0
+              }
+              opacity = (itemConfig.invertStateOpacity) ? 1 - opacity : opacity
+              opacity = (opacity < itemConfig.stateMinOpacity) ? itemConfig.stateMinOpacity : opacity
+              element.style.opacity = opacity
+            }
+          }
+          break
+      }
+    },
     isRetina () {
       return window.devicePixelRatio > 1
     },
