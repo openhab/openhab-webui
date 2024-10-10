@@ -77,13 +77,23 @@ export default {
       const svg = this.$refs.canvasBackground.querySelector('svg')
       const subElements = svg.querySelectorAll('[openhab]')
 
+      console.log('Setting up item tracking')
       for (const subElement of subElements) {
         const stateItems = this.config.embeddedSvgActions[subElement.id]?.stateItems
         const actionItem = this.config.embeddedSvgActions[subElement.id]?.actionItem
         const items = stateItems || (actionItem ? [actionItem] : [])
         if (items.length === 0) continue
         for (const item of items) {
-          if (!this.$store.getters.isItemTracked(item)) this.$store.commit('addToTrackingList', item)
+          console.log(`Processing ${item}`)
+          if (!this.$store.getters.isItemTracked(item)) {
+            console.log('  adding item to tracking list')
+            this.$store.commit('addToTrackingList', item)
+            console.log(`Registering call applyState() for ${subElement.id} and ${this.config.embeddedSvgActions[subElement.id]}`)
+          } else {
+            console.log('  ---> item already tracked')
+            console.log(`  ---> not registering call applyState() for ${subElement.id} and ${JSON.stringify(this.config.embeddedSvgActions[subElement.id])}`)
+          }
+
           const unsubscribe = this.$store.subscribe((mutation, state) => {
             if (mutation.type === 'setItemState' && mutation.payload.itemName === item) {
               this.applyStateToSvgElement(subElement, item, state.states.itemStates[item].state, state.states.itemStates[item].type, this.config.embeddedSvgActions[subElement.id])
