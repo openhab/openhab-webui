@@ -62,6 +62,10 @@ const yAxisIndexParameter = pn('yAxisIndex', 'Y Axis Index', 'The index of the Y
 const persistenceServiceParameter = pt('service', 'Persistence Service', 'The identifier of the persistence service to retrieve the data from. Leave blank to the use the default.')
   .c('persistenceService').a()
 
+const boundaryParameter = pb('noBoundary', 'Don\'t Include Boundary', 'Do not get one value before and after the requested period and move them to the start and end of the period').a()
+
+const itemStateParameter = pb('noItemState', 'Don\'t Include Item State', 'Do not add the current Item state into the requested period (the item state will be before or at the end time)').a()
+
 const offsetAmountParameter = pn('offsetAmount', 'Offset Amount', 'Offset to <em>subtract</em> from the displayed period, use if you want to do period comparisons (see also Offset Unit).').a()
 
 const offsetUnitParameter = pt('offsetUnit', 'Offset Unit', 'Offset to <em>subtract</em> from the displayed period, use if you want to do period comparisons (see also Offset Amount).')
@@ -92,6 +96,8 @@ const seriesParameters = [
   nameParameter,
   itemParameter,
   persistenceServiceParameter,
+  boundaryParameter,
+  itemStateParameter,
   offsetAmountParameter,
   offsetUnitParameter
 ]

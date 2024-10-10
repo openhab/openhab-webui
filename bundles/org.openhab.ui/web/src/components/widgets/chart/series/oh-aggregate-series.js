@@ -17,7 +17,7 @@ function dimensionFromDate (d, dimension, invert) {
 }
 
 function includeBoundaryFor (component) {
-  return (!component || !component.config || component.config.aggregationFunction !== 'diff_last') ? undefined : true
+  return (!component || !component.config || component.config.aggregationFunction === 'diff_last') ? true : undefined
 }
 
 export default {
