@@ -8,7 +8,7 @@
     </template>
   </f7-input>
   <f7-row no-gap v-else class="oh-input-with-send-button" :style="config.style">
-    <f7-input class="input-field col-90" ref="input" v-bind="config"
+    <f7-input class="input-field col-80" ref="input" v-bind="config"
               :value="((config.type && config.type.indexOf('date') === 0) || config.type === 'time') ? valueForDatepicker : value"
               :calendar-params="calendarParams" :step="config.step ? config.step : 'any'"
               @input="$evt => updated($evt.target.value)" :change="updated" @calendar:change="updated" @texteditor:change="updated" @colorpicker:change="updated">
