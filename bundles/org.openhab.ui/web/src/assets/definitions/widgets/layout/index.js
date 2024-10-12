@@ -90,6 +90,10 @@ export function OhCanvasLayoutDefinition () {
       pt('imageUrl', 'Image URL', 'The URL of the image to display as background').c('url'),
       pt('imageSrcSet', 'Image Source Set', 'The src-set attribute of background image element to take into account multiple device resolutions. For example: "/static/floorplans/floor-0.jpg, /static/floorplans/floor-0@2x.jpg 2x"')
     ])
+    .paramGroup(pg('svgEmbedding', 'SVG Embedding'), [
+      pb('embedSvg', 'Embed SVG', 'Embed SVG image directly into the page (default false)'),
+      pb('embedSvgFlashing', 'Embed SVG Flashing in Run-Mode', 'Flashes SVG elements on hovering in run-mode as well (default false)')
+    ])
     .paramGroup(pg('appearance', 'Appearance'), [
       pb('hideNavbar', 'Hide Navigation bar', 'Hide navigation bar on top when page is displayed (You can additionally hide the sidebar using its pin icon) (default false)')
         .v((value, configuration, configDescription, parameters) => { return configuration.layoutType === 'fixed' }),
