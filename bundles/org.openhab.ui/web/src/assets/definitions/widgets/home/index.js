@@ -5,6 +5,8 @@ export const OhHomePageDefinition = () => new WidgetDefinition('oh-home-page', '
   .params([
     pb('simpleNavbarMobileDefault', 'Default to Simple Navbar on Mobile', 'Use the simple navbar by default on mobile devices'),
     pb('simpleNavbarDesktopDefault', 'Default to Simple Navbar on Desktop', 'Use the simple navbar by default on desktop devices'),
+    pb('standardBackgroundMobileDefault', 'Default to Standard Background on Mobile', 'Use the standard background (light grey in light mode) by default on mobile devices'),
+    pb('standardBackgroundDesktopDefault', 'Default to Standard Background on Desktop', 'Use the standard background (light grey in light mode) by default on desktop devices'),
     pt('displayModelCardsTo', 'Display model cards to', 'Restrict who sees the Locations/Equipment/Properties tabs with the model cards')
       .o([
         { value: 'role:administrator', label: 'Administrators' },

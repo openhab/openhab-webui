@@ -66,7 +66,17 @@
           </f7-list-item>
           <f7-list-item>
             <span v-t="'about.miscellaneous.home.background'" />
-            <f7-toggle :checked="homePageBackground === 'standard'" @toggle:change="setHomePageBackground" />
+            <f7-segmented class="home-navbar-selection">
+              <f7-button outline small :active="homePageBackground === 'default'" @click="setHomePageBackground('default')">
+                {{ $t('about.miscellaneous.home.background.default') }}
+              </f7-button>
+              <f7-button outline small :active="homePageBackground === 'standard'" @click="setHomePageBackground('standard')">
+                {{ $t('about.miscellaneous.home.background.standard') }}
+              </f7-button>
+              <f7-button outline small :active="homePageBackground === 'white'" @click="setHomePageBackground('white')">
+                {{ $t('about.miscellaneous.home.background.white') }}
+              </f7-button>
+            </f7-segmented>
           </f7-list-item>
           <f7-list-item v-show="$store.getters.apiEndpoint('habot')">
             <span v-t="'about.miscellaneous.home.hideChatInput'" />
@@ -133,7 +143,7 @@ export default {
       location.reload()
     },
     setHomePageBackground (value) {
-      localStorage.setItem('openhab.ui:theme.home.background', (value) ? 'standard' : 'default')
+      localStorage.setItem('openhab.ui:theme.home.background', value)
       location.reload()
     },
     setHideChatInput (value) {
