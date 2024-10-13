@@ -1,10 +1,10 @@
 <template>
-  <f7-page stacked name="HomePage" class="page-home" :class="{ 'standard-background': $f7.data.themeOptions.homeBackground === 'standard' }" @page:init="onPageInit" @page:beforein="onPageBeforeIn" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
-    <f7-navbar :large="$f7.data.themeOptions.homeNavbar !== 'simple'" :large-transparent="$f7.data.themeOptions.homeNavbar !== 'simple'" class="home-nav disable-user-select">
+  <f7-page stacked name="HomePage" class="page-home" :class="{ 'standard-background': standardBackground }" @page:init="onPageInit" @page:beforein="onPageBeforeIn" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
+    <f7-navbar :large="!simpleNavbar" :large-transparent="!simpleNavbar" class="home-nav disable-user-select">
       <f7-nav-left>
         <f7-link icon-ios="f7:menu" icon-aurora="f7:menu" icon-md="material:menu" panel-open="left" />
       </f7-nav-left>
-      <f7-nav-title-large v-if="$f7.data.themeOptions.homeNavbar !== 'simple'" class="home-title-large">
+      <f7-nav-title-large v-if="!simpleNavbar" class="home-title-large">
         <span class="today">{{ new Date().toLocaleString($store.getters.locale, { weekday: 'long', day: 'numeric', month: 'long' }) }}</span>
         {{ title }}
       </f7-nav-title-large>
@@ -111,6 +111,24 @@ export default {
     context () {
       return {
         store: this.$store.getters.trackedItems
+      }
+    },
+    simpleNavbar () {
+      const homeNavbar = this.$f7.data.themeOptions.homeNavbar
+      if (homeNavbar !== 'default') return homeNavbar === 'simple'
+      if (this.$f7.device.desktop) {
+        return this.homePageComponent?.config?.simpleNavbarDesktopDefault === true
+      } else {
+        return this.homePageComponent?.config?.simpleNavbarMobileDefault === true
+      }
+    },
+    standardBackground () {
+      const homeBackground = this.$f7.data.themeOptions.homeBackground
+      if (homeBackground !== 'default') return homeBackground === 'standard'
+      if (this.$f7.device.desktop) {
+        return this.homePageComponent?.config?.standardBackgroundDesktopDefault === true
+      } else {
+        return this.homePageComponent?.config?.standardBackgroundMobileDefault === true
       }
     },
     homePageComponent () {
