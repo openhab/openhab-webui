@@ -309,7 +309,10 @@ public class ClientInstaller {
                         // never ever overwrite existing config files
                         continue;
                     }
-                    new File(file.getParent()).mkdirs();
+                    String parent = file.getParent();
+                    if (parent != null) {
+                        new File(parent).mkdirs();
+                    }
 
                     try (InputStream is = zipFile.getInputStream(entry); OutputStream os = new FileOutputStream(file)) {
                         for (int len; (len = is.read(BUFFER)) != -1;) {

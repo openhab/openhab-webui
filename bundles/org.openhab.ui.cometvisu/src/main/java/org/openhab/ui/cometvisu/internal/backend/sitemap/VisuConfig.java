@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.XMLConstants;
@@ -117,7 +118,7 @@ public class VisuConfig {
 
         // set relative path to XSD file
         File rootFolder = new File(Config.cometvisuWebfolder);
-        File file = new File(rootFolder, req.getPathInfo());
+        File file = new File(rootFolder, Objects.requireNonNull(req.getPathInfo(), "Path info should not be null"));
         String relXsd = "";
         File parent = file.getParentFile();
         File schema = new File(parent, "visu_config.xsd");
