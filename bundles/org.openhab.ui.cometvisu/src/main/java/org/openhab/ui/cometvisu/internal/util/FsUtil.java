@@ -113,9 +113,12 @@ public class FsUtil {
     }
 
     public void saveFile(File file, InputStream fileInputStream, String hash) throws FileOperationException {
-        File parentDir = new File(file.getParent());
-        if (!parentDir.exists()) {
-            parentDir.mkdirs();
+        String parent = file.getParent();
+        if (parent != null) {
+            File parentDir = new File(parent);
+            if (!parentDir.exists()) {
+                parentDir.mkdirs();
+            }
         }
         // check hash
         try {
