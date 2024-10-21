@@ -1,5 +1,5 @@
 <template>
-  <f7-block>
+  <f7-block class="theme-switcher">
     <f7-block-title class="padding-left" v-t="'about.theme'" />
     <f7-row>
       <f7-col width="25" class="theme-picker auto" @click="switchTheme('auto')">
@@ -52,11 +52,31 @@
         <f7-list>
           <f7-list-item>
             <span v-t="'about.miscellaneous.home.navbar'" />
-            <f7-toggle :checked="homePageNavbarStyle === 'simple'" @toggle:change="setHomePageNavbarStyle" />
+            <f7-segmented class="home-navbar-selection">
+              <f7-button outline small :active="homePageNavbarStyle === 'default'" @click="setHomePageNavbarStyle('default')">
+                {{ $t('about.miscellaneous.home.navbar.default') }}
+              </f7-button>
+              <f7-button outline small :active="homePageNavbarStyle === 'simple'" @click="setHomePageNavbarStyle('simple')">
+                {{ $t('about.miscellaneous.home.navbar.simple') }}
+              </f7-button>
+              <f7-button outline small :active="homePageNavbarStyle === 'large'" @click="setHomePageNavbarStyle('large')">
+                {{ $t('about.miscellaneous.home.navbar.large') }}
+              </f7-button>
+            </f7-segmented>
           </f7-list-item>
           <f7-list-item>
             <span v-t="'about.miscellaneous.home.background'" />
-            <f7-toggle :checked="homePageBackground === 'standard'" @toggle:change="setHomePageBackground" />
+            <f7-segmented class="home-navbar-selection">
+              <f7-button outline small :active="homePageBackground === 'default'" @click="setHomePageBackground('default')">
+                {{ $t('about.miscellaneous.home.background.default') }}
+              </f7-button>
+              <f7-button outline small :active="homePageBackground === 'standard'" @click="setHomePageBackground('standard')">
+                {{ $t('about.miscellaneous.home.background.standard') }}
+              </f7-button>
+              <f7-button outline small :active="homePageBackground === 'white'" @click="setHomePageBackground('white')">
+                {{ $t('about.miscellaneous.home.background.white') }}
+              </f7-button>
+            </f7-segmented>
           </f7-list-item>
           <f7-list-item v-show="$store.getters.apiEndpoint('habot')">
             <span v-t="'about.miscellaneous.home.hideChatInput'" />
@@ -80,6 +100,14 @@
     </f7-row>
   </f7-block>
 </template>
+
+<style lang="stylus">
+.theme-switcher
+  .home-navbar-selection
+    .button
+      width auto
+</style>
+
 <script>
 import { loadLocaleMessages } from '@/js/i18n'
 import ItemPicker from '@/components/config/controls/item-picker.vue'
@@ -111,11 +139,11 @@ export default {
       location.reload()
     },
     setHomePageNavbarStyle (value) {
-      localStorage.setItem('openhab.ui:theme.home.navbar', (value) ? 'simple' : 'default')
+      localStorage.setItem('openhab.ui:theme.home.navbar', value)
       location.reload()
     },
     setHomePageBackground (value) {
-      localStorage.setItem('openhab.ui:theme.home.background', (value) ? 'standard' : 'default')
+      localStorage.setItem('openhab.ui:theme.home.background', value)
       location.reload()
     },
     setHideChatInput (value) {
