@@ -1,7 +1,7 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="thing-details-page">
     <f7-navbar :title="pageTitle + dirtyIndicator" back-link="Back" no-hairline>
-      <f7-nav-right v-show="!error && ready">
+      <f7-nav-right v-if="!error && ready">
         <f7-link v-if="!editable" icon-f7="lock_fill" icon-only tooltip="This Thing is not editable through the UI" />
         <f7-link v-else-if="$theme.md" icon-md="material:save" icon-only @click="save()" />
         <f7-link v-else @click="save()">
@@ -92,6 +92,15 @@
                           :status="configStatusInfo"
                           :set-empty-config-as-null="true"
                           :read-only="!editable" />
+
+            <template v-if="thingActions.length > 0">
+              <f7-block-title medium class="no-margin-top">
+                Actions
+              </f7-block-title>
+              <f7-list class="margin-top">
+                <f7-list-button v-for="action in thingActions" color="blue" :key="action.name" :title="action.label" @click="doThingAction(action)" />
+              </f7-list>
+            </template>
           </f7-col>
         </f7-block>
         <!-- skeletons for not ready -->
@@ -266,6 +275,7 @@ import buildTextualDefinition from './thing-textual-definition'
 import ThingStatus from '@/components/thing/thing-status-mixin'
 
 import DirtyMixin from '../dirty-mixin'
+import ThingActionPopup from '@/pages/settings/things/thing-action-popup.vue'
 
 let copyToast = null
 
@@ -291,7 +301,11 @@ export default {
       thingType: {},
       channelTypes: {},
       configDescriptions: {},
+      thingActions: [],
       configStatusInfo: [],
+      /**
+       * @deprecated
+       */
       configActionsByGroup: [],
       thingEnabled: true,
       codePopupOpened: false,
@@ -397,6 +411,24 @@ export default {
         this.thingYaml = this.toYaml()
       }
     },
+    /**
+     * Loads the Thing actions.
+     *
+     * @returns {Promise<void>}
+     */
+    loadThingActions () {
+      return this.$oh.api.get('/rest/actions/' + this.thingId).then(data => {
+        this.thingActions = data
+        return Promise.resolve()
+      }).catch(err => {
+        if (err === 'Not Found' || err === 404) {
+          console.log('No actions available for this Thing')
+          return Promise.resolve()
+        }
+        console.error('Error loading thing actions: ' + err)
+        return Promise.reject(err)
+      })
+    },
     load () {
       // if (this.ready) return
       if (this.loading) return
@@ -413,10 +445,11 @@ export default {
       this.$oh.api.get('/rest/things/' + this.thingId).then(data => {
         this.$set(this, 'thing', data)
 
-        let typePromises = [this.$oh.api.get('/rest/thing-types/' + this.thing.thingTypeUID),
-          this.$oh.api.get('/rest/channel-types?prefixes=system,' + this.thing.thingTypeUID.split(':')[0])]
+        const promises = [this.$oh.api.get('/rest/thing-types/' + this.thing.thingTypeUID),
+          this.$oh.api.get('/rest/channel-types?prefixes=system,' + this.thing.thingTypeUID.split(':')[0]),
+          this.loadThingActions()]
 
-        Promise.all(typePromises).then(data2 => {
+        Promise.all(promises).then(data2 => {
           this.thingType = data2[0]
           this.channelTypes = data2[1]
 
@@ -490,6 +523,9 @@ export default {
       }
       return uiActions
     },
+    /**
+     * @deprecated to be removed once all Things that use config actions use real Thing actions instead
+     */
     getBindingActions (configDescriptionsResponse) {
       // Returns an array of parameters which qualify as "actions", grouped by the paramGroup. The actions themselves are enriched by execute() method
       let actionContextGroups = configDescriptionsResponse.parameterGroups.filter((pg) => pg.context === 'actions')
@@ -544,6 +580,23 @@ export default {
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
+      })
+    },
+    doThingAction (action) {
+      const popup = {
+        component: ThingActionPopup
+      }
+      this.$f7router.navigate({
+        url: 'thing-action',
+        route: {
+          path: 'thing-action',
+          popup
+        }
+      }, {
+        props: {
+          thingUID: this.thingId,
+          action
+        }
       })
     },
     doConfigAction (action) {
