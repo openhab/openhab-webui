@@ -10,7 +10,7 @@
         <span v-if="status.statusCode">Status Code: &nbsp;{{ status.statusCode }}&nbsp;&nbsp;</span>
         <span v-if="status.message">{{ status.message }}</span>
       </div>
-      <small v-html="`${configDescription.required ? '<strong>Required</strong>&nbsp;' : ''}${configDescription.description || ''}`" />
+      <small v-html="`${configDescription.required ? '<strong>Required</strong>&nbsp;' : ''}${description || ''}`" />
     </f7-block-footer>
   </f7-list>
 </template>
@@ -94,6 +94,13 @@ export default {
         return ParameterQrcode
       }
       return ParameterText
+    },
+    description () {
+      // TODO: Remove this when proper UoM support is implemented for config parameters
+      // Adds the unit to the description if it is available, UoM support is currently implemented through number parameters
+      // where the user can enter the amount for the default unit
+      if (this.configDescription.unit) return `${this.configDescription.description} (${this.configDescription.unit})`
+      return this.configDescription.description
     }
   },
   mounted () {
