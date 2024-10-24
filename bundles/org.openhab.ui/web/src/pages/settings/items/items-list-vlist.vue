@@ -34,7 +34,15 @@
       <f7-list-item title="Nothing found" />
     </f7-list>
 
-    <f7-block class="block-narrow">
+    <f7-block class="block-narrow margin-top-half">
+      <f7-col>
+        <div>
+          <f7-block-footer class="no-margin-top" style="padding-left: 16px; padding-right: 16px">
+            Note: Item states are not updated in real-time. Click the refresh button to update.
+          </f7-block-footer>
+        </div>
+      </f7-col>
+
       <!-- skeleton for not ready -->
       <f7-col v-show="!ready">
         <f7-block-title>&nbsp;Loading...</f7-block-title>
@@ -135,6 +143,7 @@ export default {
   data () {
     return {
       ready: false,
+      loading: false,
       items: [], // [{ label: 'Staircase', name: 'Staircase'}],
       vlData: {
         items: []
@@ -159,6 +168,9 @@ export default {
       this.$f7.data.lastItemSearchQuery = this.$refs.searchbar?.f7Searchbar.query
     },
     load () {
+      if (this.loading) return
+      this.loading = true
+
       if (this.ready) this.$f7.data.lastItemSearchQuery = this.$refs.searchbar?.f7Searchbar.query
       this.ready = false
 
@@ -178,6 +190,7 @@ export default {
           this.$refs.searchbar?.f7Searchbar.search(this.$f7.data.lastItemSearchQuery || '')
         })
 
+        this.loading = false
         this.ready = true
       })
     },
