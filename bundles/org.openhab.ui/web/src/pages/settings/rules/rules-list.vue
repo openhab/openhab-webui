@@ -1,17 +1,17 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:afterout="stopEventSource">
+  <f7-page @page:afterin="onPageAfterIn" @page:afterout="onPageBeforeOut">
     <f7-navbar :title="type" back-link="Settings" back-link-url="/settings/" back-link-force>
       <f7-nav-right>
         <developer-dock-icon />
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
                  :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
       </f7-nav-right>
-      <f7-subnavbar :inner="false" v-show="initSearchbar">
+      <f7-subnavbar :inner="false" v-show="ready">
+        <!-- Only render searchbar, if page is ready. Otherwise searchbar is broken after changes to the rules list. -->
         <f7-searchbar
-          v-if="initSearchbar"
+          v-if="ready"
           ref="searchbar"
           class="searchbar-rules"
-          :init="initSearchbar"
           search-container=".rules-list"
           search-item=".rulelist-item"
           search-in=".item-title, .item-text, .item-after, .item-subtitle, .item-header, .item-footer"
@@ -52,11 +52,11 @@
       <f7-list-item title="Nothing found" />
     </f7-list>
 
+    <!-- no rule engine available -->
     <empty-state-placeholder v-if="noRuleEngine" icon="exclamationmark_triangle" title="rules.missingengine.title" text="rules.missingengine.text" />
-
-    <f7-block class="block-narrow" v-show="!noRuleEngine">
-      <!-- skeleton for not ready -->
-      <f7-col v-if="!ready">
+    <!-- rule engine available but not yet ready -->
+    <f7-block v-else-if="!noRuleEngine && !ready" class="block-narrow">
+      <f7-col v-show="!ready">
         <f7-block-title>&nbsp;Loading...</f7-block-title>
         <f7-list contacts-list class="col rules-list">
           <f7-list-group>
@@ -72,8 +72,20 @@
           </f7-list-group>
         </f7-list>
       </f7-col>
+    </f7-block>
+    <!-- rule engine available and ready, but no rules -->
+    <f7-block v-else-if="ready && !rules.length" class="block-narrow">
+      <empty-state-placeholder v-if="showScripts" icon="doc_plaintext" title="scripts.title" text="scripts.text" />
+      <empty-state-placeholder v-else-if="showScenes" icon="film" title="scenes.title" text="scenes.text" />
+      <empty-state-placeholder v-else icon="wand_stars" title="rules.title" text="rules.text" />
+      <f7-row v-if="$f7.width < 1280" class="display-flex justify-content-center">
+        <f7-button large fill color="blue" external :href="`${$store.state.websiteUrl}/link/${type.toLowerCase()}`" target="_blank" v-t="'home.overview.button.documentation'" />
+      </f7-row>
+    </f7-block>
 
-      <f7-col v-else-if="rules.length > 0">
+    <!-- rule engine available and ready and has rules -->
+    <f7-block class="block-narrow" v-show="!noRuleEngine && ready && rules.length > 0">
+      <f7-col>
         <f7-block-title class="searchbar-hide-on-search">
           {{ filteredRules.length }} {{ type.toLowerCase() }} {{ selectedTags.length > 0 ? ' - ' : '' }}
           <f7-link v-if="selectedTags.length > 0" @click="selectedTags = []">
@@ -131,15 +143,6 @@
       </f7-col>
     </f7-block>
 
-    <f7-block v-if="ready && !noRuleEngine && !rules.length" class="block-narrow">
-      <empty-state-placeholder v-if="showScripts" icon="doc_plaintext" title="scripts.title" text="scripts.text" />
-      <empty-state-placeholder v-else-if="showScenes" icon="film" title="scenes.title" text="scenes.text" />
-      <empty-state-placeholder v-else icon="wand_stars" title="rules.title" text="rules.text" />
-      <f7-row v-if="$f7.width < 1280" class="display-flex justify-content-center">
-        <f7-button large fill color="blue" external :href="`${$store.state.websiteUrl}/link/${type.toLowerCase()}`" target="_blank" v-t="'home.overview.button.documentation'" />
-      </f7-row>
-    </f7-block>
-
     <f7-fab v-show="ready && !showCheckboxes" position="right-bottom" slot="fixed" color="blue" href="add">
       <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
       <f7-icon ios="f7:close" md="material:close" aurora="f7:close" />
@@ -165,7 +168,6 @@ export default {
       ruleStatuses: {},
       uniqueTags: [],
       selectedTags: [],
-      initSearchbar: false,
       selectedItems: [],
       showCheckboxes: false,
       eventSource: null
@@ -203,9 +205,17 @@ export default {
     onPageAfterIn () {
       this.load()
     },
+    onPageBeforeOut () {
+      this.stopEventSource()
+      this.$f7.data[`last${this.type}SearchQuery`] = this.$refs.searchbar?.f7Searchbar.query
+    },
     load () {
       if (this.loading) return
       this.loading = true
+
+      if (this.ready) this.$f7.data[`last${this.type}SearchQuery`] = this.$refs.searchbar?.f7Searchbar.query
+      this.ready = false
+
       this.$set(this, 'selectedItems', [])
       this.showCheckboxes = false
       let filter = ''
@@ -243,14 +253,13 @@ export default {
 
         this.loading = false
         this.ready = true
-        setTimeout(() => {
-          this.initSearchbar = true
+
+        this.$nextTick(() => {
           if (this.$refs.listIndex) this.$refs.listIndex.update()
-          this.$nextTick(() => {
-            if (this.$device.desktop && this.$refs.searchbar) {
-              this.$refs.searchbar.f7Searchbar.$inputEl[0].focus()
-            }
-          })
+          if (this.$device.desktop && this.$refs.searchbar) {
+            this.$refs.searchbar.f7Searchbar.$inputEl[0].focus()
+          }
+          this.$refs.searchbar?.f7Searchbar.search(this.$f7.data[`last${this.type}SearchQuery`] || '')
         })
 
         if (!this.eventSource) this.startEventSource()
@@ -275,6 +284,7 @@ export default {
             // skip status updates for RUNNING for performance reasons (can be easily skipped as it was never really shown due to the short execution time of rules)
             if (newStatus.status === 'RUNNING') return
 
+            if (!this.ruleStatuses[uid]) this.ruleStatuses[uid] = {}
             this.ruleStatuses[uid].status = newStatus.status
             this.ruleStatuses[uid].statusDetail = newStatus.statusDetail
         }
