@@ -7,7 +7,7 @@
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
           v-if="initSearchbar"
-          :init="initSearchbar"
+          ref="searchbar"
           search-container=".semantic-tree"
           search-item=".treeview-item"
           search-in=".treeview-item-label"
@@ -269,9 +269,6 @@ export default {
       itemDetailsKey: this.$f7.utils.id()
     }
   },
-  created () {
-
-  },
   computed: {
     empty () {
       let emptySemantic = !this.rootLocations.length && !this.rootEquipment.length && !this.rootPoints.length
@@ -287,7 +284,7 @@ export default {
     }
   },
   methods: {
-    onPageAfterIn (ev) {
+    onPageAfterIn () {
       this.$store.dispatch('startTrackingStates')
       if (this.selectedItem) {
         this.update()
@@ -299,6 +296,7 @@ export default {
       this.detailsOpened = false
       this.$store.dispatch('stopTrackingStates')
       this.stopEventSource()
+      this.$f7.data.lastModelSearchQuery = this.$refs.searchbar?.f7Searchbar.query
     },
     modelItem (item) {
       const modelItem = {
@@ -326,9 +324,16 @@ export default {
       return modelItem
     },
     load () {
+      if (this.initSearchbar) this.$f7.data.lastModelSearchQuery = this.$refs.searchbar?.f7Searchbar.query
+      this.initSearchbar = false
+
       this.loadModel().then(() => {
+        this.initSearchbar = true
         this.$nextTick(() => {
-          this.initSearchbar = true
+          if (this.$device.desktop && this.$refs.searchbar) {
+            this.$refs.searchbar.f7Searchbar.$inputEl[0].focus()
+          }
+          this.$refs.searchbar?.f7Searchbar.search(this.$f7.data.lastModelSearchQuery || '')
           this.applyExpandedOption()
         })
         if (!this.eventSource) this.startEventSource()
