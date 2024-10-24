@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
+import buildInfo from '@/assets/build-info'
+
 import components from './modules/components'
 import model from './modules/model'
 import states from './modules/states'
@@ -27,7 +29,7 @@ const store = new Vuex.Store({
     locale: null,
     runtimeInfo: null,
     uiInfo: {
-      commit: '%GIT_COMMIT_HASH%' // replaced during production build
+      commit: buildInfo.commit
     },
     websiteUrl: null,
     developerDock: false,

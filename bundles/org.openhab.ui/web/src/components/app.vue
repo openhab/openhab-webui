@@ -254,6 +254,8 @@
 <script>
 import Framework7 from 'framework7/framework7-lite.esm.bundle.js'
 
+import buildInfo from '@/assets/build-info'
+
 import routes from '@/js/routes.js'
 import PanelRight from '@/pages/panel-right.vue'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
@@ -297,7 +299,7 @@ export default {
       f7params: {
         id: 'org.openhab.ui', // App bundle ID
         name: 'openHAB', // App name
-        version: '%VERSION%', // App version, replaced during production build
+        version: buildInfo.version, // App version
         theme: theme || 'auto',
         // theme: (document.documentURI && document.documentURI.indexOf('?theme=ios') > 0) ? 'ios'
         //   : (document.documentURI && document.documentURI.indexOf('?theme=md') > 0) ? 'md'
