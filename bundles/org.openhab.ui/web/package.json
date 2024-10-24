@@ -23,11 +23,14 @@
     "bundler": "webpack"
   },
   "scripts": {
+    "generate-build-info": "node build/generate-build-info.mjs",
     "build-prod": "cross-env NODE_ENV=production node ./build/build.js",
     "webpack-analyzer": "cross-env NODE_ENV=production cross-env WEBPACK_ANALYZER=1 node ./build/build.js",
     "webpack-analyzer-report": "cross-env NODE_ENV=production cross-env WEBPACK_ANALYZER=1 WEBPACK_ANALYZER_REPORT=1 node ./build/build.js",
     "webpack-analyzer-report-stats": "cross-env NODE_ENV=production cross-env WEBPACK_ANALYZER=1 WEBPACK_ANALYZER_REPORT=1 WEBPACK_ANALYZER_REPORT_STATS=1 node ./build/build.js",
+    "predev:blockly": "cross-env NODE_ENV=development npm run generate-build-info",
     "dev:blockly": "cross-env SOURCE_MAPS=1 NODE_ENV=development webpack-dev-server --config ./build/webpack.config.js",
+    "predev": "cross-env NODE_ENV=development npm run generate-build-info",
     "dev": "cross-env NODE_ENV=development webpack-dev-server --config ./build/webpack.config.js",
     "start": "npm run dev",
     "lint": "npx eslint --ext js --ext vue src",
@@ -149,7 +152,6 @@
     "postcss-loader": "^8.1.1",
     "postcss-preset-env": "^10.0.0",
     "process": "^0.11.10",
-    "replace-in-file": "^7.2.0",
     "rimraf": "^6.0.1",
     "standard": "^17.1.0",
     "style-loader": "^4.0.0",
