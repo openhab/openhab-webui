@@ -11,6 +11,6 @@ bin/
 bundles/**/src/main/history
 features/**/src/main/history
 features/**/src/main/feature
-npm-debug.log
+*.log
 node_modules/
 .idea
