@@ -1,16 +1,16 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:afterout="stopEventSource">
+  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar title="Schedule" back-link="Settings" back-link-url="/settings/" back-link-force>
       <f7-nav-right>
         <developer-dock-icon />
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
                  :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
       </f7-nav-right>
-      <f7-subnavbar :inner="false" v-show="initSearchbar">
+      <f7-subnavbar :inner="false" v-show="ready">
         <f7-searchbar
-          v-if="initSearchbar"
+          v-if="ready"
+          ref="searchbar"
           class="searchbar-schedule"
-          :init="initSearchbar"
           search-container=".timeline"
           search-item=".timeline-item-inner"
           search-in=".timeline-item-title"
@@ -92,7 +92,6 @@ export default {
       rules: [],
       noRuleEngine: false,
       calendar: {},
-      initSearchbar: false,
       selectedItems: [],
       showCheckboxes: false,
       eventSource: null
@@ -105,9 +104,17 @@ export default {
     onPageAfterIn () {
       this.load()
     },
+    onPageBeforeOut () {
+      this.stopEventSource()
+      this.$f7.data.lastScheduleSearchQuery = this.$refs.searchbar?.f7Searchbar.query
+    },
     load () {
       if (this.loading) return
       this.loading = true
+
+      if (this.ready) this.$f7.data.lastScheduleSearchQuery = this.$refs.searchbar?.f7Searchbar.query
+      this.ready = false
+
       let occurrences = []
 
       let start = new Date(), limit = new Date()
@@ -115,7 +122,6 @@ export default {
 
       this.$oh.api.get('/rest/rules/schedule/simulations?from=' + start.toISOString() + '&until=' + limit.toISOString()).then(data => {
         this.rules = data
-        this.initSearchbar = true
         this.loading = false
 
         // map RulesExecutions per time
@@ -139,7 +145,6 @@ export default {
           const dayISODate = day.toISOString().split('T')[0]
           const dayOccurrences = occurrences.filter((o) => {
             const occurrenceISODate = o[0].split('T')[0]
-            const rule = o[1]
             return occurrenceISODate === dayISODate
           })
           cal[year][month][dayofmonth] = dayOccurrences
@@ -148,6 +153,13 @@ export default {
 
         this.ready = true
         if (!this.eventSource) this.startEventSource()
+
+        this.$nextTick(() => {
+          if (this.$device.desktop && this.$refs.searchbar) {
+            this.$refs.searchbar.f7Searchbar.$inputEl[0].focus()
+          }
+          this.$refs.searchbar?.f7Searchbar.search(this.$f7.data.lastScheduleSearchQuery || '')
+        })
       }).catch((err, status) => {
         if (err === 'Not Found' || status === 404) {
           this.noRuleEngine = true

@@ -1,17 +1,16 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:afterout="onPageAfterOut">
+  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar title="Pages" back-link="Settings" back-link-url="/settings/" back-link-force>
       <f7-nav-right>
         <developer-dock-icon />
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
                  :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
       </f7-nav-right>
-      <f7-subnavbar :inner="false" v-show="initSearchbar">
+      <f7-subnavbar :inner="false" v-show="ready">
         <f7-searchbar
-          v-if="initSearchbar"
+          v-if="ready"
           ref="searchbar"
           class="searchbar-pages"
-          :init="initSearchbar"
           search-container=".pages-list"
           search-item=".pagelist-item"
           search-in=".item-title, .item-subtitle, .item-header, .item-footer"
@@ -161,7 +160,6 @@ export default {
       ready: false,
       loading: false,
       pages: [],
-      initSearchbar: false,
       selectedItems: [],
       groupBy: 'alphabetical',
       showCheckboxes: false,
@@ -213,12 +211,16 @@ export default {
     onPageAfterIn () {
       this.load()
     },
-    onPageAfterOut () {
-
+    onPageBeforeOut () {
+      this.$f7.data.lastPagesSearchQuery = this.$refs.searchbar?.f7Searchbar.query
     },
     load () {
       if (this.loading) return
       this.loading = true
+
+      if (this.ready) this.$f7.data.lastPagesSearchQuery = this.$refs.searchbar?.f7Searchbar.query
+      this.ready = false
+
       this.$set(this, 'selectedItems', [])
       this.showCheckboxes = false
       let promises = [
@@ -233,14 +235,13 @@ export default {
 
         this.loading = false
         this.ready = true
-        setTimeout(() => {
-          this.initSearchbar = true
-          this.$refs.listIndex.update()
-          this.$nextTick(() => {
-            if (this.$device.desktop && this.$refs.searchbar) {
-              this.$refs.searchbar.f7Searchbar.$inputEl[0].focus()
-            }
-          })
+
+        this.$nextTick(() => {
+          if (this.$refs.listIndex) this.$refs.listIndex.update()
+          if (this.$device.desktop && this.$refs.searchbar) {
+            this.$refs.searchbar.f7Searchbar.$inputEl[0].focus()
+          }
+          this.$refs.searchbar?.f7Searchbar.search(this.$f7.data.lastPagesSearchQuery || '')
         })
       })
     },
