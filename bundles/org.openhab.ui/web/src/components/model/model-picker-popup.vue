@@ -67,13 +67,10 @@
 <script>
 import ModelTreeview from '@/components/model/model-treeview.vue'
 
-import { compareItems } from '@/components/widgets/widget-order'
-
-function compareModelItems (o1, o2) {
-  return compareItems(o1.item || o1, o2.item || o2)
-}
+import ModelMixin from '@/pages/settings/model/model-mixin'
 
 export default {
+  mixins: [ModelMixin],
   props: ['value', 'multiple', 'semanticOnly', 'groupsOnly', 'editableOnly', 'allowEmpty', 'popupTitle', 'actionLabel'],
   components: {
     ModelTreeview
@@ -81,26 +78,12 @@ export default {
   data () {
     if (!this.$f7.data.modelPicker) this.$f7.data.modelPicker = {}
     return {
-      ready: false,
-      loading: false,
       initSearchbar: false,
-      includeNonSemantic: false,
       includeItemName: this.$f7.data.modelPicker.includeItemName || false,
       includeItemTags: this.$f7.data.modelPicker.includeItemTags || false,
       expanded: this.$f7.data.modelPicker.expanded || false,
       doubleClickStarted: null,
       doubleClickItem: null,
-      items: [],
-      links: [],
-      locations: [],
-      rootLocations: [],
-      equipment: {},
-      rootEquipment: [],
-      rootPoints: [],
-      rootGroups: [],
-      rootItems: [],
-      selectedItem: null,
-      previousSelection: null,
       checkedItems: []
     }
   },
@@ -139,8 +122,8 @@ export default {
     modelItem (item) {
       const modelItem = {
         item,
-        opened: (item.type.indexOf('Group') === 0) ? false : undefined,
-        checked: undefined,
+        opened: false,
+        checked: false,
         class: (item.metadata && item.metadata.semantics) ? item.metadata.semantics.value : '',
         children: {
           locations: [],
@@ -170,115 +153,13 @@ export default {
 
       return modelItem
     },
-    load (update) {
-      // if (this.ready) return
-      this.loading = true
-      const items = this.$oh.api.get('/rest/items?staticDataOnly=true&metadata=.+')
-      const links = this.$oh.api.get('/rest/links')
-      Promise.all([items, links]).then((data) => {
-        if (this.editableOnly) {
-          this.items = data[0].filter((i) => i.editable)
-        } else {
-          this.items = data[0]
-        }
-        this.links = data[1]
-
-        if (this.newItem) {
-          this.items.push(this.newItem)
-        }
-
-        this.locations = this.items.filter((i) => i.metadata && i.metadata.semantics && i.metadata.semantics.value.indexOf('Location') === 0)
-        this.equipment = this.items.filter((i) => i.metadata && i.metadata.semantics && i.metadata.semantics.value.indexOf('Equipment') === 0)
-        this.points = this.items.filter((i) => i.metadata && i.metadata.semantics && i.metadata.semantics.value.indexOf('Point') === 0)
-
-        this.rootLocations = this.locations
-          .filter((i) => !i.metadata.semantics.config || !i.metadata.semantics.config.isPartOf)
-          .map(this.modelItem).sort(compareModelItems)
-        this.rootLocations.forEach(this.getChildren)
-        this.rootEquipment = this.equipment
-          .filter((i) => !i.metadata.semantics.config || (!i.metadata.semantics.config.isPartOf && !i.metadata.semantics.config.hasLocation))
-          .map(this.modelItem).sort(compareModelItems)
-        this.rootEquipment.forEach(this.getChildren)
-        this.rootPoints = this.points
-          .filter((i) => !i.metadata.semantics.config || (!i.metadata.semantics.config.isPointOf && !i.metadata.semantics.config.hasLocation))
-          .map(this.modelItem).sort(compareModelItems)
-
-        if (this.includeNonSemantic && !this.semanticOnly) {
-          this.rootGroups = this.items
-            .filter((i) => i.type === 'Group' && (!i.metadata || !i.metadata.semantics) && i.groupNames.length === 0)
-            .map(this.modelItem).sort(compareModelItems)
-          this.rootGroups.forEach(this.getChildren)
-          this.rootItems = this.items
-            .filter((i) => i.type !== 'Group' && (!i.metadata || !i.metadata.semantics) && i.groupNames.length === 0)
-            .map(this.modelItem).sort(compareModelItems)
-        }
-
-        this.loading = false
-        this.ready = true
+    load () {
+      this.loadModel().then(() => {
         this.$nextTick(() => {
           this.initSearchbar = true
           this.applyExpandedOption()
         })
       })
-    },
-    getChildren (parent) {
-      // open the parent node of the placeholder
-      if (this.newItemParent && this.newItemParent === parent.item.name) {
-        parent.opened = true
-      }
-
-      // restore previous selection
-      if (this.previousSelection && parent.item.name === this.previousSelection.item.name) {
-        this.selectedItem = parent
-        this.previousSelection = null
-        this.selectItem(parent)
-      }
-
-      if (parent.class.indexOf('Location') === 0) {
-        parent.children.locations = this.locations
-          .filter((i) => i.metadata.semantics.config && i.metadata.semantics.config.isPartOf === parent.item.name)
-          .map(this.modelItem).sort(compareModelItems)
-        parent.children.locations.forEach(this.getChildren)
-        parent.children.equipment = this.equipment
-          .filter((i) => i.metadata.semantics.config && i.metadata.semantics.config.hasLocation === parent.item.name)
-          .map(this.modelItem).sort(compareModelItems)
-        parent.children.equipment.forEach(this.getChildren)
-
-        if (!this.groupsOnly) {
-          parent.children.points = this.points
-            .filter((i) => i.metadata.semantics.config && i.metadata.semantics.config.hasLocation === parent.item.name)
-            .map(this.modelItem).sort(compareModelItems)
-        }
-      } else {
-        parent.children.equipment = this.equipment
-          .filter((i) => i.metadata.semantics.config && i.metadata.semantics.config.isPartOf === parent.item.name)
-          .map(this.modelItem).sort(compareModelItems)
-        parent.children.equipment.forEach(this.getChildren)
-
-        if (!this.groupsOnly) {
-          parent.children.points = this.points
-            .filter((i) => i.metadata.semantics.config && i.metadata.semantics.config.isPointOf === parent.item.name)
-            .map(this.modelItem).sort(compareModelItems)
-        }
-      }
-
-      if (this.includeNonSemantic) {
-        parent.children.groups = this.items
-          .filter((i) => i.type === 'Group' && (!i.metadata) && i.groupNames.indexOf(parent.item.name) >= 0)
-          .map(this.modelItem).sort(compareModelItems)
-        parent.children.groups.forEach(this.getChildren)
-        if (parent.item.metadata) {
-          parent.children.items = this.items
-            .filter((i) => i.type !== 'Group' && (!i.metadata) && i.groupNames.indexOf(parent.item.name) >= 0)
-            .map(this.modelItem).sort(compareModelItems)
-        } else {
-          if (!this.groupsOnly) {
-            parent.children.items = this.items
-              .filter((i) => i.type !== 'Group' && i.groupNames.indexOf(parent.item.name) >= 0)
-              .map(this.modelItem).sort(compareModelItems)
-          }
-        }
-      }
     },
     selectItem (item) {
       if (!this.multiple) {
@@ -320,19 +201,6 @@ export default {
       this.expanded = !this.expanded
       this.$f7.data.modelPicker.expanded = this.expanded
       this.applyExpandedOption()
-    },
-    applyExpandedOption () {
-      const treeviewItems = document.querySelectorAll('.treeview-item')
-
-      treeviewItems.forEach(item => {
-        if (item.classList.contains('treeview-item')) {
-          if (this.expanded) {
-            item.classList.add('treeview-item-opened')
-          } else {
-            item.classList.remove('treeview-item-opened')
-          }
-        }
-      })
     }
   }
 }
