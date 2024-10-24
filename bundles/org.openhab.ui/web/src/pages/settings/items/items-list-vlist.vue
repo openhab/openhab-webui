@@ -37,7 +37,7 @@
     <f7-block class="block-narrow margin-top-half">
       <f7-col>
         <div>
-          <f7-block-footer class="no-margin-top" style="padding-left: 16px; padding-right: 16px">
+          <f7-block-footer class="no-margin-top margin-bottom" style="padding-left: 16px; padding-right: 16px">
             Note: Item states are not updated in real-time. Click the refresh button to update.
           </f7-block-footer>
         </div>
@@ -45,7 +45,9 @@
 
       <!-- skeleton for not ready -->
       <f7-col v-show="!ready">
-        <f7-block-title>&nbsp;Loading...</f7-block-title>
+        <f7-block-title class="no-margin-top">
+          &nbsp;Loading...
+        </f7-block-title>
         <f7-list media-list class="col wide">
           <f7-list-group>
             <f7-list-item
@@ -64,7 +66,7 @@
       </f7-col>
 
       <f7-col v-show="ready && items.length > 0">
-        <f7-block-title class="searchbar-hide-on-search">
+        <f7-block-title class="no-margin-top searchbar-hide-on-search">
           {{ items.length }} Items
         </f7-block-title>
         <f7-list

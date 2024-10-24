@@ -1,5 +1,5 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:afterout="onPageBeforeOut">
+  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar :title="type" back-link="Settings" back-link-url="/settings/" back-link-force>
       <f7-nav-right>
         <developer-dock-icon />
