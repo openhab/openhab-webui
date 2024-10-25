@@ -10,19 +10,19 @@
       {{ subtitle }}
     </f7-block-footer>
     <template v-if="featuredAddons?.length > 0">
-      <addons-swiper v-if="!$device.desktop" :addons-list="featuredAddons" :install-action-text="installActionText" :headline="'Featured'" @addonButtonClick="addonButtonClick" />
+      <addons-swiper v-if="!$device.desktop && !$device.ipad" :addons-list="featuredAddons" :install-action-text="installActionText" :headline="'Featured'" @addonButtonClick="addonButtonClick" />
       <div v-else class="addons-cards">
         <addon-card class="addon-card-desktop" v-for="addon in featuredAddons" :key="addon.uid" :addon="addon" :install-action-text="installActionText" :headline="'Featured'" @addonButtonClick="addonButtonClick" />
       </div>
     </template>
     <template v-if="suggested">
-      <addons-swiper v-if="!$device.desktop" :addons-list="addonsList" :install-action-text="installActionText" :headline="'Suggested'" @addonButtonClick="addonButtonClick" />
+      <addons-swiper v-if="!$device.desktop && !$device.ipad" :addons-list="addonsList" :install-action-text="installActionText" :headline="'Suggested'" @addonButtonClick="addonButtonClick" />
       <div v-else class="addons-cards">
         <addon-card class="addon-card-desktop" v-for="addon in addonsList" :key="addon.uid" :addon="addon" :install-action-text="installActionText" :headline="'Suggested'" @addonButtonClick="addonButtonClick" />
       </div>
     </template>
     <template v-else-if="showAsCards">
-      <addons-swiper v-if="!$device.desktop && !canExpand" :addons-list="addonsList" :install-action-text="installActionText" @addonButtonClick="addonButtonClick" />
+      <addons-swiper v-if="!$device.desktop && !$device.ipad && !canExpand" :addons-list="addonsList" :install-action-text="installActionText" @addonButtonClick="addonButtonClick" />
       <div v-else class="addons-cards">
         <addon-card class="addon-card-desktop" v-for="addon in addonsList" :key="addon.uid" :addon="addon" :install-action-text="installActionText" @addonButtonClick="addonButtonClick" />
       </div>
@@ -91,16 +91,14 @@
     gap 10px
     .addon-card-desktop
       width 100%
-      @media (min-width: 450px)
+      @media (min-width: 481px)
         width calc(50% - 10px)
-      @media (min-width: 600px)
+      @media (min-width: 768px)
         width calc(33.333% - 10px)
-      @media (min-width: 800px)
+      @media (min-width: 1281px)
         width calc(25% - 10px)
-      @media (min-width: 1250px)
+      @media (min-width: 1601px)
         width calc(20% - 10px)
-      @media (min-width: 1600px)
-        width: calc(16.667% - 10px)
 </style>
 
 <script>
