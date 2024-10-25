@@ -6,7 +6,7 @@
       :floating-label="$theme.md"
       :min="(configDescription.options && configDescription.options.length) ? undefined : configDescription.min"
       :max="(configDescription.options && configDescription.options.length) ? undefined : configDescription.max"
-      :step="configDescription.stepsize || ((configDescription.type === 'DECIMAL') ? 0.01 : undefined)"
+      :step="step || ((configDescription.type === 'DECIMAL') ? 0.01 : undefined)"
       :value="actualValue"
       @input="updateValue"
       :required="configDescription.required" validate validate-on-blur
@@ -21,6 +21,10 @@ export default {
   computed: {
     actualValue () {
       return (this.configDescription.type === 'DECIMAL') ? parseFloat(this.value) : parseInt(this.value)
+    },
+    step () {
+      if (this.configDescription.stepsize === 0) return 'any'
+      return this.configDescription.stepsize
     }
   },
   methods: {
