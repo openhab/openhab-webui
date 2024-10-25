@@ -1,5 +1,5 @@
 <template>
-  <f7-link v-if="addon" class="addon-card padding-right-half" :href="`/addons/${addon.type}/${addon.uid}`">
+  <f7-link v-if="addon" class="addon-card" :href="`/addons/${addon.type}/${addon.uid}`">
     <div class="addon-card-inner card">
       <div class="addon-card-headline">
         <div>{{ headline || autoHeadline || "&nbsp;" }}</div>
@@ -32,19 +32,19 @@
 
 <style lang="stylus">
 .addon-card
-  padding 5px
-  width: 100%
+  width 100%
   position relative
 
   .addon-card-inner
     width 100%
     height 100%
-    margin: 0px
+    margin 0
     display flex
     flex-direction column
     scroll-snap-align center center
     padding 10px
     border-radius 5px
+    box-sizing border-box
 
     &:hover
       background var(--f7-list-link-hover-bg-color)
@@ -66,8 +66,6 @@
       text-overflow ellipsis
       overflow clip
       white-space nowrap
-      // width calc(100% - 5rem)
-      width 210px
       color var(--f7-text-color)
     .addon-card-title-after
       .preloader-inner .preloader-inner-left, .preloader-inner .preloader-inner-right, .preloader-inner .preloader-inner-line
