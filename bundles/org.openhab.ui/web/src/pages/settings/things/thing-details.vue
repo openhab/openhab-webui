@@ -97,8 +97,10 @@
               <f7-block-title medium class="no-margin-top">
                 Actions
               </f7-block-title>
-              <f7-list class="margin-top">
-                <f7-list-button v-for="action in thingActions" color="blue" :key="action.name" :title="action.label" @click="doThingAction(action)" />
+              <f7-list class="margin-top" media-list>
+                <template v-for="action in thingActions">
+                  <f7-list-item v-if="action.inputConfigDescriptions !== undefined" :key="action.name" :title="action.label" :footer="action.description" link="" @click="doThingAction(action)" />
+                </template>
               </f7-list>
             </template>
           </f7-col>
@@ -418,7 +420,7 @@ export default {
      */
     loadThingActions () {
       return this.$oh.api.get('/rest/actions/' + this.thingId).then(data => {
-        this.thingActions = data
+        this.thingActions = data.sort((a, b) => a.label.localeCompare(b.label))
         return Promise.resolve()
       }).catch(err => {
         if (err === 'Not Found' || err === 404) {
