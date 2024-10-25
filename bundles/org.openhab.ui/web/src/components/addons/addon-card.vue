@@ -25,7 +25,7 @@
           <addon-stats-line :addon="addon" :iconSize="15" />
         </div>
       </div>
-      <addon-logo class="logo-square" :lazy="true" :addon="addon" :size="150" />
+      <addon-logo class="logo-square" :lazy="lazyLogo !== undefined ? lazyLogo : true" :addon="addon" :size="150" />
     </div>
   </f7-link>
 </template>
@@ -111,7 +111,7 @@ import AddonStatsLine from './addon-stats-line.vue'
 import AddonLogo from '@/components/addons/addon-logo.vue'
 
 export default {
-  props: ['addon', 'headline', 'installActionText'],
+  props: ['addon', 'headline', 'installActionText', 'lazyLogo'],
   components: {
     AddonLogo,
     AddonStatsLine
