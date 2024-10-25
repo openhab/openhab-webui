@@ -9,15 +9,24 @@
     <f7-block-footer v-if="subtitle">
       {{ subtitle }}
     </f7-block-footer>
-    <div class="addons-cards">
-      <addon-card v-for="addon in featuredAddons" :key="addon.uid" :addon="addon" :install-action-text="installActionText" :headline="'Featured'" @addonButtonClick="addonButtonClick" />
-    </div>
-    <div v-if="suggested" class="addons-cards">
-      <addon-card v-for="addon in addonsList" :key="addon.uid" :addon="addon" :install-action-text="installActionText" :headline="'Suggested'" @addonButtonClick="addonButtonClick" />
-    </div>
-    <div v-else-if="showAsCards" class="addons-cards">
-      <addon-card v-for="addon in addonsList" :key="addon.uid" :addon="addon" :install-action-text="installActionText" @addonButtonClick="addonButtonClick" />
-    </div>
+    <template v-if="featuredAddons?.length > 0">
+      <addons-swiper v-if="!$device.desktop" :addons-list="featuredAddons" :install-action-text="installActionText" :headline="'Featured'" @addonButtonClick="addonButtonClick" />
+      <div v-else class="addons-cards">
+        <addon-card class="addon-card-desktop" v-for="addon in featuredAddons" :key="addon.uid" :addon="addon" :install-action-text="installActionText" :headline="'Featured'" @addonButtonClick="addonButtonClick" />
+      </div>
+    </template>
+    <template v-if="suggested">
+      <addons-swiper v-if="!$device.desktop" :addons-list="addonsList" :install-action-text="installActionText" :headline="'Suggested'" @addonButtonClick="addonButtonClick" />
+      <div v-else class="addons-cards">
+        <addon-card class="addon-card-desktop" v-for="addon in addonsList" :key="addon.uid" :addon="addon" :install-action-text="installActionText" :headline="'Suggested'" @addonButtonClick="addonButtonClick" />
+      </div>
+    </template>
+    <template v-else-if="showAsCards">
+      <addons-swiper v-if="!$device.desktop && !canExpand" :addons-list="addonsList" :install-action-text="installActionText" @addonButtonClick="addonButtonClick" />
+      <div v-else class="addons-cards">
+        <addon-card class="addon-card-desktop" v-for="addon in addonsList" :key="addon.uid" :addon="addon" :install-action-text="installActionText" @addonButtonClick="addonButtonClick" />
+      </div>
+    </template>
     <f7-list v-else media-list ref="addonlist" class="addons-table-list" no-chevron no-hairlines>
       <addon-list-item v-for="addon in addonsList" :key="addon.uid" :addon="addon" :install-action-text="installActionText" @addonButtonClick="addonButtonClick" />
     </f7-list>
@@ -70,36 +79,40 @@
         width 33.333%
       @media (min-width 1601px)
         width 25%
+.addons-swiper
+    margin-top 1rem
 .addons-cards
     margin-top 1rem
     display flex
-    flex-shrink 0
     flex-direction row
     align-content flex-start
     align-items flex-end
     flex-wrap wrap
-    // gap 0.5rem
-    padding-left var(--f7-safe-area-left)
-    .addon-card
+    gap 10px
+    .addon-card-desktop
       width 100%
-      @media (min-width: 481px)
-        width 50%
-      @media (min-width: 768px)
-        width 33.333%
-      @media (min-width: 1281px)
-        width 25%
-      @media (min-width: 1601px)
-        width 20%
+      @media (min-width: 450px)
+        width calc(50% - 10px)
+      @media (min-width: 600px)
+        width calc(33.333% - 10px)
+      @media (min-width: 800px)
+        width calc(25% - 10px)
+      @media (min-width: 1250px)
+        width calc(20% - 10px)
+      @media (min-width: 1600px)
+        width: calc(16.667% - 10px)
 </style>
 
 <script>
 import AddonListItem from './addon-list-item.vue'
 import AddonCard from './addon-card.vue'
 import { compareAddons } from '@/assets/addon-store'
+import AddonsSwiper from '@/components/addons/addons-swiper.vue'
 
 export default {
   props: ['addons', 'title', 'subtitle', 'showAll', 'featured', 'showAsCards', 'suggested', 'installActionText'],
   components: {
+    AddonsSwiper,
     AddonListItem,
     AddonCard
   },
