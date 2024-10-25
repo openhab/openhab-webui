@@ -15,6 +15,9 @@
         </f7-nav-right>
       </f7-navbar>
       <f7-block class="no-margin no-padding">
+        <f7-block-footer class="margin-horizontal">
+          {{ action.description }}
+        </f7-block-footer>
         <!-- Action Inputs -->
         <f7-col>
           <f7-block-title class="parameter-group-title">
@@ -28,12 +31,12 @@
           </div>
         </f7-col>
         <!-- Executing Spinner -->
-        <f7-block v-if="executing" class="text-align-center padding-top margin-top">
+        <f7-col v-if="executing" class="text-align-center padding-top margin-top">
           <f7-block-title>
             <f7-preloader :size="30" />
             <div>Executing...</div>
           </f7-block-title>
-        </f7-block>
+        </f7-col>
         <!-- Execute Button -->
         <f7-col v-if="!executing">
           <f7-list>
