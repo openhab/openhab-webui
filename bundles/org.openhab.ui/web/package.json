@@ -90,7 +90,7 @@
     "tern": "^0.24.3",
     "v-clipboard": "^2.2.3",
     "video.js": "^7.10.2",
-    "vue": "^2.7.16",
+    "vue": "^3.0.0",
     "vue-async-computed": "^3.9.0",
     "vue-codemirror": "^4.0.6",
     "vue-draggable-resizable": "^2.3.0",
