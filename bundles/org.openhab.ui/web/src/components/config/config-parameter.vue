@@ -27,6 +27,8 @@ import ParameterLocation from './controls/parameter-location.vue'
 import ParameterCronExpression from './controls/parameter-cronexpression.vue'
 import ParameterDayOfWeek from './controls/parameter-dayofweek.vue'
 import ParameterTime from './controls/parameter-time.vue'
+import ParameterDate from '@/components/config/controls/parameter-date.vue'
+import ParameterDatetime from '@/components/config/controls/parameter-datetime.vue'
 import ParameterPageWidget from './controls/parameter-pagewidget.vue'
 import ParameterRule from './controls/parameter-rule.vue'
 import ParameterPersistenceService from './controls/parameter-persistenceservice.vue'
@@ -74,6 +76,10 @@ export default {
         return ParameterDayOfWeek
       } else if (configDescription.type === 'TEXT' && configDescription.context === 'time') {
         return ParameterTime
+      } else if (configDescription.type === 'TEXT' && configDescription.context === 'date') {
+        return ParameterDate
+      } else if (configDescription.type === 'TEXT' && configDescription.context === 'datetime') {
+        return ParameterDatetime
       } else if (configDescription.type === 'TEXT' && configDescription.context && configDescription.context.indexOf('page') >= 0) {
         return ParameterPageWidget
       } else if (configDescription.type === 'TEXT' && configDescription.context && configDescription.context.indexOf('widget') >= 0) {
