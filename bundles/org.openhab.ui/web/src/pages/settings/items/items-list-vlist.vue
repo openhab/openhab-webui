@@ -6,10 +6,10 @@
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
                  :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
       </f7-nav-right>
-      <f7-subnavbar :inner="false" v-show="ready">
+      <f7-subnavbar :inner="false" v-show="initSearchbar">
         <!-- Only render searchbar, if page is ready. Otherwise searchbar is broken after changes to the Items list. -->
         <f7-searchbar
-          v-if="ready"
+          v-if="initSearchbar"
           ref="searchbar"
           class="searchbar-items"
           search-container=".virtual-list"
@@ -145,6 +145,7 @@ export default {
   data () {
     return {
       ready: false,
+      initSearchbar: false,
       loading: false,
       items: [], // [{ label: 'Staircase', name: 'Staircase'}],
       vlData: {
@@ -173,8 +174,8 @@ export default {
       if (this.loading) return
       this.loading = true
 
-      if (this.ready) this.$f7.data.lastItemSearchQuery = this.$refs.searchbar?.f7Searchbar.query
-      this.ready = false
+      if (this.initSearchbar) this.$f7.data.lastItemSearchQuery = this.$refs.searchbar?.f7Searchbar.query
+      this.initSearchbar = false
 
       this.$oh.api.get('/rest/items?metadata=semantics').then(data => {
         this.items = data.sort((a, b) => {
@@ -183,7 +184,11 @@ export default {
           return labelA.localeCompare(labelB)
         })
         this.$refs.itemsList.f7VirtualList.replaceAllItems(this.items)
+        this.initSearchbar = true
+        this.loading = false
+
         if (!this.eventSource) this.startEventSource()
+        this.ready = true
 
         this.$nextTick(() => {
           if (this.$device.desktop) {
@@ -191,9 +196,6 @@ export default {
           }
           this.$refs.searchbar?.f7Searchbar.search(this.$f7.data.lastItemSearchQuery || '')
         })
-
-        this.loading = false
-        this.ready = true
       })
     },
     startEventSource () {

@@ -6,9 +6,9 @@
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
                  :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
       </f7-nav-right>
-      <f7-subnavbar :inner="false" v-show="ready">
+      <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
-          v-if="ready"
+          v-if="initSearchbar"
           ref="searchbar"
           class="searchbar-schedule"
           search-container=".timeline"
@@ -88,6 +88,7 @@ export default {
   data () {
     return {
       ready: false,
+      initSearchbar: false,
       loading: false,
       rules: [],
       noRuleEngine: false,
@@ -112,8 +113,8 @@ export default {
       if (this.loading) return
       this.loading = true
 
-      if (this.ready) this.$f7.data.lastScheduleSearchQuery = this.$refs.searchbar?.f7Searchbar.query
-      this.ready = false
+      if (this.initSearchbar) this.$f7.data.lastScheduleSearchQuery = this.$refs.searchbar?.f7Searchbar.query
+      this.initSearchbar = false
 
       let occurrences = []
 
@@ -123,6 +124,7 @@ export default {
       this.$oh.api.get('/rest/rules/schedule/simulations?from=' + start.toISOString() + '&until=' + limit.toISOString()).then(data => {
         this.rules = data
         this.loading = false
+        this.initSearchbar = true
 
         // map RulesExecutions per time
         this.rules.forEach((rule) => {

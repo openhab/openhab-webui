@@ -6,9 +6,9 @@
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
                  :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
       </f7-nav-right>
-      <f7-subnavbar :inner="false" v-show="ready">
+      <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
-          v-if="ready"
+          v-if="initSearchbar"
           ref="searchbar"
           class="searchbar-pages"
           search-container=".pages-list"
@@ -158,6 +158,7 @@ export default {
   data () {
     return {
       ready: false,
+      initSearchbar: false,
       loading: false,
       pages: [],
       selectedItems: [],
@@ -218,8 +219,8 @@ export default {
       if (this.loading) return
       this.loading = true
 
-      if (this.ready) this.$f7.data.lastPagesSearchQuery = this.$refs.searchbar?.f7Searchbar.query
-      this.ready = false
+      if (this.initSearchbar) this.$f7.data.lastPagesSearchQuery = this.$refs.searchbar?.f7Searchbar.query
+      this.initSearchbar = false
 
       this.$set(this, 'selectedItems', [])
       this.showCheckboxes = false
@@ -232,6 +233,7 @@ export default {
         this.pages = pagesAndSitemaps.sort((a, b) => {
           return a.config.label.localeCompare(b.config.label)
         })
+        this.initSearchbar = true
 
         this.loading = false
         this.ready = true
