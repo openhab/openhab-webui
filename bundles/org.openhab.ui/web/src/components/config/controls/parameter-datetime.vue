@@ -1,6 +1,7 @@
 <template>
   <ul>
     <f7-list-input
+      class="parameter-datetime"
       ref="input"
       type="datetime-local"
       :floating-label="$theme.md"
@@ -11,6 +12,12 @@
       @input="updateValue" />
   </ul>
 </template>
+
+<style lang="stylus">
+.parameter-datetime
+  input[type="datetime-local"]
+    max-width 100% !important
+</style>
 
 <script>
 export default {
