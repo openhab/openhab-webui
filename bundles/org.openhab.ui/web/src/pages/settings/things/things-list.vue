@@ -6,9 +6,9 @@
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
                  :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
       </f7-nav-right>
-      <f7-subnavbar :inner="false" v-show="ready">
+      <f7-subnavbar :inner="false" v-show="initSeachbar">
         <f7-searchbar
-          v-if="ready"
+          v-if="initSeachbar"
           ref="searchbar"
           class="searchbar-things"
           search-container=".contacts-list"
@@ -170,6 +170,7 @@ export default {
   data () {
     return {
       ready: false,
+      initSeachbar: false,
       loading: false,
       things: [],
       inbox: [],
@@ -252,11 +253,12 @@ export default {
       if (this.loading) return
       this.loading = true
 
-      if (this.ready) this.$f7.data.lastThingsSearchQuery = this.$refs.searchbar?.f7Searchbar.query
-      this.ready = false
+      if (this.initSeachbar) this.$f7.data.lastThingsSearchQuery = this.$refs.searchbar?.f7Searchbar.query
+      this.initSeachbar = false
 
       this.$oh.api.get('/rest/things?summary=true').then((data) => {
         this.things = data.sort((a, b) => (a.label || a.UID).localeCompare(b.label || a.UID))
+        this.initSeachbar = true
         this.loading = false
         this.ready = true
         this.$nextTick(() => {
