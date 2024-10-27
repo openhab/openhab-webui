@@ -55,7 +55,8 @@ export default {
               pt('stateMinOpacity', 'Minimum Opacity applied', 'This allows an opacity to be kept above this value.').a(),
               pb('invertStateOpacity', 'Invert State opacity', '1 - opacity').a(),
               pt('stateOnAsStyleClass', 'Set Style Class based on On State ', 'Provide element-id:classname, separate multiple entries with comma. ON sets the class, if OFF is not provided, OFF removes the class of given element').a(),
-              pt('stateOffAsStyleClass', 'Set Style Class based on Off State ', 'Provide element-id:classname, separate multiple entries with comma. OFF sets the class').a()
+              pt('stateOffAsStyleClass', 'Set Style Class based on Off State ', 'Provide element-id:classname, separate multiple entries with comma. OFF sets the class').a(),
+              pb('useDisplayState', 'Use displayState as Text', 'Use the formatted state value to write into tspan').a()
             ])
             .paramGroup(actionGroup(), actionParams()),
           component: {
@@ -84,19 +85,16 @@ export default {
         const items = stateItems || (actionItem ? [actionItem] : [])
         if (items.length === 0) continue
         for (const item of items) {
-          console.log(`Processing ${item}`)
           if (!this.$store.getters.isItemTracked(item)) {
-            console.log('  adding item to tracking list')
+            console.log(` ${item}: addToTrackingList:  ${subElement.id} and ${JSON.stringify(this.config.embeddedSvgActions[subElement.id])}`)
             this.$store.commit('addToTrackingList', item)
-            console.log(`Registering call applyState() for ${subElement.id} and ${this.config.embeddedSvgActions[subElement.id]}`)
           } else {
-            console.log('  ---> item already tracked')
-            console.log(`  ---> not registering call applyState() for ${subElement.id} and ${JSON.stringify(this.config.embeddedSvgActions[subElement.id])}`)
+            console.log(` ${item}: item already tracked: not registering  ${subElement.id} and ${JSON.stringify(this.config.embeddedSvgActions[subElement.id])}`)
           }
 
           const unsubscribe = this.$store.subscribe((mutation, state) => {
             if (mutation.type === 'setItemState' && mutation.payload.itemName === item) {
-              this.applyStateToSvgElement(subElement, item, state.states.itemStates[item].state, state.states.itemStates[item].type, this.config.embeddedSvgActions[subElement.id])
+              this.applyStateToSvgElement(item, state.states.itemStates[item], this.config.embeddedSvgActions[subElement.id], subElement)
             }
           })
           this.embeddedSvgStateTrackingUnsubscribes.push(unsubscribe)
