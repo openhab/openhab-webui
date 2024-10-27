@@ -371,13 +371,23 @@ export default {
                 let offStatesArray = itemConfig.stateOffAsStyleClass.split(',')
                 for (const offState of offStatesArray) {
                   const elementClassInfo = offState.split(':')
-                  document.getElementById(elementClassInfo[0].trim()).classList.remove(elementClassInfo[1].trim())
+                  const offStateElement = document.getElementById(elementClassInfo[0].trim())
+                  if (offStateElement) {
+                    offStateElement.classList.remove(elementClassInfo[1].trim())
+                  } else {
+                    console.warn(`Target element ${elementClassInfo[0].trim()} not found. Please check style stateOffAsStyleClass expression of ${element.id}`)
+                  }
                 }
               }
               let onStatesArray = itemConfig.stateOnAsStyleClass.split(',')
               for (const onState of onStatesArray) {
                 const elementClassInfo = onState.split(':')
-                document.getElementById(elementClassInfo[0].trim()).classList.add(elementClassInfo[1].trim())
+                const onStateElement = document.getElementById(elementClassInfo[0].trim())
+                if (onStateElement) {
+                  onStateElement.classList.add(elementClassInfo[1].trim())
+                } else {
+                  console.warn(`Target element ${elementClassInfo[0].trim()} not found. Please check style stateOnAsStyleClass expression of ${element.id}`)
+                }
               }
             }
           } else if (state === 'OFF') {
@@ -395,13 +405,23 @@ export default {
               let onStatesArray = itemConfig.stateOnAsStyleClass.split(',')
               for (const onState of onStatesArray) {
                 const elementClassInfo = onState.split(':')
-                document.getElementById(elementClassInfo[0].trim()).classList.remove(elementClassInfo[1].trim())
+                const onStateElement = document.getElementById(elementClassInfo[0].trim())
+                if (onStateElement) {
+                  onStateElement.classList.remove(elementClassInfo[1].trim())
+                } else {
+                  console.warn(`Target element ${elementClassInfo[0].trim()} not found. Please check style stateOnAsStyleClass expression of ${element.id}`)
+                }
               }
               if (itemConfig.stateOffAsStyleClass) { // if offStates are provided add OffStates
                 let offStatesArray = itemConfig.stateOffAsStyleClass.split(',')
                 for (const offState of offStatesArray) {
                   const elementClassInfo = offState.split(':')
-                  document.getElementById(elementClassInfo[0].trim()).classList.add(elementClassInfo[1].trim())
+                  const offStateElement = document.getElementById(elementClassInfo[0].trim())
+                  if (offStateElement) {
+                    offStateElement.classList.add(elementClassInfo[1].trim())
+                  } else {
+                    console.warn(`Target element ${elementClassInfo[0].trim()} not found. Please check style stateOffAsStyleClass expression of ${element.id}`)
+                  }
                 }
               }
             }
