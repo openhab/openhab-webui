@@ -93,14 +93,14 @@
                           :set-empty-config-as-null="true"
                           :read-only="!editable" />
 
-            <template v-if="thingActions.length > 0">
+            <!-- Thing Actions & UI Actions -->
+            <template v-if="thingActions.length > 0 || thingType?.UID?.startsWith('zwave')">
               <f7-block-title medium class="no-margin-top">
                 Actions
               </f7-block-title>
               <f7-list class="margin-top" media-list>
-                <template v-for="action in thingActions">
-                  <f7-list-item v-if="action.inputConfigDescriptions !== undefined" :key="action.name" :title="action.label" :footer="action.description" link="" @click="doThingAction(action)" />
-                </template>
+                <f7-list-item v-if="thingType?.UID?.startsWith('zwave')" title="View Network Map" link="" @click="openZWaveNetworkPopup()" />
+                <f7-list-item v-for="action in thingActions" :key="action.name" :title="action.label" :footer="action.description" link="" @click="doThingAction(action)" />
               </f7-list>
             </template>
           </f7-col>
@@ -118,7 +118,7 @@
           </f7-col>
         </f7-block>
 
-        <!-- Actions -->
+        <!-- Config Actions (DEPRECATED) -->
         <div v-if="ready && !error">
           <f7-block class="block-narrow" v-for="actionGroup in configActionsByGroup" :key="actionGroup.group.name">
             <f7-col>
@@ -420,7 +420,9 @@ export default {
      */
     loadThingActions () {
       return this.$oh.api.get('/rest/actions/' + this.thingId).then(data => {
-        this.thingActions = data.sort((a, b) => a.label.localeCompare(b.label))
+        this.thingActions = data
+          .filter((a) => a.inputConfigDescriptions !== undefined)
+          .sort((a, b) => a.label.localeCompare(b.label))
         return Promise.resolve()
       }).catch(err => {
         if (err === 'Not Found' || err === 404) {
@@ -463,21 +465,7 @@ export default {
             let bindingActionsNames = bindingActionsGrouped.flatMap(g => g.actions).flatMap(a => a.name)
             this.configDescriptions.parameters = this.configDescriptions.parameters.filter(p => !bindingActionsNames.includes(p.name)) // params except actions
 
-            // merge UI-only actions (if any) and Binding actions (by groupName)
-            let allActions = bindingActionsGrouped
-            this.getUiActions().forEach(uiAction => {
-              let existingGroup = allActions.find(g => g.group.name === uiAction.group.name)
-              if (existingGroup) {
-                // existing (binding-side) group found, *prepending* UI actions
-                existingGroup.actions = uiAction.actions.concat(existingGroup.actions)
-                if (uiAction.group.label !== undefined) existingGroup.group.label = uiAction.group.label
-                if (uiAction.group.description !== undefined) existingGroup.group.description = uiAction.group.description
-              } else {
-                // no action group from binding, adding the UI actions into their own group (appending at the very end)
-                allActions = allActions.concat([uiAction])
-              }
-            })
-            this.configActionsByGroup = allActions
+            this.configActionsByGroup = bindingActionsGrouped
 
             loadingFinished()
             if (!this.eventSource) this.startEventSource()
@@ -502,28 +490,6 @@ export default {
           loadingFinished()
         })
       })
-    },
-    getUiActions () {
-      // Returns UI-only actions (served by the UI itself, and not coming from the binding)
-      let uiActions = []
-      if (this.thingType && this.thingType.UID && this.thingType.UID.indexOf('zwave') === 0) {
-        uiActions.push(
-          {
-            group: {
-              name: 'actions',
-              label: 'Z-Wave', // this label will override any name coming from binding actions (if matched by name)
-              description: ''
-            },
-            actions: [
-              {
-                label: 'View Network Map',
-                execute: () => this.openZWaveNetworkPopup()
-              }
-            ]
-          }
-        )
-      }
-      return uiActions
     },
     /**
      * @deprecated to be removed once all Things that use config actions use real Thing actions instead
