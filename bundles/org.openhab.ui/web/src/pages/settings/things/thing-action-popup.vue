@@ -23,8 +23,8 @@
           <f7-block-title class="parameter-group-title">
             Action Input
           </f7-block-title>
-          <config-sheet v-if="action.inputConfigDescriptions.length > 0" ref="configSheet"
-                        :parameter-groups="[]" :parameters="action.inputConfigDescriptions"
+          <config-sheet v-if="inputConfigDescriptions.length > 0" ref="configSheet"
+                        :parameter-groups="[]" :parameters="inputConfigDescriptions"
                         :configuration="actionInput" :read-only="executing" />
           <div class="margin" v-else>
             There is no input to be configured for this action.
@@ -52,24 +52,17 @@
             There is either no output for this action or something went wrong - please check the logs.
           </div>
           <div v-else>
-            <f7-list>
+            <f7-list media-list>
               <template v-for="key of Object.keys(actionOutput)">
                 <!-- Render result as a list item, works without action output definition from REST -->
-                <f7-list-item v-if="key === 'result'" :key="key" :floating-label="$theme.md" title="Result">
-                  {{ actionOutput[key] }}
-                </f7-list-item>
+                <f7-list-item v-if="key === 'result'" :key="key" :floating-label="$theme.md" :title="action.outputs.find(o => o.name === key)?.label || 'Result'" :footer="action.outputs.find(o => o.name === key)?.description" :after="actionOutput[key].toString()" />
                 <!-- Render QR code if the key is qrCode -->
-                <f7-list-item v-else-if="key === 'qrCode'" :key="key" :floating-label="$theme.md" :title="action.outputs.find(o => o.name === key)?.label || 'QR Code'">
-                  <vue-qrcode :value="actionOutput[key]" />
-                </f7-list-item>
                 <!-- Render QR code if the action output type is qrCode in the action output definition from REST -->
-                <f7-list-item v-else-if="action.outputs.find(o => o.name === key)?.type === 'qrCode'" :key="key" :floating-label="$theme.md" :title="action.outputs.find(o => o.name === key).label">
-                  <vue-qrcode :value="actionOutput[key]" />
+                <f7-list-item v-else-if="key === 'qrCode' || action.outputs.find(o => o.name === key)?.type === 'qrCode'" :key="key" :floating-label="$theme.md" :title="action.outputs.find(o => o.name === key)?.label || 'QR Code'" :footer="action.outputs.find(o => o.name === key)?.description">
+                  <vue-qrcode :value="actionOutput[key]" slot="after" />
                 </f7-list-item>
                 <!-- Render other keys as list items with the label defined by the action output definition from REST or the key as label -->
-                <f7-list-item v-else :key="key" :floating-label="$theme.md" :title="action.outputs.find(o => o.name === key)?.label || key">
-                  {{ actionOutput[key] }}
-                </f7-list-item>
+                <f7-list-item v-else :key="key" :floating-label="$theme.md" :title="action.outputs.find(o => o.name === key)?.label || key" :subtitle="action.outputs.find(o => o.name === key)?.description" :after="actionOutput[key].toString()" />
               </template>
               <f7-list-item accordion-item title="Raw Output Value">
                 <f7-accordion-content class="thing-type-description">
@@ -100,6 +93,14 @@ export default {
       executing: false,
       actionInput: {},
       actionOutput: null
+    }
+  },
+  computed: {
+    inputConfigDescriptions () {
+      return this.action.inputConfigDescriptions.map((c) => {
+        if (!c.label) c.label = c.name
+        return c
+      })
     }
   },
   methods: {
