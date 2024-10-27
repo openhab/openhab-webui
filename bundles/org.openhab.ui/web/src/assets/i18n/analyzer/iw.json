@@ -66,5 +66,7 @@
   "analyzer.dialogs.save.replace.message": "קיים דף עם ID {uid} זהה, האם ברצונך להחליפו?",
   "analyzer.dialogs.save.replace.title": "כבר קיים",
   "analyzer.page.updated": "טבלה עודכנה",
-  "analyzer.page.created": "טבלה נוצרה"
+  "analyzer.page.created": "טבלה נוצרה",
+  "analyzer.invalid-configuration.title": "תצורה בלתי חוקית",
+  "analyzer.invalid-configuration.text": "אנא ודא שכל פרמטרי השאילתה הנדרשים הועברו/התצורה חוקית."
 }
