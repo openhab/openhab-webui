@@ -57,11 +57,8 @@
                 <!-- Render result as a list item, works without action output definition from REST -->
                 <f7-list-item v-if="key === 'result'" :key="key" :floating-label="$theme.md" :title="action.outputs.find(o => o.name === key)?.label || 'Result'" :footer="action.outputs.find(o => o.name === key)?.description" :after="actionOutput[key].toString()" />
                 <!-- Render QR code if the key is qrCode -->
-                <f7-list-item v-else-if="key === 'qrCode'" :key="key" :floating-label="$theme.md" :title="action.outputs.find(o => o.name === key)?.label || 'QR Code'" :footer="action.outputs.find(o => o.name === key)?.description">
-                  <vue-qrcode :value="actionOutput[key]" slot="after" />
-                </f7-list-item>
                 <!-- Render QR code if the action output type is qrCode in the action output definition from REST -->
-                <f7-list-item v-else-if="action.outputs.find(o => o.name === key)?.type === 'qrCode'" :key="key" :floating-label="$theme.md" :title="action.outputs.find(o => o.name === key).label" :footer="action.outputs.find(o => o.name === key)?.description">
+                <f7-list-item v-else-if="key === 'qrCode' || action.outputs.find(o => o.name === key)?.type === 'qrCode'" :key="key" :floating-label="$theme.md" :title="action.outputs.find(o => o.name === key)?.label || 'QR Code'" :footer="action.outputs.find(o => o.name === key)?.description">
                   <vue-qrcode :value="actionOutput[key]" slot="after" />
                 </f7-list-item>
                 <!-- Render other keys as list items with the label defined by the action output definition from REST or the key as label -->
