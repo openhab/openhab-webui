@@ -30,5 +30,7 @@
   "addons.title": "No hi ha complements instal·lats",
   "addons.text": "Els complements afegeixen funcionalitat al vostre sistema openHAB.<br><br>Instal·leu-los amb el botó següent.",
   "page.unavailable.title": "Pàgina no disponible",
-  "page.unavailable.text": "No teniu permís per veure aquesta pàgina a causa de restriccions de visibilitat."
+  "page.unavailable.text": "No teniu permís per veure aquesta pàgina a causa de restriccions de visibilitat.",
+  "persistence.title": "No hi ha cap \"add-on\" de persistència instal·lat",
+  "persistence.text": "Amb la persistència podeu emmagatzemar els estats dels Items en el temps, independentment que siguin valors històrics o futurs. Per configurar la persistència, cal instal·lar almenys un complement o \"add-on\" de persistència."
 }

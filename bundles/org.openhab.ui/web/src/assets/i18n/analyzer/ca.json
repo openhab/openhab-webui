@@ -66,5 +66,7 @@
   "analyzer.dialogs.save.replace.message": "Ja existeix una pàgina amb l'identificador {uid}, la voleu sobreescriure?",
   "analyzer.dialogs.save.replace.title": "La pàgina ja existeix",
   "analyzer.page.updated": "S'ha actualitzat la pàgina de gràfica",
-  "analyzer.page.created": "S'ha creat la pàgina de gràfica"
+  "analyzer.page.created": "S'ha creat la pàgina de gràfica",
+  "analyzer.invalid-configuration.title": "Configuració no vàlida",
+  "analyzer.invalid-configuration.text": "Si us plau, assegureu-vos que es passen tots els paràmetres query / la configuració és vàlida."
 }
