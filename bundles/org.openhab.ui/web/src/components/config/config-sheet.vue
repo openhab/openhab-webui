@@ -1,6 +1,6 @@
 <template>
   <f7-block v-if="parameters" class="config-sheet no-margin" ref="sheet">
-    <div style="text-align:right" class="padding-right" v-if="hasAdvanced">
+    <div style="text-align:right" class="padding-right padding-bottom" v-if="hasAdvanced">
       <label @click="toggleAdvanced" class="advanced-label">Show advanced</label> <f7-checkbox :checked="showAdvanced" @change="toggleAdvanced" />
     </div>
     <f7-col>
