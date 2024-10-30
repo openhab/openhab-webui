@@ -4,6 +4,7 @@
       class="parameter-datetime"
       ref="input"
       type="datetime-local"
+      :step="step"
       :floating-label="$theme.md"
       :label="configDescription.label"
       :name="configDescription.name"
@@ -22,6 +23,12 @@
 <script>
 export default {
   props: ['configDescription', 'value'],
+  computed: {
+    step () {
+      if (this.configDescription.step !== undefined) return this.configDescription.step
+      return 60
+    }
+  },
   methods: {
     updateValue (event) {
       this.$emit('input', event.target.value)

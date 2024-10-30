@@ -29,6 +29,47 @@ export default {
     const containerControl = this.$refs.picker
     if (!inputControl || !inputControl.$el || !containerControl) return
     const inputElement = this.$$(inputControl.$el).find('input')
+
+    const cols = [
+      // Hours
+      {
+        values: (function () {
+          let arr = []
+          for (let i = 0; i <= 23; i++) { arr.push(i < 10 ? `0${i}` : i) }
+          return arr
+        })()
+      },
+      // Divider
+      {
+        divider: true,
+        content: ':'
+      },
+      // Minutes
+      {
+        values: (function () {
+          let arr = []
+          for (let i = 0; i <= 59; i++) { arr.push(i < 10 ? `0${i}` : i) }
+          return arr
+        })()
+      }
+    ]
+    if (this.hasSeconds) {
+      cols.push(
+        // Divider
+        {
+          divider: true,
+          content: ':'
+        },
+        // Seconds
+        {
+          values: (() => {
+            let arr = []
+            for (let i = 0; i <= 59; i = i + this.configDescription.step % 60) { arr.push(i < 10 ? `0${i}` : i) }
+            return arr
+          })()
+        })
+    }
+
     this.$nextTick(() => {
       this.picker = this.$f7.picker.create({
         containerEl: containerControl,
@@ -36,36 +77,19 @@ export default {
         toolbar: false,
         inputReadOnly: false,
         rotateEffect: true,
-        value: (self.value && self.value.indexOf(':') >= 0) ? self.value.split(':') : ['00', '00'],
+        value: (self.value && self.value.indexOf(':') >= 0) ? self.value.split(':') : (self.hasSeconds ? ['00', '00', '00'] : ['00', '00']),
         formatValue: function (values, displayValues) {
+          if (self.hasSeconds) return values[0] + ':' + values[1] + ':' + values[2]
           return values[0] + ':' + values[1]
         },
-        cols: [
-          // Hours
-          {
-            values: (function () {
-              let arr = []
-              for (let i = 0; i <= 23; i++) { arr.push(i < 10 ? `0${i}` : i) }
-              return arr
-            })()
-          },
-          // Divider
-          {
-            divider: true,
-            content: ':'
-          },
-          // Minutes
-          {
-            values: (function () {
-              let arr = []
-              for (let i = 0; i <= 59; i++) { arr.push(i < 10 ? `0${i}` : i) }
-              return arr
-            })()
-          }
-        ],
+        cols,
         on: {
           change: function (picker, values, displayValues) {
-            self.$emit('input', displayValues[0] + ':' + displayValues[1])
+            if (self.hasSeconds) {
+              self.$emit('input', displayValues[0] + ':' + displayValues[1] + ':' + displayValues[2])
+            } else {
+              self.$emit('input', displayValues[0] + ':' + displayValues[1])
+            }
           }
         }
       })
@@ -80,6 +104,11 @@ export default {
     value (val) {
       if (!val || val.indexOf(':') < 0 || !this.picker) return
       this.picker.setValue(val.split(':'))
+    }
+  },
+  computed: {
+    hasSeconds () {
+      return this.configDescription.step !== undefined && this.configDescription.step % 60 !== 0
     }
   },
   methods: {
