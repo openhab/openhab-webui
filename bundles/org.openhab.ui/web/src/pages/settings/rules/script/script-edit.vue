@@ -79,7 +79,7 @@
       <editor v-if="!createMode && (!isBlockly || blocklyCodePreview)" class="rule-script-editor" :mode="mode" :value="script" @input="onEditorInput" :read-only="isBlockly || !editable" :tern-autocompletion-hook="true" />
       <blockly-editor ref="blocklyEditor" v-else-if="!createMode && isBlockly" :blocks="currentModule.configuration.blockSource" @change="scriptDirty = true" @mounted="onBlocklyMounted" @ready="onBlocklyReady" />
       <script-general-settings v-else-if="createMode" :createMode="true" :rule="rule" />
-      <f7-block class="block-narrow" v-if="createMode">
+      <f7-block class="block-narrow" v-if="createMode && !ruleCopy">
         <f7-col>
           <f7-block-title medium class="margin-left margin-bottom">
             Scripting Method
@@ -131,6 +131,9 @@
           <f7-block class="block-narrow" v-if="editable && isScriptRule">
             <f7-col>
               <f7-list>
+                <f7-list-button color="blue" @click="copyRule">
+                  Copy Script
+                </f7-list-button>
                 <f7-list-button color="red" @click="deleteRule">
                   Remove Script
                 </f7-list-button>
@@ -168,7 +171,7 @@ export default {
     'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue'),
     'blockly-editor': () => import(/* webpackChunkName: "blockly-editor" */ '@/components/config/controls/blockly-editor.vue')
   },
-  props: ['ruleId', 'moduleId', 'createMode'],
+  props: ['ruleId', 'moduleId', 'createMode', 'ruleCopy'],
   data () {
     return {
       ready: false,
@@ -336,7 +339,7 @@ export default {
       }
     },
     initializeNewScript () {
-      this.rule = {
+      this.rule = this.ruleCopy || {
         uid: this.$f7.utils.id(),
         name: '',
         description: '',
@@ -345,6 +348,7 @@ export default {
         actions: [],
         tags: ['Script']
       }
+      if (this.ruleCopy) this.rule.uid = this.$f7.utils.id()
       this.savedRule = cloneDeep(this.rule)
       this.savedMode = this.mode = 'application/javascript+blockly'
       this.loadScriptModuleTypes().then(() => {
@@ -361,19 +365,21 @@ export default {
         return
       }
 
-      const actionModule = {
-        id: 'script',
-        type: 'script.ScriptAction',
-        configuration: {
-          type: this.mode,
-          script: ''
+      if (!this.ruleCopy) {
+        const actionModule = {
+          id: 'script',
+          type: 'script.ScriptAction',
+          configuration: {
+            type: this.mode,
+            script: ''
+          }
         }
+        if (this.mode === 'application/javascript+blockly') {
+          actionModule.configuration.type = this.GRAALJS_MIME_TYPE
+          actionModule.configuration.blockSource = '<xml xmlns="https://developers.google.com/blockly/xml"></xml>'
+        }
+        this.rule.actions.push(actionModule)
       }
-      if (this.mode === 'application/javascript+blockly') {
-        actionModule.configuration.type = this.GRAALJS_MIME_TYPE
-        actionModule.configuration.blockSource = '<xml xmlns="https://developers.google.com/blockly/xml"></xml>'
-      }
-      this.rule.actions.push(actionModule)
 
       this.$oh.api.postPlain('/rest/rules', JSON.stringify(this.rule), 'text/plain', 'application/json').then(() => {
         this.resetDirty()
@@ -382,7 +388,7 @@ export default {
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
-        this.$f7router.navigate(this.$f7route.url.replace('/add', '/' + this.rule.uid), { reloadCurrent: true })
+        this.$f7router.navigate(this.$f7route.url.replace(/(\/add)|(\/copy)/, '/' + this.rule.uid), { reloadCurrent: true })
       })
     },
     isMimeTypeAvailable (mimeType) {
@@ -572,6 +578,16 @@ export default {
       } else {
         run(false)
       }
+    },
+    copyRule () {
+      let ruleClone = cloneDeep(this.rule)
+      this.$f7router.navigate({
+        url: '/settings/scripts/copy'
+      }, {
+        props: {
+          ruleCopy: ruleClone
+        }
+      })
     },
     deleteRule () {
       this.$f7.dialog.confirm(

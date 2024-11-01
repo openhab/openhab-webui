@@ -115,6 +115,9 @@
           </f7-col>
           <f7-col v-if="isEditable && !createMode">
             <f7-list>
+              <f7-list-button color="blue" @click="copyRule">
+                Copy Scene
+              </f7-list-button>
               <f7-list-button color="red" @click="deleteRule">
                 Remove Scene
               </f7-list-button>
@@ -206,7 +209,7 @@ export default {
     ItemPicker,
     'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')
   },
-  props: ['ruleId', 'createMode'],
+  props: ['ruleId', 'createMode', 'ruleCopy'],
   data () {
     return {
       ready: false,
@@ -262,7 +265,7 @@ export default {
       Promise.all([loadModules1]).then((data) => {
         this.moduleTypes.actions = data[0]
         if (this.createMode) {
-          this.$set(this, 'rule', {
+          const newRule = this.ruleCopy || {
             uid: this.$f7.utils.id(),
             name: '',
             triggers: [],
@@ -275,7 +278,9 @@ export default {
             status: {
               status: 'NEW'
             }
-          })
+          }
+          if (this.ruleCopy) newRule.uid = this.$f7.utils.id()
+          this.$set(this, 'rule', newRule)
           loadingFinished()
         } else {
           this.$oh.api.get('/rest/rules/' + this.ruleId).then((data2) => {
@@ -365,6 +370,16 @@ export default {
             closeTimeout: 2000
           }).open()
         })
+      })
+    },
+    copyRule () {
+      let ruleClone = cloneDeep(this.rule)
+      this.$f7router.navigate({
+        url: '/settings/scenes/copy'
+      }, {
+        props: {
+          ruleCopy: ruleClone
+        }
       })
     },
     deleteRule () {

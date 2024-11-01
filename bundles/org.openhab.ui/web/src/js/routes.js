@@ -191,6 +191,11 @@ export default [
             async: loadAsync(ItemEditPage, { createMode: true })
           },
           {
+            path: 'copy',
+            beforeEnter: [enforceAdminForRoute],
+            async: loadAsync(ItemEditPage, { createMode: true })
+          },
+          {
             path: 'add-from-textual-definition',
             beforeEnter: [enforceAdminForRoute],
             async: loadAsync(ItemsAddFromTextualDefinition)
@@ -266,10 +271,6 @@ export default [
             beforeEnter: [enforceAdminForRoute],
             async: loadAsync(AddThingChooseBindingPage),
             routes: [
-              // {
-              //   path: 'install-binding',
-              //   async: loadAsync(AddonsAddPage, { addonType: 'binding' })
-              // },
               {
                 path: ':bindingId',
                 beforeEnter: [enforceAdminForRoute],
@@ -283,6 +284,12 @@ export default [
                 ]
               }
             ]
+          },
+          {
+            path: 'copy',
+            beforeEnter: [enforceAdminForRoute],
+            beforeLeave: [checkDirtyBeforeLeave],
+            async: loadAsync(AddThingPage)
           },
           {
             path: 'inbox',
@@ -322,13 +329,22 @@ export default [
         async: loadAsync(RulesListPage),
         routes: [
           {
+            path: 'add',
+            beforeEnter: [enforceAdminForRoute],
+            beforeLeave: [checkDirtyBeforeLeave],
+            async: loadAsync(RuleEditPage, { createMode: true })
+          },
+          {
+            path: 'copy',
+            beforeEnter: [enforceAdminForRoute],
+            beforeLeave: [checkDirtyBeforeLeave],
+            async: loadAsync(RuleEditPage, { createMode: true })
+          },
+          {
             path: ':ruleId',
             beforeEnter: [enforceAdminForRoute],
             beforeLeave: [checkDirtyBeforeLeave],
-            async: loadAsync(RuleEditPage, (routeTo) =>
-              routeTo.params.ruleId === 'add' ? { createMode: true }
-                : routeTo.params.ruleId === 'copy' ? { copyMode: true }
-                  : {}),
+            async: loadAsync(RuleEditPage),
             routes: [
               {
                 path: 'script/:moduleId',
@@ -346,10 +362,22 @@ export default [
         async: loadAsync(RulesListPage, { showScenes: true }),
         routes: [
           {
+            path: 'add',
+            beforeEnter: [enforceAdminForRoute],
+            beforeLeave: [checkDirtyBeforeLeave],
+            async: loadAsync(SceneEditPage, { createMode: true })
+          },
+          {
+            path: 'copy',
+            beforeEnter: [enforceAdminForRoute],
+            beforeLeave: [checkDirtyBeforeLeave],
+            async: loadAsync(SceneEditPage, { createMode: true })
+          },
+          {
             path: ':ruleId',
             beforeEnter: [enforceAdminForRoute],
             beforeLeave: [checkDirtyBeforeLeave],
-            async: loadAsync(SceneEditPage, (routeTo) => (routeTo.params.ruleId === 'add') ? { createMode: true } : {})
+            async: loadAsync(SceneEditPage)
           }
         ]
       },
@@ -359,10 +387,22 @@ export default [
         async: loadAsync(RulesListPage, { showScripts: true }),
         routes: [
           {
+            path: 'add',
+            beforeEnter: [enforceAdminForRoute],
+            beforeLeave: [checkDirtyBeforeLeave],
+            async: loadAsync(ScriptEditPage, { createMode: true })
+          },
+          {
+            path: 'copy',
+            beforeEnter: [enforceAdminForRoute],
+            beforeLeave: [checkDirtyBeforeLeave],
+            async: loadAsync(ScriptEditPage, { createMode: true })
+          },
+          {
             path: ':ruleId',
             beforeEnter: [enforceAdminForRoute],
             beforeLeave: [checkDirtyBeforeLeave],
-            async: loadAsync(ScriptEditPage, (routeTo) => (routeTo.params.ruleId === 'add') ? { createMode: true } : {})
+            async: loadAsync(ScriptEditPage)
           }
         ]
       },

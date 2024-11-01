@@ -67,12 +67,17 @@ export default {
     ConfigSheet,
     ThingGeneralSettings
   },
-  props: ['thingTypeId'],
+  props: ['thingTypeId', 'thingCopy'],
   data () {
+    if (this.thingCopy) {
+      delete this.thingCopy.editable
+      delete this.thingCopy.properties
+      delete this.thingCopy.statusInfo
+    }
     return {
       ready: false,
       currentTab: 'info',
-      thing: {
+      thing: this.thingCopy || {
         UID: '',
         label: '',
         configuration: {},
@@ -81,6 +86,12 @@ export default {
       },
       thingType: {},
       codePopupOpened: false
+    }
+  },
+  computed: {
+    isExtensible () {
+      if (!this.thingType || !this.thingType.extensibleChannelTypeIds) return false
+      return this.thingType.extensibleChannelTypeIds.length > 0
     }
   },
   methods: {
@@ -95,6 +106,18 @@ export default {
           console.log('Cannot generate ID: ' + e)
         }
         this.thing.label = this.thingType.label
+
+        if (this.thingCopy) {
+          if (this.thing.bridgeUID) this.thing.UID = [this.thing.thingTypeUID, this.thing.bridgeUID.substring(this.thing.bridgeUID.lastIndexOf(':') + 1), this.thing.ID].join(':')
+          if (this.isExtensible) {
+            this.thing.channels.forEach((ch) => {
+              ch.uid = this.thing.UID + ':' + ch.id
+            })
+          } else {
+            this.thing.channels = []
+          }
+        }
+
         this.ready = true
       })
     },

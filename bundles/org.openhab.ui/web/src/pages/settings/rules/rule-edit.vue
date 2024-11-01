@@ -1,6 +1,6 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:afterout="onPageAfterOut">
-    <f7-navbar :title="(isNewRule ? 'Create rule' : rule.name) + dirtyIndicator" back-link="Back" no-hairline>
+    <f7-navbar :title="(createMode ? 'Create rule' : rule.name) + dirtyIndicator" back-link="Back" no-hairline>
       <f7-nav-right>
         <developer-dock-icon />
         <template v-if="isEditable">
@@ -21,8 +21,8 @@
     </f7-toolbar>
     <f7-tabs class="sitemap-editor-tabs">
       <f7-tab id="design" @tab:show="() => this.currentTab = 'design'" :tab-active="currentTab === 'design'">
-        <f7-block v-if="ready && rule.status && (!isNewRule)" class="block-narrow padding-left padding-right" strong>
-          <f7-col v-if="!isNewRule">
+        <f7-block v-if="ready && rule.status && (!createMode)" class="block-narrow padding-left padding-right" strong>
+          <f7-col v-if="!createMode">
             <div class="float-right align-items-flex-start align-items-center">
               <!-- <f7-toggle class="enable-toggle"></f7-toggle> -->
               <f7-link :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'" :tooltip="((rule.status.statusDetail === 'DISABLED') ? 'Enable' : 'Disable') + (($device.desktop) ? ' (Ctrl-D)' : '')" icon-ios="f7:pause_circle" icon-md="f7:pause_circle" icon-aurora="f7:pause_circle" icon-size="32" color="orange" @click="toggleDisabled" />
@@ -42,7 +42,7 @@
           </f7-col>
         </f7-block>
         <!-- skeletons for not ready -->
-        <f7-block v-else-if="!isNewRule" class="block-narrow padding-left padding-right skeleton-text skeleton-effect-blink" strong>
+        <f7-block v-else-if="!createMode" class="block-narrow padding-left padding-right skeleton-text skeleton-effect-blink" strong>
           <f7-col>
             ______:
             <f7-chip class="margin-left" text="________" />
@@ -53,7 +53,7 @@
           </f7-col>
         </f7-block>
 
-        <rule-general-settings :rule="rule" :ready="ready" :createMode="isNewRule" :hasTemplate="hasTemplate" />
+        <rule-general-settings :rule="rule" :ready="ready" :createMode="createMode" :hasTemplate="hasTemplate" />
 
         <f7-block v-if="ready" class="block-narrow">
           <f7-block-footer v-if="!isEditable" class="no-margin padding-left">
@@ -125,7 +125,7 @@
               </f7-list>
             </div>
           </f7-col>
-          <f7-col v-if="isEditable && (!isNewRule)">
+          <f7-col v-if="isEditable && (!createMode)">
             <f7-list>
               <f7-list-button color="blue" @click="copyRule">
                 Copy Rule
@@ -198,7 +198,7 @@ export default {
     ConfigSheet,
     'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')
   },
-  props: ['ruleId', 'createMode', 'copyMode', 'ruleCopy', 'schedule'],
+  props: ['ruleId', 'createMode', 'ruleCopy', 'schedule'],
   data () {
     return {
       SECTION_LABELS: {
@@ -270,7 +270,7 @@ export default {
         this.moduleTypes.conditions = data[1]
         this.moduleTypes.triggers = data[2]
         if (this.createMode) {
-          this.$set(this, 'rule', {
+          const newRule = this.ruleCopy || {
             uid: this.$f7.utils.id(),
             name: '',
             triggers: [],
@@ -283,27 +283,13 @@ export default {
             status: {
               status: 'NEW'
             }
-          })
+          }
+          if (this.ruleCopy) newRule.uid = this.$f7.utils.id()
+          this.$set(this, 'rule', newRule)
           this.$oh.api.get('/rest/templates').then((data2) => {
             this.$set(this, 'templates', data2)
             loadingFinished()
           })
-          // no need for an event source, the rule doesn't exist yet
-        } else if (this.copyMode) {
-          this.$set(this, 'rule', {
-            uid: this.$f7.utils.id(),
-            name: this.ruleCopy.name + ' Copy',
-            triggers: this.ruleCopy.triggers,
-            actions: this.ruleCopy.actions,
-            conditions: this.ruleCopy.conditions,
-            tags: this.ruleCopy.tags,
-            configuration: this.ruleCopy.configuration,
-            visibility: 'VISIBLE',
-            status: {
-              status: 'NEW'
-            }
-          })
-          loadingFinished()
           // no need for an event source, the rule doesn't exist yet
         } else {
           this.$oh.api.get('/rest/rules/' + this.ruleId).then((data2) => {
@@ -329,12 +315,12 @@ export default {
         this.$f7.dialog.alert('Please give a name to the rule')
         return Promise.reject()
       }
-      const promise = (this.isNewRule)
+      const promise = (this.createMode)
         ? this.$oh.api.postPlain('/rest/rules', JSON.stringify(this.rule), 'text/plain', 'application/json')
         : this.$oh.api.put('/rest/rules/' + this.rule.uid, this.rule)
       return promise.then((data) => {
         this.dirty = false
-        if (this.isNewRule) {
+        if (this.createMode) {
           this.$f7.toast.create({
             text: 'Rule created',
             destroyOnClose: true,
@@ -375,7 +361,7 @@ export default {
       })
     },
     runNow () {
-      if (this.isNewRule) return
+      if (this.createMode) return
       if (this.rule.status.status === 'RUNNING' || this.rule.status.status === 'UNINITIALIZED') {
         return this.$f7.toast.create({
           text: `Rule cannot be run ${(this.rule.status.status === 'RUNNING') ? 'while already running, please wait' : 'if it is uninitialized'}!`,
@@ -562,7 +548,7 @@ export default {
       this.currentModuleType = mod.type
       this.scriptCode = mod.configuration.script
 
-      const updatePromise = (this.rule.editable || this.isNewRule) && this.dirty ? this.save() : Promise.resolve()
+      const updatePromise = (this.rule.editable || this.createMode) && this.dirty ? this.save() : Promise.resolve()
       updatePromise.then(() => {
         this.$f7router.navigate('/settings/rules/' + this.rule.uid + '/script/' + mod.id, { transition: this.$theme.aurora ? 'f7-cover-v' : '' })
       })
@@ -593,9 +579,6 @@ export default {
   computed: {
     hasTemplate () {
       return this.rule && this.currentTemplate !== null
-    },
-    isNewRule () {
-      return this.createMode || this.copyMode
     },
     templateTopicLink () {
       if (!this.currentTemplate) return null

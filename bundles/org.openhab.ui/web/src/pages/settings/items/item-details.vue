@@ -87,6 +87,9 @@
       <f7-row>
         <f7-col>
           <f7-list>
+            <f7-list-button color="blue" @click="copyItem">
+              Copy Item
+            </f7-list-button>
             <f7-list-button v-if="item.editable" color="red" @click="deleteItem">
               Remove Item
             </f7-list-button>
@@ -153,6 +156,8 @@
 </style>
 
 <script>
+import cloneDeep from 'lodash/cloneDeep'
+
 import ItemStatePreview from '@/components/item/item-state-preview.vue'
 import LinkDetails from '@/components/model/link-details.vue'
 import GroupMembers from '@/components/item/group-members.vue'
@@ -200,6 +205,16 @@ export default {
         this.item = data
         this.ready = true
         this.iconUrl = '/icon/' + this.item.category + '?format=svg'
+      })
+    },
+    copyItem () {
+      let itemClone = cloneDeep(this.item)
+      this.$f7router.navigate({
+        url: '/settings/items/copy'
+      }, {
+        props: {
+          itemCopy: itemClone
+        }
       })
     },
     deleteItem () {

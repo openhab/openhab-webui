@@ -135,10 +135,11 @@
           </f7-block>
         </div>
 
-        <f7-block class="block-narrow" v-if="ready && editable">
+        <f7-block class="block-narrow" v-if="ready">
           <f7-col>
             <f7-list>
-              <f7-list-button color="red" title="Delete Thing" @click="deleteThing" />
+              <f7-list-button color="blue" title="Copy Thing" @click="copyThing" />
+              <f7-list-button v-if="editable" color="red" title="Delete Thing" @click="deleteThing" />
             </f7-list>
           </f7-col>
         </f7-block>
@@ -607,6 +608,17 @@ export default {
       }, {
         props: {
           bridgeUID: this.thing.bridgeUID || this.thing.UID
+        }
+      })
+    },
+    copyThing () {
+      let thingClone = cloneDeep(this.thing)
+      this.$f7router.navigate({
+        url: '/settings/things/copy'
+      }, {
+        props: {
+          thingTypeId: this.thing.thingTypeUID,
+          thingCopy: thingClone
         }
       })
     },
