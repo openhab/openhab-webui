@@ -360,10 +360,22 @@ export default [
         async: loadAsync(RulesListPage, { showScenes: true }),
         routes: [
           {
+            path: 'add',
+            beforeEnter: [enforceAdminForRoute],
+            beforeLeave: [checkDirtyBeforeLeave],
+            async: loadAsync(SceneEditPage, { createMode: true })
+          },
+          {
+            path: 'copy',
+            beforeEnter: [enforceAdminForRoute],
+            beforeLeave: [checkDirtyBeforeLeave],
+            async: loadAsync(SceneEditPage, { createMode: true })
+          },
+          {
             path: ':ruleId',
             beforeEnter: [enforceAdminForRoute],
             beforeLeave: [checkDirtyBeforeLeave],
-            async: loadAsync(SceneEditPage, (routeTo) => (routeTo.params.ruleId === 'add') ? { createMode: true } : {})
+            async: loadAsync(SceneEditPage)
           }
         ]
       },
