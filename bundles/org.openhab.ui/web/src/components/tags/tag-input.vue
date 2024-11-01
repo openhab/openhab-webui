@@ -53,6 +53,13 @@ export default {
       if (tag === 'Scene') return true
     },
     addTag () {
+      // Block adding of Scene or Script tags in the wrong editor
+      // Adding them would otherwise lead to a situation where the rule/scene/script is not visible in the UI
+      if ((!this.inScriptEditor && this.pendingTag === 'Script') ||
+        (!this.inSceneEditor && this.pendingTag === 'Scene')) {
+        this.pendingTag = ''
+        return
+      }
       if (this.pendingTag && this.item.tags.indexOf(this.pendingTag) === -1) {
         this.item.tags.push(this.pendingTag)
       }
