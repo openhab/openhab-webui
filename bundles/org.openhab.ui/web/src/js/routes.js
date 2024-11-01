@@ -191,6 +191,11 @@ export default [
             async: loadAsync(ItemEditPage, { createMode: true })
           },
           {
+            path: 'copy',
+            beforeEnter: [enforceAdminForRoute],
+            async: loadAsync(ItemEditPage, { createMode: true })
+          },
+          {
             path: 'add-from-textual-definition',
             beforeEnter: [enforceAdminForRoute],
             async: loadAsync(ItemsAddFromTextualDefinition)

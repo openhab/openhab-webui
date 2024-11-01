@@ -73,7 +73,7 @@ import ItemMixin from '@/components/item/item-mixin'
 
 export default {
   mixins: [DirtyMixin, ItemMixin],
-  props: ['itemName', 'createMode'],
+  props: ['itemName', 'createMode', 'itemCopy'],
   components: {
     ItemForm,
     'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')
@@ -144,7 +144,7 @@ export default {
       if (this.loading) return
       this.loading = true
       if (this.createMode) {
-        const newItem = {
+        const newItem = this.itemCopy || {
           name: '',
           label: '',
           category: '',
