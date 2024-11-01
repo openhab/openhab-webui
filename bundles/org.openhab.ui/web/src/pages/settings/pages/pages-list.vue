@@ -90,7 +90,7 @@
               :key="index"
               media-item
               class="pagelist-item"
-              :checkbox="showCheckboxes"
+              :checkbox="showCheckboxes && page.uid !== 'overview'"
               :checked="isChecked(((page.component === 'Sitemap') ? 'system:sitemap:' : 'ui:page:') + page.uid)"
               :disabled="showCheckboxes && page.uid === 'overview'"
               @click.ctrl="(e) => ctrlClick(e, page)"
