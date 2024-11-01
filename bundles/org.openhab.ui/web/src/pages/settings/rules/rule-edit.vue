@@ -270,7 +270,7 @@ export default {
         this.moduleTypes.conditions = data[1]
         this.moduleTypes.triggers = data[2]
         if (this.createMode) {
-          this.rule = this.ruleCopy || {
+          const newRule = this.ruleCopy || {
             uid: this.$f7.utils.id(),
             name: '',
             triggers: [],
@@ -284,6 +284,8 @@ export default {
               status: 'NEW'
             }
           }
+          if (this.ruleCopy) newRule.uid = this.$f7.utils.id()
+          this.$set(this, 'rule', newRule)
           this.$oh.api.get('/rest/templates').then((data2) => {
             this.$set(this, 'templates', data2)
             loadingFinished()
