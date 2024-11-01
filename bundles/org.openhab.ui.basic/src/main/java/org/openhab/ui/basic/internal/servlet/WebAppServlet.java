@@ -174,7 +174,7 @@ public class WebAppServlet extends HttpServlet {
                 String label = sitemap.getLabel() != null ? sitemap.getLabel() : sitemapName;
                 EList<Widget> children = renderer.getItemUIRegistry().getChildren(sitemap);
                 result.append(renderer.processPage(sitemapName, sitemapName, label, children, async));
-            } else if (!"Colorpicker".equals(widgetId)) {
+            } else if (!"Colorpicker".equals(widgetId) && !"Colortemperaturepicker".equals(widgetId)) {
                 // we are on some subpage, so we have to render the children of the widget that has been selected
                 if (subscriptionId != null) {
                     if (subscriptions.exists(subscriptionId)) {

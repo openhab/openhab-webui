@@ -2251,6 +2251,199 @@
 
 		smarthome.eventMapper.map(eventMap);
 	}
+
+	/* class Colortemppicker */
+	function Colortemppicker(parentNode, min, max, current, gradientColors, callback) {
+		var
+			_t = this,
+			lastColorTemperatureSent = null;
+
+		_t.container = parentNode;
+		_t.isBeingChanged = false;
+
+		_t.colortemppicker = _t.container.querySelector(o.colortemppicker.colortemppicker);
+		_t.slider = _t.container.querySelector(o.colortemppicker.slider);
+		if (gradientColors !== "") {
+			_t.slider.style.background = "linear-gradient(to right, " + gradientColors + ")";
+		}
+		_t.slider.min = Math.round(min);
+		_t.slider.max = Math.round(max);
+
+		function setCorTemperature(value) {
+			if (isNaN(value)) {
+				_t.value = NaN;
+				_t.slider.value = _t.slider.min;
+			} else {
+				if (value < _t.slider.min) {
+					_t.value = _t.slider.min;
+				} else if (value > _t.slider.max) {
+					_t.value = _t.slider.max;
+				} else {
+					_t.value = value;
+				}
+				_t.slider.value = _t.value;
+			}
+			if (_t.slider.MaterialSlider) {
+				_t.slider.MaterialSlider.change();
+			}
+		}
+
+		setCorTemperature(current);
+
+		_t.button = _t.container.querySelector(o.controlButton);
+
+		componentHandler.upgradeElement(_t.button, "MaterialButton");
+		componentHandler.upgradeElement(_t.button, "MaterialRipple");
+
+		_t.debounceProxy = new DebounceProxy(function() {
+			if (_t.value !== lastColorTemperatureSent) {
+				callback(_t.value);
+				lastColorTemperatureSent = _t.value;
+			}
+		}, 200);
+
+		_t.updateColorTemperature = function(value) {
+			if (_t.isBeingChanged) {
+				return;
+			}
+			setCorTemperature(value);
+		};
+
+		function onSliderChangeStart() {
+			lastColorTemperatureSent = null;
+		}
+
+		function onSliderChange() {
+			_t.debounceProxy.finish();
+			_t.value = _t.slider.value;
+			if (_t.value !== lastColorTemperatureSent) {
+				callback(_t.value);
+				lastColorTemperatureSent = _t.value;
+			}
+		}
+
+		function onSliderInput() {
+			_t.value = _t.slider.value;
+			_t.debounceProxy.call();
+		}
+
+		var
+			eventMap = [
+				[ _t.slider, "touchstart", onSliderChangeStart ],
+				[ _t.slider, "mousedown",  onSliderChangeStart ],
+				[ _t.slider, "input",      onSliderInput ],
+				[ _t.slider, "change",     onSliderChange ]
+			];
+
+		_t.destroy = function() {
+			smarthome.eventMapper.unmap(eventMap);
+			componentHandler.downgradeElements([ _t.button ]);
+		};
+
+		smarthome.eventMapper.map(eventMap);
+	}
+
+	/* class ControlColortemppicker extends Control */
+	function ControlColortemppicker(parentNode) {
+		Control.call(this, parentNode);
+
+		var
+			_t = this,
+			color;
+
+		_t.valueNode = _t.parentNode.parentNode.querySelector(o.formValue);
+		_t.hasValue = _t.parentNode.getAttribute("data-has-value") === "true";
+		_t.value = _t.parentNode.getAttribute("data-state") === "" ? NaN : parseFloat(_t.parentNode.getAttribute("data-state"));
+		_t.min = parseFloat(_t.parentNode.getAttribute("data-min"));
+		_t.max = parseFloat(_t.parentNode.getAttribute("data-max"));
+		_t.gradientColors = _t.parentNode.getAttribute("data-gradient-colors");
+		_t.colors = (_t.gradientColors === "" ? "Gray" : _t.gradientColors).split(",");
+		_t.modalControl = null;
+		_t.buttonPick = _t.parentNode.querySelector(o.colortemppicker.pick);
+		_t.circle = _t.parentNode.querySelector(o.colortemppicker.circle);
+		color = _t.parentNode.getAttribute("data-color");
+		if (color !== "") {
+			_t.circle.setAttribute("fill", color);
+		}
+
+		_t.setValuePrivate = function(value, itemState) {
+			if (_t.hasValue) {
+				_t.valueNode.innerHTML = value;
+			}
+
+			// itemState contains value + unit in the display unit (in case unit is set in label pattern)
+			if (itemState === "NULL" || itemState === "UNDEF") {
+				_t.value = NaN;
+			} else  if (itemState.indexOf(" ") > 0) {
+				var stateAndUnit = itemState.split(" ");
+				_t.value = parseFloat(stateAndUnit[0]);
+				_t.value = isNaN(_t.value) ? NaN : (stateAndUnit[1] === "K" ? _t.value : 1000000.0 / _t.value);
+			} else {
+				_t.value = itemState * 1;
+			}
+
+			// Set the color in the preview circle with the most approaching color used to generate the gradient
+			_t.circle.setAttribute("fill", (isNaN(_t.value) || _t.value < _t.min || _t.value > _t.max)
+				? "Gray"
+				: _t.colors[Math.round((_t.value - _t.min) * (_t.colors.length - 1) / (_t.max - _t.min))]);
+
+			if (_t.modalControl !== null) {
+				_t.modalControl.updateColorTemperature(_t.value);
+			}
+		};
+
+		function emitEvent(valueKelvin) {
+			var
+				command = valueKelvin + " K";
+
+			_t.parentNode.dispatchEvent(createEvent(
+				"control-change", {
+					item: _t.item,
+					value: command
+			}));
+		}
+
+		function onPick() {
+			var
+				button;
+
+			function onClick() {
+				_t.modal.hide();
+			}
+
+			_t.modal = new Modal(renderTemplate("template-colortemppicker"));
+			_t.modal.show();
+			_t.modal.container.classList.add(o.colortemppicker.modalClass);
+			_t.modal.onHide = function() {
+				button.removeEventListener("click", onClick);
+				_t.modalControl.destroy();
+				_t.modalControl = null;
+				_t.modal = null;
+			};
+
+			_t.modalControl = new Colortemppicker(_t.modal.container, _t.min, _t.max, _t.value, _t.gradientColors,
+				function(valueKelvin) {
+					emitEvent(valueKelvin);
+				}
+			);
+
+			button = _t.modal.container.querySelector(o.colortemppicker.button);
+			button.addEventListener("click", onClick);
+		}
+
+		var
+			eventMap = [
+				[ _t.buttonPick, "click", onPick ]
+			];
+
+		_t.destroy = function() {
+			smarthome.eventMapper.unmap(eventMap);
+			componentHandler.downgradeElements([ _t.buttonPick ]);
+		};
+
+		smarthome.eventMapper.map(eventMap);
+	}
+
 	/* class ControlSwitch extends Control */
 	function ControlSwitch(parentNode) {
 		Control.call(this, parentNode);
@@ -2968,6 +3161,7 @@
 				case "setpoint":
 				case "rollerblind":
 				case "colorpicker":
+				case "colortemppicker":
 				case "buttons":
 					[].slice.call(e.querySelectorAll("button")).forEach(function(button) {
 						upgrade(button, "MaterialButton");
@@ -3153,6 +3347,9 @@
 					break;
 				case "colorpicker":
 					appendControl(new ControlColorpicker(e));
+					break;
+				case "colortemppicker":
+					appendControl(new ControlColortemppicker(e));
 					break;
 				case "mapview":
 					appendControl(new ControlMap(e));
@@ -3747,6 +3944,14 @@
 		background: ".colorpicker__background",
 		colorpicker: ".colorpicker",
 		button: ".colorpicker__buttons > button"
+	},
+	colortemppicker: {
+		pick: ".mdl-form__colortemppicker--pick",
+		circle: ".mdl-form__colortemppicker--preview > svg > circle",
+		modalClass: "mdl-modal--colortemppicker",
+		slider: ".colortemppicker__input",
+		colortemppicker: ".colortemppicker",
+		button: ".colortemppicker__buttons > button"
 	},
 	image: {
 		legendButton: ".chart-legend-button",

@@ -341,10 +341,18 @@
 	}
 	&__setpoint,
 	&__colorpicker,
+	&__colortemppicker,
 	&__rollerblind {
 		.mdl-button {
 			min-width: 0;
 			padding-top: 6px;
+		}
+	}
+	&__colortemppicker--preview {
+		svg {
+			width: 36px;
+			height: 36px;
+			object-fit: contain;
 		}
 	}
 	&__header {
@@ -458,7 +466,8 @@
 			text-transform: uppercase;
 		}
 		&--setpoint,
-		&--rollerblind {
+		&--rollerblind,
+		&--colortemppicker {
 			padding: 0 10px 0 5px;
 		}
 		&--group {
@@ -755,6 +764,84 @@ $colorpicker-mobile-size: 270px;
 	position: relative;
 }
 
+// Colortemppicker
+$colortemppicker-thumb-width: 20px;
+$colortemppicker-slider-height: 200px;
+$colortemppicker-desktop-size: 500px;
+$colortemppicker-mobile-size: 270px;
+
+@mixin colortemppicker-slider-track() {
+	display: block;
+	height: $colortemppicker-slider-height;
+	border-radius: 0;
+	background: transparent;
+	color: transparent;
+	border: none;
+}
+
+@mixin colortemppicker-slider-thumb() {
+	-webkit-appearance: none;
+	width: $colortemppicker-thumb-width;
+	height: $colortemppicker-slider-height;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	border-radius: 0;
+	background: transparent;
+	border: 3px solid #aaa;
+}
+
+.colortemppicker {
+	&__input {
+		-webkit-appearance: none;
+		position: relative;
+		padding: 0;
+		margin: 0;
+		border: 1px solid $item-separator-color;
+		width: $colortemppicker-desktop-size - 30px;
+		@media screen and (max-width: $layout-mobile-size-threshold) {
+			width: $colortemppicker-mobile-size - 30px;
+		}
+		height: $colortemppicker-slider-height;
+		&::-ms-track {
+			@include colortemppicker-slider-track();
+		}
+		&::-webkit-slider-runnable-track {
+			@include colortemppicker-slider-track();
+		}
+		&::-moz-range-track {
+			@include colortemppicker-slider-track();
+		}
+		&::-moz-range-thumb {
+			@include colortemppicker-slider-thumb();
+		}
+		&::-webkit-slider-thumb {
+			@include colortemppicker-slider-thumb();
+		}
+		&::-ms-thumb {
+			@include colortemppicker-slider-thumb();
+		}
+		&::-ms-fill-upper {
+			background: none;
+		}
+		&::-ms-fill-lower {
+			background: none;
+		}
+		&::-ms-ticks {
+			background: none;
+			display: none;
+		}
+	}
+	&__controls {
+		position: relative;
+		padding: 15px;
+		border-bottom: 1px solid $item-separator-color;
+	}
+	&__buttons {
+		padding: 5px;
+	}
+	position: relative;
+}
+
 h4 {
 	html.ui-bigger-font & {
 		font-size: 28px;
@@ -803,6 +890,12 @@ h5 {
 		max-width: $colorpicker-desktop-size;
 		@media screen and (max-width: $layout-mobile-size-threshold) {
 			max-width: $colorpicker-mobile-size;
+		}
+	}
+	&--colortemppicker {
+		max-width: $colortemppicker-desktop-size;
+		@media screen and (max-width: $layout-mobile-size-threshold) {
+			max-width: $colortemppicker-mobile-size;
 		}
 	}
 }
