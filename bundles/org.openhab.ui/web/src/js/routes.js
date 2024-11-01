@@ -373,10 +373,22 @@ export default [
         async: loadAsync(RulesListPage, { showScripts: true }),
         routes: [
           {
+            path: 'add',
+            beforeEnter: [enforceAdminForRoute],
+            beforeLeave: [checkDirtyBeforeLeave],
+            async: loadAsync(ScriptEditPage, { createMode: true })
+          },
+          {
+            path: 'copy',
+            beforeEnter: [enforceAdminForRoute],
+            beforeLeave: [checkDirtyBeforeLeave],
+            async: loadAsync(ScriptEditPage, { createMode: true })
+          },
+          {
             path: ':ruleId',
             beforeEnter: [enforceAdminForRoute],
             beforeLeave: [checkDirtyBeforeLeave],
-            async: loadAsync(ScriptEditPage, (routeTo) => (routeTo.params.ruleId === 'add') ? { createMode: true } : {})
+            async: loadAsync(ScriptEditPage)
           }
         ]
       },
