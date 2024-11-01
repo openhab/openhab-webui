@@ -271,10 +271,6 @@ export default [
             beforeEnter: [enforceAdminForRoute],
             async: loadAsync(AddThingChooseBindingPage),
             routes: [
-              // {
-              //   path: 'install-binding',
-              //   async: loadAsync(AddonsAddPage, { addonType: 'binding' })
-              // },
               {
                 path: ':bindingId',
                 beforeEnter: [enforceAdminForRoute],
@@ -288,6 +284,12 @@ export default [
                 ]
               }
             ]
+          },
+          {
+            path: 'copy',
+            beforeEnter: [enforceAdminForRoute],
+            beforeLeave: [checkDirtyBeforeLeave],
+            async: loadAsync(AddThingPage)
           },
           {
             path: 'inbox',
