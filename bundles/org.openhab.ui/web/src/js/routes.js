@@ -322,13 +322,22 @@ export default [
         async: loadAsync(RulesListPage),
         routes: [
           {
+            path: 'add',
+            beforeEnter: [enforceAdminForRoute],
+            beforeLeave: [checkDirtyBeforeLeave],
+            async: loadAsync(RuleEditPage, { createMode: true })
+          },
+          {
+            path: 'copy',
+            beforeEnter: [enforceAdminForRoute],
+            beforeLeave: [checkDirtyBeforeLeave],
+            async: loadAsync(RuleEditPage, { createMode: true })
+          },
+          {
             path: ':ruleId',
             beforeEnter: [enforceAdminForRoute],
             beforeLeave: [checkDirtyBeforeLeave],
-            async: loadAsync(RuleEditPage, (routeTo) =>
-              routeTo.params.ruleId === 'add' ? { createMode: true }
-                : routeTo.params.ruleId === 'copy' ? { copyMode: true }
-                  : {}),
+            async: loadAsync(RuleEditPage),
             routes: [
               {
                 path: 'script/:moduleId',
