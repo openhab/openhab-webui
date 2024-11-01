@@ -55,14 +55,22 @@
             <f7-list media-list>
               <template v-for="key of Object.keys(actionOutput)">
                 <!-- Render result as a list item, works without action output definition from REST -->
-                <f7-list-item v-if="key === 'result'" :key="key" :floating-label="$theme.md" :title="action.outputs.find(o => o.name === key)?.label || 'Result'" :footer="action.outputs.find(o => o.name === key)?.description" :after="actionOutput[key].toString()" />
+                <f7-list-item v-if="key === 'result'" :key="key" :floating-label="$theme.md" :title="action.outputs.find(o => o.name === key)?.label || 'Result'" :footer="action.outputs.find(o => o.name === key)?.description">
+                  <div slot="after">
+                    {{ actionOutput[key] }}
+                  </div>
+                </f7-list-item>
                 <!-- Render QR code if the key is qrCode -->
                 <!-- Render QR code if the action output type is qrCode in the action output definition from REST -->
                 <f7-list-item v-else-if="key === 'qrCode' || action.outputs.find(o => o.name === key)?.type === 'qrCode'" :key="key" :floating-label="$theme.md" :title="action.outputs.find(o => o.name === key)?.label || 'QR Code'" :footer="action.outputs.find(o => o.name === key)?.description">
                   <vue-qrcode :value="actionOutput[key]" slot="after" />
                 </f7-list-item>
                 <!-- Render other keys as list items with the label defined by the action output definition from REST or the key as label -->
-                <f7-list-item v-else :key="key" :floating-label="$theme.md" :title="action.outputs.find(o => o.name === key)?.label || key" :subtitle="action.outputs.find(o => o.name === key)?.description" :after="actionOutput[key].toString()" />
+                <f7-list-item v-else :key="key" :floating-label="$theme.md" :title="action.outputs.find(o => o.name === key)?.label || key" :footer="action.outputs.find(o => o.name === key)?.description">
+                  <div slot="after">
+                    {{ actionOutput[key] }}
+                  </div>
+                </f7-list-item>
               </template>
               <f7-list-item accordion-item title="Raw Output Value">
                 <f7-accordion-content class="thing-type-description">
@@ -113,6 +121,17 @@ export default {
       this.$oh.api.post(`/rest/actions/${this.thingUID}/${this.action.actionUid}`, this.actionInput)
         .then((data) => {
           this.actionOutput = data
+
+          this.actionOutput = {
+            test: {
+              label: 'Test',
+              description: 'Test description',
+              value: 'Test value'
+            },
+            qrCode: 'https://www.openhab.org',
+            result: 'Result value'
+          }
+
           this.executing = false
         })
     },
