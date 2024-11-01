@@ -121,17 +121,6 @@ export default {
       this.$oh.api.post(`/rest/actions/${this.thingUID}/${this.action.actionUid}`, this.actionInput)
         .then((data) => {
           this.actionOutput = data
-
-          this.actionOutput = {
-            test: {
-              label: 'Test',
-              description: 'Test description',
-              value: 'Test value'
-            },
-            qrCode: 'https://www.openhab.org',
-            result: 'Result value'
-          }
-
           this.executing = false
         })
     },
