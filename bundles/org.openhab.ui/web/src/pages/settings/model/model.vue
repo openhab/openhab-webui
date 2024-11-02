@@ -325,7 +325,6 @@ export default {
     },
     load () {
       if (this.initSearchbar) this.$f7.data.lastModelSearchQuery = this.$refs.searchbar?.f7Searchbar.query
-      this.initSearchbar = false
 
       this.loadModel().then(() => {
         this.initSearchbar = true

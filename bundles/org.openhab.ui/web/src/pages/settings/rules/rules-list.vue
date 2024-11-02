@@ -215,7 +215,6 @@ export default {
       this.loading = true
 
       if (this.initSearchbar) this.$f7.data[`last${this.type}SearchQuery`] = this.$refs.searchbar?.f7Searchbar.query
-      this.initSearchbar = false
 
       this.$set(this, 'selectedItems', [])
       this.showCheckboxes = false
