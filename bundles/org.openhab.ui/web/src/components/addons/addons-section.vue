@@ -22,7 +22,7 @@
       </div>
     </template>
     <template v-else-if="showAsCards">
-      <addons-swiper v-if="!$device.desktop && !$device.ipad && !canExpand" :addons-list="addonsList" :install-action-text="installActionText" @addonButtonClick="addonButtonClick" />
+      <addons-swiper v-if="!$device.desktop && !$device.ipad && (this.addons.length < this.addonCollapsedLimit)" :addons-list="addonsList" :install-action-text="installActionText" @addonButtonClick="addonButtonClick" />
       <div v-else class="addons-cards">
         <addon-card class="addon-card-desktop" v-for="addon in addonsList" :key="addon.uid" :addon="addon" :install-action-text="installActionText" @addonButtonClick="addonButtonClick" />
       </div>
@@ -83,22 +83,9 @@
     margin-top 1rem
 .addons-cards
     margin-top 1rem
-    display flex
-    flex-direction row
-    align-content flex-start
-    align-items flex-end
-    flex-wrap wrap
-    gap 10px
-    .addon-card-desktop
-      width 100%
-      @media (min-width: 481px)
-        width calc(50% - 10px)
-      @media (min-width: 768px)
-        width calc(33.333% - 10px)
-      @media (min-width: 1281px)
-        width calc(25% - 10px)
-      @media (min-width: 1601px)
-        width calc(20% - 10px)
+    display grid
+    grid-gap 10px
+    grid-template-columns repeat(auto-fill, minmax(200px, 1fr))
 </style>
 
 <script>
