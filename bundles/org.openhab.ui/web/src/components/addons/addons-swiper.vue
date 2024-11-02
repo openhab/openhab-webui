@@ -9,6 +9,7 @@
 
 <style lang="stylus">
 .addon-card-single
+  max-width 300px
   width 66.667%
   @media (orientation: landscape)
     width 28.571%
