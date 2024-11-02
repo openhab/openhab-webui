@@ -105,7 +105,7 @@ export default {
         } catch (e) {
           console.log('Cannot generate ID: ' + e)
         }
-        this.thing.label = this.thingType.label
+        if (!this.thingCopy) this.thing.label = this.thingType.label
 
         if (this.thingCopy) {
           if (this.thing.bridgeUID) this.thing.UID = [this.thing.thingTypeUID, this.thing.bridgeUID.substring(this.thing.bridgeUID.lastIndexOf(':') + 1), this.thing.ID].join(':')
