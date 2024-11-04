@@ -89,8 +89,9 @@ export default {
       }))
     },
     sendCommand (hsb) {
-      const state = this.commandFromHSB(hsb)
-      this.pendingUpdate = [...hsb]
+      console.debug('oh-colorpicker: Received command ' + hsb)
+      const cmd = this.commandFromHSB(hsb)
+      const state = this.commandFromHSB(this.color)
       this.pendingCommand = [...hsb]
       if (!this.areHSBEqual(this.roundedHSB(state), this.roundedHSB(this.context.store[this.config.item].state))) {
         if (!this.delayCommand) {
@@ -140,6 +141,7 @@ export default {
       } else {
         this.pendingUpdate = val
       }
+      console.debug('oh-colorpicker: Updating value to ' + val)
       this.colorPicker.setValue({ hsb: val })
     }
   }
