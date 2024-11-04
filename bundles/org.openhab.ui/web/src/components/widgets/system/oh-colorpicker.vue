@@ -23,11 +23,10 @@ export default {
   data () {
     return {
       colorPicker: null,
+      ignoreInput: false,
       delayCommand: false,
-      delayUpdate: false,
       pendingCommand: null,
       lastCommand: null,
-      pendingUpdate: null,
       init: false
     }
   },
@@ -47,8 +46,8 @@ export default {
       if (state && state.split(',').length === 3) {
         let color = this.context.store[this.config.item].state.split(',')
         color[0] = parseInt(color[0])
-        color[1] = color[1] / 100
-        color[2] = color[2] / 100
+        color[1] = Math.round(color[1]) / 100
+        color[2] = Math.round(color[2]) / 100
         return color
       }
       return [0, 0, 0]
@@ -83,6 +82,8 @@ export default {
               return
             }
             if (!value.hsb) return
+            // Ignore input for a few millis after a new state has been received to prevent sending a command on external state change
+            if (vm.ignoreInput) return
             vm.sendCommand(value.hsb)
           }
         }
@@ -92,14 +93,13 @@ export default {
       console.debug('oh-colorpicker: Received command ' + hsb)
       const cmd = this.commandFromHSB(hsb)
       const state = this.commandFromHSB(this.color)
-      this.pendingCommand = [...hsb]
-      if (!this.areHSBEqual(this.roundedHSB(state), this.roundedHSB(this.context.store[this.config.item].state))) {
+      if (cmd !== state) {
+        this.pendingCommand = [...hsb]
         if (!this.delayCommand) {
           this.delayCommand = true
-          this.delayUpdate = true
-          console.debug(this.context.store[this.config.item].state + ' -> ' + state)
-          this.$store.dispatch('sendCommand', { itemName: this.config.item, cmd: state, updateState: true })
-          this.lastCommand = state
+          console.debug(state + ' -> ' + cmd)
+          this.$store.dispatch('sendCommand', { itemName: this.config.item, cmd, updateState: true })
+          this.lastCommand = cmd
           setTimeout(() => {
             const pendingCommand = [...this.pendingCommand]
             this.pendingCommand = null
@@ -109,10 +109,6 @@ export default {
             }
           }, 200)
         }
-        setTimeout(() => {
-          this.updateValue(this.pendingUpdate)
-          this.delayUpdate = false
-        }, 2000)
       }
     },
     commandFromHSB (hsb) {
@@ -123,26 +119,13 @@ export default {
       state = state.join(',')
       return state
     },
-    areHSBEqual (hsb1, hsb2) {
-      // for the purposes of NOT entering an endless loop, we consider transient non-HSB values to be equal
-      if (hsb1.length !== hsb2.length) return false
-      if (hsb1.length !== 3 || hsb2.length !== 3) return false
-      return (hsb1[0] === hsb2[0] && hsb1[1] === hsb2[1] && hsb1[2] === hsb2[2])
-    },
-    roundedHSB (state) {
-      if (!state) return []
-      let hsb = state.split(',')
-      if (hsb.length !== 3) return hsb
-      return hsb.map((c) => Math.round(c))
-    },
     updateValue (val) {
-      if (!this.delayUpdate) {
-        this.pendingUpdate = null
-      } else {
-        this.pendingUpdate = val
-      }
       console.debug('oh-colorpicker: Updating value to ' + val)
+      this.ignoreInput = true
       this.colorPicker.setValue({ hsb: val })
+      setTimeout(() => {
+        this.ignoreInput = false
+      }, 10)
     }
   }
 }
