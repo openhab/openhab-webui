@@ -22,7 +22,7 @@ export default {
   widget: OhColorpickerDefinition,
   data () {
     return {
-      colorpicker: null,
+      colorPicker: null,
       delayCommand: false,
       delayUpdate: false,
       pendingCommand: null,
@@ -33,12 +33,12 @@ export default {
   },
   mounted () {
     if (this.color) {
-      this.initColorpicker()
+      this.initColorPicker()
     }
   },
   beforeDestroy () {
-    if (this.colorpicker) {
-      this.colorpicker.destroy()
+    if (this.colorPicker) {
+      this.colorPicker.destroy()
     }
   },
   computed: {
@@ -56,17 +56,17 @@ export default {
   },
   watch: {
     color (val) {
-      if (this.colorpicker) {
+      if (this.colorPicker) {
         this.updateValue(val)
       } else {
-        this.initColorpicker()
+        this.initColorPicker()
       }
     }
   },
   methods: {
-    initColorpicker () {
+    initColorPicker () {
       const vm = this
-      this.colorpicker = this.$f7.colorPicker.create(Object.assign({}, this.config, {
+      this.colorPicker = this.$f7.colorPicker.create(Object.assign({}, this.config, {
         containerEl: (!this.config.openIn) ? this.$refs.container : undefined,
         targetEl: (this.config.openIn) ? this.$refs.swatch : undefined,
         targetElSetBackgroundColor: true,
@@ -76,7 +76,7 @@ export default {
           hsb: this.color
         },
         on: {
-          change (colorpicker, value) {
+          change (colorPicker, value) {
             // skip the first update
             if (!vm.init || vm.context.store[vm.config.item].state === '-') {
               vm.init = true
@@ -136,11 +136,11 @@ export default {
     },
     updateValue (val) {
       if (!this.delayUpdate) {
-        this.colorpicker.setValue({ hsb: this.pendingUpdate || val })
         this.pendingUpdate = null
       } else {
         this.pendingUpdate = val
       }
+      this.colorPicker.setValue({ hsb: val })
     }
   }
 }
