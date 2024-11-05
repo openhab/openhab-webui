@@ -35,7 +35,7 @@
       </div>
       <f7-link class="right details-link padding-right" ref="detailsLink" @click="detailsOpened = true" icon-f7="chevron_up" />
     </f7-toolbar>
-    <f7-toolbar bottom class="toolbar-details" v-else style="height: 50px">
+    <f7-toolbar v-else bottom class="toolbar-details" style="height: calc(50px + var(--f7-safe-area-bottom))">
       <f7-link :disabled="selectedItem != null" class="left" @click="selectedItem = null">
         Clear
       </f7-link>
