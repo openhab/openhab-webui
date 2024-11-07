@@ -212,6 +212,190 @@ export default {
       }
     },
     /**
+     * Converts a color to an RGB-Style that is valid
+     * - color definitions starting with # are treated as valid #rgb and are just returned
+     * - otherwise the value is expected to be openHABs hsb which is then converted to rgb colors and returned as rgb(r,g,b)
+     * - in case no valid rgb colors are returned on hsb conversion the returned oalor is red (#ff0000)
+     *
+     * @param color color to be converted to a valid rgb string
+     * @returns {string} rgb string
+     */
+    toRGBStyle: function (color) {
+      if (color) {
+        if (color?.trim().startsWith('#')) {
+          return color
+        } else {
+          const rgbNumbers = color.split(',')
+          if (rgbNumbers.length !== 3) {
+            console.log(`invalid rgb values in configured color: ${color}`)
+            return '#FF0000' // not valid returns red
+          }
+          const rgb = this.$oh.utils.hsbToRgb(rgbNumbers[0], rgbNumbers[1], rgbNumbers[2])
+          return `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`
+        }
+      } else {
+        return undefined
+      }
+    },
+    /*
+     * Applies the state the svg element based on the given configuration
+     *
+     * <b>State text:</b>
+     * - if the element is of type <tspan> the state is automatically written to the body. This is supported for any state type.
+     * - <i>useDisplayState</i> is ON, then the formatted state value is used instead
+     *
+     * <b>Applying state changes</b> of type OnOff, OpenClose, HSB, Percent to the svg-element
+     *
+     *  - A state is by default applied to the svg element
+     *  - In case useProxyElementForState is switched on, the svg element has to be of type <g> (group).
+     *    - Within that group the first element marked with the attribute "flash" is used as proxy.
+     *  - In general, a color is meant to be applied to the svg element to reflect the state
+     *    - Separate colors can be provided for the On / OFF state
+     *    - The colors can also be derived by an expression, for example from the thing's color channel
+     *  - In case the state item is a color item, the color is directly applied to the svg element
+     *  - Alternatively, the opacity of the element can be controlled based on the state's value
+     *    - The opacity value is expected to be 0-100.
+     *    - The opacity can be inverted by setting <i>invertStateOpacity</i>
+     *    - Instead of setting an opacity to 0, which would make the element disappear, the value can be clamped to a minimum value <i>stateMinOpacity</i> to be still visible
+     *  - ON/OFF-States can set a style class on ony given element with the svg: stateOnAsStyleClass / stateOffAsStyleClass support this
+     *    - A list of style-changes can be provided in the form elementId:classname.
+     *    - Multiple entries can be provided in a comma-separated fashion: element1:classA,elementB:classB,....
+     *    - This can be even used to start / stop animations via css-class within the svg
+     *  - Percent and OpenClose can only be used together when stateAsOpacity=ON. In that case the state's value controls the opacity of the element
+     *
+     * <b>Configuration parameters<b/>
+     *
+     * stateItems: a list of items that are used reflection the state.
+     *  - Usually this is only them item that reflects the state visually
+     *  - Sometimes other states are used in expressions (e.g. stateOnColor). All of these items have to be included in that list.
+     *
+     * useProxyElementForState: Use "flash" element to highlight the active state. The element is marked with the attribute flash: true and must be part of the elements group
+     * useDisplayState: Use the formatted state value to write into tspan
+     * stateOnColor: Color that should to be used when State is ON
+     * stateOffColor: Color that should to be used when State is OFF
+     * stateAsOpacity: Use the state from 0 to 100 as element opacity
+     * stateMinOpacity: This allows an opacity to be kept above this value.
+     * invertStateOpacity: 1 - opacity
+     * stateOnAsStyleClass: Provide element-id:classname, separate multiple entries with comma. ON sets the class, if OFF is not provided, OFF removes the class of given element
+     * stateOffAsStyleClass: Provide element-id:classname, separate multiple entries with comma. OFF sets the class
+     *
+     * @param {string} item item name that has triggered the state change
+     * @param {object} state object
+     * @param {object} svgElementConfig configuration of the svg element
+     * @param {string} svgElement the svg element that has been configured to represent the state
+     */
+    applyStateToSvgElement (item, stateObj, svgElementConfig, svgElement) {
+      const state = (svgElementConfig.useDisplayState) ? stateObj.displayState : stateObj.state
+      const stateType = stateObj.type
+      console.log(`Update ${svgElement.id} due to ${item} changing to ${state} ${stateType}`)
+      const tagName = svgElement.tagName
+      const stateOnColorRgbStyle = this.toRGBStyle(svgElementConfig.stateOnColor)
+      const stateOffColorRgbStyle = this.toRGBStyle(svgElementConfig.stateOffColor)
+
+      if (svgElement.tagName === 'tspan') {
+        svgElement.innerHTML = state
+      }
+
+      switch (stateType) {
+        // currently no distinction is made regarding different state-types, only the following are supported (yet)
+        case 'OpenClosed':
+        case 'Percent':
+        case 'HSB':
+        case 'OnOff':
+          const useProxy = tagName === 'g' && svgElementConfig.useProxyElementForState // if proxy should be used and element is of type group
+          const element = (useProxy) ? svgElement.querySelector('[flash]') : svgElement
+          if (!element) {
+            console.error(`Element ${svgElement} is a group element but has no containing element with the attribute "flash"`)
+            return
+          }
+          if (state === 'ON' || stateType === 'HSB') {
+            if (useProxy && svgElementConfig.stateAsOpacity) { // we use the flash element
+              let opacity = (state === 'ON') ? 1 : 0
+              opacity = (svgElementConfig.invertStateOpacity) ? 1 - opacity : opacity
+              opacity = (opacity < svgElementConfig.stateMinOpacity) ? svgElementConfig.stateMinOpacity : opacity
+              // Todo: use fill-opacity if fill not available
+              element.style.opacity = opacity
+            } else {
+              element.oldFill = element.style.fill
+              element.style.fill = stateOnColorRgbStyle
+            }
+            if (svgElementConfig.stateOnAsStyleClass) {
+              if (svgElementConfig.stateOffAsStyleClass) { // if offStates are provided add OffStates
+                let offStatesArray = svgElementConfig.stateOffAsStyleClass.split(',')
+                for (const offState of offStatesArray) {
+                  const elementClassInfo = offState.split(':')
+                  const offStateElement = document.getElementById(elementClassInfo[0].trim())
+                  if (offStateElement) {
+                    offStateElement.classList.remove(elementClassInfo[1].trim())
+                  } else {
+                    console.warn(`Target element ${elementClassInfo[0].trim()} not found. Please check style stateOffAsStyleClass expression of ${element.id}`)
+                  }
+                }
+              }
+              let onStatesArray = svgElementConfig.stateOnAsStyleClass.split(',')
+              for (const onState of onStatesArray) {
+                const elementClassInfo = onState.split(':')
+                const onStateElement = document.getElementById(elementClassInfo[0].trim())
+                if (onStateElement) {
+                  onStateElement.classList.add(elementClassInfo[1].trim())
+                } else {
+                  console.warn(`Target element ${elementClassInfo[0].trim()} not found. Please check style stateOnAsStyleClass expression of ${element.id}`)
+                }
+              }
+            }
+          } else if (state === 'OFF') {
+            const updateColor = (stateOffColorRgbStyle) || ((element?.oldFill !== 'undefined') ? element?.oldFill : 'undefined')
+            if (updateColor !== 'undefined') {
+              element.style.fill = updateColor
+            }
+            if (svgElementConfig.stateAsOpacity) { // we use the flash element
+              let opacity = (svgElementConfig.invertStateOpacity) ? 1 : 0
+              opacity = (opacity < svgElementConfig.stateMinOpacity) ? svgElementConfig.stateMinOpacity : opacity
+              element.style.opacity = opacity
+            }
+            if (svgElementConfig.stateOnAsStyleClass) {
+              // remove OnState-Styles first
+              let onStatesArray = svgElementConfig.stateOnAsStyleClass.split(',')
+              for (const onState of onStatesArray) {
+                const elementClassInfo = onState.split(':')
+                const onStateElement = document.getElementById(elementClassInfo[0].trim())
+                if (onStateElement) {
+                  onStateElement.classList.remove(elementClassInfo[1].trim())
+                } else {
+                  console.warn(`Target element ${elementClassInfo[0].trim()} not found. Please check style stateOnAsStyleClass expression of ${element.id}`)
+                }
+              }
+              if (svgElementConfig.stateOffAsStyleClass) { // if offStates are provided add OffStates
+                let offStatesArray = svgElementConfig.stateOffAsStyleClass.split(',')
+                for (const offState of offStatesArray) {
+                  const elementClassInfo = offState.split(':')
+                  const offStateElement = document.getElementById(elementClassInfo[0].trim())
+                  if (offStateElement) {
+                    offStateElement.classList.add(elementClassInfo[1].trim())
+                  } else {
+                    console.warn(`Target element ${elementClassInfo[0].trim()} not found. Please check style stateOffAsStyleClass expression of ${element.id}`)
+                  }
+                }
+              }
+            }
+          } else { // Percent, OpenClosed
+            if (svgElementConfig.stateAsOpacity && state) {
+              // we expect that number between 0 - 100
+              let opacity
+              if (stateType === 'OpenClosed') {
+                opacity = (state === 'OPEN') ? 1 : 0
+              } else if (stateType === 'Percent' && !isNaN(state)) {
+                opacity = parseFloat(state) / 100.0
+              }
+              opacity = (svgElementConfig.invertStateOpacity) ? 1 - opacity : opacity
+              opacity = (opacity < svgElementConfig.stateMinOpacity) ? svgElementConfig.stateMinOpacity : opacity
+              element.style.opacity = opacity
+            }
+          }
+          break
+      }
+    },
+    /**
      * Emits the action event with the given parameters.
      *
      * NOTE: We cannot perform the widget action mixin here because this would cause a circular dependency.
