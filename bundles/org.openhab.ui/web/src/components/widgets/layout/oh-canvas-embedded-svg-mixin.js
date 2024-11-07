@@ -3,6 +3,7 @@ import { pb, pg, pi, pt, WidgetDefinition } from '@/assets/definitions/widgets/h
 import { actionGroup, actionParams } from '@/assets/definitions/widgets/actions'
 
 export default {
+  emits: ['svgOnClickConfigUpdate', 'action'],
   data () {
     return {
       embeddedSvgReady: false,
@@ -196,7 +197,7 @@ export default {
       if (this.context.editmode) {
         this.openSvgSettingsPopup(el.id)
       } else {
-        this.performBasicAction(event, '', this.config.embeddedSvgActions[el.id], this.context)
+        this.performAction(event, '', this.config.embeddedSvgActions[el.id], this.context)
       }
     },
     /**
@@ -209,6 +210,18 @@ export default {
       for (const subElement of subElements) {
         this.svgOnMouseOver(subElement)
       }
+    },
+    /**
+     * Emits the action event with the given parameters.
+     *
+     * NOTE: We cannot perform the widget action mixin here because this would cause a circular dependency.
+     * @param evt
+     * @param prefix
+     * @param config
+     * @param context
+     */
+    performAction (evt, prefix, config, context) {
+      this.$emit('action', { evt, prefix, config, context })
     }
   }
 }

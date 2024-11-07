@@ -170,14 +170,12 @@
 
 <script>
 import mixin from '../widget-mixin'
-import { basicActionsMixin } from '@/components/widgets/widget-basic-actions'
 import embeddedSvgMixin from '@/components/widgets/layout/oh-canvas-embedded-svg-mixin'
 import OhCanvasLayer from './oh-canvas-layer'
 import { OhCanvasLayoutDefinition } from '@/assets/definitions/widgets/layout'
 
 export default {
-  emits: ['svgOnClickConfigUpdate'],
-  mixins: [mixin, basicActionsMixin, embeddedSvgMixin],
+  mixins: [mixin, embeddedSvgMixin],
   widget: OhCanvasLayoutDefinition,
   components: {
     OhCanvasLayer
