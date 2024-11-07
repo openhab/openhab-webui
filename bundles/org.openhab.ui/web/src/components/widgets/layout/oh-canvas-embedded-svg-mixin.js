@@ -79,20 +79,13 @@ export default {
       const svg = this.$refs.canvasBackground.querySelector('svg')
       const subElements = svg.querySelectorAll('[openhab]')
 
-      console.log('Setting up item tracking')
       for (const subElement of subElements) {
         const stateItems = this.config.embeddedSvgActions[subElement.id]?.stateItems
         const actionItem = this.config.embeddedSvgActions[subElement.id]?.actionItem
         const items = stateItems || (actionItem ? [actionItem] : [])
         if (items.length === 0) continue
         for (const item of items) {
-          if (!this.$store.getters.isItemTracked(item)) {
-            console.log(` ${item}: addToTrackingList:  ${subElement.id} and ${JSON.stringify(this.config.embeddedSvgActions[subElement.id])}`)
-            this.$store.commit('addToTrackingList', item)
-          } else {
-            console.log(` ${item}: item already tracked: not registering  ${subElement.id} and ${JSON.stringify(this.config.embeddedSvgActions[subElement.id])}`)
-          }
-
+          if (!this.$store.getters.isItemTracked(item)) this.$store.commit('addToTrackingList', item)
           const unsubscribe = this.$store.subscribe((mutation, state) => {
             if (mutation.type === 'setItemState' && mutation.payload.itemName === item) {
               this.applyStateToSvgElement(item, state.states.itemStates[item], this.config.embeddedSvgActions[subElement.id], subElement)
@@ -103,7 +96,7 @@ export default {
       }
 
       this.$store.dispatch('updateTrackingList')
-      console.debug('Setup up embedded SVG state tracking.')
+      console.info('Successfully setup embedded SVG state tracking.')
     },
     /**
      * Unsubscribes from the state tracking for the Items linked to embedded SVG elements.
@@ -112,7 +105,7 @@ export default {
       for (const unsubscribe of this.embeddedSvgStateTrackingUnsubscribes) {
         unsubscribe()
       }
-      console.debug('Unsubscribed from embedded SVG state tracking.')
+      console.info('Unsubscribed from embedded SVG state tracking.')
     },
     /**
      * Subscribes to the mouseover and click events for the embedded SVG elements with the `openhab` attribute.
@@ -197,7 +190,7 @@ export default {
       if (this.context.editmode) {
         this.openSvgSettingsPopup(el.id)
       } else {
-        this.performAction(event, '', this.config.embeddedSvgActions[el.id], this.context)
+        this.performAction(null, null, this.config.embeddedSvgActions[el.id], this.context)
       }
     },
     /**
@@ -212,10 +205,10 @@ export default {
       }
     },
     /**
-     * Converts a color to an RGB-Style that is valid
+     * Converts a color to a valid RGB CSS style:
      * - color definitions starting with # are treated as valid #rgb and are just returned
-     * - otherwise the value is expected to be openHABs hsb which is then converted to rgb colors and returned as rgb(r,g,b)
-     * - in case no valid rgb colors are returned on hsb conversion the returned oalor is red (#ff0000)
+     * - otherwise the value is expected to be openHABs HSB which is then converted to rgb colors and returned as rgb(r,g,b)
+     * - in case no valid rgb colors are returned on hsb conversion the returned calor is red (#ff0000)
      *
      * @param color color to be converted to a valid rgb string
      * @returns {string} rgb string
@@ -227,7 +220,7 @@ export default {
         } else {
           const rgbNumbers = color.split(',')
           if (rgbNumbers.length !== 3) {
-            console.log(`invalid rgb values in configured color: ${color}`)
+            console.info(`invalid rgb values in configured color: ${color}`)
             return '#FF0000' // not valid returns red
           }
           const rgb = this.$oh.utils.hsbToRgb(rgbNumbers[0], rgbNumbers[1], rgbNumbers[2])
@@ -247,10 +240,10 @@ export default {
      * <b>Applying state changes</b> of type OnOff, OpenClose, HSB, Percent to the svg-element
      *
      *  - A state is by default applied to the svg element
-     *  - In case useProxyElementForState is switched on, the svg element has to be of type <g> (group).
+     *  - In case useProxyElementForState is enabled, the svg element has to be of type <g> (group).
      *    - Within that group the first element marked with the attribute "flash" is used as proxy.
      *  - In general, a color is meant to be applied to the svg element to reflect the state
-     *    - Separate colors can be provided for the On / OFF state
+     *    - Separate colors can be provided for the ON / OFF state
      *    - The colors can also be derived by an expression, for example from the thing's color channel
      *  - In case the state item is a color item, the color is directly applied to the svg element
      *  - Alternatively, the opacity of the element can be controlled based on the state's value
@@ -259,25 +252,24 @@ export default {
      *    - Instead of setting an opacity to 0, which would make the element disappear, the value can be clamped to a minimum value <i>stateMinOpacity</i> to be still visible
      *  - ON/OFF-States can set a style class on ony given element with the svg: stateOnAsStyleClass / stateOffAsStyleClass support this
      *    - A list of style-changes can be provided in the form elementId:classname.
-     *    - Multiple entries can be provided in a comma-separated fashion: element1:classA,elementB:classB,....
+     *    - Multiple entries can be provided in a comma-separated fashion: element1:classA,elementB:classB,...
      *    - This can be even used to start / stop animations via css-class within the svg
      *  - Percent and OpenClose can only be used together when stateAsOpacity=ON. In that case the state's value controls the opacity of the element
      *
-     * <b>Configuration parameters<b/>
+     * <b>Configuration parameters:</b>
      *
-     * stateItems: a list of items that are used reflection the state.
-     *  - Usually this is only them item that reflects the state visually
-     *  - Sometimes other states are used in expressions (e.g. stateOnColor). All of these items have to be included in that list.
-     *
-     * useProxyElementForState: Use "flash" element to highlight the active state. The element is marked with the attribute flash: true and must be part of the elements group
-     * useDisplayState: Use the formatted state value to write into tspan
-     * stateOnColor: Color that should to be used when State is ON
-     * stateOffColor: Color that should to be used when State is OFF
-     * stateAsOpacity: Use the state from 0 to 100 as element opacity
-     * stateMinOpacity: This allows an opacity to be kept above this value.
-     * invertStateOpacity: 1 - opacity
-     * stateOnAsStyleClass: Provide element-id:classname, separate multiple entries with comma. ON sets the class, if OFF is not provided, OFF removes the class of given element
-     * stateOffAsStyleClass: Provide element-id:classname, separate multiple entries with comma. OFF sets the class
+     * - stateItems: a list of items to listen for state updates to reflect the item state in the svg.
+     *   - Usually this is only them item that reflects the state visually
+     *   - Sometimes other states are used in expressions (e.g. stateOnColor). All of these items have to be included in that list.
+     * - useProxyElementForState: Use "flash" element to highlight the active state. The element is marked with the attribute flash: true and must be part of the elements group
+     * - useDisplayState: Use the formatted state value to write into tspan
+     * - stateOnColor: Color that should to be used when State is ON
+     * - stateOffColor: Color that should to be used when State is OFF
+     * - stateAsOpacity: Use the state from 0 to 100 as element opacity
+     * - stateMinOpacity: This allows an opacity to be kept above this value.
+     * - invertStateOpacity: 1 - opacity
+     * - stateOnAsStyleClass: Provide element-id:classname, separate multiple entries with comma. ON sets the class, if OFF is not provided, OFF removes the class of given element
+     * - stateOffAsStyleClass: Provide element-id:classname, separate multiple entries with comma. OFF sets the class
      *
      * @param {string} item item name that has triggered the state change
      * @param {object} state object
@@ -287,12 +279,12 @@ export default {
     applyStateToSvgElement (item, stateObj, svgElementConfig, svgElement) {
       const state = (svgElementConfig.useDisplayState) ? stateObj.displayState : stateObj.state
       const stateType = stateObj.type
-      console.log(`Update ${svgElement.id} due to ${item} changing to ${state} ${stateType}`)
+      console.info(`Update ${svgElement.id} due to ${item} changing to ${state} ${stateType}`)
       const tagName = svgElement.tagName
       const stateOnColorRgbStyle = this.toRGBStyle(svgElementConfig.stateOnColor)
       const stateOffColorRgbStyle = this.toRGBStyle(svgElementConfig.stateOffColor)
 
-      if (svgElement.tagName === 'tspan') {
+      if (tagName === 'tspan') {
         svgElement.innerHTML = state
       }
 
@@ -305,7 +297,7 @@ export default {
           const useProxy = tagName === 'g' && svgElementConfig.useProxyElementForState // if proxy should be used and element is of type group
           const element = (useProxy) ? svgElement.querySelector('[flash]') : svgElement
           if (!element) {
-            console.error(`Element ${svgElement} is a group element but has no containing element with the attribute "flash"`)
+            console.warn(`Element ${svgElement} is a group element but has no containing element with the attribute "flash"`)
             return
           }
           if (state === 'ON' || stateType === 'HSB') {
@@ -313,7 +305,7 @@ export default {
               let opacity = (state === 'ON') ? 1 : 0
               opacity = (svgElementConfig.invertStateOpacity) ? 1 - opacity : opacity
               opacity = (opacity < svgElementConfig.stateMinOpacity) ? svgElementConfig.stateMinOpacity : opacity
-              // Todo: use fill-opacity if fill not available
+              // TODO: use fill-opacity if fill not available
               element.style.opacity = opacity
             } else {
               element.oldFill = element.style.fill
