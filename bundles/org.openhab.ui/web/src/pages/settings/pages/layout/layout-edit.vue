@@ -85,6 +85,7 @@
         </f7-block>
 
         <oh-layout-page class="layout-page" v-if="ready" :context="context" :key="pageKey" :style="page.config.style"
+                        @action="performAction($event.ev, $event.prefix, $event.config, $event.context)"
                         @add-block="addBlock"
                         @add-masonry="addMasonry"
                         @add-grid-item="addGridItem"
@@ -94,7 +95,7 @@
         <editor v-if="currentTab === 'code'" :style="{ opacity: previewMode ? '0' : '' }" class="page-code-editor" mode="application/vnd.openhab.uicomponent+yaml?type=layout" :value="pageYaml" @input="onEditorInput" />
         <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
 
-        <oh-layout-page class="layout-page" v-if="ready && previewMode" :context="context" :key="pageKey" :style="page.config.style" />
+        <oh-layout-page class="layout-page" v-if="ready && previewMode" :context="context" :key="pageKey" :style="page.config.style" @action="performAction($event.ev, $event.prefix, $event.config, $event.context)" />
       </f7-tab>
     </f7-tabs>
   </f7-page>
@@ -130,9 +131,10 @@
 </style>
 
 <script>
-import PageDesigner from '../pagedesigner-mixin'
-
 import YAML from 'yaml'
+
+import PageDesigner from '../pagedesigner-mixin'
+import { actionsMixin } from '@/components/widgets/widget-actions'
 
 import OhLayoutPage from '@/components/widgets/layout/oh-layout-page.vue'
 import * as SystemWidgets from '@/components/widgets/system'
@@ -151,7 +153,7 @@ import itemDefaultCellComponent from '@/components/widgets/standard/cell/default
 import { compareItems } from '@/components/widgets/widget-order'
 
 export default {
-  mixins: [PageDesigner],
+  mixins: [PageDesigner, actionsMixin],
   components: {
     'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue'),
     OhLayoutPage,
@@ -177,6 +179,12 @@ export default {
       modelPickerOpened: false,
       fullscreen: this.$fullscreen.getState()
     }
+  },
+  created () {
+    this.$f7.on('svgOnClickConfigUpdate', this.onSvgOnClickConfigUpdate)
+  },
+  beforeDestroy () {
+    this.$f7.off('svgOnClickConfigUpdate', this.onSvgOnClickConfigUpdate)
   },
   methods: {
     addWidget (component, widgetType, parentContext, slot) {
@@ -388,6 +396,12 @@ export default {
           this.forceUpdate()
         }
       })
+    },
+    onSvgOnClickConfigUpdate (event) {
+      if (!this.page.config.embeddedSvgActions) {
+        this.$set(this.page.config, 'embeddedSvgActions', {})
+      }
+      this.page.config.embeddedSvgActions[event.id] = event.config
     }
   }
 }

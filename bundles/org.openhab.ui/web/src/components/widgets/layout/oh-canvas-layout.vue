@@ -21,6 +21,10 @@
           style="margin-left: auto"
           text="Grid" />
         <f7-menu-item
+          v-if="config.embedSvg"
+          @click="flashEmbeddedSvgComponents()"
+          icon-f7="bolt" />
+        <f7-menu-item
           dropdown
           icon-f7="rectangle_3_offgrid">
           <f7-menu-dropdown right>
@@ -91,14 +95,18 @@
       }">
       <div
         v-if="config.imageUrl || config.imageSrcSet"
+        v-show="!config.embedSvg || embeddedSvgReady"
+        ref="canvasBackground"
         style="
           height: inherit;
           width: inherit;
           position: absolute;
           top: 0;
           left: 0;
+          overflow: hidden;
         ">
         <img
+          v-if="!config.embedSvg"
           class="oh-canvas-background disable-user-drag"
           :src="config.imageUrl"
           :srcset="config.imageSrcSet">
@@ -162,11 +170,12 @@
 
 <script>
 import mixin from '../widget-mixin'
+import embeddedSvgMixin from '@/components/widgets/layout/oh-canvas-embedded-svg-mixin'
 import OhCanvasLayer from './oh-canvas-layer'
 import { OhCanvasLayoutDefinition } from '@/assets/definitions/widgets/layout'
 
 export default {
-  mixins: [mixin],
+  mixins: [mixin, embeddedSvgMixin],
   widget: OhCanvasLayoutDefinition,
   components: {
     OhCanvasLayer
@@ -215,11 +224,29 @@ export default {
     this.$fullscreen.support = true
     this.canvasLayoutStyle()
     this.computeLayout()
+
+    if (this.config.embedSvg) {
+      this.embedSvg().then(() => {
+        this.subscribeEmbeddedSvgListeners()
+        this.setupEmbeddedSvgStateTracking()
+        this.embeddedSvgReady = true
+      })
+    }
   },
   mounted () {
     // Chrome reports a wrong size in fullscreen, store initial resolution and use non-dynamically.
     this.windowWidth = window.screen.width
     this.windowHeight = window.screen.height
+  },
+  beforeDestroy () {
+    if (!this.context.editmode) {
+      window.removeEventListener('resize', this.setDimensions)
+    }
+    if (this.config.embedSvg && this.embeddedSvgReady) {
+      this.embeddedSvgReady = false
+      this.unsubscribeEmbeddedSvgListeners()
+      this.unsubscribeEmbeddedSvgStateTracking()
+    }
   },
   methods: {
     isRetina () {

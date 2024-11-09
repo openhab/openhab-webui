@@ -27,7 +27,7 @@
       </f7-tab>
     </f7-tabs>
 
-    <component :is="page.component" v-else-if="page && visibleToCurrentUser" :context="context" @command="onCommand" />
+    <component :is="page.component" v-else-if="page && visibleToCurrentUser" :context="context" @command="onCommand" @action="performAction($event.ev, $event.prefix, $event.config, $event.context)" />
 
     <empty-state-placeholder v-if="!visibleToCurrentUser" icon="multiply_circle_fill" title="page.unavailable.title" text="page.unavailable.text" />
   </f7-page>
@@ -49,9 +49,10 @@
 <script>
 import OhLayoutPage from '@/components/widgets/layout/oh-layout-page.vue'
 import WidgetExpressionMixin from '@/components/widgets/widget-expression-mixin'
+import { actionsMixin } from '@/components/widgets/widget-actions'
 
 export default {
-  mixins: [WidgetExpressionMixin],
+  mixins: [WidgetExpressionMixin, actionsMixin],
   components: {
     'oh-layout-page': OhLayoutPage,
     'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue'),
