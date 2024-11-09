@@ -25,7 +25,7 @@ export default {
   props: ['configDescription', 'value'],
   computed: {
     step () {
-      if (this.configDescription.step !== undefined) return this.configDescription.step
+      if (this.configDescription.stepsize !== undefined) return this.configDescription.stepsize
       return 60
     }
   },
