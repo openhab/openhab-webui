@@ -227,7 +227,7 @@ export default {
             console.info(`invalid rgb values in configured color: ${color}`)
             return '#FF0000' // not valid returns red
           }
-          const rgb = this.$oh.utils.hsbToRgb(rgbNumbers[0], rgbNumbers[1], rgbNumbers[2])
+          const rgb = this.$oh.utils.hsbToRgb(rgbNumbers[0], rgbNumbers[1] / 100, rgbNumbers[2] / 100)
           return `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`
         }
       } else {
