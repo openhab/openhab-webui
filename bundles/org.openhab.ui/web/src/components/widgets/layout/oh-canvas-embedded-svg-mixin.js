@@ -76,24 +76,24 @@ export default {
      * Remember to unsubscribe from the mutations using {@link unsubscribeEmbeddedSvgStateTracking} when the component is destroyed.
      */
     setupEmbeddedSvgStateTracking () {
+      if (!this.config?.embeddedSvgActions) return
+
       const svg = this.$refs.canvasBackground.querySelector('svg')
       const subElements = svg.querySelectorAll('[openhab]')
 
       for (const subElement of subElements) {
-        if (this.config?.embeddedSvgActions) {
-          const stateItems = this.config.embeddedSvgActions[subElement.id]?.stateItems
-          const actionItem = this.config.embeddedSvgActions[subElement.id]?.actionItem
-          const items = stateItems || (actionItem ? [actionItem] : [])
-          if (items.length === 0) continue
-          for (const item of items) {
-            if (!this.$store.getters.isItemTracked(item)) this.$store.commit('addToTrackingList', item)
-            const unsubscribe = this.$store.subscribe((mutation, state) => {
-              if (mutation.type === 'setItemState' && mutation.payload.itemName === item) {
-                this.applyStateToSvgElement(item, state.states.itemStates[item], this.config.embeddedSvgActions[subElement.id], subElement)
-              }
-            })
-            this.embeddedSvgStateTrackingUnsubscribes.push(unsubscribe)
-          }
+        const stateItems = this.config.embeddedSvgActions[subElement.id]?.stateItems
+        const actionItem = this.config.embeddedSvgActions[subElement.id]?.actionItem
+        const items = stateItems || (actionItem ? [actionItem] : [])
+        if (items.length === 0) continue
+        for (const item of items) {
+          if (!this.$store.getters.isItemTracked(item)) this.$store.commit('addToTrackingList', item)
+          const unsubscribe = this.$store.subscribe((mutation, state) => {
+            if (mutation.type === 'setItemState' && mutation.payload.itemName === item) {
+              this.applyStateToSvgElement(item, state.states.itemStates[item], this.config.embeddedSvgActions[subElement.id], subElement)
+            }
+          })
+          this.embeddedSvgStateTrackingUnsubscribes.push(unsubscribe)
         }
       }
 
@@ -145,36 +145,36 @@ export default {
      * @param {HTMLElement} el
      */
     svgOnMouseOver (el) {
-      if (this.config?.embeddedSvgActions) {
-        if (this.context.editmode || (!this.context.editmode && this.config.embedSvgFlashing)) {
-          const tagName = el.tagName
-          // fill green if item config is available, red if config is still missing
-          const fillColor = (this.config.embeddedSvgActions[el.id]) ? 'rgb(0, 255, 0)' : 'rgb(255, 0, 0)'
-          if (tagName !== 'g' && !el.flashing) {
-            // sometimes instead of fill, stroke colors are used, so if fill = none, then we use stroke instead
-            const attributeName = (el.style.fill !== 'none') ? 'fill' : 'stroke'
-            const oldFill = el.style.getPropertyValue(attributeName)
-            el.style.setProperty(attributeName, fillColor)
-            el.flashing = true
+      if (!this.config?.embeddedSvgActions) return
+
+      if (this.context.editmode || (!this.context.editmode && this.config.embedSvgFlashing)) {
+        const tagName = el.tagName
+        // fill green if item config is available, red if config is still missing
+        const fillColor = (this.config.embeddedSvgActions[el.id]) ? 'rgb(0, 255, 0)' : 'rgb(255, 0, 0)'
+        if (tagName !== 'g' && !el.flashing) {
+          // sometimes instead of fill, stroke colors are used, so if fill = none, then we use stroke instead
+          const attributeName = (el.style.fill !== 'none') ? 'fill' : 'stroke'
+          const oldFill = el.style.getPropertyValue(attributeName)
+          el.style.setProperty(attributeName, fillColor)
+          el.flashing = true
+          setTimeout(() => {
+            el.flashing = false
+            el.style.setProperty(attributeName, oldFill)
+          }, 200)
+        } else { // groups cannot be filled, so we need to fill special element marked as "flash"
+          const flashElement = el.querySelector('[flash]')
+          if (flashElement && !flashElement.flashing) {
+            const attributeName = (flashElement.style.fill !== 'none') ? 'fill' : 'stroke'
+            const oldFill = flashElement.style.getPropertyValue(attributeName)
+            const oldOpacity = flashElement.style.opacity
+            flashElement.style.setProperty(attributeName, fillColor)
+            flashElement.style.opacity = 1
+            flashElement.flashing = true
             setTimeout(() => {
-              el.flashing = false
-              el.style.setProperty(attributeName, oldFill)
+              flashElement.style.setProperty(attributeName, oldFill)
+              flashElement.style.opacity = oldOpacity
+              flashElement.flashing = false
             }, 200)
-          } else { // groups cannot be filled, so we need to fill special element marked as "flash"
-            const flashElement = el.querySelector('[flash]')
-            if (flashElement && !flashElement.flashing) {
-              const attributeName = (flashElement.style.fill !== 'none') ? 'fill' : 'stroke'
-              const oldFill = flashElement.style.getPropertyValue(attributeName)
-              const oldOpacity = flashElement.style.opacity
-              flashElement.style.setProperty(attributeName, fillColor)
-              flashElement.style.opacity = 1
-              flashElement.flashing = true
-              setTimeout(() => {
-                flashElement.style.setProperty(attributeName, oldFill)
-                flashElement.style.opacity = oldOpacity
-                flashElement.flashing = false
-              }, 200)
-            }
           }
         }
       }
