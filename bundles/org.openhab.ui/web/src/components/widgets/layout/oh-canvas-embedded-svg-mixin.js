@@ -76,7 +76,7 @@ export default {
      * Remember to unsubscribe from the mutations using {@link unsubscribeEmbeddedSvgStateTracking} when the component is destroyed.
      */
     setupEmbeddedSvgStateTracking () {
-      if (!this.config?.embeddedSvgActions) return
+      if (!this.config.embeddedSvgActions) return
 
       const svg = this.$refs.canvasBackground.querySelector('svg')
       const subElements = svg.querySelectorAll('[openhab]')
@@ -145,12 +145,10 @@ export default {
      * @param {HTMLElement} el
      */
     svgOnMouseOver (el) {
-      if (!this.config?.embeddedSvgActions) return
-
       if (this.context.editmode || (!this.context.editmode && this.config.embedSvgFlashing)) {
         const tagName = el.tagName
         // fill green if item config is available, red if config is still missing
-        const fillColor = (this.config.embeddedSvgActions[el.id]) ? 'rgb(0, 255, 0)' : 'rgb(255, 0, 0)'
+        const fillColor = (this.config.embeddedSvgActions && this.config.embeddedSvgActions[el.id]) ? 'rgb(0, 255, 0)' : 'rgb(255, 0, 0)'
         if (tagName !== 'g' && !el.flashing) {
           // sometimes instead of fill, stroke colors are used, so if fill = none, then we use stroke instead
           const attributeName = (el.style.fill !== 'none') ? 'fill' : 'stroke'
