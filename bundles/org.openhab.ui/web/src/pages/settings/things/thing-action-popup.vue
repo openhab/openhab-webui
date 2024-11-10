@@ -118,7 +118,7 @@ export default {
         return
       }
       this.executing = true
-      this.$oh.api.post(`/rest/actions/${this.thingUID}/${this.action.actionUid}`, this.actionInput)
+      this.$oh.api.post(`/rest/actions/${this.thingUID}/${encodeURIComponent(this.action.actionUid)}`, this.actionInput)
         .then((data) => {
           this.actionOutput = data
           this.executing = false
