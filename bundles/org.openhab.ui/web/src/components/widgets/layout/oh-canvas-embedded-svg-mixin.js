@@ -80,18 +80,21 @@ export default {
       const subElements = svg.querySelectorAll('[openhab]')
 
       for (const subElement of subElements) {
-        const stateItems = this.config.embeddedSvgActions[subElement.id]?.stateItems
-        const actionItem = this.config.embeddedSvgActions[subElement.id]?.actionItem
-        const items = stateItems || (actionItem ? [actionItem] : [])
-        if (items.length === 0) continue
-        for (const item of items) {
-          if (!this.$store.getters.isItemTracked(item)) this.$store.commit('addToTrackingList', item)
-          const unsubscribe = this.$store.subscribe((mutation, state) => {
-            if (mutation.type === 'setItemState' && mutation.payload.itemName === item) {
-              this.applyStateToSvgElement(item, state.states.itemStates[item], this.config.embeddedSvgActions[subElement.id], subElement)
-            }
-          })
-          this.embeddedSvgStateTrackingUnsubscribes.push(unsubscribe)
+        console.log(this.config?.embeddedSvgActions)
+        if (this.config?.embeddedSvgActions) {
+          const stateItems = this.config.embeddedSvgActions[subElement.id]?.stateItems
+          const actionItem = this.config.embeddedSvgActions[subElement.id]?.actionItem
+          const items = stateItems || (actionItem ? [actionItem] : [])
+          if (items.length === 0) continue
+          for (const item of items) {
+            if (!this.$store.getters.isItemTracked(item)) this.$store.commit('addToTrackingList', item)
+            const unsubscribe = this.$store.subscribe((mutation, state) => {
+              if (mutation.type === 'setItemState' && mutation.payload.itemName === item) {
+                this.applyStateToSvgElement(item, state.states.itemStates[item], this.config.embeddedSvgActions[subElement.id], subElement)
+              }
+            })
+            this.embeddedSvgStateTrackingUnsubscribes.push(unsubscribe)
+          }
         }
       }
 
