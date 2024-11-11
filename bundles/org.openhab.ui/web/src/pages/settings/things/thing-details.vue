@@ -422,6 +422,7 @@ export default {
     loadThingActions () {
       return this.$oh.api.get('/rest/actions/' + this.thingId).then(data => {
         this.thingActions = data
+          .filter((a) => a.visibility === 'VISIBLE')
           .filter((a) => a.inputConfigDescriptions !== undefined)
           .sort((a, b) => a.label.localeCompare(b.label))
         return Promise.resolve()
