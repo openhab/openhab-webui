@@ -145,18 +145,18 @@ export default {
      * @param {HTMLElement} el
      */
     svgOnMouseOver (el) {
-      function flashTheElement (flashElement, fillColor) {
-        if (flashElement && !flashElement.flashing) {
-          const attributeName = (flashElement.style.fill !== 'none') ? 'fill' : 'stroke'
-          const oldFill = flashElement.style.getPropertyValue(attributeName)
-          const oldOpacity = flashElement.style.opacity
-          flashElement.style.setProperty(attributeName, fillColor)
-          flashElement.style.opacity = 1
-          flashElement.flashing = true
+      function flashElement (el, fillColor) {
+        if (el && !el.flashing) {
+          const attributeName = (el.style.fill !== 'none') ? 'fill' : 'stroke'
+          const oldFill = el.style.getPropertyValue(attributeName)
+          const oldOpacity = el.style.opacity
+          el.style.setProperty(attributeName, fillColor)
+          el.style.opacity = 1
+          el.flashing = true
           setTimeout(() => {
-            flashElement.style.setProperty(attributeName, oldFill)
-            flashElement.style.opacity = oldOpacity
-            flashElement.flashing = false
+            el.style.setProperty(attributeName, oldFill)
+            el.style.opacity = oldOpacity
+            el.flashing = false
           }, 200)
         }
       }
@@ -176,14 +176,14 @@ export default {
             el.style.setProperty(attributeName, oldFill)
           }, 200)
         } else { // groups cannot be filled, so we need to fill special element marked as "flash"
-          const flashElement = el.querySelector('[flash]')
-          if (flashElement) {
-            flashTheElement(flashElement, fillColor)
+          const elementToFlash = el.querySelector('[flash]')
+          if (elementToFlash) {
+            flashElement(elementToFlash, fillColor)
           } else {
             // let's try flashing all path elements in the group
             const flashElements = el.querySelectorAll('path')
             for (const path of flashElements) {
-              flashTheElement(path, fillColor)
+              flashElement(path, fillColor)
             }
           }
         }
