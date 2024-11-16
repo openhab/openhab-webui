@@ -6,7 +6,7 @@
         <f7-list>
           <f7-list-item :link="config.action ? true : false" no-chevron>
             <oh-icon slot="media" v-if="config.icon" :icon="config.icon" :height="config.iconSize || 32" :width="config.iconSize || 32" :state="(config.item && config.iconUseState) ? context.store[config.item].state : null" :color="config.iconColor" />
-            <div :class="config.class">
+            <div v-if="config.label || config.item" :class="config.class">
               <span :style="{ 'font-size': config.fontSize || '24px', 'font-weight': config.fontWeight || 'normal' }">
                 {{ label }}
               </span>
