@@ -145,6 +145,22 @@ export default {
      * @param {HTMLElement} el
      */
     svgOnMouseOver (el) {
+      function flashTheElement (flashElement, fillColor) {
+        if (flashElement && !flashElement.flashing) {
+          const attributeName = (flashElement.style.fill !== 'none') ? 'fill' : 'stroke'
+          const oldFill = flashElement.style.getPropertyValue(attributeName)
+          const oldOpacity = flashElement.style.opacity
+          flashElement.style.setProperty(attributeName, fillColor)
+          flashElement.style.opacity = 1
+          flashElement.flashing = true
+          setTimeout(() => {
+            flashElement.style.setProperty(attributeName, oldFill)
+            flashElement.style.opacity = oldOpacity
+            flashElement.flashing = false
+          }, 200)
+        }
+      }
+
       if (this.context.editmode || (!this.context.editmode && this.config.embedSvgFlashing)) {
         const tagName = el.tagName
         // fill green if item config is available, red if config is still missing
@@ -161,18 +177,14 @@ export default {
           }, 200)
         } else { // groups cannot be filled, so we need to fill special element marked as "flash"
           const flashElement = el.querySelector('[flash]')
-          if (flashElement && !flashElement.flashing) {
-            const attributeName = (flashElement.style.fill !== 'none') ? 'fill' : 'stroke'
-            const oldFill = flashElement.style.getPropertyValue(attributeName)
-            const oldOpacity = flashElement.style.opacity
-            flashElement.style.setProperty(attributeName, fillColor)
-            flashElement.style.opacity = 1
-            flashElement.flashing = true
-            setTimeout(() => {
-              flashElement.style.setProperty(attributeName, oldFill)
-              flashElement.style.opacity = oldOpacity
-              flashElement.flashing = false
-            }, 200)
+          if (flashElement) {
+            flashTheElement(flashElement, fillColor)
+          } else {
+            // let's try flashing all path elements in the group
+            const flashElements = el.querySelectorAll('path')
+            for (const path of flashElements) {
+              flashTheElement(path, fillColor)
+            }
           }
         }
       }
@@ -292,6 +304,92 @@ export default {
         svgElement.innerHTML = state
       }
 
+      function processState (useProxy, element) {
+        if (state === 'ON' || stateType === 'HSB') {
+          if (useProxy && svgElementConfig.stateAsOpacity) { // we use the flash element
+            let opacity = (state === 'ON') ? 1 : 0
+            opacity = (svgElementConfig.invertStateOpacity) ? 1 - opacity : opacity
+            opacity = (opacity < svgElementConfig.stateMinOpacity) ? svgElementConfig.stateMinOpacity : opacity
+            element.style.opacity = opacity
+          } else {
+            element.oldFill = element.style.fill
+            element.style.fill = stateOnColorRgbStyle
+          }
+          if (svgElementConfig.stateOnAsStyleClass) {
+            if (svgElementConfig.stateOffAsStyleClass) { // if offStates are provided add OffStates
+              let offStatesArray = svgElementConfig.stateOffAsStyleClass.split(',')
+              for (const offState of offStatesArray) {
+                const elementClassInfo = offState.split(':')
+                const offStateElement = document.getElementById(elementClassInfo[0].trim())
+                if (offStateElement) {
+                  offStateElement.classList.remove(elementClassInfo[1].trim())
+                } else {
+                  console.warn(`Target element ${elementClassInfo[0].trim()} not found. Please check style stateOffAsStyleClass expression of ${element.id}`)
+                }
+              }
+            }
+            let onStatesArray = svgElementConfig.stateOnAsStyleClass.split(',')
+            for (const onState of onStatesArray) {
+              const elementClassInfo = onState.split(':')
+              const onStateElement = document.getElementById(elementClassInfo[0].trim())
+              if (onStateElement) {
+                onStateElement.classList.add(elementClassInfo[1].trim())
+              } else {
+                console.warn(`Target element ${elementClassInfo[0].trim()} not found. Please check style stateOnAsStyleClass expression of ${element.id}`)
+              }
+            }
+          }
+        } else if (state === 'OFF') {
+          const updateColor = (stateOffColorRgbStyle) || ((element?.oldFill !== 'undefined') ? element?.oldFill : 'undefined')
+          if (updateColor !== 'undefined') {
+            element.style.fill = updateColor
+          }
+          if (svgElementConfig.stateAsOpacity) { // we use the flash element
+            let opacity = (svgElementConfig.invertStateOpacity) ? 1 : 0
+            opacity = (opacity < svgElementConfig.stateMinOpacity) ? svgElementConfig.stateMinOpacity : opacity
+            element.style.opacity = opacity
+          }
+          if (svgElementConfig.stateOnAsStyleClass) {
+            // remove OnState-Styles first
+            let onStatesArray = svgElementConfig.stateOnAsStyleClass.split(',')
+            for (const onState of onStatesArray) {
+              const elementClassInfo = onState.split(':')
+              const onStateElement = document.getElementById(elementClassInfo[0].trim())
+              if (onStateElement) {
+                onStateElement.classList.remove(elementClassInfo[1].trim())
+              } else {
+                console.warn(`Target element ${elementClassInfo[0].trim()} not found. Please check style stateOnAsStyleClass expression of ${element.id}`)
+              }
+            }
+            if (svgElementConfig.stateOffAsStyleClass) { // if offStates are provided add OffStates
+              let offStatesArray = svgElementConfig.stateOffAsStyleClass.split(',')
+              for (const offState of offStatesArray) {
+                const elementClassInfo = offState.split(':')
+                const offStateElement = document.getElementById(elementClassInfo[0].trim())
+                if (offStateElement) {
+                  offStateElement.classList.add(elementClassInfo[1].trim())
+                } else {
+                  console.warn(`Target element ${elementClassInfo[0].trim()} not found. Please check style stateOffAsStyleClass expression of ${element.id}`)
+                }
+              }
+            }
+          }
+        } else { // Percent, OpenClosed
+          if (svgElementConfig.stateAsOpacity && state) {
+            // we expect that number between 0 - 100
+            let opacity
+            if (stateType === 'OpenClosed') {
+              opacity = (state === 'OPEN') ? 1 : 0
+            } else if (stateType === 'Percent' && !isNaN(state)) {
+              opacity = parseFloat(state) / 100.0
+            }
+            opacity = (svgElementConfig.invertStateOpacity) ? 1 - opacity : opacity
+            opacity = (opacity < svgElementConfig.stateMinOpacity) ? svgElementConfig.stateMinOpacity : opacity
+            element.style.opacity = opacity
+          }
+        }
+      }
+
       switch (stateType) {
         // currently no distinction is made regarding different state-types, only the following are supported (yet)
         case 'OpenClosed':
@@ -300,92 +398,13 @@ export default {
         case 'OnOff':
           const useProxy = tagName === 'g' && svgElementConfig.useProxyElementForState // if proxy should be used and element is of type group
           const element = (useProxy) ? svgElement.querySelector('[flash]') : svgElement
-          if (!element) {
-            console.warn(`Element ${svgElement} is a group element but has no containing element with the attribute "flash"`)
-            return
-          }
-          if (state === 'ON' || stateType === 'HSB') {
-            if (useProxy && svgElementConfig.stateAsOpacity) { // we use the flash element
-              let opacity = (state === 'ON') ? 1 : 0
-              opacity = (svgElementConfig.invertStateOpacity) ? 1 - opacity : opacity
-              opacity = (opacity < svgElementConfig.stateMinOpacity) ? svgElementConfig.stateMinOpacity : opacity
-              // TODO: use fill-opacity if fill not available
-              element.style.opacity = opacity
-            } else {
-              element.oldFill = element.style.fill
-              element.style.fill = stateOnColorRgbStyle
-            }
-            if (svgElementConfig.stateOnAsStyleClass) {
-              if (svgElementConfig.stateOffAsStyleClass) { // if offStates are provided add OffStates
-                let offStatesArray = svgElementConfig.stateOffAsStyleClass.split(',')
-                for (const offState of offStatesArray) {
-                  const elementClassInfo = offState.split(':')
-                  const offStateElement = document.getElementById(elementClassInfo[0].trim())
-                  if (offStateElement) {
-                    offStateElement.classList.remove(elementClassInfo[1].trim())
-                  } else {
-                    console.warn(`Target element ${elementClassInfo[0].trim()} not found. Please check style stateOffAsStyleClass expression of ${element.id}`)
-                  }
-                }
-              }
-              let onStatesArray = svgElementConfig.stateOnAsStyleClass.split(',')
-              for (const onState of onStatesArray) {
-                const elementClassInfo = onState.split(':')
-                const onStateElement = document.getElementById(elementClassInfo[0].trim())
-                if (onStateElement) {
-                  onStateElement.classList.add(elementClassInfo[1].trim())
-                } else {
-                  console.warn(`Target element ${elementClassInfo[0].trim()} not found. Please check style stateOnAsStyleClass expression of ${element.id}`)
-                }
-              }
-            }
-          } else if (state === 'OFF') {
-            const updateColor = (stateOffColorRgbStyle) || ((element?.oldFill !== 'undefined') ? element?.oldFill : 'undefined')
-            if (updateColor !== 'undefined') {
-              element.style.fill = updateColor
-            }
-            if (svgElementConfig.stateAsOpacity) { // we use the flash element
-              let opacity = (svgElementConfig.invertStateOpacity) ? 1 : 0
-              opacity = (opacity < svgElementConfig.stateMinOpacity) ? svgElementConfig.stateMinOpacity : opacity
-              element.style.opacity = opacity
-            }
-            if (svgElementConfig.stateOnAsStyleClass) {
-              // remove OnState-Styles first
-              let onStatesArray = svgElementConfig.stateOnAsStyleClass.split(',')
-              for (const onState of onStatesArray) {
-                const elementClassInfo = onState.split(':')
-                const onStateElement = document.getElementById(elementClassInfo[0].trim())
-                if (onStateElement) {
-                  onStateElement.classList.remove(elementClassInfo[1].trim())
-                } else {
-                  console.warn(`Target element ${elementClassInfo[0].trim()} not found. Please check style stateOnAsStyleClass expression of ${element.id}`)
-                }
-              }
-              if (svgElementConfig.stateOffAsStyleClass) { // if offStates are provided add OffStates
-                let offStatesArray = svgElementConfig.stateOffAsStyleClass.split(',')
-                for (const offState of offStatesArray) {
-                  const elementClassInfo = offState.split(':')
-                  const offStateElement = document.getElementById(elementClassInfo[0].trim())
-                  if (offStateElement) {
-                    offStateElement.classList.add(elementClassInfo[1].trim())
-                  } else {
-                    console.warn(`Target element ${elementClassInfo[0].trim()} not found. Please check style stateOffAsStyleClass expression of ${element.id}`)
-                  }
-                }
-              }
-            }
-          } else { // Percent, OpenClosed
-            if (svgElementConfig.stateAsOpacity && state) {
-              // we expect that number between 0 - 100
-              let opacity
-              if (stateType === 'OpenClosed') {
-                opacity = (state === 'OPEN') ? 1 : 0
-              } else if (stateType === 'Percent' && !isNaN(state)) {
-                opacity = parseFloat(state) / 100.0
-              }
-              opacity = (svgElementConfig.invertStateOpacity) ? 1 - opacity : opacity
-              opacity = (opacity < svgElementConfig.stateMinOpacity) ? svgElementConfig.stateMinOpacity : opacity
-              element.style.opacity = opacity
+          if (element) {
+            processState(useProxy, element)
+          } else {
+            // let's try processing all paths within the group instead
+            const pathElements = svgElement.querySelectorAll('path')
+            for (const path of pathElements) {
+              processState(useProxy, path)
             }
           }
           break
