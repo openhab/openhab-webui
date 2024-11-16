@@ -2121,6 +2121,7 @@
 
 		var
 			_t = this,
+			color,
 			repeatInterval = 300,
 			interval;
 
@@ -2132,23 +2133,47 @@
 			};
 		}
 
-		_t.value = hex2rgb(_t.parentNode.getAttribute("data-value"));
+		function rgb2color(rgb) {
+			var
+				r = Math.round(rgb.r).toString(16),
+				g = Math.round(rgb.g).toString(16),
+				b = Math.round(rgb.b).toString(16);
+
+			return "#" + (r.length < 2 ? "0" : "") + r + (g.length < 2 ? "0" : "") + g + (b.length < 2 ? "0" : "") + b;
+		}
+
+		color = _t.parentNode.getAttribute("data-value");
+		_t.value = hex2rgb(color);
 		_t.modalControl = null;
 		_t.buttonUp = _t.parentNode.querySelector(o.colorpicker.up);
 		_t.buttonDown = _t.parentNode.querySelector(o.colorpicker.down);
 		_t.buttonPick = _t.parentNode.querySelector(o.colorpicker.pick);
+		_t.circle = _t.parentNode.querySelector(o.colorpicker.circle);
+		_t.circle.setAttribute("fill", color);
 		_t.longPress = false;
 		_t.pressed = false;
 
 		_t.setValue = function(value, itemState) {
 			var
-				t = itemState.split(","),
+				t,
+				hsv,
+				color;
+
+			if (itemState === "NULL" || itemState === "UNDEF") {
+				color = "#ffffff";
+				_t.value = hex2rgb(color);
+			} else {
+				t = itemState.split(",");
 				hsv = {
 					h: t[0] / 360,
 					s: t[1] / 100,
 					v: t[2] / 100
 				};
-			_t.value = Colorpicker.hsv2rgb(hsv);
+				_t.value = Colorpicker.hsv2rgb(hsv);
+				color = rgb2color(_t.value);
+			}
+
+			_t.circle.setAttribute("fill", color);
 
 			if (_t.modalControl !== null) {
 				_t.modalControl.updateColor(_t.value);
@@ -3937,6 +3962,7 @@
 		up: ".mdl-form__colorpicker--up",
 		down: ".mdl-form__colorpicker--down",
 		pick: ".mdl-form__colorpicker--pick",
+		circle: ".mdl-form__colorpicker--preview > svg > circle",
 		modalClass: "mdl-modal--colorpicker",
 		image: ".colorpicker__image",
 		handle: ".colorpicker__handle",

@@ -21,7 +21,6 @@ import org.openhab.core.model.sitemap.sitemap.Colorpicker;
 import org.openhab.core.model.sitemap.sitemap.Widget;
 import org.openhab.core.types.State;
 import org.openhab.core.ui.items.ItemUIRegistry;
-import org.openhab.ui.basic.internal.servlet.WebAppServlet;
 import org.openhab.ui.basic.render.RenderException;
 import org.openhab.ui.basic.render.WidgetRenderer;
 import org.osgi.framework.BundleContext;
@@ -65,23 +64,11 @@ public class ColorpickerRenderer extends AbstractWidgetRenderer {
         // get RGB hex value
         State state = itemUIRegistry.getState(cp);
         String hexValue = getRGBHexCodeFromItemState(state);
-        if (hexValue == null) {
-            hexValue = "#ffffff";
-        }
-        String purelabel = itemUIRegistry.getLabel(w);
-        if (purelabel != null) {
-            purelabel = purelabel.replaceAll("\\\"", "\\\\'");
-        }
 
         // Should be called before preprocessSnippet
-        snippet = snippet.replace("%state%", hexValue);
-        snippet = snippet.replace("%state_in_url%", escapeURL(hexValue));
+        snippet = snippet.replace("%state%", hexValue == null ? "#ffffff" : hexValue);
 
         snippet = preprocessSnippet(snippet, w);
-        if (purelabel != null) {
-            snippet = snippet.replace("%purelabel%", purelabel);
-        }
-        snippet = snippet.replace("%servletname%", WebAppServlet.SERVLET_PATH);
 
         // Process the color tags
         snippet = processColor(w, snippet);
