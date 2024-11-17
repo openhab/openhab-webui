@@ -17,8 +17,9 @@ export default {
      * @returns {Promise<void>}
      */
     embedSvg () {
-      // Load the real SVG content
-      return fetch(this.config.imageUrl)
+      // Load the real SVG content, in editmode we add a random number to the URL to prevent caching
+      const svgUrl = (this.context.editmode) ? this.config.imageUrl + `?rnd=${Math.random()}` : this.config.imageUrl
+      return fetch(svgUrl)
         .then(response => response.text())
         .then(svgCode => {
           this.$refs.canvasBackground.innerHTML = svgCode
