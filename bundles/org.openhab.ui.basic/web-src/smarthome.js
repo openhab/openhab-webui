@@ -2291,8 +2291,9 @@
 		if (gradientColors !== "") {
 			_t.slider.style.background = "linear-gradient(to right, " + gradientColors + ")";
 		}
-		_t.slider.min = Math.round(min);
-		_t.slider.max = Math.round(max);
+		// Extend min/max to integers
+		_t.slider.min = Math.floor(min);
+		_t.slider.max = Math.ceil(max);
 
 		function setCorTemperature(value) {
 			if (isNaN(value)) {
@@ -2378,7 +2379,7 @@
 
 		_t.valueNode = _t.parentNode.parentNode.querySelector(o.formValue);
 		_t.hasValue = _t.parentNode.getAttribute("data-has-value") === "true";
-		_t.value = _t.parentNode.getAttribute("data-state") === "" ? NaN : parseFloat(_t.parentNode.getAttribute("data-state"));
+		_t.value = _t.parentNode.getAttribute("data-value") === "" ? NaN : parseFloat(_t.parentNode.getAttribute("data-value"));
 		_t.min = parseFloat(_t.parentNode.getAttribute("data-min"));
 		_t.max = parseFloat(_t.parentNode.getAttribute("data-max"));
 		_t.gradientColors = _t.parentNode.getAttribute("data-gradient-colors");
@@ -2448,7 +2449,15 @@
 
 			_t.modalControl = new Colortemppicker(_t.modal.container, _t.min, _t.max, _t.value, _t.gradientColors,
 				function(valueKelvin) {
-					emitEvent(valueKelvin);
+					var
+						value = valueKelvin;
+
+					if (value < _t.min) {
+						value = _t.min;
+					} else if (value > _t.max) {
+						value = _t.max;
+					}
+					emitEvent(value);
 				}
 			);
 
