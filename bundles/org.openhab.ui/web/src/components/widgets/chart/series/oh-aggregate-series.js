@@ -16,7 +16,7 @@ function dimensionFromDate (d, dimension, invert) {
   }
 }
 
-function includeBoundaryFor (component) {
+function includeBoundaryAndItemStateFor (component) {
   return (!component || !component.config || component.config.aggregationFunction === 'diff_last') ? true : undefined
 }
 
@@ -27,13 +27,16 @@ export default {
     return [series.item]
   },
   includeBoundary (component) {
-    return includeBoundaryFor(component)
+    return includeBoundaryAndItemStateFor(component)
+  },
+  includeItemState (component) {
+    return includeBoundaryAndItemStateFor(component)
   },
   get (component, points, startTime, endTime, chart) {
     let series = chart.evaluateExpression(ComponentId.get(component), component.config)
     let dimension1 = series.dimension1
     let dimension2 = series.dimension2
-    let boundary = includeBoundaryFor(component)
+    let boundary = includeBoundaryAndItemStateFor(component)
 
     const itemPoints = points.find(p => p.name === series.item).data
 

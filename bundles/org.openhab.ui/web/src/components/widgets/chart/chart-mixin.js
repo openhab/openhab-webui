@@ -153,7 +153,19 @@ export default {
         return Promise.resolve(getter([]))
       }
 
-      const boundary = seriesComponents[component.component].includeBoundary?.(component) || component.config.noBoundary !== true
+      const now = dayjs()
+      const isBetweenStartAndEnd = dayjs(this.startTime).subtract(5, 'minutes').isBefore(now) && dayjs(this.endTime).add(5, 'minutes').isAfter(now)
+
+      let boundary = seriesComponents[component.component].includeBoundary?.(component) !== undefined
+        ? seriesComponents[component.component].includeBoundary(component)
+        : isBetweenStartAndEnd
+      if (component.config.noBoundary === true) boundary = false
+
+      let itemState = seriesComponents[component.component].includeItemState?.(component) !== undefined
+        ? seriesComponents[component.component].includeItemState(component)
+        : isBetweenStartAndEnd
+      if (component.config.noItemState === true) itemState = false
+
       const itemPromises = neededItems.map((neededItem) => {
         if (this.items[neededItem]) return Promise.resolve(this.items[neededItem])
         return this.$oh.api.get(`/rest/items/${neededItem}`).then((item) => {
@@ -176,7 +188,7 @@ export default {
           starttime: seriesStartTime.toISOString(),
           endtime: seriesEndTime.subtract(1, 'millisecond').toISOString(),
           boundary,
-          itemState: component.config.noItemState !== true
+          itemState
         }
 
         return Promise.all([itemPromises[neededItem], this.$oh.api.get(url, query)])
