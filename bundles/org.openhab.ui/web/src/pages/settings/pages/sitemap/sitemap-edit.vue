@@ -268,7 +268,7 @@
       visibility hidden !important
   .add-to-sitemap-fab
     visibility hidden !important
-  
+
 @media (max-width: 767px)
   .details-pane
     display none

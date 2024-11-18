@@ -1,11 +1,11 @@
 <template>
-  <f7-treeview-item selectable :label="widgetConfigLabel()"
+  <f7-treeview-item v-if="itemsReady" selectable :label="widgetConfigLabel()"
                     :icon-f7="widgetTypeIcon()"
                     :textColor="iconColor" :color="'blue'"
                     :selected="selected && selected === widget"
                     :opened="!widget.closed"
                     @click="select">
-    <sitemap-treeview-item class="sitemap-treeview-item" v-if="itemsReady" v-for="(childwidget, idx) in children"
+    <sitemap-treeview-item class="sitemap-treeview-item" v-for="(childwidget, idx) in children"
                            :key="idx"
                            :includeItemName="includeItemName"
                            :widget="childwidget" :parent-widget="widget"
