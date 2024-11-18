@@ -17,8 +17,9 @@ export default {
      * @returns {Promise<void>}
      */
     embedSvg () {
-      // Load the real SVG content
-      return fetch(this.config.imageUrl)
+      // Load the real SVG content, in editmode we add a random number to the URL to prevent caching
+      const svgUrl = (this.context.editmode) ? this.config.imageUrl + `?rnd=${Math.random()}` : this.config.imageUrl
+      return fetch(svgUrl)
         .then(response => response.text())
         .then(svgCode => {
           this.$refs.canvasBackground.innerHTML = svgCode
@@ -46,7 +47,7 @@ export default {
       const that = this
       this.$f7router.navigate({ url: 'on-svg-click-settings', route: { path: 'on-svg-click-settings', popup } }, {
         props: {
-          widget: new WidgetDefinition('onSvgClickSettings', 'SVG onClick Action', '')
+          widget: new WidgetDefinition('onSvgClickSettings', `SVG onClick Action for ${id}`, '')
             .paramGroup(pg('state', 'State', 'Defines if and how the state is represented in the SVG'), [
               pi('stateItems', 'State Item(s)', 'Item(s) that should be used to determine the state').m().a(),
               pb('useProxyElementForState', 'Use State Proxy Element', 'Use "flash" element to highlight the active state. The element is marked with the attribute flash: true and must be part of the elements group').a(),
