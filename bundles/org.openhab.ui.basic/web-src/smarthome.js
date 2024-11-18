@@ -2121,6 +2121,7 @@
 
 		var
 			_t = this,
+			color,
 			repeatInterval = 300,
 			interval;
 
@@ -2132,23 +2133,47 @@
 			};
 		}
 
-		_t.value = hex2rgb(_t.parentNode.getAttribute("data-value"));
+		function rgb2color(rgb) {
+			var
+				r = Math.round(rgb.r).toString(16),
+				g = Math.round(rgb.g).toString(16),
+				b = Math.round(rgb.b).toString(16);
+
+			return "#" + (r.length < 2 ? "0" : "") + r + (g.length < 2 ? "0" : "") + g + (b.length < 2 ? "0" : "") + b;
+		}
+
+		color = _t.parentNode.getAttribute("data-value");
+		_t.value = hex2rgb(color);
 		_t.modalControl = null;
 		_t.buttonUp = _t.parentNode.querySelector(o.colorpicker.up);
 		_t.buttonDown = _t.parentNode.querySelector(o.colorpicker.down);
 		_t.buttonPick = _t.parentNode.querySelector(o.colorpicker.pick);
+		_t.colorPreview = _t.parentNode.querySelector(o.colorpicker.rectSvg);
+		_t.colorPreview.setAttribute("fill", color);
 		_t.longPress = false;
 		_t.pressed = false;
 
 		_t.setValue = function(value, itemState) {
 			var
-				t = itemState.split(","),
+				t,
+				hsv,
+				color;
+
+			if (itemState === "NULL" || itemState === "UNDEF") {
+				color = "#ffffff";
+				_t.value = hex2rgb(color);
+			} else {
+				t = itemState.split(",");
 				hsv = {
 					h: t[0] / 360,
 					s: t[1] / 100,
 					v: t[2] / 100
 				};
-			_t.value = Colorpicker.hsv2rgb(hsv);
+				_t.value = Colorpicker.hsv2rgb(hsv);
+				color = rgb2color(_t.value);
+			}
+
+			_t.colorPreview.setAttribute("fill", color);
 
 			if (_t.modalControl !== null) {
 				_t.modalControl.updateColor(_t.value);
@@ -2361,10 +2386,10 @@
 		_t.colors = (_t.gradientColors === "" ? "Gray" : _t.gradientColors).split(",");
 		_t.modalControl = null;
 		_t.buttonPick = _t.parentNode.querySelector(o.colortemppicker.pick);
-		_t.circle = _t.parentNode.querySelector(o.colortemppicker.circle);
+		_t.colorPreview = _t.parentNode.querySelector(o.colortemppicker.rectSvg);
 		color = _t.parentNode.getAttribute("data-color");
 		if (color !== "") {
-			_t.circle.setAttribute("fill", color);
+			_t.colorPreview.setAttribute("fill", color);
 		}
 
 		_t.setValuePrivate = function(value, itemState) {
@@ -2383,8 +2408,8 @@
 				_t.value = itemState * 1;
 			}
 
-			// Set the color in the preview circle with the most approaching color used to generate the gradient
-			_t.circle.setAttribute("fill", (isNaN(_t.value) || _t.value < _t.min || _t.value > _t.max)
+			// Set the color in the preview rectange with the most approaching color used to generate the gradient
+			_t.colorPreview.setAttribute("fill", (isNaN(_t.value) || _t.value < _t.min || _t.value > _t.max)
 				? "Gray"
 				: _t.colors[Math.round((_t.value - _t.min) * (_t.colors.length - 1) / (_t.max - _t.min))]);
 
@@ -3946,6 +3971,7 @@
 		up: ".mdl-form__colorpicker--up",
 		down: ".mdl-form__colorpicker--down",
 		pick: ".mdl-form__colorpicker--pick",
+		rectSvg: ".mdl-form__colorpicker--pick > svg > rect",
 		modalClass: "mdl-modal--colorpicker",
 		image: ".colorpicker__image",
 		handle: ".colorpicker__handle",
@@ -3956,7 +3982,7 @@
 	},
 	colortemppicker: {
 		pick: ".mdl-form__colortemppicker--pick",
-		circle: ".mdl-form__colortemppicker--preview > svg > circle",
+		rectSvg: ".mdl-form__colortemppicker--pick > svg > rect",
 		modalClass: "mdl-modal--colortemppicker",
 		slider: ".colortemppicker__input",
 		colortemppicker: ".colortemppicker",

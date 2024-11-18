@@ -348,10 +348,14 @@
 			padding-top: 6px;
 		}
 	}
-	&__colortemppicker--preview {
+	&__colorpicker--pick,
+	&__colortemppicker--pick {
+		padding-top: 0px !important;
+		padding-left: 7px;
+		padding-right: 7px;
 		svg {
-			width: 36px;
-			height: 36px;
+			width: 26px;
+			height: 26px;
 			object-fit: contain;
 		}
 	}
