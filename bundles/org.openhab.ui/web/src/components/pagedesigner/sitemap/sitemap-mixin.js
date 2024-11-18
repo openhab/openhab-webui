@@ -63,13 +63,13 @@ export default {
       { key: 'datetime', value: 'Date and Time' }
     ]
 
-    if (!this.itemsList || !this.itemsList.length) {
+    if (!this.itemsList) {
       this.$oh.api.get('/rest/items?staticDataOnly=true').then((items) => {
         this.items = items
         this.itemsReady = true
       })
     } else {
-      this.items = this.itemsList
+      this.items = this.itemsList ?? []
       this.itemsReady = true
     }
   },
@@ -89,7 +89,7 @@ export default {
     },
     widgetItemLabel (includeItemName) {
       const item = this.items.find(i => i.name === this.widget.config.item)
-      return item.label + (includeItemName ? ' (' + item.name + ')' : '')
+      return (item?.label ?? this.widget.config.item) + (includeItemName ? ' (' + item?.name ?? '' + ')' : '')
     },
     widgetConfigDescription (includeItemName) {
       const buttonPosition = this.widget.component === 'Button' ? ' (' + (this.widget.config?.row ?? '-') + ',' + (this.widget.config?.column ?? '-') + ')' : ''

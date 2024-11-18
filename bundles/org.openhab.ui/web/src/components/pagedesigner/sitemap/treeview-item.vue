@@ -9,7 +9,7 @@
                            :key="idx"
                            :includeItemName="includeItemName"
                            :widget="childwidget" :parent-widget="widget"
-                           :itemsList="itemsList"
+                           :itemsList="items"
                            @selected="(event) => $emit('selected', event)"
                            :selected="selected" />
     <div slot="label" class="subtitle">

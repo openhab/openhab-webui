@@ -292,7 +292,7 @@ export default {
     WidgetDetails,
     AttributeDetails
   },
-  props: ['createMode', 'uid'],
+  props: ['createMode', 'uid', 'itemsList'],
   data () {
     if (!this.$f7.data.sitemap) this.$f7.data.sitemap = {}
     return {

@@ -1,4 +1,3 @@
-import PagesList from '../../pages-list.vue'
 import SitemapEdit from '../sitemap-edit.vue'
 import { shallowMount, createLocalVue } from '@vue/test-utils'
 import Framework7 from 'framework7'
@@ -24,7 +23,8 @@ describe('SitemapEdit', () => {
               open: () => { }
             }
           }
-        }
+        },
+        data: { sitemap: {} }
       }
     }
   })
@@ -34,7 +34,8 @@ describe('SitemapEdit', () => {
       localVue,
       propsData: {
         createMode: true,
-        uid: 'test'
+        uid: 'test',
+        itemsList: []
       }
     })
   })
