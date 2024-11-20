@@ -44,6 +44,9 @@
                 <f7-list-item media-item title="API Explorer" footer="Discover and access the REST API directly" link="api-explorer">
                   <f7-icon slot="media" f7="burn" color="gray" />
                 </f7-list-item>
+                <f7-list-item media-item title="Log Viewer" footer="Monitor openHAB log output" link="log-viewer">
+                  <f7-icon slot="media" f7="square_list" color="gray" />
+                </f7-list-item>
               </f7-list>
             </f7-col>
           </f7-row>
