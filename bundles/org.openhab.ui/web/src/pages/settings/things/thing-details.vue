@@ -13,7 +13,8 @@
       <f7-link @click="switchTab('thing')" :tab-link-active="currentTab === 'thing'" class="tab-link">
         Thing
       </f7-link>
-      <f7-link @click="switchTab('channels')" :tab-link-active="currentTab === 'channels'" v-show="!error" class="tab-link">
+      <f7-link @click="switchTab('channels')" :tab-link-active="currentTab === 'channels'" v-show="!error"
+        class="tab-link">
         Channels
       </f7-link>
       <f7-link @click="switchTab('code')" :tab-link-active="currentTab === 'code'" v-show="!error" class="tab-link">
@@ -26,14 +27,17 @@
         <f7-block v-if="ready && thing.statusInfo" class="block-narrow padding-left padding-right" strong>
           <f7-col>
             <div v-show="!error" class="float-right align-items-flex-start align-items-center">
-              <f7-link :icon-color="(thing.statusInfo.statusDetail === 'DISABLED') ? 'orange' : 'gray'" :tooltip="((thing.statusInfo.statusDetail === 'DISABLED') ? 'Enable' : 'Disable') + (($device.desktop) ? ' (Ctrl-D)' : '')" icon-ios="f7:pause_circle" icon-md="f7:pause_circle" icon-aurora="f7:pause_circle" icon-size="32" color="orange" @click="toggleDisabled" />
+              <f7-link :icon-color="(thing.statusInfo.statusDetail === 'DISABLED') ? 'orange' : 'gray'"
+                :tooltip="((thing.statusInfo.statusDetail === 'DISABLED') ? 'Enable' : 'Disable') + (($device.desktop) ? ' (Ctrl-D)' : '')"
+                icon-ios="f7:pause_circle" icon-md="f7:pause_circle" icon-aurora="f7:pause_circle" icon-size="32"
+                color="orange" @click="toggleDisabled" />
             </div>
             Status:
-            <f7-chip class="margin-left"
-                     :text="thing.statusInfo.status"
-                     :color="thingStatusBadgeColor(thing.statusInfo)" />
+            <f7-chip class="margin-left" :text="thing.statusInfo.status"
+              :color="thingStatusBadgeColor(thing.statusInfo)" />
             <div>
-              <strong>{{ (thing.statusInfo.statusDetail !== 'NONE') ? thing.statusInfo.statusDetail : '&nbsp;' }}</strong>
+              <strong>{{ (thing.statusInfo.statusDetail !== 'NONE') ? thing.statusInfo.statusDetail : '&nbsp;'
+                }}</strong>
               <br>
               <div v-if="thing.statusInfo.description">
                 {{ thing.statusInfo.description }}
@@ -56,7 +60,8 @@
         <f7-block v-if="ready && !error" class="block-narrow">
           <f7-col>
             <thing-general-settings :thing="thing" :thing-type="thingType" :ready="true" :read-only="!editable" />
-            <f7-block-title v-if="thingType && thingType.UID" medium style="margin-bottom: var(--f7-list-margin-vertical)">
+            <f7-block-title v-if="thingType && thingType.UID" medium
+              style="margin-bottom: var(--f7-list-margin-vertical)">
               Information
             </f7-block-title>
             <f7-block-footer v-if="!editable" class="no-margin padding-left">
@@ -68,15 +73,12 @@
                   <div class="margin" v-html="thingType.description" />
                 </f7-accordion-content>
               </f7-list-item>
-              <f7-list-item accordion-item v-if="Object.keys(thing.properties).length > 0" title="Thing Properties" :badge="Object.keys(thing.properties).length">
+              <f7-list-item accordion-item v-if="Object.keys(thing.properties).length > 0" title="Thing Properties"
+                :badge="Object.keys(thing.properties).length">
                 <f7-accordion-content>
                   <f7-list>
-                    <f7-list-item
-                      class="thing-property"
-                      v-for="(value, key) in thing.properties"
-                      :key="key"
-                      :title="key"
-                      :after="value" />
+                    <f7-list-item class="thing-property" v-for="(value, key) in thing.properties" :key="key"
+                      :title="key" :after="value" />
                   </f7-list>
                 </f7-accordion-content>
               </f7-list-item>
@@ -85,22 +87,20 @@
             <f7-block-title medium>
               Configuration
             </f7-block-title>
-            <config-sheet ref="thingConfiguration"
-                          :parameter-groups="configDescriptions.parameterGroups"
-                          :parameters="configDescriptions.parameters"
-                          :configuration="thing.configuration"
-                          :status="configStatusInfo"
-                          :set-empty-config-as-null="true"
-                          :read-only="!editable" />
+            <config-sheet ref="thingConfiguration" :parameter-groups="configDescriptions.parameterGroups"
+              :parameters="configDescriptions.parameters" :configuration="thing.configuration"
+              :status="configStatusInfo" :set-empty-config-as-null="true" :read-only="!editable" />
 
             <!-- Thing Actions & UI Actions -->
-            <template v-if="thingActions.length > 0 || thingType?.UID?.startsWith('zwave')">
+            <template v-if="thingActions.length > 0 || thingType?.UID?.startsWith('zwave') || thingType?.UID?.startsWith('zigbee')">
               <f7-block-title medium class="no-margin-top">
                 Actions
               </f7-block-title>
               <f7-list class="margin-top" media-list>
                 <f7-list-item v-if="thingType?.UID?.startsWith('zwave')" title="View Network Map" link="" @click="openZWaveNetworkPopup()" />
-                <f7-list-item v-for="action in thingActions" :key="action.name" :title="action.label" :footer="action.description" link="" @click="doThingAction(action)" />
+                <f7-list-item v-if="thingType?.UID?.startsWith('zigbee')" title="View Network Map" link="" @click="openZigBeeNetworkPopup()" />
+                <f7-list-item v-for="action in thingActions" :key="action.name" :title="action.label"
+                  :footer="action.description" link="" @click="doThingAction(action)" />
               </f7-list>
             </template>
           </f7-col>
@@ -129,7 +129,8 @@
                 <div v-html="actionGroup.group.description" />
               </f7-block-footer>
               <f7-list>
-                <f7-list-button v-for="action in actionGroup.actions" :color="(action.verify) ? 'yellow' : 'blue'" :key="action.name" :title="action.label" @click="action.execute()" />
+                <f7-list-button v-for="action in actionGroup.actions" :color="(action.verify) ? 'yellow' : 'blue'"
+                  :key="action.name" :title="action.label" @click="action.execute()" />
               </f7-list>
             </f7-col>
           </f7-block>
@@ -148,22 +149,29 @@
       <f7-tab id="channels" disabled="!thingType.channels" :tab-active="currentTab === 'channels'">
         <f7-block v-if="currentTab === 'channels'" class="block-narrow">
           <channel-list :thingType="thingType" :thing="thing" :channelTypes="channelTypes"
-                        @channels-updated="onChannelsUpdated" :context="context" />
+            @channels-updated="onChannelsUpdated" :context="context" />
           <f7-col v-if="isExtensible || thing.channels.length > 0">
             <f7-list>
-              <f7-list-button class="searchbar-ignore" color="blue" title="Add Channel" v-if="isExtensible && editable" @click="addChannel()" />
-              <f7-list-button class="searchbar-ignore" color="blue" title="Add Equipment to Model" @click="addToModel(true)" />
-              <f7-list-button class="searchbar-ignore" color="blue" title="Add Points to Model" @click="addToModel(false)" />
+              <f7-list-button class="searchbar-ignore" color="blue" title="Add Channel" v-if="isExtensible && editable"
+                @click="addChannel()" />
+              <f7-list-button class="searchbar-ignore" color="blue" title="Add Equipment to Model"
+                @click="addToModel(true)" />
+              <f7-list-button class="searchbar-ignore" color="blue" title="Add Points to Model"
+                @click="addToModel(false)" />
               <f7-list-button class="searchbar-ignore" color="red" title="Unlink all Items" @click="unlinkAll(false)" />
-              <f7-list-button class="searchbar-ignore" color="red" title="Unlink all and Remove Items" @click="unlinkAll(true)" />
+              <f7-list-button class="searchbar-ignore" color="red" title="Unlink all and Remove Items"
+                @click="unlinkAll(true)" />
             </f7-list>
           </f7-col>
         </f7-block>
       </f7-tab>
 
       <f7-tab id="code" :tab-active="currentTab === 'code'">
-        <f7-icon v-if="!editable" f7="lock" class="float-right margin" style="opacity:0.5; z-index: 4000; user-select: none;" size="50" color="gray" :tooltip="notEditableMsg" />
-        <editor v-if="ready" class="thing-code-editor" mode="application/vnd.openhab.thing+yaml" :value="thingYaml" :hint-context="{ thingType: thingType, channelTypes: channelTypes }" @input="onEditorInput" :read-only="!editable" />
+        <f7-icon v-if="!editable" f7="lock" class="float-right margin"
+          style="opacity:0.5; z-index: 4000; user-select: none;" size="50" color="gray" :tooltip="notEditableMsg" />
+        <editor v-if="ready" class="thing-code-editor" mode="application/vnd.openhab.thing+yaml" :value="thingYaml"
+          :hint-context="{ thingType: thingType, channelTypes: channelTypes }" @input="onEditorInput"
+          :read-only="!editable" />
         <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
       </f7-tab>
     </f7-tabs>
@@ -269,6 +277,7 @@ import ChannelList from '@/components/thing/channel-list.vue'
 import ThingGeneralSettings from '@/components/thing/thing-general-settings.vue'
 
 import ZWaveNetworkPopup from '@/pages/settings/things/zwave/zwave-network-popup.vue'
+import ZigBeeNetworkPopup from '@/pages/settings/things/zigbee/zigbee-network-popup.vue'
 
 import AddChannelPage from '@/pages/settings/things/channel/channel-add.vue'
 import AddFromThingPage from '@/pages/settings/model/add-from-thing.vue'
@@ -521,6 +530,7 @@ export default {
         }
       }
 
+      console.log("Save dirty flags: configDirty=" + this.configDirty + ", thingDirty=" + this.thingDirty + ", saveThing=" + saveThing)
       let endpoint, payload, successMessage
       // if configDirty flag is set, assume the config has to be saved with PUT /rest/things/:thingId/config
       if (this.configDirty && !this.thingDirty && !saveThing) {
@@ -596,7 +606,7 @@ export default {
         }
       )
     },
-    openZWaveNetworkPopup () {
+    openZWaveNetworkPopup() {
       const popup = {
         component: ZWaveNetworkPopup
       }
@@ -604,6 +614,22 @@ export default {
         url: 'zwave-network',
         route: {
           path: 'zwave-network',
+          popup
+        }
+      }, {
+        props: {
+          bridgeUID: this.thing.bridgeUID || this.thing.UID
+        }
+      })
+    },
+    openZigBeeNetworkPopup() {
+      const popup = {
+        component: ZigBeeNetworkPopup
+      }
+      this.$f7router.navigate({
+        url: 'zigbee-network',
+        route: {
+          path: 'zigbee-network',
           popup
         }
       }, {
