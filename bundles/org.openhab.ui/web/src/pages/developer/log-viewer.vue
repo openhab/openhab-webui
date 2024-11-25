@@ -1,8 +1,7 @@
 <template>
   <f7-page name="logviewer">
 
-
-
+    <!-- Logger Settings Popup -->
     <div class="popup logsettings-popup">
       <div class="view">
         <div class="page">
@@ -20,7 +19,7 @@
             <f7-block class="input-with-buttons-container">
               <div class="input-with-buttons">
                 <f7-input type="text" placeholder="Add logger package entry..." v-model="inputText"
-                  @keypress.enter="handleEnter" class="custom-input"></f7-input>
+                  @keypress.enter="handleLogPackageEnter" class="custom-input"></f7-input>
               </div>
             </f7-block>
 
@@ -60,7 +59,8 @@
       </div>
     </div>
 
-    <div class="popup loghighlights-popup">
+    <!-- Highlights Popup -->
+    <div class="popup loghighlights-popup" @popup:close="saveHighlighters">
       <div class="view">
         <div class="page">
           <div class="navbar">
@@ -74,59 +74,41 @@
             </div>
           </div>
           <div class="page-content">
-            <f7-block class="input-with-buttons-container">
-              <div class="input-with-buttons">
-                <f7-input type="text" placeholder="Add logger package entry..." v-model="inputText"
-                  @keypress.enter="handleEnter" class="custom-input"></f7-input>
-              </div>
-              <div class="icon-buttons">
-                <f7-button small icon-f7="checkmark_circle" @click="handleOk" />
-                <f7-button small icon-f7="xmark_circle" color="red" @click="clearInput" />
-              </div>
-            </f7-block>
-
             <f7-list class="col wide">
-              <f7-list-item v-for="loggerPackage in loggerPackages" :key="loggerPackage.loggerName"
-                :title="loggerPackage.loggerName">
-                <f7-input type="select" :value="loggerPackage.level"
-                  @input="updateLogLevel(loggerPackage, $event.target.value)">
-                  <option value="DEFAULT">
-                    Default
-                  </option>
-                  <option value="TRACE">
-                    Trace
-                  </option>
-                  <option value="DEBUG">
-                    Debug
-                  </option>
-                  <option value="INFO">
-                    Info
-                  </option>
-                  <option value="WARN">
-                    Warning
-                  </option>
-                  <option value="ERROR">
-                    Error
-                  </option>
-                  <option value="OFF">
-                    Off
-                  </option>
-                </f7-input>
-                <f7-button small icon-f7="xmark_circle" @click="removeLogLevel(loggerPackage)" />
+              <f7-list-item v-for="(highlightFilter, index) in highlightFilters" :key="index">
+                <input slot="media" type="checkbox" v-model="highlightFilter.active" checked />
+                <f7-input slot="title" type="text" placeholder="Enter text to highlight..."
+                  :value="highlightFilter.text" @input="updateHighlightText($event, index)"></f7-input>
+
+                <!-- Color Picker -->
+                <div slot="after">
+                  <f7-button class="color-picker-button" @click="openColorPopover(index, $event)"
+                    :style="{ backgroundColor: highlightFilter.color }">
+                  </f7-button>
+                </div>
+                <f7-button slot="after" small icon-f7="xmark_circle" @click="removeHighlight(index)" />
               </f7-list-item>
             </f7-list>
-
+            <button class="button" @click="addNewHighlight">Add New Highlight</button>
           </div>
         </div>
       </div>
     </div>
 
+    <!-- Color Picker Popover -->
+    <f7-popover id="color-picker-popover">
+        <f7-block>
+          <div class="color-palette">
+            <button v-for="color in colors" :key="color" :style="{ backgroundColor: color }"
+              :class="{ selected: currentHighlightColor === color }" @click="selectHighterColor(color)"></button>
+          </div>
+        </f7-block>
+    </f7-popover>
 
-
-
-
+    <!-- Main Display -->
     <f7-navbar title="Log Viewer" back-link="Developer Tools" back-link-url="/developer/" back-link-force>
       <template #left>
+        <f7-badge class="margin-left">{{ logStart }} - {{ logEnd }}</f7-badge>
         <f7-badge color="green" class="margin-left" tooltip="Filtered log entries currently displayed">
           {{ filterCount }}</f7-badge>
         <f7-badge color="orange" tooltip="Total log entries loaded" class="margin-left">
@@ -136,7 +118,6 @@
       </template>
 
       <f7-nav-right>
-
         <div class="filter-input-box">
           <input type="text" placeholder="Filter..." v-model="filterText" @keyup.enter="handleFilter" />
         </div>
@@ -158,8 +139,8 @@
           tooltip="Download filtered log as CSV" :disabled="filterCount==0"
           :class="{ 'disabled-link': filterCount == 0 }" class="margin-left" @click="downloadCSV" />
         <f7-link icon-ios="f7:rectangle_on_rectangle" icon-aurora="f7:rectangle_on_rectangle"
-          icon-md="material:rectangle_on_rectangle" tooltip="Copy log to clipboard" :disabled="filterCount == 0"
-          :class="{ 'disabled-link': filterCount == 0 }" @click="copyTableToClipboard" />
+          icon-md="material:rectangle_on_rectangle" tooltip="Copy filtered log to clipboard"
+          :disabled="filterCount == 0" :class="{ 'disabled-link': filterCount == 0 }" @click="copyTableToClipboard" />
         <f7-link icon-ios="f7:trash" icon-aurora="f7:trash" icon-md="material:trash" tooltip="Clear the log buffer"
           class="margin-left" :disabled="tableData.length==0" :class="{ 'disabled-link': tableData.length == 0 }"
           @click="clearLog" />
@@ -172,26 +153,11 @@
 
     </f7-navbar>
 
-
-
-
-
-
-
-
-
-
-
-
-
     <f7-block>
-
       <f7-col>
         <f7-card class="custom-card">
-
           <div class="table-container" ref="tableContainer" @scroll="handleScroll">
-
-            <table class="fixed-header-table" ref="dataTable">
+            <table ref="dataTable">
               <tbody>
                 <tr v-for="entity in tableData" v-if="entity.visible" class="table-rows"
                   :class="entity.level.toLowerCase()">
@@ -208,8 +174,6 @@
                 </tr>
               </tbody>
             </table>
-
-
           </div>
         </f7-card>
       </f7-col>
@@ -225,52 +189,33 @@
   margin: 0;
   padding: 0;
   width: 100%;
-    display: flex;
-      flex-direction: column;
-      /* Ensure the container fills the page */
+  display: flex;
+  flex-direction: column;
   height: 100%;
-  /* Make card stretch across the row */
   overflow: hidden;
-  /* Prevent unnecessary overflows */
 }
 
 .table-container {
-  /* Set the height of the scrollable area */
   overflow-y: auto;
-  /* Enable vertical scrolling */
   overflow-x: auto;
-  /* Enable horizontal scrolling */
   display: block;
-  /* Ensure scrolling works inside the container */
-    /* Constrain height for scrolling */
   transition: height 0.2s ease-in-out;
-    /* Smooth resizing */
-  }
-
-.fixed-header-table {
-  width: 100%;
-      /* Set the height of the table container */
-  overflow-x: auto;
-  /* Enable horizontal scrolling */
-  position: relative;
-  /* Ensure the child elements can be positioned relatively */
-  border-collapse: collapse;
-    /* Ensure clean table appearance */
-    table-layout: auto;
-    /* Ensure flexible column widths */
 }
 
-.fixed-header-table thead th {
+table {
+  width: 100%;
+  overflow-x: auto;
+  position: relative;
+  border-collapse: collapse;
+  table-layout: auto;
+}
+
+table thead th {
   position: sticky;
-  /* Fix the header */
   top: 0;
-  /* Stick to the top */
   background-color: #f9f9f9;
-  /* Optional: background for the header */
   z-index: 2;
-  /* Ensure header stays above the body */
   border-bottom: 5px solid #ddd;
-  /* Optional: add a border under the header */
 }
 
 th.nowrap,
@@ -284,11 +229,8 @@ th.sticky,
 td.sticky {
   position: sticky;
   left: 0;
-  /* Stick the leftmost column */
   background: #f1f1f1;
-  /* Optional: Add background color to distinguish */
   z-index: 1;
-  /* Ensure the sticky column stays above other elements */
 }
 
 tr.error {
@@ -308,11 +250,8 @@ tr.trace {
 
 .disabled-link {
   pointer-events: none;
-  /* Disable clicking */
   opacity: 0.5;
-  /* Visually indicate disabled state */
   cursor: not-allowed;
-  /* Change cursor to indicate disabled */
 }
 
 .filter-input-box {
@@ -344,56 +283,60 @@ tr.trace {
   display: flex;
   align-items: center;
   border: 1px solid #ccc;
-  /* Border around the input and icons */
   border-radius: 5px;
   overflow: hidden;
-  /* Ensures the border wraps all elements */
   max-width: 400px;
-  /* Optional max width */
   width: 100%;
 }
 
 .custom-input {
   flex: 1;
   border: none;
-  /* Remove default border */
   padding: 10px;
   outline: none;
-  /* Remove default outline */
-}
-
-.icon-buttons {
-  display: flex;
-  gap: 5px;
-  /* Space between icons */
-}
-
-.icon-buttons f7-button {
-  width: 20px;
-  height: 35px;
-  padding: 0;
-  /* Compact icon buttons */
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .milliseconds {
   font-size: 0.8em;
 }
 
+.color-palette {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+.color-palette button {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  outline: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s;
+}
+
+.color-palette button.selected {
+  transform: scale(1.2);
+  border: 2px solid black;
+}
 </style> 
 
 <script lang="ts">
 import Vue from 'vue'
 
+import auth from '@/components/auth-mixin.js'
+import { getAccessToken, getTokenInCustomHeader, getBasicCredentials } from '@/js/openhab/auth.js'
+
 export default Vue.extend({
+  mixins: [auth],
   components: {
   },
   methods: {
     updateLogLevel(logger, value) {
       logger.level = value
-      console.log("Update log level 1 " + JSON.stringify(logger) + " -> " + JSON.stringify(event) + " - " + value)
       this.$oh.api.put('/rest/logging/' + logger.loggerName, logger)
     },
     removeLogLevel(loggerPackage) {
@@ -402,10 +345,9 @@ export default Vue.extend({
     socketConnect() {
       this.stateConnecting = true;
 
-      // Define the WebSocket URL for OpenHAB
-      const wsUrl = 'ws://192.168.2.125:8080/ws/logs?accessToken=oh.websocket.cH9jGdjF2poeJDDMK9Js1gQAclyXU7afuhjJ703lbJGLbr0IEBQOhcPEkbaCN4h0eY0X3sm3jaKEWg96Q';
-
       // Create a new WebSocket connection
+      // TODO: Use the real address!!!
+      const wsUrl = 'ws://192.168.2.125:8080/ws/logs?accessToken=' + getAccessToken();
       this.socket = new WebSocket(wsUrl);
 
       const me = this;
@@ -447,15 +389,21 @@ export default Vue.extend({
       const hours = date.getHours().toString().padStart(2, "0");
       const minutes = date.getMinutes().toString().padStart(2, "0");
       const seconds = date.getSeconds().toString().padStart(2, "0");
-      const milliseconds = date.getMilliseconds().toString().padStart(3, "0");
+      const milliseconds = "." + date.getMilliseconds().toString().padStart(3, "0");
 
       // Format the time with millisecond precision
-      const formattedTime = `${hours}:${minutes}:${seconds}.`;
+      const formattedTime = `${hours}:${minutes}:${seconds}`;
+
+      this.logEnd = formattedTime;
+      if (this.tableData.length == 0) {
+        this.logStart = formattedTime;
+      }
 
       var visible = false;
       if(this.stateProcessing) {
         visible = this.processFilter(logEntry);
         if(visible) {
+          // TODO: Do we need to scroll 1 line to keep the view steady?
           this.filterCount++;
         }
       }
@@ -473,6 +421,7 @@ export default Vue.extend({
 
       if (this.tableData.length > this.maxEntries) {
         const removedElement = this.tableData.shift();
+        this.logStart = removedElement.time;
         if(removedElement.visible) {
           this.filterCount--;
         }
@@ -499,10 +448,12 @@ export default Vue.extend({
     clearLog() {
       this.tableData.length = 0;
       this.filterCount = 0;
+      this.logStart = "--:--:--";
+      this.logEnd = "--:--:--";
     },
     showLatestLogs() {
       this.autoScroll = true;
-      scrollToBottom();
+      this.scrollToBottom();
     },
     scrollToBottom() {
       // Scroll to the bottom of the table
@@ -531,25 +482,18 @@ export default Vue.extend({
         tableContainer.style.height = `${availableHeight}px`;
       }
     },
-    handleEnter() {
-      this.handleOk(); // Trigger OK method on Enter key press
-    },
-    handleOk() {
-      if (this.inputText) {
-        console.log("OK pressed with text:", this.inputText);
-        this.inputText = ""; // Optionally, clear the input after submission
-      } else {
-        console.log("Input is empty.");
+    handleLogPackageEnter() {
+      if (this.logPackageInputText) {
+        updateLogLevel(this.logPackageInputText, "INFO");
+        this.logPackageInputText = ""; 
       }
-    },
-    clearInput() {
-      this.inputText = ""; // Clears the input field
     },
     processFilter(logEntry) {
       return logEntry.loggerName.toLowerCase().includes(this.filterTextLowerCase) || logEntry.message.toLowerCase().includes(this.filterTextLowerCase);
     },
     handleFilter() {
       this.filterTextLowerCase = this.filterText.trim().toLocaleLowerCase();
+      localStorage.setItem("logFilterText", JSON.stringify(this.filterText));
       this.updateFilter();
       this.scrollToBottom();
     },
@@ -564,11 +508,13 @@ export default Vue.extend({
       this.filterCount = cnt;
     },
     highlightText(text) {
-      if (!this.highlightFilters.some((filter) => filter)) return text; // Skip if no filters are active
+      if (!this.highlightFilters.some((filter) => filter.active)) {
+        return text; // Skip if no filters are active
+      }
 
       // Apply each filter with its respective color
       this.highlightFilters.forEach((filter) => {
-        if (filter.text) {
+        if (filter.text && filter.active) {
           const regex = new RegExp(`(${filter.text})`, "gi");
           text = text.replace(
             regex,
@@ -644,12 +590,38 @@ export default Vue.extend({
         .catch((err) => {
           console.error("Failed to copy table: ", err);
         });
-
+    },
+    saveHighlighters() {
+      localStorage.setItem("logHighlightFilters", JSON.stringify(this.highlightFilters));
+    },
+    addNewHighlight() {
+      this.highlightFilters.push({
+        text: "New Highlighter",
+        color: "#feca57",
+        active: false
+      });
+    },
+    updateHighlightText(event, index){
+      this.highlightFilters[index].text = event.target.value;
+    },
+    removeHighlight(index) {
+      this.highlightFilters.splice(index, 1);
+    },
+    openColorPopover(index, event) {
+      this.currentHighlightColorItemIndex = index;
+      this.currentHighlightColor = this.highlightFilters[index].color;
+      this.$f7.popover.open('#color-picker-popover', event.target);
+    },
+    selectHighterColor(color) {
+      this.$f7.popover.close('#color-picker-popover');
+      if (color !== null) {
+        this.highlightFilters[this.currentHighlightColorItemIndex].color = color;
+      }
     },
   },
   created() {
-    this.$oh.api.get('/rest/logging/').then(data4 => {
-      data4.loggers.forEach(logger => this.loggerPackages.push(logger))
+    this.$oh.api.get('/rest/logging/').then(data => {
+      data.loggers.forEach(logger => this.loggerPackages.push(logger))
       this.$nextTick(() => {
         this.loggerPackages.sort((a, b) => a.loggerName.localeCompare(b.loggerName))
         this.loggerPackages = this.loggerPackages.filter(item => item.loggerName !== "ROOT");
@@ -659,33 +631,21 @@ export default Vue.extend({
     })
 
     this.socketConnect();
+
+    this.highlightFilters = JSON.parse(localStorage.getItem("logHighlightFilters"));
+    if (this.highlightFilters == null) {
+      this.highlightFilters = [];
+    }
+
+    this.filterText = JSON.parse(localStorage.getItem("logFilterText"));
+    if (this.filterText == null) {
+      this.filterText = "";
+    }
+    this.filterTextLowerCase = this.filterText.trim().toLocaleLowerCase();
   },
   mounted() {
     this.resizeScrollRegion();
     window.addEventListener("resize", this.resizeScrollRegion);
-
-    this.highlightFilters = [
-      {
-        text: "IsAlive",
-        color: "#feca57"
-      },
-      {
-        text: "Tracker",
-        color: "#54a0ff"
-      },
-      {
-        text: "Humidity",
-        color: "#ff6b6b"
-      },
-      {
-        text: "Temperature",
-        color: "#48dbfb"
-      },
-      {
-        text: "ZclAttribute",
-        color: "#1dd1a1"
-      },
-    ];
   },
   beforeDestroy() {
     window.removeEventListener("resize", this.resizeScrollRegion);
@@ -698,9 +658,8 @@ export default Vue.extend({
     scrollTime: 0,
     autoScroll: true,
     socket: {},
-    inputText: '', // Bound to the text input field
-    highlightFilters: [], //'IsAlive', 'Tracker'],
-   // highlightColors: ["#feca57", "#54a0ff", "#ff6b6b", "#48dbfb", "#1dd1a1"], // Color palette for filters
+    logPackageInputText: '',
+    highlightFilters: [],
     filterText: "",
     filterTextLowerCase: "",
     filterCount: 0,
@@ -709,6 +668,29 @@ export default Vue.extend({
     tableData: [],           // Initial empty data for live updates
     nextId: 1,               // ID tracker for each new entry
     maxEntries: 5000,           // Fixed number of entries to display
+    logStart: "--:--:--",
+    logEnd: "--:--:--",
+    currentHighlightColorItemIndex: null,
+    currentHighlightColor: "#FF5252",
+    selectedHighlightColor: '#ff0000', // Default selected color
+    colors: [
+      "#FF0000", // Red
+      "#00FF00", // Green
+      "#0000FF", // Blue
+      "#FFFF00", // Yellow
+      "#FF00FF", // Magenta
+      "#00FFFF", // Cyan
+      "#FFA500", // Orange
+      "#800080", // Purple
+      "#008000", // Dark Green
+      "#000080", // Navy Blue
+      "#FFC0CB", // Pink
+      "#A52A2A", // Brown
+      "#FFD700", // Gold
+      "#808080", // Gray
+      "#8B4513", // Saddle Brown
+      "#4682B4", // Steel Blue
+      ],
   })
 })
 
