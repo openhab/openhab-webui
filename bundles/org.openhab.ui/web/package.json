@@ -158,7 +158,6 @@
     "stylus": "^0.63.0",
     "stylus-loader": "^8.1.0",
     "swagger-ui-dist": "^4.1.3",
-    "vite-plugin-vue-devtools": "^7.6.4",
     "vue-loader": "^15.11.1",
     "vue-masonry-css": "^1.0.3",
     "vue-template-compiler": "^2.7.16",
