@@ -92,7 +92,7 @@
           <!-- Developer Tools -->
           <f7-list-item link="/developer/" :title="$t('sidebar.developerTools')" panel-close :animate="false"
                         :class="{ currentsection: currentUrl.indexOf('/developer/') === 0 && currentUrl.indexOf('/developer/widgets') < 0 &&
-                          currentUrl.indexOf('/developer/blocks') < 0 && currentUrl.indexOf('/developer/api-explorer') < 0  && currentUrl.indexOf('/developer/log-viewer') < 0 }">
+                          currentUrl.indexOf('/developer/blocks') < 0 && currentUrl.indexOf('/developer/api-explorer') < 0 && currentUrl.indexOf('/developer/log-viewer') < 0 }">
             <f7-icon slot="media" ios="f7:wrench_fill" aurora="f7:wrench_fill" md="material:construction" color="gray" />
           </f7-list-item>
           <li v-if="showDeveloperSubmenu">
