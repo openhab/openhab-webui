@@ -18,8 +18,8 @@
           <div class="page-content">
             <f7-block class="input-with-buttons-container">
               <div class="input-with-buttons">
-                <f7-input type="text" placeholder="Add logger package entry..." v-model="inputText"
-                  @keypress.enter="handleLogPackageEnter" class="custom-input"></f7-input>
+                <input type="text" placeholder="Add custom logger package entry..."
+                  @keyup.enter="handleLogPackageEnter($event)" class="custom-input"></input>
               </div>
             </f7-block>
 
@@ -97,12 +97,12 @@
 
     <!-- Color Picker Popover -->
     <f7-popover id="color-picker-popover">
-        <f7-block>
-          <div class="color-palette">
-            <button v-for="color in colors" :key="color" :style="{ backgroundColor: color }"
-              :class="{ selected: currentHighlightColor === color }" @click="selectHighterColor(color)"></button>
-          </div>
-        </f7-block>
+      <f7-block>
+        <div class="color-palette">
+          <button v-for="color in colors" :key="color" :style="{ backgroundColor: color }"
+            :class="{ selected: currentHighlightColor === color }" @click="selectHighterColor(color)"></button>
+        </div>
+      </f7-block>
     </f7-popover>
 
     <!-- Main Display -->
@@ -339,8 +339,9 @@ export default Vue.extend({
       logger.level = value
       this.$oh.api.put('/rest/logging/' + logger.loggerName, logger)
     },
-    removeLogLevel(loggerPackage) {
-      this.$oh.api.delete('/rest/logging/' + logger.loggerName)
+    removeLogLevel(logger) {
+      this.$oh.api.delete('/rest/logging/' + logger.loggerName);
+      this.loggerPackages = this.loggerPackages.filter(loggerPackage => loggerPackage.loggerName !== logger.loggerName);
     },
     socketConnect() {
       this.stateConnecting = true;
@@ -482,11 +483,14 @@ export default Vue.extend({
         tableContainer.style.height = `${availableHeight}px`;
       }
     },
-    handleLogPackageEnter() {
-      if (this.logPackageInputText) {
-        updateLogLevel(this.logPackageInputText, "INFO");
-        this.logPackageInputText = ""; 
-      }
+    handleLogPackageEnter(event) {
+      var logger = {
+        loggerName: event.target.value,
+        level: "INFO"
+      };
+      this.updateLogLevel(logger, "INFO");
+      this.loggerPackages.push(logger)
+      this.loggerPackages.sort((a, b) => a.loggerName.localeCompare(b.loggerName))
     },
     processFilter(logEntry) {
       return logEntry.loggerName.toLowerCase().includes(this.filterTextLowerCase) || logEntry.message.toLowerCase().includes(this.filterTextLowerCase);
