@@ -222,22 +222,12 @@ table {
   table-layout: auto;
 }
 
-table thead th {
-  position: sticky;
-  top: 0;
-  background-color: #f9f9f9;
-  z-index: 2;
-  border-bottom: 5px solid #ddd;
-}
-
-th.nowrap,
 td.nowrap {
   padding: 5px;
   text-align: left;
   white-space: nowrap;
 }
 
-th.sticky,
 td.sticky {
   position: sticky;
   left: 0;
@@ -375,10 +365,8 @@ export default Vue.extend({
 
       // Event handler when a message is received from OpenHAB
       this.socket.onmessage = function (event) {
-        // Process the event data (usually in JSON format)
         try {
           const data = JSON.parse(event.data)
-          // Handle the OpenHAB event data here
           me.addLogEntry(data)
         } catch (e) {
           console.error('Error parsing event data:', e)
@@ -399,7 +387,7 @@ export default Vue.extend({
     addLogEntry (logEntry) {
       this.updateCount++
 
-      const date = new Date(logEntry.unixtime) // Create a Date object
+      const date = new Date(logEntry.unixtime)
 
       const hours = date.getHours().toString().padStart(2, '0')
       const minutes = date.getMinutes().toString().padStart(2, '0')
