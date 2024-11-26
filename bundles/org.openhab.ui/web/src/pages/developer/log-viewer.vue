@@ -518,19 +518,17 @@ export default Vue.extend({
       this.filterCount = cnt
     },
     highlightText (text) {
-      if (!this.highlightFilters.some((filter) => filter.active)) {
+      if (this.activeHighlights.length == 0) {
         return text // Skip if no filters are active
       }
 
       // Apply each filter with its respective color
-      this.highlightFilters.forEach((filter) => {
-        if (filter.text && filter.active) {
-          const regex = new RegExp(`(${filter.text})`, 'gi')
-          text = text.replace(
-            regex,
-            `<span style="background-color: ${filter.color}; font-weight: bold;">$1</span>`
-          )
-        }
+      this.activeHighlights.forEach((filter) => {
+        const regex = new RegExp(`(${filter.text})`, 'gi')
+        text = text.replace(
+          regex,
+          `<span style="background-color: ${filter.color}; font-weight: bold;">$1</span>`
+        )
       })
       return text
     },
@@ -600,8 +598,19 @@ export default Vue.extend({
           console.error('Failed to copy table: ', err)
         })
     },
+    prefilterHighlights () {
+      this.activeHighlights.length = 0;
+      for (const entry of this.highlightFilters) {
+        if(entry.active) {
+          this.activeHighlights.push({
+            text: entry.text,
+            color: entry.color
+          });
+        }
+      }    },
     saveHighlighters () {
       localStorage.setItem('logHighlightFilters', JSON.stringify(this.highlightFilters))
+      this.prefilterHighlights()
     },
     addNewHighlight () {
       this.highlightFilters.push({
@@ -612,9 +621,11 @@ export default Vue.extend({
     },
     updateHighlightText (event, index) {
       this.highlightFilters[index].text = event.target.value
+      this.prefilterHighlights();
     },
     removeHighlight (index) {
       this.highlightFilters.splice(index, 1)
+      this.prefilterHighlights();
     },
     openColorPopover (index, event) {
       this.currentHighlightColorItemIndex = index
@@ -645,6 +656,7 @@ export default Vue.extend({
     if (this.highlightFilters == null) {
       this.highlightFilters = []
     }
+    this.prefilterHighlights()
 
     this.filterText = JSON.parse(localStorage.getItem('logFilterText'))
     if (this.filterText == null) {
@@ -669,6 +681,7 @@ export default Vue.extend({
     socket: {},
     logPackageInputText: '',
     highlightFilters: [],
+    activeHighlights: [],
     filterText: '',
     filterTextLowerCase: '',
     filterCount: 0,
