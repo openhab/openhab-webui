@@ -23,6 +23,9 @@
                        @keyup.enter="handleLogPackageEnter($event)" class="custom-input"></input>
               </div>
             </f7-block>
+            <f7-block style="margin-top: 4px; font-size: 0.85rem; text-align: center;">
+              Logger will be added with ROOT log level {{ defaultLogLevel }}
+            </f7-block>
 
             <f7-list class="col wide">
               <f7-list-item v-for="loggerPackage in loggerPackages" :key="loggerPackage.loggerName"
@@ -122,6 +125,9 @@
         </f7-badge>
         <f7-badge color="red" tooltip="Maximum log entries to be buffered" class="margin-left">
           {{ maxEntries }}
+        </f7-badge>
+        <f7-badge color="blue" tooltip="Number of entries per second" class="margin-left">
+          {{ updateRate }}
         </f7-badge>
       </template>
 
@@ -391,6 +397,8 @@ export default Vue.extend({
       }
     },
     addLogEntry (logEntry) {
+      this.updateCount++
+
       const date = new Date(logEntry.unixtime) // Create a Date object
 
       const hours = date.getHours().toString().padStart(2, '0')
@@ -398,7 +406,6 @@ export default Vue.extend({
       const seconds = date.getSeconds().toString().padStart(2, '0')
       const ms = '.' + date.getMilliseconds().toString().padStart(3, '0')
 
-      // Format the time with millisecond precision
       const formattedTime = `${hours}:${minutes}:${seconds}`
 
       this.logEnd = formattedTime
@@ -417,14 +424,12 @@ export default Vue.extend({
 
       this.tableData.push({
         visible: vis,
-        id: this.nextId,
         time: formattedTime,
         milliseconds: ms,
         level: logEntry.level,
         loggerName: logEntry.loggerName,
         message: logEntry.message
       })
-      this.nextId += 1
 
       if (this.tableData.length > this.maxEntries) {
         const removedElement = this.tableData.shift()
@@ -494,7 +499,7 @@ export default Vue.extend({
         loggerName: event.target.value,
         level: 'INFO'
       }
-      this.updateLogLevel(logger, 'INFO')
+      this.updateLogLevel(logger, this.defaultLogLevel)
       this.loggerPackages.push(logger)
       this.loggerPackages.sort((a, b) => a.loggerName.localeCompare(b.loggerName))
     },
@@ -607,7 +612,8 @@ export default Vue.extend({
             color: entry.color
           });
         }
-      }    },
+      }
+    },
     saveHighlighters () {
       localStorage.setItem('logHighlightFilters', JSON.stringify(this.highlightFilters))
       this.prefilterHighlights()
@@ -637,12 +643,31 @@ export default Vue.extend({
       if (color !== null) {
         this.highlightFilters[this.currentHighlightColorItemIndex].color = color
       }
+    },
+    startTimer() {
+      // Start a periodic timer
+      this.timer = setInterval(() => {
+        this.updateRate = this.updateCount
+        this.updateCount = 0
+      }, 1000)
+    },
+    stopTimer() {
+      // Stop the timer
+      if (this.timer) {
+        clearInterval(this.timer);
+        this.timer = null;
+      }
     }
   },
   created () {
     this.$oh.api.get('/rest/logging/').then(data => {
       data.loggers.forEach(logger => this.loggerPackages.push(logger))
       this.$nextTick(() => {
+        const rootPackageIndex = this.loggerPackages.findIndex(item => item.loggerName === 'ROOT');
+        if (rootPackageIndex != -1) {
+          console.log("Root log level = " + this.loggerPackages[rootPackageIndex].level)
+          this.defaultLogLevel = this.loggerPackages[rootPackageIndex].level
+        }
         this.loggerPackages.sort((a, b) => a.loggerName.localeCompare(b.loggerName))
         this.loggerPackages = this.loggerPackages.filter(item => item.loggerName !== 'ROOT')
 
@@ -663,6 +688,8 @@ export default Vue.extend({
       this.filterText = ''
     }
     this.filterTextLowerCase = this.filterText.trim().toLocaleLowerCase()
+
+    this.startTimer()
   },
   mounted () {
     this.resizeScrollRegion()
@@ -670,6 +697,7 @@ export default Vue.extend({
   },
   beforeDestroy () {
     window.removeEventListener('resize', this.resizeScrollRegion)
+    this.stopTimer()
   },
 
   data: () => ({
@@ -679,6 +707,7 @@ export default Vue.extend({
     scrollTime: 0,
     autoScroll: true,
     socket: {},
+    defaultLogLevel: 'xx',
     logPackageInputText: '',
     highlightFilters: [],
     activeHighlights: [],
@@ -688,8 +717,9 @@ export default Vue.extend({
     loadingLoggers: true,
     loggerPackages: [],
     tableData: [],
-    nextId: 1,
     maxEntries: 5000,
+    updateCount: 0,
+    updateRate: 0,
     logStart: '--:--:--',
     logEnd: '--:--:--',
     currentHighlightColorItemIndex: null,
@@ -711,7 +741,8 @@ export default Vue.extend({
       '#808080', // Gray
       '#8B4513', // Saddle Brown
       '#4682B4' // Steel Blue
-    ]
+    ],
+    timer: null
   })
 })
 
