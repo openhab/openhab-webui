@@ -117,7 +117,7 @@
         <f7-badge class="margin-left">
           {{ logStart }} - {{ logEnd }}
         </f7-badge>
-        <f7-badge color="green" class="margin-left" tooltip="Filtered log entries currently displayed">
+        <f7-badge color="green" tooltip="Filtered log entries currently displayed" class="margin-left">
           {{ filterCount }}
         </f7-badge>
         <f7-badge color="orange" tooltip="Total log entries loaded" class="margin-left">
@@ -125,9 +125,6 @@
         </f7-badge>
         <f7-badge color="red" tooltip="Maximum log entries to be buffered" class="margin-left">
           {{ maxEntries }}
-        </f7-badge>
-        <f7-badge color="blue" tooltip="Number of entries per second" class="margin-left">
-          {{ updateRate }}
         </f7-badge>
       </template>
 
@@ -150,17 +147,21 @@
                  :class="{ 'disabled-link': autoScroll }" @click="showLatestLogs" />
 
         <f7-link icon-ios="f7:cloud_download" icon-aurora="f7:cloud_download" icon-md="material:cloud_download"
-                 tooltip="Download filtered log as CSV" :disabled="filterCount==0"
+                 tooltip="Download filtered log as CSV" :disabled="filterCount == 0"
                  :class="{ 'disabled-link': filterCount == 0 }" class="margin-left" @click="downloadCSV" />
         <f7-link icon-ios="f7:rectangle_on_rectangle" icon-aurora="f7:rectangle_on_rectangle"
                  icon-md="material:rectangle_on_rectangle" tooltip="Copy filtered log to clipboard"
                  :disabled="filterCount == 0" :class="{ 'disabled-link': filterCount == 0 }" @click="copyTableToClipboard" />
         <f7-link icon-ios="f7:trash" icon-aurora="f7:trash" icon-md="material:trash" tooltip="Clear the log buffer"
-                 class="margin-left" :disabled="tableData.length==0" :class="{ 'disabled-link': tableData.length == 0 }"
+                 class="margin-left" :disabled="tableData.length == 0" :class="{ 'disabled-link': tableData.length == 0 }"
                  @click="clearLog" />
 
+        <f7-link @click="toggleErrorDisplay" tooltip="Always show error level logs" class="margin-left">
+          <f7-icon v-if="showErrors" f7="exclamationmark_triangle_fill" />
+          <f7-icon v-else f7="exclamationmark_triangle" />
+        </f7-link>
         <f7-link icon-ios="f7:pencil" icon-aurora="f7:pencil" icon-md="material:pencil" tooltip="Configure highlights"
-                 data-popup=".loghighlights-popup" class="popup-open margin-left" />
+                 data-popup=".loghighlights-popup" class="popup-open" />
         <f7-link icon-ios="f7:gear" icon-aurora="f7:gear" icon-md="material:gear" tooltip="Configure logging"
                  data-popup=".logsettings-popup" class="popup-open" />
       </f7-nav-right>
@@ -195,7 +196,6 @@
 </template>
 
 <style>
-
 /* Ensure the card takes full width and removes padding */
 .custom-card {
   margin: 0;
@@ -231,21 +231,28 @@ td.nowrap {
 td.sticky {
   position: sticky;
   left: 0;
+  color: black;
   background: #f1f1f1;
   z-index: 1;
 }
 
 tr.error {
   background-color: rgb(255, 96, 96);
+  color: black;
 }
+
 tr.warn {
   background-color: rgb(247, 253, 163);
+  color: black;
 }
+
 tr.info {
+  color: black;
   background-color: rgb(163, 253, 163);
 }
-tr.debug {
-}
+
+tr.debug {}
+
 tr.trace {
   color: rgb(112, 112, 112);
 }
@@ -414,7 +421,7 @@ export default Vue.extend({
         visible: vis,
         time: formattedTime,
         milliseconds: ms,
-        level: logEntry.level,
+        level: logEntry.level.toUpperCase(),
         loggerName: logEntry.loggerName,
         message: logEntry.message
       })
@@ -492,11 +499,11 @@ export default Vue.extend({
       this.loggerPackages.sort((a, b) => a.loggerName.localeCompare(b.loggerName))
     },
     processFilter (logEntry) {
-      return logEntry.loggerName.toLowerCase().includes(this.filterTextLowerCase) || logEntry.message.toLowerCase().includes(this.filterTextLowerCase)
+      return logEntry.loggerName.toLowerCase().includes(this.filterTextLowerCase) || logEntry.message.toLowerCase().includes(this.filterTextLowerCase) || (this.showErrors && logEntry.level === 'ERROR')
     },
     handleFilter () {
       this.filterTextLowerCase = this.filterText.trim().toLocaleLowerCase()
-      localStorage.setItem('logFilterText', JSON.stringify(this.filterText))
+      localStorage.setItem('logFilterText', this.filterText)
       this.updateFilter()
       this.scrollToBottom()
     },
@@ -511,7 +518,7 @@ export default Vue.extend({
       this.filterCount = cnt
     },
     highlightText (text) {
-      if (this.activeHighlights.length == 0) {
+      if (this.activeHighlights.length === 0) {
         return text // Skip if no filters are active
       }
 
@@ -592,13 +599,13 @@ export default Vue.extend({
         })
     },
     prefilterHighlights () {
-      this.activeHighlights.length = 0;
+      this.activeHighlights.length = 0
       for (const entry of this.highlightFilters) {
-        if(entry.active) {
+        if (entry.active) {
           this.activeHighlights.push({
             text: entry.text,
             color: entry.color
-          });
+          })
         }
       }
     },
@@ -615,11 +622,11 @@ export default Vue.extend({
     },
     updateHighlightText (event, index) {
       this.highlightFilters[index].text = event.target.value
-      this.prefilterHighlights();
+      this.prefilterHighlights()
     },
     removeHighlight (index) {
       this.highlightFilters.splice(index, 1)
-      this.prefilterHighlights();
+      this.prefilterHighlights()
     },
     openColorPopover (index, event) {
       this.currentHighlightColorItemIndex = index
@@ -632,28 +639,18 @@ export default Vue.extend({
         this.highlightFilters[this.currentHighlightColorItemIndex].color = color
       }
     },
-    startTimer() {
-      // Start a periodic timer
-      this.timer = setInterval(() => {
-        this.updateRate = this.updateCount
-        this.updateCount = 0
-      }, 1000)
-    },
-    stopTimer() {
-      // Stop the timer
-      if (this.timer) {
-        clearInterval(this.timer);
-        this.timer = null;
-      }
+    toggleErrorDisplay () {
+      this.showErrors = !this.showErrors
+      this.updateFilter()
+      localStorage.setItem('logShowErrors', this.showErrors)
     }
   },
   created () {
     this.$oh.api.get('/rest/logging/').then(data => {
       data.loggers.forEach(logger => this.loggerPackages.push(logger))
       this.$nextTick(() => {
-        const rootPackageIndex = this.loggerPackages.findIndex(item => item.loggerName === 'ROOT');
-        if (rootPackageIndex != -1) {
-          console.log("Root log level = " + this.loggerPackages[rootPackageIndex].level)
+        const rootPackageIndex = this.loggerPackages.findIndex(item => item.loggerName === 'ROOT')
+        if (rootPackageIndex !== -1) {
           this.defaultLogLevel = this.loggerPackages[rootPackageIndex].level
         }
         this.loggerPackages.sort((a, b) => a.loggerName.localeCompare(b.loggerName))
@@ -671,13 +668,13 @@ export default Vue.extend({
     }
     this.prefilterHighlights()
 
-    this.filterText = JSON.parse(localStorage.getItem('logFilterText'))
+    this.filterText = localStorage.getItem('logFilterText')
     if (this.filterText == null) {
       this.filterText = ''
     }
     this.filterTextLowerCase = this.filterText.trim().toLocaleLowerCase()
 
-    this.startTimer()
+    this.showErrors = localStorage.getItem('logShowErrors')
   },
   mounted () {
     this.resizeScrollRegion()
@@ -685,7 +682,6 @@ export default Vue.extend({
   },
   beforeDestroy () {
     window.removeEventListener('resize', this.resizeScrollRegion)
-    this.stopTimer()
   },
 
   data: () => ({
@@ -695,19 +691,19 @@ export default Vue.extend({
     scrollTime: 0,
     autoScroll: true,
     socket: {},
-    defaultLogLevel: 'xx',
+    defaultLogLevel: 'WARN',
     logPackageInputText: '',
     highlightFilters: [],
     activeHighlights: [],
     filterText: '',
     filterTextLowerCase: '',
     filterCount: 0,
+    showErrors: false,
     loadingLoggers: true,
     loggerPackages: [],
     tableData: [],
-    maxEntries: 5000,
+    maxEntries: 2000,
     updateCount: 0,
-    updateRate: 0,
     logStart: '--:--:--',
     logEnd: '--:--:--',
     currentHighlightColorItemIndex: null,
@@ -729,8 +725,7 @@ export default Vue.extend({
       '#808080', // Gray
       '#8B4513', // Saddle Brown
       '#4682B4' // Steel Blue
-    ],
-    timer: null
+    ]
   })
 })
 
