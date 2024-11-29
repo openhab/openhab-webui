@@ -173,7 +173,7 @@
           <div class="table-container" ref="tableContainer" @scroll="handleScroll">
             <table ref="dataTable">
               <tbody>
-                <tr v-for="entity in tableData" v-if="entity.visible" class="table-rows"
+                <tr v-for="entity in filteredTableData" :key="entity.id" class="table-rows"
                     :class="entity.level.toLowerCase()">
                   <td class="sticky">
                     {{ entity.time }}<span class="milliseconds">{{ entity.milliseconds }}</span>
@@ -418,6 +418,7 @@ export default Vue.extend({
       }
 
       this.tableData.push({
+        id: this.nextId++,
         visible: vis,
         time: formattedTime,
         milliseconds: ms,
@@ -645,6 +646,11 @@ export default Vue.extend({
       localStorage.setItem('logShowErrors', this.showErrors)
     }
   },
+  computed: {
+    filteredTableData () {
+      return this.tableData.filter(item => item.visible)
+    }
+  },
   created () {
     this.$oh.api.get('/rest/logging/').then(data => {
       data.loggers.forEach(logger => this.loggerPackages.push(logger))
@@ -683,7 +689,6 @@ export default Vue.extend({
   beforeDestroy () {
     window.removeEventListener('resize', this.resizeScrollRegion)
   },
-
   data: () => ({
     stateConnecting: false,
     stateConnected: false,
@@ -702,6 +707,7 @@ export default Vue.extend({
     loadingLoggers: true,
     loggerPackages: [],
     tableData: [],
+    nextId: 0,
     maxEntries: 2000,
     updateCount: 0,
     logStart: '--:--:--',
