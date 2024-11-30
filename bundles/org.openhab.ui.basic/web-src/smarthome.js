@@ -168,6 +168,12 @@
 		});
 	}
 
+	function getElementWidth(element) {
+		var style = getComputedStyle(element);
+		return element.offsetWidth + parseFloat(style.marginLeft) + parseFloat(style.marginRight) +
+			parseFloat(style.paddingLeft) + parseFloat(style.paddingRight);
+	}
+
 	function EventMapper() {
 		var
 			_t = this;
@@ -1177,6 +1183,7 @@
 		Control.call(this, parentNode);
 
 		var
+			maxButtonWidth = 0,
 			_t = this;
 
 		_t.ignoreState = _t.parentNode.getAttribute("data-ignore-state") === "true";
@@ -1239,6 +1246,7 @@
 			) {
 				_t.valueMap[itemState].classList.add(o.buttonActiveClass);
 			}
+			_t.minimizeWidth();
 		};
 
 		_t.setValueColor = function(color) {
@@ -1337,7 +1345,71 @@
 				icon.addEventListener("load", _t.convertToInlineSVG);
 				icon.addEventListener("error", _t.replaceImageWithNone);
 			}
+
+			if (maxButtonWidth < button.offsetWidth) {
+				maxButtonWidth = button.offsetWidth;
+			}
 		});
+
+		if (_t.buttons.length > 1 && _t.parentNode.classList.contains(o.buttonsMultilineClass)) {
+			var labelMinWidth = 0;
+			if (_t.label.textContent.trim().length === 0) {
+				_t.label.style.paddingLeft = 0;
+				_t.label.style.minWidth = 0;
+			} else {
+				// Try to see if setting min-width: min-content would result in a narrower min-width
+				// than the one set in _layout.scss, e.g. when the label is short.
+				// If it does make it narrower, it frees up more space for the buttons.
+				// If it is not narrower, un-set it, so that the min-width from _layout.scss can take effect.
+
+				// To measure the min-width using offsetWidth,
+				// we need to make the neighbouring element (buttons) as wide as possible
+				// to force the label to shrink to its min-width
+				// Note that _t.parentNode.style.width will get readjusted inside minimizeWidth()
+				// so setting it to 100% here wouldn't affect the final layout.
+				_t.parentNode.style.width = "100%";
+
+				var defaultMinWidth = parseFloat(getComputedStyle(_t.label).minWidth);
+				_t.label.style.minWidth = "min-content";
+				var minContentWidth = _t.label.offsetWidth;
+				if (minContentWidth > defaultMinWidth) {
+					_t.label.style.removeProperty("min-width");
+					labelMinWidth = defaultMinWidth;
+				} else {
+					labelMinWidth = minContentWidth;
+				}
+			}
+
+			_t.minimizeWidth = function() {
+				// Minimize the width taken by the buttons without adding extra rows.
+				// Start from the maximum width the buttons can take,
+				// then shrink it down to the minimum without causing additional wrapping.
+				var buttons = _t.parentNode;
+				var buttonsStyle = getComputedStyle(buttons);
+				var labelStyle = getComputedStyle(_t.label);
+				// Calculate the maximum width the buttons can take
+				var width = buttons.parentElement.offsetWidth -
+					parseFloat(buttonsStyle.paddingLeft) - parseFloat(buttonsStyle.paddingRight) -
+					getElementWidth(_t.iconContainer) - getElementWidth(_t.value);
+				if (labelMinWidth) {
+					width -= labelMinWidth + parseFloat(labelStyle.paddingLeft) + parseFloat(labelStyle.paddingRight);
+				}
+				buttons.style.width = width + "px";
+				width = buttons.offsetWidth;
+				var height = buttons.offsetHeight;
+				while (buttons.offsetHeight === height && width >= maxButtonWidth) {
+					buttons.style.width = --width + "px";
+				}
+				buttons.style.width = (width+1) + "px";
+			};
+
+			_t.minimizeWidth();
+			// Wait until after all the icons are loaded before running minimizeWidth()
+			window.addEventListener("load", _t.minimizeWidth);
+			window.addEventListener("resize", _t.minimizeWidth);
+		} else {
+			_t.minimizeWidth = function() {};
+		}
 
 		_t.destroy = function() {
 			_t.buttons.forEach(function(button) {
@@ -1361,6 +1433,8 @@
 				}
 			});
 			componentHandler.downgradeElements(_t.buttons);
+			window.removeEventListener("load", _t.minimizeWidth);
+			window.removeEventListener("resize", _t.minimizeWidth);
 		};
 
 		_t.setValueColor(_t.valueColor);
@@ -3936,6 +4010,7 @@
 	buttonTextClass: "mdl-button-text",
 	buttonIconText: ".mdl-button-icon-text",
 	buttonIconTextClass: "mdl-button-icon-text",
+	buttonsMultilineClass: "mdl-form__buttons-multiline",
 	modal: ".mdl-modal",
 	modalContainer: ".mdl-modal__content",
 	selectionRows: ".mdl-form__selection-rows",

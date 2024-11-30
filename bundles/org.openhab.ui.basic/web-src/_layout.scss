@@ -168,7 +168,7 @@
 		@media screen and (max-width: $layout-tablet-size-threshold) {
 			padding-left: $form-row-mobile-padding;
 			html.ui-layout-condensed & {
-				padding-left: $form-row-mobile-padding-condensed;
+				padding-left: 0; // there's already padding in .mdl-form__row
 			}
 		}
 		html:not(.ui-icons-enabled) & {
@@ -212,15 +212,15 @@
 		}
 	}
 	&__label {
+		padding-left: $form-row-desktop-padding;
+		html.ui-layout-condensed & {
+			padding-left: $form-row-desktop-padding-condensed;
+		}
 		@media screen and (max-width: $layout-tablet-size-threshold) {
 			padding-left: $form-row-mobile-padding;
 			html.ui-layout-condensed & {
 				padding-left: $form-row-mobile-padding-condensed;
 			}
-		}
-		padding-left: $form-row-desktop-padding;
-		html.ui-layout-condensed & {
-			padding-left: $form-row-desktop-padding-condensed;
 		}
 		@include flex-shrink(0);
 		@include flex-grow(2);
@@ -232,17 +232,21 @@
 			font-size: 18px;
 		}
 	}
+	&__label-multiline {
+		min-width: 3em;
+	}
 	&__control {
-		@media screen and (max-width: $layout-tablet-size-threshold) {
-			padding-right: $form-row-mobile-padding;
-			html.ui-layout-condensed & {
-				padding-left: $form-row-mobile-padding-condensed;
-			}
-		}
 		padding-right: $form-row-desktop-padding;
 		padding-left: 4px;
 		html.ui-layout-condensed & {
-			padding-left: $form-row-desktop-padding-condensed;
+			padding-left: 0;
+			padding-right: $form-row-desktop-padding-condensed;
+		}
+		@media screen and (max-width: $layout-tablet-size-threshold) {
+			padding-right: $form-row-mobile-padding;
+			html.ui-layout-condensed & {
+				padding-right: $form-row-mobile-padding-condensed;
+			}
 		}
 		font-weight: 700;
 		html.ui-capitalize-values & {
@@ -270,7 +274,7 @@
 		.buttongrid-cell {
 			height: 36px;
 			.buttongrid-button {
-				min-width: 100%;
+				min-width: 100% !important;
 				text-transform: none;
 			}
 		}
@@ -279,6 +283,12 @@
 			box-shadow: none;
 			-webkit-box-shadow: none;
 			text-transform: unset;
+			min-width: 54px;
+			html.ui-layout-condensed & {
+				min-width: 40px;
+				padding-left: 4px;
+				padding-right: 4px;
+			}
 		}
 		.mdl-button-text {
 			html.ui-bigger-font & {
@@ -502,16 +512,20 @@
 	}
 	&__buttons {
 		padding-top: 2px;
+		padding-bottom: 2px;
 	}
 	&__buttons-multiline {
 		margin: 6px 0;
+		gap: 4px;
 		html.ui-layout-condensed & {
 			margin: 0;
+			gap: 3px;
 		}
-		max-width: 60%;
+		padding-top: 2px;
+		padding-bottom: 2px;
 		display: flex;
 		flex-wrap: wrap;
-		gap: 4px;
+		justify-content: end;
 	}
 	&__buttongrid {
 		padding: 0;
