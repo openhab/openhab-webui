@@ -65,7 +65,7 @@
     <oh.java.version>17</oh.java.version>
     <maven.compiler.release>${oh.java.version}</maven.compiler.release>
 
-    <bnd.version>7.0.0</bnd.version>
+    <bnd.version>7.1.0</bnd.version>
     <eea.version>2.4.0</eea.version>
     <jackson.version>2.16.0</jackson.version>
     <karaf.version>4.4.6</karaf.version>
