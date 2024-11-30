@@ -357,7 +357,7 @@ export default Vue.extend({
 
       // Create a new WebSocket connection
       // TODO: Use the real address!!!
-      const wsUrl = 'ws://192.168.2.125:8080/ws/logs?accessToken=' + getAccessToken()
+      const wsUrl = 'ws://' + window.location.host + '/ws/logs?accessToken=' + getAccessToken()
       this.socket = new WebSocket(wsUrl)
 
       const me = this
