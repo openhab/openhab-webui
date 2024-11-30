@@ -389,6 +389,8 @@ export default {
       if (this.loading) return
       this.loading = true
 
+      if (this.ready && this.dirty) this.save(true, true)
+
       if (this.createMode) {
         this.loading = false
         this.ready = true
