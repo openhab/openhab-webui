@@ -97,8 +97,10 @@
 import { Categories } from '@/assets/categories.js'
 import ItemPicker from '@/components/config/controls/item-picker.vue'
 import PersistencePicker from '@/components/config/controls/persistence-picker.vue'
+import SitemapMixin from '@/components/pagedesigner/sitemap/sitemap-mixin'
 
 export default {
+  mixins: [SitemapMixin],
   components: {
     ItemPicker,
     PersistencePicker
@@ -109,31 +111,6 @@ export default {
       iconInputId: '',
       iconAutocomplete: null
     }
-  },
-  created () {
-    this.ADDITIONAL_CONTROLS = {
-      Image: ['url', 'refresh'],
-      Video: ['url', 'encoding'],
-      Chart: ['service', 'period', 'refresh', 'legend', 'forceAsItem', 'yAxisDecimalPattern'],
-      Webview: ['url', 'height'],
-      Mapview: ['height'],
-      Slider: ['switchEnabled', 'releaseOnly', 'minValue', 'maxValue', 'step'],
-      Setpoint: ['minValue', 'maxValue', 'step'],
-      Input: ['inputHint'],
-      Button: ['row', 'column', 'stateless', 'cmd', 'releaseCmd'],
-      Default: ['height']
-    }
-    this.ENCODING_DEFS = [
-      { key: 'mjpeg', value: 'MJPEG Video' },
-      { key: 'HLS', value: 'HTTP Live Streaming' }
-    ]
-    this.INPUT_HINT_DEFS = [
-      { key: 'text', value: 'Text' },
-      { key: 'number', value: 'Number' },
-      { key: 'date', value: 'Date' },
-      { key: 'time', value: 'Time' },
-      { key: 'datetime', value: 'Date and Time' }
-    ]
   },
   methods: {
     initializeAutocomplete (inputElement) {

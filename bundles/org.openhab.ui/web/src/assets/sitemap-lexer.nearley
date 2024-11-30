@@ -22,7 +22,7 @@
     widgetclickattr:  'click=',
     widgetreleaseattr:'release=',
     widgetperiodattr: 'period=',
-    nlwidget:         ['Switch ', 'Selection ', 'Slider ', 'Setpoint ', 'Input ', 'Video ', 'Chart ', 'Webview ', 'Colorpicker ', 'Mapview ', 'Button ', 'Default '],
+    nlwidget:         ['Switch ', 'Selection ', 'Slider ', 'Setpoint ', 'Input ', 'Video ', 'Chart ', 'Webview ', 'Colorpicker ', 'Colortemperaturepicker', 'Mapview ', 'Button ', 'Default '],
     lwidget:          ['Text ', 'Group ', 'Image ', 'Frame ', 'Buttongrid '],
     lparen:           '(',
     rparen:           ')',
@@ -49,7 +49,7 @@
     number:           /[+-]?[0-9]+(?:\.[0-9]*)?/,
     string:           { match: /"(?:\\["\\]|[^\n"\\])*"/, value: x => x.slice(1, -1) }
   })
-  const requiresItem = ['Group', 'Chart', 'Switch', 'Mapview', 'Slider', 'Selection', 'Setpoint', 'Input ', 'Colorpicker', 'Button', 'Default']
+  const requiresItem = ['Group', 'Chart', 'Switch', 'Mapview', 'Slider', 'Selection', 'Setpoint', 'Input ', 'Colorpicker', 'Colortemperaturepicker', 'Button', 'Default']
 
   function getSitemap(d) {
     return {

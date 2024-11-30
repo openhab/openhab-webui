@@ -20,6 +20,10 @@
       <f7-link :disabled="selectedWidget != null" class="left" @click="selectedWidget = null">
         Clear
       </f7-link>
+      <div class="padding-right text-align-right">
+        <f7-checkbox style="margin-left: 5px" :checked="includeItemName" @change="toggleItemName" />
+        <label @click="toggleItemName" class="advanced-label">Show item name</label>
+      </div>
       <f7-link v-if="selectedWidget" class="right details-link padding-right" ref="detailsLink" @click="detailsOpened = true" icon-f7="chevron_up" />
     </f7-toolbar>
     <f7-tabs class="sitemap-editor-tabs">
@@ -34,7 +38,7 @@
             <f7-col>
               <f7-block strong class="sitemap-tree" no-gap @click.native="clearSelection">
                 <f7-treeview>
-                  <sitemap-treeview-item :widget="sitemap" @selected="selectWidget" :selected="selectedWidget" />
+                  <sitemap-treeview-item :widget="sitemap" :includeItemName="includeItemName" :itemsList="items" @selected="selectWidget" :selected="selectedWidget" />
                 </f7-treeview>
               </f7-block>
             </f7-col>
@@ -110,9 +114,9 @@
 
         <f7-actions ref="widgetTypeSelection" id="widget-type-selection" :grid="true">
           <f7-actions-group>
-            <f7-actions-button v-for="widgetType in addableWidgetTypes" :key="widgetType.type" @click="addWidget(widgetType.type)">
-              <f7-icon :f7="widgetType.icon" slot="media" />
-              <span>{{ widgetType.type }}</span>
+            <f7-actions-button class="widget-button" v-for="widgetType in addableWidgetTypes" :key="widgetType.type" @click="addWidget(widgetType.type)">
+              <f7-icon :f7="widgetTypeIcon(widgetType.type)" slot="media" />
+              <span>{{ widgetTypeLabel(widgetType.type) }}</span>
             </f7-actions-button>
           </f7-actions-group>
         </f7-actions>
@@ -226,6 +230,19 @@
   z-index 10900
 .md .sitemap-details-sheet .toolbar .link
   width 35%
+.widget-button
+  padding-bottom 8px !important
+  .actions-button-text
+    height 2lh
+  .actions-button-text span
+    display -webkit-box
+    -webkit-box-orient vertical
+    overflow hidden
+    text-overflow ellipsis
+    -webkit-line-clamp 2
+    white-space normal
+    max-height 2lh
+    line-height 1lh
 
 @media (min-width: 768px)
   .sitemap-tree-wrapper
@@ -265,18 +282,21 @@
 import SitemapCode from '@/components/pagedesigner/sitemap/sitemap-code.vue'
 import WidgetDetails from '@/components/pagedesigner/sitemap/widget-details.vue'
 import AttributeDetails from '@/components/pagedesigner/sitemap/attribute-details.vue'
+import SitemapMixin from '@/components/pagedesigner/sitemap/sitemap-mixin'
 import DirtyMixin from '../../dirty-mixin'
 
 export default {
-  mixins: [DirtyMixin],
+  mixins: [DirtyMixin, SitemapMixin],
   components: {
     SitemapCode,
     WidgetDetails,
     AttributeDetails
   },
-  props: ['createMode', 'uid'],
+  props: ['createMode', 'uid', 'itemsList'],
   data () {
+    if (!this.$f7.data.sitemap) this.$f7.data.sitemap = {}
     return {
+      includeItemName: this.$f7.data.sitemap.includeItemName || false,
       ready: false,
       loading: false,
       sitemap: {
@@ -297,36 +317,6 @@ export default {
       eventSource: null
     }
   },
-  created () {
-    this.WIDGET_TYPES = [
-      { type: 'Text', icon: 'textformat' },
-      { type: 'Switch', icon: 'power' },
-      { type: 'Selection', icon: 'text_justify' },
-      { type: 'Slider', icon: 'slider_horizontal_3' },
-      { type: 'Frame', icon: 'macwindow' },
-      { type: 'Setpoint', icon: 'plus_slash_minus' },
-      { type: 'Input', icon: 'text_cursor' },
-      { type: 'Buttongrid', icon: 'square_grid_3x2' },
-      { type: 'Button', icon: 'square_fill_line_vertical_square' },
-      { type: 'Default', icon: 'rectangle' },
-      { type: 'Group', icon: 'square_stack_3d_down_right' },
-      { type: 'Chart', icon: 'chart_bar_square' },
-      { type: 'Webview', icon: 'globe' },
-      { type: 'Colorpicker', icon: 'drop' },
-      { type: 'Mapview', icon: 'map' },
-      { type: 'Image', icon: 'photo' },
-      { type: 'Video', icon: 'videocam' }
-    ]
-    this.LINKABLE_WIDGET_TYPES = ['Sitemap', 'Text', 'Frame', 'Group', 'Image', 'Buttongrid']
-    this.WIDGET_TYPES_REQUIRING_ITEM = ['Group', 'Chart', 'Switch', 'Mapview', 'Slider', 'Selection', 'Setpoint', 'Input', 'Colorpicker', 'Default']
-    this.WIDGET_TYPES_SHOWING_VALUE = ['Text', 'Switch', 'Selection', 'Slider', 'Setpoint', 'Input', 'Default', 'Group']
-    this.REGEX_PERIOD = /^((P(\d+Y)?(\d+M)?(\d+W)?(\d+D)?(T(\d+H)?(\d+M)?(\d+S)?)?|\d*[YMWDh])-)?-?(P(\d+Y)?(\d+M)?(\d+W)?(\d+D)?(T(\d+H)?(\d+M)?(\d+S)?)?|\d*[YMWDh])$/
-    this.REGEX_DECIMAL_PATTERN = /^(?:'[0#.,;E]?'|[^0#.,;E'])*((#[,#]*|0)[,0]*)(\.(0+#*|#+))?(?:E0+)?(?:';'|[^;])*(?:;(?:'[0#.,;E]?'|[^0#.,;E'])*((#[,#]*|0)[,0]*)(\.(0+#*|#+))?(?:E0+)?.*)?$/
-    this.REGEX_MAPPING = /^\s*("[^\n"]*"|\w+)\s*=\s*("[^\n"]*"|\w+)\s*(=\s*("[^\n"]*"|\w+))?$/u
-    this.REGEX_MAPPING_SWITCH = /^\s*("[^\n"]*"|\w+)\s*(:\s*("[^\n"]*"|\w+)\s*)?=\s*("[^\n"]*"|\w+)\s*(=\s*("[^\n"]*"|\w+))?$/u
-    this.REGEX_RULE_VISIBILITY = /^(\s*((\w+\s*)?(==|>=|<=|!=|>|<)\s*)?("[^\n"]*"|\w+)\s*AND)*\s*((\w+\s*)?(==|>=|<=|!=|>|<)\s*)?("[^\n"]*"|\w+)\s*$/u
-    this.REGEX_RULE = /^(((\s*((\w+\s*)?(==|>=|<=|!=|>|<)\s*)?("[^\n"]*"|\w+)\s*AND)*\s*((\w+\s*)?(==|>=|<=|!=|>|<)\s*)?("[^\n"]*"|\w+)\s*)?\s*=)?\s*("#?(\w|:|-)+"|#?(\w|:|-)+)$/u
-  },
   computed: {
     hasChildren () {
       if (!this.selectedWidget) return false
@@ -346,9 +336,10 @@ export default {
     },
     addableWidgetTypes () {
       if (!this.selectedWidget) return
-      if (this.selectedWidget.component === 'Buttongrid') return this.WIDGET_TYPES.filter(w => w.type === 'Button')
+      let types = this.WIDGET_TYPES.filter(w => w.type !== 'Sitemap')
       // Button only allowed inside Buttongrid
-      let types = this.WIDGET_TYPES.filter(w => w.type !== 'Button')
+      if (this.selectedWidget.component === 'Buttongrid') return types.filter(w => w.type === 'Button')
+      types = types.filter(w => w.type !== 'Button')
       // No frames in frame
       if (this.selectedWidget.component === 'Frame') return types.filter(w => w.type !== 'Frame')
       // Linkable widget types only contain frames or none at all
@@ -398,6 +389,8 @@ export default {
       if (this.loading) return
       this.loading = true
 
+      if (this.ready && this.dirty) this.save(true, true)
+
       if (this.createMode) {
         this.loading = false
         this.ready = true
@@ -411,6 +404,11 @@ export default {
           })
         })
       }
+    },
+    toggleItemName () {
+      this.includeItemName = !this.includeItemName
+      this.$f7.data.sitemap.includeItemName = this.includeItemName
+      this.load()
     },
     save (stay, force) {
       this.cleanConfig(this.sitemap)
@@ -521,7 +519,7 @@ export default {
             validationWarnings.push(widget.component + ' widget ' + label + ', invalid inputHint configured: ' + widget.config?.inputHint)
           }
         })
-        widgetList.filter(widget => widget.component === 'Slider' || widget.component === 'Setpoint').forEach(widget => {
+        widgetList.filter(widget => ['Slider', 'Setpoint', 'Colortemperaturepicker'].includes(widget.component)).forEach(widget => {
           let label = scope.widgetErrorLabel(widget.config)
           if (widget.config?.step <= 0) {
             validationWarnings.push(widget.component + ' widget ' + label + ', step size cannot be 0 or negative: ' + widget.config.step)
