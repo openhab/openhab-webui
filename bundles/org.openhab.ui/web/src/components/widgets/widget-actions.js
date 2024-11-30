@@ -331,9 +331,10 @@ export const actionsMixin = {
       this.performAction(event, 'taphold')
     },
     onContextMenu (event) {
-      if (this.performAction(event, 'taphold')) {
-        event.preventDefault()
+      if (this.config.taphold_action) {
         event.stopPropagation()
+        event.preventDefault()
+        this.performAction(event, 'taphold')
       }
       // System contextual menu will be displayed
     }
