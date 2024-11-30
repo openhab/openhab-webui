@@ -89,10 +89,10 @@ export default {
     },
     widgetItemLabel (includeItemName) {
       const item = this.items.find(i => i.name === this.widget.config.item)
-      return (item?.label ?? this.widget.config.item) + (includeItemName ? ' (' + item?.name ?? '' + ')' : '')
+      return (item?.label || this.widget.config.item) + (includeItemName && item ? ` (${item.name})` : '')
     },
     widgetConfigDescription (includeItemName) {
-      const buttonPosition = this.widget.component === 'Button' ? ' (' + (this.widget.config?.row ?? '-') + ',' + (this.widget.config?.column ?? '-') + ')' : ''
+      const buttonPosition = this.widget.component === 'Button' ? ` (${this.widget.config?.row ?? '-'},${this.widget.config?.column ?? '-'})` : ''
       return (this.widget.config?.item ? ': ' + this.widgetItemLabel(includeItemName) : '') + buttonPosition
     }
   }
