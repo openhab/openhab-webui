@@ -637,7 +637,7 @@ export default {
         'Delete Thing',
         () => {
           this.$oh.api.delete(url).then(() => {
-            this.dirty = false
+            this.dirty = this.configDirty = this.thingDirty = false
             this.$f7router.back('/settings/things/', { force: true })
           })
         }
