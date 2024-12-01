@@ -106,7 +106,7 @@
       <f7-block>
         <div class="color-palette">
           <button v-for="color in colors" :key="color" :style="{ backgroundColor: color }"
-                  :class="{ selected: currentHighlightColor === color }" @click="selectHighterColor(color)" />
+                  :class="{ selected: currentHighlightColor === color }" @click="selectHighlightColor(color)" />
         </div>
       </f7-block>
     </f7-popover>
@@ -634,7 +634,7 @@ export default Vue.extend({
       this.currentHighlightColor = this.highlightFilters[index].color
       this.$f7.popover.open('#color-picker-popover', event.target)
     },
-    selectHighterColor (color) {
+    selectHighlightColor (color) {
       this.$f7.popover.close('#color-picker-popover')
       if (color !== null) {
         this.highlightFilters[this.currentHighlightColorItemIndex].color = color
