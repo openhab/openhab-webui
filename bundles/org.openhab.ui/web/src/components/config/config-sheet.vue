@@ -99,6 +99,10 @@ export default {
       return this.parameters.length > 0 && this.parameters.some((p) => p.advanced)
     },
     displayedParameters () {
+      function notNullNotUndefined (value) {
+        return value !== null && value !== undefined
+      }
+
       if (!this.parameters.length) return []
       let finalParameters = [...this.parameters]
       if (this.parameterGroups && this.parameterGroups.some((g) => g.context === 'action')) {
@@ -108,11 +112,17 @@ export default {
         })
       }
       if (this.showAdvanced) return finalParameters // show all parameters
-      // exclude advanced parameters, if:
-      // - a default value is defined and the actual value differs from the default value
-      // - no default value is defined and the param has a value
-      return finalParameters.filter((p) => !p.advanced ||
-        (p.default !== undefined && this.configuration[p.name] !== undefined && this.configuration[p.name] !== null ? this.configuration[p.name].toString() !== p.default : this.configuration[p.name] !== undefined))
+      // exclude advanced parameters:
+      return finalParameters.filter((p) =>
+        // parameter is not advanced: always show
+        !p.advanced ||
+        // parameter is advanced: show only if
+        (notNullNotUndefined(p.default) && notNullNotUndefined(this.configuration[p.name])
+          // default defined and value differs from default
+          ? this.configuration[p.name].toString() !== p.default
+          // no default defined, but value is set and not empty
+          : notNullNotUndefined(this.configuration[p.name]) && this.configuration[p.name].toString().length > 0)
+      )
     }
   },
   methods: {
