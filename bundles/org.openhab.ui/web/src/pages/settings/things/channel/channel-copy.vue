@@ -84,7 +84,7 @@ export default {
         linkedItems: [],
         properties: this.channel.properties,
         defaultTags: this.channel.defaultTags,
-        configuration: this.channel.configuration
+        configuration: this.config
       })
       this.$f7route.route.context.finalChannel = finalChannel
       // this.$f7router.emit('complete', finalChannel)
