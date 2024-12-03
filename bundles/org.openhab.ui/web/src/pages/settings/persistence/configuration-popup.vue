@@ -130,14 +130,14 @@ export default {
   },
   methods: {
     itemConfig(allItemsSelected, groupItems, items, excludeGroupItems, excludeItems) {
-      return (allItemsSelected ? ['*'] : groupItems.map((i) => i + '*').concat(items)).concat(excludeGroupItems.map((i) => '!' + i + '*')).concat(excludeItems.map((i) => '!' + i))
+      return (allItemsSelected ? ['*'] : []).concat(groupItems.map((i) => i + '*')).concat(items).concat(excludeGroupItems.map((i) => '!' + i + '*')).concat(excludeItems.map((i) => '!' + i))
     },
     updateModuleConfig () {
-      if (this.currentConfiguration.items.length === 0) {
+      if (!this.allItemsSelected && this.groupItems.length === 0 && this.items.length === 0) {
         this.$f7.dialog.alert('Please select Items')
         return
       }
-      this.$f7.emit('configurationUpdate', this.currentConfiguration)
+      this.$f7.emit('configurationUpdate', itemConfig(this.allItemsSelected, this.allItemsSelected ? [] : this.groupItems, this.allItemsSelected ? [] : this.items, this.excludeGroupItems, this.excludeItems))
       this.$refs.modulePopup.close()
     }
   }
