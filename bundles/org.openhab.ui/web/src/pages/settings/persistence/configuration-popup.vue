@@ -35,12 +35,12 @@
             <f7-list-item>... to be persisted.</f7-list-item>
           </f7-list>
           <f7-list>
-            <item-picker :key="'exclude-groups-' + excludeGroupItems.length" title="Select groups" name="excludeGroupItems" multiple="true" filterType="Group"
+            <item-picker :key="'exclude-groups-' + excludeGroupItems.length" title="Select exclude groups" name="excludeGroupItems" multiple="true" filterType="Group"
                          :disabled="!anySelected" :value="excludeGroupItems" @input="excludeGroupItems = $event" />
             <f7-list-item>... whose members are to be excluded from persistence.</f7-list-item>
           </f7-list>
           <f7-list>
-            <item-picker :key="'exclude-items-' + excludeItems.length" title="Select Items" name="excludeItems" multiple="true"
+            <item-picker :key="'exclude-items-' + excludeItems.length" title="Select exclude Items" name="excludeItems" multiple="true"
                          :disabled="!anySelected" :value="excludeItems" @input="excludeItems = $event" />
             <f7-list-item>... to be excluded from persistence.</f7-list-item>
           </f7-list>
@@ -92,7 +92,7 @@ export default {
         return this.currentConfiguration.items.filter((i) => i.length > 1 && !i.startsWith('!') && i.endsWith('*')).map((i) => i.slice(0, -1))
       },
       set (newGroupItems) {
-        this.$set(this.currentConfiguration, 'items', itemConfig(this.allItemsSelected, newGroupItems.sort((a, b) => a.localeCompare(b)), this.items, this.excludeGroupItems, this.excludeItems))
+        this.$set(this.currentConfiguration, 'items', this.itemConfig(this.allItemsSelected, newGroupItems.sort((a, b) => a.localeCompare(b)), this.items, this.excludeGroupItems, this.excludeItems))
       }
     },
     items: {
@@ -100,7 +100,7 @@ export default {
         return this.currentConfiguration.items.filter((i) => !i.startsWith('!') && !i.endsWith('*'))
       },
       set (newItems) {
-        this.$set(this.currentConfiguration, 'items', itemConfig(this.allItemsSelected, this.groupItems, newItems.sort((a, b) => a.localeCompare(b)), this.excludeGroupItems, this.excludeItems))
+        this.$set(this.currentConfiguration, 'items', this.itemConfig(this.allItemsSelected, this.groupItems, newItems.sort((a, b) => a.localeCompare(b)), this.excludeGroupItems, this.excludeItems))
       }
     },
     excludeGroupItems: {
@@ -108,7 +108,7 @@ export default {
         return this.currentConfiguration.items.filter((i) => i.startsWith('!') && i.endsWith('*')).map((i) => i.slice(1, -1))
       },
       set (newExcludeGroupItems) {
-        this.$set(this.currentConfiguration, 'items', itemConfig(this.allItemsSelected, this.groupItems, this.items, newExcludeGroupItems.sort((a, b) => a.localeCompare(b)), this.excludeItems))
+        this.$set(this.currentConfiguration, 'items', this.itemConfig(this.allItemsSelected, this.groupItems, this.items, newExcludeGroupItems.sort((a, b) => a.localeCompare(b)), this.excludeItems))
       }
     },
     excludeItems: {
@@ -116,7 +116,7 @@ export default {
         return this.currentConfiguration.items.filter((i) => i.startsWith('!') && !i.endsWith('*')).map((i) => i.slice(1))
       },
       set (newExcludeItems) {
-        this.$set(this.currentConfiguration, 'items', itemConfig(this.allItemsSelected, this.groupItems, this.items, this.excludeGroupItems, newExcludeItems.sort((a, b) => a.localeCompare(b))))
+        this.$set(this.currentConfiguration, 'items', this.itemConfig(this.allItemsSelected, this.groupItems, this.items, this.excludeGroupItems, newExcludeItems.sort((a, b) => a.localeCompare(b))))
       }
     },
     allItemsSelected: {
@@ -124,7 +124,7 @@ export default {
         return this.currentConfiguration.items.filter((i) => i === '*').length > 0
       },
       set (newAllItemsSelected) {
-        this.$set(this.currentConfiguration, 'items',  itemConfig(newAllItemsSelected, this.groupItems, this.items, this.excludeGroupItems, this.excludeItems))
+        this.$set(this.currentConfiguration, 'items',  this.itemConfig(newAllItemsSelected, this.groupItems, this.items, this.excludeGroupItems, this.excludeItems))
       }
     },
     anySelected: {
@@ -142,7 +142,8 @@ export default {
         this.$f7.dialog.alert('Please select Items')
         return
       }
-      this.$f7.emit('configurationUpdate', itemConfig(this.allItemsSelected, this.allItemsSelected ? [] : this.groupItems, this.allItemsSelected ? [] : this.items, this.excludeGroupItems, this.excludeItems))
+      this.$set(this.currentConfiguration, 'items', this.itemConfig(this.allItemsSelected, this.allItemsSelected ? [] : this.groupItems, this.allItemsSelected ? [] : this.items, this.excludeGroupItems, this.excludeItems))
+      this.$f7.emit('configurationUpdate', this.currentConfiguration)
       this.$refs.modulePopup.close()
     }
   }
