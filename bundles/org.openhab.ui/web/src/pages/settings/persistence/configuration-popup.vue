@@ -124,7 +124,7 @@ export default {
         return this.currentConfiguration.items.filter((i) => i === '*').length > 0
       },
       set (newAllItemsSelected) {
-        this.$set(this.currentConfiguration, 'items',  this.itemConfig(newAllItemsSelected, this.groupItems, this.items, this.excludeGroupItems, this.excludeItems))
+        this.$set(this.currentConfiguration, 'items', this.itemConfig(newAllItemsSelected, this.groupItems, this.items, this.excludeGroupItems, this.excludeItems))
       }
     },
     anySelected: {
@@ -134,7 +134,7 @@ export default {
     }
   },
   methods: {
-    itemConfig(allItemsSelected, groupItems, items, excludeGroupItems, excludeItems) {
+    itemConfig (allItemsSelected, groupItems, items, excludeGroupItems, excludeItems) {
       return (allItemsSelected ? ['*'] : []).concat(groupItems.map((i) => i + '*')).concat(items).concat(excludeGroupItems.map((i) => '!' + i + '*')).concat(excludeItems.map((i) => '!' + i))
     },
     updateModuleConfig () {
