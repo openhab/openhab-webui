@@ -89,7 +89,7 @@ export default {
   computed: {
     groupItems: {
       get () {
-        return this.allItemsSelected ? [] : this.currentConfiguration.items.filter((i) => i.length > 1 && !i.startsWith('!') && i.endsWith('*')).map((i) => i.slice(0, -1))
+        return this.currentConfiguration.items.filter((i) => i.length > 1 && !i.startsWith('!') && i.endsWith('*')).map((i) => i.slice(0, -1))
       },
       set (newGroupItems) {
         this.$set(this.currentConfiguration, 'items', itemConfig(this.allItemsSelected, newGroupItems.sort((a, b) => a.localeCompare(b)), this.items, this.excludeGroupItems, this.excludeItems))
@@ -97,7 +97,7 @@ export default {
     },
     items: {
       get () {
-        return this.allItemsSelected ? [] : this.currentConfiguration.items.filter((i) => !i.startsWith('!') && !i.endsWith('*'))
+        return this.currentConfiguration.items.filter((i) => !i.startsWith('!') && !i.endsWith('*'))
       },
       set (newItems) {
         this.$set(this.currentConfiguration, 'items', itemConfig(this.allItemsSelected, this.groupItems, newItems.sort((a, b) => a.localeCompare(b)), this.excludeGroupItems, this.excludeItems))
@@ -130,7 +130,7 @@ export default {
   },
   methods: {
     itemConfig(allItemsSelected, groupItems, items, excludeGroupItems, excludeItems) {
-      return (allItemsSelected ? ['*'] : []).concat(groupItems.map((i) => i + '*')).concat(items).concat(excludeGroupItems.map((i) => '!' + i + '*')).concat(excludeItems.map((i) => '!' + i))
+      return (allItemsSelected ? ['*'] : groupItems.map((i) => i + '*').concat(items)).concat(excludeGroupItems.map((i) => '!' + i + '*')).concat(excludeItems.map((i) => '!' + i))
     },
     updateModuleConfig () {
       if (this.currentConfiguration.items.length === 0) {
