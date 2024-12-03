@@ -116,12 +116,8 @@ export default {
       return finalParameters.filter((p) =>
         // parameter is not advanced: always show
         !p.advanced ||
-        // parameter is advanced: show only if
-        (notNullNotUndefined(p.default) && notNullNotUndefined(this.configuration[p.name])
-          // default defined and value differs from default
-          ? this.configuration[p.name].toString() !== p.default
-          // no default defined, but value is set and not empty
-          : notNullNotUndefined(this.configuration[p.name]) && this.configuration[p.name].toString().length > 0)
+        // parameter is advanced: show only if default is defined and value is different from default
+        (notNullNotUndefined(p.default) && notNullNotUndefined(this.configuration[p.name]) && this.configuration[p.name].toString() !== p.default)
       )
     }
   },
