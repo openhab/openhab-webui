@@ -36,12 +36,12 @@
           </f7-list>
           <f7-list>
             <item-picker :key="'exclude-groups-' + excludeGroupItems.length" title="Select groups" name="excludeGroupItems" multiple="true" filterType="Group"
-                         :value="excludeGroupItems" @input="excludeGroupItems = $event" />
+                         :disabled="!anySelected" :value="excludeGroupItems" @input="excludeGroupItems = $event" />
             <f7-list-item>... whose members are to be excluded from persistence.</f7-list-item>
           </f7-list>
           <f7-list>
             <item-picker :key="'exclude-items-' + excludeItems.length" title="Select Items" name="excludeItems" multiple="true"
-                         :value="excludeItems" @input="excludeItems = $event" />
+                         :disabled="!anySelected" :value="excludeItems" @input="excludeItems = $event" />
             <f7-list-item>... to be excluded from persistence.</f7-list-item>
           </f7-list>
         </f7-col>
@@ -126,6 +126,11 @@ export default {
       set (newAllItemsSelected) {
         this.$set(this.currentConfiguration, 'items',  itemConfig(newAllItemsSelected, this.groupItems, this.items, this.excludeGroupItems, this.excludeItems))
       }
+    },
+    anySelected: {
+      get () {
+        return this.allItemsSelected || (this.groupItems.length > 0) || (this.items.length > 0)
+      }
     }
   },
   methods: {
@@ -133,7 +138,7 @@ export default {
       return (allItemsSelected ? ['*'] : []).concat(groupItems.map((i) => i + '*')).concat(items).concat(excludeGroupItems.map((i) => '!' + i + '*')).concat(excludeItems.map((i) => '!' + i))
     },
     updateModuleConfig () {
-      if (!this.allItemsSelected && this.groupItems.length === 0 && this.items.length === 0) {
+      if (!this.anySelected) {
         this.$f7.dialog.alert('Please select Items')
         return
       }
