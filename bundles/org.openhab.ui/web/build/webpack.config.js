@@ -60,7 +60,9 @@ module.exports = {
         warnings: false
       },
       webSocketTransport: 'ws',
-      webSocketURL: apiBaseUrl + '/ws'
+      webSocketURL: {
+        pathname: '/ws'
+      }
     },
     static: [
       path.resolve(__dirname, 'www'),
@@ -72,7 +74,7 @@ module.exports = {
       target: apiBaseUrl
     },
     {
-      context: "/ws",
+      context: "/ws/logs",
       target: apiBaseUrl,
       ws: true
     }]

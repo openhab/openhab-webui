@@ -1,5 +1,5 @@
 <template>
-  <f7-page name="logviewer">
+  <f7-page name="logviewer" class="log-viewer" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <!-- Logger Settings Popup -->
     <div class="popup logsettings-popup">
       <div class="view">
@@ -18,7 +18,7 @@
           </div>
           <div class="page-content">
             <f7-block class="input-with-buttons-container">
-              <div class="input-with-buttons">
+              <div class="input-with-buttons searchbar">
                 <input type="text" placeholder="Add custom logger package entry..."
                        @keyup.enter="handleLogPackageEnter($event)" class="custom-input"></input>
               </div>
@@ -113,27 +113,9 @@
 
     <!-- Main Display -->
     <f7-navbar title="Log Viewer" back-link="Developer Tools" back-link-url="/developer/" back-link-force>
-      <template #left>
-        <f7-badge class="margin-left">
-          {{ logStart }} - {{ logEnd }}
-        </f7-badge>
-        <f7-badge color="green" tooltip="Filtered log entries currently displayed" class="margin-left">
-          {{ filterCount }}
-        </f7-badge>
-        <f7-badge color="orange" tooltip="Total log entries loaded" class="margin-left">
-          {{ tableData.length }}
-        </f7-badge>
-        <f7-badge color="red" tooltip="Maximum log entries to be buffered" class="margin-left">
-          {{ maxEntries }}
-        </f7-badge>
-      </template>
-
       <f7-nav-right>
-        <div class="filter-input-box">
-          <input type="text" placeholder="Filter..." v-model="filterText" @keyup.enter="handleFilter"></input>
-        </div>
 
-        <f7-link icon-ios="f7:play_fill" icon-aurora="f7:play_fill" icon-md="material:play_fill" class="margin-left"
+        <f7-link icon-ios="f7:play_fill" icon-f7="play_fill" icon-md="material:play_arrow" class="margin-left"
                  tooltip="Continue receiving logs" :disabled="stateConnected && stateProcessing"
                  :class="{ 'disabled-link': stateConnected && stateProcessing }" @click="loggingContinue" />
         <f7-link icon-ios="f7:pause_fill" icon-aurora="f7:pause_fill" icon-md="material:pause_fill"
@@ -142,32 +124,49 @@
         <f7-link icon-ios="f7:stop_fill" icon-aurora="f7:stop_fill" icon-md="material:stop_fill"
                  tooltip="Stop receiving logs" :disabled="!stateConnected" :class="{ 'disabled-link': !stateConnected }"
                  @click="loggingStop" />
-        <f7-link icon-ios="f7:arrow_down_to_line" icon-aurora="f7:arrow_down_to_line"
-                 icon-md="material:arrow_down_to_line" tooltip="Scroll to latest log entries" :disabled="autoScroll"
-                 :class="{ 'disabled-link': autoScroll }" @click="showLatestLogs" />
-
-        <f7-link icon-ios="f7:cloud_download" icon-aurora="f7:cloud_download" icon-md="material:cloud_download"
-                 tooltip="Download filtered log as CSV" :disabled="filterCount == 0"
-                 :class="{ 'disabled-link': filterCount == 0 }" class="margin-left" @click="downloadCSV" />
-        <f7-link icon-ios="f7:rectangle_on_rectangle" icon-aurora="f7:rectangle_on_rectangle"
-                 icon-md="material:rectangle_on_rectangle" tooltip="Copy filtered log to clipboard"
-                 :disabled="filterCount == 0" :class="{ 'disabled-link': filterCount == 0 }" @click="copyTableToClipboard" />
-        <f7-link icon-ios="f7:trash" icon-aurora="f7:trash" icon-md="material:trash" tooltip="Clear the log buffer"
-                 class="margin-left" :disabled="tableData.length == 0" :class="{ 'disabled-link': tableData.length == 0 }"
-                 @click="clearLog" />
-
-        <f7-link @click="toggleErrorDisplay" tooltip="Always show error level logs" class="margin-left">
-          <f7-icon v-if="showErrors" f7="exclamationmark_triangle_fill" />
-          <f7-icon v-else f7="exclamationmark_triangle" />
-        </f7-link>
-        <f7-link icon-ios="f7:pencil" icon-aurora="f7:pencil" icon-md="material:pencil" tooltip="Configure highlights"
-                 data-popup=".loghighlights-popup" class="popup-open" />
-        <f7-link icon-ios="f7:gear" icon-aurora="f7:gear" icon-md="material:gear" tooltip="Configure logging"
-                 data-popup=".logsettings-popup" class="popup-open" />
       </f7-nav-right>
+
+      <f7-subnavbar :inner="false">
+        <f7-searchbar ref="searchbar" :value="filterText" custom-search placeholder="Filter" :disable-button="false" @searchbar:search="handleFilter" @searchbar.clear="clearFilter" />
+        <!-- <div class="filter-input-box">
+          <input type="search" placeholder="Filter..." v-model="filterText" @keyup.enter="handleFilter"></input>
+        </div> -->
+        <div style="display: flex; flex-wrap: nowrap;">
+          <f7-badge class="log-period margin-left-half">
+            {{ logStart }}&nbsp;>&nbsp;{{ logEnd }}
+          </f7-badge>
+          <f7-badge class="margin-horizontal" :color="countersBadgeColor" tooltip="Log entries filtered/total">
+            {{filterCount}}/{{ tableData.length }}
+          </f7-badge>
+          <!-- <f7-badge color="red" tooltip="Maximum log entries to be buffered">
+            {{ maxEntries }}
+          </f7-badge> -->
+        </div>
+      </f7-subnavbar>
     </f7-navbar>
 
-    <f7-block>
+    <f7-toolbar bottom>
+      <!-- <f7-link icon-f7="arrow_down_to_line" tooltip="Scroll to latest log entries" :disabled="autoScroll"
+                 :class="{ 'disabled-link': autoScroll }" @click="showLatestLogs" /> -->
+      <f7-link icon-f7="cloud_download"
+                tooltip="Download filtered log as CSV" :disabled="filterCount == 0"
+                :class="{ 'disabled-link': filterCount == 0 }" @click="downloadCSV" />
+      <f7-link icon-f7="rectangle_on_rectangle" tooltip="Copy filtered log to clipboard"
+                :disabled="filterCount == 0" :class="{ 'disabled-link': filterCount == 0 }" @click="copyTableToClipboard" />
+      <f7-link icon-f7="trash" tooltip="Clear the log buffer"
+                :disabled="tableData.length == 0" :class="{ 'disabled-link': tableData.length == 0 }"
+                @click="clearLog" />
+      <f7-link @click="toggleErrorDisplay" tooltip="Always show error level logs">
+        <f7-icon v-if="showErrors" f7="exclamationmark_triangle_fill" />
+        <f7-icon v-else f7="exclamationmark_triangle" />
+      </f7-link>
+      <f7-link icon-f7="pencil" tooltip="Configure highlights"
+                data-popup=".loghighlights-popup" class="popup-open" />
+      <f7-link icon-f7="gear" tooltip="Configure logging"
+                data-popup=".logsettings-popup" class="popup-open" />
+    </f7-toolbar>
+
+    <f7-block class="no-padding no-margin">
       <f7-col>
         <f7-card class="custom-card">
           <div class="table-container" ref="tableContainer" @scroll="handleScroll">
@@ -192,145 +191,131 @@
         </f7-card>
       </f7-col>
     </f7-block>
+
+    <f7-fab v-show="!autoScroll" position="right-bottom" slot="fixed" color="blue"
+            tooltip="Scroll to latest log entries" @click="showLatestLogs">
+      <f7-icon f7="arrow_down_to_line" />
+    </f7-fab>
   </f7-page>
 </template>
 
-<style>
-/* Ensure the card takes full width and removes padding */
-.custom-card {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  overflow: hidden;
-}
+<style lang="stylus">
+.log-viewer
 
-.table-container {
-  overflow-y: auto;
-  overflow-x: auto;
-  display: block;
-  transition: height 0.2s ease-in-out;
-}
+  /* Ensure the card takes full width and removes padding */
+  .custom-card
+    margin 0
+    padding 0
+    width 100%
+    display flex
+    flex-direction column
+    overflow hidden
 
-table {
-  width: 100%;
-  overflow-x: auto;
-  position: relative;
-  border-collapse: collapse;
-  table-layout: auto;
-}
+  .table-container
+    overflow-y auto
+    overflow-x auto
+    display block
+    transition height 0.2s ease-in-out
+    height calc(100vh - var(--f7-navbar-height) - var(--f7-subnavbar-height) - var(--f7-toolbar-height))
 
-td.nowrap {
-  padding: 5px;
-  text-align: left;
-  white-space: nowrap;
-}
+  table
+    width 100%
+    overflow-x auto
+    position relative
+    border-collapse collapse
+    table-layout auto
 
-td.sticky {
-  position: sticky;
-  left: 0;
-  color: black;
-  background: #f1f1f1;
-  z-index: 1;
-}
+  td.nowrap
+    padding 5px
+    text-align left
+    white-space nowrap
 
-tr.error {
-  background-color: rgb(255, 96, 96);
-  color: black;
-}
+  td.sticky
+    position sticky
+    left 0
+    color black
+    background #f1f1f1
+    z-index 1
 
-tr.warn {
-  background-color: rgb(247, 253, 163);
-  color: black;
-}
+  tr.error
+    background-color rgb(255, 96, 96)
+    color black
 
-tr.info {
-  color: black;
-  background-color: rgb(163, 253, 163);
-}
+  tr.warn
+    background-color rgb(247, 253, 163)
+    color black
 
-tr.debug {}
+  tr.info
+    color black
+    background-color rgb(163, 253, 163)
 
-tr.trace {
-  color: rgb(112, 112, 112);
-}
+  tr.debug
+    color inherit
 
-.disabled-link {
-  pointer-events: none;
-  opacity: 0.5;
-  cursor: not-allowed;
-}
+  tr.trace
+    color rgb(112, 112, 112)
 
-.filter-input-box {
-  display: flex;
-  align-items: center;
-  margin-left: auto;
-}
+  .disabled-link
+    pointer-events none
+    opacity 0.5
+    cursor not-allowed
 
-.filter-input-box input {
-  width: 150px;
-  padding: 5px 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
-}
+  .filter-input-box input:focus
+    outline none
+    border-color #007aff
 
-.filter-input-box input:focus {
-  outline: none;
-  border-color: #007aff;
-}
+  .input-with-buttons-container
+    display flex
+    justify-content center
+    padding 10px
 
-.input-with-buttons-container {
-  display: flex;
-  justify-content: center;
-  padding: 10px;
-}
+  .input-with-buttons
+    display flex
+    align-items center
+    border 1px solid #ccc
+    border-radius 5px
+    overflow hidden
+    max-width 400px
+    width 100%
+    background-color var(--f7-searchbar-input-bg-color)
 
-.input-with-buttons {
-  display: flex;
-  align-items: center;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  overflow: hidden;
-  max-width: 400px;
-  width: 100%;
-}
+  .custom-input
+    flex 1
+    border none
+    padding 10px
+    outline none
 
-.custom-input {
-  flex: 1;
-  border: none;
-  padding: 10px;
-  outline: none;
-}
+  .milliseconds
+    font-size 0.8em
+  
+  .log-period
+    white-space nowrap !important
 
-.milliseconds {
-  font-size: 0.8em;
-}
+// @media (max-width: 767px)
+//   .log-viewer .log-period
+//     display none
 
-.color-palette {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  justify-content: center;
-}
+#color-picker-popover
+  .color-palette
+    display flex
+    flex-wrap wrap
+    gap 8px
+    justify-content center
 
-.color-palette button {
-  width: 32px;
-  height: 32px;
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-  outline: none;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  transition: transform 0.2s;
-}
+  .color-palette button
+    width 32px
+    height 32px
+    border none
+    border-radius 50%
+    cursor pointer
+    outline none
+    box-shadow 0 2px 4px rgba(0, 0, 0, 0.2)
+    transition transform 0.2s
 
-.color-palette button.selected {
-  transform: scale(1.2);
-  border: 2px solid black;
-}
+  .color-palette button.selected
+    transform scale(1.2)
+    border 2px solid black
+
 </style>
 
 <script lang="ts">
@@ -339,11 +324,104 @@ import Vue from 'vue'
 import auth from '@/components/auth-mixin.js'
 import { getAccessToken, getTokenInCustomHeader, getBasicCredentials } from '@/js/openhab/auth.js'
 
-export default Vue.extend({
+export default {
   mixins: [auth],
   components: {
   },
+  data () {
+    return {
+      stateConnecting: false,
+      stateConnected: false,
+      stateProcessing: true,
+      scrollTime: 0,
+      autoScroll: true,
+      socket: {},
+      keepAliveTimer: null,
+      defaultLogLevel: 'WARN',
+      logPackageInputText: '',
+      highlightFilters: [],
+      activeHighlights: [],
+      filterText: '',
+      filterTextLowerCase: '',
+      filterCount: 0,
+      showErrors: false,
+      loadingLoggers: true,
+      loggerPackages: [],
+      tableData: [],
+      nextId: 0,
+      maxEntries: 2000,
+      updateCount: 0,
+      logStart: '--:--:--',
+      logEnd: '--:--:--',
+      currentHighlightColorItemIndex: null,
+      currentHighlightColor: '#FF5252',
+      colors: [
+        '#FF0000', // Red
+        '#00FF00', // Green
+        '#0000FF', // Blue
+        '#FFFF00', // Yellow
+        '#FF00FF', // Magenta
+        '#00FFFF', // Cyan
+        '#FFA500', // Orange
+        '#800080', // Purple
+        '#008000', // Dark Green
+        '#000080', // Navy Blue
+        '#FFC0CB', // Pink
+        '#A52A2A', // Brown
+        '#FFD700', // Gold
+        '#808080', // Gray
+        '#8B4513', // Saddle Brown
+        '#4682B4' // Steel Blue
+      ]
+    }
+  },
+  computed: {
+    filteredTableData () {
+      return this.tableData.filter(item => item.visible)
+    },
+    countersBadgeColor () {
+      if (this.tableData.length >= this.maxEntries) return 'red'
+      if (this.filterCount < this.tableData.length) return 'orange'
+      return 'green'
+    }
+  },
   methods: {
+    onPageAfterIn () {
+      this.$oh.api.get('/rest/logging/').then(data => {
+        data.loggers.forEach(logger => this.loggerPackages.push(logger))
+        this.$nextTick(() => {
+          const rootPackageIndex = this.loggerPackages.findIndex(item => item.loggerName === 'ROOT')
+          if (rootPackageIndex !== -1) {
+            this.defaultLogLevel = this.loggerPackages[rootPackageIndex].level
+          }
+          this.loggerPackages.sort((a, b) => a.loggerName.localeCompare(b.loggerName))
+          this.loggerPackages = this.loggerPackages.filter(item => item.loggerName !== 'ROOT')
+
+          this.loadingLoggers = false
+        })
+      })
+
+      this.socketConnect()
+
+      this.highlightFilters = JSON.parse(localStorage.getItem('openhab.ui:logviewer.logHighlightFilters'))
+      if (this.highlightFilters == null) {
+        this.highlightFilters = []
+      }
+      this.prefilterHighlights()
+
+      this.filterText = localStorage.getItem('openhab.ui:logviewer.logFilterText')
+      if (this.filterText == null) {
+        this.filterText = ''
+      } else {
+        this.$refs.searchbar.f7Searchbar.query = this.filterText
+      }
+      this.filterTextLowerCase = this.filterText.trim().toLocaleLowerCase()
+
+      this.showErrors = localStorage.getItem('openhab.ui:logviewer.logShowErrors')
+    },
+    onPageBeforeOut () {
+      this.loggingStop()
+    },
     updateLogLevel (logger, value) {
       logger.level = value
       this.$oh.api.put('/rest/logging/' + logger.loggerName, logger)
@@ -356,8 +434,7 @@ export default Vue.extend({
       this.stateConnecting = true
 
       // Create a new WebSocket connection
-      // TODO: Use the real address!!!
-      const wsUrl = 'ws://' + window.location.host + '/ws/logs?accessToken=' + getAccessToken()
+      const wsUrl = '/ws/logs?accessToken=' + getAccessToken()
       this.socket = new WebSocket(wsUrl)
 
       const me = this
@@ -367,7 +444,7 @@ export default Vue.extend({
         me.stateConnected = true
         me.stateConnecting = false
         me.stateProcessing = true
-        me.scrollToBottom()
+        me.$nextTick(() => me.scrollToBottom())
       }
 
       // Event handler when a message is received from OpenHAB
@@ -389,6 +466,19 @@ export default Vue.extend({
       this.socket.onclose = function () {
         me.stateConnected = false
         me.stateConnecting = false
+      }
+
+      // TODO: handle timeouts
+      // this.keepAliveTimer = setTimeout(this.keepAlive, 9000)
+    },
+    keepAlive () {
+      if (this.socket && this.stateConnected) {
+        // this.socket.send('ping') shows a warning in the logs
+        this.keepAliveTimer = setTimeout(this.keepAlive, 9000)
+      } else {
+        if (this.keepAliveTimer) {
+          clearTimeout(this.keepAliveTimer)
+        }
       }
     },
     addLogEntry (logEntry) {
@@ -436,7 +526,7 @@ export default Vue.extend({
       }
 
       if (this.autoScroll) {
-        this.scrollToBottom()
+        this.$nextTick(() => this.scrollToBottom())
       }
     },
     loggingPause () {
@@ -481,15 +571,6 @@ export default Vue.extend({
       const isAtBottom = tableContainer.scrollHeight - tableContainer.scrollTop < (tableContainer.clientHeight + 20)
       this.autoScroll = isAtBottom
     },
-    resizeScrollRegion () {
-      const tableContainer = this.$refs.tableContainer
-      const navbar = document.querySelector('.navbar') // Target the Framework7 navbar
-      if (tableContainer) {
-        // TODO: Fix this sizing
-        const availableHeight = window.innerHeight - navbar.offsetHeight - 70 // tableContainer.getBoundingClientRect().top
-        tableContainer.style.height = `${availableHeight}px`
-      }
-    },
     handleLogPackageEnter (event) {
       let logger = {
         loggerName: event.target.value,
@@ -502,9 +583,21 @@ export default Vue.extend({
     processFilter (logEntry) {
       return logEntry.loggerName.toLowerCase().includes(this.filterTextLowerCase) || logEntry.message.toLowerCase().includes(this.filterTextLowerCase) || (this.showErrors && logEntry.level === 'ERROR')
     },
-    handleFilter () {
+    handleFilter (searchbar, filter) {
+      if (!searchbar) return
+      if (!filter) {
+        this.clearFilter()
+        return
+      }
+      this.filterText = filter
       this.filterTextLowerCase = this.filterText.trim().toLocaleLowerCase()
-      localStorage.setItem('logFilterText', this.filterText)
+      localStorage.setItem('openhab.ui:logviewer.logFilterText', this.filterText)
+      this.updateFilter()
+      this.scrollToBottom()
+    },
+    clearFilter () {
+      this.filterText = this.filterTextLowerCase = ''
+      localStorage.removeItem('openhab.ui:logviewer.logFilterText')
       this.updateFilter()
       this.scrollToBottom()
     },
@@ -611,12 +704,12 @@ export default Vue.extend({
       }
     },
     saveHighlighters () {
-      localStorage.setItem('logHighlightFilters', JSON.stringify(this.highlightFilters))
+      localStorage.setItem('openhab.ui:logviewer.logHighlightFilters', JSON.stringify(this.highlightFilters))
       this.prefilterHighlights()
     },
     addNewHighlight () {
       this.highlightFilters.push({
-        text: 'New Highlighter',
+        text: '',
         color: this.colors[0],
         active: false
       })
@@ -643,96 +736,9 @@ export default Vue.extend({
     toggleErrorDisplay () {
       this.showErrors = !this.showErrors
       this.updateFilter()
-      localStorage.setItem('logShowErrors', this.showErrors)
+      localStorage.setItem('openhab.ui:logviewer.logShowErrors', this.showErrors)
     }
-  },
-  computed: {
-    filteredTableData () {
-      return this.tableData.filter(item => item.visible)
-    }
-  },
-  created () {
-    this.$oh.api.get('/rest/logging/').then(data => {
-      data.loggers.forEach(logger => this.loggerPackages.push(logger))
-      this.$nextTick(() => {
-        const rootPackageIndex = this.loggerPackages.findIndex(item => item.loggerName === 'ROOT')
-        if (rootPackageIndex !== -1) {
-          this.defaultLogLevel = this.loggerPackages[rootPackageIndex].level
-        }
-        this.loggerPackages.sort((a, b) => a.loggerName.localeCompare(b.loggerName))
-        this.loggerPackages = this.loggerPackages.filter(item => item.loggerName !== 'ROOT')
-
-        this.loadingLoggers = false
-      })
-    })
-
-    this.socketConnect()
-
-    this.highlightFilters = JSON.parse(localStorage.getItem('logHighlightFilters'))
-    if (this.highlightFilters == null) {
-      this.highlightFilters = []
-    }
-    this.prefilterHighlights()
-
-    this.filterText = localStorage.getItem('logFilterText')
-    if (this.filterText == null) {
-      this.filterText = ''
-    }
-    this.filterTextLowerCase = this.filterText.trim().toLocaleLowerCase()
-
-    this.showErrors = localStorage.getItem('logShowErrors')
-  },
-  mounted () {
-    this.resizeScrollRegion()
-    window.addEventListener('resize', this.resizeScrollRegion)
-  },
-  beforeDestroy () {
-    window.removeEventListener('resize', this.resizeScrollRegion)
-  },
-  data: () => ({
-    stateConnecting: false,
-    stateConnected: false,
-    stateProcessing: true,
-    scrollTime: 0,
-    autoScroll: true,
-    socket: {},
-    defaultLogLevel: 'WARN',
-    logPackageInputText: '',
-    highlightFilters: [],
-    activeHighlights: [],
-    filterText: '',
-    filterTextLowerCase: '',
-    filterCount: 0,
-    showErrors: false,
-    loadingLoggers: true,
-    loggerPackages: [],
-    tableData: [],
-    nextId: 0,
-    maxEntries: 2000,
-    updateCount: 0,
-    logStart: '--:--:--',
-    logEnd: '--:--:--',
-    currentHighlightColorItemIndex: null,
-    currentHighlightColor: '#FF5252',
-    colors: [
-      '#FF0000', // Red
-      '#00FF00', // Green
-      '#0000FF', // Blue
-      '#FFFF00', // Yellow
-      '#FF00FF', // Magenta
-      '#00FFFF', // Cyan
-      '#FFA500', // Orange
-      '#800080', // Purple
-      '#008000', // Dark Green
-      '#000080', // Navy Blue
-      '#FFC0CB', // Pink
-      '#A52A2A', // Brown
-      '#FFD700', // Gold
-      '#808080', // Gray
-      '#8B4513', // Saddle Brown
-      '#4682B4' // Steel Blue
-    ]
-  })
-})
+  }
+}
 
 </script>
