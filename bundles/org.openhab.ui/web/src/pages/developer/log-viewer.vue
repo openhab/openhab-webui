@@ -467,12 +467,11 @@ export default {
         me.stateConnecting = false
       }
 
-      // TODO: handle timeouts
-      // this.keepAliveTimer = setTimeout(this.keepAlive, 9000)
+      this.keepAliveTimer = setTimeout(this.keepAlive, 9000)
     },
     keepAlive () {
       if (this.socket && this.stateConnected) {
-        this.socket.send('ping')
+        this.socket.send('[]')
         this.keepAliveTimer = setTimeout(this.keepAlive, 9000)
       } else {
         if (this.keepAliveTimer) {
