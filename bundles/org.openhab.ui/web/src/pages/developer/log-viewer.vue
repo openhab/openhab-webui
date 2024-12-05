@@ -20,7 +20,7 @@
             <f7-block class="input-with-buttons-container">
               <div class="input-with-buttons searchbar">
                 <input type="text" placeholder="Add custom logger package entry..."
-                       @keyup.enter="handleLogPackageEnter($event)" class="custom-input" />
+                       @keyup.enter="handleLogPackageEnter($event)" class="custom-input"></input>
               </div>
             </f7-block>
             <f7-block style="margin-top: 4px; font-size: 0.85rem; text-align: center;">
@@ -81,7 +81,7 @@
           <div class="page-content">
             <f7-list class="col wide">
               <f7-list-item v-for="(highlightFilter, index) in highlightFilters" :key="index">
-                <input slot="media" type="checkbox" v-model="highlightFilter.active" checked />
+                <input slot="media" type="checkbox" v-model="highlightFilter.active" checked></input>
                 <f7-input slot="title" type="text" placeholder="Enter text to highlight..."
                           :value="highlightFilter.text" @input="updateHighlightText($event, index)" />
 
@@ -286,7 +286,7 @@
 
   .milliseconds
     font-size 0.8em
-  
+
   .log-period
     white-space nowrap !important
 
