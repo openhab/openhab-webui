@@ -171,7 +171,7 @@
           <div class="table-container" ref="tableContainer" @scroll="handleScroll">
             <table ref="dataTable">
               <tbody>
-                <tr v-for="entity in filteredTableData" :key="entity.id" class="table-rows"
+                <!-- <tr v-for="entity in filteredTableData" :key="entity.id" class="table-rows"
                     :class="entity.level.toLowerCase()">
                   <td class="sticky">
                     {{ entity.time }}<span class="milliseconds">{{ entity.milliseconds }}</span>
@@ -183,7 +183,7 @@
                     {{ entity.loggerName }}
                   </td>
                   <td v-html="highlightText(entity.message)" class="nowrap" />
-                </tr>
+                </tr> -->
               </tbody>
             </table>
           </div>
@@ -214,7 +214,6 @@
     overflow-y auto
     overflow-x auto
     display block
-    transition height 0.2s ease-in-out
     height calc(100vh - var(--f7-navbar-height) - var(--f7-subnavbar-height) - var(--f7-toolbar-height))
 
   table
@@ -468,6 +467,16 @@ export default {
       }
 
       this.keepAliveTimer = setTimeout(this.keepAlive, 9000)
+
+      // TEMP
+      // for (let i = 0; i < 1980; i++) {
+      //   this.addLogEntry({
+      //     unixtime: Date.now(),
+      //     level: 'TRACE',
+      //     loggerName: 'test',
+      //     message: 'Test ' + i
+      //   })
+      // }
     },
     keepAlive () {
       if (this.socket && this.stateConnected) {
@@ -478,6 +487,15 @@ export default {
           clearTimeout(this.keepAliveTimer)
         }
       }
+    },
+    renderEntry (entity) {
+      let tr = document.createElement('tr')
+      tr.className = entity.level.toLowerCase()
+      tr.innerHTML = `<td class="sticky">${entity.time}<span class="milliseconds">${entity.milliseconds}</span></td>` +
+        `<td>${entity.level}</td>` +
+        `<td>${entity.loggerName}</td>` +
+        `<td>${this.highlightText(entity.message)}</td>`
+      return tr
     },
     addLogEntry (logEntry) {
       this.updateCount++
@@ -505,7 +523,7 @@ export default {
         }
       }
 
-      this.tableData.push({
+      let entry = {
         id: this.nextId++,
         visible: vis,
         time: formattedTime,
@@ -513,13 +531,20 @@ export default {
         level: logEntry.level.toUpperCase(),
         loggerName: logEntry.loggerName,
         message: logEntry.message
-      })
+      }
+
+      this.tableData.push(entry)
+      if (entry.visible) {
+        const tr = this.renderEntry(entry)
+        this.$refs.dataTable.firstChild.appendChild(tr)
+      }
 
       if (this.tableData.length > this.maxEntries) {
         const removedElement = this.tableData.shift()
         this.logStart = removedElement.time
         if (removedElement.visible) {
           this.filterCount--
+          this.$refs.dataTable.firstChild.removeChild(this.$refs.dataTable.firstChild.firstChild)
         }
       }
 
@@ -601,10 +626,14 @@ export default {
     },
     updateFilter () {
       let cnt = 0
+
+      this.$refs.dataTable.firstChild.innerHTML = ''
       for (const entry of this.tableData) {
         entry.visible = this.processFilter(entry)
         if (entry.visible) {
           cnt++
+          const tr = this.renderEntry(entry)
+          this.$refs.dataTable.firstChild.appendChild(tr)
         }
       }
       this.filterCount = cnt
@@ -704,6 +733,7 @@ export default {
     saveHighlighters () {
       localStorage.setItem('openhab.ui:logviewer.logHighlightFilters', JSON.stringify(this.highlightFilters))
       this.prefilterHighlights()
+      this.updateFilter()
     },
     addNewHighlight () {
       this.highlightFilters.push({
