@@ -97,6 +97,7 @@ public class PageRenderer extends AbstractWidgetRenderer {
         snippet = snippet.replaceAll("%main.offline-msg%", localizeText("@text/main.offline-msg"));
         snippet = snippet.replaceAll("%main.long-polling-mode-msg%", localizeText("@text/main.long-polling-mode-msg"));
         snippet = snippet.replaceAll("%id%", id);
+        snippet = snippet.replaceAll("%popup.button.close%", localizeText("@text/popup.button.close"));
 
         // if the label contains a value span, we remove this span as
         // the title of a page/layer cannot deal with this
