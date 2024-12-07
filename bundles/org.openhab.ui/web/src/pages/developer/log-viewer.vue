@@ -490,11 +490,11 @@ export default {
     },
     renderEntry (entity) {
       let tr = document.createElement('tr')
-      tr.className = entity.level.toLowerCase()
+      tr.className = 'table-rows ' + entity.level.toLowerCase()
       tr.innerHTML = `<td class="sticky">${entity.time}<span class="milliseconds">${entity.milliseconds}</span></td>` +
         `<td>${entity.level}</td>` +
         `<td>${entity.loggerName}</td>` +
-        `<td>${this.highlightText(entity.message)}</td>`
+        `<td class="nowrap">${this.highlightText(entity.message)}</td>`
       return tr
     },
     addLogEntry (logEntry) {
