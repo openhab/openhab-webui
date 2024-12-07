@@ -13,6 +13,7 @@
 package org.openhab.ui.basic.internal.render;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 import javax.measure.Unit;
 
@@ -29,6 +30,7 @@ import org.openhab.core.library.types.QuantityType;
 import org.openhab.core.library.unit.Units;
 import org.openhab.core.model.sitemap.sitemap.Colortemperaturepicker;
 import org.openhab.core.model.sitemap.sitemap.Widget;
+import org.openhab.core.thing.DefaultSystemChannelTypeProvider;
 import org.openhab.core.types.State;
 import org.openhab.core.types.StateDescription;
 import org.openhab.core.types.util.UnitUtils;
@@ -54,8 +56,10 @@ import org.slf4j.LoggerFactory;
 @NonNullByDefault
 public class ColortemppickerRenderer extends AbstractWidgetRenderer {
 
-    private static final BigDecimal MIN_TEMPERATURE_KELVIN = BigDecimal.valueOf(1000);
-    private static final BigDecimal MAX_TEMPERATURE_KELVIN = BigDecimal.valueOf(10000);
+    private static final BigDecimal MIN_TEMPERATURE_KELVIN = Objects.requireNonNull(Objects
+            .requireNonNull(DefaultSystemChannelTypeProvider.SYSTEM_COLOR_TEMPERATURE_ABS.getState()).getMinimum());
+    private static final BigDecimal MAX_TEMPERATURE_KELVIN = Objects.requireNonNull(Objects
+            .requireNonNull(DefaultSystemChannelTypeProvider.SYSTEM_COLOR_TEMPERATURE_ABS.getState()).getMaximum());
     private static final double GRADIENT_INCREMENT_PERCENT = 2.5;
 
     private final Logger logger = LoggerFactory.getLogger(ColortemppickerRenderer.class);
@@ -207,8 +211,24 @@ public class ColortemppickerRenderer extends AbstractWidgetRenderer {
     }
 
     private boolean isUnitInKelvin(StateDescription stateDescription) {
-        // If no pattern or pattern with no unit, assume unit for min and max is Kelvin
-        Unit<?> unit = UnitUtils.parseUnit(stateDescription.getPattern());
-        return unit == null || unit == Units.KELVIN;
+        // Using the pattern to determine the unit of min/max is not fully reliable
+        // because the user can override the pattern and set a different unit than
+        // the one defined by binding developer at channel level.
+        // So we consider the values of min/max to determine the unit of the range.
+        // If values are lower than 1000, we assume values are in mirek.
+        // If values are greater than 1000, we assume values are in Kelvin.
+        boolean inKelvin;
+        BigDecimal min = stateDescription.getMinimum();
+        BigDecimal max = stateDescription.getMaximum();
+        if (min != null) {
+            inKelvin = min.doubleValue() >= MIN_TEMPERATURE_KELVIN.doubleValue();
+        } else if (max != null) {
+            inKelvin = max.doubleValue() > MIN_TEMPERATURE_KELVIN.doubleValue();
+        } else {
+            // If no pattern or pattern with no unit, assume unit is Kelvin
+            Unit<?> unit = UnitUtils.parseUnit(stateDescription.getPattern());
+            inKelvin = unit == null || unit == Units.KELVIN;
+        }
+        return inKelvin;
     }
 }
