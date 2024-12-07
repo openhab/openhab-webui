@@ -7,10 +7,18 @@
   "about.darkMode.dark": "Tmavý",
   "about.navigationBarsStyle": "Styl navigační lišty",
   "about.miscellaneous": "Ostatní",
-  "about.miscellaneous.home.navbar": "Jednoduchý navigační panel na domovské stránce",
-  "about.miscellaneous.home.background": "Standardní barva pozadí domovské stránky",
+  "about.miscellaneous.home.navbar": "Navigační panel domovské stránky",
+  "about.miscellaneous.home.navbar.default": "Výchozí",
+  "about.miscellaneous.home.navbar.simple": "Jednoduchý",
+  "about.miscellaneous.home.navbar.large": "Velký",
+  "about.miscellaneous.home.background": "Barva pozadí domovské stránky",
+  "about.miscellaneous.home.background.default": "Výchozí",
+  "about.miscellaneous.home.background.standard": "Standardní",
+  "about.miscellaneous.home.background.white": "Bílý",
   "about.miscellaneous.home.hideChatInput": "Skrýt chat na domovské stránce",
   "about.miscellaneous.home.disableCardExpansionAnimation": "Zakázat animace rozbalování karet",
   "about.miscellaneous.theme.disablePageTransition": "Zakázat animace přechodu stránek",
-  "about.miscellaneous.webaudio.enable": "Povolit podporu Web Audio sink"
+  "about.miscellaneous.webaudio.enable": "Povolit podporu Web Audio sink",
+  "about.miscellaneous.commandItem.title": "Poslouchat příkazy UI ",
+  "about.miscellaneous.commandItem.selectItem": "Položka"
 }
