@@ -467,14 +467,14 @@ export default {
       this.keepAliveTimer = setTimeout(this.keepAlive, 9000)
 
       // TEMP
-      for (let i = 0; i < 1980; i++) {
-        this.addLogEntry({
-          unixtime: Date.now(),
-          level: 'TRACE',
-          loggerName: 'test',
-          message: 'Test ' + i
-        })
-      }
+      // for (let i = 0; i < 1980; i++) {
+      //   this.addLogEntry({
+      //     unixtime: Date.now(),
+      //     level: 'TRACE',
+      //     loggerName: 'test',
+      //     message: 'Test ' + i
+      //   })
+      // }
     },
     keepAlive () {
       if (this.socket && this.stateConnected) {
@@ -579,6 +579,7 @@ export default {
       this.filterCount = 0
       this.logStart = '--:--:--'
       this.logEnd = '--:--:--'
+      this.$refs.dataTable.firstChild.innerHTML = ''
     },
     showLatestLogs () {
       this.autoScroll = true
