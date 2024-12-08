@@ -126,7 +126,8 @@
       </f7-nav-right>
 
       <f7-subnavbar :inner="false">
-        <f7-searchbar ref="searchbar" :value="filterText" custom-search placeholder="Filter" :disable-button="false" @searchbar:search="handleFilter" @searchbar.clear="clearFilter" />
+        <f7-searchbar ref="searchbar" :value="filterText" custom-search placeholder="Filter" :disable-button="false"
+                      @searchbar:search="handleFilter" @searchbar.clear="clearFilter" />
         <!-- <div class="filter-input-box">
           <input type="search" placeholder="Filter..." v-model="filterText" @keyup.enter="handleFilter"></input>
         </div> -->
@@ -147,22 +148,18 @@
     <f7-toolbar bottom>
       <!-- <f7-link icon-f7="arrow_down_to_line" tooltip="Scroll to latest log entries" :disabled="autoScroll"
                  :class="{ 'disabled-link': autoScroll }" @click="showLatestLogs" /> -->
-      <f7-link icon-f7="cloud_download"
-               tooltip="Download filtered log as CSV" :disabled="filterCount == 0"
+      <f7-link icon-f7="cloud_download" tooltip="Download filtered log as CSV" :disabled="filterCount == 0"
                :class="{ 'disabled-link': filterCount == 0 }" @click="downloadCSV" />
-      <f7-link icon-f7="rectangle_on_rectangle" tooltip="Copy filtered log to clipboard"
-               :disabled="filterCount == 0" :class="{ 'disabled-link': filterCount == 0 }" @click="copyTableToClipboard" />
-      <f7-link icon-f7="trash" tooltip="Clear the log buffer"
-               :disabled="tableData.length == 0" :class="{ 'disabled-link': tableData.length == 0 }"
-               @click="clearLog" />
+      <f7-link icon-f7="rectangle_on_rectangle" tooltip="Copy filtered log to clipboard" :disabled="filterCount == 0"
+               :class="{ 'disabled-link': filterCount == 0 }" @click="copyTableToClipboard" />
+      <f7-link icon-f7="trash" tooltip="Clear the log buffer" :disabled="tableData.length == 0"
+               :class="{ 'disabled-link': tableData.length == 0 }" @click="clearLog" />
       <f7-link @click="toggleErrorDisplay" tooltip="Always show error level logs">
         <f7-icon v-if="showErrors" f7="exclamationmark_triangle_fill" />
         <f7-icon v-else f7="exclamationmark_triangle" />
       </f7-link>
-      <f7-link icon-f7="pencil" tooltip="Configure highlights"
-               data-popup=".loghighlights-popup" class="popup-open" />
-      <f7-link icon-f7="gear" tooltip="Configure logging"
-               data-popup=".logsettings-popup" class="popup-open" />
+      <f7-link icon-f7="pencil" tooltip="Configure highlights" data-popup=".loghighlights-popup" class="popup-open" />
+      <f7-link icon-f7="gear" tooltip="Configure logging" data-popup=".logsettings-popup" class="popup-open" />
     </f7-toolbar>
 
     <f7-block class="no-padding no-margin">
@@ -346,9 +343,10 @@ export default {
       loadingLoggers: true,
       loggerPackages: [],
       tableData: [],
+      batchUpdatePending: false,
+      batchLogs: [],
       nextId: 0,
       maxEntries: 2000,
-      updateCount: 0,
       logStart: '--:--:--',
       logEnd: '--:--:--',
       currentHighlightColorItemIndex: null,
@@ -469,14 +467,14 @@ export default {
       this.keepAliveTimer = setTimeout(this.keepAlive, 9000)
 
       // TEMP
-      // for (let i = 0; i < 1980; i++) {
-      //   this.addLogEntry({
-      //     unixtime: Date.now(),
-      //     level: 'TRACE',
-      //     loggerName: 'test',
-      //     message: 'Test ' + i
-      //   })
-      // }
+      for (let i = 0; i < 1980; i++) {
+        this.addLogEntry({
+          unixtime: Date.now(),
+          level: 'TRACE',
+          loggerName: 'test',
+          message: 'Test ' + i
+        })
+      }
     },
     keepAlive () {
       if (this.socket && this.stateConnected) {
@@ -498,8 +496,6 @@ export default {
       return tr
     },
     addLogEntry (logEntry) {
-      this.updateCount++
-
       const date = new Date(logEntry.unixtime)
 
       const hours = date.getHours().toString().padStart(2, '0')
@@ -533,23 +529,35 @@ export default {
         message: logEntry.message
       }
 
-      this.tableData.push(entry)
-      if (entry.visible) {
-        const tr = this.renderEntry(entry)
-        this.$refs.dataTable.firstChild.appendChild(tr)
-      }
+      this.batchLogs.push(entry)
 
-      if (this.tableData.length > this.maxEntries) {
-        const removedElement = this.tableData.shift()
-        this.logStart = removedElement.time
-        if (removedElement.visible) {
-          this.filterCount--
-          this.$refs.dataTable.firstChild.removeChild(this.$refs.dataTable.firstChild.firstChild)
-        }
-      }
+      if (!this.batchUpdatePending) {
+        this.batchUpdatePending = true
+        requestAnimationFrame(() => {
+          this.batchLogs.forEach(entry => {
+            this.tableData.push(entry)
 
-      if (this.autoScroll) {
-        this.$nextTick(() => this.scrollToBottom())
+            if (entry.visible) {
+              const tr = this.renderEntry(entry)
+              this.$refs.dataTable.firstChild.appendChild(tr)
+            }
+
+            if (this.tableData.length > this.maxEntries) {
+              const removedElement = this.tableData.shift()
+              this.logStart = removedElement.time
+              if (removedElement.visible) {
+                this.filterCount--
+                this.$refs.dataTable.firstChild.removeChild(this.$refs.dataTable.firstChild.firstChild)
+              }
+            }
+          })
+          this.batchLogs.length = 0
+          if (this.autoScroll) {
+            this.$nextTick(() => this.scrollToBottom())
+          }
+
+          this.batchUpdatePending = false
+        })
       }
     },
     loggingPause () {
