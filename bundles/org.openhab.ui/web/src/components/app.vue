@@ -92,7 +92,7 @@
           <!-- Developer Tools -->
           <f7-list-item link="/developer/" :title="$t('sidebar.developerTools')" panel-close :animate="false"
                         :class="{ currentsection: currentUrl.indexOf('/developer/') === 0 && currentUrl.indexOf('/developer/widgets') < 0 &&
-                          currentUrl.indexOf('/developer/blocks') < 0 && currentUrl.indexOf('/developer/api-explorer') < 0 }">
+                          currentUrl.indexOf('/developer/blocks') < 0 && currentUrl.indexOf('/developer/api-explorer') < 0 && currentUrl.indexOf('/developer/log-viewer') < 0 }">
             <f7-icon slot="media" ios="f7:wrench_fill" aurora="f7:wrench_fill" md="material:construction" color="gray" />
           </f7-list-item>
           <li v-if="showDeveloperSubmenu">
@@ -108,6 +108,10 @@
               <f7-list-item link="/developer/api-explorer" title="API Explorer" view=".view-main" panel-close :animate="false" no-chevron
                             :class="{ currentsection: currentUrl.indexOf('/developer/api-explorer') === 0 }">
                 <f7-icon slot="media" f7="burn" color="gray" />
+              </f7-list-item>
+              <f7-list-item link="/developer/log-viewer" title="Log Viewer" view=".view-main" panel-close :animate="false" no-chevron
+                            :class="{ currentsection: currentUrl.indexOf('/developer/log-viewer') === 0 }">
+                <f7-icon slot="media" f7="square_list" color="gray" />
               </f7-list-item>
               <!-- <f7-list-item link="" @click="$f7.emit('toggleDeveloperDock')" title="Dock" view=".view-main" panel-close :animate="false" no-chevron>
                 <f7-icon slot="media" :f7="$store.state.developerDock ? 'wrench_fill' : 'wrench'" color="gray" />

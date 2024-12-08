@@ -62,6 +62,7 @@ const WidgetEditPage = () => import(/* webpackChunkName: "admin-devtools" */ '..
 const BlocksListPage = () => import(/* webpackChunkName: "admin-devtools" */ '../pages/developer/blocks/blocks-list.vue')
 const BlocksEditPage = () => import(/* webpackChunkName: "blockly-editor" */ '../pages/developer/blocks/blocks-edit.vue')
 const ApiExplorerPage = () => import(/* webpackChunkName: "admin-devtools" */ '../pages/developer/api-explorer.vue')
+const LogViewerPage = () => import(/* webpackChunkName: "admin-devtools" */ '../pages/developer/log-viewer.vue')
 
 const SetupWizardPage = () => import(/* webpackChunkName: "setup-wizard" */ '../pages/wizards/setup-wizard.vue')
 
@@ -501,6 +502,11 @@ export default [
         path: 'api-explorer',
         beforeEnter: [enforceAdminForRoute],
         async: loadAsync(ApiExplorerPage)
+      },
+      {
+        path: 'log-viewer',
+        beforeEnter: [enforceAdminForRoute],
+        async: loadAsync(LogViewerPage)
       }
     ]
   },

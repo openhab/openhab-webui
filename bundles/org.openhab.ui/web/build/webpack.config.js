@@ -58,6 +58,10 @@ module.exports = {
         errors: true,
         runtimeErrors: false,
         warnings: false
+      },
+      webSocketTransport: 'ws',
+      webSocketURL: {
+        pathname: '/ws'
       }
     },
     static: [
@@ -68,6 +72,11 @@ module.exports = {
     proxy: [{
       context: ['/auth', '/rest', '/chart', '/proxy', '/icon', '/static', '/changePassword', '/createApiToken', '/audio'],
       target: apiBaseUrl
+    },
+    {
+      context: "/ws/logs",
+      target: apiBaseUrl,
+      ws: true
     }]
   },
   performance: {
