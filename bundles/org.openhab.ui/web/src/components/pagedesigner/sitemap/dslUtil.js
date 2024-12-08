@@ -53,7 +53,7 @@ function writeWidget (widget, indent) {
       }
     }
   }
-  if (widget.slots) {
+  if (widget.slots?.widgets?.length) {
     dsl += ' {\n'
     widget.slots.widgets.forEach((w) => {
       dsl += writeWidget(w, indent + 4)
