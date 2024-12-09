@@ -148,11 +148,11 @@
     <f7-toolbar bottom>
       <!-- <f7-link icon-f7="arrow_down_to_line" tooltip="Scroll to latest log entries" :disabled="autoScroll"
                  :class="{ 'disabled-link': autoScroll }" @click="showLatestLogs" /> -->
-      <f7-link icon-f7="cloud_download" tooltip="Download filtered log as CSV" :disabled="filterCount == 0"
+      <f7-link icon-f7="cloud_download" tooltip="Download filtered log as CSV"
                :class="{ 'disabled-link': filterCount == 0 }" @click="downloadCSV" />
-      <f7-link icon-f7="rectangle_on_rectangle" tooltip="Copy filtered log to clipboard" :disabled="filterCount == 0"
+      <f7-link icon-f7="rectangle_on_rectangle" tooltip="Copy filtered log to clipboard"
                :class="{ 'disabled-link': filterCount == 0 }" @click="copyTableToClipboard" />
-      <f7-link icon-f7="trash" tooltip="Clear the log buffer" :disabled="tableData.length == 0"
+      <f7-link icon-f7="trash" tooltip="Clear the log buffer"
                :class="{ 'disabled-link': tableData.length == 0 }" @click="clearLog" />
       <f7-link @click="toggleErrorDisplay" tooltip="Always show error level logs">
         <f7-icon v-if="showErrors" f7="exclamationmark_triangle_fill" />
