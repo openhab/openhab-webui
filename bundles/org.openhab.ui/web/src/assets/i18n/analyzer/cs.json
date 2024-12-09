@@ -66,5 +66,7 @@
   "analyzer.dialogs.save.replace.message": "Stránka s ID {uid} již existuje, chcete ji přepsat?",
   "analyzer.dialogs.save.replace.title": "Stránka již existuje",
   "analyzer.page.updated": "Stránka s grafem aktualizována",
-  "analyzer.page.created": "Stránka s grafem vytvořena"
+  "analyzer.page.created": "Stránka s grafem vytvořena",
+  "analyzer.invalid-configuration.title": "Neplatná konfigurace",
+  "analyzer.invalid-configuration.text": "Ujistěte se, že jsou vyplněny všechny požadované parametry dotazu / konfigurace je platná."
 }
