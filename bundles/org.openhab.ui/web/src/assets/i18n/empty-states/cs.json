@@ -7,6 +7,8 @@
   "things.text": "Things jsou zařízení a služby připojené k openHAB, které jsou poskytovány prostřednictvím Bindings.<br><br>Nainstalovaná Bindings, která podporují automatické vyhledávání, přidají kandidáty na Things do Inboxu. Můžete také spustit skenování pro určité Bindings nebo přidat svou první Thing ručně pomocí tlačítka níže.",
   "things.nobindings.title": "Žádná Bindings",
   "things.nobindings.text": "Chcete-li přidat Things do svého systému, musíte nejprve nainstalovat Bindings.",
+  "transformations.title": "Zatím žádné transformace",
+  "transformations.text": "Transformace se používají k překladu dat z agregované či technicky nezpracované hodnoty do zpracovaného člověkem čitelného znázornění.",
   "model.title": "Začněte modelovat svůj domov",
   "model.text": "Vytvořte si model z vašich Items, abyste je uspořádali a navzájem je sémanticky propojili.<br><br>Začněte hierarchií míst: budovy, venkovní prostory, podlaží a místnosti. Pak vložte zařízení a body z vašich Things (nebo ručně).",
   "items.title": "Zatím žádné Items",
@@ -28,5 +30,7 @@
   "addons.title": "Nejsou nainstalovány žádné doplňky",
   "addons.text": "Doplňky přidávají funkce do vašeho openHAB systému.<br><br>Nainstalujte je pomocí tlačítka níže.",
   "page.unavailable.title": "Stránka není k dispozici",
-  "page.unavailable.text": "Nejste oprávněni zobrazit tuto stránku."
+  "page.unavailable.text": "Nejste oprávněni zobrazit tuto stránku.",
+  "persistence.title": "Žádný doplněk pro ukládání dat",
+  "persistence.text": "Moduly ukládání dat - perzistence - umožní uložit stavy Items v průběhu času, bez ohledu na to, zda jde o minulé či budoucí (např. předpovídaná) hodnoty. Chcete-li konfigurovat způsob ukládání dat, potřebuje nainstalovat alespoň jeden doplněk pro ukládání dat."
 }
