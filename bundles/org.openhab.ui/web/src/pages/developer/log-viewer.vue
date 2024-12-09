@@ -114,14 +114,20 @@
     <!-- Main Display -->
     <f7-navbar title="Log Viewer" back-link="Developer Tools" back-link-url="/developer/" back-link-force>
       <f7-nav-right>
-        <f7-link icon-ios="f7:play_fill" icon-f7="play_fill" icon-md="material:play_arrow" class="margin-left"
-                 tooltip="Continue receiving logs" :disabled="stateConnected && stateProcessing"
-                 :class="{ 'disabled-link': stateConnected && stateProcessing }" @click="loggingContinue" />
+        <f7-link icon-ios="f7:play_fill" icon-f7="play_fill" icon-md="material:play_arrow"
+                 :icon-color="stateConnected && stateProcessing ? 'gray' : ''"
+                 :tooltip="$device.desktop ? 'Continue receiving logs' : ''"
+                 :class="{ 'disabled-link': stateConnected && stateProcessing, 'no-margin-left': $device.ios }"
+                 @click="loggingContinue" />
         <f7-link icon-ios="f7:pause_fill" icon-aurora="f7:pause_fill" icon-md="material:pause_fill"
-                 tooltip="Pause processing new logs" :disabled="!stateConnected || !stateProcessing"
-                 :class="{ 'disabled-link': !stateConnected || !stateProcessing }" @click="loggingPause" />
+                 :icon-color="!stateConnected || !stateProcessing ? 'gray' : ''"
+                 :tooltip="$device.desktop ? 'Pause processing new logs' : ''"
+                 :class="{ 'disabled-link': !stateConnected || !stateProcessing, 'no-margin-left': $device.ios }"
+                 @click="loggingPause" />
         <f7-link icon-ios="f7:stop_fill" icon-aurora="f7:stop_fill" icon-md="material:stop_fill"
-                 tooltip="Stop receiving logs" :disabled="!stateConnected" :class="{ 'disabled-link': !stateConnected }"
+                 :icon-color="!stateConnected ? 'gray' : ''"
+                 :tooltip="$device.desktop ? 'Stop receiving logs' : ''"
+                 :class="{ 'disabled-link': !stateConnected, 'no-margin-left': $device.ios }"
                  @click="loggingStop" />
       </f7-nav-right>
 
