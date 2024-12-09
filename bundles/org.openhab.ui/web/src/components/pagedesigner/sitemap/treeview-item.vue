@@ -41,11 +41,12 @@ import draggable from 'vuedraggable'
 import fastDeepEqual from 'fast-deep-equal/es6'
 
 export default {
+  name: 'sitemap-treeview-item',
   mixins: [SitemapMixin],
   props: ['includeItemName', 'widget', 'parentWidget', 'itemsList', 'selected', 'sitemap', 'moveState'],
   components: {
     draggable,
-    SitemapTreeviewItem: () => import('@/components/pagedesigner/sitemap/treeview-item.vue')
+    sitemapTreeviewItem: 'sitemap-treeview-item'
   },
   data () {
     return {
