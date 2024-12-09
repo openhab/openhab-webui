@@ -131,7 +131,7 @@
                  @click="loggingStop" />
       </f7-nav-right>
 
-      <f7-subnavbar :inner="false">
+      <f7-subnavbar :inner="false" style="padding-right: var(--f7-safe-area-right)">
         <f7-searchbar ref="searchbar" :value="filterText" custom-search placeholder="Filter" :disable-button="false"
                       @searchbar:search="handleFilter" @searchbar.clear="clearFilter" />
         <!-- <div class="filter-input-box">
@@ -168,7 +168,7 @@
       <f7-link icon-f7="gear" tooltip="Configure logging" data-popup=".logsettings-popup" class="popup-open" />
     </f7-toolbar>
 
-    <f7-block class="no-padding no-margin">
+    <f7-block class="table-block">
       <f7-col>
         <f7-card class="custom-card">
           <div class="table-container" ref="tableContainer" @scroll="handleScroll">
@@ -212,6 +212,13 @@
     display flex
     flex-direction column
     overflow hidden
+    border-radius 0
+
+  .table-block
+    padding 0
+    margin 0
+    padding-left var(--f7-safe-area-left)
+    padding-right var(--f7-safe-area-right)
 
   .table-container
     overflow-y auto
