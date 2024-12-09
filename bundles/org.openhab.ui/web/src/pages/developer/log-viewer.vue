@@ -312,24 +312,14 @@
 </style>
 
 <script lang="ts">
-import Vue from 'vue'
-
-import auth from '@/components/auth-mixin.js'
-import { getAccessToken, getTokenInCustomHeader, getBasicCredentials } from '@/js/openhab/auth.js'
-
 export default {
-  mixins: [auth],
-  components: {
-  },
   data () {
     return {
-      stateConnecting: false,
       stateConnected: false,
       stateProcessing: true,
       scrollTime: 0,
       autoScroll: true,
-      socket: {},
-      keepAliveTimer: null,
+      socket: null,
       defaultLogLevel: 'WARN',
       logPackageInputText: '',
       highlightFilters: [],
@@ -425,44 +415,21 @@ export default {
       this.loggerPackages = this.loggerPackages.filter(loggerPackage => loggerPackage.loggerName !== logger.loggerName)
     },
     socketConnect () {
-      this.stateConnecting = true
-
-      // Create a new WebSocket connection
-      const wsUrl = '/ws/logs?accessToken=' + getAccessToken()
-      this.socket = new WebSocket(wsUrl)
-
-      const me = this
-
-      // Event handler when the WebSocket connection is opened
-      this.socket.onopen = function () {
-        me.stateConnected = true
-        me.stateConnecting = false
-        me.stateProcessing = true
-        me.$nextTick(() => me.scrollToBottom())
+      const readyCallback = () => {
+        this.stateConnected = true
+        this.stateProcessing = true
+        this.$nextTick(() => this.scrollToBottom())
       }
 
-      // Event handler when a message is received from OpenHAB
-      this.socket.onmessage = function (event) {
-        try {
-          const data = JSON.parse(event.data)
-          me.addLogEntry(data)
-        } catch (e) {
-          console.error('Error parsing event data:', e)
-        }
+      const messageCallback = (event) => {
+        this.addLogEntry(event)
       }
 
-      // Event handler for WebSocket errors
-      this.socket.onerror = function (error) {
-        console.error('WebSocket error:', error)
+      const keepaliveCallback = () => {
+        this.socket.send('[]')
       }
 
-      // Event handler when the WebSocket connection is closed
-      this.socket.onclose = function () {
-        me.stateConnected = false
-        me.stateConnecting = false
-      }
-
-      this.keepAliveTimer = setTimeout(this.keepAlive, 9000)
+      this.socket = this.$oh.ws.connect('/ws/logs', messageCallback, readyCallback, null, keepaliveCallback, 9)
 
       // TEMP
       // for (let i = 0; i < 1980; i++) {
@@ -474,15 +441,10 @@ export default {
       //   })
       // }
     },
-    keepAlive () {
-      if (this.socket && this.stateConnected) {
-        this.socket.send('[]')
-        this.keepAliveTimer = setTimeout(this.keepAlive, 9000)
-      } else {
-        if (this.keepAliveTimer) {
-          clearTimeout(this.keepAliveTimer)
-        }
-      }
+    socketClose () {
+      this.$oh.ws.close(this.socket, () => {
+        this.stateConnected = false
+      })
     },
     renderEntry (entity) {
       let tr = document.createElement('tr')
@@ -574,7 +536,7 @@ export default {
     },
     loggingStop () {
       this.stateConnected = false
-      this.socket.close()
+      this.socketClose()
     },
     clearLog () {
       this.tableData.length = 0
