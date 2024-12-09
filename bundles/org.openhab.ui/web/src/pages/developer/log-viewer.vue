@@ -232,6 +232,9 @@
     background #f1f1f1
     z-index 1
 
+  tr.table-rows
+    height 31px
+
   tr.error
     background-color rgb(255, 96, 96)
     color black
@@ -547,13 +550,17 @@ export default {
               this.logStart = removedElement.time
               if (removedElement.visible) {
                 this.filterCount--
-                this.$refs.dataTable.firstChild.removeChild(this.$refs.dataTable.firstChild.firstChild)
+                let firstRow = this.$refs.dataTable.firstChild.firstChild
+                if (firstRow.className === 'padder') firstRow = firstRow.nextSibling
+                this.$refs.dataTable.firstChild.removeChild(firstRow)
               }
             }
           })
           this.batchLogs.length = 0
           if (this.autoScroll) {
             this.$nextTick(() => this.scrollToBottom())
+          } else {
+            this.$nextTick(() => this.handleScroll())
           }
 
           this.batchUpdatePending = false
@@ -593,6 +600,7 @@ export default {
         // Delay manual scroll detection to avoid autoscrolling being defeated when new logs arrive
         this.scrollTime = Date.now() + 250
       }
+      this.redrawPartOfTable()
     },
     handleScroll () {
       const tableContainer = this.$refs.tableContainer
@@ -602,6 +610,42 @@ export default {
       // Detect if the user has scrolled up
       const isAtBottom = tableContainer.scrollHeight - tableContainer.scrollTop < (tableContainer.clientHeight + 20)
       this.autoScroll = isAtBottom
+
+      this.redrawPartOfTable()
+    },
+    redrawPartOfTable () {
+      const LINE_HEIGHT = 31
+      const tableContainer = this.$refs.tableContainer
+      const tableBody = this.$refs.dataTable.firstChild
+      const filteredItemsCount = this.filteredTableData.length
+      const currentIndexAtTop = Math.floor(tableContainer.scrollTop / LINE_HEIGHT)
+      const nbVisibleLines = Math.floor(tableContainer.offsetHeight / LINE_HEIGHT)
+      console.debug('Current filtered items count:' + filteredItemsCount)
+      console.debug('Current scrollTop:' + tableContainer.scrollTop)
+      console.debug('Current index at top: ' + currentIndexAtTop)
+      console.debug('Nb. of visible lines: ' + nbVisibleLines)
+
+      // make sure to redraw only 50 elements below around visible area
+      const firstIndexToRedraw = Math.max(0, currentIndexAtTop - 50)
+      const lastIndexToRedraw = Math.min(currentIndexAtTop + nbVisibleLines + 50, filteredItemsCount - 1)
+      console.debug(`Should redraw ${firstIndexToRedraw}/${lastIndexToRedraw}`)
+
+      tableBody.innerHTML = ''
+      if (firstIndexToRedraw > 0) {
+        const padder = document.createElement('tr')
+        padder.className = 'padder'
+        padder.style.height = (LINE_HEIGHT * firstIndexToRedraw) + 'px'
+        tableBody.appendChild(padder)
+      }
+      for (let i = firstIndexToRedraw; i <= lastIndexToRedraw; i++) {
+        tableBody.appendChild(this.renderEntry(this.filteredTableData[i]))
+      }
+      if (lastIndexToRedraw < filteredItemsCount - 1) {
+        const padder = document.createElement('tr')
+        padder.className = 'padder'
+        padder.style.height = (LINE_HEIGHT * (filteredItemsCount - 1 - lastIndexToRedraw)) + 'px'
+        tableBody.appendChild(padder)
+      }
     },
     handleLogPackageEnter (event) {
       let logger = {
@@ -639,13 +683,14 @@ export default {
       this.$refs.dataTable.firstChild.innerHTML = ''
       for (const entry of this.tableData) {
         entry.visible = this.processFilter(entry)
-        if (entry.visible) {
-          cnt++
-          const tr = this.renderEntry(entry)
-          this.$refs.dataTable.firstChild.appendChild(tr)
-        }
+      //   if (entry.visible) {
+      //     cnt++
+      //     const tr = this.renderEntry(entry)
+      //     this.$refs.dataTable.firstChild.appendChild(tr)
+      //   }
       }
       this.filterCount = cnt
+      this.redrawPartOfTable()
     },
     highlightText (text) {
       if (this.activeHighlights.length === 0) {
