@@ -84,8 +84,7 @@ export default {
       // Linkable widget types only contain frames or none at all
       if (this.LINKABLE_WIDGET_TYPES.includes(parentWidget.component)) {
         if (parentWidget.slots?.widgets?.length > 0) {
-          const widgetList = parentWidget.slots.widgets.map((w) => ({ ...w }))
-          if (excludeWidgetIndex !== null) widgetList.splice(excludeWidgetIndex, 1)
+          const widgetList = parentWidget.slots.widgets.filter((widget, index) => index !== excludeWidgetIndex)
           if (widgetList.find(w => w.component === 'Frame')) {
             return types.filter(t => t.type === 'Frame')
           } else {
