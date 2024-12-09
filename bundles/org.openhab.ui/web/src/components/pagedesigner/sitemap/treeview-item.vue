@@ -44,7 +44,8 @@ export default {
   mixins: [SitemapMixin],
   props: ['includeItemName', 'widget', 'parentWidget', 'itemsList', 'selected', 'sitemap', 'moveState'],
   components: {
-    draggable
+    draggable,
+    SitemapTreeviewItem: () => import('@/components/pagedesigner/sitemap/treeview-item.vue')
   },
   data () {
     return {
