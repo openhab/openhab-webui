@@ -116,17 +116,17 @@
       <f7-nav-right>
         <f7-link icon-ios="f7:play_fill" icon-f7="play_fill" icon-md="material:play_arrow"
                  :icon-color="stateConnected && stateProcessing ? 'gray' : ''"
-                 :tooltip="$device.desktop ? 'Continue receiving logs' : ''"
+                 :tooltip="!$device.ios ? 'Continue receiving logs' : ''"
                  :class="{ 'disabled-link': stateConnected && stateProcessing, 'no-margin-left': $device.ios }"
                  @click="loggingContinue" />
         <f7-link icon-ios="f7:pause_fill" icon-aurora="f7:pause_fill" icon-md="material:pause_fill"
                  :icon-color="!stateConnected || !stateProcessing ? 'gray' : ''"
-                 :tooltip="$device.desktop ? 'Pause processing new logs' : ''"
+                 :tooltip="!$device.ios ? 'Pause processing new logs' : ''"
                  :class="{ 'disabled-link': !stateConnected || !stateProcessing, 'no-margin-left': $device.ios }"
                  @click="loggingPause" />
         <f7-link icon-ios="f7:stop_fill" icon-aurora="f7:stop_fill" icon-md="material:stop_fill"
                  :icon-color="!stateConnected ? 'gray' : ''"
-                 :tooltip="$device.desktop ? 'Stop receiving logs' : ''"
+                 :tooltip="!$device.ios ? 'Stop receiving logs' : ''"
                  :class="{ 'disabled-link': !stateConnected, 'no-margin-left': $device.ios }"
                  @click="loggingStop" />
       </f7-nav-right>
