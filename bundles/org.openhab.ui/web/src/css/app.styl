@@ -211,6 +211,7 @@ html
 
 @media (max-width 1023px)
   .block-narrow
+    // use insets from env because f7-safe-area CSS vars are not available due the fix in nomini.css
     padding-left env(safe-area-inset-left)
     padding-right env(safe-area-inset-right)
 
@@ -328,8 +329,6 @@ html
   margin-left var(--f7-card-expandable-margin-horizontal)
   margin-right var(--f7-card-expandable-margin-horizontal)
 
-.block-narrow
-  --f7-safe-area-left 0px
-  --f7-safe-area-outer-left 0px
-  --f7-safe-area-right 0px
-  --f7-safe-area-outer-right 0px
+// Fix safe area issues inside block-narrow, where safe areas are already respected by the wrapping block-narrow
+// Fix is in nomini.css due to CssMinimizerPlugin minimizing app.styl and removing the unit px from 0px,
+// which breaks calculcations using the overwritten CSS variables.
