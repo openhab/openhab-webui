@@ -23,8 +23,8 @@
 
     <f7-tabs>
       <f7-tab id="thing" :tab-active="currentTab === 'thing'">
-        <f7-block v-if="ready && thing.statusInfo" class="block-narrow padding-left padding-right" strong>
-          <f7-col>
+        <f7-block v-if="ready && thing.statusInfo" class="block-narrow" strong>
+          <f7-col class="padding-horizontal">
             <div v-show="!error" class="float-right align-items-flex-start align-items-center">
               <f7-link :icon-color="(thing.statusInfo.statusDetail === 'DISABLED') ? 'orange' : 'gray'" :tooltip="((thing.statusInfo.statusDetail === 'DISABLED') ? 'Enable' : 'Disable') + (($device.desktop) ? ' (Ctrl-D)' : '')" icon-ios="f7:pause_circle" icon-md="f7:pause_circle" icon-aurora="f7:pause_circle" icon-size="32" color="orange" @click="toggleDisabled" />
             </div>
@@ -42,8 +42,8 @@
           </f7-col>
         </f7-block>
         <!-- skeletons for not ready -->
-        <f7-block v-else class="block-narrow padding-left padding-right skeleton-text skeleton-effect-blink" strong>
-          <f7-col>
+        <f7-block v-else class="block-narrow skeleton-text skeleton-effect-blink" strong>
+          <f7-col class="padding-horizontal">
             ______:
             <f7-chip class="margin-left" text="________" />
             <div>

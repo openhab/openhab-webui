@@ -25,6 +25,14 @@
 .model-cards-section
   justify-content center
   margin-top 2rem
+  .card
+    margin-left calc(0.5 * var(--f7-card-expandable-margin-horizontal))
+    margin-right calc(0.5 * var(--f7-card-expandable-margin-horizontal))
+
+@media (max-width 1023px)
+  .model-cards-section
+    padding-left var(--f7-safe-area-left)
+    padding-right var(--f7-safe-area-right)
 
 @media (min-width 768px)
   .model-cards-section
@@ -40,13 +48,6 @@
     width 340px
     margin-top 0
 
-  // .model-cards-section .card
-  //   width calc((100% - var(--f7-card-expandable-margin-horizontal) * 3) / 2)
-  //
-  .model-cards-section .card:nth-child(n),
-  .model-cards-section .card:nth-child(n + 1)
-    margin-left 0
-
   .model-cards-section .card:nth-child(n + 3)
     margin-top 0
 
@@ -55,10 +56,6 @@
     .card
       width 340px
       margin-top 0
-
-  .model-cards-section .card:nth-child(n),
-  .model-cards-section .card:nth-child(n + 1)
-    margin-left 0
 
   .model-cards-section .card:nth-child(n + 3)
     margin-top 0

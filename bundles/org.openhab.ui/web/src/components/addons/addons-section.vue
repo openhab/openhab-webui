@@ -38,6 +38,9 @@
 
 <style lang="stylus">
 .addons-section
+  .block
+    padding-left var(--f7-safe-area-left)
+    padding-right var(--f7-safe-area-right)
   margin-top 2rem
   .see-all-button
     float right
@@ -63,7 +66,6 @@
     align-content flex-start
     flex-wrap wrap
     overflow auto
-    padding-left calc(var(--f7-safe-area-left) + var(--f7-list-item-padding-horizontal))
     scroll-snap-type x mandatory
     scrollbar-width none
     &::-webkit-scrollbar

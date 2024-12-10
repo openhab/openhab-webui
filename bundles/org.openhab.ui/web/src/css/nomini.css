@@ -1,0 +1,8 @@
+/* CSS that shouldn't get minimized */
+/* e.g. due to CssMinimizerPlugin removing unit from 0px, which breaks calculations */
+.block-narrow {
+  --f7-safe-area-left: 0px;
+  --f7-safe-area-outer-left: 0px;
+  --f7-safe-area-right: 0px;
+  --f7-safe-area-outer-right: 0px;
+}

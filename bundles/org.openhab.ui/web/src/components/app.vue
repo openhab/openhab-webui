@@ -3,12 +3,12 @@
     <!-- Left Panel -->
     <f7-panel v-show="ready" left :cover="showSidebar" class="sidebar" :visible-breakpoint="1024">
       <f7-page>
-        <f7-link href="/overview" class="logo no-ripple" panel-close v-if="themeOptions.dark === 'dark'">
+        <f7-link href="/overview" class="openhab-logo no-ripple" panel-close v-if="themeOptions.dark === 'dark'">
           <div class="logo-inner">
             <img src="@/images/openhab-logo-white.svg" type="image/svg+xml" width="196px">
           </div>
         </f7-link>
-        <f7-link href="/overview" class="logo no-ripple" panel-close v-else>
+        <f7-link href="/overview" class="openhab-logo no-ripple" panel-close v-else>
           <div class="logo-inner">
             <img src="@/images/openhab-logo.svg" type="image/svg+xml" width="196px">
           </div>
@@ -178,7 +178,7 @@
   </f7-app>
 </template>
 
-<style lang="stylus" scoped>
+<style lang="stylus">
 .panel-left::-webkit-scrollbar /* WebKit */
   width 0
   height 0
@@ -187,16 +187,28 @@
   scrollbar-width none /* Firefox */
   -ms-overflow-style none  /* IE 10+ */
 
+  .block-title
+    margin-left var(--f7-block-padding-horizontal)
+
   .page
     background #f5f5f5 !important
     padding-bottom calc(var(--f7-tabbar-labels-height) + var(--f7-safe-area-bottom))
-  .logo
+    padding-left var(--f7-safe-area-left)
+    width calc(var(--f7-panel-width) + var(--f7-safe-area-left))
+  .openhab-logo
     margin-top var(--f7-safe-area-top)
     .logo-inner
       background-color #fff
       padding 2.25rem 2rem
   .list
     margin-top 0
+    .item-link
+      .item-content
+        padding-left var(--f7-list-item-padding-horizontal)
+      .item-inner
+        padding-right var(--f7-list-chevron-icon-area) !important
+      .item-inner:before // chevron
+        right var(--f7-list-item-padding-horizontal)
   .currentsection
     background-color var(--f7-color-blue-tint)
     color var(--f7-color-white)
@@ -208,7 +220,7 @@
     height calc(var(--f7-tabbar-labels-height) + var(--f7-safe-area-bottom))
     background #f5f5f5 !important
     position fixed
-    bottom calc(var(--f7-safe-area-bottom))
+    bottom 0
     width 100%
     .hint-signin
       position absolute
@@ -240,7 +252,7 @@
       background #232323 !important
     .currentsection
       background-color var(--f7-color-blue-shade)
-  .logo
+  .openhab-logo
     .logo-inner
       background #111111 !important
 
