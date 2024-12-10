@@ -103,6 +103,7 @@
     "vue-qrcode": "^0.3.5",
     "vue-round-slider": "^1.0.1",
     "vue2-leaflet": "^2.7.1",
+    "vuedraggable": "^2.24.3",
     "vuetrend": "^0.3.4",
     "vuex": "^3.6.2",
     "yaml": "^2.5.0"
