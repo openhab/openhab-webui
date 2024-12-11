@@ -167,8 +167,7 @@
         <f7-card class="custom-card">
           <div class="table-container" ref="tableContainer" @scroll="handleScroll">
             <table ref="dataTable">
-              <tbody>
-              </tbody>
+              <tbody />
             </table>
           </div>
         </f7-card>
