@@ -78,6 +78,14 @@
                 "!doc": "Sends a command to the item, but only if the current state is not what is being sent.",
                 "!type": "fn(value: ?)"
             },
+            "sendIncreaseCommand": {
+                "!doc": "Increases the value of the item to the given value by sending a command, but only if the current state is less than that value.",
+                "!type": "fn(value: number|QuantityClass)"
+            },
+            "sendDecreaseCommand": {
+                "!doc": "Decreases the value of the item to the given value by sending a command, but only if the current state is greater than that value.",
+                "!type": "fn(value: number|QuantityClass)"
+            },
             "postUpdate": {
                 "!doc": "Posts an update to the item",
                 "!type": "fn(value: ?)"
@@ -299,8 +307,12 @@
                 "!type": "QuantityClass|null"
             },
             "timestamp": {
-                "!doc": "timestamp of historic Item",
-                "!type": "ZonedDateTime"
+                "!doc": "timestamp of the persisted Item",
+                "!type": "+ZonedDateTime"
+            },
+            "instant": {
+                "!doc": "timestamp of the persisted Item as Instant",
+                "!type": "+Instant"
             }
         },
         "PersistedState": {
@@ -732,7 +744,10 @@
             "hsbToRgb": { "!type": "fn(hsb: HSBType) -> [number]" },
             "hsbTosRgb": { "!type": "fn(hsb: HSBType) -> number" },
             "hsbToRgbw": { "!type": "fn(hsb: HSBType) -> [number]" },
-            "rgbToHsb": { "!type": "fn(rgb: [number]) -> HSBType" }
+            "rgbToHsb": { "!type": "fn(rgb: [number]) -> HSBType" },
+            "xyToDuv": { "!type": "fn(xy: [number]) -> number" },
+            "kelvinToXY": { "!type": "fn(kelvin: number) -> [number]" },
+            "xyToKelvin": { "!type": "fn(xy: [number]) -> number" }
         },
         "EphemerisActions": {
             "getBankHolidayName": { "!type": "fn(offsetOrDay?: ?, filename?: string) -> string" },
@@ -763,7 +778,7 @@
             },
             "addUserId": {
                 "!doc": "By adding the email address(es) of specific openHAB Cloud user(s), the notification is only sent to this (these) users.",
-                "!type": "fn(userId: string) -> NotificationBuilder"
+                "!type": "fn(...userId: string) -> NotificationBuilder"
             },
             "withIcon": {
                 "!doc": "Sets the icon of the notification.",
@@ -846,7 +861,7 @@
             },
             "notificationBuilder": {
                 "!doc": "Creates a new NotificationBuilder to send openHAB Cloud notifications. This requires the openHAB Cloud Connector to be installed.",
-                "!type": "fn(message: string) -> NotificationBuilder"
+                "!type": "fn(message?: string) -> NotificationBuilder"
             },
             "Ping": {
                 "!doc": "Ping Actions. This Action checks the vitality of the given host.",
