@@ -29,7 +29,6 @@ export const Units = [{
   baseUnitsSI: ['m/s²']
 }, {
   dimension: 'AmountOfSubstance',
-  baseUnits: ['°dH'],
   baseUnitsSI: ['mol']
 }, {
   dimension: 'Angle',
@@ -40,6 +39,10 @@ export const Units = [{
   unitsUS: ['ft²', 'mi²'],
   baseUnits: ['ca', 'a', 'in²', 'ac'],
   baseUnitsMetric: ['m²']
+}, {
+  dimension: 'ArealDensity',
+  unitsSI: ['kg/m²'],
+  unitsUS: ['DU']
 }, {
   dimension: 'DataAmount',
   units: ['bit', 'B', 'kB', 'kiB', 'MB', 'MiB', 'GB', 'GiB', 'TB', 'TiB'],
@@ -53,11 +56,11 @@ export const Units = [{
 }, {
   dimension: 'Density',
   units: ['g/l', 'g/m³', 'kg/m³'],
-  baseUnits: ['lb/in³'],
+  baseUnits: ['lb/in³', 'gr/ft³'],
   baseUnitsMetric: ['g/m³', 'g/mm³', 'g/cm³', 'g/dm³', 'g/ml', 'g/cl', 'g/dl', 'g/l']
 }, {
   dimension: 'Dimensionless',
-  units: ['one', '%', 'dB', 'ppm', 'ppb'],
+  units: ['one', '%', 'dB', 'ppm', 'ppb', '°dH'],
   default: '%'
 }, {
   dimension: 'ElectricCapcitance',
@@ -117,7 +120,7 @@ export const Units = [{
 }, {
   dimension: 'Mass',
   unitsSI: ['mg', 'g', 'kg', 't'],
-  baseUnits: ['lb', 'oz', 'st'],
+  baseUnits: ['lb', 'oz', 'st', 'gr'],
   baseUnitsMetric: ['g', 't']
 }, {
   dimension: 'Power',
@@ -130,6 +133,11 @@ export const Units = [{
   unitsUS: ['inHg', 'psi'],
   baseUnits: ['atm'],
   baseUnitsMetric: ['Pa', 'bar']
+}, {
+  dimension: 'RadiantExposure',
+  units: ['Wh/m²'],
+  unitsSI: ['J/m²'],
+  baseUnitsMetric: ['J/m²', 'Wh/m²']
 }, {
   dimension: 'RadiationAbsorbedDose',
   baseUnitsMetric: ['Gy']
