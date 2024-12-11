@@ -168,19 +168,6 @@
           <div class="table-container" ref="tableContainer" @scroll="handleScroll">
             <table ref="dataTable">
               <tbody>
-                <!-- <tr v-for="entity in filteredTableData" :key="entity.id" class="table-rows"
-                    :class="entity.level.toLowerCase()">
-                  <td class="sticky">
-                    {{ entity.time }}<span class="milliseconds">{{ entity.milliseconds }}</span>
-                  </td>
-                  <td>
-                    {{ entity.level }}
-                  </td>
-                  <td>
-                    {{ entity.loggerName }}
-                  </td>
-                  <td v-html="highlightText(entity.message)" class="nowrap" />
-                </tr> -->
               </tbody>
             </table>
           </div>
@@ -288,10 +275,6 @@
 
   .log-period
     white-space nowrap !important
-
-// @media (max-width: 767px)
-//   .log-viewer .log-period
-//     display none
 
 #color-picker-popover
   .color-palette
@@ -620,10 +603,6 @@ export default {
       const filteredItemsCount = this.filteredTableData.length
       const currentIndexAtTop = Math.floor(tableContainer.scrollTop / LINE_HEIGHT)
       const nbVisibleLines = Math.floor(tableContainer.offsetHeight / LINE_HEIGHT)
-      console.debug('Current filtered items count:' + filteredItemsCount)
-      console.debug('Current scrollTop:' + tableContainer.scrollTop)
-      console.debug('Current index at top: ' + currentIndexAtTop)
-      console.debug('Nb. of visible lines: ' + nbVisibleLines)
 
       // make sure to redraw only 50 elements below around visible area
       const firstIndexToRedraw = Math.max(0, currentIndexAtTop - 50)
@@ -683,11 +662,6 @@ export default {
       this.$refs.dataTable.firstChild.innerHTML = ''
       for (const entry of this.tableData) {
         entry.visible = this.processFilter(entry)
-      //   if (entry.visible) {
-      //     cnt++
-      //     const tr = this.renderEntry(entry)
-      //     this.$refs.dataTable.firstChild.appendChild(tr)
-      //   }
       }
       this.filterCount = cnt
       this.redrawPartOfTable()
