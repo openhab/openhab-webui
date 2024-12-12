@@ -21,7 +21,7 @@
 </style>
 
 <script>
-import ModelTreeviewItem from '../components/model/treeview-item.vue'
+import ModelTreeviewItem from '@/components/model/treeview-item.vue'
 
 export default {
   props: ['rootNodes', 'selectedItem', 'includeItemName', 'includeItemTags'],

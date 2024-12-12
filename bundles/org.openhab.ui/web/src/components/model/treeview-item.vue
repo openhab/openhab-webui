@@ -36,8 +36,12 @@
 import ItemMixin from '@/components/item/item-mixin'
 
 export default {
+  name: 'model-treeview-item',
   mixins: [ItemMixin],
   props: ['model', 'selected', 'includeItemName', 'includeItemTags'],
+  components: {
+    sitemapTreeviewItem: 'sitemap-treeview-item'
+  },
   computed: {
     children () {
       return [this.model.children.locations,
