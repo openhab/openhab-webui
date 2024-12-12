@@ -6,7 +6,6 @@ import Vue from 'vue'
 // Import globally registered components
 import SitemapWidgetGeneric from '../components/sitemap/widget-generic.vue'
 import OHIconComponent from '../components/widgets/system/oh-icon.vue'
-import ModelTreeviewItem from '../components/model/treeview-item.vue'
 import SitemapTreeviewItem from '../components/pagedesigner/sitemap/treeview-item.vue'
 import GenericWidgetComponent from '../components/widgets/generic-widget-component.vue'
 import DeveloperDockIcon from '../components/developer/developer-dock-icon.vue'

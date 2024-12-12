@@ -21,8 +21,13 @@
 </style>
 
 <script>
+import ModelTreeviewItem from '../components/model/treeview-item.vue'
+
 export default {
   props: ['rootNodes', 'selectedItem', 'includeItemName', 'includeItemTags'],
+  components: {
+    ModelTreeviewItem
+  },
   methods: {
     nodeSelected (node) {
       this.$emit('selected', node)

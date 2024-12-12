@@ -241,6 +241,7 @@ import ItemStatePreview from '@/components/item/item-state-preview.vue'
 import ItemDetails from '@/components/model/item-details.vue'
 import MetadataMenu from '@/components/item/metadata/item-metadata-menu.vue'
 import LinkDetails from '@/components/model/link-details.vue'
+import ModelTreeviewItem from '../components/model/treeview-item.vue'
 
 import ModelMixin from '@/pages/settings/model/model-mixin'
 
@@ -252,7 +253,8 @@ export default {
     ItemStatePreview,
     ItemDetails,
     MetadataMenu,
-    LinkDetails
+    LinkDetails,
+    ModelTreeviewItem
   },
   data () {
     if (!this.$f7.data.model) this.$f7.data.model = {}
