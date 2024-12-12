@@ -40,7 +40,7 @@ export default {
   mixins: [ItemMixin],
   props: ['model', 'selected', 'includeItemName', 'includeItemTags'],
   components: {
-    sitemapTreeviewItem: 'sitemap-treeview-item'
+    ModelTreeviewItem: 'model-treeview-item'
   },
   computed: {
     children () {
