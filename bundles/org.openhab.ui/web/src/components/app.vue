@@ -17,12 +17,6 @@
           <f7-list-item v-if="$store.getters.apiEndpoint('ui') && (!pages || !pages.length)">
             <span><em>{{ $t('sidebar.noPages') }}</em></span>
           </f7-list-item>
-          <!-- <f7-list-item v-for="sitemap in sitemaps" :animate="false" :key="sitemap.name"
-                :class="{ currentsection: currentUrl.indexOf('/sitemap/' + sitemap.name) >= 0 }"
-                :link="'/sitemap/' + sitemap.name + '/' + sitemap.name"
-                :title="sitemap.label" view=".view-main" panel-close>
-          <f7-icon slot="media" ios="f7:menu" aurora="f7:menu" md="material:list"></f7-icon>
-        </f7-list-item> -->
           <f7-list-item v-for="page in pages" :animate="false" :key="page.uid"
                         :class="{ currentsection: currentUrl === '/page/' + page.uid || currentUrl.indexOf('/page/' + page.uid + '/') === 0 }"
                         :link="'/page/' + page.uid"
@@ -373,7 +367,6 @@ export default {
 
       user: null,
 
-      sitemaps: null,
       pages: null,
       showSidebar: true,
       visibleBreakpointDisabled: false,
@@ -538,8 +531,6 @@ export default {
     pageIcon (page) {
       if (page.config && page.config.icon) return page.config.icon
       switch (page.component) {
-        case 'Sitemap':
-          return 'f7:menu'
         case 'oh-layout-page':
           return 'f7:rectangle_grid_2x2'
         case 'oh-tabs-page':
