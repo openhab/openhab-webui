@@ -23,6 +23,8 @@ Change to the `web` directory, gather the necessary dependencies with `npm insta
 * `npm run test:unit:watch` - start the Jest test runner, run the unit tests, keep running and watch for changes
 * `npm run test:e2e` - start Cypress and run the e2e tests
 * `npm run test:e2e:gui` - open the Cypress GUI
+* `npm run lint` - run linter to detect code style errors
+* `npm run lint:fix` - run linter and fix code style errors
 
 ## Development server
 
