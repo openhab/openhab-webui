@@ -376,8 +376,10 @@ export default {
     startEventSource () {
       this.eventSource = this.$oh.sse.connect('/rest/events?topics=openhab/things/*/added,openhab/things/*/removed,openhab/things/*/updated,openhab/things/*/status,openhab/inbox/*', null, (event) => {
         const topicParts = event.topic.split('/')
-        if (topicParts[1] === 'inbox' && event.type !== 'InboxUpdatedEvent') {
-          this.loadInbox()
+        if (topicParts[1] === 'inbox') {
+          if(event.type !== 'InboxUpdatedEvent') {
+            this.loadInbox()
+          }
         } else {
           switch (topicParts[3]) {
             case 'status':
