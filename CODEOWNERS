@@ -11,3 +11,7 @@
 /bundles/org.openhab.ui.cometvisu/ @peuter
 /bundles/org.openhab.ui.habot/ @ghys
 /bundles/org.openhab.ui.habpanel/ @ghys
+
+# Blockly maintainers:
+/bundles/org.openhab.ui/web/src/assets/definitions/blockly/ @stefan-hoehn @ghys @florian-h05
+/bundles/org.openhab.ui/web/src/components/config/controls/blockly-editor.vue @stefan-hoehn @ghys @florian-h05
