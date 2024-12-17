@@ -74,6 +74,7 @@ export default {
       })
     },
     isMimeTypeAvailable (mimeType) {
+      if (mimeType === 'application/javascript;version=ECMAScript-2021') mimeType = 'application/javascript'
       return this.languages.map(l => l.contentType).includes(mimeType)
     }
   }
