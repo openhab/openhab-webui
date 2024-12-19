@@ -6,7 +6,7 @@
       </f7-card-header>
     </slot>
     <slot name="content-root">
-      <f7-card-content @click.native="config.action ? performAction : ''" :style="{ ...contentStyle, ...config.contentStyle}" :class="[ ...(Array.isArray(contentClass) ? contentClass : ['padding']), ...(Array.isArray(config.contentClass) ? config.contentClass : []) ]">
+      <f7-card-content @click.native="performAction" @taphold.native="onTaphold($event)" @contextmenu.native="onContextMenu($event)" :style="{ ...contentStyle, ...config.contentStyle}" :class="[ ...(Array.isArray(contentClass) ? contentClass : ['padding']), ...(Array.isArray(config.contentClass) ? config.contentClass : []) ]">
         <slot name="content" />
       </f7-card-content>
     </slot>
