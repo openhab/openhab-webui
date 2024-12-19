@@ -1,5 +1,5 @@
 <template>
-  <oh-card :context="context" :content-class="['clock-card-content', 'text-align-center']">
+  <oh-card :context="context" :style="{ background: config.background }" :content-class="['clock-card-content', 'text-align-center']">
     <template #content>
       <f7-row v-if="config.showDate && config.datePos !== 'below'">
         <f7-col>
