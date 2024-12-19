@@ -143,7 +143,6 @@ export const OhClockCardDefinition = () => new WidgetDefinition('oh-clock-card',
       { value: 'LT', label: 'Localized time (\'LT\'. e.g. \'8:02 PM\')' },
       { value: 'HH:mm:ss', label: 'Current time (\'HH:mm:ss\')' }
     ], false),
-    pt('background', 'Background style', 'Background style (in CSS "background" attribute format)'),
     pt('timeFontSize', 'Time Font Size', 'Time font size (e.g. "34px")'),
     pt('timeFontWeight', 'Time Font Weight', 'Time font weight (e.g. "normal" or "bold")'),
     pb('showDate', 'Show the date', 'Show the current date in addition to the time'),
