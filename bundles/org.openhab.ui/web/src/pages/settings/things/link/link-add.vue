@@ -182,9 +182,12 @@ export default {
     },
     compatibleProfileTypes () {
       let currentItemType = this.currentItem && this.currentItem.type ? this.currentItem.type : ''
-      return this.profileTypes
-        .filter(p => !p.supportedItemTypes.length || p.supportedItemTypes.includes(currentItemType.split(':', 1)[0]))
-        .filter(p => this.isNumberChannelButNoNumberItem && (p.uid !== 'system:default' && p.uid !== 'system:follow'))
+
+      if (this.isNumberChannelButNoNumberItem) {
+        return this.profileTypes.filter(p => p.uid !== 'system:default' && p.uid !== 'system:follow')
+      }
+
+      return this.profileTypes.filter(p => !p.supportedItemTypes.length || p.supportedItemTypes.includes(currentItemType.split(':', 1)[0]))
     },
     isNumberChannelButNoNumberItem () {
       if (!this.channel || !this.channel.itemType) return false
