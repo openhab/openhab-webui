@@ -83,7 +83,7 @@
         </f7-block-footer>
         <f7-list class="profile-list">
           <f7-list-item radio v-for="profileType in profileTypes" class="profile-item"
-                        :checked="(!currentProfileType && profileType.uid === 'system:default' && !itemTypeNotChannelType) || (currentProfileType && profileType.uid === currentProfileType.uid)"
+                        :checked="(!currentProfileType && profileType.uid === 'system:default' && !itemTypeIsNotChannelType(channel, currentItem)) || (currentProfileType && profileType.uid === currentProfileType.uid)"
                         :disabled="!compatibleProfileTypes.includes(profileType)"
                         :class="{ 'profile-disabled': !compatibleProfileTypes.includes(profileType) }"
                         @change="onProfileTypeChange(profileType.uid)"
@@ -131,11 +131,11 @@ import Item from '@/components/item/item.vue'
 
 import * as Types from '@/assets/item-types.js'
 import ItemMixin from '@/components/item/item-mixin'
-
 import uomMixin from '@/components/item/uom-mixin'
+import LinkMixin from '@/pages/settings/things/link/link-mixin'
 
 export default {
-  mixins: [ItemMixin, uomMixin],
+  mixins: [ItemMixin, uomMixin, LinkMixin],
   components: {
     ConfigSheet,
     ItemPicker,
@@ -181,21 +181,7 @@ export default {
       return this.item ? this.item : (this.createMode ? this.newItem : (this.items ? this.items.find(item => item.name === this.selectedItemName) : null))
     },
     compatibleProfileTypes () {
-      let currentItemType = this.currentItem && this.currentItem.type ? this.currentItem.type : ''
-      let profileTypes = this.profileTypes
-        .filter(p => !p.supportedItemTypes || p.supportedItemTypes.length === 0 || p.supportedItemTypes.includes(currentItemType.split(':', 1)[0]))
-      if (this.itemTypeNotChannelType) {
-        profileTypes = profileTypes.filter(p => p.uid !== 'system:default' && p.uid !== 'system:follow')
-      }
-      return profileTypes
-    },
-    itemTypeNotChannelType () {
-      if (!this.channel || !this.channel.itemType) return false
-      if (!this.currentItem || !this.currentItem.type) return false
-      if (this.channel.itemType.startsWith('Number')) {
-        return !this.currentItem.type.startsWith('Number')
-      }
-      return this.channel.itemType !== this.currentItem.type
+      return this.profileTypes.filter(p => this.isProfileTypeCompatible(this.channel, p, this.currentItem))
     }
   },
   methods: {
@@ -226,8 +212,7 @@ export default {
     loadProfileTypes (channel) {
       this.ready = false
       this.selectedChannel = channel
-      const getProfileTypes = this.$oh.api.get('/rest/profile-types?channelTypeUID=' + channel.channelTypeUID)
-      getProfileTypes.then((data) => {
+      this.$oh.api.get('/rest/profile-types?channelTypeUID=' + channel.channelTypeUID).then((data) => {
         this.profileTypes = data
         this.profileTypes.unshift(data.splice(data.findIndex(p => p.uid === 'system:default'), 1)[0]) // move default to be first
         this.ready = true
@@ -310,7 +295,7 @@ export default {
           return
         }
       }
-      if (this.itemTypeNotChannelType && (!this.currentProfileType || !this.compatibleProfileTypes.includes(this.currentProfileType))) {
+      if (this.itemTypeIsNotChannelType(this.channel, this.currentItem) && (!this.currentProfileType || !this.compatibleProfileTypes.includes(this.currentProfileType))) {
         this.$f7.dialog.alert('Please configure a valid profile')
         return
       }
