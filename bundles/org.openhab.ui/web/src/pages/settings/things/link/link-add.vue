@@ -81,9 +81,9 @@
             Learn more about profiles.
           </f7-link>
         </f7-block-footer>
-        <f7-list class="profile-list profile-disabled">
+        <f7-list class="profile-list">
           <f7-list-item radio v-for="profileType in profileTypes" class="profile-item"
-                        :checked="(!currentProfileType && profileType.uid === 'system:default' && !isNumberChannelButNoNumberItem) || (currentProfileType && profileType.uid === currentProfileType.uid)"
+                        :checked="(!currentProfileType && profileType.uid === 'system:default' && !itemTypeNotChannelType) || (currentProfileType && profileType.uid === currentProfileType.uid)"
                         :disabled="!compatibleProfileTypes.includes(profileType)"
                         :class="{ 'profile-disabled': !compatibleProfileTypes.includes(profileType) }"
                         @change="onProfileTypeChange(profileType.uid)"
@@ -182,14 +182,20 @@ export default {
     },
     compatibleProfileTypes () {
       let currentItemType = this.currentItem && this.currentItem.type ? this.currentItem.type : ''
-      return this.profileTypes
-        .filter(p => !p.supportedItemTypes.length || p.supportedItemTypes.includes(currentItemType.split(':', 1)[0]))
-        .filter(p => this.isNumberChannelButNoNumberItem && (p.uid !== 'system:default' && p.uid !== 'system:follow'))
+      let profileTypes = this.profileTypes
+        .filter(p => !p.supportedItemTypes || p.supportedItemTypes.length === 0 || p.supportedItemTypes.includes(currentItemType.split(':', 1)[0]))
+      if (this.itemTypeNotChannelType) {
+        profileTypes = profileTypes.filter(p => p.uid !== 'system:default' && p.uid !== 'system:follow')
+      }
+      return profileTypes
     },
-    isNumberChannelButNoNumberItem () {
+    itemTypeNotChannelType () {
       if (!this.channel || !this.channel.itemType) return false
       if (!this.currentItem || !this.currentItem.type) return false
-      return this.channel.itemType.startsWith('Number') && !this.currentItem.type.startsWith('Number')
+      if (this.channel.itemType.startsWith('Number')) {
+        return !this.currentItem.type.startsWith('Number')
+      }
+      return this.channel.itemType !== this.currentItem.type
     }
   },
   methods: {
@@ -304,7 +310,7 @@ export default {
           return
         }
       }
-      if (this.isNumberChannelButNoNumberItem && (!this.currentProfileType || !this.compatibleProfileTypes.includes(this.currentProfileType))) {
+      if (this.itemTypeNotChannelType && (!this.currentProfileType || !this.compatibleProfileTypes.includes(this.currentProfileType))) {
         this.$f7.dialog.alert('Please configure a valid profile')
         return
       }
