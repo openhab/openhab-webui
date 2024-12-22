@@ -79,7 +79,6 @@ export default {
         const parser = new Parser(Grammar.fromCompiled(grammar))
         parser.feed(this.sitemapDsl.trim().replace(/\t/g, ' '))
         if (!parser.results.length) return { error: 'Unable to parse, check your input' }
-        // return parser.results[0].map((i) => i.name).join('\n')
         return parser.results[0]
       } catch (e) {
         return { error: e }

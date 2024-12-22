@@ -282,6 +282,7 @@
 import SitemapCode from '@/components/pagedesigner/sitemap/sitemap-code.vue'
 import WidgetDetails from '@/components/pagedesigner/sitemap/widget-details.vue'
 import AttributeDetails from '@/components/pagedesigner/sitemap/attribute-details.vue'
+import SitemapTreeviewItem from '@/components/pagedesigner/sitemap/treeview-item.vue'
 import SitemapMixin from '@/components/pagedesigner/sitemap/sitemap-mixin'
 import DirtyMixin from '../../dirty-mixin'
 
@@ -290,7 +291,8 @@ export default {
   components: {
     SitemapCode,
     WidgetDetails,
-    AttributeDetails
+    AttributeDetails,
+    SitemapTreeviewItem
   },
   props: ['createMode', 'uid', 'itemsList'],
   data () {
@@ -336,23 +338,7 @@ export default {
     },
     addableWidgetTypes () {
       if (!this.selectedWidget) return
-      let types = this.WIDGET_TYPES.filter(w => w.type !== 'Sitemap')
-      // Button only allowed inside Buttongrid
-      if (this.selectedWidget.component === 'Buttongrid') return types.filter(w => w.type === 'Button')
-      types = types.filter(w => w.type !== 'Button')
-      // No frames in frame
-      if (this.selectedWidget.component === 'Frame') return types.filter(w => w.type !== 'Frame')
-      // Linkable widget types only contain frames or none at all
-      if (this.LINKABLE_WIDGET_TYPES.includes(this.selectedWidget.component)) {
-        if (this.selectedWidget.slots?.widgets?.length > 0) {
-          if (this.selectedWidget.slots.widgets.find(w => w.component === 'Frame')) {
-            return types.filter(w => w.type === 'Frame')
-          } else {
-            return types.filter(w => w.type !== 'Frame')
-          }
-        }
-      }
-      return types
+      return this.allowedWidgetTypes(this.selectedWidget)
     }
   },
   watch: {
@@ -652,6 +638,7 @@ export default {
       if (widget.component === 'Buttongrid') {
         widget.slots?.widgets?.sort((button1, button2) => ((button1.config?.row ?? 0) - (button2.config?.row ?? 0)) || ((button1.config?.column ?? 0) - (button2.config?.column ?? 0)))
       }
+      this.addEmptySlot(widget)
       widget.slots?.widgets?.forEach(this.cleanConfig)
     },
     preProcessSitemapLoad (sitemap) {
@@ -677,7 +664,19 @@ export default {
           }
         }
       }
+      this.addEmptySlot(widget)
       widget.slots?.widgets?.forEach(this.preProcessWidgetLoad)
+    },
+    addEmptySlot (widget) {
+      // Needed for drag and drop to work into empty slot
+      if (this.LINKABLE_WIDGET_TYPES.includes(widget.component)) {
+        if (!widget.slots) {
+          widget.slots = {}
+        }
+        if (!widget.slots.widgets) {
+          widget.slots.widgets = []
+        }
+      }
     },
     preProcessSitemapSave (sitemap) {
       const processed = JSON.parse(JSON.stringify(sitemap))
