@@ -32,8 +32,12 @@
 import SitemapMixin from '@/components/pagedesigner/sitemap/sitemap-mixin'
 
 export default {
+  name: 'sitemap-treeview-item',
   mixins: [SitemapMixin],
   props: ['includeItemName', 'widget', 'parentWidget', 'itemsList', 'selected'],
+  components: {
+    SitemapTreeviewItem: 'sitemap-treeview-item'
+  },
   methods: {
     subtitle () {
       return this.widgetTypeLabel() + this.widgetConfigDescription(this.includeItemName)
