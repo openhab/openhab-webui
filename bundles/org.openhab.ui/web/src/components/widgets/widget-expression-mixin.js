@@ -49,6 +49,7 @@ export default {
       const pageContent = document.querySelector('.page-current > .page-content')
       const pageContentStyle = window.getComputedStyle(pageContent)
 
+      // recalculate screen info if clientHeight is not available yet
       if (this.recalculateScreenInfo === false && pageContent.clientHeight === 0) {
         this.$nextTick(() => {
           this.recalculateScreenInfo = true
