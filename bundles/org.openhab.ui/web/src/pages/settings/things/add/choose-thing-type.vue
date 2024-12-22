@@ -34,7 +34,7 @@
           <f7-list-item v-for="entry in scanResults"
                         :key="entry.thingUID"
                         :link="true"
-                        @click="approve(entry)"
+                        @click="openEntryActions(entry)"
                         media-item
                         :title="entry.label"
                         :subtitle="entry.representationProperty ? entry.properties[entry.representationProperty] : ''"
@@ -224,29 +224,99 @@ export default {
         Promise.reject('Failed to load inbox: ' + e)
       })
     },
-    approve (entry) {
+
+    openEntryActions (entry) {
       console.log(`Add ${entry.thingUID} as thing`)
-      this.$f7.dialog.prompt(`This will create a new Thing of type ${entry.thingTypeUID} with the following name:`,
-        'Add as Thing',
-        (name) => {
-          this.$oh.api.postPlain(`/rest/inbox/${entry.thingUID}/approve`, name).then((res) => {
-            this.$f7.toast.create({
-              text: 'Entry approved',
-              destroyOnClose: true,
-              closeTimeout: 2000
-            }).open()
-            setTimeout(() => { this.$f7router.navigate('/settings/things/', { reloadCurrent: true }) }, 300)
-          }).catch((err) => {
-            this.$f7.toast.create({
-              text: 'Error during thing creation: ' + err,
-              destroyOnClose: true,
-              closeTimeout: 2000
-            }).open()
-          })
-        },
-        null,
-        entry.label)
+      let actions = this.$f7.actions.create({
+        convertToPopover: true,
+        closeOnEscape: true,
+        buttons: [
+          [
+            {
+              text: entry.label,
+              label: true
+            }
+          ],
+          [
+            {
+              text: 'Add as Thing',
+              color: 'green',
+              bold: true,
+              onClick: () => {
+                this.$f7.dialog.prompt(`This will create a new Thing of type ${entry.thingTypeUID} with the following name:`,
+                  'Add as Thing',
+                  (name) => {
+                    this.approveEntry(entry, name)
+                  },
+                  null,
+                  entry.label)
+              }
+            },
+            {
+              text: 'Add as Thing (with custom ID)',
+              color: 'blue',
+              bold: true,
+              onClick: () => {
+                this.$f7.dialog.prompt(`This will create a new Thing of type ${entry.thingTypeUID}. You can change the suggested thing ID below:`,
+                  'Add as Thing',
+                  (newThingId) => {
+                    this.$f7.dialog.prompt('Enter the desired name of the new Thing:',
+                      'Add as Thing',
+                      (name) => {
+                        this.approveEntry(entry, name, newThingId)
+                      },
+                      null,
+                      entry.label)
+                  },
+                  null,
+                  entry.thingUID.substring(entry.thingUID.lastIndexOf(':') + 1))
+              }
+            },
+            {
+              text: 'Show equivalent Thing file configuration (basic properties)',
+              color: 'blue',
+              bold: true,
+              onClick: () => {
+                let properties = Object.entries(entry.properties).map(([k, v]) => `${k}="${v}"`)
+                let explanatoryText = 'NOTE: If this is a bridge, substitute <code>Thing</code> with <code>Bridge</code>' +
+                  '<p>All properties are show here, but you may not want to include them all in the file configuraiton. Refer to binding docs for this particular binding for more details.</p>'
+                let content = `<p><code>Thing ${entry.thingUID} "${entry.label}" [ ${properties} ]</code></p>`
+                this.$f7.dialog.create({
+                  title: 'Equivalent Thing file configuration',
+                  text: explanatoryText + content,
+                  cssClass: 'thing-file-configuration-dialog',
+                  buttons: [
+                    {
+                      text: 'Close',
+                      color: 'orange'
+                    }
+                  ]
+                }).open()
+              }
+            }
+          ]
+        ]
+      })
+
+      actions.open()
     },
+    approveEntry (entry, name, newThingId) {
+      this.$oh.api.postPlain(`/rest/inbox/${entry.thingUID}/approve${newThingId ? '?newThingId=' + newThingId : ''}`, name).then((res) => {
+        this.$f7.toast.create({
+          text: 'Entry approved',
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
+        setTimeout(() => { this.$f7router.navigate('/settings/things/', { reloadCurrent: true }) }, 300)
+      }).catch((err) => {
+        this.$f7.toast.create({
+          text: 'Error during thing creation: ' + err,
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
+      })
+    },
+
     approveAll () {
       this.$f7.dialog.confirm('Add all discovered Things?', 'Add Things', () => {
         const promises = this.scanResults.map((i) => this.$oh.api.postPlain('/rest/inbox/' + i.thingUID + '/approve', i.label))
