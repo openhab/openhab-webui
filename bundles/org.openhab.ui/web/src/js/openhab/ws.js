@@ -11,8 +11,7 @@ const openWSConnections = []
 
 function newWSConnection (path, messageCallback, readyCallback, errorCallback, heartbeatCallback, heartbeatInterval) {
   // Create a new WebSocket connection
-  const socket = new WebSocket(path + `?access_token=${getAccessToken()}`)
-  socket.path = path
+  const socket = new WebSocket(path, [`org.openhab.ws.accessToken.base64.${btoa(getAccessToken())}`, 'org.openhab.ws.protocol.default'])
 
   // Handle WebSocket connection opened
   socket.onopen = (event) => {
@@ -61,7 +60,7 @@ function newWSConnection (path, messageCallback, readyCallback, errorCallback, h
 
   // Add the new WebSocket connection to the list
   openWSConnections.push(socket)
-  console.debug(`new WS connection: ${socket.path}, ${openWSConnections.length} open connections`)
+  console.debug(`new WS connection: ${socket.url}, ${openWSConnections.length} open connections`)
   console.debug(openWSConnections)
 
   return socket
@@ -93,7 +92,7 @@ export default {
     if (openWSConnections.indexOf(socket) >= 0) {
       openWSConnections.splice(openWSConnections.indexOf(socket), 1)
     }
-    console.debug(`WS connection closed: ${socket.path}, ${openWSConnections.length} open connections`)
+    console.debug(`WS connection closed: ${socket.url}, ${openWSConnections.length} open connections`)
     console.debug(openWSConnections)
     socket.onclose = (event) => {
       if (callback) {
