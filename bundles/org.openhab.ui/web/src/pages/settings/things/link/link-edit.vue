@@ -51,18 +51,19 @@
           <f7-link external color="blue" target="_blank" :href="`${$store.state.websiteUrl}/link/profiles`">
             Learn more about profiles.
           </f7-link>
-          <f7-block v-if="!ready" class="text-align-center">
-            <f7-preloader />
-            <div>Loading...</div>
-          </f7-block>
-          <f7-list v-else>
-            <f7-list-item radio v-for="profileType in profileTypes"
-                          :checked="!currentProfileType && profileType.uid === 'system:default' || currentProfileType && profileType.uid === currentProfileType.uid"
-                          :disabled="!link.editable"
-                          @change="onProfileTypeChange(profileType.uid)"
-                          :key="profileType.uid" :title="profileType.label" name="profile-type" />
-          </f7-list>
         </f7-block-footer>
+        <f7-block v-if="!ready" class="text-align-center">
+          <f7-preloader />
+          <div>Loading...</div>
+        </f7-block>
+        <f7-list v-else class="profile-list">
+          <f7-list-item radio v-for="profileType in profileTypes" class="profile-item"
+                        :checked="!currentProfileType && profileType.uid === 'system:default' || currentProfileType && profileType.uid === currentProfileType.uid"
+                        :disabled="!link.editable"
+                        :class="{ 'profile-disabled': !link.editable }"
+                        @change="onProfileTypeChange(profileType.uid)"
+                        :key="profileType.uid" :title="profileType.label" name="profile-type" />
+        </f7-list>
       </f7-col>
       <f7-col v-if="profileTypeConfiguration != null">
         <f7-block-title>Profile Configuration</f7-block-title>
@@ -76,6 +77,16 @@
     </f7-block>
   </f7-page>
 </template>
+
+<style lang="stylus">
+.profile-list
+  .profile-item.profile-disabled
+    pointer-events none
+    .icon-radio
+      opacity 0.3
+    .item-title
+      opacity 0.55
+</style>
 
 <script>
 import ConfigSheet from '@/components/config/config-sheet.vue'
