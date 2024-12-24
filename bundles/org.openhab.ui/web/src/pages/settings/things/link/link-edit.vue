@@ -93,9 +93,10 @@ import ConfigSheet from '@/components/config/config-sheet.vue'
 import Item from '@/components/item/item.vue'
 import ItemStatePreview from '@/components/item/item-state-preview.vue'
 import ThingStatus from '@/components/thing/thing-status-mixin'
+import LinkMixin from '@/pages/settings/things/link/link-mixin'
 
 export default {
-  mixins: [ThingStatus],
+  mixins: [ThingStatus, LinkMixin],
   components: {
     ConfigSheet,
     Item,
@@ -137,7 +138,7 @@ export default {
       this.$oh.api.get('/rest/profile-types?channelTypeUID=' + this.channel.channelTypeUID + '&itemType=' + itemType).then((data) => {
         this.profileTypes = data
         this.profileTypes.unshift(data.splice(data.findIndex(p => p.uid === 'system:default'), 1)[0]) // move default to be first
-        this.profileTypes = this.profileTypes.filter(p => !p.supportedItemTypes.length || p.supportedItemTypes.includes(this.item.type.split(':', 1)[0])) // only show compatible profile types
+        this.profileTypes = this.profileTypes.filter(p => this.isProfileTypeCompatible(this.channel, p, this.item)) // only show compatible profile types
 
         this.$oh.api.get('/rest/links/' + itemName + '/' + channelUID).then((data2) => {
           this.link = data2
