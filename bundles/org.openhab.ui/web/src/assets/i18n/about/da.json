@@ -15,7 +15,7 @@
   "about.reload": "Genindlæs",
   "about.reload.purgeExplanation1": "Caches og/eller servicetråde benyttes til at gemme ressourcer lokalt, for hurtigere indlæsning af denne app. Dette medfører dog at nye versioner ikke altid kan detekteres, pga. lokal kopi.",
   "about.reload.purgeExplanation2": "Vælg Rens caches og Opdater nedenfor for at rydde alle caches, afregistrere servicetråde og hente alt fra serveren igen.",
-  "about.reload.purgeCachesAndRefresh": "Rens caches og Opdater",
+  "about.reload.purgeCachesAndRefresh": "Ryd caches og opdater",
   "about.reload.confirmPurge": "Ryd alle program-caches og afregistrer servicetrådene? Dette vil også genindlæse siden fra serveren, hvilket kan tage et par sekunder.",
   "about.reload.reloadApp": "Genindlæs app"
 }
