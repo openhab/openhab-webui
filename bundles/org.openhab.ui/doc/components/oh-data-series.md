@@ -33,8 +33,12 @@ prev: /docs/ui/components/
     The type of the series.<br/><em>Note: <code>heatmap</code> needs a configured visual map or uses the default and is not supported for time series!</em>
   </PropDescription>
   <PropOptions>
+    <PropOption value="bar" label="Bar" />
     <PropOption value="gauge" label="Gauge" />
+    <PropOption value="heatmap" label="Heatmap" />
+    <PropOption value="line" label="Line" />
     <PropOption value="pie" label="Pie" />
+    <PropOption value="scatter" label="Scatter" />
   </PropOptions>
 </PropBlock>
 </PropGroup>
