@@ -84,7 +84,7 @@ export default {
       const widget = this.localMoveState.widget
       const parentWidget = this.findParent(widget, this.localSitemap)
       const newList = parentWidget.slots.widgets
-      console.log('New parent:', parentWidget.config.label)
+      console.debug('New parent:', parentWidget)
       if (!this.allowedWidgetTypes(parentWidget, newIndex).map(wt => wt.type).includes(widget.component)) {
         this.$f7.toast.create({
           text: 'Move invalid',
