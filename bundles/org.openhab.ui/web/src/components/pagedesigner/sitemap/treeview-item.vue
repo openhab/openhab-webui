@@ -66,15 +66,12 @@ export default {
     },
     onStart (event) {
       console.debug('Drag start event:', event)
-      this.$set(this.localMoveState, 'widget', null)
+      this.$set(this.localMoveState, 'widget', this.widget.slots.widgets[event.oldIndex])
       this.$set(this.localMoveState, 'oldList', this.widget.slots.widgets)
       this.$set(this.localMoveState, 'oldIndex', event.oldIndex)
     },
     onChange (event) {
       console.debug('Drag change event:', event)
-      if (!this.localMoveState.widget) {
-        this.$set(this.localMoveState, 'widget', event.added?.element || event.moved?.element || event.removed?.element)
-      }
       if (event.added) {
         this.validateMove(event.added.newIndex)
       }
