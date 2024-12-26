@@ -74,6 +74,27 @@ export default {
     }
   },
   methods: {
+    allowedWidgetTypes (parentWidget, excludeWidgetIndex) {
+      let types = this.WIDGET_TYPES.filter(w => w.type !== 'Sitemap')
+      // Button only allowed inside Buttongrid
+      if (parentWidget.component === 'Buttongrid') return types.filter(t => t.type === 'Button')
+      types = types.filter(t => t.type !== 'Button')
+      // No frames in frame
+      if (parentWidget.component === 'Frame') return types.filter(t => t.type !== 'Frame')
+      // Linkable widget types only contain frames or none at all
+      if (this.LINKABLE_WIDGET_TYPES.includes(parentWidget.component)) {
+        if (parentWidget.slots?.widgets?.length > 0) {
+          const widgetList = parentWidget.slots.widgets.map((w) => ({...w}))
+          if (excludeWidgetIndex !== null) widgetList.splice(excludeWidgetIndex, 1)
+          if (widgetList.find(w => w.component === 'Frame')) {
+            return types.filter(t => t.type === 'Frame')
+          } else {
+            return types.filter(t => t.type !== 'Frame')
+          }
+        }
+      }
+      return types
+    },
     widgetTypeDef (component) {
       const componentType = component ?? this.widget.component
       return this.WIDGET_TYPES.find(w => w.type === componentType)
