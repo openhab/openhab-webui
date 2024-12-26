@@ -37,7 +37,7 @@
 
 <script>
 import SitemapMixin from '@/components/pagedesigner/sitemap/sitemap-mixin'
-import draggable from 'vuedraggable'
+import Draggable from 'vuedraggable'
 import fastDeepEqual from 'fast-deep-equal/es6'
 
 export default {
@@ -45,7 +45,7 @@ export default {
   mixins: [SitemapMixin],
   props: ['includeItemName', 'widget', 'parentWidget', 'itemsList', 'selected', 'sitemap', 'moveState'],
   components: {
-    draggable,
+    Draggable,
     SitemapTreeviewItem: 'sitemap-treeview-item'
   },
   data () {
