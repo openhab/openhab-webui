@@ -38,7 +38,7 @@
             <f7-col>
               <f7-block strong class="sitemap-tree" no-gap @click.native="clearSelection">
                 <f7-treeview>
-                  <sitemap-treeview-item :widget="sitemap" :includeItemName="includeItemName" :itemsList="items" @selected="selectWidget" :selected="selectedWidget"/>
+                  <sitemap-treeview-item :widget="sitemap" :includeItemName="includeItemName" :itemsList="items" @selected="selectWidget" :selected="selectedWidget" />
                 </f7-treeview>
               </f7-block>
             </f7-col>
@@ -338,7 +338,7 @@ export default {
     },
     addableWidgetTypes () {
       if (!this.selectedWidget) return
-      return this.allowedWidgetTypes (this.selectedWidget)
+      return this.allowedWidgetTypes(this.selectedWidget)
     }
   },
   watch: {

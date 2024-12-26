@@ -10,14 +10,14 @@
     <draggable v-if="canHaveChildren" :list="children" group="sitemap-treeview" animation="150" fallbackOnBody="true" swapThreshold="0.6"
                @start="onStart" @change="onChange" @end="onEnd">
       <sitemap-treeview-item class="sitemap-treeview-item" v-for="(childwidget, idx) in children"
-                            :key="idx"
-                            :includeItemName="includeItemName"
-                            :widget="childwidget" :parentWidget="widget"
-                            :itemsList="items"
-                            @selected="(event) => $emit('selected', event)"
-                            :selected="selected"
-                            :sitemap="localSitemap"
-                            :moveState="localMoveState" />
+                             :key="idx"
+                             :includeItemName="includeItemName"
+                             :widget="childwidget" :parentWidget="widget"
+                             :itemsList="items"
+                             @selected="(event) => $emit('selected', event)"
+                             :selected="selected"
+                             :sitemap="localSitemap"
+                             :moveState="localMoveState" />
     </draggable>
     <div slot="label" class="subtitle">
       {{ subtitle() }}
@@ -69,13 +69,11 @@ export default {
       this.$set(this.localMoveState, 'widget', null)
       this.$set(this.localMoveState, 'oldList', this.widget.slots.widgets)
       this.$set(this.localMoveState, 'oldIndex', event.oldIndex)
-      this.$nextTick()
     },
     onChange (event) {
       console.debug('Drag change event:', event)
       if (!this.localMoveState.widget) {
         this.$set(this.localMoveState, 'widget', event.added?.element || event.moved?.element || event.removed?.element)
-        this.$nextTick()
       }
       if (event.added) {
         this.validateMove(event.added.newIndex)
@@ -103,13 +101,13 @@ export default {
         console.debug('Move valid')
       }
     },
-    findParent(widget, parentWidget) {
+    findParent (widget, parentWidget) {
       if (parentWidget.slots?.widgets) {
         for (const w of parentWidget.slots.widgets) {
           if (fastDeepEqual(widget, w)) {
             return parentWidget
           } else {
-            parent = this.findParent(widget, w)
+            const parent = this.findParent(widget, w)
             if (parent != null) return parent
           }
         }
