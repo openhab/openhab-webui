@@ -94,12 +94,12 @@
                           :read-only="!editable" />
 
             <!-- Thing Actions & UI Actions -->
-            <template v-if="thingActions.length > 0 || thingType?.UID?.startsWith('zwave')">
+            <template v-if="thingActions.length > 0 || thingType?.UID?.startsWith('zwave:')">
               <f7-block-title medium class="no-margin-top">
                 Actions
               </f7-block-title>
               <f7-list class="margin-top" media-list>
-                <f7-list-item v-if="thingType?.UID?.startsWith('zwave')" title="View Network Map" link="" @click="openZWaveNetworkPopup()" />
+                <f7-list-item v-if="thingType?.UID?.startsWith('zwave:')" title="View Network Map" link="" @click="openZWaveNetworkPopup()" />
                 <f7-list-item v-for="action in thingActions" :key="action.name" :title="action.label" :footer="action.description" link="" @click="doThingAction(action)" />
               </f7-list>
             </template>
