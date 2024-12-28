@@ -3,7 +3,7 @@
   "vetur.format.defaultFormatter.html": "js-beautify-html",
   "javascript.format.insertSpaceBeforeFunctionParenthesis": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": false
+    "source.fixAll.eslint": "never"
   },
   "eslint.validate": ["vue", "html", "javascript"]
 }
