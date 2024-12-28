@@ -71,6 +71,8 @@ export default {
   },
   mounted () {
     if (this.context && this.context.component && this.context.component.config && this.context.component.config.stylesheet) {
+      if (!this.$el.classList) return // widget is not rendered yet, skip scoped styling
+
       this.cssUid = 'scoped-' + this.$f7.utils.id()
 
       this.$el.classList.add(this.cssUid)
