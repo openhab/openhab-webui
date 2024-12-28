@@ -6,7 +6,7 @@
       </f7-nav-left>
       <f7-nav-title>{{ (page) ? page.config.label : '' }}</f7-nav-title>
       <f7-nav-right>
-        <f7-link v-if="isAdmin" icon-md="material:edit" :href="'/settings/pages/' + pageType + '/' + uid">
+        <f7-link v-if="isAdmin" icon-md="material:edit" @click="editPage" class="edit-page-button">
           {{ $theme.md ? '' : $t('page.navbar.edit') }}
         </f7-link>
         <f7-link v-if="fullscreenIcon" class="fullscreen-icon-navbar" :icon-f7="fullscreenIcon" @click="toggleFullscreen" />
@@ -95,22 +95,7 @@ export default {
       return this.$store.getters.page(this.uid)
     },
     pageType () {
-      if (!this.page) return null
-      switch (this.page.component) {
-        case 'oh-layout-page':
-          return 'layout'
-        case 'oh-map-page':
-          return 'map'
-        case 'oh-tabs-page':
-          return 'tabs'
-        case 'oh-plan-page':
-          return 'plan'
-        case 'oh-chart-page':
-          return 'chart'
-        default:
-          console.warn('Unknown page type!')
-          return 'unknown'
-      }
+      return this.getPageType(this.page)
     },
     isAdmin () {
       return this.page && this.$store.getters.isAdmin
@@ -149,6 +134,24 @@ export default {
     onCommand (itemName, command) {
       this.$store.dispatch('sendCommand', { itemName, command })
     },
+    getPageType (page) {
+      if (!page) return null
+      switch (page.component) {
+        case 'oh-layout-page':
+          return 'layout'
+        case 'oh-map-page':
+          return 'map'
+        case 'oh-tabs-page':
+          return 'tabs'
+        case 'oh-plan-page':
+          return 'plan'
+        case 'oh-chart-page':
+          return 'chart'
+        default:
+          console.warn('Unknown page type!')
+          return 'unknown'
+      }
+    },
     tabContext (tab) {
       const page = tab.config.page ? this.$store.getters.page(tab.config.page.replace('page:', '')) : tab.component
       const context = {
@@ -179,6 +182,33 @@ export default {
     tabEvaluateExpression (tab, idx, key) {
       const ctx = this.tabContext(tab)
       return this.evaluateExpression('tab-' + idx + '-' + key, tab.config[key], ctx, ctx.props)
+    },
+    editPage () {
+      if (this.pageType === 'tabs') {
+        const action = this.$f7.actions.create({
+          buttons: [
+            {
+              text: 'Edit Tabbed Page',
+              onClick: () => {
+                this.$f7router.navigate('/settings/pages/' + this.pageType + '/' + this.uid)
+              }
+            },
+            {
+              text: 'Edit Current Tab',
+              onClick: () => {
+                const tabPageUid = this.page.slots.default[this.currentTab].config.page.replace('page:', '')
+                const tabPage = this.$store.getters.page(tabPageUid)
+                const tabPageType = this.getPageType(tabPage)
+                this.$f7router.navigate('/settings/pages/' + tabPageType + '/' + tabPageUid)
+              }
+            }
+          ],
+          targetEl: this.$el.querySelector('.edit-page-button')
+        })
+        action.open()
+      } else {
+        this.$f7router.navigate('/settings/pages/' + this.pageType + '/' + this.uid)
+      }
     },
     toggleFullscreen () {
       this.$fullscreen.toggle(document.body, {
