@@ -12,11 +12,10 @@ export default {
   },
   methods: {
     startEventSource () {
-      const topicItems = 'openhab/items/*/added,openhab/items/*/removed,openhab/items/*/updated'
       const topicAudio = 'openhab/webaudio/playurl'
       const commandItem = localStorage.getItem('openhab.ui:commandItem')
       const topicCommand = `openhab/items/${commandItem || ''}/command`
-      let topics = topicItems
+      let topics = null
       if (localStorage.getItem('openhab.ui:webaudio.enable') === 'enabled') {
         topics = topicAudio
       }
@@ -40,11 +39,6 @@ export default {
             this.handleCommand(payload.value)
             break
           default:
-            if (event.topic.startsWith('openhab/items/')) {
-              console.info('Item SSE event received, reloading semantic model ...')
-              this.$store.dispatch('loadSemanticModel')
-              break
-            }
             console.warn('Unhandled SSE event: ' + JSON.stringify(event))
         }
       })
