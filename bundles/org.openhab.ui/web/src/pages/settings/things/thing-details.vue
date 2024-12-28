@@ -550,6 +550,14 @@ export default {
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
+      }).catch(err => {
+        if (err === 409 || err === 'Conflict') {
+          this.$f7.toast.create({
+            text: 'Cannot modify configuration of uninitialized Thing',
+            destroyOnClose: true,
+            closeTimeout: 2000
+          }).open()
+        }
       })
     },
     doThingAction (action) {
