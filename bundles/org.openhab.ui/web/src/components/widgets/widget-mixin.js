@@ -26,7 +26,7 @@ export default {
       return widget.component
     },
     config () {
-      if (!this.context || !this.context.component) return null
+      if (!this.context?.component) return null
       let evalConfig = {}
       // Fallback to modelConfig for oh- components to allow configuring them in modals
       const sourceConfig = this.context.component.config || (this.componentType.startsWith('oh-') ? this.context.modalConfig : {})
@@ -40,8 +40,8 @@ export default {
       return evalConfig
     },
     props () {
-      if (!this.context || !this.context.component) return {}
-      if (this.context.component.props && this.context.component.props.parameters) {
+      if (!this.context?.component) return {}
+      if (this.context.component.props?.parameters) {
         let defaultValues = {}
         this.context.component.props.parameters.forEach((p) => {
           if (p.default !== undefined) {
@@ -63,14 +63,13 @@ export default {
         const user = this.$store.getters.user
         if (!user) return false
         if (user.roles && user.roles.some(r => visibleTo.indexOf('role:' + r) >= 0)) return true
-        if (visibleTo.indexOf('user:' + user.name) >= 0) return true
-        return false
+        return visibleTo.indexOf('user:' + user.name) >= 0
       }
       return true
     }
   },
   mounted () {
-    if (this.context && this.context.component && this.context.component.config && this.context.component.config.stylesheet) {
+    if (this.context?.component?.config?.stylesheet) {
       if (!this.$el.classList) return // widget is not rendered yet, skip scoped styling
 
       this.cssUid = 'scoped-' + this.$f7.utils.id()
