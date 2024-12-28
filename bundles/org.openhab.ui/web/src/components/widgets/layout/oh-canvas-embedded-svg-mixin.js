@@ -51,8 +51,9 @@ export default {
             .paramGroup(pg('state', 'State', 'Defines if and how the state is represented in the SVG'), [
               pi('stateItems', 'State Item(s)', 'Item(s) that should be used to determine the state').m().a(),
               pb('useProxyElementForState', 'Use State Proxy Element', 'Use "flash" element to highlight the active state. The element is marked with the attribute flash: true and must be part of the elements group').a(),
-              pt('stateOnColor', 'State ON Color', 'Color that should to be used when State is ON').a(),
-              pt('stateOffColor', 'State OFF Color', 'Color that should to be used when State is OFF').a(),
+              pt('stateOnColor', 'State ON Color', 'Color that should to be used when State is ON. #rgb and rgb(r,g,b) expressions are supported.').a(),
+              pt('stateOffColor', 'State OFF Color', 'Color that should to be used when State is OFF. #rgb and rgb(r,g,b) expressions are supported.').a(),
+              pt('stateOnSubstitute', 'State ON Substitute', 'If Item Type is String and State equals to the given value, this is interpreted as "ON"').a(),
               pb('stateAsOpacity', 'Use State as Opacity', 'Use the state from 0 - 100 as element opacity').a(),
               pt('stateMinOpacity', 'Minimum Opacity applied', 'This allows an opacity to be kept above this value.').a(),
               pb('invertStateOpacity', 'Invert State opacity', '1 - opacity').a(),
@@ -294,8 +295,13 @@ export default {
      * @param {string} svgElement the svg element that has been configured to represent the state
      */
     applyStateToSvgElement (item, stateObj, svgElementConfig, svgElement) {
-      const state = (svgElementConfig.useDisplayState) ? stateObj.displayState : stateObj.state
+      let state = (svgElementConfig.useDisplayState) ? stateObj.displayState : stateObj.state
       const stateType = stateObj.type
+      const stateOnSubstitute = svgElementConfig.stateOnSubstitute
+      if (stateOnSubstitute && stateType === 'String') {
+        state = (state === stateOnSubstitute) ? 'ON' : 'OFF'
+      }
+
       console.info(`Update ${svgElement.id} due to ${item} changing to ${state} ${stateType}`)
       const tagName = svgElement.tagName
       const stateOnColorRgbStyle = this.toRGBStyle(svgElementConfig.stateOnColor)
@@ -397,6 +403,7 @@ export default {
         case 'Percent':
         case 'HSB':
         case 'OnOff':
+        case 'String':
           const useProxy = tagName === 'g' && svgElementConfig.useProxyElementForState // if proxy should be used and element is of type group
           const element = (useProxy) ? svgElement.querySelector('[flash]') : svgElement
           if (element) {
