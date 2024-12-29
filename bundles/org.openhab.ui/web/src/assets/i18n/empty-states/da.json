@@ -6,7 +6,7 @@
   "things.title": "Ingen ting endnu",
   "things.text": "Ting er de enheder og tjenester, der er tilsluttet openHAB, de leveres af bindings tilføjelser.<br><br>Installerede bindinger der understøtter auto-opdagelse vil automatisk tilføje ting til din indbakke. Du kan også starte en scanning for en bestemt binding eller tilføje din første ting manuelt med knappen nedenfor.",
   "things.nobindings.title": "Ingen bindinger",
-  "things.nobindings.text": "For at tilføje ting til dit system, skal du først installere bindings tilføjelser.",
+  "things.nobindings.text": "For at tilføje ting til dit system, skal du først installere bindingstilføjelser.",
   "transformations.title": "Ingen transformationer endnu",
   "transformations.text": "Transformationer bruges til at oversætte data fra en rodet eller teknisk råværdi til en behandlet menneskeligt læsbar repræsentation.",
   "model.title": "Start modellering af dit hjem",
