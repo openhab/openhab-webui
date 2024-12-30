@@ -29,9 +29,9 @@
   "setupwizard.addon.automation-jsscripting.line2": "Anbefales, da Blockly afhænger af det.",
   "setupwizard.addon.binding-astro.line1": "Beregner mange positionelle og dato-/tidsværdier for solen og månen samt solens strålingsniveauer.",
   "setupwizard.addon.binding-astro.line2": "Nyttigt for automatisering.",
-  "setupwizard.addon.persistence-rrd4j.line1": "Lagrer tilstand af numeriske elementer. Vokser ikke i størrelse ved at lagre historiske data med forskellige niveauer af granularitet.",
-  "setupwizard.addon.persistence-rrd4j.line2": "Anbefales, hvis du ønsker at have diagrammer af den historiske tilstand af numeriske elementer.",
-  "setupwizard.addon.persistence-mapdb.line1": "Gemmer altid den seneste tilstand for et element. Muliggør gendannelse af alle elementers tilstand ved opstart af openHAB.",
+  "setupwizard.addon.persistence-rrd4j.line1": "Lagrer tilstand af numeriske items. Vokser ikke i størrelse ved at lagre historiske data med forskellige niveauer af granularitet.",
+  "setupwizard.addon.persistence-rrd4j.line2": "Anbefales, hvis du ønsker at have diagrammer af den historiske tilstand af numeriske items.",
+  "setupwizard.addon.persistence-mapdb.line1": "Gemmer altid den seneste tilstand for et item. Muliggør gendannelse af alle items tilstande ved opstart af openHAB.",
   "setupwizard.addon.persistence-mapdb.line2": "Anbefales, hvis du ønsker, at openHAB altid skal huske den seneste tilstand før nedlukning.",
   "setupwizard.addon.persistence-inmemory.line1": "Gemmer tilstande kun i hukommelsen. Begrænser størrelse og gemmer ikke data på disk.",
   "setupwizard.addon.persistence-inmemory.line2": "Anbefales til midlertidig opbevaring af prognoser.",
@@ -55,6 +55,6 @@
   "setupwizard.addons.suggestionsWaitMessage": "Vi søger efter de mest relevante tilføjelser til dig...",
   "setupwizard.addons.waitMessage": "Det kan tage et par minutter at installere de tilføjelser, du valgte.",
   "setupwizard.welcome.title": "Velkommen til openHAB!",
-  "setupwizard.welcome.bindingsInstalled": "Du har installeret en eller flere bindinger. Ting, som disse bindinger giver, vises i Ting-indbakken. Du kan acceptere og yderligere konfigurere derfra.",
+  "setupwizard.welcome.bindingsInstalled": "Du har installeret en eller flere bindinger. Things, som disse bindinger giver, vises i thing-indbakken. Du kan acceptere og yderligere konfigurere derfra.",
   "setupwizard.welcome.getStarted": "Kom i gang"
 }
