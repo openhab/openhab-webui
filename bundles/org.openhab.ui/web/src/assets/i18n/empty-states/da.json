@@ -25,12 +25,12 @@
   "scripts.text": "Scripts er en særlig slags regler, uden udløsere og et enkelt actionmodul til at udføre kode.<br />Du kan køre dem on-demand eller ringe til dem fra andre regler.<br><br>Opret dit første script med knappen nedenfor.",
   "schedule.title": "Intet i tidsplanen",
   "schedule.text": "Planen vises, når regler specifikt mærket \"Schedule\" forventes at køre, op til 30 dage.<br><br>Klik på knappen nedenfor for at oprette din første planlagte regel.",
-  "rules.missingengine.title": "Regel motor ikke installeret",
-  "rules.missingengine.text": "Reglen motoren skal være installeret før regler kan oprettes.",
+  "rules.missingengine.title": "Regelmotor ikke installeret",
+  "rules.missingengine.text": "Regelmotoren skal være installeret før regler kan oprettes.",
   "addons.title": "Ingen tilføjelser installeret",
   "addons.text": "Tilføjelser tilføjer funktionalitet til dit openHAB system.<br><br>Installer dem med knappen nedenfor.",
   "page.unavailable.title": "Siden er utilgængelig",
   "page.unavailable.text": "Du har ikke tilladelse til at se denne side på grund af begrænsninger for synlighed.",
-  "persistence.title": "Ingen persistenstilføjelse installeret",
-  "persistence.text": "Med persistens kan du gemme Item-tilstande over tid, uanset om de er historiske eller fremtidige værider. For at konfigurere persistens, skal du have mindst én persistenstilføjelse installeret."
+  "persistence.title": "Ingen persistens-tilføjelse installeret",
+  "persistence.text": "Med persistens kan du gemme elementtilstande over tid, uanset om de er historiske eller fremtidige værdier. For at konfigurere persistens, skal du have mindst én persistens-tilføjelse installeret."
 }
