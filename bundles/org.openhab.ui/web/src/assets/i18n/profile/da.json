@@ -9,11 +9,11 @@
   "profile.sessions.delete.success": "Sessionen slettet",
   "profile.sessions.delete.error": "Fejl under sletning af sessionen: ",
   "profile.sessions.signOut.error": "Fejl ved udlogning: ",
-  "profile.apiTokens": "API Tokens",
+  "profile.apiTokens": "API-tokens",
   "profile.apiTokens.header": "Opret API-tokens for at give eksterne værktøjer og tjenester, der ikke understøtter OAuth2 Authorization Framework permanent adgang på dine vegne.",
   "profile.apiTokens.created": "Oprettet: ",
   "profile.apiTokens.validForScope": "Gyldig for anvendelsesområde: ",
-  "profile.apiTokens.create": "Opret ny API token",
-  "profile.apiTokens.delete.success": "API token slettet",
+  "profile.apiTokens.create": "Opret nyt API-token",
+  "profile.apiTokens.delete.success": "API-token slettet",
   "profile.apiTokens.delete.error": "Fejl under sletning af API-token: "
 }
