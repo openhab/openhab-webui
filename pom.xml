@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -11,7 +9,7 @@
 
   <groupId>org.openhab.ui</groupId>
   <artifactId>org.openhab.ui.reactor</artifactId>
-  <version>4.3.1-SNAPSHOT</version>
+  <version>4.3.2-SNAPSHOT</version>
 
   <packaging>pom</packaging>
 
@@ -69,7 +67,7 @@
     <eea.version>2.4.0</eea.version>
     <jackson.version>2.16.0</jackson.version>
     <karaf.version>4.4.6</karaf.version>
-    <ohc.version>4.3.0-SNAPSHOT</ohc.version>
+    <ohc.version>4.3.2-SNAPSHOT</ohc.version>
     <sat.version>0.16.0</sat.version>
     <spotless.version>2.43.0</spotless.version>
     <!-- Eclipse Java formatter version 4.26+ does not check test files -->
