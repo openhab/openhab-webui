@@ -6,7 +6,7 @@
   "about.technicalInformation": "Tekniske oplysninger",
   "about.technicalInformation.configurationFolder": "Konfigurationsmappe",
   "about.technicalInformation.userdataFolder": "Brugerdata-mappe",
-  "about.technicalInformation.logsFolder": "Logfiler-mappe",
+  "about.technicalInformation.logsFolder": "Mappe til logfiler",
   "about.technicalInformation.operatingSystem": "Operativsystem",
   "about.technicalInformation.javaRuntime": "Java Runtime",
   "about.technicalInformation.resourceStats": "{nbproc} tilgængelige processorer - {ram} ledig hukommelse",
