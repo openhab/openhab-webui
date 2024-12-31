@@ -1,6 +1,8 @@
 /* CSS that shouldn't get minimized */
 /* e.g. due to CssMinimizerPlugin removing unit from 0px, which breaks calculations */
-.block-narrow {
+
+/* Fix safe area issues inside block-narrow, oh-grid-cells, oh-grid-row & oh-masonry, where safe areas are already respected by component or its parents itself */
+.block-narrow, .oh-cell, .oh-row, .oh-masonry-item {
   --f7-safe-area-left: 0px;
   --f7-safe-area-outer-left: 0px;
   --f7-safe-area-right: 0px;
