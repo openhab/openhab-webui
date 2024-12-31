@@ -23,15 +23,6 @@
   </f7-card>
 </template>
 
-<style lang="stylus">
-// Fix safe-area issues where oh-card is used inside a block or masonry layout, where the safe areas are already respected by the parent block
-.oh-col >
-.oh-masonry-item >
-  .oh-card
-    margin-left var(--f7-card-margin-horizontal)
-    margin-right var(--f7-card-margin-horizontal)
-</style>
-
 <script>
 import mixin from '../widget-mixin'
 import { actionsMixin } from '@/components/widgets/widget-actions'

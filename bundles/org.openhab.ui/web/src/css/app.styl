@@ -322,13 +322,5 @@ html
       .item-inner
         padding-right var(--f7-list-item-padding-horizontal)
 
-// Fix safe area issues with oh-cell components, where safe areas are already respected by the wrapping oh-block
-.oh-cell
-  margin-top var(--f7-card-expandable-margin-vertical)
-  margin-bottom var(--f7-card-expandable-margin-vertical)
-  margin-left var(--f7-card-expandable-margin-horizontal)
-  margin-right var(--f7-card-expandable-margin-horizontal)
-
-// Fix safe area issues inside block-narrow, where safe areas are already respected by the wrapping block-narrow
-// Fix is in nomini.css due to CssMinimizerPlugin minimizing app.styl and removing the unit px from 0px,
+// Additional safe area fixes are in nomini.css due to CssMinimizerPlugin minimizing app.styl and removing the unit px from 0px,
 // which breaks calculcations using the overwritten CSS variables.
