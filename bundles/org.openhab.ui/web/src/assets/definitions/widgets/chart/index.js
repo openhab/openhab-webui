@@ -286,7 +286,7 @@ export default {
     props: {
       parameterGroups: [actionGroup()],
       parameters: [
-        seriesTypeParameter('gauge', 'pie'),
+        seriesTypeParameter('line', 'bar', 'heatmap', 'scatter', 'gauge', 'pie'),
         ...actionParams()
       ]
     }
