@@ -23,6 +23,7 @@ const handler = (context) => {
       if (typeof prop !== 'string') return {}
 
       const itemName = prop
+      if (itemName === 'undefined') return { state: '-' }
       if (!context.getters.isItemTracked(itemName)) {
         context.commit('addToTrackingList', itemName.toString())
 
