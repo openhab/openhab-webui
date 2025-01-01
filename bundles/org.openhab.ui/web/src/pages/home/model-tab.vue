@@ -25,6 +25,8 @@
 .model-cards-section
   justify-content center
   margin-top 2rem
+  margin-left calc(0.5 * var(--f7-card-expandable-margin-horizontal))
+  margin-right calc(0.5 * var(--f7-card-expandable-margin-horizontal))
   .card
     margin-left calc(0.5 * var(--f7-card-expandable-margin-horizontal))
     margin-right calc(0.5 * var(--f7-card-expandable-margin-horizontal))
