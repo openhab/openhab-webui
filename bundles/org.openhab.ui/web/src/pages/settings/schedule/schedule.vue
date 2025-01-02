@@ -139,17 +139,14 @@ export default {
           const year = day.getFullYear()
           const month = day.toLocaleString('default', { month: 'long' })
           const dayofmonth = day.toLocaleString('default', { weekday: 'short' }) + ' ' + day.getDate()
+          const monthIndex = day.getMonth()
+          const dayIndex = day.getDate()
           const cal = this.calendar
           if (!cal[year]) cal[year] = {}
           if (!cal[year][month]) cal[year][month] = {}
-          if (!cal[year][month][dayofmonth]) cal[year][month][dayofmonth] = []
-
-          const monthIndex = day.getMonth()
-          const dayIndex = day.getDate()
-          const dayOccurrences = occurrences.filter((o) => {
+          cal[year][month][dayofmonth] = occurrences.filter((o) => {
             return o[0].getFullYear() === year && o[0].getMonth() === monthIndex && o[0].getDate() === dayIndex
           })
-          cal[year][month][dayofmonth] = dayOccurrences
           day.setDate(day.getDate() + 1)
         }
 
