@@ -218,7 +218,7 @@
     table-layout auto
 
   td.nowrap
-    padding 5px
+    padding 0px
     text-align left
     white-space nowrap
 
@@ -249,6 +249,7 @@
 
   tr.table-rows
     height 31px
+    vertical-align top
 
   tr.error
     background-color rgb(255, 96, 96)
@@ -529,7 +530,7 @@ export default {
         milliseconds: ms,
         level: logEntry.level.toUpperCase(),
         loggerName: logEntry.loggerName,
-        message: logEntry.message
+        message: logEntry.message.replace(/\n/g, '<br>')
       }
 
       this.batchLogs.push(entry)
