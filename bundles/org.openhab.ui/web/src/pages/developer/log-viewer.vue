@@ -125,10 +125,8 @@
                  :class="{ 'disabled-link': !stateConnected || !stateProcessing, 'no-margin-left': $device.ios }"
                  @click="loggingPause" />
         <f7-link icon-ios="f7:stop_fill" icon-aurora="f7:stop_fill" icon-md="material:stop_fill"
-                 :icon-color="!stateConnected ? 'gray' : ''"
-                 :tooltip="!$device.ios ? 'Stop receiving logs' : ''"
-                 :class="{ 'disabled-link': !stateConnected, 'no-margin-left': $device.ios }"
-                 @click="loggingStop" />
+                 :icon-color="!stateConnected ? 'gray' : ''" :tooltip="!$device.ios ? 'Stop receiving logs' : ''"
+                 :class="{ 'disabled-link': !stateConnected, 'no-margin-left': $device.ios }" @click="loggingStop" />
       </f7-nav-right>
 
       <f7-subnavbar :inner="false" style="padding-right: var(--f7-safe-area-right)">
@@ -158,8 +156,8 @@
                :class="{ 'disabled-link': filterCount == 0 }" @click="downloadCSV" />
       <f7-link icon-f7="rectangle_on_rectangle" tooltip="Copy filtered log to clipboard"
                :class="{ 'disabled-link': filterCount == 0 }" @click="copyTableToClipboard" />
-      <f7-link icon-f7="trash" tooltip="Clear the log buffer"
-               :class="{ 'disabled-link': tableData.length == 0 }" @click="clearLog" />
+      <f7-link icon-f7="trash" tooltip="Clear the log buffer" :class="{ 'disabled-link': tableData.length == 0 }"
+               @click="clearLog" />
       <f7-link @click="toggleErrorDisplay" tooltip="Always show error level logs">
         <f7-icon v-if="showErrors" f7="exclamationmark_triangle_fill" />
         <f7-icon v-else f7="exclamationmark_triangle" />
@@ -230,6 +228,8 @@
     color black
     background #f1f1f1
     z-index 1
+    white-space nowrap
+    overflow hidden
 
   tr.table-rows
     height 31px
@@ -449,7 +449,25 @@ export default {
     renderEntry (entity) {
       let tr = document.createElement('tr')
       tr.className = 'table-rows ' + entity.level.toLowerCase()
-      tr.innerHTML = `<td class="sticky">${entity.time}<span class="milliseconds">${entity.milliseconds}</span></td>` +
+      let icon = 'question_diamond'
+      switch (entity.level) {
+        case 'TRACE':
+          icon = 'arrow_down'
+          break
+        case 'DEBUG':
+          icon = 'minus'
+          break
+        case 'INFO':
+          icon = 'info_circle'
+          break
+        case 'WARN':
+          icon = 'flag'
+          break
+        case 'ERROR':
+          icon = 'exclamationmark_octagon_fill'
+          break
+      }
+      tr.innerHTML = '<td class="sticky"><i class="icon f7-icons">' + icon + `</i> ${entity.time}<span class="milliseconds">${entity.milliseconds}</span></td>` +
         `<td>${entity.level}</td>` +
         `<td>${entity.loggerName}</td>` +
         `<td class="nowrap">${this.highlightText(entity.message)}</td>`
