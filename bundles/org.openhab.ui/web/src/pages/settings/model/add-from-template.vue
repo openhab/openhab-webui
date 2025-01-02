@@ -43,7 +43,7 @@
           </f7-block-footer>
           <f7-block class="semantic-tree">
             <model-treeview class="model-picker-treeview" :rootNodes="rootLocations"
-                            :selected-item="selectedItem" @selected="selectItem" @checked="checkItem" />
+                            :selected="selectedItem" @selected="selectItem" @checked="checkItem" />
           </f7-block>
         </f7-block>
       </f7-col>
