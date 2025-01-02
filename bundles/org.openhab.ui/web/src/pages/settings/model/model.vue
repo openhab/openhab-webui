@@ -169,9 +169,9 @@
 <style lang="stylus">
 .semantic-tree-wrapper
   padding 0
-  margin-bottom 0
+  margin 0 !important
 .semantic-tree
-  padding 0
+  margin 0 !important
   border-right 1px solid var(--f7-block-strong-border-color)
 .model-details-sheet
   .toolbar
