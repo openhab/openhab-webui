@@ -50,7 +50,7 @@
             <div class="timeline-item-content">
               <div class="timeline-item-inner" v-for="(occurrence, $idx) in calendar[year][month][day]" :key="$idx">
                 <div class="timeline-item-time">
-                  {{ occurrence[0].substring(11, 16) }}
+                  {{ occurrence[0].toTimeString().substring(0, 5) }}
                 </div>
                 <div class="timeline-item-title">
                   {{ occurrence[1].name }}
@@ -128,7 +128,7 @@ export default {
 
         // map RulesExecutions per time
         this.rules.forEach((rule) => {
-          occurrences.push([new Date(rule.date).toISOString(), rule.rule])
+          occurrences.push([new Date(rule.date), rule.rule])
         })
 
         this.$set(this, 'calendar', {})
@@ -144,10 +144,10 @@ export default {
           if (!cal[year][month]) cal[year][month] = {}
           if (!cal[year][month][dayofmonth]) cal[year][month][dayofmonth] = []
 
-          const dayISODate = day.toISOString().split('T')[0]
+          const monthIndex = day.getMonth()
+          const dayIndex = day.getDate()
           const dayOccurrences = occurrences.filter((o) => {
-            const occurrenceISODate = o[0].split('T')[0]
-            return occurrenceISODate === dayISODate
+            return o[0].getFullYear() === year && o[0].getMonth() === monthIndex && o[0].getDate() === dayIndex
           })
           cal[year][month][dayofmonth] = dayOccurrences
           day.setDate(day.getDate() + 1)
