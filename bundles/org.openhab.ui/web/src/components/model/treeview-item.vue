@@ -15,8 +15,9 @@
                            :selected="selected"
                            :includeItemName="includeItemName" :includeItemTags="includeItemTags"
                            :canDragDrop="canDragDrop"
-                           :moveState="localMoveState"
-                           @checked="(item, check) => $emit('checked', item, check)" />
+                           :moveState="moveState"
+                           @checked="(item, check) => $emit('checked', item, check)"
+                           @reload="$emit('reload')" />
     </draggable>
     <div slot="label" class="semantic-class">
       {{ className() }}
@@ -45,6 +46,7 @@ export default {
   name: 'model-treeview-item',
   mixins: [ItemMixin, ModelDragDropMixin],
   props: ['model', 'parentNode', 'selected', 'includeItemName', 'includeItemTags', 'canDragDrop', 'moveState'],
+  emits: ['reload'],
   components: {
     Draggable,
     ModelTreeviewItem: 'model-treeview-item'

@@ -4,9 +4,10 @@
                @start="onDragStart" @change="onDragChange" @end="onDragEnd" :move="onDragMove">
       <model-treeview-item v-for="node in children"
                            :key="node.item.name" :model="node" :parentNode="model"
-                           :includeItemName="includeItemName" :includeItemTags="includeItemTags" :canDragDrop="canDragDrop" :moveState="localMoveState"
+                           :includeItemName="includeItemName" :includeItemTags="includeItemTags" :canDragDrop="canDragDrop" :moveState="moveState"
                            @selected="nodeSelected" :selected="selected"
-                           @checked="(item, check) => $emit('checked', item, check)" />
+                           @checked="(item, check) => $emit('checked', item, check)"
+                           @reload="$emit('reload')" />
     </draggable>
   </f7-treeview>
 </template>
@@ -31,9 +32,15 @@ import Draggable from 'vuedraggable'
 export default {
   mixins: [ModelDragDropMixin],
   props: ['rootNodes', 'selected', 'includeItemName', 'includeItemTags', 'canDragDrop'],
+  emits: ['reload'],
   components: {
     Draggable,
     ModelTreeviewItem
+  },
+  data () {
+    return {
+      moveState: {}
+    }
   },
   computed: {
     model: {
