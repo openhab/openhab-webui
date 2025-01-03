@@ -123,7 +123,7 @@ export default {
         this.$f7.dialog.alert(
           'Cannot move semantic item "' + this.itemLabel(node.item) +
           '" from non-semantic group "' + this.itemLabel(oldParentNode.item) +
-          '" into semantic group "' + this.itemLabel(parentNode.item) + "'"
+          '" into semantic group "' + this.itemLabel(parentNode.item) + '"'
         ).open()
         this.restoreModelUpdate()
         return
@@ -160,7 +160,6 @@ export default {
         if (node.class.startsWith('Location')) {
           this.$f7.dialog.alert('Cannot move Location "' + this.itemLabel(node.item) + '" into Equipment "' + this.itemLabel(parentNode.item) + '"').open()
           this.restoreModelUpdate()
-          return
         } else if (node.class.startsWith('Equipment')) {
           this.addEquipment(node, parentNode, semantics)
         } else if (node.class.startsWith('Point')) {
@@ -221,7 +220,7 @@ export default {
             'Group dimension "' + baseDimension +
              '" of group "' + this.itemLabel(parentNode.item) +
              '" not compatible with "' + (node.item.type === 'Group' ? 'group ' : '') + 'item dimension "' + dimension +
-             '" of "' + (node.item.type === 'Group' ? 'group ' : '') + '" item "' + this.itemLabel(node.item) +'"'
+             '" of "' + (node.item.type === 'Group' ? 'group ' : '') + '" item "' + this.itemLabel(node.item) + '"'
           ).open()
           return false
         }
@@ -355,10 +354,7 @@ export default {
           text: 'Item "' + this.itemLabel(node.item) + '" dragged from group "' + this.itemLabel(parentNode.item) + '", remove original?',
           buttons: [
             { text: 'Remove', onClick: () => this.remove(node, parentNode, oldIndex) },
-            { text: 'Keep', onClick: () => {
-                this.updateAfterRemove()
-              }
-          }
+            { text: 'Keep', onClick: () => this.updateAfterRemove() }
           ]
         }).open()
       } else {
@@ -397,7 +393,7 @@ export default {
       this.saveItem(updatedItem)
       this.$set(this.moveState, 'saving', false)
     },
-    restoreModelUpdate() {
+    restoreModelUpdate () {
       this.$set(this.moveState, 'canRemove', false)
       this.$set(this.moveState, 'canAdd', false)
       this.$set(this.moveState, 'adding', false)
