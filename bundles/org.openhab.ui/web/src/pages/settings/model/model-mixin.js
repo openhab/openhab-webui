@@ -1,4 +1,5 @@
 import { compareItems } from '@/components/widgets/widget-order'
+import cloneDeep from 'lodash/cloneDeep'
 
 function compareModelItems (o1, o2) {
   return compareItems(o1.item || o1, o2.item || o2)
@@ -22,11 +23,13 @@ export default {
       links: [],
       locations: [],
       rootLocations: [],
-      equipment: {},
+      equipment: [],
       rootEquipment: [],
       rootPoints: [],
       rootGroups: [],
       rootItems: [],
+
+      expandedTreeviewItems: [],
 
       previousSelection: null,
       selectedItem: null
@@ -39,8 +42,10 @@ export default {
      * @returns {Promise<void>}
      */
     loadModel () {
-      if (this.loading) return
+      if (this.loading) return Promise.resolve()
       this.loading = true
+
+      this.saveExpanded()
 
       const items = this.$oh.api.get('/rest/items?staticDataOnly=true&metadata=.+')
       const links = this.$oh.api.get('/rest/links')
@@ -152,6 +157,20 @@ export default {
             item.classList.add('treeview-item-opened')
           } else {
             item.classList.remove('treeview-item-opened')
+          }
+        }
+      })
+    },
+    saveExpanded () {
+      this.expandedTreeviewItems = [...document.querySelectorAll('.treeview-item-opened')]
+    },
+    restoreExpanded () {
+      const treeviewItems = document.querySelectorAll('.treeview-item')
+
+      treeviewItems.forEach(item => {
+        if (item.classList.contains('treeview-item')) {
+          if (this.expanded || this.expandedTreeviewItems.includes(item)) {
+            item.classList.add('treeview-item-opened')
           }
         }
       })
