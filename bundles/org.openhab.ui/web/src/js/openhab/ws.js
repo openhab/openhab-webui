@@ -10,8 +10,9 @@ const HEARTBEAT_MESSAGE = `{
 const openWSConnections = []
 
 function newWSConnection (path, messageCallback, readyCallback, errorCallback, heartbeatCallback, heartbeatInterval) {
+  const encodedToken = btoa(getAccessToken()).replace(/=*$/, '')
   // Create a new WebSocket connection
-  const socket = new WebSocket(path, [`org.openhab.ws.accessToken.base64.${btoa(getAccessToken())}`, 'org.openhab.ws.protocol.default'])
+  const socket = new WebSocket(path, [`org.openhab.ws.accessToken.base64.${encodedToken}`, 'org.openhab.ws.protocol.default'])
 
   // Handle WebSocket connection opened
   socket.onopen = (event) => {
