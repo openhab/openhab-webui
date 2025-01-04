@@ -12,7 +12,9 @@ const openWSConnections = []
 function newWSConnection (path, messageCallback, readyCallback, errorCallback, heartbeatCallback, heartbeatInterval) {
   const encodedToken = btoa(getAccessToken()).replace(/=*$/, '')
   // Create a new WebSocket connection
-  const socket = new WebSocket(path, [`org.openhab.ws.accessToken.base64.${encodedToken}`, 'org.openhab.ws.protocol.default'])
+  const socket = process?.env?.NODE_ENV === 'development'
+    ? new WebSocket(path + `?access_token=${getAccessToken()}`) // webpack dev server cannot handle our pseudo WS protocols
+    : new WebSocket(path, [`org.openhab.ws.accessToken.base64.${encodedToken}`, 'org.openhab.ws.protocol.default'])
 
   // Handle WebSocket connection opened
   socket.onopen = (event) => {
