@@ -56,6 +56,7 @@
         </f7-block>
       </f7-tab>
       <f7-tab id="debug-tab" @tab:show="() => this.currentTab = 'debug'" :tab-active="currentTab === 'debug'">
+        <!-- Test SSE connection -->
         <f7-block class="block-narrow">
           <f7-row>
             <f7-col>
@@ -63,7 +64,6 @@
                 <f7-block-title class="after-big-title">
                   Test SSE connection
                 </f7-block-title>
-                <p>Start a SSE connection to check the different implementations</p>
                 <f7-button text="Stream Events" @click="startSSE()" v-if="!sseClient" />
                 <f7-button text="Stop Streaming" @click="stopSSE()" v-if="sseClient" />
                 <f7-list media-list>
@@ -73,6 +73,24 @@
             </f7-col>
           </f7-row>
         </f7-block>
+        <!-- Test WebSocket connection -->
+        <f7-block class="block-narrow">
+          <f7-row>
+            <f7-col>
+              <f7-block>
+                <f7-block-title class="after-big-title">
+                  Test WebSocket connection
+                </f7-block-title>
+                <f7-button text="Stream Events" @click="startWS()" v-if="!wsClient" />
+                <f7-button text="Stop Streaming" @click="stopWS()" v-if="wsClient" />
+                <f7-list media-list>
+                  <f7-list-item v-for="event in wsEvents" :key="event.time.getTime()" :title="event.topic" :subtitle="event.payload" :after="event.type" />
+                </f7-list>
+              </f7-block>
+            </f7-col>
+          </f7-row>
+        </f7-block>
+        <!-- Test an icon -->
         <f7-block class="block-narrow">
           <f7-row>
             <f7-col>
@@ -116,6 +134,8 @@ export default {
       currentTab: 'menu',
       sseClient: null,
       sseEvents: [],
+      wsClient: null,
+      wsEvents: [],
       icon: 'lightbulb',
       split: this.$device.desktop ? 'vertical' : 'horizontal'
     }
@@ -135,6 +155,18 @@ export default {
       this.$oh.sse.close(this.sseClient)
       this.sseClient = null
       this.sseEvents = []
+    },
+    startWS () {
+      this.wsClient = this.$oh.ws.connect('/ws/events', (event) => {
+        event.time = new Date()
+        this.wsEvents.unshift(...[event])
+        this.wsEvents.splice(5)
+      })
+    },
+    stopWS () {
+      this.$oh.ws.close(this.wsClient)
+      this.wsClient = null
+      this.wsEvents = []
     }
   },
   asyncComputed: {
