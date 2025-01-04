@@ -34,7 +34,7 @@
           <f7-list-item v-for="entry in scanResults"
                         :key="entry.thingUID"
                         :link="true"
-                        @click="approve(entry)"
+                        @click="openEntryActions(entry)"
                         media-item
                         :title="entry.label"
                         :subtitle="entry.representationProperty ? entry.properties[entry.representationProperty] : ''"
@@ -86,9 +86,13 @@
 
 <script>
 import ConfigSheet from '@/components/config/config-sheet.vue'
+import ThingInboxMixin from '@/pages/settings/things/thing-inbox-mixin'
 
 export default {
-  components: { ConfigSheet },
+  mixins: [ThingInboxMixin],
+  components: {
+    ConfigSheet
+  },
   props: ['bindingId'],
   data () {
     return {
@@ -224,28 +228,25 @@ export default {
         Promise.reject('Failed to load inbox: ' + e)
       })
     },
-    approve (entry) {
-      console.log(`Add ${entry.thingUID} as thing`)
-      this.$f7.dialog.prompt(`This will create a new Thing of type ${entry.thingTypeUID} with the following name:`,
-        'Add as Thing',
-        (name) => {
-          this.$oh.api.postPlain(`/rest/inbox/${entry.thingUID}/approve`, name).then((res) => {
-            this.$f7.toast.create({
-              text: 'Entry approved',
-              destroyOnClose: true,
-              closeTimeout: 2000
-            }).open()
-            setTimeout(() => { this.$f7router.navigate('/settings/things/', { reloadCurrent: true }) }, 300)
-          }).catch((err) => {
-            this.$f7.toast.create({
-              text: 'Error during thing creation: ' + err,
-              destroyOnClose: true,
-              closeTimeout: 2000
-            }).open()
-          })
-        },
-        null,
-        entry.label)
+    openEntryActions (entry) {
+      let actions = this.$f7.actions.create({
+        convertToPopover: true,
+        closeOnEscape: true,
+        buttons: [
+          [
+            {
+              text: entry.label,
+              label: true
+            }
+          ],
+          [
+            this.entryActionsAddAsThingButton(entry, this.loadInbox),
+            this.entryActionsAddAsThingWithCustomIdButton(entry, this.loadInbox)
+          ]
+        ]
+      })
+
+      actions.open()
     },
     approveAll () {
       this.$f7.dialog.confirm('Add all discovered Things?', 'Add Things', () => {

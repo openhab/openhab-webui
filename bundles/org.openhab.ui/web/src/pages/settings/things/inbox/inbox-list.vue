@@ -132,7 +132,10 @@
 </style>
 
 <script>
+import ThingInboxMixin from '@/pages/settings/things/thing-inbox-mixin'
+
 export default {
+  mixins: [ThingInboxMixin],
   components: {
     'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue')
   },
@@ -256,40 +259,8 @@ export default {
             }
           ],
           [
-            {
-              text: 'Add as Thing',
-              color: 'green',
-              bold: true,
-              onClick: () => {
-                this.$f7.dialog.prompt(`This will create a new Thing of type ${entry.thingTypeUID} with the following name:`,
-                  'Add as Thing',
-                  (name) => {
-                    this.approveEntry(entry, name)
-                  },
-                  null,
-                  entry.label)
-              }
-            },
-            {
-              text: 'Add as Thing (with custom ID)',
-              color: 'blue',
-              bold: true,
-              onClick: () => {
-                this.$f7.dialog.prompt(`This will create a new Thing of type ${entry.thingTypeUID}. You can change the suggested thing ID below:`,
-                  'Add as Thing',
-                  (newThingId) => {
-                    this.$f7.dialog.prompt('Enter the desired name of the new Thing:',
-                      'Add as Thing',
-                      (name) => {
-                        this.approveEntry(entry, name, newThingId)
-                      },
-                      null,
-                      entry.label)
-                  },
-                  null,
-                  entry.thingUID.substring(entry.thingUID.lastIndexOf(':') + 1))
-              }
-            },
+            this.entryActionsAddAsThingButton(entry, this.load),
+            this.entryActionsAddAsThingWithCustomIdButton(entry, this.load),
             {
               text: (!ignored) ? 'Ignore' : 'Unignore',
               color: (!ignored) ? 'orange' : 'blue',
@@ -317,23 +288,6 @@ export default {
       })
 
       actions.open()
-    },
-    approveEntry (entry, name, newThingId) {
-      this.$oh.api.postPlain(`/rest/inbox/${entry.thingUID}/approve${newThingId ? '?newThingId=' + newThingId : ''}`, name).then((res) => {
-        this.$f7.toast.create({
-          text: 'Entry approved',
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-        this.load()
-      }).catch((err) => {
-        this.$f7.toast.create({
-          text: 'Error during thing creation: ' + err,
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-        this.load()
-      })
     },
     ignoreEntry (entry) {
       this.$oh.api.postPlain(`/rest/inbox/${entry.thingUID}/ignore`).then((res) => {
