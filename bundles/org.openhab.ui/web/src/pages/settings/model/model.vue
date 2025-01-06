@@ -168,6 +168,7 @@
 
 <style lang="stylus">
 .semantic-tree-wrapper
+  user-select: none
   padding 0
   .row
     height 100%
@@ -179,6 +180,7 @@
         margin 0
         height auto
 .semantic-tree
+  user-select: none
   margin 0 !important
   border-right 1px solid var(--f7-block-strong-border-color)
 .model-details-sheet
