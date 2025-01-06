@@ -70,7 +70,7 @@
     <jackson.version>2.16.0</jackson.version>
     <karaf.version>4.4.6</karaf.version>
     <ohc.version>5.0.0-SNAPSHOT</ohc.version>
-    <sat.version>0.16.0</sat.version>
+    <sat.version>0.17.0</sat.version>
     <spotless.version>2.43.0</spotless.version>
     <!-- Eclipse Java formatter version 4.26+ does not check test files -->
     <spotless.eclipse.version>4.25</spotless.eclipse.version>
