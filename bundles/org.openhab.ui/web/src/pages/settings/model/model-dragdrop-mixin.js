@@ -94,31 +94,31 @@ export default {
       const parentNode = this.moveState.newParent
       const oldParentNode = this.moveState.oldParent
       if (parentNode.item && node.item.groupNames?.includes(parentNode.item.name)) {
-        this.$f7.dialog.alert(
-          'Group "' + this.itemLabel(parentNode.item) +
+        const message = 'Group "' + this.itemLabel(parentNode.item) +
           '" already contains item "' + this.itemLabel(node.item) + '"'
-        ).open()
+        console.debug('Add rejected: ' + message)
+        this.$f7.dialog.alert(message).open()
         this.restoreModelUpdate()
         return
       }
       if (node.item.type === 'Group' && node.class === '') {
         const semanticNode = this.nestedNodes(node).find((n) => n.class !== '')
         if (semanticNode) {
-          this.$f7.dialog.alert(
-            'Cannot insert non-semantic group "' + this.itemLabel(node.item) +
+          const message = 'Cannot insert non-semantic group "' + this.itemLabel(node.item) +
             '" with semantic child "' + this.itemLabel(semanticNode.item) +
             '" into semantic group "' + this.itemLabel(parentNode.item) + '"'
-          ).open()
+          console.debug('Add rejected: ' + message)
+          this.$f7.dialog.alert(message).open()
           this.restoreModelUpdate()
           return
         }
       }
       if (node.class !== '' && parentNode.class !== '' && oldParentNode?.class === '') {
-        this.$f7.dialog.alert(
-          'Cannot move semantic item "' + this.itemLabel(node.item) +
+        const message = 'Cannot move semantic item "' + this.itemLabel(node.item) +
           '" from non-semantic group "' + this.itemLabel(oldParentNode.item) +
           '" into semantic group "' + this.itemLabel(parentNode.item) + '"'
-        ).open()
+        console.debug('Add rejected:' + message)
+        this.$f7.dialog.alert(message).open()
         this.restoreModelUpdate()
         return
       }
@@ -147,12 +147,12 @@ export default {
       const dimension = typeDef.length > 1 ? typeDef[1] : null
       if ((type === 'Number' || type === 'None') && baseType === 'Number') {
         if (baseDimension && dimension && baseDimension !== dimension) {
-          this.$f7.dialog.alert(
-            'Group dimension "' + baseDimension +
+          const message = 'Group dimension "' + baseDimension +
              '" of group "' + this.itemLabel(parentNode.item) +
              '" not compatible with "' + (node.item.type === 'Group' ? 'group ' : '') + 'item dimension "' + dimension +
              '" of "' + (node.item.type === 'Group' ? 'group ' : '') + '" item "' + this.itemLabel(node.item) + '"'
-          ).open()
+          console.debug('Add rejected: ' + message)
+          this.$f7.dialog.alert(message).open()
           return false
         }
         if (dimension) {
@@ -161,24 +161,24 @@ export default {
             return childTypeDef.length > 1 ? { item: child.item, dimension: childTypeDef[1] } : null
           }).find((child) => { return dimension !== child?.dimension })
           if (childWithDifferentDimension) {
-            this.$f7.dialog.alert(
-              'Group "' + this.itemLabel(parentNode.item) +
+            const message = 'Group "' + this.itemLabel(parentNode.item) +
               '" already contains item "' + this.itemLabel(childWithDifferentDimension.item) +
               '" with dimension "' + childWithDifferentDimension.dimension +
               '" different from group dimension "' + dimension + '"'
-            ).open()
+            console.debug('Add rejected: ' + message)
+            this.$f7.dialog.alert(message).open()
             return false
           }
         }
       }
       const aggregationFunction = parentNode.item?.function?.name
       if (aggregationFunction && !this.aggregationFunctions(type).includes(aggregationFunction)) {
-        this.$f7.dialog.alert(
-          'Group aggreggation function "' + aggregationFunction +
+        const message = 'Group aggreggation function "' + aggregationFunction +
           '" for group "' + this.itemLabel(parentNode.item) +
           '" not compatible with type "' + type +
           '" of item "' + this.itemLabel(node.item) + '"'
-        ).open()
+        console.debug('Add rejected: ' + message)
+        this.$f7.dialog.alert(message).open()
         return false
       }
       return true
@@ -376,8 +376,6 @@ export default {
       }
       const newChildren = this.children
       this.children = newChildren // force setters to update model
-      console.debug('Add - new children:', cloneDeep(this.children))
-      console.debug('Add - added to parent:', cloneDeep(parentNode))
       this.$set(this.moveState, 'canAdd', false)
       this.$set(this.moveState, 'adding', false)
       console.debug('Add - finished, new moveState:', cloneDeep(this.moveState))
@@ -426,8 +424,6 @@ export default {
           node.item.metadata.semantics = null
         }
       }
-      console.debug('Remove - new children:', cloneDeep(this.children))
-      console.debug('Remove - removed from parent:', parentNode)
       this.updateAfterRemove()
       console.debug('Remove - finished, new moveState:', cloneDeep(this.moveState))
     },
