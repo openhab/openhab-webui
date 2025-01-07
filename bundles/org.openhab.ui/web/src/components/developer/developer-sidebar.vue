@@ -60,7 +60,7 @@
             <ul>
               <f7-list-item v-for="thing in pinnedObjects.things" :key="thing.UID" media-item
                             :title="thing.label" :footer="thing.UID">
-                <f7-badge slot="after" :color="thingStatusBadgeColor(thing.statusInfo)" :tooltip="thing.statusInfo.description">
+                <f7-badge slot="after" :color="thingStatusBadgeColor(thing.statusInfo)" :tooltip="thingStatusDescription(thing.statusInfo)">
                   {{ thingStatusBadgeText(thing.statusInfo) }}
                 </f7-badge>
                 <div class="display-flex align-items-flex-end justify-content-flex-end" style="margin-top: 3px" slot="footer">

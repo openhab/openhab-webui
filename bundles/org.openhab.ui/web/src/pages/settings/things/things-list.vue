@@ -117,7 +117,7 @@
                 {{ thing.location }}
                 <f7-icon f7="placemark" color="gray" style="font-size: 16px; width: 16px; height: 16px;" />
               </div>
-              <f7-badge slot="after" :color="thingStatusBadgeColor(thing.statusInfo)" :tooltip="thing.statusInfo.description">
+              <f7-badge slot="after" :color="thingStatusBadgeColor(thing.statusInfo)" :tooltip="thingStatusDescription(thing.statusInfo)">
                 {{ thingStatusBadgeText(thing.statusInfo) }}
               </f7-badge>
               <f7-icon v-if="!thing.editable" slot="after-title" f7="lock_fill" size="1rem" color="gray" />

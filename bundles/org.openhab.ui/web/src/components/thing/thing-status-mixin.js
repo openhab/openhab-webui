@@ -12,6 +12,9 @@ export default {
     thingStatusBadgeText (statusInfo) {
       if (statusInfo.statusDetail !== 'NONE') return ThingStatusLabels[statusInfo.statusDetail]
       return statusInfo.status
+    },
+    thingStatusDescription (statusInfo) {
+      return statusInfo.description || ThingStatusLabels[statusInfo.statusDetail + '.description']
     }
   }
 }
