@@ -53,17 +53,24 @@ export default {
       if (tag === 'Scene') return true
     },
     addTag () {
+      const newTag = this.pendingTag
+      this.pendingTag = ''
       // Block adding of Scene or Script tags in the wrong editor
       // Adding them would otherwise lead to a situation where the rule/scene/script is not visible in the UI
-      if ((!this.inScriptEditor && this.pendingTag === 'Script') ||
-        (!this.inSceneEditor && this.pendingTag === 'Scene')) {
-        this.pendingTag = ''
+      if ((!this.inScriptEditor && newTag === 'Script') ||
+        (!this.inSceneEditor && newTag === 'Scene')) {
         return
       }
-      if (this.pendingTag && this.item.tags.indexOf(this.pendingTag) === -1) {
-        this.item.tags.push(this.pendingTag)
+      if (newTag && this.item.tags.indexOf(newTag) === -1) {
+        if (!this.showSemanticTags && this.isSemanticTag(newTag)) {
+          this.$f7.dialog.alert(
+            `The tag '${newTag}' is a semantic tag. A semantic tag cannot be added here.`,
+            'Cannot add tag'
+          )
+          return
+        }
+        this.item.tags.push(newTag)
       }
-      this.pendingTag = ''
     },
     keyPressed (evt) {
       this.pendingTag = evt.target.value
