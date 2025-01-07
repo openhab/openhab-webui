@@ -134,6 +134,11 @@ export default {
         this.$f7.dialog.alert('Please review the configuration and correct validation errors')
         return
       }
+      if (this.thingCopy) {
+        this.thing.channels.forEach((ch) => {
+          ch.uid = this.thing.UID + ':' + ch.id
+        })
+      }
 
       this.$oh.api.post('/rest/things', this.thing).then(() => {
         this.$f7.toast.create({
