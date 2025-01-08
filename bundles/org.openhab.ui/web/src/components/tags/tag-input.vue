@@ -17,11 +17,9 @@
         placeholder="Add tag"
         :value="pendingTag"
         @input="pendingTag = $event.target.value"
-        @blur="addTag()"
-        @keyPressed.native="keyPressed"
         :input="false"
         class="add-tag-input">
-        <input slot="input" type="text" placeholder="Add tag" @keypress="keyPressed">
+        <input slot="input" type="text" placeholder="Add tag" @keyup="keyUp" @blur="addTag">
       </f7-list-input>
     </f7-list>
   </div>
@@ -52,7 +50,7 @@ export default {
       if (this.inSceneEditor !== true) return false
       if (tag === 'Scene') return true
     },
-    addTag () {
+    addTag (evt) {
       const newTag = this.pendingTag
       this.pendingTag = ''
       // Block adding of Scene or Script tags in the wrong editor
@@ -71,13 +69,12 @@ export default {
         }
         this.item.tags.push(newTag)
       }
+      evt.target.value = ''
     },
-    keyPressed (evt) {
+    keyUp (evt) {
       this.pendingTag = evt.target.value
       if (evt.code === 'Enter') {
-        this.addTag()
-        evt.target.value = ''
-        this.pendingTag = ''
+        this.addTag(evt)
       }
     },
     deleteTag (ev) {
