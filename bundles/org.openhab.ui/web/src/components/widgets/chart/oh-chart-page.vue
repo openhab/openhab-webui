@@ -22,6 +22,11 @@
   &.sheet-opened
     height calc(var(--oh-chart-page-height) - var(--f7-sheet-height)) !important
 
+.sheet-modal-inner
+  .oh-chart-page-chart
+    top 0
+    height calc(var(--oh-chart-page-height) + var(--f7-toolbar-height)) !important
+
 .device-ios /* fix chart rendering issues on iOS >= 17.4 */
   .oh-chart-page-chart
     --oh-chart-page-height calc(100dvh - var(--f7-safe-area-top) - var(--f7-safe-area-bottom) - var(--f7-navbar-height)) /* use dvh because with % the height is calculated to 0px and ECharts fails to render */
