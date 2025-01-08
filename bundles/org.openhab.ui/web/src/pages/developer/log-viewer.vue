@@ -425,11 +425,11 @@ export default {
         this.addLogEntry(event)
       }
 
-      const keepaliveCallback = () => {
+      const heartbeatCallback = () => {
         this.socket.send('[]')
       }
 
-      this.socket = this.$oh.ws.connect('/ws/logs', messageCallback, readyCallback, null, keepaliveCallback, 9)
+      this.socket = this.$oh.ws.connect('/ws/logs', messageCallback, heartbeatCallback, readyCallback, null, 9)
 
       // TEMP
       // for (let i = 0; i < 1980; i++) {
