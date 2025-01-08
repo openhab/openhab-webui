@@ -25,6 +25,9 @@
 .device-ios /* fix chart rendering issues on iOS >= 17.4 */
   .oh-chart-page-chart
     --oh-chart-page-height calc(100dvh - var(--f7-safe-area-top) - var(--f7-safe-area-bottom) - var(--f7-navbar-height)) /* use dvh because with % the height is calculated to 0px and ECharts fails to render */
+  .popup, .popover, .sheet-modal-inner /* do not apply the above fix inside popups, popovers and sheets */
+    .oh-chart-page-chart
+      --oh-chart-page-height calc(100% - var(--f7-safe-area-top) - var(--f7-safe-area-bottom) - var(--f7-navbar-height))
 </style>
 
 <script>
