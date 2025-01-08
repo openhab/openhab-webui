@@ -157,7 +157,7 @@ export default {
       this.sseEvents = []
     },
     startWS () {
-      this.wsClient = this.$oh.ws.connect('/ws/events', (event) => {
+      this.wsClient = this.$oh.ws.events([], (event) => {
         event.time = new Date()
         this.wsEvents.unshift(...[event])
         this.wsEvents.splice(5)
