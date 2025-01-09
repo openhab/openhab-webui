@@ -23,7 +23,7 @@ function arrayToSerialisedString (arr) {
  * Build a event source filter message for the given WebSocket client id and the given sources.
  * Source filters can be used to remove events from a specific source from the event WS.
  * @param {string} id WS client id
- * @param {string[]} sources event sources to filter out
+ * @param {string[]} sources event sources to exclude
  * @return {string}
  */
 function eventSourceFilterMessage (id, sources) {
@@ -39,7 +39,7 @@ function eventSourceFilterMessage (id, sources) {
  * Build an event type filter message for the given WebSocket client id and the given event types.
  * Event type filters can be used to select a sub-set of all available events for the event WS.
  * @param {string} id WS client id
- * @param types
+ * @param {string[]} types event types to include
  * @return {string}
  */
 function eventTypeFilterMessage (id, types) {
@@ -47,6 +47,22 @@ function eventTypeFilterMessage (id, types) {
     type: 'WebSocketEvent',
     topic: 'openhab/websocket/filter/type',
     payload: arrayToSerialisedString(types),
+    source: id
+  })
+}
+
+/**
+ * Build an event topic filter message for the given WebSocket client id and the given event topics.
+ * Event topic filters can be used to select a sub-set of all available events for the event WS.
+ * @param {string} id WS client id
+ * @param {string[]} topics event topics to include
+ * @returns {string}
+ */
+function eventTopicFilterMesssage (id, topics) {
+  return JSON.stringify({
+    type: 'WebSocketEvent',
+    topic: 'openhab/websocket/filter/topic',
+    payload: arrayToSerialisedString(topics),
     source: id
   })
 }
@@ -128,13 +144,13 @@ export default {
    * Connect to the event WebSocket, which provides direct access to the EventBus.
    * This convenience method takes care of the keepalive mechanism as well as filter setup.
    *
-   * @param {string[]} types array of event types to filter by, if empty all events are received
+   * @param {string[]} topics array of event topics to filter by, if empty all events are received
    * @param {fn} messageCallback message callback to handle incoming messages
    * @param {fn} [readyCallback] ready callback
    * @param {fn} [errorCallback] error callback
    * @return {WebSocket}
    */
-  events (types, messageCallback, readyCallback, errorCallback) {
+  events (topics, messageCallback, readyCallback, errorCallback) {
     let socket
 
     const extendedMessageCallback = (event) => {
@@ -144,7 +160,7 @@ export default {
 
     const extendedReadyCallback = (event) => {
       socket.send(eventSourceFilterMessage(socket.id, [socket.id]))
-      if (Array.isArray(types) && types.length > 0) socket.send(eventTypeFilterMessage(socket.id, types))
+      if (Array.isArray(topics) && topics.length > 0) socket.send(eventTopicFilterMesssage(socket.id, topics))
       if (readyCallback) readyCallback(event)
     }
 
