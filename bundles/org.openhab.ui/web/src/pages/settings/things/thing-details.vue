@@ -35,9 +35,7 @@
             <div>
               <strong>{{ (thing.statusInfo.statusDetail !== 'NONE') ? thing.statusInfo.statusDetail : '&nbsp;' }}</strong>
               <br>
-              <div v-if="thing.statusInfo.description">
-                {{ thing.statusInfo.description }}
-              </div>
+              <div v-if="thingStatusDescription(thing.statusInfo)" v-html="thingStatusDescription(thing.statusInfo)" />
             </div>
           </f7-col>
         </f7-block>
