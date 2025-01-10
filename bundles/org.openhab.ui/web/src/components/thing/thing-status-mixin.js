@@ -19,7 +19,7 @@ export default {
     },
     thingStatusDescription (statusInfo) {
       const description = statusInfo.description
-      if (statusInfo.statusDetail === 'CONFIGURATION_PENDING' && description) {
+      if (description) {
         const result = linkRegex.exec(description)
         if (result) {
           const { pretext, path, posttext } = result.groups
