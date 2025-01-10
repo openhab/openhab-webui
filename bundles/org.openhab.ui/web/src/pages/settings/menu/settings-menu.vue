@@ -29,7 +29,7 @@
               link="things/"
               title="Things"
               :badge="(inboxCount > 0) ? inboxCount : undefined"
-              :after="(inboxCount > 0) ? undefined : thingsCount"
+              :after="(inboxCount > 0) ? (thingsCount + '+') : thingsCount"
               :badge-color="inboxCount ? 'red' : 'blue'"
               :footer="objectsSubtitles.things">
               <f7-icon slot="media" f7="lightbulb" color="gray" />
