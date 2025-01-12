@@ -66,6 +66,7 @@ export default {
     },
     onStart (event) {
       console.debug('Drag start event:', event)
+      this.$set(this.localMoveState, 'moving', true)
       this.$set(this.localMoveState, 'widget', this.widget.slots.widgets[event.oldIndex])
       this.$set(this.localMoveState, 'oldList', this.widget.slots.widgets)
       this.$set(this.localMoveState, 'oldIndex', event.oldIndex)
@@ -73,11 +74,13 @@ export default {
     onChange (event) {
       console.debug('Drag change event:', event)
       if (event.added) {
+        this.$set(this.localMoveState, 'moving', false)
         this.validateMove(event.added.newIndex)
       }
     },
     onEnd (event) {
       console.debug('Drag end event:', event)
+      this.$set(this.localMoveState, 'moving', false)
       this.validateMove(event.newIndex)
     },
     validateMove (newIndex) {
@@ -123,7 +126,7 @@ export default {
       return this.widget.slots?.widgets || []
     },
     canHaveChildren () {
-      return this.LINKABLE_WIDGET_TYPES.includes(this.widget.component)
+      return this.LINKABLE_WIDGET_TYPES.includes(this.widget.component) && (this.children.length > 0 || this.localMoveState.moving)
     }
   }
 }
