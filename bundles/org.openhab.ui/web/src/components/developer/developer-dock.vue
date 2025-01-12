@@ -13,7 +13,7 @@
       <f7-button :active="activeToolTab === 'pin'" icon-f7="pin_fill" icon-size="18" @click="$f7.emit('selectDeveloperDock',{'dock': 'tools','toolTab': 'pin'})" tooltip="Pinned Objects" />
       <f7-button :active="activeToolTab === 'events'" icon-f7="bolt_horizontal_fill" icon-size="18" @click="$f7.emit('selectDeveloperDock',{'dock': 'tools','toolTab': 'events'})" tooltip="Event Monitor" />
       <f7-button :active="activeToolTab === 'scripting'" icon-f7="pencil_ellipsis_rectangle" icon-size="18" @click="$f7.emit('selectDeveloperDock',{'dock': 'tools','toolTab': 'scripting'})" tooltip="Code Tools" />
-      <f7-button :active="activeToolTab === 'tools'" icon-f7="rectangle_stack_badge_plus" icon-size="18" @click="$f7.emit('selectDeveloperDock',{'dock': 'tools','toolTab': 'tools'})" tooltip="Create..." />
+      <f7-button :active="activeToolTab === 'tools'" icon-f7="rectangle_stack_badge_plus" icon-size="18" @click="$f7.emit('selectDeveloperDock',{'dock': 'tools','toolTab': 'tools'})" tooltip="Create ..." />
     </f7-segmented>
     <f7-segmented v-if="dockView === 'help'" strong tag="p" style="margin-right: calc(var(--f7-searchbar-inner-padding-right) + var(--f7-safe-area-right)); margin-left: calc(var(--f7-searchbar-inner-padding-left) + var(--f7-safe-area-left)); margin-top: 0">
       <f7-button :active="activeHelpTab === 'current'" icon-f7="doc_richtext" icon-size="18" @click="$f7.emit('selectDeveloperDock',{'dock': 'help','helpTab': 'current'})" tooltip="Page Help" />
