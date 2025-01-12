@@ -253,6 +253,7 @@ import { AddonIcons, AddonTitles, AddonSuggestionLabels, AddonConnectionTypes, A
 
 export default {
   mixins: [AddonStoreMixin],
+  props: ['searchFor'],
   components: {
     AddonsSection
   },
@@ -326,9 +327,12 @@ export default {
           })
           this.ready = true
           this.startEventSource()
-          setTimeout(() => {
+          this.$nextTick(() => {
             this.$f7.lazy.create('.page-addon-store')
-          }, 100)
+            if (this.searchFor) {
+              this.$refs.storeSearchbar.search(this.searchFor)
+            }
+          })
         })
       })
     },

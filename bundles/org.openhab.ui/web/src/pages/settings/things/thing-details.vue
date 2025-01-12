@@ -136,7 +136,8 @@
         <f7-block class="block-narrow" v-if="ready">
           <f7-col>
             <f7-list>
-              <f7-list-button color="blue" title="Copy Thing" @click="copyThing" />
+              <f7-list-button v-if="thing.statusInfo.statusDetail === 'HANDLER_MISSING_ERROR'" color="blue" title="Install Binding" @click="installBinding" />
+              <f7-list-button v-if="!error" color="blue" title="Copy Thing" @click="copyThing" />
               <f7-list-button v-if="editable" color="red" title="Delete Thing" @click="deleteThing" />
             </f7-list>
           </f7-col>
@@ -648,6 +649,15 @@ export default {
           })
         }
       )
+    },
+    installBinding () {
+      this.$f7router.navigate({
+        url: '/addons/binding/'
+      }, {
+        props: {
+          searchFor: this.thing.UID.split(':')[0]
+        }
+      })
     },
     toggleDisabled () {
       const enable = (this.thing.statusInfo.statusDetail === 'DISABLED')
