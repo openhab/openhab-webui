@@ -95,7 +95,7 @@
             </f7-list-button>
           </f7-list>
           <p class="developer-sidebar-tip text-align-center">
-            Tip: Use the developer sidebar (Shift+Alt+D) to search for usages of this Item
+            Tip: Use the developer sidebar (Shift+Alt+D) to <f7-link text="search for usages of this Item" @click="searchInSidebar" />
           </p>
         </f7-col>
       </f7-row>
@@ -227,6 +227,9 @@ export default {
           })
         }
       )
+    },
+    searchInSidebar () {
+      this.$f7.emit('selectDeveloperDock', { 'dock': 'tools', 'toolTab': 'pin', 'searchFor': this.item.name })
     }
   }
 }
