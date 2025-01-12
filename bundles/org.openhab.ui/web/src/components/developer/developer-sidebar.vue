@@ -395,7 +395,12 @@ export default {
     SearchResults,
     ExpressionTester
   },
-  props: ['activeToolTab'],
+  props: ['activeToolTab', 'searchFor'],
+  watch: {
+    searchFor (val) {
+      if (val) this.$refs.searchbar.search(val)
+    }
+  },
   data () {
     return {
       searchQuery: '',
@@ -453,6 +458,7 @@ export default {
     this.$nextTick(() => {
       if (this.$device.desktop && this.$refs.searchbar) {
         this.$refs.searchbar.f7Searchbar.$inputEl.focus()
+        if (this.searchFor) this.$refs.searchbar.search(this.searchFor)
       }
     })
   },

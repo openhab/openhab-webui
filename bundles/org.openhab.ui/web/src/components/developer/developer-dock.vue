@@ -21,7 +21,7 @@
       <f7-button :active="activeHelpTab === 'faq'" icon-f7="question_diamond_fill" icon-size="18" @click="$f7.emit('selectDeveloperDock',{'dock': 'help','helpTab': 'faq'})" tooltip="FAQ" />
       <f7-button :active="activeHelpTab === 'quick'" icon-f7="cursor_rays" icon-size="18" @click="$f7.emit('selectDeveloperDock',{'dock': 'help','helpTab': 'quick'})" tooltip="Quick Start" />
     </f7-segmented>
-    <developer-sidebar v-if="dockView === 'tools'" :activeToolTab="activeToolTab" />
+    <developer-sidebar v-if="dockView === 'tools'" :activeToolTab="activeToolTab" :searchFor="searchFor" />
     <help-sidebar v-if="dockView === 'help'" :activeHelpTab="activeHelpTab" />
   </f7-page>
 </template>
@@ -47,7 +47,7 @@ import DeveloperSidebar from './developer-sidebar.vue'
 import HelpSidebar from './help-sidebar.vue'
 
 export default {
-  props: ['dock', 'helpTab', 'toolTab'],
+  props: ['dock', 'helpTab', 'toolTab', 'searchFor'],
   components: {
     DeveloperSidebar,
     HelpSidebar

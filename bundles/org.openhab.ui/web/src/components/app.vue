@@ -148,7 +148,7 @@
     </f7-panel>
 
     <f7-panel v-if="showDeveloperDock" right :visible-breakpoint="1280" resizable>
-      <developer-dock :dock="activeDock" :helpTab="activeHelpTab" :toolTab="activeToolTab" />
+      <developer-dock :dock="activeDock" :helpTab="activeHelpTab" :toolTab="activeToolTab" :searchFor="developerSearch" />
     </f7-panel>
 
     <f7-block v-if="!ready && communicationFailureMsg" class="block-narrow">
@@ -384,6 +384,7 @@ export default {
       activeDock: 'tools',
       activeToolTab: 'pin',
       activeHelpTab: 'current',
+      developerSearch: null,
       currentUrl: ''
     }
   },
@@ -576,6 +577,7 @@ export default {
         if (dockOpts.dock) this.activeDock = dockOpts.dock
         if (dockOpts.helpTab) this.activeHelpTab = dockOpts.helpTab
         if (dockOpts.toolTab) this.activeToolTab = dockOpts.toolTab
+        if (dockOpts.searchFor) this.developerSearch = dockOpts.searchFor
       }
       if (!this.showDeveloperDock) this.toggleDeveloperDock()
     },
