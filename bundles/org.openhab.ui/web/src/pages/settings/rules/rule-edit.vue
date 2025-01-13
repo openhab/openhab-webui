@@ -99,9 +99,14 @@
               </f7-button>
             </div>
             <div v-for="section in ['triggers', 'actions', 'conditions']" :key="section">
-              <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)" v-if="isEditable || rule[section].length > 0">
-                {{ SECTION_LABELS[section][0] }}
-              </f7-block-title>
+              <template v-if="isEditable || rule[section].length > 0">
+                <f7-block-title medium class="no-margin-bottom">
+                  {{ SECTION_LABELS[section][0] }}
+                </f7-block-title>
+                <f7-block-footer class="no-margin-top margin-horizontal" style="margin-bottom: var(--f7-list-margin-vertical)">
+                  {{ SECTION_LABELS[section][1] }}
+                </f7-block-footer>
+              </template>
               <f7-list sortable swipeout media-list @sortable:sort="(ev) => reorderModule(ev, section)">
                 <f7-list-item media
                               :title="mod.label || suggestedModuleTitle(mod, null, section)"
@@ -118,7 +123,7 @@
                 </f7-list-item>
               </f7-list>
               <f7-list v-if="isEditable">
-                <f7-list-item link no-chevron media-item :color="($theme.dark) ? 'black' : 'white'" :subtitle="SECTION_LABELS[section][1]" @click="addModule(section)">
+                <f7-list-item link no-chevron media-item :color="($theme.dark) ? 'black' : 'white'" :subtitle="SECTION_LABELS[section][2]" @click="addModule(section)">
                   <f7-icon slot="media" color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
                 </f7-list-item>
                 <!-- <f7-list-button :color="(showModuleControls) ? 'gray' : 'blue'" :title="sectionLabels[section][1]"></f7-list-button> -->
@@ -202,9 +207,9 @@ export default {
   data () {
     return {
       SECTION_LABELS: {
-        triggers: ['When', 'Add Trigger'],
-        actions: ['Then', 'Add Action'],
-        conditions: ['But only if', 'Add Condition']
+        triggers: ['When', 'Events that cause this rule to run', 'Add Trigger'],
+        actions: ['Then', 'Actions to take when this rule runs', 'Add Action'],
+        conditions: ['But only if', 'Conditions that must be matched for the actions of this rule to run', 'Add Condition']
       },
 
       ready: false,
