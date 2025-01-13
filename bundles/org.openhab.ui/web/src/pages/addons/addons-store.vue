@@ -309,6 +309,10 @@ export default {
       this.stopEventSource()
     },
     load () {
+      if (this.searchFor) {
+        // Show this in the searchbar while the page is loading
+        this.$refs.storeSearchbar.f7Searchbar.$inputEl.val(this.searchFor)
+      }
       this.stopEventSource()
       this.$oh.api.get('/rest/services/org.openhab.i18n/config').then((data) => {
         if (data.region) {
