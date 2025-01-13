@@ -11,7 +11,7 @@
 
     <f7-block v-if="ready" class="block-narrow">
       <f7-col>
-        <thing-general-settings :thing="thing" :thing-type="thingType" :createMode="true" :ready="true" />
+        <thing-general-settings :thing="thing" :thing-type="thingType" :createMode="true" :things="things" :ready="true" />
         <f7-block-title medium>
           {{ thingType.label }}
         </f7-block-title>
@@ -61,13 +61,15 @@
 import ConfigSheet from '@/components/config/config-sheet.vue'
 
 import ThingGeneralSettings from '@/components/thing/thing-general-settings.vue'
+import ThingMixin from '@/components/thing/thing-mixin'
 
 export default {
+  mixins: [ThingMixin],
+  props: ['thingTypeId', 'thingCopy'],
   components: {
     ConfigSheet,
     ThingGeneralSettings
   },
-  props: ['thingTypeId', 'thingCopy'],
   data () {
     if (this.thingCopy) {
       delete this.thingCopy.editable
@@ -77,6 +79,7 @@ export default {
     return {
       ready: false,
       currentTab: 'info',
+      things: [],
       thing: this.thingCopy || {
         UID: '',
         label: '',
@@ -118,12 +121,20 @@ export default {
           }
         }
 
-        this.ready = true
+        this.$oh.api.get('/rest/things?summary=true&staticDataOnly=true').then((things) => {
+          this.things = things
+          this.ready = true
+        })
       })
     },
     save () {
       if (!this.thing.ID) {
         this.$f7.dialog.alert('Please give a unique identifier')
+        return
+      }
+      const uidValidationError = this.validateThingUID(this.thing.UID, this.thing.ID)
+      if (uidValidationError !== '') {
+        this.$f7.dialog.alert('Invalid Thing ID: ' + uidValidationError)
         return
       }
       if (!this.thing.label) {
@@ -140,14 +151,18 @@ export default {
         })
       }
 
-      this.$oh.api.post('/rest/things', this.thing).then(() => {
-        this.$f7.toast.create({
-          text: 'Thing created',
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-      })
-      setTimeout(() => { this.$f7router.navigate('/settings/things/', { reloadCurrent: true }) }, 300)
+      this.$oh.api.post('/rest/things', this.thing)
+        .then(() => {
+          this.$f7.toast.create({
+            text: 'Thing created',
+            destroyOnClose: true,
+            closeTimeout: 2000
+          }).open()
+          setTimeout(() => { this.$f7router.navigate('/settings/things/', { reloadCurrent: true }) }, 300)
+        })
+        .catch((error) => {
+          this.$f7.dialog.alert('Error creating Thing: ' + error)
+        })
     }
   }
 }
