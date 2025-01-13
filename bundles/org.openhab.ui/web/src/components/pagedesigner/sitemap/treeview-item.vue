@@ -4,10 +4,11 @@
                     :textColor="iconColor" :color="'blue'"
                     :selected="selected && selected === widget"
                     :opened="!widget.closed"
+                    :toggle="canHaveChildren"
                     @treeview:open="setWidgetClosed(false)"
                     @treeview:close="setWidgetClosed(true)"
                     @click="select">
-    <draggable v-if="canHaveChildren" :list="children" group="sitemap-treeview" animation="150" fallbackOnBody="true" swapThreshold="0.6"
+    <draggable :list="children" group="sitemap-treeview" animation="150" fallbackOnBody="true" swapThreshold="0.6"
                @start="onStart" @change="onChange" @end="onEnd">
       <sitemap-treeview-item class="sitemap-treeview-item" v-for="(childwidget, idx) in children"
                              :key="idx"
@@ -126,7 +127,7 @@ export default {
       return this.widget.slots?.widgets || []
     },
     canHaveChildren () {
-      return this.LINKABLE_WIDGET_TYPES.includes(this.widget.component) && (this.children.length > 0 || this.localMoveState.moving)
+      return (this.LINKABLE_WIDGET_TYPES.includes(this.widget.component) && (this.children.length > 0 || this.localMoveState.moving)) === true
     }
   }
 }
