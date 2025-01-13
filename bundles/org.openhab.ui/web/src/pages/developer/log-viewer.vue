@@ -467,7 +467,7 @@ export default {
           icon = 'exclamationmark_octagon_fill'
           break
       }
-      tr.innerHTML = '<td class="sticky"><i class="icon f7-icons">' + icon + `</i> ${entity.time}<span class="milliseconds">${entity.milliseconds}</span></td>` +
+      tr.innerHTML = '<td class="sticky"><i class="icon f7-icons" style="font-size: 18px;">' + icon + `</i> ${entity.time}<span class="milliseconds">${entity.milliseconds}</span></td>` +
         `<td>${entity.level}</td>` +
         `<td>${entity.loggerName}</td>` +
         `<td class="nowrap">${this.highlightText(entity.message)}</td>`
