@@ -452,10 +452,10 @@ export default {
       let icon = 'question_diamond'
       switch (entity.level) {
         case 'TRACE':
-          icon = 'arrow_down'
+          icon = 'line_horizontal_3'
           break
         case 'DEBUG':
-          icon = 'minus'
+          icon = 'ant'
           break
         case 'INFO':
           icon = 'info_circle'
