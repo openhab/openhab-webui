@@ -144,6 +144,7 @@ export default {
       ready: false,
       loading: false,
       initSearchbar: false,
+      things: [], // for validating thingUIDs against existing things
       inbox: [],
       // indexedInbox: {},
       selectedItems: [],
@@ -194,7 +195,6 @@ export default {
         this.inbox = data.sort((a, b) => a.label.localeCompare(b.label))
         this.initSearchbar = true
         this.loading = false
-        this.ready = true
         setTimeout(() => {
           this.$refs.listIndex.update()
           this.$nextTick(() => {
@@ -202,6 +202,10 @@ export default {
               this.$refs.searchbar.f7Searchbar.$inputEl[0].focus()
             }
           })
+        })
+        this.$oh.api.get('/rest/things?summary=true&staticDataOnly=true').then((things) => {
+          this.things = things
+          this.ready = true
         })
       })
     },
@@ -260,7 +264,6 @@ export default {
           ],
           [
             this.entryActionsAddAsThingButton(entry, this.load),
-            this.entryActionsAddAsThingWithCustomIdButton(entry, this.load),
             {
               text: (!ignored) ? 'Ignore' : 'Unignore',
               color: (!ignored) ? 'orange' : 'blue',
@@ -417,9 +420,12 @@ export default {
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
-        this.selectedItems = []
         dialog.close()
-        this.load()
+        this.$f7router.navigate('/settings/things/', {
+          props: {
+            searchFor: this.selectedItems.join(',')
+          }
+        })
       }).catch((err) => {
         dialog.close()
         this.load()
