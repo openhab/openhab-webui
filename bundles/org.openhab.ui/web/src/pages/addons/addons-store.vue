@@ -14,7 +14,6 @@
         ref="storeSearchbar"
         class="searchbar-store"
         custom-search
-        search-in=".item-title"
         :placeholder="'Search ' + Object.assign({ main: 'all add-ons' }, AddonTitles)[currentTab].toLowerCase()"
         :disable-button="!$theme.aurora"
         @searchbar:search="search"
