@@ -158,7 +158,7 @@ export default {
             destroyOnClose: true,
             closeTimeout: 2000
           }).open()
-          setTimeout(() => { this.$f7router.navigate('/settings/things/', { reloadCurrent: true }) }, 300)
+          this.$f7router.navigate('/settings/things/' + this.thing.UID)
         })
         .catch((error) => {
           this.$f7.dialog.alert('Error creating Thing: ' + error)
