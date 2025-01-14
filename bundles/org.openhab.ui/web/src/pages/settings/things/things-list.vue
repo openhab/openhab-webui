@@ -168,6 +168,7 @@ import ClipboardIcon from '@/components/util/clipboard-icon.vue'
 
 export default {
   mixins: [thingStatus],
+  props: ['searchFor'],
   components: {
     'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue'),
     ClipboardIcon
@@ -267,6 +268,10 @@ export default {
       if (this.initSeachbar) this.$f7.data.lastThingsSearchQuery = this.$refs.searchbar?.f7Searchbar.query
       this.initSeachbar = false
 
+      if (this.searchFor) {
+        this.$refs.searchbar?.f7Searchbar.$inputEl.val(this.searchFor)
+      }
+
       this.$oh.api.get('/rest/things?summary=true').then((data) => {
         this.things = data.sort((a, b) => (a.label || a.UID).localeCompare(b.label || a.UID))
         this.filteredThings = this.things
@@ -278,7 +283,7 @@ export default {
           if (this.$device.desktop && this.$refs.searchbar) {
             this.$refs.searchbar.f7Searchbar.$inputEl[0].focus()
           }
-          this.$refs.searchbar?.f7Searchbar.search(this.$f7.data.lastThingsSearchQuery || '')
+          this.$refs.searchbar?.f7Searchbar.search(this.searchFor || this.$f7.data.lastThingsSearchQuery || '')
         })
         if (!this.eventSource) this.startEventSource()
       })
