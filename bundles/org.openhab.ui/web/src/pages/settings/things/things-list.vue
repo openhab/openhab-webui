@@ -11,8 +11,10 @@
           v-if="initSeachbar"
           ref="searchbar"
           class="searchbar-things"
-          search-container=".contacts-list"
-          search-in=".item-inner"
+          custom-search
+          @searchbar:search="search"
+          @searchbar:clear="clearSearch"
+          @searchbar:disable="clearSearch"
           :placeholder="searchPlaceholder"
           :disable-button="!$theme.aurora" />
       </f7-subnavbar>
@@ -46,11 +48,24 @@
       :scroll-list="true"
       :label="true" />
 
-    <f7-list class="searchbar-not-found">
-      <f7-list-item title="Nothing found" />
-    </f7-list>
-
     <f7-block class="block-narrow">
+      <f7-col v-show="ready">
+        <f7-block-title>
+          <span>{{ thingsCount }} <template v-if="searchQuery">of {{ things.length }} </template>Things<template v-if="searchQuery"> found</template></span>
+          <template v-if="showCheckboxes && filteredThings.length">
+            -
+            <f7-link @click="selectDeselectAll()" :text="allSelected ? 'Deselect all' : 'Select all'" />
+          </template>
+          <template v-if="groupBy === 'location'">
+            <div v-if="!$device.desktop && $f7.width < 1024" style="text-align:right; color:var(--f7-block-text-color); font-weight: normal" class="float-right">
+              <f7-checkbox :checked="showNoLocation" @change="toggleShowNoLocation" /> <label @click="toggleShowNoLocation" style="cursor:pointer">Show no location</label>
+            </div>
+            <div v-else style="text-align:right; color:var(--f7-block-text-color); font-weight: normal" class="float-right">
+              <label @click="toggleShowNoLocation" style="cursor:pointer">Show no location</label> <f7-checkbox :checked="showNoLocation" @change="toggleShowNoLocation" />
+            </div>
+          </template>
+        </f7-block-title>
+      </f7-col>
       <!-- skeleton for not ready -->
       <f7-col v-if="!ready">
         <f7-block-title>&nbsp;Loading...</f7-block-title>
@@ -69,17 +84,6 @@
       </f7-col>
 
       <f7-col v-else-if="things.length > 0">
-        <f7-block-title class="searchbar-hide-on-search">
-          <span>{{ thingsCount }} Things</span>
-          <template v-if="groupBy === 'location'">
-            <div v-if="!$device.desktop && $f7.width < 1024" style="text-align:right; color:var(--f7-block-text-color); font-weight: normal" class="float-right">
-              <f7-checkbox :checked="showNoLocation" @change="toggleShowNoLocation" /> <label @click="toggleShowNoLocation" style="cursor:pointer">Show no location</label>
-            </div>
-            <div v-else style="text-align:right; color:var(--f7-block-text-color); font-weight: normal" class="float-right">
-              <label @click="toggleShowNoLocation" style="cursor:pointer">Show no location</label> <f7-checkbox :checked="showNoLocation" @change="toggleShowNoLocation" />
-            </div>
-          </template>
-        </f7-block-title>
         <div class="searchbar-found padding-left padding-right">
           <f7-segmented strong tag="p">
             <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')">
@@ -103,6 +107,7 @@
               class="thinglist-item"
               :checkbox="showCheckboxes"
               :checked="isChecked(thing.UID)"
+              :value="thing.UID"
               @click.ctrl="(e) => ctrlClick(e, thing)"
               @click.meta="(e) => ctrlClick(e, thing)"
               @click.exact="(e) => click(e, thing)"
@@ -174,6 +179,8 @@ export default {
       loading: false,
       things: [],
       inbox: [],
+      searchQuery: null,
+      filteredThings: [],
       selectedItems: [],
       showCheckboxes: false,
       groupBy: 'alphabetical',
@@ -186,8 +193,9 @@ export default {
   },
   computed: {
     indexedThings () {
+      const things = this.filteredThings
       if (this.groupBy === 'alphabetical') {
-        return this.things.reduce((prev, thing, i, things) => {
+        return things.reduce((prev, thing, i, things) => {
           const initial = (thing.label || thing.UID).substring(0, 1).toUpperCase()
           if (!prev[initial]) {
             prev[initial] = []
@@ -197,7 +205,7 @@ export default {
           return prev
         }, {})
       } else if (this.groupBy === 'binding') {
-        const bindingGroups = this.things.reduce((prev, thing, i, things) => {
+        const bindingGroups = things.reduce((prev, thing, i, things) => {
           const binding = thing.thingTypeUID.split(':')[0]
           if (!prev[binding]) {
             prev[binding] = []
@@ -211,7 +219,7 @@ export default {
           return objEntries
         }, {})
       } else {
-        const locationGroups = this.things.reduce((prev, thing, i, things) => {
+        const locationGroups = things.reduce((prev, thing, i, things) => {
           if (!thing.location && !this.showNoLocation) return prev
           const location = thing.location || '- No location -'
           if (!prev[location]) {
@@ -237,6 +245,9 @@ export default {
     inboxCount () {
       return this.inbox.length
     },
+    allSelected () {
+      return this.selectedItems.length === this.filteredThings.length
+    },
     searchPlaceholder () {
       return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     }
@@ -258,6 +269,7 @@ export default {
 
       this.$oh.api.get('/rest/things?summary=true').then((data) => {
         this.things = data.sort((a, b) => (a.label || a.UID).localeCompare(b.label || a.UID))
+        this.filteredThings = this.things
         this.initSeachbar = true
         this.loading = false
         this.ready = true
@@ -294,6 +306,31 @@ export default {
     },
     toggleCheck () {
       this.showCheckboxes = !this.showCheckboxes
+    },
+    selectDeselectAll () {
+      if (this.selectedItems.length === this.filteredThings.length) {
+        this.selectedItems = []
+      } else {
+        this.selectedItems = this.filteredThings.map((t) => t.UID)
+      }
+    },
+    search (searchbar, query, previousQuery) {
+      this.searchQuery = query.trim().toLowerCase()
+      const searchTerms = this.searchQuery.split(',').map(s => s.trim()).filter(s => s)
+      if (!searchTerms.length) {
+        this.clearSearch()
+        return
+      }
+      this.filteredThings = this.things.filter((thing) => {
+        let haystack = [thing.UID, thing.label, thing.location, this.thingStatusBadgeText(thing.statusInfo)]
+          .filter(h => h).join('|').toLowerCase()
+        return searchTerms.some(t => haystack.includes(t))
+      })
+      this.selectedItems = this.selectedItems.filter((i) => this.filteredThings.find((thing) => thing.UID === i))
+    },
+    clearSearch () {
+      this.searchQuery = null
+      this.filteredThings = this.things
     },
     isChecked (item) {
       return this.selectedItems.indexOf(item) >= 0
