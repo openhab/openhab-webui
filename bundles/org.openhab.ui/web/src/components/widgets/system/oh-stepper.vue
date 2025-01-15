@@ -50,9 +50,8 @@ export default {
     toStepFixed (value) {
       // uses the number of decimals in the step config to round the provided number
       if (!this.config.step) return value
-      const nbDecimals = Number(this.config.step).toString().replace(',', '.').split('.')[1]
-      // do NOT convert to number, instead return string, otherwise formatting wouldn't work
-      return parseFloat(value).toFixed(nbDecimals ? nbDecimals.length : 0)
+      const nbDecimals = Number(this.config.step).toString().replace(',', '.').split('.')[1]?.length
+      return parseFloat(Number(value).toFixed(nbDecimals ?? 0))
     },
     onPlusMinusClick () {
       setTimeout(() => {
