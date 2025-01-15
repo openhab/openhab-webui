@@ -225,11 +225,26 @@
   td.sticky
     position sticky
     left 0
+    width 105px
     color black
     background #f1f1f1
     z-index 1
     white-space nowrap
     overflow hidden
+
+  td.level
+    width 50px
+
+  td.logger
+    width 280px
+
+  span.logger
+    width 280px
+    display block
+    direction rtl
+    overflow hidden
+    text-overflow ellipsis
+    white-space nowrap
 
   tr.table-rows
     height 31px
@@ -335,6 +350,7 @@ export default {
       batchLogs: [],
       nextId: 0,
       maxEntries: 2000,
+      maxLoggerNameLength: 40,
       logStart: '--:--:--',
       logEnd: '--:--:--',
       currentHighlightColorItemIndex: null,
@@ -468,8 +484,8 @@ export default {
           break
       }
       tr.innerHTML = '<td class="sticky"><i class="icon f7-icons" style="font-size: 18px;">' + icon + `</i> ${entity.time}<span class="milliseconds">${entity.milliseconds}</span></td>` +
-        `<td>${entity.level}</td>` +
-        `<td>${entity.loggerName}</td>` +
+        `<td class="level">${entity.level}</td>` +
+        `<td class="logger"><span class="logger">${entity.loggerName}</span></td>` +
         `<td class="nowrap">${this.highlightText(entity.message)}</td>`
       return tr
     },
