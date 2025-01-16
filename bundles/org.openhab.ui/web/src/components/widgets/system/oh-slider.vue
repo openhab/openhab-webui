@@ -55,8 +55,8 @@ export default {
     },
     toStepFixed (value) {
       // uses the number of decimals in the step config to round the provided number
-      const nbDecimals = this.config.step ? Number(this.config.step).toString().replace(',', '.').split('.')[1] : 0
-      return parseFloat(Number(value).toFixed(nbDecimals))
+      const nbDecimals = this.config.step ? Number(this.config.step).toString().replace(',', '.').split('.')[1]?.length : 0
+      return parseFloat(Number(value).toFixed(nbDecimals ?? 0))
     },
     onChange (newValue) {
       if (isNaN(this.value)) return
