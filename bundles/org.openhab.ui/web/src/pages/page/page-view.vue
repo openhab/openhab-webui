@@ -4,12 +4,13 @@
       <f7-nav-left v-if="!showBackButton">
         <f7-link icon-ios="f7:menu" icon-aurora="f7:menu" icon-md="material:menu" panel-open="left" />
       </f7-nav-left>
-      <f7-nav-title>{{ (page) ? page.config.label : '' }}</f7-nav-title>
+      <f7-nav-title>{{ pageLabel }}</f7-nav-title>
       <f7-nav-right>
         <f7-link v-if="isAdmin" icon-md="material:edit" @click="editPage" class="edit-page-button">
           {{ $theme.md ? '' : $t('page.navbar.edit') }}
         </f7-link>
         <f7-link v-if="fullscreenIcon" class="fullscreen-icon-navbar" :icon-f7="fullscreenIcon" @click="toggleFullscreen" />
+        <div v-if="!showBackButton && !isAdmin && !fullscreenIcon" style="width: 44px; height: 44px;" />
       </f7-nav-right>
     </f7-navbar>
     <template v-else>
@@ -67,7 +68,9 @@ export default {
   data () {
     return {
       currentTab: this.initialTab ? Number(this.initialTab) : 0,
-      fullscreen: this.$fullscreen.getState()
+      fullscreen: this.$fullscreen.getState(),
+
+      vars: {}
     }
   },
   watch: {
@@ -97,6 +100,9 @@ export default {
     pageType () {
       return this.getPageType(this.page)
     },
+    pageLabel () {
+      return this.page?.config.label
+    },
     isAdmin () {
       return this.page && this.$store.getters.isAdmin
     },
@@ -109,12 +115,13 @@ export default {
       return false
     },
     showBackButton () {
-      return this.deep && (!this.page || !this.page.config.sidebar)
+      return this.deep && !this.page?.config.sidebar
     },
     fullscreenIcon () {
-      if (this.page && this.$fullscreen.support && this.page.config.showFullscreenIcon) {
+      if (this.$fullscreen.support && this.page?.config.showFullscreenIcon) {
         return this.fullscreen ? 'rectangle_arrow_up_right_arrow_down_left_slash' : 'rectangle_arrow_up_right_arrow_down_left'
-      } else return null
+      }
+      return null
     }
   },
   methods: {
