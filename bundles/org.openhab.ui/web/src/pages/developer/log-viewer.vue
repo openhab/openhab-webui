@@ -350,7 +350,6 @@ export default {
       batchLogs: [],
       nextId: 0,
       maxEntries: 2000,
-      maxLoggerNameLength: 40,
       logStart: '--:--:--',
       logEnd: '--:--:--',
       currentHighlightColorItemIndex: null,
