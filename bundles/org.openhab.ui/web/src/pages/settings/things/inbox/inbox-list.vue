@@ -261,6 +261,7 @@ export default {
           [
             this.entryActionsAddAsThingButton(entry, this.load),
             this.entryActionsAddAsThingWithCustomIdButton(entry, this.load),
+            this.entryActionsCopyThingDefinitionButton(entry),
             {
               text: (!ignored) ? 'Ignore' : 'Unignore',
               color: (!ignored) ? 'orange' : 'blue',
