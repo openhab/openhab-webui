@@ -242,6 +242,7 @@
     width 280px
     display block
     direction rtl
+    text-align left
     overflow hidden
     text-overflow ellipsis
     white-space nowrap
