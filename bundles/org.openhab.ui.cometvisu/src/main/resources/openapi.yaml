@@ -238,7 +238,7 @@ paths:
           content:
             application/json:
               schema:
-                oneOf:
+                allOf:
                   - $ref: '#/components/schemas/HiddenConfig'
                   - $ref: '#/components/schemas/ConfigSection'
                   - $ref: '#/components/schemas/ConfigOptionValue'
@@ -477,7 +477,7 @@ components:
       additionalProperties:
         type: string
     ReadResponse:
-      oneOf:
+      allOf:
         - $ref: '#/components/schemas/DirContent'
     DirContent:
       type: array
