@@ -217,7 +217,11 @@ export default {
         }
 
         this.dirty = false
-        this.$f7router.back()
+        if (this.createMode) {
+          this.$f7router.navigate('/settings/items/' + this.item.name)
+        } else {
+          this.$f7router.back()
+        }
       }).catch((err) => {
         this.$f7.toast.create({
           text: 'Item not saved: ' + err,
