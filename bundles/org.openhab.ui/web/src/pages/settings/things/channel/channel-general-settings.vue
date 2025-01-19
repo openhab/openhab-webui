@@ -23,6 +23,13 @@
   </f7-block>
 </template>
 
+<style lang="stylus">
+.list
+  .item-subtitle
+    overflow-wrap break-word
+    white-space inherit
+</style>
+
 <script>
 import ClipboardIcon from '@/components/util/clipboard-icon.vue'
 export default {
