@@ -370,7 +370,7 @@ export default {
         results = results.filter((a) => a.type === this.currentTab)
       }
       query = query.toLowerCase()
-      results = results.filter((a) => a.id.includes(query) || a.label.toLowerCase().includes(query))
+      results = results.filter((a) => a.id.includes(query) || a.label.toLowerCase().includes(query) || a.description?.toLowerCase()?.includes(query))
 
       this.$set(this, 'query', query)
       this.$set(this, 'searchResults', results)
