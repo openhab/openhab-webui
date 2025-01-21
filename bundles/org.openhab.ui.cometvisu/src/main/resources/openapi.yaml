@@ -238,7 +238,7 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
+                oneOf:
                   - $ref: '#/components/schemas/HiddenConfig'
                   - $ref: '#/components/schemas/ConfigSection'
                   - $ref: '#/components/schemas/ConfigOptionValue'
