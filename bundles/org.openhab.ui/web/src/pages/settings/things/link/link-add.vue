@@ -194,7 +194,7 @@ export default {
       const defaultTags = (this.channel.defaultTags.length > 0) ? this.channel.defaultTags : this.channelType.tags
       this.$set(this, 'newItem', {
         name: newItemName,
-        label: this.channel.label || this.channelType.label,
+        label: this.thing.label + ' ' + (this.channel.label || this.channelType.label),
         category: (this.channelType) ? this.channelType.category : '',
         groupNames: [],
         type: this.channel.itemType || 'Switch',
