@@ -29,7 +29,7 @@
           </f7-list>
         </f7-block>
       </template>
-      <f7-block v-if="context.editmode && !$fullscreen.isFullscreen" style="height: calc(var(--f7-toolbar-height) + var(--f7-safe-area-bottom))" />
+      <div v-if="context.editmode && !$fullscreen.isFullscreen" style="height: calc(var(--f7-toolbar-height) + var(--f7-safe-area-bottom) + 40px)" />
     </template>
     <template v-else-if="config.layoutType === 'fixed' && (!config.fixedType || config.fixedType === 'grid')">
       <oh-grid-layout :context="context" />
