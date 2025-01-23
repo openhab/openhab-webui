@@ -73,7 +73,7 @@ export default {
     },
     keyUp (evt) {
       this.pendingTag = evt.target.value
-      if (evt.code === 'Enter') {
+      if (evt.key === 'Enter') {
         this.addTag(evt)
       }
     },
