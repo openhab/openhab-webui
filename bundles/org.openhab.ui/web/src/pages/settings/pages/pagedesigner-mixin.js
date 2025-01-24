@@ -179,7 +179,6 @@ export default {
     updateWidgetConfig (config) {
       this.$set(this.currentComponent, 'config', config)
       this.forceUpdate()
-      this.widgetConfigClosed()
     },
     widgetCodeClosed () {
       this.currentComponent = null
@@ -190,7 +189,6 @@ export default {
       this.$set(this.currentComponent, 'config', updatedWidget.config)
       this.$set(this.currentComponent, 'slots', updatedWidget.slots)
       this.forceUpdate()
-      this.widgetCodeClosed()
     },
     configureWidget (component, parentContext, forceComponentType) {
       const componentType = forceComponentType || component.component
@@ -240,7 +238,7 @@ export default {
         }
       })
 
-      this.$f7.once('widgetConfigUpdate', this.updateWidgetConfig)
+      this.$f7.on('widgetConfigUpdate', this.updateWidgetConfig)
       this.$f7.once('widgetConfigClosed', () => {
         this.$f7.off('widgetConfigUpdate', this.updateWidgetConfig)
         this.widgetConfigClosed()
@@ -267,7 +265,7 @@ export default {
         }
       })
 
-      this.$f7.once('widgetCodeUpdate', this.updateWidgetCode)
+      this.$f7.on('widgetCodeUpdate', this.updateWidgetCode)
       this.$f7.once('widgetCodeClosed', () => {
         this.$f7.off('widgetCodeUpdate', this.updateWidgetCode)
         this.widgetCodeClosed()
