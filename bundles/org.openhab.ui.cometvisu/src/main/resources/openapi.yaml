@@ -477,7 +477,7 @@ components:
       additionalProperties:
         type: string
     ReadResponse:
-      oneOf:
+      allOf:
         - $ref: '#/components/schemas/DirContent'
     DirContent:
       type: array
