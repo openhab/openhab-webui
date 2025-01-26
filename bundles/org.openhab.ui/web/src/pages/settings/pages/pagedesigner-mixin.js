@@ -21,9 +21,7 @@ export default {
       clipboard: null,
       clipboardType: null,
       currentComponent: null,
-      currentWidget: null,
-      widgetConfigOpened: false,
-      widgetCodeOpened: false
+      currentWidget: null
     }
   },
   computed: {
@@ -177,7 +175,6 @@ export default {
     widgetConfigClosed () {
       this.currentComponent = null
       this.currentWidget = null
-      this.widgetConfigOpened = false
     },
     updateWidgetConfig (config) {
       this.$set(this.currentComponent, 'config', config)
@@ -187,7 +184,6 @@ export default {
     widgetCodeClosed () {
       this.currentComponent = null
       this.currentWidget = null
-      this.widgetCodeOpened = false
     },
     updateWidgetCode (code) {
       const updatedWidget = YAML.parse(code)
@@ -249,13 +245,11 @@ export default {
         this.$f7.off('widgetConfigUpdate', this.updateWidgetConfig)
         this.widgetConfigClosed()
       })
-      // this.widgetConfigOpened = true
     },
     editWidgetCode (component, parentContext, slot) {
       if (slot && !component.slots) component.slots = {}
       if (slot && !component.slots[slot]) component.slots[slot] = []
       this.currentComponent = component
-      this.widgetCodeOpened = true
       const popup = {
         component: WidgetCodePopup
       }
