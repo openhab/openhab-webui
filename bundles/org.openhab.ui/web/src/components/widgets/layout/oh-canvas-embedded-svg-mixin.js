@@ -20,7 +20,13 @@ export default {
       // Load the real SVG content, in editmode we add a random number to the URL to prevent caching
       const svgUrl = (this.context.editmode) ? this.config.imageUrl + `?rnd=${Math.random()}` : this.config.imageUrl
       return fetch(svgUrl)
-        .then(response => response.text())
+        .then(response => {
+          if (response.headers.get('Content-Type') === 'image/svg+xml') {
+            return response.text()
+          } else {
+            return Promise.reject(new Error('The imageUrl does not return an SVG file.'))
+          }
+        })
         .then(svgCode => {
           this.$refs.canvasBackground.innerHTML = svgCode
           const svgEl = this.$refs.canvasBackground.querySelector('svg')

@@ -224,19 +224,25 @@ export default {
     this.$fullscreen.support = true
     this.canvasLayoutStyle()
     this.computeLayout()
-
-    if (this.config.embedSvg) {
-      this.embedSvg().then(() => {
-        this.subscribeEmbeddedSvgListeners()
-        this.setupEmbeddedSvgStateTracking()
-        this.embeddedSvgReady = true
-      })
-    }
   },
   mounted () {
     // Chrome reports a wrong size in fullscreen, store initial resolution and use non-dynamically.
     this.windowWidth = window.screen.width
     this.windowHeight = window.screen.height
+    if (this.config.embedSvg && this.config.imageUrl) {
+      this.embedSvg().then(() => {
+        this.subscribeEmbeddedSvgListeners()
+        this.setupEmbeddedSvgStateTracking()
+        this.embeddedSvgReady = true
+      }).catch((err) => {
+        this.$nextTick(() => {
+          this.$f7.toast.create({
+            text: `Failed to embed SVG: ${err}`,
+            closeTimeout: 3000
+          }).open()
+        })
+      })
+    }
   },
   beforeDestroy () {
     if (!this.context.editmode) {
