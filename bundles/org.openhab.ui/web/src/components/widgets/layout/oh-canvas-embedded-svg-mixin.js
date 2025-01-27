@@ -21,10 +21,12 @@ export default {
       const svgUrl = (this.context.editmode) ? this.config.imageUrl + `?rnd=${Math.random()}` : this.config.imageUrl
       return fetch(svgUrl)
         .then(response => {
-          if (response.headers.get('Content-Type') === 'image/svg+xml') {
-            return response.text()
+          if (response.status !== 200) {
+            return Promise.reject(new Error(`Failed to load from ${this.config.imageUrl}. Status: ${response.status} (${response.statusText})`))
+          } else if (response.headers.get('Content-Type') !== 'image/svg+xml') {
+            return Promise.reject(new Error(`${this.config.imageUrl} is not an SVG file`))
           } else {
-            return Promise.reject(new Error('The imageUrl does not return an SVG file.'))
+            return response.text()
           }
         })
         .then(svgCode => {
@@ -221,8 +223,23 @@ export default {
      * Flashes all embedded SVG components with the `openhab` attribute.
      */
     flashEmbeddedSvgComponents () {
+      if (!this.$refs.canvasBackground) {
+        this.$f7.toast.create({
+          text: 'SVG embedding has not been properly configured. Ensure that the Image URL points to an SVG file.',
+          closeTimeout: 2000
+        }).open()
+        return
+      }
       const svg = this.$refs.canvasBackground.querySelector('svg')
       const subElements = svg.querySelectorAll('[openhab]')
+
+      if (subElements.length === 0) {
+        this.$f7.toast.create({
+          text: 'No SVG elements with an "openhab" attribute found.',
+          closeTimeout: 2000
+        }).open()
+        return
+      }
 
       for (const subElement of subElements) {
         this.svgOnMouseOver(subElement)
