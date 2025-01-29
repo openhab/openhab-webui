@@ -41,7 +41,7 @@
               <f7-list-item media-item v-for="(tab, idx) in page.slots.default" :key="idx"
                             :title="tabEvaluateExpression(tab, idx, 'title')" :subtitle="tab.config.page"
                             link="#" @click.native="(ev) => configureTab(ev, tab, context)">
-                <f7-icon slot="media" :ios="tabEvaluateExpression(tab, idx, 'icon')" :md="tabEvaluateExpression(tab, idx, 'icon')" :aurora="tabEvaluateExpression(tab, idx, 'icon')" color="gray" :size="32" />
+                <oh-icon slot="media" :icon="tabEvaluateExpression(tab, idx, 'icon')" :color="'gray'" :width="32" :height="32" />
                 <f7-menu slot="content-start" class="configure-layout-menu">
                   <f7-menu-item icon-f7="list_bullet" dropdown>
                     <f7-menu-dropdown>
