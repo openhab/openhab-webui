@@ -1,12 +1,28 @@
-export const AddonNames = {
-  'application/javascript': 'JavaScript Scripting',
-  'application/javascript;version=ECMAScript-5.1': 'JavaScript Scripting (Nashorn)',
-  'application/x-groovy': 'Groovy Scripting',
-  'application/x-python': 'Jython Scripting',
-  'application/x-ruby': 'JRuby Scripting'
-}
-
-export const DocumentationLinks = {
-  'application/javascript': '/link/jsscripting-script',
-  'application/x-ruby': '/link/jrubyscripting-script'
+export const AUTOMATION_LANGUAGES = {
+  'application/javascript': {
+    'name': 'JavaScript Scripting',
+    'commentChar': '//',
+    'documentationLink': '/link/jsscripting-script'
+  },
+  'application/javascript;version=ECMAScript-5.1': {
+    'name': 'JavaScript Scripting (Nashorn)',
+    'commentChar': '//'
+  },
+  'application/x-groovy': {
+    'name': 'Groovy Scripting',
+    'commentChar': '//'
+  },
+  'application/x-python': {
+    'name': 'Jython Scripting',
+    'commentChar': '#'
+  },
+  'application/x-ruby': {
+    'name': 'JRuby Scripting',
+    'commentChar': '#',
+    'documentationLink': '/link/jrubyscripting-script'
+  },
+  'application/x-python3': {
+    'name': 'Python Scripting',
+    'commentChar': '#'
+  }
 }
