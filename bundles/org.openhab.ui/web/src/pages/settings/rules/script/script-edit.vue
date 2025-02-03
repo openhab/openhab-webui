@@ -162,7 +162,7 @@ import RuleStatus from '@/components/rule/rule-status-mixin'
 import ScriptGeneralSettings from './script-general-settings.vue'
 import ModuleDescriptionSuggestions from '../module-description-suggestions'
 import DirtyMixin from '../../dirty-mixin'
-import { AUTOMATION_LANGUAGES } from '@/assets/automation-languages'
+import AUTOMATION_LANGUAGES from '@/assets/automation-languages'
 
 export default {
   mixins: [RuleStatus, ModuleDescriptionSuggestions, DirtyMixin],
@@ -396,13 +396,10 @@ export default {
       return this.languages.map(l => l.contentType).includes(mimeType)
     },
     mimeTypeDescription (mode) {
-      return AUTOMATION_LANGUAGES[mode]['name'] || mode
+      return AUTOMATION_LANGUAGES[mode].name || mode
     },
     documentationLink (mode) {
-      if ('documentationLink' in AUTOMATION_LANGUAGES[mode]) {
-        return AUTOMATION_LANGUAGES[mode]['documentationLink']
-      }
-      return null
+      return AUTOMATION_LANGUAGES[mode]['documentationLink']
     },
     /**
      * Load the script module type, i.e. the available script languages
@@ -443,7 +440,7 @@ export default {
         this.initDirty()
 
         if (!this.rule.editable) {
-          const commentChar = AUTOMATION_LANGUAGES[this.mode]['commentChar']
+          const commentChar = AUTOMATION_LANGUAGES[this.mode].commentChar
           let triggerDescriptionComments = `${commentChar} Triggers:\n`
           for (const trigger of this.rule.triggers) {
             const triggerModuleType = this.moduleTypes.triggers.find((t) => t.uid === trigger.type)
