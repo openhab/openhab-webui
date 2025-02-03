@@ -56,6 +56,7 @@ export default {
   widget: OhInputDefinition,
   data () {
     return {
+      item: null,
       pendingUpdate: null
     }
   },
@@ -78,17 +79,32 @@ export default {
       } else if (this.config.item) {
         const item = this.context.store[this.config.item]
         if (item.state !== 'NULL' && item.state !== 'UNDEF' && item.state !== 'Invalid Date') {
-          let value = this.config.useDisplayState ? item.displayState || item.state : item.state
-          if (this.unit) {
-            value = value.split(' ')[0]
-          }
-          return value
+          const value = (this.config.useDisplayState && item.displayState) || item.state
+          return this.config.type === 'number' ? this.extractValue(value) : value
         }
       }
       return this.config.defaultValue
     },
+    // Returns the unit from the item's displayState, state description pattern or the item's unit symbol
     unit () {
-      return this.config.type === 'number' && this.config.item && this.context.store[this.config.item].unit
+      if (this.config.type !== 'number') return null
+      if (!this.item?.unitSymbol) return null
+
+      const storeItem = this.context.store[this.config.item]
+      // When the state of a dimensioned item is UNDEF/NULL, item.displayState is undefined
+      // so we need to pull it out of the item's state description pattern
+      if (this.config.useDisplayState) {
+        const unit = this.extractUnit(storeItem.displayState || this.item.stateDescription?.pattern)
+        return unit === '%unit%' ? this.item.unitSymbol : unit
+      }
+      return this.item.unitSymbol
+    },
+    // Returns the index of the last pattern in the stateDescription
+    // Example: displayState = "Some label %0.1f footext °C", returns 2
+    // Returns -1 if no pattern is found
+    valueIndexInDisplayState () {
+      const parts = this.item?.stateDescription?.pattern?.trim()?.split(/\s+/) || []
+      return parts.findLastIndex(part => part.startsWith('%') && part !== '%unit%' && part !== '%%')
     },
     calendarParams () {
       if (this.config.type !== 'datepicker') return null
@@ -119,6 +135,18 @@ export default {
         default:
           return null
       }
+    }
+  },
+  mounted () {
+    if (this.config.item) {
+      this.$oh.api.get(`/rest/items/${this.config.item}?recursive=false`).then((item) => {
+        this.item = item
+        if (this.config.useDisplayState) {
+          this.config.min ||= item.stateDescription?.minimum
+          this.config.max ||= item.stateDescription?.maximum
+          this.config.step ||= item.stateDescription?.step
+        }
+      })
     }
   },
   methods: {
@@ -173,6 +201,21 @@ export default {
         }
         this.$store.dispatch('sendCommand', { itemName: this.config.item, cmd })
         this.$set(this, 'pendingUpdate', null)
+      }
+    },
+    extractUnit (pattern) {
+      if (!pattern) return null
+      return pattern.trim().split(/\s+/).pop()
+    },
+    extractValue (pattern) {
+      if (!pattern) return null
+
+      const parts = pattern.trim().split(/\s+/)
+      switch (parts.length) {
+        case 0: return null
+        case 1: return pattern
+        case 2: return parts[0]
+        default: return parts[this.valueIndexInDisplayState]
       }
     }
   }
