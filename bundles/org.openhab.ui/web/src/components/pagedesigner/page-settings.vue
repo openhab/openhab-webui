@@ -5,7 +5,7 @@
                      :clear-button="createMode" :info="(createMode) ? 'Required. Note: cannot be changed after the creation' : ''"
                      required validate pattern="[A-Za-z0-9_]+" error-message="Required. A-Z,a-z,0-9,_ only" :disabled="!createMode" />
       <f7-list-input label="Label" type="text" placeholder="Page label used for display purposes" :info="(createMode) ? 'Required' : ''" :value="page.config.label" @input="page.config.label = $event.target.value" required validate clear-button />
-      <f7-list-item accordion-item title="Sidebar &amp; Visibility" :disabled="page.uid === 'overview'">
+      <f7-list-item accordion-item title="Sidebar &amp; Visibility" v-if="page.uid !== 'overview'">
         <f7-accordion-content>
           <f7-list-item ref="pageVisibility" title="Visible only to" smart-select :smart-select-params="{openIn: 'popover'}">
             <select name="pagevisibility" multiple @change="updatePageVisibility">
@@ -25,12 +25,13 @@
             </f7-list-item>
             <f7-list-input label="Sidebar order" type="number" placeholder="Assign order index to rearrange pages on sidebar" :value="page.config.order" @input="page.config.order = $event.target.value" clear-button />
             <f7-list-input label="Icon" type="text" placeholder="Assign a custom icon" :value="page.config.icon" @input="page.config.icon = $event.target.value" clear-button />
+            <f7-list-input label="Browser Title" type="text" placeholder="A custom browser title instead of the label" :value="page.config.browserTitle" @input="page.config.browserTitle = $event.target.value" clear-button />
           </f7-list>
         </f7-accordion-content>
       </f7-list-item>
     </f7-list>
-    <f7-list inline-labels no-hairline-md>
-      <tag-input :item="page" :disabled="page.uid === 'overview'" />
+    <f7-list inline-labels no-hairline-md v-if="page.uid !== 'overview'">
+      <tag-input :item="page" />
     </f7-list>
   </f7-col>
 </template>
