@@ -102,6 +102,40 @@ describe('SitemapCode', () => {
     })
   })
 
+  it('parses attribute values correctly', async () => {
+    expect(wrapper.vm.sitemapDsl).toBeDefined()
+    // simulate updating the sitemap in code
+    const sitemap = [
+      'sitemap test label="Test" {',
+      '    Setpoint item=Item_Setpoint minValue=-5 maxValue=10',
+      '}',
+      ''
+    ].join('\n')
+    wrapper.vm.updateSitemap(sitemap)
+    expect(wrapper.vm.sitemapDsl).toMatch(/^sitemap test label="Test"/)
+    expect(wrapper.vm.parsedSitemap.error).toBeFalsy()
+
+    await wrapper.vm.$nextTick()
+
+    // check whether an 'updated' event was emitted and its payload
+    // (should contain the parsing result for the new sitemap definition)
+    const events = wrapper.emitted().updated
+    expect(events).toBeTruthy()
+    expect(events.length).toBe(1)
+    const payload = events[0][0]
+    expect(payload.slots).toBeDefined()
+    expect(payload.slots.widgets).toBeDefined()
+    expect(payload.slots.widgets.length).toBe(1)
+    expect(payload.slots.widgets[0]).toEqual({
+      component: 'Setpoint',
+      config: {
+        item: 'Item_Setpoint',
+        minValue: -5,
+        maxValue: 10
+      }
+    })
+  })
+
   it('parses a staticIcon definition', async () => {
     expect(wrapper.vm.sitemapDsl).toBeDefined()
     // simulate updating the sitemap in code
@@ -515,7 +549,7 @@ describe('SitemapCode', () => {
     // simulate updating the sitemap in code
     const sitemap = [
       'sitemap test label="Test" {',
-      '    Text item=Temperature valuecolor=[Last_Update==Uninitialized=gray,>=25=orange,==15=green,0=white,blue]',
+      '    Text item=Temperature valuecolor=[Last_Update==Uninitialized=gray,>=25=orange,==15=green,0=white,<=-10=purple,blue]',
       '}',
       ''
     ].join('\n')
@@ -543,6 +577,7 @@ describe('SitemapCode', () => {
           '>=25=orange',
           '==15=green',
           '0=white',
+          '<=-10=purple',
           'blue'
         ]
       }
