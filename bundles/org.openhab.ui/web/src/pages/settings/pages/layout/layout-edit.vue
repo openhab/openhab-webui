@@ -21,9 +21,10 @@
       </f7-link>
     </f7-toolbar>
     <f7-toolbar v-if="!fullscreen" bottom class="toolbar-details">
-      <f7-link v-if="$fullscreen.support" class="fullscreen-link" icon-f7="rectangle_arrow_up_right_arrow_down_left" text="Fullscreen" color="blue" @click="toggleFullscreen" />
-      <div style="margin-left: auto">
-        <f7-toggle :checked="previewMode" @toggle:change="(value) => togglePreviewMode(value)" /> Run mode<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span>
+      <f7-link v-if="$fullscreen.isEnabled" class="fullscreen-link" icon-f7="rectangle_arrow_up_right_arrow_down_left" text="Fullscreen" color="blue" @click="toggleFullscreen" />
+      <div class="display-flex flex-direction-row align-items-center">
+        <f7-toggle :checked="previewMode" @toggle:change="(value) => togglePreviewMode(value)" />&nbsp;Run mode<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span>
+        <f7-link v-if="!createMode" class="right details-link margin-left padding-right" ref="detailsLink" @click="detailsOpened = true" icon-f7="chevron_up" />
       </div>
     </f7-toolbar>
     <f7-tabs class="layout-editor-tabs">
@@ -32,8 +33,13 @@
           <f7-preloader />
           <div>Loading...</div>
         </f7-block>
-        <f7-block id="page-settings" class="block-narrow" v-if="ready && !(previewMode || fullscreen)">
+        <f7-block id="page-settings" class="block-narrow" v-if="ready && createMode && !(previewMode || fullscreen)">
           <page-settings :page="page" :createMode="createMode" />
+          <f7-col>
+            <f7-block-footer class="padding-horizontal margin-bottom">
+              Note: After saving this page, you can view the page settings by clicking the chevron up icon (<f7-icon color="blue" f7="chevron_up" />) at the bottom right corner of the screen, next to "Run mode"
+            </f7-block-footer>
+          </f7-col>
         </f7-block>
 
         <f7-block v-if="ready &&
@@ -90,6 +96,20 @@
                         @add-masonry="addMasonry"
                         @add-grid-item="addGridItem"
                         @add-canvas-item="addCanvasItem" />
+
+        <f7-sheet ref="detailsSheet" :backdrop="false" :close-on-escape="true" :opened="detailsOpened" @sheet:closed="detailsOpened = false">
+          <f7-page>
+            <f7-toolbar tabbar bottom>
+              <span class="margin-left">Page Settings</span>
+              <div class="right">
+                <f7-link sheet-close class="padding-right">
+                  <f7-icon f7="chevron_down" />
+                </f7-link>
+              </div>
+            </f7-toolbar>
+            <page-settings :page="page" :createMode="createMode" />
+          </f7-page>
+        </f7-sheet>
       </f7-tab>
       <f7-tab id="code" @tab:show="() => { this.currentTab = 'code' }" :tab-active="currentTab === 'code'">
         <editor v-if="currentTab === 'code'" :style="{ opacity: previewMode ? '0' : '' }" class="page-code-editor" mode="application/vnd.openhab.uicomponent+yaml?type=layout" :value="pageYaml" @input="onEditorInput" />
@@ -175,6 +195,7 @@ export default {
         }
       },
       addFromModelContext: {},
+      detailsOpened: false,
       modelPickerAllowMultiple: true,
       modelPickerOpened: false,
       fullscreen: this.$fullscreen.getState()
@@ -396,6 +417,9 @@ export default {
           this.forceUpdate()
         }
       })
+    },
+    onPageBeforeOut () {
+      this.$refs.detailsSheet.f7Sheet.close()
     },
     onSvgOnClickConfigUpdate (event) {
       if (!this.page.config.embeddedSvgActions) {
