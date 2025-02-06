@@ -27,6 +27,7 @@
             </f7-list-item>
             <f7-list-input label="Sidebar order" type="number" placeholder="Assign order index to rearrange pages on sidebar" :value="page.config.order" @input="page.config.order = $event.target.value" clear-button />
             <f7-list-input label="Icon" type="text" placeholder="Assign a custom icon" :value="page.config.icon" @input="page.config.icon = $event.target.value" clear-button />
+            <f7-list-input label="Browser Title" type="text" placeholder="A custom browser title instead of the label" :value="page.config.browserTitle" @input="page.config.browserTitle = $event.target.value" clear-button />
           </f7-list>
         </f7-accordion-content>
       </f7-list-item>
