@@ -8,6 +8,7 @@ import DirtyMixin from '../dirty-mixin'
 
 export default {
   mixins: [DirtyMixin],
+  props: ['pageCopy'],
   data () {
     return {
       pageReady: false,
@@ -111,6 +112,9 @@ export default {
       this.loading = true
 
       if (this.createMode) {
+        if (this.pageCopy) {
+          this.$set(this, 'page', cloneDeep(this.pageCopy))
+        }
         this.savedPage = cloneDeep(this.page)
         this.loading = false
         this.pageReady = true
@@ -134,12 +138,17 @@ export default {
         this.$f7.dialog.alert('Page ID is only allowed to contain A-Z,a-z,0-9,_')
         return
       }
-      if (!this.page.config.label) {
-        this.$f7.dialog.alert('Please give a label to the page')
+      if (this.createMode) {
+        if (this.$store.getters.page(this.page.uid)) {
+          this.$f7.dialog.alert('A page with this ID already exists')
+          return
+        }
+      } else if (this.uid !== this.page.uid) {
+        this.$f7.dialog.alert('You cannot change the ID of an existing page. Duplicate it with the new ID then delete this one.')
         return
       }
-      if (!this.createMode && this.uid !== this.page.uid) {
-        this.$f7.dialog.alert('You cannot change the ID of an existing page. Duplicate it with the new ID then delete this one.')
+      if (!this.page.config.label) {
+        this.$f7.dialog.alert('Please give a label to the page')
         return
       }
 
