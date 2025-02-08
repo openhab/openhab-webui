@@ -8,7 +8,7 @@
               <f7-list-input v-if="createMode" label="Thing ID" type="text" placeholder="Required" :value="thing.ID" input-id="input"
                              @input="changeUID" info="Note: cannot be changed after the creation" clear-button
                              required :error-message="idErrorMessage" :error-message-force="!!idErrorMessage">
-                <f7-link slot="inner" icon-f7="hammer_fill" style="margin-top: 4px; margin-left: 4px; margin-bottom: auto" tooltip="Fix ID" v-if="createMode && idErrorMessage && !idErrorMessage.includes('exists') && thing.ID" @click="$oh.utils.normalizeInput('#input')" />
+                <f7-link slot="inner" icon-f7="hammer_fill" style="margin-top: 4px; margin-left: 4px; margin-bottom: auto" tooltip="Fix ID" v-if="createMode && idErrorMessage && !idErrorMessage.includes('exists') && thing.ID" @click="$oh.utils.normalizeInputForThingId('#input')" />
               </f7-list-input>
               <f7-list-input label="Thing UID" type="text" :input="false" disabled>
                 <span slot="input">
