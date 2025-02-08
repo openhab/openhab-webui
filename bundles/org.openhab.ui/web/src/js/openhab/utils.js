@@ -3,10 +3,10 @@ import diacritic from 'diacritic'
 
 export default {
   normalizeLabel: (label) => {
-    return diacritic.clean(label.normalize('NFKD')).replace(/\s+/g, '_').replace(/[^0-9a-z_]/gi, '').replace(/^([0-9])/, '_$1')
+    return diacritic.clean(label.normalize('NFKD')).trim().replace(/\s+/g, '_').replace(/[^0-9a-z_]/gi, '').replace(/^([0-9])/, '_$1')
   },
   normalizeLabelForThingId: (label) => {
-    return diacritic.clean(label.normalize('NFKD')).replace(/\s+/g, '-').replace(/[^0-9a-z_-]/gi, '').replace(/^-+/, '')
+    return diacritic.clean(label.normalize('NFKD')).trim().replace(/\s+/g, '-').replace(/[^0-9a-z_-]/gi, '').replace(/^-+/, '')
   },
   normalizeInput (id) {
     const inputElement = document.querySelector(id)

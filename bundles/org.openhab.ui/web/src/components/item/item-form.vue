@@ -9,7 +9,7 @@
           <f7-link slot="inner" icon-f7="hammer_fill" style="margin-top: 4px; margin-left: 4px; margin-bottom: auto" tooltip="Fix ID" v-if="createMode && nameErrorMessage && !nameErrorMessage.includes('exists') && item.name.trim()" @click="$oh.utils.normalizeInput('#input')" />
         </f7-list-input>
         <f7-list-input label="Label" type="text" placeholder="Item label for display purposes" :value="item.label"
-                       @input="item.name = $event.target.value" :disabled="!editable" :clear-button="editable" />
+                       @input="updateLabel" :disabled="!editable" :clear-button="editable" />
       </f7-list-group>
       <f7-list-group v-if="!hideType" v-show="itemType">
         <!-- Type -->
@@ -268,6 +268,14 @@ export default {
       if (groupIndex >= 0) {
         this.item.groupNames.splice(groupIndex, 1)
       }
+    },
+    updateLabel (event) {
+      if (this.createMode && (!this.item.name || this.item.name === this.$oh.utils.normalizeLabel(this.item.label))) {
+        const inputElement = document.getElementById('input')
+        inputElement.value = this.$oh.utils.normalizeLabel(event.target.value)
+        inputElement.dispatchEvent(new Event('input'))
+      }
+      this.item.label = event.target.value
     }
   },
   mounted () {
