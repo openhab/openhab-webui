@@ -382,7 +382,7 @@ export default {
             }
           }
         } else { // Percent, OpenClosed
-          if (svgElementConfig.stateAsOpacity && state) {
+          if (svgElementConfig.stateAsOpacity && state) { // meant to be used as opacity
             // we expect that number between 0 - 100
             let opacity
             if (stateType === 'OpenClosed') {
@@ -393,6 +393,10 @@ export default {
             opacity = (svgElementConfig.invertStateOpacity) ? 1 - opacity : opacity
             opacity = (opacity < svgElementConfig.stateMinOpacity) ? svgElementConfig.stateMinOpacity : opacity
             element.style.opacity = opacity
+          } else if (state) { // treat it as color use the colorOnState that may be computed based on that
+            if (stateOnColorRgbStyle) {
+              element.style.fill = stateOnColorRgbStyle
+            }
           }
         }
       }
