@@ -255,6 +255,7 @@ export default {
 
         this.loading = false
         this.ready = true
+        this.noRuleEngine = false
 
         this.$nextTick(() => {
           if (this.$refs.listIndex) this.$refs.listIndex.update()
@@ -269,6 +270,11 @@ export default {
         if (err === 'Not Found' || status === 404) {
           this.noRuleEngine = true
         }
+        this.loading = false
+        let self = this
+        setTimeout(() => {
+          self.load()
+        }, 2000)
       })
     },
     startEventSource () {
