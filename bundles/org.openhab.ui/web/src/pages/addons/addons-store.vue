@@ -5,7 +5,7 @@
         <developer-dock-icon />
       </f7-nav-right>
     </f7-navbar>
-    <f7-toolbar v-if="$f7.width < 1024" tabbar bottom>
+    <f7-toolbar v-show="$f7.width < 1024 || !leftPanelOpened" tabbar bottom>
       <f7-link tab-link :tab-link-active="$store.state.pagePath === '/addons/'" href="/addons/" icon-ios="f7:bag_fill" icon-aurora="f7:bag_fill" icon-md="material:shopping_bag" />
       <f7-link v-for="section in Object.keys(AddonTitles)" :key="section" tab-link :tab-link-active="$store.state.pagePath === `/addons/${section}/`" :href="`/addons/${section}`" :icon-ios="`f7:${AddonIcons[section]}`" :icon-aurora="`f7:${AddonIcons[section]}`" :icon-md="`f7:${AddonIcons[section]}`" />
     </f7-toolbar>
@@ -258,6 +258,7 @@ export default {
   },
   data () {
     return {
+      leftPanelOpened: false,
       currentTab: 'main',
       services: null,
       suggestions: [],
@@ -306,12 +307,18 @@ export default {
     },
     onPageBeforeOut () {
       this.stopEventSource()
+      this.$f7.panel.get('left').off('opened closed', this.updateLeftPanelVisibility)
+    },
+    updateLeftPanelVisibility () {
+      this.leftPanelOpened = this.$f7.panel.get('left').opened
     },
     load () {
       if (this.searchFor) {
         // Show this in the searchbar while the page is loading
         this.$refs.storeSearchbar.f7Searchbar.$inputEl.val(this.searchFor)
       }
+      this.updateLeftPanelVisibility()
+      this.$f7.panel.get('left').on('opened closed', this.updateLeftPanelVisibility)
       this.stopEventSource()
       this.$oh.api.get('/rest/services/org.openhab.i18n/config').then((data) => {
         if (data.region) {
