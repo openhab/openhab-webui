@@ -46,7 +46,9 @@
     comma:            ',',
     colon:            ':',
     hyphen:           '-',
-    number:           /[+-]?[0-9]+(?:\.[0-9]*)?/,
+    plus:             '+',
+    dot:              '.',
+    unsignedint:      /[0-9]+/,
     string:           { match: /"(?:\\["\\]|[^\n"\\])*"/, value: x => x.slice(1, -1) }
   })
   const requiresItem = ['Group', 'Chart', 'Switch', 'Mapview', 'Slider', 'Selection', 'Setpoint', 'Input ', 'Colorpicker', 'Colortemperaturepicker', 'Button', 'Default']
@@ -138,7 +140,7 @@ WidgetPeriodAttrValue -> %identifier %hyphen %identifier                        
   | %hyphen %identifier                                                           {% (d) => "-" + d[1].value %}
   | %identifier                                                                   {% (d) => d[0].value %}
   | %string                                                                       {% (d) => d[0].value %}
-WidgetAttrValue -> %number                                                        {% (d) => { return parseFloat(d[0].value) } %}
+WidgetAttrValue -> Number                                                         {% (d) => d[0] %}
   | %identifier                                                                   {% (d) => d[0].value %}
   | %string                                                                       {% (d) => d[0].value %}
 WidgetMappingsAttrName -> %widgetmapattr
@@ -159,13 +161,13 @@ Mapping -> Command _ %colon _ Command _ %equals _ Label                         
 
 Buttons -> ButtonDef                                                              {% (d) => [d[0]] %}
   | Buttons _ %comma _ ButtonDef                                                  {% (d) => d[0].concat([d[4]]) %}
-ButtonDef -> %number _ %colon _ %number _ %colon _ ButtonValue                    {% (d) => { return { 'row':  parseInt(d[0].value), 'column': parseInt(d[4].value), 'command': d[8] } } %}
+ButtonDef -> %unsignedint _ %colon _ %unsignedint _ %colon _ ButtonValue          {% (d) => { return { 'row':  parseInt(d[0].value), 'column': parseInt(d[4].value), 'command': d[8] } } %}
 ButtonValue -> Command _ %equals _ Label                                          {% (d) => d[0] + '=' + d[4] %}
   | Command _ %equals _ Label _ %equals _ WidgetIconAttrValue                     {% (d) => d[0] + '=' + d[4] + '=' + d[8].join("") %}
 
-Command -> %number | %identifier                                                  {% (d) => d[0].value %}
+Command -> %unsignedint | %identifier                                             {% (d) => d[0].value %}
   | %string                                                                       {% (d) => '"' + d[0].value + '"' %}
-Label -> %number | %identifier                                                    {% (d) => d[0].value %}
+Label -> %identifier                                                              {% (d) => d[0].value %}
   | %string                                                                       {% (d) => '"' + d[0].value + '"' %}
 
 Visibilities -> Conditions                                                        {% (d) => [d[0]] %}
@@ -189,9 +191,20 @@ Condition -> ConditionCommand _ ConditionComparator _ ConditionValue            
   | ConditionValue                                                                {% (d) => d[0] %}
 ConditionCommand -> %identifier
 ConditionComparator -> %eq | %noteq | %lteq | %gteq | %lt | %gt
-ConditionValue -> %number                                                         {% (d) => parseFloat(d[0].value) %}
+ConditionValue -> XState                                                          {% (d) => d[0] %}
+  | Sign XState                                                                   {% (d) => d[0][0].value + d[1] %}
+XState -> %unsignedint %dot %unsignedint                                          {% (d) => parseFloat(d[0].value + '.' + d[2].value) %}
+  | %unsignedint                                                                  {% (d) => parseInt(d[0].value) %}
   | %identifier                                                                   {% (d) => d[0].value %}
   | %string                                                                       {% (d) => '"' + d[0].value + '"' %}
+
+Sign -> %plus
+  | %hyphen
+
+Number -> %hyphen %unsignedint %dot %unsignedint                                  {% (d) => parseFloat('-' + d[1].value + '.' + d[2].value) %}
+  | %hyphen %unsignedint                                                          {% (d) => parseInt('-' + d[1].value) %}
+  | %unsignedint %dot %unsignedint                                                {% (d) => parseFloat(d[0].value + '.' + d[2].value) %}
+  | %unsignedint                                                                  {% (d) => parseInt(d[0].value) %}
 
 _ -> null               {% () => null %}
 	| __                  {% () => null %}
