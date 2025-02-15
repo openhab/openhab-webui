@@ -130,7 +130,10 @@
               :footer="rule.description"
               :badge="showScenes ? '' : ruleStatusBadgeText(ruleStatuses[rule.uid])"
               :badge-color="ruleStatusBadgeColor(ruleStatuses[rule.uid])">
-              <div slot="footer">
+              <div slot="footer" class="footer-inner">
+                <f7-chip v-if="rule.templateUID" :text="templateName(rule)" media-bg-color="orange" style="margin-right: 2px">
+                  <f7-icon slot="media" ios="f7:doc_on_doc_fill" md="material:file_copy" aurora="f7:doc_on_doc_fill" />
+                </f7-chip>
                 <f7-chip v-for="tag in rule.tags.filter((t) => t !== 'Script' && t !== 'Scene')" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
                   <f7-icon slot="media" ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
                 </f7-chip>
@@ -149,6 +152,14 @@
     </f7-fab>
   </f7-page>
 </template>
+
+<style lang="stylus">
+.item-footer
+  margin-block-start 4px
+  margin-block-end 2px
+  .footer-inner
+    margin-block-start 2px
+</style>
 
 <script>
 import RuleStatus from '@/components/rule/rule-status-mixin'
@@ -171,7 +182,8 @@ export default {
       selectedTags: [],
       selectedItems: [],
       showCheckboxes: false,
-      eventSource: null
+      eventSource: null,
+      templates: null
     }
   },
   computed: {
@@ -227,6 +239,9 @@ export default {
         filter = '&tags=Scene'
       }
 
+      this.$oh.api.get('/rest/templates').then((templateData) => {
+        this.$set(this, 'templates', templateData)
+      }).catch(() => {})
       this.$oh.api.get('/rest/rules?summary=true' + filter).then(data => {
         this.rules = data.sort((a, b) => {
           return a.name.localeCompare(b.name)
@@ -395,6 +410,16 @@ export default {
     },
     isTagSelected (tag) {
       return this.selectedTags.includes(tag)
+    },
+    templateName (rule) {
+      let template = this.templates ? this.templates.find((t) => t.uid === rule.templateUID) : undefined
+      return template ? template.label : rule.templateUID
+    },
+    canRegenerate (rule) {
+      if (!rule || !rule.templateUID || !rule.templateState || rule.templateState === 'no-template' || rule.templateState === 'template-missing') {
+        return false
+      }
+      return this.templates ? this.templates.some((t) => t.uid === rule.templateUID) : false
     }
   }
 }
