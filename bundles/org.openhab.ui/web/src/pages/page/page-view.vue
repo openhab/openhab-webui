@@ -20,7 +20,13 @@
 
     <!-- Tabbed Pages -->
     <f7-toolbar tabbar labels bottom v-if="page && pageType === 'tabs' && visibleToCurrentUser">
-      <f7-link v-for="(tab, idx) in page.slots.default" :key="idx" tab-link @click="onTabChange(idx)" :tab-link-active="currentTab === idx" :icon-ios="tabEvaluateExpression(tab, idx, 'icon')" :icon-md="tabEvaluateExpression(tab, idx, 'icon')" :icon-aurora="tabEvaluateExpression(tab, idx, 'icon')" :text="tabEvaluateExpression(tab, idx, 'title')" :icon-badge="tabEvaluateExpression(tab, idx, 'badge')" :badge-color="tabEvaluateExpression(tab, idx, 'badgeColor')" />
+      <f7-link v-for="(tab, idx) in page.slots.default" :key="idx" tab-link @click="onTabChange(idx)" :tab-link-active="currentTab === idx">
+        <i v-if="tabEvaluateExpression(tab, idx, 'icon')" class="icon" :style="{ width: tabBarIconSize, height: tabBarIconSize }">
+          <oh-icon :icon="tabEvaluateExpression(tab, idx, 'icon')" :width="tabBarIconSize" :height="tabBarIconSize" />
+          <f7-badge v-if="tabEvaluateExpression(tab, idx, 'badge')" :color="tabEvaluateExpression(tab, idx, 'badgeColor')">{{ tabEvaluateExpression(tab, idx, 'badge') }}</f7-badge>
+        </i>
+        {{ tabEvaluateExpression(tab, idx, 'title') }}
+      </f7-link>
     </f7-toolbar>
     <f7-tabs v-if="page && pageType === 'tabs' && visibleToCurrentUser">
       <f7-tab v-for="(tab, idx) in page.slots.default" :key="idx" :tab-active="currentTab === idx">
@@ -45,6 +51,9 @@
   position absolute
   top 8px
   right 8px
+.icon
+  .badge
+    margin-left -10px !important
 </style>
 
 <script>
@@ -86,6 +95,10 @@ export default {
       const pageComponent = (this.pageType === 'tabs') ? this.tabContext(this.context.component.slots.default[this.currentTab]).component : this.context.component
       if (!pageComponent || !pageComponent.config || !pageComponent.config.style) return null
       return pageComponent.config.style
+    },
+    // Resolve the f7 CSS variable because iconify's SVG element doesn't like css variables
+    tabBarIconSize () {
+      return window.getComputedStyle(document.documentElement).getPropertyValue('--f7-tabbar-icon-size')
     },
     context () {
       return {
