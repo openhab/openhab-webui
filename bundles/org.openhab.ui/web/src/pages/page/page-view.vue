@@ -25,7 +25,7 @@
           <oh-icon :icon="tabEvaluateExpression(tab, idx, 'icon')" :width="tabBarIconSize" :height="tabBarIconSize" />
           <f7-badge v-if="tabEvaluateExpression(tab, idx, 'badge')" :color="tabEvaluateExpression(tab, idx, 'badgeColor')">{{ tabEvaluateExpression(tab, idx, 'badge') }}</f7-badge>
         </i>
-        {{ tabEvaluateExpression(tab, idx, 'title') }}
+        <span class="tabbar-label">{{ tabEvaluateExpression(tab, idx, 'title') }}</span>
       </f7-link>
     </f7-toolbar>
     <f7-tabs v-if="page && pageType === 'tabs' && visibleToCurrentUser">
