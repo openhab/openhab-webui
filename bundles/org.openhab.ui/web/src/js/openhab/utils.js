@@ -3,7 +3,20 @@ import diacritic from 'diacritic'
 
 export default {
   normalizeLabel: (label) => {
-    return diacritic.clean(label.normalize('NFKD')).replace(/\s+/g, '_').replace(/[^0-9a-z_]/gi, '')
+    return diacritic.clean(label.normalize('NFKD')).trim().replace(/\s+/g, '_').replace(/[^0-9a-z_]/gi, '').replace(/^([0-9])/, '_$1')
+  },
+  normalizeLabelForThingId: (label) => {
+    return diacritic.clean(label.normalize('NFKD')).trim().replace(/\s+/g, '-').replace(/[^0-9a-z_-]/gi, '').replace(/^-+/, '')
+  },
+  normalizeInput (id) {
+    const inputElement = document.querySelector(id)
+    inputElement.value = this.normalizeLabel(inputElement.value.trim())
+    inputElement.dispatchEvent(new Event('input'))
+  },
+  normalizeInputForThingId (id) {
+    const inputElement = document.querySelector(id)
+    inputElement.value = this.normalizeLabelForThingId(inputElement.value.trim())
+    inputElement.dispatchEvent(new Event('input'))
   },
   /**
    * Convert a color from HSB to RGB.
