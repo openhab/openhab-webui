@@ -342,6 +342,12 @@ export default [
             async: loadAsync(RuleEditPage, { createMode: true })
           },
           {
+            path: 'stub',
+            beforeEnter: [enforceAdminForRoute],
+            beforeLeave: [checkDirtyBeforeLeave],
+            async: loadAsync(RuleEditPage, { createMode: false, stubMode: true })
+          },
+          {
             path: ':ruleId',
             beforeEnter: [enforceAdminForRoute],
             beforeLeave: [checkDirtyBeforeLeave],
