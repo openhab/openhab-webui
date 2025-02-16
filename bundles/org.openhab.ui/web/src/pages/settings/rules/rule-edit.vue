@@ -54,7 +54,7 @@
           </f7-col>
         </f7-block>
 
-        <rule-general-settings :rule="rule" :ready="ready" :createMode="createMode" :hasTemplate="hasTemplate" />
+        <rule-general-settings :rule="rule" :ready="ready" :createMode="createMode" :hasTemplate="hasTemplate" :templateName="templateName" />
 
         <f7-block v-if="ready" class="block-narrow">
           <f7-block-footer v-if="!isEditable" class="no-margin padding-left">
@@ -137,7 +137,7 @@
                 Duplicate Rule
               </f7-list-button>
               <f7-list-button color="red" @click="deleteRule">
-                Remove Rule
+                Delete Rule
               </f7-list-button>
             </f7-list>
           </f7-col>
@@ -293,16 +293,24 @@ export default {
           }
           if (this.ruleCopy) newRule.uid = this.$f7.utils.id()
           this.$set(this, 'rule', newRule)
-          this.$oh.api.get('/rest/templates').then((data2) => {
-            this.$set(this, 'templates', data2)
+          this.$oh.api.get('/rest/templates').then((templateData) => {
+            this.$set(this, 'templates', templateData)
             loadingFinished()
           })
           // no need for an event source, the rule doesn't exist yet
         } else {
           this.$oh.api.get('/rest/rules/' + this.ruleId).then((data2) => {
             this.$set(this, 'rule', data2)
-            if (!this.eventSource) this.startEventSource()
-            loadingFinished()
+            if (data2.templateUID) {
+              this.$oh.api.get('/rest/templates').then((templateData) => {
+                this.$set(this, 'templates', templateData)
+                if (!this.eventSource) this.startEventSource()
+                loadingFinished()
+              })
+            } else {
+              if (!this.eventSource) this.startEventSource()
+              loadingFinished()
+            }
           })
         }
       })
@@ -588,6 +596,13 @@ export default {
   computed: {
     hasTemplate () {
       return this.rule && this.currentTemplate !== null
+    },
+    templateName () {
+      if (!this.rule || !this.rule.templateUID || !this.templates) {
+        return undefined
+      }
+      let result = this.templates.find((t) => t.uid === this.rule.templateUID)
+      return result ? result.label : this.rule.templateUID
     },
     templateTopicLink () {
       if (!this.currentTemplate) return null
