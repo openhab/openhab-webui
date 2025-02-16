@@ -113,7 +113,7 @@ export default {
 
       if (this.createMode) {
         if (this.pageCopy) {
-          this.$set(this, 'page', cloneDeep(this.pageCopy))
+          this.$set(this, 'page', this.pageCopy)
         }
         this.savedPage = cloneDeep(this.page)
         this.loading = false
