@@ -327,7 +327,7 @@ export default {
       if (this.showCheckboxes) {
         this.toggleItemCheck(event, item.uid, item)
       } else {
-        this.$f7router.navigate((item.editable) ? item.uid : '/settings/scripts/' + item.uid)
+        this.$f7router.navigate(item.uid)
       }
     },
     ctrlClick (event, item) {
@@ -355,7 +355,7 @@ export default {
     },
     doRemoveSelected () {
       if (this.selectedItems.some((i) => this.rules.find((rule) => rule.uid === i).editable === false)) {
-        this.$f7.dialog.alert('Some of the selected rules are not modifiable because they have been provisioned by files')
+        this.$f7.dialog.alert('Some of the selected rules are not modifiable')
         return
       }
 
