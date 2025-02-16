@@ -1,12 +1,12 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:afterout="onPageAfterOut">
-    <f7-navbar :title="(createMode ? 'Create rule' : rule.name) + dirtyIndicator" back-link="Back" no-hairline>
+    <f7-navbar :title="(createMode ? 'Create rule' : stubMode ? 'Regenerate rule from template' : rule.name) + dirtyIndicator" back-link="Back" no-hairline>
       <f7-nav-right>
         <developer-dock-icon />
         <template v-if="isEditable">
           <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only />
           <f7-link @click="save()" v-if="!$theme.md">
-            Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
+            {{ stubMode ? 'Regenerate' : $t(createMode ? 'dialogs.create' : 'dialogs.save') }} <span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
           </f7-link>
         </template>
         <f7-link v-else icon-f7="lock_fill" icon-only tooltip="This rule is not editable through the UI" />
@@ -22,10 +22,11 @@
     </f7-toolbar>
     <f7-tabs class="sitemap-editor-tabs">
       <f7-tab id="design" @tab:show="() => this.currentTab = 'design'" :tab-active="currentTab === 'design'">
-        <f7-block v-if="ready && rule.status && (!createMode)" class="block-narrow padding-left padding-right" strong>
-          <f7-col v-if="!createMode">
+        <f7-block v-if="ready && rule.status && !createMode && !stubMode" class="block-narrow padding-left padding-right" strong>
+          <f7-col v-if="!createMode && !stubMode">
             <div class="float-right align-items-flex-start align-items-center">
               <!-- <f7-toggle class="enable-toggle"></f7-toggle> -->
+              <f7-link v-if="canRegenerate" :icon-color="'deeppurple'" :tooltip="'Regenerate from template'" icon-md="f7:arrow_2_circlepath" icon-ios="f7:arrow_2_circlepath" icon-aurora="f7:arrow_2_circlepath" icon-size="32" color="deeppurple" @click="createStub" />
               <f7-link :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'" :tooltip="((rule.status.statusDetail === 'DISABLED') ? 'Enable' : 'Disable') + (($device.desktop) ? ' (Ctrl-D)' : '')" icon-ios="f7:pause_circle" icon-md="f7:pause_circle" icon-aurora="f7:pause_circle" icon-size="32" color="orange" @click="toggleDisabled" />
               <f7-link :tooltip="'Run Now' + (($device.desktop) ? ' (Ctrl-R)' : '')" icon-ios="f7:play_round" icon-md="f7:play_round" icon-aurora="f7:play_round" icon-size="32" :color="(rule.status.status === 'IDLE') ? 'blue' : 'gray'" @click="runNow" />
             </div>
@@ -43,7 +44,7 @@
           </f7-col>
         </f7-block>
         <!-- skeletons for not ready -->
-        <f7-block v-else-if="!createMode" class="block-narrow padding-left padding-right skeleton-text skeleton-effect-blink" strong>
+        <f7-block v-else-if="!createMode && !stubMode" class="block-narrow padding-left padding-right skeleton-text skeleton-effect-blink" strong>
           <f7-col>
             ______:
             <f7-chip class="margin-left" text="________" />
@@ -54,7 +55,7 @@
           </f7-col>
         </f7-block>
 
-        <rule-general-settings :rule="rule" :ready="ready" :createMode="createMode" :hasTemplate="hasTemplate" :templateName="templateName" />
+        <rule-general-settings :rule="rule" :ready="ready" :createMode="createMode" :stubMode="stubMode" :templateName="templateName" />
 
         <f7-block v-if="ready" class="block-narrow">
           <f7-block-footer v-if="!isEditable" class="no-margin padding-left">
@@ -91,6 +92,12 @@
             <config-sheet v-if="hasTemplate"
                           :parameter-groups="[]" :parameters="currentTemplate.configDescriptions"
                           :configuration="rule.configuration" />
+          </f7-col>
+          <f7-col v-else-if="stubMode" class="new-stub-from-rule">
+            <f7-block-title medium class="margin-vertical padding-top">
+              Template Configuration
+            </f7-block-title>
+            <config-sheet :parameter-groups="[]" :parameters="currentTemplate.configDescriptions" :configuration="rule.configuration" />
           </f7-col>
           <f7-col v-if="!hasTemplate" class="rule-modules">
             <div v-if="isEditable" class="no-padding float-right">
@@ -131,7 +138,7 @@
               </f7-list>
             </div>
           </f7-col>
-          <f7-col v-if="isEditable && (!createMode)">
+          <f7-col v-if="isEditable && !createMode && !stubMode">
             <f7-list>
               <f7-list-button color="blue" @click="duplicateRule">
                 Duplicate Rule
@@ -205,7 +212,7 @@ export default {
     ConfigSheet,
     'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')
   },
-  props: ['ruleId', 'createMode', 'ruleCopy', 'schedule'],
+  props: ['ruleId', 'createMode', 'ruleCopy', 'stubMode', 'schedule'],
   data () {
     return {
       SECTION_LABELS: {
@@ -298,6 +305,36 @@ export default {
             loadingFinished()
           })
           // no need for an event source, the rule doesn't exist yet
+        } else if (this.stubMode) {
+          if (!this.ruleCopy || !this.ruleCopy.templateUID) {
+            this.$f7.toast.create({
+              text: !this.ruleCopy ? 'Failed to create rule stub because there\'s no source rule' : 'Failed to create rule stub because there\'s no template UID',
+              destroyOnClose: true,
+              closeTimeout: 4000
+            }).open()
+            this.$f7router.back()
+          }
+          const ruleStub = this.ruleCopy
+          ruleStub.triggers = []
+          ruleStub.actions = []
+          ruleStub.conditions = []
+          ruleStub.templateState = 'pending'
+          this.$set(this, 'rule', ruleStub)
+          this.$oh.api.get('/rest/templates').then((templateData) => {
+            this.$set(this, 'templates', templateData)
+            let template = this.templates.find((t) => t.uid === ruleStub.templateUID)
+            if (!template) {
+              this.$f7.toast.create({
+                text: 'Template "' + ruleStub.templateUID + '" not found',
+                destroyOnClose: true,
+                closeTimeout: 4000
+              }).open()
+              this.$f7router.back()
+            }
+            this.$set(this, 'currentTemplate', template)
+            loadingFinished()
+          })
+          // no need for an event source, we're going to overwrite the existing rule
         } else {
           this.$oh.api.get('/rest/rules/' + this.ruleId).then((data2) => {
             this.$set(this, 'rule', data2)
@@ -346,6 +383,16 @@ export default {
             .replace('/duplicate', '/' + this.rule.uid)
             .replace('/schedule/', '/rules/'), { reloadCurrent: true })
           this.load()
+        } else if (this.stubMode) {
+          this.$f7.toast.create({
+            text: 'Rule regenerated',
+            destroyOnClose: true,
+            closeTimeout: 2000
+          }).open()
+          this.$f7router.navigate(this.$f7route.url
+            .replace('/stub', '/' + this.rule.uid)
+            .replace('/schedule/', '/rules/'), { reloadCurrent: true })
+          this.load()
         } else {
           if (!noToast) {
             this.$f7.toast.create({
@@ -367,9 +414,22 @@ export default {
     },
     duplicateRule () {
       let ruleClone = cloneDeep(this.rule)
+      ruleClone.templateUID = undefined
+      ruleClone.templateState = 'no-template'
       this.$f7router.navigate({
         url: '/settings/rules/duplicate'
       }, {
+        props: {
+          ruleCopy: ruleClone
+        }
+      })
+    },
+    createStub () {
+      let ruleClone = cloneDeep(this.rule)
+      this.$f7router.navigate({
+        url: '/settings/rules/stub'
+      }, {
+        reloadCurrent: true,
         props: {
           ruleCopy: ruleClone
         }
@@ -425,6 +485,7 @@ export default {
       }
       this.$set(this, 'currentTemplate', this.templates.find((t) => t.uid === uid))
       this.rule.templateUID = uid
+      this.rule.templateState = 'pending'
     },
     editModule (ev, section, mod) {
       if (this.showModuleControls) return
@@ -595,7 +656,7 @@ export default {
   },
   computed: {
     hasTemplate () {
-      return this.rule && this.currentTemplate !== null
+      return this.rule && (this.stubMode || this.currentTemplate !== null)
     },
     templateName () {
       if (!this.rule || !this.rule.templateUID || !this.templates) {
@@ -603,6 +664,12 @@ export default {
       }
       let result = this.templates.find((t) => t.uid === this.rule.templateUID)
       return result ? result.label : this.rule.templateUID
+    },
+    canRegenerate () {
+      if (!this.rule || !this.rule.templateUID || !this.rule.templateState || this.rule.templateState === 'no-template' || this.rule.templateState === 'template-missing') {
+        return false
+      }
+      return this.templates ? this.templates.some((t) => t.uid === this.rule.templateUID) : false
     },
     templateTopicLink () {
       if (!this.currentTemplate) return null

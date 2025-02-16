@@ -29,11 +29,15 @@
       <f7-link color="green" v-show="selectedItems.length" v-if="!$theme.md && !showScenes" class="enable" @click="doDisableEnableSelected(true)" icon-ios="f7:play_circle" icon-aurora="f7:play_circle">
         &nbsp;Enable {{ selectedItems.length }}
       </f7-link>
+      <f7-link color="deeppurple" v-show="selectedItems.length === 1 && canRegenerateItem(selectedItems[0])" v-if="!$theme.md && !showScenes" class="enable" @click="regenerateSelected()" icon-ios="f7:arrow_2_circlepath" icon-aurora="f7:arrow_2_circlepath">
+        &nbsp;Regenerate from template
+      </f7-link>
       <f7-link v-if="$theme.md" icon-md="material:close" icon-color="white" @click="showCheckboxes = false" />
       <div class="title" v-if="$theme.md">
         {{ selectedItems.length }} selected
       </div>
       <div class="right" v-if="$theme.md">
+        <f7-link v-if="!showScenes" v-show="selectedItems.length === 1 && canRegenerateItem(selectedItems[0])" tooltip="Regenerate selected from template" icon-md="material:autorenew" icon-color="white" @click="regenerateSelected()" />
         <f7-link v-if="!showScenes" v-show="selectedItems.length" tooltip="Disable selected" icon-md="material:pause_circle_outline" icon-color="white" @click="doDisableEnableSelected(false)" />
         <f7-link v-if="!showScenes" v-show="selectedItems.length" tooltip="Enable selected" icon-md="material:play_circle_outline" icon-color="white" @click="doDisableEnableSelected(true)" />
         <f7-link v-show="selectedItems.length" icon-md="material:delete" icon-color="white" @click="removeSelected" />
@@ -398,6 +402,23 @@ export default {
         this.$f7.dialog.alert('An error occurred while enabling/disabling: ' + err)
       })
     },
+    regenerateSelected () {
+      if (!this.selectedItems || this.selectedItems.length !== 1) {
+        return
+      }
+      this.$oh.api.get('/rest/rules/' + this.selectedItems[0]).then((rule) => {
+        this.$f7router.navigate({
+          url: '/settings/rules/stub'
+        }, {
+          reloadCurrent: false,
+          props: {
+            ruleCopy: rule
+          }
+        })
+      }).catch((err) => {
+        this.$f7.dialog.alert('An error occurred when retrieving rule "' + this.selectedItems[0] + '": ' + err)
+      })
+    },
     toggleSearchTag (e, item) {
       const idx = this.selectedTags.indexOf(item)
       if (idx !== -1) {
@@ -414,6 +435,13 @@ export default {
     templateName (rule) {
       let template = this.templates ? this.templates.find((t) => t.uid === rule.templateUID) : undefined
       return template ? template.label : rule.templateUID
+    },
+    canRegenerateItem (item) {
+      if (!this.rules) {
+        return false
+      }
+      let rule = this.rules.find((r) => r.uid === item)
+      return rule ? this.canRegenerate(rule) : false
     },
     canRegenerate (rule) {
       if (!rule || !rule.templateUID || !rule.templateState || rule.templateState === 'no-template' || rule.templateState === 'template-missing') {
