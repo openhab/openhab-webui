@@ -6,7 +6,7 @@
           <div slot="title" class="button-header display-flex">
             <oh-icon class="header-icon" v-if="config.icon" :icon="config.icon" :color="config.iconColor" width="20" height="20" />
             <span>{{ config.title || config.header }}</span>
-            <f7-badge v-if="config.headerBadge" color="config.headerBadgeColor">
+            <f7-badge v-if="config.headerBadge" :color="config.headerBadgeColor">
               {{ config.headerBadge }}
             </f7-badge>
           </div>
