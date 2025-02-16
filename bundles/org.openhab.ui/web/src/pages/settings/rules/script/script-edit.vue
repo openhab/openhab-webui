@@ -63,13 +63,13 @@
               <f7-button outline small :active="blocklyCodePreview" icon-f7="doc_text" :icon-size="($theme.aurora) ? 20 : 22" class="no-ripple" @click="showBlocklyCode" tooltip="Show generated code" />
             </f7-segmented>
           </template>
-          <f7-link v-if="DocumentationLinks[mode] && !isBlockly"
+          <f7-link v-if="documentationLink(mode) && !isBlockly"
                    icon-color="blue"
                    :text="$device.desktop ? 'Open Documentation' : 'Docs'"
                    tooltip="Open documentation"
                    icon-ios="f7:question_circle" icon-md="f7:question_circle" icon-aurora="f7:question_circle"
                    color="blue"
-                   :href="$store.state.websiteUrl + DocumentationLinks[mode]" target="_blank" external />
+                   :href="$store.state.websiteUrl + documentationLink(mode)" target="_blank" external />
           <f7-link class="right details-link margin-left padding-right" ref="detailsLink" @click="detailsOpened = true" icon-f7="chevron_up" />
         </span>
       </f7-toolbar>
@@ -162,7 +162,7 @@ import RuleStatus from '@/components/rule/rule-status-mixin'
 import ScriptGeneralSettings from './script-general-settings.vue'
 import ModuleDescriptionSuggestions from '../module-description-suggestions'
 import DirtyMixin from '../../dirty-mixin'
-import { AddonNames, DocumentationLinks } from '@/assets/automation-languages'
+import AUTOMATION_LANGUAGES from '@/assets/automation-languages'
 
 export default {
   mixins: [RuleStatus, ModuleDescriptionSuggestions, DirtyMixin],
@@ -396,7 +396,10 @@ export default {
       return this.languages.map(l => l.contentType).includes(mimeType)
     },
     mimeTypeDescription (mode) {
-      return AddonNames[mode] || mode
+      return AUTOMATION_LANGUAGES[mode].name || mode
+    },
+    documentationLink (mode) {
+      return AUTOMATION_LANGUAGES[mode]['documentationLink']
     },
     /**
      * Load the script module type, i.e. the available script languages
@@ -437,7 +440,7 @@ export default {
         this.initDirty()
 
         if (!this.rule.editable) {
-          const commentChar = (this.mode === 'application/x-ruby' ? '#' : '//')
+          const commentChar = AUTOMATION_LANGUAGES[this.mode].commentChar
           let triggerDescriptionComments = `${commentChar} Triggers:\n`
           for (const trigger of this.rule.triggers) {
             const triggerModuleType = this.moduleTypes.triggers.find((t) => t.uid === trigger.type)
@@ -718,7 +721,6 @@ export default {
   },
   created () {
     this.GRAALJS_MIME_TYPE = 'application/javascript'
-    this.DocumentationLinks = DocumentationLinks
   }
 }
 </script>
