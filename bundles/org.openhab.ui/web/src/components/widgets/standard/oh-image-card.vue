@@ -29,7 +29,6 @@
       display none
     .oh-image
       margin-bottom 5px
-.card
   .list
     margin 0 !important
 </style>
