@@ -27,7 +27,25 @@ export default {
         searchbar: true,
         searchbarPlaceholder: this.$t('dialogs.search.things'),
         virtualList: true,
-        virtualListHeight: (this.$theme.aurora) ? 32 : undefined
+        virtualListHeight: (this.$theme.aurora) ? 32 : undefined,
+
+        renderItem: (item, index) => {
+          let after = (index > 0) ? this.things[index - 1].location
+            ? this.things[index - 1].location + '<i class="icon f7-icons color-gray" style="width: 16px; height: 16px; font-size: 16px;">placemark</i>'
+            : '' : ''
+          return `
+                <li class="media-item">
+                  <label class="item-${item.radio ? 'radio' : 'checkbox'} item-content">
+                    <input type="${item.radio ? 'radio' : 'checkbox'}" name="${item.inputName}" value="${item.value}" ${item.selected ? 'checked' : ''}>
+                    <i class="icon icon-${item.radio ? 'radio' : 'checkbox'}"></i>
+                    <div class="item-inner">
+                      <div class="text">${item.text}</div>
+                      <div class="item-footer">${after}</div>
+                    </div>
+                  </label>
+                </li>
+              `
+        }
       }
     }
   },
