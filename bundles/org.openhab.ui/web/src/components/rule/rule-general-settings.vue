@@ -3,7 +3,7 @@
     <f7-block v-if="ready" class="block-narrow">
       <f7-col>
         <f7-list inline-labels no-hairlines-md>
-          <f7-list-input ref="ruleId" :label="`${type} ID`" type="text" :placeholder="`A unique identifier for the ${type.toLowerCase()}`" :value="rule.uid" required validate
+          <f7-list-input ref="ruleId" :label="`${type} ID`" type="text" :placeholder="`A unique identifier for the ${type.toLowerCase()}`" :value="rule.uid" required :validate="editable"
                          :disabled="!createMode" :info="(createMode) ? 'Required. Note: cannot be changed after the creation' : ''" input-id="input"
                          pattern="[A-Za-z0-9_\-]+" error-message="Required. A-Z,a-z,0-9,_,- only"
                          @input="rule.uid = $event.target.value" :clear-button="createMode">
@@ -24,7 +24,7 @@
     <f7-block v-else class="block-narrow">
       <f7-col class="skeleton-text skeleton-effect-blink">
         <f7-list inline-labels no-hairlines-md>
-          <f7-list-input label="Rule ID" type="text" placeholder="Required" value="_______" required validate
+          <f7-list-input label="Rule ID" type="text" placeholder="Required" value="_______" required :validate="editable"
                          :disabled="true" :info="(createMode) ? 'Note: cannot be changed after the creation' : ''"
                          @input="rule.uid = $event.target.value" :clear-button="createMode" />
           <f7-list-input label="Name" type="text" placeholder="Required" required validate

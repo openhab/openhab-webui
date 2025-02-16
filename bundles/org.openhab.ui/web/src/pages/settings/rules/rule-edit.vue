@@ -9,6 +9,7 @@
             Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
           </f7-link>
         </template>
+        <f7-link v-else icon-f7="lock_fill" icon-only tooltip="This rule is not editable through the UI" />
       </f7-nav-right>
     </f7-navbar>
     <f7-toolbar tabbar position="top">
@@ -57,7 +58,7 @@
 
         <f7-block v-if="ready" class="block-narrow">
           <f7-block-footer v-if="!isEditable" class="no-margin padding-left">
-            <f7-icon f7="lock_fill" size="12" color="gray" />&nbsp;Note: this rule is not editable because it has been provisioned from a file.
+            <f7-icon f7="lock_fill" size="12" color="gray" />&nbsp;Note: this rule is not editable.
           </f7-block-footer>
           <!-- <f7-col v-if="isEditable" class="text-align-right justify-content-flex-end">
           </f7-col> -->
@@ -112,7 +113,7 @@
                               :title="mod.label || suggestedModuleTitle(mod, null, section)"
                               :footer="mod.description || suggestedModuleDescription(mod, null, section)"
                               v-for="mod in rule[section]" :key="mod.id"
-                              :link="isEditable && !showModuleControls"
+                              :link="!showModuleControls"
                               @click.native="(ev) => editModule(ev, section, mod)" swipeout>
                   <f7-link slot="media" v-if="isEditable" icon-color="red" icon-aurora="f7:minus_circle_filled" icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline" @click="showSwipeout" />
                   <f7-swipeout-actions right v-if="isEditable">
@@ -143,7 +144,8 @@
         </f7-block>
       </f7-tab>
       <f7-tab id="code" @tab:show="() => { this.currentTab = 'code'; toYaml() }" :tab-active="currentTab === 'code'">
-        <editor v-if="currentTab === 'code'" class="rule-code-editor" mode="application/vnd.openhab.rule+yaml" :value="ruleYaml" @input="onEditorInput" />
+        <f7-icon v-if="!createMode && !isEditable" f7="lock" class="float-right margin" style="opacity:0.5; z-index: 4000; user-select: none;" size="50" color="gray" tooltip="This code is not editable" />
+        <editor v-if="currentTab === 'code'" class="rule-code-editor" mode="application/vnd.openhab.rule+yaml" :value="ruleYaml" :readOnly="!isEditable" @input="onEditorInput" />
         <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
       </f7-tab>
     </f7-tabs>
@@ -418,7 +420,6 @@ export default {
     },
     editModule (ev, section, mod) {
       if (this.showModuleControls) return
-      if (!this.isEditable) return
       let swipeoutElement = ev.target
       ev.cancelBubble = true
       while (!swipeoutElement.classList.contains('swipeout')) {
@@ -452,15 +453,18 @@ export default {
           currentSection: this.currentSection,
           ruleModule: this.currentModule,
           ruleModuleType: this.currentModuleType,
-          moduleTypes: this.moduleTypes
+          moduleTypes: this.moduleTypes,
+          readOnly: !this.isEditable
         }
       })
 
-      this.$f7.once('ruleModuleConfigUpdate', this.saveModule)
-      this.$f7.once('ruleModuleConfigClosed', () => {
-        this.$f7.off('ruleModuleConfigUpdate', this.saveModule)
-        this.moduleConfigClosed()
-      })
+      if (this.isEditable) {
+        this.$f7.once('ruleModuleConfigUpdate', this.saveModule)
+        this.$f7.once('ruleModuleConfigClosed', () => {
+          this.$f7.off('ruleModuleConfigUpdate', this.saveModule)
+          this.moduleConfigClosed()
+        })
+      }
     },
     deleteModule (ev, section, mod) {
       let swipeoutElement = ev.target
