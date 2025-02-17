@@ -37,13 +37,13 @@ export default {
       return (this.model.item.metadata && this.model.item.metadata.semantics) ? '' : 'gray'
     },
     canAdd () {
-      return this.moveState.dragEnd && !this.moveState.dragFinished && this.moveState.canAdd && !this.moveState.adding
+      return !this.moveState.cancelled && this.moveState.dragEnd && !this.moveState.dragFinished && this.moveState.canAdd && !this.moveState.adding
     },
     canRemove () {
-      return this.moveState.dragEnd && !this.moveState.dragFinished && !this.moveState.canAdd && this.moveState.canRemove && !this.moveState.removing
+      return !this.moveState.cancelled && this.moveState.dragEnd && !this.moveState.dragFinished && !this.moveState.canAdd && this.moveState.canRemove && !this.moveState.removing
     },
     canSave () {
-      return this.moveState.dragEnd && this.moveState.dragFinished && !this.moveState.canAdd && !this.moveState.canRemove && !this.moveState.saving
+      return !this.moveState.cancelled && this.moveState.dragEnd && this.moveState.dragFinished && !this.moveState.canAdd && !this.moveState.canRemove && !this.moveState.saving
     }
   },
   methods: {
@@ -53,6 +53,7 @@ export default {
       this.$set(this.moveState, 'canRemove', false)
       this.$set(this.moveState, 'dragEnd', false)
       this.$set(this.moveState, 'dragFinished', false)
+      this.$set(this.moveState, 'cancelled', false)
       this.$set(this.moveState, 'node', this.children[event.oldIndex])
       console.debug('Drag start - moveState:', cloneDeep(this.moveState))
     },
@@ -70,7 +71,7 @@ export default {
       console.debug('Drag change - moveState:', cloneDeep(this.moveState))
     },
     onDragMove (event) {
-      if (event.relatedContext.element?.item?.type === 'Group' && !event.relatedContext.element.opened) {
+      if (event.relatedContext?.element?.item?.type === 'Group' && !event.relatedContext.element.opened) {
         event.relatedContext.element.opened = true
       }
     },
@@ -98,6 +99,14 @@ export default {
           'isPointOf': null
         }
       }
+      if (parentNode.item && node.item.groupNames?.includes(parentNode.item.name)) {
+        this.$f7.dialog.alert(
+          'Group "' + this.itemLabel(parentNode.item) +
+          '" already contains item "' + this.itemLabel(node.item) + '"'
+        ).open()
+        this.restoreModelUpdate()
+        return
+      }
       if (node.item.type === 'Group' && node.class === '') {
         const semanticNode = this.nestedNodes(node, []).find((n) => n.class !== '')
         if (semanticNode) {
@@ -114,7 +123,7 @@ export default {
         this.$f7.dialog.alert(
           'Cannot move semantic item "' + this.itemLabel(node.item) +
           '" from non-semantic group "' + this.itemLabel(oldParentNode.item) +
-          '" into semantic group'
+          '" into semantic group "' + this.itemLabel(parentNode.item) + "'"
         ).open()
         this.restoreModelUpdate()
         return
@@ -364,6 +373,12 @@ export default {
       const newChildren = this.nodeChildren(parentNode)
       newChildren.splice(oldIndex, 1)
       this.children = newChildren
+      if (parentNode.class === '' && parentNode.item?.type === 'Group') {
+        // Moving a semantic item to a non-semantic group, remove semantics
+        if (node.item.metadata) {
+          this.$set(this.moveState.node.item.metadata, 'semantics', null)
+        }
+      }
       console.debug('Remove - new children:', cloneDeep(this.children))
       console.debug('Remove - removed from parent:', parentNode)
       this.updateAfterRemove()
@@ -385,6 +400,8 @@ export default {
     restoreModelUpdate() {
       this.$set(this.moveState, 'canRemove', false)
       this.$set(this.moveState, 'canAdd', false)
+      this.$set(this.moveState, 'adding', false)
+      this.$set(this.moveState, 'removing', false)
       this.$emit('reload')
     },
     itemLabel (item) {
