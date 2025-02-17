@@ -73,7 +73,7 @@
           <f7-block v-show="!empty" strong class="semantic-tree" no-gap @click.native="clearSelection">
             <model-treeview :rootNodes="[rootLocations, rootEquipment, rootPoints, rootGroups, rootItems].flat()"
                             :includeItemName="includeItemName" :includeItemTags="includeItemTags" :canDragDrop="true"
-                            @selected="selectItem" :selected="selectedItem" />
+                            @selected="selectItem" :selected="selectedItem" @reload="load"/>
           </f7-block>
         </f7-col>
         <f7-col width="100" medium="50" class="details-pane">
@@ -378,6 +378,7 @@ export default {
     clearSelection (ev) {
       if (ev.target && ev.currentTarget && ev.target === ev.currentTarget) {
         this.selectedItem = null
+        this.detailsOpened = false
       }
     },
     toggleNonSemantic () {
