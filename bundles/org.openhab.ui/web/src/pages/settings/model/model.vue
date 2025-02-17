@@ -35,7 +35,7 @@
       </div>
       <f7-link class="right details-link padding-right" ref="detailsLink" @click="detailsOpened = true" icon-f7="chevron_up" />
     </f7-toolbar>
-    <f7-toolbar v-else bottom class="toolbar-details" style="height: calc(50px + var(--f7-safe-area-bottom))">
+    <f7-toolbar v-else bottom class="toolbar-details">
       <f7-link :disabled="selectedItem != null" class="left" @click="selectedItem = null">
         Clear
       </f7-link>
@@ -169,7 +169,15 @@
 <style lang="stylus">
 .semantic-tree-wrapper
   padding 0
-  margin 0 !important
+  .row
+    height 100%
+    .col-100
+      height 100%
+      overflow auto
+      .semantic-tree
+        min-height 100%
+        margin 0
+        height auto
 .semantic-tree
   margin 0 !important
   border-right 1px solid var(--f7-block-strong-border-color)
@@ -183,16 +191,8 @@
 
 @media (min-width: 768px)
   .semantic-tree-wrapper
-    height calc(100% - var(--f7-navbar-height))
+    height calc(100% - var(--f7-toolbar-height))
     .row
-      height 100%
-      .col-100
-        height 100%
-        overflow auto
-        .semantic-tree
-          min-height 100%
-          margin 0
-          height auto
       .details-pane
         padding-top 0
         .block
@@ -204,12 +204,22 @@
     visibility hidden !important
 
 @media (max-width: 767px)
+  .semantic-tree-wrapper.block:first-child
+    margin-top 5px
+  .semantic-tree-wrapper
+    height calc(100% - 20px)
+    margin-bottom 5px
   .details-pane
     display none
   .semantic-tree-wrapper.sheet-opened
-    margin-bottom var(--f7-sheet-height)
-  .details-sheet
-    height calc(1.4*var(--f7-sheet-height))
+    height calc(100% - 5px - var(--f7-sheet-height) + var(--f7-page-toolbar-bottom-offset, 0px) + var(--f7-page-content-extra-padding-bottom, 0px))
+    margin-bottom calc(var(--f7-sheet-height) - var(--f7-page-toolbar-bottom-offset, 0px) - var(--f7-page-content-extra-padding-bottom, 0px))
+  .toolbar-details.toolbar.toolbar-bottom
+    height  calc( 50px + var(--f7-safe-area-bottom))
+  .model-details-sheet.sheet-modal.sheet-modal-bottom .block
+    margin-top 0px
+    padding-left 0px
+    padding-right 0px
 
 .expand-button
   margin-right 8px
