@@ -216,6 +216,7 @@ export default {
           text: 'Insert "' + this.itemLabel(node.item) +
             '" into "' + this.itemLabel(parentNode.item) +
             '" as',
+          verticalButtons: true,
           buttons: [
             { text: 'Cancel', color: 'gray', onClick: () => this.restoreModelUpdate() },
             { text: 'Location', onClick: () => this.addLocation(node, parentNode) },
@@ -228,7 +229,8 @@ export default {
           text: 'Insert "' + this.itemLabel(node.item) +
             '" into "' + this.itemLabel(parentNode.item) +
             '" as',
-          buttons: [
+            verticalButtons: true,
+            buttons: [
             { text: 'Cancel', color: 'gray', onClick: () => this.restoreModelUpdate() },
             { text: 'Equipment', onClick: () => this.addEquipment(node, parentNode) },
             { text: 'Point', onClick: () => this.addPoint(node, parentNode) }
@@ -255,7 +257,8 @@ export default {
           text: 'Insert "' + this.itemLabel(node.item) +
             '" into "' + this.itemLabel(parentNode.item) +
             '" as',
-          buttons: [
+            verticalButtons: true,
+            buttons: [
             { text: 'Cancel', color: 'gray', onClick: () => this.restoreModelUpdate() },
             { text: 'Equipment', onClick: () => this.addEquipment(node, parentNode) },
             { text: 'Point', onClick: () => this.addPoint(node, parentNode) }
@@ -287,7 +290,8 @@ export default {
           text: 'Insert "' + this.itemLabel(node.item) +
             '" into "' + this.itemLabel(parentNode.item) +
             '" as',
-          buttons: [
+            verticalButtons: true,
+            buttons: [
             { text: 'Cancel', color: 'gray', onClick: () => this.restoreModelUpdate() },
             { text: 'Location', onClick: () => this.addLocation(node, parentNode) },
             { text: 'Equipment', onClick: () => this.addEquipment(node, parentNode) },
@@ -300,7 +304,8 @@ export default {
           text: 'Insert "' + this.itemLabel(node.item) +
             '" into "' + this.itemLabel(parentNode.item) +
             '" as',
-          buttons: [
+            verticalButtons: true,
+            buttons: [
             { text: 'Cancel', color: 'gray', onClick: () => this.restoreModelUpdate() },
             { text: 'Equipment', onClick: () => this.addEquipment(node, parentNode) },
             { text: 'Point', onClick: () => this.addPoint(node, parentNode) },
@@ -396,7 +401,8 @@ export default {
             '" dragged from group "' + this.itemLabel(parentNode.item) +
             '" into "' + this.itemLabel(this.moveState.newParent.item) +
             '", keep original?',
-          buttons: [
+            verticalButtons: true,
+            buttons: [
             { text: 'Cancel', color: 'gray', onClick: () => this.restoreModelUpdate() },
             { text: 'Keep', onClick: () => this.updateAfterRemove() },
             { text: 'Remove', onClick: () => this.remove(node, parentNode, oldIndex) }
