@@ -45,7 +45,7 @@ export default {
       return !this.moveState.cancelled && this.moveState.dragEnd && this.moveState.dragFinished && !this.moveState.canAdd && !this.moveState.canRemove && !this.moveState.saving
     },
     canHaveChildren () {
-      return ((this.model.item.type === 'Group') && (this.children.length > 0 || this.moveState.moving) === true)
+      return ((this.model.item.type === 'Group') && (this.children.length > 0 || this.moveState.moving)) === true
     }
   },
   methods: {
