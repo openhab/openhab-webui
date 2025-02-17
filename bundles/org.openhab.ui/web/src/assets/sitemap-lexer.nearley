@@ -129,13 +129,13 @@ WidgetAttr -> %widgetswitchattr                                                 
 WidgetAttrName -> %item | %label | %widgetattr
 WidgetBooleanAttrValue -> %boolean                                                {% (d) => (d[0].value === 'true') %}
   | %string                                                                       {% (d) => (d[0].value === 'true') %}
-WidgetIconAttrValue -> %string
-  | WidgetIconName
-  | %identifier %colon WidgetIconName
-  | %identifier %colon %identifier %colon WidgetIconName
+WidgetIconAttrValue -> %string                                                    {% (d) => d[0].value %}
+  | WidgetIconAttrPart
+  | WidgetIconAttrPart %colon WidgetIconAttrPart
+  | WidgetIconAttrPart %colon WidgetIconAttrPart %colon WidgetIconAttrPart
+WidgetIconAttrPart -> %identifier                                                 {% (d) => d[0].value %}
+  | %identifier %hyphen WidgetIconAttrPart                                        {% (d) => d[0].value + "-" + d[2] %}
 WidgetIconRulesAttrValue -> %lbracket _ IconRules _ %rbracket                     {% (d) => d[2] %}
-WidgetIconName -> %identifier
-  | WidgetIconName %hyphen %identifier                                            {% (d) => d[0] + "-" + d[2].value %}
 WidgetPeriodAttrValue -> %identifier %hyphen %identifier                          {% (d) => d[0].value + "-" + d[2].value %}
   | %hyphen %identifier                                                           {% (d) => "-" + d[1].value %}
   | %identifier                                                                   {% (d) => d[0].value %}
