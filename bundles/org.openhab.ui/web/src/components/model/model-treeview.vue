@@ -2,8 +2,8 @@
   <f7-treeview class="model-treeview">
     <draggable :disabled="!canDragDrop" :list="children" group="model-treeview" animation="150" fallbackOnBody="true" forceFallback="true" scrollSensitivity="200" swapThreshold="0.6"
                @start="onDragStart" @change="onDragChange" @end="onDragEnd" :move="onDragMove">
-      <model-treeview-item v-for="node in children"
-                           :key="node.item.name" :model="node" :parentNode="model"
+      <model-treeview-item v-for="(node, index) in children"
+                           :key="node.item.name + '_' + index" :model="node" :parentNode="model"
                            :includeItemName="includeItemName" :includeItemTags="includeItemTags" :canDragDrop="canDragDrop" :moveState="moveState"
                            @selected="nodeSelected" :selected="selected"
                            @checked="(item, check) => $emit('checked', item, check)"

@@ -7,8 +7,8 @@
                     @click="select">
     <draggable :disabled="!canDragDrop || !model.item.editable" :list="children" group="model-treeview" animation="150" fallbackOnBody="true" forceFallback="true" scrollSensitivity="200" swapThreshold="0.6"
                @start="onDragStart" @change="onDragChange" @end="onDragEnd" :move="onDragMove">
-      <model-treeview-item v-for="node in children"
-                           :key="node.item.name"
+      <model-treeview-item v-for="(node, index) in children"
+                           :key="node.item.name + '_' + index"
                            :model="node"
                            :parentNode="model"
                            @selected="(event) => $emit('selected', event)"
@@ -16,8 +16,7 @@
                            :includeItemName="includeItemName" :includeItemTags="includeItemTags"
                            :canDragDrop="canDragDrop"
                            :moveState="moveState"
-                           @checked="(item, check) => $emit('checked', item, check)"
-                           @reload="$emit('reload')" />
+                           @checked="(item, check) => $emit('checked', item, check)" />
     </draggable>
     <div slot="label" class="semantic-class">
       {{ className() }}
