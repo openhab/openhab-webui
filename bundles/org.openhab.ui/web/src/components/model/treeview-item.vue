@@ -3,7 +3,7 @@
                     :icon-ios="icon('ios')" :icon-aurora="icon('aurora')" :icon-md="icon('md')"
                     :textColor="iconColor" :color="(model.item.created !== false) ? 'blue' :'orange'"
                     :selected="selected && selected.item.name === model.item.name"
-                    :opened="model.opened" :toggle="model.item.type === 'Group'"
+                    :opened="model.opened" :toggle="canHaveChildren"
                     @click="select">
     <draggable :disabled="!canDragDrop || !model.item.editable" :list="children" group="model-treeview" animation="150" fallbackOnBody="true" forceFallback="true" scrollSensitivity="200" delay="400" swapThreshold="0.6"
                @start="onDragStart" @change="onDragChange" @end="onDragEnd" :move="onDragMove">

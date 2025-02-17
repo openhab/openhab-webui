@@ -43,11 +43,18 @@ export default {
     },
     canSave () {
       return !this.moveState.cancelled && this.moveState.dragEnd && this.moveState.dragFinished && !this.moveState.canAdd && !this.moveState.canRemove && !this.moveState.saving
+    },
+    canHaveChildren () {
+      console.debug("Node children:", cloneDeep(this.children))
+      console.debug("Node children length:", this.children.length)
+      console.debug("Can have children: ", (this.children.length > 0 || this.moveState.moving) === true)
+      return ((this.model.item.type === 'Group') && (this.children.length > 0 || this.moveState.moving) === true)
     }
   },
   methods: {
     onDragStart (event) {
       console.debug('Drag start - event:', event)
+      this.$set(this.moveState, 'moving', true)
       this.$set(this.moveState, 'canAdd', false)
       this.$set(this.moveState, 'canRemove', false)
       this.$set(this.moveState, 'dragEnd', false)
@@ -77,6 +84,7 @@ export default {
       }
     },
     onDragEnd (event) {
+      this.$set(this.moveState, 'moving', false)
       this.$set(this.moveState, 'dragEnd', true)
       console.debug('Drag end - event:', event)
       console.debug('Drag end - moveState:', cloneDeep(this.moveState))
