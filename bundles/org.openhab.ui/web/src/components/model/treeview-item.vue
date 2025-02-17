@@ -5,7 +5,7 @@
                     :selected="selected && selected.item.name === model.item.name"
                     :opened="model.opened" :toggle="model.item.type === 'Group'"
                     @click="select">
-    <draggable :disabled="!canDragDrop || !model.item.editable" :list="children" group="model-treeview" animation="150" fallbackOnBody="true" forceFallback="true" scrollSensitivity="200" swapThreshold="0.6"
+    <draggable :disabled="!canDragDrop || !model.item.editable" :list="children" group="model-treeview" animation="150" fallbackOnBody="true" forceFallback="true" scrollSensitivity="200" delay="400" swapThreshold="0.6"
                @start="onDragStart" @change="onDragChange" @end="onDragEnd" :move="onDragMove">
       <model-treeview-item v-for="(node, index) in children"
                            :key="node.item.name + '_' + index"
