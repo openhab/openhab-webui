@@ -5,17 +5,18 @@ import TagMixin from '@/components/tags/tag-mixin'
 
 export default {
   mixins: [ItemMixin, TagMixin],
-  data () {
-    return {
-      localMoveState: this.moveState ? this.moveState : {}
-    }
-  },
   watch: {
     moveState: {
-      handler () {
-        if (this.moveFinished) {
-          this.saveModelUpdate(this.localMoveState)
-          this.$set(this.localMoveState, 'hasMoved', false)
+      handler: function () {
+        // console.debug('Watch - moveState:', cloneDeep(this.moveState))
+        if (this.canSave) {
+          this.$set(this.moveState, 'canSave', false)
+          this.saveModelUpdate()
+        } else if (this.canRemove) {
+          this.$set(this.moveState, 'canRemove', false)
+          this.validateRemove()
+        } else if (this.canAdd) {
+          this.validateAdd()
         }
       },
       deep: true
@@ -37,28 +38,39 @@ export default {
     iconColor () {
       return (this.model.item.metadata && this.model.item.metadata.semantics) ? '' : 'gray'
     },
-    moveFinished () {
-      return this.localMoveState.dragFinished && this.localMoveState.addFinished && this.localMoveState.removeFinished && this.localMoveState.hasMoved
+    canAdd () {
+      return !this.moveState.dragFinished && this.moveState.dragEnd && this.moveState.canAdd
+    },
+    canRemove () {
+      return !this.moveState.dragFinished && this.moveState.dragEnd && !this.moveState.canAdd && this.moveState.canRemove
+    },
+    canSave () {
+      return this.moveState.dragFinished && this.moveState.dragEnd && !this.moveState.canAdd && !this.moveState.canRemove && this.moveState.canSave
     }
   },
   methods: {
     onDragStart (event) {
       console.debug('Drag start - event:', event)
-      this.$set(this.localMoveState, 'dragFinished', false)
-      this.$set(this.localMoveState, 'node', this.children[event.oldIndex])
-      console.debug('Drag start - stored moveState:', cloneDeep(this.localMoveState))
+      this.$set(this.moveState, 'canAdd', false)
+      this.$set(this.moveState, 'canRemove', false)
+      this.$set(this.moveState, 'canSave', false)
+      this.$set(this.moveState, 'dragEnd', false)
+      this.$set(this.moveState, 'dragFinished', false)
+      this.$set(this.moveState, 'node', this.children[event.oldIndex])
+      console.debug('Drag start - moveState:', cloneDeep(this.moveState))
     },
     onDragChange (event) {
       console.debug('Drag change - event:', event)
-      console.debug('Drag change - stored moveState:', cloneDeep(this.localMoveState))
       if (event.added) {
-        this.$set(this.localMoveState, 'addFinished', false)
-        this.validateAdd()
+        this.$set(this.moveState, 'newParent', this.model)
+        this.$set(this.moveState, 'canAdd', true)
       }
       if (event.removed) {
-        this.$set(this.localMoveState, 'removeFinished', false)
-        this.validateRemove(event.removed.oldIndex)
+        this.$set(this.moveState, 'oldParent', this.model)
+        this.$set(this.moveState, 'oldIndex', event.removed.oldIndex)
+        this.$set(this.moveState, 'canRemove', true)
       }
+      console.debug('Drag change - moveState:', cloneDeep(this.moveState))
     },
     onDragMove (event) {
       if (event.relatedContext.element?.item?.type === 'Group' && !event.relatedContext.element.opened) {
@@ -66,9 +78,9 @@ export default {
       }
     },
     onDragEnd (event) {
-      this.$set(this.localMoveState, 'dragFinished', true)
+      this.$set(this.moveState, 'dragEnd', true)
       console.debug('Drag end - event:', event)
-      console.debug('Drag end - stored moveState:', cloneDeep(this.localMoveState))
+      console.debug('Drag end - moveState:', cloneDeep(this.moveState))
     },
     nestedNodes (node, nodes) {
       const children = [...node.children.locations, ...node.children.equipment, ...node.children.points, ...node.children.groups, ...node.children.items]
@@ -77,8 +89,9 @@ export default {
       return nodes
     },
     validateAdd () {
-      const node = this.localMoveState.node
-      const parentNode = this.model
+      const node = this.moveState.node
+      const parentNode = this.moveState.newParent
+      const oldParentNode = this.moveState.oldParent
       const semantics = {
         'value': null,
         'config': {
@@ -87,32 +100,41 @@ export default {
           'isPointOf': null
         }
       }
-      if (node.item.type === 'Group' && node.class === '' && parentNode?.class) {
+      if (node.item.type === 'Group' && node.class === '') {
         const semanticNode = this.nestedNodes(node, []).find((n) => n.class !== '')
         if (semanticNode) {
           this.$f7.dialog.alert(
-            'Cannot insert non-semantic group ' + this.itemLabel(node.item) +
-            ' with semantic child ' + this.itemLabel(semanticNode.item) +
-            ' into semantic group'
+            'Cannot insert non-semantic group "' + this.itemLabel(node.item) +
+            '" with semantic child "' + this.itemLabel(semanticNode.item) +
+            '" into semantic group'
           ).open()
-          this.$set(this.localMoveState, 'addFinished', true)
+          this.restoreModelUpdate()
           return
         }
       }
-      if (!this.isValidGroupType(node, parentNode)) {
-        this.$set(this.localMoveState, 'addFinished', true)
+      if (node.class !== '' && parentNode.class !== '' && oldParentNode?.class === '') {
+        this.$f7.dialog.alert(
+          'Cannot move semantic item "' + this.itemLabel(node.item) +
+          '" from non-semantic group "' + this.itemLabel(oldParentNode.item) +
+          '" into semantic group'
+        ).open()
+        this.restoreModelUpdate()
         return
       }
-      if (parentNode?.class === 'Location') {
-        if (node.class === 'Location') {
+      if (!this.isValidGroupType(node, parentNode)) {
+        this.restoreModelUpdate()
+        return
+      }
+      if (parentNode.class.startsWith('Location')) {
+        if (node.class.startsWith('Location')) {
           this.addLocation(node, parentNode, semantics)
-        } else if (node.class === 'Equipment') {
+        } else if (node.class.startsWith('Equipment')) {
           this.addEquipment(node, parentNode, semantics)
-        } else if (node.class?.startsWith('Point')) {
+        } else if (node.class.startsWith('Point')) {
           this.addPoint(node, parentNode, semantics)
         } else if (node.item.type === 'Group') {
           this.$f7.dialog.create({
-            text: 'Insert ' + this.itemLabel(node.item) + ' as',
+            text: 'Insert "' + this.itemLabel(node.item) + '" as',
             buttons: [
               { text: 'Location', onClick: () => this.addLocation(node, parentNode, semantics) },
               { text: 'Equipment', onClick: () => this.addEquipment(node, parentNode, semantics) }
@@ -120,26 +142,27 @@ export default {
           }).open()
         } else {
           this.$f7.dialog.create({
-            text: 'Insert ' + this.itemLabel(node.item) + ' as',
+            text: 'Insert "' + this.itemLabel(node.item) + '" as',
             buttons: [
               { text: 'Equipment', onClick: () => this.addEquipment(node, parentNode, semantics) },
               { text: 'Point', onClick: () => this.addPoint(node, parentNode, semantics) }
             ]
           }).open()
         }
-      } else if (parentNode?.class === 'Equipment') {
-        if (node.class === 'Location') {
-          this.$f7.dialog.alert('Cannot move Location ' + this.itemLabel(node.item) + ' into Equipment ' + this.itemLabel(parentNode.item)).open()
-          return false
-        } else if (node.class === 'Equipment') {
+      } else if (parentNode.class.startsWith('Equipment')) {
+        if (node.class.startsWith('Location')) {
+          this.$f7.dialog.alert('Cannot move Location "' + this.itemLabel(node.item) + '" into Equipment "' + this.itemLabel(parentNode.item) + '"').open()
+          this.restoreModelUpdate()
+          return
+        } else if (node.class.startsWith('Equipment')) {
           this.addEquipment(node, parentNode, semantics)
-        } else if (node.class?.startsWith('Point')) {
+        } else if (node.class.startsWith('Point')) {
           this.addPoint(node, parentNode, semantics)
         } else if (node.item.type === 'Group') {
           this.addEquipment(node, parentNode, semantics)
         } else {
           this.$f7.dialog.create({
-            text: 'Insert ' + this.itemLabel(node.item) + ' as',
+            text: 'Insert "' + this.itemLabel(node.item) + '" as',
             buttons: [
               { text: 'Equipment', onClick: () => this.addEquipment(node, parentNode, semantics) },
               { text: 'Point', onClick: () => this.addPoint(node, parentNode, semantics) }
@@ -149,15 +172,15 @@ export default {
       } else {
         if (parentNode.item) {
           this.addNonSemantic(node, parentNode, semantics)
-        } else if (node.class === 'Location') {
+        } else if (node.class.startsWith('Location')) {
           this.addLocation(node, parentNode, semantics)
-        } else if (node.class === 'Equipment') {
+        } else if (node.class.startsWith('Equipment')) {
           this.addEquipment(node, parentNode, semantics)
-        } else if (node.class?.startsWith('Point')) {
+        } else if (node.class.startsWith('Point')) {
           this.addPoint(node, parentNode, semantics)
         } else if (node.item.type === 'Group') {
           this.$f7.dialog.create({
-            text: 'Insert ' + this.itemLabel(node.item) + ' as',
+            text: 'Insert "' + this.itemLabel(node.item) + '" as',
             buttons: [
               { text: 'Location', onClick: () => this.addLocation(node, parentNode, semantics) },
               { text: 'Equipment', onClick: () => this.addEquipment(node, parentNode, semantics) },
@@ -166,7 +189,7 @@ export default {
           }).open()
         } else {
           this.$f7.dialog.create({
-            text: 'Insert ' + this.itemLabel(node.item) + ' as',
+            text: 'Insert "' + this.itemLabel(node.item) + '" as',
             buttons: [
               { text: 'Equipment', onClick: () => this.addEquipment(node, parentNode, semantics) },
               { text: 'Point', onClick: () => this.addPoint(node, parentNode, semantics) },
@@ -188,10 +211,10 @@ export default {
       if ((type === 'Number' || type === 'None') && baseType === 'Number') {
         if (baseDimension && dimension && baseDimension !== dimension) {
           this.$f7.dialog.alert(
-            'Group dimension ' + baseDimension +
-             ' of group ' + this.itemLabel(parentNode.item) +
-             ' not compatible with ' + (node.item.type === 'Group' ? 'group ' : '') + 'item dimension ' + dimension +
-             ' of ' + (node.item.type === 'Group' ? 'group ' : '') + 'item ' + this.itemLabel(node.item)
+            'Group dimension "' + baseDimension +
+             '" of group "' + this.itemLabel(parentNode.item) +
+             '" not compatible with "' + (node.item.type === 'Group' ? 'group ' : '') + 'item dimension "' + dimension +
+             '" of "' + (node.item.type === 'Group' ? 'group ' : '') + '" item "' + this.itemLabel(node.item) +'"'
           ).open()
           return false
         }
@@ -202,22 +225,22 @@ export default {
           }).find((child) => { return dimension !== child?.dimension })
           if (childWithDifferentDimension) {
             this.$f7.dialog.alert(
-              'Group ' + this.itemLabel(parentNode.item) +
-              ' already contains item ' + this.itemLabel(childWithDifferentDimension.item) +
-              ' with dimension ' + childWithDifferentDimension.dimension +
-              ' different from group dimension ' + dimension
+              'Group "' + this.itemLabel(parentNode.item) +
+              '" already contains item "' + this.itemLabel(childWithDifferentDimension.item) +
+              '" with dimension "' + childWithDifferentDimension.dimension +
+              '" different from group dimension "' + dimension + '"'
             ).open()
             return false
           }
         }
       }
       const aggregationFunction = parentNode.item?.function?.name
-      if (aggregationFunction && !this.aggregationFunctions(type).contains(aggregationFunction)) {
+      if (aggregationFunction && !this.aggregationFunctions(type).includes(aggregationFunction)) {
         this.$f7.dialog.alert(
-          'Group aggreggation function ' + aggregationFunction +
-          ' for group ' + this.itemLabel(parentNode.item) +
-          ' not compatible with type ' + type +
-          ' of item ' + this.itemLabel(node.item)
+          'Group aggreggation function "' + aggregationFunction +
+          '" for group "' + this.itemLabel(parentNode.item) +
+          '" not compatible with type "' + type +
+          '" of item "' + this.itemLabel(node.item) + '"'
         ).open()
         return false
       }
@@ -245,53 +268,53 @@ export default {
     },
     addLocation (node, parentNode, semantics) {
       semantics.value = node.item?.metadata?.semantics?.value || 'Location'
-      if (parentNode.class === 'Location') {
+      if (parentNode.class.startsWith('Location')) {
         semantics.config.isPartOf = parentNode.item.name
       }
-      if (!this.localMoveState.node.item.tags.includes(semantics.value)) this.localMoveState.node.item.tags.push(semantics.value)
-      this.$set(this.localMoveState.node, 'class', 'Location')
+      if (!this.moveState.node.item.tags.includes(semantics.value)) this.moveState.node.item.tags.push(semantics.value)
+      this.$set(this.moveState.node, 'class', semantics.value)
       this.updateAfterAdd(node, parentNode, semantics)
     },
     addEquipment (node, parentNode, semantics) {
       semantics.value = node.item?.metadata?.semantics?.value || 'Equipment'
-      if (parentNode.class === 'Location') {
+      if (parentNode.class.startsWith('Location')) {
         semantics.config.hasLocation = parentNode.item.name
-      } else if (parentNode.class === 'Equipment') {
+      } else if (parentNode.class.startsWith('Equipment')) {
         semantics.config.isPartOf = parentNode.item.name
       }
-      if (!this.localMoveState.node.item.tags.includes(semantics.value)) this.localMoveState.node.item.tags.push(semantics.value)
-      this.$set(this.localMoveState.node, 'class', 'Equipment')
+      if (!this.moveState.node.item.tags.includes(semantics.value)) this.moveState.node.item.tags.push(semantics.value)
+      this.$set(this.moveState.node, 'class', semantics.value)
       this.updateAfterAdd(node, parentNode, semantics)
     },
     addPoint (node, parentNode, semantics) {
       semantics.value = node.item?.metadata?.semantics?.value || 'Point'
-      if (parentNode.class === 'Location') {
+      if (parentNode.class.startsWith('Location')) {
         semantics.config.hasLocation = parentNode.item.name
-      } else if (parentNode.class === 'Equipment') {
+      } else if (parentNode.class.startsWith('Equipment')) {
         semantics.config.isPointOf = parentNode.item.name
       }
-      if (!this.localMoveState.node.item.tags.includes(semantics.value)) this.localMoveState.node.item.tags.push(semantics.value)
-      this.$set(this.localMoveState.node, 'class', 'Point')
+      if (!this.moveState.node.item.tags.includes(semantics.value)) this.moveState.node.item.tags.push(semantics.value)
+      this.$set(this.moveState.node, 'class', semantics.value)
       this.updateAfterAdd(node, parentNode, semantics)
     },
     addNonSemantic (node, parentNode, semantics) {
-      this.$set(this.localMoveState.node, 'class', '')
-      if (node.item.metadata?.semantics) {
-        this.$set(this.localMoveState.node.item.metadata, 'semantics', null)
-      }
-      this.updateAfterAdd(node, parentNode, semantics)
+      this.$set(this.moveState.node, 'class', '')
+      this.updateAfterAdd(node, parentNode, null)
     },
     updateAfterAdd (node, parentNode, semantics) {
-      this.$set(this.localMoveState, 'hasMoved', true)
-      if (node.item.metadata) {
-        this.$set(this.localMoveState.node.item.metadata, 'semantics', semantics)
+      if (semantics === null) {
+        if (node.item.metadata?.semantics) {
+          this.$set(this.moveState.node.item.metadata, 'semantics', null)
+        }
+      } else if (node.item.metadata) {
+        this.$set(this.moveState.node.item.metadata, 'semantics', semantics)
       } else {
-        this.$set(this.localMoveState.node.item, 'metadata', { semantics })
+        this.$set(this.moveState.node.item, 'metadata', { semantics })
       }
-      if (parentNode?.item?.type === 'Group' && !node.item.groupNames.includes(parentNode.item.name)) {
+      if (parentNode.item?.type === 'Group' && !node.item.groupNames.includes(parentNode.item.name)) {
         node.item.groupNames.push(parentNode.item.name)
       }
-      console.debug('Add - new moveState:', cloneDeep(this.localMoveState))
+      console.debug('Add - new moveState:', cloneDeep(this.moveState))
       console.debug('Add - parentNode:', cloneDeep(parentNode))
       console.debug('Add - children:', cloneDeep(this.children))
       if (!this.children.find(n => n.item.name === node.item.name)) {
@@ -302,31 +325,35 @@ export default {
       this.children = newChildren // force setters to update model
       console.debug('Add - new children:', cloneDeep(this.children))
       console.debug('Add - added to parent:', cloneDeep(parentNode))
-      this.$set(this.localMoveState, 'addFinished', true)
-      console.debug('Add - finished, new moveState:', cloneDeep(this.localMoveState))
+      this.$set(this.moveState, 'canAdd', false)
+      console.debug('Add - finished, new moveState:', cloneDeep(this.moveState))
     },
-    validateRemove (oldIndex) {
-      const node = this.localMoveState.node
-      const parentNode = this.model
-      console.debug('Remove - new moveState:', cloneDeep(this.localMoveState))
+    validateRemove () {
+      const node = this.moveState.node
+      const parentNode = this.moveState.oldParent
+      const oldIndex = this.moveState.oldIndex
+      console.debug('Remove - new moveState:', cloneDeep(this.moveState))
       console.debug('Remove - parentNode:', cloneDeep(parentNode))
       console.debug('Remove - children:', cloneDeep(this.children))
-      if (parentNode.class !== '') {
-        // always remove from semantic model groups
+      if (parentNode.class !== '' && this.moveState.newParent.class !== '') {
+        // always remove from semantic model groups, unless moving into non-semantic group
         this.remove(node, parentNode, oldIndex)
       } else if (!parentNode.item && node.class !== '') {
         // always remove semantic item from root level when moving into another group
         this.remove(node, parentNode, oldIndex)
       } else if (parentNode.item?.type === 'Group') {
         this.$f7.dialog.create({
-          text: 'Item ' + this.itemLabel(node.item) + ' dragged from group ' + this.itemLabel(parentNode.item) + ': Remove original ?',
+          text: 'Item "' + this.itemLabel(node.item) + '" dragged from group "' + this.itemLabel(parentNode.item) + '", remove original?',
           buttons: [
             { text: 'Remove', onClick: () => this.remove(node, parentNode, oldIndex) },
-            { text: 'Keep', onClick: () => this.$set(this.moveState, 'removeFinished', true) }
+            { text: 'Keep', onClick: () => {
+                this.updateAfterRemove()
+              }
+          }
           ]
         }).open()
       } else {
-        this.$set(this.localMoveState, 'removeFinished', true)
+        this.updateAfterRemove()
       }
     },
     remove (node, parentNode, oldIndex) {
@@ -339,13 +366,23 @@ export default {
       this.children = newChildren
       console.debug('Remove - new children:', cloneDeep(this.children))
       console.debug('Remove - removed from parent:', parentNode)
-      this.$set(this.localMoveState, 'removeFinished', true)
-      console.debug('Remove - finished, new moveState:', cloneDeep(this.localMoveState))
+      this.updateAfterRemove()
+      console.debug('Remove - finished, new moveState:', cloneDeep(this.moveState))
     },
-    saveModelUpdate (moveState) {
-      const updatedItem = moveState.node.item
+    updateAfterRemove () {
+      this.$set(this.moveState, 'canRemove', false)
+      this.$set(this.moveState, 'dragFinished', true)
+      this.$set(this.moveState, 'canSave', true)
+    },
+    saveModelUpdate () {
+      const updatedItem = this.moveState.node.item
       console.debug('Save - updatedItem: ', cloneDeep(updatedItem))
       this.saveItem(updatedItem)
+    },
+    restoreModelUpdate() {
+      this.$set(this.moveState, 'canRemove', false)
+      this.$set(this.moveState, 'canAdd', false)
+      this.$emit('reload')
     },
     itemLabel (item) {
       return (item.label ? (this.includeItemName ? item.label + ' (' + item.name + ')' : item.label) : item.name)
