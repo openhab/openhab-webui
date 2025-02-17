@@ -66,7 +66,7 @@
       <f7-block strong class="no-padding" v-if="ready">
         <model-treeview class="model-picker-treeview" :root-nodes="rootNodes"
                         :includeItemName="includeItemName" :includeItemTags="includeItemTags"
-                        :selected-item="selectedItem" @selected="selectItem" @checked="checkItem" />
+                        :selected="selectedItem" @selected="selectItem" @checked="checkItem" />
       </f7-block>
       <f7-block v-else-if="!ready" class="text-align-center">
         <f7-preloader />
@@ -178,7 +178,7 @@ export default {
       this.loadModel().then(() => {
         this.$nextTick(() => {
           this.initSearchbar = true
-          this.applyExpandedOption()
+          this.restoreExpanded()
         })
       })
     },
