@@ -10,10 +10,8 @@ export default {
       handler: function () {
         // console.debug('Watch - moveState:', cloneDeep(this.moveState))
         if (this.canSave) {
-          this.$set(this.moveState, 'canSave', false)
           this.saveModelUpdate()
         } else if (this.canRemove) {
-          this.$set(this.moveState, 'canRemove', false)
           this.validateRemove()
         } else if (this.canAdd) {
           this.validateAdd()
@@ -39,13 +37,13 @@ export default {
       return (this.model.item.metadata && this.model.item.metadata.semantics) ? '' : 'gray'
     },
     canAdd () {
-      return !this.moveState.dragFinished && this.moveState.dragEnd && this.moveState.canAdd
+      return this.moveState.dragEnd && !this.moveState.dragFinished && this.moveState.canAdd && !this.moveState.adding
     },
     canRemove () {
-      return !this.moveState.dragFinished && this.moveState.dragEnd && !this.moveState.canAdd && this.moveState.canRemove
+      return this.moveState.dragEnd && !this.moveState.dragFinished && !this.moveState.canAdd && this.moveState.canRemove && !this.moveState.removing
     },
     canSave () {
-      return this.moveState.dragFinished && this.moveState.dragEnd && !this.moveState.canAdd && !this.moveState.canRemove && this.moveState.canSave
+      return this.moveState.dragEnd && this.moveState.dragFinished && !this.moveState.canAdd && !this.moveState.canRemove && !this.moveState.saving
     }
   },
   methods: {
@@ -53,7 +51,6 @@ export default {
       console.debug('Drag start - event:', event)
       this.$set(this.moveState, 'canAdd', false)
       this.$set(this.moveState, 'canRemove', false)
-      this.$set(this.moveState, 'canSave', false)
       this.$set(this.moveState, 'dragEnd', false)
       this.$set(this.moveState, 'dragFinished', false)
       this.$set(this.moveState, 'node', this.children[event.oldIndex])
@@ -89,6 +86,7 @@ export default {
       return nodes
     },
     validateAdd () {
+      this.$set(this.moveState, 'adding', true)
       const node = this.moveState.node
       const parentNode = this.moveState.newParent
       const oldParentNode = this.moveState.oldParent
@@ -326,9 +324,11 @@ export default {
       console.debug('Add - new children:', cloneDeep(this.children))
       console.debug('Add - added to parent:', cloneDeep(parentNode))
       this.$set(this.moveState, 'canAdd', false)
+      this.$set(this.moveState, 'adding', false)
       console.debug('Add - finished, new moveState:', cloneDeep(this.moveState))
     },
     validateRemove () {
+      this.$set(this.moveState, 'removing', true)
       const node = this.moveState.node
       const parentNode = this.moveState.oldParent
       const oldIndex = this.moveState.oldIndex
@@ -371,13 +371,16 @@ export default {
     },
     updateAfterRemove () {
       this.$set(this.moveState, 'canRemove', false)
+      this.$set(this.moveState, 'removing', false)
       this.$set(this.moveState, 'dragFinished', true)
-      this.$set(this.moveState, 'canSave', true)
     },
     saveModelUpdate () {
+      this.$set(this.moveState, 'saving', true)
+      this.$set(this.moveState, 'dragFinished', false)
       const updatedItem = this.moveState.node.item
       console.debug('Save - updatedItem: ', cloneDeep(updatedItem))
       this.saveItem(updatedItem)
+      this.$set(this.moveState, 'saving', false)
     },
     restoreModelUpdate() {
       this.$set(this.moveState, 'canRemove', false)
