@@ -426,9 +426,10 @@ export default {
       if (this.loading) return
       this.loading = true
 
-      Promise.all([this.$oh.api.get('/rest/module-types?type=trigger'), this.$oh.api.get('/rest/rules/' + this.ruleId)]).then((data) => {
+      Promise.all([this.$oh.api.get('/rest/module-types?type=trigger'), this.$oh.api.get('/rest/module-types?type=condition'), this.$oh.api.get('/rest/rules/' + this.ruleId)]).then((data) => {
         this.$set(this.moduleTypes, 'triggers', data[0])
-        this.$set(this, 'rule', data[1])
+        this.$set(this.moduleTypes, 'conditions', data[1])
+        this.$set(this, 'rule', data[2])
 
         if (this.moduleId) {
           this.$set(this, 'currentModule', this.rule.actions.concat(this.rule.conditions).find((m) => m.id === this.moduleId))
@@ -441,7 +442,7 @@ export default {
 
         if (!this.rule.editable) {
           const commentChar = AUTOMATION_LANGUAGES[this.mode].commentChar
-          let triggerDescriptionComments = `${commentChar} Triggers:\n`
+          let preamble = `${commentChar} Triggers:\n`
           for (const trigger of this.rule.triggers) {
             const triggerModuleType = this.moduleTypes.triggers.find((t) => t.uid === trigger.type)
             let description = trigger.label || this.suggestedModuleTitle(trigger, triggerModuleType, 'trigger')
@@ -450,9 +451,20 @@ export default {
             } else {
               description = 'When ' + description
             }
-            triggerDescriptionComments += `${commentChar} - ${description}\n`
+            preamble += `${commentChar} - ${description}\n`
           }
-          this.script = triggerDescriptionComments + '\n' + this.script
+
+          if (this.rule.conditions.length > 0) {
+            preamble += `\n${commentChar} Conditions:\n`
+            for (const condition of this.rule.conditions) {
+              const conditionModuleType = this.moduleTypes.conditions.find((t) => t.uid === condition.type)
+              let description = condition.label || this.suggestedModuleTitle(condition, conditionModuleType, 'condition')
+              description = 'Only If ' + description
+              preamble += `${commentChar} - ${description}\n`
+            }
+          }
+
+          this.script = preamble + '\n' + this.script
         }
 
         this.loadScriptModuleTypes().then(() => {
