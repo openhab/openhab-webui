@@ -1,6 +1,12 @@
 <template>
   <f7-page @page:beforein="onPageBeforeIn" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
-    <f7-navbar :title="item.label || item.name" :subtitle="thing.label" back-link="Cancel">
+    <f7-navbar>
+      <f7-nav-left>
+        <f7-link icon-f7="chevron_left" @click="goBackWithDirtyCheck">
+          Back
+        </f7-link>
+      </f7-nav-left>
+      <f7-nav-title :title="(item.label || item.name) + dirtyIndicator" :subtitle="thing.label" />
       <f7-nav-right v-show="ready">
         <f7-link v-if="!link.editable" slot="right" icon-f7="lock_fill" icon-only tooltip="links defined in a .items file are not editable from this screen" />
         <f7-link v-else-if="$theme.md" icon-md="material:save" icon-only @click="save()" />
@@ -72,7 +78,8 @@
                       :parameter-groups="profileTypeConfiguration.parameterGroups"
                       :parameters="profileTypeConfiguration.parameters"
                       :configuration="link.configuration"
-                      :read-only="!link.editable" />
+                      :read-only="!link.editable"
+                      @updated="updated" />
       </f7-col>
     </f7-block>
   </f7-page>
@@ -94,9 +101,12 @@ import Item from '@/components/item/item.vue'
 import ItemStatePreview from '@/components/item/item-state-preview.vue'
 import ThingStatus from '@/components/thing/thing-status-mixin'
 import LinkMixin from '@/pages/settings/things/link/link-mixin'
+import DirtyMixin from '@/pages/settings/dirty-mixin'
+import cloneDeep from 'lodash/cloneDeep'
+import fastDeepEqual from 'fast-deep-equal/es6'
 
 export default {
-  mixins: [ThingStatus, LinkMixin],
+  mixins: [ThingStatus, LinkMixin, DirtyMixin],
   components: {
     ConfigSheet,
     Item,
@@ -106,12 +116,14 @@ export default {
   data () {
     return {
       ready: false,
+      originalLink: null,
       link: {
         itemName: null,
         channelUID: null,
         configuration: {}
       },
       profileTypes: [],
+      originalProfileType: null,
       currentProfileType: null,
       profileTypeConfiguration: null,
       channelType: {}
@@ -145,12 +157,27 @@ export default {
           if (this.link.configuration.profile) {
             this.onProfileTypeChange(this.link.configuration.profile)
           }
+          this.originalProfileType = this.currentProfileType
+          this.originalLink = cloneDeep(this.link)
+          this.dirty = false
           this.ready = true
         })
       })
       this.$oh.api.get('/rest/channel-types/' + this.channel.channelTypeUID).then((data3) => {
         this.channelType = data3
       })
+    },
+    updated () {
+      this.dirty = this.currentProfileType !== this.originalProfileType || !fastDeepEqual(this.link, this.originalLink)
+    },
+    goBackWithDirtyCheck () {
+      if (this.dirty) {
+        this.confirmLeaveWithoutSaving(() => {
+          this.$f7router.back()
+        })
+      } else {
+        this.$f7router.back()
+      }
     },
     onProfileTypeChange (profileTypeUid) {
       if (!profileTypeUid) {
@@ -159,6 +186,7 @@ export default {
         return
       }
       this.currentProfileType = this.profileTypes.find((p) => p.uid === profileTypeUid)
+      this.updated()
       const getProfileConfigDescription = this.$oh.api.get('/rest/config-descriptions/profile:' + profileTypeUid)
       getProfileConfigDescription.then((data) => {
         this.profileTypeConfiguration = data

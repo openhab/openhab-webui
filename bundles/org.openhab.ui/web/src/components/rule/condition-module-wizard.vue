@@ -85,6 +85,7 @@
     <f7-list>
       <f7-list-item radio :checked="timeEventType === 'dayOfWeek'" name="timeEventType" title="the current day of the week is" @click="updateTimeEventType('dayOfWeek')" />
       <f7-list-item radio :checked="timeEventType === 'timeOfDay'" name="timeEventType" title="inside a time range" @click="updateTimeEventType('timeOfDay')" />
+      <f7-list-item radio :checked="timeEventType === 'interval'" name="timeEventType" title="a minimum interval is met" @click="updateTimeEventType('interval')" />
     </f7-list>
     <config-sheet v-if="currentModuleType" :key="currentModule.id"
                   :parameterGroups="[]"
@@ -200,6 +201,9 @@ export default {
           break
         case 'timeOfDay':
           this.$emit('typeSelect', 'core.TimeOfDayCondition')
+          break
+        case 'interval':
+          this.$emit('typeSelect', 'timer.IntervalCondition')
           break
       }
     },

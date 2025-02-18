@@ -355,6 +355,7 @@ export default {
       logEnd: '--:--:--',
       currentHighlightColorItemIndex: null,
       currentHighlightColor: '#FF5252',
+      lastSequence: 0,
       colors: [
         '#FF0000', // Red
         '#00FF00', // Green
@@ -434,15 +435,22 @@ export default {
       const readyCallback = () => {
         this.stateConnected = true
         this.stateProcessing = true
+        this.socket.send('{"sequenceStart": ' + this.lastSequence + '}')
         this.$nextTick(() => this.scrollToBottom())
       }
 
       const messageCallback = (event) => {
-        this.addLogEntry(event)
+        if (Array.isArray(event)) {
+          event.forEach((ev) => {
+            this.addLogEntry(ev)
+          })
+        } else {
+          this.addLogEntry(event)
+        }
       }
 
       const heartbeatCallback = () => {
-        this.socket.send('[]')
+        this.socket.send('{}')
       }
 
       this.socket = this.$oh.ws.connect('/ws/logs', messageCallback, heartbeatCallback, readyCallback, null, 9)
@@ -490,6 +498,7 @@ export default {
       return tr
     },
     addLogEntry (logEntry) {
+      this.lastSequence = Math.max(this.lastSequence, logEntry.sequence)
       const date = new Date(logEntry.unixtime)
 
       const hours = date.getHours().toString().padStart(2, '0')
@@ -670,6 +679,9 @@ export default {
       this.$refs.dataTable.firstChild.innerHTML = ''
       for (const entry of this.tableData) {
         entry.visible = this.processFilter(entry)
+        if (entry.visible) {
+          cnt++
+        }
       }
       this.filterCount = cnt
       this.redrawPartOfTable()

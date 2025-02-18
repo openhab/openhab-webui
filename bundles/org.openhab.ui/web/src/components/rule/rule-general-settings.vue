@@ -3,10 +3,12 @@
     <f7-block v-if="ready" class="block-narrow">
       <f7-col>
         <f7-list inline-labels no-hairlines-md>
-          <f7-list-input :label="`${type} ID`" type="text" :placeholder="`A unique identifier for the ${type.toLowerCase()}`" :value="rule.uid" required validate
-                         :disabled="!createMode" :info="(createMode) ? 'Required. Note: cannot be changed after the creation' : ''"
+          <f7-list-input ref="ruleId" :label="`${type} ID`" type="text" :placeholder="`A unique identifier for the ${type.toLowerCase()}`" :value="rule.uid" required validate
+                         :disabled="!createMode" :info="(createMode) ? 'Required. Note: cannot be changed after the creation' : ''" input-id="input"
                          pattern="[A-Za-z0-9_\-]+" error-message="Required. A-Z,a-z,0-9,_,- only"
-                         @input="rule.uid = $event.target.value" :clear-button="createMode" />
+                         @input="rule.uid = $event.target.value" :clear-button="createMode">
+            <f7-link slot="inner" icon-f7="hammer_fill" style="margin-top: 4px; margin-left: 4px; margin-bottom: auto" tooltip="Fix ID" v-if="createMode && $refs.ruleId?.state?.inputInvalid && rule.uid.trim()" @click="$oh.utils.normalizeInput('#input')" />
+          </f7-list-input>
           <f7-list-input label="Label" type="text" :placeholder="`${type} label for display purposes`" :info="(createMode) ? 'Required' : ''" :value="rule.name" required validate
                          :disabled="!editable" @input="rule.name = $event.target.value" :clear-button="editable" />
           <f7-list-input label="Description" type="text" :value="rule.description"

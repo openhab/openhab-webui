@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language-Team: Danish\n"
 "Language: da_DK\n"
-"PO-Revision-Date: 2022-12-11 11:15\n"
+"PO-Revision-Date: 2025-01-27 17:58\n"
 
 #. Common term in widget settings dialogs
 msgctxt "widget.common.min"
@@ -245,7 +245,7 @@ msgstr "Generelt"
 #. Dropdown header
 msgctxt "widget.chart.general.type"
 msgid "Type"
-msgstr ""
+msgstr "Type"
 
 #. Dropdown option
 msgctxt "widget.chart.general.type.default"
@@ -380,12 +380,12 @@ msgstr "Tilstand"
 #. Dropdown option
 msgctxt "widget.clock.mode.analog"
 msgid "Analog"
-msgstr ""
+msgstr "Analog"
 
 #. Dropdown option
 msgctxt "widget.clock.mode.digital"
 msgid "Digital"
-msgstr ""
+msgstr "Digital"
 
 #. Dropdown header
 msgctxt "widget.clock.theme"
@@ -410,7 +410,7 @@ msgstr "Digital format"
 #. Color picker header
 msgctxt "widget.clock.digital_color"
 msgid "Digital Color"
-msgstr ""
+msgstr "Digital Farve"
 
 #. Textbox header
 msgctxt "widget.clock.font_size"
@@ -435,7 +435,7 @@ msgstr "Farvevælger indstillinger"
 #. Dropdown header
 msgctxt "widget.colorpicker.type"
 msgid "Type"
-msgstr ""
+msgstr "Type"
 
 #. Dropdown option
 msgctxt "widget.colorpicker.type.hsl"
@@ -680,7 +680,7 @@ msgstr "Grader (°)"
 #. Textbox header (small)
 msgctxt "widget.knob.bartrack.angles.start"
 msgid "Start"
-msgstr ""
+msgstr "Start"
 
 #. Textbox header (small)
 msgctxt "widget.knob.bartrack.angles.end"
@@ -770,7 +770,7 @@ msgstr "Udseende"
 #. Radio buttons header
 msgctxt "widget.knob.skin.type"
 msgid "Type"
-msgstr ""
+msgstr "Type"
 
 #. Radio button label
 msgctxt "widget.knob.skin.type.simple"

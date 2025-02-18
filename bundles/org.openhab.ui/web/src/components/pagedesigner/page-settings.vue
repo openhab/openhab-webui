@@ -1,11 +1,13 @@
 <template>
   <f7-col>
     <f7-list inline-labels accordion-list no-hairline-md>
-      <f7-list-input label="Page ID" type="text" placeholder="A unique identifier for the page" :value="page.uid" @input="page.uid = $event.target.value"
-                     :clear-button="createMode" :info="(createMode) ? 'Required. Note: cannot be changed after the creation' : ''"
-                     required validate pattern="[A-Za-z0-9_]+" error-message="Required. A-Z,a-z,0-9,_ only" :disabled="!createMode" />
+      <f7-list-input ref="pageId" label="Page ID" type="text" placeholder="A unique identifier for the page" :value="page.uid" @input="page.uid = $event.target.value"
+                     :clear-button="createMode" :info="(createMode) ? 'Required. Note: cannot be changed after the creation' : ''" input-id="input"
+                     required validate pattern="[A-Za-z0-9_]+" error-message="Required. A-Z,a-z,0-9,_ only" :disabled="!createMode">
+        <f7-link slot="inner" icon-f7="hammer_fill" style="margin-top: 4px; margin-left: 4px; margin-bottom: auto" tooltip="Fix ID" v-if="createMode && $refs.pageId?.state?.inputInvalid && page.uid.trim()" @click="$oh.utils.normalizeInput('#input')" />
+      </f7-list-input>
       <f7-list-input label="Label" type="text" placeholder="Page label used for display purposes" :info="(createMode) ? 'Required' : ''" :value="page.config.label" @input="page.config.label = $event.target.value" required validate clear-button />
-      <f7-list-item accordion-item title="Sidebar &amp; Visibility" :disabled="page.uid === 'overview'">
+      <f7-list-item accordion-item title="Sidebar &amp; Visibility" v-if="page.uid !== 'overview'">
         <f7-accordion-content>
           <f7-list-item ref="pageVisibility" title="Visible only to" smart-select :smart-select-params="{openIn: 'popover'}">
             <select name="pagevisibility" multiple @change="updatePageVisibility">
@@ -29,14 +31,25 @@
         </f7-accordion-content>
       </f7-list-item>
     </f7-list>
-    <f7-list inline-labels no-hairline-md>
-      <tag-input :item="page" :disabled="page.uid === 'overview'" />
-    </f7-list>
+    <template v-if="page.uid !== 'overview'">
+      <f7-list inline-labels no-hairline-md>
+        <tag-input :item="page" />
+      </f7-list>
+      <f7-list v-if="!createMode" inline-labels no-hairline-md>
+        <f7-list-button color="blue" @click="copyPage">
+          Copy Page
+        </f7-list-button>
+        <f7-list-button color="red" @click="deletePage">
+          Remove Page
+        </f7-list-button>
+      </f7-list>
+    </template>
   </f7-col>
 </template>
 
 <script>
 import TagInput from '@/components/tags/tag-input.vue'
+import cloneDeep from 'lodash/cloneDeep'
 
 export default {
   components: {
@@ -62,6 +75,31 @@ export default {
           destroyOnClose: true
         }).open()
       }
+    },
+    copyPage () {
+      const pageClone = cloneDeep(this.page)
+      const pageType = pageClone.component.replace(/^oh-|-page$/g, '')
+      pageClone.uid = pageClone.uid + '_copy'
+      this.$f7router.navigate(`/settings/pages/${pageType}/add`, { props: { createMode: true, pageCopy: pageClone } })
+    },
+    deletePage () {
+      this.$f7.dialog.confirm(
+        `Are you sure you want to delete ${this.page.uid}?`,
+        'Delete Page',
+        () => {
+          this.$oh.api.delete('/rest/ui/components/ui:page/' + this.page.uid).then((data) => {
+            this.$f7.toast.create({
+              text: `Page '${this.page.uid}' deleted`,
+              destroyOnClose: true,
+              closeTimeout: 2000
+            }).open()
+            this.$f7router.back('/settings/pages/', { force: true })
+          }).catch((err) => {
+            console.error(err)
+            this.$f7.dialog.alert('An error occurred while deleting: ' + err)
+          })
+        }
+      )
     }
   }
 }

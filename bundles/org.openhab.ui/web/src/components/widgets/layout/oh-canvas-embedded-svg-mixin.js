@@ -20,7 +20,15 @@ export default {
       // Load the real SVG content, in editmode we add a random number to the URL to prevent caching
       const svgUrl = (this.context.editmode) ? this.config.imageUrl + `?rnd=${Math.random()}` : this.config.imageUrl
       return fetch(svgUrl)
-        .then(response => response.text())
+        .then(response => {
+          if (response.status !== 200) {
+            return Promise.reject(new Error(`Failed to load from ${this.config.imageUrl}. Status: ${response.status} (${response.statusText})`))
+          } else if (response.headers.get('Content-Type') !== 'image/svg+xml') {
+            return Promise.reject(new Error(`${this.config.imageUrl} is not an SVG file`))
+          } else {
+            return response.text()
+          }
+        })
         .then(svgCode => {
           this.$refs.canvasBackground.innerHTML = svgCode
           const svgEl = this.$refs.canvasBackground.querySelector('svg')
@@ -215,8 +223,23 @@ export default {
      * Flashes all embedded SVG components with the `openhab` attribute.
      */
     flashEmbeddedSvgComponents () {
+      if (!this.$refs.canvasBackground) {
+        this.$f7.toast.create({
+          text: 'SVG embedding has not been properly configured. Ensure that the Image URL points to an SVG file.',
+          closeTimeout: 2000
+        }).open()
+        return
+      }
       const svg = this.$refs.canvasBackground.querySelector('svg')
       const subElements = svg.querySelectorAll('[openhab]')
+
+      if (subElements.length === 0) {
+        this.$f7.toast.create({
+          text: 'No SVG elements with an "openhab" attribute found.',
+          closeTimeout: 2000
+        }).open()
+        return
+      }
 
       for (const subElement of subElements) {
         this.svgOnMouseOver(subElement)
@@ -382,7 +405,7 @@ export default {
             }
           }
         } else { // Percent, OpenClosed
-          if (svgElementConfig.stateAsOpacity && state) {
+          if (svgElementConfig.stateAsOpacity && state) { // meant to be used as opacity
             // we expect that number between 0 - 100
             let opacity
             if (stateType === 'OpenClosed') {
@@ -393,6 +416,10 @@ export default {
             opacity = (svgElementConfig.invertStateOpacity) ? 1 - opacity : opacity
             opacity = (opacity < svgElementConfig.stateMinOpacity) ? svgElementConfig.stateMinOpacity : opacity
             element.style.opacity = opacity
+          } else if (state) { // treat it as color use the colorOnState that may be computed based on that
+            if (stateOnColorRgbStyle) {
+              element.style.fill = stateOnColorRgbStyle
+            }
           }
         }
       }

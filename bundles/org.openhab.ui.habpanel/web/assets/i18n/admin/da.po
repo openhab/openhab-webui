@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language-Team: Danish\n"
 "Language: da_DK\n"
-"PO-Revision-Date: 2022-12-11 11:15\n"
+"PO-Revision-Date: 2025-01-27 17:58\n"
 
 #. Save button in the dashboard designer
 msgctxt "designer.save"
@@ -685,7 +685,7 @@ msgstr "Tilføj indstilling"
 #. Dropdown header
 msgctxt "customwidgets.designer.settings.config.type"
 msgid "Type"
-msgstr ""
+msgstr "Type"
 
 #. Dropdown option
 msgctxt "customwidgets.designer.settings.config.type.string"
@@ -880,7 +880,7 @@ msgstr "Skjul detaljer"
 #. Little white button label
 msgctxt "widgetgallery.details.downloadzip"
 msgid "Download ZIP"
-msgstr ""
+msgstr "Hent ZIP"
 
 #. 1. Prefix of the explanation in the expanded details section
 msgctxt "widgetgallery.details.widget.hint.prefix"
