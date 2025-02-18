@@ -26,7 +26,7 @@
           <f7-col v-if="!createMode && !stubMode">
             <div class="float-right align-items-flex-start align-items-center">
               <!-- <f7-toggle class="enable-toggle"></f7-toggle> -->
-              <f7-link v-if="canRegenerate" :icon-color="'deeppurple'" :tooltip="'Regenerate from template'" icon-md="f7:arrow_2_circlepath" icon-ios="f7:arrow_2_circlepath" icon-aurora="f7:arrow_2_circlepath" icon-size="32" color="deeppurple" @click="createStub" />
+              <f7-link v-if="canRegenerate" :icon-color="'deeppurple'" :tooltip="'Regenerate from template'" icon-md="f7:arrow_2_circlepath" icon-ios="f7:arrow_2_circlepath" icon-aurora="f7:arrow_2_circlepath" icon-size="32" color="deeppurple" @click="regenerateFromTemplate" />
               <f7-link :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'" :tooltip="((rule.status.statusDetail === 'DISABLED') ? 'Enable' : 'Disable') + (($device.desktop) ? ' (Ctrl-D)' : '')" icon-ios="f7:pause_circle" icon-md="f7:pause_circle" icon-aurora="f7:pause_circle" icon-size="32" color="orange" @click="toggleDisabled" />
               <f7-link :tooltip="'Run Now' + (($device.desktop) ? ' (Ctrl-R)' : '')" icon-ios="f7:play_round" icon-md="f7:play_round" icon-aurora="f7:play_round" icon-size="32" :color="(rule.status.status === 'IDLE') ? 'blue' : 'gray'" @click="runNow" />
             </div>
@@ -423,6 +423,22 @@ export default {
           ruleCopy: ruleClone
         }
       })
+    },
+    regenerateFromTemplate () {
+      if (this.isEditable) {
+        this.createStub()
+      } else {
+        this.$oh.api.postPlain('/rest/rules/' + this.rule.uid + '/regenerate').then(() => {
+          this.$f7.toast.create({
+            text: 'Rule regenerated from template',
+            destroyOnClose: true,
+            closeTimeout: 2000
+          }).open()
+          this.load()
+        }).catch((err) => {
+          this.$f7.dialog.alert('An error occurred when trying to regenerate rule "' + this.rule.uid + '" from template: ' + err)
+        })
+      }
     },
     createStub () {
       let ruleClone = cloneDeep(this.rule)

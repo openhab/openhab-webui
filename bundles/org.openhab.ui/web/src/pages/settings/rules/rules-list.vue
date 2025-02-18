@@ -406,18 +406,34 @@ export default {
       if (!this.selectedItems || this.selectedItems.length !== 1) {
         return
       }
-      this.$oh.api.get('/rest/rules/' + this.selectedItems[0]).then((rule) => {
-        this.$f7router.navigate({
-          url: '/settings/rules/stub'
-        }, {
-          reloadCurrent: false,
-          props: {
-            ruleCopy: rule
-          }
+      let selectedRule = this.rules.find((rule) => rule.uid === this.selectedItems[0])
+      if (!selectedRule) {
+        return
+      }
+      if (selectedRule.editable) {
+        this.$oh.api.get('/rest/rules/' + this.selectedItems[0]).then((rule) => {
+          this.$f7router.navigate({
+            url: '/settings/rules/stub'
+          }, {
+            reloadCurrent: false,
+            props: {
+              ruleCopy: rule
+            }
+          })
+        }).catch((err) => {
+          this.$f7.dialog.alert('An error occurred when retrieving rule "' + this.selectedItems[0] + '": ' + err)
         })
-      }).catch((err) => {
-        this.$f7.dialog.alert('An error occurred when retrieving rule "' + this.selectedItems[0] + '": ' + err)
-      })
+      } else {
+        this.$oh.api.postPlain('/rest/rules/' + this.selectedItems[0] + '/regenerate').then(() => {
+          this.$f7.toast.create({
+            text: 'Rule regenerated from template',
+            destroyOnClose: true,
+            closeTimeout: 2000
+          }).open()
+        }).catch((err) => {
+          this.$f7.dialog.alert('An error occurred when trying to regenerate rule "' + this.selectedItems[0] + '" from template: ' + err)
+        })
+      }
     },
     toggleSearchTag (e, item) {
       const idx = this.selectedTags.indexOf(item)
