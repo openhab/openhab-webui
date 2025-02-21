@@ -190,7 +190,7 @@
                 <f7-list-item link :color="($theme.dark) ? 'black' : 'white'" title="Edit aliases" @click="editAliases(persistence.aliases)" />
               </f7-list>
               <f7-list media-list>
-                <f7-list-item v-for="a in sortedAliases" :key="Object.keys(a)[0]" :title="Object.keys(a)[0]" :after="Object.values(a)[0]" />
+                <f7-list-item v-for="i in Object.keys(sortedAliases)" :key="i" :title="i" :after="sortedAliases[i]" />
               </f7-list>
             </div>
           </f7-col>
@@ -302,13 +302,12 @@ export default {
       return names
     },
     sortedAliases () {
-      const aliases = this.persistence.aliases ? [...this.persistence.aliases] : []
-      aliases.sort((a, b) => {
-        const aItem = Object.keys(a)[0]
-        const bItem = Object.keys(b)[0]
-        return aItem < bItem ? -1 : (aItem > bItem ? 1 : 0)
-      })
-      return aliases
+      return Object.keys(this.persistence.aliases)
+        .sort()
+        .reduce((obj, key) => {
+          obj[key] = this.persistence.aliases[key]
+          return obj
+        }, {})
     }
   },
   watch: {
