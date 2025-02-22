@@ -13,6 +13,8 @@ export default () => [
   pb('validate-on-blur', 'Validate on blur', 'Only validate when focus moves away from input field'),
   pi('item', 'Item', 'Link the input value to the state of this item'),
   pb('useDisplayState', 'Use Display State', 'Use the formatted state as the value for the input control'),
+  pd('min', 'Minimum', 'Minimum allowed value when type set to number'),
+  pd('max', 'Maximum', 'Maximum allowed value when type set to number'),
   pd('step', 'Step', 'Step value when type set to number, any if left empty'),
   pb('showTime', 'Show time', 'Display time when type set to datepicker'),
   pt('defaultValue', 'Default value', 'Default value when not found in item state or variable'),
