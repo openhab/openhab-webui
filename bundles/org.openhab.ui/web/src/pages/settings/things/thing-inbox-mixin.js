@@ -1,3 +1,8 @@
+import Vue from 'vue'
+import Clipboard from 'v-clipboard'
+
+Vue.use(Clipboard)
+
 export default {
   methods: {
     /**
@@ -64,6 +69,28 @@ export default {
             },
             null,
             entry.thingUID.substring(entry.thingUID.lastIndexOf(':') + 1))
+        }
+      }
+    },
+    entryActionsCopyThingDefinitionButton (entry) {
+      return {
+        text: 'Copy .things Definition',
+        color: 'blue',
+        bold: true,
+        onClick: () => {
+          const tokens = ['Thing', entry.thingUID, `"${entry.label}"`]
+          const rp = entry.representationProperty
+          if (rp) {
+            tokens.push(`[ ${rp}="${entry.properties[rp]}" ]`)
+          }
+          const definition = tokens.join(' ') + '\n'
+          if (this.$clipboard(definition)) {
+            this.$f7.toast.create({
+              text: `Thing definition for '${entry.thingUID}' copied to clipboard`,
+              destroyOnClose: true,
+              closeTimeout: 2000
+            }).open()
+          }
         }
       }
     }
