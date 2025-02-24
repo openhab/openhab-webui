@@ -653,7 +653,7 @@ export default {
         triggers: this.rule.triggers,
         conditions: this.rule.conditions,
         actions: this.rule.actions
-      })
+      }, this.isEditable ? undefined : this.replacer)
     },
     fromYaml () {
       if (!this.isEditable) return
@@ -667,6 +667,20 @@ export default {
       } catch (e) {
         this.$f7.dialog.alert(e).open()
         return false
+      }
+    },
+    /**
+     * Replaces CRLF (Windows) or CR (Mac) with LF in scripts before YAMLification.
+     *
+     * @param key the key being processed
+     * @param value the value being processed
+     */
+    replacer (key, value) {
+      switch (key) {
+        case 'script':
+          return value ? value.replaceAll(/(\r\n|\r)/g, '\n') : value
+        default:
+          return value
       }
     }
   },
