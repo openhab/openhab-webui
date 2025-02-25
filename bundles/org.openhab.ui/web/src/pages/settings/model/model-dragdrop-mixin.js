@@ -22,7 +22,8 @@ export default {
   computed: {
     children: {
       get: function () {
-        return this.nodeChildren()
+        if (!this.model.children) return []
+        return [this.model.children.locations, this.model.children.equipment, this.model.children.points, this.model.children.groups, this.model.children.items].flat()
       },
       set: function (nodeList) {
         this.$set(this.model.children, 'locations', nodeList.filter(n => n.item.metadata?.semantics?.value?.startsWith('Location')))
@@ -36,7 +37,7 @@ export default {
       return (this.model.item.metadata && this.model.item.metadata.semantics) ? '' : 'gray'
     },
     dragDropActive () {
-      return this.moveState.moving || this.moveState.adding || this.moveState.removing || this.moveState.saving
+      return this.moveState.dragDropActive
     },
     canAdd () {
       return !this.moveState.cancelled && this.moveState.dragEnd && !this.moveState.dragFinished && this.moveState.canAdd && !this.moveState.adding
@@ -54,6 +55,7 @@ export default {
   methods: {
     onDragStart (event) {
       console.debug('Drag start - event:', event)
+      this.$set(this.moveState, 'dragDropActive', true)
       this.$set(this.moveState, 'moving', true)
       this.$set(this.moveState, 'canAdd', false)
       this.$set(this.moveState, 'canRemove', false)
@@ -63,6 +65,7 @@ export default {
       this.$set(this.moveState, 'cancelled', false)
       this.$set(this.moveState, 'moveConfirmed', false)
       this.$set(this.moveState, 'node', this.children[event.oldIndex])
+      this.$set(this.moveState, 'nodesToUpdate', [])
       console.debug('Drag start - moveState:', cloneDeep(this.moveState))
     },
     onDragChange (event) {
@@ -89,12 +92,13 @@ export default {
       console.debug('Drag end - event:', event)
       console.debug('Drag end - moveState:', cloneDeep(this.moveState))
     },
-    nestedNodes (node, nodes) {
-      nodes = nodes || []
+    nestedSemanticNode (node) {
       const children = [...node.children.locations, ...node.children.equipment, ...node.children.points, ...node.children.groups, ...node.children.items]
-      nodes.push(...children)
-      children.forEach((child) => this.nestedNodes(child, nodes))
-      return nodes
+      const semanticNode = children.find((c) => c.class !== '')
+      if (semanticNode) return semanticNode
+      return children.find((c) => {
+        return this.nestedSemanticNode(c)
+      })
     },
     validateAdd () {
       this.$set(this.moveState, 'adding', true)
@@ -115,7 +119,7 @@ export default {
         return
       }
       if (node.item.type === 'Group' && node.class === '') {
-        const semanticNode = this.nestedNodes(node).find((n) => n.class !== '')
+        const semanticNode = this.nestedSemanticNode(node)
         if (semanticNode) {
           const message = 'Cannot insert non-semantic group "' + this.itemLabel(node.item) +
             '" with semantic child "' + this.itemLabel(semanticNode.item) +
@@ -148,6 +152,8 @@ export default {
       } else {
         this.addIntoRoot(node, parentNode)
       }
+      this.$set(this.moveState, 'canAdd', false)
+      this.$set(this.moveState, 'adding', false)
     },
     isValidGroupType (node, parentNode) {
       const groupTypeDef = parentNode.item?.groupType?.split(':')
@@ -232,7 +238,7 @@ export default {
           verticalButtons: true,
           buttons: [
             { text: 'Cancel', color: 'gray', keycodes: [27], onClick: () => this.restoreModelUpdate() },
-            { text: 'Location', onClick: () => this.addLocation(node, parentNode) },
+            { text: 'Location', strong: true, keycodes: [13], onClick: () => this.addLocation(node, parentNode) },
             { text: 'Equipment', onClick: () => this.addEquipment(node, parentNode) }
           ]
         }).open()
@@ -246,7 +252,7 @@ export default {
           buttons: [
             { text: 'Cancel', color: 'gray', keycodes: [27], onClick: () => this.restoreModelUpdate() },
             { text: 'Equipment', onClick: () => this.addEquipment(node, parentNode) },
-            { text: 'Point', onClick: () => this.addPoint(node, parentNode) }
+            { text: 'Point', strong: true, keycodes: [13], onClick: () => this.addPoint(node, parentNode) }
           ]
         }).open()
       }
@@ -274,7 +280,7 @@ export default {
           buttons: [
             { text: 'Cancel', color: 'gray', keycodes: [27], onClick: () => this.restoreModelUpdate() },
             { text: 'Equipment', onClick: () => this.addEquipment(node, parentNode) },
-            { text: 'Point', onClick: () => this.addPoint(node, parentNode) }
+            { text: 'Point', strong: true, keycodes: [13], onClick: () => this.addPoint(node, parentNode) }
           ]
         }).open()
       }
@@ -308,7 +314,7 @@ export default {
             { text: 'Cancel', color: 'gray', keycodes: [27], onClick: () => this.restoreModelUpdate() },
             { text: 'Location', onClick: () => this.addLocation(node, parentNode) },
             { text: 'Equipment', onClick: () => this.addEquipment(node, parentNode) },
-            { text: 'Non Semantic', onClick: () => this.addNonSemantic(node, parentNode) }
+            { text: 'Non Semantic', strong: true, keycodes: [13], onClick: () => this.addNonSemantic(node, parentNode) }
           ]
         }).open()
       } else {
@@ -322,7 +328,7 @@ export default {
             { text: 'Cancel', color: 'gray', keycodes: [27], onClick: () => this.restoreModelUpdate() },
             { text: 'Equipment', onClick: () => this.addEquipment(node, parentNode) },
             { text: 'Point', onClick: () => this.addPoint(node, parentNode) },
-            { text: 'Non Semantic', onClick: () => this.addNonSemantic(node, parentNode) }
+            { text: 'Non Semantic', strong: true, keycodes: [13], onClick: () => this.addNonSemantic(node, parentNode) }
           ]
         }).open()
       }
@@ -389,8 +395,9 @@ export default {
       }
       const newChildren = this.children
       this.children = newChildren // force setters to update model
-      this.$set(this.moveState, 'canAdd', false)
-      this.$set(this.moveState, 'adding', false)
+      let nodesToUpdate = this.moveState.nodesToUpdate
+      nodesToUpdate.push(node)
+      this.$set(this.moveState, 'nodesToUpdate', nodesToUpdate)
       console.debug('Add - finished, new moveState:', cloneDeep(this.moveState))
     },
     validateRemove () {
@@ -445,7 +452,7 @@ export default {
             '", keep original?',
           buttons: [
             { text: 'Cancel', color: 'gray', keycodes: [27], onClick: () => this.restoreModelUpdate() },
-            { text: 'Yes', onClick: () => this.updateAfterRemove() },
+            { text: 'Yes', strong: true, keycodes: [13], onClick: () => this.updateAfterRemove() },
             { text: 'No', onClick: () => this.remove(node, parentNode, oldIndex) }
           ]
         }).open()
@@ -491,14 +498,13 @@ export default {
     },
     saveModelUpdate () {
       this.$set(this.moveState, 'dragFinished', false)
-      const node = this.moveState.node
-      const nodes = [node, ...this.nestedNodes(node)]
-      nodes.forEach((n) => {
+      this.moveState.nodesToUpdate.forEach((n) => {
         const updatedItem = n.item
         console.debug('Save - updatedItem: ', cloneDeep(updatedItem))
         this.saveItem(updatedItem)
       })
       this.$set(this.moveState, 'saving', false)
+      this.$set(this.moveState, 'dragDropActive', false)
     },
     restoreModelUpdate () {
       console.debug('Restore model')
@@ -508,6 +514,7 @@ export default {
       this.$set(this.moveState, 'adding', false)
       this.$set(this.moveState, 'removing', false)
       this.$set(this.moveState, 'saving', false)
+      this.$set(this.moveState, 'dragDropActive', false)
       this.$emit('reload')
     },
     itemLabel (item) {
@@ -525,11 +532,9 @@ export default {
       return node.item.metadata?.semantics?.config?.hasLocation
     },
     nodeChildren (node) {
-      const parentNode = node || this.model
-      if (!parentNode.children) return []
-      return [parentNode.children.locations,
-        parentNode.children.equipment, parentNode.children.points,
-        parentNode.children.groups, parentNode.children.items].flat()
+      if (!node) return this.children
+      if (!node.children) return []
+      return [node.children.locations, node.children.equipment, node.children.points, node.children.groups, node.children.items].flat()
     }
   }
 }
