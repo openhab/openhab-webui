@@ -267,10 +267,6 @@ export default {
       if (this.loading) return
       this.loading = true
 
-      const loadModules1 = this.$oh.api.get('/rest/module-types?type=action')
-      const loadModules2 = this.$oh.api.get('/rest/module-types?type=condition')
-      const loadModules3 = this.$oh.api.get('/rest/module-types?type=trigger')
-
       const loadingFinished = () => {
         this.$nextTick(() => {
           this.savedRule = cloneDeep(this.rule)
@@ -279,10 +275,8 @@ export default {
         })
       }
 
-      Promise.all([loadModules1, loadModules2, loadModules3]).then((data) => {
-        this.moduleTypes.actions = data[0]
-        this.moduleTypes.conditions = data[1]
-        this.moduleTypes.triggers = data[2]
+      this.$oh.api.get('/rest/module-types?asMap=true').then((data) => {
+        this.moduleTypes = data
         if (this.createMode) {
           const newRule = this.ruleCopy || {
             uid: this.$f7.utils.id(),

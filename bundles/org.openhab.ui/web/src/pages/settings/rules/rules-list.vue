@@ -243,57 +243,66 @@ export default {
         filter = '&tags=Scene'
       }
 
-      this.$oh.api.get('/rest/templates').then((templateData) => {
-        this.$set(this, 'templates', templateData)
-      }).catch(() => {})
-      this.$oh.api.get('/rest/rules?summary=true' + filter).then(data => {
-        this.rules = data.sort((a, b) => {
-          return a.name.localeCompare(b.name)
-        })
-
-        if (!this.showScripts) {
-          this.rules = this.rules.filter((r) => !r.tags || r.tags.indexOf('Script') < 0)
+      const promises = [this.$oh.api.get('/rest/templates'), this.$oh.api.get('/rest/rules?summary=true' + filter)]
+      Promise.allSettled(promises).then((results) => {
+        const templateData = results[0]
+        const ruleData = results[1]
+        if (templateData.status === 'fulfilled') {
+          this.$set(this, 'templates', templateData.value)
+        } else {
+          console.warn('Failed to retrieve rule templates. Status: "' + templateData.status + '", Reason: "' + templateData.reason + '"')
         }
-
-        if (!this.showScenes) {
-          this.rules = this.rules.filter((r) => !r.tags || r.tags.indexOf('Scene') < 0)
-        }
-
-        this.rules.forEach(rule => {
-          this.ruleStatuses[rule.uid] = rule.status
-
-          rule.tags.forEach(t => {
-            if (t === 'Scene' || t === 'Script') return
-            if (t.startsWith('marketplace:')) t = 'Marketplace'
-            if (!this.uniqueTags.includes(t)) this.uniqueTags.push(t)
+        if (ruleData.status === 'fulfilled') {
+          let rules = ruleData.value.sort((a, b) => {
+            return a.name.localeCompare(b.name)
           })
-        })
 
-        this.uniqueTags.sort()
-        this.initSearchbar = true
-
-        this.loading = false
-        this.ready = true
-        this.noRuleEngine = false
-
-        this.$nextTick(() => {
-          if (this.$refs.listIndex) this.$refs.listIndex.update()
-          if (this.$device.desktop && this.$refs.searchbar) {
-            this.$refs.searchbar.f7Searchbar.$inputEl[0].focus()
+          if (!this.showScripts) {
+            rules = rules.filter((r) => !r.tags || r.tags.indexOf('Script') < 0)
           }
-          this.$refs.searchbar?.f7Searchbar.search(this.$f7.data[`last${this.type}SearchQuery`] || '')
-        })
 
-        if (!this.eventSource) this.startEventSource()
-      }).catch((err, status) => {
-        if (err === 'Not Found' || status === 404) {
-          this.noRuleEngine = true
+          if (!this.showScenes) {
+            rules = rules.filter((r) => !r.tags || r.tags.indexOf('Scene') < 0)
+          }
+          this.$set(this, 'rules', rules)
+
+          rules.forEach(rule => {
+            this.ruleStatuses[rule.uid] = rule.status
+
+            rule.tags.forEach(t => {
+              if (t === 'Scene' || t === 'Script') return
+              if (t.startsWith('marketplace:')) t = 'Marketplace'
+              if (!this.uniqueTags.includes(t)) this.uniqueTags.push(t)
+            })
+          })
+
+          this.uniqueTags.sort()
+          this.initSearchbar = true
+
+          this.loading = false
+          this.ready = true
+          this.noRuleEngine = false
+
+          this.$nextTick(() => {
+            if (this.$refs.listIndex) this.$refs.listIndex.update()
+            if (this.$device.desktop && this.$refs.searchbar) {
+              this.$refs.searchbar.f7Searchbar.$inputEl[0].focus()
+            }
+            this.$refs.searchbar?.f7Searchbar.search(this.$f7.data[`last${this.type}SearchQuery`] || '')
+          })
+
+          if (!this.eventSource) this.startEventSource()
+        } else {
+          console.warn('Failed to retrieve rule templates. Status: "' + ruleData.status + '", Reason: "' + ruleData.reason + '"')
+          if (ruleData.reason === 'Not Found') {
+            this.noRuleEngine = true
+          }
+          this.loading = false
+          let self = this
+          setTimeout(() => {
+            self.load()
+          }, 2000)
         }
-        this.loading = false
-        let self = this
-        setTimeout(() => {
-          self.load()
-        }, 2000)
       })
     },
     startEventSource () {
