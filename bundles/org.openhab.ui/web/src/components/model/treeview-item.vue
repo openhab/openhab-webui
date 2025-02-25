@@ -17,7 +17,8 @@
                            :includeItemName="includeItemName" :includeItemTags="includeItemTags"
                            :canDragDrop="canDragDrop"
                            :moveState="moveState"
-                           @checked="(item, check) => $emit('checked', item, check)" />
+                           @checked="(item, check) => $emit('checked', item, check)"
+                           @reload="$emit('reload')" />
     </draggable>
     <div slot="label" class="semantic-class">
       {{ className() }}
