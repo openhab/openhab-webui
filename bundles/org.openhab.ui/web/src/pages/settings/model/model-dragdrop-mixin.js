@@ -101,7 +101,7 @@ export default {
       const node = this.moveState.node
       const parentNode = this.moveState.newParent
       const oldParentNode = this.moveState.oldParent
-      if (node.item.name === parentNode.item.name) {
+      if (node.item.name === parentNode?.item?.name) {
         // This should not be possible, but just to make sure to avoid infinite loop
         this.restoreModelUpdate()
         return
@@ -502,6 +502,7 @@ export default {
     },
     restoreModelUpdate () {
       console.debug('Restore model')
+      this.$set(this.moveState, 'cancelled', true)
       this.$set(this.moveState, 'canRemove', false)
       this.$set(this.moveState, 'canAdd', false)
       this.$set(this.moveState, 'adding', false)
