@@ -35,6 +35,9 @@ export default {
     iconColor () {
       return (this.model.item.metadata && this.model.item.metadata.semantics) ? '' : 'gray'
     },
+    dragDropActive () {
+      return this.moveState.moving || this.moveState.adding || this.moveState.removing || this.moveState.saving
+    },
     canAdd () {
       return !this.moveState.cancelled && this.moveState.dragEnd && !this.moveState.dragFinished && this.moveState.canAdd && !this.moveState.adding
     },
