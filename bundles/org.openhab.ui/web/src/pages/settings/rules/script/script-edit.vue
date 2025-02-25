@@ -128,7 +128,7 @@
               </f7-link>
             </div>
           </f7-toolbar>
-          <script-general-settings class="margin-top" :createMode="createMode" :rule="rule" :module="currentModule" :module-type="scriptModuleType" :module-types="moduleTypes" :isScriptRule="isScriptRule" :mode="mode" :languages="languages" @newLanguage="changeLanguage" />
+          <script-general-settings class="margin-top" :createMode="createMode" :rule="rule" :module="currentModule" :module-type="scriptModuleType" :isScriptRule="isScriptRule" :mode="mode" :languages="languages" @newLanguage="changeLanguage" />
           <f7-block class="block-narrow" v-if="editable && isScriptRule">
             <f7-col>
               <f7-list>
@@ -426,10 +426,11 @@ export default {
       if (this.loading) return
       this.loading = true
 
-      Promise.all([this.$oh.api.get('/rest/module-types?type=trigger'), this.$oh.api.get('/rest/module-types?type=condition'), this.$oh.api.get('/rest/rules/' + this.ruleId)]).then((data) => {
-        this.$set(this.moduleTypes, 'triggers', data[0])
-        this.$set(this.moduleTypes, 'conditions', data[1])
-        this.$set(this, 'rule', data[2])
+      Promise.all([this.$oh.api.get('/rest/module-types?type=action'), this.$oh.api.get('/rest/module-types?type=trigger'), this.$oh.api.get('/rest/module-types?type=condition'), this.$oh.api.get('/rest/rules/' + this.ruleId)]).then((data) => {
+        this.$set(this.moduleTypes, 'actions', data[0])
+        this.$set(this.moduleTypes, 'triggers', data[1])
+        this.$set(this.moduleTypes, 'conditions', data[2])
+        this.$set(this, 'rule', data[3])
 
         if (this.moduleId) {
           this.$set(this, 'currentModule', this.rule.actions.concat(this.rule.conditions).find((m) => m.id === this.moduleId))
