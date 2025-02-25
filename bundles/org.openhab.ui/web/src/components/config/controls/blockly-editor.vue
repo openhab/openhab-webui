@@ -345,6 +345,17 @@
             </shadow>
           </value>
         </block>
+        <block type="dicts_set">
+          <value name="key">
+            <shadow type="text" />
+          </value>
+          <value name="value">
+            <shadow type="text" />
+          </value>
+          <value name="dictionary">
+            <shadow type="text" />
+          </value>
+        </block>
       </category>
 
       <category name="Color" colour="%{BKY_COLOUR_HUE}">
