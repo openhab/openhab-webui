@@ -393,8 +393,8 @@ export default {
       console.debug('Remove - new moveState:', cloneDeep(this.moveState))
       if (parentNode.class !== '' && this.moveState.newParent.class !== '') {
         // special rule: a point can be part of a location and equipment at the same time, e.g. central HVAC equipment with controls by room
-        if (parentNode.class.startsWith('Equipment') && this.moveState.newParent.class.startsWith('Location')
-            && this.nodeLocation(parentNode) !== this.nodeLocation(this.moveState.newParent)) {
+        if (parentNode.class.startsWith('Equipment') && this.moveState.newParent.class.startsWith('Location') &&
+            this.nodeLocation(parentNode) !== this.nodeLocation(this.moveState.newParent)) {
           this.$set(this.moveState, 'moveConfirmed', true)
           this.$f7.dialog.create({
             text: 'Point "' + this.itemLabel(node.item) +
@@ -407,8 +407,8 @@ export default {
               { text: 'No', strong: true, onClick: () => this.remove(node, parentNode, oldIndex) }
             ]
           }).open()
-        } else if (parentNode.class.startsWith('Location') && this.moveState.newParent.class.startsWith('Equipment')
-            && this.nodeLocation(parentNode) !== this.nodeLocation(this.moveState.newParent)) {
+        } else if (parentNode.class.startsWith('Location') && this.moveState.newParent.class.startsWith('Equipment') &&
+            this.nodeLocation(parentNode) !== this.nodeLocation(this.moveState.newParent)) {
           this.$set(this.moveState, 'moveConfirmed', true)
           this.$f7.dialog.create({
             text: 'Point "' + this.itemLabel(node.item) +
