@@ -75,7 +75,7 @@ export default {
     },
     select (event) {
       let self = this
-      if (self.dragDropActive) return       // avoid opening item properties during drag drop
+      if (self.dragDropActive) return // avoid opening item properties during drag drop
       let $ = self.$$
       if ($(event.target).is('.treeview-toggle')) return
       if ($(event.target).is('.checkbox') || $(event.target).is('.icon-checkbox') || $(event.target).is('input')) return
