@@ -2,9 +2,30 @@ import cronstrue from 'cronstrue'
 
 export default {
   methods: {
+    findModuleType (mod, section) {
+      if (!mod || !this.moduleTypes) {
+        return undefined
+      }
+      let result
+      if (section) {
+        return this.moduleTypes[section]?.find((m) => m.uid === mod.type)
+      } else {
+        if (this.moduleTypes.actions) {
+          result = this.moduleTypes.actions.find((m) => m.uid === mod.type)
+        }
+        if (!result && this.moduleTypes.triggers) {
+          result = this.moduleTypes.triggers.find((m) => m.uid === mod.type)
+        }
+        if (!result && this.moduleTypes.conditions) {
+          result = this.moduleTypes.conditions.find((m) => m.uid === mod.type)
+        }
+        return result
+      }
+    },
     suggestedModuleTitle (mod, moduleType, section) {
       if (!moduleType) {
-        moduleType = this.moduleTypes[section].find((m) => m.uid === mod.type)
+        if (!this.moduleTypes) return 'Name'
+        moduleType = this.findModuleType(mod, section)
         if (!moduleType) return 'Name'
       }
       const config = mod.configuration
@@ -93,7 +114,8 @@ export default {
     },
     suggestedModuleDescription (mod, moduleType, section) {
       if (!moduleType) {
-        moduleType = this.moduleTypes[section].find((m) => m.uid === mod.type)
+        if (!this.moduleTypes) return 'Description'
+        moduleType = this.findModuleType(mod, section)
         if (!moduleType) return 'Description'
       }
       const config = mod.configuration
