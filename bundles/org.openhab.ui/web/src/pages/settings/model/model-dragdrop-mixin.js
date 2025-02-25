@@ -223,7 +223,7 @@ export default {
             '" as',
           verticalButtons: true,
           buttons: [
-            { text: 'Cancel', color: 'gray', onClick: () => this.restoreModelUpdate() },
+            { text: 'Cancel', color: 'gray', keycodes: [27], onClick: () => this.restoreModelUpdate() },
             { text: 'Location', onClick: () => this.addLocation(node, parentNode) },
             { text: 'Equipment', onClick: () => this.addEquipment(node, parentNode) }
           ]
@@ -236,7 +236,7 @@ export default {
             '" as',
           verticalButtons: true,
           buttons: [
-            { text: 'Cancel', color: 'gray', onClick: () => this.restoreModelUpdate() },
+            { text: 'Cancel', color: 'gray', keycodes: [27], onClick: () => this.restoreModelUpdate() },
             { text: 'Equipment', onClick: () => this.addEquipment(node, parentNode) },
             { text: 'Point', onClick: () => this.addPoint(node, parentNode) }
           ]
@@ -264,7 +264,7 @@ export default {
             '" as',
           verticalButtons: true,
           buttons: [
-            { text: 'Cancel', color: 'gray', onClick: () => this.restoreModelUpdate() },
+            { text: 'Cancel', color: 'gray', keycodes: [27], onClick: () => this.restoreModelUpdate() },
             { text: 'Equipment', onClick: () => this.addEquipment(node, parentNode) },
             { text: 'Point', onClick: () => this.addPoint(node, parentNode) }
           ]
@@ -297,7 +297,7 @@ export default {
             '" as',
           verticalButtons: true,
           buttons: [
-            { text: 'Cancel', color: 'gray', onClick: () => this.restoreModelUpdate() },
+            { text: 'Cancel', color: 'gray', keycodes: [27], onClick: () => this.restoreModelUpdate() },
             { text: 'Location', onClick: () => this.addLocation(node, parentNode) },
             { text: 'Equipment', onClick: () => this.addEquipment(node, parentNode) },
             { text: 'Non Semantic', onClick: () => this.addNonSemantic(node, parentNode) }
@@ -311,7 +311,7 @@ export default {
             '" as',
           verticalButtons: true,
           buttons: [
-            { text: 'Cancel', color: 'gray', onClick: () => this.restoreModelUpdate() },
+            { text: 'Cancel', color: 'gray', keycodes: [27], onClick: () => this.restoreModelUpdate() },
             { text: 'Equipment', onClick: () => this.addEquipment(node, parentNode) },
             { text: 'Point', onClick: () => this.addPoint(node, parentNode) },
             { text: 'Non Semantic', onClick: () => this.addNonSemantic(node, parentNode) }
@@ -392,8 +392,39 @@ export default {
       const oldIndex = this.moveState.oldIndex
       console.debug('Remove - new moveState:', cloneDeep(this.moveState))
       if (parentNode.class !== '' && this.moveState.newParent.class !== '') {
-        // always remove from semantic model groups, unless moving into non-semantic group
-        this.remove(node, parentNode, oldIndex)
+        // special rule: a point can be part of a location and equipment at the same time, e.g. central HVAC equipment with controls by room
+        if (parentNode.class.startsWith('Equipment') && this.moveState.newParent.class.startsWith('Location')
+            && this.nodeLocation(parentNode) !== this.nodeLocation(this.moveState.newParent)) {
+          this.$set(this.moveState, 'moveConfirmed', true)
+          this.$f7.dialog.create({
+            text: 'Point "' + this.itemLabel(node.item) +
+              '" dragged from Equipment "' + this.itemLabel(parentNode.item) +
+              '" into Location "' + this.itemLabel(this.moveState.newParent.item) +
+              '", should Point still be in Equipment as well?',
+            buttons: [
+              { text: 'Cancel', color: 'gray', keycodes: [27], onClick: () => this.restoreModelUpdate() },
+              { text: 'Yes', keycodes: [13], onClick: () => this.updateAfterRemove() },
+              { text: 'No', strong: true, onClick: () => this.remove(node, parentNode, oldIndex) }
+            ]
+          }).open()
+        } else if (parentNode.class.startsWith('Location') && this.moveState.newParent.class.startsWith('Equipment')
+            && this.nodeLocation(parentNode) !== this.nodeLocation(this.moveState.newParent)) {
+          this.$set(this.moveState, 'moveConfirmed', true)
+          this.$f7.dialog.create({
+            text: 'Point "' + this.itemLabel(node.item) +
+              '" dragged from Location "' + this.itemLabel(parentNode.item) +
+              '" into Equipment "' + this.itemLabel(this.moveState.newParent.item) +
+              '", should Point still be in Location as well?',
+            buttons: [
+              { text: 'Cancel', color: 'gray', keycodes: [27], onClick: () => this.restoreModelUpdate() },
+              { text: 'Yes', onClick: () => this.updateAfterRemove() },
+              { text: 'No', strong: true, keycodes: [13], onClick: () => this.remove(node, parentNode, oldIndex) }
+            ]
+          }).open()
+        } else {
+          // in general remove from semantic model groups, unless moving into non-semantic group
+          this.remove(node, parentNode, oldIndex)
+        }
       } else if (!parentNode.item && node.class !== '') {
         // always remove semantic item from root level when moving into another group
         this.remove(node, parentNode, oldIndex)
@@ -404,11 +435,10 @@ export default {
             '" dragged from group "' + this.itemLabel(parentNode.item) +
             '" into "' + this.itemLabel(this.moveState.newParent.item) +
             '", keep original?',
-          verticalButtons: true,
           buttons: [
-            { text: 'Cancel', color: 'gray', onClick: () => this.restoreModelUpdate() },
-            { text: 'Keep', onClick: () => this.updateAfterRemove() },
-            { text: 'Remove', onClick: () => this.remove(node, parentNode, oldIndex) }
+            { text: 'Cancel', color: 'gray', keycodes: [27], onClick: () => this.restoreModelUpdate() },
+            { text: 'Yes', onClick: () => this.updateAfterRemove() },
+            { text: 'No', onClick: () => this.remove(node, parentNode, oldIndex) }
           ]
         }).open()
       } else {
@@ -473,6 +503,16 @@ export default {
     itemLabel (item) {
       if (!item) return 'model root'
       return (item.label ? (this.includeItemName ? item.label + ' (' + item.name + ')' : item.label) : item.name)
+    },
+    nodeLocation (node) {
+      // This check is incomplete. It should walk up the model tree to find the lowest level location at or above the current node,
+      // but the full tree is not easily available here.
+      if (node.class.startsWith('Location')) return node.item.name
+      const parentItem = node.item.metadata?.semantics?.config?.isPartOf
+      if (parentItem) {
+        // go up the tree, retrieve the node and call recursively
+      }
+      return node.item.metadata?.semantics?.config?.hasLocation
     },
     nodeChildren (node) {
       const parentNode = node || this.model
