@@ -118,7 +118,7 @@ export default {
           return
         }
       }
-      if (node.class !== '' && parentNode.class !== '' && oldParentNode?.class === '') {
+      if (node.class !== '' && parentNode.class !== '' && (oldParentNode.item && oldParentNode?.class === '')) {
         const message = 'Cannot move semantic item "' + this.itemLabel(node.item) +
           '" from non-semantic group "' + this.itemLabel(oldParentNode.item) +
           '" into semantic group "' + this.itemLabel(parentNode.item) + '"'
