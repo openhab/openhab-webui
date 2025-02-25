@@ -101,6 +101,11 @@ export default {
       const node = this.moveState.node
       const parentNode = this.moveState.newParent
       const oldParentNode = this.moveState.oldParent
+      if (node.item.name === parentNode.item.name) {
+        // This should not be possible, but just to make sure to avoid infinite loop
+        this.restoreModelUpdate()
+        return
+      }
       if (parentNode.item && node.item.groupNames?.includes(parentNode.item.name)) {
         const message = 'Group "' + this.itemLabel(parentNode.item) +
           '" already contains item "' + this.itemLabel(node.item) + '"'
@@ -501,6 +506,7 @@ export default {
       this.$set(this.moveState, 'canAdd', false)
       this.$set(this.moveState, 'adding', false)
       this.$set(this.moveState, 'removing', false)
+      this.$set(this.moveState, 'saving', false)
       this.$emit('reload')
     },
     itemLabel (item) {
