@@ -2,6 +2,7 @@ import cloneDeep from 'lodash/cloneDeep'
 import * as types from '@/assets/item-types.js'
 import ItemMixin from '@/components/item/item-mixin'
 import TagMixin from '@/components/tags/tag-mixin'
+import fastDeepEqual from 'fast-deep-equal/es6'
 
 export default {
   mixins: [ItemMixin, TagMixin],
@@ -366,7 +367,7 @@ export default {
       if (!node.item.tags.includes(semantics.value)) node.item.tags.push(semantics.value)
       node.class = semantics.value
       const nodeChildren = this.nodeChildren(node)
-      nodeChildren.forEach((n) => this.addIntoLocation(n, node))
+      nodeChildren.filter((n) => !n.class).forEach((n) => this.addIntoLocation(n, node))
       console.debug('runtime addLocation end', Date.now() - timestamp)
       this.updateAfterAdd(node, parentNode, semantics)
     },
@@ -382,7 +383,7 @@ export default {
       if (!node.item.tags.includes(semantics.value)) node.item.tags.push(semantics.value)
       node.class = semantics.value
       const nodeChildren = this.nodeChildren(node)
-      nodeChildren.forEach((n) => this.addIntoEquipment(n, node))
+      nodeChildren.filter((n) => !n.class).forEach((n) => this.addIntoEquipment(n, node))
       console.debug('runtime addEquipment end', Date.now() - timestamp)
       this.updateAfterAdd(node, parentNode, semantics)
     },
@@ -406,17 +407,24 @@ export default {
     },
     updateAfterAdd (node, parentNode, semantics) {
       const timestamp = Date.now()
+      let updateRequired = false
       if (semantics === null) {
         if (node.item.metadata?.semantics) {
           node.item.metadata.semantics = null
+          updateRequired = true
         }
       } else if (node.item.metadata) {
-        node.item.metadata.semantics = semantics
+        if (!fastDeepEqual(node.item.metadata.semantics, semantics)) {
+          node.item.metadata.semantics = semantics
+          updateRequired = true
+        }
       } else {
         node.item.metadata = { semantics }
+        updateRequired = true
       }
       if (parentNode.item?.type === 'Group' && !node.item.groupNames.includes(parentNode.item.name)) {
         node.item.groupNames.push(parentNode.item.name)
+        updateRequired = true
       }
       console.debug('Add - new moveState:', cloneDeep(this.moveState))
       if (!this.children.some(n => n.item.name === node.item.name)) {
@@ -425,9 +433,11 @@ export default {
       }
       const newChildren = this.children
       this.children = newChildren // force setters to update model
-      let nodesToUpdate = this.moveState.nodesToUpdate
-      nodesToUpdate.push(node)
-      this.$set(this.moveState, 'nodesToUpdate', nodesToUpdate)
+      if (updateRequired) {
+        let nodesToUpdate = this.moveState.nodesToUpdate
+        nodesToUpdate.push(node)
+        this.$set(this.moveState, 'nodesToUpdate', nodesToUpdate)
+      }
       console.debug('Add - finished, new moveState:', cloneDeep(this.moveState))
       console.debug('runtime updateAfterAdd', Date.now() - timestamp)
     },
