@@ -67,6 +67,7 @@ export default {
       this.$set(this.moveState, 'moveConfirmed', false)
       this.$set(this.moveState, 'node', this.children[event.oldIndex])
       this.$set(this.moveState, 'nodesToUpdate', [])
+      this.$set(this.moveState, 'dragStartTimestamp', Date.now())
       console.debug('Drag start - moveState:', cloneDeep(this.moveState))
     },
     onDragChange (event) {
@@ -102,7 +103,7 @@ export default {
       })
     },
     validateAdd () {
-      const timestamp = Date.now()
+      console.debug('runtime validateAdd start', Date.now() - moveState.dargStartTimestamp)
       this.$set(this.moveState, 'adding', true)
       const node = this.moveState.node
       const parentNode = this.moveState.newParent
@@ -110,15 +111,16 @@ export default {
       if (node.item.name === parentNode?.item?.name) {
         // This should not be possible, but just to make sure to avoid infinite loop
         this.restoreModelUpdate()
+        console.debug('runtime validateAdd end', Date.now() - moveState.dargStartTimestamp)
         return
       }
       if (parentNode.item && node.item.groupNames?.includes(parentNode.item.name)) {
         const message = 'Group "' + this.itemLabel(parentNode.item) +
           '" already contains item "' + this.itemLabel(node.item) + '"'
         console.debug('Add rejected: ' + message)
-        console.debug('runtime validateAdd', Date.now() - timestamp)
         this.$f7.dialog.alert(message).open()
         this.restoreModelUpdate()
+        console.debug('runtime validateAdd end', Date.now() - moveState.dargStartTimestamp)
         return
       }
       if (node.item.type === 'Group' && node.class === '') {
@@ -128,9 +130,9 @@ export default {
             '" with semantic child "' + this.itemLabel(semanticNode.item) +
             '" into semantic group "' + this.itemLabel(parentNode.item) + '"'
           console.debug('Add rejected: ' + message)
-          console.debug('runtime validateAdd', Date.now() - timestamp)
           this.$f7.dialog.alert(message).open()
           this.restoreModelUpdate()
+          console.debug('runtime validateAdd end', Date.now() - moveState.dargStartTimestamp)
           return
         }
       }
@@ -139,14 +141,14 @@ export default {
           '" from non-semantic group "' + this.itemLabel(oldParentNode.item) +
           '" into semantic group "' + this.itemLabel(parentNode.item) + '"'
         console.debug('Add rejected:' + message)
-        console.debug('runtime validateAdd', Date.now() - timestamp)
         this.$f7.dialog.alert(message).open()
         this.restoreModelUpdate()
+        console.debug('runtime validateAdd end', Date.now() - moveState.dargStartTimestamp)
         return
       }
       if (!this.isValidGroupType(node, parentNode)) {
-        console.debug('runtime validateAdd', Date.now() - timestamp)
         this.restoreModelUpdate()
+        console.debug('runtime validateAdd end', Date.now() - moveState.dargStartTimestamp)
         return
       }
       if (parentNode.class.startsWith('Location')) {
@@ -160,10 +162,10 @@ export default {
       }
       this.$set(this.moveState, 'canAdd', false)
       this.$set(this.moveState, 'adding', false)
-      console.debug('runtime validateAdd end', Date.now() - timestamp)
+      console.debug('runtime validateAdd end', Date.now() - moveState.dargStartTimestamp)
     },
     isValidGroupType (node, parentNode) {
-      const timestamp = Date.now()
+      console.debug('runtime isValidGroupType start', Date.now() - moveState.dargStartTimestamp)
       const groupTypeDef = parentNode.item?.groupType?.split(':')
       const baseType = groupTypeDef ? groupTypeDef[0] : 'None'
       if (baseType === 'None') return true
@@ -179,8 +181,8 @@ export default {
              '" not compatible with "' + (node.item.type === 'Group' ? 'group ' : '') + 'item dimension "' + dimension +
              '" of "' + (node.item.type === 'Group' ? 'group ' : '') + '" item "' + this.itemLabel(node.item) + '"'
           console.debug('Add rejected: ' + message)
-          console.debug('runtime isValidGroupType', Date.now() - timestamp)
           this.$f7.dialog.alert(message).open()
+          console.debug('runtime isValidGroupType end', Date.now() - moveState.dargStartTimestamp)
           return false
         }
         if (dimension) {
@@ -194,8 +196,8 @@ export default {
               '" with dimension "' + childWithDifferentDimension.dimension +
               '" different from group dimension "' + dimension + '"'
             console.debug('Add rejected: ' + message)
-            console.debug('runtime isValidGroupType', Date.now() - timestamp)
             this.$f7.dialog.alert(message).open()
+            console.debug('runtime isValidGroupType end', Date.now() - moveState.dargStartTimestamp)
             return false
           }
         }
@@ -207,11 +209,11 @@ export default {
           '" not compatible with type "' + type +
           '" of item "' + this.itemLabel(node.item) + '"'
         console.debug('Add rejected: ' + message)
-        console.debug('runtime isValidGroupType', Date.now() - timestamp)
-        this.$f7.dialog.alert(message).open()
-        return false
+         this.$f7.dialog.alert(message).open()
+         console.debug('runtime isValidGroupType end', Date.now() - moveState.dargStartTimestamp)
+         return false
       }
-      console.debug('runtime isValidGroupType', Date.now() - timestamp)
+      console.debug('runtime isValidGroupType end', Date.now() - moveState.dargStartTimestamp)
       return true
     },
     aggregationFunctions (type) {
@@ -235,7 +237,7 @@ export default {
       return [...types.CommonFunctions, ...specificAggregationFunctions(type)]
     },
     addIntoLocation (node, parentNode) {
-      const timestamp = Date.now()
+      console.debug('runtime addIntoLocation start', Date.now() - moveState.dargStartTimestamp)
       if (node.class.startsWith('Location')) {
         this.addLocation(node, parentNode)
       } else if (node.class.startsWith('Equipment')) {
@@ -243,7 +245,6 @@ export default {
       } else if (node.class.startsWith('Point')) {
         this.addPoint(node, parentNode)
       } else if (node.item.type === 'Group') {
-        console.debug('runtime addIntoLocation', Date.now() - timestamp)
         this.$set(this.moveState, 'moveConfirmed', true)
         this.$f7.dialog.create({
           text: 'Insert "' + this.itemLabel(node.item) +
@@ -257,7 +258,6 @@ export default {
           ]
         }).open()
       } else {
-        console.debug('runtime addIntoLocation', Date.now() - timestamp)
         this.$set(this.moveState, 'moveConfirmed', true)
         this.$f7.dialog.create({
           text: 'Insert "' + this.itemLabel(node.item) +
@@ -271,12 +271,11 @@ export default {
           ]
         }).open()
       }
-      console.debug('runtime addIntoLocation end', Date.now() - timestamp)
+      console.debug('runtime addIntoLocation end', Date.now() - moveState.dargStartTimestamp)
     },
     addIntoEquipment (node, parentNode) {
-      const timestamp = Date.now()
+      console.debug('runtime addIntoEquipment start', Date.now() - moveState.dargStartTimestamp)
       if (node.class.startsWith('Location')) {
-        console.debug('runtime addIntoEquipment', Date.now() - timestamp)
         this.$f7.dialog.alert(
           'Cannot move Location "' + this.itemLabel(node.item) +
           '" into Equipment "' + this.itemLabel(parentNode.item) + '"'
@@ -290,7 +289,6 @@ export default {
         this.addEquipment(node, parentNode)
       } else {
         this.$set(this.moveState, 'moveConfirmed', true)
-        console.debug('runtime addIntoEquipment', Date.now() - timestamp)
         const dialog = this.$f7.dialog.create({
           text: 'Insert "' + this.itemLabel(node.item) +
             '" into "' + this.itemLabel(parentNode.item) +
@@ -303,9 +301,10 @@ export default {
           ]
         }).open()
       }
-      console.debug('runtime addIntoEquipment end', Date.now() - timestamp)
+      console.debug('runtime addIntoEquipment end', Date.now() - moveState.dargStartTimestamp)
     },
     addIntoGroup (node, parentNode) {
+      console.debug('runtime addIntoGroup start', Date.now() - moveState.dargStartTimestamp)
       if (node.class.startsWith('Location')) {
         this.addLocation(node, parentNode)
       } else if (node.class.startsWith('Equipment')) {
@@ -315,9 +314,10 @@ export default {
       } else {
         this.addNonSemantic(node, parentNode)
       }
+      console.debug('runtime addIntoGroup end', Date.now() - moveState.dargStartTimestamp)
     },
     addIntoRoot (node, parentNode) {
-      const timestamp = Date.now()
+      console.debug('runtime addIntoRoot start', Date.now() - moveState.dargStartTimestamp)
       if (node.class.startsWith('Location')) {
         this.addLocation(node, parentNode)
       } else if (node.class.startsWith('Equipment')) {
@@ -326,7 +326,6 @@ export default {
         this.addPoint(node, parentNode)
       } else if (node.item.type === 'Group') {
         this.$set(this.moveState, 'moveConfirmed', true)
-        console.debug('runtime addIntoRoot', Date.now() - timestamp)
         this.$f7.dialog.create({
           text: 'Insert "' + this.itemLabel(node.item) +
             '" into "' + this.itemLabel(parentNode.item) +
@@ -341,7 +340,6 @@ export default {
         }).open()
       } else {
         this.$set(this.moveState, 'moveConfirmed', true)
-        console.debug('runtime addIntoRoot', Date.now() - timestamp)
         this.$f7.dialog.create({
           text: 'Insert "' + this.itemLabel(node.item) +
             '" into "' + this.itemLabel(parentNode.item) +
@@ -355,10 +353,10 @@ export default {
           ]
         }).open()
       }
-      console.debug('runtime addIntoRoot end', Date.now() - timestamp)
+      console.debug('runtime addIntoRoot end', Date.now() - moveState.dargStartTimestamp)
     },
     addLocation (node, parentNode) {
-      const timestamp = Date.now()
+      console.debug('runtime addLocation start', Date.now() - moveState.dargStartTimestamp)
       const semantics = { config: {} }
       semantics.value = node.item?.metadata?.semantics?.value || 'Location'
       if (parentNode.class.startsWith('Location')) {
@@ -368,11 +366,11 @@ export default {
       node.class = semantics.value
       const nodeChildren = this.nodeChildren(node)
       nodeChildren.filter((n) => !n.class).forEach((n) => this.addIntoLocation(n, node))
-      console.debug('runtime addLocation end', Date.now() - timestamp)
       this.updateAfterAdd(node, parentNode, semantics)
+      console.debug('runtime addLocation end', Date.now() - moveState.dargStartTimestamp)
     },
     addEquipment (node, parentNode) {
-      const timestamp = Date.now()
+      console.debug('runtime addEquipment start', Date.now() - moveState.dargStartTimestamp)
       const semantics = { config: {} }
       semantics.value = node.item?.metadata?.semantics?.value || 'Equipment'
       if (parentNode.class.startsWith('Location')) {
@@ -384,12 +382,12 @@ export default {
       node.class = semantics.value
       const nodeChildren = this.nodeChildren(node)
       nodeChildren.filter((n) => !n.class).forEach((n) => this.addIntoEquipment(n, node))
-      console.debug('runtime addEquipment end', Date.now() - timestamp)
       this.updateAfterAdd(node, parentNode, semantics)
+      console.debug('runtime addEquipment end', Date.now() - moveState.dargStartTimestamp)
     },
     addPoint (node, parentNode) {
-      const timestamp = Date.now()
-      const semantics = { config: {} }
+      console.debug('runtime addPoint start', Date.now() - moveState.dargStartTimestamp)
+       const semantics = { config: {} }
       semantics.value = node.item?.metadata?.semantics?.value || 'Point'
       if (parentNode.class.startsWith('Location')) {
         semantics.config.hasLocation = parentNode.item.name
@@ -398,16 +396,18 @@ export default {
       }
       if (!node.item.tags.includes(semantics.value)) node.item.tags.push(semantics.value)
       node.class = semantics.value
-      console.debug('runtime addPoint end', Date.now() - timestamp)
       this.updateAfterAdd(node, parentNode, semantics)
+      console.debug('runtime addPoint end', Date.now() - moveState.dargStartTimestamp)
     },
     addNonSemantic (node, parentNode) {
+      console.debug('runtime addNonSemantic start', Date.now() - moveState.dargStartTimestamp)
       node.class = ''
       this.updateAfterAdd(node, parentNode, null)
+      console.debug('runtime addNonSemantic end', Date.now() - moveState.dargStartTimestamp)
     },
     updateAfterAdd (node, parentNode, semantics) {
-      const timestamp = Date.now()
-      let updateRequired = false
+      console.debug('runtime updateAfterAdd start', Date.now() - moveState.dargStartTimestamp)
+     let updateRequired = false
       if (semantics === null) {
         if (node.item.metadata?.semantics) {
           node.item.metadata.semantics = null
@@ -439,25 +439,46 @@ export default {
         this.$set(this.moveState, 'nodesToUpdate', nodesToUpdate)
       }
       console.debug('Add - finished, new moveState:', cloneDeep(this.moveState))
-      console.debug('runtime updateAfterAdd', Date.now() - timestamp)
+      console.debug('runtime updateAfterAdd end', Date.now() - moveState.dargStartTimestamp)
     },
     validateRemove () {
-      const timestamp = Date.now()
+      console.debug('runtime validateRemove start', Date.now() - moveState.dargStartTimestamp)
       this.$set(this.moveState, 'removing', true)
       const node = this.moveState.node
+      const newParentNode = this.moveSate.newParent
       const parentNode = this.moveState.oldParent
       const oldIndex = this.moveState.oldIndex
       console.debug('Remove - new moveState:', cloneDeep(this.moveState))
-      if (parentNode.class !== '' && this.moveState.newParent.class !== '') {
-        // special rule: a point can be part of a location and equipment at the same time, e.g. central HVAC equipment with controls by room
-        if (parentNode.class.startsWith('Equipment') && this.moveState.newParent.class.startsWith('Location') &&
-            this.nodeLocation(parentNode) !== this.nodeLocation(this.moveState.newParent)) {
+      if (newParentNode.item === '') {
+        if (node.class.startsWith('Equipment') || node.class.startsWith('Point')) {
           this.$set(this.moveState, 'moveConfirmed', true)
-          console.debug('runtime validateRemove', Date.now() - timestamp)
+          this.$f7.dialog.create({
+            text: 'Node "' + this.itemLabel(node.item) +
+              '" dragged from  "' + this.itemLabel(parentNode.item) +
+              '" into root, remove from model?',
+            buttons: [
+              { text: 'Cancel', color: 'gray', keycodes: [27], onClick: () => this.restoreModelUpdate() },
+              { text: 'Yes', keycodes: [13], onClick: () => {
+                  node.item.metadata.semantics = null
+                  this.remove(node, parentNode, oldIndex)
+                }
+              }
+            ]
+          }).open()          
+        } else {
+          // moving into root, so remove from source
+          // issue: it will only remove from the current parent, not all
+          this.remove(node, parentNode, oldIndex)
+        }
+      } else if (parentNode.class !== '' && newParentNode.class !== '') {
+        // special rule: a point can be part of a location and equipment at the same time, e.g. central HVAC equipment with controls by room
+        if (parentNode.class.startsWith('Equipment') && newParentNode.class.startsWith('Location') &&
+            this.nodeLocation(parentNode) !== this.nodeLocation(newParentNode)) {
+          this.$set(this.moveState, 'moveConfirmed', true)
           this.$f7.dialog.create({
             text: 'Point "' + this.itemLabel(node.item) +
               '" dragged from Equipment "' + this.itemLabel(parentNode.item) +
-              '" into Location "' + this.itemLabel(this.moveState.newParent.item) +
+              '" into Location "' + this.itemLabel(newParentNode.item) +
               '", should Point still be in Equipment as well?',
             buttons: [
               { text: 'Cancel', color: 'gray', keycodes: [27], onClick: () => this.restoreModelUpdate() },
@@ -465,14 +486,13 @@ export default {
               { text: 'No', strong: true, onClick: () => this.remove(node, parentNode, oldIndex) }
             ]
           }).open()
-        } else if (parentNode.class.startsWith('Location') && this.moveState.newParent.class.startsWith('Equipment') &&
-            this.nodeLocation(parentNode) !== this.nodeLocation(this.moveState.newParent)) {
+        } else if (parentNode.class.startsWith('Location') && newParentNode.class.startsWith('Equipment') &&
+            this.nodeLocation(parentNode) !== this.nodeLocation(newParentNode)) {
           this.$set(this.moveState, 'moveConfirmed', true)
-          console.debug('runtime validateRemove', Date.now() - timestamp)
           this.$f7.dialog.create({
             text: 'Point "' + this.itemLabel(node.item) +
               '" dragged from Location "' + this.itemLabel(parentNode.item) +
-              '" into Equipment "' + this.itemLabel(this.moveState.newParent.item) +
+              '" into Equipment "' + this.itemLabel(newParentNode.item) +
               '", should Point still be in Location as well?',
             buttons: [
               { text: 'Cancel', color: 'gray', keycodes: [27], onClick: () => this.restoreModelUpdate() },
@@ -489,11 +509,10 @@ export default {
         this.remove(node, parentNode, oldIndex)
       } else if (parentNode.item?.type === 'Group') {
         this.$set(this.moveState, 'moveConfirmed', true)
-        console.debug('runtime validateRemove', Date.now() - timestamp)
         this.$f7.dialog.create({
           text: 'Item "' + this.itemLabel(node.item) +
             '" dragged from group "' + this.itemLabel(parentNode.item) +
-            '" into "' + this.itemLabel(this.moveState.newParent.item) +
+            '" into "' + this.itemLabel(newParentNode.item) +
             '", keep original?',
           buttons: [
             { text: 'Cancel', color: 'gray', keycodes: [27], onClick: () => this.restoreModelUpdate() },
@@ -504,10 +523,10 @@ export default {
       } else {
         this.updateAfterRemove()
       }
-      console.debug('runtime validateRemove end', Date.now() - timestamp)
+      console.debug('runtime validateRemove end', Date.now() - moveState.dargStartTimestamp)
     },
     remove (node, parentNode, oldIndex) {
-      const timestamp = Date.now()
+      console.debug('runtime remove start', Date.now() - moveState.dargStartTimestamp)
       const groupNameIndex = node.item.groupNames.findIndex(g => g === parentNode.item?.name)
       if (groupNameIndex >= 0) {
         node.item.groupNames.splice(groupNameIndex, 1)
@@ -523,14 +542,17 @@ export default {
       }
       this.updateAfterRemove()
       console.debug('Remove - finished, new moveState:', cloneDeep(this.moveState))
-      console.debug('runtime remove', Date.now() - timestamp)
+      console.debug('runtime remove end', Date.now() - moveState.dargStartTimestamp)
     },
     updateAfterRemove () {
+      console.debug('runtime updateAfterRemove start', Date.now() - moveState.dargStartTimestamp)
       this.$set(this.moveState, 'canRemove', false)
       this.$set(this.moveState, 'removing', false)
       this.$set(this.moveState, 'dragFinished', true)
+      console.debug('runtime updateAfterRemove end', Date.now() - moveState.dargStartTimestamp)
     },
     saveUpdate () {
+      console.debug('runtime saveUpdate start', Date.now() - moveState.dargStartTimestamp)
       this.$set(this.moveState, 'saving', true)
       const node = this.moveState.node
       const parentNode = this.moveState.newParent
@@ -543,9 +565,10 @@ export default {
       } else {
         this.saveModelUpdate()
       }
+      console.debug('runtime saveUpdate end', Date.now() - moveState.dargStartTimestamp)
     },
     saveModelUpdate () {
-      const timestamp = Date.now()
+      console.debug('runtime saveModelUpdate start', Date.now() - moveState.dargStartTimestamp)
       this.$set(this.moveState, 'dragFinished', false)
       this.moveState.nodesToUpdate.forEach((n) => {
         const updatedItem = n.item
@@ -554,11 +577,11 @@ export default {
       })
       this.$set(this.moveState, 'saving', false)
       this.$set(this.moveState, 'dragDropActive', false)
-      console.debug('runtime saveModelUpdate', Date.now() - timestamp)
+      console.debug('runtime saveModelUpdate end', Date.now() - moveState.dargStartTimestamp)
     },
     restoreModelUpdate () {
-      const timestamp = Date.now()
       console.debug('Restore model')
+      console.debug('runtime restoreModelUpdate start', Date.now() - moveState.dargStartTimestamp)
       this.$set(this.moveState, 'cancelled', true)
       this.$set(this.moveState, 'canRemove', false)
       this.$set(this.moveState, 'canAdd', false)
@@ -567,7 +590,7 @@ export default {
       this.$set(this.moveState, 'saving', false)
       this.$set(this.moveState, 'dragDropActive', false)
       this.$emit('reload')
-      console.debug('runtime restoreModelUpdate', Date.now() - timestamp)
+      console.debug('runtime restoreModelUpdate end', Date.now() - moveState.dargStartTimestamp)
     },
     itemLabel (item) {
       if (!item) return 'model root'
