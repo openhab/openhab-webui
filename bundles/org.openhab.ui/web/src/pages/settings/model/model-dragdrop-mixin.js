@@ -56,10 +56,6 @@ export default {
   methods: {
     onDragStart (event) {
       console.debug('Drag start - event:', event)
-      if (window) {
-        // Allow escape during drag
-        window.addEventListener('keyDown', this.keyDown)
-      }
       this.$set(this.moveState, 'dragDropActive', true)
       this.$set(this.moveState, 'moving', true)
       this.$set(this.moveState, 'canAdd', false)
@@ -97,12 +93,8 @@ export default {
     onDragEnd (event) {
       console.debug('runtime onDragEnd', Date.now() - this.moveState.dragStartTimestamp)
       console.debug('Drag end - event:', event)
-      if (window) {
-        window.removeEventListener('keyDown', this.keyDown)
-      }
       this.$set(this.moveState, 'moving', false)
       this.$set(this.moveState, 'dragEnd', true)
-      console.debug('Drag end - event:', event)
       console.debug('Drag end - moveState:', cloneDeep(this.moveState))
     },
     nestedSemanticNode (node) {
@@ -129,6 +121,7 @@ export default {
         const message = 'Group "' + this.itemLabel(parentNode.item) +
           '" already contains item "' + this.itemLabel(node.item) + '"'
         console.debug('Add rejected: ' + message)
+        console.debug('runtime dialog open', Date.now() - this.moveState.dragStartTimestamp)
         this.$f7.dialog.alert(message).open()
         this.restoreModelUpdate()
         console.debug('runtime validateAdd end', Date.now() - this.moveState.dragStartTimestamp)
@@ -141,6 +134,7 @@ export default {
             '" with semantic child "' + this.itemLabel(semanticNode.item) +
             '" into semantic group "' + this.itemLabel(parentNode.item) + '"'
           console.debug('Add rejected: ' + message)
+          console.debug('runtime dialog open', Date.now() - this.moveState.dragStartTimestamp)
           this.$f7.dialog.alert(message).open()
           this.restoreModelUpdate()
           console.debug('runtime validateAdd end', Date.now() - this.moveState.dragStartTimestamp)
@@ -152,6 +146,7 @@ export default {
           '" from non-semantic group "' + this.itemLabel(oldParentNode.item) +
           '" into semantic group "' + this.itemLabel(parentNode.item) + '"'
         console.debug('Add rejected:' + message)
+        console.debug('runtime dialog open', Date.now() - this.moveState.dragStartTimestamp)
         this.$f7.dialog.alert(message).open()
         this.restoreModelUpdate()
         console.debug('runtime validateAdd end', Date.now() - this.moveState.dragStartTimestamp)
@@ -192,6 +187,7 @@ export default {
              '" not compatible with "' + (node.item.type === 'Group' ? 'group ' : '') + 'item dimension "' + dimension +
              '" of "' + (node.item.type === 'Group' ? 'group ' : '') + '" item "' + this.itemLabel(node.item) + '"'
           console.debug('Add rejected: ' + message)
+          console.debug('runtime dialog open', Date.now() - this.moveState.dragStartTimestamp)
           this.$f7.dialog.alert(message).open()
           console.debug('runtime isValidGroupType end', Date.now() - this.moveState.dragStartTimestamp)
           return false
@@ -207,6 +203,7 @@ export default {
               '" with dimension "' + childWithDifferentDimension.dimension +
               '" different from group dimension "' + dimension + '"'
             console.debug('Add rejected: ' + message)
+            console.debug('runtime dialog open', Date.now() - this.moveState.dragStartTimestamp)
             this.$f7.dialog.alert(message).open()
             console.debug('runtime isValidGroupType end', Date.now() - this.moveState.dragStartTimestamp)
             return false
@@ -220,6 +217,7 @@ export default {
           '" not compatible with type "' + type +
           '" of item "' + this.itemLabel(node.item) + '"'
         console.debug('Add rejected: ' + message)
+        console.debug('runtime dialog open', Date.now() - this.moveState.dragStartTimestamp)
         this.$f7.dialog.alert(message).open()
         console.debug('runtime isValidGroupType end', Date.now() - this.moveState.dragStartTimestamp)
         return false
@@ -257,6 +255,7 @@ export default {
         this.addPoint(node, parentNode)
       } else if (node.item.type === 'Group') {
         this.$set(this.moveState, 'moveConfirmed', true)
+        console.debug('runtime dialog open', Date.now() - this.moveState.dragStartTimestamp)
         this.$f7.dialog.create({
           text: 'Insert "' + this.itemLabel(node.item) +
             '" into "' + this.itemLabel(parentNode.item) +
@@ -270,6 +269,7 @@ export default {
         }).open()
       } else {
         this.$set(this.moveState, 'moveConfirmed', true)
+        console.debug('runtime dialog open', Date.now() - this.moveState.dragStartTimestamp)
         this.$f7.dialog.create({
           text: 'Insert "' + this.itemLabel(node.item) +
             '" into "' + this.itemLabel(parentNode.item) +
@@ -287,6 +287,7 @@ export default {
     addIntoEquipment (node, parentNode) {
       console.debug('runtime addIntoEquipment start', Date.now() - this.moveState.dragStartTimestamp)
       if (node.class.startsWith('Location')) {
+        console.debug('runtime dialog open', Date.now() - this.moveState.dragStartTimestamp)
         this.$f7.dialog.alert(
           'Cannot move Location "' + this.itemLabel(node.item) +
           '" into Equipment "' + this.itemLabel(parentNode.item) + '"'
@@ -300,6 +301,7 @@ export default {
         this.addEquipment(node, parentNode)
       } else {
         this.$set(this.moveState, 'moveConfirmed', true)
+        console.debug('runtime dialog open', Date.now() - this.moveState.dragStartTimestamp)
         const dialog = this.$f7.dialog.create({
           text: 'Insert "' + this.itemLabel(node.item) +
             '" into "' + this.itemLabel(parentNode.item) +
@@ -337,6 +339,7 @@ export default {
         this.addPoint(node, parentNode)
       } else if (node.item.type === 'Group') {
         this.$set(this.moveState, 'moveConfirmed', true)
+        console.debug('runtime dialog open', Date.now() - this.moveState.dragStartTimestamp)
         this.$f7.dialog.create({
           text: 'Insert "' + this.itemLabel(node.item) +
             '" into "' + this.itemLabel(parentNode.item) +
@@ -351,6 +354,7 @@ export default {
         }).open()
       } else {
         this.$set(this.moveState, 'moveConfirmed', true)
+        console.debug('runtime dialog open', Date.now() - this.moveState.dragStartTimestamp)
         this.$f7.dialog.create({
           text: 'Insert "' + this.itemLabel(node.item) +
             '" into "' + this.itemLabel(parentNode.item) +
@@ -469,6 +473,7 @@ export default {
         if (parentNode.class.startsWith('Equipment') && newParentNode.class.startsWith('Location') &&
             this.nodeLocation(parentNode) !== this.nodeLocation(newParentNode)) {
           this.$set(this.moveState, 'moveConfirmed', true)
+          console.debug('runtime dialog open', Date.now() - this.moveState.dragStartTimestamp)
           this.$f7.dialog.create({
             text: 'Point "' + this.itemLabel(node.item) +
               '" dragged from Equipment "' + this.itemLabel(parentNode.item) +
@@ -483,6 +488,7 @@ export default {
         } else if (parentNode.class.startsWith('Location') && newParentNode.class.startsWith('Equipment') &&
             this.nodeLocation(parentNode) !== this.nodeLocation(newParentNode)) {
           this.$set(this.moveState, 'moveConfirmed', true)
+          console.debug('runtime dialog open', Date.now() - this.moveState.dragStartTimestamp)
           this.$f7.dialog.create({
             text: 'Point "' + this.itemLabel(node.item) +
               '" dragged from Location "' + this.itemLabel(parentNode.item) +
@@ -503,6 +509,7 @@ export default {
         this.remove(node, parentNode, oldIndex)
       } else if (parentNode.item?.type === 'Group') {
         this.$set(this.moveState, 'moveConfirmed', true)
+        console.debug('runtime dialog open', Date.now() - this.moveState.dragStartTimestamp)
         this.$f7.dialog.create({
           text: 'Item "' + this.itemLabel(node.item) +
             '" dragged from group "' + this.itemLabel(parentNode.item) +
@@ -551,6 +558,7 @@ export default {
       const node = this.moveState.node
       const parentNode = this.moveState.newParent
       if (!this.moveState.moveConfirmed) {
+        console.debug('runtime dialog open', Date.now() - this.moveState.dragStartTimestamp)
         this.$f7.dialog.confirm(
           'Move "' + this.itemLabel(node.item) + '" into "' + this.itemLabel(parentNode.item) + '"?',
           () => this.saveModelUpdate(),
