@@ -138,12 +138,12 @@
               </f7-list>
             </div>
           </f7-col>
-          <f7-col v-if="isEditable && !createMode && !stubMode">
+          <f7-col v-if="!createMode && !stubMode">
             <f7-list>
-              <f7-list-button color="blue" @click="duplicateRule">
+              <f7-list-button v-if="isEditable || !hasOpaqueModule" color="blue" @click="duplicateRule">
                 Duplicate Rule
               </f7-list-button>
-              <f7-list-button color="red" @click="deleteRule">
+              <f7-list-button v-if="isEditable" color="red" @click="deleteRule">
                 Delete Rule
               </f7-list-button>
             </f7-list>
@@ -408,8 +408,10 @@ export default {
     },
     duplicateRule () {
       let ruleClone = cloneDeep(this.rule)
+      ruleClone.name = (ruleClone.name || '') + ' copy'
       ruleClone.templateUID = undefined
       ruleClone.templateState = 'no-template'
+      ruleClone.editable = true
       this.$f7router.navigate({
         url: '/settings/rules/duplicate'
       }, {
@@ -498,7 +500,7 @@ export default {
       this.rule.templateState = 'pending'
     },
     editModule (ev, section, mod) {
-      if (this.showModuleControls) return
+      if (this.showModuleControls || this.isOpaqueModule(mod)) return
       let swipeoutElement = ev.target
       ev.cancelBubble = true
       while (!swipeoutElement.classList.contains('swipeout')) {
@@ -676,6 +678,16 @@ export default {
         default:
           return value
       }
+    },
+    /**
+     * Determines if the module is "opaque" in that it doesn't actually execute the content of the module, but instead executes
+     * a referenced in-memory runnable method.
+     *
+     * @param module the module to evaluate
+     */
+    isOpaqueModule (module) {
+      if (!module?.type) return false
+      return module.type === 'jsr223.ScriptedAction' || module.type === 'jsr223.ScriptedCondition' || module.type === 'jsr223.ScriptedTrigger'
     }
   },
   computed: {
@@ -694,6 +706,10 @@ export default {
         return false
       }
       return this.templates ? this.templates.some((t) => t.uid === this.rule.templateUID) : false
+    },
+    hasOpaqueModule () {
+      if (!this.rule) return false
+      return [...this.rule.actions || [], this.rule.triggers || [], this.rule.conditions || []].some((m) => this.isOpaqueModule(m))
     },
     templateTopicLink () {
       if (!this.currentTemplate) return null
