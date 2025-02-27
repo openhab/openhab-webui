@@ -20,8 +20,8 @@
       </f7-subnavbar>
     </f7-navbar>
     <f7-toolbar class="contextual-toolbar" :class="{ 'navbar': $theme.md }" v-if="showCheckboxes" bottom-ios bottom-aurora>
-      <f7-link color="red" v-show="selectedItems.length" v-if="!$theme.md" class="delete" icon-ios="f7:trash" icon-aurora="f7:trash" @click="removeSelected">
-        Remove {{ selectedItems.length }}
+      <f7-link color="red" v-show="selectedDeletableItems.length" v-if="!$theme.md" class="delete" icon-ios="f7:trash" icon-aurora="f7:trash" @click="removeSelected">
+        Remove {{ selectedDeletableItems.length }}
       </f7-link>
       <f7-link color="orange" v-show="selectedItems.length" v-if="!$theme.md && !showScenes" class="disable" @click="doDisableEnableSelected(false)" icon-ios="f7:pause_circle" icon-aurora="f7:pause_circle">
         &nbsp;Disable {{ selectedItems.length }}
@@ -40,7 +40,7 @@
         <f7-link v-if="!showScenes" v-show="selectedItems.length === 1 && canRegenerateItem(selectedItems[0])" tooltip="Regenerate selected from template" icon-md="material:autorenew" icon-color="white" @click="regenerateSelected()" />
         <f7-link v-if="!showScenes" v-show="selectedItems.length" tooltip="Disable selected" icon-md="material:pause_circle_outline" icon-color="white" @click="doDisableEnableSelected(false)" />
         <f7-link v-if="!showScenes" v-show="selectedItems.length" tooltip="Enable selected" icon-md="material:play_circle_outline" icon-color="white" @click="doDisableEnableSelected(true)" />
-        <f7-link v-show="selectedItems.length" icon-md="material:delete" icon-color="white" @click="removeSelected" />
+        <f7-link v-show="selectedDeletableItems.length" icon-md="material:delete" icon-color="white" @click="removeSelected" />
       </div>
     </f7-toolbar>
 
@@ -185,6 +185,7 @@ export default {
       uniqueTags: [],
       selectedTags: [],
       selectedItems: [],
+      selectedDeletableItems: [],
       showCheckboxes: false,
       eventSource: null,
       templates: null
@@ -234,6 +235,7 @@ export default {
       this.initSearchbar = false
 
       this.$set(this, 'selectedItems', [])
+      this.$set(this, 'selectedDeletableItems', [])
       this.showCheckboxes = false
       let filter = ''
       if (this.showScripts) {
@@ -351,15 +353,23 @@ export default {
       if (!this.showCheckboxes) this.showCheckboxes = true
       if (this.isChecked(item)) {
         this.selectedItems.splice(this.selectedItems.indexOf(item), 1)
+        let idx = this.selectedDeletableItems.indexOf(item)
+        if (idx >= 0) {
+          this.selectedDeletableItems.splice(idx, 1)
+        }
       } else {
         this.selectedItems.push(item)
+        const rule = this.rules.find((r) => r.uid === item)
+        if (rule?.editable) {
+          this.selectedDeletableItems.push(item)
+        }
       }
     },
     removeSelected () {
       const vm = this
 
       this.$f7.dialog.confirm(
-        `Remove ${this.selectedItems.length} selected rules?`,
+        `Remove ${this.selectedDeletableItems.length} rules?`,
         'Remove Rules',
         () => {
           vm.doRemoveSelected()
@@ -367,14 +377,9 @@ export default {
       )
     },
     doRemoveSelected () {
-      if (this.selectedItems.some((i) => this.rules.find((rule) => rule.uid === i).editable === false)) {
-        this.$f7.dialog.alert('Some of the selected rules are not modifiable')
-        return
-      }
-
       let dialog = this.$f7.dialog.progress('Deleting Rules...')
 
-      const promises = this.selectedItems.map((i) => this.$oh.api.delete('/rest/rules/' + i))
+      const promises = this.selectedDeletableItems.map((i) => this.$oh.api.delete('/rest/rules/' + i))
       Promise.all(promises).then((data) => {
         this.$f7.toast.create({
           text: 'Rules removed',
@@ -382,6 +387,7 @@ export default {
           closeTimeout: 2000
         }).open()
         this.selectedItems = []
+        this.selectedDeletableItems = []
         dialog.close()
         this.load()
       }).catch((err) => {
