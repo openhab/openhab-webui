@@ -627,7 +627,7 @@ export default {
       if (!node.children) return []
       return [node.children.locations, node.children.equipment, node.children.points, node.children.groups, node.children.items].flat()
     },
-    keyDownHandler (event) {     
+    keyDownHandler (event) {
       if (!event.repeat && event.keyCode === 27) {
         console.debug('escape pressed')
         console.debug('runtime escape', Date.now() - this.moveState.dragStartTimestamp)
