@@ -56,6 +56,7 @@ export default {
   methods: {
     onDragStart (event) {
       console.debug('Drag start - event:', event)
+      window.addEventListener('keydown', this.keyDownHandler)
       this.$set(this.moveState, 'dragDropActive', true)
       this.$set(this.moveState, 'moving', true)
       this.$set(this.moveState, 'canAdd', false)
@@ -74,6 +75,10 @@ export default {
     onDragChange (event) {
       console.debug('runtime onDragChange', Date.now() - this.moveState.dragStartTimestamp)
       console.debug('Drag change - event:', event)
+      if (this.moveState.cancelled) {
+        console.debug('Drag change - cancelled')
+        return
+      }
       if (event.added) {
         this.$set(this.moveState, 'newParent', this.model)
         this.$set(this.moveState, 'canAdd', true)
@@ -86,6 +91,9 @@ export default {
       console.debug('Drag change - moveState:', cloneDeep(this.moveState))
     },
     onDragMove (event) {
+      if (this.moveState.cancelled) {
+        return false
+      }
       if (event.relatedContext?.element?.item?.type === 'Group' && !event.relatedContext.element.opened) {
         event.relatedContext.element.opened = true
       }
@@ -93,6 +101,12 @@ export default {
     onDragEnd (event) {
       console.debug('runtime onDragEnd', Date.now() - this.moveState.dragStartTimestamp)
       console.debug('Drag end - event:', event)
+      window.removeEventListener('keydown', this.keyDownHandler)
+      if (this.moveState.cancelled) {
+        console.debug('Drag end - cancelled')
+        this.restoreModelUpdate()
+        return
+      }
       this.$set(this.moveState, 'moving', false)
       this.$set(this.moveState, 'dragEnd', true)
       console.debug('Drag end - moveState:', cloneDeep(this.moveState))
@@ -613,11 +627,11 @@ export default {
       if (!node.children) return []
       return [node.children.locations, node.children.equipment, node.children.points, node.children.groups, node.children.items].flat()
     },
-    keyDown (ev) {
-      if (ev.keyCode === 27) {
-        this.restoreModelUpdate()
-        ev.stopPropagation()
-        ev.preventDefault()
+    keyDownHandler (event) {     
+      if (!event.repeat && event.keyCode === 27) {
+        console.debug('escape pressed')
+        console.debug('runtime escape', Date.now() - this.moveState.dragStartTimestamp)
+        this.$set(this.moveState, 'cancelled', true)
       }
     }
   }
