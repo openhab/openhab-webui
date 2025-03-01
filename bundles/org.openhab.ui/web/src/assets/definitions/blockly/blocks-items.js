@@ -88,7 +88,7 @@ export default function (f7) {
     init: function () {
       this.appendValueInput('tagName')
         .appendField('get items with tag')
-        .setCheck('String')
+        .setCheck(['String', 'Array'])
       this.setInputsInline(false)
       this.setOutput(true, 'Array')
       this.setColour(0)
@@ -99,16 +99,24 @@ export default function (f7) {
   }
 
   javascriptGenerator.forBlock['oh_taggeditems'] = function (block) {
-    let tagNames = javascriptGenerator.valueToCode(block, 'tagName', javascriptGenerator.ORDER_ATOMIC)
-    tagNames = tagNames.split(',')
+    let tagNames = javascriptGenerator.valueToCode(block, 'tagName', javascriptGenerator.ORDER_ATOMIC).replace(/'/g, '')
+    const inputType = blockGetCheckedInputType(block, 'tagName')
     let tags = ''
-    for (let i = 0; i < tagNames.length; i++) {
-      if (i > 0) {
-        tags += '\',\''
+    if (inputType === '') {
+      tags = `... (${tagNames}.split(',').map(tagElement => tagElement.trim()))`
+    } else {
+      if (inputType === 'Array') {
+        tagNames = tagNames.replace('[', '').replace(']', '')
       }
-      tags += tagNames[i]
+      tagNames = tagNames.split(',').map(tagElement => tagElement.trim())
+      for (let i = 0; i < tagNames.length; i++) {
+        if (i > 0) {
+          tags += '\',\''
+        }
+        tags += tagNames[i]
+      }
+      tags = '\'' + tags + '\''
     }
-
     return [`items.getItemsByTag(${tags})`, 0]
   }
 
