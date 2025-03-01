@@ -220,7 +220,7 @@ export default function (f7) {
         .appendField('to value')
       this.appendValueInput('dictionary')
         .appendField('with dictionary')
-        .setCheck(['String'])
+        .setCheck('String')
 
       this.setColour('%{BKY_LISTS_HUE}')
       this.setInputsInline(true)
@@ -232,9 +232,12 @@ export default function (f7) {
   }
 
   javascriptGenerator.forBlock['dicts_set'] = function (block) {
-    const key = javascriptGenerator.valueToCode(block, 'key', javascriptGenerator.ORDER_ATOMIC)
-    const value = javascriptGenerator.valueToCode(block, 'value', javascriptGenerator.ORDER_ATOMIC).replace(/'/g, '')
     const dict = javascriptGenerator.valueToCode(block, 'dictionary', javascriptGenerator.ORDER_ATOMIC).replace(/'/g, '')
+    const key = javascriptGenerator.valueToCode(block, 'key', javascriptGenerator.ORDER_ATOMIC)
+    if (dict === '' || key === '\'\'') {
+      throw new Error('dictionary and key name need to be provided')
+    }
+    const value = javascriptGenerator.valueToCode(block, 'value', javascriptGenerator.ORDER_ATOMIC).replace(/'/g, '')
     let code = `${dict}[${key}] = '${value}';\n`
     return code
   }
