@@ -596,8 +596,20 @@ export default {
       localStorage.setItem('openhab.ui:panel.visibleBreakpointDisabled', this.visibleBreakpointDisabled)
     },
     keyDown (ev) {
-      if (ev.keyCode === 68 && ev.shiftKey && ev.altKey) {
-        this.toggleDeveloperDock()
+      if (ev.shiftKey && ev.altKey) {
+        switch (ev.keyCode) {
+          case 68: // D for developer dock
+            this.toggleDeveloperDock()
+            break
+          case 77: // M for menu
+            const leftPanel = this.$f7.panel.get('left')
+            if (leftPanel.visibleBreakpointDisabled) {
+              leftPanel.opened ? leftPanel.close() : leftPanel.open()
+            }
+            break
+          default:
+            return
+        }
         ev.stopPropagation()
         ev.preventDefault()
       }
@@ -698,6 +710,7 @@ export default {
       })
 
       this.$f7.on('toggleDeveloperDock', () => {
+        console.log('toggling developer dock')
         this.toggleDeveloperDock()
       })
 
