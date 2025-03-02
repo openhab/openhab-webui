@@ -193,12 +193,6 @@ export default {
       mode: '',
       savedMode: '',
 
-      moduleTypes: {
-        actions: [],
-        conditions: [],
-        triggers: []
-      },
-
       currentModuleConfig: {},
       scriptModuleType: null,
       languages: null,
@@ -352,7 +346,7 @@ export default {
       if (this.ruleCopy) this.rule.uid = this.$f7.utils.id()
       this.savedRule = cloneDeep(this.rule)
       this.savedMode = this.mode = 'application/javascript+blockly'
-      this.loadScriptModuleTypes().then(() => {
+      this.loadScriptModuleType().then(() => {
         this.ready = true
       })
     },
@@ -405,8 +399,8 @@ export default {
      * Load the script module type, i.e. the available script languages
      * @returns {Promise}
      */
-    loadScriptModuleTypes () {
-      return this.$oh.api.get('/rest/module-types/script.ScriptAction').then((data) => {
+    loadScriptModuleType () {
+      return this.$oh.api.get('/rest/module-types/' + (this.currentModule?.type ? this.currentModule.type : 'script.ScriptAction')).then((data) => {
         this.$set(this, 'scriptModuleType', data)
         let languages = this.scriptModuleType.configDescriptions
           .find((c) => c.name === 'type').options
@@ -426,11 +420,8 @@ export default {
       if (this.loading) return
       this.loading = true
 
-      Promise.all([this.$oh.api.get('/rest/module-types?type=action'), this.$oh.api.get('/rest/module-types?type=trigger'), this.$oh.api.get('/rest/module-types?type=condition'), this.$oh.api.get('/rest/rules/' + this.ruleId)]).then((data) => {
-        this.$set(this.moduleTypes, 'actions', data[0])
-        this.$set(this.moduleTypes, 'triggers', data[1])
-        this.$set(this.moduleTypes, 'conditions', data[2])
-        this.$set(this, 'rule', data[3])
+      this.$oh.api.get('/rest/rules/' + this.ruleId).then((data) => {
+        this.$set(this, 'rule', data)
 
         if (this.moduleId) {
           this.$set(this, 'currentModule', this.rule.actions.concat(this.rule.conditions).find((m) => m.id === this.moduleId))
@@ -443,34 +434,7 @@ export default {
 
         this.initDirty()
 
-        if (!this.rule.editable) {
-          const commentChar = AUTOMATION_LANGUAGES[this.mode]?.commentChar
-          let preamble = `${commentChar} Triggers:\n`
-          for (const trigger of this.rule.triggers) {
-            const triggerModuleType = this.moduleTypes.triggers.find((t) => t.uid === trigger.type)
-            let description = trigger.label || this.suggestedModuleTitle(trigger, triggerModuleType, 'trigger')
-            if (triggerModuleType.uid === 'timer.GenericCronTrigger') {
-              description = description.charAt(0).toUpperCase() + description.slice(1)
-            } else {
-              description = 'When ' + description
-            }
-            preamble += `${commentChar} - ${description}\n`
-          }
-
-          if (this.rule.conditions.length > 0) {
-            preamble += `\n${commentChar} Conditions:\n`
-            for (const condition of this.rule.conditions) {
-              const conditionModuleType = this.moduleTypes.conditions.find((t) => t.uid === condition.type)
-              let description = condition.label || this.suggestedModuleTitle(condition, conditionModuleType, 'condition')
-              description = 'Only If ' + description
-              preamble += `${commentChar} - ${description}\n`
-            }
-          }
-
-          this.script = preamble + '\n' + this.script
-        }
-
-        this.loadScriptModuleTypes().then(() => {
+        this.loadScriptModuleType().then(() => {
           if (this.rule.editable && this.mode === 'application/javascript;version=ECMAScript-2021') {
             const message = 'Your JavaScript script was created with a previous version of openHAB. Please save your script.'
 

@@ -178,6 +178,7 @@ export default {
       // See https://codemirror.net/5/mode/index.html for supported language names & MIME types
       if (!mode) return mode
       if (mode.indexOf('yaml') >= 0) return 'text/x-yaml'
+      if (mode === 'application/json' || mode === 'json') return 'application/json'
       if (mode.startsWith('application/javascript') || mode === 'js') return 'text/javascript'
       if (mode === 'application/vnd.openhab.dsl.rule') return 'text/x-java'
       if (mode === 'application/x-groovy' || mode === 'groovy') return 'text/x-groovy'
@@ -234,7 +235,7 @@ export default {
     onCmReady (cm) {
       const self = this
       let extraKeys = {}
-      if (this.mode.indexOf('application/javascript') === 0) {
+      if (this.mode && this.mode.indexOf('application/javascript') === 0) {
         window.tern = tern
         if (this.ternAutocompletionHook) {
           tern.registerPlugin('openhab-tern-hook', (server, options) => {
@@ -281,7 +282,7 @@ export default {
           closeOnUnfocus: false,
           completeSingle: self.mode && self.mode.indexOf('yaml') > 0,
           hint (cm, option) {
-            if (self.mode.indexOf('application/vnd.openhab.uicomponent') === 0) {
+            if (self.mode && self.mode.indexOf('application/vnd.openhab.uicomponent') === 0) {
               return componentsHint(cm, option, self.mode)
             } else if (self.mode === 'application/vnd.openhab.item+yaml') {
               return itemsHint(cm, option, self.mode)
