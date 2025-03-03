@@ -1,5 +1,10 @@
 import ThingMixin from '@/components/thing/thing-mixin'
 
+import Vue from 'vue'
+import Clipboard from 'v-clipboard'
+
+Vue.use(Clipboard)
+
 export default {
   mixins: [ThingMixin],
   methods: {
@@ -113,6 +118,28 @@ export default {
               }
             }
           }).open()
+        }
+      }
+    },
+    entryActionsCopyThingDefinitionButton (entry) {
+      return {
+        text: 'Copy DSL Definition',
+        color: 'blue',
+        bold: true,
+        onClick: () => {
+          const headers = { accept: 'text/vnd.openhab.dsl.thing' }
+          this.$oh.api.getPlain({
+            url: '/rest/file-format/things/' + entry.thingUID,
+            headers: { accept: 'text/vnd.openhab.dsl.thing' }
+          }).then(definition => {
+            if (this.$clipboard(definition)) {
+              this.$f7.toast.create({
+                text: `DSL Thing definition for '${entry.thingUID}' copied to clipboard`,
+                destroyOnClose: true,
+                closeTimeout: 2000
+              }).open()
+            }
+          })
         }
       }
     }
