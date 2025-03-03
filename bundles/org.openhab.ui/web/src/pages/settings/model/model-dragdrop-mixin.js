@@ -27,11 +27,13 @@ export default {
         return [this.model.children.locations, this.model.children.equipment, this.model.children.points, this.model.children.groups, this.model.children.items].flat()
       },
       set: function (nodeList) {
-        this.$set(this.model.children, 'locations', nodeList.filter(n => n.item.metadata?.semantics?.value?.startsWith('Location')))
-        this.$set(this.model.children, 'equipment', nodeList.filter(n => n.item.metadata?.semantics?.value?.startsWith('Equipment')))
-        this.$set(this.model.children, 'points', nodeList.filter(n => n.item.metadata?.semantics?.value?.startsWith('Point')))
-        this.$set(this.model.children, 'groups', nodeList.filter(n => !n.item.metadata?.semantics && n.item.type === 'Group'))
-        this.$set(this.model.children, 'items', nodeList.filter(n => !n.item.metadata?.semantics && n.item.type !== 'Group'))
+        const newChildren = {}
+        newChildren.locations = nodeList.filter(n => n.item.metadata?.semantics?.value?.startsWith('Location'))
+        newChildren.equipment = nodeList.filter(n => n.item.metadata?.semantics?.value?.startsWith('Equipment'))
+        newChildren.points = nodeList.filter(n => n.item.metadata?.semantics?.value?.startsWith('Point'))
+        newChildren.groups = nodeList.filter(n => !n.item.metadata?.semantics && n.item.type === 'Group')
+        newChildren.items =  nodeList.filter(n => !n.item.metadata?.semantics && n.item.type !== 'Group')
+        this.$set(this.model, 'children', newChildren)
       }
     },
     iconColor () {
@@ -616,10 +618,6 @@ export default {
       // This check is incomplete. It should walk up the model tree to find the lowest level location at or above the current node,
       // but the full tree is not easily available here.
       if (node.class.startsWith('Location')) return node.item.name
-      const parentItem = node.item.metadata?.semantics?.config?.isPartOf
-      if (parentItem) {
-        // go up the tree, retrieve the node and call recursively
-      }
       return node.item.metadata?.semantics?.config?.hasLocation
     },
     nodeChildren (node) {
