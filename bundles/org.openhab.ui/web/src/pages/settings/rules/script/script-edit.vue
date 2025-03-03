@@ -396,10 +396,10 @@ export default {
       return this.languages.map(l => l.contentType).includes(mimeType)
     },
     mimeTypeDescription (mode) {
-      return AUTOMATION_LANGUAGES[mode].name || mode
+      return AUTOMATION_LANGUAGES[mode]?.name || mode
     },
     documentationLink (mode) {
-      return AUTOMATION_LANGUAGES[mode]['documentationLink']
+      return AUTOMATION_LANGUAGES[mode]?.documentationLink
     },
     /**
      * Load the script module type, i.e. the available script languages
@@ -441,7 +441,7 @@ export default {
         this.initDirty()
 
         if (!this.rule.editable) {
-          const commentChar = AUTOMATION_LANGUAGES[this.mode].commentChar
+          const commentChar = AUTOMATION_LANGUAGES[this.mode]?.commentChar
           let preamble = `${commentChar} Triggers:\n`
           for (const trigger of this.rule.triggers) {
             const triggerModuleType = this.moduleTypes.triggers.find((t) => t.uid === trigger.type)

@@ -1,4 +1,9 @@
 export default {
+  'application/vnd.openhab.dsl.rule': {
+    name: 'Rules DSL',
+    commentChar: '//',
+    documentationLink: '/docs/configuration/rules-dsl.html'
+  },
   'application/javascript': {
     name: 'JavaScript Scripting',
     commentChar: '//',
