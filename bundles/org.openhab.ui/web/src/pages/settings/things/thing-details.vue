@@ -137,8 +137,12 @@
           <f7-col>
             <f7-list>
               <f7-list-button v-if="thing.statusInfo.statusDetail === 'HANDLER_MISSING_ERROR'" color="blue" title="Install Binding" @click="installBinding" />
-              <f7-list-button v-if="!error" color="blue" title="Copy Thing" @click="copyThing" />
-              <f7-list-button v-if="editable" color="red" title="Delete Thing" @click="deleteThing" />
+              <f7-list-button v-if="!error" color="blue" @click="duplicateThing">
+                Duplicate Thing
+              </f7-list-button>
+              <f7-list-button v-if="editable" color="red" @click="deleteThing">
+                Remove Thing
+              </f7-list-button>
             </f7-list>
           </f7-col>
         </f7-block>
@@ -619,10 +623,10 @@ export default {
         }
       })
     },
-    copyThing () {
+    duplicateThing () {
       let thingClone = cloneDeep(this.thing)
       this.$f7router.navigate({
-        url: '/settings/things/copy'
+        url: '/settings/things/duplicate'
       }, {
         props: {
           thingTypeId: this.thing.thingTypeUID,
