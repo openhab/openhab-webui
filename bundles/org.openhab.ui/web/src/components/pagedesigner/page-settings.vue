@@ -37,8 +37,8 @@
         <tag-input :item="page" />
       </f7-list>
       <f7-list v-if="!createMode" inline-labels no-hairline-md>
-        <f7-list-button color="blue" @click="copyPage">
-          Copy Page
+        <f7-list-button color="blue" @click="duplicatePage">
+          Duplicate Page
         </f7-list-button>
         <f7-list-button color="red" @click="deletePage">
           Remove Page
@@ -77,7 +77,7 @@ export default {
         }).open()
       }
     },
-    copyPage () {
+    duplicatePage () {
       const pageClone = cloneDeep(this.page)
       const pageType = pageClone.component.replace(/^oh-|-page$/g, '')
       pageClone.uid = pageClone.uid + '_copy'
