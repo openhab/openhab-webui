@@ -46,7 +46,7 @@ import Draggable from 'vuedraggable'
 export default {
   name: 'model-treeview-item',
   mixins: [ItemMixin, ModelDragDropMixin],
-  props: ['model', 'parentNode', 'selected', 'includeItemName', 'includeItemTags', 'canDragDrop', 'moveState'],
+  props: ['model', 'parentNode', 'selected', 'includeItemName', 'includeItemTags', 'canDragDrop'],
   emits: ['reload'],
   components: {
     Draggable,

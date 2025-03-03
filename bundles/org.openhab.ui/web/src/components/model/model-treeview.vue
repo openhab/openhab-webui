@@ -38,11 +38,6 @@ export default {
     Draggable,
     ModelTreeviewItem
   },
-  data () {
-    return {
-      moveState: {}
-    }
-  },
   computed: {
     model: {
       get: function () {

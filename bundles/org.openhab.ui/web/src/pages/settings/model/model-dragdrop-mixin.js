@@ -6,6 +6,28 @@ import fastDeepEqual from 'fast-deep-equal/es6'
 
 export default {
   mixins: [ItemMixin, TagMixin],
+  props: {
+    moveState: {
+      type: Object,
+      default: () => ({
+        dragDropActive: false,
+        moving: false,
+        canAdd: false,
+        canRemove: false,
+        dragEnd: false,
+        dragFinished: false,
+        saving: false,
+        cancelled: false,
+        moveConfirmed: false,
+        node: null,
+        newParent: null,
+        oldParent: null,
+        oldIndex: null,
+        dragStartTimestamp: null,
+        nodesToUpdate: []
+      })
+    }
+  },
   watch: {
     moveState: {
       handler: function () {
@@ -59,18 +81,18 @@ export default {
     onDragStart (event) {
       console.debug('Drag start - event:', event)
       window.addEventListener('keydown', this.keyDownHandler)
-      this.$set(this.moveState, 'dragDropActive', true)
-      this.$set(this.moveState, 'moving', true)
-      this.$set(this.moveState, 'canAdd', false)
-      this.$set(this.moveState, 'canRemove', false)
-      this.$set(this.moveState, 'dragEnd', false)
-      this.$set(this.moveState, 'dragFinished', false)
-      this.$set(this.moveState, 'saving', false)
-      this.$set(this.moveState, 'cancelled', false)
-      this.$set(this.moveState, 'moveConfirmed', false)
-      this.$set(this.moveState, 'node', this.children[event.oldIndex])
-      this.$set(this.moveState, 'nodesToUpdate', [])
-      this.$set(this.moveState, 'dragStartTimestamp', Date.now())
+      this.moveState.dragDropActive = true
+      this.moveState.moving = true
+      this.moveState.canAdd = false
+      this.moveState.canRemove = false
+      this.moveState.dragEnd = false
+      this.moveState.dragFinished = false
+      this.moveState.saving = false
+      this.moveState.cancelled = false
+      this.moveState.moveConfirmed = false
+      this.moveState.node = this.children[event.oldIndex]
+      this.moveState.dragStartTimestamp = Date.now()
+      this.moveState.nodesToUpdate.splice(0)
       console.debug('Drag start - moveState:', cloneDeep(this.moveState))
       console.debug('runtime onDragStart', Date.now() - this.moveState.dragStartTimestamp)
     },
@@ -82,13 +104,13 @@ export default {
         return
       }
       if (event.added) {
-        this.$set(this.moveState, 'newParent', this.model)
-        this.$set(this.moveState, 'canAdd', true)
+        this.moveState.newParent = this.model
+        this.moveState.canAdd = true
       }
       if (event.removed) {
-        this.$set(this.moveState, 'oldParent', this.model)
-        this.$set(this.moveState, 'oldIndex', event.removed.oldIndex)
-        this.$set(this.moveState, 'canRemove', true)
+        this.moveState.oldParent = this.model
+        this.moveState.oldIndex = event.removed.oldIndex
+        this.moveState.canRemove = true
       }
       console.debug('Drag change - moveState:', cloneDeep(this.moveState))
     },
@@ -109,8 +131,8 @@ export default {
         this.restoreModelUpdate()
         return
       }
-      this.$set(this.moveState, 'moving', false)
-      this.$set(this.moveState, 'dragEnd', true)
+      this.moveState.moving = false
+      this.moveState.dragEnd = true
       console.debug('Drag end - moveState:', cloneDeep(this.moveState))
     },
     nestedSemanticNode (node) {
@@ -123,7 +145,7 @@ export default {
     },
     validateAdd () {
       console.debug('runtime validateAdd start', Date.now() - this.moveState.dragStartTimestamp)
-      this.$set(this.moveState, 'adding', true)
+      this.moveState.adding = true
       const node = this.moveState.node
       const parentNode = this.moveState.newParent
       const oldParentNode = this.moveState.oldParent
@@ -182,8 +204,8 @@ export default {
       } else {
         this.addIntoRoot(node, parentNode)
       }
-      this.$set(this.moveState, 'canAdd', false)
-      this.$set(this.moveState, 'adding', false)
+      this.moveState.canAdd = false
+      this.moveState.adding = false
       console.debug('runtime validateAdd end', Date.now() - this.moveState.dragStartTimestamp)
     },
     isValidGroupType (node, parentNode) {
@@ -270,7 +292,7 @@ export default {
       } else if (node.class.startsWith('Point')) {
         this.addPoint(node, parentNode)
       } else if (node.item.type === 'Group') {
-        this.$set(this.moveState, 'moveConfirmed', true)
+        this.moveState.moveConfirmed = true
         console.debug('runtime dialog open', Date.now() - this.moveState.dragStartTimestamp)
         this.$f7.dialog.create({
           text: 'Insert "' + this.itemLabel(node.item) +
@@ -284,7 +306,7 @@ export default {
           ]
         }).open()
       } else {
-        this.$set(this.moveState, 'moveConfirmed', true)
+        this.moveState.moveConfirmed = true
         console.debug('runtime dialog open', Date.now() - this.moveState.dragStartTimestamp)
         this.$f7.dialog.create({
           text: 'Insert "' + this.itemLabel(node.item) +
@@ -316,7 +338,7 @@ export default {
       } else if (node.item.type === 'Group') {
         this.addEquipment(node, parentNode)
       } else {
-        this.$set(this.moveState, 'moveConfirmed', true)
+        this.moveState.moveConfirmed = true
         console.debug('runtime dialog open', Date.now() - this.moveState.dragStartTimestamp)
         const dialog = this.$f7.dialog.create({
           text: 'Insert "' + this.itemLabel(node.item) +
@@ -354,7 +376,7 @@ export default {
       } else if (node.class.startsWith('Point')) {
         this.addPoint(node, parentNode)
       } else if (node.item.type === 'Group') {
-        this.$set(this.moveState, 'moveConfirmed', true)
+        this.moveState.moveConfirmed = true
         console.debug('runtime dialog open', Date.now() - this.moveState.dragStartTimestamp)
         this.$f7.dialog.create({
           text: 'Insert "' + this.itemLabel(node.item) +
@@ -369,7 +391,7 @@ export default {
           ]
         }).open()
       } else {
-        this.$set(this.moveState, 'moveConfirmed', true)
+        this.moveState.moveConfirmed = true
         console.debug('runtime dialog open', Date.now() - this.moveState.dragStartTimestamp)
         this.$f7.dialog.create({
           text: 'Insert "' + this.itemLabel(node.item) +
@@ -465,16 +487,14 @@ export default {
       const newChildren = this.children
       this.children = newChildren // force setters to update model
       if (updateRequired) {
-        let nodesToUpdate = this.moveState.nodesToUpdate
-        nodesToUpdate.push(node)
-        this.$set(this.moveState, 'nodesToUpdate', nodesToUpdate)
+        this.moveState.nodesToUpdate.push(node)
       }
       console.debug('Add - finished, new moveState:', cloneDeep(this.moveState))
       console.debug('runtime updateAfterAdd end', Date.now() - this.moveState.dragStartTimestamp)
     },
     validateRemove () {
       console.debug('runtime validateRemove start', Date.now() - this.moveState.dragStartTimestamp)
-      this.$set(this.moveState, 'removing', true)
+      this.moveState.removing = true
       const node = this.moveState.node
       const newParentNode = this.moveState.newParent
       const parentNode = this.moveState.oldParent
@@ -488,7 +508,7 @@ export default {
         // special rule: a point can be part of a location and equipment at the same time, e.g. central HVAC equipment with controls by room
         if (parentNode.class.startsWith('Equipment') && newParentNode.class.startsWith('Location') &&
             this.nodeLocation(parentNode) !== this.nodeLocation(newParentNode)) {
-          this.$set(this.moveState, 'moveConfirmed', true)
+          this.moveState.moveConfirmed = true
           console.debug('runtime dialog open', Date.now() - this.moveState.dragStartTimestamp)
           this.$f7.dialog.create({
             text: 'Point "' + this.itemLabel(node.item) +
@@ -503,7 +523,7 @@ export default {
           }).open()
         } else if (parentNode.class.startsWith('Location') && newParentNode.class.startsWith('Equipment') &&
             this.nodeLocation(parentNode) !== this.nodeLocation(newParentNode)) {
-          this.$set(this.moveState, 'moveConfirmed', true)
+          this.moveState.moveConfirmed = true
           console.debug('runtime dialog open', Date.now() - this.moveState.dragStartTimestamp)
           this.$f7.dialog.create({
             text: 'Point "' + this.itemLabel(node.item) +
@@ -524,7 +544,7 @@ export default {
         // always remove semantic item from root level when moving into another group
         this.remove(node, parentNode, oldIndex)
       } else if (parentNode.item?.type === 'Group') {
-        this.$set(this.moveState, 'moveConfirmed', true)
+        this.moveState.moveConfirmed = true
         console.debug('runtime dialog open', Date.now() - this.moveState.dragStartTimestamp)
         this.$f7.dialog.create({
           text: 'Item "' + this.itemLabel(node.item) +
@@ -563,14 +583,14 @@ export default {
     },
     updateAfterRemove () {
       console.debug('runtime updateAfterRemove start', Date.now() - this.moveState.dragStartTimestamp)
-      this.$set(this.moveState, 'canRemove', false)
-      this.$set(this.moveState, 'removing', false)
-      this.$set(this.moveState, 'dragFinished', true)
+      this.moveState.canRemove = false
+      this.moveState.removing = false
+      this.moveState.dragFinished = true
       console.debug('runtime updateAfterRemove end', Date.now() - this.moveState.dragStartTimestamp)
     },
     saveUpdate () {
       console.debug('runtime saveUpdate start', Date.now() - this.moveState.dragStartTimestamp)
-      this.$set(this.moveState, 'saving', true)
+      this.moveState.saving = true
       const node = this.moveState.node
       const parentNode = this.moveState.newParent
       if (!this.moveState.moveConfirmed) {
@@ -587,26 +607,26 @@ export default {
     },
     saveModelUpdate () {
       console.debug('runtime saveModelUpdate start', Date.now() - this.moveState.dragStartTimestamp)
-      this.$set(this.moveState, 'dragFinished', false)
+      this.moveState.dragFinished = false
       this.moveState.nodesToUpdate.forEach((n) => {
         const updatedItem = n.item
         console.debug('Save - updatedItem: ', cloneDeep(updatedItem))
         this.saveItem(updatedItem)
       })
-      this.$set(this.moveState, 'saving', false)
-      this.$set(this.moveState, 'dragDropActive', false)
+      this.moveState.saving = false
+      this.moveState.dragDropActive = false
       console.debug('runtime saveModelUpdate end', Date.now() - this.moveState.dragStartTimestamp)
     },
     restoreModelUpdate () {
       console.debug('Restore model')
       console.debug('runtime restoreModelUpdate start', Date.now() - this.moveState.dragStartTimestamp)
-      this.$set(this.moveState, 'cancelled', true)
-      this.$set(this.moveState, 'canRemove', false)
-      this.$set(this.moveState, 'canAdd', false)
-      this.$set(this.moveState, 'adding', false)
-      this.$set(this.moveState, 'removing', false)
-      this.$set(this.moveState, 'saving', false)
-      this.$set(this.moveState, 'dragDropActive', false)
+      this.moveState.cancelled = true
+      this.moveState.canRemove = false
+      this.moveState.canAdd = false
+      this.moveState.adding = false
+      this.moveState.removing = false
+      this.moveState.saving = false
+      this.moveState.dragDropActive = false
       this.$emit('reload')
       console.debug('runtime restoreModelUpdate end', Date.now() - this.moveState.dragStartTimestamp)
     },
@@ -629,7 +649,7 @@ export default {
       if (!event.repeat && event.keyCode === 27) {
         console.debug('escape pressed')
         console.debug('runtime escape', Date.now() - this.moveState.dragStartTimestamp)
-        this.$set(this.moveState, 'cancelled', true)
+        this.moveState.cancelled = true
       }
     }
   }
