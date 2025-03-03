@@ -32,7 +32,7 @@ export default {
         newChildren.equipment = nodeList.filter(n => n.item.metadata?.semantics?.value?.startsWith('Equipment'))
         newChildren.points = nodeList.filter(n => n.item.metadata?.semantics?.value?.startsWith('Point'))
         newChildren.groups = nodeList.filter(n => !n.item.metadata?.semantics && n.item.type === 'Group')
-        newChildren.items =  nodeList.filter(n => !n.item.metadata?.semantics && n.item.type !== 'Group')
+        newChildren.items = nodeList.filter(n => !n.item.metadata?.semantics && n.item.type !== 'Group')
         this.$set(this.model, 'children', newChildren)
       }
     },
