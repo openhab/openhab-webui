@@ -504,7 +504,7 @@ export default {
         // moving into root, so remove from source
         // issue: it will only remove from the current parent, not all
         this.remove(node, parentNode, oldIndex)
-      } else if (parentNode.class !== '' && newParentNode.class !== '') {
+      } else if (node.class.startsWith('Point') && parentNode.class !== '' && newParentNode.class !== '') {
         // special rule: a point can be part of a location and equipment at the same time, e.g. central HVAC equipment with controls by room
         if (parentNode.class.startsWith('Equipment') && newParentNode.class.startsWith('Location') &&
             this.nodeLocation(parentNode) !== this.nodeLocation(newParentNode)) {
