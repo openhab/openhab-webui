@@ -190,6 +190,38 @@ export default {
         console.debug('runtime validateAdd end', Date.now() - this.moveState.dragStartTimestamp)
         return
       }
+      if (node.class.startsWith('Point') && parentNode.class !== '') {
+        const groups = node.item.groupNames
+        if (oldParentNode.class.startsWith('Equipment') && parentNode.class.startsWith('Location')) {
+          const oldLocation = node.item.metadata.semantics.config.hasLocation
+          if (oldLocation) {
+            const message = 'Cannot move Point "' + this.itemLabel(node.item) +
+              '" from Equipment "' + this.itemLabel(oldParentNode.item) +
+              '" to Location "' + this.itemLabel(parentNode.item) +
+              '" as it is already in Location "' + oldLocation + '"'
+            console.debug('Add rejected:' + message)
+            console.debug('runtime dialog open', Date.now() - this.moveState.dragStartTimestamp)
+            this.$f7.dialog.alert(message).open()
+            this.restoreModelUpdate()
+            console.debug('runtime validateAdd end', Date.now() - this.moveState.dragStartTimestamp)
+            return
+          }
+        } else if (oldParentNode.class.startsWith('Location') && parentNode.class.startsWith('Equipment')) {
+          const oldEquipment = node.item.metadata.semantics.config.isPointOf
+          if (oldEquipment) {
+            const message = 'Cannot move Point "' + this.itemLabel(node.item) +
+              '" from Location "' + this.itemLabel(oldParentNode.item) +
+              '" to Equipment "' + this.itemLabel(parentNode.item) +
+              '" as it is already part of Equipment "' + oldEquipment + '"'
+            console.debug('Add rejected:' + message)
+            console.debug('runtime dialog open', Date.now() - this.moveState.dragStartTimestamp)
+            this.$f7.dialog.alert(message).open()
+            this.restoreModelUpdate()
+            console.debug('runtime validateAdd end', Date.now() - this.moveState.dragStartTimestamp)
+            return
+          }
+        }
+      }
       if (!this.isValidGroupType(node, parentNode)) {
         this.restoreModelUpdate()
         console.debug('runtime validateAdd end', Date.now() - this.moveState.dragStartTimestamp)
@@ -504,42 +536,9 @@ export default {
         // moving into root, so remove from source
         // issue: it will only remove from the current parent, not all
         this.remove(node, parentNode, oldIndex)
-      } else if (node.class.startsWith('Point') && parentNode.class !== '' && newParentNode.class !== '') {
-        // special rule: a point can be part of a location and equipment at the same time, e.g. central HVAC equipment with controls by room
-        if (parentNode.class.startsWith('Equipment') && newParentNode.class.startsWith('Location') &&
-            this.nodeLocation(parentNode) !== this.nodeLocation(newParentNode)) {
-          this.moveState.moveConfirmed = true
-          console.debug('runtime dialog open', Date.now() - this.moveState.dragStartTimestamp)
-          this.$f7.dialog.create({
-            text: 'Point "' + this.itemLabel(node.item) +
-              '" dragged from Equipment "' + this.itemLabel(parentNode.item) +
-              '" into Location "' + this.itemLabel(newParentNode.item) +
-              '", should Point still be in Equipment as well?',
-            buttons: [
-              { text: 'Cancel', color: 'gray', keycodes: [27], onClick: () => this.restoreModelUpdate() },
-              { text: 'Yes', keycodes: [13], onClick: () => this.updateAfterRemove() },
-              { text: 'No', strong: true, onClick: () => this.remove(node, parentNode, oldIndex) }
-            ]
-          }).open()
-        } else if (parentNode.class.startsWith('Location') && newParentNode.class.startsWith('Equipment') &&
-            this.nodeLocation(parentNode) !== this.nodeLocation(newParentNode)) {
-          this.moveState.moveConfirmed = true
-          console.debug('runtime dialog open', Date.now() - this.moveState.dragStartTimestamp)
-          this.$f7.dialog.create({
-            text: 'Point "' + this.itemLabel(node.item) +
-              '" dragged from Location "' + this.itemLabel(parentNode.item) +
-              '" into Equipment "' + this.itemLabel(newParentNode.item) +
-              '", should Point still be in Location as well?',
-            buttons: [
-              { text: 'Cancel', color: 'gray', keycodes: [27], onClick: () => this.restoreModelUpdate() },
-              { text: 'Yes', onClick: () => this.updateAfterRemove() },
-              { text: 'No', strong: true, keycodes: [13], onClick: () => this.remove(node, parentNode, oldIndex) }
-            ]
-          }).open()
-        } else {
-          // in general remove from semantic model groups, unless moving into non-semantic group
-          this.remove(node, parentNode, oldIndex)
-        }
+      } else if (parentNode.class !== '' && newParentNode.class !== '') {
+        // in general remove from semantic model group, unless moving into non-semantic group
+        this.remove(node, parentNode, oldIndex)
       } else if (!parentNode.item && node.class !== '') {
         // always remove semantic item from root level when moving into another group
         this.remove(node, parentNode, oldIndex)
