@@ -115,8 +115,8 @@
           </f7-col>
           <f7-col v-if="isEditable && !createMode">
             <f7-list>
-              <f7-list-button color="blue" @click="copyRule">
-                Copy Scene
+              <f7-list-button color="blue" @click="duplicateRule">
+                Duplicate Scene
               </f7-list-button>
               <f7-list-button color="red" @click="deleteRule">
                 Remove Scene
@@ -372,10 +372,10 @@ export default {
         })
       })
     },
-    copyRule () {
+    duplicateRule () {
       let ruleClone = cloneDeep(this.rule)
       this.$f7router.navigate({
-        url: '/settings/scenes/copy'
+        url: '/settings/scenes/duplicate'
       }, {
         props: {
           ruleCopy: ruleClone
