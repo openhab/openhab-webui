@@ -10,11 +10,10 @@ export default {
     moveState: {
       type: Object,
       default: () => ({
-        dragDropActive: false,
         moving: false,
         canAdd: false,
         canRemove: false,
-        dragEnd: false,
+        dragEnd: true,
         dragFinished: false,
         saving: false,
         cancelled: false,
@@ -62,7 +61,7 @@ export default {
       return (this.model.item.metadata && this.model.item.metadata.semantics) ? '' : 'gray'
     },
     dragDropActive () {
-      return this.moveState.dragDropActive
+      return !this.moveState.dragEnd
     },
     canAdd () {
       return !this.moveState.cancelled && this.moveState.dragEnd && !this.moveState.dragFinished && this.moveState.canAdd && !this.moveState.adding
@@ -81,7 +80,6 @@ export default {
     onDragStart (event) {
       console.debug('Drag start - event:', event)
       window.addEventListener('keydown', this.keyDownHandler)
-      this.moveState.dragDropActive = true
       this.moveState.moving = true
       this.moveState.canAdd = false
       this.moveState.canRemove = false
@@ -613,7 +611,6 @@ export default {
         this.saveItem(updatedItem)
       })
       this.moveState.saving = false
-      this.moveState.dragDropActive = false
       console.debug('runtime saveModelUpdate end', Date.now() - this.moveState.dragStartTimestamp)
     },
     restoreModelUpdate () {
@@ -625,19 +622,12 @@ export default {
       this.moveState.adding = false
       this.moveState.removing = false
       this.moveState.saving = false
-      this.moveState.dragDropActive = false
       this.$emit('reload')
       console.debug('runtime restoreModelUpdate end', Date.now() - this.moveState.dragStartTimestamp)
     },
     itemLabel (item) {
       if (!item) return 'model root'
       return (item.label ? (this.includeItemName ? item.label + ' (' + item.name + ')' : item.label) : item.name)
-    },
-    nodeLocation (node) {
-      // This check is incomplete. It should walk up the model tree to find the lowest level location at or above the current node,
-      // but the full tree is not easily available here.
-      if (node.class.startsWith('Location')) return node.item.name
-      return node.item.metadata?.semantics?.config?.hasLocation
     },
     nodeChildren (node) {
       if (!node) return this.children
