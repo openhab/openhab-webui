@@ -1,6 +1,6 @@
 <template>
   <f7-treeview class="model-treeview">
-    <draggable :disabled="!canDragDrop" :list="children" group="model-treeview" animation="150"
+    <draggable :disabled="!canDragDrop" :list="children" group="model-treeview" animation="150" fallbackOnBody="true" fallbackThreshold="5"
                scrollSensitivity="200" delay="400" delayOnTouchOnly="true" invertSwap="true"
                @start="onDragStart" @change="onDragChange" @end="onDragEnd" :move="onDragMove">
       <model-treeview-item v-for="(node, index) in children"
