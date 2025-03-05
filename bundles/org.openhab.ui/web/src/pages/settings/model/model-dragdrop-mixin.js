@@ -102,7 +102,8 @@ export default {
       console.debug('runtime onDragStart', Date.now() - this.moveState.dragStartTimestamp)
     },
     onDragChange (event) {
-      if (this.moveState.cancelled || !this.moveState.node.item.editable) {
+      const dropAllowed = this.moveState.moveTarget ? this.dropAllowed(this.moveState.moveTarget) : true
+      if (this.moveState.cancelled || !this.moveState.node.item.editable || !dropAllowed) {
         return
       }
       console.debug('runtime onDragChange', Date.now() - this.moveState.dragStartTimestamp)
@@ -123,23 +124,25 @@ export default {
       console.debug('Drag change - moveState:', cloneDeep(this.moveState))
     },
     onDragMove (event) {
+      console.debug('Drag move - event:', event)
       // cancel opening previous group we moved over as we moved away from it
-      const moveTarget = event.relatedContext?.element
-      const movedToSamePlace = moveTarget?.item?.name === this.moveState.moveTarget
+      const movedToSamePlace = event.relatedContext?.element?.item?.name === this.moveState.moveTarget?.item?.name
       if (!movedToSamePlace) {
         clearTimeout(this.moveState.moveDelayedOpen)
         this.moveState.moveDelayedOpen = null
       }
+      this.moveState.moveTarget = event.relatedContext?.element
       // return if we cannot drop here
-      if (this.moveState.cancelled || !this.moveState.node.item.editable || !this.dropAllowed(event?.relatedContext?.element)) {
+      if (this.moveState.cancelled || !this.moveState.node.item.editable || !this.dropAllowed(this.moveState.moveTarget)) {
         return false
       }
       // Open group if not open yet, with a delay so you don't open it if you just drag over it
-      if (!movedToSamePlace && moveTarget?.item?.type === 'Group' && !moveTarget.opened) {
-        this.moveState.moveTarget = moveTarget?.item?.name
+      if (!movedToSamePlace && this.moveState.moveTarget?.item?.type === 'Group' && !this.moveState.moveTarget?.opened) {
+        const element = event.relatedContext.element
         this.moveState.moveDelayedOpen = setTimeout(() => {
-          moveTarget.opened = true
-        }, 1000)
+          // this.$set(element, "opened", true)
+          element.opened = true
+        }, 1000, element)
       }
       return true
     },
