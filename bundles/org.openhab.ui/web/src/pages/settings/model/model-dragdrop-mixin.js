@@ -23,7 +23,9 @@ export default {
         oldParent: null,
         oldIndex: null,
         dragStartTimestamp: null,
-        nodesToUpdate: []
+        nodesToUpdate: [],
+        moveDelayedOpen: null,
+        moveTarget: null
       })
     }
   },
@@ -64,10 +66,12 @@ export default {
       return !this.moveState.dragEnd
     },
     canAdd () {
-      return !this.moveState.cancelled && this.moveState.dragEnd && !this.moveState.dragFinished && this.moveState.canAdd && !this.moveState.adding
+      return !this.moveState.cancelled && this.moveState.newParent && this.moveState.dragEnd &&
+             !this.moveState.dragFinished && this.moveState.canAdd && !this.moveState.adding
     },
     canRemove () {
-      return !this.moveState.cancelled && this.moveState.dragEnd && !this.moveState.dragFinished && !this.moveState.canAdd && this.moveState.canRemove && !this.moveState.removing
+      return !this.moveState.cancelled && this.moveState.newParent && this.moveState.oldParent &&
+             this.moveState.dragEnd && !this.moveState.dragFinished && !this.moveState.canAdd && this.moveState.canRemove && !this.moveState.removing
     },
     canSave () {
       return !this.moveState.cancelled && this.moveState.dragEnd && this.moveState.dragFinished && !this.moveState.canAdd && !this.moveState.canRemove && !this.moveState.saving
@@ -78,6 +82,8 @@ export default {
   },
   methods: {
     onDragStart (event) {
+      this.moveState.node = this.children[event.oldIndex]
+      if (!this.moveState.node.item.editable) return
       console.debug('Drag start - event:', event)
       window.addEventListener('keydown', this.keyDownHandler)
       this.moveState.moving = true
@@ -88,13 +94,17 @@ export default {
       this.moveState.saving = false
       this.moveState.cancelled = false
       this.moveState.moveConfirmed = false
-      this.moveState.node = this.children[event.oldIndex]
       this.moveState.dragStartTimestamp = Date.now()
       this.moveState.nodesToUpdate.splice(0)
+      this.moveState.moveDelayedOpen = null
+      this.moveState.moveTarget = null
       console.debug('Drag start - moveState:', cloneDeep(this.moveState))
       console.debug('runtime onDragStart', Date.now() - this.moveState.dragStartTimestamp)
     },
     onDragChange (event) {
+      if (this.moveState.cancelled || !this.moveState.node.item.editable) {
+        return
+      }
       console.debug('runtime onDragChange', Date.now() - this.moveState.dragStartTimestamp)
       console.debug('Drag change - event:', event)
       if (this.moveState.cancelled) {
@@ -113,14 +123,30 @@ export default {
       console.debug('Drag change - moveState:', cloneDeep(this.moveState))
     },
     onDragMove (event) {
-      if (this.moveState.cancelled) {
+      // cancel opening previous group we moved over as we moved away from it
+      const moveTarget = event.relatedContext?.element
+      const movedToSamePlace = moveTarget?.item?.name === this.moveState.moveTarget
+      if (!movedToSamePlace) {
+        clearTimeout(this.moveState.moveDelayedOpen)
+        this.moveState.moveDelayedOpen = null
+      }
+      // return if we cannot drop here
+      if (this.moveState.cancelled || !this.moveState.node.item.editable || !this.dropAllowed(event?.relatedContext?.element)) {
         return false
       }
-      if (event.relatedContext?.element?.item?.type === 'Group' && !event.relatedContext.element.opened) {
-        event.relatedContext.element.opened = true
+      // Open group if not open yet, with a delay so you don't open it if you just drag over it
+      if (!movedToSamePlace && moveTarget?.item?.type === 'Group' && !moveTarget.opened) {
+        this.moveState.moveTarget = moveTarget?.item?.name
+        this.moveState.moveDelayedOpen = setTimeout(() => {
+          moveTarget.opened = true
+        }, 1000)
       }
+      return true
     },
     onDragEnd (event) {
+      if (!this.moveState.node.item.editable) {
+        return
+      }
       console.debug('runtime onDragEnd', Date.now() - this.moveState.dragStartTimestamp)
       console.debug('Drag end - event:', event)
       window.removeEventListener('keydown', this.keyDownHandler)
@@ -132,6 +158,15 @@ export default {
       this.moveState.moving = false
       this.moveState.dragEnd = true
       console.debug('Drag end - moveState:', cloneDeep(this.moveState))
+    },
+    dropAllowed (node) {
+      if (node?.class?.startsWith('Point')) {
+        return false
+      }
+      if (this.moveState.node?.class?.startsWith('Location') && node?.class?.startsWith('Equipment')) {
+        return false
+      }
+      return true
     },
     nestedSemanticNode (node) {
       const children = [...node.children.locations, ...node.children.equipment, ...node.children.points, ...node.children.groups, ...node.children.items]
