@@ -87,7 +87,7 @@ describe('SitemapEdit', () => {
     wrapper.vm.validateWidgets()
     expect(lastDialogConfig).toBeTruthy()
     expect(lastDialogConfig.content).toMatch(/Frame widget Frame Test should not be empty/)
-    
+
     wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0].slots.widgets[0].slots.widgets[0], wrapper.vm.sitemap.slots.widgets[0].slots.widgets[0]])
     await wrapper.vm.$nextTick()
     wrapper.vm.addWidget('Text')
