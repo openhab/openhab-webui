@@ -56,7 +56,7 @@ describe('SitemapEdit', () => {
     await wrapper.vm.$nextTick()
     wrapper.vm.addWidget('Frame')
     await wrapper.vm.$nextTick()
-    wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0].slots.widgets[0], wrapper.vm.sitemap])
+    wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0].slots.widgets[0], wrapper.vm.sitemap.slots.widgets[0]])
     await wrapper.vm.$nextTick()
     localVue.set(wrapper.vm.selectedWidget.config, 'label', 'Frame Test')
 
@@ -76,9 +76,21 @@ describe('SitemapEdit', () => {
     await wrapper.vm.$nextTick()
     wrapper.vm.addWidget('Text')
     await wrapper.vm.$nextTick()
-    wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0].slots.widgets[0], wrapper.vm.sitemap])
+    wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0].slots.widgets[0], wrapper.vm.sitemap.slots.widgets[0]])
     await wrapper.vm.$nextTick()
     wrapper.vm.addWidget('Frame')
+    await wrapper.vm.$nextTick()
+    localVue.set(wrapper.vm.selectedWidget.config, 'label', 'Frame Test')
+
+    // should not validate, as empty frame is not allowed
+    lastDialogConfig = null
+    wrapper.vm.validateWidgets()
+    expect(lastDialogConfig).toBeTruthy()
+    expect(lastDialogConfig.content).toMatch(/Frame widget Frame Test should not be empty/)
+    
+    wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0].slots.widgets[0].slots.widgets[0], wrapper.vm.sitemap.slots.widgets[0].slots.widgets[0]])
+    await wrapper.vm.$nextTick()
+    wrapper.vm.addWidget('Text')
     await wrapper.vm.$nextTick()
 
     // should validate, as frame in text in frame is allowed
@@ -86,12 +98,17 @@ describe('SitemapEdit', () => {
     wrapper.vm.validateWidgets()
     expect(lastDialogConfig).toBeFalsy()
 
+    wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0].slots.widgets[0].slots.widgets[0].slots.widgets[0], wrapper.vm.sitemap.slots.widgets[0].slots.widgets[0].slots.widgets[0]])
+    await wrapper.vm.$nextTick()
+    wrapper.vm.removeWidget()
+    await wrapper.vm.$nextTick()
+
     // add a frame inside the frame in the text
-    wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0].slots.widgets[0].slots.widgets[0], wrapper.vm.sitemap])
+    wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0].slots.widgets[0].slots.widgets[0], wrapper.vm.sitemap.slots.widgets[0].slots.widgets[0]])
     await wrapper.vm.$nextTick()
     wrapper.vm.addWidget('Frame')
     await wrapper.vm.$nextTick()
-    wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0].slots.widgets[0].slots.widgets[0].slots.widgets[0], wrapper.vm.sitemap])
+    wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0].slots.widgets[0].slots.widgets[0].slots.widgets[0], wrapper.vm.sitemap.slots.widgets[0].slots.widgets[0].slots.widgets[0]])
     await wrapper.vm.$nextTick()
     localVue.set(wrapper.vm.selectedWidget.config, 'label', 'Frame Test')
 
