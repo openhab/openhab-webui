@@ -22,16 +22,22 @@
       <f7-button v-else color="blue" fill raised @click="save" v-show="model.item.editable">
         Save
       </f7-button>
-      <f7-button v-if="createMode || editMode" color="blue" @click="cancel">
+      <f7-button v-if="model.item.editable" color="blue" @click="cancel">
         Cancel
+      </f7-button>
+      <f7-button v-else color="blue" @click="cancel" icon-ios="material:expand_less" icon-md="material:expand_less" icon-aurora="material:expand_less">
+        Hide Details
       </f7-button>
     </f7-card-footer>
     <f7-card-footer v-else key="item-card-buttons-edit-mode">
-      <f7-button v-if="!editMode && !createMode" color="blue" @click="edit" icon-ios="material:expand_more" icon-md="material:expand_more" icon-aurora="material:expand_more">
+      <f7-button v-if="model.item.editable" color="blue" @click="edit" icon-ios="material:expand_more" icon-md="material:expand_more" icon-aurora="material:expand_more">
         Edit
       </f7-button>
-      <f7-button v-if="!editMode && !createMode && model.item.editable" color="red" @click="remove">
+      <f7-button v-if="model.item.editable" color="red" @click="remove">
         Remove
+      </f7-button>
+      <f7-button v-else color="blue" @click="edit" icon-ios="material:expand_more" icon-md="material:expand_more" icon-aurora="material:expand_more">
+        View Details
       </f7-button>
     </f7-card-footer>
   </f7-card>
