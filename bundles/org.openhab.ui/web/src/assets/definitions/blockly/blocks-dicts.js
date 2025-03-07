@@ -210,6 +210,38 @@ export default function (f7) {
     return [code, 0]
   }
 
+  Blockly.Blocks['dicts_set'] = {
+    init: function () {
+      this.appendDummyInput()
+        .appendField('set')
+      this.appendValueInput('key')
+        .setCheck(['String'])
+      this.appendValueInput('value')
+        .appendField('to value')
+      this.appendValueInput('dictionary')
+        .appendField('with dictionary')
+        .setCheck('String')
+
+      this.setColour('%{BKY_LISTS_HUE}')
+      this.setInputsInline(true)
+      this.setPreviousStatement(true, null)
+      this.setNextStatement(true, null)
+      this.setTooltip('updates the key\'s value in the dictionary provided via the named variable.')
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/https://www.openhab.org/docs/configuration/blockly/rules-blockly-standard-ext.html#set-value-of-key-of-dictionary')
+    }
+  }
+
+  javascriptGenerator.forBlock['dicts_set'] = function (block) {
+    const dict = javascriptGenerator.valueToCode(block, 'dictionary', javascriptGenerator.ORDER_ATOMIC).replace(/'/g, '')
+    const key = javascriptGenerator.valueToCode(block, 'key', javascriptGenerator.ORDER_ATOMIC)
+    if (dict === '' || key === '\'\'') {
+      throw new Error('dictionary and key name need to be provided')
+    }
+    const value = javascriptGenerator.valueToCode(block, 'value', javascriptGenerator.ORDER_ATOMIC).replace(/'/g, '')
+    let code = `${dict}[${key}] = '${value}';\n`
+    return code
+  }
+
   /*
     * creates a loop for dictionaries
     *
