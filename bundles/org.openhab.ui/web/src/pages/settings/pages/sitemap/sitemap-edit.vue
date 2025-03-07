@@ -477,6 +477,12 @@ export default {
             siblingIsFrame.pop()
           }
         })
+        widgetList.filter(widget => widget.component === 'Frame').forEach(widget => {
+          if (!widget.slots?.widgets || !widget.slots.widgets.length) {
+            let label = scope.widgetErrorLabel(widget.config)
+            validationWarnings.push(widget.component + ' widget ' + label + ' should not be empty')
+          }
+        })
         widgetList.filter(widget => this.WIDGET_TYPES_REQUIRING_ITEM.includes(widget.component)).forEach(widget => {
           if (!widget.config?.item) {
             let label = scope.widgetErrorLabel(widget.config)
