@@ -87,8 +87,11 @@
       <f7-row>
         <f7-col>
           <f7-list>
-            <f7-list-button color="blue" @click="copyItem">
-              Copy Item
+            <f7-list-button color="blue" @click="duplicateItem">
+              Duplicate Item
+            </f7-list-button>
+            <f7-list-button color="blue" @click="copyItemDslDefinition">
+              Copy DSL Definition
             </f7-list-button>
             <f7-list-button v-if="item.editable" color="red" @click="deleteItem">
               Remove Item
@@ -207,13 +210,27 @@ export default {
         this.iconUrl = '/icon/' + this.item.category + '?format=svg'
       })
     },
-    copyItem () {
+    duplicateItem () {
       let itemClone = cloneDeep(this.item)
       this.$f7router.navigate({
-        url: '/settings/items/copy'
+        url: '/settings/items/duplicate'
       }, {
         props: {
           itemCopy: itemClone
+        }
+      })
+    },
+    copyItemDslDefinition () {
+      this.$oh.api.getPlain({
+        url: '/rest/file-format/items/' + this.item.name,
+        headers: { accept: 'text/vnd.openhab.dsl.item' }
+      }).then(definition => {
+        if (this.$clipboard(definition)) {
+          this.$f7.toast.create({
+            text: `DSL Item definition for '${this.item.name}' copied to clipboard`,
+            destroyOnClose: true,
+            closeTimeout: 2000
+          }).open()
         }
       })
     },
