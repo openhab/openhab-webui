@@ -30,15 +30,28 @@ export default {
   get (uri, data) {
     return wrapPromise(Framework7.request.promise.json(uri, data))
   },
-  getPlain (uri, data, contentType, responseType) {
-    return wrapPromise(Framework7.request.promise({
-      method: 'GET',
-      url: uri,
-      data,
-      processData: false,
-      contentType: contentType || 'text/plain',
-      xhrFields: typeof responseType !== 'undefined' ? { responseType } : null
-    }))
+  getPlain (uri_or_parameters, data, contentType, responseType) {
+    let parameters = {}
+    if (typeof uri_or_parameters === 'string') {
+      parameters = {
+        url: uri_or_parameters,
+        method: 'GET',
+        data,
+        processData: false,
+        contentType: contentType || 'text/plain',
+        xhrFields: typeof responseType !== 'undefined' ? { responseType } : null
+      }
+    } else if (typeof uri_or_parameters === 'object') {
+      parameters = {
+        contentType: 'text/plain',
+        processData: false,
+        method: 'GET',
+        ...uri_or_parameters
+      }
+    } else {
+      throw new Error('Invalid parameters')
+    }
+    return wrapPromise(Framework7.request.promise(parameters))
   },
   post (uri, data, dataType) {
     return wrapPromise(Framework7.request.promise.postJSON(uri, data, dataType))
