@@ -3,10 +3,14 @@ name: Main UI
 on:
   push:
     branches: [ main ]
-    paths: bundles/org.openhab.ui/web/**
+    paths:
+      - .github/workflows/mainui.yml
+      - bundles/org.openhab.ui/web/**
   pull_request:
     branches: [ main ]
-    paths: bundles/org.openhab.ui/web/**
+    paths:
+      - .github/workflows/mainui.yml
+      - bundles/org.openhab.ui/web/**
   workflow_dispatch:
 
 defaults:
@@ -20,11 +24,11 @@ jobs:
   checks:
     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
 
@@ -33,7 +37,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: node_modules # npm cache files are stored in `~/.npm` on Linux/macOS
-          key: ${{ runner.os }}-node_modules-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-node_modules-${{ hashFiles('**/package.json', '**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-build-${{ env.cache-name }}-
             ${{ runner.os }}-build-
@@ -52,11 +56,11 @@ jobs:
   webpack-stats:
     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
 
@@ -65,7 +69,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: node_modules # npm cache files are stored in `~/.npm` on Linux/macOS
-          key: ${{ runner.os }}-node_modules-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-node_modules-${{ hashFiles('**/package.json', '**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-build-${{ env.cache-name }}-
             ${{ runner.os }}-build-
@@ -78,13 +82,14 @@ jobs:
       - name: Build and generate report
         run: npm run webpack-analyzer-report-stats
 
-      - uses: actions/upload-artifact@v4
+      - name: Upload report artifact
+        uses: actions/upload-artifact@v4
         with:
           name: report
           path: /home/runner/work/openhab-webui/openhab-webui/bundles/org.openhab.ui/web/report.html
-      
+
       # Upload bundle stats to use on relative-ci.yaml workflow
-      - name: Upload webpack stats artifact
+      - name: Upload webpack stats artifact to RelativeCI
         uses: relative-ci/agent-upload-artifact-action@v2
         with:
           webpackStatsFile: ./bundles/org.openhab.ui/web/stats.json
