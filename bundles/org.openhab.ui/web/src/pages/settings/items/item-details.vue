@@ -87,8 +87,8 @@
       <f7-row>
         <f7-col>
           <f7-list>
-            <f7-list-button color="blue" @click="copyItem">
-              Copy Item
+            <f7-list-button color="blue" @click="duplicateItem">
+              Duplicate Item
             </f7-list-button>
             <f7-list-button v-if="item.editable" color="red" @click="deleteItem">
               Remove Item
@@ -207,10 +207,10 @@ export default {
         this.iconUrl = '/icon/' + this.item.category + '?format=svg'
       })
     },
-    copyItem () {
+    duplicateItem () {
       let itemClone = cloneDeep(this.item)
       this.$f7router.navigate({
-        url: '/settings/items/copy'
+        url: '/settings/items/duplicate'
       }, {
         props: {
           itemCopy: itemClone
