@@ -643,7 +643,7 @@ export default {
         title.unshift(config?.browserTitle || (config?.label === 'Overview' ? localizedTitle : config?.label))
       } else if (this.currentPath.locations || this.currentPath.equipment || this.currentPath.properties) {
         title.unshift(this.$t(`home.${this.currentPath.$key}.title`))
-      } else if (this.currentPath.settings?.addons && navbarTitle) {
+      } else if (this.currentPath.settings?.addons && navbarTitle()) {
         // The navbar title on these pages starts with "Configure ....", so don't add "Settings" in front of it
         title.unshift(navbarTitle())
       } else {
@@ -662,7 +662,7 @@ export default {
           path = { $key: path.$key.split('-')[1] || path.$key }
         }
 
-        if (this.currentPath.settings?.services && navbarTitle) {
+        if (this.currentPath.settings?.services && navbarTitle()) {
           // Use a friendlier title for the services pages
           title.unshift(navbarTitle())
         } else {
