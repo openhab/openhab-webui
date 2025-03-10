@@ -132,8 +132,8 @@
           </f7-col>
           <f7-col v-if="isEditable && (!createMode)">
             <f7-list>
-              <f7-list-button color="blue" @click="copyRule">
-                Copy Rule
+              <f7-list-button color="blue" @click="duplicateRule">
+                Duplicate Rule
               </f7-list-button>
               <f7-list-button color="red" @click="deleteRule">
                 Remove Rule
@@ -333,7 +333,7 @@ export default {
           }).open()
           this.$f7router.navigate(this.$f7route.url
             .replace('/add', '/' + this.rule.uid)
-            .replace('/copy', '/' + this.rule.uid)
+            .replace('/duplicate', '/' + this.rule.uid)
             .replace('/schedule/', '/rules/'), { reloadCurrent: true })
           this.load()
         } else {
@@ -355,10 +355,10 @@ export default {
         }).open()
       })
     },
-    copyRule () {
+    duplicateRule () {
       let ruleClone = cloneDeep(this.rule)
       this.$f7router.navigate({
-        url: '/settings/rules/copy'
+        url: '/settings/rules/duplicate'
       }, {
         props: {
           ruleCopy: ruleClone

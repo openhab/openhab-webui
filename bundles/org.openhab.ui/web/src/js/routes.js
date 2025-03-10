@@ -192,7 +192,7 @@ export default [
             async: loadAsync(ItemEditPage, { createMode: true })
           },
           {
-            path: 'copy',
+            path: 'duplicate',
             beforeEnter: [enforceAdminForRoute],
             async: loadAsync(ItemEditPage, { createMode: true })
           },
@@ -287,7 +287,7 @@ export default [
             ]
           },
           {
-            path: 'copy',
+            path: 'duplicate',
             beforeEnter: [enforceAdminForRoute],
             beforeLeave: [checkDirtyBeforeLeave],
             async: loadAsync(AddThingPage)
@@ -336,7 +336,7 @@ export default [
             async: loadAsync(RuleEditPage, { createMode: true })
           },
           {
-            path: 'copy',
+            path: 'duplicate',
             beforeEnter: [enforceAdminForRoute],
             beforeLeave: [checkDirtyBeforeLeave],
             async: loadAsync(RuleEditPage, { createMode: true })
@@ -369,7 +369,7 @@ export default [
             async: loadAsync(SceneEditPage, { createMode: true })
           },
           {
-            path: 'copy',
+            path: 'duplicate',
             beforeEnter: [enforceAdminForRoute],
             beforeLeave: [checkDirtyBeforeLeave],
             async: loadAsync(SceneEditPage, { createMode: true })
@@ -394,7 +394,7 @@ export default [
             async: loadAsync(ScriptEditPage, { createMode: true })
           },
           {
-            path: 'copy',
+            path: 'duplicate',
             beforeEnter: [enforceAdminForRoute],
             beforeLeave: [checkDirtyBeforeLeave],
             async: loadAsync(ScriptEditPage, { createMode: true })
