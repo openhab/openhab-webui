@@ -34,22 +34,28 @@
                    icon-ios="f7:hand_thumbsup" icon-aurora="f7:hand_thumbsup">
           &nbsp;Approve
         </f7-button>
-        <f7-button @click="performActionOnSelection('copy')" color="blue" class="delete wider-screen display-flex flex-direction-row"
-                   icon-ios="f7:square_on_square" icon-aurora="f7:square_on_square">
-          &nbsp;Copy
-        </f7-button>
-        <f7-button color="blue" class="delete narrower-screen" popover-open=".item-popover">
-          ...
-        </f7-button>
-        <f7-popover class="item-popover" ref="popover" :backdrop="false" :close-by-backdrop-click="true"
-                    :style="{ width: '96px' }" :animate="false">
-          <div class="display-flex justify-content-center" style="width: 100%">
-            <f7-link @click="performActionOnSelection('copy')" color="blue" class="delete display-flex flex-direction-column margin-right"
-                     icon-ios="f7:square_on_square" icon-aurora="f7:square_on_square" popover-close=".item-popover">
-              Copy
-            </f7-link>
-          </div>
-        </f7-popover>
+        <!-- buttons for wider screen -->
+        <template v-if="$f7.width >= 500">
+          <f7-button @click="performActionOnSelection('copy')" color="blue" class="delete wider-screen display-flex flex-direction-row"
+                     icon-ios="f7:square_on_square" icon-aurora="f7:square_on_square">
+            &nbsp;Copy
+          </f7-button>
+        </template>
+        <!-- buttons for narrower screen -->
+        <template v-else>
+          <f7-button color="blue" class="delete narrower-screen" popover-open=".item-popover">
+            ...
+          </f7-button>
+          <f7-popover class="item-popover" ref="popover" :backdrop="false" :close-by-backdrop-click="true"
+                      :style="{ width: '96px' }" :animate="false">
+            <div class="margin-vertical display-flex justify-content-center" style="width: 100%">
+              <f7-link @click="performActionOnSelection('copy')" color="blue" class="delete display-flex flex-direction-column margin-right"
+                       icon-ios="f7:square_on_square" icon-aurora="f7:square_on_square" popover-close=".item-popover">
+                Copy
+              </f7-link>
+            </div>
+          </f7-popover>
+        </template>
       </div>
       <f7-link v-if="$theme.md" icon-md="material:close" icon-color="white" @click="showCheckboxes = false" />
       <div class="title" v-if="$theme.md">
@@ -155,13 +161,6 @@
   @media (min-width 960px)
     padding-left 0 !important
     padding-right 0 !important
-.wider-screen
-  @media (max-width 499px)
-    display none !important
-.narrower-screen
-  @media (min-width 500px)
-    display none !important
-
 </style>
 
 <script>
