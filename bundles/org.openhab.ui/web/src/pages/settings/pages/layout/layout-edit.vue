@@ -107,7 +107,9 @@
                 </f7-link>
               </div>
             </f7-toolbar>
-            <page-settings :page="page" :createMode="createMode" />
+            <f7-block class="block-narrow">
+              <page-settings :page="page" :createMode="createMode" />
+            </f7-block>
           </f7-page>
         </f7-sheet>
       </f7-tab>
