@@ -22,9 +22,13 @@
                    icon-ios="f7:trash" icon-aurora="f7:trash">
           &nbsp;Remove
         </f7-button>
-        <f7-button @click="confirmActionOnSelection('ignore')" color="orange" class="ignore display-flex flex-direction-row margin-right"
+        <f7-button v-if="selectedItems.map(uid => inbox.find(e => e.thingUID === uid)).filter(e => e.flag !== 'IGNORED').length" @click="confirmActionOnSelection('ignore')" color="orange" class="ignore display-flex flex-direction-row margin-right"
                    icon-ios="f7:eye_slash" icon-aurora="f7:eye_slash">
           &nbsp;Ignore
+        </f7-button>
+        <f7-button v-else @click="confirmActionOnSelection('unignore')" color="orange" class="unignore display-flex flex-direction-row margin-right"
+                   icon-ios="f7:eye" icon-aurora="f7:eye">
+          &nbsp;Unignore
         </f7-button>
         <f7-button @click="confirmActionOnSelection('approve')" color="green" class="approve display-flex flex-direction-row margin-right"
                    icon-ios="f7:hand_thumbsup" icon-aurora="f7:hand_thumbsup">
