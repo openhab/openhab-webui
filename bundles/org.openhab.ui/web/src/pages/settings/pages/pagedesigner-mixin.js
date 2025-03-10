@@ -22,9 +22,7 @@ export default {
       clipboard: null,
       clipboardType: null,
       currentComponent: null,
-      currentWidget: null,
-      widgetConfigOpened: false,
-      widgetCodeOpened: false
+      currentWidget: null
     }
   },
   computed: {
@@ -186,24 +184,20 @@ export default {
     widgetConfigClosed () {
       this.currentComponent = null
       this.currentWidget = null
-      this.widgetConfigOpened = false
     },
     updateWidgetConfig (config) {
       this.$set(this.currentComponent, 'config', config)
       this.forceUpdate()
-      this.widgetConfigClosed()
     },
     widgetCodeClosed () {
       this.currentComponent = null
       this.currentWidget = null
-      this.widgetCodeOpened = false
     },
     updateWidgetCode (code) {
       const updatedWidget = YAML.parse(code)
       this.$set(this.currentComponent, 'config', updatedWidget.config)
       this.$set(this.currentComponent, 'slots', updatedWidget.slots)
       this.forceUpdate()
-      this.widgetCodeClosed()
     },
     configureWidget (component, parentContext, forceComponentType) {
       const componentType = forceComponentType || component.component
@@ -253,18 +247,16 @@ export default {
         }
       })
 
-      this.$f7.once('widgetConfigUpdate', this.updateWidgetConfig)
+      this.$f7.on('widgetConfigUpdate', this.updateWidgetConfig)
       this.$f7.once('widgetConfigClosed', () => {
         this.$f7.off('widgetConfigUpdate', this.updateWidgetConfig)
         this.widgetConfigClosed()
       })
-      // this.widgetConfigOpened = true
     },
     editWidgetCode (component, parentContext, slot) {
       if (slot && !component.slots) component.slots = {}
       if (slot && !component.slots[slot]) component.slots[slot] = []
       this.currentComponent = component
-      this.widgetCodeOpened = true
       const popup = {
         component: WidgetCodePopup
       }
@@ -282,7 +274,7 @@ export default {
         }
       })
 
-      this.$f7.once('widgetCodeUpdate', this.updateWidgetCode)
+      this.$f7.on('widgetCodeUpdate', this.updateWidgetCode)
       this.$f7.once('widgetCodeClosed', () => {
         this.$f7.off('widgetCodeUpdate', this.updateWidgetCode)
         this.widgetCodeClosed()
