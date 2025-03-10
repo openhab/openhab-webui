@@ -75,8 +75,12 @@ export default {
           }
         }
       })
-      this.$f7.once('widgetConfigUpdate', (config) => {
+      const updateWidgetConfig = (config) => {
         this.$f7.emit('svgOnClickConfigUpdate', { id, config })
+      }
+      this.$f7.on('widgetConfigUpdate', updateWidgetConfig)
+      this.$f7.once('widgetConfigClosed', () => {
+        this.$f7.off('widgetConfigUpdate', updateWidgetConfig)
       })
     },
     /**

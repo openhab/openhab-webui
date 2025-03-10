@@ -326,7 +326,8 @@ export default {
             ])
         }
       })
-      this.$f7.once('widgetConfigUpdate', this.storeLocalConfig)
+      this.$f7.on('widgetConfigUpdate', this.storeLocalConfig)
+      this.$f7.once('widgetConfigClosed', () => this.$f7.off('widgetConfigUpdate', this.storeLocalConfig))
     },
     storeLocalConfig (config) {
       this.localConfig = config
