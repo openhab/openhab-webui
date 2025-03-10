@@ -32,6 +32,26 @@
 
   <build>
     <plugins>
+      <!-- Delete web/node_modules in Maven clean goal -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-clean-plugin</artifactId>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>web/node_modules</directory>
+            </fileset>
+          </filesets>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>clean</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- Build Main UI -->
       <plugin>
         <groupId>com.github.eirslett</groupId>
         <artifactId>frontend-maven-plugin</artifactId>
@@ -52,12 +72,36 @@
           </execution>
 
           <execution>
-            <id>npm ci</id>
+            <id>npm install</id>
             <goals>
               <goal>npm</goal>
             </goals>
             <configuration>
-              <arguments>ci</arguments>
+              <arguments>install --save false</arguments>
+            </configuration>
+          </execution>
+
+          <!-- Run ESLint during the Maven initialize phase -->
+          <execution>
+            <id>npm lint</id>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <phase>validate</phase>
+            <configuration>
+              <arguments>run lint</arguments>
+            </configuration>
+          </execution>
+
+          <!-- Run unit tests during the Maven test phase -->
+          <execution>
+            <id>npm test</id>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <phase>test</phase>
+            <configuration>
+              <arguments>run test:unit</arguments>
             </configuration>
           </execution>
 
