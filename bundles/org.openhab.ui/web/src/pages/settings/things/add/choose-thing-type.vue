@@ -244,7 +244,8 @@ export default {
             }
           ],
           [
-            this.entryActionsAddAsThingButton(entry, this.loadInbox)
+            this.entryActionsAddAsThingButton(entry, this.loadInbox),
+            this.entryActionsCopyThingDefinitionButton(entry)
           ]
         ]
       })

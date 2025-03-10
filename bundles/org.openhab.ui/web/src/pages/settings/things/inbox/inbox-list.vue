@@ -17,23 +17,55 @@
       </f7-subnavbar>
     </f7-navbar>
     <f7-toolbar class="contextual-toolbar" :class="{ 'navbar': $theme.md }" v-if="showCheckboxes" bottom-ios bottom-aurora>
-      <f7-link color="red" v-show="selectedItems.length" v-if="!$theme.md" class="delete" icon-ios="f7:trash" icon-aurora="f7:trash" @click="confirmActionOnSelection('delete')">
-        &nbsp;Remove {{ selectedItems.length }}
-      </f7-link>
-      <f7-link color="orange" v-show="selectedItems.length" v-if="!$theme.md" class="ignore" @click="confirmActionOnSelection('ignore')" icon-ios="f7:eye_slash" icon-aurora="f7:eye_slash">
-        &nbsp;Ignore {{ selectedItems.length }}
-      </f7-link>
-      <f7-link color="green" v-show="selectedItems.length" v-if="!$theme.md" class="approve" @click="confirmActionOnSelection('approve')" icon-ios="f7:hand_thumbsup" icon-aurora="f7:hand_thumbsup">
-        &nbsp;Approve {{ selectedItems.length }}
-      </f7-link>
+      <div class="display-flex justify-content-center" v-if="!$theme.md && selectedItems.length > 0" style="width: 100%">
+        <f7-button @click="confirmActionOnSelection('delete')" color="red" class="delete display-flex flex-direction-row margin-right"
+                   icon-ios="f7:trash" icon-aurora="f7:trash">
+          &nbsp;Remove
+        </f7-button>
+        <f7-button v-if="selectedItems.map(uid => inbox.find(e => e.thingUID === uid)).filter(e => e.flag !== 'IGNORED').length" @click="confirmActionOnSelection('ignore')" color="orange" class="ignore display-flex flex-direction-row margin-right"
+                   icon-ios="f7:eye_slash" icon-aurora="f7:eye_slash">
+          &nbsp;Ignore
+        </f7-button>
+        <f7-button v-else @click="confirmActionOnSelection('unignore')" color="orange" class="unignore display-flex flex-direction-row margin-right"
+                   icon-ios="f7:eye" icon-aurora="f7:eye">
+          &nbsp;Unignore
+        </f7-button>
+        <f7-button @click="confirmActionOnSelection('approve')" color="green" class="approve display-flex flex-direction-row margin-right"
+                   icon-ios="f7:hand_thumbsup" icon-aurora="f7:hand_thumbsup">
+          &nbsp;Approve
+        </f7-button>
+        <!-- buttons for wider screen -->
+        <template v-if="$f7.width >= 500">
+          <f7-button @click="performActionOnSelection('copy')" color="blue" class="delete wider-screen display-flex flex-direction-row"
+                     icon-ios="f7:square_on_square" icon-aurora="f7:square_on_square">
+            &nbsp;Copy
+          </f7-button>
+        </template>
+        <!-- buttons for narrower screen -->
+        <template v-else>
+          <f7-button color="blue" class="delete narrower-screen" popover-open=".item-popover">
+            ...
+          </f7-button>
+          <f7-popover class="item-popover" ref="popover" :backdrop="false" :close-by-backdrop-click="true"
+                      :style="{ width: '96px' }" :animate="false">
+            <div class="margin-vertical display-flex justify-content-center" style="width: 100%">
+              <f7-link @click="performActionOnSelection('copy')" color="blue" class="delete display-flex flex-direction-column margin-right"
+                       icon-ios="f7:square_on_square" icon-aurora="f7:square_on_square" popover-close=".item-popover">
+                Copy
+              </f7-link>
+            </div>
+          </f7-popover>
+        </template>
+      </div>
       <f7-link v-if="$theme.md" icon-md="material:close" icon-color="white" @click="showCheckboxes = false" />
       <div class="title" v-if="$theme.md">
         {{ selectedItems.length }} selected
       </div>
-      <div class="right" v-if="$theme.md">
+      <div class="right" v-if="$theme.md && selectedItems.length > 0">
         <f7-link v-show="selectedItems.length" icon-md="material:delete" icon-color="white" @click="confirmActionOnSelection('delete')" />
         <f7-link v-show="selectedItems.length" icon-md="material:visibility_off" icon-color="white" @click="confirmActionOnSelection('ignore')" />
         <f7-link v-show="selectedItems.length" icon-md="material:thumb_up" icon-color="white" @click="confirmActionOnSelection('approve')" />
+        <f7-link v-show="selectedItems.length" icon-md="material:content_copy" icon-color="white" @click="performActionOnSelection('copy')" />
       </div>
     </f7-toolbar>
 
@@ -47,7 +79,7 @@
     <f7-block class="block-narrow">
       <f7-col>
         <f7-block-title>
-          <span v-if="ready">{{ inboxCount }} entries</span>
+          <span v-if="ready"><template v-if="selectedItems.length > 0">{{ selectedItems.length }} of </template>{{ inboxCount }} entries<template v-if="selectedItems.length > 0"> selected</template></span>
           <div v-if="!$device.desktop && $f7.width < 1024" style="text-align:right; color:var(--f7-block-text-color); font-weight: normal" class="float-right">
             <f7-checkbox :checked="showIgnored" @change="toggleIgnored" /> <label @click="toggleIgnored" style="cursor:pointer">Show ignored</label>
           </div>
@@ -264,6 +296,7 @@ export default {
           ],
           [
             this.entryActionsAddAsThingButton(entry, this.load),
+            this.entryActionsCopyThingDefinitionButton(entry),
             {
               text: (!ignored) ? 'Ignore' : 'Unignore',
               color: (!ignored) ? 'orange' : 'blue',
@@ -389,6 +422,8 @@ export default {
     },
     performActionOnSelection (action) {
       let progressMessage, successMessage, promises
+      let navigateToThingsPage = false
+      let clearSelectionAndReload = true
       switch (action) {
         case 'delete':
           progressMessage = 'Removing Inbox Entries...'
@@ -399,6 +434,7 @@ export default {
           progressMessage = 'Approving Inbox Entries...'
           successMessage = `${this.selectedItems.length} entries approved`
           promises = this.filterSelectedItems().map((e) => this.$oh.api.postPlain('/rest/inbox/' + e.thingUID + '/approve', e.label))
+          navigateToThingsPage = true
           break
         case 'ignore':
           progressMessage = 'Ignoring Inbox Entries...'
@@ -410,22 +446,44 @@ export default {
           successMessage = `${this.selectedItems.length} entries unignored`
           promises = this.filterSelectedItems().map((e) => this.$oh.api.postPlain('/rest/inbox/' + e.thingUID + '/unignore'))
           break
+        case 'copy':
+          progressMessage = 'Copying Inbox Entries...'
+          successMessage = `${this.selectedItems.length} entries copied to clipboard`
+          promises = this.filterSelectedItems().map((e) => this.$oh.api.getPlain({
+            url: '/rest/file-format/things/' + e.thingUID,
+            headers: { accept: 'text/vnd.openhab.dsl.thing' }
+          }))
+
+          promises = [Promise.all(promises).then((data) => {
+            if (this.$clipboard(data.join('\n'))) {
+              Promise.resolve()
+            } else {
+              Promise.reject('Failed to copy to clipboard')
+            }
+          })]
+          clearSelectionAndReload = false
+          break
       }
 
       let dialog = this.$f7.dialog.progress(progressMessage)
 
-      Promise.all(promises).then((data) => {
+      Promise.all(promises).then(() => {
         this.$f7.toast.create({
           text: successMessage,
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
+        const searchFor = this.selectedItems.join(',')
+        if (clearSelectionAndReload) this.selectedItems = []
         dialog.close()
-        this.$f7router.navigate('/settings/things/', {
-          props: {
-            searchFor: this.selectedItems.join(',')
-          }
-        })
+        if (clearSelectionAndReload) this.load()
+        if (navigateToThingsPage) {
+          this.$f7router.navigate('/settings/things/', {
+            props: {
+              searchFor
+            }
+          })
+        }
       }).catch((err) => {
         dialog.close()
         this.load()
