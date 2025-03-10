@@ -89,6 +89,7 @@ export default {
               }
             ],
             destroyOnClose: true,
+            cssClass: 'thing-inbox-approve-dialog',
             on: {
               opened: (dialog) => {
                 const id = dialog.$el.find('.id-input')
