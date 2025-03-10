@@ -3,15 +3,17 @@ import VueI18n from 'vue-i18n'
 
 Vue.use(VueI18n)
 
-export function loadLocaleMessages (locales) {
+export function loadLocaleMessages (...scopes) {
   const messages = {}
-  locales.keys().forEach(key => {
-    const matched = key.match(/([A-Za-z0-9-_]+)\./i)
-    if (matched && matched.length > 1) {
-      console.debug('loading i18n messages from: ' + key)
-      const locale = matched[1]
-      messages[locale] = locales(key)
-    }
+  scopes.forEach(scope => {
+    scope.keys().forEach(key => {
+      const matched = key.match(/([A-Za-z0-9-_]+)\./i)
+      if (matched && matched.length > 1) {
+        console.debug('loading i18n messages from: ' + key)
+        const locale = matched[1]
+        messages[locale] = { ...messages[locale], ...scope(key) }
+      }
+    })
   })
   return messages
 }
