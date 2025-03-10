@@ -79,7 +79,7 @@
     <f7-block class="block-narrow">
       <f7-col>
         <f7-block-title>
-          <span v-if="ready"><template v-if="selectedItems.length > 0">{{ selectedItems.length }} selected of </template>{{ inboxCount }} entries</span>
+          <span v-if="ready"><template v-if="selectedItems.length > 0">{{ selectedItems.length }} of </template>{{ inboxCount }} entries<template v-if="selectedItems.length > 0"> selected</template></span>
           <div v-if="!$device.desktop && $f7.width < 1024" style="text-align:right; color:var(--f7-block-text-color); font-weight: normal" class="float-right">
             <f7-checkbox :checked="showIgnored" @change="toggleIgnored" /> <label @click="toggleIgnored" style="cursor:pointer">Show ignored</label>
           </div>
