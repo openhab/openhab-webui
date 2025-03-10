@@ -1,5 +1,5 @@
 <template>
-  <f7-app v-if="init" :style="{ visibility: (($store.getters.user || $store.getters.page('overview')) || communicationFailureMsg) ? '' : 'hidden' }" :params="f7params" :class="{ 'theme-dark': this.themeOptions.dark === 'dark', 'theme-filled': this.themeOptions.bars === 'filled' }">
+  <f7-app v-if="init" :style="{ visibility: (($store.getters.user || $store.getters.page('overview')) || communicationFailureMsg) ? '' : 'hidden' }" :params="f7params" :class="{ 'theme-dark': themeOptions.dark === 'dark', 'theme-filled': themeOptions.bars === 'filled' }">
     <!-- Left Panel -->
     <f7-panel v-show="ready" left :cover="showSidebar" class="sidebar" :visible-breakpoint="1024">
       <f7-page>
@@ -18,7 +18,7 @@
             <span><em>{{ $t('sidebar.noPages') }}</em></span>
           </f7-list-item>
           <f7-list-item v-for="page in pages" :animate="false" :key="page.uid"
-                        :class="{ currentsection: currentUrl === '/page/' + page.uid || currentUrl.indexOf('/page/' + page.uid + '/') === 0 }"
+                        :class="{ currentsection: currentPath.page?.[page.uid] }"
                         :link="'/page/' + page.uid"
                         :title="page.config.label" view=".view-main" panel-close>
             <oh-icon slot="media" :icon="pageIcon(page)" height="18" width="18" />
@@ -28,41 +28,41 @@
         <!-- Settings -->
         <f7-list class="admin-links" v-if="$store.getters.isAdmin">
           <f7-list-item link="/settings/" :title="$t('sidebar.settings')" view=".view-main" panel-close :animate="false"
-                        :class="{ currentsection: currentUrl === '/settings/' || currentUrl.indexOf('/settings/services/') === 0 || currentUrl.indexOf('/settings/addons/') === 0 || currentUrl.indexOf('/settings/persistence/') === 0 }">
+                        :class="{ currentsection: currentPath.settings?.$end || currentPath.settings?.services || currentPath.settings?.addons || currentPath.settings?.persistence || currentPath.settings?.transformations }">
             <f7-icon slot="media" ios="f7:gear_alt_fill" aurora="f7:gear_alt_fill" md="material:settings" color="gray" />
           </f7-list-item>
-          <li v-if="showSettingsSubmenu">
+          <li v-if="currentPath.settings">
             <ul class="menu-sublinks">
               <f7-list-item v-if="$store.getters.apiEndpoint('things')" link="/settings/things/" title="Things" view=".view-main" panel-close :animate="false" no-chevron
-                            :class="{ currentsection: currentUrl.indexOf('/settings/things') === 0 }">
+                            :class="{ currentsection: currentPath.settings?.things }">
                 <f7-icon slot="media" f7="lightbulb" color="gray" />
               </f7-list-item>
               <f7-list-item v-if="$store.getters.apiEndpoint('items')" link="/settings/model/" title="Model" view=".view-main" panel-close :animate="false" no-chevron
-                            :class="{ currentsection: currentUrl.indexOf('/settings/model') === 0 }">
+                            :class="{ currentsection: currentPath.settings?.model }">
                 <f7-icon slot="media" f7="list_bullet_indent" color="gray" />
               </f7-list-item>
               <f7-list-item v-if="$store.getters.apiEndpoint('items')" link="/settings/items/" title="Items" view=".view-main" panel-close :animate="false" no-chevron
-                            :class="{ currentsection: currentUrl.indexOf('/settings/items') === 0 }">
+                            :class="{ currentsection: currentPath.settings?.items }">
                 <f7-icon slot="media" f7="square_on_circle" color="gray" />
               </f7-list-item>
               <f7-list-item v-if="$store.getters.apiEndpoint('ui')" link="/settings/pages/" title="Pages" view=".view-main" panel-close :animate="false" no-chevron
-                            :class="{ currentsection: currentUrl.indexOf('/settings/pages') === 0 }">
+                            :class="{ currentsection: currentPath.settings?.pages }">
                 <f7-icon slot="media" f7="tv" color="gray" />
               </f7-list-item>
               <f7-list-item v-if="$store.getters.apiEndpoint('rules')" link="/settings/rules/" title="Rules" view=".view-main" panel-close :animate="false" no-chevron
-                            :class="{ currentsection: currentUrl.indexOf('/settings/rules') === 0 }">
+                            :class="{ currentsection: currentPath.settings?.rules }">
                 <f7-icon slot="media" f7="wand_stars" color="gray" />
               </f7-list-item>
               <f7-list-item v-if="$store.getters.apiEndpoint('rules')" link="/settings/scenes/" title="Scenes" view=".view-main" panel-close :animate="false" no-chevron
-                            :class="{ currentsection: currentUrl.indexOf('/settings/scenes') === 0 }">
+                            :class="{ currentsection: currentPath.settings?.scenes }">
                 <f7-icon slot="media" f7="film" color="gray" />
               </f7-list-item>
               <f7-list-item v-if="$store.getters.apiEndpoint('rules')" link="/settings/scripts/" title="Scripts" view=".view-main" panel-close :animate="false" no-chevron
-                            :class="{ currentsection: currentUrl.indexOf('/settings/scripts') === 0 }">
+                            :class="{ currentsection: currentPath.settings?.scripts }">
                 <f7-icon slot="media" f7="doc_plaintext" color="gray" />
               </f7-list-item>
               <f7-list-item v-if="$store.getters.apiEndpoint('rules')" link="/settings/schedule/" title="Schedule" view=".view-main" panel-close :animate="false" no-chevron
-                            :class="{ currentsection: currentUrl.indexOf('/settings/schedule') === 0 }">
+                            :class="{ currentsection: currentPath.settings?.schedule }">
                 <f7-icon slot="media" f7="calendar" color="gray" />
               </f7-list-item>
             </ul>
@@ -70,14 +70,14 @@
 
           <!-- Add-on Store -->
           <f7-list-item link="/addons/" :title="$t('sidebar.addOnStore')" view=".view-main" panel-close :animate="false"
-                        :class="{ currentsection: currentUrl === '/addons/' }">
+                        :class="{ currentsection: currentPath.addons?.$end }">
             <f7-icon slot="media" ios="f7:bag_fill" aurora="f7:bag_fill" md="material:shopping_bag" color="gray" />
           </f7-list-item>
-          <li v-if="showAddonsSubmenu && $store.getters.apiEndpoint('addons')">
+          <li v-if="currentPath.addons && $store.getters.apiEndpoint('addons')">
             <ul class="menu-sublinks">
               <f7-list-item v-for="section in Object.keys(AddonTitles)" :key="section" :link="`/addons/${section}/`"
                             :title="AddonTitles[section]" view=".view-main" panel-close :animate="false" no-chevron
-                            :class="{ currentsection: currentUrl.indexOf(`/addons/${section}`) === 0 }">
+                            :class="{ currentsection: currentPath.addons?.[section] }">
                 <f7-icon slot="media" :f7="AddonIcons[section]" color="gray" />
               </f7-list-item>
             </ul>
@@ -85,26 +85,25 @@
 
           <!-- Developer Tools -->
           <f7-list-item link="/developer/" :title="$t('sidebar.developerTools')" panel-close :animate="false"
-                        :class="{ currentsection: currentUrl.indexOf('/developer/') === 0 && currentUrl.indexOf('/developer/widgets') < 0 &&
-                          currentUrl.indexOf('/developer/blocks') < 0 && currentUrl.indexOf('/developer/api-explorer') < 0 && currentUrl.indexOf('/developer/log-viewer') < 0 }">
+                        :class="{ currentsection: currentPath.developer?.$end }">
             <f7-icon slot="media" ios="f7:wrench_fill" aurora="f7:wrench_fill" md="material:construction" color="gray" />
           </f7-list-item>
-          <li v-if="showDeveloperSubmenu">
+          <li v-if="currentPath.developer">
             <ul class="menu-sublinks">
               <f7-list-item v-if="$store.getters.apiEndpoint('ui')" link="/developer/widgets/" title="Widgets" view=".view-main" panel-close :animate="false" no-chevron
-                            :class="{ currentsection: currentUrl.indexOf('/developer/widgets') === 0 }">
+                            :class="{ currentsection: currentPath.developer?.widgets }">
                 <f7-icon slot="media" f7="rectangle_on_rectangle_angled" color="gray" />
               </f7-list-item>
               <f7-list-item v-if="$store.getters.apiEndpoint('ui')" link="/developer/blocks/" title="Block Libraries" view=".view-main" panel-close :animate="false" no-chevron
-                            :class="{ currentsection: currentUrl.indexOf('/developer/blocks') === 0 }">
+                            :class="{ currentsection: currentPath.developer?.blocks }">
                 <f7-icon slot="media" f7="ticket" color="gray" />
               </f7-list-item>
               <f7-list-item link="/developer/api-explorer" title="API Explorer" view=".view-main" panel-close :animate="false" no-chevron
-                            :class="{ currentsection: currentUrl.indexOf('/developer/api-explorer') === 0 }">
+                            :class="{ currentsection: currentPath.developer?.['api-explorer'] }">
                 <f7-icon slot="media" f7="burn" color="gray" />
               </f7-list-item>
               <f7-list-item link="/developer/log-viewer" title="Log Viewer" view=".view-main" panel-close :animate="false" no-chevron
-                            :class="{ currentsection: currentUrl.indexOf('/developer/log-viewer') === 0 }">
+                            :class="{ currentsection: currentPath.developer?.['log-viewer'] }">
                 <f7-icon slot="media" f7="square_list" color="gray" />
               </f7-list-item>
               <!-- <f7-list-item link="" @click="$f7.emit('toggleDeveloperDock')" title="Dock" view=".view-main" panel-close :animate="false" no-chevron>
@@ -116,15 +115,15 @@
 
         <f7-list class="admin-links">
           <f7-list-item link="/about/" :title="$t('sidebar.helpAbout')" view=".view-main" panel-close
-                        :class="{ currentsection: currentUrl.indexOf('/about') >= 0 }">
+                        :class="{ currentsection: currentPath.about }">
             <f7-icon slot="media" ios="f7:question_circle_fill" aurora="f7:question_circle_fill" md="material:help" color="gray" />
           </f7-list-item>
         </f7-list>
         <f7-link class="breakpoint-pin" @click="toggleVisibleBreakpoint">
-          <f7-icon slot="media" size="14" :f7="this.visibleBreakpointDisabled ? 'pin_slash' : 'pin'" color="gray" />
+          <f7-icon slot="media" size="14" :f7="visibleBreakpointDisabled ? 'pin_slash' : 'pin'" color="gray" />
         </f7-link>
 
-        <div slot="fixed" class="account" v-if="ready && this.$store.getters.apiEndpoint('auth')">
+        <div slot="fixed" class="account" v-if="ready && $store.getters.apiEndpoint('auth')">
           <div class="display-flex justify-content-center">
             <div class="hint-signin" v-if="!$store.getters.user && !$store.getters.pages.filter((p) => p.uid !== 'overview').length">
               <em>{{ $t('sidebar.tip.signIn') }}<br><f7-icon f7="arrow_down" size="20" /></em>
@@ -133,7 +132,7 @@
           </div>
           <f7-list v-if="$store.getters.user" media-list>
             <f7-list-item :title="$store.getters.user.name" :footer="serverDisplayUrl" io="f7:person_alt_circle_fill" link="/profile/" no-chevron panel-close view=".view-main"
-                          :class="{ currentsection: currentUrl.indexOf('/profile') >= 0 }">
+                          :class="{ currentsection: currentPath.profile }">
               <f7-icon slot="media" size="36" ios="f7:person_alt_circle_fill" aurora="f7:person_alt_circle_fill" md="f7:person_alt_circle_fill" color="gray" />
             </f7-list-item>
           </f7-list>
@@ -377,9 +376,6 @@ export default {
         filled: true
       },
 
-      showSettingsSubmenu: false,
-      showAddonsSubmenu: false,
-      showDeveloperSubmenu: false,
       showDeveloperDock: false,
       activeDock: 'tools',
       activeToolTab: 'pin',
@@ -392,6 +388,21 @@ export default {
     messages: loadLocaleMessages(require.context('@/assets/i18n/about'))
   },
   computed: {
+    currentPath () {
+      // Returns a hierarchical object representation of the currentUrl.
+      //   '/settings/services/openhabcloud/' -> currentPath.settings.services.openhabcloud
+      //   { $key: 'settings', settings: { $key: 'services', services: { $key: 'openhabcloud', openhabcloud: { $end: true } } } }
+      // When the object has no sub-objects, it will contain '$end': true:
+      //   '/settings/' -> currentPath.settings.$end is true
+      //   '/settings/addons/' -> currentPath.settings.$end is undefined, but currentPath.settings.addons.$end is true
+      // To ease traversing the object, each level also has a '$key' property containing the name of the segment
+      //   '/settings/services/openhabcloud/' -> currentPath.$key: 'settings', currentPath.settings.$key: 'services', and so on.
+      return this.currentUrl
+        .replace(/\?.*$/, '') // strip query parameters
+        .replace(/^\/|\/$/g, '') // strip leading and trailing slashes
+        .split('/')
+        .reduceRight((a, b) => { return { $key: b, [b]: a } }, { $end: true })
+    },
     serverDisplayUrl () {
       return window.location.origin
     }
@@ -509,6 +520,7 @@ export default {
               const order2 = p2.config.order || 1000
               return order1 - order2
             })
+          this.updateTitle()
 
           if (data[2]) dayjs.locale(data[2].key)
 
@@ -615,11 +627,58 @@ export default {
       }
     },
     updateUrl (newUrl) {
-      this.showSettingsSubmenu = newUrl.indexOf('/settings/') === 0
-      this.showAddonsSubmenu = newUrl.indexOf('/addons/') === 0
-      this.showDeveloperSubmenu = newUrl.indexOf('/developer/') === 0
       this.currentUrl = newUrl
       this.$store.commit('setPagePath', this.currentUrl)
+    },
+    updateTitle () {
+      const title = [this.f7params.name] // ['openHAB']
+      const navbarTitle = () => this.$$('.page-current .navbar .title')?.[0]?.textContent
+
+      // Some special cases where the title should be different
+      if (this.currentPath.page) {
+        title.unshift(this.$store.getters.page(this.currentPath.page?.$key)?.config?.label)
+      } else if (this.currentPath.overview) {
+        const config = this.$store.getters.page('overview')?.config
+        const localizedTitle = this.$t(`home.${this.currentPath.$key}.title`)
+        title.unshift(config?.browserTitle || (config?.label === 'Overview' ? localizedTitle : config?.label))
+      } else if (this.currentPath.locations || this.currentPath.equipment || this.currentPath.properties) {
+        title.unshift(this.$t(`home.${this.currentPath.$key}.title`))
+      } else if (this.currentPath.settings?.addons && navbarTitle()) {
+        // The navbar title on these pages starts with "Configure ....", so don't add "Settings" in front of it
+        title.unshift(navbarTitle())
+      } else {
+        // Get the 3rd level path object
+        // Example: '/settings/things/[uid]' -> {key: '[uid]', '[uid]': {$end: true}}
+        let path = this.currentPath[this.currentPath.$key] // 2nd level
+        path = path[path.$key] // 3rd level
+
+        if (this.currentPath.settings?.pages) {
+          // The url in Settings -> Pages section is /settings/pages/[pagetype]/[pageid]
+          // We don't want [pagetype], so skip further down the path
+          path = path[path.$key]
+        } else if (this.currentPath.addons && path?.$key) {
+          // The url in Add-ons section is /addons/[type]/[type]-[addonid]
+          // We don't want [type] in the last segment
+          path = { $key: path.$key.split('-')[1] || path.$key }
+        }
+
+        if (this.currentPath.settings?.services && navbarTitle()) {
+          // Use a friendlier title for the services pages
+          title.unshift(navbarTitle())
+        } else {
+          // Use the path segment, e.g. Item_Id, binding:thingtype:thingid, etc.
+          title.unshift(path?.$key)
+        }
+
+        let currentSection = this.$$('.currentsection .item-title')?.[0]?.textContent
+        if (this.currentPath.settings?.transformations) {
+          currentSection = 'Transformations'
+        } else if (this.currentPath.settings?.persistence) {
+          currentSection = 'Persistence'
+        }
+        title.unshift(currentSection)
+      }
+      document.title = title.filter(t => t).join(' - ')
     }
   },
   created () {
@@ -688,9 +747,14 @@ export default {
         }
       })
 
+      this.$f7.on('pageAfterIn', (page) => {
+        this.$nextTick(this.updateTitle)
+      })
+
       // needed by updateCurrentUrl() inside addon-store onTabShow()
       this.$f7.on('routeUrlUpdate', (newRoute, router) => {
         this.updateUrl(newRoute.url)
+        this.$nextTick(this.updateTitle)
       })
 
       this.$f7.on('sidebarRefresh', () => {
