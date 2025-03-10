@@ -637,9 +637,12 @@ export default {
       // Some special cases where the title should be different
       if (this.currentPath.page) {
         title.unshift(this.$store.getters.page(this.currentPath.page?.$key)?.config?.label)
-      } else if (this.currentPath.overview || this.currentPath.locations || this.currentPath.equipment || this.currentPath.properties) {
+      } else if (this.currentPath.overview) {
         const config = this.$store.getters.page('overview')?.config
-        title.unshift(config?.browserTitle || config?.label)
+        const localizedTitle = this.$t(`home.${this.currentPath.$key}.title`)
+        title.unshift(config?.browserTitle || (config?.label === 'Overview' ? localizedTitle : config?.label))
+      } else if (this.currentPath.locations || this.currentPath.equipment || this.currentPath.properties) {
+        title.unshift(this.$t(`home.${this.currentPath.$key}.title`))
       } else if (this.currentPath.settings?.addons && navbarTitle) {
         // The navbar title on these pages starts with "Configure ....", so don't add "Settings" in front of it
         title.unshift(navbarTitle())
