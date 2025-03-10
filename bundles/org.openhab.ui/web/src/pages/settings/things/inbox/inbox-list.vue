@@ -423,6 +423,7 @@ export default {
     performActionOnSelection (action) {
       let progressMessage, successMessage, promises
       let navigateToThingsPage = false
+      let clearSelectionAndReload = true
       switch (action) {
         case 'delete':
           progressMessage = 'Removing Inbox Entries...'
@@ -460,6 +461,7 @@ export default {
               Promise.reject('Failed to copy to clipboard')
             }
           })]
+          clearSelectionAndReload = false
           break
       }
 
@@ -472,9 +474,9 @@ export default {
           closeTimeout: 2000
         }).open()
         const searchFor = this.selectedItems.join(',')
-        this.selectedItems = []
+        if (clearSelectionAndReload) this.selectedItems = []
         dialog.close()
-        this.load()
+        if (clearSelectionAndReload) this.load()
         if (navigateToThingsPage) {
           this.$f7router.navigate('/settings/things/', {
             props: {
