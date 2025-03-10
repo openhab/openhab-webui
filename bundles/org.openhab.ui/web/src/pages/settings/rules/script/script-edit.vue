@@ -316,7 +316,7 @@ export default {
       this.savedRule = cloneDeep(this.rule)
       if (this.currentModule) {
         this.savedCurrentModule = cloneDeep(this.currentModule)
-        this.savedMode = this.mode = this.currentModule.configuration.type
+        this.savedMode = this.mode
         this.savedScript = this.script = this.currentModule.configuration.script || ''
       }
     },
@@ -392,7 +392,6 @@ export default {
       })
     },
     isMimeTypeAvailable (mimeType) {
-      if (mimeType === 'application/javascript;version=ECMAScript-2021') mimeType = 'application/javascript'
       return this.languages.map(l => l.contentType).includes(mimeType)
     },
     mimeTypeDescription (mode) {
@@ -438,6 +437,8 @@ export default {
           this.isScriptRule = true
         }
 
+        this.mode = this.currentModule.configuration.type
+
         this.initDirty()
 
         if (!this.rule.editable) {
@@ -468,6 +469,13 @@ export default {
         }
 
         this.loadScriptModuleTypes().then(() => {
+          if (this.rule.editable && this.mode === 'application/javascript;version=ECMAScript-2021') {
+            const message = 'Your JavaScript script was created with a previous version of openHAB. Please save your script.'
+
+            this.changeLanguage(this.GRAALJS_MIME_TYPE)
+            this.$f7.dialog.alert(message)
+          }
+
           this.loading = false
           this.ready = true
           if (!this.eventSource) this.startEventSource()
