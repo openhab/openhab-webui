@@ -76,9 +76,7 @@ export default {
           if (direct.length) return direct
           return findPoints(allEquipmentPoints(this.element.equipment), 'Point_Status_LowBattery', true)
         case 'lights':
-          direct = findPoints(this.element.properties, 'Point_Control', true, 'Property_Light')
-          if (direct.length) return direct
-          return findPoints(allEquipmentPoints(this.element.equipment), 'Point_Control', true, 'Property_Light')
+          return [...this.queryLightPoints, ...this.queryLightEquipment('Equipment_Lightbulb'), ...this.queryLightEquipment('Equipment_LightStripe')]
         case 'windows':
           equipment = findEquipment(this.element.equipment, 'Equipment_Window', false)
           if (!equipment.length) return []
@@ -201,6 +199,11 @@ export default {
         default:
           return this.map.filter((state) => state === 'ON' || state === 'OPEN').length
       }
+    },
+    queryLightPoints () {
+      let direct = findPoints(this.element.properties, 'Point_Control', true, 'Property_Light')
+      if (direct.length) return direct
+      return findPoints(allEquipmentPoints(this.element.equipment), 'Point_Control', true, 'Property_Light')
     }
   },
   methods: {
@@ -212,6 +215,14 @@ export default {
         }
       }
       return this.exprAst
+    },
+    queryLightEquipment (equipmentType) {
+      let equipment = findEquipment(this.element.equipment, equipmentType, false)
+      if (!equipment.length) return []
+      let allPoints = allEquipmentPoints(equipment)
+      let points = findPoints(allPoints, 'Point_Status_Light', false)
+      if (points.length) return points
+      return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
     }
   }
 }
