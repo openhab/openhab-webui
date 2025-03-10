@@ -127,7 +127,7 @@
               </f7-link>
             </div>
           </f7-toolbar>
-          <script-general-settings :createMode="createMode" :rule="rule" :module="currentModule" :module-type="scriptModuleType" :module-types="moduleTypes" :isScriptRule="isScriptRule" :mode="mode" :languages="languages" @newLanguage="changeLanguage" />
+          <script-general-settings class="margin-top" :createMode="createMode" :rule="rule" :module="currentModule" :module-type="scriptModuleType" :module-types="moduleTypes" :isScriptRule="isScriptRule" :mode="mode" :languages="languages" @newLanguage="changeLanguage" />
           <f7-block class="block-narrow" v-if="editable && isScriptRule">
             <f7-col>
               <f7-list>
