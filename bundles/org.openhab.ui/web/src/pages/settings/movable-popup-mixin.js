@@ -17,24 +17,29 @@ export default {
   },
   methods: {
     /**
-     * Make the given popupRef movable by dragging the draggableRef element
-     * If draggableRef is not provided, the popupRef will be used as the draggable element
-     * 
-     * This method needs to be called in the popup:open event handler, and
-     * cleanupMovablePopup() must be called in the popup:close event handler.
-     * 
-     * The popupRef must be a reference to the popup element, e.g.
-     *   <f7-popup ref="popupRef"
-     * And the draggableRef must be a reference to the element that will be used to 
+     * Make the given `popupRef` movable by dragging the `draggableRef` element.
+     * If `draggableRef` is not provided, the `popupRef` will be used as the draggable element.
+     *
+     * This method needs to be called in the `popup:open` event handler, and
+     * `cleanupMovablePopup()` must be called in the `popup:close` event handler.
+     *
+     * The `popupRef` must be a reference to the popup element, e.g.
+     * ```
+     *   <f7-popup ref="popupRef">
+     * ```
+     *
+     * The `draggableRef` must be a reference to the element that will be used to
      * drag the popup. This is usually the navbar or the header of the popup. e.g.
+     * ```
      *   <f7-navbar ref="navbar">
-     * 
+     *
      *   this.initializeMovablePopup(this.$refs.popupRef, this.$refs.navbar)
-     * 
+     * ```
+     *
      * For usage example, see widget-config-popup.vue, and widget-code-popup.vue.
-     * 
-     * @param {Object} popupRef - The reference to the popup element
-     * @param {Object} [draggableRef] - The reference to the draggable element
+     *
+     * @param {Vue} popupRef The reference to the popup element
+     * @param {Vue} [draggableRef] The reference to the draggable element
      */
     initializeMovablePopup (popupRef, draggableRef = null) {
       if (!popupRef) {
