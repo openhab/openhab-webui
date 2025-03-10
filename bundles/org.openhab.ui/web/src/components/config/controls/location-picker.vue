@@ -54,16 +54,20 @@ export default {
       this.center = (this.value) ? latLng(this.value.split(',')) : latLng(48, 6)
       this.showMap = true
       if (!this.value) {
-        this.$oh.api.get('/rest/services/org.openhab.i18n/config').then((data) => {
-          if (data.location) {
-            this.center = latLng(data.location.split(','))
-            this.zoom = 15
-            this.showMap = false
-            this.$nextTick(() => {
-              this.showMap = true
-            })
-          }
-        })
+        this.$oh.api.get('/rest/services/org.openhab.i18n/config')
+          .then((data) => {
+            if (data.location) {
+              this.center = latLng(data.location.split(','))
+              this.zoom = 15
+              this.showMap = false
+              this.$nextTick(() => {
+                this.showMap = true
+              })
+            }
+          })
+          .catch(() => {
+            // silently ignore if the request is not permitted for the user
+          })
       }
     })
   },
