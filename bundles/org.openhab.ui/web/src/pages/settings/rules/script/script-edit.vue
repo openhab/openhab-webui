@@ -131,8 +131,8 @@
           <f7-block class="block-narrow" v-if="editable && isScriptRule">
             <f7-col>
               <f7-list>
-                <f7-list-button color="blue" @click="copyRule">
-                  Copy Script
+                <f7-list-button color="blue" @click="duplicateRule">
+                  Duplicate Script
                 </f7-list-button>
                 <f7-list-button color="red" @click="deleteRule">
                   Remove Script
@@ -388,7 +388,7 @@ export default {
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
-        this.$f7router.navigate(this.$f7route.url.replace(/(\/add)|(\/copy)/, '/' + this.rule.uid), { reloadCurrent: true })
+        this.$f7router.navigate(this.$f7route.url.replace(/(\/add)|(\/duplicate)/, '/' + this.rule.uid), { reloadCurrent: true })
       })
     },
     isMimeTypeAvailable (mimeType) {
@@ -603,10 +603,10 @@ export default {
         run(false)
       }
     },
-    copyRule () {
+    duplicateRule () {
       let ruleClone = cloneDeep(this.rule)
       this.$f7router.navigate({
-        url: '/settings/scripts/copy'
+        url: '/settings/scripts/duplicate'
       }, {
         props: {
           ruleCopy: ruleClone
