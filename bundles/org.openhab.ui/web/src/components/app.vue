@@ -1,5 +1,5 @@
 <template>
-  <f7-app v-if="init" :style="{ visibility: (($store.getters.user || $store.getters.page('overview')) || communicationFailureMsg) ? '' : 'hidden' }" :params="f7params" :class="{ 'theme-dark': this.themeOptions.dark === 'dark', 'theme-filled': this.themeOptions.bars === 'filled' }">
+  <f7-app v-if="init" :style="{ visibility: (($store.getters.user || $store.getters.page('overview')) || communicationFailureMsg) ? '' : 'hidden' }" :params="f7params" :class="{ 'theme-dark': themeOptions.dark === 'dark', 'theme-filled': themeOptions.bars === 'filled' }">
     <!-- Left Panel -->
     <f7-panel v-show="ready" left :cover="showSidebar" class="sidebar" :visible-breakpoint="1024">
       <f7-page>
@@ -73,7 +73,7 @@
                         :class="{ currentsection: currentPath.addons?.$end }">
             <f7-icon slot="media" ios="f7:bag_fill" aurora="f7:bag_fill" md="material:shopping_bag" color="gray" />
           </f7-list-item>
-          <li v-if="this.currentPath.addons && $store.getters.apiEndpoint('addons')">
+          <li v-if="currentPath.addons && $store.getters.apiEndpoint('addons')">
             <ul class="menu-sublinks">
               <f7-list-item v-for="section in Object.keys(AddonTitles)" :key="section" :link="`/addons/${section}/`"
                             :title="AddonTitles[section]" view=".view-main" panel-close :animate="false" no-chevron
@@ -88,7 +88,7 @@
                         :class="{ currentsection: currentPath.developer?.$end }">
             <f7-icon slot="media" ios="f7:wrench_fill" aurora="f7:wrench_fill" md="material:construction" color="gray" />
           </f7-list-item>
-          <li v-if="this.currentPath.developer">
+          <li v-if="currentPath.developer">
             <ul class="menu-sublinks">
               <f7-list-item v-if="$store.getters.apiEndpoint('ui')" link="/developer/widgets/" title="Widgets" view=".view-main" panel-close :animate="false" no-chevron
                             :class="{ currentsection: currentPath.developer?.widgets }">
@@ -120,10 +120,10 @@
           </f7-list-item>
         </f7-list>
         <f7-link class="breakpoint-pin" @click="toggleVisibleBreakpoint">
-          <f7-icon slot="media" size="14" :f7="this.visibleBreakpointDisabled ? 'pin_slash' : 'pin'" color="gray" />
+          <f7-icon slot="media" size="14" :f7="visibleBreakpointDisabled ? 'pin_slash' : 'pin'" color="gray" />
         </f7-link>
 
-        <div slot="fixed" class="account" v-if="ready && this.$store.getters.apiEndpoint('auth')">
+        <div slot="fixed" class="account" v-if="ready && $store.getters.apiEndpoint('auth')">
           <div class="display-flex justify-content-center">
             <div class="hint-signin" v-if="!$store.getters.user && !$store.getters.pages.filter((p) => p.uid !== 'overview').length">
               <em>{{ $t('sidebar.tip.signIn') }}<br><f7-icon f7="arrow_down" size="20" /></em>
