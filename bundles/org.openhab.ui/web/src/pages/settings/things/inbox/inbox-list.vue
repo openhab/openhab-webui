@@ -422,6 +422,7 @@ export default {
     },
     performActionOnSelection (action) {
       let progressMessage, successMessage, promises
+      let navigateToThingsPage = false
       switch (action) {
         case 'delete':
           progressMessage = 'Removing Inbox Entries...'
@@ -432,6 +433,7 @@ export default {
           progressMessage = 'Approving Inbox Entries...'
           successMessage = `${this.selectedItems.length} entries approved`
           promises = this.filterSelectedItems().map((e) => this.$oh.api.postPlain('/rest/inbox/' + e.thingUID + '/approve', e.label))
+          navigateToThingsPage = true
           break
         case 'ignore':
           progressMessage = 'Ignoring Inbox Entries...'
@@ -463,18 +465,23 @@ export default {
 
       let dialog = this.$f7.dialog.progress(progressMessage)
 
-      Promise.all(promises).then((data) => {
+      Promise.all(promises).then(() => {
         this.$f7.toast.create({
           text: successMessage,
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
+        const searchFor = this.selectedItems.join(',')
+        this.selectedItems = []
         dialog.close()
-        this.$f7router.navigate('/settings/things/', {
-          props: {
-            searchFor: this.selectedItems.join(',')
-          }
-        })
+        this.load()
+        if (navigateToThingsPage) {
+          this.$f7router.navigate('/settings/things/', {
+            props: {
+              searchFor
+            }
+          })
+        }
       }).catch((err) => {
         dialog.close()
         this.load()
