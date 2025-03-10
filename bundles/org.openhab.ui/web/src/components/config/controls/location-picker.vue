@@ -36,7 +36,7 @@ export default {
   data () {
     return {
       showMap: false,
-      zoom: 4,
+      zoom: 1,
       center: latLng(48, 6),
       // url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       url: `https://a.basemaps.cartocdn.com/${this.$f7.data.themeOptions.dark}_all/{z}/{x}/{y}.png`,
@@ -49,10 +49,29 @@ export default {
   },
   mounted () {
     this.$nextTick(() => {
-      this.zoom = (this.value) ? 13 : 4
+      this.zoom = (this.value) ? 15 : 1
       this.marker = (this.value) ? latLng(this.value.split(',')) : null
       this.center = (this.value) ? latLng(this.value.split(',')) : latLng(48, 6)
       this.showMap = true
+      if (!this.value) {
+        this.$oh.api.get('/rest/services/org.openhab.i18n/config')
+          .then((data) => {
+            if (data.location) {
+              this.center = latLng(data.location.split(','))
+              this.zoom = 15
+              this.showMap = false
+              this.$nextTick(() => {
+                this.showMap = true
+              })
+            }
+          })
+          .catch((err) => {
+            // silently ignore if the request is not permitted for the user
+            if (!(err === 'Forbidden' || err === 403)) {
+              return Promise.reject(err)
+            }
+          })
+      }
     })
   },
   methods: {
