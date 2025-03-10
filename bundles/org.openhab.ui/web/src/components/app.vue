@@ -670,7 +670,12 @@ export default {
           title.unshift(path?.$key)
         }
 
-        const currentSection = this.$$('.currentsection .item-title')?.[0]?.textContent
+        let currentSection = this.$$('.currentsection .item-title')?.[0]?.textContent
+        if (this.currentPath.settings?.transformations) {
+          currentSection = 'Transformations'
+        } else if (this.currentPath.settings?.persistence) {
+          currentSection = 'Persistence'
+        }
         title.unshift(currentSection)
       }
       document.title = title.filter(t => t).join(' - ')
