@@ -99,7 +99,7 @@ export default {
       ready: false,
       loading: false,
       initSearchbar: false,
-      things: [],
+      things: [], // This is used for Thing UID validation inside thing-mixin.js
       thingTypes: [],
       discoverySupported: false,
       inputSupported: null,

@@ -1,5 +1,4 @@
 import ThingMixin from '@/components/thing/thing-mixin'
-import { on } from 'process'
 
 export default {
   mixins: [ThingMixin],
