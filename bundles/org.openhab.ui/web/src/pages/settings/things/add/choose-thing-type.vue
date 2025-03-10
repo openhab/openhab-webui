@@ -99,6 +99,7 @@ export default {
       ready: false,
       loading: false,
       initSearchbar: false,
+      things: [], // This is used for Thing UID validation inside thing-mixin.js
       thingTypes: [],
       discoverySupported: false,
       inputSupported: null,
@@ -136,6 +137,9 @@ export default {
           this.initSearchbar = true
           this.ready = true
         })
+      })
+      this.$oh.api.get('/rest/things?summary=true&staticDataOnly=true').then((things) => {
+        this.things = things
       })
     },
     finishScanning () {
@@ -240,8 +244,7 @@ export default {
             }
           ],
           [
-            this.entryActionsAddAsThingButton(entry, this.loadInbox),
-            this.entryActionsAddAsThingWithCustomIdButton(entry, this.loadInbox)
+            this.entryActionsAddAsThingButton(entry, this.loadInbox)
           ]
         ]
       })

@@ -1,4 +1,7 @@
+import ThingMixin from '@/components/thing/thing-mixin'
+
 export default {
+  mixins: [ThingMixin],
   methods: {
     /**
      * Approve the given entry from the inbox.
@@ -31,39 +34,85 @@ export default {
         color: 'green',
         bold: true,
         onClick: () => {
-          this.$f7.dialog.prompt(`This will create a new Thing of type ${entry.thingTypeUID} with the following label:`,
-            'Add as Thing',
-            (label) => {
-              this.approveEntry(entry, label).finally(() => {
-                loadFn()
-              })
-            },
-            null,
-            entry.label)
-        }
-      }
-    },
-    entryActionsAddAsThingWithCustomIdButton (entry, loadFn) {
-      return {
-        text: 'Add as Thing (with custom ID)',
-        color: 'blue',
-        bold: true,
-        onClick: () => {
-          this.$f7.dialog.prompt(`This will create a new Thing of type ${entry.thingTypeUID}. You can change the suggested Thing ID below:`,
-            'Add as Thing',
-            (newThingId) => {
-              this.$f7.dialog.prompt('Enter the desired label of the new Thing:',
-                'Add as Thing',
-                (label) => {
-                  this.approveEntry(entry, label, newThingId).finally(() => {
-                    loadFn()
-                  })
-                },
-                null,
-                entry.label)
-            },
-            null,
-            entry.thingUID.substring(entry.thingUID.lastIndexOf(':') + 1))
+          const lastColonIdx = entry.thingUID.lastIndexOf(':')
+          const uidPrefix = entry.thingUID.substring(0, lastColonIdx + 1)
+          const defaultId = entry.thingUID.substring(lastColonIdx + 1)
+
+          const okButtonClicked = (dialog, redirect) => {
+            const newThingId = dialog.$el.find('.id-input').val()
+            const newThingUID = uidPrefix + newThingId
+
+            const error = this.validateThingUID(newThingUID, newThingId)
+            const label = dialog.$el.find('.label-input').val()
+            if (!error && label) {
+              dialog.close()
+              this.approveEntry(entry, label, newThingId)
+                .then(() => {
+                  if (redirect) this.$f7router.navigate('/settings/things/' + newThingUID)
+                  else loadFn()
+                })
+                .catch(() => loadFn())
+            }
+          }
+
+          this.$f7.dialog.create({
+            title: 'Add as Thing',
+            text: `This will create a new Thing of type ${entry.thingTypeUID}.`,
+            content: `
+                <div class="dialog-text">Thing ID:</div>
+                <div class="dialog-input-field input"><input type="text" class="dialog-input id-input"></div>
+                <div class="input-info id-info"></div>
+                <div>&nbsp;</div>
+                <div class="dialog-text">Thing label:</div>
+                <div class="dialog-input-field input"><input type="text" class="dialog-input label-input"></div>
+                <div class="input-info label-info"></div>
+              `,
+            buttons: [
+              {
+                text: this.$f7.params.dialog.buttonCancel,
+                color: 'gray',
+                keyCodes: [27],
+                close: true
+              },
+              {
+                text: 'OK &rarr; Edit',
+                bold: true,
+                close: false,
+                onClick: (dialog) => okButtonClicked(dialog, true)
+              },
+              {
+                text: 'OK',
+                bold: true,
+                keyCodes: [13],
+                close: false,
+                onClick: (dialog) => okButtonClicked(dialog, false)
+              }
+            ],
+            destroyOnClose: true,
+            cssClass: 'thing-inbox-approve-dialog',
+            on: {
+              opened: (dialog) => {
+                const id = dialog.$el.find('.id-input')
+                id.val(defaultId)
+                id.focus()
+
+                id.on('input', () => {
+                  const error = this.validateThingUID(uidPrefix + id.val(), id.val())
+                  const info = dialog.$el.find('.id-info')
+                  info.text(error)
+                  info[0].style.color = error ? 'red' : ''
+                })
+
+                const label = dialog.$el.find('.label-input')
+                label.val(entry.label)
+                label.on('input', () => {
+                  const info = dialog.$el.find('.label-info')
+                  info.text(label.val() ? '' : 'Label is required')
+                  info[0].style.color = label.val() ? '' : 'red'
+                })
+              }
+            }
+          }).open()
         }
       }
     }
