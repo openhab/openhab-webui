@@ -139,7 +139,7 @@
               <f7-list-button v-if="thing.statusInfo.statusDetail === 'HANDLER_MISSING_ERROR'" color="blue" title="Install Binding" @click="installBinding" />
               <f7-list-button v-if="!error" color="blue" title="Duplicate Thing" @click="duplicateThing" />
               <f7-list-button v-if="!error" color="blue" title="Copy DSL Definition" @click="copyThingDsl" />
-              <f7-list-button v-if="editable" color="red" title="Remove Thing" @click="deleteThing"/>
+              <f7-list-button v-if="editable" color="red" title="Remove Thing" @click="deleteThing" />
             </f7-list>
           </f7-col>
         </f7-block>
