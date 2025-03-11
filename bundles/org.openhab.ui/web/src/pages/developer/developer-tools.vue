@@ -33,7 +33,7 @@
                 <f7-list-item media-item title="Copy DSL Definitions for All Items" footer="Copy all Items' DSL definitions to clipboard" link="#" @click="copyItemsDsl">
                   <f7-icon slot="media" f7="square_on_circle" color="gray" />
                 </f7-list-item>
-                <f7-list-item media-item title="Add Items from Textual Definition" footer="Create or update items &amp; links in bulk" link="add-items-dsl">
+                <f7-list-item media-item title="Add Items from DSL Definition" footer="Create or update items &amp; links in bulk" link="add-items-dsl">
                   <f7-icon slot="media" f7="text_badge_plus" color="gray" />
                 </f7-list-item>
               </f7-list>
