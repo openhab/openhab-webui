@@ -137,8 +137,15 @@
           <f7-col>
             <f7-list>
               <f7-list-button v-if="thing.statusInfo.statusDetail === 'HANDLER_MISSING_ERROR'" color="blue" title="Install Binding" @click="installBinding" />
-              <f7-list-button v-if="!error" color="blue" title="Copy Thing" @click="copyThing" />
-              <f7-list-button v-if="editable" color="red" title="Delete Thing" @click="deleteThing" />
+              <f7-list-button v-if="!error" color="blue" @click="duplicateThing">
+                Duplicate Thing
+              </f7-list-button>
+              <f7-list-button v-if="!error" color="blue" @click="copyThingDsl">
+                Copy DSL Definition
+              </f7-list-button>
+              <f7-list-button v-if="editable" color="red" @click="deleteThing">
+                Remove Thing
+              </f7-list-button>
             </f7-list>
           </f7-col>
         </f7-block>
@@ -166,44 +173,10 @@
         <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
       </f7-tab>
     </f7-tabs>
-
-    <!-- <f7-fab position="right-bottom" color="blue" slot="fixed" @click="codePopupOpened = true">
-      <f7-icon ios="f7:document_text" md="material:assignment" aurora="f7:document_text"></f7-icon>
-      <f7-icon ios="f7:close" md="material:close"></f7-icon>
-    </f7-fab>
-    <f7-popup tablet-fullscreen :opened="codePopupOpened" close-on-escape @popup:closed="codePopupOpened = false">
-      <f7-page>
-        <f7-toolbar>
-          <div class="left">
-            <f7-link @click="copyTextualDefinition">Copy</f7-link>
-          </div>
-          <div class="right">
-            <f7-link popup-close>Close</f7-link>
-          </div>
-        </f7-toolbar>
-        <textarea class="textual-definition" id="textual-definition" :value="textualDefinition"></textarea>
-      </f7-page>
-    </f7-popup> -->
   </f7-page>
 </template>
 
 <style lang="stylus">
-code.textual-definition pre
-  overflow-x auto
-  white-space normal
-
-pre.textual-definition
-  padding 5px
-
-textarea.textual-definition
-  position absolute
-  top var(--f7-toolbar-height)
-  left 5px
-  right 5px
-  bottom 0
-  width calc(100% - 10px)
-  font-family monospace
-
 .md .code-popup
   margin-bottom 0 !important
 
@@ -272,12 +245,15 @@ import ZWaveNetworkPopup from '@/pages/settings/things/zwave/zwave-network-popup
 import AddChannelPage from '@/pages/settings/things/channel/channel-add.vue'
 import AddFromThingPage from '@/pages/settings/model/add-from-thing.vue'
 
-import buildTextualDefinition from './thing-textual-definition'
-
 import ThingStatus from '@/components/thing/thing-status-mixin'
 
 import DirtyMixin from '../dirty-mixin'
 import ThingActionPopup from '@/pages/settings/things/thing-action-popup.vue'
+
+import Vue from 'vue'
+import Clipboard from 'v-clipboard'
+
+Vue.use(Clipboard)
 
 let copyToast = null
 
@@ -310,17 +286,10 @@ export default {
        */
       configActionsByGroup: [],
       thingEnabled: true,
-      codePopupOpened: false,
       eventSource: null,
       thingYaml: null,
       notEditableMsg: 'This Thing is not editable because it has been provisioned from a file.'
     }
-  },
-  created () {
-    copyToast = this.$f7.toast.create({
-      text: 'Textual definition copied to clipboard',
-      closeTimeout: 2000
-    })
   },
   computed: {
     editable () {
@@ -333,10 +302,6 @@ export default {
     isExtensible () {
       if (!this.thingType || !this.thingType.extensibleChannelTypeIds) return false
       return this.thingType.extensibleChannelTypeIds.length > 0
-    },
-    textualDefinition () {
-      if (!this.thingType || !this.thing) return
-      return buildTextualDefinition(this.thing, this.thingType)
     },
     context () {
       return {
@@ -619,14 +584,28 @@ export default {
         }
       })
     },
-    copyThing () {
+    duplicateThing () {
       let thingClone = cloneDeep(this.thing)
       this.$f7router.navigate({
-        url: '/settings/things/copy'
+        url: '/settings/things/duplicate'
       }, {
         props: {
           thingTypeId: this.thing.thingTypeUID,
           thingCopy: thingClone
+        }
+      })
+    },
+    copyThingDsl () {
+      this.$oh.api.getPlain({
+        url: '/rest/file-format/things/' + this.thingId,
+        headers: { accept: 'text/vnd.openhab.dsl.thing' }
+      }).then((definition) => {
+        if (this.$clipboard(definition)) {
+          this.$f7.toast.create({
+            text: 'Thing DSL definition copied to clipboard',
+            destroyOnClose: true,
+            closeTimeout: 2000
+          }).open()
         }
       })
     },
@@ -829,12 +808,6 @@ export default {
     stopEventSource () {
       this.$oh.sse.close(this.eventSource)
       this.eventSource = null
-    },
-    copyTextualDefinition () {
-      let el = document.getElementById('textual-definition')
-      el.select()
-      document.execCommand('copy')
-      copyToast.open()
     },
     toYaml () {
       const editableThing = {
