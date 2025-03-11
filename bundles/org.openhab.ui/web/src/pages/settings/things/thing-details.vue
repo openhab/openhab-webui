@@ -137,15 +137,9 @@
           <f7-col>
             <f7-list>
               <f7-list-button v-if="thing.statusInfo.statusDetail === 'HANDLER_MISSING_ERROR'" color="blue" title="Install Binding" @click="installBinding" />
-              <f7-list-button v-if="!error" color="blue" @click="duplicateThing">
-                Duplicate Thing
-              </f7-list-button>
-              <f7-list-button v-if="!error" color="blue" @click="copyThingDsl">
-                Copy DSL Definition
-              </f7-list-button>
-              <f7-list-button v-if="editable" color="red" @click="deleteThing">
-                Remove Thing
-              </f7-list-button>
+              <f7-list-button v-if="!error" color="blue" title="Duplicate Thing" @click="duplicateThing" />
+              <f7-list-button v-if="!error" color="blue" title="Copy DSL Definition" @click="copyThingDsl" />
+              <f7-list-button v-if="editable" color="red" title="Remove Thing" @click="deleteThing"/>
             </f7-list>
           </f7-col>
         </f7-block>
@@ -229,6 +223,11 @@ p.action-description
 </style>
 
 <script>
+import Vue from 'vue'
+
+import Clipboard from 'v-clipboard'
+Vue.use(Clipboard)
+
 import YAML from 'yaml'
 import cloneDeep from 'lodash/cloneDeep'
 import fastDeepEqual from 'fast-deep-equal/es6'
@@ -249,13 +248,6 @@ import ThingStatus from '@/components/thing/thing-status-mixin'
 
 import DirtyMixin from '../dirty-mixin'
 import ThingActionPopup from '@/pages/settings/things/thing-action-popup.vue'
-
-import Vue from 'vue'
-import Clipboard from 'v-clipboard'
-
-Vue.use(Clipboard)
-
-let copyToast = null
 
 export default {
   mixins: [ThingStatus, DirtyMixin],
