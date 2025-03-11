@@ -27,7 +27,13 @@
                 <f7-list-item media-item title="Block Libraries" footer="Develop custom extensions for Blockly scripts" link="blocks/">
                   <f7-icon slot="media" f7="ticket" color="gray" />
                 </f7-list-item>
-                <f7-list-item media-item title="Add Items from Textual Definition" footer="Create or update items &amp; links in bulk" link="add-items-dsl">
+                <f7-list-item media-item title="Copy DSL Definitions for All Things" footer="Copy all Things' DSL definitions to clipboard" link="#" @click="copyThingsDsl">
+                  <f7-icon slot="media" f7="lightbulb" color="gray" />
+                </f7-list-item>
+                <f7-list-item media-item title="Copy DSL Definitions for All Items" footer="Copy all Items' DSL definitions to clipboard" link="#" @click="copyItemsDsl">
+                  <f7-icon slot="media" f7="square_on_circle" color="gray" />
+                </f7-list-item>
+                <f7-list-item media-item title="Add Items from DSL Definition" footer="Create or update items &amp; links in bulk" link="add-items-dsl">
                   <f7-icon slot="media" f7="text_badge_plus" color="gray" />
                 </f7-list-item>
               </f7-list>
@@ -125,6 +131,10 @@
 </style>
 
 <script>
+import Vue from 'vue'
+import Clipboard from 'v-clipboard'
+
+Vue.use(Clipboard)
 
 export default {
   components: {
@@ -167,6 +177,34 @@ export default {
       this.$oh.ws.close(this.wsClient)
       this.wsClient = null
       this.wsEvents = []
+    },
+    copyThingsDsl () {
+      this.$oh.api.getPlain({
+        url: '/rest/file-format/things',
+        headers: { accept: 'text/vnd.openhab.dsl.thing' }
+      }).then((definition) => {
+        if (this.$clipboard(definition)) {
+          this.$f7.toast.show({
+            text: 'Things DSL definitions copied to clipboard',
+            destroyOnClose: true,
+            closeTimeout: 2000
+          }).open()
+        }
+      })
+    },
+    copyItemsDsl () {
+      this.$oh.api.getPlain({
+        url: '/rest/file-format/items',
+        headers: { accept: 'text/vnd.openhab.dsl.item' }
+      }).then((definition) => {
+        if (this.$clipboard(definition)) {
+          this.$f7.toast.show({
+            text: 'Items DSL definitions copied to clipboard',
+            destroyOnClose: true,
+            closeTimeout: 2000
+          }).open()
+        }
+      })
     }
   },
   asyncComputed: {
