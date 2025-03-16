@@ -13,7 +13,7 @@
             Pinned Objects
           </f7-block-title>
         </f7-block>
-        <f7-block class="no-margin no-padding" v-if="!pinnedObjects.items.length && !pinnedObjects.things.length && !pinnedObjects.rules.length && !pinnedObjects.scenes.length && !pinnedObjects.scripts.length && !pinnedObjects.pages.length && !pinnedObjects.transformations.length">
+        <f7-block class="no-margin no-padding" v-if="!pinnedObjects.items.length && !pinnedObjects.things.length && !pinnedObjects.rules.length && !pinnedObjects.scenes.length && !pinnedObjects.scripts.length && !pinnedObjects.pages.length && !pinnedObjects.widgets.length && !pinnedObjects.transformations.length">
           <p class="padding-horizontal">
             Use the search box above or the button below to temporarily pin objects here for quick access.
           </p>
@@ -179,6 +179,29 @@
                   <f7-link class="margin-right" color="blue" icon-f7="play" icon-size="18" tooltip="View" :href="'/page/' + page.uid" :animate="false" />
                   <f7-link class="margin-right" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/settings/pages/' + getPageType(page).type + '/' + page.uid" :animate="false" />
                   <f7-link color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" @click="unpin('pages', page, 'uid')" />
+                </div>
+              </f7-list-item>
+            </ul>
+          </f7-list>
+        </f7-block>
+        <!-- Pinned Widgets -->
+        <f7-block class="no-margin no-padding" v-if="pinnedObjects.widgets.length">
+          <f7-block-title class="padding-horizontal display-flex">
+            <span>Pinned Widgets</span>
+            <span style="margin-left:auto">
+              <f7-link color="gray" icon-f7="multiply" icon-size="14" @click="unpinAll('widgets')" />
+            </span>
+          </f7-block-title>
+          <f7-list media-list>
+            <ul>
+              <f7-list-item v-for="widget in pinnedObjects.widgets" :key="widget.uid" media-item
+                            :title="widget.uid">
+                <div class="display-flex align-items-flex-end justify-content-flex-end" slot="footer">
+                  <f7-link color="gray" class="margin-right">
+                    <clipboard-icon :value="widget.uid" size="18" tooltip="Copy Widget UID" />
+                  </f7-link>
+                  <f7-link class="margin-right" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/developer/widgets/' + widget.uid" :animate="false" />
+                  <f7-link color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" @click="unpin('widgets', widget, 'uid')" />
                 </div>
               </f7-list-item>
             </ul>
@@ -418,6 +441,7 @@ export default {
         scenes: [],
         scripts: [],
         pages: [],
+        widgets: [],
         transformations: [],
         persistenceConfigs: []
       },
@@ -428,6 +452,7 @@ export default {
         scenes: [],
         scripts: [],
         pages: [],
+        widgets: [],
         transformations: [],
         persistenceConfigs: []
       },
@@ -601,6 +626,26 @@ export default {
       return false
     },
     /**
+     * Search for the query string inside a single widget.
+     * All searches are non case-intensive.
+     *
+     * Checks:
+     *  - uid
+     *  - props
+     *  - slots
+     *
+     * @param w widget
+     * @param query search query (as typed, not in lowercase)
+     * @returns {boolean}
+     */
+    searchWidget (w, query) {
+      query = query.toLowerCase()
+      if (w.uid.toLowerCase().indexOf(query) >= 0) return true
+      if (w.props && JSON.stringify(w.props).toLowerCase().indexOf(query) >= 0) return true
+      if (w.slots && JSON.stringify(w.slots).toLowerCase().indexOf(query) >= 0) return true
+      return false
+    },
+    /**
      * Search for the query string inside a persistence configuration.
      * All searches are non case-intensive.
      *
@@ -659,22 +704,15 @@ export default {
       if (this.searchResultsLoading) return
 
       const promises = (this.cachedObjects)
-        ? [
-          Promise.resolve(this.cachedObjects[0]),
-          Promise.resolve(this.cachedObjects[1]),
-          Promise.resolve(this.cachedObjects[2]),
-          Promise.resolve(this.cachedObjects[3]),
-          Promise.resolve(this.cachedObjects[4]),
-          Promise.resolve(this.cachedObjects[5]),
-          Promise.resolve(this.cachedObjects[6])
-        ] : [
-          this.$oh.api.get('/rest/items?staticDataOnly=true&metadata=.*'),
-          this.$oh.api.get('/rest/things?summary=true'),
-          this.$oh.api.get('/rest/rules?summary=false'),
-          Promise.resolve(this.$store.getters.pages),
-          this.$oh.api.get('/rest/transformations'),
-          this.$oh.api.get('/rest/ui/components/system:sitemap'),
-          this.loadPersistenceConfigs()
+        ? this.cachedObjects.map((o) => Promise.resolve(o)) : [
+          this.$oh.api.get('/rest/items?staticDataOnly=true&metadata=.*'), // 0
+          this.$oh.api.get('/rest/things?summary=true'), // 1
+          this.$oh.api.get('/rest/rules?summary=false'), // 2
+          Promise.resolve(this.$store.getters.pages), // 3
+          this.$oh.api.get('/rest/ui/components/system:sitemap'), // 4
+          this.$oh.api.get('/rest/ui/components/ui:widget'), // 5
+          this.$oh.api.get('/rest/transformations'), // 6
+          this.loadPersistenceConfigs() // 7
         ]
 
       this.searchResultsLoading = true
@@ -699,17 +737,22 @@ export default {
         const rules = rulesScenesScripts.filter((r) => r.tags.indexOf('Scene') < 0 && r.tags.indexOf('Script') < 0)
         const scenes = rulesScenesScripts.filter((r) => r.tags.indexOf('Scene') >= 0)
         const scripts = rulesScenesScripts.filter((r) => r.tags.indexOf('Script') >= 0)
-        const pages = [...data[3], ...data[5]].filter((p) => this.searchPage(p, this.searchQuery)).sort((a, b) => {
+        const pages = [...data[3], ...data[4]].filter((p) => this.searchPage(p, this.searchQuery)).sort((a, b) => {
           const labelA = a.name
           const labelB = b.name
           return (labelA) ? labelA.localeCompare(labelB) : 0
         })
-        const transformations = data[4].filter((t) => t.uid.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0 || t.label.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0).sort((a, b) => {
+        const widgets = data[5].filter((w) => this.searchWidget(w, this.searchQuery)).sort((a, b) => {
           const labelA = a.name
           const labelB = b.name
           return (labelA) ? labelA.localeCompare(labelB) : 0
         })
-        const persistenceConfigs = data[6].filter((pc) => this.searchPersistenceConfigs(pc, this.searchQuery)).sort((a, b) => {
+        const transformations = data[6].filter((t) => t.uid.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0 || t.label.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0).sort((a, b) => {
+          const labelA = a.name
+          const labelB = b.name
+          return (labelA) ? labelA.localeCompare(labelB) : 0
+        })
+        const persistenceConfigs = data[7].filter((pc) => this.searchPersistenceConfigs(pc, this.searchQuery)).sort((a, b) => {
           const idA = a.id
           const idB = b.id
           return (idA) ? idA.localeCompare(idB) : 0
@@ -721,6 +764,7 @@ export default {
           scenes,
           scripts,
           pages,
+          widgets,
           transformations,
           persistenceConfigs
         })
@@ -732,7 +776,7 @@ export default {
       this.searchResultsLoading = false
       this.searchSuery = ''
       this.$set(this, 'cachedObjects', null)
-      this.$set(this, 'searchResults', { items: [], things: [], rules: [], scenes: [], scripts: [], pages: [], transformations: [], persistenceConfigs: [] })
+      this.$set(this, 'searchResults', { items: [], things: [], rules: [], scenes: [], scripts: [], pages: [], widgets: [], transformations: [], persistenceConfigs: [] })
     },
     pin (type, obj) {
       this.pinnedObjects[type].push(obj)

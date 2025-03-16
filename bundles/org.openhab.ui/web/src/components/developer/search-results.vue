@@ -127,6 +127,26 @@
         </f7-list-button>
       </f7-list>
     </f7-block>
+    <!-- Widgets -->
+    <f7-block class="no-margin no-padding" v-if="searchResults.widgets.length">
+      <f7-block-title class="padding-left">
+        <f7-icon class="margin-right" f7="rectangle_on_rectangle_angled" />Widgets ({{ searchResults.widgets.length }})
+      </f7-block-title>
+      <f7-list media-list>
+        <f7-list-item media-item v-for="widget in filteredSearchResults.widgets" :key="widget.uid"
+                      :title="widget.uid" link="" no-chevron @click="(evt) => togglePin(evt, 'widgets', widget, 'uid')">
+          <f7-link slot="after" color="gray">
+            <clipboard-icon :value="widget.uid" tooltip="Copy Widget UID" />
+          </f7-link>
+          <f7-link slot="after" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/developer/widgets/' + widget.uid" :animate="false" />
+          <f7-link slot="after" v-if="isPinned('widgets', widget, 'uid')" @click="$emit('unpin', 'widgets', widget, 'uid')" color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" />
+          <f7-link slot="after" v-else @click="$emit('pin', 'widgets', widget, 'uid')" color="blue" icon-f7="unpin" icon-size="18" tooltip="Pin" />
+        </f7-list-item>
+        <f7-list-button v-if="!showingAll('widgets')" color="blue" @click="$set(expandedTypes, 'widgets', true)">
+          Show All
+        </f7-list-button>
+      </f7-list>
+    </f7-block>
     <!-- Transformations -->
     <f7-block class="no-margin no-padding" v-if="searchResults.transformations.length">
       <f7-block-title class="padding-left">
@@ -213,9 +233,10 @@ export default {
       const scenes = (this.expandedTypes.scenes) ? this.searchResults.scenes : (this.searchResults.scenes ? this.searchResults.scenes.slice(0, 5) : [])
       const scripts = (this.expandedTypes.scripts) ? this.searchResults.scripts : (this.searchResults.scripts ? this.searchResults.scripts.slice(0, 5) : [])
       const pages = (this.expandedTypes.pages) ? this.searchResults.pages : (this.searchResults.pages ? this.searchResults.pages.slice(0, 5) : [])
+      const widgets = (this.expandedTypes.widgets) ? this.searchResults.widgets : (this.searchResults.widgets ? this.searchResults.widgets.slice(0, 5) : [])
       const transformations = (this.expandedTypes.transformations) ? this.searchResults.transformations : (this.searchResults.transformations ? this.searchResults.transformations.slice(0, 5) : [])
       const persistenceConfigs = (this.expandedTypes.persistenceConfigs) ? this.searchResults.persistenceConfigs : (this.searchResults.persistenceConfigs ? this.searchResults.persistenceConfigs.slice(0, 5) : [])
-      return { items, things, rules, scenes, scripts, pages, transformations, persistenceConfigs }
+      return { items, things, rules, scenes, scripts, pages, widgets, transformations, persistenceConfigs }
     }
   },
   watch: {
