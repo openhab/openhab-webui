@@ -1,6 +1,6 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:afterout="onPageAfterOut">
-    <f7-navbar :title="(createMode ? 'Create rule' : stubMode ? 'Regenerate rule from template' : rule.name) + dirtyIndicator" back-link="Back" no-hairline>
+    <f7-navbar :title="(createMode ? (ruleCopy ? 'Duplicate rule' : 'Create rule') : stubMode ? 'Regenerate rule from template' : rule.name) + dirtyIndicator" back-link="Back" no-hairline>
       <f7-nav-right>
         <developer-dock-icon />
         <template v-if="isEditable">
@@ -66,7 +66,7 @@
           </f7-block-footer>
           <!-- <f7-col v-if="isEditable" class="text-align-right justify-content-flex-end">
           </f7-col> -->
-          <f7-col v-if="createMode && templates.length > 0" class="new-rule-from-template">
+          <f7-col v-if="createMode && templates.length > 0 && !ruleCopy" class="new-rule-from-template">
             <f7-block-title medium class="margin-bottom">
               Create from Template
             </f7-block-title>
@@ -96,13 +96,50 @@
                           :parameter-groups="[]" :parameters="currentTemplate.configDescriptions"
                           :configuration="rule.configuration" />
           </f7-col>
-          <f7-col v-else-if="stubMode" class="new-stub-from-rule">
+          <f7-col v-else-if="currentTemplate && stubMode" class="show-associated-template">
+            <f7-block-title medium class="margin-vertical padding-top">
+              Template
+            </f7-block-title>
+            <f7-list media-list>
+              <f7-list-item :title="currentTemplate.label" :footer="currentTemplate.description" :value="currentTemplate.uid" />
+            </f7-list>
             <f7-block-title medium class="margin-vertical padding-top">
               Template Configuration
             </f7-block-title>
+            <f7-link v-if="templateTopicLink" target="_blank" class="external margin-left" color="blue" :href="templateTopicLink">
+              Template Community Marketplace Topic
+            </f7-link>
             <config-sheet :parameter-groups="[]" :parameters="currentTemplate.configDescriptions" :configuration="rule.configuration" />
           </f7-col>
-          <f7-col v-if="!hasTemplate" class="rule-modules">
+          <f7-col v-else-if="currentTemplate && createMode && ruleCopy?.templateUID" class="select-integrate-template">
+            <f7-block-title medium class="margin-vertical padding-top">
+              Template
+            </f7-block-title>
+            <f7-list media-list>
+              <f7-list-item
+                :title="'Keep template: ' + currentTemplate.label"
+                footer="The rule will still be linked to the template and can be regenerated if the template changes."
+                :value="currentTemplate.uid"
+                radio :checked="Boolean(rule.templateUID)" radio-icon="start"
+                @change="keepTemplate(true)" />
+              <f7-list-item
+                title="Integrate template"
+                footer="Integrates the template in the rule so that the rule is no longer linked to the template."
+                value="integrate"
+                radio :checked="!rule.templateUID" radio-icon="start"
+                @change="keepTemplate(false)" />
+            </f7-list>
+            <div v-if="rule.templateUID">
+              <f7-block-title medium class="margin-vertical padding-top">
+                Template Configuration
+              </f7-block-title>
+              <f7-link v-if="templateTopicLink" target="_blank" class="external margin-left" color="blue" :href="templateTopicLink">
+                Template Community Marketplace Topic
+              </f7-link>
+              <config-sheet :parameter-groups="[]" :parameters="currentTemplate.configDescriptions" :configuration="rule.configuration" />
+            </div>
+          </f7-col>
+          <f7-col v-if="!hasTemplate || (createMode && ruleCopy?.templateUID && !rule.templateUID)" class="rule-modules">
             <div v-if="isEditable" class="no-padding float-right">
               <f7-button @click="toggleModuleControls" small outline :fill="showModuleControls" sortable-toggle=".sortable" style="margin-top: -3px; margin-right: 5px"
                          color="gray" icon-size="12" icon-ios="material:wrap_text" icon-md="material:wrap_text" icon-aurora="material:wrap_text">
@@ -337,24 +374,44 @@ export default {
       this.$oh.api.get('/rest/module-types?asMap=true').then((data) => {
         this.moduleTypes = data
         if (this.createMode) {
-          const newRule = this.ruleCopy || {
-            uid: this.$f7.utils.id(),
-            name: '',
-            triggers: [],
-            actions: [],
-            conditions: [],
-            tags: (this.schedule) ? ['Schedule'] : [],
-            configuration: {},
-            templateUID: null,
-            visibility: 'VISIBLE',
-            status: {
-              status: 'NEW'
+          let newRule
+          if (this.ruleCopy) {
+            newRule = cloneDeep(this.ruleCopy)
+            newRule.uid = this.$f7.utils.id()
+            if (newRule.templateUID) {
+              newRule.triggers = []
+              newRule.actions = []
+              newRule.conditions = []
+              if (newRule.templateState === 'instantiated') {
+                newRule.templateState = 'pending'
+              }
+            }
+          } else {
+            newRule = {
+              uid: this.$f7.utils.id(),
+              name: '',
+              triggers: [],
+              actions: [],
+              conditions: [],
+              tags: (this.schedule) ? ['Schedule'] : [],
+              configuration: {},
+              templateUID: null,
+              visibility: 'VISIBLE',
+              status: {
+                status: 'NEW'
+              }
             }
           }
-          if (this.ruleCopy) newRule.uid = this.$f7.utils.id()
           this.$set(this, 'rule', newRule)
           this.$oh.api.get('/rest/templates').then((templateData) => {
             this.$set(this, 'templates', templateData)
+            if (newRule.templateUID) {
+              const currentTemplate = templateData.find((t) => t.uid === newRule.templateUID) || {
+                uid: newRule.templateUID,
+                label: newRule.templateUID
+              }
+              this.$set(this, 'currentTemplate', currentTemplate)
+            }
             loadingFinished()
           })
           // no need for an event source, the rule doesn't exist yet
@@ -468,8 +525,6 @@ export default {
     duplicateRule () {
       let ruleClone = cloneDeep(this.rule)
       ruleClone.name = (ruleClone.name || '') + ' copy'
-      ruleClone.templateUID = undefined
-      ruleClone.templateState = 'no-template'
       ruleClone.editable = true
       this.$f7router.navigate({
         url: '/settings/rules/duplicate'
@@ -557,6 +612,39 @@ export default {
       this.$set(this, 'currentTemplate', this.templates.find((t) => t.uid === uid))
       this.rule.templateUID = uid
       this.rule.templateState = 'pending'
+    },
+    keepTemplate (keep) {
+      if (!this.ruleCopy) return
+      let newRule = this.rule
+      if (keep) {
+        newRule.triggers = []
+        newRule.actions = []
+        newRule.conditions = []
+        newRule.configuration = this.ruleCopy.configuration
+        newRule.templateUID = this.ruleCopy.templateUID
+        newRule.templateState = 'pending'
+        if (!newRule.tags?.some((t) => t.indexOf('marketplace:') === 0)) {
+          const tag = this.ruleCopy.tags?.find((t) => t.indexOf('marketplace:') === 0)
+          if (tag) {
+            if (!newRule.tags) {
+              newRule.tags = [tag]
+            } else {
+              newRule.tags.push(tag)
+            }
+          }
+        }
+      } else {
+        newRule.triggers = this.ruleCopy.triggers
+        newRule.actions = this.ruleCopy.actions
+        newRule.conditions = this.ruleCopy.conditions
+        newRule.configuration = {}
+        newRule.templateUID = null
+        newRule.templateState = 'no-template'
+        if (newRule.tags) {
+          newRule.tags = newRule.tags.filter((t) => t.indexOf('marketplace:') !== 0)
+        }
+      }
+      this.$set(this, 'rule', newRule)
     },
     editModule (ev, section, mod) {
       if (this.showModuleControls || this.isOpaqueModule(mod)) return
