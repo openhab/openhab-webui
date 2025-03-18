@@ -12,7 +12,7 @@
           <f7-button v-else class="install-button prevent-active-state-propagation"
                      :text="installActionText || 'Install'" color="blue" round small @click="buttonClicked" />
         </div>
-        <div class="addon-card-label">
+        <div class="addon-card-label" :title="addon.label">
           {{ addon.label }}
         </div>
         <div v-if="addon.verifiedAuthor" class="addon-card-subtitle">
