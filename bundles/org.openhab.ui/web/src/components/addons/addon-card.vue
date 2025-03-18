@@ -3,15 +3,15 @@
     <div class="addon-card-inner card">
       <div class="addon-card-headline">
         <div>{{ headline || autoHeadline || "&nbsp;" }}</div>
-      </div>
-      <div class="addon-card-title">
-        <div v-if="showInstallActions" class="addon-card-title-after">
+        <div v-if="showInstallActions" class="addon-card-headline-after">
           <f7-preloader v-if="addon.pending" color="blue" />
           <f7-button v-else-if="addon.installed" class="install-button prevent-active-state-propagation" text="Remove"
                      color="red" round small @click="buttonClicked" />
           <f7-button v-else class="install-button prevent-active-state-propagation"
                      :text="installActionText || 'Install'" color="blue" round small @click="buttonClicked" />
         </div>
+      </div>
+      <div class="addon-card-title">
         <div class="addon-card-label">
           {{ addon.label }}
         </div>
@@ -57,6 +57,16 @@
     color var(--f7-theme-color)
     font-size 11px
     font-weight 500
+    display flex
+    align-items center
+    .addon-card-headline-after
+      .preloader-inner .preloader-inner-left, .preloader-inner .preloader-inner-right, .preloader-inner .preloader-inner-line
+        margin-left inherit !important
+      margin-left auto
+      min-width 70px
+      justify-content center
+      height var(--f7-button-small-height)
+      --f7-preloader-size var(--f7-button-small-height)
   .addon-card-title
     height 3.4rem
     font-size var(--f7-timeline-item-title-font-size) // 21px
@@ -67,16 +77,6 @@
       overflow clip
       white-space nowrap
       color var(--f7-text-color)
-    .addon-card-title-after
-      .preloader-inner .preloader-inner-left, .preloader-inner .preloader-inner-right, .preloader-inner .preloader-inner-line
-        margin-left inherit !important
-      display flex
-      float right
-      align-self top
-      min-width 70px
-      justify-content center
-      height var(--f7-button-small-height)
-      --f7-preloader-size var(--f7-button-small-height)
   .addon-card-subtitle
     color var(--f7-list-item-after-text-color)
     font-size var(--f7-list-item-subtitle-font-size) // 21px
