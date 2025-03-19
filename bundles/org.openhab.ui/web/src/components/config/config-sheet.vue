@@ -90,7 +90,13 @@ export default {
       const conf = Object.assign({}, this.configuration)
       this.parameters.forEach((p) => {
         if (conf[p.name] === undefined && p.default !== undefined) {
-          conf[p.name] = typeof p.default === 'function' ? p.default(this.configuration) : p.default
+          if (typeof p.default === 'function') {
+            conf[p.name] = p.default(this.configuration)
+          } else if (p.defaultValues !== undefined) {
+            conf[p.name] = p.defaultValues
+          } else {
+            conf[p.name] = p.default
+          }
         }
       })
       return conf
