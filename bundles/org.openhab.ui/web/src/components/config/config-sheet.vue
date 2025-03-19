@@ -92,7 +92,7 @@ export default {
         if (conf[p.name] === undefined && p.default !== undefined) {
           if (typeof p.default === 'function') {
             conf[p.name] = p.default(this.configuration)
-          } else if (p.defaultValues !== undefined) {
+          } else if (p.multiple) {
             conf[p.name] = p.defaultValues
           } else {
             conf[p.name] = p.default
