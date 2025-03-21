@@ -25,7 +25,7 @@
             </f7-list-item>
           </f7-list>
           <f7-list>
-            <item-picker key="group" title="Select groups" name="groupItems" multiple="true" filterType="Group"
+            <item-picker key="groups" title="Select groups" name="groupItems" multiple="true" filterType="Group"
                          :disabled="allItemsSelected" :value="groupItems" @input="groupItems = $event" />
             <f7-list-item>... whose members are to be persisted.</f7-list-item>
           </f7-list>
