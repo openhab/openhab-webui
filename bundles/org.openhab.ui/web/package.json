@@ -24,7 +24,8 @@
   },
   "scripts": {
     "generate-build-info": "node build/generate-build-info.mjs",
-    "build-prod": "cross-env NODE_ENV=production node ./build/build.js",
+    "build:prod": "cross-env NODE_ENV=production node ./build/build.js",
+    "build:mvn": "cross-env NODE_ENV=production cross-env MAVEN=true node ./build/build.js",
     "webpack-analyzer": "cross-env NODE_ENV=production cross-env WEBPACK_ANALYZER=1 node ./build/build.js",
     "webpack-analyzer-report": "cross-env NODE_ENV=production cross-env WEBPACK_ANALYZER=1 WEBPACK_ANALYZER_REPORT=1 node ./build/build.js",
     "webpack-analyzer-report-stats": "cross-env NODE_ENV=production cross-env WEBPACK_ANALYZER=1 WEBPACK_ANALYZER_REPORT=1 WEBPACK_ANALYZER_REPORT_STATS=1 node ./build/build.js",

@@ -76,6 +76,7 @@
             <goals>
               <goal>npm</goal>
             </goals>
+            <phase>generate-resources</phase>
             <configuration>
               <arguments>install --save false</arguments>
             </configuration>
@@ -87,7 +88,7 @@
             <goals>
               <goal>npm</goal>
             </goals>
-            <phase>validate</phase>
+            <phase>test</phase>
             <configuration>
               <arguments>run lint</arguments>
             </configuration>
@@ -110,28 +111,9 @@
             <goals>
               <goal>npm</goal>
             </goals>
+            <phase>compile</phase>
             <configuration>
-              <arguments>run build-prod ${project.version}</arguments>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>add-resource</goal>
-            </goals>
-            <phase>generate-resources</phase>
-            <configuration>
-              <resources>
-                <resource>
-                  <directory>web/www</directory>
-                  <targetPath>app</targetPath>
-                </resource>
-              </resources>
+              <arguments>run build:mvn ${project.version}</arguments>
             </configuration>
           </execution>
         </executions>
