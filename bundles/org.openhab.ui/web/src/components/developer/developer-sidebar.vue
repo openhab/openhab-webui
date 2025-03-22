@@ -710,7 +710,7 @@ export default {
           this.$oh.api.get('/rest/rules?summary=false'), // 2
           Promise.resolve(this.$store.getters.pages), // 3
           this.$oh.api.get('/rest/ui/components/system:sitemap'), // 4
-          this.$oh.api.get('/rest/ui/components/ui:widget'), // 5
+          Promise.resolve(this.$store.getters.widgets), // 5
           this.$oh.api.get('/rest/transformations'), // 6
           this.loadPersistenceConfigs() // 7
         ]
