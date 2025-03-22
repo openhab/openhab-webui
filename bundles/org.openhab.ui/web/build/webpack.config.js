@@ -70,16 +70,16 @@ module.exports = {
     allowedHosts: "all",
     historyApiFallback: true,
     proxy: [
-      {
-        context: ['/auth', '/rest', '/chart', '/proxy', '/icon', '/static', '/changePassword', '/createApiToken', '/audio'],
-        target: apiBaseUrl
-      },
-      {
-        context: ['/ws/logs', '/ws/events'],
-        target: apiBaseUrl,
-        ws: true
-      }
-    ]
+    {
+      context: ['/auth', '/rest', '/chart', '/proxy', '/icon', '/static', '/changePassword', '/createApiToken', '/audio'],
+      target: apiBaseUrl
+    },
+    {
+      context: ['/ws/logs', '/ws/events', '/ws/audio-pcm'],
+      target: apiBaseUrl,
+      ws: true
+    }
+  ]
   },
   performance: {
     maxAssetSize: 2048000,

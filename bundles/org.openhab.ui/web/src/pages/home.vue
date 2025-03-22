@@ -12,6 +12,7 @@
         {{ title }}
       </f7-nav-title>
       <f7-nav-right>
+        <f7-link v-if="this.$store.getters.voiceIcon" :icon-aurora="this.$store.getters.voiceIcon" :tooltip="$t('home.triggerVoice')" @click="$f7.emit('triggerDialog')" />
         <developer-dock-icon />
         <f7-link v-if="this.$store.getters.isAdmin" icon-ios="f7:pencil" icon-aurora="f7:pencil" icon-md="material:edit" :tooltip="$t('home.editHome')" :href="(homePageComponent) ? '/settings/pages/home/home' : '/settings/pages/home/add'" />
         <f7-link v-if="showPinToHome" icon-ios="f7:pin_fill" icon-aurora="f7:pin_fill" icon-md="material:add_location" :tooltip="$t('home.pinToHome')" @click="pinToHome" />
