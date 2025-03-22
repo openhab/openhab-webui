@@ -16,7 +16,8 @@ Change to the `web` directory, gather the necessary dependencies with `npm insta
 ## NPM Scripts
 
 * `npm start` - run the development server (see below)
-* `npm run build-prod` - build web app for production (note: no need to prepare a production version when submitting a PR, the build server will do it)
+* `npm run build:prod` - build web app for production (note: no need to prepare a production version when submitting a PR, the build server will do it)
+* `npm run build:mvn` - build web app through Maven for production (note: no need to prepare a production version when submitting a PR, the build server will do it)
 * `npm run dev` - run the development server (same as above)
 * `npm run dev:blockly` - run the development server with Blockly source-maps (allows Blockly debugging)
 * `npm run test:unit` - start the Jest test runner and run the unit tests
