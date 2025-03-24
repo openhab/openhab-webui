@@ -66,5 +66,7 @@
   "analyzer.dialogs.save.replace.message": "Já existe uma página com o ID {uid}, pretende substituir o existente?",
   "analyzer.dialogs.save.replace.title": "Página já existe",
   "analyzer.page.updated": "Página do gráfico atualizada",
-  "analyzer.page.created": "Página do gráfico criada"
+  "analyzer.page.created": "Página do gráfico criada",
+  "analyzer.invalid-configuration.title": "Configuração inválida",
+  "analyzer.invalid-configuration.text": "Verifique se todos os parâmetros obrigatórios estão indicados/a configuração é válida."
 }
