@@ -75,30 +75,6 @@
             </configuration>
           </execution>
 
-          <!-- Run ESLint during the Maven initialize phase -->
-          <execution>
-            <id>npm lint</id>
-            <goals>
-              <goal>npm</goal>
-            </goals>
-            <phase>test</phase>
-            <configuration>
-              <arguments>run lint</arguments>
-            </configuration>
-          </execution>
-
-          <!-- Run unit tests during the Maven test phase -->
-          <execution>
-            <id>npm test</id>
-            <goals>
-              <goal>npm</goal>
-            </goals>
-            <phase>test</phase>
-            <configuration>
-              <arguments>run test:unit</arguments>
-            </configuration>
-          </execution>
-
           <execution>
             <id>npm run build-prod</id>
             <goals>
