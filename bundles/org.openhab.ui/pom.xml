@@ -61,7 +61,7 @@
             <goals>
               <goal>install-node-and-npm</goal>
             </goals>
-            <phase>generate-resources</phase>
+            <phase>initialize</phase>
           </execution>
 
           <execution>
@@ -69,7 +69,7 @@
             <goals>
               <goal>npm</goal>
             </goals>
-            <phase>generate-resources</phase>
+            <phase>generate-sources</phase>
             <configuration>
               <arguments>install --save false</arguments>
             </configuration>
@@ -80,7 +80,7 @@
             <goals>
               <goal>npm</goal>
             </goals>
-            <phase>compile</phase>
+            <phase>generate-resources</phase>
             <configuration>
               <arguments>run build:mvn ${project.version}</arguments>
             </configuration>
