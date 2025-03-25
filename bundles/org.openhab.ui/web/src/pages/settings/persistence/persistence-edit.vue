@@ -283,7 +283,7 @@ export default {
     persistence: {
       handler: function () {
         if (!this.loading) { // ignore changes during loading
-          this.dirty = !fastDeepEqual(this.persistence, this.savedPersistence)
+          this.checkDirty()
         }
       },
       deep: true
@@ -392,6 +392,9 @@ export default {
           })
         }
       )
+    },
+    checkDirty () {
+      this.dirty = !fastDeepEqual(this.persistence, this.savedPersistence)
     },
     showSwipeout (ev) {
       let swipeoutElement = ev.target
@@ -533,6 +536,7 @@ export default {
         this.persistence[module][index] = updatedModule
         this.$forceUpdate()
       }
+      this.checkDirty()
     },
     deleteModule (ev, module, index) {
       let swipeoutElement = ev.target
@@ -545,6 +549,7 @@ export default {
         console.debug(`Removing ${module}:`)
         console.debug(this.persistence[module][index])
         this.persistence[module].splice(index, 1)
+        this.checkDirty()
       })
     },
     onEditorInput (value) {
