@@ -43,13 +43,6 @@
             </fileset>
           </filesets>
         </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>clean</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
       <!-- Build Main UI -->
       <plugin>
