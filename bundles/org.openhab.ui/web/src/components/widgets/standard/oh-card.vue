@@ -6,7 +6,7 @@
       </f7-card-header>
     </slot>
     <slot name="content-root">
-      <f7-card-content @click.native="performAction" @taphold.native="onTaphold($event)" @contextmenu.native="onContextMenu($event)" :style="{ ...contentStyle, ...config.contentStyle}" :class="[ ...(Array.isArray(contentClass) ? contentClass : ['padding']), ...(Array.isArray(config.contentClass) ? config.contentClass : []) ]">
+      <f7-card-content @click.native="performAction" @taphold.native="onTaphold($event)" @contextmenu.native="onContextMenu($event)" :style="{ ...contentStyle, ...config.contentStyle}" :class="computedContentClass">
         <slot name="content" />
       </f7-card-content>
     </slot>
@@ -23,6 +23,14 @@
   </f7-card>
 </template>
 
+<style lang="stylus">
+.oh-card
+  .card-link
+    cursor pointer
+  .card-link:hover
+    background var(--f7-list-link-hover-bg-color)
+</style>
+
 <script>
 import mixin from '../widget-mixin'
 import { actionsMixin } from '@/components/widgets/widget-actions'
@@ -32,6 +40,15 @@ export default {
   mixins: [mixin, actionsMixin],
   widget: OhCardDefinition,
   props: ['context', 'contentStyle', 'contentClass'],
-  slotProps: ['header', 'content', 'content-root', 'footer']
+  slotProps: ['header', 'content', 'content-root', 'footer'],
+  computed: {
+    computedContentClass () {
+      return [
+        ...(this.config.action ? ['card-link'] : []),
+        ...(Array.isArray(this.contentClass) ? this.contentClass : ['padding']),
+        ...(Array.isArray(this.config.contentClass) ? this.config.contentClass : [])
+      ]
+    }
+  }
 }
 </script>
