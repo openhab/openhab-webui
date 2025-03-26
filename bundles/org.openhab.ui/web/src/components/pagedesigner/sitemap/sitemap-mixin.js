@@ -41,7 +41,7 @@ export default {
     this.ADDITIONAL_CONTROLS = {
       Image: ['url', 'refresh'],
       Video: ['url', 'encoding'],
-      Chart: ['service', 'period', 'refresh', 'legend', 'forceAsItem', 'yAxisDecimalPattern', 'interpolaton'],
+      Chart: ['service', 'period', 'refresh', 'legend', 'forceAsItem', 'yAxisDecimalPattern', 'interpolation'],
       Webview: ['url', 'height'],
       Mapview: ['height'],
       Slider: ['switchEnabled', 'releaseOnly', 'minValue', 'maxValue', 'step'],
