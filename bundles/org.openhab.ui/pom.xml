@@ -78,7 +78,7 @@
           </execution>
 
           <execution>
-            <id>npm run build-prod</id>
+            <id>npm run build:mvn</id>
             <goals>
               <goal>npm</goal>
             </goals>
