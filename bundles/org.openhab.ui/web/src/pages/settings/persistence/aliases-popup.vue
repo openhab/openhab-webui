@@ -159,7 +159,7 @@ export default {
       }
       // Warn when alias already exists
       for (let i = 0; i < aliases.length; i++) {
-        const firstIdx = aliases.slice(0,i).indexOf(aliases[i])
+        const firstIdx = aliases.slice(0, i).indexOf(aliases[i])
         if (firstIdx >= 0) {
           this.$f7.dialog.alert('Alias ' + aliases[i] + ' for item ' + Object.keys(this.currentAliases[i])[0] + ' already exists for item ' + Object.keys(this.currentAliases[firstIdx])[0])
           return
