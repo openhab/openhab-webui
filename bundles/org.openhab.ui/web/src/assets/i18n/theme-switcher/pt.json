@@ -7,9 +7,18 @@
   "about.darkMode.dark": "Escuro",
   "about.navigationBarsStyle": "Estilo das barras de navegação",
   "about.miscellaneous": "Diversos",
-  "about.miscellaneous.home.navbar": "Barra de navegação simples na página inicial",
-  "about.miscellaneous.home.background": "Cor de fundo da página inicial padrão",
+  "about.miscellaneous.home.navbar": "Barra de navegação da página inicial",
+  "about.miscellaneous.home.navbar.default": "Predefinição",
+  "about.miscellaneous.home.navbar.simple": "Simples",
+  "about.miscellaneous.home.navbar.large": "Grande",
+  "about.miscellaneous.home.background": "Cor de fundo da página inicial",
+  "about.miscellaneous.home.background.default": "Predefinição",
+  "about.miscellaneous.home.background.standard": "Padrão",
+  "about.miscellaneous.home.background.white": "Branco",
   "about.miscellaneous.home.hideChatInput": "Ocultar caixa para conversação na página inicial",
   "about.miscellaneous.home.disableCardExpansionAnimation": "Desativar animações de expansão de cartões",
-  "about.miscellaneous.theme.disablePageTransition": "Desabilitar animações de transição de página"
+  "about.miscellaneous.theme.disablePageTransition": "Desabilitar animações de transição de página",
+  "about.miscellaneous.webaudio.enable": "Ativa o suporte para o recetor Áudio Web",
+  "about.miscellaneous.commandItem.title": "Escutar comandos da interface de utilizador para ",
+  "about.miscellaneous.commandItem.selectItem": "Item"
 }
