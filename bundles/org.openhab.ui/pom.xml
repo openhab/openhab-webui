@@ -55,13 +55,15 @@
           <workingDirectory>web</workingDirectory>
         </configuration>
 
+        <!-- run all executions in the prepare-package phase, to build the UI at the latest possible time and avoid building it when only compiling Java code -->
+        <!-- this helps Eclipse IDE to compile Java code faster -->
         <executions>
           <execution>
             <id>Install node and npm</id>
             <goals>
               <goal>install-node-and-npm</goal>
             </goals>
-            <phase>initialize</phase>
+            <phase>prepare-package</phase>
           </execution>
 
           <execution>
@@ -69,7 +71,7 @@
             <goals>
               <goal>npm</goal>
             </goals>
-            <phase>generate-sources</phase>
+            <phase>prepare-package</phase>
             <configuration>
               <arguments>install --save false</arguments>
             </configuration>
@@ -80,7 +82,7 @@
             <goals>
               <goal>npm</goal>
             </goals>
-            <phase>generate-resources</phase>
+            <phase>prepare-package</phase>
             <configuration>
               <arguments>run build:mvn ${project.version}</arguments>
             </configuration>
