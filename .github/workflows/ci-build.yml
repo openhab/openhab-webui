@@ -24,6 +24,8 @@ jobs:
         os: [ 'ubuntu-24.04' ]
     name: Build (Java ${{ matrix.java }}, ${{ matrix.os }})
     runs-on: ${{ matrix.os }}
+    # typical duration is ~5min, set a reasonable amount as limit (default is 6h)
+    timeout-minutes: 20
     steps:
       - name: Checkout
         if: github.head_ref == ''
@@ -51,6 +53,7 @@ jobs:
           distribution: 'temurin'
           java-version: ${{ matrix.java }}
 
+      # pinning to SHA to mitigate possible supply chain attack
       - name: Set up Maven ${{ matrix.maven }}
         uses: stCarolas/setup-maven@d6af6abeda15e98926a57b5aa970a96bb37f97d1 # v5
         with:
@@ -100,6 +103,8 @@ jobs:
           path: '**/checkstyle-result.xml'
           mode: inline
 
+      # this will identify modifications to files under source control during the workflow run;
+      # untracked files will be included as well!
       - name: Verify Changed Files
         id: verify-changed-files
         run: |

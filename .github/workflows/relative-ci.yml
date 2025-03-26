@@ -10,8 +10,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      # pinning to SHA to mitigate possible supply chain attack
       - name: Send bundle stats and build information to RelativeCI
-        uses: relative-ci/agent-action@v2.1.10
+        uses: relative-ci/agent-action@38328454d6a23942175eba485fca4fbb807b1f03 # v2.2.0
         with:
           key: ${{ secrets.RELATIVE_CI_KEY }}
           token: ${{ secrets.GITHUB_TOKEN }}
