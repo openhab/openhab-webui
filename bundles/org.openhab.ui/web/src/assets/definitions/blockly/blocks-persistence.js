@@ -311,7 +311,7 @@ export default function defineOHBlocks_Persistence (f7, persistenceServices) {
     skipPrevious = (skipPrevious === 'undefined') ? false : skipPrevious
 
     let riemannType = block.getFieldValue('riemannType')
-    riemannType = (riemannType === 'undefined') ? '' : (', ' + riemannType)
+    riemannType = (riemannType === 'undefined') ? '' : `, ${itemCode}.persistence.${riemannType}`
 
     const persistenceExtension = (persistenceName === '\'default\'') ? '' : `, ${persistenceName}`
 
