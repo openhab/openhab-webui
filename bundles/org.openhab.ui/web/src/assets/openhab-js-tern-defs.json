@@ -109,19 +109,19 @@
         },
         "ItemPersistence": {
             "averageBetween": {
-              "!doc": "Gets the average value of the state of a given Item between two certain points in time.",
-              "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> PersistedState|null"
+              "!doc": "Gets the average value of the state of a given Item between two points in time.",
+              "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, riemannType?: RiemannType, serviceId?: string) -> PersistedState|null"
             },
             "averageSince": {
                 "!doc": "Gets the average value of the state of a given Item since a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> PersistedState|null"
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, riemannType?: RiemannType, serviceId?: string) -> PersistedState|null"
             },
             "averageUntil": {
                 "!doc": "Gets the average value of the state of a given Item until a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> PersistedState|null"
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, riemannType?: RiemannType, serviceId?: string) -> PersistedState|null"
             },
             "changedBetween": {
-                "!doc": "Checks if the state of a given Item has changed between two certain points in time.",
+                "!doc": "Checks if the state of a given Item has changed between two points in time.",
                 "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> boolean"
             },
             "changedSince": {
@@ -133,7 +133,7 @@
                 "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> boolean"
             },
             "countBetween": {
-                "!doc": "Gets the number of available persisted data points of a given Item between two certain points in time.",
+                "!doc": "Gets the number of available persisted data points of a given Item between two points in time.",
                 "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> number"
             },
             "countSince": {
@@ -145,7 +145,7 @@
                 "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
             },
             "countStateChangesBetween": {
-                "!doc": "Gets the number of changes in persisted data points of a given Item between two certain points in time.",
+                "!doc": "Gets the number of changes in persisted data points of a given Item between two points in time.",
                 "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> number"
             },
             "countStateChangesSince": {
@@ -153,11 +153,11 @@
                 "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
             },
             "countStateChangesUntil": {
-                "!doc": "Gets the number of changes in future data points of a given Item since a certain point in time.",
+                "!doc": "Gets the number of changes in future data points of a given Item until a certain point in time.",
                 "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
             },
             "deltaBetween": {
-                "!doc": "Gets the difference value of the state of a given Item between two certain points in time.",
+                "!doc": "Gets the difference value of the state of a given Item between two points in time.",
                 "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> PersistedState|null"
             },
             "deltaSince": {
@@ -169,19 +169,19 @@
                 "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> PersistedState|null"
             },
             "deviationBetween": {
-                "!doc": "Gets the standard deviation of the state of the given Item between two certain points in time.",
-                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> PersistedState|null"
+                "!doc": "Gets the standard deviation of the state of the given Item between two points in time.",
+                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, riemannType?: RiemannType, serviceId?: string) -> PersistedState|null"
             },
             "deviationSince": {
                 "!doc": "Gets the standard deviation of the state of the given Item since a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> PersistedState|null"
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, riemannType?: RiemannType, serviceId?: string) -> PersistedState|null"
             },
             "deviationUntil": {
                 "!doc": "Gets the standard deviation of the state of the given Item until a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> PersistedState|null"
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, riemannType?: RiemannType, serviceId?: string) -> PersistedState|null"
             },
             "evolutionRateBetween": {
-                "!doc": "Gets the evolution rate of the state of a given Item between two certain points in time.",
+                "!doc": "Gets the evolution rate of the state of a given Item between two points in time.",
                 "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
             },
             "evolutionRateSince": {
@@ -193,7 +193,7 @@
                 "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
             },
             "getAllStatesBetween": {
-                "!doc": "Retrieves persisted data for a given Item between two certain points in time.",
+                "!doc": "Retrieves persisted data for a given Item between two points in time.",
                 "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> [PersistedItem]"
             },
             "getAllStatesSince": {
@@ -221,7 +221,7 @@
               "!type": "fn(serviceId?: string) -> ZonedDateTime|null"
             },
             "maximumBetween": {
-                "!doc": "Gets the maximum value of the persisted states of a given Item between two certain points in time.",
+                "!doc": "Gets the maximum value of the persisted states of a given Item between two points in time.",
                 "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> PersistedItem|null"
             },
             "maximumSince": {
@@ -233,7 +233,7 @@
                 "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> PersistedItem|null"
             },
             "minimumBetween": {
-                "!doc": "Gets the minimum value of the persisted states of a given Item between two certain points in time.",
+                "!doc": "Gets the minimum value of the persisted states of a given Item between two points in time.",
                 "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> PersistedItem"
             },
             "minimumSince": {
@@ -256,8 +256,20 @@
                 "!doc": "Returns the next state of a given item.",
                 "!type": "fn(skipEqual?: boolean, serviceId?: string) -> PersistedItem"
             },
+            "riemannSumBetween": {
+                "!doc": "Gets the Riemannsum of the state of the given Item between two points in time, time calculated in seconds.",
+                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, riemannType?: RiemannType, serviceId?: string) -> PersistedItem|null"
+            },
+            "riemannSumSince": {
+                "!doc": "Gets the Riemannsum of of the state of the given Item since a certain point in time, time calculated in seconds.",
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, riemannType?: RiemannType, serviceId?: string) -> PersistedItem|null"
+            },
+            "riemannSumUntil": {
+                "!doc": "Gets the Riemannsum of of the state of the given Item until a certain point in time, time calculated in seconds.",
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, riemannType?: RiemannType, serviceId?: string) -> PersistedItem|null"
+            },
             "sumBetween": {
-                "!doc": "Gets the sum of the states of a given Item between two certain points in time.",
+                "!doc": "Gets the sum of the states of a given Item between two points in time.",
                 "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> PersistedItem|null"
             },
             "sumSince": {
@@ -269,7 +281,7 @@
                 "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> PersistedItem|null"
             },
             "updatedBetween": {
-                "!doc": "Checks if the state of a given Item has been updated between two certain points in time.",
+                "!doc": "Checks if the state of a given Item has been updated between two points in time.",
                 "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> boolean"
             },
             "updatedSince": {
@@ -281,16 +293,16 @@
                 "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> boolean"
             },
             "varianceBetween": {
-                "!doc": "Gets the variance of the state of the given Item between two certain points in time.",
-                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> PersistedItem|null"
+                "!doc": "Gets the variance of the state of the given Item between two points in time.",
+                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, riemannType?: RiemannType, serviceId?: string) -> PersistedItem|null"
             },
             "varianceSince": {
                 "!doc": "Gets the variance of the state of the given Item since a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> PersistedItem|null"
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, riemannType?: RiemannType, serviceId?: string) -> PersistedItem|null"
             },
             "varianceUntil": {
                 "!doc": "Gets the variance of the state of the given Item until a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> PersistedItem|null"
+                "!type": "fn(timestamp: +Date|+ZonedDateTime, riemannType?: RiemannType, serviceId?: string) -> PersistedItem|null"
             }
         },
         "PersistedItem": {
