@@ -1,4 +1,4 @@
-const SharedTypes = ['Call', 'Color', 'Contact', 'DateTime', 'Dimmer', 'Image', 'Location', 'Number', 'Player', 'Rollershutter', 'String', 'Switch']
+const SharedTypes = ['Call', 'Color', 'Contact', 'DateTime', 'Dimmer', 'Image', 'Location', 'MediaBrowser', 'Number', 'Player', 'Rollershutter', 'String', 'Switch']
 
 export const ItemTypes = SharedTypes.concat(['Group'])
 export const GroupTypes = ['None'].concat(SharedTypes)
