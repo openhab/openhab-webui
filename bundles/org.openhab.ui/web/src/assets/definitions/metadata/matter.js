@@ -124,7 +124,7 @@ const fanModeOptions = [
 export const matterParameters = {
   // Global parameters available for all device types
   'global': [labelParameter, fixedLabelsParameter],
-  
+
   // Device type specific parameters
   'OnOffLight': [labelParameter, fixedLabelsParameter],
   'DimmableLight': [labelParameter, fixedLabelsParameter],
@@ -146,7 +146,7 @@ export const matterParameters = {
     }
   ],
   'Fan': [labelParameter, fixedLabelsParameter, fanModeSequenceParameter],
-  
+
   // Cluster specific parameters
   'Thermostat.SystemMode': [
     {

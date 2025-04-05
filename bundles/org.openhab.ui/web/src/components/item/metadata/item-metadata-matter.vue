@@ -6,9 +6,9 @@
       </div>
       <f7-list v-if="classesDefs && classesDefs.length">
         <f7-list-item :key="classSelectKey"
-                      :title="(multiple) ? 'Matter Device Type' : 'Matter Device Type'" 
-                      smart-select 
-                      :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: !multiple }" 
+                      :title="(multiple) ? 'Matter Device Type' : 'Matter Device Type'"
+                      smart-select
+                      :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: !multiple }"
                       ref="classes">
           <select v-if="itemType == 'Group'" name="parameters" @change="updateClasses" :multiple="multiple">
             <option v-if="!multiple" value="" />
@@ -40,9 +40,9 @@
             {{ cl }}
           </f7-block-title>
           <f7-list v-if="accessories[cl]">
-            <f7-list-item v-for="accessory in accessories[cl]" :key="accessory.label" 
-                          smart-select 
-                          :title="accessory.mandatory ? accessory.label+'*' : accessory.label" 
+            <f7-list-item v-for="accessory in accessories[cl]" :key="accessory.label"
+                          smart-select
+                          :title="accessory.mandatory ? accessory.label+'*' : accessory.label"
                           :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: !multiple }">
               <select @change="updateLinkedItem(cl, accessory.label, $event.target.value)">
                 <option value="" />
@@ -98,7 +98,7 @@ export default {
     console.log('Props:', this.item, this.itemName, this.metadata, this.namespace)
     console.log('ClassesDefs:', this.classesDefs)
     console.log('Accessories:', this.accessories)
-    
+
     this.multiple = !!this.metadata.value && this.metadata.value.indexOf(',') > 0
     this.itemType = this.item.groupType || this.item.type
 
@@ -109,7 +109,7 @@ export default {
   mounted () {
     if (this.itemType === 'Group' && this.item.members) {
       Promise.all(
-        this.item.members.map(member => 
+        this.item.members.map(member =>
           this.$oh.api.get(`/rest/items/${member.name}?metadata=matter`)
         )
       ).then(responses => {
@@ -170,7 +170,7 @@ export default {
         const typeAndCharacteristic = (accessoryClass + '.' + characteristic).toLowerCase()
         const matterValue = item.metadata.matter.value.toLowerCase()
         console.log('Checking:', typeAndCharacteristic, 'against:', matterValue)
-        return matterValue.split(',').some(value => 
+        return matterValue.split(',').some(value =>
           value.trim() === typeAndCharacteristic
         )
       }
@@ -208,10 +208,10 @@ export default {
           this.dirtyItem.add(groupMbr)
         }
       } else {
-        const groupMbr = this.item.members.find(mbr => 
-          mbr.metadata && 
-          mbr.metadata.matter && 
-          mbr.metadata.matter.value && 
+        const groupMbr = this.item.members.find(mbr =>
+          mbr.metadata &&
+          mbr.metadata.matter &&
+          mbr.metadata.matter.value &&
           mbr.metadata.matter.value.toLowerCase().indexOf(typeAndCharacteristic) > 0
         )
         if (groupMbr) {
@@ -236,4 +236,4 @@ export default {
     }
   }
 }
-</script> 
+</script>
