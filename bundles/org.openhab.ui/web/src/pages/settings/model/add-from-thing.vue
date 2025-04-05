@@ -287,10 +287,11 @@ export default {
           this.selectedThingChannelTypes = data2[1]
 
           if (this.createEquipment) {
+            const semanticEquipmentTag = this.selectedThing.semanticEquipmentTag || 'Equipment'
             this.newEquipmentItem = {
               name: this.$oh.utils.normalizeLabel(this.selectedThing.label),
               label: this.selectedThing.label,
-              tags: ['Equipment'],
+              tags: [semanticEquipmentTag],
               type: 'Group',
               groupNames: (this.parent) ? [this.parent.item.name] : []
             }
