@@ -41,7 +41,7 @@ export default {
     this.ADDITIONAL_CONTROLS = {
       Image: ['url', 'refresh'],
       Video: ['url', 'encoding'],
-      Chart: ['service', 'period', 'refresh', 'legend', 'forceAsItem', 'yAxisDecimalPattern'],
+      Chart: ['service', 'period', 'refresh', 'legend', 'forceAsItem', 'yAxisDecimalPattern', 'interpolation'],
       Webview: ['url', 'height'],
       Mapview: ['height'],
       Slider: ['switchEnabled', 'releaseOnly', 'minValue', 'maxValue', 'step'],
@@ -61,6 +61,10 @@ export default {
       { key: 'date', value: 'Date' },
       { key: 'time', value: 'Time' },
       { key: 'datetime', value: 'Date and Time' }
+    ]
+    this.INTERPOLATION_DEFS = [
+      { key: 'linear', value: 'Linear' },
+      { key: 'step', value: 'Step' }
     ]
 
     if (!this.itemsList) {

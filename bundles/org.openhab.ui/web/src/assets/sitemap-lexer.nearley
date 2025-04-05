@@ -9,7 +9,7 @@
     item:             'item=',
     staticIcon:       'staticIcon=',
     icon:             'icon=',
-    widgetattr:       ['url=', 'refresh=', 'service=', 'height=', 'minValue=', 'maxValue=', 'step=', 'encoding=', 'yAxisDecimalPattern=', 'inputHint=', 'columns=', 'row=', 'column='],
+    widgetattr:       ['url=', 'refresh=', 'service=', 'height=', 'minValue=', 'maxValue=', 'step=', 'encoding=', 'yAxisDecimalPattern=', 'inputHint=', 'columns=', 'row=', 'column=', 'interpolation='],
     widgetboolattr:   ['legend='],
     widgetfrcitmattr: 'forceasitem=',
     widgetmapattr:    'mappings=',
