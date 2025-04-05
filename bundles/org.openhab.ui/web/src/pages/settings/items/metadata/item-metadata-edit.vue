@@ -77,6 +77,7 @@ import ItemMetadataExpire from '@/components/item/metadata/item-metadata-expire.
 import ItemMetadataVoiceSystem from '@/components/item/metadata/item-metadata-voicesystem.vue'
 import ItemMetadataAlexa from '@/components/item/metadata/item-metadata-alexa.vue'
 import ItemMetadataHomeKit from '@/components/item/metadata/item-metadata-homekit.vue'
+import ItemMetadataMatter from '@/components/item/metadata/item-metadata-matter.vue'
 import ItemMetadataGa from '@/components/item/metadata/item-metadata-ga.vue'
 import ItemMetadataLinktomore from '@/components/item/metadata/item-metadata-linktomore.vue'
 import DirtyMixin from '../../dirty-mixin'
@@ -137,6 +138,8 @@ export default {
           return ItemMetadataHomeKit
         case 'ga':
           return ItemMetadataGa
+        case 'matter':
+          return ItemMetadataMatter
         case 'link_to_more':
           return ItemMetadataLinktomore
         default:
