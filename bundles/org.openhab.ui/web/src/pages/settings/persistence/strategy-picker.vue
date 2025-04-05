@@ -35,9 +35,7 @@ export default {
     return {
       smartSelectParams: {
         view: this.$f7.view.main,
-        openIn: 'popup',
-        virtualList: true,
-        virtualListHeight: (this.$theme.aurora) ? 32 : undefined
+        openIn: 'popup'
       }
     }
   },
