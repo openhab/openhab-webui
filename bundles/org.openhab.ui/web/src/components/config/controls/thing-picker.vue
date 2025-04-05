@@ -39,7 +39,7 @@ export default {
                     <input type="${item.radio ? 'radio' : 'checkbox'}" name="${item.inputName}" value="${item.value}" ${item.selected ? 'checked' : ''}>
                     <i class="icon icon-${item.radio ? 'radio' : 'checkbox'}"></i>
                     <div class="item-inner">
-                      <div class="text">${item.text}</div>
+                      <div class="item-title" style="font-weight: var(--f7-list-item-title-font-weight); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.text}</div>
                       <div class="item-footer">${after}</div>
                     </div>
                   </label>
