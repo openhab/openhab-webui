@@ -65,8 +65,9 @@
     .addon-card-label
       text-overflow ellipsis
       overflow clip
-      white-space nowrap
       color var(--f7-text-color)
+      max-height 3.4rem
+      line-height 1.1
     .addon-card-title-after
       .preloader-inner .preloader-inner-left, .preloader-inner .preloader-inner-right, .preloader-inner .preloader-inner-line
         margin-left inherit !important

@@ -17,6 +17,7 @@
 
 <style lang="stylus">
 .addon-stats-line
+  white-space nowrap
   & > span
     margin-right 4px
 </style>
