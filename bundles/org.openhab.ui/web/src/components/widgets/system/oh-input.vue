@@ -30,11 +30,11 @@
 </template>
 
 <style lang="stylus">
-input[type=number]
-  text-align right
 .oh-input
   flex-wrap nowrap !important
   align-items center !important
+  input[type=number]
+    text-align right
   .unit
     margin-left 4px
   .input-field
