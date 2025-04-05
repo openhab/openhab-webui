@@ -80,7 +80,7 @@ export default {
         const item = this.context.store[this.config.item]
         if (item.state !== 'NULL' && item.state !== 'UNDEF' && item.state !== 'Invalid Date') {
           const value = (this.config.useDisplayState && item.displayState) || item.state
-          return this.config.type === 'number' ? this.extractValue(value) : value
+          return this.config.type === 'number' ? this.extractValue(value).replace(',', '.') : value
         }
       }
       return this.config.defaultValue
