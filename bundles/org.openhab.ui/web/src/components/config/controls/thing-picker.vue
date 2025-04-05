@@ -26,8 +26,6 @@ export default {
         openIn: 'popup',
         searchbar: true,
         searchbarPlaceholder: this.$t('dialogs.search.things'),
-        virtualList: true,
-        virtualListHeight: (this.$theme.aurora) ? 32 : undefined,
 
         renderItem: (item, index) => {
           let after = (index > 0) ? this.things[index - 1].location
