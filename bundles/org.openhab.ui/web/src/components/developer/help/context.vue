@@ -97,7 +97,7 @@ export default {
             // Fix {{base}} and /docs anchor href for doc pages
             body = body.replace(/<a href="(%7B%7Bbase%7D%7D|\/docs)/gm, `<a class="external" target="_blank" href="${this.$store.state.websiteUrl}/docs`)
             // Fix local folder anchor href: Rewrite folder to /folder/
-            body = body.replace(/(<a href=")([A-z]+)(")/gm, '$1' + this.localUrl + '$2/$3')
+            body = body.replace(/(<a href=")([A-z-]+)(")/gm, '$1' + this.localUrl + '$2/$3')
             // Fix external anchor href
             body = body.replace(/<a href="http/gm, '<a class="external" target="_blank" href="http')
 

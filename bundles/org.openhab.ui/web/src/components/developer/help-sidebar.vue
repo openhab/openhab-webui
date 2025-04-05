@@ -176,6 +176,7 @@ export default {
       if (path.indexOf('/addons/') >= 0) return '/addons'
 
       // /developer/* docs
+      if (path.indexOf('/developer/log-viewer') >= 0) return '/developer/log-viewer'
       if (path.indexOf('/developer/widgets') >= 0) return '/developer/widgets'
       if (path.indexOf('/developer/') >= 0) return '/developer/index'
 
