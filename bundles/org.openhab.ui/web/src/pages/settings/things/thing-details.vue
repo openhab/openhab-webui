@@ -138,7 +138,8 @@
             <f7-list>
               <f7-list-button v-if="thing.statusInfo.statusDetail === 'HANDLER_MISSING_ERROR'" color="blue" title="Install Binding" @click="installBinding" />
               <f7-list-button v-if="!error" color="blue" title="Duplicate Thing" @click="duplicateThing" />
-              <f7-list-button v-if="!error" color="blue" title="Copy DSL Definition" @click="copyThingDsl" />
+              <f7-list-button v-if="!error" color="blue" title="Copy DSL Definition" @click="copyThingDefinition('DSL', 'text/vnd.openhab.dsl.thing')" />
+              <f7-list-button v-if="!error" color="blue" title="Copy YAML File Definition" @click="copyThingDefinition('YAML File', 'application/yaml')" />
               <f7-list-button v-if="editable" color="red" title="Remove Thing" @click="deleteThing" />
             </f7-list>
           </f7-col>
@@ -587,14 +588,14 @@ export default {
         }
       })
     },
-    copyThingDsl () {
+    copyThingDefinition (name, mediaType) {
       this.$oh.api.getPlain({
         url: '/rest/file-format/things/' + this.thingId,
-        headers: { accept: 'text/vnd.openhab.dsl.thing' }
+        headers: { accept: mediaType }
       }).then((definition) => {
         if (this.$clipboard(definition)) {
           this.$f7.toast.create({
-            text: 'Thing DSL definition copied to clipboard',
+            text: `Thing ${name} definition copied to clipboard`,
             destroyOnClose: true,
             closeTimeout: 2000
           }).open()
