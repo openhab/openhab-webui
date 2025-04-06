@@ -120,20 +120,19 @@ export default {
         }
       }
     },
-    entryActionsCopyThingDefinitionButton (entry) {
+    entryActionsCopyThingDefinitionButton (entry, name, mediaType) {
       return {
-        text: 'Copy DSL Definition',
+        text: `Copy ${name} Definition`,
         color: 'blue',
         bold: true,
         onClick: () => {
-          const headers = { accept: 'text/vnd.openhab.dsl.thing' }
           this.$oh.api.getPlain({
             url: '/rest/file-format/things/' + entry.thingUID,
-            headers: { accept: 'text/vnd.openhab.dsl.thing' }
+            headers: { accept: mediaType }
           }).then(definition => {
             if (this.$clipboard(definition)) {
               this.$f7.toast.create({
-                text: `DSL Thing definition for '${entry.thingUID}' copied to clipboard`,
+                text: `${name} Thing definition for '${entry.thingUID}' copied to clipboard`,
                 destroyOnClose: true,
                 closeTimeout: 2000
               }).open()
