@@ -25,6 +25,7 @@ export default function defineOHBlocks_Persistence (f7, persistenceServices) {
           ['historic evolution rate', 'evolutionRateSince'], ['future evolution rate', 'evolutionRateUntil'], ['state evolution rate between', 'evolutionRateBetween'],
           ['historic state minimum', 'minimumSince'], ['future state minimum', 'minimumUntil'], ['state minimum between', 'minimumBetween'],
           ['historic state maximum', 'maximumSince'], ['future state maximum', 'maximumUntil'], ['state maximum between', 'maximumBetween'],
+          ['historic state Riemann sum', 'riemannSumSince'], ['future state Riemann sum', 'riemannSumUntil'], ['state Riemann sum between', 'riemannSumBetween'],
           ['historic state sum', 'sumSince'], ['future state sum', 'sumUntil'], ['state sum between', 'sumBetween'],
           ['historic state updates count', 'countSince'], ['future state updates count', 'countUntil'], ['state updates count between', 'countBetween'],
           ['historic state changes count', 'countStateChangesSince'], ['future state changes count', 'countStateChangesUntil'], ['state changes count between', 'countStateChangesBetween'],
@@ -74,6 +75,9 @@ export default function defineOHBlocks_Persistence (f7, persistenceServices) {
           'maximumSince': 'Gets the maximum value of the State of the Item since a certain point in time',
           'maximumUntil': 'Gets the maximum value of the State of the Item until a certain point in time',
           'maximumBetween': 'Gets the maximum value of the State of the Item between two points in time',
+          'riemannSumSince': 'Gets the Riemann sum (integral) of the previous States of the Item since a certain point in time',
+          'riemannSumUntil': 'Gets the Riemann sum (integral) of the future States of the Item until a certain point in time',
+          'riemannSumBetween': 'Gets the Riemann sum (integral) of the States of the Item between two points in time',
           'sumSince': 'Gets the sum of the previous States of the Item since a certain point in time',
           'sumUntil': 'Gets the sum of the future States of the Item until a certain point in time',
           'sumBetween': 'Gets the sum of the States of the Item between two points in time',
@@ -129,12 +133,16 @@ export default function defineOHBlocks_Persistence (f7, persistenceServices) {
 
       let hasSinceField = this.methodName.endsWith('Since') || this.methodName.endsWith('Between') || (this.methodName === 'persistedState')
       let hasUntilField = this.methodName.endsWith('Until') || this.methodName.endsWith('Between')
+      let hasRiemannTypeField = this.methodName.startsWith('riemannSum') || this.methodName.startsWith('average') || this.methodName.startsWith('deviation') || this.methodName.startsWith('variance')
 
       if (this.getInput('dayInfoSince') && !hasSinceField) {
         this.removeInput('dayInfoSince')
       }
       if (this.getInput('dayInfoUntil') && !hasUntilField) {
         this.removeInput('dayInfoUntil')
+      }
+      if (this.getInput('riemannTypeInput') && !hasRiemannTypeField) {
+        this.removeInput('riemannTypeInput')
       }
 
       if (['previousState', 'nextState', 'previousNumericState', 'nextNumericState', 'previousStateTime', 'nextStateTime'].includes(this.methodName)) {
@@ -207,6 +215,19 @@ export default function defineOHBlocks_Persistence (f7, persistenceServices) {
             }
           }
         }
+
+        if (hasRiemannTypeField && !this.getInput('riemannTypeInput')) {
+          this.appendDummyInput('riemannTypeInput')
+            .appendField('using Riemann')
+            .appendField(new Blockly.FieldDropdown([
+              ['left', 'RiemannType.LEFT'],
+              ['right', 'RiemannType.RIGHT'],
+              ['trapezoidal', 'RiemannType.TRAPEZOIDAL'],
+              ['midpoint', 'RiemannType.MIDPOINT']
+            ]), 'riemannType')
+            .appendField('approximation')
+          this.moveInputBefore('riemannTypeInput', 'itemName')
+        }
       }
     },
     returnTypeNames: function () {
@@ -240,6 +261,9 @@ export default function defineOHBlocks_Persistence (f7, persistenceServices) {
         case 'deviationSince':
         case 'deviationUntil':
         case 'deviationBetween':
+        case 'riemannSumSince':
+        case 'riemannSumUntil':
+        case 'riemannSumBetween':
         case 'sumSince':
         case 'sumUntil':
         case 'sumBetween':
@@ -282,9 +306,12 @@ export default function defineOHBlocks_Persistence (f7, persistenceServices) {
     let code = ''
     const dayInfoSince = javascriptGenerator.valueToCode(block, 'dayInfoSince', javascriptGenerator.ORDER_NONE)
     const dayInfoUntil = javascriptGenerator.valueToCode(block, 'dayInfoUntil', javascriptGenerator.ORDER_NONE)
-    const dayInfo = dayInfoSince + ((dayInfoSince && dayInfoUntil) ? ' ,' : '') + dayInfoUntil
+    const dayInfo = dayInfoSince + ((dayInfoSince && dayInfoUntil) ? ', ' : '') + dayInfoUntil
     let skipPrevious = javascriptGenerator.valueToCode(block, 'skipPrevious', javascriptGenerator.ORDER_NONE)
-    skipPrevious = ((skipPrevious === 'undefined') ? false : skipPrevious)
+    skipPrevious = (skipPrevious === 'undefined') ? false : skipPrevious
+
+    let riemannType = block.getFieldValue('riemannType')
+    riemannType = (riemannType === 'undefined') ? '' : `, items.${riemannType}`
 
     const persistenceExtension = (persistenceName === '\'default\'') ? '' : `, ${persistenceName}`
 
@@ -332,13 +359,16 @@ export default function defineOHBlocks_Persistence (f7, persistenceServices) {
       case 'deviationSince':
       case 'deviationUntil':
       case 'deviationBetween':
+      case 'riemannSumSince':
+      case 'riemannSumUntil':
+      case 'riemannSumBetween':
       case 'sumSince':
       case 'sumUntil':
       case 'sumBetween':
       case 'varianceSince':
       case 'varianceUntil':
       case 'varianceBetween':
-        code = `${itemCode}.persistence.${methodName}(${dayInfo}${persistenceExtension})?.${returnTypeName}`
+        code = `${itemCode}.persistence.${methodName}(${dayInfo}${riemannType}${persistenceExtension})?.${returnTypeName}`
         break
 
       // Returning JS Array of timestamp and state pairs, whereby PersistedState is mapped to return type (GraalJS) or org.openhab.core.persistence.HistoricItem
