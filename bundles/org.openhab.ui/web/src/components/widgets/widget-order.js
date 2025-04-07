@@ -3,8 +3,8 @@ export function compareItems (i1, i2) {
     i2.metadata && i2.metadata.semantics && i2.metadata.semantics.value.indexOf('Location') === 0
 
   // Compare widgetOrder
-  const order1 = (i1.metadata && i1.metadata.widgetOrder) ? i1.metadata.widgetOrder.value : Infinity
-  const order2 = (i2.metadata && i2.metadata.widgetOrder) ? i2.metadata.widgetOrder.value : Infinity
+  const order1 = (i1.metadata && i1.metadata.widgetOrder) ? parseInt(i1.metadata.widgetOrder.value) : Infinity
+  const order2 = (i2.metadata && i2.metadata.widgetOrder) ? parseInt(i2.metadata.widgetOrder.value) : Infinity
   const widgetOrder = (order1 !== order2) ? ((order1 < order2) ? -1 : 1) : 0
 
   // Unless comparing Location Items simply return the order based on widgetOrder metadata if determined
