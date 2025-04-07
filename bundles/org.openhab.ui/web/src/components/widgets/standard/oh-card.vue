@@ -44,7 +44,7 @@ export default {
   computed: {
     computedContentClass () {
       return [
-        ...(this.config.action ? ['card-link'] : []),
+        ...(this.hasAction ? ['card-link'] : []),
         ...(Array.isArray(this.contentClass) ? this.contentClass : ['padding']),
         ...(Array.isArray(this.config.contentClass) ? this.config.contentClass : [])
       ]

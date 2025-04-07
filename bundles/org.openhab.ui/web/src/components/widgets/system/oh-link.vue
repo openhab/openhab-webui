@@ -17,7 +17,7 @@ export default {
   widget: OhLinkDefinition,
   methods: {
     clicked () {
-      if (this.config.action || this.config.actionPropsParameterGroup) {
+      if (this.hasAction) {
         this.performAction()
       }
       if (this.config.clearVariable && !this.config.clearVariableKey) {

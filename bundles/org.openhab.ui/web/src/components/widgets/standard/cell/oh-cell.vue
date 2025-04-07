@@ -11,7 +11,7 @@
       <oh-trend v-else-if="config.trendItem" :key="'trend' + config.item" class="trend card-opened-fade-out" :width="($refs.card) ? $refs.card.$el.clientWidth : 0" :context="context" />
       <div v-else class="cell-background" :class="[(config.color) ? 'bg-color-' + config.color : '', { 'on': isOn }, { 'card-opened-fade-out': !config.keepColorWhenOpened }]" />
     </slot>
-    <f7-link v-show="!opened && hasExpandedControls && config.action" icon-f7="ellipsis_vertical" icon-size="30" @click.native="openCell" class="float-right cell-open-button card-opened-fade-out no-ripple" />
+    <f7-link v-show="!opened && hasExpandedControls && hasAction" icon-f7="ellipsis_vertical" icon-size="30" @click.native="openCell" class="float-right cell-open-button card-opened-fade-out no-ripple" />
     <f7-card-content ref="cell" class="cell-contents">
       <f7-card-header class="cell-button card-opened-fade-out no-padding" v-show="!opened">
         <slot name="header">
@@ -193,7 +193,7 @@ export default {
         return
       }
       if (this.opened) return
-      if (this.config.action || this.config.actionPropsParameterGroup) {
+      if (this.hasAction) {
         this.performAction()
       } else {
         this.openCell()

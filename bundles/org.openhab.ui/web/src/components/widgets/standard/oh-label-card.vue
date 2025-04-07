@@ -4,7 +4,7 @@
       <f7-card-content ref="cardContent" @click.native="performAction" @taphold.native="onTaphold($event)" @contextmenu.native="onContextMenu($event)" :class="['label-card-content', (config.vertical ? 'vertical-arrangement' : ''), ...(Array.isArray(config.contentClass) ? config.contentClass : [])]" :style="{ background: config.background, ...config.contentStyle }">
         <oh-trend v-if="config.trendItem" :key="'trend' + config.item" class="trend" :width="($refs.cardContent) ? $refs.cardContent.$el.clientWidth : 0" :context="context" />
         <f7-list>
-          <f7-list-item :link="config.action ? true : false" no-chevron>
+          <f7-list-item :link="hasAction ? true : false" no-chevron>
             <oh-icon slot="media" v-if="config.icon" :icon="config.icon" :height="config.iconSize || 32" :width="config.iconSize || 32" :state="(config.item && config.iconUseState) ? context.store[config.item].state : null" :color="config.iconColor" />
             <div v-if="config.label || config.item" :class="config.class">
               <span :style="{ 'font-size': config.fontSize || '24px', 'font-weight': config.fontWeight || 'normal' }">
@@ -13,8 +13,6 @@
             </div>
           </f7-list-item>
         </f7-list>
-        <!-- <f7-link class="label-link" v-if="config.action">{{context.store[config.item].displayState || context.store[config.item].state}}</f7-link> -->
-        <!-- <h2>{{context.store[config.item].displayState || context.store[config.item].state}}</h2> -->
       </f7-card-content>
     </template>
   </oh-card>
