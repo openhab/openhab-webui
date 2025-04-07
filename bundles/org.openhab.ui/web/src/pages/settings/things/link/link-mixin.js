@@ -1,14 +1,17 @@
+const PROFILES_REQUIRING_TYPE_COMPATIBILITY = ['system:default', 'system:follow']
+
 export default {
   methods: {
     /**
-     * Check whether the type of the given Item does match the type of the given channel.
+     * Check whether the type of the given Item is compatible with the type of the given channel.
      * @param {object} item
      * @param {object} channel
      * @return {boolean}
      */
-    itemTypeIsChannelType (item, channel) {
+    itemTypeCompatibleWithChannelType (item, channel) {
       if (!channel || !channel.itemType) return true
       if (!item || !item.type) return true
+      if (channel.itemType === 'Color' && ['Color', 'Switch', 'Dimmer'].includes(item.type)) return true
       if (channel.itemType.startsWith('Number')) {
         return item.type.startsWith('Number')
       }
@@ -23,7 +26,7 @@ export default {
      * @return {boolean}
      */
     isProfileTypeCompatible (channel, profileType, item) {
-      if (!this.itemTypeIsChannelType(item, channel) && (profileType.uid === 'system:default' || profileType.uid === 'system:follow')) return false
+      if (!this.itemTypeCompatibleWithChannelType(item, channel) && PROFILES_REQUIRING_TYPE_COMPATIBILITY.includes(profileType.uid)) return false
       if (!profileType.supportedItemTypes || profileType.supportedItemTypes.length === 0) return true
       return profileType.supportedItemTypes.includes(item.type.split(':', 1)[0])
     }
