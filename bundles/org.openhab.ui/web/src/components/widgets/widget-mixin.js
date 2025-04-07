@@ -66,6 +66,9 @@ export default {
         return visibleTo.indexOf('user:' + user.name) >= 0
       }
       return true
+    },
+    hasAction () {
+      return this.config && (this.config.action || this.config.actionPropsParameterGroup)
     }
   },
   mounted () {

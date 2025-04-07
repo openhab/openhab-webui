@@ -58,7 +58,7 @@ export default {
     },
     clicked () {
       if (this.context.component.component !== 'oh-image') return // don't interfere if we're in the context of a oh-image-card for example
-      if (this.config.action || this.config.actionPropsParameterGroup) {
+      if (this.hasAction) {
         this.performAction()
       }
     },

@@ -5,7 +5,7 @@
                 :media-item="context.parent.component.config.mediaList && !config.divider"
                 :badge="(config.divider) ? 'Divider' : (config.listButton) ? 'List button' : config.badge"
                 :accordion-item="isRegularAccordion && !config.divider && !context.editmode"
-                :link="(config.action !== undefined && config.action !== '' && !context.editmode) ? true : undefined"
+                :link="(hasAction && !context.editmode) ? true : undefined"
                 @click.stop="openAccordionOrPerformAction"
                 :class="{ 'oh-equipment-accordion-item' : isEquipmentAccordion}"
                 ref="f7AccordionContent">
