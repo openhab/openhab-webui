@@ -749,10 +749,14 @@ export default {
       const tableHTML = table.outerHTML
 
       // Create a Blob with the HTML content and define the MIME type
-      const blob = new Blob([tableHTML], { type: 'text/html' })
+      const blobHtml = new Blob([tableHTML], { type: 'text/html' })
+      const blobText = new Blob([tableHTML], { type: 'text/plain' })
 
       // Use the ClipboardItem API to copy the Blob
-      const clipboardItem = new ClipboardItem({ 'text/html': blob })
+      const clipboardItem = new ClipboardItem({
+        'text/html': blobHtml,
+        'text/plain': blobText
+      })
 
       // Copy to clipboard
       navigator.clipboard
