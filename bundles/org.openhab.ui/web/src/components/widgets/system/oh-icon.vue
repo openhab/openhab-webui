@@ -4,8 +4,17 @@
        :style="{
          width: (resolvedConfig.width !== null) ? resolvedConfig.width + 'px' : 'auto',
          height: (resolvedConfig.height !== null) ? resolvedConfig.height + 'px' : 'auto',
+         cursor: (hasAction) ? 'pointer' : 'auto',
          ...resolvedStyle }"
        onload="this.classList.remove('no-icon')" onerror="this.classList.add('no-icon')">
+  <f7-link v-else-if="hasAction" @click="performAction()">
+    <f7-icon v-if="iconType === 'f7'" v-bind="resolvedConfig"
+             :size="resolvedConfig.width || resolvedConfig.height || null"
+             :style="resolvedStyle" />
+    <iconify-icon v-else-if="iconType === 'iconify'" v-bind="resolvedConfig"
+                  :icon="iconName"
+                  :style="resolvedStyle" />
+  </f7-link>
   <f7-icon v-else-if="iconType === 'f7'" v-bind="resolvedConfig"
            :size="resolvedConfig.width || resolvedConfig.height || null"
            :style="resolvedStyle" />
