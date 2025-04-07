@@ -3,6 +3,9 @@
     <chart
       ref="chart"
       v-if="ready"
+      :init-options="{
+        locale: ECHARTS_LOCALE
+      }"
       :option="options"
       class="oh-chart"
       @click="handleClick"
@@ -37,12 +40,13 @@
 import mixin from '../widget-mixin'
 import chart from '../chart/chart-mixin'
 import { actionsMixin } from '../widget-actions'
+import i18n from '@/js/i18n'
 
 import dayjs from 'dayjs'
 import LocalizedFormat from 'dayjs/plugin/localizedFormat'
 dayjs.extend(LocalizedFormat)
 
-import { use } from 'echarts/core'
+import { use, registerLocale } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { LineChart, BarChart, GaugeChart, HeatmapChart, PieChart, ScatterChart } from 'echarts/charts'
 import {
@@ -54,6 +58,17 @@ import VChart from 'vue-echarts'
 use([CanvasRenderer, LineChart, BarChart, GaugeChart, HeatmapChart, PieChart, ScatterChart, TitleComponent,
   LegendComponent, LegendScrollComponent, GridComponent, SingleAxisComponent, ToolboxComponent, TooltipComponent, DataZoomComponent,
   MarkLineComponent, MarkPointComponent, MarkAreaComponent, VisualMapComponent, CalendarComponent])
+
+const ECHARTS_LOCALE = i18n.locale.split('-')[0].toUpperCase()
+
+import(`echarts/i18n/lang${ECHARTS_LOCALE}-obj`)
+  .then(lang => {
+    console.info(`Registering ECharts locale ${ECHARTS_LOCALE}`)
+    registerLocale(ECHARTS_LOCALE, lang.default)
+  })
+  .catch(() => {
+    console.warn(`No ECharts locale found for ${ECHARTS_LOCALE}`)
+  })
 
 export default {
   mixins: [mixin, chart, actionsMixin],
@@ -102,6 +117,9 @@ export default {
   },
   mounted () {
     this.ready = true
+  },
+  created () {
+    this.ECHARTS_LOCALE = ECHARTS_LOCALE
   },
   beforeDestroy () {
     if (this.calendarPicker) this.calendarPicker.destroy()
