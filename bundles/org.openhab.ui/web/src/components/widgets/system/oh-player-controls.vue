@@ -38,6 +38,14 @@
                icon-material="skip_next"
                icon-size="24"
                icon-color="gray" />
+    <f7-button color="blue"   			 
+    			@click.stop="mediaChange()" 
+    			large 
+    			icon-material="alarm" 
+    			icon-size="24" 
+    			icon-color="gray"  
+    			:href="`/mediabrowser/`"/>
+               
   </f7-segmented>
 </template>
 
@@ -85,7 +93,10 @@ export default {
     },
     skipNext (value) {
       useStatesStore().sendCommand(this.config.item, 'NEXT')
+    },
+    mediaChange (value) {
+      //this.$store.dispatch('sendCommand', { itemName: this.config.item, cmd: 'spotify:playlist:5Z4AD0u9fwnvtsj7ce5ZLS' 
+      })
     }
-  }
 }
 </script>
