@@ -219,8 +219,8 @@ export default {
       })
     },
     onProfileTypeChange (profileTypeUid) {
+      this.profileTypeConfiguration = null
       if (!profileTypeUid) {
-        this.profileTypeConfiguration = null
         this.currentProfileType = null
         return
       }
