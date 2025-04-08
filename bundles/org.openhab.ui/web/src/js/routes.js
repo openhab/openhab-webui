@@ -4,6 +4,7 @@ import HomePage from '../pages/home.vue'
 import NotFoundPage from '../pages/not-found.vue'
 import PageViewPage from '../pages/page/page-view.vue'
 import AnalyzerPopup from '../pages/analyzer/analyzer-popup.vue'
+import MediaPopup from '../pages/media/media-popup.vue'
 import { AddonTitles } from '@/assets/addon-store'
 
 const AboutPage = () => import(/* webpackChunkName: "about-page" */ '@/pages/about.vue')
@@ -557,6 +558,12 @@ export default [
     path: '/analyzer/',
     popup: {
       component: AnalyzerPopup
+    }
+  },
+  {
+    path: '/mediabrowser/',
+    popup: {
+      component: MediaPopup
     }
   },
   {

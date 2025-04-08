@@ -57,6 +57,17 @@ export const OhColorpickerCardDefinition = () => new WidgetDefinition('oh-colorp
   .paramGroup(CardParameterGroup(), CardParameters())
   .paramGroup(pg('colorpicker', 'Color picker'), ColorPickerParameters())
 
+  
+// OhMediaBrowserCard
+import MediaBrowserParameters from '../system/mediabrowser.js'
+export const OhMediaBrowserCardDefinition = () => new WidgetDefinition('oh-media-browser-card', 'Media Browser Card', 'Display media browser controls in a card')
+  .paramGroup(CardParameterGroup(), CardParameters())
+  .paramGroup(pg('media-browser', 'Media Browser Controls'), MediaBrowserParameters())
+  .paramGroup(pg('Current Track Info', 'Currently playing track information'), [
+    pi('artistItem', 'Artist Item', 'Item holding the artist name'),
+    pi('trackItem', 'Track Item', 'Item holding the track name')
+  ])
+
 // OhPlayerCard
 import PlayerParameters from '../system/player.js'
 export const OhPlayerCardDefinition = () => new WidgetDefinition('oh-player-card', 'Player Card', 'Display player controls in a card')
