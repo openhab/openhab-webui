@@ -70,6 +70,13 @@ export default function itemDefaultListComponent (item, footer) {
         component: 'oh-player-item'
       }
     }
+    
+    if (item.type === 'MediaBrowser' && !stateDescription.readOnly) {
+          component = {
+            component: 'oh-media-browser-item'
+          }
+        }
+
 
     if (item.type === 'Image') {
       component = {
