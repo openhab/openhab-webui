@@ -65,16 +65,15 @@ export default {
       return this.configDescription?.multiple
     },
     options () {
-      let result
       if (this.configDescription?.options && this.configDescription.options.length > 0) {
-        result = this.configDescription.options.map((o) => {
+        return this.configDescription.options.map((o) => {
           return {
             id: o.value,
-            text: (o.label) ? (o.value !== o.label) ? `${o.label} (${o.value})` : o.label : o.value
+            text: (o.label) ? (o.value !== o.label ? `${o.label} (${o.value})` : o.label) : o.value
           }
         })
       }
-      return result
+      return null
     }
   },
   data () {
