@@ -5,6 +5,9 @@
     <f7-button color="blue" @click.stop="playPause()" large round fill :icon-f7="(isPlaying) ? 'pause_fill' : 'play_fill'" icon-size="24" />
     <f7-button v-if="this.config.showRewindFFward" color="blue" @click.stop="fastForward()" large icon-material="fast_forward" icon-size="24" icon-color="gray" />
     <f7-button color="blue" @click.stop="skipNext()" large icon-material="skip_next" icon-size="24" icon-color="gray" />
+    
+    <f7-button color="blue"   @click.stop="mediaChange()" large icon-material="alarm" icon-size="24" icon-color="gray"  :href="`/mediabrowser/`"/>
+    
   </f7-segmented>
 </template>
 
@@ -50,7 +53,11 @@ export default {
     },
     skipNext (value) {
       this.$store.dispatch('sendCommand', { itemName: this.config.item, cmd: 'NEXT' })
+    },
+    mediaChange (value) {
+      //this.$store.dispatch('sendCommand', { itemName: this.config.item, cmd: 'spotify:playlist:5Z4AD0u9fwnvtsj7ce5ZLS' })
     }
+    
   }
 }
 </script>

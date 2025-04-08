@@ -9,13 +9,56 @@
 
     
     <a href="/mediabrowser/?path=/Root">Registry</a><br/><br/>
+
+    {{ node.type }}
+    <br/>
+    {{ node.path }}
+    <br/>
+    <br/>
     
-    <div v-for="r1 in array1" style="width:200px;height:200px;float:left;margin:20px;background-color:#ffffff;color:#000000;border:solid 1px;border-radius:10px;padding:10px;" :class="{ 'sheet-opened': controlsOpened }">
-        <f7-link :href="`/mediabrowser/?path=` + r1.path" :text="r1.label" :data-reload="true" :reload-current="true" :reload-detail="true">
-            <img width=160 :src="r1.artUri">
-        </f7-link>
+    
+     
+    <div v-if="this.node.pres==='flat'">
+        <div style=" display: grid;grid-template-columns: 220px 1fr;width:50%;"> 
+            <div style="grid-column: 1;"> 
+                <img :src="node.artUri" width="200"/>
+            </div>
+            <div style="grid-column: 2;text-align:left;">
+                <p style="font-size:20pt; font-weight:bold;"> {{ node.label }}</p>
+                 <f7-button small outline fill="true" style="background-color:#9090ff;width: 120px;height:32px;font-weight:bold;padding:2px;padding-left:10px;text-align:left;border:none 0px;"  @click="doPlay(node.id)">
+                    <img src="/static/Arrow.png" style="vertical-align:middle" height=24/>&nbsp;&nbsp;&nbsp;&nbsp;PLAY
+                 </f7-button>
+                           
+            </div>
+        </div>
+        <hr/>
         <br/>
+        <div v-for="r1 in node.childs" style="display: inline;clear:both;" :class="{ 'sheet-opened': controlsOpened }">
+	        <f7-link :href="`/mediabrowser/?path=` + r1.path" :data-reload="true" :reload-current="true" :reload-detail="true">
+                 <f7-button small outline style="height:40px;font-weight:bold;padding:2px;padding-left:10px;text-align:left;border:none 0px;"  @click="doPlay(r1.id)">
+                    <img src="/static/Arrow.png" style="vertical-align:middle" height=24/>
+	                {{ r1.label }}
+	                </f7-button>
+	        </f7-link>
+	        <br/>
+        </div>
     </div>
+    <div v-else>
+	    <div v-for="r1 in node.childs" style="width:200px;height:200px;position:relative;float:left;margin:20px;background-color:#ffffff;color:#000000;border:solid 1px;border-radius:10px;padding:10px;" :class="{ 'sheet-opened': controlsOpened }">
+	        <f7-link :href="`/mediabrowser/?path=` + r1.path" :data-reload="true" :reload-current="true" :reload-detail="true">
+	            <div id="container" style="position:relative">
+	            <div style="text-align:center;position:absolute;top:-10px;width:200px;">
+	                {{ r1.label }}
+	            </div>
+	            <div style="text-align:center;width:200px;position:absolute;top:10px;">
+	                <img width=160 height=160 :src="r1.artUri">
+	            </div>
+	            </div>
+	        </f7-link>
+	        <br/>
+	    </div>
+    </div>
+    
     
     <f7-toolbar bottom>
       <span />
@@ -25,12 +68,16 @@
 </template>
 
 <style lang="stylus">
-.analyzer-controls
+:root {
+    --f7-popup-tablet-width: 80%;
+    --f7-popup-tablet-height: 1000px;
+}
+.media-controls
   --f7-theme-color var(--f7-color-blue)
   --f7-theme-color-rgb var(--f7-color-blue-rgb)
   --f7-theme-color-tint var(--f7-color-blue-tint)
   z-index 11000
-.md .analyzer-controls .toolbar .link
+.md .media-controls .toolbar .link
   width 28%
 </style>
 
@@ -61,8 +108,18 @@ export default {
       }
       
       api.get(`/rest/media/sources?path=` + this.path).then((data) => {
-          this.array1=data;
+          this.node = data;
+          this.node.pres="thumb";
+          if (this.node.type === 'org.openhab.core.media.model.MediaAlbum')
+              this.node.pres="flat";
+          if (this.node.type === 'org.openhab.core.media.model.MediaPlayList')
+              this.node.pres="flat";
+          
+          if (this.node.label === 'TopTracks')
+              this.node.pres="flat";
+              
       });
+      
       
     
       
@@ -70,8 +127,7 @@ export default {
       
       
       return {
-          array1: this. array1,
-          dataTest: this.dataTest,
+          node: this.node,
           controlsOpened: false
       };
 
@@ -93,7 +149,8 @@ export default {
     openControls () {
       this.controlsOpened = true
     },
-    doIt (type) {
+    doPlay (id) {
+        this.$store.dispatch('sendCommand', { itemName: 'Spotify_Controle_Media', cmd: id });
         alert(type);  
       },
   },
