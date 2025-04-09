@@ -13,6 +13,7 @@
           ref="searchbar"
           class="searchbar-items"
           search-container=".virtual-list"
+          @searchbar:search="filterSelectedItems"
           :placeholder="searchPlaceholder"
           :disable-button="!$theme.aurora" />
       </f7-subnavbar>
@@ -70,8 +71,12 @@
       </f7-col>
 
       <f7-col v-show="ready && items.length > 0">
-        <f7-block-title class="no-margin-top searchbar-hide-on-search">
-          {{ items.length }} Items
+        <f7-block-title class="no-margin-top">
+          <span>{{ getListSize() }} <template v-if="$refs.searchbar?.f7Searchbar.query">of {{ items.length }} </template>Items<template v-if="$refs.searchbar?.f7Searchbar.query"> found</template></span>
+          <template v-if="showCheckboxes && getListSize() > 0">
+            -
+            <f7-link @click="selectDeselectAll()" :text="areAllSelected() ? 'Deselect all' : 'Select all'" />
+          </template>
         </f7-block-title>
         <f7-list
           v-show="items.length > 0"
@@ -223,6 +228,12 @@ export default {
       this.$oh.sse.close(this.eventSource)
       this.eventSource = null
     },
+    filterSelectedItems (query) {
+      if (!this.$refs.itemsList.f7VirtualList.filteredItems) {
+        return
+      }
+      this.selectedItems = this.selectedItems.filter((i) => this.$refs.itemsList.f7VirtualList.filteredItems.find((item) => item.name === i))
+    },
     searchAll (query, items) {
       const found = []
       for (let i = 0; i < items.length; i += 1) {
@@ -235,10 +246,16 @@ export default {
           query.trim() === ''
         ) { found.push(i) }
       }
-      return found // return array with mathced indexes
+      return found // return array with matched indexes
     },
     renderExternal (vl, vlData) {
       this.vlData = vlData
+    },
+    getListSize () {
+      if (this.$refs.searchbar?.f7Searchbar.query) {
+        return this.$refs.itemsList.f7VirtualList.filteredItems.length
+      }
+      return this.items.length
     },
     height (item) {
       let vlHeight
@@ -280,6 +297,18 @@ export default {
         this.selectedItems.splice(this.selectedItems.indexOf(item), 1)
       } else {
         this.selectedItems.push(item)
+      }
+    },
+    areAllSelected () {
+      return this.selectedItems.length >= this.getListSize()
+    },
+    selectDeselectAll () {
+      if (this.areAllSelected()) {
+        this.selectedItems = []
+      } else if (this.$refs.itemsList.f7VirtualList.filteredItems?.length > 0) {
+        this.selectedItems = this.$refs.itemsList.f7VirtualList.filteredItems.map((i) => i.name)
+      } else {
+        this.selectedItems = this.items.map((i) => i.name)
       }
     },
     copySelected () {
