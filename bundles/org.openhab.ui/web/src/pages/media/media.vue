@@ -10,7 +10,10 @@
     
     <a href="/mediabrowser/?path=/Root">Registry</a><br/><br/>
 
+    <div v-if="node">
     {{ node.type }}
+    <br/>
+    {{ node.pres }}
     <br/>
     {{ node.path }}
     <br/>
@@ -18,14 +21,14 @@
     
     
      
-    <div v-if="this.node.pres==='flat'">
+    <div v-if="node.pres==='flat'">
         <div style=" display: grid;grid-template-columns: 220px 1fr;width:50%;"> 
             <div style="grid-column: 1;"> 
                 <img :src="node.artUri" width="200"/>
             </div>
             <div style="grid-column: 2;text-align:left;">
                 <p style="font-size:20pt; font-weight:bold;"> {{ node.label }}</p>
-                 <f7-button small outline fill="true" style="background-color:#9090ff;width: 120px;height:32px;font-weight:bold;padding:2px;padding-left:10px;text-align:left;border:none 0px;"  @click="doPlay(node.id)">
+                 <f7-button small outline :fill="true" style="background-color:#9090ff;width: 120px;height:32px;font-weight:bold;padding:2px;padding-left:10px;text-align:left;border:none 0px;"  @click="doPlay(node.id)">
                     <img src="/static/Arrow.png" style="vertical-align:middle" height=24/>&nbsp;&nbsp;&nbsp;&nbsp;PLAY
                  </f7-button>
                            
@@ -58,7 +61,7 @@
 	        <br/>
 	    </div>
     </div>
-    
+    </div>
     
     <f7-toolbar bottom>
       <span />
@@ -91,11 +94,6 @@ export default {
     EmptyStatePlaceholder
   },
   data () {
-      api.get(`/rest/items/MediaTest1`).then((data) => {
-          this.dataTest = data.label;          
-      });
-      
-      
       this.$f7.toast.create({
           text: this.$t('media.page.updated'),
           destroyOnClose: true,
@@ -151,7 +149,6 @@ export default {
     },
     doPlay (id) {
         this.$store.dispatch('sendCommand', { itemName: 'Spotify_Controle_Media', cmd: id });
-        alert(type);  
       },
   },
   created () {
