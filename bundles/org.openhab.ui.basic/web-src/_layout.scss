@@ -224,7 +224,8 @@
 		}
 		@include flex-shrink(0);
 		@include flex-grow(2);
-		@include flex-2011(2 2 auto);
+		// Set flex-basis to 0 to prioritize values over labels (see __text below)
+		@include flex-2011(2 0 0);
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -501,7 +502,10 @@
 			font-size: 18px;
 		}
 		overflow: hidden;
+		// Make the label shrink first before the text (see __label above)
+		// See https://stackoverflow.com/a/67858285/15409057
 		flex-shrink: 2;
+		flex-grow: 0;
 		text-overflow: ellipsis;
 	}
 	&__webview,
