@@ -3146,6 +3146,15 @@
 				}
 			}
 
+			if (param === null || param === "openhab.ui.basic:buttonRadius") {
+				_t.root.documentElement.classList.remove("ui-button-soft");
+				_t.root.documentElement.classList.remove("ui-button-pill");
+				newValue = window.localStorage.getItem("openhab.ui.basic:buttonRadius");
+				if (newValue !== undefined) {
+					_t.root.documentElement.classList.add("ui-button-" + newValue);
+				}
+			}
+
 			if (param === null || param === "openhab.ui.basic:nbColumnsTablet") {
 				oldValue = _t.cellSizeTablet;
 				newValue = window.localStorage.getItem("openhab.ui.basic:nbColumnsTablet") === null ? 4
