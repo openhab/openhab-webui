@@ -71,13 +71,6 @@ export default function itemDefaultListComponent (item, footer) {
       }
     }
     
-    if (item.type === 'MediaBrowser' && !stateDescription.readOnly) {
-          component = {
-            component: 'oh-media-browser-item'
-          }
-        }
-
-
     if (item.type === 'Image') {
       component = {
         component: 'oh-list-item',
