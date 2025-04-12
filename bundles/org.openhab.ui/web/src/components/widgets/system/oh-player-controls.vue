@@ -44,7 +44,7 @@
     			icon-material="alarm" 
     			icon-size="24" 
     			icon-color="gray"  
-    			:href="`/mediabrowser/`"/>
+    			:href="mediaBrowserUri"/>
                
   </f7-segmented>
 </template>
@@ -76,6 +76,9 @@ export default {
     isPlaying () {
       const value = this.context.store[this.config.item].state
       return value === 'PLAY'
+    },
+    mediaBrowserUri () {
+        return "/mediabrowser/?item=" + this.config.item;
     }
   },
   methods: {
