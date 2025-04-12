@@ -75,15 +75,6 @@ export default function itemDefaultStandaloneComponent (item) {
       }
     }
 
-    if (item.type === 'MediaBrowser' && !stateDescription.readOnly) {
-      component = {
-        component: 'oh-media-browser-card',
-        config: {
-          vertical: true
-        }
-      }
-    }
-
     if (item.type === 'Image') {
       component = {
         component: 'oh-image-card',
