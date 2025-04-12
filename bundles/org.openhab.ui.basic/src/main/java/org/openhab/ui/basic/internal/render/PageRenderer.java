@@ -304,9 +304,9 @@ public class PageRenderer extends AbstractWidgetRenderer {
                 "openhab.ui.basic:adjustedColors", "enabled", "disabled", true, sb);
 
         buttons = new StringBuilder();
-        buildButton("Default", "", buttons);
-        buildButton("Rounded", "rounded", buttons);
-        buildButton("Pill", "pill", buttons);
+        buildButton(escapeHtml(localizeText("@text/ui.config.basic.buttonRadius.option.default")), "", buttons);
+        buildButton(escapeHtml(localizeText("@text/ui.config.basic.buttonRadius.option.rounded")), "rounded", buttons);
+        buildButton(escapeHtml(localizeText("@text/ui.config.basic.buttonRadius.option.pill")), "pill", buttons);
 
         sb.append(getSnippet("setting_buttons")
                 .replace("%label%", escapeHtml(localizeText("@text/ui.config.basic.buttonRadius.label")))
