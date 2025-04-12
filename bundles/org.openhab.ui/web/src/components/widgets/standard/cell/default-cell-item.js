@@ -76,13 +76,7 @@ export default function itemDefaultCellComponent (item, itemNameAsFooter) {
       }
     }
 
-    // if (item.type === 'MediaBrowser' && !stateDescription.readOnly) {
-    //   component = {
-    //     component: 'oh-media-browser-item'
-    //   }
-    // }
-
-        // if (item.type === 'Player' && !stateDescription.readOnly) {
+    // if (item.type === 'Player' && !stateDescription.readOnly) {
     //   component = {
     //     component: 'oh-player-item'
     //   }
