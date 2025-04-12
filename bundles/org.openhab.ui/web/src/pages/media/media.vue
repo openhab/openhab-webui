@@ -28,8 +28,11 @@
             </div>
             <div style="grid-column: 2;text-align:left;">
                 <p style="font-size:20pt; font-weight:bold;"> {{ node.label }}</p>
-                 <f7-button small outline :fill="true" style="background-color:#9090ff;width: 120px;height:32px;font-weight:bold;padding:2px;padding-left:10px;text-align:left;border:none 0px;"  @click="doPlay(node.id)">
+                 <f7-button small outline :fill="true" style="background-color:#9090ff;width: 120px;height:32px;font-weight:bold;padding:2px;padding-left:10px;text-align:left;border:none 0px;"  @click="doPlay(item, node.path)">
                     <img src="/static/Arrow.png" style="vertical-align:middle" height=24/>&nbsp;&nbsp;&nbsp;&nbsp;PLAY
+                 </f7-button>
+                 <f7-button small outline :fill="true" style="background-color:#9090ff;width: 120px;height:32px;font-weight:bold;padding:2px;padding-left:10px;text-align:left;border:none 0px;"  @click="doEnqueue(item, node.path)">
+                    <img src="/static/Arrow.png" style="vertical-align:middle" height=24/>&nbsp;&nbsp;&nbsp;&nbsp;ENQUEUE
                  </f7-button>
                            
             </div>
@@ -37,8 +40,8 @@
         <hr/>
         <br/>
         <div v-for="r1 in node.childs" style="display: inline;clear:both;" :class="{ 'sheet-opened': controlsOpened }">
-	        <f7-link :href="`/mediabrowser/?path=` + r1.path" :data-reload="true" :reload-current="true" :reload-detail="true">
-                 <f7-button small outline style="height:40px;font-weight:bold;padding:2px;padding-left:10px;text-align:left;border:none 0px;"  @click="doPlay(r1.id)">
+	        <f7-link :href="`/mediabrowser/?path=` + r1.path + `&item=` + item" :data-reload="true" :reload-current="true" :reload-detail="true">
+                 <f7-button small outline style="height:40px;font-weight:bold;padding:2px;padding-left:10px;text-align:left;border:none 0px;"  @click="doPlay(item, r1.path)">
                     <img src="/static/Arrow.png" style="vertical-align:middle" height=24/>
 	                {{ r1.label }}
 	                </f7-button>
@@ -48,7 +51,7 @@
     </div>
     <div v-else>
 	    <div v-for="r1 in node.childs" style="width:200px;height:200px;position:relative;float:left;margin:20px;background-color:#ffffff;color:#000000;border:solid 1px;border-radius:10px;padding:10px;" :class="{ 'sheet-opened': controlsOpened }">
-	        <f7-link :href="`/mediabrowser/?path=` + r1.path" :data-reload="true" :reload-current="true" :reload-detail="true">
+	        <f7-link :href="`/mediabrowser/?path=` + r1.path + `&item=` + item" :data-reload="true" :reload-current="true" :reload-detail="true">
 	            <div id="container" style="position:relative">
 	            <div style="text-align:center;position:absolute;top:-10px;width:200px;">
 	                {{ r1.label }}
@@ -94,6 +97,10 @@ export default {
     EmptyStatePlaceholder
   },
   data () {
+      this.item = this.$f7route.query.item;
+      if (this.$f7route.query.item === '') {
+          
+      }
       this.$f7.toast.create({
           text: this.$t('media.page.updated'),
           destroyOnClose: true,
@@ -146,10 +153,17 @@ export default {
     },
     openControls () {
       this.controlsOpened = true
+      alert(this.$f7route.query.items);
+      if (this.$f7route.query.items === '') {
+      
+      }
     },
-    doPlay (id) {
-        this.$store.dispatch('sendCommand', { itemName: 'Spotify_Controle_Media', cmd: id });
+    doPlay (item, id) {
+        this.$store.dispatch('sendCommand', { itemName: item, cmd: "PLAY," + id });
       },
+      doEnqueue (item, id) {
+          this.$store.dispatch('sendCommand', { itemName: item, cmd: "ENQUEUE," + id });
+        },
   },
   created () {
   },
