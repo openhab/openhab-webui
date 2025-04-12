@@ -338,7 +338,7 @@
 			}
 
 			if (param === null || param === "openhab.ui.basic:buttonRadius") {
-				_t.root.documentElement.classList.remove("ui-button-soft");
+				_t.root.documentElement.classList.remove("ui-button-rounded");
 				_t.root.documentElement.classList.remove("ui-button-pill");
 				newValue = window.localStorage.getItem("openhab.ui.basic:buttonRadius");
 				if (newValue !== undefined) {

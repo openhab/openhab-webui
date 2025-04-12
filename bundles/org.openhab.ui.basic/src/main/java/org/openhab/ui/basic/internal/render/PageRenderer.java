@@ -305,7 +305,7 @@ public class PageRenderer extends AbstractWidgetRenderer {
 
         buttons = new StringBuilder();
         buildButton("Default", "", buttons);
-        buildButton("Soft", "soft", buttons);
+        buildButton("Rounded", "rounded", buttons);
         buildButton("Pill", "pill", buttons);
 
         sb.append(getSnippet("setting_buttons")
