@@ -515,14 +515,14 @@
 		padding-bottom: 2px;
 	}
 	&__buttons-multiline {
-		margin: 6px 0;
 		gap: 4px;
-		html.ui-layout-condensed & {
-			margin: 0;
-			gap: 3px;
-		}
 		padding-top: 2px;
 		padding-bottom: 2px;
+		html.ui-layout-condensed & {
+			gap: 3px;
+			padding-top: 0;
+			padding-bottom: 0;
+		}
 		display: flex;
 		flex-wrap: wrap;
 		justify-content: end;
