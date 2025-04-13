@@ -75,7 +75,7 @@
           <span>{{ getListSize() }} <template v-if="$refs.searchbar?.f7Searchbar.query">of {{ items.length }} </template>Items<template v-if="$refs.searchbar?.f7Searchbar.query"> found</template></span>
           <template v-if="showCheckboxes && getListSize() > 0">
             -
-            <f7-link @click="selectDeselectAll()" :text="areAllSelected() ? 'Deselect all' : 'Select all'" />
+            <f7-link @click="selectDeselectAll" :text="areAllSelected() ? 'Deselect all' : 'Select all'" />
           </template>
         </f7-block-title>
         <f7-list
