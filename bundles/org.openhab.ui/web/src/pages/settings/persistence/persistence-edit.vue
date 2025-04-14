@@ -186,12 +186,39 @@
               <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)">
                 Aliases
               </f7-block-title>
-              <f7-list class="aliases-edit" v-if="editable">
-                <f7-list-item link :color="($theme.dark) ? 'black' : 'white'" title="Edit aliases" @click="editAliases(persistence.aliases)" />
+              <f7-list :media-list="editable" swipeout>
+                <item-picker class="alias-item-picker" title="Select items with aliases" name="items" multiple="true" :value="currentItemsWithAlias" @input="updateAliasItems($event)" />
               </f7-list>
-              <f7-list media-list>
-                <f7-list-item v-for="i in Object.keys(sortedAliases)" :key="i" :title="i" :after="sortedAliases[i]" />
+              <f7-list v-if="editable">
+                <li v-for="i in currentItemsWithAlias" class="swipeout" :key="i">
+                  <div class="alias swipeout-content">
+                    <f7-link slot="media" icon-color="red" icon-aurora="f7:minus_circle_filled"
+                            icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline"
+                            @click="showSwipeout" />
+                    <f7-list-item class="alias-item" :title="i" />
+                    <f7-input class="alias-input"
+                              type="text"
+                              placeholder="alias"
+                              validate pattern="[A-Za-z_][A-Za-z0-9_]*"
+                              error-message="Required. Must not start with a number. A-Z,a-z,0-9,_ only"
+                              :value="currentAliases[i]"
+                              @input="updateAlias(i, $event.target.value)" />
+                  </div>
+                  <f7-swipeout-actions right v-if="editable">
+                    <f7-swipeout-button @click="(ev) => deleteAlias(i)" style="background-color: var(--f7-swipeout-delete-button-bg-color)">
+                      Delete
+                    </f7-swipeout-button>
+                  </f7-swipeout-actions>
+                </li>
               </f7-list>
+              <f7-list v-if="editable">
+                  <f7-list-item link no-chevron media-item :color="($theme.dark) ? 'black' : 'white'"
+                                subtitle="Add aliases"
+                                @click="editAliases()">
+                    <f7-icon slot="media" color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill"
+                             md="material:control_point" />
+                  </f7-list-item>
+                </f7-list>
             </div>
           </f7-col>
           <f7-col v-if="editable && !newPersistence">
@@ -252,14 +279,15 @@ import fastDeepEqual from 'fast-deep-equal/es6'
 import DirtyMixin from '../dirty-mixin'
 import { FilterTypes, PredefinedStrategies } from '@/assets/definitions/persistence'
 import CronStrategyPopup from '@/pages/settings/persistence/cron-strategy-popup.vue'
+import ItemPicker from '@/components/config/controls/item-picker.vue'
 import StrategyPicker from '@/pages/settings/persistence/strategy-picker.vue'
 import ConfigurationPopup from '@/pages/settings/persistence/configuration-popup.vue'
-import AliasesPopup from '@/pages/settings/persistence/aliases-popup.vue'
 import FilterPopup from '@/pages/settings/persistence/filter-popup.vue'
 
 export default {
   mixins: [DirtyMixin],
   components: {
+    ItemPicker,
     StrategyPicker,
     'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')
   },
@@ -301,13 +329,20 @@ export default {
       }
       return names
     },
-    sortedAliases () {
-      return Object.keys(this.persistence.aliases)
-        .sort()
-        .reduce((obj, key) => {
-          obj[key] = this.persistence.aliases[key]
-          return obj
-        }, {})
+    currentAliases () {
+      const aliases = Object.keys(this.persistence.aliases)
+          .sort()
+          .reduce((obj, key) => {
+            obj[key] = this.persistence.aliases[key]
+            return obj
+          }, {})
+      return aliases
+    },
+    currentNonEmptyAliases () {
+      return Object.entries(this.currentAliases).filter(([i, a]) => !!a || a === '')
+    },
+    currentItemsWithAlias () {
+      return this.currentNonEmptyAliases.map(([i, a]) => i)
     }
   },
   watch: {
@@ -391,6 +426,8 @@ export default {
       // Update the code tab
       if (this.persistenceYaml) this.toYaml()
 
+      if (!this.isAliasesValid()) return
+
       return this.$oh.api.put('/rest/persistence/' + this.persistence.serviceId, this.persistence).then((data) => {
         this.dirty = false
         if (this.newPersistence) {
@@ -469,33 +506,6 @@ export default {
         return
       }
       this.saveModule('configs', index, configuration)
-    },
-    editAliases (aliases) {
-      if (!this.editable) return
-      const currentAliases = aliases || []
-
-      const popup = {
-        component: AliasesPopup
-      }
-      this.$f7router.navigate({
-        url: 'aliases-config',
-        route: {
-          path: 'aliases-config',
-          popup
-        }
-      }, {
-        props: {
-          aliases: currentAliases
-        }
-      })
-
-      this.$f7.once('aliasesConfigUpdate', (ev) => this.saveAliases(ev))
-    },
-    saveAliases (aliases) {
-      if (aliases !== null) {
-        this.$set(this.persistence, 'aliases', aliases)
-        this.$forceUpdate()
-      }
     },
     editCronStrategy (ev, index, cronStrategy) {
       if (!this.editable) return
@@ -583,6 +593,82 @@ export default {
         if (i > -1) cfg.filters.splice(i, 1)
       })
       this.deleteModule(ev, module, index)
+    },
+    editAliases () {
+      if (!this.editable) return
+
+      const popup = {
+        component: ItemPicker
+      }
+      this.$f7router.navigate({
+        url: 'item-picker',
+        route: {
+          path: 'item-picker',
+          popup
+        }
+      }, {
+        props: {
+          items: this.currentItmesWithAlias
+        }
+      })
+
+      this.$f7.once('itemsSelected', (ev) => this.updateAliasItems(ev))
+    },
+    updateAliasItems (items) {
+      if (!this.editable) return
+      const aliases = this.persistence.aliases
+      Object.keys(aliases)
+        .filter((i) => !items.includes(i))
+        .forEach((i) => { delete aliases[i] })
+      items
+        .filter((i) => !Object.keys(aliases).includes(i))
+        .forEach((i) => { aliases[i] = '' })
+      const newAliases = Object.keys(aliases)
+        .reduce((obj, key) => {
+          obj[key] = aliases[key]
+          return obj
+        }, {})
+      this.$set(this.persistence, 'aliases', newAliases)
+    },
+    updateAlias (item, alias) {
+      if (!this.editable) return
+      // Warn when alias already exists
+      const entries = Object.entries(this.currentNonEmptyAliases)
+      for (let idx = 1; idx < entries.length; idx++) {
+        const firstIdx = entries.slice(0, idx).findIndex(([i, a]) => a === entries[idx][1])
+        if (firstIdx >= 0) {
+          this.$f7.dialog.alert('Alias ' + alias + ' for item ' + item + ' already exists for item ' + entries[firstIdx][0])
+          return
+        }
+      }
+      this.$set(this.persistence.aliases, item, alias)
+    },
+    deleteAlias (item) {
+      if (!this.editable) return
+      this.$set(this.persistence.aliases, item, undefined)
+    },
+    saveAliases (aliases) {
+      if (aliases !== null) {
+        this.$set(this.persistence, 'aliases', aliases)
+      }
+    },
+    isAliasesValid () {
+      // Warn when alias validation error for item (empty or non-valid)
+      const entry = Object.entries(this.persistence.aliases).find(([i, a]) => a === '') || Object.values(this.currentNonEmptyAliases).find((a) => !/^[A-Za-z_][A-Za-z0-9_]*$/.test(a))
+      if (entry) {
+        this.$f7.dialog.alert('Alias validation error for item ' + entry[0] + '!')
+        return false
+      }
+      // Warn when alias already exists
+      const entries = Object.entries(this.currentNonEmptyAliases)
+      for (let idx = 1; idx < entries.length; idx++) {
+        const firstIdx = entries.slice(0, idx).findIndex(([i, a]) => a === entries[idx][1])
+        if (firstIdx >= 0) {
+          this.$f7.dialog.alert('Alias ' + entries[idx][1] + ' for item ' + entries[idx][0] + ' already exists for item ' + entries[firstIdx][0])
+          return false
+        }
+      }
+      return true
     },
     saveModule (module, index, updatedModule) {
       if (index === null) {
