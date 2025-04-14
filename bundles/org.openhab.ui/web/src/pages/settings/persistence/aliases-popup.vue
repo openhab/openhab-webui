@@ -16,11 +16,11 @@
       </f7-navbar>
       <f7-block class="no-padding">
         <f7-list>
-          <li v-for="(a, idx) in currentAliases" class="swipeout">
+          <li v-for="(a, idx) in currentAliases" class="swipeout" :key="Object.keys(a)[0]">
             <span class="alias swipeout-content">
               <f7-link slot="media" icon-color="red" icon-aurora="f7:minus_circle_filled"
-                            icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline"
-                            @click="showSwipeout" />
+                       icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline"
+                       @click="showSwipeout" />
               <item-picker class="alias-item-picker" :title="Object.keys(a)[0]" :name="'item' + idx" :value="Object.keys(a)[0]" @input="updateAlias(idx, $event, null)" />
               <f7-input class="alias-input" type="text" placeholder="alias [A-Za-z_][A-Za-z0-9_]*"
                         validate-on-blur pattern="[A-Za-z_][A-Za-z0-9_]*"
@@ -136,8 +136,8 @@ export default {
       let aliases = this.currentAliases.filter((a) => Object.keys(a)[0] !== '')
       // Warn when no alias for item
       const idx = aliases.findIndex((a) => Object.values(a)[0] === null)
-      if  (idx >= 0) {
-        this.$f7.dialog.alert('Empty alias for item ' + Object.keys(aliases[idx])[0] +'!')
+      if (idx >= 0) {
+        this.$f7.dialog.alert('Empty alias for item ' + Object.keys(aliases[idx])[0] + '!')
         return
       }
       this.$f7.emit('aliasesConfigUpdate', aliases)
