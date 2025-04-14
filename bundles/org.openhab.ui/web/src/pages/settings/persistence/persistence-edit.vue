@@ -186,39 +186,37 @@
               <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)">
                 Aliases
               </f7-block-title>
-              <f7-list :media-list="editable" swipeout>
-                <item-picker class="alias-item-picker" title="Select items with aliases" name="items" multiple="true" :value="currentItemsWithAlias" @input="updateAliasItems($event)" />
-              </f7-list>
-              <f7-list v-if="editable">
-                <li v-for="i in currentItemsWithAlias" class="swipeout" :key="i">
-                  <div class="alias swipeout-content">
-                    <f7-link slot="media" icon-color="red" icon-aurora="f7:minus_circle_filled"
-                            icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline"
-                            @click="showSwipeout" />
-                    <f7-list-item class="alias-item" :title="i" />
-                    <f7-input class="alias-input"
-                              type="text"
+              <f7-list :media-list="editable" swipeout no-swipeout-opened>
+                <f7-list-item v-for="(i, index) in currentItemsWithAlias" class="swipeout list-alias-item" :key="i">
+                  <f7-link slot="media" icon-color="red" icon-aurora="f7:minus_circle_filled"
+                          icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline"
+                          @click="showSwipeout" />
+                  <div class="alias-label">{{i}}</div>
+                  <div class="alias-input">
+                    <f7-input type="text"
+                              :ref="'alias-input-' + index"
                               placeholder="alias"
                               validate pattern="[A-Za-z_][A-Za-z0-9_]*"
                               error-message="Required. Must not start with a number. A-Z,a-z,0-9,_ only"
-                              :value="currentAliases[i]"
-                              @input="updateAlias(i, $event.target.value)" />
+                              :value="persistence.aliases[i]"
+                              @input="editAlias($event, i, $event.target.value)"
+                              @keydown.native="keyDown($event, index)" />
                   </div>
                   <f7-swipeout-actions right v-if="editable">
-                    <f7-swipeout-button @click="(ev) => deleteAlias(i)" style="background-color: var(--f7-swipeout-delete-button-bg-color)">
+                    <f7-swipeout-button @click="(ev) => deleteAlias(ev, i)"
+                                        style="background-color: var(--f7-swipeout-delete-button-bg-color)">
                       Delete
                     </f7-swipeout-button>
                   </f7-swipeout-actions>
-                </li>
+                </f7-list-item>
               </f7-list>
               <f7-list v-if="editable">
-                  <f7-list-item link no-chevron media-item :color="($theme.dark) ? 'black' : 'white'"
-                                subtitle="Add aliases"
-                                @click="editAliases()">
-                    <f7-icon slot="media" color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill"
-                             md="material:control_point" />
-                  </f7-list-item>
-                </f7-list>
+                <item-picker class="alias-item-picker" title="Add alias" name="items"
+                            multiple="true" noModelPicker="true" :setValueText="false"
+                            iconColor="green" auroraIcon="f7:plus_circle_fill" iosIcon="f7:plus_circle_fill" mdIcon="material:control_point"
+                            :value="currentItemsWithAlias"
+                            @input="updateAliasItems($event)" />
+              </f7-list>
             </div>
           </f7-col>
           <f7-col v-if="editable && !newPersistence">
@@ -261,8 +259,21 @@
     margin-bottom 0
   .list
     margin-top 0
-  .aliases-edit
-    margin-bottom 0
+
+.list-alias-item .item-content .item-inner
+  display: flex
+  align-items: center
+.alias-label
+  min-width: 20%
+  margin-right: 5%
+  flex-shrink: 0
+  font-weight: var(--f7-list-media-item-title-font-weight, var(--f7-list-item-title-font-weight, inherit))
+.alias-input
+  flex-grow: 1
+  .input input
+    text-align: right
+.alias-item-picker .item-picker .item-content
+  padding-left: calc(var(--f7-list-item-padding-horizontal) + var(--f7-safe-area-left))
 
 .persistence-code-editor.vue-codemirror
   display block
@@ -329,20 +340,8 @@ export default {
       }
       return names
     },
-    currentAliases () {
-      const aliases = Object.keys(this.persistence.aliases)
-          .sort()
-          .reduce((obj, key) => {
-            obj[key] = this.persistence.aliases[key]
-            return obj
-          }, {})
-      return aliases
-    },
-    currentNonEmptyAliases () {
-      return Object.entries(this.currentAliases).filter(([i, a]) => !!a || a === '')
-    },
     currentItemsWithAlias () {
-      return this.currentNonEmptyAliases.map(([i, a]) => i)
+      return Object.keys(this.persistence.aliases).sort()
     }
   },
   watch: {
@@ -419,14 +418,15 @@ export default {
         }
       })
     },
-    save (noToast) {
+    async save (noToast) {
       if (!this.editable) return
       if (this.currentTab === 'code') this.fromYaml()
 
       // Update the code tab
       if (this.persistenceYaml) this.toYaml()
 
-      if (!this.isAliasesValid()) return
+      const saveConfirmed = await this.validateAliases()
+      if (!saveConfirmed) return
 
       return this.$oh.api.put('/rest/persistence/' + this.persistence.serviceId, this.persistence).then((data) => {
         this.dirty = false
@@ -594,26 +594,6 @@ export default {
       })
       this.deleteModule(ev, module, index)
     },
-    editAliases () {
-      if (!this.editable) return
-
-      const popup = {
-        component: ItemPicker
-      }
-      this.$f7router.navigate({
-        url: 'item-picker',
-        route: {
-          path: 'item-picker',
-          popup
-        }
-      }, {
-        props: {
-          items: this.currentItmesWithAlias
-        }
-      })
-
-      this.$f7.once('itemsSelected', (ev) => this.updateAliasItems(ev))
-    },
     updateAliasItems (items) {
       if (!this.editable) return
       const aliases = this.persistence.aliases
@@ -630,45 +610,53 @@ export default {
         }, {})
       this.$set(this.persistence, 'aliases', newAliases)
     },
-    updateAlias (item, alias) {
+    editAlias (ev, item, alias) {
       if (!this.editable) return
       // Warn when alias already exists
-      const entries = Object.entries(this.currentNonEmptyAliases)
-      for (let idx = 1; idx < entries.length; idx++) {
-        const firstIdx = entries.slice(0, idx).findIndex(([i, a]) => a === entries[idx][1])
-        if (firstIdx >= 0) {
-          this.$f7.dialog.alert('Alias ' + alias + ' for item ' + item + ' already exists for item ' + entries[firstIdx][0])
-          return
-        }
+      const duplicate = Object.entries(this.persistence.aliases).find(([i, a]) => (item !== i) && (alias === a))
+      if (duplicate) {
+        this.$f7.dialog.alert('Alias ' + alias + ' for item ' + item + ' already exists for item ' + duplicate[0])
+        this.$set(this.persistence.aliases, item, '')
+        return
       }
       this.$set(this.persistence.aliases, item, alias)
     },
-    deleteAlias (item) {
-      if (!this.editable) return
-      this.$set(this.persistence.aliases, item, undefined)
+    deleteAlias (ev, item) {
+      this.deleteModuleKey(ev, 'aliases', item)
     },
-    saveAliases (aliases) {
-      if (aliases !== null) {
-        this.$set(this.persistence, 'aliases', aliases)
+    async validateAliases () {
+      const entries = Object.entries(this.persistence.aliases)
+      // Check for invalid alias format
+      const invalidEntry = entries.find(([i, a]) => !/^[A-Za-z_][A-Za-z0-9_]*$/.test(a))
+      if (invalidEntry) {
+        const confirmed = await this.showConfirmDialog(
+          `Alias not valid for item ${invalidEntry[0]}!\nSave anyway?`,
+          'Alias Validation Error'
+        )
+        if (!confirmed) return false
       }
-    },
-    isAliasesValid () {
-      // Warn when alias validation error for item (empty or non-valid)
-      const entry = Object.entries(this.persistence.aliases).find(([i, a]) => a === '') || Object.values(this.currentNonEmptyAliases).find((a) => !/^[A-Za-z_][A-Za-z0-9_]*$/.test(a))
-      if (entry) {
-        this.$f7.dialog.alert('Alias validation error for item ' + entry[0] + '!')
-        return false
-      }
-      // Warn when alias already exists
-      const entries = Object.entries(this.currentNonEmptyAliases)
+      // Check for duplicate aliases
       for (let idx = 1; idx < entries.length; idx++) {
         const firstIdx = entries.slice(0, idx).findIndex(([i, a]) => a === entries[idx][1])
         if (firstIdx >= 0) {
-          this.$f7.dialog.alert('Alias ' + entries[idx][1] + ' for item ' + entries[idx][0] + ' already exists for item ' + entries[firstIdx][0])
-          return false
+          const confirmed = await this.showConfirmDialog(
+            `Alias "${entries[idx][1]}" for item "${entries[idx][0]}" already exists for item "${entries[firstIdx][0]}".\nSave anyway?`,
+            'Alias Validation Error'
+          )
+          if (!confirmed) return false
         }
       }
       return true
+    },
+    showConfirmDialog(message, title) {
+      return new Promise((resolve) => {
+        this.$f7.dialog.confirm(
+          message,
+          title,
+          () => resolve(true),
+          () => resolve(false)
+        )
+      })
     },
     saveModule (module, index, updatedModule) {
       if (index === null) {
@@ -684,16 +672,32 @@ export default {
       this.checkDirty()
     },
     deleteModule (ev, module, index) {
-      let swipeoutElement = ev.target
       if (!this.editable) return
+      let swipeoutElement = ev.target
+      const self = this
       ev.cancelBubble = true
       while (!swipeoutElement.classList.contains('swipeout')) {
         swipeoutElement = swipeoutElement.parentElement
       }
       this.$f7.swipeout.delete(swipeoutElement, () => {
         console.debug(`Removing ${module}:`)
-        console.debug(this.persistence[module][index])
-        this.persistence[module].splice(index, 1)
+        console.debug(self.persistence[module][index])
+        self.persistence[module].splice(index, 1)
+        this.checkDirty()
+      })
+    },
+    deleteModuleKey (ev, module, key) {
+      if (!this.editable) return
+      let swipeoutElement = ev.target
+      const self = this
+      ev.cancelBubble = true
+      while (!swipeoutElement.classList.contains('swipeout')) {
+        swipeoutElement = swipeoutElement.parentElement
+      }
+      this.$f7.swipeout.delete(swipeoutElement, () => {
+        console.debug(`Removing ${module}:`)
+        console.debug(key)
+        self.$delete(self.persistence[module], key)
         this.checkDirty()
       })
     },
@@ -730,8 +734,25 @@ export default {
         return false
       }
     },
-    keyDown (ev) {
-      if ((ev.ctrlKey || ev.metaKey) && !(ev.altKey || ev.shiftKey)) {
+    keyDown (ev, index) {
+      if (ev.key === 'Tab') {
+        ev.stopPropagation()
+        ev.preventDefault()
+        const newIndex = index || 0
+        const total = this.currentItemsWithAlias.length
+        let targetIndex
+        if (ev.shiftKey) {
+          targetIndex = newIndex - 1 < 0 ? total - 1 : newIndex - 1
+        } else {
+          targetIndex = newIndex + 1 >= total ? 0 : newIndex + 1
+        }
+        const ref = this.$refs[`alias-input-${targetIndex}`]
+        const target = Array.isArray(ref) ? ref[0] : ref
+        if (target && target.$el) {
+          const inputEl = target.$el.querySelector('input')
+          if (inputEl) inputEl.focus()
+        }
+      } else if ((ev.ctrlKey || ev.metaKey) && !(ev.altKey || ev.shiftKey)) {
         switch (ev.keyCode) {
           case 83:
             this.save()
