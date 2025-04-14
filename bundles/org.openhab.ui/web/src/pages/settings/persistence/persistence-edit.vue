@@ -67,6 +67,14 @@
                 </f7-list>
               </div>
             </div>
+            <div>
+              <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)">
+                Aliases
+              </f7-block-title>
+              <f7-list class="skeleton-text skeleton-effect-blink">
+                <f7-list-item />
+              </f7-list>
+            </div>
           </f7-col>
         </f7-block>
 
@@ -135,7 +143,7 @@
                 </f7-list-item>
               </f7-list>
               <!-- Default Strategies -->
-              <strategy-picker title="Default Strategies" name="defaults" :strategies="strategies"
+              <strategy-picker title="Default strategies" name="defaults" :strategies="strategies"
                                :value="persistence.defaults" :disabled="!editable"
                                @strategiesSelected="persistence.defaults = $event" />
             </div>
@@ -172,6 +180,18 @@
                   </f7-list-item>
                 </f7-list>
               </div>
+            </div>
+            <!-- Aliases -->
+            <div>
+              <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)">
+                Aliases
+              </f7-block-title>
+              <f7-list class="aliases-edit" v-if="editable">
+                <f7-list-item link :color="($theme.dark) ? 'black' : 'white'" title="Edit aliases" @click="editAliases(persistence.aliases)" />
+              </f7-list>
+              <f7-list media-list>
+                <f7-list-item v-for="a in persistence.aliases" :key="Object.keys(a)[0]" :title="Object.keys(a)[0]" :after="Object.values(a)[0]" />
+              </f7-list>
             </div>
           </f7-col>
           <f7-col v-if="editable && !newPersistence">
@@ -214,6 +234,8 @@
     margin-bottom 0
   .list
     margin-top 0
+  .aliases-edit
+    margin-bottom 0
 
 .persistence-code-editor.vue-codemirror
   display block
@@ -232,6 +254,7 @@ import { FilterTypes, PredefinedStrategies } from '@/assets/definitions/persiste
 import CronStrategyPopup from '@/pages/settings/persistence/cron-strategy-popup.vue'
 import StrategyPicker from '@/pages/settings/persistence/strategy-picker.vue'
 import ConfigurationPopup from '@/pages/settings/persistence/configuration-popup.vue'
+import AliasesPopup from '@/pages/settings/persistence/aliases-popup.vue'
 import FilterPopup from '@/pages/settings/persistence/filter-popup.vue'
 
 export default {
@@ -306,6 +329,7 @@ export default {
       this.persistence = {
         serviceId: this.serviceId,
         configs: [],
+        aliases: [],
         defaults: [
           'everyChange'
         ],
@@ -438,6 +462,33 @@ export default {
       }
       this.saveModule('configs', index, configuration)
     },
+    editAliases (aliases) {
+      if (!this.editable) return
+      this.currentAliases = aliases
+
+      const popup = {
+        component: AliasesPopup
+      }
+      this.$f7router.navigate({
+        url: 'aliases-config',
+        route: {
+          path: 'aliases-config',
+          popup
+        }
+      }, {
+        props: {
+          aliases: this.currentAliases
+        }
+      })
+
+      this.$f7.once('aliasesConfigUpdate', (ev) => this.saveAliases(ev))
+    },
+    saveAliases (aliases) {
+      if (aliases !== null) {
+        this.$set(this.persistence, 'aliases', aliases)
+        this.$forceUpdate()
+      }
+    },
     editCronStrategy (ev, index, cronStrategy) {
       if (!this.editable) return
       this.currentCronStrategy = cronStrategy
@@ -559,6 +610,7 @@ export default {
     toYaml () {
       const toCode = {
         configurations: this.persistence.configs,
+        aliases: this.persistence.aliases,
         cronStrategies: this.persistence.cronStrategies,
         defaultStrategies: this.persistence.defaults
       }
@@ -572,6 +624,7 @@ export default {
       try {
         const updatedPersistence = YAML.parse(this.persistenceYaml)
         this.$set(this.persistence, 'configs', updatedPersistence.configurations)
+        this.$set(this.persistence, 'aliases', updatedPersistence.aliases)
         this.$set(this.persistence, 'cronStrategies', updatedPersistence.cronStrategies)
         this.$set(this.persistence, 'defaults', updatedPersistence.defaultStrategies)
         this.FilterTypes.forEach((ft) => {
