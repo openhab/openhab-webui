@@ -33,7 +33,7 @@ import ModelPickerPopup from '@/components/model/model-picker-popup.vue'
 
 export default {
   props: ['title', 'name', 'value', 'items', 'multiple', 'filterType', 'required', 'editableOnly', 'disabled', 'setValueText', 'noModelPicker',
-          'iconColor', 'auroraIcon', 'iosIcon', 'mdIcon'],
+    'iconColor', 'auroraIcon', 'iosIcon', 'mdIcon'],
   data () {
     return {
       ready: false,

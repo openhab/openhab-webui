@@ -189,9 +189,11 @@
               <f7-list :media-list="editable" swipeout no-swipeout-opened>
                 <f7-list-item v-for="(i, index) in currentItemsWithAlias" class="swipeout list-alias-item" :key="i">
                   <f7-link slot="media" icon-color="red" icon-aurora="f7:minus_circle_filled"
-                          icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline"
-                          @click="showSwipeout" />
-                  <div class="alias-label">{{i}}</div>
+                           icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline"
+                           @click="showSwipeout" />
+                  <div class="alias-label">
+                    {{ i }}
+                  </div>
                   <div class="alias-input">
                     <f7-input type="text"
                               :ref="'alias-input-' + index"
@@ -212,10 +214,10 @@
               </f7-list>
               <f7-list v-if="editable">
                 <item-picker class="alias-item-picker" title="Add alias" name="items"
-                            multiple="true" noModelPicker="true" :setValueText="false"
-                            iconColor="green" auroraIcon="f7:plus_circle_fill" iosIcon="f7:plus_circle_fill" mdIcon="material:control_point"
-                            :value="currentItemsWithAlias"
-                            @input="updateAliasItems($event)" />
+                             multiple="true" noModelPicker="true" :setValueText="false"
+                             iconColor="green" auroraIcon="f7:plus_circle_fill" iosIcon="f7:plus_circle_fill" mdIcon="material:control_point"
+                             :value="currentItemsWithAlias"
+                             @input="updateAliasItems($event)" />
               </f7-list>
             </div>
           </f7-col>
@@ -648,7 +650,7 @@ export default {
       }
       return true
     },
-    showConfirmDialog(message, title) {
+    showConfirmDialog (message, title) {
       return new Promise((resolve) => {
         this.$f7.dialog.confirm(
           message,
