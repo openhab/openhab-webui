@@ -190,7 +190,7 @@
                 <f7-list-item link :color="($theme.dark) ? 'black' : 'white'" title="Edit aliases" @click="editAliases(persistence.aliases)" />
               </f7-list>
               <f7-list media-list>
-                <f7-list-item v-for="a in persistence.aliases" :key="Object.keys(a)[0]" :title="Object.keys(a)[0]" :after="Object.values(a)[0]" />
+                <f7-list-item v-for="a in sortedAliases" :key="Object.keys(a)[0]" :title="Object.keys(a)[0]" :after="Object.values(a)[0]" />
               </f7-list>
             </div>
           </f7-col>
@@ -300,6 +300,15 @@ export default {
         if (this.persistence[filterTypeName]) names = names.concat(this.persistence[filterTypeName].map((f) => f.name))
       }
       return names
+    },
+    sortedAliases () {
+      const aliases = this.persistence.aliases ? [...this.persistence.aliases] : []
+      aliases.sort((a, b) => {
+        const aItem = Object.keys(a)[0]
+        const bItem = Object.keys(b)[0]
+        return aItem < bItem ? -1 : (aItem > bItem ? 1 : 0)
+      })
+      return aliases
     }
   },
   watch: {
@@ -464,7 +473,7 @@ export default {
     },
     editAliases (aliases) {
       if (!this.editable) return
-      this.currentAliases = aliases
+      const currentAliases = aliases || []
 
       const popup = {
         component: AliasesPopup
@@ -477,7 +486,7 @@ export default {
         }
       }, {
         props: {
-          aliases: this.currentAliases
+          aliases: currentAliases
         }
       })
 
