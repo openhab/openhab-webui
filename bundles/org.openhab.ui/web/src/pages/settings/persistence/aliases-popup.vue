@@ -19,22 +19,22 @@
           <item-picker class="alias-item-picker" title="Select Items" name="items" multiple="true" :value="currentItems" @input="updateItems($event)" />
         </f7-list>
         <f7-list>
-          <li v-for="(a, idx) in currentAliases" class="swipeout" :key="Object.keys(a)[0]">
+          <li v-for="i in currentItems" class="swipeout" :key="i">
             <div class="alias swipeout-content">
               <f7-link slot="media" icon-color="red" icon-aurora="f7:minus_circle_filled"
                        icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline"
                        @click="showSwipeout" />
-              <f7-list-item class="alias-item" :title="Object.keys(a)[0]" />
+              <f7-list-item class="alias-item" :title="i" />
               <f7-input class="alias-input"
                         type="text"
                         placeholder="alias"
                         validate pattern="[A-Za-z_][A-Za-z0-9_]*"
                         error-message="Required. Must not start with a number. A-Z,a-z,0-9,_ only"
-                        :value="Object.values(a)[0]"
-                        @input="updateAlias(idx, Object.keys(a)[0], $event.target.value)" />
+                        :value="currentAliases[i]"
+                        @input="updateAlias(i, $event.target.value)" />
             </div>
             <f7-swipeout-actions right>
-              <f7-swipeout-button @click="(ev) => deleteAlias(idx, Object.keys(a)[0])" style="background-color: var(--f7-swipeout-delete-button-bg-color)">
+              <f7-swipeout-button @click="(ev) => deleteAlias(i)" style="background-color: var(--f7-swipeout-delete-button-bg-color)">
                 Delete
               </f7-swipeout-button>
             </f7-swipeout-actions>
@@ -94,39 +94,43 @@ export default {
   emits: ['aliasesConfigUpdate'],
   computed: {
     currentItems () {
-      const items = this.currentAliases.map((a) => Object.keys(a)[0])
-      return [...items]
+      return Object.entries(this.currentAliases).filter(([i, a]) => !!a || a === '').map(([i, a]) => i)
     }
   },
   data () {
     return {
-      currentAliases: []
+      currentAliases: {}
     }
   },
   created () {
-    this.currentAliases = this.aliases
-    this.currentAliases.sort((a, b) => this.aliasCompare(a, b))
+    this.currentAliases = Object.keys(this.aliases)
+      .sort()
+      .reduce((obj, key) => {
+        obj[key] = this.aliases[key]
+        return obj
+      }, {})
   },
   methods: {
     updateItems (items) {
-      const oldAliases = this.currentAliases.filter((a) => items.indexOf(Object.keys(a)[0]) >= 0)
-      const newItems = items.filter((i) => this.currentItems.indexOf(i) < 0)
-      const newAliases = newItems.map((i) => {
-        const aliasObj = {}
-        aliasObj[i] = null
-        return aliasObj
-      })
-      const aliases = oldAliases.concat(newAliases)
-      aliases.sort((a, b) => this.aliasCompare(a, b))
-      this.currentAliases = [...aliases]
+      const aliases = this.currentAliases
+      Object.keys(aliases)
+        .filter((i) => !items.includes(i))
+        .forEach((i) => { delete aliases[i] })
+      items
+        .filter((i) => !Object.keys(aliases).includes(i))
+        .forEach((i) => { aliases[i] = '' })
+      this.currentAliases = Object.keys(aliases)
+        .sort()
+        .reduce((obj, key) => {
+          obj[key] = aliases[key]
+          return obj
+        }, {})
     },
-    updateAlias (idx, item, alias) {
-      const aliasObj = this.currentAliases[idx]
-      aliasObj[Object.keys(aliasObj)[0]] = alias
+    updateAlias (item, alias) {
+      this.$set(this.currentAliases, item, alias)
     },
-    deleteAlias (idx, item) {
-      const aliases = this.currentAliases.splice(idx, 1)
-      this.currentAliases = [...aliases]
+    deleteAlias (item) {
+      this.$set(this.currentAliases, item, undefined)
     },
     showSwipeout (ev) {
       let swipeoutElement = ev.target
@@ -139,33 +143,34 @@ export default {
         this.$f7.swipeout.open(swipeoutElement)
       }
     },
-    aliasCompare (a, b) {
-      const aItem = Object.keys(a)[0]
-      const bItem = Object.keys(b)[0]
-      return aItem < bItem ? -1 : (aItem > bItem ? 1 : 0)
-    },
     updateModuleConfig () {
-      const aliases = this.currentAliases.map((a) => Object.values(a)[0])
+      const aliases = Object.entries(this.currentAliases).reduce((acc, [i, a]) => {
+        if (!!a || a === '') {
+          acc[i] = a
+        }
+        return acc
+      }, {})
       // Warn when no alias for item
-      const idx = this.currentAliases.findIndex((a) => !Object.values(a)[0] || Object.values(a)[0] === '')
-      if (idx >= 0) {
-        this.$f7.dialog.alert('Empty alias for item ' + Object.keys(this.currentAliases[idx])[0] + '!')
+      const entry = Object.entries(aliases).find(([i, a]) => a === '')
+      if (entry) {
+        this.$f7.dialog.alert('Empty alias for item ' + entry[0] + '!')
         return
       }
       // Warn when validation errors remain
-      if (aliases.some((a) => !/^[A-Za-z_][A-Za-z0-9_]*$/.test(a))) {
+      if (Object.values(aliases).some((a) => !/^[A-Za-z_][A-Za-z0-9_]*$/.test(a))) {
         this.$f7.dialog.alert('Validation errors for aliases!')
         return
       }
       // Warn when alias already exists
-      for (let i = 0; i < aliases.length; i++) {
-        const firstIdx = aliases.slice(0, i).indexOf(aliases[i])
+      const entries = Object.entries(aliases)
+      for (let idx = 1; idx < entries.length; idx++) {
+        const firstIdx = entries.slice(0, idx).findIndex(([i, a]) => a === entries[idx][1])
         if (firstIdx >= 0) {
-          this.$f7.dialog.alert('Alias ' + aliases[i] + ' for item ' + Object.keys(this.currentAliases[i])[0] + ' already exists for item ' + Object.keys(this.currentAliases[firstIdx])[0])
+          this.$f7.dialog.alert('Alias ' + entries[idx][1] + ' for item ' + entries[idx][0] + ' already exists for item ' + entries[firstIdx][0])
           return
         }
       }
-      this.$f7.emit('aliasesConfigUpdate', this.currentAliases)
+      this.$f7.emit('aliasesConfigUpdate', aliases)
       this.$refs.modulePopup.close()
     }
   }
