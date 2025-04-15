@@ -24,7 +24,7 @@
       <f7-link v-if="$fullscreen.isEnabled" class="fullscreen-link" icon-f7="rectangle_arrow_up_right_arrow_down_left" text="Fullscreen" color="blue" @click="toggleFullscreen" />
       <div class="display-flex flex-direction-row align-items-center">
         <f7-toggle :checked="previewMode" @toggle:change="(value) => togglePreviewMode(value)" />&nbsp;Run mode<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span>
-        <f7-link v-if="!createMode" class="right details-link margin-left padding-right" ref="detailsLink" @click="detailsOpened = true" icon-f7="chevron_up" />
+        <f7-link v-if="!createMode" class="right margin-left padding-right" @click="detailsOpened = true" icon-f7="chevron_up" />
       </div>
     </f7-toolbar>
     <f7-tabs class="layout-editor-tabs">
