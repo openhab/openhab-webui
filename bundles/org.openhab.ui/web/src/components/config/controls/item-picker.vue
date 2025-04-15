@@ -7,11 +7,13 @@
           {{ item.label ? item.label + ' (' + item.name + ')' : item.name }}
         </option>
       </select>
-      <f7-button slot="media" icon-f7="list_bullet_indent" @click.native="pickFromModel" />
+      <f7-button v-if="!noModelPicker" slot="media" :icon-color="color" :icon-aurora="aurora" :icon-ios="ios" :icon-md="md" @click.native="pickFromModel" />
+      <f7-icon v-else slot="media" :color="color" :aurora="aurora" :ios="ios" :md="md" />
     </f7-list-item>
     <!-- for placeholder purposes before items are loaded -->
     <f7-list-item link v-show="!ready" :title="title" disabled no-chevron>
-      <f7-button slot="media" icon-f7="list_bullet_indent" @click.native="pickFromModel" />
+      <f7-button v-if="!noModelPicker" slot="media" :icon-color="color" :icon-aurora="aurora" :icon-ios="ios" :icon-md="md" @click.native="pickFromModel" />
+      <f7-icon v-else slot="media" :color="color" :aurora="aurora" :ios="ios" :md="md" />
     </f7-list-item>
   </ul>
 </template>
@@ -30,12 +32,16 @@
 import ModelPickerPopup from '@/components/model/model-picker-popup.vue'
 
 export default {
-  props: ['title', 'name', 'value', 'items', 'multiple', 'filterType', 'required', 'editableOnly', 'disabled', 'setValueText'],
+  props: ['title', 'name', 'value', 'items', 'multiple', 'filterType', 'required', 'editableOnly', 'disabled', 'setValueText', 'noModelPicker',
+    'iconColor', 'auroraIcon', 'iosIcon', 'mdIcon'],
   data () {
     return {
       ready: false,
       preparedItems: [],
-      icons: {},
+      aurora: this.auroraIcon || 'f7:list_bullet_indent',
+      ios: this.iosIcon || 'f7:list_bullet_indent',
+      md: this.mdIcon || 'f7:list_bullet_indent',
+      color: this.iconColor || undefined,
       smartSelectParams: {
         view: this.$f7.view.main,
         openIn: 'popup',
