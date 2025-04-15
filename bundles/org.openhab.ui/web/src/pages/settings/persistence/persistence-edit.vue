@@ -143,7 +143,7 @@
                 </f7-list-item>
               </f7-list>
               <!-- Default Strategies -->
-              <strategy-picker title="Default strategies" name="defaults" :strategies="strategies"
+              <strategy-picker title="Default Strategies" name="defaults" :strategies="strategies"
                                :value="persistence.defaults" :disabled="!editable"
                                @strategiesSelected="persistence.defaults = $event" />
             </div>
@@ -676,22 +676,20 @@ export default {
     deleteModule (ev, module, index) {
       if (!this.editable) return
       let swipeoutElement = ev.target
-      const self = this
       ev.cancelBubble = true
       while (!swipeoutElement.classList.contains('swipeout')) {
         swipeoutElement = swipeoutElement.parentElement
       }
       this.$f7.swipeout.delete(swipeoutElement, () => {
         console.debug(`Removing ${module}:`)
-        console.debug(self.persistence[module][index])
-        self.persistence[module].splice(index, 1)
+        console.debug(this.persistence[module][index])
+        this.persistence[module].splice(index, 1)
         this.checkDirty()
       })
     },
     deleteModuleKey (ev, module, key) {
       if (!this.editable) return
       let swipeoutElement = ev.target
-      const self = this
       ev.cancelBubble = true
       while (!swipeoutElement.classList.contains('swipeout')) {
         swipeoutElement = swipeoutElement.parentElement
@@ -699,7 +697,7 @@ export default {
       this.$f7.swipeout.delete(swipeoutElement, () => {
         console.debug(`Removing ${module}:`)
         console.debug(key)
-        self.$delete(self.persistence[module], key)
+        this.$delete(this.persistence[module], key)
         this.checkDirty()
       })
     },
