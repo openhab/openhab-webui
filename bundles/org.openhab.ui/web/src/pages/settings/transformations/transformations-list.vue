@@ -39,10 +39,6 @@
       :scroll-list="true"
       :label="true" />
 
-    <f7-list class="searchbar-not-found">
-      <f7-list-item title="Nothing found" />
-    </f7-list>
-
     <f7-block class="block-narrow">
       <!-- skeleton for not ready -->
       <f7-col v-if="!ready">
@@ -61,8 +57,10 @@
         </f7-list>
       </f7-col>
 
-      <f7-col v-else-if="transformations.length > 0">
+      <f7-col v-show="transformations.length > 0">
         <f7-block-title class="searchbar-hide-on-search">
+          <span>{{ transformations.length }} <template v-if="searchQuery">of {{ transformations.length }} </template>Things<template v-if="searchQuery"> found</template></span>
+
           {{ transformations.length }} transformations
         </f7-block-title>
         <div class="searchbar-found padding-left padding-right">
@@ -76,6 +74,9 @@
           </f7-segmented>
         </div>
 
+        <f7-list class="searchbar-not-found">
+          <f7-list-item title="Nothing found" />
+        </f7-list>
         <f7-list
           class="searchbar-found col transformations-list"
           ref="transformationsList"

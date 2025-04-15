@@ -84,7 +84,7 @@
       </f7-col>
 
       <f7-col v-else-if="things.length > 0">
-        <div class="searchbar-found padding-left padding-right">
+        <div class="padding-left padding-right">
           <f7-segmented strong tag="p">
             <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')">
               Alphabetical
@@ -97,7 +97,10 @@
             </f7-button>
           </f7-segmented>
         </div>
-        <f7-list class="searchbar-found col things-list" :contacts-list="groupBy === 'alphabetical'">
+        <f7-list v-if="filteredThings.length === 0">
+          <f7-list-item title="Nothing found" />
+        </f7-list>
+        <f7-list v-else class="col things-list" :contacts-list="groupBy === 'alphabetical'">
           <f7-list-group v-for="(thingsWithInitial, initial) in indexedThings" :key="initial">
             <f7-list-item v-if="thingsWithInitial.length" :title="initial" group-title />
             <f7-list-item
@@ -155,11 +158,6 @@
 <style lang="stylus">
 .things-list
   margin-bottom calc(var(--f7-fab-size) + 2 * calc(var(--f7-fab-margin) + var(--f7-safe-area-bottom)))
-
-.searchbar-found
-  @media (min-width 960px)
-    padding-left 0 !important
-    padding-right 0 !important
 </style>
 
 <script>
@@ -188,9 +186,6 @@ export default {
       showNoLocation: false,
       eventSource: null
     }
-  },
-  created () {
-
   },
   computed: {
     indexedThings () {
