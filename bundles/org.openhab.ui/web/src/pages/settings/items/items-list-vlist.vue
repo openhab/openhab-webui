@@ -35,10 +35,6 @@
       </div>
     </f7-toolbar>
 
-    <f7-list class="searchbar-not-found">
-      <f7-list-item title="Nothing found" />
-    </f7-list>
-
     <f7-block class="block-narrow margin-top-half">
       <f7-col>
         <div>
@@ -72,12 +68,15 @@
 
       <f7-col v-show="ready && items.length > 0">
         <f7-block-title class="no-margin-top">
-          <span>{{ getListSize() }} <template v-if="$refs.searchbar?.f7Searchbar.query">of {{ items.length }} </template>Items<template v-if="$refs.searchbar?.f7Searchbar.query"> found</template></span>
-          <template v-if="showCheckboxes && getListSize() > 0">
+          <span>{{ listTitle }}</span>
+          <template v-if="showCheckboxes && filteredItemsCount > 0">
             -
-            <f7-link @click="selectDeselectAll" :text="areAllSelected() ? 'Deselect all' : 'Select all'" />
+            <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
           </template>
         </f7-block-title>
+        <f7-list class="searchbar-not-found">
+          <f7-list-item title="Nothing found" />
+        </f7-list>
         <f7-list
           v-show="items.length > 0"
           class="searchbar-found col"
@@ -171,6 +170,7 @@ export default {
         renderExternal: this.renderExternal,
         height: this.height
       },
+      searchQuery: '',
       selectedItems: [],
       showCheckboxes: false,
       eventSource: null
@@ -228,7 +228,8 @@ export default {
       this.$oh.sse.close(this.eventSource)
       this.eventSource = null
     },
-    filterSelectedItems (query) {
+    filterSelectedItems (event) {
+      this.searchQuery = event?.query
       if (!this.$refs.itemsList.f7VirtualList.filteredItems) {
         return
       }
@@ -250,12 +251,6 @@ export default {
     },
     renderExternal (vl, vlData) {
       this.vlData = vlData
-    },
-    getListSize () {
-      if (this.$refs.searchbar?.f7Searchbar.query) {
-        return this.$refs.itemsList.f7VirtualList.filteredItems.length
-      }
-      return this.items.length
     },
     height (item) {
       let vlHeight
@@ -299,11 +294,8 @@ export default {
         this.selectedItems.push(item)
       }
     },
-    areAllSelected () {
-      return this.selectedItems.length >= this.getListSize()
-    },
     selectDeselectAll () {
-      if (this.areAllSelected()) {
+      if (this.allSelected) {
         this.selectedItems = []
       } else if (this.$refs.itemsList.f7VirtualList.filteredItems?.length > 0) {
         this.selectedItems = this.$refs.itemsList.f7VirtualList.filteredItems.map((i) => i.name)
@@ -366,6 +358,27 @@ export default {
   computed: {
     searchPlaceholder () {
       return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
+    },
+    filteredItemsCount () {
+      if (this.searchQuery) {
+        return this.$refs.itemsList.f7VirtualList.filteredItems.length
+      }
+      return this.items.length
+    },
+    allSelected () {
+      return this.selectedItems.length >= this.filteredItemsCount
+    },
+    listTitle () {
+      let title = this.filteredItemsCount
+      if (this.searchQuery) {
+        title += ` of ${this.items.length} Items found`
+      } else {
+        title += ' Items'
+      }
+      if (this.selectedItems.length > 0) {
+        title += `, ${this.selectedItems.length} selected`
+      }
+      return title
     }
   }
 }
