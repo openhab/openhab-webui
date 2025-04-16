@@ -237,7 +237,7 @@ export default {
       const yamlObj = {
         label: this.item.label,
         type: this.item.type,
-        category: this.item.category || '',
+        icon: this.item.category || '',
         groupNames: this.item.groupNames || [],
         tags: this.item.tags
         // metadata: this.item.metadata
@@ -257,7 +257,7 @@ export default {
         if (updatedItem.tags == null) updatedItem.tags = []
         this.$set(this.item, 'label', updatedItem.label)
         this.$set(this.item, 'type', updatedItem.type)
-        this.$set(this.item, 'category', updatedItem.category)
+        this.$set(this.item, 'category', updatedItem.icon)
         this.$set(this.item, 'groupNames', updatedItem.groupNames)
         this.$set(this.item, 'groupType', updatedItem.groupType)
         this.$set(this.item, 'function', updatedItem.function)

@@ -52,7 +52,7 @@
         <group-form ref="groupForm" v-if="itemType === 'Group'" :item="item" :createMode="createMode" />
       </f7-list-group>
       <f7-list-group v-if="!hideCategory">
-        <f7-list-input ref="category" label="Category" autocomplete="off" type="text" placeholder="temperature, firstfloor..." :value="itemCategory"
+        <f7-list-input ref="category" label="Icon" autocomplete="off" type="text" placeholder="temperature, firstfloor..." :value="itemCategory"
                        @input="itemCategory = $event.target.value" :disabled="!editable" :clear-button="editable">
           <div slot="root-end" style="margin-left: calc(35% + 14px)">
             <oh-icon :icon="itemCategory" :state="(createMode || itemType === 'Image') ? null : item.state" height="32" width="32" />
