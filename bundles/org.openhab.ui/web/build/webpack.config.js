@@ -7,7 +7,6 @@ const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin')
 const WorkboxPlugin = require('workbox-webpack-plugin')
 const WebpackAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
-const ESLintPlugin = require('eslint-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin')
 
 const path = require('path')
@@ -239,9 +238,7 @@ module.exports = {
     }),
     new VueLoaderPlugin(),
     ...(env === 'production' ? [
-      new ESLintPlugin({
-        extensions: ['js', 'vue']
-      })
+      // Production only plugins
     ] : [
       // Development only plugins
     ]),
