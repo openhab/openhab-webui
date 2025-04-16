@@ -1,4 +1,4 @@
- <template>
+<template>
   <div v-if="item" class="quick-link-form no-padding">
     <f7-list inline-labels no-hairlines-md>
       <f7-list-group>
