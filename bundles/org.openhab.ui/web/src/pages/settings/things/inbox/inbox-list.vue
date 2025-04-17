@@ -37,13 +37,9 @@
         </f7-button>
         <!-- buttons for wider screen -->
         <template v-if="$f7.width >= 500">
-          <f7-button @click="performActionOnSelection('dslcopy')" color="blue" class="dslcopy wider-screen display-flex flex-direction-row"
+          <f7-button @click="copyFileDefinitionToClipboard(ObjectType.THING, selectedItems)" color="blue" class="copy wider-screen display-flex flex-direction-row"
                      icon-ios="f7:square_on_square" icon-aurora="f7:square_on_square">
-            &nbsp;DSL
-          </f7-button>
-          <f7-button @click="performActionOnSelection('yamlcopy')" color="blue" class="yamlcopy wider-screen display-flex flex-direction-row"
-                     icon-ios="f7:square_on_square" icon-aurora="f7:square_on_square">
-            &nbsp;YAML File
+            &nbsp;Copy
           </f7-button>
         </template>
         <!-- buttons for narrower screen -->
@@ -52,15 +48,11 @@
             ...
           </f7-button>
           <f7-popover class="item-popover" ref="popover" :backdrop="false" :close-by-backdrop-click="true"
-                      :style="{ width: '140px' }" :animate="false">
+                      :style="{ width: '96px' }" :animate="false">
             <div class="margin-vertical display-flex justify-content-center" style="width: 100%">
-              <f7-link @click="performActionOnSelection('dslcopy')" color="blue" class="dslcopy display-flex flex-direction-column margin-right"
+              <f7-link @click="performActionOnSelection('copy')" color="blue" class="copy display-flex flex-direction-column margin-right"
                        icon-ios="f7:square_on_square" icon-aurora="f7:square_on_square" popover-close=".item-popover">
-                DSL
-              </f7-link>
-              <f7-link @click="performActionOnSelection('yamlcopy')" color="blue" class="yamlcopy display-flex flex-direction-column"
-                       icon-ios="f7:square_on_square" icon-aurora="f7:square_on_square" popover-close=".item-popover">
-                YAML File
+                Copy
               </f7-link>
             </div>
           </f7-popover>
@@ -74,8 +66,7 @@
         <f7-link v-show="selectedItems.length" icon-md="material:delete" icon-color="white" @click="confirmActionOnSelection('delete')" />
         <f7-link v-show="selectedItems.length" icon-md="material:visibility_off" icon-color="white" @click="confirmActionOnSelection('ignore')" />
         <f7-link v-show="selectedItems.length" icon-md="material:thumb_up" icon-color="white" @click="confirmActionOnSelection('approve')" />
-        <f7-link v-show="selectedItems.length" icon-md="material:content_copy" icon-color="white" @click="performActionOnSelection('dslcopy')" />
-        <f7-link v-show="selectedItems.length" icon-md="material:contract" icon-color="white" @click="performActionOnSelection('yamlcopy')" />
+        <f7-link v-show="selectedItems.length" icon-md="material:content_copy" icon-color="white" @click="performActionOnSelection('copy')" />
       </div>
     </f7-toolbar>
 
@@ -327,8 +318,7 @@ export default {
           ],
           [
             this.entryActionsAddAsThingButton(entry, this.load),
-            this.entryActionsCopyThingDefinitionButton(entry, 'DSL', 'text/vnd.openhab.dsl.thing'),
-            this.entryActionsCopyThingDefinitionButton(entry, 'YAML File', 'application/yaml'),
+            this.entryActionsCopyThingDefinitionButton(entry),
             {
               text: (!ignored) ? 'Ignore' : 'Unignore',
               color: (!ignored) ? 'orange' : 'blue',
@@ -455,7 +445,6 @@ export default {
     performActionOnSelection (action) {
       let progressMessage, successMessage, promises
       let navigateToThingsPage = false
-      let clearSelectionAndReload = true
       switch (action) {
         case 'delete':
           progressMessage = 'Removing Inbox Entries...'
@@ -478,28 +467,6 @@ export default {
           successMessage = `${this.selectedItems.length} entries unignored`
           promises = this.filterSelectedItems().map((e) => this.$oh.api.postPlain('/rest/inbox/' + e.thingUID + '/unignore'))
           break
-        case 'dslcopy':
-        case 'yamlcopy':
-          const mediaType = {
-            dslcopy: 'text/vnd.openhab.dsl.thing',
-            yamlcopy: 'application/yaml'
-          }[action]
-          progressMessage = 'Copying Inbox Entries...'
-          successMessage = `${this.selectedItems.length} entries copied to clipboard`
-          promises = this.filterSelectedItems().map((e) => this.$oh.api.getPlain({
-            url: '/rest/file-format/things/' + e.thingUID,
-            headers: { accept: mediaType }
-          }))
-
-          promises = [Promise.all(promises).then((data) => {
-            if (this.$clipboard(data.join('\n'))) {
-              Promise.resolve()
-            } else {
-              Promise.reject('Failed to copy to clipboard')
-            }
-          })]
-          clearSelectionAndReload = false
-          break
       }
 
       let dialog = this.$f7.dialog.progress(progressMessage)
@@ -511,15 +478,16 @@ export default {
           closeTimeout: 2000
         }).open()
         const searchFor = this.selectedItems.join(',')
-        if (clearSelectionAndReload) this.selectedItems = []
+        this.selectedItems = []
         dialog.close()
-        if (clearSelectionAndReload) this.load()
         if (navigateToThingsPage) {
           this.$f7router.navigate('/settings/things/', {
             props: {
               searchFor
             }
           })
+        } else {
+          this.load()
         }
       }).catch((err) => {
         dialog.close()

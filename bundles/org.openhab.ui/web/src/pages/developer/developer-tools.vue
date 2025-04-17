@@ -27,14 +27,11 @@
                 <f7-list-item media-item title="Block Libraries" footer="Develop custom extensions for Blockly scripts" link="blocks/">
                   <f7-icon slot="media" f7="ticket" color="gray" />
                 </f7-list-item>
-                <f7-list-item media-item title="Copy DSL Definitions for All Things" footer="Copy all Things' DSL definitions to clipboard" link="#" @click="copyThingsDefinition('DSL', 'text/vnd.openhab.dsl.thing')">
+                <f7-list-item media-item title="Things File Definitions" footer="Copy all Things' file definitions to clipboard" link="#" @click="copyFileDefinitionToClipboard(ObjectType.THING)">
                   <f7-icon slot="media" f7="lightbulb" color="gray" />
                 </f7-list-item>
-                <f7-list-item media-item title="Copy DSL Definitions for All Items" footer="Copy all Items' DSL definitions to clipboard" link="#" @click="copyItemsDsl">
+                <f7-list-item media-item title="Items File Definitions" footer="Copy all Items' file definitions to clipboard" link="#" @click="copyFileDefinitionToClipboard(ObjectType.ITEM)">
                   <f7-icon slot="media" f7="square_on_circle" color="gray" />
-                </f7-list-item>
-                <f7-list-item media-item title="Copy YAML File Definitions for All Things" footer="Copy all Things' YAML File definitions to clipboard" link="#" @click="copyThingsDefinition('YAML File', 'application/yaml')">
-                  <f7-icon slot="media" f7="lightbulb" color="gray" />
                 </f7-list-item>
                 <f7-list-item media-item title="Add Items from DSL Definition" footer="Create or update items &amp; links in bulk" link="add-items-dsl">
                   <f7-icon slot="media" f7="text_badge_plus" color="gray" />
@@ -134,12 +131,10 @@
 </style>
 
 <script>
-import Vue from 'vue'
-import Clipboard from 'v-clipboard'
-
-Vue.use(Clipboard)
+import FileDefinition from '@/pages/settings/file-definition-mixin'
 
 export default {
+  mixins: [FileDefinition],
   components: {
   },
   data () {
@@ -180,34 +175,6 @@ export default {
       this.$oh.ws.close(this.wsClient)
       this.wsClient = null
       this.wsEvents = []
-    },
-    copyThingsDefinition (name, mediaType) {
-      this.$oh.api.getPlain({
-        url: '/rest/file-format/things',
-        headers: { accept: mediaType }
-      }).then((definition) => {
-        if (this.$clipboard(definition)) {
-          this.$f7.toast.show({
-            text: `Things ${name} definitions copied to clipboard`,
-            destroyOnClose: true,
-            closeTimeout: 2000
-          }).open()
-        }
-      })
-    },
-    copyItemsDsl () {
-      this.$oh.api.getPlain({
-        url: '/rest/file-format/items',
-        headers: { accept: 'text/vnd.openhab.dsl.item' }
-      }).then((definition) => {
-        if (this.$clipboard(definition)) {
-          this.$f7.toast.show({
-            text: 'Items DSL definitions copied to clipboard',
-            destroyOnClose: true,
-            closeTimeout: 2000
-          }).open()
-        }
-      })
     }
   },
   asyncComputed: {

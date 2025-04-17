@@ -1,11 +1,8 @@
-import Vue from 'vue'
-import Clipboard from 'v-clipboard'
-Vue.use(Clipboard)
-
 import ThingMixin from '@/components/thing/thing-mixin'
+import FileDefinition from '@/pages/settings/file-definition-mixin'
 
 export default {
-  mixins: [ThingMixin],
+  mixins: [ThingMixin, FileDefinition],
   methods: {
     /**
      * Approve the given entry from the inbox.
@@ -120,25 +117,12 @@ export default {
         }
       }
     },
-    entryActionsCopyThingDefinitionButton (entry, name, mediaType) {
+    entryActionsCopyThingDefinitionButton (entry) {
       return {
-        text: `Copy ${name} Definition`,
+        text: 'Copy Thing File Definition',
         color: 'blue',
         bold: true,
-        onClick: () => {
-          this.$oh.api.getPlain({
-            url: '/rest/file-format/things/' + entry.thingUID,
-            headers: { accept: mediaType }
-          }).then(definition => {
-            if (this.$clipboard(definition)) {
-              this.$f7.toast.create({
-                text: `${name} Thing definition for '${entry.thingUID}' copied to clipboard`,
-                destroyOnClose: true,
-                closeTimeout: 2000
-              }).open()
-            }
-          })
-        }
+        onClick: () => this.copyFileDefinitionToClipboard(this.ObjectType.THING, [entry.thingUID])
       }
     }
   }

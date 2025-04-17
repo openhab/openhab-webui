@@ -20,15 +20,20 @@
       </f7-subnavbar>
     </f7-navbar>
     <f7-toolbar class="contextual-toolbar" :class="{ 'navbar': $theme.md }" v-if="showCheckboxes" bottom-ios bottom-aurora>
-      <f7-link color="red" v-show="selectedItems.length" v-if="!$theme.md" class="delete" icon-ios="f7:trash" icon-aurora="f7:trash" @click="removeSelected">
-        Remove {{ selectedItems.length }}
-      </f7-link>
-      <f7-link color="orange" v-show="selectedItems.length" v-if="!$theme.md" class="disable" @click="doDisableEnableSelected(false)" icon-ios="f7:pause_circle" icon-aurora="f7:pause_circle">
-        &nbsp;Disable {{ selectedItems.length }}
-      </f7-link>
-      <f7-link color="green" v-show="selectedItems.length" v-if="!$theme.md" class="enable" @click="doDisableEnableSelected(true)" icon-ios="f7:play_circle" icon-aurora="f7:play_circle">
-        &nbsp;Enable {{ selectedItems.length }}
-      </f7-link>
+      <div class="display-flex justify-content-center" v-if="!$theme.md && selectedItems.length > 0" style="width: 100%">
+        <f7-link color="red" v-show="selectedItems.length" class="delete display-flex flex-direction-row margin-right" icon-ios="f7:trash" icon-aurora="f7:trash" @click="removeSelected">
+          Remove
+        </f7-link>
+        <f7-link color="orange" v-show="selectedItems.length" class="disable display-flex flex-direction-row margin-right" @click="doDisableEnableSelected(false)" icon-ios="f7:pause_circle" icon-aurora="f7:pause_circle">
+          &nbsp;Disable
+        </f7-link>
+        <f7-link color="green" v-show="selectedItems.length" class="enable display-flex flex-direction-row margin-right" @click="doDisableEnableSelected(true)" icon-ios="f7:play_circle" icon-aurora="f7:play_circle">
+          &nbsp;Enable
+        </f7-link>
+        <f7-link color="blue" v-show="selectedItems.length" class="copy display-flex flex-direction-row" @click="copyFileDefinitionToClipboard(ObjectType.THING, selectedItems)" icon-ios="f7:square_on_square" icon-aurora="f7:square_on_square">
+          &nbsp;Copy
+        </f7-link>
+      </div>
       <f7-link v-if="$theme.md" icon-md="material:close" icon-color="white" @click="showCheckboxes = false" />
       <div class="title" v-if="$theme.md">
         {{ selectedItems.length }} selected
@@ -37,6 +42,7 @@
         <f7-link v-show="selectedItems.length" tooltip="Disable selected" icon-md="material:pause_circle_outline" icon-color="white" @click="doDisableEnableSelected(false)" />
         <f7-link v-show="selectedItems.length" tooltip="Enable selected" icon-md="material:play_circle_outline" icon-color="white" @click="doDisableEnableSelected(true)" />
         <f7-link v-show="selectedItems.length" tooltip="Remove selected" icon-md="material:delete" icon-color="white" @click="removeSelected" />
+        <f7-link v-show="selectedItems.length" tooltip="Copy selected" icon-md="material:content_copy" icon-color="white" @click="copyFileDefinitionToClipboard(ObjectType.THING, selectedItems)" />
       </div>
     </f7-toolbar>
 
@@ -51,11 +57,11 @@
     <f7-block class="block-narrow">
       <f7-col v-show="ready">
         <f7-block-title>
-          <span>{{ thingsCount }} <template v-if="searchQuery">of {{ things.length }} </template>Things<template v-if="searchQuery"> found</template></span>
-          <template v-if="showCheckboxes && filteredThings.length">
+          <span>{{ listTitle }}</span>
+          <span v-if="showCheckboxes && filteredThings.length">
             -
-            <f7-link @click="selectDeselectAll()" :text="allSelected ? 'Deselect all' : 'Select all'" />
-          </template>
+            <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
+          </span>
           <template v-if="groupBy === 'location'">
             <div v-if="!$device.desktop && $f7.width < 1024" style="text-align:right; color:var(--f7-block-text-color); font-weight: normal" class="float-right">
               <f7-checkbox :checked="showNoLocation" @change="toggleShowNoLocation" /> <label @click="toggleShowNoLocation" style="cursor:pointer">Show no location</label>
@@ -161,11 +167,12 @@
 </style>
 
 <script>
-import thingStatus from '@/components/thing/thing-status-mixin'
+import ThingStatus from '@/components/thing/thing-status-mixin'
 import ClipboardIcon from '@/components/util/clipboard-icon.vue'
+import FileDefinition from '@/pages/settings/file-definition-mixin'
 
 export default {
-  mixins: [thingStatus],
+  mixins: [ThingStatus, FileDefinition],
   props: ['searchFor'],
   components: {
     'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue'),
@@ -246,6 +253,18 @@ export default {
     },
     searchPlaceholder () {
       return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
+    },
+    listTitle () {
+      let title = this.filteredThings.length
+      if (this.searchQuery) {
+        title += ` of ${this.things.length} Things found`
+      } else {
+        title += ' Things'
+      }
+      if (this.selectedItems.length > 0) {
+        title += `, ${this.selectedItems.length} selected`
+      }
+      return title
     }
   },
   methods: {

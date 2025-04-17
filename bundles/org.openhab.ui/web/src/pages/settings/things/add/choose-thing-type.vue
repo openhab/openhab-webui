@@ -245,8 +245,7 @@ export default {
           ],
           [
             this.entryActionsAddAsThingButton(entry, this.loadInbox),
-            this.entryActionsCopyThingDefinitionButton(entry, 'DSL', 'text/vnd.openhab.dsl.thing'),
-            this.entryActionsCopyThingDefinitionButton(entry, 'YAML File', 'application/yaml')
+            this.entryActionsCopyThingDefinitionButton(entry),
           ]
         ]
       })
