@@ -90,8 +90,8 @@
             <f7-list-button color="blue" @click="duplicateItem">
               Duplicate Item
             </f7-list-button>
-            <f7-list-button color="blue" @click="copyItemDslDefinition">
-              Copy DSL Definition
+            <f7-list-button color="blue" @click="copyFileDefinitionToClipboard(ObjectType.ITEM, [item.name])">
+              Copy File Definition
             </f7-list-button>
             <f7-list-button v-if="item.editable" color="red" @click="deleteItem">
               Remove Item
@@ -166,9 +166,10 @@ import LinkDetails from '@/components/model/link-details.vue'
 import GroupMembers from '@/components/item/group-members.vue'
 import MetadataMenu from '@/components/item/metadata/item-metadata-menu.vue'
 import ItemMixin from '@/components/item/item-mixin'
+import FileDefinition from '@/pages/settings/file-definition-mixin'
 
 export default {
-  mixins: [ItemMixin],
+  mixins: [ItemMixin, FileDefinition],
   props: ['itemName'],
   components: {
     LinkDetails,
@@ -217,20 +218,6 @@ export default {
       }, {
         props: {
           itemCopy: itemClone
-        }
-      })
-    },
-    copyItemDslDefinition () {
-      this.$oh.api.getPlain({
-        url: '/rest/file-format/items/' + this.item.name,
-        headers: { accept: 'text/vnd.openhab.dsl.item' }
-      }).then(definition => {
-        if (this.$clipboard(definition)) {
-          this.$f7.toast.create({
-            text: `DSL Item definition for '${this.item.name}' copied to clipboard`,
-            destroyOnClose: true,
-            closeTimeout: 2000
-          }).open()
         }
       })
     },
