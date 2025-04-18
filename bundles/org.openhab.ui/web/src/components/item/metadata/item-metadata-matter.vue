@@ -4,26 +4,19 @@
       <div style="text-align:right" class="padding-right">
         <label @click="toggleMultiple" style="cursor:pointer">Multiple</label> <f7-checkbox :checked="multiple" @change="toggleMultiple" />
       </div>
-      <f7-list v-if="classesDefs && classesDefs.length">
+      <f7-list v-if="deviceTypes">
         <f7-list-item :key="classSelectKey"
-                      :title="(multiple) ? 'Matter Device Type' : 'Matter Device Type'"
+                      :title="'Matter Device Type'"
                       smart-select
                       :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: !multiple }"
                       ref="classes">
-          <select v-if="itemType == 'Group'" name="parameters" @change="updateClasses" :multiple="multiple">
+          <select name="parameters" @change="updateClasses" :multiple="multiple">
             <option v-if="!multiple" value="" />
-            <option v-for="cl in classesDefs.filter((c) => c.indexOf('.')===-1)"
-                    :value="cl" :key="cl"
-                    :selected="isSelected(cl)">
-              {{ cl }}
-            </option>
-          </select>
-          <select v-else name="parameters" @change="updateClasses" :multiple="multiple">
-            <option v-if="!multiple" value="" />
-            <option v-for="cl in classesDefs"
-                    :value="cl" :key="cl"
-                    :selected="isSelected(cl)">
-              {{ cl }}
+            <option v-for="deviceType in getAvailableDeviceTypes()"
+                    :value="deviceType"
+                    :key="deviceType"
+                    :selected="isSelected(deviceType)">
+              {{ deviceType }}
             </option>
           </select>
         </f7-list-item>
@@ -31,22 +24,27 @@
       <div v-if="parameters && parameters.length">
         <config-sheet :parameterGroups="parametersGroups" :parameters="parameters" :configuration="metadata.config" />
       </div>
-      <f7-block class="padding-top no-padding no-margin" v-if="itemType === 'Group' && classes && classes.length">
+      <f7-block class="padding-top no-padding no-margin"
+                v-if="shouldShowClusterMapping">
         <f7-block-title class="padding-left">
-          Group Matter Clusters Mapping
+          Matter Clusters Mapping
         </f7-block-title>
-        <f7-block v-for="cl in classesAsArray" :key="cl">
+        <f7-block v-for="deviceType in classesAsArray" :key="deviceType">
           <f7-block-title class="padding-left">
-            {{ cl }}
+            {{ deviceType }}
           </f7-block-title>
-          <f7-list v-if="accessories[cl]">
-            <f7-list-item v-for="accessory in accessories[cl]" :key="accessory.label"
+          <f7-list v-if="deviceTypes[deviceType] && deviceTypes[deviceType].length">
+            <f7-list-item v-for="cluster in deviceTypes[deviceType]"
+                          :key="cluster.label"
                           smart-select
-                          :title="accessory.mandatory ? accessory.label+'*' : accessory.label"
-                          :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: !multiple }">
-              <select @change="updateLinkedItem(cl, accessory.label, $event.target.value)">
+                          :title="cluster.mandatory ? cluster.label+'*' : cluster.label"
+                          :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: true }">
+              <select @change="updateLinkedItem(deviceType, cluster.label, $event.target.value)">
                 <option value="" />
-                <option v-for="mbr in item.members" :value="mbr.name" :key="mbr.id" :selected="isLinked(cl, accessory.label, mbr)">
+                <option v-for="mbr in item.members"
+                        :value="mbr.name"
+                        :key="mbr.id"
+                        :selected="isLinked(deviceType, cluster.label, mbr)">
                   {{ mbr.label }} ({{ mbr.name }})
                 </option>
               </select>
@@ -54,6 +52,9 @@
           </f7-list>
         </f7-block>
         <f7-block-footer>
+          <small class="text-color-gray">* indicates mandatory mapping</small>
+        </f7-block-footer>
+        <f7-block-footer v-if="dirtyItem.size">
           <f7-button color="blue" @click="updatedLinkedItem">
             Update group members
           </f7-button>
@@ -73,7 +74,7 @@
 </template>
 
 <script>
-import { deviceTypesAndClusters, matterParameters, deviceTypes } from '@/assets/definitions/metadata/matter'
+import { deviceTypes, deviceTypesAndClusters, matterParameters, isComplexDeviceType } from '@/assets/definitions/metadata/matter'
 import ConfigSheet from '@/components/config/config-sheet.vue'
 
 export default {
@@ -84,7 +85,7 @@ export default {
   },
   data () {
     return {
-      accessories: deviceTypes,
+      deviceTypes,
       classesDefs: deviceTypesAndClusters,
       multiple: !!this.metadata.value && this.metadata.value.indexOf(',') > 0,
       classSelectKey: this.$f7.utils.id(),
@@ -97,7 +98,7 @@ export default {
     console.log('Component created')
     console.log('Props:', this.item, this.itemName, this.metadata, this.namespace)
     console.log('ClassesDefs:', this.classesDefs)
-    console.log('Accessories:', this.accessories)
+    console.log('Device Types:', this.deviceTypes)
 
     this.multiple = !!this.metadata.value && this.metadata.value.indexOf(',') > 0
     this.itemType = this.item.groupType || this.item.type
@@ -134,50 +135,71 @@ export default {
     classes () {
       console.log('Computing classes')
       if (!this.multiple) return this.metadata.value
-      return (this.metadata.value) ? this.metadata.value.split(',') : []
+      return this.classesAsArray
+    },
+    shouldShowClusterMapping () {
+      // Show cluster mapping if:
+      // 1. It's a Group item (regardless of groupType)
+      // 2. Has selected device types
+      // 3. At least one selected device type is complex
+      return this.item.type === 'Group' &&
+             this.classes &&
+             this.classes.length &&
+             this.classesAsArray.some(deviceType => isComplexDeviceType(deviceType))
     },
     parametersGroups () {
       console.log('Computing parametersGroups')
       if ((!this.classes) || (!this.multiple)) return []
-      let parametersGroups = []
-      this.classesAsArray.forEach(aType => {
-        parametersGroups.push({ name: aType, label: aType })
-      })
-      return parametersGroups
+      return this.classesAsArray.map(type => ({ name: type, label: type }))
     },
     parameters () {
-      console.log('Computing parameters')
       if (!this.classes) return matterParameters.global || []
-      if (!this.multiple) return matterParameters[this.classes] || matterParameters.global || []
-      if ((this.multiple) && (this.itemType === 'Group') && (this.classesAsArray.length > 1)) {
-        let options = []
-        this.classesAsArray.forEach(aType => {
-          const typeParams = matterParameters[aType] || []
-          typeParams.forEach(opt => {
-            opt.groupName = aType
-            options.push(opt)
-          })
-        })
-        return options.concat(matterParameters.global || [])
+
+      if (!this.multiple) {
+        return matterParameters[this.classes] || matterParameters.global || []
       }
-      return matterParameters.global || []
+
+      // For multiple selection, show parameters for all selected types
+      return this.classesAsArray.flatMap(type => {
+        const typeParams = matterParameters[type] || []
+        return typeParams.map(opt => ({ ...opt, groupName: type }))
+      }).concat(matterParameters.global || [])
     }
   },
   methods: {
-    isLinked (accessoryClass, characteristic, item) {
-      console.log('Checking link for:', accessoryClass, characteristic, item)
-      if (item && item.metadata && item.metadata.matter) {
-        const typeAndCharacteristic = (accessoryClass + '.' + characteristic).toLowerCase()
-        const matterValue = item.metadata.matter.value.toLowerCase()
-        console.log('Checking:', typeAndCharacteristic, 'against:', matterValue)
-        return matterValue.split(',').some(value =>
-          value.trim() === typeAndCharacteristic
-        )
+    getAvailableDeviceTypes () {
+      if (this.item.type !== 'Group') {
+        // For non-group items, show all device types
+        return Object.keys(this.deviceTypes)
+      }
+
+      if (this.multiple) {
+        // For groups in multiple selection mode:
+        // If it has a groupType, show all device types
+        // If no groupType, only show complex device types
+        return this.item.groupType
+          ? Object.keys(this.deviceTypes)
+          : Object.keys(this.deviceTypes).filter(type => isComplexDeviceType(type))
+      }
+
+      // For groups in single selection mode:
+      // If it has a groupType, show all device types
+      // If no groupType, only show complex device types
+      return this.item.groupType
+        ? Object.keys(this.deviceTypes)
+        : Object.keys(this.deviceTypes).filter(type => isComplexDeviceType(type))
+    },
+    isLinked (deviceType, cluster, item) {
+      if (item?.metadata?.matter?.value) {
+        return item.metadata.matter.value.toLowerCase() ===
+               `${deviceType}.${cluster}`.toLowerCase()
       }
       return false
     },
-    isSelected (cl) {
-      return (this.multiple) ? this.classes.indexOf(cl) >= 0 : this.classes === cl
+    isSelected (deviceType) {
+      return this.multiple
+        ? this.classes.includes(deviceType)
+        : this.classes === deviceType
     },
     toggleMultiple () {
       this.multiple = !this.multiple
@@ -186,53 +208,51 @@ export default {
     },
     updateClasses () {
       const value = this.$refs.classes.f7SmartSelect.getValue()
-      this.metadata.value = (Array.isArray(value)) ? value.join(',') : value
+      this.metadata.value = Array.isArray(value) ? value.join(',') : value
       this.$set(this.metadata, 'config', {})
     },
-    updateLinkedItem (accessoryType, accessoryCharacteristic, itemName) {
-      const typeAndCharacteristic = (accessoryType + '.' + accessoryCharacteristic).toLowerCase()
-      if (itemName) {
-        const groupMbr = this.item.members.find(mbr => mbr.name === itemName)
-        if (groupMbr) {
-          if (!groupMbr.metadata) {
-            this.$set(groupMbr, 'metadata', {})
-          }
-          if (!groupMbr.metadata.matter) {
-            this.$set(groupMbr.metadata, 'matter', { value: '', config: {} })
-          }
-          if (groupMbr.metadata.matter.value) {
-            groupMbr.metadata.matter.value = groupMbr.metadata.matter.value + ',' + typeAndCharacteristic
-          } else {
-            groupMbr.metadata.matter.value = typeAndCharacteristic
-          }
-          this.dirtyItem.add(groupMbr)
-        }
-      } else {
+    updateLinkedItem (deviceType, cluster, itemName) {
+      if (!itemName) {
+        // Handle unlinking
         const groupMbr = this.item.members.find(mbr =>
-          mbr.metadata &&
-          mbr.metadata.matter &&
-          mbr.metadata.matter.value &&
-          mbr.metadata.matter.value.toLowerCase().indexOf(typeAndCharacteristic) > 0
+          mbr.metadata?.matter?.value?.toLowerCase() ===
+          `${deviceType}.${cluster}`.toLowerCase()
         )
         if (groupMbr) {
-          let itemClasses = groupMbr.metadata.matter.value.toLowerCase().split(',')
-          itemClasses = itemClasses.filter(tag => tag !== typeAndCharacteristic)
-          groupMbr.metadata.matter.value = (Array.isArray(itemClasses)) ? itemClasses.join(',') : itemClasses
+          groupMbr.metadata.matter.value = ''
           this.dirtyItem.add(groupMbr)
         }
+        return
+      }
+
+      // Handle linking
+      const groupMbr = this.item.members.find(mbr => mbr.name === itemName)
+      if (groupMbr) {
+        if (!groupMbr.metadata) {
+          this.$set(groupMbr, 'metadata', {})
+        }
+        if (!groupMbr.metadata.matter) {
+          this.$set(groupMbr.metadata, 'matter', { value: '', config: {} })
+        }
+        groupMbr.metadata.matter.value = `${deviceType}.${cluster}`
+        this.dirtyItem.add(groupMbr)
       }
     },
     updatedLinkedItem () {
-      this.dirtyItem.forEach(it =>
-        this.$oh.api.put(`/rest/items/${it.name}/metadata/matter`, it.metadata.matter).then((data) => {
-          this.$f7.toast.create({
-            text: 'Metadata of group items updated. Please visit the items to review additional Matter configuration parameters.',
-            destroyOnClose: true,
-            closeTimeout: 3000
-          }).open()
-        })
-      )
-      this.dirtyItem.clear()
+      Promise.all(
+        Array.from(this.dirtyItem).map(item =>
+          this.$oh.api.put(`/rest/items/${item.name}/metadata/matter`, {
+            value: item.metadata.matter.value,
+            config: item.metadata.matter.config || {}
+          })
+        )
+      ).then(() => {
+        this.dirtyItem.clear()
+        this.$f7.toast.create({
+          text: 'Group members updated',
+          closeTimeout: 2000
+        }).open()
+      })
     }
   }
 }

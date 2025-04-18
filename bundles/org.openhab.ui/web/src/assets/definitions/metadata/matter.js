@@ -1,20 +1,15 @@
 export const deviceTypes = {
-  'OnOffLight': [
-    { label: 'OnOff', mandatory: true }
-  ],
-  'DimmableLight': [
-    { label: 'OnOff', mandatory: true },
-    { label: 'Brightness', mandatory: true }
-  ],
-  'ColorLight': [
-    { label: 'OnOff', mandatory: true },
-    { label: 'Brightness', mandatory: true },
-    { label: 'Color', mandatory: true }
-  ],
-  'PlugInUnit': [
-    { label: 'OnOff', mandatory: true }
-  ],
-  'Thermostat': [
+  OnOffLight: [],
+  DimmableLight: [],
+  ColorLight: [],
+  PlugInUnit: [],
+  WindowCovering: [],
+  TemperatureSensor: [],
+  HumiditySensor: [],
+  OccupancySensor: [],
+  ContactSensor: [],
+  DoorLock: [],
+  Thermostat: [
     { label: 'LocalTemperature', mandatory: true },
     { label: 'OutdoorTemperature', mandatory: false },
     { label: 'OccupiedHeatingSetpoint', mandatory: false },
@@ -22,41 +17,22 @@ export const deviceTypes = {
     { label: 'SystemMode', mandatory: true },
     { label: 'RunningMode', mandatory: false }
   ],
-  'WindowCovering': [
-    { label: 'Position', mandatory: true }
-  ],
-  'TemperatureSensor': [
-    { label: 'Temperature', mandatory: true }
-  ],
-  'HumiditySensor': [
-    { label: 'Humidity', mandatory: true }
-  ],
-  'OccupancySensor': [
-    { label: 'Occupancy', mandatory: true }
-  ],
-  'ContactSensor': [
-    { label: 'Contact', mandatory: true }
-  ],
-  'DoorLock': [
-    { label: 'LockState', mandatory: true }
-  ],
-  'Fan': [
+  Fan: [
     { label: 'OnOff', mandatory: false },
     { label: 'FanMode', mandatory: false },
     { label: 'PercentSetting', mandatory: false }
   ]
 }
 
-export const deviceTypesAndClusters = []
+export const deviceTypesAndClusters = Object.entries(deviceTypes).flatMap(([type, clusters]) => [
+  type,
+  ...(clusters.length > 0 ? clusters.map(cluster => `${type}.${cluster.label}`) : [])
+])
 
-for (const dt in deviceTypes) {
-  deviceTypesAndClusters.push(dt)
-  for (const cluster of deviceTypes[dt]) {
-    deviceTypesAndClusters.push(dt + '.' + cluster.label)
-  }
+export const isComplexDeviceType = (deviceType) => {
+  return deviceTypes[deviceType]?.length > 0
 }
 
-// Common parameters that can be used across different devices
 const labelParameter = {
   name: 'label',
   label: 'Custom Label',
@@ -71,7 +47,6 @@ const fixedLabelsParameter = {
   description: 'Comma-separated list of key=value pairs for fixed labels (e.g. room=Office, floor=1)'
 }
 
-// Thermostat specific parameters
 const thermostatLimitsParameters = [
   { name: 'thermostat-minHeatSetpointLimit', label: 'Min Heat Setpoint', type: 'INTEGER', description: 'Minimum allowable heat setpoint (in 0.01°C)' },
   { name: 'thermostat-maxHeatSetpointLimit', label: 'Max Heat Setpoint', type: 'INTEGER', description: 'Maximum allowable heat setpoint (in 0.01°C)' },
@@ -80,7 +55,6 @@ const thermostatLimitsParameters = [
   { name: 'thermostat-minSetpointDeadBand', label: 'Min Setpoint Deadband', type: 'INTEGER', description: 'Minimum temperature gap between heating and cooling setpoints (in 0.01°C)' }
 ]
 
-// Fan specific parameters
 const fanModeSequenceParameter = {
   name: 'fanControl-fanModeSequence',
   label: 'Fan Mode Sequence',
@@ -96,8 +70,17 @@ const fanModeSequenceParameter = {
     { value: '5', label: 'Off-High' }
   ]
 }
+const windowCoveringInvertParameter = {
+  name: 'windowCovering-invert',
+  label: 'Invert Control',
+  type: 'TEXT',
+  limitToOptions: true,
+  options: [
+    { value: 'false', label: 'false' },
+    { value: 'true', label: 'true' }
+  ]
+}
 
-// System mode options for thermostat
 const systemModeOptions = [
   { value: '0', label: 'OFF' },
   { value: '1', label: 'AUTO' },
@@ -110,7 +93,6 @@ const systemModeOptions = [
   { value: '9', label: 'SLEEP' }
 ]
 
-// Fan mode options
 const fanModeOptions = [
   { value: '0', label: 'OFF' },
   { value: '1', label: 'LOW' },
@@ -122,32 +104,14 @@ const fanModeOptions = [
 ]
 
 export const matterParameters = {
-  // Global parameters available for all device types
-  'global': [labelParameter, fixedLabelsParameter],
-
-  // Device type specific parameters
-  'OnOffLight': [labelParameter, fixedLabelsParameter],
-  'DimmableLight': [labelParameter, fixedLabelsParameter],
-  'ColorLight': [labelParameter, fixedLabelsParameter],
-  'PlugInUnit': [labelParameter, fixedLabelsParameter],
-  'Thermostat': [labelParameter, fixedLabelsParameter].concat(thermostatLimitsParameters),
-  'WindowCovering': [
-    labelParameter,
-    fixedLabelsParameter,
-    {
-      name: 'invert',
-      label: 'Invert Control',
-      type: 'TEXT',
-      limitToOptions: true,
-      options: [
-        { value: 'false', label: 'false' },
-        { value: 'true', label: 'true' }
-      ]
-    }
-  ],
-  'Fan': [labelParameter, fixedLabelsParameter, fanModeSequenceParameter],
-
-  // Cluster specific parameters
+  global: [labelParameter, fixedLabelsParameter],
+  OnOffLight: [labelParameter, fixedLabelsParameter],
+  DimmableLight: [labelParameter, fixedLabelsParameter],
+  ColorLight: [labelParameter, fixedLabelsParameter],
+  PlugInUnit: [labelParameter, fixedLabelsParameter],
+  Thermostat: [labelParameter, fixedLabelsParameter].concat(thermostatLimitsParameters),
+  WindowCovering: [labelParameter, fixedLabelsParameter].concat(windowCoveringInvertParameter),
+  Fan: [labelParameter, fixedLabelsParameter, fanModeSequenceParameter],
   'Thermostat.SystemMode': [
     {
       name: 'systemMode',
