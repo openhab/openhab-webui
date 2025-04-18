@@ -6,17 +6,17 @@ Vue.use(Clipboard)
 export default {
   data () {
     return {
-      ObjectType: {
+      ObjectType: Object.freeze({
         THING: 'thing',
         ITEM: 'item'
-      }
+      })
     }
   },
   methods: {
     /**
      * Copies the file definitions of the given list of thingUIDs or item names to the clipboard.
      *
-     * @param {string} type - The type of the objects (`thing` or `item`).
+     * @param {string} type - The type of the objects (`thing` or `item`). Use {ObjectType} enum for clarity.
      * @param {Array} objectIds - The list of object ids to copy. For Things, this should be an array of Thing UIDs.
      *                            For Items, this should be an array of Item names.
      *                            When `null`, all objects of the given type will be copied.
@@ -28,7 +28,7 @@ export default {
       if (objectIds === null) {
         copiedObjectsLabel = `All ${typeLabel}`
       } else if (objectIds.length === 1) {
-        copiedObjectsLabel = objectIds[0]
+        copiedObjectsLabel = '<b>' + objectIds[0] + '</b>'
       } else {
         copiedObjectsLabel = `${objectIds.length} ${typeLabel}`
       }
@@ -44,13 +44,13 @@ export default {
             },
             {
               text: 'DSL',
-              color: 'blue',
+              color: 'teal',
               onClick: () => this.executeFileDefinitionCopy(type, typeLabel, objectIds, copiedObjectsLabel, 'DSL', `text/vnd.openhab.dsl.${type}`)
             },
             {
-              text: 'YAML File',
-              color: 'green',
-              onClick: () => this.executeFileDefinitionCopy(type, typeLabel, objectIds, copiedObjectsLabel, 'YAML File', 'application/yaml')
+              text: 'YAML',
+              color: 'blue',
+              onClick: () => this.executeFileDefinitionCopy(type, typeLabel, objectIds, copiedObjectsLabel, 'YAML', 'application/yaml')
             }
           ]
         })
@@ -90,7 +90,7 @@ export default {
         })
         .catch(error => {
           progressDialog.close()
-          this.$f7.dialog.alert(`Error copying ${typeLabel} ${fileFormatLabel} definition: ${error.message}`, 'Error')
+          this.$f7.dialog.alert(`Error copying ${typeLabel} ${fileFormatLabel} definition: ${error}`, 'Error')
         })
     }
   }
