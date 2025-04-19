@@ -39,12 +39,8 @@
       :scroll-list="true"
       :label="true" />
 
-    <f7-list class="searchbar-not-found">
-      <f7-list-item title="Nothing found" />
-    </f7-list>
-
-    <!-- skeleton for not ready -->
     <f7-block class="block-narrow">
+      <!-- skeleton for not ready -->
       <f7-col v-if="!ready">
         <f7-block-title>&nbsp;Loading...</f7-block-title>
         <f7-list v-if="!ready" contacts-list class="col wide pages-list">
@@ -64,11 +60,11 @@
         </f7-list>
       </f7-col>
 
-      <f7-col v-else>
+      <f7-col v-show="ready">
         <f7-block-title class="searchbar-hide-on-search">
           {{ pages.length }} pages
         </f7-block-title>
-        <div class="searchbar-found padding-left padding-right" v-show="!ready || pages.length > 0">
+        <div class="padding-left padding-right" v-show="!ready || pages.length > 0">
           <f7-segmented strong tag="p">
             <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')">
               Alphabetical
@@ -79,8 +75,11 @@
           </f7-segmented>
         </div>
 
+        <f7-list class="searchbar-not-found">
+          <f7-list-item title="Nothing found" />
+        </f7-list>
         <f7-list v-show="pages.length > 0"
-                 class="searchbar-found col pages-list"
+                 class="col pages-list"
                  ref="pagesList"
                  :contacts-list="groupBy === 'alphabetical'" media-list>
           <f7-list-group v-for="(pagesWithInitial, initial) in indexedPages" :key="initial">
@@ -145,13 +144,6 @@
     </f7-fab>
   </f7-page>
 </template>
-
-<style lang="stylus">
-.searchbar-found
-  @media (min-width 960px)
-    padding-left 0 !important
-    padding-right 0 !important
-</style>
 
 <script>
 export default {

@@ -336,6 +336,15 @@
 					_t.root.documentElement.classList.add("ui-bigger-font");
 				}
 			}
+
+			if (param === null || param === "openhab.ui.basic:buttonRadius") {
+				_t.root.documentElement.classList.remove("ui-button-rounded");
+				_t.root.documentElement.classList.remove("ui-button-fully-rounded");
+				newValue = window.localStorage.getItem("openhab.ui.basic:buttonRadius");
+				if (newValue) {
+					_t.root.documentElement.classList.add("ui-button-" + newValue);
+				}
+			}
 		};
 
 		_t.updateControlLocalSetting = function(param) {

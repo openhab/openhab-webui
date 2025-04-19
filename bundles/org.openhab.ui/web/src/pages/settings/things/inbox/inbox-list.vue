@@ -11,8 +11,9 @@
           ref="searchbar"
           class="searchbar-inbox"
           :init="initSearchbar"
-          search-container=".contacts-list"
-          search-in=".item-inner"
+          custom-search
+          @searchbar:search="search"
+          @searchbar:clear="clearSearch"
           :disable-button="!$theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
@@ -79,7 +80,14 @@
     <f7-block class="block-narrow">
       <f7-col>
         <f7-block-title>
-          <span v-if="ready"><template v-if="selectedItems.length > 0">{{ selectedItems.length }} of </template>{{ inboxCount }} entries<template v-if="selectedItems.length > 0"> selected</template></span>
+          <span v-if="ready">
+            <template v-if="searchQuery">{{ filteredItems.length }} of</template>
+            {{ inboxCount }} entries<template v-if="selectedItems.length > 0">, {{ selectedItems.length }} selected</template>
+            <template v-if="showCheckboxes">
+              -
+              <f7-link @click="selectDeselectAll" :text="areAllSelected ? 'Deselect all' : 'Select all'" />
+            </template>
+          </span>
           <div v-if="!$device.desktop && $f7.width < 1024" style="text-align:right; color:var(--f7-block-text-color); font-weight: normal" class="float-right">
             <f7-checkbox :checked="showIgnored" @change="toggleIgnored" /> <label @click="toggleIgnored" style="cursor:pointer">Show ignored</label>
           </div>
@@ -113,7 +121,7 @@
         </f7-list>
 
         <f7-list v-else class="searchbar-found col" :contacts-list="groupBy === 'alphabetical'">
-          <f7-list-group v-for="(inboxWithInitial, initial) in indexedInbox" :key="initial">
+          <f7-list-group v-for="(inboxWithInitial, initial) in filteredIndexedInbox" :key="initial">
             <f7-list-item v-if="inboxWithInitial.length" :title="initial" group-title />
             <f7-list-item v-for="entry in inboxWithInitial"
                           :key="entry.thingUID"
@@ -135,7 +143,7 @@
             </f7-list-item>
           </f7-list-group>
         </f7-list>
-        <f7-list class="searchbar-not-found">
+        <f7-list v-if="ready && searchQuery && filteredItems.length === 0">
           <f7-list-item title="Nothing found" />
         </f7-list>
       </f7-col>
@@ -178,8 +186,8 @@ export default {
       initSearchbar: false,
       things: [], // for validating thingUIDs against existing things
       inbox: [],
-      // indexedInbox: {},
       selectedItems: [],
+      searchQuery: null,
       showIgnored: false,
       groupBy: 'alphabetical',
       showCheckboxes: false,
@@ -191,8 +199,16 @@ export default {
       if (!this.inbox) return 0
       return (this.showIgnored) ? this.inbox.length : this.inbox.filter((e) => e.flag !== 'IGNORED').length
     },
-    indexedInbox () {
-      const filteredInbox = (this.showIgnored) ? this.inbox : this.inbox.filter((e) => e.flag !== 'IGNORED')
+    filteredIndexedInbox () {
+      let filteredInbox = (this.showIgnored) ? this.inbox : this.inbox.filter((e) => e.flag !== 'IGNORED')
+      if (this.searchQuery) {
+        const searchQuery = this.searchQuery.toLowerCase()
+        filteredInbox = filteredInbox.filter((e) =>
+          e.label.toLowerCase().includes(searchQuery) ||
+          e.thingUID.toLowerCase().includes(searchQuery) ||
+          e.properties[e.representationProperty]?.toLowerCase()?.includes(searchQuery)
+        )
+      }
       if (this.groupBy === 'alphabetical') {
         return filteredInbox.reduce((prev, entry, i, inbox) => {
           const initial = entry.label.substring(0, 1).toUpperCase()
@@ -218,6 +234,12 @@ export default {
           return objEntries
         }, {})
       }
+    },
+    filteredItems () {
+      return Object.values(this.filteredIndexedInbox).flat().map(e => e.thingUID)
+    },
+    areAllSelected () {
+      return this.selectedItems.length >= this.filteredItems.length
     }
   },
   methods: {
@@ -493,6 +515,25 @@ export default {
     },
     filterSelectedItems () {
       return this.inbox.filter((e) => this.selectedItems.indexOf(e.thingUID) >= 0)
+    },
+    search (searchbar, query, previousQuery) {
+      if (query) {
+        this.searchQuery = query
+        this.selectedItems = this.selectedItems.filter((selected) => this.filteredItems.includes(selected))
+      } else {
+        this.clearSearch()
+      }
+    },
+    clearSearch () {
+      this.searchQuery = null
+    },
+    selectDeselectAll () {
+      if (this.areAllSelected) {
+        this.selectedItems = []
+      } else {
+        // copy the array, so when we remove some selectedItems (unchecking them), it won't affect filteredItems
+        this.selectedItems = this.filteredItems.slice()
+      }
     }
   }
 }

@@ -83,7 +83,7 @@
         </f7-block-footer>
         <f7-list class="profile-list">
           <f7-list-item radio v-for="profileType in profileTypes" class="profile-item"
-                        :checked="(!currentProfileType && profileType.uid === 'system:default' && itemTypeIsChannelType(currentItem, channel)) || (currentProfileType && profileType.uid === currentProfileType.uid)"
+                        :checked="(!currentProfileType && profileType.uid === 'system:default' && itemTypeCompatibleWithChannelType(currentItem, channel)) || (currentProfileType && profileType.uid === currentProfileType.uid)"
                         :disabled="!compatibleProfileTypes.includes(profileType)"
                         :class="{ 'profile-disabled': !compatibleProfileTypes.includes(profileType) }"
                         @change="onProfileTypeChange(profileType.uid)"
@@ -219,8 +219,8 @@ export default {
       })
     },
     onProfileTypeChange (profileTypeUid) {
+      this.profileTypeConfiguration = null
       if (!profileTypeUid) {
-        this.profileTypeConfiguration = null
         this.currentProfileType = null
         return
       }
@@ -295,7 +295,7 @@ export default {
           return
         }
       }
-      if (!this.itemTypeIsChannelType(this.currentItem, this.channel) && (!this.currentProfileType || !this.compatibleProfileTypes.includes(this.currentProfileType))) {
+      if (!this.itemTypeCompatibleWithChannelType(this.currentItem, this.channel) && (!this.currentProfileType || !this.compatibleProfileTypes.includes(this.currentProfileType))) {
         this.$f7.dialog.alert('Please configure a valid profile')
         return
       }

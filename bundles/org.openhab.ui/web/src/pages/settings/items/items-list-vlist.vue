@@ -13,6 +13,7 @@
           ref="searchbar"
           class="searchbar-items"
           search-container=".virtual-list"
+          @searchbar:search="filterSelectedItems"
           :placeholder="searchPlaceholder"
           :disable-button="!$theme.aurora" />
       </f7-subnavbar>
@@ -33,10 +34,6 @@
         <f7-link icon-md="material:content_copy" icon-color="white" @click="copySelected" />
       </div>
     </f7-toolbar>
-
-    <f7-list class="searchbar-not-found">
-      <f7-list-item title="Nothing found" />
-    </f7-list>
 
     <f7-block class="block-narrow margin-top-half">
       <f7-col>
@@ -70,9 +67,16 @@
       </f7-col>
 
       <f7-col v-show="ready && items.length > 0">
-        <f7-block-title class="no-margin-top searchbar-hide-on-search">
-          {{ items.length }} Items
+        <f7-block-title class="no-margin-top">
+          <span>{{ listTitle }}</span>
+          <template v-if="showCheckboxes && filteredItemsCount > 0">
+            -
+            <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
+          </template>
         </f7-block-title>
+        <f7-list class="searchbar-not-found">
+          <f7-list-item title="Nothing found" />
+        </f7-list>
         <f7-list
           v-show="items.length > 0"
           class="searchbar-found col"
@@ -166,6 +170,7 @@ export default {
         renderExternal: this.renderExternal,
         height: this.height
       },
+      searchQuery: '',
       selectedItems: [],
       showCheckboxes: false,
       eventSource: null
@@ -223,6 +228,13 @@ export default {
       this.$oh.sse.close(this.eventSource)
       this.eventSource = null
     },
+    filterSelectedItems (event) {
+      this.searchQuery = event?.query
+      if (!this.$refs.itemsList.f7VirtualList.filteredItems) {
+        return
+      }
+      this.selectedItems = this.selectedItems.filter((i) => this.$refs.itemsList.f7VirtualList.filteredItems.find((item) => item.name === i))
+    },
     searchAll (query, items) {
       const found = []
       for (let i = 0; i < items.length; i += 1) {
@@ -235,7 +247,7 @@ export default {
           query.trim() === ''
         ) { found.push(i) }
       }
-      return found // return array with mathced indexes
+      return found // return array with matched indexes
     },
     renderExternal (vl, vlData) {
       this.vlData = vlData
@@ -280,6 +292,15 @@ export default {
         this.selectedItems.splice(this.selectedItems.indexOf(item), 1)
       } else {
         this.selectedItems.push(item)
+      }
+    },
+    selectDeselectAll () {
+      if (this.allSelected) {
+        this.selectedItems = []
+      } else if (this.$refs.itemsList.f7VirtualList.filteredItems?.length > 0) {
+        this.selectedItems = this.$refs.itemsList.f7VirtualList.filteredItems.map((i) => i.name)
+      } else {
+        this.selectedItems = this.items.map((i) => i.name)
       }
     },
     copySelected () {
@@ -337,6 +358,27 @@ export default {
   computed: {
     searchPlaceholder () {
       return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
+    },
+    filteredItemsCount () {
+      if (this.searchQuery) {
+        return this.$refs.itemsList.f7VirtualList.filteredItems.length
+      }
+      return this.items.length
+    },
+    allSelected () {
+      return this.selectedItems.length >= this.filteredItemsCount
+    },
+    listTitle () {
+      let title = this.filteredItemsCount
+      if (this.searchQuery) {
+        title += ` of ${this.items.length} Items found`
+      } else {
+        title += ' Items'
+      }
+      if (this.selectedItems.length > 0) {
+        title += `, ${this.selectedItems.length} selected`
+      }
+      return title
     }
   }
 }
