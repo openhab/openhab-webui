@@ -66,7 +66,7 @@
         <f7-link v-show="selectedItems.length" icon-md="material:delete" icon-color="white" @click="confirmActionOnSelection('delete')" />
         <f7-link v-show="selectedItems.length" icon-md="material:visibility_off" icon-color="white" @click="confirmActionOnSelection('ignore')" />
         <f7-link v-show="selectedItems.length" icon-md="material:thumb_up" icon-color="white" @click="confirmActionOnSelection('approve')" />
-        <f7-link v-show="selectedItems.length" icon-md="material:content_copy" icon-color="white" @click="performActionOnSelection('copy')" />
+        <f7-link v-show="selectedItems.length" icon-md="material:content_copy" icon-color="white" @click="copyFileDefinitionToClipboard(ObjectType.THING, selectedItems)" />
       </div>
     </f7-toolbar>
 
