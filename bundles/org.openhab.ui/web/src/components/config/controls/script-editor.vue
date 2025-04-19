@@ -320,14 +320,29 @@ export default {
         }
       }
       extraKeys['Shift-Tab'] = 'indentLess'
-      extraKeys['Cmd-/'] = 'toggleComment'
-      extraKeys['Ctrl-/'] = 'toggleComment'
+      extraKeys['Cmd-/'] = extraKeys['Ctrl-/'] = 'toggleComment'
+      extraKeys['Shift-Cmd-K'] = extraKeys['Shift-Ctrl-K'] = this.deleteCurrentLine
       cm.setOption('extraKeys', extraKeys)
       cm.addOverlay(indentGuidesOverlay)
       cm.refresh()
     },
     onCmCodeChange (newCode) {
       this.$emit('input', newCode)
+    },
+    deleteCurrentLine (cm) {
+      if (cm.somethingSelected()) {
+        cm.replaceSelection('')
+      } else {
+        const cursor = cm.getCursor()
+        if (cursor.line === cm.lastLine() && cursor.line !== cm.firstLine()) {
+          const prevLine = cursor.line - 1
+          cm.replaceRange('', { line: prevLine, ch: cm.getLine(prevLine).length }, { line: cursor.line, ch: cm.getLine(cursor.line).length })
+          cm.setCursor({ line: prevLine, ch: 0 })
+        } else {
+          cm.replaceRange('', { line: cursor.line, ch: 0 }, { line: cursor.line + 1, ch: 0 })
+          cm.setCursor({ line: cursor.line, ch: 0 })
+        }
+      }
     }
   },
   computed: {
