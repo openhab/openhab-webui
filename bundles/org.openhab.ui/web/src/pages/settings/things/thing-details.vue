@@ -76,7 +76,7 @@
                   </f7-list>
                 </f7-accordion-content>
               </f7-list-item>
-              <f7-list-item accordion-item title="Firmware" :badge="firmwares.length"
+              <f7-list-item v-if="thing.firmwareStatus" accordion-item title="Firmware" :badge="firmwares.length"
                             :badge-color="(thing.firmwareStatus.status === 'UPDATE_EXECUTABLE') ? 'green' : 'gray'">
                 <f7-accordion-content>
                   <f7-list>
