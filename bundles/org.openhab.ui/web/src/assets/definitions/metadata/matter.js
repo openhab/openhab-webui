@@ -1,27 +1,52 @@
 export const deviceTypes = {
-  OnOffLight: [],
-  DimmableLight: [],
-  ColorLight: [],
-  PlugInUnit: [],
-  WindowCovering: [],
-  TemperatureSensor: [],
-  HumiditySensor: [],
-  OccupancySensor: [],
-  ContactSensor: [],
-  DoorLock: [],
-  Thermostat: [
-    { label: 'LocalTemperature', mandatory: true },
-    { label: 'OutdoorTemperature', mandatory: false },
-    { label: 'OccupiedHeatingSetpoint', mandatory: false },
-    { label: 'OccupiedCoolingSetpoint', mandatory: false },
-    { label: 'SystemMode', mandatory: true },
-    { label: 'RunningMode', mandatory: false }
-  ],
-  Fan: [
-    { label: 'OnOff', mandatory: false },
-    { label: 'FanMode', mandatory: false },
-    { label: 'PercentSetting', mandatory: false }
-  ]
+  OnOffLight: {
+    clusters: []
+  },
+  DimmableLight: {
+    clusters: []
+  },
+  ColorLight: {
+    clusters: []
+  },
+  PlugInUnit: {
+    clusters: []
+  },
+  WindowCovering: {
+    clusters: []
+  },
+  TemperatureSensor: {
+    clusters: []
+  },
+  HumiditySensor: {
+    clusters: []
+  },
+  OccupancySensor: {
+    clusters: []
+  },
+  ContactSensor: {
+    clusters: []
+  },
+  DoorLock: {
+    clusters: []
+  },
+  Thermostat: {
+    clusters: [
+      { label: 'LocalTemperature', mandatory: true },
+      { label: 'OutdoorTemperature', mandatory: false },
+      { label: 'OccupiedHeatingSetpoint', mandatory: false },
+      { label: 'OccupiedCoolingSetpoint', mandatory: false },
+      { label: 'SystemMode', mandatory: true },
+      { label: 'RunningMode', mandatory: false }
+    ]
+  },
+  Fan: {
+    clusters: [
+      { label: 'OnOff', mandatory: false },
+      { label: 'FanMode', mandatory: false },
+      { label: 'PercentSetting', mandatory: false }
+    ],
+    supportsSimpleMapping: true
+  }
 }
 
 export const deviceTypesAndClusters = Object.entries(deviceTypes).flatMap(([type, clusters]) => [

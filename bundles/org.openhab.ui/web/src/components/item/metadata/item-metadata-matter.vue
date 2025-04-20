@@ -33,22 +33,30 @@
           <f7-block-title class="padding-left">
             {{ deviceType }}
           </f7-block-title>
-          <f7-list v-if="deviceTypes[deviceType] && deviceTypes[deviceType].length">
-            <f7-list-item v-for="cluster in deviceTypes[deviceType]"
-                          :key="cluster.label"
-                          smart-select
-                          :title="cluster.mandatory ? cluster.label+'*' : cluster.label"
-                          :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: true }">
-              <select @change="updateLinkedItem(deviceType, cluster.label, $event.target.value)">
-                <option value="" />
-                <option v-for="mbr in item.members"
-                        :value="mbr.name"
-                        :key="mbr.id"
-                        :selected="isLinked(deviceType, cluster.label, mbr)">
-                  {{ mbr.label }} ({{ mbr.name }})
-                </option>
-              </select>
-            </f7-list-item>
+          <f7-list>
+            <f7-list-item v-if="deviceTypes[deviceType]?.clusters?.length > 0 &&
+                            (deviceTypes[deviceType]?.clusters?.length === 0 || deviceTypes[deviceType]?.supportsSimpleMapping === true)"
+                          checkbox
+                          title="Use as Simple Device"
+                          :checked="useSimpleMapping"
+                          @change="useSimpleMapping = $event.target.checked" />
+            <template v-if="!useSimpleMapping">
+              <f7-list-item v-for="cluster in deviceTypes[deviceType]?.clusters"
+                            :key="cluster.label"
+                            smart-select
+                            :title="cluster.mandatory ? cluster.label+'*' : cluster.label"
+                            :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: true }">
+                <select @change="updateLinkedItem(deviceType, cluster.label, $event.target.value)">
+                  <option value="" />
+                  <option v-for="mbr in item.members"
+                          :value="mbr.name"
+                          :key="mbr.id"
+                          :selected="isLinked(deviceType, cluster.label, mbr)">
+                    {{ mbr.label }} ({{ mbr.name }})
+                  </option>
+                </select>
+              </f7-list-item>
+            </template>
           </f7-list>
         </f7-block>
         <f7-block-footer>
@@ -91,7 +99,8 @@ export default {
       classSelectKey: this.$f7.utils.id(),
       itemType: this.item.groupType || this.item.type,
       dirtyItem: new Set(),
-      ready: false
+      ready: false,
+      useSimpleMapping: false
     }
   },
   created () {
@@ -141,11 +150,11 @@ export default {
       // Show cluster mapping if:
       // 1. It's a Group item (regardless of groupType)
       // 2. Has selected device types
-      // 3. At least one selected device type is complex
+      // 3. At least one selected device type has clusters defined
       return this.item.type === 'Group' &&
              this.classes &&
              this.classes.length &&
-             this.classesAsArray.some(deviceType => isComplexDeviceType(deviceType))
+             this.classesAsArray.some(deviceType => this.deviceTypes[deviceType]?.clusters?.length > 0)
     },
     parametersGroups () {
       console.log('Computing parametersGroups')
@@ -169,32 +178,28 @@ export default {
   methods: {
     getAvailableDeviceTypes () {
       if (this.item.type !== 'Group') {
-        // For non-group items, show all device types
-        return Object.keys(this.deviceTypes)
+        return Object.keys(this.deviceTypes).filter(type => {
+          const device = this.deviceTypes[type]
+          return device.clusters.length === 0 || device.supportsSimpleMapping === true
+        })
       }
 
       if (this.multiple) {
-        // For groups in multiple selection mode:
-        // If it has a groupType, show all device types
-        // If no groupType, only show complex device types
         return this.item.groupType
           ? Object.keys(this.deviceTypes)
-          : Object.keys(this.deviceTypes).filter(type => isComplexDeviceType(type))
+          : Object.keys(this.deviceTypes).filter(type => this.deviceTypes[type]?.clusters?.length > 0)
       }
 
-      // For groups in single selection mode:
-      // If it has a groupType, show all device types
-      // If no groupType, only show complex device types
       return this.item.groupType
         ? Object.keys(this.deviceTypes)
-        : Object.keys(this.deviceTypes).filter(type => isComplexDeviceType(type))
+        : Object.keys(this.deviceTypes).filter(type => this.deviceTypes[type]?.clusters?.length > 0)
     },
     isLinked (deviceType, cluster, item) {
-      if (item?.metadata?.matter?.value) {
-        return item.metadata.matter.value.toLowerCase() ===
-               `${deviceType}.${cluster}`.toLowerCase()
-      }
-      return false
+      if (!item?.metadata?.matter?.value) return false
+
+      const value = item.metadata.matter.value.toLowerCase()
+      return value === `${deviceType}.${cluster}`.toLowerCase() ||
+             (cluster === null && value === deviceType.toLowerCase())
     },
     isSelected (deviceType) {
       return this.multiple
@@ -210,6 +215,7 @@ export default {
       const value = this.$refs.classes.f7SmartSelect.getValue()
       this.metadata.value = Array.isArray(value) ? value.join(',') : value
       this.$set(this.metadata, 'config', {})
+      this.useSimpleMapping = false
     },
     updateLinkedItem (deviceType, cluster, itemName) {
       if (!itemName) {
@@ -234,7 +240,12 @@ export default {
         if (!groupMbr.metadata.matter) {
           this.$set(groupMbr.metadata, 'matter', { value: '', config: {} })
         }
-        groupMbr.metadata.matter.value = `${deviceType}.${cluster}`
+        // If using simple mapping, just set the device type
+        if (this.useSimpleMapping && this.deviceTypes[deviceType]?.supportsSimpleMapping) {
+          groupMbr.metadata.matter.value = deviceType
+        } else {
+          groupMbr.metadata.matter.value = `${deviceType}.${cluster}`
+        }
         this.dirtyItem.add(groupMbr)
       }
     },
