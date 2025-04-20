@@ -4,13 +4,12 @@ import Clipboard from 'v-clipboard'
 Vue.use(Clipboard)
 
 export default {
-  data () {
-    return {
-      ObjectType: Object.freeze({
-        THING: 'thing',
-        ITEM: 'item'
-      })
-    }
+  created () {
+    // Define the ObjectType enum to be used when calling the copyFileDefinitionToClipboard method
+    this.ObjectType = Object.freeze({
+      THING: 'thing',
+      ITEM: 'item'
+    })
   },
   methods: {
     /**
