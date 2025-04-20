@@ -156,7 +156,7 @@
               <f7-list-button v-if="thing.statusInfo.statusDetail === 'HANDLER_MISSING_ERROR'" color="blue"
                               title="Install Binding" @click="installBinding" />
               <f7-list-button v-if="!error" color="blue" title="Duplicate Thing" @click="duplicateThing" />
-              <f7-list-button v-if="!error" color="blue" title="Copy DSL Definition" @click="copyThingDsl" />
+              <f7-list-button v-if="!error" color="blue" title="Copy File Definition" @click="copyFileDefinitionToClipboard(ObjectType.THING, [thingId])" />
               <f7-list-button v-if="editable" color="red" title="Remove Thing" @click="deleteThing" />
             </f7-list>
           </f7-col>
@@ -249,11 +249,6 @@ p.action-description
 </style>
 
 <script>
-import Vue from 'vue'
-
-import Clipboard from 'v-clipboard'
-Vue.use(Clipboard)
-
 import YAML from 'yaml'
 import cloneDeep from 'lodash/cloneDeep'
 import fastDeepEqual from 'fast-deep-equal/es6'
@@ -274,9 +269,10 @@ import ThingStatus from '@/components/thing/thing-status-mixin'
 
 import DirtyMixin from '../dirty-mixin'
 import ThingActionPopup from '@/pages/settings/things/thing-action-popup.vue'
+import FileDefinition from '@/pages/settings/file-definition-mixin'
 
 export default {
-  mixins: [ThingStatus, DirtyMixin],
+  mixins: [ThingStatus, DirtyMixin, FileDefinition],
   components: {
     ConfigSheet,
     ChannelList,
@@ -614,20 +610,6 @@ export default {
         props: {
           thingTypeId: this.thing.thingTypeUID,
           thingCopy: thingClone
-        }
-      })
-    },
-    copyThingDsl () {
-      this.$oh.api.getPlain({
-        url: '/rest/file-format/things/' + this.thingId,
-        headers: { accept: 'text/vnd.openhab.dsl.thing' }
-      }).then((definition) => {
-        if (this.$clipboard(definition)) {
-          this.$f7.toast.create({
-            text: 'Thing DSL definition copied to clipboard',
-            destroyOnClose: true,
-            closeTimeout: 2000
-          }).open()
         }
       })
     },

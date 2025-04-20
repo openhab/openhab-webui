@@ -37,20 +37,20 @@
         </f7-button>
         <!-- buttons for wider screen -->
         <template v-if="$f7.width >= 500">
-          <f7-button @click="performActionOnSelection('copy')" color="blue" class="delete wider-screen display-flex flex-direction-row"
+          <f7-button @click="copyFileDefinitionToClipboard(ObjectType.THING, selectedItems)" color="blue" class="copy wider-screen display-flex flex-direction-row"
                      icon-ios="f7:square_on_square" icon-aurora="f7:square_on_square">
             &nbsp;Copy
           </f7-button>
         </template>
         <!-- buttons for narrower screen -->
         <template v-else>
-          <f7-button color="blue" class="delete narrower-screen" popover-open=".item-popover">
+          <f7-button color="blue" class="popover-button narrower-screen" popover-open=".item-popover">
             ...
           </f7-button>
           <f7-popover class="item-popover" ref="popover" :backdrop="false" :close-by-backdrop-click="true"
                       :style="{ width: '96px' }" :animate="false">
             <div class="margin-vertical display-flex justify-content-center" style="width: 100%">
-              <f7-link @click="performActionOnSelection('copy')" color="blue" class="delete display-flex flex-direction-column margin-right"
+              <f7-link @click="performActionOnSelection('copy')" color="blue" class="copy display-flex flex-direction-column margin-right"
                        icon-ios="f7:square_on_square" icon-aurora="f7:square_on_square" popover-close=".item-popover">
                 Copy
               </f7-link>
@@ -66,7 +66,7 @@
         <f7-link v-show="selectedItems.length" icon-md="material:delete" icon-color="white" @click="confirmActionOnSelection('delete')" />
         <f7-link v-show="selectedItems.length" icon-md="material:visibility_off" icon-color="white" @click="confirmActionOnSelection('ignore')" />
         <f7-link v-show="selectedItems.length" icon-md="material:thumb_up" icon-color="white" @click="confirmActionOnSelection('approve')" />
-        <f7-link v-show="selectedItems.length" icon-md="material:content_copy" icon-color="white" @click="performActionOnSelection('copy')" />
+        <f7-link v-show="selectedItems.length" icon-md="material:content_copy" icon-color="white" @click="copyFileDefinitionToClipboard(ObjectType.THING, selectedItems)" />
       </div>
     </f7-toolbar>
 
@@ -445,7 +445,6 @@ export default {
     performActionOnSelection (action) {
       let progressMessage, successMessage, promises
       let navigateToThingsPage = false
-      let clearSelectionAndReload = true
       switch (action) {
         case 'delete':
           progressMessage = 'Removing Inbox Entries...'
@@ -468,23 +467,6 @@ export default {
           successMessage = `${this.selectedItems.length} entries unignored`
           promises = this.filterSelectedItems().map((e) => this.$oh.api.postPlain('/rest/inbox/' + e.thingUID + '/unignore'))
           break
-        case 'copy':
-          progressMessage = 'Copying Inbox Entries...'
-          successMessage = `${this.selectedItems.length} entries copied to clipboard`
-          promises = this.filterSelectedItems().map((e) => this.$oh.api.getPlain({
-            url: '/rest/file-format/things/' + e.thingUID,
-            headers: { accept: 'text/vnd.openhab.dsl.thing' }
-          }))
-
-          promises = [Promise.all(promises).then((data) => {
-            if (this.$clipboard(data.join('\n'))) {
-              Promise.resolve()
-            } else {
-              Promise.reject('Failed to copy to clipboard')
-            }
-          })]
-          clearSelectionAndReload = false
-          break
       }
 
       let dialog = this.$f7.dialog.progress(progressMessage)
@@ -496,15 +478,16 @@ export default {
           closeTimeout: 2000
         }).open()
         const searchFor = this.selectedItems.join(',')
-        if (clearSelectionAndReload) this.selectedItems = []
+        this.selectedItems = []
         dialog.close()
-        if (clearSelectionAndReload) this.load()
         if (navigateToThingsPage) {
           this.$f7router.navigate('/settings/things/', {
             props: {
               searchFor
             }
           })
+        } else {
+          this.load()
         }
       }).catch((err) => {
         dialog.close()
