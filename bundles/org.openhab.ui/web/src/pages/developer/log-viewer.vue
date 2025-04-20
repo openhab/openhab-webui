@@ -140,6 +140,13 @@
                   </div>
                 </template>
               </f7-list-item>
+              <f7-list-item>
+                <template #title>
+                  <div class="wrap-text">
+                    {{ selectedLog.stackTrace }}
+                  </div>
+                </template>
+              </f7-list-item>
             </f7-list>
           </div>
         </div>
@@ -223,9 +230,8 @@
 <style lang="stylus">
 .log-viewer
   .wrap-text
-    white-space: pre-line !important
+    white-space: pre-line
     word-break: break-word
-    align: left
 
   /* Ensure the card takes full width and removes padding */
   .custom-card
@@ -585,7 +591,8 @@ export default {
         milliseconds: ms,
         level: logEntry.level.toUpperCase(),
         loggerName: logEntry.loggerName,
-        message: logEntry.message
+        message: logEntry.message,
+        stackTrace: logEntry.stackTrace
       }
 
       this.batchLogs.push(entry)
