@@ -3,6 +3,43 @@ import Clipboard from 'v-clipboard'
 
 Vue.use(Clipboard)
 
+function executeFileDefinitionCopy (vue, type, typeLabel, objectIds, copiedObjectsLabel, fileFormatLabel, mediaType) {
+  const progressDialog = vue.$f7.dialog.progress(`Loading ${typeLabel} ${fileFormatLabel} definition...`)
+
+  const path = `/rest/file-format/${type}s`
+  let apiCalls = []
+  if (objectIds !== null) {
+    apiCalls = objectIds.map((id) => vue.$oh.api.getPlain({
+      url: path + '/' + id,
+      headers: { accept: mediaType }
+    }))
+  } else {
+    apiCalls = [vue.$oh.api.getPlain({
+      url: path,
+      headers: { accept: mediaType }
+    })]
+  }
+
+  Promise.all(apiCalls)
+    .then(definitions => {
+      const definition = definitions.join('\n')
+      progressDialog.close()
+      if (vue.$clipboard(definition)) {
+        vue.$f7.toast.create({
+          text: `${typeLabel} ${fileFormatLabel} definition copied to clipboard:\n${copiedObjectsLabel}`,
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
+      } else {
+        vue.$f7.dialog.alert(`Error copying ${typeLabel} ${fileFormatLabel} definition to the clipboard`, 'Error')
+      }
+    })
+    .catch(error => {
+      progressDialog.close()
+      vue.$f7.dialog.alert(`Error copying ${typeLabel} ${fileFormatLabel} definition: ${error}`, 'Error')
+    })
+}
+
 export default {
   created () {
     // Define the ObjectType enum to be used when calling the copyFileDefinitionToClipboard method
@@ -44,53 +81,16 @@ export default {
             {
               text: 'DSL',
               color: 'teal',
-              onClick: () => this.executeFileDefinitionCopy(type, typeLabel, objectIds, copiedObjectsLabel, 'DSL', `text/vnd.openhab.dsl.${type}`)
+              onClick: () => executeFileDefinitionCopy(this, type, typeLabel, objectIds, copiedObjectsLabel, 'DSL', `text/vnd.openhab.dsl.${type}`)
             },
             {
               text: 'YAML',
               color: 'blue',
-              onClick: () => this.executeFileDefinitionCopy(type, typeLabel, objectIds, copiedObjectsLabel, 'YAML', 'application/yaml')
+              onClick: () => executeFileDefinitionCopy(this, type, typeLabel, objectIds, copiedObjectsLabel, 'YAML', 'application/yaml')
             }
           ]
         })
         .open()
-    },
-    // This is a "private" method that is called by the copyFileDefinitionToClipboard method
-    executeFileDefinitionCopy (type, typeLabel, objectIds, copiedObjectsLabel, fileFormatLabel, mediaType) {
-      const progressDialog = this.$f7.dialog.progress(`Loading ${typeLabel} ${fileFormatLabel} definition...`)
-
-      const path = `/rest/file-format/${type}s`
-      let apiCalls = []
-      if (objectIds !== null) {
-        apiCalls = objectIds.map((id) => this.$oh.api.getPlain({
-          url: path + '/' + id,
-          headers: { accept: mediaType }
-        }))
-      } else {
-        apiCalls = [this.$oh.api.getPlain({
-          url: path,
-          headers: { accept: mediaType }
-        })]
-      }
-
-      Promise.all(apiCalls)
-        .then(definitions => {
-          const definition = definitions.join('\n')
-          progressDialog.close()
-          if (this.$clipboard(definition)) {
-            this.$f7.toast.create({
-              text: `${typeLabel} ${fileFormatLabel} definition copied to clipboard:\n${copiedObjectsLabel}`,
-              destroyOnClose: true,
-              closeTimeout: 2000
-            }).open()
-          } else {
-            this.$f7.dialog.alert(`Error copying ${typeLabel} ${fileFormatLabel} definition to the clipboard`, 'Error')
-          }
-        })
-        .catch(error => {
-          progressDialog.close()
-          this.$f7.dialog.alert(`Error copying ${typeLabel} ${fileFormatLabel} definition: ${error}`, 'Error')
-        })
     }
   }
 }
