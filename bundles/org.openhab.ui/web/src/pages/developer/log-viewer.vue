@@ -111,6 +111,41 @@
       </f7-block>
     </f7-popover>
 
+    <!-- Log Details Popup -->
+    <div class="popup" id="logdetails-popup">
+      <div class="view">
+        <div class="page">
+          <div class="navbar">
+            <div class="navbar-bg" />
+            <div class="navbar-inner">
+              <div class="title">
+                Log Details
+              </div>
+              <div class="right">
+                <!-- Link to close popup -->
+                <a class="link popup-close">Close</a>
+              </div>
+            </div>
+          </div>
+          <div class="page-content">
+            <f7-list class="col wide">
+              <f7-list-item header="Time" :title="selectedLog.time + selectedLog.milliseconds" />
+              <f7-list-item header="Timestamp" :title="selectedLog.timestamp" />
+              <f7-list-item header="Level" :title="selectedLog.level" />
+              <f7-list-item header="Logger Class" :title="selectedLog.loggerName" />
+              <f7-list-item>
+                <template #title>
+                  <div class="wrap-text">
+                    {{ selectedLog.message }}
+                  </div>
+                </template>
+              </f7-list-item>
+            </f7-list>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Main Display -->
     <f7-navbar title="Log Viewer" back-link="Developer Tools" back-link-url="/developer/" back-link-force>
       <f7-nav-right>
@@ -169,7 +204,7 @@
     <f7-block class="table-block">
       <f7-col>
         <f7-card class="custom-card">
-          <div class="table-container" ref="tableContainer" @scroll="handleScroll">
+          <div class="table-container" ref="tableContainer" @click="handleTableClick" @scroll="handleScroll">
             <table ref="dataTable">
               <tbody />
             </table>
@@ -187,6 +222,10 @@
 
 <style lang="stylus">
 .log-viewer
+  .wrap-text
+    white-space: pre-line !important
+    word-break: break-word
+    align: left
 
   /* Ensure the card takes full width and removes padding */
   .custom-card
@@ -356,6 +395,7 @@ export default {
       currentHighlightColorItemIndex: null,
       currentHighlightColor: '#FF5252',
       lastSequence: 0,
+      selectedLog: {},
       colors: [
         '#FF0000', // Red
         '#00FF00', // Green
@@ -373,7 +413,8 @@ export default {
         '#808080', // Gray
         '#8B4513', // Saddle Brown
         '#4682B4' // Steel Blue
-      ]
+      ],
+      LINE_HEIGHT: 31
     }
   },
   computed: {
@@ -491,11 +532,25 @@ export default {
           icon = 'exclamationmark_octagon_fill'
           break
       }
-      tr.innerHTML = '<td class="sticky"><i class="icon f7-icons" style="font-size: 18px;">' + icon + `</i> ${entity.time}<span class="milliseconds">${entity.milliseconds}</span></td>` +
+      tr.innerHTML = '<td class="sticky" @click="this.onRowClick(entity)"><i class="icon f7-icons" style="font-size: 18px;">' + icon + `</i> ${entity.time}<span class="milliseconds">${entity.milliseconds}</span></td>` +
         `<td class="level">${entity.level}</td>` +
         `<td class="logger"><span class="logger">${entity.loggerName}</span></td>` +
         `<td class="nowrap">${this.highlightText(entity.message)}</td>`
       return tr
+    },
+    handleTableClick (event) {
+      const tableContainer = this.$refs.tableContainer
+      const currentIndexAtTop = Math.floor(tableContainer.scrollTop / this.LINE_HEIGHT)
+      const rect = tableContainer.getBoundingClientRect()
+      const index = Math.floor((event.clientY - rect.top) / this.LINE_HEIGHT) + currentIndexAtTop
+
+      if (index >= this.filteredTableData.length) {
+        return
+      }
+
+      this.selectedLog = this.filteredTableData[index]
+
+      this.$f7.popup.open('#logdetails-popup')
     },
     addLogEntry (logEntry) {
       this.lastSequence = Math.max(this.lastSequence, logEntry.sequence)
@@ -526,6 +581,7 @@ export default {
         id: this.nextId++,
         visible: vis,
         time: formattedTime,
+        timestamp: logEntry.timestamp,
         milliseconds: ms,
         level: logEntry.level.toUpperCase(),
         loggerName: logEntry.loggerName,
@@ -614,12 +670,11 @@ export default {
       this.redrawPartOfTable()
     },
     redrawPartOfTable () {
-      const LINE_HEIGHT = 31
       const tableContainer = this.$refs.tableContainer
       const tableBody = this.$refs.dataTable.firstChild
       const filteredItemsCount = this.filteredTableData.length
-      const currentIndexAtTop = Math.floor(tableContainer.scrollTop / LINE_HEIGHT)
-      const nbVisibleLines = Math.floor(tableContainer.offsetHeight / LINE_HEIGHT)
+      const currentIndexAtTop = Math.floor(tableContainer.scrollTop / this.LINE_HEIGHT)
+      const nbVisibleLines = Math.floor(tableContainer.offsetHeight / this.LINE_HEIGHT)
 
       // make sure to redraw only 50 elements below around visible area
       const firstIndexToRedraw = Math.max(0, currentIndexAtTop - 50)
@@ -630,7 +685,7 @@ export default {
       if (firstIndexToRedraw > 0) {
         const padder = document.createElement('tr')
         padder.className = 'padder'
-        padder.style.height = (LINE_HEIGHT * firstIndexToRedraw) + 'px'
+        padder.style.height = (this.LINE_HEIGHT * firstIndexToRedraw) + 'px'
         tableBody.appendChild(padder)
       }
       for (let i = firstIndexToRedraw; i <= lastIndexToRedraw; i++) {
@@ -639,7 +694,7 @@ export default {
       if (lastIndexToRedraw < filteredItemsCount - 1) {
         const padder = document.createElement('tr')
         padder.className = 'padder'
-        padder.style.height = (LINE_HEIGHT * (filteredItemsCount - 1 - lastIndexToRedraw)) + 'px'
+        padder.style.height = (this.LINE_HEIGHT * (filteredItemsCount - 1 - lastIndexToRedraw)) + 'px'
         tableBody.appendChild(padder)
       }
     },
