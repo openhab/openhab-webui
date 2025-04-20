@@ -13,8 +13,7 @@
       <f7-link @click="switchTab('thing')" :tab-link-active="currentTab === 'thing'" class="tab-link">
         Thing
       </f7-link>
-      <f7-link @click="switchTab('channels')" :tab-link-active="currentTab === 'channels'" v-show="!error"
-               class="tab-link">
+      <f7-link @click="switchTab('channels')" :tab-link-active="currentTab === 'channels'" v-show="!error" class="tab-link">
         Channels
       </f7-link>
       <f7-link @click="switchTab('code')" :tab-link-active="currentTab === 'code'" v-show="!error" class="tab-link">
@@ -33,11 +32,9 @@
                        color="orange" @click="toggleDisabled" />
             </div>
             Status:
-            <f7-chip class="margin-left" :text="thing.statusInfo.status"
-                     :color="thingStatusBadgeColor(thing.statusInfo)" />
+            <f7-chip class="margin-left" :text="thing.statusInfo.status" :color="thingStatusBadgeColor(thing.statusInfo)" />
             <div>
-              <strong>{{ (thing.statusInfo.statusDetail !== 'NONE') ? thing.statusInfo.statusDetail : '&nbsp;'
-              }}</strong>
+              <strong>{{ (thing.statusInfo.statusDetail !== 'NONE') ? thing.statusInfo.statusDetail : '&nbsp;' }}</strong>
               <br>
               <div v-if="thingStatusDescription(thing.statusInfo)" v-html="thingStatusDescription(thing.statusInfo)" />
             </div>
@@ -58,8 +55,7 @@
         <f7-block v-if="ready && !error" class="block-narrow">
           <f7-col>
             <thing-general-settings :thing="thing" :thing-type="thingType" :ready="true" :read-only="!editable" />
-            <f7-block-title v-if="thingType && thingType.UID" medium
-                            style="margin-bottom: var(--f7-list-margin-vertical)">
+            <f7-block-title v-if="thingType && thingType.UID" medium style="margin-bottom: var(--f7-list-margin-vertical)">
               Information
             </f7-block-title>
             <f7-block-footer v-if="!editable" class="no-margin padding-left">
@@ -101,9 +97,13 @@
             <f7-block-title medium>
               Configuration
             </f7-block-title>
-            <config-sheet ref="thingConfiguration" :parameter-groups="configDescriptions.parameterGroups"
-                          :parameters="configDescriptions.parameters" :configuration="thing.configuration"
-                          :status="configStatusInfo" :set-empty-config-as-null="true" :read-only="!editable" />
+            <config-sheet ref="thingConfiguration"
+                          :parameter-groups="configDescriptions.parameterGroups"
+                          :parameters="configDescriptions.parameters"
+                          :configuration="thing.configuration"
+                          :status="configStatusInfo"
+                          :set-empty-config-as-null="true"
+                          :read-only="!editable" />
 
             <!-- Thing Actions & UI Actions -->
             <template v-if="thingActions.length > 0 || thingType?.UID?.startsWith('zwave:')">
@@ -175,7 +175,8 @@
                               @click="addToModel(true)" />
               <f7-list-button class="searchbar-ignore" color="blue" title="Add Points to Model"
                               @click="addToModel(false)" />
-              <f7-list-button class="searchbar-ignore" color="red" title="Unlink all Items" @click="unlinkAll(false)" />
+              <f7-list-button class="searchbar-ignore" color="red" title="Unlink all Items"
+                              @click="unlinkAll(false)" />
               <f7-list-button class="searchbar-ignore" color="red" title="Unlink all and Remove Items"
                               @click="unlinkAll(true)" />
             </f7-list>
