@@ -24,7 +24,7 @@ function executeFileDefinitionCopy (vueInstance, objectType, objectTypeLabel, ob
     })
     .catch(error => {
       progressDialog.close()
-      vueInstance.$f7.dialog.alert(`Error copying ${objectTypeLabel} ${fileFormatLabel} definition: ${error}`, 'Error')
+      vueInstance.$f7.dialog.alert(`Error loading ${objectTypeLabel} ${fileFormatLabel} definition: ${error}`, 'Error')
     })
 }
 
