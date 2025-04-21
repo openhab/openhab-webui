@@ -72,7 +72,15 @@
                 <f7-accordion-content>
                   <f7-list>
                     <f7-list-item class="thing-property" v-for="(value, key) in thing.properties" :key="key"
-                                  :title="key" :after="value" />
+                                  @click="showFullPropertyIfTruncated(key, value)">
+                      <div slot="title" class="item-title-content">
+                        <span :ref="'titleSpan-' + key">{{ key }}</span>
+                      </div>
+                      <div slot="after" class="item-after-content">
+                        <span :ref="'valueSpan-' + key">{{ value }}</span>
+                        <f7-icon v-if="isTruncated(key, 'title') || isTruncated(key, 'value')" f7="info_circle" size="16" class="truncation-icon" />
+                      </div>
+                    </f7-list-item>
                   </f7-list>
                 </f7-accordion-content>
               </f7-list-item>
@@ -246,6 +254,35 @@ p.action-description
     top calc(var(--f7-navbar-height) + var(--f7-tabbar-height))
     height calc(100% - 2*var(--f7-navbar-height))
     width 100%
+
+  .item-title-content, .item-after-content
+    display flex
+    align-items center
+    overflow hidden
+    width 100%
+
+    span
+      overflow hidden
+      text-overflow ellipsis
+      white-space nowrap
+      flex-shrink 1
+      min-width 0
+
+  .truncation-icon
+    margin-left 4px
+    flex-shrink 0
+    color var(--f7-text-color-secondary)
+
+.dialog.wide-property-dialog
+  --f7-dialog-width: 560px
+
+  @media (max-width: 599px) {
+    --f7-dialog-width: 95vw
+  }
+
+  @media (min-width: 768px) {
+    --f7-dialog-width: 700px
+  }
 </style>
 
 <script>
@@ -303,7 +340,8 @@ export default {
       thingEnabled: true,
       eventSource: null,
       thingYaml: null,
-      notEditableMsg: 'This Thing is not editable because it has been provisioned from a file.'
+      notEditableMsg: 'This Thing is not editable because it has been provisioned from a file.',
+      propertyTruncation: {}
     }
   },
   computed: {
@@ -354,6 +392,12 @@ export default {
           delete savedThingClone.configuration
           this.thingDirty = !fastDeepEqual(thingClone, savedThingClone)
         }
+      },
+      deep: true
+    },
+    'thing.properties': {
+      handler () {
+        this.checkPropertyTruncation()
       },
       deep: true
     }
@@ -424,6 +468,7 @@ export default {
           this.savedThing = cloneDeep(this.thing)
           this.ready = true
           this.loading = false
+          this.checkPropertyTruncation()
         })
       }
 
@@ -916,7 +961,73 @@ export default {
         this.$f7.dialog.alert(e).open()
         return false
       }
+    },
+    checkPropertyTruncation () {
+      this.$nextTick(() => {
+        const newTruncationStatus = {}
+        if (!this.thing || !this.thing.properties || !this.ready) {
+          if (Object.keys(this.propertyTruncation).length > 0) {
+            this.propertyTruncation = {}
+          }
+          return
+        }
+
+        for (const key in this.thing.properties) {
+          const getElement = (refName) => {
+            const ref = this.$refs[refName]
+            return Array.isArray(ref) ? ref[0] : ref
+          }
+
+          const titleSpan = getElement(`titleSpan-${key}`)
+          const valueSpan = getElement(`valueSpan-${key}`)
+
+          const titleTruncated = titleSpan ? titleSpan.scrollWidth > titleSpan.offsetWidth : false
+          const valueTruncated = valueSpan ? valueSpan.scrollWidth > valueSpan.offsetWidth : false
+
+          if (titleTruncated || valueTruncated) {
+            newTruncationStatus[key] = { title: titleTruncated, value: valueTruncated }
+          }
+        }
+
+        if (!fastDeepEqual(this.propertyTruncation, newTruncationStatus)) {
+          this.propertyTruncation = newTruncationStatus
+        }
+      })
+    },
+
+    isTruncated (key, type) {
+      return !!(this.propertyTruncation[key] && this.propertyTruncation[key][type])
+    },
+
+    showFullProperty (key, value) {
+      const dialogContent = `
+        <div class="dialog-title" style="margin-bottom: 8px;">${key}</div>
+        <pre class="dialog-text" style="font-size: var(--f7-font-size); margin: 0; white-space: pre-wrap; word-wrap: break-word;">${value}</pre>
+      `
+      const dialog = this.$f7.dialog.create({
+        title: 'Property Details',
+        content: dialogContent,
+        cssClass: 'wide-property-dialog',
+        buttons: [
+          { text: 'OK' }
+        ]
+      })
+      dialog.open()
+    },
+
+    showFullPropertyIfTruncated (key, value) {
+      const isTitleTruncated = this.isTruncated(key, 'title')
+      const isValueTruncated = this.isTruncated(key, 'value')
+      if (isTitleTruncated || isValueTruncated) {
+        this.showFullProperty(key, value)
+      }
     }
+  },
+  mounted () {
+    this.checkPropertyTruncation()
+  },
+  updated () {
+    this.checkPropertyTruncation()
   }
 }
 </script>
