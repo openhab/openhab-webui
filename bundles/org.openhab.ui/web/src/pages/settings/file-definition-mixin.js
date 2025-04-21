@@ -8,15 +8,8 @@ function executeFileDefinitionCopy (vueInstance, objectType, objectTypeLabel, ob
 
   const path = `/rest/file-format/${objectType}s`
   const headers = { accept: mediaType }
-  let apiCall = null
-  if (objectIds !== null) {
-    const data = JSON.stringify(objectIds)
-    apiCall = vueInstance.$oh.api.postPlain(path, data, 'text', 'application/json', headers)
-  } else {
-    apiCall = vueInstance.$oh.api.getPlain(path, null, 'text', undefined, headers)
-  }
-
-  apiCall
+  const data = JSON.stringify(objectIds)
+  vueInstance.$oh.api.postPlain(path, data, 'text', 'application/json', headers)
     .then(definition => {
       progressDialog.close()
       if (vueInstance.$clipboard(definition)) {
