@@ -242,7 +242,7 @@ p.action-description
 
   .thing-property
     .item-after
-      max-width 75%
+      max-width 50%
 
       span
         max-width 100%
