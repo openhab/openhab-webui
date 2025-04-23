@@ -302,10 +302,7 @@ export default {
       }
     },
     copySelected () {
-      // When _all_ (not just filtered) items are selected, pass null to copyFileDefinitionToClipboard
-      // so that it only makes one call to the backend
-      const selectedItems = this.selectedItems.length === this.items.length ? null : this.selectedItems
-      this.copyFileDefinitionToClipboard(this.ObjectType.ITEM, selectedItems)
+      this.copyFileDefinitionToClipboard(this.ObjectType.ITEM, this.selectedItems)
     },
     removeSelected () {
       const vm = this

@@ -7,22 +7,10 @@ function executeFileDefinitionCopy (vueInstance, objectType, objectTypeLabel, ob
   const progressDialog = vueInstance.$f7.dialog.progress(`Loading ${objectTypeLabel} ${fileFormatLabel} definition...`)
 
   const path = `/rest/file-format/${objectType}s`
-  let apiCalls = []
-  if (objectIds !== null) {
-    apiCalls = objectIds.map((id) => vueInstance.$oh.api.getPlain({
-      url: path + '/' + id,
-      headers: { accept: mediaType }
-    }))
-  } else {
-    apiCalls = [vueInstance.$oh.api.getPlain({
-      url: path,
-      headers: { accept: mediaType }
-    })]
-  }
-
-  Promise.all(apiCalls)
-    .then(definitions => {
-      const definition = definitions.join('\n')
+  const headers = { accept: mediaType }
+  const data = JSON.stringify(objectIds)
+  vueInstance.$oh.api.postPlain(path, data, 'text', 'application/json', headers)
+    .then(definition => {
       progressDialog.close()
       if (vueInstance.$clipboard(definition)) {
         vueInstance.$f7.toast.create({
@@ -36,7 +24,7 @@ function executeFileDefinitionCopy (vueInstance, objectType, objectTypeLabel, ob
     })
     .catch(error => {
       progressDialog.close()
-      vueInstance.$f7.dialog.alert(`Error copying ${objectTypeLabel} ${fileFormatLabel} definition: ${error}`, 'Error')
+      vueInstance.$f7.dialog.alert(`Error loading ${objectTypeLabel} ${fileFormatLabel} definition: ${error}`, 'Error')
     })
 }
 
