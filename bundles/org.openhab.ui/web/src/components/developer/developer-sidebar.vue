@@ -445,7 +445,7 @@ export default {
         transformations: [],
         persistenceConfigs: []
       },
-      pinnedObjects: {
+      pinnedObjects: this.$f7.data.pinnedObjects || {
         items: [],
         things: [],
         rules: [],
@@ -490,6 +490,7 @@ export default {
   beforeDestroy () {
     this.stopEventSource()
     if (this.addThingAutocomplete) this.addThingAutocomplete.destroy()
+    this.$f7.data.pinnedObjects = this.pinnedObjects
   },
   methods: {
     addItemsFromModel (value) {
