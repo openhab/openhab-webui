@@ -213,7 +213,7 @@
     <f7-block class="table-block">
       <f7-col>
         <f7-card class="custom-card">
-          <div class="table-container" ref="tableContainer" @click="handleTableClick" @scroll="handleScroll">
+          <div class="table-container" ref="tableContainer" @scroll="handleScroll">
             <table ref="dataTable">
               <tbody />
             </table>
@@ -429,8 +429,7 @@ export default {
         '#808080', // Gray
         '#8B4513', // Saddle Brown
         '#4682B4' // Steel Blue
-      ],
-      LINE_HEIGHT: 31
+      ]
     }
   },
   computed: {
@@ -548,24 +547,17 @@ export default {
           icon = 'exclamationmark_octagon_fill'
           break
       }
-      tr.innerHTML = '<td class="sticky" @click="this.onRowClick(entity)"><i class="icon f7-icons" style="font-size: 18px;">' + icon + `</i> ${entity.time}<span class="milliseconds">${entity.milliseconds}</span></td>` +
+      tr.innerHTML = '<td class="sticky"><i class="icon f7-icons" style="font-size: 18px;">' + icon + `</i> ${entity.time}<span class="milliseconds">${entity.milliseconds}</span></td>` +
         `<td class="level">${entity.level}</td>` +
         `<td class="logger"><span class="logger">${entity.loggerName}</span></td>` +
         `<td class="nowrap">${this.highlightText(entity.message)}</td>`
+      tr.addEventListener('click', () => {
+        this.onRowClick(entity.id)
+      })
       return tr
     },
-    handleTableClick (event) {
-      const tableContainer = this.$refs.tableContainer
-      const currentIndexAtTop = Math.floor(tableContainer.scrollTop / this.LINE_HEIGHT)
-      const rect = tableContainer.getBoundingClientRect()
-      const index = Math.floor((event.clientY - rect.top) / this.LINE_HEIGHT) + currentIndexAtTop
-
-      if (index >= this.filteredTableData.length) {
-        return
-      }
-
-      this.selectedLog = this.filteredTableData[index]
-
+    onRowClick (entityId) {
+      this.selectedLog = this.filteredTableData[entityId]
       this.$f7.popup.open('#logdetails-popup')
     },
     addLogEntry (logEntry) {
@@ -687,11 +679,13 @@ export default {
       this.redrawPartOfTable()
     },
     redrawPartOfTable () {
+      const LINE_HEIGHT = 31
+
       const tableContainer = this.$refs.tableContainer
       const tableBody = this.$refs.dataTable.firstChild
       const filteredItemsCount = this.filteredTableData.length
-      const currentIndexAtTop = Math.floor(tableContainer.scrollTop / this.LINE_HEIGHT)
-      const nbVisibleLines = Math.floor(tableContainer.offsetHeight / this.LINE_HEIGHT)
+      const currentIndexAtTop = Math.floor(tableContainer.scrollTop / LINE_HEIGHT)
+      const nbVisibleLines = Math.floor(tableContainer.offsetHeight / LINE_HEIGHT)
 
       // make sure to redraw only 50 elements below around visible area
       const firstIndexToRedraw = Math.max(0, currentIndexAtTop - 50)
@@ -702,7 +696,7 @@ export default {
       if (firstIndexToRedraw > 0) {
         const padder = document.createElement('tr')
         padder.className = 'padder'
-        padder.style.height = (this.LINE_HEIGHT * firstIndexToRedraw) + 'px'
+        padder.style.height = (LINE_HEIGHT * firstIndexToRedraw) + 'px'
         tableBody.appendChild(padder)
       }
       for (let i = firstIndexToRedraw; i <= lastIndexToRedraw; i++) {
@@ -711,7 +705,7 @@ export default {
       if (lastIndexToRedraw < filteredItemsCount - 1) {
         const padder = document.createElement('tr')
         padder.className = 'padder'
-        padder.style.height = (this.LINE_HEIGHT * (filteredItemsCount - 1 - lastIndexToRedraw)) + 'px'
+        padder.style.height = (LINE_HEIGHT * (filteredItemsCount - 1 - lastIndexToRedraw)) + 'px'
         tableBody.appendChild(padder)
       }
     },
