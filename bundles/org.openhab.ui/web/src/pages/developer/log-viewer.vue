@@ -111,6 +111,50 @@
       </f7-block>
     </f7-popover>
 
+    <!-- Log Details Popup -->
+    <f7-popup id="logdetails-popup" close-on-escape close-by-backdrop-click>
+      <f7-page>
+        <f7-navbar title="Log Details">
+          <f7-nav-right>
+            <f7-link class="popup-close">
+              Close
+            </f7-link>
+          </f7-nav-right>
+        </f7-navbar>
+
+        <f7-list class="col wide">
+          <f7-list-item header="Time" :title="selectedLog.time + selectedLog.milliseconds" />
+          <f7-list-item header="Timestamp" :title="selectedLog.timestamp" />
+          <f7-list-item header="Level" :title="selectedLog.level" />
+          <f7-list-item header="Logger Class" :title="selectedLog.loggerName" />
+          <f7-list-item>
+            <template #title>
+              <div class="item-title">
+                <div class="item-header">
+                  Message
+                </div>
+                <div class="log-message">
+                  {{ selectedLog.message }}
+                </div>
+              </div>
+            </template>
+          </f7-list-item>
+          <f7-list-item v-if="selectedLog.stackTrace">
+            <template #title>
+              <div class="item-title">
+                <div class="item-header">
+                  Stack Trace
+                </div>
+                <div class="stack-trace">
+                  {{ selectedLog.stackTrace }}
+                </div>
+              </div>
+            </template>
+          </f7-list-item>
+        </f7-list>
+      </f7-page>
+    </f7-popup>
+
     <!-- Main Display -->
     <f7-navbar title="Log Viewer" back-link="Developer Tools" back-link-url="/developer/" back-link-force>
       <f7-nav-right>
@@ -221,6 +265,9 @@
     padding 5px
     text-align left
     white-space nowrap
+    overflow hidden
+    text-overflow ellipsis
+    max-width 100dvw
 
   td.sticky
     position sticky
@@ -304,6 +351,14 @@
   .log-period
     white-space nowrap !important
 
+#logdetails-popup
+  .log-message
+    white-space normal
+    word-break break-word
+  .stack-trace
+    white-space pre-line
+    word-break break-word
+
 #color-picker-popover
   .color-palette
     display flex
@@ -356,6 +411,7 @@ export default {
       currentHighlightColorItemIndex: null,
       currentHighlightColor: '#FF5252',
       lastSequence: 0,
+      selectedLog: {},
       colors: [
         '#FF0000', // Red
         '#00FF00', // Green
@@ -495,7 +551,14 @@ export default {
         `<td class="level">${entity.level}</td>` +
         `<td class="logger"><span class="logger">${entity.loggerName}</span></td>` +
         `<td class="nowrap">${this.highlightText(entity.message)}</td>`
+      tr.addEventListener('click', () => {
+        this.onRowClick(entity.id)
+      })
       return tr
+    },
+    onRowClick (entityId) {
+      this.selectedLog = this.filteredTableData[entityId]
+      this.$f7.popup.open('#logdetails-popup')
     },
     addLogEntry (logEntry) {
       this.lastSequence = Math.max(this.lastSequence, logEntry.sequence)
@@ -526,10 +589,12 @@ export default {
         id: this.nextId++,
         visible: vis,
         time: formattedTime,
+        timestamp: logEntry.timestamp,
         milliseconds: ms,
         level: logEntry.level.toUpperCase(),
         loggerName: logEntry.loggerName,
-        message: logEntry.message
+        message: logEntry.message,
+        stackTrace: logEntry.stackTrace
       }
 
       this.batchLogs.push(entry)
@@ -615,6 +680,7 @@ export default {
     },
     redrawPartOfTable () {
       const LINE_HEIGHT = 31
+
       const tableContainer = this.$refs.tableContainer
       const tableBody = this.$refs.dataTable.firstChild
       const filteredItemsCount = this.filteredTableData.length
