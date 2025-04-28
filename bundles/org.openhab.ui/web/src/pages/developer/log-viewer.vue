@@ -112,7 +112,7 @@
     </f7-popover>
 
     <!-- Log Details Popup -->
-    <f7-popup id="logdetails-popup">
+    <f7-popup id="logdetails-popup" close-on-escape close-by-backdrop-click>
       <f7-page>
         <f7-navbar title="Log Details">
           <f7-nav-right>
