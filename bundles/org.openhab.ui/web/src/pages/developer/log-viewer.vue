@@ -112,46 +112,48 @@
     </f7-popover>
 
     <!-- Log Details Popup -->
-    <div class="popup" id="logdetails-popup">
-      <div class="view">
-        <div class="page">
-          <div class="navbar">
-            <div class="navbar-bg" />
-            <div class="navbar-inner">
-              <div class="title">
-                Log Details
+    <f7-popup id="logdetails-popup">
+      <f7-page>
+        <f7-navbar title="Log Details">
+          <f7-nav-right>
+            <f7-link class="popup-close">
+              Close
+            </f7-link>
+          </f7-nav-right>
+        </f7-navbar>
+
+        <f7-list class="col wide">
+          <f7-list-item header="Time" :title="selectedLog.time + selectedLog.milliseconds" />
+          <f7-list-item header="Timestamp" :title="selectedLog.timestamp" />
+          <f7-list-item header="Level" :title="selectedLog.level" />
+          <f7-list-item header="Logger Class" :title="selectedLog.loggerName" />
+          <f7-list-item>
+            <template #title>
+              <div class="item-title">
+                <div class="item-header">
+                  Message
+                </div>
+                <div class="log-message">
+                  {{ selectedLog.message }}
+                </div>
               </div>
-              <div class="right">
-                <!-- Link to close popup -->
-                <a class="link popup-close">Close</a>
+            </template>
+          </f7-list-item>
+          <f7-list-item v-if="selectedLog.stackTrace">
+            <template #title>
+              <div class="item-title">
+                <div class="item-header">
+                  Stack Trace
+                </div>
+                <div class="stack-trace">
+                  {{ selectedLog.stackTrace }}
+                </div>
               </div>
-            </div>
-          </div>
-          <div class="page-content">
-            <f7-list class="col wide">
-              <f7-list-item header="Time" :title="selectedLog.time + selectedLog.milliseconds" />
-              <f7-list-item header="Timestamp" :title="selectedLog.timestamp" />
-              <f7-list-item header="Level" :title="selectedLog.level" />
-              <f7-list-item header="Logger Class" :title="selectedLog.loggerName" />
-              <f7-list-item>
-                <template #title>
-                  <div class="wrap-text">
-                    {{ selectedLog.message }}
-                  </div>
-                </template>
-              </f7-list-item>
-              <f7-list-item>
-                <template #title>
-                  <div class="wrap-text">
-                    {{ selectedLog.stackTrace }}
-                  </div>
-                </template>
-              </f7-list-item>
-            </f7-list>
-          </div>
-        </div>
-      </div>
-    </div>
+            </template>
+          </f7-list-item>
+        </f7-list>
+      </f7-page>
+    </f7-popup>
 
     <!-- Main Display -->
     <f7-navbar title="Log Viewer" back-link="Developer Tools" back-link-url="/developer/" back-link-force>
@@ -229,9 +231,6 @@
 
 <style lang="stylus">
 .log-viewer
-  .wrap-text
-    white-space: pre-line
-    word-break: break-word
 
   /* Ensure the card takes full width and removes padding */
   .custom-card
@@ -266,6 +265,9 @@
     padding 5px
     text-align left
     white-space nowrap
+    overflow hidden
+    text-overflow ellipsis
+    max-width 100dvw
 
   td.sticky
     position sticky
@@ -348,6 +350,14 @@
 
   .log-period
     white-space nowrap !important
+
+#logdetails-popup
+  .log-message
+    white-space normal
+    word-break break-word
+  .stack-trace
+    white-space pre-line
+    word-break break-word
 
 #color-picker-popover
   .color-palette
