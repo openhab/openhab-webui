@@ -118,7 +118,7 @@
           v-if="addons"
           @addonButtonClick="addonButtonClick"
           :addons="allAddons.filter((a) => a.type === 'automation' && a.contentType !== 'application/vnd.openhab.ruletemplate' && a.contentType !== 'application/vnd.openhab.uicomponent;type=blocks')"
-          :featured="['automation-jsscripting', 'automation-groovyscripting', 'automation-jrubyscripting']"
+          :featured="['automation-jsscripting', 'automation-pythonscripting', 'automation-jrubyscripting', 'automation-groovyscripting']"
           :title="'Languages &amp; Technologies'"
           :subtitle="'Use your preferred scripting language and other automation functionality'" />
         <addons-section
