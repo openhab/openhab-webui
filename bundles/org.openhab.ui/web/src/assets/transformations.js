@@ -4,6 +4,7 @@ export const CodeSnippets = {
   js: '(function(data) {\n  var returnValue = "String has " + data.length + " characters"\n  return returnValue\n})(input)',
   nashornjs: '(function(data) {\n  var returnValue = "String has " + data.length + " characters"\n  return returnValue\n})(input)',
   map: 'key=value\n=default',
+  python: '"String has " + str(len(input)) + " characters"',
   rb: '"String has #{input.length} characters"',
   xslt: '<?xml version=\'1.0\' encoding=\'UTF-8\'?>\n' +
     '<xsl:stylesheet version=\'2.0\' xmlns:xsl=\'http://www.w3.org/1999/XSL/Transform\'>\n' +
@@ -29,6 +30,7 @@ export const DocumentationLinks = {
   js: '/link/jsscripting-transform',
   jsonpath: '/addons/transformations/jsonpath/',
   map: '/addons/transformations/map/',
+  python: '/addons/automation/pythonscripting/#py-transformation',
   rb: '/link/jrubyscripting-transform',
   regex: '/addons/transformations/regex/',
   scale: '/addons/transformations/scale/',
