@@ -19,10 +19,10 @@ export default function itemDefaultCellComponent (item, itemNameAsFooter) {
     }
   } else {
     item.tags.forEach((tag) => {
-      if (store.getters.semanticClasses.Points.indexOf(tag) >= 0) {
+      if (store.getters.semanticClasses.Points[tag]) {
         semanticClass = tag
       }
-      if (store.getters.semanticClasses.Properties.indexOf(tag) >= 0) {
+      if (store.getters.semanticClasses.Properties[tag]) {
         semanticProperty = tag
       }
     })

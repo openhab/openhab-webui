@@ -49,13 +49,13 @@ export default {
   },
   methods: {
     semanticType (tag) {
-      if (this.semanticClasses.Locations.indexOf(tag) >= 0) return 'Location'
-      if (this.semanticClasses.Equipment.indexOf(tag) >= 0) return 'Equipment'
-      if (this.semanticClasses.Points.indexOf(tag) >= 0) return 'Point'
+      if (this.semanticClasses.Locations[tag]) return 'Location'
+      if (this.semanticClasses.Equipment[tag]) return 'Equipment'
+      if (this.semanticClasses.Points[tag]) return 'Point'
       return ''
     },
     isSemanticPropertyTag (tag) {
-      return (this.semanticClasses.Properties.indexOf(tag) >= 0)
+      return !!this.semanticClasses.Properties[tag]
     },
     update (type, value) {
       if (type === 'property') {
@@ -75,7 +75,7 @@ export default {
       this.semanticClass = ''
       this.semanticProperty = ''
       item.tags.forEach((t) => {
-        if (this.semanticType(t) !== '') {
+        if (this.semanticType(t)) {
           this.semanticClass = t
         }
         if (this.isSemanticPropertyTag(t)) {
@@ -108,24 +108,16 @@ export default {
       return this.createMode || (this.item && this.item.editable)
     },
     orderedLocations () {
-      return [...this.semanticClasses.Locations].sort((a, b) => {
-        return a.localeCompare(b)
-      })
+      return Object.keys(this.semanticClasses.Locations).sort((a, b) => a.localeCompare(b))
     },
     orderedEquipment () {
-      return [...this.semanticClasses.Equipment].sort((a, b) => {
-        return a.localeCompare(b)
-      })
+      return Object.keys(this.semanticClasses.Equipment).sort((a, b) => a.localeCompare(b))
     },
     orderedPoints () {
-      return [...this.semanticClasses.Points].sort((a, b) => {
-        return a.localeCompare(b)
-      })
+      return Object.keys(this.semanticClasses.Points).sort((a, b) => a.localeCompare(b))
     },
     orderedProperties () {
-      return [...this.semanticClasses.Properties].sort((a, b) => {
-        return a.localeCompare(b)
-      })
+      return Object.keys(this.semanticClasses.Properties).sort((a, b) => a.localeCompare(b))
     },
     currentSemanticType () {
       return this.semanticType(this.semanticClass)

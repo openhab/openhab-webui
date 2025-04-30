@@ -19,7 +19,7 @@ export default {
   },
   widget: () => {
     const widget = OhPropertyCardParameters()
-    widget.props.parameters.find(p => p.name === 'item').options = store.state.semantics.Properties.map(p => { return { name: p, label: store.state.semantics.Labels[p] } })
+    widget.props.parameters.find(p => p.name === 'item').options = store.state.semantics.Properties
     return widget
   }
 }

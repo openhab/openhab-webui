@@ -199,7 +199,7 @@ export default {
         groupNames: [],
         type: this.channel.itemType || 'Switch',
         unit: this.linkUnit(),
-        tags: (defaultTags.find((t) => this.$store.getters.semanticClasses.Points.indexOf(t) >= 0)) ? defaultTags : [...defaultTags, 'Point']
+        tags: (defaultTags.find((t) => this.$store.getters.semanticClasses.Points[tags])) ? defaultTags : [...defaultTags, 'Point']
       })
     },
     linkUnit () {

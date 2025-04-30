@@ -2,11 +2,11 @@ import i18n from '@/js/i18n'
 import api from '@/js/openhab/api'
 
 const state = {
-  Locations: [],
-  Equipment: [],
-  Points: [],
-  Properties: [],
-  Labels: {}
+  Locations: {},
+  Equipment: {},
+  Points: {},
+  Properties: {},
+  Tags: {} // all tag objects
 }
 
 const getters = {
@@ -17,18 +17,30 @@ const getters = {
 
 const mutations = {
   setSemantics (state, { tags }) {
-    state.Locations = tags.filter(t => t.uid.startsWith('Location')).map(t => t.name)
-    state.Equipment = tags.filter(t => t.uid.startsWith('Equipment')).map(t => t.name)
-    state.Points = tags.filter(t => t.uid.startsWith('Point')).map(t => t.name)
-    state.Properties = tags.filter(t => t.uid.startsWith('Property')).map(t => t.name)
-    // Store i18n labels
-    state.Labels = {} // Clear existing labels
-    for (const i in tags) {
-      const t = tags[i]
-      state.Labels[t.name] = t.label || t.name
-    }
+    state.Locations = {}
+    state.Equipment = {}
+    state.Points = {}
+    state.Properties = {}
+    state.Tags = {}
+    const labels = {}
+    tags.forEach(t => {
+      const type = t.uid.split('_')[0]
+      if (type === 'Location') {
+        state.Locations[t.name] = t
+      } else if (type === 'Equipment') {
+        state.Equipment[t.name] = t
+      } else if (type === 'Point') {
+        state.Points[t.name] = t
+      } else if (type === 'Property') {
+        state.Properties[t.name] = t
+      }
+      state.Tags[t.name] = t
+      t.label = t.label || t.name
+      t.type = type
+      labels[t.name] = t.label
+    })
     // Save as i18n messages
-    i18n.mergeLocaleMessage(i18n.locale, state.Labels)
+    i18n.mergeLocaleMessage(i18n.locale, labels)
   }
 }
 

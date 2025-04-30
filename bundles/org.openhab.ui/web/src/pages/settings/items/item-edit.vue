@@ -87,8 +87,6 @@ export default {
       itemYaml: '',
       items: [],
       types: Types,
-      semanticClasses: this.$store.getters.semanticClasses,
-      semanticClass: '',
       semanticProperty: '',
       pendingTag: '',
       currentTab: 'design',
