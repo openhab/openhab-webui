@@ -74,7 +74,7 @@ export default {
     },
     updateBridge (value) {
       this.thing.bridgeUID = value
-      this.thing.UID = this.computedThingUid()
+      if (this.createMode) this.thing.UID = this.computedThingUid()
     }
   }
 }
