@@ -5,43 +5,38 @@
                   :disabled="!editable"
                   @click="openPopup('class')"
                   class="aligned-smart-select" :link="editable" />
-    <f7-list-item v-if="currentSemanticType" title="Semantic Property" :after="semanticProperty || 'None'"
-                  :disabled="!editable || currentSemanticType !== 'Point'"
+    <f7-list-item v-if="currentSemanticType === 'Point'" title="Semantic Property"
+                  :after="semanticProperty || 'None'"
+                  :disabled="!editable"
                   @click="openPopup('property')"
                   class="aligned-smart-select" :link="editable" />
-    <semantics-picker-popup :key="'semantics-class-' + item.tags.toString()"
-      ref="classPopup"
+    <semantics-picker-popup
+      ref="classPopup" :key="'semantics-class'"
       v-if="popupType === 'class'"
       :item="item"
-      :sameClassOnly="sameClassOnly"
-      :hideType="hideType"
       :hideNone="hideNone"
-      :createMode="createMode"
-      :currentSemanticType="currentSemanticType"
       :semanticClass="semanticClass"
-      @close="closePopup"
-    />
+      @changed="itemChanged"
+      @close="closePopup" />
     <semantics-picker-popup
-      ref="propertyPopup" :key="'semantics-property-' + item.tags.toString()"
-      v-if="popupType === 'property' && currentSemanticType === 'Point'"
+      ref="propertyPopup" :key="'semantics-property'"
+      v-if="popupType === 'property'"
       :item="item"
-      :sameClassOnly="sameClassOnly"
-      :hideType="hideType"
       :hideNone="hideNone"
-      :createMode="createMode"
+      propertyMode="true"
+      @changed="itemChanged"
       :semanticProperty="semanticProperty"
-      @close="closePopup"
-      property-mode
-    />
+      @close="closePopup" />
   </f7-list>
 </template>
 
 <script>
+import TagMixin from '@/components/tags/tag-mixin'
 import SemanticsPickerPopup from '@/components/tags/semantics-picker-popup.vue'
 
 export default {
   mixins: [TagMixin],
-  props: ['item', 'sameClassOnly', 'hideType', 'hideNone', 'createMode'],
+  props: ['item', 'hideNone'],
   components: {
     SemanticsPickerPopup
   },
@@ -61,7 +56,7 @@ export default {
     }
   },
   methods: {
-    openPopup(type) {
+    openPopup (type) {
       if (!this.editable) return
       this.popupType = type
       this.$nextTick(() => {
@@ -70,23 +65,23 @@ export default {
         if (popupEl) this.$f7.popup.open(popupEl)
       })
     },
-    closePopup() {
+    closePopup () {
       this.popupType = null
     },
-    semanticType (tag) {
-      if (this.semanticClasses.Locations.indexOf(tag) >= 0) return 'Location'
-      if (this.semanticClasses.Equipment.indexOf(tag) >= 0) return 'Equipment'
-      if (this.semanticClasses.Points.indexOf(tag) >= 0) return 'Point'
+    semanticType (tagName) {
+      if (this.semanticClasses.Locations.indexOf(tagName) >= 0) return 'Location'
+      if (this.semanticClasses.Equipment.indexOf(tagName) >= 0) return 'Equipment'
+      if (this.semanticClasses.Points.indexOf(tagName) >= 0) return 'Point'
       return ''
     },
-    isSemanticPropertyTag (tag) {
-      return (this.semanticClasses.Properties.indexOf(tag) >= 0)
+    isSemanticPropertyTag (tagName) {
+      return (this.semanticClasses.Properties.indexOf(tagName) >= 0)
     },
-    itemChanged (item) {
-      if (!item.tags) return
+    itemChanged () {
+      if (!this.item.tags) return
       this.semanticClass = ''
       this.semanticProperty = ''
-      item.tags.forEach((t) => {
+      this.item.tags.forEach((t) => {
         if (this.semanticType(t) !== '') {
           this.semanticClass = t
         }
@@ -95,8 +90,8 @@ export default {
         }
       })
       if (this.semanticProperty && !this.semanticClass) {
-        if (item.metadata && item.metadata.semantics) {
-          const classFromMetadata = item.metadata.semantics.value.split('_')[1]
+        if (this.item.metadata && this.item.metadata.semantics) {
+          const classFromMetadata = this.item.metadata.semantics.value.split('_')[1]
           if (classFromMetadata) {
             this.semanticClass = classFromMetadata
           }
@@ -105,7 +100,7 @@ export default {
     }
   },
   mounted () {
-    this.itemChanged(this.item)
+    this.itemChanged()
   }
 }
 </script>
