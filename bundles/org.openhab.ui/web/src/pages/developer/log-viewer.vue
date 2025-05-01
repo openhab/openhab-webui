@@ -222,6 +222,10 @@
         <f7-icon v-else f7="exclamationmark_triangle" />
       </f7-link>
       <f7-link icon-f7="pencil" tooltip="Configure highlights" data-popup=".loghighlights-popup" class="popup-open" />
+      <f7-segmented>
+        <f7-button outline small :active="!textMode" icon-f7="table" :icon-size="$theme.aurora ? 20 : 22" class="no-ripple" @click="setTextMode(false)" tooltip="Show logs in a table" />
+        <f7-button outline small :active="textMode" icon-f7="text_justifyleft" :icon-size="$theme.aurora ? 20 : 22" class="no-ripple" @click="setTextMode(true)" tooltip="Show logs as plain text" />
+      </f7-segmented>
       <f7-link icon-f7="gear" tooltip="Configure logging" data-popup=".logsettings-popup" class="popup-open" />
     </f7-toolbar>
 
@@ -330,6 +334,37 @@
   tr.trace
     color rgb(112, 112, 112)
 
+  td.text
+    font-family monospace
+    font-size 0.9em
+    padding-left 4em
+    line-height 1.2em
+    span
+      margin-right 5px
+    .time
+      margin-left -3.2em
+    .level
+      width 3em
+      display inline-block
+      margin-right 0
+    .logger
+      width 20em
+      display inline-block
+      vertical-align middle
+      margin-right 0
+    .msg
+      font-weight bold
+    .error
+      color red
+    .warn
+      color orange
+    .info
+      color green
+    .debug
+      color teal
+    .trace
+      color teal
+
   .disabled-link
     pointer-events none
     opacity 0.5
@@ -419,6 +454,7 @@ export default {
       showErrors: false,
       loadingLoggers: true,
       loggerPackages: [],
+      textMode: localStorage.getItem('openhab.ui:logviewer.textMode') === 'true',
       tableData: [],
       batchUpdatePending: false,
       batchLogs: [],
@@ -554,7 +590,6 @@ export default {
     },
     renderEntry (entity) {
       let tr = document.createElement('tr')
-      tr.className = 'table-rows ' + entity.level.toLowerCase()
       let icon = 'question_diamond'
       switch (entity.level) {
         case 'TRACE':
@@ -573,10 +608,18 @@ export default {
           icon = 'exclamationmark_octagon_fill'
           break
       }
-      tr.innerHTML = '<td class="sticky"><i class="icon f7-icons" style="font-size: 18px;">' + icon + `</i> ${entity.time}<span class="milliseconds">${entity.milliseconds}</span></td>` +
-        `<td class="level">${entity.level}</td>` +
-        `<td class="logger"><span class="logger">${entity.loggerName}</span></td>` +
-        `<td class="nowrap">${this.highlightText(entity.message)}</td>`
+      if (this.textMode) {
+        tr.innerHTML = `<td class="text"><span class="time">${entity.time}${entity.milliseconds}</span>` +
+        `[<span class="level ${entity.level.toLowerCase()}">${entity.level}</span>] ` +
+        `[<span class="logger" title="${entity.loggerName}">${entity.loggerName}</span>] - ` +
+        `<span class="msg ${entity.level.toLowerCase()}">${this.highlightText(entity.message)}</span></td>`
+      } else {
+        tr.className = 'table-rows ' + entity.level.toLowerCase()
+        tr.innerHTML = '<td class="sticky"><i class="icon f7-icons" style="font-size: 18px;">' + icon + `</i> ${entity.time}<span class="milliseconds">${entity.milliseconds}</span></td>` +
+          `<td class="level">${entity.level}</td>` +
+          `<td class="logger"><span class="logger" title="${entity.loggerName}">${entity.loggerName}</span></td>` +
+          `<td class="nowrap">${this.highlightText(entity.message)}</td>`
+      }
       tr.addEventListener('click', () => {
         this.onRowClick(entity.id)
       })
@@ -862,6 +905,11 @@ export default {
         .catch((err) => {
           console.error('Failed to copy table: ', err)
         })
+    },
+    setTextMode (textModeEnabled) {
+      this.textMode = textModeEnabled
+      localStorage.setItem('openhab.ui:logviewer.textMode', this.textMode)
+      this.updateFilter()
     },
     prefilterHighlights () {
       this.activeHighlights.length = 0
