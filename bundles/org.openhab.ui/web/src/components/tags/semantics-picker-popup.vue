@@ -69,7 +69,7 @@ export default {
       filtering: false,
       expandedBeforeFiltering: false,
       selectedTag: null,
-      limitToClass: true,
+      limitToClass: true
     }
   },
   computed: {
