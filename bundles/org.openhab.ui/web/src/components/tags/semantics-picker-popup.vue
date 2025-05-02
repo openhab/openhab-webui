@@ -23,6 +23,10 @@
       <f7-toolbar bottom class="toolbar-details">
         <span />
         <div class="padding-left padding-right text-align-center" style="font-size: 12px">
+          <div v-if="classMode">
+            <f7-checkbox :checked="!limitToClass" @change="toggleLimitToClass" />
+            <label @click="toggleLimitToClass" class="advanced-label">Show all classes</label>
+          </div>
           <f7-checkbox :checked="showNames" @change="toggleShowNames" />
           <label @click="toggleShowNames" class="advanced-label">Show tag names</label>
           <f7-checkbox style="margin-left: 5px" :checked="showSynonyms" @change="toggleShowSynonyms" />
@@ -32,8 +36,8 @@
       </f7-toolbar>
       <semantics-treeview class="semantic-classes" :semanticTags="semanticTags" :expandedTags="expandedTags"
                           @selected="tagSelected" :showNames="showNames" :showSynonyms="showSynonyms"
-                          :selectedTag="selectedTag" :hideNone="hideNone"
-                          picker="true" :propertyMode="!!propertyMode" :limitToClass="limitToClass" />
+                          :selectedTag="selectedTag" :selectedClass="selectedClass" :hideNone="hideNone"
+                          picker="true" :propertyMode="!!propertyMode" :classMode="!!classMode" :limitToClass="!!limitToClass" />
     </f7-page>
   </f7-popup>
 </template>
@@ -54,7 +58,7 @@ export default {
   components: {
     SemanticsTreeview
   },
-  props: ['item', 'propertyMode', 'hideNone', 'semanticClass', 'semanticProperty'],
+  props: ['item', 'propertyMode', 'classMode', 'hideNone', 'semanticClass', 'semanticProperty'],
   data () {
     return {
       semanticClasses: this.$store.getters.semanticClasses,
@@ -64,7 +68,8 @@ export default {
       showSynonyms: false,
       filtering: false,
       expandedBeforeFiltering: false,
-      selectedTag: null
+      selectedTag: null,
+      limitToClass: true,
     }
   },
   computed: {
@@ -81,7 +86,7 @@ export default {
         return tag
       })
     },
-    limitToClass () {
+    selectedClass () {
       const selectedTag = this.semanticTags.find((t) => t.name === (this.semanticClass || this.semanticProperty)) || { uid: 'None', label: 'None' }
       const tagName = selectedTag?.name
       if (this.semanticClasses.Locations.indexOf(tagName) >= 0) return 'Location'
@@ -101,6 +106,9 @@ export default {
     },
     toggleShowSynonyms () {
       this.showSynonyms = !this.showSynonyms
+    },
+    toggleLimitToClass () {
+      this.limitToClass = !this.limitToClass
     },
     toggleExpanded () {
       this.expanded = !this.expanded
@@ -133,8 +141,6 @@ export default {
       }
     },
     tagSelected (tag) {
-      console.debug('Tag selected')
-      console.debug(tag)
       const previousTag = this.selectedTag
       if (previousTag?.name) {
         const prevIndex = this.item.tags.indexOf(previousTag.name)
@@ -147,6 +153,16 @@ export default {
         } else {
           this.$set(this.item, 'tags', [tag.name])
         }
+      }
+      // If changing tag to 'None', a 'Location' tag or an 'Equipment' tag, remove 'Property' tags
+      if (this.classMode && this.item.tags && (!tag.name || tag.uid.split('_')[0] !== 'Point')) {
+        const tags = [...this.item.tags]
+        tags.forEach((t) => {
+          if (this.semanticClasses.Properties.indexOf(t) >= 0) {
+            const index = this.item.tags.indexOf(t)
+            this.item.tags.splice(index, 1)
+          }
+        })
       }
       this.selectedTag = tag
       this.$emit('changed')
