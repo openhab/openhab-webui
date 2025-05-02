@@ -419,6 +419,11 @@
 </style>
 
 <script lang="ts">
+import Vue from 'vue'
+import Clipboard from 'v-clipboard'
+
+Vue.use(Clipboard)
+
 export default {
   data () {
     return {
@@ -852,6 +857,21 @@ export default {
       return [headers, ...rows].join('\n')
     },
     copyTableToClipboard () {
+      if (this.textMode) {
+        const logs = this.filteredTableData.map((log) => {
+          return `${log.time}${log.milliseconds} [${log.level}] [${log.loggerName}] - ${log.message}`
+        }).join('\n')
+        // v-clipboard works without https, but it can only copy plain text
+        if (this.$clipboard(logs)) {
+          this.$f7.toast.create({
+            text: 'Table copied as text to clipboard',
+            destroyOnClose: true,
+            closeTimeout: 2000
+          }).open()
+        }
+        return
+      }
+
       const table = this.$refs.dataTable
       if (!table) {
         return
@@ -875,6 +895,7 @@ export default {
         .then(() => {
           this.$f7.toast.create({
             text: 'Table copied as HTML to clipboard',
+            destroyOnClose: true,
             closeTimeout: 2000
           }).open()
         })
