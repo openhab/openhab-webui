@@ -339,6 +339,7 @@
     font-size 0.9em
     padding-left 4em
     line-height 1.2em
+    color grey
     span
       margin-right 5px
     .time
@@ -608,13 +609,14 @@ export default {
           icon = 'exclamationmark_octagon_fill'
           break
       }
+      const levelLowerCased = entity.level.toLowerCase()
       if (this.textMode) {
         tr.innerHTML = `<td class="text"><span class="time">${entity.time}${entity.milliseconds}</span>` +
-        `[<span class="level ${entity.level.toLowerCase()}">${entity.level}</span>] ` +
+        `[<span class="level ${levelLowerCased}">${entity.level}</span>] ` +
         `[<span class="logger" title="${entity.loggerName}">${entity.loggerName}</span>] - ` +
-        `<span class="msg ${entity.level.toLowerCase()}">${this.highlightText(entity.message)}</span></td>`
+        `<span class="msg ${levelLowerCased}">${this.highlightText(entity.message)}</span></td>`
       } else {
-        tr.className = 'table-rows ' + entity.level.toLowerCase()
+        tr.className = 'table-rows ' + levelLowerCased
         tr.innerHTML = '<td class="sticky"><i class="icon f7-icons" style="font-size: 18px;">' + icon + `</i> ${entity.time}<span class="milliseconds">${entity.milliseconds}</span></td>` +
           `<td class="level">${entity.level}</td>` +
           `<td class="logger"><span class="logger" title="${entity.loggerName}">${entity.loggerName}</span></td>` +
