@@ -109,7 +109,7 @@ public class ChartRenderer extends AbstractWidgetRenderer {
                     showHeaderRow ? "%visibility_class%" : "mdl-form__row--hidden");
             snippet = snippet.replace("%header_row%", Boolean.valueOf(showHeaderRow).toString());
 
-            snippet = preprocessSnippet(snippet, w, true);
+            snippet = preprocessSnippet(snippet, w);
 
             // Process the color tags
             snippet = processColor(w, snippet);
