@@ -224,14 +224,18 @@
 		}
 		@include flex-shrink(0);
 		@include flex-grow(2);
-		// Set flex-basis to 0 to prioritize values over labels (see __text below)
-		@include flex-2011(2 0 0);
+		@include flex-2011(2 2 auto);
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		html.ui-bigger-font & {
 			font-size: 18px;
 		}
+	}
+	&__label:has(+ .mdl-form__text) {
+		// this applies to labels that are followed by a text input
+		// Set flex-basis to 0 to prioritize __text over __label (see __text below)
+		@include flex-2011(2 0 0);
 	}
 	&__label-multiline {
 		min-width: 3em;
