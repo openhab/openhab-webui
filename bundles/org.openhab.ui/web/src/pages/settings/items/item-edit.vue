@@ -10,16 +10,16 @@
       </f7-nav-right>
     </f7-navbar>
     <f7-toolbar tabbar position="top">
-      <f7-link @click="switchTab('design', fromYaml)" :tab-link-active="currentTab === 'design'" class="tab-link">
+      <f7-link @click="switchTab('design')" :tab-link-active="currentTab === 'design'" class="tab-link">
         Design
       </f7-link>
-      <f7-link @click="switchTab('code', toYaml)" :tab-link-active="currentTab === 'code'" class="tab-link">
+      <f7-link @click="switchTab('code')" :tab-link-active="currentTab === 'code'" class="tab-link">
         Code
       </f7-link>
     </f7-toolbar>
 
     <f7-tabs v-if="ready">
-      <f7-tab id="design" @tab:show="() => this.currentTab = 'design'" :tab-active="currentTab === 'design'">
+      <f7-tab id="design" :tab-active="currentTab === 'design'">
         <f7-block class="block-narrow" v-if="item.name || item.created === false">
           <f7-col v-if="!editable">
             <div class="padding-left">
@@ -38,45 +38,38 @@
         </f7-block>
       </f7-tab>
 
-      <f7-tab id="code" @tab:show="() => { this.currentTab = 'code'; toYaml() }" :tab-active="currentTab === 'code'">
-        <f7-icon v-if="!editable" f7="lock" class="float-right margin" style="opacity:0.5; z-index: 4000; user-select: none;" size="50" color="gray" :tooltip="notEditableMsg" />
-        <editor class="item-code-editor" mode="application/vnd.openhab.item+yaml" :value="itemYaml" @input="onEditorInput" :readOnly="!editable" />
+      <f7-tab id="code" :tab-active="currentTab === 'code'">
+        <code-editor ref="codeEditor"
+                     object-type="items"
+                     :object="item"
+                     :object-id="item.name"
+                     :read-only="!editable"
+                     :read-only-msg="notEditableMsg"
+                     @updated="updateItem"
+                     @changed="onCodeChanged" />
       </f7-tab>
     </f7-tabs>
   </f7-page>
 </template>
-
-<style lang="stylus">
-.item-code-editor.vue-codemirror
-  display block
-  top calc(var(--f7-navbar-height) + var(--f7-tabbar-height))
-  height calc(100% - 2*var(--f7-navbar-height))
-  width 100%
-.yaml-message
-  display block
-  position absolute
-  top 80%
-  white-space pre-wrap
-</style>
 
 <script>
 import cloneDeep from 'lodash/cloneDeep'
 import fastDeepEqual from 'fast-deep-equal/es6'
 
 import * as Types from '@/assets/item-types.js'
-import YAML from 'yaml'
 
 import ItemForm from '@/components/item/item-form.vue'
 
 import DirtyMixin from '../dirty-mixin'
 import ItemMixin from '@/components/item/item-mixin'
+import CodeEditor from '@/components/config/controls/code-editor.vue'
 
 export default {
   mixins: [DirtyMixin, ItemMixin],
   props: ['itemName', 'createMode', 'itemCopy'],
   components: {
     ItemForm,
-    'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')
+    CodeEditor
   },
   data () {
     return {
@@ -84,7 +77,8 @@ export default {
       loading: false,
       item: {},
       savedItem: {},
-      itemYaml: '',
+      itemDirty: false,
+      codeDirty: false,
       items: [],
       types: Types,
       semanticClasses: this.$store.getters.semanticClasses,
@@ -110,12 +104,14 @@ export default {
     }
   },
   watch: {
+    itemDirty: function () { this.dirty = this.itemDirty || this.codeDirty },
+    codeDirty: function () { this.dirty = this.itemDirty || this.codeDirty },
     item: {
       handler: function () {
         if (!this.loading) { // ignore changes during loading
           const itemClone = cloneDeep(this.item)
           delete itemClone.functionKey
-          this.dirty = !fastDeepEqual(itemClone, this.savedItem)
+          this.itemDirty = !fastDeepEqual(itemClone, this.savedItem)
         }
       },
       deep: true
@@ -139,6 +135,19 @@ export default {
         ev.stopPropagation()
         ev.preventDefault()
       }
+    },
+    switchTab (tab) {
+      if (this.currentTab === tab) return
+      if (this.currentTab === 'code' && this.codeDirty) {
+        this.$refs.codeEditor.parseCode(() => { this.codeDirty = false })
+      }
+      this.currentTab = tab
+      if (this.currentTab === 'code') {
+        this.$refs.codeEditor.generateCode()
+      }
+    },
+    onCodeChanged (codeDirty) {
+      this.codeDirty = codeDirty
     },
     load () {
       if (this.loading) return
@@ -173,9 +182,15 @@ export default {
     },
     save () {
       if (!this.editable) return
-      if (this.currentTab === 'code') {
-        if (!this.fromYaml()) return
+
+      if (this.currentTab === 'code' && this.codeDirty) {
+        this.$refs.codeEditor.parseCode(() => {
+          this.codeDirty = false
+          this.save()
+        })
+        return
       }
+
       if (this.validateItemName(this.item.name) !== '') return this.$f7.dialog.alert('Please give the Item a valid name: ' + this.validateItemName(this.item.name)).open()
       if (!this.item.type || !this.types.ItemTypes.includes(this.item.type.split(':')[0])) return this.$f7.dialog.alert('Please give Item a valid type').open()
 
@@ -216,7 +231,7 @@ export default {
           }).open()
         }
 
-        this.dirty = false
+        this.itemDirty = this.codeDirty = false
         if (this.createMode) {
           this.$f7router.navigate('/settings/items/' + this.item.name)
         } else {
@@ -230,34 +245,15 @@ export default {
         }).open()
       })
     },
-    onEditorInput (value) {
-      this.itemYaml = value
-    },
-    toYaml () {
-      const yamlObj = {
-        label: this.item.label,
-        type: this.item.type,
-        icon: this.item.category || '',
-        groupNames: this.item.groupNames || [],
-        tags: this.item.tags
-        // metadata: this.item.metadata
-      }
-      if (this.item.type === 'Group') {
-        yamlObj.groupType = this.item.groupType || 'None'
-        yamlObj.function = this.item.function || 'None'
-      }
-      this.itemYaml = YAML.stringify(yamlObj)
-    },
-    fromYaml () {
+    updateItem (updatedItem) {
       if (!this.editable) return false
       try {
-        const updatedItem = YAML.parse(this.itemYaml)
         if (updatedItem === null) return false
         if (updatedItem.groupNames == null) updatedItem.groupNames = []
         if (updatedItem.tags == null) updatedItem.tags = []
         this.$set(this.item, 'label', updatedItem.label)
         this.$set(this.item, 'type', updatedItem.type)
-        this.$set(this.item, 'category', updatedItem.icon)
+        this.$set(this.item, 'category', updatedItem.category)
         this.$set(this.item, 'groupNames', updatedItem.groupNames)
         this.$set(this.item, 'groupType', updatedItem.groupType)
         this.$set(this.item, 'function', updatedItem.function)

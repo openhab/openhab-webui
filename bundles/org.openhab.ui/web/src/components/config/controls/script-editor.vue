@@ -172,6 +172,12 @@ export default {
       this.codemirror.closeHint()
     }
   },
+  watch: {
+    mode (newMode) {
+      this.cmOptions.mode = this.translateMode(newMode)
+      this.codemirror.setOption('mode', this.cmOptions.mode)
+    }
+  },
   methods: {
     translateMode (mode) {
       // Translations required for some special modes used in MainUI
