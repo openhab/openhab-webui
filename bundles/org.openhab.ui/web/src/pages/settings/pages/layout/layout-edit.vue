@@ -274,7 +274,7 @@ export default {
             color: 'blue',
             onClick: () => doAddWidget('widget:' + w.uid)
           }
-        })
+        }).sort((a, b) => a.text.localeCompare(b.text))
         actions = this.$f7.actions.create({
           // grid: true,
           buttons: [
