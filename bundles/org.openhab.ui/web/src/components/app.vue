@@ -615,9 +615,7 @@ export default {
             break
           case 77: // M for menu
             const leftPanel = this.$f7.panel.get('left')
-            if (leftPanel.visibleBreakpointDisabled) {
-              leftPanel.opened ? leftPanel.close() : leftPanel.open()
-            }
+            leftPanel.opened ? leftPanel.close() : leftPanel.open()
             break
           default:
             return
