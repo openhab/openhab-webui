@@ -10,7 +10,7 @@
           <f7-list-input ref="icon" label="Icon" autocomplete="off" type="text" placeholder="temperature, firstfloor..." :value="widget.config.icon"
                          @input="updateParameter('icon', $event)" clear-button>
             <div slot="root-end" style="margin-left: calc(35% + 8px)">
-              <oh-icon :icon="widget.config.icon" height="32" width="32" />
+              <oh-icon :icon="widget.config.icon || ''" height="32" width="32" />
             </div>
           </f7-list-input>
           <f7-list-item title="Static icon">
@@ -82,6 +82,9 @@
         <f7-button color="blue" @click="$emit('moveup', widget)" icon-f7="chevron_up" />
         <f7-button color="blue" @click="$emit('movedown', widget)" icon-f7="chevron_down" />
       </f7-segmented>
+      <f7-button v-if="widget.component !== 'Sitemap'" color="blue" @click="$emit('duplicate', widget)">
+        Duplicate
+      </f7-button>
       <f7-button v-if="widget.component !== 'Sitemap'" color="red" @click="$emit('remove', widget)">
         Remove
       </f7-button>
@@ -149,7 +152,6 @@ export default {
   },
   mounted () {
     if (!this.widget) return
-    if (!this.widget.config.icon) this.$set(this.widget.config, 'icon', '')
     const iconControl = this.$refs.icon
     if (!iconControl || !iconControl.$el) return
     const inputElement = this.$$(iconControl.$el).find('input')
