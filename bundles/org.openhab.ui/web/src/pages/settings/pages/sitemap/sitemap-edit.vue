@@ -355,7 +355,7 @@ export default {
       },
       deep: true
     },
-    currentTab(newTab, oldTab) {
+    currentTab (newTab, oldTab) {
       if (oldTab === 'tree' && this.$refs.detailsSheet) {
         this.$refs.detailsSheet.close()
       }
