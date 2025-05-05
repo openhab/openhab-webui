@@ -44,7 +44,7 @@
             </f7-col>
             <f7-col class="details-pane">
               <f7-block v-if="selectedWidget" no-gap>
-                <widget-details :widget="selectedWidget" :createMode="createMode" @remove="removeWidget" @movedown="moveWidgetDown" @moveup="moveWidgetUp" />
+                <widget-details :widget="selectedWidget" :createMode="createMode" @duplicate="duplicateWidget" @remove="removeWidget" @movedown="moveWidgetDown" @moveup="moveWidgetUp" />
               </f7-block>
               <f7-block v-else>
                 <div class="padding text-align-center">
@@ -134,7 +134,7 @@
       <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
       <f7-icon ios="f7:multiply" md="material:close" aurora="f7:multiply" />
     </f7-fab>
-    <f7-sheet v-if="currentTab === 'tree'" class="sitemap-details-sheet" :backdrop="false" :close-on-escape="true" :opened="detailsOpened" @sheet:closed="detailsOpened = false">
+    <f7-sheet v-if="currentTab === 'tree'" ref="detailsSheet" class="sitemap-details-sheet" :backdrop="false" :close-on-escape="true" :opened="detailsOpened" @sheet:closed="detailsOpened = false">
       <f7-page>
         <f7-toolbar tabbar bottom scrollable>
           <div class="left">
@@ -163,7 +163,7 @@
           </f7-link>
         </f7-toolbar>
         <f7-block style="margin-bottom: 6rem" v-if="selectedWidget && detailsTab === 'widget'">
-          <widget-details :widget="selectedWidget" :createMode="createMode" @remove="removeWidget" @movedown="moveWidgetDown" @moveup="moveWidgetUp" />
+          <widget-details :widget="selectedWidget" :createMode="createMode" @duplicate="duplicateWidget" @remove="removeWidget" @movedown="moveWidgetDown" @moveup="moveWidgetUp" />
         </f7-block>
         <f7-block style="margin-bottom: 6rem" v-if="selectedWidget && detailsTab === 'visibility'">
           <attribute-details :widget="selectedWidget" attribute="visibility" placeholder="item_name operator value" />
@@ -198,17 +198,18 @@
 
 <style lang="stylus">
 .sitemap-editor-tabs
-  height calc(100%)
+  height 100%
   overflow hidden
   .tab
     height 100%
   .design
     --f7-grid-gap 0px
-    height calc(100% - var(--f7-toolbar-height))
+    overflow auto
 
 .sitemap-tree-wrapper
   padding 0
   margin-bottom 0
+  height calc(100% - var(--f7-toolbar-height))
   .col
     width 100% /* manually set column width because of https://github.com/openhab/openhab-webui/issues/2574 */
 .sitemap-tree
@@ -246,7 +247,6 @@
 
 @media (min-width: 768px)
   .sitemap-tree-wrapper
-    height 100%
     .row
       height 100%
       .col
@@ -272,8 +272,11 @@
 @media (max-width: 767px)
   .details-pane
     display none
+  .sitemap-tree-wrapper
+    margin-top 0 !important
   .sitemap-tree-wrapper.sheet-opened
-    margin-bottom var(--f7-sheet-height)
+    margin-bottom calc(var(--f7-sheet-height) - var(--f7-toolbar-height))
+    height auto
   .details-sheet
     height calc(1.4*var(--f7-sheet-height))
 </style>
@@ -285,6 +288,8 @@ import AttributeDetails from '@/components/pagedesigner/sitemap/attribute-detail
 import SitemapTreeviewItem from '@/components/pagedesigner/sitemap/treeview-item.vue'
 import SitemapMixin from '@/components/pagedesigner/sitemap/sitemap-mixin'
 import DirtyMixin from '../../dirty-mixin'
+
+import cloneDeep from 'lodash/cloneDeep'
 
 export default {
   mixins: [DirtyMixin, SitemapMixin],
@@ -349,6 +354,11 @@ export default {
         }
       },
       deep: true
+    },
+    currentTab(newTab, oldTab) {
+      if (oldTab === 'tree' && this.$refs.detailsSheet) {
+        this.$refs.detailsSheet.close()
+      }
     }
   },
   methods: {
@@ -721,6 +731,12 @@ export default {
     },
     stopEventSource () {
 
+    },
+    duplicateWidget () {
+      const duplicate = cloneDeep(this.selectedWidget)
+      const index = this.selectedWidgetParent.slots.widgets.indexOf(this.selectedWidget) + 1
+      this.selectedWidgetParent.slots.widgets.splice(index, 0, duplicate)
+      this.$set(this, 'selectedWidget', this.selectedWidgetParent.slots.widgets[index])
     },
     removeWidget () {
       this.selectedWidgetParent.slots.widgets.splice(this.selectedWidgetParent.slots.widgets.indexOf(this.selectedWidget), 1)
