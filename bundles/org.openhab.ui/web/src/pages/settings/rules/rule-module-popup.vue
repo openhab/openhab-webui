@@ -12,7 +12,7 @@
           Edit {{ SectionLabels[currentSection][1] }}
         </f7-nav-title>
         <f7-nav-right>
-          <f7-link v-show="currentRuleModuleType" @click="updateModuleConfig">
+          <f7-link v-show="currentRuleModuleType && currentRuleModuleType.uid !== 'script.ScriptAction'" @click="updateModuleConfig">
             Save
           </f7-link>
         </f7-nav-right>
