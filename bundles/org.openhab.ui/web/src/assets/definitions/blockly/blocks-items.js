@@ -174,6 +174,11 @@ export default function (f7) {
       const choices = [['name', 'Name'], ['label', 'Label'], ['state', 'State'], ['category', 'Category'], ['tags', 'Tags'], ['groups', 'GroupNames'], ['type', 'Type']]
       choices.splice(3, 0, ['numeric state', 'NumericState'])
       choices.splice(4, 0, ['quantity state', 'QuantityState'])
+      choices.splice(5, 0, ['previous state', 'PreviousState'])
+      choices.splice(6, 0, ['previous numeric state', 'PreviousNumericState'])
+      choices.splice(7, 0, ['previous quantity state', 'PreviousQuantityState'])
+      choices.splice(8, 0, ['last state update', 'LastStateUpdateTimestamp'])
+      choices.splice(9, 0, ['last state change', 'lastStateChangeTimestamp'])
       const dropdown = new Blockly.FieldDropdown(
         choices,
         function (newMode) {
@@ -200,7 +205,12 @@ export default function (f7) {
           'GroupNames': 'groups of the Item (list of strings -> should be used with the loops-block \'for each item ... in list\')',
           'Type': 'type of the Item (string)',
           'NumericState': 'numeric state of the Item (number)',
-          'QuantityState': 'Unit of Measurement / quantity state of Item (Quantity)'
+          'QuantityState': 'Unit of Measurement / quantity state of Item (Quantity)',
+          'PreviousState': 'previous state of the Item (string)',
+          'PreviousNumericState': 'previous numeric state of the Item (number)',
+          'PreviousQuantityState': 'previous Unit of Measurement / quantity state of Item (Quantity)',
+          'LastStateUpdateTimestamp': 'last state update timestamp of the Item',
+          'lastStateChangeTimestamp': 'last state change timestamp of the Item'
         }
         return TIP[attributeName] + ' \n Note: make sure to use "get item xxx"-Block for the connected block when working with Variables, not "item xxx"-Block'
       })
@@ -212,12 +222,14 @@ export default function (f7) {
     _updateType: function (newAttributeName) {
       if (newAttributeName === 'Tags' || newAttributeName === 'GroupNames') {
         this.outputConnection.setCheck('Array')
-      } else if (['Name', 'Label', 'State', 'Category', 'Type'].includes(newAttributeName)) {
+      } else if (['Name', 'Label', 'State', 'PreviousState', 'Category', 'Type'].includes(newAttributeName)) {
         this.outputConnection.setCheck('String')
-      } else if (newAttributeName === 'NumericState') {
+      } else if (['NumericState', 'PreviousNumericState'].includes(newAttributeName)) {
         this.outputConnection.setCheck('Number')
-      } else if (newAttributeName === 'QuantityState') {
+      } else if (['QuantityState', 'PreviousQuantityState'].includes(newAttributeName)) {
         this.outputConnection.setCheck('oh_quantity')
+      } else if (['LastStateUpdateTimestamp', 'lastStateChangeTimestamp'].includes(newAttributeName)) {
+        this.outputConnection.setCheck('ZonedDateTime')
       }
     },
     /**
