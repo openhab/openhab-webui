@@ -1,60 +1,93 @@
 <template>
-  <f7-block class="editor">
+  <f7-block class="code-editor">
     <f7-icon v-if="readOnly" f7="lock" class="float-right margin"
              style="opacity:0.5; z-index: 4000; user-select: none;" size="50" color="gray" :tooltip="readOnlyMsg" />
-    <editor class="thing-code-editor"
+    <editor ref="editor"
+            class="editor"
             :mode="editorMode"
             :value="code"
             :hint-context="hintContext"
             :read-only="readOnly"
             @input="onEditorInput" />
-    <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
+
+    <f7-popup ref="errors" id="code-errors" close-on-escape close-by-backdrop-click @popup:open="initializeMovablePopup($refs.errors, $refs.navbar)" @popup:closed="cleanupMovablePopup">
+      <f7-page>
+        <f7-navbar title="Parse Errors" ref="navbar">
+          <f7-nav-right>
+            <f7-link class="popup-close">
+              Close
+            </f7-link>
+          </f7-nav-right>
+        </f7-navbar>
+
+        <f7-list class="col wide error-list">
+          <f7-list-item v-for="(error, idx) in errors" :key="idx" :title="error" />
+        </f7-list>
+      </f7-page>
+    </f7-popup>
+
     <f7-toolbar bottom>
       <f7-segmented>
         <f7-button outline small v-for="type in Object.keys(mediaTypes)" :key="type" :active="codeType === type" @click="switchCodeType(type)">
           {{ type }}
         </f7-button>
       </f7-segmented>
+      <f7-button @click="copyToClipboard" icon-ios="f7:square_on_square" icon-aurora="f7:square_on_square" color="blue" class="copy display-flex flex-direction-row">
+        &nbsp;Copy
+      </f7-button>
+      <f7-button v-if="!readOnly" @click="revertChanges" :disabled="!dirty" icon-ios="f7:arrow_2_circlepath" icon-aurora="f7:arrow_2_circlepath" color="red" class="reset display-flex flex-direction-row">
+        &nbsp;Revert
+      </f7-button>
     </f7-toolbar>
   </f7-block>
 </template>
 
 <style lang="stylus">
-.editor
+.code-editor
   position absolute
   top calc(var(--f7-tabbar-height))
   height calc(100% - 2*var(--f7-navbar-height))
   width 100%
   margin 0!important
 
-  .thing-code-editor.vue-codemirror
+  .editor.vue-codemirror
     top 0
+  .editor
+    .read-only
+      opacity 0.6
 
   .toolbar-bottom
     position absolute
+    .toolbar-inner
+      padding-left 8px
     .segmented
       .button
         width 5em
 
+#code-errors
+  .item-title
+    white-space normal
 </style>
 
 <script>
+import Framework7 from 'framework7/framework7-lite.esm.bundle.js'
 import FileDefinition from '@/pages/settings/file-definition-mixin'
+import MovablePopup from '@/pages/settings/movable-popup-mixin'
 
 export default {
-  mixins: [FileDefinition],
+  mixins: [FileDefinition, MovablePopup],
   components: {
     'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')
   },
-  // objectType is the type of the object, e.g. 'items', 'things'. This corresponds to the yaml element name.
+  // objectType is the type of the object, e.g. 'items', 'things'. This must match the yaml element name.
   props: ['object', 'objectType', 'objectId', 'hintContext', 'readOnly', 'readOnlyMsg'],
-  // @updated event is emitted when the code has been parsed back into an object
+  // @parsed  event is emitted when the code has been parsed back into an object
   //          as a result of calling the parseCode() method
   //          NOT when the user is just typing in the editor
   //          The parsed object is passed as the argument.
   // @changed event is emitted when the code is changed in the editor
   //          The code editor's dirty status is passed as a boolean argument.
-  emits: ['changed', 'updated'],
+  emits: ['changed', 'parsed'],
   beforeMount () {
     switch (this.objectType) {
       case 'items':
@@ -69,29 +102,30 @@ export default {
   },
   data () {
     return {
-      // the first key in the mediaTypes object is the default codeType (e.g. YAML)
       codeType: localStorage.getItem('openhab.ui:codeViewer.type') || Object.keys(this.mediaTypes)[0],
       code: null,
       originalCode: null,
       displayCodeSwitcher: false,
       dirty: false,
-      yamlVersion: null
+      readOnlyMarker: null,
+      errors: null
     }
   },
   computed: {
     editorMode () {
-      if (this.codeType === 'DSL') {
-        return 'text/x-java'
+      if (this.codeType === 'YAML') {
+        switch (this.objectType) {
+          case 'items':
+            return 'application/vnd.openhab.item+yaml'
+          case 'things':
+            return 'application/vnd.openhab.thing+yaml'
+        }
       }
-      switch (this.objectType) {
-        case 'items':
-          return 'application/vnd.openhab.item+yaml'
-        case 'things':
-          return 'application/vnd.openhab.thing+yaml'
-        default:
-          return 'application/yaml'
-      }
+      return this.mediaTypes[this.codeType]
     }
+  },
+  watch: {
+    dirty: function () { this.$emit('changed', this.dirty) }
   },
   methods: {
     /**
@@ -109,15 +143,12 @@ export default {
       payload[this.objectType] = [this.object]
       this.$oh.api.postPlain('/rest/file-format/create', JSON.stringify(payload), null, 'application/json', { accept: mediaType })
         .then((code) => {
-          if (codeType === 'YAML') {
-            // skip version:, things: / items: and UID: lines, and unindent lines
-            code = code.split('\n')
-            this.yamlVersion = code[0]
-            code = code.slice(3).map(line => line.replace(/^\s{4}/, '')).join('\n')
-          }
           this.code = code
           this.originalCode = code.repeat(1) // duplicate the string
           this.dirty = false
+          this.codeType = codeType
+          localStorage.setItem('openhab.ui:codeViewer.type', codeType)
+          this.setReadOnlyMarker()
           if (onSuccessCallback) {
             onSuccessCallback()
           }
@@ -135,18 +166,19 @@ export default {
      * @param {function} onSuccessCallback - Optional. A callback function to call when the code has been parsed
      */
     parseCode (onSuccessCallback) {
-      const mediaType = this.mediaTypes[this.codeType]
-      let payload = this.code
-      if (this.codeType === 'YAML') {
-        const indentedCode = payload.split('\n').map(line => '    ' + line).join('\n')
-        payload = `${this.yamlVersion}\n${this.objectType}:\n  ${this.objectId}:\n${indentedCode}`
-      }
-      this.$oh.api.postPlain('/rest/file-format/parse', payload, null, mediaType, { accept: 'application/json' })
+      Framework7.request.promise({
+        method: 'POST',
+        url: '/rest/file-format/parse',
+        data: this.code,
+        processData: false,
+        contentType: this.mediaTypes[this.codeType],
+        headers: { accept: 'application/json' }
+      })
         .then((data) => {
-          let object = JSON.parse(data)
+          let object = JSON.parse(data.data)
           object = object[this.objectType]
           if (object?.length > 0) {
-            this.$emit('updated', object[0])
+            this.$emit('parsed', object[0])
             if (onSuccessCallback) {
               onSuccessCallback()
             }
@@ -155,29 +187,99 @@ export default {
           }
         })
         .catch((err) => {
-          this.$f7.dialog.alert(`Error parsing ${this.codeType}: ${err}`).open()
+          if (err.status === 400) {
+            let errors = JSON.parse(err.xhr.response)
+            const yamlErrors = errors.includes('while scanning a simple key')
+            if (yamlErrors) {
+              errors = null
+              // show a toast message instead of the error popup
+              // The codemirror editor will show the error in the editor
+              this.$f7.toast.create({
+                text: 'YAML syntax error. Please check your code.',
+                destroyOnClose: true,
+                closeTimeout: 2000
+              }).open()
+            } else {
+              // clean up the error message and turn it into an array to be displayed as a list
+              errors = errors
+                .replace(/^.*? to Yaml\w+DTO: /s, '')
+                .split('\n')
+                .map(line => {
+                  return line.replace(/^invalid thing.* (?=channel id)/, '')
+                    .replace(/\s*\(class org\.openhab\.core.*?\)/, '')
+                })
+                .slice(0, 8) // limit to 8 lines
+            }
+            if (errors && errors.length > 0) {
+              this.errors = errors
+              this.$f7.popup.open('#code-errors')
+            }
+          } else {
+            this.$f7.dialog.alert(`Error parsing ${this.codeType}: ${err.message || err.status}`).open()
+          }
         })
     },
     onEditorInput (value) {
       this.code = value
       this.dirty = this.code !== this.originalCode
-      this.$emit('changed', this.dirty)
     },
     switchCodeType (type) {
       if (this.codeType === type) return
+
       if (this.readOnly || !this.dirty) {
-        this.generateCode(type, () => {
-          localStorage.setItem('openhab.ui:codeViewer.type', type)
-          this.codeType = type
-        })
+        this.generateCode(type)
       } else {
-        this.parseCode((object) => {
-          this.generateCode(type, () => {
-            localStorage.setItem('openhab.ui:codeViewer.type', type)
-            this.codeType = type
-          })
+        this.parseCode(() => {
+          this.generateCode(type)
         })
       }
+    },
+    copyToClipboard () {
+      this.$clipboard(this.code)
+      this.$f7.toast.create({
+        text: 'Code copied to clipboard',
+        destroyOnClose: true,
+        closeTimeout: 2000
+      }).open()
+    },
+    revertChanges () {
+      this.$f7.dialog.confirm('Are you sure you want to revert the changes?', () => {
+        this.code = this.originalCode.repeat(1) // duplicate the string
+        this.dirty = false
+        this.setReadOnlyMarker()
+        this.$f7.toast.create({
+          text: 'Code reverted to original',
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
+      })
+    },
+    setReadOnlyMarker () {
+      this.readOnlyMarker?.clear()
+
+      // Using $nextTick() doesn't work here, because either the editor or editor.codemirror may not be available yet
+      const interval = setInterval(() => {
+        const cm = this.$refs.editor?.codemirror
+        if (cm) {
+          clearInterval(interval)
+          let from, to
+          if (this.codeType === 'YAML') {
+            // make the first 3 lines read-only
+            from = { line: 0, ch: 0 }
+            to = { line: 3, ch: 0 }
+          } else {
+            // make the second token (UID) read-only
+            const firstLine = cm.getLine(0)
+            const tokens = firstLine.split(/\s+/)
+            const uidStart = firstLine.indexOf(tokens[1])
+            const uidEnd = uidStart + tokens[1].length
+            from = { line: 0, ch: uidStart - 1 }
+            to = { line: 0, ch: uidEnd + 1 }
+          }
+
+          this.readOnlyMarker = cm.markText(from, to, { readOnly: true, className: 'read-only' })
+        }
+      }, 10)
     }
   }
 }

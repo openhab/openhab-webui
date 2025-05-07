@@ -45,7 +45,7 @@
                      :object-id="item.name"
                      :read-only="!editable"
                      :read-only-msg="notEditableMsg"
-                     @updated="updateItem"
+                     @parsed="updateItem"
                      @changed="onCodeChanged" />
       </f7-tab>
     </f7-tabs>
@@ -139,7 +139,11 @@ export default {
     switchTab (tab) {
       if (this.currentTab === tab) return
       if (this.currentTab === 'code' && this.codeDirty) {
-        this.$refs.codeEditor.parseCode(() => { this.codeDirty = false })
+        this.$refs.codeEditor.parseCode(() => {
+          this.currentTab = tab
+          this.codeDirty = false
+        })
+        return
       }
       this.currentTab = tab
       if (this.currentTab === 'code') {
@@ -187,6 +191,7 @@ export default {
         this.$refs.codeEditor.parseCode(() => {
           this.codeDirty = false
           this.save()
+          this.$refs.codeEditor.generateCode()
         })
         return
       }

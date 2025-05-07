@@ -174,8 +174,14 @@ export default {
   },
   watch: {
     mode (newMode) {
+      // support dynamically changing the mode
       this.cmOptions.mode = this.translateMode(newMode)
       this.codemirror.setOption('mode', this.cmOptions.mode)
+    },
+    readOnly (newReadOnly) {
+      // changes to the readOnly prop need to be propagated manually to the codemirror instance
+      this.cmOptions.readOnly = newReadOnly
+      this.codemirror.setOption('readOnly', newReadOnly)
     }
   },
   methods: {
@@ -183,12 +189,12 @@ export default {
       // Translations required for some special modes used in MainUI
       // See https://codemirror.net/5/mode/index.html for supported language names & MIME types
       if (!mode) return mode
-      if (mode.indexOf('yaml') >= 0) return 'text/x-yaml'
       if (mode.startsWith('application/javascript') || mode === 'js') return 'text/javascript'
-      if (mode === 'application/vnd.openhab.dsl.rule') return 'text/x-java'
       if (mode === 'application/x-groovy' || mode === 'groovy') return 'text/x-groovy'
       if (mode === 'application/x-python' || mode === 'py') return 'text/x-python'
       if (mode === 'application/x-ruby' || mode === 'rb') return 'text/x-ruby'
+      if (mode.indexOf('yaml') >= 0) return 'text/x-yaml'
+      if (mode.indexOf('dsl') >= 0) return 'text/x-java'
       if (mode.indexOf('jinja') >= 0) return 'text/jinja2'
       return mode
     },
