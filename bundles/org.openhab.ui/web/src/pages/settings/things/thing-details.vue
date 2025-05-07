@@ -200,7 +200,7 @@
                      :read-only="!editable"
                      :read-only-msg="notEditableMsg"
                      :hint-context="{ thingType: thingType, channelTypes: channelTypes }"
-                     @updated="updateThing"
+                     @parsed="updateThing"
                      @changed="onCodeChanged" />
       </f7-tab>
     </f7-tabs>
@@ -412,8 +412,12 @@ export default {
     },
     switchTab (tab) {
       if (this.currentTab === tab) return
-      if (this.currentTab === 'code') {
-        this.$refs.codeEditor.parseCode(() => { this.codeDirty = false })
+      if (this.currentTab === 'code' && this.codeDirty) {
+        this.$refs.codeEditor.parseCode(() => {
+          this.codeDirty = false
+          this.currentTab = tab
+        })
+        return
       }
       this.currentTab = tab
       if (this.currentTab === 'code') {
@@ -498,6 +502,8 @@ export default {
           })
           this.$oh.api.get('/rest/things/' + this.thingId + '/firmwares').then(firmwareData => {
             this.firmwares = firmwareData
+          }).catch(err => {
+            console.warn('Cannot load firmware info: ' + err)
           })
         }).catch((err) => {
           console.warn('Cannot load the related info: ' + err)
@@ -532,6 +538,7 @@ export default {
         this.$refs.codeEditor.parseCode(() => {
           this.codeDirty = false
           this.save(saveThing)
+          this.$refs.codeEditor.generateCode()
         })
         return
       }

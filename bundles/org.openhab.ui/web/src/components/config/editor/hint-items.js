@@ -13,44 +13,59 @@ api.get('/rest/systeminfo/uom').then((data) => {
   })
 })
 
-function hintItemTypes (cm, line) {
+function hintTypes (cm, line, types, position, regex) {
   if (!cm.state.$oh) return
-  let ret = {
-    list: Types.ItemTypes.map((t) => {
+  const cursor = cm.getCursor()
+  const ret = {
+    list: types.map((t) => {
       return {
         text: t,
-        displayText: t
+        displayText: t,
+        from: { line: cursor.line, ch: position },
+        to: { line: cursor.line, ch: line.length }
       }
     })
   }
-  ret.list = filterPartialCompletions(cm, line, ret.list, 'text', /^type:( )?/)
-  if (line.indexOf('Number:') !== -1) {
-    ret.list = dimensions.map((t) => {
+  ret.list = filterPartialCompletions(cm, line, ret.list, 'text', regex)
+  addTooltipHandlers(cm, ret)
+  return ret
+}
+
+function hintDimension (cm, line, position, regex) {
+  if (!cm.state.$oh) return
+  const cursor = cm.getCursor()
+  const ret = {
+    list: dimensions.map((t) => {
       return {
         text: t,
-        displayText: t
+        displayText: t,
+        from: { line: cursor.line, ch: position },
+        to: { line: cursor.line, ch: line.length }
       }
     })
-    ret.list = filterPartialCompletions(cm, line, ret.list, 'text', /^type: Number:/)
   }
+  ret.list = filterPartialCompletions(cm, line, ret.list, 'text', regex)
   addTooltipHandlers(cm, ret)
   return ret
 }
 
 function hintItems (cm, line, onlyGroups) {
   if (!cm.state.$oh) return
+  const cursor = cm.getCursor()
   const promise = (itemsCache) ? Promise.resolve(itemsCache) : cm.state.$oh.api.get('/rest/items')
   return promise.then((data) => {
     if (!itemsCache) itemsCache = data
     if (onlyGroups) {
       data = data.filter((item) => item.type === 'Group')
     }
-    let ret = {
+    const ret = {
       list: data.map((item) => {
         return {
-          text: item.name,
+          text: '- ' + item.name,
           displayText: item.name,
-          description: `${(item.label) ? item.label + ' ' : ''}(${item.type})<br />${item.state}`
+          description: `${(item.label) ? item.label + ' ' : ''}(${item.type})<br />${item.state}`,
+          from: { line: cursor.line, ch: 6 },
+          to: { line: cursor.line, ch: line.length }
         }
       }).sort((i1, i2) => i1.text.localeCompare(i2.text))
     }
@@ -60,28 +75,16 @@ function hintItems (cm, line, onlyGroups) {
   })
 }
 
-function hintGroupTypes (cm, line) {
-  if (!cm.state.$oh) return
-  let ret = {
-    list: Types.GroupTypes.map((t) => {
-      return {
-        text: t,
-        displayText: t
-      }
-    })
-  }
-  ret.list = filterPartialCompletions(cm, line, ret.list, 'text', /^groupType:( )?/)
-  addTooltipHandlers(cm, ret)
-  return ret
-}
-
 function hintMetadata (cm, line) {
   if (!cm.state.$oh) return
-  let ret = {
+  const cursor = cm.getCursor()
+  const ret = {
     list: Metadata.map((m) => {
       return {
-        text: m.name + ':\n    value: ""\n    configuration: {}',
-        displayText: m.label
+        text: m.name + ':\n        value: ""\n        config: {}',
+        displayText: m.label,
+        from: { line: cursor.line, ch: 6 },
+        to: { line: cursor.line, ch: line.length }
       }
     })
   }
@@ -100,14 +103,19 @@ export default function hint (cm, option, mode) {
   console.debug(`parent line (${parentLineNr}): ${parentLine}`)
 
   let ret
-  if (line && line.match(/^type:/)) {
-    ret = hintItemTypes(cm, line)
-  } else if (line && line.match(/^groupType:/)) {
-    ret = hintGroupTypes(cm, line)
-  } else if (parentLine && parentLine.match(/^groupNames:/)) {
+  if (line && line.match(/^ {4}type:/)) {
+    ret = hintTypes(cm, line, Types.ItemTypes, 10, /^ {4}type:/)
+  } else if (line && line.match(/^ {4}dimension:/)) {
+    ret = hintDimension(cm, line, 15, /^ {4}dimension:/)
+  } else if (line && line.match(/^ {6}type:/)) { // Group type
+    ret = hintTypes(cm, line, Types.GroupTypes, 12, /^ {6}type:/)
+  } else if (line && line.match(/^ {6}dimension:/)) { // Group dimension
+    ret = hintDimension(cm, line, 17, /^ {6}dimension:/)
+  } else if (parentLine && parentLine.match(/^ {4}groups:/)) {
     ret = hintItems(cm, line, true)
-  } else if (parentLine && parentLine.match(/^metadata:/)) {
-    ret = hintMetadata(cm, line)
+    // } else if (parentLine && parentLine.match(/^ {4}metadata:/)) {
+    // metadata isn't currently supported
+    // ret = hintMetadata(cm, line)
   }
 
   if (!(ret instanceof Promise)) addTooltipHandlers(cm, ret)
