@@ -52,9 +52,6 @@
 
   .editor.vue-codemirror
     top 0
-  .editor
-    .read-only
-      opacity 0.6
 
   .toolbar-bottom
     position absolute
@@ -107,7 +104,6 @@ export default {
       originalCode: null,
       displayCodeSwitcher: false,
       dirty: false,
-      readOnlyMarker: null,
       errors: null
     }
   },
@@ -148,7 +144,6 @@ export default {
           this.dirty = false
           this.codeType = codeType
           localStorage.setItem('openhab.ui:codeViewer.type', codeType)
-          this.setReadOnlyMarker()
           if (onSuccessCallback) {
             onSuccessCallback()
           }
@@ -246,40 +241,12 @@ export default {
       this.$f7.dialog.confirm('Are you sure you want to revert the changes?', () => {
         this.code = this.originalCode.repeat(1) // duplicate the string
         this.dirty = false
-        this.setReadOnlyMarker()
         this.$f7.toast.create({
           text: 'Code reverted to original',
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
       })
-    },
-    setReadOnlyMarker () {
-      this.readOnlyMarker?.clear()
-
-      // Using $nextTick() doesn't work here, because either the editor or editor.codemirror may not be available yet
-      const interval = setInterval(() => {
-        const cm = this.$refs.editor?.codemirror
-        if (cm) {
-          clearInterval(interval)
-          let from, to
-          if (this.codeType === 'YAML') {
-            // make the first 3 lines read-only
-            from = { line: 0, ch: 0 }
-            to = { line: 3, ch: 0 }
-          } else {
-            // make the second token (UID) read-only
-            const firstLine = cm.getLine(0)
-            const tokens = firstLine.split(/\s+/)
-            const uidStart = firstLine.indexOf(tokens[1])
-            const uidEnd = uidStart + tokens[1].length
-            from = { line: 0, ch: uidStart - 1 }
-            to = { line: 0, ch: uidEnd + 1 }
-          }
-
-          this.readOnlyMarker = cm.markText(from, to, { readOnly: true, className: 'read-only' })
-        }
-      }, 10)
     }
   }
 }
