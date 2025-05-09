@@ -186,7 +186,8 @@ export default {
             { value: 'day', label: 'Hours of day' },
             { value: 'week', label: 'Days of week' },
             { value: 'month', label: 'Days of month' },
-            { value: 'year', label: 'Months of year' }
+            { value: 'year', label: 'Months of year' },
+            { value: 'values', label: 'Values' }
           ]
         },
         {
@@ -227,6 +228,16 @@ export default {
           ],
           visible: (value, configuration, configDescription, parameters) => {
             return configuration.categoryType === 'year'
+          }
+        },
+        {
+          name: 'data',
+          label: 'Category Values',
+          type: 'TEXT',
+          description: 'Category values to display',
+          multiple: true,
+          visible: (value, configuration, configDescription, parameters) => {
+            return configuration.categoryType === 'values'
           }
         },
         gridIndexParameter
@@ -300,6 +311,31 @@ export default {
       parameters: [
         ...seriesParameters,
         seriesTypeParameter('line', 'bar', 'heatmap', 'scatter'),
+        xAxisIndexParameter,
+        yAxisIndexParameter,
+        ...actionParams()
+      ]
+    }
+  },
+
+  'oh-state-series': {
+    label: 'State Series',
+    props: {
+      parameterGroups: [componentRelationsGroup, actionGroup()],
+      parameters: [
+        ...seriesParameters,
+        {
+          name: 'yValue',
+          label: 'Y Value',
+          type: 'DECIMAL',
+          description: 'The position the state timeline should appear on the Y axis (in graph coordinates). If Y axis is a category axis, this should be the index of the category'
+        },
+        {
+          name: 'yHeight',
+          label: 'Y Height',
+          type: 'DECIMAL',
+          description: 'The height the state timeline bar in graph coordinates (default is 0.6)'
+        },
         xAxisIndexParameter,
         yAxisIndexParameter,
         ...actionParams()
