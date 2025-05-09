@@ -9,32 +9,47 @@ export default {
       slots: {}
     }
 
-    page.slots.grid = [{ component: 'oh-chart-grid', config: { includeLabels: true } }]
+    let valueGrid = (analyzer.valueAxesOptions.length > 0)
+    let categoryGrid = (analyzer.categoryAxisValues.length > 0)
 
-    page.slots.xAxis = [
-      {
-        component: 'oh-time-axis',
-        config: {
-          gridIndex: 0
-        }
-      }
-    ]
+    page.slots.grid = []
+    page.slots.xAxis = []
+    page.slots.yAxis = []
+    page.slots.series = []
 
-    page.slots.yAxis = analyzer.valueAxesOptions.map((a) => {
-      return {
-        component: 'oh-value-axis',
+    if (valueGrid) {
+      page.slots.grid.push({ component: 'oh-chart-grid', config: { includeLabels: true, bottom: (categoryGrid) ? '55%' : 60 } })
+      page.slots.xAxis.push({ component: 'oh-time-axis', config: { gridIndex: 0 } })
+      analyzer.valueAxesOptions.forEach((a) => {
+        page.slots.yAxis.push({
+          component: 'oh-value-axis',
+          config: {
+            gridIndex: 0,
+            name: a.name || a.unit,
+            ...(a.min && a.min !== '') && { min: parseFloat(a.min) },
+            ...(a.max && a.max !== '') && { max: parseFloat(a.max) },
+            scale: a.scale,
+            ...(a.split === 'none' || a.split === 'area' || a.split === 'area+minor') && { splitLine: { show: false } },
+            ...(a.split === 'line+minor' || a.split === 'area+minor' || a.split === 'all') && { minorTick: { show: true }, minorSplitLine: { show: true } },
+            ...(a.split === 'area' || a.split === 'line+area' || a.split === 'area+minor' || a.split === 'all') && { splitArea: { show: true } }
+          }
+        })
+      })
+    }
+
+    let categoryGridIndex = (valueGrid) ? 1 : 0
+    if (categoryGrid) {
+      page.slots.grid.push({ component: 'oh-chart-grid', config: { includeLabels: true, top: (valueGrid) ? '55%' : 60 } })
+      page.slots.xAxis.push({ component: 'oh-time-axis', config: { gridIndex: categoryGridIndex } })
+      page.slots.yAxis.push({
+        component: 'oh-category-axis',
         config: {
-          gridIndex: 0,
-          name: a.name || a.unit,
-          ...(a.min && a.min !== '') && { min: parseFloat(a.min) },
-          ...(a.max && a.max !== '') && { max: parseFloat(a.max) },
-          scale: a.scale,
-          ...(a.split === 'none' || a.split === 'area' || a.split === 'area+minor') && { splitLine: { show: false } },
-          ...(a.split === 'line+minor' || a.split === 'area+minor' || a.split === 'all') && { minorTick: { show: true }, minorSplitLine: { show: true } },
-          ...(a.split === 'area' || a.split === 'line+area' || a.split === 'area+minor' || a.split === 'all') && { splitArea: { show: true } }
+          data: analyzer.categoryAxisValues.map((itemName) => analyzer.items.find((item) => item.name === itemName).label),
+          gridIndex: categoryGridIndex
         }
-      }
-    })
+      })
+    }
+
     if (page.slots.yAxis.length === 0) {
       // add a default axis if none was found (for instance, only discrete values)
       page.slots.yAxis.push({
@@ -49,29 +64,18 @@ export default {
       const seriesOptions = analyzer.seriesOptions[item.name]
 
       if (seriesOptions.discrete) {
-        return {
-          component: 'oh-time-series',
+        let series = {
+          component: 'oh-state-series',
           config: {
-            name: seriesOptions.name,
-            gridIndex: 0,
-            xAxisIndex: 0,
-            yAxisIndex: 0,
-            type: 'line',
-            areaStyle: seriesOptions.type === 'area' ? {} : undefined
-          },
-          slots: {
-            markArea: [
-              {
-                component: 'oh-mark-area',
-                config: {
-                  name: item.name,
-                  item: item.name,
-                  silent: seriesOptions.silent
-                }
-              }
-            ]
+            item: item.name,
+            name: item.label,
+            xAxisIndex: categoryGridIndex,
+            yAxisIndex: page.slots.yAxis.length - 1,
+            yValue: seriesOptions.yValue
           }
         }
+
+        return series
       }
 
       const markLine = (seriesOptions.markers === 'avg' || seriesOptions.markers === 'all') ? {
@@ -93,7 +97,6 @@ export default {
         component: 'oh-time-series',
         config: {
           name: seriesOptions.name,
-          gridIndex: 0,
           xAxisIndex: 0,
           yAxisIndex: seriesOptions.valueAxisIndex,
           type: 'line',
@@ -129,7 +132,8 @@ export default {
       {
         component: 'oh-chart-datazoom',
         config: {
-          type: 'inside'
+          type: 'inside',
+          xAxisIndex: (categoryGrid) ? [0, 1] : 0
         }
       }
     ]

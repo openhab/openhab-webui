@@ -13,6 +13,7 @@
   "analyzer.series.table.type.bar": "Bar",
   "analyzer.series.table.type.line": "Line",
   "analyzer.series.table.type.area": "Area",
+  "analyzer.series.table.type.state": "State",
   "analyzer.series.table.type.heatmap": "Heatmap",
   "analyzer.series.table.na": "N/A",
   "analyzer.coords": "Coords",
