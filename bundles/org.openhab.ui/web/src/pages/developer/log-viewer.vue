@@ -112,15 +112,30 @@
     </f7-popover>
 
     <!-- Log Details Popup -->
-    <f7-popup id="logdetails-popup" close-on-escape close-by-backdrop-click>
+    <f7-popup id="logdetails-popup" ref="logDetailsPopup" close-on-escape close-by-backdrop-click @popup:open="popupOpened($refs.logDetailsPopup, $refs.logDetailsNavbar)" @popup:closed="cleanupMovablePopup">
       <f7-page>
-        <f7-navbar title="Log Details">
+        <f7-navbar title="Log Details" ref="logDetailsNavbar">
           <f7-nav-right>
             <f7-link class="popup-close">
               Close
             </f7-link>
           </f7-nav-right>
         </f7-navbar>
+        <f7-toolbar bottom class="toolbar-details">
+          <div class="display-flex justify-content-center" style="width: 100%">
+            <f7-link class="display-flex flex-direction-row margin-right" @click="selectedId = selectedId > 0 ? selectedId - 1 : 0">
+              <f7-icon f7="backward_fill" />
+              &nbsp; Previous
+            </f7-link>
+            <f7-link class="display-flex flex-direction-row margin-right" @click="selectedId = selectedId < tableData.length - 1 ? selectedId + 1 : tableData.length - 1">
+              Next &nbsp;
+              <f7-icon f7="forward_fill" />
+            </f7-link>
+            <f7-link class="display-flex flex-direction-row" @click="selectedId = tableData.length - 1">
+              <f7-icon f7="forward_end_fill" />
+            </f7-link>
+          </div>
+        </f7-toolbar>
 
         <f7-list class="col wide">
           <f7-list-item header="Time" :title="selectedLog.time + selectedLog.milliseconds" />
@@ -383,7 +398,10 @@
 </style>
 
 <script lang="ts">
+import MovablePopupMixin from '@/pages/settings/movable-popup-mixin'
+
 export default {
+  mixins: [MovablePopupMixin],
   data () {
     return {
       stateConnected: false,
@@ -411,7 +429,7 @@ export default {
       currentHighlightColorItemIndex: null,
       currentHighlightColor: '#FF5252',
       lastSequence: 0,
-      selectedLog: {},
+      selectedId: null,
       colors: [
         '#FF0000', // Red
         '#00FF00', // Green
@@ -440,6 +458,9 @@ export default {
       if (this.tableData.length >= this.maxEntries) return 'red'
       if (this.filterCount < this.tableData.length) return 'orange'
       return 'green'
+    },
+    selectedLog () {
+      return this.tableData.find(entry => entry.id === this.selectedId) || {}
     }
   },
   methods: {
@@ -478,6 +499,11 @@ export default {
     },
     onPageBeforeOut () {
       this.loggingStop()
+    },
+    popupOpened (ref, navbar) {
+      this.$nextTick(() => {
+        this.initializeMovablePopup(ref, navbar)
+      })
     },
     updateLogLevel (logger, value) {
       logger.level = value
@@ -557,7 +583,7 @@ export default {
       return tr
     },
     onRowClick (entityId) {
-      this.selectedLog = this.filteredTableData[entityId]
+      this.selectedId = entityId
       this.$f7.popup.open('#logdetails-popup')
     },
     addLogEntry (logEntry) {
