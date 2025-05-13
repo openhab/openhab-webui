@@ -26,12 +26,13 @@
         <f7-block v-if="ready && thing.statusInfo" class="block-narrow" strong>
           <f7-col class="padding-horizontal">
             <div v-show="!error" class="float-right align-items-flex-start align-items-center">
-              <f7-link :icon-color="(thing.statusInfo.statusDetail === 'DISABLED') ? 'orange' : 'gray'" :tooltip="((thing.statusInfo.statusDetail === 'DISABLED') ? 'Enable' : 'Disable') + (($device.desktop) ? ' (Ctrl-D)' : '')" icon-ios="f7:pause_circle" icon-md="f7:pause_circle" icon-aurora="f7:pause_circle" icon-size="32" color="orange" @click="toggleDisabled" />
+              <f7-link :icon-color="(thing.statusInfo.statusDetail === 'DISABLED') ? 'orange' : 'gray'"
+                       :tooltip="((thing.statusInfo.statusDetail === 'DISABLED') ? 'Enable' : 'Disable') + (($device.desktop) ? ' (Ctrl-D)' : '')"
+                       icon-ios="f7:pause_circle" icon-md="f7:pause_circle" icon-aurora="f7:pause_circle" icon-size="32"
+                       color="orange" @click="toggleDisabled" />
             </div>
             Status:
-            <f7-chip class="margin-left"
-                     :text="thing.statusInfo.status"
-                     :color="thingStatusBadgeColor(thing.statusInfo)" />
+            <f7-chip class="margin-left" :text="thing.statusInfo.status" :color="thingStatusBadgeColor(thing.statusInfo)" />
             <div>
               <strong>{{ (thing.statusInfo.statusDetail !== 'NONE') ? thing.statusInfo.statusDetail : '&nbsp;' }}</strong>
               <br>
@@ -66,15 +67,36 @@
                   <div class="margin" v-html="thingType.description" />
                 </f7-accordion-content>
               </f7-list-item>
-              <f7-list-item accordion-item v-if="Object.keys(thing.properties).length > 0" title="Thing Properties" :badge="Object.keys(thing.properties).length">
+              <f7-list-item accordion-item v-if="Object.keys(thing.properties).length > 0" title="Thing Properties"
+                            :badge="Object.keys(thing.properties).length">
                 <f7-accordion-content>
                   <f7-list>
-                    <f7-list-item
-                      class="thing-property"
-                      v-for="(value, key) in thing.properties"
-                      :key="key"
-                      :title="key"
-                      :after="value" />
+                    <f7-list-item class="thing-property" v-for="(value, key) in thing.properties" :key="key"
+                                  @click="showFullPropertyIfTruncated(key, value)">
+                      <div slot="title" class="item-title-content">
+                        <span :ref="'titleSpan-' + key">{{ key }}</span>
+                      </div>
+                      <div slot="after" class="item-after-content">
+                        <span :ref="'valueSpan-' + key">{{ value }}</span>
+                        <f7-icon v-if="isTruncated(key, 'title') || isTruncated(key, 'value')" f7="info_circle" size="16" class="truncation-icon" />
+                      </div>
+                    </f7-list-item>
+                  </f7-list>
+                </f7-accordion-content>
+              </f7-list-item>
+              <f7-list-item v-if="thing.firmwareStatus" accordion-item title="Firmware" :badge="firmwares.length"
+                            :badge-color="(thing.firmwareStatus.status === 'UPDATE_EXECUTABLE') ? 'green' : 'gray'">
+                <f7-accordion-content>
+                  <f7-list>
+                    <f7-list-item class="thing-property" title="Status" :after="thing.firmwareStatus.status" />
+                    <f7-list-item class="thing-property" title="Current Version"
+                                  :after="thing.properties.firmwareVersion" />
+                    <f7-list-item class="thing-property" v-for="firmware in firmwares" :key="firmware.version"
+                                  header="Version" :title="firmware.version" :after="firmware.description"
+                                  :footer="firmware.changelog">
+                      <f7-icon v-if="firmware.version === thing.properties.firmwareVersion" f7="checkmark"
+                               color="green" />
+                    </f7-list-item>
                   </f7-list>
                 </f7-accordion-content>
               </f7-list-item>
@@ -97,8 +119,10 @@
                 Actions
               </f7-block-title>
               <f7-list class="margin-top" media-list>
-                <f7-list-item v-if="thingType?.UID?.startsWith('zwave:')" title="View Network Map" link="" @click="openZWaveNetworkPopup()" />
-                <f7-list-item v-for="action in thingActions" :key="action.name" :title="action.label" :footer="action.description" link="" @click="doThingAction(action)" />
+                <f7-list-item v-if="thingType?.UID?.startsWith('zwave:')" title="View Network Map" link=""
+                              @click="openZWaveNetworkPopup()" />
+                <f7-list-item v-for="action in thingActions" :key="action.name" :title="action.label"
+                              :footer="action.description" link="" @click="doThingAction(action)" />
               </f7-list>
             </template>
           </f7-col>
@@ -127,7 +151,8 @@
                 <div v-html="actionGroup.group.description" />
               </f7-block-footer>
               <f7-list>
-                <f7-list-button v-for="action in actionGroup.actions" :color="(action.verify) ? 'yellow' : 'blue'" :key="action.name" :title="action.label" @click="action.execute()" />
+                <f7-list-button v-for="action in actionGroup.actions" :color="(action.verify) ? 'yellow' : 'blue'"
+                                :key="action.name" :title="action.label" @click="action.execute()" />
               </f7-list>
             </f7-col>
           </f7-block>
@@ -136,9 +161,10 @@
         <f7-block class="block-narrow" v-if="ready">
           <f7-col>
             <f7-list>
-              <f7-list-button v-if="thing.statusInfo.statusDetail === 'HANDLER_MISSING_ERROR'" color="blue" title="Install Binding" @click="installBinding" />
+              <f7-list-button v-if="thing.statusInfo.statusDetail === 'HANDLER_MISSING_ERROR'" color="blue"
+                              title="Install Binding" @click="installBinding" />
               <f7-list-button v-if="!error" color="blue" title="Duplicate Thing" @click="duplicateThing" />
-              <f7-list-button v-if="!error" color="blue" title="Copy DSL Definition" @click="copyThingDsl" />
+              <f7-list-button v-if="!error" color="blue" title="Copy File Definition" @click="copyFileDefinitionToClipboard(ObjectType.THING, [thingId])" />
               <f7-list-button v-if="editable" color="red" title="Remove Thing" @click="deleteThing" />
             </f7-list>
           </f7-col>
@@ -151,19 +177,27 @@
                         @channels-updated="onChannelsUpdated" :context="context" />
           <f7-col v-if="isExtensible || thing.channels.length > 0">
             <f7-list>
-              <f7-list-button class="searchbar-ignore" color="blue" title="Add Channel" v-if="isExtensible && editable" @click="addChannel()" />
-              <f7-list-button class="searchbar-ignore" color="blue" title="Add Equipment to Model" @click="addToModel(true)" />
-              <f7-list-button class="searchbar-ignore" color="blue" title="Add Points to Model" @click="addToModel(false)" />
-              <f7-list-button class="searchbar-ignore" color="red" title="Unlink all Items" @click="unlinkAll(false)" />
-              <f7-list-button class="searchbar-ignore" color="red" title="Unlink all and Remove Items" @click="unlinkAll(true)" />
+              <f7-list-button class="searchbar-ignore" color="blue" title="Add Channel" v-if="isExtensible && editable"
+                              @click="addChannel()" />
+              <f7-list-button class="searchbar-ignore" color="blue" title="Add Equipment to Model"
+                              @click="addToModel(true)" />
+              <f7-list-button class="searchbar-ignore" color="blue" title="Add Points to Model"
+                              @click="addToModel(false)" />
+              <f7-list-button class="searchbar-ignore" color="red" title="Unlink all Items"
+                              @click="unlinkAll(false)" />
+              <f7-list-button class="searchbar-ignore" color="red" title="Unlink all and Remove Items"
+                              @click="unlinkAll(true)" />
             </f7-list>
           </f7-col>
         </f7-block>
       </f7-tab>
 
       <f7-tab id="code" :tab-active="currentTab === 'code'">
-        <f7-icon v-if="!editable" f7="lock" class="float-right margin" style="opacity:0.5; z-index: 4000; user-select: none;" size="50" color="gray" :tooltip="notEditableMsg" />
-        <editor v-if="ready" class="thing-code-editor" mode="application/vnd.openhab.thing+yaml" :value="thingYaml" :hint-context="{ thingType: thingType, channelTypes: channelTypes }" @input="onEditorInput" :read-only="!editable" />
+        <f7-icon v-if="!editable" f7="lock" class="float-right margin"
+                 style="opacity:0.5; z-index: 4000; user-select: none;" size="50" color="gray" :tooltip="notEditableMsg" />
+        <editor v-if="ready" class="thing-code-editor" mode="application/vnd.openhab.thing+yaml" :value="thingYaml"
+                :hint-context="{ thingType: thingType, channelTypes: channelTypes }" @input="onEditorInput"
+                :read-only="!editable" />
         <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
       </f7-tab>
     </f7-tabs>
@@ -208,7 +242,7 @@ p.action-description
 
   .thing-property
     .item-after
-      max-width 75%
+      max-width 50%
 
       span
         max-width 100%
@@ -220,14 +254,38 @@ p.action-description
     top calc(var(--f7-navbar-height) + var(--f7-tabbar-height))
     height calc(100% - 2*var(--f7-navbar-height))
     width 100%
+
+  .item-title-content, .item-after-content
+    display flex
+    align-items center
+    overflow hidden
+    width 100%
+
+    span
+      overflow hidden
+      text-overflow ellipsis
+      white-space nowrap
+      flex-shrink 1
+      min-width 0
+
+  .truncation-icon
+    margin-left 4px
+    flex-shrink 0
+    color var(--f7-text-color-secondary)
+
+.dialog.wide-property-dialog
+  --f7-dialog-width: 560px
+
+  @media (max-width: 599px) {
+    --f7-dialog-width: 95vw
+  }
+
+  @media (min-width: 768px) {
+    --f7-dialog-width: 700px
+  }
 </style>
 
 <script>
-import Vue from 'vue'
-
-import Clipboard from 'v-clipboard'
-Vue.use(Clipboard)
-
 import YAML from 'yaml'
 import cloneDeep from 'lodash/cloneDeep'
 import fastDeepEqual from 'fast-deep-equal/es6'
@@ -248,9 +306,10 @@ import ThingStatus from '@/components/thing/thing-status-mixin'
 
 import DirtyMixin from '../dirty-mixin'
 import ThingActionPopup from '@/pages/settings/things/thing-action-popup.vue'
+import FileDefinition from '@/pages/settings/file-definition-mixin'
 
 export default {
-  mixins: [ThingStatus, DirtyMixin],
+  mixins: [ThingStatus, DirtyMixin, FileDefinition],
   components: {
     ConfigSheet,
     ChannelList,
@@ -273,6 +332,7 @@ export default {
       configDescriptions: {},
       thingActions: [],
       configStatusInfo: [],
+      firmwares: [],
       /**
        * @deprecated
        */
@@ -280,7 +340,8 @@ export default {
       thingEnabled: true,
       eventSource: null,
       thingYaml: null,
-      notEditableMsg: 'This Thing is not editable because it has been provisioned from a file.'
+      notEditableMsg: 'This Thing is not editable because it has been provisioned from a file.',
+      propertyTruncation: {}
     }
   },
   computed: {
@@ -331,6 +392,12 @@ export default {
           delete savedThingClone.configuration
           this.thingDirty = !fastDeepEqual(thingClone, savedThingClone)
         }
+      },
+      deep: true
+    },
+    'thing.properties': {
+      handler () {
+        this.checkPropertyTruncation()
       },
       deep: true
     }
@@ -401,6 +468,7 @@ export default {
           this.savedThing = cloneDeep(this.thing)
           this.ready = true
           this.loading = false
+          this.checkPropertyTruncation()
         })
       }
 
@@ -441,6 +509,9 @@ export default {
           // config status unrelated to the other queries, so load it in parallel with the types
           this.$oh.api.get('/rest/things/' + this.thingId + '/config/status').then(statusData => {
             this.configStatusInfo = statusData
+          })
+          this.$oh.api.get('/rest/things/' + this.thingId + '/firmwares').then(firmwareData => {
+            this.firmwares = firmwareData
           })
         }).catch((err) => {
           console.warn('Cannot load the related info: ' + err)
@@ -584,20 +655,6 @@ export default {
         props: {
           thingTypeId: this.thing.thingTypeUID,
           thingCopy: thingClone
-        }
-      })
-    },
-    copyThingDsl () {
-      this.$oh.api.getPlain({
-        url: '/rest/file-format/things/' + this.thingId,
-        headers: { accept: 'text/vnd.openhab.dsl.thing' }
-      }).then((definition) => {
-        if (this.$clipboard(definition)) {
-          this.$f7.toast.create({
-            text: 'Thing DSL definition copied to clipboard',
-            destroyOnClose: true,
-            closeTimeout: 2000
-          }).open()
         }
       })
     },
@@ -904,7 +961,73 @@ export default {
         this.$f7.dialog.alert(e).open()
         return false
       }
+    },
+    checkPropertyTruncation () {
+      this.$nextTick(() => {
+        const newTruncationStatus = {}
+        if (!this.thing || !this.thing.properties || !this.ready) {
+          if (Object.keys(this.propertyTruncation).length > 0) {
+            this.propertyTruncation = {}
+          }
+          return
+        }
+
+        for (const key in this.thing.properties) {
+          const getElement = (refName) => {
+            const ref = this.$refs[refName]
+            return Array.isArray(ref) ? ref[0] : ref
+          }
+
+          const titleSpan = getElement(`titleSpan-${key}`)
+          const valueSpan = getElement(`valueSpan-${key}`)
+
+          const titleTruncated = titleSpan ? titleSpan.scrollWidth > titleSpan.offsetWidth : false
+          const valueTruncated = valueSpan ? valueSpan.scrollWidth > valueSpan.offsetWidth : false
+
+          if (titleTruncated || valueTruncated) {
+            newTruncationStatus[key] = { title: titleTruncated, value: valueTruncated }
+          }
+        }
+
+        if (!fastDeepEqual(this.propertyTruncation, newTruncationStatus)) {
+          this.propertyTruncation = newTruncationStatus
+        }
+      })
+    },
+
+    isTruncated (key, type) {
+      return !!(this.propertyTruncation[key] && this.propertyTruncation[key][type])
+    },
+
+    showFullProperty (key, value) {
+      const dialogContent = `
+        <div class="dialog-title" style="margin-bottom: 8px;">${key}</div>
+        <pre class="dialog-text" style="font-size: var(--f7-font-size); margin: 0; white-space: pre-wrap; word-wrap: break-word;">${value}</pre>
+      `
+      const dialog = this.$f7.dialog.create({
+        title: 'Property Details',
+        content: dialogContent,
+        cssClass: 'wide-property-dialog',
+        buttons: [
+          { text: 'OK' }
+        ]
+      })
+      dialog.open()
+    },
+
+    showFullPropertyIfTruncated (key, value) {
+      const isTitleTruncated = this.isTruncated(key, 'title')
+      const isValueTruncated = this.isTruncated(key, 'value')
+      if (isTitleTruncated || isValueTruncated) {
+        this.showFullProperty(key, value)
+      }
     }
+  },
+  mounted () {
+    this.checkPropertyTruncation()
+  },
+  updated () {
+    this.checkPropertyTruncation()
   }
 }
 </script>

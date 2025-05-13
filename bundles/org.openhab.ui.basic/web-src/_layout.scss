@@ -232,6 +232,11 @@
 			font-size: 18px;
 		}
 	}
+	&__label:has(+ .mdl-form__text) {
+		// this applies only to labels for sitemap text elements
+		// Set flex-basis to 0 to prioritize __text over __label (see __text below)
+		@include flex-2011(2 0 0);
+	}
 	&__label-multiline {
 		min-width: 3em;
 	}
@@ -507,7 +512,10 @@
 			font-size: 18px;
 		}
 		overflow: hidden;
+		// Make the label shrink first before the text (see __label above)
+		// See https://stackoverflow.com/a/67858285/15409057
 		flex-shrink: 2;
+		flex-grow: 0;
 		text-overflow: ellipsis;
 	}
 	&__webview,

@@ -48,9 +48,9 @@
       </f7-list>
     </f7-block>
     <!-- Rules -->
-    <f7-block class="no-margin no-padding" v-if="filteredSearchResults.rules.length">
+    <f7-block class="no-margin no-padding" v-if="searchResults.rules.length">
       <f7-block-title class="padding-left">
-        <f7-icon class="margin-right" f7="wand_stars" />Rules ({{ filteredSearchResults.rules.length }})
+        <f7-icon class="margin-right" f7="wand_stars" />Rules ({{ searchResults.rules.length }})
       </f7-block-title>
       <f7-list media-list>
         <f7-list-item media-item v-for="rule in filteredSearchResults.rules" :key="rule.uid"
@@ -68,9 +68,9 @@
       </f7-list>
     </f7-block>
     <!-- Scenes -->
-    <f7-block class="no-margin no-padding" v-if="filteredSearchResults.scenes.length">
+    <f7-block class="no-margin no-padding" v-if="searchResults.scenes.length">
       <f7-block-title class="padding-left">
-        <f7-icon class="margin-right" f7="film" />Scenes ({{ filteredSearchResults.scenes.length }})
+        <f7-icon class="margin-right" f7="film" />Scenes ({{ searchResults.scenes.length }})
       </f7-block-title>
       <f7-list media-list>
         <f7-list-item media-item v-for="rule in filteredSearchResults.scenes" :key="rule.uid"
@@ -88,9 +88,9 @@
       </f7-list>
     </f7-block>
     <!-- Scripts -->
-    <f7-block class="no-margin no-padding" v-if="filteredSearchResults.scripts.length">
+    <f7-block class="no-margin no-padding" v-if="searchResults.scripts.length">
       <f7-block-title class="padding-left">
-        <f7-icon class="margin-right" f7="doc_plaintext" />Scripts ({{ filteredSearchResults.scripts.length }})
+        <f7-icon class="margin-right" f7="doc_plaintext" />Scripts ({{ searchResults.scripts.length }})
       </f7-block-title>
       <f7-list media-list>
         <f7-list-item media-item v-for="rule in filteredSearchResults.scripts" :key="rule.uid"

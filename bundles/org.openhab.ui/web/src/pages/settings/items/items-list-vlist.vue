@@ -19,12 +19,14 @@
       </f7-subnavbar>
     </f7-navbar>
     <f7-toolbar class="contextual-toolbar" :class="{ 'navbar': $theme.md }" v-if="showCheckboxes" bottom-ios bottom-aurora>
-      <f7-link color="red" v-show="selectedItems.length" v-if="!$theme.md" class="delete right-margin" icon-ios="f7:trash" icon-aurora="f7:trash" @click="removeSelected">
-        Remove {{ selectedItems.length }}
-      </f7-link>
-      <f7-link color="blue" v-show="selectedItems.length" v-if="!$theme.md" class="copy" icon-ios="f7:square_on_square" icon-aurora="f7:square_on_square" @click="copySelected">
-        &nbsp;Copy DSL Definitions
-      </f7-link>
+      <div class="display-flex justify-content-center" v-if="!$theme.md && selectedItems.length > 0" style="width: 100%">
+        <f7-link color="red" v-show="selectedItems.length" class="delete display-flex flex-direction-row margin-right" icon-ios="f7:trash" icon-aurora="f7:trash" @click="removeSelected">
+          Remove
+        </f7-link>
+        <f7-link color="blue" v-show="selectedItems.length" class="copy display-flex flex-direction-row" icon-ios="f7:square_on_square" icon-aurora="f7:square_on_square" @click="copySelected">
+          &nbsp;Copy
+        </f7-link>
+      </div>
       <f7-link v-if="$theme.md" icon-md="material:close" icon-color="white" @click="showCheckboxes = false" />
       <div class="title" v-if="$theme.md">
         {{ selectedItems.length }} selected
@@ -143,15 +145,11 @@
 </style>
 
 <script>
-import Vue from 'vue'
-import Clipboard from 'v-clipboard'
-
-Vue.use(Clipboard)
-
 import ItemMixin from '@/components/item/item-mixin'
+import FileDefinition from '@/pages/settings/file-definition-mixin'
 
 export default {
-  mixins: [ItemMixin],
+  mixins: [ItemMixin, FileDefinition],
   components: {
     'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue')
   },
@@ -304,19 +302,7 @@ export default {
       }
     },
     copySelected () {
-      const promises = this.selectedItems.map((itemName) => this.$oh.api.getPlain({
-        url: '/rest/file-format/items/' + itemName,
-        headers: { accept: 'text/vnd.openhab.dsl.item' }
-      }))
-      Promise.all(promises).then((data) => {
-        if (this.$clipboard(data.join('\n'))) {
-          this.$f7.toast.create({
-            text: 'DSL definitions copied to clipboard',
-            destroyOnClose: true,
-            closeTimeout: 2000
-          }).open()
-        }
-      })
+      this.copyFileDefinitionToClipboard(this.ObjectType.ITEM, this.selectedItems)
     },
     removeSelected () {
       const vm = this
