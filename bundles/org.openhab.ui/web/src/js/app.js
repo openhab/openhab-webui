@@ -58,6 +58,10 @@ Vue.use(Trend)
 import fullscreen from 'vue-fullscreen'
 Vue.use(fullscreen)
 
+// Import clipboard plugin
+import Clipboard from 'v-clipboard'
+Vue.use(Clipboard)
+
 // Extend prototype with the openHAB API interface
 Vue.prototype.$oh = openhab
 
@@ -74,6 +78,7 @@ const app = new Vue({
   }
 })
 
+// Register global components
 Vue.component('oh-icon', OHIconComponent)
 Vue.component('generic-widget-component', GenericWidgetComponent)
 Vue.component('developer-dock-icon', DeveloperDockIcon)
