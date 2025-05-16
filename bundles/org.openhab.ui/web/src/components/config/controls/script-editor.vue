@@ -181,7 +181,13 @@ export default {
       if (mode.startsWith('application/javascript') || mode === 'js') return 'text/javascript'
       if (mode === 'application/vnd.openhab.dsl.rule') return 'text/x-java'
       if (mode === 'application/x-groovy' || mode === 'groovy') return 'text/x-groovy'
-      if (mode === 'application/x-python' || mode === 'py') return 'text/x-python'
+      if (mode === 'application/x-python2' || mode === 'py2') {
+        return {
+          name: 'text/x-python',
+          version: 2
+        }
+      }
+      if (mode === 'application/x-python' || mode === 'application/x-python3' || mode === 'py' || mode === 'py3') return 'text/x-python'
       if (mode === 'application/x-ruby' || mode === 'rb') return 'text/x-ruby'
       if (mode.indexOf('jinja') >= 0) return 'text/jinja2'
       return mode
