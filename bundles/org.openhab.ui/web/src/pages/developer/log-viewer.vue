@@ -434,11 +434,6 @@
 </style>
 
 <script lang="ts">
-import Vue from 'vue'
-import Clipboard from 'v-clipboard'
-
-Vue.use(Clipboard)
-
 import MovablePopupMixin from '@/pages/settings/movable-popup-mixin'
 
 export default {
@@ -916,6 +911,7 @@ export default {
       })
 
       // Copy to clipboard
+      // Uses the Clipboard API to write the ClipboardItem, as v-clipboard does not support HTML. This might not work in insecure contexts.
       navigator.clipboard
         .write([clipboardItem])
         .then(() => {

@@ -1,8 +1,3 @@
-import Vue from 'vue'
-import Clipboard from 'v-clipboard'
-
-Vue.use(Clipboard)
-
 function executeFileDefinitionCopy (vueInstance, objectType, objectTypeLabel, objectIds, copiedObjectsLabel, fileFormatLabel, mediaType) {
   const progressDialog = vueInstance.$f7.dialog.progress(`Loading ${objectTypeLabel} ${fileFormatLabel} definition...`)
 
