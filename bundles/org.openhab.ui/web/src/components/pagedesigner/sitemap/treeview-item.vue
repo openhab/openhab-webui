@@ -8,7 +8,7 @@
                     @treeview:open="setWidgetClosed(false)"
                     @treeview:close="setWidgetClosed(true)"
                     @click="select">
-    <draggable :list="children" group="sitemap-treeview" animation="150" fallbackOnBody="true" swapThreshold="0.6"
+    <draggable :list="children" group="sitemap-treeview" animation="150" fallbackOnBody="true" swapThreshold="0.6" scrollSensitivity="200" delay="400" delayOnTouchOnly="true"
                @start="onStart" @change="onChange" @end="onEnd">
       <sitemap-treeview-item class="sitemap-treeview-item" v-for="(childwidget, idx) in children"
                              :key="idx"
