@@ -290,6 +290,7 @@ import AttributeDetails from '@/components/pagedesigner/sitemap/attribute-detail
 import SitemapTreeviewItem from '@/components/pagedesigner/sitemap/treeview-item.vue'
 import SitemapMixin from '@/components/pagedesigner/sitemap/sitemap-mixin'
 import DirtyMixin from '@/pages/settings/dirty-mixin'
+import fastDeepEqual from 'fast-deep-equal/es6'
 
 export default {
   mixins: [DirtyMixin, SitemapMixin],
@@ -315,6 +316,7 @@ export default {
         tags: [],
         slots: { widgets: [] }
       },
+      lastCleanSitemap: null,
       selectedWidget: null,
       selectedWidgetParent: null,
       previousSelection: null,
@@ -348,9 +350,12 @@ export default {
   },
   watch: {
     sitemap: {
-      handler: function () {
-        if (!this.loading) {
+      handler (newVal) {
+        if (this.loading) return
+        if (!fastDeepEqual(this.stripClosed(newVal), this.lastCleanSitemap)) {
           this.dirty = true
+        } else {
+          this.dirty = false
         }
       },
       deep: true
@@ -381,6 +386,21 @@ export default {
         ev.preventDefault()
       }
     },
+    stripClosed (obj) {
+      // Remove the closed field as it is only used for expanding the tree, and should not impact the dirty state
+      if (Array.isArray(obj)) {
+        return obj.map(this.stripClosed)
+      } else if (obj !== null && typeof obj === 'object') {
+        const { closed, ...rest } = obj
+        const result = {}
+        for (const key in rest) {
+          result[key] = this.stripClosed(rest[key])
+        }
+        return result
+      } else {
+        return obj
+      }
+    },
     load () {
       if (this.loading) return
       this.loading = true
@@ -388,13 +408,16 @@ export default {
       if (this.ready && this.dirty) this.save(true, true)
 
       if (this.createMode) {
+        this.$set(this, 'lastCleanSitemap', this.stripClosed(this.sitemap))
         this.loading = false
         this.ready = true
+
       } else {
         this.$oh.api.get('/rest/ui/components/system:sitemap/' + this.uid).then((data) => {
           const sitemap = this.preProcessSitemapLoad(data)
           this.$set(this, 'sitemap', sitemap)
           this.$nextTick(() => {
+            this.$set(this, 'lastCleanSitemap', this.stripClosed(this.sitemap))
             this.ready = true
             this.loading = false
           })
@@ -444,6 +467,7 @@ export default {
             destroyOnClose: true,
             closeTimeout: 2000
           }).open()
+          this.$set(this, 'lastCleanSitemap', this.stripClosed(this.sitemap))
         }
         this.$f7.emit('sidebarRefresh', null)
         // if (!stay) this.$f7router.back()
