@@ -411,7 +411,6 @@ export default {
         this.$set(this, 'lastCleanSitemap', this.stripClosed(this.sitemap))
         this.loading = false
         this.ready = true
-
       } else {
         this.$oh.api.get('/rest/ui/components/system:sitemap/' + this.uid).then((data) => {
           const sitemap = this.preProcessSitemapLoad(data)
