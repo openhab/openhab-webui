@@ -86,7 +86,7 @@
                 <div><f7-block-title>Icon Color</f7-block-title></div>
                 <attribute-details :widget="selectedWidget" attribute="iconcolor" placeholder="item_name operator value = color" />
               </f7-block>
-              <f7-block v-if="selectedWidget && canAddChildren && selectedWidget.component !== 'Buttongrid'">
+              <f7-block v-if="selectedWidget && canAddChildren(selectedWidget) && selectedWidget.component !== 'Buttongrid'">
                 <div><f7-block-title>Add Child Widget</f7-block-title></div>
                 <f7-card>
                   <f7-card-content>
@@ -96,7 +96,7 @@
                   </f7-card-content>
                 </f7-card>
               </f7-block>
-              <f7-block v-if="selectedWidget && canAddChildren && selectedWidget.component === 'Buttongrid'">
+              <f7-block v-if="selectedWidget && canAddChildren(selectedWidget) && selectedWidget.component === 'Buttongrid'">
                 <div><f7-block-title>Add Button Widget</f7-block-title></div>
                 <f7-card>
                   <f7-card-content>
@@ -126,11 +126,11 @@
       </f7-tab>
     </f7-tabs>
 
-    <f7-fab class="add-to-sitemap-fab" v-if="canAddChildren && selectedWidget.component !== 'Buttongrid'" position="right-center" slot="fixed" color="blue" @click="$refs.widgetTypeSelection.open()">
+    <f7-fab class="add-to-sitemap-fab" v-if="canAddChildren(selectedWidget) && selectedWidget.component !== 'Buttongrid'" position="right-center" slot="fixed" color="blue" @click="$refs.widgetTypeSelection.open()">
       <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
       <f7-icon ios="f7:multiply" md="material:close" aurora="f7:multiply" />
     </f7-fab>
-    <f7-fab class="add-to-sitemap-fab" v-if="canAddChildren && selectedWidget.component === 'Buttongrid'" position="right-center" slot="fixed" color="blue" @click="addWidget('Button')">
+    <f7-fab class="add-to-sitemap-fab" v-if="canAddChildren(selectedWidget) && selectedWidget.component === 'Buttongrid'" position="right-center" slot="fixed" color="blue" @click="addWidget('Button')">
       <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
       <f7-icon ios="f7:multiply" md="material:close" aurora="f7:multiply" />
     </f7-fab>
@@ -331,14 +331,6 @@ export default {
       if (!this.selectedWidget) return false
       return (Array.isArray(this.selectedWidget.slots?.widgets) && this.selectedWidget.slots.widgets.length)
     },
-    canAddChildren () {
-      if (!this.selectedWidget) return false
-      if (this.selectedWidget.component === 'Buttongrid') {
-        const buttons = this.selectedWidget.config.buttons
-        if (Array.isArray(buttons) && buttons.length) return false
-      }
-      return this.LINKABLE_WIDGET_TYPES.includes(this.selectedWidget.component)
-    },
     canShowValue () {
       if (!this.selectedWidget) return false
       return this.WIDGET_TYPES_SHOWING_VALUE.includes(this.selectedWidget.component)
@@ -391,7 +383,8 @@ export default {
       if (Array.isArray(obj)) {
         return obj.map(this.stripClosed)
       } else if (obj !== null && typeof obj === 'object') {
-        const { closed, ...rest } = obj
+        // also exclude parent to avoid recursive copies
+        const { parent, closed, ...rest } = obj
         const result = {}
         for (const key in rest) {
           result[key] = this.stripClosed(rest[key])
@@ -400,6 +393,13 @@ export default {
       } else {
         return obj
       }
+    },
+    setParents (widget) {
+      // keep parents with widget for drag and drop
+      widget.slots?.widgets?.forEach((w) => {
+        this.$set(w, 'parent', widget)
+        this.setParents(w)
+      })
     },
     load () {
       if (this.loading) return
@@ -418,6 +418,7 @@ export default {
           this.$set(this, 'sitemap', sitemap)
           this.$nextTick(() => {
             this.$set(this, 'lastCleanSitemap', this.stripClosed(this.sitemap))
+            this.setParents(this.sitemap)
             this.ready = true
             this.loading = false
           })
@@ -468,6 +469,7 @@ export default {
             closeTimeout: 2000
           }).open()
           this.$set(this, 'lastCleanSitemap', this.stripClosed(this.sitemap))
+          this.setParents(sitemap)
         }
         this.$f7.emit('sidebarRefresh', null)
         // if (!stay) this.$f7router.back()

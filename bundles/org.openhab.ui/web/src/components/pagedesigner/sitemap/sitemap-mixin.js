@@ -78,7 +78,7 @@ export default {
     }
   },
   methods: {
-    allowedWidgetTypes (parentWidget, excludeWidgetIndex) {
+    allowedWidgetTypes (parentWidget) {
       let types = this.WIDGET_TYPES.filter(w => w.type !== 'Sitemap')
       // Button only allowed inside Buttongrid
       if (parentWidget.component === 'Buttongrid') return types.filter(t => t.type === 'Button')
@@ -88,8 +88,7 @@ export default {
       // Linkable widget types only contain frames or none at all
       if (this.LINKABLE_WIDGET_TYPES.includes(parentWidget.component)) {
         if (parentWidget.slots?.widgets?.length > 0) {
-          const widgetList = parentWidget.slots.widgets.filter((widget, index) => index !== excludeWidgetIndex)
-          if (widgetList.find(w => w.component === 'Frame')) {
+          if (parentWidget.slots.widgets.find(w => w.component === 'Frame')) {
             return types.filter(t => t.type === 'Frame')
           } else {
             return types.filter(t => t.type !== 'Frame')
@@ -97,6 +96,14 @@ export default {
         }
       }
       return types
+    },
+    canAddChildren (widget) {
+      if (!widget) return false
+      if (widget.component === 'Buttongrid') {
+        const buttons = widget.config.buttons
+        if (Array.isArray(buttons) && buttons.length) return false
+      }
+      return this.LINKABLE_WIDGET_TYPES.includes(widget.component)
     },
     widgetTypeDef (component) {
       const componentType = component ?? this.widget.component
