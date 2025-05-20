@@ -54,7 +54,7 @@ export default {
     }
     series.colorBy = 'data'
     series.label = series.label || { }
-    series.label.show = series.label.show || true
+    if (series.label.show === undefined) series.label.show = true
     series.label.position = series.label.position || 'insideLeft'
     series.label.formatter = series.label.formatter || '{@[3]}'
     series.labelLayout = series.labelLayout || { hideOverlap: true }
