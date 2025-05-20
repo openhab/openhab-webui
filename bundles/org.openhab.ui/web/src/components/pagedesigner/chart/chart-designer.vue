@@ -64,6 +64,9 @@
               <f7-list-button color="blue" @click="addSeries('oh-aggregate-series', gridIdx)">
                 Add Aggregate Series
               </f7-list-button>
+              <f7-list-button color="blue" @click="addSeries('oh-state-series', gridIdx)">
+                Add State Series
+              </f7-list-button>
             </f7-list>
           </f7-card>
         </div>
@@ -378,7 +381,7 @@ export default {
       let firstXAxis = this.context.component.slots.xAxis.find(a => a.config.gridIndex === gridIdx)
       let firstYAxis = this.context.component.slots.yAxis.find(a => a.config.gridIndex === gridIdx)
       if (!firstXAxis) {
-        if (type === 'oh-time-series') {
+        if (type === 'oh-time-series' || type === 'oh-state-series') {
           this.addAxis(gridIdx, 'xAxis', 'oh-time-axis')
           firstXAxis = this.context.component.slots.xAxis.find(a => a.config.gridIndex === gridIdx)
           automaticAxisCreated = true
@@ -391,6 +394,11 @@ export default {
         if (type === 'oh-time-series') {
           this.addAxis(gridIdx, 'yAxis', 'oh-value-axis')
           firstYAxis = this.context.component.slots.yAxis.find(a => a.config.gridIndex === gridIdx)
+          automaticAxisCreated = true
+        } else if (type === 'oh-state-series') {
+          this.addAxis(gridIdx, 'yAxis', 'oh-category-axis')
+          firstYAxis = this.context.component.slots.yAxis.find(a => a.config.gridIndex === gridIdx)
+          firstYAxis.config.categoryType = 'values'
           automaticAxisCreated = true
         } else {
           this.$f7.dialog.alert('Please add at least one X axis and one Y axis')
@@ -406,16 +414,27 @@ export default {
         }).open()
       }
 
-      this.context.component.slots.series.push({
+      let component = {
         component: type,
         config: {
           name: 'Series ' + (this.context.component.slots.series.length + 1),
           gridIndex: gridIdx,
           xAxisIndex: this.context.component.slots.xAxis.indexOf(firstXAxis),
-          yAxisIndex: this.context.component.slots.yAxis.indexOf(firstYAxis),
-          type: 'line'
+          yAxisIndex: this.context.component.slots.yAxis.indexOf(firstYAxis)
         }
-      })
+      }
+
+      if (type === 'oh-state-series') {
+        if (firstYAxis.config.categoryType === 'values') {
+          firstYAxis.config.data = firstYAxis.config.data || []
+          firstYAxis.config.data.unshift(component.config.name)
+          component.config.yValue = firstYAxis.config.data.length - 1
+        }
+      } else {
+        component.config.type = 'line'
+      }
+
+      this.context.component.slots.series.push(component)
     },
     configureSeries (ev, series, context) {
       let el = ev.target
