@@ -33,7 +33,7 @@
 
       <f7-col v-else>
         <f7-block-title>
-          {{ orphanLinks.length }} orphan links found
+          {{ orphanLinks.length }} orphan link{{ plural(orphanLinks.length) }} found
         </f7-block-title>
         <f7-list class="col" contacts-list>
           <f7-list-item v-for="orphanLink in orphanLinks" :key="orphanLink.itemChannelLink.channelUID" media-item
@@ -49,7 +49,7 @@
       <f7-col>
         <f7-list>
           <f7-list-button color="red" @click="purgeAllManaged()">
-            Purge all managed links (will purge {{ purgeableLinksCount }} managed links)
+            Purge all managed links (will purge {{ purgeableLinksCount }} managed link{{ plural(purgeableLinksCount) }})
           </f7-list-button>
         </f7-list>
       </f7-col>
@@ -104,6 +104,9 @@ export default {
       }).finally(() => {
         this.load()
       })
+    },
+    plural (count) {
+      return count === 1 ? '' : 's'
     }
   }
 }
