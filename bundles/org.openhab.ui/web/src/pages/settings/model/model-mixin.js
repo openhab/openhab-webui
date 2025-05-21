@@ -1,12 +1,11 @@
 import { compareItems } from '@/components/widgets/widget-order'
-import cloneDeep from 'lodash/cloneDeep'
 
 function compareModelItems (o1, o2) {
   return compareItems(o1.item || o1, o2.item || o2)
 }
 
 /**
- * Mixin for model page and model picker popup.
+ * Mixin for the model page and model picker popup.
  *
  * The component using this mixin has to provide the following methods:
  * - `selectItem(item)`: Called when an item is selected.
