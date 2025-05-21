@@ -38,7 +38,8 @@
         <f7-block class="no-margin no-padding" v-show="controlsTab === 'series'">
           <f7-row>
             <f7-col :width="100" />
-            <f7-col :width="100" v-if="showChart">
+            <!-- use v-show instead of v-if to keep the item-picker props valid while selecting Items and avoid TypeErrors -->
+            <f7-col :width="100" v-show="showChart">
               <div class="card data-table">
                 <div class="card-header no-padding" style="min-height: auto">
                   <f7-list style="width: 100%">
@@ -46,7 +47,7 @@
                   </f7-list>
                   <!-- <div class="data-table-title">Options</div> -->
                 </div>
-                <div class="card-content">
+                <div v-if="showChart" class="card-content">
                   <table>
                     <thead>
                       <tr>
