@@ -64,7 +64,7 @@ export default {
       const seriesOptions = analyzer.seriesOptions[item.name]
 
       if (seriesOptions.discrete) {
-        let series = {
+        return {
           component: 'oh-state-series',
           config: {
             item: item.name,
@@ -74,8 +74,6 @@ export default {
             yValue: seriesOptions.yValue
           }
         }
-
-        return series
       }
 
       const markLine = (seriesOptions.markers === 'avg' || seriesOptions.markers === 'all') ? {
