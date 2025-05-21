@@ -30,6 +30,8 @@ function renderState (params, api) {
     rectShape && {
       type: 'rect',
       shape: rectShape,
+      // api.style has been deprecated, but there is no replacement available,
+      // see https://github.com/apache/echarts/issues/16514
       style: api.style({})
     }
   )
