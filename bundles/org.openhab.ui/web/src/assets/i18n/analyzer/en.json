@@ -9,7 +9,6 @@
   "analyzer.series.table.header.axis": "Axis",
   "analyzer.series.table.header.markers": "Markers",
   "analyzer.series.table.header.aggregation": "Aggregation",
-  "analyzer.series.table.header.silent": "Silent",
   "analyzer.series.table.type.bar": "Bar",
   "analyzer.series.table.type.line": "Line",
   "analyzer.series.table.type.area": "Area",

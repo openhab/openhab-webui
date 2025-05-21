@@ -55,7 +55,6 @@
                         <th class="label-cell" v-t="'analyzer.series.table.header.axis'" />
                         <th class="label-cell" v-t="'analyzer.series.table.header.markers'" />
                         <th v-if="coordSystem !== 'time'" class="label-cell" v-t="'analyzer.series.table.header.aggregation'" />
-                        <th v-if="coordSystem === 'time'" class="label-cell" v-t="'analyzer.series.table.header.silent'" />
                       </tr>
                     </thead>
                     <tbody>
@@ -91,10 +90,6 @@
                           <f7-link @click="chooseAggregation(options)">
                             {{ options.aggregation || 'average' }}
                           </f7-link>
-                        </td>
-                        <td v-if="coordSystem === 'time'" class="label-cell">
-                          <f7-checkbox v-if="options.discrete" @change="(evt) => $set(options, 'silent', evt.target.checked)" />
-                          <span v-else v-t="'analyzer.series.table.na'" />
                         </td>
                       </tr>
                     </tbody>
