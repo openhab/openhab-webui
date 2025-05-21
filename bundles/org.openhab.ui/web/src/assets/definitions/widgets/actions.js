@@ -1,5 +1,6 @@
 // parameter group & parameters definitions for actions
 import { po, pt, pi, pb } from './helpers.js'
+import { aggregationTypeOptions } from './chart/options.js'
 
 export const actionGroup = (label, description, groupPrefix) => {
   groupPrefix = (groupPrefix) ? groupPrefix += '_' : ''
@@ -131,6 +132,10 @@ export const actionParams = (groupName, paramPrefix) => {
     ]).v((value, configuration, configDescription, parameters) => {
       return ['analyzer'].indexOf(configuration[paramPrefix + 'action']) >= 0
     }),
+    po(paramPrefix + 'actionAnalyzerAggregation', 'Initial Aggregation', 'The initial aggregation of the analyzer - ', aggregationTypeOptions)
+      .v((value, configuration, configDescription, parameters) => {
+        return ['analyzer'].indexOf(configuration[paramPrefix + 'action']) >= 0 && configuration[paramPrefix + 'actionAnalyzerCoordSystem'] === 'aggregate'
+      }),
     pt(paramPrefix + 'actionConfirmation', 'Action Confirmation', 'Shows a dialog or sheet to ask for confirmation before the action is executed. Can either be a text to show in the dialog or a JSON object <code>{ type: "dialog", title: "Confirm", text: "Are you sure?" }</code> or <code>{ type: "sheet", text: "Confirm", color: "green" }</code>').a(),
     pt(paramPrefix + 'actionFeedback', 'Action Feedback', 'Shows a toast popup when the action has been executed. Can either be a text to show or a JSON object including some of the <a class="external text-color-blue" target="_blank" href="https://framework7.io/docs/toast.html#toast-parameters">supported parameters</a>').a()
       .v((value, configuration, configDescription, parameters) => {

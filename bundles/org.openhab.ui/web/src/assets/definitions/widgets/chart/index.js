@@ -3,6 +3,7 @@
 
 import { actionGroup, actionParams } from '../actions.js'
 import { pg, pb, pt, pn, pi } from '../helpers.js'
+import { aggregationTypeOptions, dimensionTypeOptions } from './options.js'
 
 const positionGroup = pg('position', 'Position', 'Each parameter accepts pixel values or percentages. Additionally, top accepts "top", "middle" and "bottom" to align the component vertically, and left accepts "left", "center" and "right" to align the component horizontally')
 
@@ -123,25 +124,7 @@ const seriesTypeParameter = (...types) => {
 }
 
 const aggregationFunctionParameter = pt('aggregationFunction', 'Aggregation Function', 'How to reduce the data points in a same aggregation cluster to a single value. If not specified, the average function will be used.')
-  .o([
-    { value: 'average', label: 'Average' },
-    { value: 'sum', label: 'Sum' },
-    { value: 'min', label: 'Minimum' },
-    { value: 'max', label: 'Maximum' },
-    { value: 'first', label: 'First (earliest)' },
-    { value: 'last', label: 'Last (latest)' },
-    { value: 'diff_first', label: 'Difference of firsts' },
-    { value: 'diff_last', label: 'Difference of lasts' }
-  ], true)
-
-const dimensionTypesOptions = [
-  { value: 'minute', label: 'Minute of Hour' },
-  { value: 'hour', label: 'Hour of Day' },
-  { value: 'isoWeekday', label: 'Day of Week (starting on Monday)' },
-  { value: 'weekday', label: 'Day of Week (starting on Sunday)' },
-  { value: 'date', label: 'Day of Month' },
-  { value: 'month', label: 'Month of Year' }
-]
+  .o(aggregationTypeOptions, true)
 
 export default {
   'oh-chart-grid': {
@@ -357,7 +340,7 @@ export default {
           type: 'TEXT',
           description: 'The largest data point cluster size.<br />It should be consistent with the chart type, and match the type of a category axis where this series will appear.',
           limitToOptions: true,
-          options: dimensionTypesOptions
+          options: dimensionTypeOptions
         },
         {
           name: 'dimension2',
@@ -365,7 +348,7 @@ export default {
           type: 'TEXT',
           description: 'The smallest data point cluster size.<br />Set only when you have 2 category axes (for instance day of the week and hour of the day), and make sure to match the type of the 2nd axis.',
           limitToOptions: true,
-          options: dimensionTypesOptions
+          options: dimensionTypeOptions
         },
         {
           name: 'transpose',

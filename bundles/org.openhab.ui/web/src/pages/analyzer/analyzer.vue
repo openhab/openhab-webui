@@ -330,6 +330,11 @@ export default {
       this.updateItems(this.$f7route.query.items.split(',')).then(() => {
         if (this.$f7route.query.chartType) this.changeChartType(this.$f7route.query.chartType)
         if (this.$f7route.query.coordSystem) this.changeCoordSystem(this.$f7route.query.coordSystem)
+        if (this.$f7route.query.aggregation) {
+          for (const options in this.seriesOptions) {
+            this.$set(this.seriesOptions[options], 'aggregation', this.$f7route.query.aggregation)
+          }
+        }
       })
     },
     updateItems (itemNames) {
