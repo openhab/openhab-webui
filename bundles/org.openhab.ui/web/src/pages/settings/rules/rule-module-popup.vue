@@ -15,7 +15,7 @@
           Edit {{ SectionLabels[currentSection][1] }}
         </f7-nav-title>
         <f7-nav-right>
-          <f7-link v-if="!readOnly && currentRuleModuleType && dirty && currentRuleModuleType.uid !== 'script.ScriptAction'" @click="updateModuleConfig">
+          <f7-link v-if="!readOnly && currentRuleModuleType && dirty" @click="updateModuleConfig">
             {{ $t('dialogs.save') }}
           </f7-link>
           <f7-link v-else @click="close">
@@ -50,8 +50,8 @@
             </ul>
           </f7-list>
           <trigger-module-wizard v-else-if="!advancedTypePicker && currentSection === 'triggers'" :current-module="ruleModule" :current-module-type="currentRuleModuleType" @typeSelect="setModuleType" @showAdvanced="advancedTypePicker = true" />
-          <condition-module-wizard v-else-if="!advancedTypePicker && currentSection === 'conditions'" :current-module="ruleModule" :current-module-type="currentRuleModuleType" @typeSelect="setModuleType" @showAdvanced="advancedTypePicker = true" @startScript="startScripting" />
-          <action-module-wizard v-else-if="!advancedTypePicker && currentSection === 'actions'" :current-module="ruleModule" :current-module-type="currentRuleModuleType" @typeSelect="setModuleType" @showAdvanced="advancedTypePicker = true" @startScript="startScripting" />
+          <condition-module-wizard v-else-if="!advancedTypePicker && currentSection === 'conditions'" :current-module="ruleModule" :current-module-type="currentRuleModuleType" :module-types="moduleTypes['conditions']" @typeSelect="setModuleType" @showAdvanced="advancedTypePicker = true" @startScript="startScripting" />
+          <action-module-wizard v-else-if="!advancedTypePicker && currentSection === 'actions'" :current-module="ruleModule" :current-module-type="currentRuleModuleType" :module-types="moduleTypes['actions']" @typeSelect="setModuleType" @showAdvanced="advancedTypePicker = true" @startScript="startScripting" />
         </f7-col>
 
         <!-- module configuration -->
