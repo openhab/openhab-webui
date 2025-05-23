@@ -40,7 +40,9 @@ export default {
     switchTab (tab, onSuccessCallback) {
       if (this.currentTab !== tab) {
         this.currentTab = tab
-        onSuccessCallback()
+        if (onSuccessCallback) {
+          onSuccessCallback()
+        }
       }
     }
   }
