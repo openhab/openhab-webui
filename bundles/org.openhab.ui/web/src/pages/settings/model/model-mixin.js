@@ -24,6 +24,7 @@ export default {
       rootLocations: [],
       equipment: [],
       rootEquipment: [],
+      points: [],
       rootPoints: [],
       rootGroups: [],
       rootItems: [],
