@@ -5,11 +5,11 @@
                     :selected="selected && selected.item.name === model.item.name"
                     :opened="model.opened" :toggle="canHaveChildren"
                     @treeview:open="model.opened = true" @treeview:close="model.opened = false" @click="select">
-    <draggable :disabled="!canDragDrop && !dropAllowed(model)" :list="children" group="model-treeview" animation="150" fallbackOnBody="true" fallbackThreshold="5"
-               scrollSensitivity="200" delay="400" delayOnTouchOnly="true" invertSwap="true"
+    <draggable :disabled="!canDragDrop" :list="children" :group="{name: 'model-treeview', put: dropAllowed(model)}" animation="150" forceFallback="true" fallbackOnBody="true" fallbackThreshold="5"
+               scrollSensitivity="200" delay="400" delayOnTouchOnly="true" touchStartThreshold="10" invertSwap="true" sort="false"
                @start="onDragStart" @change="onDragChange" @end="onDragEnd" :move="onDragMove">
-      <model-treeview-item v-for="(node, index) in children"
-                           :key="node.item.name + '_' + index"
+      <model-treeview-item v-for="node in children"
+                           :key="node.item.name"
                            :model="node"
                            :parentNode="model"
                            @selected="(event) => $emit('selected', event)"
