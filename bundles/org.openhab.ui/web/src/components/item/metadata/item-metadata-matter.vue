@@ -39,29 +39,21 @@
             {{ deviceType }}
           </f7-block-title>
           <f7-list>
-            <f7-list-item v-if="deviceTypes[deviceType]?.attributes?.length > 0 &&
-                            (deviceTypes[deviceType]?.attributes?.length === 0 || deviceTypes[deviceType]?.supportsSimpleMapping === true)"
-                          checkbox
-                          title="Map default attribute to group"
-                          :checked="useSimpleMapping"
-                          @change="useSimpleMapping = $event.target.checked" />
-            <template v-if="!useSimpleMapping">
-              <f7-list-item v-for="attribute in deviceTypes[deviceType]?.attributes"
-                            :key="attribute.name"
-                            smart-select
-                            :title="attribute.mandatory ? attribute.label+'*' : attribute.label"
-                            :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: true }">
-                <select @change="updateLinkedItem(deviceType, attribute.name, $event.target.value)">
-                  <option value="" />
-                  <option v-for="mbr in item.members"
-                          :value="mbr.name"
-                          :key="mbr.id"
-                          :selected="isLinked(deviceType, attribute.name, mbr)">
-                    {{ mbr.label }} ({{ mbr.name }})
-                  </option>
-                </select>
-              </f7-list-item>
-            </template>
+            <f7-list-item v-for="attribute in deviceTypes[deviceType]?.attributes"
+                          :key="attribute.name"
+                          smart-select
+                          :title="attribute.mandatory ? attribute.label+'*' : attribute.label"
+                          :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: true }">
+              <select @change="updateLinkedItem(deviceType, attribute.name, $event.target.value)">
+                <option value="" />
+                <option v-for="mbr in item.members"
+                        :value="mbr.name"
+                        :key="mbr.id"
+                        :selected="isLinked(deviceType, attribute.name, mbr)">
+                  {{ mbr.label }} ({{ mbr.name }})
+                </option>
+              </select>
+            </f7-list-item>
           </f7-list>
           <!-- Option mapping UI: separate from item mapping list -->
           <div v-for="attribute in deviceTypes[deviceType]?.attributes"
@@ -124,8 +116,7 @@ export default {
       classSelectKey: this.$f7.utils.id(),
       itemType: this.item.groupType || this.item.type,
       dirtyItem: new Set(),
-      ready: false,
-      useSimpleMapping: false
+      ready: false
     }
   },
   created () {
@@ -232,7 +223,6 @@ export default {
       const value = this.$refs.classes.f7SmartSelect.getValue()
       this.metadata.value = Array.isArray(value) ? value.join(',') : value
       this.$set(this.metadata, 'config', {})
-      this.useSimpleMapping = false
     },
     updateLinkedItem (deviceType, attribute, itemName) {
       if (!itemName) {
@@ -257,12 +247,7 @@ export default {
         if (!groupMbr.metadata.matter) {
           this.$set(groupMbr.metadata, 'matter', { value: '', config: {} })
         }
-        // If using simple mapping, just set the device type
-        if (this.useSimpleMapping && this.deviceTypes[deviceType]?.supportsSimpleMapping) {
-          groupMbr.metadata.matter.value = deviceType
-        } else {
-          groupMbr.metadata.matter.value = attribute
-        }
+        groupMbr.metadata.matter.value = attribute
         this.dirtyItem.add(groupMbr)
       }
     },
