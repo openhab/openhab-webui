@@ -48,16 +48,17 @@ dayjs.extend(LocalizedFormat)
 
 import { use, registerLocale } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
-import { LineChart, BarChart, GaugeChart, HeatmapChart, PieChart, ScatterChart } from 'echarts/charts'
+import { LineChart, BarChart, GaugeChart, HeatmapChart, PieChart, ScatterChart, CustomChart } from 'echarts/charts'
+import { LabelLayout } from 'echarts/features'
 import {
   TitleComponent, LegendComponent, LegendScrollComponent, GridComponent, SingleAxisComponent, ToolboxComponent, TooltipComponent,
   DataZoomComponent, MarkLineComponent, MarkPointComponent, MarkAreaComponent, VisualMapComponent, CalendarComponent
 } from 'echarts/components'
 import VChart from 'vue-echarts'
 
-use([CanvasRenderer, LineChart, BarChart, GaugeChart, HeatmapChart, PieChart, ScatterChart, TitleComponent,
+use([CanvasRenderer, LineChart, BarChart, GaugeChart, HeatmapChart, PieChart, ScatterChart, CustomChart, TitleComponent,
   LegendComponent, LegendScrollComponent, GridComponent, SingleAxisComponent, ToolboxComponent, TooltipComponent, DataZoomComponent,
-  MarkLineComponent, MarkPointComponent, MarkAreaComponent, VisualMapComponent, CalendarComponent])
+  MarkLineComponent, MarkPointComponent, MarkAreaComponent, VisualMapComponent, CalendarComponent, LabelLayout])
 
 const ECHARTS_LOCALE = i18n.locale.split('-')[0].toUpperCase()
 

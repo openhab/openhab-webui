@@ -112,15 +112,30 @@
     </f7-popover>
 
     <!-- Log Details Popup -->
-    <f7-popup id="logdetails-popup" close-on-escape close-by-backdrop-click>
+    <f7-popup id="logdetails-popup" ref="logDetailsPopup" close-on-escape close-by-backdrop-click @popup:open="popupOpened($refs.logDetailsPopup, $refs.logDetailsNavbar)" @popup:closed="cleanupMovablePopup">
       <f7-page>
-        <f7-navbar title="Log Details">
+        <f7-navbar title="Log Details" ref="logDetailsNavbar">
           <f7-nav-right>
             <f7-link class="popup-close">
               Close
             </f7-link>
           </f7-nav-right>
         </f7-navbar>
+        <f7-toolbar bottom class="toolbar-details">
+          <div class="display-flex justify-content-center" style="width: 100%">
+            <f7-link class="display-flex flex-direction-row margin-right" @click="selectedId = selectedId > 0 ? selectedId - 1 : 0">
+              <f7-icon f7="backward_fill" />
+              &nbsp; Previous
+            </f7-link>
+            <f7-link class="display-flex flex-direction-row margin-right" @click="selectedId = selectedId < tableData.length - 1 ? selectedId + 1 : tableData.length - 1">
+              Next &nbsp;
+              <f7-icon f7="forward_fill" />
+            </f7-link>
+            <f7-link class="display-flex flex-direction-row" @click="selectedId = tableData.length - 1">
+              <f7-icon f7="forward_end_fill" />
+            </f7-link>
+          </div>
+        </f7-toolbar>
 
         <f7-list class="col wide">
           <f7-list-item header="Time" :title="selectedLog.time + selectedLog.milliseconds" />
@@ -207,6 +222,10 @@
         <f7-icon v-else f7="exclamationmark_triangle" />
       </f7-link>
       <f7-link icon-f7="pencil" tooltip="Configure highlights" data-popup=".loghighlights-popup" class="popup-open" />
+      <f7-segmented>
+        <f7-button outline small :active="!textMode" icon-f7="table" :icon-size="$theme.aurora ? 20 : 22" class="no-ripple" @click="setTextMode(false)" tooltip="Show logs in a table" />
+        <f7-button outline small :active="textMode" icon-f7="text_justifyleft" :icon-size="$theme.aurora ? 20 : 22" class="no-ripple" @click="setTextMode(true)" tooltip="Show logs as plain text" />
+      </f7-segmented>
       <f7-link icon-f7="gear" tooltip="Configure logging" data-popup=".logsettings-popup" class="popup-open" />
     </f7-toolbar>
 
@@ -315,6 +334,38 @@
   tr.trace
     color rgb(112, 112, 112)
 
+  td.text
+    font-family monospace
+    font-size 0.9em
+    padding-left 4em
+    line-height 1.2em
+    color grey
+    span
+      margin-right 5px
+    .time
+      margin-left -3.2em
+    .level
+      width 3em
+      display inline-block
+      margin-right 0
+    .logger
+      width 20em
+      display inline-block
+      vertical-align middle
+      margin-right 0
+    .msg
+      font-weight bold
+    .error
+      color red
+    .warn
+      color orange
+    .info
+      color green
+    .debug
+      color teal
+    .trace
+      color teal
+
   .disabled-link
     pointer-events none
     opacity 0.5
@@ -383,7 +434,10 @@
 </style>
 
 <script lang="ts">
+import MovablePopupMixin from '@/pages/settings/movable-popup-mixin'
+
 export default {
+  mixins: [MovablePopupMixin],
   data () {
     return {
       stateConnected: false,
@@ -401,6 +455,7 @@ export default {
       showErrors: false,
       loadingLoggers: true,
       loggerPackages: [],
+      textMode: localStorage.getItem('openhab.ui:logviewer.textMode') === 'true',
       tableData: [],
       batchUpdatePending: false,
       batchLogs: [],
@@ -411,7 +466,7 @@ export default {
       currentHighlightColorItemIndex: null,
       currentHighlightColor: '#FF5252',
       lastSequence: 0,
-      selectedLog: {},
+      selectedId: null,
       colors: [
         '#FF0000', // Red
         '#00FF00', // Green
@@ -440,6 +495,9 @@ export default {
       if (this.tableData.length >= this.maxEntries) return 'red'
       if (this.filterCount < this.tableData.length) return 'orange'
       return 'green'
+    },
+    selectedLog () {
+      return this.tableData.find(entry => entry.id === this.selectedId) || {}
     }
   },
   methods: {
@@ -478,6 +536,11 @@ export default {
     },
     onPageBeforeOut () {
       this.loggingStop()
+    },
+    popupOpened (ref, navbar) {
+      this.$nextTick(() => {
+        this.initializeMovablePopup(ref, navbar)
+      })
     },
     updateLogLevel (logger, value) {
       logger.level = value
@@ -528,7 +591,6 @@ export default {
     },
     renderEntry (entity) {
       let tr = document.createElement('tr')
-      tr.className = 'table-rows ' + entity.level.toLowerCase()
       let icon = 'question_diamond'
       switch (entity.level) {
         case 'TRACE':
@@ -547,17 +609,26 @@ export default {
           icon = 'exclamationmark_octagon_fill'
           break
       }
-      tr.innerHTML = '<td class="sticky"><i class="icon f7-icons" style="font-size: 18px;">' + icon + `</i> ${entity.time}<span class="milliseconds">${entity.milliseconds}</span></td>` +
-        `<td class="level">${entity.level}</td>` +
-        `<td class="logger"><span class="logger">${entity.loggerName}</span></td>` +
-        `<td class="nowrap">${this.highlightText(entity.message)}</td>`
+      const levelLowerCased = entity.level.toLowerCase()
+      if (this.textMode) {
+        tr.innerHTML = `<td class="text"><span class="time">${entity.time}${entity.milliseconds}</span>` +
+        `[<span class="level ${levelLowerCased}">${entity.level}</span>] ` +
+        `[<span class="logger" title="${entity.loggerName}">${entity.loggerName}</span>] - ` +
+        `<span class="msg ${levelLowerCased}">${this.highlightText(entity.message)}</span></td>`
+      } else {
+        tr.className = 'table-rows ' + levelLowerCased
+        tr.innerHTML = '<td class="sticky"><i class="icon f7-icons" style="font-size: 18px;">' + icon + `</i> ${entity.time}<span class="milliseconds">${entity.milliseconds}</span></td>` +
+          `<td class="level">${entity.level}</td>` +
+          `<td class="logger"><span class="logger" title="${entity.loggerName}">${entity.loggerName}</span></td>` +
+          `<td class="nowrap">${this.highlightText(entity.message)}</td>`
+      }
       tr.addEventListener('click', () => {
         this.onRowClick(entity.id)
       })
       return tr
     },
     onRowClick (entityId) {
-      this.selectedLog = this.filteredTableData[entityId]
+      this.selectedId = entityId
       this.$f7.popup.open('#logdetails-popup')
     },
     addLogEntry (logEntry) {
@@ -807,6 +878,21 @@ export default {
       return [headers, ...rows].join('\n')
     },
     copyTableToClipboard () {
+      if (this.textMode) {
+        const logs = this.filteredTableData.map((log) => {
+          return `${log.time}${log.milliseconds} [${log.level}] [${log.loggerName}] - ${log.message}`
+        }).join('\n')
+        // v-clipboard works without https, but it can only copy plain text
+        if (this.$clipboard(logs)) {
+          this.$f7.toast.create({
+            text: 'Table copied as text to clipboard',
+            destroyOnClose: true,
+            closeTimeout: 2000
+          }).open()
+        }
+        return
+      }
+
       const table = this.$refs.dataTable
       if (!table) {
         return
@@ -825,17 +911,24 @@ export default {
       })
 
       // Copy to clipboard
+      // Uses the Clipboard API to write the ClipboardItem, as v-clipboard does not support HTML. This might not work in insecure contexts.
       navigator.clipboard
         .write([clipboardItem])
         .then(() => {
           this.$f7.toast.create({
             text: 'Table copied as HTML to clipboard',
+            destroyOnClose: true,
             closeTimeout: 2000
           }).open()
         })
         .catch((err) => {
           console.error('Failed to copy table: ', err)
         })
+    },
+    setTextMode (textModeEnabled) {
+      this.textMode = textModeEnabled
+      localStorage.setItem('openhab.ui:logviewer.textMode', this.textMode)
+      this.updateFilter()
     },
     prefilterHighlights () {
       this.activeHighlights.length = 0

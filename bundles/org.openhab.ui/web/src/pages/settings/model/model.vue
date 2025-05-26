@@ -35,7 +35,7 @@
       </div>
       <f7-link class="right details-link padding-right" ref="detailsLink" @click="detailsOpened = true" icon-f7="chevron_up" />
     </f7-toolbar>
-    <f7-toolbar v-else bottom class="toolbar-details" style="height: calc(50px + var(--f7-safe-area-bottom))">
+    <f7-toolbar v-else bottom class="toolbar-details">
       <f7-link :disabled="selectedItem != null" class="left" @click="selectedItem = null">
         Clear
       </f7-link>
@@ -71,13 +71,9 @@
           </f7-block>
 
           <f7-block v-show="!empty" strong class="semantic-tree" no-gap @click.native="clearSelection">
-            <!-- <empty-state-placeholder v-if="empty" icon="list_bullet_indent" title="model.title" text="model.text" /> -->
-            <f7-treeview>
-              <model-treeview-item v-for="node in [rootLocations, rootEquipment, rootPoints, rootGroups, rootItems].flat()"
-                                   :key="node.item.name" :model="node"
-                                   :includeItemName="includeItemName" :includeItemTags="includeItemTags"
-                                   @selected="selectItem" :selected="selectedItem" />
-            </f7-treeview>
+            <model-treeview :rootNodes="[rootLocations, rootEquipment, rootPoints, rootGroups, rootItems].flat()" :items="items"
+                            :includeItemName="includeItemName" :includeItemTags="includeItemTags" :canDragDrop="true"
+                            @selected="selectItem" :selected="selectedItem" @reload="load" />
           </f7-block>
         </f7-col>
         <f7-col width="100" medium="50" class="details-pane">
@@ -172,20 +168,21 @@
 
 <style lang="stylus">
 .semantic-tree-wrapper
+  user-select: none
   padding 0
-  margin-bottom 0
+  .row
+    height 100%
+    .col-100
+      height 100%
+      overflow auto
+      .semantic-tree
+        min-height 100%
+        margin 0
+        height auto
 .semantic-tree
-  padding 0
+  user-select: none
+  margin 0 !important
   border-right 1px solid var(--f7-block-strong-border-color)
-  .treeview
-    --f7-treeview-item-height 40px
-    .treeview-item-label
-      font-size 10pt
-      white-space nowrap
-      overflow-x hidden
-    .semantic-class
-      font-size 8pt
-      color var(--f7-list-item-footer-text-color)
 .model-details-sheet
   .toolbar
     --f7-theme-color var(--f7-color-blue)
@@ -196,16 +193,8 @@
 
 @media (min-width: 768px)
   .semantic-tree-wrapper
-    height calc(100% - var(--f7-navbar-height))
+    height calc(100% - var(--f7-toolbar-height))
     .row
-      height 100%
-      .col-100
-        height 100%
-        overflow auto
-        .semantic-tree
-          min-height 100%
-          margin 0
-          height auto
       .details-pane
         padding-top 0
         .block
@@ -217,12 +206,22 @@
     visibility hidden !important
 
 @media (max-width: 767px)
+  .semantic-tree-wrapper.block:first-child
+    margin-top 5px
+  .semantic-tree-wrapper
+    height calc(100% - 20px)
+    margin-bottom 5px
   .details-pane
     display none
   .semantic-tree-wrapper.sheet-opened
-    margin-bottom var(--f7-sheet-height)
-  .details-sheet
-    height calc(1.4*var(--f7-sheet-height))
+    height calc(100% - 5px - var(--f7-sheet-height) + var(--f7-page-toolbar-bottom-offset, 0px) + var(--f7-page-content-extra-padding-bottom, 0px))
+    margin-bottom calc(var(--f7-sheet-height) - var(--f7-page-toolbar-bottom-offset, 0px) - var(--f7-page-content-extra-padding-bottom, 0px))
+  .toolbar-details.toolbar.toolbar-bottom
+    height  calc( 50px + var(--f7-safe-area-bottom))
+  .model-details-sheet.sheet-modal.sheet-modal-bottom .block
+    margin-top 0px
+    padding-left 0px
+    padding-right 0px
 
 .expand-button
   margin-right 8px
@@ -234,6 +233,7 @@
 
 <script>
 import ModelDetailsPane from '@/components/model/details-pane.vue'
+import ModelTreeview from '@/components/model/model-treeview.vue'
 import AddFromThing from './add-from-thing.vue'
 import AddFromTemplate from './add-from-template.vue'
 
@@ -241,7 +241,6 @@ import ItemStatePreview from '@/components/item/item-state-preview.vue'
 import ItemDetails from '@/components/model/item-details.vue'
 import MetadataMenu from '@/components/item/metadata/item-metadata-menu.vue'
 import LinkDetails from '@/components/model/link-details.vue'
-import ModelTreeviewItem from '@/components/model/treeview-item.vue'
 
 import ModelMixin from '@/pages/settings/model/model-mixin'
 
@@ -250,11 +249,11 @@ export default {
   components: {
     'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue'),
     ModelDetailsPane,
+    ModelTreeview,
     ItemStatePreview,
     ItemDetails,
     MetadataMenu,
-    LinkDetails,
-    ModelTreeviewItem
+    LinkDetails
   },
   data () {
     if (!this.$f7.data.model) this.$f7.data.model = {}
@@ -336,7 +335,7 @@ export default {
             this.$refs.searchbar.f7Searchbar.$inputEl[0].focus()
           }
           this.$refs.searchbar?.f7Searchbar.search(this.$f7.data.lastModelSearchQuery || '')
-          this.applyExpandedOption()
+          this.restoreExpanded()
         })
         if (!this.eventSource) this.startEventSource()
       })
@@ -381,6 +380,7 @@ export default {
     clearSelection (ev) {
       if (ev.target && ev.currentTarget && ev.target === ev.currentTarget) {
         this.selectedItem = null
+        this.detailsOpened = false
       }
     },
     toggleNonSemantic () {

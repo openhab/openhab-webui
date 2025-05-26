@@ -13,6 +13,7 @@ import OhDataSeries from './series/oh-data-series'
 import OhTimeSeries from './series/oh-time-series'
 import OhAggregateSeries from './series/oh-aggregate-series'
 import OhCalendarSeries from './series/oh-calendar-series'
+import OhStateSeries from './series/oh-state-series'
 
 // Other components
 import OhChartTooltip from './misc/oh-chart-tooltip'
@@ -35,7 +36,8 @@ const seriesComponents = {
   'oh-data-series': OhDataSeries,
   'oh-time-series': OhTimeSeries,
   'oh-aggregate-series': OhAggregateSeries,
-  'oh-calendar-series': OhCalendarSeries
+  'oh-calendar-series': OhCalendarSeries,
+  'oh-state-series': OhStateSeries
 }
 
 export default {

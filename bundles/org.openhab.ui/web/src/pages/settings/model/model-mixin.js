@@ -5,7 +5,7 @@ function compareModelItems (o1, o2) {
 }
 
 /**
- * Mixin for model page and model picker popup.
+ * Mixin for the model page and model picker popup.
  *
  * The component using this mixin has to provide the following methods:
  * - `selectItem(item)`: Called when an item is selected.
@@ -22,11 +22,14 @@ export default {
       links: [],
       locations: [],
       rootLocations: [],
-      equipment: {},
+      equipment: [],
       rootEquipment: [],
+      points: [],
       rootPoints: [],
       rootGroups: [],
       rootItems: [],
+
+      expandedTreeviewItems: [],
 
       previousSelection: null,
       selectedItem: null
@@ -39,8 +42,10 @@ export default {
      * @returns {Promise<void>}
      */
     loadModel () {
-      if (this.loading) return
+      if (this.loading) return Promise.resolve()
       this.loading = true
+
+      this.saveExpanded()
 
       const items = this.$oh.api.get('/rest/items?staticDataOnly=true&metadata=.+')
       const links = this.$oh.api.get('/rest/links')
@@ -125,7 +130,7 @@ export default {
 
       if (this.includeNonSemantic) {
         parent.children.groups = this.items
-          .filter((i) => i.type === 'Group' && (!i.metadata || (i.metadata && !i.metadata.semantics)) && i.groupNames.indexOf(parent.item.name) >= 0)
+          .filter((i) => i.type === 'Group' && !(parent.item.metadata && parent.item.metadata.semantics) && i.groupNames.indexOf(parent.item.name) >= 0)
           .map(this.modelItem).sort(compareModelItems)
         parent.children.groups.forEach(this.getChildren)
         if (parent.item.metadata && parent.item.metadata.semantics) {
@@ -152,6 +157,20 @@ export default {
             item.classList.add('treeview-item-opened')
           } else {
             item.classList.remove('treeview-item-opened')
+          }
+        }
+      })
+    },
+    saveExpanded () {
+      this.expandedTreeviewItems = [...document.querySelectorAll('.treeview-item-opened')]
+    },
+    restoreExpanded () {
+      const treeviewItems = document.querySelectorAll('.treeview-item')
+
+      treeviewItems.forEach(item => {
+        if (item.classList.contains('treeview-item')) {
+          if (this.expanded || this.expandedTreeviewItems.includes(item)) {
+            item.classList.add('treeview-item-opened')
           }
         }
       })

@@ -285,10 +285,11 @@ export const actionsMixin = {
             let actionAnalyzerItems = actionConfig[prefix + 'actionAnalyzerItems']
             const actionAnalyzerChartType = actionConfig[prefix + 'actionAnalyzerChartType']
             const actionAnalyzerCoordSystem = actionConfig[prefix + 'actionAnalyzerCoordSystem']
+            const actionAnalyzerAggregation = actionConfig[prefix + 'actionAnalyzerAggregation']
             if (Array.isArray(actionAnalyzerItems)) {
               actionAnalyzerItems = actionAnalyzerItems.join(',')
             }
-            this.$f7.views.main.router.navigate(`/analyzer/?items=${actionAnalyzerItems || ''}&chartType=${actionAnalyzerChartType || ''}&coordSystem=${actionAnalyzerCoordSystem || ''}`)
+            this.$f7.views.main.router.navigate(`/analyzer/?items=${actionAnalyzerItems || ''}&chartType=${actionAnalyzerChartType || ''}&coordSystem=${actionAnalyzerCoordSystem || ''}&aggregation=${actionAnalyzerAggregation || ''}`)
             console.log('Opening the analyzer')
             break
           case 'url':

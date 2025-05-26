@@ -22,7 +22,7 @@ export default {
     let axis = chartWidget.evaluateExpression(ComponentId.get(component), component.config)
     axis.type = 'category'
 
-    axis.data = []
+    axis.data = axis.data || []
     switch (config.categoryType) {
       case 'hour':
         axis.name = 'min'

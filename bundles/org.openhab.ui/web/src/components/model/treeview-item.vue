@@ -3,17 +3,23 @@
                     :icon-ios="icon('ios')" :icon-aurora="icon('aurora')" :icon-md="icon('md')"
                     :textColor="iconColor" :color="(model.item.created !== false) ? 'blue' :'orange'"
                     :selected="selected && selected.item.name === model.item.name"
-                    :opened="model.opened"
-                    @click="select">
-    <model-treeview-item v-for="node in [model.children.locations,
-                                         model.children.equipment, model.children.points,
-                                         model.children.groups, model.children.items].flat()"
-                         :key="node.item.name"
-                         :model="node"
-                         @selected="(event) => $emit('selected', event)"
-                         :selected="selected"
-                         :includeItemName="includeItemName" :includeItemTags="includeItemTags"
-                         @checked="(item, check) => $emit('checked', item, check)" />
+                    :opened="model.opened" :toggle="canHaveChildren"
+                    @treeview:open="model.opened = true" @treeview:close="model.opened = false" @click="select">
+    <draggable :disabled="!canDragDrop" :list="children" :group="{name: 'model-treeview', put: dropAllowed(model)}" animation="150" forceFallback="true" fallbackOnBody="true" fallbackThreshold="5"
+               scrollSensitivity="200" delay="400" delayOnTouchOnly="true" touchStartThreshold="10" invertSwap="true" sort="false"
+               @start="onDragStart" @change="onDragChange" @end="onDragEnd" :move="onDragMove">
+      <model-treeview-item v-for="node in children"
+                           :key="node.item.name"
+                           :model="node"
+                           :parentNode="model"
+                           @selected="(event) => $emit('selected', event)"
+                           :selected="selected"
+                           :includeItemName="includeItemName" :includeItemTags="includeItemTags"
+                           :canDragDrop="canDragDrop"
+                           :moveState="moveState"
+                           @checked="(item, check) => $emit('checked', item, check)"
+                           @reload="$emit('reload')" />
+    </draggable>
     <div slot="label" class="semantic-class">
       {{ className() }}
       <template v-if="includeItemTags">
@@ -34,31 +40,25 @@
 
 <script>
 import ItemMixin from '@/components/item/item-mixin'
+import ModelDragDropMixin from '@/pages/settings/model/model-dragdrop-mixin'
+import Draggable from 'vuedraggable'
 
 export default {
   name: 'model-treeview-item',
-  mixins: [ItemMixin],
-  props: ['model', 'selected', 'includeItemName', 'includeItemTags'],
+  mixins: [ItemMixin, ModelDragDropMixin],
+  props: ['model', 'parentNode', 'selected', 'includeItemName', 'includeItemTags', 'canDragDrop'],
+  emits: ['reload'],
   components: {
+    Draggable,
     ModelTreeviewItem: 'model-treeview-item'
-  },
-  computed: {
-    children () {
-      return [this.model.children.locations,
-        this.model.children.equipment, this.model.children.points,
-        this.model.children.groups, this.model.children.items].flat()
-    },
-    iconColor () {
-      return (this.model.item.metadata && this.model.item.metadata.semantics) ? '' : 'gray'
-    }
   },
   methods: {
     icon (theme) {
-      if (this.model.class.indexOf('Location') === 0) {
+      if (this.model.class?.indexOf('Location') === 0) {
         return (theme === 'md') ? 'material:place' : 'f7:placemark'
-      } else if (this.model.class.indexOf('Equipment') === 0) {
+      } else if (this.model.class?.indexOf('Equipment') === 0) {
         return (theme === 'md') ? 'material:payments' : 'f7:cube_box'
-      } else if (this.model.class.indexOf('Point') === 0) {
+      } else if (this.model.class?.indexOf('Point') === 0) {
         return (theme === 'md') ? 'material:flash_on' : 'f7:bolt_fill'
       } else if (this.model.item.type === 'Group') {
         return (theme === 'md') ? 'material:folder' : 'f7:folder'
@@ -76,6 +76,7 @@ export default {
     },
     select (event) {
       let self = this
+      if (self.dragDropActive) return // avoid opening item properties during drag drop
       let $ = self.$$
       if ($(event.target).is('.treeview-toggle')) return
       if ($(event.target).is('.checkbox') || $(event.target).is('.icon-checkbox') || $(event.target).is('input')) return

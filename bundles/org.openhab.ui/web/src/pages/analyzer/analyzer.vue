@@ -92,6 +92,7 @@
                             {{ options.aggregation || 'average' }}
                           </f7-link>
                         </td>
+                        <!-- the silent option makes a series non-clickable/ignores mouse-events -->
                         <td v-if="coordSystem === 'time'" class="label-cell">
                           <f7-checkbox v-if="options.discrete" @change="(evt) => $set(options, 'silent', evt.target.checked)" />
                           <span v-else v-t="'analyzer.series.table.na'" />
@@ -330,6 +331,11 @@ export default {
       this.updateItems(this.$f7route.query.items.split(',')).then(() => {
         if (this.$f7route.query.chartType) this.changeChartType(this.$f7route.query.chartType)
         if (this.$f7route.query.coordSystem) this.changeCoordSystem(this.$f7route.query.coordSystem)
+        if (this.$f7route.query.aggregation) {
+          for (const options in this.seriesOptions) {
+            this.$set(this.seriesOptions[options], 'aggregation', this.$f7route.query.aggregation)
+          }
+        }
       })
     },
     updateItems (itemNames) {

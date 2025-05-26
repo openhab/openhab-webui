@@ -1,16 +1,16 @@
 ---
-title: oh-cell - Cell
-component: oh-cell
-label: Cell
-description: A regular or expandable cell
-source: https://github.com/openhab/openhab-webui/edit/main/bundles/org.openhab.ui/doc/components/oh-cell.md
+title: oh-state-series - State Series
+component: oh-state-series
+label: State Series
+description: Reference documentation for the oh-state-series component
+source: https://github.com/openhab/openhab-webui/edit/main/bundles/org.openhab.ui/doc/components/oh-state-series.md
 prev: /docs/ui/components/
 ---
 
-# oh-cell - Cell
+# oh-state-series - State Series
 
 <!-- Put a screenshot here if relevant:
-![](./images/oh-cell/header.jpg)
+![](./images/oh-state-series/header.jpg)
 -->
 
 [[toc]]
@@ -18,50 +18,83 @@ prev: /docs/ui/components/
 <!-- Note: you can overwrite the definition-provided description and add your own intro/additional sections instead -->
 <!-- DO NOT REMOVE the following comments if you intend to keep the definition-provided description -->
 <!-- GENERATED componentDescription -->
-A regular or expandable cell
+
 <!-- GENERATED /componentDescription -->
 
 ## Configuration
 
 <!-- DO NOT REMOVE the following comments -->
 <!-- GENERATED props -->
-### Cell
+### General
 <div class="props">
-<PropGroup name="cell" label="Cell">
-  General settings of the cell
-<PropBlock type="TEXT" name="header" label="Header">
+<PropGroup label="General">
+<PropBlock type="TEXT" name="name" label="Name">
   <PropDescription>
-    Header of the cell
+    A name which will appear on tooltips and labels
   </PropDescription>
 </PropBlock>
-<PropBlock type="TEXT" name="title" label="Title">
+<PropBlock type="TEXT" name="item" label="Item" context="item">
   <PropDescription>
-    Title of the cell
+    The item whose persisted data to display
   </PropDescription>
 </PropBlock>
-<PropBlock type="TEXT" name="subtitle" label="Subtitle">
+<PropBlock type="TEXT" name="service" label="Persistence Service" context="persistenceService">
   <PropDescription>
-    Subtitle of the cell
+    The identifier of the persistence service to retrieve the data from. Leave blank to the use the default.
   </PropDescription>
 </PropBlock>
-<PropBlock type="TEXT" name="footer" label="Footer">
+<PropBlock type="BOOLEAN" name="noBoundary" label="Don't Include Boundary">
   <PropDescription>
-    Footer of the cell
+    Do not get one value before and after the requested period and move them to the start and end of the period
   </PropDescription>
 </PropBlock>
-<PropBlock type="TEXT" name="icon" label="Icon">
+<PropBlock type="BOOLEAN" name="noItemState" label="Don't Include Item State">
   <PropDescription>
-    Use <code>oh:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://www.openhab.org/link/icons">openHAB icon</a>), <code>f7:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://framework7.io/icons/">Framework7 icon</a>), <code>material:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://jossef.github.io/material-design-icons-iconfont/">Material icon</a>) or <code>iconify:iconSet:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://icon-sets.iconify.design">Iconify icon</a>, requires being online if not in cache)
+    Do not add the current Item state into the requested period (the item state will be before or at the end time)
   </PropDescription>
 </PropBlock>
-<PropBlock type="TEXT" name="color" label="Highlight Color">
+<PropBlock type="INTEGER" name="offsetAmount" label="Offset Amount">
   <PropDescription>
-    Color to use when highlighted
+    Offset to <em>subtract</em> from the displayed period, use if you want to do period comparisons (see also Offset Unit).
   </PropDescription>
 </PropBlock>
-<PropBlock type="TEXT" name="on" label="&quot;On&quot; expression">
+<PropBlock type="TEXT" name="offsetUnit" label="Offset Unit" context="offsetUnit">
   <PropDescription>
-    Expression to determine when the card should be highlighted. If blank, determine automatically from the primary bound item if applicable.
+    Offset to <em>subtract</em> from the displayed period, use if you want to do period comparisons (see also Offset Amount).
+  </PropDescription>
+  <PropOptions>
+    <PropOption value="hour" label="Hour" />
+    <PropOption value="minute" label="Minute" />
+    <PropOption value="day" label="Day" />
+    <PropOption value="week" label="Week" />
+    <PropOption value="month" label="Month" />
+    <PropOption value="year" label="Year" />
+  </PropOptions>
+</PropBlock>
+<PropBlock type="DECIMAL" name="yValue" label="Y Value">
+  <PropDescription>
+    The position the state timeline should appear on the Y axis (in graph coordinates). If Y axis is a category axis, this should be the index of the category
+  </PropDescription>
+</PropBlock>
+<PropBlock type="DECIMAL" name="yHeight" label="Y Height">
+  <PropDescription>
+    The height the state timeline bar in graph coordinates (default is 0.6)
+  </PropDescription>
+</PropBlock>
+</PropGroup>
+</div>
+
+### Axis and Coordinate System Assignments
+<div class="props">
+<PropGroup name="componentRelations" label="Axis and Coordinate System Assignments">
+<PropBlock type="INTEGER" name="xAxisIndex" label="X Axis Index" context="xAxis">
+  <PropDescription>
+    The index of the X axis for this series
+  </PropDescription>
+</PropBlock>
+<PropBlock type="INTEGER" name="yAxisIndex" label="Y Axis Index" context="yAxis">
+  <PropDescription>
+    The index of the Y axis for this series
   </PropDescription>
 </PropBlock>
 </PropGroup>
@@ -263,49 +296,6 @@ A regular or expandable cell
 </PropGroup>
 </div>
 
-### Trend Line
-<div class="props">
-<PropGroup name="trend" label="Trend Line">
-  Trend Line Background Options
-<PropBlock type="TEXT" name="trendItem" label="Trend Line Item" context="item">
-  <PropDescription>
-    Item to show as a trend line in the background
-  </PropDescription>
-</PropBlock>
-<PropBlock type="TEXT" name="trendStrokeWidth" label="Trend Stroke Width">
-  <PropDescription>
-    Thickness of the trend line
-  </PropDescription>
-</PropBlock>
-<PropBlock type="TEXT" name="trendWidth" label="Trend Line Width">
-  <PropDescription>
-    Width of the trend line (leave blank to set automatically)
-  </PropDescription>
-</PropBlock>
-<PropBlock type="TEXT" name="trendGradient" label="Trend Line Gradient">
-  <PropDescription>
-    Colors of the trend line (see <a target="_blank" class="external text-color-blue" href="https://github.com/QingWei-Li/vue-trend#props">vue-trend</a>)
-  </PropDescription>
-</PropBlock>
-<PropBlock type="TEXT" name="trendGradientDirection" label="Trend Line Gradient Direction">
-  <PropDescription>
-    Direction of the trend line gradient (default: top)
-  </PropDescription>
-  <PropOptions>
-    <PropOption value="top" label="top" />
-    <PropOption value="bottom" label="bottom" />
-    <PropOption value="left" label="left" />
-    <PropOption value="right" label="right" />
-  </PropOptions>
-</PropBlock>
-<PropBlock type="INTEGER" name="trendSampling" label="Trend Line Sampling">
-  <PropDescription>
-    Amount of minutes between each point of the trendline (default: 60). Affected by persistence strategies different from "every minute"
-  </PropDescription>
-</PropBlock>
-</PropGroup>
-</div>
-
 
 <!-- GENERATED /props -->
 
@@ -319,7 +309,7 @@ A regular or expandable cell
 
 #### `default`
 
-The contents of the oh-cell.
+The contents of the oh-state-series.
 
 -->
 
@@ -328,10 +318,10 @@ The contents of the oh-cell.
 
 ### Example 1
 
-![](./images/oh-cell/example1.jpg)
+![](./images/oh-state-series/example1.jpg)
 
 ```yaml
-component: oh-cell
+component: oh-state-series
 config:
   prop1: value1
   prop2: value2
@@ -339,11 +329,11 @@ config:
 
 ### Example 2
 
-![](./images/oh-cell/example2.jpg)
+![](./images/oh-state-series/example2.jpg)
 
 ::: details YAML
 ```yaml
-component: oh-cell
+component: oh-state-series
 config:
   prop1: value1
   prop2: value2
