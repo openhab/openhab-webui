@@ -1,57 +1,101 @@
+const systemModeOptions = [
+  { value: '0', label: 'OFF' },
+  { value: '1', label: 'AUTO' },
+  { value: '3', label: 'COOL' },
+  { value: '4', label: 'HEAT' },
+  { value: '5', label: 'EMERGENCY_HEAT' },
+  { value: '6', label: 'PRECOOLING' },
+  { value: '7', label: 'FAN_ONLY' },
+  { value: '8', label: 'DRY' },
+  { value: '9', label: 'SLEEP' }
+]
+
+const fanModeOptions = [
+  { value: '0', label: 'OFF' },
+  { value: '1', label: 'LOW' },
+  { value: '2', label: 'MEDIUM' },
+  { value: '3', label: 'HIGH' },
+  { value: '4', label: 'ON' },
+  { value: '5', label: 'AUTO' },
+  { value: '6', label: 'SMART' }
+]
+
 export const deviceTypes = {
   OnOffLight: {
-    clusters: []
+    attributes: []
   },
   DimmableLight: {
-    clusters: []
+    attributes: []
   },
   ColorLight: {
-    clusters: []
+    attributes: []
   },
-  PlugInUnit: {
-    clusters: []
+  OnOffPlugInUnit: {
+    attributes: []
   },
   WindowCovering: {
-    clusters: []
+    attributes: []
   },
   TemperatureSensor: {
-    clusters: []
+    attributes: []
   },
   HumiditySensor: {
-    clusters: []
+    attributes: []
   },
   OccupancySensor: {
-    clusters: []
+    attributes: []
   },
   ContactSensor: {
-    clusters: []
+    attributes: []
   },
   DoorLock: {
-    clusters: []
+    attributes: []
   },
   Thermostat: {
-    clusters: [
-      { label: 'LocalTemperature', mandatory: true },
-      { label: 'OutdoorTemperature', mandatory: false },
-      { label: 'OccupiedHeatingSetpoint', mandatory: false },
-      { label: 'OccupiedCoolingSetpoint', mandatory: false },
-      { label: 'SystemMode', mandatory: true },
-      { label: 'RunningMode', mandatory: false }
+    attributes: [
+      { label: 'Local Temperature', name: 'thermostat.localTemperature', mandatory: true },
+      { label: 'Outdoor Temperature', name: 'thermostat.outdoorTemperature', mandatory: false },
+      { label: 'Occupied Heating Setpoint', name: 'thermostat.occupiedHeatingSetpoint', mandatory: false },
+      { label: 'Occupied Cooling Setpoint', name: 'thermostat.occupiedCoolingSetpoint', mandatory: false },
+      {
+        label: 'System Mode',
+        name: 'thermostat.systemMode',
+        mandatory: true,
+        mapping: {
+          name: 'systemMode',
+          label: 'System Mode Mappings',
+          type: 'TEXT',
+          limitToOptions: true,
+          options: systemModeOptions
+        }
+      },
+      { label: 'Running Mode', name: 'thermostat.runningMode', mandatory: false }
     ]
   },
   Fan: {
-    clusters: [
-      { label: 'OnOff', mandatory: false },
-      { label: 'FanMode', mandatory: false },
-      { label: 'PercentSetting', mandatory: false }
+    attributes: [
+      { label: 'On Off', name: 'onOff.onOff', mandatory: false },
+      {
+        label: 'Fan Mode',
+        name: 'fanControl.fanMode',
+        mandatory: false,
+        mapping: {
+          name: 'fanMode',
+          label: 'Fan Mode Mappings',
+          type: 'TEXT',
+          limitToOptions: true,
+          options: fanModeOptions
+        }
+      },
+      { label: 'Percent Setting', name: 'fanControl.percentSetting', mandatory: false }
     ],
     supportsSimpleMapping: true
   }
 }
 
-export const deviceTypesAndClusters = Object.entries(deviceTypes).flatMap(([type, clusters]) => [
+export const deviceTypesAndAttributes = Object.entries(deviceTypes).flatMap(([type, attributes]) => [
   type,
-  ...(clusters.length > 0 ? clusters.map(cluster => `${type}.${cluster.label}`) : [])
+  ...(attributes.length > 0 ? attributes.map(cluster => `${type}.${cluster.label}`) : [])
 ])
 
 export const isComplexDeviceType = (deviceType) => {
@@ -106,28 +150,6 @@ const windowCoveringInvertParameter = {
   ]
 }
 
-const systemModeOptions = [
-  { value: '0', label: 'OFF' },
-  { value: '1', label: 'AUTO' },
-  { value: '3', label: 'COOL' },
-  { value: '4', label: 'HEAT' },
-  { value: '5', label: 'EMERGENCY_HEAT' },
-  { value: '6', label: 'PRECOOLING' },
-  { value: '7', label: 'FAN_ONLY' },
-  { value: '8', label: 'DRY' },
-  { value: '9', label: 'SLEEP' }
-]
-
-const fanModeOptions = [
-  { value: '0', label: 'OFF' },
-  { value: '1', label: 'LOW' },
-  { value: '2', label: 'MEDIUM' },
-  { value: '3', label: 'HIGH' },
-  { value: '4', label: 'ON' },
-  { value: '5', label: 'AUTO' },
-  { value: '6', label: 'SMART' }
-]
-
 export const matterParameters = {
   global: [labelParameter, fixedLabelsParameter],
   OnOffLight: [labelParameter, fixedLabelsParameter],
@@ -136,23 +158,5 @@ export const matterParameters = {
   PlugInUnit: [labelParameter, fixedLabelsParameter],
   Thermostat: [labelParameter, fixedLabelsParameter].concat(thermostatLimitsParameters),
   WindowCovering: [labelParameter, fixedLabelsParameter].concat(windowCoveringInvertParameter),
-  Fan: [labelParameter, fixedLabelsParameter, fanModeSequenceParameter],
-  'Thermostat.SystemMode': [
-    {
-      name: 'systemMode',
-      label: 'System Mode Mappings',
-      type: 'TEXT',
-      limitToOptions: true,
-      options: systemModeOptions
-    }
-  ],
-  'Fan.FanMode': [
-    {
-      name: 'fanMode',
-      label: 'Fan Mode Mappings',
-      type: 'TEXT',
-      limitToOptions: true,
-      options: fanModeOptions
-    }
-  ]
+  Fan: [labelParameter, fixedLabelsParameter, fanModeSequenceParameter]
 }

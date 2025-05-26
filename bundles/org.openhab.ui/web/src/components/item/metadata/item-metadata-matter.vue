@@ -25,39 +25,63 @@
         <config-sheet :parameterGroups="parametersGroups" :parameters="parameters" :configuration="metadata.config" />
       </div>
       <f7-block class="padding-top no-padding no-margin"
-                v-if="shouldShowClusterMapping">
+                v-if="shouldShowAttributeMapping">
         <f7-block-title class="padding-left">
-          Matter Clusters Mapping
+          Matter Attributes Mapping
         </f7-block-title>
+        <f7-block-footer v-if="dirtyItem.size">
+          <f7-button color="blue" @click="updatedLinkedItem">
+            Update group members
+          </f7-button>
+        </f7-block-footer>
         <f7-block v-for="deviceType in classesAsArray" :key="deviceType">
           <f7-block-title class="padding-left">
             {{ deviceType }}
           </f7-block-title>
           <f7-list>
-            <f7-list-item v-if="deviceTypes[deviceType]?.clusters?.length > 0 &&
-                            (deviceTypes[deviceType]?.clusters?.length === 0 || deviceTypes[deviceType]?.supportsSimpleMapping === true)"
+            <f7-list-item v-if="deviceTypes[deviceType]?.attributes?.length > 0 &&
+                            (deviceTypes[deviceType]?.attributes?.length === 0 || deviceTypes[deviceType]?.supportsSimpleMapping === true)"
                           checkbox
-                          title="Use as Simple Device"
+                          title="Map default attribute to group"
                           :checked="useSimpleMapping"
                           @change="useSimpleMapping = $event.target.checked" />
             <template v-if="!useSimpleMapping">
-              <f7-list-item v-for="cluster in deviceTypes[deviceType]?.clusters"
-                            :key="cluster.label"
+              <f7-list-item v-for="attribute in deviceTypes[deviceType]?.attributes"
+                            :key="attribute.name"
                             smart-select
-                            :title="cluster.mandatory ? cluster.label+'*' : cluster.label"
+                            :title="attribute.mandatory ? attribute.label+'*' : attribute.label"
                             :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: true }">
-                <select @change="updateLinkedItem(deviceType, cluster.label, $event.target.value)">
+                <select @change="updateLinkedItem(deviceType, attribute.name, $event.target.value)">
                   <option value="" />
                   <option v-for="mbr in item.members"
                           :value="mbr.name"
                           :key="mbr.id"
-                          :selected="isLinked(deviceType, cluster.label, mbr)">
+                          :selected="isLinked(deviceType, attribute.name, mbr)">
                     {{ mbr.label }} ({{ mbr.name }})
                   </option>
                 </select>
               </f7-list-item>
             </template>
           </f7-list>
+          <!-- Option mapping UI: separate from item mapping list -->
+          <div v-for="attribute in deviceTypes[deviceType]?.attributes"
+               :key="attribute.name + '-mapping'">
+             <template v-if="getMappedChild(attribute.name) && getAttributeOptions(attribute.name, deviceType).length">
+               <div class="option-mapping-fields padding-left padding-bottom">
+                 <div class="padding-bottom padding-top"><b>Mapping options for {{ attribute.label }}</b></div>
+                 <f7-list no-hairlines-md>
+                   <f7-list-input
+                     v-for="option in getAttributeOptions(attribute.name, deviceType)"
+                     :key="option.value"
+                     type="text"
+                     :label="option.label"
+                     :value="getChildMapping(attribute.name, option.value)"
+                     @input="setChildMapping(attribute.name, option.value, $event.target.value)"
+                   />
+                 </f7-list>
+               </div>
+             </template>
+           </div>
         </f7-block>
         <f7-block-footer>
           <small class="text-color-gray">* indicates mandatory mapping</small>
@@ -82,7 +106,7 @@
 </template>
 
 <script>
-import { deviceTypes, deviceTypesAndClusters, matterParameters, isComplexDeviceType } from '@/assets/definitions/metadata/matter'
+import { deviceTypes, deviceTypesAndAttributes, matterParameters, isComplexDeviceType } from '@/assets/definitions/metadata/matter'
 import ConfigSheet from '@/components/config/config-sheet.vue'
 
 export default {
@@ -94,7 +118,7 @@ export default {
   data () {
     return {
       deviceTypes,
-      classesDefs: deviceTypesAndClusters,
+      classesDefs: deviceTypesAndAttributes,
       multiple: !!this.metadata.value && this.metadata.value.indexOf(',') > 0,
       classSelectKey: this.$f7.utils.id(),
       itemType: this.item.groupType || this.item.type,
@@ -104,11 +128,6 @@ export default {
     }
   },
   created () {
-    console.log('Component created')
-    console.log('Props:', this.item, this.itemName, this.metadata, this.namespace)
-    console.log('ClassesDefs:', this.classesDefs)
-    console.log('Device Types:', this.deviceTypes)
-
     this.multiple = !!this.metadata.value && this.metadata.value.indexOf(',') > 0
     this.itemType = this.item.groupType || this.item.type
 
@@ -138,26 +157,23 @@ export default {
   },
   computed: {
     classesAsArray () {
-      console.log('Computing classesAsArray:', this.metadata.value)
       return (this.metadata.value) ? this.metadata.value.split(',') : []
     },
     classes () {
-      console.log('Computing classes')
       if (!this.multiple) return this.metadata.value
       return this.classesAsArray
     },
-    shouldShowClusterMapping () {
-      // Show cluster mapping if:
+    shouldShowAttributeMapping () {
+      // Show attribute mapping if:
       // 1. It's a Group item (regardless of groupType)
       // 2. Has selected device types
-      // 3. At least one selected device type has clusters defined
+      // 3. At least one selected device type has attributes defined
       return this.item.type === 'Group' &&
              this.classes &&
              this.classes.length &&
-             this.classesAsArray.some(deviceType => this.deviceTypes[deviceType]?.clusters?.length > 0)
+             this.classesAsArray.some(deviceType => this.deviceTypes[deviceType]?.attributes?.length > 0)
     },
     parametersGroups () {
-      console.log('Computing parametersGroups')
       if ((!this.classes) || (!this.multiple)) return []
       return this.classesAsArray.map(type => ({ name: type, label: type }))
     },
@@ -180,26 +196,26 @@ export default {
       if (this.item.type !== 'Group') {
         return Object.keys(this.deviceTypes).filter(type => {
           const device = this.deviceTypes[type]
-          return device.clusters.length === 0 || device.supportsSimpleMapping === true
+          return device.attributes.length === 0 || device.supportsSimpleMapping === true
         })
       }
 
       if (this.multiple) {
         return this.item.groupType
           ? Object.keys(this.deviceTypes)
-          : Object.keys(this.deviceTypes).filter(type => this.deviceTypes[type]?.clusters?.length > 0)
+          : Object.keys(this.deviceTypes).filter(type => this.deviceTypes[type]?.attributes?.length > 0)
       }
 
       return this.item.groupType
         ? Object.keys(this.deviceTypes)
-        : Object.keys(this.deviceTypes).filter(type => this.deviceTypes[type]?.clusters?.length > 0)
+        : Object.keys(this.deviceTypes).filter(type => this.deviceTypes[type]?.attributes?.length > 0)
     },
-    isLinked (deviceType, cluster, item) {
+    isLinked (deviceType, attribute, item) {
       if (!item?.metadata?.matter?.value) return false
 
       const value = item.metadata.matter.value.toLowerCase()
-      return value === `${deviceType}.${cluster}`.toLowerCase() ||
-             (cluster === null && value === deviceType.toLowerCase())
+      return value === attribute.toLowerCase() ||
+             (attribute === null && value === deviceType.toLowerCase())
     },
     isSelected (deviceType) {
       return this.multiple
@@ -217,12 +233,12 @@ export default {
       this.$set(this.metadata, 'config', {})
       this.useSimpleMapping = false
     },
-    updateLinkedItem (deviceType, cluster, itemName) {
+    updateLinkedItem (deviceType, attribute, itemName) {
       if (!itemName) {
         // Handle unlinking
         const groupMbr = this.item.members.find(mbr =>
           mbr.metadata?.matter?.value?.toLowerCase() ===
-          `${deviceType}.${cluster}`.toLowerCase()
+          attribute.toLowerCase()
         )
         if (groupMbr) {
           groupMbr.metadata.matter.value = ''
@@ -244,19 +260,24 @@ export default {
         if (this.useSimpleMapping && this.deviceTypes[deviceType]?.supportsSimpleMapping) {
           groupMbr.metadata.matter.value = deviceType
         } else {
-          groupMbr.metadata.matter.value = `${deviceType}.${cluster}`
+          groupMbr.metadata.matter.value = attribute
         }
         this.dirtyItem.add(groupMbr)
       }
     },
     updatedLinkedItem () {
       Promise.all(
-        Array.from(this.dirtyItem).map(item =>
-          this.$oh.api.put(`/rest/items/${item.name}/metadata/matter`, {
-            value: item.metadata.matter.value,
-            config: item.metadata.matter.config || {}
-          })
-        )
+        Array.from(this.dirtyItem).map(item => {
+          if (!item.metadata.matter.value) {
+            // If value is empty, send DELETE
+            return this.$oh.api.delete(`/rest/items/${item.name}/metadata/matter`)
+          } else {
+            return this.$oh.api.put(`/rest/items/${item.name}/metadata/matter`, {
+              value: item.metadata.matter.value,
+              config: item.metadata.matter.config || {}
+            })
+          }
+        })
       ).then(() => {
         this.dirtyItem.clear()
         this.$f7.toast.create({
@@ -264,6 +285,46 @@ export default {
           closeTimeout: 2000
         }).open()
       })
+      .catch(err => {
+        console.error('Failed to update group members:', err);
+      });
+    },
+    getMappedChild(attributeName) {
+      // Return the child item mapped to this attribute (all lowercase)
+      const attr = attributeName.toLowerCase()
+      return this.item.members && this.item.members.find(mbr =>
+        mbr.metadata?.matter?.value?.toLowerCase() === attr
+      )
+    },
+    getAttributeOptions(attributeName, deviceType) {
+      // Find the attribute in deviceTypes and return its mapping options if present
+      const type = this.deviceTypes[deviceType]
+      if (!type || !type.attributes) return []
+      const attr = type.attributes.find(a => a.name.toLowerCase() === attributeName.toLowerCase())
+      if (attr && attr.mapping && attr.mapping.options) {
+        return attr.mapping.options
+      }
+      return []
+    },
+    getChildMapping(attributeName, optionValue) {
+      // Get the mapped value for this option from the mapped child's metadata.config
+      const mappedChild = this.getMappedChild(attributeName)
+      if (!mappedChild) return optionValue
+      const attr = attributeName.toLowerCase()
+      if (!mappedChild.metadata.matter.config) return optionValue
+      if (!mappedChild.metadata.matter.config[attr]) return optionValue
+      // config[attr] is an object: { optionValue: mappedValue, ... }
+      return mappedChild.metadata.matter.config[attr][optionValue] || optionValue
+    },
+    setChildMapping(attributeName, optionValue, newValue) {
+      // Set the mapped value for this option in the mapped child's metadata.config
+      const mappedChild = this.getMappedChild(attributeName)
+      if (!mappedChild) return
+      const attr = attributeName.toLowerCase()
+      if (!mappedChild.metadata.matter.config) this.$set(mappedChild.metadata.matter, 'config', {})
+      if (!mappedChild.metadata.matter.config[attr]) this.$set(mappedChild.metadata.matter.config, attr, {})
+      this.$set(mappedChild.metadata.matter.config[attr], optionValue, newValue)
+      this.dirtyItem.add(mappedChild)
     }
   }
 }
