@@ -66,22 +66,23 @@
           <!-- Option mapping UI: separate from item mapping list -->
           <div v-for="attribute in deviceTypes[deviceType]?.attributes"
                :key="attribute.name + '-mapping'">
-             <template v-if="getMappedChild(attribute.name) && getAttributeOptions(attribute.name, deviceType).length">
-               <div class="option-mapping-fields padding-left padding-bottom">
-                 <div class="padding-bottom padding-top"><b>Mapping options for {{ attribute.label }}</b></div>
-                 <f7-list no-hairlines-md>
-                   <f7-list-input
-                     v-for="option in getAttributeOptions(attribute.name, deviceType)"
-                     :key="option.value"
-                     type="text"
-                     :label="option.label"
-                     :value="getChildMapping(attribute.name, option.value)"
-                     @input="setChildMapping(attribute.name, option.value, $event.target.value)"
-                   />
-                 </f7-list>
-               </div>
-             </template>
-           </div>
+            <template v-if="getMappedChild(attribute.name) && getAttributeOptions(attribute.name, deviceType).length">
+              <div class="option-mapping-fields padding-left padding-bottom">
+                <div class="padding-bottom padding-top">
+                  <b>Mapping options for {{ attribute.label }}</b>
+                </div>
+                <f7-list no-hairlines-md>
+                  <f7-list-input
+                    v-for="option in getAttributeOptions(attribute.name, deviceType)"
+                    :key="option.value"
+                    type="text"
+                    :label="option.label"
+                    :value="getChildMapping(attribute.name, option.value)"
+                    @input="setChildMapping(attribute.name, option.value, $event.target.value)" />
+                </f7-list>
+              </div>
+            </template>
+          </div>
         </f7-block>
         <f7-block-footer>
           <small class="text-color-gray">* indicates mandatory mapping</small>
@@ -285,18 +286,18 @@ export default {
           closeTimeout: 2000
         }).open()
       })
-      .catch(err => {
-        console.error('Failed to update group members:', err);
-      });
+        .catch(err => {
+          console.error('Failed to update group members:', err)
+        })
     },
-    getMappedChild(attributeName) {
+    getMappedChild (attributeName) {
       // Return the child item mapped to this attribute (all lowercase)
       const attr = attributeName.toLowerCase()
       return this.item.members && this.item.members.find(mbr =>
         mbr.metadata?.matter?.value?.toLowerCase() === attr
       )
     },
-    getAttributeOptions(attributeName, deviceType) {
+    getAttributeOptions (attributeName, deviceType) {
       // Find the attribute in deviceTypes and return its mapping options if present
       const type = this.deviceTypes[deviceType]
       if (!type || !type.attributes) return []
@@ -306,7 +307,7 @@ export default {
       }
       return []
     },
-    getChildMapping(attributeName, optionValue) {
+    getChildMapping (attributeName, optionValue) {
       // Get the mapped value for this option from the mapped child's metadata.config
       const mappedChild = this.getMappedChild(attributeName)
       if (!mappedChild) return optionValue
@@ -316,7 +317,7 @@ export default {
       // config[attr] is an object: { optionValue: mappedValue, ... }
       return mappedChild.metadata.matter.config[attr][optionValue] || optionValue
     },
-    setChildMapping(attributeName, optionValue, newValue) {
+    setChildMapping (attributeName, optionValue, newValue) {
       // Set the mapped value for this option in the mapped child's metadata.config
       const mappedChild = this.getMappedChild(attributeName)
       if (!mappedChild) return
