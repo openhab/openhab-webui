@@ -33,11 +33,13 @@ const store = new Vuex.Store({
     },
     websiteUrl: null,
     developerDock: false,
-    pagePath: null
+    pagePath: null,
+    voiceIcon: null
   },
   getters: {
     apiEndpoint: (state) => (type) => (!state.apiEndpoints) ? null : state.apiEndpoints.find((e) => e.type === type),
-    locale: (state, getters) => state.locale ?? 'default'
+    locale: (state, getters) => state.locale ?? 'default',
+    voiceIcon: (state) => state.voiceIcon
   },
   mutations: {
     setRootResource (state, { rootResponse }) {
@@ -56,6 +58,9 @@ const store = new Vuex.Store({
     },
     setPagePath (state, value) {
       state.pagePath = value
+    },
+    setVoiceIcon (state, value) {
+      state.voiceIcon = value
     }
   },
   actions: {

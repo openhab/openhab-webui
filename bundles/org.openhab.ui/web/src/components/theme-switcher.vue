@@ -98,6 +98,26 @@
         </f7-list>
       </f7-col>
     </f7-row>
+
+    <f7-row v-if="showDialogOptions">
+      <f7-col>
+        <f7-block-title v-t="'about.dialog'" />
+        <f7-list>
+          <f7-list-item>
+            <span v-t="'about.dialog.enable'" />
+            <f7-toggle :checked="dialog === 'true'" @toggle:change="setDialog" />
+          </f7-list-item>
+          <f7-list-item>
+            <span v-t="'about.dialog.id'" />
+            <f7-input type="button" :value="identifier" />
+          </f7-list-item>
+          <item-picker :title="$t('about.dialog.listeningItem')" :multiple="false" :value="listeningItem"
+                       @input="setDialogListeningItem" />
+          <item-picker :title="$t('about.dialog.locationItem')" :multiple="false" :value="locationItem"
+                       @input="setDialogLocationItem" />
+        </f7-list>
+      </f7-col>
+    </f7-row>
   </f7-block>
 </template>
 
@@ -111,7 +131,6 @@
 <script>
 import { loadLocaleMessages } from '@/js/i18n'
 import ItemPicker from '@/components/config/controls/item-picker.vue'
-
 export default {
   components: {
     ItemPicker
@@ -165,6 +184,18 @@ export default {
     setCommandItem (value) {
       localStorage.setItem('openhab.ui:commandItem', value)
       setTimeout(() => { location.reload() }, 50) // Delay reload, otherwise it doesn't work
+    },
+    setDialog (value) {
+      localStorage.setItem('openhab.ui:dialog.enabled', value)
+      setTimeout(() => { location.reload() }, 50) // Delay reload, otherwise it doesn't work
+    },
+    setDialogListeningItem (value) {
+      localStorage.setItem('openhab.ui:dialog.listeningItem', value)
+      setTimeout(() => { location.reload() }, 50) // Delay reload, otherwise it doesn't work
+    },
+    setDialogLocationItem (value) {
+      localStorage.setItem('openhab.ui:dialog.locationItem', value)
+      setTimeout(() => { location.reload() }, 50) // Delay reload, otherwise it doesn't work
     }
   },
   computed: {
@@ -197,6 +228,30 @@ export default {
     },
     commandItem () {
       return localStorage.getItem('openhab.ui:commandItem') || ''
+    },
+    showDialogOptions () {
+      const getUserMediaSupported = !!(window.navigator && window.navigator.mediaDevices && window.navigator.mediaDevices.getUserMedia)
+      return getUserMediaSupported &&
+        !!window.AudioContext &&
+        !!window.crypto
+    },
+    dialog () {
+      return localStorage.getItem('openhab.ui:dialog.enabled') || 'default'
+    },
+    identifier () {
+      const key = 'openhab.ui:dialog.id'
+      let id = localStorage.getItem(key)
+      if (!id) {
+        id = `ui-${Math.round(Math.random() * 100)}-${Math.round(Math.random() * 100)}`
+        localStorage.setItem(key, id)
+      }
+      return id
+    },
+    listeningItem () {
+      return localStorage.getItem('openhab.ui:dialog.listeningItem') || ''
+    },
+    locationItem () {
+      return localStorage.getItem('openhab.ui:dialog.locationItem') || ''
     }
   }
 }
@@ -284,5 +339,8 @@ export default {
 .nav-bars-picker-fill .demo-navbar:before,
 .nav-bars-picker-fill .demo-navbar:after
   background #fff
-
+.title-fixed .item-title
+  width: 200%
+.input-right input
+  text-align: right
 </style>
