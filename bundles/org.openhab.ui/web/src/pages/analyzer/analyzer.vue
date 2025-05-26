@@ -92,6 +92,7 @@
                             {{ options.aggregation || 'average' }}
                           </f7-link>
                         </td>
+                        <!-- the silent option makes a series non-clickable/ignores mouse-events -->
                         <td v-if="coordSystem === 'time'" class="label-cell">
                           <f7-checkbox v-if="options.discrete" @change="(evt) => $set(options, 'silent', evt.target.checked)" />
                           <span v-else v-t="'analyzer.series.table.na'" />
