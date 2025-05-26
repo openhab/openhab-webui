@@ -50,6 +50,7 @@ export default {
         return [this.model.children.locations, this.model.children.equipment, this.model.children.points, this.model.children.groups, this.model.children.items].flat()
       },
       set: function (nodeList) {
+        console.debug('Updating children', cloneDeep(nodeList))
         const newChildren = {}
         newChildren.locations = nodeList.filter(n => n.item.metadata?.semantics?.value?.startsWith('Location'))
         newChildren.equipment = nodeList.filter(n => n.item.metadata?.semantics?.value?.startsWith('Equipment'))
@@ -102,10 +103,6 @@ export default {
       console.debug('runtime onDragStart', Date.now() - this.moveState.dragStartTimestamp)
     },
     onDragChange (event) {
-      const dropAllowed = this.moveState.moveTarget ? this.dropAllowed(this.moveState.moveTarget) : true
-      if (this.moveState.cancelled || !this.moveState.node.item.editable || !dropAllowed) {
-        return
-      }
       console.debug('runtime onDragChange', Date.now() - this.moveState.dragStartTimestamp)
       console.debug('Drag change - event:', event)
       if (this.moveState.cancelled) {
@@ -113,37 +110,40 @@ export default {
         return
       }
       if (event.added) {
-        this.moveState.newParent = this.model
+        this.moveState.newParent = this.moveState.moveTarget || this.model
         this.moveState.canAdd = true
-      }
-      if (event.removed) {
+      } else if (event.removed) {
         this.moveState.oldParent = this.model
         this.moveState.oldIndex = event.removed.oldIndex
         this.moveState.canRemove = true
+      } else if (event.moved) {
+        // in theory, this should not happen as sorting within the same list is disabled
+        this.moveState.cancelled = true
+        return
       }
       console.debug('Drag change - moveState:', cloneDeep(this.moveState))
     },
     onDragMove (event) {
       console.debug('Drag move - event:', event)
+      const target = event.relatedContext?.element
       // cancel opening previous group we moved over as we moved away from it
-      const movedToSamePlace = event.relatedContext?.element?.item?.name === this.moveState.moveTarget?.item?.name
-      if (!movedToSamePlace) {
+      const movedToSamePlace = target?.item?.name === this.moveState.moveTarget?.item?.name
+      if (!movedToSamePlace && this.moveState.moveDelayedOpen) {
         clearTimeout(this.moveState.moveDelayedOpen)
         this.moveState.moveDelayedOpen = null
       }
-      this.moveState.moveTarget = event.relatedContext?.element
       // return if we cannot drop here
-      if (this.moveState.cancelled || !this.moveState.node.item.editable || !this.dropAllowed(this.moveState.moveTarget)) {
+      if (this.moveState.cancelled || !this.moveState.node.item.editable || !this.dropAllowed(target)) {
         return false
       }
+      this.moveState.moveTarget = target
       // Open group if not open yet, with a delay so you don't open it if you just drag over it
-      if (!movedToSamePlace && this.moveState.moveTarget?.item?.type === 'Group' && !this.moveState.moveTarget?.opened) {
-        const element = event.relatedContext.element
-        this.moveState.moveDelayedOpen = setTimeout(() => {
-          // this.$set(element, "opened", true)
-          element.opened = true
-        }, 1000, element)
+      if (!movedToSamePlace && target?.item?.type === 'Group' && !target.opened) {
+        this.moveState.moveDelayedOpen = setTimeout((node) => {
+          node.opened = true
+        }, 1000, target)
       }
+      console.debug('Drag move - moveState:', cloneDeep(this.moveState))
       return true
     },
     onDragEnd (event) {
@@ -163,6 +163,7 @@ export default {
       console.debug('Drag end - moveState:', cloneDeep(this.moveState))
     },
     dropAllowed (node) {
+      if (!this.moveState.moving || this.moveState.node.item?.name === node.item?.name) return true
       if (node?.class?.startsWith('Point')) {
         return false
       }
@@ -227,7 +228,6 @@ export default {
         return
       }
       if (node.class.startsWith('Point') && parentNode.class !== '') {
-        const groups = node.item.groupNames
         if (oldParentNode.class.startsWith('Equipment') && parentNode.class.startsWith('Location')) {
           const oldLocation = node.item.metadata.semantics.config.hasLocation
           if (oldLocation) {
@@ -483,7 +483,8 @@ export default {
       if (parentNode.class.startsWith('Location')) {
         semantics.config.isPartOf = parentNode.item.name
       }
-      if (!node.item.tags.includes(semantics.value)) node.item.tags.push(semantics.value)
+      const tag = semantics.value.split('_').pop()
+      if (!node.item.tags.includes(tag)) node.item.tags.push(tag)
       node.class = semantics.value
       const nodeChildren = this.nodeChildren(node)
       nodeChildren.filter((n) => !n.class).forEach((n) => this.addIntoLocation(n, node))
@@ -499,7 +500,8 @@ export default {
       } else if (parentNode.class.startsWith('Equipment')) {
         semantics.config.isPartOf = parentNode.item.name
       }
-      if (!node.item.tags.includes(semantics.value)) node.item.tags.push(semantics.value)
+      const tag = semantics.value.split('_').pop()
+      if (!node.item.tags.includes(tag)) node.item.tags.push(tag)
       node.class = semantics.value
       const nodeChildren = this.nodeChildren(node)
       nodeChildren.filter((n) => !n.class).forEach((n) => this.addIntoEquipment(n, node))
@@ -515,7 +517,8 @@ export default {
       } else if (parentNode.class.startsWith('Equipment')) {
         semantics.config.isPointOf = parentNode.item.name
       }
-      if (!node.item.tags.includes(semantics.value)) node.item.tags.push(semantics.value)
+      const tag = semantics.value.split('_').pop()
+      if (!node.item.tags.includes(tag)) node.item.tags.push(tag)
       node.class = semantics.value
       this.updateAfterAdd(node, parentNode, semantics)
       console.debug('runtime addPoint end', Date.now() - this.moveState.dragStartTimestamp)
@@ -552,8 +555,6 @@ export default {
         // sometimes the list gets updates when dragging, sometimes it is missed so we have to add here
         this.children.push(node)
       }
-      const newChildren = this.children
-      this.children = newChildren // force setters to update model
       if (updateRequired) {
         this.moveState.nodesToUpdate.push(node)
       }
@@ -605,7 +606,6 @@ export default {
       }
       const newChildren = this.nodeChildren(parentNode)
       newChildren.splice(oldIndex, 1)
-      this.children = newChildren
       if (parentNode.class === '' && parentNode.item?.type === 'Group') {
         // Moving a semantic item to a non-semantic group, remove semantics
         if (node.item.metadata) {

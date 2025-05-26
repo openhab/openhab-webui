@@ -243,7 +243,6 @@ import MetadataMenu from '@/components/item/metadata/item-metadata-menu.vue'
 import LinkDetails from '@/components/model/link-details.vue'
 
 import ModelMixin from '@/pages/settings/model/model-mixin'
-import ItemsAddFromTextualDefinition from '../items/parser/items-add-from-textual-definition.vue'
 
 export default {
   mixins: [ModelMixin],

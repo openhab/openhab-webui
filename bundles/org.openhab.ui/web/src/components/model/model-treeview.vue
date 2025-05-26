@@ -1,10 +1,10 @@
 <template>
   <f7-treeview class="model-treeview">
-    <draggable :disabled="!canDragDrop" :list="children" group="model-treeview" animation="150" fallbackOnBody="true" fallbackThreshold="5"
-               scrollSensitivity="200" delay="400" delayOnTouchOnly="true" invertSwap="true"
+    <draggable :disabled="!canDragDrop" :list="children" group="model-treeview" animation="150" forceFallBack="true" fallbackOnBody="true" fallbackThreshold="5"
+               scrollSensitivity="200" delay="400" delayOnTouchOnly="true" touchStartThreshold="10" invertSwap="true" sort="false"
                @start="onDragStart" @change="onDragChange" @end="onDragEnd" :move="onDragMove">
-      <model-treeview-item v-for="(node, index) in children"
-                           :key="node.item.name + '_' + index" :model="node" :parentNode="model"
+      <model-treeview-item v-for="node in children"
+                           :key="node.item.name" :model="node" :parentNode="model"
                            :includeItemName="includeItemName" :includeItemTags="includeItemTags" :canDragDrop="canDragDrop" :moveState="moveState"
                            @selected="nodeSelected" :selected="selected"
                            @checked="(item, check) => $emit('checked', item, check)"
