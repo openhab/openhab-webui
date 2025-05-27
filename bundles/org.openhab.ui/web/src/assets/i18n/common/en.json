@@ -6,6 +6,7 @@
   "dialogs.save": "Save",
   "dialogs.close": "Close",
   "dialogs.copy": "Copy",
+  "dialogs.create": "Create",
   "dialogs.delete": "Delete",
   "dialogs.reload": "Reload",
   "dialogs.retry": "Try Again",
