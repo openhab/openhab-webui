@@ -223,7 +223,6 @@ export default {
         scripts: 'Rules dedicated to running code',
         schedule: 'View upcoming time-based rules'
       },
-      healthCount: '',
       inboxCount: '',
       thingsCount: '',
       itemsCount: '',
