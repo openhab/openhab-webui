@@ -27,7 +27,7 @@
       </div>
       <f7-block class="padding-top no-padding no-margin"
                 v-if="shouldShowAttributeMapping">
-        <f7-block-title class="padding-left">
+        <f7-block-title class="padding-horizontal" medium>
           Matter Attributes Mapping
         </f7-block-title>
         <f7-block-footer v-if="dirtyItem.size">
@@ -35,7 +35,7 @@
             Update group members
           </f7-button>
         </f7-block-footer>
-        <f7-block v-for="deviceType in classesAsArray" :key="deviceType">
+        <f7-block v-for="deviceType in classesAsArray" :key="deviceType" class="no-padding">
           <f7-block-title class="padding-left">
             {{ deviceType }}
           </f7-block-title>
