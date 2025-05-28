@@ -1,4 +1,4 @@
-const systemModeOptions = [
+const thermostatSystemModeOptions = [
   { value: '0', label: 'OFF' },
   { value: '1', label: 'AUTO' },
   { value: '3', label: 'COOL' },
@@ -66,7 +66,7 @@ export const deviceTypes = {
           label: 'System Mode Mappings',
           type: 'TEXT',
           limitToOptions: true,
-          options: systemModeOptions
+          options: thermostatSystemModeOptions
         }
       },
       { label: 'Running Mode', name: 'thermostat.runningMode', mandatory: false }
