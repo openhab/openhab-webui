@@ -117,11 +117,11 @@ const fixedLabelsParameter = {
 }
 
 const thermostatLimitsParameters = [
-  { name: 'thermostat-minHeatSetpointLimit', label: 'Min Heat Setpoint', type: 'INTEGER', description: 'Minimum allowable heat setpoint (in 0.01°C)' },
-  { name: 'thermostat-maxHeatSetpointLimit', label: 'Max Heat Setpoint', type: 'INTEGER', description: 'Maximum allowable heat setpoint (in 0.01°C)' },
-  { name: 'thermostat-minCoolSetpointLimit', label: 'Min Cool Setpoint', type: 'INTEGER', description: 'Minimum allowable cool setpoint (in 0.01°C)' },
-  { name: 'thermostat-maxCoolSetpointLimit', label: 'Max Cool Setpoint', type: 'INTEGER', description: 'Maximum allowable cool setpoint (in 0.01°C)' },
-  { name: 'thermostat-minSetpointDeadBand', label: 'Min Setpoint Deadband', type: 'INTEGER', description: 'Minimum temperature gap between heating and cooling setpoints (in 0.01°C)' }
+  { name: 'thermostat-minHeatSetpointLimit', label: 'Min Heat Setpoint', type: 'DECIMAL', description: 'Minimum allowable heat setpoint (in 0.01°C)' },
+  { name: 'thermostat-maxHeatSetpointLimit', label: 'Max Heat Setpoint', type: 'DECIMAL', description: 'Maximum allowable heat setpoint (in 0.01°C)' },
+  { name: 'thermostat-minCoolSetpointLimit', label: 'Min Cool Setpoint', type: 'DECIMAL', description: 'Minimum allowable cool setpoint (in 0.01°C)' },
+  { name: 'thermostat-maxCoolSetpointLimit', label: 'Max Cool Setpoint', type: 'DECIMAL', description: 'Maximum allowable cool setpoint (in 0.01°C)' },
+  { name: 'thermostat-minSetpointDeadBand', label: 'Min Setpoint Deadband', type: 'DECIMAL', description: 'Minimum temperature gap between heating and cooling setpoints (in 0.01°C)' }
 ]
 
 const fanModeSequenceParameter = {
