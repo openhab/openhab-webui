@@ -34,14 +34,16 @@
 
       <f7-col v-else>
         <f7-block-title>
-          {{ semanticsProblems.length }} semantics configuration problem{{ plural(semanticsProblems.length) }} found
+          {{ semanticsProblems.length }} semantic model configuration conflict{{ plural(semanticsProblems.length) }} found
         </f7-block-title>
         <f7-list class="col" contacts-list>
           <f7-list-item v-for="semanticsProblem in semanticsProblems" :key="problemKey(semanticsProblem)" media-item
                         :link="getLinkForProblem(semanticsProblem)"
                         :title="'Item: ' + semanticsProblem.item + (semanticsProblem.semanticType ? ' (' + semanticsProblem.semanticType + ')' : '')"
                         :subtitle="semanticsProblem.reason"
-                        :footer="semanticsProblem.explanation" />
+                        :footer="semanticsProblem.explanation">
+            <f7-icon v-if="!semanticsProblem.editable" slot="after-title" f7="lock_fill" size="1rem" color="gray" />
+          </f7-list-item>
         </f7-list>
       </f7-col>
     </f7-block>
