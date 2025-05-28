@@ -132,14 +132,14 @@ export default {
           return ItemMetadataExpire
         case 'voiceSystem':
           return ItemMetadataVoiceSystem
+        case 'matter':
+          return ItemMetadataMatter
         case 'alexa':
           return ItemMetadataAlexa
         case 'homekit':
           return ItemMetadataHomeKit
         case 'ga':
           return ItemMetadataGa
-        case 'matter':
-          return ItemMetadataMatter
         case 'link_to_more':
           return ItemMetadataLinktomore
         default:
