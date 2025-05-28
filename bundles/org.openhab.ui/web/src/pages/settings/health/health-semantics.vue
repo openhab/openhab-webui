@@ -1,6 +1,6 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn">
-    <f7-navbar title="Semantic Model Configuration Issues" back-link="Health Checks" back-link-url="/settings/health/" back-link-force>
+    <f7-navbar title="Semantic Model Configuration Conflicts" back-link="Health Checks" back-link-url="/settings/health/" back-link-force>
       <f7-nav-right>
         <developer-dock-icon />
       </f7-nav-right>
