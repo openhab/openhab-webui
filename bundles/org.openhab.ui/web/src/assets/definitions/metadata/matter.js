@@ -142,12 +142,7 @@ const fanModeSequenceParameter = {
 const windowCoveringInvertParameter = {
   name: 'windowCovering-invert',
   label: 'Invert Control',
-  type: 'TEXT',
-  limitToOptions: true,
-  options: [
-    { value: 'false', label: 'false' },
-    { value: 'true', label: 'true' }
-  ]
+  type: 'BOOLEAN'
 }
 
 export const matterParameters = {
