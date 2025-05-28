@@ -2,7 +2,8 @@
   <div v-if="ready">
     <div>
       <div style="text-align:right" class="padding-right">
-        <label @click="toggleMultiple" style="cursor:pointer">Multiple</label> <f7-checkbox :checked="multiple" @change="toggleMultiple" />
+        <label @click="toggleMultiple" style="cursor:pointer">Multiple</label>
+        <f7-checkbox :checked="multiple" @change="toggleMultiple" />
       </div>
       <f7-list v-if="deviceTypes">
         <f7-list-item :key="classSelectKey"
@@ -99,7 +100,7 @@
 </template>
 
 <script>
-import { deviceTypes, deviceTypesAndAttributes, matterParameters, isComplexDeviceType } from '@/assets/definitions/metadata/matter'
+import { deviceTypes, deviceTypesAndAttributes, matterParameters } from '@/assets/definitions/metadata/matter'
 import ConfigSheet from '@/components/config/config-sheet.vue'
 
 export default {
@@ -141,7 +142,7 @@ export default {
           }
         })
         this.ready = true
-        console.log('Updated members:', this.item.members)
+        console.debug('Updated members:', this.item.members)
       })
     } else {
       this.ready = true
@@ -206,8 +207,7 @@ export default {
       if (!item?.metadata?.matter?.value) return false
 
       const value = item.metadata.matter.value.toLowerCase()
-      return value === attribute.toLowerCase() ||
-             (attribute === null && value === deviceType.toLowerCase())
+      return attribute === null ? value === deviceType.toLowerCase() : value === attribute.toLowerCase()
     },
     isSelected (deviceType) {
       return this.multiple
