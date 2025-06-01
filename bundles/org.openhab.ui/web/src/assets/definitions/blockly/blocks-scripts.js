@@ -348,7 +348,7 @@ export default function defineOHBlocks_Scripts (f7, transformationServices) {
     const ruleUID = javascriptGenerator.valueToCode(block, 'ruleUID', javascriptGenerator.ORDER_ATOMIC)
     const enableValue = javascriptGenerator.valueToCode(block, 'enable', javascriptGenerator.ORDER_ATOMIC)
     const enableType = blockGetCheckedInputType(block, 'enable')
-    let enable = (enableType === 'Boolean') ? enableValue : (enableValue === '\'true\'')
+    let enable = (enableType === 'Boolean') ? enableValue : (enableValue === '\'true\'' || enableValue === '\'enabled\'')
     return `rules.setEnabled(${ruleUID}, ${enable});\n`
   }
 }
