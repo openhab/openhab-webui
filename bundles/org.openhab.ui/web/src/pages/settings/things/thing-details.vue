@@ -193,12 +193,15 @@
       </f7-tab>
 
       <f7-tab id="code" :tab-active="currentTab === 'code'">
-        <f7-icon v-if="!editable" f7="lock" class="float-right margin"
-                 style="opacity:0.5; z-index: 4000; user-select: none;" size="50" color="gray" :tooltip="notEditableMsg" />
-        <editor v-if="ready" class="thing-code-editor" mode="application/vnd.openhab.thing+yaml" :value="thingYaml"
-                :hint-context="{ thingType: thingType, channelTypes: channelTypes }" @input="onEditorInput"
-                :read-only="!editable" />
-        <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
+        <code-editor ref="codeEditor"
+                     object-type="things"
+                     :object="thing"
+                     :object-id="thing.UID"
+                     :read-only="!editable"
+                     :read-only-msg="notEditableMsg"
+                     :hint-context="{ thingType: thingType, channelTypes: channelTypes }"
+                     @parsed="updateThing"
+                     @changed="onCodeChanged" />
       </f7-tab>
     </f7-tabs>
   </f7-page>
@@ -249,12 +252,6 @@ p.action-description
         overflow hidden
         text-overflow ellipsis
 
-  .thing-code-editor.vue-codemirror
-    display block
-    top calc(var(--f7-navbar-height) + var(--f7-tabbar-height))
-    height calc(100% - 2*var(--f7-navbar-height))
-    width 100%
-
   .item-title-content, .item-after-content
     display flex
     align-items center
@@ -286,7 +283,6 @@ p.action-description
 </style>
 
 <script>
-import YAML from 'yaml'
 import cloneDeep from 'lodash/cloneDeep'
 import fastDeepEqual from 'fast-deep-equal/es6'
 import groupBy from 'lodash/groupBy'
@@ -307,6 +303,7 @@ import ThingStatus from '@/components/thing/thing-status-mixin'
 import DirtyMixin from '../dirty-mixin'
 import ThingActionPopup from '@/pages/settings/things/thing-action-popup.vue'
 import FileDefinition from '@/pages/settings/file-definition-mixin'
+import CodeEditor from '@/components/config/controls/code-editor.vue'
 
 export default {
   mixins: [ThingStatus, DirtyMixin, FileDefinition],
@@ -314,7 +311,7 @@ export default {
     ConfigSheet,
     ChannelList,
     ThingGeneralSettings,
-    'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')
+    CodeEditor
   },
   props: ['thingId'],
   data () {
@@ -324,6 +321,7 @@ export default {
       error: false,
       configDirty: false,
       thingDirty: false,
+      codeDirty: false,
       currentTab: 'thing',
       thing: {},
       savedThing: {},
@@ -339,7 +337,6 @@ export default {
       configActionsByGroup: [],
       thingEnabled: true,
       eventSource: null,
-      thingYaml: null,
       notEditableMsg: 'This Thing is not editable because it has been provisioned from a file.',
       propertyTruncation: {}
     }
@@ -360,20 +357,12 @@ export default {
       return {
         store: this.$store.getters.trackedItems
       }
-    },
-    yamlError () {
-      if (this.currentTab !== 'code') return null
-      try {
-        YAML.parse(this.ruleYaml, { prettyErrors: true })
-        return 'OK'
-      } catch (e) {
-        return e
-      }
     }
   },
   watch: {
-    configDirty: function () { this.dirty = this.configDirty || this.thingDirty },
-    thingDirty: function () { this.dirty = this.configDirty || this.thingDirty },
+    configDirty: function () { this.dirty = this.configDirty || this.thingDirty || this.codeDirty },
+    thingDirty: function () { this.dirty = this.configDirty || this.thingDirty || this.codeDirty },
+    codeDirty: function () { this.dirty = this.configDirty || this.thingDirty || this.codeDirty },
     thing: {
       handler () {
         if (!this.loading) { // ignore changes during loading
@@ -421,21 +410,22 @@ export default {
         window.removeEventListener('keydown', this.keyDown)
       }
     },
-    onEditorInput (value) {
-      this.thingYaml = value
-    },
     switchTab (tab) {
       if (this.currentTab === tab) return
-      if (this.currentTab === 'code') {
-        const previousYaml = this.toYaml()
-        if (this.thingYaml !== previousYaml && this.fromYaml()) {
-          this.save()
-        }
+      if (this.currentTab === 'code' && this.codeDirty) {
+        this.$refs.codeEditor.parseCode(() => {
+          this.codeDirty = false
+          this.currentTab = tab
+        })
+        return
       }
       this.currentTab = tab
       if (this.currentTab === 'code') {
-        this.thingYaml = this.toYaml()
+        this.$refs.codeEditor.generateCode()
       }
+    },
+    onCodeChanged (codeDirty) {
+      this.codeDirty = codeDirty
     },
     /**
      * Loads the Thing actions.
@@ -512,6 +502,8 @@ export default {
           })
           this.$oh.api.get('/rest/things/' + this.thingId + '/firmwares').then(firmwareData => {
             this.firmwares = firmwareData
+          }).catch(err => {
+            console.warn('Cannot load firmware info: ' + err)
           })
         }).catch((err) => {
           console.warn('Cannot load the related info: ' + err)
@@ -542,10 +534,13 @@ export default {
     save (saveThing) {
       if (!this.ready || !this.editable) return
 
-      if (this.currentTab === 'code') {
-        if (!this.fromYaml()) {
-          return
-        }
+      if (this.currentTab === 'code' && this.codeDirty) {
+        this.$refs.codeEditor.parseCode(() => {
+          this.codeDirty = false
+          this.save(saveThing)
+          this.$refs.codeEditor.generateCode()
+        })
+        return
       }
 
       let endpoint, payload, successMessage
@@ -672,7 +667,7 @@ export default {
         'Delete Thing',
         () => {
           this.$oh.api.delete(url).then(() => {
-            this.dirty = this.configDirty = this.thingDirty = false
+            this.dirty = this.configDirty = this.thingDirty = this.codeDirty = false
             this.$f7router.back('/settings/things/', { force: true })
           })
         }
@@ -858,37 +853,7 @@ export default {
       this.$oh.sse.close(this.eventSource)
       this.eventSource = null
     },
-    toYaml () {
-      const editableThing = {
-        UID: this.thing.UID,
-        label: this.thing.label,
-        thingTypeUID: this.thing.thingTypeUID,
-        configuration: this.thing.configuration
-      }
-
-      if (this.thing.bridgeUID) editableThing.bridgeUID = this.thing.bridgeUID
-      if (this.thing.location) editableThing.location = this.thing.location
-
-      const editableChannels = []
-
-      for (const channel of this.thing.channels) {
-        const editableChannel = {
-          id: channel.id,
-          channelTypeUID: channel.channelTypeUID,
-          label: channel.label,
-          description: channel.description,
-          configuration: channel.configuration
-        }
-        editableChannels.push(editableChannel)
-      }
-
-      if (editableChannels.length > 0) editableThing.channels = editableChannels
-
-      return YAML.stringify(editableThing)
-    },
-    fromYaml () {
-      const updatedThing = YAML.parse(this.thingYaml)
-
+    updateThing (updatedThing) {
       const isExtensible = (channel, thingType) => {
         if (!channel || !channel.channelTypeUID) return false
         const bindingId = thingType.UID.split(':')[0]
