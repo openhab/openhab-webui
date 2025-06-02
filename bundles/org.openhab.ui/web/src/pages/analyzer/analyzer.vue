@@ -38,7 +38,8 @@
         <f7-block class="no-margin no-padding" v-show="controlsTab === 'series'">
           <f7-row>
             <f7-col :width="100" />
-            <f7-col :width="100" v-if="showChart">
+            <!-- use v-show instead of v-if to keep the item-picker props valid while selecting Items and avoid TypeErrors -->
+            <f7-col :width="100" v-show="showChart">
               <div class="card data-table">
                 <div class="card-header no-padding" style="min-height: auto">
                   <f7-list style="width: 100%">
@@ -46,7 +47,7 @@
                   </f7-list>
                   <!-- <div class="data-table-title">Options</div> -->
                 </div>
-                <div class="card-content">
+                <div v-if="showChart" class="card-content">
                   <table>
                     <thead>
                       <tr>
@@ -69,7 +70,8 @@
                           <f7-segmented round>
                             <f7-button v-if="!options.discrete && coordSystem === 'aggregate' && aggregateDimensions === 1" small outline style="width: 60px" :fill="options.type === 'bar'" @click="options.type = 'bar'" v-t="'analyzer.series.table.type.bar'" />
                             <f7-button v-if="!options.discrete && coordSystem !== 'calendar' && aggregateDimensions === 1" small outline style="width: 60px" :fill="options.type === 'line'" @click="options.type = 'line'" v-t="'analyzer.series.table.type.line'" />
-                            <f7-button v-if="coordSystem === 'time' || (coordSystem === 'aggregate' && aggregateDimensions === 1)" small outline style="width: 60px" :fill="options.type === 'area'" @click="options.type = 'area'" v-t="'analyzer.series.table.type.area'" />
+                            <f7-button v-if="!options.discrete && coordSystem === 'time' || (coordSystem === 'aggregate' && aggregateDimensions === 1)" small outline style="width: 60px" :fill="options.type === 'area'" @click="options.type = 'area'" v-t="'analyzer.series.table.type.area'" />
+                            <f7-button v-if="options.discrete && coordSystem === 'time' || (coordSystem === 'aggregate' && aggregateDimensions === 1)" small outline style="width: 60px" :fill="options.type === 'state'" @click="options.type = 'state'" v-t="'analyzer.series.table.type.state'" />
                             <f7-button v-if="coordSystem === 'calendar' || (coordSystem === 'aggregate' && aggregateDimensions === 2)" small fill outline style="width: 90px" v-t="'analyzer.series.table.type.heatmap'" />
                           </f7-segmented>
                         </td>
@@ -262,6 +264,7 @@ export default {
       items: null,
       seriesOptions: {},
       valueAxesOptions: {},
+      categoryAxisValues: [],
       orientation: (this.$device.desktop || this.$device.ipad) ? 'horizontal' : 'vertical',
       period: 'D',
       chartType: '',
@@ -341,9 +344,11 @@ export default {
     updateItems (itemNames) {
       this.itemNames = itemNames
       const promises = itemNames.map((n) => this.$oh.api.get('/rest/items/' + n))
+      this.showChart = false
       return Promise.all(promises).then((resp) => {
         this.$set(this, 'items', [])
         this.$set(this, 'valueAxesOptions', [])
+        this.$set(this, 'categoryAxisValues', [])
         resp.forEach((item) => {
           this.items.push(item)
 
@@ -369,6 +374,9 @@ export default {
               this.valueAxesOptions.push({ name: unit, unit, split: 'line' })
               this.$set(seriesOptions, 'valueAxisIndex', this.valueAxesOptions.length - 1)
             }
+          } else if (seriesOptions.type === 'state') {
+            this.categoryAxisValues.unshift(item.name)
+            this.$set(seriesOptions, 'yValue', this.categoryAxisValues.length - 1)
           }
         })
         this.$set(this, 'items', resp)
@@ -389,11 +397,11 @@ export default {
         discrete: true
       }
 
-      if (item.type.indexOf('Number') === 0 || item.type === 'Dimmer') seriesOptions.discrete = false
-      if (item.groupType && (item.groupType.indexOf('Number') === 0 || item.groupType === 'Dimmer')) seriesOptions.discrete = false
+      if (item.type.indexOf('Number') === 0) seriesOptions.discrete = false
+      if (item.groupType && (item.groupType.indexOf('Number') === 0)) seriesOptions.discrete = false
       if (!seriesOptions.discrete && this.coordSystem === 'aggregate' && this.aggregateDimensions === 1) seriesOptions.type = 'bar'
       if (!seriesOptions.discrete && (this.coordSystem === 'calendar' || (this.coordSystem === 'aggregate' && this.aggregateDimensions === 2))) seriesOptions.type = 'heatmap'
-      if (seriesOptions.discrete) seriesOptions.type = 'area'
+      if (seriesOptions.discrete) seriesOptions.type = 'state'
 
       this.$set(this.seriesOptions, item.name, seriesOptions)
     },
