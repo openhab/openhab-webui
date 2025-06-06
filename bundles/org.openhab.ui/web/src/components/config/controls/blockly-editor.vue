@@ -1112,6 +1112,18 @@
           </block>
           <sep gap="48" />
           <block type="oh_script_inline" />
+          <block type="oh_rule_enable">
+            <value name="ruleUID">
+              <shadow type="text">
+                <field name="TEXT">ruleUID</field>
+              </shadow>
+            </value>
+            <value name="enable">
+              <shadow type="logic_boolean">
+                <field name="BOOL">TRUE</field>
+              </shadow>
+            </value>
+          </block>
         </category>
 
         <category name="Logging &amp; Output">
@@ -1358,6 +1370,7 @@ export default {
         ['Thing object', 'oh_thingtype'],
         ['Quantity', 'oh_quantity'],
         ['String', 'String'],
+        ['Boolean', 'Boolean'],
         ['Number', 'Number'],
         ['Dictionary', 'Dictionary'],
         ['Colour', 'Colour']
