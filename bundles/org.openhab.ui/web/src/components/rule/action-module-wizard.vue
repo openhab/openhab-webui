@@ -151,7 +151,7 @@ import ConfigSheet from '@/components/config/config-sheet.vue'
 
 export default {
   mixins: [ModuleWizard],
-  props: ['currentModule', 'currentModuleType'],
+  props: ['currentModule', 'currentModuleType', 'moduleTypes'],
   components: {
     ItemPicker,
     ConfigSheet
@@ -196,18 +196,16 @@ export default {
     },
     chooseScriptCategory () {
       this.category = 'script'
-      this.$emit('typeSelect', 'script.ScriptAction')
-      this.$nextTick(() => {
-        this.$set(this, 'languages', this.currentModuleType.configDescriptions
-          .find((c) => c.name === 'type').options
-          .map((l) => {
-            return {
-              contentType: l.value,
-              name: l.label.split(' (')[0],
-              version: l.label.split(' (')[1].replace(')', '')
-            }
-          }))
-      })
+      let moduleType = this.moduleTypes.find((t) => t.uid === 'script.ScriptAction')
+      if (moduleType) {
+        this.$set(this, 'languages', moduleType.configDescriptions.find((c) => c.name === 'type').options.map((l) => {
+          return {
+            contentType: l.value,
+            name: l.label.split(' (')[0],
+            version: l.label.split(' (')[1].replace(')', '')
+          }
+        }))
+      }
     },
     chooseRulesCategory () {
       this.category = 'rules'
@@ -272,7 +270,10 @@ export default {
       // this.$set(this.currentModule.configuration, 'command', hsb.join(','))
     },
     scriptLanguagePicked (value) {
-      this.$emit('startScript', value)
+      this.$emit('typeSelect', 'script.ScriptAction')
+      this.$nextTick(() => {
+        this.$emit('startScript', value)
+      })
     },
     itemPicked (value) {
       this.category = 'item'
