@@ -12,9 +12,10 @@
           v-if="initSearchbar"
           ref="searchbar"
           class="searchbar-rules"
-          search-container=".rules-list"
-          search-item=".rulelist-item"
-          search-in=".item-title, .item-text, .item-after, .item-subtitle, .item-header, .item-footer"
+          custom-search
+          @searchbar:search="search"
+          @searchbar:clear="clearSearch"
+          @searchbar:disable="clearSearch"
           :placeholder="searchPlaceholder"
           :disable-button="!$theme.aurora" />
       </f7-subnavbar>
@@ -90,11 +91,16 @@
     <!-- rule engine available and ready and has rules -->
     <f7-block class="block-narrow" v-show="!noRuleEngine && ready && rules.length > 0">
       <f7-col>
-        <f7-block-title class="searchbar-hide-on-search">
-          {{ filteredRules.length }} {{ type.toLowerCase() }} {{ selectedTags.length > 0 ? ' - ' : '' }}
-          <f7-link v-if="selectedTags.length > 0" @click="selectedTags = []">
-            Reset filter(s)
-          </f7-link>
+        <f7-block-title class="no-margin-top">
+          <span>{{ listTitle }}</span>
+          <template v-if="selectedTags.length > 0">
+            -
+            <f7-link @click="selectedTags = []" text="Reset filters" />
+          </template>
+          <template v-if="showCheckboxes && filteredRules.length">
+            -
+            <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
+          </template>
         </f7-block-title>
 
         <f7-list v-if="uniqueTags.length > 0">
@@ -145,7 +151,7 @@
                   style="margin-right: 2px">
                   <f7-icon slot="media" ios="f7:doc_on_doc_fill" md="material:file_copy" aurora="f7:doc_on_doc_fill" />
                 </f7-chip>
-                <f7-chip v-for="tag in rule.tags.filter((t) => t !== 'Script' && t !== 'Scene')" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
+                <f7-chip v-for="tag in displayedTags(rule)" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
                   <f7-icon slot="media" ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
                 </f7-chip>
               </div>
@@ -198,6 +204,7 @@ export default {
       selectedTags: [],
       selectedItems: [],
       selectedDeletableItems: [],
+      searchQuery: null,
       showCheckboxes: false,
       eventSource: null,
       templates: null
@@ -208,8 +215,21 @@ export default {
       return this.showScripts ? 'Scripts' : (this.showScenes ? 'Scenes' : 'Rules')
     },
     filteredRules () {
-      if (this.selectedTags.length === 0) return this.rules
-      return this.rules.filter((r) => {
+      let rules = this.rules
+      if (this.searchQuery) {
+        rules = rules.filter((rule) => {
+          const hayStack = [
+            rule.name,
+            rule.uid,
+            rule.description,
+            this.ruleStatusBadgeText(this.ruleStatuses[rule.uid]),
+            ...this.displayedTags(rule)
+          ].join(' ').toLowerCase()
+          return hayStack.includes(this.searchQuery)
+        })
+      }
+      if (this.selectedTags.length === 0) return rules
+      return rules.filter((r) => {
         for (const t of this.selectedTags) {
           if (r.tags.includes(t)) return true
         }
@@ -229,6 +249,21 @@ export default {
     },
     searchPlaceholder () {
       return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
+    },
+    allSelected () {
+      return this.selectedItems.length === this.filteredRules.length
+    },
+    listTitle () {
+      let title = this.filteredRules.length
+      if (this.searchQuery) {
+        title += ` of ${this.rules.length} Rules found`
+      } else {
+        title += ' Rules'
+      }
+      if (this.selectedItems.length > 0) {
+        title += `, ${this.selectedItems.length} selected`
+      }
+      return title
     },
     enablableItems () {
       if (!this.selectedItems || !this.selectedItems.length) return 0
@@ -409,6 +444,21 @@ export default {
         if (ctrl && !this.selectedItems.length) this.showCheckboxes = false
       }
     },
+    search (searchbar, query, previousQuery) {
+      this.searchQuery = query.trim().toLowerCase()
+      this.selectedItems = this.selectedItems.filter((i) => this.filteredRules.find((rule) => rule.uid === i))
+    },
+    clearSearch () {
+      this.searchQuery = null
+      this.filteredThings = this.things
+    },
+    selectDeselectAll () {
+      if (this.selectedItems.length === this.filteredRules.length) {
+        this.selectedItems = []
+      } else {
+        this.selectedItems = this.filteredRules.map((t) => t.uid)
+      }
+    },
     toggleItemCheck (event, item) {
       if (!this.showCheckboxes) this.showCheckboxes = true
       if (this.isChecked(item)) {
@@ -529,6 +579,9 @@ export default {
       }
       // update rules list
       this.$refs.listIndex.update()
+    },
+    displayedTags (rule) {
+      return rule.tags.filter((t) => t !== 'Script' && t !== 'Scene')
     },
     isTagSelected (tag) {
       return this.selectedTags.includes(tag)
