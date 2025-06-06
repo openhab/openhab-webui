@@ -4,6 +4,7 @@
 
 import Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript.js'
+import { blockGetCheckedInputType } from '@/assets/definitions/blockly/utils.js'
 
 export default function (f7) {
   Blockly.Blocks['dicts_create_with'] = {
@@ -190,7 +191,7 @@ export default function (f7) {
         .setCheck('String')
       this.appendValueInput('varName')
         .appendField('from dictionary')
-        .setCheck('String')
+        .setCheck(['Dictionary', 'String'])
       this.setInputsInline(true)
       this.setOutput(true, 'String')
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-standard-ext.html#get-value-of-key-from-dictionary')
@@ -205,7 +206,12 @@ export default function (f7) {
   */
   javascriptGenerator.forBlock['dicts_get'] = function (block) {
     const key = javascriptGenerator.valueToCode(block, 'key', javascriptGenerator.ORDER_ATOMIC)
-    const varName = javascriptGenerator.valueToCode(block, 'varName', javascriptGenerator.ORDER_ATOMIC).replace(/'/g, '')
+    // note: even though the dict can be directly used without a variable, we need to keep the variable name as "varName" for backwards compatibility
+    let varName = javascriptGenerator.valueToCode(block, 'varName', javascriptGenerator.ORDER_ATOMIC)
+    const varNameType = blockGetCheckedInputType(block, 'varName')
+    if (varNameType !== 'Dictionary') {
+      varName = varName.replace(/'/g, '')
+    }
     let code = `${varName}[${key}]`
     return [code, 0]
   }
