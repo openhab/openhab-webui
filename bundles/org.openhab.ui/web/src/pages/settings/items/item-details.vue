@@ -29,11 +29,11 @@
           <item-state-preview :item="item" :context="context" />
         </f7-col>
       </f7-row>
-      <f7-row v-if="item && item.tags && item.tags.length > 0">
+      <f7-row v-if="nonSemanticTags?.length > 0">
         <f7-col>
-          <f7-block-title>Tags</f7-block-title>
+          <f7-block-title>Non-Semantic Tags</f7-block-title>
           <f7-block strong class="tags-block">
-            <f7-chip v-for="tag in item.tags" :key="tag" :text="tag" media-bg-color="blue">
+            <f7-chip v-for="tag in nonSemanticTags" :key="tag" :text="tag" media-bg-color="blue">
               <f7-icon slot="media" ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
             </f7-chip>
           </f7-block>
@@ -43,10 +43,12 @@
         <f7-col>
           <f7-block-title>Semantic Classification</f7-block-title>
           <f7-list>
-            <f7-list-item title="class" :after="item.metadata.semantics.value" />
+            <f7-list-item v-if="semanticClass" :title="semanticClass" :after="semanticValue" />
+            <f7-list-item v-if="semanticProperty" title="Property" :after="semanticProperty" />
             <f7-list-item
-              v-for="(value, key) in item.metadata.semantics.config"
+              v-for="(value, key) in semanticAttributes"
               :key="key"
+              :link="groupLink(value)"
               :title="key"
               :after="value" />
           </f7-list>
@@ -54,13 +56,13 @@
       </f7-row>
       <f7-row v-if="item && item.groupNames && item.groupNames.length > 0">
         <f7-col>
-          <f7-block-title>Direct Parent Groups</f7-block-title>
+          <f7-block-title>Direct Non-Semantic Parent Groups</f7-block-title>
           <f7-card>
             <f7-list>
               <f7-list-item
-                v-for="group in item.groupNames"
+                v-for="group in nonSemanticGroupNames"
                 :key="group"
-                :link="'/settings/items/' + group"
+                :link="groupLink(group)"
                 :title="group" />
             </f7-list>
           </f7-card>
@@ -189,6 +191,43 @@ export default {
       return {
         store: this.$store.getters.trackedItems
       }
+    },
+    semanticClass () {
+      return this.item?.metadata?.semantics?.value?.split('_')[0]
+    },
+    semanticValue () {
+      const valueArray = this.item?.metadata?.semantics?.value?.split('_')
+      if (!valueArray) return null
+      if (valueArray.length > 1) return valueArray.slice(1).join('->')
+      return valueArray[0]
+    },
+    semanticProperty () {
+      const config = this.item?.metadata?.semantics?.config
+      if (!config) return null
+      const propertyArray = config.relatesTo?.split('_')
+      if (!propertyArray) return null
+      if (propertyArray.length > 1) return propertyArray.slice(1).join('->')
+      return propertyArray[0]
+    },
+    semanticAttributes () {
+      const config = this.item?.metadata?.semantics?.config
+      if (!config) return null
+      const filteredAttributes = {
+        'isPointOf': 'Point Of',
+        'hasLocation': 'In Location',
+        'isPartOf': 'Part Of'
+      }
+      const attributes = {}
+      Object.keys(filteredAttributes).filter((key) => config[key]).forEach((key) => {
+        attributes[filteredAttributes[key]] = config[key]
+      })
+      return attributes
+    },
+    nonSemanticGroupNames () {
+      return this.item.groupNames.filter((g) => !Object.values(this.semanticAttributes).includes(g))
+    },
+    nonSemanticTags () {
+      return this.item?.tags?.filter((tag) => tag !== this.semanticTag(this.semanticValue) && tag !== this.semanticTag(this.semanticProperty))
     }
   },
   methods: {
@@ -234,6 +273,13 @@ export default {
     },
     searchInSidebar () {
       this.$f7.emit('selectDeveloperDock', { 'dock': 'tools', 'toolTab': 'pin', 'searchFor': this.item.name })
+    },
+    groupLink (group) {
+      return '/settings/items/' + group
+    },
+    semanticTag (value) {
+      const valueArray = value.split('->')
+      return valueArray[valueArray.length - 1]
     }
   }
 }
