@@ -6,7 +6,7 @@
                     :opened="model.opened" :toggle="canHaveChildren"
                     @treeview:open="model.opened = true" @treeview:close="model.opened = false" @click="select">
     <draggable :disabled="!canDragDrop" :list="children" :group="{name: 'model-treeview', put: dropAllowed(model)}" animation="150" forceFallback="true" fallbackOnBody="true" fallbackThreshold="5"
-               scrollSensitivity="200" delay="400" delayOnTouchOnly="true" touchStartThreshold="10" invertSwap="true" sort="false"
+               scrollSensitivity="200" delay="400" delayOnTouchOnly="true" touchStartThreshold="10" invertSwap="true" sort="false" ghost-class="model-sortable-ghost"
                @start="onDragStart" @change="onDragChange" @end="onDragEnd" :move="onDragMove">
       <model-treeview-item v-for="node in children"
                            :key="node.item.name"
