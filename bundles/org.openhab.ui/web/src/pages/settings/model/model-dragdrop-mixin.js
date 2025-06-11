@@ -98,7 +98,7 @@ export default {
       this.moveState.moveConfirmed = false
       this.moveState.nodesToUpdate.splice(0)
       this.moveState.moveDelayedOpen = null
-      this.moveState.moveTarget = this.rootNode
+      this.moveState.moveTarget = null
       console.debug('Drag start - moveState:', cloneDeep(this.moveState))
     },
     onDragChange (event) {
@@ -165,6 +165,9 @@ export default {
       this.moveState.moving = false
       this.moveState.dragEnd = true
       console.debug('Drag end - moveState:', cloneDeep(this.moveState))
+      if (!this.moveState.moveTarget) {
+        console.timeEnd('Timer: Drag')
+      }
     },
     dropAllowed (node) {
       if (!this.moveState.moving || this.moveState.node.item?.name === node.item?.name) return true
