@@ -37,7 +37,7 @@ export default {
   },
   computed: {
     rootElements () {
-      return [...this.rootLocations, ...this.rootEquipment, ...this.rootPoints, ... this.rootGroups, ... this.rootItems]
+      return [...this.rootLocations, ...this.rootEquipment, ...this.rootPoints, ...this.rootGroups, ...this.rootItems]
     }
   },
   methods: {
