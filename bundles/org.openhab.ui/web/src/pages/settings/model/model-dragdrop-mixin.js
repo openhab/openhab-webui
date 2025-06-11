@@ -79,6 +79,9 @@ export default {
     },
     canHaveChildren () {
       return ((this.model.item.type === 'Group') && (this.children.length > 0 || this.moveState.moving)) === true
+    },
+    allowDrop () {
+      return this.dropAllowed(this.model)
     }
   },
   methods: {
