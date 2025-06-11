@@ -166,6 +166,7 @@ export default {
     },
     dropAllowed (node) {
       if (!this.moveState.moving || this.moveState.node.item?.name === node.item?.name) return true
+      if (node.item?.type && node.item.type !== 'Group') return false
       if (node?.class?.startsWith('Point')) {
         return false
       }
@@ -278,7 +279,10 @@ export default {
       console.time('Timer: isValidGroupType')
       const groupTypeDef = parentNode.item?.groupType?.split(':')
       const baseType = groupTypeDef ? groupTypeDef[0] : 'None'
-      if (baseType === 'None') return true
+      if (baseType === 'None') {
+        console.timeEnd('Timer: isValidGroupType')
+        return true
+      }
       const baseDimension = groupTypeDef && groupTypeDef.length > 1 ? groupTypeDef[1] : null
 
       const typeDef = node.item.type !== 'Group' ? node.item.type?.split(':') : node.item.groupType?.split(':')
