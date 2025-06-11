@@ -98,7 +98,7 @@ export default {
       this.moveState.moveConfirmed = false
       this.moveState.nodesToUpdate.splice(0)
       this.moveState.moveDelayedOpen = null
-      this.moveState.moveTarget = null
+      this.moveState.moveTarget = this.rootNode
       console.debug('Drag start - moveState:', cloneDeep(this.moveState))
     },
     onDragChange (event) {
@@ -109,14 +109,14 @@ export default {
         return
       }
       if (event.added) {
-        this.moveState.newParent = this.moveState.moveTarget || this.model
+        this.moveState.newParent = this.moveState.moveTarget
         this.moveState.canAdd = true
       } else if (event.removed) {
         this.moveState.oldParent = this.model
         this.moveState.oldIndex = event.removed.oldIndex
         this.moveState.canRemove = true
       } else if (event.moved) {
-        this.moveState.newParent = this.moveState.moveTarget || this.model
+        this.moveState.newParent = this.moveState.moveTarget
         this.moveState.canAdd = true
         this.moveState.oldParent = this.model
         this.moveState.canRemove = true
@@ -127,7 +127,7 @@ export default {
     onDragMove (event) {
       console.timeLog('Timer: Drag')
       console.debug('Drag move - event:', event)
-      const target = event.relatedContext?.element
+      const target = event.relatedContext?.element || this.rootNode
       // cancel opening previous group we moved over as we moved away from it
       const movedToSamePlace = target?.item?.name === this.moveState.moveTarget?.item?.name
       if (!movedToSamePlace && this.moveState.moveDelayedOpen) {
@@ -138,7 +138,9 @@ export default {
       if (this.moveState.cancelled || !this.moveState.node.item.editable || !this.dropAllowed(target)) {
         return false
       }
-      this.moveState.moveTarget = target
+      if (!target.item || target.item.type === 'Group') {
+        this.moveState.moveTarget = target
+      }
       // Open group if not open yet, with a delay so you don't open it if you just drag over it
       if (!movedToSamePlace && target?.item?.type === 'Group' && !target.opened) {
         this.moveState.moveDelayedOpen = setTimeout((node) => {

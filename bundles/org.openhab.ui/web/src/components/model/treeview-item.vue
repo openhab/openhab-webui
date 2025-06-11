@@ -13,6 +13,7 @@
                              :key="node.item.name"
                              :model="node"
                              :parentNode="model"
+                             :rootNode="rootNode"
                              @selected="(event) => $emit('selected', event)"
                              :selected="selected"
                              :includeItemName="includeItemName" :includeItemTags="includeItemTags"
@@ -48,7 +49,7 @@ import Draggable from 'vuedraggable'
 export default {
   name: 'model-treeview-item',
   mixins: [ItemMixin, ModelDragDropMixin],
-  props: ['model', 'parentNode', 'selected', 'includeItemName', 'includeItemTags', 'canDragDrop'],
+  props: ['model', 'parentNode', 'rootNode', 'selected', 'includeItemName', 'includeItemTags', 'canDragDrop'],
   emits: ['reload'],
   components: {
     Draggable,
