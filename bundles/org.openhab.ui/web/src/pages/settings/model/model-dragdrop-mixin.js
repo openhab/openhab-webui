@@ -30,17 +30,14 @@ export default {
     }
   },
   watch: {
-    moveState: {
-      handler: function () {
-        if (this.canSave) {
-          this.saveUpdate()
-        } else if (this.canRemove) {
-          this.validateRemove()
-        } else if (this.canAdd) {
-          this.validateAdd()
-        }
-      },
-      deep: true
+    canSave(val) {
+      if (val) this.saveUpdate()
+    },
+    canRemove(val) {
+      if (val) this.validateRemove()
+    },
+    canAdd(val) {
+      if (val) this.validateAdd()
     }
   },
   computed: {
