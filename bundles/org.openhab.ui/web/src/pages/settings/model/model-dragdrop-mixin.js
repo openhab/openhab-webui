@@ -30,13 +30,13 @@ export default {
     }
   },
   watch: {
-    canSave(val) {
+    canSave (val) {
       if (val) this.saveUpdate()
     },
-    canRemove(val) {
+    canRemove (val) {
       if (val) this.validateRemove()
     },
-    canAdd(val) {
+    canAdd (val) {
       if (val) this.validateAdd()
     }
   },
