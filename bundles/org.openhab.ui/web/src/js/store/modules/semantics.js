@@ -6,7 +6,8 @@ const state = {
   Equipment: [],
   Points: [],
   Properties: [],
-  Labels: {}
+  Labels: {},
+  Tags: []
 }
 
 const getters = {
@@ -17,18 +18,29 @@ const getters = {
 
 const mutations = {
   setSemantics (state, { tags }) {
+    state.Tags = tags
+    state.Tags.forEach((tag) => {
+      const tagParts = tag.uid.split('_')
+      tag.parent = tagParts.slice(0, -1).join('_')
+    })
     state.Locations = tags.filter(t => t.uid.startsWith('Location')).map(t => t.name)
     state.Equipment = tags.filter(t => t.uid.startsWith('Equipment')).map(t => t.name)
     state.Points = tags.filter(t => t.uid.startsWith('Point')).map(t => t.name)
     state.Properties = tags.filter(t => t.uid.startsWith('Property')).map(t => t.name)
     // Store i18n labels
-    state.Labels = {} // Clear existing labels
+    state.Labels = {} // Clear existing labels and descriptions
+    state.Descriptions = {}
+    state.Synonyms = {}
     for (const i in tags) {
       const t = tags[i]
       state.Labels[t.name] = t.label || t.name
+      state.Descriptions[t.name] = t.description || ''
+      state.Synonyms[t.name] = t.synonyms || []
     }
     // Save as i18n messages
     i18n.mergeLocaleMessage(i18n.locale, state.Labels)
+    i18n.mergeLocaleMessage(i18n.locale, state.Descriptions)
+    Object.keys(state.Synonyms).forEach((name) => i18n.mergeLocaleMessage(i18n.locale, state.Synonyms[name]))
   }
 }
 
