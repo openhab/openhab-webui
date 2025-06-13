@@ -1,5 +1,5 @@
 <template>
-  <f7-page class="item-details-page" @page:beforein="onPageBeforeIn" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
+  <f7-page class="item-details-page" @page:beforein="onPageBeforeIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar :title="item.name" back-link="Back" no-shadow no-hairline class="item-details-navbar">
       <f7-nav-right v-if="ready">
         <f7-link v-if="item.editable" icon-md="material:edit" href="edit">
@@ -186,9 +186,7 @@ export default {
   },
   data () {
     return {
-      item: {},
-      links: [],
-      ready: false
+      item: {}
     }
   },
   computed: {
@@ -222,11 +220,6 @@ export default {
     onPageBeforeIn () {
       this.$store.dispatch('startTrackingStates')
       this.load()
-    },
-    onPageAfterIn () {
-      this.$oh.api.get('/rest/links?itemName=' + this.itemName).then((data) => {
-        this.links = data
-      })
     },
     onPageBeforeOut () {
       this.$store.dispatch('stopTrackingStates')
