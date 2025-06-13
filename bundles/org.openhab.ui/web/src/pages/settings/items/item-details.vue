@@ -195,22 +195,8 @@ export default {
         store: this.$store.getters.trackedItems
       }
     },
-    semanticValue () {
-      const valueArray = this.item?.metadata?.semantics?.value?.split('_')
-      if (!valueArray) return null
-      if (valueArray.length > 1) return valueArray.slice(1).join('->')
-      return valueArray[0]
-    },
-    semanticProperty () {
-      const config = this.item?.metadata?.semantics?.config
-      if (!config) return null
-      const propertyArray = config.relatesTo?.split('_')
-      if (!propertyArray) return null
-      if (propertyArray.length > 1) return propertyArray.slice(1).join('->')
-      return propertyArray[0]
-    },
     nonSemanticTags () {
-      return this.item?.tags?.filter((tag) => tag !== this.semanticTag(this.semanticValue) && tag !== this.semanticTag(this.semanticProperty)) || []
+      return this.item?.tags?.filter((tag) => tag !== this.semanticTag(this.item?.metadata?.semantics?.value) && tag !== this.semanticTag(this.item?.metadata?.semantics?.config?.relatesTo)) || []
     },
     itemGroups () {
       return this.items.filter((i) => this.item.groupNames.includes(i.name)).toSorted((a, b) => (a.label || a.name).localeCompare(b.label || b.name))
@@ -276,7 +262,8 @@ export default {
       return '/settings/items/' + item
     },
     semanticTag (value) {
-      const valueArray = value.split('->')
+      if (!value) return null
+      const valueArray = value.split('_')
       return valueArray[valueArray.length - 1]
     }
   }
