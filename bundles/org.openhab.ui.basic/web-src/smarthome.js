@@ -973,10 +973,12 @@
 
 		_t.legendButton = null;
 		_t.periodButton = null;
+		_t.chartUpscaleButton = null;
 
 		if (_t.headerRow !== null && _t.headerRow !== "") {
 			_t.legendButton = _t.formHeaderRow.querySelector(o.image.legendButton);
 			_t.periodButton = _t.formHeaderRow.querySelector(o.image.periodButton);
+			_t.chartUpscaleButton = _t.formHeaderRow.querySelector(o.image.chartUpscaleButton);
 			if (_t.legendButton !== null) {
 				_t.displayLegend = _t.parentNode.getAttribute("data-legend") === "true";
 				if (_t.displayLegend) {
@@ -987,6 +989,9 @@
 			}
 			if (_t.periodButton !== null) {
 				_t.period = null;
+			}
+			if (_t.chartUpscaleButton !== null) {
+				_t.upscale = false;
 			}
 		}
 
@@ -1020,6 +1025,38 @@
 			setTimeout(function() {
 				_t.modalPeriods.hide();
 			}, 300);
+		}
+
+		function onUpscaleClick() {
+			var
+				splittedSize,
+				width,
+				height;
+
+			_t.upscale = !_t.upscale;
+			if (_t.upscale) {
+				_t.chartUpscaleButton.classList.add(o.buttonActiveClass);
+			} else {
+				_t.chartUpscaleButton.classList.remove(o.buttonActiveClass);
+			}
+			_t.url = _t.url.replace(/&w=\w+/, "");
+			_t.url = _t.url.replace(/&h=\w+/, "");
+			if (_t.upscale) {
+				height = Math.floor(_t.parentNode.parentNode.offsetWidth / 2);
+				width = height * 2;
+				_t.url = _t.url + "&w=" + width;
+				_t.url = _t.url + "&h=" + height;
+			} else if (smarthome.UI.chartSize !== null) {
+				splittedSize = smarthome.UI.chartSize.split("x");
+				_t.url = _t.url + "&w=" + splittedSize[0];
+				_t.url = _t.url + "&h=" + splittedSize[1];
+			}
+			_t.image.setAttribute("src", _t.url + "&t=" + Date.now());
+			if (_t.upscale) {
+				_t.parentNode.classList.add(o.image.upscaleClass);
+			} else {
+				_t.parentNode.classList.remove(o.image.upscaleClass);
+			}
 		}
 
 		_t.showModalPeriods = function() {
@@ -1098,6 +1135,10 @@
 				componentHandler.downgradeElements([ _t.periodButton ]);
 				_t.periodButton.removeEventListener("click", _t.showModalPeriods);
 			}
+			if (_t.chartUpscaleButton !== null) {
+				componentHandler.downgradeElements([ _t.chartUpscaleButton ]);
+				_t.chartUpscaleButton.removeEventListener("click", onUpscaleClick);
+			}
 		};
 
 		_t.applyLocalSettingsPrivate();
@@ -1107,6 +1148,9 @@
 		}
 		if (_t.periodButton !== null) {
 			_t.periodButton.addEventListener("click", _t.showModalPeriods);
+		}
+		if (_t.chartUpscaleButton !== null) {
+			_t.chartUpscaleButton.addEventListener("click", onUpscaleClick);
 		}
 	}
 
@@ -4075,6 +4119,7 @@
 	image: {
 		legendButton: ".chart-legend-button",
 		periodButton: ".chart-period-button",
+		chartUpscaleButton: ".chart-upscale-button",
 		periodRows: ".mdl-form__header-rows",
 		upscaleButton: ".image-upscale-button",
 		upscaleClass: "mdl-form__image-upscale",
