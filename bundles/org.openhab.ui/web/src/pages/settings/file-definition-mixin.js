@@ -30,6 +30,12 @@ export default {
       THING: 'thing',
       ITEM: 'item'
     })
+    this.MediaType = Object.freeze({
+      YAML: 'application/yaml',
+      THING_DSL: 'text/vnd.openhab.dsl.thing',
+      ITEM_DSL: 'text/vnd.openhab.dsl.item',
+      JSON: 'application/json'
+    })
   },
   methods: {
     /**

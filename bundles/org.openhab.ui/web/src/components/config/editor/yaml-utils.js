@@ -1,5 +1,11 @@
 export function lineIndent (cm, linenr) {
   const line = cm.getLine(linenr)
+  if (line.trim() === '') {
+    if (linenr === cm.getCursor().line) {
+      return cm.getCursor().ch
+    }
+    return undefined
+  }
   const match = line.match(/^ +/)
   if (match && match.length === 1) return match[0].length
   return 0
@@ -7,7 +13,7 @@ export function lineIndent (cm, linenr) {
 
 export function findParent (cm, linenr) {
   const currentIndent = lineIndent(cm, linenr)
-  for (let l = linenr; l >= 0; l--) {
+  for (let l = linenr - 1; l >= 0; l--) {
     if (lineIndent(cm, l) < currentIndent) return l
   }
 }
@@ -52,5 +58,5 @@ export function isRuleSection (line) {
 
 export function isChannelsSection (line) {
   if (!line) return false
-  return line.match(/^channels:/)
+  return line.match(/^ {4}channels:/)
 }
