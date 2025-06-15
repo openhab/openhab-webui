@@ -7,6 +7,7 @@
 */
 import Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript.js'
+import { blockGetCheckedInputType } from '@/assets/definitions/blockly/utils.js'
 
 export default function defineOHBlocks_Scripts (f7, transformationServices) {
   /*
@@ -323,5 +324,31 @@ export default function defineOHBlocks_Scripts (f7, transformationServices) {
   javascriptGenerator.forBlock['oh_script_inline'] = function (block) {
     const code = block.getFieldValue('inlineScript') + '\n'
     return code
+  }
+
+  Blockly.Blocks['oh_rule_enable'] = {
+    init: function () {
+      this.appendValueInput('ruleUID')
+        .setCheck('String')
+        .appendField('Set Rule ')
+      this.appendValueInput('enable')
+        .appendField('as ')
+        .setCheck(['Boolean', 'String'])
+      this.setInputsInline(true)
+      this.setPreviousStatement(true, null)
+      this.setNextStatement(true, null)
+      this.setColour(0)
+      this.setTooltip('Allows to enable or disable a rule')
+
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-run-and-process.html#enableRule')
+    }
+  }
+
+  javascriptGenerator.forBlock['oh_rule_enable'] = function (block) {
+    const ruleUID = javascriptGenerator.valueToCode(block, 'ruleUID', javascriptGenerator.ORDER_ATOMIC)
+    const enableValue = javascriptGenerator.valueToCode(block, 'enable', javascriptGenerator.ORDER_ATOMIC)
+    const enableType = blockGetCheckedInputType(block, 'enable')
+    let enable = (enableType === 'Boolean') ? enableValue : (enableValue === '\'true\'' || enableValue === '\'enabled\'')
+    return `rules.setEnabled(${ruleUID}, ${enable});\n`
   }
 }
