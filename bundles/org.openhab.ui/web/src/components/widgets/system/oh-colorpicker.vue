@@ -88,6 +88,12 @@ export default {
           }
         }
       }))
+      //Fix sliders at 0% - display: none -> width not known during component mount
+      setTimeout(() => {
+        this.colorPicker.hueRangeSlider.calcSize()
+        this.colorPicker.saturationRangeSlider.calcSize()
+        this.colorPicker.brightnessRangeSlider.calcSize()
+      }, 0)
     },
     sendCommand (hsb) {
       console.debug('oh-colorpicker: Received command ' + hsb)
