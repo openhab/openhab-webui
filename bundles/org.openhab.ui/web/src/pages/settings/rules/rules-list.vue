@@ -20,8 +20,8 @@
       </f7-subnavbar>
     </f7-navbar>
     <f7-toolbar class="contextual-toolbar" :class="{ 'navbar': $theme.md }" v-if="showCheckboxes" bottom-ios bottom-aurora>
-      <f7-link color="red" v-show="selectedItems.length" v-if="!$theme.md" class="delete" icon-ios="f7:trash" icon-aurora="f7:trash" @click="removeSelected">
-        Remove {{ selectedItems.length }}
+      <f7-link color="red" v-show="selectedDeletableItems.length" v-if="!$theme.md" class="delete" icon-ios="f7:trash" icon-aurora="f7:trash" @click="removeSelected">
+        Remove {{ selectedDeletableItems.length }}
       </f7-link>
       <f7-link color="orange" v-show="selectedItems.length" v-if="!$theme.md && !showScenes" class="disable" @click="doDisableEnableSelected(false)" icon-ios="f7:pause_circle" icon-aurora="f7:pause_circle">
         &nbsp;Disable {{ selectedItems.length }}
@@ -29,14 +29,18 @@
       <f7-link color="green" v-show="selectedItems.length" v-if="!$theme.md && !showScenes" class="enable" @click="doDisableEnableSelected(true)" icon-ios="f7:play_circle" icon-aurora="f7:play_circle">
         &nbsp;Enable {{ selectedItems.length }}
       </f7-link>
+      <!-- <f7-link color="deeppurple" v-show="selectedItems.length === 1 && canRegenerateItem(selectedItems[0])" v-if="!$theme.md && !showScenes" class="enable" @click="regenerateSelected()" icon-ios="f7:arrow_2_circlepath" icon-aurora="f7:arrow_2_circlepath">
+        &nbsp;Regenerate from template
+      </f7-link> -->
       <f7-link v-if="$theme.md" icon-md="material:close" icon-color="white" @click="showCheckboxes = false" />
       <div class="title" v-if="$theme.md">
         {{ selectedItems.length }} selected
       </div>
       <div class="right" v-if="$theme.md">
+        <f7-link v-if="!showScenes" v-show="selectedItems.length === 1 && canRegenerateItem(selectedItems[0])" tooltip="Regenerate selected from template" icon-md="material:autorenew" icon-color="white" @click="regenerateSelected()" />
         <f7-link v-if="!showScenes" v-show="selectedItems.length" tooltip="Disable selected" icon-md="material:pause_circle_outline" icon-color="white" @click="doDisableEnableSelected(false)" />
         <f7-link v-if="!showScenes" v-show="selectedItems.length" tooltip="Enable selected" icon-md="material:play_circle_outline" icon-color="white" @click="doDisableEnableSelected(true)" />
-        <f7-link v-show="selectedItems.length" icon-md="material:delete" icon-color="white" @click="removeSelected" />
+        <f7-link v-show="selectedDeletableItems.length" icon-md="material:delete" icon-color="white" @click="removeSelected" />
       </div>
     </f7-toolbar>
 
@@ -130,7 +134,10 @@
               :footer="rule.description"
               :badge="showScenes ? '' : ruleStatusBadgeText(ruleStatuses[rule.uid])"
               :badge-color="ruleStatusBadgeColor(ruleStatuses[rule.uid])">
-              <div slot="footer">
+              <div slot="footer" class="footer-inner">
+                <f7-chip v-if="rule.templateUID" :text="templateName(rule)" media-bg-color="orange" style="margin-right: 2px">
+                  <f7-icon slot="media" ios="f7:doc_on_doc_fill" md="material:file_copy" aurora="f7:doc_on_doc_fill" />
+                </f7-chip>
                 <f7-chip v-for="tag in rule.tags.filter((t) => t !== 'Script' && t !== 'Scene')" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
                   <f7-icon slot="media" ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
                 </f7-chip>
@@ -149,6 +156,14 @@
     </f7-fab>
   </f7-page>
 </template>
+
+<style lang="stylus">
+.item-footer
+  margin-block-start 4px
+  margin-block-end 2px
+  .footer-inner
+    margin-block-start 2px
+</style>
 
 <script>
 import RuleStatus from '@/components/rule/rule-status-mixin'
@@ -170,8 +185,10 @@ export default {
       uniqueTags: [],
       selectedTags: [],
       selectedItems: [],
+      selectedDeletableItems: [],
       showCheckboxes: false,
-      eventSource: null
+      eventSource: null,
+      templates: null
     }
   },
   computed: {
@@ -218,6 +235,7 @@ export default {
       this.initSearchbar = false
 
       this.$set(this, 'selectedItems', [])
+      this.$set(this, 'selectedDeletableItems', [])
       this.showCheckboxes = false
       let filter = ''
       if (this.showScripts) {
@@ -227,47 +245,65 @@ export default {
         filter = '&tags=Scene'
       }
 
-      this.$oh.api.get('/rest/rules?summary=true' + filter).then(data => {
-        this.rules = data.sort((a, b) => {
-          return a.name.localeCompare(b.name)
-        })
-
-        if (!this.showScripts) {
-          this.rules = this.rules.filter((r) => !r.tags || r.tags.indexOf('Script') < 0)
+      const promises = [this.$oh.api.get('/rest/templates'), this.$oh.api.get('/rest/rules?summary=true' + filter)]
+      Promise.allSettled(promises).then((results) => {
+        const templateData = results[0]
+        const ruleData = results[1]
+        if (templateData.status === 'fulfilled') {
+          this.$set(this, 'templates', templateData.value)
+        } else {
+          console.warn('Failed to retrieve rule templates. Status: "' + templateData.status + '", Reason: "' + templateData.reason + '"')
         }
-
-        if (!this.showScenes) {
-          this.rules = this.rules.filter((r) => !r.tags || r.tags.indexOf('Scene') < 0)
-        }
-
-        this.rules.forEach(rule => {
-          this.ruleStatuses[rule.uid] = rule.status
-
-          rule.tags.forEach(t => {
-            if (t === 'Scene' || t === 'Script') return
-            if (t.startsWith('marketplace:')) t = 'Marketplace'
-            if (!this.uniqueTags.includes(t)) this.uniqueTags.push(t)
+        if (ruleData.status === 'fulfilled') {
+          let rules = ruleData.value.sort((a, b) => {
+            return a.name.localeCompare(b.name)
           })
-        })
 
-        this.uniqueTags.sort()
-        this.initSearchbar = true
-
-        this.loading = false
-        this.ready = true
-
-        this.$nextTick(() => {
-          if (this.$refs.listIndex) this.$refs.listIndex.update()
-          if (this.$device.desktop && this.$refs.searchbar) {
-            this.$refs.searchbar.f7Searchbar.$inputEl[0].focus()
+          if (!this.showScripts) {
+            rules = rules.filter((r) => !r.tags || r.tags.indexOf('Script') < 0)
           }
-          this.$refs.searchbar?.f7Searchbar.search(this.$f7.data[`last${this.type}SearchQuery`] || '')
-        })
 
-        if (!this.eventSource) this.startEventSource()
-      }).catch((err, status) => {
-        if (err === 'Not Found' || status === 404) {
-          this.noRuleEngine = true
+          if (!this.showScenes) {
+            rules = rules.filter((r) => !r.tags || r.tags.indexOf('Scene') < 0)
+          }
+          this.$set(this, 'rules', rules)
+
+          rules.forEach(rule => {
+            this.ruleStatuses[rule.uid] = rule.status
+
+            rule.tags.forEach(t => {
+              if (t === 'Scene' || t === 'Script') return
+              if (t.startsWith('marketplace:')) t = 'Marketplace'
+              if (!this.uniqueTags.includes(t)) this.uniqueTags.push(t)
+            })
+          })
+
+          this.uniqueTags.sort()
+          this.initSearchbar = true
+
+          this.loading = false
+          this.ready = true
+          this.noRuleEngine = false
+
+          this.$nextTick(() => {
+            if (this.$refs.listIndex) this.$refs.listIndex.update()
+            if (this.$device.desktop && this.$refs.searchbar) {
+              this.$refs.searchbar.f7Searchbar.$inputEl[0].focus()
+            }
+            this.$refs.searchbar?.f7Searchbar.search(this.$f7.data[`last${this.type}SearchQuery`] || '')
+          })
+
+          if (!this.eventSource) this.startEventSource()
+        } else {
+          console.warn('Failed to retrieve rule templates. Status: "' + ruleData.status + '", Reason: "' + ruleData.reason + '"')
+          if (ruleData.reason === 'Not Found') {
+            this.noRuleEngine = true
+          }
+          this.loading = false
+          let self = this
+          setTimeout(() => {
+            self.load()
+          }, 2000)
         }
       })
     },
@@ -306,7 +342,7 @@ export default {
       if (this.showCheckboxes) {
         this.toggleItemCheck(event, item.uid, item)
       } else {
-        this.$f7router.navigate((item.editable) ? item.uid : '/settings/scripts/' + item.uid)
+        this.$f7router.navigate(item.uid)
       }
     },
     ctrlClick (event, item) {
@@ -317,15 +353,23 @@ export default {
       if (!this.showCheckboxes) this.showCheckboxes = true
       if (this.isChecked(item)) {
         this.selectedItems.splice(this.selectedItems.indexOf(item), 1)
+        let idx = this.selectedDeletableItems.indexOf(item)
+        if (idx >= 0) {
+          this.selectedDeletableItems.splice(idx, 1)
+        }
       } else {
         this.selectedItems.push(item)
+        const rule = this.rules.find((r) => r.uid === item)
+        if (rule?.editable) {
+          this.selectedDeletableItems.push(item)
+        }
       }
     },
     removeSelected () {
       const vm = this
 
       this.$f7.dialog.confirm(
-        `Remove ${this.selectedItems.length} selected rules?`,
+        `Remove ${this.selectedDeletableItems.length} rules?`,
         'Remove Rules',
         () => {
           vm.doRemoveSelected()
@@ -333,14 +377,9 @@ export default {
       )
     },
     doRemoveSelected () {
-      if (this.selectedItems.some((i) => this.rules.find((rule) => rule.uid === i).editable === false)) {
-        this.$f7.dialog.alert('Some of the selected rules are not modifiable because they have been provisioned by files')
-        return
-      }
-
       let dialog = this.$f7.dialog.progress('Deleting Rules...')
 
-      const promises = this.selectedItems.map((i) => this.$oh.api.delete('/rest/rules/' + i))
+      const promises = this.selectedDeletableItems.map((i) => this.$oh.api.delete('/rest/rules/' + i))
       Promise.all(promises).then((data) => {
         this.$f7.toast.create({
           text: 'Rules removed',
@@ -348,6 +387,7 @@ export default {
           closeTimeout: 2000
         }).open()
         this.selectedItems = []
+        this.selectedDeletableItems = []
         dialog.close()
         this.load()
       }).catch((err) => {
@@ -377,6 +417,39 @@ export default {
         this.$f7.dialog.alert('An error occurred while enabling/disabling: ' + err)
       })
     },
+    regenerateSelected () {
+      if (!this.selectedItems || this.selectedItems.length !== 1) {
+        return
+      }
+      let selectedRule = this.rules.find((rule) => rule.uid === this.selectedItems[0])
+      if (!selectedRule) {
+        return
+      }
+      if (selectedRule.editable) {
+        this.$oh.api.get('/rest/rules/' + this.selectedItems[0]).then((rule) => {
+          this.$f7router.navigate({
+            url: '/settings/rules/stub'
+          }, {
+            reloadCurrent: false,
+            props: {
+              ruleCopy: rule
+            }
+          })
+        }).catch((err) => {
+          this.$f7.dialog.alert('An error occurred when retrieving rule "' + this.selectedItems[0] + '": ' + err)
+        })
+      } else {
+        this.$oh.api.postPlain('/rest/rules/' + this.selectedItems[0] + '/regenerate').then(() => {
+          this.$f7.toast.create({
+            text: 'Rule regenerated from template',
+            destroyOnClose: true,
+            closeTimeout: 2000
+          }).open()
+        }).catch((err) => {
+          this.$f7.dialog.alert('An error occurred when trying to regenerate rule "' + this.selectedItems[0] + '" from template: ' + err)
+        })
+      }
+    },
     toggleSearchTag (e, item) {
       const idx = this.selectedTags.indexOf(item)
       if (idx !== -1) {
@@ -389,6 +462,23 @@ export default {
     },
     isTagSelected (tag) {
       return this.selectedTags.includes(tag)
+    },
+    templateName (rule) {
+      let template = this.templates ? this.templates.find((t) => t.uid === rule.templateUID) : undefined
+      return template ? template.label : rule.templateUID
+    },
+    canRegenerateItem (item) {
+      if (!this.rules) {
+        return false
+      }
+      let rule = this.rules.find((r) => r.uid === item)
+      return rule ? this.canRegenerate(rule) : false
+    },
+    canRegenerate (rule) {
+      if (!rule || !rule.templateUID || !rule.templateState || rule.templateState === 'no-template' || rule.templateState === 'template-missing') {
+        return false
+      }
+      return this.templates ? this.templates.some((t) => t.uid === rule.templateUID) : false
     }
   }
 }

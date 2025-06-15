@@ -8,12 +8,18 @@
         <f7-nav-title v-if="ruleModule && ruleModule.new">
           Add {{ SectionLabels[currentSection][1] }}
         </f7-nav-title>
+        <f7-nav-title v-else-if="readOnly">
+          View {{ SectionLabels[currentSection][1] }}
+        </f7-nav-title>
         <f7-nav-title v-else>
           Edit {{ SectionLabels[currentSection][1] }}
         </f7-nav-title>
         <f7-nav-right>
-          <f7-link v-show="currentRuleModuleType && currentRuleModuleType.uid !== 'script.ScriptAction'" @click="updateModuleConfig">
-            Save
+          <f7-link v-if="!readOnly && currentRuleModuleType && dirty" @click="updateModuleConfig">
+            {{ $t('dialogs.save') }}
+          </f7-link>
+          <f7-link v-else @click="close">
+            {{ $t('dialogs.close') }}
           </f7-link>
         </f7-nav-right>
       </f7-navbar>
@@ -21,9 +27,9 @@
         <f7-col v-if="currentRuleModuleType" class="margin-top">
           <f7-list inline-labels no-hairlines-md class="no-margin">
             <f7-list-input type="text" :placeholder="moduleTitleSuggestion" :value="ruleModule.label" required
-                           @input="ruleModule.label = $event.target.value" clear-button />
+                           @input="ruleModule.label = $event.target.value" :disabled="readOnly" clear-button />
             <f7-list-input type="text" :placeholder="moduleDescriptionSuggestion" :value="ruleModule.description"
-                           @input="ruleModule.description = $event.target.value" clear-button />
+                           @input="ruleModule.description = $event.target.value" :disabled="readOnly" clear-button />
           </f7-list>
         </f7-col>
         <!-- <f7-block-footer class="no-margin padding-left"><small>Tip: leave fields blank to set automatically to the suggested name and description. <f7-link @click="ruleModule.label = null; ruleModule.description = null">Clear</f7-link></small></f7-block-footer> -->
@@ -44,14 +50,14 @@
             </ul>
           </f7-list>
           <trigger-module-wizard v-else-if="!advancedTypePicker && currentSection === 'triggers'" :current-module="ruleModule" :current-module-type="currentRuleModuleType" @typeSelect="setModuleType" @showAdvanced="advancedTypePicker = true" />
-          <condition-module-wizard v-else-if="!advancedTypePicker && currentSection === 'conditions'" :current-module="ruleModule" :current-module-type="currentRuleModuleType" @typeSelect="setModuleType" @showAdvanced="advancedTypePicker = true" @startScript="startScripting" />
-          <action-module-wizard v-else-if="!advancedTypePicker && currentSection === 'actions'" :current-module="ruleModule" :current-module-type="currentRuleModuleType" @typeSelect="setModuleType" @showAdvanced="advancedTypePicker = true" @startScript="startScripting" />
+          <condition-module-wizard v-else-if="!advancedTypePicker && currentSection === 'conditions'" :current-module="ruleModule" :current-module-type="currentRuleModuleType" :module-types="moduleTypes['conditions']" @typeSelect="setModuleType" @showAdvanced="advancedTypePicker = true" @startScript="startScripting" />
+          <action-module-wizard v-else-if="!advancedTypePicker && currentSection === 'actions'" :current-module="ruleModule" :current-module-type="currentRuleModuleType" :module-types="moduleTypes['actions']" @typeSelect="setModuleType" @showAdvanced="advancedTypePicker = true" @startScript="startScripting" />
         </f7-col>
 
         <!-- module configuration -->
         <f7-col v-if="ruleModule.type && (!ruleModule.new || advancedTypePicker)" class="margin-top">
           <f7-list>
-            <f7-list-item :title="SectionLabels[currentSection][0]" ref="ruleModuleTypeSmartSelect" smart-select :smart-select-params="{ view: $f7.views.main, openIn: 'popup', closeOnSelect: true }">
+            <f7-list-item :disabled="readOnly" :title="SectionLabels[currentSection][0]" ref="ruleModuleTypeSmartSelect" smart-select :smart-select-params="{ view: $f7.views.main, openIn: 'popup', closeOnSelect: true }">
               <select name="ruleModuleType"
                       @change="setModuleType(moduleTypes[currentSection].find((t) => t.uid === $refs.ruleModuleTypeSmartSelect.f7SmartSelect.getValue()), true)">
                 <optgroup v-for="(mt, scope) in groupedModuleTypes(currentSection)" :key="scope" :label="scope">
@@ -74,6 +80,7 @@
                         :parameterGroups="[]"
                         :parameters="currentRuleModuleType.configDescriptions"
                         :configuration="ruleModule.configuration"
+                        :readOnly="readOnly"
                         @updated="dirty = true" />
           <f7-block v-else>
             <f7-button @click="editBlockly" color="blue" outline fill>
@@ -105,7 +112,7 @@ export default {
     ActionModuleWizard,
     ConfigSheet
   },
-  props: ['rule', 'ruleModule', 'ruleModuleType', 'moduleTypes', 'currentSection'],
+  props: ['rule', 'ruleModule', 'ruleModuleType', 'moduleTypes', 'currentSection', 'readOnly'],
   data () {
     return {
       currentRuleModuleType: this.ruleModuleType,
@@ -187,6 +194,9 @@ export default {
       } else {
         this.$refs.modulePopup.close()
       }
+    },
+    close () {
+      this.$refs.modulePopup.close()
     }
   },
   created () {
