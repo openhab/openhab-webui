@@ -61,6 +61,7 @@ const WidgetsListPage = () => import(/* webpackChunkName: "admin-devtools" */ '.
 const WidgetEditPage = () => import(/* webpackChunkName: "admin-devtools" */ '../pages/developer/widgets/widget-edit.vue')
 const BlocksListPage = () => import(/* webpackChunkName: "admin-devtools" */ '../pages/developer/blocks/blocks-list.vue')
 const BlocksEditPage = () => import(/* webpackChunkName: "blockly-editor" */ '../pages/developer/blocks/blocks-edit.vue')
+const SemanticsEditPage = () => import(/* webpackChunkName: "semantics-editor" */ '../pages/developer/semantics/semantic-tags-edit.vue')
 const ApiExplorerPage = () => import(/* webpackChunkName: "admin-devtools" */ '../pages/developer/api-explorer.vue')
 const LogViewerPage = () => import(/* webpackChunkName: "admin-devtools" */ '../pages/developer/log-viewer.vue')
 
@@ -498,6 +499,11 @@ export default [
             async: loadAsync(BlocksEditPage, (routeTo) => (routeTo.params.uid === 'add') ? { createMode: true } : {})
           }
         ]
+      },
+      {
+        path: 'semantics/',
+        beforeEnter: [enforceAdminForRoute],
+        async: loadAsync(SemanticsEditPage)
       },
       {
         path: 'add-items-dsl',

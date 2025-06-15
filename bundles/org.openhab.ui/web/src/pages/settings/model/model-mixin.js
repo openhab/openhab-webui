@@ -35,23 +35,35 @@ export default {
       selectedItem: null
     }
   },
+  computed: {
+    rootElements () {
+      return [...this.rootLocations, ...this.rootEquipment, ...this.rootPoints, ...this.rootGroups, ...this.rootItems]
+    }
+  },
   methods: {
     /**
      * Load the items and links from the REST API and build the model.
      *
+     * @param relatedToItem optional parameter for an item, only the part of the model related to the item will be build, including all parents and the semantic children.
+     *                      The items and links Array variable will also be limited to these related items, and not the full items and links list retrieved from the REST API.
+     *
      * @returns {Promise<void>}
      */
-    loadModel () {
+    loadModel (relatedToItem) {
       if (this.loading) return Promise.resolve()
       this.loading = true
 
       this.saveExpanded()
 
       const items = this.$oh.api.get('/rest/items?staticDataOnly=true&metadata=.+')
-      const links = this.$oh.api.get('/rest/links')
+      const links = relatedToItem ? this.$oh.api.get('/rest/links?itemName=' + relatedToItem.name) : this.$oh.api.get('/rest/links')
       return Promise.all([items, links]).then((data) => {
         this.items = data[0]
         this.links = data[1]
+
+        if (relatedToItem) {
+          this.items = this.relatedItems(relatedToItem)
+        }
 
         if (this.newItem) {
           this.items.push(this.newItem)
@@ -72,6 +84,16 @@ export default {
         this.rootPoints = this.points
           .filter((i) => !i.metadata.semantics.config || (!i.metadata.semantics.config.isPointOf && !i.metadata.semantics.config.hasLocation))
           .map(this.modelItem).sort(compareModelItems)
+
+        // look for checked or selected items and include non semantic checked items in model tree
+        const selectedItems = this.value ? (Array.isArray(this.value) ? [...this.value] : [this.value]) : null
+        this.includeNonSemantic = this.includeNonSemantic || selectedItems?.some((selected) => {
+          const item = this.items.find((i) => selected === i.name)
+          const isNonSemantic = !item?.metadata?.semantics
+          const hasSemanticGroup = item?.groupNames.some((g) => this.items.some((gi) => g === gi.name && gi.metadata?.semantics))
+          const onlyNonSemanticGroup = !hasSemanticGroup && !item?.groupNames.some((g) => !this.items.some((gi) => g === gi.name && gi.metadata?.semantics))
+          return isNonSemantic || onlyNonSemanticGroup
+        })
 
         if (this.includeNonSemantic) {
           this.rootGroups = this.items
@@ -149,31 +171,78 @@ export default {
      * `this.expanded` has to be provided by the component using this mixin.
      */
     applyExpandedOption () {
-      const treeviewItems = document.querySelectorAll('.treeview-item')
-
-      treeviewItems.forEach(item => {
-        if (item.classList.contains('treeview-item')) {
-          if (this.expanded) {
-            item.classList.add('treeview-item-opened')
-          } else {
-            item.classList.remove('treeview-item-opened')
-          }
-        }
+      // Don't directly update the item classlist as items are only conditionaly rendered in the DOM to improve performance on large trees
+      this.rootElements.forEach((c) => this.applyExpandedOptionChild(c))
+    },
+    applyExpandedOptionChild (child) {
+      child.opened = this.expanded
+      Object.values(child.children).flat().forEach((c) => {
+        this.applyExpandedOptionChild(c)
       })
     },
     saveExpanded () {
-      this.expandedTreeviewItems = [...document.querySelectorAll('.treeview-item-opened')]
+      this.expandedTreeviewItems.splice(0)
+      this.rootElements.forEach((c) => this.saveExpandedChild(c))
+    },
+    saveExpandedChild (child) {
+      if (child.opened) {
+        this.expandedTreeviewItems.push(child.item.name)
+      }
+      Object.values(child.children).flat().forEach((c) => {
+        this.saveExpandedChild(c)
+      })
     },
     restoreExpanded () {
-      const treeviewItems = document.querySelectorAll('.treeview-item')
-
-      treeviewItems.forEach(item => {
-        if (item.classList.contains('treeview-item')) {
-          if (this.expanded || this.expandedTreeviewItems.includes(item)) {
-            item.classList.add('treeview-item-opened')
-          }
-        }
+      this.rootElements.forEach((child) => this.restoreExpandedChild(child, false))
+    },
+    restoreExpandedChild (child, parentClosed) {
+      if (parentClosed) {
+        child.opened = false
+      } else {
+        child.opened = this.expandedTreeviewItems.includes(child.item.name)
+      }
+      Object.values(child.children).flat().forEach((c) => {
+        this.restoreExpandedChild(c, !child.opened)
       })
+    },
+    relatedItems (item) {
+      // This will retrieve all parents and only the semantic children
+      const relatedItems = [item]
+      relatedItems.push(...this.relatedParentItems(item))
+      relatedItems.push(...this.relatedSemanticChildItems(item))
+      // An item can be in multiple parents, leading to double counting. Remove the doubles.
+      return [...new Set(relatedItems)]
+    },
+    relatedParentItems (item) {
+      const relatedItems = this.items.filter((i) => item.groupNames.includes(i.name))
+      const related = relatedItems
+      related.forEach((i) => relatedItems.push(...this.relatedParentItems(i)))
+      return relatedItems
+    },
+    relatedSemanticChildItems (item) {
+      const relatedItems = this.items.filter((i) => {
+        const isPointOf = item.name === i.metadata?.semantics?.config?.isPointOf
+        const hasLocation = item.name === i.metadata?.semantics?.config?.hasLocation
+        const isPartOf = item.name === i.metadata?.semantics?.config?.isPartOf
+        if (isPointOf || hasLocation || isPartOf) return true
+        return false
+      })
+      const children = relatedItems
+      children.forEach((i) => relatedItems.push(...this.relatedSemanticChildItems(i)))
+      return relatedItems
+    },
+    expandSelected (selection) {
+      // expand so all checked items are opened
+      this.rootElements.forEach((c) => this.expandSelectedChild(c, selection))
+    },
+    expandSelectedChild (child, selection) {
+      return Object.values(child.children).flat().map((c) => {
+        if (this.expandSelectedChild(c, selection) || c.checked || c.item.name === this.selectedItem?.item?.name || (selection && c.item.name === selection)) {
+          child.opened = true
+          return true
+        }
+        return false
+      }).reduce((prev, curr) => prev || curr, false)
     }
   }
 }
