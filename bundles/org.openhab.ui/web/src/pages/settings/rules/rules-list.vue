@@ -29,9 +29,9 @@
       <f7-link color="green" v-show="selectedItems.length" v-if="!$theme.md && !showScenes" class="enable" @click="doDisableEnableSelected(true)" icon-ios="f7:play_circle" icon-aurora="f7:play_circle">
         &nbsp;Enable {{ selectedItems.length }}
       </f7-link>
-      <f7-link color="deeppurple" v-show="selectedItems.length === 1 && canRegenerateItem(selectedItems[0])" v-if="!$theme.md && !showScenes" class="enable" @click="regenerateSelected()" icon-ios="f7:arrow_2_circlepath" icon-aurora="f7:arrow_2_circlepath">
+      <!-- <f7-link color="deeppurple" v-show="selectedItems.length === 1 && canRegenerateItem(selectedItems[0])" v-if="!$theme.md && !showScenes" class="enable" @click="regenerateSelected()" icon-ios="f7:arrow_2_circlepath" icon-aurora="f7:arrow_2_circlepath">
         &nbsp;Regenerate from template
-      </f7-link>
+      </f7-link> -->
       <f7-link v-if="$theme.md" icon-md="material:close" icon-color="white" @click="showCheckboxes = false" />
       <div class="title" v-if="$theme.md">
         {{ selectedItems.length }} selected
