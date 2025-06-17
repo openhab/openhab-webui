@@ -1,9 +1,47 @@
+import { renderVisualMap } from './analyzer-helpers'
+
 export default {
-  getChartPage (analyzer) {
+  name: 'calendar',
+  initCoordSystem (coordSettings = {}) {
+    const uiParams = {
+      showRotation: true,
+      isAggregate: true,
+      typeOptions: ['month', 'year']
+    }
+    return {
+      uiParams,
+      chartType: uiParams.typeOptions.includes(coordSettings.chartType) ? coordSettings.chartType : 'month',
+      dimensions: 2,
+      orientation: coordSettings.orientation || 'horizontal'
+    }
+  },
+  initAxes (coordSettings) {
+  },
+  initSeries (item, coordSettings, seriesOptions = {}) {
+    const options = {
+      name: item.label || item.name,
+      type: '',
+      uiParams: {
+        typeOptions: ['heatmap']
+      }
+    }
+
+    if (!(item.type.startsWith('Number') || item.type === 'Dimmer' ||
+      item.groupType?.startsWith('Number') || item.groupType === 'Dimmer')) {
+      return options
+    }
+
+    options.type = 'heatmap'
+    options.uiParams.typeOptions = ['heatmap']
+    options.uiParams.showAggregationOptions = true
+
+    return options
+  },
+  getChartPage (analyzer, coordSettings) {
     let page = {
       component: 'oh-chart-page',
       config: {
-        chartType: analyzer.chartType
+        chartType: coordSettings.chartType
       },
       slots: {}
     }
@@ -11,7 +49,7 @@ export default {
     const calendar = {
       component: 'oh-calendar-axis',
       config: {
-        orient: analyzer.orientation
+        orient: coordSettings.orientation
       }
     }
 
@@ -30,22 +68,7 @@ export default {
       }
     })
 
-    page.slots.visualMap = [
-      {
-        component: 'oh-chart-visualmap',
-        config: {
-          show: true,
-          orient: 'horizontal',
-          calculable: true,
-          bottom: 0,
-          left: 'center',
-          presetPalette: analyzer.visualMapPalette,
-          type: analyzer.visualMapType,
-          ...(analyzer.visualMapMin && analyzer.visualMapMin !== '') && { min: parseFloat(analyzer.visualMapMin) },
-          ...(analyzer.visualMapMax && analyzer.visualMapMax !== '') && { max: parseFloat(analyzer.visualMapMax) }
-        }
-      }
-    ]
+    page.slots.visualMap = renderVisualMap(analyzer.visualMap)
 
     page.slots.tooltip = [
       {

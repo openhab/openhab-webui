@@ -20,7 +20,7 @@
   "analyzer.coords.period.dynamic": "Dynamesch",
   "analyzer.coords.period.fixed": "Fix",
   "analyzer.coords.period.day": "Dag",
-  "analyzer.coords.period.week": "Woch",
+  "analyzer.coords.period.isoWeek": "Woch",
   "analyzer.coords.period.month": "Mount",
   "analyzer.coords.period.year": "Joer",
   "analyzer.coords.coordSystem": "Koordinatesystem",

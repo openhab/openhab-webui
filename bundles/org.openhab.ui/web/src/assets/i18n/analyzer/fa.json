@@ -20,7 +20,7 @@
   "analyzer.coords.period.dynamic": "پویا",
   "analyzer.coords.period.fixed": "اصلاح شد",
   "analyzer.coords.period.day": "روز",
-  "analyzer.coords.period.week": "هفته",
+  "analyzer.coords.period.isoWeek": "هفته",
   "analyzer.coords.period.month": "ماه",
   "analyzer.coords.period.year": "سال",
   "analyzer.coords.coordSystem": "دستگاه مختصات",

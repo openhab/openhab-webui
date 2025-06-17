@@ -1,16 +1,69 @@
+import { getYAxis, renderValueAxis } from './analyzer-helpers.js'
+
 export default {
-  getChartPage (analyzer) {
+  name: 'time',
+  initCoordSystem (coordSettings = {}) {
+    const uiParams = {
+      typeOptions: ['day', 'isoWeek', 'month', 'year']
+    }
+
+    return {
+      period: coordSettings.period || 'D',
+      categoryAxisValues: [],
+      valueAxesOptions: [],
+      uiParams,
+      chartType: uiParams.typeOptions.includes(coordSettings.chartType) ? coordSettings.chartType : ''
+    }
+  },
+  initAxes (coordSettings) {
+    coordSettings.categoryAxisValues = []
+    coordSettings.valueAxesOptions = []
+  },
+  initSeries (item, coordSettings, seriesOptions = {}) {
+    const options = {
+      name: item.label || item.name,
+      uiParams: {}
+    }
+
+    if (item.type.startsWith('Number') || item.groupType?.startsWith('Number')) {
+      options.uiParams.typeOptions = ['line', 'area']
+      options.uiParams.showMarkerOptions = true
+      options.uiParams.showAxesOptions = true
+      options.type = options.uiParams.typeOptions.includes(seriesOptions.type) ? seriesOptions.type : 'line'
+    } else if (item.type === 'Dimmer' || item.groupType === 'Dimmer') {
+      options.uiParams.typeOptions = ['line', 'area', 'state']
+      options.uiParams.showAxesOptions = false
+      options.uiParams.showMarkerOptions = true
+      options.type = options.uiParams.typeOptions.includes(seriesOptions.type) ? seriesOptions.type : 'line'
+    } else {
+      options.uiParams.typeOptions = ['state']
+      options.uiParams.showMarkerOptions = false
+      options.uiParams.showAxesOptions = false
+      options.type = 'state'
+    }
+
+    // determine the Y axis for the item and uiParams
+    if (options.type === 'state') {
+      coordSettings.categoryAxisValues.unshift(item.name)
+      options.yValue = coordSettings.categoryAxisValues.length - 1
+    } else if (options.type === 'line' || options.type === 'area') {
+      options.valueAxisIndex = getYAxis(item, coordSettings)
+    }
+
+    return options
+  },
+  getChartPage (analyzer, coordSettings) {
     let page = {
       component: 'oh-chart-page',
       config: {
-        chartType: analyzer.chartType,
-        period: analyzer.period
+        chartType: coordSettings.chartType,
+        period: coordSettings.period
       },
       slots: {}
     }
 
-    let valueGrid = (analyzer.valueAxesOptions.length > 0)
-    let categoryGrid = (analyzer.categoryAxisValues.length > 0)
+    let valueGrid = (coordSettings.valueAxesOptions.length > 0)
+    let categoryGrid = (coordSettings.categoryAxisValues.length > 0)
 
     page.slots.grid = []
     page.slots.xAxis = []
@@ -20,20 +73,8 @@ export default {
     if (valueGrid) {
       page.slots.grid.push({ component: 'oh-chart-grid', config: { includeLabels: true, bottom: (categoryGrid) ? '55%' : 60 } })
       page.slots.xAxis.push({ component: 'oh-time-axis', config: { gridIndex: 0 } })
-      analyzer.valueAxesOptions.forEach((a) => {
-        page.slots.yAxis.push({
-          component: 'oh-value-axis',
-          config: {
-            gridIndex: 0,
-            name: a.name || a.unit,
-            ...(a.min && a.min !== '') && { min: parseFloat(a.min) },
-            ...(a.max && a.max !== '') && { max: parseFloat(a.max) },
-            scale: a.scale,
-            ...(a.split === 'none' || a.split === 'area' || a.split === 'area+minor') && { splitLine: { show: false } },
-            ...(a.split === 'line+minor' || a.split === 'area+minor' || a.split === 'all') && { minorTick: { show: true }, minorSplitLine: { show: true } },
-            ...(a.split === 'area' || a.split === 'line+area' || a.split === 'area+minor' || a.split === 'all') && { splitArea: { show: true } }
-          }
-        })
+      page.slots.yAxis = coordSettings.valueAxesOptions.map((a) => {
+        return renderValueAxis(a)
       })
     }
 
@@ -44,7 +85,7 @@ export default {
       page.slots.yAxis.push({
         component: 'oh-category-axis',
         config: {
-          data: analyzer.categoryAxisValues.map((itemName) => analyzer.items.find((item) => item.name === itemName).label),
+          data: coordSettings.categoryAxisValues.map((item) => { return analyzer.seriesOptions[item].name }),
           gridIndex: categoryGridIndex
         }
       })
@@ -63,12 +104,12 @@ export default {
     page.slots.series = analyzer.items.map((item) => {
       const seriesOptions = analyzer.seriesOptions[item.name]
 
-      if (seriesOptions.discrete) {
+      if (seriesOptions.type === 'state') {
         return {
           component: 'oh-state-series',
           config: {
             item: item.name,
-            name: item.label,
+            name: seriesOptions.name,
             xAxisIndex: categoryGridIndex,
             yAxisIndex: page.slots.yAxis.length - 1,
             yValue: seriesOptions.yValue

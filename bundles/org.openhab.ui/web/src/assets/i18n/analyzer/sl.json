@@ -20,7 +20,7 @@
   "analyzer.coords.period.dynamic": "Dinamično",
   "analyzer.coords.period.fixed": "Statičen",
   "analyzer.coords.period.day": "Dan",
-  "analyzer.coords.period.week": "Teden",
+  "analyzer.coords.period.isoWeek": "Teden",
   "analyzer.coords.period.month": "Mesec",
   "analyzer.coords.period.year": "Leto",
   "analyzer.coords.coordSystem": "Koordinatni sistem",

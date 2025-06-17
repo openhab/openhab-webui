@@ -20,7 +20,7 @@
   "analyzer.coords.period.dynamic": "Dynamiczny",
   "analyzer.coords.period.fixed": "Stały",
   "analyzer.coords.period.day": "Dzień",
-  "analyzer.coords.period.week": "Tydzień",
+  "analyzer.coords.period.isoWeek": "Tydzień",
   "analyzer.coords.period.month": "Miesiąc",
   "analyzer.coords.period.year": "Rok",
   "analyzer.coords.coordSystem": "Układ Współrzędnych",

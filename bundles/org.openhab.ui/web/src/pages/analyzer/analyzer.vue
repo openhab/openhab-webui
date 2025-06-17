@@ -13,7 +13,7 @@
       <f7-link class="right controls-link padding-right" ref="detailsLink" @click="openControls">
         {{ $t('analyzer.controls') }}&nbsp;<f7-icon f7="chevron_up" />
       </f7-link>
-      <f7-link v-if="coordSystem !== 'time'" color="blue" icon-f7="crop_rotate" @click="orientation = (orientation === 'horizontal') ? 'vertical' : 'horizontal'" />
+      <f7-link v-if="uiParams.showRotation" color="blue" icon-f7="crop_rotate" @click="coordSettings.orientation = (coordSettings.orientation === 'horizontal') ? 'vertical' : 'horizontal'" />
       <span v-else />
     </f7-toolbar>
 
@@ -55,12 +55,12 @@
                         <th class="label-cell" v-t="'analyzer.series.table.header.type'" />
                         <th class="label-cell" v-t="'analyzer.series.table.header.axis'" />
                         <th class="label-cell" v-t="'analyzer.series.table.header.markers'" />
-                        <th v-if="coordSystem !== 'time'" class="label-cell" v-t="'analyzer.series.table.header.aggregation'" />
-                        <th v-if="coordSystem === 'time'" class="label-cell" v-t="'analyzer.series.table.header.silent'" />
+                        <th v-if="uiParams.isAggregate" class="label-cell" v-t="'analyzer.series.table.header.aggregation'" />
+                        <th v-else class="label-cell" v-t="'analyzer.series.table.header.silent'" />
                       </tr>
                     </thead>
                     <tbody>
-                      <tr v-for="(options, item) in seriesOptions" :key="item">
+                      <tr v-for="(options, idx) in seriesOptions" :key="idx">
                         <td class="label-cell">
                           <div class="input">
                             <input type="text" v-model.lazy="options.name" style="min-width: 150px">
@@ -68,37 +68,33 @@
                         </td>
                         <td class="label-cell">
                           <f7-segmented round>
-                            <f7-button v-if="!options.discrete && coordSystem === 'aggregate' && aggregateDimensions === 1" small outline style="width: 60px" :fill="options.type === 'bar'" @click="options.type = 'bar'" v-t="'analyzer.series.table.type.bar'" />
-                            <f7-button v-if="!options.discrete && coordSystem !== 'calendar' && aggregateDimensions === 1" small outline style="width: 60px" :fill="options.type === 'line'" @click="options.type = 'line'" v-t="'analyzer.series.table.type.line'" />
-                            <f7-button v-if="!options.discrete && coordSystem === 'time' || (coordSystem === 'aggregate' && aggregateDimensions === 1)" small outline style="width: 60px" :fill="options.type === 'area'" @click="options.type = 'area'" v-t="'analyzer.series.table.type.area'" />
-                            <f7-button v-if="options.discrete && coordSystem === 'time' || (coordSystem === 'aggregate' && aggregateDimensions === 1)" small outline style="width: 60px" :fill="options.type === 'state'" @click="options.type = 'state'" v-t="'analyzer.series.table.type.state'" />
-                            <f7-button v-if="coordSystem === 'calendar' || (coordSystem === 'aggregate' && aggregateDimensions === 2)" small fill outline style="width: 90px" v-t="'analyzer.series.table.type.heatmap'" />
+                            <f7-button v-for="type in options.uiParams.typeOptions" small outline :key="type" style="width: auto"
+                                       :fill="options.type === type"
+                                       @click="changeSeriesType(options, type)"
+                                       v-t="'analyzer.series.table.type.' + type" />
                           </f7-segmented>
                         </td>
                         <td class="label-cell">
-                          <f7-segmented round v-if="!options.discrete && options.type !== 'heatmap'">
-                            <f7-button v-for="(axis, $idx) in valueAxesOptions" :key="$idx" small outline style="width: 60px" :fill="options.valueAxisIndex === $idx" @click="options.valueAxisIndex = $idx">
+                          <f7-segmented round v-if="options.uiParams.showAxesOptions">
+                            <f7-button v-for="(axis, $idx) in coordSettings.valueAxesOptions" :key="$idx" small outline style="width: auto"
+                                       :fill="options.valueAxisIndex === $idx" @click="options.valueAxisIndex = $idx">
                               {{ axis.unit }}
                             </f7-button>
                           </f7-segmented>
                           <span v-else v-t="'analyzer.series.table.na'" />
                         </td>
                         <td class="label-cell">
-                          <f7-link v-if="!options.discrete && options.type !== 'heatmap'" @click="chooseMarkers(options)">
+                          <f7-link v-if="options.uiParams.showMarkerOptions" @click="chooseMarkers(options)">
                             {{ options.markers || 'none' }}
                           </f7-link>
                           <span v-else v-t="'analyzer.series.table.na'" />
                         </td>
-                        <td v-if="coordSystem !== 'time'" class="label-cell">
+                        <td v-if="options.uiParams.showAggregationOptions" class="label-cell">
                           <f7-link @click="chooseAggregation(options)">
                             {{ options.aggregation || 'average' }}
                           </f7-link>
                         </td>
-                        <!-- the silent option makes a series non-clickable/ignores mouse-events -->
-                        <td v-if="coordSystem === 'time'" class="label-cell">
-                          <f7-checkbox v-if="options.discrete" @change="(evt) => $set(options, 'silent', evt.target.checked)" />
-                          <span v-else v-t="'analyzer.series.table.na'" />
-                        </td>
+                        <td v-else class="label-cell" />
                       </tr>
                     </tbody>
                   </table>
@@ -114,30 +110,33 @@
             <f7-col :width="100" :medium="50" class="margin-bottom">
               <f7-block-header v-t="'analyzer.coords.period'" />
               <f7-segmented strong class="margin-bottom">
-                <f7-button :active="chartType === ''" @click="changeChartType('')" v-t="'analyzer.coords.period.dynamic'" />
-                <f7-button :active="chartType !== ''" @click="changeChartType('day')" v-t="'analyzer.coords.period.fixed'" />
+                <f7-button :active="coordSettings.chartType === ''" @click="changeChartType('')" v-t="'analyzer.coords.period.dynamic'" />
+                <f7-button :active="coordSettings.chartType !== ''" @click="changeChartType('day')" v-t="'analyzer.coords.period.fixed'" />
               </f7-segmented>
-              <f7-segmented v-if="chartType !== ''">
-                <f7-button :disabled="coordSystem === 'calendar'" :active="chartType === 'day'" @click="changeChartType('day')" v-t="'analyzer.coords.period.day'" />
-                <f7-button :disabled="coordSystem === 'calendar'" :active="chartType === 'isoWeek'" @click="changeChartType('isoWeek')" v-t="'analyzer.coords.period.week'" />
-                <f7-button :active="chartType === 'month'" @click="changeChartType('month')" v-t="'analyzer.coords.period.month'" />
-                <f7-button :active="chartType === 'year'" @click="changeChartType('year')" v-t="'analyzer.coords.period.year'" />
+              <f7-segmented v-if="coordSettings.chartType !== ''">
+                <f7-button v-for="type in ['day', 'isoWeek', 'month', 'year']" :key="type"
+                           :disabled="!uiParams.typeOptions.includes(type)"
+                           :active="coordSettings.chartType === type"
+                           @click="changeChartType(type)"
+                           v-t="'analyzer.coords.period.' + type" />
               </f7-segmented>
             </f7-col>
             <f7-col :width="100" :medium="50" class="margin-bottom">
               <f7-block-header v-t="'analyzer.coords.coordSystem'" />
               <f7-segmented strong class="margin-bottom">
-                <f7-button :active="coordSystem === 'time'" @click="changeCoordSystem('time')" v-t="'analyzer.coords.coordSystem.time'" />
-                <f7-button :disabled="chartType === ''" :active="coordSystem === 'aggregate'" @click="changeCoordSystem('aggregate')" v-t="'analyzer.coords.coordSystem.aggregate'" />
-                <f7-button :disabled="chartType === ''" :active="coordSystem === 'calendar'" @click="changeCoordSystem('calendar')" v-t="'analyzer.coords.coordSystem.calendar'" />
+                <f7-button v-for="cs in coordSystems" :key="cs"
+                           v-t="'analyzer.coords.coordSystem.' + cs"
+                           :disabled="coordSettings.chartType == ''"
+                           :active="coordSystem.name === cs"
+                           @click="changeCoordSystem(cs)" />
               </f7-segmented>
-              <f7-segmented v-if="coordSystem === 'aggregate'">
-                <f7-button :active="aggregateDimensions === 1" @click="changeAggregateDimensions(1)" v-t="'analyzer.coords.coordSystem.aggregate.1dimension'" />
-                <f7-button :active="aggregateDimensions === 2" @click="changeAggregateDimensions(2)" v-t="'analyzer.coords.coordSystem.aggregate.2dimensions'" />
+              <f7-segmented v-if="uiParams.showMultiDimension">
+                <f7-button :active="coordSettings.dimensions === 1" @click="changeAggregateDimensions(1)" v-t="'analyzer.coords.coordSystem.aggregate.1dimension'" />
+                <f7-button :active="coordSettings.dimensions === 2" @click="changeAggregateDimensions(2)" v-t="'analyzer.coords.coordSystem.aggregate.2dimensions'" />
               </f7-segmented>
             </f7-col>
             <f7-col width="100" class="margin-top display-flex justify-content-center margin-bottom">
-              <f7-button round raised fill color="black" v-if="coordSystem !== 'time'" icon-f7="crop_rotate" icon-size="20" @click="orientation = (orientation === 'horizontal') ? 'vertical' : 'horizontal'">
+              <f7-button round raised fill color="black" v-if="uiParams.showRotation" icon-f7="crop_rotate" icon-size="20" @click="coordSettings.orientation = (coordSettings.orientation === 'horizontal') ? 'vertical' : 'horizontal'">
                 {{ $t('analyzer.coords.rotate') }}
               </f7-button>
             </f7-col>
@@ -146,40 +145,34 @@
 
         <!-- ranges control tab -->
         <f7-block class="no-margin no-padding" v-show="controlsTab === 'ranges'">
-          <f7-row v-if="(coordSystem === 'aggregate' && aggregateDimensions === 2) || coordSystem === 'calendar'">
+          <f7-row v-if="coordSettings.dimensions === 2">
             <f7-col :width="100" :medium="50">
               <f7-list class="no-margin-vertical">
                 <f7-list-item divider v-t="'analyzer.ranges.visualPalette'" />
-                <f7-list-item radio name="visualMapPalette" :checked="visualMapPalette === ''" @change="changeVisualMapPalette('')">
-                  {{ $t('analyzer.ranges.visualPalette.yellowred') }}
-                </f7-list-item>
-                <f7-list-item radio name="visualMapPalette" :checked="visualMapPalette === 'greenred'" @change="changeVisualMapPalette('greenred')">
-                  {{ $t('analyzer.ranges.visualPalette.greenred') }}
-                </f7-list-item>
-                <f7-list-item radio name="visualMapPalette" :checked="visualMapPalette === 'whiteblue'" @change="changeVisualMapPalette('whiteblue')">
-                  {{ $t('analyzer.ranges.visualPalette.whiteblue') }}
-                </f7-list-item>
-                <f7-list-item radio name="visualMapPalette" :checked="visualMapPalette === 'bluered'" @change="changeVisualMapPalette('bluered')">
-                  {{ $t('analyzer.ranges.visualPalette.bluered') }}
+                <f7-list-item v-for="palette in ['yellowred', 'greenred', 'whiteblue', 'bluered']" :key="palette"
+                              radio name="visualMap.palette"
+                              :checked="visualMap.palette === palette"
+                              @change="changeVisualMapPalette(palette)">
+                  {{ $t('analyzer.ranges.visualPalette.' + palette) }}
                 </f7-list-item>
               </f7-list>
             </f7-col>
             <f7-col :width="100" :medium="50">
               <f7-list class="no-margin-vertical" inline-labels no-hairlines-md>
                 <f7-list-item divider v-t="'analyzer.ranges.range'" />
-                <f7-list-input :label="$t('analyzer.ranges.range.min')" :value="visualMapMin" type="number" @input="visualMapMin = $event.target.value" placeholder="Auto" clear-button />
-                <f7-list-input :label="$t('analyzer.ranges.range.max')" :value="visualMapMax" type="number" @input="visualMapMax = $event.target.value" placeholder="Auto" clear-button />
+                <f7-list-input :label="$t('analyzer.ranges.range.min')" :value="visualMap.min" type="number" @input="visualMap.min = $event.target.value" placeholder="Auto" clear-button />
+                <f7-list-input :label="$t('analyzer.ranges.range.max')" :value="visualMap.max" type="number" @input="visualMap.max = $event.target.value" placeholder="Auto" clear-button />
                 <f7-list-item divider v-t="'analyzer.ranges.range.type'" />
-                <f7-list-item radio name="visualMapType" :checked="visualMapType === 'continuous'" @change="changeVisualMapType('continuous')">
+                <f7-list-item radio name="visualMap.type" :checked="visualMap.type === 'continuous'" @change="changeVisualMapType('continuous')">
                   {{ $t('analyzer.ranges.range.type.continuous') }}
                 </f7-list-item>
-                <f7-list-item radio name="visualMapType" :checked="visualMapType === 'piecewise'" @change="changeVisualMapType('piecewise')">
+                <f7-list-item radio name="visualMap.type" :checked="visualMap.type === 'piecewise'" @change="changeVisualMapType('piecewise')">
                   {{ $t('analyzer.ranges.range.type.piecewise') }}
                 </f7-list-item>
               </f7-list>
             </f7-col>
           </f7-row>
-          <f7-row v-else-if="valueAxesOptions.length > 0">
+          <f7-row v-else-if="coordSettings.valueAxesOptions.length > 0">
             <f7-col :width="100">
               <div class="card data-table">
                 <div class="card-header" v-t="'analyzer.ranges.valueAxes'" />
@@ -195,7 +188,7 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr v-for="axis in valueAxesOptions" :key="axis.unit">
+                      <tr v-for="axis in coordSettings.valueAxesOptions" :key="axis.unit">
                         <td class="label-cell">
                           <div class="input">
                             <input type="text" v-model.lazy="axis.name" style="min-width: 150px">
@@ -243,12 +236,19 @@
 </style>
 
 <script>
+
 import ItemPicker from '@/components/config/controls/item-picker.vue'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
+import { loadLocaleMessages } from '@/js/i18n'
 import ChartTime from './chart-time'
 import ChartAggregate from './chart-aggregate'
 import ChartCalendar from './chart-calendar'
-import { loadLocaleMessages } from '@/js/i18n'
+
+const COORD_SYSTEMS = {
+  time: ChartTime,
+  aggregate: ChartAggregate,
+  calendar: ChartCalendar
+}
 
 export default {
   components: {
@@ -261,20 +261,17 @@ export default {
       showChart: false,
       invalidConfiguration: false,
       itemNames: [],
-      items: null,
+      items: [],
       seriesOptions: {},
-      valueAxesOptions: {},
-      categoryAxisValues: [],
-      orientation: (this.$device.desktop || this.$device.ipad) ? 'horizontal' : 'vertical',
-      period: 'D',
-      chartType: '',
-      coordSystem: 'time',
-      aggregateDimensions: 1,
-      visualMapPalette: '',
-      visualMapMin: null,
-      visualMapMax: null,
-      visualMapType: 'continuous',
-
+      coordSystems: Object.keys(COORD_SYSTEMS),
+      coordSystem: COORD_SYSTEMS['time'],
+      coordSettings: COORD_SYSTEMS['time'].initCoordSystem(),
+      visualMap: {
+        palette: 'yellowred',
+        min: null,
+        max: null,
+        type: 'continuous'
+      },
       controlsOpened: false,
       controlsTab: 'series',
       itemsPickerKey: this.$f7.utils.id(),
@@ -286,6 +283,9 @@ export default {
   },
 
   computed: {
+    uiParams () {
+      return this.coordSettings.uiParams || {}
+    },
     titleDisplayText () {
       if (!this.items || !this.items.length) return 'Analyze'
       if (this.items.length === 1) return (this.items[0].label) ? this.items[0].label : this.items[0].name
@@ -298,27 +298,7 @@ export default {
       }
     },
     page () {
-      switch (this.coordSystem) {
-        case 'time':
-          return ChartTime.getChartPage(this)
-        case 'aggregate':
-          return ChartAggregate.getChartPage(this)
-        case 'calendar':
-          return ChartCalendar.getChartPage(this)
-        default:
-          return {
-            component: 'oh-chart-page',
-            config: {
-              chartType: this.chartType,
-              period: this.period
-            },
-            slots: {
-              title: [
-                { component: 'oh-chart-title', config: { subtext: `Invalid coordinate system: ${this.coordSystem}`, top: 'center', left: 'center' } }
-              ]
-            }
-          }
-      }
+      return this.coordSystem.getChartPage(this, this.coordSettings)
     }
   },
   methods: {
@@ -341,48 +321,33 @@ export default {
         }
       })
     },
+    refreshChart (fn) {
+      this.showChart = false
+      if (typeof fn === 'function') fn()
+      this.$nextTick(() => {
+        this.showChart = true
+      })
+    },
+    initItemsSeries (freshInit = true) {
+      console.log('initItemsSeries: ', this.items)
+      if (freshInit) { this.$set(this, 'seriesOptions', {}) }
+      this.coordSystem.initAxes(this.coordSettings)
+      for (const item of this.items) {
+        console.log('item: ', item)
+        this.$set(this.seriesOptions, item.name, this.coordSystem.initSeries(item, this.coordSettings, freshInit ? {} : this.seriesOptions[item.name]))
+      }
+    },
     updateItems (itemNames) {
+      console.log('updateItems: ', itemNames)
       this.itemNames = itemNames
       const promises = itemNames.map((n) => this.$oh.api.get('/rest/items/' + n))
       this.showChart = false
       return Promise.all(promises).then((resp) => {
-        this.$set(this, 'items', [])
-        this.$set(this, 'valueAxesOptions', [])
-        this.$set(this, 'categoryAxisValues', [])
-        resp.forEach((item) => {
-          this.items.push(item)
-
-          if (!this.seriesOptions[item.name]) {
-            this.initializeSeriesOptions(item)
-          }
-
-          // dynamically add value axes according to unit if determined
-          const seriesOptions = this.seriesOptions[item.name]
-          if (!seriesOptions.discrete && (seriesOptions.type === 'line' || seriesOptions.type === 'bar')) {
-            let unit = (item.transformedState && item.transformedState.split(' ').length === 2)
-              ? item.transformedState.split(' ')[1]
-              : (item.state.split(' ').length === 2)
-                ? item.state.split(' ')[1]
-                : (item.stateDescription && item.stateDescription.pattern && item.stateDescription.pattern.split(' ').length === 2)
-                  ? item.stateDescription.pattern.split(' ')[1]
-                  : undefined
-            if (unit) unit = unit.replace(/^%%/, '%')
-            let unitAxis = this.valueAxesOptions.findIndex((a) => a.unit === unit)
-            if (unitAxis >= 0) {
-              this.$set(seriesOptions, 'valueAxisIndex', unitAxis)
-            } else {
-              this.valueAxesOptions.push({ name: unit, unit, split: 'line' })
-              this.$set(seriesOptions, 'valueAxisIndex', this.valueAxesOptions.length - 1)
-            }
-          } else if (seriesOptions.type === 'state') {
-            this.categoryAxisValues.unshift(item.name)
-            this.$set(seriesOptions, 'yValue', this.categoryAxisValues.length - 1)
-          }
-        })
-        this.$set(this, 'items', resp)
-        for (let item in this.seriesOptions) {
-          if (itemNames.indexOf(item) < 0) {
-            this.$delete(this.seriesOptions, item)
+        this.$set(this, 'items', [...resp])
+        this.initItemsSeries(false)
+        for (let optionKey in this.seriesOptions) {
+          if (this.itemNames.indexOf(optionKey) < 0) {
+            this.$delete(this.seriesOptions, optionKey)
           }
         }
         this.showChart = true
@@ -390,82 +355,58 @@ export default {
         return Promise.resolve()
       })
     },
-    initializeSeriesOptions (item) {
-      const seriesOptions = {
-        name: item.label || item.name,
-        type: 'line',
-        discrete: true
-      }
-
-      if (item.type.indexOf('Number') === 0 || item.type === 'Dimmer') seriesOptions.discrete = false
-      if (item.groupType && (item.groupType.indexOf('Number') === 0 || item.groupType === 'Dimmer')) seriesOptions.discrete = false
-      if (!seriesOptions.discrete && this.coordSystem === 'aggregate' && this.aggregateDimensions === 1) seriesOptions.type = 'bar'
-      if (!seriesOptions.discrete && (this.coordSystem === 'calendar' || (this.coordSystem === 'aggregate' && this.aggregateDimensions === 2))) seriesOptions.type = 'heatmap'
-      if (seriesOptions.discrete) seriesOptions.type = 'state'
-
-      this.$set(this.seriesOptions, item.name, seriesOptions)
+    changeSeriesType (options, type) {
+      console.log('changeSeriesType: ', options, type)
+      if (options.type === type) return // no change
+      this.refreshChart(() => {
+        options.type = type
+        this.initItemsSeries(false)
+      })
     },
     changeChartType (type) {
-      this.showChart = false
-      this.chartType = type
-      if (type === '') {
-        this.coordSystem = 'time'
-        for (let item in this.seriesOptions) {
-          if (!this.seriesOptions[item].discrete && this.seriesOptions[item].type !== 'line' && this.seriesOptions[item].type !== 'area') this.seriesOptions[item].type = 'line'
+      console.log('changeChartType: ', type)
+      this.refreshChart(() => {
+        this.$set(this.coordSettings, 'chartType', type)
+        if (type === '') {
+          this.changeCoordSystem('time')
         }
-      }
-      this.$nextTick(() => {
-        this.showChart = true
       })
     },
     changeCoordSystem (coordSystem) {
-      this.showChart = false
-      this.coordSystem = coordSystem
-      if (coordSystem !== 'aggregate') this.aggregateDimensions = 1
-      if (this.coordSystem === 'calendar') {
-        this.chartType = 'month'
-        for (let item in this.seriesOptions) {
-          if (!this.seriesOptions[item].discrete) this.seriesOptions[item].type = 'heatmap'
-        }
+      console.log('changeCoordSystem: ', coordSystem)
+      if (!COORD_SYSTEMS[coordSystem]) {
+        this.invalidConfiguration = true
+        return
       }
-      if (this.coordSystem === 'aggregate') {
-        for (let item in this.seriesOptions) {
-          if (!this.seriesOptions[item].discrete) this.seriesOptions[item].type = (this.aggregateDimensions === 2) ? 'heatmap' : 'bar'
-        }
-      }
-      if (this.coordSystem === 'time') {
-        for (let item in this.seriesOptions) {
-          if (!this.seriesOptions[item].discrete && this.seriesOptions[item].type !== 'line' && this.seriesOptions[item].type !== 'area') this.seriesOptions[item].type = 'line'
-        }
-      }
-      this.$nextTick(() => {
-        this.showChart = true
+
+      this.refreshChart(() => {
+        this.coordSystem = COORD_SYSTEMS[coordSystem]
+        console.log('coordSystem: ', this.coordSystem)
+        this.$set(this, 'coordSettings', this.coordSystem.initCoordSystem({
+          ...this.coordSettings,
+          orientation: (this.$device.desktop || this.$device.ipad) ? 'horizontal' : 'vertical'
+        }))
+        this.initItemsSeries(true)
       })
     },
     changeAggregateDimensions (dimensions) {
-      this.showChart = false
-      this.aggregateDimensions = dimensions
-      if (this.coordSystem === 'aggregate') {
-        for (let item in this.seriesOptions) {
-          if (!this.seriesOptions[item].discrete) this.seriesOptions[item].type = (this.aggregateDimensions === 2) ? 'heatmap' : 'bar'
-        }
+      console.log('changeAggregateDimensions: ', dimensions)
+      if (this.coordSystem.name !== 'aggregate') {
+        return
       }
-      this.$nextTick(() => {
-        this.showChart = true
+      this.refreshChart(() => {
+        this.coordSettings.dimensions = dimensions
+        this.initItemsSeries(false)
       })
     },
     changeVisualMapPalette (palette) {
-      this.showChart = false
-      this.visualMapPalette = palette
-      this.$nextTick(() => {
-        this.showChart = true
+      this.refreshChart(() => {
+        this.visualMap.palette = palette
       })
     },
     changeVisualMapType (type) {
-      this.showChart = false
-      this.visualMapType = type
-      this.$nextTick(() => {
-        this.showChart = true
+      this.refreshChart(() => {
+        this.visualMap.type = type
       })
     },
     chooseMarkers (opt) {

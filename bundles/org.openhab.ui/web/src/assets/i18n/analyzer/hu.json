@@ -20,7 +20,7 @@
   "analyzer.coords.period.dynamic": "Dinamikus",
   "analyzer.coords.period.fixed": "Rögzített",
   "analyzer.coords.period.day": "Nap",
-  "analyzer.coords.period.week": "Hét",
+  "analyzer.coords.period.isoWeek": "Hét",
   "analyzer.coords.period.month": "Hónap",
   "analyzer.coords.period.year": "Év",
   "analyzer.coords.coordSystem": "Koordináta-rendszer",

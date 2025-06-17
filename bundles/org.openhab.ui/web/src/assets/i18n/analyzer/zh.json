@@ -20,7 +20,7 @@
   "analyzer.coords.period.dynamic": "动态",
   "analyzer.coords.period.fixed": "固定",
   "analyzer.coords.period.day": "日",
-  "analyzer.coords.period.week": "周",
+  "analyzer.coords.period.isoWeek": "周",
   "analyzer.coords.period.month": "月",
   "analyzer.coords.period.year": "年",
   "analyzer.coords.coordSystem": "坐标系",

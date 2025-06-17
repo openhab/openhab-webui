@@ -20,7 +20,7 @@
   "analyzer.coords.period.dynamic": "Δυναμικό",
   "analyzer.coords.period.fixed": "Σταθερό",
   "analyzer.coords.period.day": "Ημέρα",
-  "analyzer.coords.period.week": "Εβδομάδα",
+  "analyzer.coords.period.isoWeek": "Εβδομάδα",
   "analyzer.coords.period.month": "Μήνας",
   "analyzer.coords.period.year": "Έτος",
   "analyzer.coords.coordSystem": "Σύστημα Συντεταγμένων",

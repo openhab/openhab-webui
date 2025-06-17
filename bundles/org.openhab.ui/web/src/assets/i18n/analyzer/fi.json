@@ -20,7 +20,7 @@
   "analyzer.coords.period.dynamic": "Dynaaminen",
   "analyzer.coords.period.fixed": "Kiinteä",
   "analyzer.coords.period.day": "Päivä",
-  "analyzer.coords.period.week": "Viikko",
+  "analyzer.coords.period.isoWeek": "Viikko",
   "analyzer.coords.period.month": "Kuukausi",
   "analyzer.coords.period.year": "Vuosi",
   "analyzer.coords.coordSystem": "Koordinaattijärjestelmä",

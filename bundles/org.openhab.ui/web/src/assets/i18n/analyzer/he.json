@@ -20,7 +20,7 @@
   "analyzer.coords.period.dynamic": "דינמי",
   "analyzer.coords.period.fixed": "מקובע",
   "analyzer.coords.period.day": "יום",
-  "analyzer.coords.period.week": "שבוע",
+  "analyzer.coords.period.isoWeek": "שבוע",
   "analyzer.coords.period.month": "חודש",
   "analyzer.coords.period.year": "שנה",
   "analyzer.coords.coordSystem": "מערכת קואורדינטות",
