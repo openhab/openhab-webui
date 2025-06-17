@@ -131,7 +131,7 @@ export default {
         component: 'oh-chart-datazoom',
         config: {
           type: 'inside',
-          xAxisIndex: (categoryGrid) ? [0, 1] : 0
+          xAxisIndex: (categoryGrid && valueGrid) ? [0, 1] : 0
         }
       }
     ]
