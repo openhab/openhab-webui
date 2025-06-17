@@ -107,7 +107,7 @@ window.setLogLevel = function (level) {
   console.error = enabled >= 1 ? c.error : () => {}
   console.warn = enabled >= 2 ? c.warn : () => {}
   console.info = enabled >= 3 ? c.info : () => {}
-  console.log = enabled >= 4 ? c.debug : () => {}
+  console.log = enabled >= 3 ? c.log : () => {} // console.log is at INFO level
   console.debug = enabled >= 4 ? c.debug : () => {}
   console.trace = enabled >= 5 ? c.trace : () => {}
   console.time = enabled >= 4 ? c.time : () => {}
