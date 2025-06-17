@@ -56,22 +56,22 @@
                 <f7-list-item smart-select :smartSelectParams="{ openIn: 'popup', closeOnSelect: true }" media-item title="UI Logging" footer="Set the log level for the browser console logs">
                   <f7-icon slot="media" f7="exclamationmark_circle" color="gray" />
                   <select v-model="logLevel" @change="onLogLevelChange">
-                    <option value="trace">
+                    <option value="TRACE">
                       Trace
                     </option>
-                    <option value="debug">
+                    <option value="DEBUG">
                       Debug
                     </option>
-                    <option value="info">
+                    <option value="INFO">
                       Info
                     </option>
-                    <option value="warn">
+                    <option value="WARN">
                       Warn
                     </option>
-                    <option value="error">
+                    <option value="ERROR">
                       Error
                     </option>
-                    <option value="off">
+                    <option value="OFF">
                       Off
                     </option>
                   </select>
@@ -169,7 +169,7 @@ export default {
       wsEvents: [],
       icon: 'lightbulb',
       split: this.$device.desktop ? 'vertical' : 'horizontal',
-      logLevel: localStorage.getItem('logLevel') || 'off'
+      logLevel: localStorage.getItem('logLevel') || 'INFO'
     }
   },
   methods: {
