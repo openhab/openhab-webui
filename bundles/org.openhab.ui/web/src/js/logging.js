@@ -2,6 +2,7 @@
 const LOG_LEVELS = ['OFF', 'ERROR', 'WARN', 'INFO', 'DEBUG', 'TRACE']
 if (!window._originalConsole) {
   window._originalConsole = {
+    log: console.log,
     info: console.info,
     warn: console.warn,
     error: console.error,
