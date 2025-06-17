@@ -15,6 +15,9 @@ export default {
       if (statusInfo.status === 'IDLE') return 'IDLE'
       if (statusInfo.statusDetail !== 'NONE') return RuleStatusLabels[statusInfo.statusDetail]
       return statusInfo.status
+    },
+    isRuleStatusDisabled (statusInfo) {
+      return statusInfo && statusInfo?.status !== 'IDLE' && statusInfo?.statusDetail === 'DISABLED'
     }
   }
 }
