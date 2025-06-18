@@ -1,4 +1,6 @@
 // Avoid excessive console logging, make it configurable from the UI, default to INFO level
+const LOCAL_STORAGE_KEY = 'openhab.ui:logLevel'
+
 const LOG_LEVELS = ['OFF', 'ERROR', 'WARN', 'INFO', 'DEBUG', 'TRACE']
 if (!window._originalConsole) {
   window._originalConsole = {
@@ -15,7 +17,7 @@ if (!window._originalConsole) {
 }
 window.setLogLevel = function (level) {
   window.LOG_LEVEL = level
-  localStorage.setItem('logLevel', level)
+  localStorage.setItem(LOCAL_STORAGE_KEY, level)
 
   const c = window._originalConsole
   const enabled = LOG_LEVELS.indexOf(level.toUpperCase())
@@ -31,4 +33,4 @@ window.setLogLevel = function (level) {
   console.timeLog = enabled >= 4 ? c.timeLog : () => {}
 }
 // Initialize logging from localStorage
-window.setLogLevel(localStorage.getItem('logLevel') || 'INFO')
+window.setLogLevel(localStorage.getItem(LOCAL_STORAGE_KEY) || 'INFO')

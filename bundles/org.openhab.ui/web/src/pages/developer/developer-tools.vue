@@ -169,7 +169,7 @@ export default {
       wsEvents: [],
       icon: 'lightbulb',
       split: this.$device.desktop ? 'vertical' : 'horizontal',
-      logLevel: localStorage.getItem('logLevel') || 'INFO'
+      logLevel: localStorage.getItem('openhab.ui:logLevel') || 'INFO'
     }
   },
   methods: {
