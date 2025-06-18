@@ -45,6 +45,13 @@
     			icon-size="24" 
     			icon-color="gray"  
     			:href="mediaBrowserUri"/>
+    <f7-button color="blue"   					
+    			@click.stop="mediaChange()" 
+    			large 		
+    			icon-f7="hifispeaker_fill" 	
+    			icon-size="24" 
+    			icon-color="gray"  
+    			:href="mediaBrowserUri"/>
                
   </f7-segmented>
 </template>
