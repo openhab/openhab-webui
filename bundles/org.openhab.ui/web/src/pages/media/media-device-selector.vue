@@ -7,15 +7,14 @@
         </f7-button>
       </f7-nav-right>
     </f7-navbar>
-     <f7-link href="/mediadeviceselector/?path=/Root">Root</f7-link>
-     <br/>
-     <br/>
 
-     <h3>Media Device Selector</h3>
-
-     {{ node}}
-
-
+    <ul>
+     <div v-for="r1 in node.childs" style="display: inline;clear:both;" :class="{ 'sheet-opened': controlsOpened }">
+      
+      <li>{{ r1.name}}</li>
+      <br/>
+      </div>
+    </ul>
 	   
 
 
