@@ -1,11 +1,11 @@
 <template>
-  <f7-popup :opened="true" @popup:closed="onClosed" :backdrop="true" :animate="true" :closeOnEscape="true" :push="false" :closeByBackdropClick="true" class="media-popup" >
+  <f7-popup :opened="false" @popup:closed="onClosed" :backdrop="true" :animate="true" :closeOnEscape="true" :push="false" :closeByBackdropClick="true" class="media-popup" >
     <f7-view class="view-sheet-modal" url="/mediabrowser/" :animate="false" >
         <f7-page>
-          <media-browser :base-url="baseUrl"  @navigate="onNavigate" />
+          <media-browser  @navigate="onNavigate" />
         </f7-page>
-        </f7-view>
-        </f7-popup>
+    </f7-view>
+  </f7-popup>
 </template>
 
 <script>
@@ -19,11 +19,12 @@ export default {
       type: Boolean,
       required: false
     },
-    baseUrl: { // base de l'url, par ex. "/media"
-      type: String,
-      default: "/mediabrowser"
+  },
+  data () {
+    return {
     }
   },
+
   methods: {
     onClosed() {
       this.$emit('closed')
