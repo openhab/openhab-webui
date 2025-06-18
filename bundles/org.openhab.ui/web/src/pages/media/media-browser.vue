@@ -18,6 +18,7 @@
     <br/>
     {{  this.path }}
     <br/>
+    <br/>
     
     <div v-if="node">
       <div v-if="node.pres==='flat'">
@@ -41,7 +42,7 @@
       </div>
       <div v-else>
         <div v-for="r1 in node.childs" style="width:200px;height:200px;position:relative;float:left;margin:20px;background-color:#ffffff;color:#000000;border:solid 1px;border-radius:10px;padding:10px;">
-            <f7-link :href="`/mediabrowser/?path=` + r1.path">
+            <f7-link :href="`/mediabrowser/?path=` + r1.path + `&item=` + item">
                 <div id="container" style="position:relative">
                 <div style="text-align:center;position:absolute;top:-10px;width:200px;">
                     {{ r1.label }}
@@ -69,18 +70,15 @@
 export default {
   name: 'MediaBrowser',
   props: {
-     baseUrl: { 
-      type: String,
-      default: "/mediabrowser"
-    }
   },
   data () {
       this.item = this.$f7route.query.item;
-      if (this.$f7route.query.item === '') {
-          
+      if (this.$f7route.query.item !== '') {
+          this.item = this.$f7route.query.item;
       }
-      
-     
+      console.log("MediaBrowser item: " + this.item);
+
+
       this.$f7.toast.create({
           text: this.$t('media.page.updated'),
           destroyOnClose: true,
@@ -117,12 +115,8 @@ export default {
       return {
           node: this.node,
           controlsOpened: true,
+          item: this.item
       };
-
-      
-      //this.dataObj="aaaaaa";
-      
-      
   },
   computed: {
     currentRoute() {
@@ -144,7 +138,7 @@ export default {
     onClose () { 
     },
     doPlay (item, id) {
-      console
+        console.log("Playing item: " + item + " with id: " + id);
         this.$store.dispatch('sendCommand', { itemName: item, cmd: "PLAY," + id });
       },
       doEnqueue (item, id) {
