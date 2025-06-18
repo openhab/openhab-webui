@@ -167,7 +167,10 @@
       </f7-col>
     </f7-block>
 
-    <f7-view main v-show="ready" class="safe-areas" url="/" :master-detail-breakpoint="960" :animate="themeOptions.pageTransitionAnimation !== 'disabled'" />
+    <!--
+    <f7-view main v-show="ready" class="safe-areas" url="/" :master-detail-breakpoint="960" :animate="themeOptions.pageTransitionAnimation !== 'disabled'" stat/>
+    -->
+    <f7-view main url="/" stat/>
   </f7-app>
 </template>
 
@@ -322,6 +325,12 @@ export default {
 
         // App routes
         routes,
+        router: {
+//          pushState: true,
+        },
+        pushState: true,
+        pushStateSeparator: '/',
+        pushStateOnLoad: true,
         view: {
           // disable f7 swipeback on iOS because it's handled natively by Safari
           iosSwipeBack: !this.$device.ios,
