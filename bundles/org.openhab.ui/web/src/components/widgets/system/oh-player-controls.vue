@@ -41,7 +41,7 @@
     <f7-button color="blue"   			 
     			@click.stop="mediaChange()" 
     			large 
-    			icon-material="alarm" 
+    			icon-f7="folder_fill" 
     			icon-size="24" 
     			icon-color="gray"  
     			:href="mediaBrowserUri"/>
