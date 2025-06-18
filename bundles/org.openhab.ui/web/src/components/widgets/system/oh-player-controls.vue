@@ -7,7 +7,7 @@
     <f7-button color="blue" @click.stop="skipNext()" large icon-material="skip_next" icon-size="24" icon-color="gray" />
     
     <f7-button color="blue"   @click.stop="mediaChange()" large icon-f7="folder_fill" icon-size="24" icon-color="gray"  :href="mediaBrowserUri"/>
-    <f7-button color="blue"   @click.stop="mediaChange()" large icon-f7="hifispeaker_fill" icon-size="24" icon-color="gray"  :href="mediaBrowserUri"/>
+    <f7-button color="blue"   @click.stop="mediaChange()" large icon-f7="hifispeaker_fill" icon-size="24" icon-color="gray"  :href="mediaDeviceSelectorUri"/>
     
   </f7-segmented>
 </template>
@@ -40,6 +40,9 @@ export default {
     },
     mediaBrowserUri () {
         return "/mediapopup/?item=" + this.config.item;
+      },
+    mediaDeviceSelectorUri () {
+        return "/mediadevicepopup/?item=" + this.config.item;
       }
   },
   methods: {
