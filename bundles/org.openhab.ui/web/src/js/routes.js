@@ -6,7 +6,6 @@ import PageViewPage from '../pages/page/page-view.vue'
 import AnalyzerPopup from '../pages/analyzer/analyzer-popup.vue'
 import MediaPopup from '../pages/media/media-popup.vue'
 import MediaBrowser from '../pages/media/media-browser.vue'
-import MediaTest from '../pages/media/media-test.vue'
 import { AddonTitles } from '@/assets/addon-store'
 
 const AboutPage = () => import(/* webpackChunkName: "about-page" */ '@/pages/about.vue')
@@ -564,10 +563,6 @@ export default [
       transition: 'f7-dive',
       animate: false,
     }
-  },
-  {
-    path: '/mediatest/',
-    component: MediaTest
   },
   {
     path: '(.*)',
