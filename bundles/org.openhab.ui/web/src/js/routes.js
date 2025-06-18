@@ -5,6 +5,8 @@ import NotFoundPage from '../pages/not-found.vue'
 import PageViewPage from '../pages/page/page-view.vue'
 import AnalyzerPopup from '../pages/analyzer/analyzer-popup.vue'
 import MediaPopup from '../pages/media/media-popup.vue'
+import MediaBrowser from '../pages/media/media-browser.vue'
+import MediaTest from '../pages/media/media-test.vue'
 import { AddonTitles } from '@/assets/addon-store'
 
 const AboutPage = () => import(/* webpackChunkName: "about-page" */ '@/pages/about.vue')
@@ -103,6 +105,7 @@ const loadAsync = (page, props) => {
 export default [
   {
     path: '/',
+    viewName: 'main',
     beforeEnter: function ({ reject }) {
       reject()
       this.navigate('/overview/')
@@ -549,10 +552,22 @@ export default [
     }
   },
   {
-    path: '/mediabrowser/',
+    path: '/mediapopup/',
     popup: {
       component: MediaPopup
     }
+  },
+  {
+    path: '/mediabrowser/',
+    component: MediaBrowser,
+    options: {
+      transition: 'f7-dive',
+      animate: false,
+    }
+  },
+  {
+    path: '/mediatest/',
+    component: MediaTest
   },
   {
     path: '(.*)',

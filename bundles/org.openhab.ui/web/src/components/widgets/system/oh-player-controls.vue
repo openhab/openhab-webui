@@ -78,7 +78,7 @@ export default {
       return value === 'PLAY'
     },
     mediaBrowserUri () {
-        return "/mediabrowser/?item=" + this.config.item;
+        return "/mediapopup/?item=" + this.config.item;
     }
   },
   methods: {
