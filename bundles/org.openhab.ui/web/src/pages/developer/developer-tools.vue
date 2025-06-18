@@ -53,6 +53,29 @@
                 <f7-list-item media-item title="Log Viewer" footer="Monitor openHAB log output" link="log-viewer">
                   <f7-icon slot="media" f7="square_list" color="gray" />
                 </f7-list-item>
+                <f7-list-item smart-select :smartSelectParams="{ openIn: 'popup', closeOnSelect: true }" media-item title="UI Logging" footer="Set the log level for the browser console logs">
+                  <f7-icon slot="media" f7="exclamationmark_circle" color="gray" />
+                  <select v-model="logLevel" @change="onLogLevelChange">
+                    <option value="TRACE">
+                      Trace
+                    </option>
+                    <option value="DEBUG">
+                      Debug
+                    </option>
+                    <option value="INFO">
+                      Info
+                    </option>
+                    <option value="WARN">
+                      Warn
+                    </option>
+                    <option value="ERROR">
+                      Error
+                    </option>
+                    <option value="OFF">
+                      Off
+                    </option>
+                  </select>
+                </f7-list-item>
               </f7-list>
             </f7-col>
           </f7-row>
@@ -145,7 +168,8 @@ export default {
       wsClient: null,
       wsEvents: [],
       icon: 'lightbulb',
-      split: this.$device.desktop ? 'vertical' : 'horizontal'
+      split: this.$device.desktop ? 'vertical' : 'horizontal',
+      logLevel: localStorage.getItem('openhab.ui:logLevel') || 'INFO'
     }
   },
   methods: {
@@ -175,6 +199,9 @@ export default {
       this.$oh.ws.close(this.wsClient)
       this.wsClient = null
       this.wsEvents = []
+    },
+    onLogLevelChange () {
+      window.setLogLevel(this.logLevel)
     }
   },
   asyncComputed: {

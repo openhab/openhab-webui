@@ -1,4 +1,5 @@
 import './compatibility'
+import './logging'
 
 // Import Vue
 import Vue from 'vue'
