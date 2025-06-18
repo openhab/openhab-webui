@@ -6,6 +6,8 @@ import PageViewPage from '../pages/page/page-view.vue'
 import AnalyzerPopup from '../pages/analyzer/analyzer-popup.vue'
 import MediaPopup from '../pages/media/media-popup.vue'
 import MediaBrowser from '../pages/media/media-browser.vue'
+import MediaDevicePopup from '../pages/media/media-device-popup.vue'
+import MediaDeviceSelector from '../pages/media/media-device-selector.vue'
 import { AddonTitles } from '@/assets/addon-store'
 
 const AboutPage = () => import(/* webpackChunkName: "about-page" */ '@/pages/about.vue')
@@ -570,6 +572,20 @@ export default [
   {
     path: '/mediabrowser/',
     component: MediaBrowser,
+    options: {
+      transition: 'f7-dive',
+      animate: false,
+    }
+  },
+  {
+    path: '/mediadevicepopup/',
+    popup: {
+      component: MediaDevicePopup
+    }
+  },
+  {
+    path: '/mediadeviceselector/',
+    component: MediaDeviceSelector,
     options: {
       transition: 'f7-dive',
       animate: false,

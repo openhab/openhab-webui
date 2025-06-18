@@ -36,7 +36,8 @@
                       <img src="/static/Arrow.png" style="vertical-align:middle" height=24/>&nbsp;&nbsp;&nbsp;&nbsp;ENQUEUE
                   </f7-button>
               </div>
-              <hr/>Add commentMore actions
+              <br/>
+              <hr/>
               <br/>
               <div v-for="r1 in node.childs" style="display: inline;clear:both;" :class="{ 'sheet-opened': controlsOpened }">
 	                <f7-link :href="`/mediabrowser/?path=` + r1.path" :data-reload="true" :reload-current="true" :reload-detail="true">
