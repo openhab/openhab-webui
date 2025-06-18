@@ -51,7 +51,7 @@
     			icon-f7="hifispeaker_fill" 	
     			icon-size="24" 
     			icon-color="gray"  
-    			:href="mediaBrowserUri"/>
+    			:href="mediaDeviceSelectorUri"/>
                
   </f7-segmented>
 </template>
@@ -86,6 +86,9 @@ export default {
     },
     mediaBrowserUri () {
         return "/mediapopup/?item=" + this.config.item;
+      },
+    mediaDeviceSelectorUri () {
+        return "/mediadevicepopup/?item=" + this.config.item;
     }
   },
   methods: {
