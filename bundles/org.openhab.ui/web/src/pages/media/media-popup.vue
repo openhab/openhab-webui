@@ -1,6 +1,6 @@
 <template>
   <f7-popup :opened="true" @popup:closed="onClosed" :backdrop="true" :animate="true" :closeOnEscape="true" :push="false" :closeByBackdropClick="true" class="media-popup" >
-    <f7-view class="view-sheet-modal" url="/mediabrowser/" animate="false" >
+    <f7-view class="view-sheet-modal" url="/mediabrowser/" :animate="false" >
         <f7-page>
           <media-browser :base-url="baseUrl"  @navigate="onNavigate" />
         </f7-page>

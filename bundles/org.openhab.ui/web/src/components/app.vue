@@ -167,10 +167,9 @@
       </f7-col>
     </f7-block>
 
-    <!--
-    <f7-view main v-show="ready" class="safe-areas" url="/" :master-detail-breakpoint="960" :animate="themeOptions.pageTransitionAnimation !== 'disabled'" stat/>
-    -->
-    <f7-view main url="/" stat/>
+    
+    <f7-view main v-show="ready" class="safe-areas" url="/" :master-detail-breakpoint="960" :animate="themeOptions.pageTransitionAnimation !== 'disabled'" :push-state="true" stat/>
+    
   </f7-app>
 </template>
 
@@ -335,7 +334,7 @@ export default {
           // disable f7 swipeback on iOS because it's handled natively by Safari
           iosSwipeBack: !this.$device.ios,
           auroraSwipeBack: !this.$device.ios,
-          pushState: true,
+          pushState: false,
           pushStateSeparator: ''
         },
         // Enable panel left visibility breakpoint
