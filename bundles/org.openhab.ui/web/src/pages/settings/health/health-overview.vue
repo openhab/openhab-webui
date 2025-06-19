@@ -16,18 +16,22 @@
       </f7-col>
     </f7-block>
 
-    <f7-block v-if="healthCount > 0" class="block-narrow">
+    <f7-block class="block-narrow">
       <f7-col>
         <f7-list media-list>
-          <f7-list-item v-if="orphanLinksCount > 0"
+          <f7-list-item
             media-item link="orphanlinks/" title="Orphan Links"
-            :badge="orphanLinksCount" badge-color="red"
+            :badge="orphanLinksCount > 0 ? orphanLinksCount : undefined"
+            :after="orphanLinksCount > 0 ? undefined : orphanLinksCount"
+            :badge-color="orphanLinksCount ? 'red' : 'blue'"
             :footer="objectsSubtitles.orphanLinks">
             <f7-icon slot="media" f7="link" color="gray" />
           </f7-list-item>
-          <f7-list-item v-if="semanticsProblemCount > 0"
+          <f7-list-item
             media-item link="semantics/" title="Semantics Problems"
-            :badge="semanticsProblemCount" badge-color="red"
+            :badge="semanticsProblemCount > 0 ? semanticsProblemCount : undefined"
+            :after="semanticsProblemCount > 0 ? undefined : semanticsProblemCount"
+            :badge-color="semanticsProblemCount ? 'red' : 'blue'"
             :footer="objectsSubtitles.semanticsProblems">
             <f7-icon slot="media" f7="link" color="gray" />
           </f7-list-item>
@@ -56,9 +60,6 @@ export default {
   computed: {
     apiEndpoints () {
       return this.$store.state.apiEndpoints
-    },
-    healthCount () {
-      return this.orphanLinksCount + this.semanticsProblemCount
     }
   },
   watch: {
