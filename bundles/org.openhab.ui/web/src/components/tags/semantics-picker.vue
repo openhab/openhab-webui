@@ -15,6 +15,7 @@
       v-if="popupType === 'class'"
       :item="item"
       :hideNone="hideNone"
+      classMode="true"
       :semanticClass="semanticClass"
       @changed="itemChanged"
       @close="closePopup" />
