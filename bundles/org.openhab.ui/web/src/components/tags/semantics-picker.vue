@@ -37,7 +37,7 @@ import SemanticsPickerPopup from '@/components/tags/semantics-picker-popup.vue'
 
 export default {
   mixins: [TagMixin],
-  props: ['item', 'hideNone'],
+  props: ['item', 'createMode', 'hideNone'],
   components: {
     SemanticsPickerPopup
   },
