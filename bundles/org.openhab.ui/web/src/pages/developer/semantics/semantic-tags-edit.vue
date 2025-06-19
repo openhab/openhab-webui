@@ -81,8 +81,8 @@
                                      placeholder="synonym"
                                      @change="updateSynonyms($event)" />
                       <f7-list-input value="" :disabled="!selectedTag.editable" :clear-button="selectedTag.editable"
-                                     placeholder="synonym" 
-                                     @change="updateSynonyms($event)" />                      
+                                     placeholder="synonym"
+                                     @change="updateSynonyms($event)" />
                     </f7-list>
                   </f7-card-content>
                 </f7-card>
@@ -149,8 +149,8 @@
                            placeholder="synonym"
                            @change="updateSynonyms($event, index)" />
             <f7-list-input value="" :disabled="!selectedTag.editable" :clear-button="selectedTag.editable"
-                           placeholder="synonym" 
-                           @change="updateSynonyms($event)" />                      
+                           placeholder="synonym"
+                           @change="updateSynonyms($event)" />
           </f7-list>
         </f7-block>
       </f7-page>
@@ -271,7 +271,7 @@ export default {
       showNames: false,
       editableSemanticTagsYaml: null,
       editingTagsYaml: null,
-      nonCodeDirty: false   // When editing code, keeps track if it was already dirty before switching to code tab
+      nonCodeDirty: false // When editing code, keeps track if it was already dirty before switching to code tab
     }
   },
   watch: {
@@ -385,9 +385,9 @@ export default {
         return
       }
 
-      const addTasks = addedTags.map((t) => (() => this.$oh.api.post('/rest/tags', t)))
-      const changeTasks = modifiedTags.map((t) => (() => this.$oh.api.put('/rest/tags/' + t.uid, t)))
-      const removeTasks = removedTags.map((t) => (() => this.$oh.api.delete('/rest/tags/'+ t.uid)))
+      const addTasks = addedTags.map((t) => () => this.$oh.api.post('/rest/tags', t))
+      const changeTasks = modifiedTags.map((t) => () => this.$oh.api.put('/rest/tags/' + t.uid, t))
+      const removeTasks = removedTags.map((t) => () => this.$oh.api.delete('/rest/tags/' + t.uid))
       if (addTasks.length <= 0 && changeTasks.length <= 0 && removeTasks.length <= 0) {
         this.dirty = false
         return
@@ -409,7 +409,7 @@ export default {
           console.debug('Successfully changed tags')
         }
         this.dirty = false
-          this.$store.dispatch('loadSemantics').then(() => {
+        this.$store.dispatch('loadSemantics').then(() => {
           this.load()
         })
       } catch (error) {
@@ -465,7 +465,7 @@ export default {
       this.selectedTag.uid = newUid
       this.expandedTags[newUid] = this.expandedTags[this.selectedTag.uid]
     },
-    updateSynonyms(event, index) {
+    updateSynonyms (event, index) {
       const newValue = event.target.value
       if (typeof index === 'number') {
         if (newValue) {
