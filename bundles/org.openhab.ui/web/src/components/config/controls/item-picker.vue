@@ -8,7 +8,7 @@
         </option>
       </select>
       <f7-button v-if="!noModelPicker" slot="media" :icon-color="color" :icon-aurora="aurora" :icon-ios="ios" :icon-md="md" @click.native="pickFromModel" />
-      <f7-icon v-else slot="media" :color="color" :aurora="aurora" :ios="ios" :md="md" />
+      <f7-icon v-else-if="!hideIcon" slot="media" :color="color" :aurora="aurora" :ios="ios" :md="md" />
     </f7-list-item>
     <!-- for placeholder purposes before items are loaded -->
     <f7-list-item link v-show="!ready" :title="title" disabled no-chevron>

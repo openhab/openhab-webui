@@ -49,7 +49,7 @@
               </template>
               <template #default="{ channelType, channel }" v-else-if="multipleLinksMode">
                 <item-picker v-if="isChecked(channel) && hasLinks(channel)"
-                             :title="selectedItem(channel) ? 'Change Selected Item' : 'Pick Existing Linked Item'"
+                             :title="selectedItem(channel) ? 'Change Item Selection' : 'Pick Existing Linked Item'"
                              textColor="blue" :hideIcon="true"
                              :items="items.filter((i) => channel.linkedItems.includes(i.name))"
                              :multiple="false" :noModelPicker="true" :setValueText="false"
