@@ -73,6 +73,16 @@ export default {
           .filter((i) => !i.metadata.semantics.config || (!i.metadata.semantics.config.isPointOf && !i.metadata.semantics.config.hasLocation))
           .map(this.modelItem).sort(compareModelItems)
 
+        // look for checked or selected items and include non semantic checked items in model tree
+        const selectedItems = this.value ? (Array.isArray(this.value) ? [...this.value] : [this.value]) : null
+        this.includeNonSemantic = this.includeNonSemantic || selectedItems?.some((selected) => {
+          const item = this.items.find((i) => selected === i.name)
+          const isNonSemantic = !item?.metadata?.semantics
+          const hasSemanticGroup = item?.groupNames.some((g) => this.items.some((gi) => g === gi.name && gi.metadata?.semantics))
+          const onlyNonSemanticGroup = !hasSemanticGroup && !item?.groupNames.some((g) => !this.items.some((gi) => g === gi.name && gi.metadata?.semantics))
+          return isNonSemantic || onlyNonSemanticGroup
+        })
+
         if (this.includeNonSemantic) {
           this.rootGroups = this.items
             .filter((i) => i.type === 'Group' && (!i.metadata || !i.metadata.semantics) && i.groupNames.length === 0)
@@ -174,6 +184,23 @@ export default {
           }
         }
       })
+    },
+    expandSelected () {
+      // expand so all checked items are opened
+      this.rootLocations.forEach((child) => this.expandSelectedChild(child))
+      this.rootEquipment.forEach((child) => this.expandSelectedChild(child))
+      this.rootPoints.forEach((child) => this.expandSelectedChild(child))
+      this.rootGroups.forEach((child) => this.expandSelectedChild(child))
+      this.rootItems.forEach((child) => this.expandSelectedChild(child))
+    },
+    expandSelectedChild (parent) {
+      return Object.values(parent.children).flat().map((child) => {
+        if (this.expandSelectedChild(child) || child.checked || child.item.name === this.selectedItem?.item?.name) {
+          parent.opened = true
+          return true
+        }
+        return false
+      }).reduce((prev, curr) => prev || curr, false)
     }
   }
 }
