@@ -35,6 +35,11 @@ export default {
       selectedItem: null
     }
   },
+  computed: {
+    rootElements () {
+      return [...this.rootLocations, ...this.rootEquipment, ...this.rootPoints, ... this.rootGroups, ... this.rootItems]
+    }
+  },
   methods: {
     /**
      * Load the items and links from the REST API and build the model.
@@ -159,44 +164,48 @@ export default {
      * `this.expanded` has to be provided by the component using this mixin.
      */
     applyExpandedOption () {
-      const treeviewItems = document.querySelectorAll('.treeview-item')
-
-      treeviewItems.forEach(item => {
-        if (item.classList.contains('treeview-item')) {
-          if (this.expanded) {
-            item.classList.add('treeview-item-opened')
-          } else {
-            item.classList.remove('treeview-item-opened')
-          }
-        }
+      // Don't directly update the item classlist as items are only conditionaly rendered in the DOM to improve performance on large trees
+      this.rootElements.forEach((c) => this.applyExpandedOptionChild(c))
+    },
+    applyExpandedOptionChild (child) {
+      child.opened = this.expanded
+      Object.values(child.children).flat().forEach((c) => {
+        this.applyExpandedOptionChild(c)
       })
     },
     saveExpanded () {
-      this.expandedTreeviewItems = [...document.querySelectorAll('.treeview-item-opened')]
+      this.expandedTreeviewItems.splice(0)
+      this.rootElements.forEach((c) => this.saveExpandedChild(c))
+    },
+    saveExpandedChild (child) {
+      if (child.opened) {
+        this.expandedTreeviewItems.push(child.item.name)
+      }
+      Object.values(child.children).flat().forEach((c) => {
+        this.saveExpandedChild(c)
+      })
     },
     restoreExpanded () {
-      const treeviewItems = document.querySelectorAll('.treeview-item')
-
-      treeviewItems.forEach(item => {
-        if (item.classList.contains('treeview-item')) {
-          if (this.expanded || this.expandedTreeviewItems.includes(item)) {
-            item.classList.add('treeview-item-opened')
-          }
-        }
+      this.rootElements.forEach((child) => this.restoreExpandedChild(child, false))
+    },
+    restoreExpandedChild (child, parentClosed) {
+      if (parentClosed) {
+        child.opened = false
+      } else {
+        child.opened = this.expandedTreeviewItems.includes(child.item.name)
+      }
+      Object.values(child.children).flat().forEach((c) => {
+        this.restoreExpandedChild(c, !child.opened)
       })
     },
     expandSelected () {
       // expand so all checked items are opened
-      this.rootLocations.forEach((child) => this.expandSelectedChild(child))
-      this.rootEquipment.forEach((child) => this.expandSelectedChild(child))
-      this.rootPoints.forEach((child) => this.expandSelectedChild(child))
-      this.rootGroups.forEach((child) => this.expandSelectedChild(child))
-      this.rootItems.forEach((child) => this.expandSelectedChild(child))
+      this.rootElements.forEach((c) => this.expandSelectedChild(c))
     },
-    expandSelectedChild (parent) {
-      return Object.values(parent.children).flat().map((child) => {
-        if (this.expandSelectedChild(child) || child.checked || child.item.name === this.selectedItem?.item?.name) {
-          parent.opened = true
+    expandSelectedChild (child) {
+      return Object.values(child.children).flat().map((c) => {
+        if (this.expandSelectedChild(c) || c.checked || c.item.name === this.selectedItem?.item?.name) {
+          child.opened = true
           return true
         }
         return false
