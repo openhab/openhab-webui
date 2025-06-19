@@ -196,12 +196,18 @@ export default {
       return this.item?.metadata?.semantics?.value?.split('_')[0]
     },
     semanticValue () {
-      return this.item?.metadata?.semantics?.value?.split('_').slice(1).join('->')
+      const valueArray = this.item?.metadata?.semantics?.value?.split('_')
+      if (!valueArray) return null
+      if (valueArray.length > 1) return valueArray.slice(1).join('->')
+      return valueArray[0]
     },
     semanticProperty () {
       const config = this.item?.metadata?.semantics?.config
       if (!config) return null
-      return config.relatesTo?.split('_').slice(1).join('->')
+      const propertyArray = config.relatesTo?.split('_')
+      if (!propertyArray) return null
+      if (propertyArray.length > 1) return propertyArray.slice(1).join('->')
+      return propertyArray[0]
     },
     semanticAttributes () {
       const config = this.item?.metadata?.semantics?.config
@@ -221,7 +227,7 @@ export default {
       return this.item.groupNames.filter((g) => !Object.values(this.semanticAttributes).includes(g))
     },
     nonSemanticTags () {
-      return this.item?.tags?.filter((tag) => this.semanticValue !== this.semanticTag(tag) && this.semanticProperty !== this.semanticTag(tag))
+      return this.item?.tags?.filter((tag) => tag !== this.semanticTag(this.semanticValue) && tag !== this.semanticTag(this.semanticProperty))
     }
   },
   methods: {
@@ -271,9 +277,9 @@ export default {
     groupLink (group) {
       return '/settings/items/' + group
     },
-    semanticTag (tag) {
-      const tagArray = tag.split('_')
-      return tagArray[tagArray.length - 1]
+    semanticTag (value) {
+      const valueArray = value.split('->')
+      return valueArray[valueArray.length - 1]
     }
   }
 }
