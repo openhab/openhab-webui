@@ -43,7 +43,7 @@
         <f7-col>
           <f7-block-title>Semantic Model</f7-block-title>
           <f7-card>
-            <model-treeview class="model-treeview no-selection-style" :rootNodes="[rootLocations, rootEquipment, rootPoints, rootGroups, rootItems].flat()" :items="items"
+            <model-treeview class="model-treeview no-selection-style" :rootNodes="[rootLocations, rootEquipment, rootPoints, rootGroups, rootItems].flat()"
                             :includeItemName="true" :includeItemTags="true" :selected="modelItem(item)" @selected="navigateToItem" />
           </f7-card>
         </f7-col>
