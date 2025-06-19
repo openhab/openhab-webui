@@ -6,21 +6,21 @@
                     :selected="selected && selected === tag"
                     :opened="expandedTags[tag.uid]"
                     :toggle="canHaveChildren"
-                     @treeview:open="setTagOpened(true)"
+                    @treeview:open="setTagOpened(true)"
                     @treeview:close="setTagOpened(false)"
                     @click="select">
     <draggable :list="children" group="semantic-tags-treeview" filter=".non-draggable" animation="150" fallbackOnBody="true" swapThreshold="0.6"
                @start="onDragStart" @change="onDragChange" @end="onDragEnd" :move="onDragMove">
       <semantics-treeview-item v-for="(childTag, idx) in children"
-                              :key="idx"
-                              :tag="childTag"
-                              :semanticTags="semanticTags"
-                              :expandedTags="expandedTags"
-                              :showNames="showNames"
-                              @selected="(event) => $emit('selected', event)"
-                              :selected="selected"
-                              :moveState="moveState"
-                              :class="{ 'non-draggable': !childTag.editable }" />
+                               :key="idx"
+                               :tag="childTag"
+                               :semanticTags="semanticTags"
+                               :expandedTags="expandedTags"
+                               :showNames="showNames"
+                               @selected="(event) => $emit('selected', event)"
+                               :selected="selected"
+                               :moveState="moveState"
+                               :class="{ 'non-draggable': !childTag.editable }" />
     </draggable>
   </f7-treeview-item>
 </template>
@@ -90,7 +90,7 @@ export default {
     onDragStart (event) {
       console.debug('Drag start event:', event)
       this.moveState.moving = true
-     },
+    },
     onDragChange (event) {
       console.debug('Drag change event:', event)
       if (event.added) {
