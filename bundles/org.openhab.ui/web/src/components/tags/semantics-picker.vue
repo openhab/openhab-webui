@@ -1,69 +1,88 @@
 <template>
-  <f7-list inline-labels no-hairlines-md v-if="show">
-    <f7-list-item :disabled="!editable" title="Semantic Class" class="aligned-smart-select" :key="'class-' + semanticClass" smart-select :smart-select-params="{view: $f7.view.main, searchbar: true, openIn: 'popup', closeOnSelect: true, scrollToSelectedItem: true}">
-      <select name="select-semantics-class" @change="update('class', $event.target.value)">
-        <option v-if="!hideNone" value="">
-          None
-        </option>
-        <optgroup label="Location" v-if="!sameClassOnly || semanticClass === '' || (sameClassOnly && currentSemanticType === 'Location')">
-          <option v-for="type in orderedLocations" :key="type" :value="type" :selected="type === semanticClass">
-            {{ type }}
-          </option>
-        </optgroup>
-        <optgroup label="Equipment" v-if="!sameClassOnly || semanticClass === '' || (sameClassOnly && currentSemanticType === 'Equipment')">
-          <option v-for="type in orderedEquipment" :key="type" :value="type" :selected="type === semanticClass">
-            {{ type }}
-          </option>
-        </optgroup>
-        <optgroup label="Point" v-if="!sameClassOnly || semanticClass === '' || (sameClassOnly && currentSemanticType === 'Point')">
-          <option v-for="type in orderedPoints" :key="type" :value="type" :selected="type === semanticClass">
-            {{ type }}
-          </option>
-        </optgroup>
-      </select>
-    </f7-list-item>
-    <f7-list-item v-if="currentSemanticType && !hideType" :disabled="!editable" title="Semantic Type" class="aligned-smart-select" :after="currentSemanticType" />
-    <f7-list-item v-if="currentSemanticType === 'Point'" :disabled="!editable" title="Semantic Property" class="aligned-smart-select" :key="'property-' + semanticProperty" smart-select :smart-select-params="{view: $f7.view.main, searchbar: true, openIn: 'popup', closeOnSelect: true, scrollToSelectedItem: true}">
-      <select name="select-semantics-property" :value="semanticProperty" @change="update('property', $event.target.value)">
-        <option :value="''">
-          None
-        </option>
-        <option v-for="type in orderedProperties" :key="type" :value="type" :selected="type === semanticProperty">
-          {{ type }}
-        </option>
-      </select>
-    </f7-list-item>
+  <f7-list inline-labels no-hairlines-md>
+    <f7-list-item title="Semantic Class"
+                  :after="semanticClass || 'None'"
+                  :disabled="!editable"
+                  @click="openPopup('class')"
+                  class="aligned-smart-select" :link="editable" />
+    <f7-list-item v-if="currentSemanticType" title="Semantic Property" :after="semanticProperty || 'None'"
+                  :disabled="!editable || currentSemanticType !== 'Point'"
+                  @click="openPopup('property')"
+                  class="aligned-smart-select" :link="editable" />
+    <semantics-picker-popup :key="'semantics-class-' + item.tags.toString()"
+      ref="classPopup"
+      v-if="popupType === 'class'"
+      :item="item"
+      :sameClassOnly="sameClassOnly"
+      :hideType="hideType"
+      :hideNone="hideNone"
+      :createMode="createMode"
+      :currentSemanticType="currentSemanticType"
+      :semanticClass="semanticClass"
+      @close="closePopup"
+    />
+    <semantics-picker-popup
+      ref="propertyPopup" :key="'semantics-property-' + item.tags.toString()"
+      v-if="popupType === 'property' && currentSemanticType === 'Point'"
+      :item="item"
+      :sameClassOnly="sameClassOnly"
+      :hideType="hideType"
+      :hideNone="hideNone"
+      :createMode="createMode"
+      :semanticProperty="semanticProperty"
+      @close="closePopup"
+      property-mode
+    />
   </f7-list>
 </template>
 
 <script>
-import TagMixin from '@/components/tags/tag-mixin'
+import SemanticsPickerPopup from '@/components/tags/semantics-picker-popup.vue'
 
 export default {
   mixins: [TagMixin],
   props: ['item', 'sameClassOnly', 'hideType', 'hideNone', 'createMode'],
+  components: {
+    SemanticsPickerPopup
+  },
   data () {
     return {
       semanticClass: '',
       semanticProperty: '',
-      show: true
+      popupType: null
+    }
+  },
+  computed: {
+    editable () {
+      return this.createMode || (this.item && this.item.editable)
+    },
+    currentSemanticType () {
+      return this.semanticType(this.semanticClass)
     }
   },
   methods: {
-    update (type, value) {
-      if (type === 'property') {
-        this.semanticProperty = value
-      } else {
-        this.semanticClass = value
-      }
-      this.item.tags = this.item.tags.filter((t) => !this.semanticType(t) && !this.isSemanticPropertyTag(t))
-      if (this.semanticClass) this.item.tags.push(this.semanticClass)
-      if (this.semanticType(this.semanticClass) === 'Point' && this.semanticProperty.length) {
-        this.item.tags.push(this.semanticProperty)
-      }
+    openPopup(type) {
+      if (!this.editable) return
+      this.popupType = type
+      this.$nextTick(() => {
+        const popupRef = type === 'class' ? 'classPopup' : 'propertyPopup'
+        const popupEl = this.$refs[popupRef]?.$el
+        if (popupEl) this.$f7.popup.open(popupEl)
+      })
+    },
+    closePopup() {
+      this.popupType = null
+    },
+    semanticType (tag) {
+      if (this.semanticClasses.Locations.indexOf(tag) >= 0) return 'Location'
+      if (this.semanticClasses.Equipment.indexOf(tag) >= 0) return 'Equipment'
+      if (this.semanticClasses.Points.indexOf(tag) >= 0) return 'Point'
+      return ''
+    },
+    isSemanticPropertyTag (tag) {
+      return (this.semanticClasses.Properties.indexOf(tag) >= 0)
     },
     itemChanged (item) {
-      this.show = false
       if (!item.tags) return
       this.semanticClass = ''
       this.semanticProperty = ''
@@ -83,46 +102,10 @@ export default {
           }
         }
       }
-      this.$nextTick(() => {
-        this.show = true
-      })
     }
   },
   mounted () {
     this.itemChanged(this.item)
-  },
-  watch: {
-    item (val) {
-      this.itemChanged(val)
-    }
-  },
-  computed: {
-    editable () {
-      return this.createMode || (this.item && this.item.editable)
-    },
-    orderedLocations () {
-      return [...this.semanticClasses.Locations].sort((a, b) => {
-        return a.localeCompare(b)
-      })
-    },
-    orderedEquipment () {
-      return [...this.semanticClasses.Equipment].sort((a, b) => {
-        return a.localeCompare(b)
-      })
-    },
-    orderedPoints () {
-      return [...this.semanticClasses.Points].sort((a, b) => {
-        return a.localeCompare(b)
-      })
-    },
-    orderedProperties () {
-      return [...this.semanticClasses.Properties].sort((a, b) => {
-        return a.localeCompare(b)
-      })
-    },
-    currentSemanticType () {
-      return this.semanticType(this.semanticClass)
-    }
   }
 }
 </script>
