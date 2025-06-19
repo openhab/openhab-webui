@@ -1,4 +1,5 @@
 <template>
+  <div>
   <f7-segmented v-bind="config" round outline strong class="player-controls" title="">
     <f7-button color="blue" @click.stop="skipPrevious()" large icon-material="skip_previous" icon-size="24" icon-color="gray" />
     <f7-button v-if="this.config.showRewindFFward" color="blue" @click.stop="rewind()" large icon-material="fast_rewind" icon-size="24" icon-color="gray" />
@@ -6,10 +7,14 @@
     <f7-button v-if="this.config.showRewindFFward" color="blue" @click.stop="fastForward()" large icon-material="fast_forward" icon-size="24" icon-color="gray" />
     <f7-button color="blue" @click.stop="skipNext()" large icon-material="skip_next" icon-size="24" icon-color="gray" />
     
-    <f7-button color="blue"   @click.stop="mediaChange()" large icon-f7="folder_fill" icon-size="24" icon-color="gray"  :href="mediaBrowserUri"/>
-    <f7-button color="blue"   @click.stop="mediaChange()" large icon-f7="hifispeaker_fill" icon-size="24" icon-color="gray"  :href="mediaDeviceSelectorUri"/>
+    <f7-button color="blue" large icon-f7="folder_fill" icon-size="24" icon-color="gray"  :href="mediaBrowserUri"/>
+    <f7-button color="blue" large icon-f7="hifispeaker_fill" icon-size="24" icon-color="gray"  :href="mediaDeviceSelectorUri"/>
     
+  
   </f7-segmented>
+  </div>
+
+ 
 </template>
 
 <style lang="stylus">
@@ -60,10 +65,8 @@ export default {
     },
     skipNext (value) {
       this.$store.dispatch('sendCommand', { itemName: this.config.item, cmd: 'NEXT' })
-    },
-    mediaChange (value) {
-      //this.$store.dispatch('sendCommand', { itemName: this.config.item, cmd: 'spotify:playlist:5Z4AD0u9fwnvtsj7ce5ZLS' })
     }
+    
     
   }
 }
