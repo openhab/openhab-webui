@@ -12,14 +12,14 @@
              :size="resolvedConfig.width || resolvedConfig.height || null"
              :style="resolvedStyle" />
     <iconify-icon v-else-if="iconType === 'iconify'" v-bind="resolvedConfig"
-                  :icon="iconName"
+                  :icon="resolvedIcon.iconName"
                   :style="resolvedStyle" />
   </f7-link>
   <f7-icon v-else-if="iconType === 'f7'" v-bind="resolvedConfig"
            :size="resolvedConfig.width || resolvedConfig.height || null"
            :style="resolvedStyle" />
   <iconify-icon v-else-if="iconType === 'iconify'" v-bind="resolvedConfig"
-                :icon="iconName"
+                :icon="resolvedIcon.iconName"
                 :style="resolvedStyle" />
 </template>
 
@@ -44,7 +44,7 @@ export default {
   data () {
     return {
       currentState: this.state,
-      currentIcon: this.actualIcon,
+      currentIcon: null,
       iconUrl: null
     }
   },
@@ -67,6 +67,22 @@ export default {
         aurora: (this.icon) ? this.icon : (this.config && this.config.icon) ? this.config.icon : null
       }
     },
+    resolvedIcon () {
+      let iconName = (this.context) ? this.config.icon : this.icon
+      if (!(typeof iconName === 'string' || iconName instanceof String)) {
+        iconName = ''
+      } else if (iconName.indexOf('oh:') === 0 && iconName.split(':').length === 3) {
+        iconName = iconName.split(':')[2]
+      } else if (iconName.indexOf(':') >= 0) {
+        iconName = iconName.substring(iconName.indexOf(':') + 1)
+      }
+      // for OH icons only
+      const actualState = (this.context) ? this.config.state : this.state
+      return {
+        iconName,
+        actualState
+      }
+    },
     iconType () {
       const icon = (this.context) ? this.config.icon : this.icon
       if (!icon) return 'oh'
@@ -85,44 +101,36 @@ export default {
       if (icon.indexOf('oh:') === 0 && icon.split(':').length === 3) return icon.split(':')[1]
       return 'classic'
     },
-    iconName () {
-      const icon = (this.context) ? this.config.icon : this.icon
-      if (!(typeof icon === 'string' || icon instanceof String)) return ''
-      if (icon.indexOf('oh:') === 0 && icon.split(':').length === 3) return icon.split(':')[2]
-      if (icon.indexOf(':') >= 0) return icon.substring(icon.indexOf(':') + 1)
-      return icon
-    },
-    // for OH icons only
-    actualState () {
-      return (this.context) ? this.config.state : this.state
-    },
     // for OH icons only
     iconFormat () {
       return (this.context) ? (this.config.iconFormat || 'svg') : 'svg'
     }
   },
   watch: {
-    actualState (val) {
-      if (val !== this.currentState) {
-        this.currentState = val
-        if (this.iconType === 'oh') this.updateIcon()
+    resolvedIcon (val) {
+      let updated = false
+      if (val.actualState !== this.currentState) {
+        this.currentState = val.actualState
+        updated = true
       }
-    },
-    iconName (val) {
-      if (val !== this.currentIcon) {
-        this.currentIcon = val
-        if (this.iconType === 'oh') this.updateIcon()
+      if (val.iconName !== this.currentIcon) {
+        this.currentIcon = val.iconName
+        updated = true
       }
+      if (updated && this.iconType === 'oh') this.updateIcon()
     }
   },
   mounted () {
-    this.currentIcon = this.iconName
-    this.currentState = this.actualState
+    this.currentIcon = this.resolvedIcon.iconName
+    this.currentState = this.resolvedIcon.actualState
     if (this.iconType === 'oh') this.updateIcon()
   },
   methods: {
     updateIcon () {
-      if (!this.currentIcon) return
+      if (!this.currentIcon) {
+        this.iconUrl = null
+        return
+      }
       this.$oh.media.getIcon(this.currentIcon, this.iconFormat, this.currentState, this.iconSet).then((url) => {
         if (url !== this.iconUrl) {
           this.iconUrl = url

@@ -4,7 +4,7 @@
       <f7-list-group>
         <f7-list-input label="Name" type="text" placeholder="A unique identifier for the Item." :value="item.name"
                        :disabled="!createMode" :info="(createMode) ? 'Required. Note: cannot be changed after the creation' : ''"
-                       required :error-message="nameErrorMessage" :error-message-force="!!nameErrorMessage" input-id="input"
+                       required :error-message="nameErrorMessage" :error-message-force="createMode && !!nameErrorMessage" input-id="input"
                        @input="item.name = $event.target.value" :clear-button="createMode">
           <f7-link slot="inner" icon-f7="hammer_fill" style="margin-top: 4px; margin-left: 4px; margin-bottom: auto" tooltip="Fix ID" v-if="createMode && nameErrorMessage && !nameErrorMessage.includes('exists') && item.name.trim()" @click="$oh.utils.normalizeInput('#input')" />
         </f7-list-input>
@@ -55,7 +55,8 @@
         <f7-list-input ref="category" label="Icon" autocomplete="off" type="text" placeholder="temperature, firstfloor..." :value="itemCategory"
                        @input="itemCategory = $event.target.value" :disabled="!editable" :clear-button="editable">
           <div slot="root-end" style="margin-left: calc(35% + 14px)">
-            <oh-icon :icon="itemCategory" :state="(createMode || itemType === 'Image') ? null : item.state" height="32" width="32" />
+            <oh-icon v-if="itemCategory" :icon="itemCategory" :state="(createMode || itemType === 'Image') ? null : item.state" height="32" width="32" />
+            <oh-icon v-else icon="" height="32" width="32" />
           </div>
         </f7-list-input>
       </f7-list-group>
