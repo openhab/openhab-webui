@@ -87,7 +87,7 @@ export default {
         })
       }
       if (this.$store.getters.apiEndpoint('items')) {
-        this.$oh.api.get('/rest/items/semanticshealth').then((data) => {
+        this.$oh.api.get('/rest/items/semantics/health').then((data) => {
           self.semanticsProblemCount = data.length.toString()
         })
       }
