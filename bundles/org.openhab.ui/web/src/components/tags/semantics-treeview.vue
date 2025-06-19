@@ -40,15 +40,11 @@ export default {
       }
       if (this.propertyMode) {
         tags.push('Property')
-        this.$set(this.expandedTags, 'Property', true)
       } else if (this.classMode) {
         if (this.limitToClass && this.selectedClass) {
           tags.push(this.selectedClass)
         } else {
           tags.push('Location', 'Equipment', 'Point')
-        }
-        if (this.selectedClass) {
-          this.$set(this.expandedTags, this.selectedClass, true)
         }
       } else {
         tags.push('Location', 'Equipment', 'Point', 'Property')
@@ -59,6 +55,13 @@ export default {
   methods: {
     tagSelected (tag) {
       this.$emit('selected', tag)
+    }
+  },
+  mounted () {
+    if (this.propertyMode) {
+      this.$set(this.expandedTags, 'Property', true)
+    } else if (this.classMode && this.selectedClass) {
+      this.$set(this.expandedTags, this.selectedClass, true)
     }
   }
 }

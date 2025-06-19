@@ -43,11 +43,11 @@
             <f7-col>
               <f7-subnavbar v-show="semanticTags.length" :inner="false" style="position: relative; top: 0px">
                 <f7-searchbar style="width: 100%"
-                  search-container=".semantics-treeview"
-                  search-item=".treeview-item"
-                  search-in=".treeview-item-label"
-                  :disable-button="!$theme.aurora"
-                  @input="showFiltered($event.target.value)" />
+                              search-container=".semantics-treeview"
+                              search-item=".treeview-item"
+                              search-in=".treeview-item-label"
+                              :disable-button="!$theme.aurora"
+                              @input="showFiltered($event.target.value)" />
                 <div class="expand-button">
                   <f7-button v-if="!expanded" icon-size="24" tooltip="Expand" icon-f7="rectangle_expand_vertical" @click="toggleExpanded()" />
                   <f7-button v-else color="gray" icon-size="24" tooltip="Collapse" icon-f7="rectangle_compress_vertical" @click="toggleExpanded()" />
