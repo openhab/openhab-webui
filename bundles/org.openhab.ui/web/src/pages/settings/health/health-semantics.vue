@@ -38,9 +38,10 @@
         </f7-block-title>
         <f7-list class="col" contacts-list>
           <f7-list-item v-for="semanticsProblem in semanticsProblems" :key="problemKey(semanticsProblem)" media-item
+                        class="health-problem-item"
                         :link="getLinkForProblem(semanticsProblem)"
-                        :title="'Item: ' + semanticsProblem.item + (semanticsProblem.semanticType ? ' (' + semanticsProblem.semanticType + ')' : '')"
-                        :subtitle="semanticsProblem.reason"
+                        :title="semanticsProblem.reason"
+                        :subtitle="'Item: ' + semanticsProblem.item + (semanticsProblem.semanticType ? ' (' + semanticsProblem.semanticType + ')' : '')"
                         :footer="semanticsProblem.explanation">
             <f7-icon v-if="!semanticsProblem.editable" slot="after-title" f7="lock_fill" size="1rem" color="gray" />
           </f7-list-item>
@@ -49,6 +50,13 @@
     </f7-block>
   </f7-page>
 </template>
+
+<style lang="stylus">
+    .health-problem-item
+        .item-title
+        .item-footer
+            text-wrap: auto
+</style>
 
 <script>
 export default {
