@@ -233,6 +233,9 @@ export default {
       scenesCount: '',
       scriptsCount: '',
 
+      orphanLinkCount: 0,
+      semanticsProblemCount: 0,
+
       advancedSystemServices: [
         'org.openhab.storage.json',
         'org.openhab.restauth',
@@ -260,6 +263,10 @@ export default {
         const hide = this.advancedSystemServices.includes(service.id)
         return Object.assign({ hidden: hide }, service)
       })
+    },
+    healthCount () {
+      const problemCount = this.orphanLinkCount + this.semanticsProblemCount
+      return problemCount.toString()
     }
   },
   watch: {
@@ -297,7 +304,8 @@ export default {
     },
     loadCounters () {
       if (!this.apiEndpoints) return
-      if (this.$store.getters.apiEndpoint('links')) this.$oh.api.get('/rest/links/orphans').then((data) => { this.healthCount = data.length.toString() })
+      if (this.$store.getters.apiEndpoint('links')) this.$oh.api.get('/rest/links/orphans').then((data) => { this.orphanLinkCount = data.length })
+      if (this.$store.getters.apiEndpoint('items')) this.$oh.api.get('/rest/items/semanticshealth').then((data) => { this.semanticsProblemCount = data.length })
       if (this.$store.getters.apiEndpoint('inbox')) this.$oh.api.get('/rest/inbox?includeIgnored=false').then((data) => { this.inboxCount = data.filter((e) => e.flag === 'NEW').length.toString() })
       if (this.$store.getters.apiEndpoint('things')) this.$oh.api.get('/rest/things?staticDataOnly=true').then((data) => { this.thingsCount = data.length.toString() })
       if (this.$store.getters.apiEndpoint('items')) this.$oh.api.get('/rest/items?staticDataOnly=true').then((data) => { this.itemsCount = data.length.toString() })

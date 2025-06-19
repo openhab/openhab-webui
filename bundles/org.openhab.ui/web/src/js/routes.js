@@ -23,6 +23,7 @@ const ItemsAddFromTextualDefinition = () => import(/* webpackChunkName: "admin-c
 
 const HealthOverviewPage = () => import(/* webpackChunkName: "admin-config" */ '../pages/settings/health/health-overview.vue')
 const HealthOrphanLinksPage = () => import(/* webpackChunkName: "admin-config" */ '../pages/settings/health/health-orphanlinks.vue')
+const HealthSemanticsPage = () => import(/* webpackChunkName: "admin-config" */ '../pages/settings/health/health-semantics.vue')
 const ThingsListPage = () => import(/* webpackChunkName: "admin-config" */ '../pages/settings/things/things-list.vue')
 const ThingDetailsPage = () => import(/* webpackChunkName: "admin-config" */ '../pages/settings/things/thing-details.vue')
 const AddThingChooseBindingPage = () => import(/* webpackChunkName: "admin-config" */ '../pages/settings/things/add/choose-binding.vue')
@@ -259,6 +260,18 @@ export default [
             path: 'orphanlinks',
             beforeEnter: [enforceAdminForRoute],
             async: loadAsync(HealthOrphanLinksPage)
+          }
+        ]
+      },
+      {
+        path: 'health',
+        beforeEnter: [enforceAdminForRoute],
+        async: loadAsync(HealthOverviewPage),
+        routes: [
+          {
+            path: 'semantics',
+            beforeEnter: [enforceAdminForRoute],
+            async: loadAsync(HealthSemanticsPage)
           }
         ]
       },
