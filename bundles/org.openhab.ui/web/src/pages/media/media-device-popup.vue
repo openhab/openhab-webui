@@ -1,5 +1,5 @@
 <template>
-  <f7-popup :opened="false" @popup:closed="onClosed" :backdrop="true" :animate="true" :closeOnEscape="true" :push="false" :closeByBackdropClick="true" class="media-popup" >
+  <f7-popup :opened="false" @popup:closed="onClosed" :backdrop="true" :animate="true" :closeOnEscape="true" :push="false" :closeByBackdropClick="true" class="popup" >
     <f7-view class="view-sheet-modal" url="/mediadeviceselector/" :animate="false" >
         <f7-page>
           <media-device-selector  @navigate="onNavigate" />

@@ -1,4 +1,5 @@
 <template>
+  <div>
   <f7-segmented v-bind="config"
                 round
                 outline
@@ -39,14 +40,12 @@
                icon-size="24"
                icon-color="gray" />
     <f7-button color="blue"   			 
-    			@click.stop="mediaChange()" 
     			large 
     			icon-f7="folder_fill" 
     			icon-size="24" 
     			icon-color="gray"  
     			:href="mediaBrowserUri"/>
     <f7-button color="blue"   					
-    			@click.stop="mediaChange()" 
     			large 		
     			icon-f7="hifispeaker_fill" 	
     			icon-size="24" 
@@ -54,6 +53,9 @@
     			:href="mediaDeviceSelectorUri"/>
                
   </f7-segmented>
+  </div>
+
+ 
 </template>
 
 <style lang="stylus">
