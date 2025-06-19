@@ -18,6 +18,7 @@
     <br/>
     {{  this.path }}
     <br/>
+
     
     <br/>
     
@@ -45,10 +46,10 @@
           <hr/>
               <div v-for="r1 in node.childs" style="display: inline;clear:both;" :class="{ 'sheet-opened': controlsOpened }">
 	                <f7-link :href="`/mediabrowser/?path=` + r1.path" :data-reload="true" :reload-current="true" :reload-detail="true">
-	                    <f7-button  outline style="height:30px;font-weight:bold;padding:2px;padding-left:30px;text-align:left;border:none 0px;"  @click="doPlay(item, r1.id)" icon-material="play_arrow" small  icon-size="24" >
+	                    <f7-button  outline style="height:30px;font-weight:bold;padding:2px;padding-left:30px;text-align:left;border:none 0px;"  @click="doPlay(item, r1.path)" icon-material="play_arrow" small  icon-size="24" >
                         Play
 	                    </f7-button>
-	                    <f7-button  outline style="height:30px;font-weight:bold;padding:2px;padding-left:30px;text-align:left;border:none 0px;"  @click="doEnqueue(item, r1.id)" icon-material="playlist_add" small  icon-size="24" >
+	                    <f7-button  outline style="height:30px;font-weight:bold;padding:2px;padding-left:30px;text-align:left;border:none 0px;"  @click="doEnqueue(item, r1.path)" icon-material="playlist_add" small  icon-size="24" >
                         Enqueue
 	                    </f7-button>
                       <div style="padding-left:30px;color:black">
