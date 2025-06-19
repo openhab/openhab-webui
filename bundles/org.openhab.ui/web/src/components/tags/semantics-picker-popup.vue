@@ -13,7 +13,8 @@
           search-container=".semantics-treeview"
           search-item=".treeview-item"
           search-in=".treeview-item-label"
-          :disable-button="!$theme.aurora" />
+          :disable-button="!$theme.aurora"
+          @input="showFiltered($event.target.value)" />
         <div class="expand-button">
           <f7-button v-if="!expanded" icon-size="24" tooltip="Expand" icon-f7="rectangle_expand_vertical" @click="toggleExpanded()" />
           <f7-button v-else color="gray" icon-size="24" tooltip="Collapse" icon-f7="rectangle_compress_vertical" @click="toggleExpanded()" />
@@ -37,6 +38,15 @@
   </f7-popup>
 </template>
 
+<style lang="stylus">
+.expand-button
+  margin-right 8px
+  text-overflow unset
+  align-self center
+  .icon
+    margin-bottom 2.75px !important
+</style>
+
 <script>
 import SemanticsTreeview from '@/components/tags/semantics-treeview.vue'
 
@@ -52,6 +62,8 @@ export default {
       expandedTags: [],
       showNames: false,
       showSynonyms: false,
+      filtering: false,
+      expandedBeforeFiltering: false,
       selectedTag: null
     }
   },
@@ -95,7 +107,6 @@ export default {
       this.semanticTags.forEach((t) => {
         this.$set(this.expandedTags, t.uid, this.expanded)
       })
-      const itemSemantics = this.item.metadata?.semantics
       this.expandToSelection()
     },
     expandToSelection () {
@@ -104,6 +115,22 @@ export default {
         this.$set(this.expandedTags, parent, true)
         return parent
       }, '')
+    },
+    showFiltered (filter) {
+      if (filter) {
+        if (!this.filtering) {
+          this.filtering = true
+          this.expandedBeforeFiltering = this.expanded
+          if (!this.expanded) {
+            this.toggleExpanded()
+          }
+        }
+      } else if (this.filtering) {
+        this.filtering = false
+        if (this.expanded && !this.expandedBeforeFiltering) {
+          this.toggleExpanded()
+        }
+      }
     },
     tagSelected (tag) {
       console.debug('Tag selected')
