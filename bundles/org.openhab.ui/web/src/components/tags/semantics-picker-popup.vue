@@ -1,131 +1,132 @@
 <template>
-  <f7-popup closeByBackdropClick closeOnEscape @popup:close="onClose">
+  <f7-popup closeByBackdropClick closeOnEscape @popup:open="onOpen" @popup:close="onClose">
     <f7-page>
       <f7-navbar :title="propertyMode ? 'Semantic Property' : 'Semantic Class'">
         <f7-nav-right>
-          <f7-link @click="onClose">Close</f7-link>
+          <f7-link @click="onClose">
+            Close
+          </f7-link>
         </f7-nav-right>
       </f7-navbar>
-      <f7-searchbar search-container=".semantic-classes" :disable-button="!$theme.aurora" />
-      <f7-list class="semantic-classes" inline-labels no-hairlines-md>
-        <f7-list-item v-if="!hideNone"
-                      radio radio-icon="start" :checked="semanticClass === ''"
-                      title="None"
-                      class="aligned-smart-select"
-                      @change="update('class', '')"/>
-        <template v-if="!propertyMode && ( !sameClassOnly || semanticClass === '' || (sameClassOnly && currentSemanticType === 'Location') )">
-          <f7-list-item group-item title="Location" />
-          <f7-list-item v-for="type in orderedLocations" :key="type"
-                        radio radio-icon="start" :checked="type === semanticClass"
-                        :title="type"
-                        class="aligned-smart-select"
-                        @change="update('class', type)">
-            <template v-if="tooltip(type)" slot="after">
-              <f7-icon class="tooltip-icon" f7="info_circle" ios="f7:info_circle" md="material:info" size="16px" :tooltip="tooltip(type)"/>
-            </template>
-          </f7-list-item>
-        </template>
-        <template v-if="!propertyMode && ( !sameClassOnly || semanticClass === '' || (sameClassOnly && currentSemanticType === 'Equipment') )">
-          <f7-list-item group-item title="Equipment" />
-          <f7-list-item v-for="type in orderedEquipment" :key="type"
-                        radio radio-icon="start" :checked="type === semanticClass"
-                        :tooltip="tooltip(type)"
-                        :title="type"
-                        class="aligned-smart-select"
-                        @change="update('class', type)">
-            <div v-if="tooltip(type)" slot="after-title">
-              <f7-icon class="tooltip-icon" ios="f7:info_circle" md="material:info" />
-            </div>
-          </f7-list-item>
-        </template>
-        <template v-if="!propertyMode && ( !sameClassOnly || semanticClass === '' || (sameClassOnly && currentSemanticType === 'Point') )">
-          <f7-list-item group-item title="Point" />
-          <f7-list-item v-for="type in orderedPoints" :key="type"
-                        radio radio-icon="start" :checked="type === semanticClass"
-                        :tooltip="tooltip(type)"
-                        :title="type"
-                        class="aligned-smart-select"
-                        @change="update('class', type)">
-            <div v-if="tooltip(type)" slot="after-title">
-              <f7-icon class="tooltip-icon" ios="f7:info_circle" md="material:info" />
-            </div>
-          </f7-list-item>
-        </template>
-        <template v-if="propertyMode">
-          <f7-list-item group-item title="Point" />
-          <f7-list-item v-for="type in orderedProperties" :key="type"
-                        radio radio-icon="start" :checked="type === semanticProperty"
-                        :tooltip="tooltip(type)"
-                        :title="type"
-                        class="aligned-smart-select"
-                        @change="update('property', type)">
-            <div v-if="tooltip(type)" slot="after-title">
-              <f7-icon class="tooltip-icon" ios="f7:info_circle" md="material:info" />
-            </div>
-          </f7-list-item>
-        </template>
-      </f7-list>
+      <f7-subnavbar :inner="false">
+        <f7-searchbar
+          search-container=".semantics-treeview"
+          search-item=".treeview-item"
+          search-in=".treeview-item-label"
+          :disable-button="!$theme.aurora" />
+        <div class="expand-button">
+          <f7-button v-if="!expanded" icon-size="24" tooltip="Expand" icon-f7="rectangle_expand_vertical" @click="toggleExpanded()" />
+          <f7-button v-else color="gray" icon-size="24" tooltip="Collapse" icon-f7="rectangle_compress_vertical" @click="toggleExpanded()" />
+        </div>
+      </f7-subnavbar>
+      <f7-toolbar bottom class="toolbar-details">
+        <span />
+        <div class="padding-left padding-right text-align-center" style="font-size: 12px">
+          <f7-checkbox :checked="showNames" @change="toggleShowNames" />
+          <label @click="toggleShowNames" class="advanced-label">Show tag names</label>
+          <f7-checkbox style="margin-left: 5px" :checked="showSynonyms" @change="toggleShowSynonyms" />
+          <label @click="toggleShowSynonyms" class="advanced-label">Show synonyms</label>
+        </div>
+        <span />
+      </f7-toolbar>
+      <semantics-treeview class="semantic-classes" :semanticTags="semanticTags" :expandedTags="expandedTags"
+                          @selected="tagSelected" :showNames="showNames" :showSynonyms="showSynonyms"
+                          :selectedTag="selectedTag" :hideNone="hideNone"
+                          picker="true" :propertyMode="!!propertyMode" :limitToClass="limitToClass" />
     </f7-page>
   </f7-popup>
 </template>
 
 <script>
+import SemanticsTreeview from '@/components/tags/semantics-treeview.vue'
+
 export default {
-  props: ['propertyMode', 'item', 'currentSemanticType', 'semanticClass', 'semanticProperty', 'sameClassOnly', 'hideType', 'hideNone', 'createMode'],
+  components: {
+    SemanticsTreeview
+  },
+  props: ['item', 'propertyMode', 'hideNone', 'semanticClass', 'semanticProperty'],
   data () {
     return {
-      semanticClasses: this.$store.getters.semanticClasses
-    }
-  },
-  methods: {
-    semanticType (tag) {
-      if (this.semanticClasses.Locations.indexOf(tag) >= 0) return 'Location'
-      if (this.semanticClasses.Equipment.indexOf(tag) >= 0) return 'Equipment'
-      if (this.semanticClasses.Points.indexOf(tag) >= 0) return 'Point'
-      return ''
-    },
-    isSemanticPropertyTag (tag) {
-      return (this.semanticClasses.Properties.indexOf(tag) >= 0)
-    },
-    update (type, value) {
-      if (type === 'property') {
-        this.semanticProperty = value
-      } else {
-        this.semanticClass = value
-      }
-      this.item.tags = this.item.tags.filter((t) => !this.semanticType(t) && !this.isSemanticPropertyTag(t))
-      if (this.semanticClass) this.item.tags.push(this.semanticClass)
-      if (this.semanticType(this.semanticClass) === 'Point' && this.semanticProperty.length) {
-        this.item.tags.push(this.semanticProperty)
-      }
-    },
-    tooltip (type) {
-      return this.semanticClasses.Descriptions[type] || ''
-    },
-    onClose() {
-      this.$emit('close')
+      semanticClasses: this.$store.getters.semanticClasses,
+      expanded: false,
+      expandedTags: [],
+      showNames: false,
+      showSynonyms: false,
+      selectedTag: null
     }
   },
   computed: {
-    orderedLocations () {
-      return [...this.semanticClasses.Locations].sort((a, b) => {
-        return a.localeCompare(b)
+    semanticTags () {
+      return this.semanticClasses.Tags.map((t) => {
+        const tag = {
+          uid: t.uid,
+          name: t.name,
+          label: this.semanticClasses.Labels[t.name],
+          description: t.description,
+          synonyms: this.semanticClasses.Synonyms[t.name],
+          parent: t.parent
+        }
+        return tag
       })
     },
-    orderedEquipment () {
-      return [...this.semanticClasses.Equipment].sort((a, b) => {
-        return a.localeCompare(b)
-      })
+    limitToClass () {
+      const selectedTag = this.semanticTags.find((t) => t.name === (this.semanticClass || this.semanticProperty)) || { uid: 'None', label: 'None' }
+      const tagName = selectedTag?.name
+      if (this.semanticClasses.Locations.indexOf(tagName) >= 0) return 'Location'
+      if (this.semanticClasses.Equipment.indexOf(tagName) >= 0) return 'Equipment'
+      if (this.semanticClasses.Points.indexOf(tagName) >= 0) return 'Point'
+      return ''
+    }
+  },
+  methods: {
+    onOpen () {
+      this.selectedTag = this.semanticTags.find((t) => t.name === (this.semanticClass || this.semanticProperty)) || { uid: 'None', label: 'None' }
+      // expand tree down to current selection
+      this.expandToSelection()
     },
-    orderedPoints () {
-      return [...this.semanticClasses.Points].sort((a, b) => {
-        return a.localeCompare(b)
-      })
+    toggleShowNames () {
+      this.showNames = !this.showNames
     },
-    orderedProperties () {
-      return [...this.semanticClasses.Properties].sort((a, b) => {
-        return a.localeCompare(b)
+    toggleShowSynonyms () {
+      this.showSynonyms = !this.showSynonyms
+    },
+    toggleExpanded () {
+      this.expanded = !this.expanded
+      this.semanticTags.forEach((t) => {
+        this.$set(this.expandedTags, t.uid, this.expanded)
       })
+      const itemSemantics = this.item.metadata?.semantics
+      this.expandToSelection()
+    },
+    expandToSelection () {
+      this.selectedTag?.parent?.split('_').reduce((prev, p) => {
+        const parent = (prev ? (prev + '_') : '') + p
+        this.$set(this.expandedTags, parent, true)
+        return parent
+      }, '')
+    },
+    tagSelected (tag) {
+      console.debug('Tag selected')
+      console.debug(tag)
+      const previousTag = this.selectedTag
+      if (previousTag?.name) {
+        const prevIndex = this.item.tags.indexOf(previousTag.name)
+        this.item.tags.splice(prevIndex, 1)
+      }
+      // Only add tag if note 'None'
+      if (tag.name) {
+        if (this.item.tags) {
+          this.item.tags.push(tag.name)
+        } else {
+          this.$set(this.item, 'tags', [tag.name])
+        }
+      }
+      this.selectedTag = tag
+      this.$emit('changed')
+    },
+    onClose () {
+      this.$f7.popup.close()
+      this.$emit('close')
     }
   }
 }

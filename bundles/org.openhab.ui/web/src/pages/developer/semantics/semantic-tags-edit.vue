@@ -24,6 +24,8 @@
         <div>
           <f7-checkbox :checked="showNames" @change="toggleShowNames" />
           <label @click="toggleShowNames" class="advanced-label">Show tag names</label>
+          <f7-checkbox style="margin-left: 5px" :checked="showSynonyms" @change="toggleShowSynonyms" />
+          <label @click="toggleShowSynonyms" class="advanced-label">Show synonyms</label>
         </div>
       </div>
       <f7-link v-if="selectedTag" class="right details-link padding-right" ref="detailsLink" @click="detailsOpened = true" icon-f7="chevron_up" />
@@ -40,7 +42,7 @@
             <!-- do not set column width as usual, instead use custom CSS because of https://github.com/openhab/openhab-webui/issues/2574 -->
             <f7-col>
               <f7-block strong class="semantics-tree" no-gap @click.native="clearSelection">
-                <semantics-treeview :semanticTags="semanticTags" :expandedTags="expandedTags" @selected="selectTag" :showNames="showNames" :selected="selectedTag" />
+                <semantics-treeview :semanticTags="semanticTags" :expandedTags="expandedTags" @selected="selectTag" :showNames="showNames" :showSynonyms="showSynonyms" :selectedTag="selectedTag" canDragDrop="true" />
               </f7-block>
             </f7-col>
             <f7-col class="details-pane">
@@ -266,6 +268,7 @@ export default {
       loading: false,
       ready: false,
       showNames: false,
+      showSynonyms: false,
       editableSemanticTagsYaml: null,
       editingTagsYaml: null,
       nonCodeDirty: false // When editing code, keeps track if it was already dirty before switching to code tab
@@ -341,7 +344,7 @@ export default {
           name: t.name,
           label: this.semanticClasses.Labels[t.name],
           description: t.description,
-          synonyms: [...t.synonyms],
+          synonyms: this.semanticClasses.Synonyms[t.name],
           editable: t.editable,
           parent: t.parent
         }
@@ -415,6 +418,9 @@ export default {
     },
     toggleShowNames () {
       this.showNames = !this.showNames
+    },
+    toggleShowSynonyms () {
+      this.showSynonyms = !this.showSynonyms
     },
     selectTag (tag) {
       if (this.selectedTag === tag) return
