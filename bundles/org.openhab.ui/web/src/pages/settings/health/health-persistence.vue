@@ -60,7 +60,8 @@ export default {
         PERSISTENCE_NO_DEFAULT: 'No default persistence service defined',
         PERSISTENCE_SERVICE_NO_CONFIG: 'No configuration for persistence service',
         PERSISTENCE_SERVICE_NO_ITEMS: 'No persistence items defined for persistence service',
-        PERSISTENCE_SERVICE_ITEMS_NO_STRATEGY: 'No persistence strategy set for persistence items'
+        PERSISTENCE_SERVICE_ITEMS_NO_STRATEGY: 'No persistence strategy set for persistence items',
+        PERSISTENCE_SERVICE_ITEMS_NO_STORE_STRATEGY: 'Persistence strategy for persistence items only has a restore strategy'
       }
     }
   },
