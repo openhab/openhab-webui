@@ -66,7 +66,7 @@ export default {
   },
   methods: {
     icon (theme) {
-      const type = this.tag.uid.split('_')[0] || this.tag.uid.split('_')[0]
+      const type = this.tag.uid.split('_')[0]
       if (type === 'Location') {
         return (theme === 'md') ? 'material:place' : 'f7:placemark'
       } else if (type === 'Equipment') {
