@@ -7,7 +7,7 @@
         </f7-button>
       </f7-nav-right>
     </f7-navbar>
-     <f7-link href="/mediabrowser/?path=/Root">Root</f7-link>
+     <f7-link :href="`/mediabrowser/?path=/Root&item=` + item">Root</f7-link>
      <br/>
      <br/>
 	   
@@ -29,27 +29,34 @@
               </div>
               <div style="grid-column: 2;text-align:left;">
                   <p style="font-size:20pt; font-weight:bold;"> {{ node.label }}</p>
-                  <f7-button small outline :fill="true" style="background-color:#9090ff;width: 120px;height:32px;font-weight:bold;padding:2px;padding-left:10px;text-align:left;border:none 0px;"  @click="doPlay(item, node.path)">
-                      <img src="/static/Arrow.png" style="vertical-align:middle" height=24/>&nbsp;&nbsp;&nbsp;&nbsp;PLAY
+                  <f7-button small outline :fill="true" style="background-color:#9090c0;width: 120px;height:32px;font-weight:bold;padding:2px;padding-left:10px;text-align:left;border:none 0px;"  @click="doPlay(item, node.path)" icon-material="play_arrow" large  icon-size="24" >
+                    Play  
                   </f7-button>
-                  <f7-button small outline :fill="true" style="background-color:#9090ff;width: 120px;height:32px;font-weight:bold;padding:2px;padding-left:10px;text-align:left;border:none 0px;"  @click="doEnqueue(item, node.path)">
-                      <img src="/static/Arrow.png" style="vertical-align:middle" height=24/>&nbsp;&nbsp;&nbsp;&nbsp;ENQUEUE
+                  <br/>
+                  <f7-button small outline :fill="true" style="background-color:#9090c0;width: 120px;height:32px;font-weight:bold;padding:2px;padding-left:10px;text-align:left;border:none 0px;"  @click="doEnqueue(item, node.path)" 
+                    icon-material="playlist_add" large  icon-size="24">
+                    Enqueue
                   </f7-button>
               </div>
               <br/>
               <hr/>
               <br/>
+          </div>
+          <hr/>
               <div v-for="r1 in node.childs" style="display: inline;clear:both;" :class="{ 'sheet-opened': controlsOpened }">
 	                <f7-link :href="`/mediabrowser/?path=` + r1.path" :data-reload="true" :reload-current="true" :reload-detail="true">
-                      <f7-button small outline style="height:40px;font-weight:bold;padding:2px;padding-left:10px;text-align:left;border:none 0px;"  @click="doPlay(item, r1.id)">
-                          <img src="/static/Arrow.png" style="vertical-align:middle" height=24/>
-	                          {{ r1.label }}
+	                    <f7-button  outline style="height:30px;font-weight:bold;padding:2px;padding-left:30px;text-align:left;border:none 0px;"  @click="doPlay(item, r1.id)" icon-material="play_arrow" small  icon-size="24" >
+                        Play
 	                    </f7-button>
+	                    <f7-button  outline style="height:30px;font-weight:bold;padding:2px;padding-left:30px;text-align:left;border:none 0px;"  @click="doEnqueue(item, r1.id)" icon-material="playlist_add" small  icon-size="24" >
+                        Enqueue
+	                    </f7-button>
+                      <div style="padding-left:30px;color:black">
+                      {{ r1.label }}
+                      </div>
 	                </f7-link>
 	                <br/>
               </div>
-          </div>
-          <hr/>
           <br/>
       </div>
       <div v-else>
@@ -64,7 +71,6 @@
                 </div>
                 </div>
             </f7-link>
-            <br/>
         </div>
       </div>
     </div>
@@ -85,9 +91,6 @@ export default {
   },
   data () {
       this.item = this.$f7route.query.item;
-      if (this.$f7route.query.item !== '') {
-          this.item = this.$f7route.query.item;
-      }
       console.log("MediaBrowser item: " + this.item);
 
 
@@ -98,6 +101,7 @@ export default {
         }).open();
 
       this.path='/Root';  
+//        this.path='/Root/Spotify/Playlists/spotify:playlist:5Z4AD0u9fwnvtsj7ce5ZLS';
       
       if (this.$f7route.query.path && !this.$f7route.query.path.startsWith('/page/')) {
           this.path=this.$f7route.query.path;
@@ -151,10 +155,10 @@ export default {
     },
     doPlay (item, id) {
         console.log("Playing item: " + item + " with id: " + id);
-        this.$store.dispatch('sendCommand', { itemName: item, cmd: "PLAY," + id });
+        this.$store.dispatch('sendCommand', { itemName: item, cmd: "PLAY," + id  + ",8bf6830ca7a00068f294ca8016421b3678b7568b"});
       },
       doEnqueue (item, id) {
-          this.$store.dispatch('sendCommand', { itemName: item, cmd: "ENQUEUE," + id });
+          this.$store.dispatch('sendCommand', { itemName: item, cmd: "ENQUEUE," + id +",8bf6830ca7a00068f294ca8016421b3678b7568b"});
         },
   },
   created () {

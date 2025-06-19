@@ -1,6 +1,6 @@
 <template>
   <f7-page class="media-content">
-    <f7-navbar title="MediaDeviceSelector" back-link="Back">
+    <f7-navbar title="MediaDeviceSelector">
       <f7-nav-right>
         <f7-button popup-close>
           Close
@@ -8,20 +8,27 @@
       </f7-nav-right>
     </f7-navbar>
 
-    <ul>
-     <div v-for="r1 in node.childs" style="display: inline;clear:both;" :class="{ 'sheet-opened': controlsOpened }">
-      
-      <li>{{ r1.name}}</li>
-      <br/>
-      </div>
-    </ul>
-	   
+    <div v-if="node">
+       <f7-list form>
+            <f7-list-item v-for="item in node.childs" :title="item.name + ` (` + item.type + `) `" :key="item.id" :value="item"  radio :checked="selectedOption!=null ? selectedOption.key === item.key:false"
+              @change="selectedOption = item" :name="'options-group'" />
+        </f7-list>
+    </div>
 
 
-    
-    <f7-toolbar bottom>
-      <span />
+  <f7-toolbar bottom>
+    <div style="display: flex; width: 100%; align-items: center;">
+    <div style="margin-left: auto;">
+        <f7-button @click="changeDevice()" popup-close >
+          Pick
+        </f7-button>
+        </div>
+        </div>
     </f7-toolbar>
+
+
+
+
 
   </f7-page>
 </template>
@@ -30,14 +37,10 @@
 <script>
 export default {
   name: 'MediaBrowser',
-  props: {
-  },
+    props: ['title',  'multiple' , 'name', 'value', 'required'], 
   data () {
       this.item = this.$f7route.query.item;
-      if (this.$f7route.query.item !== '') {
-          this.item = this.$f7route.query.item;
-      }
-      console.log("MediaBrowser item: " + this.item);
+      console.log("MediaDeviceSelector item: " + this.item);
 
 
       this.$f7.toast.create({
@@ -76,7 +79,9 @@ export default {
       return {
           node: this.node,
           controlsOpened: true,
-          item: this.item
+          item: this.item,
+          ready:true,
+          selectedOption: this.selectedOption
       };
   },
   computed: {
@@ -97,14 +102,22 @@ export default {
   },
   methods: {
     onClose () { 
+      console.log("Selected option: " + this.selectedOption);
     },
-    doPlay (item, id) {
-        console.log("Playing item: " + item + " with id: " + id);
-        this.$store.dispatch('sendCommand', { itemName: item, cmd: "PLAY," + id });
-      },
-      doEnqueue (item, id) {
-          this.$store.dispatch('sendCommand', { itemName: item, cmd: "ENQUEUE," + id });
-        },
+    changeDevice () { 
+      console.log("Selected option: " + this.selectedOption);
+      console.log("Selected option: " + this.selectedOption.id);
+      this.$store.dispatch('sendCommand', { itemName: this.item, cmd: "DEVICE,," + this.selectedOption.id});
+    },
+    select (e) {
+      console.log("Selected option: " + this.selectedOption);
+      /*
+      this.$f7.input.validateInputs(this.$refs.smartSelect.$el)
+      const value = this.$refs.smartSelect.f7SmartSelect.getValue()
+      this.$emit('input', value)
+      if (!this.multiple) this.$emit('itemSelected', this.preparedItems.find((i) => i.name === value))
+      */
+    }, 
   },
   created () {
   },
