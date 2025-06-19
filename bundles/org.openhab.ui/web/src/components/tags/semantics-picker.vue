@@ -57,7 +57,8 @@ export default {
     },
     semanticValue () {
       if (!this.semanticClass) return null
-      return this.tagWithHierarchy(this.semanticClass)
+      const value = this.tagWithHierarchy(this.semanticClass)
+      return value ? value : this.currentSemanticType
     },
     semanticValueTitle () {
       if (this.currentSemanticType === 'Location') return 'Location'

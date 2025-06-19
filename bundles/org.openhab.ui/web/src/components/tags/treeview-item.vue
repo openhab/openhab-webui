@@ -28,7 +28,7 @@
     <div v-if="showSynonyms" slot="label" class="synonyms-class">
       {{ synonyms }}
     </div>
-    <f7-radio slot="content-start" name="semantic-tag-radio" v-if="radioButton" :checked="selected" @change="select" />
+    <f7-radio slot="content-start" name="semantic-tag-radio" v-if="picker" :checked="selected" @change="select" />
     <f7-badge v-if="tag.description" slot="content-end" class="semantic-tag-tooltip-badge" :tooltip="tooltip">
       <f7-icon class="tooltip-icon" f7="info_circle" ios="f7:info_circle" md="material:info" />
     </f7-badge>
@@ -74,7 +74,7 @@ export default {
       })
     },
     iconColor () {
-      return (this.tag.editable || (this.picker && this.radioButton)) ? (this.$f7.data.themeOptions.dark === 'dark' ? 'white' : 'black') : 'gray'
+      return (this.tag.editable || this.picker) ? (this.$f7.data.themeOptions.dark === 'dark' ? 'white' : 'black') : 'gray'
     },
     canHaveChildren () {
       return (this.children.length > 0 || this.moveState.moving) === true
@@ -88,11 +88,6 @@ export default {
         tooltip = tooltip + '<br>(' + this.synonyms + ')'
       }
       return tooltip
-    },
-    radioButton () {
-      if (this.tag.uid === 'None') return true
-      if (!this.tag.parent) return false
-      return this.picker
     },
     selected () {
       return this.selectedTag && this.selectedTag.uid === this.tag.uid
