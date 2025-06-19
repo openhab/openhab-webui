@@ -2,9 +2,9 @@
   <f7-list class="strategy-picker-container" v-if="strategies">
     <f7-list-item :title="title" :smart-select="disabled !== true" :smart-select-params="smartSelectParams"
                   ref="smartSelect" class="defaults-picker">
-      <select v-if="disabled !== true" :name="name" multiple @change="select">
+      <select v-if="disabled !== true" :name="name" multiple>
         <option v-for="s in strategies" :key="s" :value="s"
-                :selected="value.includes(s)">
+                :selected="value.length ? value.includes(s) : suggested.includes(s)">
           {{ s }}
         </option>
       </select>
@@ -28,22 +28,55 @@
 </style>
 
 <script>
+import cloneDeep from 'lodash/cloneDeep'
+
 export default {
-  props: ['title', 'name', 'strategies', 'value', 'disabled'],
+  props: ['title', 'name', 'strategies', 'value', 'suggested', 'disabled'],
   emits: ['strategiesSelected'],
   data () {
     return {
       smartSelectParams: {
         view: this.$f7.view.main,
-        openIn: 'popup'
+        openIn: 'popup',
+        virtualList: true,
+        virtualListHeight: (this.$theme.aurora) ? 32 : undefined,
+        setValueText: false || this.value?.length
       }
+    }
+  },
+  mounted () {
+    this.$nextTick(() => {
+      const smartSelect = this.$refs.smartSelect?.f7SmartSelect
+      if (smartSelect) {
+        smartSelect.on('closed', this.select)
+      }
+    })
+  },
+  beforeDestroy () {
+    const smartSelect = this.$refs.smartSelect?.f7SmartSelect
+    if (smartSelect) {
+      smartSelect.off('closed', this.select)
     }
   },
   methods: {
     select () {
       this.$f7.input.validateInputs(this.$refs.smartSelect.$el)
-      const value = this.$refs.smartSelect.f7SmartSelect.getValue()
+      const smartSelect = this.$refs.smartSelect.f7SmartSelect
+      const value = smartSelect.getValue()
+      if (value === this.value || ((value.length === this.value.length) && value.reduce((av, cv) => { return av || this.value?.includes(cv) }, true))) return
       this.$emit('strategiesSelected', value)
+      this.smartSelectParams = {
+        ...this.smartSelectParams,
+        setValueText: true
+      }
+      // Force re-render of Smart Select showing the selected parameters
+      this.$nextTick(() => {
+        smartSelect.destroy()
+        this.$refs.smartSelect.f7SmartSelect = this.$f7.smartSelect.create({
+          el: this.$refs.smartSelect.$el,
+          ...this.smartSelectParams
+        })
+      })
     }
   }
 }
