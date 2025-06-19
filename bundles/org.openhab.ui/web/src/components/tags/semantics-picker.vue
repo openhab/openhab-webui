@@ -1,12 +1,12 @@
 <template>
   <f7-list inline-labels no-hairlines-md>
-    <f7-list-item title="Semantic Class"
-                  :after="semanticClass || 'None'"
+    <f7-list-item :title="'Semantic ' + semanticValueTitle"
+                  :after="semanticValue || 'None'"
                   :disabled="!editable"
                   @click="openPopup('class')"
                   class="aligned-smart-select" :link="editable" />
     <f7-list-item v-if="currentSemanticType === 'Point'" title="Semantic Property"
-                  :after="semanticProperty || 'None'"
+                  :after="tagWithHierarchy(semanticProperty) || 'None'"
                   :disabled="!editable"
                   @click="openPopup('property')"
                   class="aligned-smart-select" :link="editable" />
@@ -54,6 +54,16 @@ export default {
     },
     currentSemanticType () {
       return this.semanticType(this.semanticClass)
+    },
+    semanticValue () {
+      if (!this.semanticClass) return null
+      return this.tagWithHierarchy(this.semanticClass)
+    },
+    semanticValueTitle () {
+      if (this.currentSemanticType === 'Location') return 'Location'
+      else if (this.currentSemanticType === 'Equipment') return 'Equipment'
+      else if (this.currentSemanticType === 'Point') return 'Point'
+      else return 'Value'
     }
   },
   methods: {
@@ -69,14 +79,19 @@ export default {
     closePopup () {
       this.popupType = null
     },
-    semanticType (tagName) {
-      if (this.semanticClasses.Locations.indexOf(tagName) >= 0) return 'Location'
-      if (this.semanticClasses.Equipment.indexOf(tagName) >= 0) return 'Equipment'
-      if (this.semanticClasses.Points.indexOf(tagName) >= 0) return 'Point'
-      return ''
-    },
-    isSemanticPropertyTag (tagName) {
-      return (this.semanticClasses.Properties.indexOf(tagName) >= 0)
+    tagWithHierarchy (tag) {
+      if (!tag) return null
+      let parentTagId = this.semanticClasses.Tags.find((t) => t.name === tag).parent
+      if (!parentTagId) return null // no parent tag, so this is the root class
+      let value = tag
+      while (parentTagId) {
+        const parentTag = this.semanticClasses.Tags.find((t) => t.uid === parentTagId)
+        parentTagId = parentTag.parent
+        if (parentTagId) {
+          value = parentTag.name + '->' + value
+        }
+      }
+      return value
     },
     itemChanged () {
       if (!this.item.tags) return
@@ -92,7 +107,8 @@ export default {
       })
       if (this.semanticProperty && !this.semanticClass) {
         if (this.item.metadata && this.item.metadata.semantics) {
-          const classFromMetadata = this.item.metadata.semantics.value.split('_')[1]
+          const valueArray = this.item.metadata.semantics.value.split('_')
+          const classFromMetadata = valueArray[valueArray.length - 1]
           if (classFromMetadata) {
             this.semanticClass = classFromMetadata
           }
