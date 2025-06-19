@@ -45,7 +45,7 @@ export default {
      * Load the items and links from the REST API and build the model.
      *
      * @param relatedToItem optional parameter for an item, only the part of the model related to the item will be build, including all parents and the semantic children.
-     *                      The items Array variable will also be limited to these related items, and not the full items list retrieved from the REST API.
+     *                      The items and links Array variable will also be limited to these related items, and not the full items and links list retrieved from the REST API.
      *
      * @returns {Promise<void>}
      */
@@ -56,7 +56,7 @@ export default {
       this.saveExpanded()
 
       const items = this.$oh.api.get('/rest/items?staticDataOnly=true&metadata=.+')
-      const links = this.$oh.api.get('/rest/links')
+      const links = relatedToItem ? this.$oh.api.get('/rest/links?itemName=' + relatedToItem.name) : this.$oh.api.get('/rest/links')
       return Promise.all([items, links]).then((data) => {
         this.items = data[0]
         this.links = data[1]
