@@ -89,7 +89,7 @@ export default {
         const parentTag = this.semanticClasses.Tags.find((t) => t.uid === parentTagId)
         parentTagId = parentTag.parent
         if (parentTagId) {
-          value = parentTag.name + '->' + value
+          value = parentTag.name + ' > ' + value
         }
       }
       return value

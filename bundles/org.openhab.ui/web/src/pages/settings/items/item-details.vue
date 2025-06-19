@@ -39,38 +39,32 @@
           </f7-block>
         </f7-col>
       </f7-row>
-      <f7-row v-if="item && item.metadata && item.metadata.semantics">
+      <f7-row v-if="item?.metadata?.semantics?.value">
         <f7-col>
-          <f7-block-title>Semantic Classification</f7-block-title>
-          <f7-list>
-            <f7-list-item v-if="semanticClass" :title="semanticClass" :after="semanticValue" />
-            <f7-list-item v-if="semanticProperty" title="Property" :after="semanticProperty" />
-            <f7-list-item
-              v-for="(value, key) in semanticAttributes"
-              :key="key"
-              :link="groupLink(value)"
-              :title="key"
-              :after="value" />
-          </f7-list>
+          <f7-block-title>Semantic Model</f7-block-title>
+          <f7-card>
+            <model-treeview class="model-treeview no-selection-style" :rootNodes="[rootLocations, rootEquipment, rootPoints, rootGroups, rootItems].flat()" :items="items"
+                            :includeItemName="true" :includeItemTags="true" :selected="modelItem(item)" @selected="navigateToItem" />
+          </f7-card>
         </f7-col>
       </f7-row>
-      <f7-row v-if="item && item.groupNames && item.groupNames.length > 0">
+      <f7-row v-if="item?.groupNames?.length > 0">
         <f7-col>
-          <f7-block-title>Direct Non-Semantic Parent Groups</f7-block-title>
+          <f7-block-title>Parent Groups</f7-block-title>
           <f7-card>
             <f7-list>
-              <f7-list-item
-                v-for="group in nonSemanticGroupNames"
-                :key="group"
-                :link="groupLink(group)"
-                :title="group" />
+              <ul>
+                <item v-for="group in itemGroups" :key="group.name" :noState="true"
+                      :item="group" :link="itemLink(group.name)"
+                      :context="context" />
+              </ul>
             </f7-list>
           </f7-card>
         </f7-col>
       </f7-row>
-      <f7-row v-if="item && item.type === 'Group'">
+      <f7-row v-if="item?.type === 'Group'">
         <f7-col>
-          <f7-block-title>Direct Group Members</f7-block-title>
+          <f7-block-title>Child Groups</f7-block-title>
           <group-members :group-item="item" :context="context" @updated="load" />
         </f7-col>
       </f7-row>
@@ -158,26 +152,37 @@
 @media(max-width: 1279px)
   .developer-sidebar-tip
     visibility hidden
+.model-treeview.no-selection-style
+  .treeview-item-selected > .treeview-item-root,
+  .treeview-item-selected.treeview-item-root
+    background transparent !important
+    color inherit !important
+    border none !important
 </style>
 
 <script>
 import cloneDeep from 'lodash/cloneDeep'
 
+import Item from '@/components/item/item.vue'
 import ItemStatePreview from '@/components/item/item-state-preview.vue'
 import LinkDetails from '@/components/model/link-details.vue'
 import GroupMembers from '@/components/item/group-members.vue'
 import MetadataMenu from '@/components/item/metadata/item-metadata-menu.vue'
 import ItemMixin from '@/components/item/item-mixin'
+import ModelMixin from '@/pages/settings/model/model-mixin'
+import ModelTreeview from '@/components/model/model-treeview.vue'
 import FileDefinition from '@/pages/settings/file-definition-mixin'
 
 export default {
-  mixins: [ItemMixin, FileDefinition],
+  mixins: [ItemMixin, ModelMixin, FileDefinition],
   props: ['itemName'],
   components: {
+    Item,
     LinkDetails,
     GroupMembers,
     ItemStatePreview,
-    MetadataMenu
+    MetadataMenu,
+    ModelTreeview
   },
   data () {
     return {
@@ -191,9 +196,6 @@ export default {
       return {
         store: this.$store.getters.trackedItems
       }
-    },
-    semanticClass () {
-      return this.item?.metadata?.semantics?.value?.split('_')[0]
     },
     semanticValue () {
       const valueArray = this.item?.metadata?.semantics?.value?.split('_')
@@ -209,25 +211,11 @@ export default {
       if (propertyArray.length > 1) return propertyArray.slice(1).join('->')
       return propertyArray[0]
     },
-    semanticAttributes () {
-      const config = this.item?.metadata?.semantics?.config
-      if (!config) return null
-      const filteredAttributes = {
-        'isPointOf': 'Point Of',
-        'hasLocation': 'In Location',
-        'isPartOf': 'Part Of'
-      }
-      const attributes = {}
-      Object.keys(filteredAttributes).filter((key) => config[key]).forEach((key) => {
-        attributes[filteredAttributes[key]] = config[key]
-      })
-      return attributes
-    },
-    nonSemanticGroupNames () {
-      return this.item.groupNames.filter((g) => !Object.values(this.semanticAttributes).includes(g))
-    },
     nonSemanticTags () {
-      return this.item?.tags?.filter((tag) => tag !== this.semanticTag(this.semanticValue) && tag !== this.semanticTag(this.semanticProperty))
+      return this.item?.tags?.filter((tag) => tag !== this.semanticTag(this.semanticValue) && tag !== this.semanticTag(this.semanticProperty)) || []
+    },
+    itemGroups () {
+      return this.items.filter((i) => this.item.groupNames.includes(i.name)).toSorted((a, b) => (a.label || a.name).localeCompare(b.label || b.name))
     }
   },
   methods: {
@@ -243,12 +231,26 @@ export default {
     onPageBeforeOut () {
       this.$store.dispatch('stopTrackingStates')
     },
+    modelItem (item) {
+      return {
+        item,
+        opened: false,
+        class: (item.metadata && item.metadata.semantics) ? item.metadata.semantics.value : '',
+        children: {
+          locations: [],
+          equipment: [],
+          points: [],
+          groups: [],
+          items: []
+        }
+      }
+    },
     load () {
       this.$oh.api.get(`/rest/items/${this.itemName}?metadata=.+`).then((data) => {
         this.item = data
         this.ready = true
         this.iconUrl = '/icon/' + this.item.category + '?format=svg'
-      })
+      }).then(() => this.loadModel(this.item)).then(() => this.expandSelected(this.item.name))
     },
     duplicateItem () {
       let itemClone = cloneDeep(this.item)
@@ -274,8 +276,11 @@ export default {
     searchInSidebar () {
       this.$f7.emit('selectDeveloperDock', { 'dock': 'tools', 'toolTab': 'pin', 'searchFor': this.item.name })
     },
-    groupLink (group) {
-      return '/settings/items/' + group
+    navigateToItem (value) {
+      this.$f7router.navigate(this.itemLink(value.item.name))
+    },
+    itemLink (item) {
+      return '/settings/items/' + item
     },
     semanticTag (value) {
       const valueArray = value.split('->')
