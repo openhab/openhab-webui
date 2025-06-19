@@ -63,7 +63,7 @@ export default {
     },
     load () {
       this.loading = true
-      this.$oh.api.get('/rest/items/semanticshealth').then((data) => {
+      this.$oh.api.get('/rest/items/semantics/health').then((data) => {
         this.semanticsProblems = data
         this.loading = false
         this.ready = true
