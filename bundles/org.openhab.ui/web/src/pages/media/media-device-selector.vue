@@ -10,7 +10,7 @@
 
     <div v-if="node">
        <f7-list form>
-            <f7-list-item v-for="item in node.childs" :title="item.name + ` (` + item.type + `) `" :key="item.id" :value="item"  radio :checked="selectedOption!=null ? selectedOption.key === item.key:false"
+            <f7-list-item v-for="item in node.childs" :title="item.binding + ` : ` + item.name + ` (` + item.type + `) `" :key="item.id" :value="item"  radio :checked="selectedOption!=null ? selectedOption.key === item.key:false"
               @change="selectedOption = item" :name="'options-group'" />
         </f7-list>
     </div>
@@ -60,21 +60,7 @@ export default {
       this.$oh.api.get(`/rest/media/sinks`).then((data) => {
         console.log("Data:" + data);
           this.node = data;
-          this.node.pres="thumb";
-          if (this.node.type === 'org.openhab.core.media.model.MediaAlbum')
-              this.node.pres="flat";
-          if (this.node.type === 'org.openhab.core.media.model.MediaPlayList')
-              this.node.pres="flat";
-          if (this.node.label === 'TopTracks')
-              this.node.pres="flat";
-              
       });
-      
-      
-    
-      
-      
-      
       
       return {
           node: this.node,
