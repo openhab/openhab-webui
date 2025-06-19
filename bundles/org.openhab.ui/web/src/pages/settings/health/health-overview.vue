@@ -28,7 +28,7 @@
             <f7-icon slot="media" f7="link" color="gray" />
           </f7-list-item>
           <f7-list-item
-            media-item link="semantics/" title="Semantics Problems"
+            media-item link="semantics/" title="Semantic Model Conflicts"
             :badge="semanticsProblemCount > 0 ? semanticsProblemCount : undefined"
             :after="semanticsProblemCount > 0 ? undefined : semanticsProblemCount"
             :badge-color="semanticsProblemCount ? 'red' : 'blue'"
@@ -47,7 +47,7 @@ export default {
     return {
       objectsSubtitles: {
         orphanLinks: 'Items pointing to non-existent thing channels or vica versa',
-        semanticsProblems: 'Issues with semantic model setup'
+        semanticsProblems: 'Issues with semantic model configuration'
       },
       orphanLinksCount: 0,
       semanticsProblemCount: 0,
