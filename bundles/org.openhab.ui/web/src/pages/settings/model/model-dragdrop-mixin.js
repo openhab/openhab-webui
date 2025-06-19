@@ -117,8 +117,10 @@ export default {
         this.moveState.oldIndex = event.removed.oldIndex
         this.moveState.canRemove = true
       } else if (event.moved) {
-        // in theory, this should not happen as sorting within the same list is disabled
-        this.moveState.cancelled = true
+        this.moveState.newParent = this.moveState.moveTarget || this.model
+        this.moveState.canAdd = true
+        this.moveState.oldParent = this.model
+        this.moveState.canRemove = true
         return
       }
       console.debug('Drag change - moveState:', cloneDeep(this.moveState))

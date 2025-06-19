@@ -1,7 +1,7 @@
 <template>
   <f7-treeview class="model-treeview">
     <draggable :disabled="!canDragDrop" :list="children" group="model-treeview" animation="150" forceFallBack="true" fallbackOnBody="true" fallbackThreshold="5"
-               scrollSensitivity="200" delay="400" delayOnTouchOnly="true" touchStartThreshold="10" invertSwap="true" sort="false"
+               scrollSensitivity="200" delay="400" delayOnTouchOnly="true" touchStartThreshold="10" invertSwap="true" sort="false" ghost-class="model-sortable-ghost"
                @start="onDragStart" @change="onDragChange" @end="onDragEnd" :move="onDragMove">
       <model-treeview-item v-for="node in children"
                            :key="node.item.name" :model="node" :parentNode="model"
@@ -23,6 +23,15 @@
   .semantic-class
     font-size 8pt
     color var(--f7-list-item-footer-text-color)
+  .model-sortable-ghost
+    visibility hidden      /* Don't show, but don't use display none as this will misalign the dragged item relative to the cursor, style to have 0 total height */
+    position absolute
+    z-index -1
+    pointer-events none
+    height 0 !important
+    margin 0 !important
+    padding 0 !important
+    border none !important
 </style>
 
 <script>
