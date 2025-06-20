@@ -324,6 +324,12 @@ export default function defineOHBlocks_Persistence (f7, persistenceServices) {
       case 'minimumSince':
       case 'minimumUntil':
       case 'minimumBetween':
+      case 'deltaSince':
+      case 'deltaUntil':
+      case 'deltaBetween':
+      case 'sumSince':
+      case 'sumUntil':
+      case 'sumBetween':
         code = `${itemCode}.persistence.${methodName}(${dayInfo}${persistenceExtension})?.${returnTypeName}`
         break
 
@@ -353,18 +359,12 @@ export default function defineOHBlocks_Persistence (f7, persistenceServices) {
       case 'medianSince':
       case 'medianUntil':
       case 'medianBetween':
-      case 'deltaSince':
-      case 'deltaUntil':
-      case 'deltaBetween':
       case 'deviationSince':
       case 'deviationUntil':
       case 'deviationBetween':
       case 'riemannSumSince':
       case 'riemannSumUntil':
       case 'riemannSumBetween':
-      case 'sumSince':
-      case 'sumUntil':
-      case 'sumBetween':
       case 'varianceSince':
       case 'varianceUntil':
       case 'varianceBetween':
