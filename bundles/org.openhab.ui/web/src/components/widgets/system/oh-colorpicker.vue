@@ -88,12 +88,12 @@ export default {
           }
         }
       }))
-      //Fix sliders at 0% - display: none -> width not known during component mount
+      // fixes color picker sliders at 0% because display width not available on component mount in widgets
       setTimeout(() => {
-        this.colorPicker.hueRangeSlider.calcSize()
-        this.colorPicker.saturationRangeSlider.calcSize()
-        this.colorPicker.brightnessRangeSlider.calcSize()
-      }, 0)
+        this.colorPicker.hueRangeSlider?.calcSize()
+        this.colorPicker.saturationRangeSlider?.calcSize()
+        this.colorPicker.brightnessRangeSlider?.calcSize()
+      })
     },
     sendCommand (hsb) {
       console.debug('oh-colorpicker: Received command ' + hsb)
