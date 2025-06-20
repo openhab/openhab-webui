@@ -54,7 +54,7 @@
           <f7-card>
             <f7-list>
               <ul>
-                <item v-for="group in itemGroups" :key="group.name" :noState="true"
+                <item v-for="group in itemGroups" :key="group.name"
                       :item="group" :link="itemLink(group.name)"
                       :context="context" />
               </ul>
@@ -64,7 +64,7 @@
       </f7-row>
       <f7-row v-if="item?.type === 'Group'">
         <f7-col>
-          <f7-block-title>Child Groups</f7-block-title>
+          <f7-block-title>Members</f7-block-title>
           <group-members :group-item="item" :context="context" @updated="load" />
         </f7-col>
       </f7-row>
@@ -199,7 +199,7 @@ export default {
       return this.item?.tags?.filter((tag) => tag !== this.semanticTag(this.item?.metadata?.semantics?.value) && tag !== this.semanticTag(this.item?.metadata?.semantics?.config?.relatesTo)) || []
     },
     itemGroups () {
-      return this.items.filter((i) => this.item.groupNames.includes(i.name)).toSorted((a, b) => (a.label || a.name).localeCompare(b.label || b.name))
+      return this.item?.parents?.toSorted((a, b) => (a.label || a.name).localeCompare(b.label || b.name))
     }
   },
   methods: {
@@ -225,7 +225,7 @@ export default {
       }
     },
     load () {
-      this.$oh.api.get(`/rest/items/${this.itemName}?metadata=.+`).then((data) => {
+      this.$oh.api.get(`/rest/items/${this.itemName}?parents=true&metadata=.+`).then((data) => {
         this.item = data
         this.ready = true
         this.iconUrl = '/icon/' + this.item.category + '?format=svg'

@@ -55,15 +55,29 @@ export default {
 
       this.saveExpanded()
 
-      const items = this.$oh.api.get('/rest/items?staticDataOnly=true&metadata=.+')
-      const links = relatedToItem ? this.$oh.api.get('/rest/links?itemName=' + relatedToItem.name) : this.$oh.api.get('/rest/links')
+      let items, links
+      if (relatedToItem) {
+        // use the information already available in the argument to construct the response and avoid a REST call for the full model
+        items = []
+        const addItems = (items, item, up) => {
+          items.push(item)
+          if (up) {
+            item.parents?.forEach((p) => addItems(items, p, true))
+          } else {
+            item.members?.forEach((p) => addItems(items, p, false))
+          }
+        } 
+        addItems(items, relatedToItem, true)    // add parent items
+        addItems(items, relatedToItem, false)   // add member items
+        items = [...new Set(items)]             // remove doubles
+        links = this.$oh.api.get('/rest/links?itemName=' + relatedToItem.name)
+      } else {
+        items = this.$oh.api.get('/rest/items?staticDataOnly=true&metadata=.+')
+        links = this.$oh.api.get('/rest/links')
+      }
       return Promise.all([items, links]).then((data) => {
         this.items = data[0]
         this.links = data[1]
-
-        if (relatedToItem) {
-          this.items = this.relatedItems(relatedToItem)
-        }
 
         if (this.newItem) {
           this.items.push(this.newItem)
@@ -204,32 +218,6 @@ export default {
       Object.values(child.children).flat().forEach((c) => {
         this.restoreExpandedChild(c, !child.opened)
       })
-    },
-    relatedItems (item) {
-      // This will retrieve all parents and only the semantic children
-      const relatedItems = [item]
-      relatedItems.push(...this.relatedParentItems(item))
-      relatedItems.push(...this.relatedSemanticChildItems(item))
-      // An item can be in multiple parents, leading to double counting. Remove the doubles.
-      return [...new Set(relatedItems)]
-    },
-    relatedParentItems (item) {
-      const relatedItems = this.items.filter((i) => item.groupNames.includes(i.name))
-      const related = relatedItems
-      related.forEach((i) => relatedItems.push(...this.relatedParentItems(i)))
-      return relatedItems
-    },
-    relatedSemanticChildItems (item) {
-      const relatedItems = this.items.filter((i) => {
-        const isPointOf = item.name === i.metadata?.semantics?.config?.isPointOf
-        const hasLocation = item.name === i.metadata?.semantics?.config?.hasLocation
-        const isPartOf = item.name === i.metadata?.semantics?.config?.isPartOf
-        if (isPointOf || hasLocation || isPartOf) return true
-        return false
-      })
-      const children = relatedItems
-      children.forEach((i) => relatedItems.push(...this.relatedSemanticChildItems(i)))
-      return relatedItems
     },
     expandSelected (selection) {
       // expand so all checked items are opened
