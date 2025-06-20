@@ -1,5 +1,5 @@
 <template>
-  <f7-page class="item-details-page" @page:beforein="onPageBeforeIn" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
+  <f7-page class="item-details-page" @page:beforein="onPageBeforeIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar :title="item.name" back-link="Back" no-shadow no-hairline class="item-details-navbar">
       <f7-nav-right v-if="ready">
         <f7-link v-if="item.editable" icon-md="material:edit" href="edit">
@@ -29,46 +29,42 @@
           <item-state-preview :item="item" :context="context" />
         </f7-col>
       </f7-row>
-      <f7-row v-if="item && item.tags && item.tags.length > 0">
+      <f7-row v-if="nonSemanticTags?.length > 0">
         <f7-col>
-          <f7-block-title>Tags</f7-block-title>
+          <f7-block-title>Non-Semantic Tags</f7-block-title>
           <f7-block strong class="tags-block">
-            <f7-chip v-for="tag in item.tags" :key="tag" :text="tag" media-bg-color="blue">
+            <f7-chip v-for="tag in nonSemanticTags" :key="tag" :text="tag" media-bg-color="blue">
               <f7-icon slot="media" ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
             </f7-chip>
           </f7-block>
         </f7-col>
       </f7-row>
-      <f7-row v-if="item && item.metadata && item.metadata.semantics">
+      <f7-row v-if="item?.metadata?.semantics?.value">
         <f7-col>
-          <f7-block-title>Semantic Classification</f7-block-title>
-          <f7-list>
-            <f7-list-item title="class" :after="item.metadata.semantics.value" />
-            <f7-list-item
-              v-for="(value, key) in item.metadata.semantics.config"
-              :key="key"
-              :title="key"
-              :after="value" />
-          </f7-list>
+          <f7-block-title>Semantic Model</f7-block-title>
+          <f7-card>
+            <model-treeview class="model-treeview no-selection-style" :rootNodes="[rootLocations, rootEquipment, rootPoints, rootGroups, rootItems].flat()"
+                            :includeItemName="true" :includeItemTags="true" :selected="modelItem(item)" @selected="navigateToItem" />
+          </f7-card>
         </f7-col>
       </f7-row>
-      <f7-row v-if="item && item.groupNames && item.groupNames.length > 0">
+      <f7-row v-if="item?.groupNames?.length > 0">
         <f7-col>
-          <f7-block-title>Direct Parent Groups</f7-block-title>
+          <f7-block-title>Parent Groups</f7-block-title>
           <f7-card>
             <f7-list>
-              <f7-list-item
-                v-for="group in item.groupNames"
-                :key="group"
-                :link="'/settings/items/' + group"
-                :title="group" />
+              <ul>
+                <item v-for="group in itemGroups" :key="group.name"
+                      :item="group" :link="itemLink(group.name)"
+                      :context="context" />
+              </ul>
             </f7-list>
           </f7-card>
         </f7-col>
       </f7-row>
-      <f7-row v-if="item && item.type === 'Group'">
+      <f7-row v-if="item?.type === 'Group'">
         <f7-col>
-          <f7-block-title>Direct Group Members</f7-block-title>
+          <f7-block-title>Members</f7-block-title>
           <group-members :group-item="item" :context="context" @updated="load" />
         </f7-col>
       </f7-row>
@@ -156,32 +152,41 @@
 @media(max-width: 1279px)
   .developer-sidebar-tip
     visibility hidden
+.model-treeview.no-selection-style
+  .treeview-item-selected > .treeview-item-root,
+  .treeview-item-selected.treeview-item-root
+    background transparent !important
+    color inherit !important
+    border none !important
 </style>
 
 <script>
 import cloneDeep from 'lodash/cloneDeep'
 
+import Item from '@/components/item/item.vue'
 import ItemStatePreview from '@/components/item/item-state-preview.vue'
 import LinkDetails from '@/components/model/link-details.vue'
 import GroupMembers from '@/components/item/group-members.vue'
 import MetadataMenu from '@/components/item/metadata/item-metadata-menu.vue'
 import ItemMixin from '@/components/item/item-mixin'
+import ModelMixin from '@/pages/settings/model/model-mixin'
+import ModelTreeview from '@/components/model/model-treeview.vue'
 import FileDefinition from '@/pages/settings/file-definition-mixin'
 
 export default {
-  mixins: [ItemMixin, FileDefinition],
+  mixins: [ItemMixin, ModelMixin, FileDefinition],
   props: ['itemName'],
   components: {
+    Item,
     LinkDetails,
     GroupMembers,
     ItemStatePreview,
-    MetadataMenu
+    MetadataMenu,
+    ModelTreeview
   },
   data () {
     return {
-      item: {},
-      links: [],
-      ready: false
+      item: {}
     }
   },
   computed: {
@@ -189,6 +194,12 @@ export default {
       return {
         store: this.$store.getters.trackedItems
       }
+    },
+    nonSemanticTags () {
+      return this.item?.tags?.filter((tag) => tag !== this.semanticTag(this.item?.metadata?.semantics?.value) && tag !== this.semanticTag(this.item?.metadata?.semantics?.config?.relatesTo)) || []
+    },
+    itemGroups () {
+      return this.item?.parents?.toSorted((a, b) => (a.label || a.name).localeCompare(b.label || b.name))
     }
   },
   methods: {
@@ -196,20 +207,29 @@ export default {
       this.$store.dispatch('startTrackingStates')
       this.load()
     },
-    onPageAfterIn () {
-      this.$oh.api.get('/rest/links?itemName=' + this.itemName).then((data) => {
-        this.links = data
-      })
-    },
     onPageBeforeOut () {
       this.$store.dispatch('stopTrackingStates')
     },
+    modelItem (item) {
+      return {
+        item,
+        opened: false,
+        class: (item.metadata && item.metadata.semantics) ? item.metadata.semantics.value : '',
+        children: {
+          locations: [],
+          equipment: [],
+          points: [],
+          groups: [],
+          items: []
+        }
+      }
+    },
     load () {
-      this.$oh.api.get(`/rest/items/${this.itemName}?metadata=.+`).then((data) => {
+      this.$oh.api.get(`/rest/items/${this.itemName}?parents=true&metadata=.+`).then((data) => {
         this.item = data
         this.ready = true
         this.iconUrl = '/icon/' + this.item.category + '?format=svg'
-      })
+      }).then(() => this.loadModel(this.item)).then(() => this.expandSelected(this.item.name))
     },
     duplicateItem () {
       let itemClone = cloneDeep(this.item)
@@ -234,6 +254,17 @@ export default {
     },
     searchInSidebar () {
       this.$f7.emit('selectDeveloperDock', { 'dock': 'tools', 'toolTab': 'pin', 'searchFor': this.item.name })
+    },
+    navigateToItem (value) {
+      this.$f7router.navigate(this.itemLink(value.item.name))
+    },
+    itemLink (item) {
+      return '/settings/items/' + item
+    },
+    semanticTag (value) {
+      if (!value) return null
+      const valueArray = value.split('_')
+      return valueArray[valueArray.length - 1]
     }
   }
 }
