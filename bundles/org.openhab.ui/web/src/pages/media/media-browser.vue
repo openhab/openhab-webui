@@ -156,10 +156,10 @@ export default {
     },
     doPlay (item, id) {
         console.log("Playing item: " + item + " with id: " + id);
-        this.$store.dispatch('sendCommand', { itemName: item, cmd: "PLAY," + id  + ",8bf6830ca7a00068f294ca8016421b3678b7568b"});
+        this.$store.dispatch('sendCommand', { itemName: item, cmd: "NONE,PLAY," + id  + ",8bf6830ca7a00068f294ca8016421b3678b7568b,NONE"});
       },
       doEnqueue (item, id) {
-          this.$store.dispatch('sendCommand', { itemName: item, cmd: "ENQUEUE," + id +",8bf6830ca7a00068f294ca8016421b3678b7568b"});
+          this.$store.dispatch('sendCommand', { itemName: item, cmd: "NONE,ENQUEUE," + id +",8bf6830ca7a00068f294ca8016421b3678b7568b,NONE"});
         },
   },
   created () {
