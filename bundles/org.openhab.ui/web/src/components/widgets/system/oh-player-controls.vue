@@ -84,13 +84,22 @@ export default {
   computed: {
     isPlaying () {
       const value = this.context.store[this.config.item].state
-      return value === 'PLAY'
+      var components = value.split(',');
+      var state = components[0];
+      console.log ("isPlaying", value, this.config.item, state);
+      return state === 'PLAY'
     },
     mediaBrowserUri () {
         return "/mediapopup/?item=" + this.config.item;
       },
     mediaDeviceSelectorUri () {
-        return "/mediadevicepopup/?item=" + this.config.item;
+        const value = this.context.store[this.config.item].state
+        var components = value.split(',');
+        var device = components[3];
+        var binding = components[4];
+        console.log ("device is ", device);
+        console.log ("binding is ", binding);
+        return "/mediadevicepopup/?item=" + this.config.item + "&device=" + device + "&binding=" + binding;
     }
   },
   methods: {

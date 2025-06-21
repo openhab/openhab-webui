@@ -10,7 +10,7 @@
 
     <div v-if="node">
        <f7-list form>
-            <f7-list-item v-for="item in node.childs" :title="item.binding + ` : ` + item.name + ` (` + item.type + `) `" :key="item.id" :value="item"  radio :checked="selectedOption!=null ? selectedOption.key === item.key:false"
+            <f7-list-item v-for="item in node.childs" :title="item.binding + ` : ` + item.name + ` (` + item.type + `) `" :key="item.id" :value="item"  radio :checked="(selectedOption!=null) ? (selectedOption.id === item.id)?true:false:false" 
               @change="selectedOption = item" :name="'options-group'" />
         </f7-list>
     </div>
@@ -58,10 +58,28 @@ export default {
       console.log("MediaBrowser path: " + this.path);
 
       this.$oh.api.get(`/rest/media/sinks`).then((data) => {
+        data.childs = data.childs.sort((a, b) => {
+          if (a.binding < b.binding)  return -1;
+          if (a.binding > b.binding)  return 1;
+
+          if (a.name < b.name) return -1;
+          if (a.name > b.name) return 1;
+          return 0;
+        })
         console.log("Data:" + data);
-          this.node = data;
+        data.childs = data.childs.filter((item) => {
+          return item.binding === this.$f7route.query.binding;
+        });
+
+        this.selectedOption=data.childs.find((item) => {
+          return item.id === this.$f7route.query.device;
+        });
+        //"8bf6830ca7a00068f294ca8016421b3678b7568b";
+
+        this.node = data;
       });
-      
+
+
       return {
           node: this.node,
           controlsOpened: true,
@@ -93,7 +111,7 @@ export default {
     changeDevice () { 
       console.log("Selected option: " + this.selectedOption);
       console.log("Selected option: " + this.selectedOption.id);
-      this.$store.dispatch('sendCommand', { itemName: this.item, cmd: "DEVICE,," + this.selectedOption.id});
+      this.$store.dispatch('sendCommand', { itemName: this.item, cmd: "NONE,DEVICE,," + this.selectedOption.id +",NONE" });
     },
     select (e) {
       console.log("Selected option: " + this.selectedOption);
