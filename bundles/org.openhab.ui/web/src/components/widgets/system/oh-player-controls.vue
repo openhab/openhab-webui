@@ -90,7 +90,11 @@ export default {
       return state === 'PLAY'
     },
     mediaBrowserUri () {
-        return "/mediapopup/?item=" + this.config.item;
+        const value = this.context.store[this.config.item].state
+        var components = value.split(',');
+        var device = components[3];
+        var binding = components[4];
+        return "/mediapopup/?item=" + this.config.item + "&device=" + device + "&binding=" + binding;
       },
     mediaDeviceSelectorUri () {
         const value = this.context.store[this.config.item].state

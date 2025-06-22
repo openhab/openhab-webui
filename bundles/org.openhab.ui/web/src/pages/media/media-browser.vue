@@ -10,10 +10,14 @@
      
      <br/>
      <br/>
+     {{  item }}
+     <br/>
+     {{  device }}
+     <br/>
 
      <div style="display: flex; flex-direction: row; flex-wrap: nowrap; ">
      <div v-for="componentPath in currentPathSegments" style="padding:5px;">
-      <f7-link :href="`/mediabrowser/?path=` + componentPath.path + `&item=` + item">{{  componentPath.name }}</f7-link> >
+      <f7-link :href="`/mediabrowser/?path=` + componentPath.path + `&item=` + item + `&device=` + device" >{{  componentPath.name }}</f7-link> >
      </div>
      </div>
     
@@ -42,7 +46,7 @@
           </div>
           <hr/>
               <div v-for="r1 in node.childs" style="display: inline;clear:both;" :class="{ 'sheet-opened': controlsOpened }">
-	                <f7-link :href="`/mediabrowser/?path=` + r1.path" :data-reload="true" :reload-current="true" :reload-detail="true">
+	                <f7-link :href="`/mediabrowser/?path=` + r1.path + `&item=` + item + `&device=` + device" :data-reload="true" :reload-current="true" :reload-detail="true">
 	                    <f7-button  outline style="height:30px;font-weight:bold;padding:2px;padding-left:30px;text-align:left;border:none 0px;"  @click="doPlay(item, r1.path)" icon-material="play_arrow" small  icon-size="24" >
                         Play
 	                    </f7-button>
@@ -59,7 +63,7 @@
       </div>
       <div v-else>
         <div v-for="r1 in node.childs" style="width:200px;height:200px;position:relative;float:left;margin:20px;background-color:#ffffff;color:#000000;border:solid 1px;border-radius:10px;padding:10px;">
-            <f7-link :href="`/mediabrowser/?path=` + r1.path + `&item=` + item">
+            <f7-link :href="`/mediabrowser/?path=` + r1.path + `&item=` + item + `&device=` + device">
                 <div id="container" style="position:relative">
                 <div style="text-align:center;position:absolute;top:-10px;width:200px;">
                     {{ r1.label }}
@@ -89,6 +93,7 @@ export default {
   },
   data () {
       this.item = this.$f7route.query.item;
+      this.device = this.$f7route.query.device;
       console.log("MediaBrowser item: " + this.item);
 
 
@@ -131,6 +136,7 @@ export default {
           node: this.node,
           controlsOpened: true,
           item: this.item,
+          device: this.device,
       };
   },
   computed: {
@@ -171,10 +177,10 @@ export default {
     },
     doPlay (item, id) {
         console.log("Playing item: " + item + " with id: " + id);
-        this.$store.dispatch('sendCommand', { itemName: item, cmd: "NONE,PLAY," + id  + ",8bf6830ca7a00068f294ca8016421b3678b7568b,NONE"});
+        this.$store.dispatch('sendCommand', { itemName: item, cmd: "NONE,PLAY," + id  + "," + this.device + ",NONE"});
       },
       doEnqueue (item, id) {
-          this.$store.dispatch('sendCommand', { itemName: item, cmd: "NONE,ENQUEUE," + id +",8bf6830ca7a00068f294ca8016421b3678b7568b,NONE"});
+          this.$store.dispatch('sendCommand', { itemName: item, cmd: "NONE,ENQUEUE," + id +"," + this.device + ",NONE"});
         },
   },
   created () {
