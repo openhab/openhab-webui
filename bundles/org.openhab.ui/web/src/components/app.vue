@@ -68,11 +68,6 @@
             </ul>
           </li>
 
-          <f7-list-item link="/mediabrowser/" :title="$t('sidebar.mediaBrowser')" view=".view-main" panel-close :animate="false"
-                        :class="{ currentsection: currentPath.addons?.$end }">
-            <f7-icon slot="media" ios="f7:bag_fill" aurora="f7:bag_fill" md="material:shopping_bag" color="gray" />
-          </f7-list-item>
-
 
           <!-- Add-on Store -->
           <f7-list-item link="/addons/" :title="$t('sidebar.addOnStore')" view=".view-main" panel-close :animate="false"
@@ -120,6 +115,12 @@
         </f7-list>
 
         <f7-list class="admin-links">
+
+          <f7-list-item link="/mediabrowser/" :title="$t('sidebar.mediaBrowser')" view=".view-main" panel-close :animate="false"
+                        :class="{ currentsection: currentPath.mediaBrowser?.$end }">
+            <f7-icon slot="media" ios="f7:music_house_fill" aurora="f7:music_house_fill" md="material:shopping_bag" color="gray" />
+          </f7-list-item>
+
           <f7-list-item link="/about/" :title="$t('sidebar.helpAbout')" view=".view-main" panel-close
                         :class="{ currentsection: currentPath.about }">
             <f7-icon slot="media" ios="f7:question_circle_fill" aurora="f7:question_circle_fill" md="material:help" color="gray" />
