@@ -1425,6 +1425,9 @@
 			}
 
 			_t.minimizeWidth = function() {
+				if (!_t.visible) {
+					return;
+				}
 				// Minimize the width taken by the buttons without adding extra rows.
 				// Start from the maximum width the buttons can take,
 				// then shrink it down to the minimum without causing additional wrapping.
@@ -1454,6 +1457,13 @@
 		} else {
 			_t.minimizeWidth = function() {};
 		}
+
+
+		_t.parentSetVisible = _t.setVisible;
+		_t.setVisible = function(state) {
+			_t.parentSetVisible(state);
+			_t.minimizeWidth();
+		};
 
 		_t.destroy = function() {
 			_t.buttons.forEach(function(button) {
