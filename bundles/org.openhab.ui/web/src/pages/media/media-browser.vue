@@ -7,18 +7,15 @@
         </f7-button>
       </f7-nav-right>
     </f7-navbar>
-     <f7-link :href="`/mediabrowser/?path=/Root&item=` + item">Root</f7-link>
+     
      <br/>
      <br/>
-	   
 
-    {{  currentRoute }}
-    <br/>
-    {{  currentPath }}
-    <br/>
-    {{  this.path }}
-    <br/>
-
+     <div style="display: flex; flex-direction: row; flex-wrap: nowrap; ">
+     <div v-for="componentPath in currentPathSegments" style="padding:5px;">
+      <f7-link :href="`/mediabrowser/?path=` + componentPath.path + `&item=` + item">{{  componentPath.name }}</f7-link> >
+     </div>
+     </div>
     
     <br/>
     
@@ -104,6 +101,7 @@ export default {
       this.path='/Root';  
 //        this.path='/Root/Spotify/Playlists/spotify:playlist:5Z4AD0u9fwnvtsj7ce5ZLS';
       
+
       if (this.$f7route.query.path && !this.$f7route.query.path.startsWith('/page/')) {
           this.path=this.$f7route.query.path;
       }
@@ -132,7 +130,7 @@ export default {
       return {
           node: this.node,
           controlsOpened: true,
-          item: this.item
+          item: this.item,
       };
   },
   computed: {
@@ -148,6 +146,23 @@ export default {
     },
     currentPath() {
       return this.$f7route.query.path || '';
+    },
+    currentPathSegments() {
+      const path = this.$f7route.query.path || '/Root';
+
+      const segments = path.split('/');
+      console.log("path:" + path);
+      console.log("segs:" + segments);
+
+      const result = segments.map((segment, index) => {
+        return {
+            path: segments.slice(0, index + 1).join('/'),
+            name: segment
+          };  
+      });
+
+      console.log("result:" + result);
+      return result;
     }
 
   },
