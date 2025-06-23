@@ -207,9 +207,9 @@ export default {
       }
     },
     queryLightPoints () {
-      let direct = findPoints(this.element.properties, 'Point', true, 'Property_Light') 
+      let direct = findPoints(this.element.properties, 'Point', true, 'Property_Light')
       if (direct.length) return direct
-      return findPoints(allEquipmentPoints(this.element.equipment), 'Point', true, 'Property_Light') 
+      return findPoints(allEquipmentPoints(this.element.equipment), 'Point', true, 'Property_Light')
     }
   },
   methods: {
@@ -226,7 +226,7 @@ export default {
       let equipment = findEquipment(this.element.equipment, equipmentType, true)
       if (!equipment.length) return []
       let allPoints = allEquipmentPoints(equipment)
-      let points = findPoints(allPoints, 'Point', true, 'Property_Light') 
+      let points = findPoints(allPoints, 'Point', true, 'Property_Light')
       if (points.length) return points
       return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
     }
