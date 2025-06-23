@@ -296,20 +296,16 @@ export default {
       // Get the mapped value for this option from the mapped child's metadata.config
       const mappedChild = this.getMappedChild(attributeName)
       if (!mappedChild) return optionValue
-      const attr = attributeName.toLowerCase()
-      if (!mappedChild.metadata.matter.config) return optionValue
-      if (!mappedChild.metadata.matter.config[attr]) return optionValue
-      // config[attr] is an object: { optionLabel: mappedValue, ... }
-      return mappedChild.metadata.matter.config[attr][optionLabel] || optionValue
+      const cfg = (mappedChild.metadata && mappedChild.metadata.matter && mappedChild.metadata.matter.config) || {}
+      return cfg[optionLabel] || optionValue
     },
     setChildMapping (attributeName, optionLabel, newValue) {
-      // Set the mapped value for this option in the mapped child's metadata.config
       const mappedChild = this.getMappedChild(attributeName)
       if (!mappedChild) return
-      const attr = attributeName.toLowerCase()
-      if (!mappedChild.metadata.matter.config) this.$set(mappedChild.metadata.matter, 'config', {})
-      if (!mappedChild.metadata.matter.config[attr]) this.$set(mappedChild.metadata.matter.config, attr, {})
-      this.$set(mappedChild.metadata.matter.config[attr], optionLabel, newValue)
+      if (!mappedChild.metadata.matter.config) {
+        this.$set(mappedChild.metadata.matter, 'config', {})
+      }
+      this.$set(mappedChild.metadata.matter.config, optionLabel, newValue)
       this.dirtyItem.add(mappedChild)
     }
   }
