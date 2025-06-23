@@ -61,13 +61,19 @@ export default {
           if (direct.length) return direct
           return findPoints(allEquipmentPoints(this.element.equipment), 'Point_Measurement', true, 'Property_Humidity')
         case 'co2':
-          direct = findPoints(this.element.properties, 'Point_Measurement', true, 'Property_CO2')
+          direct = findPoints(this.element.properties, 'Point_Measurement', true, 'Property_AirQuality_CO2')
           if (direct.length) return direct
-          return findPoints(allEquipmentPoints(this.element.equipment), 'Point_Measurement', true, 'Property_CO2')
+          return findPoints(allEquipmentPoints(this.element.equipment), 'Point_Measurement', true, 'Property_AirQuality_CO2')
         case 'luminance':
-          direct = findPoints(this.element.properties, 'Point_Measurement', true, 'Property_Light')
+          direct = [
+            ...findPoints(this.element.properties, 'Point_Measurement', true, 'Property_Light',
+            ...findPoints(this.element.properties, 'Point_Measurement', true, 'Property_Illuminance')
+          ]
           if (direct.length) return direct
-          return findPoints(allEquipmentPoints(this.element.equipment), 'Point_Measurement', true, 'Property_Light')
+          return [
+            ...findPoints(allEquipmentPoints(this.element.equipment), 'Point_Measurement', true, 'Property_Light'),
+            ...findPoints(allEquipmentPoints(this.element.equipment), 'Point_Measurement', true, 'Property_Illuminance')
+          ]  
         default:
           return []
       }
