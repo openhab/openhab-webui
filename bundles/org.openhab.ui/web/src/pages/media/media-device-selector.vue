@@ -9,124 +9,114 @@
     </f7-navbar>
 
     <div v-if="node">
-       <f7-list form>
-            <f7-list-item v-for="item in node.childs" :title="item.binding + ` : ` + item.name + ` (` + item.type + `) `" :key="item.id" :value="item"  radio :checked="(selectedOption!=null) ? (selectedOption.id === item.id)?true:false:false" 
-              @change="selectedOption = item" :name="'options-group'" />
-        </f7-list>
+      <f7-list form>
+        <f7-list-item v-for="item in node.childs" :title="item.binding + ` : ` + item.name + ` (` + item.type + `) `" :key="item.id" :value="item" radio :checked="(selectedOption!=null) ? (selectedOption.id === item.id)?true:false:false"
+                      @change="selectedOption = item" :name="'options-group'" />
+      </f7-list>
     </div>
 
-
-  <f7-toolbar bottom>
-    <div style="display: flex; width: 100%; align-items: center;">
-    <div style="margin-left: auto;">
-        <f7-button @click="changeDevice()" popup-close >
-          Pick
-        </f7-button>
+    <f7-toolbar bottom>
+      <div style="display: flex; width: 100%; align-items: center;">
+        <div style="margin-left: auto;">
+          <f7-button @click="changeDevice()" popup-close>
+            Pick
+          </f7-button>
         </div>
-        </div>
+      </div>
     </f7-toolbar>
-
-
-
-
-
   </f7-page>
 </template>
-
 
 <script>
 export default {
   name: 'MediaBrowser',
-    props: ['title',  'multiple' , 'name', 'value', 'required'], 
+  props: ['title', 'multiple', 'name', 'value', 'required'],
   data () {
-      this.item = this.$f7route.query.item;
-      console.log("MediaDeviceSelector item: " + this.item);
+    this.item = this.$f7route.query.item
+    console.log('MediaDeviceSelector item: ' + this.item)
 
+    this.$f7.toast.create({
+      text: this.$t('media.page.updated'),
+      destroyOnClose: true,
+      closeTimeout: 2000
+    }).open()
 
-      this.$f7.toast.create({
-          text: this.$t('media.page.updated'),
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open();
+    this.path = '/Root'
 
-      this.path='/Root';  
-      
-      if (this.$f7route.query.path && !this.$f7route.query.path.startsWith('/page/')) {
-          this.path=this.$f7route.query.path;
-      }
-      
-      console.log("MediaBrowser path: " + this.path);
+    if (this.$f7route.query.path && !this.$f7route.query.path.startsWith('/page/')) {
+      this.path = this.$f7route.query.path
+    }
 
-      this.$oh.api.get(`/rest/media/sinks`).then((data) => {
-        data.childs = data.childs.sort((a, b) => {
-          if (a.binding < b.binding)  return -1;
-          if (a.binding > b.binding)  return 1;
+    console.log('MediaBrowser path: ' + this.path)
 
-          if (a.name < b.name) return -1;
-          if (a.name > b.name) return 1;
-          return 0;
-        })
-        console.log("Data:" + data);
-        data.childs = data.childs.filter((item) => {
-          return item.binding === this.$f7route.query.binding;
-        });
+    this.$oh.api.get('/rest/media/sinks').then((data) => {
+      data.childs = data.childs.sort((a, b) => {
+        if (a.binding < b.binding) return -1
+        if (a.binding > b.binding) return 1
 
-        this.selectedOption=data.childs.find((item) => {
-          return item.id === this.$f7route.query.device;
-        });
-        //"8bf6830ca7a00068f294ca8016421b3678b7568b";
+        if (a.name < b.name) return -1
+        if (a.name > b.name) return 1
+        return 0
+      })
+      console.log('Data:' + data)
+      data.childs = data.childs.filter((item) => {
+        return item.binding === this.$f7route.query.binding
+      })
 
-        this.node = data;
-      });
+      this.selectedOption = data.childs.find((item) => {
+        return item.id === this.$f7route.query.device
+      })
+      // "8bf6830ca7a00068f294ca8016421b3678b7568b";
 
+      this.node = data
+    })
 
-      return {
-          node: this.node,
-          controlsOpened: true,
-          item: this.item,
-          ready:true,
-          selectedOption: this.selectedOption
-      };
+    return {
+      node: this.node,
+      controlsOpened: true,
+      item: this.item,
+      ready: true,
+      selectedOption: this.selectedOption
+    }
   },
   computed: {
-    currentRoute() {
-      var res='';
+    currentRoute () {
+      let res = ''
       if (this.$f7router && this.$f7router.currentRoute) {
-        res = this.$f7router.currentRoute.path;
+        res = this.$f7router.currentRoute.path
       }
-      if (res===undefined) {
-        res= '';
+      if (res === undefined) {
+        res = ''
       }
-      return res;
+      return res
     },
-    currentPath() {
-      return this.$f7route.query.path || '';
+    currentPath () {
+      return this.$f7route.query.path || ''
     }
 
   },
   methods: {
-    onClose () { 
-      console.log("Selected option: " + this.selectedOption);
+    onClose () {
+      console.log('Selected option: ' + this.selectedOption)
     },
-    changeDevice () { 
-      console.log("Selected option: " + this.selectedOption);
-      console.log("Selected option: " + this.selectedOption.id);
-      this.$store.dispatch('sendCommand', { itemName: this.item, cmd: "NONE,DEVICE,," + this.selectedOption.id +",NONE" });
+    changeDevice () {
+      console.log('Selected option: ' + this.selectedOption)
+      console.log('Selected option: ' + this.selectedOption.id)
+      this.$store.dispatch('sendCommand', { itemName: this.item, cmd: 'NONE,DEVICE,,' + this.selectedOption.id + ',NONE' })
     },
     select (e) {
-      console.log("Selected option: " + this.selectedOption);
+      console.log('Selected option: ' + this.selectedOption)
       /*
       this.$f7.input.validateInputs(this.$refs.smartSelect.$el)
       const value = this.$refs.smartSelect.f7SmartSelect.getValue()
       this.$emit('input', value)
       if (!this.multiple) this.$emit('itemSelected', this.preparedItems.find((i) => i.name === value))
       */
-    }, 
+    }
   },
   created () {
   },
   mounted () {
   }
-  
 }
 </script>

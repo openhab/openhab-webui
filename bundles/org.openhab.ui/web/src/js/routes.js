@@ -100,7 +100,6 @@ const loadAsync = (page, props) => {
 export default [
   {
 
-
     path: '/',
     viewName: 'main',
     component: HomePage,
@@ -534,7 +533,7 @@ export default [
     component: MediaBrowser,
     options: {
       transition: 'f7-dive',
-      animate: false,
+      animate: false
     }
   },
   {
@@ -548,7 +547,7 @@ export default [
     component: MediaDeviceSelector,
     options: {
       transition: 'f7-dive',
-      animate: false,
+      animate: false
     }
   },
   {
@@ -556,5 +555,3 @@ export default [
     component: NotFoundPage
   }
 ]
-
-

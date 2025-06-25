@@ -68,7 +68,6 @@
             </ul>
           </li>
 
-
           <!-- Add-on Store -->
           <f7-list-item link="/addons/" :title="$t('sidebar.addOnStore')" view=".view-main" panel-close :animate="false"
                         :class="{ currentsection: currentPath.addons?.$end }">
@@ -115,7 +114,6 @@
         </f7-list>
 
         <f7-list class="admin-links">
-
           <f7-list-item link="/mediabrowser/" :title="$t('sidebar.mediaBrowser')" view=".view-main" panel-close :animate="false"
                         :class="{ currentsection: currentPath.mediaBrowser?.$end }">
             <f7-icon slot="media" ios="f7:music_house_fill" aurora="f7:music_house_fill" md="material:shopping_bag" color="gray" />
@@ -174,9 +172,7 @@
       </f7-col>
     </f7-block>
 
-    
-    <f7-view main v-show="ready" class="safe-areas" url="/" :master-detail-breakpoint="960" :animate="themeOptions.pageTransitionAnimation !== 'disabled'" :push-state="true" stat/>
-    
+    <f7-view main v-show="ready" class="safe-areas" url="/" :master-detail-breakpoint="960" :animate="themeOptions.pageTransitionAnimation !== 'disabled'" :push-state="true" stat />
   </f7-app>
 </template>
 
@@ -332,7 +328,7 @@ export default {
         // App routes
         routes,
         router: {
-//          pushState: true,
+          //          pushState: true,
         },
         pushState: true,
         pushStateSeparator: '/',

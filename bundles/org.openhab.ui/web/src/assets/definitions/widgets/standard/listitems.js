@@ -60,7 +60,6 @@ export const OhMediaBrowserItemDefinition = () => new WidgetDefinition('oh-media
     pi('trackItem', 'Track Item', 'Item holding the track name')
   ])
 
-    
 // OhPlayerItem
 import PlayerParameters from '../system/player.js'
 export const OhPlayerItemDefinition = () => new WidgetDefinition('oh-player-item', 'Player List Item', 'Display player controls in a list')

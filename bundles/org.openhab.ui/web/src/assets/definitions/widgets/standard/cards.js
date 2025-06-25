@@ -57,7 +57,6 @@ export const OhColorpickerCardDefinition = () => new WidgetDefinition('oh-colorp
   .paramGroup(CardParameterGroup(), CardParameters())
   .paramGroup(pg('colorpicker', 'Color picker'), ColorPickerParameters())
 
-  
 // OhMediaBrowserCard
 import MediaBrowserParameters from '../system/mediabrowser.js'
 export const OhMediaBrowserCardDefinition = () => new WidgetDefinition('oh-media-browser-card', 'Media Browser Card', 'Display media browser controls in a card')

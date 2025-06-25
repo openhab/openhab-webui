@@ -61,8 +61,8 @@ export const OhListDefinition = () => new WidgetDefinition('oh-list', 'List', 'L
   .params(ListParameters())
 
 import MediaBrowserParameters from './mediabrowser.js'
-  export const OhMediaBrowserDefinition = () => new WidgetDefinition('oh-media-browser', 'Media browser', 'Media browser controls, with previous track/pause/play/next buttons/title selection')
-    .params(MediaBrowserParameters())
+export const OhMediaBrowserDefinition = () => new WidgetDefinition('oh-media-browser', 'Media browser', 'Media browser controls, with previous track/pause/play/next buttons/title selection')
+  .params(MediaBrowserParameters())
 
 import PlayerParameters from './player.js'
 export const OhPlayerDefinition = () => new WidgetDefinition('oh-player', 'Media player', 'Media player controls, with previous track/pause/play/next buttons')
