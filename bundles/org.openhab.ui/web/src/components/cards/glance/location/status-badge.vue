@@ -135,7 +135,7 @@ export default {
           allPoints = allEquipmentPoints(equipment)
           points = [
             ...findPoints(allPoints, 'Point_Status', false),
-            ...findPoints(allPoints, 'Point_Control', true)
+            ...findPoints(allPoints, 'Point_Control', true),
             ...findPoints(allPoints, 'Point_Switch', false)
           ]
           if (points.length) return points
@@ -149,7 +149,7 @@ export default {
           allPoints = allEquipmentPoints(equipment)
           points = [
             ...findPoints(allPoints, 'Point_Status', false, 'Property_Power'),
-            ...findPoints(allPoints, 'Point_Control', true, 'Property_Power')
+            ...findPoints(allPoints, 'Point_Control', false, 'Property_Power'),
             ...findPoints(allPoints, 'Point_Switch', false, 'Property_Power')
           ]
           if (points.length) return points
@@ -165,7 +165,7 @@ export default {
           allPoints = allEquipmentPoints(equipment)
           points = [
             ...findPoints(allPoints, 'Point_Status', false, 'Property_Power'),
-            ...findPoints(allPoints, 'Point_Control', true, 'Property_Power')
+            ...findPoints(allPoints, 'Point_Control', false, 'Property_Power'),
             ...findPoints(allPoints, 'Point_Switch', false, 'Property_Power')
           ]
           if (points.length) return points
@@ -176,7 +176,7 @@ export default {
           allPoints = allEquipmentPoints(equipment)
           points = [
             ...findPoints(allPoints, 'Point_Status', false, 'Property_Power'),
-            ...findPoints(allPoints, 'Point_Control', true, 'Property_Power')
+            ...findPoints(allPoints, 'Point_Control', false, 'Property_Power'),
             ...findPoints(allPoints, 'Point_Switch', false, 'Property_Power')
           ]
           if (points.length) return points
