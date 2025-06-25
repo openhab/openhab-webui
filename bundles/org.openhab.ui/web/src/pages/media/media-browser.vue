@@ -8,7 +8,6 @@
       </f7-nav-right>
     </f7-navbar>
 
-    {{  this.$oh }}
     <div style="display: flex; flex-direction: row; flex-wrap: nowrap; ">
       <div v-for="componentPath in currentPathSegments" style="padding:5px;" v-bind:key="componentPath.path">
         <f7-link :href="`/mediabrowser/?path=` + componentPath.path + `&item=` + item + `&device=` + device">
