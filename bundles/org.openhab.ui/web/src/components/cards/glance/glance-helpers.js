@@ -4,12 +4,11 @@
  * @param {String} parent the potential parent tag
  * @returns true if tag is a child of parent
  */
-export function isChildOf(tag, parent) {
-return (!tag || tag.trim() === "") ? false
-      : tag.indexOf(parent) !== 0   ? false
+export function isChildOf (tag, parent) {
+  return (!tag || tag.trim() === '') ? false
+    : tag.indexOf(parent) !== 0 ? false
       : tag.length === parent.length ? true
-      : tag.charAt(parent.length) === '_' ? true
-      : false;
+        : tag.charAt(parent.length) === '_'
 }
 
 /**
