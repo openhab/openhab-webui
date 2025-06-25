@@ -5,11 +5,11 @@
  * @returns true if tag is a child of parent
  */
 export function isChildOf(tag, parent) {
-    if (!tag || tag.trim() === "") return false;
-    if (tag.indexOf(parent) !== 0) return false;
-    if (tag.length === parent.length) return true;
-    if (tag.charAt(parent.length) === '_') return true;
-    return false;
+return (!tag || tag.trim() === "") ? false
+      : tag.indexOf(parent) !== 0   ? false
+      : tag.length === parent.length ? true
+      : tag.charAt(parent.length) === '_' ? true
+      : false;
 }
 
 /**
