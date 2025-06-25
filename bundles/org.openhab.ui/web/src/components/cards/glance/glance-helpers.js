@@ -1,14 +1,14 @@
 /**
  * Check if the given semantic tag is a child of the given potential parent tag
- * @param {String} tag the tag to be checked whether it is a child of parent
- * @param {String} parent the potential parent tag
+ * @param {String} semanticTagValue the tag to be checked whether it is a child of parent
+ * @param {String} potentialSemanticTagParent the potential parent tag
  * @returns true if tag is a child of parent
  */
-export function isChildOf (tag, parent) {
-  return (!tag || tag.trim() === '') ? false
-    : tag.indexOf(parent) !== 0 ? false
-      : tag.length === parent.length ? true
-        : tag.charAt(parent.length) === '_'
+export function isChildOf (semanticTagValue, potentialSemanticTagParent) {
+  return (!semanticTagValue || semanticTagValue.trim() === '') ? false
+    : semanticTagValue.indexOf(potentialSemanticTagParent) !== 0 ? false
+      : semanticTagValue.length === potentialSemanticTagParent.length ? true
+        : semanticTagValue.charAt(potentialSemanticTagParent.length) === '_'
 }
 
 /**
