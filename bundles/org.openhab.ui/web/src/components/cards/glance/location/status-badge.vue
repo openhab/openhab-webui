@@ -136,12 +136,13 @@ export default {
           points = [
             ...findPoints(allPoints, 'Point_Status', false),
             ...findPoints(allPoints, 'Point_Control', true)
+            ...findPoints(allPoints, 'Point_Switch', false)
           ]
           if (points.length) return points
           return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
         case 'screens':
           equipment = [
-            ...findEquipment(this.element.equipment, 'Equipment_AudioVisual_Display', true),
+            ...findEquipment(this.element.equipment, 'Equipment_AudioVisual_Display_Television', true),
             ...findEquipment(this.element.equipment, 'Equipment_AudioVisual_Screen', true)
           ]
           if (!equipment.length) return []
@@ -149,6 +150,7 @@ export default {
           points = [
             ...findPoints(allPoints, 'Point_Status', false, 'Property_Power'),
             ...findPoints(allPoints, 'Point_Control', true, 'Property_Power')
+            ...findPoints(allPoints, 'Point_Switch', false, 'Property_Power')
           ]
           if (points.length) return points
           return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
@@ -164,6 +166,7 @@ export default {
           points = [
             ...findPoints(allPoints, 'Point_Status', false, 'Property_Power'),
             ...findPoints(allPoints, 'Point_Control', true, 'Property_Power')
+            ...findPoints(allPoints, 'Point_Switch', false, 'Property_Power')
           ]
           if (points.length) return points
           return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
@@ -174,6 +177,7 @@ export default {
           points = [
             ...findPoints(allPoints, 'Point_Status', false, 'Property_Power'),
             ...findPoints(allPoints, 'Point_Control', true, 'Property_Power')
+            ...findPoints(allPoints, 'Point_Switch', false, 'Property_Power')
           ]
           if (points.length) return points
           return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
