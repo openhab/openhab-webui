@@ -15,6 +15,7 @@
      {{  device }}
      <br/>
 
+<<<<<<< HEAD
      <div style="display: flex; flex-direction: row; flex-wrap: nowrap; ">
      <div v-for="componentPath in currentPathSegments" style="padding:5px;">
       <f7-link :href="`/mediabrowser/?path=` + componentPath.path + `&item=` + item + `&device=` + device" >{{  componentPath.name }}</f7-link> >
@@ -23,6 +24,18 @@
     
     <br/>
     
+=======
+    <div style="display: flex; flex-direction: row; flex-wrap: nowrap; ">
+      <div v-for="componentPath in currentPathSegments" style="padding:5px;" v-bind:key="componentPath.path">
+        <f7-link :href="`/mediabrowser/?path=` + componentPath.path + `&item=` + item + `&device=` + device">
+          {{ componentPath.name }}
+        </f7-link> >
+      </div>
+    </div>
+
+    <br>
+
+>>>>>>> a90567ce (remove debug info)
     <div v-if="node">
       <div v-if="node.pres==='flat'">
           <div style=" display: grid;grid-template-columns: 220px 1fr;width:50%;"> 
