@@ -1,11 +1,25 @@
 /**
+ * Check if the given semantic tag is a child of the given potential parent tag
+ * @param {String} tag the tag to be checked whether it is a child of parent
+ * @param {String} parent the potential parent tag
+ * @returns true if tag is a child of parent
+ */
+export function isChildOf(tag, parent) {
+    if (!tag || tag.trim() === "") return false;
+    if (tag.indexOf(parent) !== 0) return false;
+    if (tag.length === parent.length) return true;
+    if (tag.charAt(parent.length) === '_') return true;
+    return false;
+}
+
+/**
  * Retrieves equipment based on their semantic class
  * @param {Array} arr the array of equipment items & points to search
  * @param {String} value the semantic class (value) to find
  * @param {Boolean} partial match subclasses
  */
 export function findEquipment (arr, value, partial) {
-  return arr.filter((e) => (partial) ? e.item.metadata.semantics.value.indexOf(value) === 0 : e.item.metadata.semantics.value === value)
+  return arr.filter((e) => (partial) ? isChildOf(e.item.metadata.semantics.value, value) : e.item.metadata.semantics.value === value)
 }
 
 /**
@@ -25,7 +39,7 @@ export function allEquipmentPoints (equipment) {
  * @param {Boolean} children match child properties
  */
 export function findPoints (arr, value, partial, property, children) {
-  const points = arr.filter((p) => (partial) ? p.metadata.semantics.value.indexOf(value) === 0 : p.metadata.semantics.value === value)
+  const points = arr.filter((p) => (partial) ? isChildOf(p.metadata.semantics.value, value) : p.metadata.semantics.value === value)
   if (!property) return points
-  return points.filter((p) => (children) ? p.metadata.semantics.config.relatesTo.indexOf(property) === 0 : p.metadata.semantics.config.relatesTo === property)
+  return points.filter((p) => (children) ? isChildOf(p.metadata.semantics.config.relatesTo, property) : p.metadata.semantics.config.relatesTo === property)
 }
