@@ -22,9 +22,10 @@ export function allEquipmentPoints (equipment) {
  * @param {String} value the semantic class (value) to find
  * @param {Boolean} partial match subclasses
  * @param {String} property return only points also related to this property
+ * @param {Boolean} children match child properties
  */
-export function findPoints (arr, value, partial, property) {
+export function findPoints (arr, value, partial, property, children) {
   const points = arr.filter((p) => (partial) ? p.metadata.semantics.value.indexOf(value) === 0 : p.metadata.semantics.value === value)
   if (!property) return points
-  return points.filter((p) => p.metadata.semantics.config.relatesTo === property)
+  return points.filter((p) => (children) ? p.metadata.semantics.config.relatesTo.indexOf(property) === 0 : p.metadata.semantics.config.relatesTo === property)
 }

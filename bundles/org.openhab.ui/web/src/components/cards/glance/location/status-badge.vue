@@ -81,7 +81,7 @@ export default {
           equipment = findEquipment(this.element.equipment, 'Equipment_Window', false)
           if (!equipment.length) return []
           allPoints = allEquipmentPoints(equipment)
-          points = findPoints(allPoints, 'Point', true, 'Property_Opening')
+          points = findPoints(allPoints, 'Point', true, 'Property_Opening', true)
           if (points.length) return points
           return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
         case 'doors':
@@ -95,21 +95,21 @@ export default {
           ]
           if (!equipment.length) return []
           allPoints = allEquipmentPoints(equipment)
-          points = findPoints(allPoints, 'Point', true, 'Property_Opening')
+          points = findPoints(allPoints, 'Point', true, 'Property_Opening', true)
           if (points.length) return points
           return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
         case 'garagedoors':
           equipment = findEquipment(this.element.equipment, 'Equipment_Door_GarageDoor', false)
           if (!equipment.length) return []
           allPoints = allEquipmentPoints(equipment)
-          points = findPoints(allPoints, 'Point', true, 'Property_Opening')
+          points = findPoints(allPoints, 'Point', true, 'Property_Opening', true)
           if (points.length) return points
           return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
         case 'blinds':
           equipment = findEquipment(this.element.equipment, 'Equipment_WindowCovering', true)
           if (!equipment.length) return []
           allPoints = allEquipmentPoints(equipment)
-          points = findPoints(allPoints, 'Point', true, 'Property_Opening')
+          points = findPoints(allPoints, 'Point', true, 'Property_Opening', true)
           if (points.length) return points
           return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
         case 'presence':
@@ -126,7 +126,7 @@ export default {
           equipment = findEquipment(this.element.equipment, 'Equipment_Lock', false)
           if (!equipment.length) return []
           allPoints = allEquipmentPoints(equipment)
-          points = findPoints(allPoints, 'Point', true, 'Property_Opening')
+          points = findPoints(allPoints, 'Point', true, 'Property_Opening', true)
           if (points.length) return points
           return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
         case 'climate':
