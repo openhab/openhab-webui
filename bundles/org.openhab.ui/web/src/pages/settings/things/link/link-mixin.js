@@ -11,6 +11,7 @@ export default {
     itemTypeCompatibleWithChannelType (item, channel) {
       if (!channel || !channel.itemType) return true
       if (!item || !item.type) return true
+      if (channel.itemType === 'Dimmer' && ['Switch', 'Dimmer'].includes(item.type)) return true
       if (channel.itemType === 'Color' && ['Color', 'Switch', 'Dimmer'].includes(item.type)) return true
       if (item.type === 'String') return true
       if (channel.itemType.startsWith('Number')) {
