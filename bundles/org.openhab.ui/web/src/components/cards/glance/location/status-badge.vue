@@ -211,13 +211,11 @@ export default {
       }
     },
     queryLightPoints () {
-      // First look for a switch, if one found ignore possible dimmer or color which would have a Point_Control tag other than Point_Control_Switch
-      let points = findPoints(this.element.properties, 'Point_Control_Switch', false, 'Property_Light')
-      if (points.length) return points
-      // Then look for any light control (could be dimmer or color)
-      points = findPoints(this.element.properties, 'Point_Control', true, 'Property_Light')
-      if (points.length) return points
-      // Repeat this for equipments on the location
+      // Look for all control points on the location with light property
+      // Warning, this leads to double counting if 2 items linked to the same tag are tagged (e.g. a switch and a dimmer item)
+      let points = findPoints(this.element.properties, 'Point_Control', true, 'Property_Light')
+       if (points.length) return points
+      // Repeat this for equipments on the location, but this time, as it is an equipment, assume it only represents one light and we default to the switch
       return this.element.equipment.map((e) => {
         let equipmentPoints = findPoints(e.points, 'Point_Control_Switch', false, 'Property_Light')
         if (equipmentPoints.length) return equipmentPoints
