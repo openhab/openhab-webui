@@ -213,18 +213,22 @@ export default {
       const points = []
       points.push(...findPoints(this.element.properties, 'Point_Control', true, 'Property_Light'))
       // Repeat this for equipments on the location, but this time, as it is an equipment, assume it only represents one light and we default to the switch
-      points.push(...this.element.equipment.map((e) => {
-        let equipmentPoints = findPoints(e.points, 'Point_Control_Switch', false, 'Property_Light')
-        if (equipmentPoints.length) return equipmentPoints
-        return findPoints(e.points, 'Point_Control', true, 'Property_Light')
-      }).flat())
-      // Next specifically look for Equipment_LightSource and its points, even when no light property
       let equipment = findEquipment(this.element.equipment, 'Equipment_LightSource', true)
-      points.push(...equipment.map((e) => {
-        // First try a switch, then any point
-        let equipmentPoints = findPoints(e.points, 'Point_Control_Switch', false)
-        if (equipmentPoints.length) return equipmentPoints
-        return findPoints(e.points, 'Point_Control', true)
+      points.push(...this.element.equipment.map((e) => {
+        const isLightSource = equipment.includes(e) // for light source equipment we look beyond property light
+        let equipmentPoints = findPoints(e.points, 'Point_Control_Switch', false, 'Property_Light')
+        if (equipmentPoints.length) return equipmentPoints.slice(0, 1)
+        if (isLightSource) {
+          equipmentPoints = findPoints(e.points, 'Point_Control_Switch', false)
+          if (equipmentPoints.length) return equipmentPoints.slice(0, 1)
+        }
+        equipmentPoints = findPoints(e.points, 'Point_Control', true, 'Property_Light')
+        if (equipmentPoints.length) return equipmentPoints.slice(0, 1)
+        if (isLightSource) {
+          equipmentPoints = findPoints(e.points, 'Point_Control', false)
+          if (equipmentPoints.length) return equipmentPoints.slice(0, 1)
+        }
+        return []
       }).flat())
       // Return a unique list
       if (points.length) return Array.from(new Set(points))
