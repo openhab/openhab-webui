@@ -209,7 +209,6 @@ export default {
     },
     queryLightPoints () {
       // Look for all control points on the location with light property
-      // Warning, this leads to double counting if 2 items linked to the same tag are tagged (e.g. a switch and a dimmer item)
       const points = []
       points.push(...findPoints(this.element.properties, 'Point_Control', true, 'Property_Light'))
       // Repeat this for equipments on the location, but this time, as it is an equipment, assume it only represents one light and we default to the switch
