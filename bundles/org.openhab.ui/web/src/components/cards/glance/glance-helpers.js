@@ -1,6 +1,6 @@
 /**
  * Check if the given semantic value is a child of the given potential parent semantic value
- * @param {String} semanticValue the vaue to be checked whether it is a child of the parent value
+ * @param {String} semanticValue the value to be checked whether it is a child of the parent value
  * @param {String} potentialSemanticParent the potential parent semantic value
  * @returns true if semanticValue is a child of potentialSemanticParent
  */
