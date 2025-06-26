@@ -1,6 +1,6 @@
 <template>
-  <f7-page class="media-content" >
-    <f7-navbar title="MediaBrowser" back-link="Back">
+  <f7-page >
+    <f7-navbar title="MediaBrowser" back-link="Back" style="min-height:50px;">
       <f7-nav-right>
         <f7-button popup-close>
           Close
@@ -8,73 +8,89 @@
       </f7-nav-right>
     </f7-navbar>
 
-    <div style="display: flex; flex-direction: row; flex-wrap: nowrap; ">
-      <div v-for="componentPath in currentPathSegments" style="padding:5px;" v-bind:key="componentPath.path">
-        <f7-link :href="`/mediabrowser/?path=` + componentPath.path + `&item=` + item + `&device=` + device">
-          {{ componentPath.name }}
-        </f7-link> >
-      </div>
-    </div>
-    <br>
-
-    <div v-if="node">
-      <div v-if="node.pres==='flat'">
-        <div style=" display: grid;grid-template-columns: 220px 1fr;width:50%;">
-          <div style="grid-column: 1;">
-            <img :src="node.artUri" width="200">
+    <div class="page-content infinite-scroll-content"  infinite :infinite-distance="50" :infinite-preloader="showPreloader" @infinite="loadMore" style="margin-top:10px;padding:0px;height:calc(100vh - 50px - 150px);">
+      <div v-if="node">
+        <!--
+        Display a naviation bar to navigate media hierarchy.
+        -->
+        <div style="display: flex; flex-direction: row; flex-wrap: nowrap; ">
+          <div v-for="componentPath in currentPathSegments" style="padding:5px;" v-bind:key="componentPath.path">
+            <f7-link :href="`/mediabrowser/?path=` + componentPath.path + `&item=` + item + `&device=` + device">
+              {{ componentPath.name }}
+            </f7-link> >
           </div>
-          <div style="grid-column: 2;text-align:left;">
-            <p style="font-size:20pt; font-weight:bold;">
-              {{ node.label }}
-            </p>
-            <f7-button small outline :fill="true" style="background-color:#9090c0;width: 120px;height:32px;font-weight:bold;padding:2px;padding-left:10px;text-align:left;border:none 0px;" @click="doPlay(item, node.path)" icon-material="play_arrow" large icon-size="24">
-              Play
-            </f7-button>
-            <br>
-            <f7-button small outline :fill="true" style="background-color:#9090c0;width: 120px;height:32px;font-weight:bold;padding:2px;padding-left:10px;text-align:left;border:none 0px;" @click="doEnqueue(item, node.path)"
-                       icon-material="playlist_add" large icon-size="24">
-              Enqueue
-            </f7-button>
-          </div>
-          <br>
-          <hr>
-          <br>
-        </div>
-        <hr>
-        <div v-for="r1 in node.childs" style="display: inline;clear:both;" :class="{ 'sheet-opened': controlsOpened }" v-bind:key="r1.path">
-          <f7-link :href="`/mediabrowser/?path=` + r1.path + `&item=` + item + `&device=` + device" :data-reload="true" :reload-current="true" :reload-detail="true">
-            <f7-button outline style="height:30px;font-weight:bold;padding:2px;padding-left:30px;text-align:left;border:none 0px;" @click="doPlay(item, r1.path)" icon-material="play_arrow" small icon-size="24">
-              Play
-            </f7-button>
-            <f7-button outline style="height:30px;font-weight:bold;padding:2px;padding-left:30px;text-align:left;border:none 0px;" @click="doEnqueue(item, r1.path)" icon-material="playlist_add" small icon-size="24">
-              Enqueue
-            </f7-button>
-            <div style="padding-left:30px;color:black">
-              {{ r1.label }}
-            </div>
-          </f7-link>
-          <br>
         </div>
         <br>
-      </div>
-      <div v-else>
-        <div v-for="r1 in node.childs" style="width:200px;height:200px;position:relative;float:left;margin:20px;background-color:#ffffff;color:#000000;border:solid 1px;border-radius:10px;padding:10px;" v-bind:key="r1.path">
-          <f7-link :href="`/mediabrowser/?path=` + r1.path + `&item=` + item + `&device=` + device">
-            <div id="container" style="position:relative">
-              <div style="text-align:center;position:absolute;top:-10px;width:200px;">
-                {{ r1.label }}
-              </div>
-              <div style="text-align:center;width:200px;position:absolute;top:10px;">
-                <img width="160" height="160" :src="r1.artUri">
-              </div>
+
+        <!--
+        Flat presentation for Album, Playlist:
+        Display a header with the cover, title, Play and enqueue buttons
+        and then a list of tracks or items in the collection.
+        -->
+        <div v-if="node.pres==='flat'">
+          <!-- Headers -->
+          <div style=" display: grid;grid-template-columns: 220px 1fr;width:50%;">
+            <div style="grid-column: 1;">
+              <img :src="node.artUri" width="200">
             </div>
-          </f7-link>
+            <div style="grid-column: 2;text-align:left;">
+              <p style="font-size:20pt; font-weight:bold;">
+                {{ node.label }}
+              </p>
+              <f7-button small outline :fill="true" style="background-color:#9090c0;width: 120px;height:32px;font-weight:bold;padding:2px;padding-left:10px;text-align:left;border:none 0px;" @click="doPlay(item, node.path)" icon-material="play_arrow" large icon-size="24">
+                Play
+              </f7-button>
+              <br>
+              <f7-button small outline :fill="true" style="background-color:#9090c0;width: 120px;height:32px;font-weight:bold;padding:2px;padding-left:10px;text-align:left;border:none 0px;" @click="doEnqueue(item, node.path)"
+                    icon-material="playlist_add" large icon-size="24">
+                Enqueue
+              </f7-button>
+            </div>
+            <br>
+            <hr>
+            <br>
+          </div>
+          <hr>
+          <!-- Track list -->
+          <div v-for="child in items" style="display: inline;clear:both;" :class="{ 'sheet-opened': controlsOpened }" v-bind:key="child.path">
+            <f7-link :href="`/mediabrowser/?path=` + child.path + `&item=` + item + `&device=` + device" :data-reload="true" :reload-current="true" :reload-detail="true">
+              <f7-button outline style="height:30px;font-weight:bold;padding:2px;padding-left:30px;text-align:left;border:none 0px;" @click="doPlay(item, child.path)" icon-material="play_arrow" small icon-size="24">
+                Play
+              </f7-button>
+              <f7-button outline style="height:30px;font-weight:bold;padding:2px;padding-left:30px;text-align:left;border:none 0px;" @click="doEnqueue(item, child.path)" icon-material="playlist_add" small icon-size="24">
+                Enqueue
+              </f7-button>
+              <div style="padding-left:30px;color:black">
+                {{ child.label }}
+              </div>
+            </f7-link>
+            <br>
+          </div>
+          <br>
+        </div>
+          <!--
+        Thumb presentation for Collection (Albums, Artists lists)
+        Display a thumbnail for each entry with the coverArt and title,
+        -->
+        <div v-else>
+          <div v-for="child in items" style="width:200px;height:200px;position:relative;float:left;margin:20px;background-color:#ffffff;color:#000000;border:solid 1px;border-radius:10px;padding:10px;" v-bind:key="child.path">
+            <f7-link :href="`/mediabrowser/?path=` + child.path + `&item=` + item + `&device=` + device">
+              <div id="container" style="position:relative">
+                <div style="text-align:center;position:absolute;top:-10px;width:200px;">
+                  {{ child.label }}
+                </div>
+                <div style="text-align:center;width:200px;position:absolute;top:10px;">
+                  <img width="160" height="160" :src="child.artUri">
+                </div>
+              </div>
+            </f7-link>
+          </div>
         </div>
       </div>
     </div>
 
-    <f7-toolbar bottom style="min-height: 150px;padding:0px;margin:0px;">
-      <div v-if="false" style="display: flex; align-items: center; justify-content:left;padding:0px;margin:0px;">
+    <f7-toolbar v-if="true" bottom style="min-height: 150px;padding:0px;margin:0px;">
+      <div v-if="true" style="display: flex; align-items: center; justify-content:left;padding:0px;margin:0px;">
           <div style="margin:0px;padding:0px;">
             <img src="/static/Heos.png" style="width: 150px; height: 150px; margin:0px;padding:0px;" />
           </div>
@@ -103,6 +119,7 @@
           </div>
       </div>
     </f7-toolbar>
+
   </f7-page>
 </template>
 
@@ -141,49 +158,18 @@ export default {
     this.path = '/Root'
     //        this.path='/Root/Spotify/Playlists/spotify:playlist:5Z4AD0u9fwnvtsj7ce5ZLS';
 
-    if (this.$f7route.query.path && !this.$f7route.query.path.startsWith('/page/')) {
-      this.path = this.$f7route.query.path
-    }
-
-    console.log('MediaBrowser path: ' + this.path)
-
-    this.$oh.api.get('/rest/media/sources?path=' + this.path).then((data) => {
-      console.log('Data')
-      this.node = data 
-      this.node.pres = 'thumb'
-
-      var idForMap = data.id;
-      if (idForMap.endsWith('/t') ||
-      idForMap.endsWith('/a') || idForMap.endsWith('/l') || idForMap.endsWith('/g') || idForMap.endsWith('/m') || idForMap.endsWith('/n')) {
-        idForMap = idForMap.substring(0, idForMap.length - 2)
-      }
-      this.$store.commit('setMapping', { key: idForMap, value: data.label } );
-    
-      for (let i = 0; i < data.childs.length; i++) {
-        const child = data.childs[i]
-        //console.log('Child: ' + child.path + ' - ' + child.id + ' - ' + child.label)
-        //this.mapping[child.id] = child.label
-      }
-      if (this.node.type === 'org.openhab.core.media.model.MediaAlbum') { this.node.pres = 'flat' }
-      if (this.node.type === 'org.openhab.core.media.model.MediaPlayList') { this.node.pres = 'flat' }
-      if (this.node.type === 'org.openhab.core.media.model.MediaCollection' && this.containsTrack(data)) { this.node.pres = 'flat' }
-      if (this.node.label === 'TopTracks') { this.node.pres = 'flat' }
-
-      console.log("========================================")
-      Object.entries(this.$store.state.media.mappings).forEach(([key, value]) => {
-        console.log(`Key: ${key}, Value: ${value}`);
-      });
-      console.log("========================================")
-    
-    })
- 
-    
+    //this.loadInitialItems()
 
     return {
-      node: this.node,
+      node : null,
       controlsOpened: true,
-      item: this.item,
-      device: this.device
+      items: [],
+      device: this.device,
+      allowInfinite: true,
+      showPreloader: true,
+      lastItemIndex: 0,
+      itemsPerLoad: 20,
+      size:100,
     }
   },
   computed: {
@@ -241,11 +227,92 @@ export default {
         console.log('child:' + child.type);
         return child.type === 'org.openhab.core.media.model.MediaTrack'
       })
+    },
+    loadInitialItems () {
+      if (this.$f7route.query.path && !this.$f7route.query.path.startsWith('/page/')) {
+        this.path = this.$f7route.query.path
+      }
+
+      console.log('MediaBrowser path: ' + this.path)
+
+      this.$oh.api.get('/rest/media/sources?path=' + this.path + '&start=0&size=' + this.size).then((data) => {
+        console.log('Data')
+        this.node = data 
+        this.node.pres = 'thumb'
+
+        var idForMap = data.id;
+        if (idForMap.endsWith('/t') ||
+            idForMap.endsWith('/a') || 
+            idForMap.endsWith('/l') || 
+            idForMap.endsWith('/g') || 
+            idForMap.endsWith('/m') || 
+            idForMap.endsWith('/n')) {
+          idForMap = idForMap.substring(0, idForMap.length - 2)
+        }
+        this.$store.commit('setMapping', { key: idForMap, value: data.label } );
+      
+        for (let i = 0; i < data.childs.length; i++) {
+          const child = data.childs[i]
+          this.items.push(child)
+        }
+        this.lastItemIndex = this.items.length;
+
+        if (this.node.type === 'org.openhab.core.media.model.MediaAlbum') { this.node.pres = 'flat' }
+        if (this.node.type === 'org.openhab.core.media.model.MediaPlayList') { this.node.pres = 'flat' }
+        if (this.node.type === 'org.openhab.core.media.model.MediaCollection' && this.containsTrack(data)) { this.node.pres = 'flat' }
+        if (this.node.label === 'TopTracks') { this.node.pres = 'flat' }
+      })
+    },
+    loadMore () {
+      console.log("============= LoadMore ===========================")
+      console.log("this.loading: " + this.loading)
+      console.log("this.allowInfinite: " + this.allowInfinite)
+      if (this.loading || !this.allowInfinite) {
+        console.log("==> returning because loading or no infinite")
+        return;
+      }
+
+      this.loading = true;
+
+
+      this.$oh.api.get('/rest/media/sources?path=' + this.path + '&start=' + this.lastItemIndex + '&size=' + this.size).then((data) => {
+        console.log('Data')
+        this.node = data 
+        this.node.pres = 'thumb'
+
+        var idForMap = data.id;
+        if (idForMap.endsWith('/t') ||
+            idForMap.endsWith('/a') || 
+            idForMap.endsWith('/l') || 
+            idForMap.endsWith('/g') || 
+            idForMap.endsWith('/m') || 
+            idForMap.endsWith('/n')) {
+            idForMap = idForMap.substring(0, idForMap.length - 2)
+        }
+        this.$store.commit('setMapping', { key: idForMap, value: data.label } );
+      
+        for (let i = 0; i < data.childs.length; i++) {
+            const child = data.childs[i]
+            this.items.push(child)
+        }
+        this.lastItemIndex = this.items.length;
+        
+
+        if (this.node.type === 'org.openhab.core.media.model.MediaAlbum') { this.node.pres = 'flat' }
+        if (this.node.type === 'org.openhab.core.media.model.MediaPlayList') { this.node.pres = 'flat' }
+        if (this.node.type === 'org.openhab.core.media.model.MediaCollection' && this.containsTrack(data)) { this.node.pres = 'flat' }
+        if (this.node.label === 'TopTracks') { this.node.pres = 'flat' }
+
+        console.log("============== End Load ==========================")
+        this.loading = false;
+      })
+
     }
   },
   created () {
   },
   mounted () {
+    this.loadInitialItems();
   }
 
 }
