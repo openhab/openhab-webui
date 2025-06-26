@@ -78,7 +78,7 @@ export default {
         case 'lights':
           return [
             ...this.queryLightPoints,
-            ...this.queryLightEquipment()
+            ...this.queryLightEquipment
           ]
         case 'windows':
           equipment = findEquipment(this.element.equipment, 'Equipment_Window', false)
@@ -144,7 +144,7 @@ export default {
           return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
         case 'screens':
           equipment = [
-            ...findEquipment(this.element.equipment, 'Equipment_AudioVisual_Display_Television', false),
+            ...findEquipment(this.element.equipment, 'Equipment_AudioVisual_Display', true),
             ...findEquipment(this.element.equipment, 'Equipment_AudioVisual_Screen', false)
           ]
           if (!equipment.length) return []
@@ -192,7 +192,7 @@ export default {
       return this.query.map((item) => this.store[item.name].state)
     },
     reduce () {
-      const ast = this.overrideExpression()
+      const ast = this.overrideExpression
       if (ast) {
         return this.map.filter((state) => expr.evaluate(ast, { state, Number })).length
       }
@@ -210,12 +210,32 @@ export default {
       }
     },
     queryLightPoints () {
-      let direct = findPoints(this.element.properties, 'Point', true, 'Property_Light')
-      if (direct.length) return direct
-      return findPoints(allEquipmentPoints(this.element.equipment), 'Point', true, 'Property_Light')
-    }
-  },
-  methods: {
+      // First look for a switch, if one found ignore possible dimmer or color which would have a Point_Control tag other than Point_Control_Switch
+      let points = findPoints(this.element.properties, 'Point_Control_Switch', false, 'Property_Light')
+      if (points.length) return points
+      // Then look for any light control (could be dimmer or color)
+      points = findPoints(this.element.properties, 'Point_Control', true, 'Property_Light')
+      if (points.length) return points
+      // Repeat this for equipments on the location
+      return this.element.equipment.map((e) => {
+        let equipmentPoints = findPoints(e.points, 'Point_Control_Switch', false, 'Property_Light')
+        if (equipmentPoints.length) return equipmentPoints
+        return findPoints(e.points, 'Point_Control', true, 'Property_Light')
+      }).flat()
+    },
+    queryLightEquipment () {
+      let equipment = findEquipment(this.element.equipment, 'Equipment_LightSource', true)
+      if (!equipment.length) return []
+      let points = equipment.map((e) => {
+        // First try a switch, then any point
+        let equipmentPoints = findPoints(e.points, 'Point_Control_Switch', false)
+        if (equipmentPoints.length) return equipmentPoints
+        return findPoints(e.points, 'Point_Control', true)
+      }).flat()
+      if (points.length) return points
+      // If there are no points, use the equipment item itself
+      return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
+    },
     overrideExpression () {
       if (this.badgeOverrides && !this.exprAst) {
         const override = this.badgeOverrides[this.type]
@@ -224,14 +244,6 @@ export default {
         }
       }
       return this.exprAst
-    },
-    queryLightEquipment () {
-      let equipment = findEquipment(this.element.equipment, 'Equipment_LightSource', true)
-      if (!equipment.length) return []
-      let allPoints = allEquipmentPoints(equipment)
-      let points = findPoints(allPoints, 'Point_Control_Switch', false)
-      if (points.length) return points
-      return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
     }
   }
 }
