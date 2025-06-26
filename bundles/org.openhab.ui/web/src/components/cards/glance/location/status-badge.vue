@@ -76,7 +76,10 @@ export default {
           if (direct.length) return direct
           return findPoints(allEquipmentPoints(this.element.equipment), 'Point', true, 'Property_LowBattery')
         case 'lights':
-          return [...this.queryLightPoints, ...this.queryLightEquipment('Equipment_LightSource')]
+          return [
+            ...this.queryLightPoints,
+            ...this.queryLightEquipment()
+          ]
         case 'windows':
           equipment = findEquipment(this.element.equipment, 'Equipment_Window', false)
           if (!equipment.length) return []
@@ -134,23 +137,21 @@ export default {
           if (!equipment.length) return []
           allPoints = allEquipmentPoints(equipment)
           points = [
-            ...findPoints(allPoints, 'Point_Status', false),
-            ...findPoints(allPoints, 'Point_Control', true),
-            ...findPoints(allPoints, 'Point_Switch', false)
+            ...findPoints(allPoints, 'Point_Status', false, 'Property_Power'),
+            ...findPoints(allPoints, 'Point_Control', true, 'Property_Power')
           ]
           if (points.length) return points
           return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
         case 'screens':
           equipment = [
-            ...findEquipment(this.element.equipment, 'Equipment_AudioVisual_Display_Television', true),
-            ...findEquipment(this.element.equipment, 'Equipment_AudioVisual_Screen', true)
+            ...findEquipment(this.element.equipment, 'Equipment_AudioVisual_Display_Television', false),
+            ...findEquipment(this.element.equipment, 'Equipment_AudioVisual_Screen', false)
           ]
           if (!equipment.length) return []
           allPoints = allEquipmentPoints(equipment)
           points = [
             ...findPoints(allPoints, 'Point_Status', false, 'Property_Power'),
-            ...findPoints(allPoints, 'Point_Control', false, 'Property_Power'),
-            ...findPoints(allPoints, 'Point_Switch', false, 'Property_Power')
+            ...findPoints(allPoints, 'Point_Control', true, 'Property_Power')
           ]
           if (points.length) return points
           return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
@@ -165,8 +166,7 @@ export default {
           allPoints = allEquipmentPoints(equipment)
           points = [
             ...findPoints(allPoints, 'Point_Status', false, 'Property_Power'),
-            ...findPoints(allPoints, 'Point_Control', false, 'Property_Power'),
-            ...findPoints(allPoints, 'Point_Switch', false, 'Property_Power')
+            ...findPoints(allPoints, 'Point_Control', true, 'Property_Power')
           ]
           if (points.length) return points
           return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
@@ -176,8 +176,7 @@ export default {
           allPoints = allEquipmentPoints(equipment)
           points = [
             ...findPoints(allPoints, 'Point_Status', false, 'Property_Power'),
-            ...findPoints(allPoints, 'Point_Control', false, 'Property_Power'),
-            ...findPoints(allPoints, 'Point_Switch', false, 'Property_Power')
+            ...findPoints(allPoints, 'Point_Control', true, 'Property_Power')
           ]
           if (points.length) return points
           return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
@@ -226,11 +225,11 @@ export default {
       }
       return this.exprAst
     },
-    queryLightEquipment (equipmentType) {
-      let equipment = findEquipment(this.element.equipment, equipmentType, true)
+    queryLightEquipment () {
+      let equipment = findEquipment(this.element.equipment, 'Equipment_LightSource', true)
       if (!equipment.length) return []
       let allPoints = allEquipmentPoints(equipment)
-      let points = findPoints(allPoints, 'Point', true, 'Property_Light')
+      let points = findPoints(allPoints, 'Point_Control_Switch', false)
       if (points.length) return points
       return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
     }
