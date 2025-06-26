@@ -144,7 +144,8 @@ export default {
           return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
         case 'screens':
           equipment = [
-            ...findEquipment(this.element.equipment, 'Equipment_AudioVisual_Display', true),
+            ...findEquipment(this.element.equipment, 'Equipment_AudioVisual_Display', false),
+            ...findEquipment(this.element.equipment, 'Equipment_AudioVisual_Display_Television', false),
             ...findEquipment(this.element.equipment, 'Equipment_AudioVisual_Screen', false)
           ]
           if (!equipment.length) return []
