@@ -230,8 +230,6 @@ export default {
         }
         return []
       }).flat())
-      // Return a unique list
-      if (points.length) return Array.from(new Set(points))
       // If there are no points, use the equipment items themselves
       return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
     },
