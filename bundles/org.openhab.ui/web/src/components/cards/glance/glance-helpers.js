@@ -1,8 +1,8 @@
 /**
- * Check if the given semantic tag is a child of the given potential parent tag
- * @param {String} semanticValue the tag to be checked whether it is a child of parent
- * @param {String} potentialSemanticParent the potential parent tag
- * @returns true if tag is a child of parent
+ * Check if the given semantic value is a child of the given potential parent semantic value
+ * @param {String} semanticValue the vaue to be checked whether it is a child of the parent value
+ * @param {String} potentialSemanticParent the potential parent semantic value
+ * @returns true if semanticValue is a child of potentialSemanticParent
  */
 export function isChildOf (semanticValue, potentialSemanticParent) {
   return (!semanticValue || semanticValue.trim() === '') ? false
