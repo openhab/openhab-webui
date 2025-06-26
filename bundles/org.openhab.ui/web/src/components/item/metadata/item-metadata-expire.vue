@@ -3,7 +3,7 @@
     <f7-block-title medium>
       Do
     </f7-block-title>
-    <f7-list>
+    <f7-list v-if="editable">
       <f7-list-item radio :checked="parsedAction.action === 'state'" name="action" title="update state" @click="updateAction('state')" />
       <f7-list-item radio :checked="parsedAction.action === 'command'" name="action" title="send command" @click="updateAction('command')" />
       <f7-list-input
@@ -17,6 +17,10 @@
       <f7-list-item title="ignore state updates" checkbox :checked="ignoreStateUpdates" @change="(ev) => metadata.config['ignoreStateUpdates'] = new Boolean(ev.target.checked).toString()" />
       <f7-list-item title="ignore commands" checkbox :checked="ignoreCommands" @change="(ev) => metadata.config['ignoreCommands'] = new Boolean(ev.target.checked).toString()" />
     </f7-list>
+    <f7-block v-else>
+      {{ parsedAction.action === 'state' ? 'Update state to' : 'Send command' }} <strong>{{ parsedAction.value || 'UNDEF' }}</strong><br>
+      {{ `${ignoreStateUpdates ? 'Ignore state updates' : ''}${ignoreCommands && ignoreCommands ? ', ' : ''}${ignoreCommands ? 'Ignore commands' : ''}` }}
+    </f7-block>
     <f7-block-footer class="param-description padding-left">
       <small>After a different command or state update is received, perform the chosen action when the duration specified below has passed. The timer is reset if another state update or command is received before it expires. If the ignore state updates checkbox is set, only state changes and commands will reset the timer. If the ignore commands checkbox is set, only state updates and state changes will reset the timer.</small>
     </f7-block-footer>
@@ -31,9 +35,10 @@
         ref="duration"
         type="text"
         :value="sanitizedDuration"
+        :disabled="!editable"
         @blur="(evt) => updateDuration(evt.target.value)"
         pattern="(\d+h)*(\d+m)*(\d+s)*" validate validate-on-blur />
-      <f7-list-item class="display-flex justify-content-center">
+      <f7-list-item v-if="editable" class="display-flex justify-content-center">
         <div ref="picker" />
       </f7-list-item>
     </f7-list>
@@ -45,7 +50,7 @@
 
 <script>
 export default {
-  props: ['itemName', 'metadata', 'namespace'],
+  props: ['itemName', 'metadata', 'namespace', 'editable'],
   data () {
     return {
     }
@@ -93,6 +98,8 @@ export default {
     const containerControl = this.$refs.picker
     if (!inputControl || !inputControl.$el || !containerControl) return
     const inputElement = this.$$(inputControl.$el).find('input')
+
+    if (!this.editable) return
     this.picker = this.$f7.picker.create({
       containerEl: containerControl,
       inputEl: inputElement,

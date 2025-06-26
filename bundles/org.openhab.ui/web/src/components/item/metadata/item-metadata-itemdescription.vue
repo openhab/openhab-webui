@@ -1,6 +1,6 @@
 <template>
   <div v-if="ready">
-    <config-sheet v-if="namespace === 'stateDescription'" :parameterGroups="[]" :parameters="stateDescriptionParameters" :configuration="metadata.config" />
+    <config-sheet v-if="namespace === 'stateDescription'" :parameterGroups="[]" :parameters="stateDescriptionParameters" :configuration="metadata.config" :read-only="!editable" />
     <f7-list>
       <f7-list-input
         ref="input"
@@ -8,6 +8,7 @@
         :floating-label="$theme.md"
         :label="'Options'"
         name="options"
+        :disabled="!editable"
         :value="options"
         @input="updateOptions" />
       <f7-block-footer class="param-description" alot="after-list">
@@ -29,7 +30,7 @@
 import ConfigSheet from '@/components/config/config-sheet.vue'
 
 export default {
-  props: ['itemName', 'metadata', 'namespace'],
+  props: ['itemName', 'metadata', 'namespace', 'editable'],
   components: {
     ConfigSheet
   },

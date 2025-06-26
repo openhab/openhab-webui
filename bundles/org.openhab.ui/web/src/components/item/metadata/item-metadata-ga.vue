@@ -1,8 +1,8 @@
 <template>
   <div>
     <f7-list>
-      <f7-list-item :key="classSelectKey"
-                    :title="'Google Assistant Class'" smart-select :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: true, scrollToSelectedItem: true }" ref="classes">
+      <f7-list-item :key="classSelectKey" title="Google Assistant Class" :disabled="!editable"
+                    smart-select :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: true, scrollToSelectedItem: true }" ref="classes">
         <select name="classes" @change="updateClass">
           <option value="" />
           <optgroup label="Types">
@@ -25,7 +25,7 @@
       </f7-list-item>
     </f7-list>
     <div>
-      <config-sheet :parameterGroups="[]" :parameters="parameters" :configuration="metadata.config" />
+      <config-sheet :parameterGroups="[]" :parameters="parameters" :configuration="metadata.config" :read-only="!editable" />
     </div>
     <p class="padding">
       <f7-link color="blue" external target="_blank" :href="`${$store.state.websiteUrl}/link/google-assistant`">
@@ -40,7 +40,7 @@ import GoogleDefinitions from '@/assets/definitions/metadata/ga'
 import ConfigSheet from '@/components/config/config-sheet.vue'
 
 export default {
-  props: ['itemName', 'metadata', 'namespace'],
+  props: ['itemName', 'metadata', 'namespace', 'editable'],
   components: {
     ConfigSheet
   },

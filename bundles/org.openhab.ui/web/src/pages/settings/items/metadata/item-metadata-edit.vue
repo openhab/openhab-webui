@@ -1,9 +1,9 @@
 <template>
   <f7-page @page:beforein="onPageBeforeIn" @page:afterin="onPageAfterIn">
-    <f7-navbar :title="'Edit Item Metadata: ' + namespace + dirtyIndicator" back-link="Cancel" no-hairline>
+    <f7-navbar :title="`${editable ? 'Edit' : 'View'} Item Metadata: ${namespace} ${dirtyIndicator}`" back-link="Cancel" no-hairline>
       <f7-nav-right>
-        <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only />
-        <f7-link @click="save()" v-if="!$theme.md">
+        <f7-link @click="save()" v-if="$theme.md && editable" icon-md="material:save" icon-only />
+        <f7-link @click="save()" v-if="!$theme.md && editable">
           Save
         </f7-link>
       </f7-nav-right>
@@ -25,13 +25,13 @@
       <f7-tab id="config" class="metadata-editor-config-tab" @tab:show="() => this.currentTab = 'config'" :tab-active="currentTab === 'config'">
         <f7-block class="block-narrow" v-if="ready && currentTab === 'config'">
           <f7-col>
-            <component :is="editorControl" :item="item" :metadata="metadata" :namespace="namespace" />
+            <component :is="editorControl" :item="item" :metadata="metadata" :namespace="namespace" :editable="editable" />
           </f7-col>
         </f7-block>
         <f7-block class="block-narrow" v-if="ready">
           <f7-col>
             <f7-list>
-              <f7-list-button color="red" v-if="!creationMode" @click="remove()">
+              <f7-list-button color="red" v-if="!creationMode && editable" @click="remove()">
                 Remove metadata
               </f7-list-button>
             </f7-list>
@@ -40,8 +40,8 @@
       </f7-tab>
 
       <f7-tab id="code" @tab:show="() => { this.currentTab = 'code' }" :tab-active="currentTab === 'code'">
-        <editor v-if="currentTab === 'code'" class="metadata-code-editor" mode="text/x-yaml" :value="yaml" @input="onEditorInput" />
-        <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
+        <f7-icon v-if="!editable" f7="lock" class="float-right margin" style="opacity:0.5; z-index: 4000; user-select: none;" size="50" color="gray" tooltip="This metadata is not editable" />
+        <editor v-if="currentTab === 'code'" class="metadata-code-editor" mode="text/x-yaml" :value="yaml" :readOnly="!editable" @input="onEditorInput" />
       </f7-tab>
     </f7-tabs>
   </f7-page>
@@ -93,7 +93,7 @@ export default {
       ready: false,
       currentTab: 'config',
       creationMode: true,
-      generic: false,
+      generic: MetadataNamespaces.map((n) => n.name).indexOf(this.namespace) < 0,
       item: {},
       metadata: { value: '', config: {} },
       savedMetadata: {},
@@ -103,7 +103,7 @@ export default {
   watch: {
     metadata: {
       handler: function () {
-        if (this.ready) {
+        if (this.ready && this.editable) {
           this.dirty = !fastDeepEqual(this.metadata, this.savedMetadata)
         }
       },
@@ -154,13 +154,19 @@ export default {
       } catch (e) {
         return e
       }
+    },
+    editable () {
+      return this.item.editable
     }
   },
   methods: {
-    onPageBeforeIn () {
-      this.generic = MetadataNamespaces.map((n) => n.name).indexOf(this.namespace) < 0
-    },
     onPageAfterIn () {
+      this.load()
+    },
+    onEditorInput (value) {
+      this.yaml = value
+    },
+    load () {
       this.$oh.api.get(`/rest/items/${this.itemName}?metadata=${this.namespace}`).then((item) => {
         this.item = item
         if (item.metadata) {
@@ -178,10 +184,9 @@ export default {
         })
       })
     },
-    onEditorInput (value) {
-      this.yaml = value
-    },
     save () {
+      if (!this.editable) return
+
       if (this.currentTab === 'code' && !this.fromYaml()) return
       if (!this.metadata.value) this.metadata.value = ' '
       this.$oh.api.put(`/rest/items/${this.itemName}/metadata/${this.namespace}`, this.metadata).then((data) => {

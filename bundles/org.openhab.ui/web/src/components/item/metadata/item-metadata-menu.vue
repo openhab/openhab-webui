@@ -19,7 +19,7 @@
         </ul>
       </f7-list>
     </f7-card-content>
-    <f7-card-footer>
+    <f7-card-footer v-if="item.editable">
       <f7-button color="blue" @click="addMetadata">
         Add Metadata
       </f7-button>

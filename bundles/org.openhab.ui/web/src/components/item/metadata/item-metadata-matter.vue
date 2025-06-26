@@ -1,13 +1,14 @@
 <template>
   <div v-if="ready">
     <div>
-      <div style="text-align:right" class="padding-right">
+      <div v-if="editable" style="text-align:right" class="padding-right">
         <label @click="toggleMultiple" style="cursor:pointer">Multiple</label>
         <f7-checkbox :checked="multiple" @change="toggleMultiple" />
       </div>
       <f7-list v-if="deviceTypes">
         <f7-list-item :key="classSelectKey"
                       :title="'Matter Device Type'"
+                      :disabled="!editable"
                       smart-select
                       :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: !multiple }"
                       ref="classes">
@@ -23,7 +24,7 @@
         </f7-list-item>
       </f7-list>
       <div v-if="parameters && parameters.length">
-        <config-sheet :parameterGroups="parametersGroups" :parameters="parameters" :configuration="metadata.config" />
+        <config-sheet :parameterGroups="parametersGroups" :parameters="parameters" :configuration="metadata.config" :read-only="!editable" />
       </div>
       <f7-block class="padding-top no-padding no-margin"
                 v-if="shouldShowAttributeMapping">
@@ -42,6 +43,7 @@
           <f7-list>
             <f7-list-item v-for="attribute in deviceTypes[deviceType]?.attributes"
                           :key="attribute.name"
+                          :disabled="!editable"
                           smart-select
                           :title="attribute.mandatory ? attribute.label+'*' : attribute.label"
                           :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: true }">
@@ -71,6 +73,7 @@
                     type="text"
                     :label="option.label"
                     :value="getChildMapping(attribute.name, option.label, option.value)"
+                    :disabled="!editable"
                     @input="setChildMapping(attribute.name, option.label, $event.target.value)" />
                 </f7-list>
               </div>
@@ -105,7 +108,7 @@ import ConfigSheet from '@/components/config/config-sheet.vue'
 
 export default {
   name: 'item-metadata-matter',
-  props: ['item', 'metadata', 'namespace'],
+  props: ['item', 'metadata', 'namespace', 'editable'],
   components: {
     ConfigSheet
   },
