@@ -76,11 +76,7 @@ export default {
           if (direct.length) return direct
           return findPoints(allEquipmentPoints(this.element.equipment), 'Point', true, 'Property_LowBattery')
         case 'lights':
-          const lightPoints = [
-            ...this.queryLightPoints,
-            ...this.queryLightEquipment
-          ]
-          return lightPoints.filter((value, index, self) => self.indexOf(value) === index)
+          return this.queryLightPoints
         case 'windows':
           equipment = findEquipment(this.element.equipment, 'Equipment_Window', false)
           if (!equipment.length) return []
@@ -214,26 +210,25 @@ export default {
     queryLightPoints () {
       // Look for all control points on the location with light property
       // Warning, this leads to double counting if 2 items linked to the same tag are tagged (e.g. a switch and a dimmer item)
-      let points = findPoints(this.element.properties, 'Point_Control', true, 'Property_Light')
-       if (points.length) return points
+      const points = []
+      points.push(...findPoints(this.element.properties, 'Point_Control', true, 'Property_Light'))
       // Repeat this for equipments on the location, but this time, as it is an equipment, assume it only represents one light and we default to the switch
-      return this.element.equipment.map((e) => {
+      points.push(...this.element.equipment.map((e) => {
         let equipmentPoints = findPoints(e.points, 'Point_Control_Switch', false, 'Property_Light')
         if (equipmentPoints.length) return equipmentPoints
         return findPoints(e.points, 'Point_Control', true, 'Property_Light')
-      }).flat()
-    },
-    queryLightEquipment () {
+      }).flat())
+      // Next specifically look for Equipment_LightSource and its points, even when no light property
       let equipment = findEquipment(this.element.equipment, 'Equipment_LightSource', true)
-      if (!equipment.length) return []
-      let points = equipment.map((e) => {
+      points.push(...equipment.map((e) => {
         // First try a switch, then any point
         let equipmentPoints = findPoints(e.points, 'Point_Control_Switch', false)
         if (equipmentPoints.length) return equipmentPoints
         return findPoints(e.points, 'Point_Control', true)
-      }).flat()
-      if (points.length) return points
-      // If there are no points, use the equipment item itself
+      }).flat())
+      // Return a unique list
+      if (points.length) return points.filter((value, index, self) => self.indexOf(value) === index)
+      // If there are no points, use the equipment items themselves
       return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
     },
     overrideExpression () {
