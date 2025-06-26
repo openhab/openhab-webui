@@ -76,10 +76,11 @@ export default {
           if (direct.length) return direct
           return findPoints(allEquipmentPoints(this.element.equipment), 'Point', true, 'Property_LowBattery')
         case 'lights':
-          return [
+          const lightPoints = [
             ...this.queryLightPoints,
             ...this.queryLightEquipment
           ]
+          return lightPoints.filter((value, index, self) => self.indexOf(value) === index)
         case 'windows':
           equipment = findEquipment(this.element.equipment, 'Equipment_Window', false)
           if (!equipment.length) return []
