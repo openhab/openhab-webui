@@ -1,11 +1,12 @@
 <template>
   <div>
-    <div style="text-align:right" class="padding-right">
+    <div v-if="editable" style="text-align:right" class="padding-right">
       <label @click="toggleMultiple" style="cursor:pointer">Multiple</label> <f7-checkbox :checked="multiple" @change="toggleMultiple" />
     </div>
     <f7-list>
-      <f7-list-item :key="classSelectKey"
-                    :title="(multiple) ? 'HomeKit Accessory/Characteristics' : 'HomeKit Accessory/Characteristic'" smart-select :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: !multiple }" ref="classes">
+      <f7-list-item :key="classSelectKey" :title="(multiple) ? 'HomeKit Accessory/Characteristics' : 'HomeKit Accessory/Characteristic'"
+                    :disabled="!editable"
+                    smart-select :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: !multiple }" ref="classes">
         <select v-if="itemType == 'Group'" name="parameters" @change="updateClasses" :multiple="multiple">
           <option v-if="!multiple" value="" />
           <option v-for="cl in classesDefs.filter((c) => c.indexOf('.')===-1).filter((c) => c.indexOf('label:') !== 0)"
@@ -25,7 +26,7 @@
       </f7-list-item>
     </f7-list>
     <div>
-      <config-sheet :parameterGroups="parametersGroups" :parameters="parameters" :configuration="metadata.config" />
+      <config-sheet :parameterGroups="parametersGroups" :parameters="parameters" :configuration="metadata.config" :read-only="!editable" />
     </div>
     <f7-block class="padding-top no-padding no-margin" v-if="itemType === 'Group' && classes.length">
       <f7-block-title class="padding-left">
@@ -36,7 +37,7 @@
           {{ cl }}
         </f7-block-title>
         <f7-list>
-          <f7-list-item v-for="accessory in accessories[cl]" :key="accessory.label" smart-select :title="accessory.mandatory?accessory.label+'*':accessory.label" :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: !multiple }">
+          <f7-list-item v-for="accessory in accessories[cl]" :key="accessory.label" :disabled="!editable" smart-select :title="accessory.mandatory?accessory.label+'*':accessory.label" :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: !multiple }">
             <select @change="updateLinkedItem(cl, accessory.label, $event.target.value)">
               <option value="" />
               <option v-for="mbr in item.members" :value="mbr.name" :key="mbr.id" :selected="isLinked(cl, accessory.label, mbr)">
@@ -46,7 +47,7 @@
           </f7-list-item>
         </f7-list>
       </f7-block>
-      <f7-block-footer>
+      <f7-block-footer v-if="editable">
         <f7-button color="blue" @click="updatedLinkedItem">
           Update group members
         </f7-button>
@@ -65,7 +66,7 @@ import { accessoriesAndCharacteristics, homekitParameters, accessories } from '@
 import ConfigSheet from '@/components/config/config-sheet.vue'
 
 export default {
-  props: ['item', 'itemName', 'metadata', 'namespace'],
+  props: ['item', 'itemName', 'metadata', 'namespace', 'editable'],
   components: {
     ConfigSheet
   },
