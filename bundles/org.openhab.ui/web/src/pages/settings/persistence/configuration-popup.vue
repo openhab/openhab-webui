@@ -51,6 +51,7 @@
           </f7-block-title>
           <strategy-picker title="Select strategies" name="strategies" :strategies="strategies"
                            :value="currentConfiguration.strategies"
+                           :suggested="suggestedStrategies"
                            @strategiesSelected="currentConfiguration.strategies = $event" />
         </f7-col>
         <f7-col>
@@ -73,15 +74,13 @@ import FilterPicker from '@/pages/settings/persistence/filter-picker.vue'
 
 export default {
   components: { FilterPicker, StrategyPicker, ItemPicker },
-  props: ['configuration', 'strategies', 'filters'],
+  props: ['configuration', 'strategies', 'filters', 'suggestedStrategies'],
   emits: ['configurationUpdate'],
   data () {
     return {
       currentConfiguration: this.configuration || {
         items: [],
-        strategies: [
-          'everyChange'
-        ],
+        strategies: [],
         filters: []
       }
     }
