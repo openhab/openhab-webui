@@ -7,7 +7,7 @@
         ref="value"
         type="text"
         :value="metadata.value"
-        :disabled="!editable"
+        :disabled="!metadata.editable"
         @input="(ev) => metadata.value = ev.target.value" />
     </f7-list>
     <f7-block-footer class="param-description padding-left">
@@ -20,6 +20,6 @@
 
 <script>
 export default {
-  props: ['itemName', 'metadata', 'namespace', 'editable']
+  props: ['itemName', 'metadata']
 }
 </script>

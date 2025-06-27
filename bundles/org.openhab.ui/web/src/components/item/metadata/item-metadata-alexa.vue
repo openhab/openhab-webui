@@ -78,7 +78,7 @@ import AlexaDefinitions from '@/assets/definitions/metadata/alexa'
 import ConfigSheet from '@/components/config/config-sheet.vue'
 
 export default {
-  props: ['item', 'metadata', 'namespace', 'editable'],
+  props: ['item', 'metadata'],
   components: {
     ConfigSheet
   },
@@ -167,6 +167,9 @@ export default {
       } else {
         return `${this.docUrl}#device-types`
       }
+    },
+    editable () {
+      return this.metadata.editable
     }
   },
   methods: {

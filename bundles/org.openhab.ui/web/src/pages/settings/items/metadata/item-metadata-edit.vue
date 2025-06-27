@@ -25,7 +25,7 @@
       <f7-tab id="config" class="metadata-editor-config-tab" @tab:show="() => this.currentTab = 'config'" :tab-active="currentTab === 'config'">
         <f7-block class="block-narrow" v-if="ready && currentTab === 'config'">
           <f7-col>
-            <component :is="editorControl" :item="item" :metadata="metadata" :namespace="namespace" :editable="editable" />
+            <component :is="editorControl" :item="item" :metadata="metadata" :namespace="namespace" />
           </f7-col>
         </f7-block>
         <f7-block class="block-narrow" v-if="ready">
@@ -156,7 +156,7 @@ export default {
       }
     },
     editable () {
-      return this.item.editable
+      return this.metadata.editable
     }
   },
   methods: {
@@ -239,7 +239,10 @@ export default {
       )
     },
     toYaml () {
-      this.yaml = YAML.stringify(this.metadata)
+      this.yaml = YAML.stringify({
+        value: this.metadata.value,
+        config: this.metadata.config || {}
+      })
     },
     fromYaml () {
       try {

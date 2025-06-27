@@ -30,7 +30,7 @@
 import ConfigSheet from '@/components/config/config-sheet.vue'
 
 export default {
-  props: ['itemName', 'metadata', 'namespace', 'editable'],
+  props: ['itemName', 'metadata', 'namespace'],
   components: {
     ConfigSheet
   },
@@ -64,6 +64,9 @@ export default {
       } else {
         return docUrl + '#command-description'
       }
+    },
+    editable () {
+      return this.metadata.editable
     }
   },
   methods: {

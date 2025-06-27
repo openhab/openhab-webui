@@ -66,7 +66,7 @@ import { accessoriesAndCharacteristics, homekitParameters, accessories } from '@
 import ConfigSheet from '@/components/config/config-sheet.vue'
 
 export default {
-  props: ['item', 'itemName', 'metadata', 'namespace', 'editable'],
+  props: ['item', 'itemName', 'metadata'],
   components: {
     ConfigSheet
   },
@@ -113,6 +113,9 @@ export default {
         return options
       }
       return []
+    },
+    editable () {
+      return this.metadata.editable
     }
   },
 

@@ -7,7 +7,7 @@
         ref="value"
         type="text"
         :value="metadata.value"
-        :disabled="!editable"
+        :disabled="metadata.editable"
         @input="updateValue" />
       <f7-block-footer class="param-description" slot="after-list">
         <small>
@@ -21,7 +21,7 @@
 
 <script>
 export default {
-  props: ['itemName', 'metadata', 'namespace', 'editable'],
+  props: ['itemName', 'metadata'],
   methods: {
     updateValue (ev) {
       this.metadata.value = ev.target.value

@@ -11,7 +11,7 @@
         type="text"
         placeholder="leave empty to use system default"
         :value="metadata.value"
-        :disabled="!editable"
+        :disabled="!metadata.editable"
         @blur="(evt) => metadata.value = evt.target.value" />
     </f7-list>
     <f7-block-footer class="param-description padding-horizontal">
@@ -28,6 +28,6 @@
 
 <script>
 export default {
-  props: ['itemName', 'metadata', 'namespace', 'editable']
+  props: ['itemName', 'metadata']
 }
 </script>

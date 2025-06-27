@@ -74,7 +74,7 @@ import itemDefaultCellComponent from '@/components/widgets/standard/cell/default
 import { VisibilityGroup, VisibilityParameters } from '@/assets/definitions/widgets/visibility'
 
 export default {
-  props: ['item', 'metadata', 'namespace', 'editable'],
+  props: ['item', 'metadata', 'namespace'],
   components: {
     ConfigSheet
   },
@@ -95,6 +95,9 @@ export default {
   computed: {
     personalWidgets () {
       return [...this.$store.getters.widgets].sort((a, b) => { return a.uid.localeCompare(b.uid) })
+    },
+    editable () {
+      return this.metadata.editable
     }
   },
   mounted () {

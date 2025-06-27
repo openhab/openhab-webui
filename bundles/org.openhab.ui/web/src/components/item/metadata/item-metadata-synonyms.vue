@@ -8,7 +8,7 @@
         :label="'Synonyms'"
         name="synonyms"
         :value="synonyms"
-        :disabled="!editable"
+        :disabled="!metadata.editable"
         @input="updateValue" />
       <f7-block-footer class="param-description" slot="after-list">
         <small>Enter each synonym on a separate line.</small>
@@ -19,7 +19,7 @@
 
 <script>
 export default {
-  props: ['itemName', 'metadata', 'namespace', 'editable'],
+  props: ['itemName', 'metadata'],
   computed: {
     synonyms () {
       if (!this.metadata.value) return []

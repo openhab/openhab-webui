@@ -108,7 +108,7 @@ import ConfigSheet from '@/components/config/config-sheet.vue'
 
 export default {
   name: 'item-metadata-matter',
-  props: ['item', 'metadata', 'namespace', 'editable'],
+  props: ['item', 'metadata'],
   components: {
     ConfigSheet
   },
@@ -185,6 +185,9 @@ export default {
         const typeParams = matterParameters[type] || []
         return typeParams.map(opt => ({ ...opt, groupName: type }))
       }).concat(matterParameters.global || [])
+    },
+    editable () {
+      return this.metadata.editable
     }
   },
   methods: {

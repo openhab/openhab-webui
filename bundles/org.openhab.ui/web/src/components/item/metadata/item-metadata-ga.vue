@@ -40,7 +40,7 @@ import GoogleDefinitions from '@/assets/definitions/metadata/ga'
 import ConfigSheet from '@/components/config/config-sheet.vue'
 
 export default {
-  props: ['itemName', 'metadata', 'namespace', 'editable'],
+  props: ['itemName', 'metadata'],
   components: {
     ConfigSheet
   },
@@ -62,6 +62,10 @@ export default {
     parameters () {
       if (!this.metadata.value) return []
       return GoogleDefinitions['type:' + this.metadata.value] || GoogleDefinitions['attribute:' + this.metadata.value]
+    },
+
+    editable () {
+      return this.metadata.editable
     }
   },
   methods: {

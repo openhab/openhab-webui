@@ -14,7 +14,7 @@
 <script>
 import ConfigSheet from '@/components/config/config-sheet.vue'
 export default {
-  props: ['itemName', 'metadata', 'namespace', 'editable'],
+  props: ['itemName', 'metadata'],
   components: {
     ConfigSheet
   },
@@ -31,6 +31,9 @@ export default {
     customRules () {
       if (!this.metadata.value) return []
       return this.metadata.value.split('\n').map((s) => s.trim()).join('\n')
+    },
+    editable () {
+      return this.metadata.editable
     }
   },
   methods: {
