@@ -190,7 +190,7 @@ export default {
       return this.query.map((item) => this.store[item.name].state)
     },
     reduce () {
-      const ast = this.overrideExpression
+      const ast = this.overrideExpression()
       if (ast) {
         return this.map.filter((state) => expr.evaluate(ast, { state, Number })).length
       }
@@ -231,12 +231,14 @@ export default {
       }).flat())
       // If there are no points, use the equipment items themselves
       return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
-    },
+    }
+  },
+  methods: {
     overrideExpression () {
       if (this.badgeOverrides && !this.exprAst) {
         const override = this.badgeOverrides[this.type]
         if (override && override.expression) {
-          return expr.parse(override.expression)
+          this.exprAst = expr.parse(override.expression)
         }
       }
       return this.exprAst
