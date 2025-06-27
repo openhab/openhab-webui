@@ -1,6 +1,6 @@
 <template>
   <div>
-    <f7-segmented v-bind="config" round outline strong class="player-controls" title="">
+    <f7-segmented round outline strong class="player-controls" title="">
       <f7-button color="blue" @click.stop="skipPrevious()" large icon-material="skip_previous" icon-size="24" icon-color="gray" />
       <f7-button color="blue" @click.stop="rewind()" large icon-material="fast_rewind" icon-size="24" icon-color="gray" />
       <f7-button color="blue" @click.stop="playPause()" large round fill :icon-f7="(isPlaying) ? 'pause_fill' : 'play_fill'" icon-size="24" />
@@ -31,7 +31,6 @@ export default {
   mixins: [mixin],
   widget: OhPlayerDefinition,
   mounted () {
-    delete this.config.value
   },
   computed: {
     isPlaying () {
