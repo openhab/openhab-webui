@@ -179,6 +179,7 @@ export default {
         this.$nextTick(() => {
           this.initSearchbar = true
           this.restoreExpanded()
+          this.expandSelected()
         })
       })
     },
