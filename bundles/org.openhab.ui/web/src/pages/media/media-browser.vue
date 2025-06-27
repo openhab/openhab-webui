@@ -8,18 +8,37 @@
       </f7-nav-right>
     </f7-navbar>
 
+
     <div class="page-content infinite-scroll-content"  infinite :infinite-distance="50" :infinite-preloader="showPreloader" @infinite="loadMore" style="margin-top:10px;padding:0px;height:calc(100vh - 50px - 150px);">
       <div v-if="node">
         <!--
         Display a naviation bar to navigate media hierarchy.
         -->
-        <div style="display: flex; flex-direction: row; flex-wrap: nowrap; ">
-          <div v-for="componentPath in currentPathSegments" style="padding:5px;" v-bind:key="componentPath.path">
-            <f7-link :href="`/mediabrowser/?path=` + componentPath.path + `&item=` + item + `&device=` + device">
-              {{ componentPath.name }}
-            </f7-link> >
+        <div style="display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: space-between; align-items: center;">
+
+          <div style="display: flex; flex-direction: row; flex-wrap: nowrap;">
+            <div v-for="componentPath in currentPathSegments" style="padding:5px;" v-bind:key="componentPath.path">
+              <f7-link :href="`/mediabrowser/?path=` + componentPath.path + `&item=` + item + `&device=` + device">
+                {{ componentPath.name }}
+              </f7-link> >
+            </div>
+          </div>  
+
+          <div style="padding:5px; border:0px;">
+            <form class="searchbar" style="width:400px;border:solid 1px #000000;border-radius:10px;">
+              <div class="searchbar-inner" >
+                <div class="searchbar-input-wrap">
+                  <input type="search" placeholder="Search" />
+                  <i class="searchbar-icon"></i>
+                  <span class="input-clear-button"></span>
+                </div>
+                <span class="searchbar-disable-button">Cancel</span>
+              </div>
+            </form>
           </div>
         </div>
+
+        
         <br>
 
         <!--
@@ -107,7 +126,7 @@
             </div>
             <div style="display: flex; padding:20px;">
               <div style="padding-right:20px;">3.50</div>
-              <div style="width:500px;"><f7-range ref="rangeslider" class="oh-slider" v-bind="config" :min="0" :max="100" :step="1" :value="10" /> </div>
+              <div style="width:500px;"><f7-range ref="rangeslider" class="oh-slider" :min="0" :max="100" :step="1" :value="10" /> </div>
               <div style="padding-left:20px;">4.42</div>
             </div>
           </div>
@@ -115,7 +134,7 @@
           </div>
           <div style="width:400px;height:150px;padding:0px;display: flex; align-items: center; justify-content:left;">
             <f7-button icon-material="speaker" outline style="height:40px;font-weight:bold;padding:2px;padding-right:30px;text-align:left;border:none 0px;" large icon-size="36"/>
-            <f7-range ref="rangeslider" class="oh-slider" v-bind="config" :min="0" :max="100" :step="1" :value="10" /> 
+            <f7-range ref="rangeslider" class="oh-slider"  :min="0" :max="100" :step="1" :value="10" /> 
           </div>
       </div>
     </f7-toolbar>
@@ -168,8 +187,7 @@ export default {
       allowInfinite: true,
       showPreloader: true,
       lastItemIndex: 0,
-      itemsPerLoad: 20,
-      size:100,
+      size:30,
     }
   },
   computed: {
@@ -228,14 +246,14 @@ export default {
         return child.type === 'org.openhab.core.media.model.MediaTrack'
       })
     },
-    loadInitialItems () {
+    async loadItems(start = 0) {
       if (this.$f7route.query.path && !this.$f7route.query.path.startsWith('/page/')) {
         this.path = this.$f7route.query.path
       }
 
       console.log('MediaBrowser path: ' + this.path)
 
-      this.$oh.api.get('/rest/media/sources?path=' + this.path + '&start=0&size=' + this.size).then((data) => {
+      return this.$oh.api.get('/rest/media/sources?path=' + this.path + '&start=' + start + '&size=' + this.size).then((data) => {
         console.log('Data')
         this.node = data 
         this.node.pres = 'thumb'
@@ -250,6 +268,16 @@ export default {
           idForMap = idForMap.substring(0, idForMap.length - 2)
         }
         this.$store.commit('setMapping', { key: idForMap, value: data.label } );
+
+        if (data.childs.length === 0 || data.childs.length < this.size) {
+          console.log("No more items to load, stopping infinite scroll :")
+          this.allowInfinite = false;
+          this.showPreloader = false;
+        } else {
+          this.showPreloader = true;
+        }
+      
+      
       
         for (let i = 0; i < data.childs.length; i++) {
           const child = data.childs[i]
@@ -263,50 +291,19 @@ export default {
         if (this.node.label === 'TopTracks') { this.node.pres = 'flat' }
       })
     },
+    loadInitialItems () {
+      this.loadItems(0)
+    },
     loadMore () {
-      console.log("============= LoadMore ===========================")
-      console.log("this.loading: " + this.loading)
-      console.log("this.allowInfinite: " + this.allowInfinite)
       if (this.loading || !this.allowInfinite) {
-        console.log("==> returning because loading or no infinite")
+        console.log("==> returning because loading or no infinite :" +  this.loading + " / " + this.allowInfinite)
         return;
       }
 
       this.loading = true;
-
-
-      this.$oh.api.get('/rest/media/sources?path=' + this.path + '&start=' + this.lastItemIndex + '&size=' + this.size).then((data) => {
-        console.log('Data')
-        this.node = data 
-        this.node.pres = 'thumb'
-
-        var idForMap = data.id;
-        if (idForMap.endsWith('/t') ||
-            idForMap.endsWith('/a') || 
-            idForMap.endsWith('/l') || 
-            idForMap.endsWith('/g') || 
-            idForMap.endsWith('/m') || 
-            idForMap.endsWith('/n')) {
-            idForMap = idForMap.substring(0, idForMap.length - 2)
-        }
-        this.$store.commit('setMapping', { key: idForMap, value: data.label } );
-      
-        for (let i = 0; i < data.childs.length; i++) {
-            const child = data.childs[i]
-            this.items.push(child)
-        }
-        this.lastItemIndex = this.items.length;
-        
-
-        if (this.node.type === 'org.openhab.core.media.model.MediaAlbum') { this.node.pres = 'flat' }
-        if (this.node.type === 'org.openhab.core.media.model.MediaPlayList') { this.node.pres = 'flat' }
-        if (this.node.type === 'org.openhab.core.media.model.MediaCollection' && this.containsTrack(data)) { this.node.pres = 'flat' }
-        if (this.node.label === 'TopTracks') { this.node.pres = 'flat' }
-
-        console.log("============== End Load ==========================")
+      this.loadItems(this.lastItemIndex).then(() => {
         this.loading = false;
       })
-
     }
   },
   created () {
