@@ -230,7 +230,8 @@ export default {
         return []
       }).flat())
       // If there are no points, use the equipment items themselves
-      return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
+      points.push(...equipment.filter((e) => e.points.length === 0).map((e) => e.item))
+      return points
     }
   },
   methods: {
