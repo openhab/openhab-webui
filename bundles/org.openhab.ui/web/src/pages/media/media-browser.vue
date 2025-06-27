@@ -240,9 +240,8 @@ export default {
     doEnqueue (item, id) {
       this.$store.dispatch('sendCommand', { itemName: item, cmd: 'NONE,ENQUEUE,' + id + ',' + this.device + ',NONE' })
     },
-    containsTrack (data) {
-      return data.childs.every((child) => {
-        console.log('child:' + child.type);
+    containsTrack (items) {
+      return items.every((child) => {
         return child.type === 'org.openhab.core.media.model.MediaTrack'
       })
     },
@@ -269,7 +268,7 @@ export default {
         }
         this.$store.commit('setMapping', { key: idForMap, value: data.label } );
 
-        if (data.childs.length === 0 || data.childs.length < this.size) {
+        if (data.childs.length === 0) {
           console.log("No more items to load, stopping infinite scroll :")
           this.allowInfinite = false;
           this.showPreloader = false;
@@ -277,17 +276,17 @@ export default {
           this.showPreloader = true;
         }
       
-      
-      
         for (let i = 0; i < data.childs.length; i++) {
           const child = data.childs[i]
           this.items.push(child)
         }
         this.lastItemIndex = this.items.length;
 
+        console.log('items:' + this.items);
+
         if (this.node.type === 'org.openhab.core.media.model.MediaAlbum') { this.node.pres = 'flat' }
         if (this.node.type === 'org.openhab.core.media.model.MediaPlayList') { this.node.pres = 'flat' }
-        if (this.node.type === 'org.openhab.core.media.model.MediaCollection' && this.containsTrack(data)) { this.node.pres = 'flat' }
+        if (this.node.type === 'org.openhab.core.media.model.MediaCollection' && this.containsTrack(this.items)) { this.node.pres = 'flat' }
         if (this.node.label === 'TopTracks') { this.node.pres = 'flat' }
       })
     },
