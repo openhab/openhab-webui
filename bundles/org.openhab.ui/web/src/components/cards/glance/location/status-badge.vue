@@ -143,7 +143,7 @@ export default {
           equipment = [
             ...findEquipment(this.element.equipment, 'Equipment_AudioVisual_Display', false),
             ...findEquipment(this.element.equipment, 'Equipment_AudioVisual_Display_Television', false),
-            ...findEquipment(this.element.equipment, 'Equipment_AudioVisual_Screen', false)
+            ...findEquipment(this.element.equipment, 'Equipment_AudioVisual_Screen', true)
           ]
           if (!equipment.length) return []
           allPoints = allEquipmentPoints(equipment)
