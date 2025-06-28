@@ -38,6 +38,7 @@
 
         <br>
 
+        
         <!--
         Flat presentation for Album, Playlist:
         Display a header with the cover, title, Play and enqueue buttons
@@ -83,6 +84,18 @@
             <br>
           </div>
           <br>
+        </div>
+        <!-- Search Handling -->
+        <div v-if="node.pres==='search'" style="display: flex; flex-direction: column; flex-wrap: nowrap; justify-content: space-between; align-items: center; justify-content:left;padding:0px;margin:0px;">
+          <MediaBrowserThumbGrid title="Album" :items="node.childs[0].childs" item="" device=""/>
+          <MediaBrowserThumbGrid title="Artist" :items="node.childs[1].childs" item="" device="" />
+          <MediaBrowserThumbGrid title="Playlist" :items="node.childs[2].childs" item="" device=""/>
+          <MediaBrowserThumbGrid title="Track" :items="node.childs[3].childs" item="" device=""/>
+          <MediaBrowserThumbGrid title="Episodes" :items="node.childs[4].childs" item="" device=""/>
+          <MediaBrowserThumbGrid title="Audiobooks" :items="node.childs[5].childs" item="" device=""/>
+          <MediaBrowserThumbGrid title="Podcasts" :items="node.childs[6].childs" item="" device=""/>
+
+          
         </div>
           <!--
         Thumb presentation for Collection (Albums, Artists lists)
@@ -141,6 +154,7 @@
 
 <script>
 import OhSimplePlayerControls from '../../components/widgets/system/oh-simple-player-controls.vue'
+import MediaBrowserThumbGrid from './media-browser-thumb-grid.vue'
 
 export default {
   name: 'MediaBrowser',
@@ -148,6 +162,7 @@ export default {
   },
   components: {
     OhSimplePlayerControls,
+    MediaBrowserThumbGrid
   }, 
   data () {
     this.item = this.$f7route.query.item
@@ -288,6 +303,7 @@ export default {
 
         console.log('items:' + this.items);
 
+        if (this.node.type === 'org.openhab.core.media.model.MediaSearchResult') { this.node.pres = 'search' }
         if (this.node.type === 'org.openhab.core.media.model.MediaAlbum') { this.node.pres = 'flat' }
         if (this.node.type === 'org.openhab.core.media.model.MediaPlayList') { this.node.pres = 'flat' }
         if (this.node.type === 'org.openhab.core.media.model.MediaCollection' && this.containsTrack(this.items)) { this.node.pres = 'flat' }
@@ -321,7 +337,7 @@ export default {
       // On ajoute un délai pour éviter les appels API à chaque frappe
       this.searchTimeout = setTimeout(() => {
         this.fetchResults(query);
-      }, 300); // délai de 300ms, ajustable
+      }, 1000); // délai de 300ms, ajustable
     },
     onClear() {
       this.results = [];
@@ -335,7 +351,7 @@ export default {
         //const response = await fetch(`https://api.example.com/search?q=${encodeURIComponent(query)}`);
         //const data = await response.json();
 
-        this.$store.dispatch('sendCommand', { itemName: this.item, cmd: 'NONE,SEARCH,' + query.query + ',' + this.device + ',NONE' })
+        this.$store.dispatch('sendCommand', { itemName: this.item, cmd: 'NONE,SEARCH,' + encodeURIComponent(query.query) + ',' + this.device + ',NONE' })
         this.$f7router.navigate('/mediabrowser/?path=/Root/Spotify/Search&item=' + this.item + '&device=' + this.device, { reloadCurrent: true, reloadDetail: true });
 
         // Ici, adapte selon la structure de la réponse de ton API
