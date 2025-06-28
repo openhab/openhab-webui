@@ -87,13 +87,13 @@
         </div>
         <!-- Search Handling -->
         <div v-if="node.pres==='search'" style="display: flex; flex-direction: column; flex-wrap: nowrap; justify-content: space-between; align-items: center; justify-content:left;padding:0px;margin:0px;">
-          <MediaBrowserThumbGrid title="Album" :items="node.childs[0].childs" item="" device=""/>
-          <MediaBrowserThumbGrid title="Artist" :items="node.childs[1].childs" item="" device="" />
-          <MediaBrowserThumbGrid title="Playlist" :items="node.childs[2].childs" item="" device=""/>
-          <MediaBrowserThumbGrid title="Track" :items="node.childs[3].childs" item="" device=""/>
-          <MediaBrowserThumbGrid title="Episodes" :items="node.childs[4].childs" item="" device=""/>
-          <MediaBrowserThumbGrid title="Audiobooks" :items="node.childs[5].childs" item="" device=""/>
-          <MediaBrowserThumbGrid title="Podcasts" :items="node.childs[6].childs" item="" device=""/>
+          <MediaBrowserThumbGrid title="Album" :items="node.childs[0].childs" :item="this.item" :device="this.device"/>
+          <MediaBrowserThumbGrid title="Artist" :items="node.childs[1].childs" :item="this.item" :device="this.device" />
+          <MediaBrowserThumbGrid title="Playlist" :items="node.childs[2].childs" :item="this.item" :device="this.device"/>
+          <MediaBrowserThumbGrid title="Track" :items="node.childs[3].childs" :item="this.item" :device="this.device"/>
+          <MediaBrowserThumbGrid title="Episodes" :items="node.childs[4].childs" :item="this.item" :device="this.device"/>
+          <MediaBrowserThumbGrid title="Audiobooks" :items="node.childs[5].childs" :item="this.item" :device="this.device"/>
+          <MediaBrowserThumbGrid title="Podcasts" :items="node.childs[6].childs" :item="this.item" :device="this.device"/>
 
           
         </div>
