@@ -41,7 +41,7 @@ export default {
       console.log('isPlaying', value, this.config.item, state)
       return state === 'PLAY'
       */
-     return false;
+      return false
     },
     mediaDeviceSelectorUri () {
       return '/mediadevicepopup/?binding=Upnp'
