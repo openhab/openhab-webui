@@ -1,6 +1,6 @@
 <template>
   <div v-if="ready">
-    <div style="text-align:right" class="padding-right" v-if="itemType !== 'Group'">
+    <div style="text-align:right" class="padding-right" v-if="itemType !== 'Group' && editable">
       <label @click="toggleMultiple" style="cursor:pointer">Multiple</label>
       <f7-checkbox :checked="multiple" @change="toggleMultiple" />
     </div>
@@ -8,6 +8,7 @@
       <f7-list-item
         :key="classSelectKey"
         :title="'Alexa Device Type' + (itemType !== 'Group' ? (!multiple ? '/Attribute' : '/Attributes') : '')"
+        :disabled="!editable"
         smart-select
         :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: !multiple, scrollToSelectedItem: true }"
         ref="classes">
@@ -41,7 +42,7 @@
       </f7-block-footer>
     </f7-list>
     <div>
-      <config-sheet :parameterGroups="[]" :parameters="parameters" :configuration="metadata.config" />
+      <config-sheet :parameterGroups="[]" :parameters="parameters" :configuration="metadata.config" :read-only="!editable" />
     </div>
     <f7-block class="padding-top no-padding no-margin" v-if="itemType === 'Group' && classes.length">
       <f7-block-title class="padding-left">
@@ -53,7 +54,7 @@
           :title="cap.name + (cap.isIgnored ? ' (Ignored)' : '')"
           :after="cap.item"
           :key="`${cap.name}:${cap.item}`"
-          :disabled="cap.isIgnored"
+          :disabled="cap.isIgnored || !editable"
           :link="`/settings/items/${cap.item}/metadata/alexa`" />
       </f7-list>
       <f7-block-footer class="padding-left" v-if="!groupCapabilities.length">
@@ -77,7 +78,7 @@ import AlexaDefinitions from '@/assets/definitions/metadata/alexa'
 import ConfigSheet from '@/components/config/config-sheet.vue'
 
 export default {
-  props: ['item', 'metadata', 'namespace'],
+  props: ['item', 'metadata', 'namespace', 'editable'],
   components: {
     ConfigSheet
   },
