@@ -8,7 +8,6 @@
       </f7-nav-right>
     </f7-navbar>
 
-
     <div class="page-content infinite-scroll-content"  infinite :infinite-distance="50" :infinite-preloader="showPreloader" @infinite="loadMore" style="margin-top:10px;padding:0px;height:calc(100vh - 50px - 150px);">
       <div v-if="node">
         <!--
@@ -25,20 +24,18 @@
           </div>  
 
           <div style="padding:5px; border:0px;">
-            <form class="searchbar" style="width:400px;border:solid 1px #000000;border-radius:10px;">
-              <div class="searchbar-inner" >
-                <div class="searchbar-input-wrap">
-                  <input type="search" placeholder="Search" />
-                  <i class="searchbar-icon"></i>
-                  <span class="input-clear-button"></span>
-                </div>
-                <span class="searchbar-disable-button">Cancel</span>
-              </div>
-            </form>
-          </div>
+            <f7-searchbar
+              :customSearch="true"
+              placeholder="Rechercher..."
+              :clear-button="true"
+              :disable-button="false"
+              @searchbar:search="onSearch"
+              @searchbar:clear="onClear"  
+              style="width:400px;border:solid 1px #000000;border-radius:10px;"/>
+            </div>
         </div>
 
-        
+
         <br>
 
         <!--
@@ -188,6 +185,10 @@ export default {
       showPreloader: true,
       lastItemIndex: 0,
       size:30,
+      searchQuery: '',
+      results: [],
+      loading: false,
+      searchTimeout: null,
     }
   },
   computed: {
@@ -253,7 +254,8 @@ export default {
       console.log('MediaBrowser path: ' + this.path)
 
       return this.$oh.api.get('/rest/media/sources?path=' + this.path + '&start=' + start + '&size=' + this.size).then((data) => {
-        console.log('Data')
+        console.log('Data:' + data)
+        console.log('Data:' + data)
         this.node = data 
         this.node.pres = 'thumb'
 
@@ -268,7 +270,7 @@ export default {
         }
         this.$store.commit('setMapping', { key: idForMap, value: data.label } );
 
-        if (data.childs.length === 0) {
+        if (data.child!=null && data.childs.length === 0) {
           console.log("No more items to load, stopping infinite scroll :")
           this.allowInfinite = false;
           this.showPreloader = false;
@@ -276,9 +278,11 @@ export default {
           this.showPreloader = true;
         }
       
-        for (let i = 0; i < data.childs.length; i++) {
-          const child = data.childs[i]
-          this.items.push(child)
+        if (data.childs!=null) {
+          for (let i = 0; i < data.childs.length; i++) {
+            const child = data.childs[i]
+            this.items.push(child)
+          }
         }
         this.lastItemIndex = this.items.length;
 
@@ -303,7 +307,46 @@ export default {
       this.loadItems(this.lastItemIndex).then(() => {
         this.loading = false;
       })
-    }
+    },
+    onSearch(query) {
+      // Nettoyage du précédent timeout
+      if (this.searchTimeout) clearTimeout(this.searchTimeout);
+
+      // Si la requête est vide, on ne cherche pas
+      if (!query) {
+        this.results = [];
+        return;
+      }
+
+      // On ajoute un délai pour éviter les appels API à chaque frappe
+      this.searchTimeout = setTimeout(() => {
+        this.fetchResults(query);
+      }, 300); // délai de 300ms, ajustable
+    },
+    onClear() {
+      this.results = [];
+      this.searchQuery = '';
+    },
+    async fetchResults(query) {
+      this.loading = true;
+      try {
+        console.log('query:', query.query);
+        // Remplace cette URL par ton endpoint réel
+        //const response = await fetch(`https://api.example.com/search?q=${encodeURIComponent(query)}`);
+        //const data = await response.json();
+
+        this.$store.dispatch('sendCommand', { itemName: this.item, cmd: 'NONE,SEARCH,' + query.query + ',' + this.device + ',NONE' })
+        this.$f7router.navigate('/mediabrowser/?path=/Root/Spotify/Search&item=' + this.item + '&device=' + this.device, { reloadCurrent: true, reloadDetail: true });
+
+        // Ici, adapte selon la structure de la réponse de ton API
+        this.results = [ { 'name':'name1', 'val' : 'val1'}, { 'name':'name2', 'val' : 'val2'}]
+      } catch (error) {
+        console.error('Erreur API:', error);
+        this.results = [];
+      } finally {
+        this.loading = false;
+      }
+    },
   },
   created () {
   },
