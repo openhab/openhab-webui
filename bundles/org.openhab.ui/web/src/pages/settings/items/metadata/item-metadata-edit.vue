@@ -25,7 +25,7 @@
       <f7-tab id="config" class="metadata-editor-config-tab" @tab:show="() => this.currentTab = 'config'" :tab-active="currentTab === 'config'">
         <f7-block class="block-narrow" v-if="ready && currentTab === 'config'">
           <f7-col>
-            <component :is="editorControl" :item="item" :metadata="metadata" :namespace="namespace" :editable="editable" />
+            <component :is="editorControl" :item="item" :metadata="metadata" :namespace="namespace" />
           </f7-col>
         </f7-block>
         <f7-block class="block-narrow" v-if="ready">
@@ -40,7 +40,7 @@
       </f7-tab>
 
       <f7-tab id="code" @tab:show="() => { this.currentTab = 'code' }" :tab-active="currentTab === 'code'">
-        <f7-icon v-if="!editable" f7="lock" class="float-right margin" style="opacity:0.5; z-index: 4000; user-select: none;" size="50" color="gray" tooltip="This metadata is not editable" />
+        <f7-icon v-if="!editable" f7="lock" class="float-right margin" style="opacity:0.5; z-index: 4000; user-select: none;" size="50" color="gray" tooltip="This metadata is not editable as it has not been created through the UI" />
         <editor v-if="currentTab === 'code'" class="metadata-code-editor" mode="text/x-yaml" :value="yaml" :readOnly="!editable" @input="onEditorInput" />
       </f7-tab>
     </f7-tabs>
@@ -156,7 +156,7 @@ export default {
       }
     },
     editable () {
-      return this.item.editable
+      return this.metadata.editable !== false
     }
   },
   methods: {
@@ -239,7 +239,10 @@ export default {
       )
     },
     toYaml () {
-      this.yaml = YAML.stringify(this.metadata)
+      this.yaml = YAML.stringify({
+        value: this.metadata.value,
+        config: this.metadata.config || {}
+      })
     },
     fromYaml () {
       try {

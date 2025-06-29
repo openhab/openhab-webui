@@ -64,9 +64,11 @@
 <script>
 import { accessoriesAndCharacteristics, homekitParameters, accessories } from '@/assets/definitions/metadata/homekit'
 import ConfigSheet from '@/components/config/config-sheet.vue'
+import ItemMetadataMixin from '@/components/item/metadata/item-metadata-mixin'
 
 export default {
-  props: ['item', 'itemName', 'metadata', 'namespace', 'editable'],
+  props: ['item', 'itemName', 'metadata'],
+  mixins: [ItemMetadataMixin],
   components: {
     ConfigSheet
   },

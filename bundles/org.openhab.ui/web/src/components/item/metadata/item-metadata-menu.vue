@@ -7,7 +7,9 @@
             v-for="namespace in wellKnownNamespaces" :key="namespace.name"
             :link="'/settings/items/' + item.name + '/metadata/' + namespace.name"
             :title="namespace.label"
-            :after="namespace.value || 'Not Set'" />
+            :after="namespace.value || 'Not Set'">
+            <f7-icon v-if="!namespace.editable" slot="title" f7="lock_fill" size="1rem" color="gray" />
+          </f7-list-item>
         </ul>
         <ul v-if="customNamespaces.length > 0">
           <f7-list-item divider />
@@ -15,11 +17,13 @@
             v-for="namespace in customNamespaces" :key="namespace.name"
             :link="'/settings/items/' + item.name + '/metadata/' + namespace.name"
             :title="namespace.label"
-            :after="namespace.value || 'Not Set'" />
+            :after="namespace.value || 'Not Set'">
+            <f7-icon v-if="!namespace.editable" slot="title" f7="lock_fill" size="1rem" color="gray" />
+          </f7-list-item>
         </ul>
       </f7-list>
     </f7-card-content>
-    <f7-card-footer v-if="item.editable">
+    <f7-card-footer>
       <f7-button color="blue" @click="addMetadata">
         Add Metadata
       </f7-button>
@@ -51,7 +55,8 @@ export default {
         .map((n) => {
           return {
             name: n,
-            value: this.item.metadata[n].value
+            value: this.item.metadata[n].value,
+            editable: this.item.metadata[n].editable
           }
         })
     },

@@ -6,8 +6,12 @@
       </f7-col>
     </f7-block>
 
+    <f7-block-header v-if="!editable" class="padding-horizontal">
+      <b style="color: var(--f7-theme-color) !important;">INFO: This metadata is not editable as it has not been created through the UI.
+        <br>You can try out changes here, but you cannot save them.</b>
+    </f7-block-header>
     <f7-list v-if="defaultComponent.component">
-      <f7-list-item :title="'Widget'" :disabled="!editable" smart-select :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: true, scrollToSelectedItem: true }" ref="widgets">
+      <f7-list-item :title="'Widget'" smart-select :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: true, scrollToSelectedItem: true }" ref="widgets">
         <select name="widgets" @change="updateComponent">
           <option value="">
             Default ({{ defaultComponent.component }})
@@ -46,7 +50,7 @@
       <f7-block-footer v-if="currentComponent.component && currentComponent.component.indexOf('widget:') === 0" class="padding-horizontal margin-bottom">
         Make sure the personal widget is of the expected type (cell, list item or standalone).
       </f7-block-footer>
-      <config-sheet :parameterGroups="configDescriptions.parameterGroups" :parameters="configDescriptions.parameters" :configuration="metadata.config" :read-only="!editable" @updated="widgetConfigUpdated" set-empty-config-as-null="true" />
+      <config-sheet :parameterGroups="configDescriptions.parameterGroups" :parameters="configDescriptions.parameters" :configuration="metadata.config" @updated="widgetConfigUpdated" set-empty-config-as-null="true" />
     </div>
   </div>
 </template>
@@ -72,9 +76,11 @@ import itemDefaultListComponent from '@/components/widgets/standard/list/default
 import itemDefaultCellComponent from '@/components/widgets/standard/cell/default-cell-item'
 
 import { VisibilityGroup, VisibilityParameters } from '@/assets/definitions/widgets/visibility'
+import ItemMetadataMixin from '@/components/item/metadata/item-metadata-mixin'
 
 export default {
-  props: ['item', 'metadata', 'namespace', 'editable'],
+  props: ['item', 'metadata', 'namespace'],
+  mixins: [ItemMetadataMixin],
   components: {
     ConfigSheet
   },

@@ -105,10 +105,12 @@
 <script>
 import { deviceTypes, deviceTypesAndAttributes, matterParameters } from '@/assets/definitions/metadata/matter'
 import ConfigSheet from '@/components/config/config-sheet.vue'
+import ItemMetadataMixin from '@/components/item/metadata/item-metadata-mixin'
 
 export default {
   name: 'item-metadata-matter',
-  props: ['item', 'metadata', 'namespace', 'editable'],
+  props: ['item', 'metadata'],
+  mixins: [ItemMetadataMixin],
   components: {
     ConfigSheet
   },

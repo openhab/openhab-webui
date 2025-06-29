@@ -18,8 +18,11 @@
 </template>
 
 <script>
+import ItemMetadataMixin from '@/components/item/metadata/item-metadata-mixin'
+
 export default {
-  props: ['itemName', 'metadata', 'namespace', 'editable'],
+  props: ['itemName', 'metadata'],
+  mixins: [ItemMetadataMixin],
   computed: {
     synonyms () {
       if (!this.metadata.value) return []

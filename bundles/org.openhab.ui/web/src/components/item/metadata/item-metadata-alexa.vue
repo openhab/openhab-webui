@@ -76,9 +76,11 @@
 <script>
 import AlexaDefinitions from '@/assets/definitions/metadata/alexa'
 import ConfigSheet from '@/components/config/config-sheet.vue'
+import ItemMetadataMixin from '@/components/item/metadata/item-metadata-mixin'
 
 export default {
-  props: ['item', 'metadata', 'namespace', 'editable'],
+  props: ['item', 'metadata'],
+  mixins: [ItemMetadataMixin],
   components: {
     ConfigSheet
   },
