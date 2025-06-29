@@ -4,6 +4,7 @@ import Vuex from 'vuex'
 import buildInfo from '@/assets/build-info'
 
 import components from './modules/components'
+import media from './modules/media'
 import model from './modules/model'
 import states from './modules/states'
 import semantics from './modules/semantics'
@@ -17,6 +18,7 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   modules: {
     components,
+    media,
     model,
     semantics,
     states,
