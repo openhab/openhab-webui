@@ -11,7 +11,7 @@
         type="text"
         placeholder="leave empty to use system default"
         :value="metadata.value"
-        :disabled="!metadata.editable"
+        :disabled="!editable"
         @blur="(evt) => metadata.value = evt.target.value" />
     </f7-list>
     <f7-block-footer class="param-description padding-horizontal">
@@ -27,7 +27,10 @@
 </template>
 
 <script>
+import ItemMetadataMixin from '@/components/item/metadata/item-metadata-mixin'
+
 export default {
-  props: ['itemName', 'metadata']
+  props: ['itemName', 'metadata'],
+  mixins: [ItemMetadataMixin]
 }
 </script>

@@ -13,8 +13,11 @@
 
 <script>
 import ConfigSheet from '@/components/config/config-sheet.vue'
+import ItemMetadataMixin from '@/components/item/metadata/item-metadata-mixin'
+
 export default {
   props: ['itemName', 'metadata'],
+  mixins: [ItemMetadataMixin],
   components: {
     ConfigSheet
   },
@@ -31,9 +34,6 @@ export default {
     customRules () {
       if (!this.metadata.value) return []
       return this.metadata.value.split('\n').map((s) => s.trim()).join('\n')
-    },
-    editable () {
-      return this.metadata.editable
     }
   },
   methods: {

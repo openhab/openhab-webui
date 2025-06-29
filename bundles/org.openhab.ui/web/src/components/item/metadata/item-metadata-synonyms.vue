@@ -8,7 +8,7 @@
         :label="'Synonyms'"
         name="synonyms"
         :value="synonyms"
-        :disabled="!metadata.editable"
+        :disabled="!editable"
         @input="updateValue" />
       <f7-block-footer class="param-description" slot="after-list">
         <small>Enter each synonym on a separate line.</small>
@@ -18,8 +18,11 @@
 </template>
 
 <script>
+import ItemMetadataMixin from '@/components/item/metadata/item-metadata-mixin'
+
 export default {
   props: ['itemName', 'metadata'],
+  mixins: [ItemMetadataMixin],
   computed: {
     synonyms () {
       if (!this.metadata.value) return []

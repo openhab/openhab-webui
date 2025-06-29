@@ -72,9 +72,11 @@ import itemDefaultListComponent from '@/components/widgets/standard/list/default
 import itemDefaultCellComponent from '@/components/widgets/standard/cell/default-cell-item'
 
 import { VisibilityGroup, VisibilityParameters } from '@/assets/definitions/widgets/visibility'
+import ItemMetadataMixin from '@/components/item/metadata/item-metadata-mixin'
 
 export default {
   props: ['item', 'metadata', 'namespace'],
+  mixins: [ItemMetadataMixin],
   components: {
     ConfigSheet
   },
@@ -95,9 +97,6 @@ export default {
   computed: {
     personalWidgets () {
       return [...this.$store.getters.widgets].sort((a, b) => { return a.uid.localeCompare(b.uid) })
-    },
-    editable () {
-      return this.metadata.editable
     }
   },
   mounted () {

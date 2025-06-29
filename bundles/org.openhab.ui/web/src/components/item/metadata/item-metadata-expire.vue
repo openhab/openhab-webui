@@ -49,8 +49,11 @@
 </template>
 
 <script>
+import ItemMetadataMixin from '@/components/item/metadata/item-metadata-mixin'
+
 export default {
   props: ['itemName', 'metadata'],
+  mixins: [ItemMetadataMixin],
   data () {
     return {
     }
@@ -90,9 +93,6 @@ export default {
       let configValue = this.metadata.config['ignoreCommands']
       if (!configValue) return false
       return typeof (configValue) === 'string' ? configValue === 'true' : configValue
-    },
-    editable () {
-      return this.metadata.editable
     }
   },
   mounted () {

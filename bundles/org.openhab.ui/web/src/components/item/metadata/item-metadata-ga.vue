@@ -38,9 +38,11 @@
 <script>
 import GoogleDefinitions from '@/assets/definitions/metadata/ga'
 import ConfigSheet from '@/components/config/config-sheet.vue'
+import ItemMetadataMixin from '@/components/item/metadata/item-metadata-mixin'
 
 export default {
   props: ['itemName', 'metadata'],
+  mixins: [ItemMetadataMixin],
   components: {
     ConfigSheet
   },
@@ -62,10 +64,6 @@ export default {
     parameters () {
       if (!this.metadata.value) return []
       return GoogleDefinitions['type:' + this.metadata.value] || GoogleDefinitions['attribute:' + this.metadata.value]
-    },
-
-    editable () {
-      return this.metadata.editable
     }
   },
   methods: {
