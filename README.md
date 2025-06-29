@@ -60,7 +60,7 @@ Instead, you need NodeJS and npm installed, you'll learn about the required vers
 
 Then identify in the `bundles` directories where the frontend code is - for instance, for the Main UI it is `bundles/org.openhab.ui/web/`.
 Then follow the instructions in the specific add-on's `CONTRIBUTING.md` file to get started, e.g. install the correct versions of NodeJS and npm.
-For Main UI, it is located in [bundles/org.openhab.ui/CONTRIBUTING.md](https://github.com/openhab/openhab-webui/blob/master/bundles/org.openhab.ui/CONTRIBUTING.md).
+For Main UI, it is located in [bundles/org.openhab.ui/CONTRIBUTING.md](/bundles/org.openhab.ui/CONTRIBUTING.md).
 In many cases it will involve executing some `npm` commands to install dependencies and start a development server.
 
 However, if you want to compile the final `.jar` add-ons, we have assembled some step-by-step guides for different IDEs on our developer documentation website:
@@ -71,7 +71,7 @@ https://www.openhab.org/docs/developer/#setup-the-development-environment
 
 To build all add-ons from the command-line, type in:
 
-`mvn clean install`
+`./mvnw clean install`
 
 To improve build times you can add the following options to the command:
 
@@ -87,16 +87,16 @@ To improve build times you can add the following options to the command:
 
 For example you can skip checks and tests during development with:
 
-`mvn clean install -DskipChecks -DskipTests`
+`./mvnw clean install -DskipChecks -DskipTests`
 
 Adding these options improves the build time but could hide problems in your code.
 Parallel builds are also less easy to debug and the increased load may cause timing sensitive tests to fail.
 
-To check if your code is following the [code style](https://www.openhab.org/docs/developer/guidelines.html#b-code-formatting-rules-style) run: `mvn spotless:check`
-To reformat your code so it conforms to the code style you can run: `mvn spotless:apply`
+To check if your code is following the [code style](https://www.openhab.org/docs/developer/guidelines.html#b-code-formatting-rules-style) run: `./mvnw spotless:check`
+To reformat your code so it conforms to the code style you can run: `./mvnw spotless:apply`
 
 When your add-on also has an integration test in the `itests` directory, you may need to update the runbundles in the `itest.bndrun` file when the Maven dependencies change.
-Maven can resolve the integration test dependencies automatically by executing: `mvn clean install -DwithResolver -DskipChecks`
+Maven can resolve the integration test dependencies automatically by executing: `./mvnw clean install -DwithResolver -DskipChecks`
 
 The build generates a `.jar` file per bundle in the respective bundle `/target` directory.
 
