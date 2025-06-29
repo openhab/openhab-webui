@@ -76,12 +76,12 @@ export default {
           if (direct.length) return direct
           return findPoints(allEquipmentPoints(this.element.equipment), 'Point', true, 'Property_LowBattery')
         case 'lights':
-          return [...this.queryLightPoints, ...this.queryLightEquipment('Equipment_LightSource')]
+          return this.queryLightPoints
         case 'windows':
           equipment = findEquipment(this.element.equipment, 'Equipment_Window', false)
           if (!equipment.length) return []
           allPoints = allEquipmentPoints(equipment)
-          points = findPoints(allPoints, 'Point', true, 'Property_Opening')
+          points = findPoints(allPoints, 'Point', true, 'Property_Opening', true)
           if (points.length) return points
           return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
         case 'doors':
@@ -95,21 +95,21 @@ export default {
           ]
           if (!equipment.length) return []
           allPoints = allEquipmentPoints(equipment)
-          points = findPoints(allPoints, 'Point', true, 'Property_Opening')
+          points = findPoints(allPoints, 'Point', true, 'Property_Opening', true)
           if (points.length) return points
           return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
         case 'garagedoors':
           equipment = findEquipment(this.element.equipment, 'Equipment_Door_GarageDoor', false)
           if (!equipment.length) return []
           allPoints = allEquipmentPoints(equipment)
-          points = findPoints(allPoints, 'Point', true, 'Property_Opening')
+          points = findPoints(allPoints, 'Point', true, 'Property_Opening', true)
           if (points.length) return points
           return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
         case 'blinds':
           equipment = findEquipment(this.element.equipment, 'Equipment_WindowCovering', true)
           if (!equipment.length) return []
           allPoints = allEquipmentPoints(equipment)
-          points = findPoints(allPoints, 'Point', true, 'Property_Opening')
+          points = findPoints(allPoints, 'Point', true, 'Property_Opening', true)
           if (points.length) return points
           return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
         case 'presence':
@@ -126,7 +126,7 @@ export default {
           equipment = findEquipment(this.element.equipment, 'Equipment_Lock', false)
           if (!equipment.length) return []
           allPoints = allEquipmentPoints(equipment)
-          points = findPoints(allPoints, 'Point', true, 'Property_Opening')
+          points = findPoints(allPoints, 'Point', true, 'Property_Opening', true)
           if (points.length) return points
           return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
         case 'climate':
@@ -134,14 +134,15 @@ export default {
           if (!equipment.length) return []
           allPoints = allEquipmentPoints(equipment)
           points = [
-            ...findPoints(allPoints, 'Point_Status', false),
-            ...findPoints(allPoints, 'Point_Control', true)
+            ...findPoints(allPoints, 'Point_Status', false, 'Property_Power'),
+            ...findPoints(allPoints, 'Point_Control', true, 'Property_Power')
           ]
           if (points.length) return points
           return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
         case 'screens':
           equipment = [
-            ...findEquipment(this.element.equipment, 'Equipment_AudioVisual_Display', true),
+            ...findEquipment(this.element.equipment, 'Equipment_AudioVisual_Display', false),
+            ...findEquipment(this.element.equipment, 'Equipment_AudioVisual_Display_Television', false),
             ...findEquipment(this.element.equipment, 'Equipment_AudioVisual_Screen', true)
           ]
           if (!equipment.length) return []
@@ -207,9 +208,30 @@ export default {
       }
     },
     queryLightPoints () {
-      let direct = findPoints(this.element.properties, 'Point', true, 'Property_Light')
-      if (direct.length) return direct
-      return findPoints(allEquipmentPoints(this.element.equipment), 'Point', true, 'Property_Light')
+      // Look for all control points on the location with light property
+      const points = []
+      points.push(...findPoints(this.element.properties, 'Point_Control', true, 'Property_Light'))
+      // Repeat this for equipments on the location, but this time, as it is an equipment, assume it only represents one light and we default to the switch
+      let equipment = findEquipment(this.element.equipment, 'Equipment_LightSource', true)
+      points.push(...this.element.equipment.map((e) => {
+        const isLightSource = equipment.includes(e) // for light source equipment we look beyond property light
+        let equipmentPoints = findPoints(e.points, 'Point_Control_Switch', false, 'Property_Light')
+        if (equipmentPoints.length) return equipmentPoints.slice(0, 1)
+        if (isLightSource) {
+          equipmentPoints = findPoints(e.points, 'Point_Control_Switch', false)
+          if (equipmentPoints.length) return equipmentPoints.slice(0, 1)
+        }
+        equipmentPoints = findPoints(e.points, 'Point_Control', true, 'Property_Light')
+        if (equipmentPoints.length) return equipmentPoints.slice(0, 1)
+        if (isLightSource) {
+          equipmentPoints = findPoints(e.points, 'Point_Control', false)
+          if (equipmentPoints.length) return equipmentPoints.slice(0, 1)
+        }
+        return []
+      }).flat())
+      // Also include equipment items that have no points themselves
+      points.push(...equipment.filter((e) => e.points.length === 0).map((e) => e.item))
+      return points
     }
   },
   methods: {
@@ -221,14 +243,6 @@ export default {
         }
       }
       return this.exprAst
-    },
-    queryLightEquipment (equipmentType) {
-      let equipment = findEquipment(this.element.equipment, equipmentType, true)
-      if (!equipment.length) return []
-      let allPoints = allEquipmentPoints(equipment)
-      let points = findPoints(allPoints, 'Point', true, 'Property_Light')
-      if (points.length) return points
-      return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
     }
   }
 }
