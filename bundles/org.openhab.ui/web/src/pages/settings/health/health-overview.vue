@@ -33,7 +33,7 @@
             :after="semanticsProblemCount > 0 ? undefined : semanticsProblemCount"
             :badge-color="semanticsProblemCount ? 'red' : 'blue'"
             :footer="objectsSubtitles.semanticsProblems">
-            <f7-icon slot="media" f7="link" color="gray" />
+            <f7-icon slot="media" f7="list_bullet_indent" color="gray" />
           </f7-list-item>
         </f7-list>
       </f7-col>
@@ -69,16 +69,15 @@ export default {
   },
   methods: {
     loadCounters () {
-      let self = this
       if (!this.apiEndpoints) return
       if (this.$store.getters.apiEndpoint('links')) {
         this.$oh.api.get('/rest/links/orphans').then((data) => {
-          self.orphanLinksCount = data.length || 0
+          this.orphanLinksCount = data.length || 0
         })
       }
       if (this.$store.getters.apiEndpoint('items')) {
         this.$oh.api.get('/rest/items/semantics/health').then((data) => {
-          self.semanticsProblemCount = data.length || 0
+          this.semanticsProblemCount = data.length || 0
         })
       }
     },

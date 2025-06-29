@@ -260,14 +260,7 @@ export default [
             path: 'orphanlinks',
             beforeEnter: [enforceAdminForRoute],
             async: loadAsync(HealthOrphanLinksPage)
-          }
-        ]
-      },
-      {
-        path: 'health',
-        beforeEnter: [enforceAdminForRoute],
-        async: loadAsync(HealthOverviewPage),
-        routes: [
+          },
           {
             path: 'semantics',
             beforeEnter: [enforceAdminForRoute],

@@ -1,5 +1,5 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn">
+  <f7-page @page:afterin="onPageAfterIn" class="health-semantics-page">
     <f7-navbar title="Semantic Model Configuration Conflicts" back-link="Health Checks" back-link-url="/settings/health/" back-link-force>
       <f7-nav-right>
         <developer-dock-icon />
@@ -52,10 +52,11 @@
 </template>
 
 <style lang="stylus">
-    .health-problem-item
-        .item-title
-        .item-footer
-            text-wrap: auto
+.health-semantics-page
+  .health-problem-item
+    .item-title
+    .item-footer
+      text-wrap: auto
 </style>
 
 <script>
