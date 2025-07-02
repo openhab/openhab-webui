@@ -35,7 +35,7 @@
           </div>
         </div>
 <!--
-        <br/>
+-->                <br/>
         <b>currentGlobalPlayerName:</b> {{ $store.state.media.currentGlobalPlayerName }}
         <br/>
         <b>currentGlobalPlayerItem:</b> {{ $store.state.media.currentGlobalPlayerItem }}
@@ -48,20 +48,19 @@
         <br/>
         <b>trackName:</b> {{ trackName }}
         <br/>
-
+        <b>artUri:</b> {{ artUri }}
+        <br/>
+        <b>trackPosition%:</b> {{ trackPositionPourcent }}
         <br/>
 
         <b>trackPosition:</b> {{ formatTime(trackPosition) }}
         <br/>
-        <b>trackDuration:</b> {{ trackDuration }}
+        <b>trackDuration:</b> {{ formatTime(trackDuration) }}
         <br/>
         <b>volume:</b> {{ volume }}
         <br/>
            
--->        
-        <!--
-        <b>artUri:</b> {{ artUri }}
-      -->
+
         
         
 
@@ -146,7 +145,7 @@
     <f7-toolbar v-if="true" bottom style="min-height: 150px;padding:0px;margin:0px;">
       <div v-if="true" style="display: flex; align-items: center; justify-content:left;padding:0px;margin:0px;">
         <div style="margin:0px;padding:0px;">
-          <img src="/static/Heos.png" style="width: 150px; height: 150px; margin:0px;padding:0px;">
+          <img :src="artUri" style="width: 150px; height: 150px; margin:0px;padding:0px;">
         </div>
         <div />
         <div style="width:300px;padding:50px;">
@@ -164,17 +163,17 @@
                {{ formatTime(trackPosition)  }}
             </div>
             <div style="width:500px;">
-              <f7-range ref="rangeslider" class="oh-slider" :min="0" :max="100" :step="1"  />
+              <f7-range ref="rangeslider" class="oh-slider" :min="0" :max="100" :step="1" :value="trackPositionPourcent" />
             </div>
             <div style="padding-left:20px;">
-               {{ trackDuration }}
+               {{ formatTime(trackDuration) }}
             </div>
           </div>
         </div>
         <div style="width:200px;" />
         <div style="width:400px;height:150px;padding:0px;display: flex; align-items: center; justify-content:left;">
           <f7-button icon-material="speaker" outline style="height:40px;font-weight:bold;padding:2px;padding-right:30px;text-align:left;border:none 0px;" large icon-size="36" />
-          <f7-range ref="rangeslider" class="oh-slider" :min="0" :max="100" :step="1"  :label="true" />
+          <f7-range ref="rangeslider" class="oh-slider" :min="0" :max="100" :step="1"  :value="volume" :label="true" @range:changed="onVolumeChange"/>
           <br/>
           <div style="padding-left:30px;width:50px">
             {{ volume }}  %
@@ -220,9 +219,6 @@ export default {
     this.$store.commit('setMapping', { key: 'Root', value: 'Racine' })
 
     this.path = '/Root'
-    //        this.path='/Root/Spotify/Playlists/spotify:playlist:5Z4AD0u9fwnvtsj7ce5ZLS';
-
-    // this.loadInitialItems()
 
 
     if (this.item=== undefined || this.item === null || this.item === '') {
@@ -231,8 +227,8 @@ export default {
 
 
     this.item="MCR612_Spotify_Controle_Media"
-    console.log('MediaBrowser item: ' + this.item)
-    console.log('============= Mouted MediaBrowser =============')
+    //console.log('MediaBrowser item: ' + this.item)
+    //console.log('============= Mouted MediaBrowser =============')
     if (this.$store!== undefined && this.item!== undefined && this.item !== null && this.item !== '') {
 
       if (!this.$store.getters.isItemTracked(this.item)) 
@@ -243,34 +239,11 @@ export default {
       
     }
 
-    console.log('============= Data MediaBrowser =============')
+    //console.log('============= Data MediaBrowser =============')
 
     
-    console.log('item:', this.item);
+    //console.log('item:', this.item);
     if (this.$store.getters.trackedItems[this.item]!== undefined) {
-      /*
-      const value = this.$store.getters.trackedItems[this.item].state
-      console.log('value2', value);
-       if (value === undefined || value === null || value === '') {
-          return false
-        }
-        if (value==='-') {
-          return false
-        }
-      console.log('mediaControl', this.mediaControl)
-      var mediaType = JSON.parse(value)
-      console.log('value2', mediaType.currentPlayingArtistName)
-      console.log('value2', mediaType.currentPlayingTrackName)
-      
-      this.trackName = mediaType.currentPlayingTrackName.value
-      this.artistName = mediaType.currentPlayingArtistName.value
-      this.artUri = mediaType.currentPlayingArtUri.value
-      
-      this.trackDuration = mediaType.currentPlayingTrackDuration.value
-      
-      this.volume = mediaType.currentPlayingVolume.value
-      */
-      
     }
     else  {
       console.log('item not tracked:', this.item);
@@ -297,7 +270,7 @@ export default {
     mediaControl() {
       if (this.$store.getters.trackedItems[this.item]!= undefined) {
         const value = this.$store.getters.trackedItems[this.item].state
-        console.log('value2', value);
+        //console.log('value2', value);
         if (value === undefined || value === null || value === '') {
           return false
         }
@@ -305,9 +278,15 @@ export default {
           return false
         }
         var mediaType = JSON.parse(value)
-        console.log('value2', mediaType.currentPlayingArtistName)
-        console.log('value2', mediaType.currentPlayingTrackName)
+        //console.log('value2', mediaType.currentPlayingArtistName)
+        //console.log('value2', mediaType.currentPlayingTrackName)
         return mediaType
+      }
+    },
+
+    trackPositionPourcent() {
+      if (this.mediaControl!=undefined && this.mediaControl.currentPlayingTrackPosition!== undefined) {
+        return this.mediaControl.currentPlayingTrackPosition.value/this.mediaControl.currentPlayingTrackDuration.value*100.00
       }
     },
 
@@ -340,6 +319,14 @@ export default {
          return this.mediaControl.currentPlayingArtistName.value
       } 
     },
+
+
+    artUri() {
+      if (this.mediaControl!=undefined && this.mediaControl.currentPlayingArtUri!== undefined) {
+         return this.mediaControl.currentPlayingArtUri.value
+      } 
+    },
+    
 
 
     currentRoute () {
@@ -378,7 +365,7 @@ export default {
 
   },
   methods: {
-       formatTime(ms) {
+    formatTime(ms) {
       const totalSeconds = Math.floor(ms / 1000);
       const minutes = Math.floor(totalSeconds / 60);
       const seconds = totalSeconds % 60;
@@ -388,6 +375,15 @@ export default {
       const formattedSeconds = String(seconds).padStart(2, '0');
 
       return `${formattedMinutes}:${formattedSeconds}`;
+    },
+    onVolumeChange(event) {
+      this.item = this.$f7route.query.item
+      if (this.item=== undefined || this.item === null || this.item === '') {
+        this.item = this.$store.state.media.currentGlobalPlayerItem
+      }
+
+     console.log('Nouvelle valeur :', event)
+     this.$store.dispatch('sendCommand', { itemName: this.item, cmd: this.createMediaType('VOLUME', event) })
     },
     onPageAfterIn () {
     }, 
@@ -399,7 +395,10 @@ export default {
       mediaType.command = command
       mediaType.param = id
       mediaType.device = {}
-      mediaType.device.value = this.device.value
+      if (this.device !== undefined && this.device !== null) {
+        mediaType.device.value = this.device.value
+      } 
+      
       return JSON.stringify(mediaType)
     },
     doPlay (item, id) {
@@ -495,7 +494,7 @@ export default {
     async fetchResults (query) {
       this.loading = true
       try {
-        console.log('query:', query.query)
+        //console.log('query:', query.query)
         // Remplace cette URL par ton endpoint réel
         // const response = await fetch(`https://api.example.com/search?q=${encodeURIComponent(query)}`);
         // const data = await response.json();
