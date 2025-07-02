@@ -10,6 +10,7 @@
 
     <div class="page-content infinite-scroll-content" infinite :infinite-distance="50" :infinite-preloader="showPreloader" @infinite="loadMore" style="margin-top:10px;padding:0px;height:calc(100vh - 50px - 150px);">
       <div v-if="node">
+        
         <!--
         Display a naviation bar to navigate media hierarchy.
         -->
@@ -33,9 +34,38 @@
               style="width:400px;border:solid 1px #000000;border-radius:10px;" />
           </div>
         </div>
+<!--
+        <br/>
+        <b>currentGlobalPlayerName:</b> {{ $store.state.media.currentGlobalPlayerName }}
+        <br/>
+        <b>currentGlobalPlayerItem:</b> {{ $store.state.media.currentGlobalPlayerItem }}
+        <br/>
+        
+        <b>mediaControl:</b> {{ mediaControl }}
+        <br/>
 
-        <br>
+        <b>artistName:</b> {{ artistName }}
+        <br/>
+        <b>trackName:</b> {{ trackName }}
+        <br/>
 
+        <br/>
+
+        <b>trackPosition:</b> {{ formatTime(trackPosition) }}
+        <br/>
+        <b>trackDuration:</b> {{ trackDuration }}
+        <br/>
+        <b>volume:</b> {{ volume }}
+        <br/>
+           
+-->        
+        <!--
+        <b>artUri:</b> {{ artUri }}
+      -->
+        
+        
+
+        
         <!--
         Flat presentation for Album, Playlist:
         Display a header with the cover, title, Play and enqueue buttons
@@ -120,8 +150,8 @@
         </div>
         <div />
         <div style="width:300px;padding:50px;">
-          <b>Title</b><br>
-          Artists<br>
+          <b> {{ trackName }} </b><br>
+           {{ artistName  }} <br>
         </div>
         <div>
           <div>
@@ -131,20 +161,24 @@
           </div>
           <div style="display: flex; padding:20px;">
             <div style="padding-right:20px;">
-              3.50
+               {{ formatTime(trackPosition)  }}
             </div>
             <div style="width:500px;">
-              <f7-range ref="rangeslider" class="oh-slider" :min="0" :max="100" :step="1" :value="10" />
+              <f7-range ref="rangeslider" class="oh-slider" :min="0" :max="100" :step="1"  />
             </div>
             <div style="padding-left:20px;">
-              4.42
+               {{ trackDuration }}
             </div>
           </div>
         </div>
         <div style="width:200px;" />
         <div style="width:400px;height:150px;padding:0px;display: flex; align-items: center; justify-content:left;">
           <f7-button icon-material="speaker" outline style="height:40px;font-weight:bold;padding:2px;padding-right:30px;text-align:left;border:none 0px;" large icon-size="36" />
-          <f7-range ref="rangeslider" class="oh-slider" :min="0" :max="100" :step="1" :value="10" />
+          <f7-range ref="rangeslider" class="oh-slider" :min="0" :max="100" :step="1"  :label="true" />
+          <br/>
+          <div style="padding-left:30px;width:50px">
+            {{ volume }}  %
+          </div>
         </div>
       </div>
     </f7-toolbar>
@@ -154,6 +188,7 @@
 <script>
 import OhSimplePlayerControls from '../../components/widgets/system/oh-simple-player-controls.vue'
 import MediaBrowserThumbGrid from './media-browser-thumb-grid.vue'
+import mixin from '@/components/widgets/widget-mixin' 
 
 export default {
   name: 'MediaBrowser',
@@ -166,7 +201,6 @@ export default {
   data () {
     this.item = this.$f7route.query.item
     this.device = this.$f7route.query.device
-    console.log('MediaBrowser item: ' + this.item)
 
     this.$f7.toast.create({
       text: this.$t('media.page.updated'),
@@ -189,6 +223,58 @@ export default {
 
     // this.loadInitialItems()
 
+
+    if (this.item=== undefined || this.item === null || this.item === '') {
+      this.item = this.$store.state.media.currentGlobalPlayerItem
+    }
+
+
+    this.item="MCR612_Spotify_Controle_Media"
+    console.log('MediaBrowser item: ' + this.item)
+    console.log('============= Mouted MediaBrowser =============')
+    if (this.$store!== undefined && this.item!== undefined && this.item !== null && this.item !== '') {
+
+      if (!this.$store.getters.isItemTracked(this.item)) 
+      {
+        this.$store.commit('addToTrackingList', this.item)
+        this.$store.dispatch('startTrackingStates')
+      }
+      
+    }
+
+    console.log('============= Data MediaBrowser =============')
+
+    
+    console.log('item:', this.item);
+    if (this.$store.getters.trackedItems[this.item]!== undefined) {
+      /*
+      const value = this.$store.getters.trackedItems[this.item].state
+      console.log('value2', value);
+       if (value === undefined || value === null || value === '') {
+          return false
+        }
+        if (value==='-') {
+          return false
+        }
+      console.log('mediaControl', this.mediaControl)
+      var mediaType = JSON.parse(value)
+      console.log('value2', mediaType.currentPlayingArtistName)
+      console.log('value2', mediaType.currentPlayingTrackName)
+      
+      this.trackName = mediaType.currentPlayingTrackName.value
+      this.artistName = mediaType.currentPlayingArtistName.value
+      this.artUri = mediaType.currentPlayingArtUri.value
+      
+      this.trackDuration = mediaType.currentPlayingTrackDuration.value
+      
+      this.volume = mediaType.currentPlayingVolume.value
+      */
+      
+    }
+    else  {
+      console.log('item not tracked:', this.item);
+    }
+
     return {
       node: null,
       controlsOpened: true,
@@ -202,9 +288,58 @@ export default {
       results: [],
       loading: false,
       searchTimeout: null
+      
     }
   },
   computed: {
+
+    mediaControl() {
+      if (this.$store.getters.trackedItems[this.item]!= undefined) {
+        const value = this.$store.getters.trackedItems[this.item].state
+        console.log('value2', value);
+        if (value === undefined || value === null || value === '') {
+          return false
+        }
+        if (value==='-') {
+          return false
+        }
+        var mediaType = JSON.parse(value)
+        console.log('value2', mediaType.currentPlayingArtistName)
+        console.log('value2', mediaType.currentPlayingTrackName)
+        return mediaType
+      }
+    },
+
+    trackPosition() {
+      if (this.mediaControl!=undefined && this.mediaControl.currentPlayingTrackPosition!== undefined) {
+         return this.mediaControl.currentPlayingTrackPosition.value
+      } 
+    },
+
+    trackDuration() {
+      if (this.mediaControl!=undefined && this.mediaControl.currentPlayingTrackDuration!== undefined) {
+         return this.mediaControl.currentPlayingTrackDuration.value
+      } 
+    },
+
+    volume() {
+      if (this.mediaControl!=undefined && this.mediaControl.currentPlayingVolume!== undefined) {
+         return this.mediaControl.currentPlayingVolume.value
+      } 
+    },
+
+    trackName() {
+      if (this.mediaControl!=undefined && this.mediaControl.currentPlayingTrackName!== undefined) {
+         return this.mediaControl.currentPlayingTrackName.value
+      } 
+    },
+
+    artistName() {
+      if (this.mediaControl!=undefined && this.mediaControl.currentPlayingArtistName!== undefined) {
+         return this.mediaControl.currentPlayingArtistName.value
+      } 
+    },
+
 
     currentRoute () {
       let res = ''
@@ -223,8 +358,6 @@ export default {
       const path = this.$f7route.query.path || '/Root'
 
       const segments = path.split('/')
-      console.log('path:' + path)
-      console.log('segs:' + segments)
       let segName = ''
       const result = segments.map((segment, index) => {
         if (this.$store.state.media.mappings[segment]) {
@@ -239,12 +372,24 @@ export default {
         }
       })
 
-      console.log('result:' + result)
       return result
     }
 
   },
   methods: {
+       formatTime(ms) {
+      const totalSeconds = Math.floor(ms / 1000);
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+
+      // Ajoute un zéro devant si nécessaire
+      const formattedMinutes = String(minutes).padStart(2, '0');
+      const formattedSeconds = String(seconds).padStart(2, '0');
+
+      return `${formattedMinutes}:${formattedSeconds}`;
+    },
+    onPageAfterIn () {
+    }, 
     onClose () {
     },
     doPlay (item, id) {
@@ -264,11 +409,8 @@ export default {
         this.path = this.$f7route.query.path
       }
 
-      console.log('MediaBrowser path: ' + this.path)
 
       return this.$oh.api.get('/rest/media/sources?path=' + this.path + '&start=' + start + '&size=' + this.size).then((data) => {
-        console.log('Data:' + data)
-        console.log('Data:' + data)
         this.node = data
         this.node.pres = 'thumb'
 
@@ -298,8 +440,6 @@ export default {
           }
         }
         this.lastItemIndex = this.items.length
-
-        console.log('items:' + this.items)
 
         if (this.node.type === 'org.openhab.core.media.model.MediaSearchResult') { this.node.pres = 'search' }
         if (this.node.type === 'org.openhab.core.media.model.MediaAlbum') { this.node.pres = 'flat' }
@@ -365,8 +505,9 @@ export default {
   created () {
   },
   mounted () {
-    this.loadInitialItems()
-  }
+      this.loadInitialItems()
+      
+  }                                                              
 
 }
 </script>

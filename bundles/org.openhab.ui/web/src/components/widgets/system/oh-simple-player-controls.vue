@@ -30,17 +30,36 @@ import { OhPlayerDefinition } from '@/assets/definitions/widgets/system'
 export default {
   mixins: [mixin],
   widget: OhPlayerDefinition,
+  data: function () {
+    if (this.item=== undefined || this.item === null || this.item === '') {
+      this.item = this.$store.state.media.currentGlobalPlayerItem
+    }
+    
+    return {
+      item: this.item
+    }
+  },
   mounted () {
+   
   },
   computed: {
     isPlaying () {
-      /*
-      const value = this.context.store[this.config.item].state
-      let components = value.split(',')
-      let state = components[0]
-      console.log('isPlaying', value, this.config.item, state)
-      return state === 'PLAY'
-      */
+      console.log('item:', this.item);
+      if (this.$store.getters.trackedItems[this.item]!= undefined) {
+        const value = this.$store.getters.trackedItems[this.item].state
+        console.log('value', value);
+        if (value === undefined || value === null || value === '') {
+          return false
+        }
+        if (value==='-') {
+          return false
+        }
+        var mediaType = JSON.parse(value);
+        console.log('mediaType', mediaType)
+        console.log('isPlaying', mediaType.state, this.item)
+        return mediaType.state === 'PLAY'
+      } 
+
       return false
     },
     mediaDeviceSelectorUri () {
@@ -49,19 +68,19 @@ export default {
   },
   methods: {
     skipPrevious (value) {
-      this.$store.dispatch('sendCommand', { itemName: this.config.item, cmd: 'PREVIOUS' })
+      this.$store.dispatch('sendCommand', { itemName: this.item, cmd: 'PREVIOUS' })
     },
     rewind (value) {
-      this.$store.dispatch('sendCommand', { itemName: this.config.item, cmd: 'REWIND' })
+      this.$store.dispatch('sendCommand', { itemName: this.item, cmd: 'REWIND' })
     },
     playPause (value) {
-      this.$store.dispatch('sendCommand', { itemName: this.config.item, cmd: this.isPlaying ? 'PAUSE' : 'PLAY' })
+      this.$store.dispatch('sendCommand', { itemName: this.item, cmd: this.isPlaying ? 'PAUSE' : 'PLAY' })
     },
     fastForward (value) {
-      this.$store.dispatch('sendCommand', { itemName: this.config.item, cmd: 'FASTFORWARD' })
+      this.$store.dispatch('sendCommand', { itemName: this.item, cmd: 'FASTFORWARD' })
     },
     skipNext (value) {
-      this.$store.dispatch('sendCommand', { itemName: this.config.item, cmd: 'NEXT' })
+      this.$store.dispatch('sendCommand', { itemName: this.item, cmd: 'NEXT' })
     }
 
   }
