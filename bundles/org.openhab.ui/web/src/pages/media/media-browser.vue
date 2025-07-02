@@ -40,6 +40,8 @@
         <br/>
         <b>currentGlobalPlayerItem:</b> {{ $store.state.media.currentGlobalPlayerItem }}
         <br/>
+        <b>currentGlobalPlayerItem:</b> {{ item }}
+        <br/>
         
         <b>mediaControl:</b> {{ mediaControl }}
         <br/>
@@ -226,7 +228,7 @@ export default {
     }
 
 
-    this.item="MCR612_Spotify_Controle_Media"
+    //this.item="MCR612_Spotify_Controle_Media"
     //console.log('MediaBrowser item: ' + this.item)
     //console.log('============= Mouted MediaBrowser =============')
     if (this.$store!== undefined && this.item!== undefined && this.item !== null && this.item !== '') {
@@ -259,6 +261,7 @@ export default {
       lastItemIndex: 0,
       size: 30,
       searchQuery: '',
+      item: this.item,
       results: [],
       loading: false,
       searchTimeout: null
