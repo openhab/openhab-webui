@@ -10,7 +10,7 @@
 
     <div v-if="node">
       <f7-list form>
-        <f7-list-item v-for="item in node.childs" :title="item.binding + ` : ` + item.name + ` (` + item.type + `) `" :key="item.id" :value="item" radio :checked="(selectedOption!=null) ? (selectedOption.id === item.id)?true:false:false"
+        <f7-list-item v-for="item in node.childs" :title="item.binding + ` : ` + item.name + ` (` + item.type + `) `" :key="item.id"  radio :checked="(selectedOption!=null) ? (selectedOption.id === item.id)?true:false:false"
                       @change="selectedOption = item" :name="'options-group'" />
       </f7-list>
     </div>
@@ -32,8 +32,18 @@ export default {
   name: 'MediaBrowser',
   props: ['title', 'multiple', 'name', 'value', 'required'],
   data () {
+    this.currentDevice = this.$f7route.query.device
+    if (this.currentDevice === undefined || this.currentDevice === null || this.currentDevice === '') {
+      this.currentDevice = this.$store.state.media.currentGlobalPlayerName
+    }
+    console.log('MediaDeviceSelector currentDevice Name: ' + this.currentDevice)
+
     this.item = this.$f7route.query.item
-    console.log('MediaDeviceSelector item: ' + this.item)
+    if (this.item === undefined || this.item === null || this.item === '') {
+      this.item = this.$store.state.media.currentGlobalPlayerItem
+    }
+
+    console.log('MediaDeviceSelector currentDevice Item: ' + this.item)
 
     this.$f7.toast.create({
       text: this.$t('media.page.updated'),
@@ -58,13 +68,17 @@ export default {
         if (a.name > b.name) return 1
         return 0
       })
-      console.log('Data:' + data)
-      data.childs = data.childs.filter((item) => {
-        return item.binding === this.$f7route.query.binding
+      console.log('Data:' + JSON.stringify(data))
+      data.childs = data.childs.filter((device) => {
+        return device.playerItemName !== ''
       })
+      //data.childs = data.childs.filter((item) => {
+      //  return item.binding === this.$f7route.query.binding
+      //})
 
-      this.selectedOption = data.childs.find((item) => {
-        return item.id === this.$f7route.query.device
+      console.log('item:' + this.item)
+      this.selectedOption = data.childs.find((device) => {
+        return device.id === this.currentDevice
       })
       // "8bf6830ca7a00068f294ca8016421b3678b7568b";
 
@@ -102,7 +116,21 @@ export default {
     changeDevice () {
       console.log('Selected option: ' + this.selectedOption)
       console.log('Selected option: ' + this.selectedOption.id)
+      console.log('Selected option: ' + this.selectedOption.playerItemName)
+      console.log('MediaDeviceSelector item(a): ' + this.item)
+      if (this.item === undefined || this.item === null || this.item === '') {
+        this.item = this.selectedOption.playerItemName
+      }
+      
+      console.log('MediaDeviceSelector item(b): ' + this.item)
+      console.log('pa') 
+      this.$store.commit('setMapping', { key: 'Root', value: 'Racine' })
+      console.log('pb')
+      this.$store.commit('setCurrentGlobalPlayerName',  this.selectedOption.id)
+      this.$store.commit('setCurrentGlobalPlayerItem',  this.selectedOption.playerItemName)
+      console.log('pc')
       this.$store.dispatch('sendCommand', { itemName: this.item, cmd: 'NONE,DEVICE,,' + this.selectedOption.id + ',NONE' })
+      console.log('pd')
     },
     select (e) {
       console.log('Selected option: ' + this.selectedOption)
