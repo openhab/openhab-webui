@@ -44,10 +44,8 @@ export default {
   },
   computed: {
     isPlaying () {
-      console.log('item:', this.item);
       if (this.$store.getters.trackedItems[this.item]!= undefined) {
         const value = this.$store.getters.trackedItems[this.item].state
-        console.log('value', value);
         if (value === undefined || value === null || value === '') {
           return false
         }
@@ -55,8 +53,6 @@ export default {
           return false
         }
         var mediaType = JSON.parse(value);
-        console.log('mediaType', mediaType)
-        console.log('isPlaying', mediaType.state, this.item)
         return mediaType.state === 'PLAY'
       } 
 
