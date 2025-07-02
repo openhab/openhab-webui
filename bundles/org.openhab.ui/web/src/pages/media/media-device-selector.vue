@@ -113,6 +113,13 @@ export default {
     onClose () {
       console.log('Selected option: ' + this.selectedOption)
     },
+    createMediaType(command, id) {
+      var mediaType = {};
+      mediaType.state = 'NONE'
+      mediaType.command = command
+      mediaType.param = id
+      return JSON.stringify(mediaType)
+    },
     changeDevice () {
       console.log('Selected option: ' + this.selectedOption)
       console.log('Selected option: ' + this.selectedOption.id)
@@ -129,7 +136,8 @@ export default {
       this.$store.commit('setCurrentGlobalPlayerName',  this.selectedOption.id)
       this.$store.commit('setCurrentGlobalPlayerItem',  this.selectedOption.playerItemName)
       console.log('pc')
-      this.$store.dispatch('sendCommand', { itemName: this.item, cmd: 'NONE,DEVICE,,' + this.selectedOption.id + ',NONE' })
+      console.log('pc', this.item)
+      this.$store.dispatch('sendCommand', { itemName: this.item, cmd: this.createMediaType('DEVICE', this.selectedOption.id)})
       console.log('pd')
     },
     select (e) {

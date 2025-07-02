@@ -187,6 +187,7 @@
 
 <script>
 import OhSimplePlayerControls from '../../components/widgets/system/oh-simple-player-controls.vue'
+import media from '../../js/store/modules/media'
 import MediaBrowserThumbGrid from './media-browser-thumb-grid.vue'
 import mixin from '@/components/widgets/widget-mixin' 
 
@@ -392,12 +393,22 @@ export default {
     }, 
     onClose () {
     },
+    createMediaType(command, id) {
+      var mediaType = {};
+      mediaType.state = 'NONE'
+      mediaType.command = command
+      mediaType.param = id
+      mediaType.device = {}
+      mediaType.device.value = this.device.value
+      return JSON.stringify(mediaType)
+    },
     doPlay (item, id) {
       console.log('Playing item: ' + item + ' with id: ' + id)
-      this.$store.dispatch('sendCommand', { itemName: item, cmd: 'NONE,PLAY,' + id + ',' + this.device + ',NONE' })
+      
+      this.$store.dispatch('sendCommand', { itemName: item, cmd: this.createMediaType('PLAY', id) })
     },
     doEnqueue (item, id) {
-      this.$store.dispatch('sendCommand', { itemName: item, cmd: 'NONE,ENQUEUE,' + id + ',' + this.device + ',NONE' })
+      this.$store.dispatch('sendCommand', { itemName: item, cmd: this.createMediaType('ENQUEUE', id) })
     },
     containsTrack (items) {
       return items.every((child) => {
