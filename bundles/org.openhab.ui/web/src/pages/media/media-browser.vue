@@ -418,12 +418,17 @@ export default {
       })
     },
     async loadItems (start = 0) {
+      console.log('f7route:', this.$f7route.query)
+      console.log('f7route:', this.$f7route.query.query)
       if (this.$f7route.query.path && !this.$f7route.query.path.startsWith('/page/')) {
         this.path = this.$f7route.query.path
       }
+      if (this.$f7route.query.query) {
+        this.query= this.$f7route.query.query
+      }
 
 
-      return this.$oh.api.get('/rest/media/sources?path=' + this.path + '&start=' + start + '&size=' + this.size).then((data) => {
+      return this.$oh.api.get('/rest/media/sources?path=' + this.path + '&query=' + this.query + '&start=' + start + '&size=' + this.size).then((data) => {
         this.node = data
         this.node.pres = 'thumb'
 
@@ -502,8 +507,8 @@ export default {
         // const response = await fetch(`https://api.example.com/search?q=${encodeURIComponent(query)}`);
         // const data = await response.json();
 
-        this.$store.dispatch('sendCommand', { itemName: this.item, cmd: 'NONE,SEARCH,' + encodeURIComponent(query.query) + ',' + this.device + ',NONE' })
-        this.$f7router.navigate('/mediabrowser/?path=/Root/Spotify/Search&item=' + this.item + '&device=' + this.device, { reloadCurrent: true, reloadDetail: true })
+        this.$store.dispatch('sendCommand', { itemName: this.item, cmd: this.createMediaType('SEARCH', encodeURIComponent(query.query)) })
+        this.$f7router.navigate('/mediabrowser/?path=/Root/Search&query=' + query.query + '&item=' + this.item + '&device=' + this.device, { reloadCurrent: true, reloadDetail: true })
 
         // Ici, adapte selon la structure de la réponse de ton API
         this.results = [{ 'name': 'name1', 'val': 'val1' }, { 'name': 'name2', 'val': 'val2' }]
