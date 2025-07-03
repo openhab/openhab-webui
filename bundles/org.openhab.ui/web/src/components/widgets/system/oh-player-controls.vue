@@ -41,13 +41,13 @@
                icon-color="gray" />
     <f7-button color="blue"   			 
     			large 
-    			icon-f7="folder_fill" 
+    			icon-material="folder" 
     			icon-size="24" 
     			icon-color="gray"  
     			:href="mediaBrowserUri"/>
     <f7-button color="blue"   					
     			large 		
-    			icon-f7="hifispeaker_fill" 	
+    			icon-material="speaker
     			icon-size="24" 
     			icon-color="gray"  
     			:href="mediaDeviceSelectorUri"/>
