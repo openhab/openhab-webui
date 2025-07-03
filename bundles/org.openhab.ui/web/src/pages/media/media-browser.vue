@@ -156,7 +156,7 @@
         </div>
         <div>
           <div>
-            <div style="width:300px;height:30px;padding:20px;padding-left: 140px;">
+            <div style="width:300px;padding:20px;padding-left: 140px;">
               <oh-simple-player-controls />
             </div>
           </div>
