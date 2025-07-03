@@ -35,7 +35,7 @@
           </div>
         </div>
 <!--
--->                <br/>
+     <br/>
         <b>currentGlobalPlayerName:</b> {{ $store.state.media.currentGlobalPlayerName }}
         <br/>
         <b>currentGlobalPlayerItem:</b> {{ $store.state.media.currentGlobalPlayerItem }}
@@ -61,7 +61,7 @@
         <br/>
         <b>volume:</b> {{ volume }}
         <br/>
-           
+           -->           
 
         
         
