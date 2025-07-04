@@ -32,6 +32,7 @@ const store = new Vuex.Store({
       commit: buildInfo.commit
     },
     websiteUrl: null,
+    docSrcUrl: null,
     developerDock: false,
     pagePath: null
   },
@@ -46,6 +47,7 @@ const store = new Vuex.Store({
       state.runtimeInfo = rootResponse.runtimeInfo
       state.apiEndpoints = rootResponse.links
       state.websiteUrl = `https://${rootResponse.runtimeInfo?.buildString !== 'Release Build' ? 'next' : 'www'}.openhab.org`
+      state.docSrcUrl = `https://www.openhab.org/link/docs-src/${rootResponse.runtimeInfo.version.replace(/(\d+\.\d+)\.\d+/g, '$1.x')}`
     },
     setLocale (state, locale) {
       state.locale = locale

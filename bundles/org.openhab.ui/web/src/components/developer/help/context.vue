@@ -26,13 +26,6 @@ export default {
     }
   },
   computed: {
-    docsBranch () {
-      if (this.$store.state.runtimeInfo.buildString === 'Release Build') return 'final-stable'
-      return 'final'
-    },
-    docSrcUrl () {
-      return `https://raw.githubusercontent.com/openhab/openhab-docs/${this.docsBranch}/mainui`
-    },
     localUrl () {
       if (!this.$store.state.pagePath.endsWith('/')) return '/'
       return this.$store.state.pagePath
@@ -60,7 +53,7 @@ export default {
         return
       }
       console.debug('Sidebar Help: Docs not found in cache, loading from GitHub ...')
-      fetch(this.docSrcUrl + this.path + '.md').then((response) => {
+      fetch(this.$store.state.docSrcUrl + '/mainui' + this.path + '.md').then((response) => {
         if (response.status === 404) {
           this.parsedDocs = '<p>Failed to load docs. It seems they are missing.</p><p>Please <a class="external" target="_blank" href="https://github.com/openhab/openhab-docs/issues/new">report this on the openHAB docs repo</a>.</p>'
           this.ready = true
