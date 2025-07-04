@@ -20,11 +20,11 @@
     * allow loading images from any source, and data: URIs
     * allow loading media from any source, and data:, blob: and media: URIs
     * allow embedding (<iframe>) any source
-    * allow connecting (through fetch(), XMLHttpRequest, WebSocket etc.) to the same origin, raw.githubusercontent.com (add-on logos etc.), Iconify icon sources, and any source
+    * allow connecting (through fetch(), XMLHttpRequest, WebSocket etc.) to the same origin, *.openhab.org, raw.githubusercontent.com (add-on logos etc.), Iconify icon sources, and any source
     * allows loading web workers from the same origin, and blob: URIs
   -->
   <% if (process.env.NODE_ENV === 'production') { %>
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval'; font-src 'self' data:; img-src * data:; media-src * data: blob: media:; frame-src *; connect-src 'self' raw.githubusercontent.com api.iconify.design api.unisvg.com api.simplesvg.com *; worker-src 'self' blob:;">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval'; font-src 'self' data:; img-src * data:; media-src * data: blob: media:; frame-src *; connect-src 'self' *.openhab.org raw.githubusercontent.com api.iconify.design api.unisvg.com api.simplesvg.com *; worker-src 'self' blob:;">
   <% } %>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui, viewport-fit=cover">
 
