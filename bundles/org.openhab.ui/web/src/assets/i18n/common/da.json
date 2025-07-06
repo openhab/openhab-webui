@@ -6,6 +6,7 @@
   "dialogs.save": "Gem",
   "dialogs.close": "Luk",
   "dialogs.copy": "Kopier",
+  "dialogs.create": "Opret",
   "dialogs.delete": "Slet",
   "dialogs.reload": "Genindlæs",
   "dialogs.retry": "Prøv igen",
