@@ -20,7 +20,7 @@
   "analyzer.coords.period.dynamic": "Динамичен",
   "analyzer.coords.period.fixed": "Фиксиран",
   "analyzer.coords.period.day": "Ден",
-  "analyzer.coords.period.week": "Седмица",
+  "analyzer.coords.period.isoWeek": "Седмица",
   "analyzer.coords.period.month": "Месец",
   "analyzer.coords.period.year": "Година",
   "analyzer.coords.coordSystem": "Координатна система",

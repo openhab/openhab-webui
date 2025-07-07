@@ -20,7 +20,7 @@
   "analyzer.coords.period.dynamic": "Dynamisch",
   "analyzer.coords.period.fixed": "Vast",
   "analyzer.coords.period.day": "Dag",
-  "analyzer.coords.period.week": "Week",
+  "analyzer.coords.period.isoWeek": "Week",
   "analyzer.coords.period.month": "Maand",
   "analyzer.coords.period.year": "Jaar",
   "analyzer.coords.coordSystem": "Coördinatenstelsel",
