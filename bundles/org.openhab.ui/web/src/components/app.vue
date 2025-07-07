@@ -114,6 +114,11 @@
         </f7-list>
 
         <f7-list class="admin-links">
+          <f7-list-item link="/mediabrowser/" :title="$t('sidebar.mediaBrowser')" view=".view-main" panel-close :animate="false"
+                        :class="{ currentsection: currentPath.mediaBrowser?.$end }">
+            <f7-icon slot="media" ios="f7:music_house_fill" aurora="f7:music_house_fill" md="material:shopping_bag" color="gray" />
+          </f7-list-item>
+
           <f7-list-item link="/about/" :title="$t('sidebar.helpAbout')" view=".view-main" panel-close
                         :class="{ currentsection: currentPath.about }">
             <f7-icon slot="media" ios="f7:question_circle_fill" aurora="f7:question_circle_fill" md="material:help" color="gray" />
@@ -167,7 +172,7 @@
       </f7-col>
     </f7-block>
 
-    <f7-view main v-show="ready" class="safe-areas" url="/" :master-detail-breakpoint="960" :animate="themeOptions.pageTransitionAnimation !== 'disabled'" />
+    <f7-view main v-show="ready" class="safe-areas" url="/" :master-detail-breakpoint="960" :animate="themeOptions.pageTransitionAnimation !== 'disabled'" :push-state="true" stat />
   </f7-app>
 </template>
 
@@ -322,11 +327,17 @@ export default {
 
         // App routes
         routes,
+        router: {
+          //          pushState: true,
+        },
+        pushState: true,
+        pushStateSeparator: '/',
+        pushStateOnLoad: true,
         view: {
           // disable f7 swipeback on iOS because it's handled natively by Safari
           iosSwipeBack: !this.$device.ios,
           auroraSwipeBack: !this.$device.ios,
-          pushState: true,
+          pushState: false,
           pushStateSeparator: ''
         },
         // Enable panel left visibility breakpoint
