@@ -1,5 +1,6 @@
 import './compatibility'
 import './logging'
+import './monkeypatch'
 
 // Import Vue
 import Vue from 'vue'
