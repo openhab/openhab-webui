@@ -1,7 +1,7 @@
 <template>
   <oh-list-item :context="context" class="slider-listitem">
     <div slot="after">
-      {{ context.store[config.item].displayState || context.store[config.item].state }}
+      {{ value }}
     </div>
     <div slot="footer" class="padding">
       <generic-widget-component :context="childContext(sliderComponent)" v-on="$listeners" />
@@ -29,6 +29,9 @@ export default {
   mixins: [mixin],
   widget: OhSliderItemDefinition,
   computed: {
+    value () {
+      return (this.config?.ignoreDisplayState === true) ? this.context.store[this.config.item].state : this.context.store[this.config.item].displayState || this.context.store[this.config.item].state
+    },
     sliderComponent () {
       return {
         component: 'oh-slider',
