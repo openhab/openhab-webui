@@ -26,8 +26,12 @@ export default {
       }
       if (this.pendingCommand !== null) return this.pendingCommand // to keep the control reactive when operating
       const value = (this.config.ignoreDisplayState === true) ? this.context.store[this.config.item].state : this.context.store[this.config.item].displayState || this.context.store[this.config.item].state
+      console.debug(`slide-mixin: value changed for ${this.config.item}, displayState: ${this.context.store[this.config.item].displayState}, state: ${this.context.store[this.config.item].state}`)
       // use as a brightness control for HSB values
-      if (value.split && value.split(',').length === 3) return parseFloat(value.split(',')[2])
+      if (value.split && value.split(',').length === 3) {
+        console.debug(`slide-mixin: controlling brightness for ${this.config.item}, HSB value: ${value}`)
+        return parseFloat(value.split(',')[2])
+      }
       return parseFloat(value)
     },
     unit () {
