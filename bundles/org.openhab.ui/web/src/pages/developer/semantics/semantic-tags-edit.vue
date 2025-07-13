@@ -17,13 +17,15 @@
       </f7-link>
     </f7-toolbar>
     <f7-toolbar bottom class="toolbar-details" v-if="currentTab === 'tree'">
-      <f7-link :disabled="selectedTag != null" class="left" @click="selectedTag = null">
+      <f7-link :disabled="selectedTag != null" class="left" @click="selectTag(null)">
         Clear
       </f7-link>
       <div class="padding-left padding-right text-align-center" style="font-size: 12px">
         <div>
           <f7-checkbox :checked="showNames" @change="toggleShowNames" />
           <label @click="toggleShowNames" class="advanced-label">Show tag names</label>
+          <f7-checkbox style="margin-left: 5px" :checked="showSynonyms" @change="toggleShowSynonyms" />
+          <label @click="toggleShowSynonyms" class="advanced-label">Show synonyms</label>
         </div>
       </div>
       <f7-link v-if="selectedTag" class="right details-link padding-right" ref="detailsLink" @click="detailsOpened = true" icon-f7="chevron_up" />
@@ -39,8 +41,20 @@
           <f7-row v-if="currentTab === 'tree'">
             <!-- do not set column width as usual, instead use custom CSS because of https://github.com/openhab/openhab-webui/issues/2574 -->
             <f7-col>
-              <f7-block strong class="semantics-tree" no-gap @click.native="clearSelection">
-                <semantics-treeview :semanticTags="semanticTags" :expandedTags="expandedTags" @selected="selectTag" :showNames="showNames" :selected="selectedTag" />
+              <f7-subnavbar v-show="semanticTags.length" :inner="false" style="position: relative; top: 0px">
+                <f7-searchbar style="width: 100%"
+                              search-container=".semantics-treeview"
+                              search-item=".treeview-item"
+                              search-in=".treeview-item-label"
+                              :disable-button="!$theme.aurora"
+                              @input="showFiltered($event.target.value)" />
+                <div class="expand-button">
+                  <f7-button v-if="!expanded" icon-size="24" tooltip="Expand" icon-f7="rectangle_expand_vertical" @click="toggleExpanded()" />
+                  <f7-button v-else color="gray" icon-size="24" tooltip="Collapse" icon-f7="rectangle_compress_vertical" @click="toggleExpanded()" />
+                </div>
+              </f7-subnavbar>
+              <f7-block v-show="semanticTags.length" class="semantics-tree" no-gap @click.native="clearSelection">
+                <semantics-treeview :semanticTags="semanticTags" :expandedTags="expandedTags" @selected="selectTag" :showNames="showNames" :showSynonyms="showSynonyms" :selectedTag="selectedTag" canDragDrop="true" />
               </f7-block>
             </f7-col>
             <f7-col class="details-pane">
@@ -217,7 +231,6 @@
         height 100%
         overflow auto
         .semantics-tree
-          min-height 100%
           margin 0
           height auto
       .details-pane
@@ -239,6 +252,13 @@
     margin-bottom var(--f7-sheet-height)
   .semantics-details-sheet
     height calc(0.8*var(--f7-sheet-height))
+
+.expand-button
+  margin-right 8px
+  text-overflow unset
+  align-self center
+  .icon
+    margin-bottom 2.75px !important
 </style>
 
 <script>
@@ -266,6 +286,10 @@ export default {
       loading: false,
       ready: false,
       showNames: false,
+      showSynonyms: false,
+      expanded: false,
+      filtering: false,
+      expandedBeforeFiltering: false,
       editableSemanticTagsYaml: null,
       editingTagsYaml: null,
       nonCodeDirty: false // When editing code, keeps track if it was already dirty before switching to code tab
@@ -312,8 +336,7 @@ export default {
       if (tab === 'code') {
         this.currentTab = tab
         this.nonCodeDirty = this.dirty
-        this.selectedTag = null
-        this.detailsOpened = false
+        this.selectTag(null)
         this.editableSemanticTagsYaml = this.toYaml()
         this.editingTagsYaml = this.editableSemanticTagsYaml
       } else {
@@ -341,7 +364,7 @@ export default {
           name: t.name,
           label: this.semanticClasses.Labels[t.name],
           description: t.description,
-          synonyms: [...t.synonyms],
+          synonyms: this.semanticClasses.Synonyms[t.name],
           editable: t.editable,
           parent: t.parent
         }
@@ -367,13 +390,14 @@ export default {
       const addedTags = editableTags.filter((t) => !this.semanticClasses.Tags.find((c) => c.uid === t.uid))
       const modifiedTags = editableTags.filter((t) => this.semanticClasses.Tags.find((c) => (c.uid === t.uid) && !fastDeepEqual(c, t)))
       const removedTags = this.semanticClasses.Tags.filter((c) => !this.semanticTags.find((t) => t.uid === c.uid))
+      console.log(addedTags[0], removedTags[0])
 
       if (addedTags.some((t) => {
         if ((!t.name || !t.label) || modifiedTags.some((t) => !t.name || !t.label)) {
           this.$f7.dialog.alert(`${t.name}: Tag name and label required`)
           return true
         }
-        if (this.semanticClasses.Tags.find((c) => c.name === t.name)) {
+        if (this.semanticClasses.Tags.find((c) => c.name === t.name) && !removedTags.find((r) => r.name === t.name)) {
           this.$f7.dialog.alert(`${t.name}: Tag names must be unique`)
           return true
         }
@@ -416,9 +440,47 @@ export default {
     toggleShowNames () {
       this.showNames = !this.showNames
     },
+    toggleShowSynonyms () {
+      this.showSynonyms = !this.showSynonyms
+    },
+    toggleExpanded () {
+      this.expanded = !this.expanded
+      this.semanticTags.forEach((t) => {
+        this.$set(this.expandedTags, t.uid, this.expanded)
+      })
+      this.expandToSelection()
+    },
+    expandToSelection () {
+      this.selectedTag?.parent?.split('_').reduce((prev, p) => {
+        const parent = (prev ? (prev + '_') : '') + p
+        this.$set(this.expandedTags, parent, true)
+        return parent
+      }, '')
+    },
+    showFiltered (filter) {
+      if (filter) {
+        if (!this.filtering) {
+          this.filtering = true
+          this.selectTag(null)
+          this.expandedBeforeFiltering = this.expanded
+          if (!this.expanded) {
+            this.toggleExpanded()
+          }
+        }
+      } else if (this.filtering) {
+        this.filtering = false
+        if (this.expanded && !this.expandedBeforeFiltering) {
+          this.toggleExpanded()
+        }
+      }
+    },
     selectTag (tag) {
       if (this.selectedTag === tag) return
       this.selectedTag = null
+      if (!tag) {
+        this.detailsOpened = false
+        return
+      }
       this.$nextTick(() => {
         this.selectedTag = tag
         this.detailsTab = 'tag'
@@ -452,8 +514,7 @@ export default {
     removeTag () {
       if (!this.selectedTag) return
       this.semanticTags.splice(this.semanticTags.indexOf(this.selectedTag), 1)
-      this.selectedTag = null
-      this.detailsOpened = false
+      this.selectTag(null)
     },
     updateName (ev) {
       const name = ev.target.value
@@ -479,7 +540,7 @@ export default {
     },
     clearSelection (ev) {
       if (ev.target && ev.currentTarget && ev.target === ev.currentTarget) {
-        this.selectedTag = null
+        this.selectTag(null)
       }
     },
     toYaml () {

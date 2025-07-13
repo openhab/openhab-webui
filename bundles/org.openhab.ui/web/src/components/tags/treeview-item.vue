@@ -1,15 +1,15 @@
 <template>
-  <f7-treeview-item selectable :label="tag.label + (showNames ? ' (' + tag.name + ')': '')"
+  <f7-treeview-item selectable :label="tag.label + (showNames && tag.name ? ' (' + tag.name + ')': '')"
                     :icon-ios="icon('ios')" :icon-aurora="icon('aurora')" :icon-md="icon('md')"
                     :iconColor="iconColor"
                     :textColor="iconColor"
-                    :selected="selected && selected === tag"
+                    :selected="!picker && selected"
                     :opened="expandedTags[tag.uid]"
                     :toggle="canHaveChildren"
                     @treeview:open="setTagOpened(true)"
                     @treeview:close="setTagOpened(false)"
                     @click="select">
-    <draggable :list="children" group="semantic-tags-treeview" filter=".non-draggable" animation="150" fallbackOnBody="true" swapThreshold="0.6"
+    <draggable :disabled="!canDragDrop" :list="children" group="semantic-tags-treeview" filter=".non-draggable" animation="150" fallbackOnBody="true" swapThreshold="0.6"
                @start="onDragStart" @change="onDragChange" @end="onDragEnd" :move="onDragMove">
       <semantics-treeview-item v-for="(childTag, idx) in children"
                                :key="idx"
@@ -17,13 +17,28 @@
                                :semanticTags="semanticTags"
                                :expandedTags="expandedTags"
                                :showNames="showNames"
+                               :showSynonyms="showSynonyms"
+                               :canDragDrop="canDragDrop"
+                               :picker="picker"
                                @selected="(event) => $emit('selected', event)"
-                               :selected="selected"
+                               :selectedTag="selectedTag"
                                :moveState="moveState"
                                :class="{ 'non-draggable': !childTag.editable }" />
     </draggable>
+    <div v-if="showSynonyms" slot="label" class="synonyms-class">
+      {{ synonyms }}
+    </div>
+    <f7-radio slot="content-start" name="semantic-tag-radio" v-if="picker" :checked="selected" @change="select" />
+    <f7-badge v-if="tag.description" slot="content-end" class="semantic-tag-tooltip-badge" :tooltip="tooltip">
+      <f7-icon class="tooltip-icon" f7="info_circle" ios="f7:info_circle" md="material:info" />
+    </f7-badge>
   </f7-treeview-item>
 </template>
+
+<style lang="stylus">
+.semantic-tag-tooltip-badge
+  background: transparent
+</style>
 
 <script>
 import Draggable from 'vuedraggable'
@@ -34,8 +49,11 @@ export default {
     semanticTags: Array,
     expandedTags: Array,
     tag: Object,
+    picker: Boolean,
     showNames: Boolean,
-    selected: Object,
+    showSynonyms: Boolean,
+    canDragDrop: Boolean,
+    selectedTag: Object,
     moveState: {
       type: Object,
       default: () => ({
@@ -52,16 +70,27 @@ export default {
   computed: {
     children () {
       return this.semanticTags.filter((tag) => (tag.parent === this.tag.uid)).sort((t1, t2) => {
-        if (t1.uid > t2.uid) return 1
-        if (t1.uid < t2.uid) return -1
-        return 0
+        return t1.label.localeCompare(t2.label)
       })
     },
     iconColor () {
-      return (this.tag.editable) ? (this.$f7.data.themeOptions.dark === 'dark' ? 'white' : 'black') : 'gray'
+      return (this.tag.editable || this.picker) ? (this.$f7.data.themeOptions.dark === 'dark' ? 'white' : 'black') : 'gray'
     },
     canHaveChildren () {
       return (this.children.length > 0 || this.moveState.moving) === true
+    },
+    synonyms () {
+      return this.tag?.synonyms?.join(', ') || ''
+    },
+    tooltip () {
+      let tooltip = this.tag.description
+      if (this.synonyms) {
+        tooltip = tooltip + '<br>(' + this.synonyms + ')'
+      }
+      return tooltip
+    },
+    selected () {
+      return this.selectedTag && this.selectedTag.uid === this.tag.uid
     }
   },
   methods: {
@@ -73,6 +102,8 @@ export default {
         return (theme === 'md') ? 'material:payments' : 'f7:cube_box'
       } else if (type === 'Point') {
         return (theme === 'md') ? 'material:flash_on' : 'f7:bolt_fill'
+      } else if (type === 'None') {
+        return ''
       } else {
         return 'material:label_outline'
       }
@@ -115,11 +146,10 @@ export default {
       }
       this.moveState.moveTarget = event.relatedContext?.element
       // Open group if not open yet, with a delay so you don't open it if you just drag over it
-      if (!this.moveState.moveTarget?.opened) {
-        const element = event.relatedContext.component
+      if (this.moveState.moveTarget && !this.moveState.moveTarget.opened) {
         this.moveState.moveDelayedOpen = setTimeout(() => {
-          this.setTagOpened(true, element.uid)
-        }, 1000, element)
+          this.setTagOpened(true, this.moveState.moveTarget.uid)
+        }, 1000)
       }
       return true
     },

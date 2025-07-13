@@ -61,7 +61,7 @@
         </f7-list-input>
       </f7-list-group>
     </f7-list>
-    <semantics-picker v-if="!hideSemantics" :item="item" :same-class-only="true" :hide-type="true" :hide-none="forceSemantics" :createMode="createMode" :key="'semantics-' + item.tags.toString()" />
+    <semantics-picker v-if="!hideSemantics" :item="item" :createMode="createMode" :hide-none="forceSemantics" />
     <f7-list inline-labels no-hairline-md>
       <tag-input title="Non-Semantic Tags" :disabled="!editable" :item="item" />
     </f7-list>
