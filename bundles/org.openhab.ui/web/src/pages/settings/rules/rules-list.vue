@@ -19,28 +19,28 @@
           :disable-button="!$theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
-    <f7-toolbar class="contextual-toolbar" :class="{ 'navbar': $theme.md }" v-if="showCheckboxes" bottom-ios bottom-aurora>
-      <f7-link color="red" v-show="selectedDeletableItems.length" v-if="!$theme.md" class="delete" icon-ios="f7:trash" icon-aurora="f7:trash" @click="removeSelected">
-        Remove {{ selectedDeletableItems.length }}
+    <f7-toolbar class="contextual-toolbar" :class="{ 'navbar': $theme.md, 'tabbar-labels': $f7.width < 480 }" v-if="showCheckboxes" bottom-ios bottom-aurora>
+      <f7-link color="red" v-show="selectedDeletableItems.length" v-if="!$theme.md" class="delete" icon-ios="f7:trash" icon-aurora="f7:trash" @click="deleteSelected">
+        &nbsp;{{ $t('dialogs.delete') }}&nbsp;{{ selectedDeletableItems.length }}
       </f7-link>
-      <f7-link color="orange" v-show="selectedItems.length" v-if="!$theme.md && !showScenes" class="disable" @click="doDisableEnableSelected(false)" icon-ios="f7:pause_circle" icon-aurora="f7:pause_circle">
-        &nbsp;Disable {{ selectedItems.length }}
+      <f7-link color="orange" v-show="selectedItems.length && canDisable" v-if="!$theme.md && !showScenes" class="disable" @click="doDisableEnableSelected(false)" icon-ios="f7:pause_circle" icon-aurora="f7:pause_circle">
+        &nbsp;{{ $t('dialogs.disable') }}&nbsp;{{ disablableItems }}
       </f7-link>
-      <f7-link color="green" v-show="selectedItems.length" v-if="!$theme.md && !showScenes" class="enable" @click="doDisableEnableSelected(true)" icon-ios="f7:play_circle" icon-aurora="f7:play_circle">
-        &nbsp;Enable {{ selectedItems.length }}
+      <f7-link color="green" v-show="selectedItems.length && canEnable" v-if="!$theme.md && !showScenes" class="enable" @click="doDisableEnableSelected(true)" icon-ios="f7:play_circle" icon-aurora="f7:play_circle">
+        &nbsp;{{ $t('dialogs.enable') }}&nbsp;{{ enablableItems }}
       </f7-link>
-      <!-- <f7-link color="deeppurple" v-show="selectedItems.length === 1 && canRegenerateItem(selectedItems[0])" v-if="!$theme.md && !showScenes" class="enable" @click="regenerateSelected()" icon-ios="f7:arrow_2_circlepath" icon-aurora="f7:arrow_2_circlepath">
-        &nbsp;Regenerate from template
-      </f7-link> -->
+      <f7-link :color="$f7.data.themeOptions.dark === 'dark' ? 'purple' : 'deeppurple'" v-show="selectedItems.length && canRegenerate" v-if="!$theme.md && !showScenes" class="enable" @click="regenerateSelected()" icon-ios="f7:arrow_2_circlepath" icon-aurora="f7:arrow_2_circlepath">
+        &nbsp;{{ $t('dialogs.regenerate') }}&nbsp;{{ regeneratableItemsCount }}
+      </f7-link>
       <f7-link v-if="$theme.md" icon-md="material:close" icon-color="white" @click="showCheckboxes = false" />
       <div class="title" v-if="$theme.md">
         {{ selectedItems.length }} selected
       </div>
       <div class="right" v-if="$theme.md">
-        <f7-link v-if="!showScenes" v-show="selectedItems.length === 1 && canRegenerateItem(selectedItems[0])" tooltip="Regenerate selected from template" icon-md="material:autorenew" icon-color="white" @click="regenerateSelected()" />
-        <f7-link v-if="!showScenes" v-show="selectedItems.length" tooltip="Disable selected" icon-md="material:pause_circle_outline" icon-color="white" @click="doDisableEnableSelected(false)" />
-        <f7-link v-if="!showScenes" v-show="selectedItems.length" tooltip="Enable selected" icon-md="material:play_circle_outline" icon-color="white" @click="doDisableEnableSelected(true)" />
-        <f7-link v-show="selectedDeletableItems.length" icon-md="material:delete" icon-color="white" @click="removeSelected" />
+        <f7-link v-if="!showScenes" v-show="selectedItems.length && canRegenerate" tooltip="Regenerate selected from template" icon-md="material:autorenew" icon-color="white" @click="regenerateSelected()" />
+        <f7-link v-if="!showScenes" v-show="selectedItems.length && canDisable" tooltip="Disable selected" icon-md="material:pause_circle_outline" icon-color="white" @click="doDisableEnableSelected(false)" />
+        <f7-link v-if="!showScenes" v-show="selectedItems.length && canEnable" tooltip="Enable selected" icon-md="material:play_circle_outline" icon-color="white" @click="doDisableEnableSelected(true)" />
+        <f7-link v-show="selectedDeletableItems.length" tooltip="Delete selected" icon-md="material:delete" icon-color="white" @click="deleteSelected" />
       </div>
     </f7-toolbar>
 
@@ -135,7 +135,14 @@
               :badge="showScenes ? '' : ruleStatusBadgeText(ruleStatuses[rule.uid])"
               :badge-color="ruleStatusBadgeColor(ruleStatuses[rule.uid])">
               <div slot="footer" class="footer-inner">
-                <f7-chip v-if="rule.templateUID" :text="templateName(rule)" media-bg-color="orange" style="margin-right: 2px">
+                <f7-chip
+                  v-if="rule.templateUID"
+                  :text="templateName(rule)"
+                  @click.ctrl="(e) => templateClick(e, true, rule)"
+                  @click.meta="(e) => templateClick(e, true, rule)"
+                  @click.exact="(e) => templateClick(e, false, rule)"
+                  media-bg-color="orange"
+                  style="margin-right: 2px">
                   <f7-icon slot="media" ios="f7:doc_on_doc_fill" md="material:file_copy" aurora="f7:doc_on_doc_fill" />
                 </f7-chip>
                 <f7-chip v-for="tag in rule.tags.filter((t) => t !== 'Script' && t !== 'Scene')" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
@@ -163,6 +170,11 @@
   margin-block-end 2px
   .footer-inner
     margin-block-start 2px
+.tabbar-labels
+  .toolbar-inner
+    a
+      color var(--f7-toolbar-link-color, var(--f7-bars-link-color, var(--f7-theme-color)))
+      font-size var(--f7-tabbar-label-font-size)
 </style>
 
 <script>
@@ -217,6 +229,33 @@ export default {
     },
     searchPlaceholder () {
       return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
+    },
+    enablableItems () {
+      if (!this.selectedItems || !this.selectedItems.length) return 0
+      return this.selectedItems.filter((i) => this.isRuleStatusDisabled(this.ruleStatuses[i])).length
+    },
+    disablableItems () {
+      if (!this.selectedItems || !this.selectedItems.length) return 0
+      return this.selectedItems.filter((i) => this.ruleStatuses[i] && !this.isRuleStatusDisabled(this.ruleStatuses[i])).length
+    },
+    regeneratableItemsCount () {
+      return this.regeneratableItems.length
+    },
+    regeneratableItems () {
+      if (!this.selectedItems || !this.selectedItems.length || !this.rules || !this.templates) return []
+      return this.selectedItems.filter((i) => {
+        const rule = this.rules.find((r) => r.uid === i)
+        return rule && rule.templateUID && rule.templateState && rule.templateState !== 'no-template' && rule.templateState !== 'template-missing' && this.templates.some((t) => t.uid === rule.templateUID)
+      })
+    },
+    canEnable () {
+      return this.enablableItems > 0
+    },
+    canDisable () {
+      return this.disablableItems > 0
+    },
+    canRegenerate () {
+      return this.regeneratableItemsCount > 0
     }
   },
   methods: {
@@ -349,40 +388,72 @@ export default {
       this.toggleItemCheck(event, item.uid, item)
       if (!this.selectedItems.length) this.showCheckboxes = false
     },
+    templateClick (event, ctrl, rule) {
+      if (!rule || !rule.templateUID) return
+      if (ctrl || this.showCheckboxes) {
+        event.stopPropagation()
+        if (!this.showCheckboxes) this.showCheckboxes = true
+        const rules = this.rules.filter((r) => r.templateUID === rule.templateUID)
+        let unchecked = 0, checked = 0
+        rules.forEach((r) => {
+          if (this.isChecked(r.uid)) {
+            checked++
+          } else {
+            unchecked++
+          }
+        })
+        const doCheck = checked < unchecked
+        rules.forEach((r) => {
+          this.setItemChecked(r.uid, doCheck)
+        })
+        if (ctrl && !this.selectedItems.length) this.showCheckboxes = false
+      }
+    },
     toggleItemCheck (event, item) {
       if (!this.showCheckboxes) this.showCheckboxes = true
       if (this.isChecked(item)) {
-        this.selectedItems.splice(this.selectedItems.indexOf(item), 1)
-        let idx = this.selectedDeletableItems.indexOf(item)
-        if (idx >= 0) {
-          this.selectedDeletableItems.splice(idx, 1)
+        this.setItemChecked(item, false)
+      } else {
+        this.setItemChecked(item, true)
+      }
+    },
+    setItemChecked (item, checked) {
+      if (checked) {
+        if (!this.isChecked(item)) {
+          this.selectedItems.push(item)
+          const rule = this.rules.find((r) => r.uid === item)
+          if (rule?.editable) {
+            this.selectedDeletableItems.push(item)
+          }
         }
       } else {
-        this.selectedItems.push(item)
-        const rule = this.rules.find((r) => r.uid === item)
-        if (rule?.editable) {
-          this.selectedDeletableItems.push(item)
+        if (this.isChecked(item)) {
+          this.selectedItems.splice(this.selectedItems.indexOf(item), 1)
+          const idx = this.selectedDeletableItems.indexOf(item)
+          if (idx >= 0) {
+            this.selectedDeletableItems.splice(idx, 1)
+          }
         }
       }
     },
-    removeSelected () {
+    deleteSelected () {
       const vm = this
 
       this.$f7.dialog.confirm(
-        `Remove ${this.selectedDeletableItems.length} rules?`,
-        'Remove Rules',
+        `Delete ${this.selectedDeletableItems.length} rule${this.selectedDeletableItems.length === 1 ? '' : 's'}?`,
+        'Delete Rules',
         () => {
-          vm.doRemoveSelected()
+          vm.doDeleteSelected()
         }
       )
     },
-    doRemoveSelected () {
+    doDeleteSelected () {
       let dialog = this.$f7.dialog.progress('Deleting Rules...')
 
       const promises = this.selectedDeletableItems.map((i) => this.$oh.api.delete('/rest/rules/' + i))
       Promise.all(promises).then((data) => {
         this.$f7.toast.create({
-          text: 'Rules removed',
+          text: (promises.length === 1 ? 'Rule' : 'Rules') + ' deleted',
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
@@ -398,12 +469,14 @@ export default {
       })
     },
     doDisableEnableSelected (enable) {
+      if (!this.selectedItems) return
       let dialog = this.$f7.dialog.progress('Please Wait...')
 
-      const promises = this.selectedItems.map((i) => this.$oh.api.postPlain('/rest/rules/' + i + '/enable', enable.toString()))
+      const items = this.selectedItems.filter((i) => Boolean(this.isRuleStatusDisabled(this.ruleStatuses[i])) === Boolean(enable))
+      const promises = items.map((i) => this.$oh.api.postPlain('/rest/rules/' + i + '/enable', enable.toString()))
       Promise.all(promises).then((data) => {
         this.$f7.toast.create({
-          text: (enable) ? 'Rules enabled' : 'Rules disabled',
+          text: (promises.length === 1 ? 'Rule ' : 'Rules ') + (enable ? 'enabled' : 'disabled'),
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
@@ -418,15 +491,11 @@ export default {
       })
     },
     regenerateSelected () {
-      if (!this.selectedItems || this.selectedItems.length !== 1) {
-        return
-      }
-      let selectedRule = this.rules.find((rule) => rule.uid === this.selectedItems[0])
-      if (!selectedRule) {
-        return
-      }
-      if (selectedRule.editable) {
-        this.$oh.api.get('/rest/rules/' + this.selectedItems[0]).then((rule) => {
+      if (!this.selectedItems) return
+      const rules = this.regeneratableItems.map((i) => this.rules.find((r) => r.uid === i))
+      if (rules.length === 0) return
+      if (rules.length === 1 && rules[0].editable) {
+        this.$oh.api.get('/rest/rules/' + rules[0].uid).then((rule) => {
           this.$f7router.navigate({
             url: '/settings/rules/stub'
           }, {
@@ -436,17 +505,18 @@ export default {
             }
           })
         }).catch((err) => {
-          this.$f7.dialog.alert('An error occurred when retrieving rule "' + this.selectedItems[0] + '": ' + err)
+          this.$f7.dialog.alert('An error occurred when retrieving rule "' + rules[0].uid + '": ' + err)
         })
       } else {
-        this.$oh.api.postPlain('/rest/rules/' + this.selectedItems[0] + '/regenerate').then(() => {
+        const promises = rules.map((r) => this.$oh.api.postPlain('/rest/rules/' + r.uid + '/regenerate'))
+        Promise.all(promises).then(() => {
           this.$f7.toast.create({
-            text: 'Rule regenerated from template',
+            text: (rules.length === 1 ? 'Rule' : 'Rules') + ' regenerated from template',
             destroyOnClose: true,
             closeTimeout: 2000
           }).open()
         }).catch((err) => {
-          this.$f7.dialog.alert('An error occurred when trying to regenerate rule "' + this.selectedItems[0] + '" from template: ' + err)
+          this.$f7.dialog.alert('An error occurred when trying to regenerate rule(s) from template: ' + err)
         })
       }
     },
@@ -466,19 +536,6 @@ export default {
     templateName (rule) {
       let template = this.templates ? this.templates.find((t) => t.uid === rule.templateUID) : undefined
       return template ? template.label : rule.templateUID
-    },
-    canRegenerateItem (item) {
-      if (!this.rules) {
-        return false
-      }
-      let rule = this.rules.find((r) => r.uid === item)
-      return rule ? this.canRegenerate(rule) : false
-    },
-    canRegenerate (rule) {
-      if (!rule || !rule.templateUID || !rule.templateState || rule.templateState === 'no-template' || rule.templateState === 'template-missing') {
-        return false
-      }
-      return this.templates ? this.templates.some((t) => t.uid === rule.templateUID) : false
     }
   }
 }
