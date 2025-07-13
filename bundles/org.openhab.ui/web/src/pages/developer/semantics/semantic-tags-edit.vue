@@ -458,9 +458,10 @@ export default {
     updateName (ev) {
       const name = ev.target.value
       this.selectedTag.name = name
+      const oldUid = this.selectedTag.uid
       const newUid = this.selectedTag.parent + '_' + name
       this.selectedTag.uid = newUid
-      this.expandedTags[newUid] = this.expandedTags[this.selectedTag.uid]
+      this.expandedTags[newUid] = this.expandedTags[oldUid]
     },
     updateSynonyms (event, index) {
       const newValue = event.target.value
