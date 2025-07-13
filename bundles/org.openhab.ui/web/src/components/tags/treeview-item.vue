@@ -116,7 +116,7 @@ export default {
       this.moveState.moveTarget = event.relatedContext?.element
       // Open group if not open yet, with a delay so you don't open it if you just drag over it
       if (!this.moveState.moveTarget?.opened) {
-        const element = event.relatedContext.element
+        const element = event.relatedContext.component
         this.moveState.moveDelayedOpen = setTimeout(() => {
           this.setTagOpened(true, element.uid)
         }, 1000, element)

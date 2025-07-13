@@ -28,13 +28,14 @@
       </div>
       <f7-link v-if="selectedTag" class="right details-link padding-right" ref="detailsLink" @click="detailsOpened = true" icon-f7="chevron_up" />
     </f7-toolbar>
+
     <f7-tabs class="semantics-editor-tabs">
       <f7-tab class="design" id="tree" :tab-active="currentTab === 'tree'">
         <f7-block v-if="!ready" class="text-align-center">
           <f7-preloader />
           <div>Loading...</div>
         </f7-block>
-        <f7-block v-else class="semantics-tree-wrapper" :class="{ 'sheet-opened' : detailsOpened }">
+        <f7-block v-else class="semantics-tree-wrapper no-margin-top" :class="{ 'sheet-opened' : detailsOpened }">
           <f7-row v-if="currentTab === 'tree'">
             <!-- do not set column width as usual, instead use custom CSS because of https://github.com/openhab/openhab-webui/issues/2574 -->
             <f7-col>
@@ -241,16 +242,12 @@
 </style>
 
 <script>
-import Vue from 'vue'
-
-import Clipboard from 'v-clipboard'
-Vue.use(Clipboard)
-
 import YAML from 'yaml'
 import fastDeepEqual from 'fast-deep-equal/es6'
+
 import SemanticsTreeview from '@/components/tags/semantics-treeview.vue'
 import TagMixin from '@/components/tags/tag-mixin'
-import DirtyMixin from '../../settings/dirty-mixin'
+import DirtyMixin from '@/pages/settings/dirty-mixin'
 
 export default {
   mixins: [DirtyMixin, TagMixin],
@@ -339,7 +336,7 @@ export default {
       this.loading = true
 
       const tags = this.semanticClasses.Tags.map((t) => {
-        const tag = {
+        return {
           uid: t.uid,
           name: t.name,
           label: this.semanticClasses.Labels[t.name],
@@ -348,7 +345,6 @@ export default {
           editable: t.editable,
           parent: t.parent
         }
-        return tag
       })
       this.$set(this, 'semanticTags', tags)
       this.$nextTick(() => {
@@ -359,6 +355,7 @@ export default {
     },
     async save () {
       if (!this.dirty) return
+
       if (this.currentTab === 'code') {
         if (!this.fromYaml()) {
           this.$f7.dialog.alert('Error parsing YAML, cannot save')
@@ -486,14 +483,13 @@ export default {
     },
     toYaml () {
       const tags = this.semanticTags.filter((t) => t.editable).map((t) => {
-        const tag = {
+        return {
           name: t.name,
           label: t.label,
           description: t.description,
           synonyms: [...t.synonyms],
           parent: t.parent
         }
-        return tag
       })
       return YAML.stringify(tags)
     },
