@@ -33,7 +33,7 @@
   "setupwizard.addon.persistence-rrd4j.line2": "Empfohlen wenn du Diagramme von historischen Zuständen von numerischen Items haben möchtest.",
   "setupwizard.addon.persistence-mapdb.line1": "Speichert immer den letzten Status eines Items und erlaubt das Wiederherstellen des Status beim Start von openHAB.",
   "setupwizard.addon.persistence-mapdb.line2": "Empfohlen, wenn du willst, dass openHAB immer den letzten Status vor dem Herunterfahren speichert.",
-  "setupwizard.addon.persistence-inmemory.line1": "Speichert Zustände nur im Speicher. Begrenzung der Größe und hält keine Daten auf der Festplatte.",
+  "setupwizard.addon.persistence-inmemory.line1": "Speichert Zustände nur im Arbeitsspeicher. Größe wird begrenzt und keine Daten werden auf der Festplatte gespeichert.",
   "setupwizard.addon.persistence-inmemory.line2": "Empfohlen für temporäre Speicherung von Prognosen.",
   "setupwizard.persistence.footer": "Weitere erweiterte Persistence-Dienste und Konfigurationen sind möglich und können später konfiguriert werden.",
   "setupwizard.persistence.install": "Ausgewählte Persistence-Add-ons installieren",
