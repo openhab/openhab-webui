@@ -64,7 +64,7 @@
                                      @input="($event) => selectedTag.label = $event.target.value" />
                       <f7-list-input label="Description" :value="selectedTag.description" type="textarea" resizable :disabled="!selectedTag.editable" :clear-button="selectedTag.editable"
                                      placeholder="description"
-                                     @input="($event) => selectedTag.label = $event.target.value" />
+                                     @input="($event) => selectedTag.description = $event.target.value" />
                     </f7-list>
                   </f7-card-content>
                   <f7-card-footer v-if="selectedTag.editable">
@@ -137,7 +137,7 @@
                            @input="($event) => selectedTag.label = $event.target.value" />
             <f7-list-input label="Description" :value="selectedTag.description" type="textarea" resizable :disabled="!selectedTag.editable" :clear-button="selectedTag.editable"
                            placeholder="description"
-                           @input="($event) => selectedTag.label = $event.target.value" />
+                           @input="($event) => selectedTag.description = $event.target.value" />
           </f7-list>
           <f7-button v-if="selectedTag.editable" color="red" @click="removeTag">
             Remove
