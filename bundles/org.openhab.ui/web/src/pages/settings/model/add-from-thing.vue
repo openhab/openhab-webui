@@ -60,7 +60,20 @@
           <div>Loading...</div>
         </f7-block>
         <div v-else-if="selectedThing.UID && selectedThingType.UID">
-          <item-form v-if="createEquipment" :item="newEquipmentItem" :items="items" :createMode="true" :hide-type="true" :force-semantics="true" />
+          <f7-list v-if="createEquipment" media-list class="equipment-group-picker">
+            <item-picker :title="selectedGroup ? 'Change Selected Group' : 'Pick Existing Group'"
+                         textColor="blue" :hideIcon="true"
+                         :items="selectableGroups"
+                         :multiple="false" :noModelPicker="true" :setValueText="false"
+                         :value="selectedGroup?.name"
+                         @input="selectExistingGroup($event)" />
+          </f7-list>
+          <item-form v-if="createEquipment"
+                     :item="equipmentItem"
+                     :items="items"
+                     :createMode="selectedGroup ? false : true"
+                     :hide-type="true"
+                     :force-semantics="true" />
           <f7-block-title>Channels</f7-block-title>
           <f7-block-footer class="padding-left padding-right">
             Check the channels you wish to create as new Point items.
@@ -72,8 +85,8 @@
             </f7-link>
           </f7-block-footer>
           <channel-list :thing="selectedThing" :thingType="selectedThingType" :channelTypes="selectedThingChannelTypes" :items="items"
-                        :multiple-links-mode="true" :new-items-prefix="(createEquipment) ? newEquipmentItem.name : (parentGroup) ? parentGroup.name : ''"
-                        :new-items="newPointItems" />
+                        :multiple-links-mode="true" :new-items-prefix="(createEquipment) ? equipmentItem.name : (parentGroup) ? parentGroup.name : ''"
+                        :new-items="newPointItems" :updated-items="updatedPointItems" />
         </div>
       </f7-col>
     </f7-block>
@@ -88,11 +101,26 @@
   </f7-page>
 </template>
 
+<style lang="stylus">
+.equipment-group-picker
+  margin-bottom 0
+  .item-picker-container::before
+    display none
+  .item-picker-container::after
+    display none
+  .item-picker-container .item-picker .item-content .item-inner
+    .item-title-row::before
+      display none
+    .item-title
+      line-height 1.5
+</style>
+
 <script>
 import ThingPicker from '@/components/config/controls/thing-picker.vue'
 import ModelPickerPopup from '@/components/model/model-picker-popup.vue'
 import ChannelList from '@/components/thing/channel-list.vue'
 import ItemForm from '@/components/item/item-form.vue'
+import ItemPicker from '@/components/config/controls/item-picker.vue'
 
 import Item from '@/components/item/item.vue'
 
@@ -101,13 +129,16 @@ import ItemMixin from '@/components/item/item-mixin'
 
 import generateTextualDefinition from './generate-textual-definition'
 
+import cloneDeep from 'lodash/cloneDeep'
+
 export default {
   mixins: [ThingStatus, ItemMixin],
   components: {
     Item,
     ThingPicker,
     ChannelList,
-    ItemForm
+    ItemForm,
+    ItemPicker
   },
   props: ['parent', 'createEquipment', 'thingId'],
   data () {
@@ -118,9 +149,18 @@ export default {
       selectedThing: {},
       selectedThingType: {},
       selectedThingChannelTypes: {},
-      newEquipmentItem: {},
+      equipmentItem: {},
       newPointItems: [],
+      updatedPointItems: [],
+      selectedGroup: null,
       items: null
+    }
+  },
+  computed: {
+    selectableGroups () {
+      return this.items.filter((i) => {
+        return (i.type === 'Group') && !i.tags.find((t) => this.$store.getters.semanticClasses.Locations.indexOf(t) >= 0)
+      })
     }
   },
   methods: {
@@ -134,13 +174,13 @@ export default {
         let parentGroupsForEquipment, parentGroupsForPoints
         if (this.createEquipment) {
           parentGroupsForEquipment = (this.parentGroup) ? [this.parentGroup.name] : []
-          parentGroupsForPoints = [this.newEquipmentItem.name]
+          parentGroupsForPoints = [this.equipmentItem.name]
         } else {
           parentGroupsForEquipment = []
           parentGroupsForPoints = (this.parent) ? [this.parent.item.name] : (this.parentGroup) ? [this.parentGroup.name] : []
         }
 
-        const itemsDefinition = generateTextualDefinition(this.selectedThing, this.selectedThingChannelTypes, (this.createEquipment) ? this.newEquipmentItem : null, parentGroupsForEquipment, parentGroupsForPoints)
+        const itemsDefinition = generateTextualDefinition(this.selectedThing, this.selectedThingChannelTypes, (this.createEquipment) ? this.equipmentItem : null, parentGroupsForEquipment, parentGroupsForPoints)
 
         this.$f7router.navigate('/settings/items/add-from-textual-definition', {
           props: {
@@ -154,28 +194,56 @@ export default {
         this.$f7.dialog.alert('There was an error generating the items definition: ' + e)
       }
     },
+    createNewGroup () {
+      const semanticEquipmentTag = this.selectedThing.semanticEquipmentTag || 'Equipment'
+      this.equipmentItem = {
+        name: this.$oh.utils.normalizeLabel(this.selectedThing.label),
+        label: this.selectedThing.label,
+        tags: [semanticEquipmentTag],
+        type: 'Group',
+        category: '',
+        groupNames: (this.parent) ? [this.parent.item.name] : []
+      }
+    },
+    selectExistingGroup (value) {
+      const item = cloneDeep(this.items.find((i) => i.name === value))
+      if (!item) {
+        this.selectedGroup = null
+        this.createNewGroup()
+        return
+      }
+      if (!item.tags) {
+        item.tags = []
+      }
+      const hasEquipmentTag = item.tags.find((t) => this.$store.getters.semanticClasses.Equipment.indexOf(t) >= 0)
+      if (!hasEquipmentTag) {
+        item.tags.push(this.selectedThing.semanticEquipmentTag || 'Equipment')
+      }
+      this.equipmentItem = item
+      this.selectedGroup = item
+    },
     add () {
       if (!this.selectedThingId) {
         this.$f7.dialog.alert('Please select a Thing')
         return
       }
-      if (this.createEquipment && !this.newEquipmentItem.name) {
+      if (this.createEquipment && !this.equipmentItem.name) {
         this.$f7.dialog.alert('Please fill out the details for the new Equipment group')
         return
       }
-      if (!this.newPointItems.length) {
+      if (!this.newPointItems.length && !this.updatedPointItems.length) {
         this.$f7.dialog.alert('Please check at least one channel')
         return
       }
 
       let valid = true
       if (this.parentGroup && this.createEquipment) {
-        this.newEquipmentItem.groupNames = [this.parentGroup.name]
+        this.equipmentItem.groupNames = [this.parentGroup.name]
       }
       this.newPointItems.forEach((p) => {
         if (!p.name) valid = false
         if (this.createEquipment) {
-          p.groupNames = [this.newEquipmentItem.name]
+          p.groupNames = [this.equipmentItem.name]
         } else {
           p.groupNames = (this.parent) ? [this.parent.item.name] : (this.parentGroup) ? [this.parentGroup.name] : []
         }
@@ -186,8 +254,21 @@ export default {
         return
       }
 
+      this.updatedPointItems.forEach((p) => {
+        if (this.createEquipment) {
+          p.groupNames = [...p.groupNames, this.equipmentItem.name]
+        } else {
+          if (this.parent) {
+            p.groupNames = [...p.groupNames, this.parent.item.name]
+          } else if (this.parentGroup) {
+            p.groupNames = [...p.groupNames, this.parentGroup.name]
+          }
+        }
+      })
+
       let dialog = this.$f7.dialog.progress('Creating the Equipment and Points...')
-      const payload = [...this.newPointItems.map((p) => {
+      const pointItems = [...this.newPointItems, ...this.updatedPointItems]
+      const payload = [...pointItems.map((p) => {
         let copy = Object.assign({}, p)
         delete (copy.channel)
         delete (copy.channelType)
@@ -195,12 +276,12 @@ export default {
         delete (copy.stateDescriptionPattern)
         return copy
       })]
-      if (this.createEquipment) payload.unshift(this.newEquipmentItem)
+      if (this.createEquipment) payload.unshift(this.equipmentItem)
 
       this.$oh.api.put('/rest/items/', payload).then((data) => {
         dialog.setText('Updating unit metadata...')
         dialog.setProgress(40)
-        const unitPromises = this.newPointItems.map((p) => {
+        const unitPromises = pointItems.map((p) => {
           return this.saveUnit(p, p.unit).then(() => { return this.saveStateDescription(p, p.stateDescriptionPattern) })
         })
         Promise.all(unitPromises).then((data) => {
@@ -287,14 +368,7 @@ export default {
           this.selectedThingChannelTypes = data2[1]
 
           if (this.createEquipment) {
-            const semanticEquipmentTag = this.selectedThing.semanticEquipmentTag || 'Equipment'
-            this.newEquipmentItem = {
-              name: this.$oh.utils.normalizeLabel(this.selectedThing.label),
-              label: this.selectedThing.label,
-              tags: [semanticEquipmentTag],
-              type: 'Group',
-              groupNames: (this.parent) ? [this.parent.item.name] : []
-            }
+            this.createNewGroup()
           }
 
           if (this.items) {

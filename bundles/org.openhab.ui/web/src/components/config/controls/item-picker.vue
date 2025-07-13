@@ -1,6 +1,6 @@
 <template>
   <ul class="item-picker-container">
-    <f7-list-item :title="title" :disabled="disabled" smart-select :smart-select-params="smartSelectParams" v-if="ready" ref="smartSelect" class="item-picker">
+    <f7-list-item :title="title" :disabled="disabled" smart-select :smart-select-params="smartSelectParams" :textColor="textColor" v-if="ready" ref="smartSelect" class="item-picker">
       <select :name="name" :multiple="multiple" @change="select" :required="required">
         <option value="" v-if="!multiple" />
         <option v-for="item in preparedItems" :value="item.name" :key="item.name" :selected="(multiple) ? Array.isArray(value) && value.indexOf(item.name) >= 0 : value === item.name">
@@ -8,7 +8,7 @@
         </option>
       </select>
       <f7-button v-if="!noModelPicker" slot="media" :icon-color="color" :icon-aurora="aurora" :icon-ios="ios" :icon-md="md" @click.native="pickFromModel" />
-      <f7-icon v-else slot="media" :color="color" :aurora="aurora" :ios="ios" :md="md" />
+      <f7-icon v-else-if="!hideIcon" slot="media" :color="color" :aurora="aurora" :ios="ios" :md="md" />
     </f7-list-item>
     <!-- for placeholder purposes before items are loaded -->
     <f7-list-item link v-show="!ready" :title="title" disabled no-chevron>
@@ -33,14 +33,14 @@ import ModelPickerPopup from '@/components/model/model-picker-popup.vue'
 
 export default {
   props: ['title', 'name', 'value', 'items', 'multiple', 'filterType', 'required', 'editableOnly', 'disabled', 'setValueText', 'noModelPicker',
-    'iconColor', 'auroraIcon', 'iosIcon', 'mdIcon'],
+    'iconColor', 'auroraIcon', 'iosIcon', 'mdIcon', 'textColor', 'hideIcon'],
   data () {
     return {
       ready: false,
       preparedItems: [],
-      aurora: this.auroraIcon || 'f7:list_bullet_indent',
-      ios: this.iosIcon || 'f7:list_bullet_indent',
-      md: this.mdIcon || 'f7:list_bullet_indent',
+      aurora: !this.hideIcon ? (this.auroraIcon || 'f7:list_bullet_indent') : undefined,
+      ios: !this.hideIcon ? (this.iosIcon || 'f7:list_bullet_indent') : undefined,
+      md: !this.hideIcon ? (this.mdIcon || 'f7:list_bullet_indent') : undefined,
       color: this.iconColor || undefined,
       smartSelectParams: {
         view: this.$f7.view.main,

@@ -48,12 +48,21 @@
                               @channel-updated="(e) => $emit('channels-updated', e)" />
               </template>
               <template #default="{ channelType, channel }" v-else-if="multipleLinksMode">
-                <item-form v-if="isChecked(channel)"
+                <item-picker v-if="isChecked(channel) && hasLinks(channel)"
+                             :title="selectedItem(channel) ? 'Change Item Selection' : 'Pick Existing Linked Item'"
+                             textColor="blue" :hideIcon="true"
+                             :items="items.filter((i) => channel.linkedItems.includes(i.name))"
+                             :multiple="false" :noModelPicker="true" :setValueText="false"
+                             :value="selectedItem(channel)?.name"
+                             @input="selectExistingItem($event, channel, channelType)" />
+                <item-form v-if="selectedItem(channel)"
+                           :item="selectedItem(channel)"
+                           :items="items"
+                           :createMode="false" />
+                <item-form v-else-if="isChecked(channel)"
                            :item="newItem(channel)"
                            :items="items"
                            :createMode="true"
-                           :channel="channel"
-                           :checked="isChecked(channel)"
                            :unitHint="getUnitHint(channel, channelType)"
                            :stateDescription="stateDescription(channelType)" />
               </template>
@@ -62,7 +71,7 @@
           </f7-col>
         </f7-row>
         <f7-list v-if="multipleLinksMode">
-          <f7-list-button color="blue" @click="toggleAllChecks(true)">
+          <f7-list-button style="padding-left: 0; text-align: left" color="blue" @click="toggleAllChecks(true)">
             Select All
           </f7-list-button>
           <f7-list-button color="blue" @click="toggleAllChecks(false)">
@@ -84,7 +93,6 @@
 </template>
 
 <style lang="stylus">
-
 .channel-list
   margin-left calc(-1*var(--f7-block-padding-horizontal))
   padding-left 0
@@ -99,16 +107,20 @@
 import ChannelGroup from './channel-group.vue'
 import ChannelLink from './channel-link.vue'
 import ItemForm from '@/components/item/item-form.vue'
+import ItemPicker from '@/components/config/controls/item-picker.vue'
 
 import uomMixin from '@/components/item/uom-mixin'
 
+import cloneDeep from 'lodash/cloneDeep'
+
 export default {
   mixins: [uomMixin],
-  props: ['thingType', 'thing', 'channelTypes', 'items', 'pickerMode', 'multipleLinksMode', 'itemTypeFilter', 'newItemsPrefix', 'newItems', 'context'],
+  props: ['thingType', 'thing', 'channelTypes', 'items', 'pickerMode', 'multipleLinksMode', 'itemTypeFilter', 'newItemsPrefix', 'newItems', 'updatedItems', 'context'],
   components: {
     ChannelGroup,
     ChannelLink,
-    ItemForm
+    ItemForm,
+    ItemPicker
   },
   data () {
     return {
@@ -119,6 +131,13 @@ export default {
       selectedChannel: null,
       selectedChannels: [],
       channelTypesMap: new Map(this.channelTypes.map(ct => [ct.UID, ct]))
+    }
+  },
+  watch: {
+    newItemsPrefix () {
+      this.newItems.forEach((i) => {
+        i.name = this.newItemName(i.channel, i.channelType)
+      })
     }
   },
   computed: {
@@ -189,28 +208,10 @@ export default {
       if (this.isChecked(channel)) {
         this.selectedChannels.splice(this.selectedChannels.indexOf(channel), 1)
         this.newItems.splice(this.newItems.findIndex((i) => i.channel === channel), 1)
+        this.updatedItems.splice(this.updatedItems.findIndex((i) => i.channel === channel))
       } else {
         this.selectedChannels.push(channel)
-        let newItemName = this.newItemsPrefix || this.$oh.utils.normalizeLabel(this.thing.label)
-        newItemName += '_'
-        let suffix = channel.label || channelType.label || channel.id
-        if (this.thing.channels.filter((c) => c.label === suffix || (c.channelTypeUID && this.channelTypesMap[c.channelTypeUID] && this.channelTypesMap[c.channelTypeUID].label === suffix)).length > 1) {
-          suffix = channel.id.replace('#', '_').replace(/(^\w{1})|(_+\w{1})/g, letter => letter.toUpperCase())
-        }
-        newItemName += this.$oh.utils.normalizeLabel(suffix)
-        const defaultTags = (channel.defaultTags.length > 0) ? channel.defaultTags : channelType.tags
-        const newItem = {
-          channel,
-          channelType,
-          name: newItemName,
-          label: channel.label || channelType.label,
-          category: (channelType) ? channelType.category : '',
-          type: channel.itemType,
-          unit: this.channelUnit(channel, channelType),
-          stateDescriptionPattern: '',
-          tags: (defaultTags.find((t) => this.$store.getters.semanticClasses.Points.indexOf(t) >= 0)) ? defaultTags : [...defaultTags, 'Point']
-        }
-        this.newItems.push(newItem)
+        this.createNewItem(channel, channelType)
       }
     },
     channelUnit (channel, channelType) {
@@ -234,6 +235,52 @@ export default {
     },
     newItem (channel) {
       return this.newItems.find((i) => i.channel === channel)
+    },
+    createNewItem (channel, channelType) {
+      const defaultTags = (channel.defaultTags.length > 0) ? channel.defaultTags : channelType.tags
+      const newItem = {
+        channel,
+        channelType,
+        name: this.newItemName(channel, channelType),
+        label: channel.label || channelType.label,
+        category: (channelType) ? channelType.category : '',
+        type: channel.itemType,
+        unit: this.channelUnit(channel, channelType),
+        stateDescriptionPattern: '',
+        tags: (defaultTags.find((t) => this.$store.getters.semanticClasses.Points.indexOf(t) >= 0)) ? defaultTags : [...defaultTags, 'Point']
+      }
+      this.newItems.push(newItem)
+    },
+    newItemName (channel, channelType) {
+      let name = this.newItemsPrefix || this.$oh.utils.normalizeLabel(this.thing.label)
+      name += '_'
+      let suffix = channel.label || channelType.label || channel.id
+      if (this.thing.channels.filter((c) => c.label === suffix || (c.channelTypeUID && this.channelTypesMap[c.channelTypeUID] && this.channelTypesMap[c.channelTypeUID].label === suffix)).length > 1) {
+        suffix = channel.id.replace('#', '_').replace(/(^\w{1})|(_+\w{1})/g, letter => letter.toUpperCase())
+      }
+      name += this.$oh.utils.normalizeLabel(suffix)
+      return name
+    },
+    selectExistingItem (value, channel, channelType) {
+      const item = cloneDeep(this.items.find((i) => i.name === value))
+      if (!item) {
+        this.updatedItems.splice(this.updatedItems.findIndex((i) => i.channel === channel), 1)
+        this.createNewItem(channel, channelType)
+        return
+      }
+      item.channel = channel
+      if (!item.tags) {
+        item.tags = []
+      }
+      const hasPointTag = item.tags.find((t) => this.$store.getters.semanticClasses.Points.indexOf(t) >= 0)
+      if (!hasPointTag) {
+        const defaultTags = (channel.defaultTags.length > 0) ? channel.defaultTags : channelType.tags
+        item.tags = (defaultTags.find((t) => this.$store.getters.semanticClasses.Points.indexOf(t) >= 0)) ? [...item.tags, ...defaultTags] : [...item.tags, ...defaultTags, 'Point']
+      }
+      this.updatedItems.push(item)
+    },
+    selectedItem (channel) {
+      return this.updatedItems.find((i) => i.channel === channel)
     },
     channelOpened (payload) {
       this.openedChannelId = payload.channelId
