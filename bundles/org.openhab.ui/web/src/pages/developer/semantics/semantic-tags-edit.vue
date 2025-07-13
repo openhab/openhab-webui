@@ -390,13 +390,14 @@ export default {
       const addedTags = editableTags.filter((t) => !this.semanticClasses.Tags.find((c) => c.uid === t.uid))
       const modifiedTags = editableTags.filter((t) => this.semanticClasses.Tags.find((c) => (c.uid === t.uid) && !fastDeepEqual(c, t)))
       const removedTags = this.semanticClasses.Tags.filter((c) => !this.semanticTags.find((t) => t.uid === c.uid))
+      console.log(addedTags[0], removedTags[0])
 
       if (addedTags.some((t) => {
         if ((!t.name || !t.label) || modifiedTags.some((t) => !t.name || !t.label)) {
           this.$f7.dialog.alert(`${t.name}: Tag name and label required`)
           return true
         }
-        if (this.semanticClasses.Tags.find((c) => c.name === t.name)) {
+        if (this.semanticClasses.Tags.find((c) => c.name === t.name) && !removedTags.find((r) => r.name === t.name)) {
           this.$f7.dialog.alert(`${t.name}: Tag names must be unique`)
           return true
         }
