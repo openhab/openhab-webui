@@ -3,29 +3,31 @@
     <f7-navbar :title="!ready ? '' : ((createMode ? 'Create sitemap' : 'Sitemap: ' + sitemap.config.label) + dirtyIndicator)" back-link="Back" no-hairline>
       <f7-nav-right>
         <f7-link @click="save()"
-                 v-if="$theme.md"
+                 v-if="theme.md"
                  icon-md="material:save"
                  icon-only />
-        <f7-link @click="save()" v-if="!$theme.md">
+        <f7-link v-if="!theme.md" @click="save()">
           Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
         </f7-link>
       </f7-nav-right>
     </f7-navbar>
     <f7-toolbar tabbar position="top">
-      <f7-link @click="currentTab = 'tree'" :tab-link-active="currentTab === 'tree'" class="tab-link">
+      <f7-link @click="currentTab = 'tree'" :tab-link-active="currentTab === 'tree'" tab-link="#tree">
         Design
       </f7-link>
-      <f7-link @click="currentTab = 'code'" :tab-link-active="currentTab === 'code'" class="tab-link">
+      <f7-link @click="currentTab = 'code'" :tab-link-active="currentTab === 'code'" tab-link="#code">
         Code
       </f7-link>
     </f7-toolbar>
     <f7-toolbar bottom class="toolbar-details" v-if="currentTab === 'tree'">
-      <f7-link :disabled="selectedWidget != null" class="left" @click="selectedWidget = null">
+      <f7-link class="left" :class="{ disabled: selectedWidget == null }" @click="selectedWidget = null">
         Clear
       </f7-link>
       <div class="padding-right text-align-right">
-        <f7-checkbox style="margin-left: 5px" :checked="includeItemName" @change="toggleItemName" />
-        <label @click="toggleItemName" class="advanced-label">Show item name</label>
+        <label class="advanced-label">
+          <f7-checkbox style="margin-left: 5px; padding-right: 5px;" v-model:checked="runtimeStore.sitemapIncludeItemName" />
+          Show item name
+        </label>
       </div>
       <f7-link v-if="selectedWidget"
                class="right details-link padding-right"
@@ -42,17 +44,17 @@
           <f7-preloader />
           <div>Loading...</div>
         </f7-block>
-        <f7-block v-else class="sitemap-tree-wrapper" :class="{ 'sheet-opened' : detailsOpened }">
+        <f7-block v-else class="sitemap-tree-wrapper" :class="{ 'sheet-opened': detailsOpened }">
           <f7-row v-if="currentTab === 'tree'">
             <!-- do not set column width as usual, instead use custom CSS because of https://github.com/openhab/openhab-webui/issues/2574 -->
             <f7-col>
               <f7-block strong
                         class="sitemap-tree"
                         no-gap
-                        @click.native="clearSelection">
+                        @click="clearSelection">
                 <f7-treeview>
                   <sitemap-treeview-item :widget="sitemap"
-                                         :includeItemName="includeItemName"
+                                         :includeItemName="runtimeStore.sitemapIncludeItemName"
                                          :itemsList="items"
                                          @selected="selectWidget"
                                          :selected="selectedWidget" />
@@ -142,35 +144,37 @@
                                v-for="widgetType in addableWidgetTypes"
                                :key="widgetType.type"
                                @click="addWidget(widgetType.type)">
-              <f7-icon :f7="widgetTypeIcon(widgetType.type)" slot="media" />
+              <template #media>
+                <f7-icon :f7="widgetTypeIcon(widgetType.type)" />
+              </template>
               <span>{{ widgetTypeLabel(widgetType.type) }}</span>
             </f7-actions-button>
           </f7-actions-group>
         </f7-actions>
       </f7-tab>
-      <f7-tab id="code" @tab:show="() => { this.currentTab = 'code' }" :tab-active="currentTab === 'code'">
+      <f7-tab id="code" :tab-active="currentTab === 'code'">
         <sitemap-code v-if="currentTab === 'code'" :sitemap="sitemap" @updated="(value) => update(value)" />
       </f7-tab>
     </f7-tabs>
 
-    <f7-fab class="add-to-sitemap-fab"
-            v-if="canAddChildren(selectedWidget) && selectedWidget.component !== 'Buttongrid'"
-            position="right-center"
-            slot="fixed"
-            color="blue"
-            @click="$refs.widgetTypeSelection.open()">
-      <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
-      <f7-icon ios="f7:multiply" md="material:close" aurora="f7:multiply" />
-    </f7-fab>
-    <f7-fab class="add-to-sitemap-fab"
-            v-if="canAddChildren(selectedWidget) && selectedWidget.component === 'Buttongrid'"
-            position="right-center"
-            slot="fixed"
-            color="blue"
-            @click="addWidget('Button')">
-      <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
-      <f7-icon ios="f7:multiply" md="material:close" aurora="f7:multiply" />
-    </f7-fab>
+    <template #fixed>
+      <f7-fab v-if="canAddChildren(selectedWidget) && selectedWidget.component !== 'Buttongrid'"
+              class="add-to-sitemap-fab"
+              position="right-center"
+              color="blue"
+              @click="$refs.widgetTypeSelection.open()">
+        <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
+        <f7-icon ios="f7:multiply" md="material:close" aurora="f7:multiply" />
+      </f7-fab>
+      <f7-fab v-if="canAddChildren(selectedWidget) && selectedWidget.component === 'Buttongrid'"
+              class="add-to-sitemap-fab"
+              position="right-center"
+              color="blue"
+              @click="addWidget('Button')">
+        <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
+        <f7-icon ios="f7:multiply" md="material:close" aurora="f7:multiply" />
+      </f7-fab>
+    </template>
     <f7-sheet v-if="currentTab === 'tree'"
               ref="detailsSheet"
               class="sitemap-details-sheet"
@@ -191,9 +195,8 @@
           <f7-link v-if="selectedWidget && selectedWidget.component !== 'Sitemap'"
                    class="padding-left padding-right"
                    :tab-link-active="detailsTab === 'visibility'"
-                   @click="detailsTab = 'visibility'">
-            Visibility
-          </f7-link>
+                   @click="detailsTab = 'visibility'"
+                   Visibility />
           <f7-link v-if="selectedWidget && selectedWidget.component === 'Buttongrid' && !hasChildren"
                    class="padding-left padding-right"
                    :tab-link-active="detailsTab === 'buttons'"
@@ -352,7 +355,14 @@
 </style>
 
 <script>
+import { nextTick } from 'vue'
+import { utils } from 'framework7'
+import { f7, theme } from 'framework7-vue'
+import { mapStores } from 'pinia'
+
 import cloneDeep from 'lodash/cloneDeep'
+
+import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
 import SitemapCode from '@/components/pagedesigner/sitemap/sitemap-code.vue'
 import WidgetDetails from '@/components/pagedesigner/sitemap/widget-details.vue'
@@ -377,14 +387,15 @@ export default {
     f7router: Object,
     f7route: Object
   },
+  setup () {
+    return { theme }
+  },
   data () {
-    if (!this.$f7.data.sitemap) this.$f7.data.sitemap = {}
     return {
-      includeItemName: this.$f7.data.sitemap.includeItemName || false,
       ready: false,
       loading: false,
       sitemap: {
-        uid: 'page_' + this.$f7.utils.id(),
+        uid: 'page_' + utils.id(),
         component: 'Sitemap',
         config: {
           label: 'New Sitemap'
@@ -414,7 +425,8 @@ export default {
     addableWidgetTypes () {
       if (!this.selectedWidget) return
       return this.allowedWidgetTypes(this.selectedWidget)
-    }
+    },
+    ...mapStores(useRuntimeStore)
   },
   watch: {
     sitemap: {
@@ -430,7 +442,7 @@ export default {
     },
     currentTab (newTab, oldTab) {
       if (oldTab === 'tree' && this.$refs.detailsSheet) {
-        this.$refs.detailsSheet.close()
+        this.$refs.detailsSheet.$el.f7Modal.close()
       }
     }
   },
@@ -473,7 +485,7 @@ export default {
     setParents (widget) {
       // keep parents with widget for drag and drop
       widget.slots?.widgets?.forEach((w) => {
-        this.$set(w, 'parent', widget)
+        w.parent = widget
         this.setParents(w)
       })
     },
@@ -484,15 +496,15 @@ export default {
       if (this.ready && this.dirty) this.save(true, true)
 
       if (this.createMode) {
-        this.$set(this, 'lastCleanSitemap', this.stripClosed(this.sitemap))
+        this.lastCleanSitemap = this.stripClosed(this.sitemap)
         this.loading = false
         this.ready = true
       } else {
         this.$oh.api.get('/rest/ui/components/system:sitemap/' + this.uid).then((data) => {
           const sitemap = this.preProcessSitemapLoad(data)
-          this.$set(this, 'sitemap', sitemap)
-          this.$nextTick(() => {
-            this.$set(this, 'lastCleanSitemap', this.stripClosed(this.sitemap))
+          this.sitemap = sitemap
+          nextTick(() => {
+            this.lastCleanSitemap = this.stripClosed(this.sitemap)
             this.setParents(this.sitemap)
             this.ready = true
             this.loading = false
@@ -500,23 +512,18 @@ export default {
         })
       }
     },
-    toggleItemName () {
-      this.includeItemName = !this.includeItemName
-      this.$f7.data.sitemap.includeItemName = this.includeItemName
-      this.load()
-    },
     save (stay, force) {
       this.cleanConfig(this.sitemap)
       if (!this.sitemap.uid) {
-        this.$f7.dialog.alert('Please give an ID to the sitemap')
+        f7.dialog.alert('Please give an ID to the sitemap')
         return
       }
       if (!this.sitemap.config.label) {
-        this.$f7.dialog.alert('Please give a label to the sitemap')
+        f7.dialog.alert('Please give a label to the sitemap')
         return
       }
       if (!this.createMode && this.uid !== this.sitemap.uid) {
-        this.$f7.dialog.alert('You cannot change the ID of an existing sitemap. Duplicate it with the new ID then delete this one.')
+        f7.dialog.alert('You cannot change the ID of an existing sitemap. Duplicate it with the new ID then delete this one.')
         return
       }
 
@@ -530,26 +537,26 @@ export default {
       promise.then((data) => {
         this.dirty = false
         if (this.createMode) {
-          this.$f7.toast.create({
+          f7.toast.create({
             text: 'Sitemap created',
             destroyOnClose: true,
             closeTimeout: 2000
           }).open()
           this.load()
-          this.$f7router.navigate(this.$f7route.url.replace('/add', '/' + sitemap.uid), { reloadCurrent: true })
+          this.f7router.navigate(this.$f7route.url.replace('/add', '/' + sitemap.uid), { reloadCurrent: true })
         } else {
-          this.$f7.toast.create({
+          f7.toast.create({
             text: 'Sitemap updated',
             destroyOnClose: true,
             closeTimeout: 2000
           }).open()
-          this.$set(this, 'lastCleanSitemap', this.stripClosed(this.sitemap))
+          this.lastCleanSitemap = this.stripClosed(this.sitemap)
           this.setParents(sitemap)
         }
-        this.$f7.emit('sidebarRefresh', null)
+        f7.emit('sidebarRefresh', null)
         // if (!stay) this.$f7router.back()
       }).catch((err) => {
-        this.$f7.toast.create({
+        f7.toast.create({
           text: 'Error while saving sitemap: ' + err,
           destroyOnClose: true,
           closeTimeout: 2000
@@ -706,7 +713,7 @@ export default {
           }
         })
         if (validationWarnings.length > 0) {
-          this.$f7.dialog.create({
+          f7.dialog.create({
             cssClass: 'sitemap-validation-dialog',
             title: 'Validation errors',
             text: 'Sitemap definition has validation errors:',
@@ -744,7 +751,9 @@ export default {
           if (widget.config[key] && Array.isArray(widget.config[key])) {
             widget.config[key] = widget.config[key].filter(Boolean)
             if (key === 'buttons') {
-              widget.config[key].sort((value1, value2) => (value1.row - value2.row) || (value1.column - value2.column))
+              widget.config[key].sort(
+                (value1, value2) => value1.row - value2.row || value1.column - value2.column
+              )
             }
           }
           if (!widget.config[key] && widget.config[key] !== 0) {
@@ -810,12 +819,14 @@ export default {
         for (let key in widget.config) {
           if (widget.config[key] && Array.isArray(widget.config[key])) {
             if (key === 'buttons') {
-              widget.config[key].forEach((value, index) => { widget.config[key][index] = value.row + ':' + value.column + ':' + value.command })
+              widget.config[key].forEach((value, index) => {
+                widget.config[key][index] = value.row + ':' + value.column + ':' + value.command
+              })
             }
           }
         }
       }
-      if ((widget.component === 'Buttongrid') && widget.config?.item) {
+      if (widget.component === 'Buttongrid' && widget.config?.item) {
         if (!widget.config.buttons && widget.slots?.widgets) {
           widget.slots.widgets.forEach((w) => {
             if (!w.config) w.config = {}
@@ -829,7 +840,7 @@ export default {
     update (value) {
       this.selectedWidget = null
       this.selectedWidgetParent = null
-      this.$set(this, 'sitemap', value)
+      this.sitemap = value
       this.cleanConfig(this.sitemap)
     },
     startEventSource () {},
@@ -838,10 +849,13 @@ export default {
       const duplicate = cloneDeep(this.selectedWidget)
       const index = this.selectedWidgetParent.slots.widgets.indexOf(this.selectedWidget) + 1
       this.selectedWidgetParent.slots.widgets.splice(index, 0, duplicate)
-      this.$set(this, 'selectedWidget', this.selectedWidgetParent.slots.widgets[index])
+      this.selectedWidget = this.selectedWidgetParent.slots.widgets[index]
     },
     removeWidget () {
-      this.selectedWidgetParent.slots.widgets.splice(this.selectedWidgetParent.slots.widgets.indexOf(this.selectedWidget), 1)
+      this.selectedWidgetParent.slots.widgets.splice(
+        this.selectedWidgetParent.slots.widgets.indexOf(this.selectedWidget),
+        1
+      )
       if (!this.selectedWidgetParent.slots.widgets.length) {
         delete this.selectedWidgetParent.slots
       }
@@ -867,11 +881,11 @@ export default {
       const parentWidget = widgets[1]
       this.selectedWidget = null
       this.selectedWidgetParent = null
-      this.$nextTick(() => {
+      nextTick(() => {
         this.selectedWidget = widget
         this.selectedWidgetParent = parentWidget
         this.detailsTab = 'widget'
-        this.$nextTick(() => {
+        nextTick(() => {
           const detailsLink = this.$refs.detailsLink
           const visibility = window.getComputedStyle(detailsLink.$el).visibility
           if (!visibility || visibility !== 'hidden') {
@@ -888,7 +902,7 @@ export default {
     },
     addWidget (widgetType) {
       if (!this.selectedWidget.slots) {
-        this.$set(this.selectedWidget, 'slots', { widgets: [] })
+        this.selectedWidget.slots = { widgets: [] }
       }
       const widget = {
         component: widgetType,

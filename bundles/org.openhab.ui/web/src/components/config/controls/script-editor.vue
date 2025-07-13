@@ -1,154 +1,168 @@
 <template>
-  <codemirror :value="value"
-              @input="onCmCodeChange"
-              ref="cm"
-              class="code-editor-fit"
-              :options="cmOptions"
-              @ready="onCmReady" />
+  <codemirror
+    ref="cm"
+    class="code-editor-fit"
+    :model-value="value"
+    :extensions="extensions"
+    @ready="onCmReady"
+    @change="onCmCodeChange" />
 </template>
 
 <style lang="stylus">
 .code-editor-fit
-  position absolute
-  left 0
-  top var(--f7-navbar-height)
-  height calc(100% - var(--f7-navbar-height))
+  position relative
   width 100%
-  display flex
-  background white
-  align-items center
-  justify-content center
-  .CodeMirror
+  height calc(100vh - var(--f7-navbar-height) - var(--f7-tabbar-height, 48px))
+  display flex !important
+
+  .cm-editor
     height 100%
     width 100%
 
-    .CodeMirror-line
-      line-height 1.3
+    .cm-completionIcon
+      border-radius 50%
+      padding 0
+      width 16px
+      height 16px
+      line-height 16px
+      background #999
+      color #fff
+      font-size 12px
+      font-weight 700
+      opacity 0.95
+      margin 1px 6px
 
-    .cm-lkcampbell-indent-guides:not(.CodeMirror-lint-mark-error)
-      margin-top -5px
-      background-repeat repeat-y
-      background-image url("data:image/svg+xml;utf8,<?xml version='1.0' encoding='UTF-8'?><svg xmlns='http://www.w3.org/2000/svg' version='1.1' width='1px' height='2px'><rect width='1' height='1' style='fill:%2377777777' /></svg>")
-      position relative
+    .cm-completionIcon::before
+      line-height 16px !important
 
-.CodeMirror-hints
-  z-index 999999
-.CodeMirror-Tern-tooltip
-  z-index 999998
-  opacity 1 !important
-  position absolute
-.CodeMirror-lint-tooltip
-  z-index 999998
-  opacity 1 !important
-  position absolute
+    .cm-completionIcon-boolean::before
+      content "B"
+    .cm-completionIcon-number::before
+      content "1"
+    .cm-completionIcon-string::before
+      content "S"
+    .cm-completionIcon-object::before
+      content "O"
+    .cm-completionIcon-object
+      background #77c
+    .cm-completionIcon-array::before
+      content "A"
+    .cm-completionIcon-array
+      background #c66
+    .cm-completionIcon-item::before
+      content "I"
+    .cm-completionIcon-groupitem::before
+      content "G"
+    .cm-completionIcon-item,
+    .cm-completionIcon-groupitem
+      background #3ab
+    .cm-completionIcon-unknown::before
+      content "?"
+    .cm-completionIcon-function
+      background #7c7
+    .cm-completionIcon-unknown
+      background #4bb
+
+    // This affects the buttons in the search form
+    .cm-button
+      width auto
 </style>
 
 <script>
-// require component
-import { codemirror } from 'vue-codemirror'
-import _CodeMirror from 'codemirror'
-// require styles
-import 'codemirror/lib/codemirror.css'
+import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
+import { mapStores } from 'pinia'
 
-// language js
-import 'codemirror/mode/clike/clike.js'
-import 'codemirror/mode/groovy/groovy.js'
-import 'codemirror/mode/jinja2/jinja2.js'
-import 'codemirror/mode/javascript/javascript.js'
-import 'codemirror/mode/properties/properties.js'
-import 'codemirror/mode/python/python.js'
-import 'codemirror/mode/ruby/ruby.js'
-import 'codemirror/mode/shell/shell.js'
-import 'codemirror/mode/xml/xml.js'
-import 'codemirror/mode/yaml/yaml.js'
-
-// theme css
-import 'codemirror/theme/gruvbox-dark.css'
-
-import 'codemirror/addon/edit/matchbrackets.js'
-import 'codemirror/addon/edit/closebrackets.js'
-
-import 'codemirror/addon/comment/comment.js'
-
-// for autocomplete
-import 'codemirror/addon/hint/show-hint.js'
-import 'codemirror/addon/hint/show-hint.css'
-import 'codemirror/addon/hint/anyword-hint.js'
-import 'codemirror/addon/dialog/dialog.js'
-import 'codemirror/addon/dialog/dialog.css'
-import 'codemirror/addon/tern/tern.js'
-import 'codemirror/addon/tern/tern.css'
-
-// for folding
-import 'codemirror/addon/fold/foldgutter.css'
-import 'codemirror/addon/fold/foldcode.js'
-import 'codemirror/addon/fold/foldgutter.js'
-import 'codemirror/addon/fold/indent-fold.js'
+// codemirror core
+import { Codemirror } from 'vue-codemirror'
+import { keymap, tooltips } from '@codemirror/view'
+import { EditorState, EditorSelection } from '@codemirror/state'
+import { defaultKeymap, historyKeymap, indentMore } from '@codemirror/commands'
+import { StreamLanguage, getIndentUnit, codeFolding } from '@codemirror/language'
+import { autocompletion, closeBrackets } from '@codemirror/autocomplete'
 
 // for linting
-import 'codemirror/addon/lint/lint.js'
-import 'codemirror/addon/lint/lint.css'
+import { linter, lintGutter } from '@codemirror/lint'
 import YAML from 'yaml'
+import * as eslint from 'eslint-linter-browserify'
+import globals from 'globals'
 
-import tern from 'tern'
-import infer from 'tern/lib/infer'
+// other extensions
+import { indentationMarkers } from '@replit/codemirror-indentation-markers'
+import { gruvboxDark } from '@uiw/codemirror-theme-gruvbox-dark'
 
-// import 'tern/lib/signal.js'
-// import * as Tern from 'tern/lib/tern.js'
-// import 'tern/lib/def.js'
-// import 'tern/lib/comment.js'
-// import 'tern/lib/infer.js'
-// import 'tern/plugin/doc_comment.js'
+// languages
+import { javascript, esLint } from '@codemirror/lang-javascript'
+import { python } from '@codemirror/lang-python'
+import { groovy } from '@codemirror/legacy-modes/mode/groovy'
+import { ruby } from '@codemirror/legacy-modes/mode/ruby'
+import { java } from '@codemirror/lang-java'
+import { xml } from '@codemirror/lang-xml'
+import { yaml } from '@codemirror/lang-yaml'
+import { jinja2 } from '@codemirror/legacy-modes/mode/jinja2'
+import { properties } from '@codemirror/legacy-modes/mode/properties'
+import { shell } from '@codemirror/legacy-modes/mode/shell'
 
-import EcmascriptDefs from 'tern/defs/ecmascript.json'
-import NashornDefs from '@/assets/nashorn-tern-defs.json'
-import OpenhabJsDefs from '@/assets/openhab-js-tern-defs.json'
-
+// OH-specific CompletionSources
+import javascriptAutocompletions from '../editor/hint-javascript'
 import componentsHint from '../editor/hint-components'
-import itemsHint from '../editor/hint-items'
 import rulesHint from '../editor/hint-rules'
-import thingsHint from '../editor/hint-things'
-import pythonHint from '../editor/hint-python'
+// TODO-V3.1 This will again be changed when the backend YAML support is added
+// postpone migration until after?
+// import itemsHint from '../editor/hint-items';
+// import thingsHint from '../editor/hint-things';
 
-// Adapted from https://github.com/lkcampbell/brackets-indent-guides (MIT)
-let indentGuidesOverlay = {
-  token: function (stream, state) {
-    let char = '',
-      colNum = 0,
-      spaceUnits = 0,
-      isTabStart = false
+const KEYMAP = [
+  {
+    // The default indentWithTab will indent the line regardless of the cursor position.
+    // This overrides this behavior so when you're at the beginning of the line, it would indent the line
+    // but when in the middle or end of line, it inserts spaces
+    key: 'Tab',
+    run: ({ state, dispatch }) => {
+      const { from, to } = state.selection.main
+      const line = state.doc.lineAt(from)
+      const col = from - line.from
+      const beforeCursor = line.text.slice(0, col)
 
-    char = stream.next()
-    colNum = stream.column()
+      // If at the beginning of the line (ignoring whitespace), indent the line
+      if (/^\s*$/.test(beforeCursor)) {
+        return indentMore({ state, dispatch })
+      }
 
-    if (colNum === 0) {
-      return null
+      // Otherwise, insert spaces to reach the next multiple of indent size
+      const indentLength = getIndentUnit(state)
+      const nextTabStop = Math.ceil((col + 1) / indentLength) * indentLength
+      const spacesToInsert = nextTabStop - col
+      const spaces = ' '.repeat(spacesToInsert)
+
+      dispatch(
+        state.update({
+          changes: { from, to, insert: spaces },
+          selection: EditorSelection.cursor(from + spaces.length),
+          scrollIntoView: true
+        })
+      )
+      return true
     }
+  }
+]
 
-    if (char === '\t') {
-      return 'lkcampbell-indent-guides'
-    }
-
-    if (char !== ' ') {
-      stream.skipToEnd()
-      return null
-    }
-
-    spaceUnits = 2
-    isTabStart = !(colNum % spaceUnits)
-
-    if ((char === ' ') && (isTabStart)) {
-      return 'lkcampbell-indent-guides'
-    } else {
-      return null
-    }
-  },
-  flattenSpans: false
-}
+const STANDARD_EXTENSIONS = [
+  keymap.of([...defaultKeymap, ...historyKeymap, ...KEYMAP]),
+  closeBrackets(),
+  codeFolding(),
+  indentationMarkers({
+    hideFirstIndent: true,
+    activeThickness: 2
+  }),
+  tooltips({
+    // This prevents the lint tooltip from going outside the editor and getting clipped
+    tooltipSpace: (view) => view.contentDOM.getBoundingClientRect()
+  })
+]
 
 export default {
   components: {
-    codemirror
+    Codemirror
   },
   props: {
     value: String,
@@ -161,215 +175,150 @@ export default {
   data () {
     return {
       code: this.value,
-      itemsCache: [],
-      cmOptions: {
-        // codemirror options
-        tabSize: 4,
-        mode: this.translateMode(this.mode),
-        theme: (this.$f7.data.themeOptions.dark === 'dark') ? 'gruvbox-dark' : 'default',
-        lineNumbers: true,
-        line: true,
-        readOnly: this.readOnly,
-        matchBrackets: true,
-        autoCloseBrackets: true,
-        viewportMargin: Infinity,
-        foldGutter: true,
-        lint: false,
-        gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter', 'CodeMirror-lint-markers']
-      }
+      autocompletion: null
     }
   },
-  beforeDestroy () {
+  beforeUnmount () {
     if (this.codemirror && this.codemirror.closeHint) {
       this.codemirror.closeHint()
     }
   },
   methods: {
-    translateMode (mode) {
-      // Translations required for some special modes used in MainUI
-      // See https://codemirror.net/5/mode/index.html for supported language names & MIME types
-      if (!mode) return mode
-      if (mode.indexOf('yaml') >= 0) return 'text/x-yaml'
-      if (mode === 'application/json' || mode === 'json') return 'application/json'
-      if (mode.startsWith('application/javascript') || mode === 'js') return 'text/javascript'
-      if (mode === 'application/vnd.openhab.dsl.rule') return 'text/x-java'
-      if (mode === 'application/x-groovy' || mode === 'groovy') return 'text/x-groovy'
-      if (mode === 'application/x-python2' || mode === 'py2') {
-        return {
-          name: 'text/x-python',
-          version: 2
-        }
+    languageExtension (mode) {
+      switch(true) {
+        case mode.includes('yaml'):
+          return yaml()
+
+        case mode === 'dsl':
+        case mode === 'application/vnd.openhab.dsl.rule':
+          return java()
+
+        case mode === 'js':
+        case mode.startsWith('application/javascript'):
+          return javascript()
+
+        case mode === 'py':
+        case mode === 'py2':
+        case mode === 'py3':
+        case mode.startsWith('application/x-python'):
+          return python()
+
+        case mode === 'rb':
+        case mode === 'application/x-ruby':
+          return StreamLanguage.define(ruby)
+
+        case mode === 'groovy':
+        case mode === 'application/x-groovy':
+          return StreamLanguage.define(groovy)
+
+        case mode === 'map':
+        case mode === 'scale':
+          return StreamLanguage.define(properties)
+
+        case mode === 'exec':
+          return StreamLanguage.define(shell)
+
+        case mode === 'jinja':
+          return StreamLanguage.define(jinja2)
+
+        case mode === 'xslt':
+          return xml()
+
+        default:
+          console.log('Unsupported editor mode:', mode)
+          return null
       }
-      if (mode === 'application/x-python' || mode === 'application/x-python3' || mode === 'py' || mode === 'py3') return 'text/x-python'
-      if (mode === 'application/x-ruby' || mode === 'rb') return 'text/x-ruby'
-      if (mode.indexOf('jinja') >= 0) return 'text/jinja2'
-      return mode
     },
-    ternComplete (file, query) {
-      let pos = tern.resolvePos(file, query.end)
-      let lit = infer.findExpressionAround(file.ast, null, pos, file.scope, 'Literal')
-      if (!lit || !lit.node) return
-      let call = infer.findExpressionAround(file.ast, null, lit.node.start - 2, file.scope)
-      if (!call || !call.node) return
-      if (call.node.type !== 'MemberExpression' || (!call.node.object && !call.node.property)) return
-      if ((call.node.object.name === 'events' && call.node.property.name === 'postUpdate') ||
-      (call.node.object.name === 'events' && call.node.property.name === 'sendCommand') ||
-      (call.node.object.name === 'itemRegistry' && call.node.property.name === 'getItem') ||
-      (call.node.object.name === 'ir' && call.node.property.name === 'getItem') ||
-      (call.node.object.name === 'items' && call.node.property.name === 'getItem')) {
-        console.debug('Completing item names!')
+    autocompletionExtension (mode) {
+      if (!mode) {
+        return null
+      }
 
-        let before = lit.node.value.slice(0, pos - lit.node.start - 1)
-        let matches = []
-        this.itemsCache.sort((a, b) => a.name.localeCompare(b.name)).forEach((item) => {
-          if (item.name.length > before.length && item.name.toLowerCase().indexOf(before.toLowerCase()) >= 0) {
-            if (query.types || query.docs || query.urls || query.origins) {
-              let rec = {
-                name: JSON.stringify(item.name),
-                displayName: item.name,
-                doc: (item.label ? item.label + ' ' : '') + '[' + item.type + ']'
+      const activateOnCompletion = () => true
+
+      switch (true) {
+        case mode.startsWith('application/vnd.openhab.uicomponent'):
+          return autocompletion({ activateOnCompletion, override: [ componentsHint ] })
+
+        case mode === 'application/vnd.openhab.rule+yaml':
+          return autocompletion({ activateOnCompletion, override: [ rulesHint ] })
+
+          // TODO-V3.1 Wait for https://github.com/openhab/openhab-webui/pull/3180
+          // case mode === 'application/vnd.openhab.thing+yaml':
+          //   return autocompletion({ activateOnCompletion, override: [ thingsHint ] })
+
+          // case mode === 'application/vnd.openhab.item+yaml':
+          //   return autocompletion({ activateOnCompletion, override: [ itemsHint ] })
+
+        case mode === 'js':
+        case mode.startsWith('application/javascript'):
+          return javascriptAutocompletions(mode)
+
+        // CodeMirror supports autocompletion for python by default
+        default:
+          return autocompletion()
+      }
+    },
+    linterExtension (mode) {
+      switch (true) {
+        case mode.includes('yaml'):
+          return linter((view) => {
+            const parsed = YAML.parseDocument(view.state.doc.toString())
+            return parsed.errors.map((e) => {
+              return {
+                from: e.pos[0],
+                to: e.pos[1],
+                message: e.message,
+                severity: e.name === 'YAMLParseError' ? 'error' : 'warning'
               }
-              matches.push(rec)
-              if (query.types) rec.type = 'string'
-              if (query.origins) rec.origin = item.name
-            }
-          }
-        })
+            })
+          })
 
-        return {
-          start: tern.outputPos(query, file, lit.node.start),
-          end: tern.outputPos(query, file, pos + (file.text.charAt(pos) === file.text.charAt(lit.node.start) ? 1 : 0)),
-          isProperty: false,
-          completions: matches
-        }
+        case mode === 'js':
+        case mode.startsWith('application/javascript'):
+          const config = {
+            // eslint configuration
+            languageOptions: {
+              globals: { ...globals.node },
+              parserOptions: { ecmaVersion: 2022, sourceType: 'module' }
+            },
+            rules: { semi: ['error', 'never'] }
+          }
+          return linter(esLint(new eslint.Linter(), config))
       }
     },
     onCmReady (cm) {
-      const self = this
-      let extraKeys = {}
-      if (this.mode && this.mode.indexOf('application/javascript') === 0) {
-        window.tern = tern
-        if (this.ternAutocompletionHook) {
-          tern.registerPlugin('openhab-tern-hook', (server, options) => {
-            server.mod.completeStrings = {
-              maxLen: (options && options.maxLength) || 15,
-              seen: Object.create(null)
-            }
-            server.on('completion', this.ternComplete)
-          })
-          this.$oh.api.get('/rest/items?staticDataOnly=true').then((data) => { this.$set(this, 'itemsCache', data) })
-        }
-        const server = new _CodeMirror.TernServer({
-          defs: (this.mode.indexOf('version=ECMAScript-5.1') > 0) ? [EcmascriptDefs, NashornDefs] : [EcmascriptDefs, OpenhabJsDefs],
-          plugins: (this.ternAutocompletionHook) ? { 'openhab-tern-hook': {} } : undefined,
-          ecmaVersion: (this.mode.indexOf('version=ECMAScript-5.1') > 0) ? 5 : 6
-        })
-        extraKeys = {
-          'Ctrl-Space': function (cm) { server.complete(cm) },
-          'Ctrl-Q': function (cm) { server.showDocs(cm) },
-          '\'.\'': function (cm) {
-            setTimeout(function () { server.complete(cm) }, 100)
-            return _CodeMirror.Pass // tell CodeMirror we didn't handle the key
-          }
-        }
-        cm.on('cursorActivity', function (cm) {
-          server.updateArgHints(cm)
-        })
-      } else {
-        const autocomplete = function (cm) {
-          setTimeout(function () { _CodeMirror.commands.autocomplete(cm) }, 250)
-          return _CodeMirror.Pass // tell CodeMirror we didn't handle the key
-        }
-        extraKeys = {
-          'Ctrl-Space': 'autocomplete',
-          '\'.\'': autocomplete,
-          '\'=\'': autocomplete,
-          'Space': autocomplete,
-          '\'@\'': autocomplete
-        }
-        cm.state.$oh = this.$oh
-        cm.state.originalMode = this.mode
-        if (this.hintContext) cm.state.hintContext = Object.assign({}, this.hintContext)
-        cm.setOption('hintOptions', {
-          closeOnUnfocus: false,
-          completeSingle: self.mode && self.mode.indexOf('yaml') > 0,
-          hint (cm, option) {
-            if (self.mode && self.mode.indexOf('application/vnd.openhab.uicomponent') === 0) {
-              return componentsHint(cm, option, self.mode)
-            } else if (self.mode === 'application/vnd.openhab.item+yaml') {
-              return itemsHint(cm, option, self.mode)
-            } else if (self.mode === 'application/vnd.openhab.rule+yaml') {
-              return rulesHint(cm, option, self.mode)
-            } else if (self.mode === 'application/vnd.openhab.thing+yaml') {
-              return thingsHint(cm, option, self.mode)
-            } else if (self.mode === 'application/python') {
-              return pythonHint(cm, option, self.mode)
-            } else {
-              return _CodeMirror.hint.anyword(cm, option, self.mode)
-            }
-          }
-        })
-
-        _CodeMirror.registerHelper('lint', 'yaml', function (text) {
-          const found = []
-          const parsed = YAML.parseDocument(text)
-          if (parsed.errors.length > 0) {
-            parsed.errors.forEach((e) => {
-              const message = e.message
-              found.push({
-                message,
-                from: (e.linePos[0]) ? { line: e.linePos[0].line - 1, ch: e.linePos[0].col - 1 } : undefined,
-                to: (e.linePos[1]) ? { line: e.linePos[1].line - 1, ch: e.linePos[1].col - 1 } : undefined
-              })
-            })
-          }
-
-          return found
-        })
-
-        this.cmOptions.gutters.push('CodeMirror-lint-markers')
-        this.cmOptions.lint = true
-      }
-      extraKeys.Tab = function (cm) {
-        if (cm.somethingSelected()) {
-          cm.indentSelection('add')
-        } else {
-          cm.replaceSelection(cm.getOption('indentWithTabs') ? '\t'
-            : Array(cm.getOption('indentUnit') + 1).join(' '), 'end', '+input')
-        }
-      }
-      extraKeys['Shift-Tab'] = 'indentLess'
-      extraKeys['Cmd-/'] = extraKeys['Ctrl-/'] = 'toggleComment'
-      extraKeys['Shift-Cmd-K'] = extraKeys['Shift-Ctrl-K'] = this.deleteCurrentLine
-      cm.setOption('extraKeys', extraKeys)
-      cm.addOverlay(indentGuidesOverlay)
-      cm.refresh()
+      cm.view.$oh = this.$oh
+      cm.view.originalMode = this.mode
+      if (this.hintContext) cm.view.hintContext = Object.assign({}, this.hintContext)
     },
     onCmCodeChange (newCode) {
       this.$emit('input', newCode)
-    },
-    deleteCurrentLine (cm) {
-      if (cm.somethingSelected()) {
-        cm.replaceSelection('')
-      } else {
-        const cursor = cm.getCursor()
-        if (cursor.line === cm.lastLine() && cursor.line !== cm.firstLine()) {
-          const prevLine = cursor.line - 1
-          cm.replaceRange('', { line: prevLine, ch: cm.getLine(prevLine).length }, { line: cursor.line, ch: cm.getLine(cursor.line).length })
-          cm.setCursor({ line: prevLine, ch: 0 })
-        } else {
-          cm.replaceRange('', { line: cursor.line, ch: 0 }, { line: cursor.line + 1, ch: 0 })
-          cm.setCursor({ line: cursor.line, ch: 0 })
-        }
-      }
     }
   },
   computed: {
+    extensions () {
+      const linter = this.linterExtension(this.mode)
+
+      let autocompletions = this.autocompletionExtension(this.mode)
+      autocompletions = Array.isArray(autocompletions) ? autocompletions : [autocompletions]
+
+      const extensions = [
+        ...STANDARD_EXTENSIONS,
+        EditorState.readOnly.of(this.readOnly),
+        this.languageExtension(this.mode),
+        ...autocompletions,
+        linter,
+        linter && lintGutter(),
+        useUIOptionsStore().getDarkMode() === 'dark' ? gruvboxDark : null
+      ].filter((ext) => ext)
+
+      return extensions
+    },
     codemirror () {
       return this.$refs.cm.codemirror
-    }
-  },
-  mounted () {
+    },
+    ...mapStores(useUIOptionsStore)
   }
 }
 </script>

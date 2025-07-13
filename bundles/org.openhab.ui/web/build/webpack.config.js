@@ -15,13 +15,14 @@ function resolvePath(dir) {
   return path.join(__dirname, '..', dir)
 }
 
-const env = process.env.NODE_ENV || 'development'
-const target = process.env.TARGET || 'web'
-const buildSourceMaps = process.env.SOURCE_MAPS || false
-const maven = process.env.MAVEN || false
+const env = import.meta.NODE_ENV || 'development'
+const target = import.meta.TARGET || 'web'
+const buildSourceMaps = import.meta.SOURCE_MAPS || false
+const maven = import.meta.MAVEN || false
 const outPath = maven ? '../target/classes/app' : 'www'
 
-const apiBaseUrl = process.env.OH_APIBASE || 'http://localhost:8080'
+// const apiBaseUrl = import.meta.OH_APIBASE || 'http://localhost:8080'
+const apiBaseUrl = import.meta.env.OH_APIBASE || 'http://localhost:8080'
 
 /**
  * @type {import('webpack').Configuration}
@@ -46,6 +47,7 @@ module.exports = {
     },
     extensions: ['.mjs', '.js', '.vue', '.json'],
     alias: {
+      vue: '@vue/compat',
       vue$: 'vue/dist/vue.esm.js',
       '@': resolvePath('src')
     }
@@ -126,7 +128,14 @@ module.exports = {
       },
       {
         test: /\.vue$/,
-        use: 'vue-loader'
+        use: 'vue-loader',
+        options: {
+          compilerOptions: {
+            compatConfig: {
+              MODE: 2 // Use Vue 2 compatibility mode
+            }
+          }
+        }
       },
       {
         test: /\.css$/,
@@ -233,8 +242,8 @@ module.exports = {
       process: 'process/browser.js',
   }),
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify(env),
-      'process.env.TARGET': JSON.stringify(target)
+      'import.meta.NODE_ENV': JSON.stringify(env),
+      'import.meta.TARGET': JSON.stringify(target)
     }),
     new VueLoaderPlugin(),
     ...(env === 'production' ? [
@@ -303,11 +312,11 @@ module.exports = {
         minRatio: Infinity,
       })
     ] : []),
-    ...(process.env.WEBPACK_ANALYZER ? [
-      new WebpackAnalyzerPlugin(process.env.WEBPACK_ANALYZER_REPORT ? {
+    ...(import.meta.WEBPACK_ANALYZER ? [
+      new WebpackAnalyzerPlugin(import.meta.WEBPACK_ANALYZER_REPORT ? {
         analyzerMode: 'static',
         reportFilename: '../report.html',
-        generateStatsFile: (process.env.WEBPACK_ANALYZER_REPORT_STATS) ? true : false,
+        generateStatsFile: (import.meta.WEBPACK_ANALYZER_REPORT_STATS) ? true : false,
         statsFilename: '../stats.json',
         statsOptions: {
           assets: true,

@@ -1,7 +1,12 @@
+import { f7 } from 'framework7-vue'
+
 import ThingMixin from '@/components/thing/thing-mixin'
 import FileDefinition from '@/pages/settings/file-definition-mixin'
 
 export default {
+  props: {
+    f7router: Object
+  },
   mixins: [ThingMixin, FileDefinition],
   methods: {
     /**
@@ -14,14 +19,14 @@ export default {
      */
     approveEntry (entry, label, newThingId) {
       return this.$oh.api.postPlain(`/rest/inbox/${entry.thingUID}/approve${newThingId ? '?newThingId=' + newThingId : ''}`, label).then(() => {
-        this.$f7.toast.create({
+        f7.toast.create({
           text: 'Entry approved',
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
         return Promise.resolve()
       }).catch((err) => {
-        this.$f7.toast.create({
+        f7.toast.create({
           text: 'Error during thing creation: ' + err,
           destroyOnClose: true,
           closeTimeout: 2000
@@ -49,14 +54,14 @@ export default {
               dialog.close()
               this.approveEntry(entry, label, newThingId)
                 .then(() => {
-                  if (redirect) this.$f7router.navigate('/settings/things/' + newThingUID)
+                  if (redirect) this.f7router.navigate('/settings/things/' + newThingUID)
                   else loadFn()
                 })
                 .catch(() => loadFn())
             }
           }
 
-          this.$f7.dialog.create({
+          f7.dialog.create({
             title: 'Add as Thing',
             text: `This will create a new Thing of type ${entry.thingTypeUID}.`,
             content: `
@@ -70,7 +75,7 @@ export default {
               `,
             buttons: [
               {
-                text: this.$f7.params.dialog.buttonCancel,
+                text: f7.params.dialog.buttonCancel,
                 color: 'gray',
                 keyCodes: [27],
                 close: true

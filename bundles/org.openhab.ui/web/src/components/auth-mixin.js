@@ -1,6 +1,9 @@
-import { Utils } from 'framework7'
+import { utils } from 'framework7'
+import { f7 } from 'framework7-vue'
 
 import { authorize, setBasicCredentials, clearBasicCredentials, storeBasicCredentials } from '@/js/openhab/auth'
+
+import { useUserStore } from '@/js/stores/useUserStore'
 
 export default {
   data () {
@@ -15,7 +18,7 @@ export default {
     },
     tryExchangeAuthorizationCode () {
       return new Promise((resolve, reject) => {
-        const queryParams = Utils.parseUrlQuery(window.location.href)
+        const queryParams = utils.parseUrlQuery(window.location.href)
         if (queryParams.code && queryParams.state) {
           const authState = sessionStorage.getItem('openhab.ui:authState')
           sessionStorage.removeItem('openhab.ui:authState')
@@ -29,12 +32,12 @@ export default {
           const codeVerifier = sessionStorage.getItem('openhab.ui:codeVerifier')
           sessionStorage.removeItem('openhab.ui:codeVerifier')
 
-          const payload = Utils.serializeObject({
-            'grant_type': 'authorization_code',
-            'client_id': window.location.origin,
-            'redirect_uri': window.location.origin,
-            'code': queryParams.code,
-            'code_verifier': codeVerifier
+          const payload = utils.serializeObject({
+            grant_type: 'authorization_code',
+            client_id: window.location.origin,
+            redirect_uri: window.location.origin,
+            code: queryParams.code,
+            code_verifier: codeVerifier
           })
 
           this.$oh.auth.clearAccessToken()
@@ -44,10 +47,10 @@ export default {
             return this.$oh.auth.setAccessToken(resp.access_token, this.$oh.api).then(() => {
               // schedule the next token refresh when 95% of this token's lifetime has elapsed, i.e. 3 minutes before a 1-hour token is due to expire
               setTimeout(this.refreshAccessToken, resp.expires_in * 950)
-              this.$store.commit('setUser', { user: resp.user })
+              useUserStore().setUser(resp.user)
 
               const nextRoute = authState.indexOf('setup') === 0 ? '/setup-wizard/' : '/'
-              this.$f7.views.main.router.navigate(nextRoute, { animate: false, clearPreviousHistory: true })
+              f7.views.main.router.navigate(nextRoute, { animate: false, clearPreviousHistory: true })
 
               resolve(resp.user)
             })
@@ -63,11 +66,11 @@ export default {
     refreshAccessToken () {
       return new Promise((resolve, reject) => {
         const refreshToken = this.getRefreshToken()
-        const payload = Utils.serializeObject({
-          'grant_type': 'refresh_token',
-          'client_id': window.location.origin,
-          'redirect_uri': window.location.origin,
-          'refresh_token': refreshToken
+        const payload = utils.serializeObject({
+          grant_type: 'refresh_token',
+          client_id: window.location.origin,
+          redirect_uri: window.location.origin,
+          refresh_token: refreshToken
         })
 
         this.$oh.auth.clearAccessToken()
@@ -79,7 +82,7 @@ export default {
             // also make sure to check the token and renew it when the app becomes visible again
             this.currentTokenExpireTime = new Date().getTime() + resp.expires_in * 950
             document.addEventListener('visibilitychange', this.checkTokenAfterVisibilityChange)
-            this.$store.commit('setUser', { user: resp.user })
+            useUserStore().setUser(resp.user)
             resolve(resp)
           })
         }).catch((err) => {
@@ -97,19 +100,19 @@ export default {
     cleanSession () {
       return new Promise((resolve, reject) => {
         const refreshToken = this.getRefreshToken()
-        const payload = Utils.serializeObject({
-          'refresh_token': refreshToken
+        const payload = utils.serializeObject({
+          refresh_token: refreshToken
         })
         localStorage.removeItem('openhab.ui:refreshToken')
         this.$oh.api.postPlain('/rest/auth/logout', payload, 'application/json', 'application/x-www-form-urlencoded').then((data) => {
           console.log('Logged out')
           this.$oh.auth.clearAccessToken()
-          this.$store.commit('setUser', { user: null })
+          useUserStore().setUser(null)
           resolve()
         }).catch((err) => {
           console.log('Failed to log out', err)
           this.$oh.auth.clearAccessToken()
-          this.$store.commit('setUser', { user: null })
+          useUserStore().setUser(null)
           reject(err)
         })
       })

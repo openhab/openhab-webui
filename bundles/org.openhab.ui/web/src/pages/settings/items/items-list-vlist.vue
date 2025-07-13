@@ -1,14 +1,19 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
-    <f7-navbar title="Items"
-               back-link="Settings"
-               back-link-url="/settings/"
-               back-link-force>
+    <f7-navbar>
+      <f7-nav-left>
+        <f7-link icon-f7="chevron_left" href="/settings/">
+          Settings
+        </f7-link>
+      </f7-nav-left>
+      <f7-nav-title>
+        Items
+      </f7-nav-title>
       <f7-nav-right>
         <developer-dock-icon />
         <f7-link icon-md="material:done_all"
                  @click="toggleCheck()"
-                 :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
+                 :text="!theme.md ? (showCheckboxes ? 'Done' : 'Select') : ''" />
       </f7-nav-right>
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <!-- Only render searchbar, if page is ready. Otherwise searchbar is broken after changes to the Items list. -->
@@ -19,17 +24,20 @@
           search-container=".virtual-list"
           @searchbar:search="filterSelectedItems"
           :placeholder="searchPlaceholder"
-          :disable-button="!$theme.aurora" />
+          :disable-button="!theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
-    <f7-toolbar class="contextual-toolbar"
-                :class="{ 'navbar': $theme.md }"
-                v-if="showCheckboxes"
+
+    <f7-toolbar v-if="showCheckboxes"
+                class="contextual-toolbar"
+                :class="{ navbar: theme.md }"
                 bottom-ios
                 bottom-aurora>
-      <div class="display-flex justify-content-center" v-if="!$theme.md && selectedItems.length > 0" style="width: 100%">
-        <f7-link color="red"
-                 v-show="selectedItems.length"
+      <div v-if="!theme.md && selectedItems.length > 0"
+           class="display-flex justify-content-center"
+           style="width: 100%">
+        <f7-link v-show="selectedItems.length"
+                 color="red"
                  class="delete display-flex flex-direction-row margin-right"
                  icon-ios="f7:trash"
                  icon-aurora="f7:trash"
@@ -45,14 +53,14 @@
           &nbsp;Copy
         </f7-link>
       </div>
-      <f7-link v-if="$theme.md"
+      <f7-link v-if="theme.md"
                icon-md="material:close"
                icon-color="white"
                @click="showCheckboxes = false" />
-      <div class="title" v-if="$theme.md">
+      <div class="title" v-if="theme.md">
         {{ selectedItems.length }} selected
       </div>
-      <div class="right" v-if="$theme.md && selectedItems.length">
+      <div v-if="theme.md && selectedItems.length" class="right">
         <f7-link icon-md="material:delete" icon-color="white" @click="removeSelected" />
         <f7-link icon-md="material:content_copy" icon-color="white" @click="copySelected" />
       </div>
@@ -83,7 +91,9 @@
               subtitle="type, semantic metadata"
               after="The item state"
               footer="This contains the type of the item">
-              <f7-skeleton-block style="width: 32px; height: 32px; border-radius: 50%" slot="media" />
+              <template #media>
+                <f7-skeleton-block style="width: 32px; height: 32px; border-radius: 50%" />
+              </template>
             </f7-list-item>
           </f7-list-group>
         </f7-list>
@@ -125,31 +135,34 @@
               :style="`top: ${vlData.topPosition}px`"
               :after="(item.state) ? item.state : '\xa0'">
               <!-- Note: Using dynamic states is not possible since state tracking has a heavy performance impact -->
-              <oh-icon v-if="item.category"
-                       slot="media"
-                       :icon="item.category"
-                       :state="item.type === 'Image' ? null : item.state"
-                       height="32"
-                       width="32" />
-              <span v-else slot="media" class="item-initial">{{ item.name[0] }}</span>
-              <f7-icon v-if="!item.editable"
-                       slot="after-title"
-                       f7="lock_fill"
-                       size="1rem"
-                       color="gray" />
-              <!-- <f7-button slot="after-start" color="blue" icon-f7="compose" icon-size="24px" :link="`${item.name}/edit`"></f7-button> -->
-              <div slot="subtitle">
-                <f7-chip v-for="tag in getNonSemanticTags(item)"
-                         :key="tag"
-                         :text="tag"
-                         media-bg-color="blue"
-                         style="margin-right: 6px">
-                  <f7-icon slot="media"
-                           ios="f7:tag_fill"
-                           md="material:label"
-                           aurora="f7:tag_fill" />
-                </f7-chip>
-              </div>
+              <template #media>
+                <oh-icon v-if="item.category"
+                         :icon="item.category"
+                         :state="item.type === 'Image' ? null : item.state"
+                         height="32"
+                         width="32" />
+                <span v-else class="item-initial">{{ item.name[0] }}</span>
+              </template>
+              <template #after-title>
+                <f7-icon v-if="!item.editable"
+                         f7="lock_fill"
+                         size="1rem"
+                         color="gray" />
+              </template>
+              <!-- <f7-button color="blue" icon-f7="compose" icon-size="24px" :link="`${item.name}/edit`"></f7-button> -->
+              <template #subtitle>
+                <div>
+                  <f7-chip v-for="tag in getNonSemanticTags(item)"
+                           :key="tag"
+                           :text="tag"
+                           media-bg-color="blue"
+                           style="margin-right: 6px">
+                    <template #media>
+                      <f7-icon ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
+                    </template>
+                  </f7-chip>
+                </div>
+              </template>
             </f7-list-item>
           </ul>
         </f7-list>
@@ -158,32 +171,32 @@
 
     <f7-block v-if="ready && !items.length" class="block-narrow">
       <empty-state-placeholder icon="square_on_circle" title="items.title" text="items.text" />
-      <f7-row v-if="$f7.width < 1280" class="display-flex justify-content-center">
+      <f7-row v-if="f7.width < 1280" class="display-flex justify-content-center">
         <f7-button large
                    fill
                    color="blue"
                    external
-                   :href="`${$store.state.websiteUrl}/link/items`"
+                   :href="`${runtimeStore.websiteUrl}/link/items`"
                    target="_blank"
-                   v-t="'home.overview.button.documentation'" />
+                   :text="$t('home.overview.button.documentation')" />
       </f7-row>
     </f7-block>
 
-    <f7-fab v-show="!showCheckboxes"
-            position="center-bottom"
-            text="Refresh"
-            slot="fixed"
-            color="blue"
-            @click="load()">
-      <f7-icon ios="f7:arrow_clockwise" md="material:refresh" aurora="f7:arrow_clockwise" />
-    </f7-fab>
-    <f7-fab v-show="!showCheckboxes"
-            position="right-bottom"
-            slot="fixed"
-            color="blue"
-            href="add">
-      <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
-    </f7-fab>
+    <template #fixed>
+      <f7-fab v-show="!showCheckboxes"
+              position="center-bottom"
+              text="Refresh"
+              color="blue"
+              @click="load()">
+        <f7-icon ios="f7:arrow_clockwise" md="material:refresh" aurora="f7:arrow_clockwise" />
+      </f7-fab>
+      <f7-fab v-show="!showCheckboxes"
+              position="right-bottom"
+              color="blue"
+              href="add">
+        <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
+      </f7-fab>
+    </template>
   </f7-page>
 </template>
 
@@ -197,16 +210,31 @@
 </style>
 
 <script>
+import { nextTick } from 'vue'
+import { f7, theme } from 'framework7-vue'
+import { mapStores } from 'pinia'
+
 import ItemMixin from '@/components/item/item-mixin'
 import FileDefinition from '@/pages/settings/file-definition-mixin'
 
+import { useLastSearchQueryStore } from '@/js/stores/useLastSearchQueryStore'
+import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
+
 export default {
   mixins: [ItemMixin, FileDefinition],
+  props: {
+    f7router: Object
+  },
   components: {
-    'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue')
+    EmptyStatePlaceholder
+  },
+  setup () {
+    return { theme }
   },
   data () {
     return {
+      f7,
       ready: false,
       initSearchbar: false,
       loading: false,
@@ -232,33 +260,34 @@ export default {
     },
     onPageBeforeOut (event) {
       this.stopEventSource()
-      this.$f7.data.lastItemSearchQuery = this.$refs.searchbar?.f7Searchbar.query
+      useLastSearchQueryStore().lastItemSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
     },
     load () {
       if (this.loading) return
       this.loading = true
 
-      if (this.initSearchbar) this.$f7.data.lastItemSearchQuery = this.$refs.searchbar?.f7Searchbar.query
+      if (this.initSearchbar)
+        useLastSearchQueryStore().lastItemSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
       this.initSearchbar = false
 
-      this.$oh.api.get('/rest/items?metadata=semantics').then(data => {
+      this.$oh.api.get('/rest/items?metadata=semantics').then((data) => {
         this.items = data.sort((a, b) => {
           const labelA = a.label || a.name
           const labelB = b.label || b.name
           return labelA.localeCompare(labelB)
         })
-        this.$refs.itemsList.f7VirtualList.replaceAllItems(this.items)
+        this.$refs.itemsList.$el.f7VirtualList.replaceAllItems(this.items)
         this.initSearchbar = true
         this.loading = false
 
         if (!this.eventSource) this.startEventSource()
         this.ready = true
 
-        this.$nextTick(() => {
+        nextTick(() => {
           if (this.$device.desktop) {
-            this.$refs.searchbar?.f7Searchbar.$inputEl[0].focus()
+            this.$refs.searchbar?.$el.f7Searchbar.$el.focus()
           }
-          this.$refs.searchbar?.f7Searchbar.search(this.$f7.data.lastItemSearchQuery || '')
+          this.$refs.searchbar?.$el.f7Searchbar.search(useLastSearchQueryStore().lastItemSearchQuery || '')
         })
       })
     },
@@ -280,10 +309,12 @@ export default {
     },
     filterSelectedItems (event) {
       this.searchQuery = event?.query
-      if (!this.$refs.itemsList.f7VirtualList.filteredItems) {
+      if (!this.$refs.itemsList.$el.f7VirtualList.filteredItems) {
         return
       }
-      this.selectedItems = this.selectedItems.filter((i) => this.$refs.itemsList.f7VirtualList.filteredItems.find((item) => item.name === i))
+      this.selectedItems = this.selectedItems.filter((i) =>
+        this.$refs.itemsList.$el.f7VirtualList.filteredItems.find((item) => item.name === i)
+      )
     },
     searchAll (query, items) {
       const found = []
@@ -304,9 +335,9 @@ export default {
     },
     height (item) {
       let vlHeight
-      if (this.$theme.ios) vlHeight = 78
-      if (this.$theme.aurora) vlHeight = 60.77
-      if (this.$theme.md) vlHeight = 87.4
+      if (theme.ios) vlHeight = 78
+      if (theme.aurora) vlHeight = 60.77
+      if (theme.md) vlHeight = 87.4
       if (this.$device.macos) {
         if (window.navigator.userAgent.includes('Safari') && !window.navigator.userAgent.includes('Chrome')) vlHeight -= 0.77
       }
@@ -314,8 +345,8 @@ export default {
       const nonSemanticTags = this.getNonSemanticTags(item)
       if (nonSemanticTags.length > 0) {
         vlHeight += 24
-        if (this.$theme.ios) vlHeight += 4
-        if (this.$theme.md) vlHeight += 12
+        if (theme.ios) vlHeight += 4
+        if (theme.md) vlHeight += 12
       }
       return vlHeight
     },
@@ -329,7 +360,7 @@ export default {
       if (this.showCheckboxes) {
         this.toggleItemCheck(event, item.name, item)
       } else {
-        this.$f7router.navigate(item.name)
+        this.f7router.navigate(item.name)
       }
     },
     ctrlClick (event, item) {
@@ -347,8 +378,8 @@ export default {
     selectDeselectAll () {
       if (this.allSelected) {
         this.selectedItems = []
-      } else if (this.$refs.itemsList.f7VirtualList.filteredItems?.length > 0) {
-        this.selectedItems = this.$refs.itemsList.f7VirtualList.filteredItems.map((i) => i.name)
+      } else if (this.$refs.itemsList.$el.f7VirtualList.filteredItems?.length > 0) {
+        this.selectedItems = this.$refs.itemsList.$el.f7VirtualList.filteredItems.map((i) => i.name)
       } else {
         this.selectedItems = this.items.map((i) => i.name)
       }
@@ -359,7 +390,7 @@ export default {
     removeSelected () {
       const vm = this
 
-      this.$f7.dialog.confirm(
+      f7.dialog.confirm(
         `Remove ${this.selectedItems.length} selected items?`,
         'Remove Items',
         () => {
@@ -373,11 +404,11 @@ export default {
         return
       }
 
-      let dialog = this.$f7.dialog.progress('Deleting Items...')
+      let dialog = f7.dialog.progress('Deleting Items...')
 
       const promises = this.selectedItems.map((i) => this.$oh.api.delete('/rest/items/' + i))
       Promise.all(promises).then((data) => {
-        this.$f7.toast.create({
+        f7.toast.create({
           text: 'Items removed',
           destroyOnClose: true,
           closeTimeout: 2000
@@ -389,7 +420,7 @@ export default {
         dialog.close()
         this.load()
         console.error(err)
-        this.$f7.dialog.alert('An error occurred while deleting: ' + err)
+        f7.dialog.alert('An error occurred while deleting: ' + err)
       })
     }
   },
@@ -399,7 +430,7 @@ export default {
     },
     filteredItemsCount () {
       if (this.searchQuery) {
-        return this.$refs.itemsList.f7VirtualList.filteredItems.length
+        return this.$refs.itemsList.$el.f7VirtualList.filteredItems.length
       }
       return this.items.length
     },
@@ -417,7 +448,8 @@ export default {
         title += `, ${this.selectedItems.length} selected`
       }
       return title
-    }
+    },
+    ...mapStores(useRuntimeStore)
   }
 }
 </script>

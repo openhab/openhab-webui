@@ -43,7 +43,7 @@
               {{ widget.label }}
             </option>
           </optgroup>
-          <optgroup v-if="$store.getters.widgets.length" label="Personal Widgets">
+          <optgroup v-if="componentsStore.widgets.length" label="Personal Widgets">
             <option v-for="widget in personalWidgets"
                     :value="'widget:' + widget.uid"
                     :key="widget.uid"
@@ -84,6 +84,10 @@
 </style>
 
 <script>
+import { nextTick } from 'vue'
+import { utils } from 'framework7'
+import { mapStores } from 'pinia'
+
 import ConfigSheet from '@/components/config/config-sheet.vue'
 
 import * as SystemWidgets from '@/components/widgets/system'
@@ -97,6 +101,9 @@ import itemDefaultCellComponent from '@/components/widgets/standard/cell/default
 
 import { VisibilityGroup, VisibilityParameters } from '@/assets/definitions/widgets/visibility'
 import ItemMetadataMixin from '@/components/item/metadata/item-metadata-mixin'
+
+import { useStatesStore } from '@/js/stores/useStatesStore'
+import { useComponentsStore } from '@/js/stores/useComponentsStore'
 
 export default {
   props: {
@@ -113,7 +120,7 @@ export default {
       defaultComponent: {},
       currentComponent: {},
       previewContext: {},
-      previewWidgetKey: this.$f7.utils.id(),
+      previewWidgetKey: utils.id(),
       standardWidgets: Object.values(StandardWidgets).filter((c) => c.widget).map((c) => c.widget()).sort((a, b) => { return a.name.localeCompare(b.name) }),
       standardListWidgets: Object.values(StandardListWidgets).filter((c) => c.widget && typeof c.widget === 'function').map((c) => c.widget()).sort((a, b) => { return a.name.localeCompare(b.name) }),
       standardCellWidgets: Object.values(StandardCellWidgets).filter((c) => c.widget && typeof c.widget === 'function').map((c) => c.widget()).sort((a, b) => { return a.name.localeCompare(b.name) }),
@@ -124,11 +131,12 @@ export default {
   },
   computed: {
     personalWidgets () {
-      return [...this.$store.getters.widgets].sort((a, b) => { return a.uid.localeCompare(b.uid) })
-    }
+      return [...useComponentsStore().widgets].sort((a, b) => { return a.uid.localeCompare(b.uid) })
+    },
+    ...mapStores(useComponentsStore)
   },
   mounted () {
-    this.$store.dispatch('startTrackingStates')
+    useStatesStore().startTrackingStates()
     // copy the item & remove the metadata to get the default widget
     const defaultItem = Object.assign({}, this.item)
     if (defaultItem.metadata) {
@@ -139,12 +147,12 @@ export default {
         : (this.namespace === 'listWidget') ? itemDefaultListComponent(defaultItem)
           : itemDefaultStandaloneComponent(defaultItem)
 
-    this.$nextTick(() => {
+    nextTick(() => {
       this.updateComponent()
     })
   },
-  beforeDestroy () {
-    this.$store.dispatch('stopTrackingStates')
+  beforeUnmount () {
+    useStatesStore().stopTrackingStates()
   },
   methods: {
     isSelected (cl) {
@@ -153,7 +161,7 @@ export default {
     setPreviewContext () {
       // create new object to be reactive
       this.previewContext = {}
-      this.previewContext.store = this.$store.getters.trackedItems
+      this.previewContext.store = useStatesStore().trackedItems
       this.previewContext.vars = this.widgetVars
 
       if (this.namespace === 'listWidget') {
@@ -195,7 +203,7 @@ export default {
     setConfigDescriptions () {
       let desc = {}
       if (!this.currentComponent || !this.currentComponent.component) return desc
-      const widget = this.$store.getters.widgets.find((w) => w.uid === this.currentComponent.component.replace('widget:', ''))
+      const widget = useComponentsStore().widget.find((w) => w.uid === this.currentComponent.component.replace('widget:', ''))
       if (widget && widget.props) desc = Object.assign({}, widget.props)
 
       if (this.namespace === 'listWidget') {
@@ -232,7 +240,7 @@ export default {
       this.configDescriptions = desc
     },
     updateComponent () {
-      const value = this.$refs.widgets.f7SmartSelect.getValue()
+      const value = this.$refs.widgets.$el.children[0].f7SmartSelect.getValue()
       this.metadata.value = value || ' ' // ' ' is used to indicate the default widget
       this.setCurrentComponent()
       this.setConfigDescriptions()
@@ -241,14 +249,14 @@ export default {
     widgetConfigUpdated () {
       for (let key in this.metadata.config) {
         // set to '' when the default defines the option but the metadata doesn't (null would be better but the API then removes it)
-        if (!this.metadata.config[key] && typeof this.defaultComponent.config[key] === 'string') this.$set(this.metadata.config, key, '')
+        if (!this.metadata.config[key] && typeof this.defaultComponent.config[key] === 'string') this.metadata.config[key] = ''
         else if (this.metadata.config[key] === undefined || this.metadata.config[key] === null) delete this.metadata.config[key]
 
         if (key === 'visibleTo' && this.metadata.config.visibleTo.length === 0) delete this.metadata.config.visibleTo
       }
       Object.assign(this.currentComponent.config, this.metadata.config || {})
       this.setPreviewContext()
-      this.previewWidgetKey = this.$f7.utils.id()
+      this.previewWidgetKey = utils.id()
     }
   }
 }

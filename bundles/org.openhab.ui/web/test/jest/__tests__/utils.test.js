@@ -1,4 +1,4 @@
-import util from 'src/js/openhab/utils.js'
+import util from '@/js/openhab/utils.js'
 
 describe('normalizeLabel', () => {
   test('normalize the label to be a valid item name', () => {

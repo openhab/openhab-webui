@@ -9,7 +9,7 @@
           :init="initSearchbar"
           search-container=".binding-list"
           search-in=".item-title, .item-header, .item-footer"
-          :disable-button="!$theme.aurora" />
+          :disable-button="!theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
 
@@ -47,7 +47,7 @@
         </f7-list>
       </f7-col>
     </f7-block>
-    <f7-block class="block-narrow" v-if="$store.getters.apiEndpoint('addons')">
+    <f7-block class="block-narrow" v-if="runtimeStore.apiEndpoint('addons')">
       <f7-col v-if="bindings.length">
         <f7-list>
           <f7-list-button color="blue" title="Install More Bindings" href="/addons/binding/" />
@@ -66,9 +66,20 @@
 </template>
 
 <script>
+import { nextTick } from 'vue'
+import { theme } from 'framework7-vue'
+import { mapStores } from 'pinia'
+
+import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
+
+import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+
 export default {
   components: {
-    'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue')
+    EmptyStatePlaceholder
+  },
+  setup () {
+    return { theme }
   },
   data () {
     return {
@@ -79,6 +90,9 @@ export default {
       inbox: []
     }
   },
+  computed: {
+    ...mapStores(useRuntimeStore)
+  },
   methods: {
     onPageAfterIn () {
       this.loading = true
@@ -88,9 +102,9 @@ export default {
         this.loading = false
         this.initSearchbar = true
         this.ready = true
-        this.$nextTick(() => {
+        nextTick(() => {
           if (this.$device.desktop && this.$refs.searchbar) {
-            this.$refs.searchbar.f7Searchbar.$inputEl[0].focus()
+            this.$refs.searchbar.$el.f7Searchbar.$inputEl[0].focus()
           }
         })
       })

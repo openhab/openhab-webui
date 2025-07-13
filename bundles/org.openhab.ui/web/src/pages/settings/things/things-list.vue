@@ -1,14 +1,19 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
-    <f7-navbar title="Things"
-               back-link="Settings"
-               back-link-url="/settings/"
-               back-link-force>
+    <f7-navbar>
+      <f7-nav-left>
+        <f7-link icon-f7="chevron_left" href="/settings/">
+          Settings
+        </f7-link>
+      </f7-nav-left>
+      <f7-nav-title>
+        Things
+      </f7-nav-title>
       <f7-nav-right>
         <developer-dock-icon />
         <f7-link icon-md="material:done_all"
                  @click="toggleCheck()"
-                 :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
+                 :text="!theme.md ? (showCheckboxes ? 'Done' : 'Select') : ''" />
       </f7-nav-right>
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
@@ -20,7 +25,7 @@
           @searchbar:clear="clearSearch"
           @searchbar:disable="clearSearch"
           :placeholder="searchPlaceholder"
-          :disable-button="!$theme.aurora" />
+          :disable-button="!theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
     <f7-toolbar v-if="showCheckboxes"
@@ -64,14 +69,14 @@
           &nbsp;Copy
         </f7-link>
       </div>
-      <f7-link v-if="$theme.md"
+      <f7-link v-if="theme.md"
                icon-md="material:close"
                icon-color="white"
                @click="showCheckboxes = false" />
-      <div class="title" v-if="$theme.md">
+      <div class="title" v-if="theme.md">
         {{ selectedItems.length }} selected
       </div>
-      <div class="right" v-if="$theme.md">
+      <div class="right" v-if="theme.md">
         <f7-link v-show="selectedItems.length"
                  tooltip="Disable selected"
                  icon-md="material:pause_circle_outline"
@@ -112,11 +117,17 @@
             <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
           </span>
           <template v-if="groupBy === 'location'">
-            <div v-if="!$device.desktop && $f7.width < 1024" style="text-align:right; color:var(--f7-block-text-color); font-weight: normal" class="float-right">
-              <f7-checkbox :checked="showNoLocation" @change="toggleShowNoLocation" /> <label @click="toggleShowNoLocation" style="cursor:pointer">Show no location</label>
+            <div v-if="!$device.desktop && f7.width < 1024"
+                 style="text-align: right; color: var(--f7-block-text-color); font-weight: normal"
+                 class="float-right">
+              <f7-checkbox :checked="showNoLocation ? true : null" @change="toggleShowNoLocation" />
+              <label @click="toggleShowNoLocation" style="cursor: pointer">Show no location</label>
             </div>
-            <div v-else style="text-align:right; color:var(--f7-block-text-color); font-weight: normal" class="float-right">
-              <label @click="toggleShowNoLocation" style="cursor:pointer">Show no location</label> <f7-checkbox :checked="showNoLocation" @change="toggleShowNoLocation" />
+            <div v-else
+                 style="text-align: right; color: var(--f7-block-text-color); font-weight: normal"
+                 class="float-right">
+              <label @click="toggleShowNoLocation" style="cursor: pointer">Show no location</label>
+              <f7-checkbox :checked="showNoLocation ? true : null" @change="toggleShowNoLocation" />
             </div>
           </template>
         </f7-block-title>
@@ -174,23 +185,30 @@
               @click.exact="(e) => click(e, thing)"
               link=""
               :title="thing.label || thing.UID">
-              <div slot="footer">
-                {{ thing.UID }}
-                <clipboard-icon :value="thing.UID" tooltip="Copy UID" />
-              </div>
+              <template #footer>
+                <div>
+                  {{ thing.UID }}
+                  <clipboard-icon :value="thing.UID" tooltip="Copy UID" />
+                </div>
+              </template>
 
-              <div slot="subtitle" v-if="thing.location && groupBy !== 'location'">
-                {{ thing.location }}
-                <f7-icon f7="placemark" color="gray" style="font-size: 16px; width: 16px; height: 16px;" />
-              </div>
-              <f7-badge slot="after" :color="thingStatusBadgeColor(thing.statusInfo)" :tooltip="thing.statusInfo.description">
-                {{ thingStatusBadgeText(thing.statusInfo) }}
-              </f7-badge>
-              <f7-icon v-if="!thing.editable"
-                       slot="after-title"
-                       f7="lock_fill"
-                       size="1rem"
-                       color="gray" />
+              <template #subtitle>
+                <div v-if="thing.location && groupBy !== 'location'">
+                  {{ thing.location }}
+                  <f7-icon f7="placemark" color="gray" style="font-size: 16px; width: 16px; height: 16px" />
+                </div>
+              </template>
+              <template #after>
+                <f7-badge :color="thingStatusBadgeColor(thing.statusInfo)" :tooltip="thing.statusInfo.description">
+                  {{ thingStatusBadgeText(thing.statusInfo) }}
+                </f7-badge>
+              </template>
+              <template #after-title>
+                <f7-icon v-if="!thing.editable"
+                         f7="lock_fill"
+                         size="1rem"
+                         color="gray" />
+              </template>
             </f7-list-item>
           </f7-list-group>
         </f7-list>
@@ -199,21 +217,18 @@
 
     <f7-block v-if="ready && !things.length" class="block-narrow">
       <empty-state-placeholder icon="lightbulb" title="things.title" text="things.text" />
-      <f7-row v-if="$f7.width < 1280" class="display-flex justify-content-center">
+      <f7-row v-if="f7.width < 1280" class="display-flex justify-content-center">
         <f7-button large
                    fill
                    color="blue"
                    external
-                   :href="`${$store.state.websiteUrl}/link/thing`"
+                   :href="`${runtimeStore.websiteUrl}/link/thing`"
                    target="_blank"
-                   v-t="'home.overview.button.documentation'" />
+                   :text="$t('home.overview.button.documentation')" />
       </f7-row>
     </f7-block>
 
-    <f7-fab position="right-bottom"
-            slot="fixed"
-            color="blue"
-            href="add">
+    <f7-fab position="right-bottom" color="blue" href="add">
       <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
       <!-- <f7-fab-buttons position="top">
         <f7-fab-button label="Scan and add to Inbox">S</f7-fab-button>
@@ -222,7 +237,6 @@
     </f7-fab>
     <f7-fab position="center-bottom"
             :text="`Inbox (${inboxCount})`"
-            slot="fixed"
             :color="inboxCount > 0 ? 'red' : 'gray'"
             href="inbox">
       <f7-icon f7="tray" />
@@ -236,11 +250,19 @@
 </style>
 
 <script>
+import { nextTick } from 'vue'
+import { f7, theme } from 'framework7-vue'
+import { mapStores } from 'pinia'
+
 import ThingStatus from '@/components/thing/thing-status-mixin'
 import ClipboardIcon from '@/components/util/clipboard-icon.vue'
 import FileDefinition from '@/pages/settings/file-definition-mixin'
 
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
+
+import { useLastSearchQueryStore } from '@/js/stores/useLastSearchQueryStore'
+import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+
 export default {
   mixins: [ThingStatus, FileDefinition],
   props: {
@@ -252,8 +274,12 @@ export default {
     EmptyStatePlaceholder,
     ClipboardIcon
   },
+  setup () {
+    return { theme }
+  },
   data () {
     return {
+      f7,
       ready: false,
       initSearchbar: false,
       loading: false,
@@ -339,7 +365,8 @@ export default {
         title += `, ${this.selectedItems.length} selected`
       }
       return title
-    }
+    },
+    ...mapStores(useRuntimeStore)
   },
   methods: {
     onPageAfterIn () {
@@ -347,17 +374,17 @@ export default {
     },
     onPageBeforeOut () {
       this.stopEventSource()
-      this.$f7.data.lastThingsSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
+      useLastSearchQueryStore().lastThingsSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
     },
     load () {
       if (this.loading) return
       this.loading = true
 
-      if (this.initSearchbar) this.$f7.data.lastThingsSearchQuery = this.$refs.searchbar?.f7Searchbar.query
+      if (this.initSearchbar) useLastSearchQueryStore().lastThingsSearchQuery = this.$refs.searchbar?.query
       this.initSearchbar = false
 
       if (this.searchFor) {
-        this.$refs.searchbar?.f7Searchbar.$inputEl.val(this.searchFor)
+        this.$refs.searchbar?.$inputEl.val(this.searchFor)
       }
 
       this.$oh.api.get('/rest/things?summary=true').then((data) => {
@@ -366,12 +393,14 @@ export default {
         this.initSearchbar = true
         this.loading = false
         this.ready = true
-        this.$nextTick(() => {
+        nextTick(() => {
           if (this.$refs.listIndex) this.$refs.listIndex.update()
           if (this.$device.desktop && this.$refs.searchbar) {
-            this.$refs.searchbar.f7Searchbar.$inputEl[0].focus()
+            this.$refs.searchbar.$el.focus()
           }
-          this.$refs.searchbar?.f7Searchbar.search(this.searchFor || this.$f7.data.lastThingsSearchQuery || '')
+          this.$refs.searchbar?.search(
+            this.searchFor || useLastSearchQueryStore().lastThingsSearchQuery || ''
+          )
         })
         if (!this.eventSource) this.startEventSource()
       })
@@ -386,7 +415,7 @@ export default {
       this.groupBy = groupBy
       const searchbar = this.$refs.searchbar.$el.f7Searchbar
       const filterQuery = searchbar.query
-      this.$nextTick(() => {
+      nextTick(() => {
         if (filterQuery) {
           searchbar.clear()
           searchbar.search(filterQuery)
@@ -419,7 +448,9 @@ export default {
           .filter((h) => h).join('|').toLowerCase()
         return searchTerms.some((t) => haystack.includes(t))
       })
-      this.selectedItems = this.selectedItems.filter((i) => this.filteredThings.find((thing) => thing.UID === i))
+      this.selectedItems = this.selectedItems.filter((i) =>
+        this.filteredThings.find((thing) => thing.UID === i)
+      )
     },
     clearSearch () {
       this.searchQuery = null
@@ -432,7 +463,7 @@ export default {
       if (this.showCheckboxes) {
         this.toggleItemCheck(event, item.UID, item)
       } else {
-        this.$f7router.navigate(item.UID)
+        this.f7router.navigate(item.UID)
       }
     },
     ctrlClick (event, item) {
@@ -450,7 +481,7 @@ export default {
     removeSelected () {
       const vm = this
 
-      this.$f7.dialog.confirm(
+      f7.dialog.confirm(
         `Remove ${this.selectedItems.length} selected things?`,
         'Remove Things',
         () => {
@@ -460,15 +491,15 @@ export default {
     },
     doRemoveSelected () {
       if (this.selectedItems.some((i) => this.things.find((thing) => thing.UID === i).editable === false)) {
-        this.$f7.dialog.alert('Some of the selected things are not modifiable because they have been provisioned by files')
+        f7.dialog.alert('Some of the selected things are not modifiable because they have been provisioned by files')
         return
       }
 
-      let dialog = this.$f7.dialog.progress('Deleting Things...')
+      let dialog = f7.dialog.progress('Deleting Things...')
 
       const promises = this.selectedItems.map((i) => this.$oh.api.delete('/rest/things/' + i))
       Promise.all(promises).then((data) => {
-        this.$f7.toast.create({
+        f7.toast.create({
           text: 'Things removed',
           destroyOnClose: true,
           closeTimeout: 2000
@@ -480,15 +511,15 @@ export default {
         dialog.close()
         this.load()
         console.error(err)
-        this.$f7.dialog.alert('An error occurred while deleting: ' + err)
+        f7.dialog.alert('An error occurred while deleting: ' + err)
       })
     },
     doDisableEnableSelected (enable) {
-      let dialog = this.$f7.dialog.progress('Please Wait...')
+      let dialog = f7.dialog.progress('Please Wait...')
 
       const promises = this.selectedItems.map((i) => this.$oh.api.putPlain('/rest/things/' + i + '/enable', enable.toString()))
       Promise.all(promises).then((data) => {
-        this.$f7.toast.create({
+        f7.toast.create({
           text: (enable) ? 'Things enabled' : 'Things disabled',
           destroyOnClose: true,
           closeTimeout: 2000
@@ -500,7 +531,7 @@ export default {
         dialog.close()
         this.load()
         console.error(err)
-        this.$f7.dialog.alert('An error occurred while enabling/disabling: ' + err)
+        f7.dialog.alert('An error occurred while enabling/disabling: ' + err)
       })
     },
     startEventSource () {

@@ -2,34 +2,35 @@
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="plan-editor">
     <f7-navbar :title="!ready ? '' : ((createMode ? 'Create plan page' : page.config.label) + dirtyIndicator)" back-link="Back" no-hairline>
       <f7-nav-right>
-        <f7-link @click="save()"
-                 v-if="$theme.md"
+        <f7-link v-if="theme.md"
+                 @click="save()"
                  icon-md="material:save"
                  icon-only />
-        <f7-link @click="save()" v-if="!$theme.md">
+        <f7-link v-if="!theme.md" @click="save()">
           Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
         </f7-link>
       </f7-nav-right>
     </f7-navbar>
     <f7-toolbar tabbar position="top">
-      <f7-link @click="switchTab('design', fromYaml)" :tab-link-active="currentTab === 'design'" class="tab-link">
+      <f7-link tab-link-active tab-link="#design">
         Design
       </f7-link>
-      <f7-link @click="switchTab('code', toYaml)" :tab-link-active="currentTab === 'code'" class="tab-link">
+      <f7-link tab-link="#code">
         Code
       </f7-link>
     </f7-toolbar>
     <f7-toolbar bottom class="toolbar-details">
       <div style="margin-left: auto">
-        <f7-toggle :checked="previewMode ? true : null" @toggle:change="(value) => togglePreviewMode(value)" /> Run mode<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span>
+        <f7-toggle :checked="previewMode ? true : null" @toggle:change="value => togglePreviewMode(value)" />
+        Run mode<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span>
       </div>
     </f7-toolbar>
 
     <f7-tabs class="plan-editor-tabs">
       <f7-tab id="design"
               class="plan-editor-design-tab"
-              @tab:show="() => this.currentTab = 'design'"
-              :tab-active="currentTab === 'design'">
+              @tab:show="() => { fromYaml(); currentTab = 'design' }"
+              tab-active>
         <f7-block v-if="!ready" class="text-align-center">
           <f7-preloader />
           <div>Loading...</div>
@@ -65,28 +66,31 @@
                             :title="marker.config.name"
                             :subtitle="marker.config.item || marker.config.location"
                             link="#"
-                            @click.native="(ev) => configureMarker(ev, marker, context)">
-                <oh-icon v-if="marker.config.icon"
-                         slot="media"
-                         :icon="marker.config.icon"
-                         height="32"
-                         width="32" />
-                <f7-menu slot="content-start" class="configure-layout-menu">
-                  <f7-menu-item icon-f7="list_bullet" dropdown>
-                    <f7-menu-dropdown>
-                      <f7-menu-dropdown-item @click="configureWidget(marker, { component: page })" href="#" text="Configure marker" />
-                      <f7-menu-dropdown-item @click="editWidgetCode(marker, { component: page })" href="#" text="Edit YAML" />
-                      <f7-menu-dropdown-item divider />
-                      <f7-menu-dropdown-item @click="cutWidget(marker, { component: page })" href="#" text="Cut" />
-                      <f7-menu-dropdown-item @click="copyWidget(marker, { component: page })" href="#" text="Copy" />
-                      <f7-menu-dropdown-item divider />
-                      <f7-menu-dropdown-item @click="moveWidgetUp(marker, { component: page })" href="#" text="Move Up" />
-                      <f7-menu-dropdown-item @click="moveWidgetDown(marker, { component: page })" href="#" text="Move Down" />
-                      <f7-menu-dropdown-item divider />
-                      <f7-menu-dropdown-item @click="removeWidget(marker, { component: page })" href="#" text="Remove marker" />
-                    </f7-menu-dropdown>
-                  </f7-menu-item>
-                </f7-menu>
+                            @click="(ev) => configureMarker(ev, marker, context)">
+                <template #media>
+                  <oh-icon v-if="marker.config.icon"
+                           :icon="marker.config.icon"
+                           height="32"
+                           width="32" />
+                </template>
+                <template #content-start>
+                  <f7-menu class="configure-layout-menu">
+                    <f7-menu-item icon-f7="list_bullet" dropdown>
+                      <f7-menu-dropdown>
+                        <f7-menu-dropdown-item @click="configureWidget(marker, { component: page })" href="#" text="Configure marker" />
+                        <f7-menu-dropdown-item @click="editWidgetCode(marker, { component: page })" href="#" text="Edit YAML" />
+                        <f7-menu-dropdown-item divider />
+                        <f7-menu-dropdown-item @click="cutWidget(marker, { component: page })" href="#" text="Cut" />
+                        <f7-menu-dropdown-item @click="copyWidget(marker, { component: page })" href="#" text="Copy" />
+                        <f7-menu-dropdown-item divider />
+                        <f7-menu-dropdown-item @click="moveWidgetUp(marker, { component: page })" href="#" text="Move Up" />
+                        <f7-menu-dropdown-item @click="moveWidgetDown(marker, { component: page })" href="#" text="Move Down" />
+                        <f7-menu-dropdown-item divider />
+                        <f7-menu-dropdown-item @click="removeWidget(marker, { component: page })" href="#" text="Remove marker" />
+                      </f7-menu-dropdown>
+                    </f7-menu-item>
+                  </f7-menu>
+                </template>
               </f7-list-item>
               <f7-list-button color="blue" title="Add marker" @click="addWidget(page, 'oh-plan-marker')" />
             </f7-list>
@@ -106,7 +110,7 @@
                       :key="pageKey" />
       </f7-tab>
 
-      <f7-tab id="code" @tab:show="() => { this.currentTab = 'code' }" :tab-active="currentTab === 'code'">
+      <f7-tab id="code" @tab:show="() => { toYaml(); currentTab = 'code' }">
         <editor v-if="currentTab === 'code'"
                 :style="{ opacity: previewMode ? '0' : '' }"
                 class="page-code-editor"
@@ -147,6 +151,10 @@
 </style>
 
 <script>
+import { defineAsyncComponent } from 'vue'
+import { utils } from 'framework7'
+import { f7, theme } from 'framework7-vue'
+
 import PageDesigner from '../pagedesigner-mixin'
 
 import YAML from 'yaml'
@@ -165,7 +173,7 @@ import ConfigSheet from '@/components/config/config-sheet.vue'
 export default {
   mixins: [PageDesigner],
   components: {
-    'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue'),
+    editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')),
     OhPlanPage,
     PageSettings,
     ConfigSheet
@@ -175,12 +183,15 @@ export default {
     uid: String,
     f7router: Object
   },
+  setup () {
+    return { theme }
+  },
   data () {
     return {
       pageWidgetDefinition: OhPlanPage.widget(),
       forceEditMode: true,
       page: {
-        uid: 'page_' + this.$f7.utils.id(),
+        uid: 'page_' + utils.id(),
         component: 'oh-plan-page',
         config: {},
         tags: [],
@@ -234,12 +245,12 @@ export default {
     fromYaml () {
       try {
         const updatedPage = YAML.parse(this.pageYaml)
-        this.$set(this.page, 'config', updatedPage.config)
-        this.$set(this.page.slots, 'default', updatedPage.markers)
+        this.page.config = updatedPage.config
+        this.page.slots.default = updatedPage.markers
         this.forceUpdate()
         return true
       } catch (e) {
-        this.$f7.dialog.alert(e).open()
+        f7.dialog.alert(e).open()
         return false
       }
     }

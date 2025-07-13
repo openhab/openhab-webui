@@ -71,7 +71,7 @@
     </f7-list-item>
     <!-- COUNT aggregation function regular expression input -->
     <f7-list-input v-if="aggregationFunctions && groupFunctionKey === 'COUNT'"
-                   :disabled="!editable"
+                   :disabled="!editable ? true : null"
                    label="COUNT Expression"
                    type="text"
                    info="Specify the regular expression used to to match the states of the members."
@@ -91,8 +91,10 @@
 </style>
 
 <script>
-import * as types from '@/assets/item-types.js'
+import { f7 } from 'framework7-vue'
+import { nextTick } from 'vue'
 
+import * as types from '@/assets/item-types.js'
 import uomMixin from '@/components/item/uom-mixin'
 
 export default {
@@ -125,12 +127,12 @@ export default {
       },
       set (newType) {
         const previousAggregationFunctions = this.aggregationFunctions
-        this.$set(this.item, 'groupType', '')
-        this.$nextTick(() => {
+        this.item.groupType = ''
+        nextTick(() => {
           if (newType !== 'None') {
-            this.$set(this.item, 'groupType', newType)
+            this.item.groupType = newType
             if (previousAggregationFunctions !== this.aggregationFunctions) {
-              this.$set(this.item, 'functionKey', 'None')
+              this.item.functionKey = 'None'
             }
           }
         })
@@ -147,9 +149,9 @@ export default {
           return
         }
         const dimension = this.dimensions.find((d) => d.name === newDimension)
-        this.$set(this.item, 'groupType', 'Number:' + dimension.name)
+        this.item.groupType = 'Number:' + dimension.name
         this.groupUnit = this.getUnitHint(dimension.name)
-        this.$set(this.item, 'stateDescriptionPattern', this.stateDescriptionPattern)
+        this.item.stateDescriptionPattern = this.stateDescriptionPattern
       }
     },
     groupUnit: {
@@ -157,7 +159,7 @@ export default {
         return this.unit
       },
       set (newUnit) {
-        this.$set(this.item, 'unit', newUnit)
+        this.itme.unit = newUnit
       }
     },
     stateDescriptionPattern: {
@@ -166,7 +168,7 @@ export default {
         return this.item.metadata?.stateDescription?.config.pattern || '%.0f %unit%'
       },
       set (newPattern) {
-        this.$set(this.item, 'stateDescriptionPattern', newPattern)
+        this.item.stateDescriptionPattern = newPattern
       }
     },
     groupFunctionKey: {
@@ -176,10 +178,10 @@ export default {
       set (newFunctionKey) {
         if (!newFunctionKey) {
           delete this.item.function
-          this.$set(this.item, 'functionKey', '')
+          this.item.functionKey = ''
           return
         }
-        this.$set(this.item, 'functionKey', newFunctionKey)
+        this.item.functionKey = newFunctionKey
         const parts = newFunctionKey.split('_')
         let func = {
           name: parts[0]
@@ -187,7 +189,7 @@ export default {
         if (parts.length > 1) {
           func.params = [parts[1], parts[2]]
         }
-        this.$set(this.item, 'function', func)
+        this.item.function = func
       }
     },
     groupFunctionParam: {
@@ -195,7 +197,7 @@ export default {
         return this.item.function?.params?.length ? this.item.function.params[0] : null
       },
       set (newFunctionParam) {
-        this.$set(this.item.function, 'params', [newFunctionParam])
+        this.item.function.params = [newFunctionParam]
       }
     },
     aggregationFunctions () {
@@ -223,12 +225,12 @@ export default {
   },
   beforeMount () {
     if (this.item.function) {
-      this.$set(this.item, 'functionKey', this.item.function.name)
+      this.item.functionKey = this.item.function.name
       if (this.item.function.params) {
         this.item.functionKey += '_' + this.item.function.params.join('_')
       }
     } else {
-      this.$set(this.item, 'functionKey', 'None')
+      this.item.functionKey = 'None'
     }
   },
   methods: {
@@ -246,10 +248,10 @@ export default {
     revertChange () {
       if (!this.oldGroupDimension) {
         this.groupType = this.oldGroupType
-        this.$set(this.item, 'unit', '')
+        this.item.unit = ''
       } else {
         this.groupType = this.oldGroupType + ':' + this.oldGroupDimension
-        this.$set(this.item, 'unit', this.oldGroupUnit)
+        this.item.unit = this.oldGroupUnit
       }
     },
     initializeAutocompleteGroupUnit () {
@@ -257,7 +259,7 @@ export default {
       const unitControl = this.$refs.groupUnit
       if (!unitControl || !unitControl.$el) return
       const inputElement = this.$$(unitControl.$el).find('input')
-      this.groupUnitAutocomplete = this.$f7.autocomplete.create({
+      this.groupUnitAutocomplete = f7.autocomplete.create({
         inputEl: inputElement,
         openIn: 'dropdown',
         dropdownPlaceholderText: self.getUnitHint(this.dimension),
@@ -288,9 +290,9 @@ export default {
       if (this.dimensionsReady) this.initializeAutocompleteGroupUnit()
     }
   },
-  beforeDestroy () {
+  beforeUnmount () {
     if (this.groupUnitAutocomplete) {
-      this.$f7.autocomplete.destroy(this.groupUnitAutocomplete)
+      f7.autocomplete.destroy(this.groupUnitAutocomplete)
       this.groupUnitAutocomplete = null
     }
   }

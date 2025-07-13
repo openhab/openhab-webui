@@ -113,6 +113,8 @@
 </style>
 
 <script>
+import { f7 } from 'framework7-vue'
+
 import AddonInfoTable from '@/components/addons/addon-info-table.vue'
 
 export default {
@@ -141,18 +143,18 @@ export default {
           this.bindingInfo = {}
           return
         }
-        self.$f7.preloader.show()
-        this.$oh.api.get('/rest/addons/' + this.addonId + (this.serviceId ? '?serviceId=' + this.serviceId : '')).then(data => {
+        f7.preloader.show()
+        this.$oh.api.get('/rest/addons/' + this.addonId + (this.serviceId ? '?serviceId=' + this.serviceId : '')).then((data) => {
           this.addon = data
 
-          self.$f7.preloader.hide()
+          f7.preloader.hide()
           setTimeout(() => {
-            if (!this.noDetails) self.$refs.sheet.f7Sheet.setSwipeStep()
-            self.$refs.sheet.f7Sheet.open()
+            if (!this.noDetails) this.$refs.sheet.$el.f7Modal.setSwipeStep()
+            this.$refs.sheet.$el.f7Modal.open()
           })
         })
       } else {
-        self.$refs.sheet.f7Sheet.close()
+        this.$refs.sheet.$el.f7Modal.close()
       }
     }
   },
@@ -166,7 +168,7 @@ export default {
       return (this.addon && this.addon.contentType && (this.addon.contentType === 'application/vnd.openhab.bundle' || this.addon.contentType.indexOf('application/vnd.openhab.feature') === 0))
     },
     showUnverifiedAuthorWarning () {
-      return (this.addon && !this.addon.verifiedAuthor && this.installableAddon)
+      return this.addon && !this.addon.verifiedAuthor && this.installableAddon
     },
     showUnpublishedWarning () {
       return (this.serviceId === 'marketplace' && this.addon.properties && this.addon.properties.tags && this.addon.properties.tags.indexOf('published') < 0)
@@ -175,7 +177,7 @@ export default {
   methods: {
     toggleSwipeStep () {
       const self = this
-      self.$refs.sheet.f7Sheet.stepToggle('.demo-sheet-swipe-to-step')
+      self.$refs.sheet.$el.f7Modal.stepToggle('.demo-sheet-swipe-to-step')
     },
     install () {
       this.$oh.api.post('/rest/addons/' + this.addonId + '/install' + (this.serviceId ? '?serviceId=' + this.serviceId : ''), {}, 'text').then((data) => {

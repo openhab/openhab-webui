@@ -14,8 +14,10 @@
           :clear-button="true" />
       </f7-col>
     </f7-block>
-    <div style="text-align:right" class="padding-right" v-if="hasAdvanced">
-      <label @click="toggleAdvanced" class="advanced-label">Show advanced</label> <f7-checkbox name="channel-advanced" :checked="showAdvanced" @change="toggleAdvanced" />
+    <div v-if="hasAdvanced" style="text-align: right" class="padding-right">
+      <label class="advanced-label">
+        <f7-checkbox name="channel-advanced" v-model:checked="showAdvanced" />
+        Show advanced</label>
     </div>
     <f7-col v-if="thing.channels.length > 0">
       <f7-block width="100" class="channel-group no-margin no-padding" ref="channelList">
@@ -65,14 +67,15 @@
                               :channel="channel"
                               :extensible="extensible"
                               :context="context"
-                              @channel-updated="(e) => $emit('channels-updated', e)" />
+                              :f7router
+                              @channel-updated="e => $emit('channels-updated', e)" />
               </template>
-              <template #default="{ channelType, channel }" v-else-if="multipleLinksMode">
+              <template v-else-if="multipleLinksMode" #default="{ channelType, channel }">
                 <item-picker v-if="isChecked(channel) && hasLinks(channel)"
                              :title="selectedItem(channel) ? 'Change Item Selection' : 'Pick Existing Linked Item'"
                              textColor="blue"
                              :hideIcon="true"
-                             :items="items.filter((i) => channel.linkedItems.includes(i.name))"
+                             :items="items.filter(i => channel.linkedItems.includes(i.name))"
                              :multiple="false"
                              :noModelPicker="true"
                              :setValueText="false"
@@ -109,7 +112,8 @@
       <f7-block strong>
         <f7-row>
           <f7-col class="padding-left">
-            This thing has no channels. Either the thing type doesn't define channels, or they may be detected and appear later.
+            This thing has no channels. Either the thing type doesn't define channels, or they may
+            be detected and appear later.
           </f7-col>
         </f7-row>
       </f7-block>
@@ -129,6 +133,8 @@
 </style>
 
 <script>
+import { nextTick } from 'vue'
+
 import ChannelGroup from './channel-group.vue'
 import ChannelLink from './channel-link.vue'
 import ItemForm from '@/components/item/item-form.vue'
@@ -138,20 +144,23 @@ import uomMixin from '@/components/item/uom-mixin'
 
 import cloneDeep from 'lodash/cloneDeep'
 
+import { useSemanticsStore } from '@/js/stores/useSemanticsStore'
+
 export default {
   mixins: [uomMixin],
   props: {
-    thingType: Object,
-    thing: Object,
-    channelTypes: Array,
-    items: Array,
-    pickerMode: Boolean,
-    multipleLinksMode: Boolean,
-    itemTypeFilter: String,
-    newItemsPrefix: String,
-    newItems: Array,
-    updatedItems: Array,
-    context: Object
+    'thingType': Object,
+    'thing': Object,
+    'channelTypes': Array,
+    'items': Array,
+    'pickerMode': Boolean,
+    'multipleLinksMode': Boolean,
+    'itemTypeFilter': String,
+    'newItemsPrefix': String,
+    'newItems': Array,
+    'updatedItems': Array,
+    'context': Object,
+    'f7router': Object
   },
   components: {
     ChannelGroup,
@@ -168,7 +177,7 @@ export default {
       openedChannel: null,
       selectedChannel: null,
       selectedChannels: [],
-      channelTypesMap: new Map(this.channelTypes.map(ct => [ct.UID, ct]))
+      channelTypesMap: new Map(this.channelTypes.map((ct) => [ct.UID, ct]))
     }
   },
   watch: {
@@ -221,14 +230,11 @@ export default {
     }
   },
   methods: {
-    toggleAdvanced (event) {
-      this.showAdvanced = !this.showAdvanced // event.target.checked
-    },
     toggleLinkFilter (val) {
       this.showLinked = val
       const searchbar = this.$refs.searchbar.$el.f7Searchbar
       const filterQuery = searchbar.query
-      this.$nextTick(() => {
+      nextTick(() => {
         if (filterQuery) {
           searchbar.clear()
           searchbar.search(filterQuery)
@@ -293,7 +299,7 @@ export default {
         type: channel.itemType,
         unit: this.channelUnit(channel, channelType),
         stateDescriptionPattern: '',
-        tags: (defaultTags.find((t) => this.$store.getters.semanticClasses.Points.indexOf(t) >= 0)) ? defaultTags : [...defaultTags, 'Point']
+        tags: (defaultTags.find((t) => useSemanticsStore().Points.indexOf(t) >= 0)) ? defaultTags : [...defaultTags, 'Point']
       }
       this.newItems.push(newItem)
     },
@@ -318,10 +324,12 @@ export default {
       if (!item.tags) {
         item.tags = []
       }
-      const hasPointTag = item.tags.find((t) => this.$store.getters.semanticClasses.Points.indexOf(t) >= 0)
+      const hasPointTag = item.tags.find((t) => useSemanticsStore().Points.indexOf(t) >= 0)
       if (!hasPointTag) {
         const defaultTags = (channel.defaultTags.length > 0) ? channel.defaultTags : channelType.tags
-        item.tags = (defaultTags.find((t) => this.$store.getters.semanticClasses.Points.indexOf(t) >= 0)) ? [...item.tags, ...defaultTags] : [...item.tags, ...defaultTags, 'Point']
+        item.tags = (defaultTags.find((t) => useSemanticsStore().Points.indexOf(t) >= 0))
+          ? [...item.tags, ...defaultTags]
+          : [...item.tags, ...defaultTags, 'Point']
       }
       this.updatedItems.push(item)
     },

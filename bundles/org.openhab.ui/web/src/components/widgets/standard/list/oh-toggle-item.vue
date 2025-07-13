@@ -1,8 +1,10 @@
 <template>
   <oh-list-item :context="context">
-    <div slot="after">
-      <generic-widget-component :context="childContext(afterComponent)" v-on="$listeners" />
-    </div>
+    <template #after>
+      <div>
+        <generic-widget-component v-bind="$attrs" :context="childContext(afterComponent)" />
+      </div>
+    </template>
   </oh-list-item>
 </template>
 

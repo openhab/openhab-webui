@@ -19,10 +19,12 @@
                        :value="widget.config.label"
                        @input="updateParameter('label', $event)"
                        clear-button />
-        <item-picker v-if="widget.component !== 'Sitemap' && widget.component !== 'Frame'"
-                     title="Item"
-                     :value="widget.config.item"
-                     @input="(value) => widget.config.item = value" />
+        <f7-list-group v-if="widget.component !== 'Sitemap' && widget.component !== 'Frame'">
+          <item-picker
+            title="Item"
+            :value="widget.config.item"
+            @input="value => (widget.config.item = value)" />
+        </f7-list-group>
         <ul v-if="widget.component !== 'Sitemap'">
           <f7-list-input ref="icon"
                          label="Icon"
@@ -32,12 +34,16 @@
                          :value="widget.config.icon"
                          @input="updateParameter('icon', $event)"
                          clear-button>
-            <div slot="root-end" style="margin-left: calc(35% + 8px)">
-              <oh-icon :icon="widget.config.icon || ''" height="32" width="32" />
-            </div>
+            <template #root-end>
+              <div style="margin-left: calc(35% + 8px)">
+                <oh-icon :icon="widget.config.icon || ''" height="32" width="32" />
+              </div>
+            </template>
           </f7-list-input>
           <f7-list-item title="Static icon">
-            <f7-toggle slot="after" :checked="widget.config.staticIcon" @toggle:change="widget.config.staticIcon = $event" />
+            <template #after>
+              <f7-toggle :checked="widget.config.staticIcon ? true : null" @toggle:change="widget.config.staticIcon = $event" />
+            </template>
           </f7-list-item>
         </ul>
         <ul id="additional" class="additional-controls">
@@ -158,19 +164,29 @@
                          @input="updateParameter('releaseCmd', $event)"
                          clear-button />
           <f7-list-item v-if="supports('stateless')" title="Stateless">
-            <f7-toggle slot="after" :checked="widget.config.stateless" @toggle:change="widget.config.stateless = $event" />
+            <template #after>
+              <f7-toggle :checked="widget.config.stateless ? true : null" @toggle:change="widget.config.stateless = $event" />
+            </template>
           </f7-list-item>
           <f7-list-item v-if="supports('switchEnabled')" title="Switch enabled">
-            <f7-toggle slot="after" :checked="widget.config.switchEnabled" @toggle:change="widget.config.switchEnabled = $event" />
+            <template #after>
+              <f7-toggle :checked="widget.config.switchEnabled ? true : null" @toggle:change="widget.config.switchEnabled = $event" />
+            </template>
           </f7-list-item>
           <f7-list-item v-if="supports('releaseOnly')" title="Release only">
-            <f7-toggle slot="after" :checked="widget.config.releaseOnly" @toggle:change="widget.config.releaseOnly = $event" />
+            <template #after>
+              <f7-toggle :checked="widget.config.releaseOnly ? true : null" @toggle:change="widget.config.releaseOnly = $event" />
+            </template>
           </f7-list-item>
           <f7-list-item v-if="supports('legend')" title="Legend">
-            <f7-toggle slot="after" :checked="widget.config.legend" @toggle:change="widget.config.legend = $event" />
+            <template #after>
+              <f7-toggle :checked="widget.config.legend ? true : null" @toggle:change="widget.config.legend = $event" />
+            </template>
           </f7-list-item>
           <f7-list-item v-if="supports('forceAsItem')" title="Force as item">
-            <f7-toggle slot="after" :checked="widget.config.forceAsItem" @toggle:change="widget.config.forceAsItem = $event" />
+            <template #after>
+              <f7-toggle :checked="widget.config.forceAsItem ? true : null" @toggle:change="widget.config.forceAsItem = $event" />
+            </template>
           </f7-list-item>
           <f7-list-item v-if="supports('inputHint')"
                         title="Hint"
@@ -215,6 +231,7 @@
 </style>
 
 <script>
+import { f7 } from 'framework7-vue'
 import { Categories } from '@/assets/categories.js'
 import ItemPicker from '@/components/config/controls/item-picker.vue'
 import PersistencePicker from '@/components/config/controls/persistence-picker.vue'
@@ -239,7 +256,7 @@ export default {
   },
   methods: {
     initializeAutocomplete (inputElement) {
-      this.iconAutocomplete = this.$f7.autocomplete.create({
+      this.iconAutocomplete = f7.autocomplete.create({
         inputEl: inputElement,
         openIn: 'dropdown',
         source (query, render) {
@@ -253,14 +270,14 @@ export default {
     },
     supports (parameter) {
       if (!this.ADDITIONAL_CONTROLS[this.widget.component]) return false
-      return (this.ADDITIONAL_CONTROLS[this.widget.component].indexOf(parameter) >= 0)
+      return this.ADDITIONAL_CONTROLS[this.widget.component].indexOf(parameter) >= 0
     },
     updateParameter (parameter, $event) {
       let value = $event.target.value
       if (value && $event.target.type === 'number' && !isNaN(value)) {
         value = parseFloat(value)
       }
-      this.$set(this.widget.config, parameter, value)
+      this.widget.config[parameter] = value
     },
     remove () {
       this.$emit('remove')
@@ -273,9 +290,9 @@ export default {
     const inputElement = this.$$(iconControl.$el).find('input')
     this.initializeAutocomplete(inputElement)
   },
-  beforeDestroy () {
+  beforeUnmount () {
     if (this.iconControl) {
-      this.$f7.autocomplete.destroy(this.iconControl)
+      f7.autocomplete.destroy(this.iconControl)
     }
   }
 }

@@ -4,7 +4,6 @@
 *
 * See more background info on openHAB multimedia here: https://www.openhab.org/docs/configuration/multimedia.html
 */
-
 import Blockly from 'blockly'
 // import AudiosinkPickerPopup from '@/components/audio/audiosink-picker-popup.vue'
 

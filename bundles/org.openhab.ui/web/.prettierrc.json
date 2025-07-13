@@ -1,0 +1,11 @@
+{
+  "singleQuote": true,
+  "semi": false,
+  "trailingComma": "none",
+  "tabWidth": 2,
+  "printWidth": 100,
+  "arrowParens": "avoid",
+  "ebool>ndOfLine": "lf",
+  "embeddedLanguageFormatting": "off",
+  "bracketSameLine": true
+}

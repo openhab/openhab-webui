@@ -64,9 +64,10 @@
 </style>
 
 <script>
+import { VueDraggableNext as Draggable } from 'vue-draggable-next'
+
 import ModelTreeviewItem from '@/components/model/treeview-item.vue'
 import ModelDragDropMixin from '@/pages/settings/model/model-dragdrop-mixin'
-import Draggable from 'vuedraggable'
 
 export default {
   mixins: [ModelDragDropMixin],

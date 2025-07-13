@@ -14,12 +14,13 @@
                        input-id="input"
                        @input="item.name = $event.target.value"
                        :clear-button="createMode">
-          <f7-link slot="inner"
-                   icon-f7="hammer_fill"
-                   style="margin-top: 4px; margin-left: 4px; margin-bottom: auto"
-                   tooltip="Fix ID"
-                   v-if="createMode && nameErrorMessage && !nameErrorMessage.includes('exists') && item.name.trim()"
-                   @click="$oh.utils.normalizeInput('#input')" />
+          <template #inner>
+            <f7-link icon-f7="hammer_fill"
+                     style="margin-top: 4px; margin-left: 4px; margin-bottom: auto"
+                     tooltip="Fix ID"
+                     v-if="createMode && nameErrorMessage && !nameErrorMessage.includes('exists') && item.name.trim()"
+                     @click="$oh.utils.normalizeInput('#input')" />
+          </template>
         </f7-list-input>
         <f7-list-input label="Label"
                        type="text"
@@ -78,16 +79,17 @@
                        label="State Description Pattern"
                        type="text"
                        :info="(createMode) ? 'Pattern or transformation applied to the state for display purposes. Only saved if you change the pre-filled default value.' : 'Pattern can only be changed from the state description metadata page after Item creation!'"
-                       :disabled="!createMode ? true : null"
+                       :disabled="(!createMode) ? true : null"
                        :value="stateDescriptionPattern"
                        @input="stateDescriptionPattern = $event.target.value"
                        :clear-button="createMode" />
 
         <!-- Group Item Form -->
-        <group-form ref="groupForm"
-                    v-if="itemType === 'Group'"
-                    :item="item"
-                    :createMode="createMode" />
+        <f7-list-group v-if="itemType === 'Group'">
+          <group-form ref="groupForm"
+                      :item="item"
+                      :createMode="createMode" />
+        </f7-list-group>
       </f7-list-group>
       <f7-list-group v-if="!hideCategory">
         <f7-list-input ref="category"
@@ -99,17 +101,19 @@
                        @input="itemCategory = $event.target.value"
                        :disabled="!editable ? true : null"
                        :clear-button="editable">
-          <div slot="root-end" style="margin-left: calc(35% + 14px)">
-            <oh-icon v-if="itemCategory"
-                     :icon="itemCategory"
-                     :state="(createMode || itemType === 'Image') ? null : item.state"
-                     height="32"
-                     width="32" />
-            <oh-icon v-else
-                     icon=""
-                     height="32"
-                     width="32" />
-          </div>
+          <template #root-end>
+            <div style="margin-left: calc(35% + 14px)">
+              <oh-icon v-if="itemCategory"
+                       :icon="itemCategory"
+                       :state="createMode || itemType === 'Image' ? null : item.state"
+                       height="32"
+                       width="32" />
+              <oh-icon v-else
+                       icon=""
+                       height="32"
+                       width="32" />
+            </div>
+          </template>
         </f7-list-input>
       </f7-list-group>
     </f7-list>
@@ -118,35 +122,40 @@
                       :createMode="createMode"
                       :hide-none="forceSemantics" />
     <f7-list inline-labels no-hairline-md>
-      <tag-input title="Non-Semantic Tags" :disabled="!editable" :item="item" />
+      <div>
+        <tag-input title="Non-Semantic Tags" :disabled="!editable ? true : null" :item="item" />
+      </div>
     </f7-list>
     <f7-list inline-labels no-hairline-md>
       <f7-list-item title="Parent Groups" :badge="numberOfGroups" />
       <!-- make it cosmetically similar to the non-semantic tags above -->
       <f7-list-item v-if="numberOfGroups > 0">
-        <div slot="inner">
-          <f7-chip v-for="group in item.groupNames"
-                   :key="group"
-                   :text="group"
-                   :deleteable="editable"
-                   @delete="deleteGroup"
-                   media-bg-color="blue"
-                   style="margin-right: 6px">
-            <f7-icon slot="media"
-                     ios="f7:folder_fill"
-                     md="material:folder"
-                     aurora="f7:folder_fill" />
-          </f7-chip>
-        </div>
+        <template #inner>
+          <div>
+            <f7-chip v-for="group in item.groupNames"
+                     :key="group"
+                     :text="group"
+                     :deleteable="editable"
+                     @delete="deleteGroup"
+                     media-bg-color="blue"
+                     style="margin-right: 6px">
+              <template #media>
+                <f7-icon ios="f7:folder_fill" md="material:folder" aurora="f7:folder_fill" />
+              </template>
+            </f7-chip>
+          </div>
+        </template>
       </f7-list-item>
-      <item-picker v-if="editable"
-                   title="Select"
-                   :value="item.groupNames"
-                   :items="items"
-                   @input="(value) => this.item.groupNames = value"
-                   :multiple="true"
-                   filterType="Group"
-                   :set-value-text="false" />
+      <f7-list-group>
+        <item-picker v-if="editable"
+                     title="Select"
+                     :value="item.groupNames"
+                     :items="items"
+                     @input="value => (this.item.groupNames = value)"
+                     :multiple="true"
+                     filterType="Group"
+                     :set-value-text="false" />
+      </f7-list-group>
     </f7-list>
   </div>
 </template>
@@ -160,6 +169,8 @@
 </style>
 
 <script>
+import { f7 } from 'framework7-vue'
+
 import SemanticsPicker from '@/components/tags/semantics-picker.vue'
 import ItemPicker from '@/components/config/controls/item-picker.vue'
 import GroupForm from '@/components/item/group-form.vue'
@@ -216,7 +227,7 @@ export default {
         return this.item.type.split(':')[0]
       },
       set (newType) {
-        this.$set(this.item, 'type', newType)
+        this.item.type = newType
       }
     },
     itemDimension: {
@@ -226,11 +237,11 @@ export default {
       },
       set (newDimension) {
         if (!newDimension) {
-          this.$set(this.item, 'type', 'Number')
+          this.item.type = 'Number'
           return
         }
         const dimension = this.dimensions.find((d) => d.name === newDimension)
-        this.$set(this.item, 'type', 'Number:' + dimension.name)
+        this.item.type = 'Number:' + dimension.name
         this.itemUnit = (this.unitHint ? this.unitHint : this.getUnitHint(dimension.name))
       }
     },
@@ -239,7 +250,7 @@ export default {
         return this.unit
       },
       set (newUnit) {
-        this.$set(this.item, 'unit', newUnit)
+        this.item.unit = newUnit
       }
     },
     itemCategory: {
@@ -247,7 +258,7 @@ export default {
         return this.item.category || ''
       },
       set (newCategory) {
-        this.$set(this.item, 'category', newCategory)
+        this.item.category = newCategory
       }
     },
     nameErrorMessage () {
@@ -259,7 +270,7 @@ export default {
         return this.item.metadata?.stateDescription?.config.pattern || this.stateDescription || (this.createMode ? '%.0f %unit%' : '')
       },
       set (newPattern) {
-        this.$set(this.item, 'stateDescriptionPattern', newPattern)
+        this.item.stateDescriptionPattern = newPattern
       }
     }
   },
@@ -284,11 +295,11 @@ export default {
         return
       }
       if (!this.oldItemDimension) {
-        this.$set(this.item, 'type', this.oldItemType)
-        this.$set(this.item, 'unit', '')
+        this.item.type = this.oldItemType
+        this.item.unit = ''
       } else {
-        this.$set(this.item, 'type', this.oldItemType + ':' + this.oldItemDimension)
-        this.$set(this.item, 'unit', this.oldItemUnit)
+        this.item.type = this.oldItemType + ':' + this.oldItemDimension
+        this.item.unit = this.oldItemUnit
       }
     },
     initializeAutocompleteUnit () {
@@ -297,7 +308,7 @@ export default {
       const unitControl = this.$refs.unit
       if (!unitControl || !unitControl.$el) return
       const inputElement = this.$$(unitControl.$el).find('input')
-      this.unitAutocomplete = this.$f7.autocomplete.create({
+      this.unitAutocomplete = f7.autocomplete.create({
         inputEl: inputElement,
         openIn: 'dropdown',
         dropdownPlaceholderText: self.itemDimension ? self.getUnitHint(self.itemDimension) : '',
@@ -312,7 +323,7 @@ export default {
           }
           let allUnits = self.itemDimension ? self.getFullUnitList(self.itemDimension) : []
           if (!query || !query.length) {
-          // Render curated list by default
+            // Render curated list by default
             render(curatedUnits)
           } else {
             let units = curatedUnits.filter((u) => u.indexOf(query) >= 0)
@@ -332,7 +343,7 @@ export default {
       const categoryControl = this.$refs.category
       if (!categoryControl || !categoryControl.$el) return
       const inputElement = this.$$(categoryControl.$el).find('input')
-      this.categoryAutocomplete = this.$f7.autocomplete.create({
+      this.categoryAutocomplete = f7.autocomplete.create({
         inputEl: inputElement,
         openIn: 'dropdown',
         source (query, render) {
@@ -370,13 +381,13 @@ export default {
       this.item.stateDescriptionPattern = this.stateDescription
     }
   },
-  beforeDestroy () {
+  beforeUnmount () {
     if (this.unitAutocomplete) {
-      this.$f7.autocomplete.destroy(this.unitAutocomplete)
+      f7.autocomplete.destroy(this.unitAutocomplete)
       this.unitAutocomplete = null
     }
     if (this.categoryAutocomplete) {
-      this.$f7.autocomplete.destroy(this.categoryAutocomplete)
+      f7.autocomplete.destroy(this.categoryAutocomplete)
       this.categoryAutocomplete = null
     }
   }

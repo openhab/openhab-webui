@@ -16,7 +16,7 @@
           search-container=".semantics-treeview"
           search-item=".treeview-item"
           search-in=".treeview-item-label"
-          :disable-button="!$theme.aurora"
+          :disable-button="!theme.aurora"
           @input="showFiltered($event.target.value)" />
         <div class="expand-button">
           <f7-button v-if="!expanded"
@@ -35,14 +35,20 @@
       <f7-toolbar bottom class="toolbar-details">
         <span />
         <div class="padding-left padding-right text-align-center" style="font-size: 12px">
-          <div v-if="classMode">
-            <f7-checkbox :checked="!limitToClass" @change="toggleLimitToClass" />
-            <label @click="toggleLimitToClass" class="advanced-label">Show all classes</label>
-          </div>
-          <f7-checkbox :checked="showNames" @change="toggleShowNames" />
-          <label @click="toggleShowNames" class="advanced-label">Show tag names</label>
-          <f7-checkbox style="margin-left: 5px" :checked="showSynonyms" @change="toggleShowSynonyms" />
-          <label @click="toggleShowSynonyms" class="advanced-label">Show synonyms</label>
+          <template v-if="classMode">
+            <label class="advanced-label">
+              <f7-checkbox v-model:checked="showAllClasses" />
+              Show all classes
+            </label>
+          </template>
+          <label class="advanced-label">
+            <f7-checkbox v-model:checked="showNames" />
+            Show tag names
+          </label>
+          <label class="advanced-label">
+            <f7-checkbox v-model:checked="showSynonyms" />
+            Show synonyms
+          </label>
         </div>
         <span />
       </f7-toolbar>
@@ -58,7 +64,7 @@
                           :picker="true"
                           :propertyMode="!!propertyMode"
                           :classMode="!!classMode"
-                          :limitToClass="!!limitToClass" />
+                          :limitToClass="!showAllClasses" />
     </f7-page>
   </f7-popup>
 </template>
@@ -73,7 +79,9 @@
 </style>
 
 <script>
+import { f7, theme } from 'framework7-vue'
 import SemanticsTreeview from '@/components/tags/semantics-treeview.vue'
+import { useSemanticsStore } from '@/js/stores/useSemanticsStore'
 
 export default {
   components: {
@@ -88,9 +96,13 @@ export default {
     semanticProperty: String
   },
   emits: ['close', 'changed'],
+  setup () {
+    return {
+      theme
+    }
+  },
   data () {
     return {
-      semanticClasses: this.$store.getters.semanticClasses,
       expanded: false,
       expandedTags: [],
       showNames: false,
@@ -98,18 +110,18 @@ export default {
       filtering: false,
       expandedBeforeFiltering: false,
       selectedTag: null,
-      limitToClass: true
+      showAllClasses: false
     }
   },
   computed: {
     semanticTags () {
-      return this.semanticClasses.Tags.map((t) => {
+      return useSemanticsStore().Tags.map((t) => {
         const tag = {
           uid: t.uid,
           name: t.name,
-          label: this.semanticClasses.Labels[t.name],
+          label: useSemanticsStore().Labels[t.name],
           description: t.description,
-          synonyms: this.semanticClasses.Synonyms[t.name],
+          synonyms: useSemanticsStore().Synonyms[t.name],
           parent: t.parent
         }
         return tag
@@ -118,9 +130,9 @@ export default {
     selectedClass () {
       const selectedTag = this.semanticTags.find((t) => t.name === (this.semanticClass || this.semanticProperty)) || { uid: 'None', label: 'None' }
       const tagName = selectedTag?.name
-      if (this.semanticClasses.Locations.indexOf(tagName) >= 0) return 'Location'
-      if (this.semanticClasses.Equipment.indexOf(tagName) >= 0) return 'Equipment'
-      if (this.semanticClasses.Points.indexOf(tagName) >= 0) return 'Point'
+      if (useSemanticsStore().Locations.indexOf(tagName) >= 0) return 'Location'
+      if (useSemanticsStore().Equipment.indexOf(tagName) >= 0) return 'Equipment'
+      if (useSemanticsStore().Points.indexOf(tagName) >= 0) return 'Point'
       return ''
     }
   },
@@ -130,26 +142,17 @@ export default {
       // expand tree down to current selection
       this.expandToSelection()
     },
-    toggleShowNames () {
-      this.showNames = !this.showNames
-    },
-    toggleShowSynonyms () {
-      this.showSynonyms = !this.showSynonyms
-    },
-    toggleLimitToClass () {
-      this.limitToClass = !this.limitToClass
-    },
     toggleExpanded () {
       this.expanded = !this.expanded
       this.semanticTags.forEach((t) => {
-        this.$set(this.expandedTags, t.uid, this.expanded)
+        this.expandedTags[t.uid] = this.expanded
       })
       this.expandToSelection()
     },
     expandToSelection () {
       this.selectedTag?.parent?.split('_').reduce((prev, p) => {
         const parent = (prev ? (prev + '_') : '') + p
-        this.$set(this.expandedTags, parent, true)
+        this.expandedTags[parent] = true
         return parent
       }, '')
     },
@@ -180,14 +183,14 @@ export default {
         if (this.item.tags) {
           this.item.tags.push(tag.name)
         } else {
-          this.$set(this.item, 'tags', [tag.name])
+          this.item.tags = [tag.name]
         }
       }
       // If changing tag to 'None', a 'Location' tag or an 'Equipment' tag, remove 'Property' tags
       if (this.classMode && this.item.tags && (!tag.name || tag.uid.split('_')[0] !== 'Point')) {
         const tags = [...this.item.tags]
         tags.forEach((t) => {
-          if (this.semanticClasses.Properties.indexOf(t) >= 0) {
+          if (useSemanticsStore().Properties.indexOf(t) >= 0) {
             const index = this.item.tags.indexOf(t)
             this.item.tags.splice(index, 1)
           }
@@ -197,7 +200,7 @@ export default {
       this.$emit('changed')
     },
     onClose () {
-      this.$f7.popup.close()
+      f7.popup.close()
       this.$emit('close')
     }
   }

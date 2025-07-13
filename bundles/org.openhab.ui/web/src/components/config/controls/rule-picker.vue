@@ -14,7 +14,8 @@
           <option v-for="rule in scenes"
                   :value="rule.uid"
                   :key="rule.uid"
-                  :selected="(multiple) ? value && value.indexOf(rule.uid) >= 0 : value === rule.uid">
+                  :selected="(multiple) ? value && value.indexOf(rule.uid) >= 0 : value === rule.uid ? true : null
+                  ">
             {{ rule.name }}
           </option>
         </optgroup>
@@ -22,7 +23,8 @@
           <option v-for="rule in scripts"
                   :value="rule.uid"
                   :key="rule.uid"
-                  :selected="(multiple) ? value && value.indexOf(rule.uid) >= 0 : value === rule.uid">
+                  :selected="(multiple) ? value && value.indexOf(rule.uid) >= 0 : value === rule.uid ? true : null
+                  ">
             {{ rule.name }}
           </option>
         </optgroup>
@@ -30,7 +32,7 @@
           <option v-for="rule in rules"
                   :value="rule.uid"
                   :key="rule.uid"
-                  :selected="(multiple) ? value && value.indexOf(rule.uid) >= 0 : value === rule.uid">
+                  :selected="(multiple) ? value && value.indexOf(rule.uid) >= 0 : value === rule.uid ? true : null">
             {{ rule.name }}
           </option>
         </optgroup>
@@ -42,6 +44,8 @@
 </template>
 
 <script>
+import { f7 } from 'framework7-vue'
+
 export default {
   props: {
     title: String,
@@ -59,7 +63,7 @@ export default {
       rules: [],
       icons: {},
       smartSelectParams: {
-        view: this.$f7.view.main,
+        view: f7.view.main,
         openIn: 'popup',
         searchbar: true,
         multiple: this.multiple,
@@ -68,7 +72,7 @@ export default {
     }
   },
   created () {
-    this.smartSelectParams.closeOnSelect = !(this.multiple)
+    this.smartSelectParams.closeOnSelect = !this.multiple
     this.$oh.api.get('/rest/rules?staticDataOnly=true').then((data) => {
       this.scenes = data.filter((r) => r.tags.indexOf('Scene') >= 0).sort((a, b) => {
         const labelA = a.name
@@ -90,8 +94,8 @@ export default {
   },
   methods: {
     select (e) {
-      this.$f7.input.validateInputs(this.$refs.smartSelect.$el)
-      const value = this.$refs.smartSelect.f7SmartSelect.getValue()
+      f7.input.validateInputs(this.$refs.smartSelect.$el)
+      const value = this.$refs.smartSelect.$el.children[0].f7SmartSelect.getValue()
       this.$emit('input', value)
     }
   }

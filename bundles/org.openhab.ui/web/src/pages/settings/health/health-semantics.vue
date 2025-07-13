@@ -1,9 +1,14 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" class="health-semantics-page">
-    <f7-navbar title="Semantic Model Configuration Conflicts"
-               back-link="Health Checks"
-               back-link-url="/settings/health/"
-               back-link-force>
+    <f7-navbar>
+      <f7-nav-left>
+        <f7-link icon-f7="chevron_left" href="/settings/health/">
+          Health Checks
+        </f7-link>
+      </f7-nav-left>
+      <f7-nav-title>
+        Semantic Model Configuration Conflicts
+      </f7-nav-title>
       <f7-nav-right>
         <developer-dock-icon />
       </f7-nav-right>
@@ -53,11 +58,12 @@
                         :title="semanticsProblem.reason"
                         :subtitle="'Item: ' + semanticsProblem.item + (semanticsProblem.semanticType ? ' (' + semanticsProblem.semanticType + ')' : '')"
                         :footer="semanticsProblem.explanation">
-            <f7-icon v-if="!semanticsProblem.editable"
-                     slot="after-title"
-                     f7="lock_fill"
-                     size="1rem"
-                     color="gray" />
+            <template #after-title>
+              <f7-icon v-if="!semanticsProblem.editable"
+                       f7="lock_fill"
+                       size="1rem"
+                       color="gray" />
+            </template>
           </f7-list-item>
         </f7-list>
       </f7-col>

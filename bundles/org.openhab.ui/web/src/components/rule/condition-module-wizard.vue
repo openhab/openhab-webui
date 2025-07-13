@@ -34,7 +34,9 @@
   </f7-block>
   <f7-block class="no-margin no-padding" v-else-if="category === 'item'">
     <f7-list>
-      <item-picker :value="currentModule.configuration.itemName" title="Item" @input="(val) => $set(currentModule.configuration, 'itemName', val)" />
+      <f7-list-group>
+        <item-picker :value="currentModule.configuration.itemName" title="Item" @input="val => $set(currentModule.configuration, 'itemName', val)" />
+      </f7-list-group>
     </f7-list>
     <f7-list>
       <f7-list-item v-for="operator in operators"
@@ -42,14 +44,14 @@
                     :key="operator.value"
                     :title="operator.label"
                     name="itemStateOperator"
-                    :checked="currentModule.configuration.operator === operator.value"
-                    @click="$set(currentModule.configuration, 'operator', operator.value)" />
+                    :checked="currentModule.configuration.operator === operator.value ? true : null"
+                    @click="currentModule.configuration.operator = operator.value" />
       <f7-list-input
         label="State"
         name="itemState"
         type="text"
         :value="currentModule.configuration.state"
-        @blur="(evt) => $set(currentModule.configuration, 'state', evt.target.value)" />
+        @blur="(evt) => currentModule.configuration.state = evt.target.value" />
     </f7-list>
     <f7-list v-if="stateSuggestions.length">
       <f7-list-item v-for="suggestion in stateSuggestions"
@@ -57,7 +59,7 @@
                     :checked="currentModule.configuration.state === suggestion.value ? true : null"
                     :key="suggestion.value"
                     :title="suggestion.label"
-                    @click="$set(currentModule.configuration, 'state', suggestion.value)" />
+                    @click="currentModule.configuration.state = suggestion.value" />
     </f7-list>
   </f7-block>
   <f7-block class="no-margin no-padding" v-else-if="category === 'script'">
@@ -71,10 +73,9 @@
                     :footer="!isJsAvailable ? 'You need to install the JavaScript Scripting addon before you will be able to run' : undefined"
                     link=""
                     @click="scriptLanguagePicked('blockly')">
-        <img src="@/images/blockly.svg"
-             height="32"
-             width="32"
-             slot="media">
+        <template #media>
+          <img src="@/images/blockly.svg" height="32" width="32">
+        </template>
       </f7-list-item>
     </f7-list>
     <f7-block-footer class="padding-horizontal margin-vertical">
@@ -89,7 +90,9 @@
                     :footer="language.contentType"
                     link=""
                     @click="scriptLanguagePicked(language.contentType)">
-        <span slot="media" class="item-initial">{{ language.name[0] }}</span>
+        <template #media>
+          <span class="item-initial">{{ language.name[0] }}</span>
+        </template>
       </f7-list-item>
     </f7-list>
     <f7-block-footer class="padding-horizontal margin-bottom">
@@ -172,6 +175,9 @@
 </style>
 
 <script>
+import { nextTick } from 'vue'
+import { f7 } from 'framework7-vue'
+
 import ModuleWizard from './module-wizard-mixin'
 import ItemPicker from '@/components/config/controls/item-picker.vue'
 import ConfigSheet from '@/components/config/config-sheet.vue'
@@ -179,15 +185,16 @@ import ConfigSheet from '@/components/config/config-sheet.vue'
 export default {
   mixins: [ModuleWizard],
   props: {
-    currentModule: Object,
-    currentModuleType: Object,
-    moduleTypes: Object
+    'currentModule': Object,
+    'currentModuleType': Object,
+    'moduleTypes': Object,
+    f7router: Object
   },
   components: {
     ItemPicker,
     ConfigSheet
   },
-  emits: ['show-advanced', 'type-select', 'start-script'],
+  emits: ['show-advanced', 'type-selece', 'start-script'],
   data () {
     return {
       category: '',
@@ -214,13 +221,13 @@ export default {
       this.category = 'script'
       let moduleType = this.moduleTypes.find((t) => t.uid === 'script.ScriptCondition')
       if (moduleType) {
-        this.$set(this, 'languages', moduleType.configDescriptions.find((c) => c.name === 'type').options.map((l) => {
+        this.languages = moduleType.configDescriptions.find((c) => c.name === 'type').options.map((l) => {
           return {
             contentType: l.value,
             name: l.label.split(' (')[0],
             version: l.label.split(' (')[1].replace(')', '')
           }
-        }))
+        })
       }
     },
     chooseTimeCategory () {
@@ -235,13 +242,13 @@ export default {
       this.itemEventType = type
       switch (type) {
         case 'command':
-          this.$emit('type-select', 'core.ItemCommandTrigger')
+          this.$emit('type-selece', 'core.ItemCommandTrigger')
           break
         case 'updated':
-          this.$emit('type-select', 'core.ItemStateUpdateTrigger')
+          this.$emit('type-selece', 'core.ItemStateUpdateTrigger')
           break
         case 'changed':
-          this.$emit('type-select', 'core.ItemStateChangeTrigger')
+          this.$emit('type-selece', 'core.ItemStateChangeTrigger')
           break
       }
     },
@@ -249,13 +256,13 @@ export default {
       this.timeEventType = type
       switch (type) {
         case 'dayOfWeek':
-          this.$emit('type-select', 'timer.DayOfWeekCondition')
+          this.$emit('type-selece', 'timer.DayOfWeekCondition')
           break
         case 'timeOfDay':
-          this.$emit('type-select', 'core.TimeOfDayCondition')
+          this.$emit('type-selece', 'core.TimeOfDayCondition')
           break
         case 'interval':
-          this.$emit('type-select', 'timer.IntervalCondition')
+          this.$emit('type-selece', 'timer.IntervalCondition')
           break
       }
     },
@@ -263,34 +270,34 @@ export default {
       this.ephemerisEventType = type
       switch (type) {
         case 'weekdays':
-          this.$emit('type-select', 'ephemeris.WeekdayCondition')
+          this.$emit('type-selece', 'ephemeris.WeekdayCondition')
           break
         case 'weekends':
-          this.$emit('type-select', 'ephemeris.WeekendCondition')
+          this.$emit('type-selece', 'ephemeris.WeekendCondition')
           break
         case 'holidays':
-          this.$emit('type-select', 'ephemeris.HolidayCondition')
+          this.$emit('type-selece', 'ephemeris.HolidayCondition')
           break
         case 'notHolidays':
-          this.$emit('type-select', 'ephemeris.NotHolidayCondition')
+          this.$emit('type-selece', 'ephemeris.NotHolidayCondition')
           break
         case 'dayset':
-          this.$emit('type-select', 'ephemeris.DaysetCondition')
+          this.$emit('type-selece', 'ephemeris.DaysetCondition')
           break
       }
     },
     scriptLanguagePicked (value) {
-      this.$nextTick(() => {
-        this.$emit('type-select', 'script.ScriptCondition')
+      this.$emit('type-selece', 'script.ScriptCondition')
+      nextTick(() => {
         this.$emit('start-script', value)
       })
     },
     itemPicked (value) {
       this.category = 'item'
       this.currentItem = value
-      this.$set(this.currentModule.configuration, 'itemName', value.name)
-      this.$set(this.currentModule.configuration, 'operator', '=')
-      this.$emit('type-select', 'core.ItemStateCondition')
+      this.currentModule.configuration.itemName = value.name
+      this.currentModule.configuration.operator = '='
+      this.$emit('type-selece', 'core.ItemStateCondition')
     }
   }
 }

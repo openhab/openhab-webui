@@ -110,7 +110,7 @@ export default {
         value = attr.value ? attr.value : {}
         value[field] = $event.target.value
       }
-      this.$set(this.widget.config[this.attribute], idx, value)
+      this.widget.config[this.attribute][idx] = value
     },
     removeAttribute (idx) {
       this.widget.config[this.attribute].splice(idx, 1)
@@ -119,7 +119,7 @@ export default {
       if (this.widget && this.widget.config && this.widget.config[this.attribute]) {
         this.widget.config[this.attribute].push('')
       } else {
-        this.$set(this.widget.config, this.attribute, [''])
+        this.widget.config[this.attribute] = ['']
       }
     },
     onSort (ev) {

@@ -2,11 +2,11 @@
   <f7-page @page:afterin="onPageAfterIn">
     <f7-navbar title="Link Channel to Item" back-link="Cancel">
       <f7-nav-right class="if-not-aurora">
-        <f7-link @click="save()"
-                 v-if="$theme.md"
+        <f7-link v-if="theme.md"
+                 @click="save()"
                  icon-md="material:save"
                  icon-only />
-        <f7-link @click="save()" v-if="!$theme.md">
+        <f7-link v-if="!theme.md" @click="save()">
           Link
         </f7-link>
       </f7-nav-right>
@@ -93,12 +93,14 @@
         </f7-list>
         <div v-if="selectedThing.UID && selectedThingType.UID">
           <f7-block-title>Channel</f7-block-title>
+          <!--
           <channel-list :thing="selectedThing"
                         :thingType="selectedThingType"
                         :picker-mode="true"
                         :item-type-filter="item.type"
                         :channel-types="selectedThingChannelTypes"
                         @selected="(channel) => loadProfileTypes(channel)" />
+        -->
         </div>
       </f7-col>
 
@@ -115,7 +117,7 @@
           <f7-link external
                    color="blue"
                    target="_blank"
-                   :href="`${$store.state.websiteUrl}/link/profiles`">
+                   :href="`${runtimeStore.websiteUrl}/link/profiles`">
             Learn more about profiles.
           </f7-link>
         </f7-block-footer>
@@ -169,6 +171,8 @@
 </style>
 
 <script>
+import { f7, theme } from 'framework7-vue'
+
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import ItemPicker from '@/components/config/controls/item-picker.vue'
 import ThingPicker from '@/components/config/controls/thing-picker.vue'
@@ -182,6 +186,8 @@ import ItemMixin from '@/components/item/item-mixin'
 import uomMixin from '@/components/item/uom-mixin'
 import LinkMixin from '@/pages/settings/things/link/link-mixin'
 
+import { useSemanticsStore } from '@/js/stores/useSemanticsStore'
+
 export default {
   mixins: [ItemMixin, uomMixin, LinkMixin],
   components: {
@@ -189,7 +195,7 @@ export default {
     ItemPicker,
     ThingPicker,
     Item,
-    ChannelList,
+    // ChannelList, TODO-V3.1 ReferenceError: Cannot access 'ChannelList' before initialization ??? when viewing thing details
     ItemForm
   },
   props: {
@@ -198,6 +204,9 @@ export default {
     channelType: String,
     item: String,
     f7router: Object
+  },
+  setup () {
+    return { theme }
   },
   data () {
     return {
@@ -246,15 +255,15 @@ export default {
       newItemName += '_'
       newItemName += this.$oh.utils.normalizeLabel(this.channel.label || this.channelType.label)
       const defaultTags = (this.channel.defaultTags.length > 0) ? this.channel.defaultTags : this.channelType.tags
-      this.$set(this, 'newItem', {
+      this.newItem = {
         name: newItemName,
         label: this.thing.label + ' ' + (this.channel.label || this.channelType.label),
         category: (this.channelType) ? this.channelType.category : '',
         groupNames: [],
         type: this.channel.itemType || 'Switch',
         unit: this.linkUnit(),
-        tags: (defaultTags.find((t) => this.$store.getters.semanticClasses.Points.indexOf(t) >= 0)) ? defaultTags : [...defaultTags, 'Point']
-      })
+        tags: defaultTags.find((t) => useSemanticsStore().Points.indexOf(t) >= 0) ? defaultTags : [...defaultTags, 'Point']
+      }
     },
     linkUnit () {
       const dimension = (this.channel && this.channel.itemType && this.channel.itemType.startsWith('Number:')) ? this.channel.itemType.split(':')[1] : ''
@@ -266,11 +275,18 @@ export default {
     loadProfileTypes (channel) {
       this.ready = false
       this.selectedChannel = channel
-      this.$oh.api.get('/rest/profile-types?channelTypeUID=' + channel.channelTypeUID).then((data) => {
-        this.profileTypes = data
-        this.profileTypes.unshift(data.splice(data.findIndex((p) => p.uid === 'system:default'), 1)[0]) // move default to be first
-        this.ready = true
-      })
+      this.$oh.api
+        .get('/rest/profile-types?channelTypeUID=' + channel.channelTypeUID)
+        .then((data) => {
+          this.profileTypes = data
+          this.profileTypes.unshift(
+            data.splice(
+              data.findIndex((p) => p.uid === 'system:default'),
+              1
+            )[0]
+          ) // move default to be first
+          this.ready = true
+        })
     },
     onProfileTypeChange (profileTypeUid) {
       this.profileTypeConfiguration = null
@@ -322,57 +338,57 @@ export default {
       if (this.createMode) {
         const errorMessage = this.validateItemName(this.newItem.name)
         if (errorMessage !== '') {
-          this.$f7.dialog.alert('Please correct the item name: ' + errorMessage)
+          f7.dialog.alert('Please correct the item name: ' + errorMessage)
           return
         }
       }
       if (!link.itemName) {
-        this.$f7.dialog.alert('Please configure the item to link')
+        f7.dialog.alert('Please configure the item to link')
         return
       }
       if (!link.channelUID) {
-        this.$f7.dialog.alert('Please configure the channel to link')
+        f7.dialog.alert('Please configure the channel to link')
         return
       }
       if (this.$refs.profileConfiguration && !this.$refs.profileConfiguration.isValid()) {
-        this.$f7.dialog.alert('Please review the profile configuration and correct validation errors')
+        f7.dialog.alert('Please review the profile configuration and correct validation errors')
         return
       }
 
       if ((this.channel ? this.channel : this.selectedChannel).kind === 'TRIGGER') {
         if (!this.compatibleProfileTypes.length) {
-          this.$f7.dialog.alert('There is no profile available for the selected item')
+          f7.dialog.alert('There is no profile available for the selected item')
           return
         }
         if (!this.currentProfileType || !this.compatibleProfileTypes.includes(this.currentProfileType)) {
-          this.$f7.dialog.alert('Please configure a valid profile')
+          f7.dialog.alert('Please configure a valid profile')
           return
         }
       }
       if (!this.itemTypeCompatibleWithChannelType(this.currentItem, this.channel) && (!this.currentProfileType || !this.compatibleProfileTypes.includes(this.currentProfileType))) {
-        this.$f7.dialog.alert('Please configure a valid profile')
+        f7.dialog.alert('Please configure a valid profile')
         return
       }
 
       if (this.createMode) {
         this.saveItem(this.newItem).then((data) => {
           this.$oh.api.put('/rest/links/' + link.itemName + '/' + encodeURIComponent(link.channelUID), link).then((data) => {
-            this.$f7.toast.create({
+            f7.toast.create({
               text: 'Item and link created',
               destroyOnClose: true,
               closeTimeout: 2000
             }).open()
-            this.$f7router.back()
+            this.f7router.back()
           })
         })
       } else {
         this.$oh.api.put('/rest/links/' + link.itemName + '/' + encodeURIComponent(link.channelUID), link).then((data) => {
-          this.$f7.toast.create({
+          f7.toast.create({
             text: 'Link created',
             destroyOnClose: true,
             closeTimeout: 2000
           }).open()
-          this.$f7router.back()
+          this.f7router.back()
         })
       }
     }
@@ -392,7 +408,7 @@ export default {
         let typePromises = [this.$oh.api.get('/rest/thing-types/' + this.selectedThing.thingTypeUID),
           this.$oh.api.get('/rest/channel-types?prefixes=system,' + this.selectedThing.thingTypeUID.split(':')[0])]
 
-        Promise.all(typePromises).then(data2 => {
+        Promise.all(typePromises).then((data2) => {
           this.selectedThingType = data2[0]
           this.selectedThingChannelTypes = data2[1]
           this.ready = true
@@ -400,7 +416,7 @@ export default {
       })
     },
     currentItem () {
-      if (this.currentProfileType && !this.compatibleProfileTypes.find(p => p.uid === this.currentProfileType.uid)) {
+      if (this.currentProfileType && !this.compatibleProfileTypes.find((p) => p.uid === this.currentProfileType.uid)) {
         this.currentProfileType = null
       }
     }

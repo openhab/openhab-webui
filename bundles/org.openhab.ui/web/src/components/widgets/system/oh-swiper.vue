@@ -1,21 +1,22 @@
 <template>
   <f7-swiper v-bind="config" :params="{ observer: true, observeParents: true }">
-    <oh-swiper-slide :context="childContext(slide)"
-                     v-for="(slide, idx) in slides"
+    <oh-swiper-slide v-for="(slide, idx) in slides"
+                     v-bind="$attrs"
                      :key="idx"
-                     v-on="$listeners" />
+                     :context="childContext(slide)" />
 
-    <template v-if="context.component.slots && context.component.slots.slides && Array.isArray(context.component.slots.slides)">
-      <generic-widget-component :context="childContext(slide)"
-                                v-for="(slide, idx) in context.component.slots.slides"
+    <template
+      v-if="context.component.slots && context.component.slots.slides && Array.isArray(context.component.slots.slides)">
+      <generic-widget-component v-for="(slide, idx) in context.component.slots.slides"
+                                v-bind="$attrs"
                                 :key="idx"
-                                v-on="$listeners" />
+                                :context="childContext(slide)" />
     </template>
 
     <f7-swiper-slide v-if="context.editmode">
       <oh-placeholder-widget @click="context.editmode.addWidget(context.component, null, context.parent)" />
     </f7-swiper-slide>
-    <!-- <f7-menu v-if="context.editmode" slot="before-list" class="configure-layout-menu margin-vertical padding-left">
+    <!-- <f7-menu v-if="context.editmode" class="configure-layout-menu margin-vertical padding-left">
       <f7-menu-item @click="context.editmode.addWidget(context.component, 'oh-list-item')" icon-f7="plus" />
       <f7-menu-item style="margin-left: auto" icon-f7="square_list" dropdown>
         <f7-menu-dropdown right>
@@ -29,7 +30,6 @@
 </template>
 
 <script>
-
 import mixin from '../widget-mixin'
 import { OhSwiperDefinition } from '@/assets/definitions/widgets/system'
 

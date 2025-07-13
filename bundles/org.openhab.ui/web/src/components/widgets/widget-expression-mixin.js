@@ -1,5 +1,8 @@
-import expr from 'jse-eval'
-import dayjs from 'dayjs'
+import { nextTick } from 'vue'
+import { f7, theme } from 'framework7-vue'
+
+import expr, { addUnaryOp, evaluate, parse } from 'jse-eval'
+import dayjs, { extend } from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import calendar from 'dayjs/plugin/calendar'
 import localizedFormat from 'dayjs/plugin/localizedFormat'
@@ -7,35 +10,39 @@ import isoWeek from 'dayjs/plugin/isoWeek'
 import isToday from 'dayjs/plugin/isToday'
 import isYesterday from 'dayjs/plugin/isYesterday'
 import isTomorrow from 'dayjs/plugin/isTomorrow'
-import store from '@/js/store'
+
+import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
+import { useStatesStore } from '@/js/stores/useStatesStore'
+import { useUserStore } from '@/js/stores/useUserStore'
 
 import jsepRegex from '@jsep-plugin/regex'
 import jsepArrow from '@jsep-plugin/arrow'
 import jsepObject from '@jsep-plugin/object'
 import jsepTemplate from '@jsep-plugin/template'
+
 expr.jsep.plugins.register(jsepRegex, jsepArrow, jsepObject, jsepTemplate)
 
-expr.addUnaryOp('@', (itemName) => {
+addUnaryOp('@', (itemName) => {
   if (itemName === undefined) return '-'
-  const item = store.getters.trackedItems[itemName]
+  const item = useStatesStore().trackedItems[itemName]
   return (item.displayState !== undefined) ? item.displayState : item.state
 })
-expr.addUnaryOp('@@', (itemName) => {
+addUnaryOp('@@', (itemName) => {
   if (itemName === undefined) return '-'
-  return store.getters.trackedItems[itemName].state
+  return useStatesStore().trackedItems[itemName].state
 })
-expr.addUnaryOp('#', (itemName) => {
+addUnaryOp('#', (itemName) => {
   if (itemName === undefined) return undefined
-  return store.getters.trackedItems[itemName].numericState
+  return useStatesStore().trackedItems[itemName].numericState
 })
 
-dayjs.extend(relativeTime)
-dayjs.extend(calendar)
-dayjs.extend(localizedFormat)
-dayjs.extend(isoWeek)
-dayjs.extend(isToday)
-dayjs.extend(isYesterday)
-dayjs.extend(isTomorrow)
+extend(relativeTime)
+extend(calendar)
+extend(localizedFormat)
+extend(isoWeek)
+extend(isToday)
+extend(isYesterday)
+extend(isTomorrow)
 
 export default {
   data () {
@@ -47,14 +54,22 @@ export default {
   computed: {
     screenInfo () {
       const pageContent = document.querySelector('.page-current > .page-content')
-      const pageContentStyle = window.getComputedStyle(pageContent)
 
-      // recalculate screen info if clientHeight is not available yet
-      if (this.recalculateScreenInfo === false && pageContent.clientHeight === 0) {
-        this.$nextTick(() => {
+      let viewAreaHeight = 0
+      let viewAreaWidth = 0
+      if (!pageContent || (this.recalculateScreenInfo === false && pageContent.clientHeight === 0)) {
+        nextTick(() => {
           this.recalculateScreenInfo = true
           this.recalculateScreenInfo = false
         })
+      } else {
+        const pageContentStyle = window.getComputedStyle(pageContent)
+        viewAreaHeight = pageContent.clientHeight -
+          parseFloat(pageContentStyle.paddingTop) -
+          parseFloat(pageContentStyle.paddingBottom)
+        viewAreaWidth = pageContent.clientWidth -
+          parseFloat(pageContentStyle.paddingLeft) -
+          parseFloat(pageContentStyle.paddingRight)
       }
 
       return {
@@ -64,10 +79,20 @@ export default {
         availHeight: window.screen.availHeight,
         colorDepth: window.screen.colorDepth,
         pixelDepth: window.screen.pixelDepth,
-        viewAreaWidth: pageContent.clientWidth - parseFloat(pageContentStyle.paddingLeft) - parseFloat(pageContentStyle.paddingRight),
-        viewAreaHeight: pageContent.clientHeight - parseFloat(pageContentStyle.paddingTop) - parseFloat(pageContentStyle.paddingBottom),
-        appWidth: this.$f7.width,
-        appHeight: this.$f7.height
+        viewAreaWidth: viewAreaWidth,
+        viewAreaHeight: viewAreaHeight,
+        appWidth: f7.width,
+        appHeight: f7.height
+      }
+    }
+  },
+  methods: {
+    /**
+     * Evaluates a widget expression.
+          parseFloat(pageContentStyle.paddingTop) -
+          parseFloat(pageContentStyle.paddingBottom),
+        appWidth: f7.width,
+        appHeight: f7.height
       }
     }
   },
@@ -90,9 +115,9 @@ export default {
           // we cache the parsed abstract tree to prevent it from being parsed again at runtime
           // in we're edit mode according to the context do not cache because the expression is subject to change
           if (!this.exprAst[key] || ctx.editmode) {
-            this.exprAst[key] = expr.parse(value.substring(1))
+            this.exprAst[key] = parse(value.substring(1))
           }
-          return expr.evaluate(this.exprAst[key], {
+          return evaluate(this.exprAst[key], {
             items: ctx.store,
             props: props || this.props,
             config: ctx.component.config,
@@ -102,27 +127,27 @@ export default {
             loop: ctx.loop,
             Math,
             Number,
-            theme: this.$theme,
-            themeOptions: this.$f7.data.themeOptions,
+            theme,
+            themeOptions: useUIOptionsStore(),
             device: this.$device,
             screen: this.screenInfo,
             JSON,
             dayjs,
-            user: this.$store.getters.user
+            user: useUserStore().user
           })
         } catch (e) {
-          return e
+          return undefined
         }
       } else if (typeof value === 'object' && !Array.isArray(value)) {
         const evalObj = {}
         for (const objKey in value) {
-          this.$set(evalObj, objKey, this.evaluateExpression(key + '.' + objKey, value[objKey], ctx, props || this.props))
+          evalObj[objKey] = this.evaluateExpression(key + '.' + objKey, value[objKey], ctx, props || this.props)
         }
         return evalObj
       } else if (typeof value === 'object' && Array.isArray(value)) {
         const evalArr = []
         for (let i = 0; i < value.length; i++) {
-          this.$set(evalArr, i, this.evaluateExpression(key + '.' + i, value[i], ctx, props || this.props))
+          evalArr[i] = this.evaluateExpression(key + '.' + i, value[i], ctx, props || this.props)
         }
         return evalArr
       } else {

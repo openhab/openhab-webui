@@ -1,14 +1,19 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="rules-list">
-    <f7-navbar :title="type"
-               back-link="Settings"
-               back-link-url="/settings/"
-               back-link-force>
+    <f7-navbar>
+      <f7-nav-left>
+        <f7-link icon-f7="chevron_left" href="/settings/">
+          Settings
+        </f7-link>
+      </f7-nav-left>
+      <f7-nav-title>
+        {{ type }}
+      </f7-nav-title>
       <f7-nav-right>
         <developer-dock-icon />
         <f7-link icon-md="material:done_all"
                  @click="toggleCheck()"
-                 :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
+                 :text="(!theme.md) ? (showCheckboxes ? 'Done' : 'Select') : ''" />
       </f7-nav-right>
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <!-- Only render searchbar, if page is ready. Otherwise searchbar is broken after changes to the rules list. -->
@@ -21,7 +26,7 @@
           @searchbar:clear="clearSearch"
           @searchbar:disable="clearSearch"
           :placeholder="searchPlaceholder"
-          :disable-button="!$theme.aurora" />
+          :disable-button="!theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
     <f7-toolbar v-if="showCheckboxes"
@@ -29,50 +34,50 @@
                 :class="{ navbar: theme.md, 'tabbar-labels': f7.width < 480 }"
                 bottom-ios
                 bottom-aurora>
-      <f7-link color="red"
+      <f7-link v-if="!theme.md"
+               color="red"
                v-show="selectedDeletableItems.length"
-               v-if="!$theme.md"
                class="delete"
                icon-ios="f7:trash"
                icon-aurora="f7:trash"
                @click="deleteSelected">
         &nbsp;{{ $t('dialogs.delete') }}&nbsp;{{ selectedDeletableItems.length }}
       </f7-link>
-      <f7-link color="orange"
+      <f7-link v-if="!theme.md && !showScenes"
+               color="orange"
                v-show="selectedItems.length && canDisable"
-               v-if="!$theme.md && !showScenes"
                class="disable"
                @click="doDisableEnableSelected(false)"
                icon-ios="f7:pause_circle"
                icon-aurora="f7:pause_circle">
         &nbsp;{{ $t('dialogs.disable') }}&nbsp;{{ disablableItems }}
       </f7-link>
-      <f7-link color="green"
+      <f7-link v-if="!theme.md && !showScenes"
+               color="green"
                v-show="selectedItems.length && canEnable"
-               v-if="!$theme.md && !showScenes"
                class="enable"
                @click="doDisableEnableSelected(true)"
                icon-ios="f7:play_circle"
                icon-aurora="f7:play_circle">
         &nbsp;{{ $t('dialogs.enable') }}&nbsp;{{ enablableItems }}
       </f7-link>
-      <f7-link :color="$f7.data.themeOptions.dark === 'dark' ? 'purple' : 'deeppurple'"
+      <f7-link v-if="!theme.md && !showScenes"
+               :color="uiOptionsStore.getDarkMode() === 'dark' ? 'purple' : 'deeppurple'"
                v-show="selectedItems.length && canRegenerate"
-               v-if="!$theme.md && !showScenes"
                class="enable"
                @click="regenerateSelected()"
                icon-ios="f7:arrow_2_circlepath"
                icon-aurora="f7:arrow_2_circlepath">
         &nbsp;{{ $t('dialogs.regenerate') }}&nbsp;{{ regeneratableItemsCount }}
       </f7-link>
-      <f7-link v-if="$theme.md"
+      <f7-link v-if="theme.md"
                icon-md="material:close"
                icon-color="white"
                @click="showCheckboxes = false" />
-      <div class="title" v-if="$theme.md">
+      <div v-if="theme.md" class="title">
         {{ selectedItems.length }} selected
       </div>
-      <div class="right" v-if="$theme.md">
+      <div v-if="theme.md" class="right">
         <f7-link v-if="!showScenes"
                  v-show="selectedItems.length && canRegenerate"
                  tooltip="Regenerate selected from template"
@@ -148,14 +153,14 @@
                                icon="wand_stars"
                                title="rules.title"
                                text="rules.text" />
-      <f7-row v-if="$f7.width < 1280" class="display-flex justify-content-center">
+      <f7-row v-if="f7.width < 1280" class="display-flex justify-content-center">
         <f7-button large
                    fill
                    color="blue"
                    external
-                   :href="`${$store.state.websiteUrl}/link/${type.toLowerCase()}`"
+                   :href="`${runtimeStore.websiteUrl}/link/${type.toLowerCase()}`"
                    target="_blank"
-                   v-t="'home.overview.button.documentation'" />
+                   :text="$t('home.overview.button.documentation')" />
       </f7-row>
     </f7-block>
 
@@ -185,11 +190,12 @@
                          :color="isTagSelected(tag) ? 'blue' : ''"
                          style="margin-right: 6px; cursor: pointer;"
                          @click="(e) => toggleSearchTag(e, tag)">
-                  <f7-icon v-if="isTagSelected(tag)"
-                           slot="media"
-                           ios="f7:checkmark_circle_fill"
-                           md="material:check_circle"
-                           aurora="f7:checkmark_circle_fill" />
+                  <template #media>
+                    <f7-icon v-if="isTagSelected(tag)"
+                             ios="f7:checkmark_circle_fill"
+                             md="material:check_circle"
+                             aurora="f7:checkmark_circle_fill" />
+                  </template>
                 </f7-chip>
               </div>
             </f7-accordion-content>
@@ -219,51 +225,51 @@
               :footer="rule.description"
               :badge="showScenes ? '' : ruleStatusBadgeText(ruleStatuses[rule.uid])"
               :badge-color="ruleStatusBadgeColor(ruleStatuses[rule.uid])">
-              <div slot="footer" class="footer-inner">
-                <f7-chip
-                  v-if="rule.templateUID"
-                  :text="templateName(rule)"
-                  @click.ctrl="(e) => templateClick(e, true, rule)"
-                  @click.meta="(e) => templateClick(e, true, rule)"
-                  @click.exact="(e) => templateClick(e, false, rule)"
-                  media-bg-color="orange"
-                  style="margin-right: 2px">
-                  <f7-icon slot="media"
-                           ios="f7:doc_on_doc_fill"
-                           md="material:file_copy"
-                           aurora="f7:doc_on_doc_fill" />
-                </f7-chip>
-                <f7-chip v-for="tag in displayedTags(rule)"
-                         :key="tag"
-                         :text="tag"
-                         media-bg-color="blue"
-                         style="margin-right: 6px">
-                  <f7-icon slot="media"
-                           ios="f7:tag_fill"
-                           md="material:label"
-                           aurora="f7:tag_fill" />
-                </f7-chip>
-              </div>
+              <template #footer>
+                <div class="footer-inner">
+                  <f7-chip v-if="rule.templateUID"
+                           :text="templateName(rule)"
+                           @click.ctrl="e => templateClick(e, true, rule)"
+                           @click.meta="e => templateClick(e, true, rule)"
+                           @click.exact="e => templateClick(e, false, rule)"
+                           media-bg-color="orange"
+                           style="margin-right: 2px">
+                    <template #media>
+                      <f7-icon ios="f7:doc_on_doc_fill"
+                               md="material:file_copy"
+                               aurora="f7:doc_on_doc_fill" />
+                    </template>
+                  </f7-chip>
+                  <f7-chip v-for="tag in displayedTags(rule)"
+                           :key="tag"
+                           :text="tag"
+                           media-bg-color="blue"
+                           style="margin-right: 6px">
+                    <template #media>
+                      <f7-icon ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
+                    </template>
+                  </f7-chip>
+                </div>
+              </template>
               <!-- <span slot="media" class="item-initial">{{initial}}</span> -->
-              <f7-icon v-if="rule.editable === false"
-                       slot="after-title"
-                       f7="lock_fill"
-                       size="1rem"
-                       color="gray" />
+              <template v-if="rule.editable === false" #after-title>
+                <f7-icon f7="lock_fill" size="1rem" color="gray" />
+              </template>
             </f7-list-item>
           </f7-list-group>
         </f7-list>
       </f7-col>
     </f7-block>
 
-    <f7-fab v-show="ready && !showCheckboxes"
-            position="right-bottom"
-            slot="fixed"
-            color="blue"
-            href="add">
-      <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
-      <f7-icon ios="f7:close" md="material:close" aurora="f7:close" />
-    </f7-fab>
+    <template #fixed>
+      <f7-fab v-show="ready && !showCheckboxes"
+              position="right-bottom"
+              color="blue"
+              href="add">
+        <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
+        <f7-icon ios="f7:close" md="material:close" aurora="f7:close" />
+      </f7-fab>
+    </template>
   </f7-page>
 </template>
 
@@ -282,20 +288,34 @@
 </style>
 
 <script>
+import { nextTick } from 'vue'
+import { f7, theme } from 'framework7-vue'
+import { mapStores } from 'pinia'
+
 import debounce from 'debounce'
 import RuleStatus from '@/components/rule/rule-status-mixin'
+
+import { useLastSearchQueryStore } from '@/js/stores/useLastSearchQueryStore'
+import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
+import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 
 export default {
   mixins: [RuleStatus],
   props: {
     showScripts: Boolean,
-    showScenes: Boolean
+    showScenes: Boolean,
+    f7router: Object
   },
   components: {
-    'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue')
+    EmptyStatePlaceholder
+  },
+  setup () {
+    return { theme }
   },
   data () {
     return {
+      f7,
       ready: false,
       initSearchbar: false,
       loading: false,
@@ -398,7 +418,8 @@ export default {
     },
     canRegenerate () {
       return this.regeneratableItemsCount > 0
-    }
+    },
+    ...mapStores(useRuntimeStore, useUIOptionsStore)
   },
   methods: {
     onPageAfterIn () {
@@ -406,17 +427,18 @@ export default {
     },
     onPageBeforeOut () {
       this.stopEventSource()
-      this.$f7.data[`last${this.type}SearchQuery`] = this.$refs.searchbar?.f7Searchbar.query
+      useLastSearchQueryStore().lastRulesSearchQuery[this.type] = this.$refs.searchbar?.$el.f7Searchbar.query
     },
     load () {
       if (this.loading) return
       this.loading = true
 
-      if (this.initSearchbar) this.$f7.data[`last${this.type}SearchQuery`] = this.$refs.searchbar?.f7Searchbar.query
+      if (this.initSearchbar)
+        useLastSearchQueryStore().lastRulesSearchQuery[this.type] = this.$refs.searchbar?.$el.f7Searchbar.query
       this.initSearchbar = false
 
-      this.$set(this, 'selectedItems', [])
-      this.$set(this, 'selectedDeletableItems', [])
+      this.selectedItems = []
+      this.selectedDeletableItems = []
       this.showCheckboxes = false
       let filter = ''
       if (this.showScripts) {
@@ -431,7 +453,7 @@ export default {
         const templateData = results[0]
         const ruleData = results[1]
         if (templateData.status === 'fulfilled') {
-          this.$set(this, 'templates', templateData.value)
+          this.templates = templateData.value
         } else {
           console.warn('Failed to retrieve rule templates. Status: "' + templateData.status + '", Reason: "' + templateData.reason + '"')
         }
@@ -447,12 +469,12 @@ export default {
           if (!this.showScenes) {
             rules = rules.filter((r) => !r.tags || r.tags.indexOf('Scene') < 0)
           }
-          this.$set(this, 'rules', rules)
+          this.rules = rules
 
-          rules.forEach(rule => {
+          rules.forEach((rule) => {
             this.ruleStatuses[rule.uid] = rule.status
 
-            rule.tags.forEach(t => {
+            rule.tags.forEach((t) => {
               if (t === 'Scene' || t === 'Script') return
               if (t.startsWith('marketplace:')) t = 'Marketplace'
               if (!this.uniqueTags.includes(t)) this.uniqueTags.push(t)
@@ -466,12 +488,14 @@ export default {
           this.ready = true
           this.noRuleEngine = false
 
-          this.$nextTick(() => {
-            if (this.$refs.listIndex) this.$refs.listIndex.update()
+          nextTick(() => {
+            if (this.$refs.listIndex) this.$refs.listIndex.$el.f7ListIndex.update()
             if (this.$device.desktop && this.$refs.searchbar) {
-              this.$refs.searchbar.f7Searchbar.$inputEl[0].focus()
+              this.$refs.searchbar.$el.f7Searchbar.$inputEl[0].focus()
             }
-            this.$refs.searchbar?.f7Searchbar.search(this.$f7.data[`last${this.type}SearchQuery`] || '')
+            this.$refs.searchbar?.$el.f7Searchbar.search(
+              useLastSearchQueryStore().lastRulesSearchQuery[this.type] || ''
+            )
           })
 
           if (!this.eventSource) this.startEventSource()
@@ -523,7 +547,7 @@ export default {
       if (this.showCheckboxes) {
         this.toggleItemCheck(event, item.uid, item)
       } else {
-        this.$f7router.navigate(item.uid)
+        this.f7router.navigate(item.uid)
       }
     },
     ctrlClick (event, item) {
@@ -598,7 +622,7 @@ export default {
     deleteSelected () {
       const vm = this
 
-      this.$f7.dialog.confirm(
+      f7.dialog.confirm(
         `Delete ${this.selectedDeletableItems.length} rule${this.selectedDeletableItems.length === 1 ? '' : 's'}?`,
         'Delete Rules',
         () => {
@@ -607,11 +631,11 @@ export default {
       )
     },
     doDeleteSelected () {
-      let dialog = this.$f7.dialog.progress('Deleting Rules...')
+      let dialog = f7.dialog.progress('Deleting Rules...')
 
       const promises = this.selectedDeletableItems.map((i) => this.$oh.api.delete('/rest/rules/' + i))
       Promise.all(promises).then((data) => {
-        this.$f7.toast.create({
+        f7.toast.create({
           text: (promises.length === 1 ? 'Rule' : 'Rules') + ' deleted',
           destroyOnClose: true,
           closeTimeout: 2000
@@ -624,17 +648,17 @@ export default {
         dialog.close()
         this.load()
         console.error(err)
-        this.$f7.dialog.alert('An error occurred while deleting: ' + err)
+        f7.dialog.alert('An error occurred while deleting: ' + err)
       })
     },
     doDisableEnableSelected (enable) {
       if (!this.selectedItems) return
-      let dialog = this.$f7.dialog.progress('Please Wait...')
+      let dialog = f7.dialog.progress('Please Wait...')
 
       const items = this.selectedItems.filter((i) => Boolean(this.isRuleStatusDisabled(this.ruleStatuses[i])) === Boolean(enable))
       const promises = items.map((i) => this.$oh.api.postPlain('/rest/rules/' + i + '/enable', enable.toString()))
       Promise.all(promises).then((data) => {
-        this.$f7.toast.create({
+        f7.toast.create({
           text: (promises.length === 1 ? 'Rule ' : 'Rules ') + (enable ? 'enabled' : 'disabled'),
           destroyOnClose: true,
           closeTimeout: 2000
@@ -646,7 +670,7 @@ export default {
         dialog.close()
         this.load()
         console.error(err)
-        this.$f7.dialog.alert('An error occurred while enabling/disabling: ' + err)
+        f7.dialog.alert('An error occurred while enabling/disabling: ' + err)
       })
     },
     regenerateSelected () {
@@ -655,7 +679,7 @@ export default {
       if (rules.length === 0) return
       if (rules.length === 1 && rules[0].editable) {
         this.$oh.api.get('/rest/rules/' + rules[0].uid).then((rule) => {
-          this.$f7router.navigate({
+          this.f7router.navigate({
             url: '/settings/rules/stub'
           }, {
             reloadCurrent: false,
@@ -664,18 +688,18 @@ export default {
             }
           })
         }).catch((err) => {
-          this.$f7.dialog.alert('An error occurred when retrieving rule "' + rules[0].uid + '": ' + err)
+          f7.dialog.alert('An error occurred when retrieving rule "' + rules[0].uid + '": ' + err)
         })
       } else {
         const promises = rules.map((r) => this.$oh.api.postPlain('/rest/rules/' + r.uid + '/regenerate'))
         Promise.all(promises).then(() => {
-          this.$f7.toast.create({
+          f7.toast.create({
             text: (rules.length === 1 ? 'Rule' : 'Rules') + ' regenerated from template',
             destroyOnClose: true,
             closeTimeout: 2000
           }).open()
         }).catch((err) => {
-          this.$f7.dialog.alert('An error occurred when trying to regenerate rule(s) from template: ' + err)
+          f7.dialog.alert('An error occurred when trying to regenerate rule(s) from template: ' + err)
         })
       }
     },

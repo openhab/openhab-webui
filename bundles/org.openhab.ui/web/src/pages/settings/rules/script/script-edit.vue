@@ -4,20 +4,20 @@
       <f7-nav-right>
         <developer-dock-icon />
         <template v-if="editable && !createMode">
-          <f7-link @click="onSave()"
-                   v-if="$theme.md"
+          <f7-link v-if="theme.md"
+                   @click="onSave()"
                    icon-md="material:save"
                    icon-only />
-          <f7-link @click="onSave()" v-if="!$theme.md">
+          <f7-link @click="onSave()" v-if="!theme.md">
             Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
           </f7-link>
         </template>
         <template v-else-if="editable && createMode">
-          <f7-link @click="createScript"
-                   v-if="$theme.md && createMode"
+          <f7-link v-if="theme.md && createMode"
+                   @click="createScript"
                    icon-md="material:save"
                    icon-only />
-          <f7-link @click="createScript" v-if="$theme.ios && createMode">
+          <f7-link v-if="theme.ios && createMode" @click="createScript">
             Create
           </f7-link>
         </template>
@@ -28,133 +28,133 @@
       </f7-nav-right>
     </f7-navbar>
 
-    <template v-if="ready">
-      <f7-toolbar v-if="!createMode" position="bottom">
-        <span class="display-flex flex-direction-row align-items-center">
-          <f7-link :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'"
-                   :tooltip="((rule.status.statusDetail === 'DISABLED') ? 'Enable' : 'Disable') + (($device.desktop) ? ' (Ctrl-D)' : '')"
-                   icon-ios="f7:pause_circle"
-                   icon-md="f7:pause_circle"
-                   icon-aurora="f7:pause_circle"
-                   color="orange"
-                   @click="toggleDisabled" />
-          <f7-link v-if="!$theme.aurora"
-                   :tooltip="isMimeTypeAvailable(mode) ? ('Run Now' + (($device.desktop) ? ' (Ctrl-R)' : '')) : (isScriptRule ? 'Script' : 'Rule') + ' cannot be run, scripting addon for ' + mimeTypeDescription(mode) + ' is not installed'"
-                   icon-ios="f7:play_round"
-                   icon-md="f7:play_round"
-                   icon-aurora="f7:play_round"
-                   :color="((rule.status.status === 'IDLE') && isMimeTypeAvailable(mode)) ? 'blue' : 'gray'"
-                   @click="runNow" />
-          <f7-link v-else
-                   class="margin-left"
-                   :text="'Run Now' + (($device.desktop) ? ' (Ctrl-R)' : '')"
-                   :tooltip="!isMimeTypeAvailable(mode) ? (isScriptRule ? 'Script' : 'Rule') + ' cannot be run, scripting addon for ' + mimeTypeDescription(mode) + ' is not installed' : undefined"
-                   icon-ios="f7:play_round"
-                   icon-md="f7:play_round"
-                   icon-aurora="f7:play_round"
-                   :color="(rule.status.status === 'IDLE') && isMimeTypeAvailable(mode) ? 'blue' : 'gray'"
-                   @click="runNow" />
-          <f7-chip class="margin-left"
-                   v-if="currentModule && currentModule.configuration.script"
-                   :text="ruleStatusBadgeText(rule.status)"
-                   :color="ruleStatusBadgeColor(rule.status)"
-                   :tooltip="rule.status.description" />
-        </span>
-        <span class="display-flex flex-direction-row align-items-center">
-          <template v-if="isBlockly">
-            <f7-popover class="config-popover">
-              <f7-list class="config-menu">
-                <f7-list-item group-title title="Block Style" />
-                <f7-list-item v-for="renderer in blocklyRenderers"
-                              :key="renderer"
-                              :title="renderer"
-                              style="text-transform:capitalize"
-                              color="blue"
-                              radio
-                              :checked="renderer === blocklyRenderer"
-                              @click="setBlocklyRenderer(renderer)" />
-                <f7-list-item v-if="!$device.desktop" group-title title="Show Items" />
-                <f7-list-item v-if="!$device.desktop"
-                              title="As Labels"
-                              color="blue"
-                              radio
-                              :checked="blocklyShowLabels"
-                              @click="setBlocklyShowLabels(true)" />
-                <f7-list-item v-if="!$device.desktop"
-                              title="As Item IDs"
-                              color="blue"
-                              radio
-                              :checked="!blocklyShowLabels"
-                              @click="setBlocklyShowLabels(false)" />
-              </f7-list>
-            </f7-popover>
-            <template v-if="$device.desktop">
-              <f7-button v-if="!blocklyCodePreview"
-                         outline
-                         small
-                         icon-f7="paintbrush"
-                         :icon-size="($theme.aurora) ? 20 : 22"
-                         class="no-ripple"
-                         style="margin-right: 5px"
-                         tooltip="Block Style"
-                         popover-open=".config-popover" />
-              <f7-button v-if="!createMode && !blocklyCodePreview"
-                         outline
-                         small
-                         :active="blocklyShowLabels"
-                         icon-f7="square_on_circle"
-                         :icon-size="($theme.aurora) ? 20 : 22"
-                         class="no-ripple"
-                         style="margin-right: 5px"
-                         @click="setBlocklyShowLabels(!blocklyShowLabels)"
-                         tooltip="Toggle to show either Item labels or IDs" />
-            </template>
-            <f7-button v-else-if="!blocklyCodePreview"
+    <f7-toolbar v-if="ready && !createMode" bottom>
+      <span class="display-flex flex-direction-row align-items-center">
+        <f7-link :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'"
+                 :tooltip="((rule.status.statusDetail === 'DISABLED') ? 'Enable' : 'Disable') + (($device.desktop) ? ' (Ctrl-D)' : '')"
+                 icon-ios="f7:pause_circle"
+                 icon-md="f7:pause_circle"
+                 icon-aurora="f7:pause_circle"
+                 color="orange"
+                 @click="toggleDisabled" />
+        <f7-link v-if="!theme.aurora"
+                 :tooltip="isMimeTypeAvailable(mode) ? ('Run Now' + (($device.desktop) ? ' (Ctrl-R)' : '')) : (isScriptRule ? 'Script' : 'Rule') + ' cannot be run, scripting addon for ' + mimeTypeDescription(mode) + ' is not installed'"
+                 icon-ios="f7:play_round"
+                 icon-md="f7:play_round"
+                 icon-aurora="f7:play_round"
+                 :color="((rule.status.status === 'IDLE') && isMimeTypeAvailable(mode)) ? 'blue' : 'gray'"
+                 @click="runNow" />
+        <f7-link v-else
+                 class="margin-left"
+                 :text="'Run Now' + (($device.desktop) ? ' (Ctrl-R)' : '')"
+                 :tooltip="!isMimeTypeAvailable(mode) ? (isScriptRule ? 'Script' : 'Rule') + ' cannot be run, scripting addon for ' + mimeTypeDescription(mode) + ' is not installed' : undefined"
+                 icon-ios="f7:play_round"
+                 icon-md="f7:play_round"
+                 icon-aurora="f7:play_round"
+                 :color="(rule.status.status === 'IDLE') && isMimeTypeAvailable(mode) ? 'blue' : 'gray'"
+                 @click="runNow" />
+        <f7-chip class="margin-left"
+                 v-if="currentModule && currentModule.configuration.script"
+                 :text="ruleStatusBadgeText(rule.status)"
+                 :color="ruleStatusBadgeColor(rule.status)"
+                 :tooltip="rule.status.description" />
+      </span>
+      <span class="display-flex flex-direction-row align-items-center">
+        <template v-if="isBlockly">
+          <f7-popover class="config-popover">
+            <f7-list class="config-menu">
+              <f7-list-item group-title title="Block Style" />
+              <f7-list-item v-for="renderer in blocklyRenderers"
+                            :key="renderer"
+                            :title="renderer"
+                            style="text-transform:capitalize"
+                            color="blue"
+                            radio
+                            :checked="renderer === blocklyRenderer"
+                            @click="setBlocklyRenderer(renderer)" />
+              <f7-list-item v-if="!$device.desktop" group-title title="Show Items" />
+              <f7-list-item v-if="!$device.desktop"
+                            title="As Labels"
+                            color="blue"
+                            radio
+                            :checked="blocklyShowLabels"
+                            @click="setBlocklyShowLabels(true)" />
+              <f7-list-item v-if="!$device.desktop"
+                            title="As Item IDs"
+                            color="blue"
+                            radio
+                            :checked="!blocklyShowLabels"
+                            @click="setBlocklyShowLabels(false)" />
+            </f7-list>
+          </f7-popover>
+          <template v-if="$device.desktop">
+            <f7-button v-if="!blocklyCodePreview"
                        outline
                        small
-                       icon-f7="ellipsis_vertical"
-                       :icon-size="($theme.aurora) ? 20 : 22"
+                       icon-f7="paintbrush"
+                       :icon-size="(theme.aurora) ? 20 : 22"
                        class="no-ripple"
                        style="margin-right: 5px"
-                       tooltip="Blockly Settings"
+                       tooltip="Block Style"
                        popover-open=".config-popover" />
-            <f7-segmented v-if="!createMode" class="margin-right">
-              <f7-button outline
-                         small
-                         :active="!blocklyCodePreview"
-                         icon-f7="ticket"
-                         :icon-size="($theme.aurora) ? 20 : 22"
-                         class="no-ripple"
-                         @click="blocklyCodePreview = false"
-                         tooltip="Show blocks" />
-              <f7-button outline
-                         small
-                         :active="blocklyCodePreview"
-                         icon-f7="doc_text"
-                         :icon-size="($theme.aurora) ? 20 : 22"
-                         class="no-ripple"
-                         @click="showBlocklyCode"
-                         tooltip="Show generated code" />
-            </f7-segmented>
+            <f7-button v-if="!createMode && !blocklyCodePreview"
+                       outline
+                       small
+                       :active="blocklyShowLabels"
+                       icon-f7="square_on_circle"
+                       :icon-size="(theme.aurora) ? 20 : 22"
+                       class="no-ripple"
+                       style="margin-right: 5px"
+                       @click="setBlocklyShowLabels(!blocklyShowLabels)"
+                       tooltip="Toggle to show either Item labels or IDs" />
           </template>
-          <f7-link v-if="documentationLink(mode) && !isBlockly"
-                   icon-color="blue"
-                   :text="$device.desktop ? 'Open Documentation' : 'Docs'"
-                   tooltip="Open documentation"
-                   icon-ios="f7:question_circle"
-                   icon-md="f7:question_circle"
-                   icon-aurora="f7:question_circle"
-                   color="blue"
-                   :href="$store.state.websiteUrl + documentationLink(mode)"
-                   target="_blank"
-                   external />
-          <f7-link class="right details-link margin-left padding-right"
-                   ref="detailsLink"
-                   @click="detailsOpened = true"
-                   icon-f7="chevron_up" />
-        </span>
-      </f7-toolbar>
+          <f7-button v-else-if="!blocklyCodePreview"
+                     outline
+                     small
+                     icon-f7="ellipsis_vertical"
+                     :icon-size="(theme.aurora) ? 20 : 22"
+                     class="no-ripple"
+                     style="margin-right: 5px"
+                     tooltip="Blockly Settings"
+                     popover-open=".config-popover" />
+          <f7-segmented v-if="!createMode" class="margin-right">
+            <f7-button outline
+                       small
+                       :active="!blocklyCodePreview"
+                       icon-f7="ticket"
+                       :icon-size="(theme.aurora) ? 20 : 22"
+                       class="no-ripple"
+                       @click="blocklyCodePreview = false"
+                       tooltip="Show blocks" />
+            <f7-button outline
+                       small
+                       :active="blocklyCodePreview"
+                       icon-f7="doc_text"
+                       :icon-size="(theme.aurora) ? 20 : 22"
+                       class="no-ripple"
+                       @click="showBlocklyCode"
+                       tooltip="Show generated code" />
+          </f7-segmented>
+        </template>
+        <f7-link v-if="documentationLink(mode) && !isBlockly"
+                 icon-color="blue"
+                 :text="$device.desktop ? 'Open Documentation' : 'Docs'"
+                 tooltip="Open documentation"
+                 icon-ios="f7:question_circle"
+                 icon-md="f7:question_circle"
+                 icon-aurora="f7:question_circle"
+                 color="blue"
+                 :href="runtimeStore.websiteUrl + documentationLink(mode)"
+                 target="_blank"
+                 external />
+        <f7-link class="right details-link margin-left padding-right"
+                 ref="detailsLink"
+                 @click="detailsOpened = true"
+                 icon-f7="chevron_up" />
+      </span>
+    </f7-toolbar>
 
+    <template v-if="ready">
       <f7-icon v-if="!createMode && (!isBlockly && !editable) || (blocklyCodePreview && isBlockly)"
                f7="lock"
                class="float-right margin"
@@ -189,12 +189,11 @@
                           text="A beginner-friendly way to build scripts visually by assembling blocks"
                           :footer="!isJsAvailable ? 'You need to install the JavaScript Scripting addon before you will be able to run' : undefined"
                           :value="'application/javascript+blockly'"
-                          :checked="mode === 'application/javascript+blockly'"
+                          :checked="mode === 'application/javascript+blockly' ? true : null"
                           @change="mode = 'application/javascript+blockly'">
-              <img src="@/images/blockly.svg"
-                   height="32"
-                   width="32"
-                   slot="media">
+              <template #media>
+                <img src="@/images/blockly.svg" height="32" width="32">
+              </template>
             </f7-list-item>
           </f7-list>
           <f7-block-footer class="margin-vertical margin-left">
@@ -205,7 +204,7 @@
                           radio
                           radio-icon="start"
                           :value="mode"
-                          :checked="mode === language.contentType"
+                          :checked="mode === language.contentType ? true : null"
                           @change="mode = language.contentType"
                           v-for="language in languages"
                           :key="language.contentType"
@@ -231,7 +230,6 @@
 
       <f7-fab v-show="!createMode && !script && mode === 'application/javascript' && !isBlockly"
               position="center-bottom"
-              slot="fixed"
               color="blue"
               @click="convertToBlockly"
               text="Design with Blockly">
@@ -261,7 +259,7 @@
                                    :isScriptRule="isScriptRule"
                                    :mode="mode"
                                    :languages="languages"
-                                   @newLanguage="changeLanguage" />
+                                   @new-language="changeLanguage" />
           <f7-block class="block-narrow" v-if="editable && isScriptRule">
             <f7-col>
               <f7-list>
@@ -281,14 +279,17 @@
 </template>
 
 <style lang="stylus">
-.rule-script-editor.vue-codemirror
-  display block
-  top calc(var(--f7-navbar-height) + var(--f7-tabbar-height))
-  height calc(100% - 2*var(--f7-navbar-height))
-  width 100%
+.rule-script-editor.v-codemirror
+  max-height calc(100vh - var(--f7-navbar-height, 56px) - var(--f7-tabbar-height, 48px))
+  overflow auto
 </style>
 
 <script>
+import { defineAsyncComponent } from 'vue'
+import { utils } from 'framework7'
+import { f7, theme } from 'framework7-vue'
+import { mapStores } from 'pinia'
+
 import cloneDeep from 'lodash/cloneDeep'
 import fastDeepEqual from 'fast-deep-equal/es6'
 
@@ -298,14 +299,26 @@ import ModuleDescriptionSuggestions from '../module-description-suggestions'
 import DirtyMixin from '../../dirty-mixin'
 import AUTOMATION_LANGUAGES from '@/assets/automation-languages'
 
+import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+
 export default {
   mixins: [RuleStatus, ModuleDescriptionSuggestions, DirtyMixin],
   components: {
     ScriptGeneralSettings,
-    'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue'),
-    'blockly-editor': () => import(/* webpackChunkName: "blockly-editor" */ '@/components/config/controls/blockly-editor.vue')
+    'editor': defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')),
+    'blockly-editor': defineAsyncComponent(() => import(/* webpackChunkName: "blockly-editor" */ '@/components/config/controls/blockly-editor.vue'))
   },
-  props: ['ruleId', 'moduleId', 'createMode', 'ruleCopy'],
+  props: {
+    ruleId: String,
+    moduleId: String,
+    createMode: Boolean,
+    ruleCopy: Object,
+    f7router: Object,
+    f7route: Object
+  },
+  setup () {
+    return { theme }
+  },
   data () {
     return {
       ready: false,
@@ -367,7 +380,8 @@ export default {
     },
     isJsAvailable () {
       return this.isMimeTypeAvailable(this.GRAALJS_MIME_TYPE)
-    }
+    },
+    ...mapStores(useRuntimeStore)
   },
   watch: {
     // handle the script if not in Blockly
@@ -460,7 +474,7 @@ export default {
       this.load()
     },
     onPageBeforeOut () {
-      this.$refs.detailsSheet.f7Sheet.close()
+      this.$refs.detailsSheet.$el.f7Modal.close()
       this.stopEventSource()
       if (window) {
         window.removeEventListener('keydown', this.keyDown)
@@ -468,7 +482,7 @@ export default {
     },
     initializeNewScript () {
       this.rule = this.ruleCopy || {
-        uid: this.$f7.utils.id(),
+        uid: utils.id(),
         name: '',
         description: '',
         triggers: [],
@@ -476,7 +490,7 @@ export default {
         actions: [],
         tags: ['Script']
       }
-      if (this.ruleCopy) this.rule.uid = this.$f7.utils.id()
+      if (this.ruleCopy) this.rule.uid = utils.id()
       this.savedRule = cloneDeep(this.rule)
       this.savedMode = this.mode = 'application/javascript+blockly'
       this.loadScriptModuleType().then(() => {
@@ -485,11 +499,11 @@ export default {
     },
     createScript () {
       if (!this.rule.uid) {
-        this.$f7.dialog.alert('Please give an ID to the script')
+        f7.dialog.alert('Please give an ID to the script')
         return
       }
       if (!this.rule.name) {
-        this.$f7.dialog.alert('Please give a name to the script')
+        f7.dialog.alert('Please give a name to the script')
         return
       }
 
@@ -511,16 +525,16 @@ export default {
 
       this.$oh.api.postPlain('/rest/rules', JSON.stringify(this.rule), 'text/plain', 'application/json').then(() => {
         this.resetDirty()
-        this.$f7.toast.create({
+        f7.toast.create({
           text: 'Script created',
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
-        this.$f7router.navigate(this.$f7route.url.replace(/(\/add)|(\/duplicate)/, '/' + this.rule.uid), { reloadCurrent: true })
+        this.f7router.navigate(this.f7route.url.replace(/(\/add)|(\/duplicate)/, '/' + this.rule.uid), { reloadCurrent: true })
       })
     },
     isMimeTypeAvailable (mimeType) {
-      return this.languages.map(l => l.contentType).includes(mimeType)
+      return this.languages.map((l) => l.contentType).includes(mimeType)
     },
     mimeTypeDescription (mode) {
       return mode ? AUTOMATION_LANGUAGES[mode]?.name || mode : mode
@@ -532,9 +546,9 @@ export default {
      * Load the script module type, i.e. the available script languages
      * @returns {Promise}
      */
-    loadScriptModuleType () {
+    async loadScriptModuleType () {
       return this.$oh.api.get('/rest/module-types/' + (this.currentModule?.type ? this.currentModule.type : 'script.ScriptAction')).then((data) => {
-        this.$set(this, 'scriptModuleType', data)
+        this.scriptModuleType = data
         let languages = this.scriptModuleType.configDescriptions
           .find((c) => c.name === 'type').options
           .map((l) => {
@@ -545,7 +559,8 @@ export default {
             }
           })
         if (this.isBlockly) languages = languages.filter((l) => l.contentType === this.GRAALJS_MIME_TYPE)
-        this.$set(this, 'languages', languages)
+        this.languages = languages
+
         return Promise.resolve()
       })
     },
@@ -554,12 +569,12 @@ export default {
       this.loading = true
 
       this.$oh.api.get('/rest/rules/' + this.ruleId).then((data) => {
-        this.$set(this, 'rule', data)
+        this.rule = data
 
         if (this.moduleId) {
-          this.$set(this, 'currentModule', this.rule.actions.concat(this.rule.conditions).find((m) => m.id === this.moduleId))
+          this.currentModule = this.rule.actions.concat(this.rule.conditions).find((m) => m.id === this.moduleId)
         } else {
-          this.$set(this, 'currentModule', this.rule.actions.find((m) => m.id === 'script' || m.configuration.script))
+          this.currentModule = this.rule.actions.find((m) => m.id === 'script' || m.configuration.script)
           this.isScriptRule = true
         }
 
@@ -572,7 +587,7 @@ export default {
             const message = 'Your JavaScript script was created with a previous version of openHAB. Please save your script.'
 
             this.changeLanguage(this.GRAALJS_MIME_TYPE)
-            this.$f7.dialog.alert(message)
+            f7.dialog.alert(message)
           }
 
           this.loading = false
@@ -584,7 +599,7 @@ export default {
     save (noToast) {
       if (!this.editable) return
       if (this.rule.status.status === 'RUNNING') {
-        this.$f7.toast.create({
+        f7.toast.create({
           text: `${this.isScriptRule ? 'Script' : 'Rule'} cannot be updated while running, please wait!`,
           destroyOnClose: true,
           closeTimeout: 2000
@@ -597,7 +612,7 @@ export default {
             this.currentModule.configuration.blockSource = this.$refs.blocklyEditor.getBlocks()
             this.script = this.$refs.blocklyEditor.getCode()
           } else {
-            this.$f7.toast.create({
+            f7.toast.create({
               text: 'Running / saving is only supported in block mode!<br>Please switch back from code preview to block editor.',
               position: 'center',
               icon: '<i class="f7-icons">exclamationmark_bubble</i>',
@@ -607,7 +622,7 @@ export default {
             return Promise.reject('saveOnCodePreviewRejected')
           }
         } catch (e) {
-          this.$f7.dialog.alert(e)
+          f7.dialog.alert(e)
           return Promise.reject(e)
         }
       }
@@ -617,14 +632,14 @@ export default {
         this.initDirty()
         this.resetDirty()
         if (!noToast) {
-          this.$f7.toast.create({
+          f7.toast.create({
             text: (this.isScriptRule ? 'Script' : 'Rule') + ' updated',
             destroyOnClose: true,
             closeTimeout: 2000
           }).open()
         }
       }).catch((err) => {
-        this.$f7.toast.create({
+        f7.toast.create({
           text: 'Error while saving: ' + err,
           destroyOnClose: true,
           closeTimeout: 2000
@@ -632,7 +647,7 @@ export default {
       })
     },
     onSave () {
-      this.save().catch((e) => { if (!['saveWhileRunningRejected', 'saveOnCodePreviewRejected'].includes(e)) { throw (e) } })
+      this.save().catch((e) => { if (!['saveWhileRunningRejected', 'saveOnCodePreviewRejected'].includes(e)) { throw e } })
     },
     changeLanguage (contentType) {
       if (this.createMode) return
@@ -642,13 +657,13 @@ export default {
       if (this.createMode) return
       const enable = (this.rule.status.statusDetail === 'DISABLED')
       this.$oh.api.postPlain('/rest/rules/' + this.rule.uid + '/enable', enable.toString()).then((data) => {
-        this.$f7.toast.create({
+        f7.toast.create({
           text: (this.isScriptRule ? 'Script' : 'Rule') + (enable ? ' enabled' : ' disabled'),
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
       }).catch((err) => {
-        this.$f7.toast.create({
+        f7.toast.create({
           text: 'Error while disabling or enabling: ' + err,
           destroyOnClose: true,
           closeTimeout: 2000
@@ -658,14 +673,14 @@ export default {
     runNow () {
       if (this.createMode) return
       if (!this.isMimeTypeAvailable(this.mode)) {
-        return this.$f7.toast.create({
+        return f7.toast.create({
           text: `${this.isScriptRule ? 'Script' : 'Rule'} cannot be run, scripting addon for ${this.mimeTypeDescription(this.mode)} is not installed`,
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
       }
       if (this.rule.status.status === 'RUNNING' || this.rule.status.status === 'UNINITIALIZED') {
-        return this.$f7.toast.create({
+        return f7.toast.create({
           text: `${this.isScriptRule ? 'Script' : 'Rule'} cannot be run ${(this.rule.status.status === 'RUNNING') ? 'while already running, please wait' : 'if it is uninitialized'}!`,
           destroyOnClose: true,
           closeTimeout: 2000
@@ -676,13 +691,13 @@ export default {
         const savePromise = saveBefore ? this.save(true) : Promise.resolve()
         savePromise.then(() => {
           this.$oh.api.postPlain('/rest/rules/' + this.rule.uid + '/runnow', '').then(
-            this.$f7.toast.create({
+            f7.toast.create({
               text: 'Running ' + (this.isScriptRule ? 'script' : 'rule'),
               destroyOnClose: true,
               closeTimeout: 2000
             }).open()
           ).catch((err) => {
-            this.$f7.toast.create({
+            f7.toast.create({
               text: 'Error while running: ' + err,
               destroyOnClose: true,
               closeTimeout: 2000
@@ -692,7 +707,7 @@ export default {
       }
 
       if (this.editable && this.dirty) {
-        this.$f7.dialog.confirm(
+        f7.dialog.confirm(
           'Do you want to save the changes before running the script?',
           'Changes have not been saved',
           () => run(this),
@@ -704,7 +719,7 @@ export default {
     },
     duplicateRule () {
       let ruleClone = cloneDeep(this.rule)
-      this.$f7router.navigate({
+      this.f7router.navigate({
         url: '/settings/scripts/duplicate'
       }, {
         props: {
@@ -713,13 +728,13 @@ export default {
       })
     },
     deleteRule () {
-      this.$f7.dialog.confirm(
+      f7.dialog.confirm(
         `Are you sure you want to delete ${this.rule.name}?`,
         'Delete ' + (this.isScriptRule ? 'Script' : 'Rule'),
         () => {
           this.$oh.api.delete('/rest/rules/' + this.rule.uid).then(() => {
             this.dirty = false
-            this.$f7router.back('/settings/scripts/', { force: true })
+            this.f7router.back('/settings/scripts/', { force: true })
           })
         }
       )
@@ -727,9 +742,9 @@ export default {
     onBlocklyMounted () {
       this.blocklyRenderer = this.$refs.blocklyEditor.getCurrentRenderer()
       this.blocklyRenderers = this.$refs.blocklyEditor.getRenderers()
-      if (this.$store.state.pagePath.indexOf('?blockly') < 0) {
+      if (useRuntimeStore().pagePath.indexOf('?blockly') < 0) {
         // A hint for 'help-sidebar.vue' to differentiate blockly vs normal script
-        this.$store.commit('setPagePath', this.$store.state.pagePath + '?blockly')
+        useRuntimeStore().pagePath = useRuntimeStore().pagePath + '?blockly'
       }
     },
     onBlocklyReady () {
@@ -751,7 +766,7 @@ export default {
               oldRule = true
             }
           } catch (e) {
-            this.$f7.dialog.alert(e)
+            f7.dialog.alert(e)
           }
         }
         if (oldRule) message += 'Your Blockly script was created with a previous version of openHAB. Please save your script'
@@ -760,7 +775,7 @@ export default {
       // Check if JS Scripting is installed
       if (!this.isJsAvailable) message += (message ? ' and' : 'You do not have JS Scripting installed. Please') + ' install the JS Scripting addon'
 
-      if (message) this.$f7.dialog.alert(message + '.')
+      if (message) f7.dialog.alert(message + '.')
     },
     setBlocklyRenderer (newRenderer) {
       this.blocklyRenderer = newRenderer
@@ -779,12 +794,12 @@ export default {
         this.currentModule.configuration.blockSource = (this.script) ? this.$refs.blocklyEditor.getBlocks() : undefined
         if (this.isBlockly) this.blocklyCodePreview = true
       } catch (e) {
-        this.$f7.dialog.alert(e)
+        f7.dialog.alert(e)
       }
     },
     convertToBlockly () {
       if (this.script || this.isBlockly || this.mode !== this.GRAALJS_MIME_TYPE) return
-      this.$set(this.currentModule.configuration, 'blockSource', '<xml xmlns="https://developers.google.com/blockly/xml"></xml>')
+      this.currentModule.configuration.blockSource = '<xml xmlns="https://developers.google.com/blockly/xml"></xml>'
     },
     onEditorInput (value) {
       this.script = value
@@ -794,7 +809,7 @@ export default {
         const topicParts = event.topic.split('/')
         switch (topicParts[3]) {
           case 'state':
-            this.$set(this.rule, 'status', JSON.parse(event.payload)) // e.g. {"status":"RUNNING","statusDetail":"NONE"}
+            this.rule.status = JSON.parse(event.payload) // e.g. {"status":"RUNNING","statusDetail":"NONE"}
             break
           case 'added':
           case 'updated':

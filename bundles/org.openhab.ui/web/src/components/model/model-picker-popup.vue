@@ -27,7 +27,7 @@
           search-container=".model-treeview"
           search-item=".treeview-item"
           search-in=".treeview-item-label"
-          :disable-button="!$theme.aurora" />
+          :disable-button="!theme.aurora" />
         <div class="expand-button">
           <f7-button v-if="!expanded"
                      icon-size="24"
@@ -44,21 +44,25 @@
       </f7-subnavbar>
 
       <!-- Toolbar -->
-      <f7-toolbar v-if="$f7.width >= 500" bottom class="toolbar-details">
+      <f7-toolbar v-if="f7.width >= 500" bottom class="toolbar-details">
         <f7-link v-if="!multiple"
-                 :disabled="selectedItem != null"
                  class="left"
+                 :class="{ disabled: selectedItem == null }"
                  @click="selectedItem = null">
           Clear
         </f7-link>
         <span v-else />
         <div class="padding-right text-align-right">
-          <f7-checkbox :checked="includeNonSemantic" @change="toggleNonSemantic" />
-          <label @click="toggleNonSemantic" class="advanced-label">Show non-semantic</label>
-          <f7-checkbox style="margin-left: 5px" :checked="includeItemName" @change="toggleItemName" />
-          <label @click="toggleItemName" class="advanced-label">Show name</label>
-          <f7-checkbox style="margin-left: 5px" :checked="includeItemTags" @change="toggleItemTags" />
-          <label @click="toggleItemTags" class="advanced-label">Show tags</label>
+          <label class="advanced-label">
+            <f7-checkbox v-model:checked="includeNonSemantic" @change="changeNonSemantic" />
+            Show non-semantic
+          </label>
+          <label class="advanced-label">
+            <f7-checkbox v-model:checked="includeItemName" />
+            Show name</label>
+          <label class="advanced-label">
+            <f7-checkbox v-model:checked="includeItemTags" />
+            Show tags</label>
         </div>
         <span />
       </f7-toolbar>
@@ -75,14 +79,20 @@
         <span v-else />
         <div class="padding-left padding-right text-align-center" style="font-size: 12px">
           <div>
-            <f7-checkbox :checked="includeNonSemantic" @change="toggleNonSemantic" />
-            <label @click="toggleNonSemantic" class="advanced-label">Show non-semantic</label>
+            <label class="advanced-label">
+              <f7-checkbox v-model:checked="includeNonSemantic" @change="changeNonSemantic" />
+              Show non-semantic
+            </label>
           </div>
           <div>
-            <f7-checkbox :checked="includeItemName" @change="toggleItemName" />
-            <label @click="toggleItemName" class="advanced-label">Show name</label>
-            <f7-checkbox style="margin-left: 5px" :checked="includeItemTags" @change="toggleItemTags" />
-            <label @click="toggleItemTags" class="advanced-label">Show tags</label>
+            <label class="advanced-label">
+              <f7-checkbox v-model:checked="includeItemName" />
+              Show name
+            </label>
+            <label class="advanced-label">
+              <f7-checkbox v-model:checked="includeItemTags" />
+              Show tags
+            </label>
           </div>
         </div>
         <span />
@@ -115,9 +125,14 @@
 </style>
 
 <script>
-import ModelTreeview from '@/components/model/model-treeview.vue'
+import { f7, theme } from 'framework7-vue'
+import { nextTick } from 'vue'
+import { mapWritableState } from 'pinia'
 
+import ModelTreeview from '@/components/model/model-treeview.vue'
 import ModelMixin from '@/pages/settings/model/model-mixin'
+
+import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
 export default {
   mixins: [ModelMixin],
@@ -135,13 +150,13 @@ export default {
     ModelTreeview
   },
   emits: ['closed', 'input'],
+  setup () {
+    return { theme }
+  },
   data () {
-    if (!this.$f7.data.modelPicker) this.$f7.data.modelPicker = {}
     return {
+      f7,
       initSearchbar: false,
-      includeItemName: this.$f7.data.modelPicker.includeItemName || false,
-      includeItemTags: this.$f7.data.modelPicker.includeItemTags || false,
-      expanded: this.$f7.data.modelPicker.expanded || false,
       doubleClickStarted: null,
       doubleClickItem: null,
       checkedItems: []
@@ -154,19 +169,24 @@ export default {
       } else {
         return [this.rootLocations, this.rootEquipment, (!this.groupsOnly) ? this.rootPoints : [], this.rootGroups, (!this.groupsOnly) ? this.rootItems : []].flat()
       }
-    }
+    },
+    ...mapWritableState(useRuntimeStore, {
+      includeItemName: 'modelPickerIncludeItemName',
+      includeItemTags: 'modelPickerIncludeItemTags',
+      expanded: 'modelPickerExpanded'
+    })
   },
   methods: {
     onOpen () {
       this.selectedItem = null
       this.initSearchbar = false
-      this.$set(this, 'checkedItems', [])
+      this.checkedItems = []
       this.load()
     },
     onClose () {
       this.ready = false
       this.$emit('closed')
-      this.$f7.emit('modelPickerClosed')
+      f7.emit('modelPickerClosed')
     },
     pickItems () {
       let pickedItems
@@ -176,8 +196,8 @@ export default {
         pickedItems = (this.selectedItem) ? this.selectedItem.item : null
       }
       this.$emit('input', pickedItems)
-      this.$f7.emit('itemsPicked', pickedItems)
-      this.$refs.modelPicker.close()
+      f7.emit('itemsPicked', pickedItems)
+      this.$refs.modelPicker.$el.f7Modal.close()
     },
     modelItem (item) {
       const modelItem = {
@@ -215,7 +235,7 @@ export default {
     },
     load () {
       this.loadModel().then(() => {
-        this.$nextTick(() => {
+        nextTick(() => {
           this.initSearchbar = true
           this.restoreExpanded()
           this.expandSelected()
@@ -242,25 +262,13 @@ export default {
         this.checkedItems.splice(this.checkedItems.indexOf(item), 1)
       }
     },
-    toggleNonSemantic () {
+    changeNonSemantic () {
       this.rootGroups = []
       this.rootItems = []
-      this.includeNonSemantic = !this.includeNonSemantic
-      this.load()
-    },
-    toggleItemName () {
-      this.includeItemName = !this.includeItemName
-      this.$f7.data.modelPicker.includeItemName = this.includeItemName
-      this.load()
-    },
-    toggleItemTags () {
-      this.includeItemTags = !this.includeItemTags
-      this.$f7.data.modelPicker.includeItemTags = this.includeItemTags
       this.load()
     },
     toggleExpanded () {
       this.expanded = !this.expanded
-      this.$f7.data.modelPicker.expanded = this.expanded
       this.applyExpandedOption()
     }
   }

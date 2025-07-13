@@ -6,7 +6,7 @@
                  icon-f7="lock_fill"
                  icon-only
                  :tooltip="notEditableMsg" />
-        <f7-link v-else-if="$theme.md"
+        <f7-link v-else-if="theme.md"
                  icon-md="material:save"
                  icon-only
                  @click="save()" />
@@ -16,10 +16,10 @@
       </f7-nav-right>
     </f7-navbar>
     <f7-toolbar tabbar position="top">
-      <f7-link @click="switchTab('design', fromYaml)" :tab-link-active="currentTab === 'design'" class="tab-link">
+      <f7-link @click="switchTab('design', fromYaml)" :tab-link-active="currentTab === 'design'" tab-link="#design">
         Design
       </f7-link>
-      <f7-link @click="switchTab('code', toYaml)" :tab-link-active="currentTab === 'code'" class="tab-link">
+      <f7-link @click="switchTab('code', toYaml)" :tab-link-active="currentTab === 'code'" tab-link="#code">
         Code
       </f7-link>
     </f7-toolbar>
@@ -56,7 +56,7 @@
                        raised
                        fill
                        @click="save" />
-            <f7-button :text="editable ? 'Cancel' : 'Back'" color="blue" @click="$f7router.back()" />
+            <f7-button :text="editable ? 'Cancel' : 'Back'" color="blue" @click="f7router.back()" />
           </div>
         </f7-block>
       </f7-tab>
@@ -93,6 +93,9 @@
 </style>
 
 <script>
+import { nextTick, defineAsyncComponent } from 'vue'
+import { f7, theme } from 'framework7-vue'
+
 import cloneDeep from 'lodash/cloneDeep'
 import fastDeepEqual from 'fast-deep-equal/es6'
 
@@ -104,6 +107,8 @@ import ItemForm from '@/components/item/item-form.vue'
 import DirtyMixin from '../dirty-mixin'
 import ItemMixin from '@/components/item/item-mixin'
 
+import { useSemanticsStore } from '@/js/stores/useSemanticsStore'
+
 export default {
   mixins: [DirtyMixin, ItemMixin],
   props: {
@@ -114,7 +119,10 @@ export default {
   },
   components: {
     ItemForm,
-    'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')
+    editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue'))
+  },
+  setup () {
+    return { theme }
   },
   data () {
     return {
@@ -125,7 +133,6 @@ export default {
       itemYaml: '',
       items: [],
       types: Types,
-      semanticClasses: this.$store.getters.semanticClasses,
       semanticClass: '',
       semanticProperty: '',
       pendingTag: '',
@@ -191,7 +198,7 @@ export default {
           tags: [],
           created: false
         }
-        this.$set(this, 'item', newItem)
+        this.item = newItem
         this.savedItem = cloneDeep(this.item)
         this.$oh.api.get('/rest/items?staticDataOnly=true').then((items) => {
           this.items = items
@@ -202,7 +209,7 @@ export default {
         this.$oh.api.get('/rest/items/' + this.itemName + '?metadata=.*').then((data) => {
           this.item = data
           this.savedItem = cloneDeep(this.item)
-          this.$nextTick(() => {
+          nextTick(() => {
             this.ready = true
             this.loading = false
           })
@@ -214,18 +221,20 @@ export default {
       if (this.currentTab === 'code') {
         if (!this.fromYaml()) return
       }
-      if (this.validateItemName(this.item.name) !== '') { return this.$f7.dialog.alert('Please give the Item a valid name: ' + this.validateItemName(this.item.name)).open() }
-      if (!this.item.type || !this.types.ItemTypes.includes(this.item.type.split(':')[0])) { return this.$f7.dialog.alert('Please give Item a valid type').open() }
+      if (this.validateItemName(this.item.name) !== '')
+        return f7.dialog.alert('Please give the Item a valid name: ' + this.validateItemName(this.item.name)).open()
+      if (!this.item.type || !this.types.ItemTypes.includes(this.item.type.split(':')[0]))
+        return f7.dialog.alert('Please give Item a valid type').open()
 
       const typeChange = this.$refs.itemForm.typeChanged()
       const dimensionChange = this.$refs.itemForm.dimensionChanged()
       const unitChange = this.$refs.itemForm.unitChanged()
       if (typeChange || dimensionChange || unitChange) {
-        const title = 'WARNING: ' + (typeChange ? 'Type' : (dimensionChange ? 'Dimension' : 'Unit')) + ' Changed'
+        const title = 'WARNING: ' + (typeChange ? 'Type' : dimensionChange ? 'Dimension' : 'Unit') + ' Changed'
         const text = (typeChange || dimensionChange)
           ? `Existing links to channels ${dimensionChange ? 'with dimensions ' : ''}may no longer be valid!`
           : 'Changing the internal unit can corrupt your persisted data and affect rules!'
-        return this.$f7.dialog.create({
+        return f7.dialog.create({
           title,
           text,
           buttons: [
@@ -241,7 +250,7 @@ export default {
     doSave () {
       this.saveItem(this.item).then(() => {
         if (this.createMode) {
-          this.$f7.toast.create({
+          f7.toast.create({
             text: 'Item created',
             destroyOnClose: true,
             closeTimeout: 2000
@@ -249,7 +258,7 @@ export default {
           this.item.created = true
           this.item.editable = true
         } else {
-          this.$f7.toast.create({
+          f7.toast.create({
             text: 'Item updated',
             destroyOnClose: true,
             closeTimeout: 2000
@@ -258,12 +267,12 @@ export default {
 
         this.dirty = false
         if (this.createMode) {
-          this.$f7router.navigate('/settings/items/' + this.item.name)
+          this.f7router.navigate('/settings/items/' + this.item.name)
         } else {
-          this.$f7router.back()
+          this.f7router.back()
         }
       }).catch((err) => {
-        this.$f7.toast.create({
+        f7.toast.create({
           text: 'Item not saved: ' + err,
           destroyOnClose: true,
           closeTimeout: 2000
@@ -295,17 +304,17 @@ export default {
         if (updatedItem === null) return false
         if (updatedItem.groupNames == null) updatedItem.groupNames = []
         if (updatedItem.tags == null) updatedItem.tags = []
-        this.$set(this.item, 'label', updatedItem.label)
-        this.$set(this.item, 'type', updatedItem.type)
-        this.$set(this.item, 'category', updatedItem.icon)
-        this.$set(this.item, 'groupNames', updatedItem.groupNames)
-        this.$set(this.item, 'groupType', updatedItem.groupType)
-        this.$set(this.item, 'function', updatedItem.function)
-        this.$set(this.item, 'tags', updatedItem.tags)
-        // this.$set(this.item, 'metadata', updatedItem.metadata)
+        this.item.label = updatedItem.label
+        this.item.type = updatedItem.type
+        this.item.category = updatedItem.icon
+        this.item.groupNames = updatedItem.groupNames
+        this.item.groupType = updatedItem.groupType
+        this.item.function = updatedItem.function
+        this.item.tags = updatedItem.tags
+        // this.item.metadata = updatedItem.metadata
         return true
       } catch (e) {
-        this.$f7.dialog.alert(e).open()
+        f7.dialog.alert(e).open()
         return false
       }
     }

@@ -1,6 +1,8 @@
-import * as dayjs from 'dayjs'
+import dayjs, { extend } from 'dayjs'
 import IsoWeek from 'dayjs/plugin/isoWeek'
-dayjs.extend(IsoWeek)
+
+extend(IsoWeek)
+
 import aggregate from './aggregators'
 import ComponentId from '../../component-id'
 
@@ -38,7 +40,7 @@ export default {
     let dimension2 = series.dimension2
     let boundary = includeBoundaryAndItemStateFor(component)
 
-    const itemPoints = points.find(p => p.name === series.item).data
+    const itemPoints = points.find((p) => p.name === series.item).data
 
     // we'll suppose dimension2 always more granular than dimension1
     // e.g. if dimension1=day, dimension2 can be hour but not month

@@ -36,36 +36,34 @@
               <f7-list-item v-for="loggerPackage in loggerPackages"
                             :key="loggerPackage.loggerName"
                             :title="loggerPackage.loggerName">
-                <f7-input slot="after"
-                          type="select"
-                          :value="loggerPackage.level"
-                          @input="updateLogLevel(loggerPackage, $event.target.value)">
-                  <option value="DEFAULT">
-                    Default
-                  </option>
-                  <option value="TRACE">
-                    Trace
-                  </option>
-                  <option value="DEBUG">
-                    Debug
-                  </option>
-                  <option value="INFO">
-                    Info
-                  </option>
-                  <option value="WARN">
-                    Warning
-                  </option>
-                  <option value="ERROR">
-                    Error
-                  </option>
-                  <option value="OFF">
-                    Off
-                  </option>
-                </f7-input>
-                <f7-button slot="after"
-                           small
-                           icon-f7="xmark_circle"
-                           @click="removeLogLevel(loggerPackage)" />
+                <template #after>
+                  <f7-input type="select"
+                            :value="loggerPackage.level"
+                            @input="updateLogLevel(loggerPackage, $event.target.value)">
+                    <option value="DEFAULT">
+                      Default
+                    </option>
+                    <option value="TRACE">
+                      Trace
+                    </option>
+                    <option value="DEBUG">
+                      Debug
+                    </option>
+                    <option value="INFO">
+                      Info
+                    </option>
+                    <option value="WARN">
+                      Warning
+                    </option>
+                    <option value="ERROR">
+                      Error
+                    </option>
+                    <option value="OFF">
+                      Off
+                    </option>
+                  </f7-input>
+                  <f7-button small icon-f7="xmark_circle" @click="removeLogLevel(loggerPackage)" />
+                </template>
               </f7-list-item>
             </f7-list>
           </div>
@@ -92,26 +90,25 @@
           <div class="page-content">
             <f7-list class="col wide">
               <f7-list-item v-for="(highlightFilter, index) in highlightFilters" :key="index">
-                <input slot="media"
-                       type="checkbox"
-                       v-model="highlightFilter.active"
-                       checked></input>
-                <f7-input slot="title"
-                          type="text"
-                          placeholder="Enter text to highlight..."
-                          :value="highlightFilter.text"
-                          @input="updateHighlightText($event, index)" />
+                <template #media>
+                  <input type="checkbox" v-model="highlightFilter.active" checked>
+                </template>
+                <template #title>
+                  <f7-input type="text"
+                            placeholder="Enter text to highlight..."
+                            :value="highlightFilter.text"
+                            @input="updateHighlightText($event, index)" />
+                </template>
 
                 <!-- Color Picker -->
-                <div slot="after">
-                  <f7-button class="color-picker-button"
-                             @click="openColorPopover(index, $event)"
-                             :style="{ backgroundColor: highlightFilter.color }" />
-                </div>
-                <f7-button slot="after"
-                           small
-                           icon-f7="xmark_circle"
-                           @click="removeHighlight(index)" />
+                <template #after>
+                  <div>
+                    <f7-button class="color-picker-button"
+                               @click="openColorPopover(index, $event)"
+                               :style="{ backgroundColor: highlightFilter.color }" />
+                  </div>
+                  <f7-button small icon-f7="xmark_circle" @click="removeHighlight(index)" />
+                </template>
               </f7-list-item>
             </f7-list>
             <button class="button" @click="addNewHighlight">
@@ -199,11 +196,15 @@
       </f7-page>
     </f7-popup>
 
-    <!-- Main Display -->
-    <f7-navbar title="Log Viewer"
-               back-link="Developer Tools"
-               back-link-url="/developer/"
-               back-link-force>
+    <f7-navbar>
+      <f7-nav-left>
+        <f7-link icon-f7="chevron_left" href="/developer/">
+          Developer Tools
+        </f7-link>
+      </f7-nav-left>
+      <f7-nav-title>
+        Log Viewer
+      </f7-nav-title>
       <f7-nav-right>
         <f7-link icon-ios="f7:play_fill"
                  icon-f7="play_fill"
@@ -238,7 +239,7 @@
         <!-- <div class="filter-input-box">
           <input type="search" placeholder="Filter..." v-model="filterText" @keyup.enter="handleFilter"></input>
         </div> -->
-        <div style="display: flex; flex-wrap: nowrap;">
+        <div style="display: flex; flex-wrap: nowrap">
           <f7-badge class="log-period margin-left-half">
             {{ logStart }}&nbsp;>&nbsp;{{ logEnd }}
           </f7-badge>
@@ -280,7 +281,7 @@
                    small
                    :active="!textMode"
                    icon-f7="table"
-                   :icon-size="$theme.aurora ? 20 : 22"
+                   :icon-size="theme.aurora ? 20 : 22"
                    class="no-ripple"
                    @click="setTextMode(false)"
                    tooltip="Show logs in a table" />
@@ -288,7 +289,7 @@
                    small
                    :active="textMode"
                    icon-f7="text_justifyleft"
-                   :icon-size="$theme.aurora ? 20 : 22"
+                   :icon-size="theme.aurora ? 20 : 22"
                    class="no-ripple"
                    @click="setTextMode(true)"
                    tooltip="Show logs as plain text" />
@@ -311,19 +312,23 @@
       </f7-col>
     </f7-block>
 
-    <f7-fab v-show="!autoScroll"
-            position="right-bottom"
-            slot="fixed"
-            color="blue"
-            tooltip="Scroll to latest log entries"
-            @click="showLatestLogs">
-      <f7-icon f7="arrow_down_to_line" />
-    </f7-fab>
+    <template #fixed>
+      <f7-fab v-show="!autoScroll"
+              position="right-bottom"
+              color="blue"
+              tooltip="Scroll to latest log entries"
+              @click="showLatestLogs">
+        <f7-icon f7="arrow_down_to_line" />
+      </f7-fab>
+    </template>
   </f7-page>
 </template>
 
 <style lang="stylus">
 .log-viewer
+
+  .subnavbar
+    height: unset
 
   /* Ensure the card takes full width and removes padding */
   .custom-card
@@ -504,15 +509,22 @@
   .color-palette button.selected
     transform scale(1.2)
     border 2px solid black
-
 </style>
 
-<script lang="ts">
+<script>
+import { nextTick } from 'vue'
+import { theme, f7 } from 'framework7-vue'
+
 import MovablePopupMixin from '@/pages/settings/movable-popup-mixin'
 import copyToClipboard from '@/js/clipboard'
 
 export default {
   mixins: [MovablePopupMixin],
+  setup () {
+    return {
+      theme
+    }
+  },
   data () {
     return {
       stateConnected: false,
@@ -564,7 +576,7 @@ export default {
   },
   computed: {
     filteredTableData () {
-      return this.tableData.filter(item => item.visible)
+      return this.tableData.filter((item) => item.visible)
     },
     countersBadgeColor () {
       if (this.tableData.length >= this.maxEntries) return 'red'
@@ -572,20 +584,20 @@ export default {
       return 'green'
     },
     selectedLog () {
-      return this.tableData.find(entry => entry.id === this.selectedId) || {}
+      return this.tableData.find((entry) => entry.id === this.selectedId) || {}
     }
   },
   methods: {
     onPageAfterIn () {
-      this.$oh.api.get('/rest/logging/').then(data => {
-        data.loggers.forEach(logger => this.loggerPackages.push(logger))
-        this.$nextTick(() => {
-          const rootPackageIndex = this.loggerPackages.findIndex(item => item.loggerName === 'ROOT')
+      this.$oh.api.get('/rest/logging/').then((data) => {
+        data.loggers.forEach((logger) => this.loggerPackages.push(logger))
+        nextTick(() => {
+          const rootPackageIndex = this.loggerPackages.findIndex((item) => item.loggerName === 'ROOT')
           if (rootPackageIndex !== -1) {
             this.defaultLogLevel = this.loggerPackages[rootPackageIndex].level
           }
           this.loggerPackages.sort((a, b) => a.loggerName.localeCompare(b.loggerName))
-          this.loggerPackages = this.loggerPackages.filter(item => item.loggerName !== 'ROOT')
+          this.loggerPackages = this.loggerPackages.filter((item) => item.loggerName !== 'ROOT')
 
           this.loadingLoggers = false
         })
@@ -603,7 +615,7 @@ export default {
       if (this.filterText == null) {
         this.filterText = ''
       } else {
-        this.$refs.searchbar.f7Searchbar.query = this.filterText
+        this.$refs.searchbar.$el.f7Searchbar.query = this.filterText
       }
       this.filterTextLowerCase = this.filterText.trim().toLocaleLowerCase()
 
@@ -613,7 +625,7 @@ export default {
       this.loggingStop()
     },
     popupOpened (ref, navbar) {
-      this.$nextTick(() => {
+      nextTick(() => {
         this.initializeMovablePopup(ref, navbar)
       })
     },
@@ -623,14 +635,14 @@ export default {
     },
     removeLogLevel (logger) {
       this.$oh.api.delete('/rest/logging/' + logger.loggerName)
-      this.loggerPackages = this.loggerPackages.filter(loggerPackage => loggerPackage.loggerName !== logger.loggerName)
+      this.loggerPackages = this.loggerPackages.filter((loggerPackage) => loggerPackage.loggerName !== logger.loggerName)
     },
     socketConnect () {
       const readyCallback = () => {
         this.stateConnected = true
         this.stateProcessing = true
         this.socket.send('{"sequenceStart": ' + this.lastSequence + '}')
-        this.$nextTick(() => this.scrollToBottom())
+        nextTick(() => this.scrollToBottom())
       }
 
       const messageCallback = (event) => {
@@ -704,7 +716,7 @@ export default {
     },
     onRowClick (entityId) {
       this.selectedId = entityId
-      this.$f7.popup.open('#logdetails-popup')
+      f7.popup.open('#logdetails-popup')
     },
     addLogEntry (logEntry) {
       this.lastSequence = Math.max(this.lastSequence, logEntry.sequence)
@@ -748,7 +760,7 @@ export default {
       if (!this.batchUpdatePending) {
         this.batchUpdatePending = true
         requestAnimationFrame(() => {
-          this.batchLogs.forEach(entry => {
+          this.batchLogs.forEach((entry) => {
             this.tableData.push(entry)
 
             if (entry.visible) {
@@ -769,9 +781,9 @@ export default {
           })
           this.batchLogs.length = 0
           if (this.autoScroll) {
-            this.$nextTick(() => this.scrollToBottom())
+            nextTick(() => this.scrollToBottom())
           } else {
-            this.$nextTick(() => this.handleScroll())
+            nextTick(() => this.handleScroll())
           }
 
           this.batchUpdatePending = false
@@ -960,7 +972,7 @@ export default {
         // v-clipboard works without https, but it can only copy plain text
         copyToClipboard(logs, {
           onSuccess: () => {
-            this.$f7.toast.create({
+            f7.toast.create({
               text: 'Table copied as text to clipboard',
               destroyOnClose: true,
               closeTimeout: 2000
@@ -992,7 +1004,7 @@ export default {
       navigator.clipboard
         .write([clipboardItem])
         .then(() => {
-          this.$f7.toast.create({
+          f7.toast.create({
             text: 'Table copied as HTML to clipboard',
             destroyOnClose: true,
             closeTimeout: 2000
@@ -1041,10 +1053,10 @@ export default {
     openColorPopover (index, event) {
       this.currentHighlightColorItemIndex = index
       this.currentHighlightColor = this.highlightFilters[index].color
-      this.$f7.popover.open('#color-picker-popover', event.target)
+      f7.popover.open('#color-picker-popover', event.target)
     },
     selectHighlightColor (color) {
-      this.$f7.popover.close('#color-picker-popover')
+      f7.popover.close('#color-picker-popover')
       if (color !== null) {
         this.highlightFilters[this.currentHighlightColorItemIndex].color = color
       }

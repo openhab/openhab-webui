@@ -6,7 +6,8 @@
     <f7-row>
       <f7-col width="100" class="cell-slider display-flex flex-direction-column justify-content-center">
         <slot name="beforeSlider">
-          <div v-if="context.component.slots" class="margin-top display-flex flex-direction-column justify-content-center">
+          <div v-if="context.component.slots"
+               class="margin-top display-flex flex-direction-column justify-content-center">
             <generic-widget-component v-for="(slotComponent, idx) in context.component.slots.beforeSlider"
                                       :context="childContext(slotComponent)"
                                       :key="'beforeSlider-' + idx"

@@ -75,9 +75,9 @@ export default {
   },
   mounted () {
     if (this.propertyMode) {
-      this.$set(this.expandedTags, 'Property', true)
+      this.expandedTags.Property = true
     } else if (this.classMode && this.selectedClass) {
-      this.$set(this.expandedTags, this.selectedClass, true)
+      this.expandedTags[this.selectedClass] = true
     }
   }
 }

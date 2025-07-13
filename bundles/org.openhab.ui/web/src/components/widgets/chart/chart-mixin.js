@@ -1,6 +1,9 @@
-import * as dayjs from 'dayjs'
+import dayjs, { extend } from 'dayjs'
 import IsoWeek from 'dayjs/plugin/isoWeek'
-dayjs.extend(IsoWeek)
+
+extend(IsoWeek)
+
+import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
 // Axis components
 import OhTimeAxis from './axis/oh-time-axis'
@@ -65,7 +68,7 @@ export default {
     options () {
       if (!this.config) return {}
       const chartConfig = this.config.options || {}
-      if (!chartConfig.backgroundColor && this.$f7.data.themeOptions.dark === 'dark') {
+      if (!chartConfig.backgroundColor && useUIOptionsStore().getDarkMode() === 'dark') {
         chartConfig.backgroundColor = '#121212'
       }
       return {
@@ -147,10 +150,10 @@ export default {
     }
   },
   methods: {
-    getSeriesPromises (component) {
+    async getSeriesPromises (component) {
       const getter = (data) => seriesComponents[component.component].get(component, data.map((d) => d[1]), this.startTime, this.endTime, this)
 
-      const neededItems = seriesComponents[component.component].neededItems(component, this).filter(i => !!i)
+      const neededItems = seriesComponents[component.component].neededItems(component, this).filter((i) => !!i)
       if (neededItems.length === 0) {
         return Promise.resolve(getter([]))
       }

@@ -1,14 +1,16 @@
 <template>
   <round-slider v-bind="resolvedConfig"
                 :value="computedValue"
-                :style="`stroke-dasharray: ${(config.dottedPath) ? config.dottedPath : 0}`"
+                :style="`stroke-dasharray: ${config.dottedPath ? config.dottedPath : 0}`"
                 mouseScrollAction="true"
                 @input="onChange"
-                @click.native.stop="sendCommandDebounced(value, true)"
-                @touchend.native.stop="sendCommandDebounced(value, true)" />
+                @click.stop="sendCommandDebounced(value, true)"
+                @touchend.stop="sendCommandDebounced(value, true)" />
 </template>
 
 <script>
+import { defineAsyncComponent } from 'vue'
+
 import mixin from '../widget-mixin'
 import slideMixin from './slide-mixin'
 import { OhKnobDefinition } from '@/assets/definitions/widgets/system'
@@ -17,7 +19,7 @@ export default {
   mixins: [mixin, slideMixin],
   components: {
     // See https://roundsliderui.com/document.html for docs
-    'RoundSlider': () => import(/* webpackChunkName: "vue-round-slider" */ 'vue-round-slider')
+    RoundSlider: defineAsyncComponent(() => import(/* webpackChunkName: "vue-round-slider" */ 'vue-round-slider'))
   },
   widget: OhKnobDefinition,
   computed: {

@@ -3,7 +3,7 @@
     <item-state-preview v-if="model.item.created !== false"
                         :item="model.item"
                         :context="context"
-                        :key="$utils.id()" />
+                        :key="utils.id()" />
 
     <f7-block-title>Item</f7-block-title>
     <item-details :model="model"
@@ -26,10 +26,13 @@
 </template>
 
 <script>
+import { utils } from 'framework7'
+
 import ItemStatePreview from '@/components/item/item-state-preview.vue'
 import ItemDetails from '@/components/model/item-details.vue'
 import MetadataMenu from '@/components/item/metadata/item-metadata-menu.vue'
 import LinkDetails from '@/components/model/link-details.vue'
+
 
 export default {
   props: {
@@ -45,7 +48,11 @@ export default {
     LinkDetails
   },
   emits: ['item-updated', 'item-created', 'item-removed', 'cancel-create'],
-  methods: {
-  }
+  setup () {
+    return {
+      utils
+    }
+  },
+  methods: {}
 }
 </script>

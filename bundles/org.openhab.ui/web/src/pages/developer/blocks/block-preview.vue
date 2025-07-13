@@ -3,7 +3,8 @@
     <code v-if="definitionError" class="definition-error text-color-red" ref="blockPreview">
       {{ definitionError }}
     </code>
-    <f7-menu v-if="blocksDefinition && blocksDefinition.slots && blocksDefinition.slots.blocks" style="position: absolute; right: 20px; top: 20px">
+    <f7-menu v-if="blocksDefinition && blocksDefinition.slots && blocksDefinition.slots.blocks">
+      style="position: absolute; right: 20px; top: 20px"
       <f7-menu-item style="margin-left: auto" :text="currentBlock" dropdown>
         <f7-menu-dropdown right>
           <f7-menu-dropdown-item
@@ -46,17 +47,25 @@
 
 <script>
 import Blockly from 'blockly'
-import Vue from 'vue'
 
-Vue.config.ignoredElements = ['field', 'block', 'category', 'xml', 'mutation', 'value', 'sep']
+import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
+import { mapStores } from 'pinia'
+
+// Vue is configured to treat these elements as custom elements: ['field', 'block', 'category', 'xml', 'mutation', 'value', 'sep']
+
 export default {
-  props: ['blocksDefinition'],
+  props: {
+    blocksDefinition: Object
+  },
   data () {
     return {
       workspace: null,
       definitionError: null,
       currentBlock: null
     }
+  },
+  computed: {
+    ...mapStores(useUIOptionsStore)
   },
   mounted () {
     this.initWorkspace()
@@ -70,7 +79,7 @@ export default {
   methods: {
     initWorkspace () {
       this.workspace = Blockly.inject(this.$refs.blockPreview, {
-        theme: (this.$f7.data.themeOptions.dark === 'dark') ? 'dark' : undefined,
+        theme: this.uiOptionsStore.getDarkMode() === 'dark' ? 'dark' : undefined,
         trashcan: false,
         readOnly: false
       })

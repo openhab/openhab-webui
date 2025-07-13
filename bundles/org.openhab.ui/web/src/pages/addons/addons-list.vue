@@ -1,12 +1,14 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="addonPopupOpened = false" @page:afterout="stopEventSource">
-    <f7-navbar :title="'Add-ons: ' + addonsLabels[addonType]"
-               back-link="Settings"
-               back-link-url="/settings/"
-               back-link-force>
-               <!-- <f7-nav-right>
-        <f7-link href="add">Add</f7-link>
-      </f7-nav-right>-->
+    <f7-navbar>
+      <f7-nav-left>
+        <f7-link icon-f7="chevron_left" href="/settings/">
+          Settings
+        </f7-link>
+      </f7-nav-left>
+      <f7-nav-title>
+        {{ 'Add-ons: ' + addonsLabels[addonType] }}
+      </f7-nav-title>
     </f7-navbar>
     <f7-block form class="block-narrow">
       <f7-col>
@@ -35,7 +37,14 @@
                         :header="addon.uid"
                         :footer="addon.version"
                         :after="currentlyUninstalling.indexOf(addon.uid) >= 0 ? 'Uninstalling...' : ''"
-                        :title="addon.label" />
+                        :title="addon.label">
+                        <!-- <f7-swipeout-actions left>
+              <f7-swipeout-button v-if="addon.link" color="blue">Documentation</f7-swipeout-button>
+              <f7-swipeout-button color="red">Uninstall</f7-swipeout-button>
+            </f7-swipeout-actions> -->
+                        <!-- <f7-icon icon="demo-list-icon"></f7-icon> -->
+          </f7-list-item>
+          <!-- <f7-block-footer slot="after-list">Swipe right for actions.</f7-block-footer> -->
         </f7-list>
       </f7-col>
     </f7-block>
@@ -44,13 +53,12 @@
                                :title="'No ' + addonsLabels[addonType] + ' installed yet'"
                                text="addons.text" />
     </f7-block>
-    <f7-fab position="right-bottom"
-            slot="fixed"
-            color="blue"
-            href="add">
-      <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
-      <f7-icon ios="f7:close" md="material:close" aurora="f7:close" />
-    </f7-fab>
+    <template #fixed>
+      <f7-fab position="right-bottom" color="blue" href="add">
+        <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
+        <f7-icon ios="f7:close" md="material:close" aurora="f7:close" />
+      </f7-fab>
+    </template>
     <!-- <addon-details-popup
       :addon-id="currentAddonId"
       :opened="addonPopupOpened"
@@ -66,12 +74,14 @@
 </template>
 
 <script>
-// import AddonDetailsPopup from './addon-details-popup.vue'
+import { f7 } from 'framework7-vue'
+
 import AddonDetailsSheet from './addon-details-sheet.vue'
+import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 
 export default {
   components: {
-    'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue'),
+    'empty-state-placeholder': EmptyStatePlaceholder,
     AddonDetailsSheet
   },
   props: {
@@ -135,12 +145,12 @@ export default {
         switch (topicParts[3]) {
           case 'installed':
           case 'uninstalled':
-            this.$f7.emit('addonChange', null)
+            f7.emit('addonChange', null)
             this.stopEventSource()
             this.load()
             break
           case 'failed':
-            this.$f7.toast.create({
+            f7.toast.create({
               text: `Uninstallation of add-on ${topicParts[2]} failed`,
               closeButton: true,
               destroyOnClose: true

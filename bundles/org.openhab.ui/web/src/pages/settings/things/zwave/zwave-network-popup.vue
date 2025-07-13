@@ -1,7 +1,7 @@
 <template>
   <f7-popup tablet-fullscreen
             close-on-escape
-            @popup:opened="() => showNetwork = true"
+            @popup:opened="() => (showNetwork = true)"
             @popup:closed="$emit('closed')">
     <f7-page class="analyzer-content">
       <f7-navbar title="Z-Wave Network Map">
@@ -17,12 +17,14 @@
 </template>
 
 <script>
+import { defineAsyncComponent } from 'vue'
+
 export default {
   props: {
     bridgeUID: String
   },
   components: {
-    'zwave-network': () => import(/* webpackChunkName: "zwave-network" */ '@/components/thing/zwave/zwave-network.vue')
+    'zwave-network': defineAsyncComponent(() => import(/* webpackChunkName: "zwave-network" */ '@/components/thing/zwave/zwave-network.vue'))
   },
   emits: ['closed'],
   data () {

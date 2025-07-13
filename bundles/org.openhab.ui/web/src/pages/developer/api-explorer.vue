@@ -1,9 +1,18 @@
 <template>
   <f7-page name="apiexplorer" @page:afterin="onPageAfterIn">
-    <f7-navbar title="API Explorer"
-               back-link="Developer Tools"
-               back-link-url="/developer/"
-               back-link-force />
+    <f7-navbar>
+      <f7-nav-left>
+        <f7-link icon-f7="chevron_left" href="/developer/">
+          Developer Tools
+        </f7-link>
+      </f7-nav-left>
+      <f7-nav-title>
+        API Explorer
+      </f7-nav-title>
+      <f7-nav-right>
+        <developer-dock-icon />
+      </f7-nav-right>
+    </f7-navbar>
     <f7-block>
       <f7-col>
         <f7-card id="swaggerUi" />
@@ -70,6 +79,8 @@
     color var(--f7-list-item-after-text-color) !important
     font-size var(--f7-list-item-footer-font-size) !important
     font-family var(--f7-font-family) !important
+  .opblock-control-arrow
+    width: 50px           // fix for width
   .parameter__name
     font-weight bold
     white-space nowrap
@@ -105,7 +116,7 @@
   .model-title
     color var(--f7-text-color) !important
     font-size var(--f7-list-font-size) !important
-.theme-dark #swaggerUi
+.dark #swaggerUi
   .loading, .model-toggle, svg
     filter invert(1) opacity(0.5)
 </style>
@@ -118,7 +129,7 @@ export default {
   methods: {
     onPageAfterIn () {
       const swaggerCss = import(/* webpackChunkName: "swagger-css" */ 'swagger-ui-dist/swagger-ui.css')
-      const swaggerModule = import(/* webpackChunkName: "swagger" */'swagger-ui-dist')
+      const swaggerModule = import(/* webpackChunkName: "swagger" */ 'swagger-ui-dist')
       const refreshToken = this.refreshAccessToken()
 
       Promise.all([swaggerModule, swaggerCss, refreshToken]).then((results) => {

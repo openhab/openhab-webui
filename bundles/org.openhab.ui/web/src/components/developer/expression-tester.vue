@@ -7,12 +7,11 @@
       <f7-list-input type="textarea"
                      title="Expression"
                      placeholder="Try '=2+3' or '=items.MyItem.state'"
-                     :value="testExpression"
-                     @input="(evt) => testExpression = evt.target.value" />
+                     v-model:value="testExpression" />
     </f7-list>
-    <f7-block strong v-if="testExpression">
+    <f7-block strong v-if="result">
       <div :class="config.class" :style="config.style">
-        {{ (config.text === undefined) ? 'undefined' : config.text }}
+        {{ result }}
       </div>
     </f7-block>
   </f7-block>
@@ -29,22 +28,8 @@ export default {
     }
   },
   computed: {
-    context () {
-      return {
-        component: {
-          config: {
-            style: {
-              fontFamily: 'monospace'
-            },
-            noBorder: true,
-            noShadow: true,
-            text: this.testExpression.toString()
-          }
-        },
-        editmode: true,
-        vars: {},
-        store: this.$store.getters.trackedItems
-      }
+    result () {
+      return this.evaluateExpression('tester', this.testExpression)
     }
   }
 }

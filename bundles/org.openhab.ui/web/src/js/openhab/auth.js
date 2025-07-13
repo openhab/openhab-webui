@@ -1,5 +1,6 @@
-import Framework7 from 'framework7/framework7-lite.esm.bundle.js'
-import store from '@/js/store'
+import { utils } from 'framework7'
+
+import { useUserStore } from '@/js/stores/useUserStore'
 
 /**
  * The current access token
@@ -28,26 +29,31 @@ export function getRequireToken () { return requireToken }
 
 if (document.cookie.indexOf('X-OPENHAB-AUTH-HEADER') >= 0) tokenInCustomHeader = true
 
-export function authorize (setup) {
+export async function authorize (setup) {
   import('pkce-challenge').then((PkceChallenge) => {
     const pkceChallenge = PkceChallenge.default()
-    const authState = (setup ? 'setup-' : '') + Framework7.utils.id()
+    const authState = (setup ? 'setup-' : '') + utils.id()
 
     sessionStorage.setItem('openhab.ui:codeVerifier', pkceChallenge.code_verifier)
     sessionStorage.setItem('openhab.ui:authState', authState)
 
-    window.location = '/auth' +
+    window.location =
+      '/auth' +
       '?response_type=code' +
-      '&client_id=' + encodeURIComponent(window.location.origin) +
-      '&redirect_uri=' + encodeURIComponent(window.location.origin) +
+      '&client_id=' +
+      encodeURIComponent(window.location.origin) +
+      '&redirect_uri=' +
+      encodeURIComponent(window.location.origin) +
       '&scope=admin' +
       '&code_challenge_method=S256' +
-      '&code_challenge=' + encodeURIComponent(pkceChallenge.code_challenge) +
-      '&state=' + authState
+      '&code_challenge=' +
+      encodeURIComponent(pkceChallenge.code_challenge) +
+      '&state=' +
+      authState
   })
 }
 
-export function setBasicCredentials (username, password) {
+export async function setBasicCredentials (username, password) {
   if (username && password) {
     console.log('Using passed credentials')
     basicCredentials = { id: username, password }
@@ -108,15 +114,15 @@ export function clearAccessToken () {
 }
 
 export function isLoggedIn () {
-  return store.getters.user !== null
+  return useUserStore().user !== null
 }
 
 export function isAdmin () {
-  const user = store.getters.user
+  const user = useUserStore().user
   return user && user.roles && user.roles.indexOf('administrator') >= 0
 }
 
-export function enforceAdminForRoute (to, from, resolve, reject) {
+export function enforceAdminForRoute ({ resolve, reject }) {
   if (!isAdmin()) {
     reject()
     authorize()

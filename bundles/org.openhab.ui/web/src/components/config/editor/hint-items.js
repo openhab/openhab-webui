@@ -1,5 +1,4 @@
 import { findParent } from './yaml-utils'
-import { filterPartialCompletions, addTooltipHandlers } from './hint-utils'
 import * as Types from '@/assets/item-types.js'
 import Metadata from '@/assets/definitions/metadata/namespaces'
 import api from '@/js/openhab/api'
@@ -23,7 +22,7 @@ function hintItemTypes (cm, line) {
       }
     })
   }
-  ret.list = filterPartialCompletions(cm, line, ret.list, 'text', /^type:( )?/)
+  // ret.list = filterPartialCompletions(cm, line, ret.list, 'text', /^type:( )?/)
   if (line.indexOf('Number:') !== -1) {
     ret.list = dimensions.map((t) => {
       return {
@@ -31,31 +30,33 @@ function hintItemTypes (cm, line) {
         displayText: t
       }
     })
-    ret.list = filterPartialCompletions(cm, line, ret.list, 'text', /^type: Number:/)
+    // ret.list = filterPartialCompletions(cm, line, ret.list, 'text', /^type: Number:/)
   }
-  addTooltipHandlers(cm, ret)
+  // addTooltipHandlers(cm, ret)
   return ret
 }
 
 function hintItems (cm, line, onlyGroups) {
   if (!cm.state.$oh) return
-  const promise = (itemsCache) ? Promise.resolve(itemsCache) : cm.state.$oh.api.get('/rest/items')
+  const promise = itemsCache ? Promise.resolve(itemsCache) : cm.state.$oh.api.get('/rest/items')
   return promise.then((data) => {
     if (!itemsCache) itemsCache = data
     if (onlyGroups) {
       data = data.filter((item) => item.type === 'Group')
     }
     let ret = {
-      list: data.map((item) => {
-        return {
-          text: item.name,
-          displayText: item.name,
-          description: `${(item.label) ? item.label + ' ' : ''}(${item.type})<br />${item.state}`
-        }
-      }).sort((i1, i2) => i1.text.localeCompare(i2.text))
+      list: data
+        .map((item) => {
+          return {
+            text: item.name,
+            displayText: item.name,
+            description: `${item.label ? item.label + ' ' : ''}(${item.type})<br />${item.state}`
+          }
+        })
+        .sort((i1, i2) => i1.text.localeCompare(i2.text))
     }
-    ret.list = filterPartialCompletions(cm, line, ret.list)
-    addTooltipHandlers(cm, ret)
+    // ret.list = filterPartialCompletions(cm, line, ret.list)
+    // addTooltipHandlers(cm, ret)
     return ret
   })
 }
@@ -70,8 +71,8 @@ function hintGroupTypes (cm, line) {
       }
     })
   }
-  ret.list = filterPartialCompletions(cm, line, ret.list, 'text', /^groupType:( )?/)
-  addTooltipHandlers(cm, ret)
+  // ret.list = filterPartialCompletions(cm, line, ret.list, 'text', /^groupType:( )?/)
+  // addTooltipHandlers(cm, ret)
   return ret
 }
 
@@ -85,8 +86,8 @@ function hintMetadata (cm, line) {
       }
     })
   }
-  ret.list = filterPartialCompletions(cm, line, ret.list)
-  addTooltipHandlers(cm, ret)
+  // ret.list = filterPartialCompletions(cm, line, ret.list)
+  // addTooltipHandlers(cm, ret)
   return ret
 }
 
@@ -110,7 +111,7 @@ export default function hint (cm, option, mode) {
     ret = hintMetadata(cm, line)
   }
 
-  if (!(ret instanceof Promise)) addTooltipHandlers(cm, ret)
+  // if (!(ret instanceof Promise)) addTooltipHandlers(cm, ret)
 
   return ret
 }

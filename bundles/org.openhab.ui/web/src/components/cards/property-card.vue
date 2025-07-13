@@ -47,6 +47,8 @@ import itemDefaultListComponent, { itemPathLabel } from '@/components/widgets/st
 import CardMixin from './card-mixin'
 import ModelCard from './model-card.vue'
 
+import { useStatesStore } from '@/js/stores/useStatesStore'
+
 export default {
   mixins: [mixin, CardMixin],
   props: {
@@ -73,7 +75,7 @@ export default {
       }
 
       return {
-        store: this.$store.getters.trackedItems,
+        store: useStatesStore().trackedItems,
         component: {
           component: 'oh-list',
           config: {

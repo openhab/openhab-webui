@@ -36,8 +36,8 @@
                              :model="node"
                              :parentNode="model"
                              :rootNode="rootNode"
-                             @selected="(event) => $emit('selected', event)"
-                             :selected="selected"
+                             @selected="event => $emit('selected', event)"
+                             :selected="node.selected"
                              :includeItemName="includeItemName"
                              :includeItemTags="includeItemTags"
                              :canDragDrop="canDragDrop"
@@ -46,38 +46,41 @@
                              @reload="$emit('reload')" />
       </template>
     </draggable>
-    <div slot="label" class="semantic-class">
-      {{ className }}
-      <template v-if="includeItemTags">
-        <div class="semantic-class chip"
-             v-for="tag in getNonSemanticTags(model.item)"
-             :key="tag"
-             style="height: 16px; margin-left: 4px">
-          <div class="chip-media bg-color-blue" style="height: 16px; width: 16px">
-            <f7-icon slot="media"
-                     ios="f7:tag_fill"
-                     md="material:label"
-                     aurora="f7:tag_fill"
-                     style="font-size: 8px; height: 16px; line-height: 16px" />
+    <template #label>
+      <div class="semantic-class">
+        {{ className }}
+        <template v-if="includeItemTags">
+          <div class="semantic-class chip"
+               v-for="tag in getNonSemanticTags(model.item)"
+               :key="tag"
+               style="height: 16px; margin-left: 4px">
+            <div class="chip-media bg-color-blue" style="height: 16px; width: 16px">
+              <f7-icon ios="f7:tag_fill"
+                       md="material:label"
+                       aurora="f7:tag_fill"
+                       style="font-size: 8px; height: 16px; line-height: 16px" />
+            </div>
+            <div class="chip-label" style="height: 16px; line-height: 16px">
+              {{ tag }}
+            </div>
           </div>
-          <div class="chip-label" style="height: 16px; line-height: 16px">
-            {{ tag }}
-          </div>
-        </div>
-      </template>
-    </div>
-    <f7-checkbox slot="content-start"
-                 v-if="model.checkable"
-                 :checked="model.checked === true"
-                 :disabled="model.disabled"
-                 @change="check" />
+        </template>
+      </div>
+    </template>
+    <template #content-start>
+      <f7-checkbox v-if="model.checkable"
+                   :checked="model.checked ? true : null"
+                   :disabled="model.disabled ? true : null"
+                   @change="check" />
+    </template>
   </f7-treeview-item>
 </template>
 
 <script>
+import { VueDraggableNext as Draggable } from 'vue-draggable-next'
+
 import ItemMixin from '@/components/item/item-mixin'
 import ModelDragDropMixin from '@/pages/settings/model/model-dragdrop-mixin'
-import Draggable from 'vuedraggable'
 
 export default {
   name: 'model-treeview-item',
@@ -127,11 +130,9 @@ export default {
       }
     },
     select (event) {
-      let self = this
-      if (self.dragDropActive) return // avoid opening item properties during drag drop
-      let $ = self.$$
-      if ($(event.target).is('.treeview-toggle')) return
-      if ($(event.target).is('.checkbox') || $(event.target).is('.icon-checkbox') || $(event.target).is('input')) return
+      if (this.dragDropActive) return // avoid opening item properties during drag drop
+      if (this.$$(event.target).is('.treeview-toggle')) return
+      if (this.$$(event.target).is('.checkbox') || this.$$(event.target).is('.icon-checkbox') || this.$$(event.target).is('input')) return
       this.$emit('selected', this.model)
       if (this.model.checkable && !this.children.length) this.check({ target: { checked: !this.model.checked } })
     },

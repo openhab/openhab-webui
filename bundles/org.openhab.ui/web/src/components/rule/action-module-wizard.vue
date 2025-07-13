@@ -46,10 +46,12 @@
                     @click="updateItemEventType('update')" />
     </f7-list>
     <f7-list>
-      <item-picker :value="currentModule.configuration.itemName"
-                   title="Item"
-                   @input="(val) => $set(currentModule.configuration, 'itemName', val)"
-                   @itemSelected="(value) => { $set(this, 'currentItem', value); updateItemEventType('command') }" />
+      <f7-list-group>
+        <item-picker :value="currentModule.configuration.itemName"
+                     title="Item"
+                     @input="(val) => currentModule.configuration.itemName = val"
+                     @item-selected="(value) => { this.currentItem = value; updateItemEventType('command') }" />
+      </f7-list-group>
     </f7-list>
     <f7-list>
       <f7-list-input
@@ -58,14 +60,14 @@
         name="command"
         type="text"
         :value="currentModule.configuration.command"
-        @blur="(evt) => $set(currentModule.configuration, 'command', evt.target.value)" />
+        @blur="(evt) => currentModule.configuration.command = evt.target.value" />
       <f7-list-input
         v-else-if="itemEventType === 'update'"
         label="to state"
         name="state"
         type="text"
         :value="currentModule.configuration.state"
-        @blur="(evt) => $set(currentModule.configuration, 'state', evt.target.value)" />
+        @blur="(evt) => currentModule.configuration.state = evt.target.value" />
     </f7-list>
     <f7-list v-if="itemEventType === 'command' && commandSuggestions.length">
       <f7-list-item v-for="suggestion in commandSuggestions"
@@ -73,10 +75,10 @@
                     :checked="currentModule.configuration.command === suggestion.command ? true : null"
                     :key="suggestion.command"
                     :title="suggestion.label"
-                    @click="$set(currentModule.configuration, 'command', suggestion.command)" />
+                    @click="currentModule.configuration.command = suggestion.command" />
     </f7-list>
     <!-- <f7-block v-if="itemEventType === 'command' && currentItem && (currentItem.type === 'Dimmer' || currentItem.type === 'Rollershutter' || (currentItem.type === 'Number' && currentItem.stateDescription && currentItem.stateDescription.minimum !== undefined))">
-      <f7-range :value="currentModule.configuration.command" @range:changed="(val) => $set(currentModule.configuration, 'command', val)"
+      <f7-range :value="currentModule.configuration.command" @range:changed="(val) => currentModule.configuration.command = val"
         :min="(currentItem.stateDescription && currentItem.stateDescription.minimum) ? currentItem.stateDescription.minimum : 0"
         :max="(currentItem.stateDescription && currentItem.stateDescription.maximum) ? currentItem.stateDescription.maximum : 100"
         :step="(currentItem.stateDescription && currentItem.stateDescription.step) ? currentItem.stateDescription.step : 1"
@@ -95,14 +97,15 @@
                        sliderValue: true,
                        sliderValueEditable: true,
                        sliderLabel: true,
-                       formatValue: colorToCommand
+                       formatValue: colorToCommand,
                      }"
                      :value="commandToColor()"
                      @change="updateColorCommand">
-        <i slot="media"
-           style="width: 32px; height: 32px"
-           class="icon demo-list-icon"
-           id="color-picker-value" />
+        <template #media>
+          <i style="width: 32px; height: 32px"
+             class="icon demo-list-icon"
+             id="color-picker-value" />
+        </template>
       </f7-list-input>
     </f7-list>
   </f7-block>
@@ -117,10 +120,9 @@
                     :footer="!isJsAvailable ? 'You need to install the JavaScript Scripting addon before you will be able to run' : undefined "
                     link=""
                     @click="scriptLanguagePicked('blockly')">
-        <img src="@/images/blockly.svg"
-             height="32"
-             width="32"
-             slot="media">
+        <template #media>
+          <img src="@/images/blockly.svg" height="32" width="32">
+        </template>
       </f7-list-item>
     </f7-list>
     <f7-block-footer class="padding-horizontal margin-vertical">
@@ -135,7 +137,9 @@
                     :footer="language.contentType"
                     link=""
                     @click="scriptLanguagePicked(language.contentType)">
-        <span slot="media" class="item-initial">{{ language.name[0] }}</span>
+        <template #media>
+          <span class="item-initial">{{ language.name[0] }}</span>
+        </template>
       </f7-list-item>
     </f7-list>
     <f7-block-footer class="padding-horizontal margin-bottom">
@@ -192,10 +196,12 @@
   height 7.5rem
   .link
     color var(--f7-text-color)
-
 </style>
 
 <script>
+import { nextTick } from 'vue'
+import { f7 } from 'framework7-vue'
+
 import ModuleWizard from './module-wizard-mixin'
 import ItemPicker from '@/components/config/controls/item-picker.vue'
 import ConfigSheet from '@/components/config/config-sheet.vue'
@@ -203,9 +209,10 @@ import ConfigSheet from '@/components/config/config-sheet.vue'
 export default {
   mixins: [ModuleWizard],
   props: {
-    currentModule: Object,
-    currentModuleType: Object,
-    moduleTypes: Object
+    'currentModule': Object,
+    'currentModuleType': Object,
+    'moduleTypes': Object,
+    f7router: Object
   },
   components: {
     ItemPicker,
@@ -254,13 +261,13 @@ export default {
       this.category = 'script'
       let moduleType = this.moduleTypes.find((t) => t.uid === 'script.ScriptAction')
       if (moduleType) {
-        this.$set(this, 'languages', moduleType.configDescriptions.find((c) => c.name === 'type').options.map((l) => {
+        this.languages = moduleType.configDescriptions.find((c) => c.name === 'type').options.map((l) => {
           return {
             contentType: l.value,
             name: l.label.split(' (')[0],
             version: l.label.split(' (')[1].replace(')', '')
           }
-        }))
+        })
       }
     },
     chooseRulesCategory () {
@@ -275,12 +282,12 @@ export default {
       this.itemEventType = type
       switch (type) {
         case 'command':
-          if (this.currentItem) this.$set(this.currentModule, 'configuration', Object.assign({}, { itemName: this.currentItem.name }))
           this.$emit('type-select', 'core.ItemCommandAction', true)
+          if (this.currentItem) this.currentModule.configuration = Object.assign({}, { itemName: this.currentItem.name })
           break
         case 'update':
-          if (this.currentItem) this.$set(this.currentModule, 'configuration', Object.assign({}, { itemName: this.currentItem.name }))
           this.$emit('type-select', 'core.ItemStateUpdateAction', true)
+          if (this.currentItem) this.currentModule.configuration = Object.assign({}, { itemName: this.currentItem.name })
           break
       }
     },
@@ -307,7 +314,7 @@ export default {
       }
     },
     updateColorCommand (evt) {
-      this.$set(this.currentModule.configuration, 'command', evt.target.value)
+      this.currentModule.configuration.command = evt.target.value
     },
     commandToColor (evt) {
       if (!this.currentModule.configuration.command || this.currentModule.configuration.command.split(',').length !== 3) return null
@@ -323,18 +330,18 @@ export default {
       hsb[1] = Math.round(hsb[1] * 100)
       hsb[2] = Math.round(hsb[2] * 100)
       return hsb
-      // this.$set(this.currentModule.configuration, 'command', hsb.join(','))
+      // this.currentModule.configuration.command = hsb.join(',')
     },
     scriptLanguagePicked (value) {
-      this.$nextTick(() => {
-        this.$emit('startScript', value)
-        this.$emit('type-select', 'script.ScriptAction')
+      this.$emit('type-select', 'script.ScriptAction')
+      nextTick(() => {
+        this.$emit('start-script', value)
       })
     },
     itemPicked (value) {
       this.category = 'item'
       this.currentItem = value
-      this.$set(this.currentModule.configuration, 'itemName', value.name)
+      this.currentModule.configuration.itemName = value.name
       this.$emit('type-select', 'core.ItemCommandAction')
     }
   }

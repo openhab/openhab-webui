@@ -2,18 +2,19 @@
   <f7-page @page:afterin="onPageAfterIn" name="channel-edit">
     <f7-navbar :title="channel.label" :subtitle="thing.label" back-link="Cancel">
       <f7-nav-right>
-        <f7-link v-if="!thing.editable"
-                 slot="right"
-                 icon-f7="lock_fill"
-                 icon-only
-                 tooltip="Channels of Things defined in a .things file are not editable from this screen" />
-        <f7-link @click="save()"
-                 v-else-if="$theme.md"
-                 icon-md="material:save"
-                 icon-only />
-        <f7-link @click="save()" v-else>
-          Done
-        </f7-link>
+        <template #right>
+          <f7-link v-if="!thing.editable"
+                   icon-f7="lock_fill"
+                   icon-only
+                   tooltip="Channels of Things defined in a .things file are not editable from this screen" />
+          <f7-link v-else-if="theme.md"
+                   @click="save()"
+                   icon-md="material:save"
+                   icon-only />
+          <f7-link @click="save()" v-else>
+            Done
+          </f7-link>
+        </template>
       </f7-nav-right>
     </f7-navbar>
     <f7-block class="block-narrow">
@@ -44,6 +45,8 @@
 </template>
 
 <script>
+import { f7, theme } from 'framework7-vue'
+
 import ChannelGeneralSettings from '@/pages/settings/things/channel/channel-general-settings.vue'
 import ConfigSheet from '@/components/config/config-sheet.vue'
 
@@ -57,7 +60,12 @@ export default {
     thingType: Object,
     channel: Object,
     channelType: Object,
-    channelId: String
+    channelId: String,
+    f7router: Object,
+    f7route: Object
+  },
+  setup () {
+    return { theme }
   },
   data () {
     return {
@@ -81,10 +89,10 @@ export default {
       let finalChannel = Object.assign({}, this.channel, {
         configuration: this.config
       })
-      this.$f7route.route.context.finalChannel = finalChannel
-      this.$f7router.back()
+      this.f7route.route.context.finalChannel = finalChannel
+      this.f7router.back()
       // this.$emit('channelAddComplete', finalChannel)
-      // this.$f7.view.main.emit('complete', finalChannel)
+      // f7.view.main.emit('complete', finalChannel)
     }
   }
 }

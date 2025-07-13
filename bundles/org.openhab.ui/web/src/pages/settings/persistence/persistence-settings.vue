@@ -1,16 +1,21 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
-    <f7-navbar title="Persistence Settings"
-               back-link="Settings"
-               back-link-url="/settings/"
-               back-link-force>
+    <f7-navbar>
+      <f7-nav-left>
+        <f7-link icon-f7="chevron_left" href="/settings/">
+          Settings
+        </f7-link>
+      </f7-nav-left>
+      <f7-nav-title>
+        Persistence Settings
+      </f7-nav-title>
       <f7-nav-right v-if="persistenceList.length > 0">
         <developer-dock-icon />
-        <f7-link @click="save()"
-                 v-if="$theme.md"
+        <f7-link v-if="theme.md"
+                 @click="save()"
                  icon-md="material:save"
                  icon-only />
-        <f7-link @click="save()" v-if="!$theme.md">
+        <f7-link v-if="!theme.md" @click="save()">
           Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
         </f7-link>
       </f7-nav-right>
@@ -44,13 +49,14 @@
           <f7-list-item link="/addons/persistence/"
                         no-chevron
                         media-item
-                        :color="($theme.dark) ? 'black' : 'white'"
+                        :color="theme.dark ? 'black' : 'white'"
                         subtitle="Install more persistence add-ons">
-            <f7-icon slot="media"
-                     color="green"
-                     aurora="f7:plus_circle_fill"
-                     ios="f7:plus_circle_fill"
-                     md="material:control_point" />
+            <template #media>
+              <f7-icon color="green"
+                       aurora="f7:plus_circle_fill"
+                       ios="f7:plus_circle_fill"
+                       md="material:control_point" />
+            </template>
           </f7-list-item>
         </f7-list>
       </f7-col>
@@ -63,9 +69,9 @@
                    fill
                    color="blue"
                    external
-                   :href="`${$store.state.websiteUrl}/link/persistence`"
+                   :href="`${runtimeStore.websiteUrl}/link/persistence`"
                    target="_blank"
-                   v-t="'home.overview.button.documentation'" />
+                   :text="$t('home.overview.button.documentation')" />
         <span style="width: 8px" />
         <f7-button large
                    fill
@@ -86,15 +92,24 @@
 </style>
 
 <script>
+import { nextTick } from 'vue'
+import { f7, theme } from 'framework7-vue'
+import { mapStores } from 'pinia'
+
 import DirtyMixin from '../dirty-mixin'
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
+
+import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
 export default {
   mixins: [DirtyMixin],
   components: {
     EmptyStatePlaceholder,
     ConfigSheet
+  },
+  setup () {
+    return { theme }
   },
   data () {
     return {
@@ -105,6 +120,9 @@ export default {
       configDescriptions: null,
       config: null
     }
+  },
+  computed: {
+    ...mapStores(useRuntimeStore)
   },
   watch: {
     config: {
@@ -133,15 +151,15 @@ export default {
       this.loading = true
 
       this.$oh.api.get('/rest/persistence').then((data) => {
-        this.$set(this, 'persistenceList', data)
+        this.persistenceList = data
       })
       this.$oh.api.get('/rest/services/' + this.serviceId).then((data) => {
         if (data.configDescriptionURI) {
-          this.$oh.api.get('/rest/config-descriptions/' + data.configDescriptionURI).then(data2 => {
-            this.$set(this, 'configDescriptions', data2)
-            this.$oh.api.get('/rest/services/' + this.serviceId + '/config').then(data3 => {
-              this.$set(this, 'config', data3)
-              this.$nextTick(() => {
+          this.$oh.api.get('/rest/config-descriptions/' + data.configDescriptionURI).then((data2) => {
+            this.configDescriptions = data2
+            this.$oh.api.get('/rest/services/' + this.serviceId + '/config').then((data3) => {
+              this.config = data3
+              nextTick(() => {
                 this.loading = false
                 this.ready = true
               })
@@ -152,7 +170,7 @@ export default {
     },
     save () {
       this.$oh.api.put('/rest/services/' + this.serviceId + '/config', this.config).then(() => {
-        this.$f7.toast.create({
+        f7.toast.create({
           text: 'Default persistence setting saved',
           destroyOnClose: true,
           closeTimeout: 2000

@@ -20,7 +20,7 @@
                      type="text"
                      placeholder="UNDEF if unset"
                      :value="parsedAction.value"
-                     @blur="(evt) => updateActionValue(evt.target.value)" />
+                     @blur="evt => updateActionValue(evt.target.value)" />
       <f7-list-item title="ignore state updates"
                     checkbox
                     :checked="ignoreStateUpdates ? true : null"
@@ -47,7 +47,7 @@
     </f7-block-title>
     <f7-list>
       <f7-list-input
-        :floating-label="$theme.md"
+        :floating-label="theme.md"
         label="Expiration Delay"
         name="timer"
         ref="duration"
@@ -69,6 +69,8 @@
 </template>
 
 <script>
+import { f7, theme } from 'framework7-vue'
+
 import ItemMetadataMixin from '@/components/item/metadata/item-metadata-mixin'
 
 export default {
@@ -77,9 +79,8 @@ export default {
     metadata: Object
   },
   mixins: [ItemMetadataMixin],
-  data () {
-    return {
-    }
+  setup () {
+    return { theme }
   },
   computed: {
     sanitizedDuration () {
@@ -119,27 +120,26 @@ export default {
     }
   },
   mounted () {
-    const self = this
     const inputControl = this.$refs.duration
     const containerControl = this.$refs.picker
     if (!inputControl || !inputControl.$el || !containerControl) return
     const inputElement = this.$$(inputControl.$el).find('input')
 
     if (!this.editable) return
-    this.picker = this.$f7.picker.create({
+    this.picker = f7.picker.create({
       containerEl: containerControl,
       inputEl: inputElement,
       toolbar: false,
       inputReadOnly: false,
       rotateEffect: true,
       value: this.parsedTimerParts,
-      formatValue: function (values, displayValues) {
+      formatValue: (values, displayValues) => {
         return displayValues[0] + 'h' + displayValues[1] + 'm' + displayValues[2] + 's'
       },
       cols: [
         // Hours
         {
-          values: (function () {
+          values: (() => {
             let arr = []
             for (let i = 0; i <= 99; i++) { arr.push(i.toString()) }
             return arr
@@ -152,7 +152,7 @@ export default {
         },
         // Minutes
         {
-          values: (function () {
+          values: (() => {
             let arr = []
             for (let i = 0; i <= 59; i++) { arr.push(i.toString()) }
             return arr
@@ -165,7 +165,7 @@ export default {
         },
         // Seconds
         {
-          values: (function () {
+          values: (() => {
             let arr = []
             for (let i = 0; i <= 59; i++) { arr.push(i.toString()) }
             return arr
@@ -178,8 +178,8 @@ export default {
         }
       ],
       on: {
-        change: function (picker, values, displayValues) {
-          self.updateDuration(displayValues[0] + 'h' + displayValues[1] + 'm' + displayValues[2] + 's')
+        change: (picker, values, displayValues) => {
+          this.updateDuration(displayValues[0] + 'h' + displayValues[1] + 'm' + displayValues[2] + 's')
         }
       }
     })

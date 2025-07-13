@@ -3,9 +3,9 @@
           v-if="!config.item || !config.sendButton"
           class="oh-input"
           :style="config.style">
-    <f7-input class="input-field"
-              ref="input"
+    <f7-input ref="input"
               v-bind="config"
+              class="input-field"
               :style="{ width: '100%', ...config.style }"
               :value="((config.type && config.type.indexOf('date') === 0) || config.type === 'time') ? valueForDatepicker : value"
               :calendar-params="calendarParams"
@@ -29,9 +29,9 @@
           v-else
           class="oh-input"
           :style="config.style">
-    <f7-input class="input-field"
-              ref="input"
+    <f7-input ref="input"
               v-bind="config"
+              class="input-field"
               :value="((config.type && config.type.indexOf('date') === 0) || config.type === 'time') ? valueForDatepicker : value"
               :calendar-params="calendarParams"
               :step="config.step ? config.step : 'any'"
@@ -78,6 +78,8 @@ import dayjs from 'dayjs'
 import mixin from '../widget-mixin'
 import variableMixin from '../variable-mixin'
 import { OhInputDefinition } from '@/assets/definitions/widgets/system'
+
+import { useStatesStore } from '@/js/stores/useStatesStore'
 
 export default {
   mixins: [mixin, variableMixin],
@@ -197,14 +199,14 @@ export default {
       } else if (this.config.type === 'datepicker' && Array.isArray(value) && this.valueForDatepicker[0].getTime() === value[0].getTime()) {
         return
       }
-      this.$set(this, 'pendingUpdate', value)
+      this.pendingUpdate = value
       if (this.config.variable) {
         const variableScope = this.getVariableScope(this.context.ctxVars, this.context.varScope, this.config.variable)
         const variableLocation = (variableScope) ? this.context.ctxVars[variableScope] : this.context.vars
         if (this.config.variableKey) {
           value = this.setVariableKeyValues(variableLocation[this.config.variable], this.config.variableKey, value)
         }
-        this.$set(variableLocation, this.config.variable, value)
+        variableLocation[this.config.variable] = value
       }
     },
     listenForEnterKey (evt) {
@@ -227,8 +229,8 @@ export default {
           cmd = dayjs(cmd[0]).format()
           if (cmd === 'Invalid Date') return
         }
-        this.$store.dispatch('sendCommand', { itemName: this.config.item, cmd })
-        this.$set(this, 'pendingUpdate', null)
+        useStatesStore().sendCommand(this.config.item, cmd)
+        this.pendingUpdate = null
       }
     },
     extractUnit (pattern) {

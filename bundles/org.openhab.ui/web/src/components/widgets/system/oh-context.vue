@@ -1,26 +1,23 @@
 <template>
-  <fragment v-if="context.component.slots && context.component.slots.default">
+  <div v-if="context.component.slots && context.component.slots.default">
     <generic-widget-component v-for="(slotComponent, idx) in context.component.slots.default"
                               :key="'default-' + idx"
                               :context="childrenContext(slotComponent)" />
-  </fragment>
+  </div>
 </template>
 
 <script>
+import { utils } from 'framework7'
+
 import mixin from '../widget-mixin'
 import { OhContextDefinition } from '@/assets/definitions/widgets/system'
 
-import { Fragment } from 'vue-fragment'
-
 export default {
   mixins: [mixin],
-  components: {
-    Fragment
-  },
   widget: OhContextDefinition,
   data () {
     return {
-      varScope: (this.context.varScope || 'varScope') + '-' + this.$f7.utils.id()
+      varScope: (this.context.varScope || 'varScope') + '-' + utils.id()
     }
   },
   computed: {
@@ -45,21 +42,21 @@ export default {
       const ctxFunctions = this.fn
       if (this.context.fn) {
         for (const funcKey in this.context.fn) {
-          if (!ctxFunctions[funcKey]) this.$set(ctxFunctions, funcKey, this.context.fn[funcKey])
+          if (!ctxFunctions[funcKey]) ctxFunctions[funcKey] = this.context.fn[funcKey]
         }
       }
-      this.$set(ctx, 'fn', ctxFunctions)
+      ctx.fn = ctxFunctions
 
       const ctxConstants = this.const
       if (this.context.const) {
         for (const constKey in this.context.const) {
-          if (!ctxConstants[constKey]) this.$set(ctxConstants, constKey, this.context.const[constKey])
+          if (!ctxConstants[constKey]) ctxConstants[constKey] = this.context.const[constKey]
         }
       }
-      this.$set(ctx, 'const', ctxConstants)
+      ctx.const = ctxConstants
 
-      if (typeof ctx.ctxVars !== 'object') this.$set(ctx, 'ctxVars', {})
-      this.$set(ctx.ctxVars, this.varScope, this.ctxVars)
+      if (typeof ctx.ctxVars !== 'object') ctx.ctxVars = {}
+      ctx.ctxVars[this.varScope] = this.ctxVars
 
       return ctx
     }
@@ -73,7 +70,7 @@ export default {
       if (sourceConst) {
         if (typeof sourceConst !== 'object') return
         for (const key in sourceConst) {
-          this.$set(this.const, key, this.evaluateExpression(key, sourceConst[key]))
+          this.const[key] = this.evaluateExpression(key, sourceConst[key])
         }
       }
 
@@ -82,7 +79,7 @@ export default {
       if (sourceCtxVars) {
         if (typeof sourceCtxVars !== 'object') return
         for (const key in sourceCtxVars) {
-          this.$set(this.ctxVars, key, this.evaluateExpression(key, sourceCtxVars[key]))
+          this.ctxVars[key] = this.evaluateExpression(key, sourceCtxVars[key])
         }
       }
     }

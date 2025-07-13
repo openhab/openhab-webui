@@ -15,7 +15,7 @@
         <select name="classes" @change="updateClass">
           <option value="" />
           <optgroup label="Types">
-            <option v-for="cl in orderedClasses.filter((c) => c.indexOf('type:') === 0)"
+            <option v-for="cl in orderedClasses.filter(c => c.indexOf('type:') === 0)"
                     :value="cl.replace('type:', '')"
                     :key="cl"
                     :selected="isSelected(cl.replace('type:', '')) ? true : null">
@@ -23,7 +23,7 @@
             </option>
           </optgroup>
           <optgroup label="Attributes">
-            <option v-for="cl in orderedClasses.filter((c) => c.indexOf('attribute:') === 0)"
+            <option v-for="cl in orderedClasses.filter(c => c.indexOf('attribute:') === 0)"
                     :value="cl.replace('attribute:', '')"
                     :key="cl"
                     :selected="isSelected(cl.replace('attribute:', '')) ? true : null">
@@ -43,7 +43,7 @@
       <f7-link color="blue"
                external
                target="_blank"
-               :href="`${$store.state.websiteUrl}/link/google-assistant`">
+               :href="`${runtimeStore.websiteUrl}/link/google-assistant`">
         Google Assistant Integration Documentation
       </f7-link>
     </p>
@@ -51,9 +51,14 @@
 </template>
 
 <script>
+import { utils } from 'framework7'
+
 import GoogleDefinitions from '@/assets/definitions/metadata/ga'
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import ItemMetadataMixin from '@/components/item/metadata/item-metadata-mixin'
+
+import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+import { mapStores } from 'pinia'
 
 export default {
   props: {
@@ -67,7 +72,7 @@ export default {
   data () {
     return {
       classesDefs: Object.keys(GoogleDefinitions),
-      classSelectKey: this.$f7.utils.id()
+      classSelectKey: utils.id()
     }
   },
   computed: {
@@ -89,9 +94,9 @@ export default {
       return this.classes === cl
     },
     updateClass () {
-      const value = this.$refs.classes.f7SmartSelect.getValue()
+      const value = this.$refs.classes.$el.children[0].f7SmartSelect.getValue()
       this.metadata.value = value
-      this.$set(this.metadata, 'config', {})
+      this.metadata.config = {}
     }
   }
 }

@@ -96,7 +96,7 @@
         <f7-link color="blue"
                  external
                  target="_blank"
-                 :href="`${$store.state.websiteUrl}/link/matter`">
+                 :href="`${runtimeStore.websiteUrl}/link/matter`">
           Matter integration documentation
         </f7-link>
       </p>
@@ -109,9 +109,15 @@
 </template>
 
 <script>
+import { f7 } from 'framework7-vue'
+import { utils } from 'framework7'
+
 import { deviceTypes, deviceTypesAndAttributes, matterParameters } from '@/assets/definitions/metadata/matter'
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import ItemMetadataMixin from '@/components/item/metadata/item-metadata-mixin'
+
+import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+import { mapStores } from 'pinia'
 
 export default {
   name: 'item-metadata-matter',
@@ -128,7 +134,7 @@ export default {
       deviceTypes,
       classesDefs: deviceTypesAndAttributes,
       multiple: !!this.metadata.value && this.metadata.value.indexOf(',') > 0,
-      classSelectKey: this.$f7.utils.id(),
+      classSelectKey: utils.id(),
       itemType: this.item.groupType || this.item.type,
       dirtyItem: new Set(),
       ready: false
@@ -139,7 +145,7 @@ export default {
     this.itemType = this.item.groupType || this.item.type
 
     if (!this.metadata.config) {
-      this.$set(this.metadata, 'config', {})
+      this.metadata.config = {}
     }
   },
   mounted () {
@@ -196,7 +202,8 @@ export default {
         const typeParams = matterParameters[type] || []
         return typeParams.map((opt) => ({ ...opt, groupName: type }))
       }).concat(matterParameters.global || [])
-    }
+    },
+    ...mapStores(useRuntimeStore)
   },
   methods: {
     getAvailableDeviceTypes () {
@@ -231,12 +238,12 @@ export default {
     toggleMultiple () {
       this.multiple = !this.multiple
       this.metadata.value = ''
-      this.classSelectKey = this.$f7.utils.id()
+      this.classSelectKey = utils.id()
     },
     updateClasses () {
-      const value = this.$refs.classes.f7SmartSelect.getValue()
+      const value = this.$refs.classes.$el.children[0].f7SmartSelect.getValue()
       this.metadata.value = Array.isArray(value) ? value.join(',') : value
-      this.$set(this.metadata, 'config', {})
+      this.metadata.config = {}
     },
     updateLinkedItem (deviceType, attribute, itemName) {
       if (!itemName) {
@@ -256,10 +263,10 @@ export default {
       const groupMbr = this.item.members.find((mbr) => mbr.name === itemName)
       if (groupMbr) {
         if (!groupMbr.metadata) {
-          this.$set(groupMbr, 'metadata', {})
+          groupMbr.metadata = {}
         }
         if (!groupMbr.metadata.matter) {
-          this.$set(groupMbr.metadata, 'matter', { value: '', config: {} })
+          groupMbr.metadata.matter = { value: '', config: {} }
         }
         groupMbr.metadata.matter.value = attribute
         this.dirtyItem.add(groupMbr)
@@ -280,7 +287,7 @@ export default {
         })
       ).then(() => {
         this.dirtyItem.clear()
-        this.$f7.toast.create({
+        f7.toast.create({
           text: 'Group members updated',
           closeTimeout: 2000
         }).open()
@@ -316,9 +323,9 @@ export default {
       const mappedChild = this.getMappedChild(attributeName)
       if (!mappedChild) return
       if (!mappedChild.metadata.matter.config) {
-        this.$set(mappedChild.metadata.matter, 'config', {})
+        mappedChild.metadata.matter.config = {}
       }
-      this.$set(mappedChild.metadata.matter.config, optionLabel, newValue)
+      mappedChild.metadata.matter.config.optionLabel = newValue
       this.dirtyItem.add(mappedChild)
     }
   }

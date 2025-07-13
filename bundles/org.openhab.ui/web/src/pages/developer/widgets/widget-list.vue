@@ -1,14 +1,19 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn">
-    <f7-navbar title="Widgets"
-               back-link="Developer Tools"
-               back-link-url="/developer/"
-               back-link-force>
+    <f7-navbar>
+      <f7-nav-left>
+        <f7-link icon-f7="chevron_left" href="/developer/">
+          Developer Tools
+        </f7-link>
+      </f7-nav-left>
+      <f7-nav-title>
+        Widgets
+      </f7-nav-title>
       <f7-nav-right>
         <developer-dock-icon />
         <f7-link icon-md="material:done_all"
                  @click="toggleCheck()"
-                 :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
+                 :text="(!theme.md) ? (showCheckboxes ? 'Done' : 'Select') : ''" />
       </f7-nav-right>
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
@@ -19,32 +24,32 @@
           search-container=".widgets-list"
           search-item=".widgetlist-item"
           search-in=".item-title, .item-subtitle, .item-header, .item-footer"
-          :disable-button="!$theme.aurora" />
+          :disable-button="!theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
 
     <f7-toolbar v-if="showCheckboxes"
                 class="contextual-toolbar"
-                :class="{ navbar: $theme.md }"
+                :class="{ navbar: theme.md }"
                 bottom-ios
                 bottom-aurora>
-      <f7-link color="red"
+      <f7-link v-if="!theme.md"
+               color="red"
                v-show="selectedItems.length"
-               v-if="!$theme.md"
                class="delete"
                icon-ios="f7:trash"
                icon-aurora="f7:trash"
                @click="removeSelected">
         Remove {{ selectedItems.length }}
       </f7-link>
-      <f7-link v-if="$theme.md"
+      <f7-link v-if="theme.md"
                icon-md="material:close"
                icon-color="white"
                @click="showCheckboxes = false" />
-      <div class="title" v-if="$theme.md">
+      <div v-if="theme.md" class="title">
         {{ selectedItems.length }} selected
       </div>
-      <div class="right" v-if="$theme.md">
+      <div v-if="theme.md" class="right">
         <f7-link v-show="selectedItems.length"
                  icon-md="material:delete"
                  icon-color="white"
@@ -75,53 +80,64 @@
         <f7-block-title class="searchbar-hide-on-search">
           {{ widgets.length }} widgets
         </f7-block-title>
-        <f7-list
-          v-show="widgets.length > 0"
-          class="searchbar-found col widgets-list"
-          ref="widgetsList"
-          media-list>
-          <f7-list-item
-            v-for="(widget, index) in widgets"
-            :key="index"
-            media-item
-            class="widgetlist-item"
-            :checkbox="showCheckboxes"
-            :checked="isChecked(widget.uid)"
-            @click.ctrl="(e) => ctrlClick(e, widget)"
-            @click.meta="(e) => ctrlClick(e, widget)"
-            @click.exact="(e) => click(e, widget)"
-            link=""
-            :title="widget.uid">
-            <div slot="subtitle">
-              <f7-chip v-for="tag in widget.tags"
-                       :key="tag"
-                       :text="tag"
-                       media-bg-color="blue"
-                       style="margin-right: 6px">
-                <f7-icon slot="media"
-                         ios="f7:tag_fill"
-                         md="material:label"
-                         aurora="f7:tag_fill" />
-              </f7-chip>
-            </div>
-            <span slot="media" class="item-initial">{{ widget.uid[0].toUpperCase() }}</span>
+        <f7-list v-show="widgets.length > 0"
+                 class="searchbar-found col widgets-list"
+                 ref="widgetsList"
+                 media-list>
+          <f7-list-item v-for="(widget, index) in widgets"
+                        :key="index"
+                        media-item
+                        class="widgetlist-item"
+                        :checkbox="showCheckboxes"
+                        :checked="isChecked(widget.uid)"
+                        @click.ctrl="(e) => ctrlClick(e, widget)"
+                        @click.meta="(e) => ctrlClick(e, widget)"
+                        @click.exact="(e) => click(e, widget)"
+                        link=""
+                        :title="widget.uid">
+            <template #subitle>
+              <div>
+                <f7-chip v-for="tag in widget.tags"
+                         :key="tag"
+                         :text="tag"
+                         media-bg-color="blue"
+                         style="margin-right: 6px">
+                  <template #media>
+                    <f7-icon ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
+                  </template>
+                </f7-chip>
+              </div>
+            </template>
+            <template #media>
+              <span class="item-initial">{{ widget.uid[0].toUpperCase() }}</span>
+            </template>
           </f7-list-item>
         </f7-list>
       </f7-col>
     </f7-block>
-    <f7-fab v-show="ready && !showCheckboxes"
-            position="right-bottom"
-            slot="fixed"
-            color="blue"
-            href="add">
-      <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
-      <f7-icon ios="f7:close" md="material:close" aurora="f7:close" />
-    </f7-fab>
+    <template #fixed>
+      <f7-fab v-show="ready && !showCheckboxes"
+              position="right-bottom"
+              color="blue"
+              href="add">
+        <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
+        <f7-icon ios="f7:close" md="material:close" aurora="f7:close" />
+      </f7-fab>
+    </template>
   </f7-page>
 </template>
 
 <script>
+import { f7, theme } from 'framework7-vue'
+import { nextTick } from 'vue'
+
 export default {
+  props: {
+    f7router: Object
+  },
+  setup () {
+    return { theme }
+  },
   data () {
     return {
       ready: false,
@@ -134,6 +150,7 @@ export default {
       eventSource: null
     }
   },
+  created () {},
   methods: {
     onPageAfterIn () {
       this.load()
@@ -149,9 +166,9 @@ export default {
         this.ready = true
         setTimeout(() => {
           this.initSearchbar = true
-          this.$nextTick(() => {
+          nextTick(() => {
             if (this.$device.desktop && this.$refs.searchbar) {
-              this.$refs.searchbar.f7Searchbar.$inputEl[0].focus()
+              this.$refs.searchbar.$el.f7Searchbar.$inputEl[0].focus()
             }
           })
         })
@@ -167,7 +184,7 @@ export default {
       if (this.showCheckboxes) {
         this.toggleItemCheck(event, item.uid, item)
       } else {
-        this.$f7router.navigate(item.uid, { animate: false })
+        this.f7router.navigate(item.uid, { animate: false })
       }
     },
     ctrlClick (event, item) {
@@ -185,7 +202,7 @@ export default {
     removeSelected () {
       const vm = this
 
-      this.$f7.dialog.confirm(
+      f7.dialog.confirm(
         `Remove ${this.selectedItems.length} selected widgets?`,
         'Remove widgets',
         () => {
@@ -194,11 +211,11 @@ export default {
       )
     },
     doRemoveSelected () {
-      let dialog = this.$f7.dialog.progress('Deleting widgets...')
+      let dialog = f7.dialog.progress('Deleting widgets...')
 
       const promises = this.selectedItems.map((i) => this.$oh.api.delete('/rest/ui/components/ui:widget/' + i))
       Promise.all(promises).then((data) => {
-        this.$f7.toast.create({
+        f7.toast.create({
           text: 'Widgets removed',
           destroyOnClose: true,
           closeTimeout: 2000
@@ -206,13 +223,13 @@ export default {
         this.selectedItems = []
         dialog.close()
         this.load()
-        this.$f7.emit('sidebarRefresh', null)
+        f7.emit('sidebarRefresh', null)
       }).catch((err) => {
         dialog.close()
         this.load()
         console.error(err)
-        this.$f7.dialog.alert('An error occurred while deleting: ' + err)
-        this.$f7.emit('sidebarRefresh', null)
+        f7.dialog.alert('An error occurred while deleting: ' + err)
+        f7.emit('sidebarRefresh', null)
       })
     }
   }

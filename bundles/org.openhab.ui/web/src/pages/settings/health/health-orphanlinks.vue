@@ -1,9 +1,14 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn">
-    <f7-navbar title="Orphan Links"
-               back-link="Health Checks"
-               back-link-url="/settings/health/"
-               back-link-force>
+    <f7-navbar>
+      <f7-nav-left>
+        <f7-link icon-f7="chevron_left" href="/settings/health">
+          Health Checks
+        </f7-link>
+      </f7-nav-left>
+      <f7-nav-title>
+        Orphan Links
+      </f7-nav-title>
       <f7-nav-right>
         <developer-dock-icon />
       </f7-nav-right>
@@ -49,11 +54,12 @@
                         :title="'Problem: ' + orphanLinkProblemExplanation[orphanLink.problem]"
                         :subtitle="'Item name: ' + orphanLink.itemChannelLink.itemName"
                         :footer="'Channel UID: ' + orphanLink.itemChannelLink.channelUID">
-            <f7-icon v-if="!orphanLink.itemChannelLink.editable"
-                     slot="after-title"
-                     f7="lock_fill"
-                     size="1rem"
-                     color="gray" />
+            <template #after-title>
+              <f7-icon v-if="!orphanLink.itemChannelLink.editable"
+                       f7="lock_fill"
+                       size="1rem"
+                       color="gray" />
+            </template>
           </f7-list-item>
         </f7-list>
       </f7-col>
@@ -62,7 +68,8 @@
       <f7-col>
         <f7-list>
           <f7-list-button color="red" @click="purgeAllManaged()">
-            Purge all managed links (will purge {{ purgeableLinksCount }} managed links)
+            Purge all managed links (will purge
+            {{ purgeableLinksCount }} managed links)
           </f7-list-button>
         </f7-list>
       </f7-col>
@@ -121,3 +128,4 @@ export default {
   }
 }
 </script>
+

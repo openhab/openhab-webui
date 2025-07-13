@@ -16,10 +16,15 @@
 import mixin from '../widget-mixin'
 import { OhTrendDefinition } from '@/assets/definitions/widgets/system'
 
+import Trend from '@hotdogee/vue3-trend'
+
 export default {
   mixins: [mixin],
   props: {
-    width: [Number, String]
+    width: [ Number, String ]
+  },
+  components: {
+    Trend
   },
   widget: OhTrendDefinition,
   data () {

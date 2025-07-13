@@ -1,14 +1,19 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
-    <f7-navbar title="Schedule"
-               back-link="Settings"
-               back-link-url="/settings/"
-               back-link-force>
+    <f7-navbar>
+      <f7-nav-left>
+        <f7-link icon-f7="chevron_left" href="/settings/">
+          Settings
+        </f7-link>
+      </f7-nav-left>
+      <f7-nav-title>
+        Schedule
+      </f7-nav-title>
       <f7-nav-right>
         <developer-dock-icon />
         <f7-link icon-md="material:done_all"
                  @click="toggleCheck()"
-                 :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
+                 :text="(!theme.md) ? (showCheckboxes ? 'Done' : 'Select') : ''" />
       </f7-nav-right>
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
@@ -19,7 +24,7 @@
           search-item=".timeline-item-inner"
           search-in=".timeline-item-title"
           :placeholder="searchPlaceholder"
-          :disable-button="!$theme.aurora" />
+          :disable-button="!theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
     <f7-toolbar v-if="showCheckboxes"
@@ -27,22 +32,22 @@
                 :class="{ navbar: theme.md }"
                 bottom-ios
                 bottom-aurora>
-      <f7-link v-show="selectedItems.length"
-               v-if="!$theme.md"
+      <f7-link v-if="!theme.md"
+               v-show="selectedItems.length"
                class="delete"
                icon-ios="f7:trash"
                icon-aurora="f7:trash"
                @click="removeSelected">
         Remove {{ selectedItems.length }}
       </f7-link>
-      <f7-link v-if="$theme.md"
+      <f7-link v-if="theme.md"
                icon-md="material:close"
                icon-color="white"
                @click="showCheckboxes = false" />
-      <div class="title" v-if="$theme.md">
+      <div v-if="theme.md" class="title">
         {{ selectedItems.length }} selected
       </div>
-      <div class="right" v-if="$theme.md">
+      <div v-if="theme.md" class="right">
         <f7-link icon-md="material:delete" icon-color="white" @click="removeSelected" />
         <f7-link icon-md="material:more_vert" icon-color="white" @click="removeSelected" />
       </div>
@@ -70,7 +75,7 @@
               <span>{{ day }}</span>
             </div>
             <div class="timeline-item-content">
-              <div class="timeline-item-inner" v-for="(occurrence, $idx) in calendar[year][month][day]" :key="$idx">
+              <div v-for="(occurrence, $idx) in calendar[year][month][day]" class="timeline-item-inner" :key="$idx">
                 <div class="timeline-item-time">
                   {{ occurrence[0].toTimeString().substring(0, 5) }}
                 </div>
@@ -85,14 +90,15 @@
         </div>
       </div>
     </div>
-    <f7-fab v-if="ready"
-            position="right-bottom"
-            slot="fixed"
-            color="blue"
-            href="add">
-      <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
-      <f7-icon ios="f7:close" md="material:close" aurora="f7:close" />
-    </f7-fab>
+    <template #fixed>
+      <f7-fab v-if="ready"
+              position="right-bottom"
+              color="blue"
+              href="add">
+        <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
+        <f7-icon ios="f7:close" md="material:close" aurora="f7:close" />
+      </f7-fab>
+    </template>
   </f7-page>
 </template>
 
@@ -103,13 +109,23 @@
 .timeline-item-content::-webkit-scrollbar /* WebKit */
   width 0
   height 0
-
 </style>
 
 <script>
+import { nextTick } from 'vue'
+import { f7, theme } from 'framework7-vue'
+
+import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
+
+import { useLastSearchQueryStore } from '@/js/stores/useLastSearchQueryStore'
+import { use } from 'marked'
+
 export default {
   components: {
-    'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue')
+    'empty-state-placeholder': EmptyStatePlaceholder
+  },
+  setup () {
+    return { theme }
   },
   data () {
     return {
@@ -130,13 +146,13 @@ export default {
     },
     onPageBeforeOut () {
       this.stopEventSource()
-      this.$f7.data.lastScheduleSearchQuery = this.$refs.searchbar?.f7Searchbar.query
+      useLastSearchQueryStore().lastScheduleSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
     },
     load () {
       if (this.loading) return
       this.loading = true
 
-      if (this.initSearchbar) this.$f7.data.lastScheduleSearchQuery = this.$refs.searchbar?.f7Searchbar.query
+      if (this.initSearchbar) useLastSearchQueryStore().lastScheduleSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
       this.initSearchbar = false
 
       let occurrences = []
@@ -144,7 +160,7 @@ export default {
       let start = new Date(), limit = new Date()
       limit.setDate(start.getDate() + 31)
 
-      this.$oh.api.get('/rest/rules/schedule/simulations?from=' + start.toISOString() + '&until=' + limit.toISOString()).then(data => {
+      this.$oh.api.get('/rest/rules/schedule/simulations?from=' + start.toISOString() + '&until=' + limit.toISOString()).then((data) => {
         this.rules = data
         this.loading = false
         this.initSearchbar = true
@@ -154,10 +170,9 @@ export default {
           occurrences.push([new Date(rule.date), rule.rule])
         })
 
-        this.$set(this, 'calendar', {})
+        this.calendar = {}
 
         let day = start
-        // eslint-disable-next-line no-unmodified-loop-condition
         while (day < limit) {
           const year = day.getFullYear()
           const month = day.toLocaleString('default', { month: 'long' })
@@ -176,11 +191,11 @@ export default {
         this.ready = true
         if (!this.eventSource) this.startEventSource()
 
-        this.$nextTick(() => {
+        nextTick(() => {
           if (this.$device.desktop && this.$refs.searchbar) {
-            this.$refs.searchbar.f7Searchbar.$inputEl[0].focus()
+            this.$refs.searchbar.$el.f7Searchbar.$inputEl[0].focus()
           }
-          this.$refs.searchbar?.f7Searchbar.search(this.$f7.data.lastScheduleSearchQuery || '')
+          this.$refs.searchbar?.$el.f7Searchbar.search(useLastSearchQueryStore().lastScheduleSearchQuery || '')
         })
       }).catch((err, status) => {
         if (err === 'Not Found' || status === 404) {
@@ -220,7 +235,7 @@ export default {
     removeSelected () {
       const vm = this
 
-      this.$f7.dialog.confirm(
+      f7.dialog.confirm(
         `Remove ${this.selectedItems.length} selected rules?`,
         'Remove Rules',
         () => {
@@ -229,11 +244,11 @@ export default {
       )
     },
     doRemoveSelected () {
-      let dialog = this.$f7.dialog.progress('Deleting Rules...')
+      let dialog = f7.dialog.progress('Deleting Rules...')
 
       const promises = this.selectedItems.map((i) => this.$oh.api.delete('/rest/rules/' + i))
       Promise.all(promises).then((data) => {
-        this.$f7.toast.create({
+        f7.toast.create({
           text: 'Rules removed',
           destroyOnClose: true,
           closeTimeout: 2000
@@ -245,7 +260,7 @@ export default {
         dialog.close()
         this.load()
         console.error(err)
-        this.$f7.dialog.alert('An error occurred while deleting: ' + err)
+        f7.dialog.alert('An error occurred while deleting: ' + err)
       })
     }
   },

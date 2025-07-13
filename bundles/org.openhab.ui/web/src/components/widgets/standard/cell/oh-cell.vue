@@ -4,7 +4,7 @@
            class="card-prevent-open oh-cell"
            :swipeToClose="!(noSwipeToClose || config.swipeToClose === false)"
            :backdrop="config.backdrop === undefined || config.backdrop"
-           :animate="(config.animate === false || $f7.data.themeOptions.expandableCardAnimation === 'disabled') ? false : undefined"
+           :animate="(config.animate === false || uiOptionsStore.expandableCardAnimation === 'disabled') ? false : undefined"
            @card:open="cellOpen"
            @card:opened="cellOpened"
            @card:close="cellClose"
@@ -19,14 +19,14 @@
       <oh-trend v-else-if="config.trendItem"
                 :key="'trend' + config.item"
                 class="trend card-opened-fade-out"
-                :width="($refs.card) ? $refs.card.$el.clientWidth : 0"
+                :width="trendWidth"
                 :context="context" />
       <div v-else class="cell-background" :class="[(config.color) ? 'bg-color-' + config.color : '', { on: isOn }, { 'card-opened-fade-out': !config.keepColorWhenOpened }]" />
     </slot>
     <f7-link v-show="!opened && hasExpandedControls && hasAction"
              icon-f7="ellipsis_vertical"
              icon-size="30"
-             @click.native="openCell"
+             @click="openCell"
              class="float-right cell-open-button card-opened-fade-out no-ripple" />
     <f7-card-content ref="cell" class="cell-contents">
       <f7-card-header class="cell-button card-opened-fade-out no-padding" v-show="!opened">
@@ -42,30 +42,34 @@
                           media-item
                           :subtitle="config.subtitle"
                           :footer="config.footer">
-              <div slot="header" v-if="header" class="button-header display-flex">
-                <oh-icon class="header-icon"
-                         v-if="config.icon"
-                         :icon="config.icon"
-                         :color="config.iconColor"
-                         width="20"
-                         height="20" />
-                <span class="header-text">{{ header }}</span>
-                <f7-badge v-if="config.headerBadge" :color="config.headerBadgeColor">
-                  {{ config.headerBadge }}
-                </f7-badge>
-              </div>
-              <div slot="title" v-if="config.title" class="button-header display-flex">
-                <oh-icon class="header-icon"
-                         v-if="!header && config.icon"
-                         :icon="config.icon"
-                         :color="config.iconColor"
-                         width="20"
-                         height="20" />
-                <span class="header-text">{{ config.title }}</span>
-                <f7-badge v-if="config.headerBadge" :color="config.headerBadgeColor">
-                  {{ config.headerBadge }}
-                </f7-badge>
-              </div>
+              <template #header>
+                <div v-if="header" class="button-header display-flex">
+                  <oh-icon v-if="config.icon"
+                           class="header-icon"
+                           :icon="config.icon"
+                           :color="config.iconColor"
+                           width="20"
+                           height="20" />
+                  <span class="header-text">{{ header }}</span>
+                  <f7-badge v-if="config.headerBadge" :color="config.headerBadgeColor">
+                    {{ config.headerBadge }}
+                  </f7-badge>
+                </div>
+              </template>
+              <template #title>
+                <div v-if="config.title" class="button-header display-flex">
+                  <oh-icon v-if="!header && config.icon"
+                           class="header-icon"
+                           :icon="config.icon"
+                           :color="config.iconColor"
+                           width="20"
+                           height="20" />
+                  <span class="header-text">{{ config.title }}</span>
+                  <f7-badge v-if="config.headerBadge" :color="config.headerBadgeColor">
+                    {{ config.headerBadge }}
+                  </f7-badge>
+                </div>
+              </template>
             </f7-list-item>
           </f7-list>
         </slot>
@@ -73,7 +77,7 @@
       <f7-link class="card-opened-fade-in cell-close-button float-right"
                icon-size="30"
                icon-f7="multiply_circle_fill"
-               @click.native="closeCell" />
+               @click="closeCell" />
       <f7-card-header v-if="opened" class="cell-expanded-header card-opened-fade-in display-flex flex-direction-column">
         <div class="text-align-center cell-expanded-title">
           {{ config.title }}
@@ -162,10 +166,16 @@
 </style>
 
 <script>
+import { utils } from 'framework7'
+import { f7 } from 'framework7-vue'
+
 import mixin from '../../widget-mixin'
 import { actionsMixin } from '../../widget-actions'
 import { OhCellDefinition } from '@/assets/definitions/widgets/standard/cells'
 import OhTrend from '../../system/oh-trend.vue'
+
+import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
+import { mapStores } from 'pinia'
 
 export default {
   mixins: [mixin, actionsMixin],
@@ -181,7 +191,8 @@ export default {
     return {
       transitioning: false,
       opened: false,
-      cardId: this.$f7.utils.id()
+      cardId: utils.id(),
+      trendWidth: 0
     }
   },
   mounted () {
@@ -189,8 +200,12 @@ export default {
     this.$$(this.$refs.card.$el).on('taphold', this.openCell)
     this.$$(this.$refs.card.$el).on('contextmenu', this.openCell)
     window.addEventListener('popstate', this.back)
+
+    this.trendWidth = this.$refs.cardContent
+      ? this.$refs.cardContent.$el.clientWidth
+      : 0
   },
-  beforeDestroy () {
+  beforeUnmount () {
     this.$$(this.$refs.card.$el).off('click')
     this.$$(this.$refs.card.$el).off('taphold')
     this.$$(this.$refs.card.$el).off('contextmenu')
@@ -224,7 +239,8 @@ export default {
         return stateParts[0]
       }
       return false
-    }
+    },
+    ...mapStores(useUIOptionsStore)
   },
   methods: {
     click (evt) {
@@ -245,13 +261,15 @@ export default {
       if (evt && evt.preventDefault) evt.preventDefault()
       if (this.context.editmode) return false
       if (!this.hasExpandedControls) return false
-      this.$f7.card.open(this.$refs.card.$el)
-      history.pushState({ cardId: this.cardId }, null, window.location.href.split('#cell=')[0] + '#' + this.$f7.utils.serializeObject({ cell: this.cardId }))
+      f7.card.open(this.$refs.card.$el)
+      history.pushState({ cardId: this.cardId }, null, window.location.href.split('#cell=')[0] + '#' + f7.utils.serializeObject({ cell: this.cardId }))
       return false
     },
     closeCell () {
       if (this.context.editmode) return
-      setTimeout(() => { this.$f7.card.close(this.$refs.card.$el) }, 100)
+      setTimeout(() => {
+        f7.card.close(this.$refs.card.$el)
+      }, 100)
     },
     cellOpen () {
       this.transitioning = true

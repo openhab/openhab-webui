@@ -171,9 +171,12 @@
 </style>
 
 <script>
+import { nextTick } from 'vue'
+import { f7 } from 'framework7-vue'
+
 import mixin from '../widget-mixin'
 import embeddedSvgMixin from '@/components/widgets/layout/oh-canvas-embedded-svg-mixin'
-import OhCanvasLayer from './oh-canvas-layer'
+import OhCanvasLayer from './oh-canvas-layer.vue'
 import { OhCanvasLayoutDefinition } from '@/assets/definitions/widgets/layout'
 
 export default {
@@ -187,7 +190,7 @@ export default {
       layout: [],
       screenWidth: Number,
       screenHeight: Number,
-      fullscreen: this.$fullscreen.getState(),
+      fullscreen: this.$fullscreen.isFullscreen,
       navbarHidden: false,
       style: {
         width: Number,
@@ -223,7 +226,7 @@ export default {
         window.addEventListener('resize', this.setDimensions)
       }
     }
-    this.$fullscreen.support = true
+    this.$fullscreen.isEnabled = true
     this.canvasLayoutStyle()
     this.computeLayout()
   },
@@ -237,8 +240,8 @@ export default {
         this.setupEmbeddedSvgStateTracking()
         this.embeddedSvgReady = true
       }).catch((err) => {
-        this.$nextTick(() => {
-          this.$f7.toast.create({
+        nextTick(() => {
+          f7.toast.create({
             text: `Failed to embed SVG: ${err}`,
             closeTimeout: 3000
           }).open()
@@ -246,7 +249,7 @@ export default {
       })
     }
   },
-  beforeDestroy () {
+  beforeUnmount () {
     if (!this.context.editmode) {
       window.removeEventListener('resize', this.setDimensions)
     }
@@ -309,8 +312,8 @@ export default {
     hideOtherLayers () {
       this.context.component.slots.canvas.forEach((layer, idx) => {
         if (idx !== this.actLyrIdx) {
-          this.$set(layer, 'config', layer.config || {})
-          this.$set(layer.config, 'editVisible', false)
+          layer.config = layer.config || {}
+          layer.config.editVisible = false
         }
       })
     },
@@ -384,7 +387,7 @@ export default {
     },
     moveSelectedItems (exceptId, deltaX, deltaY) {
       let movedSomething = false
-      this.selectedItems.forEach(i => {
+      this.selectedItems.forEach((i) => {
         if (i.id !== exceptId) {
           i.moveTo(i.x + deltaX, i.y + deltaY)
           movedSomething = true
@@ -408,7 +411,7 @@ export default {
     ociDragStop (itemId) {
       // Notify items of drag end in case of multiple items selection
       if (this.selectedItems.length > 1) {
-        this.selectedItems.forEach(item => {
+        this.selectedItems.forEach((item) => {
           item.stopDrag()
         })
       }

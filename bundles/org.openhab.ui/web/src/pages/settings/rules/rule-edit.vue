@@ -7,11 +7,11 @@
       <f7-nav-right>
         <developer-dock-icon />
         <template v-if="isEditable">
-          <f7-link @click="save()"
-                   v-if="$theme.md"
+          <f7-link v-if="theme.md"
+                   @click="save()"
                    icon-md="material:save"
                    icon-only />
-          <f7-link @click="save()" v-if="!$theme.md">
+          <f7-link v-if="!theme.md" @click="save()">
             {{ stubMode ? $t('dialogs.regenerate') : $t(createMode ? 'dialogs.create' : 'dialogs.save') }} <span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
           </f7-link>
         </template>
@@ -21,20 +21,22 @@
                  tooltip="This rule is not editable through the UI" />
       </f7-nav-right>
     </f7-navbar>
-    <f7-toolbar tabbar position="top">
-      <f7-link @click="switchTab('design', fromYaml)" :tab-link-active="currentTab === 'design'" class="tab-link">
+    <f7-toolbar tabbar position="top" v-if="ready">
+      <f7-link @click="switchTab('design', fromYaml)"
+               :tab-link-active="currentTab === 'design' ? true : null"
+               tab-link="#design">
         Design
       </f7-link>
-      <f7-link v-if="ready && !(hasSource && hasOpaqueModule)"
+      <f7-link v-if="!(hasSource && hasOpaqueModule)"
                @click="switchTab('code', toYaml)"
-               :tab-link-active="currentTab === 'code'"
-               class="tab-link">
+               :tab-link-active="currentTab === 'code' ? true : null"
+               tab-link="#code">
         Code
       </f7-link>
-      <f7-link v-if="ready && hasSource"
+      <f7-link v-if="hasSource"
                @click="switchTab('source')"
-               :tab-link-active="currentTab === 'source'"
-               class="tab-link">
+               :tab-link-active="currentTab === 'source' ? true : null"
+               tab-link="#source">
         Source
       </f7-link>
     </f7-toolbar>
@@ -45,7 +47,7 @@
             <div class="float-right align-items-flex-start align-items-center">
               <!-- <f7-toggle class="enable-toggle"></f7-toggle> -->
               <f7-link v-if="canRegenerate"
-                       :color="$f7.data.themeOptions.dark === 'dark' ? 'purple' : 'deeppurple'"
+                       :color="uiOptionsStore.getDarkMode() === 'dark' ? 'purple' : 'deeppurple'"
                        :tooltip="'Regenerate from template'"
                        icon-md="f7:arrow_2_circlepath"
                        icon-ios="f7:arrow_2_circlepath"
@@ -112,7 +114,7 @@
               <f7-list-item title="No template"
                             footer="Create a new rule from scratch"
                             radio
-                            :checked="!hasTemplate"
+                            :checked="!hasTemplate ? true : null"
                             radio-icon="start"
                             :value="''"
                             @change="selectTemplate(null)" />
@@ -127,7 +129,7 @@
                             :footer="template.description"
                             :value="template.uid"
                             radio
-                            :checked="hasTemplate && currentTemplate.uid === template.uid"
+                            :checked="hasTemplate && currentTemplate.uid === template.uid ? true : null"
                             radio-icon="start"
                             @change="selectTemplate(template.uid)" />
             </f7-list>
@@ -236,15 +238,16 @@
                               v-for="mod in rule[section]"
                               :key="mod.id"
                               :link="!showModuleControls && !isOpaqueModule(mod)"
-                              @click.native="(ev) => editModule(ev, section, mod)"
+                              @click="(ev) => editModule(ev, section, mod)"
                               swipeout>
-                  <f7-link slot="media"
-                           v-if="isEditable"
-                           icon-color="red"
-                           icon-aurora="f7:minus_circle_filled"
-                           icon-ios="f7:minus_circle_filled"
-                           icon-md="material:remove_circle_outline"
-                           @click="showSwipeout" />
+                  <template #media>
+                    <f7-link v-if="isEditable"
+                             icon-color="red"
+                             icon-aurora="f7:minus_circle_filled"
+                             icon-ios="f7:minus_circle_filled"
+                             icon-md="material:remove_circle_outline"
+                             @click="showSwipeout" />
+                  </template>
                   <f7-swipeout-actions right v-if="isEditable">
                     <f7-swipeout-button @click="(ev) => deleteModule(ev, section, mod)" style="background-color: var(--f7-swipeout-delete-button-bg-color)">
                       Delete
@@ -256,14 +259,15 @@
                 <f7-list-item link
                               no-chevron
                               media-item
-                              :color="($theme.dark) ? 'black' : 'white'"
+                              :color="(theme.dark) ? 'black' : 'white'"
                               :subtitle="SECTION_LABELS[section][2]"
                               @click="addModule(section)">
-                  <f7-icon slot="media"
-                           color="green"
-                           aurora="f7:plus_circle_fill"
-                           ios="f7:plus_circle_fill"
-                           md="material:control_point" />
+                  <template #media>
+                    <f7-icon color="green"
+                             aurora="f7:plus_circle_fill"
+                             ios="f7:plus_circle_fill"
+                             md="material:control_point" />
+                  </template>
                 </f7-list-item>
                 <!-- <f7-list-button :color="(showModuleControls) ? 'gray' : 'blue'" :title="sectionLabels[section][1]"></f7-list-button> -->
               </f7-list>
@@ -299,7 +303,7 @@
       </f7-tab>
       <f7-tab v-if="ready && hasSource"
               id="source"
-              @tab:show="() => { this.currentTab = 'source'} "
+              @tab:show="() => { this.currentTab = 'source' }"
               :tab-active="currentTab === 'source'">
         <f7-icon f7="lock"
                  class="float-right margin"
@@ -354,6 +358,11 @@
 </style>
 
 <script>
+import { nextTick, defineAsyncComponent } from 'vue'
+import { utils } from 'framework7'
+import { f7, theme } from 'framework7-vue'
+import { mapStores } from 'pinia'
+
 import YAML from 'yaml'
 import cloneDeep from 'lodash/cloneDeep'
 import fastDeepEqual from 'fast-deep-equal/es6'
@@ -369,12 +378,14 @@ import ConfigSheet from '@/components/config/config-sheet.vue'
 import RuleGeneralSettings from '@/components/rule/rule-general-settings.vue'
 import AUTOMATION_LANGUAGES from '@/assets/automation-languages'
 
+import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
+
 export default {
   mixins: [RuleMixin, ModuleDescriptionSuggestions, RuleStatus, DirtyMixin],
   components: {
     RuleGeneralSettings,
     ConfigSheet,
-    'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')
+    editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue'))
   },
   props: {
     ruleId: String,
@@ -384,6 +395,9 @@ export default {
     schedule: Object,
     f7router: Object,
     f7route: Object
+  },
+  setup () {
+    return { theme }
   },
   data () {
     return {
@@ -440,7 +454,7 @@ export default {
       this.loading = true
 
       const loadingFinished = () => {
-        this.$nextTick(() => {
+        nextTick(() => {
           this.savedRule = cloneDeep(this.rule)
           this.ready = true
           this.loading = false
@@ -456,7 +470,7 @@ export default {
           let newRule
           if (this.ruleCopy) {
             newRule = cloneDeep(this.ruleCopy)
-            newRule.uid = this.$f7.utils.id()
+            newRule.uid = utils.id()
             if (newRule.templateUID) {
               newRule.triggers = []
               newRule.actions = []
@@ -467,7 +481,7 @@ export default {
             }
           } else {
             newRule = {
-              uid: this.$f7.utils.id(),
+              uid: utils.id(),
               name: '',
               triggers: [],
               actions: [],
@@ -481,22 +495,22 @@ export default {
               }
             }
           }
-          this.$set(this, 'rule', newRule)
+          this.rule = newRule
           this.$oh.api.get('/rest/templates').then((templateData) => {
-            this.$set(this, 'templates', templateData)
+            this.templates = templateData
             if (newRule.templateUID) {
               const currentTemplate = templateData.find((t) => t.uid === newRule.templateUID) || {
                 uid: newRule.templateUID,
                 label: newRule.templateUID
               }
-              this.$set(this, 'currentTemplate', currentTemplate)
+              this.currentTemplate = currentTemplate
             }
             loadingFinished()
           })
           // no need for an event source, the rule doesn't exist yet
         } else if (this.stubMode) {
           if (!this.ruleCopy || !this.ruleCopy.templateUID) {
-            this.$f7.toast.create({
+            f7.toast.create({
               text: !this.ruleCopy ? 'Failed to create rule stub because there\'s no source rule' : 'Failed to create rule stub because there\'s no template UID',
               destroyOnClose: true,
               closeTimeout: 4000
@@ -508,28 +522,28 @@ export default {
           ruleStub.actions = []
           ruleStub.conditions = []
           ruleStub.templateState = 'pending'
-          this.$set(this, 'rule', ruleStub)
+          this.rule = ruleStub
           this.$oh.api.get('/rest/templates').then((templateData) => {
-            this.$set(this, 'templates', templateData)
+            this.templates = templateData
             let template = this.templates.find((t) => t.uid === ruleStub.templateUID)
             if (!template) {
-              this.$f7.toast.create({
+              f7.toast.create({
                 text: 'Template "' + ruleStub.templateUID + '" not found',
                 destroyOnClose: true,
                 closeTimeout: 4000
               }).open()
-              this.$f7router.back()
+              this.f7router.back()
             }
-            this.$set(this, 'currentTemplate', template)
+            this.currentTemplate = template
             loadingFinished()
           })
           // no need for an event source, we're going to overwrite the existing rule
         } else {
           this.$oh.api.get('/rest/rules/' + this.ruleId).then((data2) => {
-            this.$set(this, 'rule', data2)
+            this.rule = data2
             if (data2.templateUID) {
               this.$oh.api.get('/rest/templates').then((templateData) => {
-                this.$set(this, 'templates', templateData)
+                this.templates = templateData
                 if (!this.eventSource) this.startEventSource()
                 loadingFinished()
               })
@@ -549,11 +563,11 @@ export default {
         }
       }
       if (!this.rule.uid) {
-        this.$f7.dialog.alert('Please give an ID to the rule')
+        f7.dialog.alert('Please give an ID to the rule')
         return Promise.reject()
       }
       if (!this.rule.name) {
-        this.$f7.dialog.alert('Please give a name to the rule')
+        f7.dialog.alert('Please give a name to the rule')
         return Promise.reject()
       }
       const promise = (this.createMode)
@@ -562,29 +576,29 @@ export default {
       return promise.then((data) => {
         this.dirty = false
         if (this.createMode) {
-          this.$f7.toast.create({
+          f7.toast.create({
             text: 'Rule created',
             destroyOnClose: true,
             closeTimeout: 2000
           }).open()
-          this.$f7router.navigate(this.$f7route.url
+          this.f7router.navigate(this.$f7route.url
             .replace('/add', '/' + this.rule.uid)
             .replace('/duplicate', '/' + this.rule.uid)
             .replace('/schedule/', '/rules/'), { reloadCurrent: true })
           this.load()
         } else if (this.stubMode) {
-          this.$f7.toast.create({
+          f7.toast.create({
             text: 'Rule regenerated',
             destroyOnClose: true,
             closeTimeout: 2000
           }).open()
-          this.$f7router.navigate(this.$f7route.url
+          this.f7router.navigate(this.$f7route.url
             .replace('/stub', '/' + this.rule.uid)
             .replace('/schedule/', '/rules/'), { reloadCurrent: true })
           this.load()
         } else {
           if (!noToast) {
-            this.$f7.toast.create({
+            f7.toast.create({
               text: 'Rule updated',
               destroyOnClose: true,
               closeTimeout: 2000
@@ -594,7 +608,7 @@ export default {
         }
         // if (!stay) this.$f7router.back()
       }).catch((err) => {
-        this.$f7.toast.create({
+        f7.toast.create({
           text: 'Error while saving rule: ' + err,
           destroyOnClose: true,
           closeTimeout: 2000
@@ -605,7 +619,7 @@ export default {
       let ruleClone = cloneDeep(this.rule)
       ruleClone.name = (ruleClone.name || '') + ' copy'
       ruleClone.editable = true
-      this.$f7router.navigate({
+      this.f7router.navigate({
         url: '/settings/rules/duplicate'
       }, {
         props: {
@@ -618,20 +632,20 @@ export default {
         this.createStub()
       } else {
         this.$oh.api.postPlain('/rest/rules/' + this.rule.uid + '/regenerate').then(() => {
-          this.$f7.toast.create({
+          f7.toast.create({
             text: 'Rule regenerated from template',
             destroyOnClose: true,
             closeTimeout: 2000
           }).open()
           this.load()
         }).catch((err) => {
-          this.$f7.dialog.alert('An error occurred when trying to regenerate rule "' + this.rule.uid + '" from template: ' + err)
+          f7.dialog.alert('An error occurred when trying to regenerate rule "' + this.rule.uid + '" from template: ' + err)
         })
       }
     },
     createStub () {
       let ruleClone = cloneDeep(this.rule)
-      this.$f7router.navigate({
+      this.f7router.navigate({
         url: '/settings/rules/stub'
       }, {
         reloadCurrent: true,
@@ -643,23 +657,23 @@ export default {
     runNow () {
       if (this.createMode) return
       if (this.rule.status.status === 'RUNNING' || this.rule.status.status === 'UNINITIALIZED') {
-        return this.$f7.toast.create({
+        return f7.toast.create({
           text: `Rule cannot be run ${(this.rule.status.status === 'RUNNING') ? 'while already running, please wait' : 'if it is uninitialized'}!`,
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
       }
-      this.$f7.toast.create({
+      f7.toast.create({
         text: 'Running rule',
         destroyOnClose: true,
         closeTimeout: 2000
       }).open()
 
-      const savePromise = (this.isEditable && this.dirty) ? this.save(true) : Promise.resolve()
+      const savePromise = this.isEditable && this.dirty ? this.save(true) : Promise.resolve()
 
       savePromise.then(() => {
         this.$oh.api.postPlain('/rest/rules/' + this.rule.uid + '/runnow', '').catch((err) => {
-          this.$f7.toast.create({
+          f7.toast.create({
             text: 'Error while running rule: ' + err,
             destroyOnClose: true,
             closeTimeout: 2000
@@ -668,27 +682,27 @@ export default {
       })
     },
     deleteRule () {
-      this.$f7.dialog.confirm(
+      f7.dialog.confirm(
         `Are you sure you want to delete ${this.rule.name}?`,
         'Delete Rule',
         () => {
           this.$oh.api.delete('/rest/rules/' + this.rule.uid).then(() => {
             this.dirty = false
-            this.$f7router.back('/settings/rules/', { force: true })
+            this.f7router.back('/settings/rules/', { force: true })
           })
         }
       )
     },
     selectTemplate (uid) {
-      this.$set(this.rule, 'configuration', {})
-      this.$set(this.rule, 'triggers', [])
-      this.$set(this.rule, 'conditions', [])
-      this.$set(this.rule, 'actions', [])
+      this.rule.configuration = {}
+      this.rule.triggers = []
+      this.rule.conditions = []
+      this.rule.actions = []
       if (!uid) {
-        this.$set(this, 'currentTemplate', null)
+        this.currentTemplate = null
         return
       }
-      this.$set(this, 'currentTemplate', this.templates.find((t) => t.uid === uid))
+      this.currentTemplate = this.templates.find((t) => t.uid === uid)
       this.rule.templateUID = uid
       this.rule.templateState = 'pending'
     },
@@ -723,7 +737,7 @@ export default {
           newRule.tags = newRule.tags.filter((t) => t.indexOf('marketplace:') !== 0)
         }
       }
-      this.$set(this, 'rule', newRule)
+      this.rule = newRule
     },
     editModule (ev, section, mod) {
       if (this.showModuleControls || this.isOpaqueModule(mod)) return
@@ -748,7 +762,7 @@ export default {
       const popup = {
         component: RuleModulePopup
       }
-      this.$f7router.navigate({
+      this.f7router.navigate({
         url: 'module-config',
         route: {
           path: 'module-config',
@@ -766,9 +780,9 @@ export default {
       })
 
       if (this.isEditable) {
-        this.$f7.once('ruleModuleConfigUpdate', this.saveModule)
-        this.$f7.once('ruleModuleConfigClosed', () => {
-          this.$f7.off('ruleModuleConfigUpdate', this.saveModule)
+        f7.once('ruleModuleConfigUpdate', this.saveModule)
+        f7.once('ruleModuleConfigClosed', () => {
+          f7.off('rule-module-config', this.saveModule)
           this.moduleConfigClosed()
         })
       }
@@ -780,7 +794,7 @@ export default {
       while (!swipeoutElement.classList.contains('swipeout')) {
         swipeoutElement = swipeoutElement.parentElement
       }
-      this.$f7.swipeout.delete(swipeoutElement, () => {
+      f7.swipeout.delete(swipeoutElement, () => {
         const idx = this.rule[section].findIndex((m) => m.id === mod.id)
         this.rule[section].splice(idx, 1)
       })
@@ -808,7 +822,7 @@ export default {
       const popup = {
         component: RuleModulePopup
       }
-      this.$f7router.navigate({
+      this.f7router.navigate({
         url: 'module-config',
         route: {
           path: 'module-config',
@@ -823,18 +837,18 @@ export default {
         }
       })
 
-      this.$f7.once('ruleModuleConfigUpdate', this.saveModule)
-      this.$f7.once('editNewScript', this.saveAndEditNewScript)
-      this.$f7.once('ruleModuleConfigClosed', () => {
-        this.$f7.off('ruleModuleConfigUpdate', this.saveModule)
-        this.$f7.off('editNewScript', this.saveAndEditNewScript)
+      f7.once('ruleModuleConfigUpdate', this.saveModule)
+      f7.once('editNewScript', this.saveAndEditNewScript)
+      f7.once('ruleModuleConfigClosed', () => {
+        f7.off('ruleModuleConfigUpdate', this.saveModule)
+        f7.off('editNewScript', this.saveAndEditNewScript)
         this.moduleConfigClosed()
       })
     },
     reorderModule (ev, section) {
       const newSection = [...this.rule[section]]
       newSection.splice(ev.to, 0, newSection.splice(ev.from, 1)[0])
-      this.$set(this.rule, section, newSection)
+      this.rule.section = newSection
     },
     saveModule (updatedModule) {
       if (!updatedModule.type) return
@@ -845,13 +859,13 @@ export default {
         this.rule[this.currentSection].push(updatedModule)
       } else {
         const idx = this.rule[this.currentSection].findIndex((m) => m.id === updatedModule.id)
-        this.$set(this.rule[this.currentSection], idx, updatedModule)
+        this.rule[this.currentSection][idx] = updatedModule
       }
     },
     saveAndEditNewScript (updatedModule) {
       this.saveModule(updatedModule)
       this.save().then(() => {
-        this.$f7router.navigate('/settings/rules/' + this.rule.uid + '/script/' + updatedModule.id, { transition: this.$theme.aurora ? 'f7-cover-v' : '' })
+        this.f7router.navigate('/settings/rules/' + this.rule.uid + '/script/' + updatedModule.id, { transition: theme.aurora ? 'f7-cover-v' : '' })
       })
     },
     moduleConfigClosed () {
@@ -866,7 +880,7 @@ export default {
 
       const updatePromise = (this.rule.editable || this.createMode) && this.dirty ? this.save() : Promise.resolve()
       updatePromise.then(() => {
-        this.$f7router.navigate('/settings/rules/' + this.rule.uid + '/script/' + mod.id, { transition: this.$theme.aurora ? 'f7-cover-v' : '' })
+        this.f7router.navigate('/settings/rules/' + this.rule.uid + '/script/' + mod.id, { transition: theme.aurora ? 'f7-cover-v' : '' })
       })
     },
     toYaml () {
@@ -881,13 +895,13 @@ export default {
       if (!this.isEditable || !this.ruleYaml) return
       try {
         const updatedRule = YAML.parse(this.ruleYaml)
-        this.$set(this.rule, 'configuration', updatedRule.configuration)
-        this.$set(this.rule, 'triggers', updatedRule.triggers)
-        this.$set(this.rule, 'conditions', updatedRule.conditions)
-        this.$set(this.rule, 'actions', updatedRule.actions)
+        this.rule.configuration = updatedRule.configuration
+        this.rule.triggers = updatedRule.triggers
+        this.rule.conditions = updatedRule.conditions
+        this.rule.actions = updatedRule.actions
         return true
       } catch (e) {
-        this.$f7.dialog.alert(e).open()
+        f7.dialog.alert(e).open()
         return false
       }
     },
@@ -988,7 +1002,8 @@ export default {
       const marketplaceTag = this.currentTemplate.tags.find((t) => t.indexOf('marketplace:') === 0)
       if (marketplaceTag) return 'https://community.openhab.org/t/' + marketplaceTag.replace('marketplace:', '')
       return null
-    }
+    },
+    ...mapStores(useUIOptionsStore)
   }
 }
 </script>

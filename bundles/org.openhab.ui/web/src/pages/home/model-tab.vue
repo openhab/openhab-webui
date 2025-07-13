@@ -1,5 +1,5 @@
 <template>
-  <div class="disable-user-select model-tab">
+  <div v-if="ready" class="disable-user-select model-tab">
     <div v-for="(elements, idx) in groups" :key="idx">
       <f7-block-title medium v-if="elements.length > 0 && elements[0].separator">
         {{ elements[0].separator }}
@@ -88,11 +88,12 @@
 
 <script>
 import cardGroups from './homecards-grouping'
-
 import LocationCard from '../../components/cards/location-card.vue'
 import EquipmentCard from '../../components/cards/equipment-card.vue'
 import PropertyCard from '../../components/cards/property-card.vue'
-import { mapState } from 'vuex'
+
+import { useStatesStore } from '@/js/stores/useStatesStore'
+import { useModelStore } from '@/js/stores/useModelStore'
 
 export default {
   props: {
@@ -104,11 +105,14 @@ export default {
     EquipmentCard,
     PropertyCard
   },
-  computed: mapState({
+  computed: {
+    ready () {
+      return useModelStore().ready
+    },
     groups (state) {
-      return cardGroups(state.model.semanticModel, this.type, this.page)
+      return cardGroups(useModelStore(), this.type, this.page)
     }
-  }),
+  },
   methods: {
     isCardExcluded (card) {
       if (!card.key) return
@@ -124,7 +128,7 @@ export default {
           component: (this.type === 'locations') ? 'oh-location-card' : (this.type === 'equipment') ? 'oh-equipment-card' : 'oh-property-card',
           config: {}
         },
-        store: this.$store.getters.trackedItems
+        store: useStatesStore().trackedItems
       }
       const page = this.page
       const type = this.type

@@ -3,41 +3,57 @@
     <f7-list>
       <f7-list-item :title="title || 'Tags'" :badge="tags.length.toString()" />
       <f7-list-item v-if="tags.length > 0">
-        <div slot="inner">
-          <f7-chip v-for="tag in tags"
-                   :key="tag"
-                   :text="tag"
-                   :deleteable="!disabled"
-                   @delete="deleteTag"
-                   media-bg-color="blue">
-            <f7-icon slot="media"
-                     ios="f7:tag_fill"
-                     md="material:label"
-                     aurora="f7:tag_fill" />
-          </f7-chip>
-        </div>
+        <template #inner>
+          <div>
+            <f7-chip v-for="tag in tags"
+                     :key="tag"
+                     :text="tag"
+                     :deleteable="!disabled"
+                     @delete="deleteTag"
+                     media-bg-color="blue">
+              <template #media>
+                <f7-icon ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
+              </template>
+            </f7-chip>
+          </div>
+        </template>
       </f7-list-item>
     </f7-list>
     <f7-list>
-      <f7-list-input
-        v-if="!disabled"
-        type="text"
-        placeholder="Add tag"
-        :value="pendingTag"
-        @input="pendingTag = $event.target.value"
-        :input="false"
-        class="add-tag-input">
-        <input slot="input"
-               type="text"
-               placeholder="Add tag"
-               @keyup="keyUp"
-               @blur="addTag">
+      <f7-list-input v-if="!disabled"
+                     type="text"
+                     placeholder="Add tag"
+                     :value="pendingTag"
+                     @input="pendingTag = $event.target.value"
+                     :input="false"
+                     class="add-tag-input">
+        <template #input>
+          <input type="text"
+                 placeholder="Add tag"
+                 @keyup="keyUp"
+                 @blur="addTag">
+        </template>
       </f7-list-input>
     </f7-list>
   </div>
 </template>
 
+<style lang="stylus">
+.tag-editor
+  margin-bottom 0
+  .tags
+    text-align center
+  .list
+    margin-top 0
+    margin-bottom 0
+    border 0
+  .chip
+    margin-right 6px !important
+</style>
+
 <script>
+import { f7 } from 'framework7-vue'
+
 import TagMixin from '@/components/tags/tag-mixin'
 
 export default {
@@ -80,7 +96,7 @@ export default {
       }
       if (newTag && this.item.tags.indexOf(newTag) === -1) {
         if (!this.showSemanticTags && this.isSemanticTag(newTag)) {
-          this.$f7.dialog.alert(
+          f7.dialog.alert(
             `The tag '${newTag}' is a semantic tag. A semantic tag cannot be added here.`,
             'Cannot add tag'
           )
@@ -106,16 +122,3 @@ export default {
   }
 }
 </script>
-
-<style lang="stylus">
-.tag-editor
-  margin-bottom 0
-  .tags
-    text-align center
-  .list
-    margin-top 0
-    margin-bottom 0
-    border 0
-  .chip
-    margin-right 6px !important
-</style>

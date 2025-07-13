@@ -30,7 +30,7 @@
                icon-color="yellow"
                :icon-size="config.iconSize" />
     <!-- Show dial menu when there`s no call -->
-    <f7-button v-else-if="(!session || session.isEnded())"
+    <f7-button v-else-if="!session || session.isEnded()"
                :style="computedButtonStyle"
                icon-f7="phone_fill_arrow_up_right"
                icon-color="green"
@@ -44,7 +44,7 @@
                  icon-color="green"
                  :icon-size="config.iconSize"
                  @click.stop="answer()">
-        {{ (!config.hideCallerId) ? remoteParty : '' }}
+        {{ !config.hideCallerId ? remoteParty : '' }}
       </f7-button>
       <f7-button :style="computedButtonStyle"
                  icon-f7="phone_down_fill"
@@ -96,6 +96,8 @@
 </style>
 
 <script>
+import { f7 } from 'framework7-vue'
+
 import mixin from '../widget-mixin'
 import { OhSIPClientDefinition } from '@/assets/definitions/widgets/system'
 import foregroundService from '../widget-foreground-service'
@@ -108,7 +110,12 @@ import { WidgetDefinition, pg, pt, pi } from '@/assets/definitions/widgets/helpe
 import ringFile from './oh-sipclient-ringtone.mp3'
 import ringBackFile from './oh-sipclient-ringback.mp3'
 
+import { useStatesStore } from '@/js/stores/useStatesStore'
+
 export default {
+  props: {
+    f7router: Object
+  },
   data () {
     return {
       connected: false,
@@ -147,7 +154,7 @@ export default {
 
       // Make sure we have Mic/Camera permissions
       if (!navigator.mediaDevices) {
-        this.$f7.dialog.alert('To use the SIP widget, please make sure that HTTPS is in use and WebRTC is supported by this browser.')
+        f7.dialog.alert('To use the SIP widget, please make sure that HTTPS is in use and WebRTC is supported by this browser.')
       } else {
         navigator.mediaDevices.getUserMedia({ audio: true, video: this.config.enableVideo })
           .then((stream) => {
@@ -159,7 +166,7 @@ export default {
           })
           .catch((err) => {
             console.log('Could not access microphone/camera', err)
-            this.$f7.dialog.alert('To use the SIP widget you must allow microphone/camera access in your browser and reload this page.')
+            f7.dialog.alert('To use the SIP widget you must allow microphone/camera access in your browser and reload this page.')
           })
       }
     },
@@ -177,7 +184,10 @@ export default {
       this.context.component.config = { ...this.config, ...this.localConfig } // Merge local device configuration
 
       import(/* webpackChunkName: "jssip" */ 'jssip').then((JsSIP) => { // Lazy load jssip
-        if (this.config.enableSIPDebug) { JsSIP.debug.enable('JsSIP:*') } else { JsSIP.debug.disable() }
+        if(this.config.enableSIPDebug)
+          JsSIP.debug.enable('JsSIP:*')
+        else
+          JsSIP.debug.disable()
         // SIP user agent setup
         this.remoteAudio = new window.Audio()
         const url = new URL(this.config.websocketUrl, window.location.origin)
@@ -357,7 +367,7 @@ export default {
     localSettingsPopup () {
       console.info(this.LOGGER_PREFIX + ': Opening local settings popup.')
       const popup = { component: WidgetConfigPopup }
-      this.$f7router.navigate({ url: 'local-sip-settings', route: { path: 'local-sip-settings', popup } }, {
+      this.f7router.navigate({ url: 'local-sip-settings', route: { path: 'local-sip-settings', popup } }, {
         props: {
           component: {
             config: this.localConfig || {}
@@ -400,7 +410,7 @@ export default {
           }
         })
         actionsPromise.then((actions) => {
-          this.$f7.actions.create({
+          f7.actions.create({
             buttons: [
               actions,
               [{ text: 'Cancel', color: 'red' }]
@@ -408,7 +418,7 @@ export default {
           }).open()
         })
       } else {
-        this.$f7.dialog.alert('Please configure phonebook entries')
+        f7.dialog.alert('Please configure phonebook entries')
       }
     },
     autoDial () {
@@ -419,7 +429,7 @@ export default {
     },
     updateStateItem (newStatus) {
       if (!this.config.sipStateItem) return
-      this.$store.dispatch('sendCommand', { itemName: this.config.sipStateItem, cmd: newStatus })
+      useStatesStore().sendCommand(this.config.sipStateItem, newStatus)
     }
   },
   created () {

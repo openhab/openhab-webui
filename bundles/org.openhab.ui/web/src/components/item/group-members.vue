@@ -38,12 +38,10 @@
   </f7-card>
 </template>
 
-<style>
-
-</style>
-
 <script>
-import Item from './item'
+import { f7 } from 'framework7-vue'
+
+import Item from './item.vue'
 import ItemPicker from '@/components/config/controls/item-picker.vue'
 
 export default {
@@ -83,17 +81,17 @@ export default {
       const itemsToRemove = this.editableMemberNames.filter((m) => !this.pickedMemberNames.includes(m))
 
       if (!itemsToAdd.length && !itemsToRemove.length) {
-        this.$f7.dialog.alert('Nothing to change')
+        f7.dialog.alert('Nothing to change')
         return
       }
       if (itemsToAdd.indexOf(this.groupItem.name) >= 0) {
-        this.$f7.dialog.alert('Cannot add this group as a member of itself')
+        f7.dialog.alert('Cannot add this group as a member of itself')
         return
       }
       // Note: this routine doesn't check cyclic memberships
 
       const vm = this
-      this.$f7.dialog.confirm(
+      f7.dialog.confirm(
         `This will add ${itemsToAdd.length} item(s) and remove ${itemsToRemove.length} item(s) from this group. Continue?`,
         'Add or Remove Members',
         () => {
@@ -104,8 +102,8 @@ export default {
 
           Promise.all(promises)
             .then((d) => {
-              vm.$emit('updated')
-              vm.$f7.toast.create({
+              f7.$emit('updated')
+              f7.toast.create({
                 text: 'Member list updated',
                 destroyOnClose: true,
                 closeTimeout: 2000
@@ -113,7 +111,7 @@ export default {
               this.editMembers = false
             })
             .catch((err) => {
-              vm.$f7.dialog.alert('Error while updating the member list: ' + err)
+              f7.dialog.alert('Error while updating the member list: ' + err)
             })
         }
       )

@@ -7,7 +7,7 @@
           :init="initSearchbar"
           v-if="initSearchbar"
           search-in=".item-title"
-          :disable-button="!$theme.aurora" />
+          :disable-button="!theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
     <f7-list class="searchbar-not-found">
@@ -40,7 +40,7 @@
             @click="openAddonPopup(addon.id)"
             :header="addon.id"
             :footer="addon.version"
-            :after="(currentlyInstalling.indexOf(addon.id) >= 0) ? 'Installing...' : ''"
+            :after="currentlyInstalling.indexOf(addon.id) >= 0 ? 'Installing...' : ''"
             :title="addon.label" />
         </f7-list>
       </f7-col>
@@ -55,6 +55,8 @@
 </template>
 
 <script>
+import { f7, theme } from 'framework7-vue'
+
 import AddonDetailsSheet from './addon-details-sheet.vue'
 
 export default {
@@ -63,6 +65,9 @@ export default {
   },
   props: {
     addonType: String
+  },
+  setup () {
+    return { theme }
   },
   data () {
     return {
@@ -107,10 +112,10 @@ export default {
           case 'uninstalled':
             this.stopEventSource()
             this.load()
-            this.$f7.emit('addonChange', null)
+            f7.emit('addonChange', null)
             break
           case 'failed':
-            this.$f7.toast.create({
+            f7.toast.create({
               text: `Installation of add-on ${topicParts[2]} failed`,
               closeButton: true,
               destroyOnClose: true

@@ -1,3 +1,5 @@
+import { f7 } from 'framework7-vue'
+
 import AddonDetailsSheet from './addon-details-sheet.vue'
 
 export default {
@@ -27,12 +29,12 @@ export default {
     installAddon (addon) {
       this.addonPopupOpened = false
       this.currentlyInstalling.push(addon.uid)
-      if (this.currentAddon) this.$set(this.currentAddon, 'pending', 'INSTALL')
+      if (this.currentAddon) this.currentAddon.pending = 'INSTALL'
     },
     uninstallAddon (addon) {
       this.addonPopupOpened = false
       this.currentlyUninstalling.push(addon.uid)
-      if (this.currentAddon) this.$set(this.currentAddon, 'pending', 'UNINSTALL')
+      if (this.currentAddon) this.currentAddon.pending = 'UNINSTALL'
     },
     installableAddon (addon) {
       return (addon && (addon.contentType === 'application/vnd.openhab.bundle' || addon.contentType.indexOf('application/vnd.openhab.feature') === 0))
@@ -47,9 +49,9 @@ export default {
       return this.isInstalling(addon) || this.isUninstalling(addon)
     },
     resetPending () {
-      this.$set(this, 'currentlyInstalling', [])
-      this.$set(this, 'currentlyUninstalling', [])
-      this.$set(this, 'currentAddon', null)
+      this.currentlyInstalling = []
+      this.currentlyUninstalling = []
+      this.currentAddon = null
       this.currentAddonId = null
       this.currentServiceId = null
     },
@@ -61,10 +63,10 @@ export default {
           case 'uninstalled':
             this.stopEventSource()
             this.load()
-            this.$f7.emit('addonChange', null)
+            f7.emit('addonChange', null)
             break
           case 'failed':
-            this.$f7.toast.create({
+            f7.toast.create({
               text: `Installation of add-on ${topicParts[2]} failed`,
               closeButton: true,
               destroyOnClose: true

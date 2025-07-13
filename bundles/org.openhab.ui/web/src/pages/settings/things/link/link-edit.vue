@@ -8,18 +8,19 @@
       </f7-nav-left>
       <f7-nav-title :title="(item.label || item.name) + dirtyIndicator" :subtitle="thing.label" />
       <f7-nav-right v-show="ready">
-        <f7-link v-if="!link.editable"
-                 slot="right"
-                 icon-f7="lock_fill"
-                 icon-only
-                 tooltip="links defined in a .items file are not editable from this screen" />
-        <f7-link v-else-if="$theme.md"
-                 icon-md="material:save"
-                 icon-only
-                 @click="save()" />
-        <f7-link v-else @click="save()">
-          Save
-        </f7-link>
+        <template #right>
+          <f7-link v-if="!link.editable"
+                   icon-f7="lock_fill"
+                   icon-only
+                   tooltip="links defined in a .items file are not editable from this screen" />
+          <f7-link v-else-if="theme.md"
+                   icon-md="material:save"
+                   icon-only
+                   @click="save()" />
+          <f7-link v-else @click="save()">
+            Save
+          </f7-link>
+        </template>
       </f7-nav-right>
     </f7-navbar>
     <f7-block class="block-narrow">
@@ -41,7 +42,9 @@
                               :subtitle="thing.label"
                               :badge="thingStatusBadgeText(thing.statusInfo)"
                               :badge-color="thingStatusBadgeColor(thing.statusInfo)">
-                  <span slot="media" class="item-initial">{{ (channel.label) ? channel.label[0] : (channelType.label) ? channelType.label[0] : '?' }}</span>
+                  <template #media>
+                    <span class="item-initial">{{ (channel.label) ? channel.label[0] : channelType.label ? channelType.label[0] : '?' }}</span>
+                  </template>
                 </f7-list-item>
                 <f7-list-item divider title="Item" />
                 <item :item="item" :context="context" :link="'/settings/items/' + item.name" />
@@ -49,10 +52,10 @@
             </f7-list>
           </f7-card-content>
           <f7-card-footer v-if="item && (item.editable || link.editable)">
-            <f7-button color="red"
+            <f7-button v-if="source === 'thing' && item.editable"
+                       color="red"
                        fill
-                       @click="unlinkAndDelete()"
-                       v-if="source === 'thing' && item.editable">
+                       @click="unlinkAndDelete()">
               Unlink &amp; Remove Item
             </f7-button>
             <f7-button color="red" @click="unlink()" v-if="link.editable">
@@ -68,7 +71,7 @@
           <f7-link external
                    color="blue"
                    target="_blank"
-                   :href="`${$store.state.websiteUrl}/link/profiles`">
+                   :href="`${runtimeStore.websiteUrl}/link/profiles`">
             Learn more about profiles.
           </f7-link>
         </f7-block-footer>
@@ -114,6 +117,9 @@
 </style>
 
 <script>
+import { f7, theme } from 'framework7-vue'
+import { mapStores } from 'pinia'
+
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import Item from '@/components/item/item.vue'
 import ItemStatePreview from '@/components/item/item-state-preview.vue'
@@ -122,6 +128,9 @@ import LinkMixin from '@/pages/settings/things/link/link-mixin'
 import DirtyMixin from '@/pages/settings/dirty-mixin'
 import cloneDeep from 'lodash/cloneDeep'
 import fastDeepEqual from 'fast-deep-equal/es6'
+
+import { useStatesStore } from '@/js/stores/useStatesStore'
+import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
 export default {
   mixins: [ThingStatus, LinkMixin, DirtyMixin],
@@ -134,7 +143,11 @@ export default {
     thing: Object,
     channel: Object,
     item: Object,
-    source: String
+    source: String,
+    f7router: Object
+  },
+  setup () {
+    return { theme }
   },
   data () {
     return {
@@ -155,16 +168,17 @@ export default {
   computed: {
     context () {
       return {
-        store: this.$store.getters.trackedItems
+        store: useStatesStore().trackedItems
       }
-    }
+    },
+    ...mapStores(useRuntimeStore)
   },
   methods: {
     onPageBeforeIn (event) {
-      this.$store.dispatch('startTrackingStates')
+      useStatesStore().startTrackingStates()
     },
     onPageBeforeOut (event) {
-      this.$store.dispatch('stopTrackingStates')
+      useStatesStore().stopTrackingStates()
     },
     onPageAfterIn (event) {
       const itemName = this.item.name
@@ -172,8 +186,8 @@ export default {
       const channelUID = this.channel.uid.replace('#', '%23')
       this.$oh.api.get('/rest/profile-types?channelTypeUID=' + this.channel.channelTypeUID + '&itemType=' + itemType).then((data) => {
         this.profileTypes = data
-        this.profileTypes.unshift(data.splice(data.findIndex(p => p.uid === 'system:default'), 1)[0]) // move default to be first
-        this.profileTypes = this.profileTypes.filter(p => this.isProfileTypeCompatible(this.channel, p, this.item)) // only show compatible profile types
+        this.profileTypes.unshift(data.splice(data.findIndex((p) => p.uid === 'system:default'), 1)[0]) // move default to be first
+        this.profileTypes = this.profileTypes.filter((p) => this.isProfileTypeCompatible(this.channel, p, this.item)) // only show compatible profile types
 
         this.$oh.api.get('/rest/links/' + itemName + '/' + channelUID).then((data2) => {
           this.link = data2
@@ -196,10 +210,10 @@ export default {
     goBackWithDirtyCheck () {
       if (this.dirty) {
         this.confirmLeaveWithoutSaving(() => {
-          this.$f7router.back()
+          this.f7router.back()
         })
       } else {
-        this.$f7router.back()
+        this.f7router.back()
       }
     },
     onProfileTypeChange (profileTypeUid) {
@@ -225,21 +239,21 @@ export default {
       return channel.itemType
     },
     unlink () {
-      this.$f7.dialog.confirm(
+      f7.dialog.confirm(
         `Are you sure you want to unlink ${this.item.name} from ${this.thing.label}?`,
         'Unlink',
         () => {
           const itemName = this.item.name
           const channelUID = encodeURIComponent(this.channel.uid)
           this.$oh.api.delete('/rest/links/' + itemName + '/' + channelUID).then(() => {
-            this.$f7.toast.create({
+            f7.toast.create({
               text: 'Link deleted',
               destroyOnClose: true,
               closeTimeout: 2000
             }).open()
             this.$f7router.back()
           }).catch((err) => {
-            this.$f7.toast.create({
+            f7.toast.create({
               text: 'Link not deleted (links defined in a .items file are not editable from this screen): ' + err,
               destroyOnClose: true,
               closeTimeout: 2000
@@ -248,7 +262,7 @@ export default {
         })
     },
     unlinkAndDelete () {
-      this.$f7.dialog.confirm(
+      f7.dialog.confirm(
         `Are you sure you want to unlink ${this.item.name} from ${this.thing.label} and delete it?`,
         'Unlink and Delete Item',
         () => {
@@ -256,21 +270,21 @@ export default {
           const channelUID = encodeURIComponent(this.channel.uid)
           this.$oh.api.delete('/rest/links/' + itemName + '/' + channelUID).then(() => {
             this.$oh.api.delete('/rest/items/' + itemName).then(() => {
-              this.$f7.toast.create({
+              f7.toast.create({
                 text: 'Link and item deleted',
                 destroyOnClose: true,
                 closeTimeout: 2000
               }).open()
             }).catch((err) => {
-              this.$f7.toast.create({
+              f7.toast.create({
                 text: 'Link deleted but error while deleting item: ' + err,
                 destroyOnClose: true,
                 closeTimeout: 2000
               }).open()
             })
-            this.$f7router.back()
+            this.f7router.back()
           }).catch((err) => {
-            this.$f7.toast.create({
+            f7.toast.create({
               text: 'Link not deleted (links defined in a .items file are not editable from this screen): ' + err,
               destroyOnClose: true,
               closeTimeout: 2000
@@ -286,22 +300,22 @@ export default {
         link.configuration.profile = this.currentProfileType.uid
       }
       if (this.$refs.profileConfiguration && !this.$refs.profileConfiguration.isValid()) {
-        this.$f7.dialog.alert('Please review the profile configuration and correct validation errors')
+        f7.dialog.alert('Please review the profile configuration and correct validation errors')
         return
       }
 
       // delete then recreate the link
       this.$oh.api.delete('/rest/links/' + itemName + '/' + channelUID).then(() => {
         this.$oh.api.put('/rest/links/' + link.itemName + '/' + encodeURIComponent(link.channelUID), link).then((data) => {
-          this.$f7.toast.create({
+          f7.toast.create({
             text: 'Link updated',
             destroyOnClose: true,
             closeTimeout: 2000
           }).open()
-          this.$f7router.back()
+          this.f7router.back()
         })
       }).catch((err) => {
-        this.$f7.toast.create({
+        f7.toast.create({
           text: 'Link not updated (links defined in a .items file are not editable from this screen): ' + err,
           destroyOnClose: true,
           closeTimeout: 2000

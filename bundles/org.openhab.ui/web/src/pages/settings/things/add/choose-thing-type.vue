@@ -10,7 +10,7 @@
           search-container=".thing-type-list"
           search-item=".media-item"
           search-in=".item-title, .item-header, .item-footer"
-          :disable-button="!$theme.aurora" />
+          :disable-button="!theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
     <f7-block class="block-narrow">
@@ -99,6 +99,9 @@
 </style>
 
 <script>
+import { nextTick } from 'vue'
+import { f7, theme } from 'framework7-vue'
+
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import ThingInboxMixin from '@/pages/settings/things/thing-inbox-mixin'
 
@@ -108,7 +111,11 @@ export default {
     ConfigSheet
   },
   props: {
-    bindingId: String
+    bindingId: String,
+    f7router: Object
+  },
+  setup () {
+    return { theme }
   },
   data () {
     return {
@@ -161,7 +168,7 @@ export default {
       if (this.scanTimeoutId) clearTimeout(this.scanTimeoutId)
       this.intervalId = 0
       this.scanTimeoutId = 0
-      this.$f7.progressbar.hide('#scan-progress')
+      f7.progressbar.hide('#scan-progress')
       this.loadInbox()
     },
     scan () {
@@ -178,7 +185,7 @@ export default {
           let progressBarEl = this.$f7.progressbar.show('#scan-progress', 0, 'blue')
           this.intervalId = setInterval(() => {
             this.scanProgress += 1
-            this.$f7.progressbar.set(progressBarEl, this.scanProgress * 100 / this.scanTimeout)
+            f7.progressbar.set(progressBarEl, this.scanProgress * 100 / this.scanTimeout)
             this.loadInbox()
           }, 1000)
           this.scanTimeoutId = setTimeout(this.finishScanning, this.scanTimeout * 1000)
@@ -229,13 +236,13 @@ export default {
       return this.$oh.api.get('/rest/inbox?includeIgnored=false').then((data) => {
         this.loading = false
         this.scanResults = data.filter((e) => e.thingTypeUID.split(':')[0] === this.bindingId)
-        const filterQuery = this.$refs.searchbar?.f7Searchbar.query
+        const filterQuery = this.$refs.searchbar?.$el.f7Searchbar.query
         this.initSearchbar = false
-        this.$nextTick(() => {
+        nextTick(() => {
           this.initSearchbar = true
           if (!filterQuery) return
-          this.$nextTick(() => {
-            const searchbar = this.$refs.searchbar?.f7Searchbar
+          nextTick(() => {
+            const searchbar = this.$refs.searchbar?.$el.f7Searchbar
             searchbar.clear()
             searchbar.search(filterQuery)
           })
@@ -246,7 +253,7 @@ export default {
       })
     },
     openEntryActions (entry) {
-      let actions = this.$f7.actions.create({
+      let actions = f7.actions.create({
         convertToPopover: true,
         closeOnEscape: true,
         buttons: [
@@ -266,11 +273,11 @@ export default {
       actions.open()
     },
     approveAll () {
-      this.$f7.dialog.confirm('Add all discovered Things?', 'Add Things', () => {
+      f7.dialog.confirm('Add all discovered Things?', 'Add Things', () => {
         const promises = this.scanResults.map((i) => this.$oh.api.postPlain('/rest/inbox/' + i.thingUID + '/approve', i.label))
         let dialog = this.$f7.dialog.progress('Adding Things')
         Promise.all(promises).then((data) => {
-          this.$f7.toast.create({
+          f7.toast.create({
             text: 'Things added',
             destroyOnClose: true,
             closeTimeout: 2000

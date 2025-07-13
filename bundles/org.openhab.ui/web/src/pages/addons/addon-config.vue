@@ -2,11 +2,11 @@
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar :title="'Configure ' + addon.label + dirtyIndicator" back-link="Back">
       <f7-nav-right>
-        <f7-link @click="save()"
-                 v-if="$theme.md"
+        <f7-link v-if="theme.md"
+                 @click="save()"
                  icon-md="material:save"
                  icon-only />
-        <f7-link @click="save()" v-if="!$theme.md">
+        <f7-link v-if="!theme.md" @click="save()">
           Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
         </f7-link>
       </f7-nav-right>
@@ -84,6 +84,8 @@
 </style>
 
 <script>
+import { f7, theme } from 'framework7-vue'
+
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import DirtyMixin from '@/pages/settings/dirty-mixin'
 import cloneDeep from 'lodash/cloneDeep'
@@ -96,7 +98,11 @@ export default {
     ConfigSheet
   },
   props: {
-    addonId: String
+    addonId: String,
+    f7router: Object
+  },
+  setup () {
+    return { theme }
   },
   data () {
     return {
@@ -160,14 +166,14 @@ export default {
       }
 
       Promise.all(promises).then(() => {
-        this.$f7.toast.create({
+        f7.toast.create({
           text: 'Saved',
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
       })
       this.dirty = false
-      this.$f7router.back()
+      this.f7router.back()
     },
     onPageAfterIn () {
       if (window) {
