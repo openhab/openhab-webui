@@ -41,7 +41,7 @@
           <f7-row v-if="currentTab === 'tree'">
             <!-- do not set column width as usual, instead use custom CSS because of https://github.com/openhab/openhab-webui/issues/2574 -->
             <f7-col>
-              <f7-subnavbar v-show="semanticTags.length" :inner="false" style="position: relative; top: 0px">
+              <f7-subnavbar v-show="semanticTags.length" :inner="false" style="position: sticky; top: 0px">
                 <f7-searchbar style="width: 100%"
                               search-container=".semantics-treeview"
                               search-item=".treeview-item"
