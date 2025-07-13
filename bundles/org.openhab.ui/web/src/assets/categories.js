@@ -163,6 +163,7 @@ export const Categories = [
   'parents_6_6',
   'pie',
   'piggybank',
+  'mediabrowser',
   'player',
   'poweroutlet_au',
   'poweroutlet_eu',
