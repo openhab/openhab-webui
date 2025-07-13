@@ -37,26 +37,19 @@
 </template>
 
 <script>
+import TagMixin from '@/components/tags/tag-mixin'
+
 export default {
+  mixins: [TagMixin],
   props: ['item', 'sameClassOnly', 'hideType', 'hideNone', 'createMode'],
   data () {
     return {
-      semanticClasses: this.$store.getters.semanticClasses,
       semanticClass: '',
       semanticProperty: '',
       show: true
     }
   },
   methods: {
-    semanticType (tag) {
-      if (this.semanticClasses.Locations.indexOf(tag) >= 0) return 'Location'
-      if (this.semanticClasses.Equipment.indexOf(tag) >= 0) return 'Equipment'
-      if (this.semanticClasses.Points.indexOf(tag) >= 0) return 'Point'
-      return ''
-    },
-    isSemanticPropertyTag (tag) {
-      return (this.semanticClasses.Properties.indexOf(tag) >= 0)
-    },
     update (type, value) {
       if (type === 'property') {
         this.semanticProperty = value

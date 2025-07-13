@@ -6,7 +6,8 @@ const state = {
   Equipment: [],
   Points: [],
   Properties: [],
-  Labels: {}
+  Labels: {},
+  Tags: []
 }
 
 const getters = {
@@ -17,6 +18,11 @@ const getters = {
 
 const mutations = {
   setSemantics (state, { tags }) {
+    state.Tags = tags
+    state.Tags.forEach((tag) => {
+      const tagParts = tag.uid.split('_')
+      tag.parent = tagParts.slice(0, -1).join('_')
+    })
     state.Locations = tags.filter(t => t.uid.startsWith('Location')).map(t => t.name)
     state.Equipment = tags.filter(t => t.uid.startsWith('Equipment')).map(t => t.name)
     state.Points = tags.filter(t => t.uid.startsWith('Point')).map(t => t.name)
