@@ -9,7 +9,6 @@ export default {
   startRecognition (lang, startCallback, errorCallback, activityCallback, resultCallback, endCallback) {
     let interimResult = ''
 
-    // eslint-disable-next-line new-cap
     wksr = new window.webkitSpeechRecognition()
     wksr.continous = false
     wksr.interimResults = true

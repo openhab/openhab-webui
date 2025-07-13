@@ -1,30 +1,33 @@
-export function lineIndent (cm, linenr) {
-  const line = cm.getLine(linenr)
-  const match = line.match(/^ +/)
+export function lineIndent (line) {
+  const match = line.text.match(/^ +/)
   if (match && match.length === 1) return match[0].length
   return 0
 }
 
-export function findParent (cm, linenr) {
-  const currentIndent = lineIndent(cm, linenr)
-  for (let l = linenr; l >= 0; l--) {
-    if (lineIndent(cm, l) < currentIndent) return l
+export function findParent (context, line) {
+  // If the line is all blank, assume the current indent is at the cursor
+  const currentIndent = line.text.match(/^\s*$/) ? context.pos - line.from : lineIndent(line)
+  for (let l = line.number - 1; l >= 1; l--) {
+    line = context.state.doc.line(l)
+    if (line.text.match(/^\s*$/)) continue // skip empty lines
+    if (lineIndent(line) < currentIndent) return line
   }
 }
 
-export function findParentRoot (cm, linenr) {
-  for (let l = linenr; l >= 0; l--) {
-    if (lineIndent(cm, l) === 0) return l
+export function findParentRoot (context, line) {
+  while (lineIndent(line) > 0 && line.number > 1) {
+    line = context.state.doc.line(line.number - 1)
   }
+  return line
 }
 
-export function findComponentType (cm, linenr) {
-  const currentIndent = lineIndent(cm, linenr)
-  for (let l = linenr - 1; l >= 0; l--) {
-    const line = cm.getLine(l)
-    const indent = lineIndent(cm, l)
+export function findComponentType (context, line) {
+  const currentIndent = lineIndent(line)
+  for (let l = line.number - 1; l >= 1; l--) {
+    line = context.state.doc.line(l)
+    const indent = lineIndent(line)
     if (indent === 0 || indent < currentIndent) {
-      const match = line.match(/component: (.*)$/)
+      const match = line.text.match(/component: (.*)$/)
       if (match && match.length === 2) return match[1]
     }
   }
@@ -32,25 +35,25 @@ export function findComponentType (cm, linenr) {
 
 export function isConfig (line) {
   if (!line) return false
-  return line.match(/^ *config(uration)?:/)
+  return line.text.match(/^ *config(uration)?:/)
 }
 
 export function isSlots (line) {
   if (!line) return false
-  return line.match(/^ *slots:/)
+  return line.text.match(/^ *slots:/)
 }
 
 export function isComponent (line) {
   if (!line) return false
-  return line.match(/^ *-? ?component:/)
+  return line.text.match(/^ *-? ?component:/)
 }
 
 export function isRuleSection (line) {
   if (!line) return false
-  return line.match(/^(triggers|conditions|actions|items):/)
+  return line.text.match(/^(triggers|conditions|actions|items):/)
 }
 
 export function isChannelsSection (line) {
   if (!line) return false
-  return line.match(/^channels:/)
+  return line.text.match(/^channels:/)
 }

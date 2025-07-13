@@ -34,10 +34,16 @@
 </style>
 
 <script>
+import { defineAsyncComponent, nextTick } from 'vue'
+import { f7 } from 'framework7-vue'
+
 export default {
-  props: ['value', 'title'],
+  props: {
+    value: String,
+    title: String
+  },
   components: {
-    'location-picker': () => import(/* webpackChunkName: "location-picker" */ './location-picker.vue')
+    'location-picker': defineAsyncComponent(() => import(/* webpackChunkName: "location-picker" */ './location-picker.vue'))
   },
   data () {
     return {
@@ -53,7 +59,7 @@ export default {
   methods: {
     updateValue () {
       if (this.currentPosition) {
-        this.$f7.emit('locationUpdate', this.currentPosition)
+        f7.emit('locationUpdate', this.currentPosition)
       }
     },
     updatePosition (event) {
@@ -63,11 +69,11 @@ export default {
     },
     mapPickerClosed () {
       this.showMap = false
-      this.$f7.emit('locationPickerClosed')
+      f7.emit('locationPickerClosed')
     },
     mapPickerOpen () {
       this.currentPosition = this.value
-      this.$nextTick(() => {
+      nextTick(() => {
         this.showMap = true
       })
     }

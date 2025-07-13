@@ -1,9 +1,15 @@
+import { f7 } from 'framework7-vue'
 import WidgetConfigPopup from '@/components/pagedesigner/widget-config-popup.vue'
 import { pb, pg, pi, pt, WidgetDefinition } from '@/assets/definitions/widgets/helpers'
 import { actionGroup, actionParams } from '@/assets/definitions/widgets/actions'
 
+import { useStatesStore } from '@/js/stores/useStatesStore'
+
 export default {
-  emits: ['svgOnClickConfigUpdate', 'action'],
+  props: {
+    f7router: Object
+  },
+  emits: ['action'],
   data () {
     return {
       embeddedSvgReady: false,
@@ -20,7 +26,7 @@ export default {
       // Load the real SVG content, in editmode we add a random number to the URL to prevent caching
       const svgUrl = (this.context.editmode) ? this.config.imageUrl + `?rnd=${Math.random()}` : this.config.imageUrl
       return fetch(svgUrl)
-        .then(response => {
+        .then((response) => {
           if (response.status !== 200) {
             return Promise.reject(new Error(`Failed to load from ${this.config.imageUrl}. Status: ${response.status} (${response.statusText})`))
           } else if (response.headers.get('Content-Type') !== 'image/svg+xml') {
@@ -29,13 +35,13 @@ export default {
             return response.text()
           }
         })
-        .then(svgCode => {
+        .then((svgCode) => {
           this.$refs.canvasBackground.innerHTML = svgCode
           const svgEl = this.$refs.canvasBackground.querySelector('svg')
           svgEl.classList.add('oh-canvas-background', 'disable-user-drag')
           return Promise.resolve()
         })
-        .catch(error => {
+        .catch((error) => {
           console.error('Error embedding SVG:', error)
           return Promise.reject(error)
         })
@@ -53,7 +59,7 @@ export default {
       }
       const popup = { component: WidgetConfigPopup }
       const that = this
-      this.$f7router.navigate({ url: 'on-svg-click-settings', route: { path: 'on-svg-click-settings', popup } }, {
+      this.f7router.navigate({ url: 'on-svg-click-settings', route: { path: 'on-svg-click-settings', popup } }, {
         props: {
           widget: new WidgetDefinition('onSvgClickSettings', `SVG onClick Action for ${id}`, '')
             .paramGroup(pg('state', 'State', 'Defines if and how the state is represented in the SVG'), [
@@ -76,11 +82,11 @@ export default {
         }
       })
       const updateWidgetConfig = (config) => {
-        this.$f7.emit('svgOnClickConfigUpdate', { id, config })
+        f7.emit('svgOnclickConfigUpdate', { id, config })
       }
-      this.$f7.on('widgetConfigUpdate', updateWidgetConfig)
-      this.$f7.once('widgetConfigClosed', () => {
-        this.$f7.off('widgetConfigUpdate', updateWidgetConfig)
+      f7.on('widgetConfigUpdate', updateWidgetConfig)
+      f7.once('widgetConfigClosed', () => {
+        f7.off('widgetConfigUpdate', updateWidgetConfig)
       })
     },
     /**
@@ -101,17 +107,20 @@ export default {
         const items = stateItems || (actionItem ? [actionItem] : [])
         if (items.length === 0) continue
         for (const item of items) {
-          if (!this.$store.getters.isItemTracked(item)) this.$store.commit('addToTrackingList', item)
+          if (!useStatesStore().isItemTracked(item)) useStatesStore().addToTrackingList(item)
+          // TODO-V3.0 - subscribe to state changes in pinia store
+          /*
           const unsubscribe = this.$store.subscribe((mutation, state) => {
             if (mutation.type === 'setItemState' && mutation.payload.itemName === item) {
               this.applyStateToSvgElement(item, state.states.itemStates[item], this.config.embeddedSvgActions[subElement.id], subElement)
             }
           })
           this.embeddedSvgStateTrackingUnsubscribes.push(unsubscribe)
+          */
         }
       }
 
-      this.$store.dispatch('updateTrackingList')
+      useStatesStore().updateTrackingList()
       console.info('Successfully setup embedded SVG state tracking.')
     },
     /**
@@ -228,7 +237,7 @@ export default {
      */
     flashEmbeddedSvgComponents () {
       if (!this.$refs.canvasBackground) {
-        this.$f7.toast.create({
+        f7.toast.create({
           text: 'SVG embedding has not been properly configured. Ensure that the Image URL points to an SVG file.',
           closeTimeout: 2000
         }).open()
@@ -238,7 +247,7 @@ export default {
       const subElements = svg.querySelectorAll('[openhab]')
 
       if (subElements.length === 0) {
-        this.$f7.toast.create({
+        f7.toast.create({
           text: 'No SVG elements with an "openhab" attribute found.',
           closeTimeout: 2000
         }).open()

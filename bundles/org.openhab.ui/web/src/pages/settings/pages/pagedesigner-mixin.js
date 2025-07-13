@@ -1,3 +1,7 @@
+import { nextTick } from 'vue'
+import { utils } from 'framework7'
+import { f7 } from 'framework7-vue'
+
 import YAML from 'yaml'
 import cloneDeep from 'lodash/cloneDeep'
 import fastDeepEqual from 'fast-deep-equal/es6'
@@ -6,15 +10,22 @@ import WidgetConfigPopup from '@/components/pagedesigner/widget-config-popup.vue
 import WidgetCodePopup from '@/components/pagedesigner/widget-code-popup.vue'
 import DirtyMixin from '../dirty-mixin'
 
+import { useStatesStore } from '@/js/stores/useStatesStore'
+import { useComponentsStore } from '@/js/stores/useComponentsStore'
+
 export default {
   mixins: [DirtyMixin],
-  props: ['pageCopy'],
+  props: {
+    pageCopy: Object,
+    f7router: Object,
+    f7route: Object
+  },
   data () {
     return {
       pageReady: false,
       loading: false,
       savedPage: {},
-      pageKey: this.$f7.utils.id(),
+      pageKey: utils.id(),
       pageYaml: null,
       props: {},
       previewMode: false,
@@ -27,12 +38,12 @@ export default {
   },
   computed: {
     ready () {
-      return this.pageReady && this.$store.state.components.widgets != null
+      return this.pageReady && useComponentsStore().widgets != null
     },
     context () {
       return {
         component: this.page,
-        store: this.$store.getters.trackedItems,
+        store: useStatesStore().trackedItems,
         props: this.props,
         vars: (this.page && this.page.config && this.page.config.defineVars) ? this.page.config.defineVars : {},
         editmode: (!this.previewMode || this.forceEditMode) ? {
@@ -77,14 +88,14 @@ export default {
       if (window) {
         window.addEventListener('keydown', this.keyDown)
       }
-      this.$store.dispatch('startTrackingStates')
+      useStatesStore().startTrackingStates()
       this.load()
     },
     onPageBeforeOut () {
       if (window) {
         window.removeEventListener('keydown', this.keyDown)
       }
-      this.$store.dispatch('stopTrackingStates')
+      useStatesStore().stopTrackingStates()
     },
     keyDown (ev) {
       if ((ev.ctrlKey || ev.metaKey) && !(ev.altKey || ev.shiftKey)) {
@@ -111,16 +122,16 @@ export default {
 
       if (this.createMode) {
         if (this.pageCopy) {
-          this.$set(this, 'page', this.pageCopy)
+          this.page = this.pageCopy
         }
         this.savedPage = cloneDeep(this.page)
         this.loading = false
         this.pageReady = true
       } else {
         this.$oh.api.get('/rest/ui/components/ui:page/' + this.uid).then((data) => {
-          this.$set(this, 'page', data)
+          this.page = data
           this.savedPage = cloneDeep(this.page)
-          this.$nextTick(() => {
+          nextTick(() => {
             this.pageReady = true
             this.loading = false
           })
@@ -130,23 +141,23 @@ export default {
     save (stay) {
       if (this.currentTab === 'code' && !this.fromYaml()) return
       if (!this.page.uid) {
-        this.$f7.dialog.alert('Please give an ID to the page')
+        f7.dialog.alert('Please give an ID to the page')
         return
       } else if (!/^[A-Za-z0-9_]+$/.test(this.page.uid)) {
-        this.$f7.dialog.alert('Page ID is only allowed to contain A-Z,a-z,0-9,_')
+        f7.dialog.alert('Page ID is only allowed to contain A-Z,a-z,0-9,_')
         return
       }
       if (this.createMode) {
-        if (this.$store.getters.page(this.page.uid)) {
-          this.$f7.dialog.alert('A page with this ID already exists')
+        if (useComponentsStore().page(this.page.uid)) {
+          f7.dialog.alert('A page with this ID already exists')
           return
         }
       } else if (this.uid !== this.page.uid) {
-        this.$f7.dialog.alert('You cannot change the ID of an existing page. Duplicate it with the new ID then delete this one.')
+        f7.dialog.alert('You cannot change the ID of an existing page. Duplicate it with the new ID then delete this one.')
         return
       }
       if (!this.page.config.label) {
-        this.$f7.dialog.alert('Please give a label to the page')
+        f7.dialog.alert('Please give a label to the page')
         return
       }
 
@@ -157,24 +168,24 @@ export default {
         this.dirty = false
         this.savedPage = cloneDeep(this.page)
         if (this.createMode) {
-          this.$f7.toast.create({
+          f7.toast.create({
             text: 'Page created',
             destroyOnClose: true,
             closeTimeout: 2000
           }).open()
-          this.$f7router.navigate(this.$f7route.url.replace('/add', '/' + this.page.uid), { reloadCurrent: true })
+          this.f7router.navigate(this.f7route.url.replace('/add', '/' + this.page.uid), { reloadCurrent: true })
           this.load()
         } else {
-          this.$f7.toast.create({
+          f7.toast.create({
             text: 'Page updated',
             destroyOnClose: true,
             closeTimeout: 2000
           }).open()
         }
-        this.$f7.emit('sidebarRefresh', null)
-        // if (!stay) this.$f7router.back()
+        f7.emit('sidebarRefresh', null)
+        // if (!stay) this.f7router.back()
       }).catch((err) => {
-        this.$f7.toast.create({
+        f7.toast.create({
           text: 'Error while saving page: ' + err,
           destroyOnClose: true,
           closeTimeout: 2000
@@ -186,7 +197,7 @@ export default {
       this.currentWidget = null
     },
     updateWidgetConfig (config) {
-      this.$set(this.currentComponent, 'config', config)
+      this.currentComponent.config = config
       this.forceUpdate()
     },
     widgetCodeClosed () {
@@ -195,8 +206,8 @@ export default {
     },
     updateWidgetCode (code) {
       const updatedWidget = YAML.parse(code)
-      this.$set(this.currentComponent, 'config', updatedWidget.config)
-      this.$set(this.currentComponent, 'slots', updatedWidget.slots)
+      this.currentComponent.config = updatedWidget.config
+      this.currentComponent.slots = updatedWidget.slots
       this.forceUpdate()
     },
     configureWidget (component, parentContext, forceComponentType) {
@@ -205,13 +216,13 @@ export default {
       this.currentWidget = null
       let widgetDefinition
       if (componentType.indexOf('widget:') === 0) {
-        this.currentWidget = this.$store.getters.widget(componentType.substring(7))
+        this.currentWidget = useComponentsStore().widget(componentType.substring(7))
       } else {
         // getWidgetDefinition should be defined locally in the page designers SFCs
         widgetDefinition = this.getWidgetDefinition(componentType)
         if (!widgetDefinition) {
           console.warn('Widget not found: ' + componentType)
-          this.$f7.toast.create({
+          f7.toast.create({
             text: `This type of component cannot be configured: ${componentType}.`,
             destroyOnClose: true,
             closeTimeout: 3000,
@@ -234,7 +245,7 @@ export default {
         componentType: this.type
       }
 
-      this.$f7router.navigate({
+      this.f7router.navigate({
         url: 'configure-widget',
         route: {
           path: 'configure-widget',
@@ -247,11 +258,15 @@ export default {
         }
       })
 
-      this.$f7.on('widgetConfigUpdate', this.updateWidgetConfig)
-      this.$f7.once('widgetConfigClosed', () => {
-        this.$f7.off('widgetConfigUpdate', this.updateWidgetConfig)
+      f7.on('widgetConfigUpdate', this.updateWidgetConfig)
+      f7.once('widgetConfigClosed', () => {
+        f7.off('widgetConfigUpdate', this.updateWidgetConfig)
         this.widgetConfigClosed()
       })
+    },
+    configureSlot () {
+      // This needs to be defined here, otherwise vue will complain about it in the computed context() method above.
+      // it will get overridden by the component that includes this mixin.
     },
     editWidgetCode (component, parentContext, slot) {
       if (slot && !component.slots) component.slots = {}
@@ -261,7 +276,7 @@ export default {
         component: WidgetCodePopup
       }
 
-      this.$f7router.navigate({
+      this.f7router.navigate({
         url: 'widget-code',
         route: {
           path: 'widget-code',
@@ -274,9 +289,9 @@ export default {
         }
       })
 
-      this.$f7.on('widgetCodeUpdate', this.updateWidgetCode)
-      this.$f7.once('widgetCodeClosed', () => {
-        this.$f7.off('widgetCodeUpdate', this.updateWidgetCode)
+      f7.on('widgetCodeUpdate', this.updateWidgetCode)
+      f7.once('widgetCodeClosed', () => {
+        f7.off('widgetCodeUpdate', this.updateWidgetCode)
         this.widgetCodeClosed()
       })
     },
@@ -286,7 +301,7 @@ export default {
     },
     copyWidget (component, parentContext, slot = 'default') {
       let newClipboard = JSON.stringify(component)
-      this.$set(this, 'clipboard', newClipboard)
+      this.clipboard = newClipboard
       this.clipboardType = component.component
     },
     pasteWidget (component, parentContext, slot = 'default') {
@@ -323,7 +338,7 @@ export default {
       this.forceUpdate()
     },
     forceUpdate () {
-      this.pageKey = this.$f7.utils.id()
+      this.pageKey = f7.utils.id()
     },
     togglePreviewMode (value) {
       if (value === undefined) value = !this.previewMode

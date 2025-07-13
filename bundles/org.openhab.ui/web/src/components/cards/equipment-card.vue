@@ -5,8 +5,8 @@
               header-height="150px">
     <template #glance>
       <div v-if="context && context.component.slots && context.component.slots.glance" class="display-flex flex-direction-column align-items-flex-start">
-        <generic-widget-component :context="childContext(slotComponent)"
-                                  v-for="(slotComponent, idx) in context.component.slots.glance"
+        <generic-widget-component v-for="(slotComponent, idx) in context.component.slots.glance"
+                                  :context="childContext(slotComponent)"
                                   :key="'glance-' + idx"
                                   @command="onCommand" />
       </div>
@@ -40,9 +40,13 @@ import { equipmentListComponent } from '@/components/widgets/standard/list/defau
 import CardMixin from './card-mixin'
 import ModelCard from './model-card.vue'
 
+import { useStatesStore } from '@/js/stores/useStatesStore'
+
 export default {
   mixins: [mixin, CardMixin],
-  props: ['tabContext'],
+  props: {
+    tabContext: Object
+  },
   components: {
     ModelCard
   },
@@ -50,7 +54,7 @@ export default {
     listContext () {
       const contextLabelDefaults = { contextLabelSource: 'path' }
       return {
-        store: this.$store.getters.trackedItems,
+        store: useStatesStore().trackedItems,
         component: equipmentListComponent(this.element.equipment, { ...contextLabelDefaults, ...this.tabContext }, false)
       }
     }

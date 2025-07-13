@@ -79,19 +79,19 @@ export default {
   },
   methods: {
     allowedWidgetTypes (parentWidget) {
-      let types = this.WIDGET_TYPES.filter(w => w.type !== 'Sitemap')
+      let types = this.WIDGET_TYPES.filter((w) => w.type !== 'Sitemap')
       // Button only allowed inside Buttongrid
-      if (parentWidget.component === 'Buttongrid') return types.filter(t => t.type === 'Button')
-      types = types.filter(t => t.type !== 'Button')
+      if (parentWidget.component === 'Buttongrid') return types.filter((t) => t.type === 'Button')
+      types = types.filter((t) => t.type !== 'Button')
       // No frames in frame
-      if (parentWidget.component === 'Frame') return types.filter(t => t.type !== 'Frame')
+      if (parentWidget.component === 'Frame') return types.filter((t) => t.type !== 'Frame')
       // Linkable widget types only contain frames or none at all
       if (this.LINKABLE_WIDGET_TYPES.includes(parentWidget.component)) {
         if (parentWidget.slots?.widgets?.length > 0) {
-          if (parentWidget.slots.widgets.find(w => w.component === 'Frame')) {
-            return types.filter(t => t.type === 'Frame')
+          if (parentWidget.slots.widgets.find((w) => w.component === 'Frame')) {
+            return types.filter((t) => t.type === 'Frame')
           } else {
-            return types.filter(t => t.type !== 'Frame')
+            return types.filter((t) => t.type !== 'Frame')
           }
         }
       }
@@ -107,7 +107,7 @@ export default {
     },
     widgetTypeDef (component) {
       const componentType = component ?? this.widget.component
-      return this.WIDGET_TYPES.find(w => w.type === componentType)
+      return this.WIDGET_TYPES.find((w) => w.type === componentType)
     },
     widgetTypeIcon (component) {
       return this.widgetTypeDef(component).icon
@@ -119,7 +119,7 @@ export default {
       return this.widget.config.label ?? ((this.widget.component === 'Button') ? this.widget.config.cmd : '')
     },
     widgetItemLabel (includeItemName) {
-      const item = this.items.find(i => i.name === this.widget.config.item)
+      const item = this.items.find((i) => i.name === this.widget.config.item)
       return (item?.label || this.widget.config.item) + (includeItemName && item ? ` (${item.name})` : '')
     },
     widgetConfigDescription (includeItemName) {

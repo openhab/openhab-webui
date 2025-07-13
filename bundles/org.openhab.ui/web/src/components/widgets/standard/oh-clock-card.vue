@@ -3,17 +3,24 @@
     <template #content>
       <f7-row v-if="config.showDate && config.datePos !== 'below'">
         <f7-col>
-          <oh-clock :context="{ component: { component: 'oh-clock', config: {} }}" :style="{ 'font-size': config.dateFontSize || '1vw', 'font-weight': config.dateFontWeight || 'normal' }" :format="config.dateFormat" />
+          <oh-clock :context="{ component: { component: 'oh-clock', config: {} } }"
+                    :style="{ 'font-size': config.dateFontSize || '1vw', 'font-weight': config.dateFontWeight || 'normal' }"
+                    :format="config.dateFormat" />
         </f7-col>
       </f7-row>
       <f7-row>
         <f7-col>
-          <oh-clock :context="{ component: { component: 'oh-clock', config: {} }}" :style="{ 'font-size': config.timeFontSize || '2vw', 'font-weight': config.timeFontWeight || 'normal' }" :format="config.timeFormat" />
+          <oh-clock :context="{ component: { component: 'oh-clock', config: {} } }"
+                    :style="{ 'font-size': config.timeFontSize || '2vw', 'font-weight': config.timeFontWeight || 'normal' }"
+                    :format="config.timeFormat" />
         </f7-col>
       </f7-row>
       <f7-row v-if="config.showDate && config.datePos === 'below'">
         <f7-col>
-          <oh-clock :context="{ component: { component: 'oh-clock', config: {} }}" :style="{ 'font-size': config.dateFontSize || '1vw', 'font-weight': config.dateFontWeight || 'normal' }" :format="config.dateFormat" />
+          <oh-clock
+            :context="{ component: { component: 'oh-clock', config: {} } }"
+            :style="{ 'font-size': config.dateFontSize || '1vw', 'font-weight': config.dateFontWeight || 'normal' }"
+            :format="config.dateFormat" />
         </f7-col>
       </f7-row>
     </template>

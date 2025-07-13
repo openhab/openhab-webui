@@ -1,4 +1,4 @@
-import * as dayjs from 'dayjs'
+import dayjs from 'dayjs'
 import aggregate from './aggregators'
 import ComponentId from '../../component-id'
 
@@ -9,7 +9,7 @@ export default {
   },
   get (component, points, startTime, endTime, chart) {
     let series = chart.evaluateExpression(ComponentId.get(component), component.config)
-    const itemPoints = points.find(p => p.name === series.item).data
+    const itemPoints = points.find((p) => p.name === series.item).data
     const groups = itemPoints.reduce((acc, p) => {
       let day = dayjs(p.time).startOf('day')
       if (acc.length && acc[acc.length - 1][0].isSame(day)) {

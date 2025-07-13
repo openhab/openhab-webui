@@ -1,13 +1,13 @@
 <template>
-  <f7-range ref="rangeslider"
+  <f7-range v-bind="config"
+            ref="rangeslider"
             class="oh-slider"
-            v-bind="config"
-            :value="sliderValue"
+            v-model="sliderValue"
             :format-label="formatLabel"
             :format-scale-label="formatScaleLabel"
             @range:change="onChange($event)"
-            @click.native.stop="sendCommandDebounced(sliderValue, true)"
-            @touchend.native="sendCommandDebounced(sliderValue, true)" />
+            @click.stop="sendCommandDebounced(sliderValue, true)"
+            @touchend="sendCommandDebounced(sliderValue, true)" />
 </template>
 
 <style lang="stylus">
@@ -48,8 +48,8 @@ export default {
     // re-calculate the range slider after masonry is updated
     setTimeout(() => {
       if (this.$refs.rangeslider) {
-        this.$refs.rangeslider.f7Range.calcSize()
-        this.$refs.rangeslider.f7Range.layout()
+        this.$refs.rangeslider.$el.f7Range.calcSize()
+        this.$refs.rangeslider.$el.f7Range.layout()
       }
     }, 0)
   },
@@ -70,7 +70,7 @@ export default {
       const tsf = this.toStepFixed(newValue)
       // Do NOT send command if sliderValue is smaller than real value +-step
       if (Math.abs(tsf - this.value) < (this.config.step || 1)) {
-        this.$refs.rangeslider.setValue(this.value)
+        this.$refs.rangeslider.$el.f7Range.setValue(this.value)
       } else {
         this.sendCommandDebounced(tsf)
       }

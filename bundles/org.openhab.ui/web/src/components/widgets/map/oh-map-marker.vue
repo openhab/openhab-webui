@@ -14,8 +14,10 @@
 </template>
 
 <script>
+import { utils } from 'framework7'
+
 import mixin from '../widget-mixin'
-import { LMarker, LTooltip, LIcon } from 'vue2-leaflet'
+import { LMarker, LTooltip, LIcon } from '@vue-leaflet/vue-leaflet'
 import { actionsMixin } from '../widget-actions'
 import { OhMapMarkerDefinition } from '@/assets/definitions/widgets/map'
 
@@ -27,9 +29,10 @@ export default {
     LIcon
   },
   widget: OhMapMarkerDefinition,
+  emits: ['update'],
   data () {
     return {
-      markerKey: this.$f7.utils.id()
+      markerKey: utils.id()
     }
   },
   computed: {
@@ -53,8 +56,7 @@ export default {
     icon () {
       if (this.config.icon && this.config.icon.indexOf('oh:') === 0) {
         return this.$oh.media.getIcon(this.config.icon.substring(3)).then((icon) => {
-          // debugger
-          this.markerKey = this.$f7.utils.id()
+          this.markerKey = utils.id()
           this.$emit('update')
           return icon
         })

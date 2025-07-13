@@ -2,23 +2,36 @@
   <ul>
     <f7-list-input
       ref="input"
-      :floating-label="$theme.md"
+      :floating-label="theme.md"
       :label="configDescription.label"
       :name="configDescription.name"
       :value="value"
       :required="configDescription.required"
       validate
       :clear-button="!configDescription.required"
-      @input="updateValue" />
-    <div slot="content-end" class="display-flex justify-content-center">
-      <div ref="picker" />
-    </div>
+      @input="updateValue">
+      <template #content-end>
+        <div class="display-flex justify-content-center">
+          <div ref="picker" />
+        </div>
+      </template>
+    </f7-list-input>
   </ul>
 </template>
 
 <script>
+import { f7, theme } from 'framework7-vue'
+import { nextTick } from 'vue'
+
 export default {
-  props: ['configDescription', 'value'],
+  props: {
+    configDescription: Object,
+    value: String
+  },
+  emits: ['input'],
+  setup () {
+    return { theme }
+  },
   data () {
     return {
       picker: null
@@ -71,8 +84,8 @@ export default {
         })
     }
 
-    this.$nextTick(() => {
-      this.picker = this.$f7.picker.create({
+    nextTick(() => {
+      this.picker = f7.picker.create({
         containerEl: containerControl,
         inputEl: inputElement,
         toolbar: false,
@@ -96,7 +109,7 @@ export default {
       })
     })
   },
-  beforeDestroy () {
+  beforeUnmount () {
     if (this.picker) {
       this.picker.destroy()
     }

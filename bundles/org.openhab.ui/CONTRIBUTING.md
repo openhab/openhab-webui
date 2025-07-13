@@ -20,8 +20,8 @@ Change to the `web` directory, gather the necessary dependencies with `npm insta
 * `npm run build:mvn` - build web app through Maven for production (note: no need to prepare a production version when submitting a PR, the build server will do it)
 * `npm run dev` - run the development server (same as above)
 * `npm run dev:blockly` - run the development server with Blockly source-maps (allows Blockly debugging)
-* `npm run test:unit` - start the Jest test runner and run the unit tests
-* `npm run test:unit:watch` - start the Jest test runner, run the unit tests, keep running and watch for changes
+* `npm run test:unit` - start the Vitest test runner and run the unit tests
+* `npm run test:unit:watch` - start the Vitest test runner, run the unit tests, keep running and watch for changes
 * `npm run test:e2e` - start Cypress and run the e2e tests
 * `npm run test:e2e:gui` - open the Cypress GUI
 * `npm run lint` - run linter to detect code style errors

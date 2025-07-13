@@ -1,19 +1,20 @@
-import * as dayjs from 'dayjs'
+import dayjs, { extend } from 'dayjs'
 import LocalizedFormat from 'dayjs/plugin/localizedFormat'
 import LocaleData from 'dayjs/plugin/localeData'
 import ComponentId from '../../component-id'
-dayjs.extend(LocalizedFormat)
-dayjs.extend(LocaleData)
+
+extend(LocalizedFormat)
+extend(LocaleData)
 
 const months = {
-  'short': [...dayjs.localeData().monthsShort()],
-  'default': [...dayjs.localeData().months()]
+  short: [...dayjs.localeData().monthsShort()],
+  default: [...dayjs.localeData().months()]
 }
 
 const weekdays = {
-  'min': [...dayjs.localeData().weekdaysMin()],
-  'short': [...dayjs.localeData().weekdaysShort()],
-  'default': [...dayjs.localeData().weekdays()]
+  min: [...dayjs.localeData().weekdaysMin()],
+  short: [...dayjs.localeData().weekdaysShort()],
+  default: [...dayjs.localeData().weekdays()]
 }
 
 export default {

@@ -10,7 +10,9 @@ import { OhClockDefinition } from '@/assets/definitions/widgets/system'
 
 export default {
   mixins: [mixin, actionsMixin],
-  props: ['format'],
+  props: {
+    format: String
+  },
   widget: OhClockDefinition,
   data () {
     return {
@@ -26,7 +28,7 @@ export default {
     this.updateTime()
     this.timer = setInterval(this.updateTime, 1000)
   },
-  beforeDestroy () {
+  beforeUnmount () {
     clearInterval(this.timer)
   }
 }

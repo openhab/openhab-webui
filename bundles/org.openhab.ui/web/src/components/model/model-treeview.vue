@@ -1,6 +1,6 @@
 <template>
   <f7-treeview class="model-treeview">
-    <draggable :disabled="!canDragDrop"
+    <draggable :disabled="!canDragDrop ? true : null"
                :list="children"
                :group="{ name: 'model-treeview', put: allowDrop }"
                animation="150"
@@ -64,14 +64,21 @@
 </style>
 
 <script>
+import { VueDraggableNext as Draggable } from 'vue-draggable-next'
+
 import ModelTreeviewItem from '@/components/model/treeview-item.vue'
 import ModelDragDropMixin from '@/pages/settings/model/model-dragdrop-mixin'
-import Draggable from 'vuedraggable'
 
 export default {
   mixins: [ModelDragDropMixin],
-  props: ['rootNodes', 'selected', 'includeItemName', 'includeItemTags', 'canDragDrop'],
-  emits: ['reload'],
+  props: {
+    rootNodes: Array,
+    selected: Object,
+    includeItemName: Boolean,
+    includeItemTags: Boolean,
+    canDragDrop: Boolean
+  },
+  emits: ['reload', 'checked', 'selected'],
   components: {
     Draggable,
     ModelTreeviewItem
@@ -81,11 +88,11 @@ export default {
       return {
         class: '',
         children: {
-          locations: this.rootNodes.filter(n => n.class.startsWith('Location')),
-          equipment: this.rootNodes.filter(n => n.class.startsWith('Equipment')),
-          points: this.rootNodes.filter(n => n.class.startsWith('Point')),
-          groups: this.rootNodes.filter(n => !n.class && n.item.type === 'Group'),
-          items: this.rootNodes.filter(n => !n.class && n.item.type !== 'Group')
+          locations: this.rootNodes.filter((n) => n.class.startsWith('Location')),
+          equipment: this.rootNodes.filter((n) => n.class.startsWith('Equipment')),
+          points: this.rootNodes.filter((n) => n.class.startsWith('Point')),
+          groups: this.rootNodes.filter((n) => !n.class && n.item.type === 'Group'),
+          items: this.rootNodes.filter((n) => !n.class && n.item.type !== 'Group')
         },
         opened: true,
         item: null
