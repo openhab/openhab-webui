@@ -53,7 +53,7 @@
                   <f7-button v-else color="gray" icon-size="24" tooltip="Collapse" icon-f7="rectangle_compress_vertical" @click="toggleExpanded()" />
                 </div>
               </f7-subnavbar>
-              <f7-block v-show="semanticTags.length" strong class="semantics-tree" no-gap @click.native="clearSelection">
+              <f7-block v-show="semanticTags.length" class="semantics-tree" no-gap @click.native="clearSelection">
                 <semantics-treeview :semanticTags="semanticTags" :expandedTags="expandedTags" @selected="selectTag" :showNames="showNames" :showSynonyms="showSynonyms" :selectedTag="selectedTag" canDragDrop="true" />
               </f7-block>
             </f7-col>
@@ -231,7 +231,6 @@
         height 100%
         overflow auto
         .semantics-tree
-          min-height 100%
           margin 0
           height auto
       .details-pane
