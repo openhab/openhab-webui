@@ -30,7 +30,7 @@
     </div>
     <f7-radio slot="content-start" name="semantic-tag-radio" v-if="picker" :checked="selected" @change="select" />
     <f7-badge v-if="tag.description" slot="content-end" class="semantic-tag-tooltip-badge" :tooltip="tooltip">
-      <f7-icon class="tooltip-icon" f7="info_circle" ios="f7:info_circle" md="material:info" />
+      <f7-icon class="tooltip-icon" f7="info_circle" ios="f7:info_circle" md="material:info" color="gray" />
     </f7-badge>
   </f7-treeview-item>
 </template>
