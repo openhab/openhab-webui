@@ -32,13 +32,13 @@
           <f7-button outline small :active="!blocklyCodePreview" icon-f7="ticket" :icon-size="($theme.aurora) ? 20 : 22" class="no-ripple" @click="blocklyCodePreview = false" />
           <f7-button outline small :active="blocklyCodePreview" icon-f7="doc_text" :icon-size="($theme.aurora) ? 20 : 22" class="no-ripple" @click="showBlocklyCode" />
         </f7-segmented>
-        <f7-link v-if="DocumentationLinks[editorMode]"
+        <f7-link v-if="DocumentationLinks[transformation.type]"
                  icon-color="blue"
                  :text="$device.desktop ? 'Open Documentation' : 'Docs'"
                  tooltip="Open documentation"
                  icon-ios="f7:question_circle" icon-md="f7:question_circle" icon-aurora="f7:question_circle"
                  color="blue"
-                 :href="$store.state.websiteUrl + DocumentationLinks[editorMode]" target="_blank" external />
+                 :href="$store.state.websiteUrl + DocumentationLinks[transformation.type]" target="_blank" external />
         <f7-link class="right details-link margin-left padding-right" ref="detailsLink" @click="detailsOpened = true" icon-f7="chevron_up" />
       </span>
     </f7-toolbar>
@@ -202,7 +202,7 @@ export default {
       }
 
       // Insert code example if available
-      if (CodeSnippets[this.transformation.type.toLowerCase()]) this.transformation.configuration.function = CodeSnippets[this.transformation.type.toLowerCase()]
+      if (CodeSnippets[this.transformation.type]) this.transformation.configuration.function = CodeSnippets[this.transformation.type]
 
       this.$oh.api.put('/rest/transformations/' + this.transformation.uid, this.transformation).then(() => {
         this.dirty = false
@@ -221,7 +221,7 @@ export default {
       this.$oh.api.get('/rest/transformations/' + this.transformationId).then((data) => {
         this.$set(this, 'transformation', data)
         this.savedTransformation = cloneDeep(this.transformation)
-        this.editorMode = EditorModes[this.transformation.type.toLowerCase()] || this.transformation.type
+        this.editorMode = EditorModes[this.transformation.type] || this.transformation.type
         this.loading = false
         this.ready = true
       })
