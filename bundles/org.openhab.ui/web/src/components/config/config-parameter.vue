@@ -102,11 +102,13 @@ export default {
       return ParameterText
     },
     description () {
+      let description = this.configDescription.description || ''
+      description = description.replace(/<a href="http/g, '<a class="external" target="_blank" href="http') // if class/target already declared, will be overwritten in most browsers
       // TODO: Remove this when proper UoM support is implemented for config parameters
       // Adds the unit to the description if it is available, UoM support is currently implemented through number parameters
       // where the user can enter the amount for the default unit
-      if (this.configDescription.unit) return `${this.configDescription.description} (${this.configDescription.unit})`
-      return this.configDescription.description
+      if (this.configDescription.unit) return `${description} (${this.configDescription.unit})`
+      return description
     }
   },
   mounted () {
