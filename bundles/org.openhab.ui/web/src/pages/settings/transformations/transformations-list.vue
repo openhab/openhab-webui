@@ -59,9 +59,7 @@
 
       <f7-col v-show="transformations.length > 0">
         <f7-block-title class="searchbar-hide-on-search">
-          <span>{{ transformations.length }} <template v-if="searchQuery">of {{ transformations.length }} </template>Things<template v-if="searchQuery"> found</template></span>
-
-          {{ transformations.length }} transformations
+          <span>{{ transformations.length }} transformations</span>
         </f7-block-title>
         <div class="searchbar-found padding-left padding-right">
           <f7-segmented strong tag="p">
