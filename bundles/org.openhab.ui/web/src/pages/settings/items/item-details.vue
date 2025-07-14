@@ -209,6 +209,11 @@ export default {
       if (propertyArray.length > 1) return propertyArray.slice(1).join('->')
       return propertyArray[0]
     },
+    /**
+     * Returns the semantic attributes of the item, i.e. "Point Of" - "X", "In Location" - "Y", "Part Of" - "Z".
+     *
+     * @return {{}|null}
+     */
     semanticAttributes () {
       const config = this.item?.metadata?.semantics?.config
       if (!config) return null
@@ -224,7 +229,9 @@ export default {
       return attributes
     },
     nonSemanticGroupNames () {
-      return this.item.groupNames.filter((g) => !Object.values(this.semanticAttributes).includes(g))
+      if (this.semanticAttributes === null) return this.item?.groupNames ?? []
+      const semanticGroupNames = Object.values(this.semanticAttributes)
+      return this.item?.groupNames?.filter((g) => !semanticGroupNames.includes(g)) ?? []
     },
     nonSemanticTags () {
       return this.item?.tags?.filter((tag) => tag !== this.semanticTag(this.semanticValue) && tag !== this.semanticTag(this.semanticProperty))

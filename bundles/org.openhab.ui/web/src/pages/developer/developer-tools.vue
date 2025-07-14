@@ -15,7 +15,7 @@
     </f7-toolbar>
 
     <f7-tabs>
-      <f7-tab id="menu-tab" @ tab:show="() => this.currentTab = 'menu'" :tab-active="currentTab === 'menu'">
+      <f7-tab id="menu-tab" tab:show="() => this.currentTab = 'menu'" :tab-active="currentTab === 'menu'">
         <f7-block class="block-narrow after-big-title settings-menu">
           <f7-row>
             <f7-col width="100" medium="50">
