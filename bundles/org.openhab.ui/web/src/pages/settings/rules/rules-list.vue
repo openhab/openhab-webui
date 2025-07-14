@@ -12,7 +12,9 @@
           v-if="initSearchbar"
           ref="searchbar"
           class="searchbar-rules"
-          custom-search
+          search-container=".rules-list"
+          search-item=".rulelist-item"
+          search-in=".item-title, .item-text, .item-after, .item-subtitle, .item-header, .item-footer"
           @searchbar:search="search"
           @searchbar:clear="clearSearch"
           @searchbar:disable="clearSearch"
@@ -97,7 +99,7 @@
             -
             <f7-link @click="selectedTags = []" text="Reset filters" />
           </template>
-          <template v-if="showCheckboxes && filteredRules.length">
+          <template v-if="showCheckboxes && displayedRulesCount > 0">
             -
             <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
           </template>
@@ -215,21 +217,8 @@ export default {
       return this.showScripts ? 'Scripts' : (this.showScenes ? 'Scenes' : 'Rules')
     },
     filteredRules () {
-      let rules = this.rules
-      if (this.searchQuery) {
-        rules = rules.filter((rule) => {
-          const hayStack = [
-            rule.name,
-            rule.uid,
-            rule.description,
-            this.ruleStatusBadgeText(this.ruleStatuses[rule.uid]),
-            ...this.displayedTags(rule)
-          ].join(' ').toLowerCase()
-          return hayStack.includes(this.searchQuery)
-        })
-      }
-      if (this.selectedTags.length === 0) return rules
-      return rules.filter((r) => {
+      if (this.selectedTags.length === 0) return this.rules
+      return this.rules.filter((r) => {
         for (const t of this.selectedTags) {
           if (r.tags.includes(t)) return true
         }
@@ -250,11 +239,17 @@ export default {
     searchPlaceholder () {
       return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     },
+    displayedRulesCount () {
+      if (this.searchQuery) {
+        return document.querySelectorAll('.searchbar-found .rulelist-item:not(.hidden-by-searchbar)').length
+      }
+      return this.filteredRules.length
+    },
     allSelected () {
-      return this.selectedItems.length === this.filteredRules.length
+      return this.selectedItems.length >= this.displayedRulesCount
     },
     listTitle () {
-      let title = this.filteredRules.length
+      let title = this.displayedRulesCount
       if (this.searchQuery) {
         title += ` of ${this.rules.length} Rules found`
       } else {
@@ -446,17 +441,21 @@ export default {
     },
     search (searchbar, query, previousQuery) {
       this.searchQuery = query.trim().toLowerCase()
-      this.selectedItems = this.selectedItems.filter((i) => this.filteredRules.find((rule) => rule.uid === i))
+      const displayedItemIds = this.getDisplayedItemIds()
+      this.selectedItems = this.selectedItems.filter((i) => displayedItemIds.includes(i))
     },
     clearSearch () {
       this.searchQuery = null
-      this.filteredThings = this.things
+    },
+    getDisplayedItemIds () {
+      const displayedElements = document.querySelectorAll('.searchbar-found .rulelist-item:not(.hidden-by-searchbar) .item-text')
+      return Array.from(displayedElements).map(el => el.textContent)
     },
     selectDeselectAll () {
-      if (this.selectedItems.length === this.filteredRules.length) {
+      if (this.allSelected) {
         this.selectedItems = []
       } else {
-        this.selectedItems = this.filteredRules.map((t) => t.uid)
+        this.selectedItems = this.getDisplayedItemIds()
       }
     },
     toggleItemCheck (event, item) {
