@@ -10,7 +10,7 @@
         <span v-if="status.statusCode">Status Code: &nbsp;{{ status.statusCode }}&nbsp;&nbsp;</span>
         <span v-if="status.message">{{ status.message }}</span>
       </div>
-      <small v-html="`${configDescription.required ? '<strong>Required</strong>&nbsp;' : ''}${description || ''}`" />
+      <small v-html="`${configDescription.required ? '<strong>Required</strong>&nbsp;' : ''}${description || ''}`" @click="descriptionClicked" />
     </f7-block-footer>
   </f7-list>
 </template>
@@ -117,6 +117,14 @@ export default {
     updateValue (value) {
       console.debug(`Update ${this.configDescription.name} to ${value}`)
       this.$emit('update', value)
+    },
+    descriptionClicked (event) {
+      if (event.target.href?.startsWith('http')) {
+        // Prevent the default link behavior which would append the link to the current page
+        event.preventDefault()
+        // Open the link in a new tab instead
+        window.open(event.target.href, '_blank')
+      }
     }
   }
 }
