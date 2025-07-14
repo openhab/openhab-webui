@@ -214,6 +214,12 @@ export default {
       templates: null
     }
   },
+  created () {
+    this.updateDisplayedItemsDataTimeout = null
+  },
+  destroyed () {
+    clearTimeout(this.updateDisplayedItemsDataTimeout)
+  },
   computed: {
     type () {
       return this.showScripts ? 'Scripts' : (this.showScenes ? 'Scenes' : 'Rules')
@@ -247,7 +253,7 @@ export default {
     listTitle () {
       let title = this.displayedItemsCount
       if (this.searchQuery) {
-        title += ` of ${this.rules.length} Rules found`
+        title += ` of ${this.filteredRules.length} Rules found`
       } else {
         title += ' Rules'
       }
