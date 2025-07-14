@@ -99,7 +99,7 @@
             -
             <f7-link @click="selectedTags = []" text="Reset filters" />
           </template>
-          <template v-if="showCheckboxes && displayedRulesCount > 0">
+          <template v-if="showCheckboxes && displayedItemsCount > 0">
             -
             <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
           </template>
@@ -203,6 +203,8 @@ export default {
       rules: [],
       ruleStatuses: {},
       uniqueTags: [],
+      displayedItemsCount: 0,
+      displayedItemIds: [],
       selectedTags: [],
       selectedItems: [],
       selectedDeletableItems: [],
@@ -239,17 +241,11 @@ export default {
     searchPlaceholder () {
       return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     },
-    displayedRulesCount () {
-      if (this.searchQuery) {
-        return document.querySelectorAll('.searchbar-found .rulelist-item:not(.hidden-by-searchbar)').length
-      }
-      return this.filteredRules.length
-    },
     allSelected () {
-      return this.selectedItems.length >= this.displayedRulesCount
+      return this.selectedItems.length >= this.displayedItemsCount
     },
     listTitle () {
-      let title = this.displayedRulesCount
+      let title = this.displayedItemsCount
       if (this.searchQuery) {
         title += ` of ${this.rules.length} Rules found`
       } else {
@@ -286,6 +282,22 @@ export default {
     },
     canRegenerate () {
       return this.regeneratableItemsCount > 0
+    }
+  },
+  watch: {
+    filteredRules (newRules) {
+      this.updateDisplayedItemsData()
+      this.$nextTick(() => {
+        const savedQuery = this.searchQuery
+        if (savedQuery) {
+          // reapply search query after filtering changed
+          this.$refs.searchbar?.f7Searchbar.clear()
+          this.$refs.searchbar?.f7Searchbar.search(savedQuery)
+        }
+      })
+    },
+    searchQuery () {
+      this.updateDisplayedItemsData()
     }
   },
   methods: {
@@ -441,21 +453,29 @@ export default {
     },
     search (searchbar, query, previousQuery) {
       this.searchQuery = query.trim().toLowerCase()
-      const displayedItemIds = this.getDisplayedItemIds()
-      this.selectedItems = this.selectedItems.filter((i) => displayedItemIds.includes(i))
     },
     clearSearch () {
       this.searchQuery = null
     },
-    getDisplayedItemIds () {
-      const displayedElements = document.querySelectorAll('.searchbar-found .rulelist-item:not(.hidden-by-searchbar) .item-text')
-      return Array.from(displayedElements).map(el => el.textContent)
+    updateDisplayedItemsData () {
+      clearTimeout(this.updateDisplayedItemsDataTimeout)
+      this.updateDisplayedItemsDataTimeout = setTimeout(() => {
+        if (this.searchQuery) {
+          const ruleList = document.querySelectorAll('.searchbar-found .rulelist-item:not(.hidden-by-searchbar)')
+          this.displayedItemsCount = ruleList.length
+          this.displayedItemIds = Array.from(ruleList).map((el) => el.querySelector('.item-text').textContent)
+        } else {
+          this.displayedItemsCount = this.filteredRules.length
+          this.displayedItemIds = this.filteredRules.map((r) => r.uid)
+        }
+        this.selectedItems = this.selectedItems.filter((i) => this.displayedItemIds.includes(i))
+      }, 100)
     },
     selectDeselectAll () {
       if (this.allSelected) {
         this.selectedItems = []
       } else {
-        this.selectedItems = this.getDisplayedItemIds()
+        this.selectedItems = Array.from(this.displayedItemIds) // copy the array to avoid reference issues
       }
     },
     toggleItemCheck (event, item) {
