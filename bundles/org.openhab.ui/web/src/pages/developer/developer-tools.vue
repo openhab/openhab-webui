@@ -28,7 +28,7 @@
                   <f7-icon slot="media" f7="ticket" color="gray" />
                 </f7-list-item>
                 <f7-list-item media-item title="Semantic Tags" footer="Extend the list of semantic tags for the model" link="semantics/">
-                  <f7-icon slot="media" f7="bolt_fill" color="gray" />
+                  <f7-icon slot="media" f7="list_bullet_indent" color="gray" />
                 </f7-list-item>
                 <f7-list-item media-item title="Things File Definitions" footer="Copy all Things' file definitions to clipboard" link="#" @click="copyFileDefinitionToClipboard(ObjectType.THING)">
                   <f7-icon slot="media" f7="lightbulb" color="gray" />
