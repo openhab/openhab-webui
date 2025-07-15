@@ -284,8 +284,16 @@ export default {
     groupLink (group) {
       return '/settings/items/' + group
     },
+    /**
+     * Extracts the semantic tag from the semantic metadata value field.
+     *
+     * @param {string|null} value
+     * @return {*|null}
+     */
     semanticTag (value) {
+      if (!value) return null
       const valueArray = value.split('->')
+      if (valueArray.length === 0) return null
       return valueArray[valueArray.length - 1]
     }
   }
