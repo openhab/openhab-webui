@@ -102,6 +102,16 @@ public class ChartRenderer extends AbstractWidgetRenderer {
                 }
             }
 
+            if (chart.getInterpolation() instanceof String interpolationMethod) {
+                if ("step".equals(interpolationMethod)) {
+                    chartUrl += "&interpolation=step";
+                } else if ("linear".equals(interpolationMethod)) {
+                    chartUrl += "&interpolation=linear";
+                } else {
+                    logger.warn("Unknown interpolation method '{}'", interpolationMethod);
+                }
+            }
+
             String snippet = getSnippet("chart");
 
             boolean showHeaderRow = chart.getLabel() != null;
