@@ -15,6 +15,9 @@
           search-container=".rules-list"
           search-item=".rulelist-item"
           search-in=".item-title, .item-text, .item-after, .item-subtitle, .item-header, .item-footer"
+          @searchbar:search="search"
+          @searchbar:clear="clearSearch"
+          @searchbar:disable="clearSearch"
           :placeholder="searchPlaceholder"
           :disable-button="!$theme.aurora" />
       </f7-subnavbar>
@@ -90,11 +93,16 @@
     <!-- rule engine available and ready and has rules -->
     <f7-block class="block-narrow" v-show="!noRuleEngine && ready && rules.length > 0">
       <f7-col>
-        <f7-block-title class="searchbar-hide-on-search">
-          {{ filteredRules.length }} {{ type.toLowerCase() }} {{ selectedTags.length > 0 ? ' - ' : '' }}
-          <f7-link v-if="selectedTags.length > 0" @click="selectedTags = []">
-            Reset filter(s)
-          </f7-link>
+        <f7-block-title class="no-margin-top">
+          <span>{{ listTitle }}</span>
+          <template v-if="selectedTags.length > 0">
+            -
+            <f7-link @click="selectedTags = []" text="Reset filters" />
+          </template>
+          <template v-if="showCheckboxes && displayedItemsCount > 0">
+            -
+            <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
+          </template>
         </f7-block-title>
 
         <f7-list v-if="uniqueTags.length > 0">
@@ -145,7 +153,7 @@
                   style="margin-right: 2px">
                   <f7-icon slot="media" ios="f7:doc_on_doc_fill" md="material:file_copy" aurora="f7:doc_on_doc_fill" />
                 </f7-chip>
-                <f7-chip v-for="tag in rule.tags.filter((t) => t !== 'Script' && t !== 'Scene')" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
+                <f7-chip v-for="tag in displayedTags(rule)" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
                   <f7-icon slot="media" ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
                 </f7-chip>
               </div>
@@ -195,13 +203,22 @@ export default {
       rules: [],
       ruleStatuses: {},
       uniqueTags: [],
+      displayedItemsCount: 0,
+      displayedItemIds: [],
       selectedTags: [],
       selectedItems: [],
       selectedDeletableItems: [],
+      searchQuery: null,
       showCheckboxes: false,
       eventSource: null,
       templates: null
     }
+  },
+  created () {
+    this.updateDisplayedItemsDataTimeout = null
+  },
+  destroyed () {
+    clearTimeout(this.updateDisplayedItemsDataTimeout)
   },
   computed: {
     type () {
@@ -230,6 +247,21 @@ export default {
     searchPlaceholder () {
       return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     },
+    allSelected () {
+      return this.selectedItems.length >= this.displayedItemsCount
+    },
+    listTitle () {
+      let title = this.displayedItemsCount
+      if (this.searchQuery) {
+        title += ` of ${this.filteredRules.length} Rules found`
+      } else {
+        title += ' Rules'
+      }
+      if (this.selectedItems.length > 0) {
+        title += `, ${this.selectedItems.length} selected`
+      }
+      return title
+    },
     enablableItems () {
       if (!this.selectedItems || !this.selectedItems.length) return 0
       return this.selectedItems.filter((i) => this.isRuleStatusDisabled(this.ruleStatuses[i])).length
@@ -256,6 +288,22 @@ export default {
     },
     canRegenerate () {
       return this.regeneratableItemsCount > 0
+    }
+  },
+  watch: {
+    filteredRules (newRules) {
+      this.updateDisplayedItemsData()
+      this.$nextTick(() => {
+        const savedQuery = this.searchQuery
+        if (savedQuery) {
+          // reapply search query after filtering changed
+          this.$refs.searchbar?.f7Searchbar.clear()
+          this.$refs.searchbar?.f7Searchbar.search(savedQuery)
+        }
+      })
+    },
+    searchQuery () {
+      this.updateDisplayedItemsData()
     }
   },
   methods: {
@@ -409,6 +457,33 @@ export default {
         if (ctrl && !this.selectedItems.length) this.showCheckboxes = false
       }
     },
+    search (searchbar, query, previousQuery) {
+      this.searchQuery = query.trim().toLowerCase()
+    },
+    clearSearch () {
+      this.searchQuery = null
+    },
+    updateDisplayedItemsData () {
+      clearTimeout(this.updateDisplayedItemsDataTimeout)
+      this.updateDisplayedItemsDataTimeout = setTimeout(() => {
+        if (this.searchQuery) {
+          const ruleList = document.querySelectorAll('.searchbar-found .rulelist-item:not(.hidden-by-searchbar)')
+          this.displayedItemsCount = ruleList.length
+          this.displayedItemIds = Array.from(ruleList).map((el) => el.querySelector('.item-text').textContent)
+        } else {
+          this.displayedItemsCount = this.filteredRules.length
+          this.displayedItemIds = this.filteredRules.map((r) => r.uid)
+        }
+        this.selectedItems = this.selectedItems.filter((i) => this.displayedItemIds.includes(i))
+      }, 100)
+    },
+    selectDeselectAll () {
+      if (this.allSelected) {
+        this.selectedItems = []
+      } else {
+        this.selectedItems = Array.from(this.displayedItemIds) // copy the array to avoid reference issues
+      }
+    },
     toggleItemCheck (event, item) {
       if (!this.showCheckboxes) this.showCheckboxes = true
       if (this.isChecked(item)) {
@@ -529,6 +604,9 @@ export default {
       }
       // update rules list
       this.$refs.listIndex.update()
+    },
+    displayedTags (rule) {
+      return rule.tags.filter((t) => t !== 'Script' && t !== 'Scene')
     },
     isTagSelected (tag) {
       return this.selectedTags.includes(tag)
