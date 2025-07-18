@@ -3,6 +3,7 @@
   "HANDLER_INITIALIZING_ERROR": "Fehler: Handler Initialisierung",
   "HANDLER_MISSING_ERROR": "Fehler: Handler fehlt",
   "TEMPLATE_MISSING_ERROR": "Fehler: Vorlage fehlt",
+  "TEMPLATE_PENDING": "VORLAGE_NICHT_FERTIG",
   "INVALID_RULE": "UNGÜLTIG",
   "DISABLED": "DEAKTIVIERT"
 }
