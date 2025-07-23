@@ -202,6 +202,7 @@ export default {
       ruleStatuses: {},
       uniqueTags: [],
       selectedTags: [],
+
       selectedItems: [],
       selectedDeletableItems: [],
       searchQuery: null,
@@ -214,26 +215,28 @@ export default {
     type () {
       return this.showScripts ? 'Scripts' : (this.showScenes ? 'Scenes' : 'Rules')
     },
-    filteredRules () {
-      let rules = this.rules
-      if (this.searchQuery) {
-        rules = rules.filter((rule) => {
-          const hayStack = [
-            rule.name,
-            rule.uid,
-            rule.description,
-            this.ruleStatusBadgeText(this.ruleStatuses[rule.uid]),
-            ...this.displayedTags(rule)
-          ].join(' ').toLowerCase()
-          return hayStack.includes(this.searchQuery)
-        })
-      }
-      if (this.selectedTags.length === 0) return rules
-      return rules.filter((r) => {
+    filteredByTags () {
+      if (this.selectedTags.length === 0) return this.rules
+
+      return this.rules.filter((r) => {
         for (const t of this.selectedTags) {
           if (r.tags.includes(t)) return true
         }
         return false
+      })
+    },
+    filteredRules () {
+      if (!this.searchQuery) return this.filteredByTags
+
+      return this.filteredByTags.filter((rule) => {
+        const hayStack = [
+          rule.name,
+          rule.uid,
+          rule.description,
+          this.ruleStatusBadgeText(this.ruleStatuses[rule.uid]),
+          ...this.displayedTags(rule)
+        ].join(' ').toLowerCase()
+        return hayStack.includes(this.searchQuery)
       })
     },
     indexedRules () {
@@ -256,7 +259,7 @@ export default {
     listTitle () {
       let title = this.filteredRules.length
       if (this.searchQuery) {
-        title += ` of ${this.rules.length} ${this.type} found`
+        title += ` of ${this.filteredByTags.length} ${this.type} found`
       } else {
         title += ' ' + this.type
       }
