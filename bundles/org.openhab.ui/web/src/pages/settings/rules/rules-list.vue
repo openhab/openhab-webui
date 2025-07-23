@@ -184,6 +184,7 @@
 </style>
 
 <script>
+import debounce from 'debounce'
 import RuleStatus from '@/components/rule/rule-status-mixin'
 
 export default {
@@ -202,7 +203,6 @@ export default {
       ruleStatuses: {},
       uniqueTags: [],
       selectedTags: [],
-
       selectedItems: [],
       selectedDeletableItems: [],
       searchQuery: null,
@@ -450,11 +450,11 @@ export default {
         if (ctrl && !this.selectedItems.length) this.showCheckboxes = false
       }
     },
-    search (searchbar, query, previousQuery) {
+    search: debounce(function (searchbar, query, previousQuery) { // don't use arrow function here, otherwise `this` is not the Vue instance
       this.searchQuery = query.trim().toLowerCase()
-      this.updateSelectedItems()
-    },
-    updateSelectedItems () {
+      this.filterSelectedItems()
+    }, 200),
+    filterSelectedItems () {
       this.selectedItems = this.selectedItems.filter((uid) => this.filteredUids.has(uid))
     },
     clearSearch () {
@@ -587,7 +587,7 @@ export default {
       }
       // update rules list
       this.$refs.listIndex.update()
-      this.updateSelectedItems()
+      this.filterSelectedItems()
     },
     displayedTags (rule) {
       return rule.tags.filter((t) => t !== 'Script' && t !== 'Scene')
