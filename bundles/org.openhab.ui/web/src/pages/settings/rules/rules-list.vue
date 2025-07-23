@@ -453,13 +453,12 @@ export default {
     },
     clearSearch () {
       this.searchQuery = null
-      this.filteredThings = this.things
     },
     selectDeselectAll () {
       if (this.selectedItems.length === this.filteredRules.length) {
         this.selectedItems = []
       } else {
-        this.selectedItems = this.filteredRules.map((t) => t.uid)
+        this.selectedItems = this.filteredRules.map((rule) => rule.uid)
       }
     },
     toggleItemCheck (event, item) {
