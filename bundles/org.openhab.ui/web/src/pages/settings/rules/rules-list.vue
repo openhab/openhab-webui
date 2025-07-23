@@ -239,6 +239,9 @@ export default {
         return hayStack.includes(this.searchQuery)
       })
     },
+    filteredUids () {
+      return new Set(this.filteredRules.map((rule) => rule.uid))
+    },
     indexedRules () {
       return this.filteredRules.reduce((prev, rule, i, rules) => {
         const initial = rule.name.substring(0, 1).toUpperCase()
@@ -449,16 +452,19 @@ export default {
     },
     search (searchbar, query, previousQuery) {
       this.searchQuery = query.trim().toLowerCase()
-      this.selectedItems = this.selectedItems.filter((i) => this.filteredRules.find((rule) => rule.uid === i))
+      this.updateSelectedItems()
+    },
+    updateSelectedItems () {
+      this.selectedItems = this.selectedItems.filter((uid) => this.filteredUids.has(uid))
     },
     clearSearch () {
       this.searchQuery = null
     },
     selectDeselectAll () {
-      if (this.selectedItems.length === this.filteredRules.length) {
+      if (this.allSelected) {
         this.selectedItems = []
       } else {
-        this.selectedItems = this.filteredRules.map((rule) => rule.uid)
+        this.selectedItems = Array.from(this.filteredUids)
       }
     },
     toggleItemCheck (event, item) {
@@ -581,6 +587,7 @@ export default {
       }
       // update rules list
       this.$refs.listIndex.update()
+      this.updateSelectedItems()
     },
     displayedTags (rule) {
       return rule.tags.filter((t) => t !== 'Script' && t !== 'Scene')
