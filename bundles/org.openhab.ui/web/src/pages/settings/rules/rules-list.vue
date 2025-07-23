@@ -256,9 +256,9 @@ export default {
     listTitle () {
       let title = this.filteredRules.length
       if (this.searchQuery) {
-        title += ` of ${this.rules.length} Rules found`
+        title += ` of ${this.rules.length} ${this.type} found`
       } else {
-        title += ' Rules'
+        title += ' ' + this.type
       }
       if (this.selectedItems.length > 0) {
         title += `, ${this.selectedItems.length} selected`
