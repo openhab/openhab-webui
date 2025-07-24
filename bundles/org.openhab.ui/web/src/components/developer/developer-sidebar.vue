@@ -399,6 +399,7 @@
 </style>
 
 <script>
+import Fuse from 'fuse.js'
 import Item from '@/components/item/item.vue'
 import ItemStandaloneControl from '@/components/item/item-standalone-control.vue'
 import ModelPickerPopup from '@/components/model/model-picker-popup.vue'
@@ -434,6 +435,7 @@ export default {
       eventTopicFilter: '',
       eventSource: null,
       cachedObjects: null,
+      cachedFuseObjects: null,
       searchResults: {
         items: [],
         things: [],
@@ -470,6 +472,67 @@ export default {
       testExpression: '',
       addThingAutocomplete: null
     }
+  },
+  created () {
+    const slots = {
+      name: 'slots',
+      getFn: (obj) => JSON.stringify(obj.slots)
+    }
+
+    const props = {
+      name: 'props',
+      getFn: (obj) => JSON.stringify(obj.props)
+    }
+
+    const metadata = {
+      name: 'metadata',
+      getFn: (obj) => JSON.stringify(obj.metadata)
+    }
+
+    this.SEARCH = {
+      items: {
+        keys: ['name', 'label', 'tags', metadata]
+      },
+      things: {
+        keys: ['UID', 'label']
+      },
+      rules: {
+        keys: [
+          'uid',
+          'name',
+          'description',
+          'tags',
+          'triggers.configuration.itemName',
+          'triggers.configuration.thingUID',
+          'actions.configuration.itemName',
+          'actions.configuration.thingUID',
+          'actions.configuration.type',
+          'actions.configuration.blockSource',
+          'actions.configuration.script',
+          'conditions.configuration.itemName',
+          'conditions.configuration.thingUID',
+          'conditions.configuration.type',
+          'conditions.configuration.blockSource',
+          'conditions.configuration.script'
+        ]
+      },
+      pages: {
+        keys: ['uid', 'config.label', slots]
+      },
+      widgets: {
+        keys: ['uid', props, slots]
+      },
+      transformations: {
+        keys: ['uid', 'label', 'configuration.function']
+      },
+      persistence: {
+        keys: ['serviceId', 'label', 'configs.items']
+      }
+    }
+    // Configure Fuse.js global settings
+    Fuse.config.threshold = 0 // precise search, no fuzzy matching
+    Fuse.config.ignoreLocation = true // search anywhere in the string
+    Fuse.config.useExtendedSearch = true // see https://www.fusejs.io/examples.html#extended-search
   },
   computed: {
     context () {
@@ -523,156 +586,6 @@ export default {
       })
     },
     /**
-     * Search for the query string inside a single Item.
-     * All searches are non case-intensive.
-     *
-     * Checks:
-     *  - name
-     *  - label
-     *  - metadata
-     *  - tags (requires exact match)
-     *
-     * @param i Item
-     * @param query search query (as typed, not in lowercase)
-     * @returns {boolean}
-     */
-    searchItem (i, query) {
-      query = query.toLowerCase()
-      if (i.name.toLowerCase().indexOf(query) >= 0) return true
-      if (i.label && i.label.toLowerCase().indexOf(query) >= 0) return true
-      if (i.metadata && JSON.stringify(i.metadata).toLowerCase().indexOf(query) >= 0) return true
-      if (i.tags && i.tags.map(t => t.toLowerCase()).includes(query)) return true
-      return false
-    },
-    /**
-     * Search for the query string inside a single rule.
-     * All searches are non case-intensive.
-     *
-     * Checks:
-     *  - name
-     *  - label
-     *  - description
-     *  - tags (requires exact match)
-     *  - itemName & thingUID of triggers, actions & conditions
-     *  - script content (e.g. JavaScript or Rule DSL)
-     *  - script MIME types (requires exact match)
-     *  - Blockly scripts when lowercase search term is 'block', 'blockly' or 'blocksource'
-     *
-     * @param r rule
-     * @param query query (as typed, not in lowercase)
-     * @returns {boolean}
-     */
-    searchRule (r, query) {
-      query = query.toLowerCase()
-      if (r.uid.toLowerCase().indexOf(query) >= 0) return true
-      if (r.name.toLowerCase().indexOf(query) >= 0) return true
-      if (r.description && r.description.toLowerCase().indexOf(query) >= 0) return true
-      if (r.tags && r.tags.map(t => t.toLowerCase()).includes(query)) return true
-      const searchItemOrThing = (m) => {
-        // Match Item names non case-intensive
-        if (m.configuration.itemName && m.configuration.itemName.toLowerCase().indexOf(query) >= 0) {
-          return true
-        }
-        // Match Group names non case-intensive
-        if (m.configuration.groupName && m.configuration.groupName.toLowerCase().indexOf(query) >= 0) {
-          return true
-        }
-        // Match Thing names non case-intensive
-        if (m.configuration.thingUID && m.configuration.thingUID.toLowerCase().indexOf(query) >= 0) {
-          return true
-        }
-      }
-      const searchScript = (m) => {
-        // MIME types require exact match
-        if (m.configuration.type && m.configuration.type.toLowerCase() === query) {
-          return true
-        }
-        if (['block', 'blockly', 'blocksource'].includes(query) && m.configuration.blockSource !== undefined) {
-          return true
-        }
-        if (m.configuration.script && m.configuration.script.toLowerCase().indexOf(query) >= 0) {
-          return true
-        }
-      }
-      for (let i = 0; i < r.triggers.length; i++) {
-        const t = r.triggers[i]
-        if (searchItemOrThing(t)) return true
-      }
-      for (let i = 0; i < r.actions.length; i++) {
-        const a = r.actions[i]
-        if (searchItemOrThing(a)) return true
-        if (searchScript(a)) return true
-      }
-      for (let i = 0; i < r.conditions.length; i++) {
-        const c = r.conditions[i]
-        if (searchItemOrThing(c)) return true
-        if (searchScript(c)) return true
-      }
-      return false
-    },
-    /**
-     * Search for the query string inside a single page or sitemap.
-     * All searches are non case-intensive.
-     *
-     * Checks:
-     *  - uid
-     *  - label
-     *  - slots
-     *
-     * @param p page
-     * @param query search query (as typed, not in lowercase)
-     * @returns {boolean}
-     */
-    searchPage (p, query) {
-      query = query.toLowerCase()
-      if (p.uid.toLowerCase().indexOf(query) >= 0) return true
-      if (p.config && p.config.label && p.config.label.toLowerCase().indexOf(query) >= 0) return true
-      if (p.slots && JSON.stringify(p.slots).toLowerCase().indexOf(query) >= 0) return true
-      return false
-    },
-    /**
-     * Search for the query string inside a single widget.
-     * All searches are non case-intensive.
-     *
-     * Checks:
-     *  - uid
-     *  - props
-     *  - slots
-     *
-     * @param w widget
-     * @param query search query (as typed, not in lowercase)
-     * @returns {boolean}
-     */
-    searchWidget (w, query) {
-      query = query.toLowerCase()
-      if (w.uid.toLowerCase().indexOf(query) >= 0) return true
-      if (w.props && JSON.stringify(w.props).toLowerCase().indexOf(query) >= 0) return true
-      if (w.slots && JSON.stringify(w.slots).toLowerCase().indexOf(query) >= 0) return true
-      return false
-    },
-    /**
-     * Search for the query string inside a persistence configuration.
-     * All searches are non case-intensive.
-     *
-     * Checks:
-     *  - serviceId
-     *  - label
-     *  - Items
-     *
-     * @param pc persistence config
-     * @param query search query (as typed, not in lowercase)
-     * @returns {boolean}
-     */
-    searchPersistenceConfigs (pc, query) {
-      query = query.toLowerCase()
-      if (pc.serviceId.toLowerCase().indexOf(query) >= 0) return true
-      if (pc.label.toLowerCase().indexOf(query) >= 0) return true
-      for (const conf of pc.configs) {
-        if (conf.items.toString().toLowerCase().indexOf(query) >= 0) return true
-      }
-      return false
-    },
-    /**
      * Load all persistence configs and extend them with the persistence service label.
      *
      * @returns {Promise} load promise
@@ -684,18 +597,17 @@ export default {
           labels[p.id] = p.label
         })
         const loadPromises = data.map(p => this.$oh.api.get('/rest/persistence/' + p.id))
-        const configs = []
 
-        Promise.allSettled(loadPromises).then((results) => {
+        return Promise.allSettled(loadPromises).then((results) => {
+          const configs = []
           for (const result of results) {
             if (result.value) {
               result.value.label = labels[result.value.serviceId]
               configs.push(result.value)
             }
           }
+          return configs
         })
-
-        return configs
       })
     },
     search (searchbar, query, previousQuery) {
@@ -704,6 +616,7 @@ export default {
         return
       }
       this.searching = true
+      query = query.trim()
       this.searchQuery = query
 
       if (this.searchResultsLoading) return
@@ -723,45 +636,42 @@ export default {
       this.searchResultsLoading = true
       Promise.all(promises).then((data) => {
         this.$set(this, 'cachedObjects', data)
-        const items = data[0].filter((i) => this.searchItem(i, this.searchQuery)).sort((a, b) => {
-          const labelA = a.name
-          const labelB = b.name
-          return (labelA) ? labelA.localeCompare(labelB) : 0
-        })
-        const things = data[1].filter((t) => t.UID.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0 ||
-          (t.label && t.label.toLowerCase().indexOf(this.searchQuery.toLowerCase())) >= 0).sort((a, b) => {
-          const labelA = a.name
-          const labelB = b.name
-          return (labelA) ? labelA.localeCompare(labelB) : 0
-        })
-        const rulesScenesScripts = data[2].filter((r) => this.searchRule(r, this.searchQuery)).sort((a, b) => {
-          const labelA = a.name
-          const labelB = b.name
-          return (labelA) ? labelA.localeCompare(labelB) : 0
-        })
-        const rules = rulesScenesScripts.filter((r) => r.tags.indexOf('Scene') < 0 && r.tags.indexOf('Script') < 0)
-        const scenes = rulesScenesScripts.filter((r) => r.tags.indexOf('Scene') >= 0)
-        const scripts = rulesScenesScripts.filter((r) => r.tags.indexOf('Script') >= 0)
-        const pages = [...data[3], ...data[4]].filter((p) => this.searchPage(p, this.searchQuery)).sort((a, b) => {
-          const labelA = a.name
-          const labelB = b.name
-          return (labelA) ? labelA.localeCompare(labelB) : 0
-        })
-        const widgets = data[5].filter((w) => this.searchWidget(w, this.searchQuery)).sort((a, b) => {
-          const labelA = a.name
-          const labelB = b.name
-          return (labelA) ? labelA.localeCompare(labelB) : 0
-        })
-        const transformations = data[6].filter((t) => t.uid.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0 || t.label.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0).sort((a, b) => {
-          const labelA = a.name
-          const labelB = b.name
-          return (labelA) ? labelA.localeCompare(labelB) : 0
-        })
-        const persistenceConfigs = data[7].filter((pc) => this.searchPersistenceConfigs(pc, this.searchQuery)).sort((a, b) => {
-          const idA = a.id
-          const idB = b.id
-          return (idA) ? idA.localeCompare(idB) : 0
-        })
+
+        if (!this.cachedFuseObjects) {
+          this.$set(this, 'cachedFuseObjects', {
+            items: new Fuse(data[0], this.SEARCH.items),
+            things: new Fuse(data[1], this.SEARCH.things),
+            rules: new Fuse(data[2], this.SEARCH.rules),
+            pages: new Fuse([...data[3], ...data[4]], this.SEARCH.pages),
+            widgets: new Fuse(data[5], this.SEARCH.widgets),
+            transformations: new Fuse(data[6], this.SEARCH.transformations),
+            persistence: new Fuse(data[7], this.SEARCH.persistence)
+          })
+        }
+
+        const items = this.searchData(this.cachedFuseObjects.items, query)
+        const things = this.searchData(this.cachedFuseObjects.things, query)
+
+        const rulesScenesScripts = this.searchData(this.cachedFuseObjects.rules, query)
+        const { rules, scenes, scripts } = rulesScenesScripts.reduce(
+          (acc, r) => {
+            if (r.tags.includes('Scene')) {
+              acc.scenes.push(r)
+            } else if (r.tags.includes('Script')) {
+              acc.scripts.push(r)
+            } else {
+              acc.rules.push(r)
+            }
+            return acc
+          },
+          { rules: [], scenes: [], scripts: [] }
+        )
+
+        const pages = this.searchData(this.cachedFuseObjects.pages, query)
+        const widgets = this.searchData(this.cachedFuseObjects.widgets, query)
+        const transformations = this.searchData(this.cachedFuseObjects.transformations, query)
+        const persistenceConfigs = this.searchData(this.cachedFuseObjects.persistence, query)
+
         this.$set(this, 'searchResults', {
           items,
           things,
@@ -776,11 +686,24 @@ export default {
         this.searchResultsLoading = false
       })
     },
+    searchData (fuse, query) {
+      if (!query) return []
+
+      return fuse
+        .search(query)
+        .map(result => result.item)
+        .sort((a, b) => {
+          const nameA = a.label || a.name || a.uid || a.UID || ''
+          const nameB = b.label || b.name || b.uid || b.UID || ''
+          return nameA.localeCompare(nameB)
+        })
+    },
     clearSearch () {
       this.searching = false
       this.searchResultsLoading = false
-      this.searchSuery = ''
+      this.searchQuery = ''
       this.$set(this, 'cachedObjects', null)
+      this.$set(this, 'cachedFuseObjects', null)
       this.$set(this, 'searchResults', { items: [], things: [], rules: [], scenes: [], scripts: [], pages: [], widgets: [], transformations: [], persistenceConfigs: [] })
     },
     pin (type, obj) {
