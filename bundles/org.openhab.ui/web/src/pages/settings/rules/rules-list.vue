@@ -1,5 +1,5 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
+  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="rules-list">
     <f7-navbar :title="type" back-link="Settings" back-link-url="/settings/" back-link-force>
       <f7-nav-right>
         <developer-dock-icon />
@@ -165,16 +165,17 @@
 </template>
 
 <style lang="stylus">
-.item-footer
-  margin-block-start 4px
-  margin-block-end 2px
-  .footer-inner
-    margin-block-start 2px
-.tabbar-labels
-  .toolbar-inner
-    a
-      color var(--f7-toolbar-link-color, var(--f7-bars-link-color, var(--f7-theme-color)))
-      font-size var(--f7-tabbar-label-font-size)
+.rules-list
+  .item-footer
+    margin-block-start 4px
+    margin-block-end 2px
+    .footer-inner
+      margin-block-start 2px
+  .tabbar-labels
+    .toolbar-inner
+      a
+        color var(--f7-toolbar-link-color, var(--f7-bars-link-color, var(--f7-theme-color)))
+        font-size var(--f7-tabbar-label-font-size)
 </style>
 
 <script>
