@@ -90,6 +90,11 @@
     }
     return widget
   }
+
+  // helper function to join values if array, pass through if string
+  function joinValue(val) {
+    return Array.isArray(val) ? val.join("") : val;
+  }
 %}
 
 @lexer lexer
@@ -119,8 +124,8 @@ WidgetAttr -> %widgetswitchattr                                                 
   | %widgetclickattr _ WidgetAttrValue                                            {% (d) => ['cmd', d[2]] %}
   | %widgetreleaseattr _ WidgetAttrValue                                          {% (d) => ['releaseCmd', d[2]] %}
   | %icon _ WidgetIconRulesAttrValue                                              {% (d) => ['iconrules', d[2]] %}
-  | %icon _ WidgetIconAttrValue                                                   {% (d) => [d[0].value, d[2].join("")] %}
-  | %staticIcon _ WidgetIconAttrValue                                             {% (d) => [d[0].value, d[2].join("")] %}
+  | %icon _ WidgetIconAttrValue                                                   {% (d) => [d[0].value, joinValue(d[2])] %}
+  | %staticIcon _ WidgetIconAttrValue                                             {% (d) => [d[0].value, joinValue(d[2])] %}
   | WidgetAttrName _ WidgetAttrValue                                              {% (d) => [d[0][0].value, d[2]] %}
   | WidgetMappingsAttrName WidgetMappingsAttrValue                                {% (d) => [d[0][0].value, d[1]] %}
   | WidgetButtonsAttrName WidgetButtonsAttrValue                                  {% (d) => [d[0][0].value, d[1]] %}
