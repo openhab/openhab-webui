@@ -14,10 +14,12 @@ function writeWidget (widget, indent) {
       } else if (key === 'stateless') {
         dsl += ' stateless'
       } else if (key === 'icon') {
+        let value = widget.config[key]
+        if (/\d$/.test(value)) value = '"' + value + '"'
         if (widget.config.staticIcon) {
-          dsl += ' staticIcon=' + widget.config[key]
+          dsl += ' staticIcon=' + value
         } else if (!widget.config['iconrules'] || widget.config['iconrules'].length === 0) {
-          dsl += ' icon=' + widget.config[key]
+          dsl += ' icon=' + value
         }
       } else if (key !== 'staticIcon') {
         if (key === 'iconrules') {

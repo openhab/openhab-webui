@@ -55,10 +55,16 @@ describe('dslUtil', () => {
       label: 'Test Switch',
       icon: 'lightbulb'
     })
+    addWidget(component, 'Text', {
+      item: 'TestItem',
+      label: 'Test Text',
+      icon: 'lightbulb-30'
+    })
     const sitemap = dslUtil.toDsl(component).split('\n')
     expect(sitemap).toEqual([
       'sitemap test label="Test" {',
       '    Switch item=TestItem label="Test Switch" icon=lightbulb',
+      '    Text item=TestItem label="Test Text" icon="lightbulb-30"',
       '}',
       ''
     ])
@@ -72,10 +78,17 @@ describe('dslUtil', () => {
       icon: 'lightbulb',
       staticIcon: true
     })
+    addWidget(component, 'Text', {
+      item: 'TestItem',
+      label: 'Test Text',
+      icon: 'lightbulb-30',
+      staticIcon: true
+    })
     const sitemap = dslUtil.toDsl(component).split('\n')
     expect(sitemap).toEqual([
       'sitemap test label="Test" {',
       '    Switch item=TestItem label="Test Switch" staticIcon=lightbulb',
+      '    Text item=TestItem label="Test Text" staticIcon="lightbulb-30"',
       '}',
       ''
     ])
