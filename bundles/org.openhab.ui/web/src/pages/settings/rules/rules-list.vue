@@ -12,9 +12,10 @@
           v-if="initSearchbar"
           ref="searchbar"
           class="searchbar-rules"
-          search-container=".rules-list"
-          search-item=".rulelist-item"
-          search-in=".item-title, .item-text, .item-after, .item-subtitle, .item-header, .item-footer"
+          custom-search
+          @searchbar:search="search"
+          @searchbar:clear="clearSearch"
+          @searchbar:disable="clearSearch"
           :placeholder="searchPlaceholder"
           :disable-button="!$theme.aurora" />
       </f7-subnavbar>
@@ -90,11 +91,16 @@
     <!-- rule engine available and ready and has rules -->
     <f7-block class="block-narrow" v-show="!noRuleEngine && ready && rules.length > 0">
       <f7-col>
-        <f7-block-title class="searchbar-hide-on-search">
-          {{ filteredRules.length }} {{ type.toLowerCase() }} {{ selectedTags.length > 0 ? ' - ' : '' }}
-          <f7-link v-if="selectedTags.length > 0" @click="selectedTags = []">
-            Reset filter(s)
-          </f7-link>
+        <f7-block-title class="no-margin-top">
+          <span>{{ listTitle }}</span>
+          <template v-if="selectedTags.length > 0">
+            -
+            <f7-link @click="selectedTags = []" text="Reset filters" />
+          </template>
+          <template v-if="showCheckboxes && filteredRules.length">
+            -
+            <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
+          </template>
         </f7-block-title>
 
         <f7-list v-if="uniqueTags.length > 0">
@@ -145,7 +151,7 @@
                   style="margin-right: 2px">
                   <f7-icon slot="media" ios="f7:doc_on_doc_fill" md="material:file_copy" aurora="f7:doc_on_doc_fill" />
                 </f7-chip>
-                <f7-chip v-for="tag in rule.tags.filter((t) => t !== 'Script' && t !== 'Scene')" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
+                <f7-chip v-for="tag in displayedTags(rule)" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
                   <f7-icon slot="media" ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
                 </f7-chip>
               </div>
@@ -178,6 +184,7 @@
 </style>
 
 <script>
+import debounce from 'debounce'
 import RuleStatus from '@/components/rule/rule-status-mixin'
 
 export default {
@@ -198,6 +205,7 @@ export default {
       selectedTags: [],
       selectedItems: [],
       selectedDeletableItems: [],
+      searchQuery: null,
       showCheckboxes: false,
       eventSource: null,
       templates: null
@@ -207,14 +215,32 @@ export default {
     type () {
       return this.showScripts ? 'Scripts' : (this.showScenes ? 'Scenes' : 'Rules')
     },
-    filteredRules () {
+    filteredByTags () {
       if (this.selectedTags.length === 0) return this.rules
+
       return this.rules.filter((r) => {
         for (const t of this.selectedTags) {
           if (r.tags.includes(t)) return true
         }
         return false
       })
+    },
+    filteredRules () {
+      if (!this.searchQuery) return this.filteredByTags
+
+      return this.filteredByTags.filter((rule) => {
+        const hayStack = [
+          rule.name,
+          rule.uid,
+          rule.description,
+          this.ruleStatusBadgeText(this.ruleStatuses[rule.uid]),
+          ...this.displayedTags(rule)
+        ].join(' ').toLowerCase()
+        return hayStack.includes(this.searchQuery)
+      })
+    },
+    filteredUids () {
+      return new Set(this.filteredRules.map((rule) => rule.uid))
     },
     indexedRules () {
       return this.filteredRules.reduce((prev, rule, i, rules) => {
@@ -229,6 +255,21 @@ export default {
     },
     searchPlaceholder () {
       return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
+    },
+    allSelected () {
+      return this.selectedItems.length === this.filteredRules.length
+    },
+    listTitle () {
+      let title = this.filteredRules.length
+      if (this.searchQuery) {
+        title += ` of ${this.filteredByTags.length} ${this.type} found`
+      } else {
+        title += ' ' + this.type
+      }
+      if (this.selectedItems.length > 0) {
+        title += `, ${this.selectedItems.length} selected`
+      }
+      return title
     },
     enablableItems () {
       if (!this.selectedItems || !this.selectedItems.length) return 0
@@ -409,6 +450,23 @@ export default {
         if (ctrl && !this.selectedItems.length) this.showCheckboxes = false
       }
     },
+    search: debounce(function (searchbar, query, previousQuery) { // don't use arrow function here, otherwise `this` is not the Vue instance
+      this.searchQuery = query.trim().toLowerCase()
+      this.filterSelectedItems()
+    }, 200),
+    filterSelectedItems () {
+      this.selectedItems = this.selectedItems.filter((uid) => this.filteredUids.has(uid))
+    },
+    clearSearch () {
+      this.searchQuery = null
+    },
+    selectDeselectAll () {
+      if (this.allSelected) {
+        this.selectedItems = []
+      } else {
+        this.selectedItems = Array.from(this.filteredUids)
+      }
+    },
     toggleItemCheck (event, item) {
       if (!this.showCheckboxes) this.showCheckboxes = true
       if (this.isChecked(item)) {
@@ -529,6 +587,10 @@ export default {
       }
       // update rules list
       this.$refs.listIndex.update()
+      this.filterSelectedItems()
+    },
+    displayedTags (rule) {
+      return rule.tags.filter((t) => t !== 'Script' && t !== 'Scene')
     },
     isTagSelected (tag) {
       return this.selectedTags.includes(tag)
