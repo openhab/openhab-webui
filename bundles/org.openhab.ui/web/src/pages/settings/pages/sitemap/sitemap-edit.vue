@@ -720,7 +720,9 @@ export default {
       }
     },
     preProcessSitemapSave (sitemap) {
-      const processed = JSON.parse(JSON.stringify(sitemap))
+      const clone = cloneDeep(sitemap)
+      clone.slots.widgets.forEach(w => delete w.parent) // remove parent from widgets, as this causes a circular reference
+      const processed = JSON.parse(JSON.stringify(clone))
       processed.slots?.widgets?.forEach(this.preProcessWidgetSave)
       return processed
     },
