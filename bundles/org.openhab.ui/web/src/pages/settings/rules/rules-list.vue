@@ -53,10 +53,6 @@
       :scroll-list="true"
       :label="true" />
 
-    <f7-list class="searchbar-not-found">
-      <f7-list-item title="Nothing found" />
-    </f7-list>
-
     <!-- no rule engine available -->
     <empty-state-placeholder v-if="noRuleEngine" icon="exclamationmark_triangle" title="rules.missingengine.title" text="rules.missingengine.text" />
     <!-- rule engine available but not yet ready -->
@@ -93,32 +89,17 @@
       <f7-col>
         <f7-block-title class="no-margin-top">
           <span>{{ listTitle }}</span>
-          <template v-if="selectedTags.length > 0">
-            -
-            <f7-link @click="selectedTags = []" text="Reset filters" />
-          </template>
-          <template v-if="showCheckboxes && filteredRules.length">
+          <template v-if="showCheckboxes && listedItems.length">
             -
             <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
           </template>
         </f7-block-title>
-
-        <f7-list v-if="uniqueTags.length > 0">
-          <f7-list-item accordion-item title="Filter by tags">
-            <f7-accordion-content>
-              <div class="block block-strong-ios block-outline-ios padding-bottom" ref="filterTags">
-                <f7-chip v-for="tag in uniqueTags" :key="tag" :text="tag" media-bg-color="blue"
-                         :color="isTagSelected(tag) ? 'blue' : ''"
-                         style="margin-right: 6px; cursor: pointer;"
-                         @click="(e) => toggleSearchTag(e, tag)">
-                  <f7-icon v-if="isTagSelected(tag)" slot="media" ios="f7:checkmark_circle_fill" md="material:check_circle" aurora="f7:checkmark_circle_fill" />
-                </f7-chip>
-              </div>
-            </f7-accordion-content>
-          </f7-list-item>
+        <list-filter v-if="ready" ref="filters" :filters="filters" @toggled="updateFilteredItems" @reset="updateFilteredItems" />
+        <f7-list v-if="!listedItems.length">
+          <f7-list-item title="Nothing found" />
         </f7-list>
         <f7-list
-          v-show="rules.length > 0"
+          v-show="listedItems.length > 0"
           class="searchbar-found col rules-list"
           ref="rulesList"
           media-list contacts-list>
@@ -187,11 +168,20 @@
 <script>
 import debounce from 'debounce'
 import RuleStatus from '@/components/rule/rule-status-mixin'
+import ListFilter from '@/components/util/list-filter.vue'
+
+const ITEM_KINDS = {
+  editable: 'Editable',
+  readonly: 'Non-editable',
+  marketplace: 'Marketplace',
+  template: 'Template Based'
+}
 
 export default {
   mixins: [RuleStatus],
   props: ['showScripts', 'showScenes'],
   components: {
+    ListFilter,
     'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue')
   },
   data () {
@@ -202,34 +192,43 @@ export default {
       noRuleEngine: false,
       rules: [],
       ruleStatuses: {},
-      uniqueTags: [],
-      selectedTags: [],
+      filters: {
+        kinds: {
+          label: 'Kind',
+          options: { ...ITEM_KINDS }
+        },
+        tags: {
+          label: 'Tag',
+          options: {}
+        }
+      },
+      filteredItems: [],
       selectedItems: [],
-      selectedDeletableItems: [],
       searchQuery: null,
       showCheckboxes: false,
       eventSource: null,
-      templates: null
+      templates: []
+    }
+  },
+  mounted () {
+    if (this.showScene || this.showScripts) {
+      delete this.filters.kinds.options.marketplace
+      delete this.filters.kinds.options.template
+    }
+  },
+  watch: {
+    listedUids () {
+      this.selectedItems = this.selectedItems.filter((i) => this.listedUids.has(i))
     }
   },
   computed: {
     type () {
       return this.showScripts ? 'Scripts' : (this.showScenes ? 'Scenes' : 'Rules')
     },
-    filteredByTags () {
-      if (this.selectedTags.length === 0) return this.rules
+    listedItems () {
+      if (!this.searchQuery) return this.filteredItems
 
-      return this.rules.filter((r) => {
-        for (const t of this.selectedTags) {
-          if (r.tags.includes(t)) return true
-        }
-        return false
-      })
-    },
-    filteredRules () {
-      if (!this.searchQuery) return this.filteredByTags
-
-      return this.filteredByTags.filter((rule) => {
+      return this.filteredItems.filter((rule) => {
         const hayStack = [
           rule.name,
           rule.uid,
@@ -240,11 +239,11 @@ export default {
         return hayStack.includes(this.searchQuery)
       })
     },
-    filteredUids () {
-      return new Set(this.filteredRules.map((rule) => rule.uid))
+    listedUids () {
+      return new Set(this.listedItems.map((rule) => rule.uid))
     },
     indexedRules () {
-      return this.filteredRules.reduce((prev, rule, i, rules) => {
+      return this.listedItems.reduce((prev, rule, i, rules) => {
         const initial = rule.name.substring(0, 1).toUpperCase()
         if (!prev[initial]) {
           prev[initial] = []
@@ -258,12 +257,12 @@ export default {
       return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     },
     allSelected () {
-      return this.selectedItems.length === this.filteredRules.length
+      return this.selectedItems.length === this.listedItems.length
     },
     listTitle () {
-      let title = this.filteredRules.length
-      if (this.searchQuery) {
-        title += ` of ${this.filteredByTags.length} ${this.type} found`
+      let title = this.listedItems.length
+      if (this.searchQuery || this.$refs.filters?.filtered) {
+        title += ` of ${this.rules.length} ${this.type} found`
       } else {
         title += ' ' + this.type
       }
@@ -272,19 +271,24 @@ export default {
       }
       return title
     },
+    selectedDeletableItems () {
+      if (!this.selectedItems.length) return []
+      const selectedUids = new Set(this.selectedItems)
+      return this.rules.filter((r) => selectedUids.has(r.uid) && r.editable).map((r) => r.uid)
+    },
     enablableItems () {
-      if (!this.selectedItems || !this.selectedItems.length) return 0
+      if (!this.selectedItems.length) return 0
       return this.selectedItems.filter((i) => this.isRuleStatusDisabled(this.ruleStatuses[i])).length
     },
     disablableItems () {
-      if (!this.selectedItems || !this.selectedItems.length) return 0
+      if (!this.selectedItems.length) return 0
       return this.selectedItems.filter((i) => this.ruleStatuses[i] && !this.isRuleStatusDisabled(this.ruleStatuses[i])).length
     },
     regeneratableItemsCount () {
       return this.regeneratableItems.length
     },
     regeneratableItems () {
-      if (!this.selectedItems || !this.selectedItems.length || !this.rules || !this.templates) return []
+      if (!this.selectedItems.length) return []
       return this.selectedItems.filter((i) => {
         const rule = this.rules.find((r) => r.uid === i)
         return rule && rule.templateUID && rule.templateState && rule.templateState !== 'no-template' && rule.templateState !== 'template-missing' && this.templates.some((t) => t.uid === rule.templateUID)
@@ -316,7 +320,6 @@ export default {
       this.initSearchbar = false
 
       this.$set(this, 'selectedItems', [])
-      this.$set(this, 'selectedDeletableItems', [])
       this.showCheckboxes = false
       let filter = ''
       if (this.showScripts) {
@@ -336,30 +339,30 @@ export default {
           console.warn('Failed to retrieve rule templates. Status: "' + templateData.status + '", Reason: "' + templateData.reason + '"')
         }
         if (ruleData.status === 'fulfilled') {
-          let rules = ruleData.value.sort((a, b) => {
-            return a.name.localeCompare(b.name)
-          })
-
-          if (!this.showScripts) {
-            rules = rules.filter((r) => !r.tags || r.tags.indexOf('Script') < 0)
-          }
-
-          if (!this.showScenes) {
-            rules = rules.filter((r) => !r.tags || r.tags.indexOf('Scene') < 0)
-          }
+          const rules = ruleData.value
+            .filter((r) => {
+              if (!this.showScripts && r.tags.includes('Script')) return false
+              if (!this.showScenes && r.tags.includes('Scene')) return false
+              return true
+            })
+            .sort((a, b) => a.name.localeCompare(b.name))
           this.$set(this, 'rules', rules)
 
+          const uniqueTags = new Set()
           rules.forEach(rule => {
             this.ruleStatuses[rule.uid] = rule.status
 
             rule.tags.forEach(t => {
               if (t === 'Scene' || t === 'Script') return
-              if (t.startsWith('marketplace:')) t = 'Marketplace'
-              if (!this.uniqueTags.includes(t)) this.uniqueTags.push(t)
+              if (t.startsWith('marketplace:')) return
+              uniqueTags.add(t)
             })
           })
 
-          this.uniqueTags.sort()
+          const sortedTags = Array.from(uniqueTags).sort((a, b) => a.localeCompare(b))
+          this.filters.tags.options = Object.fromEntries(sortedTags.map(tag => [tag, tag]))
+          this.updateFilteredItems()
+
           this.initSearchbar = true
 
           this.loading = false
@@ -453,11 +456,7 @@ export default {
     },
     search: debounce(function (searchbar, query, previousQuery) { // don't use arrow function here, otherwise `this` is not the Vue instance
       this.searchQuery = query.trim().toLowerCase()
-      this.filterSelectedItems()
     }, 200),
-    filterSelectedItems () {
-      this.selectedItems = this.selectedItems.filter((uid) => this.filteredUids.has(uid))
-    },
     clearSearch () {
       this.searchQuery = null
     },
@@ -465,7 +464,7 @@ export default {
       if (this.allSelected) {
         this.selectedItems = []
       } else {
-        this.selectedItems = Array.from(this.filteredUids)
+        this.selectedItems = Array.from(this.listedUids)
       }
     },
     toggleItemCheck (event, item) {
@@ -480,18 +479,10 @@ export default {
       if (checked) {
         if (!this.isChecked(item)) {
           this.selectedItems.push(item)
-          const rule = this.rules.find((r) => r.uid === item)
-          if (rule?.editable) {
-            this.selectedDeletableItems.push(item)
-          }
         }
       } else {
         if (this.isChecked(item)) {
           this.selectedItems.splice(this.selectedItems.indexOf(item), 1)
-          const idx = this.selectedDeletableItems.indexOf(item)
-          if (idx >= 0) {
-            this.selectedDeletableItems.splice(idx, 1)
-          }
         }
       }
     },
@@ -517,7 +508,6 @@ export default {
           closeTimeout: 2000
         }).open()
         this.selectedItems = []
-        this.selectedDeletableItems = []
         dialog.close()
         this.load()
       }).catch((err) => {
@@ -528,7 +518,7 @@ export default {
       })
     },
     doDisableEnableSelected (enable) {
-      if (!this.selectedItems) return
+      if (!this.selectedItems.length) return
       let dialog = this.$f7.dialog.progress('Please Wait...')
 
       const items = this.selectedItems.filter((i) => Boolean(this.isRuleStatusDisabled(this.ruleStatuses[i])) === Boolean(enable))
@@ -550,7 +540,7 @@ export default {
       })
     },
     regenerateSelected () {
-      if (!this.selectedItems) return
+      if (!this.selectedItems.length) return
       const rules = this.regeneratableItems.map((i) => this.rules.find((r) => r.uid === i))
       if (rules.length === 0) return
       if (rules.length === 1 && rules[0].editable) {
@@ -579,22 +569,33 @@ export default {
         })
       }
     },
-    toggleSearchTag (e, item) {
-      const idx = this.selectedTags.indexOf(item)
-      if (idx !== -1) {
-        this.selectedTags.splice(idx, 1)
-      } else {
-        this.selectedTags.push(item)
-      }
-      // update rules list
-      this.$refs.listIndex.update()
-      this.filterSelectedItems()
-    },
     displayedTags (rule) {
       return rule.tags.filter((t) => t !== 'Script' && t !== 'Scene')
     },
-    isTagSelected (tag) {
-      return this.selectedTags.includes(tag)
+    updateFilteredItems () {
+      const filters = this.$refs.filters
+      if (filters === undefined || !filters.filtered) {
+        this.filteredItems = this.rules
+        return
+      }
+
+      const selected = filters.selected
+      const ruleKinds = new Set()
+
+      this.filteredItems = this.rules.filter((rule) => {
+        const tagsMatch = !selected.tags.size || rule.tags.some((t) => selected.tags.has(t))
+
+        ruleKinds.clear()
+        ruleKinds.add(rule.editable ? 'editable' : 'readonly')
+        if (rule.tags.some((t) => t.startsWith('marketplace:'))) ruleKinds.add('marketplace')
+        if (rule.templateUID) ruleKinds.add('template')
+        const kindsMatch = !selected.kinds.size || selected.kinds.intersection(ruleKinds).size > 0
+
+        return tagsMatch && kindsMatch
+      })
+
+      // update rules list
+      this.$refs.listIndex.update()
     },
     templateName (rule) {
       let template = this.templates ? this.templates.find((t) => t.uid === rule.templateUID) : undefined
