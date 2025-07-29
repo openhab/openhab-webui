@@ -18,8 +18,8 @@
           ref="searchbar"
           class="searchbar-items"
           search-container=".virtual-list"
-          @searchbar:search="filterSelectedItems"
-          :placeholder="searchPlaceholder"
+          @searchbar:search="searchbarSearch"
+          :placeholder="searchbarPlaceholder"
           :disable-button="!theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
@@ -96,16 +96,22 @@
       <f7-col v-show="ready && items.length > 0">
         <f7-block-title class="no-margin-top">
           <span>{{ listTitle }}</span>
-          <template v-if="showCheckboxes && filteredItemsCount > 0">
+          <template v-if="showCheckboxes && listedItems.length">
             -
             <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
           </template>
         </f7-block-title>
-        <f7-list class="searchbar-not-found">
+        <list-filter v-if="ready"
+                     ref="filters"
+                     :filters="filters"
+                     @toggled="processFilter"
+                     @reset="resetFilter" />
+
+        <f7-list v-if="!listedItems.length">
           <f7-list-item title="Nothing found" />
         </f7-list>
         <f7-list
-          v-show="items.length > 0"
+          v-show="listedItems.length > 0"
           class="searchbar-found col"
           ref="itemsList"
           media-list
@@ -208,12 +214,18 @@ import { nextTick } from 'vue'
 import { f7, theme } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
+import { useLastSearchQueryStore } from '@/js/stores/useLastSearchQueryStore'
+import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
+
+import * as Types from '@/assets/item-types'
 import ItemMixin from '@/components/item/item-mixin'
 import FileDefinition from '@/pages/settings/file-definition-mixin'
 
-import { useLastSearchQueryStore } from '@/js/stores/useLastSearchQueryStore'
-import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
+import ListFilter from '@/components/util/list-filter.vue'
+
+const ITEM_KINDS = { editable: 'Editable', readonly: 'Non-editable' }
 
 export default {
   mixins: [ItemMixin, FileDefinition],
@@ -221,6 +233,7 @@ export default {
     f7router: Object
   },
   components: {
+    ListFilter,
     EmptyStatePlaceholder
   },
   setup () {
@@ -242,7 +255,19 @@ export default {
         height: this.height
       },
       searchQuery: '',
+      filters: {
+        kinds: {
+          label: 'Kind',
+          options: ITEM_KINDS
+        },
+        types: {
+          label: 'Item Type',
+          options: Object.fromEntries(Types.ItemTypes.map((type) => [type, type]))
+        }
+      },
       selectedItems: [],
+      listedItems: [],
+      excludedUids: new Set(),
       showCheckboxes: false,
       eventSource: null
     }
@@ -272,6 +297,7 @@ export default {
         this.$refs.itemsList.$el.f7VirtualList.replaceAllItems(this.items)
         this.initSearchbar = true
         this.loading = false
+        this.processFilter()
 
         if (!this.eventSource) this.startEventSource()
         this.ready = true
@@ -300,28 +326,11 @@ export default {
       this.$oh.sse.close(this.eventSource)
       this.eventSource = null
     },
-    filterSelectedItems (event) {
+    searchbarSearch (event) {
       this.searchQuery = event?.query
-      if (!this.$refs.itemsList.$el.f7VirtualList.filteredItems) {
-        return
+      if (!this.searchQuery && this.$refs.filters?.filtered) {
+        this.applyFilter()
       }
-      this.selectedItems = this.selectedItems.filter((i) =>
-        this.$refs.itemsList.$el.f7VirtualList.filteredItems.find((item) => item.name === i)
-      )
-    },
-    searchAll (query, items) {
-      const found = []
-      for (let i = 0; i < items.length; i += 1) {
-        let haystack = items[i].name
-        if (items[i].label) haystack += ' ' + items[i].label
-        if (items[i].tags) for (let j = 0; j < items[i].tags.length; j += 1) haystack += ' ' + items[i].tags[j]
-        haystack += ' ' + this.getItemTypeAndMetaLabel(items[i])
-        if (
-          haystack.toLowerCase().indexOf(query.toLowerCase()) >= 0 ||
-          query.trim() === ''
-        ) { found.push(i) }
-      }
-      return found // return array with matched indexes
     },
     renderExternal (vl, vlData) {
       this.vlData = vlData
@@ -371,10 +380,8 @@ export default {
     selectDeselectAll () {
       if (this.allSelected) {
         this.selectedItems = []
-      } else if (this.$refs.itemsList.$el.f7VirtualList.filteredItems?.length > 0) {
-        this.selectedItems = this.$refs.itemsList.$el.f7VirtualList.filteredItems.map((i) => i.name)
       } else {
-        this.selectedItems = this.items.map((i) => i.name)
+        this.selectedItems = this.listedItems.map((i) => i.name)
       }
     },
     copySelected () {
@@ -415,24 +422,119 @@ export default {
         console.error(err)
         f7.dialog.alert('An error occurred while deleting: ' + err)
       })
+    },
+    searchAll (query, items) {
+      if (query.trim() === '') {
+        return items.filter((item) => !this.excludedUids.has(item.name)).map((_, index) => index)
+      }
+
+      query = query.toLowerCase()
+      const found = []
+      const foundUids = new Set()
+      items.forEach((item, index) => {
+        if (this.excludedUids.has(item.name)) {
+          return // skip items excluded by filter
+        }
+        const haystack = [item.name, item.label, item.tags.join(' '), this.getItemTypeAndMetaLabel(item)]
+        if (haystack.join(' ').toLowerCase().includes(query)) {
+          found.push(index)
+          foundUids.add(item.name)
+        }
+      })
+
+      if (foundUids.size === 0) {
+        this.selectedItems = []
+      } else {
+        this.selectedItems = this.selectedItems.filter((uid) => foundUids.has(uid))
+      }
+      return found // return array with matched indexes
+    },
+    reapplySearch () {
+      const query = this.searchQuery
+      if (!query) {
+        return
+      }
+      this.$refs.searchbar?.f7Searchbar.search('')
+      this.$refs.searchbar?.f7Searchbar.search(query)
+    },
+    resetFilter () {
+      this.excludedUids.clear()
+      if (this.searchQuery) {
+        this.reapplySearch()
+      } else {
+        this.$refs.itemsList.$el.f7VirtualList.resetFilter()
+      }
+    },
+    applyFilter () {
+      let filteredIndexes = null
+      const selected = this.$refs.filters?.selected
+
+      this.excludedUids.clear()
+      if (selected && this.$refs.filters.filtered) {
+        filteredIndexes = []
+        this.items.forEach((item, index) => {
+          const typeMatch = !selected.types.size || selected.types.has(item.type.split(':')[0])
+          const kind = item.editable ? 'editable' : 'readonly'
+          const kindMatch = !selected.kinds.size || selected.kinds.has(kind)
+          if (kindMatch && typeMatch) {
+            filteredIndexes.push(index)
+          } else {
+            this.excludedUids.add(item.name)
+          }
+        })
+      }
+
+      if (this.excludedUids.size > 0) {
+        this.selectedItems = this.selectedItems.filter((uid) => !this.excludedUids.has(uid))
+      }
+
+      if (this.searchQuery) {
+        this.reapplySearch()
+      } else if (filteredIndexes !== null) {
+        this.$refs.itemsList.$el.f7VirtualList.filterItems(filteredIndexes)
+      } else {
+        this.$refs.itemsList.$el.f7VirtualList.resetFilter()
+      }
+    },
+    processFilter () {
+      const filters = this.$refs.filters
+      if (filters?.filtered) {
+        this.applyFilter()
+      } else {
+        this.resetFilter()
+      }
+    },
+    updateListedItems () {
+      this.$nextTick(() => {
+        console.log('updating listed items')
+        this.listedItems = this.$refs.itemsList.$el.f7VirtualList.filteredItems || this.$refs.itemsList.$el.f7VirtualList.items || []
+      })
+    }
+  },
+  watch: {
+    ready () {
+      this.updateListedItems()
+    },
+    searchQuery () {
+      this.updateListedItems()
+    },
+    excludedUids: {
+      handler: function () {
+        this.updateListedItems()
+      },
+      deep: true
     }
   },
   computed: {
-    searchPlaceholder () {
+    searchbarPlaceholder () {
       return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     },
-    filteredItemsCount () {
-      if (this.searchQuery) {
-        return this.$refs.itemsList.$el.f7VirtualList.filteredItems.length
-      }
-      return this.items.length
-    },
     allSelected () {
-      return this.selectedItems.length >= this.filteredItemsCount
+      return this.selectedItems.length >= this.listedItems.length
     },
     listTitle () {
-      let title = this.filteredItemsCount
-      if (this.searchQuery) {
+      let title = this.listedItems.length
+      if (this.searchQuery || this.$refs.filters?.filtered) {
         title += ` of ${this.items.length} Items found`
       } else {
         title += ' Items'
@@ -442,7 +544,7 @@ export default {
       }
       return title
     },
-    ...mapStores(useRuntimeStore)
+    ...mapStores(useRuntimeStore, useUIOptionsStore)
   }
 }
 </script>
