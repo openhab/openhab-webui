@@ -136,8 +136,8 @@ WidgetBooleanAttrValue -> %boolean                                              
   | %string                                                                       {% (d) => (d[0].value === 'true') %}
 WidgetIconAttrValue -> %string                                                    {% (d) => d[0].value %}
   | WidgetIconAttrPart
-  | WidgetIconAttrPart %colon WidgetIconAttrPart                                  {% (d) => d[0] + ':' + d[2] %}
-| WidgetIconAttrPart %colon WidgetIconAttrPart %colon WidgetIconAttrPart          {% (d) => d[0] + ':' + d[2] + ':' + d[4] %}
+  | WidgetIconAttrPart %colon WidgetIconAttrPart
+  | WidgetIconAttrPart %colon WidgetIconAttrPart %colon WidgetIconAttrPart
 WidgetIconAttrPart -> %identifier                                                 {% (d) => d[0].value %}
   | %identifier %hyphen WidgetIconAttrPart                                        {% (d) => d[0].value + "-" + d[2] %}
 WidgetIconRulesAttrValue -> %lbracket _ IconRules _ %rbracket                     {% (d) => d[2] %}
@@ -161,14 +161,14 @@ Mappings -> Mapping                                                             
   | Mappings _ %comma _ Mapping                                                   {% (d) => d[0].concat([d[4]]) %}
 Mapping -> Command _ %colon _ Command _ %equals _ Label                           {% (d) => d[0] + ':' + d[4] + '=' + d[8] %}
   | Command _ %equals _ Label                                                     {% (d) => d[0] + '=' + d[4] %}
-  | Command _ %colon _ Command _ %equals _ Label _ %equals _ WidgetIconAttrValue  {% (d) => d[0] + ':' + d[4] + '=' + d[8] + '=' + d[12].join("") %}
-  | Command _ %equals _ Label _ %equals _ WidgetIconAttrValue                     {% (d) => d[0] + '=' + d[4] + '=' + d[8].join("") %}
+  | Command _ %colon _ Command _ %equals _ Label _ %equals _ WidgetIconAttrValue  {% (d) => d[0] + ':' + d[4] + '=' + d[8] + '=' + joinValue(d[12]) %}
+  | Command _ %equals _ Label _ %equals _ WidgetIconAttrValue                     {% (d) => d[0] + '=' + d[4] + '=' + joinValue(d[8]) %}
 
 Buttons -> ButtonDef                                                              {% (d) => [d[0]] %}
   | Buttons _ %comma _ ButtonDef                                                  {% (d) => d[0].concat([d[4]]) %}
 ButtonDef -> %unsignedint _ %colon _ %unsignedint _ %colon _ ButtonValue          {% (d) => { return { 'row':  parseInt(d[0].value), 'column': parseInt(d[4].value), 'command': d[8] } } %}
 ButtonValue -> Command _ %equals _ Label                                          {% (d) => d[0] + '=' + d[4] %}
-  | Command _ %equals _ Label _ %equals _ WidgetIconAttrValue                     {% (d) => d[0] + '=' + d[4] + '=' + d[8].join("") %}
+  | Command _ %equals _ Label _ %equals _ WidgetIconAttrValue                     {% (d) => d[0] + '=' + d[4] + '=' + joinValue(d[8]) %}
 
 Command -> %unsignedint | %identifier                                             {% (d) => d[0].value %}
   | %string                                                                       {% (d) => '"' + d[0].value + '"' %}
@@ -186,8 +186,8 @@ ColorName ->  %identifier | %string
 
 IconRules -> IconRule                                                             {% (d) => [d[0]] %}
   | IconRules _ %comma _ IconRule                                                 {% (d) => d[0].concat([d[4]]) %}
-IconRule -> Conditions _ %equals _ WidgetIconAttrValue                            {% (d) => d[0] + '=' + d[4] %}
-  | WidgetIconAttrValue                                                           {% (d) => d[0].join("") %}
+IconRule -> Conditions _ %equals _ WidgetIconAttrValue                            {% (d) => d[0] + '=' + joinValue(d[4]) %}
+  | WidgetIconAttrValue                                                           {% (d) => joinValue(d[0]) %}
 
 Conditions -> Condition                                                           {% (d) => d[0] %}
   | Conditions _ %and _ Condition                                                 {% (d) => d[0] + ' AND ' + d[4] %}
