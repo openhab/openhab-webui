@@ -30,7 +30,6 @@
       </div>
       <f7-link v-if="selectedTag" class="right details-link padding-right" ref="detailsLink" @click="detailsOpened = true" icon-f7="chevron_up" />
     </f7-toolbar>
-
     <f7-tabs class="semantics-editor-tabs">
       <f7-tab class="design" id="tree" :tab-active="currentTab === 'tree'">
         <f7-block v-if="!ready" class="text-align-center">
@@ -262,12 +261,16 @@
 </style>
 
 <script>
+import Vue from 'vue'
+
+import Clipboard from 'v-clipboard'
+Vue.use(Clipboard)
+
 import YAML from 'yaml'
 import fastDeepEqual from 'fast-deep-equal/es6'
-
 import SemanticsTreeview from '@/components/tags/semantics-treeview.vue'
 import TagMixin from '@/components/tags/tag-mixin'
-import DirtyMixin from '@/pages/settings/dirty-mixin'
+import DirtyMixin from '../../settings/dirty-mixin'
 
 export default {
   mixins: [DirtyMixin, TagMixin],
@@ -378,7 +381,6 @@ export default {
     },
     async save () {
       if (!this.dirty) return
-
       if (this.currentTab === 'code') {
         if (!this.fromYaml()) {
           this.$f7.dialog.alert('Error parsing YAML, cannot save')
