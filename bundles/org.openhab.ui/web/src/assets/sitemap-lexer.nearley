@@ -136,8 +136,8 @@ WidgetBooleanAttrValue -> %boolean                                              
   | %string                                                                       {% (d) => (d[0].value === 'true') %}
 WidgetIconAttrValue -> %string                                                    {% (d) => d[0].value %}
   | WidgetIconAttrPart
-  | WidgetIconAttrPart %colon WidgetIconAttrPart
-  | WidgetIconAttrPart %colon WidgetIconAttrPart %colon WidgetIconAttrPart
+  | WidgetIconAttrPart %colon WidgetIconAttrPart                                  {% (d) => d[0] + ':' + d[2] %}
+| WidgetIconAttrPart %colon WidgetIconAttrPart %colon WidgetIconAttrPart          {% (d) => d[0] + ':' + d[2] + ':' + d[4] %}
 WidgetIconAttrPart -> %identifier                                                 {% (d) => d[0].value %}
   | %identifier %hyphen WidgetIconAttrPart                                        {% (d) => d[0].value + "-" + d[2] %}
 WidgetIconRulesAttrValue -> %lbracket _ IconRules _ %rbracket                     {% (d) => d[2] %}
@@ -186,7 +186,7 @@ ColorName ->  %identifier | %string
 
 IconRules -> IconRule                                                             {% (d) => [d[0]] %}
   | IconRules _ %comma _ IconRule                                                 {% (d) => d[0].concat([d[4]]) %}
-IconRule -> Conditions _ %equals _ WidgetIconAttrValue                            {% (d) => d[0] + '=' + d[4].join("") %}
+IconRule -> Conditions _ %equals _ WidgetIconAttrValue                            {% (d) => d[0] + '=' + d[4] %}
   | WidgetIconAttrValue                                                           {% (d) => d[0].join("") %}
 
 Conditions -> Condition                                                           {% (d) => d[0] %}
