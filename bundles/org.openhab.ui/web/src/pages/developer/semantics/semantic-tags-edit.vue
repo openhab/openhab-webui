@@ -303,6 +303,14 @@ export default {
         }
       },
       deep: true
+    },
+    '$store.getters.semanticsLoaded': {
+      handler: function (loaded) {
+        if (loaded) {
+          this.load()
+        }
+      },
+      immediate: true
     }
   },
   methods: {
@@ -310,7 +318,6 @@ export default {
       if (window) {
         window.addEventListener('keydown', this.keyDown)
       }
-      this.load()
     },
     onPageBeforeOut () {
       if (window) {

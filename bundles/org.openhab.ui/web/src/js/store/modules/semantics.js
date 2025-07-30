@@ -7,13 +7,15 @@ const state = {
   Points: [],
   Properties: [],
   Labels: {},
-  Tags: []
+  Tags: [],
+  loaded: false
 }
 
 const getters = {
   semanticClasses: (state) => {
     return state
-  }
+  },
+  semanticsLoaded: (state) => state.loaded
 }
 
 const mutations = {
@@ -40,6 +42,8 @@ const mutations = {
     }
     // Save labels as i18n messages
     i18n.mergeLocaleMessage(i18n.locale, state.Labels)
+
+    state.loaded = true
   }
 }
 
