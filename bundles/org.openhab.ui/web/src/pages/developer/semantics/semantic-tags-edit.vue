@@ -92,9 +92,9 @@
                 <f7-card style="tag-detail">
                   <f7-card-content>
                     <f7-list class="synonyms">
-                      <f7-list-input v-for="synonym in selectedTag.synonyms" :key="synonym" :value="synonym" :disabled="!selectedTag.editable" :clear-button="selectedTag.editable"
+                      <f7-list-input v-for="(synonym, index) in selectedTag.synonyms" :key="synonym" :value="synonym" :disabled="!selectedTag.editable" :clear-button="selectedTag.editable"
                                      placeholder="synonym"
-                                     @change="updateSynonyms($event)" />
+                                     @change="updateSynonyms($event, index)" />
                       <f7-list-input value="" :disabled="!selectedTag.editable" :clear-button="selectedTag.editable"
                                      placeholder="synonym"
                                      @change="updateSynonyms($event)" />
