@@ -35,7 +35,7 @@
           <f7-list-item v-for="loggerPackage in loggerPackages" :key="loggerPackage.loggerName"
                         :title="loggerPackage.loggerName">
             <f7-input type="select" :value="loggerPackage.level"
-                      @input="loggerPackage.level = $event.target.value; loggerPackage.changed = true">
+                      @input="loggerPackage.level = $event.target.value">
               <option value="DEFAULT">
                 Default
               </option>
@@ -77,6 +77,9 @@
 <script>
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import DirtyMixin from '@/pages/settings/dirty-mixin'
+import cloneDeep from 'lodash/cloneDeep'
+import fastDeepEqual from 'fast-deep-equal/es6'
+import debounce from 'debounce'
 
 export default {
   mixins: [DirtyMixin],
@@ -89,12 +92,14 @@ export default {
       addon: {},
       configDescription: null,
       config: null,
+      originalConfig: null,
       bindingId: null,
       loggerPackages: [],
+      originalLoggerPackages: [],
       serviceId: null,
       strippedAddonId: '',
-      loadingConfig: true,
-      loadingLoggers: true
+      configLoaded: false,
+      loggersLoaded: false
     }
   },
   computed: {
@@ -108,31 +113,32 @@ export default {
   watch: {
     config: {
       handler: function () {
-        if (!this.loadingConfig) {
-          this.dirty = true
-        }
+        this.checkDirty()
       },
       deep: true
     },
     loggerPackages: {
       handler: function () {
-        if (!this.loadingLoggers) {
-          this.dirty = true
-        }
+        this.checkDirty()
       },
       deep: true
     }
   },
   methods: {
+    checkDirty: debounce(function () {
+      const configChanged = this.configLoaded && !fastDeepEqual(this.config, this.originalConfig)
+      const loggersChanged = this.loggersLoaded && !fastDeepEqual(this.loggerPackages, this.originalLoggerPackages)
+      this.dirty = configChanged || loggersChanged
+    }, 100),
     save () {
       let promises = []
 
+      const originalLoggerMap = Object.fromEntries(this.originalLoggerPackages.map(l => [l.loggerName, l.level]))
       this.loggerPackages.forEach(logger => {
-        if (logger.changed === true) {
+        if (logger.level !== originalLoggerMap[logger.loggerName]) {
           if (logger.level === 'DEFAULT') {
             promises.push(this.$oh.api.delete('/rest/logging/' + logger.loggerName))
           } else {
-            delete logger.changed
             promises.push(this.$oh.api.put('/rest/logging/' + logger.loggerName, logger))
           }
         }
@@ -188,26 +194,19 @@ export default {
         this.$oh.api.get('/rest/config-descriptions/' + configDescriptionURI).then(data2 => {
           this.configDescription = data2
           this.$oh.api.get('/rest/addons/' + this.strippedAddonId + '/config' + (this.serviceId ? '?serviceId=' + this.serviceId : '')).then(data3 => {
-            this.config = data3
-            this.$nextTick(() => {
-              this.loadingConfig = false
-            })
+            this.originalConfig = data3
+            this.config = cloneDeep(data3)
+            this.configLoaded = true
           })
         })
-      } else {
-        this.loadingConfig = false
       }
       if (Array.isArray(this.addon.loggerPackages)) {
-        this.addon.loggerPackages.forEach(loggerPackage => {
-          this.$oh.api.get('/rest/logging/' + loggerPackage).then(data4 => {
-            data4.loggers.forEach(logger => this.loggerPackages.push(logger))
-            this.$nextTick(() => {
-              this.loadingLoggers = false
-            })
-          })
+        const promises = this.addon.loggerPackages.map(logger => this.$oh.api.get('/rest/logging/' + logger))
+        Promise.all(promises).then(data => {
+          this.originalLoggerPackages = data.flatMap(logging => logging.loggers).sort((a, b) => a.loggerName.localeCompare(b.loggerName))
+          this.loggerPackages = cloneDeep(this.originalLoggerPackages)
+          this.loggersLoaded = true
         })
-      } else {
-        this.loadingLoggers = false
       }
     })
   }
