@@ -79,6 +79,7 @@ import ConfigSheet from '@/components/config/config-sheet.vue'
 import DirtyMixin from '@/pages/settings/dirty-mixin'
 import cloneDeep from 'lodash/cloneDeep'
 import fastDeepEqual from 'fast-deep-equal/es6'
+import debounce from 'debounce'
 
 export default {
   mixins: [DirtyMixin],
@@ -124,14 +125,17 @@ export default {
     }
   },
   methods: {
-    checkDirty () {
-      this.dirty = (this.configLoaded && !fastDeepEqual(this.config, this.originalConfig)) || (this.loggersLoaded && !fastDeepEqual(this.loggerPackages, this.originalLoggerPackages))
-    },
+    checkDirty: debounce(function () {
+      const configChanged = this.configLoaded && !fastDeepEqual(this.config, this.originalConfig)
+      const loggersChanged = this.loggersLoaded && !fastDeepEqual(this.loggerPackages, this.originalLoggerPackages)
+      this.dirty = configChanged || loggersChanged
+    }, 200),
     save () {
       let promises = []
 
+      const originalLoggerMap = Object.fromEntries(this.originalLoggerPackages.map(l => [l.loggerName, l.level]))
       this.loggerPackages.forEach(logger => {
-        if (logger.level !== this.originalLoggerPackages.find(l => l.loggerName === logger.loggerName).level) {
+        if (logger.level !== originalLoggerMap[logger.loggerName]) {
           if (logger.level === 'DEFAULT') {
             promises.push(this.$oh.api.delete('/rest/logging/' + logger.loggerName))
           } else {
