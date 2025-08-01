@@ -91,76 +91,89 @@
           <f7-block-footer v-if="!isEditable" class="no-margin padding-left">
             <f7-icon f7="lock_fill" size="12" color="gray" />&nbsp;Note: this rule is not editable.
           </f7-block-footer>
-          <!-- <f7-col v-if="isEditable" class="text-align-right justify-content-flex-end">
-          </f7-col> -->
           <f7-col v-if="createMode && templates.length > 0 && !ruleCopy" class="new-rule-from-template">
-            <f7-block-title medium class="margin-bottom">
-              Create from Template
-            </f7-block-title>
-            <f7-list media-list>
-              <f7-list-item title="No template"
-                            footer="Create a new rule from scratch"
-                            radio
-                            :checked="!hasTemplate ? true : null"
-                            radio-icon="start"
-                            :value="''"
-                            @change="selectTemplate(null)" />
+            <f7-list>
+              <f7-list-item ref="templateAccordion" accordion-item>
+                <template #title>
+                  <template v-if="currentTemplate">
+                    Create from Template: {{ currentTemplate.label }}
+                  </template>
+                  <template v-else>
+                    Create a new rule from scratch (or expand to select a template)
+                  </template>
+                </template>
+                <f7-accordion-content>
+                  <f7-list media-list>
+                    <f7-list-item title="No template"
+                                  footer="Create a new rule from scratch"
+                                  radio
+                                  :checked="!hasTemplate"
+                                  radio-icon="start"
+                                  :value="''"
+                                  @change="selectTemplate(null)" />
+                  </f7-list>
+                  <f7-block-header class="margin-left margin-top">
+                    or choose a rule template:
+                  </f7-block-header>
+                  <f7-list media-list>
+                    <f7-list-item v-for="template in templates"
+                                  :key="template.uid"
+                                  :footer="template.description"
+                                  :value="template.uid"
+                                  radio
+                                  :checked="currentTemplate && currentTemplate.uid === template.uid ? true : null"
+                                  radio-icon="start"
+                                  @change="selectTemplate(template.uid)">
+                      <template #title>
+                        {{ template.label }}
+                        <template v-if="getTopicLink(template)">
+                          &nbsp;
+                          <f7-link :href="getTopicLink(template)"
+                                   tooltip="View openHAB Community Marketplace topic for this template"
+                                   target="_blank"
+                                   class="external"
+                                   color="gray"
+                                   :icon-size="18"
+                                   icon="info_circle"
+                                   icon-ios="f7:info_circle"
+                                   icon-md="f7:info_circle"
+                                   icon-aurora="f7:info_circle" />
+                        </template>
+                      </template>
+                    </f7-list-item>
+                  </f7-list>
+                </f7-accordion-content>
+              </f7-list-item>
             </f7-list>
-            <f7-block-footer class="margin-left">
-              or choose a rule template:
-            </f7-block-footer>
-            <f7-list media-list>
-              <f7-list-item v-for="template in templates"
-                            :key="template.uid"
-                            :title="template.label"
-                            :footer="template.description"
-                            :value="template.uid"
-                            radio
-                            :checked="hasTemplate && currentTemplate.uid === template.uid ? true : null"
-                            radio-icon="start"
-                            @change="selectTemplate(template.uid)" />
-            </f7-list>
-            <f7-block-title v-if="hasTemplate" medium class="margin-vertical padding-top">
-              Template Configuration
-            </f7-block-title>
-            <f7-link v-if="templateTopicLink"
-                     target="_blank"
-                     class="external margin-left"
-                     color="blue"
-                     :href="templateTopicLink">
-              Template Community Marketplace Topic
-            </f7-link>
-            <config-sheet v-if="hasTemplate"
-                          :parameter-groups="[]"
-                          :parameters="currentTemplate.configDescriptions"
-                          :configuration="rule.configuration" />
           </f7-col>
-          <f7-col v-else-if="currentTemplate && stubMode" class="show-associated-template">
-            <f7-block-title medium class="margin-vertical padding-top">
+          <f7-col v-if="currentTemplate && (createMode || stubMode)">
+            <f7-block-title medium>
               Template
             </f7-block-title>
             <f7-list media-list>
-              <f7-list-item :title="currentTemplate.label" :footer="currentTemplate.description" :value="currentTemplate.uid" />
+              <f7-list-item :footer="currentTemplate.description">
+                <template #title>
+                  {{ currentTemplate.label }}
+                  <template v-if="currentTemplateTopicLink">
+                    &nbsp;
+                    <f7-link :href="currentTemplateTopicLink"
+                             tooltip="View openHAB Community Marketplace topic for this template"
+                             target="_blank"
+                             class="external"
+                             color="gray"
+                             :icon-size="18"
+                             icon="info_circle"
+                             icon-ios="f7:info_circle"
+                             icon-md="f7:info_circle"
+                             icon-aurora="f7:info_circle" />
+                  </template>
+                </template>
+              </f7-list-item>
             </f7-list>
-            <f7-block-title medium class="margin-vertical padding-top">
-              Template Configuration
-            </f7-block-title>
-            <f7-link v-if="templateTopicLink"
-                     target="_blank"
-                     class="external margin-left"
-                     color="blue"
-                     :href="templateTopicLink">
-              Template Community Marketplace Topic
-            </f7-link>
-            <config-sheet :parameter-groups="[]" :parameters="currentTemplate.configDescriptions" :configuration="rule.configuration" />
-          </f7-col>
-          <f7-col v-else-if="currentTemplate && createMode && ruleCopy?.templateUID" class="select-integrate-template">
-            <f7-block-title medium class="margin-vertical padding-top">
-              Template
-            </f7-block-title>
-            <f7-list media-list>
+            <!-- Show radio options only if integrating template (createMode && ruleCopy?.templateUID) -->
+            <f7-list media-list v-if="createMode && ruleCopy?.templateUID">
               <f7-list-item
-                :title="'Keep template: ' + currentTemplate.label"
+                title="Keep template"
                 footer="The rule will still be linked to the template and can be regenerated if the template changes."
                 :value="currentTemplate.uid"
                 radio
@@ -176,19 +189,13 @@
                 radio-icon="start"
                 @change="keepTemplate(false)" />
             </f7-list>
-            <div v-if="rule.templateUID">
+            <!-- Show Template Configuration only if template is kept or not integrating -->
+            <template v-if="rule.templateUID || (!createMode || !ruleCopy?.templateUID)">
               <f7-block-title medium class="margin-vertical padding-top">
                 Template Configuration
               </f7-block-title>
-              <f7-link v-if="templateTopicLink"
-                       target="_blank"
-                       class="external margin-left"
-                       color="blue"
-                       :href="templateTopicLink">
-                Template Community Marketplace Topic
-              </f7-link>
               <config-sheet :parameter-groups="[]" :parameters="currentTemplate.configDescriptions" :configuration="rule.configuration" />
-            </div>
+            </template>
           </f7-col>
           <f7-col v-if="!hasTemplate || (createMode && ruleCopy?.templateUID && !rule.templateUID)" class="rule-modules">
             <div v-if="isEditable" class="no-padding float-right">
@@ -685,13 +692,16 @@ export default {
       this.rule.triggers = []
       this.rule.conditions = []
       this.rule.actions = []
-      if (!uid) {
+      if (uid) {
+        this.currentTemplate = this.templates.find((t) => t.uid === uid)
+        this.rule.templateUID = uid
+        this.rule.templateState = 'pending'
+      } else {
         this.currentTemplate = null
-        return
       }
-      this.currentTemplate = this.templates.find((t) => t.uid === uid)
-      this.rule.templateUID = uid
-      this.rule.templateState = 'pending'
+      if (this.$refs.templateAccordion) {
+        f7.accordion.close(this.$refs.templateAccordion.$el)
+      }
     },
     keepTemplate (keep) {
       if (!this.ruleCopy) return
@@ -725,6 +735,13 @@ export default {
         }
       }
       this.rule = newRule
+    },
+    getTopicLink (template) {
+      if (!template) return null
+      if (!template.tags) return null
+      const marketplaceTag = template.tags.find((t) => t.indexOf('marketplace:') === 0)
+      if (marketplaceTag) return 'https://community.openhab.org/t/' + marketplaceTag.replace('marketplace:', '')
+      return null
     },
     editModule (ev, section, mod) {
       if (this.showModuleControls || this.isOpaqueModule(mod)) return
@@ -937,6 +954,9 @@ export default {
       let result = this.templates.find((t) => t.uid === this.rule.templateUID)
       return result ? result.label : this.rule.templateUID
     },
+    currentTemplateTopicLink () {
+      return this.getTopicLink(this.currentTemplate)
+    },
     canRegenerate () {
       if (!this.rule || !this.rule.templateUID || !this.rule.templateState || this.rule.templateState === 'no-template' || this.rule.templateState === 'template-missing') {
         return false
@@ -991,13 +1011,6 @@ export default {
         }
       }
       return undefined
-    },
-    templateTopicLink () {
-      if (!this.currentTemplate) return null
-      if (!this.currentTemplate.tags) return null
-      const marketplaceTag = this.currentTemplate.tags.find((t) => t.indexOf('marketplace:') === 0)
-      if (marketplaceTag) return 'https://community.openhab.org/t/' + marketplaceTag.replace('marketplace:', '')
-      return null
     },
     ...mapStores(useUIOptionsStore)
   }
