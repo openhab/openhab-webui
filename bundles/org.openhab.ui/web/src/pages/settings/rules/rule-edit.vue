@@ -64,60 +64,49 @@
           <f7-block-footer v-if="!isEditable" class="no-margin padding-left">
             <f7-icon f7="lock_fill" size="12" color="gray" />&nbsp;Note: this rule is not editable.
           </f7-block-footer>
-          <!-- <f7-col v-if="isEditable" class="text-align-right justify-content-flex-end">
-          </f7-col> -->
           <f7-col v-if="createMode && templates.length > 0 && !ruleCopy" class="new-rule-from-template">
-            <f7-block-title medium class="margin-bottom">
-              Create from Template
-            </f7-block-title>
-            <f7-list media-list>
-              <f7-list-item title="No template" footer="Create a new rule from scratch"
-                            radio :checked="!hasTemplate" radio-icon="start"
-                            :value="''"
-                            @change="selectTemplate(null)" />
+            <f7-list>
+              <f7-list-item ref="templateAccordion" accordion-item>
+                <template slot="title">
+                  <template v-if="currentTemplate">
+                    Create from Template: {{ currentTemplate.label }}
+                  </template>
+                  <template v-else>
+                    Create a new rule from scratch (or expand to select a template)
+                  </template>
+                </template>
+                <f7-accordion-content>
+                  <f7-list media-list>
+                    <f7-list-item title="No template" footer="Create a new rule from scratch"
+                                  radio :checked="!hasTemplate" radio-icon="start"
+                                  :value="''"
+                                  @change="selectTemplate(null)" />
+                  </f7-list>
+                  <f7-block-header class="margin-left margin-top">
+                    or choose a rule template:
+                  </f7-block-header>
+                  <f7-list media-list>
+                    <f7-list-item :key="template.uid" v-for="template in templates"
+                                  :title="template.label" :footer="template.description"
+                                  :value="template.uid"
+                                  radio :checked="hasTemplate && currentTemplate.uid === template.uid" radio-icon="start"
+                                  @change="selectTemplate(template.uid)" />
+                  </f7-list>
+                </f7-accordion-content>
+              </f7-list-item>
             </f7-list>
-            <f7-block-footer class="margin-left">
-              or choose a rule template:
-            </f7-block-footer>
-            <f7-list media-list>
-              <f7-list-item :key="template.uid" v-for="template in templates"
-                            :title="template.label" :footer="template.description"
-                            :value="template.uid"
-                            radio :checked="hasTemplate && currentTemplate.uid === template.uid" radio-icon="start"
-                            @change="selectTemplate(template.uid)" />
-            </f7-list>
-            <f7-block-title v-if="hasTemplate" medium class="margin-vertical padding-top">
-              Template Configuration
-            </f7-block-title>
-            <f7-link v-if="templateTopicLink" target="_blank" class="external margin-left" color="blue" :href="templateTopicLink">
-              Template Community Marketplace Topic
-            </f7-link>
-            <config-sheet v-if="hasTemplate"
-                          :parameter-groups="[]" :parameters="currentTemplate.configDescriptions"
-                          :configuration="rule.configuration" />
           </f7-col>
-          <f7-col v-else-if="currentTemplate && stubMode" class="show-associated-template">
-            <f7-block-title medium class="margin-vertical padding-top">
+          <f7-col v-if="currentTemplate && (createMode || stubMode)">
+            <f7-block-title medium>
               Template
             </f7-block-title>
             <f7-list media-list>
-              <f7-list-item :title="currentTemplate.label" :footer="currentTemplate.description" :value="currentTemplate.uid" />
+              <f7-list-item :title="currentTemplate.label" :footer="currentTemplate.description" />
             </f7-list>
-            <f7-block-title medium class="margin-vertical padding-top">
-              Template Configuration
-            </f7-block-title>
-            <f7-link v-if="templateTopicLink" target="_blank" class="external margin-left" color="blue" :href="templateTopicLink">
-              Template Community Marketplace Topic
-            </f7-link>
-            <config-sheet :parameter-groups="[]" :parameters="currentTemplate.configDescriptions" :configuration="rule.configuration" />
-          </f7-col>
-          <f7-col v-else-if="currentTemplate && createMode && ruleCopy?.templateUID" class="select-integrate-template">
-            <f7-block-title medium class="margin-vertical padding-top">
-              Template
-            </f7-block-title>
-            <f7-list media-list>
+            <!-- Show radio options only if integrating template (createMode && ruleCopy?.templateUID) -->
+            <f7-list media-list v-if="createMode && ruleCopy?.templateUID">
               <f7-list-item
-                :title="'Keep template: ' + currentTemplate.label"
+                title="Keep template"
                 footer="The rule will still be linked to the template and can be regenerated if the template changes."
                 :value="currentTemplate.uid"
                 radio :checked="Boolean(rule.templateUID)" radio-icon="start"
@@ -129,7 +118,8 @@
                 radio :checked="!rule.templateUID" radio-icon="start"
                 @change="keepTemplate(false)" />
             </f7-list>
-            <div v-if="rule.templateUID">
+            <!-- Show Template Configuration only if template is kept or not integrating -->
+            <template v-if="rule.templateUID || (!createMode || !ruleCopy?.templateUID)">
               <f7-block-title medium class="margin-vertical padding-top">
                 Template Configuration
               </f7-block-title>
@@ -137,7 +127,7 @@
                 Template Community Marketplace Topic
               </f7-link>
               <config-sheet :parameter-groups="[]" :parameters="currentTemplate.configDescriptions" :configuration="rule.configuration" />
-            </div>
+            </template>
           </f7-col>
           <f7-col v-if="!hasTemplate || (createMode && ruleCopy?.templateUID && !rule.templateUID)" class="rule-modules">
             <div v-if="isEditable" class="no-padding float-right">
@@ -563,13 +553,14 @@ export default {
       this.$set(this.rule, 'triggers', [])
       this.$set(this.rule, 'conditions', [])
       this.$set(this.rule, 'actions', [])
-      if (!uid) {
+      if (uid) {
+        this.$set(this, 'currentTemplate', this.templates.find((t) => t.uid === uid))
+        this.rule.templateUID = uid
+        this.rule.templateState = 'pending'
+      } else {
         this.$set(this, 'currentTemplate', null)
-        return
       }
-      this.$set(this, 'currentTemplate', this.templates.find((t) => t.uid === uid))
-      this.rule.templateUID = uid
-      this.rule.templateState = 'pending'
+      this.$f7.accordion.close(this.$refs.templateAccordion.$el)
     },
     keepTemplate (keep) {
       if (!this.ruleCopy) return
