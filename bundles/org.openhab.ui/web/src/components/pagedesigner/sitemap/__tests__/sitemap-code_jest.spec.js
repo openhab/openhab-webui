@@ -248,7 +248,7 @@ describe('SitemapCode', () => {
     // simulate updating the sitemap in code
     const sitemap = [
       'sitemap test label="Test" {',
-      '    Default item=Item_Icon icon=[>5=iconify:wi:day-sunny-overcast,<=5 AND Test_Item=="check error"=error]',
+      '    Default item=Item_Icon icon=[NULL=empty, >5=iconify:wi:day-sunny-overcast,<=5 AND Test_Item=="check error"=error]',
       '}',
       ''
     ].join('\n')
@@ -272,6 +272,7 @@ describe('SitemapCode', () => {
       config: {
         item: 'Item_Icon',
         iconrules: [
+          'NULL=empty',
           '>5=iconify:wi:day-sunny-overcast',
           '<=5 AND Test_Item=="check error"=error'
         ]
