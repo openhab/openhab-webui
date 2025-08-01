@@ -482,6 +482,7 @@ export default {
           }
           this.rule = newRule
           this.$oh.api.get('/rest/templates').then((templateData) => {
+            templateData = templateData.sort((a, b) => a.label.localeCompare(b.label))
             this.templates = templateData
             if (newRule.templateUID) {
               const currentTemplate = templateData.find((t) => t.uid === newRule.templateUID) || {
