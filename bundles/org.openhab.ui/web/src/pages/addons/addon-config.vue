@@ -129,7 +129,7 @@ export default {
       const configChanged = this.configLoaded && !fastDeepEqual(this.config, this.originalConfig)
       const loggersChanged = this.loggersLoaded && !fastDeepEqual(this.loggerPackages, this.originalLoggerPackages)
       this.dirty = configChanged || loggersChanged
-    }, 200),
+    }, 100),
     save () {
       let promises = []
 
@@ -194,22 +194,18 @@ export default {
         this.$oh.api.get('/rest/config-descriptions/' + configDescriptionURI).then(data2 => {
           this.configDescription = data2
           this.$oh.api.get('/rest/addons/' + this.strippedAddonId + '/config' + (this.serviceId ? '?serviceId=' + this.serviceId : '')).then(data3 => {
-            this.config = data3
-            this.originalConfig = cloneDeep(this.config)
-            this.$nextTick(() => {
-              this.configLoaded = true
-            })
+            this.originalConfig = data3
+            this.config = cloneDeep(data3)
+            this.configLoaded = true
           })
         })
       }
       if (Array.isArray(this.addon.loggerPackages)) {
         const promises = this.addon.loggerPackages.map(logger => this.$oh.api.get('/rest/logging/' + logger))
         Promise.all(promises).then(data => {
-          this.loggerPackages = data.flatMap(logging => logging.loggers).sort((a, b) => a.loggerName.localeCompare(b.loggerName))
-          this.originalLoggerPackages = cloneDeep(this.loggerPackages)
-          this.$nextTick(() => {
-            this.loggersLoaded = true
-          })
+          this.originalLoggerPackages = data.flatMap(logging => logging.loggers).sort((a, b) => a.loggerName.localeCompare(b.loggerName))
+          this.loggerPackages = cloneDeep(this.originalLoggerPackages)
+          this.loggersLoaded = true
         })
       }
     })
