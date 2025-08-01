@@ -573,6 +573,10 @@ export default {
         if (m.configuration.itemName && m.configuration.itemName.toLowerCase().indexOf(query) >= 0) {
           return true
         }
+        // Match Group names non case-intensive
+        if (m.configuration.groupName && m.configuration.groupName.toLowerCase().indexOf(query) >= 0) {
+          return true
+        }
         // Match Thing names non case-intensive
         if (m.configuration.thingUID && m.configuration.thingUID.toLowerCase().indexOf(query) >= 0) {
           return true
