@@ -1,6 +1,6 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:afterout="onPageAfterOut">
-    <f7-navbar :title="(createMode ? (ruleCopy ? 'Duplicate rule' : 'Create rule') : stubMode ? 'Regenerate rule from template' : rule.name) + dirtyIndicator" :subtitle="hasOpaqueModule ? opaqueModulesTypeText : undefined" back-link="Back" no-hairline>
+    <f7-navbar :title="pageTitle + dirtyIndicator" :subtitle="hasOpaqueModule ? opaqueModulesTypeText : undefined" back-link="Back" no-hairline>
       <f7-nav-right>
         <developer-dock-icon />
         <template v-if="isEditable">
@@ -795,6 +795,15 @@ export default {
     }
   },
   computed: {
+    pageTitle () {
+      if (this.createMode) {
+        return this.ruleCopy ? 'Create a duplicate rule' : 'Create rule'
+      } else if (this.stubMode) {
+        return 'Regenerate rule from template'
+      } else {
+        return this.rule.name
+      }
+    },
     hasTemplate () {
       return this.rule && (this.stubMode || this.currentTemplate !== null)
     },
