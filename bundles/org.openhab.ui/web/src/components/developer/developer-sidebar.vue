@@ -503,6 +503,7 @@ export default {
           'description',
           'tags',
           'triggers.configuration.itemName',
+          'triggers.configuration.groupName',
           'triggers.configuration.thingUID',
           'actions.configuration.itemName',
           'actions.configuration.thingUID',
