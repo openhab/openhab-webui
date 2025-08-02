@@ -75,6 +75,7 @@
     "framework7": "^5.7.14",
     "framework7-icons": "^5.0.5",
     "framework7-vue": "^5.7.14",
+    "fuse.js": "^7.0.0",
     "jse-eval": "^1.5.2",
     "jssip": "^3.10.1",
     "leaflet": "^1.9.4",
