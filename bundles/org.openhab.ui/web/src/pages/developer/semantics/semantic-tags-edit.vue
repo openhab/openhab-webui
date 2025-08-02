@@ -92,9 +92,9 @@
                 <f7-card style="tag-detail">
                   <f7-card-content>
                     <f7-list class="synonyms">
-                      <f7-list-input v-for="synonym in selectedTag.synonyms" :key="synonym" :value="synonym" :disabled="!selectedTag.editable" :clear-button="selectedTag.editable"
+                      <f7-list-input v-for="(synonym, index) in selectedTag.synonyms" :key="synonym" :value="synonym" :disabled="!selectedTag.editable" :clear-button="selectedTag.editable"
                                      placeholder="synonym"
-                                     @change="updateSynonyms($event)" />
+                                     @change="updateSynonyms($event, index)" />
                       <f7-list-input value="" :disabled="!selectedTag.editable" :clear-button="selectedTag.editable"
                                      placeholder="synonym"
                                      @change="updateSynonyms($event)" />
@@ -303,6 +303,14 @@ export default {
         }
       },
       deep: true
+    },
+    '$store.getters.semanticsLoaded': {
+      handler: function (loaded) {
+        if (loaded) {
+          this.load()
+        }
+      },
+      immediate: true
     }
   },
   methods: {
@@ -310,7 +318,6 @@ export default {
       if (window) {
         window.addEventListener('keydown', this.keyDown)
       }
-      this.load()
     },
     onPageBeforeOut () {
       if (window) {
