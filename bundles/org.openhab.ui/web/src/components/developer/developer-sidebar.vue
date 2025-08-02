@@ -474,6 +474,12 @@ export default {
     }
   },
   created () {
+    const fuseOptions = {
+      threshold: 0, // precise search, no fuzzy matching
+      ignoreLocation: true, // search anywhere in the string
+      useExtendedSearch: true // see https://www.fusejs.io/examples.html#extended-search
+    }
+
     const slots = {
       name: 'slots',
       getFn: (obj) => JSON.stringify(obj.slots)
@@ -530,10 +536,9 @@ export default {
         keys: ['serviceId', 'label', 'configs.items']
       }
     }
-    // Configure Fuse.js global settings
-    Fuse.config.threshold = 0 // precise search, no fuzzy matching
-    Fuse.config.ignoreLocation = true // search anywhere in the string
-    Fuse.config.useExtendedSearch = true // see https://www.fusejs.io/examples.html#extended-search
+
+    // Add fuseOptions to all SEARCH
+    Object.values(this.SEARCH).forEach((options) => Object.assign(options, fuseOptions))
   },
   computed: {
     context () {
