@@ -40,6 +40,8 @@ const mutations = {
     }
     // Save labels as i18n messages
     i18n.mergeLocaleMessage(i18n.locale, state.Labels)
+    i18n.mergeLocaleMessage(i18n.locale, state.Descriptions)
+    Object.keys(state.Synonyms).forEach((name) => i18n.mergeLocaleMessage(i18n.locale, state.Synonyms[name]))
   }
 }
 
