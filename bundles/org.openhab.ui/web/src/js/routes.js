@@ -509,6 +509,7 @@ export default [
       {
         path: 'semantics/',
         beforeEnter: [enforceAdminForRoute],
+        beforeLeave: [checkDirtyBeforeLeave],
         async: loadAsync(SemanticsEditPage)
       },
       {

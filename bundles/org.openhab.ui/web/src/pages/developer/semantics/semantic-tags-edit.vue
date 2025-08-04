@@ -1,5 +1,5 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
+  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" @page:afterout="onPageAfterOut">
     <f7-navbar :title="'Semantic Tags' + dirtyIndicator" back-link="Back" no-hairline>
       <f7-nav-right>
         <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only />
@@ -92,12 +92,13 @@
                 <f7-card style="tag-detail">
                   <f7-card-content>
                     <f7-list class="synonyms">
-                      <f7-list-input v-for="(synonym, index) in selectedTag.synonyms" :key="synonym" :value="synonym" :disabled="!selectedTag.editable" :clear-button="selectedTag.editable"
+                      <f7-list-input v-for="(synonym, index) in selectedTag.synonyms" :key="index" :value="synonym" :disabled="!selectedTag.editable" :clear-button="selectedTag.editable"
                                      placeholder="synonym"
                                      @change="updateSynonyms($event, index)" />
-                      <f7-list-input value="" :disabled="!selectedTag.editable" :clear-button="selectedTag.editable"
+                      <f7-list-input :value="newSynonym" :disabled="!selectedTag.editable" :clear-button="selectedTag.editable"
                                      placeholder="synonym"
-                                     @change="updateSynonyms($event)" />
+                                     @input="newSynonym = $event.target.value"
+                                     @change="addSynonym($event)" />
                     </f7-list>
                   </f7-card-content>
                 </f7-card>
@@ -160,12 +161,13 @@
         </f7-block>
         <f7-block style="margin-bottom: 6rem" v-if="selectedTag && detailsTab === 'synonyms'">
           <f7-list class="synonyms">
-            <f7-list-input v-for="(synonym, index) in selectedTag.synonyms" :key="synonym" :value="synonym" :disabled="!selectedTag.editable" :clear-button="selectedTag.editable"
+            <f7-list-input v-for="(synonym, index) in selectedTag.synonyms" :key="index" :value="synonym" :disabled="!selectedTag.editable" :clear-button="selectedTag.editable"
                            placeholder="synonym"
                            @change="updateSynonyms($event, index)" />
-            <f7-list-input value="" :disabled="!selectedTag.editable" :clear-button="selectedTag.editable"
+            <f7-list-input :value=newSynonym :disabled="!selectedTag.editable" :clear-button="selectedTag.editable"
                            placeholder="synonym"
-                           @change="updateSynonyms($event)" />
+                           @input="newSynonym = $event.target.value"
+                           @change="addSynonym($event)" />
           </f7-list>
         </f7-block>
       </f7-page>
@@ -280,6 +282,7 @@ export default {
       semanticTags: [],
       selectedTag: null,
       expandedTags: [],
+      newSynonym: '',
       currentTab: 'tree',
       detailsTab: 'tag',
       detailsOpened: false,
@@ -324,6 +327,11 @@ export default {
         window.removeEventListener('keydown', this.keyDown)
       }
       this.detailsOpened = false
+    },
+    onPageAfterOut () {
+      if (this.dirty) {
+        this.$store.dispatch('loadSemantics')
+      }
     },
     onEditorInput (value) {
       if (value !== this.editableSemanticTagsYaml) {
@@ -371,7 +379,7 @@ export default {
           name: t.name,
           label: this.semanticClasses.Labels[t.name],
           description: t.description,
-          synonyms: this.semanticClasses.Synonyms[t.name],
+          synonyms: this.semanticClasses.Synonyms[t.name] || [],
           editable: t.editable,
           parent: t.parent
         }
@@ -397,7 +405,7 @@ export default {
       const addedTags = editableTags.filter((t) => !this.semanticClasses.Tags.find((c) => c.uid === t.uid))
       const modifiedTags = editableTags.filter((t) => this.semanticClasses.Tags.find((c) => (c.uid === t.uid) && !fastDeepEqual(c, t)))
       const removedTags = this.semanticClasses.Tags.filter((c) => !this.semanticTags.find((t) => t.uid === c.uid))
-      console.log(addedTags[0], removedTags[0])
+      console.trace('Added: ', addedTags, 'Removed: ', removedTags, 'Modified: ', modifiedTags)
 
       if (addedTags.some((t) => {
         if ((!t.name || !t.label) || modifiedTags.some((t) => !t.name || !t.label)) {
@@ -513,7 +521,7 @@ export default {
         editable: true,
         synonyms: []
       }
-      this.semanticTags.push(tag)
+      this.semanticTags.splice(this.semanticTags.lenghth, 0, tag)
       this.selectTag(tag)
       this.$set(this.expandedTags, tag.parent, true)
       this.detailsTab = 'tag'
@@ -531,18 +539,19 @@ export default {
       this.selectedTag.uid = newUid
       this.expandedTags[newUid] = this.expandedTags[oldUid]
     },
+    addSynonym (event) {
+      const newValue = event.target.value.trim()
+      if (newValue && ! this.selectedTag.synonyms.includes(newValue)) {
+        this.selectedTag.synonyms.splice(this.selectedTag.synonyms.length, 0, newValue)
+      }
+      this.newSynonym = ''
+    },
     updateSynonyms (event, index) {
-      const newValue = event.target.value
-      if (typeof index === 'number') {
-        if (newValue) {
-          this.selectedTag.synonyms.splice(index, 1, newValue)
-        } else {
-          this.selectedTag.synonyms.splice(index, 1)
-        }
+      const newValue = event.target.value.trim()
+      if (newValue) {
+        this.selectedTag.synonyms.splice(index, 1, newValue)
       } else {
-        if (newValue) {
-          this.selectedTag.synonyms.push(newValue)
-        }
+        this.selectedTag.synonyms.splice(index, 1)
       }
     },
     clearSelection (ev) {
