@@ -379,7 +379,7 @@ export default {
           name: t.name,
           label: this.semanticClasses.Labels[t.name],
           description: t.description,
-          synonyms: this.semanticClasses.Synonyms[t.name] || [],
+          synonyms: [...this.semanticClasses.Synonyms[t.name]] || [], // clone the array to avoid modifying the original one
           editable: t.editable,
           parent: t.parent
         }
@@ -405,7 +405,7 @@ export default {
       const addedTags = editableTags.filter((t) => !this.semanticClasses.Tags.find((c) => c.uid === t.uid))
       const modifiedTags = editableTags.filter((t) => this.semanticClasses.Tags.find((c) => (c.uid === t.uid) && !fastDeepEqual(c, t)))
       const removedTags = this.semanticClasses.Tags.filter((c) => !this.semanticTags.find((t) => t.uid === c.uid))
-      console.trace('Added: ', addedTags, 'Removed: ', removedTags, 'Modified: ', modifiedTags)
+      console.debug('Added: ', addedTags, 'Removed: ', removedTags, 'Modified: ', modifiedTags)
 
       if (addedTags.some((t) => {
         if ((!t.name || !t.label) || modifiedTags.some((t) => !t.name || !t.label)) {
@@ -521,7 +521,7 @@ export default {
         editable: true,
         synonyms: []
       }
-      this.semanticTags.splice(this.semanticTags.lenghth, 0, tag)
+      this.semanticTags.splice(this.semanticTags.length, 0, tag)
       this.selectTag(tag)
       this.$set(this.expandedTags, tag.parent, true)
       this.detailsTab = 'tag'
