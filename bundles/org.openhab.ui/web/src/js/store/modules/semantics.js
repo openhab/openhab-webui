@@ -2,12 +2,26 @@ import i18n from '@/js/i18n'
 import api from '@/js/openhab/api'
 
 const state = {
+  Tags: [],
   Locations: [],
   Equipment: [],
   Points: [],
   Properties: [],
+  /**
+   * Maps tag names to their label.
+   * @type {Object<string, string>}
+   */
   Labels: {},
-  Tags: [],
+  /**
+   * Maps tag names to their description.
+   * @type {Object<string, string>}
+   */
+  Descriptions: {},
+  /**
+   * Maps tag names to their synonyms.
+   * @type {Object<string, string[]>}
+   */
+  Synonyms: {},
   loaded: false
 }
 
