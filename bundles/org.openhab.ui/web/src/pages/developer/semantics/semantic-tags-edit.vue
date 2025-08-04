@@ -164,7 +164,7 @@
             <f7-list-input v-for="(synonym, index) in selectedTag.synonyms" :key="index" :value="synonym" :disabled="!selectedTag.editable" :clear-button="selectedTag.editable"
                            placeholder="synonym"
                            @change="updateSynonyms($event, index)" />
-            <f7-list-input :value=newSynonym :disabled="!selectedTag.editable" :clear-button="selectedTag.editable"
+            <f7-list-input :value="newSynonym" :disabled="!selectedTag.editable" :clear-button="selectedTag.editable"
                            placeholder="synonym"
                            @input="newSynonym = $event.target.value"
                            @change="addSynonym($event)" />
@@ -541,7 +541,7 @@ export default {
     },
     addSynonym (event) {
       const newValue = event.target.value.trim()
-      if (newValue && ! this.selectedTag.synonyms.includes(newValue)) {
+      if (newValue && !this.selectedTag.synonyms.includes(newValue)) {
         this.selectedTag.synonyms.splice(this.selectedTag.synonyms.length, 0, newValue)
       }
       this.newSynonym = ''
