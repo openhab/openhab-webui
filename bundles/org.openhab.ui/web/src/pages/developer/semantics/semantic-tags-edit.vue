@@ -72,7 +72,9 @@
                                      placeholder="name"
                                      required
                                      validate pattern="^[A-Za-z][A-Za-z0-9\-]*$" error-message="Required. A-Z,a-z,0-9,- only"
-                                     @input="updateName($event)" />
+                                     @input="updateName($event)">
+                        <f7-icon v-if="!selectedTag.editable" slot="inner-end" f7="lock" ios="f7:lock" md="material:lock" color="gray" />
+                      </f7-list-input>
                       <f7-list-input label="Label" :value="selectedTag.label" :disabled="!selectedTag.editable" :clear-button="selectedTag.editable"
                                      placeholder="label"
                                      required
