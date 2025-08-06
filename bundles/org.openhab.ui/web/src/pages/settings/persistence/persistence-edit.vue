@@ -142,43 +142,39 @@
                            md="material:control_point" />
                 </f7-list-item>
               </f7-list>
-              <!-- Default Strategies -->
-              <strategy-picker title="Default Strategies" name="defaults" :strategies="strategies"
-                               :value="persistence.defaults" :disabled="!editable"
-                               @strategiesSelected="persistence.defaults = $event" />
-            </div>
-            <!-- Filters -->
-            <div>
-              <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)">
-                Filters
-              </f7-block-title>
-              <div v-for="ft in FilterTypes" :key="ft.name">
-                <f7-block-title>
-                  {{ ft.label }}
+              <!-- Filters -->
+              <div>
+                <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)">
+                  Filters
                 </f7-block-title>
-                <f7-list :media-list="editable" swipeout>
-                  <f7-list-item v-for="(f, index) in persistence[ft.name]" :key="f.name" :title="f.name"
-                                :footer="(typeof ft.footerFn === 'function') ? ft.footerFn(f) : ''" :link="editable"
-                                @click.native="(ev) => editFilter(ev, ft, index, f)" swipeout>
-                    <f7-link slot="media" v-if="editable" icon-color="red" icon-aurora="f7:minus_circle_filled"
-                             icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline"
-                             @click="showSwipeout" />
-                    <f7-swipeout-actions right v-if="editable">
-                      <f7-swipeout-button @click="(ev) => deleteFilter(ev, ft.name, index)"
-                                          style="background-color: var(--f7-swipeout-delete-button-bg-color)">
-                        Delete
-                      </f7-swipeout-button>
-                    </f7-swipeout-actions>
-                  </f7-list-item>
-                </f7-list>
-                <f7-list v-if="editable">
-                  <f7-list-item link no-chevron media-item :color="($theme.dark) ? 'black' : 'white'"
-                                :subtitle="'Add ' + ft.label.toLowerCase() + ' filter'"
-                                @click="editFilter(undefined, ft, null)">
-                    <f7-icon slot="media" color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill"
-                             md="material:control_point" />
-                  </f7-list-item>
-                </f7-list>
+                <div v-for="ft in FilterTypes" :key="ft.name">
+                  <f7-block-title>
+                    {{ ft.label }}
+                  </f7-block-title>
+                  <f7-list :media-list="editable" swipeout>
+                    <f7-list-item v-for="(f, index) in persistence[ft.name]" :key="f.name" :title="f.name"
+                                  :footer="(typeof ft.footerFn === 'function') ? ft.footerFn(f) : ''" :link="editable"
+                                  @click.native="(ev) => editFilter(ev, ft, index, f)" swipeout>
+                      <f7-link slot="media" v-if="editable" icon-color="red" icon-aurora="f7:minus_circle_filled"
+                               icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline"
+                               @click="showSwipeout" />
+                      <f7-swipeout-actions right v-if="editable">
+                        <f7-swipeout-button @click="(ev) => deleteFilter(ev, ft.name, index)"
+                                            style="background-color: var(--f7-swipeout-delete-button-bg-color)">
+                          Delete
+                        </f7-swipeout-button>
+                      </f7-swipeout-actions>
+                    </f7-list-item>
+                  </f7-list>
+                  <f7-list v-if="editable">
+                    <f7-list-item link no-chevron media-item :color="($theme.dark) ? 'black' : 'white'"
+                                  :subtitle="'Add ' + ft.label.toLowerCase() + ' filter'"
+                                  @click="editFilter(undefined, ft, null)">
+                      <f7-icon slot="media" color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill"
+                               md="material:control_point" />
+                    </f7-list-item>
+                  </f7-list>
+                </div>
               </div>
             </div>
             <!-- Aliases -->
@@ -290,7 +286,7 @@ import cloneDeep from 'lodash/cloneDeep'
 import fastDeepEqual from 'fast-deep-equal/es6'
 
 import DirtyMixin from '../dirty-mixin'
-import { FilterTypes, PredefinedStrategies } from '@/assets/definitions/persistence'
+import { FilterTypes, PredefinedStrategies, CommonCronStrategies } from '@/assets/definitions/persistence'
 import CronStrategyPopup from '@/pages/settings/persistence/cron-strategy-popup.vue'
 import ItemPicker from '@/components/config/controls/item-picker.vue'
 import StrategyPicker from '@/pages/settings/persistence/strategy-picker.vue'
@@ -310,6 +306,7 @@ export default {
       newPersistence: false,
       persistence: {},
       savedPersistence: {},
+      suggestedStrategies: [],
       persistenceYaml: '',
       ready: false,
       loading: false,
@@ -370,27 +367,15 @@ export default {
     },
     initializeNewPersistence () {
       this.newPersistence = true
+      const suggestedCronStrategies = this.suggestedStrategies.filter((s) => s.cronExpression)
+      const suggestedCronStrategyNames = suggestedCronStrategies.map((s) => s.name)
+      const commonCronStrategies = this.CommonCronStrategies.filter((s) => (!suggestedCronStrategyNames.includes(s.name)))
+      const cronStrategies = suggestedCronStrategies.concat(commonCronStrategies)
       this.persistence = {
         serviceId: this.serviceId,
         configs: [],
         aliases: [],
-        defaults: [
-          'everyChange'
-        ],
-        cronStrategies: [
-          {
-            name: 'everyMinute',
-            cronExpression: '0 * * ? * *'
-          },
-          {
-            name: 'everyHour',
-            cronExpression: '0 0 * * * ?'
-          },
-          {
-            name: 'everyDay',
-            cronExpression: '0 0 0 * * ?'
-          }
-        ]
+        cronStrategies
       }
       // Dynamically add empty arrays for all filter types defined in the FilterTypes object
       this.FilterTypes.forEach((ft) => { this.persistence[ft.name] = [] })
@@ -401,23 +386,27 @@ export default {
       if (this.loading) return
       this.loading = true
 
-      this.$oh.api.get('/rest/persistence/' + this.serviceId).then((data) => {
-        this.$set(this, 'persistence', data)
-        this.savedPersistence = cloneDeep(this.persistence)
-        // Ensure arrays for all filter types defined in the FilterTypes object are existent
-        this.FilterTypes.forEach((ft) => {
-          if (!this.persistence[ft.name]) this.persistence[ft.name] = []
-        })
-        this.loading = false
-        this.ready = true
-      }).catch((e) => {
-        if (e === 404 || e === 'Not Found') {
-          this.initializeNewPersistence()
+      this.$oh.api.get('/rest/persistence/strategysuggestions?serviceId=' + this.serviceId).then((suggestions) => {
+        this.suggestedStrategies = suggestions
+
+        this.$oh.api.get('/rest/persistence/' + this.serviceId).then((data) => {
+          this.$set(this, 'persistence', data)
+          this.savedPersistence = cloneDeep(this.persistence)
+          // Ensure arrays for all filter types defined in the FilterTypes object are existent
+          this.FilterTypes.forEach((ft) => {
+            if (!this.persistence[ft.name]) this.persistence[ft.name] = []
+          })
           this.loading = false
           this.ready = true
-        } else {
-          Promise.reject(e)
-        }
+        }).catch((e) => {
+          if (e === 404 || e === 'Not Found') {
+            this.initializeNewPersistence()
+            this.loading = false
+            this.ready = true
+          } else {
+            Promise.reject(e)
+          }
+        })
       })
     },
     async save (noToast) {
@@ -495,7 +484,8 @@ export default {
         props: {
           configuration: this.currentConfiguration,
           strategies: this.strategies,
-          filters: this.filters
+          filters: this.filters,
+          suggestedStrategies: this.suggestedStrategies.map((s) => s.name)
         }
       })
 
@@ -766,6 +756,7 @@ export default {
   created () {
     this.PredefinedStrategies = PredefinedStrategies
     this.FilterTypes = FilterTypes
+    this.CommonCronStrategies = CommonCronStrategies
   }
 }
 </script>
