@@ -19,8 +19,8 @@
             <clipboard-icon :value="item.name" tooltip="Copy Item name" />
           </f7-link>
           <f7-link slot="after" color="gray" icon-f7="pencil" icon-size="18" tooltip="Details" :href="'/settings/items/' + item.name" :animate="false" />
-          <f7-link slot="after" v-if="isPinned('items', item, 'name')" @click="$emit('unpin', 'items', item, 'name')" color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" />
-          <f7-link slot="after" v-else @click="$emit('pin', 'items', item, 'name')" color="blue" icon-f7="unpin" icon-size="18" tooltip="Pin" />
+          <f7-link slot="after" v-if="isPinned('items', item, 'name')" @click="$emit('unpin', 'items', item, 'name')" color="blue" icon-f7="pin_fill" icon-size="18" tooltip="Unpin" />
+          <f7-link slot="after" v-else @click="$emit('pin', 'items', item, 'name')" color="gray" icon-f7="unpin" icon-size="18" tooltip="Pin" />
         </f7-list-item>
         <f7-list-button v-if="!showingAll('items')" color="blue" @click="$set(expandedTypes, 'items', true)">
           Show All
@@ -39,8 +39,8 @@
             <clipboard-icon :value="thing.UID" tooltip="Copy Thing UID" />
           </f7-link>
           <f7-link slot="after" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/settings/things/' + thing.UID" :animate="false" />
-          <f7-link slot="after" v-if="isPinned('things', thing, 'UID')" @click="$emit('unpin', 'things', thing, 'UID')" color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" />
-          <f7-link slot="after" v-else @click="$emit('pin', 'things', thing, 'UID')" color="blue" icon-f7="unpin" icon-size="18" tooltip="Pin" />
+          <f7-link slot="after" v-if="isPinned('things', thing, 'UID')" @click="$emit('unpin', 'things', thing, 'UID')" color="blue" icon-f7="pin_fill" icon-size="18" tooltip="Unpin" />
+          <f7-link slot="after" v-else @click="$emit('pin', 'things', thing, 'UID')" color="gray" icon-f7="unpin" icon-size="18" tooltip="Pin" />
         </f7-list-item>
         <f7-list-button v-if="!showingAll('things')" color="blue" @click="$set(expandedTypes, 'things', true)">
           Show All
@@ -59,8 +59,8 @@
             <clipboard-icon :value="rule.uid" tooltip="Copy Rule UID" />
           </f7-link>
           <f7-link slot="after" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/settings/' + (rule.tags.indexOf('Script') >= 0 ? 'scripts' : 'rules') + '/' + rule.uid" :animate="false" />
-          <f7-link slot="after" v-if="isPinned('rules', rule, 'uid')" @click="$emit('unpin', 'rules', rule, 'uid')" color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" />
-          <f7-link slot="after" v-else @click="$emit('pin', 'rules', rule, 'uid')" color="blue" icon-f7="unpin" icon-size="18" tooltip="Pin" />
+          <f7-link slot="after" v-if="isPinned('rules', rule, 'uid')" @click="$emit('unpin', 'rules', rule, 'uid')" color="blue" icon-f7="pin_fill" icon-size="18" tooltip="Unpin" />
+          <f7-link slot="after" v-else @click="$emit('pin', 'rules', rule, 'uid')" color="blue" icon-f7="gray" icon-size="18" tooltip="Pin" />
         </f7-list-item>
         <f7-list-button v-if="!showingAll('rules')" color="blue" @click="$set(expandedTypes, 'rules', true)">
           Show All
@@ -79,8 +79,8 @@
             <clipboard-icon :value="rule.uid" tooltip="Copy Scene UID" />
           </f7-link>
           <f7-link slot="after" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/settings/' + (rule.tags.indexOf('Script') >= 0 ? 'scripts' : 'rules') + '/' + rule.uid" :animate="false" />
-          <f7-link slot="after" v-if="isPinned('scenes', rule, 'uid')" @click="$emit('unpin', 'scenes', rule, 'uid')" color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" />
-          <f7-link slot="after" v-else @click="$emit('pin', 'scenes', rule, 'uid')" color="blue" icon-f7="unpin" icon-size="18" tooltip="Pin" />
+          <f7-link slot="after" v-if="isPinned('scenes', rule, 'uid')" @click="$emit('unpin', 'scenes', rule, 'uid')" color="blue" icon-f7="pin_fill" icon-size="18" tooltip="Unpin" />
+          <f7-link slot="after" v-else @click="$emit('pin', 'scenes', rule, 'uid')" color="blue" icon-f7="gray" icon-size="18" tooltip="Pin" />
         </f7-list-item>
         <f7-list-button v-if="!showingAll('rules')" color="blue" @click="$set(expandedTypes, 'rules', true)">
           Show All
@@ -99,8 +99,8 @@
             <clipboard-icon :value="rule.uid" tooltip="Copy Script UID" />
           </f7-link>
           <f7-link slot="after" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/settings/' + (rule.tags.indexOf('Script') >= 0 ? 'scripts' : 'rules') + '/' + rule.uid" :animate="false" />
-          <f7-link slot="after" v-if="isPinned('scripts', rule, 'uid')" @click="$emit('unpin', 'scripts', rule, 'uid')" color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" />
-          <f7-link slot="after" v-else @click="$emit('pin', 'scripts', rule, 'uid')" color="blue" icon-f7="unpin" icon-size="18" tooltip="Pin" />
+          <f7-link slot="after" v-if="isPinned('scripts', rule, 'uid')" @click="$emit('unpin', 'scripts', rule, 'uid')" color="blue" icon-f7="pin_fill" icon-size="18" tooltip="Unpin" />
+          <f7-link slot="after" v-else @click="$emit('pin', 'scripts', rule, 'uid')" color="gray" icon-f7="unpin" icon-size="18" tooltip="Pin" />
         </f7-list-item>
         <f7-list-button v-if="!showingAll('rules')" color="blue" @click="$set(expandedTypes, 'rules', true)">
           Show All
@@ -119,8 +119,8 @@
             <clipboard-icon :value="page.uid" tooltip="Copy Page UID" />
           </f7-link>
           <f7-link slot="after" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/settings/pages/' + getPageType(page).type + '/' + page.uid" :animate="false" />
-          <f7-link slot="after" v-if="isPinned('pages', page, 'uid')" @click="$emit('unpin', 'pages', page, 'uid')" color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" />
-          <f7-link slot="after" v-else @click="$emit('pin', 'pages', page, 'uid')" color="blue" icon-f7="unpin" icon-size="18" tooltip="Pin" />
+          <f7-link slot="after" v-if="isPinned('pages', page, 'uid')" @click="$emit('unpin', 'pages', page, 'uid')" color="blue" icon-f7="pin_fill" icon-size="18" tooltip="Unpin" />
+          <f7-link slot="after" v-else @click="$emit('pin', 'pages', page, 'uid')" color="gray" icon-f7="unpin" icon-size="18" tooltip="Pin" />
         </f7-list-item>
         <f7-list-button v-if="!showingAll('pages')" color="blue" @click="$set(expandedTypes, 'pages', true)">
           Show All
@@ -139,8 +139,8 @@
             <clipboard-icon :value="widget.uid" tooltip="Copy Widget UID" />
           </f7-link>
           <f7-link slot="after" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/developer/widgets/' + widget.uid" :animate="false" />
-          <f7-link slot="after" v-if="isPinned('widgets', widget, 'uid')" @click="$emit('unpin', 'widgets', widget, 'uid')" color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" />
-          <f7-link slot="after" v-else @click="$emit('pin', 'widgets', widget, 'uid')" color="blue" icon-f7="unpin" icon-size="18" tooltip="Pin" />
+          <f7-link slot="after" v-if="isPinned('widgets', widget, 'uid')" @click="$emit('unpin', 'widgets', widget, 'uid')" color="blue" icon-f7="pin_fill" icon-size="18" tooltip="Unpin" />
+          <f7-link slot="after" v-else @click="$emit('pin', 'widgets', widget, 'uid')" color="gray" icon-f7="unpin" icon-size="18" tooltip="Pin" />
         </f7-list-item>
         <f7-list-button v-if="!showingAll('widgets')" color="blue" @click="$set(expandedTypes, 'widgets', true)">
           Show All
@@ -159,8 +159,8 @@
             <clipboard-icon :value="transformation.uid" tooltip="Copy Transformation UID" />
           </f7-link>
           <f7-link slot="after" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/settings/transformations/' + transformation.uid" :animate="false" />
-          <f7-link slot="after" v-if="isPinned('transformations', transformation, 'uid')" @click="$emit('unpin', 'transformations', transformation, 'uid')" color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" />
-          <f7-link slot="after" v-else @click="$emit('pin', 'transformations', transformation, 'uid')" color="blue" icon-f7="unpin" icon-size="18" tooltip="Pin" />
+          <f7-link slot="after" v-if="isPinned('transformations', transformation, 'uid')" @click="$emit('unpin', 'transformations', transformation, 'uid')" color="blue" icon-f7="pin_fill" icon-size="18" tooltip="Unpin" />
+          <f7-link slot="after" v-else @click="$emit('pin', 'transformations', transformation, 'uid')" color="gray" icon-f7="unpin" icon-size="18" tooltip="Pin" />
         </f7-list-item>
         <f7-list-button v-if="!showingAll('transformations')" color="blue" @click="$set(expandedTypes, 'transformations', true)">
           Show All
@@ -179,8 +179,8 @@
             <clipboard-icon :value="persistenceConfig.serviceId" tooltip="Copy Service ID" />
           </f7-link>
           <f7-link slot="after" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/settings/persistence/' + persistenceConfig.serviceId" :animate="false" />
-          <f7-link slot="after" v-if="isPinned('persistenceConfigs', persistenceConfig, 'serviceId')" @click="$emit('unpin', 'persistenceConfigs', persistenceConfig, 'serviceId')" color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" />
-          <f7-link slot="after" v-else @click="$emit('pin', 'persistenceConfigs', persistenceConfig, 'serviceId')" color="blue" icon-f7="unpin" icon-size="18" tooltip="Pin" />
+          <f7-link slot="after" v-if="isPinned('persistenceConfigs', persistenceConfig, 'serviceId')" @click="$emit('unpin', 'persistenceConfigs', persistenceConfig, 'serviceId')" color="blue" icon-f7="pin_fill" icon-size="18" tooltip="Unpin" />
+          <f7-link slot="after" v-else @click="$emit('pin', 'persistenceConfigs', persistenceConfig, 'serviceId')" color="gray" icon-f7="unpin" icon-size="18" tooltip="Pin" />
         </f7-list-item>
         <f7-list-button v-if="!showingAll('persistenceConfigs')" color="blue" @click="$set(expandedTypes, 'persistenceConfigs', true)">
           Show All

@@ -41,7 +41,7 @@
                     <clipboard-icon :value="item.name" size="18" tooltip="Copy Item name" />
                   </f7-link>
                   <f7-link class="margin-right itemlist-actions" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/settings/items/' + item.name" :animate="false" />
-                  <f7-link class="itemlist-actions" color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" @click="unpin('items', item, 'name')" />
+                  <f7-link class="itemlist-actions" color="blue" icon-f7="pin_fill" icon-size="18" tooltip="Unpin" @click="unpin('items', item, 'name')" />
                 </div>
               </item>
             </ul>
@@ -69,7 +69,7 @@
                   </f7-link>
                   <f7-link class="margin-right" :icon-color="(thing.statusInfo.statusDetail === 'DISABLED') ? 'orange' : 'gray'" :tooltip="(thing.statusInfo.statusDetail === 'DISABLED') ? 'Enable' : 'Disable'" icon-f7="pause_circle" icon-size="18" @click="toggleThingDisabled(thing)" />
                   <f7-link class="margin-right" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/settings/things/' + thing.UID" :animate="false" />
-                  <f7-link color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" @click="unpin('things', thing, 'UID')" />
+                  <f7-link color="blue" icon-f7="pin_fill" icon-size="18" tooltip="Unpin" @click="unpin('things', thing, 'UID')" />
                 </div>
               </f7-list-item>
             </ul>
@@ -97,7 +97,7 @@
                   <f7-link class="margin-right" :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'" :tooltip="(rule.status.statusDetail === 'DISABLED') ? 'Enable' : 'Disable'" icon-f7="pause_circle" icon-size="18" @click="toggleRuleDisabled(rule)" />
                   <f7-link class="margin-right" :color="(rule.status.status === 'IDLE') ? 'blue' : 'gray'" icon-f7="play" icon-size="18" tooltip="Run" @click="runRuleNow(rule)" />
                   <f7-link class="margin-right" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/settings/' + (rule.tags.indexOf('Script') >= 0 ? 'scripts' : 'rules') + '/' + rule.uid" :animate="false" />
-                  <f7-link color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" @click="unpin('rules', rule, 'uid')" />
+                  <f7-link color="blue" icon-f7="pin_fill" icon-size="18" tooltip="Unpin" @click="unpin('rules', rule, 'uid')" />
                 </div>
               </f7-list-item>
             </ul>
@@ -125,7 +125,7 @@
                   <f7-link class="margin-right" :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'" :tooltip="(rule.status.statusDetail === 'DISABLED') ? 'Enable' : 'Disable'" icon-f7="pause_circle" icon-size="18" @click="toggleRuleDisabled(rule, 'Scene')" />
                   <f7-link class="margin-right" :color="(rule.status.status === 'IDLE') ? 'blue' : 'gray'" icon-f7="play" icon-size="18" tooltip="Run" @click="runRuleNow(rule, 'Scene')" />
                   <f7-link class="margin-right" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/settings/' + (rule.tags.indexOf('Script') >= 0 ? 'scripts' : 'rules') + '/' + rule.uid" :animate="false" />
-                  <f7-link color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" @click="unpin('scenes', rule, 'uid')" />
+                  <f7-link color="blue" icon-f7="pin_fill" icon-size="18" tooltip="Unpin" @click="unpin('scenes', rule, 'uid')" />
                 </div>
               </f7-list-item>
             </ul>
@@ -153,7 +153,7 @@
                   <f7-link class="margin-right" :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'" :tooltip="(rule.status.statusDetail === 'DISABLED') ? 'Enable' : 'Disable'" icon-f7="pause_circle" icon-size="18" @click="toggleRuleDisabled(rule, 'Script')" />
                   <f7-link class="margin-right" :color="(rule.status.status === 'IDLE') ? 'blue' : 'gray'" icon-f7="play" icon-size="18" tooltip="Run" @click="runRuleNow(rule, 'Script')" />
                   <f7-link class="margin-right" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/settings/' + (rule.tags.indexOf('Script') >= 0 ? 'scripts' : 'rules') + '/' + rule.uid" :animate="false" />
-                  <f7-link color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" @click="unpin('scripts', rule, 'uid')" />
+                  <f7-link color="blue" icon-f7="pin_fill" icon-size="18" tooltip="Unpin" @click="unpin('scripts', rule, 'uid')" />
                 </div>
               </f7-list-item>
             </ul>
@@ -178,7 +178,7 @@
                   <!-- <f7-link class="margin-right" color="blue" icon-f7="rectangle_on_rectangle" icon-size="18" tooltip="Open in Popup" /> -->
                   <f7-link class="margin-right" color="blue" icon-f7="play" icon-size="18" tooltip="View" :href="'/page/' + page.uid" :animate="false" />
                   <f7-link class="margin-right" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/settings/pages/' + getPageType(page).type + '/' + page.uid" :animate="false" />
-                  <f7-link color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" @click="unpin('pages', page, 'uid')" />
+                  <f7-link color="blue" icon-f7="pin_fill" icon-size="18" tooltip="Unpin" @click="unpin('pages', page, 'uid')" />
                 </div>
               </f7-list-item>
             </ul>
@@ -201,7 +201,7 @@
                     <clipboard-icon :value="widget.uid" size="18" tooltip="Copy Widget UID" />
                   </f7-link>
                   <f7-link class="margin-right" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/developer/widgets/' + widget.uid" :animate="false" />
-                  <f7-link color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" @click="unpin('widgets', widget, 'uid')" />
+                  <f7-link color="blue" icon-f7="pin_fill" icon-size="18" tooltip="Unpin" @click="unpin('widgets', widget, 'uid')" />
                 </div>
               </f7-list-item>
             </ul>
@@ -224,7 +224,7 @@
                     <clipboard-icon :value="transformation.uid" size="18" tooltip="Copy Transformation UID" />
                   </f7-link>
                   <f7-link class="margin-right" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/settings/transformations/' + transformation.uid" :animate="false" />
-                  <f7-link color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" @click="unpin('transformations', transformation, 'uid')" />
+                  <f7-link color="blue" icon-f7="pin_fill" icon-size="18" tooltip="Unpin" @click="unpin('transformations', transformation, 'uid')" />
                 </div>
               </f7-list-item>
             </ul>
@@ -247,7 +247,7 @@
                     <clipboard-icon :value="persistenceConfig.serviceId" size="18" tooltip="Copy Service ID" />
                   </f7-link>
                   <f7-link class="margin-right" color="gray" icon-f7="pencil" icon-size="18" tooltip="Edit" :href="'/settings/persistence/' + persistenceConfig.serviceId" :animate="false" />
-                  <f7-link color="red" icon-f7="pin_slash_fill" icon-size="18" tooltip="Unpin" @click="unpin('persistenceConfig', persistenceConfig, 'serviceId')" />
+                  <f7-link color="blue" icon-f7="pin_fill" icon-size="18" tooltip="Unpin" @click="unpin('persistenceConfig', persistenceConfig, 'serviceId')" />
                 </div>
               </f7-list-item>
             </ul>
