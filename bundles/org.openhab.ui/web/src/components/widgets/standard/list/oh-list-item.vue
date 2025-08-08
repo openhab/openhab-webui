@@ -1,7 +1,15 @@
 <template>
-  <f7-list-button v-if="config.listButton && !context.editmode" :title="config.title || 'Action'" :color="config.color || 'blue'" @click.stop="performAction" />
-  <f7-list-item divider ref="divider" :title="config.title" v-else-if="config.divider && !context.editmode" />
-  <f7-list-item v-else v-bind="config" :divider="config.divider && !context.editmode"
+  <f7-list-button v-if="config.listButton && !context.editmode"
+                  :title="config.title || 'Action'"
+                  :color="config.color || 'blue'"
+                  @click.stop="performAction" />
+  <f7-list-item divider
+                ref="divider"
+                :title="config.title"
+                v-else-if="config.divider && !context.editmode" />
+  <f7-list-item v-else
+                v-bind="config"
+                :divider="config.divider && !context.editmode"
                 :media-item="context.parent.component.config.mediaList && !config.divider"
                 :badge="(config.divider) ? 'Divider' : (config.listButton) ? 'List button' : config.badge"
                 :accordion-item="isRegularAccordion && !config.divider && !context.editmode"
@@ -14,15 +22,23 @@
     <slot name="content" #content />
     <slot name="root-end" #root-end />
     <slot name="footer" #footer />
-    <generic-widget-component slot="after" v-if="context.component.slots && context.component.slots.after && context.component.slots.after.length"
-                              :context="childContext(context.component.slots.after[0])" v-on="$listeners" />
+    <generic-widget-component slot="after"
+                              v-if="context.component.slots && context.component.slots.after && context.component.slots.after.length"
+                              :context="childContext(context.component.slots.after[0])"
+                              v-on="$listeners" />
     <f7-accordion-content v-if="context.parent.component.config.accordionList && !context.editmode">
       <generic-widget-component v-if="isRegularAccordion" :context="childContext(context.component.slots.accordion[0])" v-on="$listeners" />
     </f7-accordion-content>
     <f7-accordion-content slot="root" v-if="isEquipmentAccordion && !context.editmode">
       <generic-widget-component :context="childContext(context.component.slots.accordion[0])" v-on="$listeners" />
     </f7-accordion-content>
-    <oh-icon slot="media" v-if="config.icon" :icon="config.icon" height="32" width="32" :color="config.iconColor" :state="(config.item && config.iconUseState) ? context.store[config.item].state : null" />
+    <oh-icon slot="media"
+             v-if="config.icon"
+             :icon="config.icon"
+             height="32"
+             width="32"
+             :color="config.iconColor"
+             :state="(config.item && config.iconUseState) ? context.store[config.item].state : null" />
     <span slot="media" v-else-if="config.fallbackIconToInitial && config.title && context.parent.component.config && context.parent.component.config.mediaList" class="item-initial">{{ config.title[0].toUpperCase() }}</span>
   </f7-list-item>
 </template>

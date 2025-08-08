@@ -1,6 +1,9 @@
 <template>
   <f7-page name="about" class="page-about" @page:beforein="beforePageIn">
-    <f7-navbar large :title-large="$t('about.title')" :title="$t('about.title')" :back-link="$t('dialogs.back')">
+    <f7-navbar large
+               :title-large="$t('about.title')"
+               :title="$t('about.title')"
+               :back-link="$t('dialogs.back')">
       <f7-nav-right>
         <developer-dock-icon />
       </f7-nav-right>
@@ -10,7 +13,10 @@
         <f7-col>
           <!-- <f7-block-title>About openHAB</f7-block-title> -->
           <f7-block>
-            <img src="../res/icons/favicon.svg" type="image/svg+xml" width="96" class="padding float-right">
+            <img src="../res/icons/favicon.svg"
+                 type="image/svg+xml"
+                 width="96"
+                 class="padding float-right">
             <h2 v-if="$store.state.runtimeInfo" class="block-title-medium">
               openHAB {{ $store.state.runtimeInfo.version }}<br>
               <small>{{ $store.state.runtimeInfo.buildString }}</small>
@@ -18,9 +24,24 @@
             <p v-if="$store.state.uiInfo.commit">
               Main UI Commit {{ $store.state.uiInfo.commit }}
             </p>
-            <p><f7-link external target="_blank" href="https://www.openhab.org/" v-t="'about.homePage'" /></p>
-            <p><f7-link external target="_blank" href="https://www.openhab.org/docs/" v-t="'about.documentation'" /></p>
-            <p><f7-link external target="_blank" href="https://community.openhab.org/" v-t="'about.communityForum'" /></p>
+            <p>
+              <f7-link external
+                       target="_blank"
+                       href="https://www.openhab.org/"
+                       v-t="'about.homePage'" />
+            </p>
+            <p>
+              <f7-link external
+                       target="_blank"
+                       href="https://www.openhab.org/docs/"
+                       v-t="'about.documentation'" />
+            </p>
+            <p>
+              <f7-link external
+                       target="_blank"
+                       href="https://community.openhab.org/"
+                       v-t="'about.communityForum'" />
+            </p>
           </f7-block>
         </f7-col>
       </f7-row>
@@ -36,7 +57,10 @@
                   <f7-list-item :title="$t('about.technicalInformation.operatingSystem')" :after="`${systemInfo.osName}/${systemInfo.osVersion} (${systemInfo.osArchitecture})`" />
                   <f7-list-item :title="$t('about.technicalInformation.javaRuntime')" :footer="systemInfo.javaVendor" :after="`${systemInfo.javaVersion} (${systemInfo.javaVendorVersion})`">
                     <div slot="root-end" class="item-content" style="flex-direction: column">
-                      <f7-progressbar class="margin-top" style="width: 90%" color="blue" :progress="systemInfo.freeMemory * 100 / systemInfo.totalMemory" />
+                      <f7-progressbar class="margin-top"
+                                      style="width: 90%"
+                                      color="blue"
+                                      :progress="systemInfo.freeMemory * 100 / systemInfo.totalMemory" />
                       <small class="margin-bottom text-color-gray">
                         {{ $t('about.technicalInformation.resourceStats', { nbproc: systemInfo.availableProcessors, ram: Math.round(systemInfo.freeMemory / 1024 / 1024) + '/' + Math.round(systemInfo.totalMemory / 1024 / 1024) + 'MB' }) }}
                       </small>
@@ -85,7 +109,10 @@
         </div>
       </f7-navbar>
       <!-- <pre class="textual-definition" v-html="textualDefinition"></pre> -->
-      <textarea readonly class="textual-systeminfo" id="textual-systeminfo" :value="textualSystemInfo" />
+      <textarea readonly
+                class="textual-systeminfo"
+                id="textual-systeminfo"
+                :value="textualSystemInfo" />
     </f7-popup>
   </f7-page>
 </template>

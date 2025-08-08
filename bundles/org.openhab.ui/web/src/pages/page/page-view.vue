@@ -1,26 +1,54 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" hide-bars-on-scroll :style="pageStyle" class="disable-user-select">
+  <f7-page @page:afterin="onPageAfterIn"
+           @page:beforeout="onPageBeforeOut"
+           hide-bars-on-scroll
+           :style="pageStyle"
+           class="disable-user-select">
     <f7-navbar v-if="!page || !page.config.hideNavbar" :back-link="(showBackButton) ? $t('page.navbar.back') : undefined" class="disable-user-select">
       <f7-nav-left v-if="!showBackButton">
-        <f7-link icon-ios="f7:menu" icon-aurora="f7:menu" icon-md="material:menu" panel-open="left" />
+        <f7-link icon-ios="f7:menu"
+                 icon-aurora="f7:menu"
+                 icon-md="material:menu"
+                 panel-open="left" />
       </f7-nav-left>
       <f7-nav-title>{{ pageLabel }}</f7-nav-title>
       <f7-nav-right>
-        <f7-link v-if="isAdmin" icon-md="material:edit" @click="editPage" class="edit-page-button">
+        <f7-link v-if="isAdmin"
+                 icon-md="material:edit"
+                 @click="editPage"
+                 class="edit-page-button">
           {{ $theme.md ? '' : $t('page.navbar.edit') }}
         </f7-link>
-        <f7-link v-if="fullscreenIcon" class="fullscreen-icon-navbar" :icon-f7="fullscreenIcon" @click="toggleFullscreen" />
+        <f7-link v-if="fullscreenIcon"
+                 class="fullscreen-icon-navbar"
+                 :icon-f7="fullscreenIcon"
+                 @click="toggleFullscreen" />
         <div v-if="!showBackButton && !isAdmin && !fullscreenIcon" style="width: 44px; height: 44px;" />
       </f7-nav-right>
     </f7-navbar>
     <template v-else>
-      <f7-link v-if="!page.config.hideSidebarIcon" class="sidebar-icon" icon-ios="f7:menu" icon-aurora="f7:menu" icon-md="material:menu" panel-open="left" />
-      <f7-link v-if="fullscreenIcon" class="fullscreen-icon" :icon-f7="fullscreenIcon" @click="toggleFullscreen" />
+      <f7-link v-if="!page.config.hideSidebarIcon"
+               class="sidebar-icon"
+               icon-ios="f7:menu"
+               icon-aurora="f7:menu"
+               icon-md="material:menu"
+               panel-open="left" />
+      <f7-link v-if="fullscreenIcon"
+               class="fullscreen-icon"
+               :icon-f7="fullscreenIcon"
+               @click="toggleFullscreen" />
     </template>
 
     <!-- Tabbed Pages -->
-    <f7-toolbar tabbar labels bottom v-if="page && pageType === 'tabs' && visibleToCurrentUser">
-      <f7-link v-for="(tab, idx) in page.slots.default" :key="idx" tab-link @click="onTabChange(idx)" :tab-link-active="currentTab === idx">
+    <f7-toolbar tabbar
+                labels
+                bottom
+                v-if="page && pageType === 'tabs' && visibleToCurrentUser">
+      <f7-link v-for="(tab, idx) in page.slots.default"
+               :key="idx"
+               tab-link
+               @click="onTabChange(idx)"
+               :tab-link-active="currentTab === idx">
         <i v-if="tabEvaluateExpression(tab, idx, 'icon')" class="icon" :style="{ width: tabBarIconSize, height: tabBarIconSize }">
           <oh-icon :icon="tabEvaluateExpression(tab, idx, 'icon')" :width="tabBarIconSize" :height="tabBarIconSize" />
           <f7-badge v-if="tabEvaluateExpression(tab, idx, 'badge')" :color="tabEvaluateExpression(tab, idx, 'badgeColor')">{{ tabEvaluateExpression(tab, idx, 'badge') }}</f7-badge>
@@ -30,13 +58,23 @@
     </f7-toolbar>
     <f7-tabs v-if="page && pageType === 'tabs' && visibleToCurrentUser">
       <f7-tab v-for="(tab, idx) in page.slots.default" :key="idx" :tab-active="currentTab === idx">
-        <component v-if="currentTab === idx" :is="tabComponent(tab)" :context="tabContext(tab)" @command="onCommand" />
+        <component v-if="currentTab === idx"
+                   :is="tabComponent(tab)"
+                   :context="tabContext(tab)"
+                   @command="onCommand" />
       </f7-tab>
     </f7-tabs>
 
-    <component :is="page.component" v-else-if="page && visibleToCurrentUser" :context="context" @command="onCommand" @action="performAction($event.ev, $event.prefix, $event.config, $event.context)" />
+    <component :is="page.component"
+               v-else-if="page && visibleToCurrentUser"
+               :context="context"
+               @command="onCommand"
+               @action="performAction($event.ev, $event.prefix, $event.config, $event.context)" />
 
-    <empty-state-placeholder v-if="!visibleToCurrentUser" icon="multiply_circle_fill" title="page.unavailable.title" text="page.unavailable.text" />
+    <empty-state-placeholder v-if="!visibleToCurrentUser"
+                             icon="multiply_circle_fill"
+                             title="page.unavailable.title"
+                             text="page.unavailable.text" />
   </f7-page>
 </template>
 

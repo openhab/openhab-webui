@@ -1,9 +1,13 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
-    <f7-navbar title="Pages" back-link="Settings" back-link-url="/settings/" back-link-force>
+    <f7-navbar title="Pages"
+               back-link="Settings"
+               back-link-url="/settings/"
+               back-link-force>
       <f7-nav-right>
         <developer-dock-icon />
-        <f7-link icon-md="material:done_all" @click="toggleCheck()"
+        <f7-link icon-md="material:done_all"
+                 @click="toggleCheck()"
                  :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
       </f7-nav-right>
       <f7-subnavbar :inner="false" v-show="initSearchbar">
@@ -18,22 +22,39 @@
           :disable-button="!$theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
-    <f7-toolbar class="contextual-toolbar" :class="{ 'navbar': $theme.md }" v-if="showCheckboxes" bottom-ios bottom-aurora>
-      <f7-link color="red" v-show="selectedItems.length" v-if="!$theme.md" class="delete" icon-ios="f7:trash" icon-aurora="f7:trash" @click="removeSelected">
+    <f7-toolbar class="contextual-toolbar"
+                :class="{ 'navbar': $theme.md }"
+                v-if="showCheckboxes"
+                bottom-ios
+                bottom-aurora>
+      <f7-link color="red"
+               v-show="selectedItems.length"
+               v-if="!$theme.md"
+               class="delete"
+               icon-ios="f7:trash"
+               icon-aurora="f7:trash"
+               @click="removeSelected">
         Remove {{ selectedItems.length }}
       </f7-link>
-      <f7-link v-if="$theme.md" icon-md="material:close" icon-color="white" @click="showCheckboxes = false" />
+      <f7-link v-if="$theme.md"
+               icon-md="material:close"
+               icon-color="white"
+               @click="showCheckboxes = false" />
       <div class="title" v-if="$theme.md">
         {{ selectedItems.length }} selected
       </div>
       <div class="right" v-if="$theme.md">
-        <f7-link v-show="selectedItems.length" icon-md="material:delete" icon-color="white" @click="removeSelected" />
+        <f7-link v-show="selectedItems.length"
+                 icon-md="material:delete"
+                 icon-color="white"
+                 @click="removeSelected" />
       </div>
     </f7-toolbar>
 
     <f7-list-index
       v-if="ready"
-      ref="listIndex" :key="'pages-index'"
+      ref="listIndex"
+      :key="'pages-index'"
       v-show="groupBy === 'alphabetical' && !$device.desktop"
       list-el=".pages-list"
       :scroll-list="true"
@@ -81,7 +102,8 @@
         <f7-list v-show="pages.length > 0"
                  class="col pages-list"
                  ref="pagesList"
-                 :contacts-list="groupBy === 'alphabetical'" media-list>
+                 :contacts-list="groupBy === 'alphabetical'"
+                 media-list>
           <f7-list-group v-for="(pagesWithInitial, initial) in indexedPages" :key="initial">
             <f7-list-item v-if="pagesWithInitial.length" :title="initial" group-title />
             <f7-list-item
@@ -101,15 +123,30 @@
               :footer="page.uid"
               :badge="page.config.order">
               <div slot="subtitle">
-                <f7-chip v-for="tag in page.tags" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
-                  <f7-icon slot="media" ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
+                <f7-chip v-for="tag in page.tags"
+                         :key="tag"
+                         :text="tag"
+                         media-bg-color="blue"
+                         style="margin-right: 6px">
+                  <f7-icon slot="media"
+                           ios="f7:tag_fill"
+                           md="material:label"
+                           aurora="f7:tag_fill" />
                 </f7-chip>
-                <f7-chip v-for="userrole in page.config.visibleTo || []" :key="userrole" :text="userrole" media-bg-color="green" style="margin-right: 6px">
+                <f7-chip v-for="userrole in page.config.visibleTo || []"
+                         :key="userrole"
+                         :text="userrole"
+                         media-bg-color="green"
+                         style="margin-right: 6px">
                   <f7-icon slot="media" f7="person_crop_circle_fill_badge_checkmark" />
                 </f7-chip>
               </div>
               <!-- <span slot="media" class="item-initial">{{page.config.label[0].toUpperCase()}}</span> -->
-              <oh-icon slot="media" :color="page.config.sidebar || page.uid === 'overview' ? '' : 'gray'" :icon="getPageIcon(page)" :height="32" :width="32" />
+              <oh-icon slot="media"
+                       :color="page.config.sidebar || page.uid === 'overview' ? '' : 'gray'"
+                       :icon="getPageIcon(page)"
+                       :height="32"
+                       :width="32" />
             </f7-list-item>
           </f7-list-group>
         </f7-list>
@@ -118,7 +155,10 @@
 
     <!-- empty-state-placeholder not needed because the overview page cannot be deleted, so there is at least 1 page -->
 
-    <f7-fab v-show="ready && !showCheckboxes" position="right-bottom" slot="fixed" color="blue">
+    <f7-fab v-show="ready && !showCheckboxes"
+            position="right-bottom"
+            slot="fixed"
+            color="blue">
       <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
       <f7-icon ios="f7:multiply" md="material:close" aurora="f7:multiply" />
       <f7-fab-buttons position="top">

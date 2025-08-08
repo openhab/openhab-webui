@@ -2,7 +2,12 @@
   <div style="width: 100%">
     <f7-row v-if="enableAddonSelection">
       <f7-col width="100">
-        <f7-button ref="selectAddons" large icon-f7="bag_fill_badge_plus" icon-size="24" @click="selectAddons" :text="$t('setupwizard.addons.selectAddons')" />
+        <f7-button ref="selectAddons"
+                   large
+                   icon-f7="bag_fill_badge_plus"
+                   icon-size="24"
+                   @click="selectAddons"
+                   :text="$t('setupwizard.addons.selectAddons')" />
       </f7-col>
     </f7-row>
     <f7-list media-list>
@@ -10,9 +15,17 @@
         <f7-block class="addon display-flex flex-direction-column">
           <f7-row no-gap>
             <div style="width: 100%">
-              <f7-checkbox style="margin-right: 0.5rem" :checked="selectedAddon(addon)" :disabled="addon.installed" @change="toggleAddonSelection(addon, $event)" />
+              <f7-checkbox style="margin-right: 0.5rem"
+                           :checked="selectedAddon(addon)"
+                           :disabled="addon.installed"
+                           @change="toggleAddonSelection(addon, $event)" />
               {{ addon.label }}
-              <f7-link style="float: right" icon-f7="doc_text_search" :external="true" color="gray" target="_blank" :href="addon.link" />
+              <f7-link style="float: right"
+                       icon-f7="doc_text_search"
+                       :external="true"
+                       color="gray"
+                       target="_blank"
+                       :href="addon.link" />
             </div>
           </f7-row>
           <f7-row no-gap style="margin-top: 0.5rem; margin-bottom: 0">

@@ -1,8 +1,12 @@
 <template>
   <f7-page>
-    <f7-navbar title="Items" back-link="Settings" back-link-url="/settings/" back-link-force>
+    <f7-navbar title="Items"
+               back-link="Settings"
+               back-link-url="/settings/"
+               back-link-force>
       <f7-nav-right>
-        <f7-link icon-md="material:done_all" @click="toggleCheck()"
+        <f7-link icon-md="material:done_all"
+                 @click="toggleCheck()"
                  :text="($theme.ios) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
       </f7-nav-right>
       <!-- <f7-nav-right>
@@ -65,7 +69,9 @@
       <f7-list v-else class="searchbar-found col items-list" contacts-list>
         <f7-list-group v-for="(itemsWithInitial, initial) in indexedItems" :key="initial">
           <f7-list-item v-if="itemsWithInitial.length" :title="initial" group-title />
-          <f7-list-item v-for="item in itemsWithInitial" :checkbox="showCheckboxes" :key="item.name"
+          <f7-list-item v-for="item in itemsWithInitial"
+                        :checkbox="showCheckboxes"
+                        :key="item.name"
                         media-item
                         :link="showCheckboxes ? null : item.name"
                         :title="(item.label) ? item.label : item.name"
@@ -81,7 +87,10 @@
         </f7-block>
       </f7-col>
     </f7-block>-->
-    <f7-fab position="right-bottom" slot="fixed" color="blue" href="add">
+    <f7-fab position="right-bottom"
+            slot="fixed"
+            color="blue"
+            href="add">
       <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
       <f7-icon ios="f7:close" md="material:close" aurora="f7:close" />
     </f7-fab>

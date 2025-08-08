@@ -13,7 +13,10 @@
       </f7-subnavbar>
     </f7-navbar>
 
-    <empty-state-placeholder v-if="ready && !bindings.length" icon="circle_grid_hex" title="things.nobindings.title" text="things.nobindings.text" />
+    <empty-state-placeholder v-if="ready && !bindings.length"
+                             icon="circle_grid_hex"
+                             title="things.nobindings.title"
+                             text="things.nobindings.text" />
 
     <f7-block class="block-narrow">
       <f7-col>
@@ -51,7 +54,10 @@
         </f7-list>
       </f7-col>
       <f7-row v-else-if="ready" class="display-flex justify-content-center">
-        <f7-button large fill color="blue" href="/addons/binding/">
+        <f7-button large
+                   fill
+                   color="blue"
+                   href="/addons/binding/">
           Install Bindings
         </f7-button>
       </f7-row>

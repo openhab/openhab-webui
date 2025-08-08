@@ -14,24 +14,40 @@
         ref="classes">
         <select v-if="itemType === 'Group'" name="classes" @change="updateClasses">
           <option value="" />
-          <option v-for="cl in orderedClasses" :value="cl" :key="cl" :selected="isSelected(cl)">
+          <option v-for="cl in orderedClasses"
+                  :value="cl"
+                  :key="cl"
+                  :selected="isSelected(cl)">
             {{ cl }}
           </option>
         </select>
-        <select v-else name="classes" @change="updateClasses" :multiple="multiple">
+        <select v-else
+                name="classes"
+                @change="updateClasses"
+                :multiple="multiple">
           <option v-if="!multiple" value="" />
           <optgroup label="Default Attributes" v-if="!multiple">
-            <option v-for="cl in defaultClasses" :value="cl" :key="cl" :selected="isSelected(cl)">
+            <option v-for="cl in defaultClasses"
+                    :value="cl"
+                    :key="cl"
+                    :selected="isSelected(cl)">
               {{ cl }}
             </option>
           </optgroup>
           <optgroup label="Specific Attributes">
-            <option v-for="cl in specificClasses" :value="cl" :key="cl" :selected="isSelected(cl)" :disabled="isDefined(cl)">
+            <option v-for="cl in specificClasses"
+                    :value="cl"
+                    :key="cl"
+                    :selected="isSelected(cl)"
+                    :disabled="isDefined(cl)">
               {{ cl }}
             </option>
           </optgroup>
           <optgroup label="Generic Attributes">
-            <option v-for="cl in genericClasses" :value="cl" :key="cl" :selected="isSelected(cl)">
+            <option v-for="cl in genericClasses"
+                    :value="cl"
+                    :key="cl"
+                    :selected="isSelected(cl)">
               {{ cl }}
             </option>
           </optgroup>
@@ -42,7 +58,10 @@
       </f7-block-footer>
     </f7-list>
     <div>
-      <config-sheet :parameterGroups="[]" :parameters="parameters" :configuration="metadata.config" :read-only="!editable" />
+      <config-sheet :parameterGroups="[]"
+                    :parameters="parameters"
+                    :configuration="metadata.config"
+                    :read-only="!editable" />
     </div>
     <f7-block class="padding-top no-padding no-margin" v-if="itemType === 'Group' && classes.length">
       <f7-block-title class="padding-left">
@@ -62,7 +81,10 @@
       </f7-block-footer>
     </f7-block>
     <p class="padding">
-      <f7-link color="blue" external target="_blank" :href="docLink">
+      <f7-link color="blue"
+               external
+               target="_blank"
+               :href="docLink">
         Alexa Integration Documentation
       </f7-link>
     </p>

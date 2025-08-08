@@ -43,23 +43,49 @@
               </f7-list-item>
               <f7-list-item radio :checked="second.cronEvery === 2" @change="second.cronEvery = 2">
                 {{ text.Seconds.interval[0] }}
-                <f7-stepper small :value="second.incrementIncrement" @stepper:change="(v) => second.incrementIncrement = v" :min="1" :max="60" />
+                <f7-stepper small
+                            :value="second.incrementIncrement"
+                            @stepper:change="(v) => second.incrementIncrement = v"
+                            :min="1"
+                            :max="60" />
                 {{ text.Seconds.interval[1]||'' }}
-                <f7-stepper small :value="second.incrementStart" @stepper:change="(v) => second.incrementStart = v" :min="0" :max="59" />
+                <f7-stepper small
+                            :value="second.incrementStart"
+                            @stepper:change="(v) => second.incrementStart = v"
+                            :min="0"
+                            :max="59" />
                 {{ text.Seconds.interval[2]||'' }}
               </f7-list-item>
-              <f7-list-item radio ref="specificSecond" :title="text.Seconds.specific" smart-select no-chevron :smart-select-params="{ openIn: 'popover', view: $f7.views.main }" :checked="second.cronEvery === 3" @click="second.cronEvery = 3">
+              <f7-list-item radio
+                            ref="specificSecond"
+                            :title="text.Seconds.specific"
+                            smart-select
+                            no-chevron
+                            :smart-select-params="{ openIn: 'popover', view: $f7.views.main }"
+                            :checked="second.cronEvery === 3"
+                            @click="second.cronEvery = 3">
                 <select multiple @change="second.specificSpecific = $refs.specificSecond.f7SmartSelect.getValue()">
-                  <option v-for="val in 60" :key="val" :value="val-1" :selected="second.specificSpecific.indexOf(val-1) >= 0">
+                  <option v-for="val in 60"
+                          :key="val"
+                          :value="val-1"
+                          :selected="second.specificSpecific.indexOf(val-1) >= 0">
                     {{ val-1 }}
                   </option>
                 </select>
               </f7-list-item>
               <f7-list-item radio :checked="second.cronEvery === 4" @change="second.cronEvery = 4">
                 {{ text.Seconds.cycle[0] }}
-                <f7-stepper small :value="second.rangeStart" @stepper:change="(v) => second.rangeStart = v" :min="0" :max="59" />
+                <f7-stepper small
+                            :value="second.rangeStart"
+                            @stepper:change="(v) => second.rangeStart = v"
+                            :min="0"
+                            :max="59" />
                 {{ text.Seconds.cycle[1]||'' }}
-                <f7-stepper small :value="second.rangeEnd" @stepper:change="(v) => second.rangeEnd = v" :min="0" :max="59" />
+                <f7-stepper small
+                            :value="second.rangeEnd"
+                            @stepper:change="(v) => second.rangeEnd = v"
+                            :min="0"
+                            :max="59" />
                 {{ text.Seconds.cycle[2]||'' }}
               </f7-list-item>
             </f7-list>
@@ -77,23 +103,49 @@
               </f7-list-item>
               <f7-list-item radio :checked="minute.cronEvery === 2" @change="minute.cronEvery = 2">
                 {{ text.Minutes.interval[0] }}
-                <f7-stepper small :value="minute.incrementIncrement" @stepper:change="(v) => minute.incrementIncrement = v" :min="1" :max="60" />
+                <f7-stepper small
+                            :value="minute.incrementIncrement"
+                            @stepper:change="(v) => minute.incrementIncrement = v"
+                            :min="1"
+                            :max="60" />
                 {{ text.Minutes.interval[1]||'' }}
-                <f7-stepper small :value="minute.incrementStart" @stepper:change="(v) => minute.incrementStart = v" :min="0" :max="59" />
+                <f7-stepper small
+                            :value="minute.incrementStart"
+                            @stepper:change="(v) => minute.incrementStart = v"
+                            :min="0"
+                            :max="59" />
                 {{ text.Minutes.interval[2]||'' }}
               </f7-list-item>
-              <f7-list-item radio ref="specificMinute" :title="text.Minutes.specific" smart-select no-chevron :smart-select-params="{ openIn: 'popover', view: $f7.views.main }" :checked="minute.cronEvery === 3" @click="minute.cronEvery = 3">
+              <f7-list-item radio
+                            ref="specificMinute"
+                            :title="text.Minutes.specific"
+                            smart-select
+                            no-chevron
+                            :smart-select-params="{ openIn: 'popover', view: $f7.views.main }"
+                            :checked="minute.cronEvery === 3"
+                            @click="minute.cronEvery = 3">
                 <select multiple @change="minute.specificSpecific = $refs.specificMinute.f7SmartSelect.getValue()">
-                  <option v-for="val in 60" :key="val" :value="val-1" :selected="minute.specificSpecific.indexOf(val-1) >= 0">
+                  <option v-for="val in 60"
+                          :key="val"
+                          :value="val-1"
+                          :selected="minute.specificSpecific.indexOf(val-1) >= 0">
                     {{ val-1 }}
                   </option>
                 </select>
               </f7-list-item>
               <f7-list-item radio :checked="minute.cronEvery === 4" @change="minute.cronEvery = 4">
                 {{ text.Minutes.cycle[0] }}
-                <f7-stepper small :value="minute.rangeStart" @stepper:change="(v) => minute.rangeStart = v" :min="0" :max="60" />
+                <f7-stepper small
+                            :value="minute.rangeStart"
+                            @stepper:change="(v) => minute.rangeStart = v"
+                            :min="0"
+                            :max="60" />
                 {{ text.Minutes.cycle[1]||'' }}
-                <f7-stepper small :value="minute.rangeEnd" @stepper:change="(v) => minute.rangeEnd = v" :min="0" :max="59" />
+                <f7-stepper small
+                            :value="minute.rangeEnd"
+                            @stepper:change="(v) => minute.rangeEnd = v"
+                            :min="0"
+                            :max="59" />
                 {{ text.Minutes.cycle[2]||'' }}
               </f7-list-item>
             </f7-list>
@@ -111,23 +163,49 @@
               </f7-list-item>
               <f7-list-item radio :checked="hour.cronEvery === 2" @change="hour.cronEvery = 2">
                 {{ text.Hours.interval[0] }}
-                <f7-stepper small :value="hour.incrementIncrement" @stepper:change="(v) => hour.incrementIncrement = v" :min="1" :max="23" />
+                <f7-stepper small
+                            :value="hour.incrementIncrement"
+                            @stepper:change="(v) => hour.incrementIncrement = v"
+                            :min="1"
+                            :max="23" />
                 {{ text.Hours.interval[1]||'' }}
-                <f7-stepper small :value="hour.incrementStart" @stepper:change="(v) => hour.incrementStart = v" :min="0" :max="23" />
+                <f7-stepper small
+                            :value="hour.incrementStart"
+                            @stepper:change="(v) => hour.incrementStart = v"
+                            :min="0"
+                            :max="23" />
                 {{ text.Hours.interval[2]||'' }}
               </f7-list-item>
-              <f7-list-item radio ref="specificHour" :title="text.Hours.specific" smart-select no-chevron :smart-select-params="{ openIn: 'popover', view: $f7.views.main }" :checked="hour.cronEvery === 3" @click="hour.cronEvery = 3">
+              <f7-list-item radio
+                            ref="specificHour"
+                            :title="text.Hours.specific"
+                            smart-select
+                            no-chevron
+                            :smart-select-params="{ openIn: 'popover', view: $f7.views.main }"
+                            :checked="hour.cronEvery === 3"
+                            @click="hour.cronEvery = 3">
                 <select multiple @change="hour.specificSpecific = $refs.specificHour.f7SmartSelect.getValue()">
-                  <option v-for="val in 24" :key="val" :value="val-1" :selected="hour.specificSpecific.indexOf(val-1) >= 0">
+                  <option v-for="val in 24"
+                          :key="val"
+                          :value="val-1"
+                          :selected="hour.specificSpecific.indexOf(val-1) >= 0">
                     {{ val-1 }}
                   </option>
                 </select>
               </f7-list-item>
               <f7-list-item radio :checked="hour.cronEvery === 4" @change="hour.cronEvery = 4">
                 {{ text.Hours.cycle[0] }}
-                <f7-stepper small :value="hour.rangeStart" @stepper:change="(v) => hour.rangeStart = v" :min="0" :max="23" />
+                <f7-stepper small
+                            :value="hour.rangeStart"
+                            @stepper:change="(v) => hour.rangeStart = v"
+                            :min="0"
+                            :max="23" />
                 {{ text.Hours.cycle[1]||'' }}
-                <f7-stepper small :value="hour.rangeEnd" @stepper:change="(v) => hour.rangeEnd = v" :min="0" :max="23" />
+                <f7-stepper small
+                            :value="hour.rangeEnd"
+                            @stepper:change="(v) => hour.rangeEnd = v"
+                            :min="0"
+                            :max="23" />
                 {{ text.Hours.cycle[2]||'' }}
               </f7-list-item>
             </f7-list>
@@ -147,10 +225,17 @@
               <!-- Every 1 day(s) starting on Sunday -->
               <f7-list-item radio :checked="day.cronEvery === 2" @change="day.cronEvery = 2">
                 {{ text.Day.intervalWeek[0] }}
-                <f7-stepper small :value="week.incrementIncrement" @stepper:change="(v) => week.incrementIncrement = v" :min="1" :max="7" />
+                <f7-stepper small
+                            :value="week.incrementIncrement"
+                            @stepper:change="(v) => week.incrementIncrement = v"
+                            :min="1"
+                            :max="7" />
                 {{ text.Day.intervalWeek[1]||'' }}
                 <select size="small" v-model="week.incrementStart" style="max-width: 150px">
-                  <option v-for="val in 7" :key="val" :label="text.Week[val-1]" :value="val" />
+                  <option v-for="val in 7"
+                          :key="val"
+                          :label="text.Week[val-1]"
+                          :value="val" />
                 </select>
                 <!-- <f7-stepper small :value="week.incrementStart" @stepper:change="(v) => week.incrementStart = v" :min="0" :max="23"></f7-stepper> -->
                 {{ text.Day.intervalWeek[2]||'' }}
@@ -158,23 +243,51 @@
               <!-- Every 1 day(s) starting on the 1 of the month -->
               <f7-list-item radio :checked="day.cronEvery === 3" @change="day.cronEvery = 3">
                 {{ text.Day.intervalDay[0] }}
-                <f7-stepper small :value="day.incrementIncrement" @stepper:change="(v) => day.incrementIncrement = v" :min="1" :max="31" />
+                <f7-stepper small
+                            :value="day.incrementIncrement"
+                            @stepper:change="(v) => day.incrementIncrement = v"
+                            :min="1"
+                            :max="31" />
                 {{ text.Day.intervalDay[1]||'' }}
-                <f7-stepper small :value="day.incrementStart" @stepper:change="(v) => day.incrementStart = v" :min="1" :max="31" />
+                <f7-stepper small
+                            :value="day.incrementStart"
+                            @stepper:change="(v) => day.incrementStart = v"
+                            :min="1"
+                            :max="31" />
                 {{ text.Day.intervalDay[2]||'' }}
               </f7-list-item>
               <!-- Specific day of week -->
-              <f7-list-item radio ref="specificDayOfWeek" :title="text.Day.specificWeek" smart-select no-chevron :smart-select-params="{ openIn: 'popover', view: $f7.views.main }" :checked="day.cronEvery === 4" @click="day.cronEvery = 4">
+              <f7-list-item radio
+                            ref="specificDayOfWeek"
+                            :title="text.Day.specificWeek"
+                            smart-select
+                            no-chevron
+                            :smart-select-params="{ openIn: 'popover', view: $f7.views.main }"
+                            :checked="day.cronEvery === 4"
+                            @click="day.cronEvery = 4">
                 <select multiple @change="week.specificSpecific = $refs.specificDayOfWeek.f7SmartSelect.getValue()">
-                  <option v-for="val in 7" :key="val" :value="['SUN','MON','TUE','WED','THU','FRI','SAT'][val-1]" :selected="week.specificSpecific.indexOf(['SUN','MON','TUE','WED','THU','FRI','SAT'][val-1]) >= 0">
+                  <option v-for="val in 7"
+                          :key="val"
+                          :value="['SUN','MON','TUE','WED','THU','FRI','SAT'][val-1]"
+                          :selected="week.specificSpecific.indexOf(['SUN','MON','TUE','WED','THU','FRI','SAT'][val-1]) >= 0">
                     {{ text.Week[val-1] }}
                   </option>
                 </select>
               </f7-list-item>
               <!-- Specific day of the month -->
-              <f7-list-item radio ref="specificDayOfMonth" :title="text.Day.specificDay" smart-select no-chevron :smart-select-params="{ openIn: 'popover', view: $f7.views.main }" :checked="day.cronEvery === 5" @click="day.cronEvery = 5">
+              <f7-list-item radio
+                            ref="specificDayOfMonth"
+                            :title="text.Day.specificDay"
+                            smart-select
+                            no-chevron
+                            :smart-select-params="{ openIn: 'popover', view: $f7.views.main }"
+                            :checked="day.cronEvery === 5"
+                            @click="day.cronEvery = 5">
                 <select multiple @change="day.specificSpecific = $refs.specificDayOfMonth.f7SmartSelect.getValue()">
-                  <option v-for="val in 31" :key="val" :value="val" :selected="day.specificSpecific.indexOf(val) >= 0">
+                  <option v-for="val in 31"
+                          :key="val"
+                          :value="val"
+                          :selected="day.specificSpecific.indexOf(val) >= 0">
                     {{ val }}
                   </option>
                 </select>
@@ -191,27 +304,45 @@
               <f7-list-item radio :checked="day.cronEvery === 8" @change="day.cronEvery = 8">
                 {{ text.Day.lastWeek[0] }}
                 <select size="small" v-model="day.cronLastSpecificDomDay" style="max-width: 150px">
-                  <option v-for="val in 7" :key="val" :label="text.Week[val-1]" :value="val" />
+                  <option v-for="val in 7"
+                          :key="val"
+                          :label="text.Week[val-1]"
+                          :value="val" />
                 </select>
                 {{ text.Day.lastWeek[1]||'' }}
               </f7-list-item>
               <!-- 1 day(s) before the end of the month -->
               <f7-list-item radio :checked="day.cronEvery === 9" @change="day.cronEvery = 9">
-                <f7-stepper small :value="day.cronDaysBeforeEomMinus" @stepper:change="(v) => day.cronDaysBeforeEomMinus = v" :min="1" :max="31" />
+                <f7-stepper small
+                            :value="day.cronDaysBeforeEomMinus"
+                            @stepper:change="(v) => day.cronDaysBeforeEomMinus = v"
+                            :min="1"
+                            :max="31" />
                 {{ text.Day.beforeEndMonth[0] }}
               </f7-list-item>
               <!-- Nearest weekday (Monday to Friday) to the 1 of the month -->
               <f7-list-item radio :checked="day.cronEvery === 10" @change="day.cronEvery = 10">
                 {{ text.Day.nearestWeekday[0] }}
-                <f7-stepper small :value="day.cronDaysNearestWeekday" @stepper:change="(v) => day.cronDaysNearestWeekday = v" :min="1" :max="31" />
+                <f7-stepper small
+                            :value="day.cronDaysNearestWeekday"
+                            @stepper:change="(v) => day.cronDaysNearestWeekday = v"
+                            :min="1"
+                            :max="31" />
                 {{ text.Day.nearestWeekday[1] }}
               </f7-list-item>
               <!-- On the 1 Sunday of the month -->
               <f7-list-item radio :checked="day.cronEvery === 11" @change="day.cronEvery = 11">
                 {{ text.Day.someWeekday[0] }}
-                <f7-stepper small :value="week.cronNthDayNth" @stepper:change="(v) => week.cronNthDayNth = v" :min="1" :max="5" />
+                <f7-stepper small
+                            :value="week.cronNthDayNth"
+                            @stepper:change="(v) => week.cronNthDayNth = v"
+                            :min="1"
+                            :max="5" />
                 <select size="small" v-model="week.cronNthDayDay" style="max-width: 150px">
-                  <option v-for="val in 7" :key="val" :label="text.Week[val-1]" :value="val" />
+                  <option v-for="val in 7"
+                          :key="val"
+                          :label="text.Week[val-1]"
+                          :value="val" />
                 </select>
                 {{ text.Day.someWeekday[1] }}
               </f7-list-item>
@@ -226,23 +357,49 @@
               </f7-list-item>
               <f7-list-item radio :checked="month.cronEvery === 2" @change="month.cronEvery = 2">
                 {{ text.Month.interval[0] }}
-                <f7-stepper small :value="month.incrementIncrement" @stepper:change="(v) => month.incrementIncrement = v" :min="1" :max="12" />
+                <f7-stepper small
+                            :value="month.incrementIncrement"
+                            @stepper:change="(v) => month.incrementIncrement = v"
+                            :min="1"
+                            :max="12" />
                 {{ text.Month.interval[1]||'' }}
-                <f7-stepper small :value="month.incrementStart" @stepper:change="(v) => month.incrementStart = v" :min="1" :max="12" />
+                <f7-stepper small
+                            :value="month.incrementStart"
+                            @stepper:change="(v) => month.incrementStart = v"
+                            :min="1"
+                            :max="12" />
                 {{ text.Month.interval[2]||'' }}
               </f7-list-item>
-              <f7-list-item radio ref="specificMonth" :title="text.Month.specific" smart-select no-chevron :smart-select-params="{ openIn: 'popover', view: $f7.views.main }" :checked="month.cronEvery === 3" @click="month.cronEvery = 3">
+              <f7-list-item radio
+                            ref="specificMonth"
+                            :title="text.Month.specific"
+                            smart-select
+                            no-chevron
+                            :smart-select-params="{ openIn: 'popover', view: $f7.views.main }"
+                            :checked="month.cronEvery === 3"
+                            @click="month.cronEvery = 3">
                 <select multiple @change="month.specificSpecific = $refs.specificMonth.f7SmartSelect.getValue()">
-                  <option v-for="val in 12" :key="val" :value="val" :selected="month.specificSpecific.indexOf(val) >= 0">
+                  <option v-for="val in 12"
+                          :key="val"
+                          :value="val"
+                          :selected="month.specificSpecific.indexOf(val) >= 0">
                     {{ val }}
                   </option>
                 </select>
               </f7-list-item>
               <f7-list-item radio :checked="month.cronEvery === 4" @change="month.cronEvery = 4">
                 {{ text.Month.cycle[0] }}
-                <f7-stepper small :value="month.rangeStart" @stepper:change="(v) => month.rangeStart = v" :min="1" :max="12" />
+                <f7-stepper small
+                            :value="month.rangeStart"
+                            @stepper:change="(v) => month.rangeStart = v"
+                            :min="1"
+                            :max="12" />
                 {{ text.Month.cycle[1]||'' }}
-                <f7-stepper small :value="month.rangeEnd" @stepper:change="(v) => month.rangeEnd = v" :min="1" :max="12" />
+                <f7-stepper small
+                            :value="month.rangeEnd"
+                            @stepper:change="(v) => month.rangeEnd = v"
+                            :min="1"
+                            :max="12" />
                 {{ text.Month.cycle[2]||'' }}
               </f7-list-item>
             </f7-list>
@@ -256,23 +413,49 @@
               </f7-list-item>
               <f7-list-item radio :checked="year.cronEvery === 2" @change="year.cronEvery = 2">
                 {{ text.Year.interval[0] }}
-                <f7-stepper small :value="year.incrementIncrement" @stepper:change="(v) => year.incrementIncrement = v" :min="1" :max="99" />
+                <f7-stepper small
+                            :value="year.incrementIncrement"
+                            @stepper:change="(v) => year.incrementIncrement = v"
+                            :min="1"
+                            :max="99" />
                 {{ text.Year.interval[1]||'' }}
-                <f7-stepper small :value="year.incrementStart" @stepper:change="(v) => year.incrementStart = v" :min="2019" :max="2119" />
+                <f7-stepper small
+                            :value="year.incrementStart"
+                            @stepper:change="(v) => year.incrementStart = v"
+                            :min="2019"
+                            :max="2119" />
                 {{ text.Year.interval[2]||'' }}
               </f7-list-item>
-              <f7-list-item radio ref="specificYear" :title="text.Year.specific" smart-select no-chevron :smart-select-params="{ openIn: 'popover', view: $f7.views.main }" :checked="year.cronEvery === 3" @click="year.cronEvery = 3">
+              <f7-list-item radio
+                            ref="specificYear"
+                            :title="text.Year.specific"
+                            smart-select
+                            no-chevron
+                            :smart-select-params="{ openIn: 'popover', view: $f7.views.main }"
+                            :checked="year.cronEvery === 3"
+                            @click="year.cronEvery = 3">
                 <select multiple @change="year.specificSpecific = $refs.specificYear.f7SmartSelect.getValue()">
-                  <option v-for="val in 100" :key="val" :value="val+2018" :selected="year.specificSpecific.indexOf(val+2018) >= 0">
+                  <option v-for="val in 100"
+                          :key="val"
+                          :value="val+2018"
+                          :selected="year.specificSpecific.indexOf(val+2018) >= 0">
                     {{ val+2018 }}
                   </option>
                 </select>
               </f7-list-item>
               <f7-list-item radio :checked="year.cronEvery === 4" @change="year.cronEvery = 4">
                 {{ text.Year.cycle[0] }}
-                <f7-stepper small :value="year.rangeStart" @stepper:change="(v) => year.rangeStart = v" :min="2019" :max="2119" />
+                <f7-stepper small
+                            :value="year.rangeStart"
+                            @stepper:change="(v) => year.rangeStart = v"
+                            :min="2019"
+                            :max="2119" />
                 {{ text.Year.cycle[1]||'' }}
-                <f7-stepper small :value="year.rangeEnd" @stepper:change="(v) => year.rangeEnd = v" :min="2019" :max="2119" />
+                <f7-stepper small
+                            :value="year.rangeEnd"
+                            @stepper:change="(v) => year.rangeEnd = v"
+                            :min="2019"
+                            :max="2119" />
                 {{ text.Year.cycle[2]||'' }}
               </f7-list-item>
             </f7-list>

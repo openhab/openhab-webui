@@ -2,29 +2,64 @@
   <div v-if="item" class="quick-link-form no-padding">
     <f7-list inline-labels no-hairlines-md>
       <f7-list-group>
-        <f7-list-input label="Name" type="text" placeholder="A unique identifier for the Item." :value="item.name"
-                       :disabled="!createMode" :info="(createMode) ? 'Required. Note: cannot be changed after the creation' : ''"
-                       required :error-message="nameErrorMessage" :error-message-force="createMode && !!nameErrorMessage" input-id="input"
-                       @input="item.name = $event.target.value" :clear-button="createMode">
-          <f7-link slot="inner" icon-f7="hammer_fill" style="margin-top: 4px; margin-left: 4px; margin-bottom: auto" tooltip="Fix ID" v-if="createMode && nameErrorMessage && !nameErrorMessage.includes('exists') && item.name.trim()" @click="$oh.utils.normalizeInput('#input')" />
+        <f7-list-input label="Name"
+                       type="text"
+                       placeholder="A unique identifier for the Item."
+                       :value="item.name"
+                       :disabled="!createMode"
+                       :info="(createMode) ? 'Required. Note: cannot be changed after the creation' : ''"
+                       required
+                       :error-message="nameErrorMessage"
+                       :error-message-force="createMode && !!nameErrorMessage"
+                       input-id="input"
+                       @input="item.name = $event.target.value"
+                       :clear-button="createMode">
+          <f7-link slot="inner"
+                   icon-f7="hammer_fill"
+                   style="margin-top: 4px; margin-left: 4px; margin-bottom: auto"
+                   tooltip="Fix ID"
+                   v-if="createMode && nameErrorMessage && !nameErrorMessage.includes('exists') && item.name.trim()"
+                   @click="$oh.utils.normalizeInput('#input')" />
         </f7-list-input>
-        <f7-list-input label="Label" type="text" placeholder="Item label for display purposes" :value="item.label"
-                       @input="updateLabel" :disabled="!editable" :clear-button="editable" />
+        <f7-list-input label="Label"
+                       type="text"
+                       placeholder="Item label for display purposes"
+                       :value="item.label"
+                       @input="updateLabel"
+                       :disabled="!editable"
+                       :clear-button="editable" />
       </f7-list-group>
       <f7-list-group v-if="!hideType" v-show="itemType">
         <!-- Type -->
-        <f7-list-item title="Type" class="aligned-smart-select" :disabled="!editable" :key="'type-' + itemType" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
+        <f7-list-item title="Type"
+                      class="aligned-smart-select"
+                      :disabled="!editable"
+                      :key="'type-' + itemType"
+                      smart-select
+                      :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
           <select name="select-type" @change="itemType = $event.target.value">
-            <option v-for="t in types.ItemTypes" :key="t" :value="t" :selected="t === itemType">
+            <option v-for="t in types.ItemTypes"
+                    :key="t"
+                    :value="t"
+                    :selected="t === itemType">
               {{ t }}
             </option>
           </select>
         </f7-list-item>
         <!-- Dimensions -->
-        <f7-list-item v-if="dimensions.length && itemType === 'Number'" title="Dimension" class="aligned-smart-select" :disabled="!editable" :key="'dimension-' + itemDimension" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
+        <f7-list-item v-if="dimensions.length && itemType === 'Number'"
+                      title="Dimension"
+                      class="aligned-smart-select"
+                      :disabled="!editable"
+                      :key="'dimension-' + itemDimension"
+                      smart-select
+                      :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
           <select name="select-dimension" @change="itemDimension = $event.target.value">
             <option key="" value="" :selected="itemDimension === ''" />
-            <option v-for="d in dimensions" :key="d.name" :value="d.name" :selected="d.name === itemDimension">
+            <option v-for="d in dimensions"
+                    :key="d.name"
+                    :value="d.name"
+                    :selected="d.name === itemDimension">
               {{ d.label }}
             </option>
           </select>
@@ -49,19 +84,39 @@
                        :clear-button="createMode" />
 
         <!-- Group Item Form -->
-        <group-form ref="groupForm" v-if="itemType === 'Group'" :item="item" :createMode="createMode" />
+        <group-form ref="groupForm"
+                    v-if="itemType === 'Group'"
+                    :item="item"
+                    :createMode="createMode" />
       </f7-list-group>
       <f7-list-group v-if="!hideCategory">
-        <f7-list-input ref="category" label="Icon" autocomplete="off" type="text" placeholder="temperature, firstfloor..." :value="itemCategory"
-                       @input="itemCategory = $event.target.value" :disabled="!editable" :clear-button="editable">
+        <f7-list-input ref="category"
+                       label="Icon"
+                       autocomplete="off"
+                       type="text"
+                       placeholder="temperature, firstfloor..."
+                       :value="itemCategory"
+                       @input="itemCategory = $event.target.value"
+                       :disabled="!editable"
+                       :clear-button="editable">
           <div slot="root-end" style="margin-left: calc(35% + 14px)">
-            <oh-icon v-if="itemCategory" :icon="itemCategory" :state="(createMode || itemType === 'Image') ? null : item.state" height="32" width="32" />
-            <oh-icon v-else icon="" height="32" width="32" />
+            <oh-icon v-if="itemCategory"
+                     :icon="itemCategory"
+                     :state="(createMode || itemType === 'Image') ? null : item.state"
+                     height="32"
+                     width="32" />
+            <oh-icon v-else
+                     icon=""
+                     height="32"
+                     width="32" />
           </div>
         </f7-list-input>
       </f7-list-group>
     </f7-list>
-    <semantics-picker v-if="!hideSemantics" :item="item" :createMode="createMode" :hide-none="forceSemantics" />
+    <semantics-picker v-if="!hideSemantics"
+                      :item="item"
+                      :createMode="createMode"
+                      :hide-none="forceSemantics" />
     <f7-list inline-labels no-hairline-md>
       <tag-input title="Non-Semantic Tags" :disabled="!editable" :item="item" />
     </f7-list>
@@ -70,12 +125,28 @@
       <!-- make it cosmetically similar to the non-semantic tags above -->
       <f7-list-item v-if="numberOfGroups > 0">
         <div slot="inner">
-          <f7-chip v-for="group in item.groupNames" :key="group" :text="group" :deleteable="editable" @delete="deleteGroup" media-bg-color="blue" style="margin-right: 6px">
-            <f7-icon slot="media" ios="f7:folder_fill" md="material:folder" aurora="f7:folder_fill" />
+          <f7-chip v-for="group in item.groupNames"
+                   :key="group"
+                   :text="group"
+                   :deleteable="editable"
+                   @delete="deleteGroup"
+                   media-bg-color="blue"
+                   style="margin-right: 6px">
+            <f7-icon slot="media"
+                     ios="f7:folder_fill"
+                     md="material:folder"
+                     aurora="f7:folder_fill" />
           </f7-chip>
         </div>
       </f7-list-item>
-      <item-picker v-if="editable" title="Select" :value="item.groupNames" :items="items" @input="(value) => this.item.groupNames = value" :multiple="true" filterType="Group" :set-value-text="false" />
+      <item-picker v-if="editable"
+                   title="Select"
+                   :value="item.groupNames"
+                   :items="items"
+                   @input="(value) => this.item.groupNames = value"
+                   :multiple="true"
+                   filterType="Group"
+                   :set-value-text="false" />
     </f7-list>
   </div>
 </template>

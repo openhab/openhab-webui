@@ -1,20 +1,36 @@
 <template>
   <ul>
-    <f7-list-item :title="title || 'Rule'" smart-select :smart-select-params="smartSelectParams" v-if="ready" ref="smartSelect">
-      <select :name="name" :multiple="multiple" @change="select" :required="required">
+    <f7-list-item :title="title || 'Rule'"
+                  smart-select
+                  :smart-select-params="smartSelectParams"
+                  v-if="ready"
+                  ref="smartSelect">
+      <select :name="name"
+              :multiple="multiple"
+              @change="select"
+              :required="required">
         <option v-if="!multiple" value="" />
         <optgroup v-if="scenes.length > 0" label="Scenes">
-          <option v-for="rule in scenes" :value="rule.uid" :key="rule.uid" :selected="(multiple) ? value && value.indexOf(rule.uid) >= 0 : value === rule.uid">
+          <option v-for="rule in scenes"
+                  :value="rule.uid"
+                  :key="rule.uid"
+                  :selected="(multiple) ? value && value.indexOf(rule.uid) >= 0 : value === rule.uid">
             {{ rule.name }}
           </option>
         </optgroup>
         <optgroup v-if="scripts.length > 0" label="Scripts">
-          <option v-for="rule in scripts" :value="rule.uid" :key="rule.uid" :selected="(multiple) ? value && value.indexOf(rule.uid) >= 0 : value === rule.uid">
+          <option v-for="rule in scripts"
+                  :value="rule.uid"
+                  :key="rule.uid"
+                  :selected="(multiple) ? value && value.indexOf(rule.uid) >= 0 : value === rule.uid">
             {{ rule.name }}
           </option>
         </optgroup>
         <optgroup v-if="rules.length > 0" label="Rules">
-          <option v-for="rule in rules" :value="rule.uid" :key="rule.uid" :selected="(multiple) ? value && value.indexOf(rule.uid) >= 0 : value === rule.uid">
+          <option v-for="rule in rules"
+                  :value="rule.uid"
+                  :key="rule.uid"
+                  :selected="(multiple) ? value && value.indexOf(rule.uid) >= 0 : value === rule.uid">
             {{ rule.name }}
           </option>
         </optgroup>

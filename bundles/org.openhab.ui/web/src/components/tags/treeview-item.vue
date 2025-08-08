@@ -1,6 +1,9 @@
 <template>
-  <f7-treeview-item selectable :label="tag.label + (showNames && tag.name ? ' (' + tag.name + ')': '')"
-                    :icon-ios="icon('ios')" :icon-aurora="icon('aurora')" :icon-md="icon('md')"
+  <f7-treeview-item selectable
+                    :label="tag.label + (showNames && tag.name ? ' (' + tag.name + ')': '')"
+                    :icon-ios="icon('ios')"
+                    :icon-aurora="icon('aurora')"
+                    :icon-md="icon('md')"
                     :iconColor="iconColor"
                     :textColor="iconColor"
                     :selected="!picker && selected"
@@ -9,8 +12,17 @@
                     @treeview:open="setTagOpened(true)"
                     @treeview:close="setTagOpened(false)"
                     @click="select">
-    <draggable :disabled="!canDragDrop" :list="children" group="semantic-tags-treeview" filter=".non-draggable" animation="150" fallbackOnBody="true" swapThreshold="0.6"
-               @start="onDragStart" @change="onDragChange" @end="onDragEnd" :move="onDragMove">
+    <draggable :disabled="!canDragDrop"
+               :list="children"
+               group="semantic-tags-treeview"
+               filter=".non-draggable"
+               animation="150"
+               fallbackOnBody="true"
+               swapThreshold="0.6"
+               @start="onDragStart"
+               @change="onDragChange"
+               @end="onDragEnd"
+               :move="onDragMove">
       <semantics-treeview-item v-for="(childTag, idx) in children"
                                :key="idx"
                                :tag="childTag"
@@ -28,9 +40,20 @@
     <div v-if="showSynonyms" slot="label" class="synonyms-class">
       {{ synonyms }}
     </div>
-    <f7-radio slot="content-start" name="semantic-tag-radio" v-if="picker" :checked="selected" @change="select" />
-    <f7-badge v-if="tag.description" slot="content-end" class="semantic-tag-tooltip-badge" :tooltip="tooltip">
-      <f7-icon class="tooltip-icon" f7="info_circle" ios="f7:info_circle" md="material:info" color="gray" />
+    <f7-radio slot="content-start"
+              name="semantic-tag-radio"
+              v-if="picker"
+              :checked="selected"
+              @change="select" />
+    <f7-badge v-if="tag.description"
+              slot="content-end"
+              class="semantic-tag-tooltip-badge"
+              :tooltip="tooltip">
+      <f7-icon class="tooltip-icon"
+               f7="info_circle"
+               ios="f7:info_circle"
+               md="material:info"
+               color="gray" />
     </f7-badge>
   </f7-treeview-item>
 </template>

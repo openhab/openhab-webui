@@ -1,9 +1,15 @@
 <template>
   <f7-swiper v-bind="config" :params="{ observer: true, observeParents: true }">
-    <oh-swiper-slide :context="childContext(slide)" v-for="(slide, idx) in slides" :key="idx" v-on="$listeners" />
+    <oh-swiper-slide :context="childContext(slide)"
+                     v-for="(slide, idx) in slides"
+                     :key="idx"
+                     v-on="$listeners" />
 
     <template v-if="context.component.slots && context.component.slots.slides && Array.isArray(context.component.slots.slides)">
-      <generic-widget-component :context="childContext(slide)" v-for="(slide, idx) in context.component.slots.slides" :key="idx" v-on="$listeners" />
+      <generic-widget-component :context="childContext(slide)"
+                                v-for="(slide, idx) in context.component.slots.slides"
+                                :key="idx"
+                                v-on="$listeners" />
     </template>
 
     <f7-swiper-slide v-if="context.editmode">

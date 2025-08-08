@@ -1,10 +1,17 @@
 <template>
   <f7-list class="strategy-picker-container" v-if="filters">
-    <f7-list-item title="Select filters" :smart-select="disabled !== true && filters.length > 0"
+    <f7-list-item title="Select filters"
+                  :smart-select="disabled !== true && filters.length > 0"
                   :smart-select-params="smartSelectParams"
-                  ref="smartSelect" class="defaults-picker">
-      <select v-if="disabled !== true && filters.length > 0" name="filters" multiple @change="select">
-        <option v-for="s in filters" :key="s" :value="s"
+                  ref="smartSelect"
+                  class="defaults-picker">
+      <select v-if="disabled !== true && filters.length > 0"
+              name="filters"
+              multiple
+              @change="select">
+        <option v-for="s in filters"
+                :key="s"
+                :value="s"
                 :selected="value.includes(s)">
           {{ s }}
         </option>

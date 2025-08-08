@@ -1,6 +1,17 @@
 <template>
-  <img v-if="config.lazy" ref="lazyImage" v-bind="config" :data-src="computedSrc" class="oh-image lazy" :class="{ 'lazy-fade-in': config.lazyFadeIn }" @click="clicked">
-  <img v-else ref="image" v-bind="config" :src="computedSrc" class="oh-image" @click="clicked">
+  <img v-if="config.lazy"
+       ref="lazyImage"
+       v-bind="config"
+       :data-src="computedSrc"
+       class="oh-image lazy"
+       :class="{ 'lazy-fade-in': config.lazyFadeIn }"
+       @click="clicked">
+  <img v-else
+       ref="image"
+       v-bind="config"
+       :src="computedSrc"
+       class="oh-image"
+       @click="clicked">
 </template>
 
 <style lang="stylus">

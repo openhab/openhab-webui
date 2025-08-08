@@ -1,6 +1,12 @@
 <template>
   <f7-page @page:init="onPageInit" @page:afterin="onPageAfterIn" class="page-settings">
-    <f7-navbar large :large-transparent="false" title-large="Settings" title="Settings" back-link="Back" back-link-url="/" back-link-force>
+    <f7-navbar large
+               :large-transparent="false"
+               title-large="Settings"
+               title="Settings"
+               back-link="Back"
+               back-link-url="/"
+               back-link-force>
       <f7-nav-right>
         <developer-dock-icon />
         <f7-link
@@ -152,7 +158,11 @@
           </div>
           <div v-show="$f7.width < 1450">
             <div v-show="addonsLoaded && addonsInstalled.length > 0">
-              <addon-section class="add-on-section" :addonsInstalled="addonsInstalled" :addonsServices="addonsServices" :expanded="expanded('addonsSettings')" @expand="expand('addonsSettings')" />
+              <addon-section class="add-on-section"
+                             :addonsInstalled="addonsInstalled"
+                             :addonsServices="addonsServices"
+                             :expanded="expanded('addonsSettings')"
+                             @expand="expand('addonsSettings')" />
             </div>
             <!-- skeleton for not addonsLoaded -->
             <div v-if="!addonsLoaded">
@@ -169,7 +179,10 @@
         </f7-col>
         <f7-col width="33" class="add-on-col" v-show="$f7.width >= 1450">
           <div v-show="addonsLoaded && addonsInstalled.length > 0">
-            <addon-section :addonsInstalled="addonsInstalled" :addonsServices="addonsServices" :expanded="expanded('addonsSettings')" @expand="expand('addonsSettings')" />
+            <addon-section :addonsInstalled="addonsInstalled"
+                           :addonsServices="addonsServices"
+                           :expanded="expanded('addonsSettings')"
+                           @expand="expand('addonsSettings')" />
           </div>
           <!-- skeleton for not addonsLoaded -->
           <div v-if="!addonsLoaded">
@@ -189,7 +202,12 @@
       </f7-block-footer>
     </f7-block>
 
-    <f7-fab v-if="healthCount > 0" position="center-bottom" :text="`Health Issues (${healthCount})`" slot="fixed" color="red" href="health/">
+    <f7-fab v-if="healthCount > 0"
+            position="center-bottom"
+            :text="`Health Issues (${healthCount})`"
+            slot="fixed"
+            color="red"
+            href="health/">
       <f7-icon f7="heart" />
     </f7-fab>
   </f7-page>

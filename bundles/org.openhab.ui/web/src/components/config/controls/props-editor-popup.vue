@@ -1,9 +1,15 @@
 <template>
-  <f7-popup ref="propSheet" close-on-escape class="widgetprops-popup" @popup:closed="propsSheetClosed">
+  <f7-popup ref="propSheet"
+            close-on-escape
+            class="widgetprops-popup"
+            @popup:closed="propsSheetClosed">
     <f7-page>
       <f7-navbar>
         <f7-nav-left>
-          <f7-link icon-ios="f7:arrow_left" icon-md="material:arrow_back" icon-aurora="f7:arrow_left" class="popup-close" />
+          <f7-link icon-ios="f7:arrow_left"
+                   icon-md="material:arrow_back"
+                   icon-aurora="f7:arrow_left"
+                   class="popup-close" />
         </f7-nav-left>
         <f7-nav-title>Set Component Props</f7-nav-title>
         <f7-nav-right>

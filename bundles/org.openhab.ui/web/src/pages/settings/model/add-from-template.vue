@@ -2,7 +2,10 @@
   <f7-page>
     <f7-navbar title="Add Locations from Template" back-link="Back">
       <f7-nav-right class="if-not-aurora">
-        <f7-link @click="add()" v-if="$theme.md" icon-md="material:save" icon-only />
+        <f7-link @click="add()"
+                 v-if="$theme.md"
+                 icon-md="material:save"
+                 icon-only />
         <f7-link @click="add()" v-if="!$theme.md">
           Add
         </f7-link>
@@ -16,9 +19,21 @@
             Location Template
           </f7-block-title>
           <f7-list>
-            <f7-list-item radio value="0" @change="onSelectTemplate(0)" title="One Bedroom Apartment" name="select-template" />
-            <f7-list-item radio value="1" @change="onSelectTemplate(1)" title="One Story House" name="select-template" />
-            <f7-list-item radio value="2" @change="onSelectTemplate(2)" title="Two Story House" name="select-template" />
+            <f7-list-item radio
+                          value="0"
+                          @change="onSelectTemplate(0)"
+                          title="One Bedroom Apartment"
+                          name="select-template" />
+            <f7-list-item radio
+                          value="1"
+                          @change="onSelectTemplate(1)"
+                          title="One Story House"
+                          name="select-template" />
+            <f7-list-item radio
+                          value="2"
+                          @change="onSelectTemplate(2)"
+                          title="Two Story House"
+                          name="select-template" />
           </f7-list>
           <f7-block-footer class="padding-left padding-right">
             Select the template that best matches the description of your property.
@@ -29,8 +44,12 @@
             Item Name Prefix
           </f7-block-title>
           <f7-list>
-            <f7-list-input label="Prefix" type="text" placeholder="item prefix"
-                           @input="onPrefixInput" clear-button :error-message="prefixErrorMessage"
+            <f7-list-input label="Prefix"
+                           type="text"
+                           placeholder="item prefix"
+                           @input="onPrefixInput"
+                           clear-button
+                           :error-message="prefixErrorMessage"
                            :error-message-force="!!prefixErrorMessage" />
           </f7-list>
           <f7-block-footer class="padding-horizontal">
@@ -42,8 +61,11 @@
             Select the locations to add to your model (you may add others from the model page at a later time).
           </f7-block-footer>
           <f7-block class="semantic-tree">
-            <model-treeview class="model-picker-treeview" :rootNodes="rootLocations"
-                            :selected="selectedItem" @selected="selectItem" @checked="checkItem" />
+            <model-treeview class="model-picker-treeview"
+                            :rootNodes="rootLocations"
+                            :selected="selectedItem"
+                            @selected="selectItem"
+                            @checked="checkItem" />
           </f7-block>
         </f7-block>
       </f7-col>
@@ -51,7 +73,13 @@
 
     <div v-if="selectedTemplate !== null && (checkedItems.length > 0)" class="if-aurora display-flex justify-content-center margin padding">
       <div class="flex-shrink-0">
-        <f7-button class="padding-left padding-right" style="width: 150px" color="blue" large raised fill @click="add">
+        <f7-button class="padding-left padding-right"
+                   style="width: 150px"
+                   color="blue"
+                   large
+                   raised
+                   fill
+                   @click="add">
           Add to Model
         </f7-button>
       </div>

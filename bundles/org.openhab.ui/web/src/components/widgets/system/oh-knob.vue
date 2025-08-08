@@ -1,6 +1,11 @@
 <template>
-  <round-slider v-bind="resolvedConfig" :value="computedValue" :style="`stroke-dasharray: ${(config.dottedPath) ? config.dottedPath : 0}`" mouseScrollAction="true"
-                @input="onChange" @click.native.stop="sendCommandDebounced(value, true)" @touchend.native.stop="sendCommandDebounced(value, true)" />
+  <round-slider v-bind="resolvedConfig"
+                :value="computedValue"
+                :style="`stroke-dasharray: ${(config.dottedPath) ? config.dottedPath : 0}`"
+                mouseScrollAction="true"
+                @input="onChange"
+                @click.native.stop="sendCommandDebounced(value, true)"
+                @touchend.native.stop="sendCommandDebounced(value, true)" />
 </template>
 
 <script>

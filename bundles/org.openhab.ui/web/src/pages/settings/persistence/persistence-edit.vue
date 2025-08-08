@@ -2,8 +2,14 @@
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar :title="pageTitle + dirtyIndicator" back-link="Back">
       <f7-nav-right v-show="ready">
-        <f7-link v-if="!editable" icon-f7="lock_fill" icon-only tooltip="This persistence configuration is not editable through the UI" />
-        <f7-link v-else-if="$theme.md" icon-md="material:save" icon-only @click="save()" />
+        <f7-link v-if="!editable"
+                 icon-f7="lock_fill"
+                 icon-only
+                 tooltip="This persistence configuration is not editable through the UI" />
+        <f7-link v-else-if="$theme.md"
+                 icon-md="material:save"
+                 icon-only
+                 @click="save()" />
         <f7-link v-else @click="save()">
           Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
         </f7-link>
@@ -26,7 +32,10 @@
             <div>
               <f7-block-footer style="padding-left: 16px; padding-right: 16px">
                 Persistence stores data over time, which can be retrieved at a later time, e.g. to restore Item states after startup, or to display graphs in the UI.
-                <f7-link external color="blue" target="_blank" :href="`${$store.state.websiteUrl}/link/persistence`">
+                <f7-link external
+                         color="blue"
+                         target="_blank"
+                         :href="`${$store.state.websiteUrl}/link/persistence`">
                   Learn more about persistence.
                 </f7-link>
               </f7-block-footer>
@@ -91,12 +100,19 @@
                 Configuration
               </f7-block-title>
               <f7-list :media-list="editable" swipeout>
-                <f7-list-item v-for="(cfg, index) in persistence.configs" :key="cfg.items.join()"
+                <f7-list-item v-for="(cfg, index) in persistence.configs"
+                              :key="cfg.items.join()"
                               :title="cfg.items.join(', ')"
-                              :footer="cfg.strategies.join(', ') + (cfg.filters.length > 0 ? ' - ' + cfg.filters.join(', ') : '')" :link="editable"
-                              @click.native="(ev) => editConfiguration(ev, index, cfg)" swipeout>
-                  <f7-link slot="media" v-if="editable" icon-color="red" icon-aurora="f7:minus_circle_filled"
-                           icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline"
+                              :footer="cfg.strategies.join(', ') + (cfg.filters.length > 0 ? ' - ' + cfg.filters.join(', ') : '')"
+                              :link="editable"
+                              @click.native="(ev) => editConfiguration(ev, index, cfg)"
+                              swipeout>
+                  <f7-link slot="media"
+                           v-if="editable"
+                           icon-color="red"
+                           icon-aurora="f7:minus_circle_filled"
+                           icon-ios="f7:minus_circle_filled"
+                           icon-md="material:remove_circle_outline"
                            @click="showSwipeout" />
                   <f7-swipeout-actions right v-if="editable">
                     <f7-swipeout-button @click="(ev) => deleteModule(ev, 'configs', index)"
@@ -107,9 +123,16 @@
                 </f7-list-item>
               </f7-list>
               <f7-list v-if="editable">
-                <f7-list-item link no-chevron media-item :color="($theme.dark) ? 'black' : 'white'"
-                              subtitle="Add configuration" @click="editConfiguration(undefined, null)">
-                  <f7-icon slot="media" color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill"
+                <f7-list-item link
+                              no-chevron
+                              media-item
+                              :color="($theme.dark) ? 'black' : 'white'"
+                              subtitle="Add configuration"
+                              @click="editConfiguration(undefined, null)">
+                  <f7-icon slot="media"
+                           color="green"
+                           aurora="f7:plus_circle_fill"
+                           ios="f7:plus_circle_fill"
                            md="material:control_point" />
                 </f7-list-item>
               </f7-list>
@@ -121,11 +144,19 @@
               </f7-block-title>
               <!-- Cron Strategies -->
               <f7-list :media-list="editable" swipeout>
-                <f7-list-item v-for="(cs, index) in persistence.cronStrategies" :key="cs.name" :title="cs.name"
-                              :footer="cs.cronExpression" :link="editable"
-                              @click.native="(ev) => editCronStrategy(ev, index, cs)" swipeout>
-                  <f7-link slot="media" v-if="editable" icon-color="red" icon-aurora="f7:minus_circle_filled"
-                           icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline"
+                <f7-list-item v-for="(cs, index) in persistence.cronStrategies"
+                              :key="cs.name"
+                              :title="cs.name"
+                              :footer="cs.cronExpression"
+                              :link="editable"
+                              @click.native="(ev) => editCronStrategy(ev, index, cs)"
+                              swipeout>
+                  <f7-link slot="media"
+                           v-if="editable"
+                           icon-color="red"
+                           icon-aurora="f7:minus_circle_filled"
+                           icon-ios="f7:minus_circle_filled"
+                           icon-md="material:remove_circle_outline"
                            @click="showSwipeout" />
                   <f7-swipeout-actions right v-if="editable">
                     <f7-swipeout-button @click="(ev) => deleteCronStrategy(ev, index)"
@@ -136,15 +167,25 @@
                 </f7-list-item>
               </f7-list>
               <f7-list v-if="editable">
-                <f7-list-item link no-chevron media-item :color="($theme.dark) ? 'black' : 'white'"
-                              subtitle="Add cron strategy" @click="editCronStrategy(undefined, null)">
-                  <f7-icon slot="media" color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill"
+                <f7-list-item link
+                              no-chevron
+                              media-item
+                              :color="($theme.dark) ? 'black' : 'white'"
+                              subtitle="Add cron strategy"
+                              @click="editCronStrategy(undefined, null)">
+                  <f7-icon slot="media"
+                           color="green"
+                           aurora="f7:plus_circle_fill"
+                           ios="f7:plus_circle_fill"
                            md="material:control_point" />
                 </f7-list-item>
               </f7-list>
               <!-- Default Strategies -->
-              <strategy-picker title="Default Strategies" name="defaults" :strategies="strategies"
-                               :value="persistence.defaults" :disabled="!editable"
+              <strategy-picker title="Default Strategies"
+                               name="defaults"
+                               :strategies="strategies"
+                               :value="persistence.defaults"
+                               :disabled="!editable"
                                @strategiesSelected="persistence.defaults = $event" />
             </div>
             <!-- Filters -->
@@ -157,11 +198,19 @@
                   {{ ft.label }}
                 </f7-block-title>
                 <f7-list :media-list="editable" swipeout>
-                  <f7-list-item v-for="(f, index) in persistence[ft.name]" :key="f.name" :title="f.name"
-                                :footer="(typeof ft.footerFn === 'function') ? ft.footerFn(f) : ''" :link="editable"
-                                @click.native="(ev) => editFilter(ev, ft, index, f)" swipeout>
-                    <f7-link slot="media" v-if="editable" icon-color="red" icon-aurora="f7:minus_circle_filled"
-                             icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline"
+                  <f7-list-item v-for="(f, index) in persistence[ft.name]"
+                                :key="f.name"
+                                :title="f.name"
+                                :footer="(typeof ft.footerFn === 'function') ? ft.footerFn(f) : ''"
+                                :link="editable"
+                                @click.native="(ev) => editFilter(ev, ft, index, f)"
+                                swipeout>
+                    <f7-link slot="media"
+                             v-if="editable"
+                             icon-color="red"
+                             icon-aurora="f7:minus_circle_filled"
+                             icon-ios="f7:minus_circle_filled"
+                             icon-md="material:remove_circle_outline"
                              @click="showSwipeout" />
                     <f7-swipeout-actions right v-if="editable">
                       <f7-swipeout-button @click="(ev) => deleteFilter(ev, ft.name, index)"
@@ -172,10 +221,16 @@
                   </f7-list-item>
                 </f7-list>
                 <f7-list v-if="editable">
-                  <f7-list-item link no-chevron media-item :color="($theme.dark) ? 'black' : 'white'"
+                  <f7-list-item link
+                                no-chevron
+                                media-item
+                                :color="($theme.dark) ? 'black' : 'white'"
                                 :subtitle="'Add ' + ft.label.toLowerCase() + ' filter'"
                                 @click="editFilter(undefined, ft, null)">
-                    <f7-icon slot="media" color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill"
+                    <f7-icon slot="media"
+                             color="green"
+                             aurora="f7:plus_circle_fill"
+                             ios="f7:plus_circle_fill"
                              md="material:control_point" />
                   </f7-list-item>
                 </f7-list>
@@ -188,8 +243,11 @@
               </f7-block-title>
               <f7-list :media-list="editable" swipeout no-swipeout-opened>
                 <f7-list-item v-for="(i, index) in currentItemsWithAlias" class="swipeout list-alias-item" :key="i">
-                  <f7-link slot="media" icon-color="red" icon-aurora="f7:minus_circle_filled"
-                           icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline"
+                  <f7-link slot="media"
+                           icon-color="red"
+                           icon-aurora="f7:minus_circle_filled"
+                           icon-ios="f7:minus_circle_filled"
+                           icon-md="material:remove_circle_outline"
                            @click="showSwipeout" />
                   <div class="alias-label">
                     {{ i }}
@@ -198,7 +256,8 @@
                     <f7-input type="text"
                               :ref="'alias-input-' + index"
                               placeholder="alias"
-                              validate pattern="[A-Za-z_][A-Za-z0-9_]*"
+                              validate
+                              pattern="[A-Za-z_][A-Za-z0-9_]*"
                               error-message="Required. Must not start with a number. A-Z,a-z,0-9,_ only"
                               :value="persistence.aliases[i]"
                               @input="editAlias($event, i, $event.target.value)"
@@ -213,9 +272,16 @@
                 </f7-list-item>
               </f7-list>
               <f7-list v-if="editable">
-                <item-picker class="alias-item-picker" title="Add alias" name="items"
-                             multiple="true" noModelPicker="true" :setValueText="false"
-                             iconColor="green" auroraIcon="f7:plus_circle_fill" iosIcon="f7:plus_circle_fill" mdIcon="material:control_point"
+                <item-picker class="alias-item-picker"
+                             title="Add alias"
+                             name="items"
+                             multiple="true"
+                             noModelPicker="true"
+                             :setValueText="false"
+                             iconColor="green"
+                             auroraIcon="f7:plus_circle_fill"
+                             iosIcon="f7:plus_circle_fill"
+                             mdIcon="material:control_point"
                              :value="currentItemsWithAlias"
                              @input="updateAliasItems($event)" />
               </f7-list>
@@ -233,11 +299,18 @@
 
       <!-- Code Tab -->
       <f7-tab id="code" @tab:show="() => { currentTab = 'code'; toYaml() }" :tab-active="currentTab === 'code'">
-        <f7-icon v-if="!editable" f7="lock" class="float-right margin"
-                 style="opacity:0.5; z-index: 4000; user-select: none;" size="50" color="gray"
+        <f7-icon v-if="!editable"
+                 f7="lock"
+                 class="float-right margin"
+                 style="opacity:0.5; z-index: 4000; user-select: none;"
+                 size="50"
+                 color="gray"
                  :tooltip="notEditableMgs" />
-        <editor v-if="currentTab === 'code'" class="persistence-code-editor"
-                mode="application/vnd.openhab.persistence+yaml" :value="persistenceYaml" @input="onEditorInput"
+        <editor v-if="currentTab === 'code'"
+                class="persistence-code-editor"
+                mode="application/vnd.openhab.persistence+yaml"
+                :value="persistenceYaml"
+                @input="onEditorInput"
                 :read-only="!editable" />
       </f7-tab>
     </f7-tabs>

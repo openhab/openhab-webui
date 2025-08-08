@@ -3,7 +3,10 @@
     <f7-page>
       <f7-navbar>
         <f7-nav-left>
-          <f7-link icon-ios="f7:arrow_left" icon-md="material:arrow_back" icon-aurora="f7:arrow_left" popup-close />
+          <f7-link icon-ios="f7:arrow_left"
+                   icon-md="material:arrow_back"
+                   icon-aurora="f7:arrow_left"
+                   popup-close />
         </f7-nav-left>
         <f7-nav-title>
           Configure cron strategy
@@ -17,11 +20,18 @@
       <f7-block class="no-margin no-padding">
         <f7-col>
           <f7-list>
-            <f7-list-input ref="name" label="Name" type="text" placeholder="Required" :value="currentCronStrategy.name"
+            <f7-list-input ref="name"
+                           label="Name"
+                           type="text"
+                           placeholder="Required"
+                           :value="currentCronStrategy.name"
                            @input="currentCronStrategy.name = $event.target.value"
                            :disabled="!createMode"
                            :info="(createMode) ? 'Note: cannot be changed after the creation' : ''"
-                           required validate pattern="[A-Za-z0-9_]+" error-message="Required. A-Z,a-z only" />
+                           required
+                           validate
+                           pattern="[A-Za-z0-9_]+"
+                           error-message="Required. A-Z,a-z only" />
           </f7-list>
         </f7-col>
         <f7-col>
@@ -29,7 +39,8 @@
             Configuration
           </f7-block-title>
           <f7-list>
-            <parameter-cronexpression ref="cronExpression" :configDescription="cronExpressionConfigDescription"
+            <parameter-cronexpression ref="cronExpression"
+                                      :configDescription="cronExpressionConfigDescription"
                                       :value="currentCronStrategy.cronExpression"
                                       @input="currentCronStrategy.cronExpression = $event" />
           </f7-list>

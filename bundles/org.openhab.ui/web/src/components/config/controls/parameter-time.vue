@@ -6,7 +6,8 @@
       :label="configDescription.label"
       :name="configDescription.name"
       :value="value"
-      :required="configDescription.required" validate
+      :required="configDescription.required"
+      validate
       :clear-button="!configDescription.required"
       @input="updateValue" />
     <div slot="content-end" class="display-flex justify-content-center">

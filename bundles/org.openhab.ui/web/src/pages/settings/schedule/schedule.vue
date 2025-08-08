@@ -1,9 +1,13 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
-    <f7-navbar title="Schedule" back-link="Settings" back-link-url="/settings/" back-link-force>
+    <f7-navbar title="Schedule"
+               back-link="Settings"
+               back-link-url="/settings/"
+               back-link-force>
       <f7-nav-right>
         <developer-dock-icon />
-        <f7-link icon-md="material:done_all" @click="toggleCheck()"
+        <f7-link icon-md="material:done_all"
+                 @click="toggleCheck()"
                  :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
       </f7-nav-right>
       <f7-subnavbar :inner="false" v-show="initSearchbar">
@@ -18,11 +22,23 @@
           :disable-button="!$theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
-    <f7-toolbar class="contextual-toolbar" :class="{ 'navbar': $theme.md }" v-if="showCheckboxes" bottom-ios bottom-aurora>
-      <f7-link v-show="selectedItems.length" v-if="!$theme.md" class="delete" icon-ios="f7:trash" icon-aurora="f7:trash" @click="removeSelected">
+    <f7-toolbar class="contextual-toolbar"
+                :class="{ 'navbar': $theme.md }"
+                v-if="showCheckboxes"
+                bottom-ios
+                bottom-aurora>
+      <f7-link v-show="selectedItems.length"
+               v-if="!$theme.md"
+               class="delete"
+               icon-ios="f7:trash"
+               icon-aurora="f7:trash"
+               @click="removeSelected">
         Remove {{ selectedItems.length }}
       </f7-link>
-      <f7-link v-if="$theme.md" icon-md="material:close" icon-color="white" @click="showCheckboxes = false" />
+      <f7-link v-if="$theme.md"
+               icon-md="material:close"
+               icon-color="white"
+               @click="showCheckboxes = false" />
       <div class="title" v-if="$theme.md">
         {{ selectedItems.length }} selected
       </div>
@@ -32,8 +48,14 @@
       </div>
     </f7-toolbar>
 
-    <empty-state-placeholder v-if="noRuleEngine" icon="exclamationmark_triangle" title="rules.missingengine.title" text="rules.missingengine.text" />
-    <empty-state-placeholder v-else-if="ready && !rules.length" icon="calendar" title="schedule.title" text="schedule.text" />
+    <empty-state-placeholder v-if="noRuleEngine"
+                             icon="exclamationmark_triangle"
+                             title="rules.missingengine.title"
+                             text="rules.missingengine.text" />
+    <empty-state-placeholder v-else-if="ready && !rules.length"
+                             icon="calendar"
+                             title="schedule.title"
+                             text="schedule.text" />
     <div v-else class="timeline timeline-horizontal col-33 tablet-15">
       <div class="timeline-year" v-for="(yearObj, year) in calendar" :key="year">
         <div class="timeline-year-title">
@@ -63,7 +85,11 @@
         </div>
       </div>
     </div>
-    <f7-fab v-if="ready" position="right-bottom" slot="fixed" color="blue" href="add">
+    <f7-fab v-if="ready"
+            position="right-bottom"
+            slot="fixed"
+            color="blue"
+            href="add">
       <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
       <f7-icon ios="f7:close" md="material:close" aurora="f7:close" />
     </f7-fab>
