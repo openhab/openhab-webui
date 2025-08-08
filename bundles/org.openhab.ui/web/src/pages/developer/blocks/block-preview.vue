@@ -7,8 +7,11 @@
       <f7-menu-item style="margin-left: auto" :text="currentBlock" dropdown>
         <f7-menu-dropdown right>
           <f7-menu-dropdown-item
-            v-for="block in blocksDefinition.slots.blocks.filter((b) => b.component === 'BlockType')" :key="block.config.type"
-            @click="displayCurrentBlock(block)" href="#" :text="block.config.type" />
+            v-for="block in blocksDefinition.slots.blocks.filter((b) => b.component === 'BlockType')"
+            :key="block.config.type"
+            @click="displayCurrentBlock(block)"
+            href="#"
+            :text="block.config.type" />
         </f7-menu-dropdown>
       </f7-menu-item>
     </f7-menu>

@@ -1,7 +1,10 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="addonPopupOpened = false" @page:afterout="stopEventSource">
-    <f7-navbar :title="'Add-ons: ' + addonsLabels[addonType]" back-link="Settings" back-link-url="/settings/" back-link-force>
-      <!-- <f7-nav-right>
+    <f7-navbar :title="'Add-ons: ' + addonsLabels[addonType]"
+               back-link="Settings"
+               back-link-url="/settings/"
+               back-link-force>
+               <!-- <f7-nav-right>
         <f7-link href="add">Add</f7-link>
       </f7-nav-right>-->
     </f7-navbar>
@@ -47,7 +50,10 @@
     <f7-block form v-if="ready && !addons.length" class="block-narrow">
       <empty-state-placeholder :icon="addonsIcons[addonType]" :title="'No ' + addonsLabels[addonType] + ' installed yet'" text="addons.text" />
     </f7-block>
-    <f7-fab position="right-bottom" slot="fixed" color="blue" href="add">
+    <f7-fab position="right-bottom"
+            slot="fixed"
+            color="blue"
+            href="add">
       <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
       <f7-icon ios="f7:close" md="material:close" aurora="f7:close" />
     </f7-fab>

@@ -26,8 +26,11 @@
       :url="backgroundImageUrl"
       :bounds="bounds" />
     <l-feature-group ref="featureGroup" v-if="context.component.slots && ready">
-      <component v-for="(marker, idx) in markers" :key="idx"
-                 :is="markerComponent(marker)" :context="childContext(marker)" @update="onMarkerUpdate" />
+      <component v-for="(marker, idx) in markers"
+                 :key="idx"
+                 :is="markerComponent(marker)"
+                 :context="childContext(marker)"
+                 @update="onMarkerUpdate" />
     </l-feature-group>
     <l-control v-if="context.editmode != null" position="topright">
       <f7-menu class="padding">

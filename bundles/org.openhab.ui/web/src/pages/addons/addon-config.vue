@@ -2,7 +2,10 @@
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar :title="'Configure ' + addon.label + dirtyIndicator" back-link="Back">
       <f7-nav-right>
-        <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only />
+        <f7-link @click="save()"
+                 v-if="$theme.md"
+                 icon-md="material:save"
+                 icon-only />
         <f7-link @click="save()" v-if="!$theme.md">
           Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
         </f7-link>
@@ -10,7 +13,11 @@
     </f7-navbar>
     <f7-block v-if="type === 'persistence'" class="block-narrow">
       <f7-col>
-        <f7-button large fill color="blue" :href="'/settings/persistence/' + name" class="persistence-button">
+        <f7-button large
+                   fill
+                   color="blue"
+                   :href="'/settings/persistence/' + name"
+                   class="persistence-button">
           Configure Persistence Policies
         </f7-button>
       </f7-col>
@@ -32,9 +39,11 @@
           Add-on log settings
         </f7-block-title>
         <f7-list class="col wide">
-          <f7-list-item v-for="loggerPackage in loggerPackages" :key="loggerPackage.loggerName"
+          <f7-list-item v-for="loggerPackage in loggerPackages"
+                        :key="loggerPackage.loggerName"
                         :title="loggerPackage.loggerName">
-            <f7-input type="select" :value="loggerPackage.level"
+            <f7-input type="select"
+                      :value="loggerPackage.level"
                       @input="loggerPackage.level = $event.target.value">
               <option value="DEFAULT">
                 Default

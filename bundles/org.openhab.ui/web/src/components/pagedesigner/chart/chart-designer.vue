@@ -19,14 +19,22 @@
     </f7-block>
 
     <!-- Grids -->
-    <f7-block strong :style="{ zIndex: 100 - gridIdx }" v-for="(grid, gridIdx) in context.component.slots.grid" :key="gridIdx">
+    <f7-block strong
+              :style="{ zIndex: 100 - gridIdx }"
+              v-for="(grid, gridIdx) in context.component.slots.grid"
+              :key="gridIdx">
       <f7-block-title>Grid {{ gridIdx }}</f7-block-title>
       <div>
         <f7-menu v-if="context.editmode" class="configure-layout-menu">
           <span v-for="(yAxis, yAxisIdx) in context.component.slots.yAxis" :key="yAxisIdx">
-            <edit-context-menu v-if="yAxis.config.gridIndex === gridIdx" :context="context" :component="yAxis" :parentSlot="'yAxis'"
-                               class="margin-right" :text="'Y' + parseInt(yAxisIdx).toString()"
-                               :configureLabel="'Configure Y Axis'" :removeLabel="'Remove Axis'" />
+            <edit-context-menu v-if="yAxis.config.gridIndex === gridIdx"
+                               :context="context"
+                               :component="yAxis"
+                               :parentSlot="'yAxis'"
+                               class="margin-right"
+                               :text="'Y' + parseInt(yAxisIdx).toString()"
+                               :configureLabel="'Configure Y Axis'"
+                               :removeLabel="'Remove Axis'" />
           </span>
           <f7-menu-item icon-f7="plus" dropdown>
             <f7-menu-dropdown left>
@@ -34,28 +42,54 @@
               <f7-menu-dropdown-item @click="addAxis(gridIdx, 'yAxis', 'oh-category-axis')" href="#" text="Add category axis" />
             </f7-menu-dropdown>
           </f7-menu-item>
-          <edit-context-menu :context="context" :component="grid" :parentSlot="'grid'"
-                             style="margin-left: auto" icon-f7="square_split_2x2" right
-                             :configureLabel="'Configure Grid'" :removeLabel="'Remove Grid'" />
+          <edit-context-menu :context="context"
+                             :component="grid"
+                             :parentSlot="'grid'"
+                             style="margin-left: auto"
+                             icon-f7="square_split_2x2"
+                             right
+                             :configureLabel="'Configure Grid'"
+                             :removeLabel="'Remove Grid'" />
         </f7-menu>
       </div>
       <div>
         <div class="skeleton-series">
           <f7-card class="elevation-4">
             <f7-list media-list>
-              <f7-list-item media-item link-item v-for="(series, seriesIdx) in gridSeries(grid, gridIdx)" :key="seriesIdx"
-                            :title="series.config.name" :subtitle="series.config.item"
+              <f7-list-item media-item
+                            link-item
+                            v-for="(series, seriesIdx) in gridSeries(grid, gridIdx)"
+                            :key="seriesIdx"
+                            :title="series.config.name"
+                            :subtitle="series.config.item"
                             :after="`X: ${series.config.xAxisIndex} Y: ${series.config.yAxisIndex}`"
-                            link="#" @click.native="(ev) => configureSeries(ev, series, context)">
+                            link="#"
+                            @click.native="(ev) => configureSeries(ev, series, context)">
                 <f7-menu slot="content-start" class="configure-layout-menu" style="z-index: 50">
-                  <edit-context-menu :context="context" :component="series" :parentSlot="'series'"
-                                     icon-f7="list_bullet" :configureLabel="'Configure Series'" :removeLabel="'Remove Series'" />
+                  <edit-context-menu :context="context"
+                                     :component="series"
+                                     :parentSlot="'series'"
+                                     icon-f7="list_bullet"
+                                     :configureLabel="'Configure Series'"
+                                     :removeLabel="'Remove Series'" />
                 </f7-menu>
                 <div slot="media">
-                  <img slot="media" v-if="series.config.type === 'bar'" src="./bar.svg" width="32px">
-                  <img slot="media" v-else-if="series.config.type === 'scatter'" src="./scatter.svg" width="32px">
-                  <img slot="media" v-else-if="series.config.type === 'heatmap'" src="./heatmap.svg" width="32px">
-                  <img slot="media" v-else src="./line.svg" width="32px">
+                  <img slot="media"
+                       v-if="series.config.type === 'bar'"
+                       src="./bar.svg"
+                       width="32px">
+                  <img slot="media"
+                       v-else-if="series.config.type === 'scatter'"
+                       src="./scatter.svg"
+                       width="32px">
+                  <img slot="media"
+                       v-else-if="series.config.type === 'heatmap'"
+                       src="./heatmap.svg"
+                       width="32px">
+                  <img slot="media"
+                       v-else
+                       src="./line.svg"
+                       width="32px">
                 </div>
               </f7-list-item>
               <f7-list-button color="blue" @click="addSeries('oh-time-series', gridIdx)">
@@ -75,9 +109,15 @@
       <div>
         <f7-menu v-if="context.editmode" class="configure-layout-menu">
           <span :style="{ marginLeft: xAxisIdx === 0 ? 'auto' : undefined }" v-for="(xAxis, xAxisIdx) in context.component.slots.xAxis" :key="xAxisIdx">
-            <edit-context-menu v-if="xAxis.config.gridIndex === gridIdx" :context="context" :component="xAxis" :parentSlot="'xAxis'"
-                               class="margin-right" :text="'X' + parseInt(xAxisIdx).toString()" right
-                               :configureLabel="'Configure X Axis'" :removeLabel="'Remove Axis'" />
+            <edit-context-menu v-if="xAxis.config.gridIndex === gridIdx"
+                               :context="context"
+                               :component="xAxis"
+                               :parentSlot="'xAxis'"
+                               class="margin-right"
+                               :text="'X' + parseInt(xAxisIdx).toString()"
+                               right
+                               :configureLabel="'Configure X Axis'"
+                               :removeLabel="'Remove Axis'" />
           </span>
 
           <f7-menu-item :style="{ marginLeft: context.component.slots.xAxis.length === 0 ? 'auto' : undefined }" icon-f7="plus" dropdown>
@@ -92,30 +132,56 @@
     </f7-block>
 
     <!-- Calendars -->
-    <f7-block strong :style="{ zIndex: 50 - calendarIdx }" v-for="(calendar, calendarIdx) in context.component.slots.calendar" :key="calendarIdx">
+    <f7-block strong
+              :style="{ zIndex: 50 - calendarIdx }"
+              v-for="(calendar, calendarIdx) in context.component.slots.calendar"
+              :key="calendarIdx">
       <f7-block-title>Calendar {{ calendarIdx }}</f7-block-title>
       <div>
         <f7-menu v-if="context.editmode" class="configure-layout-menu">
-          <edit-context-menu :context="context" :component="calendar" :parentSlot="'calendar'"
-                             style="margin-left: auto" icon-f7="calendar" right
-                             :configureLabel="'Configure Calendar'" :removeLabel="'Remove Calendar'" />
+          <edit-context-menu :context="context"
+                             :component="calendar"
+                             :parentSlot="'calendar'"
+                             style="margin-left: auto"
+                             icon-f7="calendar"
+                             right
+                             :configureLabel="'Configure Calendar'"
+                             :removeLabel="'Remove Calendar'" />
         </f7-menu>
       </div>
       <div>
         <div class="skeleton-series">
           <f7-card class="elevation-4">
             <f7-list media-list>
-              <f7-list-item media-item link-item v-for="(series, seriesIdx) in calendarSeries(calendar, calendarIdx)" :key="seriesIdx"
-                            :title="series.config.name" :subtitle="series.config.item"
-                            link="#" @click.native="(ev) => configureSeries(ev, series, context)">
+              <f7-list-item media-item
+                            link-item
+                            v-for="(series, seriesIdx) in calendarSeries(calendar, calendarIdx)"
+                            :key="seriesIdx"
+                            :title="series.config.name"
+                            :subtitle="series.config.item"
+                            link="#"
+                            @click.native="(ev) => configureSeries(ev, series, context)">
                 <f7-menu slot="content-start" class="configure-layout-menu">
-                  <edit-context-menu :context="context" :component="series" :parentSlot="'series'"
-                                     icon-f7="list_bullet" :configureLabel="'Configure Series'" :removeLabel="'Remove Series'" />
+                  <edit-context-menu :context="context"
+                                     :component="series"
+                                     :parentSlot="'series'"
+                                     icon-f7="list_bullet"
+                                     :configureLabel="'Configure Series'"
+                                     :removeLabel="'Remove Series'" />
                 </f7-menu>
                 <div slot="media">
-                  <img slot="media" v-if="series.config.type === 'scatter'" src="./scatter.svg" width="32px">
-                  <img slot="media" v-else-if="series.config.type === 'heatmap'" src="./heatmap.svg" width="32px">
-                  <img slot="media" v-else src="./line.svg" width="32px">
+                  <img slot="media"
+                       v-if="series.config.type === 'scatter'"
+                       src="./scatter.svg"
+                       width="32px">
+                  <img slot="media"
+                       v-else-if="series.config.type === 'heatmap'"
+                       src="./heatmap.svg"
+                       width="32px">
+                  <img slot="media"
+                       v-else
+                       src="./line.svg"
+                       width="32px">
                 </div>
               </f7-list-item>
               <f7-list-button color="blue" @click="addCalendarSeries('oh-calendar-series', calendarIdx)">

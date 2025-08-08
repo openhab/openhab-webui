@@ -4,8 +4,16 @@
       <f7-list-item :title="title || 'Tags'" :badge="tags.length.toString()" />
       <f7-list-item v-if="tags.length > 0">
         <div slot="inner">
-          <f7-chip v-for="tag in tags" :key="tag" :text="tag" :deleteable="!disabled" @delete="deleteTag" media-bg-color="blue">
-            <f7-icon slot="media" ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
+          <f7-chip v-for="tag in tags"
+                   :key="tag"
+                   :text="tag"
+                   :deleteable="!disabled"
+                   @delete="deleteTag"
+                   media-bg-color="blue">
+            <f7-icon slot="media"
+                     ios="f7:tag_fill"
+                     md="material:label"
+                     aurora="f7:tag_fill" />
           </f7-chip>
         </div>
       </f7-list-item>
@@ -19,7 +27,11 @@
         @input="pendingTag = $event.target.value"
         :input="false"
         class="add-tag-input">
-        <input slot="input" type="text" placeholder="Add tag" @keyup="keyUp" @blur="addTag">
+        <input slot="input"
+               type="text"
+               placeholder="Add tag"
+               @keyup="keyUp"
+               @blur="addTag">
       </f7-list-input>
     </f7-list>
   </div>

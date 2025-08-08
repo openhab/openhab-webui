@@ -3,8 +3,19 @@
     <f7-page :style="modalStyle">
       <f7-navbar :title="(context.component.config && context.component.config.label) ? context.component.config.label : ''" :back-link="$t('dialogs.back')" />
 
-      <f7-toolbar tabbar labels bottom v-if="page && page.component === 'oh-tabs-page' && visibleToCurrentUser">
-        <f7-link v-for="(tab, idx) in page.slots.default" :key="idx" tab-link @click="onTabChange(idx)" :tab-link-active="currentTab === idx" :icon-ios="tab.config.icon" :icon-md="tab.config.icon" :icon-aurora="tab.config.icon" :text="tab.config.title" />
+      <f7-toolbar tabbar
+                  labels
+                  bottom
+                  v-if="page && page.component === 'oh-tabs-page' && visibleToCurrentUser">
+        <f7-link v-for="(tab, idx) in page.slots.default"
+                 :key="idx"
+                 tab-link
+                 @click="onTabChange(idx)"
+                 :tab-link-active="currentTab === idx"
+                 :icon-ios="tab.config.icon"
+                 :icon-md="tab.config.icon"
+                 :icon-aurora="tab.config.icon"
+                 :text="tab.config.title" />
       </f7-toolbar>
 
       <f7-tabs v-if="page && page.component === 'oh-tabs-page' && visibleToCurrentUser" :class="{notready: !ready}">
@@ -12,8 +23,14 @@
           <component v-if="currentTab === idx" :is="tabComponent(tab)" :context="tabContext(tab)" />
         </f7-tab>
       </f7-tabs>
-      <component v-else-if="visibleToCurrentUser" :is="componentType" :context="context" :class="{notready: !ready}" />
-      <empty-state-placeholder v-if="page && !visibleToCurrentUser" icon="multiply_circle_fill" title="page.unavailable.title" text="page.unavailable.text" />
+      <component v-else-if="visibleToCurrentUser"
+                 :is="componentType"
+                 :context="context"
+                 :class="{notready: !ready}" />
+      <empty-state-placeholder v-if="page && !visibleToCurrentUser"
+                               icon="multiply_circle_fill"
+                               title="page.unavailable.title"
+                               text="page.unavailable.text" />
     </f7-page>
   </f7-popup>
 </template>

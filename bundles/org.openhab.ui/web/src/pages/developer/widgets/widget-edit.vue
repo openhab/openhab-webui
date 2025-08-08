@@ -2,7 +2,10 @@
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar :title="(createMode ? 'Create Widget' : 'Widget: ' + widget.uid) + dirtyIndicator" back-link="Back">
       <f7-nav-right>
-        <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only />
+        <f7-link @click="save()"
+                 v-if="$theme.md"
+                 icon-md="material:save"
+                 icon-only />
         <f7-link @click="save()" v-if="!$theme.md">
           Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
         </f7-link>
@@ -20,7 +23,10 @@
     <f7-block :key="blockKey + '-h'" v-if="split === 'horizontal'" class="widget-editor horizontal">
       <f7-row resizable>
         <f7-col style="min-width: 20px" class="widget-code">
-          <editor class="widget-component-editor" mode="application/vnd.openhab.uicomponent+yaml?type=widget" :value="widgetDefinition" @input="onEditorInput" />
+          <editor class="widget-component-editor"
+                  mode="application/vnd.openhab.uicomponent+yaml?type=widget"
+                  :value="widgetDefinition"
+                  @input="onEditorInput" />
         </f7-col>
       </f7-row>
       <f7-row v-if="ready" resizable>
@@ -32,19 +38,32 @@
     <f7-block v-else :key="blockKey + 'b'" class="widget-editor vertical">
       <f7-row resizable>
         <f7-col resizable style="min-width: 20px" class="widget-code">
-          <editor class="widget-component-editor" mode="application/vnd.openhab.uicomponent+yaml?type=widget" :value="widgetDefinition" @input="onEditorInput" />
+          <editor class="widget-component-editor"
+                  mode="application/vnd.openhab.uicomponent+yaml?type=widget"
+                  :value="widgetDefinition"
+                  @input="onEditorInput" />
         </f7-col>
-        <f7-col v-if="ready" resizable style="min-width: 20px" class="widget-preview padding-right margin-bottom">
+        <f7-col v-if="ready"
+                resizable
+                style="min-width: 20px"
+                class="widget-preview padding-right margin-bottom">
           <generic-widget-component :key="widgetKey" :context="context" @command="onCommand" />
         </f7-col>
       </f7-row>
     </f7-block>
 
-    <f7-popup ref="widgetProps" close-on-escape class="widgetprops-popup" :opened="widgetPropsOpened" @popup:closed="widgetPropsClosed">
+    <f7-popup ref="widgetProps"
+              close-on-escape
+              class="widgetprops-popup"
+              :opened="widgetPropsOpened"
+              @popup:closed="widgetPropsClosed">
       <f7-page v-if="widgetPropsOpened">
         <f7-navbar>
           <f7-nav-left>
-            <f7-link icon-ios="f7:arrow_left" icon-md="material:arrow_back" icon-aurora="f7:arrow_left" popup-close />
+            <f7-link icon-ios="f7:arrow_left"
+                     icon-md="material:arrow_back"
+                     icon-aurora="f7:arrow_left"
+                     popup-close />
           </f7-nav-left>
           <f7-nav-title>Set Widget Props</f7-nav-title>
           <f7-nav-right>

@@ -1,9 +1,17 @@
 <template>
   <f7-list class="strategy-picker-container" v-if="strategies">
-    <f7-list-item :title="title" :smart-select="disabled !== true" :smart-select-params="smartSelectParams"
-                  ref="smartSelect" class="defaults-picker">
-      <select v-if="disabled !== true" :name="name" multiple @change="select">
-        <option v-for="s in strategies" :key="s" :value="s"
+    <f7-list-item :title="title"
+                  :smart-select="disabled !== true"
+                  :smart-select-params="smartSelectParams"
+                  ref="smartSelect"
+                  class="defaults-picker">
+      <select v-if="disabled !== true"
+              :name="name"
+              multiple
+              @change="select">
+        <option v-for="s in strategies"
+                :key="s"
+                :value="s"
                 :selected="value.includes(s)">
           {{ s }}
         </option>

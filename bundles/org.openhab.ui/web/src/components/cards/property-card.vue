@@ -1,20 +1,34 @@
 <template>
-  <model-card type="property" :context="context" :element="element" header-height="150px">
+  <model-card type="property"
+              :context="context"
+              :element="element"
+              header-height="150px">
     <template #glance>
       <div v-if="context && context.component.slots && context.component.slots.glance" class="display-flex flex-direction-column align-items-flex-start">
-        <generic-widget-component :context="childContext(slotComponent)" v-for="(slotComponent, idx) in context.component.slots.glance" :key="'glance-' + idx" @command="onCommand" />
+        <generic-widget-component :context="childContext(slotComponent)"
+                                  v-for="(slotComponent, idx) in context.component.slots.glance"
+                                  :key="'glance-' + idx"
+                                  @command="onCommand" />
       </div>
       <!-- <div class="property-stats" v-else><small v-if="element.points">{{element.points.length}}</small></div> -->
     </template>
     <div class="card-content-padding">
       <generic-widget-component :context="listContext" />
       <p class="padding-top margin-horizontal">
-        <f7-button outline round :color="color" :href="`/analyzer/?items=${element.points.map((m) => m.name).join(',')}`">
+        <f7-button outline
+                   round
+                   :color="color"
+                   :href="`/analyzer/?items=${element.points.map((m) => m.name).join(',')}`">
           {{ element.points.length > 1 ? $t('home.cards.analyzeAll') : $t('home.cards.analyze') }}
         </f7-button>
       </p>
       <p class="margin-horizontal">
-        <f7-button fill round large card-close :color="color" :text="$t('home.cards.close')" />
+        <f7-button fill
+                   round
+                   large
+                   card-close
+                   :color="color"
+                   :text="$t('home.cards.close')" />
       </p>
     </div>
   </model-card>

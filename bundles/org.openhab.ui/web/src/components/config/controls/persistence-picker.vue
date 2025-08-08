@@ -1,9 +1,16 @@
 <template>
   <ul class="persistence-picker-container">
-    <f7-list-item :title="title || 'Persistence'" smart-select :smart-select-params="smartSelectParams" ref="smartSelect" v-if="ready">
+    <f7-list-item :title="title || 'Persistence'"
+                  smart-select
+                  :smart-select-params="smartSelectParams"
+                  ref="smartSelect"
+                  v-if="ready">
       <select :name="name" @change="select" :required="required">
         <option value="" />
-        <option v-for="service in services" :value="service.id" :key="service.id" :selected="value === service.id">
+        <option v-for="service in services"
+                :value="service.id"
+                :key="service.id"
+                :selected="value === service.id">
           {{ service.label ? service.label + ' (' + service.id + ')' : service.id }}
         </option>
       </select>

@@ -1,6 +1,9 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" class="health-semantics-page">
-    <f7-navbar title="Semantic Model Configuration Conflicts" back-link="Health Checks" back-link-url="/settings/health/" back-link-force>
+    <f7-navbar title="Semantic Model Configuration Conflicts"
+               back-link="Health Checks"
+               back-link-url="/settings/health/"
+               back-link-force>
       <f7-nav-right>
         <developer-dock-icon />
       </f7-nav-right>
@@ -26,8 +29,13 @@
         <f7-block-title>&nbsp;Loading...</f7-block-title>
         <f7-list contacts-list class="col">
           <f7-list-group>
-            <f7-list-item media-item v-for="n in 10" :key="n" :class="`skeleton-text skeleton-effect-blink`"
-                          title="Type of problem" subtitle="Semantics model" footer="" />
+            <f7-list-item media-item
+                          v-for="n in 10"
+                          :key="n"
+                          :class="`skeleton-text skeleton-effect-blink`"
+                          title="Type of problem"
+                          subtitle="Semantics model"
+                          footer="" />
           </f7-list-group>
         </f7-list>
       </f7-col>
@@ -37,13 +45,19 @@
           {{ semanticsProblems.length }} semantic model configuration conflict{{ plural(semanticsProblems.length) }} found
         </f7-block-title>
         <f7-list class="col" contacts-list>
-          <f7-list-item v-for="semanticsProblem in semanticsProblems" :key="problemKey(semanticsProblem)" media-item
+          <f7-list-item v-for="semanticsProblem in semanticsProblems"
+                        :key="problemKey(semanticsProblem)"
+                        media-item
                         class="health-problem-item"
                         :link="getLinkForProblem(semanticsProblem)"
                         :title="semanticsProblem.reason"
                         :subtitle="'Item: ' + semanticsProblem.item + (semanticsProblem.semanticType ? ' (' + semanticsProblem.semanticType + ')' : '')"
                         :footer="semanticsProblem.explanation">
-            <f7-icon v-if="!semanticsProblem.editable" slot="after-title" f7="lock_fill" size="1rem" color="gray" />
+            <f7-icon v-if="!semanticsProblem.editable"
+                     slot="after-title"
+                     f7="lock_fill"
+                     size="1rem"
+                     color="gray" />
           </f7-list-item>
         </f7-list>
       </f7-col>

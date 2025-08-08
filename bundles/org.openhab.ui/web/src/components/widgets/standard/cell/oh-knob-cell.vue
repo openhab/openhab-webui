@@ -4,13 +4,19 @@
       <f7-col width="100" style="height: 400px" class="cell-knob display-flex flex-direction-column align-items-center">
         <slot name="beforeKnob">
           <div v-if="context.component.slots" class="margin-top display-flex flex-direction-column justify-content-center">
-            <generic-widget-component :context="childContext(slotComponent)" v-for="(slotComponent, idx) in context.component.slots.beforeKnob" :key="'beforeKnob-' + idx" @command="onCommand" />
+            <generic-widget-component :context="childContext(slotComponent)"
+                                      v-for="(slotComponent, idx) in context.component.slots.beforeKnob"
+                                      :key="'beforeKnob-' + idx"
+                                      @command="onCommand" />
           </div>
         </slot>
         <oh-knob :context="knobContext" />
         <slot name="afterKnob">
           <div v-if="context.component.slots" class="margin-top display-flex flex-direction-column justify-content-center">
-            <generic-widget-component :context="childContext(slotComponent)" v-for="(slotComponent, idx) in context.component.slots.afterKnob" :key="'afterKnob-' + idx" @command="onCommand" />
+            <generic-widget-component :context="childContext(slotComponent)"
+                                      v-for="(slotComponent, idx) in context.component.slots.afterKnob"
+                                      :key="'afterKnob-' + idx"
+                                      @command="onCommand" />
           </div>
         </slot>
       </f7-col>

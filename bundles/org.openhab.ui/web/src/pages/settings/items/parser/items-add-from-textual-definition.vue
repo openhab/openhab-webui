@@ -2,7 +2,10 @@
   <f7-page @page:afterin="onPageAfterIn">
     <f7-navbar title="Add Items from Textual Definition" back-link="Cancel">
       <f7-nav-right>
-        <f7-link @click="add()" v-if="$theme.md" icon-md="material:save" icon-only />
+        <f7-link @click="add()"
+                 v-if="$theme.md"
+                 icon-md="material:save"
+                 icon-only />
         <f7-link @click="add()" v-if="!$theme.md">
           Add
         </f7-link>
@@ -11,7 +14,10 @@
     <f7-block class="items-add-from-textual-definition">
       <div class="row items-parser resizable" v-if="ready">
         <div class="col">
-          <editor class="editor" :value="itemsDsl" @input="(value) => itemsDsl = value" mode="application/vnd.openhab.items+dsl" />
+          <editor class="editor"
+                  :value="itemsDsl"
+                  @input="(value) => itemsDsl = value"
+                  mode="application/vnd.openhab.items+dsl" />
         </div>
         <span class="resize-handler" />
       </div>
@@ -61,21 +67,39 @@
                     </td>
                     <td class="label-cell">
                       {{ item.name }}
-                      <f7-icon v-if="item.existing && item.existing.editable" f7="exclamationmark_octagon_fill" color="yellow" size="22" tooltip="Item already exists" />
-                      <f7-icon v-if="item.existing && !item.existing.editable" f7="multiply_circle_fill" color="red" size="22" tooltip="Item already exists and is not editable" />
+                      <f7-icon v-if="item.existing && item.existing.editable"
+                               f7="exclamationmark_octagon_fill"
+                               color="yellow"
+                               size="22"
+                               tooltip="Item already exists" />
+                      <f7-icon v-if="item.existing && !item.existing.editable"
+                               f7="multiply_circle_fill"
+                               color="red"
+                               size="22"
+                               tooltip="Item already exists and is not editable" />
                     </td>
                     <td class="label-cell">
                       {{ item.label }}
                     </td>
                     <td class="label-cell">
-                      <oh-icon v-if="item.category" :icon="item.category" :width="20" :height="20" />
+                      <oh-icon v-if="item.category"
+                               :icon="item.category"
+                               :width="20"
+                               :height="20" />
                     </td>
                     <td class="label-cell">
                       {{ (item.groupNames) ? item.groupNames.join(', ') : '' }}
                     </td>
                     <td class="label-cell" v-if="item.tags">
-                      <f7-chip class="margin-right" v-for="tag in item.tags" :key="tag" :text="tag" media-bg-color="blue">
-                        <f7-icon slot="media" ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
+                      <f7-chip class="margin-right"
+                               v-for="tag in item.tags"
+                               :key="tag"
+                               :text="tag"
+                               media-bg-color="blue">
+                        <f7-icon slot="media"
+                                 ios="f7:tag_fill"
+                                 md="material:label"
+                                 aurora="f7:tag_fill" />
                       </f7-chip>
                     </td>
                     <td class="label-cell" v-else />

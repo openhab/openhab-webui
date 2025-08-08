@@ -1,5 +1,10 @@
 <template>
-  <f7-sheet ref="sheet" class="demo-sheet-swipe-to-step" @sheet:closed="$emit('closed')" swipe-to-close swipe-to-step backdrop>
+  <f7-sheet ref="sheet"
+            class="demo-sheet-swipe-to-step"
+            @sheet:closed="$emit('closed')"
+            swipe-to-close
+            swipe-to-step
+            backdrop>
     <div class="sheet-modal-swipe-step">
       <div v-if="!noDetails" class="swipe-handler" @click="toggleSwipeStep" />
       <f7-block-title><strong><big>{{ addon.label }}</big></strong></f7-block-title>
@@ -27,10 +32,18 @@
       <f7-block>
         <f7-row>
           <f7-col class="col-100 margin-top padding-horizontal">
-            <f7-button large fill color="blue" v-if="state === 'UNINSTALLED'" @click="install()">
+            <f7-button large
+                       fill
+                       color="blue"
+                       v-if="state === 'UNINSTALLED'"
+                       @click="install()">
               {{ installableAddon ? 'Install' : 'Add' }}
             </f7-button>
-            <f7-button large fill color="red" v-if="state !== 'UNINSTALLED'" @click="uninstall()">
+            <f7-button large
+                       fill
+                       color="red"
+                       v-if="state !== 'UNINSTALLED'"
+                       @click="uninstall()">
               {{ installableAddon ? 'Uninstall' : 'Remove' }}
             </f7-button>
           </f7-col>

@@ -1,12 +1,20 @@
 <template>
-  <f7-card :no-border="config.noBorder" :no-shadow="config.noShadow" :outline="config.outline" :style="config.style" :class="['oh-card', ...(Array.isArray(config.class) ? config.class : [])]">
+  <f7-card :no-border="config.noBorder"
+           :no-shadow="config.noShadow"
+           :outline="config.outline"
+           :style="config.style"
+           :class="['oh-card', ...(Array.isArray(config.class) ? config.class : [])]">
     <slot name="header">
       <f7-card-header v-if="config.title" :style="config.headerStyle" :class="config.headerClass">
         <div>{{ config.title }}</div>
       </f7-card-header>
     </slot>
     <slot name="content-root">
-      <f7-card-content @click.native="performAction" @taphold.native="onTaphold($event)" @contextmenu.native="onContextMenu($event)" :style="{ ...contentStyle, ...config.contentStyle}" :class="computedContentClass">
+      <f7-card-content @click.native="performAction"
+                       @taphold.native="onTaphold($event)"
+                       @contextmenu.native="onContextMenu($event)"
+                       :style="{ ...contentStyle, ...config.contentStyle}"
+                       :class="computedContentClass">
         <slot name="content" />
       </f7-card-content>
     </slot>

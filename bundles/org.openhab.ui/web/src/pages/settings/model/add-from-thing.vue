@@ -2,7 +2,10 @@
   <f7-page @page:afterin="onPageAfterIn">
     <f7-navbar title="Add Items from Thing" back-link="Back">
       <f7-nav-right class="if-not-aurora">
-        <f7-link @click="add()" v-if="$theme.md" icon-md="material:save" icon-only />
+        <f7-link @click="add()"
+                 v-if="$theme.md"
+                 icon-md="material:save"
+                 icon-only />
         <f7-link @click="add()" v-if="!$theme.md">
           Add
         </f7-link>
@@ -26,7 +29,10 @@
           <ul v-if="parentGroup">
             <item :item="parentGroup" :link="true" @click="openModelPicker" />
           </ul>
-          <f7-list-item v-else title="Pick From Model" link @click="openModelPicker" />
+          <f7-list-item v-else
+                        title="Pick From Model"
+                        link
+                        @click="openModelPicker" />
         </f7-list>
         <f7-block-title v-if="selectedThing.statusInfo">
           Source Thing
@@ -53,7 +59,10 @@
           Select the Thing for which you wish to create Point Items from its Channels. They will be placed under the parent group above, if any.
         </f7-block-footer>
         <f7-list inline-labels no-hairlines-md v-if="!thingId">
-          <thing-picker title="Thing" name="thing" :value="selectedThingId" @input="(e) => selectedThingId = e" />
+          <thing-picker title="Thing"
+                        name="thing"
+                        :value="selectedThingId"
+                        @input="(e) => selectedThingId = e" />
         </f7-list>
         <f7-block v-if="!ready" class="text-align-center">
           <f7-preloader />
@@ -62,9 +71,12 @@
         <div v-else-if="selectedThing.UID && selectedThingType.UID">
           <f7-list v-if="createEquipment" media-list class="equipment-group-picker">
             <item-picker :title="selectedGroup ? 'Change Selected Group' : 'Pick Existing Group'"
-                         textColor="blue" :hideIcon="true"
+                         textColor="blue"
+                         :hideIcon="true"
                          :items="selectableGroups"
-                         :multiple="false" :noModelPicker="true" :setValueText="false"
+                         :multiple="false"
+                         :noModelPicker="true"
+                         :setValueText="false"
                          :value="selectedGroup?.name"
                          @input="selectExistingGroup($event)" />
           </f7-list>
@@ -84,16 +96,27 @@
               Expert Mode
             </f7-link>
           </f7-block-footer>
-          <channel-list :thing="selectedThing" :thingType="selectedThingType" :channelTypes="selectedThingChannelTypes" :items="items"
-                        :multiple-links-mode="true" :new-items-prefix="(createEquipment) ? equipmentItem.name : (parentGroup) ? parentGroup.name : ''"
-                        :new-items="newPointItems" :updated-items="updatedPointItems" />
+          <channel-list :thing="selectedThing"
+                        :thingType="selectedThingType"
+                        :channelTypes="selectedThingChannelTypes"
+                        :items="items"
+                        :multiple-links-mode="true"
+                        :new-items-prefix="(createEquipment) ? equipmentItem.name : (parentGroup) ? parentGroup.name : ''"
+                        :new-items="newPointItems"
+                        :updated-items="updatedPointItems" />
         </div>
       </f7-col>
     </f7-block>
 
     <div v-if="ready && selectedThing.UID" class="if-aurora display-flex justify-content-center margin padding">
       <div class="flex-shrink-0">
-        <f7-button class="padding-left padding-right" style="width: 150px" color="blue" large raised fill @click="add">
+        <f7-button class="padding-left padding-right"
+                   style="width: 150px"
+                   color="blue"
+                   large
+                   raised
+                   fill
+                   @click="add">
           Add to Model
         </f7-button>
       </div>
