@@ -141,6 +141,7 @@ export default {
         const configuration = {
           sockets: [socket],
           uri: 'sip:' + this.config.username + '@' + this.config.domain,
+          authorization_user: this.config.authorizationUser ?? undefined,
           password: this.config.password,
           session_timers: false,
           register: (this.config.disableRegister !== true)
