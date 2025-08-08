@@ -1,6 +1,13 @@
 <template>
-  <f7-page name="Model" :stacked="true" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" @click="selectItem(null)">
-    <f7-navbar title="Semantic Model" back-link="Settings" back-link-url="/settings/" back-link-force>
+  <f7-page name="Model"
+           :stacked="true"
+           @page:afterin="onPageAfterIn"
+           @page:beforeout="onPageBeforeOut"
+           @click="selectItem(null)">
+    <f7-navbar title="Semantic Model"
+               back-link="Settings"
+               back-link-url="/settings/"
+               back-link-force>
       <f7-nav-right>
         <developer-dock-icon />
       </f7-nav-right>
@@ -14,8 +21,17 @@
           :placeholder="searchPlaceholder"
           :disable-button="!$theme.aurora" />
         <div class="expand-button">
-          <f7-button v-if="!expanded" icon-size="24" tooltip="Expand" icon-f7="rectangle_expand_vertical" @click="toggleExpanded()" />
-          <f7-button v-else color="gray" icon-size="24" tooltip="Collapse" icon-f7="rectangle_compress_vertical" @click="toggleExpanded()" />
+          <f7-button v-if="!expanded"
+                     icon-size="24"
+                     tooltip="Expand"
+                     icon-f7="rectangle_expand_vertical"
+                     @click="toggleExpanded()" />
+          <f7-button v-else
+                     color="gray"
+                     icon-size="24"
+                     tooltip="Collapse"
+                     icon-f7="rectangle_compress_vertical"
+                     @click="toggleExpanded()" />
         </div>
       </f7-subnavbar>
     </f7-navbar>
@@ -33,7 +49,10 @@
         <f7-checkbox style="margin-left: 5px" :checked="includeItemTags" @change="toggleItemTags" />
         <label @click="toggleItemTags" class="advanced-label">Show tags</label>
       </div>
-      <f7-link class="right details-link padding-right" ref="detailsLink" @click="detailsOpened = true" icon-f7="chevron_up" />
+      <f7-link class="right details-link padding-right"
+               ref="detailsLink"
+               @click="detailsOpened = true"
+               icon-f7="chevron_up" />
     </f7-toolbar>
     <f7-toolbar v-else bottom class="toolbar-details">
       <f7-link :disabled="selectedItem != null" class="left" @click="selectedItem = null">
@@ -51,7 +70,10 @@
           <label @click="toggleItemTags" class="advanced-label">Show tags</label>
         </div>
       </div>
-      <f7-link class="right details-link padding-right" ref="detailsLink" @click="detailsOpened = true" icon-f7="chevron_up" />
+      <f7-link class="right details-link padding-right"
+               ref="detailsLink"
+               @click="detailsOpened = true"
+               icon-f7="chevron_up" />
     </f7-toolbar>
 
     <f7-block v-if="!ready" class="text-align-center">
@@ -64,21 +86,42 @@
           <f7-block v-if="empty">
             <empty-state-placeholder icon="list_bullet_indent" title="model.title" text="model.text" />
             <f7-row class="display-flex justify-content-center">
-              <f7-button color="blue" large raised fill @click="addFromLocationTemplate()">
+              <f7-button color="blue"
+                         large
+                         raised
+                         fill
+                         @click="addFromLocationTemplate()">
                 Add Locations from Template
               </f7-button>
             </f7-row>
           </f7-block>
 
-          <f7-block v-show="!empty" strong class="semantic-tree" no-gap @click.native="clearSelection">
-            <model-treeview :rootNodes="[rootLocations, rootEquipment, rootPoints, rootGroups, rootItems].flat()" :items="items"
-                            :includeItemName="includeItemName" :includeItemTags="includeItemTags" :canDragDrop="true"
-                            @selected="selectItem" :selected="selectedItem" @reload="load" />
+          <f7-block v-show="!empty"
+                    strong
+                    class="semantic-tree"
+                    no-gap
+                    @click.native="clearSelection">
+            <model-treeview :rootNodes="[rootLocations, rootEquipment, rootPoints, rootGroups, rootItems].flat()"
+                            :items="items"
+                            :includeItemName="includeItemName"
+                            :includeItemTags="includeItemTags"
+                            :canDragDrop="true"
+                            @selected="selectItem"
+                            :selected="selectedItem"
+                            @reload="load" />
           </f7-block>
         </f7-col>
         <f7-col width="100" medium="50" class="details-pane">
           <f7-block v-if="selectedItem" no-gap>
-            <model-details-pane :key="itemDetailsKey" :model="selectedItem" :links="links" :items="items" :context="context" @item-updated="update" @item-created="update" @item-removed="selectItem(null)" @cancel-create="selectItem(null)" />
+            <model-details-pane :key="itemDetailsKey"
+                                :model="selectedItem"
+                                :links="links"
+                                :items="items"
+                                :context="context"
+                                @item-updated="update"
+                                @item-created="update"
+                                @item-removed="selectItem(null)"
+                                @cancel-create="selectItem(null)" />
           </f7-block>
           <f7-block v-else>
             <div class="padding text-align-center">
@@ -90,12 +133,18 @@
             <f7-card>
               <f7-card-content>
                 <f7-list>
-                  <f7-list-button color="blue" v-show="!selectedItem || selectedItem.class.indexOf('Location') === 0" title="Add Location" @click="addSemanticItem('Location')" />
+                  <f7-list-button color="blue"
+                                  v-show="!selectedItem || selectedItem.class.indexOf('Location') === 0"
+                                  title="Add Location"
+                                  @click="addSemanticItem('Location')" />
                   <f7-list-button color="blue" title="Create Equipment from Thing" @click="addFromThing(true)" />
                   <f7-list-button color="blue" title="Create Points from Thing" @click="addFromThing(false)" />
                   <f7-list-button color="blue" title="Add Equipment" @click="addSemanticItem('Equipment')" />
                   <f7-list-button color="blue" title="Add Point" @click="addSemanticItem('Point')" />
-                  <f7-list-button color="blue" v-if="includeNonSemantic" title="Add Item" @click="addNonSemanticItem(false)" />
+                  <f7-list-button color="blue"
+                                  v-if="includeNonSemantic"
+                                  title="Add Item"
+                                  @click="addNonSemanticItem(false)" />
                 </f7-list>
               </f7-card-content>
             </f7-card>
@@ -104,11 +153,18 @@
       </f7-row>
     </f7-block>
 
-    <f7-fab class="add-to-model-fab" position="right-bottom" slot="fixed" color="blue" v-if="!selectedItem || (selectedItem.item.created !== false && selectedItem.item.type === 'Group' && selectedItem.class.indexOf('Point_') < 0)">
+    <f7-fab class="add-to-model-fab"
+            position="right-bottom"
+            slot="fixed"
+            color="blue"
+            v-if="!selectedItem || (selectedItem.item.created !== false && selectedItem.item.type === 'Group' && selectedItem.class.indexOf('Point_') < 0)">
       <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
       <f7-icon ios="f7:multiply" md="material:close" aurora="f7:multiply" />
       <f7-fab-buttons position="top">
-        <f7-fab-button v-if="includeNonSemantic" fab-close label="Add Item" @click="addNonSemanticItem(false)">
+        <f7-fab-button v-if="includeNonSemantic"
+                       fab-close
+                       label="Add Item"
+                       @click="addNonSemanticItem(false)">
           <f7-icon ios="material:label_outline" md="material:label_outline" aurora="material:label_outline" />
         </f7-fab-button>
         <f7-fab-button fab-close label="Add Point" @click="addSemanticItem('Point')">
@@ -123,13 +179,20 @@
         <f7-fab-button fab-close label="Create Equipment from Thing" @click="addFromThing(true)">
           <f7-icon ios="f7:layers_fill" md="material:layers" aurora="f7:layers_fill" />
         </f7-fab-button>
-        <f7-fab-button v-show="!selectedItem || selectedItem.class.indexOf('Location') === 0" fab-close label="Add Location" @click="addSemanticItem('Location')">
+        <f7-fab-button v-show="!selectedItem || selectedItem.class.indexOf('Location') === 0"
+                       fab-close
+                       label="Add Location"
+                       @click="addSemanticItem('Location')">
           <f7-icon ios="f7:placemark_fill" md="material:place" aurora="f7:placemark_fill" />
         </f7-fab-button>
       </f7-fab-buttons>
     </f7-fab>
 
-    <f7-sheet class="model-details-sheet" :backdrop="false" :close-on-escape="true" :opened="detailsOpened" @sheet:closed="detailsOpened = false">
+    <f7-sheet class="model-details-sheet"
+              :backdrop="false"
+              :close-on-escape="true"
+              :opened="detailsOpened"
+              @sheet:closed="detailsOpened = false">
       <f7-page>
         <f7-toolbar tabbar bottom>
           <f7-link class="padding-left padding-right" :tab-link-active="detailsTab === 'state'" @click="detailsTab = 'state'">
@@ -152,7 +215,15 @@
         </f7-toolbar>
         <f7-block style="margin-bottom: 6rem" v-if="selectedItem">
           <item-state-preview v-if="detailsTab === 'state' && !newItem" :item="selectedItem.item" :context="context" />
-          <item-details v-if="detailsTab === 'item'" :model="selectedItem" :links="links" :items="items" @item-updated="update" @item-created="update" @item-removed="selectItem(null)" @cancel-create="selectItem(null)" :context="context" />
+          <item-details v-if="detailsTab === 'item'"
+                        :model="selectedItem"
+                        :links="links"
+                        :items="items"
+                        @item-updated="update"
+                        @item-created="update"
+                        @item-removed="selectItem(null)"
+                        @cancel-create="selectItem(null)"
+                        :context="context" />
           <metadata-menu v-if="detailsTab === 'meta'" :item="selectedItem.item" />
           <link-details v-if="detailsTab === 'links'" :item="selectedItem.item" :links="links" />
         </f7-block>

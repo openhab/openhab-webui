@@ -1,14 +1,16 @@
 <template>
   <f7-treeview class="semantics-treeview">
     <semantics-treeview-item v-for="(childTag, idx) in rootTags"
-                             :key="idx" :tag="childTag"
+                             :key="idx"
+                             :tag="childTag"
                              :semanticTags="semanticTags"
                              :expandedTags="expandedTags"
                              :showNames="showNames"
                              :showSynonyms="showSynonyms"
                              :canDragDrop="!!canDragDrop"
                              :picker="!!picker"
-                             @selected="tagSelected" :selectedTag="selectedTag" />
+                             @selected="tagSelected"
+                             :selectedTag="selectedTag" />
   </f7-treeview>
 </template>
 

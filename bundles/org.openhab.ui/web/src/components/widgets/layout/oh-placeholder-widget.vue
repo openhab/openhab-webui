@@ -1,6 +1,10 @@
 <template>
   <div class="placeholder-widget">
-    <f7-button class="button" icon-f7="plus" color="gray" :icon-size="50" outline
+    <f7-button class="button"
+               icon-f7="plus"
+               color="gray"
+               :icon-size="50"
+               outline
                @click="$emit('click')" />
   </div>
 </template>

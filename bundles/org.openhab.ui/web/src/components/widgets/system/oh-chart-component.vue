@@ -10,16 +10,23 @@
       class="oh-chart"
       @click="handleClick"
       :class="{ 'with-tabbar': context.tab, 'with-toolbar': context.analyzer }"
-      :theme="$f7.data.themeOptions.dark === 'dark' ? 'dark' : undefined" autoresize />
+      :theme="$f7.data.themeOptions.dark === 'dark' ? 'dark' : undefined"
+      autoresize />
     <f7-menu class="padding float-right" v-if="periodVisible">
       <f7-menu-item @click="earlierPeriod()" icon-f7="chevron_left" />
-      <f7-menu-item v-if="context.component.config.chartType" :text="fixedPeriodLabel" type="text" @click="pickFixedStartDate">
+      <f7-menu-item v-if="context.component.config.chartType"
+                    :text="fixedPeriodLabel"
+                    type="text"
+                    @click="pickFixedStartDate">
         <input ref="calendarInput" type="text" style="width: 40px; height: 0; visibility: hidden">
       </f7-menu-item>
       <f7-menu-item v-else dropdown :text="period">
         <f7-menu-dropdown right>
           <f7-menu-dropdown-item v-for="p in ['h', '2h', '4h', '12h', 'D', '2D', '3D', 'W', '2W', 'M', '2M', '4M', '6M', 'Y', '3Y', '5Y', '10Y']"
-                                 :key="p" @click="setPeriod(p)" href="#" :text="p" />
+                                 :key="p"
+                                 @click="setPeriod(p)"
+                                 href="#"
+                                 :text="p" />
         </f7-menu-dropdown>
       </f7-menu-item>
       <f7-menu-item @click="laterPeriod()" icon-f7="chevron_right" />

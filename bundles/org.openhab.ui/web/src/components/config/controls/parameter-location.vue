@@ -6,7 +6,8 @@
       :name="configDescription.name"
       :value="value"
       :placeholder="placeholder"
-      :required="configDescription.required" validate
+      :required="configDescription.required"
+      validate
       :clear-button="!configDescription.required"
       @input="(ev) => updateValue(ev.target.value)"
       type="text">

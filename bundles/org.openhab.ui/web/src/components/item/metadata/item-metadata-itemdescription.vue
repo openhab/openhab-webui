@@ -1,6 +1,10 @@
 <template>
   <div v-if="ready">
-    <config-sheet v-if="namespace === 'stateDescription'" :parameterGroups="[]" :parameters="stateDescriptionParameters" :configuration="metadata.config" :read-only="!editable" />
+    <config-sheet v-if="namespace === 'stateDescription'"
+                  :parameterGroups="[]"
+                  :parameters="stateDescriptionParameters"
+                  :configuration="metadata.config"
+                  :read-only="!editable" />
     <f7-list>
       <f7-list-input
         ref="input"
@@ -16,10 +20,18 @@
       </f7-block-footer>
     </f7-list>
     <p class="padding">
-      <f7-link v-if="namespace === 'stateDescription'" color="blue" external target="_blank" :href="docLink">
+      <f7-link v-if="namespace === 'stateDescription'"
+               color="blue"
+               external
+               target="_blank"
+               :href="docLink">
         State Description Documentation
       </f7-link>
-      <f7-link v-if="namespace === 'commandDescription'" color="blue" external target="_blank" :href="docLink">
+      <f7-link v-if="namespace === 'commandDescription'"
+               color="blue"
+               external
+               target="_blank"
+               :href="docLink">
         Command Description Documentation
       </f7-link>
     </p>

@@ -1,9 +1,15 @@
 <template>
-  <f7-popup ref="slotConfig" class="slotconfig-popup" @popup:open="ready = true" @popup:closed="widgetSlotConfigClosed">
+  <f7-popup ref="slotConfig"
+            class="slotconfig-popup"
+            @popup:open="ready = true"
+            @popup:closed="widgetSlotConfigClosed">
     <f7-page v-if="ready">
       <f7-navbar>
         <f7-nav-left>
-          <f7-link icon-ios="f7:arrow_left" icon-md="material:arrow_back" icon-aurora="f7:arrow_left" popup-close />
+          <f7-link icon-ios="f7:arrow_left"
+                   icon-md="material:arrow_back"
+                   icon-aurora="f7:arrow_left"
+                   popup-close />
         </f7-nav-left>
         <f7-nav-title>Edit {{ currentSlot }}</f7-nav-title>
         <f7-nav-right>
@@ -13,7 +19,11 @@
         </f7-nav-right>
       </f7-navbar>
       <f7-toolbar tabbar position="top">
-        <f7-link v-for="(slotComponent, idx) in slotConfig" :key="idx" @click="switchTab(idx)" :tab-link-active="currentTab === idx" class="tab-link">
+        <f7-link v-for="(slotComponent, idx) in slotConfig"
+                 :key="idx"
+                 @click="switchTab(idx)"
+                 :tab-link-active="currentTab === idx"
+                 class="tab-link">
           {{ idx }}
         </f7-link>
         <f7-link @click="addComponentToSlot" icon-f7="plus_filled" class="tab-link" />

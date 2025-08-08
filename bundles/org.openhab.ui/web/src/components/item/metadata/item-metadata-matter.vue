@@ -24,7 +24,10 @@
         </f7-list-item>
       </f7-list>
       <div v-if="parameters && parameters.length">
-        <config-sheet :parameterGroups="parametersGroups" :parameters="parameters" :configuration="metadata.config" :read-only="!editable" />
+        <config-sheet :parameterGroups="parametersGroups"
+                      :parameters="parameters"
+                      :configuration="metadata.config"
+                      :read-only="!editable" />
       </div>
       <f7-block class="padding-top no-padding no-margin"
                 v-if="shouldShowAttributeMapping">
@@ -90,7 +93,10 @@
         </f7-block-footer>
       </f7-block>
       <p class="padding">
-        <f7-link color="blue" external target="_blank" :href="`${$store.state.websiteUrl}/link/matter`">
+        <f7-link color="blue"
+                 external
+                 target="_blank"
+                 :href="`${$store.state.websiteUrl}/link/matter`">
           Matter integration documentation
         </f7-link>
       </p>

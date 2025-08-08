@@ -1,6 +1,9 @@
 <template>
-  <f7-link class="habot-speech-icon" v-if="supported"
-           :icon-f7="(listening && activity) ? 'mic_fill' : 'mic'" :icon-size="24" :icon-color="listening ? 'red' : 'gray'"
+  <f7-link class="habot-speech-icon"
+           v-if="supported"
+           :icon-f7="(listening && activity) ? 'mic_fill' : 'mic'"
+           :icon-size="24"
+           :icon-color="listening ? 'red' : 'gray'"
            @click="toggleSpeech" />
 </template>
 

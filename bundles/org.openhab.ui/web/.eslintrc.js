@@ -75,7 +75,10 @@ module.exports = {
     'vue/html-indent': 'error',
     'vue/html-quotes': 'error',
     'vue/html-self-closing': 'error',
-    'vue/max-attributes-per-line': 'off',
+    'vue/max-attributes-per-line': ["error", {
+        'singleline': 3,
+        'multiline' : 1
+    }],
     'vue/multiline-html-element-content-newline': 'error',
     'vue/multi-word-component-names': 'off',
     'vue/mustache-interpolation-spacing': 'error',

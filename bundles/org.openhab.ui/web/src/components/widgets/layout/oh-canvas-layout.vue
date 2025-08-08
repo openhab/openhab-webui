@@ -1,5 +1,9 @@
 <template>
-  <div ref="ohCanvasLayout" class="oh-canvas-layout disable-user-select" :class="context.editmode ? 'margin-top' : ''" @keydown="onKeyDown" @keyup="onKeyUp">
+  <div ref="ohCanvasLayout"
+       class="oh-canvas-layout disable-user-select"
+       :class="context.editmode ? 'margin-top' : ''"
+       @keydown="onKeyDown"
+       @keyup="onKeyUp">
     <f7-block v-if="context.editmode">
       <f7-menu class="configure-layout-menu">
         <f7-menu-item

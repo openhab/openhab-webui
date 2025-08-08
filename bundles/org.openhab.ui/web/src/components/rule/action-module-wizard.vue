@@ -34,11 +34,22 @@
   </f7-block>
   <f7-block class="no-margin no-padding" v-else-if="category === 'item'">
     <f7-list>
-      <f7-list-item radio :checked="itemEventType === 'command'" name="MediaEventType" title="send a command to" @click="updateItemEventType('command')" />
-      <f7-list-item radio :checked="itemEventType === 'update'" name="MediaEventType" title="update the state of" @click="updateItemEventType('update')" />
+      <f7-list-item radio
+                    :checked="itemEventType === 'command'"
+                    name="MediaEventType"
+                    title="send a command to"
+                    @click="updateItemEventType('command')" />
+      <f7-list-item radio
+                    :checked="itemEventType === 'update'"
+                    name="MediaEventType"
+                    title="update the state of"
+                    @click="updateItemEventType('update')" />
     </f7-list>
     <f7-list>
-      <item-picker :value="currentModule.configuration.itemName" title="Item" @input="(val) => $set(currentModule.configuration, 'itemName', val)" @itemSelected="(value) => { $set(this, 'currentItem', value); updateItemEventType('command') }" />
+      <item-picker :value="currentModule.configuration.itemName"
+                   title="Item"
+                   @input="(val) => $set(currentModule.configuration, 'itemName', val)"
+                   @itemSelected="(value) => { $set(this, 'currentItem', value); updateItemEventType('command') }" />
     </f7-list>
     <f7-list>
       <f7-list-input
@@ -57,8 +68,12 @@
         @blur="(evt) => $set(currentModule.configuration, 'state', evt.target.value)" />
     </f7-list>
     <f7-list v-if="itemEventType === 'command' && commandSuggestions.length">
-      <f7-list-item radio :checked="currentModule.configuration.command === suggestion.command" v-for="suggestion in commandSuggestions" :key="suggestion.command"
-                    :title="suggestion.label" @click="$set(currentModule.configuration, 'command', suggestion.command)" />
+      <f7-list-item radio
+                    :checked="currentModule.configuration.command === suggestion.command"
+                    v-for="suggestion in commandSuggestions"
+                    :key="suggestion.command"
+                    :title="suggestion.label"
+                    @click="$set(currentModule.configuration, 'command', suggestion.command)" />
     </f7-list>
     <!-- <f7-block v-if="itemEventType === 'command' && currentItem && (currentItem.type === 'Dimmer' || currentItem.type === 'Rollershutter' || (currentItem.type === 'Number' && currentItem.stateDescription && currentItem.stateDescription.minimum !== undefined))">
       <f7-range :value="currentModule.configuration.command" @range:changed="(val) => $set(currentModule.configuration, 'command', val)"
@@ -68,7 +83,10 @@
         :scale="true" :label="true" :scaleSubSteps="5" />
     </f7-block> -->
     <f7-list v-if="itemEventType === 'command' && currentItem && currentItem.type === 'Color'" media-list>
-      <f7-list-input media-item type="colorpicker" label="Pick a color" :color-picker-params="{
+      <f7-list-input media-item
+                     type="colorpicker"
+                     label="Pick a color"
+                     :color-picker-params="{
                        targetEl: '#color-picker-value',
                        targetElSetBackgroundColor: true,
                        openIn: 'auto',
@@ -80,7 +98,10 @@
                      }"
                      :value="commandToColor()"
                      @change="updateColorCommand">
-        <i slot="media" style="width: 32px; height: 32px" class="icon demo-list-icon" id="color-picker-value" />
+        <i slot="media"
+           style="width: 32px; height: 32px"
+           class="icon demo-list-icon"
+           id="color-picker-value" />
       </f7-list-input>
     </f7-list>
   </f7-block>
@@ -93,16 +114,26 @@
                     title="Design with Blockly"
                     text="A beginner-friendly way to build scripts visually by assembling blocks"
                     :footer="!isJsAvailable ? 'You need to install the JavaScript Scripting addon before you will be able to run' : undefined"
-                    link="" @click="scriptLanguagePicked('blockly')">
-        <img src="@/images/blockly.svg" height="32" width="32" slot="media">
+                    link=""
+                    @click="scriptLanguagePicked('blockly')">
+        <img src="@/images/blockly.svg"
+             height="32"
+             width="32"
+             slot="media">
       </f7-list-item>
     </f7-list>
     <f7-block-footer class="padding-horizontal margin-vertical">
       or choose the scripting language:
     </f7-block-footer>
     <f7-list media-list>
-      <f7-list-item media-item v-for="language in languages" :key="language.contentType"
-                    :title="language.name" :after="language.version" :footer="language.contentType" link="" @click="scriptLanguagePicked(language.contentType)">
+      <f7-list-item media-item
+                    v-for="language in languages"
+                    :key="language.contentType"
+                    :title="language.name"
+                    :after="language.version"
+                    :footer="language.contentType"
+                    link=""
+                    @click="scriptLanguagePicked(language.contentType)">
         <span slot="media" class="item-initial">{{ language.name[0] }}</span>
       </f7-list-item>
     </f7-list>
@@ -112,10 +143,19 @@
   </f7-block>
   <f7-block class="no-margin no-padding" v-else-if="category === 'rules'">
     <f7-list>
-      <f7-list-item radio :checked="rulesEventType === 'run'" name="rulesEventType" title="run" @click="updateRulesEventType('run')" />
-      <f7-list-item radio :checked="rulesEventType === 'enable'" name="rulesEventType" title="enable or disable" @click="updateRulesEventType('enable')" />
+      <f7-list-item radio
+                    :checked="rulesEventType === 'run'"
+                    name="rulesEventType"
+                    title="run"
+                    @click="updateRulesEventType('run')" />
+      <f7-list-item radio
+                    :checked="rulesEventType === 'enable'"
+                    name="rulesEventType"
+                    title="enable or disable"
+                    @click="updateRulesEventType('enable')" />
     </f7-list>
-    <config-sheet v-if="currentModuleType" :key="currentModule.id"
+    <config-sheet v-if="currentModuleType"
+                  :key="currentModule.id"
                   :parameterGroups="[]"
                   :parameters="currentModuleType.configDescriptions"
                   :configuration="currentModule.configuration"
@@ -123,10 +163,19 @@
   </f7-block>
   <f7-block class="no-margin no-padding" v-else-if="category === 'media'">
     <f7-list>
-      <f7-list-item radio :checked="mediaEventType === 'say'" name="MediaEventType" title="say something" @click="updateMediaEventType('say')" />
-      <f7-list-item radio :checked="mediaEventType === 'play'" name="MediaEventType" title="play an audio file" @click="updateMediaEventType('play')" />
+      <f7-list-item radio
+                    :checked="mediaEventType === 'say'"
+                    name="MediaEventType"
+                    title="say something"
+                    @click="updateMediaEventType('say')" />
+      <f7-list-item radio
+                    :checked="mediaEventType === 'play'"
+                    name="MediaEventType"
+                    title="play an audio file"
+                    @click="updateMediaEventType('play')" />
     </f7-list>
-    <config-sheet v-if="currentModuleType" :key="currentModule.id"
+    <config-sheet v-if="currentModuleType"
+                  :key="currentModule.id"
                   :parameterGroups="[]"
                   :parameters="currentModuleType.configDescriptions"
                   :configuration="currentModule.configuration"

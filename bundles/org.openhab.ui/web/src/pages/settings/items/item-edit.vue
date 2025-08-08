@@ -2,8 +2,14 @@
   <f7-page @page:afterin="onPageAfterIn">
     <f7-navbar :title="pageTitle + dirtyIndicator" :back-link="editable ? 'Cancel': 'Back'">
       <f7-nav-right v-show="ready">
-        <f7-link v-if="!editable" icon-f7="lock_fill" icon-only :tooltip="notEditableMsg" />
-        <f7-link v-else-if="$theme.md" icon-md="material:save" icon-only @click="save()" />
+        <f7-link v-if="!editable"
+                 icon-f7="lock_fill"
+                 icon-only
+                 :tooltip="notEditableMsg" />
+        <f7-link v-else-if="$theme.md"
+                 icon-md="material:save"
+                 icon-only
+                 @click="save()" />
         <f7-link v-else @click="save()">
           Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
         </f7-link>
@@ -27,20 +33,47 @@
             </div>
           </f7-col>
           <f7-col>
-            <item-form ref="itemForm" :item="item" :items="items" :createMode="createMode" />
+            <item-form ref="itemForm"
+                       :item="item"
+                       :items="items"
+                       :createMode="createMode" />
           </f7-col>
 
           <div class="flex-shrink-0 if-aurora display-flex justify-content-center">
-            <f7-button text="Create" v-if="createMode" style="width: 150px" class="margin-horizontal" color="blue" raised fill @click="save" />
-            <f7-button text="Save" v-else-if="editable" style="width: 150px" class="margin-horizontal" color="blue" raised fill @click="save" />
+            <f7-button text="Create"
+                       v-if="createMode"
+                       style="width: 150px"
+                       class="margin-horizontal"
+                       color="blue"
+                       raised
+                       fill
+                       @click="save" />
+            <f7-button text="Save"
+                       v-else-if="editable"
+                       style="width: 150px"
+                       class="margin-horizontal"
+                       color="blue"
+                       raised
+                       fill
+                       @click="save" />
             <f7-button :text="editable ? 'Cancel' : 'Back'" color="blue" @click="$f7router.back()" />
           </div>
         </f7-block>
       </f7-tab>
 
       <f7-tab id="code" @tab:show="() => { this.currentTab = 'code'; toYaml() }" :tab-active="currentTab === 'code'">
-        <f7-icon v-if="!editable" f7="lock" class="float-right margin" style="opacity:0.5; z-index: 4000; user-select: none;" size="50" color="gray" :tooltip="notEditableMsg" />
-        <editor class="item-code-editor" mode="application/vnd.openhab.item+yaml" :value="itemYaml" @input="onEditorInput" :readOnly="!editable" />
+        <f7-icon v-if="!editable"
+                 f7="lock"
+                 class="float-right margin"
+                 style="opacity:0.5; z-index: 4000; user-select: none;"
+                 size="50"
+                 color="gray"
+                 :tooltip="notEditableMsg" />
+        <editor class="item-code-editor"
+                mode="application/vnd.openhab.item+yaml"
+                :value="itemYaml"
+                @input="onEditorInput"
+                :readOnly="!editable" />
       </f7-tab>
     </f7-tabs>
   </f7-page>

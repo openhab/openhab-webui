@@ -3,7 +3,10 @@
     <f7-page>
       <f7-navbar>
         <f7-nav-left>
-          <f7-link icon-ios="f7:arrow_left" icon-md="material:arrow_back" icon-aurora="f7:arrow_left" popup-close />
+          <f7-link icon-ios="f7:arrow_left"
+                   icon-md="material:arrow_back"
+                   icon-aurora="f7:arrow_left"
+                   popup-close />
         </f7-nav-left>
         <f7-nav-title>
           Configure {{ filterType.label.toLowerCase() }} filter
@@ -17,18 +20,27 @@
       <f7-block class="no-margin no-padding">
         <f7-col>
           <f7-list>
-            <f7-list-input ref="name" label="Name" type="text" placeholder="Required" :value="currentFilter.name"
+            <f7-list-input ref="name"
+                           label="Name"
+                           type="text"
+                           placeholder="Required"
+                           :value="currentFilter.name"
                            @input="currentFilter.name = $event.target.value"
                            :disabled="!createMode"
                            :info="(createMode) ? 'Note: cannot be changed after the creation' : ''"
-                           required validate pattern="[A-Za-z0-9_]+" error-message="Required. A-Z,a-z only" />
+                           required
+                           validate
+                           pattern="[A-Za-z0-9_]+"
+                           error-message="Required. A-Z,a-z only" />
           </f7-list>
         </f7-col>
         <f7-col>
           <f7-block-title medium>
             Configuration
           </f7-block-title>
-          <config-sheet ref="config-sheet" :parameter-groups="[]" :parameters="filterConfigDescriptionParameters"
+          <config-sheet ref="config-sheet"
+                        :parameter-groups="[]"
+                        :parameters="filterConfigDescriptionParameters"
                         :configuration="currentFilter" />
         </f7-col>
       </f7-block>

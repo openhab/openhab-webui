@@ -1,7 +1,12 @@
 <template>
   <f7-page class="other-apps">
     <f7-navbar color="blue" :title="$t('home.otherApps')" />
-    <f7-link class="app-link" v-for="app in apps" :key="app.url" :href="app.url" external target="_blank">
+    <f7-link class="app-link"
+             v-for="app in apps"
+             :key="app.url"
+             :href="app.url"
+             external
+             target="_blank">
       <f7-card class="app-card">
         <f7-card-content :padding="false">
           <img :src="app.imageUrl" width="100%">

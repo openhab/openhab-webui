@@ -2,7 +2,10 @@
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="chart-editor">
     <f7-navbar :title="(createMode ? 'Create chart page' : page.config.label) + dirtyIndicator" back-link="Back" no-hairline>
       <f7-nav-right>
-        <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only />
+        <f7-link @click="save()"
+                 v-if="$theme.md"
+                 icon-md="material:save"
+                 icon-only />
         <f7-link @click="save()" v-if="!$theme.md">
           Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
         </f7-link>
@@ -22,7 +25,10 @@
       </div>
     </f7-toolbar>
     <f7-tabs class="chart-editor-tabs">
-      <f7-tab id="design" class="chart-editor-design-tab" @tab:show="() => this.currentTab = 'design'" :tab-active="currentTab === 'design'">
+      <f7-tab id="design"
+              class="chart-editor-design-tab"
+              @tab:show="() => this.currentTab = 'design'"
+              :tab-active="currentTab === 'design'">
         <f7-block v-if="!ready" class="text-align-center">
           <f7-preloader />
           <div>Loading...</div>
@@ -38,14 +44,25 @@
 
         <chart-designer class="chart-designer" v-if="ready && !previewMode && currentTab === 'design'" :context="context" />
 
-        <oh-chart-page class="chart-page" v-else-if="ready && previewMode && currentTab === 'design'" :context="context" :key="pageKey" />
+        <oh-chart-page class="chart-page"
+                       v-else-if="ready && previewMode && currentTab === 'design'"
+                       :context="context"
+                       :key="pageKey" />
       </f7-tab>
 
       <f7-tab id="code" @tab:show="() => { this.currentTab = 'code' }" :tab-active="currentTab === 'code'">
-        <editor v-if="currentTab === 'code'" :style="{ opacity: previewMode ? '0' : '' }" class="page-code-editor" mode="application/vnd.openhab.uicomponent+yaml;type=chart" :value="pageYaml" @input="onEditorInput" />
+        <editor v-if="currentTab === 'code'"
+                :style="{ opacity: previewMode ? '0' : '' }"
+                class="page-code-editor"
+                mode="application/vnd.openhab.uicomponent+yaml;type=chart"
+                :value="pageYaml"
+                @input="onEditorInput" />
         <!-- <pre v-show="!previewMode" class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
 
-        <oh-chart-page class="chart-page" v-if="ready && previewMode" :context="context" :key="pageKey" />
+        <oh-chart-page class="chart-page"
+                       v-if="ready && previewMode"
+                       :context="context"
+                       :key="pageKey" />
       </f7-tab>
     </f7-tabs>
   </f7-page>

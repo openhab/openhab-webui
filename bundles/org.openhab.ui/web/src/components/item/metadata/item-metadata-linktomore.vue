@@ -12,7 +12,10 @@
       <f7-block-footer class="param-description" slot="after-list">
         <small>
           Enter a valid URL, e.g. <code>https://www.openhab.org</code>, <code>/locations</code> or <code>/basicui/app?w=0004&sitemap=mysitemap</code>, to open when you long-press a tile in Android Device Control.
-          <f7-link external color="blue" target="_blank" :href="$store.state.websiteUrl + '/docs/apps/android.html#device-controls'">Read the docs.</f7-link>
+          <f7-link external
+                   color="blue"
+                   target="_blank"
+                   :href="$store.state.websiteUrl + '/docs/apps/android.html#device-controls'">Read the docs.</f7-link>
         </small>
       </f7-block-footer>
     </f7-list>

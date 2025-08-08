@@ -11,28 +11,43 @@
         <br>You can try out changes here, but you cannot save them.</b>
     </f7-block-header>
     <f7-list v-if="defaultComponent.component">
-      <f7-list-item :title="'Widget'" smart-select :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: true, scrollToSelectedItem: true }" ref="widgets">
+      <f7-list-item :title="'Widget'"
+                    smart-select
+                    :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: true, scrollToSelectedItem: true }"
+                    ref="widgets">
         <select name="widgets" @change="updateComponent">
           <option value="">
             Default ({{ defaultComponent.component }})
           </option>
           <optgroup label="Standard Library (List)" v-if="namespace === 'listWidget'">
-            <option v-for="widget in standardListWidgets" :key="widget.name" :value="widget.name" :selected="metadata.value === widget.name">
+            <option v-for="widget in standardListWidgets"
+                    :key="widget.name"
+                    :value="widget.name"
+                    :selected="metadata.value === widget.name">
               {{ widget.label }}
             </option>
           </optgroup>
           <optgroup label="Standard Library (Cell)" v-else-if="namespace === 'cellWidget'">
-            <option v-for="widget in standardCellWidgets" :key="widget.name" :value="widget.name" :selected="metadata.value === widget.name">
+            <option v-for="widget in standardCellWidgets"
+                    :key="widget.name"
+                    :value="widget.name"
+                    :selected="metadata.value === widget.name">
               {{ widget.label }}
             </option>
           </optgroup>
           <optgroup label="Standard Library" v-else>
-            <option v-for="widget in standardWidgets" :key="widget.name" :value="widget.name" :selected="metadata.value === widget.name">
+            <option v-for="widget in standardWidgets"
+                    :key="widget.name"
+                    :value="widget.name"
+                    :selected="metadata.value === widget.name">
               {{ widget.label }}
             </option>
           </optgroup>
           <optgroup v-if="$store.getters.widgets.length" label="Personal Widgets">
-            <option v-for="widget in personalWidgets" :value="'widget:' + widget.uid" :key="widget.uid" :selected="metadata.value.replace('widget:', '') === widget.uid">
+            <option v-for="widget in personalWidgets"
+                    :value="'widget:' + widget.uid"
+                    :key="widget.uid"
+                    :selected="metadata.value.replace('widget:', '') === widget.uid">
               {{ widget.uid }}
             </option>
           </optgroup>
@@ -50,7 +65,11 @@
       <f7-block-footer v-if="currentComponent.component && currentComponent.component.indexOf('widget:') === 0" class="padding-horizontal margin-bottom">
         Make sure the personal widget is of the expected type (cell, list item or standalone).
       </f7-block-footer>
-      <config-sheet :parameterGroups="configDescriptions.parameterGroups" :parameters="configDescriptions.parameters" :configuration="metadata.config" @updated="widgetConfigUpdated" set-empty-config-as-null="true" />
+      <config-sheet :parameterGroups="configDescriptions.parameterGroups"
+                    :parameters="configDescriptions.parameters"
+                    :configuration="metadata.config"
+                    @updated="widgetConfigUpdated"
+                    set-empty-config-as-null="true" />
     </div>
   </div>
 </template>
