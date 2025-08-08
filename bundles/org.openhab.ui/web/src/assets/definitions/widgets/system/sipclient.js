@@ -6,6 +6,7 @@ export default () => [
   pt('domain', 'SIP Domain', '').r(),
   pt('username', 'SIP Username', ''),
   pt('password', 'SIP Password', ''),
+  pt('authorizationUser', 'Authorization User', 'User name used for SIP authentication, only required if different from the SIP username.'),
   pb('enableTones', 'Enable tones', 'Enable ringback and ring tone. Not recommended for mobile browsers, might cause issues. Ring tone might only work after interaction with the webpage.').a(),
   pt('phonebook', 'Phonebook', 'Single SIP Address (phone number) for a single call target or a comma-separated list of <code>phoneNumber=name</code> for multiple call targets. Used as well to display a name instead of the number for incoming calls.').r(),
   pt('dtmfString', 'DTMF String', 'Display a button to send a preset DTMF string while in calls for remote doors, gates, etc...'),
