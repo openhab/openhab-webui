@@ -24,7 +24,30 @@
             Pinned Objects
           </f7-block-title>
         </f7-block>
-        <f7-block class="no-margin no-padding" v-if="!pinnedObjects.items.length && !pinnedObjects.things.length && !pinnedObjects.rules.length && !pinnedObjects.scenes.length && !pinnedObjects.scripts.length && !pinnedObjects.pages.length && !pinnedObjects.widgets.length && !pinnedObjects.transformations.length">
+        <f7-list v-if="Object.keys(pinCollections).length > 0 || pinsExist">
+          <f7-list-item accordion-item title="Saved Pins" ref="pinCollectionsAccordion" @accordion:opened="onPinCollectionsAccordionOpened">
+            <f7-accordion-content>
+              <f7-list>
+                <f7-list-input v-if="pinsExist" type="text" :input="false" clear-button>
+                  <input slot="input" type="text" placeholder="Save current pins as" v-model="newCollectionName" @keyup="savePinCollection">
+                </f7-list-input>
+              </f7-list>
+              <f7-list v-if="Object.keys(pinCollections).length > 0" class="pin-collections">
+                <f7-list-item group-title title="Saved Pin Collections" class="padding-vertical" />
+                <f7-list-item v-for="collectionName in sortedCollectionNames"
+                              :ref="collectionName === currentPinCollection ? 'currentPinCollectionItem' : null"
+                              :key="collectionName"
+                              :title="collectionName"
+                              :link="true"
+                              :class="{ 'current-pin-collection': collectionName === currentPinCollection }"
+                              @click="loadPinCollection(collectionName)">
+                  <f7-link slot="after" color="red" icon-f7="trash" tooltip="Delete Collection" @click.stop="$delete(pinCollections, collectionName)" />
+                </f7-list-item>
+              </f7-list>
+            </f7-accordion-content>
+          </f7-list-item>
+        </f7-list>
+        <f7-block class="no-margin no-padding" v-if="!pinsExist">
           <p class="padding-horizontal">
             Use the search box above or the button below to temporarily pin objects here for quick access.
           </p>
@@ -606,6 +629,11 @@
 
   .developer-sidebar-content
     margin-top 1rem
+    .pin-collections
+      max-height 11rem /* Make the last item partially show to hint that there are more items */
+      overflow-y auto
+      .current-pin-collection
+        background-color rgba(33,150,243, 0.2) /* How do we use the theme color (blue) here without hardcoding? */
 
   &.page
     background #e7e7e7 !important
@@ -631,6 +659,7 @@ import ClipboardIcon from '@/components/util/clipboard-icon.vue'
 
 import RuleStatus from '@/components/rule/rule-status-mixin'
 import ThingStatus from '@/components/thing/thing-status-mixin'
+import cloneDeep from 'lodash/cloneDeep'
 
 export default {
   mixins: [RuleStatus, ThingStatus],
@@ -645,6 +674,15 @@ export default {
   watch: {
     searchFor (val) {
       if (val) this.$refs.searchbar.search(val)
+    },
+    pinnedObjects: {
+      handler (val) {
+        this.pinsDirty = true
+      },
+      deep: true
+    },
+    pinCollections (val) {
+      localStorage.setItem('pinCollections', JSON.stringify(val))
     }
   },
   data () {
@@ -680,6 +718,10 @@ export default {
         transformations: [],
         persistenceConfigs: []
       },
+      pinCollections: JSON.parse(localStorage.getItem('pinCollections') || '{}'),
+      currentPinCollection: '',
+      pinsDirty: false,
+      newCollectionName: '',
       sseEvents: [],
       openedItem: null,
       pageTypes: [
@@ -767,6 +809,12 @@ export default {
       return {
         store: this.$store.getters.trackedItems
       }
+    },
+    sortedCollectionNames () {
+      return Object.keys(this.pinCollections).sort((a, b) => a.localeCompare(b))
+    },
+    pinsExist () {
+      return Object.values(this.pinnedObjects).some((obj) => obj.length > 0)
     }
   },
   mounted () {
@@ -945,6 +993,95 @@ export default {
     },
     unpinAll (type) {
       this.$set(this.pinnedObjects, type, [])
+    },
+    onPinCollectionsAccordionOpened () {
+      this.$nextTick(() => {
+        const el = this.$refs.currentPinCollectionItem
+        if (el && el[0]) {
+          el[0].$el.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+        }
+      })
+    },
+    savePinCollection (evt) {
+      if (evt.key !== 'Enter') return
+      console.log('Adding pin collection', this.newCollectionName)
+      this.newCollectionName = this.newCollectionName.trim()
+      if (!this.newCollectionName) return
+
+      const saveCurrentCollection = () => {
+        this.$set(this.pinCollections, this.newCollectionName, cloneDeep(this.pinnedObjects))
+        this.pinsDirty = false
+        this.currentPinCollection = this.newCollectionName
+        this.$f7.accordion.close(this.$refs.pinCollectionsAccordion.$el)
+        this.newCollectionName = ''
+      }
+
+      if (this.pinCollections[this.newCollectionName]) {
+        this.$f7.dialog.confirm('Collection with this name already exists, do you want to overwrite it?', () => {
+          saveCurrentCollection()
+        })
+      } else {
+        saveCurrentCollection()
+      }
+    },
+    loadPinCollection (name) {
+      if (!this.pinCollections[name]) return
+
+      const load = () => {
+        this.$set(this, 'pinnedObjects', cloneDeep(this.pinCollections[name]))
+        this.$f7.accordion.close(this.$refs.pinCollectionsAccordion.$el)
+        this.currentPinCollection = name
+        this.$nextTick(() => {
+          this.pinsDirty = false
+        })
+      }
+
+      const saveCurrentCollection = () => {
+        this.$set(this.pinCollections, this.currentPinCollection, cloneDeep(this.pinnedObjects))
+        this.pinsDirty = false
+        this.$f7.accordion.close(this.$refs.pinCollectionsAccordion.$el)
+      }
+
+      if (this.pinsDirty && this.pinsExist) {
+        if (this.currentPinCollection === name) {
+          this.$f7.dialog.confirm(`Save changes to '${this.currentPinCollection}' collection?`, () => {
+            saveCurrentCollection()
+            load()
+          }, () => {
+            load()
+          })
+          return
+        }
+
+        this.$f7.dialog.create({
+          title: 'Unsaved Changes',
+          text: `Before switching to a different collection, would you like to save the changes to '${this.currentPinCollection}' collection?`,
+          buttons: [
+            {
+              text: 'Cancel',
+              color: 'gray'
+            },
+            {
+              text: 'Save',
+              color: 'blue',
+              onClick: () => {
+                saveCurrentCollection()
+                load()
+              }
+            },
+            {
+              text: 'Discard',
+              color: 'red',
+              onClick: () => {
+                load()
+              }
+            }
+          ],
+          destroyOnClose: true
+        }).open()
+      } else {
+        load()
+      }
     },
     getPageType (page) {
       return this.pageTypes.find(t => t.componentType === page.component)
