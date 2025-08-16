@@ -40,6 +40,7 @@ import org.openhab.core.io.rest.LocaleService;
 import org.openhab.core.io.rest.RESTConstants;
 import org.openhab.core.io.rest.RESTResource;
 import org.openhab.core.voice.VoiceManager;
+import org.openhab.core.voice.text.HumanLanguageInterpreter;
 import org.openhab.core.voice.text.InterpretationException;
 import org.openhab.ui.habot.card.Card;
 import org.openhab.ui.habot.card.internal.CardRegistry;
@@ -92,8 +93,6 @@ public class HABotResource implements RESTResource {
     /** The URI path to this resource */
     public static final String PATH_HABOT = "habot";
 
-    private static final String OPENNLP_HLI = "opennlp";
-
     private final Logger logger = LoggerFactory.getLogger(HABotResource.class);
 
     private final CardRegistry cardRegistry;
@@ -143,16 +142,48 @@ public class HABotResource implements RESTResource {
     @Operation(summary = "Send a query to HABot to interpret.", responses = {
             @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ChatReply.class))),
             @ApiResponse(responseCode = "500", description = "An interpretation error occurred") })
-    public Response chat(@Parameter(description = "human language query", required = true) String query)
+    public Response chat(@Parameter(description = "human language query", required = true) String query,
+            @QueryParam("hli") @Parameter(description = "HLI to use (optional, defaults to user's configured default)") String requestedHli)
             throws Exception {
         final Locale locale = localeService.getLocale(null);
 
-        // interpret
-        OpenNLPInterpreter hli = (OpenNLPInterpreter) voiceManager.getHLI(OPENNLP_HLI);
-        if (hli == null) {
-            throw new InterpretationException("The OpenNLP interpreter is not available");
+        HumanLanguageInterpreter hli;
+
+        // If a specific HLI is requested, try to use it
+        if (requestedHli != null && !requestedHli.trim().isEmpty()) {
+            hli = voiceManager.getHLI(requestedHli.trim());
+            if (hli == null) {
+                logger.warn("Requested HLI '{}' is not available, falling back to default", requestedHli);
+                hli = voiceManager.getHLI(); // Get user's configured default or first available
+            } else {
+                logger.debug("Using requested HLI: {}", requestedHli);
+            }
+        } else {
+            // Use the user's configured default HLI or first available
+            hli = voiceManager.getHLI();
+            logger.debug("Using default HLI: {}", hli != null ? hli.getId() : "none");
         }
-        ChatReply reply = hli.reply(locale, query);
+
+        if (hli == null) {
+            throw new InterpretationException("No Human Language Interpreter is available");
+        }
+
+        ChatReply reply = new ChatReply(locale, query);
+
+        try {
+            // Check if it's the special OpenNLP implementation with enhanced features
+            if (hli instanceof OpenNLPInterpreter opennlp) {
+                logger.debug("Using OpenNLP interpreter with enhanced features");
+                reply = opennlp.reply(locale, query);
+            } else {
+                logger.debug("Using standard HLI: {} ({})", hli.getId(), hli.getLabel(locale));
+                String answer = hli.interpret(locale, query);
+                reply.setAnswer(answer);
+            }
+        } catch (InterpretationException e) {
+            logger.error("Interpretation failed with HLI '{}': {}", hli.getId(), e.getMessage());
+            throw e;
+        }
 
         return Response.ok(reply).build();
     }
