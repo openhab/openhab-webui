@@ -1,8 +1,9 @@
 import * as dayjs from 'dayjs'
 import IsoWeek from 'dayjs/plugin/isoWeek'
 dayjs.extend(IsoWeek)
+import ComponentId from '@/components/widgets/component-id'
 import aggregate from './aggregators'
-import ComponentId from '../../component-id'
+import applyMarkers from '@/components/widgets/chart/series/markers'
 
 function dimensionFromDate (d, dimension, invert) {
   switch (dimension) {
@@ -99,6 +100,8 @@ export default {
     series.data = data
 
     // other things
+    applyMarkers(series)
+
     return series
   }
 }

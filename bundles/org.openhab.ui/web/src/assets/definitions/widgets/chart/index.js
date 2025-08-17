@@ -63,7 +63,7 @@ const yAxisIndexParameter = pn('yAxisIndex', 'Y Axis Index', 'The index of the Y
 const persistenceServiceParameter = pt('service', 'Persistence Service', 'The identifier of the persistence service to retrieve the data from. Leave blank to the use the default.')
   .c('persistenceService').a()
 
-const markersParameter = pt('markers', 'Markers', 'The markers to display for the series').o(markerOptions, true, true)
+const markersParameter = (withTime) => pt('markers', 'Markers', 'The markers to display for the series').o(markerOptions(withTime), true, true)
 
 const boundaryParameter = pb('noBoundary', 'Don\'t Include Boundary', 'Do not get one value before and after the requested period and move them to the start and end of the period').a()
 
@@ -295,7 +295,7 @@ export default {
       parameterGroups: [componentRelationsGroup, actionGroup()],
       parameters: [
         ...seriesParameters,
-        markersParameter,
+        markersParameter(true),
         seriesTypeParameter('line', 'bar', 'heatmap', 'scatter'),
         xAxisIndexParameter,
         yAxisIndexParameter,
@@ -336,6 +336,7 @@ export default {
       parameterGroups: [componentRelationsGroup, actionGroup()],
       parameters: [
         ...seriesParameters,
+        markersParameter(),
         seriesTypeParameter('line', 'bar', 'heatmap', 'scatter'),
         {
           name: 'dimension1',
