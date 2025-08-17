@@ -2,7 +2,10 @@
   <f7-page @page:afterin="onPageAfterIn" class="thing-add-page">
     <f7-navbar :title="(ready) ? 'New ' + thingType.label : 'New Thing'" back-link="Back">
       <f7-nav-right class="if-not-aurora">
-        <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only />
+        <f7-link @click="save()"
+                 v-if="$theme.md"
+                 icon-md="material:save"
+                 icon-only />
         <f7-link @click="save()" v-if="!$theme.md">
           Add
         </f7-link>
@@ -11,7 +14,11 @@
 
     <f7-block v-if="ready" class="block-narrow">
       <f7-col>
-        <thing-general-settings :thing="thing" :thing-type="thingType" :createMode="true" :things="things" :ready="true" />
+        <thing-general-settings :thing="thing"
+                                :thing-type="thingType"
+                                :createMode="true"
+                                :things="things"
+                                :ready="true" />
         <f7-block-title medium>
           {{ thingType.label }}
         </f7-block-title>
@@ -20,7 +27,10 @@
     </f7-block>
     <!-- skeletons for not ready -->
     <f7-block v-else class="block-narrow skeleton-text skeleton-effect-blink">
-      <thing-general-settings :thing="thing" :thing-type="thingType" :createMode="true" :ready="false" />
+      <thing-general-settings :thing="thing"
+                              :thing-type="thingType"
+                              :createMode="true"
+                              :ready="false" />
       <f7-col>
         <f7-block-title>____ _______</f7-block-title>
         <div class="margin">
@@ -38,7 +48,13 @@
 
     <div v-if="ready" class="if-aurora display-flex justify-content-center margin">
       <div class="flex-shrink-0">
-        <f7-button class="padding-left padding-right" style="width: 150px" color="blue" large raised fill @click="save">
+        <f7-button class="padding-left padding-right"
+                   style="width: 150px"
+                   color="blue"
+                   large
+                   raised
+                   fill
+                   @click="save">
           Create Thing
         </f7-button>
       </div>

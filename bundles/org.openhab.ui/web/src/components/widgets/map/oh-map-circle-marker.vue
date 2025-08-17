@@ -1,5 +1,12 @@
 <template>
-  <l-circle ref="marker" v-if="center && radius" :key="markerKey" :lat-lng="center" :radius="radius" v-bind="markerConfig" @update:latLng="$emit('update', $event)" @click="performAction">
+  <l-circle ref="marker"
+            v-if="center && radius"
+            :key="markerKey"
+            :lat-lng="center"
+            :radius="radius"
+            v-bind="markerConfig"
+            @update:latLng="$emit('update', $event)"
+            @click="performAction">
     <l-tooltip v-if="config.label">
       {{ config.label }}
     </l-tooltip>

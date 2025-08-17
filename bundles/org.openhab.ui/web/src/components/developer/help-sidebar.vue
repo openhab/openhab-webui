@@ -9,13 +9,24 @@
         </f7-block>
         <f7-block class="no-margin no-padding">
           <f7-list accordion-list>
-            <f7-list-item v-for="instruct in qstart" :key="instruct.title" accordion-item :accordion-item-opened="instruct.opened" :title="instruct.title">
+            <f7-list-item v-for="instruct in qstart"
+                          :key="instruct.title"
+                          accordion-item
+                          :accordion-item-opened="instruct.opened"
+                          :title="instruct.title">
               <f7-accordion-content>
                 <f7-list media-list>
-                  <f7-list-item v-for="step in instruct.steps" :key="step.title" :link="step.link" :title="step.title">
+                  <f7-list-item v-for="step in instruct.steps"
+                                :key="step.title"
+                                :link="step.link"
+                                :title="step.title">
                     <div class="item-text" v-html="step.text" />
                   </f7-list-item>
-                  <f7-list-button v-if="instruct.button" :external="true" :title="instruct.button.title" :href="$store.state.websiteUrl + '/' + instruct.button.link" target="_blank" />
+                  <f7-list-button v-if="instruct.button"
+                                  :external="true"
+                                  :title="instruct.button.title"
+                                  :href="$store.state.websiteUrl + '/' + instruct.button.link"
+                                  target="_blank" />
                 </f7-list>
               </f7-accordion-content>
             </f7-list-item>
@@ -31,7 +42,11 @@
         </f7-block>
         <f7-block class="no-margin no-padding">
           <f7-list accordion-list>
-            <f7-list-item class="faq-title" accordion-item v-for="faq in faqs" :key="faq.title" :title="faq.title">
+            <f7-list-item class="faq-title"
+                          accordion-item
+                          v-for="faq in faqs"
+                          :key="faq.title"
+                          :title="faq.title">
               <f7-accordion-content>
                 <f7-block>
                   <p v-if="faq.goto">
@@ -60,7 +75,13 @@
         </f7-block>
         <f7-block class="no-margin no-padding">
           <f7-list media-list>
-            <f7-list-item v-for="addon in addons" :key="addon.uid" :link="addon.link.replace('https://www.openhab.org', $store.state.websiteUrl)" :external="true" target="_blank" :title="addon.label.replaceAll(/Binding|Transformation|Persistence/gi,'')" :text="addon.type" />
+            <f7-list-item v-for="addon in addons"
+                          :key="addon.uid"
+                          :link="addon.link.replace('https://www.openhab.org', $store.state.websiteUrl)"
+                          :external="true"
+                          target="_blank"
+                          :title="addon.label.replaceAll(/Binding|Transformation|Persistence/gi,'')"
+                          :text="addon.type" />
           </f7-list>
         </f7-block>
       </div>
@@ -82,10 +103,30 @@
         <f7-block>
           You can find many more details and help at these resources:
           <ul>
-            <li><f7-link external target="_blank" href="https://www.openhab.org/" v-t="'about.homePage'" /></li>
-            <li><f7-link external target="_blank" :href="`${$store.state.websiteUrl}/link/docs`" v-t="'about.documentation'" /></li>
-            <li><f7-link external :href="`${$store.state.websiteUrl}/link/tutorial`" target="_blank" v-t="'home.overview.button.tutorial'" /></li>
-            <li><f7-link external target="_blank" href="https://community.openhab.org/" v-t="'about.communityForum'" /></li>
+            <li>
+              <f7-link external
+                       target="_blank"
+                       href="https://www.openhab.org/"
+                       v-t="'about.homePage'" />
+            </li>
+            <li>
+              <f7-link external
+                       target="_blank"
+                       :href="`${$store.state.websiteUrl}/link/docs`"
+                       v-t="'about.documentation'" />
+            </li>
+            <li>
+              <f7-link external
+                       :href="`${$store.state.websiteUrl}/link/tutorial`"
+                       target="_blank"
+                       v-t="'home.overview.button.tutorial'" />
+            </li>
+            <li>
+              <f7-link external
+                       target="_blank"
+                       href="https://community.openhab.org/"
+                       v-t="'about.communityForum'" />
+            </li>
           </ul>
         </f7-block>
       </div>

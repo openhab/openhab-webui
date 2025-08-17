@@ -23,29 +23,62 @@
       </ul>
     </div>
   </div>
-  <f7-list media-list v-else inset class="margin-left searchbar-ignore">
+  <f7-list media-list
+           v-else
+           inset
+           class="margin-left searchbar-ignore">
     <f7-list-group v-if="links">
       <f7-list-item
-        v-for="link in links" :key="link.itemName"
-        media-item link
+        v-for="link in links"
+        :key="link.itemName"
+        media-item
+        link
         class="channellist-linkeditem searchbar-ignore"
         @click="configureLink(link)"
         :title="(link.item.label) ? link.item.label : link.item.name"
         :footer="(link.item.label) ? link.item.name : '\xa0'"
         :subtitle="getItemTypeAndMetaLabel(link.item)"
         :after="context.store[link.item.name] ? context.store[link.item.name].displayState || context.store[link.item.name].state : link.item.state">
-        <oh-icon v-if="link.item.category" slot="media" :icon="link.item.category" :state="link.item.type === 'Image' ? null : (context.store[link.item.name].state || link.item.state)" height="32" width="32" />
+        <oh-icon v-if="link.item.category"
+                 slot="media"
+                 :icon="link.item.category"
+                 :state="link.item.type === 'Image' ? null : (context.store[link.item.name].state || link.item.state)"
+                 height="32"
+                 width="32" />
         <span v-else slot="media" class="item-initial">{{ link.item.name[0] }}</span>
-        <f7-icon v-if="!link.item.editable" slot="after-title" f7="lock_fill" size="1rem" color="gray" />
+        <f7-icon v-if="!link.item.editable"
+                 slot="after-title"
+                 f7="lock_fill"
+                 size="1rem"
+                 color="gray" />
         <!-- <f7-button slot="after-start" color="blue" icon-f7="compose" icon-size="24px" :link="`${item.name}/edit`"></f7-button> -->
       </f7-list-item>
     </f7-list-group>
-    <f7-list-item class="searchbar-ignore" link color="blue" subtitle="Add Link to Item..." @click="addLink()">
-      <f7-icon slot="media" color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
+    <f7-list-item class="searchbar-ignore"
+                  link
+                  color="blue"
+                  subtitle="Add Link to Item..."
+                  @click="addLink()">
+      <f7-icon slot="media"
+               color="green"
+               aurora="f7:plus_circle_fill"
+               ios="f7:plus_circle_fill"
+               md="material:control_point" />
     </f7-list-item>
-    <f7-list-button class="searchbar-ignore" color="blue" :title="thing.editable && (channelType.parameterGroups.length || channelType.parameters.length) ? 'Configure Channel' : 'Channel Details'" @click="configureChannel()" />
-    <f7-list-button class="searchbar-ignore" v-if="extensible && thing.editable" color="blue" title="Duplicate Channel" @click="duplicateChannel()" />
-    <f7-list-button class="searchbar-ignore" v-if="extensible && thing.editable" color="red" title="Remove Channel" @click="removeChannel()" />
+    <f7-list-button class="searchbar-ignore"
+                    color="blue"
+                    :title="thing.editable && (channelType.parameterGroups.length || channelType.parameters.length) ? 'Configure Channel' : 'Channel Details'"
+                    @click="configureChannel()" />
+    <f7-list-button class="searchbar-ignore"
+                    v-if="extensible && thing.editable"
+                    color="blue"
+                    title="Duplicate Channel"
+                    @click="duplicateChannel()" />
+    <f7-list-button class="searchbar-ignore"
+                    v-if="extensible && thing.editable"
+                    color="red"
+                    title="Remove Channel"
+                    @click="removeChannel()" />
   </f7-list>
 </template>
 

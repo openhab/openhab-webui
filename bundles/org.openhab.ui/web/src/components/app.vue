@@ -1,14 +1,27 @@
 <template>
-  <f7-app v-if="init" :style="{ visibility: (($store.getters.user || $store.getters.page('overview')) || communicationFailureMsg) ? '' : 'hidden' }" :params="f7params" :class="{ 'theme-dark': themeOptions.dark === 'dark', 'theme-filled': themeOptions.bars === 'filled' }">
+  <f7-app v-if="init"
+          :style="{ visibility: (($store.getters.user || $store.getters.page('overview')) || communicationFailureMsg) ? '' : 'hidden' }"
+          :params="f7params"
+          :class="{ 'theme-dark': themeOptions.dark === 'dark', 'theme-filled': themeOptions.bars === 'filled' }">
     <!-- Left Panel -->
-    <f7-panel v-show="ready" left :cover="showSidebar" class="sidebar" :visible-breakpoint="1024">
+    <f7-panel v-show="ready"
+              left
+              :cover="showSidebar"
+              class="sidebar"
+              :visible-breakpoint="1024">
       <f7-page>
-        <f7-link href="/overview" class="openhab-logo no-ripple" panel-close v-if="themeOptions.dark === 'dark'">
+        <f7-link href="/overview"
+                 class="openhab-logo no-ripple"
+                 panel-close
+                 v-if="themeOptions.dark === 'dark'">
           <div class="logo-inner">
             <img src="@/images/openhab-logo-white.svg" type="image/svg+xml" width="196px">
           </div>
         </f7-link>
-        <f7-link href="/overview" class="openhab-logo no-ripple" panel-close v-else>
+        <f7-link href="/overview"
+                 class="openhab-logo no-ripple"
+                 panel-close
+                 v-else>
           <div class="logo-inner">
             <img src="@/images/openhab-logo.svg" type="image/svg+xml" width="196px">
           </div>
@@ -17,51 +30,114 @@
           <f7-list-item v-if="$store.getters.apiEndpoint('ui') && (!pages || !pages.length)">
             <span><em>{{ $t('sidebar.noPages') }}</em></span>
           </f7-list-item>
-          <f7-list-item v-for="page in pages" :animate="false" :key="page.uid"
+          <f7-list-item v-for="page in pages"
+                        :animate="false"
+                        :key="page.uid"
                         :class="{ currentsection: currentPath.page?.[page.uid] }"
                         :link="'/page/' + page.uid"
-                        :title="page.config.label" view=".view-main" panel-close>
-            <oh-icon slot="media" :icon="pageIcon(page)" height="18" width="18" />
+                        :title="page.config.label"
+                        view=".view-main"
+                        panel-close>
+            <oh-icon slot="media"
+                     :icon="pageIcon(page)"
+                     height="18"
+                     width="18" />
           </f7-list-item>
         </f7-list>
         <f7-block-title v-if="$store.getters.isAdmin" v-t="'sidebar.administration'" />
         <!-- Settings -->
         <f7-list class="admin-links" v-if="$store.getters.isAdmin">
-          <f7-list-item link="/settings/" :title="$t('sidebar.settings')" view=".view-main" panel-close :animate="false"
+          <f7-list-item link="/settings/"
+                        :title="$t('sidebar.settings')"
+                        view=".view-main"
+                        panel-close
+                        :animate="false"
                         :class="{ currentsection: currentPath.settings?.$end || currentPath.settings?.services || currentPath.settings?.addons || currentPath.settings?.persistence || currentPath.settings?.transformations }">
-            <f7-icon slot="media" ios="f7:gear_alt_fill" aurora="f7:gear_alt_fill" md="material:settings" color="gray" />
+            <f7-icon slot="media"
+                     ios="f7:gear_alt_fill"
+                     aurora="f7:gear_alt_fill"
+                     md="material:settings"
+                     color="gray" />
           </f7-list-item>
           <li v-if="currentPath.settings">
             <ul class="menu-sublinks">
-              <f7-list-item v-if="$store.getters.apiEndpoint('things')" link="/settings/things/" title="Things" view=".view-main" panel-close :animate="false" no-chevron
+              <f7-list-item v-if="$store.getters.apiEndpoint('things')"
+                            link="/settings/things/"
+                            title="Things"
+                            view=".view-main"
+                            panel-close
+                            :animate="false"
+                            no-chevron
                             :class="{ currentsection: currentPath.settings?.things }">
                 <f7-icon slot="media" f7="lightbulb" color="gray" />
               </f7-list-item>
-              <f7-list-item v-if="$store.getters.apiEndpoint('items')" link="/settings/model/" title="Model" view=".view-main" panel-close :animate="false" no-chevron
+              <f7-list-item v-if="$store.getters.apiEndpoint('items')"
+                            link="/settings/model/"
+                            title="Model"
+                            view=".view-main"
+                            panel-close
+                            :animate="false"
+                            no-chevron
                             :class="{ currentsection: currentPath.settings?.model }">
                 <f7-icon slot="media" f7="list_bullet_indent" color="gray" />
               </f7-list-item>
-              <f7-list-item v-if="$store.getters.apiEndpoint('items')" link="/settings/items/" title="Items" view=".view-main" panel-close :animate="false" no-chevron
+              <f7-list-item v-if="$store.getters.apiEndpoint('items')"
+                            link="/settings/items/"
+                            title="Items"
+                            view=".view-main"
+                            panel-close
+                            :animate="false"
+                            no-chevron
                             :class="{ currentsection: currentPath.settings?.items }">
                 <f7-icon slot="media" f7="square_on_circle" color="gray" />
               </f7-list-item>
-              <f7-list-item v-if="$store.getters.apiEndpoint('ui')" link="/settings/pages/" title="Pages" view=".view-main" panel-close :animate="false" no-chevron
+              <f7-list-item v-if="$store.getters.apiEndpoint('ui')"
+                            link="/settings/pages/"
+                            title="Pages"
+                            view=".view-main"
+                            panel-close
+                            :animate="false"
+                            no-chevron
                             :class="{ currentsection: currentPath.settings?.pages }">
                 <f7-icon slot="media" f7="tv" color="gray" />
               </f7-list-item>
-              <f7-list-item v-if="$store.getters.apiEndpoint('rules')" link="/settings/rules/" title="Rules" view=".view-main" panel-close :animate="false" no-chevron
+              <f7-list-item v-if="$store.getters.apiEndpoint('rules')"
+                            link="/settings/rules/"
+                            title="Rules"
+                            view=".view-main"
+                            panel-close
+                            :animate="false"
+                            no-chevron
                             :class="{ currentsection: currentPath.settings?.rules }">
                 <f7-icon slot="media" f7="wand_stars" color="gray" />
               </f7-list-item>
-              <f7-list-item v-if="$store.getters.apiEndpoint('rules')" link="/settings/scenes/" title="Scenes" view=".view-main" panel-close :animate="false" no-chevron
+              <f7-list-item v-if="$store.getters.apiEndpoint('rules')"
+                            link="/settings/scenes/"
+                            title="Scenes"
+                            view=".view-main"
+                            panel-close
+                            :animate="false"
+                            no-chevron
                             :class="{ currentsection: currentPath.settings?.scenes }">
                 <f7-icon slot="media" f7="film" color="gray" />
               </f7-list-item>
-              <f7-list-item v-if="$store.getters.apiEndpoint('rules')" link="/settings/scripts/" title="Scripts" view=".view-main" panel-close :animate="false" no-chevron
+              <f7-list-item v-if="$store.getters.apiEndpoint('rules')"
+                            link="/settings/scripts/"
+                            title="Scripts"
+                            view=".view-main"
+                            panel-close
+                            :animate="false"
+                            no-chevron
                             :class="{ currentsection: currentPath.settings?.scripts }">
                 <f7-icon slot="media" f7="doc_plaintext" color="gray" />
               </f7-list-item>
-              <f7-list-item v-if="$store.getters.apiEndpoint('rules')" link="/settings/schedule/" title="Schedule" view=".view-main" panel-close :animate="false" no-chevron
+              <f7-list-item v-if="$store.getters.apiEndpoint('rules')"
+                            link="/settings/schedule/"
+                            title="Schedule"
+                            view=".view-main"
+                            panel-close
+                            :animate="false"
+                            no-chevron
                             :class="{ currentsection: currentPath.settings?.schedule }">
                 <f7-icon slot="media" f7="calendar" color="gray" />
               </f7-list-item>
@@ -69,14 +145,28 @@
           </li>
 
           <!-- Add-on Store -->
-          <f7-list-item link="/addons/" :title="$t('sidebar.addOnStore')" view=".view-main" panel-close :animate="false"
+          <f7-list-item link="/addons/"
+                        :title="$t('sidebar.addOnStore')"
+                        view=".view-main"
+                        panel-close
+                        :animate="false"
                         :class="{ currentsection: currentPath.addons?.$end }">
-            <f7-icon slot="media" ios="f7:bag_fill" aurora="f7:bag_fill" md="material:shopping_bag" color="gray" />
+            <f7-icon slot="media"
+                     ios="f7:bag_fill"
+                     aurora="f7:bag_fill"
+                     md="material:shopping_bag"
+                     color="gray" />
           </f7-list-item>
           <li v-if="currentPath.addons && $store.getters.apiEndpoint('addons')">
             <ul class="menu-sublinks">
-              <f7-list-item v-for="section in Object.keys(AddonTitles)" :key="section" :link="`/addons/${section}/`"
-                            :title="AddonTitles[section]" view=".view-main" panel-close :animate="false" no-chevron
+              <f7-list-item v-for="section in Object.keys(AddonTitles)"
+                            :key="section"
+                            :link="`/addons/${section}/`"
+                            :title="AddonTitles[section]"
+                            view=".view-main"
+                            panel-close
+                            :animate="false"
+                            no-chevron
                             :class="{ currentsection: currentPath.addons?.[section] }">
                 <f7-icon slot="media" :f7="AddonIcons[section]" color="gray" />
               </f7-list-item>
@@ -84,25 +174,54 @@
           </li>
 
           <!-- Developer Tools -->
-          <f7-list-item link="/developer/" :title="$t('sidebar.developerTools')" panel-close :animate="false"
+          <f7-list-item link="/developer/"
+                        :title="$t('sidebar.developerTools')"
+                        panel-close
+                        :animate="false"
                         :class="{ currentsection: currentPath.developer?.$end }">
-            <f7-icon slot="media" ios="f7:wrench_fill" aurora="f7:wrench_fill" md="material:construction" color="gray" />
+            <f7-icon slot="media"
+                     ios="f7:wrench_fill"
+                     aurora="f7:wrench_fill"
+                     md="material:construction"
+                     color="gray" />
           </f7-list-item>
           <li v-if="currentPath.developer">
             <ul class="menu-sublinks">
-              <f7-list-item v-if="$store.getters.apiEndpoint('ui')" link="/developer/widgets/" title="Widgets" view=".view-main" panel-close :animate="false" no-chevron
+              <f7-list-item v-if="$store.getters.apiEndpoint('ui')"
+                            link="/developer/widgets/"
+                            title="Widgets"
+                            view=".view-main"
+                            panel-close
+                            :animate="false"
+                            no-chevron
                             :class="{ currentsection: currentPath.developer?.widgets }">
                 <f7-icon slot="media" f7="rectangle_on_rectangle_angled" color="gray" />
               </f7-list-item>
-              <f7-list-item v-if="$store.getters.apiEndpoint('ui')" link="/developer/blocks/" title="Block Libraries" view=".view-main" panel-close :animate="false" no-chevron
+              <f7-list-item v-if="$store.getters.apiEndpoint('ui')"
+                            link="/developer/blocks/"
+                            title="Block Libraries"
+                            view=".view-main"
+                            panel-close
+                            :animate="false"
+                            no-chevron
                             :class="{ currentsection: currentPath.developer?.blocks }">
                 <f7-icon slot="media" f7="ticket" color="gray" />
               </f7-list-item>
-              <f7-list-item link="/developer/api-explorer" title="API Explorer" view=".view-main" panel-close :animate="false" no-chevron
+              <f7-list-item link="/developer/api-explorer"
+                            title="API Explorer"
+                            view=".view-main"
+                            panel-close
+                            :animate="false"
+                            no-chevron
                             :class="{ currentsection: currentPath.developer?.['api-explorer'] }">
                 <f7-icon slot="media" f7="burn" color="gray" />
               </f7-list-item>
-              <f7-list-item link="/developer/log-viewer" title="Log Viewer" view=".view-main" panel-close :animate="false" no-chevron
+              <f7-list-item link="/developer/log-viewer"
+                            title="Log Viewer"
+                            view=".view-main"
+                            panel-close
+                            :animate="false"
+                            no-chevron
                             :class="{ currentsection: currentPath.developer?.['log-viewer'] }">
                 <f7-icon slot="media" f7="square_list" color="gray" />
               </f7-list-item>
@@ -114,13 +233,23 @@
         </f7-list>
 
         <f7-list class="admin-links">
-          <f7-list-item link="/about/" :title="$t('sidebar.helpAbout')" view=".view-main" panel-close
+          <f7-list-item link="/about/"
+                        :title="$t('sidebar.helpAbout')"
+                        view=".view-main"
+                        panel-close
                         :class="{ currentsection: currentPath.about }">
-            <f7-icon slot="media" ios="f7:question_circle_fill" aurora="f7:question_circle_fill" md="material:help" color="gray" />
+            <f7-icon slot="media"
+                     ios="f7:question_circle_fill"
+                     aurora="f7:question_circle_fill"
+                     md="material:help"
+                     color="gray" />
           </f7-list-item>
         </f7-list>
         <f7-link class="breakpoint-pin" @click="toggleVisibleBreakpoint">
-          <f7-icon slot="media" size="14" :f7="visibleBreakpointDisabled ? 'pin_slash' : 'pin'" color="gray" />
+          <f7-icon slot="media"
+                   size="14"
+                   :f7="visibleBreakpointDisabled ? 'pin_slash' : 'pin'"
+                   color="gray" />
         </f7-link>
 
         <div slot="fixed" class="account" v-if="ready && $store.getters.apiEndpoint('auth')">
@@ -128,12 +257,29 @@
             <div class="hint-signin" v-if="!$store.getters.user && !$store.getters.pages.filter((p) => p.uid !== 'overview').length">
               <em>{{ $t('sidebar.tip.signIn') }}<br><f7-icon f7="arrow_down" size="20" /></em>
             </div>
-            <f7-button v-if="!loggedIn" large color="gray" icon-size="36" :tooltip="$t('sidebar.unlockAdmin')" icon-f7="lock_shield_fill" @click="authorize()" />
+            <f7-button v-if="!loggedIn"
+                       large
+                       color="gray"
+                       icon-size="36"
+                       :tooltip="$t('sidebar.unlockAdmin')"
+                       icon-f7="lock_shield_fill"
+                       @click="authorize()" />
           </div>
           <f7-list v-if="$store.getters.user" media-list>
-            <f7-list-item :title="$store.getters.user.name" :footer="serverDisplayUrl" io="f7:person_alt_circle_fill" link="/profile/" no-chevron panel-close view=".view-main"
+            <f7-list-item :title="$store.getters.user.name"
+                          :footer="serverDisplayUrl"
+                          io="f7:person_alt_circle_fill"
+                          link="/profile/"
+                          no-chevron
+                          panel-close
+                          view=".view-main"
                           :class="{ currentsection: currentPath.profile }">
-              <f7-icon slot="media" size="36" ios="f7:person_alt_circle_fill" aurora="f7:person_alt_circle_fill" md="f7:person_alt_circle_fill" color="gray" />
+              <f7-icon slot="media"
+                       size="36"
+                       ios="f7:person_alt_circle_fill"
+                       aurora="f7:person_alt_circle_fill"
+                       md="f7:person_alt_circle_fill"
+                       color="gray" />
             </f7-list-item>
           </f7-list>
         </div>
@@ -141,13 +287,22 @@
     </f7-panel>
 
     <!-- Right Panel -->
-    <f7-panel right reveal theme-dark v-if="ready">
+    <f7-panel right
+              reveal
+              theme-dark
+              v-if="ready">
       <panel-right />
     <!-- <f7-view url="/panel-right/"></f7-view> -->
     </f7-panel>
 
-    <f7-panel v-if="showDeveloperDock" right :visible-breakpoint="1280" resizable>
-      <developer-dock :dock="activeDock" :helpTab="activeHelpTab" :toolTab="activeToolTab" :searchFor="developerSearch" />
+    <f7-panel v-if="showDeveloperDock"
+              right
+              :visible-breakpoint="1280"
+              resizable>
+      <developer-dock :dock="activeDock"
+                      :helpTab="activeHelpTab"
+                      :toolTab="activeToolTab"
+                      :searchFor="developerSearch" />
     </f7-panel>
 
     <f7-block v-if="!ready && communicationFailureMsg" class="block-narrow">
@@ -167,7 +322,12 @@
       </f7-col>
     </f7-block>
 
-    <f7-view main v-show="ready" class="safe-areas" url="/" :master-detail-breakpoint="960" :animate="themeOptions.pageTransitionAnimation !== 'disabled'" />
+    <f7-view main
+             v-show="ready"
+             class="safe-areas"
+             url="/"
+             :master-detail-breakpoint="960"
+             :animate="themeOptions.pageTransitionAnimation !== 'disabled'" />
   </f7-app>
 </template>
 

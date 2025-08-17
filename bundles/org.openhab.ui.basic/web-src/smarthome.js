@@ -774,6 +774,14 @@
 		_t.setVisible = function(state) {
 			if (state) {
 				_t.parentNode.classList.remove(o.formHidden);
+				_t.parentNode.querySelectorAll(o.formControls).forEach(function(e) {
+					var id = e.getAttribute(o.idAttribute);
+					var control = smarthome.dataModel[id];
+					// readjust child buttons width when the parent frame becomes visible
+					if (control.minimizeWidth) {
+						control.minimizeWidth();
+					}
+				});
 			} else {
 				_t.parentNode.classList.add(o.formHidden);
 			}

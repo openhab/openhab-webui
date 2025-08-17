@@ -1,10 +1,19 @@
 <template>
   <ul v-if="!inlineList">
     <f7-list-item
-      :title="configDescription.label" smart-select :smart-select-params="smartSelectParams" ref="item">
-      <select :name="configDescription.name" @change="updateValue" :multiple="configDescription.multiple" :required="configDescription.required">
+      :title="configDescription.label"
+      smart-select
+      :smart-select-params="smartSelectParams"
+      ref="item">
+      <select :name="configDescription.name"
+              @change="updateValue"
+              :multiple="configDescription.multiple"
+              :required="configDescription.required">
         <option v-if="!configDescription.required && !configDescription.multiple" :value="undefined" :selected="value === null || value === undefined" />
-        <option v-for="option in configDescription.options" :value="option.value" :key="option.value" :selected="isSelected(option)">
+        <option v-for="option in configDescription.options"
+                :value="option.value"
+                :key="option.value"
+                :selected="isSelected(option)">
           {{ option.label }}
         </option>
       </select>
@@ -25,12 +34,20 @@
           opacity: configDescription.required ? 0 : 1,
           cursor: 'pointer',
           pointerEvents: 'initial'
-        }" class="input-clear-button margin-right" @click="updateValue(undefined)" />
+        }"
+        class="input-clear-button margin-right"
+        @click="updateValue(undefined)" />
     </f7-block-header>
-    <f7-list-item radio v-for="option in configDescription.options" no-hairline
-                  :value="option.value" :checked="isSelected(option)" radio-icon="start"
+    <f7-list-item radio
+                  v-for="option in configDescription.options"
+                  no-hairline
+                  :value="option.value"
+                  :checked="isSelected(option)"
+                  radio-icon="start"
                   @change="(!configDescription.required && isSelected(option)) ? updateValue(undefined) : updateValue(option.value)"
-                  :key="option.value" :title="option.label" :name="configDescription.name" />
+                  :key="option.value"
+                  :title="option.label"
+                  :name="configDescription.name" />
   </ul>
 </template>
 

@@ -1,17 +1,31 @@
 <template>
-  <f7-page class="item-details-page" @page:beforein="onPageBeforeIn" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
-    <f7-navbar :title="item.name" back-link="Back" no-shadow no-hairline class="item-details-navbar">
+  <f7-page class="item-details-page"
+           @page:beforein="onPageBeforeIn"
+           @page:afterin="onPageAfterIn"
+           @page:beforeout="onPageBeforeOut">
+    <f7-navbar :title="item.name"
+               back-link="Back"
+               no-shadow
+               no-hairline
+               class="item-details-navbar">
       <f7-nav-right v-if="ready">
         <f7-link v-if="item.editable" icon-md="material:edit" href="edit">
           {{ $theme.md ? '' : 'Edit' }}
         </f7-link>
-        <f7-link v-else icon-f7="lock_fill" tooltip="This Item is not editable through the UI" href="edit">
+        <f7-link v-else
+                 icon-f7="lock_fill"
+                 tooltip="This Item is not editable through the UI"
+                 href="edit">
           Details
         </f7-link>
       </f7-nav-right>
       <f7-subnavbar sliding class="item-header">
         <div class="item-icon" v-if="item.name">
-          <oh-icon v-if="item.category" :icon="item.category" :state="item.type === 'Image' ? null : (context.store[item.name].state || item.state)" height="60" width="60" />
+          <oh-icon v-if="item.category"
+                   :icon="item.category"
+                   :state="item.type === 'Image' ? null : (context.store[item.name].state || item.state)"
+                   height="60"
+                   width="60" />
           <span v-else>
             {{ item.label ? item.label[0] : item.name[0] }}
           </span>
@@ -33,8 +47,14 @@
         <f7-col>
           <f7-block-title>Non-Semantic Tags</f7-block-title>
           <f7-block strong class="tags-block">
-            <f7-chip v-for="tag in nonSemanticTags" :key="tag" :text="tag" media-bg-color="blue">
-              <f7-icon slot="media" ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
+            <f7-chip v-for="tag in nonSemanticTags"
+                     :key="tag"
+                     :text="tag"
+                     media-bg-color="blue">
+              <f7-icon slot="media"
+                       ios="f7:tag_fill"
+                       md="material:label"
+                       aurora="f7:tag_fill" />
             </f7-chip>
           </f7-block>
         </f7-col>

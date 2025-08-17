@@ -2,7 +2,10 @@
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar :title="service.label + dirtyIndicator" back-link="Settings">
       <f7-nav-right>
-        <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only />
+        <f7-link @click="save()"
+                 v-if="$theme.md"
+                 icon-md="material:save"
+                 icon-only />
         <f7-link @click="save()" v-if="!$theme.md">
           Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
         </f7-link>

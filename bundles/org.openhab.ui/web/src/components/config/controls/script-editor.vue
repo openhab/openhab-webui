@@ -1,5 +1,10 @@
 <template>
-  <codemirror :value="value" @input="onCmCodeChange" ref="cm" class="code-editor-fit" :options="cmOptions" @ready="onCmReady" />
+  <codemirror :value="value"
+              @input="onCmCodeChange"
+              ref="cm"
+              class="code-editor-fit"
+              :options="cmOptions"
+              @ready="onCmReady" />
 </template>
 
 <style lang="stylus">

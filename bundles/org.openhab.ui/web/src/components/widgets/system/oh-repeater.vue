@@ -1,12 +1,21 @@
 <template>
   <ul v-if="config.listContainer" :class="config.containerClasses" :style="config.containerStyle">
-    <generic-widget-component :context="ctx" v-for="(ctx, idx) in childrenContexts" :key="'repeater-' + idx" @command="onCommand" />
+    <generic-widget-component :context="ctx"
+                              v-for="(ctx, idx) in childrenContexts"
+                              :key="'repeater-' + idx"
+                              @command="onCommand" />
   </ul>
   <fragment v-else-if="config.fragment">
-    <generic-widget-component :context="ctx" v-for="(ctx, idx) in childrenContexts" :key="'repeater-' + idx" @command="onCommand" />
+    <generic-widget-component :context="ctx"
+                              v-for="(ctx, idx) in childrenContexts"
+                              :key="'repeater-' + idx"
+                              @command="onCommand" />
   </fragment>
   <div v-else :class="config.containerClasses" :style="config.containerStyle">
-    <generic-widget-component :context="ctx" v-for="(ctx, idx) in childrenContexts" :key="'repeater-' + idx" @command="onCommand" />
+    <generic-widget-component :context="ctx"
+                              v-for="(ctx, idx) in childrenContexts"
+                              :key="'repeater-' + idx"
+                              @command="onCommand" />
   </div>
 </template>
 

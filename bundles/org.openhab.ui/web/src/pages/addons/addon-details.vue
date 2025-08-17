@@ -1,5 +1,8 @@
 <template>
-  <f7-page @page:beforein="onPageBeforeIn" @page:beforeout="onPageBeforeOut" ref="addondetails" class="page-addon-details">
+  <f7-page @page:beforein="onPageBeforeIn"
+           @page:beforeout="onPageBeforeOut"
+           ref="addondetails"
+           class="page-addon-details">
     <f7-navbar :transparent="true" back-link="Back" class="addon-details-nav">
       <f7-nav-title v-if="addon">
         {{ addon.label }}
@@ -26,10 +29,30 @@
               <div class="addon-header-actions">
                 <div v-if="showInstallActions">
                   <f7-preloader v-if="isPending(addon)" color="blue" />
-                  <f7-button v-else-if="addon.installed" class="install-button" text="Remove" color="red" round small fill @click="openAddonPopup" />
-                  <f7-button v-else class="install-button" :text="installableAddon(addon) ? 'Install' : 'Add'" color="blue" round small fill @click="openAddonPopup" />
+                  <f7-button v-else-if="addon.installed"
+                             class="install-button"
+                             text="Remove"
+                             color="red"
+                             round
+                             small
+                             fill
+                             @click="openAddonPopup" />
+                  <f7-button v-else
+                             class="install-button"
+                             :text="installableAddon(addon) ? 'Install' : 'Add'"
+                             color="blue"
+                             round
+                             small
+                             fill
+                             @click="openAddonPopup" />
                 </div>
-                <f7-link v-if="showConfig" icon-f7="gears" tooltip="Configure add-on" color="blue" :href="'/settings/addons/' + addonId" round small />
+                <f7-link v-if="showConfig"
+                         icon-f7="gears"
+                         tooltip="Configure add-on"
+                         color="blue"
+                         :href="'/settings/addons/' + addonId"
+                         round
+                         small />
               </div>
             </div>
           </div>

@@ -17,7 +17,13 @@
       <f7-col>
         <div v-if="discoverySupported" class="display-flex justify-content-center">
           <div class="flex-shrink-0">
-            <f7-button class="padding-left padding-right" style="width: 150px" :color="(scanning) ? 'red' : 'blue'" large raised fill @click="scan">
+            <f7-button class="padding-left padding-right"
+                       style="width: 150px"
+                       :color="(scanning) ? 'red' : 'blue'"
+                       large
+                       raised
+                       fill
+                       @click="scan">
               {{ (scanning) ? 'Stop Scanning' : 'Scan' }}
             </f7-button>
           </div>
@@ -26,7 +32,11 @@
         <f7-block-title v-if="inputSupported">
           Scan Input
         </f7-block-title>
-        <config-sheet v-if="inputSupported" class="scan-input" :parameter-groups="[]" :parameters="inputParameters" :configuration="inputConfig" />
+        <config-sheet v-if="inputSupported"
+                      class="scan-input"
+                      :parameter-groups="[]"
+                      :parameters="inputParameters"
+                      :configuration="inputConfig" />
         <f7-block-title v-if="discoverySupported && scanResults.length">
           Discovered Things
         </f7-block-title>
@@ -39,7 +49,10 @@
                         :title="entry.label"
                         :subtitle="entry.representationProperty ? entry.properties[entry.representationProperty] : ''"
                         :footer="entry.thingUID" />
-          <f7-list-button v-show="scanResults.length > 1" title="Add All" @click="approveAll" color="blue" />
+          <f7-list-button v-show="scanResults.length > 1"
+                          title="Add All"
+                          @click="approveAll"
+                          color="blue" />
         </f7-list>
 
         <f7-block-title>Add Manually</f7-block-title>
@@ -61,7 +74,8 @@
                           :title="thingType.label"
                           :footer="getHeading(thingType.description)"
                           :header="thingType.UID"
-                          :badge="thingType.bridge ? 'Bridge' : ''" badge-color="blue"
+                          :badge="thingType.bridge ? 'Bridge' : ''"
+                          badge-color="blue"
                           media-item />
           </ul>
         </f7-list>

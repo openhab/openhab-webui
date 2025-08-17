@@ -2,7 +2,10 @@
   <f7-page @page:afterin="onPageAfterIn" @page:afterout="onPageAfterOut">
     <f7-navbar :title="(createMode ? 'Create scene' : rule.name) + dirtyIndicator" back-link="Back" no-hairline>
       <f7-nav-right v-if="isEditable">
-        <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only />
+        <f7-link @click="save()"
+                 v-if="$theme.md"
+                 icon-md="material:save"
+                 icon-only />
         <f7-link @click="save()" v-if="!$theme.md">
           Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
         </f7-link>
@@ -22,8 +25,21 @@
           <f7-col v-if="!createMode">
             <div class="float-right align-items-flex-start align-items-center">
               <!-- <f7-toggle class="enable-toggle"></f7-toggle> -->
-              <f7-link :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'" :tooltip="((rule.status.statusDetail === 'DISABLED') ? 'Enable' : 'Disable') + (($device.desktop) ? ' (Ctrl-D)' : '')" icon-ios="f7:pause_circle" icon-md="f7:pause_circle" icon-aurora="f7:pause_circle" icon-size="32" color="orange" @click="toggleDisabled" />
-              <f7-link :tooltip="'Activate Now' + (($device.desktop) ? ' (Ctrl-R)' : '')" icon-ios="f7:play_round" icon-md="f7:play_round" icon-aurora="f7:play_round" icon-size="32" :color="(rule.status.status === 'IDLE') ? 'blue' : 'gray'" @click="runNow" />
+              <f7-link :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'"
+                       :tooltip="((rule.status.statusDetail === 'DISABLED') ? 'Enable' : 'Disable') + (($device.desktop) ? ' (Ctrl-D)' : '')"
+                       icon-ios="f7:pause_circle"
+                       icon-md="f7:pause_circle"
+                       icon-aurora="f7:pause_circle"
+                       icon-size="32"
+                       color="orange"
+                       @click="toggleDisabled" />
+              <f7-link :tooltip="'Activate Now' + (($device.desktop) ? ' (Ctrl-R)' : '')"
+                       icon-ios="f7:play_round"
+                       icon-md="f7:play_round"
+                       icon-aurora="f7:play_round"
+                       icon-size="32"
+                       :color="(rule.status.status === 'IDLE') ? 'blue' : 'gray'"
+                       @click="runNow" />
             </div>
             Status:
             <f7-chip class="margin-left"
@@ -50,7 +66,10 @@
           </f7-col>
         </f7-block>
 
-        <rule-general-settings :rule="rule" :ready="ready" :createMode="createMode" :inSceneEditor="true" />
+        <rule-general-settings :rule="rule"
+                               :ready="ready"
+                               :createMode="createMode"
+                               :inSceneEditor="true" />
 
         <f7-block v-if="ready" class="block-narrow">
           <f7-block-footer v-if="!isEditable" class="no-margin padding-left">
@@ -61,9 +80,16 @@
             </f7-col> -->
           <f7-col class="rule-modules">
             <div class="no-padding float-right" v-if="rule['actions'].length > 0">
-              <f7-button @click="toggleModuleControls" small outline :fill="showModuleControls" sortable-toggle=".sortable"
+              <f7-button @click="toggleModuleControls"
+                         small
+                         outline
+                         :fill="showModuleControls"
+                         sortable-toggle=".sortable"
                          style="margin-top: -3px; margin-right: 5px"
-                         color="gray" icon-size="12" icon-ios="material:wrap_text" icon-md="material:wrap_text"
+                         color="gray"
+                         icon-size="12"
+                         icon-ios="material:wrap_text"
+                         icon-md="material:wrap_text"
                          icon-aurora="material:wrap_text">
                 &nbsp;Reorder
               </f7-button>
@@ -72,26 +98,42 @@
               <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)">
                 Configuration
               </f7-block-title>
-              <f7-list class="scene-items" sortable swipeout media-list @sortable:sort="(ev) => reorderModule(ev, 'actions')">
-                <f7-list-item :title="mod.configuration.itemName" media
-                              v-for="mod in rule['actions']" :key="mod.id"
+              <f7-list class="scene-items"
+                       sortable
+                       swipeout
+                       media-list
+                       @sortable:sort="(ev) => reorderModule(ev, 'actions')">
+                <f7-list-item :title="mod.configuration.itemName"
+                              media
+                              v-for="mod in rule['actions']"
+                              :key="mod.id"
                               :link="!showModuleControls"
-                              @click.native="(ev) => editModule(ev, mod)" swipeout no-chevron>
-                  <f7-link slot="media" icon-color="red" icon-aurora="f7:minus_circle_filled"
-                           icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline"
+                              @click.native="(ev) => editModule(ev, mod)"
+                              swipeout
+                              no-chevron>
+                  <f7-link slot="media"
+                           icon-color="red"
+                           icon-aurora="f7:minus_circle_filled"
+                           icon-ios="f7:minus_circle_filled"
+                           icon-md="material:remove_circle_outline"
                            @click="showSwipeout" />
                   <span slot="inner" class="inline-command-input">
-                    <f7-input type="text" outline
+                    <f7-input type="text"
+                              outline
                               :value="mod.configuration.command"
                               @input="updateActionModule([mod.configuration.itemName, $event.target.value])"
                               :disabled="showModuleControls" />
                   </span>
                   <span slot="after">
                     <f7-link icon-f7="arrow_uturn_left_circle"
-                             class="margin-left-half" color="blue" tooltip="Set to current state"
+                             class="margin-left-half"
+                             color="blue"
+                             tooltip="Set to current state"
                              @click.native="(ev) => updateCommandFromCurrentState(ev, mod)" />
                     <f7-link icon-f7="arrowtriangle_right_circle"
-                             class="margin-left-half" color="blue" tooltip="Test command"
+                             class="margin-left-half"
+                             color="blue"
+                             tooltip="Test command"
                              @click.native="(ev) => testCommand(ev, mod)" />
                   </span>
                   <f7-swipeout-actions right>
@@ -108,7 +150,13 @@
                   <f7-icon slot="media" color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill"
                            md="material:control_point" />
                 </f7-list-item> -->
-                <item-picker title="Select Items" name="newItem" :multiple="true" :value="selectedItems" @input="selectItems" :no-after="true" class="scene-items-picker" />
+                <item-picker title="Select Items"
+                             name="newItem"
+                             :multiple="true"
+                             :value="selectedItems"
+                             @input="selectItems"
+                             :no-after="true"
+                             class="scene-items-picker" />
                 <!-- <f7-list-button :color="(showModuleControls) ? 'gray' : 'blue'" :title="sectionLabels[section][1]"></f7-list-button> -->
               </f7-list>
             </div>
@@ -126,7 +174,11 @@
         </f7-block>
       </f7-tab>
       <f7-tab id="code" @tab:show="() => { this.currentTab = 'code'; toYaml() }" :tab-active="currentTab === 'code'">
-        <editor v-if="currentTab === 'code'" class="rule-code-editor" mode="application/vnd.openhab.rule+yaml" :value="ruleYaml" @input="onEditorInput" />
+        <editor v-if="currentTab === 'code'"
+                class="rule-code-editor"
+                mode="application/vnd.openhab.rule+yaml"
+                :value="ruleYaml"
+                @input="onEditorInput" />
         <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
       </f7-tab>
     </f7-tabs>

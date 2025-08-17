@@ -4,7 +4,11 @@
       Widgets Expression Tester
     </f7-block-title>
     <f7-list media-list>
-      <f7-list-input type="textarea" title="Expression" placeholder="Try '=2+3' or '=items.MyItem.state'" :value="testExpression" @input="(evt) => testExpression = evt.target.value" />
+      <f7-list-input type="textarea"
+                     title="Expression"
+                     placeholder="Try '=2+3' or '=items.MyItem.state'"
+                     :value="testExpression"
+                     @input="(evt) => testExpression = evt.target.value" />
     </f7-list>
     <f7-block strong v-if="testExpression">
       <div :class="config.class" :style="config.style">

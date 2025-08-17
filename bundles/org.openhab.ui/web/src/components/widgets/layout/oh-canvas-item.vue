@@ -14,7 +14,8 @@
     :grid="gridEnable ? [gridPitch,gridPitch] : undefined"
     :min-height="gridEnable ? gridPitch : undefined"
     :min-width="gridEnable ? gridPitch : undefined"
-    v-if="visible" class="oh-canvas-item no-margin"
+    v-if="visible"
+    class="oh-canvas-item no-margin"
     @dragging="onDrag"
     @resizing="onResize"
     :on-drag-start="onDragStartCallback"
@@ -27,7 +28,10 @@
       <f7-menu-item icon-f7="menu" dropdown icon-only>
         <f7-menu-dropdown right>
           <f7-menu-dropdown-item @click="context.editmode.configureWidget(context.component, context.parent)" href="#" text="Configure container" />
-          <f7-menu-dropdown-item v-if="context.component.slots.default.length > 0" @click="context.editmode.configureWidget(context.component.slots.default[0], context)" href="#" text="Configure Widget" />
+          <f7-menu-dropdown-item v-if="context.component.slots.default.length > 0"
+                                 @click="context.editmode.configureWidget(context.component.slots.default[0], context)"
+                                 href="#"
+                                 text="Configure Widget" />
           <f7-menu-dropdown-item @click="context.editmode.editWidgetCode(context.component, context.parent)" href="#" text="Edit YAML" />
           <f7-menu-dropdown-item v-if="context.component.slots.default.length > 0" @click="toggleAutoSize()" href="#">
             <span>Auto Size</span>
@@ -52,12 +56,19 @@
     </f7-menu>
     <div @click.capture="eventControl" style="width: 100%; height: 100%; position:absolute;" class="disable-user-select">
       <oh-placeholder-widget v-if="context.editmode && !context.component.slots.default.length" @click="context.editmode.addWidget(context.component, null, context.parent)" class="oh-canvas-item-content" />
-      <generic-widget-component v-else-if="context.component.slots.default.length" :context="childContext(context.component.slots.default[0])" @command="onCommand" class="oh-canvas-item-content"
+      <generic-widget-component v-else-if="context.component.slots.default.length"
+                                :context="childContext(context.component.slots.default[0])"
+                                @command="onCommand"
+                                class="oh-canvas-item-content"
                                 :class="{
                                   'oh-canvas-item-styled' : styled,
                                   'oh-canvas-item-shadow' : styled && shadow
                                 }" />
-      <f7-icon v-if="context.editmode" class="drag-handle disable-user-select" f7="move" size="15" color="gray" />
+      <f7-icon v-if="context.editmode"
+               class="drag-handle disable-user-select"
+               f7="move"
+               size="15"
+               color="gray" />
       <div v-if="context.editmode" class="oh-canvas-item-id disable-user-select">
         {{ config.id }}
       </div>

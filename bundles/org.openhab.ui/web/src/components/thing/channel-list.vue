@@ -22,9 +22,21 @@
         <f7-row class="searchbar-ignore">
           <f7-col class="padding-left padding-right searchbar-ignore">
             <f7-segmented class="searchbar-ignore" strong tag="p">
-              <f7-button class="searchbar-ignore" @click="toggleLinkFilter(undefined)" small :active="showLinked === undefined" text="All" />
-              <f7-button class="searchbar-ignore" @click="toggleLinkFilter(true)" small :active="showLinked === true" text="Linked" />
-              <f7-button class="searchbar-ignore" @click="toggleLinkFilter(false)" small :active="showLinked === false" text="Unlinked" />
+              <f7-button class="searchbar-ignore"
+                         @click="toggleLinkFilter(undefined)"
+                         small
+                         :active="showLinked === undefined"
+                         text="All" />
+              <f7-button class="searchbar-ignore"
+                         @click="toggleLinkFilter(true)"
+                         small
+                         :active="showLinked === true"
+                         text="Linked" />
+              <f7-button class="searchbar-ignore"
+                         @click="toggleLinkFilter(false)"
+                         small
+                         :active="showLinked === false"
+                         text="Unlinked" />
             </f7-segmented>
           </f7-col>
         </f7-row>
@@ -38,21 +50,31 @@
             <channel-group
               :group="group"
               :thing="thing"
-              :picker-mode="pickerMode" :multiple-links-mode="multipleLinksMode" :item-type-filter="itemTypeFilter"
+              :picker-mode="pickerMode"
+              :multiple-links-mode="multipleLinksMode"
+              :item-type-filter="itemTypeFilter"
               :selection="(multipleLinksMode) ? selectedChannels : selectedChannel"
               @selected="selectChannel"
               @channel-opened="channelOpened">
               <template #default="{ channelId, channelType, channel, extensible }" v-if="!pickerMode && !multipleLinksMode">
                 <channel-link :opened="openedChannelId === channelId"
-                              :thing="thing" :channelId="channelId" :channelType="channelType" :channel="channel" :extensible="extensible" :context="context"
+                              :thing="thing"
+                              :channelId="channelId"
+                              :channelType="channelType"
+                              :channel="channel"
+                              :extensible="extensible"
+                              :context="context"
                               @channel-updated="(e) => $emit('channels-updated', e)" />
               </template>
               <template #default="{ channelType, channel }" v-else-if="multipleLinksMode">
                 <item-picker v-if="isChecked(channel) && hasLinks(channel)"
                              :title="selectedItem(channel) ? 'Change Item Selection' : 'Pick Existing Linked Item'"
-                             textColor="blue" :hideIcon="true"
+                             textColor="blue"
+                             :hideIcon="true"
                              :items="items.filter((i) => channel.linkedItems.includes(i.name))"
-                             :multiple="false" :noModelPicker="true" :setValueText="false"
+                             :multiple="false"
+                             :noModelPicker="true"
+                             :setValueText="false"
                              :value="selectedItem(channel)?.name"
                              @input="selectExistingItem($event, channel, channelType)" />
                 <item-form v-if="selectedItem(channel)"

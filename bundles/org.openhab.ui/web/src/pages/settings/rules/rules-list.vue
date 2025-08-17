@@ -1,9 +1,13 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="rules-list">
-    <f7-navbar :title="type" back-link="Settings" back-link-url="/settings/" back-link-force>
+    <f7-navbar :title="type"
+               back-link="Settings"
+               back-link-url="/settings/"
+               back-link-force>
       <f7-nav-right>
         <developer-dock-icon />
-        <f7-link icon-md="material:done_all" @click="toggleCheck()"
+        <f7-link icon-md="material:done_all"
+                 @click="toggleCheck()"
                  :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
       </f7-nav-right>
       <f7-subnavbar :inner="false" v-show="initSearchbar">
@@ -20,28 +24,78 @@
           :disable-button="!$theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
-    <f7-toolbar class="contextual-toolbar" :class="{ 'navbar': $theme.md, 'tabbar-labels': $f7.width < 480 }" v-if="showCheckboxes" bottom-ios bottom-aurora>
-      <f7-link color="red" v-show="selectedDeletableItems.length" v-if="!$theme.md" class="delete" icon-ios="f7:trash" icon-aurora="f7:trash" @click="deleteSelected">
+    <f7-toolbar class="contextual-toolbar"
+                :class="{ 'navbar': $theme.md, 'tabbar-labels': $f7.width < 480 }"
+                v-if="showCheckboxes"
+                bottom-ios
+                bottom-aurora>
+      <f7-link color="red"
+               v-show="selectedDeletableItems.length"
+               v-if="!$theme.md"
+               class="delete"
+               icon-ios="f7:trash"
+               icon-aurora="f7:trash"
+               @click="deleteSelected">
         &nbsp;{{ $t('dialogs.delete') }}&nbsp;{{ selectedDeletableItems.length }}
       </f7-link>
-      <f7-link color="orange" v-show="selectedItems.length && canDisable" v-if="!$theme.md && !showScenes" class="disable" @click="doDisableEnableSelected(false)" icon-ios="f7:pause_circle" icon-aurora="f7:pause_circle">
+      <f7-link color="orange"
+               v-show="selectedItems.length && canDisable"
+               v-if="!$theme.md && !showScenes"
+               class="disable"
+               @click="doDisableEnableSelected(false)"
+               icon-ios="f7:pause_circle"
+               icon-aurora="f7:pause_circle">
         &nbsp;{{ $t('dialogs.disable') }}&nbsp;{{ disablableItems }}
       </f7-link>
-      <f7-link color="green" v-show="selectedItems.length && canEnable" v-if="!$theme.md && !showScenes" class="enable" @click="doDisableEnableSelected(true)" icon-ios="f7:play_circle" icon-aurora="f7:play_circle">
+      <f7-link color="green"
+               v-show="selectedItems.length && canEnable"
+               v-if="!$theme.md && !showScenes"
+               class="enable"
+               @click="doDisableEnableSelected(true)"
+               icon-ios="f7:play_circle"
+               icon-aurora="f7:play_circle">
         &nbsp;{{ $t('dialogs.enable') }}&nbsp;{{ enablableItems }}
       </f7-link>
-      <f7-link :color="$f7.data.themeOptions.dark === 'dark' ? 'purple' : 'deeppurple'" v-show="selectedItems.length && canRegenerate" v-if="!$theme.md && !showScenes" class="enable" @click="regenerateSelected()" icon-ios="f7:arrow_2_circlepath" icon-aurora="f7:arrow_2_circlepath">
+      <f7-link :color="$f7.data.themeOptions.dark === 'dark' ? 'purple' : 'deeppurple'"
+               v-show="selectedItems.length && canRegenerate"
+               v-if="!$theme.md && !showScenes"
+               class="enable"
+               @click="regenerateSelected()"
+               icon-ios="f7:arrow_2_circlepath"
+               icon-aurora="f7:arrow_2_circlepath">
         &nbsp;{{ $t('dialogs.regenerate') }}&nbsp;{{ regeneratableItemsCount }}
       </f7-link>
-      <f7-link v-if="$theme.md" icon-md="material:close" icon-color="white" @click="showCheckboxes = false" />
+      <f7-link v-if="$theme.md"
+               icon-md="material:close"
+               icon-color="white"
+               @click="showCheckboxes = false" />
       <div class="title" v-if="$theme.md">
         {{ selectedItems.length }} selected
       </div>
       <div class="right" v-if="$theme.md">
-        <f7-link v-if="!showScenes" v-show="selectedItems.length && canRegenerate" tooltip="Regenerate selected from template" icon-md="material:autorenew" icon-color="white" @click="regenerateSelected()" />
-        <f7-link v-if="!showScenes" v-show="selectedItems.length && canDisable" tooltip="Disable selected" icon-md="material:pause_circle_outline" icon-color="white" @click="doDisableEnableSelected(false)" />
-        <f7-link v-if="!showScenes" v-show="selectedItems.length && canEnable" tooltip="Enable selected" icon-md="material:play_circle_outline" icon-color="white" @click="doDisableEnableSelected(true)" />
-        <f7-link v-show="selectedDeletableItems.length" tooltip="Delete selected" icon-md="material:delete" icon-color="white" @click="deleteSelected" />
+        <f7-link v-if="!showScenes"
+                 v-show="selectedItems.length && canRegenerate"
+                 tooltip="Regenerate selected from template"
+                 icon-md="material:autorenew"
+                 icon-color="white"
+                 @click="regenerateSelected()" />
+        <f7-link v-if="!showScenes"
+                 v-show="selectedItems.length && canDisable"
+                 tooltip="Disable selected"
+                 icon-md="material:pause_circle_outline"
+                 icon-color="white"
+                 @click="doDisableEnableSelected(false)" />
+        <f7-link v-if="!showScenes"
+                 v-show="selectedItems.length && canEnable"
+                 tooltip="Enable selected"
+                 icon-md="material:play_circle_outline"
+                 icon-color="white"
+                 @click="doDisableEnableSelected(true)" />
+        <f7-link v-show="selectedDeletableItems.length"
+                 tooltip="Delete selected"
+                 icon-md="material:delete"
+                 icon-color="white"
+                 @click="deleteSelected" />
       </div>
     </f7-toolbar>
 
@@ -58,7 +112,10 @@
     </f7-list>
 
     <!-- no rule engine available -->
-    <empty-state-placeholder v-if="noRuleEngine" icon="exclamationmark_triangle" title="rules.missingengine.title" text="rules.missingengine.text" />
+    <empty-state-placeholder v-if="noRuleEngine"
+                             icon="exclamationmark_triangle"
+                             title="rules.missingengine.title"
+                             text="rules.missingengine.text" />
     <!-- rule engine available but not yet ready -->
     <f7-block v-else-if="!noRuleEngine && !ready" class="block-narrow">
       <f7-col v-show="!ready">
@@ -80,11 +137,26 @@
     </f7-block>
     <!-- rule engine available and ready, but no rules -->
     <f7-block v-else-if="ready && !rules.length" class="block-narrow">
-      <empty-state-placeholder v-if="showScripts" icon="doc_plaintext" title="scripts.title" text="scripts.text" />
-      <empty-state-placeholder v-else-if="showScenes" icon="film" title="scenes.title" text="scenes.text" />
-      <empty-state-placeholder v-else icon="wand_stars" title="rules.title" text="rules.text" />
+      <empty-state-placeholder v-if="showScripts"
+                               icon="doc_plaintext"
+                               title="scripts.title"
+                               text="scripts.text" />
+      <empty-state-placeholder v-else-if="showScenes"
+                               icon="film"
+                               title="scenes.title"
+                               text="scenes.text" />
+      <empty-state-placeholder v-else
+                               icon="wand_stars"
+                               title="rules.title"
+                               text="rules.text" />
       <f7-row v-if="$f7.width < 1280" class="display-flex justify-content-center">
-        <f7-button large fill color="blue" external :href="`${$store.state.websiteUrl}/link/${type.toLowerCase()}`" target="_blank" v-t="'home.overview.button.documentation'" />
+        <f7-button large
+                   fill
+                   color="blue"
+                   external
+                   :href="`${$store.state.websiteUrl}/link/${type.toLowerCase()}`"
+                   target="_blank"
+                   v-t="'home.overview.button.documentation'" />
       </f7-row>
     </f7-block>
 
@@ -107,11 +179,18 @@
           <f7-list-item accordion-item title="Filter by tags">
             <f7-accordion-content>
               <div class="block block-strong-ios block-outline-ios padding-bottom" ref="filterTags">
-                <f7-chip v-for="tag in uniqueTags" :key="tag" :text="tag" media-bg-color="blue"
+                <f7-chip v-for="tag in uniqueTags"
+                         :key="tag"
+                         :text="tag"
+                         media-bg-color="blue"
                          :color="isTagSelected(tag) ? 'blue' : ''"
                          style="margin-right: 6px; cursor: pointer;"
                          @click="(e) => toggleSearchTag(e, tag)">
-                  <f7-icon v-if="isTagSelected(tag)" slot="media" ios="f7:checkmark_circle_fill" md="material:check_circle" aurora="f7:checkmark_circle_fill" />
+                  <f7-icon v-if="isTagSelected(tag)"
+                           slot="media"
+                           ios="f7:checkmark_circle_fill"
+                           md="material:check_circle"
+                           aurora="f7:checkmark_circle_fill" />
                 </f7-chip>
               </div>
             </f7-accordion-content>
@@ -121,7 +200,8 @@
           v-show="rules.length > 0"
           class="searchbar-found col rules-list"
           ref="rulesList"
-          media-list contacts-list>
+          media-list
+          contacts-list>
           <f7-list-group v-for="(rulesWithInitial, initial) in indexedRules" :key="initial">
             <f7-list-item v-if="rulesWithInitial.length" :title="initial" group-title />
             <f7-list-item
@@ -149,21 +229,39 @@
                   @click.exact="(e) => templateClick(e, false, rule)"
                   media-bg-color="orange"
                   style="margin-right: 2px">
-                  <f7-icon slot="media" ios="f7:doc_on_doc_fill" md="material:file_copy" aurora="f7:doc_on_doc_fill" />
+                  <f7-icon slot="media"
+                           ios="f7:doc_on_doc_fill"
+                           md="material:file_copy"
+                           aurora="f7:doc_on_doc_fill" />
                 </f7-chip>
-                <f7-chip v-for="tag in displayedTags(rule)" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
-                  <f7-icon slot="media" ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
+                <f7-chip v-for="tag in displayedTags(rule)"
+                         :key="tag"
+                         :text="tag"
+                         media-bg-color="blue"
+                         style="margin-right: 6px">
+                  <f7-icon slot="media"
+                           ios="f7:tag_fill"
+                           md="material:label"
+                           aurora="f7:tag_fill" />
                 </f7-chip>
               </div>
               <!-- <span slot="media" class="item-initial">{{initial}}</span> -->
-              <f7-icon v-if="rule.editable === false" slot="after-title" f7="lock_fill" size="1rem" color="gray" />
+              <f7-icon v-if="rule.editable === false"
+                       slot="after-title"
+                       f7="lock_fill"
+                       size="1rem"
+                       color="gray" />
             </f7-list-item>
           </f7-list-group>
         </f7-list>
       </f7-col>
     </f7-block>
 
-    <f7-fab v-show="ready && !showCheckboxes" position="right-bottom" slot="fixed" color="blue" href="add">
+    <f7-fab v-show="ready && !showCheckboxes"
+            position="right-bottom"
+            slot="fixed"
+            color="blue"
+            href="add">
       <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
       <f7-icon ios="f7:close" md="material:close" aurora="f7:close" />
     </f7-fab>

@@ -4,7 +4,11 @@
       <div v-show="ready" v-html="parsedDocs" />
     </f7-block>
     <f7-block>
-      <f7-link external :href="documentationLink" target="_blank" text="Open full documentation" color="blue" />
+      <f7-link external
+               :href="documentationLink"
+               target="_blank"
+               text="Open full documentation"
+               color="blue" />
     </f7-block>
   </f7-block>
 </template>

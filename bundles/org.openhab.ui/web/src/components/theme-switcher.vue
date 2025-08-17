@@ -53,13 +53,22 @@
           <f7-list-item>
             <span v-t="'about.miscellaneous.home.navbar'" />
             <f7-segmented class="home-navbar-selection">
-              <f7-button outline small :active="homePageNavbarStyle === 'default'" @click="setHomePageNavbarStyle('default')">
+              <f7-button outline
+                         small
+                         :active="homePageNavbarStyle === 'default'"
+                         @click="setHomePageNavbarStyle('default')">
                 {{ $t('about.miscellaneous.home.navbar.default') }}
               </f7-button>
-              <f7-button outline small :active="homePageNavbarStyle === 'simple'" @click="setHomePageNavbarStyle('simple')">
+              <f7-button outline
+                         small
+                         :active="homePageNavbarStyle === 'simple'"
+                         @click="setHomePageNavbarStyle('simple')">
                 {{ $t('about.miscellaneous.home.navbar.simple') }}
               </f7-button>
-              <f7-button outline small :active="homePageNavbarStyle === 'large'" @click="setHomePageNavbarStyle('large')">
+              <f7-button outline
+                         small
+                         :active="homePageNavbarStyle === 'large'"
+                         @click="setHomePageNavbarStyle('large')">
                 {{ $t('about.miscellaneous.home.navbar.large') }}
               </f7-button>
             </f7-segmented>
@@ -67,13 +76,22 @@
           <f7-list-item>
             <span v-t="'about.miscellaneous.home.background'" />
             <f7-segmented class="home-navbar-selection">
-              <f7-button outline small :active="homePageBackground === 'default'" @click="setHomePageBackground('default')">
+              <f7-button outline
+                         small
+                         :active="homePageBackground === 'default'"
+                         @click="setHomePageBackground('default')">
                 {{ $t('about.miscellaneous.home.background.default') }}
               </f7-button>
-              <f7-button outline small :active="homePageBackground === 'standard'" @click="setHomePageBackground('standard')">
+              <f7-button outline
+                         small
+                         :active="homePageBackground === 'standard'"
+                         @click="setHomePageBackground('standard')">
                 {{ $t('about.miscellaneous.home.background.standard') }}
               </f7-button>
-              <f7-button outline small :active="homePageBackground === 'white'" @click="setHomePageBackground('white')">
+              <f7-button outline
+                         small
+                         :active="homePageBackground === 'white'"
+                         @click="setHomePageBackground('white')">
                 {{ $t('about.miscellaneous.home.background.white') }}
               </f7-button>
             </f7-segmented>
@@ -94,7 +112,10 @@
             <span v-t="'about.miscellaneous.webaudio.enable'" />
             <f7-toggle :checked="webAudio === 'enabled'" @toggle:change="setWebAudio" />
           </f7-list-item>
-          <item-picker :title="$t('about.miscellaneous.commandItem.title')" :multiple="false" :value="commandItem" @input="setCommandItem" />
+          <item-picker :title="$t('about.miscellaneous.commandItem.title')"
+                       :multiple="false"
+                       :value="commandItem"
+                       @input="setCommandItem" />
         </f7-list>
       </f7-col>
     </f7-row>

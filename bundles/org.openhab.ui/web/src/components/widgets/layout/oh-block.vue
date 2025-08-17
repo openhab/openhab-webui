@@ -15,7 +15,10 @@
             <f7-menu-dropdown-item divider />
             <!-- <f7-menu-dropdown-item @click="context.editmode.(context.component, context.parent)" href="#" text="Cut"></f7-menu-dropdown-item>
             <f7-menu-dropdown-item @click="context.editmode.(context.component, context.parent)" href="#" text="Copy"></f7-menu-dropdown-item> -->
-            <f7-menu-dropdown-item v-if="context.clipboardtype === 'oh-grid-row' || context.clipboardtype === 'oh-grid-cells'" @click="context.editmode.pasteWidget(context.component, context.parent)" href="#" text="Paste" />
+            <f7-menu-dropdown-item v-if="context.clipboardtype === 'oh-grid-row' || context.clipboardtype === 'oh-grid-cells'"
+                                   @click="context.editmode.pasteWidget(context.component, context.parent)"
+                                   href="#"
+                                   text="Paste" />
             <f7-menu-dropdown-item v-if="context.clipboardtype === 'oh-grid-row' || context.clipboardtype === 'oh-grid-cells'" divider />
             <f7-menu-dropdown-item @click="context.editmode.moveWidgetUp(context.component, context.parent)" href="#" text="Move Up" />
             <f7-menu-dropdown-item @click="context.editmode.moveWidgetDown(context.component, context.parent)" href="#" text="Move Down" />

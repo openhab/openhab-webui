@@ -3,23 +3,28 @@
     <chart
       ref="chart"
       v-if="ready"
-      :init-options="{
-        locale: ECHARTS_LOCALE
-      }"
+      :init-options="initOptions"
       :option="options"
       class="oh-chart"
       @click="handleClick"
       :class="{ 'with-tabbar': context.tab, 'with-toolbar': context.analyzer }"
-      :theme="$f7.data.themeOptions.dark === 'dark' ? 'dark' : undefined" autoresize />
+      :theme="$f7.data.themeOptions.dark === 'dark' ? 'dark' : undefined"
+      autoresize />
     <f7-menu class="padding float-right" v-if="periodVisible">
       <f7-menu-item @click="earlierPeriod()" icon-f7="chevron_left" />
-      <f7-menu-item v-if="context.component.config.chartType" :text="fixedPeriodLabel" type="text" @click="pickFixedStartDate">
+      <f7-menu-item v-if="context.component.config.chartType"
+                    :text="fixedPeriodLabel"
+                    type="text"
+                    @click="pickFixedStartDate">
         <input ref="calendarInput" type="text" style="width: 40px; height: 0; visibility: hidden">
       </f7-menu-item>
       <f7-menu-item v-else dropdown :text="period">
         <f7-menu-dropdown right>
           <f7-menu-dropdown-item v-for="p in ['h', '2h', '4h', '12h', 'D', '2D', '3D', 'W', '2W', 'M', '2M', '4M', '6M', 'Y', '3Y', '5Y', '10Y']"
-                                 :key="p" @click="setPeriod(p)" href="#" :text="p" />
+                                 :key="p"
+                                 @click="setPeriod(p)"
+                                 href="#"
+                                 :text="p" />
         </f7-menu-dropdown>
       </f7-menu-item>
       <f7-menu-item @click="laterPeriod()" icon-f7="chevron_right" />
@@ -60,15 +65,16 @@ use([CanvasRenderer, LineChart, BarChart, GaugeChart, HeatmapChart, PieChart, Sc
   LegendComponent, LegendScrollComponent, GridComponent, SingleAxisComponent, ToolboxComponent, TooltipComponent, DataZoomComponent,
   MarkLineComponent, MarkPointComponent, MarkAreaComponent, VisualMapComponent, CalendarComponent, LabelLayout])
 
-const ECHARTS_LOCALE = i18n.locale.split('-')[0].toUpperCase()
+let echartsLocale = i18n.locale.split('-')[0].toUpperCase()
 
-import(`echarts/i18n/lang${ECHARTS_LOCALE}-obj`)
+import(`echarts/i18n/lang${echartsLocale}-obj`)
   .then(lang => {
-    console.info(`Registering ECharts locale ${ECHARTS_LOCALE}`)
-    registerLocale(ECHARTS_LOCALE, lang.default)
+    console.info(`Registering ECharts locale ${echartsLocale}`)
+    registerLocale(echartsLocale, lang.default)
   })
   .catch(() => {
-    console.warn(`No ECharts locale found for ${ECHARTS_LOCALE}`)
+    console.warn(`No ECharts locale found for ${echartsLocale}`)
+    echartsLocale = undefined
   })
 
 export default {
@@ -108,6 +114,11 @@ export default {
         default:
           return startTime.format('ll')
       }
+    },
+    initOptions () {
+      return echartsLocale ? {
+        locale: echartsLocale
+      } : undefined
     }
   },
   data () {
@@ -118,9 +129,6 @@ export default {
   },
   mounted () {
     this.ready = true
-  },
-  created () {
-    this.ECHARTS_LOCALE = ECHARTS_LOCALE
   },
   beforeDestroy () {
     if (this.calendarPicker) this.calendarPicker.destroy()

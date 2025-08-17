@@ -1,5 +1,8 @@
 <template>
-  <f7-popup tablet-fullscreen close-on-escape @popup:opened="() => showNetwork = true" @popup:closed="$emit('closed')">
+  <f7-popup tablet-fullscreen
+            close-on-escape
+            @popup:opened="() => showNetwork = true"
+            @popup:closed="$emit('closed')">
     <f7-page class="analyzer-content">
       <f7-navbar title="Z-Wave Network Map">
         <f7-nav-right>

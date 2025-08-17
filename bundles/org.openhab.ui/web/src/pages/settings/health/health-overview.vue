@@ -1,6 +1,9 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn">
-    <f7-navbar title="Health Checks" back-link="Settings" back-link-url="/settings/" back-link-force>
+    <f7-navbar title="Health Checks"
+               back-link="Settings"
+               back-link-url="/settings/"
+               back-link-force>
       <f7-nav-right>
         <developer-dock-icon />
       </f7-nav-right>
@@ -20,7 +23,9 @@
       <f7-col>
         <f7-list media-list>
           <f7-list-item
-            media-item link="orphanlinks/" title="Orphan Links"
+            media-item
+            link="orphanlinks/"
+            title="Orphan Links"
             :badge="orphanLinksCount > 0 ? orphanLinksCount : undefined"
             :after="orphanLinksCount > 0 ? undefined : orphanLinksCount"
             :badge-color="orphanLinksCount ? 'red' : 'blue'"
@@ -28,7 +33,9 @@
             <f7-icon slot="media" f7="link" color="gray" />
           </f7-list-item>
           <f7-list-item
-            media-item link="semantics/" title="Semantic Model Conflicts"
+            media-item
+            link="semantics/"
+            title="Semantic Model Conflicts"
             :badge="semanticsProblemCount > 0 ? semanticsProblemCount : undefined"
             :after="semanticsProblemCount > 0 ? undefined : semanticsProblemCount"
             :badge-color="semanticsProblemCount ? 'red' : 'blue'"

@@ -9,7 +9,10 @@
             <f7-menu-dropdown-item divider />
             <f7-menu-dropdown-item @click="context.editmode.cutWidget(context.component, context.parent)" href="#" text="Cut" />
             <f7-menu-dropdown-item @click="context.editmode.copyWidget(context.component, context.parent)" href="#" text="Copy" />
-            <f7-menu-dropdown-item v-if="context.clipboardtype === 'oh-grid-col'" @click="context.editmode.pasteWidget(context.component, context.parent)" href="#" text="Paste" />
+            <f7-menu-dropdown-item v-if="context.clipboardtype === 'oh-grid-col'"
+                                   @click="context.editmode.pasteWidget(context.component, context.parent)"
+                                   href="#"
+                                   text="Paste" />
             <f7-menu-dropdown-item divider />
             <f7-menu-dropdown-item @click="context.editmode.moveWidgetUp(context.component, context.parent)" href="#" text="Move Up" />
             <f7-menu-dropdown-item @click="context.editmode.moveWidgetDown(context.component, context.parent)" href="#" text="Move Down" />
@@ -22,7 +25,11 @@
     <masonry v-if="visible" :cols="config.cols || {default: 5, 1400: 4, 1280: 3, 576: 3, 480: 2}">
       <div v-for="(slotComponent, idx) in context.component.slots.default" :key="idx" class="oh-cell-container">
         <f7-menu v-if="context.editmode" class="configure-layout-menu margin-bottom">
-          <f7-menu-item style="margin-left: auto" icon-f7="slider_horizontal_below_rectangle" dropdown @menu:opened="dropdownMenuOpened = idx" @menu:closed="dropdownMenuOpened = null">
+          <f7-menu-item style="margin-left: auto"
+                        icon-f7="slider_horizontal_below_rectangle"
+                        dropdown
+                        @menu:opened="dropdownMenuOpened = idx"
+                        @menu:closed="dropdownMenuOpened = null">
             <f7-menu-dropdown right>
               <f7-menu-dropdown-item @click="context.editmode.configureWidget(slotComponent, context)" href="#" text="Configure Cell" />
               <f7-menu-dropdown-item @click="context.editmode.editWidgetCode(slotComponent, context)" href="#" text="Edit YAML" />

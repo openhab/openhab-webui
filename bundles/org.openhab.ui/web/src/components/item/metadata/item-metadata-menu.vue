@@ -4,21 +4,31 @@
       <f7-list>
         <ul>
           <f7-list-item
-            v-for="namespace in wellKnownNamespaces" :key="namespace.name"
+            v-for="namespace in wellKnownNamespaces"
+            :key="namespace.name"
             :link="'/settings/items/' + item.name + '/metadata/' + namespace.name"
             :title="namespace.label"
             :after="namespace.value || 'Not Set'">
-            <f7-icon v-if="!namespace.editable" slot="title" f7="lock_fill" size="1rem" color="gray" />
+            <f7-icon v-if="!namespace.editable"
+                     slot="title"
+                     f7="lock_fill"
+                     size="1rem"
+                     color="gray" />
           </f7-list-item>
         </ul>
         <ul v-if="customNamespaces.length > 0">
           <f7-list-item divider />
           <f7-list-item
-            v-for="namespace in customNamespaces" :key="namespace.name"
+            v-for="namespace in customNamespaces"
+            :key="namespace.name"
             :link="'/settings/items/' + item.name + '/metadata/' + namespace.name"
             :title="namespace.label"
             :after="namespace.value || 'Not Set'">
-            <f7-icon v-if="!namespace.editable" slot="title" f7="lock_fill" size="1rem" color="gray" />
+            <f7-icon v-if="!namespace.editable"
+                     slot="title"
+                     f7="lock_fill"
+                     size="1rem"
+                     color="gray" />
           </f7-list-item>
         </ul>
       </f7-list>

@@ -4,14 +4,18 @@
                   :after="semanticValue || 'None'"
                   :disabled="!editable"
                   @click="openPopup('class')"
-                  class="aligned-smart-select" :link="editable" />
-    <f7-list-item v-if="currentSemanticType === 'Point'" title="Semantic Property"
+                  class="aligned-smart-select"
+                  :link="editable" />
+    <f7-list-item v-if="currentSemanticType === 'Point'"
+                  title="Semantic Property"
                   :after="tagWithHierarchy(semanticProperty) || 'None'"
                   :disabled="!editable"
                   @click="openPopup('property')"
-                  class="aligned-smart-select" :link="editable" />
+                  class="aligned-smart-select"
+                  :link="editable" />
     <semantics-picker-popup
-      ref="classPopup" :key="'semantics-class'"
+      ref="classPopup"
+      :key="'semantics-class'"
       v-if="popupType === 'class'"
       :item="item"
       :hideNone="hideNone"
@@ -20,7 +24,8 @@
       @changed="itemChanged"
       @close="closePopup" />
     <semantics-picker-popup
-      ref="propertyPopup" :key="'semantics-property'"
+      ref="propertyPopup"
+      :key="'semantics-property'"
       v-if="popupType === 'property'"
       :item="item"
       :hideNone="hideNone"

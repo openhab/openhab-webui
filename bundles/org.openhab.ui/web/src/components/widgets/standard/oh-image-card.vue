@@ -3,7 +3,10 @@
     <template #content-root>
       <f7-card-content :style="config.contentStyle" :class="[ ...(Array.isArray(config.contentClass) ? config.contentClass : []), 'oh-image-card', 'no-padding']">
         <f7-list v-if="hasAction" class="image-link">
-          <f7-list-item class="oh-image-clickable" link="#" no-chevron @click="performAction">
+          <f7-list-item class="oh-image-clickable"
+                        link="#"
+                        no-chevron
+                        @click="performAction">
             <oh-image slot="content-start" :context="childContext(context.component)" />
           </f7-list-item>
         </f7-list>

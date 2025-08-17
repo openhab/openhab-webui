@@ -2,8 +2,14 @@
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="thing-details-page">
     <f7-navbar :title="pageTitle + dirtyIndicator" back-link="Back" no-hairline>
       <f7-nav-right v-if="!error && ready">
-        <f7-link v-if="!editable" icon-f7="lock_fill" icon-only tooltip="This Thing is not editable through the UI" />
-        <f7-link v-else-if="$theme.md" icon-md="material:save" icon-only @click="save()" />
+        <f7-link v-if="!editable"
+                 icon-f7="lock_fill"
+                 icon-only
+                 tooltip="This Thing is not editable through the UI" />
+        <f7-link v-else-if="$theme.md"
+                 icon-md="material:save"
+                 icon-only
+                 @click="save()" />
         <f7-link v-else @click="save()">
           Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
         </f7-link>
@@ -13,10 +19,16 @@
       <f7-link @click="switchTab('thing')" :tab-link-active="currentTab === 'thing'" class="tab-link">
         Thing
       </f7-link>
-      <f7-link @click="switchTab('channels')" :tab-link-active="currentTab === 'channels'" v-show="!error" class="tab-link">
+      <f7-link @click="switchTab('channels')"
+               :tab-link-active="currentTab === 'channels'"
+               v-show="!error"
+               class="tab-link">
         Channels
       </f7-link>
-      <f7-link @click="switchTab('code')" :tab-link-active="currentTab === 'code'" v-show="!error" class="tab-link">
+      <f7-link @click="switchTab('code')"
+               :tab-link-active="currentTab === 'code'"
+               v-show="!error"
+               class="tab-link">
         Code
       </f7-link>
     </f7-toolbar>
@@ -28,8 +40,12 @@
             <div v-show="!error" class="float-right align-items-flex-start align-items-center">
               <f7-link :icon-color="(thing.statusInfo.statusDetail === 'DISABLED') ? 'orange' : 'gray'"
                        :tooltip="((thing.statusInfo.statusDetail === 'DISABLED') ? 'Enable' : 'Disable') + (($device.desktop) ? ' (Ctrl-D)' : '')"
-                       icon-ios="f7:pause_circle" icon-md="f7:pause_circle" icon-aurora="f7:pause_circle" icon-size="32"
-                       color="orange" @click="toggleDisabled" />
+                       icon-ios="f7:pause_circle"
+                       icon-md="f7:pause_circle"
+                       icon-aurora="f7:pause_circle"
+                       icon-size="32"
+                       color="orange"
+                       @click="toggleDisabled" />
             </div>
             Status:
             <f7-chip class="margin-left" :text="thing.statusInfo.status" :color="thingStatusBadgeColor(thing.statusInfo)" />
@@ -54,7 +70,10 @@
 
         <f7-block v-if="ready && !error" class="block-narrow">
           <f7-col>
-            <thing-general-settings :thing="thing" :thing-type="thingType" :ready="true" :read-only="!editable" />
+            <thing-general-settings :thing="thing"
+                                    :thing-type="thingType"
+                                    :ready="true"
+                                    :read-only="!editable" />
             <f7-block-title v-if="thingType && thingType.UID" medium style="margin-bottom: var(--f7-list-margin-vertical)">
               Information
             </f7-block-title>
@@ -67,34 +86,50 @@
                   <div class="margin" v-html="thingType.description" />
                 </f7-accordion-content>
               </f7-list-item>
-              <f7-list-item accordion-item v-if="Object.keys(thing.properties).length > 0" title="Thing Properties"
+              <f7-list-item accordion-item
+                            v-if="Object.keys(thing.properties).length > 0"
+                            title="Thing Properties"
                             :badge="Object.keys(thing.properties).length">
                 <f7-accordion-content>
                   <f7-list>
-                    <f7-list-item class="thing-property" v-for="(value, key) in thing.properties" :key="key"
+                    <f7-list-item class="thing-property"
+                                  v-for="(value, key) in thing.properties"
+                                  :key="key"
                                   @click="showFullPropertyIfTruncated(key, value)">
                       <div slot="title" class="item-title-content">
                         <span :ref="'titleSpan-' + key">{{ key }}</span>
                       </div>
                       <div slot="after" class="item-after-content">
                         <span :ref="'valueSpan-' + key">{{ value }}</span>
-                        <f7-icon v-if="isTruncated(key, 'title') || isTruncated(key, 'value')" f7="info_circle" size="16" class="truncation-icon" />
+                        <f7-icon v-if="isTruncated(key, 'title') || isTruncated(key, 'value')"
+                                 f7="info_circle"
+                                 size="16"
+                                 class="truncation-icon" />
                       </div>
                     </f7-list-item>
                   </f7-list>
                 </f7-accordion-content>
               </f7-list-item>
-              <f7-list-item v-if="thing.firmwareStatus" accordion-item title="Firmware" :badge="firmwares.length"
+              <f7-list-item v-if="thing.firmwareStatus"
+                            accordion-item
+                            title="Firmware"
+                            :badge="firmwares.length"
                             :badge-color="(thing.firmwareStatus.status === 'UPDATE_EXECUTABLE') ? 'green' : 'gray'">
                 <f7-accordion-content>
                   <f7-list>
                     <f7-list-item class="thing-property" title="Status" :after="thing.firmwareStatus.status" />
-                    <f7-list-item class="thing-property" title="Current Version"
+                    <f7-list-item class="thing-property"
+                                  title="Current Version"
                                   :after="thing.properties.firmwareVersion" />
-                    <f7-list-item class="thing-property" v-for="firmware in firmwares" :key="firmware.version"
-                                  header="Version" :title="firmware.version" :after="firmware.description"
+                    <f7-list-item class="thing-property"
+                                  v-for="firmware in firmwares"
+                                  :key="firmware.version"
+                                  header="Version"
+                                  :title="firmware.version"
+                                  :after="firmware.description"
                                   :footer="firmware.changelog">
-                      <f7-icon v-if="firmware.version === thing.properties.firmwareVersion" f7="checkmark"
+                      <f7-icon v-if="firmware.version === thing.properties.firmwareVersion"
+                               f7="checkmark"
                                color="green" />
                     </f7-list-item>
                   </f7-list>
@@ -119,10 +154,16 @@
                 Actions
               </f7-block-title>
               <f7-list class="margin-top" media-list>
-                <f7-list-item v-if="thingType?.UID?.startsWith('zwave:')" title="View Network Map" link=""
+                <f7-list-item v-if="thingType?.UID?.startsWith('zwave:')"
+                              title="View Network Map"
+                              link=""
                               @click="openZWaveNetworkPopup()" />
-                <f7-list-item v-for="action in thingActions" :key="action.name" :title="action.label"
-                              :footer="action.description" link="" @click="doThingAction(action)" />
+                <f7-list-item v-for="action in thingActions"
+                              :key="action.name"
+                              :title="action.label"
+                              :footer="action.description"
+                              link=""
+                              @click="doThingAction(action)" />
               </f7-list>
             </template>
           </f7-col>
@@ -151,8 +192,11 @@
                 <div v-html="actionGroup.group.description" />
               </f7-block-footer>
               <f7-list>
-                <f7-list-button v-for="action in actionGroup.actions" :color="(action.verify) ? 'yellow' : 'blue'"
-                                :key="action.name" :title="action.label" @click="action.execute()" />
+                <f7-list-button v-for="action in actionGroup.actions"
+                                :color="(action.verify) ? 'yellow' : 'blue'"
+                                :key="action.name"
+                                :title="action.label"
+                                @click="action.execute()" />
               </f7-list>
             </f7-col>
           </f7-block>
@@ -161,11 +205,22 @@
         <f7-block class="block-narrow" v-if="ready">
           <f7-col>
             <f7-list>
-              <f7-list-button v-if="thing.statusInfo.statusDetail === 'HANDLER_MISSING_ERROR'" color="blue"
-                              title="Install Binding" @click="installBinding" />
-              <f7-list-button v-if="!error" color="blue" title="Duplicate Thing" @click="duplicateThing" />
-              <f7-list-button v-if="!error" color="blue" title="Copy File Definition" @click="copyFileDefinitionToClipboard(ObjectType.THING, [thingId])" />
-              <f7-list-button v-if="editable" color="red" title="Remove Thing" @click="deleteThing" />
+              <f7-list-button v-if="thing.statusInfo.statusDetail === 'HANDLER_MISSING_ERROR'"
+                              color="blue"
+                              title="Install Binding"
+                              @click="installBinding" />
+              <f7-list-button v-if="!error"
+                              color="blue"
+                              title="Duplicate Thing"
+                              @click="duplicateThing" />
+              <f7-list-button v-if="!error"
+                              color="blue"
+                              title="Copy File Definition"
+                              @click="copyFileDefinitionToClipboard(ObjectType.THING, [thingId])" />
+              <f7-list-button v-if="editable"
+                              color="red"
+                              title="Remove Thing"
+                              @click="deleteThing" />
             </f7-list>
           </f7-col>
         </f7-block>
@@ -173,19 +228,33 @@
 
       <f7-tab id="channels" disabled="!thingType.channels" :tab-active="currentTab === 'channels'">
         <f7-block v-if="currentTab === 'channels'" class="block-narrow">
-          <channel-list :thingType="thingType" :thing="thing" :channelTypes="channelTypes"
-                        @channels-updated="onChannelsUpdated" :context="context" />
+          <channel-list :thingType="thingType"
+                        :thing="thing"
+                        :channelTypes="channelTypes"
+                        @channels-updated="onChannelsUpdated"
+                        :context="context" />
           <f7-col v-if="isExtensible || thing.channels.length > 0">
             <f7-list>
-              <f7-list-button class="searchbar-ignore" color="blue" title="Add Channel" v-if="isExtensible && editable"
+              <f7-list-button class="searchbar-ignore"
+                              color="blue"
+                              title="Add Channel"
+                              v-if="isExtensible && editable"
                               @click="addChannel()" />
-              <f7-list-button class="searchbar-ignore" color="blue" title="Add Equipment to Model"
+              <f7-list-button class="searchbar-ignore"
+                              color="blue"
+                              title="Add Equipment to Model"
                               @click="addToModel(true)" />
-              <f7-list-button class="searchbar-ignore" color="blue" title="Add Points to Model"
+              <f7-list-button class="searchbar-ignore"
+                              color="blue"
+                              title="Add Points to Model"
                               @click="addToModel(false)" />
-              <f7-list-button class="searchbar-ignore" color="red" title="Unlink all Items"
+              <f7-list-button class="searchbar-ignore"
+                              color="red"
+                              title="Unlink all Items"
                               @click="unlinkAll(false)" />
-              <f7-list-button class="searchbar-ignore" color="red" title="Unlink all and Remove Items"
+              <f7-list-button class="searchbar-ignore"
+                              color="red"
+                              title="Unlink all and Remove Items"
                               @click="unlinkAll(true)" />
             </f7-list>
           </f7-col>
@@ -193,10 +262,19 @@
       </f7-tab>
 
       <f7-tab id="code" :tab-active="currentTab === 'code'">
-        <f7-icon v-if="!editable" f7="lock" class="float-right margin"
-                 style="opacity:0.5; z-index: 4000; user-select: none;" size="50" color="gray" :tooltip="notEditableMsg" />
-        <editor v-if="ready" class="thing-code-editor" mode="application/vnd.openhab.thing+yaml" :value="thingYaml"
-                :hint-context="{ thingType: thingType, channelTypes: channelTypes }" @input="onEditorInput"
+        <f7-icon v-if="!editable"
+                 f7="lock"
+                 class="float-right margin"
+                 style="opacity:0.5; z-index: 4000; user-select: none;"
+                 size="50"
+                 color="gray"
+                 :tooltip="notEditableMsg" />
+        <editor v-if="ready"
+                class="thing-code-editor"
+                mode="application/vnd.openhab.thing+yaml"
+                :value="thingYaml"
+                :hint-context="{ thingType: thingType, channelTypes: channelTypes }"
+                @input="onEditorInput"
                 :read-only="!editable" />
         <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
       </f7-tab>

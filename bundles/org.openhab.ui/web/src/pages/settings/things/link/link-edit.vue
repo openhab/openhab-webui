@@ -8,8 +8,15 @@
       </f7-nav-left>
       <f7-nav-title :title="(item.label || item.name) + dirtyIndicator" :subtitle="thing.label" />
       <f7-nav-right v-show="ready">
-        <f7-link v-if="!link.editable" slot="right" icon-f7="lock_fill" icon-only tooltip="links defined in a .items file are not editable from this screen" />
-        <f7-link v-else-if="$theme.md" icon-md="material:save" icon-only @click="save()" />
+        <f7-link v-if="!link.editable"
+                 slot="right"
+                 icon-f7="lock_fill"
+                 icon-only
+                 tooltip="links defined in a .items file are not editable from this screen" />
+        <f7-link v-else-if="$theme.md"
+                 icon-md="material:save"
+                 icon-only
+                 @click="save()" />
         <f7-link v-else @click="save()">
           Save
         </f7-link>
@@ -27,7 +34,8 @@
             <f7-list media-list>
               <ul>
                 <f7-list-item divider title="Channel" />
-                <f7-list-item media-item class="channel-item"
+                <f7-list-item media-item
+                              class="channel-item"
                               :title="channel.label || channelType.label"
                               :footer="channel.uid + ' (' + getItemType(channel) + ')'"
                               :subtitle="thing.label"
@@ -41,7 +49,10 @@
             </f7-list>
           </f7-card-content>
           <f7-card-footer v-if="item && (item.editable || link.editable)">
-            <f7-button color="red" fill @click="unlinkAndDelete()" v-if="source === 'thing' && item.editable">
+            <f7-button color="red"
+                       fill
+                       @click="unlinkAndDelete()"
+                       v-if="source === 'thing' && item.editable">
               Unlink &amp; Remove Item
             </f7-button>
             <f7-button color="red" @click="unlink()" v-if="link.editable">
@@ -54,7 +65,10 @@
         <f7-block-title>Profile</f7-block-title>
         <f7-block-footer class="padding-left padding-right">
           Profiles define how Channels and Items work together. Install transformation add-ons to get additional profiles.
-          <f7-link external color="blue" target="_blank" :href="`${$store.state.websiteUrl}/link/profiles`">
+          <f7-link external
+                   color="blue"
+                   target="_blank"
+                   :href="`${$store.state.websiteUrl}/link/profiles`">
             Learn more about profiles.
           </f7-link>
         </f7-block-footer>
@@ -63,12 +77,16 @@
           <div>Loading...</div>
         </f7-block>
         <f7-list v-else class="profile-list">
-          <f7-list-item radio v-for="profileType in profileTypes" class="profile-item"
+          <f7-list-item radio
+                        v-for="profileType in profileTypes"
+                        class="profile-item"
                         :checked="!currentProfileType && profileType.uid === 'system:default' || currentProfileType && profileType.uid === currentProfileType.uid"
                         :disabled="!link.editable"
                         :class="{ 'profile-disabled': !link.editable }"
                         @change="onProfileTypeChange(profileType.uid)"
-                        :key="profileType.uid" :title="profileType.label" name="profile-type" />
+                        :key="profileType.uid"
+                        :title="profileType.label"
+                        name="profile-type" />
         </f7-list>
       </f7-col>
       <f7-col v-if="profileTypeConfiguration != null">

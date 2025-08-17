@@ -1,9 +1,16 @@
 <template>
-  <f7-popup ref="sceneItemPopup" class="sceneitemconfig-popup" close-on-escape @popup:open="itemConfigOpened" @popup:closed="itemConfigClosed">
+  <f7-popup ref="sceneItemPopup"
+            class="sceneitemconfig-popup"
+            close-on-escape
+            @popup:open="itemConfigOpened"
+            @popup:closed="itemConfigClosed">
     <f7-page>
       <f7-navbar>
         <f7-nav-left>
-          <f7-link icon-ios="f7:arrow_left" icon-md="material:arrow_back" icon-aurora="f7:arrow_left" popup-close />
+          <f7-link icon-ios="f7:arrow_left"
+                   icon-md="material:arrow_back"
+                   icon-aurora="f7:arrow_left"
+                   popup-close />
         </f7-nav-left>
         <f7-nav-title>
           Configure Item:
@@ -33,8 +40,12 @@
               @input="command = $event.target.value"
               type="text" />
             <ul v-if="commandSuggestions.length">
-              <f7-list-item radio :checked="command === suggestion.command" v-for="suggestion in commandSuggestions" :key="suggestion.command"
-                            :title="suggestion.label" @click="command = suggestion.command" />
+              <f7-list-item radio
+                            :checked="command === suggestion.command"
+                            v-for="suggestion in commandSuggestions"
+                            :key="suggestion.command"
+                            :title="suggestion.label"
+                            @click="command = suggestion.command" />
             </ul>
           </f7-list>
         </f7-col>
@@ -49,10 +60,25 @@
             <f7-range v-bind="sliderConfig" :value="command" @range:change="command = $event.toString()" />
           </div>
           <div v-else-if="control === 'rollershutter'" class="scene-item-control-rollershutter">
-            <f7-segmented round outline strong class="rollershutter-controls">
-              <f7-button @click="command = 'UP'" large icon-f7="arrowtriangle_left" icon-size="24" icon-color="gray" />
-              <f7-button @click="command = 'STOP'" large icon-f7="stop" icon-size="24" icon-color="red" />
-              <f7-button @click="command = 'DOWN'" large icon-f7="arrowtriangle_right" icon-size="24" icon-color="gray" />
+            <f7-segmented round
+                          outline
+                          strong
+                          class="rollershutter-controls">
+              <f7-button @click="command = 'UP'"
+                         large
+                         icon-f7="arrowtriangle_left"
+                         icon-size="24"
+                         icon-color="gray" />
+              <f7-button @click="command = 'STOP'"
+                         large
+                         icon-f7="stop"
+                         icon-size="24"
+                         icon-color="red" />
+              <f7-button @click="command = 'DOWN'"
+                         large
+                         icon-f7="arrowtriangle_right"
+                         icon-size="24"
+                         icon-color="gray" />
             </f7-segmented>
           </div>
         </f7-col>

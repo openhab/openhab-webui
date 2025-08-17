@@ -6,7 +6,10 @@
       back-link="Back"
       no-hairline>
       <f7-nav-right>
-        <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only />
+        <f7-link @click="save()"
+                 v-if="$theme.md"
+                 icon-md="material:save"
+                 icon-only />
         <f7-link @click="save()" v-if="!$theme.md">
           Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
         </f7-link>
@@ -21,14 +24,25 @@
       </f7-link>
     </f7-toolbar>
     <f7-toolbar v-if="!fullscreen" bottom class="toolbar-details">
-      <f7-link v-if="$fullscreen.isEnabled" class="fullscreen-link" icon-f7="rectangle_arrow_up_right_arrow_down_left" text="Fullscreen" color="blue" @click="toggleFullscreen" />
+      <f7-link v-if="$fullscreen.isEnabled"
+               class="fullscreen-link"
+               icon-f7="rectangle_arrow_up_right_arrow_down_left"
+               text="Fullscreen"
+               color="blue"
+               @click="toggleFullscreen" />
       <div class="display-flex flex-direction-row align-items-center">
         <f7-toggle :checked="previewMode" @toggle:change="(value) => togglePreviewMode(value)" />&nbsp;Run mode<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span>
-        <f7-link v-if="!createMode" class="right margin-left padding-right" @click="detailsOpened = true" icon-f7="chevron_up" />
+        <f7-link v-if="!createMode"
+                 class="right margin-left padding-right"
+                 @click="detailsOpened = true"
+                 icon-f7="chevron_up" />
       </div>
     </f7-toolbar>
     <f7-tabs class="layout-editor-tabs">
-      <f7-tab id="design" class="layout-editor-design-tab" @tab:show="() => this.currentTab = 'design'" :tab-active="currentTab === 'design'">
+      <f7-tab id="design"
+              class="layout-editor-design-tab"
+              @tab:show="() => this.currentTab = 'design'"
+              :tab-active="currentTab === 'design'">
         <f7-block v-if="!ready" class="text-align-center">
           <f7-preloader />
           <div>Loading...</div>
@@ -90,14 +104,22 @@
           </f7-col>
         </f7-block>
 
-        <oh-layout-page class="layout-page" v-if="ready" :context="context" :key="pageKey" :style="page.config.style"
+        <oh-layout-page class="layout-page"
+                        v-if="ready"
+                        :context="context"
+                        :key="pageKey"
+                        :style="page.config.style"
                         @action="performAction($event.ev, $event.prefix, $event.config, $event.context)"
                         @add-block="addBlock"
                         @add-masonry="addMasonry"
                         @add-grid-item="addGridItem"
                         @add-canvas-item="addCanvasItem" />
 
-        <f7-sheet ref="detailsSheet" :backdrop="false" :close-on-escape="true" :opened="detailsOpened" @sheet:closed="detailsOpened = false">
+        <f7-sheet ref="detailsSheet"
+                  :backdrop="false"
+                  :close-on-escape="true"
+                  :opened="detailsOpened"
+                  @sheet:closed="detailsOpened = false">
           <f7-page>
             <f7-toolbar tabbar bottom>
               <span class="margin-left">Page Settings</span>
@@ -114,10 +136,20 @@
         </f7-sheet>
       </f7-tab>
       <f7-tab id="code" @tab:show="() => { this.currentTab = 'code' }" :tab-active="currentTab === 'code'">
-        <editor v-if="currentTab === 'code'" :style="{ opacity: previewMode ? '0' : '' }" class="page-code-editor" mode="application/vnd.openhab.uicomponent+yaml?type=layout" :value="pageYaml" @input="onEditorInput" />
+        <editor v-if="currentTab === 'code'"
+                :style="{ opacity: previewMode ? '0' : '' }"
+                class="page-code-editor"
+                mode="application/vnd.openhab.uicomponent+yaml?type=layout"
+                :value="pageYaml"
+                @input="onEditorInput" />
         <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
 
-        <oh-layout-page class="layout-page" v-if="ready && previewMode" :context="context" :key="pageKey" :style="page.config.style" @action="performAction($event.ev, $event.prefix, $event.config, $event.context)" />
+        <oh-layout-page class="layout-page"
+                        v-if="ready && previewMode"
+                        :context="context"
+                        :key="pageKey"
+                        :style="page.config.style"
+                        @action="performAction($event.ev, $event.prefix, $event.config, $event.context)" />
       </f7-tab>
     </f7-tabs>
   </f7-page>

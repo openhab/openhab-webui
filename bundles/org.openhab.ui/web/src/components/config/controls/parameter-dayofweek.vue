@@ -1,7 +1,12 @@
 <template>
   <ul>
-    <f7-list-item v-for="(day, $idx) in values" :value="day" :key="day"
-                  :title="labels[$idx]" checkbox :checked="isSelected(day)" @change="(evt) => select(day, evt.target.checked)" />
+    <f7-list-item v-for="(day, $idx) in values"
+                  :value="day"
+                  :key="day"
+                  :title="labels[$idx]"
+                  checkbox
+                  :checked="isSelected(day)"
+                  @change="(evt) => select(day, evt.target.checked)" />
   </ul>
 </template>
 

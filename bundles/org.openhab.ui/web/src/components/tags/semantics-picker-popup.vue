@@ -1,5 +1,8 @@
 <template>
-  <f7-popup closeByBackdropClick closeOnEscape @popup:open="onOpen" @popup:close="onClose">
+  <f7-popup closeByBackdropClick
+            closeOnEscape
+            @popup:open="onOpen"
+            @popup:close="onClose">
     <f7-page>
       <f7-navbar :title="propertyMode ? 'Semantic Property' : 'Semantic Class'">
         <f7-nav-right>
@@ -16,8 +19,17 @@
           :disable-button="!$theme.aurora"
           @input="showFiltered($event.target.value)" />
         <div class="expand-button">
-          <f7-button v-if="!expanded" icon-size="24" tooltip="Expand" icon-f7="rectangle_expand_vertical" @click="toggleExpanded()" />
-          <f7-button v-else color="gray" icon-size="24" tooltip="Collapse" icon-f7="rectangle_compress_vertical" @click="toggleExpanded()" />
+          <f7-button v-if="!expanded"
+                     icon-size="24"
+                     tooltip="Expand"
+                     icon-f7="rectangle_expand_vertical"
+                     @click="toggleExpanded()" />
+          <f7-button v-else
+                     color="gray"
+                     icon-size="24"
+                     tooltip="Collapse"
+                     icon-f7="rectangle_compress_vertical"
+                     @click="toggleExpanded()" />
         </div>
       </f7-subnavbar>
       <f7-toolbar bottom class="toolbar-details">
@@ -34,10 +46,19 @@
         </div>
         <span />
       </f7-toolbar>
-      <semantics-treeview class="semantic-classes" :semanticTags="semanticTags" :expandedTags="expandedTags"
-                          @selected="tagSelected" :showNames="showNames" :showSynonyms="showSynonyms"
-                          :selectedTag="selectedTag" :selectedClass="selectedClass" :hideNone="hideNone"
-                          picker="true" :propertyMode="!!propertyMode" :classMode="!!classMode" :limitToClass="!!limitToClass" />
+      <semantics-treeview class="semantic-classes"
+                          :semanticTags="semanticTags"
+                          :expandedTags="expandedTags"
+                          @selected="tagSelected"
+                          :showNames="showNames"
+                          :showSynonyms="showSynonyms"
+                          :selectedTag="selectedTag"
+                          :selectedClass="selectedClass"
+                          :hideNone="hideNone"
+                          picker="true"
+                          :propertyMode="!!propertyMode"
+                          :classMode="!!classMode"
+                          :limitToClass="!!limitToClass" />
     </f7-page>
   </f7-popup>
 </template>

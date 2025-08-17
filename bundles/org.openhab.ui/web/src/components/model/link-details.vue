@@ -3,13 +3,22 @@
     <f7-card-content v-if="enrichedLinks.length > 0">
       <f7-list media-list>
         <ul>
-          <f7-list-item v-for="l in enrichedLinks" :key="l.itemName" media-item
-                        :title="l.thing.label" :subtitle="l.channel.label || '?'" :footer="l.link.channelUID"
+          <f7-list-item v-for="l in enrichedLinks"
+                        :key="l.itemName"
+                        media-item
+                        :title="l.thing.label"
+                        :subtitle="l.channel.label || '?'"
+                        :footer="l.link.channelUID"
                         :badge="thingStatusBadgeText(l.thing.statusInfo)"
                         :badge-color="thingStatusBadgeColor(l.thing.statusInfo)"
-                        :link="!l.link.editable && l._invalid ? undefined : '#'" @click="!l.link.editable && l._invalid ? undefined : editLink(l)">
+                        :link="!l.link.editable && l._invalid ? undefined : '#'"
+                        @click="!l.link.editable && l._invalid ? undefined : editLink(l)">
             <span slot="media" class="item-initial">{{ !l._invalid && l.channel.label ? l.channel.label[0] : '?' }}</span>
-            <f7-icon v-if="!l.link.editable" slot="title" f7="lock_fill" size="1rem" color="gray" />
+            <f7-icon v-if="!l.link.editable"
+                     slot="title"
+                     f7="lock_fill"
+                     size="1rem"
+                     color="gray" />
           </f7-list-item>
         </ul>
       </f7-list>

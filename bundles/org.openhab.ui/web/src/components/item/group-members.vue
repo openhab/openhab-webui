@@ -4,19 +4,31 @@
       <f7-list>
         <ul v-if="!editMembers">
           <item
-            v-for="member in sortedGroupMembers" :key="member.name"
-            :item="member" :link="'/settings/items/' + member.name"
+            v-for="member in sortedGroupMembers"
+            :key="member.name"
+            :item="member"
+            :link="'/settings/items/' + member.name"
             :context="context" />
           <!-- <f7-list-button @click="enableEditMode" color="blue" title="Add or Remove Members" /> -->
         </ul>
-        <item-picker v-if="editMembers" :multiple="true" name="groupMembers" :value="pickedMemberNames" title="Members" :editableOnly="true" @input="(members) => pickedMemberNames = members" />
+        <item-picker v-if="editMembers"
+                     :multiple="true"
+                     name="groupMembers"
+                     :value="pickedMemberNames"
+                     title="Members"
+                     :editableOnly="true"
+                     @input="(members) => pickedMemberNames = members" />
       </f7-list>
     </f7-card-content>
     <f7-card-footer>
       <f7-button color="blue" v-if="!editMembers" @click="enableEditMode">
         Change
       </f7-button>
-      <f7-button color="blue" v-if="editMembers" fill raised @click="updateMembers">
+      <f7-button color="blue"
+                 v-if="editMembers"
+                 fill
+                 raised
+                 @click="updateMembers">
         Apply
       </f7-button>
       <f7-button color="blue" v-if="editMembers" @click="cancelEditMode">

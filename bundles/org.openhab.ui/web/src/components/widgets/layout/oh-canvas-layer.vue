@@ -1,5 +1,8 @@
 <template>
-  <div v-if="layerPreload || layerVisible" v-show="!layerPreload || layerVisible" ref="ohCanvasLayer" class="oh-canvas-layer">
+  <div v-if="layerPreload || layerVisible"
+       v-show="!layerPreload || layerVisible"
+       ref="ohCanvasLayer"
+       class="oh-canvas-layer">
     <oh-canvas-item
       v-for="obj in layer"
       :key="obj.id"

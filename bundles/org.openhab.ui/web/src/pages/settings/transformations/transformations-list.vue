@@ -1,9 +1,13 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:afterout="onPageAfterOut">
-    <f7-navbar title="Transformations" back-link="Settings" back-link-url="/settings/" back-link-force>
+    <f7-navbar title="Transformations"
+               back-link="Settings"
+               back-link-url="/settings/"
+               back-link-force>
       <f7-nav-right>
         <developer-dock-icon />
-        <f7-link icon-md="material:done_all" @click="toggleCheck()"
+        <f7-link icon-md="material:done_all"
+                 @click="toggleCheck()"
                  :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
       </f7-nav-right>
       <f7-subnavbar :inner="false" v-show="initSearchbar">
@@ -18,16 +22,32 @@
           :disable-button="!$theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
-    <f7-toolbar class="contextual-toolbar" :class="{ 'navbar': $theme.md }" v-if="showCheckboxes" bottom-ios bottom-aurora>
-      <f7-link color="red" v-show="selectedTransformations.length" v-if="!$theme.md" class="delete" icon-ios="f7:trash" icon-aurora="f7:trash" @click="removeSelected">
+    <f7-toolbar class="contextual-toolbar"
+                :class="{ 'navbar': $theme.md }"
+                v-if="showCheckboxes"
+                bottom-ios
+                bottom-aurora>
+      <f7-link color="red"
+               v-show="selectedTransformations.length"
+               v-if="!$theme.md"
+               class="delete"
+               icon-ios="f7:trash"
+               icon-aurora="f7:trash"
+               @click="removeSelected">
         Remove {{ selectedTransformations.length }}
       </f7-link>
-      <f7-link v-if="$theme.md" icon-md="material:close" icon-color="white" @click="showCheckboxes = false" />
+      <f7-link v-if="$theme.md"
+               icon-md="material:close"
+               icon-color="white"
+               @click="showCheckboxes = false" />
       <div class="title" v-if="$theme.md">
         {{ selectedTransformations.length }} selected
       </div>
       <div class="right" v-if="$theme.md">
-        <f7-link v-show="selectedTransformations.length" icon-md="material:delete" icon-color="white" @click="removeSelected" />
+        <f7-link v-show="selectedTransformations.length"
+                 icon-md="material:delete"
+                 icon-color="white"
+                 @click="removeSelected" />
       </div>
     </f7-toolbar>
 
@@ -94,7 +114,11 @@
               link=""
               :title="transformation.label"
               :subtitle="transformation.type">
-              <f7-icon v-if="!transformation.editable" slot="after-title" f7="lock_fill" size="1rem" color="gray" />
+              <f7-icon v-if="!transformation.editable"
+                       slot="after-title"
+                       f7="lock_fill"
+                       size="1rem"
+                       color="gray" />
               <template slot="footer">
                 {{ transformation.uid }}
                 <clipboard-icon :value="transformation.uid" tooltip="Copy UID" />
@@ -108,11 +132,21 @@
     <f7-block v-if="ready && !transformations.length" class="block-narrow">
       <empty-state-placeholder icon="arrow_2_squarepath" title="transformations.title" text="transformations.text" />
       <f7-row v-if="$f7.width < 1280" class="display-flex justify-content-center">
-        <f7-button large fill color="blue" external :href="`${this.$store.state.websiteUrl}/link/transformations`" target="_blank" v-t="'home.overview.button.documentation'" />
+        <f7-button large
+                   fill
+                   color="blue"
+                   external
+                   :href="`${this.$store.state.websiteUrl}/link/transformations`"
+                   target="_blank"
+                   v-t="'home.overview.button.documentation'" />
       </f7-row>
     </f7-block>
 
-    <f7-fab v-show="ready && !showCheckboxes" position="right-bottom" slot="fixed" color="blue" href="add">
+    <f7-fab v-show="ready && !showCheckboxes"
+            position="right-bottom"
+            slot="fixed"
+            color="blue"
+            href="add">
       <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
     </f7-fab>
   </f7-page>

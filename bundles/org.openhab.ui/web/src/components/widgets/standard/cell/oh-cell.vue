@@ -1,34 +1,66 @@
 <template>
-  <f7-card ref="card" :expandable="true" class="card-prevent-open oh-cell"
+  <f7-card ref="card"
+           :expandable="true"
+           class="card-prevent-open oh-cell"
            :swipeToClose="!(noSwipeToClose || config.swipeToClose === false)"
            :backdrop="config.backdrop === undefined || config.backdrop"
            :animate="(config.animate === false || $f7.data.themeOptions.expandableCardAnimation === 'disabled') ? false : undefined"
-           @card:open="cellOpen" @card:opened="cellOpened" @card:close="cellClose" @card:closed="cellClosed">
+           @card:open="cellOpen"
+           @card:opened="cellOpened"
+           @card:close="cellClose"
+           @card:closed="cellClosed">
     <slot name="background">
       <div v-if="context.component.slots && context.component.slots.background">
-        <generic-widget-component :context="childContext(slotComponent)" v-for="(slotComponent, idx) in context.component.slots.background" :key="'background-' + idx" @command="onCommand" />
+        <generic-widget-component :context="childContext(slotComponent)"
+                                  v-for="(slotComponent, idx) in context.component.slots.background"
+                                  :key="'background-' + idx"
+                                  @command="onCommand" />
       </div>
-      <oh-trend v-else-if="config.trendItem" :key="'trend' + config.item" class="trend card-opened-fade-out" :width="($refs.card) ? $refs.card.$el.clientWidth : 0" :context="context" />
+      <oh-trend v-else-if="config.trendItem"
+                :key="'trend' + config.item"
+                class="trend card-opened-fade-out"
+                :width="($refs.card) ? $refs.card.$el.clientWidth : 0"
+                :context="context" />
       <div v-else class="cell-background" :class="[(config.color) ? 'bg-color-' + config.color : '', { 'on': isOn }, { 'card-opened-fade-out': !config.keepColorWhenOpened }]" />
     </slot>
-    <f7-link v-show="!opened && hasExpandedControls && hasAction" icon-f7="ellipsis_vertical" icon-size="30" @click.native="openCell" class="float-right cell-open-button card-opened-fade-out no-ripple" />
+    <f7-link v-show="!opened && hasExpandedControls && hasAction"
+             icon-f7="ellipsis_vertical"
+             icon-size="30"
+             @click.native="openCell"
+             class="float-right cell-open-button card-opened-fade-out no-ripple" />
     <f7-card-content ref="cell" class="cell-contents">
       <f7-card-header class="cell-button card-opened-fade-out no-padding" v-show="!opened">
         <slot name="header">
           <f7-list media-list>
             <div v-if="context.component.slots && context.component.slots.header">
-              <generic-widget-component :context="childContext(slotComponent)" v-for="(slotComponent, idx) in context.component.slots.header" :key="'header-' + idx" @command="onCommand" />
+              <generic-widget-component :context="childContext(slotComponent)"
+                                        v-for="(slotComponent, idx) in context.component.slots.header"
+                                        :key="'header-' + idx"
+                                        @command="onCommand" />
             </div>
-            <f7-list-item v-else media-item :subtitle="config.subtitle" :footer="config.footer">
+            <f7-list-item v-else
+                          media-item
+                          :subtitle="config.subtitle"
+                          :footer="config.footer">
               <div slot="header" v-if="header" class="button-header display-flex">
-                <oh-icon class="header-icon" v-if="config.icon" :icon="config.icon" :color="config.iconColor" width="20" height="20" />
+                <oh-icon class="header-icon"
+                         v-if="config.icon"
+                         :icon="config.icon"
+                         :color="config.iconColor"
+                         width="20"
+                         height="20" />
                 <span class="header-text">{{ header }}</span>
                 <f7-badge v-if="config.headerBadge" :color="config.headerBadgeColor">
                   {{ config.headerBadge }}
                 </f7-badge>
               </div>
               <div slot="title" v-if="config.title" class="button-header display-flex">
-                <oh-icon class="header-icon" v-if="!header && config.icon" :icon="config.icon" :color="config.iconColor" width="20" height="20" />
+                <oh-icon class="header-icon"
+                         v-if="!header && config.icon"
+                         :icon="config.icon"
+                         :color="config.iconColor"
+                         width="20"
+                         height="20" />
                 <span class="header-text">{{ config.title }}</span>
                 <f7-badge v-if="config.headerBadge" :color="config.headerBadgeColor">
                   {{ config.headerBadge }}
@@ -38,7 +70,10 @@
           </f7-list>
         </slot>
       </f7-card-header>
-      <f7-link class="card-opened-fade-in cell-close-button float-right" icon-size="30" icon-f7="multiply_circle_fill" @click.native="closeCell" />
+      <f7-link class="card-opened-fade-in cell-close-button float-right"
+               icon-size="30"
+               icon-f7="multiply_circle_fill"
+               @click.native="closeCell" />
       <f7-card-header v-if="opened" class="cell-expanded-header card-opened-fade-in display-flex flex-direction-column">
         <div class="text-align-center cell-expanded-title">
           {{ config.title }}
@@ -53,7 +88,10 @@
       <div v-if="opened" class="cell-expanded-contents card-opened-fade-in display-flex flex-direction-column align-items-center">
         <slot>
           <div v-if="context.component.slots && context.component.slots.default">
-            <generic-widget-component :context="childContext(slotComponent)" v-for="(slotComponent, idx) in context.component.slots.default" :key="'default-' + idx" @command="onCommand" />
+            <generic-widget-component :context="childContext(slotComponent)"
+                                      v-for="(slotComponent, idx) in context.component.slots.default"
+                                      :key="'default-' + idx"
+                                      @command="onCommand" />
           </div>
         </slot>
       </div>

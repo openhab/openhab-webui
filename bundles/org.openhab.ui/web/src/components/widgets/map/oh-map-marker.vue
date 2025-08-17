@@ -1,5 +1,9 @@
 <template>
-  <l-marker ref="marker" v-if="coords" :key="markerKey" :lat-lng="coords" @click="performAction">
+  <l-marker ref="marker"
+            v-if="coords"
+            :key="markerKey"
+            :lat-lng="coords"
+            @click="performAction">
     <l-tooltip v-if="config.label">
       {{ config.label }}
     </l-tooltip>

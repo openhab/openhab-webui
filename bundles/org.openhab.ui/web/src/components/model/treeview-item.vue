@@ -1,13 +1,35 @@
 <template>
-  <f7-treeview-item selectable :label="label"
-                    :icon-ios="icon('ios')" :icon-aurora="icon('aurora')" :icon-md="icon('md')"
-                    :textColor="iconColor" :color="(model.item.created !== false) ? 'blue' :'orange'"
+  <f7-treeview-item selectable
+                    :label="label"
+                    :icon-ios="icon('ios')"
+                    :icon-aurora="icon('aurora')"
+                    :icon-md="icon('md')"
+                    :textColor="iconColor"
+                    :color="(model.item.created !== false) ? 'blue' :'orange'"
                     :selected="selected && selected.item.name === model.item.name"
-                    :opened="model.opened" :toggle="canHaveChildren"
-                    @treeview:open="model.opened = true" @treeview:close="model.opened = false" @click="select">
-    <draggable :disabled="!canDragDrop" :list="children" :group="{ name: 'model-treeview', put: allowDrop }" animation="150" forceFallback="true" fallbackOnBody="true" fallbackThreshold="5"
-               scrollSensitivity="200" delay="400" delayOnTouchOnly="true" touchStartThreshold="10" invertSwap="true" sort="false" ghost-class="model-sortable-ghost"
-               @start="onDragStart" @change="onDragChange" @end="onDragEnd" :move="onDragMove">
+                    :opened="model.opened"
+                    :toggle="canHaveChildren"
+                    @treeview:open="model.opened = true"
+                    @treeview:close="model.opened = false"
+                    @click="select">
+    <draggable :disabled="!canDragDrop"
+               :list="children"
+               :group="{ name: 'model-treeview', put: allowDrop }"
+               animation="150"
+               forceFallback="true"
+               fallbackOnBody="true"
+               fallbackThreshold="5"
+               scrollSensitivity="200"
+               delay="400"
+               delayOnTouchOnly="true"
+               touchStartThreshold="10"
+               invertSwap="true"
+               sort="false"
+               ghost-class="model-sortable-ghost"
+               @start="onDragStart"
+               @change="onDragChange"
+               @end="onDragEnd"
+               :move="onDragMove">
       <template v-if="model.opened">
         <model-treeview-item v-for="node in children"
                              :key="node.item.name"
@@ -16,7 +38,8 @@
                              :rootNode="rootNode"
                              @selected="(event) => $emit('selected', event)"
                              :selected="selected"
-                             :includeItemName="includeItemName" :includeItemTags="includeItemTags"
+                             :includeItemName="includeItemName"
+                             :includeItemTags="includeItemTags"
                              :canDragDrop="canDragDrop"
                              :moveState="moveState"
                              @checked="(item, check) => $emit('checked', item, check)"
@@ -26,9 +49,16 @@
     <div slot="label" class="semantic-class">
       {{ className }}
       <template v-if="includeItemTags">
-        <div class="semantic-class chip" v-for="tag in getNonSemanticTags(model.item)" :key="tag" style="height: 16px; margin-left: 4px">
+        <div class="semantic-class chip"
+             v-for="tag in getNonSemanticTags(model.item)"
+             :key="tag"
+             style="height: 16px; margin-left: 4px">
           <div class="chip-media bg-color-blue" style="height: 16px; width: 16px">
-            <f7-icon slot="media" ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" style="font-size: 8px; height: 16px; line-height: 16px" />
+            <f7-icon slot="media"
+                     ios="f7:tag_fill"
+                     md="material:label"
+                     aurora="f7:tag_fill"
+                     style="font-size: 8px; height: 16px; line-height: 16px" />
           </div>
           <div class="chip-label" style="height: 16px; line-height: 16px">
             {{ tag }}
@@ -36,8 +66,11 @@
         </div>
       </template>
     </div>
-    <f7-checkbox slot="content-start" v-if="model.checkable"
-                 :checked="model.checked === true" :disabled="model.disabled" @change="check" />
+    <f7-checkbox slot="content-start"
+                 v-if="model.checkable"
+                 :checked="model.checked === true"
+                 :disabled="model.disabled"
+                 @change="check" />
   </f7-treeview-item>
 </template>
 

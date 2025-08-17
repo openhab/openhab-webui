@@ -1,8 +1,12 @@
 <template>
   <div>
     <f7-list>
-      <f7-list-item :key="classSelectKey" title="Google Assistant Class" :disabled="!editable"
-                    smart-select :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: true, scrollToSelectedItem: true }" ref="classes">
+      <f7-list-item :key="classSelectKey"
+                    title="Google Assistant Class"
+                    :disabled="!editable"
+                    smart-select
+                    :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: true, scrollToSelectedItem: true }"
+                    ref="classes">
         <select name="classes" @change="updateClass">
           <option value="" />
           <optgroup label="Types">
@@ -25,10 +29,16 @@
       </f7-list-item>
     </f7-list>
     <div>
-      <config-sheet :parameterGroups="[]" :parameters="parameters" :configuration="metadata.config" :read-only="!editable" />
+      <config-sheet :parameterGroups="[]"
+                    :parameters="parameters"
+                    :configuration="metadata.config"
+                    :read-only="!editable" />
     </div>
     <p class="padding">
-      <f7-link color="blue" external target="_blank" :href="`${$store.state.websiteUrl}/link/google-assistant`">
+      <f7-link color="blue"
+               external
+               target="_blank"
+               :href="`${$store.state.websiteUrl}/link/google-assistant`">
         Google Assistant Integration Documentation
       </f7-link>
     </p>

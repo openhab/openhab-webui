@@ -2,14 +2,20 @@
   <f7-page @page:beforein="onPageBeforeIn" @page:afterin="onPageAfterIn">
     <f7-navbar :title="`${editable ? 'Edit' : 'View'} Item Metadata: ${namespace} ${dirtyIndicator}`" back-link="Cancel" no-hairline>
       <f7-nav-right>
-        <f7-link @click="save()" v-if="$theme.md && editable" icon-md="material:save" icon-only />
+        <f7-link @click="save()"
+                 v-if="$theme.md && editable"
+                 icon-md="material:save"
+                 icon-only />
         <f7-link @click="save()" v-if="!$theme.md && editable">
           Save
         </f7-link>
       </f7-nav-right>
     </f7-navbar>
     <f7-toolbar v-if="ready" tabbar position="top">
-      <f7-link v-if="!generic" @click="switchTab('config', fromYaml)" :tab-link-active="currentTab === 'config'" class="tab-link">
+      <f7-link v-if="!generic"
+               @click="switchTab('config', fromYaml)"
+               :tab-link-active="currentTab === 'config'"
+               class="tab-link">
         Config
       </f7-link>
       <f7-link @click="switchTab('code', toYaml)" :tab-link-active="currentTab === 'code'" class="tab-link">
@@ -17,15 +23,24 @@
       </f7-link>
     </f7-toolbar>
     <f7-toolbar v-if="ready && generic" position="bottom">
-      <f7-button color="red" v-if="!creationMode" @click="remove()" class="width-100">
+      <f7-button color="red"
+                 v-if="!creationMode"
+                 @click="remove()"
+                 class="width-100">
         Remove metadata
       </f7-button>
     </f7-toolbar>
     <f7-tabs class="metadata-editor-tabs">
-      <f7-tab id="config" class="metadata-editor-config-tab" @tab:show="() => this.currentTab = 'config'" :tab-active="currentTab === 'config'">
+      <f7-tab id="config"
+              class="metadata-editor-config-tab"
+              @tab:show="() => this.currentTab = 'config'"
+              :tab-active="currentTab === 'config'">
         <f7-block class="block-narrow" v-if="ready && currentTab === 'config'">
           <f7-col>
-            <component :is="editorControl" :item="item" :metadata="metadata" :namespace="namespace" />
+            <component :is="editorControl"
+                       :item="item"
+                       :metadata="metadata"
+                       :namespace="namespace" />
           </f7-col>
         </f7-block>
         <f7-block class="block-narrow" v-if="ready">
@@ -40,8 +55,19 @@
       </f7-tab>
 
       <f7-tab id="code" @tab:show="() => { this.currentTab = 'code' }" :tab-active="currentTab === 'code'">
-        <f7-icon v-if="!editable" f7="lock" class="float-right margin" style="opacity:0.5; z-index: 4000; user-select: none;" size="50" color="gray" tooltip="This metadata is not editable as it has not been created through the UI" />
-        <editor v-if="currentTab === 'code'" class="metadata-code-editor" mode="text/x-yaml" :value="yaml" :readOnly="!editable" @input="onEditorInput" />
+        <f7-icon v-if="!editable"
+                 f7="lock"
+                 class="float-right margin"
+                 style="opacity:0.5; z-index: 4000; user-select: none;"
+                 size="50"
+                 color="gray"
+                 tooltip="This metadata is not editable as it has not been created through the UI" />
+        <editor v-if="currentTab === 'code'"
+                class="metadata-code-editor"
+                mode="text/x-yaml"
+                :value="yaml"
+                :readOnly="!editable"
+                @input="onEditorInput" />
       </f7-tab>
     </f7-tabs>
   </f7-page>

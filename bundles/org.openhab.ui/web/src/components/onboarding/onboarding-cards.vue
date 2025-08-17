@@ -9,7 +9,10 @@
           No thanks
         </f7-link>
         <!-- <f7-button color="blue" fill raised login-screen-open="#login-screen">Start Setup Wizard</f7-button> -->
-        <f7-button color="blue" fill raised href="/setup-wizard/">
+        <f7-button color="blue"
+                   fill
+                   raised
+                   href="/setup-wizard/">
           Start Setup Wizard
         </f7-button>
       </f7-card-footer>

@@ -1,6 +1,12 @@
 <template>
-  <f7-stepper ref="stepper" v-bind="config" @stepper:plusclick="onPlusMinusClick" @stepper:minusclick="onPlusMinusClick" @input="onInput"
-              :input="config.enableInput === true" :manual-input-mode="true" :format-value="formatValue" />
+  <f7-stepper ref="stepper"
+              v-bind="config"
+              @stepper:plusclick="onPlusMinusClick"
+              @stepper:minusclick="onPlusMinusClick"
+              @input="onInput"
+              :input="config.enableInput === true"
+              :manual-input-mode="true"
+              :format-value="formatValue" />
 </template>
 
 <style lang="stylus">

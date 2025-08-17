@@ -12,8 +12,11 @@
     @update:center="centerUpdate"
     @update:zoom="zoomUpdate">
     <l-feature-group ref="featureGroup" v-if="context.component.slots">
-      <component v-for="(marker, idx) in context.component.slots.default" :key="idx"
-                 :is="markerComponent(marker)" :context="childContext(marker)" @update="onMarkerUpdate" />
+      <component v-for="(marker, idx) in context.component.slots.default"
+                 :key="idx"
+                 :is="markerComponent(marker)"
+                 :context="childContext(marker)"
+                 @update="onMarkerUpdate" />
     </l-feature-group>
   </l-map>
 </template>

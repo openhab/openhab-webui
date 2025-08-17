@@ -2,7 +2,10 @@
   <f7-page @page:afterin="onPageAfterIn" name="channel-add">
     <f7-navbar title="Add Channel" :subtitle="thing.label" back-link="Cancel">
       <f7-nav-right class="if-not-aurora">
-        <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only />
+        <f7-link @click="save()"
+                 v-if="$theme.md"
+                 icon-md="material:save"
+                 icon-only />
         <f7-link @click="save()" v-if="!$theme.md">
           Done
         </f7-link>
@@ -11,7 +14,10 @@
     <f7-block class="block-narrow">
       <f7-col>
         <f7-block-title>Channel</f7-block-title>
-        <channel-general-settings v-if="ready" :channel="channel" :channelType="currentChannelType" :createMode="true" />
+        <channel-general-settings v-if="ready"
+                                  :channel="channel"
+                                  :channelType="currentChannelType"
+                                  :createMode="true" />
       </f7-col>
       <f7-col>
         <f7-block-title>Channel type</f7-block-title>
@@ -20,10 +26,14 @@
           <div>Loading...</div>
         </f7-block>
         <f7-list v-else>
-          <f7-list-item radio v-for="channelType in channelTypes"
+          <f7-list-item radio
+                        v-for="channelType in channelTypes"
                         :value="channelType.UID"
                         @change="currentChannelType = channelTypes.find((m) => m.UID === $event.target.value)"
-                        :key="channelType.UID" :title="channelType.label" :footer="channelType.description" name="channel-type" />
+                        :key="channelType.UID"
+                        :title="channelType.label"
+                        :footer="channelType.description"
+                        name="channel-type" />
         </f7-list>
       </f7-col>
       <f7-col v-if="currentChannelType != null">
@@ -37,7 +47,13 @@
 
     <div v-if="ready && currentChannelType" class="if-aurora display-flex justify-content-center margin padding">
       <div class="flex-shrink-0">
-        <f7-button class="padding-left padding-right" style="width: 150px" color="blue" large raised fill @click="save">
+        <f7-button class="padding-left padding-right"
+                   style="width: 150px"
+                   color="blue"
+                   large
+                   raised
+                   fill
+                   @click="save">
           Create
         </f7-button>
       </div>

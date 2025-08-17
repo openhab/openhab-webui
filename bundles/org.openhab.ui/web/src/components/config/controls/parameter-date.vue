@@ -7,7 +7,8 @@
       :label="configDescription.label"
       :name="configDescription.name"
       :value="value"
-      :required="configDescription.required" validate
+      :required="configDescription.required"
+      validate
       @input="updateValue" />
   </ul>
 </template>

@@ -2,7 +2,10 @@
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="tabs-editor">
     <f7-navbar :title="!ready ? '' : ((createMode ? 'Create tabbed page' : page.config.label) + dirtyIndicator)" back-link="Back" no-hairline>
       <f7-nav-right>
-        <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only />
+        <f7-link @click="save()"
+                 v-if="$theme.md"
+                 icon-md="material:save"
+                 icon-only />
         <f7-link @click="save()" v-if="!$theme.md">
           Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
         </f7-link>
@@ -17,7 +20,10 @@
       </f7-link>
     </f7-toolbar>
     <f7-tabs class="tabs-editor-tabs">
-      <f7-tab id="design" class="tabs-editor-design-tab" @tab:show="() => this.currentTab = 'design'" :tab-active="currentTab === 'design'">
+      <f7-tab id="design"
+              class="tabs-editor-design-tab"
+              @tab:show="() => this.currentTab = 'design'"
+              :tab-active="currentTab === 'design'">
         <f7-block v-if="!ready" class="text-align-center">
           <f7-preloader />
           <div>Loading...</div>
@@ -38,10 +44,18 @@
             </f7-menu>
 
             <f7-list media-list class="tabs-list">
-              <f7-list-item media-item v-for="(tab, idx) in page.slots.default" :key="idx"
-                            :title="tabEvaluateExpression(tab, idx, 'title')" :subtitle="tab.config.page"
-                            link="#" @click.native="(ev) => configureTab(ev, tab, context)">
-                <oh-icon slot="media" :icon="tabEvaluateExpression(tab, idx, 'icon')" :color="'gray'" :width="32" :height="32" />
+              <f7-list-item media-item
+                            v-for="(tab, idx) in page.slots.default"
+                            :key="idx"
+                            :title="tabEvaluateExpression(tab, idx, 'title')"
+                            :subtitle="tab.config.page"
+                            link="#"
+                            @click.native="(ev) => configureTab(ev, tab, context)">
+                <oh-icon slot="media"
+                         :icon="tabEvaluateExpression(tab, idx, 'icon')"
+                         :color="'gray'"
+                         :width="32"
+                         :height="32" />
                 <f7-menu slot="content-start" class="configure-layout-menu">
                   <f7-menu-item icon-f7="list_bullet" dropdown>
                     <f7-menu-dropdown>
@@ -66,7 +80,11 @@
       </f7-tab>
 
       <f7-tab id="code" @tab:show="() => { this.currentTab = 'code' }" :tab-active="currentTab === 'code'">
-        <editor v-if="currentTab === 'code'" class="page-code-editor" mode="application/vnd.openhab.uicomponent+yaml;type=tabs" :value="pageYaml" @input="onEditorInput" />
+        <editor v-if="currentTab === 'code'"
+                class="page-code-editor"
+                mode="application/vnd.openhab.uicomponent+yaml;type=tabs"
+                :value="pageYaml"
+                @input="onEditorInput" />
         <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
       </f7-tab>
     </f7-tabs>
