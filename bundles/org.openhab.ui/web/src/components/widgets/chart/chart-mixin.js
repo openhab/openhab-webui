@@ -1,6 +1,8 @@
 import * as dayjs from 'dayjs'
 import IsoWeek from 'dayjs/plugin/isoWeek'
+import Duration from 'dayjs/plugin/duration'
 dayjs.extend(IsoWeek)
+dayjs.extend(Duration)
 
 // Axis components
 import OhTimeAxis from './axis/oh-time-axis'
@@ -44,9 +46,10 @@ export default {
   data () {
     const config = this.context.component.config || {}
     const chartType = config.chartType
+    const future = config.future === true ? 1 : (config.future ?? 0)
     const endTime = (chartType)
-      ? this.addOrSubtractPeriod(dayjs().startOf(chartType), 1 + (config.future ? 1 : 0))
-      : this.addOrSubtractPeriod(dayjs(), config.future ? 1 : 0)
+      ? this.addOrSubtractPeriod(dayjs().startOf(chartType), 1 + future)
+      : this.addOrSubtractPeriod(dayjs(), future)
 
     return {
       items: {},
@@ -218,15 +221,16 @@ export default {
       if (direction === 0) return day
       const fn = (direction < 0) ? day.subtract : day.add
       const chartType = this.context.component.config.chartType
-      for (let i = 0; i < Math.abs(direction); i++) {
-        if (chartType) {
-          day = fn.apply(day, [1, chartType === 'isoWeek' ? 'week' : chartType])
-        } else {
-          const period = this.period || this.context.component.config.period || DEFAULT_PERIOD
-          const span = period.match(/^([\d]*)([smhdDwWMQyY])$/)
-          if (span) {
-            day = fn.apply(day, [parseInt(span[1]) || 1, span[2].replace(/[DWY]/, (x) => x.toLowerCase())])
-          }
+      direction = Math.abs(direction)
+      if (chartType) {
+        const millis = dayjs.duration({ [chartType === 'isoWeek' ? 'week' : chartType]: 1 }).asMilliseconds() * direction
+        day = fn.apply(day, [millis, 'millisecond'])
+      } else {
+        const period = this.period || this.context.component.config.period || DEFAULT_PERIOD
+        const span = period.match(/^([\d]*)([smhdDwWMQyY])$/)
+        if (span) {
+          const millis = dayjs.duration({ [span[2].replace(/[DWY]/, (x) => x.toLowerCase())]: parseInt(span[1]) || 1 }).asMilliseconds() * direction
+          day = fn.apply(day, [millis, 'millisecond'])
         }
       }
 
