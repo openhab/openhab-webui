@@ -54,6 +54,7 @@ export default {
     return {
       items: {},
       speriod: config.period || DEFAULT_PERIOD,
+      future,
       endTime,
       orient: null
     }
@@ -203,7 +204,7 @@ export default {
     },
     setPeriod (period) {
       this.speriod = period
-      this.endTime = this.addOrSubtractPeriod(dayjs(), this.config.future ? 1 : 0)
+      this.endTime = this.addOrSubtractPeriod(dayjs(), this.future)
     },
     setDate (date) {
       const chartType = this.context.component.config.chartType
