@@ -1,6 +1,8 @@
-import ComponentId from '../../component-id'
-import MarkArea from './oh-mark-area'
 import Framework7 from 'framework7'
+import dayjs from 'dayjs'
+
+import ComponentId from '@/components/widgets/component-id'
+import MarkArea from './oh-mark-area'
 
 export default {
   neededItems (component, chart) {
@@ -35,6 +37,47 @@ export default {
     // other things
     if (component.slots && component.slots.markArea) {
       series.markArea = MarkArea.get(component.slots.markArea[0], points, startTime, endTime, chart)
+    }
+
+    if (Array.isArray(series.markers)) {
+      if (!series.markLine) {
+        series.markLine = {
+          data: []
+        }
+      }
+      if (!series.markPoint) {
+        series.markPoint = {
+          label: {
+            backgroundColor: 'auto'
+          },
+          data: []
+        }
+      }
+      if (series.markers.includes('avg')) {
+        series.markLine.data.push({
+          type: 'average'
+        })
+      }
+      if (series.markers.includes('time')) {
+        series.markLine.data.push({
+          label: {
+            show: false
+          },
+          lineStyle: {
+            color: '#e64a19',
+            type: 'solid',
+            width: 1
+          },
+          symbol: 'none',
+          xAxis: dayjs().format()
+        })
+      }
+      if (series.markers.includes('min')) {
+        series.markPoint.data.push({ type: 'min', name: 'min' })
+      }
+      if (series.markers.includes('max')) {
+        series.markPoint.data.push({ type: 'max', name: 'max' })
+      }
     }
 
     if (!series.showSymbol) series.showSymbol = false

@@ -17,3 +17,10 @@ export const aggregationTypeOptions = [
   { value: 'diff_first', label: 'Difference of firsts' },
   { value: 'diff_last', label: 'Difference of lasts' }
 ]
+
+export const markerOptions = [
+  { value: 'avg', label: 'Average' },
+  { value: 'min', label: 'Minimum' },
+  { value: 'max', label: 'Maximum' },
+  { value: 'time', label: 'Current Time' }
+]

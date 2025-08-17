@@ -74,20 +74,10 @@ export default {
         }
       }
 
-      const markLine = (seriesOptions.markers === 'avg' || seriesOptions.markers === 'all') ? {
-        data: [
-          { type: 'average' }
-        ]
-      } : undefined
-      const markPoint = (seriesOptions.markers === 'min-max' || seriesOptions.markers === 'all') ? {
-        label: {
-          backgroundColor: 'auto'
-        },
-        data: [
-          { type: 'min', name: 'min' },
-          { type: 'max', name: 'max' }
-        ]
-      } : undefined
+      const markers = []
+      if (seriesOptions.markers === 'all') markers.push('min', 'max', 'avg')
+      if (seriesOptions.markers === 'min-max') markers.push('min', 'max')
+      if (seriesOptions.markers === 'avg') markers.push('avg')
 
       return {
         component: 'oh-time-series',
@@ -99,8 +89,7 @@ export default {
           type: 'line',
           item: item.name,
           areaStyle: seriesOptions.type === 'area' ? { opacity: 0.2 } : undefined,
-          markLine,
-          markPoint
+          markers
         }
       }
     })

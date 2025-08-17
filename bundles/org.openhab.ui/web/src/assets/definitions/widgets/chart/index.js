@@ -3,7 +3,7 @@
 
 import { actionGroup, actionParams } from '../actions.js'
 import { pg, pb, pt, pn, pi } from '../helpers.js'
-import { aggregationTypeOptions, dimensionTypeOptions } from './options.js'
+import { aggregationTypeOptions, dimensionTypeOptions, markerOptions } from './options.js'
 
 const positionGroup = pg('position', 'Position', 'Each parameter accepts pixel values or percentages. Additionally, top accepts "top", "middle" and "bottom" to align the component vertically, and left accepts "left", "center" and "right" to align the component horizontally')
 
@@ -62,6 +62,8 @@ const yAxisIndexParameter = pn('yAxisIndex', 'Y Axis Index', 'The index of the Y
 
 const persistenceServiceParameter = pt('service', 'Persistence Service', 'The identifier of the persistence service to retrieve the data from. Leave blank to the use the default.')
   .c('persistenceService').a()
+
+const markersParameter = pt('markers', 'Markers', 'The markers to display for the series').o(markerOptions, true, true)
 
 const boundaryParameter = pb('noBoundary', 'Don\'t Include Boundary', 'Do not get one value before and after the requested period and move them to the start and end of the period').a()
 
@@ -293,6 +295,7 @@ export default {
       parameterGroups: [componentRelationsGroup, actionGroup()],
       parameters: [
         ...seriesParameters,
+        markersParameter,
         seriesTypeParameter('line', 'bar', 'heatmap', 'scatter'),
         xAxisIndexParameter,
         yAxisIndexParameter,
