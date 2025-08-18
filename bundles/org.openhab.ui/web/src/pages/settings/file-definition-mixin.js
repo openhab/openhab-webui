@@ -2,6 +2,8 @@
  * File Definition Mixin
  */
 
+import copyToClipboard from '@/js/clipboard'
+
 function executeFileDefinitionCopy (vueInstance, copyOptions) {
   const progressDialog = vueInstance.$f7.dialog.progress(`Loading ${copyOptions.label} ${copyOptions.format} definition...`)
 
@@ -11,54 +13,26 @@ function executeFileDefinitionCopy (vueInstance, copyOptions) {
   vueInstance.$oh.api.postPlain(path, data, 'text', 'application/json', headers)
     .then(definition => {
       progressDialog.close()
-      const userAgent = window.navigator.userAgent || ''
-      // Check if clipboard operations are supported here.
-      // The alternative is to check the user agent for Safari, e.g.:
-      // if (userAgent.includes('Safari') && !userAgent.includes('Chrome')) {
-      if (!vueInstance.$clipboard('test')) {
-        // Safari requires that the copy operation is triggered _directly_ by a user action
-        // without any intervening asynchronous operations.
-        confirmCopyToClipboard(vueInstance, definition, copyOptions)
-      } else {
-        copyToClipboard(vueInstance, definition, copyOptions)
-      }
+      copyToClipboard({
+        data: definition,
+        dialogTitle: `Copy ${copyOptions.label} File Definition`,
+        dialogText: 'File definition retrieved successfully. Click OK to copy it to the clipboard.',
+        onSuccess: () => {
+          vueInstance.$f7.toast.create({
+            text: `${copyOptions.label} ${copyOptions.format} definition copied to clipboard:\n${copyOptions.objectName}`,
+            destroyOnClose: true,
+            closeTimeout: 2000
+          }).open()
+        },
+        onError: () => {
+          vueInstance.$f7.dialog.alert(`Error copying ${copyOptions.label} ${copyOptions.format} definition to the clipboard`, 'Error')
+        }
+      })
     })
     .catch(error => {
       progressDialog.close()
       vueInstance.$f7.dialog.alert(`Error loading ${copyOptions.label} ${copyOptions.format} definition: ${error}`, 'Error')
     })
-}
-
-function confirmCopyToClipboard (vueInstance, definition, copyOptions) {
-  vueInstance.$f7.dialog
-    .create({
-      title: `Copy ${copyOptions.label} File Definition`,
-      text: 'File definition retrieved successfully. Click OK to copy it to the clipboard.',
-      buttons: [
-        {
-          text: 'Cancel',
-          color: 'gray'
-        },
-        {
-          text: 'OK',
-          color: 'blue',
-          onClick: () => copyToClipboard(vueInstance, definition, copyOptions)
-        }
-      ]
-    })
-    .open()
-}
-
-function copyToClipboard (vueInstance, definition, copyOptions) {
-  if (vueInstance.$clipboard(definition)) {
-    vueInstance.$f7.toast.create({
-      text: `${copyOptions.label} ${copyOptions.format} definition copied to clipboard:\n${copyOptions.objectName}`,
-      destroyOnClose: true,
-      closeTimeout: 2000
-    }).open()
-  } else {
-    vueInstance.$f7.dialog.alert(`Error copying ${copyOptions.label} ${copyOptions.format} definition to the clipboard`, 'Error')
-  }
 }
 
 export default {
