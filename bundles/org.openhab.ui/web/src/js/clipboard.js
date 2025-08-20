@@ -2,18 +2,18 @@ import Vue from 'vue'
 import { f7 } from 'framework7-vue'
 
 /**
- * Copy data to the clipboard, with a fallback dialog for browsers that require a direct user gesture.
+ * Copies the provided data to the clipboard. If the initial attempt fails (e.g., due to browser restrictions),
+ * presents a dialog prompting the user to manually trigger the copy operation.
  *
- * @param {string} data - Value to copy.
- * @param {Object} config - Optional configuration object.
- * @param {string} [config.dialogTitle='Copy to Clipboard'] - Title shown in the fallback dialog.
- * @param {string} [config.dialogText='Click OK to copy data to clipboard'] - Text shown in the fallback dialog.
- * @param {function} [config.onSuccess] - Callback invoked when copy succeeds (immediately or after OK).
- * @param {function} [config.onError] - Callback invoked when copy fails after pressing OK.
+ * @param {string} data - The value to copy to the clipboard.
+ * @param {Object} options - Options for the copy operation and dialog.
+ * @param {string} [options.dialogTitle='Copy to Clipboard'] - The title of the fallback dialog.
+ * @param {string} [options.dialogText='Click OK to copy data to clipboard'] - The text displayed in the fallback dialog.
+ * @param {Function} [options.onSuccess] - Callback invoked when the copy operation succeeds.
+ * @param {Function} [options.onError] - Callback invoked when the copy operation fails.
  * @returns {void} This function uses callbacks for outcomes. On Cancel the dialog closes and no callback is invoked.
  */
-export default function copyToClipboard (data, config = {}) {
-  const { dialogTitle, dialogText, onSuccess, onError } = config
+export default function copyToClipboard (data, { dialogTitle = 'Copy to Clipboard', dialogText = 'Click OK to copy data to clipboard', onSuccess, onError }) {
   if (Vue.prototype.$clipboard(data)) {
     onSuccess && onSuccess()
   } else {
@@ -21,8 +21,8 @@ export default function copyToClipboard (data, config = {}) {
     // without any intervening asynchronous operations. So in case the copy didn't work,
     // Try to re-trigger the copy operation within a user action.
     f7.dialog.create({
-      title: dialogTitle ?? 'Copy to Clipboard',
-      text: dialogText ?? 'Click OK to copy data to clipboard',
+      title: dialogTitle,
+      text: dialogText,
       buttons: [
         {
           text: 'Cancel',
