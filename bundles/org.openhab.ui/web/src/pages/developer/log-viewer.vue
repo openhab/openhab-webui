@@ -884,8 +884,7 @@ export default {
           return `${log.time}${log.milliseconds} [${log.level}] [${log.loggerName}] - ${log.message}`
         }).join('\n')
         // v-clipboard works without https, but it can only copy plain text
-        copyToClipboard({
-          data: logs,
+        copyToClipboard(logs, {
           onSuccess: () => {
             this.$f7.toast.create({
               text: 'Table copied as text to clipboard',

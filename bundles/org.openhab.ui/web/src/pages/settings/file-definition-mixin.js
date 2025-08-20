@@ -13,8 +13,7 @@ function executeFileDefinitionCopy (vueInstance, copyOptions) {
   vueInstance.$oh.api.postPlain(path, data, 'text', 'application/json', headers)
     .then(definition => {
       progressDialog.close()
-      copyToClipboard({
-        data: definition,
+      copyToClipboard(definition, {
         dialogTitle: `Copy ${copyOptions.label} File Definition`,
         dialogText: 'File definition retrieved successfully. Click OK to copy it to the clipboard.',
         onSuccess: () => {
