@@ -1,25 +1,36 @@
-function executeFileDefinitionCopy (vueInstance, objectType, objectTypeLabel, objectIds, copiedObjectsLabel, fileFormatLabel, mediaType) {
-  const progressDialog = vueInstance.$f7.dialog.progress(`Loading ${objectTypeLabel} ${fileFormatLabel} definition...`)
+/**
+ * File Definition Mixin
+ */
 
-  const path = `/rest/file-format/${objectType}s`
-  const headers = { accept: mediaType }
-  const data = JSON.stringify(objectIds)
+import copyToClipboard from '@/js/clipboard'
+
+function executeFileDefinitionCopy (vueInstance, copyOptions) {
+  const progressDialog = vueInstance.$f7.dialog.progress(`Loading ${copyOptions.label} ${copyOptions.format} definition...`)
+
+  const path = `/rest/file-format/${copyOptions.type}s`
+  const headers = { accept: copyOptions.mediaType }
+  const data = JSON.stringify(copyOptions.objectIds)
   vueInstance.$oh.api.postPlain(path, data, 'text', 'application/json', headers)
     .then(definition => {
       progressDialog.close()
-      if (vueInstance.$clipboard(definition)) {
-        vueInstance.$f7.toast.create({
-          text: `${objectTypeLabel} ${fileFormatLabel} definition copied to clipboard:\n${copiedObjectsLabel}`,
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-      } else {
-        vueInstance.$f7.dialog.alert(`Error copying ${objectTypeLabel} ${fileFormatLabel} definition to the clipboard`, 'Error')
-      }
+      copyToClipboard(definition, {
+        dialogTitle: `Copy ${copyOptions.label} File Definition`,
+        dialogText: 'File definition retrieved successfully. Click OK to copy it to the clipboard.',
+        onSuccess: () => {
+          vueInstance.$f7.toast.create({
+            text: `${copyOptions.label} ${copyOptions.format} definition copied to clipboard:\n${copyOptions.objectName}`,
+            destroyOnClose: true,
+            closeTimeout: 2000
+          }).open()
+        },
+        onError: () => {
+          vueInstance.$f7.dialog.alert(`Error copying ${copyOptions.label} ${copyOptions.format} definition to the clipboard`, 'Error')
+        }
+      })
     })
     .catch(error => {
       progressDialog.close()
-      vueInstance.$f7.dialog.alert(`Error loading ${objectTypeLabel} ${fileFormatLabel} definition: ${error}`, 'Error')
+      vueInstance.$f7.dialog.alert(`Error loading ${copyOptions.label} ${copyOptions.format} definition: ${error}`, 'Error')
     })
 }
 
@@ -41,21 +52,25 @@ export default {
      *                            When `null`, all objects of the given type will be copied.
      */
     copyFileDefinitionToClipboard (objectType, objectIds = null) {
-      const objectTypeLabel = objectType.charAt(0).toUpperCase() + objectType.slice(1) + 's'
+      const copyOptions = {
+        type: objectType,
+        label: objectType.charAt(0).toUpperCase() + objectType.slice(1) + 's',
+        objectIds,
+        objectName: ''
+      }
 
-      let copiedObjectsLabel = null
       if (objectIds === null) {
-        copiedObjectsLabel = `All ${objectTypeLabel}`
+        copyOptions.objectName = `All ${copyOptions.label}`
       } else if (objectIds.length === 1) {
-        copiedObjectsLabel = '<b>' + objectIds[0] + '</b>'
+        copyOptions.objectName = '<b>' + objectIds[0] + '</b>'
       } else {
-        copiedObjectsLabel = `${objectIds.length} ${objectTypeLabel}`
+        copyOptions.objectName = `${objectIds.length} ${copyOptions.label}`
       }
 
       this.$f7.dialog
         .create({
-          title: `Copy ${objectTypeLabel} File Definition`,
-          text: `Select the file format to copy ${copiedObjectsLabel} to clipboard`,
+          title: `Copy ${copyOptions.label} File Definition`,
+          text: `Select the file format to copy ${copyOptions.objectName} to clipboard`,
           buttons: [
             {
               text: 'Cancel',
@@ -64,12 +79,20 @@ export default {
             {
               text: 'DSL',
               color: 'teal',
-              onClick: () => executeFileDefinitionCopy(this, objectType, objectTypeLabel, objectIds, copiedObjectsLabel, 'DSL', `text/vnd.openhab.dsl.${objectType}`)
+              onClick: () => {
+                copyOptions.format = 'DSL'
+                copyOptions.mediaType = `text/vnd.openhab.dsl.${objectType}`
+                executeFileDefinitionCopy(this, copyOptions)
+              }
             },
             {
               text: 'YAML',
               color: 'blue',
-              onClick: () => executeFileDefinitionCopy(this, objectType, objectTypeLabel, objectIds, copiedObjectsLabel, 'YAML', 'application/yaml')
+              onClick: () => {
+                copyOptions.format = 'YAML'
+                copyOptions.mediaType = 'application/yaml'
+                executeFileDefinitionCopy(this, copyOptions)
+              }
             }
           ]
         })
