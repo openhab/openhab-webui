@@ -12,7 +12,7 @@ import { f7 } from 'framework7-vue'
  * @param {function} [config.onError] - Callback invoked when copy fails after pressing OK.
  * @returns {void} This function uses callbacks for outcomes. On Cancel the dialog closes and no callback is invoked.
  */
-export default function copyToClipboard(data, config = {}) {
+export default function copyToClipboard (data, config = {}) {
   const { dialogTitle, dialogText, onSuccess, onError } = config
   if (Vue.prototype.$clipboard(data)) {
     onSuccess && onSuccess()
