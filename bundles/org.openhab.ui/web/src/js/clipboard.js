@@ -5,7 +5,7 @@ import { f7 } from 'framework7-vue'
  * Copy data to the clipboard, with a fallback dialog for browsers that require a direct user gesture.
  *
  * @param {string} data - Value to copy.
- * @param {Object} config - Configuration object (required; use `{}` for defaults).
+ * @param {Object} config - Optional configuration object.
  * @param {string} [config.dialogTitle='Copy to Clipboard'] - Title shown in the fallback dialog.
  * @param {string} [config.dialogText='Click OK to copy data to clipboard'] - Text shown in the fallback dialog.
  * @param {function} [config.onSuccess] - Callback invoked when copy succeeds (immediately or after OK).
