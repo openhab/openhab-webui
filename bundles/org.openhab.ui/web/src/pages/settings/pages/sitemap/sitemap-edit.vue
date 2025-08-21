@@ -793,7 +793,7 @@ export default {
       return processed
     },
     preProcessWidgetSave (widget) {
-      delete widget.parent  // remove parent from widget, as this would cause a circular reference error when converting to JSON
+      delete widget.parent // remove parent from widget, as this would cause a circular reference error when converting to JSON
       if (widget.config) {
         for (let key in widget.config) {
           if (widget.config[key] && Array.isArray(widget.config[key])) {
