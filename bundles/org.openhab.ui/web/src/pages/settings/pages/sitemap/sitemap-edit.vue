@@ -788,13 +788,12 @@ export default {
       }
     },
     preProcessSitemapSave (sitemap) {
-      const clone = cloneDeep(sitemap)
-      clone.slots.widgets.forEach(w => delete w.parent) // remove parent from widgets, as this causes a circular reference
-      const processed = JSON.parse(JSON.stringify(clone))
+      const processed = cloneDeep(sitemap)
       processed.slots?.widgets?.forEach(this.preProcessWidgetSave)
       return processed
     },
     preProcessWidgetSave (widget) {
+      delete widget.parent // remove parent from widget, as this would cause a circular reference error when converting to JSON
       if (widget.config) {
         for (let key in widget.config) {
           if (widget.config[key] && Array.isArray(widget.config[key])) {
