@@ -43,7 +43,7 @@ const replaceBetweenComments = (commentTag, text, value) => {
 
 const escapeQuotes = (text) => {
   if (text !== undefined) {
-    return text.replace(/"/g, "&quot;");
+    return text.toString().replace(/"/g, "&quot;");
   }
   return text
 }
