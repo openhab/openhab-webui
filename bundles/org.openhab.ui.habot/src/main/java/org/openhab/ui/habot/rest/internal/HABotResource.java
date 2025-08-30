@@ -12,6 +12,8 @@
  */
 package org.openhab.ui.habot.rest.internal;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.security.InvalidParameterException;
 import java.util.Collection;
 import java.util.HashMap;
@@ -48,7 +50,6 @@ import org.openhab.ui.habot.nlp.ChatReply;
 import org.openhab.ui.habot.nlp.ItemNamedAttribute;
 import org.openhab.ui.habot.nlp.ItemResolver;
 import org.openhab.ui.habot.nlp.internal.AnswerFormatter;
-import org.openhab.ui.habot.nlp.internal.OpenNLPInterpreter;
 import org.openhab.ui.habot.notification.internal.NotificationService;
 import org.openhab.ui.habot.notification.internal.webpush.Subscription;
 import org.osgi.service.component.annotations.Activate;
@@ -171,15 +172,25 @@ public class HABotResource implements RESTResource {
         ChatReply reply = new ChatReply(locale, query);
 
         try {
-            // Check if it's the special OpenNLP implementation with enhanced features
-            if (hli instanceof OpenNLPInterpreter opennlp) {
-                logger.debug("Using OpenNLP interpreter with enhanced features");
-                reply = opennlp.reply(locale, query);
+            Method replyMethod;
+            try {
+                // Check if a public method reply(Locale, String) exists
+                replyMethod = hli.getClass().getMethod("reply", Locale.class, String.class);
+            } catch (NoSuchMethodException e) {
+                replyMethod = null;
+            }
+            if (replyMethod != null) {
+                logger.debug("Using HLI with enhanced features: {}", hli.getClass().getName());
+                Object result = replyMethod.invoke(hli, locale, query);
+                reply = (ChatReply) result;
             } else {
                 logger.debug("Using standard HLI: {} ({})", hli.getId(), hli.getLabel(locale));
                 String answer = hli.interpret(locale, query);
                 reply.setAnswer(answer);
             }
+        } catch (InvocationTargetException | IllegalAccessException e) {
+            logger.error("Failed to invoke HLI method '{}': {}", hli.getClass().getName(), e.getMessage());
+            throw e;
         } catch (InterpretationException e) {
             logger.error("Interpretation failed with HLI '{}': {}", hli.getId(), e.getMessage());
             throw e;
