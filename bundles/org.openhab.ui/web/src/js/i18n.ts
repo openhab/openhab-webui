@@ -1,4 +1,15 @@
-import { createI18n, type I18n } from 'vue-i18n'
+/**
+ * ui translation (i18n) notes
+ *
+ * - useRuntimeStore().local is the primary method to update the regionalization locale.
+ * - App.vue: in this.loadData (), the local is set with the setRootResoruces
+ * - App.vue: watches useRuntimeStore().local will load the appropriate global locale messages and set the i18n locale setting appropriately
+ * - Global translations are accessible through $t or this.$t in any component without additional setup in the component
+ * - For local translations, dereference and use the setLocaleMessages and t from the useI18n composable in the setup function with the useScope: 'local'
+ * - the setLocaleMessages function should be passsed to the loadLocaleMessages as a parameter
+ * - Message files are bundled into the build with the "vite-plugin-dynamic-import" plugin
+ */
+import { createI18n, type I18n, type I18nOptions } from 'vue-i18n'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
@@ -20,8 +31,6 @@ export async function loadLocaleMessages (dir : string, setLocaleMessage: (local
   ])
   const localeFilesArray = Array.from(localeFiles)
 
-  console.log(`Loading locale messages: ${dir} for locales:`, localeFilesArray)
-
   return Promise.allSettled(
     localeFilesArray.map((locale) => import(`../assets/i18n/${dir}/${locale}.json`))
   ).then((results) => {
@@ -38,11 +47,9 @@ export const i18n: I18n = createI18n({
   legacy: false,
   locale: '',         // this will be updated when useRuntimeStore is available
   fallbackLocale: '', // this will be updated when useRuntimeStore is available
-  messages: {},
-  silentFallbackWarn: true,
-  silentTranslationWarn: true,
-  globalInjection: true,
+  fallbackWarn: false,
   missingWarn: false,
+  globalInjection: true,
   fallbackRoot: true,
   warnHtmlMessage: false
 })

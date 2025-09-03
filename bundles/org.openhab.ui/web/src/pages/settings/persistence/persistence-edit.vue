@@ -127,7 +127,7 @@
                 <f7-list-item link
                               no-chevron
                               media-item
-                              :color="theme.dark ? 'black' : 'white'"
+                              :color="(theme.dark) ? 'black' : 'white'"
                               subtitle="Add configuration"
                               @click="editConfiguration(undefined, null)">
                   <template #media>
@@ -283,8 +283,8 @@
                   <item-picker class="alias-item-picker"
                                title="Add alias"
                                name="items"
-                               multiple="true"
-                               noModelPicker="true"
+                               :multiple="true"
+                               :noModelPicker="true"
                                :setValueText="false"
                                iconColor="green"
                                auroraIcon="f7:plus_circle_fill"

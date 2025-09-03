@@ -107,8 +107,6 @@ import ItemForm from '@/components/item/item-form.vue'
 import DirtyMixin from '../dirty-mixin'
 import ItemMixin from '@/components/item/item-mixin'
 
-import { useSemanticsStore } from '@/js/stores/useSemanticsStore'
-
 export default {
   mixins: [DirtyMixin, ItemMixin],
   props: {
@@ -230,7 +228,7 @@ export default {
       const dimensionChange = this.$refs.itemForm.dimensionChanged()
       const unitChange = this.$refs.itemForm.unitChanged()
       if (typeChange || dimensionChange || unitChange) {
-        const title = 'WARNING: ' + (typeChange ? 'Type' : dimensionChange ? 'Dimension' : 'Unit') + ' Changed'
+        const title = 'WARNING: ' + (typeChange ? 'Type' : (dimensionChange ? 'Dimension' : 'Unit')) + ' Changed'
         const text = (typeChange || dimensionChange)
           ? `Existing links to channels ${dimensionChange ? 'with dimensions ' : ''}may no longer be valid!`
           : 'Changing the internal unit can corrupt your persisted data and affect rules!'

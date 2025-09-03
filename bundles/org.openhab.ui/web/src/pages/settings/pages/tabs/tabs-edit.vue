@@ -22,6 +22,7 @@
     <f7-tabs class="tabs-editor-tabs">
       <f7-tab id="design"
               class="tabs-editor-design-tab"
+              @tab:show="currentTab = 'design'"
               :tab-active="currentTab === 'design'">
         <f7-block v-if="!ready" class="text-align-center">
           <f7-preloader />
@@ -81,7 +82,7 @@
         </f7-block>
       </f7-tab>
 
-      <f7-tab id="code" :tab-active="currentTab === 'code'">
+      <f7-tab id="code" @tab:show="currentTab = 'code'" :tab-active="currentTab === 'code'">
         <editor v-if="currentTab === 'code'"
                 class="page-code-editor"
                 mode="application/vnd.openhab.uicomponent+yaml;type=tabs"

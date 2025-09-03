@@ -70,7 +70,7 @@
                     :parameters="configDescriptions.parameters"
                     :configuration="metadata.config"
                     @updated="widgetConfigUpdated"
-                    set-empty-config-as-null="true" />
+                    :set-empty-config-as-null="true" />
     </div>
   </div>
 </template>
@@ -203,7 +203,7 @@ export default {
     setConfigDescriptions () {
       let desc = {}
       if (!this.currentComponent || !this.currentComponent.component) return desc
-      const widget = useComponentsStore().widget.find((w) => w.uid === this.currentComponent.component.replace('widget:', ''))
+      const widget = useComponentsStore().widgets.find((w) => w.uid === this.currentComponent.component.replace('widget:', ''))
       if (widget && widget.props) desc = Object.assign({}, widget.props)
 
       if (this.namespace === 'listWidget') {

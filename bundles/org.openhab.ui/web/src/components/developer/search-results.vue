@@ -17,7 +17,6 @@
     <!-- Items -->
     <f7-block class="no-margin no-padding" v-if="searchResults.items.length">
       <f7-block-title class="padding-left">
-        <!-- eslint-disable-next-line -->
         <f7-icon class="margin-right" f7="square_on_circle" />Items ({{ searchResults.items.length }})
       </f7-block-title>
       <f7-list media-list>
@@ -73,7 +72,7 @@
                       :footer="thing.UID"
                       link=""
                       no-chevron
-                      @click="evt => togglePin(evt, 'things', thing, 'UID')">
+                      @click="(evt) => togglePin(evt, 'things', thing, 'UID')">
           <template #after>
             <f7-link color="gray">
               <clipboard-icon :value="thing.UID" tooltip="Copy Thing UID" />
@@ -118,7 +117,7 @@
                       :footer="rule.uid"
                       link=""
                       no-chevron
-                      @click="evt => togglePin(evt, 'rules', rule, 'uid')">
+                      @click="(evt) => togglePin(evt, 'rules', rule, 'uid')">
           <template #after>
             <f7-link color="gray">
               <clipboard-icon :value="rule.uid" tooltip="Copy Rule UID" />
@@ -163,7 +162,7 @@
                       :footer="rule.uid"
                       link=""
                       no-chevron
-                      @click="evt => togglePin(evt, 'rules', rule, 'uid')">
+                      @click="(evt) => togglePin(evt, 'rules', rule, 'uid')">
           <template #after>
             <f7-link color="gray">
               <clipboard-icon :value="rule.uid" tooltip="Copy Scene UID" />
@@ -198,7 +197,6 @@
     <!-- Scripts -->
     <f7-block class="no-margin no-padding" v-if="searchResults.scripts.length">
       <f7-block-title class="padding-left">
-        <!-- eslint-disable-next-line -->
         <f7-icon class="margin-right" f7="doc_plaintext" />Scripts ({{ searchResults.scripts.length }})
       </f7-block-title>
       <f7-list media-list>
@@ -209,7 +207,7 @@
                       :footer="rule.uid"
                       link=""
                       no-chevron
-                      @click="evt => togglePin(evt, 'rules', rule, 'uid')">
+                      @click="(evt) => togglePin(evt, 'rules', rule, 'uid')">
           <template #after>
             <f7-link color="gray">
               <clipboard-icon :value="rule.uid" tooltip="Copy Script UID" />
@@ -289,7 +287,6 @@
     <!-- Widgets -->
     <f7-block class="no-margin no-padding" v-if="searchResults.widgets.length">
       <f7-block-title class="padding-left">
-        <!-- eslint-disable-next-line -->
         <f7-icon class="margin-right" f7="rectangle_on_rectangle_angled" />Widgets ({{ searchResults.widgets.length }})
       </f7-block-title>
       <f7-list media-list>
@@ -299,7 +296,7 @@
                       :title="widget.uid"
                       link=""
                       no-chevron
-                      @click="evt => togglePin(evt, 'widgets', widget, 'uid')">
+                      @click="(evt) => togglePin(evt, 'widgets', widget, 'uid')">
           <template #after>
             <f7-link color="gray">
               <clipboard-icon :value="widget.uid" tooltip="Copy Widget UID" />
@@ -334,7 +331,6 @@
     <!-- Transformations -->
     <f7-block class="no-margin no-padding" v-if="searchResults.transformations.length">
       <f7-block-title class="padding-left">
-        <!-- eslint-disable-next-line -->
         <f7-icon class="margin-right" f7="arrow_2_squarepath" />Transformations ({{ searchResults.transformations.length }})
       </f7-block-title>
       <f7-list media-list>
@@ -345,7 +341,7 @@
                       :footer="transformation.uid"
                       link=""
                       no-chevron
-                      @click="evt => togglePin(evt, 'transformations', transformation, 'uid')">
+                      @click="(evt) => togglePin(evt, 'transformations', transformation, 'uid')">
           <template #after>
             <f7-link color="gray">
               <clipboard-icon :value="transformation.uid" tooltip="Copy Transformation UID" />
@@ -380,7 +376,6 @@
     <!-- Persistence configs -->
     <f7-block class="no-margin no-padding" v-if="searchResults.persistenceConfigs.length">
       <f7-block-title class="padding-left">
-        <!-- eslint-disable-next-line -->
         <f7-icon class="margin-right" f7="download_circle" />Persistence Configs ({{ searchResults.persistenceConfigs.length }})
       </f7-block-title>
       <f7-list media-list>
@@ -391,7 +386,7 @@
                       :footer="persistenceConfig.serviceId"
                       link=""
                       no-chevron
-                      @click="evt => togglePin(evt, 'persistenceConfigs', persistenceConfig, 'serviceId')">
+                      @click="(evt) => togglePin(evt, 'persistenceConfigs', persistenceConfig, 'serviceId')">
           <template #after>
             <f7-link color="gray">
               <clipboard-icon :value="persistenceConfig.serviceId" tooltip="Copy Service ID" />

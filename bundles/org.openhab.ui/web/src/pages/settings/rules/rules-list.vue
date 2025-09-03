@@ -229,9 +229,9 @@
                 <div class="footer-inner">
                   <f7-chip v-if="rule.templateUID"
                            :text="templateName(rule)"
-                           @click.ctrl="e => templateClick(e, true, rule)"
-                           @click.meta="e => templateClick(e, true, rule)"
-                           @click.exact="e => templateClick(e, false, rule)"
+                           @click.ctrl="(e) => templateClick(e, true, rule)"
+                           @click.meta="(e) => templateClick(e, true, rule)"
+                           @click.exact="(e) => templateClick(e, false, rule)"
                            media-bg-color="orange"
                            style="margin-right: 2px">
                     <template #media>

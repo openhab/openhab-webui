@@ -1,7 +1,8 @@
 <template>
   <f7-page name="Model"
            @page:afterin="onPageAfterIn"
-           @page:beforeout="onPageBeforeOut">
+           @page:beforeout="onPageBeforeOut"
+           @click="selectItem(null)">
     <f7-navbar>
       <f7-nav-left>
         <f7-link icon-f7="chevron_left" href="/settings/">

@@ -8,7 +8,7 @@
                    @click="onSave()"
                    icon-md="material:save"
                    icon-only />
-          <f7-link @click="onSave()" v-if="!theme.md">
+          <f7-link v-if="!theme.md" @click="onSave()">
             Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
           </f7-link>
         </template>

@@ -75,7 +75,7 @@
                              :title="selectedItem(channel) ? 'Change Item Selection' : 'Pick Existing Linked Item'"
                              textColor="blue"
                              :hideIcon="true"
-                             :items="items.filter(i => channel.linkedItems.includes(i.name))"
+                             :items="items.filter((i) => channel.linkedItems.includes(i.name))"
                              :multiple="false"
                              :noModelPicker="true"
                              :setValueText="false"
@@ -112,8 +112,7 @@
       <f7-block strong>
         <f7-row>
           <f7-col class="padding-left">
-            This thing has no channels. Either the thing type doesn't define channels, or they may
-            be detected and appear later.
+            This thing has no channels. Either the thing type doesn't define channels, or they may be detected and appear later.
           </f7-col>
         </f7-row>
       </f7-block>

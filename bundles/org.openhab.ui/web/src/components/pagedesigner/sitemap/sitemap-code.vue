@@ -81,7 +81,7 @@ export default {
   computed: {
     parsedSitemap () {
       try {
-        const parser = new Parser(Grammar.fromCompiled(grammar))
+        const parser = new Parser(Grammar.fromCompiled(grammar.default))
         parser.feed(this.sitemapDsl.trim().replace(/\t/g, ' '))
         if (!parser.results.length) return { error: 'Unable to parse, check your input' }
         return parser.results[0]

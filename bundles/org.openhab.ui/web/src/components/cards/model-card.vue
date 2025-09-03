@@ -97,10 +97,10 @@
 </style>
 
 <script>
+import { mapStores } from 'pinia'
 import CardMixin from './card-mixin'
 
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
-import { mapStores } from 'pinia'
 
 export default {
   mixins: [CardMixin],

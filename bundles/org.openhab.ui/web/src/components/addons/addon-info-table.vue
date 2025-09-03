@@ -37,10 +37,9 @@
 </style>
 
 <script>
-import dayjs, { extend } from 'dayjs'
+import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
-
-extend(utc)
+dayjs.extend(utc)
 
 import { ContentTypes, Formats } from '@/assets/addon-store'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'

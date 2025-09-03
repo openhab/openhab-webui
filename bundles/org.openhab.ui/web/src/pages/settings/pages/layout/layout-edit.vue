@@ -41,14 +41,13 @@
     <f7-tabs class="layout-editor-tabs">
       <f7-tab id="design"
               class="layout-editor-design-tab"
+              @tab:show="currentTab = 'design'"
               :tab-active="currentTab === 'design'">
         <f7-block v-if="!ready" class="text-align-center">
           <f7-preloader />
           <div>Loading...</div>
         </f7-block>
-        <f7-block v-if="ready && createMode && !(previewMode || fullscreen)"
-                  id="page-settings"
-                  class="block-narrow">
+        <f7-block v-if="ready && createMode && !(previewMode || fullscreen)" id="page-settings" class="block-narrow">
           <page-settings :page="page" :createMode="createMode" :f7router />
           <f7-col>
             <f7-block-footer class="padding-horizontal margin-bottom">
@@ -142,7 +141,7 @@
           </f7-page>
         </f7-sheet>
       </f7-tab>
-      <f7-tab id="code" :tab-active="currentTab === 'code'">
+      <f7-tab id="code" @tab:show="currentTab = 'code'" :tab-active="currentTab === 'code'">
         <editor v-if="currentTab === 'code'"
                 :style="{ opacity: previewMode ? '0' : '' }"
                 class="page-code-editor"

@@ -62,9 +62,7 @@
                              class="padding-left padding-right">
               This type of Thing needs to be associated to a working Bridge to function properly.
             </f7-block-footer>
-            <f7-list v-if="ready && thingType.supportedBridgeTypeUIDs.length"
-                     inline-labels
-                     no-hairlines-md>
+            <f7-list v-if="ready && thingType.supportedBridgeTypeUIDs.length" inline-labels no-hairlines-md>
               <f7-list-group v-if="editable">
                 <thing-picker title="Bridge"
                               name="bridge"

@@ -182,7 +182,7 @@ export default {
         try {
           this.scanTimeout = parseInt(data)
           this.scanProgress = 0
-          let progressBarEl = this.$f7.progressbar.show('#scan-progress', 0, 'blue')
+          let progressBarEl = f7.progressbar.show('#scan-progress', 0, 'blue')
           this.intervalId = setInterval(() => {
             this.scanProgress += 1
             f7.progressbar.set(progressBarEl, this.scanProgress * 100 / this.scanTimeout)
@@ -230,7 +230,7 @@ export default {
      *
      * @returns {Promise<void>}
      */
-    loadInbox () {
+    async loadInbox () {
       if (this.loading) return
       this.loading = true
       return this.$oh.api.get('/rest/inbox?includeIgnored=false').then((data) => {
@@ -275,7 +275,7 @@ export default {
     approveAll () {
       f7.dialog.confirm('Add all discovered Things?', 'Add Things', () => {
         const promises = this.scanResults.map((i) => this.$oh.api.postPlain('/rest/inbox/' + i.thingUID + '/approve', i.label))
-        let dialog = this.$f7.dialog.progress('Adding Things')
+        let dialog = f7.dialog.progress('Adding Things')
         Promise.all(promises).then((data) => {
           f7.toast.create({
             text: 'Things added',
@@ -283,11 +283,11 @@ export default {
             closeTimeout: 2000
           }).open()
           dialog.close()
-          setTimeout(() => { this.$f7router.navigate('/settings/things/', { reloadCurrent: true }) }, 300)
+          setTimeout(() => { this.f7router.navigate('/settings/things/', { reloadCurrent: true }) }, 300)
         }).catch((err) => {
           dialog.close()
           console.error(err)
-          this.$f7.dialog.alert('An error occurred: ' + err)
+          f7.dialog.alert('An error occurred: ' + err)
         })
       })
     },

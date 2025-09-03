@@ -515,7 +515,7 @@ export default {
               destroyOnClose: true,
               closeTimeout: 4000
             }).open()
-            this.$f7router.back()
+            this.f7router.back()
           }
           const ruleStub = this.ruleCopy
           ruleStub.triggers = []
@@ -581,7 +581,7 @@ export default {
             destroyOnClose: true,
             closeTimeout: 2000
           }).open()
-          this.f7router.navigate(this.$f7route.url
+          this.f7router.navigate(this.f7route.url
             .replace('/add', '/' + this.rule.uid)
             .replace('/duplicate', '/' + this.rule.uid)
             .replace('/schedule/', '/rules/'), { reloadCurrent: true })
@@ -592,7 +592,7 @@ export default {
             destroyOnClose: true,
             closeTimeout: 2000
           }).open()
-          this.f7router.navigate(this.$f7route.url
+          this.f7router.navigate(this.f7route.url
             .replace('/stub', '/' + this.rule.uid)
             .replace('/schedule/', '/rules/'), { reloadCurrent: true })
           this.load()
@@ -606,7 +606,7 @@ export default {
           }
           this.savedRule = cloneDeep(this.rule)
         }
-        // if (!stay) this.$f7router.back()
+        // if (!stay) this.f7router.back()
       }).catch((err) => {
         f7.toast.create({
           text: 'Error while saving rule: ' + err,
@@ -669,7 +669,7 @@ export default {
         closeTimeout: 2000
       }).open()
 
-      const savePromise = this.isEditable && this.dirty ? this.save(true) : Promise.resolve()
+      const savePromise = (this.isEditable && this.dirty) ? this.save(true) : Promise.resolve()
 
       savePromise.then(() => {
         this.$oh.api.postPlain('/rest/rules/' + this.rule.uid + '/runnow', '').catch((err) => {

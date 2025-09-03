@@ -32,12 +32,8 @@
                  :icon="c.channelType.category"
                  height="32"
                  width="32" />
-        <span v-else-if="c.extensible && c.channel.label" class="item-initial">{{
-          c.channel.label[0]
-        }}</span>
-        <span v-else-if="!c.extensible && c.channelType.label" class="item-initial">{{
-          c.channelType.label[0]
-        }}</span>
+        <span v-else-if="c.extensible && c.channel.label" class="item-initial">{{ c.channel.label[0] }}</span>
+        <span v-else-if="!c.extensible && c.channelType.label" class="item-initial">{{ c.channelType.label[0] }}</span>
       </template>
       <!-- Channel links -->
       <f7-accordion-content v-if="!pickerMode" class="searchbar-ignore">

@@ -91,13 +91,13 @@
 <script>
 import { f7 } from 'framework7-vue'
 import { utils } from 'framework7'
+import { mapStores } from 'pinia'
 
 import { accessoriesAndCharacteristics, homekitParameters, accessories } from '@/assets/definitions/metadata/homekit'
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import ItemMetadataMixin from '@/components/item/metadata/item-metadata-mixin'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
-import { mapStores } from 'pinia'
 
 export default {
   props: {

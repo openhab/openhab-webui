@@ -217,8 +217,7 @@
           </div>
         </f7-col>
       </f7-row>
-      <f7-block-footer v-if="$t('home.overview.title') !== 'Overview'"
-                       class="margin text-align-center">
+      <f7-block-footer v-if="$t('home.overview.title') !== 'Overview'" class="margin text-align-center">
         <small>{{ $t('admin.notTranslatedYet') }}</small>
       </f7-block-footer>
     </f7-block>
@@ -334,7 +333,7 @@ export default {
       if (useRuntimeStore().apiEndpoint('services')) {
         this.$oh.api.get('/rest/services').then((data) => {
           this.systemServices = data
-            .filter((s) => s.category === 'system' && s.id !== 'org.openhab.persistence')
+            .filter((s) => (s.category === 'system') && (s.id !== 'org.openhab.persistence'))
             .sort((s1, s2) => this.sortByLabel(s1, s2))
           this.addonsServices = data.filter((s) => s.category !== 'system').sort((s1, s2) => this.sortByLabel(s1, s2))
           this.servicesLoaded = true
@@ -345,9 +344,7 @@ export default {
           this.addonsInstalled = data
             .filter((a) => a.installed && !['application/vnd.openhab.ruletemplate', 'application/vnd.openhab.uicomponent;type=widget', 'application/vnd.openhab.uicomponent;type=blocks'].includes(a.contentType))
             .sort((s1, s2) => this.sortByLabel(s1, s2))
-          this.persistenceAddonsInstalled = this.addonsInstalled.filter(
-            (a) => a.installed && a.type === 'persistence'
-          )
+          this.persistenceAddonsInstalled = this.addonsInstalled.filter((a) => a.installed && a.type === 'persistence')
           this.addonsLoaded = true
         })
       }
@@ -358,33 +355,19 @@ export default {
     loadCounters () {
       if (!this.apiEndpoints) return
       if (useRuntimeStore().apiEndpoint('links'))
-        this.$oh.api.get('/rest/links/orphans').then((data) => {
-          this.orphanLinkCount = data.length
-        })
+        this.$oh.api.get('/rest/links/orphans').then((data) => { this.orphanLinkCount = data.length })
       if (useRuntimeStore().apiEndpoint('items'))
-        this.$oh.api.get('/rest/items/semantics/health').then((data) => {
-          this.semanticsProblemCount = data.length
-        })
+        this.$oh.api.get('/rest/items/semantics/health').then((data) => { this.semanticsProblemCount = data.length })
       if (useRuntimeStore().apiEndpoint('inbox'))
-        this.$oh.api.get('/rest/inbox?includeIgnored=false').then((data) => {
-          this.inboxCount = data.filter((e) => e.flag === 'NEW').length.toString()
-        })
+        this.$oh.api.get('/rest/inbox?includeIgnored=false').then((data) => { this.inboxCount = data.filter((e) => e.flag === 'NEW').length.toString() })
       if (useRuntimeStore().apiEndpoint('things'))
-        this.$oh.api.get('/rest/things?staticDataOnly=true').then((data) => {
-          this.thingsCount = data.length.toString()
-        })
+        this.$oh.api.get('/rest/things?staticDataOnly=true').then((data) => { this.thingsCount = data.length.toString() })
       if (useRuntimeStore().apiEndpoint('items'))
-        this.$oh.api.get('/rest/items?staticDataOnly=true').then((data) => {
-          this.itemsCount = data.length.toString()
-        })
+        this.$oh.api.get('/rest/items?staticDataOnly=true').then((data) => { this.itemsCount = data.length.toString() })
       if (useRuntimeStore().apiEndpoint('ui'))
-        this.$oh.api.get('/rest/ui/components/system:sitemap').then((data) => {
-          this.sitemapsCount = data.length
-        })
+        this.$oh.api.get('/rest/ui/components/system:sitemap').then((data) => { this.sitemapsCount = data.length })
       if (useRuntimeStore().apiEndpoint('transformations'))
-        this.$oh.api.get('/rest/transformations').then((data) => {
-          this.transformationsCount = data.length.toString()
-        })
+        this.$oh.api.get('/rest/transformations').then((data) => { this.transformationsCount = data.length.toString() })
       if (useRuntimeStore().apiEndpoint('rules')) {
         this.$oh.api.get('/rest/rules?staticDataOnly=true').then((data) => {
           this.rulesCount = data.filter((r) => r.tags.indexOf('Scene') < 0 && r.tags.indexOf('Script') < 0).length.toString()

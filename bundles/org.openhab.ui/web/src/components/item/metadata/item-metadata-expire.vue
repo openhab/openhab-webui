@@ -20,7 +20,7 @@
                      type="text"
                      placeholder="UNDEF if unset"
                      :value="parsedAction.value"
-                     @blur="evt => updateActionValue(evt.target.value)" />
+                     @blur="(evt) => updateActionValue(evt.target.value)" />
       <f7-list-item title="ignore state updates"
                     checkbox
                     :checked="ignoreStateUpdates ? true : null"
@@ -120,6 +120,7 @@ export default {
     }
   },
   mounted () {
+    const self = this
     const inputControl = this.$refs.duration
     const containerControl = this.$refs.picker
     if (!inputControl || !inputControl.$el || !containerControl) return
@@ -133,13 +134,13 @@ export default {
       inputReadOnly: false,
       rotateEffect: true,
       value: this.parsedTimerParts,
-      formatValue: (values, displayValues) => {
+      formatValue: function (values, displayValues) {
         return displayValues[0] + 'h' + displayValues[1] + 'm' + displayValues[2] + 's'
       },
       cols: [
         // Hours
         {
-          values: (() => {
+          values: (function () {
             let arr = []
             for (let i = 0; i <= 99; i++) { arr.push(i.toString()) }
             return arr
@@ -152,7 +153,7 @@ export default {
         },
         // Minutes
         {
-          values: (() => {
+          values: (function () {
             let arr = []
             for (let i = 0; i <= 59; i++) { arr.push(i.toString()) }
             return arr
@@ -165,7 +166,7 @@ export default {
         },
         // Seconds
         {
-          values: (() => {
+          values: (function () {
             let arr = []
             for (let i = 0; i <= 59; i++) { arr.push(i.toString()) }
             return arr
@@ -178,8 +179,8 @@ export default {
         }
       ],
       on: {
-        change: (picker, values, displayValues) => {
-          this.updateDuration(displayValues[0] + 'h' + displayValues[1] + 'm' + displayValues[2] + 's')
+        change: function (picker, values, displayValues) {
+          self.updateDuration(displayValues[0] + 'h' + displayValues[1] + 'm' + displayValues[2] + 's')
         }
       }
     })

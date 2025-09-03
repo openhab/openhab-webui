@@ -42,7 +42,7 @@
         <template #media>
           <oh-icon v-if="link.item.category"
                    :icon="link.item.category"
-                   :state="link.item.type === 'Image' ? null : context.store[link.item.name].state || link.item.state"
+                   :state="link.item.type === 'Image' ? null : (context.store[link.item.name].state || link.item.state)"
                    height="32"
                    width="32" />
           <span v-else class="item-initial">{{ link.item.name[0] }}</span>
@@ -208,7 +208,7 @@ export default {
               if (finalChannel) {
                 // replace the channel in-place
                 const idx = self.thing.channels.findIndex((c) => c.uid === finalChannel.uid)
-                this.thing.channels[idx] = finalChannel
+                self.thing.channels[idx] = finalChannel
                 self.$emit('channel-updated', true)
               } else {
                 self.$emit('channel-updated', false)

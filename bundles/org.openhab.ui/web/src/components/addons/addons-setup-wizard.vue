@@ -35,7 +35,7 @@
             </div>
           </f7-row>
         </f7-block>
-      </f7-list-item>/>
+      </f7-list-item>
     </f7-list>
   </div>
 </template>

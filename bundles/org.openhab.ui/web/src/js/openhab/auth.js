@@ -37,19 +37,14 @@ export async function authorize (setup) {
     sessionStorage.setItem('openhab.ui:codeVerifier', pkceChallenge.code_verifier)
     sessionStorage.setItem('openhab.ui:authState', authState)
 
-    window.location =
-      '/auth' +
+    window.location = '/auth' +
       '?response_type=code' +
-      '&client_id=' +
-      encodeURIComponent(window.location.origin) +
-      '&redirect_uri=' +
-      encodeURIComponent(window.location.origin) +
+      '&client_id=' + encodeURIComponent(window.location.origin) +
+      '&redirect_uri=' + encodeURIComponent(window.location.origin) +
       '&scope=admin' +
       '&code_challenge_method=S256' +
-      '&code_challenge=' +
-      encodeURIComponent(pkceChallenge.code_challenge) +
-      '&state=' +
-      authState
+      '&code_challenge=' + encodeURIComponent(pkceChallenge.code_challenge) +
+      '&state=' + authState
   })
 }
 

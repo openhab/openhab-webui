@@ -16,7 +16,6 @@
 
 <script>
 import { nextTick } from 'vue'
-import { theme } from 'framework7-vue'
 
 import { latLng, Icon } from 'leaflet'
 import { LMap, LTileLayer, LMarker } from '@vue-leaflet/vue-leaflet'

@@ -49,12 +49,11 @@ import { mapStores } from 'pinia'
 import mixin from '../widget-mixin'
 import chart from '../chart/chart-mixin'
 import { actionsMixin } from '../widget-actions'
-import { i18n } from '@/js/i18n'
 
-import dayjs, { extend } from 'dayjs'
+import dayjs from 'dayjs'
 import LocalizedFormat from 'dayjs/plugin/localizedFormat'
 
-extend(LocalizedFormat)
+dayjs.extend(LocalizedFormat)
 
 import { use, registerLocale, registerTheme } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
@@ -68,22 +67,11 @@ import {
 } from 'echarts/components'
 import VChart from 'vue-echarts'
 import 'echarts/theme/dark.js'
+import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
 use([CanvasRenderer, LineChart, BarChart, GaugeChart, HeatmapChart, PieChart, ScatterChart, CustomChart, TitleComponent,
   LegendComponent, LegendScrollComponent, GridComponent, SingleAxisComponent, ToolboxComponent, TooltipComponent, DataZoomComponent,
   MarkLineComponent, MarkPointComponent, MarkAreaComponent, VisualMapComponent, CalendarComponent, LabelLayout])
-
-let echartsLocale = i18n.global.locale.value.split('-')[0].toUpperCase()
-
-import(`../../../../node_modules/echarts/i18n/lang${echartsLocale}-obj.js`)   // must be relative import @rollup/plugin-dynamic-import-vars
-  .then((lang) => {
-    console.info(`Registering ECharts locale ${echartsLocale}`)
-    registerLocale(echartsLocale, lang.default)
-  })
-  .catch(() => {
-    console.warn(`No ECharts locale found for ${echartsLocale}`)
-    echartsLocale = undefined
-  })
 
 export default {
   mixins: [mixin, chart, actionsMixin],
@@ -124,16 +112,32 @@ export default {
       }
     },
     initOptions () {
-      return echartsLocale ? {
-        locale: echartsLocale
-      } : undefined
+      return {
+        locale: useRuntimeStore().locale.split('-')[0].toUpperCase()
+      }
     },
-    ...mapStores(useUIOptionsStore)
+    ...mapStores(useUIOptionsStore, useRuntimeStore)
   },
   data () {
     return {
       ready: false,
       calendarPicker: null
+    }
+  },
+  watch: {
+    'runtimeStore.locale': {
+      handler: function (newValue) {
+        let echartsLocale = newValue.split('-')[0].toUpperCase()
+        console.log(`Locale changed to ${echartsLocale}, updating ECharts locale`)
+
+        import(`../../../../node_modules/echarts/lib/i18n/lang${echartsLocale}.js`).then((lang) => {
+          console.info(`Registering ECharts locale ${echartsLocale}`)
+          registerLocale(echartsLocale, lang.default)
+        }).catch(() => {
+          console.warn(`No ECharts locale found for ${echartsLocale}`)
+        })
+      },
+      immediate: true
     }
   },
   mounted () {

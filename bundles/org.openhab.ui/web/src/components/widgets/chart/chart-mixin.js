@@ -1,7 +1,7 @@
-import dayjs, { extend } from 'dayjs'
+import dayjs from 'dayjs'
 import IsoWeek from 'dayjs/plugin/isoWeek'
 
-extend(IsoWeek)
+dayjs.extend(IsoWeek)
 
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 

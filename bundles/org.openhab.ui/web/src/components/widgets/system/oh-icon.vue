@@ -1,12 +1,12 @@
 <template>
   <img v-if="iconType === 'oh'"
-       v-bind="config"
        :src="iconUrl"
+       v-bind="config"
        @click="performAction()"
        :style="{
-         width: resolvedConfig.width !== null ? resolvedConfig.width + 'px' : 'auto',
-         height: resolvedConfig.height !== null ? resolvedConfig.height + 'px' : 'auto',
-         cursor: hasAction ? 'pointer' : 'auto',
+         width: (resolvedConfig.width !== null) ? resolvedConfig.width + 'px' : 'auto',
+         height: (resolvedConfig.height !== null) ? resolvedConfig.height + 'px' : 'auto',
+         cursor: (hasAction) ? 'pointer' : 'auto',
          ...resolvedStyle }"
        :class="{ 'no-icon': !iconLoaded }"
        @load="iconLoaded = true">

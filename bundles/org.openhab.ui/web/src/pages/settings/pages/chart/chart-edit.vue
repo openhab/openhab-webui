@@ -144,7 +144,8 @@ export default {
       currentSlotParent: null,
       currentSlotConfig: null,
       currentSlotDefaultComponentType: null,
-      widgetSlotConfigOpened: false
+      widgetSlotConfigOpened: false,
+      forceEditMode: true
     }
   },
   methods: {
