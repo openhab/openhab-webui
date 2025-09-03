@@ -13,7 +13,7 @@
         <developer-dock-icon />
         <f7-link icon-md="material:done_all"
                  @click="toggleCheck()"
-                 :text="!theme.md ? (showCheckboxes ? 'Done' : 'Select') : ''" />
+                 :text="(!theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
       </f7-nav-right>
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <!-- Only render searchbar, if page is ready. Otherwise searchbar is broken after changes to the Items list. -->
@@ -33,9 +33,7 @@
                 :class="{ navbar: theme.md }"
                 bottom-ios
                 bottom-aurora>
-      <div v-if="!theme.md && selectedItems.length > 0"
-           class="display-flex justify-content-center"
-           style="width: 100%">
+      <div v-if="!theme.md && selectedItems.length > 0" class="display-flex justify-content-center" style="width: 100%">
         <f7-link v-show="selectedItems.length"
                  color="red"
                  class="delete display-flex flex-direction-row margin-right"
@@ -57,7 +55,7 @@
                icon-md="material:close"
                icon-color="white"
                @click="showCheckboxes = false" />
-      <div class="title" v-if="theme.md">
+      <div v-if="theme.md" class="title">
         {{ selectedItems.length }} selected
       </div>
       <div v-if="theme.md && selectedItems.length" class="right">
@@ -230,11 +228,10 @@ export default {
     EmptyStatePlaceholder
   },
   setup () {
-    return { theme }
+    return { f7, theme }
   },
   data () {
     return {
-      f7,
       ready: false,
       initSearchbar: false,
       loading: false,
@@ -400,7 +397,7 @@ export default {
     },
     doRemoveSelected () {
       if (this.selectedItems.some((i) => i.editable === false)) {
-        this.$f7.dialog.alert('Some of the selected items are not modifiable because they have been created by textual configuration')
+        f7.dialog.alert('Some of the selected items are not modifiable because they have been created by textual configuration')
         return
       }
 

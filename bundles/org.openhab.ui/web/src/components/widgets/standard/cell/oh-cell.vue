@@ -42,8 +42,8 @@
                           media-item
                           :subtitle="config.subtitle"
                           :footer="config.footer">
-              <template #header>
-                <div v-if="header" class="button-header display-flex">
+              <template v-if="header" #header>
+                <div class="button-header display-flex">
                   <oh-icon v-if="config.icon"
                            class="header-icon"
                            :icon="config.icon"
@@ -56,8 +56,8 @@
                   </f7-badge>
                 </div>
               </template>
-              <template #title>
-                <div v-if="config.title" class="button-header display-flex">
+              <template v-if="config.title" #title>
+                <div class="button-header display-flex">
                   <oh-icon v-if="!header && config.icon"
                            class="header-icon"
                            :icon="config.icon"
@@ -168,6 +168,7 @@
 <script>
 import { utils } from 'framework7'
 import { f7 } from 'framework7-vue'
+import { mapStores } from 'pinia'
 
 import mixin from '../../widget-mixin'
 import { actionsMixin } from '../../widget-actions'
@@ -175,7 +176,6 @@ import { OhCellDefinition } from '@/assets/definitions/widgets/standard/cells'
 import OhTrend from '../../system/oh-trend.vue'
 
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
-import { mapStores } from 'pinia'
 
 export default {
   mixins: [mixin, actionsMixin],
@@ -191,8 +191,7 @@ export default {
     return {
       transitioning: false,
       opened: false,
-      cardId: utils.id(),
-      trendWidth: 0
+      cardId: utils.id()
     }
   },
   mounted () {
@@ -200,10 +199,6 @@ export default {
     this.$$(this.$refs.card.$el).on('taphold', this.openCell)
     this.$$(this.$refs.card.$el).on('contextmenu', this.openCell)
     window.addEventListener('popstate', this.back)
-
-    this.trendWidth = this.$refs.cardContent
-      ? this.$refs.cardContent.$el.clientWidth
-      : 0
   },
   beforeUnmount () {
     this.$$(this.$refs.card.$el).off('click')
@@ -240,6 +235,9 @@ export default {
       }
       return false
     },
+    trendWidth () {
+      return this.$refs.cardContent ? this.$refs.cardContent.$el.clientWidth : 0
+    },
     ...mapStores(useUIOptionsStore)
   },
   methods: {
@@ -267,9 +265,7 @@ export default {
     },
     closeCell () {
       if (this.context.editmode) return
-      setTimeout(() => {
-        f7.card.close(this.$refs.card.$el)
-      }, 100)
+      setTimeout(() => { f7.card.close(this.$refs.card.$el) }, 100)
     },
     cellOpen () {
       this.transitioning = true

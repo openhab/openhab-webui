@@ -193,7 +193,7 @@ export default {
       if (!this.textualSystemInfoOpened) return ''
       return YAML.stringify({
         runtimeInfo: useRuntimeStore().runtimeInfo,
-        locale: useRuntimeStore().locale || 'default',
+        locale: useRuntimeStore().locale,
         systemInfo: this.systemInfo,
         addons: this.addons,
         clientInfo: {
@@ -211,8 +211,8 @@ export default {
             platform: navigator.platform
           },
           screen: { width: window.screen.width, height: window.screen.height, colorDepth: window.screen.colorDepth },
-          support: this.$f7.support,
-          themeOptions: this.$f7.data.themeOptions,
+          support: f7.support,
+          themeOptions: useUIOptionsStore().themeOptions(),
           userAgent: window.navigator.userAgent
         },
         timestamp: new Date()

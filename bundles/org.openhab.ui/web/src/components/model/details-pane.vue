@@ -52,7 +52,6 @@ export default {
     return {
       utils
     }
-  },
-  methods: {}
+  }
 }
 </script>

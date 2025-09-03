@@ -100,7 +100,7 @@
       <addons-section v-else
                       :show-as-cards="searchResults.length <= 3"
                       :addons="searchResults"
-                      :title="'Found: ' + searchResults.length + (currentTab == 'main' ? '' : ' ' + currentTab) + ' add-on' + (searchResults.length === 1 ? '' : 's')"
+                      :title="'Found: ' + searchResults.length + (currentTab == 'main' ? '' : ' ' + currentTab) + ' add-on' + ((searchResults.length === 1) ? '' : 's')"
                       @addon-button-click="addonButtonClick" />
     </div>
 
@@ -131,23 +131,23 @@
         <addons-section v-if="suggestedAddons"
                         :show-all="true"
                         @addon-button-click="addonButtonClick"
-                        :addons="suggestedAddons.filter(a => a.type === 'binding')"
+                        :addons="suggestedAddons.filter((a) => a.type === 'binding')"
                         :suggested="true"
                         :title="SuggestionLabels.binding.title"
                         :subtitle="SuggestionLabels.binding.subtitle" />
         <addons-section v-if="officialAddons"
                         @addon-button-click="addonButtonClick"
-                        :addons="officialAddons.filter(a => a.type === 'binding')"
+                        :addons="officialAddons.filter((a) => a.type === 'binding')"
                         :title="'openHAB Distribution'"
                         :subtitle="'Official bindings maintained by the openHAB project'" />
         <addons-section v-if="addons && addons.marketplace"
                         @addon-button-click="addonButtonClick"
-                        :addons="marketplaceAddons.filter(a => a.type === 'binding')"
+                        :addons="marketplaceAddons.filter((a) => a.type === 'binding')"
                         :title="'Community Marketplace'"
                         :subtitle="'Bindings independently released by the community'" />
         <addons-section v-if="otherAddons && otherAddons.length"
                         @addon-button-click="addonButtonClick"
-                        :addons="otherAddons.filter(a => a.type === 'binding')"
+                        :addons="otherAddons.filter((a) => a.type === 'binding')"
                         :title="'Other Add-ons'" />
       </f7-tab>
 
@@ -177,8 +177,7 @@
       <f7-tab id="ui" @tab-show="onTabShow">
         <addons-section v-if="addons && addons.marketplace"
                         @addon-button-click="addonButtonClick"
-                        :addons="
-                          marketplaceAddons.filter((a) => a.type === 'ui' && a.contentType === 'application/vnd.openhab.uicomponent;type=widget')"
+                        :addons="marketplaceAddons.filter((a) => a.type === 'ui' && a.contentType === 'application/vnd.openhab.uicomponent;type=widget')"
                         :install-action-text="'Add'"
                         :show-as-cards="true"
                         :title="'Widgets for the Main UI'"
@@ -196,13 +195,13 @@
                         :show-all="true"
                         @addon-button-click="addonButtonClick"
                         :suggested="true"
-                        :addons="suggestedAddons.filter(a => a.type === 'misc')"
+                        :addons="suggestedAddons.filter((a) => a.type === 'misc')"
                         :title="SuggestionLabels.misc.title"
                         :subtitle="SuggestionLabels.misc.subtitle" />
         <addons-section v-if="addons && officialAddons"
                         :show-all="true"
                         @addon-button-click="addonButtonClick"
-                        :addons="unsuggestedAddons.filter(a => a.type === 'misc')"
+                        :addons="unsuggestedAddons.filter((a) => a.type === 'misc')"
                         :featured="['misc-openhabcloud', 'misc-homekit', 'misc-metrics']"
                         :subtitle="'Integrate openHAB with external systems'" />
       </f7-tab>
@@ -212,12 +211,12 @@
                         :show-all="true"
                         @addon-button-click="addonButtonClick"
                         :suggested="true"
-                        :addons="suggestedAddons.filter(a => a.type === 'persistence')"
+                        :addons="suggestedAddons.filter((a) => a.type === 'persistence')"
                         :title="SuggestionLabels.persistence.title"
                         :subtitle="SuggestionLabels.persistence.subtitle" />
         <addons-section v-if="addons && officialAddons"
                         @addon-button-click="addonButtonClick"
-                        :addons="unsuggestedAddons.filter(a => a.type === 'persistence')"
+                        :addons="unsuggestedAddons.filter((a) => a.type === 'persistence')"
                         :show-all="true"
                         :featured="['persistence-rrd4j', 'persistence-influxdb', 'persistence-mapdb']"
                         :title="'Persistence Services'"
@@ -229,12 +228,12 @@
                         :show-all="true"
                         @addon-button-click="addonButtonClick"
                         :suggested="true"
-                        :addons="suggestedAddons.filter(a => a.type === 'transformation')"
+                        :addons="suggestedAddons.filter((a) => a.type === 'transformation')"
                         :title="SuggestionLabels.transformation.title"
                         :subtitle="SuggestionLabels.transformation.subtitle" />
         <addons-section v-if="addons && officialAddons"
                         @addon-button-click="addonButtonClick"
-                        :addons="unsuggestedAddons.filter(a => a.type === 'transformation')"
+                        :addons="unsuggestedAddons.filter((a) => a.type === 'transformation')"
                         :show-all="true"
                         :featured="['transformation-jsonpath', 'transformation-map', 'transformation-regex']"
                         :title="'Transformation Add-ons'"
@@ -246,13 +245,13 @@
                         :show-all="true"
                         @addon-button-click="addonButtonClick"
                         :suggested="true"
-                        :addons="suggestedAddons.filter(a => a.type === 'voice')"
+                        :addons="suggestedAddons.filter((a) => a.type === 'voice')"
                         :title="SuggestionLabels.voice.title"
                         :subtitle="SuggestionLabels.voice.subtitle" />
         <addons-section v-if="addons && officialAddons"
                         :show-all="true"
                         @addon-button-click="addonButtonClick"
-                        :addons="unsuggestedAddons.filter(a => a.type === 'voice')"
+                        :addons="unsuggestedAddons.filter((a) => a.type === 'voice')"
                         :featured="['voice-googletts', 'voice-pollytts', 'voice-voicerss']"
                         :subtitle="'Convert between text and speech, interpret human language queries'" />
       </f7-tab>
@@ -302,11 +301,10 @@ export default {
     AddonsSection
   },
   setup () {
-    return { theme }
+    return { f7, theme }
   },
   data () {
     return {
-      f7,
       leftPanelOpened: false,
       currentTab: 'main',
       services: null,

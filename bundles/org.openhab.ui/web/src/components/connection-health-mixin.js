@@ -24,7 +24,6 @@ export default {
       const { sseConnected } = storeToRefs(useStatesStore())
 
       watch(sseConnected, (newValue) => {
-        console.log('SSE Connection Status Changed:', newValue)
         if(newValue === false) {
           if (this.communicationFailureToast === null) {
             this.communicationFailureTimeoutId = setTimeout(() => {

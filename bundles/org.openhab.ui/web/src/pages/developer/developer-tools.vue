@@ -13,25 +13,17 @@
         <developer-dock-icon />
       </f7-nav-right>
     </f7-navbar>
-
-
     <f7-toolbar tabbar position="top">
-      <f7-link @click="currentTab = 'menu'"
-               :tab-link-active="currentTab === 'menu'"
-               tab-link="#tab-menu">
+      <f7-link @click="currentTab = 'menu'" :tab-link-active="currentTab === 'menu'" tab-link="#tab-menu">
         Expert Features
       </f7-link>
-      <f7-link @click="currentTab = 'debug'"
-               :tab-link-active="currentTab === 'debug'"
-               tab-link="#tab-debug">
+      <f7-link @click="currentTab = 'debug'" :tab-link-active="currentTab === 'debug'" tab-link="#tab-debug">
         Debug
       </f7-link>
     </f7-toolbar>
 
     <f7-tabs>
-      <f7-tab id="tab-menu"
-              tab:show="() => this.currentTab = 'menu'"
-              :tab-active="currentTab === 'menu'">
+      <f7-tab id="tab-menu" :tab-active="currentTab === 'menu'">
         <f7-block class="block-narrow after-big-title settings-menu">
           <f7-row>
             <f7-col width="100" medium="50">
@@ -156,15 +148,12 @@
               </f7-list>
             </f7-col>
           </f7-row>
-          <f7-block-footer v-if="$t('home.overview.title') !== 'Overview'"
-                           class="margin text-align-center">
+          <f7-block-footer v-if="$t('home.overview.title') !== 'Overview'" class="margin text-align-center">
             <small>{{ $t('admin.notTranslatedYet') }}</small>
           </f7-block-footer>
         </f7-block>
       </f7-tab>
-      <f7-tab id="tab-debug"
-              @tab:show="() => (this.currentTab = 'debug')"
-              :tab-active="currentTab === 'debug'">
+      <f7-tab id="tab-debug" :tab-active="currentTab === 'debug'">
         <!-- Test SSE connection -->
         <f7-block class="block-narrow">
           <f7-row>

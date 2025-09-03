@@ -4,9 +4,9 @@ import { useModelStore } from '@/js/stores/useModelStore'
 
 export default {
   computed: {
-    model: (state) => useModelStore(),
-    modelReady: (state) => useModelStore().ready,
-    loopError: (state) => useModelStore().error
+    model: () => useModelStore(),
+    modelReady: () => useModelStore().ready,
+    loopError: () => useModelStore().error
   },
   methods: {
     cardGroups (type, page) {

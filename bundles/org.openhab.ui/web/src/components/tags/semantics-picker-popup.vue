@@ -36,7 +36,7 @@
         <span />
         <div class="padding-left padding-right text-align-center" style="font-size: 12px">
           <template v-if="classMode">
-            <label class="advanced-label">
+            <label v-if="classMode" class="advanced-label">
               <f7-checkbox v-model:checked="showAllClasses" />
               Show all classes
             </label>

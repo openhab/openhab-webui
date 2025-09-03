@@ -37,8 +37,8 @@
 </style>
 
 <script>
-import { f7, theme } from 'framework7-vue'
 import { nextTick } from 'vue'
+import { f7 } from 'framework7-vue'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
 import mixin from '../widget-mixin'
@@ -77,7 +77,7 @@ export default {
       currentCenter: null,
       center: (this.context.component.config.initialCenter) ? latLng(this.context.component.config.initialCenter.split(',')) : latLng(48, 6),
       // url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      url: `https://a.basemaps.cartocdn.com/${this.$f7.data.themeOptions.dark}_all/{z}/{x}/{y}.png`,
+      url: `https://a.basemaps.cartocdn.com/${f7.data.themeOptions.dark}_all/{z}/{x}/{y}.png`,
       attribution: '&copy; <a class="external" target="_blank" href="http://osm.org/copyright">OpenStreetMap</a>, &copy; <a class="external" target="_blank" href="https://carto.com/attribution/">CARTO</a>',
       showMap: true
     }
@@ -101,7 +101,7 @@ export default {
   },
   methods: {
     setBackgroundLayer () {
-      const defaultProvider = useUIOptionsStore().getDarkMode() === 'dark' ? 'CartoDB.DarkMatter' : 'CartoDB.Positron'
+      const defaultProvider = (useUIOptionsStore().getDarkMode() === 'dark') ? 'CartoDB.DarkMatter' : 'CartoDB.Positron'
       const provider = this.config.tileLayerProvider || defaultProvider
       let layer, overlayLayer
       try {

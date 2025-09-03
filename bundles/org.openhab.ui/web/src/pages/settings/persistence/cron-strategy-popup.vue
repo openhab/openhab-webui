@@ -8,10 +8,11 @@
                    icon-aurora="f7:arrow_left"
                    popup-close />
         </f7-nav-left>
-        <f7-nav-title> Configure cron strategy </f7-nav-title>
+        <f7-nav-title>
+          Configure cron strategy
+        </f7-nav-title>
         <f7-nav-right>
-          <f7-link v-show="currentCronStrategy.name && currentCronStrategy.cronExpression"
-                   @click="updateModuleConfig">
+          <f7-link v-show="currentCronStrategy.name && currentCronStrategy.cronExpression" @click="updateModuleConfig">
             Done
           </f7-link>
         </f7-nav-right>
@@ -26,7 +27,7 @@
                            :value="currentCronStrategy.name"
                            @input="currentCronStrategy.name = $event.target.value"
                            :disabled="!createMode ? true : null"
-                           :info="createMode ? 'Note: cannot be changed after the creation' : ''"
+                           :info="(createMode) ? 'Note: cannot be changed after the creation' : ''"
                            required
                            validate
                            pattern="[A-Za-z0-9_]+"

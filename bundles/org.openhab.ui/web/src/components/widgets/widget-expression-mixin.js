@@ -2,7 +2,7 @@ import { nextTick } from 'vue'
 import { f7, theme } from 'framework7-vue'
 
 import expr, { addUnaryOp, evaluate, parse } from 'jse-eval'
-import dayjs, { extend } from 'dayjs'
+import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import calendar from 'dayjs/plugin/calendar'
 import localizedFormat from 'dayjs/plugin/localizedFormat'
@@ -36,13 +36,13 @@ addUnaryOp('#', (itemName) => {
   return useStatesStore().trackedItems[itemName].numericState
 })
 
-extend(relativeTime)
-extend(calendar)
-extend(localizedFormat)
-extend(isoWeek)
-extend(isToday)
-extend(isYesterday)
-extend(isTomorrow)
+dayjs.extend(relativeTime)
+dayjs.extend(calendar)
+dayjs.extend(localizedFormat)
+dayjs.extend(isoWeek)
+dayjs.extend(isToday)
+dayjs.extend(isYesterday)
+dayjs.extend(isTomorrow)
 
 export default {
   data () {
@@ -128,7 +128,7 @@ export default {
             Math,
             Number,
             theme,
-            themeOptions: useUIOptionsStore(),
+            themeOptions: useUIOptionsStore().themeOptions(),
             device: this.$device,
             screen: this.screenInfo,
             JSON,

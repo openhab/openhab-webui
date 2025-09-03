@@ -93,7 +93,7 @@
         </f7-list>
         <div v-if="selectedThing.UID && selectedThingType.UID">
           <f7-block-title>Channel</f7-block-title>
-          <!--
+          <!-- TODO V3.1
           <channel-list :thing="selectedThing"
                         :thingType="selectedThingType"
                         :picker-mode="true"
@@ -275,18 +275,11 @@ export default {
     loadProfileTypes (channel) {
       this.ready = false
       this.selectedChannel = channel
-      this.$oh.api
-        .get('/rest/profile-types?channelTypeUID=' + channel.channelTypeUID)
-        .then((data) => {
-          this.profileTypes = data
-          this.profileTypes.unshift(
-            data.splice(
-              data.findIndex((p) => p.uid === 'system:default'),
-              1
-            )[0]
-          ) // move default to be first
-          this.ready = true
-        })
+      this.$oh.api.get('/rest/profile-types?channelTypeUID=' + channel.channelTypeUID).then((data) => {
+        this.profileTypes = data
+        this.profileTypes.unshift(data.splice(data.findIndex((p) => p.uid === 'system:default'), 1)[0]) // move default to be first
+        this.ready = true
+      })
     },
     onProfileTypeChange (profileTypeUid) {
       this.profileTypeConfiguration = null

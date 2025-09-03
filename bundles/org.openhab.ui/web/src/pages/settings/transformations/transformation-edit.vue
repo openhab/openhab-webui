@@ -232,7 +232,7 @@ export default {
       this.load()
     },
     onPageBeforeOut () {
-      if (this.$refs.detailsSheet?.$el.f7Modal) this.$refs.detailsSheet.$el.f7Modal.close()
+      f7.sheet.close('detailsSheet')
       if (window) {
         window.removeEventListener('keydown', this.keyDown)
       }

@@ -33,8 +33,8 @@
                 bottom-ios
                 bottom-aurora>
       <f7-link v-if="!theme.md"
-               color="red"
                v-show="selectedItems.length"
+               color="red"
                class="delete"
                icon-ios="f7:trash"
                icon-aurora="f7:trash"
@@ -45,10 +45,10 @@
                icon-md="material:close"
                icon-color="white"
                @click="showCheckboxes = false" />
-      <div class="title" v-if="theme.md">
+      <div v-if="theme.md" class="title">
         {{ selectedItems.length }} selected
       </div>
-      <div class="right" v-if="theme.md">
+      <div v-if="theme.md" class="right">
         <f7-link v-show="selectedItems.length"
                  icon-md="material:delete"
                  icon-color="white"

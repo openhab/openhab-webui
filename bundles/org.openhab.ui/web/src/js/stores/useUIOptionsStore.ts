@@ -150,6 +150,22 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     }
   }
 
+  function themeOptions () {
+    return {
+      dark: getDarkMode(),
+      autoDarkMode: isAutoDarkMode(),
+      bars: bars.value,
+      homeNavBar: homeNavBar.value,
+      homeBackground: homeBackground.value,
+      disableExpandableCardAnimation: disableExpandableCardAnimation.value,
+      blocklyRenderer: blocklyRenderer.value,
+      disablePageTransitionAnimation: disablePageTransitionAnimation.value,
+      hideChatInput: hideChatInput.value,
+      webAudio: webAudio.value,
+      visibleBreakpointDisabled: visibleBreakpointDisabled.value
+    }
+  }
+
   return {
     storedDarkMode,
     getDarkMode,
@@ -165,6 +181,7 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     webAudio,
     visibleBreakpointDisabled,
 
-    updateClasses
+    updateClasses,
+    themeOptions
   }
 })

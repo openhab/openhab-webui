@@ -164,7 +164,7 @@ export default {
   mounted () {
     this.greet()
     const savedHistory = localStorage.getItem('openhab.ui:chat.history')
-    this.history = savedHistory ? savedHistory.split('|') : []
+    this.history = (savedHistory) ? savedHistory.split('|') : []
   },
   computed: {
     cardContext () {

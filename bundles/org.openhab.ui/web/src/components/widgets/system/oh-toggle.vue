@@ -47,7 +47,7 @@ export default {
         }
         variableLocation[this.config.variable] = value
       } else if (this.config.item) {
-        useStatesStore().sendCommand(this.config.item, value ? 'ON' : 'OFF')
+        useStatesStore().sendCommand(this.config.item, (value) ? 'ON' : 'OFF')
       }
     }
   }

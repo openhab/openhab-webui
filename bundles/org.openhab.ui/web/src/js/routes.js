@@ -6,8 +6,8 @@ import PageViewPage from '../pages/page/page-view.vue'
 import AnalyzerPopup from '../pages/analyzer/analyzer-popup.vue'
 import { AddonTitles } from '@/assets/addon-store'
 
-const AboutPage = () => import(/* webpackChunkName: "about-page" */ '../pages/about.vue')
-const UserProfilePage = () => import(/* webpackChunkName: "profile-page" */ '../pages/profile.vue')
+const AboutPage = () => import(/* webpackChunkName: "about-page" */ '@/pages/about.vue')
+const UserProfilePage = () => import(/* webpackChunkName: "profile-page" */ '@/pages/profile.vue')
 
 const SettingsMenuPage = () => import(/* webpackChunkName: "admin-base" */ '@/pages/settings/menu/settings-menu.vue')
 const ServiceSettingsPage = () => import(/* webpackChunkName: "admin-base" */ '@/pages/settings/services/service-settings.vue')
@@ -155,7 +155,7 @@ export default [
   },
   {
     path: '/about/',
-    asyncComponent: AboutPage,
+    async: loadAsync(AboutPage),
     options: {
       animate: false
     }
@@ -163,7 +163,7 @@ export default [
   {
     path: '/setup-wizard/',
     beforeEnter: [enforceAdminForRoute],
-    asyncComponent: SetupWizardPage
+    async: loadAsync(SetupWizardPage)
   },
   {
     path: '/profile/',
@@ -175,7 +175,7 @@ export default [
         authorize()
       }
     }],
-    asyncComponent: UserProfilePage,
+    async: loadAsync(UserProfilePage),
     options: {
       animate: false
     }
@@ -183,13 +183,13 @@ export default [
   {
     path: '/settings/',
     beforeEnter: [enforceAdminForRoute],
-    asyncComponent: SettingsMenuPage,
-    // keepAlive: true,  // keepAlive is not supported for async routes
+    async: loadAsync(SettingsMenuPage),
+    // keepAlive: true,  keepAlive is not supported for async routes
     routes: [
       {
         path: 'items/',
         beforeEnter: [enforceAdminForRoute],
-        asyncComponent: ItemsListPage,
+        async: loadAsync(ItemsListPage),
         routes: [
           {
             path: 'add',
@@ -204,24 +204,24 @@ export default [
           {
             path: 'add-from-textual-definition',
             beforeEnter: [enforceAdminForRoute],
-            asyncComponent: ItemsAddFromTextualDefinition
+            async: loadAsync(ItemsAddFromTextualDefinition)
           },
           {
             path: ':itemName',
             beforeEnter: [enforceAdminForRoute],
-            asyncComponent: ItemDetailsPage,
+            async: loadAsync(ItemDetailsPage),
             routes: [
               {
                 path: 'edit',
                 beforeEnter: [enforceAdminForRoute],
                 beforeLeave: [checkDirtyBeforeLeave],
-                asyncComponent: ItemEditPage
+                async: loadAsync(ItemEditPage)
               },
               {
                 path: 'metadata/:namespace',
                 beforeEnter: [enforceAdminForRoute],
                 beforeLeave: [checkDirtyBeforeLeave],
-                asyncComponent: ItemMetadataEditPage
+                async: loadAsync(ItemMetadataEditPage)
               }
             ]
           }
@@ -229,7 +229,7 @@ export default [
       },
       {
         path: 'pages/',
-        asyncComponent: PagesListPage,
+        async: loadAsync(PagesListPage),
         beforeEnter: [enforceAdminForRoute],
         routes: [
           {
@@ -247,7 +247,7 @@ export default [
       },
       {
         path: 'transformations/',
-        asyncComponent: TransformationsListPage,
+        async: loadAsync(TransformationsListPage),
         routes: [
           {
             path: ':transformationId',
@@ -261,39 +261,39 @@ export default [
       {
         path: 'health/',
         beforeEnter: [enforceAdminForRoute],
-        asyncComponent: HealthOverviewPage,
+        async: loadAsync(HealthOverviewPage),
         routes: [
           {
             path: 'orphanlinks',
             beforeEnter: [enforceAdminForRoute],
-            asyncComponent: HealthOrphanLinksPage
+            async: loadAsync(HealthOrphanLinksPage)
           },
           {
             path: 'semantics',
             beforeEnter: [enforceAdminForRoute],
-            asyncComponent: HealthSemanticsPage
+            async: loadAsync(HealthSemanticsPage)
           }
         ]
       },
       {
         path: 'things/',
         beforeEnter: [enforceAdminForRoute],
-        asyncComponent: ThingsListPage,
+        async: loadAsync(ThingsListPage),
         routes: [
           {
             path: 'add',
             beforeEnter: [enforceAdminForRoute],
-            asyncComponent: AddThingChooseBindingPage,
+            async: loadAsync(AddThingChooseBindingPage),
             routes: [
               {
                 path: ':bindingId',
                 beforeEnter: [enforceAdminForRoute],
-                asyncComponent: AddThingChooseThingTypePage,
+                async: loadAsync(AddThingChooseThingTypePage),
                 routes: [
                   {
                     path: ':thingTypeId',
                     beforeEnter: [enforceAdminForRoute],
-                    asyncComponent: AddThingPage
+                    async: loadAsync(AddThingPage)
                   }
                 ]
               }
@@ -303,12 +303,12 @@ export default [
             path: 'duplicate',
             beforeEnter: [enforceAdminForRoute],
             beforeLeave: [checkDirtyBeforeLeave],
-            asyncComponent: AddThingPage
+            async: loadAsync(AddThingPage)
           },
           {
             path: 'inbox',
             beforeEnter: [enforceAdminForRoute],
-            asyncComponent: InboxListPage
+            async: loadAsync(InboxListPage)
           },
           {
             path: ':thingId',
@@ -321,26 +321,26 @@ export default [
       {
         path: 'model/',
         beforeEnter: [enforceAdminForRoute],
-        asyncComponent: SemanticModelPage
+        async: loadAsync(SemanticModelPage)
       },
       {
         path: 'persistence/',
         beforeEnter: [enforceAdminForRoute],
         beforeLeave: [checkDirtyBeforeLeave],
-        asyncComponent: PersistenceSettingsPage,
+        async: loadAsync(PersistenceSettingsPage),
         routes: [
           {
             path: ':serviceId',
             beforeEnter: [enforceAdminForRoute],
             beforeLeave: [checkDirtyBeforeLeave],
-            asyncComponent: PersistenceEditPage
+            async: loadAsync(PersistenceEditPage)
           }
         ]
       },
       {
         path: 'rules/',
         beforeEnter: [enforceAdminForRoute],
-        asyncComponent: RulesListPage,
+        async: loadAsync(RulesListPage),
         routes: [
           {
             path: 'add',
@@ -364,7 +364,7 @@ export default [
             path: ':ruleId',
             beforeEnter: [enforceAdminForRoute],
             beforeLeave: [checkDirtyBeforeLeave],
-            asyncComponent: RuleEditPage,
+            async: loadAsync(RuleEditPage),
             routes: [
               {
                 path: 'script/:moduleId',
@@ -399,7 +399,7 @@ export default [
             path: ':ruleId',
             beforeEnter: [enforceAdminForRoute],
             beforeLeave: [checkDirtyBeforeLeave],
-            asyncComponent: SceneEditPage
+            async: loadAsync(SceneEditPage)
           }
         ]
       },
@@ -424,14 +424,14 @@ export default [
             path: ':ruleId',
             beforeEnter: [enforceAdminForRoute],
             beforeLeave: [checkDirtyBeforeLeave],
-            asyncComponent: ScriptEditPage
+            async: loadAsync(ScriptEditPage)
           }
         ]
       },
       {
         path: 'schedule/',
         beforeEnter: [enforceAdminForRoute],
-        asyncComponent: SchedulePage,
+        async: loadAsync(SchedulePage),
         routes: [
           {
             path: 'add',
@@ -448,7 +448,7 @@ export default [
             path: ':addonId',
             beforeEnter: [enforceAdminForRoute],
             beforeLeave: [checkDirtyBeforeLeave],
-            asyncComponent: AddonsConfigureBindingPage
+            async: loadAsync(AddonsConfigureBindingPage)
           }
         ]
       },
@@ -456,14 +456,14 @@ export default [
         path: 'services/:serviceId',
         beforeEnter: [enforceAdminForRoute],
         beforeLeave: [checkDirtyBeforeLeave],
-        asyncComponent: ServiceSettingsPage
+        async: loadAsync(ServiceSettingsPage)
       }
     ]
   },
   {
     path: '/addons/',
     beforeEnter: [enforceAdminForRoute],
-    asyncComponent: AddonsStorePage,
+    async: loadAsync(AddonsStorePage),
     tabs: [
       {
         path: '/',
@@ -479,19 +479,19 @@ export default [
       {
         path: ':section/:addonId',
         beforeEnter: [enforceAdminForRoute],
-        asyncComponent: AddonDetailsPage
+        async: loadAsync(AddonDetailsPage)
       }
     ]
   },
   {
     path: '/developer/',
     beforeEnter: [enforceAdminForRoute],
-    asyncComponent: DeveloperToolsPage,
+    async: loadAsync(DeveloperToolsPage),
     routes: [
       {
         path: 'widgets/',
         beforeEnter: [enforceAdminForRoute],
-        asyncComponent: WidgetsListPage,
+        async: loadAsync(WidgetsListPage),
         routes: [
           {
             path: ':uid',
@@ -506,7 +506,7 @@ export default [
       {
         path: 'blocks/',
         beforeEnter: [enforceAdminForRoute],
-        asyncComponent: BlocksListPage,
+        async: loadAsync(BlocksListPage),
         routes: [
           {
             path: ':uid',
@@ -522,22 +522,22 @@ export default [
         path: 'semantics/',
         beforeEnter: [enforceAdminForRoute],
         beforeLeave: [checkDirtyBeforeLeave],
-        asyncComponent: SemanticsEditPage
+        async: loadAsync(SemanticsEditPage)
       },
       {
         path: 'add-items-dsl/',
         beforeEnter: [enforceAdminForRoute],
-        asyncComponent: ItemsAddFromTextualDefinition
+        async: loadAsync(ItemsAddFromTextualDefinition)
       },
       {
         path: 'api-explorer/',
         beforeEnter: [enforceAdminForRoute],
-        asyncComponent: ApiExplorerPage
+        async: loadAsync(ApiExplorerPage)
       },
       {
         path: 'log-viewer/',
         beforeEnter: [enforceAdminForRoute],
-        asyncComponent: LogViewerPage
+        async: loadAsync(LogViewerPage)
       }
     ]
   },

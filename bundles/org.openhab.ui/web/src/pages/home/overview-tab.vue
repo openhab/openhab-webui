@@ -96,9 +96,11 @@ export default {
     'empty-state-placeholder': EmptyStatePlaceholder,
     habot: defineAsyncComponent(() => import(/* webpackChunkName: "habot" */ '../../components/home/habot.vue'))
   },
+  setup () {
+    return { f7 }
+  },
   data () {
     return {
-      f7,
       inChatSession: false
     }
   },

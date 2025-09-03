@@ -13,7 +13,7 @@
         <developer-dock-icon />
         <f7-link icon-md="material:done_all"
                  @click="toggleCheck()"
-                 :text="(!theme.md) ? (showCheckboxes ? 'Done' : 'Select') : ''" />
+                 :text="(!theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
       </f7-nav-right>
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
@@ -34,8 +34,8 @@
                 bottom-ios
                 bottom-aurora>
       <f7-link v-if="!theme.md"
-               color="red"
                v-show="selectedItems.length"
+               color="red"
                class="delete"
                icon-ios="f7:trash"
                icon-aurora="f7:trash"
@@ -150,7 +150,6 @@ export default {
       eventSource: null
     }
   },
-  created () {},
   methods: {
     onPageAfterIn () {
       this.load()

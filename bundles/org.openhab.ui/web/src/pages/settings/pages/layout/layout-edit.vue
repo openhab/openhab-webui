@@ -46,9 +46,7 @@
           <f7-preloader />
           <div>Loading...</div>
         </f7-block>
-        <f7-block v-if="ready && createMode && !(previewMode || fullscreen)"
-                  id="page-settings"
-                  class="block-narrow">
+        <f7-block v-if="ready && createMode && !(previewMode || fullscreen)" id="page-settings" class="block-narrow">
           <page-settings :page="page" :createMode="createMode" :f7router />
           <f7-col>
             <f7-block-footer class="padding-horizontal margin-bottom">
@@ -146,7 +144,7 @@
         <editor v-if="currentTab === 'code'"
                 :style="{ opacity: previewMode ? '0' : '' }"
                 class="page-code-editor"
-                mode="application/vnd.openhab.uicomponent+yaml;type=layout"
+                mode="application/vnd.openhab.uicomponent+yaml?type=layout"
                 :value="pageYaml"
                 @input="onEditorInput" />
         <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->

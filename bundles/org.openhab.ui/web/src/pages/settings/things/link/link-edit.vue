@@ -251,7 +251,7 @@ export default {
               destroyOnClose: true,
               closeTimeout: 2000
             }).open()
-            this.$f7router.back()
+            this.f7router.back()
           }).catch((err) => {
             f7.toast.create({
               text: 'Link not deleted (links defined in a .items file are not editable from this screen): ' + err,

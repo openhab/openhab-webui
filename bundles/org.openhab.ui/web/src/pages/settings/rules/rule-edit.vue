@@ -41,7 +41,7 @@
       </f7-link>
     </f7-toolbar>
     <f7-tabs class="sitemap-editor-tabs">
-      <f7-tab id="design" @tab:show="() => this.currentTab = 'design'" :tab-active="currentTab === 'design'">
+      <f7-tab id="design" :tab-active="currentTab === 'design'">
         <f7-block v-if="ready && rule.status && !createMode && !stubMode" class="block-narrow padding-left padding-right" strong>
           <f7-col v-if="!createMode && !stubMode">
             <div class="float-right align-items-flex-start align-items-center">
@@ -285,7 +285,7 @@
           </f7-col>
         </f7-block>
       </f7-tab>
-      <f7-tab id="code" @tab:show="() => { this.currentTab = 'code'; toYaml() }" :tab-active="currentTab === 'code'">
+      <f7-tab id="code" :tab-active="currentTab === 'code'">
         <f7-icon v-if="!createMode && !isEditable"
                  f7="lock"
                  class="float-right margin"
@@ -303,7 +303,6 @@
       </f7-tab>
       <f7-tab v-if="ready && hasSource"
               id="source"
-              @tab:show="() => { this.currentTab = 'source' }"
               :tab-active="currentTab === 'source'">
         <f7-icon f7="lock"
                  class="float-right margin"
@@ -515,7 +514,7 @@ export default {
               destroyOnClose: true,
               closeTimeout: 4000
             }).open()
-            this.$f7router.back()
+            this.f7router.back()
           }
           const ruleStub = this.ruleCopy
           ruleStub.triggers = []
@@ -581,7 +580,7 @@ export default {
             destroyOnClose: true,
             closeTimeout: 2000
           }).open()
-          this.f7router.navigate(this.$f7route.url
+          this.f7router.navigate(this.f7route.url
             .replace('/add', '/' + this.rule.uid)
             .replace('/duplicate', '/' + this.rule.uid)
             .replace('/schedule/', '/rules/'), { reloadCurrent: true })
@@ -592,7 +591,7 @@ export default {
             destroyOnClose: true,
             closeTimeout: 2000
           }).open()
-          this.f7router.navigate(this.$f7route.url
+          this.f7router.navigate(this.f7route.url
             .replace('/stub', '/' + this.rule.uid)
             .replace('/schedule/', '/rules/'), { reloadCurrent: true })
           this.load()
@@ -606,7 +605,7 @@ export default {
           }
           this.savedRule = cloneDeep(this.rule)
         }
-        // if (!stay) this.$f7router.back()
+        // if (!stay) this.f7router.back()
       }).catch((err) => {
         f7.toast.create({
           text: 'Error while saving rule: ' + err,
@@ -669,7 +668,7 @@ export default {
         closeTimeout: 2000
       }).open()
 
-      const savePromise = this.isEditable && this.dirty ? this.save(true) : Promise.resolve()
+      const savePromise = (this.isEditable && this.dirty) ? this.save(true) : Promise.resolve()
 
       savePromise.then(() => {
         this.$oh.api.postPlain('/rest/rules/' + this.rule.uid + '/runnow', '').catch((err) => {

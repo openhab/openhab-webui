@@ -235,9 +235,7 @@
                            :text="t('analyzer.coords.coordSystem.aggregate.2dimensions')" />
               </f7-segmented>
             </f7-col>
-            <f7-col
-              width="100"
-              class="margin-top display-flex justify-content-center margin-bottom">
+            <f7-col width="100" class="margin-top display-flex justify-content-center margin-bottom">
               <f7-button v-if="coordSystem !== 'time'"
                          round
                          raised
@@ -245,7 +243,7 @@
                          color="black"
                          icon-f7="crop_rotate"
                          icon-size="20"
-                         @click="orientation = orientation === 'horizontal' ? 'vertical' : 'horizontal'">
+                         @click="orientation = (orientation === 'horizontal') ? 'vertical' : 'horizontal'">
                 {{ t('analyzer.coords.rotate') }}
               </f7-button>
             </f7-col>
@@ -575,18 +573,8 @@ export default {
       if (item.type.indexOf('Number') === 0 || item.type === 'Dimmer')
         seriesOptions.discrete = false
       if (item.groupType && (item.groupType.indexOf('Number') === 0 || item.groupType === 'Dimmer')) seriesOptions.discrete = false
-      if (
-        !seriesOptions.discrete &&
-        this.coordSystem === 'aggregate' &&
-        this.aggregateDimensions === 1
-      )
-        seriesOptions.type = 'bar'
-      if (
-        !seriesOptions.discrete &&
-        (this.coordSystem === 'calendar' ||
-          (this.coordSystem === 'aggregate' && this.aggregateDimensions === 2))
-      )
-        seriesOptions.type = 'heatmap'
+      if (!seriesOptions.discrete && this.coordSystem === 'aggregate' && this.aggregateDimensions === 1) seriesOptions.type = 'bar'
+      if (!seriesOptions.discrete && (this.coordSystem === 'calendar' || (this.coordSystem === 'aggregate' && this.aggregateDimensions === 2))) seriesOptions.type = 'heatmap'
       if (seriesOptions.discrete) seriesOptions.type = 'area'
 
       this.seriesOptions[item.name] = seriesOptions
@@ -597,11 +585,7 @@ export default {
       if (type === '') {
         this.coordSystem = 'time'
         for (let item in this.seriesOptions) {
-          if (
-            !this.seriesOptions[item].discrete &&
-            this.seriesOptions[item].type !== 'line' &&
-            this.seriesOptions[item].type !== 'area'
-          )
+          if (!this.seriesOptions[item].discrete && this.seriesOptions[item].type !== 'line' && this.seriesOptions[item].type !== 'area')
             this.seriesOptions[item].type = 'line'
         }
       }
@@ -621,17 +605,12 @@ export default {
       }
       if (this.coordSystem === 'aggregate') {
         for (let item in this.seriesOptions) {
-          if (!this.seriesOptions[item].discrete)
-            this.seriesOptions[item].type = this.aggregateDimensions === 2 ? 'heatmap' : 'bar'
+          if (!this.seriesOptions[item].discrete) this.seriesOptions[item].type = (this.aggregateDimensions === 2) ? 'heatmap' : 'bar'
         }
       }
       if (this.coordSystem === 'time') {
         for (let item in this.seriesOptions) {
-          if (
-            !this.seriesOptions[item].discrete &&
-            this.seriesOptions[item].type !== 'line' &&
-            this.seriesOptions[item].type !== 'area'
-          )
+          if (!this.seriesOptions[item].discrete && this.seriesOptions[item].type !== 'line' && this.seriesOptions[item].type !== 'area')
             this.seriesOptions[item].type = 'line'
         }
       }
@@ -673,7 +652,7 @@ export default {
           onClick: () => { opt.markers = m }
         }
       })
-      this.$f7.actions.create({
+      f7.actions.create({
         buttons: [
           [
             { label: true, text: this.t('analyzer.dialogs.header.markers') },
@@ -693,7 +672,7 @@ export default {
           onClick: () => { opt.aggregation = a.value }
         }
       })
-      this.$f7.actions.create({
+      f7.actions.create({
         buttons: [
           [
             { label: true, text: this.t('analyzer.dialogs.header.aggregation') },

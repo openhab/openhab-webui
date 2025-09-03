@@ -29,7 +29,6 @@
     <f7-tabs class="chart-editor-tabs">
       <f7-tab id="design"
               class="chart-editor-design-tab"
-              @tab:show="() => this.currentTab = 'design'"
               :tab-active="currentTab === 'design'">
         <f7-block v-if="!ready" class="text-align-center">
           <f7-preloader />
@@ -144,7 +143,8 @@ export default {
       currentSlotParent: null,
       currentSlotConfig: null,
       currentSlotDefaultComponentType: null,
-      widgetSlotConfigOpened: false
+      widgetSlotConfigOpened: false,
+      forceEditMode: true
     }
   },
   methods: {

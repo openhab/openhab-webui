@@ -127,13 +127,27 @@ html
   --f7-theme-color #2196f3
   --f7-theme-color-rgb var(--f7-color-blue-rgb)
   --f7-theme-color-tint var(--f7-color-blue-tint)
-  --f7-tabbar-link-active-border-color #2196f3
+
+.home-tabs
+  --f7-theme-color #2196f3
+  --f7-bars-bg-color rgb(247, 247, 248)
+  --f7-bars-text-color #000
+  --f7-tabbar-link-inactive-color rgba(0, 0, 0, 0.54)
+  --f7-tabbar-link-active-color var(--f7-theme-color)
+  text-transform none
 
 .md .title-large-text
   font-weight bold !important
 
 :root .dark
   color-scheme dark
+
+.dark .home-tabs
+  --f7-bars-bg-color rgb(32, 32, 33)
+  --f7-bars-text-color #fff
+  --f7-bars-link-color #fff
+  --f7-tabbar-link-inactive-color rgba(255,255,255,0.54)
+
 
 .ios .contextual-toolbar
    .delete

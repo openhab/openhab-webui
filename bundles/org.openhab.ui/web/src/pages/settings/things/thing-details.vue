@@ -120,7 +120,7 @@
                             accordion-item
                             title="Firmware"
                             :badge="firmwares.length"
-                            :badge-color="thing.firmwareStatus.status === 'UPDATE_EXECUTABLE' ? 'green' : 'gray'">
+                            :badge-color="(thing.firmwareStatus.status) === 'UPDATE_EXECUTABLE' ? 'green' : 'gray'">
                 <f7-accordion-content>
                   <f7-list>
                     <f7-list-item class="thing-property" title="Status" :after="thing.firmwareStatus.status" />
@@ -988,7 +988,7 @@ export default {
       const isExtensible = (channel, thingType) => {
         if (!channel || !channel.channelTypeUID) return false
         const bindingId = thingType.UID.split(':')[0]
-        return (thingType.extensibleChannelTypeIds.map((t) => bindingId + ':' + t).indexOf(channel.channelTypeUID) >= 0)
+        return thingType.extensibleChannelTypeIds.map((t) => bindingId + ':' + t).indexOf(channel.channelTypeUID) >= 0
       }
 
       try {

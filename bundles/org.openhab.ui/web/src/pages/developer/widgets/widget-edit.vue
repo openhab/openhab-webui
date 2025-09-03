@@ -16,7 +16,7 @@
       <f7-link @click="widgetPropsOpened = true">
         Set Props<span v-if="$device.desktop">&nbsp;(Ctrl-P)</span>
       </f7-link>
-      <f7-link icon-f7="uiwindow_split_2x1" @click="split = split === 'horizontal' ? 'vertical' : 'horizontal'; blockKey = utils.id()" />
+      <f7-link icon-f7="uiwindow_split_2x1" @click="split = (split === 'horizontal') ? 'vertical' : 'horizontal'; blockKey = utils.id()" />
       <f7-link @click="redrawWidget">
         Redraw<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span>
       </f7-link>
@@ -197,11 +197,6 @@ export default {
       }
     }
   },
-  watch: {
-    // widgetDefinition () {
-    //   this.redrawWidget()
-    // }
-  },
   methods: {
     onPageAfterIn () {
       if (window) {
@@ -297,10 +292,6 @@ export default {
         f7.dialog.alert('Widget UID is only allowed to contain A-Z,a-z,0-9,_,-')
         return
       }
-      // if (!this.widget.config.label) {
-      //   f7.dialog.alert('Please give a label to the widget')
-      //   return
-      // }
       if (!this.createMode && this.uid !== this.widget.uid) {
         f7.dialog.alert('You cannot change the ID of an existing widget. Duplicate it with the new ID then delete this one.')
         return
@@ -327,7 +318,6 @@ export default {
           }).open()
         }
         f7.emit('sidebarRefresh', null)
-        // if (!stay) this.f7router.back()
       }).catch((err) => {
         f7.toast.create({
           text: 'Error while saving page: ' + err,
@@ -342,11 +332,6 @@ export default {
     redrawWidget () {
       this.ctxVars = {}
       this.widgetKey = utils.id()
-      // const wd = this.widgetDefinition
-      // this.widgetDefinition = 'component: Label\nnconfig: { text: "Redrawing..."}'
-      // nextTick(() => {
-      //   this.widgetDefinition = wd
-      // })
     },
     widgetPropsClosed () {
       this.widgetPropsOpened = false

@@ -28,7 +28,7 @@
                               :key="'semantics-property'"
                               :item="item"
                               :hideNone="hideNone"
-                              propertyMode="true"
+                              :propertyMode="true"
                               @changed="itemChanged"
                               :semanticProperty="semanticProperty"
                               @close="closePopup" />
@@ -37,7 +37,6 @@
 </template>
 
 <script>
-import { nextTick } from 'vue'
 import { f7 } from 'framework7-vue'
 
 import TagMixin from '@/components/tags/tag-mixin'

@@ -40,7 +40,7 @@
                    icon-aurora="f7:trash">
           &nbsp;Remove
         </f7-button>
-        <f7-button v-if="selectedItems .map(uid => inbox.find(e => e.thingUID === uid)).filter(e => e.flag !== 'IGNORED').length"
+        <f7-button v-if="selectedItems.map(uid => inbox.find(e => e.thingUID === uid)).filter(e => e.flag !== 'IGNORED').length"
                    @click="confirmActionOnSelection('ignore')"
                    color="orange"
                    class="ignore display-flex flex-direction-row margin-right"
@@ -199,11 +199,7 @@
                           :title="entry.label"
                           :subtitle="entry.representationProperty ? entry.properties[entry.representationProperty] : ''"
                           :footer="entry.thingUID"
-                          :badge="(entry.flag === 'IGNORED') ? 'IGNORED' : ''">
-                          <!-- <f7-button icon-f7="add_round" color="blue"></f7-button>
-              <f7-button icon-f7="eye_off" color="blue"></f7-button>
-              <f7-button icon-f7="trash" color="blue"></f7-button> -->
-            </f7-list-item>
+                          :badge="(entry.flag === 'IGNORED') ? 'IGNORED' : ''" />
           </f7-list-group>
         </f7-list>
         <f7-list v-if="ready && searchQuery && filteredItems.length === 0">
@@ -223,10 +219,6 @@
               href="/settings/things/add">
         <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
         <f7-icon ios="f7:close" md="material:close" aurora="f7:close" />
-        <!-- <f7-fab-buttons position="top">
-        <f7-fab-button label="Scan and add to Inbox">S</f7-fab-button>
-        <f7-fab-button label="Add thing manually">M</f7-fab-button>
-      </f7-fab-buttons> -->
       </f7-fab>
     </template>
   </f7-page>
@@ -252,11 +244,10 @@ export default {
     EmptyStatePlaceholder
   },
   setup () {
-    return { theme }
+    return { f7, theme }
   },
   data () {
     return {
-      f7,
       ready: false,
       loading: false,
       initSearchbar: false,
@@ -568,7 +559,7 @@ export default {
         dialog.close()
         this.load()
         console.error(err)
-        this.$f7.dialog.alert('An error occurred: ' + err)
+        f7.dialog.alert('An error occurred: ' + err)
       })
     },
     filterSelectedItems () {
