@@ -150,7 +150,7 @@ export default {
     },
     setCommandItem (value) {
       localStorage.setItem('openhab.ui:commandItem', value)
-      // setTimeout(() => { location.reload() }, 50) // Delay reload, otherwise it doesn't work
+      setTimeout(() => { location.reload() }, 50) // Delay reload, otherwise it doesn't work
     }
   },
   computed: {

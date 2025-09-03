@@ -25,7 +25,7 @@
     </f7-toolbar>
 
     <f7-tabs v-if="ready">
-      <f7-tab id="design" @tab:show="() => this.currentTab = 'design'" :tab-active="currentTab === 'design'">
+      <f7-tab id="design" :tab-active="currentTab === 'design'">
         <f7-block class="block-narrow" v-if="item.name || item.created === false">
           <f7-col v-if="!editable">
             <div class="padding-left">
@@ -61,7 +61,7 @@
         </f7-block>
       </f7-tab>
 
-      <f7-tab id="code" @tab:show="() => { this.currentTab = 'code'; toYaml() }" :tab-active="currentTab === 'code'">
+      <f7-tab id="code" :tab-active="currentTab === 'code'">
         <f7-icon v-if="!editable"
                  f7="lock"
                  class="float-right margin"
@@ -106,8 +106,6 @@ import ItemForm from '@/components/item/item-form.vue'
 
 import DirtyMixin from '../dirty-mixin'
 import ItemMixin from '@/components/item/item-mixin'
-
-import { useSemanticsStore } from '@/js/stores/useSemanticsStore'
 
 export default {
   mixins: [DirtyMixin, ItemMixin],
@@ -230,7 +228,7 @@ export default {
       const dimensionChange = this.$refs.itemForm.dimensionChanged()
       const unitChange = this.$refs.itemForm.unitChanged()
       if (typeChange || dimensionChange || unitChange) {
-        const title = 'WARNING: ' + (typeChange ? 'Type' : dimensionChange ? 'Dimension' : 'Unit') + ' Changed'
+        const title = 'WARNING: ' + (typeChange ? 'Type' : (dimensionChange ? 'Dimension' : 'Unit')) + ' Changed'
         const text = (typeChange || dimensionChange)
           ? `Existing links to channels ${dimensionChange ? 'with dimensions ' : ''}may no longer be valid!`
           : 'Changing the internal unit can corrupt your persisted data and affect rules!'

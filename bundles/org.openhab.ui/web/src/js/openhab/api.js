@@ -31,7 +31,7 @@ export default {
   async get (uri, data) {
     return wrapPromise(request.json(uri, data))
   },
-  getPlain (uri, data, contentType, responseType, headers) {
+  async getPlain (uri, data, contentType, responseType, headers) {
     return wrapPromise(
       request({
         method: 'GET',
@@ -44,10 +44,10 @@ export default {
       })
     )
   },
-  post (uri, data, dataType) {
+  async post (uri, data, dataType) {
     return wrapPromise(request.postJSON(uri, data, dataType))
   },
-  postPlain (uri, data, dataType, contentType, headers) {
+  async postPlain (uri, data, dataType, contentType, headers) {
     return wrapPromise(
       request({
         method: 'POST',
@@ -60,7 +60,7 @@ export default {
       })
     )
   },
-  put (uri, data) {
+  async put (uri, data) {
     return wrapPromise(
       request({
         method: 'PUT',
@@ -72,7 +72,7 @@ export default {
       })
     )
   },
-  putPlain (uri, data, dataType, contentType) {
+  async putPlain (uri, data, dataType, contentType) {
     return wrapPromise(
       request({
         method: 'PUT',
@@ -85,7 +85,7 @@ export default {
       })
     )
   },
-  head (uri) {
+  async head (uri) {
     return wrapPromise(
       request({
         method: 'HEAD',
@@ -93,7 +93,7 @@ export default {
       })
     )
   },
-  delete (uri, data) {
+  async delete (uri, data) {
     return wrapPromise(
       request({
         method: 'DELETE',

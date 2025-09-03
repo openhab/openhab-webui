@@ -68,8 +68,7 @@
       <f7-col>
         <f7-list>
           <f7-list-button color="red" @click="purgeAllManaged()">
-            Purge all managed links (will purge
-            {{ purgeableLinksCount }} managed links)
+            Purge all managed links (will purge {{ purgeableLinksCount }} managed links)
           </f7-list-button>
         </f7-list>
       </f7-col>

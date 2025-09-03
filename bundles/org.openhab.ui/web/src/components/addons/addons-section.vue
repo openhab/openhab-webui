@@ -42,7 +42,7 @@
       </div>
     </template>
     <template v-else-if="showAsCards">
-      <addons-swiper v-if="!$device.desktop && !$device.ipad && this.addons.length < this.addonCollapsedLimit"
+      <addons-swiper v-if="!$device.desktop && !$device.ipad && (this.addons.length < this.addonCollapsedLimit)"
                      :addons-list="addonsList"
                      :install-action-text="installActionText"
                      @addon-button-click="addonButtonClick" />

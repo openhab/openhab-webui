@@ -34,7 +34,7 @@
               <item-picker key="groups"
                            title="Select groups"
                            name="groupItems"
-                           multiple="true"
+                           :multiple="true"
                            filterType="Group"
                            :disabled="allItemsSelected ? true : null"
                            :value="groupItems"
@@ -47,7 +47,7 @@
               <item-picker key="items"
                            title="Select Items"
                            name="items"
-                           multiple="true"
+                           :multiple="true"
                            :disabled="allItemsSelected ? true : null"
                            :value="items"
                            @input="items = $event" />
@@ -59,7 +59,7 @@
               <item-picker key="exclude-groups"
                            title="Select exclude groups"
                            name="excludeGroupItems"
-                           multiple="true"
+                           :multiple="true"
                            filterType="Group"
                            :disabled="!anySelected ? true : null"
                            :value="excludeGroupItems"
@@ -72,7 +72,7 @@
               <item-picker key="exclude-items"
                            title="Select exclude Items"
                            name="excludeItems"
-                           multiple="true"
+                           :multiple="true"
                            :disabled="!anySelected ? true : null"
                            :value="excludeItems"
                            @input="excludeItems = $event" />
@@ -172,7 +172,7 @@ export default {
     },
     anySelected: {
       get () {
-        return this.allItemsSelected || this.groupItems.length > 0 || this.items.length > 0
+        return this.allItemsSelected || (this.groupItems.length > 0) || (this.items.length > 0)
       }
     }
   },

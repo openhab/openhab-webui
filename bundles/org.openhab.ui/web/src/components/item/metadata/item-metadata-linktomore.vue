@@ -27,10 +27,10 @@
 </template>
 
 <script>
-import ItemMetadataMixin from '@/components/item/metadata/item-metadata-mixin'
-
-import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { mapStores } from 'pinia'
+
+import ItemMetadataMixin from '@/components/item/metadata/item-metadata-mixin'
+import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
 export default {
   props: {

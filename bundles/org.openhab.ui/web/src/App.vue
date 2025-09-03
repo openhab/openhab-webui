@@ -527,14 +527,12 @@ import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
 import auth from '@/components/auth-mixin'
-import i18n_mixin from '@/components/i18n-mixin'
 import connectionHealth from '@/components/connection-health-mixin'
 import sseEvents from '@/components/sse-events-mixin'
 
 import { i18n, loadLocaleMessages } from '@/js/i18n'
 import dayjs from 'dayjs'
 import dayjsLocales from 'dayjs/locale.json'
-import 'dayjs/locale/de.js'
 import { useI18n } from 'vue-i18n'
 
 import { AddonIcons, AddonTitles } from '@/assets/addon-store'
@@ -545,10 +543,9 @@ import { useUserStore } from '@/js/stores/useUserStore'
 import { useComponentsStore } from '@/js/stores/useComponentsStore'
 import { useSemanticsStore } from '@/js/stores/useSemanticsStore'
 import { useModelStore } from '@/js/stores/useModelStore'
-import { use } from 'marked'
 
 export default {
-  mixins: [auth, i18n_mixin, connectionHealth, sseEvents],
+  mixins: [auth, connectionHealth, sseEvents],
   components: {
     EmptyStatePlaceholder,
     PanelRight,
@@ -783,7 +780,6 @@ export default {
         .then((rootResponse) => {
           // store the REST API services present on the system
           useRuntimeStore().setRootResource(rootResponse)
-          // this.updateLocale(this.globalSetLocaleMessage)
           if (!useRuntimeStore().apiEndpoint('auth')) useUserStore().setNoAuth(true)
           return rootResponse
         })
@@ -914,7 +910,6 @@ export default {
       }
     },
     updateUrl (newUrl) {
-      console.log('Updating URL to:', newUrl)
       this.currentUrl = newUrl
       useRuntimeStore().pagePath = this.currentUrl
     },
@@ -1016,7 +1011,6 @@ export default {
     }
   },
   mounted () {
-    console.log('App mounted')
     f7ready(async (f7) => {
       performance.mark('f7ready')
       this.updateThemeOptions()
@@ -1044,26 +1038,26 @@ export default {
       })
 
       f7.on('routeChange', (route) => {
-        console.log('Route changed:', route.url)
-        console.log('Browser history state:', history.state) // Native browser history state
+        // console.log('Route changed:', route.url)
+        // console.log('Browser history state:', history.state) // Native browser history state
       })
 
       f7.on('pageBeforeIn', (page) => {
         if (page.route && page.route.url) {
-          console.log('pageBeforeIn: current URL:', page.route.url)
+          // console.log('pageBeforeIn: current URL:', page.route.url)
           this.updateUrl(page.route.url)
         }
       })
 
       f7.on('pageAfterIn', (page) => {
-        console.log('pageAfterIn: current URL:', page.route.url)
-        console.log('Full route object:', page.route)
+        // console.log('pageAfterIn: current URL:', page.route.url)
+        // console.log('Full route object:', page.route)
         nextTick(this.updateTitle)
       })
 
       // needed by updateCurrentUrl() inside addon-store onTabShow()
       f7.on('routeUrlUpdate', (newRoute, router) => {
-        console.log('Route URL updated:', newRoute.url)
+        // console.log('Route URL updated:', newRoute.url)
         this.updateUrl(newRoute.url)
         nextTick(this.updateTitle)
       })

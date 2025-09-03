@@ -1,7 +1,7 @@
 <template>
   <round-slider v-bind="resolvedConfig"
                 :value="computedValue"
-                :style="`stroke-dasharray: ${config.dottedPath ? config.dottedPath : 0}`"
+                :style="`stroke-dasharray: ${(config.dottedPath) ? config.dottedPath : 0}`"
                 mouseScrollAction="true"
                 @input="onChange"
                 @click.stop="sendCommandDebounced(value, true)"

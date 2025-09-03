@@ -1,9 +1,9 @@
-import dayjs, { extend } from 'dayjs'
+import dayjs from 'dayjs'
 import 'dayjs/locale/de'
 import LocalizedFormat from 'dayjs/plugin/localizedFormat'
 import ComponentId from '../../component-id'
 
-extend(LocalizedFormat)
+dayjs.extend(LocalizedFormat)
 
 export default {
   get (component, startTime, endTime, chart, device) {

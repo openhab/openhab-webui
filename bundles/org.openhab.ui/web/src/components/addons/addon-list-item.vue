@@ -82,7 +82,6 @@
 <script>
 import AddonStatsLine from './addon-stats-line.vue'
 import AddonLogo from '@/components/addons/addon-logo.vue'
-import { f7 } from 'framework7-vue'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 import { mapStores } from 'pinia'
 

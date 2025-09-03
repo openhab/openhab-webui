@@ -12,25 +12,23 @@
       </f7-nav-right>
     </f7-navbar>
     <f7-toolbar tabbar position="top">
-      <f7-link tab-link-active tab-link="#design">
+      <f7-link @click="switchTab('design', fromYaml)" :tab-link-active="currentTab === 'design'" tab-link="#design">
         Design
       </f7-link>
-      <f7-link tab-link="#code">
+      <f7-link @click="switchTab('code', toYaml)" :tab-link-active="currentTab === 'code'" tab-link="#code">
         Code
       </f7-link>
     </f7-toolbar>
     <f7-toolbar bottom class="toolbar-details">
       <div style="margin-left: auto">
-        <f7-toggle :checked="previewMode ? true : null" @toggle:change="value => togglePreviewMode(value)" />
-        Run mode<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span>
+        <f7-toggle :checked="previewMode ? true : null" @toggle:change="(value) => togglePreviewMode(value)" /> Run mode<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span>
       </div>
     </f7-toolbar>
 
     <f7-tabs class="plan-editor-tabs">
       <f7-tab id="design"
               class="plan-editor-design-tab"
-              @tab:show="() => { fromYaml(); currentTab = 'design' }"
-              tab-active>
+              :tab-active="currentTab === 'design'">
         <f7-block v-if="!ready" class="text-align-center">
           <f7-preloader />
           <div>Loading...</div>
@@ -110,7 +108,7 @@
                       :key="pageKey" />
       </f7-tab>
 
-      <f7-tab id="code" @tab:show="() => { toYaml(); currentTab = 'code' }">
+      <f7-tab id="code" :tab-active="currentTab === 'code'">
         <editor v-if="currentTab === 'code'"
                 :style="{ opacity: previewMode ? '0' : '' }"
                 class="page-code-editor"

@@ -306,10 +306,10 @@ use([CanvasRenderer, LineChart, BarChart, GaugeChart, HeatmapChart, PieChart, Sc
   LegendComponent, LegendScrollComponent, GridComponent, SingleAxisComponent, ToolboxComponent, TooltipComponent, DataZoomComponent,
   MarkLineComponent, MarkPointComponent, MarkAreaComponent, VisualMapComponent, CalendarComponent, LabelLayout])
 
-import dayjs, { extend } from 'dayjs'
+import dayjs from 'dayjs'
 import IsoWeek from 'dayjs/plugin/isoWeek'
 
-extend(IsoWeek)
+dayjs.extend(IsoWeek)
 
 const defaultSlotComponentType = {
   tooltip: 'oh-chart-tooltip',

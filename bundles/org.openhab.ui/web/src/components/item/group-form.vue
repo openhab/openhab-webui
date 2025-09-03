@@ -159,7 +159,7 @@ export default {
         return this.unit
       },
       set (newUnit) {
-        this.itme.unit = newUnit
+        this.item.unit = newUnit
       }
     },
     stateDescriptionPattern: {

@@ -30,7 +30,7 @@
                icon-color="yellow"
                :icon-size="config.iconSize" />
     <!-- Show dial menu when there`s no call -->
-    <f7-button v-else-if="!session || session.isEnded()"
+    <f7-button v-else-if="(!session || session.isEnded())"
                :style="computedButtonStyle"
                icon-f7="phone_fill_arrow_up_right"
                icon-color="green"
@@ -44,7 +44,7 @@
                  icon-color="green"
                  :icon-size="config.iconSize"
                  @click.stop="answer()">
-        {{ !config.hideCallerId ? remoteParty : '' }}
+        {{ (!config.hideCallerId) ? remoteParty : '' }}
       </f7-button>
       <f7-button :style="computedButtonStyle"
                  icon-f7="phone_down_fill"
@@ -384,8 +384,8 @@ export default {
             ])
         }
       })
-      this.$f7.on('widgetConfigUpdate', this.storeLocalConfig)
-      this.$f7.once('widgetConfigClosed', () => this.$f7.off('widgetConfigUpdate', this.storeLocalConfig))
+      f7.on('widgetConfigUpdate', this.storeLocalConfig)
+      f7.once('widgetConfigClosed', () => f7.off('widgetConfigUpdate', this.storeLocalConfig))
     },
     storeLocalConfig (config) {
       this.localConfig = config

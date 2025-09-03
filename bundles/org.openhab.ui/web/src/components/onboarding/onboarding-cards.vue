@@ -32,8 +32,7 @@
           </li>
           <li>
             <f7-link no-link-class color="blue" href="#">
-              Design your home's conceptually with the semantic model builder and link the Things to
-              Items
+              Design your home's conceptually with the semantic model builder and link the Things to Items
             </f7-link>
           </li>
           <li>

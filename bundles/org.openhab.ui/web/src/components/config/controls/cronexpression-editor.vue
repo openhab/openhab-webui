@@ -496,9 +496,13 @@ export default {
   props: {
     value: String
   },
+  setup () {
+    return [
+      f7
+    ]
+  },
   data () {
     return {
-      f7,
       currentTab: 'seconds',
       second: {
         cronEvery: 3,

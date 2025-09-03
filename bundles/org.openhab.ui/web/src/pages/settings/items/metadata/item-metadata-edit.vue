@@ -1,55 +1,45 @@
 <template>
   <f7-page @page:beforein="onPageBeforeIn" @page:afterin="onPageAfterIn">
-    <f7-navbar
-      :title="`${editable ? 'Edit' : 'View'} Item Metadata: ${namespace} ${dirtyIndicator}`"
-      back-link="Cancel"
-      no-hairline>
+    <f7-navbar :title="`${editable ? 'Edit' : 'View'} Item Metadata: ${namespace} ${dirtyIndicator}`" back-link="Cancel" no-hairline>
       <f7-nav-right>
         <f7-link @click="save()"
                  v-if="theme.md && editable"
                  icon-md="material:save"
                  icon-only />
-        <f7-link @click="save()" v-if="!theme.md && editable">
+        <f7-link v-if="!theme.md && editable" @click="save()">
           Save
         </f7-link>
       </f7-nav-right>
     </f7-navbar>
     <f7-toolbar v-if="ready" tabbar position="top">
-      <f7-link
-        v-if="!generic"
-        @click="switchTab('config', fromYaml)"
-        :tab-link-active="currentTab === 'config'"
-        tab-link="#config">
+      <f7-link v-if="!generic"
+               @click="switchTab('config', fromYaml)"
+               :tab-link-active="currentTab === 'config'"
+               tab-link="#config">
         Config
       </f7-link>
-      <f7-link
-        @click="switchTab('code', toYaml)"
-        :tab-link-active="currentTab === 'code'"
-        tab-link="#code">
+      <f7-link @click="switchTab('code', toYaml)" :tab-link-active="currentTab === 'code'" tab-link="#code">
         Code
       </f7-link>
     </f7-toolbar>
     <f7-toolbar v-if="ready && generic" position="bottom">
-      <f7-button color="red"
-                 v-if="!creationMode"
+      <f7-button v-if="!creationMode"
+                 color="red"
                  @click="remove()"
                  class="width-100">
         Remove metadata
       </f7-button>
     </f7-toolbar>
     <f7-tabs class="metadata-editor-tabs">
-      <f7-tab
-        id="config"
-        class="metadata-editor-config-tab"
-        @tab:show="() => (this.currentTab = 'config')"
-        :tab-active="currentTab === 'config'">
+      <f7-tab id="config"
+              class="metadata-editor-config-tab"
+              :tab-active="currentTab === 'config'">
         <f7-block class="block-narrow" v-if="ready && currentTab === 'config'">
           <f7-col>
-            <component
-              :is="editorControl"
-              :item="item"
-              :metadata="metadata"
-              :namespace="namespace" />
+            <component :is="editorControl"
+                       :item="item"
+                       :metadata="metadata"
+                       :namespace="namespace" />
           </f7-col>
         </f7-block>
         <f7-block class="block-narrow" v-if="ready">
@@ -63,29 +53,20 @@
         </f7-block>
       </f7-tab>
 
-      <f7-tab
-        id="code"
-        @tab:show="
-          () => {
-            this.currentTab = 'code';
-          }
-        "
-        :tab-active="currentTab === 'code'">
-        <f7-icon
-          v-if="!editable"
-          f7="lock"
-          class="float-right margin"
-          style="opacity: 0.5; z-index: 4000; user-select: none"
-          size="50"
-          color="gray"
-          tooltip="This metadata is not editable as it has not been created through the UI" />
-        <editor
-          v-if="currentTab === 'code'"
-          class="metadata-code-editor"
-          mode="text/x-yaml"
-          :value="yaml"
-          :readOnly="!editable"
-          @input="onEditorInput" />
+      <f7-tab id="code" :tab-active="currentTab === 'code'">
+        <f7-icon v-if="!editable"
+                 f7="lock"
+                 class="float-right margin"
+                 style="opacity: 0.5; z-index: 4000; user-select: none"
+                 size="50"
+                 color="gray"
+                 tooltip="This metadata is not editable as it has not been created through the UI" />
+        <editor v-if="currentTab === 'code'"
+                class="metadata-code-editor"
+                mode="text/x-yaml"
+                :value="yaml"
+                :readOnly="!editable"
+                @input="onEditorInput" />
       </f7-tab>
     </f7-tabs>
   </f7-page>
@@ -105,11 +86,11 @@
 </style>
 
 <script>
+import { f7, theme } from 'framework7-vue'
+import { nextTick, defineAsyncComponent } from 'vue'
 import YAML from 'yaml'
 import fastDeepEqual from 'fast-deep-equal/es6'
 import cloneDeep from 'lodash/cloneDeep'
-import { f7, theme } from 'framework7-vue'
-import { nextTick, defineAsyncComponent } from 'vue'
 
 import MetadataNamespaces from '@/assets/definitions/metadata/namespaces.js'
 
@@ -242,72 +223,52 @@ export default {
 
       if (this.currentTab === 'code' && !this.fromYaml()) return
       if (!this.metadata.value) this.metadata.value = ' '
-      this.$oh.api
-        .put(`/rest/items/${this.itemName}/metadata/${this.namespace}`, this.metadata)
-        .then((data) => {
-          if (this.creationMode) {
-            f7.toast
-              .create({
-                text: 'Metadata created',
-                destroyOnClose: true,
-                closeTimeout: 2000
-              })
-              .open()
-          } else {
-            f7.toast
-              .create({
-                text: 'Metadata updated',
-                destroyOnClose: true,
-                closeTimeout: 2000
-              })
-              .open()
-          }
-          this.savedMetadata = cloneDeep(this.metadata)
-          this.dirty = false
-          this.f7router.back()
-        })
-        .catch((err) => {
-          f7.toast
-            .create({
-              text: 'Error while saving metadata: ' + err,
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
-        })
+      this.$oh.api.put(`/rest/items/${this.itemName}/metadata/${this.namespace}`, this.metadata).then((data) => {
+        if (this.creationMode) {
+          f7.toast.create({
+            text: 'Metadata created',
+            destroyOnClose: true,
+            closeTimeout: 2000
+          }).open()
+        } else {
+          f7.toast.create({
+            text: 'Metadata updated',
+            destroyOnClose: true,
+            closeTimeout: 2000
+          }).open()
+        }
+        this.savedMetadata = cloneDeep(this.metadata)
+        this.dirty = false
+        this.f7router.back()
+      }).catch((err) => {
+        f7.toast.create({
+          text: 'Error while saving metadata: ' + err,
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
+      })
     },
     remove () {
-      let nslabel = (
-        [...MetadataNamespaces].find((ns) => ns.name === this.namespace) || {
-          label: this.namespace
-        }
-      ).label
+      let nslabel = ([...MetadataNamespaces].find((ns) => ns.name === this.namespace) || { label: this.namespace }).label
       f7.dialog.confirm(
         `Are you sure you want to remove all metadata for "${nslabel}"?`,
         'Remove metadata',
         () => {
-          this.$oh.api
-            .delete(`/rest/items/${this.itemName}/metadata/${this.namespace}`)
-            .then(() => {
-              f7.toast
-                .create({
-                  text: 'Metadata deleted',
-                  destroyOnClose: true,
-                  closeTimeout: 2000
-                })
-                .open()
-              this.dirty = false
-              this.f7router.back()
-            })
-            .catch((err) => {
-              f7.toast
-                .create({
-                  text: 'Error while deleting metadata: ' + err,
-                  destroyOnClose: true,
-                  closeTimeout: 2000
-                })
-                .open()
-            })
+          this.$oh.api.delete(`/rest/items/${this.itemName}/metadata/${this.namespace}`).then(() => {
+            f7.toast.create({
+              text: 'Metadata deleted',
+              destroyOnClose: true,
+              closeTimeout: 2000
+            }).open()
+            this.dirty = false
+            this.f7router.back()
+          }).catch((err) => {
+            f7.toast.create({
+              text: 'Error while deleting metadata: ' + err,
+              destroyOnClose: true,
+              closeTimeout: 2000
+            }).open()
+          })
         }
       )
     },

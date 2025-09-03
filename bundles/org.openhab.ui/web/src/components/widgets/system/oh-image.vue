@@ -1,7 +1,7 @@
 <template>
   <img v-if="config.lazy"
-       v-bind="config"
        ref="lazyImage"
+       v-bind="config"
        :data-src="computedSrc"
        class="oh-image lazy"
        :class="{ 'lazy-fade-in': config.lazyFadeIn }"

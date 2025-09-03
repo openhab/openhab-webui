@@ -54,7 +54,7 @@
         <f7-col>
           <div v-show="control === 'colorpicker'" class="scene-item-control-colorpicker" ref="colorpicker" />
           <div v-if="control === 'toggle'" class="scene-item-control-toggle">
-            <f7-toggle :checked="command === 'ON' ? true : null" @toggle:change="value => (command = value ? 'ON' : 'OFF')" />
+            <f7-toggle :checked="command === 'ON' ? true : null" @toggle:change="(value) => (command = value ? 'ON' : 'OFF')" />
           </div>
           <div v-else-if="control === 'slider'" class="scene-item-control-slider">
             <f7-range v-bind="sliderConfig" :value="command" @range:change="command = $event.toString()" />

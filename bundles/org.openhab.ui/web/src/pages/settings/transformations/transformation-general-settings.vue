@@ -28,7 +28,7 @@
         <f7-list-input label="Label"
                        type="text"
                        placeholder="Tranformation label for display purposes"
-                       :info="createMode ? 'Required' : ''"
+                       :info="(createMode) ? 'Required' : ''"
                        :value="transformation.label"
                        required
                        validate

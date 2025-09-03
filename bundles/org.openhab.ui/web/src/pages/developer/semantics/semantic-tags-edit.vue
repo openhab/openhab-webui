@@ -23,7 +23,7 @@
       <f7-link class="left" :class="{ disabled: selectedTag == null }" @click="selectTag(null)">
         Clear
       </f7-link>
-      <div class="padding-left padding-right" style="font-size: 12px">
+      <div class="padding-left padding-right text-align-center" style="font-size: 12px">
         <div>
           <label class="advanced-label">
             <f7-checkbox v-model:checked="showNames" />
@@ -51,15 +51,11 @@
           <f7-preloader />
           <div>Loading...</div>
         </f7-block>
-        <f7-block v-else
-                  class="semantics-tree-wrapper no-margin-top"
-                  :class="{ 'sheet-opened' : detailsOpened }">
+        <f7-block v-else class="semantics-tree-wrapper no-margin-top" :class="{ 'sheet-opened' : detailsOpened }">
           <f7-row v-if="currentTab === 'tree'">
             <!-- do not set column width as usual, instead use custom CSS because of https://github.com/openhab/openhab-webui/issues/2574 -->
             <f7-col>
-              <f7-subnavbar v-show="semanticTags.length"
-                            :inner="false"
-                            style="position: sticky; top: 0px">
+              <f7-subnavbar v-show="semanticTags.length" :inner="false" style="position: sticky; top: 0px">
                 <f7-searchbar style="width: 100%"
                               search-container=".semantics-treeview"
                               search-item=".treeview-item"
@@ -162,9 +158,7 @@
                 <f7-card>
                   <f7-card-content>
                     <f7-list>
-                      <f7-list-button color="blue"
-                                      :title="`Insert ${semanticType(selectedTag.name)} Child Tag in ${selectedTag.name}`"
-                                      @click="addTag()" />
+                      <f7-list-button color="blue" :title="`Insert ${semanticType(selectedTag.name)} Child Tag in ${selectedTag.name}`" @click="addTag()" />
                     </f7-list>
                   </f7-card-content>
                 </f7-card>
@@ -256,7 +250,7 @@
                            :disabled="!selectedTag.editable ? true : null"
                            :clear-button="selectedTag.editable"
                            placeholder="synonym"
-                           @change="addSynonyms($event)" />
+                           @change="addSynonym($event)" />
           </f7-list>
         </f7-block>
       </f7-page>
@@ -406,9 +400,6 @@ export default {
     }
   },
   computed: {
-    ready () {
-      return useSemanticsStore().ready
-    },
     ...mapStores(useSemanticsStore)
   },
   watch: {

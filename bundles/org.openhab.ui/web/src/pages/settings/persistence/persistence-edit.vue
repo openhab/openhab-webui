@@ -26,7 +26,7 @@
 
     <f7-tabs>
       <!-- Design Tab -->
-      <f7-tab id="design" @tab:show="() => this.currentTab = 'design'" :tab-active="currentTab === 'design'">
+      <f7-tab id="design" :tab-active="currentTab === 'design'">
         <f7-block class="block-narrow">
           <f7-col>
             <div>
@@ -127,7 +127,7 @@
                 <f7-list-item link
                               no-chevron
                               media-item
-                              :color="theme.dark ? 'black' : 'white'"
+                              :color="(theme.dark) ? 'black' : 'white'"
                               subtitle="Add configuration"
                               @click="editConfiguration(undefined, null)">
                   <template #media>
@@ -283,8 +283,8 @@
                   <item-picker class="alias-item-picker"
                                title="Add alias"
                                name="items"
-                               multiple="true"
-                               noModelPicker="true"
+                               :multiple="true"
+                               :noModelPicker="true"
                                :setValueText="false"
                                iconColor="green"
                                auroraIcon="f7:plus_circle_fill"
@@ -307,7 +307,7 @@
       </f7-tab>
 
       <!-- Code Tab -->
-      <f7-tab id="code" @tab:show="() => { currentTab = 'code'; toYaml() } " :tab-active="currentTab === 'code'">
+      <f7-tab id="code" :tab-active="currentTab === 'code'">
         <f7-icon v-if="!editable"
                  f7="lock"
                  class="float-right margin"

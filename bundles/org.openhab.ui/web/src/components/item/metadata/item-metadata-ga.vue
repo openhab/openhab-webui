@@ -15,7 +15,7 @@
         <select name="classes" @change="updateClass">
           <option value="" />
           <optgroup label="Types">
-            <option v-for="cl in orderedClasses.filter(c => c.indexOf('type:') === 0)"
+            <option v-for="cl in orderedClasses.filter((c) => c.indexOf('type:') === 0)"
                     :value="cl.replace('type:', '')"
                     :key="cl"
                     :selected="isSelected(cl.replace('type:', '')) ? true : null">
@@ -23,7 +23,7 @@
             </option>
           </optgroup>
           <optgroup label="Attributes">
-            <option v-for="cl in orderedClasses.filter(c => c.indexOf('attribute:') === 0)"
+            <option v-for="cl in orderedClasses.filter((c) => c.indexOf('attribute:') === 0)"
                     :value="cl.replace('attribute:', '')"
                     :key="cl"
                     :selected="isSelected(cl.replace('attribute:', '')) ? true : null">
@@ -52,13 +52,13 @@
 
 <script>
 import { utils } from 'framework7'
+import { mapStores } from 'pinia'
 
 import GoogleDefinitions from '@/assets/definitions/metadata/ga'
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import ItemMetadataMixin from '@/components/item/metadata/item-metadata-mixin'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
-import { mapStores } from 'pinia'
 
 export default {
   props: {
@@ -87,7 +87,8 @@ export default {
     parameters () {
       if (!this.metadata.value) return []
       return GoogleDefinitions['type:' + this.metadata.value] || GoogleDefinitions['attribute:' + this.metadata.value]
-    }
+    },
+    ...mapStores(useRuntimeStore)
   },
   methods: {
     isSelected (cl) {

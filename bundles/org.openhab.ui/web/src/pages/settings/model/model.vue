@@ -1,7 +1,8 @@
 <template>
   <f7-page name="Model"
            @page:afterin="onPageAfterIn"
-           @page:beforeout="onPageBeforeOut">
+           @page:beforeout="onPageBeforeOut"
+           @click="selectItem(null)">
     <f7-navbar>
       <f7-nav-left>
         <f7-link icon-f7="chevron_left" href="/settings/">
@@ -359,12 +360,11 @@ export default {
   },
   setup () {
     return {
-      theme
+      f7, theme
     }
   },
   data () {
     return {
-      f7,
       newItem: null,
       newItemParent: null,
       initSearchbar: false,

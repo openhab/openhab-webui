@@ -172,7 +172,7 @@ export const actionsMixin = {
                         text: cd.label || cd.command,
                         color: 'blue',
                         onClick: () => {
-                          useStatesStore().sendCommand(actionCommandOptionsItem, cmd)
+                          useStatesStore().sendCommand(actionCommandOptionsItem, cd.command)
                             .then(() => this.showActionFeedback(prefix, actionConfig))
                         }
                       }

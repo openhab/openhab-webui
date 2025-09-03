@@ -29,7 +29,6 @@
     <f7-tabs class="map-editor-tabs">
       <f7-tab id="design"
               class="map-editor-design-tab"
-              @tab:show="() => this.currentTab = 'design'"
               :tab-active="currentTab === 'design'">
         <f7-block v-if="!ready" class="text-align-center">
           <f7-preloader />
@@ -103,7 +102,7 @@
                      :key="pageKey" />
       </f7-tab>
 
-      <f7-tab id="code" :tab-active="currentTab === 'code'">
+      <f7-tab id="code" @tab-show="currentTab='code'" :tab-active="currentTab === 'code'">
         <editor v-if="currentTab === 'code'"
                 :style="{ opacity: previewMode ? '0' : '' }"
                 class="page-code-editor"

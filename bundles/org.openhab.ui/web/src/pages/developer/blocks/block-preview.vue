@@ -46,10 +46,10 @@
 </style>
 
 <script>
+import { mapStores } from 'pinia'
 import Blockly from 'blockly'
 
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
-import { mapStores } from 'pinia'
 
 // Vue is configured to treat these elements as custom elements: ['field', 'block', 'category', 'xml', 'mutation', 'value', 'sep']
 
@@ -79,7 +79,7 @@ export default {
   methods: {
     initWorkspace () {
       this.workspace = Blockly.inject(this.$refs.blockPreview, {
-        theme: this.uiOptionsStore.getDarkMode() === 'dark' ? 'dark' : undefined,
+        theme: useUIOptionsStore().getDarkMode() === 'dark' ? 'dark' : undefined,
         trashcan: false,
         readOnly: false
       })

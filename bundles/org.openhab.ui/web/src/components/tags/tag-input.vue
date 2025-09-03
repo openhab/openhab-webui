@@ -38,19 +38,6 @@
   </div>
 </template>
 
-<style lang="stylus">
-.tag-editor
-  margin-bottom 0
-  .tags
-    text-align center
-  .list
-    margin-top 0
-    margin-bottom 0
-    border 0
-  .chip
-    margin-right 6px !important
-</style>
-
 <script>
 import { f7 } from 'framework7-vue'
 
@@ -122,3 +109,16 @@ export default {
   }
 }
 </script>
+
+<style lang="stylus">
+.tag-editor
+  margin-bottom 0
+  .tags
+    text-align center
+  .list
+    margin-top 0
+    margin-bottom 0
+    border 0
+  .chip
+    margin-right 6px !important
+</style>

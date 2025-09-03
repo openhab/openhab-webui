@@ -687,6 +687,7 @@
 <script>
 import { f7, theme } from 'framework7-vue'
 import { nextTick } from 'vue'
+import { mapStores } from 'pinia'
 
 import Fuse from 'fuse.js'
 import Item from '@/components/item/item.vue'
@@ -702,7 +703,6 @@ import ThingStatus from '@/components/thing/thing-status-mixin'
 import { useDeveloperStore } from '@/js/stores/useDeveloperStore'
 import { useStatesStore } from '@/js/stores/useStatesStore'
 import { useComponentsStore } from '@/js/stores/useComponentsStore'
-import { mapStores } from 'pinia'
 
 export default {
   mixins: [RuleStatus, ThingStatus],
@@ -839,7 +839,7 @@ export default {
     this.startEventSource()
     nextTick(() => {
       if (this.$device.desktop && this.$refs.searchbar) {
-        this.$refs.searchbar.$el.f7Searchbar.$inputEl.focus()
+        f7.input.focus('searchbar')
         if (this.searchFor) this.$refs.searchbar.$el.f7Searchbar.search(this.searchFor)
       }
     })
@@ -850,7 +850,7 @@ export default {
   },
   methods: {
     addItemsFromModel (value) {
-      useDeveloperStore().items = [...value]
+      useDeveloperStore().pinnedObjects.items = [...value]
     },
     openModelPicker () {
       const popup = {
@@ -865,7 +865,7 @@ export default {
         }
       }, {
         props: {
-          value: useDeveloperStore().items,
+          value: useDeveloperStore().pinnedObjects.items,
           multiple: true,
           allowEmpty: true,
           popupTitle: 'Pin Items from Model',
@@ -873,9 +873,9 @@ export default {
         }
       })
 
-      this.$f7.once('itemsPicked', this.addItemsFromModel)
-      this.$f7.once('modelPickerClosed', () => {
-        this.$f7.off('itemsPicked', this.addItemsFromModel)
+      f7.once('itemsPicked', this.addItemsFromModel)
+      f7.once('modelPickerClosed', () => {
+        f7.off('itemsPicked', this.addItemsFromModel)
       })
     },
     /**
@@ -1002,16 +1002,16 @@ export default {
       this.searchResults = { items: [], things: [], rules: [], scenes: [], scripts: [], pages: [], widgets: [], transformations: [], persistenceConfigs: [] }
     },
     pin (type, obj) {
-      useDeveloperStore()[type].push(obj)
+      useDeveloperStore().pinnedObjects[type].push(obj)
     },
     unpin (type, obj, keyName) {
-      let index = useDeveloperStore()[type].findIndex((o) => o[keyName] === obj[keyName])
+      let index = useDeveloperStore().pinnedObjects[type].findIndex((o) => o[keyName] === obj[keyName])
       if (index >= 0) {
-        useDeveloperStore()[type].splice(index, 1)
+        useDeveloperStore().pinnedObjects[type].splice(index, 1)
       }
     },
     unpinAll (type) {
-      useDeveloperStore()[type] = []
+      useDeveloperStore().pinnedObjects[type] = []
     },
     getPageType (page) {
       return this.pageTypes.find((t) => t.componentType === page.component)

@@ -6,7 +6,7 @@
                  v-if="theme.md"
                  icon-md="material:save"
                  icon-only />
-        <f7-link @click="add()" v-if="!theme.md">
+        <f7-link v-if="!theme.md" @click="add()">
           Add
         </f7-link>
       </f7-nav-right>
@@ -58,8 +58,7 @@
         </f7-block>
         <f7-block v-if="selectedTemplate !== null" class="semantic-tree-wrapper">
           <f7-block-footer class="padding-left padding-right">
-            Select the locations to add to your model (you may add others from the model page at a
-            later time).
+            Select the locations to add to your model (you may add others from the model page at a later time).
           </f7-block-footer>
           <f7-block class="semantic-tree">
             <model-treeview class="model-picker-treeview"
@@ -72,8 +71,7 @@
       </f7-col>
     </f7-block>
 
-    <div v-if="selectedTemplate !== null && checkedItems.length > 0"
-         class="if-aurora display-flex justify-content-center margin padding">
+    <div v-if="selectedTemplate !== null && (checkedItems.length > 0)" class="if-aurora display-flex justify-content-center margin padding">
       <div class="flex-shrink-0">
         <f7-button class="padding-left padding-right"
                    style="width: 150px"

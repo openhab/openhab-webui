@@ -52,7 +52,7 @@ export default {
           let html, value, thing, channel, description
           if (index > 0 && !item.isLabel) {
             value = item.value.substring(0, item.value.lastIndexOf(':'))
-            thing = index > 0 ? this.things.find((th) => th.UID === value) : ''
+            thing = (index > 0) ? this.things.find((th) => th.UID === value) : ''
             channel = (thing && thing.triggerChannels.length > 0)
               ? thing.triggerChannels.find((ch) => ch.uid === item.value) : undefined
           }

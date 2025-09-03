@@ -827,7 +827,9 @@
           <block type="oh_dayoffset">
             <value name="offset">
               <shadow type="math_number">
-                <field name="NUM"> 0 </field>
+                <field name="NUM">
+                  0
+                </field>
               </shadow>
             </value>
           </block>
@@ -1186,6 +1188,9 @@ textarea.blocklyHtmlTextAreaInput
 </style>
 
 <script>
+import { f7 } from 'framework7-vue'
+import { mapStores } from 'pinia'
+
 import Blockly from 'blockly'
 import { WorkspaceSearch } from '@blockly/plugin-workspace-search'
 import { javascriptGenerator } from 'blockly/javascript.js'
@@ -1195,13 +1200,11 @@ import { shadowBlockConversionChangeListener } from '@blockly/shadow-block-conve
 // TODO-V3.1 import { Multiselect, MultiselectBlockDragger } from '@mit-app-inventor/blockly-plugin-workspace-multiselect'
 import { TypedVariableModal } from '@blockly/plugin-typed-variable-modal'
 
-import { f7, theme } from 'framework7-vue'
 
 import defineOHBlocks from '@/assets/definitions/blockly'
 import { defineLibraryToolboxCategory } from '@/assets/definitions/blockly/libraries'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
-import { mapStores } from 'pinia'
 
 // Vue is configured to treat these elements as custom elements: ['field', 'block', 'category', 'xml', 'mutation', 'value', 'sep']
 

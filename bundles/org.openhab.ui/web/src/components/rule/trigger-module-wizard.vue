@@ -192,7 +192,7 @@
         title="to"
         smart-select
         :smart-select-params="{ view: f7.view.main, openIn: 'popover' }">
-        <select name="thingStatus" required @change="evt => currentModule.configuration.status = evt.target.value">
+        <select name="thingStatus" required @change="(evt) => currentModule.configuration.status = evt.target.value">
           <option v-for="status in [{ value: '', label: '' }, ...currentModuleType.configDescriptions.find((p) => p.name === 'status').options]"
                   :value="status.value"
                   :key="status.value"
@@ -302,7 +302,6 @@ export default {
     return {
       f7
     }
-
   },
   data () {
     return {

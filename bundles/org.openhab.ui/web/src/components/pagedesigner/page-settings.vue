@@ -11,7 +11,7 @@
                      :value="page.uid"
                      @input="page.uid = $event.target.value"
                      :clear-button="createMode"
-                     :info="createMode ? 'Required. Note: cannot be changed after the creation' : ''"
+                     :info="(createMode) ? 'Required. Note: cannot be changed after the creation' : ''"
                      input-id="input"
                      required
                      validate

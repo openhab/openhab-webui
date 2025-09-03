@@ -136,7 +136,6 @@ export default {
   },
   watch: {
     opened (state) {
-      let self = this
       if (state) {
         if (!this.addonId) {
           this.addon = {}
@@ -176,8 +175,7 @@ export default {
   },
   methods: {
     toggleSwipeStep () {
-      const self = this
-      self.$refs.sheet.$el.f7Modal.stepToggle('.demo-sheet-swipe-to-step')
+      this.$refs.sheet.$el.f7Modal.stepToggle('.demo-sheet-swipe-to-step')
     },
     install () {
       this.$oh.api.post('/rest/addons/' + this.addonId + '/install' + (this.serviceId ? '?serviceId=' + this.serviceId : ''), {}, 'text').then((data) => {

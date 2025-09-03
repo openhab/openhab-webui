@@ -181,7 +181,6 @@ export const useModelStore = defineStore('model', () => {
   }
 
   async function loadSemanticModel () {
-    console.log('Loading semantic model and building semantic homepages ...')
     api.get('/rest/items?staticDataOnly=true&metadata=semantics,listWidget,widgetOrder').then((data: Item[]) => {
       let modelItems = data as ModelItem[]
 

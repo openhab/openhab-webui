@@ -3,12 +3,10 @@
     <f7-navbar :title="title" :subtitle="subtitle" :color="uiOptionsStore.getDarkMode() === 'dark' ? '' : 'black'" />
     <f7-segmented strong
                   tag="p"
-                  style="
-        margin-right: calc(var(--f7-searchbar-inner-padding-right) + var(--f7-safe-area-right));
-        margin-left: calc(var(--f7-searchbar-inner-padding-left) + var(--f7-safe-area-left));
-        margin-top: 5px;
-        margin-bottom: 5px;
-      ">
+                  style="margin-right: calc(var(--f7-searchbar-inner-padding-right) + var(--f7-safe-area-right));
+                    margin-left: calc(var(--f7-searchbar-inner-padding-left) + var(--f7-safe-area-left));
+                    margin-top: 5px;
+                    margin-bottom: 5px;">
       <f7-button :active="dockView === 'tools'"
                  @click="f7.emit('selectDeveloperDock', { dock: 'tools' })">
         Tools
@@ -90,14 +88,14 @@
 </style>
 
 <script>
-import { f7, theme } from 'framework7-vue'
+import { f7 } from 'framework7-vue'
 import { nextTick } from 'vue'
+import { mapStores } from 'pinia'
 
 import DeveloperSidebar from './developer-sidebar.vue'
 import HelpSidebar from './help-sidebar.vue'
 
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
-import { mapStores } from 'pinia'
 
 export default {
   props: {

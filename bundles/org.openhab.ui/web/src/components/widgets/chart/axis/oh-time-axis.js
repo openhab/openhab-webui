@@ -1,8 +1,8 @@
-import dayjs, { extend } from 'dayjs'
+import dayjs from 'dayjs'
 import IsoWeek from 'dayjs/plugin/isoWeek'
 import ComponentId from '../../component-id'
 
-extend(IsoWeek)
+dayjs.extend(IsoWeek)
 
 export default {
   get (component, startTime, endTime, chart, chartWidget) {

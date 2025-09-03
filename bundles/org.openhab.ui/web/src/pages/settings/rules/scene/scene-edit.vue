@@ -6,7 +6,7 @@
                  @click="save()"
                  icon-md="material:save"
                  icon-only />
-        <f7-link @click="save()" v-if="!theme.md">
+        <f7-link v-if="!theme.md" @click="save()">
           Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
         </f7-link>
       </f7-nav-right>
@@ -20,7 +20,7 @@
       </f7-link>
     </f7-toolbar>
     <f7-tabs class="scene-editor-tabs">
-      <f7-tab id="design" @tab:show="() => this.currentTab = 'design'" :tab-active="currentTab === 'design'">
+      <f7-tab id="design" :tab-active="currentTab === 'design'">
         <f7-block v-if="ready && rule.status && !createMode" class="block-narrow padding-left padding-right" strong>
           <f7-col v-if="!createMode">
             <div class="float-right align-items-flex-start align-items-center">
@@ -182,7 +182,7 @@
           </f7-col>
         </f7-block>
       </f7-tab>
-      <f7-tab id="code" @tab:show="() => { this.currentTab = 'code'; toYaml() }" :tab-active="currentTab === 'code'">
+      <f7-tab id="code" :tab-active="currentTab === 'code'">
         <editor v-if="currentTab === 'code'"
                 class="rule-code-editor"
                 mode="application/vnd.openhab.rule+yaml"

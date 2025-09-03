@@ -249,7 +249,7 @@ export default {
     },
     updateClasses () {
       const value = this.$refs.classes.$el.children[0].f7SmartSelect.getValue()
-      this.metadata.value = Array.isArray(value) ? value.join(',') : value
+      this.metadata.value = (Array.isArray(value)) ? value.join(',') : value
       this.metadata.config = {}
     }
   }

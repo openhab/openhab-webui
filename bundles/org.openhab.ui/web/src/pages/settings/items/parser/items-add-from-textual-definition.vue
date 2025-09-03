@@ -230,7 +230,7 @@ export default {
         }
       })
 
-      let dialog = this.$f7.dialog.progress('Creating/updating Items...')
+      let dialog = f7.dialog.progress('Creating/updating Items...')
       this.$oh.api.put('/rest/items/', itemsPayload).then((data) => {
         dialog.setText('Updating links and metadata...')
         dialog.setProgress(50)
@@ -306,7 +306,7 @@ export default {
   computed: {
     parsedItems () {
       try {
-        const parser = new Parser(Grammar.fromCompiled(grammar))
+        const parser = new Parser(Grammar.fromCompiled(grammar.default))
         parser.feed(this.itemsDsl.trim().replace(/\t/g, ' '))
         if (!parser.results.length) return { error: 'Unable to parse, check your input' }
         // return parser.results[0].map((i) => i.name).join('\n')

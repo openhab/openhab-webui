@@ -50,7 +50,6 @@ export const useSemanticsStore = defineStore('semantics', () => {
   }
 
   async function loadSemantics (i18n: I18n) {
-    console.log('Loading semantic tags ...')
     if (useRuntimeStore().apiEndpoint('tags')) {
       return api
         .get('/rest/tags')

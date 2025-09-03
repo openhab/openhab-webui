@@ -1,10 +1,10 @@
-import dayjs, { extend } from 'dayjs'
+import dayjs from 'dayjs'
 import LocalizedFormat from 'dayjs/plugin/localizedFormat'
 import LocaleData from 'dayjs/plugin/localeData'
 import ComponentId from '../../component-id'
 
-extend(LocalizedFormat)
-extend(LocaleData)
+dayjs.extend(LocalizedFormat)
+dayjs.extend(LocaleData)
 
 const months = {
   short: [...dayjs.localeData().monthsShort()],

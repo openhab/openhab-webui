@@ -5,9 +5,6 @@
                no-shadow
                no-hairline
                class="user-profile-navbar">
-      <!-- <f7-nav-right>
-        <f7-link icon-md="material:edit" href="edit">{{ theme.md ? '' : 'Edit' }}</f7-link>
-      </f7-nav-right> -->
       <f7-subnavbar sliding class="profile-header">
         <div class="profile-icon">
           <f7-icon size="60"
@@ -15,12 +12,8 @@
                    aurora="f7:person_alt_circle_fill"
                    md="f7:person_alt_circle_fill"
                    color="gray" />
-          <!-- <span v-else>
-          {{item.label ? item.label[0] : item.name[0]}}
-        </span> -->
         </div>
         <h2>{{ userStore.user.name }}</h2>
-        <!-- <h4 v-show="item.label">{{item.name}}</h4> -->
         <h5>
           <small>{{ userStore.user.roles.join(', ') }}</small>
         </h5>

@@ -108,7 +108,7 @@ export default {
         if (items.length === 0) continue
         for (const item of items) {
           if (!useStatesStore().isItemTracked(item)) useStatesStore().addToTrackingList(item)
-          // TODO-V3.0 - subscribe to state changes in pinia store
+          // TODO-V3.1 - subscribe to state changes in pinia store
           /*
           const unsubscribe = this.$store.subscribe((mutation, state) => {
             if (mutation.type === 'setItemState' && mutation.payload.itemName === item) {

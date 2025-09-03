@@ -84,7 +84,7 @@
     "dayjs": "^1.11.12",
     "debounce": "^1.2.1",
     "diacritic": "^0.0.2",
-    "echarts": "^5.6.0",
+    "echarts": "^5.5.1",
     "esbuild": "^0.25.6",
     "escaper": "^3.0.6",
     "eslint-linter-browserify": "^9.33.0",

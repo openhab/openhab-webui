@@ -35,7 +35,7 @@
   <f7-block class="no-margin no-padding" v-else-if="category === 'item'">
     <f7-list>
       <f7-list-group>
-        <item-picker :value="currentModule.configuration.itemName" title="Item" @input="val => $set(currentModule.configuration, 'itemName', val)" />
+        <item-picker :value="currentModule.configuration.itemName" title="Item" @input="(val) => currentModule.configuration.itemName = val" />
       </f7-list-group>
     </f7-list>
     <f7-list>
@@ -176,7 +176,6 @@
 
 <script>
 import { nextTick } from 'vue'
-import { f7 } from 'framework7-vue'
 
 import ModuleWizard from './module-wizard-mixin'
 import ItemPicker from '@/components/config/controls/item-picker.vue'

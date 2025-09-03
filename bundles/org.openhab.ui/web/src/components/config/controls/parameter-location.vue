@@ -9,7 +9,7 @@
       :required="configDescription.required"
       validate
       :clear-button="!configDescription.required"
-      @input="ev => updateValue(ev.target.value)"
+      @input="(ev) => updateValue(ev.target.value)"
       type="text">
       <template #slot-content-end>
         <div class="padding-left">

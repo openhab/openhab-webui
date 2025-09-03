@@ -1,7 +1,7 @@
 <template>
-  <f7-range v-bind="config"
-            ref="rangeslider"
+  <f7-range ref="rangeslider"
             class="oh-slider"
+            v-bind="config"
             v-model="sliderValue"
             :format-label="formatLabel"
             :format-scale-label="formatScaleLabel"
@@ -27,13 +27,6 @@ export default {
   data () {
     return {
       sliderValue: null
-    }
-  },
-  watch: {
-    value (newValue) {
-      if (!isNaN(newValue)) {
-        this.sliderValue = newValue
-      }
     }
   },
   created () {

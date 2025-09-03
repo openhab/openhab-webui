@@ -31,7 +31,7 @@
                  icon-aurora="f7:pencil"
                  icon-md="material:edit"
                  :tooltip="$t('home.editHome')"
-                 :href="homePageComponent ? '/settings/pages/home/home' : '/settings/pages/home/add'" />
+                 :href="(homePageComponent) ? '/settings/pages/home/home' : '/settings/pages/home/add'" />
         <f7-link v-if="showPinToHome"
                  icon-ios="f7:pin_fill"
                  icon-aurora="f7:pin_fill"
@@ -59,6 +59,7 @@
                 bottom
                 v-if="tabsVisible">
       <f7-link tab-link="#tab-overview"
+               @click="switchTab('overview')"
                href="/overview/"
                :tab-link-active="currentTab === 'overview' ? true : null"
                icon-ios="f7:house_fill"
@@ -67,6 +68,7 @@
                :text="$t('home.overview.tab')" />
       <f7-link v-if="tabVisible('locations')"
                tab-link="#tab-locations"
+               @click="switchTab('locations')"
                href="/locations/"
                :tab-link-active="currentTab === 'locations' ? true : null"
                icon-ios="f7:placemark_fill"
@@ -75,6 +77,7 @@
                :text="$t('home.locations.tab')" />
       <f7-link v-if="tabVisible('equipment')"
                tab-link="#tab-equipment"
+               @click="switchTab('equipment')"
                href="/equipment/"
                :tab-link-active="currentTab === 'equipment' ? true : null"
                icon-ios="f7:cube_box_fill"
@@ -83,6 +86,7 @@
                :text="$t('home.equipment.tab')" />
       <f7-link v-if="tabVisible('properties')"
                tab-link="#tab-properties"
+               @click="switchTab('properties')"
                href="/properties/"
                :tab-link-active="currentTab === 'properties' ? true : null"
                icon-ios="f7:bolt_fill"
@@ -104,25 +108,25 @@
       </f7-block>
     </f7-block>
     <f7-tabs v-else>
-      <f7-tab id="tab-overview" :tab-active="currentTab === 'overview' ? true : null" @tab:show="() => (this.currentTab = 'overview')">
+      <f7-tab id="tab-overview" :tab-active="currentTab === 'overview' ? true : null" @tab:show="currentTab = 'overview'">
         <overview-tab v-if="currentTab === 'overview'"
                       :context="context"
                       :key="overviewPageKey"
                       :allow-chat="allowChat" />
       </f7-tab>
-      <f7-tab id="tab-locations" :tab-active="currentTab === 'locations' ? true : null" @tab:show="() => (this.currentTab = 'locations')">
+      <f7-tab id="tab-locations" :tab-active="currentTab === 'locations' ? true : null" @tab:show="currentTab = 'locations'">
         <model-tab v-if="currentTab === 'locations'"
                    :context="context"
                    type="locations"
                    :page="homePageComponent" />
       </f7-tab>
-      <f7-tab id="tab-equipment" :tab-active="currentTab === 'equipment' ? true : null" @tab:show="() => (this.currentTab = 'equipment')">
+      <f7-tab id="tab-equipment" :tab-active="currentTab === 'equipment' ? true : null" @tab:show="currentTab = 'equipment'">
         <model-tab v-if="currentTab === 'equipment'"
                    :context="context"
                    type="equipment"
                    :page="homePageComponent" />
       </f7-tab>
-      <f7-tab id="tab-properties" :tab-active="currentTab === 'properties' ? true : null" @tab:show="() => (this.currentTab = 'properties')">
+      <f7-tab id="tab-properties" :tab-active="currentTab === 'properties' ? true : null" @tab:show="currentTab = 'properties'">
         <model-tab v-if="currentTab === 'properties'"
                    :context="context"
                    type="properties"
@@ -298,6 +302,11 @@ export default {
     },
     exitToApp () {
       window.OHApp.exitToApp()
+    },
+    switchTab (tab) {
+      this.currentTab = tab
+      this.f7router.updateCurrentUrl('/' + this.currentTab)
+      this.f7router.url = '/' + this.currentTab
     },
     tabVisible (tab) {
       if (!this.tabsVisible) return false

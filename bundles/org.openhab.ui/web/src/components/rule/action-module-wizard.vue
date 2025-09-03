@@ -97,7 +97,7 @@
                        sliderValue: true,
                        sliderValueEditable: true,
                        sliderLabel: true,
-                       formatValue: colorToCommand,
+                       formatValue: colorToCommand
                      }"
                      :value="commandToColor()"
                      @change="updateColorCommand">
@@ -200,7 +200,6 @@
 
 <script>
 import { nextTick } from 'vue'
-import { f7 } from 'framework7-vue'
 
 import ModuleWizard from './module-wizard-mixin'
 import ItemPicker from '@/components/config/controls/item-picker.vue'

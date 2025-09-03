@@ -6,7 +6,7 @@
                  @click="add()"
                  icon-md="material:save"
                  icon-only />
-        <f7-link @click="add()" v-if="!theme.md">
+        <f7-link v-if="!theme.md" @click="add()">
           Add
         </f7-link>
       </f7-nav-right>
@@ -23,8 +23,7 @@
           </ul>
         </f7-list>
         <f7-block-footer v-if="thingId" class="padding-left padding-right">
-          Select the parent Location or Equipment group in the semantic model, under which the new
-          items will be inserted (optional, but recommended).
+          Select the parent Location or Equipment group in the semantic model, under which the new items will be inserted (optional, but recommended).
         </f7-block-footer>
         <f7-list v-if="thingId">
           <ul v-if="parentGroup">
@@ -68,7 +67,7 @@
             <thing-picker title="Thing"
                           name="thing"
                           :value="selectedThingId"
-                          @input="e => (selectedThingId = e)" />
+                          @input="(e) => (selectedThingId = e)" />
           </f7-list-group>
         </f7-list>
         <f7-block v-if="!ready" class="text-align-center">
@@ -110,15 +109,14 @@
                         :channelTypes="selectedThingChannelTypes"
                         :items="items"
                         :multiple-links-mode="true"
-                        :new-items-prefix="createEquipment ? equipmentItem.name : parentGroup ? parentGroup.name : ''"
+                        :new-items-prefix="(createEquipment) ? equipmentItem.name : (parentGroup) ? parentGroup.name : ''"
                         :new-items="newPointItems"
                         :updated-items="updatedPointItems" />
         </div>
       </f7-col>
     </f7-block>
 
-    <div v-if="ready && selectedThing.UID"
-         class="if-aurora display-flex justify-content-center margin padding">
+    <div v-if="ready && selectedThing.UID" class="if-aurora display-flex justify-content-center margin padding">
       <div class="flex-shrink-0">
         <f7-button class="padding-left padding-right"
                    style="width: 150px"

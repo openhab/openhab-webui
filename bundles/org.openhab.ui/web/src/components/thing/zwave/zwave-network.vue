@@ -20,6 +20,7 @@
 </style>
 
 <script>
+import { mapStores } from 'pinia'
 // import ECharts modules manually to reduce bundle size
 import { use } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
@@ -28,7 +29,6 @@ import { TooltipComponent, ToolboxComponent } from 'echarts/components'
 import VChart from 'vue-echarts'
 
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
-import { mapStores } from 'pinia'
 
 use([CanvasRenderer, GraphChart, TooltipComponent, ToolboxComponent])
 

@@ -23,7 +23,7 @@
           <item-picker
             title="Item"
             :value="widget.config.item"
-            @input="value => (widget.config.item = value)" />
+            @input="(value) => widget.config.item = value" />
         </f7-list-group>
         <ul v-if="widget.component !== 'Sitemap'">
           <f7-list-input ref="icon"
@@ -270,7 +270,7 @@ export default {
     },
     supports (parameter) {
       if (!this.ADDITIONAL_CONTROLS[this.widget.component]) return false
-      return this.ADDITIONAL_CONTROLS[this.widget.component].indexOf(parameter) >= 0
+      return (this.ADDITIONAL_CONTROLS[this.widget.component].indexOf(parameter) >= 0)
     },
     updateParameter (parameter, $event) {
       let value = $event.target.value
