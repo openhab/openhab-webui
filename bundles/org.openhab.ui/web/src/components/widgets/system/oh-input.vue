@@ -3,9 +3,9 @@
           v-if="!config.item || !config.sendButton"
           class="oh-input"
           :style="config.style">
-    <f7-input ref="input"
+    <f7-input class="input-field"
+              ref="input"
               v-bind="config"
-              class="input-field"
               :style="{ width: '100%', ...config.style }"
               :value="((config.type && config.type.indexOf('date') === 0) || config.type === 'time') ? valueForDatepicker : value"
               :calendar-params="calendarParams"
@@ -29,9 +29,9 @@
           v-else
           class="oh-input"
           :style="config.style">
-    <f7-input ref="input"
+    <f7-input class="input-field"
+              ref="input"
               v-bind="config"
-              class="input-field"
               :value="((config.type && config.type.indexOf('date') === 0) || config.type === 'time') ? valueForDatepicker : value"
               :calendar-params="calendarParams"
               :step="config.step ? config.step : 'any'"

@@ -27,8 +27,7 @@
                        :color="config.iconColor" />
             </template>
             <div v-if="config.label || config.item" :class="config.class">
-              <span
-                :style="{ 'font-size': config.fontSize || '24px', 'font-weight': config.fontWeight || 'normal' }">
+              <span :style="{ 'font-size': config.fontSize || '24px', 'font-weight': config.fontWeight || 'normal' }">
                 {{ label }}
               </span>
             </div>

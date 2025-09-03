@@ -31,9 +31,7 @@
       <div v-if="context.editmode && !$fullscreen.isFullscreen"
            style="height: calc(var(--f7-toolbar-height) + var(--f7-safe-area-bottom) + 40px)" />
     </template>
-    <template v-else-if="
-      config.layoutType === 'fixed' && (!config.fixedType || config.fixedType === 'grid')
-    ">
+    <template v-else-if="config.layoutType === 'fixed' && (!config.fixedType || config.fixedType === 'grid')">
       <oh-grid-layout :context="context" />
     </template>
     <template v-else-if="config.layoutType === 'fixed' && config.fixedType === 'canvas'">

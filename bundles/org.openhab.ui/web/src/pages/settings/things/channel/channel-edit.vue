@@ -11,7 +11,7 @@
                    @click="save()"
                    icon-md="material:save"
                    icon-only />
-          <f7-link @click="save()" v-else>
+          <f7-link v-else @click="save()">
             Done
           </f7-link>
         </template>

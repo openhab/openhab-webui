@@ -16,7 +16,7 @@
           <f7-list-item
             :title="t('setupwizard.language')"
             smart-select
-            :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: true, }">
+            :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: true }">
             <select name="language" v-model="language">
               <option disabled value="" />
               <option v-for="option in availableLanguages"
@@ -92,7 +92,7 @@
           <f7-list-group>
             <parameter-location :value="location"
                                 :config-description="{ label: t('setupwizard.location.parameterLabel'), name: 'Location' }"
-                                @input="value => location = value"
+                                @input="(value) => location = value"
                                 :placeholder="t('setupwizard.location.placeholder')" />
           </f7-list-group>
         </f7-list>
@@ -152,7 +152,7 @@
                                class="network"
                                :config-description="networkConfigDescription"
                                :value="network"
-                               @input="value => changeNetwork(value)" />
+                               @input="(value) => changeNetwork(value)" />
           </f7-list-group>
         </f7-list>
         <f7-block class="display-flex flex-direction-column padding">
@@ -259,11 +259,11 @@
             <small>{{ t('setupwizard.addons.footer') }}</small>
           </f7-block-footer>
           <div>
-            <f7-button v-if="addonSuggestionsReady && toInstallAddons.filter(a => !preSelectedAddon(a) && !a.installed).length > 0"
+            <f7-button v-if="addonSuggestionsReady && (toInstallAddons.filter(a => (!preSelectedAddon(a) && !a.installed)).length > 0)"
                        large
                        fill
                        color="blue"
-                       :text="t('setupwizard.addons.installAddons', toInstallAddons.filter(a => !preSelectedAddon(a) && !a.installed).length)"
+                       :text="t('setupwizard.addons.installAddons', toInstallAddons.filter(a => (!preSelectedAddon(a) && !a.installed)).length)"
                        @click="installAddons" />
             <f7-button large
                        color="blue"
@@ -357,17 +357,15 @@
 <script>
 import { nextTick, defineAsyncComponent } from 'vue'
 import { f7, theme } from 'framework7-vue'
-import { mapStores } from 'pinia'
 
-import i18n_mixin from '@/components/i18n-mixin'
 import { useI18n } from 'vue-i18n'
 import { loadLocaleMessages } from '@/js/i18n'
+
 import AddonsSetupWizard from '@/components/addons/addons-setup-wizard.vue'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
 export default {
-  mixins: [i18n_mixin],
   components: {
     'parameter-location': defineAsyncComponent(() => import('@/components/config/controls/parameter-location.vue')),
     'parameter-options': defineAsyncComponent(() => import('@/components/config/controls/parameter-options.vue')),
@@ -691,7 +689,7 @@ export default {
       this.showFinish()
     },
     showFinish () {
-      this.$refs.finish.show()
+      f7.tab.show('#finish')
     },
     finish () {
       f7.panel.get('left').enableVisibleBreakpoint()

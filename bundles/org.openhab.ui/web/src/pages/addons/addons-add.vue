@@ -40,7 +40,7 @@
             @click="openAddonPopup(addon.id)"
             :header="addon.id"
             :footer="addon.version"
-            :after="currentlyInstalling.indexOf(addon.id) >= 0 ? 'Installing...' : ''"
+            :after="(currentlyInstalling.indexOf(addon.id) >= 0) ? 'Installing...' : ''"
             :title="addon.label" />
         </f7-list>
       </f7-col>

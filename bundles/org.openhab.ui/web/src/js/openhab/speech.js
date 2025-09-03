@@ -1,6 +1,7 @@
-import Framework7 from 'framework7'
+import { getDevice } from 'framework7'
 
 let wksr = null
+let device = getDevice()
 
 export default {
   isRecognitionSupported () {
@@ -18,13 +19,13 @@ export default {
     wksr.onstart = startCallback
     wksr.onerror = errorCallback
     wksr.onend = () => {
-      if (Framework7.device.android && interimResult) {
+      if (device.android && interimResult) {
         resultCallback({ final: true, text: interimResult })
       }
       endCallback()
     }
     wksr.onresult = (event) => {
-      if (Framework7.device.android) {
+      if (device.android) {
         let bestConfidence = 0
         for (let result of event.results) {
           for (let alternative of result) {

@@ -22,7 +22,7 @@
     <f7-toolbar v-else tabbar position="top">
       <f7-link v-for="tab in modelTabs"
                :key="tab.value"
-               @click="showCardControls = false; currentModelTab = tab.value;"
+               @click="showCardControls = false; currentModelTab = tab.value"
                :tab-link-active="currentModelTab === tab.value"
                :tab-link="'#' + tab.value">
         {{ tab.label }}
@@ -30,14 +30,13 @@
     </f7-toolbar>
     <f7-toolbar bottom class="toolbar-details">
       <div style="margin-left: auto">
-        <f7-toggle :checked="previewMode ? true : null" @toggle:change="value => togglePreviewMode(value)" />
+        <f7-toggle :checked="previewMode ? true : null" @toggle:change="(value) => togglePreviewMode(value)" />
         Run mode<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span>
       </div>
     </f7-toolbar>
     <f7-tabs class="tabs-editor-tabs">
       <f7-tab id="design"
               class="tabs-editor-design-tab"
-              @tab:show="() => this.currentTab = 'design'"
               :tab-active="currentTab === 'design'">
         <f7-block v-if="!ready || !modelReady" class="text-align-center">
           <f7-preloader />

@@ -37,14 +37,7 @@
                         :header="addon.uid"
                         :footer="addon.version"
                         :after="currentlyUninstalling.indexOf(addon.uid) >= 0 ? 'Uninstalling...' : ''"
-                        :title="addon.label">
-                        <!-- <f7-swipeout-actions left>
-              <f7-swipeout-button v-if="addon.link" color="blue">Documentation</f7-swipeout-button>
-              <f7-swipeout-button color="red">Uninstall</f7-swipeout-button>
-            </f7-swipeout-actions> -->
-                        <!-- <f7-icon icon="demo-list-icon"></f7-icon> -->
-          </f7-list-item>
-          <!-- <f7-block-footer slot="after-list">Swipe right for actions.</f7-block-footer> -->
+                        :title="addon.label" />
         </f7-list>
       </f7-col>
     </f7-block>
@@ -59,11 +52,6 @@
         <f7-icon ios="f7:close" md="material:close" aurora="f7:close" />
       </f7-fab>
     </template>
-    <!-- <addon-details-popup
-      :addon-id="currentAddonId"
-      :opened="addonPopupOpened"
-      @closed="addonPopupOpened = false; currentAddonId = null"
-    /> -->
     <addon-details-sheet
       v-if="ready"
       :addon-id="currentAddonId"

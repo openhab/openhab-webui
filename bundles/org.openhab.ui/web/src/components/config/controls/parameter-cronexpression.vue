@@ -8,7 +8,7 @@
       :required="configDescription.required"
       validate
       :clear-button="!configDescription.required"
-      @input="evt => updateValue(evt.target.value)"
+      @input="(evt) => updateValue(evt.target.value)"
       :error-message-force="exprError"
       type="text">
       <template #content-end>
@@ -45,9 +45,7 @@ export default {
       this.$emit('input', value)
     },
     openPopup () {
-      import(
-        /* webpackChunkName: "cronexpression-editor" */ '@/components/config/controls/cronexpression-editor.vue'
-      ).then((c) => {
+      import(/* webpackChunkName: "cronexpression-editor" */ '@/components/config/controls/cronexpression-editor.vue').then((c) => {
         const popup = {
           component: c.default
         }

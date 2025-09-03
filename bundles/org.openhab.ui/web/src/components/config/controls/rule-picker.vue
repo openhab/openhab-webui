@@ -14,8 +14,7 @@
           <option v-for="rule in scenes"
                   :value="rule.uid"
                   :key="rule.uid"
-                  :selected="(multiple) ? value && value.indexOf(rule.uid) >= 0 : value === rule.uid ? true : null
-                  ">
+                  :selected="(multiple) ? value && value.indexOf(rule.uid) >= 0 : value === rule.uid ? true : null">
             {{ rule.name }}
           </option>
         </optgroup>
@@ -23,8 +22,7 @@
           <option v-for="rule in scripts"
                   :value="rule.uid"
                   :key="rule.uid"
-                  :selected="(multiple) ? value && value.indexOf(rule.uid) >= 0 : value === rule.uid ? true : null
-                  ">
+                  :selected="(multiple) ? value && value.indexOf(rule.uid) >= 0 : value === rule.uid ? true : null">
             {{ rule.name }}
           </option>
         </optgroup>

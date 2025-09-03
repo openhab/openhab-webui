@@ -12,10 +12,10 @@
       </f7-nav-right>
     </f7-navbar>
     <f7-toolbar tabbar position="top">
-      <f7-link @click="currentTab = 'tree'" :tab-link-active="currentTab === 'tree'" tab-link="#tree">
+      <f7-link :tab-link-active="currentTab === 'tree'" tab-link="#tree">
         Design
       </f7-link>
-      <f7-link @click="currentTab = 'code'" :tab-link-active="currentTab === 'code'" tab-link="#code">
+      <f7-link :tab-link-active="currentTab === 'code'" tab-link="#code">
         Code
       </f7-link>
     </f7-toolbar>
@@ -29,16 +29,17 @@
           Show item name
         </label>
       </div>
-      <f7-link v-if="selectedWidget"
-               class="right details-link padding-right"
-               ref="detailsLink"
-               @click="detailsOpened = true"
-               icon-f7="chevron_up" />
+      <div>
+        <f7-link v-if="selectedWidget"
+                 class="right details-link padding-right"
+                 ref="detailsLink"
+                 @click="detailsOpened = true"
+                 icon-f7="chevron_up" />
+      </div>
     </f7-toolbar>
     <f7-tabs class="sitemap-editor-tabs">
       <f7-tab class="design"
               id="tree"
-              @tab:show="() => this.currentTab = 'tree'"
               :tab-active="currentTab === 'tree'">
         <f7-block v-if="!ready" class="text-align-center">
           <f7-preloader />
@@ -195,8 +196,9 @@
           <f7-link v-if="selectedWidget && selectedWidget.component !== 'Sitemap'"
                    class="padding-left padding-right"
                    :tab-link-active="detailsTab === 'visibility'"
-                   @click="detailsTab = 'visibility'"
-                   Visibility />
+                   @click="detailsTab = 'visibility'">
+            Visibility
+          </f7-link>
           <f7-link v-if="selectedWidget && selectedWidget.component === 'Buttongrid' && !hasChildren"
                    class="padding-left padding-right"
                    :tab-link-active="detailsTab === 'buttons'"
@@ -543,7 +545,7 @@ export default {
             closeTimeout: 2000
           }).open()
           this.load()
-          this.f7router.navigate(this.$f7route.url.replace('/add', '/' + sitemap.uid), { reloadCurrent: true })
+          this.f7router.navigate(this.f7route.url.replace('/add', '/' + sitemap.uid), { reloadCurrent: true })
         } else {
           f7.toast.create({
             text: 'Sitemap updated',
@@ -554,7 +556,7 @@ export default {
           this.setParents(sitemap)
         }
         f7.emit('sidebarRefresh', null)
-        // if (!stay) this.$f7router.back()
+        // if (!stay) this.f7router.back()
       }).catch((err) => {
         f7.toast.create({
           text: 'Error while saving sitemap: ' + err,
@@ -751,9 +753,7 @@ export default {
           if (widget.config[key] && Array.isArray(widget.config[key])) {
             widget.config[key] = widget.config[key].filter(Boolean)
             if (key === 'buttons') {
-              widget.config[key].sort(
-                (value1, value2) => value1.row - value2.row || value1.column - value2.column
-              )
+              widget.config[key].sort((value1, value2) => (value1.row - value2.row) || (value1.column - value2.column))
             }
           }
           if (!widget.config[key] && widget.config[key] !== 0) {
@@ -819,14 +819,12 @@ export default {
         for (let key in widget.config) {
           if (widget.config[key] && Array.isArray(widget.config[key])) {
             if (key === 'buttons') {
-              widget.config[key].forEach((value, index) => {
-                widget.config[key][index] = value.row + ':' + value.column + ':' + value.command
-              })
+              widget.config[key].forEach((value, index) => { widget.config[key][index] = value.row + ':' + value.column + ':' + value.command })
             }
           }
         }
       }
-      if (widget.component === 'Buttongrid' && widget.config?.item) {
+      if ((widget.component === 'Buttongrid') && widget.config?.item) {
         if (!widget.config.buttons && widget.slots?.widgets) {
           widget.slots.widgets.forEach((w) => {
             if (!w.config) w.config = {}
@@ -852,10 +850,7 @@ export default {
       this.selectedWidget = this.selectedWidgetParent.slots.widgets[index]
     },
     removeWidget () {
-      this.selectedWidgetParent.slots.widgets.splice(
-        this.selectedWidgetParent.slots.widgets.indexOf(this.selectedWidget),
-        1
-      )
+      this.selectedWidgetParent.slots.widgets.splice(this.selectedWidgetParent.slots.widgets.indexOf(this.selectedWidget), 1)
       if (!this.selectedWidgetParent.slots.widgets.length) {
         delete this.selectedWidgetParent.slots
       }

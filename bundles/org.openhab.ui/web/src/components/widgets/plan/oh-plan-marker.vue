@@ -82,7 +82,7 @@ export default {
   },
   computed: {
     coords () {
-      return this.config.coords ? this.config.coords.split(',') : [250, 250]
+      return (this.config.coords) ? this.config.coords.split(',') : [250, 250]
     },
     hasIcon () {
       return this.config.icon

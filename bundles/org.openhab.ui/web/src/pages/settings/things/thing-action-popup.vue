@@ -74,7 +74,6 @@
                 <!-- Render QR code if the key is qrCode -->
                 <!-- Render QR code if the action output type is qrCode in the action output definition from REST -->
                 <f7-list-item v-else-if="key === 'qrCode' || action.outputs.find(o => o.name === key)?.type === 'qrCode'"
-                              :key="key + '-qr-code-item'"
                               :floating-label="theme.md"
                               :title="action.outputs.find(o => o.name === key)?.label || 'QR Code'"
                               :footer="action.outputs.find(o => o.name === key)?.description">
@@ -84,7 +83,6 @@
                 </f7-list-item>
                 <!-- Render other keys as list items with the label defined by the action output definition from REST or the key as label -->
                 <f7-list-item v-else
-                              :key="key + '-other-item'"
                               :floating-label="theme.md"
                               :title="action.outputs.find(o => o.name === key)?.label || key"
                               :footer="action.outputs.find(o => o.name === key)?.description">

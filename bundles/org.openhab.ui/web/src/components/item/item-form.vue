@@ -15,10 +15,10 @@
                        @input="item.name = $event.target.value"
                        :clear-button="createMode">
           <template #inner>
-            <f7-link icon-f7="hammer_fill"
+            <f7-link v-if="createMode && nameErrorMessage && !nameErrorMessage.includes('exists') && item.name.trim()"
+                     icon-f7="hammer_fill"
                      style="margin-top: 4px; margin-left: 4px; margin-bottom: auto"
                      tooltip="Fix ID"
-                     v-if="createMode && nameErrorMessage && !nameErrorMessage.includes('exists') && item.name.trim()"
                      @click="$oh.utils.normalizeInput('#input')" />
           </template>
         </f7-list-input>
@@ -79,7 +79,7 @@
                        label="State Description Pattern"
                        type="text"
                        :info="(createMode) ? 'Pattern or transformation applied to the state for display purposes. Only saved if you change the pre-filled default value.' : 'Pattern can only be changed from the state description metadata page after Item creation!'"
-                       :disabled="(!createMode) ? true : null"
+                       :disabled="!createMode ? true : null"
                        :value="stateDescriptionPattern"
                        @input="stateDescriptionPattern = $event.target.value"
                        :clear-button="createMode" />
@@ -151,7 +151,7 @@
                      title="Select"
                      :value="item.groupNames"
                      :items="items"
-                     @input="value => (this.item.groupNames = value)"
+                     @input="(value) => this.item.groupNames = value"
                      :multiple="true"
                      filterType="Group"
                      :set-value-text="false" />

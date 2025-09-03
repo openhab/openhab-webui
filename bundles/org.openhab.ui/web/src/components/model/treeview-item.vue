@@ -36,7 +36,7 @@
                              :model="node"
                              :parentNode="model"
                              :rootNode="rootNode"
-                             @selected="event => $emit('selected', event)"
+                             @selected="(event) => $emit('selected', event)"
                              :selected="node.selected"
                              :includeItemName="includeItemName"
                              :includeItemTags="includeItemTags"
