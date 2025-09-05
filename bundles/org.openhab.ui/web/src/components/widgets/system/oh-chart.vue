@@ -5,11 +5,12 @@
 <script>
 import mixin from '../widget-mixin'
 import { OhChartDefinition } from '@/assets/definitions/widgets/system'
+import { defineAsyncComponent } from 'vue'
 
 export default {
   mixins: [mixin],
   components: {
-    'oh-chart-component': () => import(/* webpackChunkName: "oh-chart-component" */ './oh-chart-component.vue')
+    'oh-chart-component': defineAsyncComponent(() => import(/* webpackChunkName: "oh-chart-component" */ './oh-chart-component.vue'))
   },
   widget: OhChartDefinition,
   methods: {

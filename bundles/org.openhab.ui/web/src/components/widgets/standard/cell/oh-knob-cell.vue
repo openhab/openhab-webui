@@ -4,8 +4,8 @@
       <f7-col width="100" style="height: 400px" class="cell-knob display-flex flex-direction-column align-items-center">
         <slot name="beforeKnob">
           <div v-if="context.component.slots" class="margin-top display-flex flex-direction-column justify-content-center">
-            <generic-widget-component :context="childContext(slotComponent)"
-                                      v-for="(slotComponent, idx) in context.component.slots.beforeKnob"
+            <generic-widget-component v-for="(slotComponent, idx) in context.component.slots.beforeKnob"
+                                      :context="childContext(slotComponent)"
                                       :key="'beforeKnob-' + idx"
                                       @command="onCommand" />
           </div>
@@ -13,8 +13,8 @@
         <oh-knob :context="knobContext" />
         <slot name="afterKnob">
           <div v-if="context.component.slots" class="margin-top display-flex flex-direction-column justify-content-center">
-            <generic-widget-component :context="childContext(slotComponent)"
-                                      v-for="(slotComponent, idx) in context.component.slots.afterKnob"
+            <generic-widget-component v-for="(slotComponent, idx) in context.component.slots.afterKnob"
+                                      :context="childContext(slotComponent)"
                                       :key="'afterKnob-' + idx"
                                       @command="onCommand" />
           </div>
@@ -23,9 +23,6 @@
     </f7-row>
   </oh-cell>
 </template>
-
-<style lang="stylus">
-</style>
 
 <script>
 import mixin from '../../widget-mixin'

@@ -29,12 +29,21 @@
   height calc(100% - var(--f7-safe-area-top) - var(--f7-navbar-height)) !important
   &.with-tabbar
     height calc(100% - var(--f7-safe-area-top) - var(--f7-navbar-height) - var(--f7-tabbar-labels-height)) !important
+
+// override leaflet style
+.leaflet-div-icon
+  background: unset
+  border: unset
 </style>
 
 <script>
+import { nextTick } from 'vue'
+import { f7 } from 'framework7-vue'
+import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
+
 import mixin from '../widget-mixin'
 import { tileLayer, latLng, Icon } from 'leaflet'
-import { LMap, LTileLayer, LFeatureGroup } from 'vue2-leaflet'
+import { LMap, LTileLayer, LFeatureGroup } from '@vue-leaflet/vue-leaflet'
 import 'leaflet/dist/leaflet.css'
 
 import { OhMapPageDefinition } from '@/assets/definitions/widgets/map'
@@ -46,9 +55,9 @@ import 'leaflet-providers'
 
 delete Icon.Default.prototype._getIconUrl
 Icon.Default.mergeOptions({
-  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
-  iconUrl: require('leaflet/dist/images/marker-icon.png'),
-  shadowUrl: require('leaflet/dist/images/marker-shadow.png')
+  iconRetinaUrl: import('leaflet/dist/images/marker-icon-2x.png'),
+  iconUrl: import('leaflet/dist/images/marker-icon.png'),
+  shadowUrl: import('leaflet/dist/images/marker-shadow.png')
 })
 
 export default {
@@ -68,7 +77,7 @@ export default {
       currentCenter: null,
       center: (this.context.component.config.initialCenter) ? latLng(this.context.component.config.initialCenter.split(',')) : latLng(48, 6),
       // url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      url: `https://a.basemaps.cartocdn.com/${this.$f7.data.themeOptions.dark}_all/{z}/{x}/{y}.png`,
+      url: `https://a.basemaps.cartocdn.com/${f7.data.themeOptions.dark}_all/{z}/{x}/{y}.png`,
       attribution: '&copy; <a class="external" target="_blank" href="http://osm.org/copyright">OpenStreetMap</a>, &copy; <a class="external" target="_blank" href="https://carto.com/attribution/">CARTO</a>',
       showMap: true
     }
@@ -92,7 +101,7 @@ export default {
   },
   methods: {
     setBackgroundLayer () {
-      const defaultProvider = (this.$f7.data.themeOptions.dark === 'dark') ? 'CartoDB.DarkMatter' : 'CartoDB.Positron'
+      const defaultProvider = (useUIOptionsStore().getDarkMode() === 'dark') ? 'CartoDB.DarkMatter' : 'CartoDB.Positron'
       const provider = this.config.tileLayerProvider || defaultProvider
       let layer, overlayLayer
       try {
@@ -132,7 +141,7 @@ export default {
       }
     },
     onMarkerUpdate () {
-      this.$nextTick(() => {
+      nextTick(() => {
         const bounds = this.$refs.featureGroup.mapObject.getBounds()
         if (bounds.isValid()) {
           this.$refs.map.mapObject.fitBounds(bounds.pad(0.5))

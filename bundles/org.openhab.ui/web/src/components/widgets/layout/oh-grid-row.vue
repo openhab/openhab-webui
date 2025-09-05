@@ -25,9 +25,9 @@
     </div>
     <f7-row no-gap v-if="visible">
       <oh-grid-col v-for="(component, idx) in context.component.slots.default"
+                   v-bind="$attrs"
                    :key="idx"
-                   :context="childContext(component)"
-                   v-on="$listeners" />
+                   :context="childContext(component)" />
       <f7-block-title v-if="config.title" />
     </f7-row>
     <!-- <f7-row v-if="context.editmode">

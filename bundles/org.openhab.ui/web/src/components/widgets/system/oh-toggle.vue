@@ -1,14 +1,16 @@
 <template>
   <f7-toggle v-bind="config"
-             :checked="value"
+             :checked="value ? true : null"
              @toggle:change="onChange"
-             @click.native.stop />
+             @click.stop />
 </template>
 
 <script>
 import mixin from '../widget-mixin'
 import variableMixin from '../variable-mixin'
 import { OhToggleDefinition } from '@/assets/definitions/widgets/system'
+
+import { useStatesStore } from '@/js/stores/useStatesStore'
 
 export default {
   mixins: [mixin, variableMixin],
@@ -43,9 +45,9 @@ export default {
         if (this.config.variableKey) {
           value = this.setVariableKeyValues(variableLocation[this.config.variable], this.config.variableKey, value)
         }
-        this.$set(variableLocation, this.config.variable, value)
+        variableLocation[this.config.variable] = value
       } else if (this.config.item) {
-        this.$store.dispatch('sendCommand', { itemName: this.config.item, cmd: (value) ? 'ON' : 'OFF' })
+        useStatesStore().sendCommand(this.config.item, (value) ? 'ON' : 'OFF')
       }
     }
   }

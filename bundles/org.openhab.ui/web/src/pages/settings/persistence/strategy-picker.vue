@@ -12,7 +12,7 @@
         <option v-for="s in strategies"
                 :key="s"
                 :value="s"
-                :selected="value.includes(s)">
+                :selected="value.includes(s) ? true : null">
           {{ s }}
         </option>
       </select>
@@ -36,22 +36,30 @@
 </style>
 
 <script>
+import { f7 } from 'framework7-vue'
+
 export default {
-  props: ['title', 'name', 'strategies', 'value', 'disabled'],
-  emits: ['strategiesSelected'],
+  props: {
+    title: String,
+    name: String,
+    strategies: Array,
+    value: Array,
+    disabled: Boolean
+  },
+  emits: ['strategies-selected'],
   data () {
     return {
       smartSelectParams: {
-        view: this.$f7.view.main,
+        view: f7.view.main,
         openIn: 'popup'
       }
     }
   },
   methods: {
     select () {
-      this.$f7.input.validateInputs(this.$refs.smartSelect.$el)
-      const value = this.$refs.smartSelect.f7SmartSelect.getValue()
-      this.$emit('strategiesSelected', value)
+      f7.input.validateInputs(this.$refs.smartSelect.$el)
+      const value = this.$refs.smartSelect.$el.children[0].f7SmartSelect.getValue()
+      this.$emit('strategies-selected', value)
     }
   }
 }

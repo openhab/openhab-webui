@@ -19,6 +19,8 @@ import mixin from '../widget-mixin'
 import variableMixin from '../variable-mixin'
 import { OhStepperDefinition } from '@/assets/definitions/widgets/system'
 
+import { useStatesStore } from '@/js/stores/useStatesStore'
+
 export default {
   mixins: [mixin, variableMixin],
   widget: OhStepperDefinition,
@@ -84,9 +86,9 @@ export default {
         if (this.config.variableKey) {
           newValue = applyOffset(this.setVariableKeyValues(variableLocation[this.config.variable], this.config.variableKey, value))
         }
-        this.$set(variableLocation, this.config.variable, newValue)
+        variableLocation[this.config.variable] = newValue
       } else if (this.config.item) {
-        this.$store.dispatch('sendCommand', { itemName: this.config.item, cmd: newValue.toString() })
+        useStatesStore().sendCommand(this.config.item, newValue.toString())
       }
     }
   }

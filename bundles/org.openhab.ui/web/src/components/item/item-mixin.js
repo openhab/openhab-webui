@@ -46,7 +46,7 @@ export default {
     validateItemName (name) {
       if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(name)) {
         return 'Required. Must not start with a number. A-Z,a-z,0-9,_ only'
-      } else if (this.items && this.items.some(item => item.name === name)) {
+      } else if (this.items && this.items.some((item) => item.name === name)) {
         return 'An Item with this name already exists'
       }
       return ''

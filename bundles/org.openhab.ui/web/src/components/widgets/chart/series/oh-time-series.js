@@ -1,6 +1,6 @@
+import { utils } from 'framework7'
 import ComponentId from '../../component-id'
 import MarkArea from './oh-mark-area'
-import Framework7 from 'framework7'
 
 export default {
   neededItems (component, chart) {
@@ -21,7 +21,7 @@ export default {
     series.data = []
 
     if (series.item) {
-      const itemPoints = points.find(p => p.name === series.item).data
+      const itemPoints = points.find((p) => p.name === series.item).data
 
       const formatter = new Intl.NumberFormat('en', { useGrouping: false, maximumFractionDigits: 3 })
       const data = itemPoints.map((p) => {
@@ -29,7 +29,7 @@ export default {
       })
 
       series.data = data
-      series.id = `oh-time-series#${series.item}#${Framework7.utils.id()}`
+      series.id = `oh-time-series#${series.item}#${utils.id()}`
     }
 
     // other things

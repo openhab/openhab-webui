@@ -15,26 +15,29 @@
                        pattern="[A-Za-z0-9_][A-Za-z0-9_\-]*"
                        error-message="Required. Must not start with a dash. A-Z,a-z,0-9,_,- only"
                        @input="channel.id = $event.target.value">
-          <f7-link slot="inner"
-                   icon-f7="hammer_fill"
-                   style="margin-top: 4px; margin-left: 4px; margin-bottom: auto"
-                   tooltip="Fix ID"
-                   v-if="createMode && $refs.channelId?.state?.inputInvalid && channel.id.trim()"
-                   @click="$oh.utils.normalizeInputForThingId('#input')" />
+          <template #inner>
+            <f7-link v-if="createMode && $refs.channelId?.state?.inputInvalid && channel.id.trim()"
+                     icon-f7="hammer_fill"
+                     style="margin-top: 4px; margin-left: 4px; margin-bottom: auto"
+                     tooltip="Fix ID"
+                     @click="$oh.utils.normalizeInputForThingId('#input')" />
+          </template>
         </f7-list-input>
         <f7-list-item v-if="!createMode"
                       media-item
                       class="channel-item"
                       title="Channel UID">
-          <div slot="subtitle">
-            {{ channel.uid }}
-            <clipboard-icon :value="channel.uid" tooltip="Copy UID" />
-          </div>
+          <template #subtitle>
+            <div>
+              {{ channel.uid }}
+              <clipboard-icon :value="channel.uid" tooltip="Copy UID" />
+            </div>
+          </template>
         </f7-list-item>
 
         <f7-list-input label="Label"
                        type="text"
-                       :disabled="disabled"
+                       :disabled="disabled ? true : null"
                        :placeholder="(channelType !== null) ? channelType.label : 'Channel label for display purposes'"
                        :value="channel.label"
                        required
@@ -44,7 +47,7 @@
                        :clear-button="disabled !== true" />
         <f7-list-input label="Description"
                        type="text"
-                       :disabled="disabled"
+                       :disabled="disabled ? true : null"
                        :placeholder="(channelType !== null) ? channelType.description : ''"
                        :value="channel.description"
                        @input="channel.description = $event.target.value"
@@ -64,7 +67,12 @@
 <script>
 import ClipboardIcon from '@/components/util/clipboard-icon.vue'
 export default {
-  props: ['channel', 'channelType', 'createMode', 'disabled'],
+  props: {
+    channel: Object,
+    channelType: Object,
+    createMode: Boolean,
+    disabled: Boolean
+  },
   components: {
     ClipboardIcon
   }

@@ -23,11 +23,21 @@
 </style>
 
 <script>
+import { f7 } from 'framework7-vue'
+import { defineAsyncComponent } from 'vue'
+
 export default {
   components: {
-    'editor': () => import(/* webpackChunkName: "script-editor" */ './script-editor.vue')
+    editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ './script-editor.vue'))
   },
-  props: ['title', 'value', 'mode', 'opened', 'fullscreen', 'popupId'],
+  props: {
+    title: String,
+    value: String,
+    mode: String,
+    opened: Boolean,
+    fullscreen: Boolean,
+    popupId: String
+  },
   data () {
     return {
       code: this.value,
@@ -36,11 +46,11 @@ export default {
   },
   methods: {
     popupClosed () {
-      this.$f7.emit('scriptEditorClosed')
+      f7.emit('scriptEditorClosed')
       this.showEditor = false
     },
     update () {
-      this.$f7.emit('scriptEditorUpdate', this.code)
+      f7.emit('scriptEditorUpdate', this.code)
     }
   }
 }
