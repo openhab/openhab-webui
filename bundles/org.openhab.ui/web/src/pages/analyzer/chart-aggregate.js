@@ -84,20 +84,10 @@ export default {
     page.slots.series = analyzer.items.map((item) => {
       const seriesOptions = analyzer.seriesOptions[item.name]
 
-      const markLine = (seriesOptions.markers === 'avg' || seriesOptions.markers === 'all') ? {
-        data: [
-          { type: 'average' }
-        ]
-      } : undefined
-      const markPoint = (seriesOptions.markers === 'min-max' || seriesOptions.markers === 'all') ? {
-        label: {
-          backgroundColor: 'auto'
-        },
-        data: [
-          { type: 'min', name: 'min' },
-          { type: 'max', name: 'max' }
-        ]
-      } : undefined
+      const markers = []
+      if (seriesOptions.markers === 'all') markers.push('min', 'max', 'avg')
+      if (seriesOptions.markers === 'min-max') markers.push('min', 'max')
+      if (seriesOptions.markers === 'avg') markers.push('avg')
 
       return {
         component: 'oh-aggregate-series',
@@ -110,8 +100,7 @@ export default {
           type: dimension2 ? 'heatmap' : (seriesOptions.type === 'bar') ? 'bar' : 'line',
           dimension1,
           dimension2,
-          markLine,
-          markPoint,
+          markers,
           transpose: analyzer.orientation === 'vertical' ? true : undefined,
           areaStyle: seriesOptions.type === 'area' ? { opacity: 0.2 } : undefined,
           aggregationFunction: seriesOptions.aggregation
