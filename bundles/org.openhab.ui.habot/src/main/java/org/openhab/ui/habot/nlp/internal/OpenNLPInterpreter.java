@@ -27,12 +27,13 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.core.common.registry.RegistryChangeListener;
 import org.openhab.core.config.core.ConfigurableService;
+import org.openhab.core.hli.ChatReply;
+import org.openhab.core.hli.EnhancedHLIInterpreter;
+import org.openhab.core.hli.Intent;
 import org.openhab.core.items.Item;
 import org.openhab.core.items.ItemRegistry;
 import org.openhab.core.voice.text.HumanLanguageInterpreter;
 import org.openhab.core.voice.text.InterpretationException;
-import org.openhab.ui.habot.nlp.ChatReply;
-import org.openhab.ui.habot.nlp.Intent;
 import org.openhab.ui.habot.nlp.IntentInterpretation;
 import org.openhab.ui.habot.nlp.ItemNamedAttribute;
 import org.openhab.ui.habot.nlp.ItemNamedAttribute.AttributeType;
@@ -55,7 +56,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 @NonNullByDefault
 @Component(service = HumanLanguageInterpreter.class, immediate = true, name = "org.openhab.opennlphli")
 @ConfigurableService(category = "voice", label = "OpenNLP Interpreter for HABot", description_uri = OpenNLPInterpreter.CONFIG_URI)
-public class OpenNLPInterpreter implements HumanLanguageInterpreter {
+public class OpenNLPInterpreter implements EnhancedHLIInterpreter {
 
     protected static final String CONFIG_URI = "voice:opennlphli";
 
@@ -163,6 +164,7 @@ public class OpenNLPInterpreter implements HumanLanguageInterpreter {
      * @return the interpretation result as a {@link ChatReply} object
      * @throws InterpretationException
      */
+    @Override
     public ChatReply reply(Locale locale, String text) throws InterpretationException {
         IntentTrainer intentTrainer = this.intentTrainer;
         if (!locale.equals(currentLocale) || intentTrainer == null) {
