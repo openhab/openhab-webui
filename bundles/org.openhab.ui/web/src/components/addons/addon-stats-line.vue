@@ -24,6 +24,9 @@
 
 <script>
 export default {
-  props: ['addon', 'iconSize']
+  props: {
+    addon: Object,
+    iconSize: [String, Number]
+  }
 }
 </script>

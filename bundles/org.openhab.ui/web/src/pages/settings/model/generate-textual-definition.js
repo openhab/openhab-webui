@@ -1,4 +1,4 @@
-import store from '@/js/store'
+import { useSemanticsStore } from '@/js/stores/useSemanticsStore'
 
 import utils from '@/js/openhab/utils'
 
@@ -7,7 +7,7 @@ import utils from '@/js/openhab/utils'
  * for expert users who prefer to edit their items that way
  */
 export default (thing, channelTypes, newEquipmentItem, parentGroupsForEquipment, parentGroupsForPoints) => {
-  const channelTypesMap = new Map(channelTypes.map(ct => [ct.UID, ct]))
+  const channelTypesMap = new Map(channelTypes.map((ct) => [ct.UID, ct]))
 
   let def = ''
   if (newEquipmentItem && newEquipmentItem.name) {
@@ -29,7 +29,7 @@ export default (thing, channelTypes, newEquipmentItem, parentGroupsForEquipment,
     newItemName += '_'
     let suffix = channel.label || channel.id
     if (thing.channels.filter((c) => c.label === suffix || (c.channelTypeUID && channelTypesMap[c.channelTypeUID] && channelTypesMap[c.channelTypeUID].label === suffix)).length > 1) {
-      suffix = channel.id.replace('#', '_').replace(/(^\w{1})|(_+\w{1})/g, letter => letter.toUpperCase())
+      suffix = channel.id.replace('#', '_').replace(/(^\w{1})|(_+\w{1})/g, (letter) => letter.toUpperCase())
     }
     newItemName += utils.normalizeLabel(suffix)
     const defaultTags = (channel.defaultTags.length > 0) ? channel.defaultTags : channelType.tags
@@ -41,7 +41,7 @@ export default (thing, channelTypes, newEquipmentItem, parentGroupsForEquipment,
       groupNames: parentGroupsForPoints,
       category: (channelType) ? channelType.category : '',
       type: channel.itemType,
-      tags: (defaultTags.find((t) => store.getters.semanticClasses.Points.indexOf(t) >= 0)) ? defaultTags : [...defaultTags, 'Point']
+      tags: (defaultTags.find((t) => useSemanticsStore().Points.indexOf(t) >= 0)) ? defaultTags : [...defaultTags, 'Point']
     }
 
     let line = []

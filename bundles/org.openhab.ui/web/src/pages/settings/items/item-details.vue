@@ -10,7 +10,7 @@
                class="item-details-navbar">
       <f7-nav-right v-if="ready">
         <f7-link v-if="item.editable" icon-md="material:edit" href="edit">
-          {{ $theme.md ? '' : 'Edit' }}
+          {{ theme.md ? '' : 'Edit' }}
         </f7-link>
         <f7-link v-else
                  icon-f7="lock_fill"
@@ -51,10 +51,9 @@
                      :key="tag"
                      :text="tag"
                      media-bg-color="blue">
-              <f7-icon slot="media"
-                       ios="f7:tag_fill"
-                       md="material:label"
-                       aurora="f7:tag_fill" />
+              <template #media>
+                <f7-icon ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
+              </template>
             </f7-chip>
           </f7-block>
         </f7-col>
@@ -120,7 +119,8 @@
             </f7-list-button>
           </f7-list>
           <p class="developer-sidebar-tip text-align-center">
-            Tip: Use the developer sidebar (Shift+Alt+D) to <f7-link text="search for usages of this Item" @click="searchInSidebar" />
+            Tip: Use the developer sidebar (Shift+Alt+D) to
+            <f7-link text="search for usages of this Item" @click="searchInSidebar" />
           </p>
         </f7-col>
       </f7-row>
@@ -182,6 +182,9 @@
 
 <script>
 import cloneDeep from 'lodash/cloneDeep'
+import { f7, theme } from 'framework7-vue'
+
+import { useStatesStore } from '@/js/stores/useStatesStore'
 
 import ItemStatePreview from '@/components/item/item-state-preview.vue'
 import LinkDetails from '@/components/model/link-details.vue'
@@ -192,12 +195,18 @@ import FileDefinition from '@/pages/settings/file-definition-mixin'
 
 export default {
   mixins: [ItemMixin, FileDefinition],
-  props: ['itemName'],
+  props: {
+    itemName: String,
+    f7router: Object
+  },
   components: {
     LinkDetails,
     GroupMembers,
     ItemStatePreview,
     MetadataMenu
+  },
+  setup () {
+    return { theme }
   },
   data () {
     return {
@@ -209,7 +218,7 @@ export default {
   computed: {
     context () {
       return {
-        store: this.$store.getters.trackedItems
+        store: useStatesStore().trackedItems
       }
     },
     semanticClass () {
@@ -259,7 +268,7 @@ export default {
   },
   methods: {
     onPageBeforeIn () {
-      this.$store.dispatch('startTrackingStates')
+      useStatesStore().startTrackingStates()
       this.load()
     },
     onPageAfterIn () {
@@ -268,7 +277,7 @@ export default {
       })
     },
     onPageBeforeOut () {
-      this.$store.dispatch('stopTrackingStates')
+      useStatesStore().stopTrackingStates()
     },
     load () {
       this.$oh.api.get(`/rest/items/${this.itemName}?metadata=.+`).then((data) => {
@@ -279,7 +288,7 @@ export default {
     },
     duplicateItem () {
       let itemClone = cloneDeep(this.item)
-      this.$f7router.navigate({
+      this.f7router.navigate({
         url: '/settings/items/duplicate'
       }, {
         props: {
@@ -288,18 +297,18 @@ export default {
       })
     },
     deleteItem () {
-      this.$f7.dialog.confirm(
+      f7.dialog.confirm(
         `Are you sure you want to delete ${this.item.label || this.item.name}?`,
         'Delete Item',
         () => {
           this.$oh.api.delete('/rest/items/' + this.item.name).then(() => {
-            this.$f7router.back('/settings/items/', { force: true })
+            this.f7router.back('/settings/items/', { force: true })
           })
         }
       )
     },
     searchInSidebar () {
-      this.$f7.emit('selectDeveloperDock', { 'dock': 'tools', 'toolTab': 'pin', 'searchFor': this.item.name })
+      f7.emit('selectDeveloperDock', { 'dock': 'tools', 'toolTab': 'pin', 'searchFor': this.item.name })
     },
     groupLink (group) {
       return '/settings/items/' + group

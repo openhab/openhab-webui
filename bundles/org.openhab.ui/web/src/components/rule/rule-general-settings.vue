@@ -10,19 +10,20 @@
                          :value="rule.uid"
                          required
                          :validate="editable"
-                         :disabled="!createMode"
+                         :disabled="!createMode ? true : null"
                          :info="(createMode) ? 'Required. Note: cannot be changed after the creation' : ''"
                          input-id="input"
                          pattern="[A-Za-z0-9_\-]+"
                          error-message="Required. A-Z,a-z,0-9,_,- only"
                          @input="rule.uid = $event.target.value"
                          :clear-button="createMode">
-            <f7-link slot="inner"
-                     icon-f7="hammer_fill"
-                     style="margin-top: 4px; margin-left: 4px; margin-bottom: auto"
-                     tooltip="Fix ID"
-                     v-if="createMode && $refs.ruleId?.state?.inputInvalid && rule.uid.trim()"
-                     @click="$oh.utils.normalizeInput('#input')" />
+            <template #inner>
+              <f7-link v-if="createMode && $refs.ruleId?.state?.inputInvalid && rule.uid.trim()"
+                       icon-f7="hammer_fill"
+                       style="margin-top: 4px; margin-left: 4px; margin-bottom: auto"
+                       tooltip="Fix ID"
+                       @click="$oh.utils.normalizeInput('#input')" />
+            </template>
           </f7-list-input>
           <f7-list-input v-if="!createMode && templateName"
                          label="Template"
@@ -36,24 +37,26 @@
                          :value="rule.name"
                          required
                          validate
-                         :disabled="!editable"
+                         :disabled="!editable ? true : null"
                          @input="rule.name = $event.target.value"
                          :clear-button="editable" />
           <f7-list-input label="Description"
                          type="text"
                          :value="rule.description"
-                         :disabled="!editable"
+                         :disabled="!editable ? true : null"
                          @input="rule.description = $event.target.value"
                          :clear-button="editable" />
         </f7-list>
         <f7-list inline-labels no-hairlines-md>
-          <tag-input v-if="!stubMode"
-                     title="Tags"
-                     :item="rule"
-                     :disabled="!editable"
-                     :showSemanticTags="true"
-                     :inScriptEditor="inScriptEditor"
-                     :inSceneEditor="inSceneEditor" />
+          <div>
+            <tag-input v-if="!stubMode"
+                       title="Tags"
+                       :item="rule"
+                       :disabled="!editable ? true : null"
+                       :showSemanticTags="true"
+                       :inScriptEditor="inScriptEditor"
+                       :inSceneEditor="inSceneEditor" />
+          </div>
         </f7-list>
       </f7-col>
     </f7-block>
@@ -88,12 +91,14 @@
                          :clear-button="editable" />
         </f7-list>
         <f7-list inline-labels no-hairlines-md>
-          <tag-input v-if="!stubMode"
-                     :item="rule"
-                     :disabled="!editable"
-                     :showSemanticTags="true"
-                     :inScriptEditor="inScriptEditor"
-                     :inSceneEditor="inSceneEditor" />
+          <f7-list-group>
+            <tag-input v-if="!stubMode"
+                       :item="rule"
+                       :disabled="!editable ? true : null"
+                       :showSemanticTags="true"
+                       :inScriptEditor="inScriptEditor"
+                       :inSceneEditor="inSceneEditor" />
+          </f7-list-group>
         </f7-list>
       </f7-col>
     </f7-block>
@@ -104,7 +109,15 @@
 import TagInput from '@/components/tags/tag-input.vue'
 
 export default {
-  props: ['rule', 'ready', 'createMode', 'stubMode', 'templateName', 'inScriptEditor', 'inSceneEditor'],
+  props: {
+    rule: Object,
+    ready: Boolean,
+    createMode: Boolean,
+    stubMode: Boolean,
+    templateName: String,
+    inScriptEditor: Boolean,
+    inSceneEditor: Boolean
+  },
   components: {
     TagInput
   },

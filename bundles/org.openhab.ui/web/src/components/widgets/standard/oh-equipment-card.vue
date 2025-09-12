@@ -4,22 +4,31 @@
 
 <script>
 import mixin from '../widget-mixin'
-import store from '@/js/store'
 import { OhEquipmentCardParameters } from '@/assets/definitions/widgets/home'
 import EquipmentCard from '@/components/cards/equipment-card.vue'
+
+import { useSemanticsStore } from '@/js/stores/useSemanticsStore'
+import { useModelStore } from '@/js/stores/useModelStore'
 
 export default {
   components: { EquipmentCard },
   mixins: [mixin],
   computed: {
     element () {
-      return this.$store.getters.semanticModelElement(this.config.item, 'equipment') ||
-        { defaultTitle: 'Equipment Card', item: { equipment: [], metadata: { semantics: { value: '' } } }, equipment: [], properties: [] }
+      return useModelStore().getSemanticModelElement(this.config.item, 'equipment') || {
+        defaultTitle: 'Equipment Card',
+        item: { equipment: [], metadata: { semantics: { value: '' } } },
+        equipment: [],
+        properties: []
+      }
     }
   },
   widget: () => {
     const widget = OhEquipmentCardParameters()
-    widget.props.parameters.find(p => p.name === 'item').options = store.state.semantics.Equipment.map(p => { return { name: p, label: store.state.semantics.Labels[p] } })
+    widget.props.parameters.find((p) => p.name === 'item').options =
+      useSemanticsStore().Equipment.map((p) => {
+        return { name: p, label: useSemanticsStore().Labels[p] }
+      })
     return widget
   }
 }

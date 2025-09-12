@@ -1,12 +1,13 @@
 import cardGroups from './homecards-grouping'
-import { mapState } from 'vuex'
+
+import { useModelStore } from '@/js/stores/useModelStore'
 
 export default {
-  computed: mapState({
-    model: state => state.model.semanticModel,
-    modelReady: state => state.model.semanticModel != null,
-    loopError: state => state.model.error
-  }),
+  computed: {
+    model: () => useModelStore(),
+    modelReady: () => useModelStore().ready,
+    loopError: () => useModelStore().error
+  },
   methods: {
     cardGroups (type, page) {
       return cardGroups(this.model, type, page)

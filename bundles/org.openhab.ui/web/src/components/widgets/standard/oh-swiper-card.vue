@@ -1,7 +1,7 @@
 <template>
   <oh-card :context="context" :content-class="['no-padding']">
     <template #content>
-      <oh-swiper :context="childContext(context.component)" v-on="$listeners" />
+      <oh-swiper v-bind="$attrs" :context="childContext(context.component)" />
     </template>
   </oh-card>
 </template>

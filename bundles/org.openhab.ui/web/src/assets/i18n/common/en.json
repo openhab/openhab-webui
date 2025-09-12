@@ -19,6 +19,7 @@
   "dialogs.search.things": "Search things",
   "dialogs.search.rules": "Search rules",
   "dialogs.search.nothingFound": "Nothing found",
+  "dialogs.search.persistence": "Search persistence",
   "home.overview.title": "Overview",
   "home.overview.tab": "Overview",
   "home.overview.button.documentation": "Documentation",

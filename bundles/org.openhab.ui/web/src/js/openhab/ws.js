@@ -1,4 +1,4 @@
-import Framework7 from 'framework7'
+import { utils } from 'framework7'
 import { getAccessToken } from './auth'
 
 /**
@@ -16,7 +16,7 @@ function heartbeatMessage (id) {
 }
 
 function arrayToSerialisedString (arr) {
-  return '[' + arr.map(e => '"' + e + '"').join(',') + ']'
+  return '[' + arr.map((e) => '"' + e + '"').join(',') + ']'
 }
 
 /**
@@ -74,7 +74,7 @@ function newWSConnection (path, messageCallback, readyCallback, errorCallback, h
   // Create a new WebSocket connection
   const socket = new WebSocket(path, [`org.openhab.ws.accessToken.base64.${encodedToken}`, 'org.openhab.ws.protocol.default'])
 
-  socket.id = 'ui-' + Framework7.utils.id()
+  socket.id = 'ui-' + utils.id()
 
   // Handle WebSocket connection opened
   socket.onopen = (event) => {

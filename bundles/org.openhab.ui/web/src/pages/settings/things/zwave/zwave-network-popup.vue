@@ -17,19 +17,20 @@
 </template>
 
 <script>
+import { defineAsyncComponent } from 'vue'
+
 export default {
-  props: ['bridgeUID'],
-  components: {
-    'zwave-network': () => import(/* webpackChunkName: "zwave-network" */ '@/components/thing/zwave/zwave-network.vue')
+  props: {
+    bridgeUID: String
   },
+  components: {
+    'zwave-network': defineAsyncComponent(() => import(/* webpackChunkName: "zwave-network" */ '@/components/thing/zwave/zwave-network.vue'))
+  },
+  emits: ['closed'],
   data () {
     return {
       showNetwork: false
     }
-  },
-  methods: {
-  },
-  computed: {
   }
 }
 </script>
