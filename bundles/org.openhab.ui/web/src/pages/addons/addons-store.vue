@@ -105,7 +105,7 @@
     </div>
 
     <f7-tabs v-show="ready && !searchResults" routable>
-      <f7-tab id="main" @tab-show="onTabShow">
+      <f7-tab id="main" @tab:show="onTabShow">
         <!-- Show Suggested Add-ons -->
         <addons-section
           v-for="section in Object.keys(SuggestionLabels)"
@@ -127,7 +127,7 @@
           :addons="installedAddons.filter((a) => a.type === section)" />
       </f7-tab>
 
-      <f7-tab id="binding" @tab-show="onTabShow">
+      <f7-tab id="binding" @tab:show="onTabShow">
         <addons-section v-if="suggestedAddons"
                         :show-all="true"
                         @addon-button-click="addonButtonClick"
@@ -151,7 +151,7 @@
                         :title="'Other Add-ons'" />
       </f7-tab>
 
-      <f7-tab id="automation" @tab-show="onTabShow">
+      <f7-tab id="automation" @tab:show="onTabShow">
         <addons-section v-if="addons"
                         @addon-button-click="addonButtonClick"
                         :addons="allAddons.filter((a) => a.type === 'automation' && a.contentType !== 'application/vnd.openhab.ruletemplate' && a.contentType !== 'application/vnd.openhab.uicomponent;type=blocks')"
@@ -174,7 +174,7 @@
           :subtitle="'Community extensions to the Blockly toolbox'" />
       </f7-tab>
 
-      <f7-tab id="ui" @tab-show="onTabShow">
+      <f7-tab id="ui" @tab:show="onTabShow">
         <addons-section v-if="addons && addons.marketplace"
                         @addon-button-click="addonButtonClick"
                         :addons="marketplaceAddons.filter((a) => a.type === 'ui' && a.contentType === 'application/vnd.openhab.uicomponent;type=widget')"
@@ -190,7 +190,7 @@
                         :subtitle="'Alternative user interfaces and icon sets'" />
       </f7-tab>
 
-      <f7-tab id="misc" @tab-show="onTabShow">
+      <f7-tab id="misc" @tab:show="onTabShow">
         <addons-section v-if="suggestedAddons"
                         :show-all="true"
                         @addon-button-click="addonButtonClick"
@@ -206,7 +206,7 @@
                         :subtitle="'Integrate openHAB with external systems'" />
       </f7-tab>
 
-      <f7-tab id="persistence" @tab-show="onTabShow">
+      <f7-tab id="persistence" @tab:show="onTabShow">
         <addons-section v-if="suggestedAddons"
                         :show-all="true"
                         @addon-button-click="addonButtonClick"
@@ -223,7 +223,7 @@
                         :subtitle="'Backend connectors to store historical data'" />
       </f7-tab>
 
-      <f7-tab id="transformation" @tab-show="onTabShow">
+      <f7-tab id="transformation" @tab:show="onTabShow">
         <addons-section v-if="suggestedAddons"
                         :show-all="true"
                         @addon-button-click="addonButtonClick"
@@ -240,7 +240,7 @@
                         :subtitle="'Translate raw values into processed or human-readable representations'" />
       </f7-tab>
 
-      <f7-tab id="voice" @tab-show="onTabShow">
+      <f7-tab id="voice" @tab:show="onTabShow">
         <addons-section v-if="suggestedAddons"
                         :show-all="true"
                         @addon-button-click="addonButtonClick"

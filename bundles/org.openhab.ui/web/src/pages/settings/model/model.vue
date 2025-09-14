@@ -124,7 +124,8 @@
                             :canDragDrop="true"
                             @selected="selectItem"
                             :selected="selectedItem"
-                            @reload="load" />
+                            @reload="load"
+                            @click.stop />
           </f7-block>
         </f7-col>
         <f7-col width="100" medium="50" class="details-pane">
