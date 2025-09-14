@@ -39,7 +39,8 @@
     "OLD:dev:blockly": "cross-env SOURCE_MAPS=1 NODE_ENV=development webpack-dev-server --config ./build/webpack.config.js",
     "OLD:build:prod": "cross-env NODE_ENV=production node ./build/build.js",
     "test:unit": "vitest run",
-    "test:unit:watch": "vitest - watch"
+    "test:unit:watch": "vitest - watch",
+    "postinstall": "patch-package"
   },
   "browserslist": [
     "Android >= 5",
@@ -84,6 +85,7 @@
     "dayjs": "^1.11.12",
     "debounce": "^1.2.1",
     "diacritic": "^0.0.2",
+    "dom7": "^4.0.6",
     "echarts": "^5.5.1",
     "esbuild": "^0.25.6",
     "escaper": "^3.0.6",
@@ -106,6 +108,7 @@
     "pinia": "^3.0.3",
     "pkce-challenge": "^3.1.0",
     "qrcode": "^1.5.4",
+    "scope-css": "^1.2.1",
     "slugify": "^1.6.6",
     "stream-browserify": "^3.0.0",
     "strip-css-comments": "^5.0.0",
@@ -114,7 +117,7 @@
     "uuid": "^11.1.0",
     "video.js": "^7.10.2",
     "vite": "^7.0.2",
-    "vue": "^3.5.18",
+    "vue": "^3.5.21",
     "vue-async-computed": "^4.0.1",
     "vue-codemirror": "^6.1.1",
     "vue-draggable-next": "^2.2.1",
@@ -170,6 +173,7 @@
     "npm": "^11.4.2",
     "npm-run-all2": "^8.0.4",
     "ora": "^8.2.0",
+    "patch-package": "^8.0.0",
     "postcss-loader": "^8.1.1",
     "postcss-preset-env": "^10.0.0",
     "prettier": "^3.6.2",

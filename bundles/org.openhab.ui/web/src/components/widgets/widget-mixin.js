@@ -3,7 +3,7 @@
 import { utils } from 'framework7'
 import { mapStores } from 'pinia'
 
-import scope from '@/js/scope-css'
+import scope from 'scope-css'
 import WidgetExpressionMixin from '@/components/widgets/widget-expression-mixin'
 
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
