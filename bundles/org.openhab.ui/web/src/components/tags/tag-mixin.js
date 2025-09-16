@@ -1,24 +1,23 @@
+import { useSemanticsStore } from '@/js/stores/useSemanticsStore'
+
 export default {
-  data () {
-    return {
-      semanticClasses: this.$store.getters.semanticClasses
-    }
-  },
   methods: {
     isSemanticTag (tag) {
-      return [this.semanticClasses.Locations,
-        this.semanticClasses.Equipment,
-        this.semanticClasses.Points,
-        this.semanticClasses.Properties].some((t) => t.indexOf(tag) >= 0)
+      return [
+        useSemanticsStore().Locations,
+        useSemanticsStore().Equipment,
+        useSemanticsStore().Points,
+        useSemanticsStore().Properties
+      ].some((t) => t.indexOf(tag) >= 0)
     },
     semanticType (tag) {
-      if (this.semanticClasses.Locations.indexOf(tag) >= 0) return 'Location'
-      if (this.semanticClasses.Equipment.indexOf(tag) >= 0) return 'Equipment'
-      if (this.semanticClasses.Points.indexOf(tag) >= 0) return 'Point'
+      if (useSemanticsStore().Locations.indexOf(tag) >= 0) return 'Location'
+      if (useSemanticsStore().Equipment.indexOf(tag) >= 0) return 'Equipment'
+      if (useSemanticsStore().Points.indexOf(tag) >= 0) return 'Point'
       return ''
     },
     isSemanticPropertyTag (tag) {
-      return (this.semanticClasses.Properties.indexOf(tag) >= 0)
+      return useSemanticsStore().Properties.indexOf(tag) >= 0
     }
   }
 }

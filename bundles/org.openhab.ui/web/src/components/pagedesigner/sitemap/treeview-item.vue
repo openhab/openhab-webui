@@ -5,13 +5,13 @@
                     :icon-f7="widgetTypeIcon()"
                     :textColor="iconColor"
                     :color="'blue'"
-                    :selected="selected && selected === widget"
+                    :selected="selected && selected === widget ? true : null"
                     :opened="!widget.closed"
                     :toggle="canHaveChildren"
                     @treeview:open="setWidgetClosed(false)"
                     @treeview:close="setWidgetClosed(true)"
                     @click="select">
-    <draggable :disabled="!dropAllowed(widget)"
+    <draggable :disabled="!dropAllowed(widget) ? true : null"
                :list="children"
                group="sitemap-treeview"
                animation="150"
@@ -24,8 +24,8 @@
                @start="onStart"
                @end="onEnd"
                :move="onMove">
-      <sitemap-treeview-item class="sitemap-treeview-item"
-                             v-for="(childwidget, idx) in children"
+      <sitemap-treeview-item v-for="(childwidget, idx) in children"
+                             class="sitemap-treeview-item"
                              :key="idx"
                              :includeItemName="includeItemName"
                              :widget="childwidget"
@@ -36,9 +36,11 @@
                              :sitemap="localSitemap"
                              :moveState="localMoveState" />
     </draggable>
-    <div slot="label" class="subtitle">
-      {{ subtitle() }}
-    </div>
+    <template #label>
+      <div class="subtitle">
+        {{ subtitle }}
+      </div>
+    </template>
   </f7-treeview-item>
 </template>
 
@@ -54,16 +56,25 @@
 
 <script>
 import SitemapMixin from '@/components/pagedesigner/sitemap/sitemap-mixin'
-import Draggable from 'vuedraggable'
+import { VueDraggableNext as Draggable } from 'vue-draggable-next'
 
 export default {
   name: 'sitemap-treeview-item',
   mixins: [SitemapMixin],
-  props: ['includeItemName', 'widget', 'parentWidget', 'itemsList', 'selected', 'sitemap', 'moveState'],
+  props: {
+    includeItemName: Boolean,
+    widget: Object,
+    parentWidget: Object,
+    itemsList: Array,
+    selected: Object,
+    sitemap: Object,
+    moveState: Object
+  },
   components: {
     Draggable,
     SitemapTreeviewItem: 'sitemap-treeview-item'
   },
+  emits: ['selected'],
   data () {
     return {
       localSitemap: this.sitemap ? this.sitemap : this.widget,
@@ -71,26 +82,22 @@ export default {
     }
   },
   methods: {
-    subtitle () {
-      return this.widgetTypeLabel() + this.widgetConfigDescription(this.includeItemName)
-    },
     select (event) {
       let self = this
-      let $ = self.$$
-      if ($(event.target).is('.treeview-toggle')) return
+      if (this.$$(event.target).is('.treeview-toggle')) return
       this.$emit('selected', [this.widget, this.parentWidget])
     },
     onStart (event) {
       console.debug('Drag start event:', event)
-      this.$set(this.localMoveState, 'moving', true)
-      this.$set(this.localMoveState, 'widget', this.widget.slots.widgets[event.oldIndex])
-      this.$set(this.localMoveState, 'newParent', this.parentWidget)
+      this.localMoveState.moving = true
+      this.localMoveState.widget = this.widget.slots.widgets[event.oldIndex]
+      this.localMoveState.newParent = this.parentWidget
     },
     onMove (event) {
       console.debug('Drag move event:', event)
       const newParent = event.relatedContext?.element?.parent
       if (newParent) {
-        this.$set(this.localMoveState, 'newParent', newParent)
+        this.localMoveState.newParent = newParent
       }
     },
     onEnd (event) {
@@ -98,24 +105,27 @@ export default {
       const widget = this.localMoveState.widget
       const parentWidget = this.localMoveState.newParent
       if (widget && parentWidget) {
-        this.$set(widget, 'parent', parentWidget)
+        widget.parent = parentWidget
       }
-      this.$set(this.localMoveState, 'moving', false)
-      this.$set(this.localMoveState, 'widget', null)
-      this.$set(this.localMoveState, 'newParent', null)
+      this.localMoveState.moving = false
+      this.localMoveState.widget = null
+      this.localMoveState.newParent = null
     },
     dropAllowed (widget) {
       if (!this.canAddChildren(widget)) return false
-      if (!this.localMoveState.widget || this.allowedWidgetTypes(widget).map(wt => wt.type).includes(this.localMoveState.widget.component)) {
+      if (!this.localMoveState.widget || this.allowedWidgetTypes(widget).map((wt) => wt.type).includes(this.localMoveState.widget.component)) {
         return true
       }
       return false
     },
     setWidgetClosed (closed) {
-      this.$set(this.widget, 'closed', closed)
+      this.widget.closed = closed
     }
   },
   computed: {
+    subtitle () {
+      return this.widgetTypeLabel() + this.widgetConfigDescription(this.includeItemName)
+    },
     iconColor () {
       return ''
     },

@@ -39,19 +39,21 @@
         :footer="(link.item.label) ? link.item.name : '\xa0'"
         :subtitle="getItemTypeAndMetaLabel(link.item)"
         :after="context.store[link.item.name] ? context.store[link.item.name].displayState || context.store[link.item.name].state : link.item.state">
-        <oh-icon v-if="link.item.category"
-                 slot="media"
-                 :icon="link.item.category"
-                 :state="link.item.type === 'Image' ? null : (context.store[link.item.name].state || link.item.state)"
-                 height="32"
-                 width="32" />
-        <span v-else slot="media" class="item-initial">{{ link.item.name[0] }}</span>
-        <f7-icon v-if="!link.item.editable"
-                 slot="after-title"
-                 f7="lock_fill"
-                 size="1rem"
-                 color="gray" />
-        <!-- <f7-button slot="after-start" color="blue" icon-f7="compose" icon-size="24px" :link="`${item.name}/edit`"></f7-button> -->
+        <template #media>
+          <oh-icon v-if="link.item.category"
+                   :icon="link.item.category"
+                   :state="link.item.type === 'Image' ? null : (context.store[link.item.name].state || link.item.state)"
+                   height="32"
+                   width="32" />
+          <span v-else class="item-initial">{{ link.item.name[0] }}</span>
+        </template>
+        <template #after-title>
+          <f7-icon v-if="!link.item.editable"
+                   f7="lock_fill"
+                   size="1rem"
+                   color="gray" />
+        </template>
+        <!-- <f7-button color="blue" icon-f7="compose" icon-size="24px" :link="`${item.name}/edit`"></f7-button> -->
       </f7-list-item>
     </f7-list-group>
     <f7-list-item class="searchbar-ignore"
@@ -59,23 +61,24 @@
                   color="blue"
                   subtitle="Add Link to Item..."
                   @click="addLink()">
-      <f7-icon slot="media"
-               color="green"
-               aurora="f7:plus_circle_fill"
-               ios="f7:plus_circle_fill"
-               md="material:control_point" />
+      <template #media>
+        <f7-icon color="green"
+                 aurora="f7:plus_circle_fill"
+                 ios="f7:plus_circle_fill"
+                 md="material:control_point" />
+      </template>
     </f7-list-item>
     <f7-list-button class="searchbar-ignore"
                     color="blue"
                     :title="thing.editable && (channelType.parameterGroups.length || channelType.parameters.length) ? 'Configure Channel' : 'Channel Details'"
                     @click="configureChannel()" />
-    <f7-list-button class="searchbar-ignore"
-                    v-if="extensible && thing.editable"
+    <f7-list-button v-if="extensible && thing.editable"
+                    class="searchbar-ignore"
                     color="blue"
                     title="Duplicate Channel"
                     @click="duplicateChannel()" />
-    <f7-list-button class="searchbar-ignore"
-                    v-if="extensible && thing.editable"
+    <f7-list-button v-if="extensible && thing.editable"
+                    class="searchbar-ignore"
                     color="red"
                     title="Remove Channel"
                     @click="removeChannel()" />
@@ -92,6 +95,8 @@
 </style>
 
 <script>
+import { f7 } from 'framework7-vue'
+
 import AddLinkPage from '@/pages/settings/things/link/link-add.vue'
 import ConfigureLinkPage from '@/pages/settings/things/link/link-edit.vue'
 import ConfigureChannelPage from '@/pages/settings/things/channel/channel-edit.vue'
@@ -101,7 +106,17 @@ import ItemMixin from '@/components/item/item-mixin'
 
 export default {
   mixins: [ItemMixin],
-  props: ['channelType', 'channelId', 'channel', 'thing', 'opened', 'extensible', 'context'],
+  props: {
+    channelType: Object,
+    channelId: String,
+    channel: Object,
+    thing: Object,
+    opened: Boolean,
+    extensible: Boolean,
+    context: Object,
+    f7router: Object
+  },
+  emits: ['channel-updated'],
   data () {
     return {
       ready: false,
@@ -137,7 +152,7 @@ export default {
       }
     },
     addLink () {
-      this.$f7router.navigate({
+      this.f7router.navigate({
         url: 'links/new',
         route: {
           component: AddLinkPage,
@@ -153,7 +168,7 @@ export default {
     },
     configureLink (link) {
       const path = 'links/' + link.itemName + '/' + this.channelId
-      this.$f7router.navigate({
+      this.f7router.navigate({
         url: path,
         route: {
           component: ConfigureLinkPage,
@@ -178,7 +193,7 @@ export default {
     configureChannel () {
       const self = this
       const path = 'channels/' + this.channelId + '/edit'
-      this.$f7router.navigate({
+      this.f7router.navigate({
         url: path,
         route: {
           component: ConfigureChannelPage,
@@ -193,7 +208,7 @@ export default {
               if (finalChannel) {
                 // replace the channel in-place
                 const idx = self.thing.channels.findIndex((c) => c.uid === finalChannel.uid)
-                self.$set(self.thing.channels, idx, finalChannel)
+                self.thing.channels[idx] = finalChannel
                 self.$emit('channel-updated', true)
               } else {
                 self.$emit('channel-updated', false)
@@ -213,7 +228,7 @@ export default {
     duplicateChannel () {
       const self = this
       const path = 'channels/' + this.channelId + '/edit'
-      this.$f7router.navigate({
+      this.f7router.navigate({
         url: path,
         route: {
           component: DuplicateChannelPage,
@@ -247,11 +262,11 @@ export default {
       const self = this
 
       if (this.links.length > 0) {
-        this.$f7.dialog.alert('Please unlink all items to the channel before removing it')
+        f7.dialog.alert('Please unlink all items to the channel before removing it')
         return
       }
 
-      this.$f7.dialog.confirm(
+      f7.dialog.confirm(
         `Are you sure you want to remove the ${self.channel.label} channel from ${this.thing.label}?`,
         'Remove channel',
         () => {

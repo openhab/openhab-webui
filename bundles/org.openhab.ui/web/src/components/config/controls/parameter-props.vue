@@ -5,10 +5,19 @@
 </template>
 
 <script>
+import { f7 } from 'framework7-vue'
+import { useComponentsStore } from '@/js/stores/useComponentsStore'
 import PropsEditorPopup from './props-editor-popup.vue'
 
 export default {
-  props: ['configDescription', 'value', 'parameters', 'configuration'],
+  props: {
+    configDescription: Object,
+    value: String,
+    parameters: Array,
+    configuration: Object,
+    f7router: Object
+  },
+  emits: ['input'],
   data () {
     return {
       propsSheetOpened: false,
@@ -27,14 +36,14 @@ export default {
     props () {
       if (!this.configureTarget) return null
       if (this.configureTarget.indexOf('page:') === 0) {
-        const page = this.$store.getters.page(this.configureTarget.substring(5))
+        const page = useComponentsStore().page(this.configureTarget.substring(5))
         if (!page) {
           console.warn('Page not found: ' + this.configureTarget)
           return
         }
         return page.props
       } else if (this.configureTarget.indexOf('widget:') === 0) {
-        const widget = this.$store.getters.widget(this.configureTarget.substring(7))
+        const widget = useComponentsStore().widget(this.configureTarget.substring(7))
         if (!widget) {
           console.warn('Widget not found: ' + this.configureTarget)
           return
@@ -59,7 +68,7 @@ export default {
         component: PropsEditorPopup
       }
 
-      this.$f7router.navigate({
+      this.f7router.navigate({
         url: 'configure-props',
         route: {
           path: 'configure-props',
@@ -72,9 +81,9 @@ export default {
         }
       })
 
-      this.$f7.once('propsEditorUpdate', this.updateProps)
-      this.$f7.once('propsEditorClosed', () => {
-        this.$f7.off('propsEditorUpdate', this.updateProps)
+      f7.once('propsEditorUpdate', this.updateProps)
+      f7.once('propsEditorClosed', () => {
+        f7.off('propsEditorUpdate', this.updateProps)
       })
     },
     propsSheetClosed () {

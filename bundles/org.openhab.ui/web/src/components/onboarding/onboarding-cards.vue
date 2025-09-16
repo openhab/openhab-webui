@@ -31,18 +31,12 @@
             </f7-link>
           </li>
           <li>
-            <f7-link
-              no-link-class
-              color="blue"
-              href="#">
+            <f7-link no-link-class color="blue" href="#">
               Design your home's conceptually with the semantic model builder and link the Things to Items
             </f7-link>
           </li>
           <li>
-            <f7-link
-              no-link-class
-              color="blue"
-              href="#">
+            <f7-link no-link-class color="blue" href="#">
               Connect to openHAB Cloud for remote access and integration with voice assistants
             </f7-link>
           </li>
@@ -58,11 +52,16 @@
 </template>
 
 <script>
+import { f7 } from 'framework7-vue'
+
 export default {
-  props: ['showSetup', 'showTasks'],
+  props: {
+    showSetup: Boolean,
+    showTasks: Boolean
+  },
   methods: {
     skipSetupWizard () {
-      this.$f7.dialog.confirm(
+      f7.dialog.confirm(
         'Are you sure? You currently only have a minimal set of features available and you will need to install all essential add-ons by hand!',
         'Skip Setup Wizard',
         () => {

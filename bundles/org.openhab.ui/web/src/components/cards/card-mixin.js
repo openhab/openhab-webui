@@ -1,8 +1,13 @@
 import mixin from '@/components/widgets/widget-mixin'
+import { f7 } from 'framework7-vue'
+import { utils } from 'framework7'
 
 export default {
   mixins: [mixin],
-  props: ['type', 'element'],
+  props: {
+    type: String,
+    element: Object
+  },
   data () {
     return {
       opened: false,
@@ -12,7 +17,7 @@ export default {
   mounted () {
     window.addEventListener('popstate', this.back)
   },
-  beforeDestroy () {
+  beforeUnmount () {
     window.removeEventListener('popstate', this.back)
   },
   computed: {
@@ -66,8 +71,8 @@ export default {
   },
   methods: {
     cardOpening () {
-      this.cardId = this.title + '-' + this.$f7.utils.id()
-      history.pushState({ cardId: this.cardId }, null, window.location.href.split('#card=')[0] + '#' + this.$f7.utils.serializeObject({ card: this.element.key }))
+      this.cardId = this.title + '-' + utils.id()
+      history.pushState({ cardId: this.cardId }, null, window.location.href.split('#card=')[0] + '#' + utils.serializeObject({ card: this.element.key }))
       setTimeout(() => { this.opened = true })
     },
     cardClosed () {
@@ -75,7 +80,7 @@ export default {
       this.opened = false
     },
     closeCard () {
-      setTimeout(() => { this.$f7.card.close(this.$refs.card.$el) }, 100)
+      setTimeout(() => { f7.card.close(this.$refs.card.$el) }, 100)
     },
     back (evt) {
       console.debug(evt.state)

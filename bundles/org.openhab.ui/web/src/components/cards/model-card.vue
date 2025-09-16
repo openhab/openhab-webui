@@ -4,7 +4,7 @@
            ref="card"
            class="model-card"
            :class="type + '-card'"
-           :animate="$f7.data.themeOptions.expandableCardAnimation !== 'disabled'"
+           :animate="uiOptionsStore.disableExpandableCardAnimation ? null : true"
            card-tablet-fullscreen
            @card:opened="cardOpening"
            @card:closed="cardClosed">
@@ -94,16 +94,21 @@
 @media (min-width: 768px)
   .model-card
     --card-offset calc(675px - 200px + var(--f7-safe-area-left) + var(--f7-safe-area-right))
-
 </style>
 
 <script>
+import { mapStores } from 'pinia'
 import CardMixin from './card-mixin'
+
+import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
 export default {
   mixins: [CardMixin],
-  props: ['headerHeight'],
-  methods: {
+  props: {
+    headerHeight: [String, Number]
+  },
+  computed: {
+    ...mapStores(useUIOptionsStore)
   },
   asyncComputed: {
     backgroundImageUrl () {

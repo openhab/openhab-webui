@@ -1,143 +1,81 @@
-import { lineIndent, findParent, findParentRoot, isConfig, isRuleSection } from './yaml-utils'
-import { filterPartialCompletions, addTooltipHandlers, getClassNamesForParameter } from './hint-utils'
+import { insertCompletionText } from '@codemirror/autocomplete'
+import { findParent, findParentRoot, isConfig, isRuleSection } from './yaml-utils'
+import { completionStart, hintBooleanValue, hintItems, hintParameterOptions, hintParameters } from './hint-utils'
 
-let itemsCache = null
+let moduleTypesCache = null
 
-function getModuleTypes (cm, section) {
-  if (cm.state['moduleTypes' + section]) return Promise.resolve(cm.state['moduleTypes' + section])
-  return cm.state.$oh.api.get('/rest/module-types' + ((section) ? '?type=' + section : '')).then((data) => {
-    cm.state['moduleTypes' + section] = data
-    return data
-  })
-}
-
-function hintItems (cm, line, replaceAfterColon, replaceAfterLastSpace, addColonSuffix) {
-  const cursor = cm.getCursor()
-  if (!cm.state.$oh) return
-  const promise = (itemsCache) ? Promise.resolve(itemsCache) : cm.state.$oh.api.get('/rest/items?staticDataOnly=true')
-  return promise.then((data) => {
-    if (!itemsCache) itemsCache = data
-    let ret = {
-      list: data.map((item) => {
-        return {
-          text: item.name + ((addColonSuffix ? ': ' : '')),
-          displayText: item.name,
-          description: `${(item.label) ? item.label + ' ' : ''}(${item.type})<br />${item.state}`
-        }
-      }).sort((i1, i2) => i1.text.localeCompare(i2.text))
-    }
-    ret.list = filterPartialCompletions(cm, line, ret.list)
-    if (replaceAfterColon) {
-      const colonPos = line.indexOf(':')
-      ret.from = { line: cursor.line, ch: colonPos + 2 }
-      ret.to = { line: cursor.line, ch: line.length }
-    }
-    if (replaceAfterLastSpace) {
-      const lastSpacePos = line.lastIndexOf(' ')
-      ret.from = { line: cursor.line, ch: lastSpacePos + 1 }
-      ret.to = { line: cursor.line, ch: line.length }
-    }
-    addTooltipHandlers(cm, ret)
-    return ret
-  })
-}
-
-function hintOptions (cm, line, parameter) {
-  const cursor = cm.getCursor()
-  const colonPos = line.indexOf(':')
-  let ret = {
-    list: parameter.options.map((o) => {
-      return {
-        text: o.value,
-        description: o.label || o.value
-      }
+function getModuleTypes (context, section) {
+  if (moduleTypesCache) return Promise.resolve(moduleTypesCache)
+  return context.view.$oh.api
+    .get('/rest/module-types' + (section ? '?type=' + section : ''))
+    .then((data) => {
+      moduleTypesCache = data
+      return data
     })
-  }
-  ret.list = filterPartialCompletions(cm, line, ret.list)
-  ret.from = { line: cursor.line, ch: colonPos + 2 }
-  ret.to = { line: cursor.line, ch: line.length }
-  addTooltipHandlers(cm, ret)
-  return ret
 }
 
-function findModuleType (cm) {
-  // FIXME: this function will assume the module type will appear directly after
-  // the configuration block, which will usually be the case but it's not guaranteed.
-  // It doesn't parse the YAML properly.
-  const cursor = cm.getCursor()
-  for (let l = cursor.line + 1; l < cm.doc.size; l++) {
-    const line = cm.getLine(l)
-    if (line.match(/^ {4}type: /)) {
-      return line.split(':')[1].trim()
+function findModuleType (context, line) {
+  const parentLine = findParent(context, line)
+  const grandParentLine = findParent(context, parentLine)
+  for (let l = grandParentLine.number + 1; l <= context.state.doc.lines; l++) {
+    const line = context.state.doc.line(l)
+    if (line.text.match(/^ {4}type: /)) {
+      return line.text.split(':')[1].trim()
     }
   }
 }
 
-function hintConfig (cm, line, parentLineNr) {
-  const cursor = cm.getCursor()
-  const moduleTypeUid = findModuleType(cm, cursor.line)
+function hintConfig (context, line, parentLine) {
+  const cursor = context.pos - line.from
+  const moduleTypeUid = findModuleType(context, line)
   console.debug(`hinting config for module type: ${moduleTypeUid}`)
-  // const indent = lineIndent(cm, parentLineNr)
   if (!moduleTypeUid) return
-  const sectionRootLineNr = findParentRoot(cm, parentLineNr)
-  const sectionRootLine = cm.getLine(sectionRootLineNr)
-  const section = sectionRootLine.replace('s:', '').trim()
+
+  const sectionRootLine = findParentRoot(context, parentLine)
+  const section = sectionRootLine.text.replace('s:', '').trim()
   console.debug(`section: ${section}`)
   if (!section) return
-  const colonPos = line.indexOf(':')
-  const afterColon = colonPos > 0 && cursor.ch > colonPos
-  return getModuleTypes(cm, section).then((moduleTypes) => {
+
+  const colonPos = line.text.indexOf(':')
+  const afterColon = colonPos > 0 && cursor > colonPos
+  return getModuleTypes(context, section).then((moduleTypes) => {
     const moduleType = moduleTypes.find((m) => m.uid === moduleTypeUid)
     if (!moduleType) return null
     const parameters = moduleType.configDescriptions
     if (afterColon) {
-      const parameterName = line.substring(0, colonPos).trim()
+      const parameterName = line.text.substring(0, colonPos).trim()
       const parameter = parameters.find((p) => p.name === parameterName)
       if (parameter) {
         if (parameter.type === 'BOOLEAN') {
-          if (line.endsWith('true') || line.endsWith('false')) return
-          return {
-            list: [{ text: 'true' }, { text: 'false' }],
-            from: { line: cursor.line, ch: colonPos + 2 },
-            to: { line: cursor.line, ch: line.length }
-          }
+          return hintBooleanValue(context, line, colonPos)
         } else if (parameter.context === 'item') {
-          return hintItems(cm, line, true)
+          return hintItems(context, { replaceAfterColon: true })
         } else if (parameter.options) {
-          return hintOptions(cm, line, parameter)
+          return hintParameterOptions(context, parameter, colonPos)
         }
       }
     } else {
       console.debug(moduleType)
-      let completions = parameters.map((p) => {
-        return {
-          text: p.name + ': ',
-          displayText: p.name,
-          description: p.description,
-          className: getClassNamesForParameter(p)
-        }
-      })
-      completions = filterPartialCompletions(cm, line, completions)
-      let ret = {
-        list: completions,
-        from: { line: cursor.line, ch: 6 },
-        to: { line: cursor.line, ch: line.length }
-      }
-      addTooltipHandlers(cm, ret, true)
-      return ret
+      return hintParameters(context, parameters, 6)
     }
   })
 }
 
-function buildModuleStructure (cm, moduleType) {
+function getNextId (view) {
   let nextId = 1
-  cm.doc.eachLine((l) => {
-    console.debug(l.text)
-    if (l.text.match(/^[ -]{4}id:/)) {
-      const id = parseInt(l.text.split(':')[1].replace('"', '').trim())
+  const lineIterator = view.state.doc.iterLines()
+  while (!lineIterator.next().done) {
+    const line = lineIterator.value
+    if (line.match(/^[ -]{4}id: /)) {
+      const id = parseInt(line.split(':')[1].replace('"', '').trim())
       if (id >= nextId) nextId = id + 1
     }
-  })
+  }
+  return nextId
+}
+
+function buildModuleStructure (view, moduleType) {
+  const nextId = getNextId(view)
   let ret = `  - inputs: {}\n    id: "${nextId}"\n`
   if (moduleType.configDescriptions.some((p) => p.required)) {
     ret += '    configuration:\n'
@@ -149,53 +87,47 @@ function buildModuleStructure (cm, moduleType) {
   return ret
 }
 
-function hintSceneItems (cm, line, parentNr) {
+function hintSceneItems (context) {
   console.info('hinting in the items section (scenes)')
-  return hintItems(cm, line, false, true, true)
+  return hintItems(context, { indent: 2, suffix: ': ' })
 }
 
-function hintModuleStructure (cm, line, parentLineNr) {
-  const cursor = cm.getCursor()
-  const section = cm.getLine(parentLineNr).replace('s:', '').trim()
+function hintModuleStructure (context, line, parentLine) {
+  const section = parentLine.text.replace('s:', '').trim()
   if (section === 'item') {
-    if (line.indexOf(':') < 0) return hintSceneItems(cm, line, parentLineNr)
+    if (!line.text.includes(':')) return hintSceneItems(context)
     return // todo: hint commands?
   }
-  return getModuleTypes(cm, section).then((moduleTypes) => {
-    let completions = moduleTypes.map((m) => {
-      return {
-        text: buildModuleStructure(cm, m),
-        displayText: `${section}: ${m.label}`,
-        description: m.uid
-      }
-    })
-    let ret = {
-      list: completions,
-      from: { line: cursor.line, ch: 0 },
-      to: { line: cursor.line, ch: cm.getLine(cursor.line).length }
+
+  const apply = (view, completion, _from, _to) => {
+    const insert = buildModuleStructure(view, completion.moduleType)
+    view.dispatch(insertCompletionText(view.state, insert, line.from, line.to))
+  }
+
+  return getModuleTypes(context, section).then((moduleTypes) => {
+    return {
+      from: completionStart(context),
+      validFor: /\w+/,
+      options: moduleTypes.map((m) => {
+        return {
+          label: `${section}: ${m.label}`,
+          info: m.uid,
+          moduleType: m,
+          apply
+        }
+      })
     }
-    ret.list = filterPartialCompletions(cm, line, ret.list)
-    addTooltipHandlers(cm, ret)
-    return ret
   })
 }
 
-export default function hint (cm, option, mode) {
-  const cursor = cm.getCursor()
-  const line = cm.getLine(cursor.line)
+export default function hint (context) {
+  const line = context.state.doc.lineAt(context.pos)
+  const parentLine = findParent(context, line)
+  console.debug('parent line', parentLine)
 
-  const parentLineNr = findParent(cm, cursor.line)
-  const parentLine = cm.getLine(parentLineNr)
-  console.debug(`parent line (${parentLineNr}): ${parentLine}`)
-
-  let ret
-  if (parentLine && isConfig(parentLine)) {
-    ret = hintConfig(cm, line, parentLineNr)
+  if (isConfig(parentLine)) {
+    return hintConfig(context, line, parentLine)
   } else if (isRuleSection(parentLine)) {
-    ret = hintModuleStructure(cm, line, parentLineNr)
+    return hintModuleStructure(context, line, parentLine)
   }
-
-  if (!(ret instanceof Promise)) addTooltipHandlers(cm, ret)
-
-  return ret
 }

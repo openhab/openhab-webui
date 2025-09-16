@@ -53,6 +53,8 @@
 import mixin from '../widget-mixin'
 import { OhRollershutterDefinition } from '@/assets/definitions/widgets/system'
 
+import { useStatesStore } from '@/js/stores/useStatesStore'
+
 export default {
   mixins: [mixin],
   widget: OhRollershutterDefinition,
@@ -80,13 +82,13 @@ export default {
   },
   methods: {
     up (value) {
-      this.$store.dispatch('sendCommand', { itemName: this.config.item, cmd: 'UP' })
+      useStatesStore().sendCommand(this.config.item, 'UP')
     },
     down (value) {
-      this.$store.dispatch('sendCommand', { itemName: this.config.item, cmd: 'DOWN' })
+      useStatesStore().sendCommand(this.config.item, 'DOWN')
     },
     stop (value) {
-      this.$store.dispatch('sendCommand', { itemName: this.config.item, cmd: 'STOP' })
+      useStatesStore().sendCommand(this.config.item, 'STOP')
     }
   }
 }

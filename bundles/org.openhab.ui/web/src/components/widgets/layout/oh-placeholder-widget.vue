@@ -22,3 +22,9 @@
     padding 3rem 0
     height calc(2*3rem + 50px)
 </style>
+
+<script>
+export default {
+  emits: ['click']
+}
+</script>

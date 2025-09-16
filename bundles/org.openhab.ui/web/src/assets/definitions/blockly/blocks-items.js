@@ -108,7 +108,7 @@ export default function (f7) {
       if (inputType === 'Array') {
         tagNames = tagNames.replace('[', '').replace(']', '')
       }
-      tagNames = tagNames.split(',').map(tagElement => tagElement.trim())
+      tagNames = tagNames.split(',').map((tagElement) => tagElement.trim())
       for (let i = 0; i < tagNames.length; i++) {
         if (i > 0) {
           tags += '\',\''

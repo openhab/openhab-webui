@@ -17,13 +17,14 @@
                      validate
                      pattern="[A-Za-z0-9_]+"
                      error-message="Required. A-Z,a-z,0-9,_ only"
-                     :disabled="!createMode">
-        <f7-link slot="inner"
-                 icon-f7="hammer_fill"
-                 style="margin-top: 4px; margin-left: 4px; margin-bottom: auto"
-                 tooltip="Fix ID"
-                 v-if="createMode && $refs.pageId?.state?.inputInvalid && page.uid.trim()"
-                 @click="$oh.utils.normalizeInput('#input')" />
+                     :disabled="!createMode ? true : null">
+        <template #inner>
+          <f7-link icon-f7="hammer_fill"
+                   style="margin-top: 4px; margin-left: 4px; margin-bottom: auto"
+                   tooltip="Fix ID"
+                   v-if="createMode && $refs.pageId?.state?.inputInvalid && page.uid.trim()"
+                   @click="$oh.utils.normalizeInput('#input')" />
+        </template>
       </f7-list-input>
       <f7-list-input label="Label"
                      type="text"
@@ -39,13 +40,13 @@
           <f7-list-item ref="pageVisibility"
                         title="Visible only to"
                         smart-select
-                        :smart-select-params="{openIn: 'popover'}">
+                        :smart-select-params="{ openIn: 'popover' }">
             <select name="pagevisibility" multiple @change="updatePageVisibility">
               <optgroup label="Roles">
-                <option value="role:administrator" :selected="isVisibleTo('role:administrator')">
+                <option value="role:administrator" :selected="isVisibleTo('role:administrator') ? true : null">
                   Administrators
                 </option>
-                <option value="role:user" :selected="isVisibleTo('role:user')">
+                <option value="role:user" :selected="isVisibleTo('role:user') ? true : null">
                   Users
                 </option>
               </optgroup>
@@ -53,7 +54,9 @@
           </f7-list-item>
           <f7-list inline-labels no-hairline-md>
             <f7-list-item title="Show on sidebar">
-              <f7-toggle slot="after" :checked="page.config.sidebar" @toggle:change="page.config.sidebar = $event" />
+              <template #after>
+                <f7-toggle :checked="page.config.sidebar ? true : null" @toggle:change="page.config.sidebar = $event" />
+              </template>
             </f7-list-item>
             <f7-list-input label="Sidebar order"
                            type="number"
@@ -79,7 +82,9 @@
     </f7-list>
     <template v-if="page.uid !== 'overview'">
       <f7-list inline-labels no-hairline-md>
-        <tag-input :item="page" />
+        <div>
+          <tag-input :item="page" />
+        </div>
       </f7-list>
       <f7-list v-if="!createMode" inline-labels no-hairline-md>
         <f7-list-button color="blue" @click="duplicatePage">
@@ -94,6 +99,8 @@
 </template>
 
 <script>
+import { f7 } from 'framework7-vue'
+
 import TagInput from '@/components/tags/tag-input.vue'
 import cloneDeep from 'lodash/cloneDeep'
 
@@ -101,7 +108,11 @@ export default {
   components: {
     TagInput
   },
-  props: ['page', 'createMode'],
+  props: {
+    page: Object,
+    createMode: Boolean,
+    f7router: Object
+  },
   data () {
     return {}
   },
@@ -110,12 +121,12 @@ export default {
       return Array.isArray(this.page.config.visibleTo) && this.page.config.visibleTo.indexOf(userrole) >= 0
     },
     updatePageVisibility (userrole) {
-      let value = this.$refs.pageVisibility.f7SmartSelect.getValue()
+      let value = this.$refs.pageVisibility.$el.children[0].f7SmartSelect.getValue()
       if (value && value.length === 0) {
-        this.$delete(this.page.config, 'visibleTo')
+        delete this.page.config.visibleTo
       } else {
-        this.$set(this.page.config, 'visibleTo', value)
-        this.$f7.toast.create({
+        this.page.config.visibleTo = value
+        f7.toast.create({
           text: 'Please be advised: the visibility restriction is not a security feature - items can be controlled by other means!',
           closeButton: true,
           destroyOnClose: true
@@ -126,23 +137,23 @@ export default {
       const pageClone = cloneDeep(this.page)
       const pageType = pageClone.component.replace(/^oh-|-page$/g, '')
       pageClone.uid = pageClone.uid + '_copy'
-      this.$f7router.navigate(`/settings/pages/${pageType}/add`, { props: { createMode: true, pageCopy: pageClone } })
+      this.f7router.navigate(`/settings/pages/${pageType}/add`, { props: { createMode: true, pageCopy: pageClone } })
     },
     deletePage () {
-      this.$f7.dialog.confirm(
+      f7.dialog.confirm(
         `Are you sure you want to delete ${this.page.uid}?`,
         'Delete Page',
         () => {
           this.$oh.api.delete('/rest/ui/components/ui:page/' + this.page.uid).then((data) => {
-            this.$f7.toast.create({
+            f7.toast.create({
               text: `Page '${this.page.uid}' deleted`,
               destroyOnClose: true,
               closeTimeout: 2000
             }).open()
-            this.$f7router.back('/settings/pages/', { force: true })
+            this.f7router.back('/settings/pages/', { force: true })
           }).catch((err) => {
             console.error(err)
-            this.$f7.dialog.alert('An error occurred while deleting: ' + err)
+            f7.dialog.alert('An error occurred while deleting: ' + err)
           })
         }
       )

@@ -3,7 +3,7 @@
     <f7-list-input
       :name="configDescription.name"
       :label="configDescription.label"
-      :floating-label="$theme.md"
+      :floating-label="theme.md"
       :min="(configDescription.options && configDescription.options.length) ? undefined : configDescription.min"
       :max="(configDescription.options && configDescription.options.length) ? undefined : configDescription.max"
       :step="step || ((configDescription.type === 'DECIMAL') ? 0.01 : undefined)"
@@ -18,8 +18,17 @@
 </template>
 
 <script>
+import { theme } from 'framework7-vue'
+
 export default {
-  props: ['configDescription', 'value'],
+  props: {
+    configDescription: Object,
+    value: [String, Number]
+  },
+  emits: ['input'],
+  setup () {
+    return { theme }
+  },
   computed: {
     actualValue () {
       return (this.configDescription.type === 'DECIMAL') ? parseFloat(this.value) : parseInt(this.value)

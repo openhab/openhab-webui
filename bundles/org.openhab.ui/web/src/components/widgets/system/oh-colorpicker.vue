@@ -17,8 +17,12 @@
 </template>
 
 <script>
+import { f7 } from 'framework7-vue'
+
 import mixin from '../widget-mixin'
 import { OhColorpickerDefinition } from '@/assets/definitions/widgets/system'
+
+import { useStatesStore } from '@/js/stores/useStatesStore'
 
 export default {
   mixins: [mixin],
@@ -38,7 +42,7 @@ export default {
       this.initColorPicker()
     }
   },
-  beforeDestroy () {
+  beforeUnmount () {
     if (this.colorPicker) {
       this.colorPicker.destroy()
     }
@@ -68,7 +72,7 @@ export default {
   methods: {
     initColorPicker () {
       const vm = this
-      this.colorPicker = this.$f7.colorPicker.create(Object.assign({}, this.config, {
+      this.colorPicker = f7.colorPicker.create(Object.assign({}, this.config, {
         containerEl: (!this.config.openIn) ? this.$refs.container : undefined,
         targetEl: (this.config.openIn) ? this.$refs.swatch : undefined,
         targetElSetBackgroundColor: true,
@@ -107,7 +111,7 @@ export default {
         if (!this.delayCommand) {
           this.delayCommand = true
           console.debug(state + ' -> ' + cmd)
-          this.$store.dispatch('sendCommand', { itemName: this.config.item, cmd, updateState: true })
+          useStatesStore().sendCommand(this.config.item, cmd, true)
           this.lastCommand = cmd
           setTimeout(() => {
             const pendingCommand = [...this.pendingCommand]

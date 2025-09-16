@@ -2,49 +2,62 @@
   <f7-list inline-labels no-hairlines-md>
     <f7-list-item :title="'Semantic ' + semanticValueTitle"
                   :after="semanticValue || 'None'"
-                  :disabled="!editable"
+                  :disabled="!editable ? true : null"
                   @click="openPopup('class')"
                   class="aligned-smart-select"
                   :link="editable" />
     <f7-list-item v-if="currentSemanticType === 'Point'"
                   title="Semantic Property"
                   :after="tagWithHierarchy(semanticProperty) || 'None'"
-                  :disabled="!editable"
+                  :disabled="!editable ? true : null"
                   @click="openPopup('property')"
                   class="aligned-smart-select"
                   :link="editable" />
-    <semantics-picker-popup
-      ref="classPopup"
-      :key="'semantics-class'"
-      v-if="popupType === 'class'"
-      :item="item"
-      :hideNone="hideNone"
-      classMode="true"
-      :semanticClass="semanticClass"
-      @changed="itemChanged"
-      @close="closePopup" />
-    <semantics-picker-popup
-      ref="propertyPopup"
-      :key="'semantics-property'"
-      v-if="popupType === 'property'"
-      :item="item"
-      :hideNone="hideNone"
-      propertyMode="true"
-      @changed="itemChanged"
-      :semanticProperty="semanticProperty"
-      @close="closePopup" />
+    <f7-list-group>
+      <semantics-picker-popup v-if="popupType === 'class'"
+                              ref="classPopup"
+                              :key="'semantics-class'"
+                              :item="item"
+                              :hideNone="hideNone"
+                              :classMode="true"
+                              :semanticClass="semanticClass"
+                              @changed="itemChanged"
+                              @close="closePopup" />
+      <semantics-picker-popup v-if="popupType === 'property'"
+                              ref="propertyPopup"
+                              :key="'semantics-property'"
+                              :item="item"
+                              :hideNone="hideNone"
+                              :propertyMode="true"
+                              @changed="itemChanged"
+                              :semanticProperty="semanticProperty"
+                              @close="closePopup" />
+    </f7-list-group>
   </f7-list>
 </template>
 
 <script>
+import { f7 } from 'framework7-vue'
+
 import TagMixin from '@/components/tags/tag-mixin'
 import SemanticsPickerPopup from '@/components/tags/semantics-picker-popup.vue'
 
+import { useSemanticsStore } from '@/js/stores/useSemanticsStore'
+
 export default {
   mixins: [TagMixin],
-  props: ['item', 'createMode', 'hideNone'],
+  props: {
+    item: Object,
+    createMode: Boolean,
+    hideNone: Boolean
+  },
   components: {
     SemanticsPickerPopup
+  },
+  setup () {
+    return {
+      f7
+    }
   },
   data () {
     return {
@@ -79,7 +92,7 @@ export default {
       this.$nextTick(() => {
         const popupRef = type === 'class' ? 'classPopup' : 'propertyPopup'
         const popupEl = this.$refs[popupRef]?.$el
-        if (popupEl) this.$f7.popup.open(popupEl)
+        if (popupEl) f7.popup.open(popupEl)
       })
     },
     closePopup () {
@@ -87,11 +100,11 @@ export default {
     },
     tagWithHierarchy (tag) {
       if (!tag) return null
-      let parentTagId = this.semanticClasses.Tags.find((t) => t.name === tag).parent
+      let parentTagId = useSemanticsStore().Tags.find((t) => t.name === tag).parent
       if (!parentTagId) return null // no parent tag, so this is the root class
       let value = tag
       while (parentTagId) {
-        const parentTag = this.semanticClasses.Tags.find((t) => t.uid === parentTagId)
+        const parentTag = useSemanticsStore().Tags.find((t) => t.uid === parentTagId)
         parentTagId = parentTag.parent
         if (parentTagId) {
           value = parentTag.name + '->' + value

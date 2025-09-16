@@ -14,11 +14,6 @@
         </f7-menu-dropdown>
       </f7-menu-item>
     </f7-menu>
-    <!-- <magic-grid v-if="config.flavor === 'magic-grid'" class="oh-magic-grid" :gap="16" :maxColWidth="300" :animate="false">
-      <template v-slot>
-        <generic-widget-component class="magic-grid-item" :context="childContext(slotComponent)" v-for="(slotComponent, idx) in context.component.slots.default" :key="idx" v-on="$listeners" />
-      </template>
-    </magic-grid> -->
     <div v-if="config.flavor === 'css-grid'" class="oh-masonry">
       <div v-for="(slotComponent, idx) in context.component.slots.default"
            :key="idx"
@@ -44,12 +39,14 @@
             </f7-menu-dropdown>
           </f7-menu-item>
         </f7-menu>
-        <generic-widget-component :context="childContext(slotComponent)" v-on="$listeners" />
+        <generic-widget-component v-bind="$attrs" :context="childContext(slotComponent)" />
       </div>
-      <oh-placeholder-widget v-if="context.editmode" class="oh-column-item placeholder" @click="context.editmode.addWidget(context.component, null, context.parent)" />
+      <oh-placeholder-widget v-if="context.editmode"
+                             class="oh-column-item placeholder"
+                             @click="context.editmode.addWidget(context.component, null, context.parent)" />
     </div>
-    <masonry v-else :cols="config.cols || {default: 5, 1400: 4, 1280: 3, 1023: 4, 768: 3, 576: 2, 480: 1}">
-      <div v-for="(slotComponent, idx) in context.component.slots.default" :key="idx" class="oh-masonry-item">
+    <MasonryGrid v-else :columns="config.cols || { default: 5, 1400: 4, 1280: 3, 1023: 4, 768: 3, 576: 2, 480: 1 } ">
+      <MasonryGridItem v-for="(slotComponent, idx) in context.component.slots.default" :key="idx">
         <f7-menu v-if="context.editmode" class="configure-layout-menu">
           <f7-menu-item style="margin-left: auto"
                         icon-f7="slider_horizontal_below_rectangle"
@@ -70,10 +67,12 @@
             </f7-menu-dropdown>
           </f7-menu-item>
         </f7-menu>
-        <generic-widget-component :context="childContext(slotComponent)" v-on="$listeners" />
-      </div>
-      <oh-placeholder-widget v-if="context.editmode" class="oh-column-item placeholder" @click="context.editmode.addWidget(context.component, null, context.parent)" />
-    </masonry>
+        <generic-widget-component v-bind="$attrs" :context="childContext(slotComponent)" />
+      </MasonryGridItem>
+      <MasonryGridItem v-if="context.editmode">
+        <oh-placeholder-widget class="oh-column-item placeholder" @click="context.editmode.addWidget(context.component, null, context.parent)" />
+      </MasonryGridItem>
+    </MasonryGrid>
   </div>
 </template>
 
@@ -81,11 +80,14 @@
 import mixin from '../widget-mixin'
 import OhPlaceholderWidget from './oh-placeholder-widget.vue'
 import { OhMasonryDefinition } from '@/assets/definitions/widgets/layout'
+import { MasonryGrid, MasonryGridItem } from '../../../components/vue3-masonry-css'
 
 export default {
   mixins: [mixin],
   components: {
-    OhPlaceholderWidget
+    OhPlaceholderWidget,
+    MasonryGrid,
+    MasonryGridItem
   },
   data () {
     return {
@@ -120,4 +122,7 @@ export default {
     &.placeholder
       width calc(100% - 16px)
 
+.menu
+  z-index 6000 !important
 </style>
+
