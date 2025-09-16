@@ -36,19 +36,19 @@ import javax.ws.rs.core.Response.Status;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.core.auth.Role;
+import org.openhab.core.hli.Card;
+import org.openhab.core.hli.CardRegistry;
+import org.openhab.core.hli.ChatReply;
+import org.openhab.core.hli.EnhancedHLIInterpreter;
 import org.openhab.core.io.rest.LocaleService;
 import org.openhab.core.io.rest.RESTConstants;
 import org.openhab.core.io.rest.RESTResource;
 import org.openhab.core.voice.VoiceManager;
 import org.openhab.core.voice.text.HumanLanguageInterpreter;
 import org.openhab.core.voice.text.InterpretationException;
-import org.openhab.ui.habot.card.Card;
-import org.openhab.ui.habot.card.internal.CardRegistry;
-import org.openhab.ui.habot.nlp.ChatReply;
 import org.openhab.ui.habot.nlp.ItemNamedAttribute;
 import org.openhab.ui.habot.nlp.ItemResolver;
 import org.openhab.ui.habot.nlp.internal.AnswerFormatter;
-import org.openhab.ui.habot.nlp.internal.OpenNLPInterpreter;
 import org.openhab.ui.habot.notification.internal.NotificationService;
 import org.openhab.ui.habot.notification.internal.webpush.Subscription;
 import org.osgi.service.component.annotations.Activate;
@@ -171,15 +171,19 @@ public class HABotResource implements RESTResource {
         ChatReply reply = new ChatReply(locale, query);
 
         try {
-            // Check if it's the special OpenNLP implementation with enhanced features
-            if (hli instanceof OpenNLPInterpreter opennlp) {
-                logger.debug("Using OpenNLP interpreter with enhanced features");
-                reply = opennlp.reply(locale, query);
+            if (hli instanceof EnhancedHLIInterpreter enhanced) {
+                logger.debug("Using enhanced HLI: {}", hli.getClass().getName());
+                ChatReply enhancedReply = enhanced.reply(locale, query);
+                if (enhancedReply == null) {
+                    throw new InterpretationException("Enhanced HLI returned null reply");
+                }
+                reply = enhancedReply;
             } else {
-                logger.debug("Using standard HLI: {} ({})", hli.getId(), hli.getLabel(locale));
+                logger.debug("HLI doesn't have an enhanced reply method, using the standard interpret instead");
                 String answer = hli.interpret(locale, query);
                 reply.setAnswer(answer);
             }
+
         } catch (InterpretationException e) {
             logger.error("Interpretation failed with HLI '{}': {}", hli.getId(), e.getMessage());
             throw e;
