@@ -108,6 +108,14 @@ export const actionParams = (groupName, paramPrefix) => {
       .v((value, configuration, configDescription, parameters) => {
         return ['photos'].indexOf(configuration[paramPrefix + 'action']) >= 0
       }),
+    pi(paramPrefix + 'actionPhotosRefreshSec', 'Photo Refresh Interval (seconds)', 'Number of seconds between automatic refreshes of the photos')
+      .v((value, configuration, configDescription, parameters) => {
+        return ['photos'].indexOf(configuration[paramPrefix + 'action']) >= 0
+      }),
+    pi(paramPrefix + 'actionPhotosRefreshMs', 'Photo Refresh Interval (milliseconds)', 'Number of milliseconds between automatic refreshes of the photos')
+      .v((value, configuration, configDescription, parameters) => {
+        return ['photos'].indexOf(configuration[paramPrefix + 'action']) >= 0
+      }),
     pi(paramPrefix + 'actionGroupPopupItem', 'Group Popup Item', 'Group Item whose members to show in a popup')
       .v((value, configuration, configDescription, parameters) => {
         return ['group'].indexOf(configuration[paramPrefix + 'action']) >= 0
