@@ -245,6 +245,7 @@ export default {
     },
     toggleAllChecks (checked) {
       this.thing.channels.forEach((c) => {
+        if (this.multipleLinksMode && c.kind === 'TRIGGER') return
         const channelType = this.channelTypesMap.get(c.channelTypeUID)
         if (!channelType) return
         if (channelType.advanced && !this.showAdvanced) return
