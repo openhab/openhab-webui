@@ -20,8 +20,8 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.core.i18n.LocaleProvider;
 import org.openhab.core.i18n.TranslationProvider;
 import org.openhab.core.library.types.StringType;
-import org.openhab.core.model.sitemap.sitemap.Video;
-import org.openhab.core.model.sitemap.sitemap.Widget;
+import org.openhab.core.sitemap.Video;
+import org.openhab.core.sitemap.Widget;
 import org.openhab.core.types.State;
 import org.openhab.core.ui.items.ItemUIRegistry;
 import org.openhab.ui.basic.render.RenderException;
@@ -36,6 +36,7 @@ import org.osgi.service.component.annotations.Reference;
  * can produce HTML code for Video widgets.
  *
  * @author Kai Kreuzer - Initial contribution and API
+ * @author Mark Herwege - Implement sitemap registry
  */
 @Component(service = WidgetRenderer.class)
 @NonNullByDefault
@@ -57,12 +58,12 @@ public class VideoRenderer extends AbstractWidgetRenderer {
     @Override
     public EList<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException {
         Video videoWidget = (Video) w;
+        String encoding = videoWidget.getEncoding();
 
         String widgetId = itemUIRegistry.getWidgetId(w);
 
         // we handle mjpeg streams as an html image as browser can usually handle this
-        String snippetName = (videoWidget.getEncoding() != null
-                && videoWidget.getEncoding().toLowerCase().contains("mjpeg")) ? "image" : "video";
+        String snippetName = (encoding != null && encoding.toLowerCase().contains("mjpeg")) ? "image" : "video";
 
         boolean showHeaderRow = w.getLabel() != null;
         String snippet = (("video".equals(snippetName) && showHeaderRow) ? getSnippet("header_row") : "")
@@ -97,7 +98,7 @@ public class VideoRenderer extends AbstractWidgetRenderer {
             snippet = snippet.replace("%url%", url);
         } else {
             String mediaType;
-            if (videoWidget.getEncoding() != null && videoWidget.getEncoding().toLowerCase().contains("hls")) {
+            if (encoding != null && encoding.toLowerCase().contains("hls")) {
                 // For HTTP Live Stream we don't proxy the URL and we set the appropriate media type
                 url = (state instanceof StringType) ? state.toString() : videoWidget.getUrl();
                 mediaType = "type=\"application/vnd.apple.mpegurl\"";
