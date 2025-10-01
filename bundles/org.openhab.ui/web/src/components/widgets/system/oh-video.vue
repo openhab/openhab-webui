@@ -6,16 +6,19 @@
       :stunServer="config.stunServer"
       :candidatesTimeout="config.candidatesTimeout"
       :startManually="config.startManually"
+      :startMuted="config.startMuted"
       :hideControls="config.hideControls"
-      :posterURL="config.posterURL" />
+      :posterURL="posterSrc"
+      :sendAudio="config.sendAudio" />
     <oh-video-videojs
       v-else
       :src="src"
       :type="config.type"
       :config="config.videoOptions"
+      :startMuted="config.startMuted"
       :startManually="config.startManually"
       :hideControls="config.hideControls"
-      :posterURL="config.posterURL" />
+      :posterURL="posterSrc" />
   </div>
 </template>
 
@@ -30,10 +33,14 @@ export default {
     'oh-video-videojs': () => import(/* webpackChunkName: "oh-video-videojs" */ './oh-video-videojs.vue'),
     'oh-video-webrtc': () => import(/* webpackChunkName: "oh-video-webrtc" */ './oh-video-webrtc.vue')
   },
+  props: {
+    sendAudio: { type: Boolean }
+  },
   data () {
     return {
       t: this.$utils.id(),
-      src: null
+      src: null,
+      posterSrc: null
     }
   },
   watch: {
@@ -59,6 +66,11 @@ export default {
     } else {
       this.src = this.config.url
     }
+    if (this.config.posterItem) {
+      this.loadPosterItemURL()
+    } else {
+      this.posterSrc = this.config.posterURL
+    }
   },
   methods: {
     loadItemURL () {
@@ -66,6 +78,13 @@ export default {
         .getPlain(`/rest/items/${this.config.item}/state`, 'text/plain')
         .then((data) => {
           this.src = data
+        })
+    },
+    loadPosterItemURL () {
+      this.$oh.api
+        .getPlain(`/rest/items/${this.config.posterItem}/state`, 'text/plain')
+        .then((data) => {
+          this.posterSrc = data
         })
     }
   }
