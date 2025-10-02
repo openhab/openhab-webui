@@ -16,8 +16,8 @@ import java.util.Collection;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.openhab.core.hli.Card;
 import org.openhab.core.items.Item;
-import org.openhab.ui.habot.card.Card;
 
 /**
  * A intent interpretation is the result of the interpretation of an {@link Intent} by a {@link Skill}.

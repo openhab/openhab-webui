@@ -22,6 +22,10 @@ import java.util.stream.Stream;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.openhab.core.hli.Card;
+import org.openhab.core.hli.CardRegistry;
+import org.openhab.core.hli.Component;
+import org.openhab.core.hli.Intent;
 import org.openhab.core.items.GroupItem;
 import org.openhab.core.items.Item;
 import org.openhab.core.items.Metadata;
@@ -32,8 +36,6 @@ import org.openhab.core.transform.TransformationException;
 import org.openhab.core.transform.TransformationHelper;
 import org.openhab.core.types.State;
 import org.openhab.core.types.StateDescription;
-import org.openhab.ui.habot.card.internal.CardRegistry;
-import org.openhab.ui.habot.nlp.Intent;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Reference;
 

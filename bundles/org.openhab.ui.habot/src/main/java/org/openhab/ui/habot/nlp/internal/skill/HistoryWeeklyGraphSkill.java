@@ -16,10 +16,10 @@ import java.util.Set;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.openhab.core.hli.Intent;
 import org.openhab.core.items.Item;
 import org.openhab.ui.habot.card.CardBuilder;
 import org.openhab.ui.habot.nlp.AbstractItemIntentInterpreter;
-import org.openhab.ui.habot.nlp.Intent;
 import org.openhab.ui.habot.nlp.IntentInterpretation;
 import org.openhab.ui.habot.nlp.ItemResolver;
 import org.openhab.ui.habot.nlp.Skill;
