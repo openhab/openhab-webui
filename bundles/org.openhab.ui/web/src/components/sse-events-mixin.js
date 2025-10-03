@@ -1,6 +1,10 @@
+import { f7 } from 'framework7-vue'
+
 import OhPopup from '@/components/widgets/modals/oh-popup.vue'
 import OhSheet from '@/components/widgets/modals/oh-sheet.vue'
 import OhPopover from '@/components/widgets/modals/oh-popover.vue'
+
+import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
 export default {
   data () {
@@ -16,7 +20,7 @@ export default {
       const commandItem = localStorage.getItem('openhab.ui:commandItem')
       const topicCommand = `openhab/items/${commandItem || ''}/command`
       let topics = null
-      if (localStorage.getItem('openhab.ui:webaudio.enable') === 'enabled') {
+      if (useUIOptionsStore().webAudio) {
         topics = topicAudio
       }
       if (commandItem) {
@@ -87,23 +91,23 @@ export default {
         if (audioContext.state !== 'suspended') return
         const b = document.body
         const events = ['touchstart', 'touchend', 'mousedown', 'keydown']
-        events.forEach(e => b.addEventListener(e, unlock, false))
+        events.forEach((e) => b.addEventListener(e, unlock, false))
         function unlock () { audioContext.resume().then(clean) }
-        function clean () { events.forEach(e => b.removeEventListener(e, unlock)) }
+        function clean () { events.forEach((e) => b.removeEventListener(e, unlock)) }
       }
     },
     closePopups () {
       const popupEl = this.$el.querySelector('.popup')
       if (popupEl) {
-        this.$f7.popup.close(popupEl)
+        f7.popup.close(popupEl)
       }
       const popoverEl = this.$el.querySelector('.popover')
       if (popoverEl) {
-        this.$f7.popover.close(popoverEl)
+        f7.popover.close(popoverEl)
       }
       const sheetEl = this.$el.querySelector('.sheet-modal')
       if (sheetEl) {
-        this.$f7.sheet.close(sheetEl)
+        f7.sheet.close(sheetEl)
       }
     },
     handleCommand (commandString) {
@@ -112,7 +116,7 @@ export default {
       const combined = segments.join(':')
       switch (command) {
         case 'navigate':
-          this.$f7.views.main.router.navigate(combined)
+          f7.views.main.router.navigate(combined)
           break
         case 'popup':
         case 'popover':
@@ -137,13 +141,13 @@ export default {
             }
           }
           this.closePopups()
-          this.$f7.views.main.router.navigate(modalRoute, modalProps)
+          f7.views.main.router.navigate(modalRoute, modalProps)
           break
         case 'close':
           this.closePopups()
           break
         case 'back':
-          this.$f7.views.main.router.back()
+          f7.views.main.router.back()
           break
         case 'reload':
           window.location.reload()
@@ -167,7 +171,7 @@ export default {
           if (segments.length > 4) {
             payload.closeTimeout = parseInt(segments[4])
           }
-          this.$f7.notification.create(payload).open()
+          f7.notification.create(payload).open()
           break
       }
     }

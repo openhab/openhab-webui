@@ -1,13 +1,15 @@
 <template>
-  <f7-popup @popup:open="onOpen" @popup:close="onClose">
+  <f7-popup @popup:open="onOpen">
     <f7-page class="analyzer-content disable-user-select">
-      <f7-navbar :title="(item) ? item.label || item.name : ''" :back-link="$t('dialogs.back')" />
-
+      <f7-navbar>
+        <f7-nav-left :back-link="$t('dialogs.back')" />
+        <f7-nav-title>{{ (item) ? item.label || item.name : '' }}</f7-nav-title>
+      </f7-navbar>
       <div class="group-item-control no-padding no-margin">
-        <generic-widget-component v-if="ready && groupControlContext" :context="groupControlContext" v-on="$listeners" />
+        <generic-widget-component v-if="ready && groupControlContext" v-bind="$attrs" :context="groupControlContext" />
       </div>
 
-      <generic-widget-component v-if="ready" :context="context" v-on="$listeners" />
+      <generic-widget-component v-if="ready" v-bind="$attrs" :context="context" />
     </f7-page>
   </f7-popup>
 </template>
@@ -22,8 +24,12 @@ import itemDefaultStandaloneComponent from '@/components/widgets/standard/defaul
 import itemDefaultListComponent from '@/components/widgets/standard/list/default-list-item'
 import { compareItems } from '@/components/widgets/widget-order'
 
+import { useStatesStore } from '@/js/stores/useStatesStore'
+
 export default {
-  props: ['groupItem'],
+  props: {
+    groupItem: String
+  },
   data () {
     return {
       item: null
@@ -35,7 +41,7 @@ export default {
 
       if (this.item.members && this.item.members.length > 0) {
         return {
-          store: this.$store.getters.trackedItems,
+          store: useStatesStore().trackedItems,
           component: {
             component: 'oh-list-card',
             config: {
@@ -58,7 +64,7 @@ export default {
         }
       } else {
         return {
-          store: this.$store.getters.trackedItems,
+          store: useStatesStore().trackedItems,
           component: itemDefaultStandaloneComponent(this.item)
         }
       }
@@ -72,7 +78,7 @@ export default {
       itemAsBaseType.groupType = undefined
 
       return {
-        store: this.$store.getters.trackedItems,
+        store: useStatesStore().trackedItems,
         component: itemDefaultStandaloneComponent(itemAsBaseType)
       }
     },
@@ -83,9 +89,6 @@ export default {
   methods: {
     onOpen () {
       this.load()
-    },
-    onClose () {
-
     },
     load () {
       this.$oh.api.get(`/rest/items/${this.groupItem}?metadata=semantics,widget,listWidget,widgetOrder`).then((data) => {

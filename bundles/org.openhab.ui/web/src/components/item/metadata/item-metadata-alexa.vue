@@ -1,23 +1,25 @@
 <template>
   <div v-if="ready">
-    <div style="text-align:right" class="padding-right" v-if="itemType !== 'Group' && editable">
-      <label @click="toggleMultiple" style="cursor:pointer">Multiple</label>
-      <f7-checkbox :checked="multiple" @change="toggleMultiple" />
+    <div v-if="itemType !== 'Group' && editable"
+         style="text-align: right"
+         class="padding-right">
+      <label @click="toggleMultiple" style="cursor: pointer">Multiple</label>
+      <f7-checkbox :checked="multiple ? true : null" @change="toggleMultiple" />
     </div>
     <f7-list>
       <f7-list-item
         :key="classSelectKey"
         :title="'Alexa Device Type' + (itemType !== 'Group' ? (!multiple ? '/Attribute' : '/Attributes') : '')"
-        :disabled="!editable"
+        :disabled="!editable ? true : null"
         smart-select
-        :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: !multiple, scrollToSelectedItem: true }"
+        :smart-select-params="{openIn: 'popup', searchbar: true, closeOnSelect: !multiple, scrollToSelectedItem: true}"
         ref="classes">
         <select v-if="itemType === 'Group'" name="classes" @change="updateClasses">
           <option value="" />
           <option v-for="cl in orderedClasses"
                   :value="cl"
                   :key="cl"
-                  :selected="isSelected(cl)">
+                  :selected="isSelected(cl) ? true : null">
             {{ cl }}
           </option>
         </select>
@@ -30,7 +32,7 @@
             <option v-for="cl in defaultClasses"
                     :value="cl"
                     :key="cl"
-                    :selected="isSelected(cl)">
+                    :selected="isSelected(cl) ? true : null">
               {{ cl }}
             </option>
           </optgroup>
@@ -38,8 +40,8 @@
             <option v-for="cl in specificClasses"
                     :value="cl"
                     :key="cl"
-                    :selected="isSelected(cl)"
-                    :disabled="isDefined(cl)">
+                    :selected="isSelected(cl) ? true : null"
+                    :disabled="isDefined(cl) ? true : null">
               {{ cl }}
             </option>
           </optgroup>
@@ -47,7 +49,7 @@
             <option v-for="cl in genericClasses"
                     :value="cl"
                     :key="cl"
-                    :selected="isSelected(cl)">
+                    :selected="isSelected(cl) ? true : null">
               {{ cl }}
             </option>
           </optgroup>
@@ -63,18 +65,17 @@
                     :configuration="metadata.config"
                     :read-only="!editable" />
     </div>
-    <f7-block class="padding-top no-padding no-margin" v-if="itemType === 'Group' && classes.length">
+    <f7-block v-if="itemType === 'Group' && classes.length" class="padding-top no-padding no-margin">
       <f7-block-title class="padding-left">
         Group Endpoint Capabilities
       </f7-block-title>
       <f7-list>
-        <f7-list-item
-          v-for="cap in groupCapabilities"
-          :title="cap.name + (cap.isIgnored ? ' (Ignored)' : '')"
-          :after="cap.item"
-          :key="`${cap.name}:${cap.item}`"
-          :disabled="cap.isIgnored || !editable"
-          :link="`/settings/items/${cap.item}/metadata/alexa`" />
+        <f7-list-item v-for="cap in groupCapabilities"
+                      :title="cap.name + (cap.isIgnored ? ' (Ignored)' : '')"
+                      :after="cap.item"
+                      :key="`${cap.name}:${cap.item}`"
+                      :disabled="cap.isIgnored || !editable ? true : null"
+                      :link="`/settings/items/${cap.item}/metadata/alexa`" />
       </f7-list>
       <f7-block-footer class="padding-left" v-if="!groupCapabilities.length">
         No direct group members of {{ item.name }} configured for Alexa
@@ -96,12 +97,20 @@
 </template>
 
 <script>
+import { utils } from 'framework7'
+
 import AlexaDefinitions from '@/assets/definitions/metadata/alexa'
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import ItemMetadataMixin from '@/components/item/metadata/item-metadata-mixin'
 
+import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+import { mapStores } from 'pinia'
+
 export default {
-  props: ['item', 'metadata'],
+  props: {
+    item: Object,
+    metadata: Object
+  },
   mixins: [ItemMetadataMixin],
   components: {
     ConfigSheet
@@ -111,8 +120,8 @@ export default {
       classesDefs: Object.keys(AlexaDefinitions),
       itemType: this.item.groupType || this.item.type,
       multiple: !!this.metadata.value && this.metadata.value.indexOf(',') > 0,
-      classSelectKey: this.$f7.utils.id(),
-      docUrl: `${this.$store.state.websiteUrl}/link/alexa`,
+      classSelectKey: utils.id(),
+      docUrl: `${useRuntimeStore().websiteUrl}/link/alexa`,
       ready: false
     }
   },
@@ -191,7 +200,8 @@ export default {
       } else {
         return `${this.docUrl}#device-types`
       }
-    }
+    },
+    ...mapStores(useRuntimeStore)
   },
   methods: {
     isSelected (cl) {
@@ -235,12 +245,12 @@ export default {
     toggleMultiple () {
       this.multiple = !this.multiple
       if (this.metadata.value.indexOf(',') > 0) this.metadata.value = ''
-      this.classSelectKey = this.$f7.utils.id()
+      this.classSelectKey = utils.id()
     },
     updateClasses () {
-      const value = this.$refs.classes.f7SmartSelect.getValue()
+      const value = this.$refs.classes.$el.children[0].f7SmartSelect.getValue()
       this.metadata.value = (Array.isArray(value)) ? value.join(',') : value
-      this.$set(this.metadata, 'config', {})
+      this.metadata.config = {}
     }
   }
 }

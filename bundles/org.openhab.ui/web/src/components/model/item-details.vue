@@ -75,18 +75,25 @@
 </template>
 
 <script>
+import { f7 } from 'framework7-vue'
+
 import Item from '@/components/item/item.vue'
 import ItemForm from '@/components/item/item-form.vue'
-
 import ItemMixin from '@/components/item/item-mixin'
 
 export default {
   mixins: [ItemMixin],
-  props: ['model', 'links', 'items', 'context'],
+  props: {
+    model: Object,
+    links: Array,
+    items: Array,
+    context: Object
+  },
   components: {
     Item,
     ItemForm
   },
+  emits: ['item-created', 'item-removed', 'cancel-create', 'item-updated'],
   data () {
     return {
       editMode: false,
@@ -121,7 +128,7 @@ export default {
       this.createMode = false
       this.forceSemantics = false
       if (this.model.item.created === false) {
-        this.$set(this, 'editedItem', Object.assign({}, this.model.item))
+        this.editedItem = Object.assign({}, this.model.item)
         this.createMode = true
         if (this.model.item.metadata && this.model.item.metadata.semantics) {
           this.forceSemantics = true
@@ -131,14 +138,14 @@ export default {
     save () {
       this.editMode = false
       this.saveItem(this.editedItem).then(() => {
-        this.$f7.toast.create({
+        f7.toast.create({
           text: 'Item updated',
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
         this.$emit('item-updated', this.editedItem)
       }).catch((err) => {
-        this.$f7.toast.create({
+        f7.toast.create({
           text: 'Item not saved: ' + err,
           destroyOnClose: true,
           closeTimeout: 2000
@@ -152,18 +159,18 @@ export default {
       if (!this.editedItem.name) return
 
       this.saveItem(this.editedItem).then(() => {
-        this.$f7.toast.create({
+        f7.toast.create({
           text: 'Item created',
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
-        this.$set(this.model, 'item', this.editedItem)
+        this.model.item = this.editedItem
         this.model.item.created = true
         this.model.item.editable = true
         this.$emit('item-created', this.model.item)
         this.onModelChange()
       }).catch((err) => {
-        this.$f7.toast.create({
+        f7.toast.create({
           text: 'Item not saved: ' + err,
           destroyOnClose: true,
           closeTimeout: 2000
@@ -173,7 +180,7 @@ export default {
     remove () {
       const vm = this
 
-      this.$f7.dialog.confirm(
+      f7.dialog.confirm(
         'Remove ' + this.model.item.name + '?',
         'Remove Item',
         () => {
@@ -185,7 +192,7 @@ export default {
       this.editMode = false
 
       this.$oh.api.delete('/rest/items/' + this.model.item.name).then((data) => {
-        this.$f7.toast.create({
+        f7.toast.create({
           text: 'Item removed',
           destroyOnClose: true,
           closeTimeout: 2000
@@ -195,7 +202,7 @@ export default {
         this.$emit('item-removed', this.model.item)
         this.onModelChange()
       }).catch((err) => {
-        this.$f7.toast.create({
+        f7.toast.create({
           text: 'Item not removed: ' + err,
           destroyOnClose: true,
           closeTimeout: 2000
@@ -204,7 +211,7 @@ export default {
     },
     edit () {
       this.editMode = true
-      this.$set(this, 'editedItem', Object.assign({}, this.model.item))
+      this.editedItem = Object.assign({}, this.model.item)
     },
     cancel () {
       if (this.createMode) {
@@ -212,7 +219,7 @@ export default {
       }
       this.createMode = false
       this.editMode = false
-      this.$set(this, 'editedItem', {})
+      this.editedItem = {}
     }
   },
   watch: {

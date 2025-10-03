@@ -6,7 +6,11 @@
 import itemDefaultStandaloneComponent from '@/components/widgets/standard/default-standalone-item'
 
 export default {
-  props: ['item', 'context', 'noBorder'],
+  props: {
+    item: Object,
+    context: Object,
+    noBorder: Boolean
+  },
   data () {
     return {
       vars: {}

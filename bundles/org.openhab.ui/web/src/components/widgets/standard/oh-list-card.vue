@@ -1,7 +1,7 @@
 <template>
   <oh-card :context="context">
     <template #content>
-      <oh-list :context="childContext(context.component)" v-on="$listeners" />
+      <oh-list v-bind="$attrs" :context="childContext(context.component)" />
     </template>
   </oh-card>
 </template>

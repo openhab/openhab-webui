@@ -42,7 +42,7 @@ export default {
   mounted () {
     this.createPlayer()
   },
-  beforeDestroy () {
+  beforeUnmount () {
     if (this.player) {
       this.player.dispose()
     }

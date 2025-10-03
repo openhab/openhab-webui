@@ -23,15 +23,16 @@
                  :key="idx"
                  @click="switchTab(idx)"
                  :tab-link-active="currentTab === idx"
-                 class="tab-link">
+                 :tab-link="'#tab-' + idx">
           {{ idx }}
         </f7-link>
-        <f7-link @click="addComponentToSlot" icon-f7="plus_filled" class="tab-link" />
-        <!-- <f7-link @click="currentTab = 'config'" :tab-link-active="currentTab === 'config'" class="tab-link">Config</f7-link>
-        <f7-link @click="currentTab = 'channels'" :tab-link-active="currentTab === 'channels'" class="tab-link">Channels</f7-link> -->
+        <f7-link @click="addComponentToSlot" icon-f7="plus_filled" />
       </f7-toolbar>
       <f7-tabs>
-        <f7-tab v-for="(slotComponent, idx) in slotConfig" :key="idx" :tab-active="currentTab === idx">
+        <f7-tab v-for="(slotComponent, idx) in slotConfig"
+                :id="'tab-' + idx"
+                :key="idx"
+                :tab-active="currentTab === idx">
           <config-sheet v-if="currentTab === idx && getWidgetDefinition(slotComponent.component)"
                         :parameterGroups="getWidgetDefinition(slotComponent.component).props.parameterGroups || []"
                         :parameters="getWidgetDefinition(slotComponent.component).props.parameters || []"
@@ -61,10 +62,22 @@
 </style>
 
 <script>
+import { f7 } from 'framework7-vue'
+import { nextTick } from 'vue'
+
 import ConfigSheet from '@/components/config/config-sheet.vue'
 
 export default {
-  props: ['currentSlot', 'slotConfig', 'getWidgetDefinition', 'currentSlotDefaultComponentType', 'initialConfig', 'removeComponentFromSlot', 'editWidgetCode'],
+  props: {
+    currentSlot: String,
+    slotConfig: Array,
+    getWidgetDefinition: Function,
+    currentSlotDefaultComponentType: String,
+    initialConfig: Object,
+    removeComponentFromSlot: Function,
+    editWidgetCode: Function
+  },
+  emits: ['widgetSlotConfigClosed', 'widgetSlotConfigUpdate'],
   components: {
     ConfigSheet
   },
@@ -77,15 +90,15 @@ export default {
   methods: {
     switchTab (idx) {
       this.currentTab = undefined
-      this.$nextTick(() => { this.currentTab = idx })
+      nextTick(() => { this.currentTab = idx })
     },
     widgetSlotConfigOpened () {
     },
     widgetSlotConfigClosed () {
-      this.$f7.emit('widgetSlotConfigClosed')
+      f7.emit('widgetSlotConfigClosed')
     },
     updateWidgetSlotConfig () {
-      this.$f7.emit('widgetSlotConfigUpdate', this.slotConfig)
+      f7.emit('widgetSlotConfigUpdate', this.slotConfig)
     },
     addComponentToSlot () {
       this.slotConfig.push({ component: this.currentSlotDefaultComponentType, config: Object.assign({}, this.initialConfig) })

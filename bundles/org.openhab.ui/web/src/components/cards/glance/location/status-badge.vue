@@ -59,7 +59,13 @@ import { findEquipment, allEquipmentPoints, findPoints } from '../glance-helpers
 import expr from 'jse-eval'
 
 export default {
-  props: ['element', 'type', 'badgeOverrides', 'invertColor', 'store'],
+  props: {
+    element: Object,
+    type: String,
+    badgeOverrides: Object,
+    invertColor: Boolean,
+    store: Object
+  },
   data () {
     return {
       badgeConfigs: {
@@ -105,7 +111,7 @@ export default {
           allPoints = allEquipmentPoints(equipment)
           points = findPoints(allPoints, 'Point', true, 'Property_Opening', true)
           if (points.length) return points
-          return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
+          return equipment.filter((e) => e.points.length === 0)
         case 'doors':
           equipment = [
             ...findEquipment(this.element.equipment, 'Equipment_Door', false),
@@ -119,21 +125,21 @@ export default {
           allPoints = allEquipmentPoints(equipment)
           points = findPoints(allPoints, 'Point', true, 'Property_Opening', true)
           if (points.length) return points
-          return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
+          return equipment.filter((e) => e.points.length === 0)
         case 'garagedoors':
           equipment = findEquipment(this.element.equipment, 'Equipment_Door_GarageDoor', false)
           if (!equipment.length) return []
           allPoints = allEquipmentPoints(equipment)
           points = findPoints(allPoints, 'Point', true, 'Property_Opening', true)
           if (points.length) return points
-          return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
+          return equipment.filter((e) => e.points.length === 0)
         case 'blinds':
           equipment = findEquipment(this.element.equipment, 'Equipment_WindowCovering', true)
           if (!equipment.length) return []
           allPoints = allEquipmentPoints(equipment)
           points = findPoints(allPoints, 'Point', true, 'Property_Opening', true)
           if (points.length) return points
-          return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
+          return equipment.filter((e) => e.points.length === 0)
         case 'presence':
           direct = [
             ...findPoints(this.element.properties, 'Point', true, 'Property_Presence'),
@@ -150,7 +156,7 @@ export default {
           allPoints = allEquipmentPoints(equipment)
           points = findPoints(allPoints, 'Point', true, 'Property_Opening', true)
           if (points.length) return points
-          return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
+          return equipment.filter((e) => e.points.length === 0)
         case 'climate':
           equipment = findEquipment(this.element.equipment, 'Equipment_HVAC', true)
           if (!equipment.length) return []
@@ -160,7 +166,7 @@ export default {
             ...findPoints(allPoints, 'Point_Control', true, 'Property_Power')
           ]
           if (points.length) return points
-          return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
+          return equipment.filter((e) => e.points.length === 0)
         case 'screens':
           equipment = [
             ...findEquipment(this.element.equipment, 'Equipment_AudioVisual_Display', false),
@@ -174,7 +180,7 @@ export default {
             ...findPoints(allPoints, 'Point_Control', true, 'Property_Power')
           ]
           if (points.length) return points
-          return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
+          return equipment.filter((e) => e.points.length === 0)
         case 'speakers':
           equipment = [
             ...findEquipment(this.element.equipment, 'Equipment_AudioVisual_Receiver', false),
@@ -189,7 +195,7 @@ export default {
             ...findPoints(allPoints, 'Point_Control', true, 'Property_Power')
           ]
           if (points.length) return points
-          return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
+          return equipment.filter((e) => e.points.length === 0)
         case 'projectors':
           equipment = findEquipment(this.element.equipment, 'Equipment_AudioVisual_Display_Projector', false)
           if (!equipment.length) return []
@@ -199,7 +205,7 @@ export default {
             ...findPoints(allPoints, 'Point_Control', true, 'Property_Power')
           ]
           if (points.length) return points
-          return equipment.filter((e) => e.points.length === 0).map((e) => e.item)
+          return equipment.filter((e) => e.points.length === 0)
         case 'alarms':
           direct = findPoints(this.element.properties, 'Point_Alarm', true)
           if (direct.length) return direct
@@ -252,7 +258,7 @@ export default {
         return []
       }).flat())
       // Also include equipment items that have no points themselves
-      points.push(...equipment.filter((e) => e.points.length === 0).map((e) => e.item))
+      points.push(...equipment.filter((e) => e.points.length === 0))
       return points
     }
   },

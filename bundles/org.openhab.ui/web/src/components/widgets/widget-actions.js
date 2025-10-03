@@ -1,9 +1,13 @@
+import { f7 } from 'framework7-vue'
+
 import OhPopup from './modals/oh-popup.vue'
 import OhSheet from './modals/oh-sheet.vue'
 import OhPopover from './modals/oh-popover.vue'
 
 import GroupPopup from '@/pages/group/group-popup.vue'
 import variableMixin from './variable-mixin'
+
+import { useStatesStore } from '@/js/stores/useStatesStore'
 
 export const actionsMixin = {
   mixins: [variableMixin],
@@ -18,13 +22,13 @@ export const actionsMixin = {
       let toastConfig = feedbackConfig || actionConfig[prefix + 'actionFeedback']
       if (typeof toastConfig === 'string' && toastConfig.startsWith('{')) toastConfig = JSON.parse(toastConfig)
       if (typeof toastConfig === 'string') {
-        this.$f7.toast.create({
+        f7.toast.create({
           text: toastConfig,
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
       } else if (typeof toastConfig === 'object') {
-        this.$f7.toast.create(Object.assign({}, toastConfig, {
+        f7.toast.create(Object.assign({}, toastConfig, {
           destroyOnClose: true,
           closeTimeout: (toastConfig.icon || !toastConfig.closeButton) ? 2000 : toastConfig.closeTimeout
         })).open()
@@ -35,12 +39,12 @@ export const actionsMixin = {
       if (typeof confirmConfig === 'string' && confirmConfig.startsWith('{')) confirmConfig = JSON.parse(confirmConfig)
       if (typeof confirmConfig === 'string') {
         return new Promise((resolve, reject) => {
-          this.$f7.dialog.confirm(confirmConfig, () => resolve(), () => reject()).open()
+          f7.dialog.confirm(confirmConfig, () => resolve(), () => reject()).open()
         })
       } else if (typeof confirmConfig === 'object') {
         if (confirmConfig.type === 'sheet') {
           return new Promise((resolve, reject) => {
-            this.$f7.actions.create({
+            f7.actions.create({
               buttons: [
                 [{ text: confirmConfig.text, color: confirmConfig.color || 'blue', onClick: () => resolve() }],
                 [{ text: this.$t('dialogs.cancel'), color: 'red', onClick: () => reject() }]
@@ -49,7 +53,7 @@ export const actionsMixin = {
           })
         } // else use dialog
         return new Promise((resolve, reject) => {
-          this.$f7.dialog.confirm(confirmConfig.text, confirmConfig.title || 'openHAB', () => resolve(), () => reject()).open()
+          f7.dialog.confirm(confirmConfig.text, confirmConfig.title || 'openHAB', () => resolve(), () => reject()).open()
         })
       }
       return Promise.resolve()
@@ -104,12 +108,12 @@ export const actionsMixin = {
             let navigateOptions = { props: { deep: true } }
             if (actionPageTransition) navigateOptions.transition = actionPageTransition
             if (actionPageVars) navigateOptions.props.defineVars = actionPageVars
-            this.$f7.views.main.router.navigate('/page/' + actionPage.substring(5), navigateOptions)
+            f7.views.main.router.navigate('/page/' + actionPage.substring(5), navigateOptions)
             break
           case 'command':
             const actionItem = actionConfig[prefix + 'actionItem']
             const actionCommand = actionConfig[prefix + 'actionCommand']
-            this.$store.dispatch('sendCommand', { itemName: actionItem, cmd: actionCommand })
+            useStatesStore().sendCommand(actionItem, actionCommand)
               .then(() => this.showActionFeedback(prefix, actionConfig))
             break
           case 'toggle':
@@ -123,7 +127,7 @@ export const actionsMixin = {
             if (actionToggleCommand === 'ON' && state.split(',').length === 3 && parseInt(state.split(',')[2]) > 0) cmd = actionToggleCommandAlt
             if (actionToggleCommand === 'OFF' && state.indexOf(',') < 0 && parseInt(state) === 0) cmd = actionToggleCommandAlt
             if (actionToggleCommand === 'ON' && state.indexOf(',') < 0 && parseInt(state) > 0) cmd = actionToggleCommandAlt
-            this.$store.dispatch('sendCommand', { itemName: actionToggleItem, cmd })
+            useStatesStore().sendCommand(actionToggleItem, cmd)
               .then(() => this.showActionFeedback(prefix, actionConfig))
             break
           case 'options':
@@ -153,7 +157,7 @@ export const actionsMixin = {
                     text: label || cmd,
                     color: 'blue',
                     onClick: () => {
-                      this.$store.dispatch('sendCommand', { itemName: actionCommandOptionsItem, cmd })
+                      useStatesStore().sendCommand(actionCommandOptionsItem, cmd)
                         .then(() => this.showActionFeedback(prefix, actionConfig))
                     }
                   }
@@ -168,7 +172,7 @@ export const actionsMixin = {
                         text: cd.label || cd.command,
                         color: 'blue',
                         onClick: () => {
-                          this.$store.dispatch('sendCommand', { itemName: actionCommandOptionsItem, cmd: cd.command })
+                          useStatesStore().sendCommand(actionCommandOptionsItem, cd.command)
                             .then(() => this.showActionFeedback(prefix, actionConfig))
                         }
                       }
@@ -179,11 +183,8 @@ export const actionsMixin = {
             })
 
             actionsPromise.then((actions) => {
-              this.$f7.actions.create({
-                buttons: [
-                  actions,
-                  [{ text: this.$t('dialogs.cancel'), color: 'red' }]
-                ]
+              f7.actions.create({
+                buttons: [actions, [{ text: this.$t('dialogs.cancel'), color: 'red' }]]
               }).open()
             })
             break
@@ -195,7 +196,7 @@ export const actionsMixin = {
             this.$oh.api.postPlain('/rest/rules/' + actionRule + '/runnow', actionRuleContext || '', 'text/plain', 'application/json')
               .then(() => this.showActionFeedback(prefix, actionConfig))
               .catch((err) => {
-                this.$f7.toast.create({
+                f7.toast.create({
                   text: 'Error while running rule: ' + err,
                   destroyOnClose: true,
                   closeTimeout: 2000
@@ -228,10 +229,9 @@ export const actionsMixin = {
                 modalConfig: actionModalConfig || {}
               }
             }
-            this.$f7.views.main.router.navigate(modalRoute, modalProps)
+            f7.views.main.router.navigate(modalRoute, modalProps)
             break
           case 'photos':
-            const self = this
             let photos = actionConfig[prefix + 'actionPhotos']
             let photoBrowserConfig = actionConfig[prefix + 'actionPhotoBrowserConfig']
             if (typeof photos === 'string' && photos.startsWith('[')) photos = JSON.parse(photos)
@@ -242,7 +242,7 @@ export const actionsMixin = {
                 if (typeof el === 'object') {
                   if (el.item) {
                     return new Promise((resolve, reject) => {
-                      self.$oh.api.getPlain(`/rest/items/${el.item}/state`, 'text/plain').then((data) => {
+                      this.$oh.api.getPlain(`/rest/items/${el.item}/state`, 'text/plain').then((data) => {
                         resolve({
                           url: data,
                           caption: el.caption
@@ -262,8 +262,8 @@ export const actionsMixin = {
               Promise.all(promises).then((resolvedPhotos) => {
                 let photoBrowserParams = Object.assign({}, photoBrowserConfig, { photos: resolvedPhotos })
                 // automatically select the dark theme if not specified
-                if (!photoBrowserParams.theme && self.$f7.darkTheme) photoBrowserParams.theme = 'dark'
-                self.$f7.photoBrowser.create(photoBrowserParams).open()
+                if (!photoBrowserParams.theme && f7.darkTheme) photoBrowserParams.theme = 'dark'
+                f7.photoBrowser.create(photoBrowserParams).open()
               })
             }
             break
@@ -278,7 +278,7 @@ export const actionsMixin = {
                 }
               }
             }
-            this.$f7.views.main.router.navigate(groupPopupRoute, { props: { groupItem: actionGroupItem } })
+            f7.views.main.router.navigate(groupPopupRoute, { props: { groupItem: actionGroupItem } })
             break
           case 'analyze':
           case 'analyzer':
@@ -289,7 +289,7 @@ export const actionsMixin = {
             if (Array.isArray(actionAnalyzerItems)) {
               actionAnalyzerItems = actionAnalyzerItems.join(',')
             }
-            this.$f7.views.main.router.navigate(`/analyzer/?items=${actionAnalyzerItems || ''}&chartType=${actionAnalyzerChartType || ''}&coordSystem=${actionAnalyzerCoordSystem || ''}&aggregation=${actionAnalyzerAggregation || ''}`)
+            f7.views.main.router.navigate(`/analyzer/?items=${actionAnalyzerItems || ''}&chartType=${actionAnalyzerChartType || ''}&coordSystem=${actionAnalyzerCoordSystem || ''}&aggregation=${actionAnalyzerAggregation || ''}`)
             console.log('Opening the analyzer')
             break
           case 'url':
@@ -317,7 +317,7 @@ export const actionsMixin = {
             if (actionVariableKey) {
               actionVariableValue = this.setVariableKeyValues(actionVariableLocation[actionVariable], actionVariableKey, actionVariableValue)
             }
-            this.$set(actionVariableLocation, actionVariable, actionVariableValue)
+            actionVariableLocation[actionVariable] = actionVariableValue
             break
           default:
             console.log('Invalid action: ' + action)
