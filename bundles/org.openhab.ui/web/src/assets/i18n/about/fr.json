@@ -16,6 +16,6 @@
   "about.reload.purgeExplanation1": "Des caches et service workers sont en place pour charger cette application plus rapidement. Il est possible qu'une nouvelle version n'ait pas été détectée.",
   "about.reload.purgeExplanation2": "Choisissez Purger et Recharger pour effacer les caches, désenregistrer les service workers et re-télécharger l'application depuis le serveur.",
   "about.reload.purgeCachesAndRefresh": "Purger et Recharger",
-  "about.reload.confirmPurge": "Purger tous les caches applicatifs et désenregistrer les service workers ? Ceci va recharger la page depuis le serveur, ce qui peut prendre quelques secondes.",
+  "about.reload.confirmPurge": "Voulez-vous purger tous les caches applicatifs et désenregistrer les service workers ? Cela va recharger la page depuis le serveur, ce qui peut prendre quelques secondes.",
   "about.reload.reloadApp": "Recharger l'App"
 }
