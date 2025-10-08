@@ -252,22 +252,39 @@ export default function defineOHBlocks_Scripts (f7, transformationServices) {
     }
   }
 
+  // mapping of old event  names to the new ones
+  let attributeMap =
+    {
+      'ruleUID': 'ruleUID',
+      'eventAvailable': 'true', // event always available in new approach
+      'type': 'event.eventName',
+      'itemState': '(event.receivedState ?? event.newState)',
+      'oldItemState': 'event.oldState',
+      'itemName': 'event.itemName',
+      'itemCommand': 'event.receivedCommand',
+      'channel': 'event.channelUID',
+      'event': 'event.receivedEvent'
+    }
+
   javascriptGenerator.forBlock['oh_context_info'] = function (block) {
-    const contextInfo = block.getFieldValue('contextInfo')
+    const oldContectInfoName = block.getFieldValue('contextInfo')
+    // map attributes to the correct event attribute names
+    const contextInfo = attributeMap[oldContectInfoName]
+
     const type = block.getFieldValue('asType')
     if (contextInfo === 'eventAvailable') return ['(event !== undefined)', javascriptGenerator.ORDER_ATOMIC]
     if (contextInfo === 'ruleUID') return ['ctx.ruleUID', javascriptGenerator.ORDER_ATOMIC]
 
-    if (contextInfo === 'itemState' || contextInfo === 'oldItemState' || contextInfo === 'itemCommand') {
+    if (contextInfo === 'itemState' || contextInfo === 'oldState' || contextInfo === 'itemCommand') {
       if (type === 'asNumber') {
-        return [`((event.${contextInfo} !== undefined) ? parseFloat(event.${contextInfo}.toString()) : undefined)`, javascriptGenerator.ORDER_ATOMIC]
+        return [`((${contextInfo} !== undefined) ? parseFloat(${contextInfo}.toString()) : undefined)`, javascriptGenerator.ORDER_ATOMIC]
       } else if (type === 'asQuantity') {
-        return [`((event.${contextInfo} !== undefined) ? Quantity(event.${contextInfo}.toString()) : undefined)`, javascriptGenerator.ORDER_ATOMIC]
+        return [`((${contextInfo} !== undefined) ? Quantity(${contextInfo}.toString()) : undefined)`, javascriptGenerator.ORDER_ATOMIC]
       } else {
-        return [`event.${contextInfo}?.toString()`, javascriptGenerator.ORDER_ATOMIC]
+        return [`${contextInfo}?.toString()`, javascriptGenerator.ORDER_ATOMIC]
       }
     }
-    return [`event.${contextInfo}`, javascriptGenerator.ORDER_ATOMIC]
+    return [`${contextInfo}`, javascriptGenerator.ORDER_ATOMIC]
   }
 
   /*
@@ -350,5 +367,35 @@ export default function defineOHBlocks_Scripts (f7, transformationServices) {
     const enableType = blockGetCheckedInputType(block, 'enable')
     let enable = (enableType === 'Boolean') ? enableValue : (enableValue === '\'true\'' || enableValue === '\'enabled\'')
     return `rules.setEnabled(${ruleUID}, ${enable});\n`
+  }
+
+  /*
+  * Allows quick return from a rule. This is useful to stop further processing of a rule.
+  * Also allows returning a value from a rule if required which can be using blockly for a script condition
+  * Blockly part
+  */
+  Blockly.Blocks['oh_rule_return'] = {
+    init: function () {
+      this.appendValueInput('value')
+        .appendField('return')
+      this.setInputsInline(true)
+      this.setPreviousStatement(true, null)
+      this.setNextStatement(false, null)
+      this.setColour(0)
+      this.setTooltip('Allows to return from the rule')
+
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-run-and-process.html#returnRule')
+    }
+  }
+
+  /*
+  * Allows quick return from a rule.
+  * Code part
+  */
+  javascriptGenerator.forBlock['oh_rule_return'] = function (block) {
+    // we need to add a wrapper function to allow returning from the rule
+    javascriptGenerator.provideFunction_('wrapper', ['"use wrapper;"'])
+    const value = javascriptGenerator.valueToCode(block, 'value', javascriptGenerator.ORDER_ATOMIC)
+    return `return ${value} \n`
   }
 }
