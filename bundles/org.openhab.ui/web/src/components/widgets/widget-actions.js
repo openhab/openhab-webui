@@ -232,40 +232,163 @@ export const actionsMixin = {
             break
           case 'photos':
             const self = this
+
+            // read refresh parameters (ms has precedence over sec)
+            const refreshSec = actionConfig[prefix + 'actionPhotosRefreshSec']
+            const refreshMs = actionConfig[prefix + 'actionPhotosRefreshMs']
+            const refreshInterval =
+              (refreshMs && !isNaN(parseInt(refreshMs))) ? parseInt(refreshMs) :
+              (refreshSec && !isNaN(parseInt(refreshSec))) ? parseInt(refreshSec) * 1000 : 0
+
+            // parse inputs
             let photos = actionConfig[prefix + 'actionPhotos']
             let photoBrowserConfig = actionConfig[prefix + 'actionPhotoBrowserConfig']
             if (typeof photos === 'string' && photos.startsWith('[')) photos = JSON.parse(photos)
             if (typeof photoBrowserConfig === 'string' && photoBrowserConfig.startsWith('{')) photoBrowserConfig = JSON.parse(photoBrowserConfig)
-            if (photos && photos.length > 0) {
+            if (!photos || photos.length === 0) break
+
+            // resolve photos: strings, objects and items -> { url, caption }
+            const resolvePhotos = () => {
+              const toPhotoObj = (url, caption) => ({ url, caption })
               const promises = photos.map((el) => {
-                if (typeof el === 'string') return Promise.resolve(el)
+                if (typeof el === 'string') return Promise.resolve(toPhotoObj(el, null))
                 if (typeof el === 'object') {
                   if (el.item) {
-                    return new Promise((resolve, reject) => {
-                      self.$oh.api.getPlain(`/rest/items/${el.item}/state`, 'text/plain').then((data) => {
-                        resolve({
-                          url: data,
-                          caption: el.caption
-                        })
-                      }).catch((err) => {
-                        console.warn('Error while resolving image from item: ' + err)
-                        reject(err)
-                      })
-                    })
-                  } else {
-                    return Promise.resolve(el)
+                    return self.$oh.api.getPlain(`/rest/items/${el.item}/state`, 'text/plain')
+                      .then((data) => toPhotoObj(data, el.caption || null))
                   }
+                  // already an object with url/caption, keep as is
+                  if (el.url) return Promise.resolve(toPhotoObj(el.url, el.caption || null))
+                  // fallback: keep original object (e.g. custom html); will not be live-updated
+                  return Promise.resolve(el)
                 }
                 return Promise.reject('invalid actionPhotos parameter format')
               })
-
-              Promise.all(promises).then((resolvedPhotos) => {
-                let photoBrowserParams = Object.assign({}, photoBrowserConfig, { photos: resolvedPhotos })
-                // automatically select the dark theme if not specified
-                if (!photoBrowserParams.theme && self.$f7.darkTheme) photoBrowserParams.theme = 'dark'
-                self.$f7.photoBrowser.create(photoBrowserParams).open()
-              })
+              return Promise.all(promises)
             }
+
+            // cache busting to force reload even if URL stays the same
+            const addCacheBuster = (url) => {
+              try {
+                const u = new URL(url, window.location.href)
+                u.searchParams.set('_t', Date.now().toString())
+                return u.toString()
+              } catch (e) {
+                const sep = url.includes('?') ? '&' : '?'
+                return `${url}${sep}_t=${Date.now()}`
+              }
+            }
+
+            // apply a new set of photos to an already opened photo browser without reopening it
+            const applyPhotosToBrowser = (pb, newPhotos) => {
+              // keep active index
+              const activeIndex = (pb && pb.swiper && typeof pb.swiper.activeIndex === 'number') ? pb.swiper.activeIndex : 0
+
+              // update internal params
+              pb.params.photos = newPhotos
+
+              const slidesEls = pb.swiper.slides
+              const currentCount = slidesEls.length
+              const newCount = newPhotos.length
+
+              // helper to create a slide HTML string (Swiper addSlide API)
+              const slideHtmlFor = (p) => {
+                const src = (p && p.url) ? p.url : (typeof p === 'string' ? p : '')
+                const safeSrc = addCacheBuster(src)
+                return `<div class="swiper-slide">
+                  <div class="photo-zoom-container"><img src="${safeSrc}" /></div>
+                </div>`
+              }
+
+              // adjust slide count (add/remove) if necessary
+              if (newCount > currentCount) {
+                const toAdd = []
+                for (let i = currentCount; i < newCount; i++) {
+                  toAdd.push(slideHtmlFor(newPhotos[i]))
+                }
+                if (toAdd.length) pb.swiper.addSlide(currentCount, toAdd)
+              } else if (newCount < currentCount) {
+                // remove from the end down to newCount
+                const idxs = []
+                for (let i = currentCount - 1; i >= newCount; i--) idxs.push(i)
+                pb.swiper.removeSlide(idxs)
+              }
+
+              // update existing slides' img src and active caption
+              const updatedSlides = pb.swiper.slides // refresh reference after add/remove
+              const count = Math.min(updatedSlides.length, newPhotos.length)
+              for (let i = 0; i < count; i++) {
+                const p = newPhotos[i]
+                const slideEl = updatedSlides[i]
+                // update <img> src (and data-src for lazy setups)
+                const img = slideEl && slideEl.querySelector ? slideEl.querySelector('img') : null
+                if (img && p && (p.url || typeof p === 'string')) {
+                  const newUrl = addCacheBuster(p.url || p)
+                  img.src = newUrl
+                  img.setAttribute('data-src', newUrl)
+                }
+              }
+
+              // keep position and update Swiper
+              pb.swiper.update()
+              if (activeIndex < pb.swiper.slides.length) {
+                pb.swiper.slideTo(activeIndex, 0, false)
+              }
+
+              // update caption for active slide (if caption element exists)
+              const activePhoto = newPhotos[Math.min(activeIndex, newPhotos.length - 1)]
+              const newCaption = (activePhoto && activePhoto.caption) ? activePhoto.caption : ''
+              // F7 PB can render captions in different class names depending on theme/version
+              const captionEl = pb.$el.find('.photo-browser-caption, .photo-caption')
+              if (captionEl && captionEl.length > 0) captionEl.text(newCaption)
+            }
+
+            resolvePhotos().then((resolved) => {
+              // initial params
+              let photoBrowserParams = Object.assign({}, photoBrowserConfig, {
+                // pass original shapes (string/object). Use resolved only to open with URLs
+                photos: resolved.map((p) => (p && p.url) ? p : p)
+              })
+              // auto-select dark theme if not specified
+              if (!photoBrowserParams.theme && self.$f7.darkTheme) photoBrowserParams.theme = 'dark'
+
+              let pb = self.$f7.photoBrowser.create(photoBrowserParams)
+              pb.open()
+
+              let refreshTimer = null
+
+              const doRefresh = () => {
+                resolvePhotos()
+                  .then((newResolved) => applyPhotosToBrowser(pb, newResolved))
+                  .catch((err) => console.warn('Photo refresh failed:', err))
+              }
+
+              // set up periodic refresh if requested
+              if (refreshInterval && refreshInterval > 0) {
+                refreshTimer = setInterval(doRefresh, refreshInterval)
+              }
+
+              // cleanup on close
+              if (pb && pb.on) {
+                pb.on('closed', () => {
+                  if (refreshTimer) {
+                    clearInterval(refreshTimer)
+                    refreshTimer = null
+                  }
+                  try { pb.destroy() } catch (e) {}
+                })
+                // also update caption on slide change to keep it in sync
+                pb.on('slideChange', () => {
+                  try {
+                    const idx = pb.swiper.activeIndex || 0
+                    const p = (pb.params.photos && pb.params.photos[idx]) || null
+                    const cap = (p && p.caption) ? p.caption : ''
+                    const captionEl = pb.$el.find('.photo-browser-caption, .photo-caption')
+                    if (captionEl && captionEl.length > 0) captionEl.text(cap)
+                  } catch (e) {}
+                })
+              }
+            })
             break
           case 'group':
             const actionGroupItem = actionConfig[prefix + 'actionGroupPopupItem']
