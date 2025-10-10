@@ -430,8 +430,8 @@ export default {
     f7route: Object
   },
   setup () {
-    const { t, setLocaleMessage } = useI18n({ useScope: 'local' })
-    loadLocaleMessages('analyzer', setLocaleMessage)
+    const { t, mergeLocaleMessage } = useI18n({ useScope: 'local' })
+    loadLocaleMessages('analyzer', mergeLocaleMessage)
     return {
       t, f7, theme
     }

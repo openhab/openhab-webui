@@ -168,8 +168,8 @@ import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 export default {
   mixins: [auth],
   setup () {
-    const { t, setLocaleMessage } = useI18n({ useScope: 'local' })
-    loadLocaleMessages('profile', setLocaleMessage)
+    const { t, mergeLocaleMessage } = useI18n({ useScope: 'local' })
+    loadLocaleMessages('profile', mergeLocaleMessage)
     return {
       t, theme
     }

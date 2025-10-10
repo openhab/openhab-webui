@@ -138,9 +138,9 @@ export default {
   },
   emits: ['session-started', 'session-end'],
   setup () {
-    const { t, setLocaleMessage } = useI18n({ useScope: 'local' })
+    const { t, mergeLocaleMessage } = useI18n({ useScope: 'local' })
 
-    loadLocaleMessages('habot', setLocaleMessage)
+    loadLocaleMessages('habot', mergeLocaleMessage)
 
     return {
       t

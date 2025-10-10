@@ -175,9 +175,9 @@ export default {
     ThemeSwitcher
   },
   setup () {
-    const { t, setLocaleMessage } = useI18n({ useScope: 'local'})
-    loadLocaleMessages('about', setLocaleMessage)
-    return { t, setLocaleMessage }
+    const { t, mergeLocaleMessage } = useI18n({ useScope: 'local'})
+    loadLocaleMessages('about', mergeLocaleMessage)
+    return { t, mergeLocaleMessage }
   },
   data () {
     return {

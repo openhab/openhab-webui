@@ -9,8 +9,8 @@ export default {
     }
   },
   setup () {
-    const { t, setLocaleMessage } = useI18n({ useScope: 'local' })
-    loadLocaleMessages('about', setLocaleMessage)
+    const { t, mergeLocaleMessage } = useI18n({ useScope: 'local' })
+    loadLocaleMessages('about', mergeLocaleMessage)
     return {
       t
     }

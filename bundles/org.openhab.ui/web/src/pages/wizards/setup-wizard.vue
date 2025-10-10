@@ -372,9 +372,9 @@ export default {
     AddonsSetupWizard
   },
   setup () {
-    const { t, setLocaleMessage } = useI18n({ useScope: 'local' })
-    loadLocaleMessages('setup-wizard', setLocaleMessage)
-    return { t, theme, setLocaleMessage }
+    const { t, mergeLocaleMessage } = useI18n({ useScope: 'local' })
+    loadLocaleMessages('setup-wizard', mergeLocaleMessage)
+    return { t, theme, mergeLocaleMessage }
   },
   data () {
     return {
@@ -433,7 +433,7 @@ export default {
   watch: {
     locale (val) {
       useRuntimeStore().locale = this.locale
-      loadLocaleMessages('setup-wizard', this.setLocaleMessage)
+      loadLocaleMessages('setup-wizard', this.mergeLocaleMessage)
       // watch on useRuntimeStore().locale in App.vue will update globals
     }
   },

@@ -85,8 +85,8 @@ export default {
     AddonLogo
   },
   setup () {
-    const { t, setLocaleMessage } = useI18n({ useScope: 'local' })
-    loadLocaleMessages('setup-wizard', setLocaleMessage)
+    const { t, mergeLocaleMessage } = useI18n({ useScope: 'local' })
+    loadLocaleMessages('setup-wizard', mergeLocaleMessage)
     return {
       t
     }

@@ -134,8 +134,8 @@ export default {
     ItemPicker
   },
   setup () {
-    const { t, setLocaleMessage } = useI18n({ useScope: 'local' })
-    loadLocaleMessages('theme-switcher', setLocaleMessage)
+    const { t, mergeLocaleMessage } = useI18n({ useScope: 'local' })
+    loadLocaleMessages('theme-switcher', mergeLocaleMessage)
     return {
       t
     }

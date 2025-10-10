@@ -189,9 +189,9 @@ export default {
     activeHelpTab: String
   },
   setup () {
-    const { t, setLocaleMessage } = useI18n({ useScope: 'local' })
+    const { t, mergeLocaleMessage } = useI18n({ useScope: 'local' })
 
-    loadLocaleMessages('about', setLocaleMessage)
+    loadLocaleMessages('about', mergeLocaleMessage)
 
     return {
       t
