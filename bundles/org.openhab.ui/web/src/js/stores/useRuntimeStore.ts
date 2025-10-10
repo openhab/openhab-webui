@@ -18,7 +18,6 @@ export const useRuntimeStore = defineStore('runtime', () => {
   const measurementSystem = ref<'SI' | 'US' | null>(null)
   const apiEndpoints = ref<Link[] | null>(null)
   const locale = ref<string>(import.meta.env.VUE_APP_I18N_LOCALE || 'en')
-  const fallbackLocale = ref<string>(import.meta.env.VUE_APP_I18N_FALLBACK_LOCALE || 'en')
   const runtimeInfo = ref<object | null>(null)
   const uiInfo = ref<UIInfo>({ commit: buildInfo.commit })
   const websiteUrl = ref<string | null>(null)
@@ -59,7 +58,6 @@ export const useRuntimeStore = defineStore('runtime', () => {
     apiEndpoints,
     apiEndpoint,
     locale,
-    fallbackLocale,
     runtimeInfo,
     uiInfo,
     websiteUrl,

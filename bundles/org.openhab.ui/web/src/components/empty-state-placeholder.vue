@@ -27,11 +27,11 @@ export default {
     text: String
   },
   setup () {
-    const { t, setLocaleMessage } = useI18n({ useScope: 'local' })
-    loadLocaleMessages('empty-states', setLocaleMessage)
+    const { t, mergeLocaleMessage } = useI18n({ useScope: 'local' })
+    loadLocaleMessages('empty-states', mergeLocaleMessage)
     return {
       t,
-      setLocaleMessage
+      mergeLocaleMessage
     }
   }
 }

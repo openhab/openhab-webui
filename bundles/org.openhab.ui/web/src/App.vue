@@ -552,15 +552,18 @@ export default {
     DeveloperDock: defineAsyncComponent(() => import(/* webpackChunkName: "admin-base" */ '@/components/developer/developer-dock.vue'))
   },
   setup () {
-    const { locale, fallbackLocale, setLocaleMessage : globalSetLocaleMessage } = useI18n({ useScope: 'global'})
-    const { t, setLocaleMessage : localSetLocaleMessage } = useI18n({ useScope: 'local'})
+    const { locale, mergeLocaleMessage : globalMergeLocaleMessage } = useI18n({ useScope: 'global'})
+    const { t, mergeLocaleMessage : localMergeLocaleMessage } = useI18n({ useScope: 'local'})
+    // required for notReachable error screen:
+    loadLocaleMessages('common', globalMergeLocaleMessage)
+    loadLocaleMessages('about', localMergeLocaleMessage)
+    loadLocaleMessages('empty-states', localMergeLocaleMessage)
 
     return {
       t,
-      localSetLocaleMessage,
-      globalSetLocaleMessage,
-      locale,
-      fallbackLocale
+      localMergeLocaleMessage,
+      globalMergeLocaleMessage,
+      locale
     }
   },
   data () {
@@ -676,9 +679,8 @@ export default {
         console.debug('App locale change', newValue)
         // update i18n globals
         this.locale = useRuntimeStore().locale
-        this.fallbackLocale = useRuntimeStore().fallbackLocale
 
-        loadLocaleMessages('common', this.globalSetLocaleMessage).then(() => {
+        loadLocaleMessages('common', this.globalmergeLocaleMessage).then(() => {
           f7.params.dialog.buttonOk = this.$t('dialogs.ok')
           f7.params.dialog.buttonCancel = this.$t('dialogs.cancel')
           f7.params.smartSelect.searchbarDisableText = this.$t('dialogs.cancel')
@@ -692,7 +694,7 @@ export default {
             console.error('Error loading locale messages: ', err)
           })
 
-        loadLocaleMessages('about', this.localSetLocaleMessage)
+        loadLocaleMessages('about', this.localmergeLocaleMessage)
       }
     }
   },
