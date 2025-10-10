@@ -184,11 +184,10 @@ export default {
       this.context.component.config = { ...this.config, ...this.localConfig } // Merge local device configuration
 
       import(/* webpackChunkName: "jssip" */ 'jssip').then((JsSIP) => { // Lazy load jssip
-        if(this.config.enableSIPDebug) {
+        if(this.config.enableSIPDebug)
           JsSIP.debug.enable('JsSIP:*')
-        } else {
+        else
           JsSIP.debug.disable()
-        }
         // SIP user agent setup
         this.remoteAudio = new window.Audio()
         const url = new URL(this.config.websocketUrl, window.location.origin)

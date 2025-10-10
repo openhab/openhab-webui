@@ -8,13 +8,6 @@ export default {
       showCachePurgeOption: false
     }
   },
-  setup () {
-    const { t, mergeLocaleMessage } = useI18n({ useScope: 'local' })
-    loadLocaleMessages('about', mergeLocaleMessage)
-    return {
-      t
-    }
-  },
   methods: {
     checkPurgeServiceWorkerAndCachesAvailable () {
       if (navigator.serviceWorker) {

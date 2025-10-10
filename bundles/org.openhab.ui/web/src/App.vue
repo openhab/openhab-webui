@@ -680,7 +680,7 @@ export default {
         // update i18n globals
         this.locale = useRuntimeStore().locale
 
-        loadLocaleMessages('common', this.globalmergeLocaleMessage).then(() => {
+        loadLocaleMessages('common', this.globalMergeLocaleMessage).then(() => {
           f7.params.dialog.buttonOk = this.$t('dialogs.ok')
           f7.params.dialog.buttonCancel = this.$t('dialogs.cancel')
           f7.params.smartSelect.searchbarDisableText = this.$t('dialogs.cancel')
@@ -694,7 +694,7 @@ export default {
             console.error('Error loading locale messages: ', err)
           })
 
-        loadLocaleMessages('about', this.localmergeLocaleMessage)
+        loadLocaleMessages('about', this.globalMergeLocaleMessage)
       }
     }
   },
