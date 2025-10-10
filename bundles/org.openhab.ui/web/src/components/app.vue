@@ -879,6 +879,15 @@ export default {
       this.updateThemeOptions()
       this.$f7.data.themeOptions = this.themeOptions
 
+      fetch('/static/theme.css').then(resp => {
+        if (resp.ok) {
+          const themeLink = document.createElement('link')
+          themeLink.rel = 'stylesheet'
+          themeLink.href = '/static/theme.css'
+          document.head.appendChild(themeLink)
+        }
+      })
+
       if (!this.user) {
         this.tryExchangeAuthorizationCode().then((user) => {
           this.loggedIn = true
