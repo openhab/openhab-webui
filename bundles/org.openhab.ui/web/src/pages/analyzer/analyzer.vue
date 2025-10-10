@@ -431,9 +431,7 @@ export default {
   },
   setup () {
     const { t, setLocaleMessage } = useI18n({ useScope: 'local' })
-
     loadLocaleMessages('analyzer', setLocaleMessage)
-
     return {
       t, f7, theme
     }

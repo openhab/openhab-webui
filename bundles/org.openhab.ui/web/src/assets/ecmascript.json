@@ -1,5 +1,6 @@
 {
   "!comment": "This was extracted from https://github.com/ternjs/tern/blob/master/defs/ecmascript.json",
+  "!license": "MIT, Copyright (C) 2013 by Marijn Haverbeke and others <marijnh@gmail.com>",
   "!name": "ecmascript",
   "!define": {
     "Error.prototype": "Error.prototype",

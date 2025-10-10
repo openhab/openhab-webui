@@ -11,8 +11,10 @@ import { plugin } from 'typescript-eslint'
 const projectRootDir = resolve(__dirname)
 
 const apiBaseUrl = process.env.OH_APIBASE || 'http://localhost:8080'
-console.log(`Using openHAB API base URL: ${apiBaseUrl}`)
 const maven = process.env.MAVEN || false
+if (!maven) {
+  console.log(`Using openHAB API base URL: ${apiBaseUrl}`)
+}
 const outPath = maven ? '../target/classes/app' : 'www'
 
 export default defineConfig({

@@ -15,10 +15,9 @@ import { copyText } from 'vue3-clipboard'
  */
 export default function copyToClipboard (data, { dialogTitle = 'Copy to Clipboard', dialogText = 'Click OK to copy data to clipboard', onSuccess, onError } = {}) {
   copyText(data, undefined, (error, event) => {
-    if(!error) {
+    if (!error) {
       if (typeof onSuccess === 'function') {
         onSuccess()
-        return
       }
     }
   })

@@ -184,7 +184,7 @@ export default [
     path: '/settings/',
     beforeEnter: [enforceAdminForRoute],
     async: loadAsync(SettingsMenuPage),
-    // keepAlive: true,  keepAlive is not supported for async routes
+    // keepAlive: true, // keepAlive is not supported for async routes
     routes: [
       {
         path: 'items/',
@@ -236,7 +236,7 @@ export default [
             path: ':type/:uid',
             beforeEnter: [enforceAdminForRoute],
             beforeLeave: [checkDirtyBeforeLeave],
-            async: ({ to, resolve}) => {
+            async: ({ to, resolve }) => {
               PageEditors[to.params.type]().then((c) => {
                 resolve({ component: c.default }, (to.params.uid === 'add') ? { props: { createMode: true } } : {}
                 )

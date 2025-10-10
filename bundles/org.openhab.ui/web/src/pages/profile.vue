@@ -169,9 +169,7 @@ export default {
   mixins: [auth],
   setup () {
     const { t, setLocaleMessage } = useI18n({ useScope: 'local' })
-
     loadLocaleMessages('profile', setLocaleMessage)
-
     return {
       t, theme
     }

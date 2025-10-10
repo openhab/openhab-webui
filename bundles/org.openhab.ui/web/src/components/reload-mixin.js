@@ -1,9 +1,18 @@
 import { f7 } from 'framework7-vue'
+import { useI18n } from 'vue-i18n'
+import { loadLocaleMessages } from '@/js/i18n.js'
 
 export default {
   data () {
     return {
       showCachePurgeOption: false
+    }
+  },
+  setup () {
+    const { t, setLocaleMessage } = useI18n({ useScope: 'local' })
+    loadLocaleMessages('about', setLocaleMessage)
+    return {
+      t
     }
   },
   methods: {

@@ -28,9 +28,7 @@ export default {
   },
   setup () {
     const { t, setLocaleMessage } = useI18n({ useScope: 'local' })
-
     loadLocaleMessages('empty-states', setLocaleMessage)
-
     return {
       t,
       setLocaleMessage

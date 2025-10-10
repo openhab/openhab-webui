@@ -176,9 +176,7 @@ export default {
   },
   setup () {
     const { t, setLocaleMessage } = useI18n({ useScope: 'local'})
-
     loadLocaleMessages('about', setLocaleMessage)
-
     return { t, setLocaleMessage }
   },
   data () {

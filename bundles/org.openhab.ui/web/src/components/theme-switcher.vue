@@ -135,9 +135,7 @@ export default {
   },
   setup () {
     const { t, setLocaleMessage } = useI18n({ useScope: 'local' })
-
     loadLocaleMessages('theme-switcher', setLocaleMessage)
-
     return {
       t
     }

@@ -89,16 +89,6 @@ export default {
   methods: {
     /**
      * Evaluates a widget expression.
-          parseFloat(pageContentStyle.paddingTop) -
-          parseFloat(pageContentStyle.paddingBottom),
-        appWidth: f7.width,
-        appHeight: f7.height
-      }
-    }
-  },
-  methods: {
-    /**
-     * Evaluates a widget expression.
      * May read <code>this.context</code> and <code>this.props</code> (see below).
      *
      * @param {string} key the key of the expression (used for abstract syntax tree caching)
@@ -136,7 +126,7 @@ export default {
             user: useUserStore().user
           })
         } catch (e) {
-          return undefined
+          return e
         }
       } else if (typeof value === 'object' && !Array.isArray(value)) {
         const evalObj = {}

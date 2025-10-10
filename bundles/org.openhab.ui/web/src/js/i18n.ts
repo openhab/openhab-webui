@@ -1,12 +1,12 @@
 /**
- * ui translation (i18n) notes
+ * UI translation (i18n) notes
  *
- * - useRuntimeStore().local is the primary method to update the regionalization locale.
- * - App.vue: in this.loadData (), the local is set with the setRootResoruces
+ * - useRuntimeStore().local is the primary method to update the regionalisation locale.
+ * - App.vue: in this.loadData (), the local is set with the setRootResources
  * - App.vue: watches useRuntimeStore().local will load the appropriate global locale messages and set the i18n locale setting appropriately
  * - Global translations are accessible through $t or this.$t in any component without additional setup in the component
  * - For local translations, dereference and use the setLocaleMessages and t from the useI18n composable in the setup function with the useScope: 'local'
- * - the setLocaleMessages function should be passsed to the loadLocaleMessages as a parameter
+ * - the setLocaleMessages function should be passed to the loadLocaleMessages as a parameter
  * - Message files are bundled into the build with the "vite-plugin-dynamic-import" plugin
  */
 import { createI18n, type I18n, type I18nOptions } from 'vue-i18n'

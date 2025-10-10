@@ -373,9 +373,7 @@ export default {
   },
   setup () {
     const { t, setLocaleMessage } = useI18n({ useScope: 'local' })
-
     loadLocaleMessages('setup-wizard', setLocaleMessage)
-
     return { t, theme, setLocaleMessage }
   },
   data () {

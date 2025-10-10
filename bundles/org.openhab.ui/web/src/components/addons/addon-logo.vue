@@ -51,8 +51,9 @@ export default {
     imageUrl (type) {
       if (this.addon.imageLink) return this.addon.imageLink.replace(/^\/\//, 'https://')
       let docsBranch = 'final'
-      if (useRuntimeStore().runtimeInfo.buildString === 'Release Build')
+      if (useRuntimeStore().runtimeInfo.buildString === 'Release Build') {
         docsBranch = 'final-stable'
+      }
       return `https://raw.githubusercontent.com/openhab/openhab-docs/${docsBranch}/images/addons/${this.addon.id}.${type}`
     }
   },
