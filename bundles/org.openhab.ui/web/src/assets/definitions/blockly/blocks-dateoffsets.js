@@ -133,22 +133,22 @@ export default function (f7) {
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-date-handling.html#datetime-with-date-and-time-values')
     },
     updateShape_: function () {
-      let year = this.appendValueInput('year')
+      this.appendValueInput('year')
         .setCheck('Number')
         .appendField('datetime with date')
-      let month = this.appendValueInput('month')
+      this.appendValueInput('month')
         .setCheck('Number')
         .appendField('-')
-      let day = this.appendValueInput('day')
+      this.appendValueInput('day')
         .setCheck('Number')
         .appendField('-')
-      let hour = this.appendValueInput('hour')
+      this.appendValueInput('hour')
         .setCheck('Number')
         .appendField('and time')
-      let minute = this.appendValueInput('minute')
+      this.appendValueInput('minute')
         .setCheck('Number')
         .appendField(':')
-      let second = this.appendValueInput('second')
+      this.appendValueInput('second')
         .setCheck('Number')
         .appendField(':')
     }
@@ -525,6 +525,9 @@ export default function (f7) {
     let millis = 0
     let micros = 0
     let nanos = 0
+    let millisChanged = false
+    let microsChanged = false
+    let nanosChanged = false
 
     let operationBlock = block.getInput('ADD0')
     if (operationBlock) {
@@ -542,12 +545,15 @@ export default function (f7) {
             switch (parseInt(blockType)) {
               case 6:
                 millis = parseInt(temporal)
+                millisChanged = true
                 break
               case 7:
                 micros = parseInt(temporal)
+                microsChanged = true
                 break
               case 8:
                 nanos = parseInt(temporal)
+                nanosChanged = true
                 break
               default:
                 code += `.${operation}${operationUnit}(${temporal})`
@@ -555,11 +561,14 @@ export default function (f7) {
           }
         }
       }
-      let totalNanos = 1000000 * millis + 1000 * micros + nanos
-      if (totalNanos > 0) {
-        let operationUnit = this.blockTypesMethod[operation][8]
-        code += `.${operation}${operationUnit}(${totalNanos})`
+      let nanoCode = ''
+      if (millisChanged || microsChanged || nanosChanged) {
+        nanoCode += (!millisChanged) ? `(${baseZdt}.get(time.ChronoField.NANO_OF_SECOND) / 1000000 | 0) * 1000000  + ` : `${millis}  * 1000000 +`
+        nanoCode += (!microsChanged) ? `((${baseZdt}.get(time.ChronoField.NANO_OF_SECOND) / 1000) % 1000 | 0) * 1000 + ` : `${micros} * 1000 +`
+        nanoCode += (!nanosChanged) ? `(${baseZdt}.get(time.ChronoField.NANO_OF_SECOND) % 1000 | 0)` : nanos
       }
+      let operationUnit = this.blockTypesMethod[operation][8]
+      code += `.${operation}${operationUnit}(${nanoCode})`
     }
     return [code, javascriptGenerator.ORDER_ATOMIC]
   }
@@ -738,7 +747,7 @@ export default function (f7) {
   Blockly.Blocks['oh_get_zdt_part'] = {
     init: function () {
       this.appendDummyInput()
-        .appendField(new Blockly.FieldDropdown([['year', 'getYear'], ['month', 'getMonthValue'], ['day of month', 'getDayOfMonth'], ['day of week', 'getDayOfWeek'], ['day of year', 'getDayOfYear'], ['hour', 'getHour'], ['minute', 'getMinute'], ['second', 'getSecond'], ['milli', 'getMilli'], ['micro', 'getMicro'], ['nano', 'getNano']]), 'temporalPart')
+        .appendField(new Blockly.FieldDropdown([['year', 'getYear'], ['month', 'getMonthValue'], ['day of month', 'getDayOfMonth'], ['day of week', 'getDayOfWeek'], ['day of year', 'getDayOfYear'], ['hour', 'getHour'], ['minute', 'getMinute'], ['second', 'getSecond'], ['milli', 'getMilli'], ['micro', 'getMicro'], ['nano', 'getNano'], ['nanoTotal', 'getNanoTotal']]), 'temporalPart')
         .appendField('of')
       this.appendValueInput('zdt')
         .setCheck('ZonedDateTime')
@@ -758,14 +767,21 @@ export default function (f7) {
     const zdt = javascriptGenerator.valueToCode(block, 'zdt', javascriptGenerator.ORDER_ATOMIC)
     let temporalPart = block.getFieldValue('temporalPart')
 
-    const op = new Map([['getYear', 'year'], ['getMonthValue', 'monthValue'], ['getDayOfMonth', 'dayOfMonth'], ['getDayOfWeek', 'dayOfWeek().value'], ['getDayOfYear', 'dayOfYear'], ['getHour', 'hour'], ['getMinute', 'minute'], ['getSecond', 'second'], ['getNano', 'nano']])
+    const op = new Map([['getYear', 'year'], ['getMonthValue', 'monthValue'], ['getDayOfMonth', 'dayOfMonth'], ['getDayOfWeek', 'dayOfWeek().value'], ['getDayOfYear', 'dayOfYear'], ['getHour', 'hour'], ['getMinute', 'minute'], ['getSecond', 'second'], ['getNanoTotal', 'get(time.ChronoField.NANO_OF_SECOND)']])
     switch (temporalPart) {
       case 'getMilli':
-        temporalPart = 'getLong(time.ChronoField.MILLI_OF_SECOND)'
+        temporalPart = 'get(time.ChronoField.NANO_OF_SECOND) / 1000000 | 0'
         break
       case 'getMicro':
-        temporalPart = 'getLong(time.ChronoField.MICRO_OF_SECOND) % 1000'
+        temporalPart = 'get(time.ChronoField.NANO_OF_SECOND) / 1000 % 1000 | 0'
         break
+      case 'getNano':
+        temporalPart = 'get(time.ChronoField.NANO_OF_SECOND) % 1000 | 0'
+        break
+      case 'getNanoTotal':
+        temporalPart = 'get(time.ChronoField.NANO_OF_SECOND)'
+        break
+
       default:
         temporalPart = op.get(temporalPart) + '()'
     }
