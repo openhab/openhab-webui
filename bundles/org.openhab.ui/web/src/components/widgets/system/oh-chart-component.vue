@@ -55,7 +55,7 @@ import LocalizedFormat from 'dayjs/plugin/localizedFormat'
 
 dayjs.extend(LocalizedFormat)
 
-import { use, registerLocale, registerTheme } from 'echarts/core'
+import { use, registerLocale } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
@@ -70,21 +70,21 @@ import 'echarts/theme/dark.js'
 
 import VChart from 'vue-echarts'
 
+use([CanvasRenderer, LineChart, BarChart, GaugeChart, HeatmapChart, PieChart, ScatterChart, CustomChart, TitleComponent,
+  LegendComponent, LegendScrollComponent, GridComponent, SingleAxisComponent, ToolboxComponent, TooltipComponent, DataZoomComponent,
+  MarkLineComponent, MarkPointComponent, MarkAreaComponent, VisualMapComponent, CalendarComponent, LabelLayout])
+
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
 let echartsLocale = useRuntimeStore().locale.split('-')[0].toUpperCase()
-console.log(`Locale changed to ${echartsLocale}, updating ECharts locale`)
 
 await import(`../../../../node_modules/echarts/lib/i18n/lang${echartsLocale}.js`).then((lang) => {
   console.info(`Registering ECharts locale ${echartsLocale}`)
   registerLocale(echartsLocale, lang.default)
 }).catch(() => {
-    console.warn(`No ECharts locale found for ${echartsLocale}`)
+  console.warn(`No ECharts locale found for ${echartsLocale}`)
+  echartsLocale = null
 })
-
-use([CanvasRenderer, LineChart, BarChart, GaugeChart, HeatmapChart, PieChart, ScatterChart, CustomChart, TitleComponent,
-  LegendComponent, LegendScrollComponent, GridComponent, SingleAxisComponent, ToolboxComponent, TooltipComponent, DataZoomComponent,
-  MarkLineComponent, MarkPointComponent, MarkAreaComponent, VisualMapComponent, CalendarComponent, LabelLayout])
 
 export default {
   mixins: [mixin, chart, actionsMixin],
@@ -125,9 +125,9 @@ export default {
       }
     },
     initOptions () {
-      return {
-        locale: useRuntimeStore().locale.split('-')[0].toUpperCase()
-      }
+      return echartsLocale ? {
+        locale: echartsLocale
+      } : null
     },
     ...mapStores(useUIOptionsStore, useRuntimeStore)
   },
