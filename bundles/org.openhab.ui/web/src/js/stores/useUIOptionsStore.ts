@@ -64,7 +64,7 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
   // Getters
   function getDarkMode () {
     if (storedDarkMode.value === 'auto') {
-      return window.OHApp ? window.OHApp.preferDarkMode() : f7.darkMode ? 'dark' : 'light'
+      return typeof window.OHApp?.preferDarkMode === 'function' ? window.OHApp.preferDarkMode() : f7.darkMode ? 'dark' : 'light'
     }
 
     return storedDarkMode.value

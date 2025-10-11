@@ -54,7 +54,7 @@ export async function setBasicCredentials (username, password) {
     basicCredentials = { id: username, password }
     tokenInCustomHeader = true
     return Promise.resolve()
-  } else if (window.OHApp && window.OHApp.getBasicCredentialsUsername) {
+  } else if (typeof window.OHApp?.getBasicCredentialsUsername === 'function') {
     const usernameFromApp = window.OHApp.getBasicCredentialsUsername()
     const passwordFromApp = window.OHApp.getBasicCredentialsPassword()
     basicCredentials = { id: usernameFromApp, password: passwordFromApp }

@@ -573,7 +573,7 @@ export default {
   data () {
     let theme = localStorage.getItem('openhab.ui:theme')
 
-    if ((!theme || theme === 'auto') && window.OHApp && window.OHApp.preferTheme) {
+    if ((!theme || theme === 'auto') && typeof window.OHApp?.preferTheme === 'function') {
       theme = window.OHApp.preferTheme()
     }
 
@@ -670,7 +670,7 @@ export default {
     'statesStore.sseConnected': {
       handler: function (connected) {
         console.debug('sseConnected', connected)
-        if (window.OHApp && typeof window.OHApp.sseConnected === 'function') {
+        if (typeof window.OHApp?.sseConnected === 'function') {
           try {
             window.OHApp.sseConnected(connected)
           } catch {}
