@@ -337,14 +337,13 @@
                 icon-f7="lock_shield_fill"
                 large
                 color="gray"
-                icon-size="36"
+                icon-size="34"
                 :tooltip="t('sidebar.unlockAdmin')" />
             </div>
             <f7-list v-if="userStore.user" media-list>
               <f7-list-item
                 :title="userStore.user.name"
                 :footer="serverDisplayUrl"
-                io="f7:person_alt_circle_fill"
                 link="/profile/"
                 no-chevron
                 panel-close
@@ -488,6 +487,12 @@
   @media (min-width 960px)
     .breakpoint-pin
       opacity 0.75
+
+.aurora
+  .account
+    --f7-list-item-padding-vertical 4px
+    .item-title-row::before
+      visibility hidden
 
 .dark
   .panel-left
