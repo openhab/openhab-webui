@@ -131,16 +131,6 @@ export default {
     },
     ...mapStores(useUIOptionsStore, useRuntimeStore)
   },
-  setup () {
-    let echartsLocale = useRuntimeStore().locale.split('-')[0].toUpperCase()
-    console.log(`Locale changed to ${echartsLocale}, updating ECharts locale`)
-
-    import(`../../../../node_modules/echarts/lib/i18n/lang${echartsLocale}.js`).then((lang) => {
-      console.info(`Registering ECharts locale ${echartsLocale}`)
-    }).catch(() => {
-      console.warn(`No ECharts locale found for ${echartsLocale}`)
-    })
-  },
   data () {
     return {
       ready: false,
