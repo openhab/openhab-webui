@@ -608,6 +608,9 @@ export default {
           })
           this.$oh.api.get('/rest/things/' + this.thingId + '/firmwares').then((firmwareData) => {
             this.firmwares = firmwareData
+          }).catch(() => {
+            // ignore error
+            console.debug(`Firmware info not available for Thing ${this.thingId}`)
           })
         }).catch((err) => {
           console.warn('Cannot load the related info: ' + err)
