@@ -21,7 +21,7 @@
                size="1rem"
                color="gray" />
     </template>
-    <template #footer />
+    <slot name="footer" />
     <template #subtitle>
       <div v-if="!noTags">
         <f7-chip v-for="tag in getNonSemanticTags(item)"
