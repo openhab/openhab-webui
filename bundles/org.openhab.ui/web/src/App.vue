@@ -337,7 +337,7 @@
                 icon-f7="lock_shield_fill"
                 large
                 color="gray"
-                icon-size="43"
+                icon-size="36"
                 :tooltip="t('sidebar.unlockAdmin')" />
             </div>
             <f7-list v-if="userStore.user" media-list>
