@@ -280,8 +280,10 @@
 
 <style lang="stylus">
 .rule-script-editor.v-codemirror
-  max-height calc(100vh - var(--f7-navbar-height, 56px) - var(--f7-tabbar-height, 48px))
-  overflow auto
+  position absolute
+  top calc(var(--f7-navbar-height) + var(--f7-tabbar-height))
+  height calc(100% - var(--f7-navbar-height, 56px) - var(--f7-tabbar-height, 48px))
+  width 100%
 </style>
 
 <script>
