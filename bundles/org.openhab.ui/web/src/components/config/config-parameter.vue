@@ -144,6 +144,8 @@ export default {
 .parameter-group.block
   margin-top 0
   margin-bottom 0
+  .list ul
+    padding-left 0
 .param-description
   padding-left 16px !important
   &.block-footer
