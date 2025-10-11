@@ -60,7 +60,6 @@
                 v-if="tabsVisible">
       <f7-link tab-link="#tab-overview"
                @click="switchTab('overview')"
-               href="/overview/"
                :tab-link-active="currentTab === 'overview' ? true : null"
                icon-ios="f7:house_fill"
                icon-aurora="f7:house_fill"
@@ -69,7 +68,6 @@
       <f7-link v-if="tabVisible('locations')"
                tab-link="#tab-locations"
                @click="switchTab('locations')"
-               href="/locations/"
                :tab-link-active="currentTab === 'locations' ? true : null"
                icon-ios="f7:placemark_fill"
                icon-aurora="f7:placemark_fill"
@@ -78,7 +76,6 @@
       <f7-link v-if="tabVisible('equipment')"
                tab-link="#tab-equipment"
                @click="switchTab('equipment')"
-               href="/equipment/"
                :tab-link-active="currentTab === 'equipment' ? true : null"
                icon-ios="f7:cube_box_fill"
                icon-aurora="f7:cube_box_fill"
@@ -87,7 +84,6 @@
       <f7-link v-if="tabVisible('properties')"
                tab-link="#tab-properties"
                @click="switchTab('properties')"
-               href="/properties/"
                :tab-link-active="currentTab === 'properties' ? true : null"
                icon-ios="f7:bolt_fill"
                icon-aurora="f7:bolt_fill"
@@ -305,8 +301,8 @@ export default {
     },
     switchTab (tab) {
       this.currentTab = tab
-      this.f7router.updateCurrentUrl('/' + this.currentTab)
-      this.f7router.url = '/' + this.currentTab
+      this.f7router.updateCurrentUrl('/' + this.currentTab + '/')
+      this.f7router.url = '/' + this.currentTab + '/'
     },
     tabVisible (tab) {
       if (!this.tabsVisible) return false
