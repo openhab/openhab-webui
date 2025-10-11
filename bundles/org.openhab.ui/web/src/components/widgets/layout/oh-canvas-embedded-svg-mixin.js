@@ -4,6 +4,7 @@ import { pb, pg, pi, pt, WidgetDefinition } from '@/assets/definitions/widgets/h
 import { actionGroup, actionParams } from '@/assets/definitions/widgets/actions'
 
 import { useStatesStore } from '@/js/stores/useStatesStore'
+import { watch } from 'vue'
 
 export default {
   props: {
@@ -108,15 +109,12 @@ export default {
         if (items.length === 0) continue
         for (const item of items) {
           if (!useStatesStore().isItemTracked(item)) useStatesStore().addToTrackingList(item)
-          // TODO-V3.1 - subscribe to state changes in pinia store
-          /*
-          const unsubscribe = this.$store.subscribe((mutation, state) => {
-            if (mutation.type === 'setItemState' && mutation.payload.itemName === item) {
-              this.applyStateToSvgElement(item, state.states.itemStates[item], this.config.embeddedSvgActions[subElement.id], subElement)
-            }
-          })
-          this.embeddedSvgStateTrackingUnsubscribes.push(unsubscribe)
-          */
+
+          const stop = watch(() => useStatesStore().itemStates.get(item), (newState) => {
+            if (newState) this.applyStateToSvgElement(item, newState, this.config.embeddedSvgActions[subElement.id], subElement)
+          }, { deep: true })
+
+          this.embeddedSvgStateTrackingUnsubscribes.push(stop)
         }
       }
 
