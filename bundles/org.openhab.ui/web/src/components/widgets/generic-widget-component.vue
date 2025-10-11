@@ -35,12 +35,14 @@
              :is="componentType"
              :context="context"
              @command="onCommand" />
+  <!-- Label renders text inside <div> element -->
   <div v-else-if="componentType && componentType === 'Label' && visible" :class="config.class" :style="config.style">
     {{ config.text }}
   </div>
-  <div v-else-if="componentType && componentType === 'Content'">
+  <!-- Content renders text without any additional container -->
+  <template v-else-if="componentType && componentType === 'Content'">
     {{ config.text }}
-  </div>
+  </template>
   <pre v-else-if="componentType && componentType === 'Error' && visible" class="text-color-red" style="white-space: pre-wrap">{{ config.error }}</pre>
   <component v-else-if="visible" :is="componentType" v-bind="config">
     {{ config.content }}
