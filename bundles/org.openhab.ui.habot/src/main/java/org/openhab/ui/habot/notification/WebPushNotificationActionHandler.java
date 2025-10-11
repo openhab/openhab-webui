@@ -62,7 +62,7 @@ public class WebPushNotificationActionHandler extends BaseModuleHandler<Action> 
     }
 
     @Override
-    public @Nullable Map<String, Object> execute(Map<String, Object> context) {
+    public @Nullable Map<String, @Nullable Object> execute(Map<String, Object> context) {
         String title = (String) module.getConfiguration().get(PARAM_TITLE);
         String body = (String) module.getConfiguration().get(PARAM_BODY);
         String cardUID = (String) module.getConfiguration().get(PARAM_CARD_UID);
