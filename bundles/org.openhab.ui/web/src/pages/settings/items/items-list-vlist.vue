@@ -332,18 +332,18 @@ export default {
     },
     height (item) {
       let vlHeight
-      if (theme.ios) vlHeight = 78
-      if (theme.aurora) vlHeight = 60.77
-      if (theme.md) vlHeight = 87.4
+      if (theme.ios) vlHeight = 69.16
+      if (theme.aurora) vlHeight = 66.37
+      if (theme.md) vlHeight = 69.37
       if (this.$device.macos) {
         if (window.navigator.userAgent.includes('Safari') && !window.navigator.userAgent.includes('Chrome')) vlHeight -= 0.77
       }
 
       const nonSemanticTags = this.getNonSemanticTags(item)
       if (nonSemanticTags.length > 0) {
-        vlHeight += 24
+        vlHeight += 28
         if (theme.ios) vlHeight += 4
-        if (theme.md) vlHeight += 12
+        if (theme.md) vlHeight += 6
       }
       return vlHeight
     },
