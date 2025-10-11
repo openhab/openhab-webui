@@ -15,10 +15,6 @@ export const CodeSnippets = {
     '</xsl:stylesheet>'
 }
 
-export const EditorModes = {
-  nashorn: 'application/javascript;version=ECMAScript-5.1'
-}
-
 export const DocumentationLinks = {
   exec: '/addons/transformations/exec/',
   jinja: '/addons/transformations/jinja/',

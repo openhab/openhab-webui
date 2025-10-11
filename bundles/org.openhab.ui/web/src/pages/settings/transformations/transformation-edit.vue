@@ -159,7 +159,7 @@ import fastDeepEqual from 'fast-deep-equal/es6'
 
 import DirtyMixin from '../dirty-mixin'
 import TransformationGeneralSettings from '@/pages/settings/transformations/transformation-general-settings.vue'
-import { CodeSnippets, EditorModes, DocumentationLinks } from '@/assets/transformations.js'
+import { CodeSnippets, DocumentationLinks } from '@/assets/transformations.js'
 import ClipboardIcon from '@/components/util/clipboard-icon.vue'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
@@ -297,7 +297,7 @@ export default {
       this.$oh.api.get('/rest/transformations/' + this.transformationId).then((data) => {
         this.transformation = data
         this.savedTransformation = cloneDeep(this.transformation)
-        this.editorMode = EditorModes[this.transformation.type] || this.transformation.type
+        this.editorMode = this.transformation.type
         this.loading = false
         this.ready = true
       })
