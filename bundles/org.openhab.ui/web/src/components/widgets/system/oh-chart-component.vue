@@ -65,8 +65,11 @@ import {
   TitleComponent, LegendComponent, LegendScrollComponent, GridComponent, SingleAxisComponent, ToolboxComponent, TooltipComponent,
   DataZoomComponent, MarkLineComponent, MarkPointComponent, MarkAreaComponent, VisualMapComponent, CalendarComponent
 } from 'echarts/components'
-import VChart from 'vue-echarts'
+
 import 'echarts/theme/dark.js'
+
+import VChart from 'vue-echarts'
+
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
 use([CanvasRenderer, LineChart, BarChart, GaugeChart, HeatmapChart, PieChart, ScatterChart, CustomChart, TitleComponent,
@@ -142,9 +145,6 @@ export default {
   },
   mounted () {
     this.ready = true
-  },
-  created () {
-    registerTheme('dark', theme.dark)
   },
   beforeUnmount () {
     if (this.calendarPicker) this.calendarPicker.destroy()
