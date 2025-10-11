@@ -1,4 +1,5 @@
 import { f7 } from 'framework7-vue'
+import { nextTick } from 'vue'
 
 export default {
   data () {
@@ -24,15 +25,13 @@ export default {
       )
     },
     beforeLeave ({ resolve, reject, router, from }) {
+      console.info('Checking dirty before leave ...')
       if (this.dirty) {
         this.confirmLeaveWithoutSaving(
           function () { resolve() },
           function () {
-            const { pushStateRoot = '', pushStateSeparator } = router.params
-            let url = from.url
-            history.pushState({ view_main: { url } }, '', pushStateRoot + pushStateSeparator + url)
-            reject()
             router.allowPageChange = true
+            reject()
           }
         )
       } else {
@@ -47,5 +46,15 @@ export default {
         }
       }
     }
+  },
+  mounted () {
+    void nextTick(() => {
+      const pageEl = this.$el
+      if (!pageEl) return
+      if (!pageEl.classList.contains('page')) return
+
+      // store a wrapped function so `this` inside beforeLeave is the Vue component instance
+      pageEl.beforeLeave = (args) => this.beforeLeave(args)
+    })
   }
 }

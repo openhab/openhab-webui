@@ -70,9 +70,9 @@ const LogViewerPage = () => import(/* webpackChunkName: "admin-devtools" */ '@/p
 const SetupWizardPage = () => import(/* webpackChunkName: "setup-wizard" */ '@/pages/wizards/setup-wizard.vue')
 
 const checkDirtyBeforeLeave = function ({ router, to, from, resolve, reject }) {
-  if (this.currentPageEl && this.currentPageEl.__vue__ && this.currentPageEl.__vue__.$parent && this.currentPageEl.__vue__.$parent.beforeLeave &&
+  if (this.currentPageEl?.beforeLeave &&
     !to.path.startsWith(from.path)) {
-    this.currentPageEl.__vue__.$parent.beforeLeave({ router, to, from, resolve, reject })
+    this.currentPageEl.beforeLeave({ router, to, from, resolve, reject })
   } else {
     resolve()
   }
