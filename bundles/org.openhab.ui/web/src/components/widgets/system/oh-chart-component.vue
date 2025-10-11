@@ -72,6 +72,16 @@ import VChart from 'vue-echarts'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
+let echartsLocale = useRuntimeStore().locale.split('-')[0].toUpperCase()
+console.log(`Locale changed to ${echartsLocale}, updating ECharts locale`)
+
+await import(`../../../../node_modules/echarts/lib/i18n/lang${echartsLocale}.js`).then((lang) => {
+  console.info(`Registering ECharts locale ${echartsLocale}`)
+  registerLocale(echartsLocale, lang.default)
+}).catch(() => {
+    console.warn(`No ECharts locale found for ${echartsLocale}`)
+})
+
 use([CanvasRenderer, LineChart, BarChart, GaugeChart, HeatmapChart, PieChart, ScatterChart, CustomChart, TitleComponent,
   LegendComponent, LegendScrollComponent, GridComponent, SingleAxisComponent, ToolboxComponent, TooltipComponent, DataZoomComponent,
   MarkLineComponent, MarkPointComponent, MarkAreaComponent, VisualMapComponent, CalendarComponent, LabelLayout])
@@ -121,26 +131,20 @@ export default {
     },
     ...mapStores(useUIOptionsStore, useRuntimeStore)
   },
+  setup () {
+    let echartsLocale = useRuntimeStore().locale.split('-')[0].toUpperCase()
+    console.log(`Locale changed to ${echartsLocale}, updating ECharts locale`)
+
+    import(`../../../../node_modules/echarts/lib/i18n/lang${echartsLocale}.js`).then((lang) => {
+      console.info(`Registering ECharts locale ${echartsLocale}`)
+    }).catch(() => {
+      console.warn(`No ECharts locale found for ${echartsLocale}`)
+    })
+  },
   data () {
     return {
       ready: false,
       calendarPicker: null
-    }
-  },
-  watch: {
-    'runtimeStore.locale': {
-      handler: function (newValue) {
-        let echartsLocale = newValue.split('-')[0].toUpperCase()
-        console.log(`Locale changed to ${echartsLocale}, updating ECharts locale`)
-
-        import(`../../../../node_modules/echarts/lib/i18n/lang${echartsLocale}.js`).then((lang) => {
-          console.info(`Registering ECharts locale ${echartsLocale}`)
-          registerLocale(echartsLocale, lang.default)
-        }).catch(() => {
-          console.warn(`No ECharts locale found for ${echartsLocale}`)
-        })
-      },
-      immediate: true
     }
   },
   mounted () {
