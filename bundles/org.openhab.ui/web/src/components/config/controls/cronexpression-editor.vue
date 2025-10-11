@@ -3,7 +3,8 @@
 <template>
   <f7-popup class="cron-select" close-on-escape @popup:closed="close">
     <f7-page class="cron-select-content">
-      <f7-navbar :title="'Cron: ' + cron" :subtitle="translation">
+      <!-- use cron expression as key to force rerendering (and thereby realignment) on cron expression change -->
+      <f7-navbar :key="cron" :title="'Cron: ' + cron" :subtitle="translation">
         <f7-nav-right>
           <f7-link class="popup-close" @click="change">
             Done
@@ -63,7 +64,7 @@
                             :title="text.Seconds.specific"
                             smart-select
                             no-chevron
-                            :smart-select-params="{ openIn: 'popover', view: f7.views.main, }"
+                            :smart-select-params="smartSelectParams"
                             :checked="second.cronEvery === 3 ? true : null"
                             @click="second.cronEvery = 3">
                 <select multiple @change="second.specificSpecific = $refs.specificSecond.$el.children[0].f7SmartSelect.getValue()">
@@ -125,7 +126,7 @@
                             :title="text.Minutes.specific"
                             smart-select
                             no-chevron
-                            :smart-select-params="{ openIn: 'popover', view: f7.views.main, }"
+                            :smart-select-params="smartSelectParams"
                             :checked="minute.cronEvery === 3 ? true : null"
                             @click="minute.cronEvery = 3">
                 <select multiple @change="minute.specificSpecific = $refs.specificMinute.f7SmartSelect.getValue()">
@@ -187,7 +188,7 @@
                             :title="text.Hours.specific"
                             smart-select
                             no-chevron
-                            :smart-select-params="{ openIn: 'popover', view: f7.views.main, }"
+                            :smart-select-params="smartSelectParams"
                             :checked="hour.cronEvery === 3 ? true : null"
                             @click="hour.cronEvery = 3">
                 <select multiple @change="hour.specificSpecific = $refs.specificHour.$el.children[0].f7SmartSelect.getValue()">
@@ -270,7 +271,7 @@
                             :title="text.Day.specificWeek"
                             smart-select
                             no-chevron
-                            :smart-select-params="{ openIn: 'popover', view: f7.views.main, }"
+                            :smart-select-params="smartSelectParams"
                             :checked="day.cronEvery === 4 ? true : null"
                             @click="day.cronEvery = 4">
                 <select multiple @change="week.specificSpecific = $refs.specificDayOfWeek.$el.children[0].f7SmartSelect.getValue()">
@@ -288,7 +289,7 @@
                             :title="text.Day.specificDay"
                             smart-select
                             no-chevron
-                            :smart-select-params="{ openIn: 'popover', view: f7.views.main, }"
+                            :smart-select-params="smartSelectParams"
                             :checked="day.cronEvery === 5 ? true : null"
                             @click="day.cronEvery = 5">
                 <select multiple @change="day.specificSpecific = $refs.specificDayOfMonth.$el.children[0].f7SmartSelect.getValue()">
@@ -383,7 +384,7 @@
                             :title="text.Month.specific"
                             smart-select
                             no-chevron
-                            :smart-select-params="{ openIn: 'popover', view: f7.views.main, }"
+                            :smart-select-params="smartSelectParams"
                             :checked="month.cronEvery === 3 ? true : null"
                             @click="month.cronEvery = 3">
                 <select multiple @change="month.specificSpecific = $refs.specificMonth.$el.children[0].f7SmartSelect.getValue()">
@@ -439,7 +440,7 @@
                             :title="text.Year.specific"
                             smart-select
                             no-chevron
-                            :smart-select-params="{ openIn: 'popover', view: f7.views.main, }"
+                            :smart-select-params="smartSelectParams"
                             :checked="year.cronEvery === 3 ? true : null"
                             @click="year.cronEvery = 3">
                 <select multiple @change="year.specificSpecific = $refs.specificYear.$el.children[0].f7SmartSelect.getValue()">
@@ -580,6 +581,9 @@ export default {
     }
   },
   computed: {
+    smartSelectParams () {
+      return { openIn: 'popover', view: f7.view.main }
+    },
     text () {
       return Labels
     },
