@@ -1,6 +1,8 @@
 import { lineIndent, findParent, isConfig, isChannelsSection } from './yaml-utils'
 import { getCompletionType } from './hint-utils'
 
+// TODO-V3.1 clean up commented out code
+
 function hintOptions (cm, line, parameter) {
   const cursor = cm.getCursor()
   const colonPos = line.indexOf(':')

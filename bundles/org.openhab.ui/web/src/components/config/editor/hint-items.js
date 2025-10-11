@@ -3,6 +3,8 @@ import * as Types from '@/assets/item-types.js'
 import Metadata from '@/assets/definitions/metadata/namespaces'
 import api from '@/js/openhab/api'
 
+// TODO-V3.1 clean up commented out code
+
 const dimensions = []
 let itemsCache = null
 
