@@ -29,6 +29,13 @@
                  width="196px">
           </div>
         </f7-link>
+        <f7-link class="breakpoint-pin" @click="toggleVisibleBreakpoint">
+          <f7-icon
+            size="14"
+            :f7="uiOptionsStore.visibleBreakpointDisabled ? 'pin_slash' : 'pin'"
+            color="gray" />
+        </f7-link>
+
         <f7-list v-if="ready">
           <f7-list-item v-if="runtimeStore.apiEndpoint('ui') && (!pages || !pages.length)">
             <span><em>{{ t('sidebar.noPages') }}</em></span>
@@ -313,14 +320,6 @@
             </template>
           </f7-list-item>
         </f7-list>
-        <f7-link class="breakpoint-pin" @click="toggleVisibleBreakpoint">
-          <template #media>
-            <f7-icon
-              size="14"
-              :f7="uiOptionsStore.visibleBreakpointDisabled ? 'pin_slash' : 'pin'"
-              color="gray" />
-          </template>
-        </f7-link>
 
         <template #fixed>
           <div class="account" v-if="ready && runtimeStore.apiEndpoint('auth')">
