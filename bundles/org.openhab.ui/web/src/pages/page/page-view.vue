@@ -125,7 +125,7 @@ export default {
   },
   props: {
     uid: String,
-    initialTab: Number,
+    initialTab: String, // declare string here as router will pass string, not number
     deep: Boolean,
     defineVars: Object,
     f7router: Object
