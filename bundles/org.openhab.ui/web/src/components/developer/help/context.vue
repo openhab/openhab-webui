@@ -104,6 +104,9 @@ export default {
             // Fix external anchor href
             body = body.replace(/<a href="http/gm, '<a class="external" target="_blank" href="http')
 
+            // Fix links to other pages if on overview or semantic model tabs
+            body = body.replace(/(<a href=")(\/overview\/)([A-z-]+)(\/")/gm, '$1$3$4')
+
             // Allow embedding framework7 icons by using <!--F7(:blue|:green) ICON_NAME --> comments
             body = body.replace(/<!--F7 ([A-z]*) -->/gm, '<i class="f7-icons size-22">$1</i>')
             body = body.replace(/<!--F7:blue ([A-z]*) -->/gm, '<i class="f7-icons size-22" style="color: #2196f3">$1</i>')

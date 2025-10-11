@@ -1,10 +1,11 @@
 <template>
   <f7-page class="developer-dock">
-    <f7-navbar :title="title" :subtitle="subtitle" :color="uiOptionsStore.getDarkMode() === 'dark' ? '' : 'black'" />
+    <!-- note: title is left aligned in Material theme, this is no bug -->
+    <f7-navbar title="Developer Sidebar" subtitle="(Shift+Alt+D)" :color="uiOptionsStore.getDarkMode() === 'dark' ? '' : 'black'" />
     <f7-segmented strong
                   tag="p"
-                  style="margin-right: calc(var(--f7-searchbar-inner-padding-right) + var(--f7-safe-area-right));
-                    margin-left: calc(var(--f7-searchbar-inner-padding-left) + var(--f7-safe-area-left));
+                  style="margin-right: calc(var(--f7-searchbar-inner-padding-right) + var(--f7-searchbar-in-page-content-margin) + var(--f7-safe-area-right));
+                    margin-left: calc(var(--f7-searchbar-inner-padding-right) + var(--f7-searchbar-in-page-content-margin) + var(--f7-safe-area-left));
                     margin-top: 5px;
                     margin-bottom: 5px;">
       <f7-button :active="dockView === 'tools'"
@@ -19,7 +20,9 @@
     <f7-segmented v-if="dockView === 'tools'"
                   strong
                   tag="p"
-                  style="margin-right: calc(var(--f7-searchbar-inner-padding-right) + var(--f7-safe-area-right)); margin-left: calc(var(--f7-searchbar-inner-padding-left) + var(--f7-safe-area-left)); margin-top: 0">
+                  style="margin-right: calc(var(--f7-searchbar-inner-padding-right) + var(--f7-searchbar-in-page-content-margin) + var(--f7-safe-area-right));
+                    margin-left: calc(var(--f7-searchbar-inner-padding-right) + var(--f7-searchbar-in-page-content-margin) + var(--f7-safe-area-left));
+                    margin-top: 0">
       <f7-button :active="activeToolTab === 'pin'"
                  icon-f7="pin_fill"
                  icon-size="18"
@@ -44,7 +47,9 @@
     <f7-segmented v-if="dockView === 'help'"
                   strong
                   tag="p"
-                  style="margin-right: calc(var(--f7-searchbar-inner-padding-right) + var(--f7-safe-area-right)); margin-left: calc(var(--f7-searchbar-inner-padding-left) + var(--f7-safe-area-left)); margin-top: 0">
+                  style="margin-right: calc(var(--f7-searchbar-inner-padding-right) + var(--f7-searchbar-in-page-content-margin) + var(--f7-safe-area-right));
+                    margin-left: calc(var(--f7-searchbar-inner-padding-right) + var(--f7-searchbar-in-page-content-margin) + var(--f7-safe-area-left));
+                    margin-top: 0">
       <f7-button :active="activeHelpTab === 'current'"
                  icon-f7="doc_richtext"
                  icon-size="18"
@@ -83,8 +88,9 @@
   z-index 6000
 
 .developer-dock
-  scrollbar-width none /* Firefox */
-  -ms-overflow-style none  /* IE 10+ */
+  .page-content
+    scrollbar-width none /* Firefox */
+    -ms-overflow-style none  /* IE 10+ */
 </style>
 
 <script>
@@ -113,21 +119,7 @@ export default {
       f7
     }
   },
-  data () {
-    return {
-      ready: false
-    }
-  },
   computed: {
-    // work-around styling issues when lazy-loading the developer-dock by setting (sub)title after component creation
-    title () {
-      if (!this.ready) return ''
-      return 'Developer Sidebar'
-    },
-    subtitle () {
-      if (!this.ready) return ''
-      return '(Shift+Alt+D)'
-    },
     dockView () {
       return this.dock
     },
@@ -138,11 +130,6 @@ export default {
       return (this.toolTab || 'pin')
     },
     ...mapStores(useUIOptionsStore)
-  },
-  created () {
-    nextTick(() => {
-      this.ready = true
-    })
   }
 }
 </script>

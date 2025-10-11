@@ -177,6 +177,8 @@ import { useI18n } from 'vue-i18n'
 import { loadLocaleMessages } from '@/js/i18n'
 
 import Context from '@/components/developer/help/context.vue'
+import Faqs from '@/assets/definitions/help/help-faq-defs.json'
+import Qstart from '@/assets/definitions/help/help-qstart-defs.json'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { mapStores } from 'pinia'
@@ -190,9 +192,7 @@ export default {
   },
   setup () {
     const { t, mergeLocaleMessage } = useI18n({ useScope: 'local' })
-
     loadLocaleMessages('about', mergeLocaleMessage)
-
     return {
       t
     }
@@ -200,8 +200,8 @@ export default {
   data () {
     return {
       addons: [],
-      faqs: import('@/assets/definitions/help/help-faq-defs.json'),
-      qstart: import('@/assets/definitions/help/help-qstart-defs.json')
+      faqs: Faqs,
+      qstart: Qstart
     }
   },
   created () {

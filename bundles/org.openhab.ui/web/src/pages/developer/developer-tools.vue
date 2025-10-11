@@ -96,7 +96,7 @@
                   </template>
                   <template #header>
                     <div style="height: 100%; height: 32px" class="display-flex float-right flex-direction-column justify-content-center">
-                      <f7-toggle color="blue" :checked="runtimeStore.developerDock ? true : null" />
+                      <f7-toggle color="blue" :checked="runtimeStore.showDeveloperDock ? true : null" />
                     </div>
                   </template>
                 </f7-list-item>

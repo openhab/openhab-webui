@@ -50,7 +50,7 @@
                  icon-md="material:exit_to_app"
                  :tooltip="$t('home.otherApps')"
                  panel-open="right"
-                 @click="runtimeStore.developerDock ? f7.emit('toggleDeveloperDock') : ''" />
+                 @click="runtimeStore.showDeveloperDock ? f7.emit('toggleDeveloperDock') : ''" />
       </f7-nav-right>
     </f7-navbar>
 

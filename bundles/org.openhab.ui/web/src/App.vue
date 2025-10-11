@@ -291,7 +291,7 @@
                 </template>
               </f7-list-item>
               <!-- <f7-list-item link="" @click="f7.emit('toggleDeveloperDock')" title="Dock" view=".view-main" panel-close :animate="false" no-chevron>
-                <f7-icon :f7="runtimeStore.developerDock ? 'wrench_fill' : 'wrench'" color="gray" />
+                <f7-icon :f7="runtimeStore.showDeveloperDock ? 'wrench_fill' : 'wrench'" color="gray" />
               </f7-list-item> -->
             </ul>
           </li>
@@ -573,7 +573,7 @@ export default {
       theme = window.OHApp.preferTheme()
     }
 
-    // choose Aurora as default theme for desktops
+    // choose Aurora as the default theme for desktops
     if ((!theme || theme === 'auto') && this.$device.desktop) {
       theme = 'aurora'
     }
@@ -1089,7 +1089,7 @@ export default {
         this.selectDeveloperDock(opts)
       })
 
-      f7.on('smart-select-opened', (smartSelect) => {
+      f7.on('smartSelectOpened', (smartSelect) => {
         if (smartSelect && smartSelect.searchbar && this.$device.desktop) {
           smartSelect.searchbar.$inputEl.focus()
         }

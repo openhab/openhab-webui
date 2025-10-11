@@ -671,6 +671,9 @@
   .developer-sidebar-content
     margin-top 1rem
 
+  .searchbar
+    width 100%
+
   &.page
     background #e7e7e7 !important
 

@@ -13,7 +13,7 @@ import DeveloperDockIcon from './components/developer/developer-dock-icon.vue'
 // Import Framework7
 import Framework7 from 'framework7/lite-bundle'
 import Framework7Vue, { registerComponents } from 'framework7-vue/bundle'
-import { Dom7, getDevice  } from 'framework7'
+import { Dom7, getDevice } from 'framework7'
 import 'framework7/css/bundle'
 
 // Import Icons and App Custom Styles
