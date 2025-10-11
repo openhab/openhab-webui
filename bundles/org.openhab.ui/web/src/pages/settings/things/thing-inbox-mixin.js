@@ -54,7 +54,7 @@ export default {
               dialog.close()
               this.approveEntry(entry, label, newThingId)
                 .then(() => {
-                  if (redirect) this.f7router.navigate('/settings/things/' + newThingUID)
+                  if (redirect) this.f7router.navigate('/settings/things/' + newThingUID, {}) // empty options are required
                   else loadFn()
                 })
                 .catch(() => loadFn())
