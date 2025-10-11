@@ -112,7 +112,6 @@ export const useStatesStore = defineStore('states', () => {
   }
 
   async function sendCommand (itemName: string, command: string, updateState: boolean = false) {
-    console.debug(`Sending command "${command}" to item "${itemName}"`)
     if (updateState) {
       setItemState(itemName, { state: command })
     }
@@ -120,7 +119,7 @@ export const useStatesStore = defineStore('states', () => {
       '/rest/items/' + itemName,
       command,
       'text/plain',
-      'text/plain', //JJ shouldn't this be 'application/json'?
+      'text/plain',
       null
     )
   }
