@@ -184,8 +184,15 @@ export default {
     }
   },
   methods: {
+    /**
+     * Provides the CodeMirror language for the given mode.
+     * Thereby, this method handles the mapping of the mode to the language for scripts, transformations, etc.
+     *
+     * @param {string} mode
+     * @return {StreamLanguage<unknown>|LanguageSupport|null}
+     */
     languageExtension (mode) {
-      switch(true) {
+      switch (true) {
         case mode.includes('yaml'):
           return yaml()
 
@@ -280,9 +287,11 @@ export default {
             // eslint configuration
             languageOptions: {
               globals: { ...globals.node },
-              parserOptions: { ecmaVersion: 2022, sourceType: 'module' }
+              parserOptions: { ecmaVersion: 2024, sourceType: 'module' }
             },
-            rules: { semi: ['error', 'never'] }
+            rules: {
+              semi: 'off' // allow both with and without semicolons
+            }
           }
           return linter(esLint(new eslint.Linter(), config))
       }
