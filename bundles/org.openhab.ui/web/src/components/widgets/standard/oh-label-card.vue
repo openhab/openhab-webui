@@ -18,9 +18,8 @@
                   :context="context" />
         <f7-list>
           <f7-list-item :link="hasAction ? true : false" no-chevron>
-            <template #media>
-              <oh-icon v-if="config.icon"
-                       :icon="config.icon"
+            <template #media v-if="config.icon">
+              <oh-icon :icon="config.icon"
                        :height="config.iconSize || 32"
                        :width="config.iconSize || 32"
                        :state="(config.item && config.iconUseState) ? context.store[config.item].state : null"
