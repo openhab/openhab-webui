@@ -338,10 +338,10 @@
     margin-bottom 0
   .list
     margin-top 0
-.rule-code-editor.vue-codemirror
-  display block
+.rule-code-editor.v-codemirror
+  position absolute
   top calc(var(--f7-navbar-height) + var(--f7-tabbar-height))
-  height calc(100% - 2*var(--f7-navbar-height))
+  height calc(100% - var(--f7-navbar-height, 56px) - var(--f7-tabbar-height, 48px))
   width 100%
 .yaml-message
   display block
@@ -349,10 +349,10 @@
   top 80%
   white-space pre-wrap
 #source
-  .rule-source-viewer.vue-codemirror
-    display block
+  .rule-source-viewer.v-codemirror
+    position absolute
     top calc(var(--f7-navbar-height) + var(--f7-tabbar-height))
-    height calc(100% - 2*var(--f7-navbar-height))
+    height calc(100% - var(--f7-navbar-height, 56px) - var(--f7-tabbar-height, 48px))
     width 100%
 </style>
 
