@@ -393,7 +393,7 @@ export default {
         nextTick(() => {
           if (this.$refs.listIndex) this.$refs.listIndex.update()
           if (this.$device.desktop && this.$refs.searchbar) {
-            this.$refs.searchbar.$el.focus()
+            this.$refs.searchbar.$el.f7Searchbar.$inputEl[0].focus()
           }
           this.$refs.searchbar?.search(
             this.searchFor || useLastSearchQueryStore().lastThingsSearchQuery || ''
