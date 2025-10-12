@@ -60,13 +60,12 @@
         <f7-block-title>&nbsp;Loading...</f7-block-title>
         <f7-list media-list class="col wide">
           <f7-list-group>
-            <f7-list-item
-              media-item
-              v-for="n in 20"
-              :key="n"
-              :class="`skeleton-text skeleton-effect-blink`"
-              title="Title of the widget"
-              subtitle="Tag1, Tag2, Tag3..." />
+            <f7-list-item v-for="n in 20"
+                          media-item
+                          :key="n"
+                          :class="`skeleton-text skeleton-effect-blink`"
+                          title="Title of the widget"
+                          subtitle="Tag1, Tag2, Tag3..." />
           </f7-list-group>
         </f7-list>
       </f7-col>
@@ -133,9 +132,6 @@ export default {
       eventSource: null
     }
   },
-  created () {
-
-  },
   methods: {
     onPageAfterIn () {
       this.load()
@@ -143,7 +139,7 @@ export default {
     load () {
       if (this.loading) return
       this.loading = true
-      this.$oh.api.get('/rest/ui/components/ui:blocks').then(data => {
+      this.$oh.api.get('/rest/ui/components/ui:blocks').then((data) => {
         this.blocks = data.sort((a, b) => {
           return a.uid.localeCompare(b.uid)
         })

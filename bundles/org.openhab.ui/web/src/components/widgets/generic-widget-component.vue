@@ -30,14 +30,18 @@
                                 @command="onCommand" />
     </template>
   </oh-card>
-  <generic-widget-component v-else-if="componentType && componentType.startsWith('widget:') && visible" :context="childWidgetContext()" @command="onCommand" />
+  <generic-widget-component v-else-if="componentType && componentType.startsWith('widget:') && visible"
+                            :context="childWidgetContext()"
+                            @command="onCommand" />
   <component v-else-if="componentType && componentType.startsWith('oh-') && visible"
              :is="componentType"
              :context="context"
              @command="onCommand" />
+  <!-- Label renders text inside <div> element -->
   <div v-else-if="componentType && componentType === 'Label' && visible" :class="config.class" :style="config.style">
     {{ config.text }}
   </div>
+  <!-- Content renders text without any additional container -->
   <fragment v-else-if="componentType && componentType === 'Content'">
     {{ config.text }}
   </fragment>
@@ -45,7 +49,9 @@
   <component v-else-if="visible" :is="componentType" v-bind="config">
     {{ config.content }}
     <template v-if="context.component.slots && context.component.slots.default">
-      <generic-widget-component :context="childContext(slotComponent)" v-for="(slotComponent, idx) in context.component.slots.default" :key="'default-' + idx" />
+      <generic-widget-component v-for="(slotComponent, idx) in context.component.slots.default"
+                                :context="childContext(slotComponent)"
+                                :key="'default-' + idx" />
     </template>
   </component>
 </template>

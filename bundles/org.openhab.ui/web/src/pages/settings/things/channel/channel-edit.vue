@@ -22,7 +22,7 @@
         <channel-general-settings :channel="channel"
                                   :channelType="channelType"
                                   :createMode="false"
-                                  :disabled="!thing.editable" />
+                                  :disabled="!thing.editable ? true : null" />
       </f7-col>
       <f7-col v-if="channelType != null">
         <f7-block-title v-if="configDescription.parameters">
@@ -52,7 +52,13 @@ export default {
     ChannelGeneralSettings,
     ConfigSheet
   },
-  props: ['thing', 'thingType', 'channel', 'channelType', 'channelId'],
+  props: {
+    thing: Object,
+    thingType: Object,
+    channel: Object,
+    channelType: Object,
+    channelId: String
+  },
   data () {
     return {
       configDescription: {},

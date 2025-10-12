@@ -26,7 +26,7 @@
                            placeholder="Required"
                            :value="currentFilter.name"
                            @input="currentFilter.name = $event.target.value"
-                           :disabled="!createMode"
+                           :disabled="!createMode ? true : null"
                            :info="(createMode) ? 'Note: cannot be changed after the creation' : ''"
                            required
                            validate
@@ -53,7 +53,11 @@ import ConfigSheet from '@/components/config/config-sheet.vue'
 
 export default {
   components: { ConfigSheet },
-  props: ['filter', 'filterType', 'filterConfigDescriptionParameters'],
+  props: {
+    filter: Object,
+    filterType: Object,
+    filterConfigDescriptionParameters: Array
+  },
   emits: ['filterUpdate'],
   data () {
     return {

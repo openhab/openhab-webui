@@ -8,7 +8,13 @@
 import PropsEditorPopup from './props-editor-popup.vue'
 
 export default {
-  props: ['configDescription', 'value', 'parameters', 'configuration'],
+  props: {
+    configDescription: Object,
+    value: String,
+    parameters: Array,
+    configuration: Object
+  },
+  emits: ['input'],
   data () {
     return {
       propsSheetOpened: false,

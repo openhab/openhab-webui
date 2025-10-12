@@ -67,7 +67,10 @@
 import OhLayoutPage from '@/components/widgets/layout/oh-layout-page.vue'
 
 export default {
-  props: ['context', 'allowChat'],
+  props: {
+    context: Object,
+    allowChat: Boolean
+  },
   components: {
     OhLayoutPage,
     'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue'),

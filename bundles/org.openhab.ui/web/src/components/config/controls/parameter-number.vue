@@ -19,7 +19,11 @@
 
 <script>
 export default {
-  props: ['configDescription', 'value'],
+  props: {
+    configDescription: Object,
+    value: [String, Number]
+  },
+  emits: ['input'],
   computed: {
     actualValue () {
       return (this.configDescription.type === 'DECIMAL') ? parseFloat(this.value) : parseInt(this.value)

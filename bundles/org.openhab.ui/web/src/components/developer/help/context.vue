@@ -21,7 +21,9 @@ const renderer = {
 }
 
 export default {
-  props: ['path'],
+  props: {
+    path: String
+  },
   data () {
     return {
       ready: false,

@@ -25,7 +25,14 @@
 
 <script>
 export default {
-  props: ['title', 'name', 'value', 'multiple', 'required'],
+  props: {
+    title: String,
+    name: String,
+    value: [String, Array],
+    multiple: Boolean,
+    required: Boolean
+  },
+  emits: ['input'],
   data () {
     return {
       ready: false,

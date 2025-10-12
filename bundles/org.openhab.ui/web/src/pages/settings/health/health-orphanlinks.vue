@@ -15,9 +15,9 @@
           Orphan links are items pointing to non-existent thing channels or vice versa.
           <br>
           <br>
-          Note that only the links of managed Items can be purged, not links defined
-          in <code>.items</code> files - these must be fixed manually in the corresponding file.
-          The latter are marked with <f7-icon f7="lock_fill" size="1rem" color="gray" />.
+          Note that only the links of managed Items can be purged, not links defined in
+          <code>.items</code> files - these must be fixed manually in the corresponding file. The
+          latter are marked with <f7-icon f7="lock_fill" size="1rem" color="gray" />.
         </f7-block-footer>
       </f7-col>
     </f7-block>
@@ -28,8 +28,8 @@
         <f7-block-title>&nbsp;Loading...</f7-block-title>
         <f7-list contacts-list class="col">
           <f7-list-group>
-            <f7-list-item media-item
-                          v-for="n in 10"
+            <f7-list-item v-for="n in 10"
+                          media-item
                           :key="n"
                           :class="`skeleton-text skeleton-effect-blink`"
                           title="Type of problem"
@@ -40,9 +40,7 @@
       </f7-col>
 
       <f7-col v-else>
-        <f7-block-title>
-          {{ orphanLinks.length }} orphan links found
-        </f7-block-title>
+        <f7-block-title> {{ orphanLinks.length }} orphan links found </f7-block-title>
         <f7-list class="col" contacts-list>
           <f7-list-item v-for="orphanLink in orphanLinks"
                         :key="orphanLink.itemChannelLink.channelUID"
@@ -123,5 +121,3 @@ export default {
   }
 }
 </script>
-
-<style></style>

@@ -25,8 +25,11 @@
         </f7-menu-item>
       </f7-menu>
     </div>
-    <oh-placeholder-widget v-if="context.editmode && !context.component.slots.default.length" @click="context.editmode.addWidget(context.component, null, context.parent)" />
-    <generic-widget-component v-else-if="context.component.slots.default.length" :context="childContext(context.component.slots.default[0])" @command="onCommand" />
+    <oh-placeholder-widget v-if="context.editmode && !context.component.slots.default.length"
+                           @click="context.editmode.addWidget(context.component, null, context.parent)" />
+    <generic-widget-component v-else-if="context.component.slots.default.length"
+                              :context="childContext(context.component.slots.default[0])"
+                              @command="onCommand" />
   </f7-col>
 </template>
 

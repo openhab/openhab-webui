@@ -2,7 +2,7 @@
   <div class="group-form no-padding">
     <!-- Type -->
     <f7-list-item v-if="item.type === 'Group'"
-                  :disabled="!editable"
+                  :disabled="!editable ? true : null"
                   :key="'type-' + groupType"
                   title="Members Base Type"
                   class="aligned-smart-select"
@@ -12,32 +12,32 @@
         <option v-for="type in types.GroupTypes"
                 :key="type"
                 :value="type"
-                :selected="type === groupType">
+                :selected="type === groupType ? true : null">
           {{ type }}
         </option>
       </select>
     </f7-list-item>
     <!-- Dimension -->
     <f7-list-item v-if="dimensions.length && groupType && groupType === 'Number'"
-                  :disabled="!editable"
+                  :disabled="!editable ? true : null"
                   :key="'dimension-' + groupDimension"
                   title="Dimension"
                   class="aligned-smart-select"
                   smart-select
                   :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
       <select name="select-dimension" @change="groupDimension = $event.target.value">
-        <option key="" value="Number" :selected="groupType === 'Number'" />
+        <option key="" value="Number" :selected="groupType === 'Number' ? true : null" />
         <option v-for="d in dimensions"
                 :key="d.name"
                 :value="d.name"
-                :selected="d.name === groupDimension">
+                :selected="d.name === groupDimension ? true : null">
           {{ d.label }}
         </option>
       </select>
     </f7-list-item>
     <!-- (Internal) Unit & State Description -->
     <f7-list-input v-show="groupType && groupDimension && dimensionsReady"
-                   :disabled="!editable"
+                   :disabled="!editable ? true : null"
                    ref="groupUnit"
                    label="Unit"
                    type="text"
@@ -46,7 +46,7 @@
                    @change="groupUnit = $event.target.value"
                    :clear-button="editable" />
     <f7-list-input v-show="groupType && groupDimension"
-                   :disabled="!editable"
+                   :disabled="!editable ? true : null"
                    label="State Description Pattern"
                    type="text"
                    :info="(createMode) ? 'Pattern or transformation applied to the state for display purposes. Only saved if you change the pre-filled default value.' : ''"
@@ -55,7 +55,7 @@
                    :clear-button:="editable" />
     <!-- Aggregation Functions -->
     <f7-list-item v-if="aggregationFunctions"
-                  :disabled="!editable"
+                  :disabled="!editable ? true : null"
                   title="Aggregation Function"
                   class="aligned-smart-select"
                   smart-select
@@ -64,7 +64,7 @@
         <option v-for="type in aggregationFunctions"
                 :key="type.name"
                 :value="type.name"
-                :selected="type.name === groupFunctionKey">
+                :selected="type.name === groupFunctionKey ? true : null">
           {{ type.value }}
         </option>
       </select>
@@ -97,7 +97,10 @@ import uomMixin from '@/components/item/uom-mixin'
 
 export default {
   mixins: [uomMixin],
-  props: ['item', 'createMode'],
+  props: {
+    item: Object,
+    createMode: Boolean
+  },
   data () {
     return {
       types,
@@ -262,16 +265,16 @@ export default {
           let curatedUnits = self.groupDimension ? self.getUnitList(self.groupDimension) : []
           let allUnits = self.groupDimension ? self.getFullUnitList(self.groupDimension) : []
           if (!query || !query.length) {
-          // Render curated list by default
+            // Render curated list by default
             render(curatedUnits)
           } else {
-            let units = curatedUnits.filter(u => u.indexOf(query) >= 0)
+            let units = curatedUnits.filter((u) => u.indexOf(query) >= 0)
             if (units.length) {
               // Show full curated list if in curated list
               render(curatedUnits)
             } else {
               // If no match filter on full list
-              render(allUnits.filter(u => u.indexOf(query) >= 0))
+              render(allUnits.filter((u) => u.indexOf(query) >= 0))
             }
           }
         }

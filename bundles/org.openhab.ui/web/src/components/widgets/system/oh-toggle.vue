@@ -1,6 +1,6 @@
 <template>
   <f7-toggle v-bind="config"
-             :checked="value"
+             :checked="value ? true : null"
              @toggle:change="onChange"
              @click.native.stop />
 </template>

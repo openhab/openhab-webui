@@ -4,7 +4,9 @@
              @taphold.native="onTaphold($event)"
              @contextmenu.native="onContextMenu($event)">
     <template v-if="context.component.slots && context.component.slots.default">
-      <generic-widget-component :context="childContext(slotComponent)" v-for="(slotComponent, idx) in context.component.slots.default" :key="'default-' + idx" />
+      <generic-widget-component v-for="(slotComponent, idx) in context.component.slots.default"
+                                :context="childContext(slotComponent)"
+                                :key="'default-' + idx" />
     </template>
   </f7-button>
 </template>

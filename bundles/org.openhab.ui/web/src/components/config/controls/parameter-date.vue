@@ -15,7 +15,11 @@
 
 <script>
 export default {
-  props: ['configDescription', 'value'],
+  props: {
+    configDescription: Object,
+    value: String
+  },
+  emits: ['input'],
   methods: {
     updateValue (event) {
       this.$emit('input', event.target.value)

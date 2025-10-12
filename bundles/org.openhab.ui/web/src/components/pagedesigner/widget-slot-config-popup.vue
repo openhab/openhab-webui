@@ -31,7 +31,10 @@
         <f7-link @click="currentTab = 'channels'" :tab-link-active="currentTab === 'channels'" class="tab-link">Channels</f7-link> -->
       </f7-toolbar>
       <f7-tabs>
-        <f7-tab v-for="(slotComponent, idx) in slotConfig" :key="idx" :tab-active="currentTab === idx">
+        <f7-tab v-for="(slotComponent, idx) in slotConfig"
+                :id="'tab-' + idx"
+                :key="idx"
+                :tab-active="currentTab === idx">
           <config-sheet v-if="currentTab === idx && getWidgetDefinition(slotComponent.component)"
                         :parameterGroups="getWidgetDefinition(slotComponent.component).props.parameterGroups || []"
                         :parameters="getWidgetDefinition(slotComponent.component).props.parameters || []"
@@ -64,7 +67,16 @@
 import ConfigSheet from '@/components/config/config-sheet.vue'
 
 export default {
-  props: ['currentSlot', 'slotConfig', 'getWidgetDefinition', 'currentSlotDefaultComponentType', 'initialConfig', 'removeComponentFromSlot', 'editWidgetCode'],
+  props: {
+    currentSlot: String,
+    slotConfig: Array,
+    getWidgetDefinition: Function,
+    currentSlotDefaultComponentType: String,
+    initialConfig: Object,
+    removeComponentFromSlot: Function,
+    editWidgetCode: Function
+  },
+  emits: ['widgetSlotConfigClosed', 'widgetSlotConfigUpdate'],
   components: {
     ConfigSheet
   },

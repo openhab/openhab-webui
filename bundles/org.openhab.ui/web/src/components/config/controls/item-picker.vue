@@ -71,8 +71,26 @@
 import ModelPickerPopup from '@/components/model/model-picker-popup.vue'
 
 export default {
-  props: ['title', 'name', 'value', 'items', 'multiple', 'filterType', 'required', 'editableOnly', 'disabled', 'setValueText', 'noModelPicker',
-    'iconColor', 'auroraIcon', 'iosIcon', 'mdIcon', 'textColor', 'hideIcon'],
+  props: {
+    title: String,
+    name: String,
+    value: [String, Array],
+    items: Array,
+    multiple: Boolean,
+    filterType: [String, Array],
+    required: Boolean,
+    editableOnly: Boolean,
+    disabled: Boolean,
+    setValueText: Boolean,
+    noModelPicker: Boolean,
+    iconColor: String,
+    auroraIcon: String,
+    iosIcon: String,
+    mdIcon: String,
+    textColor: String,
+    hideIcon: Boolean
+  },
+  emits: ['input', 'item-selected'],
   data () {
     return {
       ready: false,
@@ -125,14 +143,14 @@ export default {
       this.$f7.input.validateInputs(this.$refs.smartSelect.$el)
       const value = this.$refs.smartSelect.f7SmartSelect.getValue()
       this.$emit('input', value)
-      if (!this.multiple) this.$emit('itemSelected', this.preparedItems.find((i) => i.name === value))
+      if (!this.multiple) this.$emit('item-selected', this.preparedItems.find((i) => i.name === value))
     },
     updateFromModelPicker (value) {
       if (this.multiple) {
         this.$emit('input', value.map((i) => i.name))
       } else {
         this.$emit('input', value.name)
-        this.$emit('itemSelected', value)
+        this.$emit('item-selected', value)
       }
       this.ready = false
       this.$nextTick(() => { this.ready = true })

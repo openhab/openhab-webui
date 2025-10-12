@@ -74,11 +74,11 @@ export default {
       webrtc.onnegotiationneeded = function handleNegotiationNeeded () {
         // WebRTC lifecycle to create a live stream
         webrtc.createOffer()
-          .then(offer => webrtc.setLocalDescription(offer))
+          .then((offer) => webrtc.setLocalDescription(offer))
           .then(() => waitForCandidates(self.candidatesTimeout))
           .then(() => sendOffer())
-          .then(answer => webrtc.setRemoteDescription(new RTCSessionDescription({ type: 'answer', sdp: answer })))
-          .catch(e => console.warn(e))
+          .then((answer) => webrtc.setRemoteDescription(new RTCSessionDescription({ type: 'answer', sdp: answer })))
+          .catch((e) => console.warn(e))
 
         // waits x amount of time for ICE candidates before resolving
         function waitForCandidates (timeout = 2000) {
@@ -111,12 +111,12 @@ export default {
                 data: btoa(webrtc.localDescription.sdp)
               })
             })
-              .then(response => response.text())
-              .then(data => {
+              .then((response) => response.text())
+              .then((data) => {
                 const answer = atob(data)
                 console.debug('Answer: ', answer)
                 resolve(answer)
-              }).catch(e => reject(e))
+              }).catch((e) => reject(e))
           })
         }
       }
@@ -124,7 +124,7 @@ export default {
       const webrtcSendChannel = webrtc.createDataChannel(
         'dataSendChannel'
       )
-      webrtcSendChannel.onclose = _event => {
+      webrtcSendChannel.onclose = (_event) => {
         console.debug(`${webrtcSendChannel.label} has closed`)
         // if we did not close this, restart the stream
         if (!webrtc.isClosed) {

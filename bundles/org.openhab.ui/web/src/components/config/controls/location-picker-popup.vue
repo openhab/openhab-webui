@@ -35,7 +35,10 @@
 
 <script>
 export default {
-  props: ['value', 'title'],
+  props: {
+    value: String,
+    title: String
+  },
   components: {
     'location-picker': () => import(/* webpackChunkName: "location-picker" */ './location-picker.vue')
   },

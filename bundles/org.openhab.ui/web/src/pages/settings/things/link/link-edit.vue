@@ -77,11 +77,11 @@
           <div>Loading...</div>
         </f7-block>
         <f7-list v-else class="profile-list">
-          <f7-list-item radio
-                        v-for="profileType in profileTypes"
+          <f7-list-item v-for="profileType in profileTypes"
+                        radio
                         class="profile-item"
-                        :checked="!currentProfileType && profileType.uid === 'system:default' || currentProfileType && profileType.uid === currentProfileType.uid"
-                        :disabled="!link.editable"
+                        :checked="(!currentProfileType && profileType.uid === 'system:default' || currentProfileType && profileType.uid === currentProfileType.uid) ? true : null"
+                        :disabled="!link.editable ? true : null"
                         :class="{ 'profile-disabled': !link.editable }"
                         @change="onProfileTypeChange(profileType.uid)"
                         :key="profileType.uid"
@@ -130,7 +130,12 @@ export default {
     Item,
     ItemStatePreview
   },
-  props: ['thing', 'channel', 'item', 'source'],
+  props: {
+    thing: Object,
+    channel: Object,
+    item: Object,
+    source: String
+  },
   data () {
     return {
       ready: false,

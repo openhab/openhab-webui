@@ -5,7 +5,7 @@
     </f7-block-title>
     <f7-list v-if="editable">
       <f7-list-item radio
-                    :checked="parsedAction.action === 'state'"
+                    :checked="parsedAction.action === 'state' ? true : null"
                     name="action"
                     title="update state"
                     @click="updateAction('state')" />
@@ -14,29 +14,33 @@
                     name="action"
                     title="send command"
                     @click="updateAction('command')" />
-      <f7-list-input
-        :label="parsedAction.action === 'command' ? 'Command' : 'State'"
-        name="value"
-        ref="value"
-        type="text"
-        placeholder="UNDEF if unset"
-        :value="parsedAction.value"
-        @blur="(evt) => updateActionValue(evt.target.value)" />
+      <f7-list-input ref="value"
+                     :label="parsedAction.action === 'command' ? 'Command' : 'State'"
+                     name="value"
+                     type="text"
+                     placeholder="UNDEF if unset"
+                     :value="parsedAction.value"
+                     @blur="(evt) => updateActionValue(evt.target.value)" />
       <f7-list-item title="ignore state updates"
                     checkbox
-                    :checked="ignoreStateUpdates"
+                    :checked="ignoreStateUpdates ? true : null"
                     @change="(ev) => metadata.config['ignoreStateUpdates'] = new Boolean(ev.target.checked).toString()" />
       <f7-list-item title="ignore commands"
                     checkbox
-                    :checked="ignoreCommands"
+                    :checked="ignoreCommands ? true : null"
                     @change="(ev) => metadata.config['ignoreCommands'] = new Boolean(ev.target.checked).toString()" />
     </f7-list>
     <f7-block v-else>
-      {{ parsedAction.action === 'state' ? 'Update state to' : 'Send command' }} <strong>{{ parsedAction.value || 'UNDEF' }}</strong><br>
+      {{ parsedAction.action === 'state' ? 'Update state to' : 'Send command' }}
+      <strong>{{ parsedAction.value || 'UNDEF' }}</strong><br>
       {{ `${ignoreStateUpdates ? 'Ignore state updates' : ''}${ignoreCommands && ignoreCommands ? ', ' : ''}${ignoreCommands ? 'Ignore commands' : ''}` }}
     </f7-block>
     <f7-block-footer class="param-description padding-left">
-      <small>After a different command or state update is received, perform the chosen action when the duration specified below has passed. The timer is reset if another state update or command is received before it expires. If the ignore state updates checkbox is set, only state changes and commands will reset the timer. If the ignore commands checkbox is set, only state updates and state changes will reset the timer.</small>
+      <small>After a different command or state update is received, perform the chosen action when the
+        duration specified below has passed. The timer is reset if another state update or command
+        is received before it expires. If the ignore state updates checkbox is set, only state
+        changes and commands will reset the timer. If the ignore commands checkbox is set, only
+        state updates and state changes will reset the timer.</small>
     </f7-block-footer>
     <f7-block-title medium>
       After
@@ -49,7 +53,7 @@
         ref="duration"
         type="text"
         :value="sanitizedDuration"
-        :disabled="!editable"
+        :disabled="!editable ? true : null"
         @blur="(evt) => updateDuration(evt.target.value)"
         pattern="(\d+h)*(\d+m)*(\d+s)*"
         validate
@@ -68,7 +72,10 @@
 import ItemMetadataMixin from '@/components/item/metadata/item-metadata-mixin'
 
 export default {
-  props: ['itemName', 'metadata'],
+  props: {
+    itemName: String,
+    metadata: Object
+  },
   mixins: [ItemMetadataMixin],
   data () {
     return {

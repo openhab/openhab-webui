@@ -14,7 +14,7 @@
                      :addons-list="featuredAddons"
                      :install-action-text="installActionText"
                      :headline="'Featured'"
-                     @addonButtonClick="addonButtonClick" />
+                     @addon-button-click="addonButtonClick" />
       <div v-else class="addons-cards">
         <addon-card class="addon-card-desktop"
                     v-for="addon in featuredAddons"
@@ -22,7 +22,7 @@
                     :addon="addon"
                     :install-action-text="installActionText"
                     :headline="'Featured'"
-                    @addonButtonClick="addonButtonClick" />
+                    @addon-button-click="addonButtonClick" />
       </div>
     </template>
     <template v-if="suggested">
@@ -30,7 +30,7 @@
                      :addons-list="addonsList"
                      :install-action-text="installActionText"
                      :headline="'Suggested'"
-                     @addonButtonClick="addonButtonClick" />
+                     @addon-button-click="addonButtonClick" />
       <div v-else class="addons-cards">
         <addon-card class="addon-card-desktop"
                     v-for="addon in addonsList"
@@ -38,21 +38,21 @@
                     :addon="addon"
                     :install-action-text="installActionText"
                     :headline="'Suggested'"
-                    @addonButtonClick="addonButtonClick" />
+                    @addon-button-click="addonButtonClick" />
       </div>
     </template>
     <template v-else-if="showAsCards">
       <addons-swiper v-if="!$device.desktop && !$device.ipad && (this.addons.length < this.addonCollapsedLimit)"
                      :addons-list="addonsList"
                      :install-action-text="installActionText"
-                     @addonButtonClick="addonButtonClick" />
+                     @addon-button-click="addonButtonClick" />
       <div v-else class="addons-cards">
         <addon-card class="addon-card-desktop"
                     v-for="addon in addonsList"
                     :key="addon.uid"
                     :addon="addon"
                     :install-action-text="installActionText"
-                    @addonButtonClick="addonButtonClick" />
+                    @addon-button-click="addonButtonClick" />
       </div>
     </template>
     <f7-list v-else
@@ -65,7 +65,7 @@
                        :key="addon.uid"
                        :addon="addon"
                        :install-action-text="installActionText"
-                       @addonButtonClick="addonButtonClick" />
+                       @addon-button-click="addonButtonClick" />
     </f7-list>
     <f7-block v-if="canExpand" class="display-flex justify-content-center">
       <f7-button class=""
@@ -138,7 +138,17 @@ import { compareAddons } from '@/assets/addon-store'
 import AddonsSwiper from '@/components/addons/addons-swiper.vue'
 
 export default {
-  props: ['addons', 'title', 'subtitle', 'showAll', 'featured', 'showAsCards', 'suggested', 'installActionText'],
+  props: {
+    addons: Array,
+    title: String,
+    subtitle: String,
+    showAll: Boolean,
+    featured: Array,
+    showAsCards: Boolean,
+    suggested: Boolean,
+    installActionText: String
+  },
+  emits: ['addon-button-click'],
   components: {
     AddonsSwiper,
     AddonListItem,
@@ -152,17 +162,17 @@ export default {
   computed: {
     featuredAddons () {
       if (this.featured) {
-        return this.addons.filter(a => this.featured.indexOf(a.uid) >= 0).sort(compareAddons)
+        return this.addons.filter((a) => this.featured.indexOf(a.uid) >= 0).sort(compareAddons)
       }
       return null
     },
     notFeaturedAddons () {
-      return (this.featuredAddons && this.featuredAddons.length)
-        ? this.addons.filter(a => this.featuredAddons.indexOf(a) < 0).sort(compareAddons)
+      return this.featuredAddons && this.featuredAddons.length
+        ? this.addons.filter((a) => this.featuredAddons.indexOf(a) < 0).sort(compareAddons)
         : [...this.addons].sort(compareAddons)
     },
     addonCollapsedLimit () {
-      const installedCount = this.notFeaturedAddons.filter(a => a.installed).length
+      const installedCount = this.notFeaturedAddons.filter((a) => a.installed).length
       if (installedCount >= 22) return 36
       if (installedCount >= 10) return 24
       return 12
@@ -185,7 +195,7 @@ export default {
       }, 100)
     },
     addonButtonClick (addon) {
-      this.$emit('addonButtonClick', addon)
+      this.$emit('addon-button-click', addon)
     }
   },
   mounted () {

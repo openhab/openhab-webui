@@ -10,7 +10,9 @@ import { OhClockDefinition } from '@/assets/definitions/widgets/system'
 
 export default {
   mixins: [mixin, actionsMixin],
-  props: ['format'],
+  props: {
+    format: String
+  },
   widget: OhClockDefinition,
   data () {
     return {

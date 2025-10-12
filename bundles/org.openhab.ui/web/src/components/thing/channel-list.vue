@@ -56,7 +56,8 @@
               :selection="(multipleLinksMode) ? selectedChannels : selectedChannel"
               @selected="selectChannel"
               @channel-opened="channelOpened">
-              <template #default="{ channelId, channelType, channel, extensible }" v-if="!pickerMode && !multipleLinksMode">
+              <template v-if="!pickerMode && !multipleLinksMode"
+                        #default="{ channelId, channelType, channel, extensible }">
                 <channel-link :opened="openedChannelId === channelId"
                               :thing="thing"
                               :channelId="channelId"
@@ -93,7 +94,9 @@
           </f7-col>
         </f7-row>
         <f7-list v-if="multipleLinksMode">
-          <f7-list-button style="padding-left: 0; text-align: left" color="blue" @click="toggleAllChecks(true)">
+          <f7-list-button style="padding-left: 0; text-align: left"
+                          color="blue"
+                          @click="toggleAllChecks(true)">
             Select All
           </f7-list-button>
           <f7-list-button color="blue" @click="toggleAllChecks(false)">
@@ -137,13 +140,26 @@ import cloneDeep from 'lodash/cloneDeep'
 
 export default {
   mixins: [uomMixin],
-  props: ['thingType', 'thing', 'channelTypes', 'items', 'pickerMode', 'multipleLinksMode', 'itemTypeFilter', 'newItemsPrefix', 'newItems', 'updatedItems', 'context'],
+  props: {
+    thingType: Object,
+    thing: Object,
+    channelTypes: Array,
+    items: Array,
+    pickerMode: Boolean,
+    multipleLinksMode: Boolean,
+    itemTypeFilter: String,
+    newItemsPrefix: String,
+    newItems: Array,
+    updatedItems: Array,
+    context: Object
+  },
   components: {
     ChannelGroup,
     ChannelLink,
     ItemForm,
     ItemPicker
   },
+  emits: ['channels-updated', 'selected'],
   data () {
     return {
       showAdvanced: false,
@@ -168,20 +184,27 @@ export default {
     },
     channelGroups () {
       if (!this.thing || !this.thingType || !this.channelTypes) return {}
-      let groups = this.thingType.channelGroups.map((g) => { return { id: g.id, label: g.label, description: g.description, channels: [] } })
+      let groups = this.thingType.channelGroups.map((g) => {
+        return {
+          id: g.id,
+          label: g.label,
+          description: g.description,
+          channels: []
+        }
+      })
       groups.push({ id: '', channels: [] })
 
       try {
         this.thing.channels.forEach((c) => {
-          let groupIndex = groups.findIndex(g => g.id === c.id.split('#')[0])
+          let groupIndex = groups.findIndex((g) => g.id === c.id.split('#')[0])
           if (groupIndex < 0) groupIndex = groups.length - 1
           let channelType = this.channelTypesMap.get(c.channelTypeUID)
           if (!channelType) {
             console.warn('Channel type ' + c.channelTypeUID + ' not found for channel ' + c.id)
             return
           }
-          if ((this.showAdvanced || !channelType.advanced)) {
-            if ((this.showLinked === undefined || (this.showLinked === true && this.hasLinks(c)) || (this.showLinked === false && !this.hasLinks(c)))) {
+          if (this.showAdvanced || !channelType.advanced) {
+            if (this.showLinked === undefined || (this.showLinked === true && this.hasLinks(c)) || (this.showLinked === false && !this.hasLinks(c))) {
               groups[groupIndex].channels.push({ channel: c, channelType, extensible: this.thingType.extensibleChannelTypeIds.indexOf(c.channelTypeUID.split(':')[1]) >= 0 })
             }
           }
@@ -194,7 +217,7 @@ export default {
       return groups
     },
     hasAdvanced () {
-      return this.channelGroups.some(g => g.hasAdvanced)
+      return this.channelGroups.some((g) => g.hasAdvanced)
     }
   },
   methods: {
@@ -279,7 +302,7 @@ export default {
       name += '_'
       let suffix = channel.label || channelType.label || channel.id
       if (this.thing.channels.filter((c) => c.label === suffix || (c.channelTypeUID && this.channelTypesMap[c.channelTypeUID] && this.channelTypesMap[c.channelTypeUID].label === suffix)).length > 1) {
-        suffix = channel.id.replace('#', '_').replace(/(^\w{1})|(_+\w{1})/g, letter => letter.toUpperCase())
+        suffix = channel.id.replace('#', '_').replace(/(^\w{1})|(_+\w{1})/g, (letter) => letter.toUpperCase())
       }
       name += this.$oh.utils.normalizeLabel(suffix)
       return name

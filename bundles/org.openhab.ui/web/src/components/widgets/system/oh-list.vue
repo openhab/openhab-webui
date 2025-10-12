@@ -15,7 +15,7 @@
     </f7-menu>
     <ul v-if="context.component.slots && context.component.slots.default">
       <template v-for="(slotComponent, idx) in context.component.slots.default">
-        <f7-menu v-if="context.editmode" style="float:left" :key="idx">
+        <f7-menu v-if="context.editmode" style="float: left" :key="idx">
           <f7-menu-item icon-f7="list_bullet" class="margin-left configure-layout-menu" dropdown>
             <f7-menu-dropdown>
               <f7-menu-dropdown-item @click="context.editmode.configureWidget(context.component.slots.default[idx], context)" href="#" text="Configure Item" />

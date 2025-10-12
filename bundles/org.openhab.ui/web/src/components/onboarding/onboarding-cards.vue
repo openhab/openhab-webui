@@ -31,18 +31,12 @@
             </f7-link>
           </li>
           <li>
-            <f7-link
-              no-link-class
-              color="blue"
-              href="#">
+            <f7-link no-link-class color="blue" href="#">
               Design your home's conceptually with the semantic model builder and link the Things to Items
             </f7-link>
           </li>
           <li>
-            <f7-link
-              no-link-class
-              color="blue"
-              href="#">
+            <f7-link no-link-class color="blue" href="#">
               Connect to openHAB Cloud for remote access and integration with voice assistants
             </f7-link>
           </li>
@@ -59,7 +53,10 @@
 
 <script>
 export default {
-  props: ['showSetup', 'showTasks'],
+  props: {
+    showSetup: Boolean,
+    showTasks: Boolean
+  },
   methods: {
     skipSetupWizard () {
       this.$f7.dialog.confirm(

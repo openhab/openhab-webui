@@ -25,10 +25,10 @@
                 <input type="text"
                        placeholder="Add custom logger package entry..."
                        @keyup.enter="handleLogPackageEnter($event)"
-                       class="custom-input"></input>
+                       class="custom-input">
               </div>
             </f7-block>
-            <f7-block style="margin-top: 4px; font-size: 0.85rem; text-align: center;">
+            <f7-block style="margin-top: 4px; font-size: 0.85rem; text-align: center">
               Logger will be added with ROOT log level {{ defaultLogLevel }}
             </f7-block>
 
@@ -227,7 +227,6 @@
                  :class="{ 'disabled-link': !stateConnected, 'no-margin-left': $device.ios }"
                  @click="loggingStop" />
       </f7-nav-right>
-
       <f7-subnavbar :inner="false" style="padding-right: var(--f7-safe-area-right)">
         <f7-searchbar ref="searchbar"
                       :value="filterText"

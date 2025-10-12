@@ -11,8 +11,8 @@
            @card:closed="cellClosed">
     <slot name="background">
       <div v-if="context.component.slots && context.component.slots.background">
-        <generic-widget-component :context="childContext(slotComponent)"
-                                  v-for="(slotComponent, idx) in context.component.slots.background"
+        <generic-widget-component v-for="(slotComponent, idx) in context.component.slots.background"
+                                  :context="childContext(slotComponent)"
                                   :key="'background-' + idx"
                                   @command="onCommand" />
       </div>
@@ -21,7 +21,7 @@
                 class="trend card-opened-fade-out"
                 :width="($refs.card) ? $refs.card.$el.clientWidth : 0"
                 :context="context" />
-      <div v-else class="cell-background" :class="[(config.color) ? 'bg-color-' + config.color : '', { 'on': isOn }, { 'card-opened-fade-out': !config.keepColorWhenOpened }]" />
+      <div v-else class="cell-background" :class="[(config.color) ? 'bg-color-' + config.color : '', { on: isOn }, { 'card-opened-fade-out': !config.keepColorWhenOpened }]" />
     </slot>
     <f7-link v-show="!opened && hasExpandedControls && hasAction"
              icon-f7="ellipsis_vertical"
@@ -33,8 +33,8 @@
         <slot name="header">
           <f7-list media-list>
             <div v-if="context.component.slots && context.component.slots.header">
-              <generic-widget-component :context="childContext(slotComponent)"
-                                        v-for="(slotComponent, idx) in context.component.slots.header"
+              <generic-widget-component v-for="(slotComponent, idx) in context.component.slots.header"
+                                        :context="childContext(slotComponent)"
                                         :key="'header-' + idx"
                                         @command="onCommand" />
             </div>
@@ -88,8 +88,8 @@
       <div v-if="opened" class="cell-expanded-contents card-opened-fade-in display-flex flex-direction-column align-items-center">
         <slot>
           <div v-if="context.component.slots && context.component.slots.default">
-            <generic-widget-component :context="childContext(slotComponent)"
-                                      v-for="(slotComponent, idx) in context.component.slots.default"
+            <generic-widget-component v-for="(slotComponent, idx) in context.component.slots.default"
+                                      :context="childContext(slotComponent)"
                                       :key="'default-' + idx"
                                       @command="onCommand" />
           </div>
@@ -173,7 +173,10 @@ export default {
     OhTrend
   },
   widget: OhCellDefinition,
-  props: ['noSwipeToClose', 'state'],
+  props: {
+    noSwipeToClose: Boolean,
+    state: String
+  },
   data () {
     return {
       transitioning: false,

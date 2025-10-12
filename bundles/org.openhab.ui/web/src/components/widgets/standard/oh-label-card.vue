@@ -72,7 +72,11 @@ export default {
   widget: OhLabelCardDefinition,
   computed: {
     label () {
-      return this.config.label || this.context.store[this.config.item].displayState || this.context.store[this.config.item].state
+      return (
+        this.config.label ||
+        this.context.store[this.config.item].displayState ||
+        this.context.store[this.config.item].state
+      )
     }
   }
 }

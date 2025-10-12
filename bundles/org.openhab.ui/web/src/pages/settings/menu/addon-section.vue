@@ -10,7 +10,9 @@
         :link="'addons/' + a.uid"
         :title="a.label"
         v-show="!a.hidden" />
-      <f7-list-button v-if="!expanded && addonsSettings.find((a) => a.hidden)" color="blue" @click="$emit('expand')">
+      <f7-list-button v-if="!expanded && addonsSettings.find((a) => a.hidden)"
+                      color="blue"
+                      @click="$emit('expand')">
         {{ $t('dialogs.showAll') }}
       </f7-list-button>
     </f7-list>
@@ -19,7 +21,12 @@
 
 <script>
 export default {
-  props: ['addonsInstalled', 'addonsServices', 'expanded'],
+  props: {
+    addonsInstalled: Array,
+    addonsServices: Array,
+    expanded: Boolean
+  },
+  emits: ['expand'],
   computed: {
     addonsSettings () {
       if (this.expanded) return this.addonsInstalled

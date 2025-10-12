@@ -27,6 +27,7 @@ export default {
     LIcon
   },
   widget: OhMapMarkerDefinition,
+  emits: ['update'],
   data () {
     return {
       markerKey: this.$f7.utils.id()

@@ -32,13 +32,19 @@ import MetadataMenu from '@/components/item/metadata/item-metadata-menu.vue'
 import LinkDetails from '@/components/model/link-details.vue'
 
 export default {
-  props: ['model', 'links', 'items', 'context'],
+  props: {
+    model: Object,
+    links: Array,
+    items: Array,
+    context: Object
+  },
   components: {
     ItemStatePreview,
     ItemDetails,
     MetadataMenu,
     LinkDetails
   },
+  emits: ['item-updated', 'item-created', 'item-removed', 'cancel-create'],
   methods: {
   }
 }

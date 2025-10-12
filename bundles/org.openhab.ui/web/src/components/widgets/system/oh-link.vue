@@ -1,7 +1,9 @@
 <template>
   <f7-link v-bind="config" @click="clicked">
     <template v-if="context.component.slots && context.component.slots.default">
-      <generic-widget-component :context="childContext(slotComponent)" v-for="(slotComponent, idx) in context.component.slots.default" :key="'default-' + idx" />
+      <generic-widget-component v-for="(slotComponent, idx) in context.component.slots.default"
+                                :context="childContext(slotComponent)"
+                                :key="'default-' + idx" />
     </template>
   </f7-link>
 </template>

@@ -28,9 +28,7 @@
           v-if="config.embedSvg"
           @click="flashEmbeddedSvgComponents()"
           icon-f7="bolt" />
-        <f7-menu-item
-          dropdown
-          icon-f7="rectangle_3_offgrid">
+        <f7-menu-item dropdown icon-f7="rectangle_3_offgrid">
           <f7-menu-dropdown right>
             <f7-menu-dropdown-item
               @click="
@@ -149,10 +147,10 @@
         :grid-pitch="grid.pitch"
         :prevent-deactivation="preventDeactivation"
         :context="childContext(obj.item)"
-        @ociDragged="ociDragged"
-        @ociDragStop="ociDragStop"
-        @ociSelected="ociSelected"
-        @ociDeselected="ociDeselected" />
+        @oci-dragged="ociDragged"
+        @oci-drag-stop="ociDragStop"
+        @oci-selected="ociSelected"
+        @oci-deselected="ociDeselected" />
     </div>
   </div>
 </template>

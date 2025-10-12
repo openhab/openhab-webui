@@ -1,6 +1,7 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
-    <f7-navbar :title="(createMode ? 'Create Widget' : 'Widget: ' + widget.uid) + dirtyIndicator" back-link="Back">
+    <f7-navbar :title="(createMode ? 'Create Widget' : 'Widget: ' + widget.uid) + dirtyIndicator"
+               back-link="Back">
       <f7-nav-right>
         <f7-link @click="save()"
                  v-if="$theme.md"
@@ -24,7 +25,7 @@
       <f7-row resizable>
         <f7-col style="min-width: 20px" class="widget-code">
           <editor class="widget-component-editor"
-                  mode="application/vnd.openhab.uicomponent+yaml?type=widget"
+                  mode="application/vnd.openhab.uicomponent+yaml;type=widget"
                   :value="widgetDefinition"
                   @input="onEditorInput" />
         </f7-col>
@@ -39,7 +40,7 @@
       <f7-row resizable>
         <f7-col resizable style="min-width: 20px" class="widget-code">
           <editor class="widget-component-editor"
-                  mode="application/vnd.openhab.uicomponent+yaml?type=widget"
+                  mode="application/vnd.openhab.uicomponent+yaml;type=widget"
                   :value="widgetDefinition"
                   @input="onEditorInput" />
         </f7-col>
@@ -75,7 +76,8 @@
         <f7-block v-if="widget.props">
           <f7-col>
             <f7-block-footer>
-              Please note that expressions in properties are not evaluated inside the widget editor, but are evaluated when the widget is used on pages.
+              Please note that expressions in properties are not evaluated inside the widget editor,
+              but are evaluated when the widget is used on pages.
             </f7-block-footer>
             <config-sheet
               :parameterGroups="widget.props.parameterGroups || []"
@@ -134,7 +136,10 @@ export default {
     'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue'),
     ConfigSheet
   },
-  props: ['uid', 'createMode'],
+  props: {
+    uid: String,
+    createMode: Boolean
+  },
   data () {
     return {
       widgetDefinition: null,
@@ -178,11 +183,6 @@ export default {
         return { component: 'Error', config: { error: e.message } }
       }
     }
-  },
-  watch: {
-    // widgetDefinition () {
-    //   this.redrawWidget()
-    // }
   },
   methods: {
     onPageAfterIn () {

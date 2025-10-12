@@ -54,11 +54,15 @@ import DirtyMixin from '@/pages/settings/dirty-mixin'
 import MovablePopupMixin from '@/pages/settings/movable-popup-mixin'
 
 export default {
-  props: ['component', 'componentType'],
+  props: {
+    component: Object,
+    componentType: String
+  },
   mixins: [DirtyMixin, MovablePopupMixin],
   components: {
     'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')
   },
+  emits: ['update', 'closed'],
   data () {
     return {
       leaveCancelled: false,

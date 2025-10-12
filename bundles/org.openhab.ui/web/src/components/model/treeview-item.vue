@@ -5,14 +5,14 @@
                     :icon-aurora="icon('aurora')"
                     :icon-md="icon('md')"
                     :textColor="iconColor"
-                    :color="(model.item.created !== false) ? 'blue' :'orange'"
-                    :selected="selected && selected.item.name === model.item.name"
+                    :color="(model.item.created !== false) ? 'blue' : 'orange'"
+                    :selected="selected && selected.item.name === model.item.name ? true : null"
                     :opened="model.opened"
                     :toggle="canHaveChildren"
                     @treeview:open="model.opened = true"
                     @treeview:close="model.opened = false"
                     @click="select">
-    <draggable :disabled="!canDragDrop"
+    <draggable :disabled="!canDragDrop ? true : null"
                :list="children"
                :group="{ name: 'model-treeview', put: allowDrop }"
                animation="150"
@@ -82,8 +82,16 @@ import Draggable from 'vuedraggable'
 export default {
   name: 'model-treeview-item',
   mixins: [ItemMixin, ModelDragDropMixin],
-  props: ['model', 'parentNode', 'rootNode', 'selected', 'includeItemName', 'includeItemTags', 'canDragDrop'],
-  emits: ['reload'],
+  props: {
+    model: Object,
+    parentNode: Object,
+    rootNode: Object,
+    selected: Object,
+    includeItemName: Boolean,
+    includeItemTags: Boolean,
+    canDragDrop: Boolean
+  },
+  emits: ['reload', 'selected', 'checked'],
   components: {
     Draggable,
     ModelTreeviewItem: 'model-treeview-item'

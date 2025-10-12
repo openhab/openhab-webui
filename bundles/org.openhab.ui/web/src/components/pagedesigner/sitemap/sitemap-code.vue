@@ -55,7 +55,10 @@ export default {
   components: {
     'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')
   },
-  props: ['sitemap'],
+  props: {
+    sitemap: Object
+  },
+  emits: ['updated'],
   data () {
     return {
       sitemapDsl: ''

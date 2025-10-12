@@ -6,7 +6,7 @@
     <f7-input class="input-field"
               ref="input"
               v-bind="config"
-              :style="{width: '100%', ...config.style}"
+              :style="{ width: '100%', ...config.style }"
               :value="((config.type && config.type.indexOf('date') === 0) || config.type === 'time') ? valueForDatepicker : value"
               :calendar-params="calendarParams"
               :step="config.step ? config.step : 'any'"
@@ -18,7 +18,9 @@
               @texteditor:change="updated"
               @colorpicker:change="updated">
       <template v-if="context.component.slots && context.component.slots.default">
-        <generic-widget-component :context="childContext(slotComponent)" v-for="(slotComponent, idx) in context.component.slots.default" :key="'default-' + idx" />
+        <generic-widget-component v-for="(slotComponent, idx) in context.component.slots.default"
+                                  :context="childContext(slotComponent)"
+                                  :key="'default-' + idx" />
       </template>
     </f7-input>
     <span v-if="unit" class="unit">{{ unit }}</span>
@@ -42,12 +44,14 @@
               @texteditor:change="updated"
               @colorpicker:change="updated">
       <template v-if="context.component.slots && context.component.slots.default">
-        <generic-widget-component :context="childContext(slotComponent)" v-for="(slotComponent, idx) in context.component.slots.default" :key="'default-' + idx" />
+        <generic-widget-component v-for="(slotComponent, idx) in context.component.slots.default"
+                                  :context="childContext(slotComponent)"
+                                  :key="'default-' + idx" />
       </template>
     </f7-input>
     <span v-if="unit" class="unit">{{ unit }}</span>
-    <f7-button class="send-button col-10"
-               v-if="this.config.sendButton"
+    <f7-button v-if="this.config.sendButton"
+               class="send-button col-10"
                @click.stop="sendButtonClicked"
                v-bind="config.sendButtonConfig || { iconMaterial: 'done', iconColor: 'gray' }" />
   </f7-row>
@@ -128,7 +132,7 @@ export default {
     // Returns -1 if no pattern is found
     valueIndexInDisplayState () {
       const parts = this.item?.stateDescription?.pattern?.trim()?.split(/\s+/) || []
-      return parts.findLastIndex(part => part.startsWith('%') && part !== '%unit%' && part !== '%%')
+      return parts.findLastIndex((part) => part.startsWith('%') && part !== '%unit%' && part !== '%%')
     },
     calendarParams () {
       if (this.config.type !== 'datepicker') return null

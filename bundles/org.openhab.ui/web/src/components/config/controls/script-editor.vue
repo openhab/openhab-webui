@@ -150,7 +150,14 @@ export default {
   components: {
     codemirror
   },
-  props: ['value', 'mode', 'hintContext', 'ternAutocompletionHook', 'readOnly'],
+  props: {
+    value: String,
+    mode: String,
+    hintContext: Object,
+    ternAutocompletionHook: Boolean,
+    readOnly: Boolean
+  },
+  emits: ['input'],
   data () {
     return {
       code: this.value,

@@ -48,21 +48,27 @@
           Equipment
         </f7-block-title>
         <f7-block-footer v-if="createEquipment && !thingId" class="padding-left padding-right">
-          Select the Thing you wish to create as a new Equipment group in the model. It will be placed under the parent group above, if any.
-          You can alter the new group's details and change its equipment class.
+          Select the Thing you wish to create as a new Equipment group in the model. It will be
+          placed under the parent group above, if any. You can alter the new group's details and
+          change its equipment class.
         </f7-block-footer>
         <f7-block-footer v-else-if="createEquipment && thingId" class="padding-left padding-right">
-          Complete the details of the new Equipment group to add to the model. It will be placed under the parent group above, if any.
-          You can alter the new group's details and change its equipment class.
+          Complete the details of the new Equipment group to add to the model. It will be placed
+          under the parent group above, if any. You can alter the new group's details and change its
+          equipment class.
         </f7-block-footer>
-        <f7-block-footer v-else-if="!createEquipment && !thingId" class="padding-left padding-right">
-          Select the Thing for which you wish to create Point Items from its Channels. They will be placed under the parent group above, if any.
+        <f7-block-footer v-else-if="!createEquipment && !thingId"
+                         class="padding-left padding-right">
+          Select the Thing for which you wish to create Point Items from its Channels. They will be
+          placed under the parent group above, if any.
         </f7-block-footer>
         <f7-list inline-labels no-hairlines-md v-if="!thingId">
-          <thing-picker title="Thing"
-                        name="thing"
-                        :value="selectedThingId"
-                        @input="(e) => selectedThingId = e" />
+          <f7-list-group>
+            <thing-picker title="Thing"
+                          name="thing"
+                          :value="selectedThingId"
+                          @input="(e) => (selectedThingId = e)" />
+          </f7-list-group>
         </f7-list>
         <f7-block v-if="!ready" class="text-align-center">
           <f7-preloader />
@@ -70,15 +76,17 @@
         </f7-block>
         <div v-else-if="selectedThing.UID && selectedThingType.UID">
           <f7-list v-if="createEquipment" media-list class="equipment-group-picker">
-            <item-picker :title="selectedGroup ? 'Change Selected Group' : 'Pick Existing Group'"
-                         textColor="blue"
-                         :hideIcon="true"
-                         :items="selectableGroups"
-                         :multiple="false"
-                         :noModelPicker="true"
-                         :setValueText="false"
-                         :value="selectedGroup?.name"
-                         @input="selectExistingGroup($event)" />
+            <f7-list-group>
+              <item-picker :title="selectedGroup ? 'Change Selected Group' : 'Pick Existing Group'"
+                           textColor="blue"
+                           :hideIcon="true"
+                           :items="selectableGroups"
+                           :multiple="false"
+                           :noModelPicker="true"
+                           :setValueText="false"
+                           :value="selectedGroup?.name"
+                           @input="selectExistingGroup($event)" />
+            </f7-list-group>
           </f7-list>
           <item-form v-if="createEquipment"
                      :item="equipmentItem"
@@ -88,10 +96,10 @@
                      :force-semantics="true" />
           <f7-block-title>Channels</f7-block-title>
           <f7-block-footer class="padding-left padding-right">
-            Check the channels you wish to create as new Point items.
-            You can alter the suggested names and labels as well as the semantic class and related property.<br><br>
-            The newly created Points will be linked to their respective channels with the default profile
-            (you will be able to configure the links individually later if needed).
+            Check the channels you wish to create as new Point items. You can alter the suggested
+            names and labels as well as the semantic class and related property.<br><br>
+            The newly created Points will be linked to their respective channels with the default
+            profile (you will be able to configure the links individually later if needed).
             <f7-link class="display-block margin-top-half" @click="switchToExpertMode" color="blue">
               Expert Mode
             </f7-link>
@@ -163,7 +171,12 @@ export default {
     ItemForm,
     ItemPicker
   },
-  props: ['parent', 'createEquipment', 'thingId'],
+  props: {
+    parent: Object,
+    createEquipment: Boolean,
+    thingId: String,
+    f7router: Object // Added for navigation
+  },
   data () {
     return {
       ready: true,
@@ -386,7 +399,7 @@ export default {
         let typePromises = [this.$oh.api.get('/rest/thing-types/' + this.selectedThing.thingTypeUID),
           this.$oh.api.get('/rest/channel-types?prefixes=system,' + this.selectedThing.thingTypeUID.split(':')[0])]
 
-        Promise.all(typePromises).then(data2 => {
+        Promise.all(typePromises).then((data2) => {
           this.selectedThingType = data2[0]
           this.selectedThingChannelTypes = data2[1]
 

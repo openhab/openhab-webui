@@ -484,7 +484,9 @@ import cronstrue from 'cronstrue'
 
 export default {
   name: 'vueCron',
-  props: ['value'],
+  props: {
+    value: String
+  },
   data () {
     return {
       currentTab: 'seconds',

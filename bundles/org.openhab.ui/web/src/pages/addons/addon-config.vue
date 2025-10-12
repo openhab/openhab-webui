@@ -95,7 +95,9 @@ export default {
   components: {
     ConfigSheet
   },
-  props: ['addonId'],
+  props: {
+    addonId: String
+  },
   data () {
     return {
       addon: {},
@@ -142,8 +144,8 @@ export default {
     save () {
       let promises = []
 
-      const originalLoggerMap = Object.fromEntries(this.originalLoggerPackages.map(l => [l.loggerName, l.level]))
-      this.loggerPackages.forEach(logger => {
+      const originalLoggerMap = Object.fromEntries(this.originalLoggerPackages.map((l) => [l.loggerName, l.level]))
+      this.loggerPackages.forEach((logger) => {
         if (logger.level !== originalLoggerMap[logger.loggerName]) {
           if (logger.level === 'DEFAULT') {
             promises.push(this.$oh.api.delete('/rest/logging/' + logger.loggerName))
@@ -195,14 +197,14 @@ export default {
     }
     let requestUri = '/rest/addons/' + this.strippedAddonId + (this.serviceId ? '?serviceId=' + this.serviceId : '')
 
-    this.$oh.api.get(requestUri).then(data => {
+    this.$oh.api.get(requestUri).then((data) => {
       this.addon = data
       const configDescriptionURI = this.addon.configDescriptionURI
 
       if (configDescriptionURI) {
-        this.$oh.api.get('/rest/config-descriptions/' + configDescriptionURI).then(data2 => {
+        this.$oh.api.get('/rest/config-descriptions/' + configDescriptionURI).then((data2) => {
           this.configDescription = data2
-          this.$oh.api.get('/rest/addons/' + this.strippedAddonId + '/config' + (this.serviceId ? '?serviceId=' + this.serviceId : '')).then(data3 => {
+          this.$oh.api.get('/rest/addons/' + this.strippedAddonId + '/config' + (this.serviceId ? '?serviceId=' + this.serviceId : '')).then((data3) => {
             this.originalConfig = data3
             this.config = cloneDeep(data3)
             this.configLoaded = true
@@ -210,9 +212,9 @@ export default {
         })
       }
       if (Array.isArray(this.addon.loggerPackages)) {
-        const promises = this.addon.loggerPackages.map(logger => this.$oh.api.get('/rest/logging/' + logger))
-        Promise.all(promises).then(data => {
-          this.originalLoggerPackages = data.flatMap(logging => logging.loggers).sort((a, b) => a.loggerName.localeCompare(b.loggerName))
+        const promises = this.addon.loggerPackages.map((logger) => this.$oh.api.get('/rest/logging/' + logger))
+        Promise.all(promises).then((data) => {
+          this.originalLoggerPackages = data.flatMap((logging) => logging.loggers).sort((a, b) => a.loggerName.localeCompare(b.loggerName))
           this.loggerPackages = cloneDeep(this.originalLoggerPackages)
           this.loggersLoaded = true
         })

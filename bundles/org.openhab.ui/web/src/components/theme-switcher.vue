@@ -222,6 +222,7 @@ export default {
   }
 }
 </script>
+
 <style lang="stylus">
 .theme-picker
   cursor pointer

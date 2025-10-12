@@ -1,7 +1,11 @@
 <template>
-  <oh-card :context="context" :content-class="['display-flex', 'justify-content-center', 'oh-rollershutter-card']" :content-style="{ height: config.vertical ? '10em' : undefined }">
+  <oh-card :context="context"
+           :content-class="['display-flex', 'justify-content-center', 'oh-rollershutter-card']"
+           :content-style="{ height: config.vertical ? '10em' : undefined }">
     <template #content>
-      <oh-rollershutter :class="{ vertical: config.vertical }" :context="context" @command="onCommand" />
+      <oh-rollershutter :class="{ vertical: config.vertical }"
+                        :context="context"
+                        @command="onCommand" />
     </template>
   </oh-card>
 </template>

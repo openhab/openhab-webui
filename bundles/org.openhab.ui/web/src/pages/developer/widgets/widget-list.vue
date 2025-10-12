@@ -22,9 +22,10 @@
           :disable-button="!$theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
-    <f7-toolbar class="contextual-toolbar"
-                :class="{ 'navbar': $theme.md }"
-                v-if="showCheckboxes"
+
+    <f7-toolbar v-if="showCheckboxes"
+                class="contextual-toolbar"
+                :class="{ navbar: $theme.md }"
                 bottom-ios
                 bottom-aurora>
       <f7-link color="red"
@@ -61,13 +62,12 @@
         <f7-block-title>&nbsp;Loading...</f7-block-title>
         <f7-list media-list class="col wide">
           <f7-list-group>
-            <f7-list-item
-              media-item
-              v-for="n in 20"
-              :key="n"
-              :class="`skeleton-text skeleton-effect-blink`"
-              title="Title of the widget"
-              subtitle="Tag1, Tag2, Tag3..." />
+            <f7-list-item v-for="n in 20"
+                          media-item
+                          :key="n"
+                          :class="`skeleton-text skeleton-effect-blink`"
+                          title="Title of the widget"
+                          subtitle="Tag1, Tag2, Tag3..." />
           </f7-list-group>
         </f7-list>
       </f7-col>
@@ -134,9 +134,6 @@ export default {
       eventSource: null
     }
   },
-  created () {
-
-  },
   methods: {
     onPageAfterIn () {
       this.load()
@@ -144,7 +141,7 @@ export default {
     load () {
       if (this.loading) return
       this.loading = true
-      this.$oh.api.get('/rest/ui/components/ui:widget').then(data => {
+      this.$oh.api.get('/rest/ui/components/ui:widget').then((data) => {
         this.widgets = data.sort((a, b) => {
           return a.uid.localeCompare(b.uid)
         })

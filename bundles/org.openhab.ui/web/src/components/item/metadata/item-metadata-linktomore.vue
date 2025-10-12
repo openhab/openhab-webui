@@ -7,7 +7,7 @@
         ref="value"
         type="text"
         :value="metadata.value"
-        :disabled="editable"
+        :disabled="editable ? true : null"
         @input="updateValue" />
       <f7-block-footer class="param-description" slot="after-list">
         <small>
@@ -26,7 +26,10 @@
 import ItemMetadataMixin from '@/components/item/metadata/item-metadata-mixin'
 
 export default {
-  props: ['itemName', 'metadata'],
+  props: {
+    itemName: String,
+    metadata: Object
+  },
   mixins: [ItemMetadataMixin],
   methods: {
     updateValue (ev) {

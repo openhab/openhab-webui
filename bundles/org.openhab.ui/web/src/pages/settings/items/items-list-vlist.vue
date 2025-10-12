@@ -36,8 +36,8 @@
                  @click="removeSelected">
           Remove
         </f7-link>
-        <f7-link color="blue"
-                 v-show="selectedItems.length"
+        <f7-link v-show="selectedItems.length"
+                 color="blue"
                  class="copy display-flex flex-direction-row"
                  icon-ios="f7:square_on_square"
                  icon-aurora="f7:square_on_square"

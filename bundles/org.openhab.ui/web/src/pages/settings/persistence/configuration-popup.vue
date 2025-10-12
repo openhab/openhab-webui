@@ -28,45 +28,53 @@
             </f7-list-item>
           </f7-list>
           <f7-list>
-            <item-picker key="groups"
-                         title="Select groups"
-                         name="groupItems"
-                         multiple="true"
-                         filterType="Group"
-                         :disabled="allItemsSelected"
-                         :value="groupItems"
-                         @input="groupItems = $event" />
+            <f7-list-group>
+              <item-picker key="groups"
+                           title="Select groups"
+                           name="groupItems"
+                           :multiple="true"
+                           filterType="Group"
+                           :disabled="allItemsSelected ? true : null"
+                           :value="groupItems"
+                           @input="groupItems = $event" />
+            </f7-list-group>
             <f7-list-item>... whose members are to be persisted.</f7-list-item>
           </f7-list>
           <f7-list>
-            <item-picker key="items"
-                         title="Select Items"
-                         name="items"
-                         multiple="true"
-                         :disabled="allItemsSelected"
-                         :value="items"
-                         @input="items = $event" />
+            <f7-list-group>
+              <item-picker key="items"
+                           title="Select Items"
+                           name="items"
+                           :multiple="true"
+                           :disabled="allItemsSelected ? true : null"
+                           :value="items"
+                           @input="items = $event" />
+            </f7-list-group>
             <f7-list-item>... to be persisted.</f7-list-item>
           </f7-list>
           <f7-list>
-            <item-picker key="exclude-groups"
-                         title="Select exclude groups"
-                         name="excludeGroupItems"
-                         multiple="true"
-                         filterType="Group"
-                         :disabled="!anySelected"
-                         :value="excludeGroupItems"
-                         @input="excludeGroupItems = $event" />
+            <f7-list-group>
+              <item-picker key="exclude-groups"
+                           title="Select exclude groups"
+                           name="excludeGroupItems"
+                           :multiple="true"
+                           filterType="Group"
+                           :disabled="!anySelected ? true : null"
+                           :value="excludeGroupItems"
+                           @input="excludeGroupItems = $event" />
+            </f7-list-group>
             <f7-list-item>... whose members are to be excluded from persistence.</f7-list-item>
           </f7-list>
           <f7-list>
-            <item-picker key="exclude-items"
-                         title="Select exclude Items"
-                         name="excludeItems"
-                         multiple="true"
-                         :disabled="!anySelected"
-                         :value="excludeItems"
-                         @input="excludeItems = $event" />
+            <f7-list-group>
+              <item-picker key="exclude-items"
+                           title="Select exclude Items"
+                           name="excludeItems"
+                           :multiple="true"
+                           :disabled="!anySelected ? true : null"
+                           :value="excludeItems"
+                           @input="excludeItems = $event" />
+            </f7-list-group>
             <f7-list-item>... to be excluded from persistence.</f7-list-item>
           </f7-list>
         </f7-col>
@@ -78,7 +86,7 @@
                            name="strategies"
                            :strategies="strategies"
                            :value="currentConfiguration.strategies"
-                           @strategiesSelected="currentConfiguration.strategies = $event" />
+                           @strategies-selected="currentConfiguration.strategies = $event" />
         </f7-col>
         <f7-col>
           <f7-block-title medium class="padding-bottom">
@@ -86,7 +94,7 @@
           </f7-block-title>
           <filter-picker :filters="filters"
                          :value="currentConfiguration.filters"
-                         @filtersSelected="currentConfiguration.filters = $event" />
+                         @filters-selected="currentConfiguration.filters = $event" />
         </f7-col>
       </f7-block>
     </f7-page>
@@ -100,7 +108,11 @@ import FilterPicker from '@/pages/settings/persistence/filter-picker.vue'
 
 export default {
   components: { FilterPicker, StrategyPicker, ItemPicker },
-  props: ['configuration', 'strategies', 'filters'],
+  props: {
+    configuration: Object,
+    strategies: Array,
+    filters: Array
+  },
   emits: ['configurationUpdate'],
   data () {
     return {

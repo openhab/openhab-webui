@@ -52,8 +52,8 @@
     </f7-toolbar>
 
     <f7-list-index
-      ref="listIndex"
       v-if="$refs.transformationsList"
+      ref="listIndex"
       v-show="groupBy === 'alphabetical' && !$device.desktop"
       listEl=".transformations-list"
       :scroll-list="true"
@@ -66,8 +66,8 @@
         <f7-list contacts-list class="col transformations-list">
           <f7-list-group>
             <f7-list-item
-              media-item
               v-for="n in 20"
+              media-item
               :key="n"
               :class="`skeleton-text skeleton-effect-blink`"
               title="Label of the transformation"
@@ -98,7 +98,8 @@
         <f7-list
           class="searchbar-found col transformations-list"
           ref="transformationsList"
-          :contacts-list="groupBy === 'alphabetical'">
+          :contacts-list="groupBy === 'alphabetical'"
+          media-list>
           <f7-list-group v-for="(transformationsWithInitial, initial) in indexedTransformations" :key="initial">
             <f7-list-item v-if="transformationsWithInitial.length" :title="initial" group-title />
             <f7-list-item
@@ -107,7 +108,7 @@
               media-item
               class="transformationlist-item"
               :checkbox="showCheckboxes && transformation.editable"
-              :checked="isChecked(transformation.uid)"
+              :checked="isChecked(transformation.uid) ? true : null"
               @click.ctrl="(e) => ctrlClick(e, transformation)"
               @click.meta="(e) => ctrlClick(e, transformation)"
               @click.exact="(e) => click(e, transformation)"
@@ -161,10 +162,11 @@
 
 <script>
 import ClipboardIcon from '@/components/util/clipboard-icon.vue'
+import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 
 export default {
   components: {
-    'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue'),
+    EmptyStatePlaceholder,
     ClipboardIcon
   },
   data () {
@@ -211,9 +213,6 @@ export default {
   methods: {
     onPageAfterIn () {
       this.load()
-    },
-    onPageAfterOut () {
-
     },
     load () {
       if (this.loading) return

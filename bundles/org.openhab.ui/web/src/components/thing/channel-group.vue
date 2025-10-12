@@ -1,7 +1,7 @@
 <template>
   <f7-list :accordion-list="!pickerMode">
-    <f7-list-item group-title
-                  v-if="group && group.label && group.channels.length > 0"
+    <f7-list-item v-if="group && group.label && group.channels.length > 0"
+                  group-title
                   :title="group.label"
                   :description="group.description"
                   :footer="group.description" />
@@ -67,16 +67,17 @@ export default {
   components: {
     ClipboardIcon
   },
-  props: [
-    'extensible',
-    'group',
-    'channelTypes',
-    'thing',
-    'pickerMode',
-    'multipleLinksMode',
-    'itemTypeFilter',
-    'selection'
-  ],
+  props: {
+    extensible: Boolean,
+    group: Object,
+    channelTypes: Array,
+    thing: Object,
+    pickerMode: Boolean,
+    multipleLinksMode: Boolean,
+    itemTypeFilter: String,
+    selection: [String, Array]
+  },
+  emits: ['selected', 'channel-opened'],
   data () {
     return {
       openedChannel: ''

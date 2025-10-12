@@ -39,13 +39,13 @@
           <f7-list-item ref="pageVisibility"
                         title="Visible only to"
                         smart-select
-                        :smart-select-params="{openIn: 'popover'}">
+                        :smart-select-params="{ openIn: 'popover' }">
             <select name="pagevisibility" multiple @change="updatePageVisibility">
               <optgroup label="Roles">
-                <option value="role:administrator" :selected="isVisibleTo('role:administrator')">
+                <option value="role:administrator" :selected="isVisibleTo('role:administrator') ? true : null">
                   Administrators
                 </option>
-                <option value="role:user" :selected="isVisibleTo('role:user')">
+                <option value="role:user" :selected="isVisibleTo('role:user') ? true : null">
                   Users
                 </option>
               </optgroup>
@@ -101,7 +101,10 @@ export default {
   components: {
     TagInput
   },
-  props: ['page', 'createMode'],
+  props: {
+    page: Object,
+    createMode: Boolean
+  },
   data () {
     return {}
   },

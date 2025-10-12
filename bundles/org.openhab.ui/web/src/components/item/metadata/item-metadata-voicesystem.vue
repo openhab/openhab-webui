@@ -7,7 +7,7 @@
                      :label="'Custom Rules'"
                      name="custom-rules"
                      :value="customRules"
-                     :disabled="!editable"
+                     :disabled="!editable ? true : null"
                      @input="updateValue" />
       <f7-block-footer class="param-description" slot="after-list">
         <small>Enter each rule on a separate line. Available placeholders: $name$, $cmd$ and $*$</small>
@@ -25,7 +25,10 @@ import ConfigSheet from '@/components/config/config-sheet.vue'
 import ItemMetadataMixin from '@/components/item/metadata/item-metadata-mixin'
 
 export default {
-  props: ['itemName', 'metadata'],
+  props: {
+    itemName: String,
+    metadata: Object
+  },
   mixins: [ItemMetadataMixin],
   components: {
     ConfigSheet

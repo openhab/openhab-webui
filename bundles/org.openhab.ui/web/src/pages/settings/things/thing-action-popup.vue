@@ -113,7 +113,10 @@ export default {
     ConfigSheet,
     'vue-qrcode': () => import(/* webpackChunkName: "vue-qrcode" */ 'vue-qrcode')
   },
-  props: ['thingUID', 'action'],
+  props: {
+    thingUID: String,
+    action: Object
+  },
   data () {
     return {
       executing: false,

@@ -641,7 +641,10 @@ export default {
     SearchResults,
     ExpressionTester
   },
-  props: ['activeToolTab', 'searchFor'],
+  props: {
+    activeToolTab: String,
+    searchFor: String
+  },
   watch: {
     searchFor (val) {
       if (val) this.$refs.searchbar.search(val)

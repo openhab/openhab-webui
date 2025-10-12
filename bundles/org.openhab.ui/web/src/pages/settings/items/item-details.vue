@@ -4,6 +4,7 @@
            @page:afterin="onPageAfterIn"
            @page:beforeout="onPageBeforeOut">
     <f7-navbar :title="item.name"
+               :key="item.name"
                back-link="Back"
                no-shadow
                no-hairline
@@ -120,7 +121,8 @@
             </f7-list-button>
           </f7-list>
           <p class="developer-sidebar-tip text-align-center">
-            Tip: Use the developer sidebar (Shift+Alt+D) to <f7-link text="search for usages of this Item" @click="searchInSidebar" />
+            Tip: Use the developer sidebar (Shift+Alt+D) to
+            <f7-link text="search for usages of this Item" @click="searchInSidebar" />
           </p>
         </f7-col>
       </f7-row>
@@ -192,7 +194,10 @@ import FileDefinition from '@/pages/settings/file-definition-mixin'
 
 export default {
   mixins: [ItemMixin, FileDefinition],
-  props: ['itemName'],
+  props: {
+    itemName: String,
+    f7router: Object
+  },
   components: {
     LinkDetails,
     GroupMembers,

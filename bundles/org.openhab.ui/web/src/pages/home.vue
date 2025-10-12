@@ -7,7 +7,10 @@
            @page:beforein="onPageBeforeIn"
            @page:afterin="onPageAfterIn"
            @page:beforeout="onPageBeforeOut">
-    <f7-navbar :large="!simpleNavbar" :large-transparent="!simpleNavbar" class="home-nav disable-user-select">
+    <f7-navbar :large="!simpleNavbar"
+               :large-transparent="!simpleNavbar"
+               class="home-nav disable-user-select"
+               ref="navbar">
       <f7-nav-left>
         <f7-link icon-ios="f7:menu"
                  icon-aurora="f7:menu"

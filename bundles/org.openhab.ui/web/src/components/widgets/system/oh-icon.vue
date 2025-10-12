@@ -46,13 +46,23 @@ export default {
   components: {
     'iconify-icon': Icon
   },
-  props: ['icon', 'width', 'height', 'color', 'state', 'rotate', 'horizontalFlip', 'verticalFlip'],
+  props: {
+    icon: String,
+    width: [String, Number],
+    height: [String, Number],
+    color: String,
+    state: [String, Number, Boolean, Object], // not sure about this
+    rotate: [String, Number],
+    horizontalFlip: Boolean,
+    verticalFlip: Boolean
+  },
   widget: OhIconDefinition,
   data () {
     return {
       currentState: this.state,
       currentIcon: null,
-      iconUrl: null
+      iconUrl: null,
+      iconLoaded: false
     }
   },
   computed: {
@@ -145,13 +155,5 @@ export default {
       })
     }
   }
-  // asyncComputed: {
-  //   iconUrl () {
-  //     return (this.icon)
-  //       ? this.$oh.media.getIcon(this.icon, 'svg', this.currentState)
-  //       // transparent PNG pixel
-  //       : 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='
-  //   }
-  // }
 }
 </script>

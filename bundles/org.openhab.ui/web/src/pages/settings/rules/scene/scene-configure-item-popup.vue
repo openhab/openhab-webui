@@ -40,9 +40,9 @@
               @input="command = $event.target.value"
               type="text" />
             <ul v-if="commandSuggestions.length">
-              <f7-list-item radio
-                            :checked="command === suggestion.command"
-                            v-for="suggestion in commandSuggestions"
+              <f7-list-item v-for="suggestion in commandSuggestions"
+                            radio
+                            :checked="command === suggestion.command ? true : null"
                             :key="suggestion.command"
                             :title="suggestion.label"
                             @click="command = suggestion.command" />
@@ -54,7 +54,7 @@
         <f7-col>
           <div v-show="control === 'colorpicker'" class="scene-item-control-colorpicker" ref="colorpicker" />
           <div v-if="control === 'toggle'" class="scene-item-control-toggle">
-            <f7-toggle :checked="command === 'ON'" @toggle:change="(value) => command = (value) ? 'ON' : 'OFF'" />
+            <f7-toggle :checked="command === 'ON' ? true : null" @toggle:change="(value) => (command = value ? 'ON' : 'OFF')" />
           </div>
           <div v-else-if="control === 'slider'" class="scene-item-control-slider">
             <f7-range v-bind="sliderConfig" :value="command" @range:change="command = $event.toString()" />
@@ -118,14 +118,16 @@
       width 150px
       transform rotate(90deg)
       transform-origin center
-
 </style>
 
 <script>
 export default {
-  components: {
+  components: {},
+  props: {
+    rule: Object,
+    module: Object
   },
-  props: ['rule', 'module'],
+  emits: ['closed', 'update', 'sceneItemConfigUpdate'],
   data () {
     return {
       ready: false,

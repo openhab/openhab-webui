@@ -56,16 +56,15 @@ import ParameterText from './controls/parameter-text.vue'
 import ParameterQrcode from './controls/parameter-qrcode.vue'
 
 export default {
-  components: {
+  props: {
+    configDescription: Object,
+    value: [String, Number, Boolean, Array, Object],
+    parameters: Array,
+    configuration: Object,
+    readOnly: Boolean,
+    status: Array
   },
-  props: [
-    'configDescription',
-    'value',
-    'parameters',
-    'configuration',
-    'readOnly',
-    'status'
-  ],
+  emits: ['update'],
   data () {
     return {
     }

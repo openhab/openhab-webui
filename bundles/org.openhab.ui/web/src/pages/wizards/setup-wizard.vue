@@ -95,10 +95,12 @@
           {{ $t('setupwizard.location.header1') }}<br>{{ $t('setupwizard.location.header2') }}
         </f7-block>
         <f7-list>
-          <parameter-location :value="location"
-                              :config-description="{ label: $t('setupwizard.location.parameterLabel'), name: 'Location' }"
-                              @input="(value) => location = value"
-                              :placeholder="$t('setupwizard.location.placeholder')" />
+          <f7-list-group>
+            <parameter-location :value="location"
+                                :config-description="{ label: $t('setupwizard.location.parameterLabel'), name: 'Location' }"
+                                @input="(value) => location = value"
+                                :placeholder="t('setupwizard.location.placeholder')" />
+          </f7-list-group>
         </f7-list>
         <f7-block class="padding">
           <f7-row>
@@ -151,11 +153,13 @@
           {{ $t('setupwizard.network.header1') }} {{ $t('setupwizard.network.header2') }}
         </f7-block>
         <f7-list>
-          <parameter-options class="network"
-                             v-if="networksReady"
-                             :config-description="networkConfigDescription"
-                             :value="network"
-                             @input="(value) => changeNetwork(value)" />
+          <f7-list-group>
+            <parameter-options v-if="networksReady"
+                               class="network"
+                               :config-description="networkConfigDescription"
+                               :value="network"
+                               @input="(value) => changeNetwork(value)" />
+          </f7-list-group>
         </f7-list>
         <f7-block class="display-flex flex-direction-column padding">
           <div>
@@ -414,14 +418,14 @@ export default {
      * @returns {*[]}
      */
     mainAddons () {
-      return this.addons.filter(a => !this.preSelectingAddonTypes.includes(a.type))
+      return this.addons.filter((a) => !this.preSelectingAddonTypes.includes(a.type))
     },
     /**
      * Add-ons that are currently selected in the main add-on selection step, with installed and pre-selected add-ons excluded.
      * @returns {*[]}
      */
     mainAddonSelection () {
-      const addons = this.selectedAddons.concat(this.toInstallAddons).filter(a => (!a.installed && !this.preSelectedAddon(a)))
+      const addons = this.selectedAddons.concat(this.toInstallAddons).filter((a) => (!a.installed && !this.preSelectedAddon(a)))
       return [...new Set(addons)]
     }
   },
@@ -722,9 +726,9 @@ export default {
 
     Promise.all(promises).then((data) => {
       // i18n config descriptions
-      this.availableLanguages = data[0].parameters.find(p => p.name === 'language').options
-      this.availableRegions = data[0].parameters.find(p => p.name === 'region').options
-      this.availableTimezones = data[0].parameters.find(p => p.name === 'timezone').options
+      this.availableLanguages = data[0].parameters.find((p) => p.name === 'language').options
+      this.availableRegions = data[0].parameters.find((p) => p.name === 'region').options
+      this.availableTimezones = data[0].parameters.find((p) => p.name === 'timezone').options
 
       if (Intl && Intl.DateTimeFormat().resolvedOptions()) {
         const intlOptions = Intl.DateTimeFormat().resolvedOptions()
@@ -746,7 +750,7 @@ export default {
       this.i18nReady = true
 
       // network config description & config
-      this.networkConfigDescription = data[2].parameters.find(p => p.name === 'primaryAddress')
+      this.networkConfigDescription = data[2].parameters.find((p) => p.name === 'primaryAddress')
       this.network = data[3].primaryAddress
       this.networksReady = true
 

@@ -42,7 +42,9 @@ dayjs.extend(utc)
 import { ContentTypes, Formats } from '@/assets/addon-store'
 
 export default {
-  props: ['addon'],
+  props: {
+    addon: Object
+  },
   computed: {
     information () {
       let info = []

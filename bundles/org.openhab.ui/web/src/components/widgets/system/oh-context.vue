@@ -1,6 +1,8 @@
 <template>
-  <fragment v-if="(context.component.slots && context.component.slots.default)">
-    <generic-widget-component v-for="(slotComponent, idx) in context.component.slots.default" :key="'default-' + idx" :context="childrenContext(slotComponent)" />
+  <fragment v-if="context.component.slots && context.component.slots.default">
+    <generic-widget-component v-for="(slotComponent, idx) in context.component.slots.default"
+                              :key="'default-' + idx"
+                              :context="childrenContext(slotComponent)" />
   </fragment>
 </template>
 

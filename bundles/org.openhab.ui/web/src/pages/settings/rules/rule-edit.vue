@@ -121,8 +121,8 @@
               or choose a rule template:
             </f7-block-footer>
             <f7-list media-list>
-              <f7-list-item :key="template.uid"
-                            v-for="template in templates"
+              <f7-list-item v-for="template in templates"
+                            :key="template.uid"
                             :title="template.label"
                             :footer="template.description"
                             :value="template.uid"
@@ -175,7 +175,7 @@
                 footer="The rule will still be linked to the template and can be regenerated if the template changes."
                 :value="currentTemplate.uid"
                 radio
-                :checked="Boolean(rule.templateUID)"
+                :checked="Boolean(rule.templateUID) ? true : null"
                 radio-icon="start"
                 @change="keepTemplate(true)" />
               <f7-list-item
@@ -183,7 +183,7 @@
                 footer="Integrates the template in the rule so that the rule is no longer linked to the template."
                 value="integrate"
                 radio
-                :checked="!rule.templateUID"
+                :checked="!rule.templateUID ? true : null"
                 radio-icon="start"
                 @change="keepTemplate(false)" />
             </f7-list>
@@ -285,7 +285,7 @@
         <f7-icon v-if="!createMode && !isEditable"
                  f7="lock"
                  class="float-right margin"
-                 style="opacity:0.5; z-index: 4000; user-select: none;"
+                 style="opacity: 0.5; z-index: 4000; user-select: none"
                  size="50"
                  color="gray"
                  tooltip="This code is not editable" />
@@ -376,7 +376,15 @@ export default {
     ConfigSheet,
     'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')
   },
-  props: ['ruleId', 'createMode', 'ruleCopy', 'stubMode', 'schedule'],
+  props: {
+    ruleId: String,
+    createMode: Boolean,
+    ruleCopy: Object,
+    stubMode: Boolean,
+    schedule: Object,
+    f7router: Object,
+    f7route: Object
+  },
   data () {
     return {
       SECTION_LABELS: {
