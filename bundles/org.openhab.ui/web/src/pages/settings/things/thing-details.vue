@@ -70,7 +70,7 @@
           </f7-col>
         </f7-block>
 
-        <f7-block v-if="ready && !error" class="block-narrow">
+        <f7-block v-if="ready && !error" class="block-narrow no-margin-bottom">
           <f7-col>
             <thing-general-settings :thing="thing"
                                     :thing-type="thingType"
@@ -143,7 +143,7 @@
               </f7-list-item>
             </f7-list>
 
-            <f7-block-title medium>
+            <f7-block-title medium class="no-margin-bottom">
               Configuration
             </f7-block-title>
             <config-sheet ref="thingConfiguration"
@@ -208,7 +208,7 @@
           </f7-block>
         </div>
 
-        <f7-block class="block-narrow" v-if="ready">
+        <f7-block class="block-narrow no-margin-top" v-if="ready">
           <f7-col>
             <f7-list>
               <f7-list-button v-if="thing.statusInfo.statusDetail === 'HANDLER_MISSING_ERROR'"

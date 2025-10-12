@@ -96,7 +96,7 @@
       <f7-row v-if="item.name">
         <f7-col>
           <f7-block-title>Metadata</f7-block-title>
-          <metadata-menu :item="item" />
+          <metadata-menu :item="item" :f7router />
         </f7-col>
       </f7-row>
       <f7-row v-if="item.name && item.type !== 'Group'">

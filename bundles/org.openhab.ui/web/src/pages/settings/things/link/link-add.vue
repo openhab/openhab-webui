@@ -185,6 +185,8 @@ import LinkMixin from '@/pages/settings/things/link/link-mixin'
 
 import { useSemanticsStore } from '@/js/stores/useSemanticsStore'
 import { defineAsyncComponent } from 'vue'
+import { useRuntimeStore } from '@/js/stores/useRuntimeStore.js'
+import { mapStores } from 'pinia'
 
 export default {
   mixins: [ItemMixin, uomMixin, LinkMixin],
@@ -244,7 +246,8 @@ export default {
     },
     compatibleProfileTypes () {
       return this.profileTypes.filter((p) => this.isProfileTypeCompatible(this.channel, p, this.currentItem))
-    }
+    },
+    ...mapStores(useRuntimeStore)
   },
   methods: {
     onPageAfterIn () {

@@ -135,6 +135,7 @@
                                 :links="links"
                                 :items="items"
                                 :context="context"
+                                :f7router
                                 @item-updated="update"
                                 @item-created="update"
                                 @item-removed="selectItem(null)"
@@ -243,7 +244,10 @@
                         @cancel-create="selectItem(null)"
                         :context="context" />
           <metadata-menu v-if="detailsTab === 'meta'" :item="selectedItem.item" />
-          <link-details v-if="detailsTab === 'links'" :item="selectedItem.item" :links="links" />
+          <link-details v-if="detailsTab === 'links'"
+                        :item="selectedItem.item"
+                        :links="links"
+                        :f7router />
         </f7-block>
         <f7-block v-else>
           <div class="padding text-align-center">
