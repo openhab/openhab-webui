@@ -93,14 +93,12 @@
         </f7-list>
         <div v-if="selectedThing.UID && selectedThingType.UID">
           <f7-block-title>Channel</f7-block-title>
-          <!-- TODO V3.1
           <channel-list :thing="selectedThing"
                         :thingType="selectedThingType"
                         :picker-mode="true"
                         :item-type-filter="item.type"
                         :channel-types="selectedThingChannelTypes"
                         @selected="(channel) => loadProfileTypes(channel)" />
-        -->
         </div>
       </f7-col>
 
@@ -176,7 +174,6 @@ import { f7, theme } from 'framework7-vue'
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import ItemPicker from '@/components/config/controls/item-picker.vue'
 import ThingPicker from '@/components/config/controls/thing-picker.vue'
-import ChannelList from '@/components/thing/channel-list.vue'
 import ItemForm from '@/components/item/item-form.vue'
 
 import Item from '@/components/item/item.vue'
@@ -187,6 +184,7 @@ import uomMixin from '@/components/item/uom-mixin'
 import LinkMixin from '@/pages/settings/things/link/link-mixin'
 
 import { useSemanticsStore } from '@/js/stores/useSemanticsStore'
+import { defineAsyncComponent } from 'vue'
 
 export default {
   mixins: [ItemMixin, uomMixin, LinkMixin],
@@ -195,7 +193,8 @@ export default {
     ItemPicker,
     ThingPicker,
     Item,
-    // ChannelList, TODO-V3.1 ReferenceError: Cannot access 'ChannelList' before initialization ??? when viewing thing details
+    // TODO-V3.1 ReferenceError: Cannot access 'ChannelList' before initialization when importing normal
+    ChannelList: defineAsyncComponent(() => import('@/components/thing/channel-list.vue')),
     ItemForm
   },
   props: {
