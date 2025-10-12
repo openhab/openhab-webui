@@ -11,13 +11,14 @@
             :context="context" />
           <!-- <f7-list-button @click="enableEditMode" color="blue" title="Add or Remove Members" /> -->
         </ul>
-        <item-picker v-if="editMembers"
-                     :multiple="true"
-                     name="groupMembers"
-                     :value="pickedMemberNames"
-                     title="Members"
-                     :editableOnly="true"
-                     @input="(members) => pickedMemberNames = members" />
+        <f7-list-group v-if="editMembers">
+          <item-picker :multiple="true"
+                       name="groupMembers"
+                       :value="pickedMemberNames"
+                       title="Members"
+                       :editableOnly="true"
+                       @input="(members) => pickedMemberNames = members" />
+        </f7-list-group>
       </f7-list>
     </f7-card-content>
     <f7-card-footer>
@@ -102,7 +103,7 @@ export default {
 
           Promise.all(promises)
             .then((d) => {
-              f7.$emit('updated')
+              this.$emit('updated')
               f7.toast.create({
                 text: 'Member list updated',
                 destroyOnClose: true,
