@@ -12,10 +12,10 @@
       </f7-nav-right>
     </f7-navbar>
     <f7-toolbar tabbar position="top">
-      <f7-link :tab-link-active="currentTab === 'tree'" tab-link="#tree">
+      <f7-link @click="currentTab = 'tree'" :tab-link-active="currentTab === 'tree'">
         Design
       </f7-link>
-      <f7-link :tab-link-active="currentTab === 'code'" tab-link="#code">
+      <f7-link @click="currentTab = 'code'" :tab-link-active="currentTab === 'code'">
         Code
       </f7-link>
     </f7-toolbar>
