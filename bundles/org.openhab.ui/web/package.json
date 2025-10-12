@@ -31,7 +31,7 @@
     "start": "vite",
     "lint": "npx eslint src",
     "lint:fix": "npx eslint --fix src",
-    "prebuild": "npm run build:grammar",
+    "prebuild": "npm run generate-build-info && npm run build:grammar",
     "build": "vue-tsc -b && vite build",
     "webpack-analyzer-report-stats": "vue-tsc -b && cross-env STATS=true vite build",
     "preview": "vite preview",
