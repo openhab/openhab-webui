@@ -267,6 +267,7 @@ export default {
       }
     },
     linterExtension (mode) {
+      if (this.readOnly) return null
       switch (true) {
         case mode.includes('yaml'):
           return linter((view) => {
