@@ -5,12 +5,23 @@
                               :key="'repeater-' + idx"
                               @command="onCommand" />
   </ul>
-  <div v-else-if="config.fragment">
-    <generic-widget-component v-for="(ctx, idx) in childrenContexts"
-                              :context="ctx"
-                              :key="'repeater-' + idx"
-                              @command="onCommand" />
-  </div>
+  <!-- render without any additional container -->
+  <template v-else-if="config.fragment">
+    <!-- if parent is oh-swiper, render inside f7-swiper-slide -->
+    <template v-if="['oh-swiper', 'f7-swiper'].includes(context.parent.component.component)">
+      <f7-swiper-slide v-for="(ctx, idx) in childrenContexts" :key="'repeater-' + idx">
+        <generic-widget-component :context="ctx"
+                                  @command="onCommand" />
+      </f7-swiper-slide>
+    </template>
+    <!-- else render -->
+    <template v-else>
+      <generic-widget-component v-for="(ctx, idx) in childrenContexts"
+                                :context="ctx"
+                                :key="'repeater-' + idx"
+                                @command1111="onCommand" />
+    </template>
+  </template>
   <div v-else :class="config.containerClasses" :style="config.containerStyle">
     <generic-widget-component v-for="(ctx, idx) in childrenContexts"
                               :context="ctx"
