@@ -54,7 +54,8 @@
                 last
                 tail />
     <generic-widget-component v-if="cardContext && !focused && !interimSpeechResult" :context="cardContext" />
-    <div v-if="query && !focused && answer && !busy && !interimSpeechResult" class="display-flex justify-content-space-between padding">
+    <div v-if="query && !focused && answer && !busy && !interimSpeechResult"
+         class="display-flex justify-content-space-between padding">
       <span />
       <f7-button outline
                  round
@@ -129,6 +130,7 @@ export default {
   components: {
     SpeechButton
   },
+  emits: ['session-started', 'session-end'],
   data () {
     return {
       greeting: null,

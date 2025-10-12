@@ -79,7 +79,15 @@
 import { actionParams } from '@/assets/definitions/widgets/actions'
 
 export default {
-  props: ['parameterGroups', 'parameters', 'configuration', 'status', 'readOnly', 'setEmptyConfigAsNull'],
+  props: {
+    parameterGroups: Array,
+    parameters: Array,
+    configuration: Object,
+    status: Array,
+    readOnly: Boolean,
+    setEmptyConfigAsNull: Boolean
+  },
+  emits: ['updated'],
   components: {
     'config-parameter': () => import(/* webpackChunkName: "config-parameter" */ './config-parameter.vue')
   },

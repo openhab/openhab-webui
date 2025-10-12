@@ -56,9 +56,9 @@
         <div class="skeleton-series">
           <f7-card class="elevation-4">
             <f7-list media-list>
-              <f7-list-item media-item
+              <f7-list-item v-for="(series, seriesIdx) in gridSeries(grid, gridIdx)"
+                            media-item
                             link-item
-                            v-for="(series, seriesIdx) in gridSeries(grid, gridIdx)"
                             :key="seriesIdx"
                             :title="series.config.name"
                             :subtitle="series.config.item"
@@ -104,11 +104,15 @@
             </f7-list>
           </f7-card>
         </div>
-        <chart-skeleton :option="skeletonGridOptions(grid, gridIdx)" style="height: 400px; width: 100%" :autoresize="true" />
+        <chart-skeleton :option="skeletonGridOptions(grid, gridIdx)"
+                        style="height: 400px; width: 100%"
+                        :autoresize="true" />
       </div>
       <div>
         <f7-menu v-if="context.editmode" class="configure-layout-menu">
-          <span :style="{ marginLeft: xAxisIdx === 0 ? 'auto' : undefined }" v-for="(xAxis, xAxisIdx) in context.component.slots.xAxis" :key="xAxisIdx">
+          <span v-for="(xAxis, xAxisIdx) in context.component.slots.xAxis"
+                :style="{ marginLeft: xAxisIdx === 0 ? 'auto' : undefined }"
+                :key="xAxisIdx">
             <edit-context-menu v-if="xAxis.config.gridIndex === gridIdx"
                                :context="context"
                                :component="xAxis"
@@ -132,9 +136,9 @@
     </f7-block>
 
     <!-- Calendars -->
-    <f7-block strong
+    <f7-block v-for="(calendar, calendarIdx) in context.component.slots.calendar"
+              strong
               :style="{ zIndex: 50 - calendarIdx }"
-              v-for="(calendar, calendarIdx) in context.component.slots.calendar"
               :key="calendarIdx">
       <f7-block-title>Calendar {{ calendarIdx }}</f7-block-title>
       <div>
@@ -153,9 +157,9 @@
         <div class="skeleton-series">
           <f7-card class="elevation-4">
             <f7-list media-list>
-              <f7-list-item media-item
+              <f7-list-item v-for="(series, seriesIdx) in calendarSeries(calendar, calendarIdx)"
+                            media-item
                             link-item
-                            v-for="(series, seriesIdx) in calendarSeries(calendar, calendarIdx)"
                             :key="seriesIdx"
                             :title="series.config.name"
                             :subtitle="series.config.item"
@@ -308,12 +312,12 @@ import IsoWeek from 'dayjs/plugin/isoWeek'
 dayjs.extend(IsoWeek)
 
 const defaultSlotComponentType = {
-  'tooltip': 'oh-chart-tooltip',
-  'title': 'oh-chart-title',
-  'visualMap': 'oh-chart-visualmap',
-  'dataZoom': 'oh-chart-datazoom',
-  'legend': 'oh-chart-legend',
-  'toolbox': 'oh-chart-toolbox'
+  tooltip: 'oh-chart-tooltip',
+  title: 'oh-chart-title',
+  visualMap: 'oh-chart-visualmap',
+  dataZoom: 'oh-chart-datazoom',
+  legend: 'oh-chart-legend',
+  toolbox: 'oh-chart-toolbox'
 }
 
 export default {
@@ -331,8 +335,8 @@ export default {
       axisTypes.forEach((axisType) => {
         let skeletonAxis = JSON.parse(JSON.stringify(
           this.context.component.slots[axisType]
-            .filter(a => a.config.gridIndex === gridIdx)))
-        skeletonAxis = skeletonAxis.map(a => { delete a.config.gridIndex; return a.config })
+            .filter((a) => a.config.gridIndex === gridIdx)))
+        skeletonAxis = skeletonAxis.map((a) => { delete a.config.gridIndex; return a.config })
         options[axisType] = skeletonAxis
       })
 
@@ -400,8 +404,8 @@ export default {
       return options
     },
     gridSeries (grid, gridIdx) {
-      const gridxAxisIndexes = this.context.component.slots.xAxis.map((a, idx) => a.config.gridIndex === gridIdx ? idx : null).filter(i => i !== null)
-      const gridyAxisIndexes = this.context.component.slots.yAxis.map((a, idx) => a.config.gridIndex === gridIdx ? idx : null).filter(i => i !== null)
+      const gridxAxisIndexes = this.context.component.slots.xAxis.map((a, idx) => (a.config.gridIndex === gridIdx) ? idx : null).filter((i) => i !== null)
+      const gridyAxisIndexes = this.context.component.slots.yAxis.map((a, idx) => (a.config.gridIndex === gridIdx) ? idx : null).filter((i) => i !== null)
       return this.context.component.slots.series.filter((s) => gridxAxisIndexes.indexOf(s.config.xAxisIndex) >= 0 && gridyAxisIndexes.indexOf(s.config.yAxisIndex) >= 0)
     },
     calendarSeries (calendar, calendarIdx) {
@@ -444,8 +448,8 @@ export default {
     addSeries (type, gridIdx) {
       if (!this.context.component.slots.series) this.$set(this.context.component.slots, 'series', [])
       let automaticAxisCreated = false
-      let firstXAxis = this.context.component.slots.xAxis.find(a => a.config.gridIndex === gridIdx)
-      let firstYAxis = this.context.component.slots.yAxis.find(a => a.config.gridIndex === gridIdx)
+      let firstXAxis = this.context.component.slots.xAxis.find((a) => a.config.gridIndex === gridIdx)
+      let firstYAxis = this.context.component.slots.yAxis.find((a) => a.config.gridIndex === gridIdx)
       if (!firstXAxis) {
         if (type === 'oh-time-series' || type === 'oh-state-series') {
           this.addAxis(gridIdx, 'xAxis', 'oh-time-axis')
@@ -459,11 +463,11 @@ export default {
       if (!firstYAxis) {
         if (type === 'oh-time-series') {
           this.addAxis(gridIdx, 'yAxis', 'oh-value-axis')
-          firstYAxis = this.context.component.slots.yAxis.find(a => a.config.gridIndex === gridIdx)
+          firstYAxis = this.context.component.slots.yAxis.find((a) => a.config.gridIndex === gridIdx)
           automaticAxisCreated = true
         } else if (type === 'oh-state-series') {
           this.addAxis(gridIdx, 'yAxis', 'oh-category-axis')
-          firstYAxis = this.context.component.slots.yAxis.find(a => a.config.gridIndex === gridIdx)
+          firstYAxis = this.context.component.slots.yAxis.find((a) => a.config.gridIndex === gridIdx)
           firstYAxis.config.categoryType = 'values'
           automaticAxisCreated = true
         } else {

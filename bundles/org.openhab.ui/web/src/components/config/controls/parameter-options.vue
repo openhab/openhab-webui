@@ -53,7 +53,11 @@
 
 <script>
 export default {
-  props: ['configDescription', 'value'],
+  props: {
+    configDescription: Object,
+    value: [String, Array]
+  },
+  emits: ['input'],
   data () {
     return {
       inlineList: false,

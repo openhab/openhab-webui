@@ -7,7 +7,9 @@
             backdrop>
     <div class="sheet-modal-swipe-step">
       <div v-if="!noDetails" class="swipe-handler" @click="toggleSwipeStep" />
-      <f7-block-title><strong><big>{{ addon.label }}</big></strong></f7-block-title>
+      <f7-block-title>
+        <strong>{{ addon.label }}</strong>
+      </f7-block-title>
       <f7-block v-if="state === 'UNINSTALLED'">
         <div v-if="addon.verifiedAuthor" class="text-color-green display-flex align-items-center">
           <f7-icon f7="checkmark_shield" class="margin-right" />
@@ -22,35 +24,39 @@
           Unverified Author
         </div>
         <f7-block-footer v-if="showUnpublishedWarning" class="display-flex align-items-center text-color-red">
-          This add-on has not been published to the Marketplace. DO NOT install this add-on, unless for debugging purposes if you are the author or a marketplace curator!<br><br>
-          Please make sure "Show Unpublished Entries" is not inadvertently turned on in Settings > Community Marketplace.
+          This add-on has not been published to the Marketplace. DO NOT install this add-on, unless
+          for debugging purposes if you are the author or a marketplace curator!<br><br>
+          Please make sure "Show Unpublished Entries" is not inadvertently turned on in Settings >
+          Community Marketplace.
         </f7-block-footer>
         <f7-block-footer v-if="showUnverifiedAuthorWarning" class="display-flex align-items-center">
-          <small>Adding this type of add-on from unknown providers can harm your system because its code might not have been properly reviewed. Make sure you trust the source and understand the risks before installing this add-on.</small>
+          <small>Adding this type of add-on from unknown providers can harm your system because its code
+            might not have been properly reviewed. Make sure you trust the source and understand the
+            risks before installing this add-on.</small>
         </f7-block-footer>
       </f7-block>
       <f7-block>
         <f7-row>
           <f7-col class="col-100 margin-top padding-horizontal">
-            <f7-button large
+            <f7-button v-if="state === 'UNINSTALLED'"
+                       large
                        fill
                        color="blue"
-                       v-if="state === 'UNINSTALLED'"
                        @click="install()">
               {{ installableAddon ? 'Install' : 'Add' }}
             </f7-button>
-            <f7-button large
+            <f7-button v-if="state !== 'UNINSTALLED'"
+                       large
                        fill
                        color="red"
-                       v-if="state !== 'UNINSTALLED'"
                        @click="uninstall()">
               {{ installableAddon ? 'Uninstall' : 'Remove' }}
             </f7-button>
           </f7-col>
         </f7-row>
       </f7-block>
-      <f7-block class="padding-bottom no-margin-vertical" @click.native="toggleSwipeStep">
-        <div v-if="!noDetails" class="margin-top margin-bottom text-align-center" style="cursor:pointer">
+      <f7-block class="padding-bottom no-margin-vertical" @click="toggleSwipeStep">
+        <div v-if="!noDetails" class="margin-top margin-bottom text-align-center" style="cursor: pointer">
           <f7-icon f7="chevron_down_circle" />&nbsp;Expand for details
         </div>
       </f7-block>
@@ -104,17 +110,22 @@
     margin-left 30%
     margin-right 30%
     width: calc(100% - 60%)
-
 </style>
 
 <script>
 import AddonInfoTable from '@/components/addons/addon-info-table.vue'
 
 export default {
-  props: ['addonId', 'serviceId', 'opened', 'noDetails'],
+  props: {
+    addonId: String,
+    serviceId: String,
+    opened: Boolean,
+    noDetails: Boolean
+  },
   components: {
     AddonInfoTable
   },
+  emits: ['closed', 'install', 'uninstall'],
   data () {
     return {
       addon: {},

@@ -29,7 +29,7 @@
       </f7-col>
     </f7-row>
     <f7-list>
-      <f7-list-button title="Show All" color="blue" @click="$emit('showAdvanced')" />
+      <f7-list-button title="Show All" color="blue" @click="$emit('show-advanced')" />
     </f7-list>
   </f7-block>
   <f7-block class="no-margin no-padding" v-else-if="category === 'item'">
@@ -42,12 +42,12 @@
     </f7-list>
     <f7-list>
       <f7-list-item radio
-                    :checked="itemEventType === 'command'"
+                    :checked="itemEventType === 'command' ? true : null"
                     name="itemEventType"
                     title="received a command"
                     @click="updateItemEventType('command')" />
       <f7-list-item radio
-                    :checked="itemEventType === 'updated'"
+                    :checked="itemEventType === 'updated' ? true : null"
                     name="itemEventType"
                     title="was updated"
                     @click="updateItemEventType('updated')" />
@@ -56,21 +56,21 @@
                     name="itemEventType"
                     title="changed"
                     @click="updateItemEventType('changed')" />
-      <f7-list-item radio
-                    v-if="currentItem && currentItem.type === 'Group'"
-                    :checked="itemEventType === 'memberCommand'"
+      <f7-list-item v-if="currentItem && currentItem.type === 'Group'"
+                    radio
+                    :checked="itemEventType === 'memberCommand' ? true : null"
                     name="itemEventType"
                     title="had a member receive a command"
                     @click="updateItemEventType('memberCommand')" />
-      <f7-list-item radio
-                    v-if="currentItem && currentItem.type === 'Group'"
-                    :checked="itemEventType === 'memberUpdated'"
+      <f7-list-item v-if="currentItem && currentItem.type === 'Group'"
+                    radio
+                    :checked="itemEventType === 'memberUpdated' ? true : null"
                     name="itemEventType"
                     title="had a member update"
                     @click="updateItemEventType('memberUpdated')" />
-      <f7-list-item radio
-                    v-if="currentItem && currentItem.type === 'Group'"
-                    :checked="itemEventType === 'memberChanged'"
+      <f7-list-item v-if="currentItem && currentItem.type === 'Group'"
+                    radio
+                    :checked="itemEventType === 'memberChanged' ? true : null"
                     name="itemEventType"
                     title="had a member change"
                     @click="updateItemEventType('memberChanged')" />
@@ -110,17 +110,17 @@
         @blur="(evt) => $set(currentModule.configuration, 'state', evt.target.value)" />
     </f7-list>
     <f7-list v-if="(itemEventType === 'command' || itemEventType === 'memberCommand') && commandSuggestions.length">
-      <f7-list-item radio
-                    :checked="currentModule.configuration.command === suggestion.command"
-                    v-for="suggestion in commandSuggestions"
+      <f7-list-item v-for="suggestion in commandSuggestions"
+                    radio
+                    :checked="currentModule.configuration.command === suggestion.command ? true : null"
                     :key="suggestion.command"
                     :title="suggestion.label"
                     @click="$set(currentModule.configuration, 'command', suggestion.command)" />
     </f7-list>
     <f7-list v-else-if="stateSuggestions.length">
-      <f7-list-item radio
-                    :checked="currentModule.configuration.state === suggestion.value"
-                    v-for="suggestion in stateSuggestions"
+      <f7-list-item v-for="suggestion in stateSuggestions"
+                    radio
+                    :checked="currentModule.configuration.state === suggestion.value ? true : null"
                     :key="suggestion.value"
                     :title="suggestion.label"
                     @click="$set(currentModule.configuration, 'state', suggestion.value)" />
@@ -137,19 +137,19 @@
     <f7-list />
     <f7-list>
       <f7-list-item radio
-                    :checked="thingEventType === 'triggerChannelFired'"
+                    :checked="thingEventType === 'triggerChannelFired' ? true : null"
                     name="thingEventType"
                     title="a trigger channel fired"
                     @click="updateThingEventType('triggerChannelFired')" />
-      <f7-list-item radio
-                    v-if="currentModule.configuration.thingUID"
-                    :checked="thingEventType === 'statusUpdated'"
+      <f7-list-item v-if="currentModule.configuration.thingUID"
+                    radio
+                    :checked="thingEventType === 'statusUpdated' ? true : null"
                     name="thingEventType"
                     title="status was updated"
                     @click="updateThingEventType('statusUpdated')" />
-      <f7-list-item radio
-                    v-if="currentModule.configuration.thingUID"
-                    :checked="thingEventType === 'statusChanged'"
+      <f7-list-item v-if="currentModule.configuration.thingUID"
+                    radio
+                    :checked="thingEventType === 'statusChanged' ? true : null"
                     name="thingEventType"
                     title="status changed"
                     @click="updateThingEventType('statusChanged')" />
@@ -219,17 +219,17 @@
   <f7-block class="no-margin no-padding" v-else-if="category === 'time'">
     <f7-list>
       <f7-list-item radio
-                    :checked="timeEventType === 'cron'"
+                    :checked="timeEventType === 'cron' ? true : null"
                     name="timeEventType"
                     title="on a schedule (cron)"
                     @click="updateTimeEventType('cron')" />
       <f7-list-item radio
-                    :checked="timeEventType === 'timeOfDay'"
+                    :checked="timeEventType === 'timeOfDay' ? true : null"
                     name="timeEventType"
                     title="at a fixed time of the day"
                     @click="updateTimeEventType('timeOfDay')" />
       <f7-list-item radio
-                    :checked="timeEventType === 'dateTime'"
+                    :checked="timeEventType === 'dateTime' ? true : null"
                     name="timeEventType"
                     title="at the time specified in an item's state"
                     @click="updateTimeEventType('dateTime')" />
@@ -244,7 +244,7 @@
   <f7-block class="no-margin no-padding" v-else-if="category === 'system'">
     <f7-list>
       <f7-list-item radio
-                    :checked="systemEventType === 'start'"
+                    :checked="systemEventType === 'start' ? true : null"
                     name="systemEventType"
                     title="the system is being initialized"
                     @click="updateSystemEventType('start')" />
@@ -268,7 +268,6 @@
   height 7.5rem
   .link
     color var(--f7-text-color)
-
 </style>
 
 <script>
@@ -280,13 +279,17 @@ import ConfigSheet from '@/components/config/config-sheet.vue'
 
 export default {
   mixins: [ModuleWizard],
-  props: ['currentModule', 'currentModuleType'],
+  props: {
+    currentModule: Object,
+    currentModuleType: Object
+  },
   components: {
     ItemPicker,
     ThingPicker,
     TriggerChannelPicker,
     ConfigSheet
   },
+  emits: ['show-advanced', 'type-select'],
   data () {
     return {
       category: '',
@@ -316,28 +319,28 @@ export default {
       this.itemEventType = type
       switch (type) {
         case 'command':
-          this.$emit('typeSelect', 'core.ItemCommandTrigger')
           if (this.currentItem) this.$set(this.currentModule, 'configuration', Object.assign({}, { itemName: this.currentItem.name }))
+          this.$emit('type-select', 'core.ItemCommandTrigger')
           break
         case 'updated':
-          this.$emit('typeSelect', 'core.ItemStateUpdateTrigger')
           if (this.currentItem) this.$set(this.currentModule, 'configuration', Object.assign({}, { itemName: this.currentItem.name }))
+          this.$emit('type-select', 'core.ItemStateUpdateTrigger')
           break
         case 'changed':
-          this.$emit('typeSelect', 'core.ItemStateChangeTrigger')
           if (this.currentItem) this.$set(this.currentModule, 'configuration', Object.assign({}, { itemName: this.currentItem.name }))
+          this.$emit('type-select', 'core.ItemStateChangeTrigger')
           break
         case 'memberCommand':
-          this.$emit('typeSelect', 'core.GroupCommandTrigger')
           if (this.currentItem) this.$set(this.currentModule, 'configuration', Object.assign({}, { groupName: this.currentItem.name }))
+          this.$emit('type-select', 'core.GroupCommandTrigger')
           break
         case 'memberUpdated':
-          this.$emit('typeSelect', 'core.GroupStateUpdateTrigger')
           if (this.currentItem) this.$set(this.currentModule, 'configuration', Object.assign({}, { groupName: this.currentItem.name }))
+          this.$emit('type-select', 'core.GroupStateUpdateTrigger')
           break
         case 'memberChanged':
-          this.$emit('typeSelect', 'core.GroupStateChangeTrigger')
           if (this.currentItem) this.$set(this.currentModule, 'configuration', Object.assign({}, { groupName: this.currentItem.name }))
+          this.$emit('type-select', 'core.GroupStateChangeTrigger')
           break
       }
     },
@@ -346,16 +349,16 @@ export default {
       const currentThingUID = this.currentModule.configuration.thingUID
       switch (type) {
         case 'triggerChannelFired':
-          this.$emit('typeSelect', 'core.ChannelEventTrigger', true)
           if (currentThingUID) this.$set(this.currentModule, 'configuration', Object.assign({}, { thingUID: currentThingUID }))
+          this.$emit('type-select', 'core.ChannelEventTrigger', true)
           break
         case 'statusUpdated':
-          this.$emit('typeSelect', 'core.ThingStatusUpdateTrigger', true)
           if (currentThingUID) this.$set(this.currentModule, 'configuration', Object.assign({}, { thingUID: currentThingUID }))
+          this.$emit('type-select', 'core.ThingStatusUpdateTrigger', true)
           break
         case 'statusChanged':
-          this.$emit('typeSelect', 'core.ThingStatusChangeTrigger', true)
           if (currentThingUID) this.$set(this.currentModule, 'configuration', Object.assign({}, { thingUID: currentThingUID }))
+          this.$emit('type-select', 'core.ThingStatusChangeTrigger', true)
           break
       }
     },
@@ -363,13 +366,13 @@ export default {
       this.timeEventType = type
       switch (type) {
         case 'cron':
-          this.$emit('typeSelect', 'timer.GenericCronTrigger', true)
+          this.$emit('type-select', 'timer.GenericCronTrigger', true)
           break
         case 'timeOfDay':
-          this.$emit('typeSelect', 'timer.TimeOfDayTrigger', true)
+          this.$emit('type-select', 'timer.TimeOfDayTrigger', true)
           break
         case 'dateTime':
-          this.$emit('typeSelect', 'timer.DateTimeTrigger', true)
+          this.$emit('type-select', 'timer.DateTimeTrigger', true)
           break
       }
     },
@@ -377,8 +380,8 @@ export default {
       this.systemEventType = type
       switch (type) {
         case 'start':
-          this.$emit('typeSelect', 'core.SystemStartlevelTrigger', true)
           this.$set(this.currentModule.configuration, 'startlevel', 20)
+          this.$emit('type-select', 'core.SystemStartlevelTrigger', true)
           break
       }
     },

@@ -27,7 +27,12 @@
 import LocationPickerPopup from './location-picker-popup.vue'
 
 export default {
-  props: ['configDescription', 'value', 'placeholder'],
+  props: {
+    configDescription: Object,
+    value: String,
+    placeholder: String
+  },
+  emits: ['input'],
   methods: {
     updateValue (position) {
       this.$emit('input', position)

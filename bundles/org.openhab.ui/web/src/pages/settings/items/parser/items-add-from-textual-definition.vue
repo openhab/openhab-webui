@@ -91,8 +91,8 @@
                       {{ (item.groupNames) ? item.groupNames.join(', ') : '' }}
                     </td>
                     <td class="label-cell" v-if="item.tags">
-                      <f7-chip class="margin-right"
-                               v-for="tag in item.tags"
+                      <f7-chip v-for="tag in item.tags"
+                               class="margin-right"
                                :key="tag"
                                :text="tag"
                                media-bg-color="blue">
@@ -116,7 +116,9 @@
                     <td class="label-cell" v-else />
                     <!-- metadata -->
                     <td class="label-cell" v-if="item.metadata">
-                      <div class="margin-right" v-for="(metadata, lidx) in item.metadata" :key="lidx">
+                      <div v-for="(metadata, lidx) in item.metadata"
+                           class="margin-right"
+                           :key="lidx">
                         <div v-if="metadata.value.value">
                           <div>{{ metadata.key }}="{{ metadata.value.value }}"</div>
                           <small>{{ metadata.value.config.map((c) => c.key + '=' + c.value).join(', ') }}</small>

@@ -77,7 +77,11 @@ import AddonStatsLine from './addon-stats-line.vue'
 import AddonLogo from '@/components/addons/addon-logo.vue'
 
 export default {
-  props: ['addon', 'installActionText'],
+  props: {
+    addon: Object,
+    installActionText: String
+  },
+  emits: ['addon-button-click'],
   components: {
     AddonLogo,
     AddonStatsLine
@@ -90,7 +94,7 @@ export default {
   },
   methods: {
     buttonClicked () {
-      this.$emit('addonButtonClick', this.addon)
+      this.$emit('addon-button-click', this.addon)
     }
   }
 }

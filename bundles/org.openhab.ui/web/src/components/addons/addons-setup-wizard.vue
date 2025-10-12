@@ -16,8 +16,8 @@
           <f7-row no-gap>
             <div style="width: 100%">
               <f7-checkbox style="margin-right: 0.5rem"
-                           :checked="selectedAddon(addon)"
-                           :disabled="addon.installed"
+                           :checked="selectedAddon(addon) ? true : null"
+                           :disabled="addon.installed ? true : null"
                            @change="toggleAddonSelection(addon, $event)" />
               {{ addon.label }}
               <f7-link style="float: right"
@@ -35,7 +35,7 @@
             </div>
           </f7-row>
         </f7-block>
-      </f7-list-item>/>
+      </f7-list-item>
     </f7-list>
   </div>
 </template>
@@ -73,7 +73,11 @@ import AddonLogo from '@/components/addons/addon-logo.vue'
 import { loadLocaleMessages } from '@/js/i18n'
 
 export default {
-  props: ['addons', 'preSelectedAddons', 'enableAddonSelection'],
+  props: {
+    addons: Array,
+    preSelectedAddons: Array,
+    enableAddonSelection: Boolean
+  },
   emits: ['update'],
   components: {
     AddonLogo
@@ -136,7 +140,7 @@ export default {
      */
     selectAddons () {
       if (this.autocompleteAddons) {
-        this.autocompleteAddons.value = this.selectedAddons.map(a => a.label)
+        this.autocompleteAddons.value = this.selectedAddons.map((a) => a.label)
         this.autocompleteAddons.open()
       }
     },
@@ -154,7 +158,7 @@ export default {
     // Update the list of shown and selected add-ons with the pre-selected add-ons.
     // Exclude add-ons that are in the list of pre-selected add-ons, but are not meant to be shown here (usually because these add-ons are handled in a separate step).
     if (Array.isArray(this.preSelectedAddons)) {
-      this.shownAddons = this.selectedAddons = this.preSelectedAddons.filter(a => this.addons.includes(a))
+      this.shownAddons = this.selectedAddons = this.preSelectedAddons.filter((a) => this.addons.includes(a))
     }
 
     // Initialize the autocomplete, which provides the add-on selection popup, if add-on selection has been enabled.
@@ -170,11 +174,13 @@ export default {
       source: (query, render) => {
         // Exclude installed and pre-selected add-ons from the selection popup.
         if (query.length === 0) {
-          render(self.addons.filter(a => !a.installed && !self.preSelectedAddon(a)).map((a) => a.label))
+          render(self.addons.filter((a) => !a.installed && !self.preSelectedAddon(a)).map((a) => a.label))
         } else {
-          render(self.addons
-            .filter(a => (!a.installed && !self.preSelectedAddon(a) && (a.label.toLowerCase().indexOf(query.toLowerCase()) >= 0 || a.uid.toLowerCase().indexOf(query.toLowerCase()) >= 0)))
-            .map(a => a.label))
+          render(
+            self.addons
+              .filter(
+                (a) => !a.installed && !self.preSelectedAddon(a) && (a.label.toLowerCase().indexOf(query.toLowerCase()) >= 0 || a.uid.toLowerCase().indexOf(query.toLowerCase()) >= 0))
+              .map((a) => a.label))
         }
       },
       on: {

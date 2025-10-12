@@ -30,17 +30,17 @@
                        :value="transformation.label"
                        required
                        validate
-                       :disabled="!transformation.editable"
+                       :disabled="!transformation.editable ? true : null"
                        @input="transformation.label = $event.target.value"
                        :clear-button="createMode || transformation.editable" />
         <f7-list-item v-if="createMode && languages"
                       title="Language"
                       smart-select
                       :smart-select-params="smartSelectParams">
-          <select name="language" @change="$emit('newLanguage', $event.target.value)">
+          <select name="language" @change="$emit('new-language', $event.target.value)">
             <option value="" selected />
             <option v-for="lang in languages"
-                    :selected="language"
+                    :selected="language ? true : null"
                     :value="lang.value"
                     :key="lang.value">
               {{ lang.label }}
@@ -52,13 +52,13 @@
     <f7-col v-if="createMode && types">
       <f7-block-title>Transformation Type</f7-block-title>
       <f7-list media-list>
-        <f7-list-item media-item
+        <f7-list-item v-for="type in types"
+                      media-item
                       radio
                       radio-icon="start"
                       :value="transformation.type"
-                      :checked="transformation.type === type"
-                      @change="$emit('newType', type)"
-                      v-for="type in types"
+                      :checked="transformation.type === type ? true : null"
+                      @change="$emit('new-type', type)"
                       :key="type"
                       :title="type" />
       </f7-list>
@@ -71,8 +71,14 @@ import ClipboardIcon from '@/components/util/clipboard-icon.vue'
 
 export default {
   components: { ClipboardIcon },
-  props: ['transformation', 'createMode', 'types', 'languages', 'language'],
-  emits: ['newType', 'newLanguage'],
+  props: {
+    transformation: Object,
+    createMode: Boolean,
+    types: Array,
+    languages: Array,
+    language: String
+  },
+  emits: ['new-type', 'new-language'],
   data () {
     return {
       smartSelectParams: {

@@ -69,7 +69,6 @@
   .button
     height 120px
     padding 35px
-
 </style>
 
 <script>

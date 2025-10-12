@@ -4,7 +4,14 @@
       <f7-preloader />
       <div>Loading...</div>
     </f7-block>
-    <f7-block v-else-if="!searchResults.items.length && !searchResults.things.length && !searchResults.rules.length && !searchResults.pages.length && !searchResults.scenes.length && !searchResults.scripts.length" class="text-align-center">
+    <f7-block v-else-if="
+                !searchResults.items.length &&
+                  !searchResults.things.length &&
+                  !searchResults.rules.length &&
+                  !searchResults.pages.length &&
+                  !searchResults.scenes.length &&
+                  !searchResults.scripts.length"
+              class="text-align-center">
       <div>Nothing found</div>
     </f7-block>
     <!-- Items -->
@@ -57,8 +64,8 @@
         <f7-icon class="margin-right" f7="lightbulb" />Things ({{ searchResults.things.length }})
       </f7-block-title>
       <f7-list media-list>
-        <f7-list-item media-item
-                      v-for="thing in filteredSearchResults.things"
+        <f7-list-item v-for="thing in filteredSearchResults.things"
+                      media-item
                       :key="thing.UID"
                       :title="thing.label"
                       :footer="thing.UID"
@@ -90,7 +97,9 @@
                    icon-size="18"
                    tooltip="Pin" />
         </f7-list-item>
-        <f7-list-button v-if="!showingAll('things')" color="blue" @click="$set(expandedTypes, 'things', true)">
+        <f7-list-button v-if="!showingAll('things')"
+                        color="blue"
+                        @click="expandedTypes.things = true">
           Show All
         </f7-list-button>
       </f7-list>
@@ -101,8 +110,8 @@
         <f7-icon class="margin-right" f7="wand_stars" />Rules ({{ searchResults.rules.length }})
       </f7-block-title>
       <f7-list media-list>
-        <f7-list-item media-item
-                      v-for="rule in filteredSearchResults.rules"
+        <f7-list-item v-for="rule in filteredSearchResults.rules"
+                      media-item
                       :key="rule.uid"
                       :title="rule.name"
                       :footer="rule.uid"
@@ -134,7 +143,9 @@
                    icon-size="18"
                    tooltip="Pin" />
         </f7-list-item>
-        <f7-list-button v-if="!showingAll('rules')" color="blue" @click="$set(expandedTypes, 'rules', true)">
+        <f7-list-button v-if="!showingAll('rules')"
+                        color="blue"
+                        @click="expandedTypes.rules = true">
           Show All
         </f7-list-button>
       </f7-list>
@@ -145,8 +156,8 @@
         <f7-icon class="margin-right" f7="film" />Scenes ({{ searchResults.scenes.length }})
       </f7-block-title>
       <f7-list media-list>
-        <f7-list-item media-item
-                      v-for="rule in filteredSearchResults.scenes"
+        <f7-list-item v-for="rule in filteredSearchResults.scenes"
+                      media-item
                       :key="rule.uid"
                       :title="rule.name"
                       :footer="rule.uid"
@@ -178,7 +189,9 @@
                    icon-size="18"
                    tooltip="Pin" />
         </f7-list-item>
-        <f7-list-button v-if="!showingAll('rules')" color="blue" @click="$set(expandedTypes, 'rules', true)">
+        <f7-list-button v-if="!showingAll('rules')"
+                        color="blue"
+                        @click="expandedTypes.rules = true">
           Show All
         </f7-list-button>
       </f7-list>
@@ -189,8 +202,8 @@
         <f7-icon class="margin-right" f7="doc_plaintext" />Scripts ({{ searchResults.scripts.length }})
       </f7-block-title>
       <f7-list media-list>
-        <f7-list-item media-item
-                      v-for="rule in filteredSearchResults.scripts"
+        <f7-list-item v-for="rule in filteredSearchResults.scripts"
+                      media-item
                       :key="rule.uid"
                       :title="rule.name"
                       :footer="rule.uid"
@@ -222,7 +235,9 @@
                    icon-size="18"
                    tooltip="Pin" />
         </f7-list-item>
-        <f7-list-button v-if="!showingAll('rules')" color="blue" @click="$set(expandedTypes, 'rules', true)">
+        <f7-list-button v-if="!showingAll('rules')"
+                        color="blue"
+                        @click="expandedTypes.rules = true">
           Show All
         </f7-list-button>
       </f7-list>
@@ -233,8 +248,8 @@
         <f7-icon class="margin-right" f7="tv" />Pages ({{ searchResults.pages.length }})
       </f7-block-title>
       <f7-list media-list>
-        <f7-list-item media-item
-                      v-for="page in filteredSearchResults.pages"
+        <f7-list-item v-for="page in filteredSearchResults.pages"
+                      media-item
                       :key="page.uid"
                       :title="page.config.label"
                       :footer="page.uid"
@@ -266,7 +281,9 @@
                    icon-size="18"
                    tooltip="Pin" />
         </f7-list-item>
-        <f7-list-button v-if="!showingAll('pages')" color="blue" @click="$set(expandedTypes, 'pages', true)">
+        <f7-list-button v-if="!showingAll('pages')"
+                        color="blue"
+                        @click="expandedTypes.pages = true">
           Show All
         </f7-list-button>
       </f7-list>
@@ -277,8 +294,8 @@
         <f7-icon class="margin-right" f7="rectangle_on_rectangle_angled" />Widgets ({{ searchResults.widgets.length }})
       </f7-block-title>
       <f7-list media-list>
-        <f7-list-item media-item
-                      v-for="widget in filteredSearchResults.widgets"
+        <f7-list-item v-for="widget in filteredSearchResults.widgets"
+                      media-item
                       :key="widget.uid"
                       :title="widget.uid"
                       link=""
@@ -320,8 +337,8 @@
         <f7-icon class="margin-right" f7="arrow_2_squarepath" />Transformations ({{ searchResults.transformations.length }})
       </f7-block-title>
       <f7-list media-list>
-        <f7-list-item media-item
-                      v-for="transformation in filteredSearchResults.transformations"
+        <f7-list-item v-for="transformation in filteredSearchResults.transformations"
+                      media-item
                       :key="transformation.uid"
                       :title="transformation.label"
                       :footer="transformation.uid"
@@ -353,7 +370,9 @@
                    icon-size="18"
                    tooltip="Pin" />
         </f7-list-item>
-        <f7-list-button v-if="!showingAll('transformations')" color="blue" @click="$set(expandedTypes, 'transformations', true)">
+        <f7-list-button v-if="!showingAll('transformations')"
+                        color="blue"
+                        @click="expandedTypes.transformations = true">
           Show All
         </f7-list-button>
       </f7-list>
@@ -364,8 +383,8 @@
         <f7-icon class="margin-right" f7="download_circle" />Persistence Configs ({{ searchResults.persistenceConfigs.length }})
       </f7-block-title>
       <f7-list media-list>
-        <f7-list-item media-item
-                      v-for="persistenceConfig in filteredSearchResults.persistenceConfigs"
+        <f7-list-item v-for="persistenceConfig in filteredSearchResults.persistenceConfigs"
+                      media-item
                       :key="persistenceConfig.serviceId"
                       :title="persistenceConfig.label"
                       :footer="persistenceConfig.serviceId"
@@ -397,7 +416,9 @@
                    icon-size="18"
                    tooltip="Pin" />
         </f7-list-item>
-        <f7-list-button v-if="!showingAll('persistenceConfigs')" color="blue" @click="$set(expandedTypes, 'persistenceConfigs', true)">
+        <f7-list-button v-if="!showingAll('persistenceConfigs')"
+                        color="blue"
+                        @click="expandedTypes.persistenceConfigs = true">
           Show All
         </f7-list-button>
       </f7-list>
@@ -419,7 +440,13 @@ export default {
   components: {
     ClipboardIcon
   },
-  props: ['searchResults', 'pinnedObjects', 'cachedObjects', 'loading'],
+  props: {
+    searchResults: Object,
+    pinnedObjects: Object,
+    cachedObjects: Object,
+    loading: Boolean
+  },
+  emits: ['pin', 'unpin'],
   data () {
     return {
       typesIcons: {
@@ -467,7 +494,7 @@ export default {
       return (this.expandedTypes[type] || this.searchResults[type].length <= 5)
     },
     getPageType (page) {
-      return this.pageTypes.find(t => t.componentType === page.component)
+      return this.pageTypes.find((t) => t.componentType === page.component)
     },
     togglePin (evt, type, obj, keyName) {
       evt.cancelBubble = true

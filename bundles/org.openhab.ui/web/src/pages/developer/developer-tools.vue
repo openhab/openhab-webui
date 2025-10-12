@@ -201,7 +201,6 @@
 @media (max-width 1279px)
   .developer-sidebar-toggle
     display none
-
 </style>
 
 <script>

@@ -15,7 +15,8 @@
         <f7-nav-title>{{ popupTitle || 'Pick from Model' }}</f7-nav-title>
         <f7-nav-right>
           <f7-link v-if="ready && ((multiple && checkedItems.length > 0) || selectedItem || allowEmpty)" @click="pickItems">
-            {{ actionLabel || 'Pick' }}<span v-if="multiple && checkedItems.length > 0">&nbsp;{{ checkedItems.length }}</span>
+            {{ actionLabel || 'Pick' }}
+            <span v-if="multiple && checkedItems.length > 0">&nbsp;{{ checkedItems.length }}</span>
           </f7-link>
         </f7-nav-right>
       </f7-navbar>
@@ -66,7 +67,7 @@
                   class="toolbar-details"
                   style="height: calc(50px + var(--f7-safe-area-bottom))">
         <f7-link v-if="!multiple"
-                 :disabled="selectedItem != null"
+                 :disabled="selectedItem != null ? true : null"
                  class="left"
                  @click="selectedItem = null">
           Clear
@@ -120,10 +121,20 @@ import ModelMixin from '@/pages/settings/model/model-mixin'
 
 export default {
   mixins: [ModelMixin],
-  props: ['value', 'multiple', 'semanticOnly', 'groupsOnly', 'editableOnly', 'allowEmpty', 'popupTitle', 'actionLabel'],
+  props: {
+    value: [String, Array],
+    multiple: Boolean,
+    semanticOnly: Boolean,
+    groupsOnly: Boolean,
+    editableOnly: Boolean,
+    allowEmpty: Boolean,
+    popupTitle: String,
+    actionLabel: String
+  },
   components: {
     ModelTreeview
   },
+  emits: ['closed', 'input'],
   data () {
     if (!this.$f7.data.modelPicker) this.$f7.data.modelPicker = {}
     return {

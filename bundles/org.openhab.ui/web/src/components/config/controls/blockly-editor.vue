@@ -1213,7 +1213,10 @@ Vue.config.ignoredElements = [
 ]
 
 export default {
-  props: ['blocks', 'libraryDefinitions'],
+  props: {
+    blocks: String,
+    libraryDefinitions: Array
+  },
   emits: ['mounted', 'ready', 'change'],
   data () {
     return {

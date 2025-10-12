@@ -11,7 +11,11 @@
 
 <script>
 export default {
-  props: ['configDescription', 'value'],
+  props: {
+    configDescription: Object,
+    value: [String, Boolean]
+  },
+  emits: ['input'],
   computed: {
     actualValue () {
       if (typeof (this.value) === 'string') {

@@ -35,7 +35,9 @@ export default {
   components: {
     ConfigSheet
   },
-  props: ['serviceId'],
+  props: {
+    serviceId: String
+  },
   data () {
     return {
       service: {},

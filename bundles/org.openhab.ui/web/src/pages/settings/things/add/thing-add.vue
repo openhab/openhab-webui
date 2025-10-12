@@ -81,7 +81,11 @@ import ThingMixin from '@/components/thing/thing-mixin'
 
 export default {
   mixins: [ThingMixin],
-  props: ['thingTypeId', 'thingCopy'],
+  props: {
+    thingTypeId: String,
+    thingCopy: Object,
+    f7router: Object
+  },
   components: {
     ConfigSheet,
     ThingGeneralSettings
@@ -116,7 +120,7 @@ export default {
   methods: {
     onPageAfterIn () {
       if (this.ready) return
-      this.$oh.api.get('/rest/thing-types/' + this.thingTypeId).then(data => {
+      this.$oh.api.get('/rest/thing-types/' + this.thingTypeId).then((data) => {
         this.thingType = data
         try {
           this.thing.ID = this.$f7.utils.id()

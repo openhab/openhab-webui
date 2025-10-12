@@ -8,8 +8,8 @@
         <small>{{ parentLocation }}</small>
       </div>
       <div v-if="context && context.component.slots && context.component.slots.glance" class="display-flex flex-direction-column align-items-flex-start">
-        <generic-widget-component :context="childContext(slotComponent)"
-                                  v-for="(slotComponent, idx) in context.component.slots.glance"
+        <generic-widget-component v-for="(slotComponent, idx) in context.component.slots.glance"
+                                  :context="childContext(slotComponent)"
                                   :key="'glance-' + idx"
                                   @command="onCommand" />
       </div>
@@ -91,7 +91,10 @@ import MeasurementBadge from './glance/location/measurement-badge.vue'
 
 export default {
   mixins: [mixin, CardMixin],
-  props: ['parentLocation', 'tabContext'],
+  props: {
+    parentLocation: String,
+    tabContext: Object
+  },
   components: {
     ModelCard,
     StatusBadge,

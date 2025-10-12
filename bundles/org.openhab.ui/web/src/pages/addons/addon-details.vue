@@ -71,17 +71,16 @@
           </f7-block>
           <f7-block v-else class="skeleton-text skeleton-effect-blink">
             <p>
-              Lorem ipsum dolor sit amet, an labore inermis est.
-              Mel ut dicant tamquam commune, duo id accumsan eleifend tractatos, ius purto vitae fabulas cu.
-              Te his vide omnis qualisque, in duo soluta persecuti instructior. Ex dicit detraxit voluptaria est.
+              Lorem ipsum dolor sit amet, an labore inermis est. Mel ut dicant tamquam commune, duo
+              id accumsan eleifend tractatos, ius purto vitae fabulas cu. Te his vide omnis
+              qualisque, in duo soluta persecuti instructior. Ex dicit detraxit voluptaria est.
               Aperiri reformidans comprehensam in vis.
             </p>
             <p>
-              Quo quas rebum dicta ad, in erant eruditi vim.
-              Mel no primis everti voluptatum, id utamur voluptatibus mea.
-              Nam deseruisse expetendis cotidieque at, vis oratio utroque cu.
-              Eu duo quod fuisset, ne fabulas hendrerit argumentum pro.
-              Errem dictas his ea, eos interesset efficiantur ei.
+              Quo quas rebum dicta ad, in erant eruditi vim. Mel no primis everti voluptatum, id
+              utamur voluptatibus mea. Nam deseruisse expetendis cotidieque at, vis oratio utroque
+              cu. Eu duo quod fuisset, ne fabulas hendrerit argumentum pro. Errem dictas his ea, eos
+              interesset efficiantur ei.
             </p>
           </f7-block>
         </f7-col>
@@ -214,7 +213,9 @@ export default {
     AddonStatsLine,
     AddonInfoTable
   },
-  props: ['addonId'],
+  props: {
+    addonId: String
+  },
   data () {
     return {
       addon: null,

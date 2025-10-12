@@ -10,7 +10,10 @@
 
 <script>
 export default {
-  props: ['configDescription', 'value'],
+  props: {
+    configDescription: Object,
+    value: String
+  },
   components: {
     'vue-qrcode': () => import(/* webpackChunkName: "vue-qrcode" */ 'vue-qrcode')
   }

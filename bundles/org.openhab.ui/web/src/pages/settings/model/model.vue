@@ -80,7 +80,7 @@
       <f7-preloader />
       <div>Loading...</div>
     </f7-block>
-    <f7-block v-else class="semantic-tree-wrapper" :class="{ 'sheet-opened' : detailsOpened }">
+    <f7-block v-else class="semantic-tree-wrapper" :class="{ 'sheet-opened': detailsOpened }">
       <f7-row>
         <f7-col width="100" medium="50">
           <f7-block v-if="empty">
@@ -133,8 +133,8 @@
             <f7-card>
               <f7-card-content>
                 <f7-list>
-                  <f7-list-button color="blue"
-                                  v-show="!selectedItem || selectedItem.class.indexOf('Location') === 0"
+                  <f7-list-button v-show="!selectedItem || selectedItem.class.indexOf('Location') === 0"
+                                  color="blue"
                                   title="Add Location"
                                   @click="addSemanticItem('Location')" />
                   <f7-list-button color="blue" title="Create Equipment from Thing" @click="addFromThing(true)" />
@@ -314,11 +314,12 @@ import MetadataMenu from '@/components/item/metadata/item-metadata-menu.vue'
 import LinkDetails from '@/components/model/link-details.vue'
 
 import ModelMixin from '@/pages/settings/model/model-mixin'
+import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 
 export default {
   mixins: [ModelMixin],
   components: {
-    'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue'),
+    EmptyStatePlaceholder,
     ModelDetailsPane,
     ModelTreeview,
     ItemStatePreview,
@@ -446,7 +447,6 @@ export default {
       if (!visibility || visibility !== 'hidden') {
         this.detailsOpened = true
       }
-      // console.log('selected ' + item.item.name)
     },
     clearSelection (ev) {
       if (ev.target && ev.currentTarget && ev.target === ev.currentTarget) {

@@ -14,7 +14,7 @@
     <component v-if="visibleToCurrentUser"
                :is="componentType"
                :context="context"
-               :class="{notready: !ready}" />
+               :class="{ notready: !ready }" />
     <empty-state-placeholder v-if="page && !visibleToCurrentUser"
                              icon="multiply_circle_fill"
                              title="page.unavailable.title"
@@ -29,11 +29,12 @@
 
 <script>
 import modal from './modal-mixin'
+import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 
 export default {
   mixins: [modal],
   components: {
-    'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue')
+    EmptyStatePlaceholder
   }
 }
 </script>

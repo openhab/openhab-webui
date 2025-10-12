@@ -84,7 +84,6 @@
   .card-expandable.card-opened .card-content::-webkit-scrollbar /* WebKit */
       width 0
       height 0
-
 </style>
 
 <script>
@@ -96,7 +95,10 @@ import PropertyCard from '../../components/cards/property-card.vue'
 import { mapState } from 'vuex'
 
 export default {
-  props: ['type', 'page'],
+  props: {
+    type: String,
+    page: Object
+  },
   components: {
     LocationCard,
     EquipmentCard,

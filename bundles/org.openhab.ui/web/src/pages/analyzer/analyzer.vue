@@ -65,12 +65,14 @@
               <div class="card data-table">
                 <div class="card-header no-padding" style="min-height: auto">
                   <f7-list style="width: 100%">
-                    <item-picker :key="itemsPickerKey"
-                                 title="Items"
-                                 name="items-to-analyze"
-                                 :value="itemNames"
-                                 @input="updateItems"
-                                 :multiple="true" />
+                    <f7-list-group>
+                      <item-picker :key="itemsPickerKey"
+                                   title="Items"
+                                   name="items-to-analyze"
+                                   :value="itemNames"
+                                   @input="updateItems"
+                                   :multiple="true" />
+                    </f7-list-group>
                   </f7-list>
                   <!-- <div class="data-table-title">Options</div> -->
                 </div>
@@ -364,6 +366,10 @@ export default {
     ItemPicker,
     EmptyStatePlaceholder
   },
+  props: {
+    f7router: Object,
+    f7route: Object
+  },
   data () {
     return {
       showChart: false,
@@ -499,7 +505,7 @@ export default {
         discrete: true
       }
 
-      if (item.type.indexOf('Number') === 0 || item.type === 'Dimmer') seriesOptions.discrete = false
+      if (item.type.indexOf('Number') === 0 || item.type === 'Dimmer') { seriesOptions.discrete = false }
       if (item.groupType && (item.groupType.indexOf('Number') === 0 || item.groupType === 'Dimmer')) seriesOptions.discrete = false
       if (!seriesOptions.discrete && this.coordSystem === 'aggregate' && this.aggregateDimensions === 1) seriesOptions.type = 'bar'
       if (!seriesOptions.discrete && (this.coordSystem === 'calendar' || (this.coordSystem === 'aggregate' && this.aggregateDimensions === 2))) seriesOptions.type = 'heatmap'
@@ -513,7 +519,7 @@ export default {
       if (type === '') {
         this.coordSystem = 'time'
         for (let item in this.seriesOptions) {
-          if (!this.seriesOptions[item].discrete && this.seriesOptions[item].type !== 'line' && this.seriesOptions[item].type !== 'area') this.seriesOptions[item].type = 'line'
+          if (!this.seriesOptions[item].discrete && this.seriesOptions[item].type !== 'line' && this.seriesOptions[item].type !== 'area') { this.seriesOptions[item].type = 'line' }
         }
       }
       this.$nextTick(() => {
@@ -537,7 +543,7 @@ export default {
       }
       if (this.coordSystem === 'time') {
         for (let item in this.seriesOptions) {
-          if (!this.seriesOptions[item].discrete && this.seriesOptions[item].type !== 'line' && this.seriesOptions[item].type !== 'area') this.seriesOptions[item].type = 'line'
+          if (!this.seriesOptions[item].discrete && this.seriesOptions[item].type !== 'line' && this.seriesOptions[item].type !== 'area') { this.seriesOptions[item].type = 'line' }
         }
       }
       this.$nextTick(() => {

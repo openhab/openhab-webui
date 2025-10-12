@@ -33,13 +33,13 @@
           <f7-block-title>Item</f7-block-title>
           <f7-list media-list>
             <f7-list-item radio
-                          :checked="!createMode"
+                          :checked="!createMode ? true : null"
                           value="false"
                           @change="createMode = false"
                           title="Use an existing Item"
                           name="item-creation-choice" />
             <f7-list-item radio
-                          :checked="createMode"
+                          :checked="createMode ? true : null"
                           value="true"
                           @change="createMode = true"
                           title="Create a new Item"
@@ -50,14 +50,16 @@
         <!-- Choose item to link -->
         <f7-col v-if="!createMode">
           <f7-list>
-            <item-picker key="itemLink"
-                         title="Item to Link"
-                         name="item"
-                         :value="selectedItemName"
-                         :multiple="false"
-                         :items="items"
-                         :filterType="getCompatibleItemTypes()"
-                         @input="(value) => selectedItemName = value" />
+            <f7-list-group>
+              <item-picker key="itemLink"
+                           title="Item to Link"
+                           name="item"
+                           :value="selectedItemName"
+                           :multiple="false"
+                           :items="items"
+                           :filterType="getCompatibleItemTypes()"
+                           @input="(value) => selectedItemName = value" />
+            </f7-list-group>
           </f7-list>
         </f7-col>
 
@@ -82,10 +84,12 @@
         </f7-list>
         <f7-block-title>Thing</f7-block-title>
         <f7-list inline-labels no-hairlines-md>
-          <thing-picker title="Thing"
-                        name="thing"
-                        :value="selectedThingId"
-                        @input="(e) => selectedThingId = e" />
+          <f7-list-group>
+            <thing-picker title="Thing"
+                          name="thing"
+                          :value="selectedThingId"
+                          @input="(e) => selectedThingId = e" />
+          </f7-list-group>
         </f7-list>
         <div v-if="selectedThing.UID && selectedThingType.UID">
           <f7-block-title>Channel</f7-block-title>
@@ -116,11 +120,11 @@
           </f7-link>
         </f7-block-footer>
         <f7-list class="profile-list">
-          <f7-list-item radio
-                        v-for="profileType in profileTypes"
+          <f7-list-item v-for="profileType in profileTypes"
+                        radio
                         class="profile-item"
-                        :checked="(!currentProfileType && profileType.uid === 'system:default' && itemTypeCompatibleWithChannelType(currentItem, channel)) || (currentProfileType && profileType.uid === currentProfileType.uid)"
-                        :disabled="!compatibleProfileTypes.includes(profileType)"
+                        :checked="(!currentProfileType && profileType.uid === 'system:default' && itemTypeCompatibleWithChannelType(currentItem, channel)) || (currentProfileType && profileType.uid === currentProfileType.uid) ? true : null"
+                        :disabled="!compatibleProfileTypes.includes(profileType) ? true : null"
                         :class="{ 'profile-disabled': !compatibleProfileTypes.includes(profileType) }"
                         @change="onProfileTypeChange(profileType.uid)"
                         :key="profileType.uid"
@@ -188,7 +192,13 @@ export default {
     ChannelList,
     ItemForm
   },
-  props: ['thing', 'channel', 'channelType', 'item'],
+  props: {
+    thing: String,
+    channel: String,
+    channelType: String,
+    item: String,
+    f7router: Object
+  },
   data () {
     return {
       ready: true,
@@ -222,10 +232,10 @@ export default {
   },
   computed: {
     currentItem () {
-      return this.item ? this.item : (this.createMode ? this.newItem : (this.items ? this.items.find(item => item.name === this.selectedItemName) : null))
+      return this.item ? this.item : (this.createMode ? this.newItem : (this.items ? this.items.find((item) => item.name === this.selectedItemName) : null))
     },
     compatibleProfileTypes () {
-      return this.profileTypes.filter(p => this.isProfileTypeCompatible(this.channel, p, this.currentItem))
+      return this.profileTypes.filter((p) => this.isProfileTypeCompatible(this.channel, p, this.currentItem))
     }
   },
   methods: {
@@ -258,7 +268,7 @@ export default {
       this.selectedChannel = channel
       this.$oh.api.get('/rest/profile-types?channelTypeUID=' + channel.channelTypeUID).then((data) => {
         this.profileTypes = data
-        this.profileTypes.unshift(data.splice(data.findIndex(p => p.uid === 'system:default'), 1)[0]) // move default to be first
+        this.profileTypes.unshift(data.splice(data.findIndex((p) => p.uid === 'system:default'), 1)[0]) // move default to be first
         this.ready = true
       })
     },

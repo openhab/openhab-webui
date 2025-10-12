@@ -1,7 +1,14 @@
 <template>
-  <oh-card :context="context" :content-class="[ (config.vertical ? 'slider-card-vertical' : ''), 'display-flex', 'justify-content-center' ]">
+  <oh-card :context="context"
+           :content-class="[
+             config.vertical ? 'slider-card-vertical' : '',
+             'display-flex',
+             'justify-content-center',
+           ]">
     <template #content>
-      <oh-slider :context="childContext(context.component)" :class="{ 'slider-card-vertical': config.vertical }" @command="onCommand" />
+      <oh-slider :context="childContext(context.component)"
+                 :class="{ 'slider-card-vertical': config.vertical }"
+                 @command="onCommand" />
     </template>
   </oh-card>
 </template>

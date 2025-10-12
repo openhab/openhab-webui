@@ -6,13 +6,14 @@
             :lat-lng="coords"
             @update:latLng="onMove"
             @click="onClick">
-    <l-tooltip v-if="tooltip && !config.useTooltipAsLabel" :options="tooltipOptions" @click="() => {}">
+    <l-tooltip v-if="tooltip && !config.useTooltipAsLabel"
+               :options="tooltipOptions"
+               @click="() => {}">
       <div style="white-space: nowrap" :style="tooltipStyle">
         {{ tooltip }}
       </div>
     </l-tooltip>
-    <l-icon
-      :icon-size="[config.iconSize || 40, config.iconSize || 40]">
+    <l-icon :icon-size="[config.iconSize || 40, config.iconSize || 40]">
       <div v-if="config.useTooltipAsLabel" style="white-space: nowrap" :style="tooltipStyle">
         {{ tooltip }}
       </div>
@@ -70,6 +71,7 @@ export default {
     LPopup
   },
   widget: OhPlanMarkerDefinition,
+  emits: ['update'],
   data () {
     return {
       markerKey: 'marker-' + this.$f7.utils.id(),

@@ -30,7 +30,21 @@
 import SemanticsTreeviewItem from '@/components/tags/treeview-item.vue'
 
 export default {
-  props: ['semanticTags', 'expandedTags', 'showNames', 'showSynonyms', 'picker', 'selectedTag', 'selectedClass', 'canDragDrop', 'propertyMode', 'classMode', 'limitToClass', 'hideNone'],
+  props: {
+    semanticTags: Array,
+    expandedTags: Object,
+    showNames: Boolean,
+    showSynonyms: Boolean,
+    picker: Boolean,
+    selectedTag: Object,
+    selectedClass: String,
+    canDragDrop: Boolean,
+    propertyMode: Boolean,
+    classMode: Boolean,
+    limitToClass: Boolean,
+    hideNone: Boolean
+  },
+  emits: ['selected'],
   components: {
     SemanticsTreeviewItem
   },

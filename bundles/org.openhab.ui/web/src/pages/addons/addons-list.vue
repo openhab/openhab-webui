@@ -27,28 +27,22 @@
             media-item />
         </f7-list>
         <f7-list v-else>
-          <f7-list-item
-            media-item
-            link="#"
-            v-for="addon in addons"
-            :key="addon.uid"
-            @click="openAddonPopup(addon.uid)"
-            :header="addon.uid"
-            :footer="addon.version"
-            :after="(currentlyUninstalling.indexOf(addon.uid) >= 0) ? 'Uninstalling...' : ''"
-            :title="addon.label">
-            <!-- <f7-swipeout-actions left>
-              <f7-swipeout-button v-if="addon.link" color="blue">Documentation</f7-swipeout-button>
-              <f7-swipeout-button color="red">Uninstall</f7-swipeout-button>
-            </f7-swipeout-actions> -->
-            <!-- <f7-icon slot="media" icon="demo-list-icon"></f7-icon> -->
-          </f7-list-item>
-          <!-- <f7-block-footer slot="after-list">Swipe right for actions.</f7-block-footer> -->
+          <f7-list-item v-for="addon in addons"
+                        media-item
+                        link="#"
+                        :key="addon.uid"
+                        @click="openAddonPopup(addon.uid)"
+                        :header="addon.uid"
+                        :footer="addon.version"
+                        :after="currentlyUninstalling.indexOf(addon.uid) >= 0 ? 'Uninstalling...' : ''"
+                        :title="addon.label" />
         </f7-list>
       </f7-col>
     </f7-block>
     <f7-block form v-if="ready && !addons.length" class="block-narrow">
-      <empty-state-placeholder :icon="addonsIcons[addonType]" :title="'No ' + addonsLabels[addonType] + ' installed yet'" text="addons.text" />
+      <empty-state-placeholder :icon="addonsIcons[addonType]"
+                               :title="'No ' + addonsLabels[addonType] + ' installed yet'"
+                               text="addons.text" />
     </f7-block>
     <f7-fab position="right-bottom"
             slot="fixed"
@@ -80,7 +74,9 @@ export default {
     'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue'),
     AddonDetailsSheet
   },
-  props: ['addonType'],
+  props: {
+    addonType: String
+  },
   data () {
     return {
       addons: [],
@@ -118,8 +114,8 @@ export default {
       this.load()
     },
     load () {
-      this.$oh.api.get('/rest/addons').then(data => {
-        this.addons = data.filter(addon => addon.installed && addon.type === this.addonType).sort((a, b) => a.label.toUpperCase().localeCompare(b.label.toUpperCase()))
+      this.$oh.api.get('/rest/addons').then((data) => {
+        this.addons = data.filter((addon) => addon.installed && addon.type === this.addonType).sort((a, b) => a.label.toUpperCase().localeCompare(b.label.toUpperCase()))
         this.ready = true
         this.startEventSource()
       }).catch((err) => {

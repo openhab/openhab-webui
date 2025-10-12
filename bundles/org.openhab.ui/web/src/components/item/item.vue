@@ -41,7 +41,15 @@ import ItemMixin from '@/components/item/item-mixin'
 
 export default {
   mixins: [ItemMixin],
-  props: ['item', 'context', 'noState', 'noType', 'noIcon', 'noTags', 'link'],
+  props: {
+    item: Object,
+    context: Object,
+    noState: Boolean,
+    noType: Boolean,
+    noIcon: Boolean,
+    noTags: Boolean,
+    link: String
+  },
   computed: {
     state () {
       if (this.noState) return

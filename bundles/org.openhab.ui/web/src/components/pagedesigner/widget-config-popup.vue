@@ -52,10 +52,15 @@ import MovablePopupMixin from '@/pages/settings/movable-popup-mixin'
 
 export default {
   mixins: [DirtyMixin, MovablePopupMixin],
-  props: ['opened', 'component', 'widget'],
+  props: {
+    opened: Boolean,
+    component: Object,
+    widget: Object
+  },
   components: {
     ConfigSheet
   },
+  emits: ['closed', 'update'],
   data () {
     return {
       originalConfig: null,

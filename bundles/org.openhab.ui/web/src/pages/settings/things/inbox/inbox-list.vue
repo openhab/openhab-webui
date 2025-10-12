@@ -10,23 +10,24 @@
                  :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
       </f7-nav-right>
       <f7-subnavbar :inner="false" v-show="initSearchbar">
-        <f7-searchbar
-          v-if="initSearchbar"
-          ref="searchbar"
-          class="searchbar-inbox"
-          :init="initSearchbar"
-          custom-search
-          @searchbar:search="search"
-          @searchbar:clear="clearSearch"
-          :disable-button="!$theme.aurora" />
+        <f7-searchbar v-if="initSearchbar"
+                      ref="searchbar"
+                      class="searchbar-inbox"
+                      :init="initSearchbar"
+                      custom-search
+                      @searchbar:search="search"
+                      @searchbar:clear="clearSearch"
+                      :disable-button="!$theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
-    <f7-toolbar class="contextual-toolbar"
-                :class="{ 'navbar': $theme.md }"
-                v-if="showCheckboxes"
+    <f7-toolbar v-if="showCheckboxes"
+                class="contextual-toolbar"
+                :class="{ navbar: theme.md }"
                 bottom-ios
                 bottom-aurora>
-      <div class="display-flex justify-content-center" v-if="!$theme.md && selectedItems.length > 0" style="width: 100%">
+      <div v-if="!$theme.md && selectedItems.length > 0"
+           class="display-flex justify-content-center"
+           style="width: 100%">
         <f7-button @click="confirmActionOnSelection('delete')"
                    color="red"
                    class="delete display-flex flex-direction-row margin-right"
@@ -168,7 +169,10 @@
           </f7-list-group>
         </f7-list>
 
-        <f7-list v-else class="searchbar-found col" :contacts-list="groupBy === 'alphabetical'">
+        <f7-list v-else
+                 media-list
+                 class="searchbar-found col"
+                 :contacts-list="groupBy === 'alphabetical'">
           <f7-list-group v-for="(inboxWithInitial, initial) in filteredIndexedInbox" :key="initial">
             <f7-list-item v-if="inboxWithInitial.length" :title="initial" group-title />
             <f7-list-item v-for="entry in inboxWithInitial"
@@ -176,7 +180,7 @@
                           :link="true"
                           media-item
                           :checkbox="showCheckboxes"
-                          :checked="isChecked(entry.thingUID)"
+                          :checked="isChecked(entry.thingUID) ? true : null"
                           @change="(e) => toggleItemCheck(e, entry.thingUID)"
                           @click.ctrl="(e) => ctrlClick(e, entry)"
                           @click.meta="(e) => ctrlClick(e, entry)"
@@ -184,11 +188,7 @@
                           :title="entry.label"
                           :subtitle="entry.representationProperty ? entry.properties[entry.representationProperty] : ''"
                           :footer="entry.thingUID"
-                          :badge="(entry.flag === 'IGNORED') ? 'IGNORED' : ''">
-                          <!-- <f7-button icon-f7="add_round" color="blue" slot="after"></f7-button>
-              <f7-button icon-f7="eye_off" color="blue" slot="after"></f7-button>
-              <f7-button icon-f7="trash" color="blue" slot="after"></f7-button> -->
-            </f7-list-item>
+                          :badge="(entry.flag === 'IGNORED') ? 'IGNORED' : ''" />
           </f7-list-group>
         </f7-list>
         <f7-list v-if="ready && searchQuery && filteredItems.length === 0">

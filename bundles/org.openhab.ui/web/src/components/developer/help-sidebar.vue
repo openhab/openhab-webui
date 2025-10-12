@@ -50,7 +50,8 @@
               <f7-accordion-content>
                 <f7-block>
                   <p v-if="faq.goto">
-                    In the left panel go to <f7-link :href="faq.goto.target">
+                    In the left panel go to
+                    <f7-link :href="faq.goto.target">
                       {{ faq.goto.text }}
                     </f7-link>
                   </p>
@@ -80,7 +81,7 @@
                           :link="addon.link.replace('https://www.openhab.org', $store.state.websiteUrl)"
                           :external="true"
                           target="_blank"
-                          :title="addon.label.replaceAll(/Binding|Transformation|Persistence/gi,'')"
+                          :title="addon.label.replaceAll(/Binding|Transformation|Persistence/gi, '')"
                           :text="addon.type" />
           </f7-list>
         </f7-block>
@@ -179,7 +180,9 @@ export default {
   components: {
     Context
   },
-  props: ['activeHelpTab'],
+  props: {
+    activeHelpTab: String
+  },
   data () {
     return {
       addons: [],
@@ -188,8 +191,8 @@ export default {
     }
   },
   created () {
-    this.$oh.api.get('/rest/addons').then(data => {
-      this.addons = data.filter(addon => addon.installed).sort((a, b) => a.label.toUpperCase().localeCompare(b.label.toUpperCase()))
+    this.$oh.api.get('/rest/addons').then((data) => {
+      this.addons = data.filter((addon) => addon.installed).sort((a, b) => a.label.toUpperCase().localeCompare(b.label.toUpperCase()))
     }).catch((err) => {
       // sometimes we get 502 errors ('Jersey is not ready yet!'), keep trying
       if (err === 'Bad Gateway' || err === 502) {

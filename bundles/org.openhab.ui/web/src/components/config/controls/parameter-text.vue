@@ -59,7 +59,11 @@
 
 <script>
 export default {
-  props: ['configDescription', 'value'],
+  props: {
+    configDescription: Object,
+    value: [String, Array]
+  },
+  emits: ['input'],
   computed: {
     controlType () {
       if (this.configDescription.context === 'password' && !this.showPassword) return 'password'

@@ -25,7 +25,17 @@
 
 <script>
 export default {
-  props: ['title', 'name', 'value', 'multiple', 'required', 'filterType', 'filterUid', 'openOnReady'],
+  props: {
+    title: String,
+    name: String,
+    value: [String, Array],
+    multiple: Boolean,
+    required: Boolean,
+    filterType: Array,
+    filterUid: Array,
+    openOnReady: Boolean
+  },
+  emits: ['input'],
   data () {
     return {
       ready: false,

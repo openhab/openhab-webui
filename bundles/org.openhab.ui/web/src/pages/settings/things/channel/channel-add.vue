@@ -26,8 +26,8 @@
           <div>Loading...</div>
         </f7-block>
         <f7-list v-else>
-          <f7-list-item radio
-                        v-for="channelType in channelTypes"
+          <f7-list-item v-for="channelType in channelTypes"
+                        radio
                         :value="channelType.UID"
                         @change="currentChannelType = channelTypes.find((m) => m.UID === $event.target.value)"
                         :key="channelType.UID"
@@ -70,7 +70,12 @@ export default {
     ChannelGeneralSettings,
     ConfigSheet
   },
-  props: ['thing', 'thingType'],
+  props: {
+    thing: Object,
+    thingType: Object,
+    f7router: Object,
+    f7route: Object
+  },
   data () {
     return {
       ready: false,

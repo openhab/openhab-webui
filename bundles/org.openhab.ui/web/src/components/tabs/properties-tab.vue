@@ -6,7 +6,9 @@
 import ModelTab from '@/pages/home/model-tab.vue'
 
 export default {
-  props: ['context'],
+  props: {
+    context: Object
+  },
   components: { ModelTab }
 }
 </script>

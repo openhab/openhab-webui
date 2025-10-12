@@ -69,13 +69,13 @@
                     color="blue"
                     :title="thing.editable && (channelType.parameterGroups.length || channelType.parameters.length) ? 'Configure Channel' : 'Channel Details'"
                     @click="configureChannel()" />
-    <f7-list-button class="searchbar-ignore"
-                    v-if="extensible && thing.editable"
+    <f7-list-button v-if="extensible && thing.editable"
+                    class="searchbar-ignore"
                     color="blue"
                     title="Duplicate Channel"
                     @click="duplicateChannel()" />
-    <f7-list-button class="searchbar-ignore"
-                    v-if="extensible && thing.editable"
+    <f7-list-button v-if="extensible && thing.editable"
+                    class="searchbar-ignore"
                     color="red"
                     title="Remove Channel"
                     @click="removeChannel()" />
@@ -101,7 +101,16 @@ import ItemMixin from '@/components/item/item-mixin'
 
 export default {
   mixins: [ItemMixin],
-  props: ['channelType', 'channelId', 'channel', 'thing', 'opened', 'extensible', 'context'],
+  props: {
+    channelType: Object,
+    channelId: String,
+    channel: Object,
+    thing: Object,
+    opened: Boolean,
+    extensible: Boolean,
+    context: Object
+  },
+  emits: ['channel-updated'],
   data () {
     return {
       ready: false,

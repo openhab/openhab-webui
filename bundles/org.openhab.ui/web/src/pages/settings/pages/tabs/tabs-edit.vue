@@ -44,8 +44,8 @@
             </f7-menu>
 
             <f7-list media-list class="tabs-list">
-              <f7-list-item media-item
-                            v-for="(tab, idx) in page.slots.default"
+              <f7-list-item v-for="(tab, idx) in page.slots.default"
+                            media-item
                             :key="idx"
                             :title="tabEvaluateExpression(tab, idx, 'title')"
                             :subtitle="tab.config.page"
@@ -127,7 +127,10 @@ export default {
     'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue'),
     PageSettings
   },
-  props: ['createMode', 'uid'],
+  props: {
+    createMode: Boolean,
+    uid: String
+  },
   data () {
     return {
       page: {

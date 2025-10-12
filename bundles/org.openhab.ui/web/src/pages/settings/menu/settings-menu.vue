@@ -24,6 +24,7 @@
         @searchbar:search="expandAll"
         :disable-button="!$theme.aurora" />
     </f7-navbar>
+
     <f7-block class="block-narrow after-big-title settings-menu">
       <f7-row>
         <f7-col :class="!addonsLoaded || (addonsLoaded && addonsInstalled.length > 0) ? 'settings-col' : ''" width="100" medium="50">

@@ -86,14 +86,14 @@
                   <div class="margin" v-html="thingType.description" />
                 </f7-accordion-content>
               </f7-list-item>
-              <f7-list-item accordion-item
-                            v-if="Object.keys(thing.properties).length > 0"
+              <f7-list-item v-if="Object.keys(thing.properties).length > 0"
+                            accordion-item
                             title="Thing Properties"
                             :badge="Object.keys(thing.properties).length">
                 <f7-accordion-content>
                   <f7-list>
-                    <f7-list-item class="thing-property"
-                                  v-for="(value, key) in thing.properties"
+                    <f7-list-item v-for="(value, key) in thing.properties"
+                                  class="thing-property"
                                   :key="key"
                                   @click="showFullPropertyIfTruncated(key, value)">
                       <div slot="title" class="item-title-content">
@@ -114,15 +114,15 @@
                             accordion-item
                             title="Firmware"
                             :badge="firmwares.length"
-                            :badge-color="(thing.firmwareStatus.status === 'UPDATE_EXECUTABLE') ? 'green' : 'gray'">
+                            :badge-color="(thing.firmwareStatus.status) === 'UPDATE_EXECUTABLE' ? 'green' : 'gray'">
                 <f7-accordion-content>
                   <f7-list>
                     <f7-list-item class="thing-property" title="Status" :after="thing.firmwareStatus.status" />
                     <f7-list-item class="thing-property"
                                   title="Current Version"
                                   :after="thing.properties.firmwareVersion" />
-                    <f7-list-item class="thing-property"
-                                  v-for="firmware in firmwares"
+                    <f7-list-item v-for="firmware in firmwares"
+                                  class="thing-property"
                                   :key="firmware.version"
                                   header="Version"
                                   :title="firmware.version"
@@ -183,7 +183,7 @@
 
         <!-- Config Actions (DEPRECATED) -->
         <div v-if="ready && !error">
-          <f7-block class="block-narrow" v-for="actionGroup in configActionsByGroup" :key="actionGroup.group.name">
+          <f7-block v-for="actionGroup in configActionsByGroup" class="block-narrow" :key="actionGroup.group.name">
             <f7-col>
               <f7-block-title class="parameter-group-title">
                 {{ actionGroup.group.label }}
@@ -226,7 +226,7 @@
         </f7-block>
       </f7-tab>
 
-      <f7-tab id="channels" disabled="!thingType.channels" :tab-active="currentTab === 'channels'">
+      <f7-tab id="channels" disabled="!thingType.channels ? true : null" :tab-active="currentTab === 'channels' ? true : null">
         <f7-block v-if="currentTab === 'channels'" class="block-narrow">
           <channel-list :thingType="thingType"
                         :thing="thing"
@@ -235,10 +235,10 @@
                         :context="context" />
           <f7-col v-if="isExtensible || thing.channels.length > 0">
             <f7-list>
-              <f7-list-button class="searchbar-ignore"
+              <f7-list-button v-if="isExtensible && editable"
+                              class="searchbar-ignore"
                               color="blue"
                               title="Add Channel"
-                              v-if="isExtensible && editable"
                               @click="addChannel()" />
               <f7-list-button class="searchbar-ignore"
                               color="blue"
@@ -394,7 +394,10 @@ export default {
     ThingGeneralSettings,
     'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')
   },
-  props: ['thingId'],
+  props: {
+    thingId: String,
+    f7router: Object
+  },
   data () {
     return {
       ready: false,
@@ -550,30 +553,30 @@ export default {
         })
       }
 
-      this.$oh.api.get('/rest/things/' + this.thingId).then(data => {
+      this.$oh.api.get('/rest/things/' + this.thingId).then((data) => {
         this.$set(this, 'thing', data)
 
         const promises = [this.$oh.api.get('/rest/thing-types/' + this.thing.thingTypeUID),
           this.$oh.api.get('/rest/channel-types?prefixes=system,' + this.thing.thingTypeUID.split(':')[0]),
           this.loadThingActions()]
 
-        Promise.all(promises).then(data2 => {
+        Promise.all(promises).then((data2) => {
           this.thingType = data2[0]
           this.channelTypes = data2[1]
 
-          this.$oh.api.get('/rest/config-descriptions/thing:' + this.thingId).then(data3 => {
+          this.$oh.api.get('/rest/config-descriptions/thing:' + this.thingId).then((data3) => {
             this.configDescriptions = data3
 
             // gather actions (rendered as buttons at the bottom)
             let bindingActionsGrouped = this.getBindingActions(this.configDescriptions)
-            let bindingActionsNames = bindingActionsGrouped.flatMap(g => g.actions).flatMap(a => a.name)
-            this.configDescriptions.parameters = this.configDescriptions.parameters.filter(p => !bindingActionsNames.includes(p.name)) // params except actions
+            let bindingActionsNames = bindingActionsGrouped.flatMap((g) => g.actions).flatMap((a) => a.name)
+            this.configDescriptions.parameters = this.configDescriptions.parameters.filter((p) => !bindingActionsNames.includes(p.name)) // params except actions
 
             this.configActionsByGroup = bindingActionsGrouped
 
             loadingFinished()
             if (!this.eventSource) this.startEventSource()
-          }).catch(err => {
+          }).catch((err) => {
             console.log('No config descriptions for this thing, using those on the thing type: ' + err)
             this.configDescriptions = {
               parameterGroups: this.thingType.parameterGroups,
@@ -585,11 +588,14 @@ export default {
           })
 
           // config status unrelated to the other queries, so load it in parallel with the types
-          this.$oh.api.get('/rest/things/' + this.thingId + '/config/status').then(statusData => {
+          this.$oh.api.get('/rest/things/' + this.thingId + '/config/status').then((statusData) => {
             this.configStatusInfo = statusData
           })
-          this.$oh.api.get('/rest/things/' + this.thingId + '/firmwares').then(firmwareData => {
+          this.$oh.api.get('/rest/things/' + this.thingId + '/firmwares').then((firmwareData) => {
             this.firmwares = firmwareData
+          }).catch(() => {
+            // ignore error
+            console.debug(`Firmware info not available for Thing ${this.thingId}`)
           })
         }).catch((err) => {
           console.warn('Cannot load the related info: ' + err)
@@ -608,7 +614,7 @@ export default {
         // No match by context, fall back to heuristic match by group name and label
         actionContextGroups = configDescriptionsResponse.parameterGroups.filter((pg) => pg.name === 'actions' && pg.label === 'Actions')
       }
-      let bindingActions = configDescriptionsResponse.parameters.filter((p) => actionContextGroups.map(acg => acg.name).includes(p.groupName) && p.type === 'BOOLEAN')
+      let bindingActions = configDescriptionsResponse.parameters.filter((p) => actionContextGroups.map((acg) => acg.name).includes(p.groupName) && p.type === 'BOOLEAN')
 
       return map(groupBy(bindingActions, 'groupName'), (gActions, gName) => {
         return {

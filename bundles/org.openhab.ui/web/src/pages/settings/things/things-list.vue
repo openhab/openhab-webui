@@ -10,9 +10,9 @@
                  @click="toggleCheck()"
                  :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
       </f7-nav-right>
-      <f7-subnavbar :inner="false" v-show="initSeachbar">
+      <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
-          v-if="initSeachbar"
+          v-if="initSearchbar"
           ref="searchbar"
           class="searchbar-things"
           custom-search
@@ -23,12 +23,14 @@
           :disable-button="!$theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
-    <f7-toolbar class="contextual-toolbar"
-                :class="{ 'navbar': $theme.md }"
-                v-if="showCheckboxes"
+    <f7-toolbar v-if="showCheckboxes"
+                class="contextual-toolbar"
+                :class="{ navbar: theme.md }"
                 bottom-ios
                 bottom-aurora>
-      <div class="display-flex justify-content-center" v-if="!$theme.md && selectedItems.length > 0" style="width: 100%">
+      <div v-if="!theme.md && selectedItems.length > 0"
+           class="display-flex justify-content-center"
+           style="width: 100%">
         <f7-link color="red"
                  v-show="selectedItems.length"
                  class="delete display-flex flex-direction-row margin-right"
@@ -37,24 +39,24 @@
                  @click="removeSelected">
           Remove
         </f7-link>
-        <f7-link color="orange"
-                 v-show="selectedItems.length"
+        <f7-link v-show="selectedItems.length"
+                 color="orange"
                  class="disable display-flex flex-direction-row margin-right"
                  @click="doDisableEnableSelected(false)"
                  icon-ios="f7:pause_circle"
                  icon-aurora="f7:pause_circle">
           &nbsp;Disable
         </f7-link>
-        <f7-link color="green"
-                 v-show="selectedItems.length"
+        <f7-link v-show="selectedItems.length"
+                 color="green"
                  class="enable display-flex flex-direction-row margin-right"
                  @click="doDisableEnableSelected(true)"
                  icon-ios="f7:play_circle"
                  icon-aurora="f7:play_circle">
           &nbsp;Enable
         </f7-link>
-        <f7-link color="blue"
-                 v-show="selectedItems.length"
+        <f7-link v-show="selectedItems.length"
+                 color="blue"
                  class="copy display-flex flex-direction-row"
                  @click="copyFileDefinitionToClipboard(ObjectType.THING, selectedItems)"
                  icon-ios="f7:square_on_square"
@@ -155,14 +157,17 @@
         </f7-list>
         <f7-list v-else class="col things-list" :contacts-list="groupBy === 'alphabetical'">
           <f7-list-group v-for="(thingsWithInitial, initial) in indexedThings" :key="initial">
-            <f7-list-item v-if="thingsWithInitial.length" :title="initial" group-title />
+            <f7-list-item v-if="thingsWithInitial.length"
+                          :title="initial"
+                          group-title
+                          media-item />
             <f7-list-item
               v-for="(thing, index) in thingsWithInitial"
               :key="index"
               media-item
               class="thinglist-item"
               :checkbox="showCheckboxes"
-              :checked="isChecked(thing.UID)"
+              :checked="isChecked(thing.UID) ? true : null"
               :value="thing.UID"
               @click.ctrl="(e) => ctrlClick(e, thing)"
               @click.meta="(e) => ctrlClick(e, thing)"
@@ -235,17 +240,22 @@ import ThingStatus from '@/components/thing/thing-status-mixin'
 import ClipboardIcon from '@/components/util/clipboard-icon.vue'
 import FileDefinition from '@/pages/settings/file-definition-mixin'
 
+import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 export default {
   mixins: [ThingStatus, FileDefinition],
-  props: ['searchFor'],
+  props: {
+    searchFor: String,
+    f7route: Object,
+    f7router: Object
+  },
   components: {
-    'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue'),
+    EmptyStatePlaceholder,
     ClipboardIcon
   },
   data () {
     return {
       ready: false,
-      initSeachbar: false,
+      initSearchbar: false,
       loading: false,
       things: [],
       inbox: [],
@@ -304,7 +314,7 @@ export default {
     },
     thingsCount () {
       let sum = 0
-      Object.keys(this.indexedThings).forEach(key => {
+      Object.keys(this.indexedThings).forEach((key) => {
         sum = sum + this.indexedThings[key].length
       })
       return sum
@@ -343,8 +353,8 @@ export default {
       if (this.loading) return
       this.loading = true
 
-      if (this.initSeachbar) this.$f7.data.lastThingsSearchQuery = this.$refs.searchbar?.f7Searchbar.query
-      this.initSeachbar = false
+      if (this.initSearchbar) this.$f7.data.lastThingsSearchQuery = this.$refs.searchbar?.f7Searchbar.query
+      this.initSearchbar = false
 
       if (this.searchFor) {
         this.$refs.searchbar?.f7Searchbar.$inputEl.val(this.searchFor)
@@ -353,7 +363,7 @@ export default {
       this.$oh.api.get('/rest/things?summary=true').then((data) => {
         this.things = data.sort((a, b) => (a.label || a.UID).localeCompare(b.label || a.UID))
         this.filteredThings = this.things
-        this.initSeachbar = true
+        this.initSearchbar = true
         this.loading = false
         this.ready = true
         this.$nextTick(() => {
@@ -399,15 +409,15 @@ export default {
     },
     search (searchbar, query, previousQuery) {
       this.searchQuery = query.trim().toLowerCase()
-      const searchTerms = this.searchQuery.split(',').map(s => s.trim()).filter(s => s)
+      const searchTerms = this.searchQuery.split(',').map((s) => s.trim()).filter((s) => s)
       if (!searchTerms.length) {
         this.clearSearch()
         return
       }
       this.filteredThings = this.things.filter((thing) => {
         let haystack = [thing.UID, thing.label, thing.location, this.thingStatusBadgeText(thing.statusInfo)]
-          .filter(h => h).join('|').toLowerCase()
-        return searchTerms.some(t => haystack.includes(t))
+          .filter((h) => h).join('|').toLowerCase()
+        return searchTerms.some((t) => haystack.includes(t))
       })
       this.selectedItems = this.selectedItems.filter((i) => this.filteredThings.find((thing) => thing.UID === i))
     },

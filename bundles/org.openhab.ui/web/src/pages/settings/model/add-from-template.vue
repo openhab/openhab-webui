@@ -105,6 +105,7 @@
     .semantic-class
       font-size 8pt
       color var(--f7-list-item-footer-text-color)
+
 @media (min-width: 768px)
   .semantic-tree-wrapper
     height calc(100% - var(--f7-navbar-height))
@@ -133,7 +134,10 @@ function compareModelItems (o1, o2) {
 }
 
 export default {
-  props: ['itemList'],
+  props: {
+    itemList: Array,
+    f7router: Object
+  },
   components: {
     ModelTreeview
   },

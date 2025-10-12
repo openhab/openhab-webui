@@ -22,9 +22,9 @@
           :disable-button="!$theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
-    <f7-toolbar class="contextual-toolbar"
-                :class="{ 'navbar': $theme.md }"
-                v-if="showCheckboxes"
+    <f7-toolbar v-if="showCheckboxes"
+                class="contextual-toolbar"
+                :class="{ navbar: theme.md }"
                 bottom-ios
                 bottom-aurora>
       <f7-link v-show="selectedItems.length"
@@ -123,9 +123,6 @@ export default {
       showCheckboxes: false,
       eventSource: null
     }
-  },
-  created () {
-
   },
   methods: {
     onPageAfterIn () {

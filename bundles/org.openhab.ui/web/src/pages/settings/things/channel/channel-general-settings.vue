@@ -34,7 +34,7 @@
 
         <f7-list-input label="Label"
                        type="text"
-                       :disabled="disabled"
+                       :disabled="disabled ? true : null"
                        :placeholder="(channelType !== null) ? channelType.label : 'Channel label for display purposes'"
                        :value="channel.label"
                        required
@@ -44,7 +44,7 @@
                        :clear-button="disabled !== true" />
         <f7-list-input label="Description"
                        type="text"
-                       :disabled="disabled"
+                       :disabled="disabled ? true : null"
                        :placeholder="(channelType !== null) ? channelType.description : ''"
                        :value="channel.description"
                        @input="channel.description = $event.target.value"
@@ -64,7 +64,12 @@
 <script>
 import ClipboardIcon from '@/components/util/clipboard-icon.vue'
 export default {
-  props: ['channel', 'channelType', 'createMode', 'disabled'],
+  props: {
+    channel: Object,
+    channelType: Object,
+    createMode: Boolean,
+    disabled: Boolean
+  },
   components: {
     ClipboardIcon
   }

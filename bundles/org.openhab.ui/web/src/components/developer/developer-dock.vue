@@ -85,7 +85,12 @@ import DeveloperSidebar from './developer-sidebar.vue'
 import HelpSidebar from './help-sidebar.vue'
 
 export default {
-  props: ['dock', 'helpTab', 'toolTab', 'searchFor'],
+  props: {
+    dock: String,
+    helpTab: String,
+    toolTab: String,
+    searchFor: String
+  },
   components: {
     DeveloperSidebar,
     HelpSidebar

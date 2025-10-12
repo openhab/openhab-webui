@@ -34,7 +34,9 @@ export default {
         pathColor: cfg.pathColor !== undefined ? cfg.pathColor : cfg.secondaryColor,
         tooltipColor: cfg.tooltipColor !== undefined ? cfg.tooltipColor : cfg.textColor,
         width: cfg.width !== undefined ? cfg.width : cfg.strokeWidth,
+        // eslint-disable-next-line no-constant-binary-expression
         startAngle: !cfg.circleShape !== undefined ? (cfg.startAngle !== undefined ? cfg.startAngle : -50) : null,
+        // eslint-disable-next-line no-constant-binary-expression
         endAngle: !cfg.circleShape !== undefined ? (cfg.endAngle !== undefined ? cfg.endAngle : -130) : null
       }
     }

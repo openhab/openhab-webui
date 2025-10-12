@@ -43,7 +43,12 @@
 
 <script>
 export default {
-  props: ['widget', 'attribute', 'placeholder', 'fields'],
+  props: {
+    widget: Object,
+    attribute: String,
+    placeholder: String,
+    fields: String
+  },
   data () {
     return {
       fieldDefaults: {

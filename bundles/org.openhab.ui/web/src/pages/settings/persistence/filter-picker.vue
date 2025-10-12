@@ -12,7 +12,7 @@
         <option v-for="s in filters"
                 :key="s"
                 :value="s"
-                :selected="value.includes(s)">
+                :selected="value.includes(s) ? true : null">
           {{ s }}
         </option>
       </select>
@@ -40,8 +40,12 @@
 
 <script>
 export default {
-  props: ['filters', 'value', 'disabled'],
-  emits: ['filtersSelected'],
+  props: {
+    filters: Array,
+    value: Array,
+    disabled: Boolean
+  },
+  emits: ['filters-selected'],
   data () {
     return {
       smartSelectParams: {
@@ -54,7 +58,7 @@ export default {
     select () {
       this.$f7.input.validateInputs(this.$refs.smartSelect.$el)
       const value = this.$refs.smartSelect.f7SmartSelect.getValue()
-      this.$emit('filtersSelected', value)
+      this.$emit('filters-selected', value)
     }
   }
 }

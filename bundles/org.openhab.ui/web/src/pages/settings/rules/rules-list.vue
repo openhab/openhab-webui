@@ -24,9 +24,9 @@
           :disable-button="!$theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
-    <f7-toolbar class="contextual-toolbar"
-                :class="{ 'navbar': $theme.md, 'tabbar-labels': $f7.width < 480 }"
-                v-if="showCheckboxes"
+    <f7-toolbar v-if="showCheckboxes"
+                class="contextual-toolbar"
+                :class="{ navbar: theme.md, 'tabbar-labels': f7.width < 480 }"
                 bottom-ios
                 bottom-aurora>
       <f7-link color="red"
@@ -122,15 +122,14 @@
         <f7-block-title>&nbsp;Loading...</f7-block-title>
         <f7-list contacts-list class="col rules-list">
           <f7-list-group>
-            <f7-list-item
-              media-item
-              v-for="n in 20"
-              :key="n"
-              :class="`skeleton-text skeleton-effect-blink`"
-              title="Title of the rule"
-              subtitle="Tags, Schedule, Scene..."
-              after="status badge"
-              footer="Description of the rule" />
+            <f7-list-item v-for="n in 20"
+                          media-item
+                          :key="n"
+                          :class="`skeleton-text skeleton-effect-blink`"
+                          title="Title of the rule"
+                          subtitle="Tags, Schedule, Scene..."
+                          after="status badge"
+                          footer="Description of the rule" />
           </f7-list-group>
         </f7-list>
       </f7-col>
@@ -209,8 +208,8 @@
               :key="rule.uid"
               media-item
               class="rulelist-item"
-              :checkbox="showCheckboxes"
-              :checked="isChecked(rule.uid)"
+              :checkbox="showCheckboxes ? true : null"
+              :checked="isChecked(rule.uid) ? true : null"
               @click.ctrl="(e) => ctrlClick(e, rule)"
               @click.meta="(e) => ctrlClick(e, rule)"
               @click.exact="(e) => click(e, rule)"
@@ -288,7 +287,10 @@ import RuleStatus from '@/components/rule/rule-status-mixin'
 
 export default {
   mixins: [RuleStatus],
-  props: ['showScripts', 'showScenes'],
+  props: {
+    showScripts: Boolean,
+    showScenes: Boolean
+  },
   components: {
     'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue')
   },

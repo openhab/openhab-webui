@@ -43,7 +43,12 @@ export default {
     ChannelGeneralSettings,
     ConfigSheet
   },
-  props: ['thing', 'channel', 'channelType', 'channelId'],
+  props: {
+    thing: Object,
+    channel: Object,
+    channelType: Object,
+    channelId: String
+  },
   data () {
     return {
       configDescription: {},

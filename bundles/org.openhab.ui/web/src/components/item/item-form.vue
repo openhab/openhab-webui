@@ -6,7 +6,7 @@
                        type="text"
                        placeholder="A unique identifier for the Item."
                        :value="item.name"
-                       :disabled="!createMode"
+                       :disabled="!createMode ? true : null"
                        :info="(createMode) ? 'Required. Note: cannot be changed after the creation' : ''"
                        required
                        :error-message="nameErrorMessage"
@@ -26,14 +26,14 @@
                        placeholder="Item label for display purposes"
                        :value="item.label"
                        @input="updateLabel"
-                       :disabled="!editable"
+                       :disabled="!editable ? true : null"
                        :clear-button="editable" />
       </f7-list-group>
       <f7-list-group v-if="!hideType" v-show="itemType">
         <!-- Type -->
         <f7-list-item title="Type"
                       class="aligned-smart-select"
-                      :disabled="!editable"
+                      :disabled="!editable ? true : null"
                       :key="'type-' + itemType"
                       smart-select
                       :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
@@ -41,7 +41,7 @@
             <option v-for="t in types.ItemTypes"
                     :key="t"
                     :value="t"
-                    :selected="t === itemType">
+                    :selected="t === itemType ? true : null">
               {{ t }}
             </option>
           </select>
@@ -50,16 +50,16 @@
         <f7-list-item v-if="dimensions.length && itemType === 'Number'"
                       title="Dimension"
                       class="aligned-smart-select"
-                      :disabled="!editable"
+                      :disabled="!editable ? true : null"
                       :key="'dimension-' + itemDimension"
                       smart-select
                       :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
           <select name="select-dimension" @change="itemDimension = $event.target.value">
-            <option key="" value="" :selected="itemDimension === ''" />
+            <option key="" value="" :selected="itemDimension === '' ? true : null" />
             <option v-for="d in dimensions"
                     :key="d.name"
                     :value="d.name"
-                    :selected="d.name === itemDimension">
+                    :selected="d.name === itemDimension ? true : null">
               {{ d.label }}
             </option>
           </select>
@@ -71,14 +71,14 @@
                        label="Unit"
                        type="text"
                        :info="(createMode) ? 'Type a valid unit for the dimension or select from the proposed units. Used internally, for persistence and external systems. Is independent from state visualization in the UI, which is defined through the state description pattern.' : ''"
-                       :disabled="!editable"
+                       :disabled="!editable ? true : null"
                        :value="itemDimension ? itemUnit : ''"
                        @change="itemUnit = $event.target.value" />
         <f7-list-input v-show="itemDimension"
                        label="State Description Pattern"
                        type="text"
                        :info="(createMode) ? 'Pattern or transformation applied to the state for display purposes. Only saved if you change the pre-filled default value.' : 'Pattern can only be changed from the state description metadata page after Item creation!'"
-                       :disabled="!createMode"
+                       :disabled="!createMode ? true : null"
                        :value="stateDescriptionPattern"
                        @input="stateDescriptionPattern = $event.target.value"
                        :clear-button="createMode" />
@@ -97,7 +97,7 @@
                        placeholder="temperature, firstfloor..."
                        :value="itemCategory"
                        @input="itemCategory = $event.target.value"
-                       :disabled="!editable"
+                       :disabled="!editable ? true : null"
                        :clear-button="editable">
           <div slot="root-end" style="margin-left: calc(35% + 14px)">
             <oh-icon v-if="itemCategory"
@@ -172,7 +172,17 @@ import uomMixin from '@/components/item/uom-mixin'
 
 export default {
   mixins: [ItemMixin, uomMixin],
-  props: ['item', 'items', 'createMode', 'hideCategory', 'hideType', 'hideSemantics', 'forceSemantics', 'unitHint', 'stateDescription'],
+  props: {
+    item: Object,
+    items: Array,
+    createMode: Boolean,
+    hideCategory: Boolean,
+    hideType: Boolean,
+    hideSemantics: Boolean,
+    forceSemantics: Boolean,
+    unitHint: String,
+    stateDescription: String
+  },
   components: {
     SemanticsPicker,
     ItemPicker,
@@ -305,13 +315,13 @@ export default {
           // Render curated list by default
             render(curatedUnits)
           } else {
-            let units = curatedUnits.filter(u => u.indexOf(query) >= 0)
+            let units = curatedUnits.filter((u) => u.indexOf(query) >= 0)
             if (units.length) {
               // Show full curated list if in curated list
               render(curatedUnits)
             } else {
               // If no match filter on full list
-              render(allUnits.filter(u => u.indexOf(query) >= 0))
+              render(allUnits.filter((u) => u.indexOf(query) >= 0))
             }
           }
         }

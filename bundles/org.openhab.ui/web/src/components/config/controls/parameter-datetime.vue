@@ -23,7 +23,11 @@
 
 <script>
 export default {
-  props: ['configDescription', 'value'],
+  props: {
+    configDescription: Object,
+    value: String
+  },
+  emits: ['input'],
   computed: {
     step () {
       if (this.configDescription.stepsize !== undefined) return this.configDescription.stepsize
