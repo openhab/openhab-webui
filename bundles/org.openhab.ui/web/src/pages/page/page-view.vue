@@ -141,13 +141,6 @@ export default {
       vars: {}
     }
   },
-  watch: {
-    pageType (newType, oldType) {
-      if (oldType === null && newType === 'tabs') {
-        this.onTabChange(this.currentTab)
-      }
-    }
-  },
   computed: {
     pageStyle () {
       if (!this.context) return null
@@ -212,6 +205,9 @@ export default {
   methods: {
     onPageAfterIn () {
       useStatesStore().startTrackingStates()
+      // make sure to set the current tab
+      // fixes an issue where a tabbed subpage was opened and navigated around, when returning back to original page, tab was rendered empty
+      this.onTabChange(this.currentTab)
     },
     onPageBeforeOut () {
       useStatesStore().stopTrackingStates()
