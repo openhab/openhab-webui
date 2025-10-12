@@ -334,12 +334,6 @@ p.action-description
         overflow hidden
         text-overflow ellipsis
 
-  .thing-code-editor.vue-codemirror
-    display block
-    top calc(var(--f7-navbar-height) + var(--f7-tabbar-height))
-    height calc(100% - 2*var(--f7-navbar-height))
-    width 100%
-
   .item-title-content, .item-after-content
     display flex
     align-items center
@@ -357,6 +351,12 @@ p.action-description
     margin-left 4px
     flex-shrink 0
     color var(--f7-text-color-secondary)
+
+.thing-code-editor.v-codemirror
+  position absolute
+  top calc(var(--f7-navbar-height) + var(--f7-tabbar-height))
+  height calc(100% - var(--f7-navbar-height, 56px) - var(--f7-tabbar-height, 48px))
+  width 100%
 
 .dialog.wide-property-dialog
   --f7-dialog-width: 560px
