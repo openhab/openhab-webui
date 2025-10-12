@@ -1,7 +1,6 @@
 <template>
   <f7-page class="item-details-page"
            @page:beforein="onPageBeforeIn"
-           @page:afterin="onPageAfterIn"
            @page:beforeout="onPageBeforeOut">
     <f7-navbar :title="item.name"
                :key="item.name"
@@ -103,7 +102,7 @@
       <f7-row v-if="item.name && item.type !== 'Group'">
         <f7-col>
           <f7-block-title>Channel Links</f7-block-title>
-          <link-details :item="item" :links="links" />
+          <link-details :item="item" :links="links" :f7router />
         </f7-col>
       </f7-row>
       <f7-row>
@@ -269,22 +268,23 @@ export default {
   },
   methods: {
     onPageBeforeIn () {
-      useStatesStore().startTrackingStates()
       this.load()
-    },
-    onPageAfterIn () {
-      this.$oh.api.get('/rest/links?itemName=' + this.itemName).then((data) => {
-        this.links = data
-      })
     },
     onPageBeforeOut () {
       useStatesStore().stopTrackingStates()
     },
     load () {
-      this.$oh.api.get(`/rest/items/${this.itemName}?metadata=.+`).then((data) => {
-        this.item = data
-        this.ready = true
+      const promises = [
+        this.$oh.api.get(`/rest/items/${this.itemName}?metadata=.+`),
+        this.$oh.api.get('/rest/links?itemName=' + this.itemName)
+      ]
+
+      Promise.all(promises).then((data) => {
+        this.item = data[0]
+        this.links = data[1]
         this.iconUrl = '/icon/' + this.item.category + '?format=svg'
+        this.ready = true
+        useStatesStore().startTrackingStates()
       })
     },
     duplicateItem () {
