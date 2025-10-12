@@ -29,7 +29,7 @@ export default defineConfig({
     {
       name: 'html-injector',
       apply: 'build',
-      transformIndexHtml() {
+      transformIndexHtml () {
         return [
           {
             tag: 'meta',
@@ -43,21 +43,21 @@ export default defineConfig({
       }
     },
     pluginDynamicImport({
-      filter(id) {
+      filter (id) {
         if(id.includes('/node_modules/')) {
           return true
         }
       }
     }),
     vueDevtools(),
-    visualizer({ open: true }),
+    visualizer({ open: false }),
     vitePluginTopLevelAwait()
   ],
   define: {
-    // __VUE_I18N_LEGACY_API__: false    // tree-shake legacy mode
+    // __VUE_I18N_LEGACY_API__: false // tree-shake legacy mode
   },
   server: {
-    port: 8080,
+    port: 8081,
     host: '0.0.0.0',
     proxy: {
       '/rest': {
