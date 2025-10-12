@@ -33,7 +33,7 @@
     "lint:fix": "npx eslint --fix src",
     "prebuild": "npm run generate-build-info && npm run build:grammar",
     "build": "vue-tsc -b && vite build",
-    "webpack-analyzer-report-stats": "vue-tsc -b && cross-env STATS=true vite build",
+    "webpack-analyzer-report-stats": "npm run generate-build-info && cross-env STATS=true vite build",
     "preview": "vite preview",
     "format": "prettier --write src",
     "OLD:predev:blockly": "cross-env NODE_ENV=development npm run generate-build-info",
