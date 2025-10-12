@@ -43,7 +43,7 @@ export const useRuntimeStore = defineStore('runtime', () => {
     runtimeInfo.value = rootResponse.runtimeInfo
     apiEndpoints.value = rootResponse.links
     websiteUrl.value = `https://${rootResponse.runtimeInfo?.buildString !== 'Release Build' ? 'next' : 'www'}.openhab.org`
-    docSrcUrl.value = `https://www.openhab.org/link/docs-src/${rootResponse.runtimeInfo.version.replace(/(\d+\.\d+)\.\d+/g, '$1.x')}`
+    docSrcUrl.value = `https://www.openhab.org/link/docs-src/${rootResponse.runtimeInfo.version.replace(/(\d+\.\d+)\.\d+(\.M\d+)?/g, '$1.x')}`
 
     ready.value = true
   }
