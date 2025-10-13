@@ -77,7 +77,7 @@ export default {
       currentCenter: null,
       center: (this.context.component.config.initialCenter) ? latLng(this.context.component.config.initialCenter.split(',')) : latLng(48, 6),
       // url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      url: `https://a.basemaps.cartocdn.com/${f7.data.themeOptions.dark}_all/{z}/{x}/{y}.png`,
+      url: `https://a.basemaps.cartocdn.com/${useUIOptionsStore().getDarkMode()}_all/{z}/{x}/{y}.png`,
       attribution: '&copy; <a class="external" target="_blank" href="http://osm.org/copyright">OpenStreetMap</a>, &copy; <a class="external" target="_blank" href="https://carto.com/attribution/">CARTO</a>',
       showMap: true
     }
