@@ -185,6 +185,7 @@ export default {
         f7.emit('sidebarRefresh', null)
         // if (!stay) this.f7router.back()
       }).catch((err) => {
+        console.error('Error while saving page: ', err)
         f7.toast.create({
           text: 'Error while saving page: ' + err,
           destroyOnClose: true,

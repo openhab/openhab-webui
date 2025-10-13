@@ -152,7 +152,8 @@
                           :configuration="thing.configuration"
                           :status="configStatusInfo"
                           :set-empty-config-as-null="true"
-                          :read-only="!editable" />
+                          :read-only="!editable"
+                          :f7router />
 
             <!-- Thing Actions & UI Actions -->
             <template v-if="thingActions.length > 0 || thingType?.UID?.startsWith('zwave:')">

@@ -10,6 +10,7 @@
                  :parameters="parameters"
                  :configuration="configuration"
                  :title="configDescription.title"
+                 :f7router
                  @input="updateValue" />
     </f7-list-group>
     <f7-list-item v-else-if="readOnly && configDescription.context === 'password'"
@@ -65,7 +66,8 @@ export default {
     parameters: Array,
     configuration: Object,
     readOnly: Boolean,
-    status: Array
+    status: Array,
+    f7router: Object
   },
   emits: ['update'],
   computed: {

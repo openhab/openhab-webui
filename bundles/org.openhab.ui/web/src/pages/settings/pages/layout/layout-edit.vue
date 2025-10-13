@@ -228,7 +228,8 @@ export default {
   props: {
     createMode: Boolean,
     uid: String,
-    f7router: Object
+    f7router: Object,
+    f7route: Object
   },
   setup () {
     return { theme }

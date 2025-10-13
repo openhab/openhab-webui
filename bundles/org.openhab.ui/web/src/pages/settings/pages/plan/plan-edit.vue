@@ -44,6 +44,7 @@
               :parameterGroups="pageWidgetDefinition.props.parameterGroups || []"
               :parameters="pageWidgetDefinition.props.parameters || []"
               :configuration="page.config"
+              :f7router
               @updated="dirty = true" />
 
             <f7-block-title class="padding-bottom">
@@ -179,7 +180,8 @@ export default {
   props: {
     createMode: Boolean,
     uid: String,
-    f7router: Object
+    f7router: Object,
+    f7route: Object
   },
   setup () {
     return { theme }
