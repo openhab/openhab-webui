@@ -68,7 +68,8 @@
   .smart-select > .item-content > .item-inner:after
     display none !important
   .item-content .item-inner
-    overflow auto
+    overflow-x auto
+    overflow-y hidden
 
 .param-description.block-footer h1
   font-size 1em
