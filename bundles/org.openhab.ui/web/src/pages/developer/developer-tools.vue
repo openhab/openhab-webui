@@ -1,14 +1,11 @@
 <template>
   <f7-page name="devtools" @page:beforeremove="onPageBeforeRemove">
-    <f7-navbar no-hairline>
+    <f7-navbar title="Developer Tools" no-hairline>
       <f7-nav-left>
         <f7-link icon-f7="chevron_left" href="/overview/">
           Overview
         </f7-link>
       </f7-nav-left>
-      <f7-nav-title>
-        Developer Tools
-      </f7-nav-title>
       <f7-nav-right>
         <developer-dock-icon />
       </f7-nav-right>

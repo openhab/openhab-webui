@@ -1,14 +1,11 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
-    <f7-navbar>
+    <f7-navbar title="Persistence Settings">
       <f7-nav-left>
         <f7-link icon-f7="chevron_left" href="/settings/">
           Settings
         </f7-link>
       </f7-nav-left>
-      <f7-nav-title>
-        Persistence Settings
-      </f7-nav-title>
       <f7-nav-right v-if="persistenceList.length > 0">
         <developer-dock-icon />
         <f7-link v-if="theme.md"

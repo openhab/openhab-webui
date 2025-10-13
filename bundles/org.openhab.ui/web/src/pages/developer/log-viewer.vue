@@ -196,15 +196,12 @@
       </f7-page>
     </f7-popup>
 
-    <f7-navbar>
+    <f7-navbar title="Log Viewer">
       <f7-nav-left>
         <f7-link icon-f7="chevron_left" href="/developer/">
           Developer Tools
         </f7-link>
       </f7-nav-left>
-      <f7-nav-title>
-        Log Viewer
-      </f7-nav-title>
       <f7-nav-right>
         <developer-dock-icon />
         <f7-link icon-ios="f7:play_fill"

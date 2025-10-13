@@ -1,10 +1,7 @@
 <template>
   <f7-popup @popup:open="onOpen">
     <f7-page class="group-popup-content disable-user-select">
-      <f7-navbar>
-        <f7-nav-left :back-link="$t('dialogs.back')" />
-        <f7-nav-title>{{ (item) ? item.label || item.name : '' }}</f7-nav-title>
-      </f7-navbar>
+      <f7-navbar :title="(item) ? item.label || item.name : ''" :back-link="$t('dialogs.back')" />
       <div class="group-item-control no-padding no-margin">
         <generic-widget-component v-if="ready && groupControlContext" v-bind="$attrs" :context="groupControlContext" />
       </div>

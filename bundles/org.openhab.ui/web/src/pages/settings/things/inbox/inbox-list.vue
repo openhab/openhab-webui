@@ -1,14 +1,11 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:afterout="stopEventSource">
-    <f7-navbar>
+    <f7-navbar title="Inbox">
       <f7-nav-left>
         <f7-link icon-f7="chevron_left" href="/settings/things/">
           Things
         </f7-link>
       </f7-nav-left>
-      <f7-nav-title>
-        Inbox
-      </f7-nav-title>
       <f7-nav-right>
         <f7-link icon-md="material:done_all"
                  @click="toggleCheck()"
