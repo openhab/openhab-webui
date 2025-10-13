@@ -10,6 +10,7 @@
         Block Libraries
       </f7-nav-title>
       <f7-nav-right>
+        <developer-dock-icon />
         <f7-link icon-md="material:done_all"
                  @click="toggleCheck()"
                  :text="!theme.md ? (showCheckboxes ? 'Done' : 'Select') : ''" />

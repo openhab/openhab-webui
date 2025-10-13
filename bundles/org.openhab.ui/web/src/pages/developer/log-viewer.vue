@@ -206,6 +206,7 @@
         Log Viewer
       </f7-nav-title>
       <f7-nav-right>
+        <developer-dock-icon />
         <f7-link icon-ios="f7:play_fill"
                  icon-f7="play_fill"
                  icon-md="material:play_arrow"
