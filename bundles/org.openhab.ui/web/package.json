@@ -40,8 +40,8 @@
     "OLD:predev:blockly": "cross-env NODE_ENV=development npm run generate-build-info",
     "OLD:dev:blockly": "cross-env SOURCE_MAPS=1 NODE_ENV=development webpack-dev-server --config ./build/webpack.config.js",
     "OLD:build:prod": "cross-env NODE_ENV=production node ./build/build.js",
-    "test:unit": "vitest run",
-    "test:unit:watch": "vitest - watch",
+    "test:unit": "npm run generate-build-info && vitest run",
+    "test:unit:watch": "npm run generate-build-info && vitest - watch",
     "postinstall": "patch-package"
   },
   "browserslist": [
