@@ -35,7 +35,7 @@
           <div>Loading...</div>
         </f7-block>
         <f7-block class="block-narrow" v-if="ready && !previewMode">
-          <page-settings :page="page" :createMode="createMode" />
+          <page-settings :page="page" :createMode="createMode" :f7router />
           <f7-block-title>Chart Configuration</f7-block-title>
           <config-sheet
             :parameterGroups="pageWidgetDefinition.props.parameterGroups || []"
