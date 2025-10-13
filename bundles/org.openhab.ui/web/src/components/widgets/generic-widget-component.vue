@@ -20,8 +20,7 @@
     </template>
   </component>
   <oh-card v-else-if="componentType && componentType === 'oh-card' && visible" :context="context">
-    <!-- eslint-disable-next-line vue/no-unused-vars -->
-    <template v-for="(slotComponents, slotName) in context.component.slots" :key="slotName + '-' + idx" #[slotName]>
+    <template v-for="(slotComponents, slotName) in context.component.slots" :key="slotName" #[slotName]>
       <generic-widget-component v-for="(slotComponent, idx) in slotComponents"
                                 :context="childContext(slotComponent)"
                                 :key="slotName + '-' + idx "
@@ -55,6 +54,8 @@
 </template>
 
 <script>
+import { defineAsyncComponent } from 'vue'
+
 import mixin from './widget-mixin'
 
 import * as SystemWidgets from './system/index'
@@ -70,7 +71,9 @@ export default {
     ...StandardWidgets,
     ...StandardListWidgets,
     ...StandardCellWidgets,
-    ...LayoutWidgets
+    ...LayoutWidgets,
+    // TODO-V3.1: OhContext won't render in production build unless we async import here -> circular import ???
+    OhContext: defineAsyncComponent(() => import('./system/oh-context.vue'))
   }
 }
 </script>

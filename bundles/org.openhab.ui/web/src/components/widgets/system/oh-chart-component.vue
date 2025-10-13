@@ -42,7 +42,7 @@
 </style>
 
 <script>
-import { f7, theme } from 'framework7-vue'
+import { f7 } from 'framework7-vue'
 import { nextTick } from 'vue'
 import { mapStores } from 'pinia'
 
