@@ -1,8 +1,7 @@
 <template>
   <f7-page name="Model"
            @page:afterin="onPageAfterIn"
-           @page:beforeout="onPageBeforeOut"
-           @click="selectItem(null)">
+           @page:beforeout="onPageBeforeOut">
     <f7-navbar title="Semantic Model">
       <f7-nav-left>
         <f7-link icon-f7="chevron_left" href="/settings/">
@@ -235,12 +234,12 @@
                         :model="selectedItem"
                         :links="links"
                         :items="items"
+                        :context="context"
                         @item-updated="update"
                         @item-created="update"
                         @item-removed="selectItem(null)"
-                        @cancel-create="selectItem(null)"
-                        :context="context" />
-          <metadata-menu v-if="detailsTab === 'meta'" :item="selectedItem.item" />
+                        @cancel-create="selectItem(null)" />
+          <metadata-menu v-if="detailsTab === 'meta'" :item="selectedItem.item" :f7router />
           <link-details v-if="detailsTab === 'links'"
                         :item="selectedItem.item"
                         :links="links"
