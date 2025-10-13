@@ -882,6 +882,10 @@ export default {
         this.detailsTab = 'widget'
         nextTick(() => {
           const detailsLink = this.$refs.detailsLink
+          if(!detailsLink) {
+            console.warn('detailsLink ref not found - should not occur')
+            return
+          }
           const visibility = window.getComputedStyle(detailsLink.$el).visibility
           if (!visibility || visibility !== 'hidden') {
             this.detailsOpened = true
