@@ -1,7 +1,6 @@
 <template>
   <l-map
     ref="map"
-    v-if="showMap"
     :zoom="zoom"
     :center="center"
     :options="mapOptions"
@@ -12,11 +11,12 @@
     @update:center="centerUpdate"
     @update:zoom="zoomUpdate">
     <l-feature-group ref="featureGroup" v-if="context.component.slots">
-      <component v-for="(marker, idx) in context.component.slots.default"
-                 :key="idx"
-                 :is="markerComponent(marker)"
-                 :context="childContext(marker)"
-                 @update="onMarkerUpdate" />
+      <component
+        v-for="(marker, idx) in context.component.slots.default"
+        :key="idx"
+        :is="markerComponent(marker)"
+        :context="childContext(marker)"
+        @update="onMarkerUpdate" />
     </l-feature-group>
   </l-map>
 </template>
@@ -38,7 +38,6 @@
 
 <script>
 import { nextTick } from 'vue'
-import { f7 } from 'framework7-vue'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
 import mixin from '../widget-mixin'
@@ -78,28 +77,29 @@ export default {
       center: (this.context.component.config.initialCenter) ? latLng(this.context.component.config.initialCenter.split(',')) : latLng(48, 6),
       // url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       url: `https://a.basemaps.cartocdn.com/${useUIOptionsStore().getDarkMode()}_all/{z}/{x}/{y}.png`,
-      attribution: '&copy; <a class="external" target="_blank" href="http://osm.org/copyright">OpenStreetMap</a>, &copy; <a class="external" target="_blank" href="https://carto.com/attribution/">CARTO</a>',
-      showMap: true
+      attribution: '&copy; <a class="external" target="_blank" href="http://osm.org/copyright">OpenStreetMap</a>, &copy; <a class="external" target="_blank" href="https://carto.com/attribution/">CARTO</a>'
     }
   },
   mounted () {
-    this.setBackgroundLayer()
-    this.onMarkerUpdate()
-  },
-  computed: {
-    mapOptions () {
-      return Object.assign({
-        zoomSnap: 0.1
-      }, this.config.noZoomOrDrag ? {
-        dragging: false,
-        touchZoom: false,
-        doubleClickZoom: false,
-        scrollWheelZoom: false,
-        zoomControl: false
-      } : {})
+    // vue-leaflet docs say the leafletObject should be ready on the next tick after mounting,
+    // but it isn't, so we have to wait for the map to be ready before we can initialise
+    const check = () => {
+      if (this.$refs.map?.ready) {
+        console.debug('Map is now ready, initializing ...')
+        this.initialize()
+      } else {
+        setTimeout(check, 10)
+      }
     }
+    nextTick(() => {
+      check()
+    })
   },
   methods: {
+    initialize () {
+      this.setBackgroundLayer()
+      this.onMarkerUpdate()
+    },
     setBackgroundLayer () {
       const defaultProvider = (useUIOptionsStore().getDarkMode() === 'dark') ? 'CartoDB.DarkMatter' : 'CartoDB.Positron'
       const provider = this.config.tileLayerProvider || defaultProvider
@@ -109,7 +109,7 @@ export default {
       } catch {
         layer = tileLayer.provider(defaultProvider)
       }
-      layer.addTo(this.$refs.map.mapObject)
+      layer.addTo(this.$refs.map.leafletObject)
 
       if (this.config.overlayTileLayerProvider) {
         try {
@@ -120,9 +120,9 @@ export default {
         if (overlayLayer._url.indexOf('openweather') > 0) {
           overlayLayer._url = overlayLayer._url.replace('{variant}', '{variant}_new')
         }
-        overlayLayer.addTo(this.$refs.map.mapObject)
+        overlayLayer.addTo(this.$refs.map.leafletObject)
       }
-      this.$refs.map.mapObject.invalidateSize()
+      this.$refs.map.leafletObject.invalidateSize()
     },
     zoomUpdate (zoom) {
       this.currentZoom = zoom
@@ -142,10 +142,10 @@ export default {
     },
     onMarkerUpdate () {
       nextTick(() => {
-        const bounds = this.$refs.featureGroup.mapObject.getBounds()
+        const bounds = this.$refs.featureGroup.leafletObject.getBounds()
         if (bounds.isValid()) {
-          this.$refs.map.mapObject.fitBounds(bounds.pad(0.5))
-          this.$refs.map.mapObject.invalidateSize()
+          this.$refs.map.leafletObject.fitBounds(bounds.pad(0.5))
+          this.$refs.map.leafletObject.invalidateSize()
         }
       })
     }
