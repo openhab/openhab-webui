@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
 
 import buildInfo from '@/assets/build-info'
-import { convertJavaLocale } from '@/js/i18n'
+import { convertJavaLocale } from '@/js/i18n-utils.ts'
 
 import { useStatesStore } from '@/js/stores/useStatesStore'
 
