@@ -16,7 +16,9 @@
       @item-created="$emit('item-created')"
       @item-removed="$emit('item-removed')"
       @cancel-create="$emit('cancel-create')" />
-    <f7-block-title v-if="model.item.created !== false"> Metadata </f7-block-title>
+    <f7-block-title v-if="model.item.created !== false">
+      Metadata
+    </f7-block-title>
     <metadata-menu v-if="model.item.created !== false" :item="model.item" :f7router />
     <f7-block-title v-if="model.item.type !== 'Group' && model.item.created !== false">
       Channel Links
@@ -51,7 +53,6 @@ export default {
   },
   emits: ['item-updated', 'item-created', 'item-removed', 'cancel-create'],
   setup () {
-    f7.views.main.router
     return {
       utils
     }

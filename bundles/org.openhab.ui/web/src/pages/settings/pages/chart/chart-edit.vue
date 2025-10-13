@@ -41,8 +41,7 @@
             :parameterGroups="pageWidgetDefinition.props.parameterGroups || []"
             :parameters="pageWidgetDefinition.props.parameters || []"
             :configuration="page.config"
-            :f7router
-          />
+            :f7router />
         </f7-block>
 
         <chart-designer v-if="ready && !previewMode && currentTab === 'design'"
