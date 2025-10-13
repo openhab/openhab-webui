@@ -1,9 +1,7 @@
 <template>
-  <div v-if="context.component.slots && context.component.slots.default">
-    <generic-widget-component v-for="(slotComponent, idx) in context.component.slots.default"
-                              :key="'default-' + idx"
-                              :context="childrenContext(slotComponent)" />
-  </div>
+  <generic-widget-component v-for="(slotComponent, idx) in children"
+                            :key="'default-' + idx"
+                            :context="childrenContext(slotComponent)" />
 </template>
 
 <script>
@@ -21,8 +19,12 @@ export default {
     }
   },
   computed: {
+    children () {
+      if (!this.context?.component?.slots?.default) return []
+      return this.context.component.slots.default
+    },
     fn () {
-      if (!this.context || !this.context.component || !this.context.component.config) return {}
+      if (!this.context?.component?.config) return {}
       let evalFunc = {}
       const sourceFunc = this.context.component.config.functions || {}
       console.debug('oh-context: sourceFunc =', sourceFunc)
@@ -63,7 +65,7 @@ export default {
   },
   beforeMount () {
     const evaluateDefaults = () => {
-      if (!this.context || !this.context.component || !this.context.component.config) return
+      if (!this.context?.component?.config) return
 
       this.const = {}
       const sourceConst = this.context.component.config.constants || {}
