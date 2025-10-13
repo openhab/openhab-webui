@@ -56,9 +56,24 @@ html
   .searchbar-backdrop
     display none
 
+/* Adjustments for cards */
 :root
   --f7-card-margin-vertical 10px
   --f7-card-margin-horizontal 10px
+
+/* Fixes for navbar title positioning */
+.navbar-inner.navbar-inner-centered-title
+  display flex
+  justify-content center !important
+  .left
+    position absolute
+    left var(--f7-navbar-inner-padding-left)
+  .title
+    left 0 !important
+    right 0 !important
+  .right
+    position absolute
+    right var(--f7-navbar-inner-padding-right)
 
 .no-page-transitions
   .smart-select-popup.popup.modal-in, .smart-select-popup.popup.modal-out
