@@ -1,5 +1,5 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn">
+  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar :title="pageTitle + dirtyIndicator" :back-link="editable ? 'Cancel' : 'Back'">
       <f7-nav-right v-show="ready">
         <f7-link v-if="!editable"
