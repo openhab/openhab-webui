@@ -78,13 +78,15 @@ import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
 let echartsLocale = useRuntimeStore().locale.split('-')[0].toUpperCase()
 
-await import(`../../../../node_modules/echarts/lib/i18n/lang${echartsLocale}.js`).then((lang) => {
+/* TODO-V3.1
+import(`../../../../node_modules/echarts/lib/i18n/lang${echartsLocale}.js`).then((lang) => {
   console.info(`Registering ECharts locale ${echartsLocale}`)
   registerLocale(echartsLocale, lang.default)
 }).catch(() => {
   console.warn(`No ECharts locale found for ${echartsLocale}`)
   echartsLocale = null
 })
+*/
 
 export default {
   mixins: [mixin, chart, actionsMixin],
