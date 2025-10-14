@@ -3,9 +3,14 @@
     <f7-list>
       <f7-list-item :key="classSelectKey"
                     title="Google Assistant Class"
-                    :disabled="!editable"
+                    :disabled="!editable ? true : null"
                     smart-select
-                    :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: true, scrollToSelectedItem: true }"
+                    :smart-select-params="{
+                      openIn: 'popup',
+                      searchbar: true,
+                      closeOnSelect: true,
+                      scrollToSelectedItem: true,
+                    }"
                     ref="classes">
         <select name="classes" @change="updateClass">
           <option value="" />
@@ -13,7 +18,7 @@
             <option v-for="cl in orderedClasses.filter((c) => c.indexOf('type:') === 0)"
                     :value="cl.replace('type:', '')"
                     :key="cl"
-                    :selected="isSelected(cl.replace('type:', ''))">
+                    :selected="isSelected(cl.replace('type:', '')) ? true : null">
               {{ cl.replace('type:', '') }}
             </option>
           </optgroup>
@@ -21,7 +26,7 @@
             <option v-for="cl in orderedClasses.filter((c) => c.indexOf('attribute:') === 0)"
                     :value="cl.replace('attribute:', '')"
                     :key="cl"
-                    :selected="isSelected(cl.replace('attribute:', ''))">
+                    :selected="isSelected(cl.replace('attribute:', '')) ? true : null">
               {{ cl.replace('attribute:', '') }}
             </option>
           </optgroup>
@@ -51,7 +56,10 @@ import ConfigSheet from '@/components/config/config-sheet.vue'
 import ItemMetadataMixin from '@/components/item/metadata/item-metadata-mixin'
 
 export default {
-  props: ['itemName', 'metadata'],
+  props: {
+    itemName: String,
+    metadata: Object
+  },
   mixins: [ItemMetadataMixin],
   components: {
     ConfigSheet

@@ -47,11 +47,15 @@ import Item from './item'
 import ItemPicker from '@/components/config/controls/item-picker.vue'
 
 export default {
-  props: ['groupItem', 'context'],
+  props: {
+    groupItem: Object,
+    context: Object
+  },
   components: {
     Item,
     ItemPicker
   },
+  emits: ['updated'],
   data () {
     return {
       editMembers: false,

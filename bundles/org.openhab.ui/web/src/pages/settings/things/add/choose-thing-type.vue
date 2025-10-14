@@ -107,7 +107,9 @@ export default {
   components: {
     ConfigSheet
   },
-  props: ['bindingId'],
+  props: {
+    bindingId: String
+  },
   data () {
     return {
       ready: false,
@@ -126,9 +128,6 @@ export default {
       intervalId: 0,
       scanTimeoutId: 0
     }
-  },
-  created () {
-
   },
   methods: {
     onPageBeforeOut () {

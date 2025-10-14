@@ -102,7 +102,9 @@ import CardMixin from './card-mixin'
 
 export default {
   mixins: [CardMixin],
-  props: ['headerHeight'],
+  props: {
+    headerHeight: [String, Number]
+  },
   methods: {
   },
   asyncComputed: {

@@ -29,18 +29,18 @@
       </f7-col>
     </f7-row>
     <f7-list>
-      <f7-list-button title="Show All" color="blue" @click="$emit('showAdvanced')" />
+      <f7-list-button title="Show All" color="blue" @click="$emit('show-advanced')" />
     </f7-list>
   </f7-block>
   <f7-block class="no-margin no-padding" v-else-if="category === 'item'">
     <f7-list>
       <f7-list-item radio
-                    :checked="itemEventType === 'command'"
+                    :checked="itemEventType === 'command' ? true : null"
                     name="MediaEventType"
                     title="send a command to"
                     @click="updateItemEventType('command')" />
       <f7-list-item radio
-                    :checked="itemEventType === 'update'"
+                    :checked="itemEventType === 'update' ? true : null"
                     name="MediaEventType"
                     title="update the state of"
                     @click="updateItemEventType('update')" />
@@ -68,9 +68,9 @@
         @blur="(evt) => $set(currentModule.configuration, 'state', evt.target.value)" />
     </f7-list>
     <f7-list v-if="itemEventType === 'command' && commandSuggestions.length">
-      <f7-list-item radio
-                    :checked="currentModule.configuration.command === suggestion.command"
-                    v-for="suggestion in commandSuggestions"
+      <f7-list-item v-for="suggestion in commandSuggestions"
+                    radio
+                    :checked="currentModule.configuration.command === suggestion.command ? true : null"
                     :key="suggestion.command"
                     :title="suggestion.label"
                     @click="$set(currentModule.configuration, 'command', suggestion.command)" />
@@ -82,7 +82,8 @@
         :step="(currentItem.stateDescription && currentItem.stateDescription.step) ? currentItem.stateDescription.step : 1"
         :scale="true" :label="true" :scaleSubSteps="5" />
     </f7-block> -->
-    <f7-list v-if="itemEventType === 'command' && currentItem && currentItem.type === 'Color'" media-list>
+    <f7-list v-if="itemEventType === 'command' && currentItem && currentItem.type === 'Color'"
+             media-list>
       <f7-list-input media-item
                      type="colorpicker"
                      label="Pick a color"
@@ -113,7 +114,7 @@
       <f7-list-item media-item
                     title="Design with Blockly"
                     text="A beginner-friendly way to build scripts visually by assembling blocks"
-                    :footer="!isJsAvailable ? 'You need to install the JavaScript Scripting addon before you will be able to run' : undefined"
+                    :footer="!isJsAvailable ? 'You need to install the JavaScript Scripting addon before you will be able to run' : undefined "
                     link=""
                     @click="scriptLanguagePicked('blockly')">
         <img src="@/images/blockly.svg"
@@ -126,8 +127,8 @@
       or choose the scripting language:
     </f7-block-footer>
     <f7-list media-list>
-      <f7-list-item media-item
-                    v-for="language in languages"
+      <f7-list-item v-for="language in languages"
+                    media-item
                     :key="language.contentType"
                     :title="language.name"
                     :after="language.version"
@@ -138,18 +139,19 @@
       </f7-list-item>
     </f7-list>
     <f7-block-footer class="padding-horizontal margin-bottom">
-      <small><strong>Note:</strong> Creating a new scripted module will <em>save the rule</em> before launching the script editor.</small>
+      <small><strong>Note:</strong> Creating a new scripted module will <em>save the rule</em> before
+        launching the script editor.</small>
     </f7-block-footer>
   </f7-block>
   <f7-block class="no-margin no-padding" v-else-if="category === 'rules'">
     <f7-list>
       <f7-list-item radio
-                    :checked="rulesEventType === 'run'"
+                    :checked="rulesEventType === 'run' ? true : null"
                     name="rulesEventType"
                     title="run"
                     @click="updateRulesEventType('run')" />
       <f7-list-item radio
-                    :checked="rulesEventType === 'enable'"
+                    :checked="rulesEventType === 'enable' ? true : null"
                     name="rulesEventType"
                     title="enable or disable"
                     @click="updateRulesEventType('enable')" />
@@ -164,12 +166,12 @@
   <f7-block class="no-margin no-padding" v-else-if="category === 'media'">
     <f7-list>
       <f7-list-item radio
-                    :checked="mediaEventType === 'say'"
+                    :checked="mediaEventType === 'say' ? true : null"
                     name="MediaEventType"
                     title="say something"
                     @click="updateMediaEventType('say')" />
       <f7-list-item radio
-                    :checked="mediaEventType === 'play'"
+                    :checked="mediaEventType === 'play' ? true : null"
                     name="MediaEventType"
                     title="play an audio file"
                     @click="updateMediaEventType('play')" />
@@ -200,11 +202,16 @@ import ConfigSheet from '@/components/config/config-sheet.vue'
 
 export default {
   mixins: [ModuleWizard],
-  props: ['currentModule', 'currentModuleType', 'moduleTypes'],
+  props: {
+    currentModule: Object,
+    currentModuleType: Object,
+    moduleTypes: Object
+  },
   components: {
     ItemPicker,
     ConfigSheet
   },
+  emits: ['type-select', 'start-script', 'show-advanced'],
   data () {
     return {
       category: '',
@@ -268,12 +275,12 @@ export default {
       this.itemEventType = type
       switch (type) {
         case 'command':
-          this.$emit('typeSelect', 'core.ItemCommandAction', true)
           if (this.currentItem) this.$set(this.currentModule, 'configuration', Object.assign({}, { itemName: this.currentItem.name }))
+          this.$emit('type-select', 'core.ItemCommandAction', true)
           break
         case 'update':
-          this.$emit('typeSelect', 'core.ItemStateUpdateAction', true)
           if (this.currentItem) this.$set(this.currentModule, 'configuration', Object.assign({}, { itemName: this.currentItem.name }))
+          this.$emit('type-select', 'core.ItemStateUpdateAction', true)
           break
       }
     },
@@ -281,10 +288,10 @@ export default {
       this.rulesEventType = type
       switch (type) {
         case 'run':
-          this.$emit('typeSelect', 'core.RunRuleAction', true)
+          this.$emit('type-select', 'core.RunRuleAction', true)
           break
         case 'enable':
-          this.$emit('typeSelect', 'core.RuleEnablementAction', true)
+          this.$emit('type-select', 'core.RuleEnablementAction', true)
           break
       }
     },
@@ -292,10 +299,10 @@ export default {
       this.mediaEventType = type
       switch (type) {
         case 'say':
-          this.$emit('typeSelect', 'media.SayAction', true)
+          this.$emit('type-select', 'media.SayAction', true)
           break
         case 'play':
-          this.$emit('typeSelect', 'media.PlayAction', true)
+          this.$emit('type-select', 'media.PlayAction', true)
           break
       }
     },
@@ -319,16 +326,16 @@ export default {
       // this.$set(this.currentModule.configuration, 'command', hsb.join(','))
     },
     scriptLanguagePicked (value) {
-      this.$emit('typeSelect', 'script.ScriptAction')
       this.$nextTick(() => {
         this.$emit('startScript', value)
+        this.$emit('type-select', 'script.ScriptAction')
       })
     },
     itemPicked (value) {
       this.category = 'item'
       this.currentItem = value
       this.$set(this.currentModule.configuration, 'itemName', value.name)
-      this.$emit('typeSelect', 'core.ItemCommandAction')
+      this.$emit('type-select', 'core.ItemCommandAction')
     }
   }
 }

@@ -55,7 +55,7 @@
                           :selectedTag="selectedTag"
                           :selectedClass="selectedClass"
                           :hideNone="hideNone"
-                          picker="true"
+                          :picker="true"
                           :propertyMode="!!propertyMode"
                           :classMode="!!classMode"
                           :limitToClass="!!limitToClass" />
@@ -79,7 +79,15 @@ export default {
   components: {
     SemanticsTreeview
   },
-  props: ['item', 'propertyMode', 'classMode', 'hideNone', 'semanticClass', 'semanticProperty'],
+  props: {
+    item: Object,
+    propertyMode: Boolean,
+    classMode: Boolean,
+    hideNone: Boolean,
+    semanticClass: String,
+    semanticProperty: String
+  },
+  emits: ['close', 'changed'],
   data () {
     return {
       semanticClasses: this.$store.getters.semanticClasses,

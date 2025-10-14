@@ -61,7 +61,9 @@ export default {
   components: {
     AddonDetailsSheet
   },
-  props: ['addonType'],
+  props: {
+    addonType: String
+  },
   data () {
     return {
       addons: [],
@@ -82,8 +84,8 @@ export default {
       this.load()
     },
     load () {
-      this.$oh.api.get('/rest/addons').then(data => {
-        this.addons = data.filter(addon => !addon.installed && addon.type === this.addonType).sort((a, b) => a.label.toUpperCase().localeCompare(b.label.toUpperCase()))
+      this.$oh.api.get('/rest/addons').then((data) => {
+        this.addons = data.filter((addon) => !addon.installed && addon.type === this.addonType).sort((a, b) => a.label.toUpperCase().localeCompare(b.label.toUpperCase()))
         this.ready = true
         setTimeout(() => { this.initSearchbar = true })
         this.startEventSource()
@@ -130,6 +132,3 @@ export default {
   }
 }
 </script>
-
-<style>
-</style>

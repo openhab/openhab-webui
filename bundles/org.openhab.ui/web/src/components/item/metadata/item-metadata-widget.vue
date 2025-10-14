@@ -23,7 +23,7 @@
             <option v-for="widget in standardListWidgets"
                     :key="widget.name"
                     :value="widget.name"
-                    :selected="metadata.value === widget.name">
+                    :selected="metadata.value === widget.name ? true : null">
               {{ widget.label }}
             </option>
           </optgroup>
@@ -47,7 +47,7 @@
             <option v-for="widget in personalWidgets"
                     :value="'widget:' + widget.uid"
                     :key="widget.uid"
-                    :selected="metadata.value.replace('widget:', '') === widget.uid">
+                    :selected="metadata.value.replace('widget:', '') === widget.uid ? true : null">
               {{ widget.uid }}
             </option>
           </optgroup>
@@ -60,6 +60,7 @@
     <div v-if="configDescriptions.parameters" class="widget-metadata-config-sheet">
       <f7-block-title>Configuration</f7-block-title>
       <f7-block-footer class="padding-horizontal margin-bottom">
+        // eslint-disable-next-line prettier/prettier
         Note: the parameter named 'item' will be set automatically with the name of the item ({{ this.item.name }}) unless it's set explicitely.
       </f7-block-footer>
       <f7-block-footer v-if="currentComponent.component && currentComponent.component.indexOf('widget:') === 0" class="padding-horizontal margin-bottom">
@@ -69,7 +70,7 @@
                     :parameters="configDescriptions.parameters"
                     :configuration="metadata.config"
                     @updated="widgetConfigUpdated"
-                    set-empty-config-as-null="true" />
+                    :set-empty-config-as-null="true" />
     </div>
   </div>
 </template>
@@ -98,7 +99,11 @@ import { VisibilityGroup, VisibilityParameters } from '@/assets/definitions/widg
 import ItemMetadataMixin from '@/components/item/metadata/item-metadata-mixin'
 
 export default {
-  props: ['item', 'metadata', 'namespace'],
+  props: {
+    item: Object,
+    metadata: Object,
+    namespace: String
+  },
   mixins: [ItemMetadataMixin],
   components: {
     ConfigSheet

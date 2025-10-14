@@ -1,6 +1,6 @@
 <template>
   <vue-draggable-resizable
-    :id="'oh-canvas-item-vdr-' +id"
+    :id="'oh-canvas-item-vdr-' + id"
     :key="reloadKey"
     :x="x"
     :y="y"
@@ -11,7 +11,7 @@
     :draggable="!!context.editmode"
     :resizable="!!context.editmode && !autosize"
     :class-name="!!context.editmode ? 'oh-canvas-item-editmode' : 'oh-canvas-item-runmode'"
-    :grid="gridEnable ? [gridPitch,gridPitch] : undefined"
+    :grid="gridEnable ? [gridPitch, gridPitch] : undefined"
     :min-height="gridEnable ? gridPitch : undefined"
     :min-width="gridEnable ? gridPitch : undefined"
     v-if="visible"
@@ -33,11 +33,15 @@
                                  href="#"
                                  text="Configure Widget" />
           <f7-menu-dropdown-item @click="context.editmode.editWidgetCode(context.component, context.parent)" href="#" text="Edit YAML" />
-          <f7-menu-dropdown-item v-if="context.component.slots.default.length > 0" @click="toggleAutoSize()" href="#">
+          <f7-menu-dropdown-item v-if="context.component.slots.default.length > 0"
+                                 @click="toggleAutoSize()"
+                                 href="#">
             <span>Auto Size</span>
             <f7-icon class="margin-left" :f7="autosize ? 'checkmark_square' : 'square'" />
           </f7-menu-dropdown-item>
-          <f7-menu-dropdown-item v-if="context.component.slots.default.length > 0" @click="toggleShadow()" href="#">
+          <f7-menu-dropdown-item v-if="context.component.slots.default.length > 0"
+                                 @click="toggleShadow()"
+                                 href="#">
             <span>Shadow</span>
             <f7-icon class="margin-left" :f7="shadow ? 'checkmark_square' : 'square'" />
           </f7-menu-dropdown-item>
@@ -54,15 +58,20 @@
         </f7-menu-dropdown>
       </f7-menu-item>
     </f7-menu>
-    <div @click.capture="eventControl" style="width: 100%; height: 100%; position:absolute;" class="disable-user-select">
-      <oh-placeholder-widget v-if="context.editmode && !context.component.slots.default.length" @click="context.editmode.addWidget(context.component, null, context.parent)" class="oh-canvas-item-content" />
+    <div
+      @click.capture="eventControl"
+      style="width: 100%; height: 100%; position: absolute"
+      class="disable-user-select">
+      <oh-placeholder-widget v-if="context.editmode && !context.component.slots.default.length"
+                             @click="context.editmode.addWidget(context.component, null, context.parent)"
+                             class="oh-canvas-item-content" />
       <generic-widget-component v-else-if="context.component.slots.default.length"
                                 :context="childContext(context.component.slots.default[0])"
                                 @command="onCommand"
                                 class="oh-canvas-item-content"
                                 :class="{
-                                  'oh-canvas-item-styled' : styled,
-                                  'oh-canvas-item-shadow' : styled && shadow
+                                  'oh-canvas-item-styled': styled,
+                                  'oh-canvas-item-shadow': styled && shadow,
                                 }" />
       <f7-icon v-if="context.editmode"
                class="drag-handle disable-user-select"
@@ -80,75 +89,75 @@
 </template>
 
 <style lang="stylus">
-  .oh-canvas-item-editmode
-    outline 1px dashed #F00
-    cursor move
-    color red
-    font-size 10px
+.oh-canvas-item-editmode
+  outline 1px dashed #F00
+  cursor move
+  color red
+  font-size 10px
 
-    *
-      cursor move !important
+  *
+    cursor move !important
 
-  .oh-canvas-item
-    position absolute
-    pointer-events auto
+.oh-canvas-item
+  position absolute
+  pointer-events auto
 
-    .oh-canvas-item-content
-      width 100%
-      height 100%
-      margin 0
+  .oh-canvas-item-content
+    width 100%
+    height 100%
+    margin 0
 
-    .oh-canvas-item-styled        // override background obscuring styles from system widgets
-      &.card                    // apply to card items
-        box-shadow none
-        background none
-        .card-content, .card-footer
-          .segmented, .stepper, .toggle
-            background var(--f7-card-bg-color)
+  .oh-canvas-item-styled        // override background obscuring styles from system widgets
+    &.card                    // apply to card items
+      box-shadow none
+      background none
+      .card-content, .card-footer
+        .segmented, .stepper, .toggle
+          background var(--f7-card-bg-color)
 
-    .oh-canvas-item-shadow        // shadow tuned to various card widgets
-      &.card                    // apply to card items
-        .card-content, .card-footer
-          .segmented, .stepper, .toggle
+  .oh-canvas-item-shadow        // shadow tuned to various card widgets
+    &.card                    // apply to card items
+      .card-content, .card-footer
+        .segmented, .stepper, .toggle
+          box-shadow  var(--oh-canvas-item-box-shadow)
+        .oh-slider
+          .range-bar, .range-knob, .range-knob-label
             box-shadow  var(--oh-canvas-item-box-shadow)
-          .oh-slider
-            .range-bar, .range-knob, .range-knob-label
-              box-shadow  var(--oh-canvas-item-box-shadow)
-          img, svg
-            filter var(--oh-canvas-item-svg-shadow)
-        .label-card-content
-          text-shadow var(--oh-canvas-item-text-shadow)
+        img, svg
+          filter var(--oh-canvas-item-svg-shadow)
+      .label-card-content
+        text-shadow var(--oh-canvas-item-text-shadow)
 
-    .oh-canvas-item-id
-      position absolute
-      bottom 0
-      right 0
+  .oh-canvas-item-id
+    position absolute
+    bottom 0
+    right 0
 
-    .oh-canvas-item-msg
-      position absolute
-      bottom -22px
-      right 0
+  .oh-canvas-item-msg
+    position absolute
+    bottom -22px
+    right 0
 
-    .placeholder-widget a
-      height 100%
-      padding 0
-      display flex
+  .placeholder-widget a
+    height 100%
+    padding 0
+    display flex
 
-    .drag-handle                // show drag handle on upper left corner
-      position absolute !important
-      top 0px
-      left 0px
-      padding 2px
-      z-index 1000
+  .drag-handle                // show drag handle on upper left corner
+    position absolute !important
+    top 0px
+    left 0px
+    padding 2px
+    z-index 1000
 
-    .configure-canvas-menu        // show menu icon on upper right corner
-      position absolute
-      top 2px
-      right 2px
-      .menu-inner
-        padding 0px
-      .menu-inner:after
-        width 0px
+  .configure-canvas-menu        // show menu icon on upper right corner
+    position absolute
+    top 2px
+    right 2px
+    .menu-inner
+      padding 0px
+    .menu-inner:after
+      width 0px
 </style>
 
 <script>
@@ -174,6 +183,7 @@ export default {
     id: String,
     preventDeactivation: Boolean
   },
+  emits: ['oci-selected', 'oci-deselected', 'oci-drag-stop', 'oci-dragged'],
   data () {
     return {
       x: 0,
@@ -212,8 +222,8 @@ export default {
   },
   watch: {
     active (val) {
-      if (val) this.$emit('ociSelected', this)
-      else this.$emit('ociDeselected', this)
+      if (val) this.$emit('oci-selected', this)
+      else this.$emit('oci-deselected', this)
     }
   },
   methods: {
@@ -239,7 +249,7 @@ export default {
       this.h = this.context.component.config.h = height
     },
     onDrag (x, y) {
-      this.$emit('ociDragged', this, x - this.x, y - this.y)
+      this.$emit('oci-dragged', this, x - this.x, y - this.y)
       this.moveTo(x, y)
     },
     moveTo (x, y) {
@@ -297,7 +307,7 @@ export default {
       this.resizing = false
     },
     onDragStop () {
-      this.$emit('ociDragStop', this)
+      this.$emit('oci-drag-stop', this)
       this.stopDrag()
     },
     stopDrag () {

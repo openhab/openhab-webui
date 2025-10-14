@@ -185,8 +185,8 @@
                                name="defaults"
                                :strategies="strategies"
                                :value="persistence.defaults"
-                               :disabled="!editable"
-                               @strategiesSelected="persistence.defaults = $event" />
+                               :disabled="!editable ? true : null"
+                               @strategies-selected="persistence.defaults = $event" />
             </div>
             <!-- Filters -->
             <div>
@@ -272,18 +272,20 @@
                 </f7-list-item>
               </f7-list>
               <f7-list v-if="editable">
-                <item-picker class="alias-item-picker"
-                             title="Add alias"
-                             name="items"
-                             multiple="true"
-                             noModelPicker="true"
-                             :setValueText="false"
-                             iconColor="green"
-                             auroraIcon="f7:plus_circle_fill"
-                             iosIcon="f7:plus_circle_fill"
-                             mdIcon="material:control_point"
-                             :value="currentItemsWithAlias"
-                             @input="updateAliasItems($event)" />
+                <f7-list-group>
+                  <item-picker class="alias-item-picker"
+                               title="Add alias"
+                               name="items"
+                               :multiple="true"
+                               :noModelPicker="true"
+                               :setValueText="false"
+                               iconColor="green"
+                               auroraIcon="f7:plus_circle_fill"
+                               iosIcon="f7:plus_circle_fill"
+                               mdIcon="material:control_point"
+                               :value="currentItemsWithAlias"
+                               @input="updateAliasItems($event)" />
+                </f7-list-group>
               </f7-list>
             </div>
           </f7-col>
@@ -302,7 +304,7 @@
         <f7-icon v-if="!editable"
                  f7="lock"
                  class="float-right margin"
-                 style="opacity:0.5; z-index: 4000; user-select: none;"
+                 style="opacity: 0.5; z-index: 4000; user-select: none"
                  size="50"
                  color="gray"
                  :tooltip="notEditableMgs" />
@@ -377,7 +379,9 @@ export default {
     StrategyPicker,
     'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')
   },
-  props: ['serviceId'],
+  props: {
+    serviceId: String
+  },
   data () {
     return {
       newPersistence: false,
@@ -405,7 +409,7 @@ export default {
       return `Edit ${this.serviceId} persistence configuration`
     },
     strategies () {
-      return this.PredefinedStrategies.concat(this.persistence.cronStrategies.map(cs => cs.name))
+      return this.PredefinedStrategies.concat(this.persistence.cronStrategies.map((cs) => cs.name))
     },
     filters () {
       let names = []

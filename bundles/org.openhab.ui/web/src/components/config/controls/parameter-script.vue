@@ -17,7 +17,12 @@
 import ScriptEditorPopup from './script-editor-popup.vue'
 
 export default {
-  props: ['configDescription', 'configuration', 'value'],
+  props: {
+    configDescription: Object,
+    configuration: Object,
+    value: String
+  },
+  emits: ['input'],
   data () {
     return {
     }

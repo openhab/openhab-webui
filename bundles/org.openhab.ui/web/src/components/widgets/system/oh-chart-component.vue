@@ -1,8 +1,8 @@
 <template>
   <div class="oh-chart-container" :style="{ height: activeHeight }">
     <chart
-      ref="chart"
       v-if="ready"
+      ref="chart"
       :init-options="initOptions"
       :option="options"
       class="oh-chart"
@@ -49,6 +49,7 @@ import i18n from '@/js/i18n'
 
 import dayjs from 'dayjs'
 import LocalizedFormat from 'dayjs/plugin/localizedFormat'
+
 dayjs.extend(LocalizedFormat)
 
 import { use, registerLocale } from 'echarts/core'
@@ -80,7 +81,7 @@ import(`echarts/i18n/lang${echartsLocale}-obj`)
 export default {
   mixins: [mixin, chart, actionsMixin],
   components: {
-    'chart': VChart
+    chart: VChart
   },
   computed: {
     activeHeight () {

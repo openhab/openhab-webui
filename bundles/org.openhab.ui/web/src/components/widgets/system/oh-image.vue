@@ -23,6 +23,7 @@ import mixin from '../widget-mixin'
 import { actionsMixin } from '../widget-actions'
 import { OhImageDefinition } from '@/assets/definitions/widgets/system'
 import foregroundService from '../widget-foreground-service'
+
 export default {
   mixins: [mixin, actionsMixin, foregroundService],
   widget: OhImageDefinition,

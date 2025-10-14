@@ -188,34 +188,34 @@
           <f7-link class="padding-left padding-right" :tab-link-active="detailsTab === 'widget'" @click="detailsTab = 'widget'">
             Widget
           </f7-link>
-          <f7-link class="padding-left padding-right"
+          <f7-link v-if="selectedWidget && selectedWidget.component !== 'Sitemap'"
+                   class="padding-left padding-right"
                    :tab-link-active="detailsTab === 'visibility'"
-                   @click="detailsTab = 'visibility'"
-                   v-if="selectedWidget && selectedWidget.component !== 'Sitemap'">
+                   @click="detailsTab = 'visibility'">
             Visibility
           </f7-link>
-          <f7-link class="padding-left padding-right"
+          <f7-link v-if="selectedWidget && selectedWidget.component === 'Buttongrid' && !hasChildren"
+                   class="padding-left padding-right"
                    :tab-link-active="detailsTab === 'buttons'"
-                   @click="detailsTab = 'buttons'"
-                   v-if="selectedWidget && selectedWidget.component === 'Buttongrid' && !hasChildren">
+                   @click="detailsTab = 'buttons'">
             Buttons
           </f7-link>
-          <f7-link class="padding-left padding-right"
+          <f7-link v-if="selectedWidget && ['Switch', 'Selection'].includes(selectedWidget.component) >= 0"
+                   class="padding-left padding-right"
                    :tab-link-active="detailsTab === 'mappings'"
-                   @click="detailsTab = 'mappings'"
-                   v-if="selectedWidget && ['Switch', 'Selection'].includes(selectedWidget.component) >= 0">
+                   @click="detailsTab = 'mappings'">
             Mappings
           </f7-link>
-          <f7-link class="padding-left padding-right"
+          <f7-link v-if="selectedWidget && selectedWidget.component !== 'Sitemap'"
+                   class="padding-left padding-right"
                    :tab-link-active="detailsTab === 'icons'"
-                   @click="detailsTab = 'icons'"
-                   v-if="selectedWidget && selectedWidget.component !== 'Sitemap'">
+                   @click="detailsTab = 'icons'">
             Icons
           </f7-link>
-          <f7-link class="padding-left padding-right"
+          <f7-link v-if="selectedWidget && selectedWidget.component !== 'Sitemap'"
+                   class="padding-left padding-right"
                    :tab-link-active="detailsTab === 'colors'"
-                   @click="detailsTab = 'colors'"
-                   v-if="selectedWidget && selectedWidget.component !== 'Sitemap'">
+                   @click="detailsTab = 'colors'">
             Colors
           </f7-link>
         </f7-toolbar>
@@ -228,7 +228,9 @@
                           @moveup="moveWidgetUp" />
         </f7-block>
         <f7-block style="margin-bottom: 6rem" v-if="selectedWidget && detailsTab === 'visibility'">
-          <attribute-details :widget="selectedWidget" attribute="visibility" placeholder="item_name operator value" />
+          <attribute-details :widget="selectedWidget"
+                             attribute="visibility"
+                             placeholder="item_name operator value" />
         </f7-block>
         <f7-block style="margin-bottom: 6rem" v-if="selectedWidget && detailsTab === 'buttons'">
           <attribute-details :widget="selectedWidget"
@@ -368,7 +370,13 @@ export default {
     AttributeDetails,
     SitemapTreeviewItem
   },
-  props: ['createMode', 'uid', 'itemsList'],
+  props: {
+    createMode: Boolean,
+    uid: String,
+    itemsList: Array,
+    f7router: Object,
+    f7route: Object
+  },
   data () {
     if (!this.$f7.data.sitemap) this.$f7.data.sitemap = {}
     return {
@@ -580,25 +588,25 @@ export default {
             siblingIsFrame.pop()
           }
         })
-        widgetList.filter(widget => widget.component === 'Frame').forEach(widget => {
+        widgetList.filter((widget) => widget.component === 'Frame').forEach((widget) => {
           if (!widget.slots?.widgets || !widget.slots.widgets.length) {
             let label = scope.widgetErrorLabel(widget.config)
             validationWarnings.push(widget.component + ' widget ' + label + ' should not be empty')
           }
         })
-        widgetList.filter(widget => this.WIDGET_TYPES_REQUIRING_ITEM.includes(widget.component)).forEach(widget => {
+        widgetList.filter((widget) => this.WIDGET_TYPES_REQUIRING_ITEM.includes(widget.component)).forEach((widget) => {
           if (!widget.config?.item) {
             let label = scope.widgetErrorLabel(widget.config)
             validationWarnings.push(widget.component + ' widget ' + label + ', no item configured')
           }
         })
-        widgetList.filter(widget => widget.component === 'Video' || widget.component === 'Webview').forEach(widget => {
+        widgetList.filter((widget) => widget.component === 'Video' || widget.component === 'Webview').forEach((widget) => {
           if (!widget.config?.url) {
             let label = scope.widgetErrorLabel(widget.config)
             validationWarnings.push(widget.component + ' widget ' + label + ', no url configured')
           }
         })
-        widgetList.filter(widget => widget.component === 'Chart').forEach(widget => {
+        widgetList.filter((widget) => widget.component === 'Chart').forEach((widget) => {
           if (!(widget.config?.period && this.REGEX_PERIOD.test(widget.config.period))) {
             let label = scope.widgetErrorLabel(widget.config)
             validationWarnings.push(widget.component + ' widget ' + label + ', invalid period configured: ' + widget.config?.period)
@@ -608,13 +616,13 @@ export default {
             validationWarnings.push(widget.component + ' widget ' + label + ', invalid Y-axis decimal pattern configured: ' + widget.config?.yAxisDecimalPattern)
           }
         })
-        widgetList.filter(widget => widget.component === 'Input').forEach(widget => {
+        widgetList.filter((widget) => widget.component === 'Input').forEach((widget) => {
           if (widget.config?.inputHint && !['text', 'number', 'date', 'time', 'datetime'].includes(widget.config.inputHint)) {
             let label = scope.widgetErrorLabel(widget.config)
             validationWarnings.push(widget.component + ' widget ' + label + ', invalid inputHint configured: ' + widget.config?.inputHint)
           }
         })
-        widgetList.filter(widget => ['Slider', 'Setpoint', 'Colortemperaturepicker'].includes(widget.component)).forEach(widget => {
+        widgetList.filter((widget) => ['Slider', 'Setpoint', 'Colortemperaturepicker'].includes(widget.component)).forEach((widget) => {
           let label = scope.widgetErrorLabel(widget.config)
           if (widget.config?.step <= 0) {
             validationWarnings.push(widget.component + ' widget ' + label + ', step size cannot be 0 or negative: ' + widget.config.step)
@@ -623,7 +631,7 @@ export default {
             validationWarnings.push(widget.component + ' widget ' + label + ', minValue must be less than or equal maxValue: ' + widget.config.minValue + ' > ' + widget.config.maxValue)
           }
         })
-        widgetList.filter(widget => widget.component === 'Buttongrid').forEach(widget => {
+        widgetList.filter((widget) => widget.component === 'Buttongrid').forEach((widget) => {
           let label = scope.widgetErrorLabel(widget.config)
           if (!widget.config?.item && !widget.slots?.widgets?.length) {
             validationWarnings.push(widget.component + ' widget ' + label + ', no item configured')
@@ -633,24 +641,24 @@ export default {
           }
           let positions = []
           if (widget.config?.buttons?.length) {
-            positions = widget.config.buttons.map(param => { return { row: param.row, column: param.column } })
+            positions = widget.config.buttons.map((param) => { return { row: param.row, column: param.column } })
           } else if (widget.slots?.widgets?.length) {
-            positions = widget.slots.widgets.filter(widget => widget.config).map(widget => { return { row: widget.config.row, column: widget.config.column } })
+            positions = widget.slots.widgets.filter((widget) => widget.config).map((widget) => { return { row: widget.config.row, column: widget.config.column } })
           }
           let occurrences = {}
-          const duplicates = positions.filter(pos => {
+          const duplicates = positions.filter((pos) => {
             const jsonpos = JSON.stringify(pos)
             if (occurrences[jsonpos]) return true
             occurrences[jsonpos] = true
             return false
           })
-          duplicates.forEach(duplicate =>
+          duplicates.forEach((duplicate) =>
             validationWarnings.push(widget.component + ' widget ' + label + ', duplicate button position : row ' + duplicate.row + ' column ' + duplicate.column)
           )
         })
-        widgetList.filter(widget => widget.component === 'Button').forEach(widget => {
+        widgetList.filter((widget) => widget.component === 'Button').forEach((widget) => {
           let label = scope.widgetErrorLabel(widget.config)
-          let parentWidget = widgetList.find(w => {
+          let parentWidget = widgetList.find((w) => {
             if (w.slots?.widgets?.includes(widget)) return w
             return undefined
           })
@@ -673,11 +681,11 @@ export default {
             validationWarnings.push(widget.component + ' widget ' + label + ', no click command defined')
           }
         })
-        widgetList.forEach(widget => {
+        widgetList.forEach((widget) => {
           if (widget.config) {
             let label = scope.widgetErrorLabel(widget.config)
-            Object.keys(widget.config).filter(attr => ['buttons', 'mappings', 'visibility', 'valuecolor', 'labelcolor', 'iconcolor', 'iconrules'].includes(attr)).forEach(attr => {
-              widget.config[attr].forEach(param => {
+            Object.keys(widget.config).filter((attr) => ['buttons', 'mappings', 'visibility', 'valuecolor', 'labelcolor', 'iconcolor', 'iconrules'].includes(attr)).forEach((attr) => {
+              widget.config[attr].forEach((param) => {
                 if (((attr === 'mappings') && !this.validateMapping(widget.component, param)) ||
                     ((['visibility', 'valuecolor', 'labelcolor', 'iconcolor', 'iconrules'].includes(attr)) && !this.validateRule(attr, param))) {
                   validationWarnings.push(widget.component + ' widget ' + label + ', syntax error in ' + attr + ': ' + param)
@@ -745,7 +753,11 @@ export default {
         }
       }
       if (widget.component === 'Buttongrid') {
-        widget.slots?.widgets?.sort((button1, button2) => ((button1.config?.row ?? 0) - (button2.config?.row ?? 0)) || ((button1.config?.column ?? 0) - (button2.config?.column ?? 0)))
+        widget.slots?.widgets?.sort(
+          (button1, button2) =>
+            (button1.config?.row ?? 0) - (button2.config?.row ?? 0) ||
+            (button1.config?.column ?? 0) - (button2.config?.column ?? 0)
+        )
       }
       this.addEmptySlot(widget)
       widget.slots?.widgets?.forEach(this.cleanConfig)
@@ -805,7 +817,7 @@ export default {
       }
       if ((widget.component === 'Buttongrid') && widget.config?.item) {
         if (!widget.config.buttons && widget.slots?.widgets) {
-          widget.slots.widgets.forEach(w => {
+          widget.slots.widgets.forEach((w) => {
             if (!w.config) w.config = {}
             if (!w.config.item) w.config.item = widget.config.item
           })
@@ -820,12 +832,8 @@ export default {
       this.$set(this, 'sitemap', value)
       this.cleanConfig(this.sitemap)
     },
-    startEventSource () {
-
-    },
-    stopEventSource () {
-
-    },
+    startEventSource () {},
+    stopEventSource () {},
     duplicateWidget () {
       const duplicate = cloneDeep(this.selectedWidget)
       const index = this.selectedWidgetParent.slots.widgets.indexOf(this.selectedWidget) + 1

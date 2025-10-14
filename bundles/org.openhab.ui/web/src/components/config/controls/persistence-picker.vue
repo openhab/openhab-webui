@@ -28,8 +28,15 @@
 
 <script>
 export default {
-  props: ['title', 'name', 'value', 'required', 'filterType', 'openOnReady'],
-  emits: ['persistencePicked'],
+  props: {
+    title: String,
+    name: String,
+    value: String,
+    required: Boolean,
+    filterType: Array,
+    openOnReady: Boolean
+  },
+  emits: ['persistencePicked', 'input'],
   data () {
     return {
       ready: false,

@@ -82,7 +82,14 @@ import ThingMixin from '@/components/thing/thing-mixin'
 
 export default {
   mixins: [ThingMixin],
-  props: ['thing', 'thingType', 'createMode', 'ready', 'readOnly', 'things'],
+  props: {
+    thing: Object,
+    thingType: Object,
+    createMode: Boolean,
+    ready: Boolean,
+    readOnly: Boolean,
+    things: Array
+  },
   components: {
     ThingPicker,
     ClipboardIcon

@@ -5,13 +5,13 @@
                     :icon-f7="widgetTypeIcon()"
                     :textColor="iconColor"
                     :color="'blue'"
-                    :selected="selected && selected === widget"
+                    :selected="selected && selected === widget ? true : null"
                     :opened="!widget.closed"
                     :toggle="canHaveChildren"
                     @treeview:open="setWidgetClosed(false)"
                     @treeview:close="setWidgetClosed(true)"
                     @click="select">
-    <draggable :disabled="!dropAllowed(widget)"
+    <draggable :disabled="!dropAllowed(widget) ? true : null"
                :list="children"
                group="sitemap-treeview"
                animation="150"
@@ -24,8 +24,8 @@
                @start="onStart"
                @end="onEnd"
                :move="onMove">
-      <sitemap-treeview-item class="sitemap-treeview-item"
-                             v-for="(childwidget, idx) in children"
+      <sitemap-treeview-item v-for="(childwidget, idx) in children"
+                             class="sitemap-treeview-item"
                              :key="idx"
                              :includeItemName="includeItemName"
                              :widget="childwidget"
@@ -59,11 +59,20 @@ import Draggable from 'vuedraggable'
 export default {
   name: 'sitemap-treeview-item',
   mixins: [SitemapMixin],
-  props: ['includeItemName', 'widget', 'parentWidget', 'itemsList', 'selected', 'sitemap', 'moveState'],
+  props: {
+    includeItemName: Boolean,
+    widget: Object,
+    parentWidget: Object,
+    itemsList: Array,
+    selected: Object,
+    sitemap: Object,
+    moveState: Object
+  },
   components: {
     Draggable,
     SitemapTreeviewItem: 'sitemap-treeview-item'
   },
+  emits: ['selected'],
   data () {
     return {
       localSitemap: this.sitemap ? this.sitemap : this.widget,

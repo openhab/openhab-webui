@@ -14,7 +14,10 @@
 
 <script>
 export default {
-  props: ['value', 'size'],
+  props: {
+    value: String,
+    size: Number
+  },
   methods: {
     success ({ value, event }) {
       event.stopPropagation()

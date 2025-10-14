@@ -20,7 +20,11 @@
 import { loadLocaleMessages } from '@/js/i18n'
 
 export default {
-  props: ['icon', 'title', 'text'],
+  props: {
+    icon: String,
+    title: String,
+    text: String
+  },
   i18n: {
     messages: loadLocaleMessages(require.context('@/assets/i18n/empty-states'))
   }

@@ -12,7 +12,7 @@
                        validate
                        pattern="[A-Za-z0-9_]+"
                        error-message="Required. Alphanumeric &amp; underscores only"
-                       :disabled="!createMode" />
+                       :disabled="!createMode ? true : null" />
         <f7-list-input label="Label"
                        type="text"
                        placeholder="Label"
@@ -58,7 +58,7 @@
           <f7-list-item v-if="supports('encoding')"
                         title="Encoding"
                         smart-select
-                        :smart-select-params="{openIn: 'popover', closeOnSelect: true}">
+                        :smart-select-params="{ openIn: 'popover', closeOnSelect: true }">
             <select name="encodings" :value="widget.config.encoding" @change="updateParameter('encoding', $event)">
               <option v-for="def in ENCODING_DEFS" :key="def.key" :value="def.key">
                 {{ def.value }}
@@ -66,7 +66,7 @@
             </select>
           </f7-list-item>
           <persistence-picker v-if="supports('service')"
-                              style="padding-left:0"
+                              style="padding-left: 0"
                               title="Persistence service"
                               :value="widget.config.service"
                               @input="(value) => widget.config.service = value" />
@@ -117,7 +117,7 @@
           <f7-list-item v-if="supports('interpolation')"
                         title="Interpolation"
                         smart-select
-                        :smart-select-params="{openIn: 'popover', closeOnSelect: true}">
+                        :smart-select-params="{ openIn: 'popover', closeOnSelect: true }">
             <select name="interpolations" :value="widget.config.encoding" @change="updateParameter('interpolation', $event)">
               <option v-for="def in INTERPOLATION_DEFS" :key="def.key" :value="def.key">
                 {{ def.value }}
@@ -175,7 +175,7 @@
           <f7-list-item v-if="supports('inputHint')"
                         title="Hint"
                         smart-select
-                        :smart-select-params="{openIn: 'popover', closeOnSelect: true}">
+                        :smart-select-params="{ openIn: 'popover', closeOnSelect: true }">
             <select name="inputHints"
                     required
                     :value="widget.config.inputHint"
@@ -226,7 +226,11 @@ export default {
     ItemPicker,
     PersistencePicker
   },
-  props: ['widget', 'createMode'],
+  props: {
+    widget: Object,
+    createMode: Boolean
+  },
+  emits: ['moveup', 'movedown', 'duplicate', 'remove'],
   data () {
     return {
       iconInputId: '',

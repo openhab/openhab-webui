@@ -10,7 +10,7 @@
                          :value="rule.uid"
                          required
                          :validate="editable"
-                         :disabled="!createMode"
+                         :disabled="!createMode ? true : null"
                          :info="(createMode) ? 'Required. Note: cannot be changed after the creation' : ''"
                          input-id="input"
                          pattern="[A-Za-z0-9_\-]+"
@@ -36,13 +36,13 @@
                          :value="rule.name"
                          required
                          validate
-                         :disabled="!editable"
+                         :disabled="!editable ? true : null"
                          @input="rule.name = $event.target.value"
                          :clear-button="editable" />
           <f7-list-input label="Description"
                          type="text"
                          :value="rule.description"
-                         :disabled="!editable"
+                         :disabled="!editable ? true : null"
                          @input="rule.description = $event.target.value"
                          :clear-button="editable" />
         </f7-list>
@@ -104,7 +104,15 @@
 import TagInput from '@/components/tags/tag-input.vue'
 
 export default {
-  props: ['rule', 'ready', 'createMode', 'stubMode', 'templateName', 'inScriptEditor', 'inSceneEditor'],
+  props: {
+    rule: Object,
+    ready: Boolean,
+    createMode: Boolean,
+    stubMode: Boolean,
+    templateName: String,
+    inScriptEditor: Boolean,
+    inSceneEditor: Boolean
+  },
   components: {
     TagInput
   },

@@ -23,7 +23,9 @@ import itemDefaultListComponent from '@/components/widgets/standard/list/default
 import { compareItems } from '@/components/widgets/widget-order'
 
 export default {
-  props: ['groupItem'],
+  props: {
+    groupItem: String
+  },
   data () {
     return {
       item: null
@@ -83,9 +85,6 @@ export default {
   methods: {
     onOpen () {
       this.load()
-    },
-    onClose () {
-
     },
     load () {
       this.$oh.api.get(`/rest/items/${this.groupItem}?metadata=semantics,widget,listWidget,widgetOrder`).then((data) => {

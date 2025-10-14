@@ -31,11 +31,14 @@
           <label @click="toggleShowSynonyms" class="advanced-label">Show synonyms</label>
         </div>
       </div>
-      <f7-link v-if="selectedTag"
-               class="right details-link padding-right"
-               ref="detailsLink"
-               @click="detailsOpened = true"
-               icon-f7="chevron_up" />
+      <div>
+        <!-- needed to keep the 3 elements positioned when this link is not shown -->
+        <f7-link v-if="selectedTag"
+                 class="right details-link padding-right"
+                 ref="detailsLink"
+                 @click="detailsOpened = true"
+                 icon-f7="chevron_up" />
+      </div>
     </f7-toolbar>
 
     <f7-tabs class="semantics-editor-tabs">
@@ -94,7 +97,7 @@
                     <f7-list class="tag-detail" inline-labels>
                       <f7-list-input label="Name"
                                      :value="selectedTag.name"
-                                     :disabled="!selectedTag.editable"
+                                     :disabled="!selectedTag.editable ? true : null"
                                      :clear-button="selectedTag.editable"
                                      placeholder="name"
                                      required
@@ -104,7 +107,7 @@
                                      @input="updateName($event)" />
                       <f7-list-input label="Label"
                                      :value="selectedTag.label"
-                                     :disabled="!selectedTag.editable"
+                                     :disabled="!selectedTag.editable ? true : null"
                                      :clear-button="selectedTag.editable"
                                      placeholder="label"
                                      required
@@ -113,7 +116,7 @@
                                      :value="selectedTag.description"
                                      type="textarea"
                                      resizable
-                                     :disabled="!selectedTag.editable"
+                                     :disabled="!selectedTag.editable ? true : null"
                                      :clear-button="selectedTag.editable"
                                      placeholder="description"
                                      @input="($event) => selectedTag.description = $event.target.value" />
@@ -203,7 +206,7 @@
           <f7-list class="tag-detail" inline-labels>
             <f7-list-input label="Name"
                            :value="selectedTag.name"
-                           :disabled="!selectedTag.editable"
+                           :disabled="!selectedTag.editable ? true : null"
                            :clear-button="selectedTag.editable"
                            placeholder="name"
                            validate
@@ -212,7 +215,7 @@
                            @input="updateName($event)" />
             <f7-list-input label="Label"
                            :value="selectedTag.label"
-                           :disabled="!selectedTag.editable"
+                           :disabled="!selectedTag.editable ? true : null"
                            :clear-button="selectedTag.editable"
                            placeholder="label"
                            @input="($event) => selectedTag.label = $event.target.value" />
@@ -220,7 +223,7 @@
                            :value="selectedTag.description"
                            type="textarea"
                            resizable
-                           :disabled="!selectedTag.editable"
+                           :disabled="!selectedTag.editable ? true : null"
                            :clear-button="selectedTag.editable"
                            placeholder="description"
                            @input="($event) => selectedTag.description = $event.target.value" />
@@ -234,12 +237,12 @@
             <f7-list-input v-for="(synonym, index) in selectedTag.synonyms"
                            :key="index"
                            :value="synonym"
-                           :disabled="!selectedTag.editable"
+                           :disabled="!selectedTag.editable ? true : null"
                            :clear-button="selectedTag.editable"
                            placeholder="synonym"
                            @change="updateSynonyms($event, index)" />
             <f7-list-input :value="newSynonym"
-                           :disabled="!selectedTag.editable"
+                           :disabled="!selectedTag.editable ? true : null"
                            :clear-button="selectedTag.editable"
                            placeholder="synonym"
                            @input="newSynonym = $event.target.value"
@@ -363,7 +366,6 @@ export default {
       detailsTab: 'tag',
       detailsOpened: false,
       loading: false,
-      ready: false,
       showNames: false,
       showSynonyms: false,
       expanded: false,
@@ -371,7 +373,8 @@ export default {
       expandedBeforeFiltering: false,
       editableSemanticTagsYaml: null,
       editingTagsYaml: null,
-      nonCodeDirty: false // When editing code, keeps track if it was already dirty before switching to code tab
+      nonCodeDirty: false, // When editing code, keeps track if it was already dirty before switching to code tab
+      ready: false
     }
   },
   watch: {

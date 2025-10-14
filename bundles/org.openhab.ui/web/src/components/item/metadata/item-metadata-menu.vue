@@ -45,14 +45,18 @@
 import MetadataNamespaces from '@/assets/definitions/metadata/namespaces.js'
 
 export default {
-  props: ['item'],
+  props: {
+    item: Object
+  },
   data () {
     return {
       metadataNamespaces: MetadataNamespaces
     }
   },
   beforeMount () {
-    if (this.item.type === 'Group' ? (this.item.groupType && this.item.groupType.indexOf('Number:') < 0) : this.item.type.indexOf('Number:') < 0) this.metadataNamespaces = this.metadataNamespaces.filter(n => n.name !== 'unit')
+    if ((this.item.type === 'Group')
+      ? (this.item.groupType && this.item.groupType.indexOf('Number:') < 0)
+      : this.item.type.indexOf('Number:') < 0) { this.metadataNamespaces = this.metadataNamespaces.filter((n) => n.name !== 'unit') }
   },
   computed: {
     editableNamespaces () {

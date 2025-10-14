@@ -3,10 +3,10 @@
                   :title="config.title || 'Action'"
                   :color="config.color || 'blue'"
                   @click.stop="performAction" />
-  <f7-list-item divider
+  <f7-list-item v-else-if="config.divider && !context.editmode"
+                divider
                 ref="divider"
-                :title="config.title"
-                v-else-if="config.divider && !context.editmode" />
+                :title="config.title" />
   <f7-list-item v-else
                 v-bind="config"
                 :divider="config.divider && !context.editmode"
@@ -15,7 +15,7 @@
                 :accordion-item="isRegularAccordion && !config.divider && !context.editmode"
                 :link="(hasAction && !context.editmode) ? true : undefined"
                 @click.stop="openAccordionOrPerformAction"
-                :class="{ 'oh-equipment-accordion-item' : isEquipmentAccordion}"
+                :class="{ 'oh-equipment-accordion-item': isEquipmentAccordion }"
                 ref="f7AccordionContent">
     <slot name="inner" #inner />
     <slot name="after" #after />

@@ -26,12 +26,14 @@
 .aurora .habot-speech-icon
   top calc(-0.80 * var(--f7-searchbar-height))
   float right
-
 </style>
 
 <script>
 export default {
-  props: ['lang'],
+  props: {
+    lang: String
+  },
+  emits: ['result'],
   data () {
     return {
       supported: this.$oh.speech.isRecognitionSupported(),

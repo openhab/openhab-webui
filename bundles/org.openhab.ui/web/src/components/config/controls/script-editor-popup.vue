@@ -27,7 +27,14 @@ export default {
   components: {
     'editor': () => import(/* webpackChunkName: "script-editor" */ './script-editor.vue')
   },
-  props: ['title', 'value', 'mode', 'opened', 'fullscreen', 'popupId'],
+  props: {
+    title: String,
+    value: String,
+    mode: String,
+    opened: Boolean,
+    fullscreen: Boolean,
+    popupId: String
+  },
   data () {
     return {
       code: this.value,

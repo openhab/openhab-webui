@@ -88,11 +88,12 @@
 <script>
 import DirtyMixin from '../dirty-mixin'
 import ConfigSheet from '@/components/config/config-sheet.vue'
+import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 
 export default {
   mixins: [DirtyMixin],
   components: {
-    'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue'),
+    EmptyStatePlaceholder,
     ConfigSheet
   },
   data () {
@@ -134,7 +135,7 @@ export default {
       this.$oh.api.get('/rest/persistence').then((data) => {
         this.$set(this, 'persistenceList', data)
       })
-      this.$oh.api.get('/rest/services/' + this.serviceId).then(data => {
+      this.$oh.api.get('/rest/services/' + this.serviceId).then((data) => {
         if (data.configDescriptionURI) {
           this.$oh.api.get('/rest/config-descriptions/' + data.configDescriptionURI).then(data2 => {
             this.$set(this, 'configDescriptions', data2)

@@ -12,7 +12,7 @@
                     @treeview:open="setTagOpened(true)"
                     @treeview:close="setTagOpened(false)"
                     @click="select">
-    <draggable :disabled="!canDragDrop"
+    <draggable :disabled="!canDragDrop ? true : null"
                :list="children"
                group="semantic-tags-treeview"
                filter=".non-draggable"
@@ -86,6 +86,7 @@ export default {
       })
     }
   },
+  emits: ['selected'],
   components: {
     Draggable,
     SemanticsTreeviewItem: 'semantics-treeview-item'

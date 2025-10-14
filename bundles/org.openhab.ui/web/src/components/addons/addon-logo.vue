@@ -26,7 +26,11 @@
 import { AddonIcons } from '@/assets/addon-store'
 
 export default {
-  props: ['addon', 'size', 'lazy'],
+  props: {
+    addon: Object,
+    size: [String, Number],
+    lazy: Boolean
+  },
   data () {
     return {
       addonIcon: AddonIcons[this.addon.type],

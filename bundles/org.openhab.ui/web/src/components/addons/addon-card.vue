@@ -2,7 +2,7 @@
   <f7-link v-if="addon" class="addon-card" :href="`/addons/${addon.type}/${addon.uid}`">
     <div class="addon-card-inner card">
       <div class="addon-card-headline">
-        <div>{{ headline || autoHeadline || "&nbsp;" }}</div>
+        <div>{{ headline || autoHeadline || '&nbsp;' }}</div>
       </div>
       <div class="addon-card-title">
         <div v-if="showInstallActions" class="addon-card-title-after">
@@ -127,7 +127,13 @@ import AddonStatsLine from './addon-stats-line.vue'
 import AddonLogo from '@/components/addons/addon-logo.vue'
 
 export default {
-  props: ['addon', 'headline', 'installActionText', 'lazyLogo'],
+  props: {
+    addon: Object,
+    headline: String,
+    installActionText: String,
+    lazyLogo: Boolean
+  },
+  emits: ['addon-button-click'],
   components: {
     AddonLogo,
     AddonStatsLine
@@ -146,7 +152,7 @@ export default {
   },
   methods: {
     buttonClicked () {
-      this.$emit('addonButtonClick', this.addon)
+      this.$emit('addon-button-click', this.addon)
     }
   }
 }

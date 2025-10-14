@@ -23,8 +23,8 @@
       </f7-link>
     </f7-toolbar>
     <f7-toolbar v-if="ready && generic" position="bottom">
-      <f7-button color="red"
-                 v-if="!creationMode"
+      <f7-button v-if="!creationMode"
+                 color="red"
                  @click="remove()"
                  class="width-100">
         Remove metadata
@@ -58,7 +58,7 @@
         <f7-icon v-if="!editable"
                  f7="lock"
                  class="float-right margin"
-                 style="opacity:0.5; z-index: 4000; user-select: none;"
+                 style="opacity: 0.5; z-index: 4000; user-select: none"
                  size="50"
                  color="gray"
                  tooltip="This metadata is not editable as it has not been created through the UI" />
@@ -110,7 +110,11 @@ import DirtyMixin from '../../dirty-mixin'
 
 export default {
   mixins: [DirtyMixin],
-  props: ['itemName', 'namespace'],
+  props: {
+    itemName: String,
+    namespace: String,
+    f7router: Object
+  },
   components: {
     'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')
   },

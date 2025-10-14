@@ -1,6 +1,6 @@
 <template>
-  <trend :key="'trend' + config.item"
-         v-if="showTrend"
+  <trend v-if="showTrend"
+         :key="'trend' + config.item"
          :style="config.style"
          :width="trendWidth"
          class="trend"
@@ -18,7 +18,9 @@ import { OhTrendDefinition } from '@/assets/definitions/widgets/system'
 
 export default {
   mixins: [mixin],
-  props: ['width'],
+  props: {
+    width: [Number, String]
+  },
   widget: OhTrendDefinition,
   data () {
     return {

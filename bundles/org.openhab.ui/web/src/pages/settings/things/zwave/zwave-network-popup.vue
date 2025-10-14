@@ -18,18 +18,17 @@
 
 <script>
 export default {
-  props: ['bridgeUID'],
+  props: {
+    bridgeUID: String
+  },
   components: {
     'zwave-network': () => import(/* webpackChunkName: "zwave-network" */ '@/components/thing/zwave/zwave-network.vue')
   },
+  emits: ['closed'],
   data () {
     return {
       showNetwork: false
     }
-  },
-  methods: {
-  },
-  computed: {
   }
 }
 </script>

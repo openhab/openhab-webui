@@ -38,7 +38,10 @@ import ThingStatus from '@/components/thing/thing-status-mixin'
 
 export default {
   mixins: [ThingStatus],
-  props: ['item', 'links'],
+  props: {
+    item: Object,
+    links: Array
+  },
   data () {
     return {
       currentItemName: null,

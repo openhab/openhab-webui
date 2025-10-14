@@ -82,11 +82,17 @@ import ItemMixin from '@/components/item/item-mixin'
 
 export default {
   mixins: [ItemMixin],
-  props: ['model', 'links', 'items', 'context'],
+  props: {
+    model: Object,
+    links: Array,
+    items: Array,
+    context: Object
+  },
   components: {
     Item,
     ItemForm
   },
+  emits: ['item-created', 'item-removed', 'cancel-create', 'item-updated'],
   data () {
     return {
       editMode: false,

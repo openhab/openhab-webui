@@ -7,7 +7,9 @@
                class="text-align-right">
       Local SIP Account Settings
     </f7-button>
-    <div v-if="config.enableVideo" class="video-container" :style="{ 'aspect-ratio': config.defaultVideoAspectRatio || '4/3' }">
+    <div v-if="config.enableVideo"
+         class="video-container"
+         :style="{ 'aspect-ratio': config.defaultVideoAspectRatio || '4/3' }">
       <video ref="remoteVideo"
              autoplay
              playsinline
@@ -35,7 +37,8 @@
                :icon-size="config.iconSize"
                @click.stop="dial()" />
     <!-- Show answer button on incoming call -->
-    <f7-segmented v-else-if="session && session.direction === 'incoming' && session.isInProgress()" style="width: 100%; height: 100%">
+    <f7-segmented v-else-if="session && session.direction === 'incoming' && session.isInProgress()"
+                  style="width: 100%; height: 100%">
       <f7-button :style="computedButtonStyle"
                  icon-f7="phone_fill_arrow_down_left"
                  icon-color="green"
@@ -174,7 +177,7 @@ export default {
       this.context.component.config = { ...this.config, ...this.localConfig } // Merge local device configuration
 
       import(/* webpackChunkName: "jssip" */ 'jssip').then((JsSIP) => { // Lazy load jssip
-        this.config.enableSIPDebug ? JsSIP.debug.enable('JsSIP:*') : JsSIP.debug.disable()
+        if (this.config.enableSIPDebug) { JsSIP.debug.enable('JsSIP:*') } else { JsSIP.debug.disable() }
         // SIP user agent setup
         this.remoteAudio = new window.Audio()
         const url = new URL(this.config.websocketUrl, window.location.origin)
@@ -246,7 +249,7 @@ export default {
                 this.answer()
               } else {
                 const parts = autoAnswer.split(',')
-                parts.forEach(part => {
+                parts.forEach((part) => {
                   if ((part.indexOf('@') > 0 && part === remotePartyWithHost) || part === remoteParty) {
                     this.answer()
                   }
@@ -282,7 +285,7 @@ export default {
         // Play tone
         this.audio.loop = true
         this.audio.load()
-        this.audio.play().catch(error => {
+        this.audio.play().catch((error) => {
           console.debug(this.LOGGER_PREFIX + ': Play tone: ' + error)
         })
       }
@@ -346,8 +349,8 @@ export default {
     },
     sendDTMF () {
       const options = {
-        'duration': 160,
-        'interToneGap': 640
+        duration: 160,
+        interToneGap: 640
       }
       this.session.sendDTMF(this.config.dtmfString, options)
     },

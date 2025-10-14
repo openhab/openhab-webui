@@ -74,13 +74,13 @@
             </f7-link>
           </f7-nav-right>
         </f7-navbar>
-        <blockly-editor ref="blocklyPreviewEditor"
-                        v-if="previewMode === 'blockly'"
+        <blockly-editor v-if="previewMode === 'blockly'"
+                        ref="blocklyPreviewEditor"
                         :blocks="previewBlockSource"
                         :library-definitions="[blocks]"
                         @change="dirty = true" />
-        <editor class="blocks-preview-code"
-                v-else-if="previewMode === 'code'"
+        <editor v-else-if="previewMode === 'code'"
+                class="blocks-preview-code"
                 mode="application/javascript"
                 :value="previewGeneratedCode"
                 :read-only="true" />
@@ -151,7 +151,12 @@ export default {
     BlocklyEditor, // 'blockly-editor': () => import(/* webpackChunkName: "blockly-editor" */ '@/components/config/controls/blockly-editor.vue'),
     BlockPreview // 'block-preview': () => import(/* webpackChunkName: "blockly-editor" */ './block-preview.vue')
   },
-  props: ['uid', 'createMode'],
+  props: {
+    uid: String,
+    createMode: Boolean,
+    f7router: Object,
+    f7route: Object
+  },
   data () {
     return {
       blocksDefinition: null,
@@ -270,14 +275,8 @@ export default {
                       type: 'field_dropdown',
                       name: 'OPTION1',
                       options: [
-                        [
-                          'something',
-                          'option1'
-                        ],
-                        [
-                          'something else',
-                          'option2'
-                        ]
+                        ['something', 'option1'],
+                        ['something else', 'option2']
                       ]
                     },
                     {
@@ -294,11 +293,11 @@ export default {
                       name: 'NAME'
                     }
                   ],
-                  'previousStatement': null,
-                  'nextStatement': null,
-                  'colour': 90,
-                  'tooltip': '',
-                  'helpUrl': ''
+                  previousStatement: null,
+                  nextStatement: null,
+                  colour: 90,
+                  tooltip: '',
+                  helpUrl: ''
                 },
                 slots: {
                   code: [

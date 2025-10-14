@@ -31,7 +31,7 @@
                color="blue"
                @click="toggleFullscreen" />
       <div class="display-flex flex-direction-row align-items-center">
-        <f7-toggle :checked="previewMode" @toggle:change="(value) => togglePreviewMode(value)" />&nbsp;Run mode<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span>
+        <f7-toggle :checked="previewMode ? true : null" @toggle:change="(value) => togglePreviewMode(value)" />&nbsp;Run mode<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span>
         <f7-link v-if="!createMode"
                  class="right margin-left padding-right"
                  @click="detailsOpened = true"
@@ -51,7 +51,9 @@
           <page-settings :page="page" :createMode="createMode" />
           <f7-col>
             <f7-block-footer class="padding-horizontal margin-bottom">
-              Note: After saving this page, you can view the page settings by clicking the chevron up icon (<f7-icon color="blue" f7="chevron_up" />) at the bottom right corner of the screen, next to "Run mode"
+              Note: After saving this page, you can view the page settings by clicking the chevron
+              up icon (<f7-icon color="blue" f7="chevron_up" />) at the bottom right corner of the
+              screen, next to "Run mode"
             </f7-block-footer>
           </f7-col>
         </f7-block>
@@ -76,7 +78,9 @@
                   </f7-block>
                   <f7-row class="text-align-center align-items-stretch margin-vertical" no-gap>
                     <f7-col width="50">
-                      <f7-link @click="setLayoutType('fixed', 'grid')" class="flex-direction-column padding margin-left-half elevation-1 elevation-hover-3" style="color: var(--f7-theme-color-text-color)">
+                      <f7-link @click="setLayoutType('fixed', 'grid')"
+                               class="flex-direction-column padding margin-left-half elevation-1 elevation-hover-3"
+                               style="color: var(--f7-theme-color-text-color)">
                         <f7-icon size="70px" f7="grid" />
                         <div class="margin-bottom">
                           Fixed Grid
@@ -87,7 +91,9 @@
                       </f7-link>
                     </f7-col>
                     <f7-col width="50">
-                      <f7-link @click="setLayoutType('fixed', 'canvas')" class="flex-direction-column padding margin-right-half elevation-1 elevation-hover-3" style="color: var(--f7-theme-color-text-color)">
+                      <f7-link @click="setLayoutType('fixed', 'canvas')"
+                               class="flex-direction-column padding margin-right-half elevation-1 elevation-hover-3"
+                               style="color: var(--f7-theme-color-text-color)">
                         <f7-icon size="70px" f7="rectangle_3_offgrid" />
                         <div class="margin-bottom">
                           Fixed Canvas
@@ -104,8 +110,8 @@
           </f7-col>
         </f7-block>
 
-        <oh-layout-page class="layout-page"
-                        v-if="ready"
+        <oh-layout-page v-if="ready"
+                        class="layout-page"
                         :context="context"
                         :key="pageKey"
                         :style="page.config.style"
@@ -144,8 +150,8 @@
                 @input="onEditorInput" />
         <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
 
-        <oh-layout-page class="layout-page"
-                        v-if="ready && previewMode"
+        <oh-layout-page v-if="ready && previewMode"
+                        class="layout-page"
                         :context="context"
                         :key="pageKey"
                         :style="page.config.style"
@@ -213,7 +219,11 @@ export default {
     OhLayoutPage,
     PageSettings
   },
-  props: ['createMode', 'uid'],
+  props: {
+    createMode: Boolean,
+    uid: String,
+    f7router: Object
+  },
   data () {
     return {
       page: {

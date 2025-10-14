@@ -1,6 +1,6 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn">
-    <f7-navbar :title="pageTitle + dirtyIndicator" :back-link="editable ? 'Cancel': 'Back'">
+    <f7-navbar :title="pageTitle + dirtyIndicator" :back-link="editable ? 'Cancel' : 'Back'">
       <f7-nav-right v-show="ready">
         <f7-link v-if="!editable"
                  icon-f7="lock_fill"
@@ -40,16 +40,16 @@
           </f7-col>
 
           <div class="flex-shrink-0 if-aurora display-flex justify-content-center">
-            <f7-button text="Create"
-                       v-if="createMode"
+            <f7-button v-if="createMode"
+                       text="Create"
                        style="width: 150px"
                        class="margin-horizontal"
                        color="blue"
                        raised
                        fill
                        @click="save" />
-            <f7-button text="Save"
-                       v-else-if="editable"
+            <f7-button v-else-if="editable"
+                       text="Save"
                        style="width: 150px"
                        class="margin-horizontal"
                        color="blue"
@@ -65,7 +65,7 @@
         <f7-icon v-if="!editable"
                  f7="lock"
                  class="float-right margin"
-                 style="opacity:0.5; z-index: 4000; user-select: none;"
+                 style="opacity: 0.5; z-index: 4000; user-select: none;"
                  size="50"
                  color="gray"
                  :tooltip="notEditableMsg" />
@@ -106,7 +106,12 @@ import ItemMixin from '@/components/item/item-mixin'
 
 export default {
   mixins: [DirtyMixin, ItemMixin],
-  props: ['itemName', 'createMode', 'itemCopy'],
+  props: {
+    itemName: String,
+    createMode: Boolean,
+    itemCopy: Object,
+    f7router: Object
+  },
   components: {
     ItemForm,
     'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')
@@ -209,15 +214,17 @@ export default {
       if (this.currentTab === 'code') {
         if (!this.fromYaml()) return
       }
-      if (this.validateItemName(this.item.name) !== '') return this.$f7.dialog.alert('Please give the Item a valid name: ' + this.validateItemName(this.item.name)).open()
-      if (!this.item.type || !this.types.ItemTypes.includes(this.item.type.split(':')[0])) return this.$f7.dialog.alert('Please give Item a valid type').open()
+      if (this.validateItemName(this.item.name) !== '') { return this.$f7.dialog.alert('Please give the Item a valid name: ' + this.validateItemName(this.item.name)).open() }
+      if (!this.item.type || !this.types.ItemTypes.includes(this.item.type.split(':')[0])) { return this.$f7.dialog.alert('Please give Item a valid type').open() }
 
       const typeChange = this.$refs.itemForm.typeChanged()
       const dimensionChange = this.$refs.itemForm.dimensionChanged()
       const unitChange = this.$refs.itemForm.unitChanged()
       if (typeChange || dimensionChange || unitChange) {
         const title = 'WARNING: ' + (typeChange ? 'Type' : (dimensionChange ? 'Dimension' : 'Unit')) + ' Changed'
-        const text = (typeChange || dimensionChange) ? `Existing links to channels ${dimensionChange ? 'with dimensions ' : ''}may no longer be valid!` : 'Changing the internal unit can corrupt your persisted data and affect rules!'
+        const text = (typeChange || dimensionChange)
+          ? `Existing links to channels ${dimensionChange ? 'with dimensions ' : ''}may no longer be valid!`
+          : 'Changing the internal unit can corrupt your persisted data and affect rules!'
         return this.$f7.dialog.create({
           title,
           text,

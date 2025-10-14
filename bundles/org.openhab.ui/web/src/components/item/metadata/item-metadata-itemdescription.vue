@@ -12,11 +12,12 @@
         :floating-label="$theme.md"
         :label="'Options'"
         name="options"
-        :disabled="!editable"
+        :disabled="!editable ? true : null"
         :value="options"
         @input="updateOptions" />
       <f7-block-footer class="param-description" alot="after-list">
-        <small>Enter each option on a separate line.<br>Use <code>value=label</code> format to provide a label different than the option.</small>
+        <small>Enter each option on a separate line.<br>Use <code>value=label</code> format to provide
+          a label different than the option.</small>
       </f7-block-footer>
     </f7-list>
     <p class="padding">
@@ -43,7 +44,11 @@ import ConfigSheet from '@/components/config/config-sheet.vue'
 import ItemMetadataMixin from '@/components/item/metadata/item-metadata-mixin'
 
 export default {
-  props: ['itemName', 'metadata', 'namespace'],
+  props: {
+    itemName: String,
+    metadata: Object,
+    namespace: String
+  },
   mixins: [ItemMetadataMixin],
   components: {
     ConfigSheet

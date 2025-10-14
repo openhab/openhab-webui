@@ -27,7 +27,10 @@ Icon.Default.mergeOptions({
 })
 
 export default {
-  props: ['value'],
+  props: {
+    value: String
+  },
+  emits: ['input'],
   components: {
     LMap,
     LTileLayer,

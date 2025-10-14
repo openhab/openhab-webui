@@ -1,6 +1,6 @@
 <template>
-  <l-circle ref="marker"
-            v-if="center && radius"
+  <l-circle v-if="center && radius"
+            ref="marker"
             :key="markerKey"
             :lat-lng="center"
             :radius="radius"
@@ -27,6 +27,7 @@ export default {
     LTooltip
   },
   widget: OhMapCircleMarkerDefinition,
+  emits: ['update'],
   data () {
     return {
       markerKey: this.$f7.utils.id()

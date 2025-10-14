@@ -21,7 +21,7 @@
     </f7-toolbar>
     <f7-toolbar bottom class="toolbar-details">
       <div style="margin-left: auto">
-        <f7-toggle :checked="previewMode" @toggle:change="(value) => togglePreviewMode(value)" /> Run mode<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span>
+        <f7-toggle :checked="previewMode ? true : null" @toggle:change="(value) => togglePreviewMode(value)" /> Run mode<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span>
       </div>
     </f7-toolbar>
 
@@ -59,8 +59,8 @@
             </f7-menu>
 
             <f7-list media-list class="markers-list">
-              <f7-list-item media-item
-                            v-for="(marker, idx) in page.slots.default"
+              <f7-list-item v-for="(marker, idx) in page.slots.default"
+                            media-item
                             :key="idx"
                             :title="marker.config.name"
                             :subtitle="marker.config.item || marker.config.location"
@@ -91,15 +91,17 @@
               <f7-list-button color="blue" title="Add marker" @click="addWidget(page, 'oh-plan-marker')" />
             </f7-list>
             <f7-block-footer class="param-description">
-              You can also <f7-link style="z-index: inherit" href="#" @click="previewMode = true">
+              You can also
+              <f7-link style="z-index: inherit" href="#" @click="previewMode = true">
                 switch to Run mode
-              </f7-link> to add markers and position them on the plan.
+              </f7-link>
+              to add markers and position them on the plan.
             </f7-block-footer>
           </f7-col>
         </f7-block>
 
-        <oh-plan-page class="plan-page"
-                      v-else-if="ready && previewMode"
+        <oh-plan-page v-else-if="ready && previewMode"
+                      class="plan-page"
                       :context="context"
                       :key="pageKey" />
       </f7-tab>
@@ -113,8 +115,8 @@
                 @input="onEditorInput" />
         <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
 
-        <oh-plan-page class="plan-page"
-                      v-if="ready && previewMode"
+        <oh-plan-page v-if="ready && previewMode"
+                      class="plan-page"
                       :context="context"
                       :key="pageKey + '2'" />
       </f7-tab>
@@ -168,7 +170,11 @@ export default {
     PageSettings,
     ConfigSheet
   },
-  props: ['createMode', 'uid'],
+  props: {
+    createMode: Boolean,
+    uid: String,
+    f7router: Object
+  },
   data () {
     return {
       pageWidgetDefinition: OhPlanPage.widget(),

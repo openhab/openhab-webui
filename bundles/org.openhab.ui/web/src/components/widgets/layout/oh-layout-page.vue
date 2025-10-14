@@ -29,7 +29,8 @@
           </f7-list>
         </f7-block>
       </template>
-      <div v-if="context.editmode && !$fullscreen.isFullscreen" style="height: calc(var(--f7-toolbar-height) + var(--f7-safe-area-bottom) + 40px)" />
+      <div v-if="context.editmode && !$fullscreen.isFullscreen"
+           style="height: calc(var(--f7-toolbar-height) + var(--f7-safe-area-bottom) + 40px)" />
     </template>
     <template v-else-if="config.layoutType === 'fixed' && (!config.fixedType || config.fixedType === 'grid')">
       <oh-grid-layout :context="context" />
@@ -50,7 +51,7 @@ import OhGridLayout from './oh-grid-layout.vue'
 import OhCanvasLayout from './oh-canvas-layout.vue'
 
 export default {
-  emits: ['action'],
+  emits: ['action', 'add-block', 'add-masonry'],
   mixins: [mixin],
   components: {
     OhBlock,

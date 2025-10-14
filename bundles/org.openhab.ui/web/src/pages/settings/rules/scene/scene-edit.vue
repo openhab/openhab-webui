@@ -103,9 +103,9 @@
                        swipeout
                        media-list
                        @sortable:sort="(ev) => reorderModule(ev, 'actions')">
-                <f7-list-item :title="mod.configuration.itemName"
+                <f7-list-item v-for="mod in rule['actions']"
+                              :title="mod.configuration.itemName"
                               media
-                              v-for="mod in rule['actions']"
                               :key="mod.id"
                               :link="!showModuleControls"
                               @click.native="(ev) => editModule(ev, mod)"
@@ -150,14 +150,16 @@
                   <f7-icon slot="media" color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill"
                            md="material:control_point" />
                 </f7-list-item> -->
-                <item-picker title="Select Items"
-                             name="newItem"
-                             :multiple="true"
-                             :value="selectedItems"
-                             @input="selectItems"
-                             :no-after="true"
-                             class="scene-items-picker" />
+                <f7-list-group>
+                  <item-picker title="Select Items"
+                               name="newItem"
+                               :multiple="true"
+                               :value="selectedItems"
+                               @input="selectItems"
+                               :no-after="true"
+                               class="scene-items-picker" />
                 <!-- <f7-list-button :color="(showModuleControls) ? 'gray' : 'blue'" :title="sectionLabels[section][1]"></f7-list-button> -->
+                </f7-list-group>
               </f7-list>
             </div>
           </f7-col>
@@ -261,7 +263,13 @@ export default {
     ItemPicker,
     'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')
   },
-  props: ['ruleId', 'createMode', 'ruleCopy'],
+  props: {
+    ruleId: String,
+    createMode: Boolean,
+    ruleCopy: Object,
+    f7router: Object,
+    f7route: Object
+  },
   data () {
     return {
       ready: false,
