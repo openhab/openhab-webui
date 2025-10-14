@@ -176,7 +176,7 @@
                 title="Service Label" />
             </f7-list>
           </div>
-          <div v-show="f7width < 1450">
+          <div v-show="$f7dim.width < 1450">
             <div v-show="addonsLoaded && addonsInstalled.length > 0">
               <addon-section class="add-on-section"
                              :addonsInstalled="addonsInstalled"
@@ -197,7 +197,7 @@
             </div>
           </div>
         </f7-col>
-        <f7-col width="33" class="add-on-col" v-show="f7width >= 1450">
+        <f7-col width="33" class="add-on-col" v-show="$f7dim.width >= 1450">
           <div v-show="addonsLoaded && addonsInstalled.length > 0">
             <addon-section :addonsInstalled="addonsInstalled"
                            :addonsServices="addonsServices"
@@ -253,7 +253,6 @@ export default {
   },
   data () {
     return {
-      f7width: f7.width,
       addonsLoaded: false,
       servicesLoaded: false,
       addonsInstalled: [],
@@ -297,7 +296,7 @@ export default {
       ],
 
       expandedTypes: {
-        systemSettingsExpanded: this.f7width >= 1450,
+        systemSettingsExpanded: this.$f7dim.width >= 1450,
         addonsExpanded: false
       }
     }
@@ -324,11 +323,6 @@ export default {
       this.loadMenu()
       this.loadCounters()
     }
-  },
-  mounted () {
-    f7.on('resize', () => {
-      this.f7width = f7.width
-    })
   },
   methods: {
     loadMenu () {

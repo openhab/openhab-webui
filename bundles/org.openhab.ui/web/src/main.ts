@@ -3,7 +3,7 @@ import '@/js/logging'
 import '@/js/monkeypatch'
 
 // Import Vue
-import { createApp } from 'vue'
+import { createApp, reactive } from 'vue'
 
 // Import globally registered components
 import OhNavContent from '@/components/navigation/oh-nav-content.vue'
@@ -51,6 +51,7 @@ registerComponents(app)
 app.config.globalProperties.$oh = openhab
 app.config.globalProperties.$device = getDevice()
 app.config.globalProperties.$$ = Dom7
+app.config.globalProperties.$f7dim = reactive({ width: 0, height: 0 })
 
 app.use(pinia)
 app.use(i18n)

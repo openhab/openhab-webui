@@ -1018,6 +1018,9 @@ export default {
   },
   mounted () {
     f7ready(async (f7) => {
+      this.$f7dim.width = f7.width
+      this.$f7dim.height = f7.height
+
       performance.mark('f7ready')
       this.updateThemeOptions()
 
@@ -1097,6 +1100,11 @@ export default {
         if (smartSelect && smartSelect.searchbar && this.$device.desktop) {
           smartSelect.searchbar.$inputEl.focus()
         }
+      })
+
+      f7.on('resize', () => {
+        this.$f7dim.width = f7.width
+        this.$f7dim.height = f7.height
       })
 
       if (window) {
