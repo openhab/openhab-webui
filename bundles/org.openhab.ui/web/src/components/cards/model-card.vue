@@ -54,6 +54,8 @@
     position absolute
     top calc(16px + var(--f7-safe-area-top))
     right calc(var(--f7-card-content-padding-horizontal) + var(--f7-safe-area-right))
+  .media-list
+    margin-top 0 !important
   &.invert-text
   .card-background
     position absolute

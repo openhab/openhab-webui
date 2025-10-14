@@ -26,6 +26,10 @@ html
   .media-list, li.media-item
   .list .item-inner
     --f7-list-item-padding-vertical 5px
+    --f7-typography-margin 0
+    .toggle
+       margin-top 0 !important
+       margin-bottom 0 !important
   // navbar
   --f7-navbar-title-line-height 1.3
   --f7-navbar-subtitle-line-height 1.3
@@ -44,18 +48,19 @@ html
   .f7-icons
      font-size 20px
 
-.ios
-.md
-  // list
-  --f7-list-margin-vertical 20px
-  .media-list, li.media-item
-    --f7-list-item-padding-vertical 7px
-
 /* Fixes for desktop devices */
 .device-desktop
   // disable all searchbar backdrops on desktop devices
   .searchbar-backdrop
     display none
+
+/* Adjustments for iOS & Material Design themes */
+.ios
+.md
+  --f7-list-margin-vertical 20px
+  li.media-item
+    --f7-typography-margin 0
+    --f7-list-item-padding-vertical 10px
 
 /* Adjustments for cards */
 :root
