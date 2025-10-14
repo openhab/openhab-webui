@@ -1,19 +1,21 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="thing-details-page">
-    <f7-navbar :title="pageTitle + dirtyIndicator" back-link="Back" no-hairline>
-      <f7-nav-right v-if="!error && ready">
-        <f7-link v-if="!editable"
-                 icon-f7="lock_fill"
-                 icon-only
-                 tooltip="This Thing is not editable through the UI" />
-        <f7-link v-else-if="theme.md"
-                 icon-md="material:save"
-                 icon-only
-                 @click="save()" />
-        <f7-link v-else @click="save()">
-          Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
-        </f7-link>
-      </f7-nav-right>
+    <f7-navbar no-hairline>
+      <oh-nav-content :title="pageTitle + dirtyIndicator" back-link="Back" :f7router>
+        <template v-if="!error && ready" #right>
+          <f7-link v-if="!editable"
+                   icon-f7="lock_fill"
+                   icon-only
+                   tooltip="This Thing is not editable through the UI" />
+          <f7-link v-else-if="theme.md"
+                   icon-md="material:save"
+                   icon-only
+                   @click="save()" />
+          <f7-link v-else @click="save()">
+            Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
+          </f7-link>
+        </template>
+      </oh-nav-content>
     </f7-navbar>
     <f7-toolbar tabbar position="top">
       <f7-link @click="switchTab('thing')"

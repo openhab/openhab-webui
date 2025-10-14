@@ -6,6 +6,7 @@ import '@/js/monkeypatch'
 import { createApp } from 'vue'
 
 // Import globally registered components
+import OhNavContent from '@/components/navigation/oh-nav-content.vue'
 import OHIconComponent from './components/widgets/system/oh-icon.vue'
 import GenericWidgetComponent from './components/widgets/generic-widget-component.vue'
 import DeveloperDockIcon from './components/developer/developer-dock-icon.vue'
@@ -61,6 +62,7 @@ app.use(VueClipboard, {
 })
 
 // Register global components
+app.component('OhNavContent', OhNavContent)
 app.component('OhIcon', OHIconComponent)
 app.component('GenericWidgetComponent', GenericWidgetComponent)
 app.component('DeveloperDockIcon', DeveloperDockIcon)

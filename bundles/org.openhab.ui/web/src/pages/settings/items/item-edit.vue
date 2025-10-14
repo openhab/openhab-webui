@@ -1,19 +1,21 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
-    <f7-navbar :title="pageTitle + dirtyIndicator" :back-link="editable ? 'Cancel' : 'Back'">
-      <f7-nav-right v-show="ready">
-        <f7-link v-if="!editable"
-                 icon-f7="lock_fill"
-                 icon-only
-                 :tooltip="notEditableMsg" />
-        <f7-link v-else-if="theme.md"
-                 icon-md="material:save"
-                 icon-only
-                 @click="save()" />
-        <f7-link v-else @click="save()">
-          Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
-        </f7-link>
-      </f7-nav-right>
+    <f7-navbar>
+      <oh-nav-content :title="pageTitle + dirtyIndicator" :back-link="editable ? 'Cancel' : 'Back'" :f7router>
+        <template v-if="ready" #right>
+          <f7-link v-if="!editable"
+                   icon-f7="lock_fill"
+                   icon-only
+                   :tooltip="notEditableMsg" />
+          <f7-link v-else-if="theme.md"
+                   icon-md="material:save"
+                   icon-only
+                   @click="save()" />
+          <f7-link v-else @click="save()">
+            Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
+          </f7-link>
+        </template>
+      </oh-nav-content>
     </f7-navbar>
     <f7-toolbar tabbar position="top">
       <f7-link @click="switchTab('design', fromYaml)" :tab-link-active="currentTab === 'design'" tab-link="#design">
@@ -80,10 +82,10 @@
 </template>
 
 <style lang="stylus">
-.item-code-editor.vue-codemirror
-  display block
+.item-code-editor.v-codemirror
+  position absolute
   top calc(var(--f7-navbar-height) + var(--f7-tabbar-height))
-  height calc(100% - 2*var(--f7-navbar-height))
+  height calc(100% - var(--f7-navbar-height, 56px) - var(--f7-tabbar-height, 48px))
   width 100%
 .yaml-message
   display block
