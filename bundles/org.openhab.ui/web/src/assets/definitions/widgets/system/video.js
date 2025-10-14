@@ -9,7 +9,7 @@ export default () => [
   pb('startMuted', 'Start Muted', 'Mute audio output by default').a(),
   pi('posterItem', 'Poster Item', 'Image item or String item containing the URL of an image to use as a poster before the video loads').a(),
   pt('posterURL', 'Poster URL', 'URL of an image to use as a poster before the video loads (if item if not specified)').a(),
-  pt('playerType', 'Player Type', 'Select the player type (optional), defualts to Video.js').o([
+  pt('playerType', 'Player Type', 'Select the player type (optional), defaults to Video.js').o([
     { value: 'videojs', label: 'Video.js (Dash, HLS, Others)' },
     { value: 'webrtc', label: 'WebRTC' }
   ], true, false).a(),
