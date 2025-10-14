@@ -40,7 +40,7 @@
                                 v-bind="$attrs"
                                 :context="childContext(context.component.slots.accordion[0])" />
     </f7-accordion-content>
-    <template #root v-if="$slots.root">
+    <template #root>
       <f7-accordion-content v-if="isEquipmentAccordion && !context.editmode">
         <generic-widget-component v-bind="$attrs" :context="childContext(context.component.slots.accordion[0])" />
       </f7-accordion-content>
