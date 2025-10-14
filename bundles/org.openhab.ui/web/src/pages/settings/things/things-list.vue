@@ -114,17 +114,10 @@
             <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
           </span>
           <template v-if="groupBy === 'location'">
-            <div v-if="!$device.desktop && f7.width < 1024"
-                 style="text-align: right; color: var(--f7-block-text-color); font-weight: normal"
-                 class="float-right">
-              <f7-checkbox :checked="showNoLocation ? true : null" @change="toggleShowNoLocation" />
-              <label @click="toggleShowNoLocation" style="cursor: pointer">Show no location</label>
-            </div>
-            <div v-else
-                 style="text-align: right; color: var(--f7-block-text-color); font-weight: normal"
-                 class="float-right">
-              <label @click="toggleShowNoLocation" style="cursor: pointer">Show no location</label>
-              <f7-checkbox :checked="showNoLocation ? true : null" @change="toggleShowNoLocation" />
+            <div style="text-align: right" class="padding-right">
+              <label class="show-no-location-label">
+                <f7-checkbox v-model:checked="showNoLocation" />
+                Show no location</label>
             </div>
           </template>
         </f7-block-title>
@@ -416,9 +409,6 @@ export default {
         }
         if (groupBy === 'alphabetical') this.$refs.listIndex.update()
       })
-    },
-    toggleShowNoLocation () {
-      this.showNoLocation = !this.showNoLocation
     },
     toggleCheck () {
       this.showCheckboxes = !this.showCheckboxes
