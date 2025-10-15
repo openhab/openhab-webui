@@ -31,11 +31,9 @@ export default {
   widget: OhPlayerDefinition,
   watch: {
     '$store.state.media.currentGlobalPlayerName'(newVal) {
-      console.log("==================== currentGlobalPlayerName changed:", newVal);
         this.item = this.$store.state.media.currentGlobalPlayerItem
     },
     '$store.state.media.currentGlobalPlayerItem'(newVal) {
-      console.log("==================== currentGlobalPlayerItem changed:", newVal);
       this.item = this.$store.state.media.currentGlobalPlayerItem
     }
   },
