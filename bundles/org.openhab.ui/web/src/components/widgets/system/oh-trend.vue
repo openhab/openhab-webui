@@ -3,6 +3,7 @@
          :key="'trend' + config.item"
          :style="config.style"
          :width="trendWidth"
+         :viewWidth="trendWidth"
          class="trend"
          :data="trendData"
          :gradient="trendGradient"
