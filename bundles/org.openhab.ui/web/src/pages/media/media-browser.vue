@@ -36,32 +36,35 @@
         </div>
 
      <br/>
-     
-        <b>currentGlobalPlayerName:</b> {{ $store.state.media.currentGlobalPlayerName }}
-        <br/>
-        <b>currentGlobalPlayerItem:</b> {{ $store.state.media.currentGlobalPlayerItem }}
-        <br/>
-        <b>item:</b> {{ item }}
-        <br/>
-        <b>device:</b> {{ device }}
-        <br/>
-
-        <b>artistName:</b> {{ artistName }}
-        <br/>
-        <b>trackName:</b> {{ trackName }}
-        <br/>
-        <b>artUri:</b> {{ artUri }}
-        <br/>
-        <b>trackPosition%:</b> {{ trackPositionPourcent }}
-        <br/>
-
-        <b>trackPosition:</b> {{ formatTime(trackPosition) }}
-        <br/>
-        <b>trackDuration:</b> {{ formatTime(trackDuration) }}
-        <br/>
-        <b>volume:</b> {{ volume }}
-        <br/>
-<!--                 -->           
+    
+    <table style="border:solid 1px #000000;background-color:#ffffff;color:#303030;display:inline-block;margin:20px;padding:0px;">
+      <tr style="font-weight: bold;background-color: #c0c0c0;">
+        <td>currentGlobalPlayerName</td>
+        <td>currentGlobalPlayerItem</td>
+        <td>item</td>
+        <td>device</td>
+        <td>volume</td>
+        <td>artistName</td>
+        <td>trackName</td>
+        <td>trackPosition</td>
+        <td>trackDuration</td>
+        <td>trackPosition%</td>
+        <td>artUri</td>
+      </tr>
+      <tr>
+        <td nowrap>{{ $store.state.media.currentGlobalPlayerName }}</td>
+        <td nowrap>{{ $store.state.media.currentGlobalPlayerItem }}</td>
+        <td nowrap>{{ item }}</td>
+        <td nowrap>{{ device }}</td>
+        <td nowrap>{{ volume }}</td>
+        <td nowrap>{{ artistName }}</td>
+        <td nowrap>{{ trackName }}</td>
+        <td nowrap>{{ formatTime(trackPosition) }}</td>
+        <td nowrap>{{ formatTime(trackDuration) }}</td>
+        <td nowrap>{{ trackPositionPourcent }}</td>
+        <td nowrap>{{ artUri }}</td>
+      </tr>
+    </table>
 
         
         
@@ -216,6 +219,9 @@ export default {
     MediaBrowserThumbGrid
   },
   watch: {
+    'itemState'(newVal) {
+      this.decodeState()
+    },
     '$store.state.media.currentGlobalPlayerName'(newVal) {
       this.item = this.$store.state.media.currentGlobalPlayerItem
     },
@@ -294,47 +300,17 @@ export default {
     }
   },
   computed: {
+    itemState() {
+      return this.$store.getters.trackedItems[this.item]?.state ?? '';
+    },
     displayPlayer() {
       return this.isGlobalMediaPlayer;
     },
     trackPositionPourcent() {
-      this.decodeState();
       return this.trackPosition/this.trackDuration*100.00
     },
 
-    trackPosition() {
-        this.decodeState();
-        return this.trackPosition
-    },
-
-    trackDuration() {
-        this.decodeState();
-        return this.trackDuration
-    },
-
-    volume() {
-        this.decodeState();
-        return this.volume
-    },
-
-    trackName() {
-        this.decodeState();
-        return this.trackName
-    },
-
-    artistName() {
-        this.decodeState();
-        return this.artistName
-    },
-
-
-    artUri() {
-        this.decodeState();
-        return this.artUri
-    },
     
-
-
     currentRoute () {
       let res = ''
       if (this.$f7router && this.$f7router.currentRoute) {
