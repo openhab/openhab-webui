@@ -130,14 +130,19 @@ export default {
     }
   },
   mounted () {
-    import(`../../../../node_modules/echarts/lib/i18n/lang${this.echartsLocale}.js`).then((lang) => {
-      registerLocale(this.echartsLocale, lang.default)
-      console.log('echart localisation loaded: ', this.echartsLocale)
-    }).catch(() => {
-      console.log('echart localisation loading failed: ', this.echartsLocale)
-    }).finally(() => {
+    // echarts localisation for EN and ZH are already included
+    if(["EN", "ZH"].includes(this.echartsLocale)) {
       this.ready = true
-    })
+    } else {
+      import(`../../../../node_modules/echarts/lib/i18n/lang${this.echartsLocale}.js`).then((lang) => {
+        registerLocale(this.echartsLocale, lang.default)
+        console.log('echart localisation loaded: ', this.echartsLocale)
+      }).catch(() => {
+        console.log('echart localisation loading failed: ', this.echartsLocale)
+      }).finally(() => {
+        this.ready = true
+      })
+    }
   },
   beforeUnmount () {
     if (this.calendarPicker) this.calendarPicker.destroy()
