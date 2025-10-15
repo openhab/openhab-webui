@@ -48,33 +48,23 @@ export default {
   },
   computed: {
     isPlaying () {
-      const value = this.context.store[this.config.item].state
       this.decodeState()
       return this.state === 'PLAY'
     },
     mediaBrowserUri () {
-      const value = this.context.store[this.config.item].state
       this.decodeState()
       return '/mediapopup/?item=' + this.config.item + '&device=' + this.device + '&binding=' + this.binding
     },
     mediaDeviceSelectorUri () {
-      const value = this.context.store[this.config.item].state
-      let components = value.split(',')
-      let device = components[3]
-      let binding = components[4]
-      console.log('device is ', device)
-      console.log('binding is ', binding)
+      this.decodeState()
       return '/mediadevicepopup/?item=' + this.config.item + '&device=' + this.device + '&binding=' + this.binding
     }
   },
   methods: {
     decodeState () {
       const value = this.context.store[this.config.item].state
-      console.log('=============a:', value);
       if (!(value === undefined || value === null || value === '' || value==='-')) {
-        console.log('=============b');
         if (value.indexOf('{') === 0) {
-          console.log('=============c');
           let json = JSON.parse(value);
           this.state = json.state;
           this.device = json.device.value;
@@ -85,7 +75,6 @@ export default {
           this.trackPosition = json.currentPlayingTrackPosition.value;
           this.trackDuration = json.currentPlayingTrackDuration.value;
           this.volume = json.currentPlayingVolume.value;
-          console.log('=============d:' + this.state);
         } else {
           let components = value.split(',')
           let state = components[0]
