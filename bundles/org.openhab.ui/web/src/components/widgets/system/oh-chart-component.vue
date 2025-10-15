@@ -3,7 +3,7 @@
     <chart
       v-if="ready"
       ref="chart"
-      :init-options="initOptions"
+      :initOptions="initOptions"
       :option="options"
       class="oh-chart"
       @click="handleClick"
@@ -76,22 +76,17 @@ use([CanvasRenderer, LineChart, BarChart, GaugeChart, HeatmapChart, PieChart, Sc
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
-let echartsLocale = useRuntimeStore().locale.split('-')[0].toUpperCase()
-
-/* TODO-V3.1
-import(`../../../../node_modules/echarts/lib/i18n/lang${echartsLocale}.js`).then((lang) => {
-  console.info(`Registering ECharts locale ${echartsLocale}`)
-  registerLocale(echartsLocale, lang.default)
-}).catch(() => {
-  console.warn(`No ECharts locale found for ${echartsLocale}`)
-  echartsLocale = null
-})
-*/
-
 export default {
   mixins: [mixin, chart, actionsMixin],
   components: {
     chart: VChart
+  },
+  setup () {
+    let echartsLocale = useRuntimeStore().locale.split('-')[0].toUpperCase()
+    let initOptions = echartsLocale ? {
+        locale: echartsLocale
+      } : null
+    return { echartsLocale, initOptions }
   },
   computed: {
     activeHeight () {
@@ -126,11 +121,6 @@ export default {
           return startTime.format('ll')
       }
     },
-    initOptions () {
-      return echartsLocale ? {
-        locale: echartsLocale
-      } : null
-    },
     ...mapStores(useUIOptionsStore, useRuntimeStore)
   },
   data () {
@@ -140,7 +130,14 @@ export default {
     }
   },
   mounted () {
-    this.ready = true
+    import(`../../../../node_modules/echarts/lib/i18n/lang${this.echartsLocale}.js`).then((lang) => {
+      registerLocale(this.echartsLocale, lang.default)
+      console.log('echart localisation loaded: ', this.echartsLocale)
+    }).catch(() => {
+      console.log('echart localisation loading failed: ', this.echartsLocale)
+    }).finally(() => {
+      this.ready = true
+    })
   },
   beforeUnmount () {
     if (this.calendarPicker) this.calendarPicker.destroy()
