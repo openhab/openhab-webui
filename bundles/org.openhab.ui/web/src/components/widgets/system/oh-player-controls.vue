@@ -6,7 +6,6 @@
       <f7-button color="blue" @click.stop="playPause()" large round fill :icon-f7="(isPlaying) ? 'pause_fill' : 'play_fill'" icon-size="24" />
       <f7-button v-if="this.config.showRewindFFward" color="blue" @click.stop="fastForward()" large icon-material="fast_forward" icon-size="24" icon-color="gray" />
       <f7-button color="blue" @click.stop="skipNext()" large icon-material="skip_next" icon-size="24" icon-color="gray" />
-
       <f7-button color="blue" large icon-material="folder" icon-size="24" icon-color="gray" :href="mediaBrowserUri" />
       <f7-button color="blue" large icon-material="speaker" icon-size="24" icon-color="gray" :href="mediaDeviceSelectorUri" />
     </f7-segmented>
@@ -34,20 +33,29 @@ export default {
   mounted () {
     delete this.config.value
   },
+  data () {
+    return {
+      state: '',
+      device: '',
+      binding:'',
+      artistName: '',
+      trackName: '',
+      artUri: '',
+      trackPosition: 0,
+      trackDuration: 0,
+      volume: 0
+    }
+  },
   computed: {
     isPlaying () {
       const value = this.context.store[this.config.item].state
-      let components = value.split(',')
-      let state = components[0]
-      console.log('isPlaying', value, this.config.item, state)
-      return state === 'PLAY'
+      this.decodeState()
+      return this.state === 'PLAY'
     },
     mediaBrowserUri () {
       const value = this.context.store[this.config.item].state
-      let components = value.split(',')
-      let device = components[3]
-      let binding = components[4]
-      return '/mediapopup/?item=' + this.config.item + '&device=' + device + '&binding=' + binding
+      this.decodeState()
+      return '/mediapopup/?item=' + this.config.item + '&device=' + this.device + '&binding=' + this.binding
     },
     mediaDeviceSelectorUri () {
       const value = this.context.store[this.config.item].state
@@ -56,10 +64,34 @@ export default {
       let binding = components[4]
       console.log('device is ', device)
       console.log('binding is ', binding)
-      return '/mediadevicepopup/?item=' + this.config.item + '&device=' + device + '&binding=' + binding
+      return '/mediadevicepopup/?item=' + this.config.item + '&device=' + this.device + '&binding=' + this.binding
     }
   },
   methods: {
+    decodeState () {
+      const value = this.context.store[this.config.item].state
+      console.log('=============a:', value);
+      if (!(value === undefined || value === null || value === '' || value==='-')) {
+        console.log('=============b');
+        if (value.indexOf('{') === 0) {
+          console.log('=============c');
+          let json = JSON.parse(value);
+          this.state = json.state;
+          this.device = json.device.value;
+          this.binding = json.binding.value;
+          this.artistName = json.currentPlayingArtistName.value;
+          this.trackName = json.currentPlayingTrackName.value;
+          this.artUri = json.currentPlayingArtUri.value;
+          this.trackPosition = json.currentPlayingTrackPosition.value;
+          this.trackDuration = json.currentPlayingTrackDuration.value;
+          this.volume = json.currentPlayingVolume.value;
+          console.log('=============d:' + this.state);
+        } else {
+          let components = value.split(',')
+          let state = components[0]
+        }
+      }
+    },
     skipPrevious (value) {
       this.$store.dispatch('sendCommand', { itemName: this.config.item, cmd: 'PREVIOUS' })
     },

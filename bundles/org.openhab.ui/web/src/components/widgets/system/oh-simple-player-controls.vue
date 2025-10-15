@@ -35,7 +35,16 @@ export default {
     }
     
     return {
-      item: this.item
+      item: this.item,
+      state: '',
+      device: '',
+      binding:'',
+      artistName: '',
+      trackName: '',
+      artUri: '',
+      trackPosition: 0,
+      trackDuration: 0,
+      volume: 0
     }
   },
   mounted () {
@@ -43,8 +52,10 @@ export default {
   },
   computed: {
     isPlaying () {
+      console.log('isPlaying for item ' + this.item);
       if (this.$store.getters.trackedItems[this.item]!= undefined) {
         const value = this.$store.getters.trackedItems[this.item].state
+        console.log('value is ' + value);
         if (value === undefined || value === null || value === '') {
           return false
         }
@@ -62,6 +73,27 @@ export default {
     }
   },
   methods: {
+    decodeState () {
+      //if (this.$store.getters.trackedItems[this.item]!= undefined)
+      const value = this.context.store[this.config.item].state
+      if (!(value === undefined || value === null || value === '' || value==='-')) {
+        if (value.indexOf('{') === 0) {
+          let json = JSON.parse(value);
+          this.state = json.state;
+          this.device = json.device.value;
+          this.binding = json.binding.value;
+          this.artistName = json.currentPlayingArtistName.value;
+          this.trackName = json.currentPlayingTrackName.value;
+          this.artUri = json.currentPlayingArtUri.value;
+          this.trackPosition = json.currentPlayingTrackPosition.value;
+          this.trackDuration = json.currentPlayingTrackDuration.value;
+          this.volume = json.currentPlayingVolume.value;
+        } else {
+          let components = value.split(',')
+          let state = components[0]
+        }
+      }
+    },
     skipPrevious (value) {
       this.$store.dispatch('sendCommand', { itemName: this.item, cmd: 'PREVIOUS' })
     },
