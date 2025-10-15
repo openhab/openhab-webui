@@ -43,8 +43,7 @@
         <br/>
         <b>item:</b> {{ item }}
         <br/>
-
-        <b>mediaControl:</b> {{ mediaControl }}
+        <b>device:</b> {{ device }}
         <br/>
 
         <b>artistName:</b> {{ artistName }}
@@ -282,70 +281,52 @@ export default {
       results: [],
       loading: false,
       searchTimeout: null,
-      sliderVolume:9
+      state: '',
+      binding:'',
+      artistName: '',
+      trackName: '',
+      artUri: '',
+      trackPosition: 0,
+      trackDuration: 0,
+      volume: 0
+
     }
   },
   computed: {
-
-    mediaControl() {
-      if (this.$store.getters.trackedItems[this.item]!= undefined) {
-        const value = this.$store.getters.trackedItems[this.item].state
-        //console.log('value2', value);
-        if (value === undefined || value === null || value === '') {
-          return false
-        }
-        if (value==='-') {
-          return false
-        }
-        var mediaType = JSON.parse(value)
-        //console.log('value2', mediaType.currentPlayingArtistName)
-        //console.log('value2', mediaType.currentPlayingTrackName)
-        return mediaType
-      }
-    },
-
     trackPositionPourcent() {
-      if (this.mediaControl!=undefined && this.mediaControl.currentPlayingTrackPosition!== undefined) {
-        return this.mediaControl.currentPlayingTrackPosition.value/this.mediaControl.currentPlayingTrackDuration.value*100.00
-      }
+      this.decodeState();
+      return this.trackPosition/this.trackDuration*100.00
     },
 
     trackPosition() {
-      if (this.mediaControl!=undefined && this.mediaControl.currentPlayingTrackPosition!== undefined) {
-         return this.mediaControl.currentPlayingTrackPosition.value
-      } 
+        this.decodeState();
+        return this.trackPosition
     },
 
     trackDuration() {
-      if (this.mediaControl!=undefined && this.mediaControl.currentPlayingTrackDuration!== undefined) {
-         return this.mediaControl.currentPlayingTrackDuration.value
-      } 
+        this.decodeState();
+        return this.trackDuration
     },
 
     volume() {
-        if (this.mediaControl!=undefined && this.mediaControl.currentPlayingVolume!== undefined) {
-          return this.mediaControl.currentPlayingVolume.value
-        } 
-        return "10";
+        this.decodeState();
+        return this.volume
     },
 
     trackName() {
-      if (this.mediaControl!=undefined && this.mediaControl.currentPlayingTrackName!== undefined) {
-         return this.mediaControl.currentPlayingTrackName.value
-      } 
+        this.decodeState();
+        return this.trackName
     },
 
     artistName() {
-      if (this.mediaControl!=undefined && this.mediaControl.currentPlayingArtistName!== undefined) {
-         return this.mediaControl.currentPlayingArtistName.value
-      } 
+        this.decodeState();
+        return this.artistName
     },
 
 
     artUri() {
-      if (this.mediaControl!=undefined && this.mediaControl.currentPlayingArtUri!== undefined) {
-         return this.mediaControl.currentPlayingArtUri.value
-      } 
+        this.decodeState();
+        return this.artUri
     },
     
 
@@ -386,6 +367,26 @@ export default {
 
   },
   methods: {
+     decodeState () {
+      const value = this.$store.getters.trackedItems[this.item].state
+      console.log("================value:" + value)
+      if (!(value === undefined || value === null || value === '' || value==='-')) {
+        if (value.indexOf('{') === 0) {
+          let json = JSON.parse(value);
+          this.state = json.state;
+          this.binding = json.binding.value;
+          this.artistName = json.currentPlayingArtistName.value;
+          this.trackName = json.currentPlayingTrackName.value;
+          this.artUri = json.currentPlayingArtUri.value;
+          this.trackPosition = json.currentPlayingTrackPosition.value;
+          this.trackDuration = json.currentPlayingTrackDuration.value;
+          this.volume = json.currentPlayingVolume.value;
+        } else {
+          let components = value.split(',')
+          let state = components[0]
+        }
+      }
+    },
     onPageInit(e) {
     },
     formatTime(ms) {
@@ -414,8 +415,8 @@ export default {
       mediaType.command = command
       mediaType.param = id
       mediaType.device = {}
-      if (this.device !== undefined && this.device !== null) {
-        mediaType.device.value = this.device.value
+      if (this.device !== null) {
+        mediaType.device.value = this.device
       } 
       
       return JSON.stringify(mediaType)
