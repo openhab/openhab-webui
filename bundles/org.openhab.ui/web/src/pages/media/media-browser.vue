@@ -144,7 +144,7 @@
       </div>
     </div>
 
-    <f7-toolbar v-if="true" bottom style="min-height: 150px;padding:0px;margin:0px;">
+    <f7-toolbar v-if="displayPlayer" bottom style="min-height: 150px;padding:0px;margin:0px;">
       <div v-if="true" style="display: flex; align-items: center; justify-content:left;padding:0px;margin:0px;">
         <div style="margin:0px;padding:0px;">
           <img :src="artUri" style="width: 150px; height: 150px; margin:0px;padding:0px;">
@@ -224,6 +224,7 @@ export default {
     }
   },
   data () {
+    this.isGlobalMediaPlayer = this.$f7route.query.item=== undefined || this.$f7route.query.item===null;
     this.item = this.$f7route.query.item
     this.device = this.$f7route.query.device
 
@@ -293,6 +294,9 @@ export default {
     }
   },
   computed: {
+    displayPlayer() {
+      return this.isGlobalMediaPlayer;
+    },
     trackPositionPourcent() {
       this.decodeState();
       return this.trackPosition/this.trackDuration*100.00
