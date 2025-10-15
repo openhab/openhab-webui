@@ -1,5 +1,5 @@
 <template>
-  <f7-page>
+  <f7-page @page:init="onPageInit">
     <f7-navbar title="MediaBrowser" back-link="Back" style="min-height:50px;">
       <f7-nav-right>
         <f7-button popup-close>
@@ -36,12 +36,12 @@
         </div>
 
      <br/>
-     <!--
+     
         <b>currentGlobalPlayerName:</b> {{ $store.state.media.currentGlobalPlayerName }}
         <br/>
         <b>currentGlobalPlayerItem:</b> {{ $store.state.media.currentGlobalPlayerItem }}
         <br/>
-        <b>currentGlobalPlayerItem:</b> {{ item }}
+        <b>item:</b> {{ item }}
         <br/>
 
         <b>mediaControl:</b> {{ mediaControl }}
@@ -62,7 +62,7 @@
         <br/>
         <b>volume:</b> {{ volume }}
         <br/>
-                 -->           
+<!--                 -->           
 
         
         
@@ -176,7 +176,7 @@
                {{ formatTime(trackPosition)  }}
             </div>
             <div style="width:500px;">
-              <f7-range ref="rangeslider" class="oh-slider" :min="0" :max="100" :step="1" :value="trackPositionPourcent" />
+              <f7-range ref="rangeslider" class="oh-slider" :min="0" :max="100" :step="1" :value="trackPositionPourcent" :key="trackPositionPourcent"  />
             </div>
             <div style="padding-left:20px;">
                {{ formatTime(trackDuration) }}
@@ -191,7 +191,7 @@
         -->
         <div style="width:400px;height:150px;padding:0px;display: flex; align-items: center; justify-content:left;">
           <f7-button icon-material="speaker" outline style="height:40px;font-weight:bold;padding:2px;padding-right:30px;text-align:left;border:none 0px;" large icon-size="36" />
-          <f7-range ref="rangeslider" class="oh-slider" :min="0" :max="100" :step="1"  :value="volume" :label="true" @range:changed="onVolumeChange"/>
+          <f7-range ref="volumesSlider" class="oh-slider" :min="0" :max="100" :step="1"  :value="volume" @range:changed="onVolumeChange" />
           <br/>
           <div style="padding-left:30px;width:50px">
             {{ volume }}  %
@@ -216,6 +216,14 @@ export default {
     OhSimplePlayerControls,
     MediaBrowserThumbGrid
   },
+  watch: {
+    '$store.state.media.currentGlobalPlayerName'(newVal) {
+      this.item = this.$store.state.media.currentGlobalPlayerItem
+    },
+    '$store.state.media.currentGlobalPlayerItem'(newVal) {
+      this.item = this.$store.state.media.currentGlobalPlayerItem
+    }
+  },
   data () {
     this.item = this.$f7route.query.item
     this.device = this.$f7route.query.device
@@ -239,14 +247,9 @@ export default {
     this.path = '/Root'
 
 
-    if (this.item=== undefined || this.item === null || this.item === '') {
-      this.item = this.$store.state.media.currentGlobalPlayerItem
-    }
+    this.item = this.$store.state.media.currentGlobalPlayerItem
 
 
-    //this.item="MCR612_Spotify_Controle_Media"
-    //console.log('MediaBrowser item: ' + this.item)
-    //console.log('============= Mouted MediaBrowser =============')
     if (this.$store!== undefined && this.item!== undefined && this.item !== null && this.item !== '') {
 
       if (!this.$store.getters.isItemTracked(this.item)) 
@@ -257,10 +260,8 @@ export default {
       
     }
 
-    //console.log('============= Data MediaBrowser =============')
 
     
-    //console.log('item:', this.item);
     if (this.$store.getters.trackedItems[this.item]!== undefined) {
     }
     else  {
@@ -280,8 +281,8 @@ export default {
       item: this.item,
       results: [],
       loading: false,
-      searchTimeout: null
-      
+      searchTimeout: null,
+      sliderVolume:9
     }
   },
   computed: {
@@ -322,9 +323,10 @@ export default {
     },
 
     volume() {
-      if (this.mediaControl!=undefined && this.mediaControl.currentPlayingVolume!== undefined) {
-         return this.mediaControl.currentPlayingVolume.value
-      } 
+        if (this.mediaControl!=undefined && this.mediaControl.currentPlayingVolume!== undefined) {
+          return this.mediaControl.currentPlayingVolume.value
+        } 
+        return "10";
     },
 
     trackName() {
@@ -384,6 +386,8 @@ export default {
 
   },
   methods: {
+    onPageInit(e) {
+    },
     formatTime(ms) {
       const totalSeconds = Math.floor(ms / 1000);
       const minutes = Math.floor(totalSeconds / 60);
@@ -396,16 +400,12 @@ export default {
       return `${formattedMinutes}:${formattedSeconds}`;
     },
     onVolumeChange(event) {
-      this.item = this.$f7route.query.item
-      if (this.item=== undefined || this.item === null || this.item === '') {
-        this.item = this.$store.state.media.currentGlobalPlayerItem
-      }
-
-     console.log('Nouvelle valeur :', event)
-     this.$store.dispatch('sendCommand', { itemName: this.item, cmd: this.createMediaType('VOLUME', event) })
+      const itemName = this.item ?? this.$store.state.media.currentGlobalPlayerItem;
+      this.$store.dispatch('sendCommand', {
+        itemName,
+        cmd: this.createMediaType('VOLUME', event)
+      });
     },
-    onPageAfterIn () {
-    }, 
     onClose () {
     },
     createMediaType(command, id) {

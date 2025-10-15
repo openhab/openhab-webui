@@ -29,6 +29,16 @@ import { OhPlayerDefinition } from '@/assets/definitions/widgets/system'
 export default {
   mixins: [mixin],
   widget: OhPlayerDefinition,
+  watch: {
+    '$store.state.media.currentGlobalPlayerName'(newVal) {
+      console.log("==================== currentGlobalPlayerName changed:", newVal);
+        this.item = this.$store.state.media.currentGlobalPlayerItem
+    },
+    '$store.state.media.currentGlobalPlayerItem'(newVal) {
+      console.log("==================== currentGlobalPlayerItem changed:", newVal);
+      this.item = this.$store.state.media.currentGlobalPlayerItem
+    }
+  },
   data: function () {
     if (this.item=== undefined || this.item === null || this.item === '') {
       this.item = this.$store.state.media.currentGlobalPlayerItem

@@ -121,24 +121,14 @@ export default {
       return JSON.stringify(mediaType)
     },
     changeDevice () {
-      console.log('Selected option: ' + this.selectedOption)
-      console.log('Selected option: ' + this.selectedOption.id)
-      console.log('Selected option: ' + this.selectedOption.playerItemName)
-      console.log('MediaDeviceSelector item(a): ' + this.item)
       if (this.item === undefined || this.item === null || this.item === '') {
         this.item = this.selectedOption.playerItemName
       }
-      
-      console.log('MediaDeviceSelector item(b): ' + this.item)
-      console.log('pa') 
+
       this.$store.commit('setMapping', { key: 'Root', value: 'Racine' })
-      console.log('pb')
       this.$store.commit('setCurrentGlobalPlayerName',  this.selectedOption.id)
       this.$store.commit('setCurrentGlobalPlayerItem',  this.selectedOption.playerItemName)
-      console.log('pc')
-      console.log('pc', this.item)
       this.$store.dispatch('sendCommand', { itemName: this.item, cmd: this.createMediaType('DEVICE', this.selectedOption.id)})
-      console.log('pd')
     },
     select (e) {
       console.log('Selected option: ' + this.selectedOption)
