@@ -12,7 +12,7 @@
       <div v-if="node">
         
         <!--
-        Display a naviation bar to navigate media hierarchy.
+        Display a navigation bar to navigate media hierarchy.
         -->
         <div style="display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: space-between; align-items: center;">
           <div style="display: flex; flex-direction: row; flex-wrap: nowrap;">
@@ -34,15 +34,16 @@
               style="width:400px;border:solid 1px #000000;border-radius:10px;" />
           </div>
         </div>
-<!--
+
      <br/>
+     <!--
         <b>currentGlobalPlayerName:</b> {{ $store.state.media.currentGlobalPlayerName }}
         <br/>
         <b>currentGlobalPlayerItem:</b> {{ $store.state.media.currentGlobalPlayerItem }}
         <br/>
         <b>currentGlobalPlayerItem:</b> {{ item }}
         <br/>
-        
+
         <b>mediaControl:</b> {{ mediaControl }}
         <br/>
 
@@ -61,7 +62,7 @@
         <br/>
         <b>volume:</b> {{ volume }}
         <br/>
-           -->           
+                 -->           
 
         
         
@@ -155,11 +156,21 @@
            {{ artistName  }} <br>
         </div>
         <div>
+          <!--
+          =============================================
+          Player controls
+          =============================================
+          -->
           <div>
             <div style="width:300px;padding:20px;padding-left: 140px;">
               <oh-simple-player-controls />
             </div>
           </div>
+          <!--
+          =============================================
+          Tack position slider
+          =============================================
+          -->
           <div style="display: flex; padding:20px;">
             <div style="padding-right:20px;">
                {{ formatTime(trackPosition)  }}
@@ -173,6 +184,11 @@
           </div>
         </div>
         <div style="width:200px;" />
+        <!--
+          =============================================
+          Volume slider
+          =============================================
+        -->
         <div style="width:400px;height:150px;padding:0px;display: flex; align-items: center; justify-content:left;">
           <f7-button icon-material="speaker" outline style="height:40px;font-weight:bold;padding:2px;padding-right:30px;text-align:left;border:none 0px;" large icon-size="36" />
           <f7-range ref="rangeslider" class="oh-slider" :min="0" :max="100" :step="1"  :value="volume" :label="true" @range:changed="onVolumeChange"/>
