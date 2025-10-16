@@ -28,7 +28,7 @@
     </f7-navbar>
     <f7-toolbar v-if="showCheckboxes"
                 class="contextual-toolbar"
-                :class="{ navbar: theme.md, 'tabbar-labels': f7.width < 480 }"
+                :class="{ navbar: theme.md, 'tabbar-labels': $f7dim.width < 480 }"
                 bottom-ios
                 bottom-aurora>
       <f7-link v-if="!theme.md"
@@ -150,7 +150,7 @@
                                icon="wand_stars"
                                title="rules.title"
                                text="rules.text" />
-      <f7-row v-if="f7.width < 1280" class="display-flex justify-content-center">
+      <f7-row v-if="$f7dim.width < 1280" class="display-flex justify-content-center">
         <f7-button large
                    fill
                    color="blue"

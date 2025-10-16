@@ -17,7 +17,7 @@ export default {
   },
   computed: {
     iconVisible () {
-      return useUserStore().isAdmin() && f7.width >= 1280
+      return useUserStore().isAdmin() && this.$f7dim.width >= 1280
     },
     ...mapStores(useRuntimeStore)
   }

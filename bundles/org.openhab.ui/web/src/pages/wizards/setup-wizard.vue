@@ -693,7 +693,7 @@ export default {
       f7.panel.get('left').enableVisibleBreakpoint()
       nextTick(() => {
         f7.views.main.router.navigate('/', { transition: 'f7-circle', clearPreviousHistory: true })
-        if (f7.width >= 1280) {
+        if (this.$f7dim.width >= 1280) {
           f7.emit('selectDeveloperDock', { dock: 'help', helpTab: 'quick' })
         }
       })

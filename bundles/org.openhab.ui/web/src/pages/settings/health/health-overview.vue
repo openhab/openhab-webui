@@ -55,8 +55,6 @@
 </template>
 
 <script>
-import { f7 } from 'framework7-vue'
-
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
 export default {
@@ -70,7 +68,7 @@ export default {
       semanticsProblemCount: 0,
 
       expandedTypes: {
-        systemSettings: f7.width >= 1450
+        systemSettings: this.$f7dim.width >= 1450
       }
     }
   },

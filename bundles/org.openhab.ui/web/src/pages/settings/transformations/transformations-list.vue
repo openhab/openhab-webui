@@ -135,7 +135,7 @@
 
     <f7-block v-if="ready && !transformations.length" class="block-narrow">
       <empty-state-placeholder icon="arrow_2_squarepath" title="transformations.title" text="transformations.text" />
-      <f7-row v-if="f7.width < 1280" class="display-flex justify-content-center">
+      <f7-row v-if="$f7dim.width < 1280" class="display-flex justify-content-center">
         <f7-button large
                    fill
                    color="blue"

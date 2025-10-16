@@ -61,7 +61,7 @@
           &nbsp;Approve
         </f7-button>
         <!-- buttons for wider screen -->
-        <template v-if="f7.width >= 500">
+        <template v-if="$f7dim.width >= 500">
           <f7-button @click="copyFileDefinitionToClipboard(ObjectType.THING, selectedItems)"
                      color="blue"
                      class="copy wider-screen display-flex flex-direction-row"
@@ -139,7 +139,7 @@
               <f7-link @click="selectDeselectAll" :text="areAllSelected ? 'Deselect all' : 'Select all'" />
             </template>
           </span>
-          <div v-if="!$device.desktop && f7.width < 1024" style="text-align: right; color: var(--f7-block-text-color); font-weight: normal" class="float-right">
+          <div v-if="!$device.desktop && $f7dim.width < 1024" style="text-align: right; color: var(--f7-block-text-color); font-weight: normal" class="float-right">
             <label class="advanced-label">
               <f7-checkbox v-model:checked="showIgnored" @change="changeIgnored" />
               Show ignored

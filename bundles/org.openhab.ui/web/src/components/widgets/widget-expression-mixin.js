@@ -1,5 +1,5 @@
 import { nextTick } from 'vue'
-import { f7, theme } from 'framework7-vue'
+import { theme } from 'framework7-vue'
 
 import expr, { addUnaryOp, evaluate, parse } from 'jse-eval'
 import dayjs from 'dayjs'
@@ -81,8 +81,8 @@ export default {
         pixelDepth: window.screen.pixelDepth,
         viewAreaWidth: viewAreaWidth,
         viewAreaHeight: viewAreaHeight,
-        appWidth: f7.width,
-        appHeight: f7.height
+        appWidth: this.$f7dim.width,
+        appHeight: this.$f7dim.height
       }
     }
   },

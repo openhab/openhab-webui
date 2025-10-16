@@ -18,7 +18,7 @@
         <developer-dock-icon />
       </f7-nav-right>
     </f7-navbar>
-    <f7-toolbar v-show="f7.width < 1024 || !leftPanelOpened" tabbar bottom>
+    <f7-toolbar v-show="$f7dim.width < 1024 || !leftPanelOpened" tabbar bottom>
       <f7-link tab-link="#main"
                :tab-link-active="runtimeStore.pagePath === '/addons/'"
                href="/addons/"

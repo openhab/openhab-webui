@@ -44,7 +44,7 @@
       </f7-subnavbar>
 
       <!-- Toolbar -->
-      <f7-toolbar v-if="f7.width >= 500" bottom class="toolbar-details">
+      <f7-toolbar v-if="$f7dim.width >= 500" bottom class="toolbar-details">
         <f7-link v-if="!multiple"
                  class="left"
                  :class="{ disabled: selectedItem == null }"

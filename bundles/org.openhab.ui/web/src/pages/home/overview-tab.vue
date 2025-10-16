@@ -28,7 +28,7 @@
                  @command="onCommand" />
       <div v-else-if="!inChatSession" class="empty-overview">
         <empty-state-placeholder icon="house" title="overview.title" text="overview.text" />
-        <f7-row v-if="!userStore.isAdmin() || f7.width < 1280" class="display-flex justify-content-center">
+        <f7-row v-if="!userStore.isAdmin() || $f7dim.width < 1280" class="display-flex justify-content-center">
           <f7-button large
                      fill
                      color="blue"

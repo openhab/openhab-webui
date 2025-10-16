@@ -31,7 +31,6 @@
 </style>
 
 <script>
-import { f7 } from 'framework7-vue'
 import AddonCard from '@/components/addons/addon-card.vue'
 
 export default {
@@ -46,7 +45,7 @@ export default {
   },
   computed: {
     slidesPerView () {
-      if (f7.width > f7.height) return 3.5
+      if (this.$f7dim.width > this.$f7dim.height) return 3.5
       return 1.5
     }
   },
