@@ -32,12 +32,6 @@ export default {
   name: 'MediaBrowser',
   props: ['title', 'multiple', 'name', 'value', 'required'],
   data () {
-    this.currentDevice = this.$f7route.query.device
-    if (this.currentDevice === undefined || this.currentDevice === null || this.currentDevice === '') {
-      this.currentDevice = this.$store.state.media.currentGlobalPlayerName
-    }
-    console.log('MediaDeviceSelector currentDevice Name: ' + this.currentDevice)
-
     this.item = this.$f7route.query.item
     if (this.item === undefined || this.item === null || this.item === '') {
       this.item = this.$store.state.media.currentGlobalPlayerItem
