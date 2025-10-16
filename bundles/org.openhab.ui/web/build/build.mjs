@@ -27,14 +27,12 @@ exec(`npm run generate-build-info ${process.argv[2]}`)
     build({
       root: resolve(__dirname, '..')
     })
-      .then(rollupOutput => {
+      .then(() => {
         spinner.stop()
-
-        process.stdout.write(rollupOutput.toString())
 
         console.log(chalk.cyan('Build complete.\n'))
       })
-      .catch(err => {
+      .catch((err) => {
         spinner.stop()
         console.error(chalk.red('Build failed with errors.\n'))
         console.error(err)
