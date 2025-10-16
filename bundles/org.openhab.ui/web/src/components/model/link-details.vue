@@ -97,6 +97,7 @@ export default {
       })
     },
     addLink () {
+      this.f7router.allowPageChange = true
       this.f7router.navigate({
         url: 'links/new',
         route: {
@@ -110,6 +111,7 @@ export default {
       })
     },
     editLink (link) {
+      this.f7router.allowPageChange = true
       if (link._invalid) {
         f7.dialog.confirm('This link is invalid, remove it?', 'Invalid Link',
           () => {
