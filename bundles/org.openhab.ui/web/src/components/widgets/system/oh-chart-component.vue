@@ -84,8 +84,8 @@ export default {
   setup () {
     let echartsLocale = useRuntimeStore().locale.split('-')[0].toUpperCase()
     let initOptions = echartsLocale ? {
-        locale: echartsLocale
-      } : null
+      locale: echartsLocale
+    } : null
     return { echartsLocale, initOptions }
   },
   computed: {
@@ -131,7 +131,7 @@ export default {
   },
   mounted () {
     // echarts localisation for EN and ZH are already included
-    if(["EN", "ZH"].includes(this.echartsLocale)) {
+    if(['EN', 'ZH'].includes(this.echartsLocale)) {
       this.ready = true
     } else {
       import(`../../../../node_modules/echarts/lib/i18n/lang${this.echartsLocale}.js`).then((lang) => {
