@@ -89,11 +89,11 @@
               <p style="font-size:20pt; font-weight:bold;">
                 {{ node.label }}
               </p>
-              <f7-button small outline :fill="true" style="background-color:#9090c0;width: 120px;height:32px;font-weight:bold;padding:2px;padding-left:10px;text-align:left;border:none 0px;" @click="doPlay(item, node.path)" icon-material="play_arrow" large icon-size="24">
+              <f7-button small outline :fill="true" style="background-color:#9090c0;width: 120px;height:32px;font-weight:bold;padding:2px;padding-left:10px;text-align:left;border:none 0px;" @click="doPlay(currentPlayerItem, node.path)" icon-material="play_arrow" large icon-size="24">
                 Play
               </f7-button>
               <br>
-              <f7-button small outline :fill="true" style="background-color:#9090c0;width: 120px;height:32px;font-weight:bold;padding:2px;padding-left:10px;text-align:left;border:none 0px;" @click="doEnqueue(item, node.path)"
+              <f7-button small outline :fill="true" style="background-color:#9090c0;width: 120px;height:32px;font-weight:bold;padding:2px;padding-left:10px;text-align:left;border:none 0px;" @click="doEnqueue(currentPlayerItem, node.path)"
                          icon-material="playlist_add" large icon-size="24">
                 Enqueue
               </f7-button>
@@ -106,10 +106,10 @@
           <!-- Track list -->
           <div v-for="child in items" style="display: inline;clear:both;" :class="{ 'sheet-opened': controlsOpened }" :key="child.path">
             <f7-link :href="`/mediabrowser/?path=` + child.path + `&item=` + item + `&device=` + device" :data-reload="true" :reload-current="true" :reload-detail="true">
-              <f7-button outline style="height:30px;font-weight:bold;padding:2px;padding-left:30px;text-align:left;border:none 0px;" @click="doPlay(item, child.path)" icon-material="play_arrow" small icon-size="24">
+              <f7-button outline style="height:30px;font-weight:bold;padding:2px;padding-left:30px;text-align:left;border:none 0px;" @click="doPlay(currentPlayerItem, child.path)" icon-material="play_arrow" small icon-size="24">
                 Play
               </f7-button>
-              <f7-button outline style="height:30px;font-weight:bold;padding:2px;padding-left:30px;text-align:left;border:none 0px;" @click="doEnqueue(item, child.path)" icon-material="playlist_add" small icon-size="24">
+              <f7-button outline style="height:30px;font-weight:bold;padding:2px;padding-left:30px;text-align:left;border:none 0px;" @click="doEnqueue(currentPlayerItem, child.path)" icon-material="playlist_add" small icon-size="24">
                 Enqueue
               </f7-button>
               <div style="padding-left:30px;color:black">
