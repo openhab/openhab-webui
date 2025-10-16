@@ -11,7 +11,7 @@
       <f7-nav-right>
         <developer-dock-icon />
       </f7-nav-right>
-      <f7-subnavbar :inner="false" v-show="initSearchbar">
+      <f7-subnavbar :inner="false" v-show="initSearchbar" style="height: var(--f7-searchbar-height)">
         <f7-searchbar
           v-if="initSearchbar"
           ref="searchbar"
@@ -351,7 +351,6 @@ export default {
   mixins: [ModelMixin],
   components: {
     EmptyStatePlaceholder,
-
     ModelDetailsPane,
     ModelTreeview,
     ItemStatePreview,

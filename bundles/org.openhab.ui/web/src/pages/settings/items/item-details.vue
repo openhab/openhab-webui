@@ -177,16 +177,20 @@
     visibility hidden
 </style>
 
-<script>
-import cloneDeep from 'lodash/cloneDeep'
-import { f7, theme } from 'framework7-vue'
-
-import { useStatesStore } from '@/js/stores/useStatesStore'
-
+<script setup>
 import ItemStatePreview from '@/components/item/item-state-preview.vue'
 import LinkDetails from '@/components/model/link-details.vue'
 import GroupMembers from '@/components/item/group-members.vue'
 import MetadataMenu from '@/components/item/metadata/item-metadata-menu.vue'
+</script>
+
+<script>
+import cloneDeep from 'lodash/cloneDeep'
+import { utils } from 'framework7'
+import { f7, theme } from 'framework7-vue'
+
+import { useStatesStore } from '@/js/stores/useStatesStore'
+
 import ItemMixin from '@/components/item/item-mixin'
 import FileDefinition from '@/pages/settings/file-definition-mixin'
 
@@ -196,14 +200,8 @@ export default {
     itemName: String,
     f7router: Object
   },
-  components: {
-    LinkDetails,
-    GroupMembers,
-    ItemStatePreview,
-    MetadataMenu
-  },
   setup () {
-    return { theme }
+    return { theme, utils }
   },
   data () {
     return {
