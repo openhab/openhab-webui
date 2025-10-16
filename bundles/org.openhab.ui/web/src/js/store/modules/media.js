@@ -1,9 +1,12 @@
+import { set } from 'lodash'
 import Vue from 'vue'
 
 const state = {
   mappings: {},
-  currentGlobalPlayerName: localStorage.getItem('currentGlobalPlayerName') || 'aa',
-  currentGlobalPlayerItem: localStorage.getItem('currentGlobalPlayerItem') || 'aa'
+  currentGlobalPlayerName: localStorage.getItem('currentGlobalPlayerName'),
+  currentGlobalPlayerItem: localStorage.getItem('currentGlobalPlayerItem'),
+  mediaBrowserMode: localStorage.getItem('mediaBrowserMode'),
+  playerItem: localStorage.getItem('playerItem')
 }
 
 const mutations = {
@@ -20,6 +23,14 @@ const mutations = {
   setCurrentGlobalPlayerItem(state,  playerItem) {
     state.currentGlobalPlayerItem = playerItem
     localStorage.setItem('currentGlobalPlayerItem', playerItem)
+  },
+  setMediaBrowserMode(state,  mode) {
+    state.mediaBrowserMode = mode
+    localStorage.setItem('mediaBrowserMode', mode)
+  },
+  setPlayerItem(state,  playerItem) {
+    state.playerItem = playerItem
+    localStorage.setItem('playerItem', playerItem)
   }
   
 }

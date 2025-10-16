@@ -114,7 +114,7 @@
         </f7-list>
 
         <f7-list class="admin-links">
-          <f7-list-item link="/mediabrowser/" :title="$t('sidebar.mediaBrowser')" view=".view-main" panel-close :animate="false"
+          <f7-list-item link="/mediabrowser/" :route-props="{ mediaBrowserMode: 'Global' }" :title="$t('sidebar.mediaBrowser')" view=".view-main" panel-close :animate="false"
                         :class="{ currentsection: currentPath.mediaBrowser?.$end }">
             <f7-icon slot="media" ios="f7:music_house_fill" aurora="f7:music_house_fill" md="material:shopping_bag" color="gray" />
           </f7-list-item>

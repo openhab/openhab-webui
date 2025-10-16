@@ -1,8 +1,8 @@
 <template>
-  <f7-popup :opened="false" @popup:closed="onClosed" :backdrop="true" :animate="false" :closeOnEscape="true" :push="false" :closeByBackdropClick="true" class="popup-media">
+  <f7-popup :opened="opened"  @popup:closed="onClosed" :backdrop="true" :animate="false" :closeOnEscape="true" :push="false" :closeByBackdropClick="true" class="popup-media">
     <f7-view class="view-sheet-modal" url="/mediabrowser/" :animate="false">
       <f7-page>
-        <media-browser @navigate="onNavigate" />
+        <media-browser  media-browser-mode="Popup" @navigate="$emit('navigate', $event)" :player-item="playerItem" />
       </f7-page>
     </f7-view>
   </f7-popup>
@@ -17,12 +17,14 @@ export default {
   props: {
     opened: {
       type: Boolean,
-      required: false
+      required: true
+    },
+    playerItem: {
+      type: String,
+      required: true
     }
   },
   data () {
-    return {
-    }
   },
   methods: {
     onClosed () {

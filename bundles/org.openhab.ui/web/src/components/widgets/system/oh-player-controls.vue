@@ -6,10 +6,15 @@
       <f7-button color="blue" @click.stop="playPause()" large round fill :icon-f7="(isPlaying) ? 'pause_fill' : 'play_fill'" icon-size="24" />
       <f7-button v-if="this.config.showRewindFFward" color="blue" @click.stop="fastForward()" large icon-material="fast_forward" icon-size="24" icon-color="gray" />
       <f7-button color="blue" @click.stop="skipNext()" large icon-material="skip_next" icon-size="24" icon-color="gray" />
-      <f7-button color="blue" large icon-material="folder" icon-size="24" icon-color="gray" :href="mediaBrowserUri" />
+      <f7-button color="blue" large icon-material="folder" icon-size="24" icon-color="gray"   @click="openPopup"/>
+      <!--
+      :href="mediaBrowserUri"
+      -->
       <f7-button color="blue" large icon-material="speaker" icon-size="24" icon-color="gray" :href="mediaDeviceSelectorUri" />
+
+      <media-popup :opened="popupOpened"  :player-item="config.item"  @update:opened="popupOpened = $event"/>
     </f7-segmented>
-  </div>
+  </div> 
 </template>
 
 <style lang="stylus">
@@ -26,12 +31,16 @@
 <script>
 import mixin from '../widget-mixin'
 import { OhPlayerDefinition } from '@/assets/definitions/widgets/system'
+import MediaPopup from '@/pages/media/media-popup.vue'
 
 export default {
   mixins: [mixin],
   widget: OhPlayerDefinition,
   mounted () {
     delete this.config.value
+  },
+  components: {        // ⚡ Ici on déclare le composant
+    MediaPopup
   },
   data () {
     return {
@@ -43,7 +52,8 @@ export default {
       artUri: '',
       trackPosition: 0,
       trackDuration: 0,
-      volume: 0
+      volume: 0,
+      popupOpened: false
     }
   },
   computed: {
@@ -53,14 +63,17 @@ export default {
     },
     mediaBrowserUri () {
       this.decodeState()
-      return '/mediapopup/?item=' + this.config.item + '&device=' + this.device + '&binding=' + this.binding
+      return '/mediapopup/?item=' + this.config.item 
     },
     mediaDeviceSelectorUri () {
       this.decodeState()
-      return '/mediadevicepopup/?item=' + this.config.item + '&device=' + this.device + '&binding=' + this.binding
+      return '/mediadevicepopup/?item=' + this.config.item
     }
   },
   methods: {
+    openPopup() {
+      this.popupOpened = true
+    },
     decodeState () {
       const value = this.context.store[this.config.item].state
       if (!(value === undefined || value === null || value === '' || value==='-')) {
@@ -76,8 +89,9 @@ export default {
           this.trackDuration = json.currentPlayingTrackDuration.value;
           this.volume = json.currentPlayingVolume.value;
         } else {
+          console.log("===========value:" + value)
           let components = value.split(',')
-          let state = components[0]
+          this.state = components[0]
         }
       }
     },

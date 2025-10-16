@@ -17,11 +17,12 @@
         <div style="display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: space-between; align-items: center;">
           <div style="display: flex; flex-direction: row; flex-wrap: nowrap;">
             <div v-for="componentPath in currentPathSegments" style="padding:5px;" :key="componentPath.path">
-              <f7-link :href="`/mediabrowser/?path=` + componentPath.path + `&item=` + item + `&device=` + device">
+              <f7-link :href="`/mediabrowser/?path=` + componentPath.path" :route-props="{ mediaBrowserMode }">
                 {{ componentPath.name }}
               </f7-link> >
             </div>
           </div>
+
 
           <div style="padding:5px; border:0px;">
             <f7-searchbar
@@ -34,8 +35,11 @@
               style="width:400px;border:solid 1px #000000;border-radius:10px;" />
           </div>
         </div>
-
      <br/>
+    mode: {{  currentMediaBrowserMode }}
+    <br/>
+    playerItem: {{  currentPlayerItem }}
+    <br/>
     
     <table style="border:solid 1px #000000;background-color:#ffffff;color:#303030;display:inline-block;margin:20px;padding:0px;">
       <tr style="font-weight: bold;background-color: #c0c0c0;">
@@ -132,7 +136,7 @@
         -->
         <div v-else>
           <div v-for="child in items" style="width:200px;height:200px;position:relative;float:left;margin:20px;background-color:#ffffff;color:#000000;border:solid 1px;border-radius:10px;padding:10px;" :key="child.path">
-            <f7-link :href="`/mediabrowser/?path=` + child.path + `&item=` + item + `&device=` + device">
+            <f7-link :href="`/mediabrowser/?path=` + child.path" :route-props="{ mediaBrowserMode }">
               <div id="container" style="position:relative">
                 <div style="text-align:center;position:absolute;top:-10px;width:200px;">
                   {{ child.label }}
@@ -209,10 +213,20 @@ import OhSimplePlayerControls from '../../components/widgets/system/oh-simple-pl
 import media from '../../js/store/modules/media'
 import MediaBrowserThumbGrid from './media-browser-thumb-grid.vue'
 import mixin from '@/components/widgets/widget-mixin' 
+import { useStore } from 'vuex'
+import { useMediaStore } from '@/js/store/modules/media'
+import { computed } from 'vue'
 
 export default {
-  name: 'MediaBrowser',
-  props: {
+  props:  {
+      mediaBrowserMode: {
+        type: String,
+        required: false
+      },
+      playerItem: {
+        type: String,
+        required: false
+      }
   },
   components: {
     OhSimplePlayerControls,
@@ -230,7 +244,6 @@ export default {
     }
   },
   data () {
-    this.isGlobalMediaPlayer = this.$f7route.query.item=== undefined || this.$f7route.query.item===null;
     this.item = this.$f7route.query.item
     this.device = this.$f7route.query.device
 
@@ -300,11 +313,27 @@ export default {
     }
   },
   computed: {
+    currentMediaBrowserMode() {
+      if (!this.mediaBrowserMode) {
+        return this.$store.state.media.mediaBrowserMode
+      }
+
+      this.$store.commit('setMediaBrowserMode', this.mediaBrowserMode)
+      return this.mediaBrowserMode
+    },
+    currentPlayerItem() {
+      if (!this.playerItem) {
+        return this.$store.state.media.playerItem
+      }
+
+      this.$store.commit('setPlayerItem', this.playerItem)
+      return this.playerItem
+    },
     itemState() {
       return this.$store.getters.trackedItems[this.item]?.state ?? '';
     },
     displayPlayer() {
-      return this.isGlobalMediaPlayer;
+      return this.mediaBrowserMode === 'Global'
     },
     trackPositionPourcent() {
       return this.trackPosition/this.trackDuration*100.00
@@ -505,7 +534,7 @@ export default {
         // const data = await response.json();
 
         this.$store.dispatch('sendCommand', { itemName: this.item, cmd: this.createMediaType('SEARCH', encodeURIComponent(query.query)) })
-        this.$f7router.navigate('/mediabrowser/?path=/Root/Search&query=' + query.query + '&item=' + this.item + '&device=' + this.device, { reloadCurrent: true, reloadDetail: true })
+        this.$f7router.navigate('/mediabrowser/?path=/Root/Search&query=' + query.query, { reloadCurrent: true, reloadDetail: true })
 
         // Ici, adapte selon la structure de la réponse de ton API
         this.results = [{ 'name': 'name1', 'val': 'val1' }, { 'name': 'name2', 'val': 'val2' }]
