@@ -44,15 +44,16 @@
     			icon-material="folder" 
     			icon-size="24" 
     			icon-color="gray"  
-    			@click="openPopup"/>
+    			@click="openBrowserPopup"/>
     <f7-button color="blue"   					
     			large 		
     			icon-material="speaker
     			icon-size="24" 
     			icon-color="gray"  
-    			:href="mediaDeviceSelectorUri"/>
+    			@click="openDeviceSelectorPopup"/>
 				
-	<media-popup :opened="popupOpened"  :player-item="config.item"  @update:opened="popupOpened = $event"/>
+	<media-popup :opened="browserPopupOpened"  :player-item="config.item"  @update:opened="browserPopupOpened = $event"/>
+    <media-device-popup :opened="deviceSelectorPopupOpened"  :player-item="config.item"  @update:opened="deviceSelectorPopupOpened = $event"/>
                
   </f7-segmented>
   </div>
@@ -75,6 +76,7 @@
 import mixin from '../widget-mixin'
 import { OhPlayerDefinition } from '@/assets/definitions/widgets/system'
 import MediaPopup from '@/pages/media/media-popup.vue'
+import MediaDevicePopup from '@/pages/media/media-device-selector-popup.vue'
 import { useStatesStore } from '@/js/stores/useStatesStore'
 
 export default {
@@ -84,7 +86,8 @@ export default {
     delete this.config.value
   },
   components: {        // ⚡ Ici on déclare le composant
-    MediaPopup
+    MediaPopup,
+    MediaDevicePopup
   },
   data () {
     return {
@@ -97,7 +100,8 @@ export default {
       trackPosition: 0,
       trackDuration: 0,
       volume: 0,
-      popupOpened: false
+      browserPopupOpened: false,
+      deviceSelectorPopupOpened: false
     }
   },
   computed: {
@@ -105,19 +109,12 @@ export default {
       this.decodeState()
       return this.state === 'PLAY'
     },
-    mediaBrowserUri () {
-        const value = this.context.store[this.config.item].state
-		this.decodeState()
-      return '/mediapopup/?item=' + this.config.item 
-    },
-    mediaDeviceSelectorUri () {
-      this.decodeState()
-      return '/mediadevicepopup/?item=' + this.config.item
-    }
-  },
   methods: {
-    openPopup() {
-      this.popupOpened = true
+    openBrowserPopup() {
+      this.browserPopupOpened = true
+  },
+    openDeviceSelectorPopup() {
+      this.deviceSelectorPopupOpened = true
     },
     decodeState () {
       const value = this.context.store[this.config.item].state

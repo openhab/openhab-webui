@@ -34,11 +34,7 @@ export default {
       type: String,
       required: true
     },
-    item: {
-      type: String,
-      required: true
-    },
-    device: {
+    playerItem: {
       type: String,
       required: true
     },

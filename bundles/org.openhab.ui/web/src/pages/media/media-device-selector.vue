@@ -8,10 +8,13 @@
       </f7-nav-right>
     </f7-navbar>
 
+    currentPlayerItem: {{  currentPlayerItem }}
     <div v-if="node">
       <f7-list form>
-        <f7-list-item v-for="item in node.childs" :title="item.binding + ` : ` + item.name + ` (` + item.type + `) `" :key="item.id"  radio :checked="(selectedOption!=null) ? (selectedOption.id === item.id)?true:false:false"
-                      @change="selectedOption = item" :name="'options-group'" />
+        <f7-list-item v-for="item in node.childs" 
+                    :title="item.playerItemName + ` ` + item.id + ` : ` + item.binding + ` : ` + item.name + ` (` + item.type + `) `" 
+                    :key="item.id"  radio :checked="(currentPlayerItem!=null) ? (currentPlayerItem === item.playerItemName)?true:false:false"
+                    @change="selectedOption = item" :name="'options-group'" />
       </f7-list>
     </div>
 
@@ -30,20 +33,29 @@
 <script>
 export default {
   name: 'MediaBrowser',
-  props: ['title', 'multiple', 'name', 'value', 'required'],
+  props: 
+  {
+    playerItem: {
+      type: String,
+      required: false
+    }
+  },
   data () {
-    this.item = this.$f7route.query.item
-    if (this.item === undefined || this.item === null || this.item === '') {
-      this.item = this.$store.state.media.currentGlobalPlayerItem
+    let currentPlayerItem = this.playerItem
+    console.log("p0:" + this.currentPlayerItem);
+
+    
+    if (currentPlayerItem === undefined || currentPlayerItem === null || currentPlayerItem === '') {
+      console.log("p1");
+      currentPlayerItem = this.$store.state.media.playerItem
+    }
+    console.log("p2");
+    if (currentPlayerItem === undefined || currentPlayerItem === null || currentPlayerItem === '') {
+      console.log("p3");
+      currentPlayerItem = this.$store.state.media.currentGlobalPlayerItem
     }
 
-    console.log('MediaDeviceSelector currentDevice Item: ' + this.item)
-
-    this.$f7.toast.create({
-      text: this.$t('media.page.updated'),
-      destroyOnClose: true,
-      closeTimeout: 2000
-    }).open()
+    this.$store.commit('setPlayerItem', currentPlayerItem)
 
     this.path = '/Root'
 
@@ -53,6 +65,7 @@ export default {
 
     console.log('MediaBrowser path: ' + this.path)
 
+    let selectedOption= ""
     this.$oh.api.get('/rest/media/sinks').then((data) => {
       data.childs = data.childs.sort((a, b) => {
         if (a.binding < b.binding) return -1
@@ -62,7 +75,6 @@ export default {
         if (a.name > b.name) return 1
         return 0
       })
-      console.log('Data:' + JSON.stringify(data))
       data.childs = data.childs.filter((device) => {
         return device.playerItemName !== ''
       })
@@ -71,7 +83,7 @@ export default {
       //})
 
       console.log('item:' + this.item)
-      this.selectedOption = data.childs.find((device) => {
+      selectedOption = data.childs.find((device) => {
         return device.id === this.currentDevice
       })
       // "8bf6830ca7a00068f294ca8016421b3678b7568b";
@@ -80,11 +92,12 @@ export default {
     })
 
     return {
+      currentPlayerItem: currentPlayerItem,
       node: this.node,
       controlsOpened: true,
       item: this.item,
       ready: true,
-      selectedOption: this.selectedOption
+      selectedOption: selectedOption
     }
   },
   computed: {
@@ -100,8 +113,7 @@ export default {
     },
     currentPath () {
       return this.$f7route.query.path || ''
-    }
-
+    },
   },
   methods: {
     onClose () {
@@ -115,14 +127,19 @@ export default {
       return JSON.stringify(mediaType)
     },
     changeDevice () {
-      if (this.item === undefined || this.item === null || this.item === '') {
-        this.item = this.selectedOption.playerItemName
+      console.log('this.currentPlayerItem:', this.currentPlayerItem)
+      if (this.currentPlayerItem === undefined || this.currentPlayerItem === null || this.currentPlayerItem === '' || this.currentPlayerItem === 'undefined') {
+        console.log('p1')
+        this.currentPlayerItem = this.selectedOption.playerItemName
       }
+      console.log('p2')
+
+      console.log('this.selectedOption:', this.selectedOption)
+      console.log('this.currentPlayerItem:', this.currentPlayerItem)
 
       this.$store.commit('setMapping', { key: 'Root', value: 'Racine' })
-      this.$store.commit('setCurrentGlobalPlayerName',  this.selectedOption.id)
-      this.$store.commit('setCurrentGlobalPlayerItem',  this.selectedOption.playerItemName)
-      this.$store.dispatch('sendCommand', { itemName: this.item, cmd: this.createMediaType('DEVICE', this.selectedOption.id)})
+      this.$store.commit('setCurrentGlobalPlayerItem',  this.currentPlayerItem)
+      this.$store.dispatch('sendCommand', { itemName: this.currentPlayerItem, cmd: this.createMediaType('DEVICE', this.selectedOption.id)})
     },
     select (e) {
       console.log('Selected option: ' + this.selectedOption)
