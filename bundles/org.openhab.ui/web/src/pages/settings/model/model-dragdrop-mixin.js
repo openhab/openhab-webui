@@ -10,29 +10,6 @@ import fastDeepEqual from 'fast-deep-equal/es6'
 
 export default {
   mixins: [ItemMixin, TagMixin],
-  props: {
-    moveState: {
-      type: Object,
-      default: () => ({
-        moving: false,
-        canAdd: false,
-        canRemove: false,
-        dragEnd: true,
-        dragFinished: false,
-        saving: false,
-        cancelled: false,
-        moveConfirmed: false,
-        node: null,
-        newParent: null,
-        oldParent: null,
-        oldIndex: null,
-        dragStartTimestamp: null,
-        nodesToUpdate: [],
-        moveDelayedOpen: null,
-        moveTarget: null
-      })
-    }
-  },
   watch: {
     canSave (val) {
       if (val) this.saveUpdate()

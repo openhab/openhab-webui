@@ -83,6 +83,30 @@ export default {
     Draggable,
     ModelTreeviewItem
   },
+  data () {
+    return {
+      moveState: {
+        moving: false,
+        canAdd: false,
+        canRemove: false,
+        dragEnd: true,
+        dragFinished: false,
+        saving: false,
+        cancelled: false,
+        moveConfirmed: false,
+        adding: false,
+        removing: false,
+        node: null,
+        newParent: null,
+        oldParent: null,
+        oldIndex: null,
+        dragStartTimestamp: null,
+        nodesToUpdate: [],
+        moveDelayedOpen: null,
+        moveTarget: null
+      }
+    }
+  },
   computed: {
     model () {
       return {

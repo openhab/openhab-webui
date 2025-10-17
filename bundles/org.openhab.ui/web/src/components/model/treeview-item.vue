@@ -92,7 +92,8 @@ export default {
     selected: Object,
     includeItemName: Boolean,
     includeItemTags: Boolean,
-    canDragDrop: Boolean
+    canDragDrop: Boolean,
+    moveState: Object
   },
   emits: ['reload', 'selected', 'checked'],
   components: {
