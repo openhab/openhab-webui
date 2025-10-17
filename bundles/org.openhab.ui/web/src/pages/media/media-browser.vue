@@ -35,10 +35,8 @@
               style="width:400px;border:solid 1px #000000;border-radius:10px;" />
           </div>
         </div>
-     <br/>
+    <br/>
 
-     playerState: {{ playerItemState }}
-    
     <table style="border:solid 1px #000000;background-color:#ffffff;color:#303030;display:inline-block;margin:20px;padding:0px;">
       <tr style="font-weight: bold;background-color: #c0c0c0;">
         <td>mediaBrowserMode</td>
@@ -237,7 +235,7 @@ export default {
   },
   watch: {
     'playerItemState'(newVal) {
-      console.log("================playerItemState(newVal):" + newVal)
+      console.log("playerItemState(newVal):" + newVal)
       this.decodeState()
     },
     '$store.state.media.currentGlobalPlayerItem'(newVal) {
@@ -311,7 +309,21 @@ export default {
       return currentPlayerItem;
     },
     playerItemState() {
-      console.log("================playerItemState")
+      if (this.$store!== undefined && this.currentPlayerItem!== undefined && this.currentPlayerItem !== null && this.currentPlayerItem !== '') {
+        if (!this.$store.getters.isItemTracked(this.currentPlayerItem)) 
+        {
+          this.$store.commit('addToTrackingList', this.currentPlayerItem)
+          this.$store.dispatch('startTrackingStates')
+        }
+      }
+        
+      if (this.$store.getters.trackedItems[this.currentPlayerItem]!== undefined) {
+        console.log('item tracked:', this.currentPlayerItem);
+      }
+      else  {
+        console.log('item not tracked:', this.currentPlayerItem);
+      }
+
       this.decodeState()
       return this.$store.getters.trackedItems[this.currentPlayerItem]?.state ?? '';
     },
@@ -361,7 +373,6 @@ export default {
   methods: {
      decodeState () {
       const value = this.$store.getters.trackedItems[this.currentPlayerItem].state
-      console.log("================value1:" + this.$store)
       if (!(value === undefined || value === null || value === '' || value==='-')) {
         if (value.indexOf('{') === 0) {
           let json = JSON.parse(value);
