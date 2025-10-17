@@ -6,7 +6,10 @@
       <f7-button color="blue" @click.stop="playPause()" large round fill :icon-f7="(isPlaying) ? 'pause_fill' : 'play_fill'" icon-size="24" style="vertical-align: middle;display: flex;"/>
       <f7-button color="blue" @click.stop="fastForward()" large icon-material="fast_forward" icon-size="24" icon-color="gray" style="vertical-align: middle;display: flex;"/>
       <f7-button color="blue" @click.stop="skipNext()" large icon-material="skip_next" icon-size="24" icon-color="gray" style="vertical-align: middle;display: flex;"/>
-      <f7-button color="blue" large icon-material="speaker" icon-size="24" icon-color="gray" :href="mediaDeviceSelectorUri" style="vertical-align: middle;display: flex;"/>
+
+      <f7-button color="blue" large icon-material="speaker" icon-size="24" icon-color="gray" @click="openDeviceSelectorPopup" />
+      <media-device-selector-popup :opened="deviceSelectorPopupOpened"  :player-item="currentPlayerItem"  @update:opened="deviceSelectorPopupOpened = $event"/>
+
     </f7-segmented>
   </div>
 </template>
@@ -25,25 +28,26 @@
 <script>
 import mixin from '../widget-mixin'
 import { OhPlayerDefinition } from '@/assets/definitions/widgets/system'
+import MediaDeviceSelectorPopup from '@/pages/media/media-device-selector-popup.vue'
 
 export default {
   mixins: [mixin],
   widget: OhPlayerDefinition,
   watch: {
-    '$store.state.media.currentGlobalPlayerName'(newVal) {
-        this.item = this.$store.state.media.currentGlobalPlayerItem
-    },
     '$store.state.media.currentGlobalPlayerItem'(newVal) {
-      this.item = this.$store.state.media.currentGlobalPlayerItem
+        this.currentPlayerItem = this.$store.state.media.currentGlobalPlayerItem
     }
   },
+   components: {        // ⚡ Ici on déclare le composant
+    MediaDeviceSelectorPopup
+  },
   data: function () {
-    if (this.item=== undefined || this.item === null || this.item === '') {
-      this.item = this.$store.state.media.currentGlobalPlayerItem
+    if (this.currentPlayerItem === undefined) {
+      this.currentPlayerItem = this.$store.state.media.currentGlobalPlayerItem
     }
-    
+
     return {
-      item: this.item,
+      currentPlayerItem: this.currentPlayerItem,
       state: '',
       device: '',
       binding:'',
@@ -52,7 +56,8 @@ export default {
       artUri: '',
       trackPosition: 0,
       trackDuration: 0,
-      volume: 0
+      volume: 0,
+      deviceSelectorPopupOpened: false
     }
   },
   mounted () {
@@ -63,13 +68,17 @@ export default {
       this.decodeState()
       return this.state === 'PLAY'
     },
-    mediaDeviceSelectorUri () {
-      return '/mediadevicepopup/?binding=Upnp'
-    }
   },
   methods: {
+    openDeviceSelectorPopup() {
+      this.deviceSelectorPopupOpened = true
+    },
     decodeState () {
-      const value = this.$store.getters.trackedItems[this.item].state
+      console.log("decodeState called for " + this.currentPlayerItem);
+      const value = this.$store.getters.trackedItems[this.currentPlayerItem].state
+      
+      console.log("value:" + JSON.stringify(this.$store.getters.trackedItems));
+      console.log("value:" + value);
       if (!(value === undefined || value === null || value === '' || value==='-')) {
         if (value.indexOf('{') === 0) {
           let json = JSON.parse(value);
@@ -89,19 +98,19 @@ export default {
       }
     },
     skipPrevious (value) {
-      this.$store.dispatch('sendCommand', { itemName: this.item, cmd: 'PREVIOUS' })
+      this.$store.dispatch('sendCommand', { itemName: this.currentPlayerItem, cmd: 'PREVIOUS' })
     },
     rewind (value) {
-      this.$store.dispatch('sendCommand', { itemName: this.item, cmd: 'REWIND' })
+      this.$store.dispatch('sendCommand', { itemName: this.currentPlayerItem, cmd: 'REWIND' })
     },
     playPause (value) {
-      this.$store.dispatch('sendCommand', { itemName: this.item, cmd: this.isPlaying ? 'PAUSE' : 'PLAY' })
+      this.$store.dispatch('sendCommand', { itemName: this.currentPlayerItem, cmd: this.isPlaying ? 'PAUSE' : 'PLAY' })
     },
     fastForward (value) {
-      this.$store.dispatch('sendCommand', { itemName: this.item, cmd: 'FASTFORWARD' })
+      this.$store.dispatch('sendCommand', { itemName: this.currentPlayerItem, cmd: 'FASTFORWARD' })
     },
     skipNext (value) {
-      this.$store.dispatch('sendCommand', { itemName: this.item, cmd: 'NEXT' })
+      this.$store.dispatch('sendCommand', { itemName: this.currentPlayerItem, cmd: 'NEXT' })
     }
 
   }

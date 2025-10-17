@@ -1,5 +1,5 @@
 <template>
-  <f7-popup :opened="opened"  @popup:closed="onClosed" :backdrop="true" :animate="false" :closeOnEscape="true" :push="false" :closeByBackdropClick="true" class="popup-media">
+  <f7-popup :opened="opened"  @popup:closed="$emit('update:opened', false)" :backdrop="true" :animate="false" :closeOnEscape="true" :push="false" :closeByBackdropClick="true" class="popup-media">
     <f7-view class="view-sheet-modal" url="/mediabrowser/" :animate="false">
       <f7-page>
         <media-browser  media-browser-mode="Popup" @navigate="$emit('navigate', $event)" :player-item="playerItem" />
@@ -24,12 +24,7 @@ export default {
       required: true
     }
   },
-  data () {
-  },
   methods: {
-    onClosed () {
-      this.$emit('closed')
-    },
     onNavigate (path) {
       console.log('Navigating to:', path)
       // Emit the navigate event to the parent component

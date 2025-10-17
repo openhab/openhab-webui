@@ -6,13 +6,12 @@
       <f7-button color="blue" @click.stop="playPause()" large round fill :icon-f7="(isPlaying) ? 'pause_fill' : 'play_fill'" icon-size="24" />
       <f7-button v-if="this.config.showRewindFFward" color="blue" @click.stop="fastForward()" large icon-material="fast_forward" icon-size="24" icon-color="gray" />
       <f7-button color="blue" @click.stop="skipNext()" large icon-material="skip_next" icon-size="24" icon-color="gray" />
-      <f7-button color="blue" large icon-material="folder" icon-size="24" icon-color="gray"   @click="openPopup"/>
-      <!--
-      :href="mediaBrowserUri"
-      -->
-      <f7-button color="blue" large icon-material="speaker" icon-size="24" icon-color="gray" :href="mediaDeviceSelectorUri" />
 
-      <media-popup :opened="popupOpened"  :player-item="config.item"  @update:opened="popupOpened = $event"/>
+      <f7-button color="blue" large icon-material="folder" icon-size="24" icon-color="gray"   @click="openBrowserPopup"/>
+      <f7-button color="blue" large icon-material="speaker" icon-size="24" icon-color="gray" @click="openDeviceSelectorPopup" />
+
+      <media-popup :opened="browserPopupOpened"  :player-item="config.item"  @update:opened="browserPopupOpened = $event"/>
+      <media-device-popup :opened="deviceSelectorPopupOpened"  :player-item="config.item"  @update:opened="deviceSelectorPopupOpened = $event"/>
     </f7-segmented>
   </div> 
 </template>
@@ -31,7 +30,8 @@
 <script>
 import mixin from '../widget-mixin'
 import { OhPlayerDefinition } from '@/assets/definitions/widgets/system'
-import MediaPopup from '@/pages/media/media-popup.vue'
+import MediaPopup from '@/pages/media/media-browser-popup.vue'
+import MediaDevicePopup from '@/pages/media/media-device-selector-popup.vue'
 
 export default {
   mixins: [mixin],
@@ -40,7 +40,8 @@ export default {
     delete this.config.value
   },
   components: {        // ⚡ Ici on déclare le composant
-    MediaPopup
+    MediaPopup,
+    MediaDevicePopup
   },
   data () {
     return {
@@ -53,7 +54,8 @@ export default {
       trackPosition: 0,
       trackDuration: 0,
       volume: 0,
-      popupOpened: false
+      browserPopupOpened: false,
+      deviceSelectorPopupOpened: false
     }
   },
   computed: {
@@ -61,18 +63,13 @@ export default {
       this.decodeState()
       return this.state === 'PLAY'
     },
-    mediaBrowserUri () {
-      this.decodeState()
-      return '/mediapopup/?item=' + this.config.item 
-    },
-    mediaDeviceSelectorUri () {
-      this.decodeState()
-      return '/mediadevicepopup/?item=' + this.config.item
-    }
   },
   methods: {
-    openPopup() {
-      this.popupOpened = true
+    openBrowserPopup() {
+      this.browserPopupOpened = true
+    },
+    openDeviceSelectorPopup() {
+      this.deviceSelectorPopupOpened = true
     },
     decodeState () {
       const value = this.context.store[this.config.item].state

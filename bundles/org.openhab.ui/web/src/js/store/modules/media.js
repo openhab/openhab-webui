@@ -3,7 +3,6 @@ import Vue from 'vue'
 
 const state = {
   mappings: {},
-  currentGlobalPlayerName: localStorage.getItem('currentGlobalPlayerName'),
   currentGlobalPlayerItem: localStorage.getItem('currentGlobalPlayerItem'),
   mediaBrowserMode: localStorage.getItem('mediaBrowserMode'),
   playerItem: localStorage.getItem('playerItem')
@@ -15,10 +14,6 @@ const mutations = {
   },
   removeItem (state, key) {
     Vue.delete(state.mappings, key)
-  },
-  setCurrentGlobalPlayerName(state,  playerName) {
-    state.currentGlobalPlayerName = playerName
-    localStorage.setItem('currentGlobalPlayerName', playerName)
   },
   setCurrentGlobalPlayerItem(state,  playerItem) {
     state.currentGlobalPlayerItem = playerItem

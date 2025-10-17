@@ -6,6 +6,7 @@ Vue.use(VueI18n)
 export function loadLocaleMessages (...scopes) {
   const messages = {}
   scopes.forEach(scope => {
+    console.log("scope: " + scope)
     scope.keys().forEach(key => {
       const matched = key.match(/([A-Za-z0-9-_]+)\./i)
       if (matched && matched.length > 1) {

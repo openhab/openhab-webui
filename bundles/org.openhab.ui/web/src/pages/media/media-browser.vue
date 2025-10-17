@@ -36,17 +36,14 @@
           </div>
         </div>
      <br/>
-    mode: {{  currentMediaBrowserMode }}
-    <br/>
-    playerItem: {{  currentPlayerItem }}
-    <br/>
+
+     playerState: {{ playerItemState }}
     
     <table style="border:solid 1px #000000;background-color:#ffffff;color:#303030;display:inline-block;margin:20px;padding:0px;">
       <tr style="font-weight: bold;background-color: #c0c0c0;">
-        <td>currentGlobalPlayerName</td>
-        <td>currentGlobalPlayerItem</td>
-        <td>item</td>
-        <td>device</td>
+        <td>mediaBrowserMode</td>
+        <td>globalPlayerItem</td>
+        <td>playerItem</td>
         <td>volume</td>
         <td>artistName</td>
         <td>trackName</td>
@@ -56,10 +53,10 @@
         <td>artUri</td>
       </tr>
       <tr>
-        <td nowrap>{{ $store.state.media.currentGlobalPlayerName }}</td>
+        
+        <td nowrap>{{ currentMediaBrowserMode }}</td>
         <td nowrap>{{ $store.state.media.currentGlobalPlayerItem }}</td>
-        <td nowrap>{{ item }}</td>
-        <td nowrap>{{ device }}</td>
+        <td nowrap>{{ currentPlayerItem }}</td>
         <td nowrap>{{ volume }}</td>
         <td nowrap>{{ artistName }}</td>
         <td nowrap>{{ trackName }}</td>
@@ -122,13 +119,13 @@
         </div>
         <!-- Search Handling -->
         <div v-else-if="node.pres==='search'" style="display: flex; flex-direction: column; flex-wrap: nowrap; justify-content: space-between; align-items: center; justify-content:left;padding:0px;margin:0px;">
-          <MediaBrowserThumbGrid title="Album" :items="node.childs[0].childs" :item="this.item" :device="this.device" type="Albums" />
-          <MediaBrowserThumbGrid title="Artist" :items="node.childs[1].childs" :item="this.item" :device="this.device" type="Artists" />
-          <MediaBrowserThumbGrid title="Playlist" :items="node.childs[2].childs" :item="this.item" :device="this.device" type="Playlists" />
-          <MediaBrowserThumbGrid title="Track" :items="node.childs[3].childs" :item="this.item" :device="this.device" type="Tracks" />
-          <MediaBrowserThumbGrid title="Episodes" :items="node.childs[4].childs" :item="this.item" :device="this.device" type="Episodes" />
-          <MediaBrowserThumbGrid title="Audiobooks" :items="node.childs[5].childs" :item="this.item" :device="this.device" type="Audiobooks" />
-          <MediaBrowserThumbGrid title="Podcasts" :items="node.childs[6].childs" :item="this.item" :device="this.device" type="Podcasts" />
+          <MediaBrowserThumbGrid title="Album" :items="node.childs[0].childs" :playerItem="this.currentPlayerItem" type="Albums" />
+          <MediaBrowserThumbGrid title="Artist" :items="node.childs[1].childs" :playerItem="this.currentPlayerItem" type="Artists" />
+          <MediaBrowserThumbGrid title="Playlist" :items="node.childs[2].childs" :playerItem="this.currentPlayerItem" type="Playlists" />
+          <MediaBrowserThumbGrid title="Track" :items="node.childs[3].childs" :playerItem="this.currentPlayerItem" type="Tracks" />
+          <MediaBrowserThumbGrid title="Episodes" :items="node.childs[4].childs" :playerItem="this.currentPlayerItem"  type="Episodes" />
+          <MediaBrowserThumbGrid title="Audiobooks" :items="node.childs[5].childs" :playerItem="this.currentPlayerItem" type="Audiobooks" />
+          <MediaBrowserThumbGrid title="Podcasts" :items="node.childs[6].childs" :playerItem="this.currentPlayerItem" type="Podcasts" />
         </div>
         <!--
         Thumb presentation for Collection (Albums, Artists lists)
@@ -169,6 +166,7 @@
           -->
           <div>
             <div style="width:300px;padding:20px;padding-left: 140px;">
+            
               <oh-simple-player-controls />
             </div>
           </div>
@@ -216,6 +214,8 @@ import mixin from '@/components/widgets/widget-mixin'
 import { useStore } from 'vuex'
 import { useMediaStore } from '@/js/store/modules/media'
 import { computed } from 'vue'
+import { p } from '@/assets/definitions/widgets/helpers'
+import { loadLocaleMessages } from '@/js/i18n'
 
 export default {
   props:  {
@@ -228,25 +228,23 @@ export default {
         required: false
       }
   },
+  i18n: {
+    messages: loadLocaleMessages(require.context('@/assets/i18n/media'))
+  },
   components: {
     OhSimplePlayerControls,
     MediaBrowserThumbGrid
   },
   watch: {
-    'itemState'(newVal) {
+    'playerItemState'(newVal) {
+      console.log("================playerItemState(newVal):" + newVal)
       this.decodeState()
     },
-    '$store.state.media.currentGlobalPlayerName'(newVal) {
-      this.item = this.$store.state.media.currentGlobalPlayerItem
-    },
     '$store.state.media.currentGlobalPlayerItem'(newVal) {
-      this.item = this.$store.state.media.currentGlobalPlayerItem
+      this.playerItem = this.$store.state.media.currentGlobalPlayerItem
     }
   },
   data () {
-    this.item = this.$f7route.query.item
-    this.device = this.$f7route.query.device
-
     this.$f7.toast.create({
       text: this.$t('media.page.updated'),
       destroyOnClose: true,
@@ -264,28 +262,6 @@ export default {
     this.$store.commit('setMapping', { key: 'Root', value: 'Racine' })
 
     this.path = '/Root'
-
-
-    this.item = this.$store.state.media.currentGlobalPlayerItem
-
-
-    if (this.$store!== undefined && this.item!== undefined && this.item !== null && this.item !== '') {
-
-      if (!this.$store.getters.isItemTracked(this.item)) 
-      {
-        this.$store.commit('addToTrackingList', this.item)
-        this.$store.dispatch('startTrackingStates')
-      }
-      
-    }
-
-
-    
-    if (this.$store.getters.trackedItems[this.item]!== undefined) {
-    }
-    else  {
-      console.log('item not tracked:', this.item);
-    }
 
     return {
       node: null,
@@ -322,18 +298,25 @@ export default {
       return this.mediaBrowserMode
     },
     currentPlayerItem() {
-      if (!this.playerItem) {
-        return this.$store.state.media.playerItem
+      let currentPlayerItem = this.playerItem
+      if (currentPlayerItem === undefined || currentPlayerItem === null || currentPlayerItem === '') {
+        currentPlayerItem = this.$store.state.media.playerItem
       }
 
-      this.$store.commit('setPlayerItem', this.playerItem)
-      return this.playerItem
+      if (currentPlayerItem === undefined || currentPlayerItem === null || currentPlayerItem === '') {
+        currentPlayerItem = this.$store.state.media.currentGlobalPlayerItem
+      }
+
+      this.$store.commit('setPlayerItem', currentPlayerItem)
+      return currentPlayerItem;
     },
-    itemState() {
-      return this.$store.getters.trackedItems[this.item]?.state ?? '';
+    playerItemState() {
+      console.log("================playerItemState")
+      this.decodeState()
+      return this.$store.getters.trackedItems[this.currentPlayerItem]?.state ?? '';
     },
     displayPlayer() {
-      return this.mediaBrowserMode === 'Global'
+      return this.currentMediaBrowserMode === 'Global'
     },
     trackPositionPourcent() {
       return this.trackPosition/this.trackDuration*100.00
@@ -377,8 +360,8 @@ export default {
   },
   methods: {
      decodeState () {
-      const value = this.$store.getters.trackedItems[this.item].state
-      console.log("================value:" + value)
+      const value = this.$store.getters.trackedItems[this.currentPlayerItem].state
+      console.log("================value1:" + this.$store)
       if (!(value === undefined || value === null || value === '' || value==='-')) {
         if (value.indexOf('{') === 0) {
           let json = JSON.parse(value);
