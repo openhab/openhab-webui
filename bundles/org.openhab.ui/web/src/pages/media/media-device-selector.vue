@@ -42,7 +42,7 @@ export default {
   },
   data () {
     let currentPlayerItem = this.playerItem
-    console.log("p0:" + this.currentPlayerItem);
+    console.log("p0:" + currentPlayerItem);
 
     
     if (currentPlayerItem === undefined || currentPlayerItem === null || currentPlayerItem === '') {

@@ -42,12 +42,10 @@ export default {
     MediaDeviceSelectorPopup
   },
   data: function () {
-    if (this.currentPlayerItem === undefined) {
-      this.currentPlayerItem = this.$store.state.media.currentGlobalPlayerItem
-    }
+    let currentPlayerItem = this.$store.state.media.currentGlobalPlayerItem
 
     return {
-      currentPlayerItem: this.currentPlayerItem,
+      currentPlayerItem: currentPlayerItem,
       state: '',
       device: '',
       binding:'',
