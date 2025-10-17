@@ -8,11 +8,13 @@
       </f7-nav-right>
     </f7-navbar>
 
+    <!--
     currentPlayerItem: {{  currentPlayerItem }}
+    -->
     <div v-if="node">
       <f7-list form>
         <f7-list-item v-for="item in node.childs" 
-                    :title="item.playerItemName + ` ` + item.id + ` : ` + item.binding + ` : ` + item.name + ` (` + item.type + `) `" 
+                    :title="item.binding + ` : ` + item.name + ` (` + item.type + `) `" 
                     :key="item.id"  radio :checked="(currentPlayerItem!=null) ? (currentPlayerItem === item.playerItemName)?true:false:false"
                     @change="selectedOption = item" :name="'options-group'" />
       </f7-list>
