@@ -239,7 +239,7 @@ export default {
       this.decodeState()
     },
     '$store.state.media.currentGlobalPlayerItem'(newVal) {
-      this.playerItem = this.$store.state.media.currentGlobalPlayerItem
+      this.currentPlayerItem = this.$store.state.media.currentGlobalPlayerItem
     }
   },
   data () {
@@ -261,7 +261,19 @@ export default {
 
     this.path = '/Root'
 
+    let currentPlayerItem = this.playerItem
+    if (currentPlayerItem === undefined || currentPlayerItem === null || currentPlayerItem === '') {
+      currentPlayerItem = this.$store.state.media.playerItem
+    }
+
+    if (currentPlayerItem === undefined || currentPlayerItem === null || currentPlayerItem === '') {
+      currentPlayerItem = this.$store.state.media.currentGlobalPlayerItem
+    }
+
+    this.$store.commit('setPlayerItem', currentPlayerItem)
+    
     return {
+      currentPlayerItem: currentPlayerItem,
       node: null,
       controlsOpened: true,
       items: [],
@@ -294,19 +306,6 @@ export default {
 
       this.$store.commit('setMediaBrowserMode', this.mediaBrowserMode)
       return this.mediaBrowserMode
-    },
-    currentPlayerItem() {
-      let currentPlayerItem = this.playerItem
-      if (currentPlayerItem === undefined || currentPlayerItem === null || currentPlayerItem === '') {
-        currentPlayerItem = this.$store.state.media.playerItem
-      }
-
-      if (currentPlayerItem === undefined || currentPlayerItem === null || currentPlayerItem === '') {
-        currentPlayerItem = this.$store.state.media.currentGlobalPlayerItem
-      }
-
-      this.$store.commit('setPlayerItem', currentPlayerItem)
-      return currentPlayerItem;
     },
     playerItemState() {
       if (this.$store!== undefined && this.currentPlayerItem!== undefined && this.currentPlayerItem !== null && this.currentPlayerItem !== '') {
