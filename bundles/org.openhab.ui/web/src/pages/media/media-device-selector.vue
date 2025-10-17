@@ -128,10 +128,7 @@ export default {
     },
     changeDevice () {
       console.log('this.currentPlayerItem:', this.currentPlayerItem)
-      if (this.currentPlayerItem === undefined || this.currentPlayerItem === null || this.currentPlayerItem === '' || this.currentPlayerItem === 'undefined') {
-        console.log('p1')
-        this.currentPlayerItem = this.selectedOption.playerItemName
-      }
+      this.currentPlayerItem = this.selectedOption.playerItemName
       console.log('p2')
 
       console.log('this.selectedOption:', this.selectedOption)
