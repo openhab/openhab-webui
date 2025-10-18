@@ -50,30 +50,25 @@ import type { Router } from 'framework7'
 import DeveloperDockIcon from '@/components/developer/developer-dock-icon.vue'
 import { computed } from 'vue'
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   title: string,
   subtitle?: string,
   backLink?: string,
   backLinkUrl?: string,
-  editable?: {
-    type: boolean,
-    default: undefined
-  },
+  editable?: boolean,
   saveLink?: string,
   saveLinkUrl?: string,
   f7router?: object,
-}>()
+}>(), {
+  backLink: 'Back',
+  editable: undefined
+})
 
 defineEmits(['save'])
 
 defineSlots<{
   right: void,
 }>()
-
-const backLink = computed(() => {
-  if (props.backLink === null) return null
-  return props.backLink ?? 'Back'
-})
 
 function back () {
   if (props.backLinkUrl) return
