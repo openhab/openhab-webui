@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, watch } from 'vue'
+import { ref, reactive, watch } from 'vue'
 
 import buildInfo from '@/assets/build-info'
 import { convertJavaLocale } from '@/js/i18n-utils.ts'
@@ -25,9 +25,12 @@ export const useRuntimeStore = defineStore('runtime', () => {
   const showDeveloperDock = ref<boolean>(false)
   const pagePath = ref<string | null>(null)
   const sitemapIncludeItemName = ref<boolean>(false)
-  const modelPickerIncludeItemName = ref<boolean>(false)
-  const modelPickerIncludeItemTags = ref<boolean>(false)
-  const modelPickerExpanded = ref<boolean>(false)
+  const modelPicker = reactive<Object>({
+    includeItemNames: false,
+    includeItemTags: false,
+    expanded: false,
+    includeNonSemantic: false
+  })
   const ready = ref<boolean>(false)
 
   // Getters
@@ -64,9 +67,7 @@ export const useRuntimeStore = defineStore('runtime', () => {
     docSrcUrl,
     showDeveloperDock,
     pagePath,
-    modelPickerIncludeItemName,
-    modelPickerIncludeItemTags,
-    modelPickerExpanded,
+    modelPicker,
     sitemapIncludeItemName,
     ready,
 

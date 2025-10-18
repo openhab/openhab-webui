@@ -16,7 +16,6 @@ export default {
     return {
       ready: false,
       loading: false,
-      includeNonSemantic: false,
 
       items: [],
       links: [],

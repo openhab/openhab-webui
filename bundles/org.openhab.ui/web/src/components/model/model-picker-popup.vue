@@ -172,6 +172,7 @@ export default {
     ...mapWritableState(useRuntimeStore, {
       includeItemName: 'modelPickerIncludeItemName',
       includeItemTags: 'modelPickerIncludeItemTags',
+      includeNonSemantic: 'modelPickerIncludeNonSemantic',
       expanded: 'modelPickerExpanded'
     })
   },
