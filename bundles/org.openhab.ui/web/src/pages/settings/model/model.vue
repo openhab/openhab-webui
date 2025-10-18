@@ -384,9 +384,9 @@ export default {
       return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     },
     ...mapWritableState(useRuntimeStore, {
-      includeItemName: 'modelPicker.includeItemName',
-      includeItemTags: 'modelPicker.includeItemTags',
-      expanded: 'modelPicker.expanded'
+      includeItemName: 'modelPicker.modelPickerIncludeItemName',
+      includeItemTags: 'modelPicker.modelPickerIncludeItemTags',
+      expanded: 'modelPicker.modelPickerExpanded'
     })
   },
   methods: {
