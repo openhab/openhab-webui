@@ -3,8 +3,7 @@
 <template>
   <f7-popup class="cron-select" close-on-escape @popup:closed="close">
     <f7-page class="cron-select-content">
-      <!-- use cron expression as key to force rerendering (and thereby realignment) on cron expression change -->
-      <f7-navbar :key="cron" :title="'Cron: ' + cron" :subtitle="translation">
+      <f7-navbar :title="'Cron: ' + cron" :subtitle="translation">
         <f7-nav-right>
           <f7-link class="popup-close" @click="change">
             Done

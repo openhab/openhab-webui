@@ -3,10 +3,8 @@
            @page:beforeout="onPageBeforeOut"
            ref="addondetails"
            class="page-addon-details">
-    <f7-navbar :transparent="true" back-link="Back" class="addon-details-nav">
-      <f7-nav-title v-if="addon">
-        {{ addon.label }}
-      </f7-nav-title>
+    <f7-navbar :transparent="true" class="addon-details-nav">
+      <oh-nav-content :title="addon?.label" :f7router />
     </f7-navbar>
     <f7-block class="block-narrow addon-details" v-if="ready && addon">
       <f7-row>

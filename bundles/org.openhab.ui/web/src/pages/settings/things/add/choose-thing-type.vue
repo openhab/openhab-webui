@@ -1,6 +1,7 @@
 <template>
   <f7-page class="choose-thing-type" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
-    <f7-navbar :title="`Add a new Thing: ${bindingId}`" back-link="Back">
+    <f7-navbar>
+      <oh-nav-content :title="`Add a new Thing: ${bindingId}`" />
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
           v-if="initSearchbar"

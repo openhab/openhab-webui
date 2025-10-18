@@ -2,15 +2,11 @@
   <f7-page name="Model"
            @page:afterin="onPageAfterIn"
            @page:beforeout="onPageBeforeOut">
-    <f7-navbar title="Semantic Model">
-      <f7-nav-left>
-        <f7-link icon-f7="chevron_left" href="/settings/">
-          Settings
-        </f7-link>
-      </f7-nav-left>
-      <f7-nav-right>
-        <developer-dock-icon />
-      </f7-nav-right>
+    <f7-navbar>
+      <oh-nav-content title="Semantic Model"
+                      back-link="Settings"
+                      back-link-url="/settings/"
+                      :f7router />
       <f7-subnavbar :inner="false" v-show="initSearchbar" style="height: var(--f7-searchbar-height)">
         <f7-searchbar
           v-if="initSearchbar"

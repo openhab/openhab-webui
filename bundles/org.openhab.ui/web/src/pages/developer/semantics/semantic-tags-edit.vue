@@ -1,15 +1,12 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" @page:afterout="onPageAfterOut">
-    <f7-navbar :title="'Semantic Tags' + dirtyIndicator" back-link="Back" no-hairline>
-      <f7-nav-right>
-        <f7-link v-if="theme.md"
-                 @click="save()"
-                 icon-md="material:save"
-                 icon-only />
-        <f7-link v-if="!theme.md" @click="save()">
-          Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
-        </f7-link>
-      </f7-nav-right>
+    <f7-navbar no-hairline>
+      <oh-nav-content :title="'Semantic Tags' + dirtyIndicator"
+                      back-link="Developer Tools"
+                      back-link-url="/developer/"
+                      :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
+                      @save="save()"
+                      :f7router />
     </f7-navbar>
     <f7-toolbar tabbar position="top">
       <f7-link @click="switchTab('tree')" :tab-link-active="currentTab === 'tree'" tab-link="#tree">
@@ -375,6 +372,9 @@ export default {
     SemanticsTreeview,
     'editor': defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue'))
   },
+  props: {
+    f7router: Object
+  },
   setup () {
     return {
       theme
@@ -540,21 +540,37 @@ export default {
           // Remove first as moving a tag will keep name but change uid.
           // So need to use the post endpoint with the new uid, but this is refused if the name is still the same and not first deleted.
           await Promise.all(removeTasks.map((fn) => fn()))
-          console.debug('Successfull removed tags')
+          console.debug('Successfully removed tags')
+          f7.toast.create({
+            text: (removeTasks.length === 1 ? 'Tag' : 'Tags') + ' deleted',
+            destroyOnClose: true,
+            closeTimeout: 2000
+          }).open()
         }
         if (addTasks.length > 0) {
           await Promise.all(addTasks.map((fn) => fn()))
           console.debug('Successfully added tags')
+          f7.toast.create({
+            text: (addTasks.length === 1 ? 'Tag' : 'Tags') + ' added',
+            destroyOnClose: true,
+            closeTimeout: 2000
+          }).open()
         }
         if (changeTasks.length > 0) {
           await Promise.all(changeTasks.map((fn) => fn()))
-          console.debug('Successfully changed tags')
+          console.debug('Successfully modified tags')
+          f7.toast.create({
+            text: (changeTasks.length === 1 ? 'Tag' : 'Tags') + ' modified',
+            destroyOnClose: true,
+            closeTimeout: 2000
+          }).open()
         }
         this.dirty = false
-        useSemanticsStore().loadSemantics().then(() => {
+        useSemanticsStore().loadSemantics(i18n).then(() => {
           this.load()
         })
       } catch (error) {
+        console.error(error)
         f7.dialog.alert('Error saving: ' + error)
       }
     },

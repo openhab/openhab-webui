@@ -1,19 +1,11 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
-    <f7-navbar :title="pageTitle + dirtyIndicator" back-link="Back">
-      <f7-nav-right v-show="ready">
-        <f7-link v-if="!editable"
-                 icon-f7="lock_fill"
-                 icon-only
-                 tooltip="This persistence configuration is not editable through the UI" />
-        <f7-link v-else-if="theme.md"
-                 icon-md="material:save"
-                 icon-only
-                 @click="save()" />
-        <f7-link v-else @click="save()">
-          Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
-        </f7-link>
-      </f7-nav-right>
+    <f7-navbar>
+      <oh-nav-content :title="pageTitle + dirtyIndicator"
+                      :editable
+                      save-link="Save"
+                      @save="save()"
+                      :f7router />
     </f7-navbar>
     <f7-toolbar tabbar position="top">
       <f7-link @click="switchTab('design', fromYaml)" :tab-link-active="currentTab === 'design'" tab-link="#design">

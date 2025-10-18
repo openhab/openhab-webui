@@ -1,15 +1,12 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn">
-    <f7-navbar title="Add Items from Textual Definition" back-link="Cancel">
-      <f7-nav-right>
-        <f7-link v-if="theme.md"
-                 @click="add()"
-                 icon-md="material:save"
-                 icon-only />
-        <f7-link v-if="!theme.md" @click="add()">
-          Add
-        </f7-link>
-      </f7-nav-right>
+    <f7-navbar>
+      <oh-nav-content title="Add Items from Textual Definition"
+                      back-link="Developer Tools"
+                      back-link-url="/developer/"
+                      save-link="Add"
+                      @save="add()"
+                      :f7router />
     </f7-navbar>
     <f7-block class="items-add-from-textual-definition">
       <div class="row items-parser resizable" v-if="ready">

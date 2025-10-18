@@ -196,36 +196,35 @@
       </f7-page>
     </f7-popup>
 
-    <f7-navbar title="Log Viewer">
-      <f7-nav-left>
-        <f7-link icon-f7="chevron_left" href="/developer/">
-          Developer Tools
-        </f7-link>
-      </f7-nav-left>
-      <f7-nav-right>
-        <developer-dock-icon />
-        <f7-link icon-ios="f7:play_fill"
-                 icon-f7="play_fill"
-                 icon-md="material:play_arrow"
-                 :icon-color="stateConnected && stateProcessing ? 'gray' : ''"
-                 :tooltip="!$device.ios ? 'Continue receiving logs' : ''"
-                 :class="{ 'disabled-link': stateConnected && stateProcessing, 'no-margin-left': $device.ios }"
-                 @click="loggingContinue" />
-        <f7-link icon-ios="f7:pause_fill"
-                 icon-aurora="f7:pause_fill"
-                 icon-md="material:pause_fill"
-                 :icon-color="!stateConnected || !stateProcessing ? 'gray' : ''"
-                 :tooltip="!$device.ios ? 'Pause processing new logs' : ''"
-                 :class="{ 'disabled-link': !stateConnected || !stateProcessing, 'no-margin-left': $device.ios }"
-                 @click="loggingPause" />
-        <f7-link icon-ios="f7:stop_fill"
-                 icon-aurora="f7:stop_fill"
-                 icon-md="material:stop_fill"
-                 :icon-color="!stateConnected ? 'gray' : ''"
-                 :tooltip="!$device.ios ? 'Stop receiving logs' : ''"
-                 :class="{ 'disabled-link': !stateConnected, 'no-margin-left': $device.ios }"
-                 @click="loggingStop" />
-      </f7-nav-right>
+    <f7-navbar>
+      <oh-nav-content title="Log Viewer"
+                      back-link="Developer Tools"
+                      back-link-url="/developer/"
+                      :f7router>
+        <template #right>
+          <f7-link icon-ios="f7:play_fill"
+                   icon-f7="play_fill"
+                   icon-md="material:play_arrow"
+                   :icon-color="stateConnected && stateProcessing ? 'gray' : ''"
+                   :tooltip="!$device.ios ? 'Continue receiving logs' : ''"
+                   :class="{ 'disabled-link': stateConnected && stateProcessing, 'no-margin-left': $device.ios }"
+                   @click="loggingContinue" />
+          <f7-link icon-ios="f7:pause_fill"
+                   icon-aurora="f7:pause_fill"
+                   icon-md="material:pause_fill"
+                   :icon-color="!stateConnected || !stateProcessing ? 'gray' : ''"
+                   :tooltip="!$device.ios ? 'Pause processing new logs' : ''"
+                   :class="{ 'disabled-link': !stateConnected || !stateProcessing, 'no-margin-left': $device.ios }"
+                   @click="loggingPause" />
+          <f7-link icon-ios="f7:stop_fill"
+                   icon-aurora="f7:stop_fill"
+                   icon-md="material:stop_fill"
+                   :icon-color="!stateConnected ? 'gray' : ''"
+                   :tooltip="!$device.ios ? 'Stop receiving logs' : ''"
+                   :class="{ 'disabled-link': !stateConnected, 'no-margin-left': $device.ios }"
+                   @click="loggingStop" />
+        </template>
+      </oh-nav-content>
       <f7-subnavbar :inner="false" style="padding-right: var(--f7-safe-area-right)">
         <f7-searchbar ref="searchbar"
                       :value="filterText"

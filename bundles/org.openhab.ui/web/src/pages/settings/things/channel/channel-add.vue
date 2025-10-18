@@ -1,15 +1,12 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" name="channel-add">
-    <f7-navbar title="Add Channel" :subtitle="thing.label" back-link="Cancel">
-      <f7-nav-right class="if-not-aurora">
-        <f7-link v-if="theme.md"
-                 @click="save()"
-                 icon-md="material:save"
-                 icon-only />
-        <f7-link v-if="!theme.md" @click="save()">
-          Done
-        </f7-link>
-      </f7-nav-right>
+    <f7-navbar>
+      <oh-nav-content title="Add Channel"
+                      :subtitle="thing.label"
+                      back-link="Cancel"
+                      save-link="Done"
+                      @save="save()"
+                      :f7router />
     </f7-navbar>
     <f7-block class="block-narrow">
       <f7-col>

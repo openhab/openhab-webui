@@ -1,11 +1,11 @@
 <template>
   <f7-page class="analyzer-content">
-    <f7-navbar :title="titleDisplayText" :back-link="t('analyzer.back')">
-      <f7-nav-right>
-        <f7-link v-if="userStore.isAdmin()" icon-md="material:save" @click="savePage">
-          {{ theme.md ? '' : t('analyzer.save') }}
-        </f7-link>
-      </f7-nav-right>
+    <f7-navbar>
+      <oh-nav-content :title="titleDisplayText"
+                      :back-link="t('analyzer.back')"
+                      :save-link="userStore.isAdmin() ? t('analyzer.save') : undefined"
+                      @save="savePage"
+                      :f7router />
     </f7-navbar>
 
     <f7-toolbar bottom>

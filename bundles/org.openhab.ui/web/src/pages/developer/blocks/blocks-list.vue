@@ -1,17 +1,16 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn">
-    <f7-navbar title="Block Libraries">
-      <f7-nav-left>
-        <f7-link icon-f7="chevron_left" href="/developer/">
-          Developer Tools
-        </f7-link>
-      </f7-nav-left>
-      <f7-nav-right>
-        <developer-dock-icon />
-        <f7-link icon-md="material:done_all"
-                 @click="toggleCheck()"
-                 :text="!theme.md ? (showCheckboxes ? 'Done' : 'Select') : ''" />
-      </f7-nav-right>
+    <f7-navbar>
+      <oh-nav-content title="Block Libraries"
+                      back-link="Developer Tools"
+                      back-link-url="/developer/"
+                      :f7router>
+        <template #right>
+          <f7-link icon-md="material:done_all"
+                   @click="toggleCheck()"
+                   :text="!theme.md ? (showCheckboxes ? 'Done' : 'Select') : ''" />
+        </template>
+      </oh-nav-content>
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
           v-if="initSearchbar"

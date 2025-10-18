@@ -1,21 +1,12 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
-    <f7-navbar title="Persistence Settings">
-      <f7-nav-left>
-        <f7-link icon-f7="chevron_left" href="/settings/">
-          Settings
-        </f7-link>
-      </f7-nav-left>
-      <f7-nav-right v-if="persistenceList.length > 0">
-        <developer-dock-icon />
-        <f7-link v-if="theme.md"
-                 @click="save()"
-                 icon-md="material:save"
-                 icon-only />
-        <f7-link v-if="!theme.md" @click="save()">
-          Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
-        </f7-link>
-      </f7-nav-right>
+    <f7-navbar>
+      <oh-nav-content title="Persistence Settings"
+                      back-link="Settings"
+                      back-link-url="/settings/"
+                      :save-link="persistenceList.length > 0 ? `Save${$device.desktop ? ' (Ctrl-S)' : ''}` : ''"
+                      @save="save()"
+                      :f7router />
     </f7-navbar>
 
     <f7-block form v-if="ready && persistenceList.length" class="block-narrow">
@@ -104,6 +95,9 @@ export default {
   components: {
     EmptyStatePlaceholder,
     ConfigSheet
+  },
+  props: {
+    f7router: Object
   },
   setup () {
     return { theme }

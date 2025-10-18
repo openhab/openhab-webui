@@ -1,17 +1,16 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="rules-list">
-    <f7-navbar :title="type">
-      <f7-nav-left>
-        <f7-link icon-f7="chevron_left" href="/settings/">
-          Settings
-        </f7-link>
-      </f7-nav-left>
-      <f7-nav-right>
-        <developer-dock-icon />
-        <f7-link icon-md="material:done_all"
-                 @click="toggleCheck()"
-                 :text="(!theme.md) ? (showCheckboxes ? 'Done' : 'Select') : ''" />
-      </f7-nav-right>
+    <f7-navbar>
+      <oh-nav-content :title="type"
+                      back-link="Settings"
+                      back-link-url="/settings/"
+                      :f7router>
+        <template #right>
+          <f7-link icon-md="material:done_all"
+                   @click="toggleCheck()"
+                   :text="(!theme.md) ? (showCheckboxes ? 'Done' : 'Select') : ''" />
+        </template>
+      </oh-nav-content>
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <!-- Only render searchbar, if page is ready. Otherwise searchbar is broken after changes to the rules list. -->
         <f7-searchbar

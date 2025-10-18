@@ -6,17 +6,10 @@
     <f7-navbar large
                :large-transparent="false"
                class="store-nav">
-      <f7-nav-left>
-        <f7-link icon-f7="chevron_left" href="/settings/">
-          Settings
-        </f7-link>
-      </f7-nav-left>
-      <f7-nav-title-large>
-        {{ AddonTitles[currentTab] || 'Add-on Store' }}
-      </f7-nav-title-large>
-      <f7-nav-right>
-        <developer-dock-icon />
-      </f7-nav-right>
+      <oh-nav-content :title="AddonTitles[currentTab] || 'Add-on Store'"
+                      back-link="Settings"
+                      back-link-url="/settings/"
+                      :f7router />
     </f7-navbar>
     <f7-toolbar v-show="$f7dim.width < 1024 || !leftPanelOpened" tabbar bottom>
       <f7-link tab-link="#main"

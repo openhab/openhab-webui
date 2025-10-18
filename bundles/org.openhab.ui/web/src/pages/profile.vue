@@ -1,10 +1,7 @@
 <template>
   <f7-page class="user-profile-page" @page:beforein="onPageBeforeIn">
-    <f7-navbar :title="t('profile.title')"
-               back-link="Back"
-               no-shadow
-               no-hairline
-               class="user-profile-navbar">
+    <f7-navbar no-shadow no-hairline class="user-profile-navbar">
+      <oh-nav-content :title="t('profile.title')" :f7router />
       <f7-subnavbar sliding class="profile-header">
         <div class="profile-icon">
           <f7-icon size="60"
@@ -167,6 +164,9 @@ import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
 export default {
   mixins: [auth],
+  props: {
+    f7router: Object
+  },
   setup () {
     const { t, mergeLocaleMessage } = useI18n({ useScope: 'local' })
     loadLocaleMessages('profile', mergeLocaleMessage)

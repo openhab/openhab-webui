@@ -11,7 +11,6 @@
                  icon-md="material:menu"
                  panel-open="left" />
       </f7-nav-left>
-      <f7-nav-title>{{ pageLabel }}</f7-nav-title>
       <f7-nav-right>
         <f7-link v-if="isAdmin"
                  icon-md="material:edit"
@@ -213,6 +212,8 @@ export default {
       useStatesStore().stopTrackingStates()
     },
     onTabChange (idx) {
+      if (this.pageType !== 'tabs') return
+
       this.currentTab = idx
       this.vars = {}
       const url = '/page/' + this.uid + '/' + this.currentTab

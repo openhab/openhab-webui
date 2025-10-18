@@ -1,27 +1,13 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar>
-      <f7-nav-left>
-        <f7-link icon-f7="chevron_left" href="/settings/transformations/">
-          Transformations
-        </f7-link>
-      </f7-nav-left>
-      <f7-nav-title :subtitle="(!createMode && transformation) ? editorMode : ''">
-        {{ (createMode ? 'Create' : 'Edit') + ' Transformation' + dirtyIndicator }}
-      </f7-nav-title>
-      <f7-nav-right>
-        <f7-link v-if="createMode" @click="createTransformation" icon-md="material:save">
-          {{ theme.md ? '' : 'Create' }}
-        </f7-link>
-        <f7-link v-else-if="isEditable" @click="save()" icon-md="material:save">
-          <template v-if="!theme.md">
-            Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
-          </template>
-        </f7-link>
-        <f7-link v-else icon-f7="lock_fill" tooltip="This transformation is not editable through the UI">
-          Details
-        </f7-link>
-      </f7-nav-right>
+      <oh-nav-content :title="(createMode ? 'Create' : 'Edit') + ' Transformation' + dirtyIndicator"
+                      :subtitle="(!createMode && transformation) ? editorMode : ''"
+                      back-link="Transformations"
+                      back-link-url="/settings/transformations/"
+                      :editable="isEditable"
+                      :save-link="createMode ? 'Create' : `Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
+                      @save="createMode ? createTransformation() : save()" />
     </f7-navbar>
     <!-- Create Transformation -->
     <transformation-general-settings v-if="createMode && ready"

@@ -1,21 +1,13 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" name="channel-edit">
-    <f7-navbar :title="channel.label" :subtitle="thing.label" back-link="Cancel">
-      <f7-nav-right>
-        <template #right>
-          <f7-link v-if="!thing.editable"
-                   icon-f7="lock_fill"
-                   icon-only
-                   tooltip="Channels of Things defined in a .things file are not editable from this screen" />
-          <f7-link v-else-if="theme.md"
-                   @click="save()"
-                   icon-md="material:save"
-                   icon-only />
-          <f7-link v-else @click="save()">
-            Done
-          </f7-link>
-        </template>
-      </f7-nav-right>
+    <f7-navbar>
+      <oh-nav-content :title="channel.label"
+                      :subtitle="thing.label"
+                      back-link="Cancel"
+                      :editable="thing.editable"
+                      save-link="Done"
+                      @save="save()"
+                      :f7router />
     </f7-navbar>
     <f7-block class="block-narrow">
       <f7-col v-if="channel">
@@ -49,9 +41,11 @@ import { f7, theme } from 'framework7-vue'
 
 import ChannelGeneralSettings from '@/pages/settings/things/channel/channel-general-settings.vue'
 import ConfigSheet from '@/components/config/config-sheet.vue'
+import OhNavContent from '@/components/navigation/oh-nav-content.vue'
 
 export default {
   components: {
+    OhNavContent,
     ChannelGeneralSettings,
     ConfigSheet
   },

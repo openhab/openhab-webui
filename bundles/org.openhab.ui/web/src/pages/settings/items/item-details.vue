@@ -3,16 +3,10 @@
            @page:beforein="onPageBeforeIn"
            @page:beforeout="onPageBeforeOut">
     <f7-navbar>
-      <oh-nav-content :title="item.name" :f7router>
+      <oh-nav-content :title="item.name" :editable="item.editable" :f7router>
         <template v-if="ready" #right>
           <f7-link v-if="item.editable" icon-md="material:edit" href="edit">
             {{ theme.md ? '' : 'Edit' }}
-          </f7-link>
-          <f7-link v-else
-                   icon-f7="lock_fill"
-                   tooltip="This Item is not editable through the UI"
-                   href="edit">
-            Details
           </f7-link>
         </template>
       </oh-nav-content>

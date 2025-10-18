@@ -1,17 +1,16 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
-    <f7-navbar title="Pages">
-      <f7-nav-left>
-        <f7-link icon-f7="chevron_left" href="/settings/">
-          Settings
-        </f7-link>
-      </f7-nav-left>
-      <f7-nav-right>
-        <developer-dock-icon />
-        <f7-link icon-md="material:done_all"
-                 @click="toggleCheck()"
-                 :text="(!theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
-      </f7-nav-right>
+    <f7-navbar>
+      <oh-nav-content title="Pages"
+                      back-link="Settings"
+                      back-link-url="/settings/"
+                      :f7router>
+        <template #right>
+          <f7-link icon-md="material:done_all"
+                   @click="toggleCheck()"
+                   :text="(!theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
+        </template>
+      </oh-nav-content>
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
           v-if="initSearchbar"

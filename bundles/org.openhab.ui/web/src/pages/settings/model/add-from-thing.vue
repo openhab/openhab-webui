@@ -1,15 +1,10 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn">
-    <f7-navbar title="Add Items from Thing" back-link="Back">
-      <f7-nav-right class="if-not-aurora">
-        <f7-link v-if="theme.md"
-                 @click="add()"
-                 icon-md="material:save"
-                 icon-only />
-        <f7-link v-if="!theme.md" @click="add()">
-          Add
-        </f7-link>
-      </f7-nav-right>
+    <f7-navbar>
+      <oh-nav-content title="Add Items from Thing"
+                      save-link="Add"
+                      @save="add()"
+                      :f7router />
     </f7-navbar>
 
     <f7-block class="block-narrow">

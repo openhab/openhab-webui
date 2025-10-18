@@ -12,13 +12,7 @@
                    @click="onBackClicked" />
         </f7-nav-left>
         <f7-nav-title v-if="ruleModule && ruleModule.new">
-          Add {{ SectionLabels[currentSection][1] }}
-        </f7-nav-title>
-        <f7-nav-title v-else-if="readOnly">
-          View {{ SectionLabels[currentSection][1] }}
-        </f7-nav-title>
-        <f7-nav-title v-else>
-          Edit {{ SectionLabels[currentSection][1] }}
+          {{ title }}
         </f7-nav-title>
         <f7-nav-right>
           <f7-link v-if="!readOnly && currentRuleModuleType && dirty" @click="updateModuleConfig">
@@ -181,6 +175,11 @@ export default {
     }
   },
   computed: {
+    title () {
+      if (this.ruleModule && this.ruleModule.new) return 'Add ' + this.SectionLabels[this.currentSection][1]
+      if (this.readOnly) return 'View ' + this.SectionLabels[this.currentSection][1]
+      return 'Edit ' + this.SectionLabels[this.currentSection][1]
+    },
     moduleTitleSuggestion () {
       if (!this.ruleModule || !this.currentRuleModuleType) return 'Title'
       return this.suggestedModuleTitle(this.ruleModule, this.currentRuleModuleType)

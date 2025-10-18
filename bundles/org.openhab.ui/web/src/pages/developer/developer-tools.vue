@@ -1,14 +1,10 @@
 <template>
   <f7-page name="devtools" @page:beforeremove="onPageBeforeRemove">
-    <f7-navbar title="Developer Tools" no-hairline>
-      <f7-nav-left>
-        <f7-link icon-f7="chevron_left" href="/overview/">
-          Overview
-        </f7-link>
-      </f7-nav-left>
-      <f7-nav-right>
-        <developer-dock-icon />
-      </f7-nav-right>
+    <f7-navbar no-hairline>
+      <oh-nav-content title="Developer Tools"
+                      back-link="Overview"
+                      back-link-url="/overview/"
+                      :f7router />
     </f7-navbar>
     <f7-toolbar tabbar position="top">
       <f7-link @click="currentTab = 'menu'" :tab-link-active="currentTab === 'menu'" tab-link="#tab-menu">
@@ -238,6 +234,9 @@ import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
 export default {
   mixins: [FileDefinition],
+  props: {
+    f7router: Object
+  },
   setup () {
     return {
       f7

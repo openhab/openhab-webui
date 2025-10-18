@@ -1,21 +1,12 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar>
-      <oh-nav-content :title="pageTitle + dirtyIndicator" :back-link="editable ? 'Cancel' : 'Back'" :f7router>
-        <template v-if="ready" #right>
-          <f7-link v-if="!editable"
-                   icon-f7="lock_fill"
-                   icon-only
-                   :tooltip="notEditableMsg" />
-          <f7-link v-else-if="theme.md"
-                   icon-md="material:save"
-                   icon-only
-                   @click="save()" />
-          <f7-link v-else @click="save()">
-            Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
-          </f7-link>
-        </template>
-      </oh-nav-content>
+      <oh-nav-content :title="pageTitle + dirtyIndicator"
+                      :back-link="editable ? 'Cancel' : 'Back'"
+                      :editable
+                      :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
+                      @save="save()"
+                      :f7router />
     </f7-navbar>
     <f7-toolbar tabbar position="top">
       <f7-link @click="switchTab('design', fromYaml)" :tab-link-active="currentTab === 'design'" tab-link="#design">

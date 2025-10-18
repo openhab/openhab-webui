@@ -29,7 +29,9 @@ export const useStatesStore = defineStore('states', () => {
           '__v_isRef',
           '__v_isReadonly',
           '__v_skip',
-          '__v_isShallow'
+          '__v_isShallow',
+          '__v_raw',
+          '__v_isReactive'
         ].indexOf(prop.toString()) >= 0
       )
         return {}

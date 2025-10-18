@@ -19,7 +19,7 @@
       <generic-widget-component v-for="(ctx, idx) in childrenContexts"
                                 :context="ctx"
                                 :key="'repeater-' + idx"
-                                @command1111="onCommand" />
+                                @command="onCommand" />
     </template>
   </template>
   <div v-else :class="config.containerClasses" :style="config.containerStyle">

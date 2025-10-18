@@ -1,6 +1,8 @@
 <template>
   <f7-page>
-    <f7-navbar title="Not found" back-link="Back" />
+    <f7-navbar>
+      <oh-nav-content title="Not Found" :f7router />
+    </f7-navbar>
     <f7-block strong>
       <p>Sorry</p>
       <p>Requested content not found.</p>

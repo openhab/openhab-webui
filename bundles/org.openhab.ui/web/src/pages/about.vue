@@ -1,17 +1,10 @@
 <template>
   <f7-page name="about" class="page-about" @page:beforein="beforePageIn">
     <f7-navbar large>
-      <f7-nav-left>
-        <f7-link icon-f7="chevron_left" href="/overview/">
-          Overview
-        </f7-link>
-      </f7-nav-left>
-      <f7-nav-title-large>
-        {{ t('about.title') }}
-      </f7-nav-title-large>
-      <f7-nav-right>
-        <developer-dock-icon />
-      </f7-nav-right>
+      <oh-nav-content :title="t('about.title')"
+                      back-link="Overview"
+                      back-link-url="/overview/"
+                      :f7router />
     </f7-navbar>
     <f7-block class="block-narrow after-big-title">
       <f7-row>

@@ -1,16 +1,16 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:afterout="stopEventSource">
-    <f7-navbar title="Inbox">
-      <f7-nav-left>
-        <f7-link icon-f7="chevron_left" href="/settings/things/">
-          Things
-        </f7-link>
-      </f7-nav-left>
-      <f7-nav-right>
-        <f7-link icon-md="material:done_all"
-                 @click="toggleCheck()"
-                 :text="(!theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
-      </f7-nav-right>
+    <f7-navbar>
+      <oh-nav-content title="Inbox"
+                      back-link="Things"
+                      back-link-url="/settings/things/"
+                      :f7router>
+        <template #right>
+          <f7-link icon-md="material:done_all"
+                   @click="toggleCheck()"
+                   :text="(!theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
+        </template>
+      </oh-nav-content>
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar v-if="initSearchbar"
                       ref="searchbar"

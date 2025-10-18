@@ -1,14 +1,10 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" class="health-semantics-page">
-    <f7-navbar title="Semantic Model Configuration Conflicts">
-      <f7-nav-left>
-        <f7-link icon-f7="chevron_left" href="/settings/health/">
-          Health Checks
-        </f7-link>
-      </f7-nav-left>
-      <f7-nav-right>
-        <developer-dock-icon />
-      </f7-nav-right>
+    <f7-navbar>
+      <oh-nav-content title="Semantic Model Configuration Conflicts"
+                      back-link="Health Checks"
+                      back-link-url="/settings/health"
+                      :f7router />
     </f7-navbar>
 
     <f7-block class="block-narrow">
@@ -78,6 +74,9 @@
 
 <script>
 export default {
+  props: {
+    f7router: Object
+  },
   data () {
     return {
       ready: false,

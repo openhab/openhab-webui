@@ -1,15 +1,10 @@
 <template>
-  <f7-page @page:beforein="onPageBeforeIn" @page:afterin="onPageAfterIn">
-    <f7-navbar :title="`${editable ? 'Edit' : 'View'} Item Metadata: ${namespace} ${dirtyIndicator}`" back-link="Cancel" no-hairline>
-      <f7-nav-right>
-        <f7-link @click="save()"
-                 v-if="theme.md && editable"
-                 icon-md="material:save"
-                 icon-only />
-        <f7-link v-if="!theme.md && editable" @click="save()">
-          Save
-        </f7-link>
-      </f7-nav-right>
+  <f7-page @page:beforein="onPageBeforeIn">
+    <f7-navbar no-hairline>
+      <oh-nav-content :title="`${editable ? 'Edit' : 'View'} Item Metadata: ${namespace} ${dirtyIndicator}`"
+                      :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
+                      @save="save()"
+                      :f7router />
     </f7-navbar>
     <f7-toolbar v-if="ready" tabbar position="top">
       <f7-link v-if="!generic"
@@ -194,7 +189,7 @@ export default {
     }
   },
   methods: {
-    onPageAfterIn () {
+    onPageBeforeIn () {
       this.load()
     },
     onEditorInput (value) {

@@ -1,31 +1,12 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
-    <f7-navbar :title="pageTitle + dirtyIndicator" :subtitle="(!createMode) ? mode : undefined" back-link="Back">
-      <f7-nav-right>
-        <developer-dock-icon />
-        <template v-if="editable && !createMode">
-          <f7-link v-if="theme.md"
-                   @click="onSave()"
-                   icon-md="material:save"
-                   icon-only />
-          <f7-link v-if="!theme.md" @click="onSave()">
-            Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
-          </f7-link>
-        </template>
-        <template v-else-if="editable && createMode">
-          <f7-link v-if="theme.md && createMode"
-                   @click="createScript"
-                   icon-md="material:save"
-                   icon-only />
-          <f7-link v-if="theme.ios && createMode" @click="createScript">
-            Create
-          </f7-link>
-        </template>
-        <f7-link v-if="!editable"
-                 icon-f7="lock_fill"
-                 icon-only
-                 tooltip="This script is not editable through the UI" />
-      </f7-nav-right>
+    <f7-navbar>
+      <oh-nav-content :title="pageTitle + dirtyIndicator"
+                      :subtitle="(!createMode) ? mode : undefined"
+                      :editable
+                      :save-link="createMode ? 'Create' : `Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
+                      @save="createMode ? createScript() : save()"
+                      :f7router />
     </f7-navbar>
 
     <f7-toolbar v-if="ready && !createMode" bottom>
