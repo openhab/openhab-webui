@@ -98,19 +98,50 @@
             <br>
           </div>
           <hr>
+        </div>
+        <div v-if="node.pres==='flat'">
           <!-- Track list -->
           <div v-for="child in items" style="display: inline;clear:both;" :class="{ 'sheet-opened': controlsOpened }" :key="child.path">
-            <f7-link :href="`/mediabrowser/?path=` + child.path + `&item=` + item + `&device=` + device" :data-reload="true" :reload-current="true" :reload-detail="true">
-              <f7-button outline style="height:30px;font-weight:bold;padding:2px;padding-left:30px;text-align:left;border:none 0px;" @click="doPlay(currentPlayerItem, child.path)" icon-material="play_arrow" small icon-size="24">
-                Play
-              </f7-button>
-              <f7-button outline style="height:30px;font-weight:bold;padding:2px;padding-left:30px;text-align:left;border:none 0px;" @click="doEnqueue(currentPlayerItem, child.path)" icon-material="playlist_add" small icon-size="24">
-                Enqueue
-              </f7-button>
-              <div style="padding-left:30px;color:black">
-                {{ child.label }}
-              </div>
-            </f7-link>
+              <f7-link :href="`/mediabrowser/?path=` + child.path + `&item=` + item + `&device=` + device" :data-reload="true" :reload-current="true" :reload-detail="true">
+                <f7-button outline style="height:30px;font-weight:bold;padding:2px;padding-left:30px;text-align:left;border:none 0px;" @click="doPlay(currentPlayerItem, child.path)" icon-material="play_arrow" small icon-size="24">
+                  Play
+                </f7-button>
+                <f7-button outline style="height:30px;font-weight:bold;padding:2px;padding-left:30px;text-align:left;border:none 0px;" @click="doEnqueue(currentPlayerItem, child.path)" icon-material="playlist_add" small icon-size="24">
+                  Enqueue
+                </f7-button>
+                <div style="padding-left:30px;color:black">
+                  {{ child.label }}
+                </div>
+              </f7-link>
+            <br>
+          </div>
+          <br>
+        </div>
+        <div v-else-if="node.pres==='queue'">
+          <!-- Track list -->
+          <div v-for="(child,index) in items" style="display: inline;clear:both;" :class="{ 'sheet-opened': controlsOpened }" :key="child.path">
+              <f7-link :href="`/mediabrowser/?path=` + child.path + `&item=` + item + `&device=` + device" :data-reload="true" :reload-current="true" :reload-detail="true">
+                <div style="padding-left:30px;width:20px;color:black;font-weight:bold;font-size:14pt;">
+                  {{ index + 1  }}
+                </div>
+
+                <div v-if="index==1" style="width:50px;padding-left:20px;">
+                    <img src="/static/hp.gif" style="padding-left:15px;width:24px;"/>
+                </div>
+                <div v-else-if="index!=1" style="width:50px;padding-left:20px;">
+                  <f7-button outline style="height:30px;font-weight:bold;text-align:left;border:none 0px;" @click="doPlay(currentPlayerItem, child.path)" icon-material="play_arrow" small icon-size="24"/>
+                </div>
+
+                <div style="padding-left:30px;width:120px;color:black">
+                  <img :src="child.artUri" width="50px"></img>
+                </div>
+                <div style="padding-left:30px;width:400px;color:black">
+                  {{ child.label }}
+                </div>
+                <div style="padding-left:30px;width:300px;color:black">
+                  {{ child.complement }}
+                </div>
+              </f7-link>
             <br>
           </div>
           <br>
@@ -243,11 +274,6 @@ export default {
     }
   },
   data () {
-    this.$f7.toast.create({
-      text: this.$t('media.page.updated'),
-      destroyOnClose: true,
-      closeTimeout: 2000
-    }).open()
 
     this.$store.commit('setMapping', { key: 'Root', value: 'Racine' })
     this.$store.commit('setMapping', { key: 'g', value: 'Genres' })
@@ -479,6 +505,7 @@ export default {
         this.lastItemIndex = this.items.length
 
         if (this.node.type === 'org.openhab.core.media.model.MediaSearchResult') { this.node.pres = 'search' }
+        if (this.node.type === 'org.openhab.core.media.model.MediaQueue') { this.node.pres = 'queue' }
         if (this.node.type === 'org.openhab.core.media.model.MediaAlbum') { this.node.pres = 'flat' }
         if (this.node.type === 'org.openhab.core.media.model.MediaPlayList') { this.node.pres = 'flat' }
         if (this.node.type === 'org.openhab.core.media.model.MediaCollection' && this.containsTrack(this.items)) { this.node.pres = 'flat' }
@@ -489,6 +516,12 @@ export default {
       this.loadItems(0)
     },
     loadMore () {
+        this.$f7.toast.create({
+          text: this.$t("media.loading"),
+          destroyOnClose: true,
+          closeTimeout: 1000
+        }).open()
+
       if (this.loading || !this.allowInfinite) {
         console.log('==> returning because loading or no infinite :' + this.loading + ' / ' + this.allowInfinite)
         return
@@ -521,11 +554,6 @@ export default {
     async fetchResults (query) {
       this.loading = true
       try {
-        //console.log('query:', query.query)
-        // Remplace cette URL par ton endpoint réel
-        // const response = await fetch(`https://api.example.com/search?q=${encodeURIComponent(query)}`);
-        // const data = await response.json();
-
         this.$store.dispatch('sendCommand', { itemName: this.item, cmd: this.createMediaType('SEARCH', encodeURIComponent(query.query)) })
         this.$f7router.navigate('/mediabrowser/?path=/Root/Search&query=' + query.query, { reloadCurrent: true, reloadDetail: true })
 
