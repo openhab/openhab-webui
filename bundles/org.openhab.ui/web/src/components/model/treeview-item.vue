@@ -41,7 +41,6 @@
                              :includeItemName="includeItemName"
                              :includeItemTags="includeItemTags"
                              :canDragDrop="canDragDrop"
-                             :moveState="moveState"
                              @checked="(item, check) => $emit('checked', item, check)"
                              @reload="$emit('reload')" />
       </template>
@@ -77,6 +76,7 @@
 </template>
 
 <script>
+import { inject } from 'vue'
 import { VueDraggableNext as Draggable } from 'vue-draggable-next'
 
 import ItemMixin from '@/components/item/item-mixin'
@@ -92,13 +92,19 @@ export default {
     selected: Object,
     includeItemName: Boolean,
     includeItemTags: Boolean,
-    canDragDrop: Boolean,
-    moveState: Object
+    canDragDrop: Boolean
   },
   emits: ['reload', 'selected', 'checked'],
   components: {
     Draggable,
     ModelTreeviewItem: 'model-treeview-item'
+  },
+  setup () {
+    const moveState = inject('moveState')
+
+    return {
+      moveState
+    } 
   },
   computed: {
     label () {

@@ -26,7 +26,6 @@
                            :includeItemName="includeItemName"
                            :includeItemTags="includeItemTags"
                            :canDragDrop="canDragDrop"
-                           :moveState="moveState"
                            @selected="nodeSelected"
                            :selected="selected"
                            @checked="(item, check) => $emit('checked', item, check)"
@@ -64,6 +63,7 @@
 </style>
 
 <script>
+import { reactive, provide } from 'vue'
 import { VueDraggableNext as Draggable } from 'vue-draggable-next'
 
 import ModelTreeviewItem from '@/components/model/treeview-item.vue'
@@ -83,28 +83,32 @@ export default {
     Draggable,
     ModelTreeviewItem
   },
-  data () {
+  setup () {
+    let moveState = reactive({
+      moving: false,
+      canAdd: false,
+      canRemove: false,
+      dragEnd: true,
+      dragFinished: false,
+      saving: false,
+      cancelled: false,
+      moveConfirmed: false,
+      adding: false,
+      removing: false,
+      node: null,
+      newParent: null,
+      oldParent: null,
+      oldIndex: null,
+      dragStartTimestamp: null,
+      nodesToUpdate: [],
+      moveDelayedOpen: null,
+      moveTarget: null
+    })
+
+    provide('moveState', moveState)
+
     return {
-      moveState: {
-        moving: false,
-        canAdd: false,
-        canRemove: false,
-        dragEnd: true,
-        dragFinished: false,
-        saving: false,
-        cancelled: false,
-        moveConfirmed: false,
-        adding: false,
-        removing: false,
-        node: null,
-        newParent: null,
-        oldParent: null,
-        oldIndex: null,
-        dragStartTimestamp: null,
-        nodesToUpdate: [],
-        moveDelayedOpen: null,
-        moveTarget: null
-      }
+      moveState
     }
   },
   computed: {
