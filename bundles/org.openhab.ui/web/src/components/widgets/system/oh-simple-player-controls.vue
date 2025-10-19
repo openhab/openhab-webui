@@ -10,6 +10,7 @@
       <f7-button color="blue" large icon-material="speaker" icon-size="24" icon-color="gray" @click="openDeviceSelectorPopup" style="vertical-align: middle;display: flex;"/>
       <media-device-selector-popup :opened="deviceSelectorPopupOpened"  :player-item="currentPlayerItem"  @update:opened="deviceSelectorPopupOpened = $event"/>
 
+      <f7-button color="blue" large icon-material="queue_music" icon-size="24" icon-color="gray" href="/mediabrowser/?path=/Root/CurrentQueue" style="vertical-align: middle;display: flex;"/>
     </f7-segmented>
   </div>
 </template>
