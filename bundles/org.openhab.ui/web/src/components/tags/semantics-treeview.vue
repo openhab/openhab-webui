@@ -27,6 +27,7 @@
 </style>
 
 <script>
+import { reactive, provide } from 'vue'
 import SemanticsTreeviewItem from '@/components/tags/treeview-item.vue'
 
 export default {
@@ -47,6 +48,15 @@ export default {
   emits: ['selected'],
   components: {
     SemanticsTreeviewItem
+  },
+  setup () {
+    const moveState = reactive({
+      moving: false,
+      moveDelayedOpen: null,
+      moveTarget: null
+    })
+
+    provide('moveState', moveState)
   },
   computed: {
     rootTags () {

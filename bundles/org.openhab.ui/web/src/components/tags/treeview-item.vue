@@ -34,7 +34,6 @@
                                :picker="picker"
                                @selected="(event) => $emit('selected', event)"
                                :selectedTag="selectedTag"
-                               :moveState="moveState"
                                :class="{ 'non-draggable': !childTag.editable }" />
     </draggable>
     <template #label>
@@ -68,6 +67,7 @@
 </style>
 
 <script>
+import { inject } from 'vue'
 import { VueDraggableNext as Draggable } from 'vue-draggable-next'
 
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
@@ -82,20 +82,17 @@ export default {
     showNames: Boolean,
     showSynonyms: Boolean,
     canDragDrop: Boolean,
-    selectedTag: Object,
-    moveState: {
-      type: Object,
-      default: () => ({
-        moving: false,
-        moveDelayedOpen: null,
-        moveTarget: null
-      })
-    }
+    selectedTag: Object
   },
   emits: ['selected'],
   components: {
     Draggable,
     SemanticsTreeviewItem: 'semantics-treeview-item'
+  },
+  setup () {
+    return {
+      moveState: inject('moveState')
+    }
   },
   computed: {
     children () {
