@@ -3,7 +3,7 @@
            @page:beforein="onPageBeforeIn"
            @page:beforeout="onPageBeforeOut">
     <f7-navbar>
-      <oh-nav-content :title="item.name" :editable="item.editable" :f7router>
+      <oh-nav-content v-if="ready" :title="item.name" :editable="item.editable" :f7router>
         <template v-if="ready" #right>
           <f7-link v-if="item.editable" icon-md="material:edit" href="edit">
             {{ theme.md ? '' : 'Edit' }}
@@ -262,7 +262,7 @@ export default {
     onPageBeforeOut () {
       useStatesStore().stopTrackingStates()
     },
-    load () {
+    async load () {
       const promises = [
         this.$oh.api.get(`/rest/items/${this.itemName}?metadata=.+`),
         this.$oh.api.get('/rest/links?itemName=' + this.itemName)
