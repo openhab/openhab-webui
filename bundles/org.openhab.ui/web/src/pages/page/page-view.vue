@@ -11,6 +11,9 @@
                  icon-md="material:menu"
                  panel-open="left" />
       </f7-nav-left>
+      <f7-nav-title>
+        {{ pageLabel }}
+      </f7-nav-title>
       <f7-nav-right>
         <f7-link v-if="isAdmin"
                  icon-md="material:edit"
