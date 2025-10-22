@@ -1124,6 +1124,13 @@
               </shadow>
             </value>
           </block>
+          <block type="oh_rule_return">
+            <value name="value">
+              <shadow type="logic_boolean">
+                <field name="BOOL">TRUE</field>
+              </shadow>
+            </value>
+          </block>
         </category>
 
         <category name="Logging &amp; Output">
