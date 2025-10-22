@@ -18,7 +18,7 @@ import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 const userStore = useUserStore()
 const runtimeStore = useRuntimeStore()
 
-const { proxy } = getCurrentInstance()
+const { proxy } = getCurrentInstance() as any
 
 const iconVisible = computed(() => {
   return userStore.isAdmin() && proxy.$f7dim.width >= 1280

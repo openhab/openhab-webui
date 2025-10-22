@@ -72,7 +72,6 @@ defineSlots<{
 
 function back () {
   if (props.backLinkUrl) return
-  // @ts-expect-error assuming Router.Router for f7router prop
   const f7router : Router.Router = props.f7router || f7.views.main.router
 
   f7router.history.pop()
