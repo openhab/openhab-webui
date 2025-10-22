@@ -25,7 +25,7 @@ export const useRuntimeStore = defineStore('runtime', () => {
   const showDeveloperDock = ref<boolean>(false)
   const pagePath = ref<string | null>(null)
   const sitemapIncludeItemName = ref<boolean>(false)
-  const modelPicker = reactive<Object>({
+  const modelPicker = reactive<object>({
     includeItemNames: false,
     includeItemTags: false,
     expanded: false,

@@ -104,7 +104,7 @@ export default {
 
     return {
       moveState
-    } 
+    }
   },
   computed: {
     label () {
