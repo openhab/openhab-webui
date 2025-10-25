@@ -866,6 +866,11 @@ export default {
     },
     updateThemeOptions () {
       useUIOptionsStore().updateClasses()
+      if (useUIOptionsStore().visibleBreakpointDisabled) {
+        nextTick(() => {
+          f7.panel.get('left').disableVisibleBreakpoint()
+        })
+      }
     },
     toggleDeveloperDock () {
       if (!useUserStore().isAdmin()) return
