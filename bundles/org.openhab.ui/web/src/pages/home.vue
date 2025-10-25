@@ -25,6 +25,7 @@
         {{ title }}
       </f7-nav-title>
       <f7-nav-right>
+        <f7-link v-if="this.$store.getters.voiceIcon" :icon-aurora="this.$store.getters.voiceIcon" :tooltip="$t('home.triggerVoice')" @click="$f7.emit('triggerDialog')" />
         <developer-dock-icon />
         <f7-link v-if="this.$store.getters.isAdmin"
                  icon-ios="f7:pencil"
