@@ -25,18 +25,19 @@ export default {
     axis.data = axis.data || []
     switch (config.categoryType) {
       case 'hour':
-        axis.name = 'min'
+        if (!config.name) axis.name = 'min'
         for (let i = 0; i < 60; i++) {
           axis.data.push(i)
         }
         break
       case 'day':
-        axis.name = 'h'
+        if (!config.name) axis.name = 'h'
         for (let i = 0; i < 24; i++) {
           axis.data.push(i)
         }
         break
       case 'week':
+        if (!config.name) axis.name = 'day'
         const axisWeekdays = weekdays[config.weekdayFormat] || weekdays.default
         axis.data = [...axisWeekdays]
         if (!config.startOnSunday) {
@@ -44,12 +45,13 @@ export default {
         }
         break
       case 'month':
-        axis.name = 'day'
+        if (!config.name) axis.name = 'day'
         for (let i = 1; i <= 31; i++) {
           axis.data.push(i)
         }
         break
       case 'year':
+        if (!config.name) axis.name = 'month'
         const axisMonths = months[config.monthFormat] || months.default
         axis.data = [...axisMonths]
         break
