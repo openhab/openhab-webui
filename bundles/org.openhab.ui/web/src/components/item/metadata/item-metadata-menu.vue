@@ -9,11 +9,12 @@
             :link="'/settings/items/' + item.name + '/metadata/' + namespace.name"
             :title="namespace.label"
             :after="namespace.value || 'Not Set'">
-            <f7-icon v-if="!namespace.editable"
-                     slot="title"
-                     f7="lock_fill"
-                     size="1rem"
-                     color="gray" />
+            <template #title>
+              <f7-icon v-if="!namespace.editable"
+                       f7="lock_fill"
+                       size="1rem"
+                       color="gray" />
+            </template>
           </f7-list-item>
         </ul>
         <ul v-if="customNamespaces.length > 0">
@@ -24,11 +25,12 @@
             :link="'/settings/items/' + item.name + '/metadata/' + namespace.name"
             :title="namespace.label"
             :after="namespace.value || 'Not Set'">
-            <f7-icon v-if="!namespace.editable"
-                     slot="title"
-                     f7="lock_fill"
-                     size="1rem"
-                     color="gray" />
+            <template #title>
+              <f7-icon v-if="!namespace.editable"
+                       f7="lock_fill"
+                       size="1rem"
+                       color="gray" />
+            </template>
           </f7-list-item>
         </ul>
       </f7-list>
@@ -43,10 +45,12 @@
 
 <script>
 import MetadataNamespaces from '@/assets/definitions/metadata/namespaces.js'
+import { f7 } from 'framework7-vue'
 
 export default {
   props: {
-    item: Object
+    item: Object,
+    f7router: Object
   },
   data () {
     return {
@@ -56,7 +60,8 @@ export default {
   beforeMount () {
     if ((this.item.type === 'Group')
       ? (this.item.groupType && this.item.groupType.indexOf('Number:') < 0)
-      : this.item.type.indexOf('Number:') < 0) { this.metadataNamespaces = this.metadataNamespaces.filter((n) => n.name !== 'unit') }
+      : this.item.type.indexOf('Number:') < 0)
+      this.metadataNamespaces = this.metadataNamespaces.filter((n) => n.name !== 'unit')
   },
   computed: {
     editableNamespaces () {
@@ -98,14 +103,14 @@ export default {
   },
   methods: {
     editCustomMetadata () {
-      this.$f7.dialog.prompt('Please type in the namespace you would like to edit:',
+      f7.dialog.prompt('Please type in the namespace you would like to edit:',
         'Edit Custom Metadata',
         (namespace) => {
-          if (namespace) this.$f7.views.main.router.navigate('/settings/items/' + this.item.name + '/metadata/' + namespace)
+          if (namespace) f7.views.main.router.navigate('/settings/items/' + this.item.name + '/metadata/' + namespace)
         })
     },
     addMetadata () {
-      this.$f7.actions.create({
+      f7.actions.create({
         buttons: [
           [
             { label: true, text: 'Well-known namespaces' },
@@ -114,7 +119,7 @@ export default {
                 text: n.label,
                 color: 'blue',
                 onClick: () => {
-                  this.$f7router.navigate('/settings/items/' + this.item.name + '/metadata/' + n.name)
+                  this.f7router.navigate('/settings/items/' + this.item.name + '/metadata/' + n.name)
                 }
               }
             })

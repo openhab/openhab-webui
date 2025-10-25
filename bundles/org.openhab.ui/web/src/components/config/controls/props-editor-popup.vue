@@ -31,9 +31,12 @@
 </template>
 
 <script>
+import { f7 } from 'framework7-vue'
+import { defineAsyncComponent } from 'vue'
+
 export default {
   components: {
-    'config-sheet': () => import(/* webpackChunkName: "config-sheet" */ '@/components/config/config-sheet.vue')
+    'config-sheet': defineAsyncComponent(() => import(/* webpackChunkName: "config-sheet" */ '@/components/config/config-sheet.vue'))
   },
   props: {
     props: Object,
@@ -41,10 +44,10 @@ export default {
   },
   methods: {
     propsSheetClosed () {
-      this.$f7.emit('propsEditorClosed')
+      f7.emit('propsEditorClosed')
     },
     updateProps () {
-      this.$f7.emit('propsEditorUpdate', this.config)
+      f7.emit('propsEditorUpdate', this.config)
     }
   }
 }

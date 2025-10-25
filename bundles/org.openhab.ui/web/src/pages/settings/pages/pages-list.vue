@@ -1,15 +1,16 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
-    <f7-navbar title="Pages"
-               back-link="Settings"
-               back-link-url="/settings/"
-               back-link-force>
-      <f7-nav-right>
-        <developer-dock-icon />
-        <f7-link icon-md="material:done_all"
-                 @click="toggleCheck()"
-                 :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
-      </f7-nav-right>
+    <f7-navbar>
+      <oh-nav-content title="Pages"
+                      back-link="Settings"
+                      back-link-url="/settings/"
+                      :f7router>
+        <template #right>
+          <f7-link icon-md="material:done_all"
+                   @click="toggleCheck()"
+                   :text="(!theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
+        </template>
+      </oh-nav-content>
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
           v-if="initSearchbar"
@@ -19,7 +20,7 @@
           search-item=".pagelist-item"
           search-in=".item-title, .item-subtitle, .item-header, .item-footer"
           :placeholder="searchPlaceholder"
-          :disable-button="!$theme.aurora" />
+          :disable-button="!theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
 
@@ -28,7 +29,7 @@
                 :class="{ navbar: theme.md }"
                 bottom-ios
                 bottom-aurora>
-      <f7-link v-if="!$theme.md"
+      <f7-link v-if="!theme.md"
                color="red"
                v-show="selectedItems.length"
                class="delete"
@@ -37,14 +38,14 @@
                @click="removeSelected">
         Remove {{ selectedItems.length }}
       </f7-link>
-      <f7-link v-if="$theme.md"
+      <f7-link v-if="theme.md"
                icon-md="material:close"
                icon-color="white"
                @click="showCheckboxes = false" />
-      <div class="title" v-if="$theme.md">
+      <div class="title" v-if="theme.md">
         {{ selectedItems.length }} selected
       </div>
-      <div class="right" v-if="$theme.md">
+      <div class="right" v-if="theme.md">
         <f7-link v-show="selectedItems.length"
                  icon-md="material:delete"
                  icon-color="white"
@@ -76,7 +77,9 @@
               subtitle="Page type"
               after="The item state"
               footer="Page ID">
-              <f7-skeleton-block style="width: 32px; height: 32px; border-radius: 50%" slot="media" />
+              <template #media>
+                <f7-skeleton-block style="width: 32px; height: 32px; border-radius: 50%" />
+              </template>
             </f7-list-item>
           </f7-list-group>
         </f7-list>
@@ -114,7 +117,7 @@
               class="pagelist-item"
               :checkbox="showCheckboxes && page.uid !== 'overview'"
               :checked="isChecked(((page.component === 'Sitemap') ? 'system:sitemap:' : 'ui:page:') + page.uid)"
-              :disabled="showCheckboxes && page.uid === 'overview'"
+              :disabled="showCheckboxes && page.uid === 'overview' ? true : null"
               @click.ctrl="(e) => ctrlClick(e, page)"
               @click.meta="(e) => ctrlClick(e, page)"
               @click.exact="(e) => click(e, page)"
@@ -123,31 +126,35 @@
               :subtitle="getPageType(page).label"
               :footer="page.uid"
               :badge="page.config.order">
-              <div slot="subtitle">
-                <f7-chip v-for="tag in page.tags"
-                         :key="tag"
-                         :text="tag"
-                         media-bg-color="blue"
-                         style="margin-right: 6px">
-                  <f7-icon slot="media"
-                           ios="f7:tag_fill"
-                           md="material:label"
-                           aurora="f7:tag_fill" />
-                </f7-chip>
-                <f7-chip v-for="userrole in page.config.visibleTo || []"
-                         :key="userrole"
-                         :text="userrole"
-                         media-bg-color="green"
-                         style="margin-right: 6px">
-                  <f7-icon slot="media" f7="person_crop_circle_fill_badge_checkmark" />
-                </f7-chip>
-              </div>
-              <!-- <span slot="media" class="item-initial">{{page.config.label[0].toUpperCase()}}</span> -->
-              <oh-icon slot="media"
-                       :color="page.config.sidebar || page.uid === 'overview' ? '' : 'gray'"
-                       :icon="getPageIcon(page)"
-                       :height="32"
-                       :width="32" />
+              <template #subtitle>
+                <div>
+                  <f7-chip v-for="tag in page.tags"
+                           :key="tag"
+                           :text="tag"
+                           media-bg-color="blue"
+                           style="margin-right: 6px">
+                    <template #media>
+                      <f7-icon ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
+                    </template>
+                  </f7-chip>
+                  <f7-chip v-for="userrole in page.config.visibleTo || []"
+                           :key="userrole"
+                           :text="userrole"
+                           media-bg-color="green"
+                           style="margin-right: 6px">
+                    <template #media>
+                      <f7-icon f7="person_crop_circle_fill_badge_checkmark" />
+                    </template>
+                  </f7-chip>
+                </div>
+              </template>
+              <!-- <span class="item-initial">{{page.config.label[0].toUpperCase()}}</span> -->
+              <template #media>
+                <oh-icon :color="page.config.sidebar || page.uid === 'overview' ? '' : 'gray'"
+                         :icon="getPageIcon(page)"
+                         :height="32"
+                         :width="32" />
+              </template>
             </f7-list-item>
           </f7-list-group>
         </f7-list>
@@ -156,38 +163,50 @@
 
     <!-- empty-state-placeholder not needed because the overview page cannot be deleted, so there is at least 1 page -->
 
-    <f7-fab v-show="ready && !showCheckboxes"
-            position="right-bottom"
-            slot="fixed"
-            color="blue">
-      <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
-      <f7-icon ios="f7:multiply" md="material:close" aurora="f7:multiply" />
-      <f7-fab-buttons position="top">
-        <f7-fab-button fab-close label="Create sitemap" href="sitemap/add">
-          <f7-icon f7="menu" />
-        </f7-fab-button>
-        <f7-fab-button fab-close label="Create layout" href="layout/add">
-          <f7-icon f7="rectangle_grid_2x2" />
-        </f7-fab-button>
-        <f7-fab-button fab-close label="Create tabbed page" href="tabs/add">
-          <f7-icon f7="squares_below_rectangle" />
-        </f7-fab-button>
-        <f7-fab-button fab-close label="Create map view" href="map/add">
-          <f7-icon f7="map" />
-        </f7-fab-button>
-        <f7-fab-button fab-close label="Create floor plan" href="plan/add">
-          <f7-icon f7="square_stack_3d_up" />
-        </f7-fab-button>
-        <f7-fab-button fab-close label="Create chart" href="chart/add">
-          <f7-icon f7="graph_square" />
-        </f7-fab-button>
-      </f7-fab-buttons>
-    </f7-fab>
+    <template #fixed>
+      <f7-fab v-show="ready && !showCheckboxes"
+              position="right-bottom"
+              color="blue">
+        <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
+        <f7-icon ios="f7:multiply" md="material:close" aurora="f7:multiply" />
+        <f7-fab-buttons position="top">
+          <f7-fab-button fab-close label="Create sitemap" href="sitemap/add">
+            <f7-icon f7="menu" />
+          </f7-fab-button>
+          <f7-fab-button fab-close label="Create layout" href="layout/add">
+            <f7-icon f7="rectangle_grid_2x2" />
+          </f7-fab-button>
+          <f7-fab-button fab-close label="Create tabbed page" href="tabs/add">
+            <f7-icon f7="squares_below_rectangle" />
+          </f7-fab-button>
+          <f7-fab-button fab-close label="Create map view" href="map/add">
+            <f7-icon f7="map" />
+          </f7-fab-button>
+          <f7-fab-button fab-close label="Create floor plan" href="plan/add">
+            <f7-icon f7="square_stack_3d_up" />
+          </f7-fab-button>
+          <f7-fab-button fab-close label="Create chart" href="chart/add">
+            <f7-icon f7="graph_square" />
+          </f7-fab-button>
+        </f7-fab-buttons>
+      </f7-fab>
+    </template>
   </f7-page>
 </template>
 
 <script>
+import { nextTick } from 'vue'
+import { f7, theme } from 'framework7-vue'
+
+import { useLastSearchQueryStore } from '@/js/stores/useLastSearchQueryStore'
+
 export default {
+  props: {
+    f7router: Object
+  },
+  setup () {
+    return { theme }
+  },
   data () {
     return {
       ready: false,
@@ -246,22 +265,23 @@ export default {
       this.load()
     },
     onPageBeforeOut () {
-      this.$f7.data.lastPagesSearchQuery = this.$refs.searchbar?.f7Searchbar.query
+      useLastSearchQueryStore().lastPagesSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
     },
     load () {
       if (this.loading) return
       this.loading = true
 
-      if (this.initSearchbar) this.$f7.data.lastPagesSearchQuery = this.$refs.searchbar?.f7Searchbar.query
+      if (this.initSearchbar)
+        useLastSearchQueryStore().lastPagesSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
       this.initSearchbar = false
 
-      this.$set(this, 'selectedItems', [])
+      this.selectedItems = []
       this.showCheckboxes = false
       let promises = [
         this.$oh.api.get('/rest/ui/components/system:sitemap'),
         this.$oh.api.get('/rest/ui/components/ui:page')
       ]
-      Promise.all(promises).then(data => {
+      Promise.all(promises).then((data) => {
         const pagesAndSitemaps = data[0].concat(data[1])
         this.pages = pagesAndSitemaps.sort((a, b) => {
           return a.config.label.localeCompare(b.config.label)
@@ -271,12 +291,12 @@ export default {
         this.loading = false
         this.ready = true
 
-        this.$nextTick(() => {
+        nextTick(() => {
           if (this.$refs.listIndex) this.$refs.listIndex.update()
           if (this.$device.desktop && this.$refs.searchbar) {
-            this.$refs.searchbar.f7Searchbar.$inputEl[0].focus()
+            this.$refs.searchbar.$el.f7Searchbar.$inputEl[0].focus()
           }
-          this.$refs.searchbar?.f7Searchbar.search(this.$f7.data.lastPagesSearchQuery || '')
+          this.$refs.searchbar?.$el.f7Searchbar.search(useLastSearchQueryStore().lastPagesSearchQuery || '')
         })
       })
     },
@@ -284,7 +304,7 @@ export default {
       this.groupBy = groupBy
       const searchbar = this.$refs.searchbar.$el.f7Searchbar
       const filterQuery = searchbar.query
-      this.$nextTick(() => {
+      nextTick(() => {
         if (filterQuery) {
           searchbar.clear()
           searchbar.search(filterQuery)
@@ -302,7 +322,7 @@ export default {
       if (this.showCheckboxes) {
         this.toggleItemCheck(event, item.uid, item)
       } else {
-        this.$f7router.navigate(this.getPageType(item).type + '/' + item.uid)
+        this.f7router.navigate(this.getPageType(item).type + '/' + item.uid)
       }
     },
     ctrlClick (event, item) {
@@ -319,23 +339,23 @@ export default {
       }
     },
     getPageType (page) {
-      return this.pageTypes.find(t => t.componentType === page.component)
+      return this.pageTypes.find((t) => t.componentType === page.component)
     },
     getPageIcon (page) {
       if (page.uid === 'overview') return 'f7:house'
       if (page.config && page.config.icon) return page.config.icon
-      const pageType = this.pageTypes.find(t => t.componentType === page.component)
-      return (pageType) ? pageType.icon : 'f7:tv'
+      const pageType = this.pageTypes.find((t) => t.componentType === page.component)
+      return pageType ? pageType.icon : 'f7:tv'
     },
     removeSelected () {
       const vm = this
 
       if (this.selectedItems.indexOf('ui:page:overview') >= 0) {
-        this.$f7.dialog.alert('The overview page cannot be deleted!')
+        f7.dialog.alert('The overview page cannot be deleted!')
         return
       }
 
-      this.$f7.dialog.confirm(
+      f7.dialog.confirm(
         `Remove ${this.selectedItems.length} selected pages?`,
         'Remove Pages',
         () => {
@@ -344,7 +364,7 @@ export default {
       )
     },
     doRemoveSelected () {
-      let dialog = this.$f7.dialog.progress('Deleting Pages...')
+      let dialog = f7.dialog.progress('Deleting Pages...')
 
       const promises = this.selectedItems.map((p) => {
         if (p.startsWith('system:sitemap')) {
@@ -354,7 +374,7 @@ export default {
         }
       })
       Promise.all(promises).then((data) => {
-        this.$f7.toast.create({
+        f7.toast.create({
           text: 'Pages removed',
           destroyOnClose: true,
           closeTimeout: 2000
@@ -362,19 +382,19 @@ export default {
         this.selectedItems = []
         dialog.close()
         this.load()
-        this.$f7.emit('sidebarRefresh', null)
+        f7.emit('sidebarRefresh', null)
       }).catch((err) => {
         dialog.close()
         this.load()
         console.error(err)
-        this.$f7.dialog.alert('An error occurred while deleting: ' + err)
-        this.$f7.emit('sidebarRefresh', null)
+        f7.dialog.alert('An error occurred while deleting: ' + err)
+        f7.emit('sidebarRefresh', null)
       })
     }
   },
   asyncComputed: {
     iconUrl () {
-      return icon => this.$oh.media.getIcon(icon)
+      return (icon) => this.$oh.media.getIcon(icon)
     }
   }
 }

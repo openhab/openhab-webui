@@ -29,6 +29,8 @@
 </style>
 
 <script>
+import { f7 } from 'framework7-vue'
+
 export default {
   props: {
     lang: String
@@ -56,7 +58,7 @@ export default {
           },
           // error
           (ev) => {
-            self.$f7.toast.create({
+            f7.toast.create({
               icon: '<i class="f7-icons">mic_slash_fill</i>',
               text: ev.error,
               position: 'center',

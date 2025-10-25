@@ -81,7 +81,7 @@
       <f7-link color="blue"
                external
                target="_blank"
-               :href="`${$store.state.websiteUrl}/link/homekit`">
+               :href="`${runtimeStore.websiteUrl}/link/homekit`">
         HomeKit integration documentation
       </f7-link>
     </p>
@@ -89,9 +89,15 @@
 </template>
 
 <script>
+import { f7 } from 'framework7-vue'
+import { utils } from 'framework7'
+import { mapStores } from 'pinia'
+
 import { accessoriesAndCharacteristics, homekitParameters, accessories } from '@/assets/definitions/metadata/homekit'
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import ItemMetadataMixin from '@/components/item/metadata/item-metadata-mixin'
+
+import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
 export default {
   props: {
@@ -108,7 +114,7 @@ export default {
       accessories,
       classesDefs: accessoriesAndCharacteristics,
       multiple: !!this.metadata.value && this.metadata.value.indexOf(',') > 0,
-      classSelectKey: this.$f7.utils.id(),
+      classSelectKey: utils.id(),
       itemType: this.item.groupType || this.item.type,
       dirtyItem: new Set()
     }
@@ -146,7 +152,8 @@ export default {
         return options
       }
       return []
-    }
+    },
+    ...mapStores(useRuntimeStore)
   },
 
   methods: {
@@ -162,12 +169,12 @@ export default {
     toggleMultiple () {
       this.multiple = !this.multiple
       this.metadata.value = ''
-      this.classSelectKey = this.$f7.utils.id()
+      this.classSelectKey = utils.id()
     },
     updateClasses () {
-      const value = this.$refs.classes.f7SmartSelect.getValue()
+      const value = this.$refs.classes.$el.children[0].f7SmartSelect.getValue()
       this.metadata.value = (Array.isArray(value)) ? value.join(',') : value
-      this.$set(this.metadata, 'config', {})
+      this.metadata.config = {}
     },
     updateLinkedItem (accessoryType, accessoryCharacteristic, itemName) {
       const typeAndCharacteristic = accessoryType + '.' + accessoryCharacteristic
@@ -194,7 +201,7 @@ export default {
     updatedLinkedItem () {
       this.dirtyItem.forEach((it) =>
         this.$oh.api.put(`/rest/items/${it.name}/metadata/homekit`, it.metadata.homekit).then((data) => {
-          this.$f7.toast.create({
+          f7.toast.create({
             text: 'Metadata of group items updated. Please visit the items to review additional HomeKit configuration parameters.',
             destroyOnClose: true,
             closeTimeout: 3000

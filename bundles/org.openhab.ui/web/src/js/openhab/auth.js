@@ -1,5 +1,6 @@
-import Framework7 from 'framework7/framework7-lite.esm.bundle.js'
-import store from '@/js/store'
+import { utils } from 'framework7'
+
+import { useUserStore } from '@/js/stores/useUserStore'
 
 /**
  * The current access token
@@ -28,10 +29,10 @@ export function getRequireToken () { return requireToken }
 
 if (document.cookie.indexOf('X-OPENHAB-AUTH-HEADER') >= 0) tokenInCustomHeader = true
 
-export function authorize (setup) {
+export async function authorize (setup) {
   import('pkce-challenge').then((PkceChallenge) => {
     const pkceChallenge = PkceChallenge.default()
-    const authState = (setup ? 'setup-' : '') + Framework7.utils.id()
+    const authState = (setup ? 'setup-' : '') + utils.id()
 
     sessionStorage.setItem('openhab.ui:codeVerifier', pkceChallenge.code_verifier)
     sessionStorage.setItem('openhab.ui:authState', authState)
@@ -47,13 +48,13 @@ export function authorize (setup) {
   })
 }
 
-export function setBasicCredentials (username, password) {
+export async function setBasicCredentials (username, password) {
   if (username && password) {
     console.log('Using passed credentials')
     basicCredentials = { id: username, password }
     tokenInCustomHeader = true
     return Promise.resolve()
-  } else if (window.OHApp && window.OHApp.getBasicCredentialsUsername) {
+  } else if (typeof window.OHApp?.getBasicCredentialsUsername === 'function') {
     const usernameFromApp = window.OHApp.getBasicCredentialsUsername()
     const passwordFromApp = window.OHApp.getBasicCredentialsPassword()
     basicCredentials = { id: usernameFromApp, password: passwordFromApp }
@@ -108,15 +109,15 @@ export function clearAccessToken () {
 }
 
 export function isLoggedIn () {
-  return store.getters.user !== null
+  return useUserStore().user !== null
 }
 
 export function isAdmin () {
-  const user = store.getters.user
+  const user = useUserStore().user
   return user && user.roles && user.roles.indexOf('administrator') >= 0
 }
 
-export function enforceAdminForRoute (to, from, resolve, reject) {
+export function enforceAdminForRoute ({ resolve, reject }) {
   if (!isAdmin()) {
     reject()
     authorize()

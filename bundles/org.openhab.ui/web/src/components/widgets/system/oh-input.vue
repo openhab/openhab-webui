@@ -79,6 +79,8 @@ import mixin from '../widget-mixin'
 import variableMixin from '../variable-mixin'
 import { OhInputDefinition } from '@/assets/definitions/widgets/system'
 
+import { useStatesStore } from '@/js/stores/useStatesStore'
+
 export default {
   mixins: [mixin, variableMixin],
   widget: OhInputDefinition,
@@ -197,14 +199,14 @@ export default {
       } else if (this.config.type === 'datepicker' && Array.isArray(value) && this.valueForDatepicker[0].getTime() === value[0].getTime()) {
         return
       }
-      this.$set(this, 'pendingUpdate', value)
+      this.pendingUpdate = value
       if (this.config.variable) {
         const variableScope = this.getVariableScope(this.context.ctxVars, this.context.varScope, this.config.variable)
         const variableLocation = (variableScope) ? this.context.ctxVars[variableScope] : this.context.vars
         if (this.config.variableKey) {
           value = this.setVariableKeyValues(variableLocation[this.config.variable], this.config.variableKey, value)
         }
-        this.$set(variableLocation, this.config.variable, value)
+        variableLocation[this.config.variable] = value
       }
     },
     listenForEnterKey (evt) {
@@ -227,8 +229,8 @@ export default {
           cmd = dayjs(cmd[0]).format()
           if (cmd === 'Invalid Date') return
         }
-        this.$store.dispatch('sendCommand', { itemName: this.config.item, cmd })
-        this.$set(this, 'pendingUpdate', null)
+        useStatesStore().sendCommand(this.config.item, cmd)
+        this.pendingUpdate = null
       }
     },
     extractUnit (pattern) {

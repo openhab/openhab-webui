@@ -1,13 +1,12 @@
-import { loadLocaleMessages } from '@/js/i18n'
+import { f7 } from 'framework7-vue'
+import { useI18n } from 'vue-i18n'
+import { loadLocaleMessages } from '@/js/i18n.js'
 
 export default {
   data () {
     return {
       showCachePurgeOption: false
     }
-  },
-  i18n: {
-    messages: loadLocaleMessages(require.context('@/assets/i18n/about'))
   },
   methods: {
     checkPurgeServiceWorkerAndCachesAvailable () {
@@ -27,15 +26,15 @@ export default {
       }
     },
     purgeServiceWorkerAndCaches () {
-      this.$f7.dialog.confirm(
-        this.$t('about.reload.confirmPurge'),
+      f7.dialog.confirm(
+        this.t('about.reload.confirmPurge'),
         () => {
           navigator.serviceWorker.getRegistrations().then(function (registrations) {
             for (let registration of registrations) {
               registration.unregister().then(function () {
                 return self.clients.matchAll()
               }).then(function (clients) {
-                clients.forEach(client => {
+                clients.forEach((client) => {
                   if (client.url && 'navigate' in client) {
                     setTimeout(() => { client.navigate(client.url.split('#')[0]) }, 1000)
                   }
@@ -45,7 +44,7 @@ export default {
           })
           window.caches.keys().then(function (cachesNames) {
             console.log('Deleting caches')
-            return Promise.all(cachesNames.map(function (cacheName) {
+            return Promise.all(cachesNames.map(async function (cacheName) {
               return caches.delete(cacheName).then(function () {
                 console.log('Cache with name ' + cacheName + ' is deleted')
               })

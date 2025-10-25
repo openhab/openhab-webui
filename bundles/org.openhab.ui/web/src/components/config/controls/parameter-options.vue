@@ -13,7 +13,7 @@
         <option v-for="option in configDescription.options"
                 :value="option.value"
                 :key="option.value"
-                :selected="isSelected(option)">
+                :selected="isSelected(option) ? true : null">
           {{ option.label }}
         </option>
       </select>
@@ -42,7 +42,7 @@
                   v-for="option in configDescription.options"
                   no-hairline
                   :value="option.value"
-                  :checked="isSelected(option)"
+                  :checked="isSelected(option) ? true : null"
                   radio-icon="start"
                   @change="(!configDescription.required && isSelected(option)) ? updateValue(undefined) : updateValue(option.value)"
                   :key="option.value"
@@ -52,6 +52,8 @@
 </template>
 
 <script>
+import { f7, theme } from 'framework7-vue'
+
 export default {
   props: {
     configDescription: Object,
@@ -62,7 +64,7 @@ export default {
     return {
       inlineList: false,
       smartSelectParams: {
-        view: (this.$f7) ? this.$f7.view.main : null
+        view: (f7) ? f7.view.main : null
       }
     }
   },
@@ -75,7 +77,7 @@ export default {
       this.smartSelectParams.openIn = 'popup'
       this.smartSelectParams.searchbar = true
       this.smartSelectParams.virtualList = true
-      if (this.$theme.aurora) this.smartSelectParams.virtualListHeight = 32
+      if (theme.aurora) this.smartSelectParams.virtualListHeight = 32
     } else {
       this.smartSelectParams.openIn = 'popup'
       this.smartSelectParams.searchbar = true
@@ -88,7 +90,7 @@ export default {
   },
   methods: {
     updateValue (evt) {
-      let value = (this.inlineList) ? evt : this.$refs.item.f7SmartSelect.getValue()
+      let value = (this.inlineList) ? evt : this.$refs.item.$el.children[0].f7SmartSelect.getValue()
       if (!this.configDescription.multiple && this.configDescription.type === 'INTEGER') {
         value = parseInt(value)
       }

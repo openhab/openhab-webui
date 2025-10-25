@@ -5,25 +5,20 @@
            class="page-addon-store">
     <f7-navbar large
                :large-transparent="false"
-               back-link="Back"
-               class="store-nav"
-               :title-large="AddonTitles[currentTab] || 'Add-on Store'"
-               :title="pageTitle">
-      <f7-nav-right>
-        <developer-dock-icon />
-      </f7-nav-right>
+               class="store-nav">
+      <oh-nav-content :title="AddonTitles[currentTab] || 'Add-on Store'" :f7router />
     </f7-navbar>
-    <f7-toolbar v-show="$f7.width < 1024 || !leftPanelOpened" tabbar bottom>
-      <f7-link tab-link
-               :tab-link-active="$store.state.pagePath === '/addons/'"
+    <f7-toolbar v-show="$f7dim.width < 1024 || !leftPanelOpened" tabbar bottom>
+      <f7-link tab-link="#main"
+               :tab-link-active="runtimeStore.pagePath === '/addons/'"
                href="/addons/"
                icon-ios="f7:bag_fill"
                icon-aurora="f7:bag_fill"
                icon-md="material:shopping_bag" />
       <f7-link v-for="section in Object.keys(AddonTitles)"
                :key="section"
-               tab-link
-               :tab-link-active="$store.state.pagePath === `/addons/${section}/`"
+               tab-link="#section"
+               :tab-link-active="runtimeStore.pagePath === `/addons/${section}/`"
                :href="`/addons/${section}`"
                :icon-ios="`f7:${AddonIcons[section]}`"
                :icon-aurora="`f7:${AddonIcons[section]}`"
@@ -35,7 +30,7 @@
         class="searchbar-store"
         custom-search
         :placeholder="'Search ' + Object.assign({ main: 'all add-ons' }, AddonTitles)[currentTab].toLowerCase()"
-        :disable-button="!$theme.aurora"
+        :disable-button="!theme.aurora"
         @searchbar:search="search"
         @searchbar:clear="clearSearch" />
       <f7-list accordion-list style="margin-top: 0px; margin-bottom: 0px">
@@ -82,7 +77,7 @@
     <!-- Search Results -->
     <div v-if="searchResults">
       <f7-block v-if="searchResults.length === 0">
-        '{{ this.$refs.storeSearchbar.f7Searchbar.query }}' not found in {{ currentTab === 'main' ? 'any' : currentTab }} add-ons
+        '{{ this.$refs.storeSearchbar.$el.f7Searchbar.query }}' not found in {{ currentTab === 'main' ? 'any' : currentTab }} add-ons
         <div class="flex-shrink-0 if-aurora display-flex justify-content-center">
           <f7-button color="blue"
                      fill
@@ -100,7 +95,7 @@
     </div>
 
     <f7-tabs v-show="ready && !searchResults" routable>
-      <f7-tab id="main" @tabShow="onTabShow">
+      <f7-tab id="main" @tab:show="onTabShow">
         <!-- Show Suggested Add-ons -->
         <addons-section
           v-for="section in Object.keys(SuggestionLabels)"
@@ -201,7 +196,7 @@
                         :subtitle="'Integrate openHAB with external systems'" />
       </f7-tab>
 
-      <f7-tab id="persistence" @tabShow="onTabShow">
+      <f7-tab id="persistence" @tab:show="onTabShow">
         <addons-section v-if="suggestedAddons"
                         :show-all="true"
                         @addon-button-click="addonButtonClick"
@@ -218,7 +213,7 @@
                         :subtitle="'Backend connectors to store historical data'" />
       </f7-tab>
 
-      <f7-tab id="transformation" @tabShow="onTabShow">
+      <f7-tab id="transformation" @tab:show="onTabShow">
         <addons-section v-if="suggestedAddons"
                         :show-all="true"
                         @addon-button-click="addonButtonClick"
@@ -235,7 +230,7 @@
                         :subtitle="'Translate raw values into processed or human-readable representations'" />
       </f7-tab>
 
-      <f7-tab id="voice" @tabShow="onTabShow">
+      <f7-tab id="voice" @tab:show="onTabShow">
         <addons-section v-if="suggestedAddons"
                         :show-all="true"
                         @addon-button-click="addonButtonClick"
@@ -276,9 +271,15 @@
 </style>
 
 <script>
+import { nextTick } from 'vue'
+import { f7, theme } from 'framework7-vue'
+import { mapStores } from 'pinia'
+
 import AddonStoreMixin from './addon-store-mixin'
 import AddonsSection from '@/components/addons/addons-section.vue'
 import { AddonIcons, AddonTitles, AddonSuggestionLabels, AddonConnectionTypes, AddonRegionTypes } from '@/assets/addon-store'
+
+import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
 export default {
   mixins: [AddonStoreMixin],
@@ -288,6 +289,9 @@ export default {
   },
   components: {
     AddonsSection
+  },
+  setup () {
+    return { f7, theme }
   },
   data () {
     return {
@@ -332,7 +336,8 @@ export default {
     },
     connectionTypes () {
       return this.AddonConnectionTypes[this.connectionType].values
-    }
+    },
+    ...mapStores(useRuntimeStore)
   },
   methods: {
     onPageAfterIn () {
@@ -340,18 +345,18 @@ export default {
     },
     onPageBeforeOut () {
       this.stopEventSource()
-      this.$f7.panel.get('left').off('opened closed', this.updateLeftPanelVisibility)
+      f7.panel.get('left').off('opened closed', this.updateLeftPanelVisibility)
     },
     updateLeftPanelVisibility () {
-      this.leftPanelOpened = this.$f7.panel.get('left').opened
+      this.leftPanelOpened = f7.panel.get('left').opened
     },
     load () {
       if (this.searchFor) {
         // Show this in the searchbar while the page is loading
-        this.$refs.storeSearchbar.f7Searchbar.$inputEl.val(this.searchFor)
+        this.$refs.storeSearchbar.$el.f7Searchbar.$inputEl.val(this.searchFor)
       }
       this.updateLeftPanelVisibility()
-      this.$f7.panel.get('left').on('opened closed', this.updateLeftPanelVisibility)
+      f7.panel.get('left').on('opened closed', this.updateLeftPanelVisibility)
       this.stopEventSource()
       this.$oh.api.get('/rest/services/org.openhab.i18n/config').then((data) => {
         if (data.region) {
@@ -360,18 +365,18 @@ export default {
         }
       })
       this.$oh.api.get('/rest/addons/suggestions').then((data) => {
-        this.$set(this, 'suggestions', data)
+        this.suggestions = data
       })
       this.$oh.api.get('/rest/addons/services').then((data) => {
         this.services = data
         Promise.all(this.services.map((s) => this.$oh.api.get('/rest/addons?serviceId=' + s.id))).then((data2) => {
           data2.forEach((addons, idx) => {
-            this.$set(this.addons, data[idx].id, data2[idx])
+            this.addons[data[idx].id] = data2[idx]
           })
           this.ready = true
           this.startEventSource()
-          this.$nextTick(() => {
-            this.$f7.lazy.create('.page-addon-store')
+          nextTick(() => {
+            f7.lazy.create('.page-addon-store')
             if (this.searchFor) {
               this.$refs.storeSearchbar.search(this.searchFor)
             }
@@ -386,14 +391,14 @@ export default {
     onTabShow (tab) {
       this.currentTab = tab.id
 
-      const section = tab.id === 'main' ? '' : (tab.id + '/')
-      this.$f7router.updateCurrentUrl('/addons/' + section)
-      this.$f7router.url = '/' + this.currentTab
+      const section = tab.id === 'main' ? '' : tab.id + '/'
+      this.f7router.updateCurrentUrl('/addons/' + section)
+      this.f7router.url = '/' + this.currentTab
 
       this.clearSearch()
 
-      this.$nextTick(() => {
-        this.$f7.lazy.create('.page-addon-store')
+      nextTick(() => {
+        f7.lazy.create('.page-addon-store')
       })
     },
     search (searchbar, query, previousQuery) {
@@ -412,26 +417,26 @@ export default {
       query = query.toLowerCase()
       results = results.filter((a) => a.id.includes(query) || a.label.toLowerCase().includes(query) || a.description?.toLowerCase()?.includes(query))
 
-      this.$set(this, 'query', query)
-      this.$set(this, 'searchResults', results)
+      this.query = query
+      this.searchResults = results
       setTimeout(() => {
-        this.$f7.lazy.create('.page-addon-store')
+        f7.lazy.create('.page-addon-store')
       }, 100)
     },
     clearSearch (searchbar, previousQuery) {
-      this.$refs.storeSearchbar.f7Searchbar.$inputEl.val('')
-      this.$set(this, 'query', null)
-      this.$set(this, 'searchResults', null)
+      this.$refs.storeSearchbar.$el.f7Searchbar.$inputEl.val('')
+      this.query = null
+      this.searchResults = null
       if (this.$device.desktop) {
-        this.$nextTick(() => {
-          this.$refs.storeSearchbar.f7Searchbar.$inputEl.focus()
+        nextTick(() => {
+          this.$refs.storeSearchbar.$el.f7Searchbar.$inputEl.focus()
         })
       }
     },
     updateFilter (filter, value) {
-      this.$set(this, filter, value)
+      this[filter] = value
       if (this.query) {
-        this.$nextTick(() => {
+        nextTick(() => {
           this.search(undefined, this.query)
         })
       }

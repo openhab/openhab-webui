@@ -18,7 +18,7 @@ defaults:
     working-directory: bundles/org.openhab.ui/web
 
 env:
-  NODE_VERSION: '20.12.2'
+  NODE_VERSION: '24.5.0'
 
 jobs:
   checks:
@@ -85,12 +85,12 @@ jobs:
       - name: Upload report artifact
         uses: actions/upload-artifact@v4
         with:
-          name: report
-          path: /home/runner/work/openhab-webui/openhab-webui/bundles/org.openhab.ui/web/report.html
+          name: webpack-stats
+          path: /home/runner/work/openhab-webui/openhab-webui/bundles/org.openhab.ui/web/www/webpack-stats.json
 
       # Upload bundle stats to use on relative-ci.yaml workflow,
       # pinning to SHA to mitigate possible supply chain attack
       - name: Upload webpack stats artifact to RelativeCI
         uses: relative-ci/agent-upload-artifact-action@a2b5741b4f7e6a989c84ec1a3059696b23c152e5 # v2.0.0
         with:
-          webpackStatsFile: ./bundles/org.openhab.ui/web/stats.json
+          webpackStatsFile: ./bundles/org.openhab.ui/web/www/webpack-stats.json

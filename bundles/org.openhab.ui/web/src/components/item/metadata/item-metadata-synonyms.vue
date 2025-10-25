@@ -4,20 +4,24 @@
       <f7-list-input
         ref="input"
         type="textarea"
-        :floating-label="$theme.md"
+        :floating-label="theme.md"
         :label="'Synonyms'"
         name="synonyms"
         :value="synonyms"
         :disabled="!editable ? true : null"
         @input="updateValue" />
-      <f7-block-footer class="param-description" slot="after-list">
-        <small>Enter each synonym on a separate line.</small>
-      </f7-block-footer>
+      <template #after-list>
+        <f7-block-footer class="param-description">
+          <small>Enter each synonym on a separate line.</small>
+        </f7-block-footer>
+      </template>
     </f7-list>
   </div>
 </template>
 
 <script>
+import { theme } from 'framework7-vue'
+
 import ItemMetadataMixin from '@/components/item/metadata/item-metadata-mixin'
 
 export default {
@@ -26,6 +30,9 @@ export default {
     metadata: Object
   },
   mixins: [ItemMetadataMixin],
+  setup () {
+    return { theme }
+  },
   computed: {
     synonyms () {
       if (!this.metadata.value) return []

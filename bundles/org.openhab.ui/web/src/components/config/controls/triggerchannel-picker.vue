@@ -14,7 +14,7 @@
           <option v-for="channel in thing.triggerChannels"
                   :value="channel.uid"
                   :key="channel.uid"
-                  :selected="(multiple) ? value.indexOf(channel.uid) >= 0 : value === channel.uid">
+                  :selected="(multiple) ? value.indexOf(channel.uid) >= 0 : value === channel.uid ? true : null">
             {{ channel.id }} ({{ channel.label }})
           </option>
         </optgroup>
@@ -26,6 +26,8 @@
 </template>
 
 <script>
+import { f7 } from 'framework7-vue'
+
 export default {
   props: {
     title: String,
@@ -42,7 +44,7 @@ export default {
       things: [],
       icons: {},
       smartSelectParams: {
-        view: this.$f7.view.main,
+        view: f7.view.main,
         openIn: 'popup',
         searchbar: true,
         searchbarPlaceholder: 'Search channels',
@@ -101,7 +103,7 @@ export default {
   },
   methods: {
     select (e) {
-      this.$f7.input.validateInputs(this.$refs.smartSelect.$el)
+      f7.input.validateInputs(this.$refs.smartSelect.$el)
       this.$emit('input', e.target.value)
     }
   }

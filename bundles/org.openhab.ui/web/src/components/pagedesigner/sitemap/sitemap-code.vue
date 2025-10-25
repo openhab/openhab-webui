@@ -47,13 +47,15 @@
 </style>
 
 <script>
+import { defineAsyncComponent } from 'vue'
+
 import { Parser, Grammar } from 'nearley'
-import grammar from '@/assets/sitemap-lexer.nearley'
+import * as grammar from '@/assets/sitemap-lexer.nearley.js'
 import dslUtil from './dslUtil'
 
 export default {
   components: {
-    'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')
+    editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue'))
   },
   props: {
     sitemap: Object
@@ -79,7 +81,7 @@ export default {
   computed: {
     parsedSitemap () {
       try {
-        const parser = new Parser(Grammar.fromCompiled(grammar))
+        const parser = new Parser(Grammar.fromCompiled(grammar.default))
         parser.feed(this.sitemapDsl.trim().replace(/\t/g, ' '))
         if (!parser.results.length) return { error: 'Unable to parse, check your input' }
         return parser.results[0]

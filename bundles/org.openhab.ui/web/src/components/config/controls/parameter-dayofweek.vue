@@ -5,7 +5,7 @@
                   :key="day"
                   :title="labels[$idx]"
                   checkbox
-                  :checked="isSelected(day)"
+                  :checked="isSelected(day) ? true : null"
                   @change="(evt) => select(day, evt.target.checked)" />
   </ul>
 </template>

@@ -12,6 +12,7 @@
     :key="mapKey"
     @update:bounds="ready = true"
     class="oh-plan-page-lmap"
+    @ready="fitMapBounds"
     :class="{ 'with-tabbar': context.tab,
               'oh-plan-white-background': config.backgroundColor === 'white',
               'oh-plan-black-background': config.backgroundColor === 'black',
@@ -56,7 +57,7 @@
     background-color white
   &.oh-plan-black-background
     background-color black
-.theme-dark
+.dark
   .oh-plan-page-lmap
     &.oh-plan-blackwhite-background
       background-color black
@@ -87,15 +88,24 @@ dark-tooltip()
 .oh-plan-tooltip-black
   dark-tooltip()
 
-.theme-dark
+.dark
   .oh-plan-tooltip-blackwhite
     dark-tooltip()
+
+// override leaflet style
+.leaflet-div-icon
+  background: unset
+  border: unset
+
 </style>
 
 <script>
+import { nextTick } from 'vue'
+import { utils } from 'framework7'
+
 import mixin from '../widget-mixin'
 import { CRS, Icon } from 'leaflet'
-import { LMap, LImageOverlay, LFeatureGroup, LControl } from 'vue2-leaflet'
+import { LMap, LImageOverlay, LFeatureGroup, LControl } from '@vue-leaflet/vue-leaflet'
 import 'leaflet/dist/leaflet.css'
 
 import OhPlanMarker from './oh-plan-marker.vue'
@@ -103,9 +113,9 @@ import { OhPlanPageDefinition } from '@/assets/definitions/widgets/plan'
 
 delete Icon.Default.prototype._getIconUrl
 Icon.Default.mergeOptions({
-  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
-  iconUrl: require('leaflet/dist/images/marker-icon.png'),
-  shadowUrl: require('leaflet/dist/images/marker-shadow.png')
+  iconRetinaUrl: import('leaflet/dist/images/marker-icon-2x.png'),
+  iconUrl: import('leaflet/dist/images/marker-icon.png'),
+  shadowUrl: import('leaflet/dist/images/marker-shadow.png')
 })
 
 export default {
@@ -127,7 +137,7 @@ export default {
       zoom: -0.5,
       crs: CRS.Simple,
       showMap: false,
-      mapKey: this.$f7.utils.id(),
+      mapKey: utils.id(),
       markers: []
     }
   },
@@ -190,11 +200,11 @@ export default {
     onMarkerUpdate () {
     },
     fitMapBounds () {
-      if (this.$refs.map) this.$refs.map.mapObject.fitBounds(this.bounds)
+      if (this.$refs.map) this.$refs.map.leafletObject?.fitBounds(this.bounds)
     },
     refreshMap () {
-      this.mapKey = this.$f7.utils.id()
-      this.$nextTick(() => {
+      this.mapKey = utils.id()
+      nextTick(() => {
         this.fitMapBounds()
       })
     }

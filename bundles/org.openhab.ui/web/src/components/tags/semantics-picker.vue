@@ -37,8 +37,12 @@
 </template>
 
 <script>
+import { f7 } from 'framework7-vue'
+
 import TagMixin from '@/components/tags/tag-mixin'
 import SemanticsPickerPopup from '@/components/tags/semantics-picker-popup.vue'
+
+import { useSemanticsStore } from '@/js/stores/useSemanticsStore'
 
 export default {
   mixins: [TagMixin],
@@ -49,6 +53,11 @@ export default {
   },
   components: {
     SemanticsPickerPopup
+  },
+  setup () {
+    return {
+      f7
+    }
   },
   data () {
     return {
@@ -83,7 +92,7 @@ export default {
       this.$nextTick(() => {
         const popupRef = type === 'class' ? 'classPopup' : 'propertyPopup'
         const popupEl = this.$refs[popupRef]?.$el
-        if (popupEl) this.$f7.popup.open(popupEl)
+        if (popupEl) f7.popup.open(popupEl)
       })
     },
     closePopup () {
@@ -91,11 +100,11 @@ export default {
     },
     tagWithHierarchy (tag) {
       if (!tag) return null
-      let parentTagId = this.semanticClasses.Tags.find((t) => t.name === tag).parent
+      let parentTagId = useSemanticsStore().Tags.find((t) => t.name === tag).parent
       if (!parentTagId) return null // no parent tag, so this is the root class
       let value = tag
       while (parentTagId) {
-        const parentTag = this.semanticClasses.Tags.find((t) => t.uid === parentTagId)
+        const parentTag = useSemanticsStore().Tags.find((t) => t.uid === parentTagId)
         parentTagId = parentTag.parent
         if (parentTagId) {
           value = parentTag.name + '->' + value

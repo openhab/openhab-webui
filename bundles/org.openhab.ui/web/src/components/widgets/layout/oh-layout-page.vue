@@ -2,9 +2,9 @@
   <div>
     <template v-if="!config.layoutType || config.layoutType === 'responsive'">
       <oh-block v-for="(component, idx) in context.component.slots.default"
+                v-bind="$attrs"
                 :key="idx"
                 :context="childContext(component)"
-                v-on="$listeners"
                 style="z-index: 5000 !important" />
       <f7-block v-if="context.editmode">
         <f7-list>
@@ -15,10 +15,9 @@
       </f7-block>
 
       <hr v-if="context.editmode">
-      <f7-block v-if="context.component.slots.masonry && context.component.slots.masonry.length" style="z-index: auto !important">
-        <oh-masonry
-          :context="childContext(context.component.slots.masonry[0])"
-          v-on="$listeners" />
+      <f7-block v-if="context.component.slots.masonry && context.component.slots.masonry.length"
+                style="z-index: auto !important">
+        <oh-masonry v-bind="$attrs" :context="childContext(context.component.slots.masonry[0])" />
       </f7-block>
       <template v-else-if="context.editmode">
         <f7-block>

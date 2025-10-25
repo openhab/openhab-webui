@@ -1,7 +1,7 @@
 <template>
   <ul>
     <f7-list-input
-      :floating-label="$theme.md"
+      :floating-label="theme.md"
       :label="configDescription.label"
       :name="configDescription.name"
       :value="value"
@@ -11,20 +11,25 @@
       @input="(evt) => updateValue(evt.target.value)"
       :error-message-force="exprError"
       type="text">
-      <div class="padding-left" slot="content-end">
-        <f7-button slot="content-end" @click="openPopup">
-          <f7-icon f7="calendar" /> Build
-        </f7-button>
-      </div>
-      <div slot="info">
-        {{ translation }}
-      </div>
+      <template #content-end>
+        <div class="padding-left">
+          <f7-button @click="openPopup">
+            <f7-icon f7="calendar" /> Build
+          </f7-button>
+        </div>
+      </template>
+      <template #info>
+        <div>
+          {{ translation }}
+        </div>
+      </template>
     </f7-list-input>
   </ul>
 </template>
 
 <script>
-import cronstrue from 'cronstrue'
+import { toString } from 'cronstrue'
+import { f7, theme } from 'framework7-vue'
 
 export default {
   props: {
@@ -32,8 +37,8 @@ export default {
     value: String
   },
   emits: ['input'],
-  data () {
-    return {}
+  setup () {
+    return { theme }
   },
   methods: {
     updateValue (value) {
@@ -45,7 +50,7 @@ export default {
           component: c.default
         }
 
-        this.$f7router.navigate({
+        f7.views.main.router.navigate({
           url: 'cron-edit',
           route: {
             path: 'cron-edit',
@@ -57,9 +62,9 @@ export default {
           }
         })
 
-        this.$f7.once('cronEditorUpdate', this.updateValue)
-        this.$f7.once('cronEditorClosed', () => {
-          this.$f7.off('cronEditorUpdate', this.updateValue)
+        f7.once('cronEditorUpdate', this.updateValue)
+        f7.once('cronEditorClosed', () => {
+          f7.off('cronEditorUpdate', this.updateValue)
         })
       })
     }
@@ -67,7 +72,7 @@ export default {
   computed: {
     translation () {
       try {
-        const ret = cronstrue.toString(this.value, {
+        const ret = toString(this.value, {
           use24HourTimeFormat: true
         })
         return ret

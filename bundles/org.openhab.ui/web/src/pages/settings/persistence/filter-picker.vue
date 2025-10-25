@@ -39,6 +39,8 @@
 </style>
 
 <script>
+import { f7 } from 'framework7-vue'
+
 export default {
   props: {
     filters: Array,
@@ -49,15 +51,15 @@ export default {
   data () {
     return {
       smartSelectParams: {
-        view: this.$f7.view.main,
+        view: f7.view.main,
         openIn: 'popup'
       }
     }
   },
   methods: {
     select () {
-      this.$f7.input.validateInputs(this.$refs.smartSelect.$el)
-      const value = this.$refs.smartSelect.f7SmartSelect.getValue()
+      f7.input.validateInputs(this.$refs.smartSelect.$el)
+      const value = this.$refs.smartSelect.$el.children[0].f7SmartSelect.getValue()
       this.$emit('filters-selected', value)
     }
   }

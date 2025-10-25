@@ -3,10 +3,8 @@
            @page:beforeout="onPageBeforeOut"
            ref="addondetails"
            class="page-addon-details">
-    <f7-navbar :transparent="true" back-link="Back" class="addon-details-nav">
-      <f7-nav-title v-if="addon">
-        {{ addon.label }}
-      </f7-nav-title>
+    <f7-navbar :transparent="true" class="addon-details-nav">
+      <oh-nav-content :title="addon?.label" :f7router />
     </f7-navbar>
     <f7-block class="block-narrow addon-details" v-if="ready && addon">
       <f7-row>
@@ -21,7 +19,7 @@
               </div>
               <div v-if="addon.verifiedAuthor" class="addon-header-subtitle">
                 {{ addon.author }}
-                <f7-icon :color="$f7.data.themeOptions.dark === 'dark' ? 'white' : 'blue'" f7="checkmark_seal_fill" />
+                <f7-icon :color="uiOptionsStore.getDarkMode() === 'dark' ? 'white' : 'blue'" f7="checkmark_seal_fill" />
               </div>
               <div v-else-if="addon.properties && addon.properties.views" class="addon-header-subtitle">
                 <addon-stats-line :addon="addon" :iconSize="15" />
@@ -201,10 +199,16 @@
 </style>
 
 <script>
+import { f7 } from 'framework7-vue'
+import { mapStores } from 'pinia'
+
 import AddonStoreMixin from './addon-store-mixin'
 import AddonStatsLine from '@/components/addons/addon-stats-line.vue'
 import AddonInfoTable from '@/components/addons/addon-info-table.vue'
 import AddonLogo from '@/components/addons/addon-logo.vue'
+
+import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
+import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
 export default {
   mixins: [AddonStoreMixin],
@@ -251,14 +255,15 @@ export default {
     docLinkUrl () {
       if (!this.addon) return ''
       if (this.serviceId && this.serviceId !== 'karaf') return this.addon.link ? this.addon.link : ''
-      return this.$store.state.websiteUrl +
+      return useRuntimeStore().websiteUrl +
         `/addons/${this.addon.type.replace('misc', 'integrations').replace('binding', 'bindings').replace('transformation', 'transformations')}` +
         `/${this.addon.id}`
     },
     showInstallActions () {
       let splitted = this.addon.uid.split(':')
       return splitted.length < 2 || splitted[0] !== 'eclipse'
-    }
+    },
+    ...mapStores(useUIOptionsStore)
   },
   methods: {
     onPageBeforeIn () {
@@ -276,13 +281,13 @@ export default {
       }
       this.$oh.api.get('/rest/addons/' + this.addonId + (serviceId ? '?serviceId=' + serviceId : '')).then((data) => {
         this.resetPending()
-        this.$set(this, 'addon', data)
+        this.addon = data
         this.ready = true
         this.processDescription()
         this.startEventSource()
 
         setTimeout(() => {
-          this.$f7.lazy.create('.page-addon-details')
+          f7.lazy.create('.page-addon-details')
         })
       })
     },
@@ -290,11 +295,11 @@ export default {
       if (this.addon.author === 'openHAB') {
         // assuming the add-on is an official one (distribution), try to fetch the documentation from GitHub
         let docsBranch = 'final'
-        if (this.$store.state.runtimeInfo.buildString === 'Release Build') docsBranch = 'final-stable'
+        if (useRuntimeStore().runtimeInfo.buildString === 'Release Build') docsBranch = 'final-stable'
         let addonTypeFolder = '_addons_' + this.addon.type
         if (this.addon.type === 'misc') addonTypeFolder = '_addons_io'
         if (this.addon.type !== 'automation') addonTypeFolder += 's'
-        let docSrcUrl = `${this.$store.state.docSrcUrl}/${addonTypeFolder}/${this.addon.id}`
+        let docSrcUrl = `${useRuntimeStore().docSrcUrl}/${addonTypeFolder}/${this.addon.id}`
 
         fetch(docSrcUrl + '/readme.md').then((readme) => {
           readme.text().then((text) => {
@@ -322,13 +327,13 @@ export default {
 
               this.parsedDescription = body
               this.descriptionReady = true
-              setTimeout(() => { this.$f7.lazy.create('.addon-description-text') })
+              setTimeout(() => { f7.lazy.create('.addon-description-text') })
             })
           })
         }).catch((err) => {
           this.parsedDescription = '<p>The description is unavailable for this add-on.</p><h3>Debug Information</h3><blockquote>' + err + '</blockquote>'
           this.descriptionReady = true
-          setTimeout(() => { this.$f7.lazy.create('.addon-description-text') })
+          setTimeout(() => { f7.lazy.create('.addon-description-text') })
         })
       } else {
         // perform a few replaces for Discourse "cooked" HTML
@@ -342,7 +347,7 @@ export default {
         body = body.replace(/<img src="\/\/community-openhab-org/gm, '<img class="lazy lazy-fade-in" data-src="//community-openhab-org')
         this.parsedDescription = body
         this.descriptionReady = true
-        setTimeout(() => { this.$f7.lazy.create('.addon-description-text') })
+        setTimeout(() => { f7.lazy.create('.addon-description-text') })
       }
     }
   }

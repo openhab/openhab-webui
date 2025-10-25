@@ -97,9 +97,14 @@
 </template>
 
 <script>
+import { utils } from 'framework7'
+
 import AlexaDefinitions from '@/assets/definitions/metadata/alexa'
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import ItemMetadataMixin from '@/components/item/metadata/item-metadata-mixin'
+
+import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+import { mapStores } from 'pinia'
 
 export default {
   props: {
@@ -115,8 +120,8 @@ export default {
       classesDefs: Object.keys(AlexaDefinitions),
       itemType: this.item.groupType || this.item.type,
       multiple: !!this.metadata.value && this.metadata.value.indexOf(',') > 0,
-      classSelectKey: this.$f7.utils.id(),
-      docUrl: `${this.$store.state.websiteUrl}/link/alexa`,
+      classSelectKey: utils.id(),
+      docUrl: `${useRuntimeStore().websiteUrl}/link/alexa`,
       ready: false
     }
   },
@@ -195,7 +200,8 @@ export default {
       } else {
         return `${this.docUrl}#device-types`
       }
-    }
+    },
+    ...mapStores(useRuntimeStore)
   },
   methods: {
     isSelected (cl) {
@@ -239,12 +245,12 @@ export default {
     toggleMultiple () {
       this.multiple = !this.multiple
       if (this.metadata.value.indexOf(',') > 0) this.metadata.value = ''
-      this.classSelectKey = this.$f7.utils.id()
+      this.classSelectKey = utils.id()
     },
     updateClasses () {
-      const value = this.$refs.classes.f7SmartSelect.getValue()
+      const value = this.$refs.classes.$el.children[0].f7SmartSelect.getValue()
       this.metadata.value = (Array.isArray(value)) ? value.join(',') : value
-      this.$set(this.metadata, 'config', {})
+      this.metadata.config = {}
     }
   }
 }

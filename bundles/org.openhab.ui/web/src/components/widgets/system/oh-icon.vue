@@ -8,8 +8,8 @@
          height: (resolvedConfig.height !== null) ? resolvedConfig.height + 'px' : 'auto',
          cursor: (hasAction) ? 'pointer' : 'auto',
          ...resolvedStyle }"
-       onload="this.classList.remove('no-icon')"
-       onerror="this.classList.add('no-icon')">
+       :class="{ 'no-icon': !iconLoaded }"
+       @load="iconLoaded = true">
   <f7-link v-else-if="hasAction" @click="performAction()">
     <f7-icon v-if="iconType === 'f7'"
              v-bind="resolvedConfig"
@@ -39,7 +39,7 @@
 import mixin from '../widget-mixin'
 import { OhIconDefinition } from '@/assets/definitions/widgets/system'
 import { actionsMixin } from '../widget-actions'
-import { Icon } from '@iconify/vue2'
+import { Icon } from '@iconify/vue'
 
 export default {
   mixins: [mixin, actionsMixin],

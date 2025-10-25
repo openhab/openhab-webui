@@ -121,6 +121,9 @@
 </style>
 
 <script>
+import { nextTick } from 'vue'
+import { f7 } from 'framework7-vue'
+
 export default {
   components: {},
   props: {
@@ -150,19 +153,19 @@ export default {
     },
     itemConfigClosed () {
       if (this.colorpicker) this.colorpicker.destroy()
-      this.$f7.emit('sceneItemConfigClosed')
+      f7.emit('sceneItemConfigClosed')
       this.$emit('closed')
     },
     updateItemConfig () {
       if (this.colorpicker) this.colorpicker.destroy()
-      this.$f7.emit('sceneItemConfigUpdate', [this.itemName, this.command])
+      f7.emit('sceneItemConfigUpdate', [this.itemName, this.command])
       this.$emit('update', [this.itemName, this.command])
       this.itemConfigClosed()
     },
     updateCommandFromCurrentState () {
       this.$oh.api.getPlain('/rest/items/' + this.itemName + '/state?metadata=semantics,widget').then((state) => {
-        this.$set(this, 'command', state)
-        this.$f7.toast.create({
+        this.command = state
+        f7.toast.create({
           text: `Updated desired state of ${this.itemName} to ${state}`,
           destroyOnClose: true,
           closeTimeout: 2000
@@ -171,7 +174,7 @@ export default {
     },
     testCommand () {
       this.$oh.api.postPlain('/rest/items/' + this.itemName, this.command, 'text/plain', 'text/plain').then((state) => {
-        this.$f7.toast.create({
+        f7.toast.create({
           text: `Sent comment ${this.command} to ${this.itemName}`,
           destroyOnClose: true,
           closeTimeout: 2000
@@ -183,8 +186,8 @@ export default {
       if (this.item.type === 'Color' || this.item.groupType === 'Color') {
         this.control = 'colorpicker'
         const vm = this
-        this.$nextTick(() => {
-          this.colorpicker = this.$f7.colorPicker.create(Object.assign({}, this.config, {
+        nextTick(() => {
+          this.colorpicker = f7.colorPicker.create(Object.assign({}, this.config, {
             containerEl: this.$refs.colorpicker,
             modules: ['wheel'],
             value: (this.command.split(',').length === 3) ? { hsb: this.color } : null,

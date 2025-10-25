@@ -8,7 +8,8 @@
   <f7-swiper class="addons-swiper"
              v-else
              pagination
-             :params="{ spaceBetween: 10, slidesPerView: slidesPerView }"
+             :space-between="10"
+             :slides-per-view="slidesPerView"
              :key="slidesPerView">
     <f7-swiper-slide v-for="addon in addonsList" :key="addon.uid">
       <addon-card :key="addon.uid"
@@ -44,7 +45,7 @@ export default {
   },
   computed: {
     slidesPerView () {
-      if (this.$f7.width > this.$f7.height) return 3.5
+      if (this.$f7dim.width > this.$f7dim.height) return 3.5
       return 1.5
     }
   },

@@ -44,6 +44,8 @@
 </style>
 
 <script>
+import { f7 } from 'framework7-vue'
+
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import DirtyMixin from '@/pages/settings/dirty-mixin'
 import cloneDeep from 'lodash/cloneDeep'
@@ -79,7 +81,7 @@ export default {
     widgetConfigClosed () {
       this.cleanupMovablePopup()
       window.removeEventListener('keydown', this.onKeydown)
-      this.$f7.emit('widgetConfigClosed')
+      f7.emit('widgetConfigClosed')
       this.$emit('closed')
     },
     onKeydown (evt) {
@@ -92,7 +94,7 @@ export default {
         const dialog = this.confirmLeaveWithoutSaving(
           () => {
             this.updateWidgetConfig(this.originalConfig)
-            this.$refs.widgetConfig.close()
+            this.$refs.widgetConfig.$el.f7Modal.close()
           },
           () => {
             // prevent re-triggering the confirm dialog when ESC is pressed to close the dialog
@@ -101,11 +103,11 @@ export default {
           }
         )
       } else {
-        this.$refs.widgetConfig.close()
+        this.$refs.widgetConfig.$el.f7Modal.close()
       }
     },
     reset () {
-      this.$f7.dialog.confirm('Do you want to revert your changes?', 'Revert Changes', () => {
+      f7.dialog.confirm('Do you want to revert your changes?', 'Revert Changes', () => {
         this.config = cloneDeep(this.originalConfig)
         this.updateWidgetConfig(this.originalConfig)
         this.dirty = false
@@ -113,11 +115,11 @@ export default {
     },
     save () {
       this.updateWidgetConfig(this.config)
-      this.$refs.widgetConfig.close()
+      this.$refs.widgetConfig.$el.f7Modal.close()
     },
     updateWidgetConfig (config) {
       const newConfig = cloneDeep(config)
-      this.$f7.emit('widgetConfigUpdate', newConfig)
+      f7.emit('widgetConfigUpdate', newConfig)
       this.$emit('update', newConfig)
     },
     updated () {

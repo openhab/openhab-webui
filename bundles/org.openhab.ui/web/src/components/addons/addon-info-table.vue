@@ -8,7 +8,9 @@
                   external
                   no-chevron
                   target="_blank">
-      <f7-icon slot="after" v-if="line.afterIcon" :f7="line.afterIcon" />
+      <template #after>
+        <f7-icon v-if="line.afterIcon" :f7="line.afterIcon" />
+      </template>
     </f7-list-item>
   </f7-list>
 </template>
@@ -40,6 +42,8 @@ import utc from 'dayjs/plugin/utc'
 dayjs.extend(utc)
 
 import { ContentTypes, Formats } from '@/assets/addon-store'
+import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+import { mapStores } from 'pinia'
 
 export default {
   props: {
@@ -152,7 +156,7 @@ export default {
           id: 'documentationLink',
           title: 'Documentation',
           afterIcon: 'question_circle_fill',
-          linkUrl: `${this.$store.state.websiteUrl}/addons/${this.addon.type.replace('misc', 'integrations').replace('binding', 'bindings').replace('transformation', 'transformations')}/${this.addon.id}` // this.addon.link
+          linkUrl: `${useRuntimeStore().websiteUrl}/addons/${this.addon.type.replace('misc', 'integrations').replace('binding', 'bindings').replace('transformation', 'transformations')}/${this.addon.id}` // this.addon.link
         })
 
         let repository
@@ -192,7 +196,8 @@ export default {
       }
 
       return info
-    }
+    },
+    ...mapStores(useRuntimeStore)
   }
 }
 </script>

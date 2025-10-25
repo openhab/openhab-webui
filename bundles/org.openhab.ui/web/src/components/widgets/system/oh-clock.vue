@@ -28,7 +28,7 @@ export default {
     this.updateTime()
     this.timer = setInterval(this.updateTime, 1000)
   },
-  beforeDestroy () {
+  beforeUnmount () {
     clearInterval(this.timer)
   }
 }

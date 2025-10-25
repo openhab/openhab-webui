@@ -1,4 +1,4 @@
-import cronstrue from 'cronstrue'
+import { toString } from 'cronstrue'
 
 export default {
   methods: {
@@ -37,7 +37,7 @@ export default {
         case 'timer.GenericCronTrigger':
           if (!config.cronExpression) return moduleType.label
           try {
-            const cron = cronstrue.toString(config.cronExpression, {
+            const cron = toString(config.cronExpression, {
               use24HourTimeFormat: true
             })
             return cron.charAt(0).toLowerCase() + cron.slice(1)

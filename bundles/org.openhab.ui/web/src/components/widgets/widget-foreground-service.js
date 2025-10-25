@@ -1,3 +1,5 @@
+import { f7 } from 'framework7-vue'
+
 export default {
   data () {
     return {
@@ -19,13 +21,13 @@ export default {
       this.startForegroundActivity()
     }
 
-    this.$f7.on('pageAfterIn', this.onPageAfterIn)
-    this.$f7.on('pageBeforeOut', this.onPageBeforeOut)
+    f7.on('pageAfterIn', this.onPageAfterIn)
+    f7.on('pageBeforeOut', this.onPageBeforeOut)
     document.addEventListener('visibilitychange', this.onVisibilityChange)
   },
-  beforeDestroy () {
-    this.$f7.off('pageAfterIn', this.onPageAfterIn)
-    this.$f7.off('pageBeforeOut', this.onPageBeforeOut)
+  beforeUnmount () {
+    f7.off('pageAfterIn', this.onPageAfterIn)
+    f7.off('pageBeforeOut', this.onPageBeforeOut)
     document.removeEventListener('visibilitychange', this.onVisibilityChange)
     this.inForeground = false
     this.stopForegroundActivity()

@@ -1,25 +1,18 @@
 <template>
   <f7-page class="item-details-page"
            @page:beforein="onPageBeforeIn"
-           @page:afterin="onPageAfterIn"
            @page:beforeout="onPageBeforeOut">
-    <f7-navbar :title="item.name"
-               :key="item.name"
-               back-link="Back"
-               no-shadow
-               no-hairline
-               class="item-details-navbar">
-      <f7-nav-right v-if="ready">
-        <f7-link v-if="item.editable" icon-md="material:edit" href="edit">
-          {{ $theme.md ? '' : 'Edit' }}
-        </f7-link>
-        <f7-link v-else
-                 icon-f7="lock_fill"
-                 tooltip="This Item is not editable through the UI"
-                 href="edit">
-          Details
-        </f7-link>
-      </f7-nav-right>
+    <f7-navbar>
+      <oh-nav-content v-if="ready"
+                      :title="item.name"
+                      :editable="item.editable"
+                      :f7router>
+        <template v-if="ready" #right>
+          <f7-link v-if="item.editable" icon-md="material:edit" href="edit">
+            {{ theme.md ? '' : 'Edit' }}
+          </f7-link>
+        </template>
+      </oh-nav-content>
       <f7-subnavbar sliding class="item-header">
         <div class="item-icon" v-if="item.name">
           <oh-icon v-if="item.category"
@@ -52,10 +45,9 @@
                      :key="tag"
                      :text="tag"
                      media-bg-color="blue">
-              <f7-icon slot="media"
-                       ios="f7:tag_fill"
-                       md="material:label"
-                       aurora="f7:tag_fill" />
+              <template #media>
+                <f7-icon ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
+              </template>
             </f7-chip>
           </f7-block>
         </f7-col>
@@ -98,13 +90,13 @@
       <f7-row v-if="item.name">
         <f7-col>
           <f7-block-title>Metadata</f7-block-title>
-          <metadata-menu :item="item" />
+          <metadata-menu :item="item" :f7router />
         </f7-col>
       </f7-row>
       <f7-row v-if="item.name && item.type !== 'Group'">
         <f7-col>
           <f7-block-title>Channel Links</f7-block-title>
-          <link-details :item="item" :links="links" />
+          <link-details :item="item" :links="links" :f7router />
         </f7-col>
       </f7-row>
       <f7-row>
@@ -182,13 +174,20 @@
     visibility hidden
 </style>
 
-<script>
-import cloneDeep from 'lodash/cloneDeep'
-
+<script setup>
 import ItemStatePreview from '@/components/item/item-state-preview.vue'
 import LinkDetails from '@/components/model/link-details.vue'
 import GroupMembers from '@/components/item/group-members.vue'
 import MetadataMenu from '@/components/item/metadata/item-metadata-menu.vue'
+</script>
+
+<script>
+import cloneDeep from 'lodash/cloneDeep'
+import { utils } from 'framework7'
+import { f7, theme } from 'framework7-vue'
+
+import { useStatesStore } from '@/js/stores/useStatesStore'
+
 import ItemMixin from '@/components/item/item-mixin'
 import FileDefinition from '@/pages/settings/file-definition-mixin'
 
@@ -198,11 +197,8 @@ export default {
     itemName: String,
     f7router: Object
   },
-  components: {
-    LinkDetails,
-    GroupMembers,
-    ItemStatePreview,
-    MetadataMenu
+  setup () {
+    return { theme, utils }
   },
   data () {
     return {
@@ -214,7 +210,7 @@ export default {
   computed: {
     context () {
       return {
-        store: this.$store.getters.trackedItems
+        store: useStatesStore().trackedItems
       }
     },
     semanticClass () {
@@ -264,27 +260,28 @@ export default {
   },
   methods: {
     onPageBeforeIn () {
-      this.$store.dispatch('startTrackingStates')
       this.load()
     },
-    onPageAfterIn () {
-      this.$oh.api.get('/rest/links?itemName=' + this.itemName).then((data) => {
-        this.links = data
-      })
-    },
     onPageBeforeOut () {
-      this.$store.dispatch('stopTrackingStates')
+      useStatesStore().stopTrackingStates()
     },
-    load () {
-      this.$oh.api.get(`/rest/items/${this.itemName}?metadata=.+`).then((data) => {
-        this.item = data
-        this.ready = true
+    async load () {
+      const promises = [
+        this.$oh.api.get(`/rest/items/${this.itemName}?metadata=.+`),
+        this.$oh.api.get('/rest/links?itemName=' + this.itemName)
+      ]
+
+      Promise.all(promises).then((data) => {
+        this.item = data[0]
+        this.links = data[1]
         this.iconUrl = '/icon/' + this.item.category + '?format=svg'
+        this.ready = true
+        useStatesStore().startTrackingStates()
       })
     },
     duplicateItem () {
       let itemClone = cloneDeep(this.item)
-      this.$f7router.navigate({
+      this.f7router.navigate({
         url: '/settings/items/duplicate'
       }, {
         props: {
@@ -293,18 +290,18 @@ export default {
       })
     },
     deleteItem () {
-      this.$f7.dialog.confirm(
+      f7.dialog.confirm(
         `Are you sure you want to delete ${this.item.label || this.item.name}?`,
         'Delete Item',
         () => {
           this.$oh.api.delete('/rest/items/' + this.item.name).then(() => {
-            this.$f7router.back('/settings/items/', { force: true })
+            this.f7router.back('/settings/items/', { force: true })
           })
         }
       )
     },
     searchInSidebar () {
-      this.$f7.emit('selectDeveloperDock', { 'dock': 'tools', 'toolTab': 'pin', 'searchFor': this.item.name })
+      f7.emit('selectDeveloperDock', { 'dock': 'tools', 'toolTab': 'pin', 'searchFor': this.item.name })
     },
     groupLink (group) {
       return '/settings/items/' + group

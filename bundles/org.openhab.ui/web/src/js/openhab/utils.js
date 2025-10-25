@@ -1,4 +1,5 @@
-import Framework7 from 'framework7'
+import { utils } from 'framework7'
+
 import diacritic from 'diacritic'
 
 export default {
@@ -27,7 +28,7 @@ export default {
    * @returns {number[]} [r, g, b] array
    */
   hsbToRgb (h, s, b) {
-    const hsl = Framework7.utils.colorHsbToHsl(h, s, b)
-    return Framework7.utils.colorHslToRgb(hsl[0], hsl[1], hsl[2])
+    const hsl = utils.colorHsbToHsl(h, s, b)
+    return utils.colorHslToRgb(hsl[0], hsl[1], hsl[2])
   }
 }

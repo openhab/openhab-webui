@@ -1,4 +1,5 @@
 import ModelPickerPopup from '@/components/model/model-picker-popup.vue'
+import { f7 } from 'framework7-vue'
 
 export default {
   data () {
@@ -56,7 +57,7 @@ export default {
         component: ModelPickerPopup
       }
 
-      this.$f7router.navigate({
+      f7.views.main.router.navigate({
         url: 'pick-from-model',
         route: {
           path: 'pick-from-model',
@@ -68,14 +69,14 @@ export default {
         }
       })
 
-      this.$f7.once('itemsPicked', this.itemPicked)
-      this.$f7.once('modelPickerClosed', () => {
-        this.$f7.off('itemsPicked', this.itemPicked)
+      f7.once('itemsPicked', this.itemPicked)
+      f7.once('modelPickerClosed', () => {
+        f7.off('itemsPicked', this.itemPicked)
       })
     },
     isMimeTypeAvailable (mimeType) {
       if (mimeType === 'application/javascript;version=ECMAScript-2021') mimeType = 'application/javascript'
-      return this.languages.map(l => l.contentType).includes(mimeType)
+      return this.languages.map((l) => l.contentType).includes(mimeType)
     }
   }
 }

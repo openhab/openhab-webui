@@ -1,0 +1,35 @@
+diff --git a/node_modules/framework7-vue/framework7-vue.d.ts b/node_modules/framework7-vue/framework7-vue.d.ts
+index c3bbb28..460b6fc 100644
+--- a/node_modules/framework7-vue/framework7-vue.d.ts
++++ b/node_modules/framework7-vue/framework7-vue.d.ts
+@@ -126,6 +126,8 @@ interface useStore {
+ 
+ declare const useStore: useStore;
+ 
++declare function registerComponents(app: App): void;
++
+ export { f7AccordionContent, f7AccordionItem, f7AccordionToggle, f7Accordion, f7ActionsButton, f7ActionsGroup, f7ActionsLabel, f7Actions, f7App, f7Appbar, f7AreaChart, f7Badge, f7BlockFooter, f7BlockHeader, f7BlockTitle, f7Block, f7BreadcrumbsCollapsed, f7BreadcrumbsItem, f7BreadcrumbsSeparator, f7Breadcrumbs, f7Button, f7CardContent, f7CardFooter, f7CardHeader, f7Card, f7Checkbox, f7Chip, f7Col, f7FabBackdrop, f7FabButton, f7FabButtons, f7Fab, f7Gauge, f7Icon, f7Input, f7Link, f7ListButton, f7ListGroup, f7ListIndex, f7ListInput, f7ListItemCell, f7ListItemRow, f7ListItem, f7List, f7LoginScreenTitle, f7LoginScreen, f7MenuDropdownItem, f7MenuDropdown, f7MenuItem, f7Menu, f7Message, f7MessagebarAttachment, f7MessagebarAttachments, f7MessagebarSheetImage, f7MessagebarSheetItem, f7MessagebarSheet, f7Messagebar, f7MessagesTitle, f7Messages, f7NavLeft, f7NavRight, f7NavTitleLarge, f7NavTitle, f7Navbar, f7PageContent, f7Page, f7Panel, f7PhotoBrowser, f7PieChart, f7Popover, f7Popup, f7Preloader, f7Progressbar, f7Radio, f7Range, f7RoutableModals, f7Row, f7Searchbar, f7Segmented, f7Sheet, f7SkeletonAvatar, f7SkeletonBlock, f7SkeletonImage, f7SkeletonText, f7Stepper, f7Subnavbar, f7SwipeoutActions, f7SwipeoutButton, f7SwiperSlide, f7Swiper, f7Tab, f7Tabs, f7TextEditor, f7Toggle, f7Toolbar, f7TreeviewItem, f7Treeview, f7UseIcon, f7View, f7Views }
+-export { f7, f7ready, theme, useStore };
++export { f7, f7ready, theme, useStore, registerComponents };
+ export default Framework7Vue;
+diff --git a/node_modules/framework7-vue/package.json b/node_modules/framework7-vue/package.json
+index 836e093..ba6e4bd 100644
+--- a/node_modules/framework7-vue/package.json
++++ b/node_modules/framework7-vue/package.json
+@@ -4,8 +4,14 @@
+   "description": "Build full featured iOS & Android apps using Framework7 & Vue",
+   "type": "module",
+   "exports": {
+-    ".": "./framework7-vue.js",
+-    "./bundle": "./framework7-vue-bundle.js",
++    ".": {
++      "default": "./framework7-vue.js",
++      "types": "./framework7-vue.d.ts"
++    },
++    "./bundle": {
++      "default": "./framework7-vue-bundle.js",
++      "types": "./framework7-vue.d.ts"
++    },
+     "./components/*": "./components/*",
+     "./shared/*": "./shared/*"
+   },

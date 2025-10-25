@@ -10,7 +10,7 @@
         <option v-for="service in services"
                 :value="service.id"
                 :key="service.id"
-                :selected="value === service.id">
+                :selected="value === service.id ? true : null">
           {{ service.label ? service.label + ' (' + service.id + ')' : service.id }}
         </option>
       </select>
@@ -27,6 +27,9 @@
 </style>
 
 <script>
+import { f7 } from 'framework7-vue'
+import { nextTick } from 'vue'
+
 export default {
   props: {
     title: String,
@@ -42,7 +45,7 @@ export default {
       ready: false,
       services: [],
       smartSelectParams: {
-        view: this.$f7.view.main,
+        view: f7.view.main,
         openIn: 'popup',
         searchbar: true,
         searchbarPlaceholder: this.$t('dialogs.search.persistence')
@@ -66,20 +69,20 @@ export default {
       }
       this.ready = true
       if (this.openOnReady) {
-        this.$nextTick(() => {
-          this.$refs.smartSelect.f7SmartSelect.open()
+        nextTick(() => {
+          this.$refs.smartSelect.$el.children[0].f7SmartSelect.open()
         })
       }
     })
   },
   methods: {
     open () {
-      this.$refs.smartSelect.f7SmartSelect.open()
+      this.$refs.smartSelect.$el.children[0].f7SmartSelect.open()
     },
     select (e) {
-      this.$f7.input.validateInputs(this.$refs.smartSelect.$el)
+      f7.input.validateInputs(this.$refs.smartSelect.$el)
       this.$emit('input', e.target.value)
-      this.$f7.emit('persistencePicked', e.target.value)
+      f7.emit('persistencePicked', e.target.value)
     }
   }
 }

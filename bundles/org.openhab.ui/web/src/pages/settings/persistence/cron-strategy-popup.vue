@@ -53,6 +53,8 @@
 </template>
 
 <script>
+import { f7 } from 'framework7-vue'
+
 import ParameterCronexpression from '@/components/config/controls/parameter-cronexpression.vue'
 
 export default {
@@ -80,12 +82,12 @@ export default {
   },
   methods: {
     updateModuleConfig () {
-      if (!this.$f7.input.validateInputs(this.$refs.name.$el) && !this.$f7.input.validateInputs(this.$refs.cronExpression.$el)) {
-        this.$f7.dialog.alert('Please review the configuration and correct validation errors')
+      if (!f7.input.validateInputs(this.$refs.name.$el) && !f7.input.validateInputs(this.$refs.cronExpression.$el)) {
+        f7.dialog.alert('Please review the configuration and correct validation errors')
         return
       }
-      this.$f7.emit('cronStrategyConfigUpdate', this.currentCronStrategy)
-      this.$refs.modulePopup.close()
+      f7.emit('cronStrategyConfigUpdate', this.currentCronStrategy)
+      this.$refs.modulePopup.$el.f7Modal.close()
     }
   }
 }

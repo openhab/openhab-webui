@@ -32,7 +32,7 @@
   <ul v-else>
     <f7-list-input
       ref="input"
-      :floating-label="$theme.md"
+      :floating-label="theme.md"
       :label="configDescription.label"
       :name="configDescription.name"
       :value="value"
@@ -45,25 +45,30 @@
       @input="updateValue"
       :readonly="configDescription.readOnly"
       :type="controlType">
-      <div v-if="configDescription.context === 'password'" class="padding-left" slot="content-end">
-        <f7-link class="margin"
-                 color="gray"
-                 slot="content-end"
-                 @click="showPassword = !showPassword">
-          <f7-icon size="20" :f7="(showPassword) ? 'eye_slash_fill' : 'eye_fill'" />
-        </f7-link>
-      </div>
+      <template #slot-content-end>
+        <div v-if="configDescription.context === 'password'" class="padding-left">
+          <f7-link class="margin" color="gray" @click="showPassword = !showPassword">
+            <f7-icon size="20" :f7="(showPassword) ? 'eye_slash_fill' : 'eye_fill'" />
+          </f7-link>
+        </div>
+      </template>
     </f7-list-input>
   </ul>
 </template>
 
 <script>
+import { f7, theme } from 'framework7-vue'
+import { nextTick } from 'vue'
+
 export default {
   props: {
     configDescription: Object,
     value: [String, Array]
   },
   emits: ['input'],
+  setup () {
+    return { theme }
+  },
   computed: {
     controlType () {
       if (this.configDescription.context === 'password' && !this.showPassword) return 'password'
@@ -101,7 +106,7 @@ export default {
       if (!inputControl || !inputControl.$el) return
       const inputElement = this.$$(inputControl.$el).find('input')
       const options = this.options
-      this.autoCompleteOptions = this.$f7.autocomplete.create({
+      this.autoCompleteOptions = f7.autocomplete.create({
         inputEl: inputElement,
         openIn: 'dropdown',
         requestSourceOnOpen: true,
@@ -111,7 +116,7 @@ export default {
       })
     }
   },
-  beforeDestroy () {
+  beforeUnmount () {
     this.destroyAutoCompleteOptions()
   },
   methods: {
@@ -123,7 +128,7 @@ export default {
       if (!this.multiple || idx < 0 || !this.values || idx >= this.values.length) return
       const newValues = [...this.values]
       newValues[idx] = event.target.value
-      this.$set(this, 'values', newValues)
+      this.values = newValues
       this.emitValues()
     },
     addValue (event) {
@@ -136,10 +141,10 @@ export default {
       if (newValues.some((val) => val === v)) return
       newValues.push(v)
       this.suspendEvents = true
-      this.$set(this, 'values', newValues)
+      this.values = newValues
       this.emitValues()
 
-      this.$nextTick(() => {
+      nextTick(() => {
         const inputControl = this.$refs.input
         if (inputControl && inputControl.$el) {
           const inputElements = this.$$(inputControl.$el).find('input')
@@ -163,9 +168,9 @@ export default {
       let newValues = [...this.values]
       newValues.splice(idx, 1)
       this.suspendEvents = true
-      this.$set(this, 'values', newValues)
+      this.values = newValues
       this.emitValues()
-      this.$nextTick(() => {
+      nextTick(() => {
         this.suspendEvents = false
       })
     },
@@ -179,7 +184,7 @@ export default {
         } else {
           result = [this.value]
         }
-        this.$set(this, 'values', result)
+        this.values = result
       }
     },
     emitValues () {
@@ -197,7 +202,7 @@ export default {
       }
       const options = this.values?.length ? this.options.filter((o) => !this.values.some((v) => v.toLowerCase() === o.id.toLowerCase())) : this.options
       if (!options?.length) return
-      this.autoCompleteOptions = this.$f7.autocomplete.create({
+      this.autoCompleteOptions = f7.autocomplete.create({
         inputEl: event.target,
         openIn: 'dropdown',
         requestSourceOnOpen: true,
@@ -210,7 +215,7 @@ export default {
     destroyAutoCompleteOptions () {
       if (this.autoCompleteOptions) {
         this.autoCompleteOptions.close()
-        this.$f7.autocomplete.destroy(this.autoCompleteOptions)
+        f7.autocomplete.destroy(this.autoCompleteOptions)
       }
       this.autoCompleteOptions = null
     }

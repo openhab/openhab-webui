@@ -1,3 +1,6 @@
+import { f7 } from 'framework7-vue'
+import api from '@/js/openhab/api'
+
 /**
  * File Definition Mixin
  */
@@ -5,32 +8,32 @@
 import copyToClipboard from '@/js/clipboard'
 
 function executeFileDefinitionCopy (vueInstance, copyOptions) {
-  const progressDialog = vueInstance.$f7.dialog.progress(`Loading ${copyOptions.label} ${copyOptions.format} definition...`)
+  const progressDialog = f7.dialog.progress(`Loading ${copyOptions.label} ${copyOptions.format} definition...`)
 
   const path = `/rest/file-format/${copyOptions.type}s`
   const headers = { accept: copyOptions.mediaType }
   const data = JSON.stringify(copyOptions.objectIds)
-  vueInstance.$oh.api.postPlain(path, data, 'text', 'application/json', headers)
-    .then(definition => {
+  api.postPlain(path, data, 'text', 'application/json', headers)
+    .then((definition) => {
       progressDialog.close()
       copyToClipboard(definition, {
         dialogTitle: `Copy ${copyOptions.label} File Definition`,
         dialogText: 'File definition retrieved successfully. Click OK to copy it to the clipboard.',
         onSuccess: () => {
-          vueInstance.$f7.toast.create({
+          f7.toast.create({
             text: `${copyOptions.label} ${copyOptions.format} definition copied to clipboard:\n${copyOptions.objectName}`,
             destroyOnClose: true,
             closeTimeout: 2000
           }).open()
         },
         onError: () => {
-          vueInstance.$f7.dialog.alert(`Error copying ${copyOptions.label} ${copyOptions.format} definition to the clipboard`, 'Error')
+          f7.dialog.alert(`Error copying ${copyOptions.label} ${copyOptions.format} definition to the clipboard`, 'Error')
         }
       })
     })
-    .catch(error => {
+    .catch((error) => {
       progressDialog.close()
-      vueInstance.$f7.dialog.alert(`Error loading ${copyOptions.label} ${copyOptions.format} definition: ${error}`, 'Error')
+      f7.dialog.alert(`Error loading ${copyOptions.label} ${copyOptions.format} definition: ${error}`, 'Error')
     })
 }
 
@@ -67,7 +70,7 @@ export default {
         copyOptions.objectName = `${objectIds.length} ${copyOptions.label}`
       }
 
-      this.$f7.dialog
+      f7.dialog
         .create({
           title: `Copy ${copyOptions.label} File Definition`,
           text: `Select the file format to copy ${copyOptions.objectName} to clipboard`,

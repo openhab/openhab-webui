@@ -1,15 +1,10 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" class="thing-add-page">
-    <f7-navbar :title="(ready) ? 'New ' + thingType.label : 'New Thing'" back-link="Back">
-      <f7-nav-right class="if-not-aurora">
-        <f7-link @click="save()"
-                 v-if="$theme.md"
-                 icon-md="material:save"
-                 icon-only />
-        <f7-link @click="save()" v-if="!$theme.md">
-          Add
-        </f7-link>
-      </f7-nav-right>
+    <f7-navbar>
+      <oh-nav-content :title="(ready) ? 'New ' + thingType.label : 'New Thing'"
+                      save-link="Add"
+                      @save="save()"
+                      :f7router />
     </f7-navbar>
 
     <f7-block v-if="ready" class="block-narrow">
@@ -74,6 +69,9 @@
 </style>
 
 <script>
+import { utils } from 'framework7'
+import { f7, theme } from 'framework7-vue'
+
 import ConfigSheet from '@/components/config/config-sheet.vue'
 
 import ThingGeneralSettings from '@/components/thing/thing-general-settings.vue'
@@ -89,6 +87,9 @@ export default {
   components: {
     ConfigSheet,
     ThingGeneralSettings
+  },
+  setup () {
+    return { theme }
   },
   data () {
     if (this.thingCopy) {
@@ -123,7 +124,7 @@ export default {
       this.$oh.api.get('/rest/thing-types/' + this.thingTypeId).then((data) => {
         this.thingType = data
         try {
-          this.thing.ID = this.$f7.utils.id()
+          this.thing.ID = utils.id()
           this.thing.UID = this.thingTypeId + ':' + this.thing.ID
         } catch (e) {
           console.log('Cannot generate ID: ' + e)
@@ -149,20 +150,20 @@ export default {
     },
     save () {
       if (!this.thing.ID) {
-        this.$f7.dialog.alert('Please give a unique identifier')
+        f7.dialog.alert('Please give a unique identifier')
         return
       }
       const uidValidationError = this.validateThingUID(this.thing.UID, this.thing.ID)
       if (uidValidationError !== '') {
-        this.$f7.dialog.alert('Invalid Thing ID: ' + uidValidationError)
+        f7.dialog.alert('Invalid Thing ID: ' + uidValidationError)
         return
       }
       if (!this.thing.label) {
-        this.$f7.dialog.alert('Please give a name')
+        f7.dialog.alert('Please give a name')
         return
       }
       if (!this.$refs.parameters.isValid()) {
-        this.$f7.dialog.alert('Please review the configuration and correct validation errors')
+        f7.dialog.alert('Please review the configuration and correct validation errors')
         return
       }
       if (this.thingCopy) {
@@ -173,15 +174,15 @@ export default {
 
       this.$oh.api.post('/rest/things', this.thing)
         .then(() => {
-          this.$f7.toast.create({
+          f7.toast.create({
             text: 'Thing created',
             destroyOnClose: true,
             closeTimeout: 2000
           }).open()
-          this.$f7router.navigate('/settings/things/' + this.thing.UID)
+          this.f7router.navigate('/settings/things/' + this.thing.UID)
         })
         .catch((error) => {
-          this.$f7.dialog.alert('Error creating Thing: ' + error)
+          f7.dialog.alert('Error creating Thing: ' + error)
         })
     }
   }

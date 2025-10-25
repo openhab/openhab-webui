@@ -5,7 +5,7 @@
             :lat-lng="center"
             :radius="radius"
             v-bind="markerConfig"
-            @update:latLng="$emit('update', $event)"
+            @update:lat-lng="$emit('update', $event)"
             @click="performAction">
     <l-tooltip v-if="config.label">
       {{ config.label }}
@@ -14,7 +14,9 @@
 </template>
 
 <script>
-import { LCircle, LTooltip } from 'vue2-leaflet'
+import { utils } from 'framework7'
+
+import { LCircle, LTooltip } from '@vue-leaflet/vue-leaflet'
 
 import mixin from '../widget-mixin'
 import { actionsMixin } from '../widget-actions'
@@ -30,7 +32,7 @@ export default {
   emits: ['update'],
   data () {
     return {
-      markerKey: this.$f7.utils.id()
+      markerKey: utils.id()
     }
   },
   computed: {

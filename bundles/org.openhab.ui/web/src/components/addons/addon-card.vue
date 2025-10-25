@@ -29,7 +29,7 @@
           {{ addon.author }}
           <f7-icon v-if="addon.verifiedAuthor"
                    size="15"
-                   :color="$f7.data.themeOptions.dark === 'dark' ? 'white' : 'blue'"
+                   :color="uiOptionsStore.getDarkMode() === 'dark' ? 'white' : 'blue'"
                    f7="checkmark_seal_fill"
                    style="margin-top: -3px;" />
         </div>
@@ -125,6 +125,8 @@
 <script>
 import AddonStatsLine from './addon-stats-line.vue'
 import AddonLogo from '@/components/addons/addon-logo.vue'
+import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
+import { mapStores } from 'pinia'
 
 export default {
   props: {
@@ -148,7 +150,8 @@ export default {
     showInstallActions () {
       let splitted = this.addon.uid.split(':')
       return splitted.length < 2 || splitted[0] !== 'eclipse'
-    }
+    },
+    ...mapStores(useUIOptionsStore)
   },
   methods: {
     buttonClicked () {

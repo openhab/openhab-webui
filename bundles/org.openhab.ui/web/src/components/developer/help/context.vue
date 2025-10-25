@@ -14,6 +14,9 @@
 </template>
 
 <script>
+import { mapStores } from 'pinia'
+import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+
 const renderer = {
   list (body, ordered, start) {
     return `<ul style="padding-left: 20px">${body}</ul>`
@@ -33,13 +36,14 @@ export default {
   },
   computed: {
     localUrl () {
-      if (!this.$store.state.pagePath.endsWith('/')) return '/'
-      return this.$store.state.pagePath
+      if (!useRuntimeStore().pagePath.endsWith('/')) return '/'
+      return useRuntimeStore().pagePath
     },
     documentationLink () {
-      if (this.path.endsWith('index')) return `${this.$store.state.websiteUrl}/docs/mainui${this.path.replace('index', '')}`
-      return `${this.$store.state.websiteUrl}/docs/mainui${this.path}`
-    }
+      if (this.path.endsWith('index')) return `${useRuntimeStore().websiteUrl}/docs/mainui${this.path.replace('index', '')}`
+      return `${useRuntimeStore().websiteUrl}/docs/mainui${this.path}`
+    },
+    ...mapStores(useRuntimeStore)
   },
   watch: {
     path () {
@@ -59,7 +63,7 @@ export default {
         return
       }
       console.debug('Sidebar Help: Docs not found in cache, loading from GitHub ...')
-      fetch(this.$store.state.docSrcUrl + '/mainui' + this.path + '.md').then((response) => {
+      fetch(useRuntimeStore().docSrcUrl + '/mainui' + this.path + '.md').then((response) => {
         if (response.status === 404) {
           this.parsedDocs = '<p>Failed to load docs. It seems they are missing.</p><p>Please <a class="external" target="_blank" href="https://github.com/openhab/openhab-docs/issues/new">report this on the openHAB docs repo</a>.</p>'
           this.ready = true
@@ -94,11 +98,14 @@ export default {
             body = body.replace(/<img src=".*$/gm, '') // Remove images
 
             // Fix {{base}} and /docs anchor href for doc pages
-            body = body.replace(/<a href="(%7B%7Bbase%7D%7D|\/docs)/gm, `<a class="external" target="_blank" href="${this.$store.state.websiteUrl}/docs`)
+            body = body.replace(/<a href="(%7B%7Bbase%7D%7D|\/docs)/gm, `<a class="external" target="_blank" href="${useRuntimeStore().websiteUrl}/docs`)
             // Fix local folder anchor href: Rewrite folder to /folder/
             body = body.replace(/(<a href=")([A-z-]+)(")/gm, '$1' + this.localUrl + '$2/$3')
             // Fix external anchor href
             body = body.replace(/<a href="http/gm, '<a class="external" target="_blank" href="http')
+
+            // Fix links to other pages if on overview or semantic model tabs
+            body = body.replace(/(<a href=")(\/overview\/)([A-z-]+)(\/")/gm, '$1$3$4')
 
             // Allow embedding framework7 icons by using <!--F7(:blue|:green) ICON_NAME --> comments
             body = body.replace(/<!--F7 ([A-z]*) -->/gm, '<i class="f7-icons size-22">$1</i>')

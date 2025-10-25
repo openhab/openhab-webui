@@ -49,6 +49,9 @@
 </style>
 
 <script>
+import { f7 } from 'framework7-vue'
+import { nextTick, defineAsyncComponent } from 'vue'
+
 import YAML from 'yaml'
 import DirtyMixin from '@/pages/settings/dirty-mixin'
 import MovablePopupMixin from '@/pages/settings/movable-popup-mixin'
@@ -60,7 +63,7 @@ export default {
   },
   mixins: [DirtyMixin, MovablePopupMixin],
   components: {
-    'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')
+    editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue'))
   },
   emits: ['update', 'closed'],
   data () {
@@ -85,7 +88,7 @@ export default {
     widgetCodeOpened () {
       this.code = YAML.stringify(this.component)
       this.originalCode = this.code
-      this.$nextTick(() => {
+      nextTick(() => {
         // this.$refs.navbar only exists after the code editor finished rendering
         this.initializeMovablePopup(this.$refs.widgetCode, this.$refs.navbar)
       })
@@ -94,7 +97,7 @@ export default {
     widgetCodeClosed () {
       this.cleanupMovablePopup()
       window.removeEventListener('keydown', this.onKeydown)
-      this.$f7.emit('widgetCodeClosed')
+      f7.emit('widgetCodeClosed')
       this.$emit('closed')
     },
     onKeydown (evt) {
@@ -107,7 +110,7 @@ export default {
         const dialog = this.confirmLeaveWithoutSaving(
           () => {
             this.updateWidgetCode(this.originalCode)
-            this.$refs.widgetCode.close()
+            this.$refs.widgetCode.$el.f7Modal.close()
           },
           () => {
             // prevent re-triggering the confirm dialog when ESC is pressed to close the dialog
@@ -116,11 +119,11 @@ export default {
           }
         )
       } else {
-        this.$refs.widgetCode.close()
+        this.$refs.widgetCode.$el.f7Modal.close()
       }
     },
     reset () {
-      this.$f7.dialog.confirm('Do you want to revert your changes?', 'Revert Changes', () => {
+      f7.dialog.confirm('Do you want to revert your changes?', 'Revert Changes', () => {
         this.code = this.originalCode
         this.updateWidgetCode(this.code)
         this.dirty = false
@@ -128,14 +131,14 @@ export default {
     },
     save () {
       if (this.widgetYamlError !== 'OK') {
-        this.$f7.dialog.alert('Invalid YAML: ' + this.widgetYamlError, 'Unable to save changes').open()
+        f7.dialog.alert('Invalid YAML: ' + this.widgetYamlError, 'Unable to save changes').open()
         return
       }
       this.updateWidgetCode(this.code)
-      this.$refs.widgetCode.close()
+      this.$refs.widgetCode.$el.f7Modal.close()
     },
     updateWidgetCode (value) {
-      this.$f7.emit('widgetCodeUpdate', value)
+      f7.emit('widgetCodeUpdate', value)
       this.$emit('update', value)
     },
     update (value) {

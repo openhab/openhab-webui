@@ -18,10 +18,12 @@
                        label="Transformation UID"
                        type="text"
                        :input="false">
-          <span slot="input">
-            {{ transformation.uid }}
-            <clipboard-icon :value="transformation.uid" tooltip="Copy UID" style="pointer-events: initial !important" />
-          </span>
+          <template #input>
+            <span>
+              {{ transformation.uid }}
+              <clipboard-icon :value="transformation.uid" tooltip="Copy UID" style="pointer-events: initial !important" />
+            </span>
+          </template>
         </f7-list-input>
         <f7-list-input label="Label"
                        type="text"
@@ -67,6 +69,8 @@
 </template>
 
 <script>
+import { theme } from 'framework7-vue'
+
 import ClipboardIcon from '@/components/util/clipboard-icon.vue'
 
 export default {
@@ -85,7 +89,7 @@ export default {
         openIn: 'popup',
         searchbar: true,
         virtualList: true,
-        virtualListHeight: (this.$theme.aurora) ? 32 : undefined
+        virtualListHeight: (theme.aurora) ? 32 : undefined
       }
     }
   }

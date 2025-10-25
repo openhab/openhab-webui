@@ -1,32 +1,24 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
-    <f7-navbar :title="pageTitle + dirtyIndicator" back-link="Back">
-      <f7-nav-right v-show="ready">
-        <f7-link v-if="!editable"
-                 icon-f7="lock_fill"
-                 icon-only
-                 tooltip="This persistence configuration is not editable through the UI" />
-        <f7-link v-else-if="$theme.md"
-                 icon-md="material:save"
-                 icon-only
-                 @click="save()" />
-        <f7-link v-else @click="save()">
-          Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
-        </f7-link>
-      </f7-nav-right>
+    <f7-navbar>
+      <oh-nav-content :title="pageTitle + dirtyIndicator"
+                      :editable
+                      save-link="Save"
+                      @save="save()"
+                      :f7router />
     </f7-navbar>
     <f7-toolbar tabbar position="top">
-      <f7-link @click="switchTab('design', fromYaml)" :tab-link-active="currentTab === 'design'" class="tab-link">
+      <f7-link @click="switchTab('design', fromYaml)" :tab-link-active="currentTab === 'design'" tab-link="#design">
         Design
       </f7-link>
-      <f7-link @click="switchTab('code', toYaml)" :tab-link-active="currentTab === 'code'" class="tab-link">
+      <f7-link @click="switchTab('code', toYaml)" :tab-link-active="currentTab === 'code'" tab-link="#code">
         Code
       </f7-link>
     </f7-toolbar>
 
     <f7-tabs>
       <!-- Design Tab -->
-      <f7-tab id="design" @tab:show="() => this.currentTab = 'design'" :tab-active="currentTab === 'design'">
+      <f7-tab id="design" :tab-active="currentTab === 'design'">
         <f7-block class="block-narrow">
           <f7-col>
             <div>
@@ -35,7 +27,7 @@
                 <f7-link external
                          color="blue"
                          target="_blank"
-                         :href="`${$store.state.websiteUrl}/link/persistence`">
+                         :href="`${runtimeStore.websiteUrl}/link/persistence`">
                   Learn more about persistence.
                 </f7-link>
               </f7-block-footer>
@@ -105,15 +97,16 @@
                               :title="cfg.items.join(', ')"
                               :footer="cfg.strategies.join(', ') + (cfg.filters.length > 0 ? ' - ' + cfg.filters.join(', ') : '')"
                               :link="editable"
-                              @click.native="(ev) => editConfiguration(ev, index, cfg)"
+                              @click="(ev) => editConfiguration(ev, index, cfg)"
                               swipeout>
-                  <f7-link slot="media"
-                           v-if="editable"
-                           icon-color="red"
-                           icon-aurora="f7:minus_circle_filled"
-                           icon-ios="f7:minus_circle_filled"
-                           icon-md="material:remove_circle_outline"
-                           @click="showSwipeout" />
+                  <template #media>
+                    <f7-link v-if="editable"
+                             icon-color="red"
+                             icon-aurora="f7:minus_circle_filled"
+                             icon-ios="f7:minus_circle_filled"
+                             icon-md="material:remove_circle_outline"
+                             @click="showSwipeout" />
+                  </template>
                   <f7-swipeout-actions right v-if="editable">
                     <f7-swipeout-button @click="(ev) => deleteModule(ev, 'configs', index)"
                                         style="background-color: var(--f7-swipeout-delete-button-bg-color)">
@@ -126,14 +119,15 @@
                 <f7-list-item link
                               no-chevron
                               media-item
-                              :color="($theme.dark) ? 'black' : 'white'"
+                              :color="(theme.dark) ? 'black' : 'white'"
                               subtitle="Add configuration"
                               @click="editConfiguration(undefined, null)">
-                  <f7-icon slot="media"
-                           color="green"
-                           aurora="f7:plus_circle_fill"
-                           ios="f7:plus_circle_fill"
-                           md="material:control_point" />
+                  <template #media>
+                    <f7-icon color="green"
+                             aurora="f7:plus_circle_fill"
+                             ios="f7:plus_circle_fill"
+                             md="material:control_point" />
+                  </template>
                 </f7-list-item>
               </f7-list>
             </div>
@@ -149,15 +143,16 @@
                               :title="cs.name"
                               :footer="cs.cronExpression"
                               :link="editable"
-                              @click.native="(ev) => editCronStrategy(ev, index, cs)"
+                              @click="(ev) => editCronStrategy(ev, index, cs)"
                               swipeout>
-                  <f7-link slot="media"
-                           v-if="editable"
-                           icon-color="red"
-                           icon-aurora="f7:minus_circle_filled"
-                           icon-ios="f7:minus_circle_filled"
-                           icon-md="material:remove_circle_outline"
-                           @click="showSwipeout" />
+                  <template #media>
+                    <f7-link v-if="editable"
+                             icon-color="red"
+                             icon-aurora="f7:minus_circle_filled"
+                             icon-ios="f7:minus_circle_filled"
+                             icon-md="material:remove_circle_outline"
+                             @click="showSwipeout" />
+                  </template>
                   <f7-swipeout-actions right v-if="editable">
                     <f7-swipeout-button @click="(ev) => deleteCronStrategy(ev, index)"
                                         style="background-color: var(--f7-swipeout-delete-button-bg-color)">
@@ -170,14 +165,15 @@
                 <f7-list-item link
                               no-chevron
                               media-item
-                              :color="($theme.dark) ? 'black' : 'white'"
+                              :color="(theme.dark) ? 'black' : 'white'"
                               subtitle="Add cron strategy"
                               @click="editCronStrategy(undefined, null)">
-                  <f7-icon slot="media"
-                           color="green"
-                           aurora="f7:plus_circle_fill"
-                           ios="f7:plus_circle_fill"
-                           md="material:control_point" />
+                  <template #media>
+                    <f7-icon color="green"
+                             aurora="f7:plus_circle_fill"
+                             ios="f7:plus_circle_fill"
+                             md="material:control_point" />
+                  </template>
                 </f7-list-item>
               </f7-list>
               <!-- Default Strategies -->
@@ -203,15 +199,16 @@
                                 :title="f.name"
                                 :footer="(typeof ft.footerFn === 'function') ? ft.footerFn(f) : ''"
                                 :link="editable"
-                                @click.native="(ev) => editFilter(ev, ft, index, f)"
+                                @click="(ev) => editFilter(ev, ft, index, f)"
                                 swipeout>
-                    <f7-link slot="media"
-                             v-if="editable"
-                             icon-color="red"
-                             icon-aurora="f7:minus_circle_filled"
-                             icon-ios="f7:minus_circle_filled"
-                             icon-md="material:remove_circle_outline"
-                             @click="showSwipeout" />
+                    <template #media>
+                      <f7-link v-if="editable"
+                               icon-color="red"
+                               icon-aurora="f7:minus_circle_filled"
+                               icon-ios="f7:minus_circle_filled"
+                               icon-md="material:remove_circle_outline"
+                               @click="showSwipeout" />
+                    </template>
                     <f7-swipeout-actions right v-if="editable">
                       <f7-swipeout-button @click="(ev) => deleteFilter(ev, ft.name, index)"
                                           style="background-color: var(--f7-swipeout-delete-button-bg-color)">
@@ -224,14 +221,15 @@
                   <f7-list-item link
                                 no-chevron
                                 media-item
-                                :color="($theme.dark) ? 'black' : 'white'"
+                                :color="(theme.dark) ? 'black' : 'white'"
                                 :subtitle="'Add ' + ft.label.toLowerCase() + ' filter'"
                                 @click="editFilter(undefined, ft, null)">
-                    <f7-icon slot="media"
-                             color="green"
-                             aurora="f7:plus_circle_fill"
-                             ios="f7:plus_circle_fill"
-                             md="material:control_point" />
+                    <template #media>
+                      <f7-icon color="green"
+                               aurora="f7:plus_circle_fill"
+                               ios="f7:plus_circle_fill"
+                               md="material:control_point" />
+                    </template>
                   </f7-list-item>
                 </f7-list>
               </div>
@@ -243,12 +241,13 @@
               </f7-block-title>
               <f7-list :media-list="editable" swipeout no-swipeout-opened>
                 <f7-list-item v-for="(i, index) in currentItemsWithAlias" class="swipeout list-alias-item" :key="i">
-                  <f7-link slot="media"
-                           icon-color="red"
-                           icon-aurora="f7:minus_circle_filled"
-                           icon-ios="f7:minus_circle_filled"
-                           icon-md="material:remove_circle_outline"
-                           @click="showSwipeout" />
+                  <template #media>
+                    <f7-link icon-color="red"
+                             icon-aurora="f7:minus_circle_filled"
+                             icon-ios="f7:minus_circle_filled"
+                             icon-md="material:remove_circle_outline"
+                             @click="showSwipeout" />
+                  </template>
                   <div class="alias-label">
                     {{ i }}
                   </div>
@@ -261,7 +260,7 @@
                               error-message="Required. Must not start with a number. A-Z,a-z,0-9,_ only"
                               :value="persistence.aliases[i]"
                               @input="editAlias($event, i, $event.target.value)"
-                              @keydown.native="keyDown($event, index)" />
+                              @keydown="keyDown($event, index)" />
                   </div>
                   <f7-swipeout-actions right v-if="editable">
                     <f7-swipeout-button @click="(ev) => deleteAlias(ev, i)"
@@ -300,7 +299,7 @@
       </f7-tab>
 
       <!-- Code Tab -->
-      <f7-tab id="code" @tab:show="() => { currentTab = 'code'; toYaml() }" :tab-active="currentTab === 'code'">
+      <f7-tab id="code" :tab-active="currentTab === 'code'">
         <f7-icon v-if="!editable"
                  f7="lock"
                  class="float-right margin"
@@ -360,6 +359,10 @@
 </style>
 
 <script>
+import { defineAsyncComponent } from 'vue'
+import { f7, theme } from 'framework7-vue'
+import { mapStores } from 'pinia'
+
 import YAML from 'yaml'
 import cloneDeep from 'lodash/cloneDeep'
 import fastDeepEqual from 'fast-deep-equal/es6'
@@ -372,15 +375,21 @@ import StrategyPicker from '@/pages/settings/persistence/strategy-picker.vue'
 import ConfigurationPopup from '@/pages/settings/persistence/configuration-popup.vue'
 import FilterPopup from '@/pages/settings/persistence/filter-popup.vue'
 
+import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+
 export default {
   mixins: [DirtyMixin],
   components: {
     ItemPicker,
     StrategyPicker,
-    'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')
+    editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue'))
   },
   props: {
-    serviceId: String
+    serviceId: String,
+    f7router: Object
+  },
+  setup () {
+    return { theme }
   },
   data () {
     return {
@@ -421,7 +430,8 @@ export default {
     },
     currentItemsWithAlias () {
       return Object.keys(this.persistence.aliases).sort()
-    }
+    },
+    ...mapStores(useRuntimeStore)
   },
   watch: {
     persistence: {
@@ -479,7 +489,7 @@ export default {
       this.loading = true
 
       this.$oh.api.get('/rest/persistence/' + this.serviceId).then((data) => {
-        this.$set(this, 'persistence', data)
+        this.persistence = data
         this.savedPersistence = cloneDeep(this.persistence)
         // Ensure arrays for all filter types defined in the FilterTypes object are existent
         this.FilterTypes.forEach((ft) => {
@@ -515,14 +525,14 @@ export default {
           this.load()
         }
         if (!noToast) {
-          this.$f7.toast.create({
+          f7.toast.create({
             text: 'Persistence configuration saved',
             destroyOnClose: true,
             closeTimeout: 2000
           }).open()
         }
       }).catch((err) => {
-        this.$f7.toast.create({
+        f7.toast.create({
           text: 'Error while saving persistence configuration: ' + err,
           destroyOnClose: true,
           closeTimeout: 2000
@@ -530,13 +540,13 @@ export default {
       })
     },
     deletePersistence () {
-      this.$f7.dialog.confirm(
+      f7.dialog.confirm(
         `Are you sure you want to delete persistence configuration for ${this.serviceId}?`,
         'Delete persistence configuration',
         () => {
           this.$oh.api.delete('/rest/persistence/' + this.serviceId).then(() => {
             this.dirty = false
-            this.$f7router.back({ force: true })
+            this.f7router.back({ force: true })
           })
         }
       )
@@ -552,7 +562,7 @@ export default {
       }
 
       if (swipeoutElement) {
-        this.$f7.swipeout.open(swipeoutElement)
+        f7.swipeout.open(swipeoutElement)
       }
     },
     editConfiguration (ev, index, configuration) {
@@ -562,7 +572,7 @@ export default {
       const popup = {
         component: ConfigurationPopup
       }
-      this.$f7router.navigate({
+      this.f7router.navigate({
         url: 'configuration-config',
         route: {
           path: 'configuration-config',
@@ -576,12 +586,12 @@ export default {
         }
       })
 
-      this.$f7.once('configurationUpdate', (ev) => this.saveConfiguration(index, ev))
+      f7.once('configurationUpdate', (ev) => this.saveConfiguration(index, ev))
     },
     saveConfiguration (index, configuration) {
       const idx = this.persistence.configs.findIndex((cfg) => cfg.items.join() === configuration.items.join())
       if (index === null && idx !== -1) {
-        this.$f7.dialog.alert('A configuration for this/these Item(s) already exists!')
+        f7.dialog.alert('A configuration for this/these Item(s) already exists!')
         return
       }
       this.saveModule('configs', index, configuration)
@@ -593,7 +603,7 @@ export default {
       const popup = {
         component: CronStrategyPopup
       }
-      this.$f7router.navigate({
+      this.f7router.navigate({
         url: 'cron-strategy-config',
         route: {
           path: 'cron-strategy-config',
@@ -605,12 +615,12 @@ export default {
         }
       })
 
-      this.$f7.once('cronStrategyConfigUpdate', (ev) => this.saveCronStrategy(index, ev))
+      f7.once('cronStrategyConfigUpdate', (ev) => this.saveCronStrategy(index, ev))
     },
     saveCronStrategy (index, cronStrategy) {
       const idx = this.persistence.cronStrategies.findIndex((cs) => cs.name === cronStrategy.name)
       if ((index === null && idx !== -1) || this.PredefinedStrategies.includes(cronStrategy.name)) {
-        this.$f7.dialog.alert('A (cron) strategy with the same name already exists!')
+        f7.dialog.alert('A (cron) strategy with the same name already exists!')
         return
       }
       this.saveModule('cronStrategies', index, cronStrategy)
@@ -634,7 +644,7 @@ export default {
       const popup = {
         component: FilterPopup
       }
-      this.$f7router.navigate({
+      this.f7router.navigate({
         url: 'filter-config',
         route: {
           path: 'filter-config',
@@ -648,12 +658,12 @@ export default {
         }
       })
 
-      this.$f7.once('filterUpdate', (ev, ftn) => this.saveFilter(ftn, index, ev))
+      f7.once('filterUpdate', (ev, ftn) => this.saveFilter(ftn, index, ev))
     },
     saveFilter (filterTypeName, index, filter) {
       const idx = this.filters.findIndex((f) => f === filter.name)
       if (index === null && idx !== -1) {
-        this.$f7.dialog.alert('A filter with the same name already exists!')
+        f7.dialog.alert('A filter with the same name already exists!')
         return
       }
       // Convert comma separated string to array for equals filter
@@ -687,18 +697,18 @@ export default {
           obj[key] = aliases[key]
           return obj
         }, {})
-      this.$set(this.persistence, 'aliases', newAliases)
+      this.persistence.aliases = newAliases
     },
     editAlias (ev, item, alias) {
       if (!this.editable) return
       // Warn when alias already exists
       const duplicate = Object.entries(this.persistence.aliases).find(([i, a]) => (item !== i) && (alias === a))
       if (duplicate) {
-        this.$f7.dialog.alert('Alias ' + alias + ' for item ' + item + ' already exists for item ' + duplicate[0])
-        this.$set(this.persistence.aliases, item, '')
+        f7.dialog.alert('Alias ' + alias + ' for item ' + item + ' already exists for item ' + duplicate[0])
+        this.persistence.aliases[item] = ''
         return
       }
-      this.$set(this.persistence.aliases, item, alias)
+      this.persistence.aliases[item] = alias
     },
     deleteAlias (ev, item) {
       this.deleteModuleKey(ev, 'aliases', item)
@@ -729,7 +739,7 @@ export default {
     },
     showConfirmDialog (message, title) {
       return new Promise((resolve) => {
-        this.$f7.dialog.confirm(
+        f7.dialog.confirm(
           message,
           title,
           () => resolve(true),
@@ -757,7 +767,7 @@ export default {
       while (!swipeoutElement.classList.contains('swipeout')) {
         swipeoutElement = swipeoutElement.parentElement
       }
-      this.$f7.swipeout.delete(swipeoutElement, () => {
+      f7.swipeout.delete(swipeoutElement, () => {
         console.debug(`Removing ${module}:`)
         console.debug(this.persistence[module][index])
         this.persistence[module].splice(index, 1)
@@ -771,10 +781,10 @@ export default {
       while (!swipeoutElement.classList.contains('swipeout')) {
         swipeoutElement = swipeoutElement.parentElement
       }
-      this.$f7.swipeout.delete(swipeoutElement, () => {
+      f7.swipeout.delete(swipeoutElement, () => {
         console.debug(`Removing ${module}:`)
         console.debug(key)
-        this.$delete(this.persistence[module], key)
+        delete this.persistence[module][key]
         this.checkDirty()
       })
     },
@@ -798,16 +808,16 @@ export default {
       if (!this.editable) return false
       try {
         const updatedPersistence = YAML.parse(this.persistenceYaml)
-        this.$set(this.persistence, 'configs', updatedPersistence.configurations)
-        this.$set(this.persistence, 'aliases', updatedPersistence.aliases)
-        this.$set(this.persistence, 'cronStrategies', updatedPersistence.cronStrategies)
-        this.$set(this.persistence, 'defaults', updatedPersistence.defaultStrategies)
+        this.persistence.configs = updatedPersistence.configurations
+        this.persistence.aliases = updatedPersistence.aliases
+        this.persistence.cronStrategies = updatedPersistence.cronStrategies
+        this.persistence.defaults = updatedPersistence.defaultStrategies
         this.FilterTypes.forEach((ft) => {
-          this.$set(this.persistence, ft.name, updatedPersistence[ft.name])
+          this.persistence[ft.name] = updatedPersistence[ft.name]
         })
         return true
       } catch (e) {
-        this.$f7.dialog.alert(e).open()
+        f7.dialog.alert(e).open()
         return false
       }
     },

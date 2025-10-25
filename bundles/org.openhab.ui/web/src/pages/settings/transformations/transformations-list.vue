@@ -1,15 +1,13 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:afterout="onPageAfterOut">
-    <f7-navbar title="Transformations"
-               back-link="Settings"
-               back-link-url="/settings/"
-               back-link-force>
-      <f7-nav-right>
-        <developer-dock-icon />
-        <f7-link icon-md="material:done_all"
-                 @click="toggleCheck()"
-                 :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
-      </f7-nav-right>
+  <f7-page @page:afterin="onPageAfterIn">
+    <f7-navbar>
+      <oh-nav-content title="Transformations" back-link="Settings" back-link-url="/settings/">
+        <template #right>
+          <f7-link icon-md="material:done_all"
+                   @click="toggleCheck()"
+                   :text="(!theme.md) ? (showCheckboxes ? 'Done' : 'Select') : ''" />
+        </template>
+      </oh-nav-content>
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
           v-if="initSearchbar"
@@ -19,31 +17,31 @@
           search-container=".transformations-list"
           search-item=".transformationlist-item"
           search-in=".item-title, .item-subtitle, .item-footer"
-          :disable-button="!$theme.aurora" />
+          :disable-button="!theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
-    <f7-toolbar class="contextual-toolbar"
-                :class="{ 'navbar': $theme.md }"
-                v-if="showCheckboxes"
+    <f7-toolbar v-if="showCheckboxes"
+                class="contextual-toolbar"
+                :class="{ navbar: theme.md }"
                 bottom-ios
                 bottom-aurora>
-      <f7-link color="red"
+      <f7-link v-if="!theme.md"
+               color="red"
                v-show="selectedTransformations.length"
-               v-if="!$theme.md"
                class="delete"
                icon-ios="f7:trash"
                icon-aurora="f7:trash"
                @click="removeSelected">
         Remove {{ selectedTransformations.length }}
       </f7-link>
-      <f7-link v-if="$theme.md"
+      <f7-link v-if="theme.md"
                icon-md="material:close"
                icon-color="white"
                @click="showCheckboxes = false" />
-      <div class="title" v-if="$theme.md">
+      <div v-if="theme.md" class="title">
         {{ selectedTransformations.length }} selected
       </div>
-      <div class="right" v-if="$theme.md">
+      <div v-if="theme.md" class="right">
         <f7-link v-show="selectedTransformations.length"
                  icon-md="material:delete"
                  icon-color="white"
@@ -115,12 +113,13 @@
               link=""
               :title="transformation.label"
               :subtitle="transformation.type">
-              <f7-icon v-if="!transformation.editable"
-                       slot="after-title"
-                       f7="lock_fill"
-                       size="1rem"
-                       color="gray" />
-              <template slot="footer">
+              <template #after-title>
+                <f7-icon v-if="!transformation.editable"
+                         f7="lock_fill"
+                         size="1rem"
+                         color="gray" />
+              </template>
+              <template #footer>
                 {{ transformation.uid }}
                 <clipboard-icon :value="transformation.uid" tooltip="Copy UID" />
               </template>
@@ -132,24 +131,25 @@
 
     <f7-block v-if="ready && !transformations.length" class="block-narrow">
       <empty-state-placeholder icon="arrow_2_squarepath" title="transformations.title" text="transformations.text" />
-      <f7-row v-if="$f7.width < 1280" class="display-flex justify-content-center">
+      <f7-row v-if="$f7dim.width < 1280" class="display-flex justify-content-center">
         <f7-button large
                    fill
                    color="blue"
                    external
-                   :href="`${this.$store.state.websiteUrl}/link/transformations`"
+                   :href="`${runtimeStore.websiteUrl}/link/transformations`"
                    target="_blank"
-                   v-t="'home.overview.button.documentation'" />
+                   :text="$t('home.overview.button.documentation')" />
       </f7-row>
     </f7-block>
 
-    <f7-fab v-show="ready && !showCheckboxes"
-            position="right-bottom"
-            slot="fixed"
-            color="blue"
-            href="add">
-      <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
-    </f7-fab>
+    <template #fixed>
+      <f7-fab v-show="ready && !showCheckboxes"
+              position="right-bottom"
+              color="blue"
+              href="add">
+        <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
+      </f7-fab>
+    </template>
   </f7-page>
 </template>
 
@@ -161,13 +161,25 @@
 </style>
 
 <script>
+import { nextTick } from 'vue'
+import { f7, theme } from 'framework7-vue'
+import { mapStores } from 'pinia'
+
 import ClipboardIcon from '@/components/util/clipboard-icon.vue'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 
+import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+
 export default {
+  props: {
+    f7router: Object
+  },
   components: {
     EmptyStatePlaceholder,
     ClipboardIcon
+  },
+  setup () {
+    return { f7, theme }
   },
   data () {
     return {
@@ -177,7 +189,8 @@ export default {
       initSearchbar: false,
       selectedTransformations: [],
       groupBy: 'alphabetical',
-      showCheckboxes: false
+      showCheckboxes: false,
+      searchQuery: ''    // TODO-V3.1 - this was never implemented in exisitng UI
     }
   },
   computed: {
@@ -208,7 +221,8 @@ export default {
           return objEntries
         }, {})
       }
-    }
+    },
+    ...mapStores(useRuntimeStore)
   },
   methods: {
     onPageAfterIn () {
@@ -225,7 +239,7 @@ export default {
         setTimeout(() => {
           this.initSearchbar = true
           if (this.$refs.listIndex) this.$refs.listIndex.update()
-          if (this.$device.desktop && this.$refs.searchbar) this.$refs.searchbar.f7Searchbar.$inputEl[0].focus()
+          if (this.$device.desktop && this.$refs.searchbar) this.$refs.searchbar.$el.f7Searchbar.$inputEl[0].focus()
         })
       })
     },
@@ -233,7 +247,7 @@ export default {
       this.groupBy = groupBy
       const searchbar = this.$refs.searchbar.$el.f7Searchbar
       const filterQuery = searchbar.query
-      this.$nextTick(() => {
+      nextTick(() => {
         if (filterQuery) {
           searchbar.clear()
           searchbar.search(filterQuery)
@@ -251,7 +265,7 @@ export default {
       if (this.showCheckboxes) {
         this.toggleTransformationCheck(event, transformation.uid, transformation)
       } else {
-        this.$f7router.navigate(transformation.uid)
+        this.f7router.navigate(transformation.uid)
       }
     },
     ctrlClick (event, transformation) {
@@ -270,7 +284,7 @@ export default {
     removeSelected () {
       const vm = this
 
-      this.$f7.dialog.confirm(
+      f7.dialog.confirm(
         `Remove ${this.selectedTransformations.length} selected transformations?`,
         'Remove Transformations',
         () => {
@@ -279,13 +293,13 @@ export default {
       )
     },
     doRemoveSelected () {
-      let dialog = this.$f7.dialog.progress('Deleting Transformations...')
+      let dialog = f7.dialog.progress('Deleting Transformations...')
 
       const promises = this.selectedTransformations.map((p) => {
         return this.$oh.api.delete('/rest/transformations/' + p)
       })
       Promise.all(promises).then((data) => {
-        this.$f7.toast.create({
+        f7.toast.create({
           text: 'Transformations removed',
           destroyOnClose: true,
           closeTimeout: 2000
@@ -293,13 +307,13 @@ export default {
         this.selectedTransformations = []
         dialog.close()
         this.load()
-        this.$f7.emit('sidebarRefresh', null) // for what?
+        f7.emit('sidebarRefresh', null) // for what?
       }).catch((err) => {
         dialog.close()
         this.load()
         console.error(err)
-        this.$f7.dialog.alert('An error occurred while deleting: ' + err)
-        this.$f7.emit('sidebarRefresh', null) // for what?
+        f7.dialog.alert('An error occurred while deleting: ' + err)
+        f7.emit('sidebarRefresh', null) // for what?
       })
     }
   }
