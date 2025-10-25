@@ -1,23 +1,16 @@
 <template>
   <f7-page @page:init="onPageInit" @page:afterin="onPageAfterIn" class="page-settings">
     <f7-navbar large>
-      <f7-nav-left>
-        <f7-link icon-f7="chevron_left" href="/overview/">
-          Overview
-        </f7-link>
-      </f7-nav-left>
-      <f7-nav-title-large>
-        Settings
-      </f7-nav-title-large>
-      <f7-nav-right>
-        <developer-dock-icon />
-        <f7-link
-          class="searchbar-enable"
-          data-searchbar=".searchbar-demo"
-          icon-ios="f7:search_strong"
-          icon-aurora="f7:search_strong"
-          icon-md="material:search" />
-      </f7-nav-right>
+      <oh-nav-content title="Settings" :large="true" :f7router>
+        <template #right>
+          <f7-link
+            class="searchbar-enable"
+            data-searchbar=".searchbar-demo"
+            icon-ios="f7:search_strong"
+            icon-aurora="f7:search_strong"
+            icon-md="material:search" />
+        </template>
+      </oh-nav-content>
       <f7-searchbar
         class="searchbar-demo"
         expandable
@@ -234,6 +227,13 @@
   </f7-page>
 </template>
 
+<style lang="stylus">
+.page-settings
+  .navbar.with-searchbar-expandable-enabled
+    height calc(var(--f7-searchbar-input-height) + var(--f7-searchbar-inner-padding-left))
+    .searchbar
+      top calc(0.5 * var(--f7-searchbar-inner-padding-left))
+</style>
 
 <script>
 import { f7, theme } from 'framework7-vue'
@@ -247,6 +247,9 @@ import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 export default {
   components: {
     AddonSection
+  },
+  props: {
+    f7router: Object
   },
   setup () {
     return { theme }
