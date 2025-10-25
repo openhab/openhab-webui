@@ -1,10 +1,7 @@
 <template>
   <f7-page name="devtools" @page:beforeremove="onPageBeforeRemove">
     <f7-navbar no-hairline>
-      <oh-nav-content title="Developer Tools"
-                      back-link="Overview"
-                      back-link-url="/overview/"
-                      :f7router />
+      <oh-nav-content title="Developer Tools" :f7router />
     </f7-navbar>
     <f7-toolbar tabbar position="top">
       <f7-link @click="currentTab = 'menu'" :tab-link-active="currentTab === 'menu'" tab-link="#tab-menu">

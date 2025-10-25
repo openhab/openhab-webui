@@ -6,10 +6,7 @@
     <f7-navbar large
                :large-transparent="false"
                class="store-nav">
-      <oh-nav-content :title="AddonTitles[currentTab] || 'Add-on Store'"
-                      back-link="Settings"
-                      back-link-url="/settings/"
-                      :f7router />
+      <oh-nav-content :title="AddonTitles[currentTab] || 'Add-on Store'" :f7router />
     </f7-navbar>
     <f7-toolbar v-show="$f7dim.width < 1024 || !leftPanelOpened" tabbar bottom>
       <f7-link tab-link="#main"

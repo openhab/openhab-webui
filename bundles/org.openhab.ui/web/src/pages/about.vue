@@ -1,10 +1,7 @@
 <template>
   <f7-page name="about" class="page-about" @page:beforein="beforePageIn">
     <f7-navbar large>
-      <oh-nav-content :title="t('about.title')"
-                      back-link="Overview"
-                      back-link-url="/overview/"
-                      :f7router />
+      <oh-nav-content :title="t('about.title')" :f7router />
     </f7-navbar>
     <f7-block class="block-narrow after-big-title">
       <f7-row>
@@ -166,6 +163,9 @@ export default {
   mixins: [reloadMixin],
   components: {
     ThemeSwitcher
+  },
+  props: {
+    f7router: Object
   },
   setup () {
     const { t, mergeLocaleMessage } = useI18n({ useScope: 'local'})
