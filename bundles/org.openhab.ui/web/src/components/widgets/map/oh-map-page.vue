@@ -10,7 +10,7 @@
     :class="{ 'with-tabbar': context.tab }"
     @update:center="centerUpdate"
     @update:zoom="zoomUpdate">
-    <l-feature-group ref="featureGroup" v-if="context.component.slots">
+    <l-feature-group ref="featureGroup" v-if="showMarkers">
       <component v-for="(marker, idx) in context.component.slots.default"
                  :key="idx"
                  :is="markerComponent(marker)"
@@ -76,7 +76,8 @@ export default {
       center: (this.context.component.config.initialCenter) ? latLng(this.context.component.config.initialCenter.split(',')) : latLng(48, 6),
       // url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       url: `https://a.basemaps.cartocdn.com/${useUIOptionsStore().getDarkMode()}_all/{z}/{x}/{y}.png`,
-      attribution: '&copy; <a class="external" target="_blank" href="http://osm.org/copyright">OpenStreetMap</a>, &copy; <a class="external" target="_blank" href="https://carto.com/attribution/">CARTO</a>'
+      attribution: '&copy; <a class="external" target="_blank" href="http://osm.org/copyright">OpenStreetMap</a>, &copy; <a class="external" target="_blank" href="https://carto.com/attribution/">CARTO</a>',
+      showMarkers: false
     }
   },
   computed: {
@@ -110,7 +111,14 @@ export default {
   methods: {
     initialize () {
       this.setBackgroundLayer()
-      this.onMarkerUpdate()
+      if (this.context.component.slots) {
+        // "dynamic" markers need to be initialised after the background layer;
+        // otherwise Leaflet will throw Invalid LatLng object: (NaN, NaN)
+        nextTick(() => {
+          this.showMarkers = true
+          this.onMarkerUpdate()
+        })
+      }
     },
     setBackgroundLayer () {
       const defaultProvider = (useUIOptionsStore().getDarkMode() === 'dark') ? 'CartoDB.DarkMatter' : 'CartoDB.Positron'
