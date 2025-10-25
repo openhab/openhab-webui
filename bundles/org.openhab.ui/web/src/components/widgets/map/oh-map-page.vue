@@ -11,12 +11,11 @@
     @update:center="centerUpdate"
     @update:zoom="zoomUpdate">
     <l-feature-group ref="featureGroup" v-if="context.component.slots">
-      <component
-        v-for="(marker, idx) in context.component.slots.default"
-        :key="idx"
-        :is="markerComponent(marker)"
-        :context="childContext(marker)"
-        @update="onMarkerUpdate" />
+      <component v-for="(marker, idx) in context.component.slots.default"
+                 :key="idx"
+                 :is="markerComponent(marker)"
+                 :context="childContext(marker)"
+                 @update="onMarkerUpdate" />
     </l-feature-group>
   </l-map>
 </template>
@@ -78,6 +77,19 @@ export default {
       // url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       url: `https://a.basemaps.cartocdn.com/${useUIOptionsStore().getDarkMode()}_all/{z}/{x}/{y}.png`,
       attribution: '&copy; <a class="external" target="_blank" href="http://osm.org/copyright">OpenStreetMap</a>, &copy; <a class="external" target="_blank" href="https://carto.com/attribution/">CARTO</a>'
+    }
+  },
+  computed: {
+    mapOptions () {
+      return Object.assign({
+        zoomSnap: 0.1
+      }, this.config.noZoomOrDrag ? {
+        dragging: false,
+        touchZoom: false,
+        doubleClickZoom: false,
+        scrollWheelZoom: false,
+        zoomControl: false
+      } : {})
     }
   },
   mounted () {
