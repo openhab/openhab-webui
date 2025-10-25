@@ -11,10 +11,10 @@
              :href="backLinkUrl"
              @click="back" />
   </f7-nav-left>
-  <f7-nav-title>
+  <component :is="titleComponent">
     {{ title }}
     <span v-if="subtitle" class="subtitle">{{ subtitle }}</span>
-  </f7-nav-title>
+  </component>
   <f7-nav-right>
     <developer-dock-icon />
     <f7-link v-if="editable === false"
@@ -45,7 +45,7 @@
  *
  * To use it, simply put it as the first component into the f7-navbar.
  */
-import { f7, theme } from 'framework7-vue'
+import { f7, theme, f7NavTitle, f7NavTitleLarge } from 'framework7-vue'
 import type { Router } from 'framework7'
 import DeveloperDockIcon from '@/components/developer/developer-dock-icon.vue'
 import { computed } from 'vue'
@@ -58,10 +58,12 @@ const props = withDefaults(defineProps<{
   editable?: boolean,
   saveLink?: string,
   saveLinkUrl?: string,
+  large?: boolean,
   f7router?: object,
 }>(), {
   backLink: 'Back',
-  editable: undefined
+  editable: undefined,
+  large: false
 })
 
 defineEmits(['save'])
@@ -69,6 +71,14 @@ defineEmits(['save'])
 defineSlots<{
   right: void,
 }>()
+
+const titleComponent = computed(() => {
+  if (props.large) {
+    return f7NavTitleLarge
+  } else {
+    return f7NavTitle
+  }
+})
 
 function back () {
   if (props.backLinkUrl) return
