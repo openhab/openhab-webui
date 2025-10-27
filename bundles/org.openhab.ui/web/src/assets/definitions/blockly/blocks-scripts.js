@@ -267,9 +267,9 @@ export default function defineOHBlocks_Scripts (f7, transformationServices) {
     }
 
   javascriptGenerator.forBlock['oh_context_info'] = function (block) {
-    const oldContectInfoName = block.getFieldValue('contextInfo')
+    const oldContextInfoName = block.getFieldValue('contextInfo')
     // map attributes to the correct event attribute names
-    const contextInfo = attributeMap[oldContectInfoName]
+    const contextInfo = attributeMap[oldContextInfoName]
 
     const type = block.getFieldValue('asType')
     if (contextInfo === 'eventAvailable') return ['(event !== undefined)', javascriptGenerator.ORDER_ATOMIC]
@@ -371,7 +371,7 @@ export default function defineOHBlocks_Scripts (f7, transformationServices) {
 
   /*
   * Allows quick return from a rule. This is useful to stop further processing of a rule.
-  * Also allows returning a value from a rule if required which can be using blockly for a script condition
+  * Also allows returning a value from a rule if required which allows using blockly for a script condition
   * Blockly part
   */
   Blockly.Blocks['oh_rule_return'] = {
@@ -393,7 +393,7 @@ export default function defineOHBlocks_Scripts (f7, transformationServices) {
   * Code part
   */
   javascriptGenerator.forBlock['oh_rule_return'] = function (block) {
-    // we need to add a wrapper function to allow returning from the rule
+    // we need to enable the wrapper to allow returning from the rule
     javascriptGenerator.provideFunction_('wrapper', ['"use wrapper;"'])
     const value = javascriptGenerator.valueToCode(block, 'value', javascriptGenerator.ORDER_ATOMIC)
     return `return ${value} \n`
