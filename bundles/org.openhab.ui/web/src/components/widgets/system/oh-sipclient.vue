@@ -30,14 +30,14 @@
                icon-color="yellow"
                :icon-size="config.iconSize" />
     <!-- Show dial menu when there`s no call -->
-    <f7-button v-else-if="(!session || session.isEnded())"
+    <f7-button v-else-if="(!session || sessionState === 'ended')"
                :style="computedButtonStyle"
                icon-f7="phone_fill_arrow_up_right"
                icon-color="green"
                :icon-size="config.iconSize"
                @click.stop="dial()" />
     <!-- Show answer button on incoming call -->
-    <f7-segmented v-else-if="session && session.direction === 'incoming' && session.isInProgress()"
+    <f7-segmented v-else-if="session && session.direction === 'incoming' && sessionState === 'in-progress'"
                   style="width: 100%; height: 100%">
       <f7-button :style="computedButtonStyle"
                  icon-f7="phone_fill_arrow_down_left"
@@ -53,23 +53,23 @@
                  @click.stop="session.terminate()" />
     </f7-segmented>
     <!-- Show hangup button and DTM button (if configured) for ongoing call -->
-    <f7-segmented v-else style="width: 100%; height: 100%">
+    <f7-segmented v-else-if="session" style="width: 100%; height: 100%">
       <!-- Show hangup button for outgoing call -->
-      <f7-button v-if="session && session.isInProgress()"
+      <f7-button v-if="sessionState === 'in-progress'"
                  :style="computedButtonStyle"
                  icon-f7="phone_down_fill"
                  icon-color="yellow"
                  :icon-size="config.iconSize"
                  @click.stop="session.terminate()" />
       <!-- Show hangup button for ongoing call -->
-      <f7-button v-else-if="session && !session.isEnded()"
+      <f7-button v-else-if="sessionState === 'established'"
                  :style="computedButtonStyle"
                  icon-f7="phone_down_fill"
                  icon-color="red"
                  :icon-size="config.iconSize"
                  @click.stop="session.terminate()" />
       <!-- Show send DTMF button if in a call if DTMF string is configured -->
-      <f7-button v-if="session && !session.isInProgress() && !session.isEnded() && config.dtmfString && config.dtmfString.length > 0"
+      <f7-button v-if="sessionState === 'established' && config.dtmfString && config.dtmfString.length > 0"
                  :style="computedButtonStyle"
                  icon-f7="number_square"
                  icon-color="orange"
@@ -119,7 +119,8 @@ export default {
   data () {
     return {
       connected: false,
-      session: null,
+      session: null, // internal state is not tracked -> reactivity is limited
+      sessionState: null, // dedicated computed session state so Vue reactivity works properly
       remoteParty: '',
       phonebook: new Map(),
       showLocalVideo: false,
@@ -232,6 +233,7 @@ export default {
         // Register event for new incoming or outgoing call event
         this.phone.on('newRTCSession', (data) => {
           this.session = data.session
+          this.sessionState = 'in-progress'
           const remoteParty = this.session.remote_identity.uri.user
           const remotePartyWithHost = `${this.session.remote_identity.uri.user}@${this.session.remote_identity.uri.host}`
 
@@ -241,6 +243,7 @@ export default {
             this.updateStateItem('outgoing:' + remotePartyWithHost)
             // Handle accepted call
             this.session.on('accepted', () => {
+              this.sessionState = 'established'
               this.stopTones()
               this.updateStateItem('outgoing-accepted:' + remotePartyWithHost)
               console.info(this.LOGGER_PREFIX + ': Outgoing call in progress')
@@ -251,6 +254,7 @@ export default {
             this.updateStateItem('incoming:' + remotePartyWithHost)
             // Handle accepted call
             this.session.on('accepted', () => {
+              this.sessionState = 'established'
               this.updateStateItem('incoming-accepted:' + remotePartyWithHost)
               console.info(this.LOGGER_PREFIX + ': Incoming call in progress')
             })
@@ -270,12 +274,16 @@ export default {
           }
           // Handle ended call
           this.session.on('ended', () => {
+            this.session = null
+            this.sessionState = 'ended'
             this.stopMedia()
             this.updateStateItem('ended:' + remotePartyWithHost)
             console.info(this.LOGGER_PREFIX + ': Call ended')
           })
           // Handle failed call
           this.session.on('failed', (event) => {
+            this.session = null
+            this.sessionState = 'ended'
             this.stopTones()
             this.stopMedia()
             this.updateStateItem('failed:' + remotePartyWithHost)
