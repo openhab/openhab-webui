@@ -708,7 +708,7 @@ export default {
       const useCredentialsPromise = useCredentials ? this.setBasicCredentials() : Promise.resolve()
       return useCredentialsPromise
         .then(() => {
-          return request.json('/rest')
+          return request.json('/rest/')
         })
         .catch((err) => {
           console.error('openHAB REST API connection failed with error:')
