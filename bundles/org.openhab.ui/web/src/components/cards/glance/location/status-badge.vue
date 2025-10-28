@@ -204,7 +204,9 @@ export default {
       }
     },
     map () {
-      return this.query.map((item) => this.store[item.name].state)
+      // Make sure items are only counted once
+      const itemNames = new Set(this.query.map((item) => item.name))
+      return itemNames.map((itemName) => this.store[itemName].state)
     },
     reduce () {
       const ast = this.overrideExpression()
