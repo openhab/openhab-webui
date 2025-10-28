@@ -236,23 +236,40 @@ export default {
       }
     },
     queryLightPoints () {
-      // Look for all control points on the location with light property
+      // Look for all control points on the location with light, color and brightness properties.
+      // The semantic model should be constructed such that a light represented as a point on a location is only represented once on the location.
       const points = []
       points.push(...findPoints(this.element.properties, 'Point_Control', true, 'Property_Light'))
-      // Repeat this for equipments on the location, but this time, as it is an equipment, assume it only represents one light and we default to the switch
+      points.push(...findPoints(this.element.properties, 'Point_Control', true, 'Property_Color'))
+      points.push(...findPoints(this.element.properties, 'Point_Control', true, 'Property_Brightness'))
+      points.push(...findPoints(this.element.properties, 'Point_Status', true, 'Property_Light'))
+      points.push(...findPoints(this.element.properties, 'Point_Status', true, 'Property_Color'))
+      points.push(...findPoints(this.element.properties, 'Point_Status', true, 'Property_Brightness'))
+      // Repeat this for equipments on the location, but this time, as it is an equipment, assume it only represents one light and we prioritize a switch.
+      // Make sure the semantic model does not have the same light represented as a point on the location and a (sub-)equipment in the location.
       let equipment = findEquipment(this.element.equipment, 'Equipment_LightSource', true)
       points.push(...this.element.equipment.map((e) => {
-        const isLightSource = equipment.includes(e) // for light source equipment we look beyond property light
+        const isLightSource = equipment.includes(e) // for light source equipment we look beyond property light, color and brightness
         let equipmentPoints = findPoints(e.points, 'Point_Control_Switch', false, 'Property_Light')
+        if (equipmentPoints.length) return equipmentPoints.slice(0, 1)
+        equipmentPoints = findPoints(e.points, 'Point_Control', true, 'Property_Light')
+        if (equipmentPoints.length) return equipmentPoints.slice(0, 1)
+        equipmentPoints = findPoints(e.points, 'Point_Control', true, 'Property_Color')
+        if (equipmentPoints.length) return equipmentPoints.slice(0, 1)
+        equipmentPoints = findPoints(e.points, 'Point_Control', true, 'Property_Brightness')
+        if (equipmentPoints.length) return equipmentPoints.slice(0, 1)
+        equipmentPoints = findPoints(e.points, 'Point_Status', true, 'Property_Light')
+        if (equipmentPoints.length) return equipmentPoints.slice(0, 1)
+        equipmentPoints = findPoints(e.points, 'Point_Status', true, 'Property_Color')
+        if (equipmentPoints.length) return equipmentPoints.slice(0, 1)
+        equipmentPoints = findPoints(e.points, 'Point_Status', true, 'Property_Brightness')
         if (equipmentPoints.length) return equipmentPoints.slice(0, 1)
         if (isLightSource) {
           equipmentPoints = findPoints(e.points, 'Point_Control_Switch', false)
           if (equipmentPoints.length) return equipmentPoints.slice(0, 1)
-        }
-        equipmentPoints = findPoints(e.points, 'Point_Control', true, 'Property_Light')
-        if (equipmentPoints.length) return equipmentPoints.slice(0, 1)
-        if (isLightSource) {
-          equipmentPoints = findPoints(e.points, 'Point_Control', false)
+          equipmentPoints = findPoints(e.points, 'Point_Control', true)
+          if (equipmentPoints.length) return equipmentPoints.slice(0, 1)
+          equipmentPoints = findPoints(e.points, 'Point_Status', true)
           if (equipmentPoints.length) return equipmentPoints.slice(0, 1)
         }
         return []
