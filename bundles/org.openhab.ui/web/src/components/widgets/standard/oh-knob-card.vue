@@ -1,7 +1,7 @@
 <template>
   <oh-card :context="context" :content-class="['display-flex', 'justify-content-center']">
     <template #content>
-      <oh-knob :context="childContext(context.component)" @command="onCommand" />
+      <oh-knob :context="childContext(context.component)" />
     </template>
   </oh-card>
 </template>

@@ -10,8 +10,7 @@
       <div v-if="context && context.component.slots && context.component.slots.glance" class="display-flex flex-direction-column align-items-flex-start">
         <generic-widget-component v-for="(slotComponent, idx) in context.component.slots.glance"
                                   :context="childContext(slotComponent)"
-                                  :key="'glance-' + idx"
-                                  @command="onCommand" />
+                                  :key="'glance-' + idx" />
       </div>
       <div class="location-stats margin-top-half" v-if="!config.disableBadges">
         <span v-for="badgeType in ['temperature', 'humidity', 'co2', 'luminance']" :key="badgeType">

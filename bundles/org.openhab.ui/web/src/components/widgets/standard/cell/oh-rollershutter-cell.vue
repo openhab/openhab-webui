@@ -6,8 +6,7 @@
           <div v-if="context.component.slots" class="margin-top display-flex flex-direction-column justify-content-center">
             <generic-widget-component v-for="(slotComponent, idx) in context.component.slots.beforeRollershutter"
                                       :context="childContext(slotComponent)"
-                                      :key="'beforeRollershutter-' + idx"
-                                      @command="onCommand" />
+                                      :key="'beforeRollershutter-' + idx" />
           </div>
         </slot>
         <oh-rollershutter class="rollershutter-controls" :context="rollershutterContext" />
@@ -15,8 +14,7 @@
           <div v-if="context.component.slots" class="margin-top display-flex flex-direction-column justify-content-center">
             <generic-widget-component v-for="(slotComponent, idx) in context.component.slots.afterRollershutter"
                                       :context="childContext(slotComponent)"
-                                      :key="'afterRollershutter-' + idx"
-                                      @command="onCommand" />
+                                      :key="'afterRollershutter-' + idx" />
           </div>
         </slot>
       </f7-col>

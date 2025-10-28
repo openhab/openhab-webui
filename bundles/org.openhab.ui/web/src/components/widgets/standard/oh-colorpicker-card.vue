@@ -1,7 +1,7 @@
 <template>
   <oh-card :context="context" :content-class="['display-flex', 'justify-content-center']">
     <template #content>
-      <oh-colorpicker :context="context" @command="onCommand" />
+      <oh-colorpicker :context="context" />
     </template>
   </oh-card>
 </template>

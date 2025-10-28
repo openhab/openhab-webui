@@ -16,7 +16,7 @@
     </template>
     <template #footer>
       <f7-card-footer class="display-flex justify-content-center">
-        <oh-player-controls :context="childContext(context.component)" @command="onCommand" />
+        <oh-player-controls :context="childContext(context.component)" />
       </f7-card-footer>
     </template>
   </oh-card>

@@ -25,8 +25,7 @@
                  v-show="!inChatSession"
                  :context="overviewPageContext"
                  :class="{ notready: !ready }"
-                 :f7router
-                 @command="onCommand" />
+                 :f7router />
       <div v-else-if="!inChatSession" class="empty-overview">
         <empty-state-placeholder icon="house" title="overview.title" text="overview.text" />
         <f7-row v-if="!userStore.isAdmin() || $f7dim.width < 1280" class="display-flex justify-content-center">
@@ -136,11 +135,6 @@ export default {
       return this.overviewPage.config.style
     },
     ...mapStores(useUserStore,  useStatesStore, useComponentsStore, useUIOptionsStore, useRuntimeStore)
-  },
-  methods: {
-    onCommand (itemName, command) {
-      useStatesStore().sendCommand(itemName, command)
-    }
   }
 }
 </script>

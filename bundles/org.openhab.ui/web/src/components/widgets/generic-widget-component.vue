@@ -1,21 +1,18 @@
 <template>
   <component v-if="componentType && componentType.startsWith('f7-') && visible"
              :is="componentType"
-             v-bind="config"
-             @command="onCommand">
+             v-bind="config">
     <!-- eslint-disable-next-line vue/no-unused-vars -->
     <template v-for="(slotComponents, slotName) in context.component.slots" :key="slotName" #[slotName]>
       <ul v-if="componentType === 'f7-list'">
         <generic-widget-component v-for="(slotComponent, idx) in slotComponents"
                                   :context="childContext(slotComponent)"
-                                  :key="slotName + '-' + idx"
-                                  @command="onCommand" />
+                                  :key="slotName + '-' + idx" />
       </ul>
       <template v-else>
         <generic-widget-component v-for="(slotComponent, idx) in slotComponents"
                                   :context="childContext(slotComponent)"
-                                  :key="slotName + '-' + idx"
-                                  @command="onCommand" />
+                                  :key="slotName + '-' + idx" />
       </template>
     </template>
   </component>
@@ -23,17 +20,14 @@
     <template v-for="(slotComponents, slotName) in context.component.slots" :key="slotName" #[slotName]>
       <generic-widget-component v-for="(slotComponent, idx) in slotComponents"
                                 :context="childContext(slotComponent)"
-                                :key="slotName + '-' + idx "
-                                @command="onCommand" />
+                                :key="slotName + '-' + idx " />
     </template>
   </oh-card>
   <generic-widget-component v-else-if="componentType && componentType.startsWith('widget:') && visible"
-                            :context="childWidgetContext()"
-                            @command="onCommand" />
+                            :context="childWidgetContext()" />
   <component v-else-if="componentType && componentType.startsWith('oh-') && visible"
              :is="componentType"
-             :context="context"
-             @command="onCommand" />
+             :context="context" />
   <!-- Label renders text inside <div> element -->
   <div v-else-if="componentType && componentType === 'Label' && visible" :class="config.class" :style="config.style">
     {{ config.text }}

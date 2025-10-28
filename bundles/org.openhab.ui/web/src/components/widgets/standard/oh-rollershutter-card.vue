@@ -4,8 +4,7 @@
            :content-style="{ height: config.vertical ? '10em' : undefined }">
     <template #content>
       <oh-rollershutter :class="{ vertical: config.vertical }"
-                        :context="context"
-                        @command="onCommand" />
+                        :context="context" />
     </template>
   </oh-card>
 </template>
