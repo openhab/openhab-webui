@@ -266,13 +266,13 @@ export default {
           const lightSourcePoints = [...findPoints(e.points, 'Point_Control_Switch', false), ...findPoints(e.points, 'Point_Control', true), ...findPoints(e.points, 'Point_Status', true)]
           if (lightSourcePoints.length) {
             equipmentPoints.push(lightSourcePoints.slice(0, 1))
+          } else {
+            // Also include LightSource tagged equipment items that have no points themselves.
+            equipmentPoints.push(e.map((lightSource) => lightSource.item))
           }
         }
         return equipmentPoints
       }).flat())
-      // Also include LightSource tagged equipment items that have no points themselves and that have no sub-equipment included already.
-      const lightSourceEquipmentNoPoints = lightSourceEquipment.filter((e) => e.points.length === 0).filter((e) => !allEquipmentPoints(e).some((p) => points.includes(p))).map((e) => e.item)
-      points.push(...lightSourceEquipmentNoPoints)
       return points
     }
   },
