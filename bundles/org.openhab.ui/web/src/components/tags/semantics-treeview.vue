@@ -27,12 +27,36 @@
 </style>
 
 <script>
+import { reactive, provide } from 'vue'
 import SemanticsTreeviewItem from '@/components/tags/treeview-item.vue'
 
 export default {
-  props: ['semanticTags', 'expandedTags', 'showNames', 'showSynonyms', 'picker', 'selectedTag', 'selectedClass', 'canDragDrop', 'propertyMode', 'classMode', 'limitToClass', 'hideNone'],
+  props: {
+    semanticTags: Array,
+    expandedTags: Object,
+    showNames: Boolean,
+    showSynonyms: Boolean,
+    picker: Boolean,
+    selectedTag: Object,
+    selectedClass: String,
+    canDragDrop: Boolean,
+    propertyMode: Boolean,
+    classMode: Boolean,
+    limitToClass: Boolean,
+    hideNone: Boolean
+  },
+  emits: ['selected'],
   components: {
     SemanticsTreeviewItem
+  },
+  setup () {
+    const moveState = reactive({
+      moving: false,
+      moveDelayedOpen: null,
+      moveTarget: null
+    })
+
+    provide('moveState', moveState)
   },
   computed: {
     rootTags () {
@@ -61,9 +85,9 @@ export default {
   },
   mounted () {
     if (this.propertyMode) {
-      this.$set(this.expandedTags, 'Property', true)
+      this.expandedTags.Property = true
     } else if (this.classMode && this.selectedClass) {
-      this.$set(this.expandedTags, this.selectedClass, true)
+      this.expandedTags[this.selectedClass] = true
     }
   }
 }

@@ -2,7 +2,7 @@
   <f7-popup ref="modulePopup"
             class="moduleconfig-popup"
             :close-by-backdrop-click="false"
-            @popupClosed="moduleConfigClosed">
+            @popup:closed="moduleConfigClosed">
     <f7-page>
       <f7-navbar>
         <f7-nav-left>
@@ -12,13 +12,7 @@
                    @click="onBackClicked" />
         </f7-nav-left>
         <f7-nav-title v-if="ruleModule && ruleModule.new">
-          Add {{ SectionLabels[currentSection][1] }}
-        </f7-nav-title>
-        <f7-nav-title v-else-if="readOnly">
-          View {{ SectionLabels[currentSection][1] }}
-        </f7-nav-title>
-        <f7-nav-title v-else>
-          Edit {{ SectionLabels[currentSection][1] }}
+          {{ title }}
         </f7-nav-title>
         <f7-nav-right>
           <f7-link v-if="!readOnly && currentRuleModuleType && dirty" @click="updateModuleConfig">
@@ -37,13 +31,13 @@
                            :value="ruleModule.label"
                            required
                            @input="ruleModule.label = $event.target.value"
-                           :disabled="readOnly"
+                           :disabled="readOnly ? true : null"
                            clear-button />
             <f7-list-input type="text"
                            :placeholder="moduleDescriptionSuggestion"
                            :value="ruleModule.description"
                            @input="ruleModule.description = $event.target.value"
-                           :disabled="readOnly"
+                           :disabled="readOnly ? true : null"
                            clear-button />
           </f7-list>
         </f7-col>
@@ -51,17 +45,17 @@
 
         <!-- module type picker -->
         <f7-col v-if="ruleModule.new">
-          <f7-block-title class="no-margin padding-horizontal margin-vertical" v-if="!advancedTypePicker" medium>
+          <f7-block-title v-if="!advancedTypePicker" class="no-margin padding-horizontal margin-vertical" medium>
             {{ SectionLabels[currentSection][0] }}
           </f7-block-title>
           <f7-list v-if="advancedTypePicker && !ruleModule.type">
             <ul v-for="(mt, scope) in groupedModuleTypes(currentSection)" :key="scope">
               <f7-list-item divider :title="scope" />
-              <f7-list-item radio
-                            v-for="moduleType in mt"
+              <f7-list-item v-for="moduleType in mt"
+                            radio
                             :value="moduleType.uid"
                             @change="setModuleType(moduleType)"
-                            :checked="ruleModule.type === moduleType.uid"
+                            :checked="ruleModule.type === moduleType.uid ? true : null"
                             :key="moduleType.uid"
                             :title="moduleType.label"
                             name="module-type" />
@@ -70,39 +64,41 @@
           <trigger-module-wizard v-else-if="!advancedTypePicker && currentSection === 'triggers'"
                                  :current-module="ruleModule"
                                  :current-module-type="currentRuleModuleType"
-                                 @typeSelect="setModuleType"
-                                 @showAdvanced="advancedTypePicker = true" />
+                                 @type-select="setModuleType"
+                                 @show-advanced="advancedTypePicker = true" />
           <condition-module-wizard v-else-if="!advancedTypePicker && currentSection === 'conditions'"
                                    :current-module="ruleModule"
                                    :current-module-type="currentRuleModuleType"
                                    :module-types="moduleTypes['conditions']"
-                                   @typeSelect="setModuleType"
-                                   @showAdvanced="advancedTypePicker = true"
-                                   @startScript="startScripting" />
+                                   @type-select="setModuleType"
+                                   @show-advanced="advancedTypePicker = true"
+                                   @start-script="startScripting"
+                                   :f7router />
           <action-module-wizard v-else-if="!advancedTypePicker && currentSection === 'actions'"
                                 :current-module="ruleModule"
                                 :current-module-type="currentRuleModuleType"
                                 :module-types="moduleTypes['actions']"
-                                @typeSelect="setModuleType"
-                                @showAdvanced="advancedTypePicker = true"
-                                @startScript="startScripting" />
+                                @type-select="setModuleType"
+                                @show-advanced="advancedTypePicker = true"
+                                @start-script="startScripting"
+                                :f7router />
         </f7-col>
 
         <!-- module configuration -->
         <f7-col v-if="ruleModule.type && (!ruleModule.new || advancedTypePicker)" class="margin-top">
           <f7-list>
-            <f7-list-item :disabled="readOnly"
+            <f7-list-item :disabled="readOnly ? true : null"
                           :title="SectionLabels[currentSection][0]"
                           ref="ruleModuleTypeSmartSelect"
                           smart-select
-                          :smart-select-params="{ view: $f7.views.main, openIn: 'popup', closeOnSelect: true }">
+                          :smart-select-params="{ view: f7.views.main, openIn: 'popup', closeOnSelect: true }">
               <select name="ruleModuleType"
-                      @change="setModuleType(moduleTypes[currentSection].find((t) => t.uid === $refs.ruleModuleTypeSmartSelect.f7SmartSelect.getValue()), true)">
+                      @change="setModuleType(moduleTypes[currentSection].find((t) => t.uid === $refs.ruleModuleTypeSmartSelect.$el.children[0].f7SmartSelect.getValue()), true)">
                 <optgroup v-for="(mt, scope) in groupedModuleTypes(currentSection)" :key="scope" :label="scope">
                   <option v-for="moduleType in mt"
                           :value="moduleType.uid"
                           :key="moduleType.uid"
-                          :selected="currentRuleModuleType.uid === moduleType.uid">
+                          :selected="currentRuleModuleType?.uid === moduleType.uid ? true : null">
                     {{ moduleType.label }}
                   </option>
                 </optgroup>
@@ -137,6 +133,8 @@
 </template>
 
 <script>
+import { f7 } from 'framework7-vue'
+
 import cloneDeep from 'lodash/cloneDeep'
 import fastDeepEqual from 'fast-deep-equal/es6'
 
@@ -155,7 +153,21 @@ export default {
     ActionModuleWizard,
     ConfigSheet
   },
-  props: ['rule', 'ruleModule', 'ruleModuleType', 'moduleTypes', 'currentSection', 'readOnly'],
+  props: {
+    rule: Object,
+    ruleModule: Object,
+    ruleModuleType: Object,
+    moduleTypes: Object,
+    currentSection: String,
+    readOnly: Boolean,
+    f7router: Object
+  },
+  emits: ['module-update', 'editNewScript'],
+  setup () {
+    return {
+      f7
+    }
+  },
   data () {
     return {
       currentRuleModuleType: this.ruleModuleType,
@@ -163,6 +175,11 @@ export default {
     }
   },
   computed: {
+    title () {
+      if (this.ruleModule && this.ruleModule.new) return 'Add ' + this.SectionLabels[this.currentSection][1]
+      if (this.readOnly) return 'View ' + this.SectionLabels[this.currentSection][1]
+      return 'Edit ' + this.SectionLabels[this.currentSection][1]
+    },
     moduleTitleSuggestion () {
       if (!this.ruleModule || !this.currentRuleModuleType) return 'Title'
       return this.suggestedModuleTitle(this.ruleModule, this.currentRuleModuleType)
@@ -184,35 +201,35 @@ export default {
     setModuleType (val, clearConfig) {
       const moduleType = (typeof val === 'string') ? this.moduleTypes[this.currentSection].find((t) => t.uid === val) : val
       this.ruleModule.type = moduleType.uid
-      this.$set(this, 'currentRuleModuleType', moduleType)
-      if (clearConfig) this.$set(this.ruleModule, 'configuration', {})
+      this.currentRuleModuleType = moduleType
+      if (clearConfig) this.ruleModule.configuration = {}
       this.ruleModule.label = this.ruleModule.description = ''
     },
     moduleConfigClosed () {
-      this.$f7.emit('ruleModuleConfigClosed')
+      f7.emit('ruleModuleConfigClosed')
     },
     updateModuleConfig () {
       if (this.$refs.parameters && !this.$refs.parameters.isValid()) {
-        this.$f7.dialog.alert('Please review the configuration and correct validation errors')
+        f7.dialog.alert('Please review the configuration and correct validation errors')
         return
       }
-      this.$f7.emit('ruleModuleConfigUpdate', this.ruleModule)
-      this.$refs.modulePopup.close()
+      f7.emit('ruleModuleConfigUpdate', this.ruleModule)
+      this.$refs.modulePopup.$el.f7Modal.close()
     },
     editBlockly () {
       this.updateModuleConfig()
-      this.$f7.views.main.router.navigate(`/settings/rules/${this.rule.uid}/script/${this.ruleModule.id}`)
+      f7.views.main.router.navigate(`/settings/rules/${this.rule.uid}/script/${this.ruleModule.id}`)
     },
     startScripting (language) {
       const contentType = (language === 'blockly') ? 'application/javascript' : language
-      this.$set(this.ruleModule.configuration, 'type', contentType)
-      this.$set(this.ruleModule.configuration, 'script', '')
+      this.ruleModule.configuration.type = contentType
+      this.ruleModule.configuration.script = ''
       if (language === 'blockly') {
         // initialize an empty blockly source
-        this.$set(this.ruleModule.configuration, 'blockSource', '<xml xmlns="https://developers.google.com/blockly/xml"></xml>')
+        this.ruleModule.configuration.blockSource = '<xml xmlns="https://developers.google.com/blockly/xml"></xml>'
       }
-      this.$f7.emit('editNewScript', this.ruleModule)
-      this.$refs.modulePopup.close()
+      f7.emit('editNewScript', this.ruleModule)
+      this.$refs.modulePopup.$el.f7Modal.close()
     },
     groupedModuleTypes (section) {
       const moduleTypes = this.moduleTypes[section].filter((t) => t.visibility === 'VISIBLE')
@@ -233,13 +250,13 @@ export default {
     },
     onBackClicked () {
       if (this.dirty) {
-        this.confirmLeaveWithoutSaving(this.$refs.modulePopup.close)
+        this.confirmLeaveWithoutSaving(this.$refs.modulePopup.$el.f7Modal.close)
       } else {
-        this.$refs.modulePopup.close()
+        this.$refs.modulePopup.$el.f7Modal.close()
       }
     },
     close () {
-      this.$refs.modulePopup.close()
+      this.$refs.modulePopup.$el.f7Modal.close()
     }
   },
   created () {

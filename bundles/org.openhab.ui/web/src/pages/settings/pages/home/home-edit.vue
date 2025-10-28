@@ -1,21 +1,16 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="home-editor">
-    <f7-navbar :title="'Edit Home Page' + dirtyIndicator" back-link="Back" no-hairline>
-      <f7-nav-right>
-        <f7-link @click="save()"
-                 v-if="$theme.md"
-                 icon-md="material:save"
-                 icon-only />
-        <f7-link @click="save()" v-if="!$theme.md">
-          Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
-        </f7-link>
-      </f7-nav-right>
+    <f7-navbar no-hairline>
+      <oh-nav-content :title="'Edit Home Page' + dirtyIndicator"
+                      :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
+                      @save="save()"
+                      :f7router />
     </f7-navbar>
     <f7-toolbar tabbar position="top" v-if="!previewMode">
-      <f7-link @click="switchTab('design', fromYaml)" :tab-link-active="currentTab === 'design'" class="tab-link">
+      <f7-link @click="switchTab('design', fromYaml)" :tab-link-active="currentTab === 'design'" tab-link="#design">
         Design
       </f7-link>
-      <f7-link @click="switchTab('code', toYaml)" :tab-link-active="currentTab === 'code'" class="tab-link">
+      <f7-link @click="switchTab('code', toYaml)" :tab-link-active="currentTab === 'code'" tab-link="#code">
         Code
       </f7-link>
     </f7-toolbar>
@@ -24,19 +19,19 @@
                :key="tab.value"
                @click="showCardControls = false; currentModelTab = tab.value"
                :tab-link-active="currentModelTab === tab.value"
-               class="tab-link">
+               :tab-link="'#' + tab.value">
         {{ tab.label }}
       </f7-link>
     </f7-toolbar>
     <f7-toolbar bottom class="toolbar-details">
       <div style="margin-left: auto">
-        <f7-toggle :checked="previewMode" @toggle:change="(value) => togglePreviewMode(value)" /> Run mode<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span>
+        <f7-toggle :checked="previewMode ? true : null" @toggle:change="(value) => togglePreviewMode(value)" />
+        Run mode<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span>
       </div>
     </f7-toolbar>
     <f7-tabs class="tabs-editor-tabs">
       <f7-tab id="design"
               class="tabs-editor-design-tab"
-              @tab:show="() => this.currentTab = 'design'"
               :tab-active="currentTab === 'design'">
         <f7-block v-if="!ready || !modelReady" class="text-align-center">
           <f7-preloader />
@@ -51,6 +46,7 @@
                 :parameterGroups="pageWidgetDefinition.props.parameterGroups || []"
                 :parameters="pageWidgetDefinition.props.parameters || []"
                 :configuration="page.config"
+                :f7router
                 @updated="dirty = true" />
             </f7-col>
           </f7-block>
@@ -91,44 +87,45 @@
                        sortable
                        :key="'cards-' + currentModelTab + cardListId"
                        @sortable:sort="reorderCard">
-                <f7-list-item media-item
+                <f7-list-item v-for="(card, idx) in cardGroups(currentModelTab, page).flat()"
+                              media-item
                               :link="(showCardControls) ? undefined : ''"
-                              @click.native="(ev) => cardClicked(ev, card, idx)"
-                              v-for="(card, idx) in cardGroups(currentModelTab, page).flat()"
+                              @click="(ev) => cardClicked(ev, card, idx)"
                               :key="idx"
                               :title="card.separator || card.defaultTitle"
                               :footer="(card.separator) ? '(separator)' : card.key">
-                  <f7-menu slot="content-start" class="configure-layout-menu">
-                    <f7-menu-item icon-f7="list_bullet" dropdown>
-                      <f7-menu-dropdown>
-                        <f7-menu-dropdown-item v-if="!card.separator"
-                                               @click="configureCard(card)"
-                                               href="#"
-                                               text="Configure Card" />
-                        <f7-menu-dropdown-item v-if="!card.separator"
-                                               @click="editCardCode(card)"
-                                               href="#"
-                                               text="Edit YAML" />
-                        <f7-menu-dropdown-item v-if="card.separator"
-                                               @click="renameCardSeparator(idx)"
-                                               href="#"
-                                               text="Rename" />
-                        <f7-menu-dropdown-item divider />
-                        <f7-menu-dropdown-item v-if="!card.separator"
-                                               @click="addCardSeparator(idx)"
-                                               href="#"
-                                               text="Add Separator Before" />
-                        <f7-menu-dropdown-item v-if="card.separator"
-                                               @click="removeCardSeparator(idx)"
-                                               href="#"
-                                               text="Remove Separator" />
-                      </f7-menu-dropdown>
-                    </f7-menu-item>
-                  </f7-menu>
-                  <f7-checkbox :checked="!isCardExcluded(card)"
-                               :disabled="card.separator !== undefined"
-                               slot="content-start"
-                               class="margin-right" />
+                  <template #content-start>
+                    <f7-menu class="configure-layout-menu">
+                      <f7-menu-item icon-f7="list_bullet" dropdown>
+                        <f7-menu-dropdown>
+                          <f7-menu-dropdown-item v-if="!card.separator"
+                                                 @click="configureCard(card)"
+                                                 href="#"
+                                                 text="Configure Card" />
+                          <f7-menu-dropdown-item v-if="!card.separator"
+                                                 @click="editCardCode(card)"
+                                                 href="#"
+                                                 text="Edit YAML" />
+                          <f7-menu-dropdown-item v-if="card.separator"
+                                                 @click="renameCardSeparator(idx)"
+                                                 href="#"
+                                                 text="Rename" />
+                          <f7-menu-dropdown-item divider />
+                          <f7-menu-dropdown-item v-if="!card.separator"
+                                                 @click="addCardSeparator(idx)"
+                                                 href="#"
+                                                 text="Add Separator Before" />
+                          <f7-menu-dropdown-item v-if="card.separator"
+                                                 @click="removeCardSeparator(idx)"
+                                                 href="#"
+                                                 text="Remove Separator" />
+                        </f7-menu-dropdown>
+                      </f7-menu-item>
+                    </f7-menu>
+                    <f7-checkbox :checked="!isCardExcluded(card) ? true : null"
+                                 :disabled="card.separator !== undefined ? true : null"
+                                 class="margin-right" />
+                  </template>
                 </f7-list-item>
               </f7-list>
             </div>
@@ -140,6 +137,7 @@
                 :parameterGroups="locationsTabParameters.props.parameterGroups || []"
                 :parameters="locationsTabParameters.props.parameters || []"
                 :configuration="page.slots.locations[0].config"
+                :f7router
                 @updated="dirty = true" />
             </div>
 
@@ -148,6 +146,7 @@
                 :parameterGroups="equipmentTabParameters.props.parameterGroups || []"
                 :parameters="equipmentTabParameters.props.parameters || []"
                 :configuration="page.slots.equipment[0].config"
+                :f7router
                 @updated="dirty = true" />
             </div>
 
@@ -169,7 +168,7 @@
         </div>
       </f7-tab>
 
-      <f7-tab id="code" @tab:show="() => { this.currentTab = 'code' }" :tab-active="currentTab === 'code'">
+      <f7-tab id="code" :tab-active="currentTab === 'code'">
         <editor v-if="currentTab === 'code'"
                 :style="{ opacity: previewMode ? '0' : '' }"
                 class="page-code-editor"
@@ -215,6 +214,10 @@
 </style>
 
 <script>
+import { nextTick, defineAsyncComponent } from 'vue'
+import { utils } from 'framework7'
+import { f7, theme } from 'framework7-vue'
+
 import PageDesigner from '../pagedesigner-mixin'
 import HomeCards from '../../../home/homecards-mixin'
 
@@ -234,11 +237,19 @@ const ConfigurableWidgets = {
 export default {
   mixins: [PageDesigner, HomeCards],
   components: {
-    'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue'),
+    editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')),
     ConfigSheet,
     ModelTab
   },
-  props: ['createMode', 'uid'],
+  props: {
+    createMode: Boolean,
+    uid: String,
+    f7router: Object,
+    f7route: Object
+  },
+  setup () {
+    return { theme }
+  },
   data () {
     return {
       pageWidgetDefinition: OhHomePageDefinition(),
@@ -248,7 +259,7 @@ export default {
       currentModelTab: 'locations',
       modelTabs: [],
       showCardControls: false,
-      cardListId: this.$f7.utils.id(),
+      cardListId: utils.id(),
       page: {
         uid: 'home',
         component: 'oh-home-page',
@@ -266,11 +277,11 @@ export default {
   watch: {
     pageReady (val) {
       if (val) {
-        this.$set(this, 'modelTabs', [
+        this.modelTabs = [
           { value: 'locations', label: this.$t('home.locations.tab') },
           { value: 'equipment', label: this.$t('home.equipment.tab') },
           { value: 'properties', label: this.$t('home.properties.tab') }
-        ])
+        ]
       }
     }
   },
@@ -319,16 +330,16 @@ export default {
     addCardSeparator (idx) {
       const orderedCards = this.cardGroups(this.currentModelTab, this.page).flat().map((e) => (e.separator) ? e : e.key)
       orderedCards.splice(idx, 0, { separator: 'New Section' })
-      this.$set(this.page.slots[this.currentModelTab][0].config, 'cardOrder', orderedCards)
+      this.page.slots[this.currentModelTab][0].config.cardOrder = orderedCards
       this.renameCardSeparator(idx)
     },
     renameCardSeparator (idx) {
       const orderedCards = this.cardGroups(this.currentModelTab, this.page).flat().map((e) => (e.separator) ? e : e.key)
       if (orderedCards[idx].separator) {
-        this.$f7.dialog.prompt('Enter the title of the separator:', null,
+        f7.dialog.prompt('Enter the title of the separator:', null,
           (title) => {
             orderedCards[idx].separator = title
-            this.$set(this.page.slots[this.currentModelTab][0].config, 'cardOrder', orderedCards)
+            this.page.slots[this.currentModelTab][0].config.cardOrder = orderedCards
           },
           null,
           orderedCards[idx].separator)
@@ -337,7 +348,7 @@ export default {
     removeCardSeparator (idx) {
       const orderedCards = this.cardGroups(this.currentModelTab, this.page).flat().map((e) => (e.separator) ? e : e.key)
       orderedCards.splice(idx, 1)
-      this.$set(this.page.slots[this.currentModelTab][0].config, 'cardOrder', orderedCards)
+      this.page.slots[this.currentModelTab][0].config.cardOrder = orderedCards
     },
     cardClicked (ev, card, idx) {
       ev.cancelBubble = true
@@ -359,11 +370,11 @@ export default {
       const orderedCards = this.cardGroups(this.currentModelTab, this.page).flat().map((e) => (e.separator) ? e : e.key)
       const newOrder = [...orderedCards]
       newOrder.splice(ev.to, 0, newOrder.splice(ev.from, 1)[0])
-      this.$set(this.page.slots[this.currentModelTab][0].config, 'cardOrder', newOrder)
+      this.page.slots[this.currentModelTab][0].config.cardOrder = newOrder
       this.cardListId = null
       this.showCardControls = false
-      this.$nextTick(() => {
-        this.cardListId = this.$f7.utils.id()
+      nextTick(() => {
+        this.cardListId = utils.id()
       })
     },
     isCardExcluded (card) {
@@ -381,7 +392,7 @@ export default {
       const excludedCards = (page && page.slots && page.slots[type] && page.slots[type][0] && page.slots[type][0].config && page.slots[type][0].config.excludedCards) ? page.slots[type][0].config.excludedCards : []
       const excludedIdx = excludedCards.indexOf(card.key)
       if (excludedIdx < 0) {
-        this.$set(this.page.slots[type][0].config, 'excludedCards', [...excludedCards, card.key])
+        this.page.slots[type][0].config.excludedCards = [...excludedCards, card.key]
       } else {
         this.page.slots[type][0].config.excludedCards.splice(excludedIdx, 1)
       }
@@ -392,13 +403,13 @@ export default {
     fromYaml () {
       try {
         const updatedTabs = YAML.parse(this.pageYaml)
-        this.$set(this.page, 'slots', updatedTabs)
-        this.$set(this.page, 'config', this.page.slots.config)
+        this.page.slots = updatedTabs
+        this.page.config = this.page.slots.config
         delete this.page.slots.config
         this.forceUpdate()
         return true
       } catch (e) {
-        this.$f7.dialog.alert(e).open()
+        f7.dialog.alert(e).open()
         return false
       }
     }

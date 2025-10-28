@@ -7,7 +7,10 @@
            @page:beforein="onPageBeforeIn"
            @page:afterin="onPageAfterIn"
            @page:beforeout="onPageBeforeOut">
-    <f7-navbar :large="!simpleNavbar" :large-transparent="!simpleNavbar" class="home-nav disable-user-select">
+    <f7-navbar :large="!simpleNavbar"
+               :large-transparent="!simpleNavbar"
+               class="home-nav disable-user-select"
+               ref="navbar">
       <f7-nav-left>
         <f7-link icon-ios="f7:menu"
                  icon-aurora="f7:menu"
@@ -15,7 +18,7 @@
                  panel-open="left" />
       </f7-nav-left>
       <f7-nav-title-large v-if="!simpleNavbar" class="home-title-large">
-        <span class="today">{{ new Date().toLocaleString($store.getters.locale, { weekday: 'long', day: 'numeric', month: 'long' }) }}</span>
+        <span class="today">{{ new Date().toLocaleString(runtimeStore.locale, { weekday: 'long', day: 'numeric', month: 'long' }) }}</span>
         {{ title }}
       </f7-nav-title-large>
       <f7-nav-title>
@@ -23,7 +26,7 @@
       </f7-nav-title>
       <f7-nav-right>
         <developer-dock-icon />
-        <f7-link v-if="this.$store.getters.isAdmin"
+        <f7-link v-if="userStore.isAdmin"
                  icon-ios="f7:pencil"
                  icon-aurora="f7:pencil"
                  icon-md="material:edit"
@@ -47,40 +50,41 @@
                  icon-md="material:exit_to_app"
                  :tooltip="$t('home.otherApps')"
                  panel-open="right"
-                 @click="($store.state.developerDock) ? $f7.emit('toggleDeveloperDock') : ''" />
+                 @click="runtimeStore.showDeveloperDock ? f7.emit('toggleDeveloperDock') : ''" />
       </f7-nav-right>
     </f7-navbar>
+
     <f7-toolbar tabbar
                 labels
                 bottom
                 v-if="tabsVisible">
-      <f7-link tab-link
+      <f7-link tab-link="#tab-overview"
                @click="switchTab('overview')"
-               :tab-link-active="currentTab === 'overview'"
+               :tab-link-active="currentTab === 'overview' ? true : null"
                icon-ios="f7:house_fill"
                icon-aurora="f7:house_fill"
                icon-md="material:home"
                :text="$t('home.overview.tab')" />
-      <f7-link tab-link
-               v-if="tabVisible('locations')"
+      <f7-link v-if="tabVisible('locations')"
+               tab-link="#tab-locations"
                @click="switchTab('locations')"
-               :tab-link-active="currentTab === 'locations'"
+               :tab-link-active="currentTab === 'locations' ? true : null"
                icon-ios="f7:placemark_fill"
                icon-aurora="f7:placemark_fill"
                icon-md="material:place"
                :text="$t('home.locations.tab')" />
-      <f7-link tab-link
-               v-if="tabVisible('equipment')"
+      <f7-link v-if="tabVisible('equipment')"
+               tab-link="#tab-equipment"
                @click="switchTab('equipment')"
-               :tab-link-active="currentTab === 'equipment'"
+               :tab-link-active="currentTab === 'equipment' ? true : null"
                icon-ios="f7:cube_box_fill"
                icon-aurora="f7:cube_box_fill"
                icon-md="material:payments"
                :text="$t('home.equipment.tab')" />
-      <f7-link tab-link
-               v-if="tabVisible('properties')"
+      <f7-link v-if="tabVisible('properties')"
+               tab-link="#tab-properties"
                @click="switchTab('properties')"
-               :tab-link-active="currentTab === 'properties'"
+               :tab-link-active="currentTab === 'properties' ? true : null"
                icon-ios="f7:bolt_fill"
                icon-aurora="f7:bolt_fill"
                icon-md="material:flash_on"
@@ -100,25 +104,26 @@
       </f7-block>
     </f7-block>
     <f7-tabs v-else>
-      <f7-tab id="tab-overview" :tab-active="currentTab === 'overview'" @tab:show="() => this.currentTab = 'overview'">
+      <f7-tab id="tab-overview" :tab-active="currentTab === 'overview' ? true : null" @tab:show="currentTab = 'overview'">
         <overview-tab v-if="currentTab === 'overview'"
                       :context="context"
                       :key="overviewPageKey"
-                      :allow-chat="allowChat" />
+                      :allow-chat="allowChat"
+                      :f7router />
       </f7-tab>
-      <f7-tab id="tab-locations" :tab-active="currentTab === 'locations'" @tab:show="() => this.currentTab = 'locations'">
+      <f7-tab id="tab-locations" :tab-active="currentTab === 'locations' ? true : null" @tab:show="currentTab = 'locations'">
         <model-tab v-if="currentTab === 'locations'"
                    :context="context"
                    type="locations"
                    :page="homePageComponent" />
       </f7-tab>
-      <f7-tab id="tab-equipment" :tab-active="currentTab === 'equipment'" @tab:show="() => this.currentTab = 'equipment'">
+      <f7-tab id="tab-equipment" :tab-active="currentTab === 'equipment' ? true : null" @tab:show="currentTab = 'equipment'">
         <model-tab v-if="currentTab === 'equipment'"
                    :context="context"
                    type="equipment"
                    :page="homePageComponent" />
       </f7-tab>
-      <f7-tab id="tab-properties" :tab-active="currentTab === 'properties'" @tab:show="() => this.currentTab = 'properties'">
+      <f7-tab id="tab-properties" :tab-active="currentTab === 'properties' ? true : null" @tab:show="currentTab = 'properties'">
         <model-tab v-if="currentTab === 'properties'"
                    :context="context"
                    type="properties"
@@ -154,13 +159,25 @@
 </style>
 
 <script>
+import { utils } from 'framework7'
+import { mapStores } from 'pinia'
+
 import OverviewTab from './home/overview-tab.vue'
 import ModelTab from './home/model-tab.vue'
-
 import HomeCards from './home/homecards-mixin'
 
+import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
+import { useStatesStore } from '@/js/stores/useStatesStore'
+import { useUserStore } from '@/js/stores/useUserStore'
+import { useComponentsStore } from '@/js/stores/useComponentsStore'
+import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+
 export default {
-  props: ['initialTab'],
+  props: {
+    initialTab: String,
+    f7route: Object,
+    f7router: Object
+  },
   mixins: [HomeCards],
   components: {
     OverviewTab,
@@ -174,38 +191,38 @@ export default {
       showPinToHome: false,
       showExitToApp: false,
       currentTab: this.initialTab || 'overview',
-      overviewPageKey: this.$utils.id()
+      overviewPageKey: utils.id()
     }
   },
   computed: {
     ready () {
-      return this.$store.state.apiVersion > 0
+      return useComponentsStore().ready && useRuntimeStore().ready
     },
     context () {
       return {
-        store: this.$store.getters.trackedItems
+        store: useStatesStore().trackedItems
       }
     },
     simpleNavbar () {
-      const homeNavbar = this.$f7.data.themeOptions.homeNavbar
-      if (homeNavbar !== 'default') return homeNavbar === 'simple'
-      if (this.$f7.device.desktop) {
+      const homeNavBar = useUIOptionsStore().homeNavBar
+      if (homeNavBar !== 'default') return homeNavBar === 'simple'
+      if (this.$device.desktop) {
         return this.homePageComponent?.config?.simpleNavbarDesktopDefault === true
       } else {
         return this.homePageComponent?.config?.simpleNavbarMobileDefault === true
       }
     },
     standardBackground () {
-      const homeBackground = this.$f7.data.themeOptions.homeBackground
+      const homeBackground = useUIOptionsStore().homeBackground
       if (homeBackground !== 'default') return homeBackground === 'standard'
-      if (this.$f7.device.desktop) {
+      if (this.$device.desktop) {
         return this.homePageComponent?.config?.standardBackgroundDesktopDefault === true
       } else {
         return this.homePageComponent?.config?.standardBackgroundMobileDefault === true
       }
     },
     homePageComponent () {
-      const page = this.$store.getters.page('home')
+      const page = useComponentsStore().page('home')
       if (!page) return null
       if (page.component !== 'oh-home-page') return null
       return page
@@ -219,9 +236,9 @@ export default {
       // Note: User configuration takes precedence over role configuration
       const visibleTo = this.homePageComponent.config.displayModelCardsTo
       if (visibleTo === undefined || !visibleTo.length) return true
-      const user = this.$store.getters.user
+      const user = useUserStore().user
       if (!user) return false
-      if (user.roles && user.roles.some(r => visibleTo.indexOf('role:' + r) >= 0)) return true
+      if (user.roles && user.roles.some((r) => visibleTo.indexOf('role:' + r) >= 0)) return true
       if (visibleTo.indexOf('user:' + user.name) >= 0) return true
       return false
     },
@@ -229,9 +246,9 @@ export default {
       if (!this.homePageComponent) return true
       const visibleTo = this.homePageComponent.config.allowChatInputTo
       if (visibleTo === undefined || !visibleTo.length) return true
-      const user = this.$store.getters.user
+      const user = useUserStore().user
       if (!user) return false
-      if (user.roles && user.roles.some(r => visibleTo.indexOf('role:' + r) >= 0)) return true
+      if (user.roles && user.roles.some((r) => visibleTo.indexOf('role:' + r) >= 0)) return true
       if (visibleTo.indexOf('user:' + user.name) >= 0) return true
       return false
     },
@@ -248,28 +265,27 @@ export default {
         default:
           return this.$t('home.overview.title')
       }
-    }
+    },
+    ...mapStores(useUIOptionsStore, useUserStore, useRuntimeStore)
   },
   watch: {
     ready (val, oldVal) {
       if (val && !oldVal) {
-        this.$store.dispatch('startTrackingStates')
+        useStatesStore().startTrackingStates()
       }
     }
   },
   methods: {
     onPageBeforeIn () {
-      this.$f7router.updateCurrentUrl('/' + this.currentTab)
-      this.$f7router.url = '/' + this.currentTab
-      this.overviewPageKey = this.$utils.id()
+      this.overviewPageKey = utils.id()
     },
     onPageAfterIn () {
       if (this.ready) {
-        this.$store.dispatch('startTrackingStates')
+        useStatesStore().startTrackingStates()
       }
     },
     onPageBeforeOut () {
-      this.$store.dispatch('stopTrackingStates')
+      useStatesStore().stopTrackingStates()
     },
     onPageInit () {
       if (window.OHApp) {
@@ -285,8 +301,8 @@ export default {
     },
     switchTab (tab) {
       this.currentTab = tab
-      this.$f7router.updateCurrentUrl('/' + this.currentTab)
-      this.$f7router.url = '/' + this.currentTab
+      this.f7router.updateCurrentUrl('/' + this.currentTab + '/')
+      this.f7router.url = '/' + this.currentTab + '/'
     },
     tabVisible (tab) {
       if (!this.tabsVisible) return false

@@ -37,7 +37,14 @@
 import { allEquipmentPoints, findPoints } from '../glance-helpers'
 
 export default {
-  props: ['element', 'type', 'badgeOverrides', 'customConfig', 'invertColor', 'store'],
+  props: {
+    element: Object,
+    type: String,
+    badgeOverrides: Object,
+    customConfig: Object, // TODO: Delete unused prop
+    invertColor: Boolean,
+    store: Object
+  },
   data () {
     return {
       badgeConfigs: {

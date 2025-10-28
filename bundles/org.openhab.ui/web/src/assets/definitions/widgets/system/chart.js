@@ -1,4 +1,4 @@
-import { po, pb } from '../helpers.js'
+import { pd, po } from '../helpers.js'
 
 export default () => [
   po('chartType', 'Chart Type', 'Define a fixed period for the chart, aligned at the beginning of the period, e.g. January 1st at midnight for a year chart. If not set (or set to dynamic), the length of the period will be configurable but certain combinations like aggregated series might not work', [
@@ -30,5 +30,11 @@ export default () => [
   ]).v((value, configuration, configDescription, parameters) => {
     return !configuration.chartType
   }),
-  pb('future', 'Future Period', 'Whether the period should extend to the future instead of the past')
+  pd('future', 'Future Proportion', 'The proportion of the period that should extend into the future').o([
+    { value: 0, label: '0% - Past only' },
+    { value: 0.25, label: '25% - 3/4 past, 1/4 future' },
+    { value: 0.50, label: '50% - 1/2 past, 1/2 future' },
+    { value: 0.75, label: '75% - 1/4 past, 3/4 future' },
+    { value: 1, label: '100% - Future only' }
+  ])
 ]

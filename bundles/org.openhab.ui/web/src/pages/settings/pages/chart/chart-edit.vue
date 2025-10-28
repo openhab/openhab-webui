@@ -1,56 +1,55 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="chart-editor">
-    <f7-navbar :title="(createMode ? 'Create chart page' : page.config.label) + dirtyIndicator" back-link="Back" no-hairline>
-      <f7-nav-right>
-        <f7-link @click="save()"
-                 v-if="$theme.md"
-                 icon-md="material:save"
-                 icon-only />
-        <f7-link @click="save()" v-if="!$theme.md">
-          Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
-        </f7-link>
-      </f7-nav-right>
+    <f7-navbar no-hairline>
+      <oh-nav-content :title="(createMode ? 'Create chart page' : page.config.label) + dirtyIndicator"
+                      :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
+                      @save="save()"
+                      :f7router />
     </f7-navbar>
     <f7-toolbar tabbar position="top">
-      <f7-link @click="switchTab('design', fromYaml)" :tab-link-active="currentTab === 'design'" class="tab-link">
+      <f7-link @click="switchTab('design', fromYaml)" :tab-link-active="currentTab === 'design'" tab-link="#design">
         Design
       </f7-link>
-      <f7-link @click="switchTab('code', toYaml)" :tab-link-active="currentTab === 'code'" class="tab-link">
+      <f7-link @click="switchTab('code', toYaml)" :tab-link-active="currentTab === 'code' ? true : null" tab-link="#code">
         Code
       </f7-link>
     </f7-toolbar>
     <f7-toolbar bottom class="toolbar-details">
       <div style="margin-left: auto">
-        <f7-toggle :checked="previewMode" @toggle:change="(value) => togglePreviewMode(value)" /> Run mode<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span>
+        <f7-toggle :checked="previewMode ? true : null" @toggle:change="value => togglePreviewMode(value)" />
+        Run mode
+        <span v-if="$device.desktop">&nbsp;(Ctrl-R)</span>
       </div>
     </f7-toolbar>
     <f7-tabs class="chart-editor-tabs">
       <f7-tab id="design"
               class="chart-editor-design-tab"
-              @tab:show="() => this.currentTab = 'design'"
               :tab-active="currentTab === 'design'">
         <f7-block v-if="!ready" class="text-align-center">
           <f7-preloader />
           <div>Loading...</div>
         </f7-block>
         <f7-block class="block-narrow" v-if="ready && !previewMode">
-          <page-settings :page="page" :createMode="createMode" />
+          <page-settings :page="page" :createMode="createMode" :f7router />
           <f7-block-title>Chart Configuration</f7-block-title>
           <config-sheet
             :parameterGroups="pageWidgetDefinition.props.parameterGroups || []"
             :parameters="pageWidgetDefinition.props.parameters || []"
-            :configuration="page.config" />
+            :configuration="page.config"
+            :f7router />
         </f7-block>
 
-        <chart-designer class="chart-designer" v-if="ready && !previewMode && currentTab === 'design'" :context="context" />
+        <chart-designer v-if="ready && !previewMode && currentTab === 'design'"
+                        class="chart-designer"
+                        :context="context" />
 
-        <oh-chart-page class="chart-page"
-                       v-else-if="ready && previewMode && currentTab === 'design'"
+        <oh-chart-page v-else-if="ready && previewMode && currentTab === 'design'"
+                       class="chart-page"
                        :context="context"
                        :key="pageKey" />
       </f7-tab>
 
-      <f7-tab id="code" @tab:show="() => { this.currentTab = 'code' }" :tab-active="currentTab === 'code'">
+      <f7-tab id="code" :tab-active="currentTab === 'code'">
         <editor v-if="currentTab === 'code'"
                 :style="{ opacity: previewMode ? '0' : '' }"
                 class="page-code-editor"
@@ -59,8 +58,8 @@
                 @input="onEditorInput" />
         <!-- <pre v-show="!previewMode" class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
 
-        <oh-chart-page class="chart-page"
-                       v-if="ready && previewMode"
+        <oh-chart-page v-if="ready && previewMode"
+                       class="chart-page"
                        :context="context"
                        :key="pageKey" />
       </f7-tab>
@@ -90,6 +89,10 @@
 </style>
 
 <script>
+import { defineAsyncComponent } from 'vue'
+import { utils } from 'framework7'
+import { f7, theme } from 'framework7-vue'
+
 import PageDesigner from '../pagedesigner-mixin'
 
 import YAML from 'yaml'
@@ -108,18 +111,26 @@ import WidgetSlotConfigPopup from '@/components/pagedesigner/widget-slot-config-
 export default {
   mixins: [PageDesigner],
   components: {
-    'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue'),
+    editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')),
     OhChartPage,
     PageSettings,
     ChartDesigner,
     ConfigSheet
   },
-  props: ['createMode', 'uid'],
+  props: {
+    createMode: Boolean,
+    uid: String,
+    f7router: Object,
+    f7route: Object
+  },
+  setup () {
+    return { theme }
+  },
   data () {
     return {
       pageWidgetDefinition: OhChartPage.widget(),
       page: {
-        uid: 'page_' + this.$f7.utils.id(),
+        uid: 'page_' + utils.id(),
         component: 'oh-chart-page',
         config: {},
         tags: [],
@@ -129,7 +140,8 @@ export default {
       currentSlotParent: null,
       currentSlotConfig: null,
       currentSlotDefaultComponentType: null,
-      widgetSlotConfigOpened: false
+      widgetSlotConfigOpened: false,
+      forceEditMode: true
     }
   },
   methods: {
@@ -155,8 +167,8 @@ export default {
       this.widgetConfigOpened = false
       this.widgetSlotConfigOpened = false
     },
-    updateWidgetSlotConfig () {
-      this.$set(this.currentSlotParent.slots, this.currentSlot, this.currentSlotConfig)
+    updateWidgetSlotConfig (slotConfig) {
+      this.currentSlotParent.slots[this.currentSlot] = slotConfig
       this.forceUpdate()
       this.widgetConfigClosed()
     },
@@ -171,21 +183,21 @@ export default {
       if (this.currentSlotParent.slots[slotName] && this.currentSlotParent.slots[slotName].length > 0) {
         this.currentSlotConfig = JSON.parse(JSON.stringify(this.currentSlotParent.slots[slotName]))
       } else {
-        this.$set(this, 'currentSlotConfig', [
+        this.currentSlotConfig = [
           {
             component: defaultSlotComponentType,
             config: {
               show: true
             }
           }
-        ])
+        ]
       }
 
       const popup = {
         component: WidgetSlotConfigPopup
       }
 
-      this.$f7router.navigate({
+      this.f7router.navigate({
         url: 'configure-slot',
         route: {
           path: 'configure-slot',
@@ -203,16 +215,16 @@ export default {
         }
       })
 
-      this.$f7.once('widgetSlotConfigUpdate', this.updateWidgetSlotConfig)
-      this.$f7.once('widgetSlotConfigClosed', () => {
-        this.$f7.off('widgetSlotConfigUpdate', this.updateWidgetSlotConfig)
+      f7.once('widgetSlotConfigUpdate', this.updateWidgetSlotConfig)
+      f7.once('widgetSlotConfigClosed', () => {
+        f7.off('widgetSlotConfigUpdate', this.updateWidgetSlotConfig)
         this.widgetConfigClosed()
       })
     },
     removeComponentFromSlot (component, slot) {
       slot.splice(slot.indexOf(component), 1)
       if (this.widgetSlotConfigOpened && slot.length === 0) {
-        this.$set(this.currentSlotParent.slots, this.currentSlot, undefined)
+        this.currentSlotParent.slots[this.currentSlot] = undefined
         delete this.currentSlotParent.slots[this.currentSlot]
         this.widgetConfigClosed()
       }
@@ -227,12 +239,12 @@ export default {
     fromYaml () {
       try {
         const updatedPage = YAML.parse(this.pageYaml)
-        this.$set(this.page, 'config', updatedPage.config)
-        this.$set(this.page, 'slots', updatedPage.slots)
+        this.page.config = updatedPage.config
+        this.page.slots = updatedPage.slots
         this.forceUpdate()
         return true
       } catch (e) {
-        this.$f7.dialog.alert(e).open()
+        f7.dialog.alert(e).open()
         return false
       }
     }

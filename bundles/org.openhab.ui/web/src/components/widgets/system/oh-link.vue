@@ -1,7 +1,9 @@
 <template>
   <f7-link v-bind="config" @click="clicked">
     <template v-if="context.component.slots && context.component.slots.default">
-      <generic-widget-component :context="childContext(slotComponent)" v-for="(slotComponent, idx) in context.component.slots.default" :key="'default-' + idx" />
+      <generic-widget-component v-for="(slotComponent, idx) in context.component.slots.default"
+                                :context="childContext(slotComponent)"
+                                :key="'default-' + idx" />
     </template>
   </f7-link>
 </template>
@@ -25,12 +27,12 @@ export default {
           this.config.clearVariable.forEach((v) => {
             const clearVariableScope = this.getVariableScope(this.context.ctxVars, this.context.varScope, v)
             const clearVariableLocation = (clearVariableScope) ? this.context.ctxVars[clearVariableScope] : this.context.vars
-            this.$set(clearVariableLocation, v, undefined)
+            clearVariableLocation[v] = undefined
           })
         } else if (typeof this.config.clearVariable === 'string') {
           const clearVariableScope = this.getVariableScope(this.context.ctxVars, this.context.varScope, this.config.clearVariable)
           const clearVariableLocation = (clearVariableScope) ? this.context.ctxVars[clearVariableScope] : this.context.vars
-          this.$set(clearVariableLocation, this.config.clearVariable, undefined)
+          clearVariableLocation[this.config.clearVariable] = undefined
         }
       }
       if (this.config.clearVariable && this.config.clearVariableKey) {
@@ -46,7 +48,7 @@ export default {
           const clearVariableLocation = (clearVariableScope) ? this.context.ctxVars[clearVariableScope] : this.context.vars
           value = this.setVariableKeyValues(clearVariableLocation, this.config.clearVariableKey, undefined)
         }
-        this.$set(this.context.vars, this.config.clearVariable, value)
+        this.context.vars[this.config.clearVariable] = value
       }
     }
   }

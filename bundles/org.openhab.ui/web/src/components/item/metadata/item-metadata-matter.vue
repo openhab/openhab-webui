@@ -1,14 +1,14 @@
 <template>
   <div v-if="ready">
     <div>
-      <div v-if="editable" style="text-align:right" class="padding-right">
-        <label @click="toggleMultiple" style="cursor:pointer">Multiple</label>
-        <f7-checkbox :checked="multiple" @change="toggleMultiple" />
+      <div v-if="editable" style="text-align: right" class="padding-right">
+        <label @click="toggleMultiple" style="cursor: pointer">Multiple</label>
+        <f7-checkbox :checked="multiple ? true : null" @change="toggleMultiple" />
       </div>
       <f7-list v-if="deviceTypes">
         <f7-list-item :key="classSelectKey"
                       :title="'Matter Device Type'"
-                      :disabled="!editable"
+                      :disabled="!editable ? true : null"
                       smart-select
                       :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: !multiple }"
                       ref="classes">
@@ -17,7 +17,7 @@
             <option v-for="deviceType in getAvailableDeviceTypes()"
                     :value="deviceType"
                     :key="deviceType"
-                    :selected="isSelected(deviceType)">
+                    :selected="isSelected(deviceType) ? true : null">
               {{ deviceType }}
             </option>
           </select>
@@ -29,8 +29,8 @@
                       :configuration="metadata.config"
                       :read-only="!editable" />
       </div>
-      <f7-block class="padding-top no-padding no-margin"
-                v-if="shouldShowAttributeMapping">
+      <f7-block v-if="shouldShowAttributeMapping"
+                class="padding-top no-padding no-margin">
         <f7-block-title class="padding-horizontal" medium>
           Matter Attributes Mapping
         </f7-block-title>
@@ -46,16 +46,16 @@
           <f7-list>
             <f7-list-item v-for="attribute in deviceTypes[deviceType]?.attributes"
                           :key="attribute.name"
-                          :disabled="!editable"
+                          :disabled="!editable ? true : null"
                           smart-select
-                          :title="attribute.mandatory ? attribute.label+'*' : attribute.label"
+                          :title="attribute.mandatory ? attribute.label + '*' : attribute.label"
                           :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: true }">
               <select @change="updateLinkedItem(deviceType, attribute.name, $event.target.value)">
                 <option value="" />
                 <option v-for="mbr in item.members"
                         :value="mbr.name"
                         :key="mbr.id"
-                        :selected="isLinked(deviceType, attribute.name, mbr)">
+                        :selected="isLinked(deviceType, attribute.name, mbr) ? true : null">
                   {{ mbr.label }} ({{ mbr.name }})
                 </option>
               </select>
@@ -76,7 +76,7 @@
                     type="text"
                     :label="option.label"
                     :value="getChildMapping(attribute.name, option.label, option.value)"
-                    :disabled="!editable"
+                    :disabled="!editable ? true : null"
                     @input="setChildMapping(attribute.name, option.label, $event.target.value)" />
                 </f7-list>
               </div>
@@ -96,7 +96,7 @@
         <f7-link color="blue"
                  external
                  target="_blank"
-                 :href="`${$store.state.websiteUrl}/link/matter`">
+                 :href="`${runtimeStore.websiteUrl}/link/matter`">
           Matter integration documentation
         </f7-link>
       </p>
@@ -109,13 +109,22 @@
 </template>
 
 <script>
+import { f7 } from 'framework7-vue'
+import { utils } from 'framework7'
+import { mapStores } from 'pinia'
+
 import { deviceTypes, deviceTypesAndAttributes, matterParameters } from '@/assets/definitions/metadata/matter'
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import ItemMetadataMixin from '@/components/item/metadata/item-metadata-mixin'
 
+import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+
 export default {
   name: 'item-metadata-matter',
-  props: ['item', 'metadata'],
+  props: {
+    item: Object,
+    metadata: Object
+  },
   mixins: [ItemMetadataMixin],
   components: {
     ConfigSheet
@@ -125,7 +134,7 @@ export default {
       deviceTypes,
       classesDefs: deviceTypesAndAttributes,
       multiple: !!this.metadata.value && this.metadata.value.indexOf(',') > 0,
-      classSelectKey: this.$f7.utils.id(),
+      classSelectKey: utils.id(),
       itemType: this.item.groupType || this.item.type,
       dirtyItem: new Set(),
       ready: false
@@ -136,16 +145,16 @@ export default {
     this.itemType = this.item.groupType || this.item.type
 
     if (!this.metadata.config) {
-      this.$set(this.metadata, 'config', {})
+      this.metadata.config = {}
     }
   },
   mounted () {
     if (this.itemType === 'Group' && this.item.members) {
       Promise.all(
-        this.item.members.map(member =>
+        this.item.members.map((member) =>
           this.$oh.api.get(`/rest/items/${member.name}?metadata=matter`)
         )
-      ).then(responses => {
+      ).then((responses) => {
         this.item.members = this.item.members.map((member, index) => {
           return {
             ...member,
@@ -175,11 +184,11 @@ export default {
       return this.item.type === 'Group' &&
              this.classes &&
              this.classes.length &&
-             this.classesAsArray.some(deviceType => this.deviceTypes[deviceType]?.attributes?.length > 0)
+             this.classesAsArray.some((deviceType) => this.deviceTypes[deviceType]?.attributes?.length > 0)
     },
     parametersGroups () {
-      if ((!this.classes) || (!this.multiple)) return []
-      return this.classesAsArray.map(type => ({ name: type, label: type }))
+      if (!this.classes || !this.multiple) return []
+      return this.classesAsArray.map((type) => ({ name: type, label: type }))
     },
     parameters () {
       if (!this.classes) return matterParameters.global || []
@@ -189,16 +198,17 @@ export default {
       }
 
       // For multiple selection, show parameters for all selected types
-      return this.classesAsArray.flatMap(type => {
+      return this.classesAsArray.flatMap((type) => {
         const typeParams = matterParameters[type] || []
-        return typeParams.map(opt => ({ ...opt, groupName: type }))
+        return typeParams.map((opt) => ({ ...opt, groupName: type }))
       }).concat(matterParameters.global || [])
-    }
+    },
+    ...mapStores(useRuntimeStore)
   },
   methods: {
     getAvailableDeviceTypes () {
       if (this.item.type !== 'Group') {
-        return Object.keys(this.deviceTypes).filter(type => {
+        return Object.keys(this.deviceTypes).filter((type) => {
           const device = this.deviceTypes[type]
           return device.attributes.length === 0 || device.supportsSimpleMapping === true
         })
@@ -207,12 +217,12 @@ export default {
       if (this.multiple) {
         return this.item.groupType
           ? Object.keys(this.deviceTypes)
-          : Object.keys(this.deviceTypes).filter(type => this.deviceTypes[type]?.attributes?.length > 0)
+          : Object.keys(this.deviceTypes).filter((type) => this.deviceTypes[type]?.attributes?.length > 0)
       }
 
       return this.item.groupType
         ? Object.keys(this.deviceTypes)
-        : Object.keys(this.deviceTypes).filter(type => this.deviceTypes[type]?.attributes?.length > 0)
+        : Object.keys(this.deviceTypes).filter((type) => this.deviceTypes[type]?.attributes?.length > 0)
     },
     isLinked (deviceType, attribute, item) {
       if (!item?.metadata?.matter?.value) return false
@@ -228,17 +238,17 @@ export default {
     toggleMultiple () {
       this.multiple = !this.multiple
       this.metadata.value = ''
-      this.classSelectKey = this.$f7.utils.id()
+      this.classSelectKey = utils.id()
     },
     updateClasses () {
-      const value = this.$refs.classes.f7SmartSelect.getValue()
+      const value = this.$refs.classes.$el.children[0].f7SmartSelect.getValue()
       this.metadata.value = Array.isArray(value) ? value.join(',') : value
-      this.$set(this.metadata, 'config', {})
+      this.metadata.config = {}
     },
     updateLinkedItem (deviceType, attribute, itemName) {
       if (!itemName) {
         // Handle unlinking
-        const groupMbr = this.item.members.find(mbr =>
+        const groupMbr = this.item.members.find((mbr) =>
           mbr.metadata?.matter?.value?.toLowerCase() ===
           attribute.toLowerCase()
         )
@@ -250,13 +260,13 @@ export default {
       }
 
       // Handle linking
-      const groupMbr = this.item.members.find(mbr => mbr.name === itemName)
+      const groupMbr = this.item.members.find((mbr) => mbr.name === itemName)
       if (groupMbr) {
         if (!groupMbr.metadata) {
-          this.$set(groupMbr, 'metadata', {})
+          groupMbr.metadata = {}
         }
         if (!groupMbr.metadata.matter) {
-          this.$set(groupMbr.metadata, 'matter', { value: '', config: {} })
+          groupMbr.metadata.matter = { value: '', config: {} }
         }
         groupMbr.metadata.matter.value = attribute
         this.dirtyItem.add(groupMbr)
@@ -264,7 +274,7 @@ export default {
     },
     updatedLinkedItem () {
       Promise.all(
-        Array.from(this.dirtyItem).map(item => {
+        Array.from(this.dirtyItem).map((item) => {
           if (!item.metadata.matter.value) {
             // If value is empty, send DELETE
             return this.$oh.api.delete(`/rest/items/${item.name}/metadata/matter`)
@@ -277,19 +287,18 @@ export default {
         })
       ).then(() => {
         this.dirtyItem.clear()
-        this.$f7.toast.create({
+        f7.toast.create({
           text: 'Group members updated',
           closeTimeout: 2000
         }).open()
+      }).catch((err) => {
+        console.error('Failed to update group members:', err)
       })
-        .catch(err => {
-          console.error('Failed to update group members:', err)
-        })
     },
     getMappedChild (attributeName) {
       // Return the child item mapped to this attribute (all lowercase)
       const attr = attributeName.toLowerCase()
-      return this.item.members && this.item.members.find(mbr =>
+      return this.item.members && this.item.members.find((mbr) =>
         mbr.metadata?.matter?.value?.toLowerCase() === attr
       )
     },
@@ -297,7 +306,7 @@ export default {
       // Find the attribute in deviceTypes and return its mapping options if present
       const type = this.deviceTypes[deviceType]
       if (!type || !type.attributes) return []
-      const attr = type.attributes.find(a => a.name.toLowerCase() === attributeName.toLowerCase())
+      const attr = type.attributes.find((a) => a.name.toLowerCase() === attributeName.toLowerCase())
       if (attr && attr.mapping && attr.mapping.options) {
         return attr.mapping.options
       }
@@ -314,9 +323,9 @@ export default {
       const mappedChild = this.getMappedChild(attributeName)
       if (!mappedChild) return
       if (!mappedChild.metadata.matter.config) {
-        this.$set(mappedChild.metadata.matter, 'config', {})
+        mappedChild.metadata.matter.config = {}
       }
-      this.$set(mappedChild.metadata.matter.config, optionLabel, newValue)
+      mappedChild.metadata.matter.config.optionLabel = newValue
       this.dirtyItem.add(mappedChild)
     }
   }

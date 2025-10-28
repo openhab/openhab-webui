@@ -13,7 +13,7 @@
         <option v-for="service in services"
                 :value="service.id"
                 :key="service.id"
-                :selected="(multiple) ? value.indexOf(service.id) >= 0 : value === service.id">
+                :selected="(multiple) ? value.indexOf(service.id) >= 0 : value === service.id ? true : null">
           {{ service.label }}
         </option>
       </select>
@@ -24,15 +24,24 @@
 </template>
 
 <script>
+import { f7 } from 'framework7-vue'
+
 export default {
-  props: ['title', 'name', 'value', 'multiple', 'required'],
+  props: {
+    title: String,
+    name: String,
+    value: [String, Array],
+    multiple: Boolean,
+    required: Boolean
+  },
+  emits: ['input'],
   data () {
     return {
       ready: false,
       service: [],
       icons: {},
       smartSelectParams: {
-        view: this.$f7.view.main,
+        view: f7.view.main,
         openIn: 'popover'
       }
     }
@@ -51,7 +60,7 @@ export default {
   },
   methods: {
     select (e) {
-      this.$f7.input.validateInputs(this.$refs.smartSelect.$el)
+      f7.input.validateInputs(this.$refs.smartSelect.$el)
       this.$emit('input', e.target.value)
     }
   }

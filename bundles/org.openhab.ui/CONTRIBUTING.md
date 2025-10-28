@@ -15,13 +15,12 @@ Change to the `web` directory, gather the necessary dependencies with `npm insta
 
 ## NPM Scripts
 
-* `npm start` - run the development server (see below)
 * `npm run build:prod` - build web app for production (note: no need to prepare a production version when submitting a PR, the build server will do it)
 * `npm run build:mvn` - build web app through Maven for production (note: no need to prepare a production version when submitting a PR, the build server will do it)
-* `npm run dev` - run the development server (same as above)
+* `npm run dev` - run the development server
 * `npm run dev:blockly` - run the development server with Blockly source-maps (allows Blockly debugging)
-* `npm run test:unit` - start the Jest test runner and run the unit tests
-* `npm run test:unit:watch` - start the Jest test runner, run the unit tests, keep running and watch for changes
+* `npm run test:unit` - start the Vitest test runner and run the unit tests
+* `npm run test:unit:watch` - start the Vitest test runner, run the unit tests, keep running and watch for changes
 * `npm run test:e2e` - start Cypress and run the e2e tests
 * `npm run test:e2e:gui` - open the Cypress GUI
 * `npm run lint` - run linter to detect code style errors
@@ -29,9 +28,9 @@ Change to the `web` directory, gather the necessary dependencies with `npm insta
 
 ## Development server
 
-Before starting the development server with `npm start`, you should have an instance of openHAB (either a complete distribution or the demo app) running on _localhost:8080_.
+Before starting the development server with `npm run dev`, you should have an instance of openHAB (either a complete distribution or the demo app) running on _localhost:8080_.
 The development server will run on the next available port (for instance, 8081) and proxy requests to well-known openHAB URLs like the REST API or icon servlet, forwarding them to their equivalent on port 8080.
-If you wish to change the target of these forwards and use a remote instance, set the `OH_APIBASE` environment variable to the desired URL (e.g. `OH_APIBASE=http://openhab-dev:8080`) before running `npm start`.
+If you wish to change the target of these forwards and use a remote instance, set the `OH_APIBASE` environment variable to the desired URL (e.g. `OH_APIBASE=http://openhab-dev:8080`) before running `npm run dev`.
 
 You can also run the unit tests (`test/jest`) and e2e (`test/cypress`) tests using the abovementioned commands.
 Cypress is configured to assume the development server is running on port 8081 - you can change that in `cypress.json` but remember not to commit.

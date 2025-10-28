@@ -1,6 +1,6 @@
 <template>
-  <grid-item v-bind="$attrs"
-             v-if="visible"
+  <grid-item v-if="visible"
+             v-bind="$attrs"
              class="oh-grid-item card no-margin"
              @moved="movedEvent"
              @resized="resizedEvent"
@@ -15,16 +15,16 @@
                   :style="{ width: context.component.slots.default.length > 0 ? '208px' : '76px' }"
                   :animate="false">
         <div class="display-flex margin justify-content-center">
-          <f7-link href="#"
-                   v-if="context.component.slots.default.length > 0"
+          <f7-link v-if="context.component.slots.default.length > 0"
+                   href="#"
                    class="text-color-blue display-flex flex-direction-column margin-right"
                    :popover-close="'.item-popover-' + _uid"
-                   @click="$refs.popover.f7Popover.close(false); context.editmode.configureWidget(context.component.slots.default[0], context)"
+                   @click="($refs.popover.f7Popover.close(false), context.editmode.configureWidget(context.component.slots.default[0], context))"
                    icon-f7="square_pencil">
             Configure
           </f7-link>
-          <f7-link href="#"
-                   v-if="context.component.slots.default.length > 0"
+          <f7-link v-if="context.component.slots.default.length > 0"
+                   href="#"
                    class="text-color-blue display-flex flex-direction-column margin-right"
                    :popover-close="'.item-popover-' + _uid"
                    @click="$refs.popover.f7Popover.close(false); context.editmode.editWidgetCode(context.component.slots.default[0], context)"
@@ -40,7 +40,9 @@
         </div>
       </f7-popover>
     </template>
-    <oh-placeholder-widget v-if="context.editmode && !context.component.slots.default.length" @click="context.editmode.addWidget(context.component, null, context.parent)" class="oh-grid-item-content" />
+    <oh-placeholder-widget v-if="context.editmode && !context.component.slots.default.length"
+                           @click="context.editmode.addWidget(context.component, null, context.parent)"
+                           class="oh-grid-item-content" />
     <generic-widget-component v-else-if="context.component.slots.default.length"
                               @command="onCommand"
                               class="oh-grid-item-content"
@@ -139,13 +141,15 @@
 </style>
 
 <script>
+import { defineAsyncComponent } from 'vue'
+
 import mixin from '../widget-mixin'
 import OhPlaceholderWidget from '../layout/oh-placeholder-widget.vue'
 
 export default {
   mixins: [mixin],
   components: {
-    'grid-item': () => import('vue-grid-layout').then((mod) => mod.GridItem),
+    'grid-item': defineAsyncComponent(() => import('grid-layout-plus').then((mod) => mod.GridItem)),
     OhPlaceholderWidget
   },
   methods: {

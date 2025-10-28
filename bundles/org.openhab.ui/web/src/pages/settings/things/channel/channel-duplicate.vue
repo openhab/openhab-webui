@@ -1,15 +1,12 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" name="channel-duplicate">
-    <f7-navbar title="Duplicate channel" :subtitle="thing.label" back-link="Cancel">
-      <f7-nav-right>
-        <f7-link @click="save()"
-                 v-if="$theme.md"
-                 icon-md="material:save"
-                 icon-only />
-        <f7-link @click="save()" v-if="!$theme.md">
-          Save
-        </f7-link>
-      </f7-nav-right>
+    <f7-navbar>
+      <oh-nav-content title="Duplicate channel"
+                      :subtitle="thing.label"
+                      back-link="Cancel"
+                      save-link="Save"
+                      @save="save()"
+                      :f7router />
     </f7-navbar>
     <f7-block class="block-narrow">
       <f7-col v-if="channel">
@@ -35,6 +32,8 @@
 </template>
 
 <script>
+import { f7, theme } from 'framework7-vue'
+
 import ChannelGeneralSettings from '@/pages/settings/things/channel/channel-general-settings.vue'
 import ConfigSheet from '@/components/config/config-sheet.vue'
 
@@ -43,7 +42,17 @@ export default {
     ChannelGeneralSettings,
     ConfigSheet
   },
-  props: ['thing', 'channel', 'channelType', 'channelId'],
+  props: {
+    thing: Object,
+    channel: Object,
+    channelType: Object,
+    channelId: String,
+    f7router: Object,
+    f7route: Object
+  },
+  setup () {
+    return { theme }
+  },
   data () {
     return {
       configDescription: {},
@@ -52,7 +61,7 @@ export default {
     }
   },
   methods: {
-    onPageAfterIn (event) {
+    onPageAfterIn () {
       this.channel.id = this.channel.id + '_copy'
       this.channel.uid = this.channel.uid + '_copy'
       this.channel.label = this.channel.label + ' copy'
@@ -67,15 +76,15 @@ export default {
     },
     save () {
       if (!this.channel.id) {
-        this.$f7.dialog.alert('Please give a unique identifier')
+        f7.dialog.alert('Please give a unique identifier')
         return
       }
       if (!this.channel.id.match(/^[a-zA-Z0-9_-]*$/)) {
-        this.$f7.dialog.alert('The identifier should only contain alphanumeric characters')
+        f7.dialog.alert('The identifier should only contain alphanumeric characters')
         return
       }
       if (!this.channel.label) {
-        this.$f7.dialog.alert('Please give a label')
+        f7.dialog.alert('Please give a label')
         return
       }
 
@@ -89,9 +98,9 @@ export default {
         defaultTags: this.channel.defaultTags,
         configuration: this.config
       })
-      this.$f7route.route.context.finalChannel = finalChannel
-      // this.$f7router.emit('complete', finalChannel)
-      this.$f7router.back()
+      this.f7route.route.context.finalChannel = finalChannel
+      // this.f7router.emit('complete', finalChannel)
+      this.f7router.back()
     }
   }
 }

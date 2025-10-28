@@ -1,84 +1,85 @@
 <template>
   <f7-page @page:init="onPageInit" @page:afterin="onPageAfterIn" class="page-settings">
-    <f7-navbar large
-               :large-transparent="false"
-               title-large="Settings"
-               title="Settings"
-               back-link="Back"
-               back-link-url="/"
-               back-link-force>
-      <f7-nav-right>
-        <developer-dock-icon />
-        <f7-link
-          class="searchbar-enable"
-          data-searchbar=".searchbar-demo"
-          icon-ios="f7:search_strong"
-          icon-aurora="f7:search_strong"
-          icon-md="material:search" />
-      </f7-nav-right>
+    <f7-navbar large>
+      <oh-nav-content title="Settings" :large="true" :f7router>
+        <template #right>
+          <f7-link
+            class="searchbar-enable"
+            data-searchbar=".searchbar-demo"
+            icon-ios="f7:search_strong"
+            icon-aurora="f7:search_strong"
+            icon-md="material:search" />
+        </template>
+      </oh-nav-content>
       <f7-searchbar
         class="searchbar-demo"
         expandable
         search-container=".search-list"
         search-in=".item-title"
         @searchbar:search="expandAll"
-        :disable-button="!$theme.aurora" />
+        :disable-button="!theme.aurora" />
     </f7-navbar>
+
     <f7-block class="block-narrow after-big-title settings-menu">
       <f7-row>
         <f7-col :class="!addonsLoaded || (addonsLoaded && addonsInstalled.length > 0) ? 'settings-col' : ''" width="100" medium="50">
           <f7-block-title>Configuration</f7-block-title>
           <f7-list media-list class="search-list">
-            <f7-list-item
-              v-if="$store.getters.apiEndpoint('things')"
-              media-item
-              link="things/"
-              title="Things"
-              :badge="(inboxCount > 0) ? inboxCount : undefined"
-              :after="(inboxCount > 0) ? (thingsCount + '+') : thingsCount"
-              :badge-color="inboxCount ? 'red' : 'blue'"
-              :footer="objectsSubtitles.things">
-              <f7-icon slot="media" f7="lightbulb" color="gray" />
+            <f7-list-item v-if="runtimeStore.apiEndpoint('things')"
+                          media-item
+                          link="things/"
+                          title="Things"
+                          :badge="inboxCount > 0 ? inboxCount : undefined"
+                          :after="inboxCount > 0 ? thingsCount + '+' : thingsCount"
+                          :badge-color="inboxCount ? 'red' : 'blue'"
+                          :footer="objectsSubtitles.things">
+              <template #media>
+                <f7-icon f7="lightbulb" color="gray" />
+              </template>
             </f7-list-item>
-            <f7-list-item
-              v-if="$store.getters.apiEndpoint('items')"
-              media-item
-              link="model/"
-              title="Model"
-              badge-color="blue"
-              :footer="objectsSubtitles.model">
-              <f7-icon slot="media" f7="list_bullet_indent" color="gray" />
+            <f7-list-item v-if="runtimeStore.apiEndpoint('items')"
+                          media-item
+                          link="model/"
+                          title="Model"
+                          badge-color="blue"
+                          :footer="objectsSubtitles.model">
+              <template #media>
+                <f7-icon f7="list_bullet_indent" color="gray" />
+              </template>
             </f7-list-item>
-            <f7-list-item
-              v-if="$store.getters.apiEndpoint('items')"
-              media-item
-              link="items/"
-              title="Items"
-              :after="itemsCount"
-              badge-color="blue"
-              :footer="objectsSubtitles.items">
-              <f7-icon slot="media" f7="square_on_circle" color="gray" />
+            <f7-list-item v-if="runtimeStore.apiEndpoint('items')"
+                          media-item
+                          link="items/"
+                          title="Items"
+                          :after="itemsCount"
+                          badge-color="blue"
+                          :footer="objectsSubtitles.items">
+              <template #media>
+                <f7-icon f7="square_on_circle" color="gray" />
+              </template>
             </f7-list-item>
-            <f7-list-item
-              v-if="$store.getters.apiEndpoint('ui')"
-              link="pages/"
-              title="Pages"
-              :after="$store.getters.pages.length + sitemapsCount"
-              badge-color="blue"
-              :footer="objectsSubtitles.pages">
-              <f7-icon slot="media" f7="tv" color="gray" />
+            <f7-list-item v-if="runtimeStore.apiEndpoint('ui')"
+                          link="pages/"
+                          title="Pages"
+                          :after="componentsStore.pages().length + sitemapsCount"
+                          badge-color="blue"
+                          :footer="objectsSubtitles.pages">
+              <template #media>
+                <f7-icon f7="tv" color="gray" />
+              </template>
             </f7-list-item>
           </f7-list>
           <f7-list media-list class="search-list">
-            <f7-list-item
-              v-if="$store.getters.apiEndpoint('transformations')"
-              media-item
-              link="transformations/"
-              title="Transformations"
-              :after="transformationsCount"
-              badge-color="blue"
-              :footer="objectsSubtitles.transform">
-              <f7-icon slot="media" f7="function" color="gray" />
+            <f7-list-item v-if="runtimeStore.apiEndpoint('transformations')"
+                          media-item
+                          link="transformations/"
+                          title="Transformations"
+                          :after="transformationsCount"
+                          badge-color="blue"
+                          :footer="objectsSubtitles.transform">
+              <template #media>
+                <f7-icon f7="function" color="gray" />
+              </template>
             </f7-list-item>
             <f7-list-item
               media-item
@@ -86,10 +87,12 @@
               title="Persistence"
               badge-color="blue"
               :footer="objectsSubtitles.persistence">
-              <f7-icon slot="media" f7="download_circle" color="gray" />
+              <template #media>
+                <f7-icon f7="download_circle" color="gray" />
+              </template>
             </f7-list-item>
           </f7-list>
-          <f7-block-title v-if="$store.getters.apiEndpoint('rules')">
+          <f7-block-title v-if="runtimeStore.apiEndpoint('rules')">
             Automation
           </f7-block-title>
           <f7-list media-list class="search-list">
@@ -100,7 +103,9 @@
               :after="rulesCount"
               badge-color="blue"
               :footer="objectsSubtitles.rules">
-              <f7-icon slot="media" f7="wand_stars" color="gray" />
+              <template #media>
+                <f7-icon f7="wand_stars" color="gray" />
+              </template>
             </f7-list-item>
             <f7-list-item
               media-item
@@ -109,7 +114,9 @@
               :after="scenesCount"
               badge-color="blue"
               :footer="objectsSubtitles.scenes">
-              <f7-icon slot="media" f7="film" color="gray" />
+              <template #media>
+                <f7-icon f7="film" color="gray" />
+              </template>
             </f7-list-item>
             <f7-list-item
               media-item
@@ -118,7 +125,9 @@
               :after="scriptsCount"
               badge-color="blue"
               :footer="objectsSubtitles.scripts">
-              <f7-icon slot="media" f7="doc_plaintext" color="gray" />
+              <template #media>
+                <f7-icon f7="doc_plaintext" color="gray" />
+              </template>
             </f7-list-item>
             <f7-list-item
               media-item
@@ -126,7 +135,9 @@
               title="Schedule"
               badge-color="blue"
               :footer="objectsSubtitles.schedule">
-              <f7-icon slot="media" f7="calendar" color="gray" />
+              <template #media>
+                <f7-icon f7="calendar" color="gray" />
+              </template>
             </f7-list-item>
           </f7-list>
         </f7-col>
@@ -140,7 +151,9 @@
                 :link="'services/' + service.id"
                 :title="service.label"
                 v-show="!service.hidden" />
-              <f7-list-button v-if="!expanded('systemSettings')" color="blue" @click="expand('systemSettings')">
+              <f7-list-button v-if="!expandedTypes.systemSettingsExpanded"
+                              color="blue"
+                              @click="expand('systemSettingsExpanded')">
                 {{ $t('dialogs.showAll') }}
               </f7-list-button>
             </f7-list>
@@ -156,13 +169,13 @@
                 title="Service Label" />
             </f7-list>
           </div>
-          <div v-show="$f7.width < 1450">
+          <div v-show="$f7dim.width < 1450">
             <div v-show="addonsLoaded && addonsInstalled.length > 0">
               <addon-section class="add-on-section"
                              :addonsInstalled="addonsInstalled"
                              :addonsServices="addonsServices"
-                             :expanded="expanded('addonsSettings')"
-                             @expand="expand('addonsSettings')" />
+                             :expanded="expandedTypes.addonsExpanded"
+                             @expand="expand('addonsExpanded')" />
             </div>
             <!-- skeleton for not addonsLoaded -->
             <div v-if="!addonsLoaded">
@@ -177,12 +190,12 @@
             </div>
           </div>
         </f7-col>
-        <f7-col width="33" class="add-on-col" v-show="$f7.width >= 1450">
+        <f7-col width="33" class="add-on-col" v-show="$f7dim.width >= 1450">
           <div v-show="addonsLoaded && addonsInstalled.length > 0">
             <addon-section :addonsInstalled="addonsInstalled"
                            :addonsServices="addonsServices"
-                           :expanded="expanded('addonsSettings')"
-                           @expand="expand('addonsSettings')" />
+                           :expanded="expandedTypes.addonsExpanded"
+                           @expand="expand('addonsExpanded')" />
           </div>
           <!-- skeleton for not addonsLoaded -->
           <div v-if="!addonsLoaded">
@@ -198,27 +211,48 @@
         </f7-col>
       </f7-row>
       <f7-block-footer v-if="$t('home.overview.title') !== 'Overview'" class="margin text-align-center">
-        <small v-t="'admin.notTranslatedYet'" />
+        <small>{{ $t('admin.notTranslatedYet') }}</small>
       </f7-block-footer>
     </f7-block>
 
-    <f7-fab v-if="healthCount > 0"
-            position="center-bottom"
-            :text="`Health Issues (${healthCount})`"
-            slot="fixed"
-            color="red"
-            href="health/">
-      <f7-icon f7="heart" />
-    </f7-fab>
+    <template #fixed>
+      <f7-fab v-if="healthCount > 0"
+              position="center-bottom"
+              :text="`Health Issues (${healthCount})`"
+              color="red"
+              href="health/">
+        <f7-icon f7="heart" />
+      </f7-fab>
+    </template>
   </f7-page>
 </template>
 
+<style lang="stylus">
+.page-settings
+  .navbar.with-searchbar-expandable-enabled
+    height calc(var(--f7-searchbar-input-height) + var(--f7-searchbar-inner-padding-left))
+    .searchbar
+      top calc(0.5 * var(--f7-searchbar-inner-padding-left))
+</style>
+
 <script>
+import { f7, theme } from 'framework7-vue'
+import { mapStores } from 'pinia'
+
 import AddonSection from './addon-section.vue'
+
+import { useComponentsStore } from '@/js/stores/useComponentsStore'
+import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
 export default {
   components: {
     AddonSection
+  },
+  props: {
+    f7router: Object
+  },
+  setup () {
+    return { theme }
   },
   data () {
     return {
@@ -265,17 +299,17 @@ export default {
       ],
 
       expandedTypes: {
-        systemSettings: this.$f7.width >= 1450,
-        addonsSettings: false
+        systemSettingsExpanded: this.$f7dim.width >= 1450,
+        addonsExpanded: false
       }
     }
   },
   computed: {
     apiEndpoints () {
-      return this.$store.state.apiEndpoints
+      return useRuntimeStore().apiEndpoints
     },
     systemSettings () {
-      if (this.expandedTypes.systemSettings) return this.systemServices
+      if (this.expandedTypes.systemSettingsExpanded) return this.systemServices
       return this.systemServices.map((service) => {
         const hide = this.advancedSystemServices.includes(service.id)
         return Object.assign({ hidden: hide }, service)
@@ -284,7 +318,8 @@ export default {
     healthCount () {
       const problemCount = this.orphanLinkCount + this.semanticsProblemCount
       return problemCount.toString()
-    }
+    },
+    ...mapStores(useComponentsStore, useRuntimeStore)
   },
   watch: {
     apiEndpoints () {
@@ -297,21 +332,21 @@ export default {
       if (!this.apiEndpoints) return
 
       // can be done in parallel!
-      if (this.$store.getters.apiEndpoint('services')) {
+      if (useRuntimeStore().apiEndpoint('services')) {
         this.$oh.api.get('/rest/services').then((data) => {
           this.systemServices = data
-            .filter(s => (s.category === 'system') && (s.id !== 'org.openhab.persistence'))
+            .filter((s) => (s.category === 'system') && (s.id !== 'org.openhab.persistence'))
             .sort((s1, s2) => this.sortByLabel(s1, s2))
-          this.addonsServices = data.filter(s => s.category !== 'system').sort((s1, s2) => this.sortByLabel(s1, s2))
+          this.addonsServices = data.filter((s) => s.category !== 'system').sort((s1, s2) => this.sortByLabel(s1, s2))
           this.servicesLoaded = true
         })
       }
-      if (this.$store.getters.apiEndpoint('addons')) {
+      if (useRuntimeStore().apiEndpoint('addons')) {
         this.$oh.api.get('/rest/addons?serviceId=all').then((data) => {
           this.addonsInstalled = data
-            .filter(a => a.installed && !['application/vnd.openhab.ruletemplate', 'application/vnd.openhab.uicomponent;type=widget', 'application/vnd.openhab.uicomponent;type=blocks'].includes(a.contentType))
+            .filter((a) => a.installed && !['application/vnd.openhab.ruletemplate', 'application/vnd.openhab.uicomponent;type=widget', 'application/vnd.openhab.uicomponent;type=blocks'].includes(a.contentType))
             .sort((s1, s2) => this.sortByLabel(s1, s2))
-          this.persistenceAddonsInstalled = this.addonsInstalled.filter(a => a.installed && a.type === 'persistence')
+          this.persistenceAddonsInstalled = this.addonsInstalled.filter((a) => a.installed && a.type === 'persistence')
           this.addonsLoaded = true
         })
       }
@@ -321,14 +356,21 @@ export default {
     },
     loadCounters () {
       if (!this.apiEndpoints) return
-      if (this.$store.getters.apiEndpoint('links')) this.$oh.api.get('/rest/links/orphans').then((data) => { this.orphanLinkCount = data.length })
-      if (this.$store.getters.apiEndpoint('items')) this.$oh.api.get('/rest/items/semantics/health').then((data) => { this.semanticsProblemCount = data.length })
-      if (this.$store.getters.apiEndpoint('inbox')) this.$oh.api.get('/rest/inbox?includeIgnored=false').then((data) => { this.inboxCount = data.filter((e) => e.flag === 'NEW').length.toString() })
-      if (this.$store.getters.apiEndpoint('things')) this.$oh.api.get('/rest/things?staticDataOnly=true').then((data) => { this.thingsCount = data.length.toString() })
-      if (this.$store.getters.apiEndpoint('items')) this.$oh.api.get('/rest/items?staticDataOnly=true').then((data) => { this.itemsCount = data.length.toString() })
-      if (this.$store.getters.apiEndpoint('ui')) this.$oh.api.get('/rest/ui/components/system:sitemap').then((data) => { this.sitemapsCount = data.length })
-      if (this.$store.getters.apiEndpoint('transformations')) this.$oh.api.get('/rest/transformations').then((data) => { this.transformationsCount = data.length.toString() })
-      if (this.$store.getters.apiEndpoint('rules')) {
+      if (useRuntimeStore().apiEndpoint('links'))
+        this.$oh.api.get('/rest/links/orphans').then((data) => { this.orphanLinkCount = data.length })
+      if (useRuntimeStore().apiEndpoint('items'))
+        this.$oh.api.get('/rest/items/semantics/health').then((data) => { this.semanticsProblemCount = data.length })
+      if (useRuntimeStore().apiEndpoint('inbox'))
+        this.$oh.api.get('/rest/inbox?includeIgnored=false').then((data) => { this.inboxCount = data.filter((e) => e.flag === 'NEW').length.toString() })
+      if (useRuntimeStore().apiEndpoint('things'))
+        this.$oh.api.get('/rest/things?staticDataOnly=true').then((data) => { this.thingsCount = data.length.toString() })
+      if (useRuntimeStore().apiEndpoint('items'))
+        this.$oh.api.get('/rest/items?staticDataOnly=true').then((data) => { this.itemsCount = data.length.toString() })
+      if (useRuntimeStore().apiEndpoint('ui'))
+        this.$oh.api.get('/rest/ui/components/system:sitemap').then((data) => { this.sitemapsCount = data.length })
+      if (useRuntimeStore().apiEndpoint('transformations'))
+        this.$oh.api.get('/rest/transformations').then((data) => { this.transformationsCount = data.length.toString() })
+      if (useRuntimeStore().apiEndpoint('rules')) {
         this.$oh.api.get('/rest/rules?staticDataOnly=true').then((data) => {
           this.rulesCount = data.filter((r) => r.tags.indexOf('Scene') < 0 && r.tags.indexOf('Script') < 0).length.toString()
           this.scenesCount = data.filter((r) => r.tags.indexOf('Scene') >= 0).length.toString()
@@ -337,10 +379,7 @@ export default {
       }
     },
     expand (type) {
-      this.$set(this.expandedTypes, type, true)
-    },
-    expanded (type) {
-      return this.expandedTypes[type] || (this[type] && this[type].length <= 5)
+      this.expandedTypes[type] = true
     },
     expandAll () {
       Object.keys(this.expandedTypes).forEach((type) => this.expand(type))

@@ -13,12 +13,15 @@
                         :badge-color="thingStatusBadgeColor(l.thing.statusInfo)"
                         :link="!l.link.editable && l._invalid ? undefined : '#'"
                         @click="!l.link.editable && l._invalid ? undefined : editLink(l)">
-            <span slot="media" class="item-initial">{{ !l._invalid && l.channel.label ? l.channel.label[0] : '?' }}</span>
-            <f7-icon v-if="!l.link.editable"
-                     slot="title"
-                     f7="lock_fill"
-                     size="1rem"
-                     color="gray" />
+            <template #media>
+              <span class="item-initial">{{ !l._invalid && l.channel.label ? l.channel.label[0] : '?' }}</span>
+            </template>
+            <template #title>
+              <f7-icon v-if="!l.link.editable"
+                       f7="lock_fill"
+                       size="1rem"
+                       color="gray" />
+            </template>
           </f7-list-item>
         </ul>
       </f7-list>
@@ -35,10 +38,15 @@
 import AddLinkPage from '@/pages/settings/things/link/link-add.vue'
 import EditLinkPage from '@/pages/settings/things/link/link-edit.vue'
 import ThingStatus from '@/components/thing/thing-status-mixin'
+import { f7 } from 'framework7-vue'
 
 export default {
   mixins: [ThingStatus],
-  props: ['item', 'links'],
+  props: {
+    item: Object,
+    links: Array,
+    f7router: Object
+  },
   data () {
     return {
       currentItemName: null,
@@ -47,6 +55,7 @@ export default {
     }
   },
   mounted () {
+    this.f7router.allowPageChange = true
     this.load()
   },
   methods: {
@@ -89,7 +98,7 @@ export default {
       })
     },
     addLink () {
-      this.$f7router.navigate({
+      this.f7router.navigate({
         url: 'links/new',
         route: {
           component: AddLinkPage,
@@ -103,17 +112,17 @@ export default {
     },
     editLink (link) {
       if (link._invalid) {
-        this.$f7.dialog.confirm('This link is invalid, remove it?', 'Invalid Link',
+        f7.dialog.confirm('This link is invalid, remove it?', 'Invalid Link',
           () => {
             this.$oh.api.delete('/rest/links/' + link.link.itemName + '/' + encodeURIComponent(link.link.channelUID)).then(() => {
-              this.$f7.toast.create({
+              f7.toast.create({
                 text: 'Link deleted',
                 destroyOnClose: true,
                 closeTimeout: 2000
               }).open()
-              this.$delete(this.enrichedLinks, this.enrichedLinks.indexOf(link))
+              delete this.enrichedLinks[this.enrichedLinks.indexOf(link)]
             }).catch((err) => {
-              this.$f7.toast.create({
+              f7.toast.create({
                 text: 'Link not deleted (links defined in a .items file are not editable from this screen): ' + err,
                 destroyOnClose: true,
                 closeTimeout: 2000
@@ -123,7 +132,7 @@ export default {
         return
       }
 
-      this.$f7router.navigate({
+      this.f7router.navigate({
         url: 'links/edit/' + link.channel.uid,
         route: {
           component: EditLinkPage,

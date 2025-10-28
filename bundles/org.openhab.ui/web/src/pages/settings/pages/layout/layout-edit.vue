@@ -2,24 +2,17 @@
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="layout-editor">
     <f7-navbar
       v-if="!(previewMode && page.config.hideNavbar) && !fullscreen"
-      :title="!ready ? '' : ((createMode ? 'Create layout page' : page.config.label) + dirtyIndicator)"
-      back-link="Back"
       no-hairline>
-      <f7-nav-right>
-        <f7-link @click="save()"
-                 v-if="$theme.md"
-                 icon-md="material:save"
-                 icon-only />
-        <f7-link @click="save()" v-if="!$theme.md">
-          Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
-        </f7-link>
-      </f7-nav-right>
+      <oh-nav-content :title="!ready ? '' : ((createMode ? 'Create layout page' : page.config.label) + dirtyIndicator)"
+                      :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
+                      @save="save()"
+                      :f7router />
     </f7-navbar>
     <f7-toolbar v-if="!previewMode && !fullscreen" tabbar position="top">
-      <f7-link @click="switchTab('design', fromYaml)" :tab-link-active="currentTab === 'design'" class="tab-link">
+      <f7-link @click="switchTab('design', fromYaml)" :tab-link-active="currentTab === 'design'" tab-link="#design">
         Design
       </f7-link>
-      <f7-link @click="switchTab('code', toYaml)" :tab-link-active="currentTab === 'code'" class="tab-link">
+      <f7-link @click="switchTab('code', toYaml)" :tab-link-active="currentTab === 'code'" tab-link="#code">
         Code
       </f7-link>
     </f7-toolbar>
@@ -31,7 +24,7 @@
                color="blue"
                @click="toggleFullscreen" />
       <div class="display-flex flex-direction-row align-items-center">
-        <f7-toggle :checked="previewMode" @toggle:change="(value) => togglePreviewMode(value)" />&nbsp;Run mode<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span>
+        <f7-toggle :checked="previewMode ? true : null" @toggle:change="(value) => togglePreviewMode(value)" />&nbsp;Run mode<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span>
         <f7-link v-if="!createMode"
                  class="right margin-left padding-right"
                  @click="detailsOpened = true"
@@ -41,17 +34,18 @@
     <f7-tabs class="layout-editor-tabs">
       <f7-tab id="design"
               class="layout-editor-design-tab"
-              @tab:show="() => this.currentTab = 'design'"
               :tab-active="currentTab === 'design'">
         <f7-block v-if="!ready" class="text-align-center">
           <f7-preloader />
           <div>Loading...</div>
         </f7-block>
-        <f7-block id="page-settings" class="block-narrow" v-if="ready && createMode && !(previewMode || fullscreen)">
-          <page-settings :page="page" :createMode="createMode" />
+        <f7-block v-if="ready && createMode && !(previewMode || fullscreen)" id="page-settings" class="block-narrow">
+          <page-settings :page="page" :createMode="createMode" :f7router />
           <f7-col>
             <f7-block-footer class="padding-horizontal margin-bottom">
-              Note: After saving this page, you can view the page settings by clicking the chevron up icon (<f7-icon color="blue" f7="chevron_up" />) at the bottom right corner of the screen, next to "Run mode"
+              Note: After saving this page, you can view the page settings by clicking the chevron
+              up icon (<f7-icon color="blue" f7="chevron_up" />) at the bottom right corner of the
+              screen, next to "Run mode"
             </f7-block-footer>
           </f7-col>
         </f7-block>
@@ -76,7 +70,9 @@
                   </f7-block>
                   <f7-row class="text-align-center align-items-stretch margin-vertical" no-gap>
                     <f7-col width="50">
-                      <f7-link @click="setLayoutType('fixed', 'grid')" class="flex-direction-column padding margin-left-half elevation-1 elevation-hover-3" style="color: var(--f7-theme-color-text-color)">
+                      <f7-link @click="setLayoutType('fixed', 'grid')"
+                               class="flex-direction-column padding margin-left-half elevation-1 elevation-hover-3"
+                               style="color: var(--f7-theme-color-text-color)">
                         <f7-icon size="70px" f7="grid" />
                         <div class="margin-bottom">
                           Fixed Grid
@@ -87,7 +83,9 @@
                       </f7-link>
                     </f7-col>
                     <f7-col width="50">
-                      <f7-link @click="setLayoutType('fixed', 'canvas')" class="flex-direction-column padding margin-right-half elevation-1 elevation-hover-3" style="color: var(--f7-theme-color-text-color)">
+                      <f7-link @click="setLayoutType('fixed', 'canvas')"
+                               class="flex-direction-column padding margin-right-half elevation-1 elevation-hover-3"
+                               style="color: var(--f7-theme-color-text-color)">
                         <f7-icon size="70px" f7="rectangle_3_offgrid" />
                         <div class="margin-bottom">
                           Fixed Canvas
@@ -104,11 +102,12 @@
           </f7-col>
         </f7-block>
 
-        <oh-layout-page class="layout-page"
-                        v-if="ready"
+        <oh-layout-page v-if="ready"
+                        class="layout-page"
                         :context="context"
                         :key="pageKey"
                         :style="page.config.style"
+                        :f7router
                         @action="performAction($event.ev, $event.prefix, $event.config, $event.context)"
                         @add-block="addBlock"
                         @add-masonry="addMasonry"
@@ -130,12 +129,12 @@
               </div>
             </f7-toolbar>
             <f7-block class="block-narrow">
-              <page-settings :page="page" :createMode="createMode" />
+              <page-settings :page="page" :createMode="createMode" :f7router />
             </f7-block>
           </f7-page>
         </f7-sheet>
       </f7-tab>
-      <f7-tab id="code" @tab:show="() => { this.currentTab = 'code' }" :tab-active="currentTab === 'code'">
+      <f7-tab id="code" :tab-active="currentTab === 'code'">
         <editor v-if="currentTab === 'code'"
                 :style="{ opacity: previewMode ? '0' : '' }"
                 class="page-code-editor"
@@ -144,11 +143,12 @@
                 @input="onEditorInput" />
         <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
 
-        <oh-layout-page class="layout-page"
-                        v-if="ready && previewMode"
+        <oh-layout-page v-if="ready && previewMode"
+                        class="layout-page"
                         :context="context"
                         :key="pageKey"
                         :style="page.config.style"
+                        :f7router
                         @action="performAction($event.ev, $event.prefix, $event.config, $event.context)" />
       </f7-tab>
     </f7-tabs>
@@ -185,6 +185,10 @@
 </style>
 
 <script>
+import { nextTick, defineAsyncComponent } from 'vue'
+import { utils } from 'framework7'
+import { f7, theme } from 'framework7-vue'
+
 import YAML from 'yaml'
 
 import PageDesigner from '../pagedesigner-mixin'
@@ -206,18 +210,29 @@ import itemDefaultCellComponent from '@/components/widgets/standard/cell/default
 
 import { compareItems } from '@/components/widgets/widget-order'
 
+import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
+import { useComponentsStore } from '@/js/stores/useComponentsStore'
+
 export default {
   mixins: [PageDesigner, actionsMixin],
   components: {
-    'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue'),
+    editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')),
     OhLayoutPage,
     PageSettings
   },
-  props: ['createMode', 'uid'],
+  props: {
+    createMode: Boolean,
+    uid: String,
+    f7router: Object,
+    f7route: Object
+  },
+  setup () {
+    return { theme }
+  },
   data () {
     return {
       page: {
-        uid: 'page_' + this.$f7.utils.id(),
+        uid: 'page_' + utils.id(),
         component: 'oh-layout-page',
         config: {},
         tags: [],
@@ -232,14 +247,14 @@ export default {
       detailsOpened: false,
       modelPickerAllowMultiple: true,
       modelPickerOpened: false,
-      fullscreen: this.$fullscreen.getState()
+      fullscreen: this.$fullscreen.isFullscreen
     }
   },
   created () {
-    this.$f7.on('svgOnClickConfigUpdate', this.onSvgOnClickConfigUpdate)
+    f7.on('svgOnclickConfigUpdate', this.onSvgOnClickConfigUpdate)
   },
-  beforeDestroy () {
-    this.$f7.off('svgOnClickConfigUpdate', this.onSvgOnClickConfigUpdate)
+  beforeUnmount () {
+    f7.off('svgOnclickConfigUpdate', this.onSvgOnClickConfigUpdate)
   },
   methods: {
     addWidget (component, widgetType, parentContext, slot) {
@@ -262,7 +277,7 @@ export default {
             component: choice,
             config: {}
           })
-          this.$nextTick(() => actions.destroy())
+          nextTick(() => actions.destroy())
           this.forceUpdate()
         }
         const addFromModel = () => {
@@ -272,7 +287,7 @@ export default {
             component: ModelPickerPopup
           }
 
-          this.$f7router.navigate({
+          this.f7router.navigate({
             url: 'pick-from-model',
             route: {
               path: 'pick-from-model',
@@ -285,12 +300,12 @@ export default {
             }
           })
 
-          this.$f7.once('itemsPicked', this.doAddFromModel)
-          this.$f7.once('modelPickerClosed', () => {
-            this.$f7.off('itemsPicked', this.doAddFromModel)
+          f7.once('itemsPicked', this.doAddFromModel)
+          f7.once('modelPickerClosed', () => {
+            f7.off('itemsPicked', this.doAddFromModel)
           })
 
-          this.$nextTick(() => actions.destroy())
+          nextTick(() => actions.destroy())
         }
         const stdWidgets = (isList) ? StandardListWidgets : (isCells) ? StandardCellWidgets : StandardWidgets
         const standardWidgetOptions = Object.keys(stdWidgets).filter((k) => !stdWidgets[k].widget().hidden).map((k) => {
@@ -300,14 +315,14 @@ export default {
             onClick: () => doAddWidget(stdWidgets[k].widget().name)
           }
         })
-        const customWidgetOptions = this.$store.state.components.widgets.map((w) => {
+        const customWidgetOptions = useComponentsStore().widgets().map((w) => {
           return {
             text: w.uid,
             color: 'blue',
             onClick: () => doAddWidget('widget:' + w.uid)
           }
         }).sort((a, b) => a.text.localeCompare(b.text))
-        actions = this.$f7.actions.create({
+        actions = f7.actions.create({
           // grid: true,
           buttons: [
             [
@@ -378,11 +393,11 @@ export default {
     },
     addMasonry (component) {
       if (!component.slots.masonry || !component.slots.masonry.length) {
-        this.$set(this.page.slots, 'masonry', [{
+        this.page.slots.masonry = [{
           component: 'oh-masonry',
           config: {},
           slots: { default: [] }
-        }])
+        }]
       }
     },
     addGridItem (component) {
@@ -424,15 +439,15 @@ export default {
           throw new Error('Using blocks and masonry in fixed layouts is not possible')
         }
 
-        this.$set(this.page, 'config', updatedPage.config)
-        this.$set(this.page.slots, 'default', updatedPage.blocks)
-        this.$set(this.page.slots, 'masonry', updatedPage.masonry)
-        this.$set(this.page.slots, 'grid', updatedPage.grid)
-        this.$set(this.page.slots, 'canvas', updatedPage.canvas)
+        this.page.config = updatedPage.config
+        this.page.slots.default = updatedPage.blocks
+        this.page.slots.masonry = updatedPage.masonry
+        this.page.slots.grid = updatedPage.grid
+        this.page.slots.canvas = updatedPage.canvas
         this.forceUpdate()
         return true
       } catch (e) {
-        this.$f7.dialog.alert(e).open()
+        f7.dialog.alert(e).open()
         return false
       }
     },
@@ -442,10 +457,10 @@ export default {
         callback: (fullscreen) => {
           this.fullscreen = fullscreen
           if (fullscreen) {
-            this.$f7.panel.get('left').disableVisibleBreakpoint()
+            f7.panel.get('left').disableVisibleBreakpoint()
           } else {
-            if (localStorage.getItem('openhab.ui:panel.visibleBreakpointDisabled') !== 'true') {
-              this.$f7.panel.get('left').enableVisibleBreakpoint()
+            if (!useUIOptionsStore().visibleBreakpointDisabled) {
+              f7.panel.get('left').enableVisibleBreakpoint()
             }
           }
           this.forceUpdate()
@@ -453,11 +468,11 @@ export default {
       })
     },
     onPageBeforeOut () {
-      this.$refs.detailsSheet.f7Sheet.close()
+      this.$refs.detailsSheet.$el.f7Modal.close()
     },
     onSvgOnClickConfigUpdate (event) {
       if (!this.page.config.embeddedSvgActions) {
-        this.$set(this.page.config, 'embeddedSvgActions', {})
+        this.page.config.embeddedSvgActions = {}
       }
       this.page.config.embeddedSvgActions[event.id] = event.config
     }

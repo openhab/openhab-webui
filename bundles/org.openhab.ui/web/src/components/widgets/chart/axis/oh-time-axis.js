@@ -1,6 +1,7 @@
-import * as dayjs from 'dayjs'
+import dayjs from 'dayjs'
 import IsoWeek from 'dayjs/plugin/isoWeek'
 import ComponentId from '../../component-id'
+
 dayjs.extend(IsoWeek)
 
 export default {

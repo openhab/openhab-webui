@@ -40,9 +40,9 @@
               @input="command = $event.target.value"
               type="text" />
             <ul v-if="commandSuggestions.length">
-              <f7-list-item radio
-                            :checked="command === suggestion.command"
-                            v-for="suggestion in commandSuggestions"
+              <f7-list-item v-for="suggestion in commandSuggestions"
+                            radio
+                            :checked="command === suggestion.command ? true : null"
                             :key="suggestion.command"
                             :title="suggestion.label"
                             @click="command = suggestion.command" />
@@ -54,7 +54,7 @@
         <f7-col>
           <div v-show="control === 'colorpicker'" class="scene-item-control-colorpicker" ref="colorpicker" />
           <div v-if="control === 'toggle'" class="scene-item-control-toggle">
-            <f7-toggle :checked="command === 'ON'" @toggle:change="(value) => command = (value) ? 'ON' : 'OFF'" />
+            <f7-toggle :checked="command === 'ON' ? true : null" @toggle:change="(value) => (command = value ? 'ON' : 'OFF')" />
           </div>
           <div v-else-if="control === 'slider'" class="scene-item-control-slider">
             <f7-range v-bind="sliderConfig" :value="command" @range:change="command = $event.toString()" />
@@ -118,14 +118,19 @@
       width 150px
       transform rotate(90deg)
       transform-origin center
-
 </style>
 
 <script>
+import { nextTick } from 'vue'
+import { f7 } from 'framework7-vue'
+
 export default {
-  components: {
+  components: {},
+  props: {
+    rule: Object,
+    module: Object
   },
-  props: ['rule', 'module'],
+  emits: ['closed', 'update', 'sceneItemConfigUpdate'],
   data () {
     return {
       ready: false,
@@ -148,19 +153,19 @@ export default {
     },
     itemConfigClosed () {
       if (this.colorpicker) this.colorpicker.destroy()
-      this.$f7.emit('sceneItemConfigClosed')
+      f7.emit('sceneItemConfigClosed')
       this.$emit('closed')
     },
     updateItemConfig () {
       if (this.colorpicker) this.colorpicker.destroy()
-      this.$f7.emit('sceneItemConfigUpdate', [this.itemName, this.command])
+      f7.emit('sceneItemConfigUpdate', [this.itemName, this.command])
       this.$emit('update', [this.itemName, this.command])
       this.itemConfigClosed()
     },
     updateCommandFromCurrentState () {
       this.$oh.api.getPlain('/rest/items/' + this.itemName + '/state?metadata=semantics,widget').then((state) => {
-        this.$set(this, 'command', state)
-        this.$f7.toast.create({
+        this.command = state
+        f7.toast.create({
           text: `Updated desired state of ${this.itemName} to ${state}`,
           destroyOnClose: true,
           closeTimeout: 2000
@@ -169,7 +174,7 @@ export default {
     },
     testCommand () {
       this.$oh.api.postPlain('/rest/items/' + this.itemName, this.command, 'text/plain', 'text/plain').then((state) => {
-        this.$f7.toast.create({
+        f7.toast.create({
           text: `Sent comment ${this.command} to ${this.itemName}`,
           destroyOnClose: true,
           closeTimeout: 2000
@@ -181,8 +186,8 @@ export default {
       if (this.item.type === 'Color' || this.item.groupType === 'Color') {
         this.control = 'colorpicker'
         const vm = this
-        this.$nextTick(() => {
-          this.colorpicker = this.$f7.colorPicker.create(Object.assign({}, this.config, {
+        nextTick(() => {
+          this.colorpicker = f7.colorPicker.create(Object.assign({}, this.config, {
             containerEl: this.$refs.colorpicker,
             modules: ['wheel'],
             value: (this.command.split(',').length === 3) ? { hsb: this.color } : null,

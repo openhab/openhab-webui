@@ -1,7 +1,7 @@
 <template>
-  <f7-card :no-border="config.noBorder"
-           :no-shadow="config.noShadow"
-           :outline="config.outline"
+  <f7-card :no-border="config.noBorder ? true : null"
+           :no-shadow="config.noShadow ? true : null"
+           :outline="config.outline ? true : null"
            :style="config.style"
            :class="['oh-card', ...(Array.isArray(config.class) ? config.class : [])]">
     <slot name="header">
@@ -10,10 +10,10 @@
       </f7-card-header>
     </slot>
     <slot name="content-root">
-      <f7-card-content @click.native="performAction"
-                       @taphold.native="onTaphold($event)"
-                       @contextmenu.native="onContextMenu($event)"
-                       :style="{ ...contentStyle, ...config.contentStyle}"
+      <f7-card-content @click="performAction"
+                       @taphold="onTaphold($event)"
+                       @contextmenu="onContextMenu($event)"
+                       :style="{ ...contentStyle, ...config.contentStyle }"
                        :class="computedContentClass">
         <slot name="content" />
       </f7-card-content>
@@ -47,8 +47,16 @@ import { OhCardDefinition } from '@/assets/definitions/widgets/standard/cards'
 export default {
   mixins: [mixin, actionsMixin],
   widget: OhCardDefinition,
-  props: ['context', 'contentStyle', 'contentClass'],
-  slotProps: ['header', 'content', 'content-root', 'footer'],
+  props: {
+    context: Object,
+    contentStyle: Object,
+    contentClass: [String, Array],
+    header: Object,
+    content: Object,
+    // eslint-disable-next-line vue/prop-name-casing
+    'content-root': Object,
+    footer: Object
+  },
   computed: {
     computedContentClass () {
       return [

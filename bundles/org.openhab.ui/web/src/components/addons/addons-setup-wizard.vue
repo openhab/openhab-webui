@@ -7,7 +7,7 @@
                    icon-f7="bag_fill_badge_plus"
                    icon-size="24"
                    @click="selectAddons"
-                   :text="$t('setupwizard.addons.selectAddons')" />
+                   :text="t('setupwizard.addons.selectAddons')" />
       </f7-col>
     </f7-row>
     <f7-list media-list>
@@ -16,8 +16,8 @@
           <f7-row no-gap>
             <div style="width: 100%">
               <f7-checkbox style="margin-right: 0.5rem"
-                           :checked="selectedAddon(addon)"
-                           :disabled="addon.installed"
+                           :checked="selectedAddon(addon) ? true : null"
+                           :disabled="addon.installed ? true : null"
                            @change="toggleAddonSelection(addon, $event)" />
               {{ addon.label }}
               <f7-link style="float: right"
@@ -35,7 +35,7 @@
             </div>
           </f7-row>
         </f7-block>
-      </f7-list-item>/>
+      </f7-list-item>
     </f7-list>
   </div>
 </template>
@@ -68,24 +68,34 @@
 </style>
 
 <script>
+import { f7 } from 'framework7-vue'
 import AddonLogo from '@/components/addons/addon-logo.vue'
 
+import { useI18n } from 'vue-i18n'
 import { loadLocaleMessages } from '@/js/i18n'
 
 export default {
-  props: ['addons', 'preSelectedAddons', 'enableAddonSelection'],
+  props: {
+    addons: Array,
+    preSelectedAddons: Array,
+    enableAddonSelection: Boolean
+  },
   emits: ['update'],
   components: {
     AddonLogo
+  },
+  setup () {
+    const { t, mergeLocaleMessage } = useI18n({ useScope: 'local' })
+    loadLocaleMessages('setup-wizard', mergeLocaleMessage)
+    return {
+      t
+    }
   },
   data () {
     return {
       shownAddons: [],
       selectedAddons: []
     }
-  },
-  i18n: {
-    messages: loadLocaleMessages(require.context('@/assets/i18n/setup-wizard'))
   },
   methods: {
     /**
@@ -110,12 +120,12 @@ export default {
      * @returns {string}
      */
     addonDescription (addon) {
-      const line1 = this.$t('setupwizard.addon.' + addon.uid + '.line1')
-      const line2 = this.$t('setupwizard.addon.' + addon.uid + '.line2')
-      const hasLine1 = (line1 !== 'setupwizard.addon.' + addon.uid + '.line1')
-      const hasLine2 = (line2 !== 'setupwizard.addon.' + addon.uid + '.line2')
-      const descr = (hasLine1 ? line1 : '') + (hasLine2 ? ('<br>' + line2) : '')
-      return descr || addon.description || (addon.uid + '<br>' + addon.version)
+      const line1 = this.t('setupwizard.addon.' + addon.uid + '.line1')
+      const line2 = this.t('setupwizard.addon.' + addon.uid + '.line2')
+      const hasLine1 = line1 !== 'setupwizard.addon.' + addon.uid + '.line1'
+      const hasLine2 = line2 !== 'setupwizard.addon.' + addon.uid + '.line2'
+      const descr = (hasLine1 ? line1 : '') + (hasLine2 ? '<br>' + line2 : '')
+      return descr || addon.description || addon.uid + '<br>' + addon.version
     },
     /**
      * Toggles the selection of a single add-on.
@@ -125,9 +135,9 @@ export default {
      */
     toggleAddonSelection (addon, event) {
       if (event.target.checked) {
-        this.$set(this, 'selectedAddons', [...new Set(this.selectedAddons.concat(addon))])
+        this.selectedAddons.push(addon)
       } else {
-        this.$set(this, 'selectedAddons', this.selectedAddons.filter(a => (a.uid !== addon.uid)))
+        this.selectedAddons = this.selectedAddons.filter((a) => a.uid !== addon.uid)
       }
       this.$emit('update', this.selectedAddons)
     },
@@ -136,7 +146,7 @@ export default {
      */
     selectAddons () {
       if (this.autocompleteAddons) {
-        this.autocompleteAddons.value = this.selectedAddons.map(a => a.label)
+        this.autocompleteAddons.value = this.selectedAddons.map((a) => a.label)
         this.autocompleteAddons.open()
       }
     },
@@ -154,32 +164,33 @@ export default {
     // Update the list of shown and selected add-ons with the pre-selected add-ons.
     // Exclude add-ons that are in the list of pre-selected add-ons, but are not meant to be shown here (usually because these add-ons are handled in a separate step).
     if (Array.isArray(this.preSelectedAddons)) {
-      this.shownAddons = this.selectedAddons = this.preSelectedAddons.filter(a => this.addons.includes(a))
+      this.shownAddons = this.selectedAddons = this.preSelectedAddons.filter((a) => this.addons.includes(a))
     }
 
     // Initialize the autocomplete, which provides the add-on selection popup, if add-on selection has been enabled.
     if (!this.enableAddonSelection) return
-    const self = this
-    this.autocompleteAddons = this.$f7.autocomplete.create({
+    this.autocompleteAddons = f7.autocomplete.create({
       openIn: 'popup',
-      pageTitle: self.$t('setupwizard.addons.selectAddons'),
-      searchbarPlaceholder: self.$t('setupwizard.addons.selectAddons.placeholder'),
-      openerEl: self.$refs.selectAddons,
+      pageTitle: this.t('setupwizard.addons.selectAddons'),
+      searchbarPlaceholder: this.t('setupwizard.addons.selectAddons.placeholder'),
+      openerEl: this.$refs.selectAddons,
       multiple: true,
       requestSourceOnOpen: true,
       source: (query, render) => {
         // Exclude installed and pre-selected add-ons from the selection popup.
         if (query.length === 0) {
-          render(self.addons.filter(a => !a.installed && !self.preSelectedAddon(a)).map((a) => a.label))
+          render(self.addons.filter((a) => !a.installed && !self.preSelectedAddon(a)).map((a) => a.label))
         } else {
-          render(self.addons
-            .filter(a => (!a.installed && !self.preSelectedAddon(a) && (a.label.toLowerCase().indexOf(query.toLowerCase()) >= 0 || a.uid.toLowerCase().indexOf(query.toLowerCase()) >= 0)))
-            .map(a => a.label))
+          render(
+            self.addons
+              .filter(
+                (a) => !a.installed && !self.preSelectedAddon(a) && (a.label.toLowerCase().indexOf(query.toLowerCase()) >= 0 || a.uid.toLowerCase().indexOf(query.toLowerCase()) >= 0))
+              .map((a) => a.label))
         }
       },
       on: {
         change (value) {
-          const selected = value.map(label => self.addons.find(a => (a.label === label)))
+          const selected = value.map((label) => self.addons.find((a) => a.label === label))
           // If we added addons, keep them visible on the main list, even if we deselect them again later.
           self.shownAddons = [...new Set(self.selectedAddons.concat(selected))]
           self.updateAddonSelection(selected)
@@ -188,14 +199,14 @@ export default {
     })
 
     // Add event listener for locale change
-    this.$f7.on('localeChange', () => {
+    f7.on('localeChange', () => {
       if (this.autocompleteAddons) {
-        this.autocompleteAddons.params.pageTitle = this.$t('setupwizard.addons.selectAddons')
-        this.autocompleteAddons.params.searchbarPlaceholder = this.$t('setupwizard.addons.selectAddons.placeholder')
-        this.autocompleteAddons.params.searchbarDisableText = this.$t('dialogs.cancel')
-        this.autocompleteAddons.params.popupCloseLinkText = this.$t('dialogs.close')
-        this.autocompleteAddons.params.pageBackLinkText = this.$t('dialogs.back')
-        this.autocompleteAddons.params.notFoundText = this.$t('dialogs.search.nothingFound')
+        this.autocompleteAddons.params.pageTitle = this.t('setupwizard.addons.selectAddons')
+        this.autocompleteAddons.params.searchbarPlaceholder = this.t('setupwizard.addons.selectAddons.placeholder')
+        this.autocompleteAddons.params.searchbarDisableText = this.t('dialogs.cancel')
+        this.autocompleteAddons.params.popupCloseLinkText = this.t('dialogs.close')
+        this.autocompleteAddons.params.pageBackLinkText = this.t('dialogs.back')
+        this.autocompleteAddons.params.notFoundText = this.t('dialogs.search.nothingFound')
       }
     })
   }

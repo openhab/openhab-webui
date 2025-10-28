@@ -13,7 +13,7 @@
         <option v-for="option in configDescription.options"
                 :value="option.value"
                 :key="option.value"
-                :selected="isSelected(option)">
+                :selected="isSelected(option) ? true : null">
           {{ option.label }}
         </option>
       </select>
@@ -42,7 +42,7 @@
                   v-for="option in configDescription.options"
                   no-hairline
                   :value="option.value"
-                  :checked="isSelected(option)"
+                  :checked="isSelected(option) ? true : null"
                   radio-icon="start"
                   @change="(!configDescription.required && isSelected(option)) ? updateValue(undefined) : updateValue(option.value)"
                   :key="option.value"
@@ -52,13 +52,19 @@
 </template>
 
 <script>
+import { f7, theme } from 'framework7-vue'
+
 export default {
-  props: ['configDescription', 'value'],
+  props: {
+    configDescription: Object,
+    value: [String, Array]
+  },
+  emits: ['input'],
   data () {
     return {
       inlineList: false,
       smartSelectParams: {
-        view: (this.$f7) ? this.$f7.view.main : null
+        view: (f7) ? f7.view.main : null
       }
     }
   },
@@ -71,7 +77,7 @@ export default {
       this.smartSelectParams.openIn = 'popup'
       this.smartSelectParams.searchbar = true
       this.smartSelectParams.virtualList = true
-      if (this.$theme.aurora) this.smartSelectParams.virtualListHeight = 32
+      if (theme.aurora) this.smartSelectParams.virtualListHeight = 32
     } else {
       this.smartSelectParams.openIn = 'popup'
       this.smartSelectParams.searchbar = true
@@ -84,22 +90,23 @@ export default {
   },
   methods: {
     updateValue (evt) {
-      let value = (this.inlineList) ? evt : this.$refs.item.f7SmartSelect.getValue()
-      if (!this.configDescription.multiple && this.configDescription.type === 'INTEGER') {
-        value = parseInt(value)
+      let value = (this.inlineList) ? evt : this.$refs.item.$el.children[0].f7SmartSelect.getValue()
+      if (!this.configDescription.multiple) {
+        if (this.configDescription.type === 'INTEGER') value = parseInt(value)
+        if (this.configDescription.type === 'DECIMAL') value = parseFloat(value)
       }
       this.$emit('input', value)
     },
     isSelected (option) {
+      let optVal = option.value
+      if (this.configDescription.type === 'INTEGER') optVal = parseInt(optVal)
+      if (this.configDescription.type === 'DECIMAL') optVal = parseFloat(optVal)
+
       if (this.value === null || this.value === undefined) return
       if (!this.configDescription.multiple) {
-        return this.value.toString() === option.value
+        return this.value === optVal
       } else {
-        if (this.configDescription.type === 'INTEGER') {
-          return this.value && this.value.indexOf(parseInt(option.value)) >= 0
-        } else {
-          return this.value && this.value.indexOf(option.value) >= 0
-        }
+        return this.value && this.value.indexOf(optVal) >= 0
       }
     }
   }

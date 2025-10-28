@@ -2,7 +2,7 @@
   <f7-link v-if="addon" class="addon-card" :href="`/addons/${addon.type}/${addon.uid}`">
     <div class="addon-card-inner card">
       <div class="addon-card-headline">
-        <div>{{ headline || autoHeadline || "&nbsp;" }}</div>
+        <div>{{ headline || autoHeadline || '&nbsp;' }}</div>
       </div>
       <div class="addon-card-title">
         <div v-if="showInstallActions" class="addon-card-title-after">
@@ -29,7 +29,7 @@
           {{ addon.author }}
           <f7-icon v-if="addon.verifiedAuthor"
                    size="15"
-                   :color="$f7.data.themeOptions.dark === 'dark' ? 'white' : 'blue'"
+                   :color="uiOptionsStore.getDarkMode() === 'dark' ? 'white' : 'blue'"
                    f7="checkmark_seal_fill"
                    style="margin-top: -3px;" />
         </div>
@@ -125,9 +125,17 @@
 <script>
 import AddonStatsLine from './addon-stats-line.vue'
 import AddonLogo from '@/components/addons/addon-logo.vue'
+import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
+import { mapStores } from 'pinia'
 
 export default {
-  props: ['addon', 'headline', 'installActionText', 'lazyLogo'],
+  props: {
+    addon: Object,
+    headline: String,
+    installActionText: String,
+    lazyLogo: Boolean
+  },
+  emits: ['addon-button-click'],
   components: {
     AddonLogo,
     AddonStatsLine
@@ -142,11 +150,12 @@ export default {
     showInstallActions () {
       let splitted = this.addon.uid.split(':')
       return splitted.length < 2 || splitted[0] !== 'eclipse'
-    }
+    },
+    ...mapStores(useUIOptionsStore)
   },
   methods: {
     buttonClicked () {
-      this.$emit('addonButtonClick', this.addon)
+      this.$emit('addon-button-click', this.addon)
     }
   }
 }

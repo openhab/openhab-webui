@@ -3,7 +3,7 @@
             close-on-escape
             @popup:opened="() => showNetwork = true"
             @popup:closed="$emit('closed')">
-    <f7-page class="analyzer-content">
+    <f7-page class="zwave-network-popup-content">
       <f7-navbar title="Z-Wave Network Map">
         <f7-nav-right>
           <f7-link popup-close>
@@ -17,19 +17,20 @@
 </template>
 
 <script>
+import { defineAsyncComponent } from 'vue'
+
 export default {
-  props: ['bridgeUID'],
-  components: {
-    'zwave-network': () => import(/* webpackChunkName: "zwave-network" */ '@/components/thing/zwave/zwave-network.vue')
+  props: {
+    bridgeUID: String
   },
+  components: {
+    'zwave-network': defineAsyncComponent(() => import(/* webpackChunkName: "zwave-network" */ '@/components/thing/zwave/zwave-network.vue'))
+  },
+  emits: ['closed'],
   data () {
     return {
       showNetwork: false
     }
-  },
-  methods: {
-  },
-  computed: {
   }
 }
 </script>

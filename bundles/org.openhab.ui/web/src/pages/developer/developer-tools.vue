@@ -1,25 +1,19 @@
 <template>
   <f7-page name="devtools" @page:beforeremove="onPageBeforeRemove">
-    <f7-navbar title="Developer Tools"
-               back-link="Back"
-               back-link-url="/"
-               back-link-force
-               no-hairline>
-      <f7-nav-right>
-        <developer-dock-icon />
-      </f7-nav-right>
+    <f7-navbar no-hairline>
+      <oh-nav-content title="Developer Tools" :f7router />
     </f7-navbar>
     <f7-toolbar tabbar position="top">
-      <f7-link @click="currentTab = 'menu'" :tab-link-active="currentTab === 'menu'" class="tab-link">
+      <f7-link @click="currentTab = 'menu'" :tab-link-active="currentTab === 'menu'" tab-link="#tab-menu">
         Expert Features
       </f7-link>
-      <f7-link @click="currentTab = 'debug'" :tab-link-active="currentTab === 'debug'" class="tab-link">
+      <f7-link @click="currentTab = 'debug'" :tab-link-active="currentTab === 'debug'" tab-link="#tab-debug">
         Debug
       </f7-link>
     </f7-toolbar>
 
     <f7-tabs>
-      <f7-tab id="menu-tab" tab:show="() => this.currentTab = 'menu'" :tab-active="currentTab === 'menu'">
+      <f7-tab id="tab-menu" :tab-active="currentTab === 'menu'">
         <f7-block class="block-narrow after-big-title settings-menu">
           <f7-row>
             <f7-col width="100" medium="50">
@@ -29,39 +23,51 @@
                               title="Widgets"
                               footer="Develop custom widgets to use on pages"
                               link="widgets/">
-                  <f7-icon slot="media" f7="rectangle_on_rectangle_angled" color="gray" />
+                  <template #media>
+                    <f7-icon f7="rectangle_on_rectangle_angled" color="gray" />
+                  </template>
                 </f7-list-item>
                 <f7-list-item media-item
                               title="Block Libraries"
                               footer="Develop custom extensions for Blockly scripts"
                               link="blocks/">
-                  <f7-icon slot="media" f7="ticket" color="gray" />
+                  <template #media>
+                    <f7-icon f7="ticket" color="gray" />
+                  </template>
                 </f7-list-item>
                 <f7-list-item media-item
                               title="Semantic Tags"
                               footer="Extend the list of semantic tags for the model"
                               link="semantics/">
-                  <f7-icon slot="media" f7="list_bullet_indent" color="gray" />
+                  <template #media>
+                    <f7-icon f7="list_bullet_indent" color="gray" />
+                  </template>
                 </f7-list-item>
                 <f7-list-item media-item
                               title="Things File Definitions"
                               footer="Copy all Things' file definitions to clipboard"
                               link="#"
                               @click="copyFileDefinitionToClipboard(ObjectType.THING)">
-                  <f7-icon slot="media" f7="lightbulb" color="gray" />
+                  <template #media>
+                    <f7-icon f7="lightbulb" color="gray" />
+                  </template>
                 </f7-list-item>
                 <f7-list-item media-item
                               title="Items File Definitions"
                               footer="Copy all Items' file definitions to clipboard"
                               link="#"
                               @click="copyFileDefinitionToClipboard(ObjectType.ITEM)">
-                  <f7-icon slot="media" f7="square_on_circle" color="gray" />
+                  <template #media>
+                    <f7-icon f7="square_on_circle" color="gray" />
+                  </template>
                 </f7-list-item>
                 <f7-list-item media-item
                               title="Add Items from DSL Definition"
                               footer="Create or update items &amp; links in bulk"
-                              link="add-items-dsl">
-                  <f7-icon slot="media" f7="text_badge_plus" color="gray" />
+                              link="add-items-dsl/">
+                  <template #media>
+                    <f7-icon f7="text_badge_plus" color="gray" />
+                  </template>
                 </f7-list-item>
               </f7-list>
             </f7-col>
@@ -74,30 +80,40 @@
                               footer="Show a panel with various tools and help"
                               link=""
                               no-chevron
-                              @click="$f7.emit('toggleDeveloperDock')">
-                  <f7-icon slot="media" f7="wrench" color="gray" />
-                  <div slot="header" style="height: 100%; height: 32px" class="display-flex float-right flex-direction-column justify-content-center">
-                    <f7-toggle color="blue" :checked="$store.state.developerDock" />
-                  </div>
+                              @click="f7.emit('toggleDeveloperDock')">
+                  <template #media>
+                    <f7-icon f7="wrench" color="gray" />
+                  </template>
+                  <template #header>
+                    <div style="height: 100%; height: 32px" class="display-flex float-right flex-direction-column justify-content-center">
+                      <f7-toggle color="blue" :checked="runtimeStore.showDeveloperDock ? true : null" />
+                    </div>
+                  </template>
                 </f7-list-item>
                 <f7-list-item media-item
                               title="API Explorer"
                               footer="Discover and access the REST API directly"
-                              link="api-explorer">
-                  <f7-icon slot="media" f7="burn" color="gray" />
+                              link="api-explorer/">
+                  <template #media>
+                    <f7-icon f7="burn" color="gray" />
+                  </template>
                 </f7-list-item>
                 <f7-list-item media-item
                               title="Log Viewer"
                               footer="Monitor openHAB log output"
-                              link="log-viewer">
-                  <f7-icon slot="media" f7="square_list" color="gray" />
+                              link="log-viewer/">
+                  <template #media>
+                    <f7-icon f7="square_list" color="gray" />
+                  </template>
                 </f7-list-item>
                 <f7-list-item smart-select
                               :smartSelectParams="{ openIn: 'popup', closeOnSelect: true }"
                               media-item
                               title="UI Logging"
                               footer="Set the log level for the browser console logs">
-                  <f7-icon slot="media" f7="exclamationmark_circle" color="gray" />
+                  <template #media>
+                    <f7-icon f7="exclamationmark_circle" color="gray" />
+                  </template>
                   <select v-model="logLevel" @change="onLogLevelChange">
                     <option value="TRACE">
                       Trace
@@ -123,11 +139,11 @@
             </f7-col>
           </f7-row>
           <f7-block-footer v-if="$t('home.overview.title') !== 'Overview'" class="margin text-align-center">
-            <small v-t="'admin.notTranslatedYet'" />
+            <small>{{ $t('admin.notTranslatedYet') }}</small>
           </f7-block-footer>
         </f7-block>
       </f7-tab>
-      <f7-tab id="debug-tab" @tab:show="() => this.currentTab = 'debug'" :tab-active="currentTab === 'debug'">
+      <f7-tab id="tab-debug" :tab-active="currentTab === 'debug'">
         <!-- Test SSE connection -->
         <f7-block class="block-narrow">
           <f7-row>
@@ -185,7 +201,9 @@
                     placeholder="e.g. lightbulb, qualityofservice-2"
                     :info="iconUrl"
                     clear-button>
-                    <img :src="iconUrl" width="44" slot="media">
+                    <template #media>
+                      <img :src="iconUrl" width="44">
+                    </template>
                   </f7-list-input>
                 </f7-list>
               </f7-block>
@@ -201,15 +219,25 @@
 @media (max-width 1279px)
   .developer-sidebar-toggle
     display none
-
 </style>
 
 <script>
+import { f7 } from 'framework7-vue'
+import { mapStores } from 'pinia'
+
 import FileDefinition from '@/pages/settings/file-definition-mixin'
+
+import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
 export default {
   mixins: [FileDefinition],
-  components: {
+  props: {
+    f7router: Object
+  },
+  setup () {
+    return {
+      f7
+    }
   },
   data () {
     return {
@@ -222,6 +250,9 @@ export default {
       split: this.$device.desktop ? 'vertical' : 'horizontal',
       logLevel: localStorage.getItem('openhab.ui:logLevel') || 'INFO'
     }
+  },
+  computed: {
+    ...mapStores(useRuntimeStore)
   },
   methods: {
     onPageBeforeRemove () {

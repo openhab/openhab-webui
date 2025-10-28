@@ -7,17 +7,17 @@
       <f7-col width="100" class="cell-slider display-flex flex-direction-column justify-content-center">
         <slot name="beforeSlider">
           <div v-if="context.component.slots" class="margin-top display-flex flex-direction-column justify-content-center">
-            <generic-widget-component :context="childContext(slotComponent)"
-                                      v-for="(slotComponent, idx) in context.component.slots.beforeSlider"
+            <generic-widget-component v-for="(slotComponent, idx) in context.component.slots.beforeSlider"
+                                      :context="childContext(slotComponent)"
                                       :key="'beforeSlider-' + idx"
                                       @command="onCommand" />
           </div>
         </slot>
         <oh-slider class="slider-control" :context="sliderContext" />
-        <div class="after-slider" v-if="context.component.slots && context.component.slots.afterSlider">
+        <div v-if="context.component.slots && context.component.slots.afterSlider" class="after-slider">
           <slot name="afterSlider">
-            <generic-widget-component :context="childContext(slotComponent)"
-                                      v-for="(slotComponent, idx) in context.component.slots.afterSlider"
+            <generic-widget-component v-for="(slotComponent, idx) in context.component.slots.afterSlider"
+                                      :context="childContext(slotComponent)"
                                       :key="'afterSlider-' + idx"
                                       @command="onCommand" />
           </slot>

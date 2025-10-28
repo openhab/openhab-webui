@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest'
 import dslUtil from '../dslUtil'
 
 function createSitemapComponent (uid, label) {

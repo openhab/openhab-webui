@@ -1,15 +1,10 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
-    <f7-navbar :title="'Configure ' + addon.label + dirtyIndicator" back-link="Back">
-      <f7-nav-right>
-        <f7-link @click="save()"
-                 v-if="$theme.md"
-                 icon-md="material:save"
-                 icon-only />
-        <f7-link @click="save()" v-if="!$theme.md">
-          Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
-        </f7-link>
-      </f7-nav-right>
+    <f7-navbar>
+      <oh-nav-content :title="'Configure ' + addon.label + dirtyIndicator"
+                      :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
+                      @save="save()"
+                      :f7router />
     </f7-navbar>
     <f7-block v-if="type === 'persistence'" class="block-narrow">
       <f7-col>
@@ -84,6 +79,8 @@
 </style>
 
 <script>
+import { f7, theme } from 'framework7-vue'
+
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import DirtyMixin from '@/pages/settings/dirty-mixin'
 import cloneDeep from 'lodash/cloneDeep'
@@ -95,7 +92,13 @@ export default {
   components: {
     ConfigSheet
   },
-  props: ['addonId'],
+  props: {
+    addonId: String,
+    f7router: Object
+  },
+  setup () {
+    return { theme }
+  },
   data () {
     return {
       addon: {},
@@ -142,8 +145,8 @@ export default {
     save () {
       let promises = []
 
-      const originalLoggerMap = Object.fromEntries(this.originalLoggerPackages.map(l => [l.loggerName, l.level]))
-      this.loggerPackages.forEach(logger => {
+      const originalLoggerMap = Object.fromEntries(this.originalLoggerPackages.map((l) => [l.loggerName, l.level]))
+      this.loggerPackages.forEach((logger) => {
         if (logger.level !== originalLoggerMap[logger.loggerName]) {
           if (logger.level === 'DEFAULT') {
             promises.push(this.$oh.api.delete('/rest/logging/' + logger.loggerName))
@@ -158,14 +161,14 @@ export default {
       }
 
       Promise.all(promises).then(() => {
-        this.$f7.toast.create({
+        f7.toast.create({
           text: 'Saved',
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
       })
       this.dirty = false
-      this.$f7router.back()
+      this.f7router.back()
     },
     onPageAfterIn () {
       if (window) {
@@ -195,14 +198,14 @@ export default {
     }
     let requestUri = '/rest/addons/' + this.strippedAddonId + (this.serviceId ? '?serviceId=' + this.serviceId : '')
 
-    this.$oh.api.get(requestUri).then(data => {
+    this.$oh.api.get(requestUri).then((data) => {
       this.addon = data
       const configDescriptionURI = this.addon.configDescriptionURI
 
       if (configDescriptionURI) {
-        this.$oh.api.get('/rest/config-descriptions/' + configDescriptionURI).then(data2 => {
+        this.$oh.api.get('/rest/config-descriptions/' + configDescriptionURI).then((data2) => {
           this.configDescription = data2
-          this.$oh.api.get('/rest/addons/' + this.strippedAddonId + '/config' + (this.serviceId ? '?serviceId=' + this.serviceId : '')).then(data3 => {
+          this.$oh.api.get('/rest/addons/' + this.strippedAddonId + '/config' + (this.serviceId ? '?serviceId=' + this.serviceId : '')).then((data3) => {
             this.originalConfig = data3
             this.config = cloneDeep(data3)
             this.configLoaded = true
@@ -210,9 +213,9 @@ export default {
         })
       }
       if (Array.isArray(this.addon.loggerPackages)) {
-        const promises = this.addon.loggerPackages.map(logger => this.$oh.api.get('/rest/logging/' + logger))
-        Promise.all(promises).then(data => {
-          this.originalLoggerPackages = data.flatMap(logging => logging.loggers).sort((a, b) => a.loggerName.localeCompare(b.loggerName))
+        const promises = this.addon.loggerPackages.map((logger) => this.$oh.api.get('/rest/logging/' + logger))
+        Promise.all(promises).then((data) => {
+          this.originalLoggerPackages = data.flatMap((logging) => logging.loggers).sort((a, b) => a.loggerName.localeCompare(b.loggerName))
           this.loggerPackages = cloneDeep(this.originalLoggerPackages)
           this.loggersLoaded = true
         })

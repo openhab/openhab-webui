@@ -1,26 +1,22 @@
+import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import SitemapCode from '../sitemap-code.vue'
-import { shallowMount, createLocalVue } from '@vue/test-utils'
-import Framework7 from 'framework7'
-import Framework7Vue from 'f7vue'
+import { shallowMount } from '@vue/test-utils'
 
 describe('SitemapCode', () => {
-  const localVue = createLocalVue()
-  Framework7.use(Framework7Vue)
   let wrapper = null
 
   beforeEach(() => {
     wrapper = shallowMount(SitemapCode, {
-      localVue,
-      propsData: {
+      props: {
         sitemap: { uid: 'test', config: { label: 'Test' } }
       },
-      stubs: [
-        'editor'
-      ]
+      global: {
+        stubs: ['editor']
+      }
     })
   })
 
-  afterEach(() => wrapper.destroy())
+  afterEach(() => wrapper.unmount())
 
   it('has generated a sitemap definition from the component', () => {
     expect(wrapper.vm.sitemapDsl).toBeDefined()
@@ -356,28 +352,30 @@ describe('SitemapCode', () => {
         icon: 'screen'
       },
       slots: {
-        widgets: [{
-          component: 'Button',
-          config: {
-            row: 1,
-            column: 1,
-            item: 'Scene_General',
-            label: 'Morning',
-            stateless: true,
-            cmd: 1
+        widgets: [
+          {
+            component: 'Button',
+            config: {
+              row: 1,
+              column: 1,
+              item: 'Scene_General',
+              label: 'Morning',
+              stateless: true,
+              cmd: 1
+            }
+          },
+          {
+            component: 'Button',
+            config: {
+              row: 1,
+              column: 2,
+              item: 'Scene_General',
+              label: 'Cinéma',
+              cmd: '10',
+              releaseCmd: '11'
+            }
           }
-        },
-        {
-          component: 'Button',
-          config: {
-            row: 1,
-            column: 2,
-            item: 'Scene_General',
-            label: 'Cinéma',
-            cmd: '10',
-            releaseCmd: '11'
-          }
-        }]
+        ]
       }
     })
   })
@@ -450,11 +448,7 @@ describe('SitemapCode', () => {
       component: 'Selection',
       config: {
         item: 'Echos',
-        mappings: [
-          'EchoDot1="Echo 1"',
-          'EchoDot2="Echo 2"',
-          '"EchoDot1,EchoDot2"=Alle'
-        ]
+        mappings: ['EchoDot1="Echo 1"', 'EchoDot2="Echo 2"', '"EchoDot1,EchoDot2"=Alle']
       }
     })
   })
@@ -557,11 +551,7 @@ describe('SitemapCode', () => {
       component: 'Text',
       config: {
         item: 'Test',
-        visibility: [
-          'Battery<30',
-          'Battery>50',
-          'Battery_Level>=20'
-        ]
+        visibility: ['Battery<30', 'Battery>50', 'Battery_Level>=20']
       }
     })
   })
