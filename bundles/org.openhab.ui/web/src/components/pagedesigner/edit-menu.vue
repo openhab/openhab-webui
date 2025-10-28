@@ -17,6 +17,16 @@
 
 <script>
 export default {
-  props: ['context', 'component', 'page', 'right', 'text', 'iconF7', 'configureLabel', 'removeLabel', 'parentSlot']
+  props: {
+    context: Object,
+    component: Object,
+    page: Object,
+    right: Boolean,
+    text: String,
+    iconF7: String,
+    configureLabel: String,
+    removeLabel: String,
+    parentSlot: String
+  }
 }
 </script>

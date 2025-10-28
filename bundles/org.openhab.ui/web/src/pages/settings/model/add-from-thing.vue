@@ -1,15 +1,10 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn">
-    <f7-navbar title="Add Items from Thing" back-link="Back">
-      <f7-nav-right class="if-not-aurora">
-        <f7-link @click="add()"
-                 v-if="$theme.md"
-                 icon-md="material:save"
-                 icon-only />
-        <f7-link @click="add()" v-if="!$theme.md">
-          Add
-        </f7-link>
-      </f7-nav-right>
+    <f7-navbar>
+      <oh-nav-content title="Add Items from Thing"
+                      save-link="Add"
+                      @save="add()"
+                      :f7router />
     </f7-navbar>
 
     <f7-block class="block-narrow">
@@ -48,21 +43,27 @@
           Equipment
         </f7-block-title>
         <f7-block-footer v-if="createEquipment && !thingId" class="padding-left padding-right">
-          Select the Thing you wish to create as a new Equipment group in the model. It will be placed under the parent group above, if any.
-          You can alter the new group's details and change its equipment class.
+          Select the Thing you wish to create as a new Equipment group in the model. It will be
+          placed under the parent group above, if any. You can alter the new group's details and
+          change its equipment class.
         </f7-block-footer>
         <f7-block-footer v-else-if="createEquipment && thingId" class="padding-left padding-right">
-          Complete the details of the new Equipment group to add to the model. It will be placed under the parent group above, if any.
-          You can alter the new group's details and change its equipment class.
+          Complete the details of the new Equipment group to add to the model. It will be placed
+          under the parent group above, if any. You can alter the new group's details and change its
+          equipment class.
         </f7-block-footer>
-        <f7-block-footer v-else-if="!createEquipment && !thingId" class="padding-left padding-right">
-          Select the Thing for which you wish to create Point Items from its Channels. They will be placed under the parent group above, if any.
+        <f7-block-footer v-else-if="!createEquipment && !thingId"
+                         class="padding-left padding-right">
+          Select the Thing for which you wish to create Point Items from its Channels. They will be
+          placed under the parent group above, if any.
         </f7-block-footer>
         <f7-list inline-labels no-hairlines-md v-if="!thingId">
-          <thing-picker title="Thing"
-                        name="thing"
-                        :value="selectedThingId"
-                        @input="(e) => selectedThingId = e" />
+          <f7-list-group>
+            <thing-picker title="Thing"
+                          name="thing"
+                          :value="selectedThingId"
+                          @input="(e) => (selectedThingId = e)" />
+          </f7-list-group>
         </f7-list>
         <f7-block v-if="!ready" class="text-align-center">
           <f7-preloader />
@@ -70,15 +71,17 @@
         </f7-block>
         <div v-else-if="selectedThing.UID && selectedThingType.UID">
           <f7-list v-if="createEquipment" media-list class="equipment-group-picker">
-            <item-picker :title="selectedGroup ? 'Change Selected Group' : 'Pick Existing Group'"
-                         textColor="blue"
-                         :hideIcon="true"
-                         :items="selectableGroups"
-                         :multiple="false"
-                         :noModelPicker="true"
-                         :setValueText="false"
-                         :value="selectedGroup?.name"
-                         @input="selectExistingGroup($event)" />
+            <f7-list-group>
+              <item-picker :title="selectedGroup ? 'Change Selected Group' : 'Pick Existing Group'"
+                           textColor="blue"
+                           :hideIcon="true"
+                           :items="selectableGroups"
+                           :multiple="false"
+                           :noModelPicker="true"
+                           :setValueText="false"
+                           :value="selectedGroup?.name"
+                           @input="selectExistingGroup($event)" />
+            </f7-list-group>
           </f7-list>
           <item-form v-if="createEquipment"
                      :item="equipmentItem"
@@ -88,10 +91,10 @@
                      :force-semantics="true" />
           <f7-block-title>Channels</f7-block-title>
           <f7-block-footer class="padding-left padding-right">
-            Check the channels you wish to create as new Point items.
-            You can alter the suggested names and labels as well as the semantic class and related property.<br><br>
-            The newly created Points will be linked to their respective channels with the default profile
-            (you will be able to configure the links individually later if needed).
+            Check the channels you wish to create as new Point items. You can alter the suggested
+            names and labels as well as the semantic class and related property.<br><br>
+            The newly created Points will be linked to their respective channels with the default
+            profile (you will be able to configure the links individually later if needed).
             <f7-link class="display-block margin-top-half" @click="switchToExpertMode" color="blue">
               Expert Mode
             </f7-link>
@@ -139,6 +142,8 @@
 </style>
 
 <script>
+import { theme, f7 } from 'framework7-vue'
+
 import ThingPicker from '@/components/config/controls/thing-picker.vue'
 import ModelPickerPopup from '@/components/model/model-picker-popup.vue'
 import ChannelList from '@/components/thing/channel-list.vue'
@@ -154,6 +159,8 @@ import generateTextualDefinition from './generate-textual-definition'
 
 import cloneDeep from 'lodash/cloneDeep'
 
+import { useSemanticsStore } from '@/js/stores/useSemanticsStore'
+
 export default {
   mixins: [ThingStatus, ItemMixin],
   components: {
@@ -163,7 +170,15 @@ export default {
     ItemForm,
     ItemPicker
   },
-  props: ['parent', 'createEquipment', 'thingId'],
+  props: {
+    parent: Object,
+    createEquipment: Boolean,
+    thingId: String,
+    f7router: Object // Added for navigation
+  },
+  setup () {
+    return { theme }
+  },
   data () {
     return {
       ready: true,
@@ -182,7 +197,7 @@ export default {
   computed: {
     selectableGroups () {
       return this.items.filter((i) => {
-        return (i.type === 'Group') && !i.tags.find((t) => this.$store.getters.semanticClasses.Locations.indexOf(t) >= 0)
+        return (i.type === 'Group' && !i.tags.find((t) => useSemanticsStore().Locations.indexOf(t) >= 0))
       })
     }
   },
@@ -205,7 +220,7 @@ export default {
 
         const itemsDefinition = generateTextualDefinition(this.selectedThing, this.selectedThingChannelTypes, (this.createEquipment) ? this.equipmentItem : null, parentGroupsForEquipment, parentGroupsForPoints)
 
-        this.$f7router.navigate('/settings/items/add-from-textual-definition', {
+        this.f7router.navigate('/settings/items/add-from-textual-definition', {
           props: {
             textualDefinition: itemsDefinition
           },
@@ -214,7 +229,7 @@ export default {
         })
       } catch (e) {
         console.error(e)
-        this.$f7.dialog.alert('There was an error generating the items definition: ' + e)
+        f7.dialog.alert('There was an error generating the items definition: ' + e)
       }
     },
     createNewGroup () {
@@ -238,7 +253,7 @@ export default {
       if (!item.tags) {
         item.tags = []
       }
-      const hasEquipmentTag = item.tags.find((t) => this.$store.getters.semanticClasses.Equipment.indexOf(t) >= 0)
+      const hasEquipmentTag = item.tags.find((t) => useSemanticsStore().Equipment.indexOf(t) >= 0)
       if (!hasEquipmentTag) {
         item.tags.push(this.selectedThing.semanticEquipmentTag || 'Equipment')
       }
@@ -247,15 +262,15 @@ export default {
     },
     add () {
       if (!this.selectedThingId) {
-        this.$f7.dialog.alert('Please select a Thing')
+        f7.dialog.alert('Please select a Thing')
         return
       }
       if (this.createEquipment && !this.equipmentItem.name) {
-        this.$f7.dialog.alert('Please fill out the details for the new Equipment group')
+        f7.dialog.alert('Please fill out the details for the new Equipment group')
         return
       }
       if (!this.newPointItems.length && !this.updatedPointItems.length) {
-        this.$f7.dialog.alert('Please check at least one channel')
+        f7.dialog.alert('Please check at least one channel')
         return
       }
 
@@ -273,7 +288,7 @@ export default {
       })
 
       if (!valid) {
-        this.$f7.dialog.alert('There are validation errors in some of the Points item to create and link to checked channels')
+        f7.dialog.alert('There are validation errors in some of the Points item to create and link to checked channels')
         return
       }
 
@@ -289,7 +304,7 @@ export default {
         }
       })
 
-      let dialog = this.$f7.dialog.progress('Creating the Equipment and Points...')
+      let dialog = f7.dialog.progress('Creating the Equipment and Points...')
       const pointItems = [...this.newPointItems, ...this.updatedPointItems]
       const payload = [...pointItems.map((p) => {
         let copy = Object.assign({}, p)
@@ -320,27 +335,27 @@ export default {
 
           Promise.all(linkPromises).then((data) => {
             dialog.setProgress(100)
-            this.$f7.toast.create({
+            f7.toast.create({
               text: 'Items created and linked',
               destroyOnClose: true,
               closeTimeout: 2000
             }).open()
             dialog.close()
-            this.$f7router.back()
+            this.f7router.back()
           }).catch((err) => {
             dialog.close()
             console.error(err)
-            this.$f7.dialog.alert('An error occurred while creating the links: ' + err)
+            f7.dialog.alert('An error occurred while creating the links: ' + err)
           })
         }).catch((err) => {
           dialog.close()
           console.error(err)
-          this.$f7.dialog.alert('An error occurred while creating unit metadata: ' + err)
+          f7.dialog.alert('An error occurred while creating unit metadata: ' + err)
         })
       }).catch((err) => {
         dialog.close()
         console.error(err)
-        this.$f7.dialog.alert('An error occurred while creating the items: ' + err)
+        f7.dialog.alert('An error occurred while creating the items: ' + err)
       })
     },
     pickParentFromModel (value) {
@@ -351,7 +366,7 @@ export default {
         component: ModelPickerPopup
       }
 
-      this.$f7router.navigate({
+      this.f7router.navigate({
         url: 'pick-from-model',
         route: {
           path: 'pick-from-model',
@@ -367,9 +382,9 @@ export default {
         }
       })
 
-      this.$f7.once('itemsPicked', this.pickParentFromModel)
-      this.$f7.once('modelPickerClosed', () => {
-        this.$f7.off('itemsPicked', this.pickParentFromModel)
+      f7.once('itemsPicked', this.pickParentFromModel)
+      f7.once('modelPickerClosed', () => {
+        f7.off('itemsPicked', this.pickParentFromModel)
       })
     }
   },
@@ -386,7 +401,7 @@ export default {
         let typePromises = [this.$oh.api.get('/rest/thing-types/' + this.selectedThing.thingTypeUID),
           this.$oh.api.get('/rest/channel-types?prefixes=system,' + this.selectedThing.thingTypeUID.split(':')[0])]
 
-        Promise.all(typePromises).then(data2 => {
+        Promise.all(typePromises).then((data2) => {
           this.selectedThingType = data2[0]
           this.selectedThingChannelTypes = data2[1]
 

@@ -12,7 +12,7 @@
                     @treeview:open="setTagOpened(true)"
                     @treeview:close="setTagOpened(false)"
                     @click="select">
-    <draggable :disabled="!canDragDrop"
+    <draggable :disabled="!canDragDrop ? true : null"
                :list="children"
                group="semantic-tags-treeview"
                filter=".non-draggable"
@@ -34,27 +34,30 @@
                                :picker="picker"
                                @selected="(event) => $emit('selected', event)"
                                :selectedTag="selectedTag"
-                               :moveState="moveState"
                                :class="{ 'non-draggable': !childTag.editable }" />
     </draggable>
-    <div v-if="showSynonyms" slot="label" class="synonyms-class">
-      {{ synonyms }}
-    </div>
-    <f7-radio slot="content-start"
-              name="semantic-tag-radio"
-              v-if="picker"
-              :checked="selected"
-              @change="select" />
-    <f7-badge v-if="tag.description"
-              slot="content-end"
-              class="semantic-tag-tooltip-badge"
-              :tooltip="tooltip">
-      <f7-icon class="tooltip-icon"
-               f7="info_circle"
-               ios="f7:info_circle"
-               md="material:info"
-               color="gray" />
-    </f7-badge>
+    <template #label>
+      <div v-if="showSynonyms" class="synonyms-class">
+        {{ synonyms }}
+      </div>
+    </template>
+    <template #content-start>
+      <f7-radio v-if="picker"
+                name="semantic-tag-radio"
+                :checked="selected"
+                @change="select" />
+    </template>
+    <template #content-end>
+      <f7-badge v-if="tag.description"
+                class="semantic-tag-tooltip-badge"
+                :tooltip="tooltip">
+        <f7-icon class="tooltip-icon"
+                 f7="info_circle"
+                 ios="f7:info_circle"
+                 md="material:info"
+                 color="gray" />
+      </f7-badge>
+    </template>
   </f7-treeview-item>
 </template>
 
@@ -64,7 +67,10 @@
 </style>
 
 <script>
-import Draggable from 'vuedraggable'
+import { inject } from 'vue'
+import { VueDraggableNext as Draggable } from 'vue-draggable-next'
+
+import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
 export default {
   name: 'semantics-treeview-item',
@@ -76,19 +82,17 @@ export default {
     showNames: Boolean,
     showSynonyms: Boolean,
     canDragDrop: Boolean,
-    selectedTag: Object,
-    moveState: {
-      type: Object,
-      default: () => ({
-        moving: false,
-        moveDelayedOpen: null,
-        moveTarget: null
-      })
-    }
+    selectedTag: Object
   },
+  emits: ['selected'],
   components: {
     Draggable,
     SemanticsTreeviewItem: 'semantics-treeview-item'
+  },
+  setup () {
+    return {
+      moveState: inject('moveState')
+    }
   },
   computed: {
     children () {
@@ -97,7 +101,7 @@ export default {
       })
     },
     iconColor () {
-      return (this.tag.editable || this.picker) ? (this.$f7.data.themeOptions.dark === 'dark' ? 'white' : 'black') : 'gray'
+      return (this.tag.editable || this.picker) ? (useUIOptionsStore().getDarkMode() === 'dark' ? 'white' : 'black') : 'gray'
     },
     canHaveChildren () {
       return (this.children.length > 0 || this.moveState.moving) === true
@@ -132,14 +136,12 @@ export default {
       }
     },
     select (event) {
-      let self = this
-      let $ = self.$$
-      if ($(event.target).is('.treeview-toggle')) return
+      if (this.$$(event.target).is('.treeview-toggle')) return
       this.$emit('selected', this.tag)
     },
     setTagOpened (opened, uid) {
       const tagUid = uid || this.tag.uid
-      this.$set(this.expandedTags, tagUid, opened)
+      this.expandedTags[tagUid] = opened
     },
     onDragStart (event) {
       console.debug('Drag start event:', event)

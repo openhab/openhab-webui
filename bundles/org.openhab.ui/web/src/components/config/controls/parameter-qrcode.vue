@@ -1,18 +1,29 @@
 <template>
   <ul>
     <f7-list-item
-      :floating-label="$theme.md"
+      :floating-label="theme.md"
       :title="configDescription.label">
-      <vue-qrcode :value="value" slot="media" />
+      <template #media>
+        <vue-qrcode :value="value" />
+      </template>
     </f7-list-item>
   </ul>
 </template>
 
 <script>
+import { theme } from 'framework7-vue'
+import { defineAsyncComponent } from 'vue'
+
 export default {
-  props: ['configDescription', 'value'],
+  props: {
+    configDescription: Object,
+    value: String
+  },
+  setup () {
+    return { theme }
+  },
   components: {
-    'vue-qrcode': () => import(/* webpackChunkName: "vue-qrcode" */ 'vue-qrcode')
+    'vue-qrcode': defineAsyncComponent(() => import(/* webpackChunkName: "vue-qrcode" */ 'vue-qrcode'))
   }
 }
 </script>

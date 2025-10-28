@@ -18,7 +18,7 @@ export function isChildOf (semanticValue, potentialSemanticParent) {
  * @param {Boolean} partial match subclasses
  */
 export function findEquipment (arr, value, partial) {
-  return arr.filter((e) => (partial) ? isChildOf(e.item.metadata.semantics.value, value) : e.item.metadata.semantics.value === value)
+  return arr.filter((e) => (partial) ? isChildOf(e.metadata.semantics.value, value) : e.metadata.semantics.value === value)
 }
 
 /**

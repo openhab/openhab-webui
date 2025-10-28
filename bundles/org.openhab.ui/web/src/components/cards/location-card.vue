@@ -8,8 +8,8 @@
         <small>{{ parentLocation }}</small>
       </div>
       <div v-if="context && context.component.slots && context.component.slots.glance" class="display-flex flex-direction-column align-items-flex-start">
-        <generic-widget-component :context="childContext(slotComponent)"
-                                  v-for="(slotComponent, idx) in context.component.slots.glance"
+        <generic-widget-component v-for="(slotComponent, idx) in context.component.slots.glance"
+                                  :context="childContext(slotComponent)"
                                   :key="'glance-' + idx"
                                   @command="onCommand" />
       </div>
@@ -89,9 +89,14 @@ import ModelCard from './model-card.vue'
 import StatusBadge from './glance/location/status-badge.vue'
 import MeasurementBadge from './glance/location/measurement-badge.vue'
 
+import { useStatesStore } from '@/js/stores/useStatesStore'
+
 export default {
   mixins: [mixin, CardMixin],
-  props: ['parentLocation', 'tabContext'],
+  props: {
+    parentLocation: String,
+    tabContext: Object
+  },
   components: {
     ModelCard,
     StatusBadge,
@@ -108,7 +113,7 @@ export default {
     },
     propertiesListContext () {
       return {
-        store: this.$store.getters.trackedItems,
+        store: useStatesStore().trackedItems,
         component: {
           component: 'oh-list',
           config: {
@@ -122,7 +127,7 @@ export default {
     },
     equipmentListContext () {
       return {
-        store: this.$store.getters.trackedItems,
+        store: useStatesStore().trackedItems,
         component: equipmentListComponent(this.element.item.equipment, this.tabContext, true)
       }
     }

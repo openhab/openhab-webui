@@ -1,6 +1,8 @@
 <template>
   <div>
-    <f7-block v-if="visible" class="oh-block" :style="{ 'z-index': (context.editmode) ? 100 - context.parent.component.slots.default.indexOf(context.component) : 'auto !important', ...config.style }">
+    <f7-block v-if="visible"
+              class="oh-block"
+              :style="{ 'z-index': (context.editmode) ? 100 - context.parent.component.slots.default.indexOf(context.component) : 'auto !important', ...config.style }">
       <hr v-if="context.editmode">
       <f7-block-title v-if="config.title">
         {{ config.title }}
@@ -28,10 +30,10 @@
         </f7-menu-item>
       </f7-menu>
       <component v-for="(component, idx) in context.component.slots.default"
+                 v-bind="$attrs"
                  :is="component.component"
                  :key="idx"
-                 :context="childContext(component)"
-                 v-on="$listeners" />
+                 :context="childContext(component)" />
     </f7-block>
   </div>
 </template>

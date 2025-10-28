@@ -20,6 +20,9 @@
 </template>
 
 <script>
+import { defineAsyncComponent } from 'vue'
+import { utils } from 'framework7'
+
 import mixin from '../widget-mixin'
 import { OhVideoDefinition } from '@/assets/definitions/widgets/system'
 
@@ -27,12 +30,12 @@ export default {
   mixins: [mixin],
   widget: OhVideoDefinition,
   components: {
-    'oh-video-videojs': () => import(/* webpackChunkName: "oh-video-videojs" */ './oh-video-videojs.vue'),
-    'oh-video-webrtc': () => import(/* webpackChunkName: "oh-video-webrtc" */ './oh-video-webrtc.vue')
+    'oh-video-videojs': defineAsyncComponent(() => import(/* webpackChunkName: "oh-video-videojs" */ './oh-video-videojs.vue')),
+    'oh-video-webrtc': defineAsyncComponent(() => import(/* webpackChunkName: "oh-video-webrtc" */ './oh-video-webrtc.vue'))
   },
   data () {
     return {
-      t: this.$utils.id(),
+      t: utils.id(),
       src: null
     }
   },
@@ -46,9 +49,7 @@ export default {
   computed: {
     itemState () {
       if (this.config.item) {
-        return (
-          this.$utils.id() + '|' + this.context.store[this.config.item].state
-        )
+        return utils.id() + '|' + this.context.store[this.config.item].state
       }
       return null
     }

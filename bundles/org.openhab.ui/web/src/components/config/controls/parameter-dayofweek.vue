@@ -5,14 +5,18 @@
                   :key="day"
                   :title="labels[$idx]"
                   checkbox
-                  :checked="isSelected(day)"
+                  :checked="isSelected(day) ? true : null"
                   @change="(evt) => select(day, evt.target.checked)" />
   </ul>
 </template>
 
 <script>
 export default {
-  props: ['configDescription', 'value'],
+  props: {
+    configDescription: Object,
+    value: [String, Array]
+  },
+  emits: ['input'],
   data () {
     return {
       labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],

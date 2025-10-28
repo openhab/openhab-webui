@@ -12,7 +12,7 @@ jobs:
     steps:
       # pinning to SHA to mitigate possible supply chain attack
       - name: Send bundle stats and build information to RelativeCI
-        uses: relative-ci/agent-action@1707825cbfcc7452b2913d273414705415ae64d4 # v3.0.1
+        uses: relative-ci/agent-action@8504826a02078b05756e4c07e380023cc2c4274a # v3.1.0
         with:
           key: ${{ secrets.RELATIVE_CI_KEY }}
           token: ${{ secrets.GITHUB_TOKEN }}

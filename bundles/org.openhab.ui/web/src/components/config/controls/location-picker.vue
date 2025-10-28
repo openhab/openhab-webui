@@ -15,19 +15,27 @@
 </template>
 
 <script>
+import { nextTick } from 'vue'
+
 import { latLng, Icon } from 'leaflet'
-import { LMap, LTileLayer, LMarker } from 'vue2-leaflet'
+import { LMap, LTileLayer, LMarker } from '@vue-leaflet/vue-leaflet'
 import 'leaflet/dist/leaflet.css'
+
+import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
+import { mapStores } from 'pinia'
 
 delete Icon.Default.prototype._getIconUrl
 Icon.Default.mergeOptions({
-  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
-  iconUrl: require('leaflet/dist/images/marker-icon.png'),
-  shadowUrl: require('leaflet/dist/images/marker-shadow.png')
+  iconRetinaUrl: import('leaflet/dist/images/marker-icon-2x.png'),
+  iconUrl: import('leaflet/dist/images/marker-icon.png'),
+  shadowUrl: import('leaflet/dist/images/marker-shadow.png')
 })
 
 export default {
-  props: ['value'],
+  props: {
+    value: String
+  },
+  emits: ['input'],
   components: {
     LMap,
     LTileLayer,
@@ -39,7 +47,7 @@ export default {
       zoom: 1,
       center: latLng(48, 6),
       // url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      url: `https://a.basemaps.cartocdn.com/${this.$f7.data.themeOptions.dark}_all/{z}/{x}/{y}.png`,
+      url: `https://a.basemaps.cartocdn.com/${useUIOptionsStore().getDarkMode()}_all/{z}/{x}/{y}.png`,
       attribution: '&copy; <a class="external" target="_blank" href="http://osm.org/copyright">OpenStreetMap</a>, &copy; <a class="external" target="_blank" href="https://carto.com/attribution/">CARTO</a>',
       marker: null,
       mapOptions: {
@@ -47,8 +55,11 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapStores(useUIOptionsStore)
+  },
   mounted () {
-    this.$nextTick(() => {
+    nextTick(() => {
       this.zoom = (this.value) ? 15 : 1
       this.marker = (this.value) ? latLng(this.value.split(',')) : null
       this.center = (this.value) ? latLng(this.value.split(',')) : latLng(48, 6)
@@ -60,7 +71,7 @@ export default {
               this.center = latLng(data.location.split(','))
               this.zoom = 15
               this.showMap = false
-              this.$nextTick(() => {
+              nextTick(() => {
                 this.showMap = true
               })
             }

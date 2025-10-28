@@ -1,26 +1,22 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:afterout="onPageAfterOut">
-    <f7-navbar :title="(createMode ? 'Create scene' : rule.name) + dirtyIndicator" back-link="Back" no-hairline>
-      <f7-nav-right v-if="isEditable">
-        <f7-link @click="save()"
-                 v-if="$theme.md"
-                 icon-md="material:save"
-                 icon-only />
-        <f7-link @click="save()" v-if="!$theme.md">
-          Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
-        </f7-link>
-      </f7-nav-right>
+    <f7-navbar no-hairline>
+      <oh-nav-content :title="(createMode ? 'Create scene' : rule.name) + dirtyIndicator"
+                      :editable="isEditable"
+                      :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
+                      @save="save()"
+                      :f7router />
     </f7-navbar>
     <f7-toolbar tabbar position="top">
-      <f7-link @click="switchTab('design', fromYaml)" :tab-link-active="currentTab === 'design'" class="tab-link">
+      <f7-link @click="switchTab('design', fromYaml)" :tab-link-active="currentTab === 'design'" tab-link="#design">
         Design
       </f7-link>
-      <f7-link @click="switchTab('code', toYaml)" :tab-link-active="currentTab === 'code'" class="tab-link">
+      <f7-link @click="switchTab('code', toYaml)" :tab-link-active="currentTab === 'code'" tab-link="#code">
         Code
       </f7-link>
     </f7-toolbar>
     <f7-tabs class="scene-editor-tabs">
-      <f7-tab id="design" @tab:show="() => this.currentTab = 'design'" :tab-active="currentTab === 'design'">
+      <f7-tab id="design" :tab-active="currentTab === 'design'">
         <f7-block v-if="ready && rule.status && !createMode" class="block-narrow padding-left padding-right" strong>
           <f7-col v-if="!createMode">
             <div class="float-right align-items-flex-start align-items-center">
@@ -103,39 +99,44 @@
                        swipeout
                        media-list
                        @sortable:sort="(ev) => reorderModule(ev, 'actions')">
-                <f7-list-item :title="mod.configuration.itemName"
+                <f7-list-item v-for="mod in rule['actions']"
+                              :title="mod.configuration.itemName"
                               media
-                              v-for="mod in rule['actions']"
                               :key="mod.id"
                               :link="!showModuleControls"
-                              @click.native="(ev) => editModule(ev, mod)"
+                              @click="(ev) => editModule(ev, mod)"
                               swipeout
                               no-chevron>
-                  <f7-link slot="media"
-                           icon-color="red"
-                           icon-aurora="f7:minus_circle_filled"
-                           icon-ios="f7:minus_circle_filled"
-                           icon-md="material:remove_circle_outline"
-                           @click="showSwipeout" />
-                  <span slot="inner" class="inline-command-input">
-                    <f7-input type="text"
-                              outline
-                              :value="mod.configuration.command"
-                              @input="updateActionModule([mod.configuration.itemName, $event.target.value])"
-                              :disabled="showModuleControls" />
-                  </span>
-                  <span slot="after">
-                    <f7-link icon-f7="arrow_uturn_left_circle"
-                             class="margin-left-half"
-                             color="blue"
-                             tooltip="Set to current state"
-                             @click.native="(ev) => updateCommandFromCurrentState(ev, mod)" />
-                    <f7-link icon-f7="arrowtriangle_right_circle"
-                             class="margin-left-half"
-                             color="blue"
-                             tooltip="Test command"
-                             @click.native="(ev) => testCommand(ev, mod)" />
-                  </span>
+                  <template #media>
+                    <f7-link icon-color="red"
+                             icon-aurora="f7:minus_circle_filled"
+                             icon-ios="f7:minus_circle_filled"
+                             icon-md="material:remove_circle_outline"
+                             @click="showSwipeout" />
+                  </template>
+                  <template #inner>
+                    <span class="inline-command-input">
+                      <f7-input type="text"
+                                outline
+                                :value="mod.configuration.command"
+                                @input="updateActionModule([mod.configuration.itemName, $event.target.value])"
+                                :disabled="showModuleControls ? true : null" />
+                    </span>
+                  </template>
+                  <template #after>
+                    <span>
+                      <f7-link icon-f7="arrow_uturn_left_circle"
+                               class="margin-left-half"
+                               color="blue"
+                               tooltip="Set to current state"
+                               @click="(ev) => updateCommandFromCurrentState(ev, mod)" />
+                      <f7-link icon-f7="arrowtriangle_right_circle"
+                               class="margin-left-half"
+                               color="blue"
+                               tooltip="Test command"
+                               @click="(ev) => testCommand(ev, mod)" />
+                    </span>
+                  </template>
                   <f7-swipeout-actions right>
                     <f7-swipeout-button @click="(ev) => deleteModule(ev, 'actions', mod)"
                                         style="background-color: var(--f7-swipeout-delete-button-bg-color)">
@@ -145,19 +146,23 @@
                 </f7-list-item>
               </f7-list>
               <f7-list v-if="isEditable">
-                <!-- <f7-list-item link no-chevron media-item :color="($theme.dark) ? 'black' : 'white'" subtitle="Add Item"
+                <!-- <f7-list-item link no-chevron media-item :color="(theme.dark) ? 'black' : 'white'" subtitle="Add Item"
                               @click="addModule()">
-                  <f7-icon slot="media" color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill"
-                           md="material:control_point" />
+                  <template #media>
+                    <f7-icon color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill"
+                            md="material:control_point" />
+                  </template>
                 </f7-list-item> -->
-                <item-picker title="Select Items"
-                             name="newItem"
-                             :multiple="true"
-                             :value="selectedItems"
-                             @input="selectItems"
-                             :no-after="true"
-                             class="scene-items-picker" />
+                <f7-list-group>
+                  <item-picker title="Select Items"
+                               name="newItem"
+                               :multiple="true"
+                               :value="selectedItems"
+                               @input="selectItems"
+                               :no-after="true"
+                               class="scene-items-picker" />
                 <!-- <f7-list-button :color="(showModuleControls) ? 'gray' : 'blue'" :title="sectionLabels[section][1]"></f7-list-button> -->
+                </f7-list-group>
               </f7-list>
             </div>
           </f7-col>
@@ -173,7 +178,7 @@
           </f7-col>
         </f7-block>
       </f7-tab>
-      <f7-tab id="code" @tab:show="() => { this.currentTab = 'code'; toYaml() }" :tab-active="currentTab === 'code'">
+      <f7-tab id="code" :tab-active="currentTab === 'code'">
         <editor v-if="currentTab === 'code'"
                 class="rule-code-editor"
                 mode="application/vnd.openhab.rule+yaml"
@@ -237,10 +242,13 @@
   position absolute
   top 80%
   white-space pre-wrap
-
 </style>
 
 <script>
+import { nextTick, defineAsyncComponent } from 'vue'
+import { utils } from 'framework7'
+import { f7, theme } from 'framework7-vue'
+
 import YAML from 'yaml'
 import cloneDeep from 'lodash/cloneDeep'
 import fastDeepEqual from 'fast-deep-equal/es6'
@@ -259,9 +267,18 @@ export default {
   components: {
     RuleGeneralSettings,
     ItemPicker,
-    'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')
+    editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue'))
   },
-  props: ['ruleId', 'createMode', 'ruleCopy'],
+  props: {
+    ruleId: String,
+    createMode: Boolean,
+    ruleCopy: Object,
+    f7router: Object,
+    f7route: Object
+  },
+  setup () {
+    return { theme }
+  },
   data () {
     return {
       ready: false,
@@ -306,7 +323,7 @@ export default {
       const loadModules1 = this.$oh.api.get('/rest/module-types?type=action')
 
       const loadingFinished = () => {
-        this.$nextTick(() => {
+        nextTick(() => {
           this.savedRule = cloneDeep(this.rule)
           this.ready = true
           this.loading = false
@@ -318,7 +335,7 @@ export default {
         this.moduleTypes.actions = data[0]
         if (this.createMode) {
           const newRule = this.ruleCopy || {
-            uid: this.$f7.utils.id(),
+            uid: utils.id(),
             name: '',
             triggers: [],
             actions: [],
@@ -331,14 +348,14 @@ export default {
               status: 'NEW'
             }
           }
-          if (this.ruleCopy) newRule.uid = this.$f7.utils.id()
-          this.$set(this, 'rule', newRule)
+          if (this.ruleCopy) newRule.uid = utils.id()
+          this.rule = newRule
           loadingFinished()
         } else {
           this.$oh.api.get('/rest/rules/' + this.ruleId).then((data2) => {
-            this.$set(this, 'rule', data2)
-            this.rule.tags = this.rule.tags.filter(e => e !== 'Scene')
-            this.$set(this, 'selectedItems', [])
+            this.rule = data2
+            this.rule.tags = this.rule.tags.filter((e) => e !== 'Scene')
+            this.selectedItems = []
             this.rule.actions.forEach((a) => {
               if (a.type === 'core.ItemCommandAction') {
                 this.selectedItems.push(a.configuration.itemName)
@@ -357,11 +374,11 @@ export default {
         }
       }
       if (!this.rule.uid) {
-        this.$f7.dialog.alert('Please give an ID to the scene')
+        f7.dialog.alert('Please give an ID to the scene')
         return Promise.reject()
       }
       if (!this.rule.name) {
-        this.$f7.dialog.alert('Please give a name to the scene')
+        f7.dialog.alert('Please give a name to the scene')
         return Promise.reject()
       }
       let saveRule = cloneDeep(this.rule)
@@ -372,16 +389,16 @@ export default {
       return promise.then((data) => {
         this.dirty = false
         if (this.createMode) {
-          this.$f7.toast.create({
+          f7.toast.create({
             text: 'Scene created',
             destroyOnClose: true,
             closeTimeout: 2000
           }).open()
-          this.$f7router.navigate(this.$f7route.url.replace('/add', '/' + this.rule.uid), { reloadCurrent: true })
+          this.f7router.navigate(this.f7route.url.replace('/add', '/' + this.rule.uid), { reloadCurrent: true })
           this.load()
         } else {
           if (!noToast) {
-            this.$f7.toast.create({
+            f7.toast.create({
               text: 'Scene updated',
               destroyOnClose: true,
               closeTimeout: 2000
@@ -390,7 +407,7 @@ export default {
           this.savedRule = cloneDeep(this.rule)
         }
       }).catch((err) => {
-        this.$f7.toast.create({
+        f7.toast.create({
           text: 'Error while saving scene: ' + err,
           destroyOnClose: true,
           closeTimeout: 2000
@@ -400,13 +417,13 @@ export default {
     runNow () {
       if (this.createMode) return
       if (this.rule.status.status === 'RUNNING' || this.rule.status.status === 'UNINITIALIZED') {
-        return this.$f7.toast.create({
+        return f7.toast.create({
           text: `Scene cannot be activated ${(this.rule.status.status === 'RUNNING') ? 'while currently activating, please wait' : 'if it is uninitialized'}!`,
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
       }
-      this.$f7.toast.create({
+      f7.toast.create({
         text: 'Activating scene',
         destroyOnClose: true,
         closeTimeout: 2000
@@ -416,7 +433,7 @@ export default {
 
       savePromise.then(() => {
         this.$oh.api.postPlain('/rest/rules/' + this.rule.uid + '/runnow', '').catch((err) => {
-          this.$f7.toast.create({
+          f7.toast.create({
             text: 'Error while activating scene: ' + err,
             destroyOnClose: true,
             closeTimeout: 2000
@@ -426,7 +443,7 @@ export default {
     },
     duplicateRule () {
       let ruleClone = cloneDeep(this.rule)
-      this.$f7router.navigate({
+      this.f7router.navigate({
         url: '/settings/scenes/duplicate'
       }, {
         props: {
@@ -435,13 +452,13 @@ export default {
       })
     },
     deleteRule () {
-      this.$f7.dialog.confirm(
+      f7.dialog.confirm(
         `Are you sure you want to delete ${this.rule.name}?`,
         'Delete Scene',
         () => {
           this.$oh.api.delete('/rest/rules/' + this.rule.uid).then(() => {
             this.dirty = false
-            this.$f7router.back('/settings/scenes/', { force: true })
+            this.f7router.back('/settings/scenes/', { force: true })
           })
         }
       )
@@ -464,7 +481,7 @@ export default {
         component: SceneConfigureItemPopup
       }
 
-      this.$f7router.navigate({
+      this.f7router.navigate({
         url: 'item-config',
         route: {
           path: 'item-config',
@@ -477,9 +494,9 @@ export default {
         }
       })
 
-      this.$f7.once('sceneItemConfigUpdate', this.updateActionModule)
-      this.$f7.once('sceneItemConfigClosed', () => {
-        this.$f7.off('sceneItemConfigUpdate', this.updateActionModule)
+      f7.once('sceneItemConfigUpdate', this.updateActionModule)
+      f7.once('sceneItemConfigClosed', () => {
+        f7.off('sceneItemConfigUpdate', this.updateActionModule)
       })
     },
     deleteModule (ev, section, mod) {
@@ -489,29 +506,29 @@ export default {
       while (!swipeoutElement.classList.contains('swipeout')) {
         swipeoutElement = swipeoutElement.parentElement
       }
-      this.$f7.swipeout.delete(swipeoutElement, () => {
+      f7.swipeout.delete(swipeoutElement, () => {
         const idx = this.rule[section].findIndex((m) => m.id === mod.id)
         const itemName = this.rule.actions[idx].configuration.itemName
         this.rule[section].splice(idx, 1)
         console.debug('Removing: ' + itemName)
-        this.$set(this, 'selectedItems', this.selectedItems.filter((i) => i !== itemName))
+        this.selectedItems = this.selectedItems.filter((i) => i !== itemName)
         this.buildActionModules()
       })
     },
     selectItems (items) {
       console.log(items)
-      this.$set(this, 'selectedItems', items)
+      this.selectedItems = items
       this.buildActionModules()
     },
     reorderModule (ev, section) {
       const newSection = [...this.rule[section]]
       newSection.splice(ev.to, 0, newSection.splice(ev.from, 1)[0])
-      this.$set(this.rule, section, newSection)
+      this.rule.section = newSection
     },
     buildActionModules () {
       const modulesToRemove = this.rule.actions.filter((a) => this.selectedItems.indexOf(a.configuration.itemName) < 0)
       if (modulesToRemove.length > 0) console.debug('Removing: ' + modulesToRemove.map((m) => m.configuration.itemName).join(', '))
-      this.$set(this.rule, 'actions', this.rule.actions.filter((a) => this.selectedItems.indexOf(a.configuration.itemName) >= 0))
+      this.rule.actions = this.rule.actions.filter((a) => this.selectedItems.indexOf(a.configuration.itemName) >= 0)
       const itemsToAdd = this.selectedItems.filter((i) => !this.rule.actions.some((a) => a.configuration.itemName === i))
       if (itemsToAdd.length > 0) console.debug('Adding: ' + itemsToAdd.join(', '))
 
@@ -533,7 +550,7 @@ export default {
       Promise.all(statePromises).then((states) => {
         states.forEach((state, idx) => {
           const module = this.rule.actions.find((a) => a.configuration.itemName === itemsToAdd[idx])
-          this.$set(module.configuration, 'command', state)
+          module.configuration.command = state
         })
       })
     },
@@ -541,7 +558,7 @@ export default {
       if (ev) ev.cancelBubble = true
       const itemName = module.configuration.itemName
       this.$oh.api.getPlain('/rest/items/' + itemName + '/state').then((state) => {
-        this.$set(module.configuration, 'command', state)
+        module.configuration.command = state
       })
     },
     testCommand (ev, module) {
@@ -549,7 +566,7 @@ export default {
       const itemName = module.configuration.itemName
       const command = module.configuration.command
       this.$oh.api.postPlain('/rest/items/' + itemName, command, 'text/plain', 'text/plain').then(() => {
-        this.$f7.toast.create({
+        f7.toast.create({
           text: `Updated desired state of ${itemName} to ${command}`,
           destroyOnClose: true,
           closeTimeout: 2000
@@ -592,13 +609,13 @@ export default {
             type: 'core.ItemCommandAction'
           })
         }
-        this.$set(this.rule, 'triggers', updatedRule.triggers)
-        this.$set(this.rule, 'conditions', updatedRule.conditions)
-        this.$set(this.rule, 'actions', actions)
+        this.rule.triggers = updatedRule.triggers
+        this.rule.conditions = updatedRule.conditions
+        this.rule.actions = actions
         console.debug(this.rule)
         return true
       } catch (e) {
-        this.$f7.dialog.alert(e).open()
+        f7.dialog.alert(e).open()
         return false
       }
     }

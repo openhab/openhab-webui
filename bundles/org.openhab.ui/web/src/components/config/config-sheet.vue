@@ -1,11 +1,14 @@
 <template>
   <f7-block v-if="parameters" class="config-sheet no-margin" ref="sheet">
-    <div style="text-align:right" class="padding-right padding-bottom" v-if="hasAdvanced">
-      <label @click="toggleAdvanced" class="advanced-label">Show advanced</label> <f7-checkbox :checked="showAdvanced" @change="toggleAdvanced" />
+    <div style="text-align: right" class="padding-right padding-bottom" v-if="hasAdvanced">
+      <label class="advanced-label">
+        <f7-checkbox v-model:checked="showAdvanced" />
+        Show advanced
+      </label>
     </div>
     <f7-col>
       <f7-block width="100" class="parameter-group no-margin no-padding">
-        <f7-row v-if="displayedParameters.some((p) => !p.groupName)">
+        <f7-row v-if="displayedParameters.some(p => !p.groupName)">
           <f7-col>
             <config-parameter
               v-for="parameter in displayedParameters.filter((p) => !p.groupName)"
@@ -16,6 +19,7 @@
               :configuration="configurationWithDefaults"
               :read-only="readOnly"
               :status="parameterStatus(parameter)"
+              :f7router
               @update="(value) => updateParameter(parameter, value)" />
           </f7-col>
         </f7-row>
@@ -44,6 +48,7 @@
               :configuration="configurationWithDefaults"
               :read-only="readOnly"
               :status="parameterStatus(parameter)"
+              :f7router
               @update="(value) => updateParameter(parameter, value)" />
           </f7-col>
         </f7-row>
@@ -63,7 +68,8 @@
   .smart-select > .item-content > .item-inner:after
     display none !important
   .item-content .item-inner
-    overflow auto
+    overflow-x auto
+    overflow-y hidden
 
 .param-description.block-footer h1
   font-size 1em
@@ -77,11 +83,22 @@
 
 <script>
 import { actionParams } from '@/assets/definitions/widgets/actions'
+import { defineAsyncComponent } from 'vue'
+import { f7 } from 'framework7-vue'
 
 export default {
-  props: ['parameterGroups', 'parameters', 'configuration', 'status', 'readOnly', 'setEmptyConfigAsNull'],
+  props: {
+    parameterGroups: Array,
+    parameters: Array,
+    configuration: Object,
+    status: Array,
+    readOnly: Boolean,
+    setEmptyConfigAsNull: Boolean,
+    f7router: Object
+  },
+  emits: ['updated'],
   components: {
-    'config-parameter': () => import(/* webpackChunkName: "config-parameter" */ './config-parameter.vue')
+    'config-parameter': defineAsyncComponent(() => import(/* webpackChunkName: "config-parameter" */ './config-parameter.vue'))
   },
   data () {
     return {
@@ -132,21 +149,18 @@ export default {
   },
   methods: {
     isValid () {
-      return this.$f7.input.validateInputs(this.$refs.sheet.$el)
-    },
-    toggleAdvanced (event) {
-      this.showAdvanced = !this.showAdvanced // event.target.checked
+      return f7.input.validateInputs(this.$refs.sheet.$el)
     },
     updateParameter (parameter, value) {
       if ((typeof value === 'number' && isNaN(value)) || value === '' || value === undefined || value === null || (parameter.multiple && Array.isArray(value) && !value.length)) {
         if (this.setEmptyConfigAsNull) {
           // deleting the parameter sometimes lead to saves not updating it, so set it explicitely to null
-          this.$set(this.configuration, parameter.name, null)
+          this.configuration[parameter.name] = null
         } else {
-          this.$delete(this.configuration, parameter.name)
+          delete this.configuration[parameter.name]
         }
       } else {
-        this.$set(this.configuration, parameter.name, value)
+        this.configuration[parameter.name] = value
       }
       console.debug(JSON.stringify(this.configuration))
       this.$emit('updated')

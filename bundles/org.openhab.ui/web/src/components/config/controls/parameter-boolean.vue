@@ -1,17 +1,22 @@
 <template>
   <ul>
     <f7-list-item :title="configDescription.label">
-      <f7-toggle slot="after"
-                 :name="configDescription.name"
-                 :checked="actualValue"
-                 @toggle:change="updateValue" />
+      <template #after>
+        <f7-toggle :name="configDescription.name"
+                   :checked="actualValue ? true : null"
+                   @toggle:change="updateValue" />
+      </template>
     </f7-list-item>
   </ul>
 </template>
 
 <script>
 export default {
-  props: ['configDescription', 'value'],
+  props: {
+    configDescription: Object,
+    value: [String, Boolean]
+  },
+  emits: ['input'],
   computed: {
     actualValue () {
       if (typeof (this.value) === 'string') {

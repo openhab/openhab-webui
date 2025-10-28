@@ -1,19 +1,20 @@
-import * as dayjs from 'dayjs'
+import dayjs from 'dayjs'
 import LocalizedFormat from 'dayjs/plugin/localizedFormat'
 import LocaleData from 'dayjs/plugin/localeData'
 import ComponentId from '../../component-id'
+
 dayjs.extend(LocalizedFormat)
 dayjs.extend(LocaleData)
 
 const months = {
-  'short': [...dayjs.localeData().monthsShort()],
-  'default': [...dayjs.localeData().months()]
+  short: [...dayjs.localeData().monthsShort()],
+  default: [...dayjs.localeData().months()]
 }
 
 const weekdays = {
-  'min': [...dayjs.localeData().weekdaysMin()],
-  'short': [...dayjs.localeData().weekdaysShort()],
-  'default': [...dayjs.localeData().weekdays()]
+  min: [...dayjs.localeData().weekdaysMin()],
+  short: [...dayjs.localeData().weekdaysShort()],
+  default: [...dayjs.localeData().weekdays()]
 }
 
 export default {
@@ -25,18 +26,19 @@ export default {
     axis.data = axis.data || []
     switch (config.categoryType) {
       case 'hour':
-        axis.name = 'min'
+        if (!config.name) axis.name = 'min'
         for (let i = 0; i < 60; i++) {
           axis.data.push(i)
         }
         break
       case 'day':
-        axis.name = 'h'
+        if (!config.name) axis.name = 'h'
         for (let i = 0; i < 24; i++) {
           axis.data.push(i)
         }
         break
       case 'week':
+        if (!config.name) axis.name = 'day'
         const axisWeekdays = weekdays[config.weekdayFormat] || weekdays.default
         axis.data = [...axisWeekdays]
         if (!config.startOnSunday) {
@@ -44,12 +46,13 @@ export default {
         }
         break
       case 'month':
-        axis.name = 'day'
+        if (!config.name) axis.name = 'day'
         for (let i = 1; i <= 31; i++) {
           axis.data.push(i)
         }
         break
       case 'year':
+        if (!config.name) axis.name = 'month'
         const axisMonths = months[config.monthFormat] || months.default
         axis.data = [...axisMonths]
         break

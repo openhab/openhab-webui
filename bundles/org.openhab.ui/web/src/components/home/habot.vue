@@ -21,11 +21,11 @@
                     @click="chooseSuggestion(suggestion)"
                     link
                     :title="suggestion"
-                    :footer="history.length === 0 ? $t('habot.example.label') : ''"
+                    :footer="history.length === 0 ? t('habot.example.label') : ''"
                     no-chevron />
       <f7-list-button v-if="history.length > 0"
                       color="red"
-                      :title="$t('habot.clearHistory')"
+                      :title="t('habot.clearHistory')"
                       @click="clearHistory" />
     </f7-list>
     <f7-message v-if="interimSpeechResult"
@@ -54,13 +54,14 @@
                 last
                 tail />
     <generic-widget-component v-if="cardContext && !focused && !interimSpeechResult" :context="cardContext" />
-    <div v-if="query && !focused && answer && !busy && !interimSpeechResult" class="display-flex justify-content-space-between padding">
+    <div v-if="query && !focused && answer && !busy && !interimSpeechResult"
+         class="display-flex justify-content-space-between padding">
       <span />
       <f7-button outline
                  round
                  color="blue"
                  @click="endSession">
-        {{ $t('habot.dismiss' ) }}
+        {{ t('habot.dismiss') }}
       </f7-button>
     </div>
   </div>
@@ -123,11 +124,27 @@
 import itemDefaultStandaloneComponent from '@/components/widgets/standard/default-standalone-item'
 import itemDefaultListComponent from '@/components/widgets/standard/list/default-list-item'
 import SpeechButton from './speech-button.vue'
+import { useI18n } from 'vue-i18n'
 import { loadLocaleMessages } from '@/js/i18n'
 
+import { useStatesStore } from '@/js/stores/useStatesStore'
+
 export default {
+  props: {
+    f7router: Object
+  },
   components: {
     SpeechButton
+  },
+  emits: ['session-started', 'session-end'],
+  setup () {
+    const { t, mergeLocaleMessage } = useI18n({ useScope: 'local' })
+
+    loadLocaleMessages('habot', mergeLocaleMessage)
+
+    return {
+      t
+    }
   },
   data () {
     return {
@@ -144,24 +161,21 @@ export default {
       focused: false
     }
   },
-  i18n: {
-    messages: loadLocaleMessages(require.context('@/assets/i18n/habot'))
-  },
   mounted () {
     this.greet()
     const savedHistory = localStorage.getItem('openhab.ui:chat.history')
-    this.$set(this, 'history', (savedHistory) ? savedHistory.split('|') : [])
+    this.history = (savedHistory) ? savedHistory.split('|') : []
   },
   computed: {
     cardContext () {
       if (!this.card) return null
       return {
-        store: this.$store.getters.trackedItems,
+        store: useStatesStore().trackedItems,
         component: this.card
       }
     },
     suggestions () {
-      return (this.history.length > 0) ? this.history : [this.$t('habot.example1'), this.$t('habot.example2'), this.$t('habot.example3')]
+      return (this.history.length > 0) ? this.history : [this.t('habot.example1'), this.t('habot.example2'), this.t('habot.example3')]
     }
   },
   methods: {
@@ -202,7 +216,7 @@ export default {
     clearHistory () {
       this.focused = false
       localStorage.setItem('openhab.ui:chat.history', '')
-      this.$set(this, 'history', [])
+      this.history = []
       this.endSession()
     },
     speechResult (result) {
@@ -228,7 +242,7 @@ export default {
       // store in history
       if (this.history.indexOf(this.query) < 0) {
         this.history.unshift(this.query)
-        this.$set(this, 'history', this.history.splice(0, 5))
+        this.history = this.history.splice(0, 5)
         localStorage.setItem('openhab.ui:chat.history', this.history.join('|'))
       }
 
@@ -242,7 +256,7 @@ export default {
         } else {
           this.busy = false
         }
-        this.greeting = this.$t('habot.anythingElse')
+        this.greeting = this.t('habot.anythingElse')
       })
     },
     convertHABotCard (habotCard) {
@@ -252,7 +266,7 @@ export default {
           component: 'f7-card',
           config: {
             title: habotCard.title,
-            footer: this.$t('habot.cardDeckIsIncompatible')
+            footer: this.t('habot.cardDeckIsIncompatible')
           }
         }
         return
@@ -263,7 +277,7 @@ export default {
           component: 'f7-card',
           config: {
             title: habotCard.title,
-            footer: this.$t('habot.cardIsIncompatible')
+            footer: this.t('habot.cardIsIncompatible')
           }
         }
         return
@@ -272,7 +286,7 @@ export default {
         // there's a chart to display - image widgets are not implemented yet so simply open the analyzer
         const items = habotCard.slots.media[0].config.items.join(',')
         const period = habotCard.slots.media[0].config.period
-        this.$f7router.navigate(`/analyzer/?items=${items}&period=${period}`)
+        this.f7router.navigate(`/analyzer/?items=${items}&period=${period}`)
         this.card = {
           component: 'f7-card',
           config: {

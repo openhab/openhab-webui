@@ -1,0 +1,23 @@
+diff --git a/node_modules/dom7/package.json b/node_modules/dom7/package.json
+index 5306cd9..2d05bd7 100644
+--- a/node_modules/dom7/package.json
++++ b/node_modules/dom7/package.json
+@@ -8,8 +8,16 @@
+   "main": "./dom7.esm.js",
+   "module": "./dom7.esm.js",
+   "exports": {
+-    "./package.json": "./package.json",
+-    ".": "./dom7.esm.js"
++    ".": {
++      "import": {
++        "default": "./dom7.esm.js",
++        "types": "./dom7.d.ts"
++      },
++      "require": {
++        "default": "./dom7.js",
++        "types": "./dom7.d.ts"
++      }
++    }
+   },
+   "repository": {
+     "type": "git",

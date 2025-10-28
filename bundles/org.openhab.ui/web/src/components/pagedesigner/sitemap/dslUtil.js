@@ -34,19 +34,19 @@ function writeWidget (widget, indent) {
         if (key === 'item' || key === 'period' || key === 'legend' || Number.isFinite(widget.config[key])) {
           dsl += widget.config[key]
         } else if (key === 'mappings') {
-          dsl += '[' + widget.config[key].filter(Boolean).map(mapping => {
+          dsl += '[' + widget.config[key].filter(Boolean).map((mapping) => {
             return mapping
           }).join(', ') + ']'
         } else if (key === 'buttons') {
-          dsl += '[' + widget.config[key].filter(Boolean).map(button => {
+          dsl += '[' + widget.config[key].filter(Boolean).map((button) => {
             return button.row + ':' + button.column + ':' + button.command
           }).join(', ') + ']'
         } else if (key === 'visibility') {
-          dsl += '[' + widget.config[key].filter(Boolean).map(rule => {
+          dsl += '[' + widget.config[key].filter(Boolean).map((rule) => {
             return writeCondition(rule)
           }).join(', ') + ']'
         } else if (['valuecolor', 'labelcolor', 'iconcolor', 'iconrules'].includes(key)) {
-          dsl += '[' + widget.config[key].filter(Boolean).map(rule => {
+          dsl += '[' + widget.config[key].filter(Boolean).map((rule) => {
             return writeCondition(rule, true)
           }).join(', ') + ']'
         } else {
@@ -79,7 +79,7 @@ function writeCondition (rule, hasArgument = false) {
     argument = (index > 0 ? '=' + argument : argument)
     conditions = rule.substring(0, index - 1)
   }
-  return conditions.split(' AND ').map(condition => {
+  return conditions.split(' AND ').map((condition) => {
     let index = Math.max(condition.lastIndexOf('='), condition.lastIndexOf('>'), condition.lastIndexOf('<')) + 1
     let conditionValue = condition.substring(index).trim()
     if (/^.*\W.*$/.test(conditionValue) && /^[^"'].*[^"']$/.test(conditionValue)) {

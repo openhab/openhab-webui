@@ -1,15 +1,10 @@
 <template>
   <f7-page>
-    <f7-navbar title="Add Locations from Template" back-link="Back">
-      <f7-nav-right class="if-not-aurora">
-        <f7-link @click="add()"
-                 v-if="$theme.md"
-                 icon-md="material:save"
-                 icon-only />
-        <f7-link @click="add()" v-if="!$theme.md">
-          Add
-        </f7-link>
-      </f7-nav-right>
+    <f7-navbar>
+      <oh-nav-content title="Add Locations from Template"
+                      save-link="Add"
+                      @save="add()"
+                      :f7router />
     </f7-navbar>
 
     <f7-block class="block-narrow">
@@ -97,14 +92,18 @@
   border-bottom 1px solid var(--f7-block-strong-border-color)
   background: var(--f7-list-bg-color)
   .treeview
+    .treeview-item
+      margin-top 3px
+      margin-bottom 3px
     --f7-treeview-item-height 40px
     .treeview-item-label
-      font-size 10pt
+      font-size 11pt
       white-space nowrap
       overflow-x hidden
     .semantic-class
-      font-size 8pt
+      font-size var(--f7-chip-font-size)
       color var(--f7-list-item-footer-text-color)
+
 @media (min-width: 768px)
   .semantic-tree-wrapper
     height calc(100% - var(--f7-navbar-height))
@@ -124,8 +123,9 @@
 </style>
 
 <script>
-import ModelTreeview from '@/components/model/model-treeview.vue'
+import { f7, theme } from 'framework7-vue'
 
+import ModelTreeview from '@/components/model/model-treeview.vue'
 import { compareItems } from '@/components/widgets/widget-order'
 
 function compareModelItems (o1, o2) {
@@ -133,9 +133,15 @@ function compareModelItems (o1, o2) {
 }
 
 export default {
-  props: ['itemList'],
+  props: {
+    itemList: Array,
+    f7router: Object
+  },
   components: {
     ModelTreeview
+  },
+  setup () {
+    return { theme }
   },
   data () {
     return {
@@ -601,13 +607,13 @@ export default {
       }
     },
     onSelectTemplate (template) {
-      this.$set(this, 'checkedItems', [])
+      this.checkItem = []
       this.currentModel = null
       this.selectedTemplate = template
     },
     add () {
       if (this.prefixErrorMessage) {
-        this.$f7.dialog.alert('Invalid prefix for item names')
+        f7.dialog.alert('Invalid prefix for item names')
         return
       }
       if (this.prefix) {
@@ -620,9 +626,9 @@ export default {
       }
       const existingNames = this.itemList.map((i) => i.name)
       if (this.checkedItems.length === 0) {
-        this.$f7.dialog.alert('Please select some locations')
+        f7.dialog.alert('Please select some locations')
       } else if (this.checkedItems.some((i) => existingNames.includes(i.item.name))) {
-        this.$f7.dialog.confirm('Some Item names already exist. Continuing will overwrite those Items. Continue?',
+        f7.dialog.confirm('Some Item names already exist. Continuing will overwrite those Items. Continue?',
           'Warning',
           () => { this.doAdd() }
         )
@@ -631,7 +637,7 @@ export default {
       }
     },
     doAdd () {
-      const dialog = this.$f7.dialog.progress('Creating template...')
+      const dialog = f7.dialog.progress('Creating template...')
       const payload = this.checkedItems.map((i) => i.item)
 
       this.$oh.api.put('/rest/items/', payload).then((data) => {
@@ -640,16 +646,16 @@ export default {
       }).catch((err) => {
         dialog.close()
         console.error(err)
-        this.$f7.dialog.alert('An error occurred while creating the model items: ' + err)
+        f7.dialog.alert('An error occurred while creating the model items: ' + err)
       }).then((data) => {
         dialog.setProgress(100)
-        this.$f7.toast.create({
+        f7.toast.create({
           text: 'Model created',
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
         dialog.close()
-        this.$f7router.back()
+        this.f7router.back()
       })
     },
     onPrefixInput (event) {

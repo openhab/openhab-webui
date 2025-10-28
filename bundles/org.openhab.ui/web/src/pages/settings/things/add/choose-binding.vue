@@ -1,6 +1,7 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn">
-    <f7-navbar title="Choose Binding" back-link="Back">
+    <f7-navbar>
+      <oh-nav-content title="Choose Binding" :f7router />
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
           v-if="initSearchbar"
@@ -9,7 +10,7 @@
           :init="initSearchbar"
           search-container=".binding-list"
           search-in=".item-title, .item-header, .item-footer"
-          :disable-button="!$theme.aurora" />
+          :disable-button="!theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
 
@@ -47,7 +48,7 @@
         </f7-list>
       </f7-col>
     </f7-block>
-    <f7-block class="block-narrow" v-if="$store.getters.apiEndpoint('addons')">
+    <f7-block class="block-narrow" v-if="runtimeStore.apiEndpoint('addons')">
       <f7-col v-if="bindings.length">
         <f7-list>
           <f7-list-button color="blue" title="Install More Bindings" href="/addons/binding/" />
@@ -66,9 +67,23 @@
 </template>
 
 <script>
+import { nextTick } from 'vue'
+import { theme } from 'framework7-vue'
+import { mapStores } from 'pinia'
+
+import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
+
+import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+
 export default {
   components: {
-    'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue')
+    EmptyStatePlaceholder
+  },
+  props: {
+    f7router: Object
+  },
+  setup () {
+    return { theme }
   },
   data () {
     return {
@@ -79,18 +94,21 @@ export default {
       inbox: []
     }
   },
+  computed: {
+    ...mapStores(useRuntimeStore)
+  },
   methods: {
     onPageAfterIn () {
       this.loading = true
       this.$oh.api.get('/rest/addons?serviceId=all').then((data) => {
-        let installedBindings = data.filter(addon => addon.type === 'binding' && addon.installed === true)
+        let installedBindings = data.filter((addon) => addon.type === 'binding' && addon.installed === true)
         this.bindings = installedBindings.sort((a, b) => a.label.localeCompare(b.label))
         this.loading = false
         this.initSearchbar = true
         this.ready = true
-        this.$nextTick(() => {
+        nextTick(() => {
           if (this.$device.desktop && this.$refs.searchbar) {
-            this.$refs.searchbar.f7Searchbar.$inputEl[0].focus()
+            this.$refs.searchbar.$el.f7Searchbar.$inputEl[0].focus()
           }
         })
       })

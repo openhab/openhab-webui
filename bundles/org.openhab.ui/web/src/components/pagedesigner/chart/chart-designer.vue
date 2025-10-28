@@ -56,41 +56,41 @@
         <div class="skeleton-series">
           <f7-card class="elevation-4">
             <f7-list media-list>
-              <f7-list-item media-item
+              <f7-list-item v-for="(series, seriesIdx) in gridSeries(grid, gridIdx)"
+                            media-item
                             link-item
-                            v-for="(series, seriesIdx) in gridSeries(grid, gridIdx)"
                             :key="seriesIdx"
                             :title="series.config.name"
                             :subtitle="series.config.item"
                             :after="`X: ${series.config.xAxisIndex} Y: ${series.config.yAxisIndex}`"
                             link="#"
-                            @click.native="(ev) => configureSeries(ev, series, context)">
-                <f7-menu slot="content-start" class="configure-layout-menu" style="z-index: 50">
-                  <edit-context-menu :context="context"
-                                     :component="series"
-                                     :parentSlot="'series'"
-                                     icon-f7="list_bullet"
-                                     :configureLabel="'Configure Series'"
-                                     :removeLabel="'Remove Series'" />
-                </f7-menu>
-                <div slot="media">
-                  <img slot="media"
-                       v-if="series.config.type === 'bar'"
-                       src="./bar.svg"
-                       width="32px">
-                  <img slot="media"
-                       v-else-if="series.config.type === 'scatter'"
-                       src="./scatter.svg"
-                       width="32px">
-                  <img slot="media"
-                       v-else-if="series.config.type === 'heatmap'"
-                       src="./heatmap.svg"
-                       width="32px">
-                  <img slot="media"
-                       v-else
-                       src="./line.svg"
-                       width="32px">
-                </div>
+                            @click="ev => configureSeries(ev, series, context)">
+                <template #content-start>
+                  <f7-menu class="configure-layout-menu">
+                    <edit-context-menu :context="context"
+                                       :component="series"
+                                       :parentSlot="'series'"
+                                       icon-f7="list_bullet"
+                                       :configureLabel="'Configure Series'"
+                                       :removeLabel="'Remove Series'" />
+                  </f7-menu>
+                </template>
+                <template #media>
+                  <div>
+                    <img v-if="series.config.type === 'bar'"
+                         src="./bar.svg"
+                         width="32px">
+                    <img v-else-if="series.config.type === 'scatter'"
+                         src="./scatter.svg"
+                         width="32px">
+                    <img v-else-if="series.config.type === 'heatmap'"
+                         src="./heatmap.svg"
+                         width="32px">
+                    <img v-else
+                         src="./line.svg"
+                         width="32px">
+                  </div>
+                </template>
               </f7-list-item>
               <f7-list-button color="blue" @click="addSeries('oh-time-series', gridIdx)">
                 Add Time Series
@@ -104,11 +104,15 @@
             </f7-list>
           </f7-card>
         </div>
-        <chart-skeleton :option="skeletonGridOptions(grid, gridIdx)" style="height: 400px; width: 100%" :autoresize="true" />
+        <chart-skeleton :option="skeletonGridOptions(grid, gridIdx)"
+                        style="height: 400px; width: 100%"
+                        :autoresize="true" />
       </div>
       <div>
         <f7-menu v-if="context.editmode" class="configure-layout-menu">
-          <span :style="{ marginLeft: xAxisIdx === 0 ? 'auto' : undefined }" v-for="(xAxis, xAxisIdx) in context.component.slots.xAxis" :key="xAxisIdx">
+          <span v-for="(xAxis, xAxisIdx) in context.component.slots.xAxis"
+                :style="{ marginLeft: xAxisIdx === 0 ? 'auto' : undefined }"
+                :key="xAxisIdx">
             <edit-context-menu v-if="xAxis.config.gridIndex === gridIdx"
                                :context="context"
                                :component="xAxis"
@@ -132,9 +136,9 @@
     </f7-block>
 
     <!-- Calendars -->
-    <f7-block strong
+    <f7-block v-for="(calendar, calendarIdx) in context.component.slots.calendar"
+              strong
               :style="{ zIndex: 50 - calendarIdx }"
-              v-for="(calendar, calendarIdx) in context.component.slots.calendar"
               :key="calendarIdx">
       <f7-block-title>Calendar {{ calendarIdx }}</f7-block-title>
       <div>
@@ -153,36 +157,31 @@
         <div class="skeleton-series">
           <f7-card class="elevation-4">
             <f7-list media-list>
-              <f7-list-item media-item
+              <f7-list-item v-for="(series, seriesIdx) in calendarSeries(calendar, calendarIdx)"
+                            media-item
                             link-item
-                            v-for="(series, seriesIdx) in calendarSeries(calendar, calendarIdx)"
                             :key="seriesIdx"
                             :title="series.config.name"
                             :subtitle="series.config.item"
                             link="#"
-                            @click.native="(ev) => configureSeries(ev, series, context)">
-                <f7-menu slot="content-start" class="configure-layout-menu">
-                  <edit-context-menu :context="context"
-                                     :component="series"
-                                     :parentSlot="'series'"
-                                     icon-f7="list_bullet"
-                                     :configureLabel="'Configure Series'"
-                                     :removeLabel="'Remove Series'" />
-                </f7-menu>
-                <div slot="media">
-                  <img slot="media"
-                       v-if="series.config.type === 'scatter'"
-                       src="./scatter.svg"
-                       width="32px">
-                  <img slot="media"
-                       v-else-if="series.config.type === 'heatmap'"
+                            @click="ev => configureSeries(ev, series, context)">
+                <template #content-start>
+                  <f7-menu class="configure-layout-menu">
+                    <edit-context-menu :context="context"
+                                       :component="series"
+                                       :parentSlot="'series'"
+                                       icon-f7="list_bullet"
+                                       :configureLabel="'Configure Series'"
+                                       :removeLabel="'Remove Series'" />
+                  </f7-menu>
+                </template>
+                <template #media>
+                  <img v-if="series.config.type === 'scatter'" src="./scatter.svg" width="32px">
+                  <img v-else-if="series.config.type === 'heatmap'"
                        src="./heatmap.svg"
                        width="32px">
-                  <img slot="media"
-                       v-else
-                       src="./line.svg"
-                       width="32px">
-                </div>
+                  <img v-else src="./line.svg" width="32px">
+                </template>
               </f7-list-item>
               <f7-list-button color="blue" @click="addCalendarSeries('oh-calendar-series', calendarIdx)">
                 Add Calendar Series
@@ -287,33 +286,38 @@
 </style>
 
 <script>
+import { f7 } from 'framework7-vue'
+
 import widget from '@/components/widgets/widget-mixin'
 import EditContextMenu from '@/components/pagedesigner/edit-menu.vue'
 
 import { use } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
-import { LineChart, BarChart, GaugeChart, HeatmapChart, PieChart, ScatterChart } from 'echarts/charts'
+import { LineChart, BarChart, GaugeChart, HeatmapChart, PieChart, ScatterChart, CustomChart } from 'echarts/charts'
+import { LabelLayout } from 'echarts/features'
 import {
   TitleComponent, LegendComponent, LegendScrollComponent, GridComponent, SingleAxisComponent, ToolboxComponent, TooltipComponent,
   DataZoomComponent, MarkLineComponent, MarkPointComponent, MarkAreaComponent, VisualMapComponent, CalendarComponent
 } from 'echarts/components'
 import VChart from 'vue-echarts'
+import 'echarts/theme/dark.js'
 
-use([CanvasRenderer, LineChart, BarChart, GaugeChart, HeatmapChart, PieChart, ScatterChart, TitleComponent,
+use([CanvasRenderer, LineChart, BarChart, GaugeChart, HeatmapChart, PieChart, ScatterChart, CustomChart, TitleComponent,
   LegendComponent, LegendScrollComponent, GridComponent, SingleAxisComponent, ToolboxComponent, TooltipComponent, DataZoomComponent,
-  MarkLineComponent, MarkPointComponent, MarkAreaComponent, VisualMapComponent, CalendarComponent])
+  MarkLineComponent, MarkPointComponent, MarkAreaComponent, VisualMapComponent, CalendarComponent, LabelLayout])
 
-import * as dayjs from 'dayjs'
+import dayjs from 'dayjs'
 import IsoWeek from 'dayjs/plugin/isoWeek'
+
 dayjs.extend(IsoWeek)
 
 const defaultSlotComponentType = {
-  'tooltip': 'oh-chart-tooltip',
-  'title': 'oh-chart-title',
-  'visualMap': 'oh-chart-visualmap',
-  'dataZoom': 'oh-chart-datazoom',
-  'legend': 'oh-chart-legend',
-  'toolbox': 'oh-chart-toolbox'
+  tooltip: 'oh-chart-tooltip',
+  title: 'oh-chart-title',
+  visualMap: 'oh-chart-visualmap',
+  dataZoom: 'oh-chart-datazoom',
+  legend: 'oh-chart-legend',
+  toolbox: 'oh-chart-toolbox'
 }
 
 export default {
@@ -331,8 +335,8 @@ export default {
       axisTypes.forEach((axisType) => {
         let skeletonAxis = JSON.parse(JSON.stringify(
           this.context.component.slots[axisType]
-            .filter(a => a.config.gridIndex === gridIdx)))
-        skeletonAxis = skeletonAxis.map(a => { delete a.config.gridIndex; return a.config })
+            .filter((a) => a.config.gridIndex === gridIdx)))
+        skeletonAxis = skeletonAxis.map((a) => { delete a.config.gridIndex; return a.config })
         options[axisType] = skeletonAxis
       })
 
@@ -381,7 +385,7 @@ export default {
       calendarOptions.left = 60
       calendarOptions.right = 60
 
-      if (document && document.documentElement.classList.contains('theme-dark')) {
+      if (document && document.documentElement.classList.contains('dark')) {
         if (!calendarOptions.itemStyle) calendarOptions.itemStyle = {}
         if (!calendarOptions.itemStyle.color) calendarOptions.itemStyle.color = '#202020'
         if (!calendarOptions.itemStyle.borderColor) calendarOptions.itemStyle.borderColor = '#555'
@@ -400,29 +404,29 @@ export default {
       return options
     },
     gridSeries (grid, gridIdx) {
-      const gridxAxisIndexes = this.context.component.slots.xAxis.map((a, idx) => a.config.gridIndex === gridIdx ? idx : null).filter(i => i !== null)
-      const gridyAxisIndexes = this.context.component.slots.yAxis.map((a, idx) => a.config.gridIndex === gridIdx ? idx : null).filter(i => i !== null)
+      const gridxAxisIndexes = this.context.component.slots.xAxis.map((a, idx) => (a.config.gridIndex === gridIdx) ? idx : null).filter((i) => i !== null)
+      const gridyAxisIndexes = this.context.component.slots.yAxis.map((a, idx) => (a.config.gridIndex === gridIdx) ? idx : null).filter((i) => i !== null)
       return this.context.component.slots.series.filter((s) => gridxAxisIndexes.indexOf(s.config.xAxisIndex) >= 0 && gridyAxisIndexes.indexOf(s.config.yAxisIndex) >= 0)
     },
     calendarSeries (calendar, calendarIdx) {
       return this.context.component.slots.series.filter((s) => s.config.calendarIndex === calendarIdx)
     },
     addGrid () {
-      if (!this.context.component.slots.grid) this.$set(this.context.component.slots, 'grid', [])
+      if (!this.context.component.slots.grid) this.context.component.slots.grid = []
       this.context.component.slots.grid.push({
         component: 'oh-chart-grid',
         config: {}
       })
     },
     addCalendar () {
-      if (!this.context.component.slots.calendar) this.$set(this.context.component.slots, 'calendar', [])
+      if (!this.context.component.slots.calendar) this.context.component.slots.calendar = []
       this.context.component.slots.calendar.push({
         component: 'oh-calendar-axis',
         config: {}
       })
     },
     addAxis (gridIdx, axis, type) {
-      if (!this.context.component.slots[axis]) this.$set(this.context.component.slots, axis, [])
+      if (!this.context.component.slots[axis]) this.context.component.slots[axis] = []
       this.context.component.slots[axis].push({
         component: type,
         config: {
@@ -431,7 +435,7 @@ export default {
       })
     },
     addCalendarSeries (type, calendarIdx) {
-      if (!this.context.component.slots.series) this.$set(this.context.component.slots, 'series', [])
+      if (!this.context.component.slots.series) this.context.component.slots.series = []
       this.context.component.slots.series.push({
         component: type,
         config: {
@@ -442,38 +446,38 @@ export default {
       })
     },
     addSeries (type, gridIdx) {
-      if (!this.context.component.slots.series) this.$set(this.context.component.slots, 'series', [])
+      if (!this.context.component.slots.series) this.context.component.slots.series = []
       let automaticAxisCreated = false
-      let firstXAxis = this.context.component.slots.xAxis.find(a => a.config.gridIndex === gridIdx)
-      let firstYAxis = this.context.component.slots.yAxis.find(a => a.config.gridIndex === gridIdx)
+      let firstXAxis = this.context.component.slots.xAxis.find((a) => a.config.gridIndex === gridIdx)
+      let firstYAxis = this.context.component.slots.yAxis.find((a) => a.config.gridIndex === gridIdx)
       if (!firstXAxis) {
         if (type === 'oh-time-series' || type === 'oh-state-series') {
           this.addAxis(gridIdx, 'xAxis', 'oh-time-axis')
-          firstXAxis = this.context.component.slots.xAxis.find(a => a.config.gridIndex === gridIdx)
+          firstXAxis = this.context.component.slots.xAxis.find((a) => a.config.gridIndex === gridIdx)
           automaticAxisCreated = true
         } else {
-          this.$f7.dialog.alert('Please add at least one X axis and one Y axis')
+          f7.dialog.alert('Please add at least one X axis and one Y axis')
           return
         }
       }
       if (!firstYAxis) {
         if (type === 'oh-time-series') {
           this.addAxis(gridIdx, 'yAxis', 'oh-value-axis')
-          firstYAxis = this.context.component.slots.yAxis.find(a => a.config.gridIndex === gridIdx)
+          firstYAxis = this.context.component.slots.yAxis.find((a) => a.config.gridIndex === gridIdx)
           automaticAxisCreated = true
         } else if (type === 'oh-state-series') {
           this.addAxis(gridIdx, 'yAxis', 'oh-category-axis')
-          firstYAxis = this.context.component.slots.yAxis.find(a => a.config.gridIndex === gridIdx)
+          firstYAxis = this.context.component.slots.yAxis.find((a) => a.config.gridIndex === gridIdx)
           firstYAxis.config.categoryType = 'values'
           automaticAxisCreated = true
         } else {
-          this.$f7.dialog.alert('Please add at least one X axis and one Y axis')
+          f7.dialog.alert('Please add at least one X axis and one Y axis')
           return
         }
       }
 
       if (automaticAxisCreated) {
-        this.$f7.toast.create({
+        f7.toast.create({
           text: 'Missing axes have been created automatically.',
           destroyOnClose: true,
           closeTimeout: 2000

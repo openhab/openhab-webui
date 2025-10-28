@@ -9,14 +9,15 @@
       <f7-list-input
         ref="input"
         type="textarea"
-        :floating-label="$theme.md"
+        :floating-label="theme.md"
         :label="'Options'"
         name="options"
-        :disabled="!editable"
+        :disabled="!editable ? true : null"
         :value="options"
         @input="updateOptions" />
       <f7-block-footer class="param-description" alot="after-list">
-        <small>Enter each option on a separate line.<br>Use <code>value=label</code> format to provide a label different than the option.</small>
+        <small>Enter each option on a separate line.<br>Use <code>value=label</code> format to provide
+          a label different than the option.</small>
       </f7-block-footer>
     </f7-list>
     <p class="padding">
@@ -39,14 +40,25 @@
 </template>
 
 <script>
+import { theme } from 'framework7-vue'
+
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import ItemMetadataMixin from '@/components/item/metadata/item-metadata-mixin'
 
+import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+
 export default {
-  props: ['itemName', 'metadata', 'namespace'],
+  props: {
+    itemName: String,
+    metadata: Object,
+    namespace: String
+  },
   mixins: [ItemMetadataMixin],
   components: {
     ConfigSheet
+  },
+  setup () {
+    return { theme }
   },
   data () {
     return {
@@ -72,7 +84,7 @@ export default {
       return this.metadata.config.options.trim().split(',').map((s) => s.trim()).join('\n')
     },
     docLink () {
-      const docUrl = `${this.$store.state.websiteUrl}/link/thing`
+      const docUrl = `${useRuntimeStore().websiteUrl}/link/thing`
       if (this.namespace === 'stateDescription') {
         return docUrl + '#state-description'
       } else {

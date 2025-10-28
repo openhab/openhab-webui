@@ -3,8 +3,8 @@
     <f7-row>
       <f7-col>
         <f7-icon :f7="icon" size="64" color="gray" />
-        <h1>{{ $t(title) || title }}</h1>
-        <p v-html="$t(text) || text" />
+        <h1>{{ t(title) || title }}</h1>
+        <p v-html="t(text) || text" />
       </f7-col>
     </f7-row>
   </f7-block>
@@ -17,12 +17,22 @@
 </style>
 
 <script>
+import { useI18n } from 'vue-i18n'
 import { loadLocaleMessages } from '@/js/i18n'
 
 export default {
-  props: ['icon', 'title', 'text'],
-  i18n: {
-    messages: loadLocaleMessages(require.context('@/assets/i18n/empty-states'))
+  props: {
+    icon: String,
+    title: String,
+    text: String
+  },
+  setup () {
+    const { t, mergeLocaleMessage } = useI18n({ useScope: 'local' })
+    loadLocaleMessages('empty-states', mergeLocaleMessage)
+    return {
+      t,
+      mergeLocaleMessage
+    }
   }
 }
 </script>

@@ -1,6 +1,6 @@
 <template>
   <div class="network-fit">
-    <chart :option="finalOptions" :theme="$f7.data.themeOptions.dark === 'dark' ? 'dark' : undefined" autoresize />
+    <chart :option="finalOptions" :theme="uiOptionsStore.getDarkMode() === 'dark' ? 'dark' : undefined" autoresize />
   </div>
 </template>
 
@@ -20,7 +20,7 @@
 </style>
 
 <script>
-
+import { mapStores } from 'pinia'
 // import ECharts modules manually to reduce bundle size
 import { use } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
@@ -28,15 +28,19 @@ import { GraphChart } from 'echarts/charts'
 import { TooltipComponent, ToolboxComponent } from 'echarts/components'
 import VChart from 'vue-echarts'
 
+import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
+
 use([CanvasRenderer, GraphChart, TooltipComponent, ToolboxComponent])
 
 import ThingStatus from '@/components/thing/thing-status-mixin'
 
 export default {
   mixins: [ThingStatus],
-  props: ['bridgeUID'],
+  props: {
+    bridgeUID: String
+  },
   components: {
-    'chart': VChart
+    chart: VChart
   },
   computed: {
     finalOptions () {
@@ -47,10 +51,11 @@ export default {
           x: 10,
           y: 10
         },
-        backgroundColor: (this.$f7.data.themeOptions.dark === 'dark') ? '#121212' : undefined,
+        backgroundColor: this.uiOptionsStore.getDarkMode() === 'dark' ? '#121212' : undefined,
         series: this.series
       }
-    }
+    },
+    ...mapStores(useUIOptionsStore)
   },
   asyncComputed: {
     series () {

@@ -2,34 +2,38 @@
   <f7-list ref="parameter"
            class="config-parameter"
            :no-hairlines-md="configDescription.type !== 'BOOLEAN' && (!configDescription.options || !configDescription.options.length) && ['item'].indexOf(configDescription.context) < 0"
-           v-show="(configDescription.visible) ? configDescription.visible(value, configuration, configDescription, parameters) : true">
-    <component v-if="!readOnly && !configDescription.readOnly"
-               :is="control"
-               :config-description="configDescription"
-               :value="value"
-               :parameters="parameters"
-               :configuration="configuration"
-               :title="configDescription.title"
-               @input="updateValue" />
-    <f7-list-item v-else-if="readOnly && (configDescription.context === 'password')"
+           v-show="configDescription.visible ? configDescription.visible(value, configuration, configDescription, parameters) : true">
+    <f7-list-group v-if="!readOnly && !configDescription.readOnly">
+      <component :is="control"
+                 :config-description="configDescription"
+                 :value="value"
+                 :parameters="parameters"
+                 :configuration="configuration"
+                 :title="configDescription.title"
+                 :f7router
+                 @input="updateValue" />
+    </f7-list-group>
+    <f7-list-item v-else-if="readOnly && configDescription.context === 'password'"
                   :is="passwords"
                   :config-description="configDescription"
                   :value="value"
                   :parameters="parameters"
                   :configuration="configuration"
                   :title="configDescription.title" />
-    <f7-list-item v-else :title="configDescription.label" :after="(value !== undefined && value !== null) ? value.toString() : 'N/A'" />
-    <f7-block-footer slot="after-list" class="param-description">
-      <div v-if="status" class="param-status-info">
-        <f7-chip v-if="status.type !== 'INFORMATION'"
-                 :color="status.type === 'WARNING' ? 'orange' : (status.type === 'ERROR') ? 'red' : 'gray'"
-                 style="float: right"
-                 :text="status.type" />
-        <span v-if="status.statusCode">Status Code: &nbsp;{{ status.statusCode }}&nbsp;&nbsp;</span>
-        <span v-if="status.message">{{ status.message }}</span>
-      </div>
-      <small v-html="`${configDescription.required ? '<strong>Required</strong>&nbsp;' : ''}${description || ''}`" />
-    </f7-block-footer>
+    <f7-list-item v-else :title="configDescription.label" :after="value !== undefined && value !== null ? value.toString() : 'N/A'" />
+    <template #after-list>
+      <f7-block-footer class="param-description">
+        <div v-if="status" class="param-status-info">
+          <f7-chip v-if="status.type !== 'INFORMATION'"
+                   :color="status.type === 'WARNING' ? 'orange' : status.type === 'ERROR' ? 'red' : 'gray'"
+                   style="float: right"
+                   :text="status.type" />
+          <span v-if="status.statusCode">Status Code: &nbsp;{{ status.statusCode }}&nbsp;&nbsp;</span>
+          <span v-if="status.message">{{ status.message }}</span>
+        </div>
+        <small v-html="`${configDescription.required ? '<strong>Required</strong>&nbsp;' : ''}${description || ''}`" />
+      </f7-block-footer>
+    </template>
   </f7-list>
 </template>
 
@@ -54,20 +58,24 @@ import ParameterProps from './controls/parameter-props.vue'
 import ParameterTriggerChannel from './controls/parameter-triggerchannel.vue'
 import ParameterText from './controls/parameter-text.vue'
 import ParameterQrcode from './controls/parameter-qrcode.vue'
+import { f7 } from 'framework7-vue'
 
 export default {
-  components: {
+  props: {
+    configDescription: Object,
+    value: [String, Number, Boolean, Array, Object],
+    parameters: Array,
+    configuration: Object,
+    readOnly: Boolean,
+    status: Array
   },
-  props: [
-    'configDescription',
-    'value',
-    'parameters',
-    'configuration',
-    'readOnly',
-    'status'
-  ],
-  data () {
+  emits: ['update'],
+  setup () {
+    // make f7 optional for Vitest
+    const f7router = f7?.views.main.router
+
     return {
+      f7router
     }
   },
   computed: {
@@ -131,7 +139,7 @@ export default {
   },
   mounted () {
     // Uncomment to perform initial validation on the field
-    // this.$f7.input.validateInputs(this.$refs.parameter.$el)
+    // f7.input.validateInputs(this.$refs.parameter.$el)
   },
   methods: {
     updateValue (value) {
@@ -146,6 +154,8 @@ export default {
 .parameter-group.block
   margin-top 0
   margin-bottom 0
+  .list ul
+    padding-left 0
 .param-description
   padding-left 16px !important
   &.block-footer

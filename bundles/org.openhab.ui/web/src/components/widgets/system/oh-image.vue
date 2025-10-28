@@ -14,21 +14,22 @@
        @click="clicked">
 </template>
 
-<style lang="stylus">
-
-</style>
-
 <script>
+import { nextTick } from 'vue'
+import { utils } from 'framework7'
+import { f7 } from 'framework7-vue'
+
 import mixin from '../widget-mixin'
 import { actionsMixin } from '../widget-actions'
 import { OhImageDefinition } from '@/assets/definitions/widgets/system'
 import foregroundService from '../widget-foreground-service'
+
 export default {
   mixins: [mixin, actionsMixin, foregroundService],
   widget: OhImageDefinition,
   data () {
     return {
-      t: this.$utils.id(),
+      t: utils.id(),
       src: null,
       ts: 0
     }
@@ -40,7 +41,7 @@ export default {
       })
     },
     src (val) {
-      if (this.config.lazy) this.$nextTick(() => { this.$f7.lazy.loadImage(this.$refs.lazyImage) })
+      if (this.config.lazy) nextTick(() => { f7.lazy.loadImage(this.$refs.lazyImage) })
     },
     itemState (value) {
       if (value) {
@@ -53,7 +54,7 @@ export default {
       return this.config.url
     },
     itemState () {
-      if (this.config.item) return this.$utils.id() + '|' + this.context.store[this.config.item].state
+      if (this.config.item) return f7.utils.id() + '|' + this.context.store[this.config.item].state
       return null
     },
     computedSrc () {
@@ -64,7 +65,7 @@ export default {
     loadItemImage () {
       this.$oh.api.getPlain(`/rest/items/${this.config.item}/state`, 'text/plain').then((data) => {
         this.src = data
-        if (this.config.lazy) this.$nextTick(() => { this.$f7.lazy.loadImage(this.$refs.lazyImage) })
+        if (this.config.lazy) nextTick(() => { f7.lazy.loadImage(this.$refs.lazyImage) })
       })
     },
     clicked () {
@@ -82,7 +83,7 @@ export default {
         })
       }
       if (this.config.refreshInterval) {
-        this.refreshInterval = setInterval(() => { this.ts = (new Date()).toISOString() }, this.config.refreshInterval)
+        this.refreshInterval = setInterval(() => { this.ts = new Date().toISOString() }, this.config.refreshInterval)
       }
     },
     stopForegroundActivity () {

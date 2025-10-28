@@ -1,8 +1,8 @@
 <template>
   <f7-page class="other-apps">
     <f7-navbar color="blue" :title="$t('home.otherApps')" />
-    <f7-link class="app-link"
-             v-for="app in apps"
+    <f7-link v-for="app in apps"
+             class="app-link"
              :key="app.url"
              :href="app.url"
              external
@@ -20,6 +20,7 @@
     </f7-link>
   </f7-page>
 </template>
+
 <script>
 export default {
   data () {

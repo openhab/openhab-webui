@@ -15,15 +15,6 @@ export const CodeSnippets = {
     '</xsl:stylesheet>'
 }
 
-export const EditorModes = {
-  dsl: 'application/vnd.openhab.dsl.rule',
-  exec: 'application/x-sh',
-  map: 'text/x-properties',
-  nashorn: 'application/javascript;version=ECMAScript-5.1',
-  scale: 'text/x-properties',
-  xslt: 'application/xml'
-}
-
 export const DocumentationLinks = {
   exec: '/addons/transformations/exec/',
   jinja: '/addons/transformations/jinja/',

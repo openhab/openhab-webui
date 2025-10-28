@@ -1,9 +1,10 @@
 import { Units, MetricPrefixes, BinaryPrefixes } from '@/assets/units'
+import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
 export default {
   data () {
     return {
-      measurementSystem: this.$store.state.measurementSystem,
+      measurementSystem: useRuntimeStore().measurementSystem,
       dimensions: [],
       dimensionsReady: false
     }
@@ -47,13 +48,13 @@ export default {
   },
   methods: {
     getSystemUnit (dimension) {
-      return this.dimensions.find(d => d.name === dimension)?.systemUnit
+      return this.dimensions.find((d) => d.name === dimension)?.systemUnit
     },
     getUnitHint (dimension, channelType) {
       const units = ((channelType && channelType.unitHint) ? channelType.unitHint : '').split(',')
       let unitHint = (this.measurementSystem === 'US' && units.length > 1) ? units[1].trim() : units[0].trim()
       if (!unitHint) {
-        const unitCurated = Units.find(u => u.dimension === dimension)
+        const unitCurated = Units.find((u) => u.dimension === dimension)
         if (unitCurated) {
           if (this.measurementSystem === 'SI' && unitCurated.defaultSI) {
             unitHint = unitCurated.defaultSI
@@ -76,7 +77,7 @@ export default {
      */
     getUnitList (dimension) {
       let unitList = []
-      const unitCurated = Units.find(u => u.dimension === dimension)
+      const unitCurated = Units.find((u) => u.dimension === dimension)
       if (unitCurated?.units) {
         unitList = unitList.concat(unitCurated.units)
       }
@@ -110,21 +111,21 @@ export default {
      */
     getFullUnitList (dimension) {
       let unitList = []
-      const unit = Units.find(u => u.dimension === dimension)
+      const unit = Units.find((u) => u.dimension === dimension)
       let units = unit?.baseUnits
       if (units) {
         unitList = unitList.concat(units)
       }
       let metricUnits = unit?.baseUnitsMetric?.flatMap(
-        u => MetricPrefixes.map(
-          p => p.concat(u)
+        (u) => MetricPrefixes.map(
+          (p) => p.concat(u)
         ))
       if (metricUnits) {
         unitList = unitList.concat(metricUnits)
       }
       let binaryUnits = unit?.baseUnitsBinary?.flatMap(
-        u => BinaryPrefixes.map(
-          p => p.concat(u)
+        (u) => BinaryPrefixes.map(
+          (p) => p.concat(u)
         ))
       if (binaryUnits) {
         unitList = unitList.concat(binaryUnits)

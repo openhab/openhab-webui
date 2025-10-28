@@ -26,12 +26,16 @@
 .aurora .habot-speech-icon
   top calc(-0.80 * var(--f7-searchbar-height))
   float right
-
 </style>
 
 <script>
+import { f7 } from 'framework7-vue'
+
 export default {
-  props: ['lang'],
+  props: {
+    lang: String
+  },
+  emits: ['result'],
   data () {
     return {
       supported: this.$oh.speech.isRecognitionSupported(),
@@ -54,7 +58,7 @@ export default {
           },
           // error
           (ev) => {
-            self.$f7.toast.create({
+            f7.toast.create({
               icon: '<i class="f7-icons">mic_slash_fill</i>',
               text: ev.error,
               position: 'center',

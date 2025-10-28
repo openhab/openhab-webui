@@ -4,11 +4,12 @@
               :addon="addonsList[0]"
               :install-action-text="installActionText"
               :headline="headline"
-              @addonButtonClick="addonButtonClick" />
+              @addon-button-click="addonButtonClick" />
   <f7-swiper class="addons-swiper"
              v-else
              pagination
-             :params="{ spaceBetween: 10, slidesPerView: slidesPerView }"
+             :space-between="10"
+             :slides-per-view="slidesPerView"
              :key="slidesPerView">
     <f7-swiper-slide v-for="addon in addonsList" :key="addon.uid">
       <addon-card :key="addon.uid"
@@ -16,7 +17,7 @@
                   :install-action-text="installActionText"
                   :headline="headline"
                   :lazy-logo="false"
-                  @addonButtonClick="addonButtonClick" />
+                  @addon-button-click="addonButtonClick" />
     </f7-swiper-slide>
   </f7-swiper>
 </template>
@@ -33,20 +34,24 @@
 import AddonCard from '@/components/addons/addon-card.vue'
 
 export default {
-  props: ['addonsList', 'installActionText', 'headline'],
-  emits: ['addonButtonClick'],
+  props: {
+    addonsList: Array,
+    installActionText: String,
+    headline: String
+  },
+  emits: ['addon-button-click'],
   components: {
     AddonCard
   },
   computed: {
     slidesPerView () {
-      if (this.$f7.width > this.$f7.height) return 3.5
+      if (this.$f7dim.width > this.$f7dim.height) return 3.5
       return 1.5
     }
   },
   methods: {
     addonButtonClick (addon) {
-      this.$emit('addonButtonClick', addon)
+      this.$emit('addon-button-click', addon)
     }
   }
 }
