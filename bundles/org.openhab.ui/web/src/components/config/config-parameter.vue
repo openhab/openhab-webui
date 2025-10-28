@@ -58,6 +58,7 @@ import ParameterProps from './controls/parameter-props.vue'
 import ParameterTriggerChannel from './controls/parameter-triggerchannel.vue'
 import ParameterText from './controls/parameter-text.vue'
 import ParameterQrcode from './controls/parameter-qrcode.vue'
+import { f7 } from 'framework7-vue'
 
 export default {
   props: {
@@ -66,10 +67,16 @@ export default {
     parameters: Array,
     configuration: Object,
     readOnly: Boolean,
-    status: Array,
-    f7router: Object
+    status: Array
   },
   emits: ['update'],
+  setup () {
+    const f7router = f7.views.main.router
+
+    return {
+      f7router
+    }
+  },
   computed: {
     passwords () {
       const configDescription = this.configDescription
