@@ -55,7 +55,7 @@
 </style>
 
 <script>
-import { findEquipment, allEquipmentPoints, findPoints } from '../glance-helpers'
+import { findEquipment, allEquipmentPoints, findPoints, equipmentNoPointsSelected } from '../glance-helpers'
 import expr from 'jse-eval'
 
 export default {
@@ -101,115 +101,104 @@ export default {
       switch (this.type) {
         case 'battery':
           direct = findPoints(this.element.properties, 'Point', true, 'Property_LowBattery')
-          if (direct.length) return direct
-          return findPoints(allEquipmentPoints(this.element.equipment), 'Point', true, 'Property_LowBattery')
+          return [...direct, ...findPoints(allEquipmentPoints(this.element.equipment, true), 'Point', true, 'Property_LowBattery')]
         case 'lights':
           return this.queryLightPoints
         case 'windows':
-          equipment = findEquipment(this.element.equipment, 'Equipment_Window', false)
+          equipment = findEquipment(this.element.equipment, 'Equipment_Window', false, true)
           if (!equipment.length) return []
-          allPoints = allEquipmentPoints(equipment)
+          allPoints = allEquipmentPoints(equipment, true)
           points = findPoints(allPoints, 'Point', true, 'Property_Opening', true)
-          if (points.length) return points
-          return equipment.filter((e) => e.points.length === 0)
+          return [...points, ...equipmentNoPointsSelected(equipment, points, true)]
         case 'doors':
           equipment = [
-            ...findEquipment(this.element.equipment, 'Equipment_Door', false),
-            ...findEquipment(this.element.equipment, 'Equipment_Door_FrontDoor', false),
-            ...findEquipment(this.element.equipment, 'Equipment_Door_BackDoor', false),
-            ...findEquipment(this.element.equipment, 'Equipment_Door_InnerDoor', false),
-            ...findEquipment(this.element.equipment, 'Equipment_Door_CellarDoor', false),
-            ...findEquipment(this.element.equipment, 'Equipment_Door_SideDoor', false)
+            ...findEquipment(this.element.equipment, 'Equipment_Door', false, true),
+            ...findEquipment(this.element.equipment, 'Equipment_Door_FrontDoor', false, true),
+            ...findEquipment(this.element.equipment, 'Equipment_Door_BackDoor', false, true),
+            ...findEquipment(this.element.equipment, 'Equipment_Door_InnerDoor', false, true),
+            ...findEquipment(this.element.equipment, 'Equipment_Door_CellarDoor', false, true),
+            ...findEquipment(this.element.equipment, 'Equipment_Door_SideDoor', false, true)
           ]
           if (!equipment.length) return []
-          allPoints = allEquipmentPoints(equipment)
+          allPoints = allEquipmentPoints(equipment, true)
           points = findPoints(allPoints, 'Point', true, 'Property_Opening', true)
-          if (points.length) return points
-          return equipment.filter((e) => e.points.length === 0)
+          return [...points, ...equipmentNoPointsSelected(equipment, points, true)]
         case 'garagedoors':
-          equipment = findEquipment(this.element.equipment, 'Equipment_Door_GarageDoor', false)
+          equipment = findEquipment(this.element.equipment, 'Equipment_Door_GarageDoor', false, true)
           if (!equipment.length) return []
-          allPoints = allEquipmentPoints(equipment)
+          allPoints = allEquipmentPoints(equipment, true)
           points = findPoints(allPoints, 'Point', true, 'Property_Opening', true)
-          if (points.length) return points
-          return equipment.filter((e) => e.points.length === 0)
+          return [...points, ...equipmentNoPointsSelected(equipment, points, true)]
         case 'blinds':
-          equipment = findEquipment(this.element.equipment, 'Equipment_WindowCovering', true)
+          equipment = findEquipment(this.element.equipment, 'Equipment_WindowCovering', true, true)
           if (!equipment.length) return []
-          allPoints = allEquipmentPoints(equipment)
+          allPoints = allEquipmentPoints(equipment, true)
           points = findPoints(allPoints, 'Point', true, 'Property_Opening', true)
-          if (points.length) return points
-          return equipment.filter((e) => e.points.length === 0)
+          return [...points, ...equipmentNoPointsSelected(equipment, points, true)]
         case 'presence':
           direct = [
             ...findPoints(this.element.properties, 'Point', true, 'Property_Presence'),
             ...findPoints(this.element.properties, 'Point', true, 'Property_Motion')
           ]
-          if (direct.length) return direct
           return [
-            ...findPoints(allEquipmentPoints(this.element.equipment), 'Point', true, 'Property_Presence'),
-            ...findPoints(allEquipmentPoints(this.element.equipment), 'Point', true, 'Property_Motion')
+            ...direct,
+            ...findPoints(allEquipmentPoints(this.element.equipment, true), 'Point', true, 'Property_Presence'),
+            ...findPoints(allEquipmentPoints(this.element.equipment, true), 'Point', true, 'Property_Motion')
           ]
         case 'lock':
-          equipment = findEquipment(this.element.equipment, 'Equipment_Lock', false)
+          equipment = findEquipment(this.element.equipment, 'Equipment_Lock', false, true)
           if (!equipment.length) return []
-          allPoints = allEquipmentPoints(equipment)
+          allPoints = allEquipmentPoints(equipment, true)
           points = findPoints(allPoints, 'Point', true, 'Property_Opening', true)
-          if (points.length) return points
-          return equipment.filter((e) => e.points.length === 0)
+          return [...points, ...equipmentNoPointsSelected(equipment, points, true)]
         case 'climate':
-          equipment = findEquipment(this.element.equipment, 'Equipment_HVAC', true)
+          equipment = findEquipment(this.element.equipment, 'Equipment_HVAC', true, true)
           if (!equipment.length) return []
-          allPoints = allEquipmentPoints(equipment)
+          allPoints = allEquipmentPoints(equipment, true)
           points = [
             ...findPoints(allPoints, 'Point_Status', false, 'Property_Power'),
             ...findPoints(allPoints, 'Point_Control', true, 'Property_Power')
           ]
-          if (points.length) return points
-          return equipment.filter((e) => e.points.length === 0)
+          return [...points, ...equipmentNoPointsSelected(equipment, points, true)]
         case 'screens':
           equipment = [
-            ...findEquipment(this.element.equipment, 'Equipment_AudioVisual_Display', false),
-            ...findEquipment(this.element.equipment, 'Equipment_AudioVisual_Display_Television', false),
-            ...findEquipment(this.element.equipment, 'Equipment_AudioVisual_Screen', true)
+            ...findEquipment(this.element.equipment, 'Equipment_AudioVisual_Display', false, true),
+            ...findEquipment(this.element.equipment, 'Equipment_AudioVisual_Display_Television', false, true),
+            ...findEquipment(this.element.equipment, 'Equipment_AudioVisual_Screen', true, true)
           ]
           if (!equipment.length) return []
-          allPoints = allEquipmentPoints(equipment)
+          allPoints = allEquipmentPoints(equipment, true)
           points = [
             ...findPoints(allPoints, 'Point_Status', false, 'Property_Power'),
             ...findPoints(allPoints, 'Point_Control', true, 'Property_Power')
           ]
-          if (points.length) return points
-          return equipment.filter((e) => e.points.length === 0)
+          return [...points, ...equipmentNoPointsSelected(equipment, points, true)]
         case 'speakers':
           equipment = [
-            ...findEquipment(this.element.equipment, 'Equipment_AudioVisual_Receiver', false),
-            ...findEquipment(this.element.equipment, 'Equipment_AudioVisual_Speaker', false),
-            ...findEquipment(this.element.equipment, 'Equipment_VoiceAssistant', false),
-            ...findEquipment(this.element.equipment, 'Equipment_AudioVisual_MediaPlayer', false)
+            ...findEquipment(this.element.equipment, 'Equipment_AudioVisual_Receiver', false, true),
+            ...findEquipment(this.element.equipment, 'Equipment_AudioVisual_Speaker', false, true),
+            ...findEquipment(this.element.equipment, 'Equipment_VoiceAssistant', false, true),
+            ...findEquipment(this.element.equipment, 'Equipment_AudioVisual_MediaPlayer', false, true)
           ]
           if (!equipment.length) return []
-          allPoints = allEquipmentPoints(equipment)
+          allPoints = allEquipmentPoints(equipment, true)
           points = [
             ...findPoints(allPoints, 'Point_Status', false, 'Property_Power'),
             ...findPoints(allPoints, 'Point_Control', true, 'Property_Power')
           ]
-          if (points.length) return points
-          return equipment.filter((e) => e.points.length === 0)
+          return [...points, ...equipmentNoPointsSelected(equipment, points, true)]
         case 'projectors':
-          equipment = findEquipment(this.element.equipment, 'Equipment_AudioVisual_Display_Projector', false)
+          equipment = findEquipment(this.element.equipment, 'Equipment_AudioVisual_Display_Projector', false, true)
           if (!equipment.length) return []
-          allPoints = allEquipmentPoints(equipment)
+          allPoints = allEquipmentPoints(equipment, true)
           points = [
             ...findPoints(allPoints, 'Point_Status', false, 'Property_Power'),
             ...findPoints(allPoints, 'Point_Control', true, 'Property_Power')
           ]
-          if (points.length) return points
-          return equipment.filter((e) => e.points.length === 0)
+          return [...points, ...equipmentNoPointsSelected(equipment, points, true)]
         case 'alarms':
-          direct = findPoints(this.element.properties, 'Point_Alarm', true)
-          if (direct.length) return direct
-          return findPoints(allEquipmentPoints(this.element.equipment), 'Point_Alarm', true)
+          direct = findPoints(this.element.properties, 'Point_Alarm', true, true)
+          return [...direct, ...findPoints(allEquipmentPoints(this.element.equipment, true), 'Point_Alarm', true)]
         default:
           return []
       }
@@ -236,7 +225,6 @@ export default {
       }
     },
     queryLightPoints () {
-      const lightSourceEquipment = findEquipment(this.element.equipment, 'Equipment_LightSource', true)
       // Look for all control points on the location with light, color and brightness properties.
       // For a user: It is advisable that lights represented as a point on a location are not represented anywhere in the model as a light point in an equipment,
       // or they will be counted twice (possibly in different locations). Therefore only tag one light point for a given physical light.
@@ -247,10 +235,9 @@ export default {
       points.push(...findPoints(this.element.properties, 'Point_Status', true, 'Property_Color'))
       points.push(...findPoints(this.element.properties, 'Point_Status', true, 'Property_Brightness'))
       points.push(...findPoints(this.element.properties, 'Point_Status', true, 'Property_Light'))
-      // Repeat this for equipments on the location.
+      // Repeat this for equipment on the location.
       points.push(...this.element.equipment.map((e) => {
-        const isLightSource = lightSourceEquipment.includes(e)
-        const allPoints = allEquipmentPoints(e) // consider sub-equipment as well
+        const allPoints = allEquipmentPoints([e], true) // consider sub-equipment as well
         const equipmentPoints = []
         equipmentPoints.push(...findPoints(allPoints, 'Point_Control', true, 'Property_Color'))
         equipmentPoints.push(...findPoints(allPoints, 'Point_Control', true, 'Property_Brightness'))
@@ -258,21 +245,21 @@ export default {
         equipmentPoints.push(...findPoints(allPoints, 'Point_Status', true, 'Property_Color'))
         equipmentPoints.push(...findPoints(allPoints, 'Point_Status', true, 'Property_Brightness'))
         equipmentPoints.push(...findPoints(allPoints, 'Point_Status', true, 'Property_Light'))
-        // For light source equipment not yet covered above we look beyond property light, color and brightness,
-        // but will only consider one point (first in the list), with priority to switch.
-        // We don't look at sub-equipment for this.
-        // In summary: assumption is the equipment represents a unique light.
-        if (isLightSource && !allPoints.some((p) => equipmentPoints.includes(p))) {
-          const lightSourcePoints = [...findPoints(e.points, 'Point_Control_Switch', false), ...findPoints(e.points, 'Point_Control', true), ...findPoints(e.points, 'Point_Status', true)]
-          if (lightSourcePoints.length) {
-            equipmentPoints.push(lightSourcePoints.slice(0, 1))
-          } else {
-            // Also include LightSource tagged equipment items that have no points themselves.
-            equipmentPoints.push(e.map((lightSource) => lightSource.item))
-          }
-        }
         return equipmentPoints
       }).flat())
+      // For light source equipment not yet covered above we look beyond property light, color and brightness,
+      // but will only consider one point (first in the list), with priority to switch.
+      // In summary: assumption is the equipment represents a unique light.
+      const lightSourceEquipment = findEquipment(this.element.equipment, 'Equipment_LightSource', true, true)
+      const lightSourceEquipmentNoLightPoints = lightSourceEquipment.filter((e) => !e.points.some((p) => points.includes(p)))
+      lightSourceEquipmentNoLightPoints.forEach((e) => {
+        const lightSourcePoints = [...findPoints(e.points, 'Point_Control_Switch', false), ...findPoints(e.points, 'Point_Control', true), ...findPoints(e.points, 'Point_Status', true)]
+        if (lightSourcePoints.length) {
+          points.push(lightSourcePoints.slice(0, 1))
+        }
+      })
+      // Also include LightSource tagged equipment items that have no points themselves and no points in the children.
+      points.push(...equipmentNoPointsSelected(lightSourceEquipmentNoLightPoints, points, true))
       return points
     }
   },
