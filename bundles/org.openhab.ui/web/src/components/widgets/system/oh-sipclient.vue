@@ -113,9 +113,6 @@ import ringBackFile from './oh-sipclient-ringback.mp3'
 import { useStatesStore } from '@/js/stores/useStatesStore'
 
 export default {
-  props: {
-    f7router: Object
-  },
   data () {
     return {
       connected: false,
@@ -124,7 +121,8 @@ export default {
       remoteParty: '',
       phonebook: new Map(),
       showLocalVideo: false,
-      stream: null
+      stream: null,
+      f7router: f7.views.main.router
     }
   },
   mixins: [mixin, foregroundService, actionsMixin],
