@@ -924,9 +924,9 @@ export default {
           this.$oh.api.get('/rest/items?staticDataOnly=true&metadata=.*'), // 0
           this.$oh.api.get('/rest/things?summary=true'), // 1
           this.$oh.api.get('/rest/rules?summary=false'), // 2
-          Promise.resolve(useComponentsStore().pages), // 3
+          Promise.resolve(useComponentsStore().pages()), // 3
           this.$oh.api.get('/rest/ui/components/system:sitemap'), // 4
-          Promise.resolve(useComponentsStore().widgets), // 5
+          Promise.resolve(useComponentsStore().widgets()), // 5
           this.$oh.api.get('/rest/transformations'), // 6
           this.loadPersistenceConfigs() // 7
         ]

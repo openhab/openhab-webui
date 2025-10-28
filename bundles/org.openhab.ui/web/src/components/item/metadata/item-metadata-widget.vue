@@ -43,7 +43,7 @@
               {{ widget.label }}
             </option>
           </optgroup>
-          <optgroup v-if="componentsStore.widgets.length" label="Personal Widgets">
+          <optgroup v-if="componentsStore.widgets().length" label="Personal Widgets">
             <option v-for="widget in personalWidgets"
                     :value="'widget:' + widget.uid"
                     :key="widget.uid"
@@ -131,7 +131,7 @@ export default {
   },
   computed: {
     personalWidgets () {
-      return [...useComponentsStore().widgets].sort((a, b) => { return a.uid.localeCompare(b.uid) })
+      return [...useComponentsStore().widgets()].sort((a, b) => { return a.uid.localeCompare(b.uid) })
     },
     ...mapStores(useComponentsStore)
   },
@@ -203,7 +203,7 @@ export default {
     setConfigDescriptions () {
       let desc = {}
       if (!this.currentComponent || !this.currentComponent.component) return desc
-      const widget = useComponentsStore().widgets.find((w) => w.uid === this.currentComponent.component.replace('widget:', ''))
+      const widget = useComponentsStore().widgets().find((w) => w.uid === this.currentComponent.component.replace('widget:', ''))
       if (widget && widget.props) desc = Object.assign({}, widget.props)
 
       if (this.namespace === 'listWidget') {

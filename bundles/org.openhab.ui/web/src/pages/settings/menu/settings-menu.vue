@@ -61,7 +61,7 @@
             <f7-list-item v-if="runtimeStore.apiEndpoint('ui')"
                           link="pages/"
                           title="Pages"
-                          :after="componentsStore.pages.length + sitemapsCount"
+                          :after="componentsStore.pages().length + sitemapsCount"
                           badge-color="blue"
                           :footer="objectsSubtitles.pages">
               <template #media>
