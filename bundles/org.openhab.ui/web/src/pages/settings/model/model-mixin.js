@@ -16,7 +16,6 @@ export default {
     return {
       ready: false,
       loading: false,
-      includeNonSemantic: false,
 
       items: [],
       links: [],
@@ -46,7 +45,7 @@ export default {
      *
      * @returns {Promise<void>}
      */
-    loadModel () {
+    async loadModel () {
       if (this.loading) return Promise.resolve()
       this.loading = true
 

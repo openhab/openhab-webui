@@ -1,15 +1,12 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
-    <f7-navbar :title="service.label + dirtyIndicator" back-link="Settings">
-      <f7-nav-right>
-        <f7-link @click="save()"
-                 v-if="$theme.md"
-                 icon-md="material:save"
-                 icon-only />
-        <f7-link @click="save()" v-if="!$theme.md">
-          Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
-        </f7-link>
-      </f7-nav-right>
+    <f7-navbar>
+      <oh-nav-content :title="service.label + dirtyIndicator"
+                      back-link="Settings"
+                      back-link-url="/settings/"
+                      :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
+                      @save="save()"
+                      :f7router />
     </f7-navbar>
     <f7-block form v-if="configDescriptions && config" class="block-narrow">
       <f7-col>
@@ -24,6 +21,9 @@
 </template>
 
 <script>
+import { nextTick } from 'vue'
+import { f7, theme } from 'framework7-vue'
+
 import fastDeepEqual from 'fast-deep-equal/es6'
 import cloneDeep from 'lodash/cloneDeep'
 
@@ -36,7 +36,11 @@ export default {
     ConfigSheet
   },
   props: {
-    serviceId: String
+    serviceId: String,
+    f7router: Object
+  },
+  setup () {
+    return { theme }
   },
   data () {
     return {
@@ -60,18 +64,18 @@ export default {
   methods: {
     save () {
       this.$oh.api.put('/rest/services/' + this.serviceId + '/config', this.config).then(() => {
-        this.$f7.toast.create({
+        f7.toast.create({
           text: 'Saved',
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
       })
       if (this.serviceId === 'org.openhab.i18n') {
-        this.$f7.emit('sidebarRefresh', this.config.locale)
+        f7.emit('sidebarRefresh', this.config.locale)
       }
       this.savedConfig = cloneDeep(this.config)
       this.dirty = false
-      this.$f7router.back()
+      this.f7router.back()
     },
     onPageAfterIn () {
       if (window) {
@@ -92,17 +96,17 @@ export default {
     }
   },
   created () {
-    this.$oh.api.get('/rest/services/' + this.serviceId).then(data => {
+    this.$oh.api.get('/rest/services/' + this.serviceId).then((data) => {
       this.service = data
 
       if (this.service.configDescriptionURI) {
-        this.$oh.api.get('/rest/config-descriptions/' + this.service.configDescriptionURI).then(data2 => {
+        this.$oh.api.get('/rest/config-descriptions/' + this.service.configDescriptionURI).then((data2) => {
           this.configDescriptions = data2
 
-          this.$oh.api.get('/rest/services/' + this.serviceId + '/config').then(data3 => {
+          this.$oh.api.get('/rest/services/' + this.serviceId + '/config').then((data3) => {
             this.config = data3
             this.savedConfig = cloneDeep(this.config)
-            this.$nextTick(() => {
+            nextTick(() => {
               this.loading = false
             })
           })

@@ -4,29 +4,26 @@
              v-bind="config"
              @command="onCommand">
     <!-- eslint-disable-next-line vue/no-unused-vars -->
-    <template v-for="(slotComponents, slotName) in context.component.slots" #[slotName]>
-      <ul :key="slotName" v-if="componentType === 'f7-list'">
-        <generic-widget-component :context="childContext(slotComponent)"
-                                  v-for="(slotComponent, idx) in slotComponents"
-                                  :slot="slotName"
+    <template v-for="(slotComponents, slotName) in context.component.slots" :key="slotName" #[slotName]>
+      <ul v-if="componentType === 'f7-list'">
+        <generic-widget-component v-for="(slotComponent, idx) in slotComponents"
+                                  :context="childContext(slotComponent)"
                                   :key="slotName + '-' + idx"
                                   @command="onCommand" />
       </ul>
-      <generic-widget-component v-else
-                                :context="childContext(slotComponent)"
-                                v-for="(slotComponent, idx) in slotComponents"
-                                :slot="slotName"
-                                :key="slotName + '-' + idx"
-                                @command="onCommand" />
+      <template v-else>
+        <generic-widget-component v-for="(slotComponent, idx) in slotComponents"
+                                  :context="childContext(slotComponent)"
+                                  :key="slotName + '-' + idx"
+                                  @command="onCommand" />
+      </template>
     </template>
   </component>
   <oh-card v-else-if="componentType && componentType === 'oh-card' && visible" :context="context">
-    <!-- eslint-disable-next-line vue/no-unused-vars -->
-    <template v-for="(slotComponents, slotName) in context.component.slots" #[slotName]>
-      <generic-widget-component :context="childContext(slotComponent)"
-                                v-for="(slotComponent, idx) in slotComponents"
-                                :slot="slotName"
-                                :key="slotName + '-' + idx"
+    <template v-for="(slotComponents, slotName) in context.component.slots" :key="slotName" #[slotName]>
+      <generic-widget-component v-for="(slotComponent, idx) in slotComponents"
+                                :context="childContext(slotComponent)"
+                                :key="slotName + '-' + idx "
                                 @command="onCommand" />
     </template>
   </oh-card>
@@ -42,9 +39,9 @@
     {{ config.text }}
   </div>
   <!-- Content renders text without any additional container -->
-  <fragment v-else-if="componentType && componentType === 'Content'">
+  <template v-else-if="componentType && componentType === 'Content'">
     {{ config.text }}
-  </fragment>
+  </template>
   <pre v-else-if="componentType && componentType === 'Error' && visible" class="text-color-red" style="white-space: pre-wrap">{{ config.error }}</pre>
   <component v-else-if="visible" :is="componentType" v-bind="config">
     {{ config.content }}
@@ -57,7 +54,7 @@
 </template>
 
 <script>
-import { Fragment } from 'vue-fragment'
+import { defineAsyncComponent } from 'vue'
 
 import mixin from './widget-mixin'
 
@@ -70,12 +67,13 @@ import * as LayoutWidgets from './layout/index'
 export default {
   mixins: [mixin],
   components: {
-    Fragment,
     ...SystemWidgets,
     ...StandardWidgets,
     ...StandardListWidgets,
     ...StandardCellWidgets,
-    ...LayoutWidgets
+    ...LayoutWidgets,
+    // TODO-V3.1: OhContext won't render in production build unless we async import here -> circular import ???
+    OhContext: defineAsyncComponent(() => import('./system/oh-context.vue'))
   }
 }
 </script>

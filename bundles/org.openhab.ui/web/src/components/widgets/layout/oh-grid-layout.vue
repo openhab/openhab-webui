@@ -39,7 +39,7 @@
       ref="vueGridLayout"
       :is-draggable="!!context.editmode"
       :is-resizable="!!context.editmode"
-      :layout.sync="layout"
+      v-model:layout="layout"
       :auto-size="config.layoutType !== 'fixed'"
       :col-num="colNum"
       :row-height="rowHeight"
@@ -87,15 +87,18 @@
 </style>
 
 <script>
+import { nextTick, defineAsyncComponent } from 'vue'
+import { f7 } from 'framework7-vue'
+
 import mixin from '../widget-mixin'
-import OhGridItem from './oh-grid-item'
+import OhGridItem from './oh-grid-item.vue'
 import { OhGridLayoutDefinition } from '@/assets/definitions/widgets/layout'
 
 export default {
   mixins: [mixin],
   widget: OhGridLayoutDefinition,
   components: {
-    'grid-layout': () => import('vue-grid-layout').then((mod) => mod.GridLayout),
+    'grid-layout': defineAsyncComponent(() => import('grid-layout-plus').then((mod) => mod.GridLayout)),
     OhGridItem
   },
   data () {
@@ -107,7 +110,7 @@ export default {
       colNum: Number,
       screenWidth: Number,
       screenHeight: Number,
-      fullscreen: this.$fullscreen.getState(),
+      fullscreen: this.$fullscreen.isFullscreen,
       navbarHidden: false,
       style: {
         width: Number,
@@ -136,7 +139,7 @@ export default {
     this.computeLayout()
   },
   mounted () {
-    this.$nextTick(() => {
+    nextTick(() => {
       this.setDimensions() // call at nexttick for clientWidth to be available
     })
 
@@ -144,7 +147,7 @@ export default {
     this.windowWidth = window.screen.width
     this.windowHeight = window.screen.height
   },
-  beforeDestroy () {
+  beforeUnmount () {
     if (!this.context.editmode) {
       window.removeEventListener('resize', this.setDimensions)
     }
@@ -176,7 +179,7 @@ export default {
     addItem () {
       // try adding a 2x2 widget, or a 1x1 widget if there's no room left
       if (!this.createItem(2) && !this.createItem(1)) {
-        this.$f7.dialog.alert('No more space available', 'Unable to add widget')
+        f7.dialog.alert('No more space available', 'Unable to add widget')
       }
     },
     setDimensions () {

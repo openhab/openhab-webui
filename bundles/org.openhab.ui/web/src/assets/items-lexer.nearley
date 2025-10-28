@@ -1,5 +1,7 @@
+@preprocessor esmodule
+
 @{%
-  const moo = require('moo')
+  import moo from 'moo'
 
   let lexer = moo.compile({
     WS:         /[ \t]+/,

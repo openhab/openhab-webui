@@ -1,5 +1,6 @@
+import { request } from 'framework7/lite-bundle'
+
 import { getBasicCredentials } from '@/js/openhab/auth'
-import Framework7 from 'framework7/framework7-lite.esm.bundle.js'
 
 export default {
   getIcon: (icon, format, state, iconSet) => {
@@ -10,7 +11,7 @@ export default {
 
     if (getBasicCredentials()) {
       return new Promise((resolve, reject) => {
-        Framework7.request.promise({ url, xhrFields: { responseType: 'blob' } }).then((resp) => {
+        request.promise({ url, xhrFields: { responseType: 'blob' } }).then((resp) => {
           let reader = new FileReader()
           reader.readAsDataURL(resp.data)
           reader.onload = () => {
@@ -25,7 +26,7 @@ export default {
   getImage: (url) => {
     if (getBasicCredentials()) {
       return new Promise((resolve, reject) => {
-        Framework7.request.promise({ url, xhrFields: { responseType: 'blob' } }).then((resp) => {
+        request.promise({ url, xhrFields: { responseType: 'blob' } }).then((resp) => {
           let reader = new FileReader()
           reader.readAsDataURL(resp.data)
           reader.onload = () => {

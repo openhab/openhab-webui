@@ -59,35 +59,38 @@
           </div>
           <div v-else>
             <f7-list media-list>
-              <template v-for="key of Object.keys(actionOutput)">
+              <template v-for="key of Object.keys(actionOutput)" :key="key + '-list-item'">
                 <!-- Render result as a list item, works without action output definition from REST -->
                 <f7-list-item v-if="key === 'result'"
-                              :key="key"
-                              :floating-label="$theme.md"
+                              :floating-label="theme.md"
                               :title="action.outputs.find(o => o.name === key)?.label || 'Result'"
                               :footer="action.outputs.find(o => o.name === key)?.description">
-                  <div slot="after">
-                    {{ actionOutput[key] }}
-                  </div>
+                  <template #after>
+                    <div>
+                      {{ actionOutput[key] }}
+                    </div>
+                  </template>
                 </f7-list-item>
                 <!-- Render QR code if the key is qrCode -->
                 <!-- Render QR code if the action output type is qrCode in the action output definition from REST -->
                 <f7-list-item v-else-if="key === 'qrCode' || action.outputs.find(o => o.name === key)?.type === 'qrCode'"
-                              :key="key"
-                              :floating-label="$theme.md"
+                              :floating-label="theme.md"
                               :title="action.outputs.find(o => o.name === key)?.label || 'QR Code'"
                               :footer="action.outputs.find(o => o.name === key)?.description">
-                  <vue-qrcode :value="actionOutput[key]" slot="after" />
+                  <template #after>
+                    <vue-qrcode :value="actionOutput[key]" />
+                  </template>
                 </f7-list-item>
                 <!-- Render other keys as list items with the label defined by the action output definition from REST or the key as label -->
                 <f7-list-item v-else
-                              :key="key"
-                              :floating-label="$theme.md"
+                              :floating-label="theme.md"
                               :title="action.outputs.find(o => o.name === key)?.label || key"
                               :footer="action.outputs.find(o => o.name === key)?.description">
-                  <div slot="after">
-                    {{ actionOutput[key] }}
-                  </div>
+                  <template #after>
+                    <div>
+                      {{ actionOutput[key] }}
+                    </div>
+                  </template>
                 </f7-list-item>
               </template>
               <f7-list-item accordion-item title="Raw Output Value">
@@ -106,16 +109,22 @@
 </template>
 
 <script>
+import { defineAsyncComponent } from 'vue'
+import { f7, theme } from 'framework7-vue'
+
 import ConfigSheet from '@/components/config/config-sheet.vue'
 
 export default {
   components: {
     ConfigSheet,
-    'vue-qrcode': () => import(/* webpackChunkName: "vue-qrcode" */ 'vue-qrcode')
+    'vue-qrcode': defineAsyncComponent(() => import(/* webpackChunkName: "vue-qrcode" */ 'vue-qrcode'))
   },
   props: {
     thingUID: String,
     action: Object
+  },
+  setup () {
+    return { theme }
   },
   data () {
     return {
@@ -135,7 +144,7 @@ export default {
   methods: {
     execute () {
       if (this.$refs.configSheet?.isValid() === false) {
-        this.$f7.dialog.alert('Please review the input and correct validation errors')
+        f7.dialog.alert('Please review the input and correct validation errors')
         return
       }
       this.executing = true
@@ -146,7 +155,7 @@ export default {
         })
     },
     close () {
-      this.$refs.modulePopup.close()
+      this.$refs.modulePopup.$el.f7Modal.close()
     }
   }
 }

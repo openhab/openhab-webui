@@ -12,7 +12,9 @@
                         link="#"
                         no-chevron
                         @click="performAction">
-            <oh-image slot="content-start" :context="childContext(context.component)" />
+            <template #content-start>
+              <oh-image :context="childContext(context.component)" />
+            </template>
           </f7-list-item>
         </f7-list>
         <oh-image v-else :context="childContext(context.component)" />

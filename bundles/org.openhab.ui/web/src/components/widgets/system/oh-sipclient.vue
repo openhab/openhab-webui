@@ -30,14 +30,14 @@
                icon-color="yellow"
                :icon-size="config.iconSize" />
     <!-- Show dial menu when there`s no call -->
-    <f7-button v-else-if="(!session || session.isEnded())"
+    <f7-button v-else-if="(!session || sessionState === 'ended')"
                :style="computedButtonStyle"
                icon-f7="phone_fill_arrow_up_right"
                icon-color="green"
                :icon-size="config.iconSize"
                @click.stop="dial()" />
     <!-- Show answer button on incoming call -->
-    <f7-segmented v-else-if="session && session.direction === 'incoming' && session.isInProgress()"
+    <f7-segmented v-else-if="session && session.direction === 'incoming' && sessionState === 'in-progress'"
                   style="width: 100%; height: 100%">
       <f7-button :style="computedButtonStyle"
                  icon-f7="phone_fill_arrow_down_left"
@@ -53,23 +53,23 @@
                  @click.stop="session.terminate()" />
     </f7-segmented>
     <!-- Show hangup button and DTM button (if configured) for ongoing call -->
-    <f7-segmented v-else style="width: 100%; height: 100%">
+    <f7-segmented v-else-if="session" style="width: 100%; height: 100%">
       <!-- Show hangup button for outgoing call -->
-      <f7-button v-if="session && session.isInProgress()"
+      <f7-button v-if="sessionState === 'in-progress'"
                  :style="computedButtonStyle"
                  icon-f7="phone_down_fill"
                  icon-color="yellow"
                  :icon-size="config.iconSize"
                  @click.stop="session.terminate()" />
       <!-- Show hangup button for ongoing call -->
-      <f7-button v-else-if="session && !session.isEnded()"
+      <f7-button v-else-if="sessionState === 'established'"
                  :style="computedButtonStyle"
                  icon-f7="phone_down_fill"
                  icon-color="red"
                  :icon-size="config.iconSize"
                  @click.stop="session.terminate()" />
       <!-- Show send DTMF button if in a call if DTMF string is configured -->
-      <f7-button v-if="session && !session.isInProgress() && !session.isEnded() && config.dtmfString && config.dtmfString.length > 0"
+      <f7-button v-if="sessionState === 'established' && config.dtmfString && config.dtmfString.length > 0"
                  :style="computedButtonStyle"
                  icon-f7="number_square"
                  icon-color="orange"
@@ -96,6 +96,8 @@
 </style>
 
 <script>
+import { f7 } from 'framework7-vue'
+
 import mixin from '../widget-mixin'
 import { OhSIPClientDefinition } from '@/assets/definitions/widgets/system'
 import foregroundService from '../widget-foreground-service'
@@ -108,15 +110,19 @@ import { WidgetDefinition, pg, pt, pi } from '@/assets/definitions/widgets/helpe
 import ringFile from './oh-sipclient-ringtone.mp3'
 import ringBackFile from './oh-sipclient-ringback.mp3'
 
+import { useStatesStore } from '@/js/stores/useStatesStore'
+
 export default {
   data () {
     return {
       connected: false,
-      session: null,
+      session: null, // internal state is not tracked -> reactivity is limited
+      sessionState: null, // dedicated computed session state so Vue reactivity works properly
       remoteParty: '',
       phonebook: new Map(),
       showLocalVideo: false,
-      stream: null
+      stream: null,
+      f7router: f7.views.main.router
     }
   },
   mixins: [mixin, foregroundService, actionsMixin],
@@ -147,7 +153,7 @@ export default {
 
       // Make sure we have Mic/Camera permissions
       if (!navigator.mediaDevices) {
-        this.$f7.dialog.alert('To use the SIP widget, please make sure that HTTPS is in use and WebRTC is supported by this browser.')
+        f7.dialog.alert('To use the SIP widget, please make sure that HTTPS is in use and WebRTC is supported by this browser.')
       } else {
         navigator.mediaDevices.getUserMedia({ audio: true, video: this.config.enableVideo })
           .then((stream) => {
@@ -159,7 +165,7 @@ export default {
           })
           .catch((err) => {
             console.log('Could not access microphone/camera', err)
-            this.$f7.dialog.alert('To use the SIP widget you must allow microphone/camera access in your browser and reload this page.')
+            f7.dialog.alert('To use the SIP widget you must allow microphone/camera access in your browser and reload this page.')
           })
       }
     },
@@ -177,7 +183,11 @@ export default {
       this.context.component.config = { ...this.config, ...this.localConfig } // Merge local device configuration
 
       import(/* webpackChunkName: "jssip" */ 'jssip').then((JsSIP) => { // Lazy load jssip
-        if (this.config.enableSIPDebug) { JsSIP.debug.enable('JsSIP:*') } else { JsSIP.debug.disable() }
+        if (this.config.enableSIPDebug) {
+          JsSIP.debug.enable('JsSIP:*')
+        } else {
+          JsSIP.debug.disable()
+        }
         // SIP user agent setup
         this.remoteAudio = new window.Audio()
         const url = new URL(this.config.websocketUrl, window.location.origin)
@@ -221,6 +231,7 @@ export default {
         // Register event for new incoming or outgoing call event
         this.phone.on('newRTCSession', (data) => {
           this.session = data.session
+          this.sessionState = 'in-progress'
           const remoteParty = this.session.remote_identity.uri.user
           const remotePartyWithHost = `${this.session.remote_identity.uri.user}@${this.session.remote_identity.uri.host}`
 
@@ -230,6 +241,7 @@ export default {
             this.updateStateItem('outgoing:' + remotePartyWithHost)
             // Handle accepted call
             this.session.on('accepted', () => {
+              this.sessionState = 'established'
               this.stopTones()
               this.updateStateItem('outgoing-accepted:' + remotePartyWithHost)
               console.info(this.LOGGER_PREFIX + ': Outgoing call in progress')
@@ -240,6 +252,7 @@ export default {
             this.updateStateItem('incoming:' + remotePartyWithHost)
             // Handle accepted call
             this.session.on('accepted', () => {
+              this.sessionState = 'established'
               this.updateStateItem('incoming-accepted:' + remotePartyWithHost)
               console.info(this.LOGGER_PREFIX + ': Incoming call in progress')
             })
@@ -259,12 +272,16 @@ export default {
           }
           // Handle ended call
           this.session.on('ended', () => {
+            this.session = null
+            this.sessionState = 'ended'
             this.stopMedia()
             this.updateStateItem('ended:' + remotePartyWithHost)
             console.info(this.LOGGER_PREFIX + ': Call ended')
           })
           // Handle failed call
           this.session.on('failed', (event) => {
+            this.session = null
+            this.sessionState = 'ended'
             this.stopTones()
             this.stopMedia()
             this.updateStateItem('failed:' + remotePartyWithHost)
@@ -357,7 +374,7 @@ export default {
     localSettingsPopup () {
       console.info(this.LOGGER_PREFIX + ': Opening local settings popup.')
       const popup = { component: WidgetConfigPopup }
-      this.$f7router.navigate({ url: 'local-sip-settings', route: { path: 'local-sip-settings', popup } }, {
+      this.f7router.navigate({ url: 'local-sip-settings', route: { path: 'local-sip-settings', popup } }, {
         props: {
           component: {
             config: this.localConfig || {}
@@ -374,8 +391,8 @@ export default {
             ])
         }
       })
-      this.$f7.on('widgetConfigUpdate', this.storeLocalConfig)
-      this.$f7.once('widgetConfigClosed', () => this.$f7.off('widgetConfigUpdate', this.storeLocalConfig))
+      f7.on('widgetConfigUpdate', this.storeLocalConfig)
+      f7.once('widgetConfigClosed', () => f7.off('widgetConfigUpdate', this.storeLocalConfig))
     },
     storeLocalConfig (config) {
       this.localConfig = config
@@ -400,7 +417,7 @@ export default {
           }
         })
         actionsPromise.then((actions) => {
-          this.$f7.actions.create({
+          f7.actions.create({
             buttons: [
               actions,
               [{ text: 'Cancel', color: 'red' }]
@@ -408,7 +425,7 @@ export default {
           }).open()
         })
       } else {
-        this.$f7.dialog.alert('Please configure phonebook entries')
+        f7.dialog.alert('Please configure phonebook entries')
       }
     },
     autoDial () {
@@ -419,7 +436,7 @@ export default {
     },
     updateStateItem (newStatus) {
       if (!this.config.sipStateItem) return
-      this.$store.dispatch('sendCommand', { itemName: this.config.sipStateItem, cmd: newStatus })
+      useStatesStore().sendCommand(this.config.sipStateItem, newStatus)
     }
   },
   created () {

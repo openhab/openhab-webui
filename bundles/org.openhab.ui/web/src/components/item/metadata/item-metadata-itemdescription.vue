@@ -9,7 +9,7 @@
       <f7-list-input
         ref="input"
         type="textarea"
-        :floating-label="$theme.md"
+        :floating-label="theme.md"
         :label="'Options'"
         name="options"
         :disabled="!editable ? true : null"
@@ -40,8 +40,12 @@
 </template>
 
 <script>
+import { theme } from 'framework7-vue'
+
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import ItemMetadataMixin from '@/components/item/metadata/item-metadata-mixin'
+
+import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
 export default {
   props: {
@@ -52,6 +56,9 @@ export default {
   mixins: [ItemMetadataMixin],
   components: {
     ConfigSheet
+  },
+  setup () {
+    return { theme }
   },
   data () {
     return {
@@ -77,7 +84,7 @@ export default {
       return this.metadata.config.options.trim().split(',').map((s) => s.trim()).join('\n')
     },
     docLink () {
-      const docUrl = `${this.$store.state.websiteUrl}/link/thing`
+      const docUrl = `${useRuntimeStore().websiteUrl}/link/thing`
       if (this.namespace === 'stateDescription') {
         return docUrl + '#state-description'
       } else {

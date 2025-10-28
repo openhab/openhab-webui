@@ -2,7 +2,7 @@
   <f7-popup ref="modulePopup"
             class="moduleconfig-popup"
             :close-by-backdrop-click="false"
-            @popupClosed="moduleConfigClosed">
+            @popup:closed="moduleConfigClosed">
     <f7-page>
       <f7-navbar>
         <f7-nav-left>
@@ -12,13 +12,7 @@
                    @click="onBackClicked" />
         </f7-nav-left>
         <f7-nav-title v-if="ruleModule && ruleModule.new">
-          Add {{ SectionLabels[currentSection][1] }}
-        </f7-nav-title>
-        <f7-nav-title v-else-if="readOnly">
-          View {{ SectionLabels[currentSection][1] }}
-        </f7-nav-title>
-        <f7-nav-title v-else>
-          Edit {{ SectionLabels[currentSection][1] }}
+          {{ title }}
         </f7-nav-title>
         <f7-nav-right>
           <f7-link v-if="!readOnly && currentRuleModuleType && dirty" @click="updateModuleConfig">
@@ -78,14 +72,16 @@
                                    :module-types="moduleTypes['conditions']"
                                    @type-select="setModuleType"
                                    @show-advanced="advancedTypePicker = true"
-                                   @start-script="startScripting" />
+                                   @start-script="startScripting"
+                                   :f7router />
           <action-module-wizard v-else-if="!advancedTypePicker && currentSection === 'actions'"
                                 :current-module="ruleModule"
                                 :current-module-type="currentRuleModuleType"
                                 :module-types="moduleTypes['actions']"
                                 @type-select="setModuleType"
                                 @show-advanced="advancedTypePicker = true"
-                                @start-script="startScripting" />
+                                @start-script="startScripting"
+                                :f7router />
         </f7-col>
 
         <!-- module configuration -->
@@ -95,9 +91,9 @@
                           :title="SectionLabels[currentSection][0]"
                           ref="ruleModuleTypeSmartSelect"
                           smart-select
-                          :smart-select-params="{ view: $f7.views.main, openIn: 'popup', closeOnSelect: true }">
+                          :smart-select-params="{ view: f7.views.main, openIn: 'popup', closeOnSelect: true }">
               <select name="ruleModuleType"
-                      @change="setModuleType(moduleTypes[currentSection].find((t) => t.uid === $refs.ruleModuleTypeSmartSelect.f7SmartSelect.getValue()), true)">
+                      @change="setModuleType(moduleTypes[currentSection].find((t) => t.uid === $refs.ruleModuleTypeSmartSelect.$el.children[0].f7SmartSelect.getValue()), true)">
                 <optgroup v-for="(mt, scope) in groupedModuleTypes(currentSection)" :key="scope" :label="scope">
                   <option v-for="moduleType in mt"
                           :value="moduleType.uid"
@@ -137,6 +133,8 @@
 </template>
 
 <script>
+import { f7 } from 'framework7-vue'
+
 import cloneDeep from 'lodash/cloneDeep'
 import fastDeepEqual from 'fast-deep-equal/es6'
 
@@ -165,6 +163,11 @@ export default {
     f7router: Object
   },
   emits: ['module-update', 'editNewScript'],
+  setup () {
+    return {
+      f7
+    }
+  },
   data () {
     return {
       currentRuleModuleType: this.ruleModuleType,
@@ -172,6 +175,11 @@ export default {
     }
   },
   computed: {
+    title () {
+      if (this.ruleModule && this.ruleModule.new) return 'Add ' + this.SectionLabels[this.currentSection][1]
+      if (this.readOnly) return 'View ' + this.SectionLabels[this.currentSection][1]
+      return 'Edit ' + this.SectionLabels[this.currentSection][1]
+    },
     moduleTitleSuggestion () {
       if (!this.ruleModule || !this.currentRuleModuleType) return 'Title'
       return this.suggestedModuleTitle(this.ruleModule, this.currentRuleModuleType)
@@ -193,35 +201,35 @@ export default {
     setModuleType (val, clearConfig) {
       const moduleType = (typeof val === 'string') ? this.moduleTypes[this.currentSection].find((t) => t.uid === val) : val
       this.ruleModule.type = moduleType.uid
-      this.$set(this, 'currentRuleModuleType', moduleType)
-      if (clearConfig) this.$set(this.ruleModule, 'configuration', {})
+      this.currentRuleModuleType = moduleType
+      if (clearConfig) this.ruleModule.configuration = {}
       this.ruleModule.label = this.ruleModule.description = ''
     },
     moduleConfigClosed () {
-      this.$f7.emit('ruleModuleConfigClosed')
+      f7.emit('ruleModuleConfigClosed')
     },
     updateModuleConfig () {
       if (this.$refs.parameters && !this.$refs.parameters.isValid()) {
-        this.$f7.dialog.alert('Please review the configuration and correct validation errors')
+        f7.dialog.alert('Please review the configuration and correct validation errors')
         return
       }
-      this.$f7.emit('ruleModuleConfigUpdate', this.ruleModule)
-      this.$refs.modulePopup.close()
+      f7.emit('ruleModuleConfigUpdate', this.ruleModule)
+      this.$refs.modulePopup.$el.f7Modal.close()
     },
     editBlockly () {
       this.updateModuleConfig()
-      this.$f7.views.main.router.navigate(`/settings/rules/${this.rule.uid}/script/${this.ruleModule.id}`)
+      f7.views.main.router.navigate(`/settings/rules/${this.rule.uid}/script/${this.ruleModule.id}`)
     },
     startScripting (language) {
       const contentType = (language === 'blockly') ? 'application/javascript' : language
-      this.$set(this.ruleModule.configuration, 'type', contentType)
-      this.$set(this.ruleModule.configuration, 'script', '')
+      this.ruleModule.configuration.type = contentType
+      this.ruleModule.configuration.script = ''
       if (language === 'blockly') {
         // initialize an empty blockly source
-        this.$set(this.ruleModule.configuration, 'blockSource', '<xml xmlns="https://developers.google.com/blockly/xml"></xml>')
+        this.ruleModule.configuration.blockSource = '<xml xmlns="https://developers.google.com/blockly/xml"></xml>'
       }
-      this.$f7.emit('editNewScript', this.ruleModule)
-      this.$refs.modulePopup.close()
+      f7.emit('editNewScript', this.ruleModule)
+      this.$refs.modulePopup.$el.f7Modal.close()
     },
     groupedModuleTypes (section) {
       const moduleTypes = this.moduleTypes[section].filter((t) => t.visibility === 'VISIBLE')
@@ -242,13 +250,13 @@ export default {
     },
     onBackClicked () {
       if (this.dirty) {
-        this.confirmLeaveWithoutSaving(this.$refs.modulePopup.close)
+        this.confirmLeaveWithoutSaving(this.$refs.modulePopup.$el.f7Modal.close)
       } else {
-        this.$refs.modulePopup.close()
+        this.$refs.modulePopup.$el.f7Modal.close()
       }
     },
     close () {
-      this.$refs.modulePopup.close()
+      this.$refs.modulePopup.$el.f7Modal.close()
     }
   },
   created () {

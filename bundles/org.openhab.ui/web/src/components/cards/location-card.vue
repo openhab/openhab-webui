@@ -89,6 +89,8 @@ import ModelCard from './model-card.vue'
 import StatusBadge from './glance/location/status-badge.vue'
 import MeasurementBadge from './glance/location/measurement-badge.vue'
 
+import { useStatesStore } from '@/js/stores/useStatesStore'
+
 export default {
   mixins: [mixin, CardMixin],
   props: {
@@ -111,7 +113,7 @@ export default {
     },
     propertiesListContext () {
       return {
-        store: this.$store.getters.trackedItems,
+        store: useStatesStore().trackedItems,
         component: {
           component: 'oh-list',
           config: {
@@ -125,7 +127,7 @@ export default {
     },
     equipmentListContext () {
       return {
-        store: this.$store.getters.trackedItems,
+        store: useStatesStore().trackedItems,
         component: equipmentListComponent(this.element.item.equipment, this.tabContext, true)
       }
     }

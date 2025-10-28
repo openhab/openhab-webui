@@ -17,29 +17,44 @@
                 @click.stop="openAccordionOrPerformAction"
                 :class="{ 'oh-equipment-accordion-item': isEquipmentAccordion }"
                 ref="f7AccordionContent">
-    <slot name="inner" #inner />
-    <slot name="after" #after />
-    <slot name="content" #content />
-    <slot name="root-end" #root-end />
-    <slot name="footer" #footer />
-    <generic-widget-component slot="after"
-                              v-if="context.component.slots && context.component.slots.after && context.component.slots.after.length"
-                              :context="childContext(context.component.slots.after[0])"
-                              v-on="$listeners" />
+    <template #inner v-if="$slots.inner">
+      <slot name="inner" />
+    </template>
+    <template #content v-if="$slots.content">
+      <slot name="content" />
+    </template>
+    <template #root-end v-if="$slots['root-end']">
+      <slot name="root-end" />
+    </template>
+    <template #footer v-if="$slots.footer">
+      <slot name="footer" />
+    </template>
+    <template #after v-if="$slots.after">
+      <slot name="after" />
+    </template>
+    <generic-widget-component v-if="context.component.slots && context.component.slots.after && context.component.slots.after.length"
+                              v-bind="$attrs"
+                              :context="childContext(context.component.slots.after[0])" />
     <f7-accordion-content v-if="context.parent.component.config.accordionList && !context.editmode">
-      <generic-widget-component v-if="isRegularAccordion" :context="childContext(context.component.slots.accordion[0])" v-on="$listeners" />
+      <generic-widget-component v-if="isRegularAccordion"
+                                v-bind="$attrs"
+                                :context="childContext(context.component.slots.accordion[0])" />
     </f7-accordion-content>
-    <f7-accordion-content slot="root" v-if="isEquipmentAccordion && !context.editmode">
-      <generic-widget-component :context="childContext(context.component.slots.accordion[0])" v-on="$listeners" />
-    </f7-accordion-content>
-    <oh-icon slot="media"
-             v-if="config.icon"
-             :icon="config.icon"
-             height="32"
-             width="32"
-             :color="config.iconColor"
-             :state="(config.item && config.iconUseState) ? context.store[config.item].state : null" />
-    <span slot="media" v-else-if="config.fallbackIconToInitial && config.title && context.parent.component.config && context.parent.component.config.mediaList" class="item-initial">{{ config.title[0].toUpperCase() }}</span>
+    <template #root>
+      <f7-accordion-content v-if="isEquipmentAccordion && !context.editmode">
+        <generic-widget-component v-bind="$attrs" :context="childContext(context.component.slots.accordion[0])" />
+      </f7-accordion-content>
+    </template>
+    <template #media v-if="$slots.media || config.icon || (config.fallbackIconToInitial && config.title && context.parent.component.config && context.parent.component.config.mediaList)">
+      <oh-icon v-if="config.icon"
+               :icon="config.icon"
+               height="32"
+               width="32"
+               :color="config.iconColor"
+               :state="config.item && config.iconUseState ? context.store[config.item].state : null" />
+      <span v-else-if="config.fallbackIconToInitial && config.title && context.parent.component.config && context.parent.component.config.mediaList"
+            class="item-initial">{{ config.title[0].toUpperCase() }}</span>
+    </template>
   </f7-list-item>
 </template>
 
@@ -132,6 +147,9 @@
 </style>
 
 <script>
+import { nextTick } from 'vue'
+import { f7 } from 'framework7-vue'
+
 import mixin from '../../widget-mixin'
 import { actionsMixin } from '../../widget-actions'
 import { OhListItemDefinition } from '@/assets/definitions/widgets/standard/listitems'
@@ -151,7 +169,7 @@ export default {
   mounted () {
     mixin.mounted.call(this)
     if (this.config.divider && !this.context.editmode) {
-      this.$nextTick(function () {
+      nextTick(() => {
         this.trimTitle()
       })
     }
@@ -161,14 +179,14 @@ export default {
       window.addEventListener('resize', this.duringResize)
     }
   },
-  destroyed () {
+  unmounted () {
     window.removeEventListener('resize', this.duringResize)
     if (this.timer) clearTimeout(this.timer)
   },
   methods: {
     openAccordionOrPerformAction () {
       if (this.isEquipmentAccordion) {
-        this.$f7.accordion.toggle(this.$refs.f7AccordionContent.$el)
+        f7.accordion.toggle(this.$refs.f7AccordionContent.$el)
       } else {
         this.performAction()
       }
@@ -190,7 +208,7 @@ export default {
         if (element.scrollWidth > element.offsetWidth) {
           let value = '…' + element.textContent
           do {
-            value = '…' + value.substr(2)
+            value = '…' + value.slice(2)
             trimCount++
             element.textContent = value
           } while (element.scrollWidth > element.offsetWidth && trimCount < 100)

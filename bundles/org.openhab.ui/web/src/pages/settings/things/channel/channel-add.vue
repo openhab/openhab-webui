@@ -1,15 +1,12 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" name="channel-add">
-    <f7-navbar title="Add Channel" :subtitle="thing.label" back-link="Cancel">
-      <f7-nav-right class="if-not-aurora">
-        <f7-link @click="save()"
-                 v-if="$theme.md"
-                 icon-md="material:save"
-                 icon-only />
-        <f7-link @click="save()" v-if="!$theme.md">
-          Done
-        </f7-link>
-      </f7-nav-right>
+    <f7-navbar>
+      <oh-nav-content title="Add Channel"
+                      :subtitle="thing.label"
+                      back-link="Cancel"
+                      save-link="Done"
+                      @save="save()"
+                      :f7router />
     </f7-navbar>
     <f7-block class="block-narrow">
       <f7-col>
@@ -64,6 +61,7 @@
 <script>
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import ChannelGeneralSettings from '@/pages/settings/things/channel/channel-general-settings.vue'
+import { f7, theme } from 'framework7-vue'
 
 export default {
   components: {
@@ -75,6 +73,9 @@ export default {
     thingType: Object,
     f7router: Object,
     f7route: Object
+  },
+  setup () {
+    return { theme }
   },
   data () {
     return {
@@ -99,16 +100,16 @@ export default {
     },
     save () {
       if (!this.channel.id) {
-        this.$f7.dialog.alert('Please give a unique identifier')
+        f7.dialog.alert('Please give a unique identifier')
         return
       }
       if (!this.channel.id.match(/^[a-zA-Z0-9_-]*$/)) {
-        this.$f7.dialog.alert('The identifier should only contain alphanumeric characters')
+        f7.dialog.alert('The identifier should only contain alphanumeric characters')
         return
       }
       if (!this.channel.label && this.currentChannelType.label) this.channel.label = this.currentChannelType.label
       if (!this.channel.label) {
-        this.$f7.dialog.alert('Please give a label')
+        f7.dialog.alert('Please give a label')
         return
       }
       let finalChannel = Object.assign({}, this.channel, {
@@ -121,9 +122,9 @@ export default {
         defaultTags: [],
         configuration: this.config
       })
-      this.$f7route.route.context.finalChannel = finalChannel
-      // this.$f7router.emit('complete', finalChannel)
-      this.$f7router.back()
+      this.f7route.route.context.finalChannel = finalChannel
+      // this.f7router.emit('complete', finalChannel)
+      this.f7router.back()
     }
   }
 }

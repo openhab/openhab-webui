@@ -49,6 +49,8 @@
 </template>
 
 <script>
+import { f7 } from 'framework7-vue'
+
 import ConfigSheet from '@/components/config/config-sheet.vue'
 
 export default {
@@ -70,17 +72,17 @@ export default {
   methods: {
     updateModuleConfig () {
       if (!this.$refs['config-sheet'].isValid()) {
-        this.$f7.dialog.alert('Please review the configuration and correct validation errors')
+        f7.dialog.alert('Please review the configuration and correct validation errors')
         return
       }
       if (this.filterType.name === 'includeFilters') {
         if (this.currentFilter.upper <= this.currentFilter.lower) {
-          this.$f7.dialog.alert('The lower bound value must be less than the upper bound value')
+          f7.dialog.alert('The lower bound value must be less than the upper bound value')
           return
         }
       }
-      this.$f7.emit('filterUpdate', this.currentFilter, this.filterType.name)
-      this.$refs.modulePopup.close()
+      f7.emit('filterUpdate', this.currentFilter, this.filterType.name)
+      this.$refs.modulePopup.$el.f7Modal.close()
     }
   }
 }
