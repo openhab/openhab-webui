@@ -65,8 +65,7 @@
               :tab-active="currentTab === idx">
         <component v-if="currentTab === idx"
                    :is="tabComponent(tab)"
-                   :context="tabContext(tab)"
-                   @command="onCommand" />
+                   :context="tabContext(tab)" />
       </f7-tab>
     </f7-tabs>
 
@@ -74,7 +73,6 @@
                :is="page.component"
                :context="context"
                :f7router
-               @command="onCommand"
                @action="performAction($event.ev, $event.prefix, $event.config, $event.context)" />
 
     <empty-state-placeholder v-if="!visibleToCurrentUser"
@@ -223,9 +221,6 @@ export default {
       const url = '/page/' + this.uid + '/' + this.currentTab
       this.f7router.updateCurrentUrl(url)
       this.f7router.url = url
-    },
-    onCommand (itemName, command) {
-      useStatesStore().sendCommand(itemName, command)
     },
     getPageType (page) {
       if (!page) return null

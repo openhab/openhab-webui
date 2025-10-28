@@ -150,9 +150,6 @@ export default {
         parent: this.context.parent
       }
       return widgetContext
-    },
-    onCommand (itemName, cmd) {
-      useStatesStore().sendCommand(itemName, cmd)
     }
   }
 }

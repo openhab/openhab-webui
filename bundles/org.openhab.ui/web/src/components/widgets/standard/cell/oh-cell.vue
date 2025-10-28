@@ -13,8 +13,7 @@
       <div v-if="context.component.slots && context.component.slots.background">
         <generic-widget-component v-for="(slotComponent, idx) in context.component.slots.background"
                                   :context="childContext(slotComponent)"
-                                  :key="'background-' + idx"
-                                  @command="onCommand" />
+                                  :key="'background-' + idx" />
       </div>
       <oh-trend v-else-if="config.trendItem"
                 :key="'trend' + config.item"
@@ -35,8 +34,7 @@
             <div v-if="context.component.slots && context.component.slots.header">
               <generic-widget-component v-for="(slotComponent, idx) in context.component.slots.header"
                                         :context="childContext(slotComponent)"
-                                        :key="'header-' + idx"
-                                        @command="onCommand" />
+                                        :key="'header-' + idx" />
             </div>
             <f7-list-item v-else
                           media-item
@@ -94,8 +92,7 @@
           <div v-if="context.component.slots && context.component.slots.default">
             <generic-widget-component v-for="(slotComponent, idx) in context.component.slots.default"
                                       :context="childContext(slotComponent)"
-                                      :key="'default-' + idx"
-                                      @command="onCommand" />
+                                      :key="'default-' + idx" />
           </div>
         </slot>
       </div>

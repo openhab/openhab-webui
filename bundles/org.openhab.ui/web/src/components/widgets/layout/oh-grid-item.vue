@@ -44,7 +44,6 @@
                            @click="context.editmode.addWidget(context.component, null, context.parent)"
                            class="oh-grid-item-content" />
     <generic-widget-component v-else-if="context.component.slots.default.length"
-                              @command="onCommand"
                               class="oh-grid-item-content"
                               :context="childContext(context.component.slots.default[0])"
                               :style="{ overflow: context.editmode ? 'visible' : 'hidden' }" />

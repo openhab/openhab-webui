@@ -26,7 +26,7 @@
       </f7-row>
       <f7-row v-if="ready" resizable>
         <f7-col style="min-width: 20px" class="widget-preview margin-horizontal margin-bottom">
-          <generic-widget-component :key="widgetKey" :context="context" @command="onCommand" />
+          <generic-widget-component :key="widgetKey" :context="context" />
         </f7-col>
       </f7-row>
     </f7-block>
@@ -42,7 +42,7 @@
                 resizable
                 style="min-width: 20px"
                 class="widget-preview padding-right margin-bottom">
-          <generic-widget-component :key="widgetKey" :context="context" @command="onCommand" />
+          <generic-widget-component :key="widgetKey" :context="context" />
         </f7-col>
       </f7-row>
     </f7-block>
@@ -319,9 +319,6 @@ export default {
           closeTimeout: 2000
         }).open()
       })
-    },
-    onCommand (itemName, cmd) {
-      useStatesStore().sendCommand(itemName, cmd)
     },
     redrawWidget () {
       this.ctxVars = {}

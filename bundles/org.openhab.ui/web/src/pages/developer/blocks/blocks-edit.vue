@@ -27,7 +27,7 @@
       <f7-row v-if="ready" resizable>
         <f7-col style="min-width: 20px" class="block-preview-pane margin-horizontal margin-bottom">
           <block-preview :blocks-definition="blocks" :key="previewKey" />
-          <!-- <generic-widget-component :key="widgetKey" :context="context" @command="onCommand" /> -->
+          <!-- <generic-widget-component :key="widgetKey" :context="context" /> -->
         </f7-col>
       </f7-row>
     </f7-block>
@@ -44,7 +44,7 @@
                 style="min-width: 20px"
                 class="block-preview-pane padding-right margin-bottom">
           <block-preview :blocks-definition="blocks" :key="previewKey" />
-          <!-- <generic-widget-component :key="widgetKey" :context="context" @command="onCommand" /> -->
+          <!-- <generic-widget-component :key="widgetKey" :context="context" /> -->
         </f7-col>
       </f7-row>
     </f7-block>

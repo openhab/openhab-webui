@@ -19,8 +19,7 @@
             <div v-if="context && context.component.slots && context.component.slots.header">
               <generic-widget-component :context="childContext(slotComponent)"
                                         v-for="(slotComponent, idx) in context.component.slots.header"
-                                        :key="'header-' + idx"
-                                        @command="onCommand" />
+                                        :key="'header-' + idx" />
             </div>
             <div v-else>
               <div class="title">

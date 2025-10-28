@@ -7,8 +7,7 @@
       <div v-if="context && context.component.slots && context.component.slots.glance" class="display-flex flex-direction-column align-items-flex-start">
         <generic-widget-component v-for="(slotComponent, idx) in context.component.slots.glance"
                                   :context="childContext(slotComponent)"
-                                  :key="'glance-' + idx"
-                                  @command="onCommand" />
+                                  :key="'glance-' + idx" />
       </div>
       <!-- <div class="equipment-stats" v-else><small v-if="element.equipment">{{element.equipment.length}}</small></div> -->
     </template>

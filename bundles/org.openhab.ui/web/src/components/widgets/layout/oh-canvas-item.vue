@@ -67,7 +67,6 @@
                              class="oh-canvas-item-content" />
       <generic-widget-component v-else-if="context.component.slots.default.length"
                                 :context="childContext(context.component.slots.default[0])"
-                                @command="onCommand"
                                 class="oh-canvas-item-content"
                                 :class="{
                                   'oh-canvas-item-styled': styled,
