@@ -51,12 +51,12 @@ import org.openhab.core.items.Item;
 import org.openhab.core.items.ItemNotFoundException;
 import org.openhab.core.items.events.ItemEventFactory;
 import org.openhab.core.library.types.StringType;
-import org.openhab.core.model.sitemap.SitemapProvider;
-import org.openhab.core.model.sitemap.sitemap.Sitemap;
 import org.openhab.core.persistence.FilterCriteria;
 import org.openhab.core.persistence.FilterCriteria.Ordering;
 import org.openhab.core.persistence.HistoricItem;
 import org.openhab.core.persistence.QueryablePersistenceService;
+import org.openhab.core.sitemap.Sitemap;
+import org.openhab.core.sitemap.registry.SitemapProvider;
 import org.openhab.core.types.Command;
 import org.openhab.ui.cometvisu.internal.Config;
 import org.openhab.ui.cometvisu.internal.backend.model.rss.Feed;
@@ -71,6 +71,8 @@ import com.google.gson.Gson;
  * Servlet for CometVisu files
  *
  * @author Tobias Bräutigam - Initial contribution
+ * @author Mark Herwege - Implement sitemap registry
+ * 
  */
 @NonNullByDefault
 public class CometVisuServlet extends HttpServlet {

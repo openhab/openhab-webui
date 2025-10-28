@@ -12,9 +12,10 @@
  */
 package org.openhab.ui.basic.render;
 
-import org.eclipse.emf.common.util.EList;
+import java.util.List;
+
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.openhab.core.model.sitemap.sitemap.Widget;
+import org.openhab.core.sitemap.Widget;
 import org.openhab.ui.basic.internal.WebAppConfig;
 
 /**
@@ -22,6 +23,7 @@ import org.openhab.ui.basic.internal.WebAppConfig;
  *
  * @author Kai Kreuzer - Initial contribution and API
  * @author Vlad Ivanov - BasicUI changes
+ * @author Mark Herwege - Implement sitemap registry
  */
 @NonNullByDefault
 public interface WidgetRenderer {
@@ -43,7 +45,7 @@ public interface WidgetRenderer {
      *         a "%children%" placeholder for them.
      * @throws RenderException if an error occurs during rendering
      */
-    EList<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException;
+    List<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException;
 
     /**
      * Applies a servlet configuration to the renderer

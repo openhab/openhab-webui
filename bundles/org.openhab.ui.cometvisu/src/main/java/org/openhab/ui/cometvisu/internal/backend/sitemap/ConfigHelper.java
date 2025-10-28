@@ -25,14 +25,13 @@ import java.util.regex.Pattern;
 import javax.xml.bind.JAXBElement;
 
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.eclipse.emf.common.util.EList;
 import org.openhab.core.items.Item;
 import org.openhab.core.library.types.DecimalType;
 import org.openhab.core.library.types.OnOffType;
 import org.openhab.core.library.types.OpenClosedType;
 import org.openhab.core.library.types.StringType;
 import org.openhab.core.library.types.UpDownType;
-import org.openhab.core.model.sitemap.sitemap.Widget;
+import org.openhab.core.sitemap.Widget;
 import org.openhab.core.types.Command;
 import org.openhab.core.types.TypeParser;
 import org.openhab.core.ui.icon.IconProvider;
@@ -77,6 +76,7 @@ import org.slf4j.LoggerFactory;
  * XML file.
  *
  * @author Tobias Bräutigam - Initial contribution
+ * @author Mark Herwege - Implement sitemap registry
  */
 public class ConfigHelper {
     public enum Transform {
@@ -436,7 +436,7 @@ public class ConfigHelper {
         return null;
     }
 
-    public Mapping createMapping(String name, EList<org.openhab.core.model.sitemap.sitemap.Mapping> sitemapMapping) {
+    public Mapping createMapping(String name, List<org.openhab.core.sitemap.Mapping> sitemapMapping) {
         Mapping mapping = null;
         if (mappings.containsKey(name)) {
             mapping = mappings.get(name);
@@ -445,7 +445,7 @@ public class ConfigHelper {
             mapping = new Mapping();
             mapping.setName(name);
 
-            for (org.openhab.core.model.sitemap.sitemap.Mapping map : sitemapMapping) {
+            for (org.openhab.core.sitemap.Mapping map : sitemapMapping) {
                 Entry entry = new Entry();
                 entry.setValue(map.getCmd());
                 entry.getContent().add(map.getLabel());
@@ -509,7 +509,7 @@ public class ConfigHelper {
     }
 
     public void mapToTriggers(Object element, Item item, Widget widget) {
-        EList<org.openhab.core.model.sitemap.sitemap.Mapping> sitemapMapping = getMapping(widget);
+        List<org.openhab.core.sitemap.Mapping> sitemapMapping = getMapping(widget);
 
         int groupColumns = 6;
 
@@ -536,7 +536,7 @@ public class ConfigHelper {
         states.add(UpDownType.class);
         states.add(StringType.class);
 
-        for (org.openhab.core.model.sitemap.sitemap.Mapping map : sitemapMapping) {
+        for (org.openhab.core.sitemap.Mapping map : sitemapMapping) {
             Command command = TypeParser.parseCommand(states, map.getCmd());
             if (!(command instanceof DecimalType)) {
                 // no number command
@@ -550,7 +550,7 @@ public class ConfigHelper {
         Mapping mapping = createMapping(mappingName, sitemapMapping);
         addToMappings(mapping);
 
-        for (org.openhab.core.model.sitemap.sitemap.Mapping map : sitemapMapping) {
+        for (org.openhab.core.sitemap.Mapping map : sitemapMapping) {
             Trigger trigger = new Trigger();
 
             trigger.setValue(map.getCmd());
@@ -571,7 +571,7 @@ public class ConfigHelper {
      * @param widget
      */
     public void mapToMultiTrigger(Object element, Item item, Widget widget) {
-        EList<org.openhab.core.model.sitemap.sitemap.Mapping> sitemapMapping = getMapping(widget);
+        List<org.openhab.core.sitemap.Mapping> sitemapMapping = getMapping(widget);
 
         Transform transform = Transform.NUMBER;
 
@@ -582,7 +582,7 @@ public class ConfigHelper {
         states.add(UpDownType.class);
         states.add(StringType.class);
 
-        for (org.openhab.core.model.sitemap.sitemap.Mapping map : sitemapMapping) {
+        for (org.openhab.core.sitemap.Mapping map : sitemapMapping) {
             Command command = TypeParser.parseCommand(states, map.getCmd());
             if (!(command instanceof DecimalType)) {
                 // no number command
@@ -601,7 +601,7 @@ public class ConfigHelper {
 
         Buttons buttons = factory.createButtons();
 
-        for (org.openhab.core.model.sitemap.sitemap.Mapping map : sitemapMapping) {
+        for (org.openhab.core.sitemap.Mapping map : sitemapMapping) {
             Button button = factory.createButton();
             button.setLabel(map.getLabel());
             button.setValue(map.getCmd());
@@ -611,11 +611,11 @@ public class ConfigHelper {
     }
 
     @SuppressWarnings("unchecked")
-    private EList<org.openhab.core.model.sitemap.sitemap.Mapping> getMapping(Widget widget) {
-        EList<org.openhab.core.model.sitemap.sitemap.Mapping> mapping = null;
+    private List<org.openhab.core.sitemap.Mapping> getMapping(Widget widget) {
+        List<org.openhab.core.sitemap.Mapping> mapping = null;
         try {
             Method getter = widget.getClass().getMethod("getMappings");
-            mapping = (EList<org.openhab.core.model.sitemap.sitemap.Mapping>) getter.invoke(widget);
+            mapping = (List<org.openhab.core.sitemap.Mapping>) getter.invoke(widget);
         } catch (NoSuchMethodException | SecurityException e) {
             // do nothing, normal behaviour for item that have no mappingdefined
         } catch (IllegalAccessException | InvocationTargetException | IllegalArgumentException e) {
@@ -626,7 +626,7 @@ public class ConfigHelper {
 
     public Mapping addMapping(Object element, Widget widget) {
         Mapping mapping = null;
-        EList<org.openhab.core.model.sitemap.sitemap.Mapping> smap = getMapping(widget);
+        List<org.openhab.core.sitemap.Mapping> smap = getMapping(widget);
         if (smap != null && !smap.isEmpty()) {
             mapping = addMapping(element, String.valueOf(smap.hashCode()), smap);
         }
@@ -634,8 +634,7 @@ public class ConfigHelper {
         return mapping;
     }
 
-    public Mapping addMapping(Object element, String name,
-            EList<org.openhab.core.model.sitemap.sitemap.Mapping> sitemapMapping) {
+    public Mapping addMapping(Object element, String name, List<org.openhab.core.sitemap.Mapping> sitemapMapping) {
         Mapping mapping = createMapping(name, sitemapMapping);
         addMapping(element, mapping);
         return mapping;
@@ -805,7 +804,7 @@ public class ConfigHelper {
      *            the page for wich the pagejump should be created
      * @param widget
      */
-    public void addToNavbar(Page barPage, Page targetPage, org.openhab.core.model.sitemap.sitemap.Group widget,
+    public void addToNavbar(Page barPage, Page targetPage, org.openhab.core.sitemap.Group widget,
             NavbarPositionType position, Item item) {
         Pagejump pagejump = new Pagejump();
         pagejump.setBindClickToWidget(true);

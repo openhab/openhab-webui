@@ -12,6 +12,8 @@
  */
 package org.openhab.ui.basic.internal.render;
 
+import java.util.Objects;
+
 import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -22,9 +24,9 @@ import org.openhab.core.items.Item;
 import org.openhab.core.items.ItemNotFoundException;
 import org.openhab.core.library.items.NumberItem;
 import org.openhab.core.library.types.QuantityType;
-import org.openhab.core.model.sitemap.sitemap.Mapping;
-import org.openhab.core.model.sitemap.sitemap.Selection;
-import org.openhab.core.model.sitemap.sitemap.Widget;
+import org.openhab.core.sitemap.Mapping;
+import org.openhab.core.sitemap.Selection;
+import org.openhab.core.sitemap.Widget;
 import org.openhab.core.types.CommandDescription;
 import org.openhab.core.types.CommandOption;
 import org.openhab.core.types.State;
@@ -47,6 +49,7 @@ import com.google.gson.JsonObject;
  *
  * @author Kai Kreuzer - Initial contribution and API
  * @author Vlad Ivanov - BasicUI changes
+ * @author Mark Herwege - Implement sitemap registry
  */
 @Component(service = WidgetRenderer.class)
 @NonNullByDefault
@@ -78,7 +81,8 @@ public class SelectionRenderer extends AbstractWidgetRenderer {
 
         Item item = null;
         try {
-            item = itemUIRegistry.getItem(w.getItem());
+            String itemName = Objects.requireNonNull(w.getItem()); // Checked at creation there is an item
+            item = itemUIRegistry.getItem(itemName);
         } catch (ItemNotFoundException e) {
             logger.debug("Failed to retrieve item during widget rendering: {}", e.getMessage());
         }
@@ -133,7 +137,8 @@ public class SelectionRenderer extends AbstractWidgetRenderer {
             }
         }
 
-        rowSnippet = rowSnippet.replace("%item%", w.getItem() != null ? w.getItem() : "");
+        String widgetItemName = w.getItem();
+        rowSnippet = rowSnippet.replace("%item%", widgetItemName != null ? widgetItemName : "");
         rowSnippet = rowSnippet.replace("%cmd%", escapeHtml(command));
         rowSnippet = rowSnippet.replace("%label%", escapeHtml(label));
 

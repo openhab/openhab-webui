@@ -18,8 +18,8 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.core.i18n.LocaleProvider;
 import org.openhab.core.i18n.TranslationProvider;
 import org.openhab.core.library.types.PointType;
-import org.openhab.core.model.sitemap.sitemap.Mapview;
-import org.openhab.core.model.sitemap.sitemap.Widget;
+import org.openhab.core.sitemap.Mapview;
+import org.openhab.core.sitemap.Widget;
 import org.openhab.core.types.State;
 import org.openhab.core.ui.items.ItemUIRegistry;
 import org.openhab.ui.basic.render.RenderException;
@@ -34,6 +34,7 @@ import org.osgi.service.component.annotations.Reference;
  * can produce HTML code for Text widgets.
  *
  * @author Gaël L'hopital - Initial contribution
+ * @author Mark Herwege - Implement sitemap registry
  */
 @Component(service = WidgetRenderer.class)
 @NonNullByDefault

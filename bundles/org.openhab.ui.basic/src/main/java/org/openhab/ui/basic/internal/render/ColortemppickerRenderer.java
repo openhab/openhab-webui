@@ -28,8 +28,8 @@ import org.openhab.core.items.ItemNotFoundException;
 import org.openhab.core.library.CoreItemFactory;
 import org.openhab.core.library.types.QuantityType;
 import org.openhab.core.library.unit.Units;
-import org.openhab.core.model.sitemap.sitemap.Colortemperaturepicker;
-import org.openhab.core.model.sitemap.sitemap.Widget;
+import org.openhab.core.sitemap.Colortemperaturepicker;
+import org.openhab.core.sitemap.Widget;
 import org.openhab.core.thing.DefaultSystemChannelTypeProvider;
 import org.openhab.core.types.State;
 import org.openhab.core.types.StateDescription;
@@ -51,6 +51,7 @@ import org.slf4j.LoggerFactory;
  * Colortemperaturepicker widgets.
  *
  * @author Laurent Garnier - Initial contribution
+ * @author Mark Herwege - Implement sitemap registry
  */
 @Component(service = WidgetRenderer.class)
 @NonNullByDefault
@@ -86,59 +87,57 @@ public class ColortemppickerRenderer extends AbstractWidgetRenderer {
         BigDecimal maxK = MAX_TEMPERATURE_KELVIN;
         String[] colorsRGB = null;
         String itemType = null;
-        String itemName = w.getItem();
-        if (itemName != null) {
-            try {
-                Item item = itemUIRegistry.getItem(itemName);
-                itemType = item.getType();
-                if ((CoreItemFactory.NUMBER + ":Temperature").equals(itemType)) {
-                    State state = itemUIRegistry.getState(w);
-                    if (state instanceof QuantityType<?> quantity) {
-                        if (unit == null) {
-                            unit = quantity.getUnit();
-                        }
-                        quantity = quantity.toInvertibleUnit(Units.KELVIN);
-                        if (quantity != null) {
-                            currentK = quantity.toBigDecimal();
-                            try {
-                                int[] rgb = ColorUtil
-                                        .hsbToRgb(ColorUtil.xyToHsb(ColorUtil.kelvinToXY(currentK.doubleValue())));
-                                logger.debug("Current {} K => RGB {} {} {}", currentK, rgb[0], rgb[1], rgb[2]);
-                                currentRGB = "#%02x%02x%02x".formatted(rgb[0], rgb[1], rgb[2]);
-                            } catch (IllegalArgumentException | IndexOutOfBoundsException e) {
-                                logger.debug("Can't get RGB for {} Kelvin, bypassing color gradient!", currentK);
-                            }
+        String itemName = Objects.requireNonNull(w.getItem()); // Checked at creation there is an item
+        try {
+            Item item = itemUIRegistry.getItem(itemName);
+            itemType = item.getType();
+            if ((CoreItemFactory.NUMBER + ":Temperature").equals(itemType)) {
+                State state = itemUIRegistry.getState(w);
+                if (state instanceof QuantityType<?> quantity) {
+                    if (unit == null) {
+                        unit = quantity.getUnit();
+                    }
+                    quantity = quantity.toInvertibleUnit(Units.KELVIN);
+                    if (quantity != null) {
+                        currentK = quantity.toBigDecimal();
+                        try {
+                            int[] rgb = ColorUtil
+                                    .hsbToRgb(ColorUtil.xyToHsb(ColorUtil.kelvinToXY(currentK.doubleValue())));
+                            logger.debug("Current {} K => RGB {} {} {}", currentK, rgb[0], rgb[1], rgb[2]);
+                            currentRGB = "#%02x%02x%02x".formatted(rgb[0], rgb[1], rgb[2]);
+                        } catch (IllegalArgumentException | IndexOutOfBoundsException e) {
+                            logger.debug("Can't get RGB for {} Kelvin, bypassing color gradient!", currentK);
                         }
                     }
-                    if (unit == Units.KELVIN || unit == Units.MIRED) {
-                        minK = getMinimumInKelvin(ctp, unit, item.getStateDescription());
-                        maxK = getMaximumInKelvin(ctp, unit, item.getStateDescription());
-                        logger.debug("ColortemppickerRenderer current={} unit={} min={} max={}", currentK, unit, minK,
-                                maxK);
+                }
+                if (unit == Units.KELVIN || unit == Units.MIRED) {
+                    minK = getMinimumInKelvin(ctp, unit, item.getStateDescription());
+                    maxK = getMaximumInKelvin(ctp, unit, item.getStateDescription());
+                    logger.debug("ColortemppickerRenderer current={} unit={} min={} max={}", currentK, unit, minK,
+                            maxK);
 
-                        double valueKelvin = 0d;
-                        try {
-                            colorsRGB = new String[(int) Math.round(100 / GRADIENT_INCREMENT_PERCENT) + 1];
-                            for (int i = 0; Math.round(i * GRADIENT_INCREMENT_PERCENT) <= 100; i++) {
-                                valueKelvin = (maxK.doubleValue() - minK.doubleValue()) * i * GRADIENT_INCREMENT_PERCENT
-                                        / 100.0 + minK.doubleValue();
-                                int[] rgb = ColorUtil.hsbToRgb(ColorUtil.xyToHsb(ColorUtil.kelvinToXY(valueKelvin)));
-                                logger.debug("Gradient {}%: {} K => RGB {} {} {}", i * GRADIENT_INCREMENT_PERCENT,
-                                        valueKelvin, rgb[0], rgb[1], rgb[2]);
-                                colorsRGB[i] = "#%02x%02x%02x".formatted(rgb[0], rgb[1], rgb[2]);
-                            }
-                        } catch (IllegalArgumentException | IndexOutOfBoundsException e) {
-                            logger.debug("Can't get RGB for {} Kelvin, bypassing color gradient!", valueKelvin);
-                            colorsRGB = null;
+                    double valueKelvin = 0d;
+                    try {
+                        colorsRGB = new String[(int) Math.round(100 / GRADIENT_INCREMENT_PERCENT) + 1];
+                        for (int i = 0; Math.round(i * GRADIENT_INCREMENT_PERCENT) <= 100; i++) {
+                            valueKelvin = (maxK.doubleValue() - minK.doubleValue()) * i * GRADIENT_INCREMENT_PERCENT
+                                    / 100.0 + minK.doubleValue();
+                            int[] rgb = ColorUtil.hsbToRgb(ColorUtil.xyToHsb(ColorUtil.kelvinToXY(valueKelvin)));
+                            logger.debug("Gradient {}%: {} K => RGB {} {} {}", i * GRADIENT_INCREMENT_PERCENT,
+                                    valueKelvin, rgb[0], rgb[1], rgb[2]);
+                            colorsRGB[i] = "#%02x%02x%02x".formatted(rgb[0], rgb[1], rgb[2]);
                         }
-                    } else {
-                        logger.warn("Invalid unit {} for Colortemperaturepicker element", unit);
+                    } catch (IllegalArgumentException | IndexOutOfBoundsException e) {
+                        logger.debug("Can't get RGB for {} Kelvin, bypassing color gradient!", valueKelvin);
+                        colorsRGB = null;
                     }
                 } else {
-                    logger.warn("Invalid item type {} for Colortemperaturepicker element", itemType);
+                    logger.warn("Invalid unit {} for Colortemperaturepicker element", unit);
                 }
-            } catch (ItemNotFoundException e) {
+            } else {
+                logger.warn("Invalid item type {} for Colortemperaturepicker element", itemType);
             }
+        } catch (ItemNotFoundException e) {
         }
 
         String snippet = getSnippet((CoreItemFactory.NUMBER + ":Temperature").equals(itemType)

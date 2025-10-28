@@ -26,9 +26,9 @@ import javax.servlet.ServletException;
 import org.openhab.core.config.core.ConfigurableService;
 import org.openhab.core.events.EventPublisher;
 import org.openhab.core.items.ItemRegistry;
-import org.openhab.core.model.sitemap.SitemapProvider;
 import org.openhab.core.persistence.PersistenceService;
 import org.openhab.core.persistence.QueryablePersistenceService;
+import org.openhab.core.sitemap.registry.SitemapProvider;
 import org.openhab.core.ui.icon.IconProvider;
 import org.openhab.core.ui.items.ItemUIRegistry;
 import org.openhab.ui.cometvisu.internal.Config;
@@ -52,6 +52,8 @@ import org.slf4j.LoggerFactory;
  * registers the CometVisuServlet-Service
  *
  * @author Tobias Bräutigam - Initial contribution
+ * @author Mark Herwege - Implement sitemap registry
+ *
  */
 @Component(immediate = true, service = CometVisuApp.class, configurationPid = "org.openhab.cometvisu", //
         property = Constants.SERVICE_PID + "=org.openhab.cometvisu")

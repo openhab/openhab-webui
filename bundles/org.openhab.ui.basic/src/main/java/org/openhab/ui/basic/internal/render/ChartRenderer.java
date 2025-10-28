@@ -15,6 +15,7 @@ package org.openhab.ui.basic.internal.render;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Objects;
 
 import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.common.util.EList;
@@ -25,8 +26,8 @@ import org.openhab.core.i18n.TranslationProvider;
 import org.openhab.core.items.GroupItem;
 import org.openhab.core.items.Item;
 import org.openhab.core.items.ItemNotFoundException;
-import org.openhab.core.model.sitemap.sitemap.Chart;
-import org.openhab.core.model.sitemap.sitemap.Widget;
+import org.openhab.core.sitemap.Chart;
+import org.openhab.core.sitemap.Widget;
 import org.openhab.core.ui.items.ItemUIRegistry;
 import org.openhab.ui.basic.render.RenderException;
 import org.openhab.ui.basic.render.WidgetRenderer;
@@ -44,6 +45,7 @@ import org.slf4j.LoggerFactory;
  * @author Kai Kreuzer - Initial contribution and API
  * @author Vlad Ivanov - BasicUI changes
  * @author Laurent Garnier - Delegate the definition of certain chart URL parameters to the frontend (smarthome.js)
+ * @author Mark Herwege - Implement sitemap registry
  */
 @Component(service = WidgetRenderer.class)
 @NonNullByDefault
@@ -70,11 +72,10 @@ public class ChartRenderer extends AbstractWidgetRenderer {
 
         try {
             String itemParam = null;
-            boolean forceAsItem = false;
-            if (chart.getForceAsItem() != null) {
-                forceAsItem = chart.getForceAsItem();
-            }
-            Item item = itemUIRegistry.getItem(chart.getItem());
+            boolean forceAsItem = chart.forceAsItem();
+            Item item = null;
+            String itemName = Objects.requireNonNull(w.getItem()); // Checked at creation there is an item
+            item = itemUIRegistry.getItem(itemName);
             if (item instanceof GroupItem && !forceAsItem) {
                 itemParam = "groups=" + chart.getItem();
             } else {
@@ -92,14 +93,12 @@ public class ChartRenderer extends AbstractWidgetRenderer {
             }
 
             // if legend parameter is given, add corresponding GET parameter
-            boolean legend = item instanceof GroupItem && !forceAsItem;
-            if (chart.getLegend() != null) {
-                legend = chart.getLegend();
-                if (chart.getLegend()) {
-                    chartUrl += "&legend=true";
-                } else {
-                    chartUrl += "&legend=false";
-                }
+            boolean legend = chart.hasLegend();
+            legend = legend || (item instanceof GroupItem && !forceAsItem);
+            if (legend) {
+                chartUrl += "&legend=true";
+            } else {
+                chartUrl += "&legend=false";
             }
 
             if (chart.getInterpolation() instanceof String interpolationMethod) {
@@ -174,7 +173,8 @@ public class ChartRenderer extends AbstractWidgetRenderer {
         String command = cmd;
         String label = lab == null ? cmd : lab;
 
-        rowSnippet = rowSnippet.replace("%item%", w.getItem() != null ? w.getItem() : "");
+        String itemName = w.getItem();
+        rowSnippet = rowSnippet.replace("%item%", itemName != null ? itemName : "");
         rowSnippet = rowSnippet.replace("%cmd%", escapeHtml(command));
         rowSnippet = rowSnippet.replace("%label%", escapeHtml(label));
 

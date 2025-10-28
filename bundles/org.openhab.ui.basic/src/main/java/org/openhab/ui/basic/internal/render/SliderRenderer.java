@@ -12,6 +12,9 @@
  */
 package org.openhab.ui.basic.internal.render;
 
+import java.math.BigDecimal;
+import java.util.Objects;
+
 import javax.measure.Unit;
 
 import org.eclipse.emf.common.util.ECollections;
@@ -20,8 +23,8 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.core.i18n.LocaleProvider;
 import org.openhab.core.i18n.TranslationProvider;
 import org.openhab.core.library.types.QuantityType;
-import org.openhab.core.model.sitemap.sitemap.Slider;
-import org.openhab.core.model.sitemap.sitemap.Widget;
+import org.openhab.core.sitemap.Slider;
+import org.openhab.core.sitemap.Widget;
 import org.openhab.core.types.State;
 import org.openhab.core.ui.items.ItemUIRegistry;
 import org.openhab.ui.basic.render.RenderException;
@@ -42,6 +45,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author Kai Kreuzer - Initial contribution and API
  * @author Vlad Ivanov - BasicUI changes
  * @author Florian Schmidt - Make min and max value configurable in Sitemap
+ * @author Mark Herwege - Implement sitemap registry
  */
 @Component(service = WidgetRenderer.class)
 @NonNullByDefault
@@ -70,8 +74,8 @@ public class SliderRenderer extends AbstractWidgetRenderer {
             // Search the unit in the item state
             // Do not use itemUIRegistry.getState(w) as it will return a DecimalType for a slider widget
             // even if the item state is a QuantityType
-            String itemName = w.getItem();
-            State state = itemName != null ? itemUIRegistry.getItemState(itemName) : null;
+            String itemName = Objects.requireNonNull(w.getItem()); // Checked at creation there is an item
+            State state = itemUIRegistry.getItemState(itemName);
             if (state instanceof QuantityType<?>) {
                 Unit<?> stateUnit = ((QuantityType<?>) state).getUnit();
                 unit = stateUnit.toString();
@@ -94,22 +98,25 @@ public class SliderRenderer extends AbstractWidgetRenderer {
     }
 
     private String maxValueOf(Slider slider) {
-        if (slider.getMaxValue() != null) {
-            return slider.getMaxValue().toString();
+        BigDecimal maxValue = slider.getMaxValue();
+        if (maxValue != null) {
+            return maxValue.toString();
         }
         return "100";
     }
 
     private String minValueOf(Slider slider) {
-        if (slider.getMinValue() != null) {
-            return slider.getMinValue().toString();
+        BigDecimal minValue = slider.getMinValue();
+        if (minValue != null) {
+            return minValue.toString();
         }
         return "0";
     }
 
     private String stepOf(Slider slider) {
-        if (slider.getStep() != null) {
-            return slider.getStep().toString();
+        BigDecimal step = slider.getStep();
+        if (step != null) {
+            return step.toString();
         }
         return "1";
     }
