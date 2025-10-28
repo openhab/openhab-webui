@@ -1,6 +1,9 @@
 import { utils } from 'framework7'
+import dayjs from 'dayjs'
+
 import ComponentId from '../../component-id'
 import MarkArea from './oh-mark-area'
+import applyMarkers from '@/components/widgets/chart/series/markers'
 
 export default {
   neededItems (component, chart) {
@@ -36,6 +39,8 @@ export default {
     if (component.slots && component.slots.markArea) {
       series.markArea = MarkArea.get(component.slots.markArea[0], points, startTime, endTime, chart)
     }
+
+    applyMarkers(series)
 
     if (!series.showSymbol) series.showSymbol = false
     if (!series.tooltip) {
