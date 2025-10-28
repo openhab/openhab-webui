@@ -250,17 +250,19 @@ export default {
       // Repeat this for equipments on the location.
       points.push(...this.element.equipment.map((e) => {
         const isLightSource = lightSourceEquipment.includes(e)
+        const allPoints = allEquipmentPoints(e) // consider sub-equipment as well
         const equipmentPoints = []
-        equipmentPoints.push(...findPoints(e.points, 'Point_Control', true, 'Property_Color'))
-        equipmentPoints.push(...findPoints(e.points, 'Point_Control', true, 'Property_Brightness'))
-        equipmentPoints.push(...findPoints(e.points, 'Point_Control', true, 'Property_Light'))
-        equipmentPoints.push(...findPoints(e.points, 'Point_Status', true, 'Property_Color'))
-        equipmentPoints.push(...findPoints(e.points, 'Point_Status', true, 'Property_Brightness'))
-        equipmentPoints.push(...findPoints(e.points, 'Point_Status', true, 'Property_Light'))
+        equipmentPoints.push(...findPoints(allPoints, 'Point_Control', true, 'Property_Color'))
+        equipmentPoints.push(...findPoints(allPoints, 'Point_Control', true, 'Property_Brightness'))
+        equipmentPoints.push(...findPoints(allPoints, 'Point_Control', true, 'Property_Light'))
+        equipmentPoints.push(...findPoints(allPoints, 'Point_Status', true, 'Property_Color'))
+        equipmentPoints.push(...findPoints(allPoints, 'Point_Status', true, 'Property_Brightness'))
+        equipmentPoints.push(...findPoints(allPoints, 'Point_Status', true, 'Property_Light'))
         // For light source equipment not yet covered above we look beyond property light, color and brightness,
         // but will only consider one point (first in the list), with priority to switch.
-        // So we assume the equipment represents a unique light.
-        if (isLightSource && !e.points.some(p => equipmentPoints.includes(p))) {
+        // We don't look at sub-equipment for this.
+        // In summary: assumption is the equipment represents a unique light.
+        if (isLightSource && !allPoints.some((p) => equipmentPoints.includes(p))) {
           const lightSourcePoints = [...findPoints(e.points, 'Point_Control_Switch', false), ...findPoints(e.points, 'Point_Control', true), ...findPoints(e.points, 'Point_Status', true)]
           if (lightSourcePoints.length) {
             equipmentPoints.push(lightSourcePoints.slice(0, 1))
@@ -268,8 +270,9 @@ export default {
         }
         return equipmentPoints
       }).flat())
-      // Also include LightSource tagged equipment items that have no points themselves.
-      points.push(...lightSourceEquipment.filter((e) => e.points.length === 0).map((e) => e.item))
+      // Also include LightSource tagged equipment items that have no points themselves and that have no sub-equipment included already.
+      const lightSourceEquipmentNoPoints = lightSourceEquipment.filter((e) => e.points.length === 0).filter((e) => !allEquipmentPoints(e).some((p) => points.includes(p))).map((e) => e.item)
+      points.push(...lightSourceEquipmentNoPoints)
       return points
     }
   },
