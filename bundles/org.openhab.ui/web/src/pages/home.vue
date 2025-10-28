@@ -108,7 +108,8 @@
         <overview-tab v-if="currentTab === 'overview'"
                       :context="context"
                       :key="overviewPageKey"
-                      :allow-chat="allowChat" />
+                      :allow-chat="allowChat"
+                      :f7router />
       </f7-tab>
       <f7-tab id="tab-locations" :tab-active="currentTab === 'locations' ? true : null" @tab:show="currentTab = 'locations'">
         <model-tab v-if="currentTab === 'locations'"
@@ -159,7 +160,6 @@
 
 <script>
 import { utils } from 'framework7'
-import { f7 } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
 import OverviewTab from './home/overview-tab.vue'

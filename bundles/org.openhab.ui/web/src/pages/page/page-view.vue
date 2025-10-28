@@ -73,6 +73,7 @@
     <component v-else-if="page && visibleToCurrentUser"
                :is="page.component"
                :context="context"
+               :f7router
                @command="onCommand"
                @action="performAction($event.ev, $event.prefix, $event.config, $event.context)" />
 

@@ -107,6 +107,7 @@
                         :context="context"
                         :key="pageKey"
                         :style="page.config.style"
+                        :f7router
                         @action="performAction($event.ev, $event.prefix, $event.config, $event.context)"
                         @add-block="addBlock"
                         @add-masonry="addMasonry"
@@ -147,6 +148,7 @@
                         :context="context"
                         :key="pageKey"
                         :style="page.config.style"
+                        :f7router
                         @action="performAction($event.ev, $event.prefix, $event.config, $event.context)" />
       </f7-tab>
     </f7-tabs>

@@ -35,7 +35,7 @@
       <oh-grid-layout :context="context" />
     </template>
     <template v-else-if="config.layoutType === 'fixed' && config.fixedType === 'canvas'">
-      <oh-canvas-layout :context="context" @action="$emit('action', $event)" />
+      <oh-canvas-layout :context="context" :f7router @action="$emit('action', $event)" />
     </template>
   </div>
 </template>
@@ -50,6 +50,9 @@ import OhGridLayout from './oh-grid-layout.vue'
 import OhCanvasLayout from './oh-canvas-layout.vue'
 
 export default {
+  props: {
+    f7router: Object
+  },
   emits: ['action', 'add-block', 'add-masonry'],
   mixins: [mixin],
   components: {

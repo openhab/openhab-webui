@@ -59,7 +59,6 @@ export default {
         actionCommandAlt: 'OFF'
       }
       const popup = { component: WidgetConfigPopup }
-      const that = this
       this.f7router.navigate({ url: 'on-svg-click-settings', route: { path: 'on-svg-click-settings', popup } }, {
         props: {
           widget: new WidgetDefinition('onSvgClickSettings', `SVG onClick Action for ${id}`, '')

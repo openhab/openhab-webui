@@ -25,6 +25,7 @@
                  v-show="!inChatSession"
                  :context="overviewPageContext"
                  :class="{ notready: !ready }"
+                 :f7router
                  @command="onCommand" />
       <div v-else-if="!inChatSession" class="empty-overview">
         <empty-state-placeholder icon="house" title="overview.title" text="overview.text" />
@@ -89,7 +90,8 @@ import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 export default {
   props: {
     context: Object,
-    allowChat: Boolean
+    allowChat: Boolean,
+    f7router: Object
   },
   components: {
     OhLayoutPage,
