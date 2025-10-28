@@ -721,13 +721,13 @@ export default {
     }
   },
   mounted () {
-    // hack to eliminate issue in framework7 router where the the intro page (after a login) is unresponsive. Note, 
+    // hack to eliminate issue in framework7 router where the the intro page (after a login) is unresponsive. Note,
     // if the setup-wizard page is reloaded, the page works correctly and is responsive.
     // Diagnosis: While the animate option is set to false when navigating to the setup-wizard (in auth-mixin),
     // framework7 seems to ignore and initiates the animation by setting the router-transition and router-transition-forward
     // classes on the view. These classes are never cleared in the framework and since these classes have 'pointer-events: none',
     // the page becomes unresponsive.
-    f7.views.main.router.$el.removeClass('router-transition router-transition-forward');
+    f7.views.main.router.$el.removeClass('router-transition router-transition-forward')
 
     const promises = [
       this.$oh.api.get('/rest/config-descriptions/system:i18n'),
