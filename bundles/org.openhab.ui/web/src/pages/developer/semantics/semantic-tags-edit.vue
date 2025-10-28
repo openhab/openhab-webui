@@ -107,7 +107,11 @@
                                      error-message="Required. A-Z,a-z,0-9,- only"
                                      @input="updateName($event)">
                         <template #inner-end>
-                          <f7-icon v-if="!selectedTag.editable" f7="lock" ios="f7:lock" md="material:lock" color="gray" />
+                          <f7-icon v-if="!selectedTag.editable"
+                                   f7="lock"
+                                   ios="f7:lock"
+                                   md="material:lock"
+                                   color="gray" />
                         </template>
                       </f7-list-input>
                       <f7-list-input label="Label"
