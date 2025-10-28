@@ -71,7 +71,8 @@ export default {
   },
   emits: ['update'],
   setup () {
-    const f7router = f7.views.main.router
+    // make f7 optional for Vitest
+    const f7router = f7?.views.main.router
 
     return {
       f7router
