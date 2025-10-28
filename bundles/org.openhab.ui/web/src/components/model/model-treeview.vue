@@ -84,7 +84,7 @@ export default {
     ModelTreeviewItem
   },
   setup () {
-    let moveState = reactive({
+    const moveState = reactive({
       moving: false,
       canAdd: false,
       canRemove: false,

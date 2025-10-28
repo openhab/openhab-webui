@@ -100,10 +100,8 @@ export default {
     ModelTreeviewItem: 'model-treeview-item'
   },
   setup () {
-    const moveState = inject('moveState')
-
     return {
-      moveState
+      moveState: inject('moveState')
     }
   },
   computed: {
