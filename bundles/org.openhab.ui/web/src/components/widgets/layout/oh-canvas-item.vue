@@ -161,6 +161,7 @@
 </style>
 
 <script>
+import { defineAsyncComponent } from 'vue'
 import mixin from '../widget-mixin'
 import OhPlaceholderWidget from './oh-placeholder-widget.vue'
 import { OhCanvasItemDefinition } from '@/assets/definitions/widgets/layout'
@@ -169,12 +170,12 @@ export default {
   mixins: [mixin],
   widget: OhCanvasItemDefinition,
   components: {
-    'vue-draggable-resizable': () => Promise.all([
-      import(/* webpackChunkName: "canvas-layout" */ 'vue-draggable-resizable/dist/VueDraggableResizable.css'),
+    'vue-draggable-resizable': defineAsyncComponent(() => Promise.all([
+      import(/* webpackChunkName: "canvas-layout" */ 'vue-draggable-resizable/style.css'),
       import(/* webpackChunkName: "canvas-layout" */ 'vue-draggable-resizable')
     ]).then((component) => {
       return component[1].default
-    }),
+    })),
     OhPlaceholderWidget
   },
   props: {
