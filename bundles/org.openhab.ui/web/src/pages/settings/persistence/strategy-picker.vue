@@ -12,7 +12,7 @@
         <option v-for="s in strategies"
                 :key="s"
                 :value="s"
-                :selected="value.includes(s) ? true : null">
+                :selected="value.length ? value.includes(s) : suggested.includes(s)">
           {{ s }}
         </option>
       </select>
@@ -37,6 +37,7 @@
 
 <script>
 import { f7 } from 'framework7-vue'
+import cloneDeep from 'lodash/cloneDeep'
 
 export default {
   props: {
@@ -44,6 +45,7 @@ export default {
     name: String,
     strategies: Array,
     value: Array,
+    suggested: Array,
     disabled: Boolean
   },
   emits: ['strategies-selected'],
@@ -51,15 +53,46 @@ export default {
     return {
       smartSelectParams: {
         view: f7.view.main,
-        openIn: 'popup'
+        openIn: 'popup',
+        virtualList: true,
+        virtualListHeight: (this.$theme.aurora) ? 32 : undefined,
+        setValueText: false || this.value?.length
       }
+    }
+  },
+  mounted () {
+    this.$nextTick(() => {
+      const smartSelect = this.$refs.smartSelect?.f7SmartSelect
+      if (smartSelect) {
+        smartSelect.on('closed', this.select)
+      }
+    })
+  },
+  beforeDestroy () {
+    const smartSelect = this.$refs.smartSelect?.f7SmartSelect
+    if (smartSelect) {
+      smartSelect.off('closed', this.select)
     }
   },
   methods: {
     select () {
       f7.input.validateInputs(this.$refs.smartSelect.$el)
-      const value = this.$refs.smartSelect.$el.children[0].f7SmartSelect.getValue()
+      const smartSelect = this.$refs.smartSelect.$el.children[0].f7SmartSelect
+      const value = smartSelect.getValue()
+      if (value === this.value || ((value.length === this.value.length) && value.reduce((av, cv) => { return av || this.value?.includes(cv) }, true))) return
       this.$emit('strategies-selected', value)
+      this.smartSelectParams = {
+        ...this.smartSelectParams,
+        setValueText: true
+      }
+      // Force re-render of Smart Select showing the selected parameters
+      this.$nextTick(() => {
+        smartSelect.destroy()
+        this.$refs.smartSelect.f7SmartSelect = this.$f7.smartSelect.create({
+          el: this.$refs.smartSelect.$el,
+          ...this.smartSelectParams
+        })
+      })
     }
   }
 }
