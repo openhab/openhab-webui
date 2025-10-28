@@ -16,11 +16,16 @@ export default {
         const variableLocation = (variableScope) ? this.context.ctxVars[variableScope] : this.context.vars
         return variableLocation[this.config.variable]
       }
-      let value = (this.config.item) ? this.context.store[this.config.item].state : this.config.value
-      // use as a brightness indicator for HSB values
-      if (value.split && value.split(',').length === 3) value = value.split(',')[2]
       const min = this.config.min || 0
       const max = this.config.max || 100
+      let value = (this.config.item) ? this.context.store[this.config.item].state : this.config.value
+
+      if(!value) {
+        return undefined
+      }
+
+      // use as a brightness indicator for HSB values
+      if (value && value.split && value.split(',').length === 3) value = value.split(',')[2]
       const percentageValue = (parseFloat(value.toString()) - min) / (max - min)
       return percentageValue
     },
