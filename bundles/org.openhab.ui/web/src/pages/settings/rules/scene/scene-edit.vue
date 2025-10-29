@@ -246,7 +246,6 @@
 
 <script>
 import { nextTick, defineAsyncComponent } from 'vue'
-import { utils } from 'framework7'
 import { f7, theme } from 'framework7-vue'
 
 import YAML from 'yaml'
@@ -335,7 +334,7 @@ export default {
         this.moduleTypes.actions = data[0]
         if (this.createMode) {
           const newRule = this.ruleCopy || {
-            uid: utils.id(),
+            uid: f7.utils.id(),
             name: '',
             triggers: [],
             actions: [],
@@ -348,7 +347,7 @@ export default {
               status: 'NEW'
             }
           }
-          if (this.ruleCopy) newRule.uid = utils.id()
+          if (this.ruleCopy) newRule.uid = f7.utils.id()
           this.rule = newRule
           loadingFinished()
         } else {

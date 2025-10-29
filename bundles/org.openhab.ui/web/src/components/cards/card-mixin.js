@@ -1,6 +1,5 @@
 import mixin from '@/components/widgets/widget-mixin'
 import { f7 } from 'framework7-vue'
-import { utils } from 'framework7'
 
 export default {
   mixins: [mixin],
@@ -71,8 +70,8 @@ export default {
   },
   methods: {
     cardOpening () {
-      this.cardId = this.title + '-' + utils.id()
-      history.pushState({ cardId: this.cardId }, null, window.location.href.split('#card=')[0] + '#' + utils.serializeObject({ card: this.element.key }))
+      this.cardId = this.title + '-' + f7.utils.id()
+      history.pushState({ cardId: this.cardId }, null, window.location.href.split('#card=')[0] + '#' + f7.utils.serializeObject({ card: this.element.key }))
       setTimeout(() => { this.opened = true })
     },
     cardClosed () {

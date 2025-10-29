@@ -215,7 +215,6 @@
 
 <script>
 import { nextTick, defineAsyncComponent } from 'vue'
-import { utils } from 'framework7'
 import { f7, theme } from 'framework7-vue'
 
 import PageDesigner from '../pagedesigner-mixin'
@@ -259,7 +258,7 @@ export default {
       currentModelTab: 'locations',
       modelTabs: [],
       showCardControls: false,
-      cardListId: utils.id(),
+      cardListId: f7.utils.id(),
       page: {
         uid: 'home',
         component: 'oh-home-page',
@@ -374,7 +373,7 @@ export default {
       this.cardListId = null
       this.showCardControls = false
       nextTick(() => {
-        this.cardListId = utils.id()
+        this.cardListId = f7.utils.id()
       })
     },
     isCardExcluded (card) {

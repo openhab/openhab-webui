@@ -101,7 +101,7 @@ dark-tooltip()
 
 <script>
 import { nextTick } from 'vue'
-import { utils } from 'framework7'
+import { f7 } from 'framework7-vue'
 
 import mixin from '../widget-mixin'
 import { CRS, Icon } from 'leaflet'
@@ -137,7 +137,7 @@ export default {
       zoom: -0.5,
       crs: CRS.Simple,
       showMap: false,
-      mapKey: utils.id(),
+      mapKey: f7.utils.id(),
       markers: []
     }
   },
@@ -203,7 +203,7 @@ export default {
       if (this.$refs.map) this.$refs.map.leafletObject?.fitBounds(this.bounds)
     },
     refreshMap () {
-      this.mapKey = utils.id()
+      this.mapKey = f7.utils.id()
       nextTick(() => {
         this.fitMapBounds()
       })

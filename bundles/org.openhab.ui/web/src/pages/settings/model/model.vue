@@ -319,7 +319,6 @@
 
 <script>
 import { nextTick } from 'vue'
-import { utils } from 'framework7'
 import { f7, theme } from 'framework7-vue'
 import { mapWritableState } from 'pinia'
 
@@ -367,7 +366,7 @@ export default {
       detailsOpened: false,
       detailsTab: 'state',
       eventSource: null,
-      itemDetailsKey: utils.id()
+      itemDetailsKey: f7.utils.id()
     }
   },
   computed: {

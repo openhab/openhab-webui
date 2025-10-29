@@ -1,4 +1,4 @@
-import { utils } from 'framework7'
+import { f7 } from 'framework7-vue'
 import { getAccessToken } from './auth'
 
 /**
@@ -74,7 +74,7 @@ function newWSConnection (path, messageCallback, readyCallback, errorCallback, h
   // Create a new WebSocket connection
   const socket = new WebSocket(path, [`org.openhab.ws.accessToken.base64.${encodedToken}`, 'org.openhab.ws.protocol.default'])
 
-  socket.id = 'ui-' + utils.id()
+  socket.id = 'ui-' + f7.utils.id()
 
   // Handle WebSocket connection opened
   socket.onopen = (event) => {

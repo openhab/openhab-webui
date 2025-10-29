@@ -1,5 +1,4 @@
 import { nextTick } from 'vue'
-import { utils } from 'framework7'
 import { f7 } from 'framework7-vue'
 
 import YAML from 'yaml'
@@ -25,7 +24,7 @@ export default {
       pageReady: false,
       loading: false,
       savedPage: {},
-      pageKey: utils.id(),
+      pageKey: f7.utils.id(),
       pageYaml: null,
       props: {},
       previewMode: false,

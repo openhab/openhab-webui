@@ -163,7 +163,6 @@
 </style>
 
 <script>
-import { utils } from 'framework7'
 import { f7 } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
@@ -188,7 +187,7 @@ export default {
     return {
       transitioning: false,
       opened: false,
-      cardId: utils.id()
+      cardId: f7.utils.id()
     }
   },
   mounted () {

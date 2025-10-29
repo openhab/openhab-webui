@@ -69,7 +69,6 @@
 </style>
 
 <script>
-import { utils } from 'framework7'
 import { f7, theme } from 'framework7-vue'
 
 import ConfigSheet from '@/components/config/config-sheet.vue'
@@ -124,7 +123,7 @@ export default {
       this.$oh.api.get('/rest/thing-types/' + this.thingTypeId).then((data) => {
         this.thingType = data
         try {
-          this.thing.ID = utils.id()
+          this.thing.ID = f7.utils.id()
           this.thing.UID = this.thingTypeId + ':' + this.thing.ID
         } catch (e) {
           console.log('Cannot generate ID: ' + e)

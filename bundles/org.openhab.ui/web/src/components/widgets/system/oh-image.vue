@@ -16,7 +16,6 @@
 
 <script>
 import { nextTick } from 'vue'
-import { utils } from 'framework7'
 import { f7 } from 'framework7-vue'
 
 import mixin from '../widget-mixin'
@@ -29,7 +28,7 @@ export default {
   widget: OhImageDefinition,
   data () {
     return {
-      t: utils.id(),
+      t: f7.utils.id(),
       src: null,
       ts: 0
     }

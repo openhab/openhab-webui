@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { utils } from 'framework7'
+import { f7 } from 'framework7-vue'
 
 import { LCircle, LTooltip } from '@vue-leaflet/vue-leaflet'
 
@@ -32,7 +32,7 @@ export default {
   emits: ['update'],
   data () {
     return {
-      markerKey: utils.id()
+      markerKey: f7.utils.id()
     }
   },
   computed: {

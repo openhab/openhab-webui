@@ -1,4 +1,4 @@
-import { utils } from 'framework7'
+import { f7 } from 'framework7-vue'
 import ComponentId from '../../component-id'
 import { graphic } from 'echarts/core'
 
@@ -104,7 +104,7 @@ export default {
 
       series.data = data
 
-      series.id = `oh-state-series#${series.item}#${utils.id()}`
+      series.id = `oh-state-series#${series.item}#${f7.utils.id()}`
     }
 
     if (!series.tooltip) {

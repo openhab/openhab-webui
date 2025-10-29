@@ -269,7 +269,6 @@
 
 <script>
 import { defineAsyncComponent } from 'vue'
-import { utils } from 'framework7'
 import { f7, theme } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
@@ -465,7 +464,7 @@ export default {
     },
     initializeNewScript () {
       this.rule = this.ruleCopy || {
-        uid: utils.id(),
+        uid: f7.utils.id(),
         name: '',
         description: '',
         triggers: [],
@@ -473,7 +472,7 @@ export default {
         actions: [],
         tags: ['Script']
       }
-      if (this.ruleCopy) this.rule.uid = utils.id()
+      if (this.ruleCopy) this.rule.uid = f7.utils.id()
       this.savedRule = cloneDeep(this.rule)
       this.savedMode = this.mode = 'application/javascript+blockly'
       this.loadScriptModuleType().then(() => {
