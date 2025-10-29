@@ -5,9 +5,10 @@
 * Additionally there is a block that allows transformations based on the Map-File functionality, regular-expressions and applying JSON-paths
 * supports jsscripting
 */
-import Blockly from 'blockly'
-import { javascriptGenerator } from 'blockly/javascript.js'
+import * as Blockly from 'blockly'
+import { javascriptGenerator } from 'blockly/javascript'
 import { blockGetCheckedInputType } from '@/assets/definitions/blockly/utils.js'
+import { registerFieldMultilineInput, FieldMultilineInput } from '@blockly/field-multilineinput'
 
 export default function defineOHBlocks_Scripts (f7, transformationServices) {
   /*
@@ -81,7 +82,7 @@ export default function defineOHBlocks_Scripts (f7, transformationServices) {
   Blockly.Blocks['oh_transformation'] = {
     init: function () {
       this.appendValueInput('value')
-        .setAlign(Blockly.ALIGN_RIGHT)
+        .setAlign(Blockly.inputs.Align.RIGHT)
         .appendField('transform')
       this.appendValueInput('function')
         .appendField('apply')
@@ -318,13 +319,14 @@ export default function defineOHBlocks_Scripts (f7, transformationServices) {
   * Allows inlining arbitrary code
   * Blockly part
   */
+  registerFieldMultilineInput()
   Blockly.Blocks['oh_script_inline'] = {
     init: function () {
       this.appendDummyInput()
         .appendField('inline script (advanced)')
       const code = 'for (var i = 0; i < 10; i++) {\n  console.log(i.toString());\n}'
       this.appendDummyInput()
-        .appendField(new Blockly.FieldMultilineInput(code), 'inlineScript')
+        .appendField(new FieldMultilineInput(code), 'inlineScript')
       this.setInputsInline(false)
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)

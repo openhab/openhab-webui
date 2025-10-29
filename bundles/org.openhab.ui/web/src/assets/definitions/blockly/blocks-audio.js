@@ -10,8 +10,8 @@
 * supports jsscripting
 */
 
-import Blockly from 'blockly'
-import { javascriptGenerator } from 'blockly/javascript.js'
+import * as Blockly from 'blockly'
+import { javascriptGenerator } from 'blockly/javascript'
 import { FieldSlider } from '@blockly/field-slider'
 
 export default function (f7, sinks, voices) {

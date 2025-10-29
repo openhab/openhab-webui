@@ -2,8 +2,8 @@
 * These blocks support the persistence module which stores the data in the database and allows to retrieve historical and statistical data
 * supports jsscripting
 */
-import Blockly from 'blockly'
-import { javascriptGenerator } from 'blockly/javascript.js'
+import * as Blockly from 'blockly'
+import { javascriptGenerator } from 'blockly/javascript'
 import { blockGetCheckedInputType } from './utils.js'
 
 export default function defineOHBlocks_Persistence (f7, persistenceServices) {
@@ -38,7 +38,7 @@ export default function defineOHBlocks_Persistence (f7, persistenceServices) {
       this.methodName = this.getFieldValue('methodName')
       this.appendValueInput('itemName')
         .appendField('of item')
-        .setAlign(Blockly.ALIGN_RIGHT)
+        .setAlign(Blockly.inputs.Align.RIGHT)
         .setCheck(['String', 'oh_item', 'oh_itemtype'])
       this.appendValueInput('persistenceName')
         .appendField('from')
@@ -127,7 +127,7 @@ export default function defineOHBlocks_Persistence (f7, persistenceServices) {
         this.appendDummyInput('returnTypeInput')
           .appendField('as')
           .appendField(new Blockly.FieldDropdown(this.returnTypeNames()), 'returnTypeName')
-          .setAlign(Blockly.ALIGN_RIGHT)
+          .setAlign(Blockly.inputs.Align.RIGHT)
         this.moveInputBefore('returnTypeInput', 'itemName')
       }
 
@@ -149,7 +149,7 @@ export default function defineOHBlocks_Persistence (f7, persistenceServices) {
         if (!this.getInput('skipPrevious')) {
           this.appendValueInput('skipPrevious')
             .appendField('skip same ')
-            .setAlign(Blockly.ALIGN_RIGHT)
+            .setAlign(Blockly.inputs.Align.RIGHT)
             .setCheck(['Boolean'])
           this.getInput('skipPrevious').setShadowDom(
             Blockly.utils.xml.textToDom(`<shadow type="logic_boolean">
@@ -393,7 +393,7 @@ export default function defineOHBlocks_Persistence (f7, persistenceServices) {
   Blockly.Blocks['oh_persist_changed'] = {
     init: function () {
       this.appendValueInput('itemName')
-        .setAlign(Blockly.ALIGN_RIGHT)
+        .setAlign(Blockly.inputs.Align.RIGHT)
         .appendField('the state of')
         .setCheck(['String', 'oh_item', 'oh_itemtype'])
       const persistenceNameInput = this.appendValueInput('persistenceName')
@@ -407,7 +407,7 @@ export default function defineOHBlocks_Persistence (f7, persistenceServices) {
           ['has changed since', 'changedSince'], ['will have changed until', 'changedUntil'], ['changes between', 'changedBetween'],
           ['has been updated since', 'updatedSince'], ['will have been updated until', 'updatedUntil'], ['is updated between', 'updatedBetween']
         ], this.handleTypeSelection.bind(this)), 'methodName')
-        .setAlign(Blockly.ALIGN_RIGHT)
+        .setAlign(Blockly.inputs.Align.RIGHT)
         .setCheck(['ZonedDateTime'])
       this.methodName = this.getFieldValue('methodName')
 
@@ -553,7 +553,7 @@ export default function defineOHBlocks_Persistence (f7, persistenceServices) {
         </shadow>`))
       this.appendValueInput('itemName')
         .appendField('for item')
-        .setAlign(Blockly.ALIGN_RIGHT)
+        .setAlign(Blockly.inputs.Align.RIGHT)
         .setCheck(['String', 'oh_item', 'oh_itemtype'])
       const persistenceNameInput = this.appendValueInput('persistenceName')
         .appendField('to')
@@ -702,7 +702,7 @@ export default function defineOHBlocks_Persistence (f7, persistenceServices) {
       this.methodName = this.getFieldValue('methodName')
       this.appendValueInput('itemName')
         .appendField('of item')
-        .setAlign(Blockly.ALIGN_RIGHT)
+        .setAlign(Blockly.inputs.Align.RIGHT)
         .setCheck(['String', 'oh_item', 'oh_itemtype'])
       this.appendValueInput('persistenceName')
         .appendField('from')

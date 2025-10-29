@@ -2,8 +2,8 @@
 * Adds new bitwise operator blocks to the math section
 */
 
-import Blockly from 'blockly'
-import { javascriptGenerator } from 'blockly/javascript.js'
+import * as Blockly from 'blockly'
+import { javascriptGenerator } from 'blockly/javascript'
 import { blockGetCheckedInputType } from './utils.js'
 
 export default function (f7) {

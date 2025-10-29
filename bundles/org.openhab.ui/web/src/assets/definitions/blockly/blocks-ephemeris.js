@@ -6,8 +6,8 @@
 * See usage discussion here: https://community.openhab.org/t/wip-ephemeris-documentation/84536
 * supports jsscripting
 */
-import Blockly from 'blockly'
-import { javascriptGenerator } from 'blockly/javascript.js'
+import * as Blockly from 'blockly'
+import { javascriptGenerator } from 'blockly/javascript'
 
 export default function (f7) {
   /*
