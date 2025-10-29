@@ -2,8 +2,8 @@
  * supports jsscripting
  */
 
-import Blockly from 'blockly'
-import { javascriptGenerator } from 'blockly/javascript.js'
+import * as Blockly from 'blockly'
+import { javascriptGenerator } from 'blockly/javascript'
 import { blockGetCheckedInputType } from '@/assets/definitions/blockly/utils.js'
 
 export default function (f7) {
@@ -121,7 +121,7 @@ export default function (f7) {
       for (i = 0; i < this.itemCount_; i++) {
         if (!this.getInput('ADD' + i)) {
           let input = this.appendValueInput('ADD' + i)
-            .setAlign(Blockly.ALIGN_RIGHT)
+            .setAlign(Blockly.inputs.Align.RIGHT)
           if (i === 0) {
             input.appendField('dictionary of')
           }

@@ -1,5 +1,5 @@
-import Blockly from 'blockly'
-import { javascriptGenerator } from 'blockly/javascript.js'
+import * as Blockly from 'blockly'
+import { javascriptGenerator } from 'blockly/javascript'
 import { addOSGiService } from './utils.js'
 
 const generateCodeForBlock = (block) => {
@@ -66,7 +66,7 @@ const generateCodeForBlock = (block) => {
           return code.replace(placeholder, context.utilities[placeholderName])
         case 'temp_name':
           if (!context.uniqueIdentifiers[placeholderName]) {
-            const realm = placeholderOption ? Blockly.Variables[placeholderOption] : Blockly.Variables.NAME_TYPE
+            const realm = placeholderOption ? Blockly.Names[placeholderOption] : Blockly.Names.NameType
             context.uniqueIdentifiers[placeholderName] = javascriptGenerator.variableDB_.getDistinctName(placeholderName, realm)
           }
           return code.replace(placeholder, context.uniqueIdentifiers[placeholderName])

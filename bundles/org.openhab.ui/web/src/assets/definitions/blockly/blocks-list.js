@@ -2,8 +2,8 @@
 * Adds new blocks to the list section
 * supports jsscripting
 */
-import Blockly from 'blockly'
-import { javascriptGenerator } from 'blockly/javascript.js'
+import * as Blockly from 'blockly'
+import { javascriptGenerator } from 'blockly/javascript'
 
 export default function (f7) {
   /*
@@ -17,7 +17,7 @@ export default function (f7) {
         .setCheck('Array')
       this.appendValueInput('list2')
         .appendField('to')
-        .setAlign(Blockly.ALIGN_RIGHT)
+        .setAlign(Blockly.inputs.Align.RIGHT)
         .setCheck('Array')
       this.setInputsInline(true)
       this.setOutput(true, 'Array')

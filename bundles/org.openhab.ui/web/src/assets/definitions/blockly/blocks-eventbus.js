@@ -3,8 +3,8 @@
  * supports jsscripting
  */
 
-import Blockly from 'blockly'
-import { javascriptGenerator } from 'blockly/javascript.js'
+import * as Blockly from 'blockly'
+import { javascriptGenerator } from 'blockly/javascript'
 import { blockGetCheckedInputType } from './utils.js'
 
 export default function (f7) {
@@ -19,7 +19,7 @@ export default function (f7) {
         .appendField(new Blockly.FieldDropdown([['send command', 'sendCommand'], ['post update', 'postUpdate']]), 'eventType')
       this.appendValueInput('itemName')
         .appendField('to')
-        .setAlign(Blockly.ALIGN_RIGHT)
+        .setAlign(Blockly.inputs.Align.RIGHT)
         .setCheck(['String', 'oh_item', 'oh_itemtype'])
       this.setInputsInline(true)
       this.setPreviousStatement(true, null)

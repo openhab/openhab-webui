@@ -46,7 +46,7 @@
 
 <script>
 import { mapStores } from 'pinia'
-import Blockly from 'blockly'
+import * as Blockly from 'blockly'
 
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 

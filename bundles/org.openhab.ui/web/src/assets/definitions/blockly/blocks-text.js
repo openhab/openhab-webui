@@ -3,8 +3,8 @@
 * supports jsscripting
 */
 
-import Blockly from 'blockly'
-import { javascriptGenerator } from 'blockly/javascript.js'
+import * as Blockly from 'blockly'
+import { javascriptGenerator } from 'blockly/javascript'
 
 export default function (f7) {
   /*
@@ -37,11 +37,11 @@ export default function (f7) {
         .setCheck('String')
       this.appendValueInput('replacement')
         .appendField('with')
-        .setAlign(Blockly.ALIGN_RIGHT)
+        .setAlign(Blockly.inputs.Align.RIGHT)
         .setCheck('String')
       this.appendValueInput('origin')
         .appendField('in')
-        .setAlign(Blockly.ALIGN_RIGHT)
+        .setAlign(Blockly.inputs.Align.RIGHT)
         .setCheck('String')
       this.setInputsInline(true)
       this.setOutput(true, 'String')

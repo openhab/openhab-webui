@@ -3,8 +3,8 @@
 * Note that the blocks are only support for GraalVM together with the JSScripting library
 */
 
-import Blockly from 'blockly'
-import { javascriptGenerator } from 'blockly/javascript.js'
+import * as Blockly from 'blockly'
+import { javascriptGenerator } from 'blockly/javascript'
 import { addGetItemMetaConfigValue } from './utils.js'
 
 export default function (f7) {
