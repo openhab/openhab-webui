@@ -1,4 +1,4 @@
-import { javascriptGenerator } from 'blockly/javascript.js'
+import { javascriptGenerator } from 'blockly/javascript'
 
 /*
 * Function allowing to call classes within the OSGi container

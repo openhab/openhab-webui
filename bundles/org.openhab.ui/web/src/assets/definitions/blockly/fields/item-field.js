@@ -2,7 +2,7 @@
  * Field allowing to pick the name of an item from the model
  */
 
-import Blockly from 'blockly'
+import * as Blockly from 'blockly'
 import ModelPickerPopup from '@/components/model/model-picker-popup.vue'
 
 export class FieldItemModelPicker extends Blockly.FieldTextInput {

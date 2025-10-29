@@ -3,8 +3,8 @@
 * supports jsscripting
 */
 
-import Blockly from 'blockly'
-import { javascriptGenerator } from 'blockly/javascript.js'
+import * as Blockly from 'blockly'
+import { javascriptGenerator } from 'blockly/javascript'
 
 export default function (f7) {
   Blockly.Blocks['oh_print'] = {
