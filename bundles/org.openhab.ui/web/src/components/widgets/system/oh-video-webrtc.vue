@@ -190,7 +190,7 @@ export default {
           return
         }
         // If already enabled, do nothing
-        if (this.localAudioStream && this.localAudioStream.getAudioTracks().some(t => t.enabled)) {
+        if (this.localAudioStream && this.localAudioStream.getAudioTracks().some((t) => t.enabled)) {
           return
         }
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
@@ -212,7 +212,7 @@ export default {
           this.audioTransceiver.sender.replaceTrack(null)
         }
         if (this.localAudioStream) {
-          this.localAudioStream.getTracks().forEach(t => {
+          this.localAudioStream.getTracks().forEach((t) => {
             try { t.stop() } catch (e) {}
           })
           this.localAudioStream = null
