@@ -47,16 +47,17 @@
   </component>
 </template>
 
-<script>
-import { defineAsyncComponent } from 'vue'
-
-import mixin from './widget-mixin'
-
+<script setup>
 import * as SystemWidgets from './system/index'
 import * as StandardWidgets from './standard/index'
 import * as StandardListWidgets from './standard/list'
 import * as StandardCellWidgets from './standard/cell'
 import * as LayoutWidgets from './layout/index'
+import OhContext from './system/oh-context.vue'
+</script>
+
+<script>
+import mixin from './widget-mixin'
 
 export default {
   mixins: [mixin],
@@ -66,8 +67,7 @@ export default {
     ...StandardListWidgets,
     ...StandardCellWidgets,
     ...LayoutWidgets,
-    // TODO-V3.1: OhContext won't render in production build unless we async import here -> circular import ???
-    OhContext: defineAsyncComponent(() => import('./system/oh-context.vue'))
+    OhContext
   }
 }
 </script>
