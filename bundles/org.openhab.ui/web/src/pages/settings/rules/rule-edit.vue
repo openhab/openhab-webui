@@ -124,7 +124,20 @@
                                   radio
                                   :checked="hasTemplate && currentTemplate.uid === template.uid"
                                   radio-icon="start"
-                                  @change="selectTemplate(template.uid)" />
+                                  @change="selectTemplate(template.uid)">
+                      <template #title v-if="getTopicLink(template)">
+                        &nbsp;
+                        <f7-link :href="getTopicLink(template)"
+                                 tooltip="View openHAB Community Marketplace topic for this template"
+                                 target="_blank"
+                                 class="external"
+                                 color="gray"
+                                 icon="info_circle"
+                                 icon-ios="f7:info_circle"
+                                 icon-md="f7:info_circle"
+                                 icon-aurora="f7:info_circle" />
+                      </template>
+                    </f7-list-item>
                   </f7-list>
                 </f7-accordion-content>
               </f7-list-item>
@@ -135,7 +148,20 @@
               Template
             </f7-block-title>
             <f7-list media-list>
-              <f7-list-item :title="currentTemplate.label" :footer="currentTemplate.description" />
+              <f7-list-item :title="currentTemplate.label" :footer="currentTemplate.description">
+                <template #title v-if="getTopicLink(currentTemplate)">
+                  &nbsp;
+                  <f7-link :href="getTopicLink(currentTemplate)"
+                           tooltip="View openHAB Community Marketplace topic for this template"
+                           target="_blank"
+                           class="external"
+                           color="gray"
+                           icon="info_circle"
+                           icon-ios="f7:info_circle"
+                           icon-md="f7:info_circle"
+                           icon-aurora="f7:info_circle" />
+                </template>
+              </f7-list-item>
             </f7-list>
             <!-- Show radio options only if integrating template (createMode && ruleCopy?.templateUID) -->
             <f7-list media-list v-if="createMode && ruleCopy?.templateUID">
@@ -161,13 +187,6 @@
               <f7-block-title medium class="margin-vertical padding-top">
                 Template Configuration
               </f7-block-title>
-              <f7-link v-if="templateTopicLink"
-                       target="_blank"
-                       class="external margin-left"
-                       color="blue"
-                       :href="templateTopicLink">
-                Template Community Marketplace Topic
-              </f7-link>
               <config-sheet :parameter-groups="[]" :parameters="currentTemplate.configDescriptions" :configuration="rule.configuration" />
             </template>
           </f7-col>
@@ -708,6 +727,13 @@ export default {
       }
       this.rule = newRule
     },
+    getTopicLink (template) {
+      if (!template) return null
+      if (!template.tags) return null
+      const marketplaceTag = template.tags.find((t) => t.indexOf('marketplace:') === 0)
+      if (marketplaceTag) return 'https://community.openhab.org/t/' + marketplaceTag.replace('marketplace:', '')
+      return null
+    },
     editModule (ev, section, mod) {
       if (this.showModuleControls || this.isOpaqueModule(mod)) return
       let swipeoutElement = ev.target
@@ -973,13 +999,6 @@ export default {
         }
       }
       return undefined
-    },
-    templateTopicLink () {
-      if (!this.currentTemplate) return null
-      if (!this.currentTemplate.tags) return null
-      const marketplaceTag = this.currentTemplate.tags.find((t) => t.indexOf('marketplace:') === 0)
-      if (marketplaceTag) return 'https://community.openhab.org/t/' + marketplaceTag.replace('marketplace:', '')
-      return null
     },
     ...mapStores(useUIOptionsStore)
   }
