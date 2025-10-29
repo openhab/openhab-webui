@@ -2,20 +2,27 @@
   <ul v-if="config.listContainer" :class="config.containerClasses" :style="config.containerStyle">
     <generic-widget-component v-for="(ctx, idx) in childrenContexts"
                               :context="ctx"
-                              :key="'repeater-' + idx"
-                              @command="onCommand" />
+                              :key="'repeater-' + idx" />
   </ul>
-  <fragment v-else-if="config.fragment">
-    <generic-widget-component :context="ctx"
-                              v-for="(ctx, idx) in childrenContexts"
-                              :key="'repeater-' + idx"
-                              @command="onCommand" />
-  </fragment>
+  <!-- render without any additional container -->
+  <template v-else-if="config.fragment">
+    <!-- if parent is oh-swiper, render inside f7-swiper-slide -->
+    <template v-if="['oh-swiper', 'f7-swiper'].includes(context.parent.component.component)">
+      <f7-swiper-slide v-for="(ctx, idx) in childrenContexts" :key="'repeater-' + idx">
+        <generic-widget-component :context="ctx" />
+      </f7-swiper-slide>
+    </template>
+    <!-- else render -->
+    <template v-else>
+      <generic-widget-component v-for="(ctx, idx) in childrenContexts"
+                                :context="ctx"
+                                :key="'repeater-' + idx" />
+    </template>
+  </template>
   <div v-else :class="config.containerClasses" :style="config.containerStyle">
     <generic-widget-component v-for="(ctx, idx) in childrenContexts"
                               :context="ctx"
-                              :key="'repeater-' + idx"
-                              @command="onCommand" />
+                              :key="'repeater-' + idx" />
   </div>
 </template>
 
@@ -23,13 +30,9 @@
 import mixin from '../widget-mixin'
 import { OhRepeaterDefinition } from '@/assets/definitions/widgets/system'
 import { compareItems, compareRules } from '@/components/widgets/widget-order'
-import { Fragment } from 'vue-fragment'
 
 export default {
   mixins: [mixin],
-  components: {
-    Fragment
-  },
   widget: OhRepeaterDefinition,
   data () {
     return {
@@ -43,14 +46,14 @@ export default {
         const loopVars = {}
         if (ctx.loop) {
           for (const loopKey in this.context.loop) {
-            this.$set(loopVars, loopKey, this.context.loop[loopKey])
+            loopVars[loopKey] = this.context.loop[loopKey]
           }
         }
         loopVars[this.config.for] = el
         loopVars[this.config.for + '_idx'] = idx
         loopVars[this.config.for + '_source'] = source
 
-        this.$set(ctx, 'loop', loopVars)
+        ctx.loop = loopVars
 
         return ctx
       }

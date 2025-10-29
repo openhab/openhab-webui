@@ -14,24 +14,24 @@
                            type="text"
                            :value="moduleTitle"
                            :placeholder="sugModuleTitle"
-                           @input="$set(module, 'label', $event.target.value)"
-                           :disabled="!editable"
+                           @input="module.label = $event.target.value"
+                           :disabled="!editable ? true : null"
                            :clear-button="editable" />
             <f7-list-input label="Description"
                            type="text"
                            :value="moduleDescription"
                            :placeholder="sugModuleDescription"
-                           @input="$set(module, 'description', $event.target.value)"
-                           :disabled="!editable"
+                           @input="module.description = $event.target.value"
+                           :disabled="!editable ? true : null"
                            :clear-button="editable" />
           </template>
           <f7-list-item title="Scripting Language"
                         class="aligned-smart-select"
-                        :disabled="!editable"
+                        :disabled="!editable ? true : null"
                         :key="mode"
                         smart-select
-                        :smart-select-params="{openIn: 'sheet', closeOnSelect: true}">
-            <select @change="$emit('newLanguage', $event.target.value)">
+                        :smart-select-params="{ openIn: 'sheet', closeOnSelect: true }">
+            <select @change="$emit('new-language', $event.target.value)">
               <option v-if="!languages.map(l => l.contentType).includes(mode)"
                       :key="mode"
                       :value="mode"
@@ -41,7 +41,7 @@
               <option v-for="language in languages"
                       :key="language.contentType"
                       :value="language.contentType"
-                      :selected="language.contentType === mode">
+                      :selected="language.contentType === mode ? true : null">
                 {{ language.name }} ({{ language.version }})
               </option>
             </select>
@@ -58,8 +58,16 @@ import ModuleDescriptionSuggestions from '../module-description-suggestions'
 
 export default {
   mixins: [ModuleDescriptionSuggestions],
-  props: ['rule', 'module', 'moduleType', 'createMode', 'isScriptRule', 'languages', 'mode'],
-  emits: ['newLanguage'],
+  props: {
+    rule: Object,
+    module: Object,
+    moduleType: Object,
+    createMode: Boolean,
+    isScriptRule: Boolean,
+    languages: Array,
+    mode: String
+  },
+  emits: ['new-language'],
   components: {
     RuleGeneralSettings
   },

@@ -5,7 +5,7 @@
       ref="input"
       type="datetime-local"
       :step="step"
-      :floating-label="$theme.md"
+      :floating-label="theme.md"
       :label="configDescription.label"
       :name="configDescription.name"
       :value="value"
@@ -22,12 +22,17 @@
 </style>
 
 <script>
+import { theme } from 'framework7-vue'
+
 export default {
   props: {
     configDescription: Object,
     value: String
   },
   emits: ['input'],
+  setup () {
+    return { theme }
+  },
   computed: {
     step () {
       if (this.configDescription.stepsize !== undefined) return this.configDescription.stepsize

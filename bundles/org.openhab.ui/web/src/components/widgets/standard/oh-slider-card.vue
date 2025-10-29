@@ -7,8 +7,7 @@
            ]">
     <template #content>
       <oh-slider :context="childContext(context.component)"
-                 :class="{ 'slider-card-vertical': config.vertical }"
-                 @command="onCommand" />
+                 :class="{ 'slider-card-vertical': config.vertical }" />
     </template>
   </oh-card>
 </template>

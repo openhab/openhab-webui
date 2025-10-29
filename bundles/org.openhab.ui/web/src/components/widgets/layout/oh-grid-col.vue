@@ -28,8 +28,7 @@
     <oh-placeholder-widget v-if="context.editmode && !context.component.slots.default.length"
                            @click="context.editmode.addWidget(context.component, null, context.parent)" />
     <generic-widget-component v-else-if="context.component.slots.default.length"
-                              :context="childContext(context.component.slots.default[0])"
-                              @command="onCommand" />
+                              :context="childContext(context.component.slots.default[0])" />
   </f7-col>
 </template>
 

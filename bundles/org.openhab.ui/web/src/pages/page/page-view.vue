@@ -11,13 +11,15 @@
                  icon-md="material:menu"
                  panel-open="left" />
       </f7-nav-left>
-      <f7-nav-title>{{ pageLabel }}</f7-nav-title>
+      <f7-nav-title>
+        {{ pageLabel }}
+      </f7-nav-title>
       <f7-nav-right>
         <f7-link v-if="isAdmin"
                  icon-md="material:edit"
                  @click="editPage"
                  class="edit-page-button">
-          {{ $theme.md ? '' : $t('page.navbar.edit') }}
+          {{ theme.md ? '' : $t('page.navbar.edit') }}
         </f7-link>
         <f7-link v-if="fullscreenIcon"
                  class="fullscreen-icon-navbar"
@@ -46,7 +48,7 @@
                 v-if="page && pageType === 'tabs' && visibleToCurrentUser">
       <f7-link v-for="(tab, idx) in page.slots.default"
                :key="idx"
-               tab-link
+               :tab-link="'#tab-' + idx"
                @click="onTabChange(idx)"
                :tab-link-active="currentTab === idx">
         <i v-if="tabEvaluateExpression(tab, idx, 'icon')" class="icon" :style="{ width: tabBarIconSize, height: tabBarIconSize }">
@@ -63,15 +65,14 @@
               :tab-active="currentTab === idx">
         <component v-if="currentTab === idx"
                    :is="tabComponent(tab)"
-                   :context="tabContext(tab)"
-                   @command="onCommand" />
+                   :context="tabContext(tab)" />
       </f7-tab>
     </f7-tabs>
 
     <component v-else-if="page && visibleToCurrentUser"
                :is="page.component"
                :context="context"
-               @command="onCommand"
+               :f7router
                @action="performAction($event.ev, $event.prefix, $event.config, $event.context)" />
 
     <empty-state-placeholder v-if="!visibleToCurrentUser"
@@ -98,58 +99,79 @@
 </style>
 
 <script>
+import { defineAsyncComponent } from 'vue'
+import { f7, theme } from 'framework7-vue'
+
 import OhLayoutPage from '@/components/widgets/layout/oh-layout-page.vue'
 import WidgetExpressionMixin from '@/components/widgets/widget-expression-mixin'
 import { actionsMixin } from '@/components/widgets/widget-actions'
+import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
+
+import { useStatesStore } from '@/js/stores/useStatesStore'
+import { useComponentsStore } from '@/js/stores/useComponentsStore'
+import { useUserStore } from '@/js/stores/useUserStore'
+import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
 export default {
   mixins: [WidgetExpressionMixin, actionsMixin],
   components: {
     'oh-layout-page': OhLayoutPage,
-    'empty-state-placeholder': () => import('@/components/empty-state-placeholder.vue'),
-    'oh-map-page': () => import(/* webpackChunkName: "map-page" */ '@/components/widgets/map/oh-map-page.vue'),
-    'oh-plan-page': () => import(/* webpackChunkName: "plan-page" */ '@/components/widgets/plan/oh-plan-page.vue'),
-    'oh-chart-page': () => import(/* webpackChunkName: "chart-page" */ '@/components/widgets/chart/oh-chart-page.vue'),
-    'oh-locations-tab': () => import('@/components/tabs/locations-tab.vue'),
-    'oh-equipment-tab': () => import('@/components/tabs/equipment-tab.vue'),
-    'oh-properties-tab': () => import('@/components/tabs/properties-tab.vue')
+    EmptyStatePlaceholder,
+    'oh-map-page': defineAsyncComponent(() => import(/* webpackChunkName: "map-page" */ '@/components/widgets/map/oh-map-page.vue')),
+    'oh-plan-page': defineAsyncComponent(() => import(/* webpackChunkName: "plan-page" */ '@/components/widgets/plan/oh-plan-page.vue')),
+    'oh-chart-page': defineAsyncComponent(() => import(/* webpackChunkName: "chart-page" */ '@/components/widgets/chart/oh-chart-page.vue')),
+    'oh-locations-tab': defineAsyncComponent(() => import('@/components/tabs/locations-tab.vue')),
+    'oh-equipment-tab': defineAsyncComponent(() => import('@/components/tabs/equipment-tab.vue')),
+    'oh-properties-tab': defineAsyncComponent(() => import('@/components/tabs/properties-tab.vue'))
   },
-  props: ['uid', 'initialTab', 'deep', 'defineVars'],
+  props: {
+    uid: String,
+    initialTab: String, // declare string here as router will pass string, not number
+    deep: Boolean,
+    defineVars: Object,
+    f7router: Object
+  },
+  setup () {
+    return { theme }
+  },
   data () {
     return {
       currentTab: this.initialTab ? Number(this.initialTab) : 0,
-      fullscreen: this.$fullscreen.getState(),
+      fullscreen: this.$fullscreen.isFullscreen,
 
       vars: {}
-    }
-  },
-  watch: {
-    pageType (newType, oldType) {
-      if (oldType === null && newType === 'tabs') {
-        this.onTabChange(this.currentTab)
-      }
     }
   },
   computed: {
     pageStyle () {
       if (!this.context) return null
-      const pageComponent = (this.pageType === 'tabs') ? this.tabContext(this.context.component.slots.default[this.currentTab]).component : this.context.component
+      const pageComponent =
+        this.pageType === 'tabs'
+          ? this.tabContext(this.context.component.slots.default[this.currentTab]).component
+          : this.context.component
       if (!pageComponent || !pageComponent.config || !pageComponent.config.style) return null
       return pageComponent.config.style
     },
     // Resolve the f7 CSS variable because iconify's SVG element doesn't like css variables
     tabBarIconSize () {
-      return window.getComputedStyle(document.documentElement).getPropertyValue('--f7-tabbar-icon-size')
+      return window
+        .getComputedStyle(document.documentElement)
+        .getPropertyValue('--f7-tabbar-icon-size')
     },
     context () {
       return {
         component: this.page,
-        vars: Object.assign((this.page && this.page.config && this.page.config.defineVars) ? this.page.config.defineVars : {}, this.defineVars),
-        store: this.$store.getters.trackedItems
+        vars: Object.assign(
+          this.page && this.page.config && this.page.config.defineVars
+            ? this.page.config.defineVars
+            : {},
+          this.defineVars
+        ),
+        store: useStatesStore().trackedItems
       }
     },
     page () {
-      return this.$store.getters.page(this.uid)
+      return useComponentsStore().page(this.uid)
     },
     pageType () {
       return this.getPageType(this.page)
@@ -158,13 +180,14 @@ export default {
       return this.page?.config.label
     },
     isAdmin () {
-      return this.page && this.$store.getters.isAdmin
+      return this.page && useUserStore().isAdmin()
     },
     visibleToCurrentUser () {
       if (!this.page || !this.page.config || !this.page.config.visibleTo) return true
-      const user = this.$store.getters.user
+      const user = useUserStore().user
       if (!user) return false
-      if (user.roles && user.roles.some(r => this.page.config.visibleTo.indexOf('role:' + r) >= 0)) return true
+      if (user.roles && user.roles.some((r) => this.page.config.visibleTo.indexOf('role:' + r) >= 0))
+        return true
       if (this.page.config.visibleTo.indexOf('user:' + user.name) >= 0) return true
       return false
     },
@@ -172,28 +195,32 @@ export default {
       return this.deep && !this.page?.config.sidebar
     },
     fullscreenIcon () {
-      if (this.$fullscreen.support && this.page?.config.showFullscreenIcon) {
-        return this.fullscreen ? 'rectangle_arrow_up_right_arrow_down_left_slash' : 'rectangle_arrow_up_right_arrow_down_left'
+      if (this.$fullscreen.isEnabled && this.page?.config.showFullscreenIcon) {
+        return this.fullscreen
+          ? 'rectangle_arrow_up_right_arrow_down_left_slash'
+          : 'rectangle_arrow_up_right_arrow_down_left'
       }
       return null
     }
   },
   methods: {
     onPageAfterIn () {
-      this.$store.dispatch('startTrackingStates')
+      useStatesStore().startTrackingStates()
+      // make sure to set the current tab
+      // fixes an issue where a tabbed subpage was opened and navigated around, when returning back to original page, tab was rendered empty
+      this.onTabChange(this.currentTab)
     },
     onPageBeforeOut () {
-      this.$store.dispatch('stopTrackingStates')
+      useStatesStore().stopTrackingStates()
     },
     onTabChange (idx) {
+      if (this.pageType !== 'tabs') return
+
       this.currentTab = idx
-      this.$set(this, 'vars', {})
+      this.vars = {}
       const url = '/page/' + this.uid + '/' + this.currentTab
-      this.$f7router.updateCurrentUrl(url)
-      this.$f7router.url = url
-    },
-    onCommand (itemName, command) {
-      this.$store.dispatch('sendCommand', { itemName, command })
+      this.f7router.updateCurrentUrl(url)
+      this.f7router.url = url
     },
     getPageType (page) {
       if (!page) return null
@@ -214,13 +241,15 @@ export default {
       }
     },
     tabContext (tab) {
-      const page = tab.config.page ? this.$store.getters.page(tab.config.page.replace('page:', '')) : tab.component
+      const page = tab.config.page
+        ? useComponentsStore().page(tab.config.page.replace('page:', ''))
+        : tab.component
       const context = {
         component: page,
         tab,
         vars: this.vars,
         props: tab.config.pageConfig,
-        store: this.$store.getters.trackedItems
+        store: useStatesStore().trackedItems
       }
       // mock some slots so that it works with current homecard-grouping implementation
       if (tab.component === 'oh-locations-tab') {
@@ -237,7 +266,7 @@ export default {
         return tab.component
       }
 
-      const page = this.$store.getters.page(tab.config.page.replace('page:', ''))
+      const page = useComponentsStore().page(tab.config.page.replace('page:', ''))
       return page.component
     },
     tabEvaluateExpression (tab, idx, key) {
@@ -246,21 +275,21 @@ export default {
     },
     editPage () {
       if (this.pageType === 'tabs') {
-        const action = this.$f7.actions.create({
+        const action = f7.actions.create({
           buttons: [
             {
               text: 'Edit Tabbed Page',
               onClick: () => {
-                this.$f7router.navigate('/settings/pages/' + this.pageType + '/' + this.uid)
+                this.f7router.navigate('/settings/pages/' + this.pageType + '/' + this.uid)
               }
             },
             {
               text: 'Edit Current Tab',
               onClick: () => {
                 const tabPageUid = this.page.slots.default[this.currentTab].config.page.replace('page:', '')
-                const tabPage = this.$store.getters.page(tabPageUid)
+                const tabPage = useComponentsStore().page(tabPageUid)
                 const tabPageType = this.getPageType(tabPage)
-                this.$f7router.navigate('/settings/pages/' + tabPageType + '/' + tabPageUid)
+                this.f7router.navigate('/settings/pages/' + tabPageType + '/' + tabPageUid)
               }
             }
           ],
@@ -268,7 +297,7 @@ export default {
         })
         action.open()
       } else {
-        this.$f7router.navigate('/settings/pages/' + this.pageType + '/' + this.uid)
+        this.f7router.navigate('/settings/pages/' + this.pageType + '/' + this.uid)
       }
     },
     toggleFullscreen () {
@@ -277,10 +306,10 @@ export default {
         callback: (fullscreen) => {
           this.fullscreen = fullscreen
           if (fullscreen) {
-            this.$f7.panel.get('left').disableVisibleBreakpoint()
+            f7.panel.get('left').disableVisibleBreakpoint()
           } else {
-            if (localStorage.getItem('openhab.ui:panel.visibleBreakpointDisabled') !== 'true') {
-              this.$f7.panel.get('left').enableVisibleBreakpoint()
+            if (!useUIOptionsStore().visibleBreakpointDisabled) {
+              f7.panel.get('left').enableVisibleBreakpoint()
             }
           }
         }

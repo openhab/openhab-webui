@@ -30,10 +30,10 @@
         </f7-menu-item>
       </f7-menu>
       <component v-for="(component, idx) in context.component.slots.default"
+                 v-bind="$attrs"
                  :is="component.component"
                  :key="idx"
-                 :context="childContext(component)"
-                 v-on="$listeners" />
+                 :context="childContext(component)" />
     </f7-block>
   </div>
 </template>

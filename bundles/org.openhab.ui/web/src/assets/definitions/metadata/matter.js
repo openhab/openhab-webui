@@ -95,7 +95,7 @@ export const deviceTypes = {
 
 export const deviceTypesAndAttributes = Object.entries(deviceTypes).flatMap(([type, attributes]) => [
   type,
-  ...(attributes.length > 0 ? attributes.map(cluster => `${type}.${cluster.label}`) : [])
+  ...(attributes.length > 0 ? attributes.map((cluster) => `${type}.${cluster.label}`) : [])
 ])
 
 export const isComplexDeviceType = (deviceType) => {

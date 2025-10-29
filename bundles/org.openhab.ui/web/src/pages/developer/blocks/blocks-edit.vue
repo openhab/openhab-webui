@@ -1,21 +1,16 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
-    <f7-navbar :title="(createMode ? 'Create Block Library' : 'Block Library: ' + blocks.uid) + dirtyIndicator" back-link="Back">
-      <f7-nav-right>
-        <f7-link @click="save()"
-                 v-if="$theme.md"
-                 icon-md="material:save"
-                 icon-only />
-        <f7-link @click="save()" v-if="!$theme.md">
-          Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
-        </f7-link>
-      </f7-nav-right>
+    <f7-navbar>
+      <oh-nav-content :title="(createMode ? 'Create Block Library' : 'Block Library: ' + blocks.uid) + dirtyIndicator"
+                      :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
+                      @save="save()"
+                      :f7router />
     </f7-navbar>
     <f7-toolbar position="bottom">
       <f7-link @click="previewOpened = true">
         Preview<span v-if="$device.desktop">&nbsp;(Ctrl-P)</span>
       </f7-link>
-      <f7-link icon-f7="uiwindow_split_2x1" @click="split = (split === 'horizontal') ? 'vertical' : 'horizontal'; blockKey = $f7.utils.id()" />
+      <f7-link icon-f7="uiwindow_split_2x1" @click="split = (split === 'horizontal') ? 'vertical' : 'horizontal'; blockKey = utils.id();" />
       <f7-link @click="refreshBlocks">
         Refresh<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span>
       </f7-link>
@@ -32,7 +27,7 @@
       <f7-row v-if="ready" resizable>
         <f7-col style="min-width: 20px" class="block-preview-pane margin-horizontal margin-bottom">
           <block-preview :blocks-definition="blocks" :key="previewKey" />
-          <!-- <generic-widget-component :key="widgetKey" :context="context" @command="onCommand" /> -->
+          <!-- <generic-widget-component :key="widgetKey" :context="context" /> -->
         </f7-col>
       </f7-row>
     </f7-block>
@@ -49,7 +44,7 @@
                 style="min-width: 20px"
                 class="block-preview-pane padding-right margin-bottom">
           <block-preview :blocks-definition="blocks" :key="previewKey" />
-          <!-- <generic-widget-component :key="widgetKey" :context="context" @command="onCommand" /> -->
+          <!-- <generic-widget-component :key="widgetKey" :context="context" /> -->
         </f7-col>
       </f7-row>
     </f7-block>
@@ -84,20 +79,20 @@
                 mode="application/javascript"
                 :value="previewGeneratedCode"
                 :read-only="true" />
-        <f7-fab v-show="previewMode === 'blockly'"
-                position="right-bottom"
-                slot="fixed"
-                color="blue"
-                @click="togglePreviewMode('code')">
-          <f7-icon f7="doc_text" />
-        </f7-fab>
-        <f7-fab v-show="previewMode === 'code'"
-                position="right-bottom"
-                slot="fixed"
-                color="blue"
-                @click="togglePreviewMode('blockly')">
-          <f7-icon f7="ticket" />
-        </f7-fab>
+        <template #fixed>
+          <f7-fab v-show="previewMode === 'blockly'"
+                  position="right-bottom"
+                  color="blue"
+                  @click="togglePreviewMode('code')">
+            <f7-icon f7="doc_text" />
+          </f7-fab>
+          <f7-fab v-show="previewMode === 'code'"
+                  position="right-bottom"
+                  color="blue"
+                  @click="togglePreviewMode('blockly')">
+            <f7-icon f7="ticket" />
+          </f7-fab>
+        </template>
       </f7-page>
     </f7-popup>
   </f7-page>
@@ -136,6 +131,10 @@
 </style>
 
 <script>
+import { utils } from 'framework7'
+import { f7, theme } from 'framework7-vue'
+import { nextTick, defineAsyncComponent } from 'vue'
+
 import YAML from 'yaml'
 
 import BlocklyEditor from '@/components/config/controls/blockly-editor.vue'
@@ -147,7 +146,7 @@ const toStringOptions = { toStringDefaults: { lineWidth: 0 } }
 export default {
   mixins: [DirtyMixin],
   components: {
-    'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue'),
+    editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')),
     BlocklyEditor, // 'blockly-editor': () => import(/* webpackChunkName: "blockly-editor" */ '@/components/config/controls/blockly-editor.vue'),
     BlockPreview // 'block-preview': () => import(/* webpackChunkName: "blockly-editor" */ './block-preview.vue')
   },
@@ -157,8 +156,12 @@ export default {
     f7router: Object,
     f7route: Object
   },
+  setup () {
+    return { theme }
+  },
   data () {
     return {
+      utils,
       blocksDefinition: null,
       items: [],
       ready: false,
@@ -167,8 +170,8 @@ export default {
       vars: {},
       previewBlockSource: '<xml xmlns="https://developers.google.com/blockly/xml"></xml>',
       previewCode: '',
-      blockKey: this.$f7.utils.id(),
-      previewKey: this.$f7.utils.id(),
+      blockKey: utils.id(),
+      previewKey: utils.id(),
       previewOpened: false,
       previewMode: 'blockly',
       previewGeneratedCode: ''
@@ -203,7 +206,7 @@ export default {
       }
     },
     refreshBlocks () {
-      this.previewKey = this.$f7.utils.id()
+      this.previewKey = utils.id()
     },
     previewClosed () {
       this.previewOpened = false
@@ -255,7 +258,7 @@ export default {
       if (this.loading) return
       this.loading = true
       if (this.createMode) {
-        const uid = this.$f7.utils.id()
+        const uid = utils.id()
         this.blocksDefinition = YAML.stringify({
           uid: 'blocklibrary_' + uid,
           tags: [],
@@ -316,14 +319,14 @@ export default {
             ]
           }
         }, { toStringOptions })
-        this.$nextTick(() => {
+        nextTick(() => {
           this.loading = false
           this.ready = true
         })
       } else {
         this.$oh.api.get('/rest/ui/components/ui:blocks/' + this.uid).then((data) => {
-          this.$set(this, 'blocksDefinition', YAML.stringify(data, { toStringOptions }))
-          this.$nextTick(() => {
+          this.blocksDefinition = YAML.stringify(data, { toStringOptions })
+          nextTick(() => {
             this.loading = false
             this.ready = true
           })
@@ -332,11 +335,11 @@ export default {
     },
     save (stay) {
       if (!this.blocks.uid) {
-        this.$f7.dialog.alert('Please give an ID to the block library')
+        f7.dialog.alert('Please give an ID to the block library')
         return
       }
       if (!this.createMode && this.uid !== this.blocks.uid) {
-        this.$f7.dialog.alert('You cannot change the ID of an existing block library. Duplicate it with the new ID then delete this one.')
+        f7.dialog.alert('You cannot change the ID of an existing block library. Duplicate it with the new ID then delete this one.')
         return
       }
 
@@ -346,24 +349,24 @@ export default {
       promise.then((data) => {
         this.dirty = false
         if (this.createMode) {
-          this.$f7.toast.create({
+          f7.toast.create({
             text: 'Block library created',
             destroyOnClose: true,
             closeTimeout: 2000
           }).open()
-          this.$f7router.navigate(this.$f7route.url.replace('/add', '/' + this.blocks.uid), { reloadCurrent: true })
+          this.f7router.navigate(this.f7route.url.replace('/add', '/' + this.blocks.uid), { reloadCurrent: true })
           this.load()
         } else {
-          this.$f7.toast.create({
+          f7.toast.create({
             text: 'Block library updated',
             destroyOnClose: true,
             closeTimeout: 2000
           }).open()
         }
-        // this.$f7.emit('sidebarRefresh', null)
-        // if (!stay) this.$f7router.back()
+        // f7.emit('sidebarRefresh', null)
+        // if (!stay) this.f7router.back()
       }).catch((err) => {
-        this.$f7.toast.create({
+        f7.toast.create({
           text: 'Error while saving block library: ' + err,
           destroyOnClose: true,
           closeTimeout: 2000

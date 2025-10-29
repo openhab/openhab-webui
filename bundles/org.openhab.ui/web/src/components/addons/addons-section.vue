@@ -132,6 +132,7 @@
 </style>
 
 <script>
+import { f7 } from 'framework7-vue'
 import AddonListItem from './addon-list-item.vue'
 import AddonCard from './addon-card.vue'
 import { compareAddons } from '@/assets/addon-store'
@@ -191,7 +192,7 @@ export default {
     expand () {
       this.collapsed = false
       setTimeout(() => {
-        this.$f7.lazy.create('.page-addon-store')
+        f7.lazy.create('.page-addon-store')
       }, 100)
     },
     addonButtonClick (addon) {

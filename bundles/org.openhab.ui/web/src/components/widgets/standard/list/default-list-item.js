@@ -6,7 +6,7 @@
  * Refer to {@see itemContextLabel} for valid options.
  */
 
-import store from '@/js/store'
+import { useSemanticsStore } from '@/js/stores/useSemanticsStore'
 
 export default function itemDefaultListComponent (item, footer) {
   const stateDescription = item.stateDescription || {}
@@ -22,10 +22,10 @@ export default function itemDefaultListComponent (item, footer) {
     }
   } else {
     item.tags.forEach((tag) => {
-      if (store.getters.semanticClasses.Points.indexOf(tag) >= 0) {
+      if (useSemanticsStore().Points.indexOf(tag) >= 0) {
         semanticClass = tag
       }
-      if (store.getters.semanticClasses.Properties.indexOf(tag) >= 0) {
+      if (useSemanticsStore().Properties.indexOf(tag) >= 0) {
         semanticProperty = tag
       }
     })

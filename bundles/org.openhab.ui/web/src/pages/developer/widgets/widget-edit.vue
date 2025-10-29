@@ -1,22 +1,16 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
-    <f7-navbar :title="(createMode ? 'Create Widget' : 'Widget: ' + widget.uid) + dirtyIndicator"
-               back-link="Back">
-      <f7-nav-right>
-        <f7-link @click="save()"
-                 v-if="$theme.md"
-                 icon-md="material:save"
-                 icon-only />
-        <f7-link @click="save()" v-if="!$theme.md">
-          Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
-        </f7-link>
-      </f7-nav-right>
+    <f7-navbar>
+      <oh-nav-content :title="(createMode ? 'Create Widget' : 'Widget: ' + widget.uid) + dirtyIndicator"
+                      :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
+                      @save="save()"
+                      :f7router />
     </f7-navbar>
     <f7-toolbar position="bottom">
       <f7-link @click="widgetPropsOpened = true">
         Set Props<span v-if="$device.desktop">&nbsp;(Ctrl-P)</span>
       </f7-link>
-      <f7-link icon-f7="uiwindow_split_2x1" @click="split = (split === 'horizontal') ? 'vertical' : 'horizontal'; blockKey = $f7.utils.id()" />
+      <f7-link icon-f7="uiwindow_split_2x1" @click="split = (split === 'horizontal') ? 'vertical' : 'horizontal'; blockKey = utils.id()" />
       <f7-link @click="redrawWidget">
         Redraw<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span>
       </f7-link>
@@ -32,7 +26,7 @@
       </f7-row>
       <f7-row v-if="ready" resizable>
         <f7-col style="min-width: 20px" class="widget-preview margin-horizontal margin-bottom">
-          <generic-widget-component :key="widgetKey" :context="context" @command="onCommand" />
+          <generic-widget-component :key="widgetKey" :context="context" />
         </f7-col>
       </f7-row>
     </f7-block>
@@ -48,7 +42,7 @@
                 resizable
                 style="min-width: 20px"
                 class="widget-preview padding-right margin-bottom">
-          <generic-widget-component :key="widgetKey" :context="context" @command="onCommand" />
+          <generic-widget-component :key="widgetKey" :context="context" />
         </f7-col>
       </f7-row>
     </f7-block>
@@ -121,27 +115,38 @@
 </style>
 
 <script>
-import YAML from 'yaml'
+import { defineAsyncComponent, nextTick } from 'vue'
+import { utils } from 'framework7'
+import { theme, f7 } from 'framework7-vue'
 
+import YAML from 'yaml'
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import DirtyMixin from '@/pages/settings/dirty-mixin'
 
 import * as StandardListWidgets from '@/components/widgets/standard/list'
+
+import { useStatesStore } from '@/js/stores/useStatesStore'
 
 const toStringOptions = { toStringDefaults: { lineWidth: 0 } }
 
 export default {
   mixins: [DirtyMixin],
   components: {
-    'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue'),
+    editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')),
     ConfigSheet
   },
   props: {
     uid: String,
-    createMode: Boolean
+    createMode: Boolean,
+    f7router: Object,
+    f7route: Object
+  },
+  setup () {
+    return { theme }
   },
   data () {
     return {
+      utils,
       widgetDefinition: null,
       items: [],
       ready: false,
@@ -149,10 +154,12 @@ export default {
       props: {},
       vars: {},
       ctxVars: {},
-      blockKey: this.$f7.utils.id(),
-      widgetKey: this.$f7.utils.id(),
+      blockKey: utils.id(),
+      widgetKey: utils.id(),
       widgetPropsOpened: false,
-      standardListWidgets: Object.values(StandardListWidgets).filter((c) => c.widget && typeof c.widget === 'function').map((c) => c.widget().name)
+      standardListWidgets: Object.values(StandardListWidgets)
+        .filter((c) => c.widget && typeof c.widget === 'function')
+        .map((c) => c.widget().name)
     }
   },
   computed: {
@@ -169,7 +176,7 @@ export default {
             }
           }
           : this.widget,
-        store: this.$store.getters.trackedItems,
+        store: useStatesStore().trackedItems,
         props: this.props,
         vars: this.vars,
         ctxVars: this.ctxVars
@@ -189,14 +196,14 @@ export default {
       if (window) {
         window.addEventListener('keydown', this.keyDown)
       }
-      this.$store.dispatch('startTrackingStates')
+      useStatesStore().startTrackingStates()
       this.load()
     },
     onPageBeforeOut () {
       if (window) {
         window.removeEventListener('keydown', this.keyDown)
       }
-      this.$store.dispatch('stopTrackingStates')
+      useStatesStore().stopTrackingStates()
     },
     onEditorInput (value) {
       this.widgetDefinition = value
@@ -230,7 +237,7 @@ export default {
       this.loading = true
       if (this.createMode) {
         this.widgetDefinition = YAML.stringify({
-          uid: 'widget_' + this.$f7.utils.id(),
+          uid: 'widget_' + utils.id(),
           props: {
             parameterGroups: [],
             parameters: [
@@ -257,14 +264,14 @@ export default {
             content: '=items[props.item].displayState || items[props.item].state'
           }
         }, { toStringOptions })
-        this.$nextTick(() => {
+        nextTick(() => {
           this.loading = false
           this.ready = true
         })
       } else {
         this.$oh.api.get('/rest/ui/components/ui:widget/' + this.uid).then((data) => {
-          this.$set(this, 'widgetDefinition', YAML.stringify(data, { toStringOptions }))
-          this.$nextTick(() => {
+          this.widgetDefinition = YAML.stringify(data, { toStringOptions })
+          nextTick(() => {
             this.loading = false
             this.ready = true
           })
@@ -273,18 +280,14 @@ export default {
     },
     save (stay) {
       if (!this.widget.uid) {
-        this.$f7.dialog.alert('Please give an UID to the widget')
+        f7.dialog.alert('Please give an UID to the widget')
         return
       } else if (!/^[A-Za-z0-9_-]+$/.test(this.widget.uid)) {
-        this.$f7.dialog.alert('Widget UID is only allowed to contain A-Z,a-z,0-9,_,-')
+        f7.dialog.alert('Widget UID is only allowed to contain A-Z,a-z,0-9,_,-')
         return
       }
-      // if (!this.widget.config.label) {
-      //   this.$f7.dialog.alert('Please give a label to the widget')
-      //   return
-      // }
       if (!this.createMode && this.uid !== this.widget.uid) {
-        this.$f7.dialog.alert('You cannot change the ID of an existing widget. Duplicate it with the new ID then delete this one.')
+        f7.dialog.alert('You cannot change the ID of an existing widget. Duplicate it with the new ID then delete this one.')
         return
       }
 
@@ -294,41 +297,32 @@ export default {
       promise.then((data) => {
         this.dirty = false
         if (this.createMode) {
-          this.$f7.toast.create({
+          f7.toast.create({
             text: 'Widget created',
             destroyOnClose: true,
             closeTimeout: 2000
           }).open()
-          this.$f7router.navigate(this.$f7route.url.replace('/add', '/' + this.widget.uid), { reloadCurrent: true })
+          this.f7router.navigate(this.f7route.url.replace('/add', '/' + this.widget.uid), { reloadCurrent: true })
           this.load()
         } else {
-          this.$f7.toast.create({
+          f7.toast.create({
             text: 'Widget updated',
             destroyOnClose: true,
             closeTimeout: 2000
           }).open()
         }
-        this.$f7.emit('sidebarRefresh', null)
-        // if (!stay) this.$f7router.back()
+        f7.emit('sidebarRefresh', null)
       }).catch((err) => {
-        this.$f7.toast.create({
+        f7.toast.create({
           text: 'Error while saving page: ' + err,
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
       })
     },
-    onCommand (itemName, cmd) {
-      this.$store.dispatch('sendCommand', { itemName, cmd })
-    },
     redrawWidget () {
       this.ctxVars = {}
-      this.widgetKey = this.$f7.utils.id()
-      // const wd = this.widgetDefinition
-      // this.widgetDefinition = 'component: Label\nnconfig: { text: "Redrawing..."}'
-      // this.$nextTick(() => {
-      //   this.widgetDefinition = wd
-      // })
+      this.widgetKey = utils.id()
     },
     widgetPropsClosed () {
       this.widgetPropsOpened = false

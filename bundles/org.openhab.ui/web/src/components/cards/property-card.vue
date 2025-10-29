@@ -7,8 +7,7 @@
       <div v-if="context && context.component.slots && context.component.slots.glance" class="display-flex flex-direction-column align-items-flex-start">
         <generic-widget-component :context="childContext(slotComponent)"
                                   v-for="(slotComponent, idx) in context.component.slots.glance"
-                                  :key="'glance-' + idx"
-                                  @command="onCommand" />
+                                  :key="'glance-' + idx" />
       </div>
       <!-- <div class="property-stats" v-else><small v-if="element.points">{{element.points.length}}</small></div> -->
     </template>
@@ -47,6 +46,8 @@ import itemDefaultListComponent, { itemPathLabel } from '@/components/widgets/st
 import CardMixin from './card-mixin'
 import ModelCard from './model-card.vue'
 
+import { useStatesStore } from '@/js/stores/useStatesStore'
+
 export default {
   mixins: [mixin, CardMixin],
   props: {
@@ -73,7 +74,7 @@ export default {
       }
 
       return {
-        store: this.$store.getters.trackedItems,
+        store: useStatesStore().trackedItems,
         component: {
           component: 'oh-list',
           config: {

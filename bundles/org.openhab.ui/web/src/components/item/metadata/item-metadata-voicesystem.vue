@@ -3,15 +3,17 @@
     <f7-list>
       <f7-list-input ref="input"
                      type="textarea"
-                     :floating-label="$theme.md"
+                     :floating-label="theme.md"
                      :label="'Custom Rules'"
                      name="custom-rules"
                      :value="customRules"
                      :disabled="!editable ? true : null"
                      @input="updateValue" />
-      <f7-block-footer class="param-description" slot="after-list">
-        <small>Enter each rule on a separate line. Available placeholders: $name$, $cmd$ and $*$</small>
-      </f7-block-footer>
+      <template #after-list>
+        <f7-block-footer class="param-description">
+          <small>Enter each rule on a separate line. Available placeholders: $name$, $cmd$ and $*$</small>
+        </f7-block-footer>
+      </template>
     </f7-list>
     <config-sheet :parameterGroups="[]"
                   :parameters="ruleOptionParameters"
@@ -21,6 +23,8 @@
 </template>
 
 <script>
+import { theme } from 'framework7-vue'
+
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import ItemMetadataMixin from '@/components/item/metadata/item-metadata-mixin'
 
@@ -32,6 +36,9 @@ export default {
   mixins: [ItemMetadataMixin],
   components: {
     ConfigSheet
+  },
+  setup () {
+    return { theme }
   },
   data: () => {
     return {

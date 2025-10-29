@@ -45,18 +45,26 @@
 </style>
 
 <script>
+import { mapStores } from 'pinia'
 import Blockly from 'blockly'
-import Vue from 'vue'
 
-Vue.config.ignoredElements = ['field', 'block', 'category', 'xml', 'mutation', 'value', 'sep']
+import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
+
+// Vue is configured to treat these elements as custom elements: ['field', 'block', 'category', 'xml', 'mutation', 'value', 'sep']
+
 export default {
-  props: ['blocksDefinition'],
+  props: {
+    blocksDefinition: Object
+  },
   data () {
     return {
       workspace: null,
       definitionError: null,
       currentBlock: null
     }
+  },
+  computed: {
+    ...mapStores(useUIOptionsStore)
   },
   mounted () {
     this.initWorkspace()
@@ -70,7 +78,7 @@ export default {
   methods: {
     initWorkspace () {
       this.workspace = Blockly.inject(this.$refs.blockPreview, {
-        theme: (this.$f7.data.themeOptions.dark === 'dark') ? 'dark' : undefined,
+        theme: useUIOptionsStore().getDarkMode() === 'dark' ? 'dark' : undefined,
         trashcan: false,
         readOnly: false
       })

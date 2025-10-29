@@ -1,5 +1,5 @@
-import Vue from 'vue'
 import { f7 } from 'framework7-vue'
+import { copyText } from 'vue3-clipboard'
 
 /**
  * Copies the provided data to the clipboard. If the initial attempt fails (e.g., due to browser restrictions),
@@ -14,32 +14,42 @@ import { f7 } from 'framework7-vue'
  * @returns {void} This function uses callbacks for outcomes. On Cancel the dialog closes and no callback is invoked.
  */
 export default function copyToClipboard (data, { dialogTitle = 'Copy to Clipboard', dialogText = 'Click OK to copy data to clipboard', onSuccess, onError } = {}) {
-  if (Vue.prototype.$clipboard(data)) {
-    onSuccess && onSuccess()
-  } else {
-    // Safari requires that the copy operation is triggered _directly_ by a user action
-    // without any intervening asynchronous operations. So in case the copy didn't work,
-    // Try to re-trigger the copy operation within a user action.
-    f7.dialog.create({
-      title: dialogTitle,
-      text: dialogText,
-      buttons: [
-        {
-          text: 'Cancel',
-          color: 'gray'
-        },
-        {
-          text: 'OK',
-          color: 'blue',
-          onClick: () => {
-            if (Vue.prototype.$clipboard(data)) {
-              onSuccess && onSuccess()
+  copyText(data, undefined, (error, event) => {
+    if (!error) {
+      if (typeof onSuccess === 'function') {
+        onSuccess()
+      }
+    }
+  })
+
+  // Safari requires that the copy operation is triggered _directly_ by a user action
+  // without any intervening asynchronous operations. So in case the copy didn't work,
+  // Try to re-trigger the copy operation within a user action.
+  f7.dialog.create({
+    title: dialogTitle,
+    text: dialogText,
+    buttons: [
+      {
+        text: 'Cancel',
+        color: 'gray'
+      },
+      {
+        text: 'OK',
+        color: 'blue',
+        onClick: () => {
+          copyText(data, undefined, (error, event) => {
+            if (error) {
+              if (typeof onError === 'function') {
+                onError()
+              }
             } else {
-              onError && onError()
+              if (typeof onSuccess === 'function') {
+                onSuccess()
+              }
             }
-          }
+          })
         }
-      ]
-    }).open()
-  }
+      }
+    ]
+  }).open()
 }

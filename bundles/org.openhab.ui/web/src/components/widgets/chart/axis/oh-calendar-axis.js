@@ -1,5 +1,7 @@
 import ComponentId from '../../component-id'
 
+import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
+
 export default {
   get (component, startTime, endTime, chart, chartWidget, orient) {
     let calendar = chartWidget.evaluateExpression(ComponentId.get(component), component.config)
@@ -16,7 +18,7 @@ export default {
     if (!calendar.left) calendar.left = 60
     if (!calendar.right) calendar.right = 50
 
-    if (document && document.documentElement.classList.contains('theme-dark')) {
+    if (useUIOptionsStore().getDarkMode() === 'dark') {
       if (!calendar.itemStyle) calendar.itemStyle = {}
       if (!calendar.itemStyle.color) calendar.itemStyle.color = '#333'
       if (!calendar.itemStyle.borderColor) calendar.itemStyle.borderColor = '#555'

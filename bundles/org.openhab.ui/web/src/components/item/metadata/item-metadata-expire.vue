@@ -47,7 +47,7 @@
     </f7-block-title>
     <f7-list>
       <f7-list-input
-        :floating-label="$theme.md"
+        :floating-label="theme.md"
         label="Expiration Delay"
         name="timer"
         ref="duration"
@@ -69,6 +69,8 @@
 </template>
 
 <script>
+import { f7, theme } from 'framework7-vue'
+
 import ItemMetadataMixin from '@/components/item/metadata/item-metadata-mixin'
 
 export default {
@@ -77,9 +79,8 @@ export default {
     metadata: Object
   },
   mixins: [ItemMetadataMixin],
-  data () {
-    return {
-    }
+  setup () {
+    return { theme }
   },
   computed: {
     sanitizedDuration () {
@@ -126,7 +127,7 @@ export default {
     const inputElement = this.$$(inputControl.$el).find('input')
 
     if (!this.editable) return
-    this.picker = this.$f7.picker.create({
+    this.picker = f7.picker.create({
       containerEl: containerControl,
       inputEl: inputElement,
       toolbar: false,

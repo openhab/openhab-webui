@@ -417,7 +417,7 @@
         </block>
       </category>
 
-      <category name="openHAB" colour="0" :expanded="$f7.device.desktop">
+      <category name="openHAB" colour="0" :expanded="$device.desktop">
         <category name="Items &amp; Things">
           <button
             helpUrl="configuration/blockly/rules-blockly-items-things.html"
@@ -1124,6 +1124,13 @@
               </shadow>
             </value>
           </block>
+          <block type="oh_rule_return">
+            <value name="value">
+              <shadow type="logic_boolean">
+                <field name="BOOL">TRUE</field>
+              </shadow>
+            </value>
+          </block>
         </category>
 
         <category name="Logging &amp; Output">
@@ -1188,29 +1195,25 @@ textarea.blocklyHtmlTextAreaInput
 </style>
 
 <script>
+import { f7 } from 'framework7-vue'
+import { mapStores } from 'pinia'
+
 import Blockly from 'blockly'
 import { WorkspaceSearch } from '@blockly/plugin-workspace-search'
 import { javascriptGenerator } from 'blockly/javascript.js'
 import DarkTheme from '@blockly/theme-dark'
 import { ZoomToFitControl } from '@blockly/zoom-to-fit'
 import { shadowBlockConversionChangeListener } from '@blockly/shadow-block-converter'
-import { Multiselect, MultiselectBlockDragger } from '@mit-app-inventor/blockly-plugin-workspace-multiselect'
+// TODO-V3.1 import { Multiselect, MultiselectBlockDragger } from '@mit-app-inventor/blockly-plugin-workspace-multiselect'
 import { TypedVariableModal } from '@blockly/plugin-typed-variable-modal'
 
-import Vue from 'vue'
 
 import defineOHBlocks from '@/assets/definitions/blockly'
 import { defineLibraryToolboxCategory } from '@/assets/definitions/blockly/libraries'
+import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
+import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
-Vue.config.ignoredElements = [
-  'field',
-  'block',
-  'category',
-  'xml',
-  'mutation',
-  'value',
-  'sep'
-]
+// Vue is configured to treat these elements as custom elements: ['field', 'block', 'category', 'xml', 'mutation', 'value', 'sep']
 
 export default {
   props: {
@@ -1235,11 +1238,12 @@ export default {
   computed: {
     cssVars () {
       return {
-        '--blockly-ws-search-bg-color': this.$f7.data.themeOptions.dark === 'dark' ? '#1e1e1e' : 'white',
-        '--blockly-ws-search-border-color': this.$f7.data.themeOptions.dark === 'dark' ? 'lightgrey' : 'grey',
-        '--blockly-ws-search-text-color': this.$f7.data.themeOptions.dark === 'dark' ? 'white' : 'black'
+        '--blockly-ws-search-bg-color': useUIOptionsStore().getDarkMode() === 'dark' ? '#1e1e1e' : 'white',
+        '--blockly-ws-search-border-color': useUIOptionsStore().getDarkMode() === 'dark' ? 'lightgrey' : 'grey',
+        '--blockly-ws-search-text-color': useUIOptionsStore().getDarkMode() === 'dark' ? 'white' : 'black'
       }
-    }
+    },
+    ...mapStores(useUIOptionsStore)
   },
   mounted () {
     this.load()
@@ -1303,7 +1307,7 @@ export default {
         })
     },
     initBlockly (libraryDefinitions) {
-      defineOHBlocks(this.$f7, libraryDefinitions, {
+      defineOHBlocks(f7, libraryDefinitions, {
         sinks: this.sinks,
         voices: this.voices,
         persistenceServices: this.persistenceServices,
@@ -1313,11 +1317,11 @@ export default {
 
       const options = {
         toolbox: this.$refs.toolbox,
-        plugins: {
-          'blockDragger': MultiselectBlockDragger
-        },
+        //TODO-V3.1 plugins: {
+        // 'blockDragger': MultiselectBlockDragger
+        // },
         horizontalLayout: !this.$device.desktop,
-        theme: this.$f7.data.themeOptions.dark === 'dark' ? DarkTheme : undefined,
+        theme: useUIOptionsStore().getDarkMode() === 'dark' ? DarkTheme : undefined,
         zoom: {
           controls: true,
           wheel: true,
@@ -1387,15 +1391,16 @@ export default {
       const zoomToFit = new ZoomToFitControl(this.workspace)
       zoomToFit.init()
 
-      const multiselectPlugin = new Multiselect(this.workspace)
-      multiselectPlugin.init(options)
+      // TODO-V3.1
+      // const multiselectPlugin = new Multiselect(this.workspace)
+      // multiselectPlugin.init(options)
 
       this.registerLibraryCallbacks(libraryDefinitions)
       const xml = Blockly.utils.xml.textToDom(this.blocks)
       Blockly.Xml.domToWorkspace(xml, this.workspace)
       this.workspace.addChangeListener(this.onChange)
 
-      this.workspace.helpurlPrefix = (this.$store.state.runtimeInfo.buildString === 'Release Build') ? 'next' : 'www'
+      this.workspace.helpurlPrefix = useRuntimeStore().runtimeInfo.buildString === 'Release Build' ? 'next' : 'www'
       this.workspace.registerButtonCallback('ohBlocklyHelp', function (button) {
         window.open(`https://${button.targetWorkspace.helpurlPrefix}.openhab.org/docs/${button.info.helpurl}`, '_blank')
       })
@@ -1417,7 +1422,7 @@ export default {
     },
     registerLibraryCallbacks (definitions) {
       definitions.forEach((definition) => {
-        this.workspace.registerToolboxCategoryCallback('LIBRARY_' + definition.uid, defineLibraryToolboxCategory(definition, this.$f7))
+        this.workspace.registerToolboxCategoryCallback('LIBRARY_' + definition.uid, defineLibraryToolboxCategory(definition, f7))
       })
     },
     showHideLabels (showLabels) {
@@ -1434,16 +1439,15 @@ export default {
     getRenderers () {
       const excludedRenderers = ['minimalist']
       const renderers = Object.keys(Blockly.registry.getAllItems('renderer'))
-        .filter(r => !excludedRenderers.includes(r))
+        .filter((r) => !excludedRenderers.includes(r))
         .sort()
       return renderers
     },
     getCurrentRenderer () {
-      return this.$f7.data.themeOptions.blocklyRenderer
+      return this.uiOptionsStore.blocklyRenderer
     },
     changeRenderer (newRenderer) {
-      this.$f7.data.themeOptions.blocklyRenderer = newRenderer
-      localStorage.setItem('openhab.ui:blockly.renderer', newRenderer)
+      this.uiOptionsStore.blocklyRenderer = newRenderer
 
       const dom = Blockly.Xml.workspaceToDom(this.workspace)
       this.workspace.dispose()

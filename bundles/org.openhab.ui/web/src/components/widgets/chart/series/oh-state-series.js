@@ -1,5 +1,5 @@
+import { utils } from 'framework7'
 import ComponentId from '../../component-id'
-import Framework7 from 'framework7'
 import { graphic } from 'echarts/core'
 
 function renderState (params, api) {
@@ -71,7 +71,7 @@ export default {
     series.data = []
 
     if (series.item) {
-      let itemPoints = points.find(p => p.name === series.item).data
+      let itemPoints = points.find((p) => p.name === series.item).data
 
       if (series.mapState) {
         for (let i = 0; i < itemPoints.length; i++) {
@@ -104,7 +104,7 @@ export default {
 
       series.data = data
 
-      series.id = `oh-state-series#${series.item}#${Framework7.utils.id()}`
+      series.id = `oh-state-series#${series.item}#${utils.id()}`
     }
 
     if (!series.tooltip) {

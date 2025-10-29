@@ -9,8 +9,7 @@
           <div v-if="context.component.slots" class="margin-top display-flex flex-direction-column justify-content-center">
             <generic-widget-component v-for="(slotComponent, idx) in context.component.slots.beforeSlider"
                                       :context="childContext(slotComponent)"
-                                      :key="'beforeSlider-' + idx"
-                                      @command="onCommand" />
+                                      :key="'beforeSlider-' + idx" />
           </div>
         </slot>
         <oh-slider class="slider-control" :context="sliderContext" />
@@ -18,8 +17,7 @@
           <slot name="afterSlider">
             <generic-widget-component v-for="(slotComponent, idx) in context.component.slots.afterSlider"
                                       :context="childContext(slotComponent)"
-                                      :key="'afterSlider-' + idx"
-                                      @command="onCommand" />
+                                      :key="'afterSlider-' + idx" />
           </slot>
         </div>
       </f7-col>

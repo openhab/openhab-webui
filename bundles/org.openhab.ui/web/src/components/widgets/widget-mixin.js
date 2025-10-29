@@ -1,16 +1,27 @@
 // Import into widget components as a mixin!
 
+import { utils } from 'framework7'
+import { mapStores } from 'pinia'
+
 import scope from 'scope-css'
 import WidgetExpressionMixin from '@/components/widgets/widget-expression-mixin'
 
+import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
+import { useUserStore } from '@/js/stores/useUserStore'
+import { useComponentsStore } from '@/js/stores/useComponentsStore'
+import { useStatesStore } from '@/js/stores/useStatesStore'
+
 export default {
   mixins: [WidgetExpressionMixin],
-  props: ['context'],
+  props: {
+    context: Object
+  },
   data () {
     return {
       vars: (this.context) ? this.context.vars : {},
       ctxVars: (this.context) ? this.context.ctxVars : {},
-      widgetVars: {}
+      widgetVars: {},
+      varScope: null
     }
   },
   computed: {
@@ -19,7 +30,7 @@ export default {
     },
     childWidgetComponentType () {
       if (!this.componentType.startsWith('widget:')) return null
-      const widget = this.$store.getters.widget(this.componentType.substring(7))
+      const widget = useComponentsStore().widget(this.componentType.substring(7))
       if (!widget) {
         console.warn('widget not found, cannot render: ' + this.componentType)
       }
@@ -34,7 +45,7 @@ export default {
         if (typeof sourceConfig !== 'object') return {}
         for (const key in sourceConfig) {
           if (key === 'visible' || key === 'visibleTo' || key === 'stylesheet' || key === 'constants') continue
-          this.$set(evalConfig, key, this.evaluateExpression(key, sourceConfig[key]))
+          evalConfig[key] = this.evaluateExpression(key, sourceConfig[key])
         }
       }
       return evalConfig
@@ -60,22 +71,23 @@ export default {
       if (visible === undefined && visibleTo === undefined) return true
       if (visible === false || visible === 'false') return false
       if (visibleTo) {
-        const user = this.$store.getters.user
+        const user = useUserStore().user
         if (!user) return false
-        if (user.roles && user.roles.some(r => visibleTo.indexOf('role:' + r) >= 0)) return true
+        if (user.roles && user.roles.some((r) => visibleTo.indexOf('role:' + r) >= 0)) return true
         return visibleTo.indexOf('user:' + user.name) >= 0
       }
       return true
     },
     hasAction () {
       return this.config && (this.config.action || this.config.actionPropsParameterGroup)
-    }
+    },
+    ...mapStores(useUIOptionsStore)
   },
   mounted () {
     if (this.context?.component?.config?.stylesheet) {
       if (!this.$el.classList) return // widget is not rendered yet, skip scoped styling
 
-      this.cssUid = 'scoped-' + this.$f7.utils.id()
+      this.cssUid = 'scoped-' + utils.id()
 
       this.$el.classList.add(this.cssUid)
 
@@ -85,7 +97,7 @@ export default {
       document.head.appendChild(style)
     }
   },
-  beforeDestroy () {
+  beforeUnmount () {
     if (this.cssUid) {
       const scoped_stylesheet = document.getElementById(this.cssUid)
       if (scoped_stylesheet) scoped_stylesheet.remove()
@@ -112,13 +124,13 @@ export default {
     },
     childWidgetContext () {
       if (!this.componentType.startsWith('widget:')) return null
-      let widget = this.$store.getters.widget(this.componentType.substring(7))
+      let widget = useComponentsStore().widget(this.componentType.substring(7))
       if (!widget) {
         console.warn('widget not found, cannot render: ' + this.componentType)
       }
       if (this.context.vars) {
         for (const varKey in this.context.vars) {
-          this.$set(this.widgetVars, varKey, this.context.vars[varKey])
+          this.widgetVars[varKey] = this.context.vars[varKey]
         }
       }
       if (this.context.component.slots) Object.assign(widget.slots, this.context.component.slots)
@@ -138,9 +150,6 @@ export default {
         parent: this.context.parent
       }
       return widgetContext
-    },
-    onCommand (itemName, cmd) {
-      this.$store.dispatch('sendCommand', { itemName, cmd })
     }
   }
 }

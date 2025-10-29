@@ -1,34 +1,15 @@
+import { f7 } from 'framework7-vue'
+
 import cloneDeep from 'lodash/cloneDeep'
 import * as types from '@/assets/item-types.js'
 import ItemMixin from '@/components/item/item-mixin'
 import TagMixin from '@/components/tags/tag-mixin'
 import fastDeepEqual from 'fast-deep-equal/es6'
 
+// TODO-V3.1 console.debug calls with cloneDeep - do we need to remove them?
+
 export default {
   mixins: [ItemMixin, TagMixin],
-  props: {
-    moveState: {
-      type: Object,
-      default: () => ({
-        moving: false,
-        canAdd: false,
-        canRemove: false,
-        dragEnd: true,
-        dragFinished: false,
-        saving: false,
-        cancelled: false,
-        moveConfirmed: false,
-        node: null,
-        newParent: null,
-        oldParent: null,
-        oldIndex: null,
-        dragStartTimestamp: null,
-        nodesToUpdate: [],
-        moveDelayedOpen: null,
-        moveTarget: null
-      })
-    }
-  },
   watch: {
     canSave (val) {
       if (val) this.saveUpdate()
@@ -49,12 +30,12 @@ export default {
       set: function (nodeList) {
         console.debug('Updating children', cloneDeep(nodeList))
         const newChildren = {}
-        newChildren.locations = nodeList.filter(n => n.item.metadata?.semantics?.value?.startsWith('Location'))
-        newChildren.equipment = nodeList.filter(n => n.item.metadata?.semantics?.value?.startsWith('Equipment'))
-        newChildren.points = nodeList.filter(n => n.item.metadata?.semantics?.value?.startsWith('Point'))
-        newChildren.groups = nodeList.filter(n => !n.item.metadata?.semantics && n.item.type === 'Group')
-        newChildren.items = nodeList.filter(n => !n.item.metadata?.semantics && n.item.type !== 'Group')
-        this.$set(this.model, 'children', newChildren)
+        newChildren.locations = nodeList.filter((n) => n.item.metadata?.semantics?.value?.startsWith('Location'))
+        newChildren.equipment = nodeList.filter((n) => n.item.metadata?.semantics?.value?.startsWith('Equipment'))
+        newChildren.points = nodeList.filter((n) => n.item.metadata?.semantics?.value?.startsWith('Point'))
+        newChildren.groups = nodeList.filter((n) => !n.item.metadata?.semantics && n.item.type === 'Group')
+        newChildren.items = nodeList.filter((n) => !n.item.metadata?.semantics && n.item.type !== 'Group')
+        this.model.children = newChildren
       }
     },
     iconColor () {
@@ -205,7 +186,7 @@ export default {
         const message = 'Group "' + this.itemLabel(parentNode.item) +
           '" already contains item "' + this.itemLabel(node.item) + '"'
         console.debug('Add rejected: ' + message)
-        this.$f7.dialog.alert(message).open()
+        f7.dialog.alert(message).open()
         this.restoreModelUpdate()
         console.timeEnd('Timer: validateAdd')
         return
@@ -217,7 +198,7 @@ export default {
             '" with semantic child "' + this.itemLabel(semanticNode.item) +
             '" into semantic group "' + this.itemLabel(parentNode.item) + '"'
           console.debug('Add rejected: ' + message)
-          this.$f7.dialog.alert(message).open()
+          f7.dialog.alert(message).open()
           this.restoreModelUpdate()
           console.timeEnd('Timer: validateAdd')
           return
@@ -228,7 +209,7 @@ export default {
           '" from non-semantic group "' + this.itemLabel(oldParentNode.item) +
           '" into semantic group "' + this.itemLabel(parentNode.item) + '"'
         console.debug('Add rejected:' + message)
-        this.$f7.dialog.alert(message).open()
+        f7.dialog.alert(message).open()
         this.restoreModelUpdate()
         console.timeEnd('Timer: validateAdd')
         return
@@ -242,7 +223,7 @@ export default {
               '" to Location "' + this.itemLabel(parentNode.item) +
               '" as it is already in Location "' + oldLocation + '"'
             console.debug('Add rejected:' + message)
-            this.$f7.dialog.alert(message).open()
+            f7.dialog.alert(message).open()
             this.restoreModelUpdate()
             console.timeEnd('Timer: validateAdd')
             return
@@ -255,7 +236,7 @@ export default {
               '" to Equipment "' + this.itemLabel(parentNode.item) +
               '" as it is already part of Equipment "' + oldEquipment + '"'
             console.debug('Add rejected:' + message)
-            this.$f7.dialog.alert(message).open()
+            f7.dialog.alert(message).open()
             this.restoreModelUpdate()
             console.timeEnd('Timer: validateAdd')
             return
@@ -300,7 +281,7 @@ export default {
              '" not compatible with "' + (node.item.type === 'Group' ? 'group ' : '') + 'item dimension "' + dimension +
              '" of "' + (node.item.type === 'Group' ? 'group ' : '') + '" item "' + this.itemLabel(node.item) + '"'
           console.debug('Add rejected: ' + message)
-          this.$f7.dialog.alert(message).open()
+          f7.dialog.alert(message).open()
           console.timeEnd('Timer: isValidGroupType')
           return false
         }
@@ -315,7 +296,7 @@ export default {
               '" with dimension "' + childWithDifferentDimension.dimension +
               '" different from group dimension "' + dimension + '"'
             console.debug('Add rejected: ' + message)
-            this.$f7.dialog.alert(message).open()
+            f7.dialog.alert(message).open()
             console.timeEnd('Timer: isValidGroupType')
             return false
           }
@@ -328,7 +309,7 @@ export default {
           '" not compatible with type "' + type +
           '" of item "' + this.itemLabel(node.item) + '"'
         console.debug('Add rejected: ' + message)
-        this.$f7.dialog.alert(message).open()
+        f7.dialog.alert(message).open()
         console.timeEnd('Timer: isValidGroupType')
         return false
       }
@@ -365,7 +346,7 @@ export default {
         this.addPoint(node, parentNode)
       } else if (node.item.type === 'Group') {
         this.moveState.moveConfirmed = true
-        this.$f7.dialog.create({
+        f7.dialog.create({
           text: 'Insert "' + this.itemLabel(node.item) +
             '" into "' + this.itemLabel(parentNode.item) +
             '" as',
@@ -378,7 +359,7 @@ export default {
         }).open()
       } else {
         this.moveState.moveConfirmed = true
-        this.$f7.dialog.create({
+        f7.dialog.create({
           text: 'Insert "' + this.itemLabel(node.item) +
             '" into "' + this.itemLabel(parentNode.item) +
             '" as',
@@ -395,7 +376,7 @@ export default {
     addIntoEquipment (node, parentNode) {
       console.time('Timer: addIntoEquipment')
       if (node.class.startsWith('Location')) {
-        this.$f7.dialog.alert(
+        f7.dialog.alert(
           'Cannot move Location "' + this.itemLabel(node.item) +
           '" into Equipment "' + this.itemLabel(parentNode.item) + '"'
         ).open()
@@ -408,7 +389,7 @@ export default {
         this.addEquipment(node, parentNode)
       } else {
         this.moveState.moveConfirmed = true
-        const dialog = this.$f7.dialog.create({
+        const dialog = f7.dialog.create({
           text: 'Insert "' + this.itemLabel(node.item) +
             '" into "' + this.itemLabel(parentNode.item) +
             '" as',
@@ -445,7 +426,7 @@ export default {
         this.addPoint(node, parentNode)
       } else if (node.item.type === 'Group') {
         this.moveState.moveConfirmed = true
-        this.$f7.dialog.create({
+        f7.dialog.create({
           text: 'Insert "' + this.itemLabel(node.item) +
             '" into "' + this.itemLabel(parentNode.item) +
             '" as',
@@ -459,7 +440,7 @@ export default {
         }).open()
       } else {
         this.moveState.moveConfirmed = true
-        this.$f7.dialog.create({
+        f7.dialog.create({
           text: 'Insert "' + this.itemLabel(node.item) +
             '" into "' + this.itemLabel(parentNode.item) +
             '" as',
@@ -487,6 +468,7 @@ export default {
       const nodeChildren = this.nodeChildren(node)
       nodeChildren.filter((n) => !n.class).forEach((n) => this.addIntoLocation(n, node))
       this.updateAfterAdd(node, parentNode, semantics)
+      this.saveUpdate()
       console.timeEnd('Timer: addLocation')
     },
     addEquipment (node, parentNode) {
@@ -504,6 +486,7 @@ export default {
       const nodeChildren = this.nodeChildren(node)
       nodeChildren.filter((n) => !n.class).forEach((n) => this.addIntoEquipment(n, node))
       this.updateAfterAdd(node, parentNode, semantics)
+      this.saveUpdate()
       console.timeEnd('Timer: addEquipment')
     },
     addPoint (node, parentNode) {
@@ -519,6 +502,7 @@ export default {
       if (!node.item.tags.includes(tag)) node.item.tags.push(tag)
       node.class = semantics.value
       this.updateAfterAdd(node, parentNode, semantics)
+      this.saveUpdate()
       console.timeEnd('Timer: addPoint')
     },
     addNonSemantic (node, parentNode) {
@@ -550,7 +534,7 @@ export default {
         updateRequired = true
       }
       console.debug('Add - new moveState:', cloneDeep(this.moveState))
-      if (!this.children.some(n => n.item.name === node.item.name)) {
+      if (!this.children.some((n) => n.item.name === node.item.name)) {
         // sometimes the list gets updates when dragging, sometimes it is missed so we have to add here
         this.children.push(node)
       }
@@ -581,7 +565,7 @@ export default {
         this.remove(node, parentNode, oldIndex)
       } else if (parentNode.item?.type === 'Group') {
         this.moveState.moveConfirmed = true
-        this.$f7.dialog.create({
+        f7.dialog.create({
           text: 'Item "' + this.itemLabel(node.item) +
             '" dragged from group "' + this.itemLabel(parentNode.item) +
             '" into "' + this.itemLabel(newParentNode.item) +
@@ -599,7 +583,7 @@ export default {
     },
     remove (node, parentNode, oldIndex) {
       console.time('Timer: remove')
-      const groupNameIndex = node.item.groupNames.findIndex(g => g === parentNode.item?.name)
+      const groupNameIndex = node.item.groupNames.findIndex((g) => g === parentNode.item?.name)
       if (groupNameIndex >= 0) {
         node.item.groupNames.splice(groupNameIndex, 1)
       }
@@ -629,7 +613,7 @@ export default {
       const node = this.moveState.node
       const parentNode = this.moveState.newParent
       if (!this.moveState.moveConfirmed) {
-        this.$f7.dialog.confirm(
+        f7.dialog.confirm(
           'Move "' + this.itemLabel(node.item) + '" into "' + this.itemLabel(parentNode.item) + '"?',
           () => this.saveModelUpdate(),
           () => this.restoreModelUpdate()

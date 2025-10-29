@@ -1,5 +1,7 @@
-import { lineIndent, findParent, findParentRoot, isConfig, isChannelsSection } from './yaml-utils'
-import { filterPartialCompletions, addTooltipHandlers, getClassNamesForParameter } from './hint-utils'
+import { lineIndent, findParent, isConfig, isChannelsSection } from './yaml-utils'
+import { getCompletionType } from './hint-utils'
+
+// TODO-V3.1 clean up commented out code
 
 function hintOptions (cm, line, parameter) {
   const cursor = cm.getCursor()
@@ -12,10 +14,10 @@ function hintOptions (cm, line, parameter) {
       }
     })
   }
-  ret.list = filterPartialCompletions(cm, line, ret.list)
+  // ret.list = filterPartialCompletions(cm, line, ret.list)
   ret.from = { line: cursor.line, ch: colonPos + 2 }
   ret.to = { line: cursor.line, ch: line.length }
-  addTooltipHandlers(cm, ret)
+  // addTooltipHandlers(cm, ret)
   return ret
 }
 
@@ -45,16 +47,16 @@ function hintThingConfig (cm, line, parentLineNr) {
         text: p.name + ': ',
         displayText: p.name,
         description: p.description,
-        className: getClassNamesForParameter(p)
+        className: getCompletionType(p.type)
       }
     })
-    completions = filterPartialCompletions(cm, line, completions)
+    // completions = filterPartialCompletions(cm, line, completions)
     let ret = {
       list: completions,
       from: { line: cursor.line, ch: 6 },
       to: { line: cursor.line, ch: line.length }
     }
-    addTooltipHandlers(cm, ret, true)
+    // addTooltipHandlers(cm, ret, true)
     return ret
   }
 }
@@ -104,16 +106,16 @@ function hintChannelConfig (cm, line, parentLineNr) {
         text: p.name + ': ',
         displayText: p.name,
         description: p.description,
-        className: getClassNamesForParameter(p)
+        className: getCompletionType(p.type)
       }
     })
-    completions = filterPartialCompletions(cm, line, completions)
+    // completions = filterPartialCompletions(cm, line, completions)
     let ret = {
       list: completions,
       from: { line: cursor.line, ch: 6 },
       to: { line: cursor.line, ch: line.length }
     }
-    addTooltipHandlers(cm, ret, true)
+    // addTooltipHandlers(cm, ret, true)
     return ret
   }
 }
@@ -130,12 +132,14 @@ function hintChannelStructure (cm, line, parentLineNr) {
   const cursor = cm.getCursor()
   const thingType = cm.state.hintContext.thingType
   const bindingId = cm.state.hintContext.thingType.UID.split(':')[0]
-  const channelTypes = cm.state.hintContext.channelTypes.filter((c) => thingType.extensibleChannelTypeIds.map((t) => bindingId + ':' + t).indexOf(c.UID) >= 0)
+  const channelTypes = cm.state.hintContext.channelTypes.filter(
+    (c) => thingType.extensibleChannelTypeIds.map((t) => bindingId + ':' + t).indexOf(c.UID) >= 0
+  )
   let completions = channelTypes.map((c) => {
     return {
       text: buildChannelStructure(cm, c),
       displayText: `channel: ${c.UID}`,
-      description: `${c.label}${(c.description) ? '<br/><br />' + c.description : ''}`
+      description: `${c.label}${c.description ? '<br/><br />' + c.description : ''}`
     }
   })
   let ret = {
@@ -143,8 +147,8 @@ function hintChannelStructure (cm, line, parentLineNr) {
     from: { line: cursor.line, ch: 0 },
     to: { line: cursor.line, ch: cm.getLine(cursor.line).length }
   }
-  ret.list = filterPartialCompletions(cm, line, ret.list)
-  addTooltipHandlers(cm, ret)
+  // ret.list = filterPartialCompletions(cm, line, ret.list)
+  // addTooltipHandlers(cm, ret)
   return ret
 }
 
@@ -165,7 +169,7 @@ export default function hint (cm, option, mode) {
     ret = hintChannelStructure(cm, line, parentLineNr)
   }
 
-  if (!(ret instanceof Promise)) addTooltipHandlers(cm, ret)
+  // if (!(ret instanceof Promise)) addTooltipHandlers(cm, ret)
 
   return ret
 }

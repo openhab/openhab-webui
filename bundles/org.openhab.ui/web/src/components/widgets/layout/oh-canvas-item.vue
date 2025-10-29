@@ -22,7 +22,7 @@
     :on-resize-start="onResizeStartCallback"
     @dragstop="onDragStop"
     @resizestop="onResizeStop"
-    :active.sync="active"
+    v-model:active="active"
     :prevent-deactivation="preventDeactivation">
     <f7-menu v-if="context.editmode" class="configure-canvas-menu disable-user-select">
       <f7-menu-item icon-f7="menu" dropdown icon-only>
@@ -67,7 +67,6 @@
                              class="oh-canvas-item-content" />
       <generic-widget-component v-else-if="context.component.slots.default.length"
                                 :context="childContext(context.component.slots.default[0])"
-                                @command="onCommand"
                                 class="oh-canvas-item-content"
                                 :class="{
                                   'oh-canvas-item-styled': styled,

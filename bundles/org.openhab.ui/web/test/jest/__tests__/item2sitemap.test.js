@@ -1,4 +1,4 @@
-import item2sitemap from 'src/components/cards/item2SitemapModel'
+import item2sitemap from '@/components/cards/item2SitemapModel'
 
 describe('item2sitemap', () => {
   const item = {

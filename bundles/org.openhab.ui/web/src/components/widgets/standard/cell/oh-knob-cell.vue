@@ -6,8 +6,7 @@
           <div v-if="context.component.slots" class="margin-top display-flex flex-direction-column justify-content-center">
             <generic-widget-component v-for="(slotComponent, idx) in context.component.slots.beforeKnob"
                                       :context="childContext(slotComponent)"
-                                      :key="'beforeKnob-' + idx"
-                                      @command="onCommand" />
+                                      :key="'beforeKnob-' + idx" />
           </div>
         </slot>
         <oh-knob :context="knobContext" />
@@ -15,8 +14,7 @@
           <div v-if="context.component.slots" class="margin-top display-flex flex-direction-column justify-content-center">
             <generic-widget-component v-for="(slotComponent, idx) in context.component.slots.afterKnob"
                                       :context="childContext(slotComponent)"
-                                      :key="'afterKnob-' + idx"
-                                      @command="onCommand" />
+                                      :key="'afterKnob-' + idx" />
           </div>
         </slot>
       </f7-col>

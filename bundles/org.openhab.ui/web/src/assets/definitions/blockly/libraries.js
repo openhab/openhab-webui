@@ -19,7 +19,7 @@ const generateCodeForBlock = (block) => {
   const provideUtility = (utilityName) => {
     let utilityCode = [`function ${javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_}() { /* error! */ }`]
     if (library.slots.utilities) {
-      const utilityComponent = library.slots.utilities.find(c => c.config && c.config.name === utilityName)
+      const utilityComponent = library.slots.utilities.find((c) => c.config && c.config.name === utilityName)
       if (!utilityComponent) {
       } else {
         switch (utilityComponent.component) {

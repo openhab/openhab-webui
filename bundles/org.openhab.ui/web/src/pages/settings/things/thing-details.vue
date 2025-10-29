@@ -1,40 +1,35 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="thing-details-page">
-    <f7-navbar :title="pageTitle + dirtyIndicator" back-link="Back" no-hairline>
-      <f7-nav-right v-if="!error && ready">
-        <f7-link v-if="!editable"
-                 icon-f7="lock_fill"
-                 icon-only
-                 tooltip="This Thing is not editable through the UI" />
-        <f7-link v-else-if="$theme.md"
-                 icon-md="material:save"
-                 icon-only
-                 @click="save()" />
-        <f7-link v-else @click="save()">
-          Save<span v-if="$device.desktop">&nbsp;(Ctrl-S)</span>
-        </f7-link>
-      </f7-nav-right>
+    <f7-navbar no-hairline>
+      <oh-nav-content :title="pageTitle + dirtyIndicator"
+                      back-link="Back"
+                      :editable
+                      :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
+                      @save="save()"
+                      :f7router />
     </f7-navbar>
     <f7-toolbar tabbar position="top">
-      <f7-link @click="switchTab('thing')" :tab-link-active="currentTab === 'thing'" class="tab-link">
+      <f7-link @click="switchTab('thing')"
+               :tab-link-active="currentTab === 'thing' ? true : null"
+               tab-link="#thing">
         Thing
       </f7-link>
-      <f7-link @click="switchTab('channels')"
-               :tab-link-active="currentTab === 'channels'"
-               v-show="!error"
-               class="tab-link">
+      <f7-link v-show="!error"
+               @click="switchTab('channels')"
+               :tab-link-active="currentTab === 'channels' ? true : null"
+               tab-link="#channels">
         Channels
       </f7-link>
-      <f7-link @click="switchTab('code')"
-               :tab-link-active="currentTab === 'code'"
-               v-show="!error"
-               class="tab-link">
+      <f7-link v-show="!error"
+               @click="switchTab('code')"
+               :tab-link-active="currentTab === 'code' ? true : null"
+               tab-link="#code">
         Code
       </f7-link>
     </f7-toolbar>
 
     <f7-tabs>
-      <f7-tab id="thing" :tab-active="currentTab === 'thing'">
+      <f7-tab id="thing" :tab-active="currentTab === 'thing'? true : null">
         <f7-block v-if="ready && thing.statusInfo" class="block-narrow" strong>
           <f7-col class="padding-horizontal">
             <div v-show="!error" class="float-right align-items-flex-start align-items-center">
@@ -68,7 +63,7 @@
           </f7-col>
         </f7-block>
 
-        <f7-block v-if="ready && !error" class="block-narrow">
+        <f7-block v-if="ready && !error" class="block-narrow no-margin-bottom">
           <f7-col>
             <thing-general-settings :thing="thing"
                                     :thing-type="thingType"
@@ -96,16 +91,20 @@
                                   class="thing-property"
                                   :key="key"
                                   @click="showFullPropertyIfTruncated(key, value)">
-                      <div slot="title" class="item-title-content">
-                        <span :ref="'titleSpan-' + key">{{ key }}</span>
-                      </div>
-                      <div slot="after" class="item-after-content">
-                        <span :ref="'valueSpan-' + key">{{ value }}</span>
-                        <f7-icon v-if="isTruncated(key, 'title') || isTruncated(key, 'value')"
-                                 f7="info_circle"
-                                 size="16"
-                                 class="truncation-icon" />
-                      </div>
+                      <template #title>
+                        <div class="item-title-content">
+                          <span :ref="'titleSpan-' + key">{{ key }}</span>
+                        </div>
+                      </template>
+                      <template #after>
+                        <div class="item-after-content">
+                          <span :ref="'valueSpan-' + key">{{ value }}</span>
+                          <f7-icon v-if="isTruncated(key, 'title') || isTruncated(key, 'value')"
+                                   f7="info_circle"
+                                   size="16"
+                                   class="truncation-icon" />
+                        </div>
+                      </template>
                     </f7-list-item>
                   </f7-list>
                 </f7-accordion-content>
@@ -137,7 +136,7 @@
               </f7-list-item>
             </f7-list>
 
-            <f7-block-title medium>
+            <f7-block-title medium class="no-margin-bottom">
               Configuration
             </f7-block-title>
             <config-sheet ref="thingConfiguration"
@@ -146,7 +145,8 @@
                           :configuration="thing.configuration"
                           :status="configStatusInfo"
                           :set-empty-config-as-null="true"
-                          :read-only="!editable" />
+                          :read-only="!editable"
+                          :f7router />
 
             <!-- Thing Actions & UI Actions -->
             <template v-if="thingActions.length > 0 || thingType?.UID?.startsWith('zwave:')">
@@ -202,7 +202,7 @@
           </f7-block>
         </div>
 
-        <f7-block class="block-narrow" v-if="ready">
+        <f7-block class="block-narrow no-margin-top" v-if="ready">
           <f7-col>
             <f7-list>
               <f7-list-button v-if="thing.statusInfo.statusDetail === 'HANDLER_MISSING_ERROR'"
@@ -232,7 +232,8 @@
                         :thing="thing"
                         :channelTypes="channelTypes"
                         @channels-updated="onChannelsUpdated"
-                        :context="context" />
+                        :context="context"
+                        :f7router />
           <f7-col v-if="isExtensible || thing.channels.length > 0">
             <f7-list>
               <f7-list-button v-if="isExtensible && editable"
@@ -261,11 +262,11 @@
         </f7-block>
       </f7-tab>
 
-      <f7-tab id="code" :tab-active="currentTab === 'code'">
+      <f7-tab id="code" :tab-active="currentTab === 'code' ? true : null">
         <f7-icon v-if="!editable"
                  f7="lock"
                  class="float-right margin"
-                 style="opacity:0.5; z-index: 4000; user-select: none;"
+                 style="opacity: 0.5; z-index: 4000; user-select: none"
                  size="50"
                  color="gray"
                  :tooltip="notEditableMsg" />
@@ -327,12 +328,6 @@ p.action-description
         overflow hidden
         text-overflow ellipsis
 
-  .thing-code-editor.vue-codemirror
-    display block
-    top calc(var(--f7-navbar-height) + var(--f7-tabbar-height))
-    height calc(100% - 2*var(--f7-navbar-height))
-    width 100%
-
   .item-title-content, .item-after-content
     display flex
     align-items center
@@ -351,6 +346,12 @@ p.action-description
     flex-shrink 0
     color var(--f7-text-color-secondary)
 
+.thing-code-editor.v-codemirror
+  position absolute
+  top calc(var(--f7-navbar-height) + var(--f7-tabbar-height))
+  height calc(100% - var(--f7-navbar-height, 56px) - var(--f7-tabbar-height, 48px))
+  width 100%
+
 .dialog.wide-property-dialog
   --f7-dialog-width: 560px
 
@@ -364,6 +365,9 @@ p.action-description
 </style>
 
 <script>
+import { nextTick, defineAsyncComponent } from 'vue'
+import { f7, theme } from 'framework7-vue'
+
 import YAML from 'yaml'
 import cloneDeep from 'lodash/cloneDeep'
 import fastDeepEqual from 'fast-deep-equal/es6'
@@ -386,17 +390,22 @@ import DirtyMixin from '../dirty-mixin'
 import ThingActionPopup from '@/pages/settings/things/thing-action-popup.vue'
 import FileDefinition from '@/pages/settings/file-definition-mixin'
 
+import { useStatesStore } from '@/js/stores/useStatesStore'
+
 export default {
   mixins: [ThingStatus, DirtyMixin, FileDefinition],
   components: {
     ConfigSheet,
     ChannelList,
     ThingGeneralSettings,
-    'editor': () => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')
+    editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue'))
   },
   props: {
     thingId: String,
     f7router: Object
+  },
+  setup () {
+    return { theme }
   },
   data () {
     return {
@@ -439,7 +448,7 @@ export default {
     },
     context () {
       return {
-        store: this.$store.getters.trackedItems
+        store: useStatesStore().trackedItems
       }
     },
     yamlError () {
@@ -485,7 +494,7 @@ export default {
   },
   methods: {
     onPageAfterIn (event) {
-      this.$store.dispatch('startTrackingStates')
+      useStatesStore().startTrackingStates()
       if (window) {
         window.addEventListener('keydown', this.keyDown)
       }
@@ -496,7 +505,7 @@ export default {
       }
     },
     onPageBeforeOut (event) {
-      this.$store.dispatch('stopTrackingStates')
+      useStatesStore().stopTrackingStates()
       this.stopEventSource()
       if (window) {
         window.removeEventListener('keydown', this.keyDown)
@@ -524,13 +533,13 @@ export default {
      * @returns {Promise<void>}
      */
     loadThingActions () {
-      return this.$oh.api.get('/rest/actions/' + this.thingId).then(data => {
+      return this.$oh.api.get('/rest/actions/' + this.thingId).then((data) => {
         this.thingActions = data
           .filter((a) => a.visibility === 'VISIBLE')
           .filter((a) => a.inputConfigDescriptions !== undefined)
           .sort((a, b) => a.label.localeCompare(b.label))
         return Promise.resolve()
-      }).catch(err => {
+      }).catch((err) => {
         if (err === 'Not Found' || err === 404) {
           console.log('No actions available for this Thing')
           return Promise.resolve()
@@ -545,7 +554,7 @@ export default {
       this.loading = true
 
       const loadingFinished = () => {
-        this.$nextTick(() => {
+        nextTick(() => {
           this.savedThing = cloneDeep(this.thing)
           this.ready = true
           this.loading = false
@@ -554,7 +563,7 @@ export default {
       }
 
       this.$oh.api.get('/rest/things/' + this.thingId).then((data) => {
-        this.$set(this, 'thing', data)
+        this.thing = data
 
         const promises = [this.$oh.api.get('/rest/thing-types/' + this.thing.thingTypeUID),
           this.$oh.api.get('/rest/channel-types?prefixes=system,' + this.thing.thingTypeUID.split(':')[0]),
@@ -645,10 +654,10 @@ export default {
         successMessage = 'Thing updated'
       }
       if (!this.$refs.thingConfiguration.isValid()) {
-        this.$f7.dialog.alert('Please review the configuration and correct validation errors')
+        f7.dialog.alert('Please review the configuration and correct validation errors')
         return
       }
-      this.$oh.api.put(endpoint, payload).then(data => {
+      this.$oh.api.put(endpoint, payload).then((data) => {
         // this.$set(this, 'thing', data)
         if (this.configDirty && !this.thingDirty && !saveThing) this.configDirty = false
         this.thingDirty = false
@@ -656,14 +665,14 @@ export default {
           // if still dirty, save again to save the configuration
           this.save()
         }
-        this.$f7.toast.create({
+        f7.toast.create({
           text: successMessage,
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
-      }).catch(err => {
+      }).catch((err) => {
         if (err === 409 || err === 'Conflict') {
-          this.$f7.toast.create({
+          f7.toast.create({
             text: 'Cannot modify configuration of uninitialized Thing',
             destroyOnClose: true,
             closeTimeout: 2000
@@ -675,7 +684,7 @@ export default {
       const popup = {
         component: ThingActionPopup
       }
-      this.$f7router.navigate({
+      this.f7router.navigate({
         url: 'thing-action',
         route: {
           path: 'thing-action',
@@ -700,15 +709,15 @@ export default {
       if (action.verify) {
         prompt += '<p><small><strong class="text-color-yellow"><i class="f7-icons">exclamationmark_triangle</i>WARNING:</strong>&nbsp;This action may be dangerous!</small></p>'
       }
-      this.$f7.dialog.confirm(
+      f7.dialog.confirm(
         prompt,
         this.thing.label,
         () => {
           // Make sure Vue reactivity notices the change
-          this.$set(this.thing, 'configuration', ({
+          this.thing.configuration = ({
             ...this.thing.configuration,
             [action.name]: true
-          }))
+          })
           // Vue reactivity is too slow to recognize config change before the API call, manually mark the config dirty
           this.configDirty = true
           this.save()
@@ -719,7 +728,7 @@ export default {
       const popup = {
         component: ZWaveNetworkPopup
       }
-      this.$f7router.navigate({
+      this.f7router.navigate({
         url: 'zwave-network',
         route: {
           path: 'zwave-network',
@@ -733,7 +742,7 @@ export default {
     },
     duplicateThing () {
       let thingClone = cloneDeep(this.thing)
-      this.$f7router.navigate({
+      this.f7router.navigate({
         url: '/settings/things/duplicate'
       }, {
         props: {
@@ -751,19 +760,19 @@ export default {
         message = `Are you sure you want to delete ${this.thing.label || this.thing.UID}?`
         url = '/rest/things/' + this.thingId
       }
-      this.$f7.dialog.confirm(
+      f7.dialog.confirm(
         message,
         'Delete Thing',
         () => {
           this.$oh.api.delete(url).then(() => {
             this.dirty = this.configDirty = this.thingDirty = false
-            this.$f7router.back('/settings/things/', { force: true })
+            this.f7router.back('/settings/things/', { force: true })
           })
         }
       )
     },
     installBinding () {
-      this.$f7router.navigate({
+      this.f7router.navigate({
         url: '/addons/binding/'
       }, {
         props: {
@@ -774,13 +783,13 @@ export default {
     toggleDisabled () {
       const enable = (this.thing.statusInfo.statusDetail === 'DISABLED')
       this.$oh.api.putPlain('/rest/things/' + this.thingId + '/enable', enable.toString()).then((data) => {
-        this.$f7.toast.create({
+        f7.toast.create({
           text: (enable) ? 'Thing enabled' : 'Thing disabled',
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
       }).catch((err) => {
-        this.$f7.toast.create({
+        f7.toast.create({
           text: 'Error while disabling or enabling: ' + err,
           destroyOnClose: true,
           closeTimeout: 2000
@@ -805,7 +814,7 @@ export default {
     },
     addChannel () {
       const self = this
-      this.$f7router.navigate({
+      this.f7router.navigate({
         url: 'channels/new',
         route: {
           component: AddChannelPage,
@@ -835,7 +844,7 @@ export default {
       })
     },
     addToModel (createEquipment) {
-      this.$f7router.navigate({
+      this.f7router.navigate({
         url: 'add-to-model',
         route: {
           component: AddFromThingPage,
@@ -862,10 +871,10 @@ export default {
       const message = (removeItems)
         ? 'Are you sure you wish to unlink and remove all items currently linked to this thing?'
         : 'Are you sure you wish to unlink all items currently linked to this thing?'
-      this.$f7.dialog.confirm(message, 'Unlink all',
+      f7.dialog.confirm(message, 'Unlink all',
         () => {
           this.$oh.api.get('/rest/links').then((data) => {
-            let dialog = this.$f7.dialog.progress('Unlinking all items...')
+            let dialog = f7.dialog.progress('Unlinking all items...')
             this.stopEventSource()
             const links = data.filter((l) => l.channelUID.indexOf(this.thingId) === 0)
 
@@ -876,7 +885,7 @@ export default {
                 const deletePromises = links.map((l) => this.$oh.api.delete(`/rest/items/${l.itemName}`))
                 Promise.all(deletePromises).then(() => {
                   dialog.close()
-                  this.$f7.toast.create({
+                  f7.toast.create({
                     text: 'All items unlinked and removed',
                     destroyOnClose: true,
                     closeTimeout: 2000
@@ -884,12 +893,12 @@ export default {
                   this.load()
                 }).catch((err) => {
                   dialog.close()
-                  this.$f7.dialog.alert('Some of the items could not be unlinked: ' + err)
+                  f7.dialog.alert('Some of the items could not be unlinked: ' + err)
                   this.load()
                 })
               } else {
                 dialog.close()
-                this.$f7.toast.create({
+                f7.toast.create({
                   text: 'All items unlinked',
                   destroyOnClose: true,
                   closeTimeout: 2000
@@ -898,7 +907,7 @@ export default {
               }
             }).catch((err) => {
               dialog.close()
-              this.$f7.dialog.alert('Some of the items could not be removed: ' + err)
+              f7.dialog.alert('Some of the items could not be removed: ' + err)
               this.load()
             })
           })
@@ -913,15 +922,15 @@ export default {
             if (topicParts[2] !== this.thingId) return
             switch (topicParts[3]) {
               case 'status':
-                this.$set(this.thing, 'statusInfo', JSON.parse(event.payload))
+                this.thing.statusInfo = JSON.parse(event.payload)
                 break
               case 'removed':
-                this.$f7.toast.create({
+                f7.toast.create({
                   text: 'The Thing was deleted',
                   destroyOnClose: true,
                   closeTimeout: 2000
                 }).open()
-                this.$f7router.back('/settings/things/', { force: true })
+                this.f7router.back('/settings/things/', { force: true })
                 break
               case 'updated':
                 console.log('Thing updated according to SSE, reloading')
@@ -982,12 +991,12 @@ export default {
       try {
         if (updatedThing.UID !== this.thing.UID) throw new Error('Changing the thing UID is not supported')
         if (updatedThing.thingTypeUID !== this.thing.thingTypeUID) throw new Error('Changing the thing type is not supported')
-        if (updatedThing.label) this.$set(this.thing, 'label', updatedThing.label)
-        if (updatedThing.location) this.$set(this.thing, 'location', updatedThing.location)
-        if (updatedThing.bridgeUID) this.$set(this.thing, 'bridgeUID', updatedThing.bridgeUID)
+        if (updatedThing.label) this.thing.label = updatedThing.label
+        if (updatedThing.location) this.thing.location = updatedThing.location
+        if (updatedThing.bridgeUID) this.thing.bridgeUID = updatedThing.bridgeUID
 
         if (updatedThing.configuration && JSON.stringify(this.thing.configuration) !== JSON.stringify(updatedThing.configuration)) {
-          this.$set(this.thing, 'configuration', updatedThing.configuration)
+          this.thing.configuration = updatedThing.configuration
         }
 
         if (updatedThing.channels && Array.isArray(updatedThing.channels)) {
@@ -995,12 +1004,12 @@ export default {
             const existingChannel = this.thing.channels.find((c) => c.id === updatedChannel.id)
             if (existingChannel) {
               if (isExtensible(existingChannel, this.thingType)) {
-                if (existingChannel.channelTypeUID) this.$set(existingChannel, 'channelTypeUID', updatedChannel.channelTypeUID)
-                if (existingChannel.label) this.$set(existingChannel, 'label', updatedChannel.label)
-                if (existingChannel.description) this.$set(existingChannel, 'description', updatedChannel.description)
+                if (existingChannel.channelTypeUID) existingChannel.channelTypeUID = updatedChannel.channelTypeUID
+                if (existingChannel.label) existingChannel.label = updatedChannel.label
+                if (existingChannel.description) existingChannel.description = updatedChannel.description
               }
               if (existingChannel.configuration && JSON.stringify(existingChannel.configuration) !== JSON.stringify(updatedChannel.configuration)) {
-                this.$set(existingChannel, 'configuration', updatedChannel.configuration)
+                existingChannel.configuration = updatedChannel.configuration
               }
             } else {
               if (!updatedChannel.id || !updatedChannel.label || !updatedChannel.channelTypeUID) continue
@@ -1032,7 +1041,7 @@ export default {
               const foundIdx = updatedThing.channels.findIndex((c) => c.id === existingChannel.id)
               if (foundIdx < 0) {
                 if (existingChannel.linkedItems && existingChannel.linkedItems.length > 0) {
-                  this.$f7.dialog.alert(`Not removing channel ${existingChannel.id} because there are items linked to it`).open()
+                  f7.dialog.alert(`Not removing channel ${existingChannel.id} because there are items linked to it`).open()
                   continue
                 }
                 this.thing.channels.splice(this.thing.channels.findIndex((c) => c.id === existingChannel.id), 1)
@@ -1042,12 +1051,12 @@ export default {
         }
         return true
       } catch (e) {
-        this.$f7.dialog.alert(e).open()
+        f7.dialog.alert(e).open()
         return false
       }
     },
     checkPropertyTruncation () {
-      this.$nextTick(() => {
+      nextTick(() => {
         const newTruncationStatus = {}
         if (!this.thing || !this.thing.properties || !this.ready) {
           if (Object.keys(this.propertyTruncation).length > 0) {
@@ -1088,7 +1097,7 @@ export default {
         <div class="dialog-title" style="margin-bottom: 8px;">${key}</div>
         <pre class="dialog-text" style="font-size: var(--f7-font-size); margin: 0; white-space: pre-wrap; word-wrap: break-word;">${value}</pre>
       `
-      const dialog = this.$f7.dialog.create({
+      const dialog = f7.dialog.create({
         title: 'Property Details',
         content: dialogContent,
         cssClass: 'wide-property-dialog',

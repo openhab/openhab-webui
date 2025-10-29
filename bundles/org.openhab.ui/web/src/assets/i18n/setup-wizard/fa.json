@@ -29,7 +29,7 @@
   "setupwizard.addons.installLater": "افزونه ها را بعداً نصب کنید",
   "setupwizard.addons.installing": "در حال نصب افزونه ها...",
   "setupwizard.addons.installingAddon": "در حال نصب افزونه: {addon}",
-  "setupwizard.addons.progress": "{درحال حاضر} از {مجموع}",
+  "setupwizard.addons.progress": "{current} از {total}",
   "setupwizard.addons.pleaseWait": "لطفا منتظر بمانید...",
   "setupwizard.addons.waitMessage": "نصب افزونه های انتخابی شما ممکن است چند دقیقه طول بکشد.",
   "setupwizard.welcome.title": "به openHAB خوش آمدید!",

@@ -5,13 +5,13 @@
        class="oh-canvas-layer">
     <oh-canvas-item
       v-for="obj in layer"
+      v-bind="$attrs"
       :key="obj.id"
       :id="obj.id"
       :grid-enable="gridEnable"
       :grid-pitch="gridPitch"
       :prevent-deactivation="preventDeactivation"
-      :context="childContext(obj.item)"
-      v-on="$listeners" />
+      :context="childContext(obj.item)" />
   </div>
 </template>
 
@@ -25,7 +25,7 @@
 
 <script>
 import mixin from '../widget-mixin'
-import OhCanvasItem from './oh-canvas-item'
+import OhCanvasItem from './oh-canvas-item.vue'
 import { OhCanvasLayerDefinition } from '@/assets/definitions/widgets/layout'
 
 export default {

@@ -1,11 +1,15 @@
 <template>
   <oh-list-item :context="context" class="slider-listitem">
-    <div slot="after">
-      {{ value }}
-    </div>
-    <div slot="footer" class="padding">
-      <generic-widget-component :context="childContext(sliderComponent)" v-on="$listeners" />
-    </div>
+    <template #after>
+      <div>
+        {{ value }}
+      </div>
+    </template>
+    <template #footer>
+      <div class="padding">
+        <generic-widget-component v-bind="$attrs" :context="childContext(sliderComponent)" />
+      </div>
+    </template>
   </oh-list-item>
 </template>
 
