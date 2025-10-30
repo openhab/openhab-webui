@@ -97,7 +97,7 @@
 </template>
 
 <script>
-import { utils } from 'framework7'
+import { f7 } from 'framework7-vue'
 
 import AlexaDefinitions from '@/assets/definitions/metadata/alexa'
 import ConfigSheet from '@/components/config/config-sheet.vue'
@@ -120,7 +120,7 @@ export default {
       classesDefs: Object.keys(AlexaDefinitions),
       itemType: this.item.groupType || this.item.type,
       multiple: !!this.metadata.value && this.metadata.value.indexOf(',') > 0,
-      classSelectKey: utils.id(),
+      classSelectKey: f7.utils.id(),
       docUrl: `${useRuntimeStore().websiteUrl}/link/alexa`,
       ready: false
     }
@@ -245,7 +245,7 @@ export default {
     toggleMultiple () {
       this.multiple = !this.multiple
       if (this.metadata.value.indexOf(',') > 0) this.metadata.value = ''
-      this.classSelectKey = utils.id()
+      this.classSelectKey = f7.utils.id()
     },
     updateClasses () {
       const value = this.$refs.classes.$el.children[0].f7SmartSelect.getValue()

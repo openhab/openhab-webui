@@ -90,7 +90,6 @@
 
 <script>
 import { f7 } from 'framework7-vue'
-import { utils } from 'framework7'
 import { mapStores } from 'pinia'
 
 import { accessoriesAndCharacteristics, homekitParameters, accessories } from '@/assets/definitions/metadata/homekit'
@@ -114,7 +113,7 @@ export default {
       accessories,
       classesDefs: accessoriesAndCharacteristics,
       multiple: !!this.metadata.value && this.metadata.value.indexOf(',') > 0,
-      classSelectKey: utils.id(),
+      classSelectKey: f7.utils.id(),
       itemType: this.item.groupType || this.item.type,
       dirtyItem: new Set()
     }
@@ -169,7 +168,7 @@ export default {
     toggleMultiple () {
       this.multiple = !this.multiple
       this.metadata.value = ''
-      this.classSelectKey = utils.id()
+      this.classSelectKey = f7.utils.id()
     },
     updateClasses () {
       const value = this.$refs.classes.$el.children[0].f7SmartSelect.getValue()

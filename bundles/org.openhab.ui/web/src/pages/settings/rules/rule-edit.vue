@@ -345,7 +345,6 @@
 
 <script>
 import { nextTick, defineAsyncComponent } from 'vue'
-import { utils } from 'framework7'
 import { f7, theme } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
@@ -456,7 +455,7 @@ export default {
           let newRule
           if (this.ruleCopy) {
             newRule = cloneDeep(this.ruleCopy)
-            newRule.uid = utils.id()
+            newRule.uid = f7.utils.id()
             if (newRule.templateUID) {
               newRule.triggers = []
               newRule.actions = []
@@ -467,7 +466,7 @@ export default {
             }
           } else {
             newRule = {
-              uid: utils.id(),
+              uid: f7.utils.id(),
               name: '',
               triggers: [],
               actions: [],

@@ -10,7 +10,7 @@
       <f7-link @click="widgetPropsOpened = true">
         Set Props<span v-if="$device.desktop">&nbsp;(Ctrl-P)</span>
       </f7-link>
-      <f7-link icon-f7="uiwindow_split_2x1" @click="split = (split === 'horizontal') ? 'vertical' : 'horizontal'; blockKey = utils.id()" />
+      <f7-link icon-f7="uiwindow_split_2x1" @click="split = (split === 'horizontal') ? 'vertical' : 'horizontal'; blockKey = f7.utils.id()" />
       <f7-link @click="redrawWidget">
         Redraw<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span>
       </f7-link>
@@ -116,7 +116,6 @@
 
 <script>
 import { defineAsyncComponent, nextTick } from 'vue'
-import { utils } from 'framework7'
 import { theme, f7 } from 'framework7-vue'
 
 import YAML from 'yaml'
@@ -142,11 +141,10 @@ export default {
     f7route: Object
   },
   setup () {
-    return { theme }
+    return { f7, theme }
   },
   data () {
     return {
-      utils,
       widgetDefinition: null,
       items: [],
       ready: false,
@@ -154,8 +152,8 @@ export default {
       props: {},
       vars: {},
       ctxVars: {},
-      blockKey: utils.id(),
-      widgetKey: utils.id(),
+      blockKey: f7.utils.id(),
+      widgetKey: f7.utils.id(),
       widgetPropsOpened: false,
       standardListWidgets: Object.values(StandardListWidgets)
         .filter((c) => c.widget && typeof c.widget === 'function')
@@ -237,7 +235,7 @@ export default {
       this.loading = true
       if (this.createMode) {
         this.widgetDefinition = YAML.stringify({
-          uid: 'widget_' + utils.id(),
+          uid: 'widget_' + f7.utils.id(),
           props: {
             parameterGroups: [],
             parameters: [
@@ -322,7 +320,7 @@ export default {
     },
     redrawWidget () {
       this.ctxVars = {}
-      this.widgetKey = utils.id()
+      this.widgetKey = f7.utils.id()
     },
     widgetPropsClosed () {
       this.widgetPropsOpened = false

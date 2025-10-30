@@ -21,7 +21,7 @@
 
 <script>
 import { defineAsyncComponent } from 'vue'
-import { utils } from 'framework7'
+import { f7 } from 'framework7-vue'
 
 import mixin from '../widget-mixin'
 import { OhVideoDefinition } from '@/assets/definitions/widgets/system'
@@ -35,7 +35,7 @@ export default {
   },
   data () {
     return {
-      t: utils.id(),
+      t: f7.utils.id(),
       src: null
     }
   },
@@ -49,7 +49,7 @@ export default {
   computed: {
     itemState () {
       if (this.config.item) {
-        return utils.id() + '|' + this.context.store[this.config.item].state
+        return f7.utils.id() + '|' + this.context.store[this.config.item].state
       }
       return null
     }

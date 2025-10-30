@@ -159,7 +159,7 @@
 </style>
 
 <script>
-import { utils } from 'framework7'
+import { f7 } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
 import OverviewTab from './home/overview-tab.vue'
@@ -191,7 +191,7 @@ export default {
       showPinToHome: false,
       showExitToApp: false,
       currentTab: this.initialTab || 'overview',
-      overviewPageKey: utils.id()
+      overviewPageKey: f7.utils.id()
     }
   },
   computed: {
@@ -277,7 +277,7 @@ export default {
   },
   methods: {
     onPageBeforeIn () {
-      this.overviewPageKey = utils.id()
+      this.overviewPageKey = f7.utils.id()
     },
     onPageAfterIn () {
       if (this.ready) {

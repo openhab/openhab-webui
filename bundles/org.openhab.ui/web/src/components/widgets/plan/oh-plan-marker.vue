@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import { utils } from 'framework7'
+import { f7 } from 'framework7-vue'
 
 import mixin from '../widget-mixin'
 import { LMarker, LTooltip, LIcon, LPopup } from '@vue-leaflet/vue-leaflet'
@@ -76,7 +76,7 @@ export default {
   emits: ['update'],
   data () {
     return {
-      markerKey: 'marker-' + utils.id(),
+      markerKey: 'marker-' + f7.utils.id(),
       dragging: false
     }
   },

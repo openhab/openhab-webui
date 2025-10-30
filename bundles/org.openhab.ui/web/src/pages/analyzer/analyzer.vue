@@ -403,7 +403,6 @@
 
 <script>
 import { nextTick, defineAsyncComponent } from 'vue'
-import { utils } from 'framework7'
 import { f7, theme } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
@@ -456,8 +455,8 @@ export default {
 
       controlsOpened: false,
       controlsTab: 'series',
-      itemsPickerKey: utils.id(),
-      chartKey: utils.id()
+      itemsPickerKey: f7.utils.id(),
+      chartKey: f7.utils.id()
     }
   },
   computed: {

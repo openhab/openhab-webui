@@ -10,7 +10,7 @@
       <f7-link @click="previewOpened = true">
         Preview<span v-if="$device.desktop">&nbsp;(Ctrl-P)</span>
       </f7-link>
-      <f7-link icon-f7="uiwindow_split_2x1" @click="split = (split === 'horizontal') ? 'vertical' : 'horizontal'; blockKey = utils.id();" />
+      <f7-link icon-f7="uiwindow_split_2x1" @click="split = (split === 'horizontal') ? 'vertical' : 'horizontal'; blockKey = f7.utils.id();" />
       <f7-link @click="refreshBlocks">
         Refresh<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span>
       </f7-link>
@@ -131,7 +131,6 @@
 </style>
 
 <script>
-import { utils } from 'framework7'
 import { f7, theme } from 'framework7-vue'
 import { nextTick, defineAsyncComponent } from 'vue'
 
@@ -157,11 +156,10 @@ export default {
     f7route: Object
   },
   setup () {
-    return { theme }
+    return { theme, f7 }
   },
   data () {
     return {
-      utils,
       blocksDefinition: null,
       items: [],
       ready: false,
@@ -170,8 +168,8 @@ export default {
       vars: {},
       previewBlockSource: '<xml xmlns="https://developers.google.com/blockly/xml"></xml>',
       previewCode: '',
-      blockKey: utils.id(),
-      previewKey: utils.id(),
+      blockKey: f7.utils.id(),
+      previewKey: f7.utils.id(),
       previewOpened: false,
       previewMode: 'blockly',
       previewGeneratedCode: ''
@@ -206,7 +204,7 @@ export default {
       }
     },
     refreshBlocks () {
-      this.previewKey = utils.id()
+      this.previewKey = f7.utils.id()
     },
     previewClosed () {
       this.previewOpened = false
@@ -258,7 +256,7 @@ export default {
       if (this.loading) return
       this.loading = true
       if (this.createMode) {
-        const uid = utils.id()
+        const uid = f7.utils.id()
         this.blocksDefinition = YAML.stringify({
           uid: 'blocklibrary_' + uid,
           tags: [],
