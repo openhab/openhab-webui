@@ -20,7 +20,7 @@ export default {
       const max = this.config.max || 100
       let value = (this.config.item) ? this.context.store[this.config.item].state : this.config.value
 
-      if(!value) {
+      if (!value) {
         return undefined
       }
 

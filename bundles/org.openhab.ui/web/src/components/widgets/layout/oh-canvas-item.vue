@@ -20,8 +20,8 @@
     @resizing="onResize"
     :on-drag-start="onDragStartCallback"
     :on-resize-start="onResizeStartCallback"
-    @dragStop="onDragStop"
-    @resizeStop="onResizeStop"
+    @drag-stop="onDragStop"
+    @resize-stop="onResizeStop"
     v-model:active="active"
     :prevent-deactivation="preventDeactivation">
     <f7-menu v-if="context.editmode" class="configure-canvas-menu disable-user-select">
