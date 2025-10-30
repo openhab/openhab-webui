@@ -24,7 +24,7 @@
             Pinned Objects
           </f7-block-title>
         </f7-block>
-        <f7-list v-if="Object.keys(pinCollections).length > 0 || isAnythingPinned">
+        <f7-list v-if="Object.keys(developerStore.pinCollections).length > 0 || isAnythingPinned">
           <f7-list-item accordion-item
                         title="Saved Pins"
                         ref="pinCollectionsAccordion"
@@ -43,7 +43,7 @@
                   </template>
                 </f7-list-input>
               </f7-list>
-              <f7-list v-if="Object.keys(pinCollections).length > 0" class="pin-collections">
+              <f7-list v-if="Object.keys(developerStore.pinCollections).length > 0" class="pin-collections">
                 <f7-list-item group-title title="Saved Pin Collections" class="padding-vertical" />
                 <f7-list-item v-for="collectionName in sortedCollectionNames"
                               :ref="collectionName === currentPinCollection ? 'currentPinCollectionItem' : null"
@@ -56,7 +56,7 @@
                     <f7-link color="red"
                              icon-f7="trash"
                              tooltip="Delete Collection"
-                             @click.stop="$delete(pinCollections, collectionName)" />
+                             @click.stop="delete developerStore.pinCollections[collectionName]" />
                   </template>
                 </f7-list-item>
               </f7-list>
@@ -742,6 +742,7 @@ import ClipboardIcon from '@/components/util/clipboard-icon.vue'
 import RuleStatus from '@/components/rule/rule-status-mixin'
 import ThingStatus from '@/components/thing/thing-status-mixin'
 import cloneDeep from 'lodash/cloneDeep'
+import { use } from 'marked'
 
 export default {
   mixins: [RuleStatus, ThingStatus],
@@ -765,9 +766,6 @@ export default {
         this.pinsDirty = true
       },
       deep: true
-    },
-    pinCollections (val) {
-      localStorage.setItem('pinCollections', JSON.stringify(val))
     }
   },
   data () {
@@ -792,7 +790,6 @@ export default {
         transformations: [],
         persistenceConfigs: []
       },
-      pinCollections: JSON.parse(localStorage.getItem('pinCollections') || '{}'),
       currentPinCollection: '',
       pinsDirty: false,
       newCollectionName: '',
@@ -886,7 +883,7 @@ export default {
       }
     },
     sortedCollectionNames () {
-      return Object.keys(this.pinCollections).sort((a, b) => a.localeCompare(b))
+      return Object.keys(useDeveloperStore().pinCollections).sort((a, b) => a.localeCompare(b))
     },
     isAnythingPinned () {
       return Object.values(useDeveloperStore().pinnedObjects).some((obj) => obj.length > 0)
@@ -1077,14 +1074,14 @@ export default {
       if (!this.newCollectionName) return
 
       const saveCurrentCollection = () => {
-        this.pinCollections[this.newCollectionName] = cloneDeep(useDeveloperStore().pinnedObjects)
+        useDeveloperStore().pinCollections[this.newCollectionName] = cloneDeep(useDeveloperStore().pinnedObjects)
         this.pinsDirty = false
         this.currentPinCollection = this.newCollectionName
         f7.accordion.close(this.$refs.pinCollectionsAccordion.$el)
         this.newCollectionName = ''
       }
 
-      if (this.pinCollections[this.newCollectionName]) {
+      if (useDeveloperStore().pinCollections[this.newCollectionName]) {
         f7.dialog.confirm('Collection with this name already exists, do you want to overwrite it?', () => {
           saveCurrentCollection()
         })
@@ -1093,10 +1090,10 @@ export default {
       }
     },
     loadPinCollection (name) {
-      if (!this.pinCollections[name]) return
+      if (!useDeveloperStore().pinCollections[name]) return
 
       const load = () => {
-        useDeveloperStore().pinnedObjects = cloneDeep(this.pinCollections[name])
+        useDeveloperStore().pinnedObjects = cloneDeep(useDeveloperStore().pinCollections[name])
         f7.accordion.close(this.$refs.pinCollectionsAccordion.$el)
         this.currentPinCollection = name
         this.$nextTick(() => {
@@ -1105,7 +1102,7 @@ export default {
       }
 
       const saveCurrentCollection = () => {
-        this.pinCollections[this.currentPinCollection] = cloneDeep(useDeveloperStore().pinnedObjects)
+        useDeveloperStore().pinCollections[this.currentPinCollection] = cloneDeep(useDeveloperStore().pinnedObjects)
         this.pinsDirty = false
         f7.accordion.close(this.$refs.pinCollectionsAccordion.$el)
       }
