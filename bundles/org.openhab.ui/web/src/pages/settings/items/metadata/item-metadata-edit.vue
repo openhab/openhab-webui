@@ -68,16 +68,8 @@
 </template>
 
 <style lang="stylus">
-.metadata-code-editor.vue-codemirror
-  display block
-  top calc(var(--f7-navbar-height) + var(--f7-tabbar-height))
-  height calc(100% - 2*var(--f7-navbar-height))
-  width 100%
-.yaml-message
-  display block
+.metadata-code-editor.v-codemirror
   position absolute
-  top 80%
-  white-space pre-wrap
 </style>
 
 <script>

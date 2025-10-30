@@ -100,8 +100,7 @@
       overflow auto
     .widget-code
       height 100%
-  .vue-codemirror
-    top 0
+  .v-codemirror
     height 100%
   &.vertical
     .block

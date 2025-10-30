@@ -232,11 +232,6 @@
   .item-after
     display none
 
-.rule-code-editor.vue-codemirror
-  display block
-  top calc(var(--f7-navbar-height) + var(--f7-tabbar-height))
-  height calc(100% - 2*var(--f7-navbar-height))
-  width 100%
 .yaml-message
   display block
   position absolute

@@ -310,11 +310,6 @@
   z-index 10900
 .md .semantics-details-sheet .toolbar .link
   width 35%
-.semantic-tag-code-editor.vue-codemirror
-  display block
-  top calc(var(--f7-navbar-height) + var(--f7-tabbar-height))
-  height calc(100% - 2*var(--f7-navbar-height))
-  width 100%
 
 @media (min-width: 768px)
   .semantics-tree-wrapper

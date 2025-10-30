@@ -172,11 +172,9 @@
         margin-bottom calc(var(--f7-toolbar-height) + 1rem)
         .oh-masonry
           z-index inherit
-  .page-code-editor.vue-codemirror
-    display block
-    top calc(var(--f7-navbar-height) + var(--f7-tabbar-height))
-    height calc(100% - 3*var(--f7-navbar-height))
-    width 100%
+  .page-code-editor.v-codemirror
+    position absolute
+    height calc(100% - var(--f7-navbar-height) - 2*var(--f7-toolbar-height))
   .yaml-message
     display block
     position absolute

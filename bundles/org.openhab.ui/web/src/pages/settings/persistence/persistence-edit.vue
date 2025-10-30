@@ -351,11 +351,8 @@
 .alias-item-picker .item-picker .item-content
   padding-left: calc(var(--f7-list-item-padding-horizontal) + var(--f7-safe-area-left))
 
-.persistence-code-editor.vue-codemirror
-  display block
-  top calc(var(--f7-navbar-height) + var(--f7-tabbar-height))
-  height calc(100% - 2 * var(--f7-navbar-height))
-  width 100%
+.persistence-code-editor.v-codemirror
+  position absolute
 </style>
 
 <script>

@@ -148,8 +148,8 @@
   .items-parser
     height 50%
     width 100%
-    .editor.vue-codemirror
-      top 0
+    .editor.v-codemirror
+      position absolute
       height calc(100% - var(--f7-grid-gap))
   .items-results
     height 50%
