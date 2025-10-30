@@ -1,9 +1,9 @@
 import dayjs from 'dayjs'
 import IsoWeek from 'dayjs/plugin/isoWeek'
-import Duration from 'dayjs/plugin/duration'
+import DayDuration from 'dayjs/plugin/duration'
 
 dayjs.extend(IsoWeek)
-dayjs.extend(Duration)
+dayjs.extend(DayDuration)
 
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 

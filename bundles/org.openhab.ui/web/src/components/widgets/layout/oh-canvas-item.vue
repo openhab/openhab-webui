@@ -20,8 +20,8 @@
     @resizing="onResize"
     :on-drag-start="onDragStartCallback"
     :on-resize-start="onResizeStartCallback"
-    @dragstop="onDragStop"
-    @resizestop="onResizeStop"
+    @drag-stop="onDragStop"
+    @resize-stop="onResizeStop"
     v-model:active="active"
     :prevent-deactivation="preventDeactivation">
     <f7-menu v-if="context.editmode" class="configure-canvas-menu disable-user-select">
@@ -159,7 +159,13 @@
       width 0px
 </style>
 
+<script setup>
+import 'vue-draggable-resizable/style.css'
+import VueDraggableResizable from 'vue-draggable-resizable'
+</script>
+
 <script>
+import { defineAsyncComponent } from 'vue'
 import mixin from '../widget-mixin'
 import OhPlaceholderWidget from './oh-placeholder-widget.vue'
 import { OhCanvasItemDefinition } from '@/assets/definitions/widgets/layout'
@@ -168,12 +174,7 @@ export default {
   mixins: [mixin],
   widget: OhCanvasItemDefinition,
   components: {
-    'vue-draggable-resizable': () => Promise.all([
-      import(/* webpackChunkName: "canvas-layout" */ 'vue-draggable-resizable/dist/VueDraggableResizable.css'),
-      import(/* webpackChunkName: "canvas-layout" */ 'vue-draggable-resizable')
-    ]).then((component) => {
-      return component[1].default
-    }),
+    VueDraggableResizable,
     OhPlaceholderWidget
   },
   props: {
