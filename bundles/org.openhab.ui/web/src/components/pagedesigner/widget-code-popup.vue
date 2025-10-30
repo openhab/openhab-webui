@@ -37,7 +37,7 @@
 <style lang="stylus">
 .widgetcode-popup
   .page-code-editor.v-codemirror
-    position relative
+    position absolute
     height calc(100% - var(--f7-navbar-height))
   .yaml-message
     display block
