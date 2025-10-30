@@ -164,15 +164,17 @@
       opacity 0.55
 </style>
 
-<script>
-import { f7, theme } from 'framework7-vue'
-
+<script setup>
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import ItemPicker from '@/components/config/controls/item-picker.vue'
 import ThingPicker from '@/components/config/controls/thing-picker.vue'
 import ItemForm from '@/components/item/item-form.vue'
-
+import ChannelList from '@/components/thing/channel-list.vue'
 import Item from '@/components/item/item.vue'
+</script>
+
+<script>
+import { f7, theme } from 'framework7-vue'
 
 import * as Types from '@/assets/item-types.js'
 import ItemMixin from '@/components/item/item-mixin'
@@ -180,21 +182,11 @@ import uomMixin from '@/components/item/uom-mixin'
 import LinkMixin from '@/pages/settings/things/link/link-mixin'
 
 import { useSemanticsStore } from '@/js/stores/useSemanticsStore'
-import { defineAsyncComponent } from 'vue'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore.js'
 import { mapStores } from 'pinia'
 
 export default {
   mixins: [ItemMixin, uomMixin, LinkMixin],
-  components: {
-    ConfigSheet,
-    ItemPicker,
-    ThingPicker,
-    Item,
-    // TODO-V3.1 ReferenceError: Cannot access 'ChannelList' before initialization when importing normal
-    ChannelList: defineAsyncComponent(() => import('@/components/thing/channel-list.vue')),
-    ItemForm
-  },
   props: {
     thing: String,
     channel: String,
