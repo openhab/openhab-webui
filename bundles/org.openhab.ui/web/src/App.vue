@@ -32,7 +32,7 @@
         <f7-link class="breakpoint-pin" @click="toggleVisibleBreakpoint">
           <f7-icon
             size="14"
-            :f7="uiOptionsStore.visibleBreakpointDisabled ? 'pin_slash' : 'pin'"
+            :f7="uiOptionsStore.visibleBreakpointDisabled ? 'pin' : 'pin_filled'"
             color="gray" />
         </f7-link>
 

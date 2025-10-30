@@ -83,8 +83,8 @@
                              :href="'/settings/items/' + item.name"
                              :animate="false" />
                     <f7-link class="itemlist-actions"
-                             color="red"
-                             icon-f7="pin_slash_fill"
+                             color="blue"
+                             icon-f7="pin_fill"
                              icon-size="18"
                              tooltip="Unpin"
                              @click="unpin('items', item, 'name')" />
@@ -137,8 +137,8 @@
                              tooltip="Edit"
                              :href="'/settings/things/' + thing.UID"
                              :animate="false" />
-                    <f7-link color="red"
-                             icon-f7="pin_slash_fill"
+                    <f7-link color="blue"
+                             icon-f7="pin_fill"
                              icon-size="18"
                              tooltip="Unpin"
                              @click="unpin('things', thing, 'UID')" />
@@ -197,8 +197,8 @@
                              tooltip="Edit"
                              :href="'/settings/' + (rule.tags.indexOf('Script') >= 0 ? 'scripts' : 'rules') + '/' + rule.uid"
                              :animate="false" />
-                    <f7-link color="red"
-                             icon-f7="pin_slash_fill"
+                    <f7-link color="blue"
+                             icon-f7="pin_fill"
                              icon-size="18"
                              tooltip="Unpin"
                              @click="unpin('rules', rule, 'uid')" />
@@ -257,8 +257,8 @@
                              tooltip="Edit"
                              :href="'/settings/' + (rule.tags.indexOf('Script') >= 0 ? 'scripts' : 'rules') + '/' + rule.uid"
                              :animate="false" />
-                    <f7-link color="red"
-                             icon-f7="pin_slash_fill"
+                    <f7-link color="blue"
+                             icon-f7="pin_fill"
                              icon-size="18"
                              tooltip="Unpin"
                              @click="unpin('scenes', rule, 'uid')" />
@@ -318,8 +318,8 @@
                              tooltip="Edit"
                              :href="'/settings/' + (rule.tags.indexOf('Script') >= 0 ? 'scripts' : 'rules') + '/' + rule.uid"
                              :animate="false" />
-                    <f7-link color="red"
-                             icon-f7="pin_slash_fill"
+                    <f7-link color="blue"
+                             icon-f7="pin_fill"
                              icon-size="18"
                              tooltip="Unpin"
                              @click="unpin('scripts', rule, 'uid')" />
@@ -369,8 +369,8 @@
                              tooltip="Edit"
                              :href="'/settings/pages/' + getPageType(page).type + '/' + page.uid"
                              :animate="false" />
-                    <f7-link color="red"
-                             icon-f7="pin_slash_fill"
+                    <f7-link color="blue"
+                             icon-f7="pin_fill"
                              icon-size="18"
                              tooltip="Unpin"
                              @click="unpin('pages', page, 'uid')" />
@@ -410,8 +410,8 @@
                              tooltip="Edit"
                              :href="'/developer/widgets/' + widget.uid"
                              :animate="false" />
-                    <f7-link color="red"
-                             icon-f7="pin_slash_fill"
+                    <f7-link color="blue"
+                             icon-f7="pin_fill"
                              icon-size="18"
                              tooltip="Unpin"
                              @click="unpin('widgets', widget, 'uid')" />
@@ -453,8 +453,8 @@
                              tooltip="Edit"
                              :href="'/settings/transformations/' + transformation.uid"
                              :animate="false" />
-                    <f7-link color="red"
-                             icon-f7="pin_slash_fill"
+                    <f7-link color="blue"
+                             icon-f7="pin_fill"
                              icon-size="18"
                              tooltip="Unpin"
                              @click="unpin('transformations', transformation, 'uid')" />
@@ -496,8 +496,8 @@
                              tooltip="Edit"
                              :href="'/settings/persistence/' + persistenceConfig.serviceId"
                              :animate="false" />
-                    <f7-link color="red"
-                             icon-f7="pin_slash_fill"
+                    <f7-link color="blue"
+                             icon-f7="pin_fill"
                              icon-size="18"
                              tooltip="Unpin"
                              @click="unpin('persistenceConfig', persistenceConfig, 'serviceId')" />
