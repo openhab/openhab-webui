@@ -12,7 +12,7 @@
 .code-editor-fit
   position relative
   width 100%
-  height calc(100vh - var(--f7-navbar-height) - var(--f7-tabbar-height, 48px))
+  height 100%
   display flex !important
 
   .cm-editor
@@ -106,10 +106,8 @@ import { shell } from '@codemirror/legacy-modes/mode/shell'
 import javascriptAutocompletions from '../editor/hint-javascript'
 import componentsHint from '../editor/hint-components'
 import rulesHint from '../editor/hint-rules'
-// TODO-V3.1 This will again be changed when the backend YAML support is added
-// postpone migration until after?
-// import itemsHint from '../editor/hint-items';
-// import thingsHint from '../editor/hint-things';
+import thingsHint from '../editor/hint-things'
+import itemsHint from '../editor/hint-items'
 
 const KEYMAP = [
   {
@@ -200,6 +198,10 @@ export default {
         case mode === 'application/vnd.openhab.dsl.rule':
           return java()
 
+        case mode === 'text/vnd.openhab.dsl.thing':
+        case mode === 'text/vnd.openhab.dsl.item':
+          return javascript()
+
         case mode === 'js':
         case mode.startsWith('application/javascript'):
           return javascript()
@@ -232,7 +234,7 @@ export default {
           return xml()
 
         default:
-          console.log('Unsupported editor mode:', mode)
+          console.debug('Unsupported editor mode:', mode)
           return null
       }
     },
@@ -250,12 +252,11 @@ export default {
         case mode === 'application/vnd.openhab.rule+yaml':
           return autocompletion({ activateOnCompletion, override: [ rulesHint ] })
 
-          // TODO-V3.1 Wait for https://github.com/openhab/openhab-webui/pull/3180
-          // case mode === 'application/vnd.openhab.thing+yaml':
-          //   return autocompletion({ activateOnCompletion, override: [ thingsHint ] })
+        case mode === 'application/vnd.openhab.thing+yaml':
+          return autocompletion({ activateOnCompletion, override: [ thingsHint ] })
 
-          // case mode === 'application/vnd.openhab.item+yaml':
-          //   return autocompletion({ activateOnCompletion, override: [ itemsHint ] })
+        case mode === 'application/vnd.openhab.item+yaml':
+          return autocompletion({ activateOnCompletion, override: [ itemsHint ] })
 
         case mode === 'js':
         case mode.startsWith('application/javascript'):
