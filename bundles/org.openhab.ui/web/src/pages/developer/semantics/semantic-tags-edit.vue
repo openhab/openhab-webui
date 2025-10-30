@@ -105,7 +105,15 @@
                                      validate
                                      pattern="^[A-Za-z][A-Za-z0-9\-]*$"
                                      error-message="Required. A-Z,a-z,0-9,- only"
-                                     @input="updateName($event)" />
+                                     @input="updateName($event)">
+                        <template #inner-end>
+                          <f7-icon v-if="!selectedTag.editable"
+                                   f7="lock"
+                                   ios="f7:lock"
+                                   md="material:lock"
+                                   color="gray" />
+                        </template>
+                      </f7-list-input>
                       <f7-list-input label="Label"
                                      :value="selectedTag.label"
                                      :disabled="!selectedTag.editable ? true : null"
