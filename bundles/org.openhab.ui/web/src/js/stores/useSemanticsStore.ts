@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
 import api from '@/js/openhab/api'
-import { type I18n } from 'vue-i18n'
+import { type Composer, type I18n } from 'vue-i18n'
 import { useRuntimeStore } from './useRuntimeStore'
 
 import { type Tag } from '@/types/openhab'
@@ -45,8 +45,7 @@ export const useSemanticsStore = defineStore('semantics', () => {
       Synonyms.value[t.name] = t.synonyms || []
     }
     // Save labels as i18n messages
-    // @ts-expect-error   TODO-V3.1
-    i18n.global.mergeLocaleMessage(i18n.global.locale.value as string, Labels.value)
+    (i18n.global as Composer).mergeLocaleMessage((i18n.global as Composer).locale.value as string, Labels.value)
   }
 
   async function loadSemantics (i18n: I18n) {

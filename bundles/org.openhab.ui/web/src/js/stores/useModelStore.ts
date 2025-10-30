@@ -7,6 +7,7 @@ import { i18n } from '@/js/i18n'
 import api from '@/js/openhab/api'
 
 import { type Item } from '@/types/openhab'
+import type { Composer } from 'vue-i18n'
 
 interface ModelItem extends Item {
   modelPath: Item[]
@@ -65,8 +66,7 @@ function _buildLocationModelCard (item: ModelItem, key: string) : LocationModelC
 function _buildEquipmentModelCard (items: ModelItem[], key: string): EquipmentModelCard {
   return {
     key,
-    // @ts-expect-error   TODO-V3.1
-    defaultTitle: i18n.global.t(key),
+    defaultTitle: (i18n.global as Composer).t(key),
     equipment: items
   }
 }
@@ -74,8 +74,7 @@ function _buildEquipmentModelCard (items: ModelItem[], key: string): EquipmentMo
 function _buildPropertyModelCard (items: ModelItem[], key: string): PropertyModelCard {
   return {
     key,
-    // @ts-expect-error   TODO-V3.1
-    defaultTitle: i18n.global.t(key),
+    defaultTitle: (i18n.global as Composer).t(key),
     points: items
   }
 }
@@ -230,12 +229,10 @@ export const useModelStore = defineStore('model', () => {
 
       locations.value = locationItems.map((l) => _buildLocationModelCard(l, l.name))
       equipment.value = Object.keys(equipmentStruct)
-        // @ts-expect-error   TODO-V3.1
-        .sort((a: string, b: string) => i18n.global.t(a).localeCompare(i18n.global.t(b)))
+        .sort((a: string, b: string) => (i18n.global as Composer).t(a).localeCompare((i18n.global as Composer).t(b)))
         .map((k) => _buildEquipmentModelCard(equipmentStruct[k], k))
       properties.value = Object.keys(propertyStruct)
-        // @ts-expect-error   TODO-V3.1
-        .sort((a: string, b: string) => i18n.global.t(a).localeCompare(i18n.global.t(b)))
+        .sort((a: string, b: string) => (i18n.global as Composer).t(a).localeCompare((i18n.global as Composer).t(b)))
         .map((k) => _buildPropertyModelCard(propertyStruct[k], k))
 
       ready.value = true
