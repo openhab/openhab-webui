@@ -205,7 +205,7 @@ export default {
     },
     map () {
       // Make sure items are only counted once
-      const itemNames = new Set(this.query.map((item) => item.name))
+      const itemNames = [...new Set(this.query.map((item) => item.name))]
       return itemNames.map((itemName) => this.store[itemName].state)
     },
     reduce () {
