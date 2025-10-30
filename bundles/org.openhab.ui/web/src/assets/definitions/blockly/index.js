@@ -22,8 +22,6 @@ import defineLogicBlocks from './blocks-logic.js'
 
 import { defineLibraries } from './libraries.js'
 
-import Blockly from 'blockly'
-
 export default function (f7, libraryDefinitions, data) {
   defineDictionaryBlocks(f7)
   defineDateOffsetsBlocks(f7)
