@@ -9,7 +9,10 @@
                       :f7router>
         <template v-if="ready" #right>
           <f7-link v-if="item.editable" icon-md="material:edit" href="edit">
-            {{ theme.md ? '' : 'Edit' }}
+            {{ theme.md ? '' : $t('page.navbar.edit') }}
+          </f7-link>
+          <f7-link v-else icon-md="f7:ellipsis_circle_fill" href="edit">
+            {{ theme.md ? '' : 'View' }}
           </f7-link>
         </template>
       </oh-nav-content>
