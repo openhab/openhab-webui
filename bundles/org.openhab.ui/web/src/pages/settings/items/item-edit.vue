@@ -9,10 +9,10 @@
                       :f7router />
     </f7-navbar>
     <f7-toolbar tabbar position="top">
-      <f7-link @click="switchTab('design', fromYaml)" :tab-link-active="currentTab === 'design'" tab-link="#design">
+      <f7-link @click="switchTab('design')" :tab-link-active="currentTab === 'design'" tab-link="#design">
         Design
       </f7-link>
-      <f7-link @click="switchTab('code', toYaml)" :tab-link-active="currentTab === 'code'" tab-link="#code">
+      <f7-link @click="switchTab('code')" :tab-link-active="currentTab === 'code'" tab-link="#code">
         Code
       </f7-link>
     </f7-toolbar>
@@ -55,18 +55,15 @@
       </f7-tab>
 
       <f7-tab id="code" :tab-active="currentTab === 'code'">
-        <f7-icon v-if="!editable"
-                 f7="lock"
-                 class="float-right margin"
-                 style="opacity: 0.5; z-index: 4000; user-select: none;"
-                 size="50"
-                 color="gray"
-                 :tooltip="notEditableMsg" />
-        <editor class="item-code-editor"
-                mode="application/vnd.openhab.item+yaml"
-                :value="itemYaml"
-                @input="onEditorInput"
-                :readOnly="!editable" />
+        <code-editor v-if="ready"
+                     ref="codeEditor"
+                     object-type="items"
+                     :object="item"
+                     :object-id="item.name"
+                     :read-only="!editable"
+                     :read-only-msg="notEditableMsg"
+                     @parsed="updateItem"
+                     @changed="onCodeChanged" />
       </f7-tab>
     </f7-tabs>
   </f7-page>
@@ -93,7 +90,6 @@ import cloneDeep from 'lodash/cloneDeep'
 import fastDeepEqual from 'fast-deep-equal/es6'
 
 import * as Types from '@/assets/item-types.js'
-import YAML from 'yaml'
 
 import ItemForm from '@/components/item/item-form.vue'
 
@@ -110,7 +106,7 @@ export default {
   },
   components: {
     ItemForm,
-    editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue'))
+    CodeEditor: defineAsyncComponent(() => import(/* webpackChunkName: "code-editor" */ '@/components/config/controls/code-editor.vue'))
   },
   setup () {
     return { theme }
@@ -121,7 +117,8 @@ export default {
       loading: false,
       item: {},
       savedItem: {},
-      itemYaml: '',
+      itemDirty: false,
+      codeDirty: false,
       items: [],
       types: Types,
       semanticClass: '',
@@ -146,12 +143,14 @@ export default {
     }
   },
   watch: {
+    itemDirty: function () { this.dirty = this.itemDirty || this.codeDirty },
+    codeDirty: function () { this.dirty = this.itemDirty || this.codeDirty },
     item: {
       handler: function () {
         if (!this.loading) { // ignore changes during loading
           const itemClone = cloneDeep(this.item)
           delete itemClone.functionKey
-          this.dirty = !fastDeepEqual(itemClone, this.savedItem)
+          this.itemDirty = !fastDeepEqual(itemClone, this.savedItem)
         }
       },
       deep: true
@@ -175,6 +174,29 @@ export default {
         ev.stopPropagation()
         ev.preventDefault()
       }
+    },
+    switchTab (newTab) {
+      if (this.currentTab === newTab) return
+
+      // We can't prevent the tab switch here. Instead, we'll switch back if parsing fails
+      this.currentTab = newTab
+
+      if (newTab === 'code') {
+        this.$refs.codeEditor.generateCode()
+      } else if (this.codeDirty) {
+        this.$refs.codeEditor.parseCode(
+          () => {
+            this.codeDirty = false
+          },
+          () => {
+            this.currentTab = 'code'
+            f7.tab.show('#code')
+          }
+        )
+      }
+    },
+    onCodeChanged (codeDirty) {
+      this.codeDirty = codeDirty
     },
     load () {
       if (this.loading) return
@@ -209,9 +231,16 @@ export default {
     },
     save () {
       if (!this.editable) return
-      if (this.currentTab === 'code') {
-        if (!this.fromYaml()) return
+
+      if (this.currentTab === 'code' && this.codeDirty) {
+        this.$refs.codeEditor.parseCode(() => {
+          this.codeDirty = false
+          this.save()
+          this.$refs.codeEditor.generateCode()
+        })
+        return
       }
+
       if (this.validateItemName(this.item.name) !== '')
         return f7.dialog.alert('Please give the Item a valid name: ' + this.validateItemName(this.item.name)).open()
       if (!this.item.type || !this.types.ItemTypes.includes(this.item.type.split(':')[0]))
@@ -256,7 +285,7 @@ export default {
           }).open()
         }
 
-        this.dirty = false
+        this.itemDirty = this.codeDirty = false
         if (this.createMode) {
           this.f7router.navigate('/settings/items/' + this.item.name, {
             reloadCurrent: true
@@ -272,34 +301,15 @@ export default {
         }).open()
       })
     },
-    onEditorInput (value) {
-      this.itemYaml = value
-    },
-    toYaml () {
-      const yamlObj = {
-        label: this.item.label,
-        type: this.item.type,
-        icon: this.item.category || '',
-        groupNames: this.item.groupNames || [],
-        tags: this.item.tags
-        // metadata: this.item.metadata
-      }
-      if (this.item.type === 'Group') {
-        yamlObj.groupType = this.item.groupType || 'None'
-        yamlObj.function = this.item.function || 'None'
-      }
-      this.itemYaml = YAML.stringify(yamlObj)
-    },
-    fromYaml () {
+    updateItem (updatedItem) {
       if (!this.editable) return false
       try {
-        const updatedItem = YAML.parse(this.itemYaml)
         if (updatedItem === null) return false
         if (updatedItem.groupNames == null) updatedItem.groupNames = []
         if (updatedItem.tags == null) updatedItem.tags = []
         this.item.label = updatedItem.label
         this.item.type = updatedItem.type
-        this.item.category = updatedItem.icon
+        this.item.category = updatedItem.category
         this.item.groupNames = updatedItem.groupNames
         this.item.groupType = updatedItem.groupType
         this.item.function = updatedItem.function

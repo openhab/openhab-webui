@@ -1,119 +1,104 @@
+import { insertCompletionText } from '@codemirror/autocomplete'
 import { findParent } from './yaml-utils'
+import { completionStart, hintItems } from './hint-utils'
+
 import * as Types from '@/assets/item-types.js'
 import Metadata from '@/assets/definitions/metadata/namespaces'
-import api from '@/js/openhab/api'
 
-// TODO-V3.1 clean up commented out code
+let dimensions = null
 
-const dimensions = []
-let itemsCache = null
+function getDimensions (context) {
+  if (dimensions) return Promise.resolve(dimensions)
 
-api.get('/rest/systeminfo/uom').then((data) => {
-  data.uomInfo.dimensions.forEach((d) => {
-    dimensions.push(d.dimension)
-  })
-})
-
-function hintItemTypes (cm, line) {
-  if (!cm.state.$oh) return
-  let ret = {
-    list: Types.ItemTypes.map((t) => {
-      return {
-        text: t,
-        displayText: t
-      }
-    })
-  }
-  // ret.list = filterPartialCompletions(cm, line, ret.list, 'text', /^type:( )?/)
-  if (line.indexOf('Number:') !== -1) {
-    ret.list = dimensions.map((t) => {
-      return {
-        text: t,
-        displayText: t
-      }
-    })
-    // ret.list = filterPartialCompletions(cm, line, ret.list, 'text', /^type: Number:/)
-  }
-  // addTooltipHandlers(cm, ret)
-  return ret
-}
-
-function hintItems (cm, line, onlyGroups) {
-  if (!cm.state.$oh) return
-  const promise = itemsCache ? Promise.resolve(itemsCache) : cm.state.$oh.api.get('/rest/items')
-  return promise.then((data) => {
-    if (!itemsCache) itemsCache = data
-    if (onlyGroups) {
-      data = data.filter((item) => item.type === 'Group')
-    }
-    let ret = {
-      list: data
-        .map((item) => {
-          return {
-            text: item.name,
-            displayText: item.name,
-            description: `${item.label ? item.label + ' ' : ''}(${item.type})<br />${item.state}`
-          }
-        })
-        .sort((i1, i2) => i1.text.localeCompare(i2.text))
-    }
-    // ret.list = filterPartialCompletions(cm, line, ret.list)
-    // addTooltipHandlers(cm, ret)
-    return ret
+  return context.view.$oh.api.get('/rest/systeminfo/uom').then((data) => {
+    dimensions = data.uomInfo.dimensions.map((d) => d.dimension)
+    return dimensions
   })
 }
 
-function hintGroupTypes (cm, line) {
-  if (!cm.state.$oh) return
-  let ret = {
-    list: Types.GroupTypes.map((t) => {
+function hintTypes (context, line, position) {
+  const apply = (view, completion, _from, _to) => {
+    const insert = completion.label
+    const from = line.from + position
+    const to = line.to
+    view.dispatch(insertCompletionText(view.state, insert, from, to))
+  }
+
+  return {
+    from: completionStart(context),
+    validFor: /\w+/,
+    options: Types.ItemTypes.map((t) => {
       return {
-        text: t,
-        displayText: t
+        label: t,
+        apply
       }
     })
   }
-  // ret.list = filterPartialCompletions(cm, line, ret.list, 'text', /^groupType:( )?/)
-  // addTooltipHandlers(cm, ret)
-  return ret
 }
 
-function hintMetadata (cm, line) {
-  if (!cm.state.$oh) return
-  let ret = {
-    list: Metadata.map((m) => {
+function hintDimension (context, line, position) {
+  const apply = (view, completion, _from, _to) => {
+    const insert = completion.label
+    const from = line.from + position
+    const to = line.to
+    view.dispatch(insertCompletionText(view.state, insert, from, to))
+  }
+
+  return getDimensions(context).then((dimensions) => {
+    return {
+      from: completionStart(context),
+      validFor: /\w+/,
+      options: dimensions.map((d) => {
+        return {
+          label: d,
+          apply
+        }
+      })
+    }
+  })
+}
+
+function hintMetadata (context, line) {
+  const apply = (view, completion, _from, _to) => {
+    const insert = [
+      '      ' + completion.label + ':',
+      '        value: ""',
+      '        config: {}'
+    ].join('\n')
+    const from = line.from
+    const to = view.state.doc.lineAt(context.pos).to
+    view.dispatch(insertCompletionText(view.state, insert, from, to))
+  }
+
+  return {
+    from: completionStart(context),
+    validFor: /\w+/,
+    options: Metadata.map((m) => {
       return {
-        text: m.name + ':\n    value: ""\n    configuration: {}',
-        displayText: m.label
+        label: m.name,
+        info: m.label,
+        apply
       }
     })
   }
-  // ret.list = filterPartialCompletions(cm, line, ret.list)
-  // addTooltipHandlers(cm, ret)
-  return ret
 }
 
-export default function hint (cm, option, mode) {
-  const cursor = cm.getCursor()
-  const line = cm.getLine(cursor.line)
-  console.debug(`line: ${line}`)
+export default function hint (context) {
+  const line = context.state.doc.lineAt(context.pos)
+  if (!line) return
+  const parentLine = findParent(context, line)
 
-  const parentLineNr = findParent(cm, cursor.line)
-  const parentLine = cm.getLine(parentLineNr)
-  console.debug(`parent line (${parentLineNr}): ${parentLine}`)
-
-  let ret
-  if (line && line.match(/^type:/)) {
-    ret = hintItemTypes(cm, line)
-  } else if (line && line.match(/^groupType:/)) {
-    ret = hintGroupTypes(cm, line)
-  } else if (parentLine && parentLine.match(/^groupNames:/)) {
-    ret = hintItems(cm, line, true)
-  } else if (parentLine && parentLine.match(/^metadata:/)) {
-    ret = hintMetadata(cm, line)
+  if (line.text.match(/^ {4}type: /)) {
+    return hintTypes(context, line, 10)
+  } else if (line.text.match(/^ {4}dimension: /)) {
+    return hintDimension(context, line, 15)
+  } else if (line.text.match(/^ {6}type: /)) { // Group type
+    return hintTypes(context, line, 12)
+  } else if (line.text.match(/^ {6}dimension: /)) { // Group dimension
+    return hintDimension(context, line, 17)
+  } else if (parentLine && parentLine.text.match(/^ {4}groups:/)) {
+    return hintItems(context, { indent: 6, prefix: '- ', groupsOnly: true })
+  } else if (parentLine && parentLine.text.match(/^ {4}metadata:/)) {
+    return hintMetadata(context, line)
   }
-
-  // if (!(ret instanceof Promise)) addTooltipHandlers(cm, ret)
-
-  return ret
 }

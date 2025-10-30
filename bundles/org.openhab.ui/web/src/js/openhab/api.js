@@ -28,6 +28,9 @@ request.setup({
 })
 
 export default {
+  async request (parameters) {
+    return request(parameters)
+  },
   async get (uri, data) {
     return wrapPromise(request.json(uri, data))
   },
