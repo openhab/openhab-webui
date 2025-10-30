@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { reactive, toRaw, watch } from 'vue'
+import { reactive, watch } from 'vue'
 
 interface PinnedObjects {
   items: Array<string>

@@ -742,7 +742,6 @@ import ClipboardIcon from '@/components/util/clipboard-icon.vue'
 import RuleStatus from '@/components/rule/rule-status-mixin'
 import ThingStatus from '@/components/thing/thing-status-mixin'
 import cloneDeep from 'lodash/cloneDeep'
-import { use } from 'marked'
 
 export default {
   mixins: [RuleStatus, ThingStatus],
