@@ -79,9 +79,11 @@ function newSSEConnection (
     }
 
     // Event handlers
-    es.addEventListener('ready', (e: MessageEvent) => {
-      if (readyCallback) readyCallback(e.data)
-    })
+    if (readyCallback) {
+      es.addEventListener('ready', (e: MessageEvent) => {
+        readyCallback(e.data)
+      })
+    }
 
     es.addEventListener('alive', (e: MessageEvent) => {
       // Type 'e.data' is string, parse to get the object with 'interval'

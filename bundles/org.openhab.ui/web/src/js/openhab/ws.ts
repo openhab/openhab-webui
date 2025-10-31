@@ -87,7 +87,7 @@ function eventTypeFilterMessage (id: string, types: string[]): string {
  * @param {string[]} topics event topics to include
  * @returns {string}
  */
-function eventTopicFilterMesssage (id: string, topics: string[]): string {
+function eventTopicFilterMessage (id: string, topics: string[]): string {
   const message: WebSocketMessage = {
     type: 'WebSocketEvent',
     topic: 'openhab/websocket/filter/topic',
@@ -156,7 +156,7 @@ function newWSConnection (
 
   // Handle WebSocket message received
   socket.onmessage = (event: MessageEvent) => {
-    let evt: any = event.data
+    let evt: WebSocketMessage
     try {
       // The message is expected to be JSON, but we handle the case where it's not.
       evt = JSON.parse(event.data)
@@ -237,7 +237,7 @@ const WebSocketService = {
      */
     const extendedReadyCallback: ReadyCallback = (event: Event) => {
       socket.send(eventSourceFilterMessage(socket.id, [socket.id]))
-      if (Array.isArray(topics) && topics.length > 0) socket.send(eventTopicFilterMesssage(socket.id, topics))
+      if (Array.isArray(topics) && topics.length > 0) socket.send(eventTopicFilterMessage(socket.id, topics))
       if (readyCallback) readyCallback(event)
     }
 
