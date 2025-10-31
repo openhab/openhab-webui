@@ -46,12 +46,12 @@
               <f7-list v-if="developerStore.sortedCollectionNames.length > 0" class="pin-collections">
                 <f7-list-item group-title title="Saved Pin Collections" class="padding-vertical" />
                 <f7-list-item v-for="collectionName in developerStore.sortedCollectionNames"
-                               :ref="collectionName === currentPinCollection ? 'currentPinCollectionItem' : null"
-                               :key="collectionName"
-                               :title="collectionName"
-                               :link="true"
-                               :class="{ 'current-pin-collection': collectionName === currentPinCollection }"
-                               @click="loadPinCollection(collectionName)">
+                              :ref="collectionName === currentPinCollection ? 'currentPinCollectionItem' : null"
+                              :key="collectionName"
+                              :title="collectionName"
+                              :link="true"
+                              :class="{ 'current-pin-collection': collectionName === currentPinCollection }"
+                              @click="loadPinCollection(collectionName)">
                   <template #after>
                     <f7-link color="red"
                              icon-f7="trash"
