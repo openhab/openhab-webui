@@ -125,9 +125,9 @@
                                   :checked="hasTemplate && currentTemplate.uid === template.uid ? true : null"
                                   radio-icon="start"
                                   @change="selectTemplate(template.uid)">
-                      <template #title v-if="(topicLink = getTopicLink(template))">
+                      <template #title v-if="getTopicLink(template)">
                         &nbsp;
-                        <f7-link :href="topicLink"
+                        <f7-link :href="getTopicLink(template)"
                                  tooltip="View openHAB Community Marketplace topic for this template"
                                  target="_blank"
                                  class="external"
@@ -149,9 +149,9 @@
             </f7-block-title>
             <f7-list media-list>
               <f7-list-item :title="currentTemplate.label" :footer="currentTemplate.description">
-                <template #title v-if="(topicLink = getTopicLink(currentTemplate))">
+                <template #title v-if="currentTemplateTopicLink">
                   &nbsp;
-                  <f7-link :href="topicLink"
+                  <f7-link :href="currentTemplateTopicLink"
                            tooltip="View openHAB Community Marketplace topic for this template"
                            target="_blank"
                            class="external"
@@ -946,6 +946,9 @@ export default {
       }
       let result = this.templates.find((t) => t.uid === this.rule.templateUID)
       return result ? result.label : this.rule.templateUID
+    },
+    currentTemplateTopicLink () {
+      return this.getTopicLink(this.currentTemplate)
     },
     canRegenerate () {
       if (!this.rule || !this.rule.templateUID || !this.rule.templateState || this.rule.templateState === 'no-template' || this.rule.templateState === 'template-missing') {
