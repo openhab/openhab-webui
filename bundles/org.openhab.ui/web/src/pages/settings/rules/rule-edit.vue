@@ -121,7 +121,7 @@
                                   :footer="template.description"
                                   :value="template.uid"
                                   radio
-                                  :checked="hasTemplate && currentTemplate.uid === template.uid ? true : null"
+                                  :checked="currentTemplate && currentTemplate.uid === template.uid ? true : null"
                                   radio-icon="start"
                                   @change="selectTemplate(template.uid)">
                       <template #title>
