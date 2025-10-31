@@ -22,7 +22,7 @@
                  outline
                  small
                  :key="type"
-                 :active="codeType === type"
+                 :active="uiOptionsStore.codeEditorType === type"
                  @click="switchCodeType(type)">
         {{ type }}
       </f7-button>
@@ -89,6 +89,8 @@
 
 <script>
 import { f7 } from 'framework7-vue'
+import { mapStores } from 'pinia'
+import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
 import Editor from '@/components/config/controls/script-editor.vue'
 
@@ -139,7 +141,6 @@ export default {
   emits: ['changed', 'parsed'],
   data () {
     return {
-      codeType: localStorage.getItem('openhab.ui:codeViewer.type') || 'YAML',
       code: null,
       originalCode: null,
       displayCodeSwitcher: false,
@@ -149,7 +150,7 @@ export default {
   },
   computed: {
     editorMode () {
-      if (this.codeType === 'YAML') {
+      if (this.uiOptionsStore.codeEditorType === 'YAML') {
         switch (this.objectType) {
           case 'items':
             return 'application/vnd.openhab.item+yaml'
@@ -157,14 +158,17 @@ export default {
             return 'application/vnd.openhab.thing+yaml'
         }
       }
-      return this.mediaTypes[this.codeType]
+      return this.mediaTypes[this.uiOptionsStore.codeEditorType]
     },
     mediaTypes () {
       return SupportedMediaTypes[this.objectType] || DefaultMediaTypes
-    }
+    },
+    ...mapStores(useUIOptionsStore)
   },
   watch: {
-    dirty: function () { this.$emit('changed', this.dirty) }
+    dirty () {
+      this.$emit('changed', this.dirty)
+    }
   },
   methods: {
     /**
@@ -176,7 +180,7 @@ export default {
      * @param {function} onSuccessCallback - Optional. A callback function to call when the code has been generated
      */
     generateCode (codeType, onSuccessCallback) {
-      codeType ||= this.codeType
+      codeType ||= this.uiOptionsStore.codeEditorType
       const sourceMediaType = MediaType.JSON
       const targetMediaType = this.mediaTypes[codeType]
       const payload = {}
@@ -186,8 +190,7 @@ export default {
           this.code = code
           this.originalCode = code.repeat(1) // duplicate the string
           this.dirty = false
-          this.codeType = codeType
-          localStorage.setItem('openhab.ui:codeViewer.type', codeType)
+          this.uiOptionsStore.codeEditorType = codeType
           if (onSuccessCallback) {
             onSuccessCallback()
           }
@@ -205,7 +208,7 @@ export default {
      * @param {function} onSuccessCallback - Optional. A callback function to call when the code has been parsed
      */
     parseCode (onSuccessCallback, onFailureCallback) {
-      const sourceMediaType = this.mediaTypes[this.codeType]
+      const sourceMediaType = this.mediaTypes[this.uiOptionsStore.codeEditorType]
       const targetMediaType = MediaType.JSON
       this.$oh.api.request({
         method: 'POST',
@@ -227,7 +230,7 @@ export default {
             if (onFailureCallback) {
               onFailureCallback()
             }
-            f7.dialog.alert(`Error parsing ${this.codeType}: no ${this.objectType} found`).open()
+            f7.dialog.alert(`Error parsing ${this.uiOptionsStore.codeEditorType}: no ${this.objectType} found`).open()
           }
         })
         .catch((err) => {
@@ -263,7 +266,7 @@ export default {
               f7.popup.open('#code-errors')
             }
           } else {
-            f7.dialog.alert(`Error parsing ${this.codeType}: ${err.message || err.status}`).open()
+            f7.dialog.alert(`Error parsing ${this.uiOptionsStore.codeEditorType}: ${err.message || err.status}`).open()
           }
         })
     },
@@ -272,7 +275,7 @@ export default {
       this.dirty = this.code !== this.originalCode
     },
     switchCodeType (type) {
-      if (this.codeType === type) return
+      if (this.uiOptionsStore.codeEditorType === type) return
 
       if (this.readOnly || !this.dirty) {
         this.generateCode(type)

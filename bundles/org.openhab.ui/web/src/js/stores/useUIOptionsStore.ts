@@ -61,6 +61,8 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     localStorage.getItem('openhab.ui:panel.visibleBreakpointDisabled') === 'true'
   )
 
+  const codeEditorType = ref<string>(localStorage.getItem('openhab.ui:codeEditor.type') || 'YAML')
+
   // Getters
   function getDarkMode () {
     if (storedDarkMode.value === 'auto') {
@@ -132,6 +134,10 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     localStorage.setItem('openhab.ui:panel.visibleBreakpointDisabled', newValue.toString())
   })
 
+  watch(codeEditorType, (newValue) => {
+    localStorage.setItem('openhab.ui:codeEditor.type', newValue)
+  })
+
   function updateClasses () {
     if (getDarkMode() === 'dark') {
       Dom7('html').addClass('dark')
@@ -180,6 +186,7 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     hideChatInput,
     webAudio,
     visibleBreakpointDisabled,
+    codeEditorType,
 
     updateClasses,
     themeOptions
