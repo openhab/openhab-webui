@@ -103,8 +103,8 @@
                                      placeholder="name"
                                      required
                                      validate
-                                     pattern="^[A-Za-z][A-Za-z0-9\-]*$"
-                                     error-message="Required. A-Z,a-z,0-9,- only"
+                                     pattern="^[A-Za-z][A-Za-z0-9]*$"
+                                     error-message="Required. A-Z,a-z,0-9 only"
                                      @input="updateName($event)">
                         <template #inner-end>
                           <f7-icon v-if="!selectedTag.editable"
