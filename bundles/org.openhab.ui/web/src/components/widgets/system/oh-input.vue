@@ -13,11 +13,10 @@
               @focus="listenForEnterKey"
               @blur="stopListeningForEnterKey"
               @input="$evt => updated($evt.target.value)"
-              :change="updated"
               @calendar:change="updated"
               @texteditor:change="updated"
               @colorpicker:change="updated">
-      <template v-if="context.component.slots && context.component.slots.default">
+      <template v-if="context.component.slots && context.component.slots.default" #default>
         <generic-widget-component v-for="(slotComponent, idx) in context.component.slots.default"
                                   :context="childContext(slotComponent)"
                                   :key="'default-' + idx" />
@@ -39,11 +38,10 @@
               @focus="listenForEnterKey"
               @blur="stopListeningForEnterKey"
               @input="$evt => updated($evt.target.value)"
-              :change="updated"
               @calendar:change="updated"
               @texteditor:change="updated"
               @colorpicker:change="updated">
-      <template v-if="context.component.slots && context.component.slots.default">
+      <template v-if="context.component.slots && context.component.slots.default" #default>
         <generic-widget-component v-for="(slotComponent, idx) in context.component.slots.default"
                                   :context="childContext(slotComponent)"
                                   :key="'default-' + idx" />
