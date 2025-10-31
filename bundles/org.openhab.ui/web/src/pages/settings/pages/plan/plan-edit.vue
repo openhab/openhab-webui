@@ -146,7 +146,6 @@
 
 <script>
 import { defineAsyncComponent } from 'vue'
-import { utils } from 'framework7'
 import { f7, theme } from 'framework7-vue'
 
 import PageDesigner from '../pagedesigner-mixin'
@@ -186,7 +185,7 @@ export default {
       pageWidgetDefinition: OhPlanPage.widget(),
       forceEditMode: true,
       page: {
-        uid: 'page_' + utils.id(),
+        uid: 'page_' + f7.utils.id(),
         component: 'oh-plan-page',
         config: {},
         tags: [],

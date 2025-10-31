@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-// @ts-expect-error   TODO-V3.1
-import { utils } from 'framework7'
-const id = utils.id()
+import { f7 } from 'framework7-vue'
+
+const id = f7.utils.id()
 </script>

@@ -54,6 +54,12 @@ html
   .searchbar-backdrop
     display none
 
+/* Fixes an adjustments for list input */
+.list
+  textarea
+    padding-top 0
+    padding-bottom 0
+
 /* Adjustments for iOS & Material Design themes */
 .ios
 .md
@@ -324,21 +330,6 @@ html
   text-align center
   line-height 32px
 
-// TODO-V3.1 - should be able to be deleted in favor of the below since the dark class is added to the top-level html element now
-#framework7-root:not(.dark) .page-home:not(.standard-background),
-#framework7-root:not(.dark) .page-about:not(.standard-background),
-#framework7-root:not(.dark) .page-addon-store:not(.standard-background),
-#framework7-root:not(.dark) .page-addon-details:not(.standard-background),
-  --f7-page-bg-color #fff
-//#framework7-root:not(.dark) .page-settings
-
-html:not(.dark) .page
-html:not(.dark) .page-home:not(.standard-background),
-html:not(.dark) .page-about:not(.standard-background),
-html:not(.dark) .page-addon-store:not(.standard-background),
-html:not(.dark) .page-addon-details:not(.standard-background),
-  --f7-page-bg-color #fff
-
 // disable blur on card backdrop (poor performance - update: seems fixed)
 // .card-backdrop
 //   background rgba(0,0,0,0.2)
@@ -401,8 +392,7 @@ html:not(.dark) .page-addon-details:not(.standard-background),
 // Additional safe area fixes are in nomini.css due to CssMinimizerPlugin minimizing app.styl and removing the unit px from 0px,
 // which breaks calculcations using the overwritten CSS variables.
 
-// TODO-V3.1: Check if this actually fixes the issue, because e.g. config-parameter.vue needed its own CSS
-// Fix for grouped list indentation
+// Fix for grouped list indentation, e.g. Pages list
 .list ul .list-group ul
   --f7-list-in-list-padding-left 0px
   --f7-list-item-padding-horizontal 0px

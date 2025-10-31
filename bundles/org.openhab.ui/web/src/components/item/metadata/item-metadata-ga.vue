@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import { utils } from 'framework7'
+import { f7 } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
 import GoogleDefinitions from '@/assets/definitions/metadata/ga'
@@ -72,7 +72,7 @@ export default {
   data () {
     return {
       classesDefs: Object.keys(GoogleDefinitions),
-      classSelectKey: utils.id()
+      classSelectKey: f7.utils.id()
     }
   },
   computed: {

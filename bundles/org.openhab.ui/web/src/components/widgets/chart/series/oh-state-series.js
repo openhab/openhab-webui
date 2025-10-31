@@ -1,31 +1,22 @@
-import { utils } from 'framework7'
+import { f7 } from 'framework7-vue'
 import ComponentId from '../../component-id'
 import { graphic } from 'echarts/core'
 
 function renderState (params, api) {
   const yValue = api.value(0)
   const start = api.coord([api.value(1), yValue])
-  const duration = api.value(2)
-  const end = api.coord([api.value(1) + duration, yValue])
+  const end = api.coord([api.value(2), yValue])
   const state = api.value(3)
   const yHeight = api.value(4)
 
   if (state === 'UNDEF' || state === 'NULL') return
   const height = api.size([0, 1])[1] * yHeight
-  const rectShape = graphic.clipRectByRect(
-    {
-      x: start[0],
-      y: start[1] - height / 2,
-      width: end[0] - start[0],
-      height
-    },
-    {
-      x: params.coordSys.x,
-      y: params.coordSys.y,
-      width: params.coordSys.width,
-      height: params.coordSys.height
-    }
-  )
+  const rectShape = {
+    x: start[0],
+    y: start[1] - height / 2,
+    width: end[0] - start[0],
+    height
+  }
   return (
     rectShape && {
       type: 'rect',
@@ -53,6 +44,7 @@ export default {
       itemName: 3
     }
     series.colorBy = 'data'
+    series.clip = true
     series.label = series.label || { }
     if (series.label.show === undefined) series.label.show = true
     series.label.position = series.label.position || 'insideLeft'
@@ -61,7 +53,7 @@ export default {
     series.tooltip = series.tooltip || { }
     if (series.tooltip.formatter === undefined) {
       series.tooltip.formatter = (params) => {
-        let durationSec = params.value[2] / 1000
+        let durationSec = (params.value[2] - params.value[1]) / 1000
         let hours = Math.floor(durationSec / 3600).toString().padStart(2, '0')
         let minutes = Math.floor((durationSec - (hours * 3600)) / 60).toString().padStart(2, '0')
         return params.seriesName + '<br />' + params.marker + params.name + '&#9;(' + hours + ':' + minutes + ')'
@@ -90,11 +82,10 @@ export default {
 
         itemStartTime = itemStartTime || new Date(itemPoints[i].time)
         let itemEndTime = new Date(itemPoints[i + 1] ? itemPoints[i + 1].time : endTime)
-        let itemDuration = itemEndTime - itemStartTime
 
         let stateColor = (series.stateColor) ? series.stateColor[itemPoints[i].state] : null
         data.push({
-          value: [series.yValue || 0, itemStartTime, itemDuration, itemPoints[i].state, series.yHeight || 0.6],
+          value: [series.yValue || 0, itemStartTime, itemEndTime, itemPoints[i].state, series.yHeight || 0.6],
           itemStyle: {
             color: stateColor
           }
@@ -104,7 +95,7 @@ export default {
 
       series.data = data
 
-      series.id = `oh-state-series#${series.item}#${utils.id()}`
+      series.id = `oh-state-series#${series.item}#${f7.utils.id()}`
     }
 
     if (!series.tooltip) {

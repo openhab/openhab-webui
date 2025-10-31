@@ -136,7 +136,6 @@
 
 <script>
 import { defineAsyncComponent } from 'vue'
-import { utils } from 'framework7'
 import { f7, theme } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
@@ -225,7 +224,7 @@ export default {
     },
     initializeNewTransformation () {
       this.transformation = {
-        uid: utils.id(),
+        uid: f7.utils.id(),
         label: '',
         type: '',
         configuration: {

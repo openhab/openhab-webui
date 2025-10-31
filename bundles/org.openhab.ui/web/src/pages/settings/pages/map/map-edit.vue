@@ -140,7 +140,6 @@
 
 <script>
 import { defineAsyncComponent } from 'vue'
-import { utils } from 'framework7'
 import { f7, theme } from 'framework7-vue'
 
 import PageDesigner from '../pagedesigner-mixin'
@@ -228,7 +227,7 @@ export default {
       pageWidgetDefinition,
       forceEditMode: true,
       page: {
-        uid: 'page_' + utils.id(),
+        uid: 'page_' + f7.utils.id(),
         component: 'oh-map-page',
         config: {},
         tags: [],

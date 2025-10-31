@@ -108,7 +108,6 @@
 
 <script>
 import { defineAsyncComponent } from 'vue'
-import { utils } from 'framework7'
 import { f7, theme } from 'framework7-vue'
 
 import PageDesignerMixin from '@/pages/settings/pages/pagedesigner-mixin'
@@ -140,7 +139,7 @@ export default {
   data () {
     return {
       page: {
-        uid: 'page_' + utils.id(),
+        uid: 'page_' + f7.utils.id(),
         component: 'oh-tabs-page',
         config: {},
         tags: [],

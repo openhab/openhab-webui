@@ -23,7 +23,7 @@ export default {
      *
      * @returns {Promise<void>}
      */
-    embedSvg () {
+    async embedSvg () {
       // Load the real SVG content, in editmode we add a random number to the URL to prevent caching
       const svgUrl = (this.context.editmode) ? this.config.imageUrl + `?rnd=${Math.random()}` : this.config.imageUrl
       return fetch(svgUrl)

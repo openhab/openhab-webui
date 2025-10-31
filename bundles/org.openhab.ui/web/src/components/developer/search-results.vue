@@ -40,13 +40,13 @@
                      :animate="false" />
             <f7-link v-if="isPinned('items', item, 'name')"
                      @click="$emit('unpin', 'items', item, 'name')"
-                     color="red"
-                     icon-f7="pin_slash_fill"
+                     color="blue"
+                     icon-f7="pin_fill"
                      icon-size="18"
                      tooltip="Unpin" />
             <f7-link v-else
                      @click="$emit('pin', 'items', item, 'name')"
-                     color="blue"
+                     color="gray"
                      icon-f7="unpin"
                      icon-size="18"
                      tooltip="Pin" />
@@ -85,13 +85,13 @@
                      :animate="false" />
             <f7-link v-if="isPinned('things', thing, 'UID')"
                      @click="$emit('unpin', 'things', thing, 'UID')"
-                     color="red"
-                     icon-f7="pin_slash_fill"
+                     color="blue"
+                     icon-f7="pin_fill"
                      icon-size="18"
                      tooltip="Unpin" />
             <f7-link v-else
                      @click="$emit('pin', 'things', thing, 'UID')"
-                     color="blue"
+                     color="gray"
                      icon-f7="unpin"
                      icon-size="18"
                      tooltip="Pin" />
@@ -130,13 +130,13 @@
                      :animate="false" />
             <f7-link v-if="isPinned('rules', rule, 'uid')"
                      @click="$emit('unpin', 'rules', rule, 'uid')"
-                     color="red"
-                     icon-f7="pin_slash_fill"
+                     color="blue"
+                     icon-f7="pin_fill"
                      icon-size="18"
                      tooltip="Unpin" />
             <f7-link v-else
                      @click="$emit('pin', 'rules', rule, 'uid')"
-                     color="blue"
+                     color="gray"
                      icon-f7="unpin"
                      icon-size="18"
                      tooltip="Pin" />
@@ -175,13 +175,13 @@
                      :animate="false" />
             <f7-link v-if="isPinned('scenes', rule, 'uid')"
                      @click="$emit('unpin', 'scenes', rule, 'uid')"
-                     color="red"
-                     icon-f7="pin_slash_fill"
+                     color="blue"
+                     icon-f7="pin_fill"
                      icon-size="18"
                      tooltip="Unpin" />
             <f7-link v-else
                      @click="$emit('pin', 'scenes', rule, 'uid')"
-                     color="blue"
+                     color="gray"
                      icon-f7="unpin"
                      icon-size="18"
                      tooltip="Pin" />
@@ -220,13 +220,13 @@
                      :animate="false" />
             <f7-link v-if="isPinned('scripts', rule, 'uid')"
                      @click="$emit('unpin', 'scripts', rule, 'uid')"
-                     color="red"
-                     icon-f7="pin_slash_fill"
+                     color="blue"
+                     icon-f7="pin_fill"
                      icon-size="18"
                      tooltip="Unpin" />
             <f7-link v-else
                      @click="$emit('pin', 'scripts', rule, 'uid')"
-                     color="blue"
+                     color="gray"
                      icon-f7="unpin"
                      icon-size="18"
                      tooltip="Pin" />
@@ -265,13 +265,13 @@
                      :animate="false" />
             <f7-link v-if="isPinned('pages', page, 'uid')"
                      @click="$emit('unpin', 'pages', page, 'uid')"
-                     color="red"
-                     icon-f7="pin_slash_fill"
+                     color="blue"
+                     icon-f7="pin_fill"
                      icon-size="18"
                      tooltip="Unpin" />
             <f7-link v-else
                      @click="$emit('pin', 'pages', page, 'uid')"
-                     color="blue"
+                     color="gray"
                      icon-f7="unpin"
                      icon-size="18"
                      tooltip="Pin" />
@@ -309,13 +309,13 @@
                      :animate="false" />
             <f7-link v-if="isPinned('widgets', widget, 'uid')"
                      @click="$emit('unpin', 'widgets', widget, 'uid')"
-                     color="red"
-                     icon-f7="pin_slash_fill"
+                     color="blue"
+                     icon-f7="pin_fill"
                      icon-size="18"
                      tooltip="Unpin" />
             <f7-link v-else
                      @click="$emit('pin', 'widgets', widget, 'uid')"
-                     color="blue"
+                     color="gray"
                      icon-f7="unpin"
                      icon-size="18"
                      tooltip="Pin" />
@@ -354,13 +354,13 @@
                      :animate="false" />
             <f7-link v-if="isPinned('transformations', transformation, 'uid')"
                      @click="$emit('unpin', 'transformations', transformation, 'uid')"
-                     color="red"
-                     icon-f7="pin_slash_fill"
+                     color="blue"
+                     icon-f7="pin_fill"
                      icon-size="18"
                      tooltip="Unpin" />
             <f7-link v-else
                      @click="$emit('pin', 'transformations', transformation, 'uid')"
-                     color="blue"
+                     color="gray"
                      icon-f7="unpin"
                      icon-size="18"
                      tooltip="Pin" />
@@ -399,13 +399,13 @@
                      :animate="false" />
             <f7-link v-if="isPinned('persistenceConfigs', persistenceConfig, 'serviceId')"
                      @click="$emit('unpin', 'persistenceConfigs', persistenceConfig, 'serviceId')"
-                     color="red"
-                     icon-f7="pin_slash_fill"
+                     color="blue"
+                     icon-f7="pin_fill"
                      icon-size="18"
                      tooltip="Unpin" />
             <f7-link v-else
                      @click="$emit('pin', 'persistenceConfigs', persistenceConfig, 'serviceId')"
-                     color="blue"
+                     color="gray"
                      icon-f7="unpin"
                      icon-size="18"
                      tooltip="Pin" />

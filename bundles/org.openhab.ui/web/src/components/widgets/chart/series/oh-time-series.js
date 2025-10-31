@@ -1,5 +1,4 @@
-import { utils } from 'framework7'
-import dayjs from 'dayjs'
+import { f7 } from 'framework7-vue'
 
 import ComponentId from '../../component-id'
 import MarkArea from './oh-mark-area'
@@ -32,7 +31,7 @@ export default {
       })
 
       series.data = data
-      series.id = `oh-time-series#${series.item}#${utils.id()}`
+      series.id = `oh-time-series#${series.item}#${f7.utils.id()}`
     }
 
     // other things

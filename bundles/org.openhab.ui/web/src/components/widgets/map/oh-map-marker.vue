@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { utils } from 'framework7'
+import { f7 } from 'framework7-vue'
 
 import mixin from '../widget-mixin'
 import { LMarker, LTooltip, LIcon } from '@vue-leaflet/vue-leaflet'
@@ -32,7 +32,7 @@ export default {
   emits: ['update'],
   data () {
     return {
-      markerKey: utils.id()
+      markerKey: f7.utils.id()
     }
   },
   computed: {
@@ -56,7 +56,7 @@ export default {
     icon () {
       if (this.config.icon && this.config.icon.indexOf('oh:') === 0) {
         return this.$oh.media.getIcon(this.config.icon.substring(3)).then((icon) => {
-          this.markerKey = utils.id()
+          this.markerKey = f7.utils.id()
           this.$emit('update')
           return icon
         })

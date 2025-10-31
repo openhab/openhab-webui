@@ -190,6 +190,8 @@ export default {
       layout: [],
       screenWidth: Number,
       screenHeight: Number,
+      windowWidth: Number,
+      windowHeight: Number,
       fullscreen: this.$fullscreen.isFullscreen,
       navbarHidden: false,
       style: {

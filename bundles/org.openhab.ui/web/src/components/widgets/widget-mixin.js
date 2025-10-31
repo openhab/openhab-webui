@@ -1,6 +1,6 @@
 // Import into widget components as a mixin!
 
-import { utils } from 'framework7'
+import { f7 } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
 import scope from 'scope-css'
@@ -9,7 +9,6 @@ import WidgetExpressionMixin from '@/components/widgets/widget-expression-mixin'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 import { useUserStore } from '@/js/stores/useUserStore'
 import { useComponentsStore } from '@/js/stores/useComponentsStore'
-import { useStatesStore } from '@/js/stores/useStatesStore'
 
 export default {
   mixins: [WidgetExpressionMixin],
@@ -87,7 +86,7 @@ export default {
     if (this.context?.component?.config?.stylesheet) {
       if (!this.$el.classList) return // widget is not rendered yet, skip scoped styling
 
-      this.cssUid = 'scoped-' + utils.id()
+      this.cssUid = 'scoped-' + f7.utils.id()
 
       this.$el.classList.add(this.cssUid)
 

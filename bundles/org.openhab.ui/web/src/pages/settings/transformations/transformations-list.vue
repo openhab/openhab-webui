@@ -1,5 +1,5 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn">
+  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar>
       <oh-nav-content title="Transformations" back-link="Settings" back-link-url="/settings/">
         <template #right>
@@ -169,6 +169,9 @@ import ClipboardIcon from '@/components/util/clipboard-icon.vue'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+import { useLastSearchQueryStore } from '@/js/stores/useLastSearchQueryStore'
+
+const lastSearchQueryStore = useLastSearchQueryStore()
 
 export default {
   props: {
@@ -189,8 +192,7 @@ export default {
       initSearchbar: false,
       selectedTransformations: [],
       groupBy: 'alphabetical',
-      showCheckboxes: false,
-      searchQuery: ''    // TODO-V3.1 - this was never implemented in exisitng UI
+      showCheckboxes: false
     }
   },
   computed: {
@@ -228,18 +230,28 @@ export default {
     onPageAfterIn () {
       this.load()
     },
+    onPageBeforeOut (event) {
+      lastSearchQueryStore.lastTransformationSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
+    },
     load () {
       if (this.loading) return
       this.loading = true
-      this.loading = true
+
+      if (this.initSearchbar) {
+        lastSearchQueryStore.lastTransformationSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
+      }
+      this.initSearchbar = false
+
       this.$oh.api.get('/rest/transformations').then((data) => {
         this.transformations = data.sort((a, b) => (a.label || a.uid).localeCompare(b.label || a.uid))
         this.loading = false
         this.ready = true
-        setTimeout(() => {
-          this.initSearchbar = true
+        this.initSearchbar = true
+
+        nextTick(() => {
           if (this.$refs.listIndex) this.$refs.listIndex.update()
           if (this.$device.desktop && this.$refs.searchbar) this.$refs.searchbar.$el.f7Searchbar.$inputEl[0].focus()
+          this.$refs.searchbar?.$el.f7Searchbar.search(lastSearchQueryStore.lastTransformationSearchQuery || '')
         })
       })
     },

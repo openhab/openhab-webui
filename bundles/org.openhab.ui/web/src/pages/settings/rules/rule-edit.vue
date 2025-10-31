@@ -345,7 +345,6 @@
 
 <script>
 import { nextTick, defineAsyncComponent } from 'vue'
-import { utils } from 'framework7'
 import { f7, theme } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
@@ -456,7 +455,7 @@ export default {
           let newRule
           if (this.ruleCopy) {
             newRule = cloneDeep(this.ruleCopy)
-            newRule.uid = utils.id()
+            newRule.uid = f7.utils.id()
             if (newRule.templateUID) {
               newRule.triggers = []
               newRule.actions = []
@@ -467,7 +466,7 @@ export default {
             }
           } else {
             newRule = {
-              uid: utils.id(),
+              uid: f7.utils.id(),
               name: '',
               triggers: [],
               actions: [],
@@ -549,11 +548,11 @@ export default {
         }
       }
       if (!this.rule.uid) {
-        f7.dialog.alert('Please give an ID to the rule')
+        f7.dialog.alert('Please provide a unique rule ID. The ID must not be empty and should only contain letters, numbers, hyphens or underscores.', 'ID required').open()
         return Promise.reject()
       }
       if (!this.rule.name) {
-        f7.dialog.alert('Please give a name to the rule')
+        f7.dialog.alert('Please provide a rule label. The label is required and will be shown in the UI to identify this rule.', 'Label required').open()
         return Promise.reject()
       }
       const promise = (this.createMode)

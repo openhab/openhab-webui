@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { utils } from 'framework7'
+import { f7 } from 'framework7-vue'
 
 import mixin from '../widget-mixin'
 import { OhContextDefinition } from '@/assets/definitions/widgets/system'
@@ -15,7 +15,7 @@ export default {
   widget: OhContextDefinition,
   data () {
     return {
-      varScope: (this.context.varScope || 'varScope') + '-' + utils.id()
+      varScope: (this.context.varScope || 'varScope') + '-' + f7.utils.id()
     }
   },
   computed: {

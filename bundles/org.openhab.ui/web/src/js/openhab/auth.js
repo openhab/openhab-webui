@@ -1,4 +1,4 @@
-import { utils } from 'framework7'
+import { f7 } from 'framework7-vue'
 
 import { useUserStore } from '@/js/stores/useUserStore'
 
@@ -32,7 +32,7 @@ if (document.cookie.indexOf('X-OPENHAB-AUTH-HEADER') >= 0) tokenInCustomHeader =
 export async function authorize (setup) {
   import('pkce-challenge').then((PkceChallenge) => {
     const pkceChallenge = PkceChallenge.default()
-    const authState = (setup ? 'setup-' : '') + utils.id()
+    const authState = (setup ? 'setup-' : '') + f7.utils.id()
 
     sessionStorage.setItem('openhab.ui:codeVerifier', pkceChallenge.code_verifier)
     sessionStorage.setItem('openhab.ui:authState', authState)

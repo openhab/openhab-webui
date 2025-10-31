@@ -4,7 +4,7 @@
       v-if="model.item.created !== false"
       :item="model.item"
       :context="context"
-      :key="utils.id()" />
+      :key="f7.utils.id()" />
 
     <f7-block-title>Item</f7-block-title>
     <item-details
@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { utils } from 'framework7'
+import { f7 } from 'framework7-vue'
 
 import ItemStatePreview from '@/components/item/item-state-preview.vue'
 import ItemDetails from '@/components/model/item-details.vue'
@@ -52,7 +52,7 @@ export default {
   emits: ['item-updated', 'item-created', 'item-removed', 'cancel-create'],
   setup () {
     return {
-      utils
+      f7
     }
   }
 }

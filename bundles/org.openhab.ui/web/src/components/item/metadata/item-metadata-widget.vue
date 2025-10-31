@@ -85,7 +85,7 @@
 
 <script>
 import { nextTick } from 'vue'
-import { utils } from 'framework7'
+import { f7 } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
 import ConfigSheet from '@/components/config/config-sheet.vue'
@@ -120,7 +120,7 @@ export default {
       defaultComponent: {},
       currentComponent: {},
       previewContext: {},
-      previewWidgetKey: utils.id(),
+      previewWidgetKey: f7.utils.id(),
       standardWidgets: Object.values(StandardWidgets).filter((c) => c.widget).map((c) => c.widget()).sort((a, b) => { return a.name.localeCompare(b.name) }),
       standardListWidgets: Object.values(StandardListWidgets).filter((c) => c.widget && typeof c.widget === 'function').map((c) => c.widget()).sort((a, b) => { return a.name.localeCompare(b.name) }),
       standardCellWidgets: Object.values(StandardCellWidgets).filter((c) => c.widget && typeof c.widget === 'function').map((c) => c.widget()).sort((a, b) => { return a.name.localeCompare(b.name) }),
@@ -256,7 +256,7 @@ export default {
       }
       Object.assign(this.currentComponent.config, this.metadata.config || {})
       this.setPreviewContext()
-      this.previewWidgetKey = utils.id()
+      this.previewWidgetKey = f7.utils.id()
     }
   }
 }

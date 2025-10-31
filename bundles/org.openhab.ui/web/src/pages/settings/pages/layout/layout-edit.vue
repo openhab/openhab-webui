@@ -186,7 +186,6 @@
 
 <script>
 import { nextTick, defineAsyncComponent } from 'vue'
-import { utils } from 'framework7'
 import { f7, theme } from 'framework7-vue'
 
 import YAML from 'yaml'
@@ -232,7 +231,7 @@ export default {
   data () {
     return {
       page: {
-        uid: 'page_' + utils.id(),
+        uid: 'page_' + f7.utils.id(),
         component: 'oh-layout-page',
         config: {},
         tags: [],
