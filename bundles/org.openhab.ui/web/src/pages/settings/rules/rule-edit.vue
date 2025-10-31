@@ -107,7 +107,7 @@
                     <f7-list-item title="No template"
                                   footer="Create a new rule from scratch"
                                   radio
-                                  :checked="hasTemplate"
+                                  :checked="!hasTemplate"
                                   radio-icon="start"
                                   :value="''"
                                   @change="selectTemplate(null)" />
