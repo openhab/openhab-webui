@@ -156,7 +156,7 @@
                 <f7-button text="Stop Streaming" @click="stopSSE()" v-if="sseClient" />
                 <f7-list media-list>
                   <f7-list-item v-for="event in sseEvents"
-                                :key="event.time.getTime()"
+                                :key="event.time.getTime() + '#' + f7.utils.id()"
                                 :title="event.topic"
                                 :subtitle="event.payload"
                                 :after="event.type" />
@@ -177,7 +177,7 @@
                 <f7-button text="Stop Streaming" @click="stopWS()" v-if="wsClient" />
                 <f7-list media-list>
                   <f7-list-item v-for="event in wsEvents"
-                                :key="event.time.getTime()"
+                                :key="event.time.getTime() + '#' + f7.utils.id()"
                                 :title="event.topic"
                                 :subtitle="event.payload"
                                 :after="event.type" />
