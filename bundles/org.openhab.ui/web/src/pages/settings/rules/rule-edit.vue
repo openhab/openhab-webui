@@ -548,11 +548,11 @@ export default {
         }
       }
       if (!this.rule.uid) {
-        f7.dialog.alert('Please give an ID to the rule')
+        f7.dialog.alert('Please provide a unique rule ID. The ID must not be empty and should only contain letters, numbers, hyphens or underscores.', 'ID required').open()
         return Promise.reject()
       }
       if (!this.rule.name) {
-        f7.dialog.alert('Please give a name to the rule')
+        f7.dialog.alert('Please provide a rule label. The label is required and will be shown in the UI to identify this rule.', 'Label required').open()
         return Promise.reject()
       }
       const promise = (this.createMode)
