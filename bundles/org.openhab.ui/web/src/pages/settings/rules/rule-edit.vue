@@ -118,24 +118,26 @@
                   <f7-list media-list>
                     <f7-list-item v-for="template in templates"
                                   :key="template.uid"
-                                  :title="template.label"
                                   :footer="template.description"
                                   :value="template.uid"
                                   radio
                                   :checked="hasTemplate && currentTemplate.uid === template.uid ? true : null"
                                   radio-icon="start"
                                   @change="selectTemplate(template.uid)">
-                      <template #title v-if="getTopicLink(template)">
-                        &nbsp;
-                        <f7-link :href="getTopicLink(template)"
-                                 tooltip="View openHAB Community Marketplace topic for this template"
-                                 target="_blank"
-                                 class="external"
-                                 color="gray"
-                                 icon="info_circle"
-                                 icon-ios="f7:info_circle"
-                                 icon-md="f7:info_circle"
-                                 icon-aurora="f7:info_circle" />
+                      <template #title>
+                        {{ template.label }}
+                        <template v-if="getTopicLink(template)">
+                          &nbsp;
+                          <f7-link :href="getTopicLink(template)"
+                                   tooltip="View openHAB Community Marketplace topic for this template"
+                                   target="_blank"
+                                   class="external"
+                                   color="gray"
+                                   icon="info_circle"
+                                   icon-ios="f7:info_circle"
+                                   icon-md="f7:info_circle"
+                                   icon-aurora="f7:info_circle" />
+                        </template>
                       </template>
                     </f7-list-item>
                   </f7-list>
@@ -148,18 +150,21 @@
               Template
             </f7-block-title>
             <f7-list media-list>
-              <f7-list-item :title="currentTemplate.label" :footer="currentTemplate.description">
-                <template #title v-if="currentTemplateTopicLink">
-                  &nbsp;
-                  <f7-link :href="currentTemplateTopicLink"
-                           tooltip="View openHAB Community Marketplace topic for this template"
-                           target="_blank"
-                           class="external"
-                           color="gray"
-                           icon="info_circle"
-                           icon-ios="f7:info_circle"
-                           icon-md="f7:info_circle"
-                           icon-aurora="f7:info_circle" />
+              <f7-list-item :footer="currentTemplate.description">
+                <template #title>
+                  {{ currentTemplate.label }}
+                  <template v-if="currentTemplateTopicLink">
+                    &nbsp;
+                    <f7-link :href="currentTemplateTopicLink"
+                             tooltip="View openHAB Community Marketplace topic for this template"
+                             target="_blank"
+                             class="external"
+                             color="gray"
+                             icon="info_circle"
+                             icon-ios="f7:info_circle"
+                             icon-md="f7:info_circle"
+                             icon-aurora="f7:info_circle" />
+                  </template>
                 </template>
               </f7-list-item>
             </f7-list>
