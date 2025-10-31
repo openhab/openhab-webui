@@ -186,7 +186,7 @@ export default {
     async enableMicrophone (webrtc, audioTransceiver) {
       try {
         if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-          console.warn('getUserMedia not supported in this browser')
+          f7.dialog.alert('To enable the microphone, please make sure that HTTPS is in use and WebRTC is supported by this browser, including microphone access.')
           return
         }
         // If already enabled, do nothing
