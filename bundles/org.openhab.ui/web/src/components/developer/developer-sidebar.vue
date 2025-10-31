@@ -38,7 +38,7 @@
                     <input type="text"
                            placeholder="Save current pins as"
                            v-model="newCollectionName"
-                           @keyup="savePinCollection">
+                           @keyup.enter="savePinCollection">
                   </template>
                 </f7-list-input>
               </f7-list>
@@ -1053,7 +1053,6 @@ export default {
       useDeveloperStore().pinnedObjects[type] = []
     },
     savePinCollection (evt) {
-      if (evt.key !== 'Enter') return
       this.newCollectionName = this.newCollectionName.trim()
       if (!this.newCollectionName) return
 
@@ -1064,7 +1063,7 @@ export default {
       }
 
       if (useDeveloperStore().pinCollections[this.newCollectionName]) {
-        f7.dialog.confirm('Collection with this name already exists, do you want to overwrite it?', () => {
+        f7.dialog.confirm('A Pin Collection with this name already exists. Do you want to overwrite it?', 'Overwrite Collection?', () => {
           save()
         })
       } else {
@@ -1072,7 +1071,13 @@ export default {
       }
     },
     deletePinCollection (name) {
-      delete useDeveloperStore().pinCollections[name]
+      f7.dialog.confirm(
+        `Are you sure you want to delete the '${name}' collection? This action cannot be undone.`,
+        'Delete Pin Collection?',
+        () => {
+          delete useDeveloperStore().pinCollections[name]
+        }
+      )
     },
     loadPinCollection (name) {
       const pinCollection = useDeveloperStore().pinCollections[name]
