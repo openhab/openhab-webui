@@ -107,7 +107,7 @@
                     <f7-list-item title="No template"
                                   footer="Create a new rule from scratch"
                                   radio
-                                  :checked="!hasTemplate"
+                                  :checked="!hasTemplate ? true : null"
                                   radio-icon="start"
                                   :value="''"
                                   @change="selectTemplate(null)" />
@@ -116,18 +116,18 @@
                     or choose a rule template:
                   </f7-block-header>
                   <f7-list media-list>
-                    <f7-list-item :key="template.uid"
-                                  v-for="template in templates"
+                    <f7-list-item v-for="template in templates"
+                                  :key="template.uid"
                                   :title="template.label"
                                   :footer="template.description"
                                   :value="template.uid"
                                   radio
-                                  :checked="hasTemplate && currentTemplate.uid === template.uid"
+                                  :checked="hasTemplate && currentTemplate.uid === template.uid ? true : null"
                                   radio-icon="start"
                                   @change="selectTemplate(template.uid)">
-                      <template #title v-if="getTopicLink(template)">
+                      <template #title v-if="(topicLink = getTopicLink(template))">
                         &nbsp;
-                        <f7-link :href="getTopicLink(template)"
+                        <f7-link :href="topicLink"
                                  tooltip="View openHAB Community Marketplace topic for this template"
                                  target="_blank"
                                  class="external"
@@ -149,9 +149,9 @@
             </f7-block-title>
             <f7-list media-list>
               <f7-list-item :title="currentTemplate.label" :footer="currentTemplate.description">
-                <template #title v-if="getTopicLink(currentTemplate)">
+                <template #title v-if="(topicLink = getTopicLink(currentTemplate))">
                   &nbsp;
-                  <f7-link :href="getTopicLink(currentTemplate)"
+                  <f7-link :href="topicLink"
                            tooltip="View openHAB Community Marketplace topic for this template"
                            target="_blank"
                            class="external"
@@ -692,7 +692,9 @@ export default {
       } else {
         this.currentTemplate = null
       }
-      f7.accordion.close(this.$refs.templateAccordion.$el)
+      if (this.$refs.templateAccordion) {
+        f7.accordion.close(this.$refs.templateAccordion.$el)
+      }
     },
     keepTemplate (keep) {
       if (!this.ruleCopy) return
