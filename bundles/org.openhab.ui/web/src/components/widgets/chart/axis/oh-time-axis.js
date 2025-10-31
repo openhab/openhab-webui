@@ -10,9 +10,11 @@ export default {
     axis.type = 'time'
     if (chart.config.chartType) {
       axis.min = (v) => {
+        if(isNaN(v.min)) return startTime.toDate().getTime()
         return isFinite(v.min) ? dayjs(v.min).startOf(chart.config.chartType).toDate().getTime() : v.min
       }
       axis.max = (v) => {
+        if(isNaN(v.min)) return endTime.toDate().getTime()
         return isFinite(v.min) ? dayjs(v.min).startOf(chart.config.chartType).add(1, chart.config.chartType === 'isoWeek' ? 'week' : chart.config.chartType).toDate().getTime() : v.max
       }
     } else {
