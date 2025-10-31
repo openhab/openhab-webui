@@ -26,7 +26,7 @@
         </f7-block>
         <f7-list v-if="Object.keys(developerStore.pinCollections).length > 0 || isAnythingPinned">
           <f7-list-item accordion-item
-                        title="Saved Pins"
+                        :title="'Saved Pins' + (currentPinCollection ? ' (' + currentPinCollection + ')' : '')"
                         ref="pinCollectionsAccordion"
                         @accordion:opened="onPinCollectionsAccordionOpened">
             <f7-accordion-content>
@@ -56,7 +56,7 @@
                     <f7-link color="red"
                              icon-f7="trash"
                              tooltip="Delete Collection"
-                             @click.stop="delete developerStore.pinCollections[collectionName]" />
+                             @click.stop="deletePinCollection(collectionName)" />
                   </template>
                 </f7-list-item>
               </f7-list>
@@ -704,7 +704,7 @@
       max-height 11rem /* Make the last item partially show to hint that there are more items */
       overflow-y auto
       .current-pin-collection
-        background-color rgba(33,150,243, 0.2) /* How do we use the theme color (blue) here without hardcoding? */
+        background-color unquote('rgba(var(--f7-color-blue-rgb, 33,150,243), 0.12)')
 
   .searchbar
     width 100%
@@ -1085,11 +1085,17 @@ export default {
         saveCurrentCollection()
       }
     },
+    deletePinCollection (name) {
+      if (this.currentPinCollection === name) {
+        this.currentPinCollection = ''
+      }
+      delete useDeveloperStore().pinCollections[name]
+    },
     loadPinCollection (name) {
       if (!useDeveloperStore().pinCollections[name]) return
 
       const load = () => {
-        useDeveloperStore().pinnedObjects = cloneDeep(useDeveloperStore().pinCollections[name])
+        Object.assign(useDeveloperStore().pinnedObjects, cloneDeep(useDeveloperStore().pinCollections[name]))
         f7.accordion.close(this.$refs.pinCollectionsAccordion.$el)
         this.currentPinCollection = name
         this.$nextTick(() => {
@@ -1103,7 +1109,7 @@ export default {
         f7.accordion.close(this.$refs.pinCollectionsAccordion.$el)
       }
 
-      if (this.pinsDirty && this.isAnythingPinned) {
+      if (this.pinsDirty) {
         if (this.currentPinCollection === name) {
           f7.dialog.confirm(`Save changes to '${this.currentPinCollection}' collection?`, () => {
             saveCurrentCollection()
@@ -1114,32 +1120,34 @@ export default {
           return
         }
 
-        f7.dialog.create({
-          title: 'Unsaved Changes',
-          text: `Before switching to a different collection, would you like to save the changes to '${this.currentPinCollection}' collection?`,
-          buttons: [
-            {
-              text: 'Cancel',
-              color: 'gray'
-            },
-            {
-              text: 'Save',
-              color: 'blue',
-              onClick: () => {
-                saveCurrentCollection()
-                load()
+        if (this.currentPinCollection) {
+          f7.dialog.create({
+            title: 'Unsaved Changes',
+            text: `Before switching to a different collection, would you like to save the changes to '${this.currentPinCollection}' collection?`,
+            buttons: [
+              {
+                text: 'Cancel',
+                color: 'gray'
+              },
+              {
+                text: 'Save',
+                color: 'blue',
+                onClick: () => {
+                  saveCurrentCollection()
+                  load()
+                }
+              },
+              {
+                text: 'Discard',
+                color: 'red',
+                onClick: () => {
+                  load()
+                }
               }
-            },
-            {
-              text: 'Discard',
-              color: 'red',
-              onClick: () => {
-                load()
-              }
-            }
-          ],
-          destroyOnClose: true
-        }).open()
+            ],
+            destroyOnClose: true
+          }).open()
+        }
       } else {
         load()
       }
