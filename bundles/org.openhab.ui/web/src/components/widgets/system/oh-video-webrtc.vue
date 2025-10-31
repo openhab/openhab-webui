@@ -22,6 +22,8 @@
 </template>
 
 <script>
+import { f7 } from 'framework7-vue'
+
 import foregroundService from '../widget-foreground-service'
 
 export default {
