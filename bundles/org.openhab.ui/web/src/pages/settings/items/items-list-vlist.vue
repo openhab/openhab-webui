@@ -506,7 +506,6 @@ export default {
     },
     updateListedItems () {
       this.$nextTick(() => {
-        console.log('updating listed items')
         this.listedItems = this.$refs.itemsList.$el.f7VirtualList.filteredItems || this.$refs.itemsList.$el.f7VirtualList.items || []
       })
     }
