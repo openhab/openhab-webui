@@ -57,7 +57,7 @@
   It allows users to filter the list based on various criteria.
 
   Usage:
-    <list-filters ref="filters" :filters="filters" @toggled="handleFilterToggle" @reset="handleFilterReset" />
+    <list-filter ref="filters" :filters="filters" @toggled="handleFilterToggle" @reset="handleFilterReset" />
 
   Props:
     - filters: An object containing filter definitions, each with a label and options.
