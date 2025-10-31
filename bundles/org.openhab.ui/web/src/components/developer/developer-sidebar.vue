@@ -26,9 +26,8 @@
         </f7-block>
         <f7-list v-if="Object.keys(developerStore.pinCollections).length > 0 || isAnythingPinned">
           <f7-list-item accordion-item
-                        :title="'Saved Pins' + (currentPinCollection ? ' (' + currentPinCollection + ')' : '')"
-                        ref="pinCollectionsAccordion"
-                        @accordion:opened="onPinCollectionsAccordionOpened">
+                        title="Saved Pins"
+                        ref="pinCollectionsAccordion">
             <f7-accordion-content>
               <f7-list>
                 <f7-list-input v-if="isAnythingPinned"
@@ -46,11 +45,9 @@
               <f7-list v-if="developerStore.sortedCollectionNames.length > 0" class="pin-collections">
                 <f7-list-item group-title title="Saved Pin Collections" class="padding-vertical" />
                 <f7-list-item v-for="collectionName in developerStore.sortedCollectionNames"
-                              :ref="collectionName === currentPinCollection ? 'currentPinCollectionItem' : null"
                               :key="collectionName"
                               :title="collectionName"
                               :link="true"
-                              :class="{ 'current-pin-collection': collectionName === currentPinCollection }"
                               @click="loadPinCollection(collectionName)">
                   <template #after>
                     <f7-link color="red"
@@ -703,8 +700,6 @@
     .pin-collections
       max-height 11rem /* Make the last item partially show to hint that there are more items */
       overflow-y auto
-      .current-pin-collection
-        background-color unquote('rgba(var(--f7-color-blue-rgb, 33,150,243), 0.12)')
 
   .searchbar
     width 100%
@@ -742,6 +737,7 @@ import ClipboardIcon from '@/components/util/clipboard-icon.vue'
 import RuleStatus from '@/components/rule/rule-status-mixin'
 import ThingStatus from '@/components/thing/thing-status-mixin'
 import cloneDeep from 'lodash/cloneDeep'
+import fastDeepEqual from 'fast-deep-equal/es6'
 
 export default {
   mixins: [RuleStatus, ThingStatus],
@@ -759,12 +755,6 @@ export default {
   watch: {
     searchFor (val) {
       if (val) this.$refs.searchbar.$el.f7Searchbar.search(val)
-    },
-    'developerStore.pinnedObjects': {
-      handler (val) {
-        this.pinsDirty = true
-      },
-      deep: true
     }
   },
   data () {
@@ -789,8 +779,6 @@ export default {
         transformations: [],
         persistenceConfigs: []
       },
-      currentPinCollection: '',
-      pinsDirty: false,
       newCollectionName: '',
       sseEvents: [],
       openedItem: null,
@@ -1069,96 +1057,45 @@ export default {
       this.newCollectionName = this.newCollectionName.trim()
       if (!this.newCollectionName) return
 
-      const saveCurrentCollection = () => {
+      const save = () => {
         useDeveloperStore().pinCollections[this.newCollectionName] = cloneDeep(useDeveloperStore().pinnedObjects)
-        this.pinsDirty = false
-        this.currentPinCollection = this.newCollectionName
         f7.accordion.close(this.$refs.pinCollectionsAccordion.$el)
         this.newCollectionName = ''
       }
 
       if (useDeveloperStore().pinCollections[this.newCollectionName]) {
         f7.dialog.confirm('Collection with this name already exists, do you want to overwrite it?', () => {
-          saveCurrentCollection()
+          save()
         })
       } else {
-        saveCurrentCollection()
+        save()
       }
     },
     deletePinCollection (name) {
-      if (this.currentPinCollection === name) {
-        this.currentPinCollection = ''
-      }
       delete useDeveloperStore().pinCollections[name]
     },
     loadPinCollection (name) {
-      if (!useDeveloperStore().pinCollections[name]) return
+      const pinCollection = useDeveloperStore().pinCollections[name]
+      if (!pinCollection) return
+
+      if (fastDeepEqual(pinCollection, useDeveloperStore().pinnedObjects)) {
+        f7.accordion.close(this.$refs.pinCollectionsAccordion.$el)
+        return
+      }
 
       const load = () => {
-        Object.assign(useDeveloperStore().pinnedObjects, cloneDeep(useDeveloperStore().pinCollections[name]))
+        useDeveloperStore().clearPinnedObjects()
+        Object.assign(useDeveloperStore().pinnedObjects, cloneDeep(pinCollection))
         f7.accordion.close(this.$refs.pinCollectionsAccordion.$el)
-        this.currentPinCollection = name
-        this.$nextTick(() => {
-          this.pinsDirty = false
+      }
+
+      if (this.isAnythingPinned) {
+        f7.dialog.confirm(`Discard the current set of pinned objects and load '${name}' collection?`, () => {
+          load()
         })
-      }
-
-      const saveCurrentCollection = () => {
-        useDeveloperStore().pinCollections[this.currentPinCollection] = cloneDeep(useDeveloperStore().pinnedObjects)
-        this.pinsDirty = false
-        f7.accordion.close(this.$refs.pinCollectionsAccordion.$el)
-      }
-
-      if (this.pinsDirty) {
-        if (this.currentPinCollection === name) {
-          f7.dialog.confirm(`Save changes to '${this.currentPinCollection}' collection?`, () => {
-            saveCurrentCollection()
-            load()
-          }, () => {
-            load()
-          })
-          return
-        }
-
-        if (this.currentPinCollection) {
-          f7.dialog.create({
-            title: 'Unsaved Changes',
-            text: `Before switching to a different collection, would you like to save the changes to '${this.currentPinCollection}' collection?`,
-            buttons: [
-              {
-                text: 'Cancel',
-                color: 'gray'
-              },
-              {
-                text: 'Save',
-                color: 'blue',
-                onClick: () => {
-                  saveCurrentCollection()
-                  load()
-                }
-              },
-              {
-                text: 'Discard',
-                color: 'red',
-                onClick: () => {
-                  load()
-                }
-              }
-            ],
-            destroyOnClose: true
-          }).open()
-        }
       } else {
         load()
       }
-    },
-    onPinCollectionsAccordionOpened () {
-      this.$nextTick(() => {
-        const el = this.$refs.currentPinCollectionItem
-        if (el && el[0]) {
-          el[0].$el.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
-        }
-      })
     },
     getPageType (page) {
       return this.pageTypes.find((t) => t.componentType === page.component)

@@ -45,6 +45,12 @@ export const useDeveloperStore = defineStore('developer', () => {
     }
   }
 
+  function clearPinnedObjects () {
+    for (const key in pinnedObjects) {
+      pinnedObjects[key as keyof PinnedObjects] = []
+    }
+  }
+
   watch(
     pinCollections,
     (val) => {
@@ -62,6 +68,8 @@ export const useDeveloperStore = defineStore('developer', () => {
   return {
     pinnedObjects,
     pinCollections,
-    sortedCollectionNames
+    sortedCollectionNames,
+
+    clearPinnedObjects
   }
 })
