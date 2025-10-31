@@ -65,7 +65,7 @@ export const useStatesStore = defineStore('states', () => {
     clearTrackingList()
     if (trackerEventSource.value) {
       console.debug('Closing existing state tracker connection')
-      openhab.sse.close(trackerEventSource.value, null)
+      openhab.sse.close(trackerEventSource.value)
       clearStateTracker()
     }
     const eventSource = openhab.sse.connectStateTracker(
