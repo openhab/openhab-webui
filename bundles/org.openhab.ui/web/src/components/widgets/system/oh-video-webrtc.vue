@@ -204,6 +204,7 @@ export default {
         }
       } catch (e) {
         console.warn('Failed to enable microphone:', e)
+        f7.dialog.alert('Microphone could not be enabled: ' + (e.message || 'Unknown error'))
       }
     },
     disableMicrophone () {
