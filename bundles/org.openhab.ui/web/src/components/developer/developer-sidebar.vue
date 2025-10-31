@@ -43,15 +43,15 @@
                   </template>
                 </f7-list-input>
               </f7-list>
-              <f7-list v-if="Object.keys(developerStore.pinCollections).length > 0" class="pin-collections">
+              <f7-list v-if="developerStore.sortedCollectionNames.length > 0" class="pin-collections">
                 <f7-list-item group-title title="Saved Pin Collections" class="padding-vertical" />
-                <f7-list-item v-for="collectionName in sortedCollectionNames"
-                              :ref="collectionName === currentPinCollection ? 'currentPinCollectionItem' : null"
-                              :key="collectionName"
-                              :title="collectionName"
-                              :link="true"
-                              :class="{ 'current-pin-collection': collectionName === currentPinCollection }"
-                              @click="loadPinCollection(collectionName)">
+                <f7-list-item v-for="collectionName in developerStore.sortedCollectionNames"
+                               :ref="collectionName === currentPinCollection ? 'currentPinCollectionItem' : null"
+                               :key="collectionName"
+                               :title="collectionName"
+                               :link="true"
+                               :class="{ 'current-pin-collection': collectionName === currentPinCollection }"
+                               @click="loadPinCollection(collectionName)">
                   <template #after>
                     <f7-link color="red"
                              icon-f7="trash"
@@ -880,9 +880,6 @@ export default {
       return {
         store: useStatesStore().trackedItems
       }
-    },
-    sortedCollectionNames () {
-      return Object.keys(useDeveloperStore().pinCollections).sort((a, b) => a.localeCompare(b))
     },
     isAnythingPinned () {
       return Object.values(useDeveloperStore().pinnedObjects).some((obj) => obj.length > 0)

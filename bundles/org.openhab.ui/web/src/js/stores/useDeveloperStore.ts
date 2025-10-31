@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { reactive, watch } from 'vue'
+import { reactive, watch, computed } from 'vue'
 
 interface PinnedObjects {
   items: Array<string>
@@ -27,6 +27,8 @@ export const useDeveloperStore = defineStore('developer', () => {
   })
 
   const pinCollections = reactive<Record<string, PinnedObjects>>({})
+
+  const sortedCollectionNames = computed(() => Object.keys(pinCollections).sort((a, b) => a.localeCompare(b)))
 
   const STORAGE_KEY = 'openhab.ui:developer.pinCollections'
 
@@ -59,6 +61,7 @@ export const useDeveloperStore = defineStore('developer', () => {
 
   return {
     pinnedObjects,
-    pinCollections
+    pinCollections,
+    sortedCollectionNames
   }
 })
