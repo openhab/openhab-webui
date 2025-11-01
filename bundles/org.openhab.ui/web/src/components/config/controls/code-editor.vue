@@ -189,7 +189,6 @@ export default {
         .then((code) => {
           this.code = code
           this.originalCode = code.repeat(1) // duplicate the string
-          this.dirty = false
           this.uiOptionsStore.codeEditorType = codeType
           if (onSuccessCallback) {
             onSuccessCallback()

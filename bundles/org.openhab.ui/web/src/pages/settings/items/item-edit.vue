@@ -183,6 +183,10 @@ export default {
       this.currentTab = newTab
 
       if (newTab === 'code') {
+        if (this.item.unit && this.item.unit !== this.savedItem.unit) {
+          this.item.metadata = this.item.metadata || {}
+          this.item.metadata.unit = { value: this.item.unit }
+        }
         this.$refs.codeEditor.generateCode()
       } else if (this.codeDirty) {
         this.$refs.codeEditor.parseCode(
@@ -361,6 +365,7 @@ export default {
         this.item.function = updatedItem.function
         this.item.tags = updatedItem.tags
         this.item.metadata = updatedItem.metadata
+        this.item.unit = updatedItem.metadata?.unit?.value || ''
         return true
       } catch (e) {
         f7.dialog.alert(e).open()
