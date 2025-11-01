@@ -34,8 +34,6 @@ import org.osgi.service.component.annotations.Reference;
  * widgets.
  *
  * <p>
- * Note: This renderer requires the files "jquery.miniColors.css" and "jquery.miniColors.js" in the web folder of this
- * bundle
  *
  * @author Kai Kreuzer - Initial contribution and API
  * @author Vlad Ivanov - BasicUI changes
