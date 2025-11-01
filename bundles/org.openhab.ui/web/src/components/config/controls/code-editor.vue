@@ -272,6 +272,7 @@ export default {
     onEditorInput (value) {
       this.code = value
       this.dirty = this.code !== this.originalCode
+      this.$emit('changed', this.dirty)
     },
     switchCodeType (type) {
       if (this.uiOptionsStore.codeEditorType === type) return
