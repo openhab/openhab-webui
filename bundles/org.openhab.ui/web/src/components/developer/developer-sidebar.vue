@@ -1025,7 +1025,7 @@ export default {
       const itemEl = this.$$(evt.target).closest('.itemlist-item')
       if (!itemEl.length) return
       this.openedItem = item
-      nextTick(() => this.$refs.itemPopover.$el.f7Popover.open(itemEl[0]))
+      nextTick(() => this.$refs.itemPopover.$el.f7Modal.open(itemEl[0]))
     },
     toggleThingDisabled (thing) {
       const enable = (thing.statusInfo.statusDetail === 'DISABLED')
