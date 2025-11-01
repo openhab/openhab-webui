@@ -16,6 +16,7 @@ import java.io.InputStream;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.openhab.core.hli.Intent;
 
 /**
  * This interface must be implemented to add support for a certain intent.
