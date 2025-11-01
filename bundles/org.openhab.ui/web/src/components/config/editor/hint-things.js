@@ -98,7 +98,7 @@ function hintChannelType (context, line, parentLine) {
   const apply = (view, completion, _from, _to) => {
     const insert = completion.label
     const from = line.from + 14 // after 'type: '
-    const to = line.to
+    const to = view.state.doc.lineAt(context.pos).to
     view.dispatch(insertCompletionText(view.state, insert, from, to))
   }
 
