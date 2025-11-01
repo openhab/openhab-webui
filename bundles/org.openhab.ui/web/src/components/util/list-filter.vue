@@ -109,7 +109,7 @@ export default {
   },
   computed: {
     filtered () {
-      return Object.keys(this.filters).some((type, _) => this.isFilteredBy(type))
+      return Object.keys(this.filters).some((type) => this.isFilteredBy(type))
     }
   },
   methods: {
