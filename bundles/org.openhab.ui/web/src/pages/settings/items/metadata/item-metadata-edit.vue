@@ -95,9 +95,10 @@ import ItemMetadataMatter from '@/components/item/metadata/item-metadata-matter.
 import ItemMetadataGa from '@/components/item/metadata/item-metadata-ga.vue'
 import ItemMetadataLinktomore from '@/components/item/metadata/item-metadata-linktomore.vue'
 import DirtyMixin from '../../dirty-mixin'
+import ItemMixin from '@/components/item/item-mixin.js'
 
 export default {
-  mixins: [DirtyMixin],
+  mixins: [DirtyMixin, ItemMixin],
   props: {
     itemName: String,
     namespace: String,
@@ -210,7 +211,7 @@ export default {
 
       if (this.currentTab === 'code' && !this.fromYaml()) return
       if (!this.metadata.value) this.metadata.value = ' '
-      this.$oh.api.put(`/rest/items/${this.itemName}/metadata/${this.namespace}`, this.metadata).then((data) => {
+      this.saveMetadata(this.item, this.namespace, this.metadata).then((data) => {
         if (this.creationMode) {
           f7.toast.create({
             text: 'Metadata created',
@@ -241,7 +242,7 @@ export default {
         `Are you sure you want to remove all metadata for "${nslabel}"?`,
         'Remove metadata',
         () => {
-          this.$oh.api.delete(`/rest/items/${this.itemName}/metadata/${this.namespace}`).then(() => {
+          this.deleteMetadata(this.item, this.namespace).then(() => {
             f7.toast.create({
               text: 'Metadata deleted',
               destroyOnClose: true,
