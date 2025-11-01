@@ -114,7 +114,7 @@
           </span>
           <template v-if="groupBy === 'location'">
             <div style="text-align: right" class="padding-right">
-              <label class="show-no-location-label">
+              <label class="advanced-label">
                 <f7-checkbox v-model:checked="showNoLocation" />
                 Show no location</label>
             </div>
