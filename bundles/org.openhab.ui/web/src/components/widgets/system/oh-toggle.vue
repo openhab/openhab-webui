@@ -7,13 +7,14 @@
 
 <script>
 import mixin from '../widget-mixin'
-import variableMixin from '../variable-mixin'
 import { OhToggleDefinition } from '@/assets/definitions/widgets/system'
+
+import { getVariableScope, getLastVariableKeyValue, setVariableKeyValues } from '@/components/widgets/variable'
 
 import { useStatesStore } from '@/js/stores/useStatesStore'
 
 export default {
-  mixins: [mixin, variableMixin],
+  mixins: [mixin],
   widget: OhToggleDefinition,
   mounted () {
     delete this.config.value
@@ -21,10 +22,10 @@ export default {
   computed: {
     value () {
       if (this.config.variable) {
-        const variableScope = this.getVariableScope(this.context.ctxVars, this.context.varScope, this.config.variable)
+        const variableScope = getVariableScope(this.context.ctxVars, this.context.varScope, this.config.variable)
         const variableLocation = (variableScope) ? this.context.ctxVars[variableScope] : this.context.vars
         if (this.config.variableKey) {
-          return this.getLastVariableKeyValue(variableLocation[this.config.variable], this.config.variableKey)
+          return getLastVariableKeyValue(variableLocation[this.config.variable], this.config.variableKey)
         }
         return variableLocation[this.config.variable]
       }
@@ -40,10 +41,10 @@ export default {
     onChange (value) {
       if (value === this.value) return
       if (this.config.variable) {
-        const variableScope = this.getVariableScope(this.context.ctxVars, this.context.varScope, this.config.variable)
+        const variableScope = getVariableScope(this.context.ctxVars, this.context.varScope, this.config.variable)
         const variableLocation = (variableScope) ? this.context.ctxVars[variableScope] : this.context.vars
         if (this.config.variableKey) {
-          value = this.setVariableKeyValues(variableLocation[this.config.variable], this.config.variableKey, value)
+          value = setVariableKeyValues(variableLocation[this.config.variable], this.config.variableKey, value)
         }
         variableLocation[this.config.variable] = value
       } else if (this.config.item) {
