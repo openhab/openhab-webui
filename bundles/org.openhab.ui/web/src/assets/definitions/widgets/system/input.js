@@ -1,8 +1,14 @@
 import { pi, pb, pt, pd } from '../helpers.js'
 
+export const ptType = pt('type', 'HTML Input Type',
+  'HTML input type for different OpenHAB Item types.\
+  <li><b>String:</b> text, textarea, texteditor, password, email, tel, url</li>\
+  <li><b>DateTime:</b> date, datepicker, datetime-local</li>\
+  <li><b>Number:</b> number</li>')
+
 export default () => [
   pt('name', 'Name', 'Input name'),
-  pt('type', 'Type', 'Type of input (see <a class="external text-color-blue" target="_blank" href="https://framework7.io/docs/inputs.html#supported-inputs">f7 input docs</a>, <code>time</code>, <code>date</code> or <code>datepicker</code>)'),
+  ptType,
   pt('inputmode', 'Input Mode', 'Type of data that might be entered (see <a class="external text-color-blue" target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/inputmode">MDN docs</a>)'),
   pt('placeholder', 'Placeholder', 'Placeholder text'),
   pb('sendButton', 'Send button', 'Display Send button to update the state with a command (needs a configured item)'),
