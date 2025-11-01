@@ -5,6 +5,7 @@ import { completionStart, hintItems } from './hint-utils'
 import YAML from 'yaml'
 import * as Types from '@/assets/item-types.js'
 import Metadata from '@/assets/definitions/metadata/namespaces'
+import { Categories } from '@/assets/categories.js'
 
 let dimensions = null
 
@@ -57,6 +58,26 @@ function hintDimension (context, line, position) {
       })
     }
   })
+}
+
+function hintIcon (context, line) {
+  const apply = (view, completion, _from, _to) => {
+    const insert = completion.label
+    const from = line.from + 10 // after 'icon: '
+    const to = view.state.doc.lineAt(context.pos).to
+    view.dispatch(insertCompletionText(view.state, insert, from, to))
+  }
+
+  return {
+    from: completionStart(context),
+    validFor: /\w+/,
+    options: Categories.map((label) => {
+      return {
+        label,
+        apply
+      }
+    })
+  }
 }
 
 const MetadataCompletions = {
@@ -116,6 +137,8 @@ export default function hint (context) {
     return hintTypes(context, line, 12)
   } else if (line.text.match(/^ {6}dimension: /)) { // Group dimension
     return hintDimension(context, line, 17)
+  } else if (line.text.match(/^ {4}icon: /)) {
+    return hintIcon(context, line)
   } else if (parentLine && parentLine.text.match(/^ {4}groups:/)) {
     return hintItems(context, { indent: 6, prefix: '- ', groupsOnly: true })
   } else if (parentLine && parentLine.text.match(/^ {4}metadata:/)) {
