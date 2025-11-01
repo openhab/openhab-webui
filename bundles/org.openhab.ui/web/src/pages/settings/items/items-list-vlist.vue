@@ -431,7 +431,7 @@ export default {
         if (this.excludedUids.has(item.name)) {
           return // skip items excluded by filter
         }
-        const haystack = [item.name, item.label, item.tags.join(' '), this.getItemTypeAndMetaLabel(item)]
+        const haystack = [item.name, item.label, ...(item.tags || []), this.getItemTypeAndMetaLabel(item)]
         if (haystack.join(' ').toLowerCase().includes(query)) {
           found.push(index)
           foundUids.add(item.name)
