@@ -309,7 +309,6 @@ export default {
       })
     },
     doSaveMetadata () {
-      console.log('Saving metadata...')
       const newNamespaces = new Set(Object.keys(this.item.metadata || {}))
 
       // remove deleted metadata
