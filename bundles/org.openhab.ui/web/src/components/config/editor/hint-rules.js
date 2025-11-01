@@ -1,11 +1,12 @@
 import { insertCompletionText } from '@codemirror/autocomplete'
 import { findParent, findParentRoot, isConfig, isRuleSection } from './yaml-utils'
-import { completionStart, hintBooleanValue, hintItems, hintParameterOptions, hintParameters } from './hint-utils'
+import { completionStart, hintItems, hintParameterValues, hintParameters } from './hint-utils'
 
 let moduleTypesCache = null
 
 function getModuleTypes (context, section) {
   if (moduleTypesCache) return Promise.resolve(moduleTypesCache)
+
   return context.view.$oh.api
     .get('/rest/module-types' + (section ? '?type=' + section : ''))
     .then((data) => {
@@ -43,17 +44,7 @@ function hintConfig (context, line, parentLine) {
     if (!moduleType) return null
     const parameters = moduleType.configDescriptions
     if (afterColon) {
-      const parameterName = line.text.substring(0, colonPos).trim()
-      const parameter = parameters.find((p) => p.name === parameterName)
-      if (parameter) {
-        if (parameter.type === 'BOOLEAN') {
-          return hintBooleanValue(context, line, colonPos)
-        } else if (parameter.context === 'item') {
-          return hintItems(context, { replaceAfterColon: true })
-        } else if (parameter.options) {
-          return hintParameterOptions(context, parameter, colonPos)
-        }
-      }
+      return hintParameterValues(context, parameters, line, colonPos)
     } else {
       console.debug(moduleType)
       return hintParameters(context, parameters, 6)

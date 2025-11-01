@@ -327,9 +327,7 @@
     margin-top 0
 .rule-code-editor.v-codemirror
   position absolute
-  top calc(var(--f7-navbar-height) + var(--f7-tabbar-height))
-  height calc(100% - var(--f7-navbar-height, 56px) - var(--f7-tabbar-height, 48px))
-  width 100%
+  height calc(100% - var(--f7-navbar-height) - var(--f7-toolbar-height))
 .yaml-message
   display block
   position absolute
@@ -338,8 +336,7 @@
 #source
   .rule-source-viewer.v-codemirror
     position absolute
-    top calc(var(--f7-navbar-height) + var(--f7-tabbar-height))
-    height calc(100% - var(--f7-navbar-height, 56px) - var(--f7-tabbar-height, 48px))
+    height calc(100% - var(--f7-navbar-height) - var(--f7-toolbar-height))
     width 100%
 </style>
 

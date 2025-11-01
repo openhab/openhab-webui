@@ -115,7 +115,7 @@
       overflow auto
     .blocks-code
       height 100%
-  .vue-codemirror
+  .v-codemirror
     top 0
     height 100%
   &.vertical
@@ -124,7 +124,7 @@
   &.horizontal
     .row
       height 50%
-    .vue-codemirror
+    .v-codemirror
       height calc(100% - var(--f7-grid-gap))
 .blocklyDropDownDiv
   z-index 11001 !important
