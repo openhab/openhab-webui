@@ -95,6 +95,7 @@ import ItemForm from '@/components/item/item-form.vue'
 
 import DirtyMixin from '../dirty-mixin'
 import ItemMixin from '@/components/item/item-mixin'
+import { name } from 'jssip'
 
 export default {
   mixins: [DirtyMixin, ItemMixin],
@@ -285,7 +286,9 @@ export default {
           }).open()
         }
 
-        this.itemDirty = this.codeDirty = false
+        this.doSaveMetadata()
+
+        this.dirty = this.itemDirty = this.codeDirty = false
         if (this.createMode) {
           this.f7router.navigate('/settings/items/' + this.item.name, {
             reloadCurrent: true
@@ -296,6 +299,49 @@ export default {
       }).catch((err) => {
         f7.toast.create({
           text: 'Item not saved: ' + err,
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
+      })
+    },
+    doSaveMetadata () {
+      console.log('Saving metadata...')
+      const newNamespaces = new Set(Object.keys(this.item.metadata || {}))
+
+      // remove deleted metadata
+      const deletionPromises = Object.entries(this.savedItem.metadata || {})
+        .filter(([namespace, savedMetadata]) => savedMetadata.editable && !newNamespaces.has(namespace))
+        .map(([namespace, _]) => this.deleteMetadata(this.item, namespace))
+
+      // create/update new/changed metadata
+      const updatePromises = Object.entries(this.item.metadata || {})
+        .filter(([namespace, metadata]) => {
+          const savedMetadata = this.savedItem.metadata?.[namespace] || {}
+          if (savedMetadata.editable === false) return false // don't touch non-editable metadata
+
+          // remove editable flag from comparison, because the generated code doesn't have it
+          delete savedMetadata.editable
+
+          metadata = metadata || {}
+          const newMetadata = { ...metadata }
+          // the editable flag may exist in the original loaded item (not from generated code)
+          delete newMetadata.editable
+
+          return !fastDeepEqual(newMetadata, savedMetadata)
+        })
+        .map(([namespace, metadata]) => {
+          return this.saveMetadata(this.item, namespace, metadata)
+        })
+
+      Promise.all([...deletionPromises, ...updatePromises]).then(() => {
+        f7.toast.create({
+          text: 'Metadata updated successfully',
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
+      }).catch((err) => {
+        f7.toast.create({
+          text: 'Error while saving metadata: ' + err,
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
@@ -314,7 +360,7 @@ export default {
         this.item.groupType = updatedItem.groupType
         this.item.function = updatedItem.function
         this.item.tags = updatedItem.tags
-        // this.item.metadata = updatedItem.metadata
+        this.item.metadata = updatedItem.metadata
         return true
       } catch (e) {
         f7.dialog.alert(e).open()

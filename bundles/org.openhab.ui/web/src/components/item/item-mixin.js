@@ -84,7 +84,7 @@ export default {
           value: unit,
           config: {}
         }
-        return this.saveMetaData(item, 'unit', metadata)
+        return this.saveMetadata(item, 'unit', metadata)
       } else {
         return Promise.resolve()
       }
@@ -98,13 +98,16 @@ export default {
             pattern: stateDescriptionPattern
           }
         }
-        return this.saveMetaData(item, 'stateDescription', metadata)
+        return this.saveMetadata(item, 'stateDescription', metadata)
       } else {
         return Promise.resolve()
       }
     },
-    saveMetaData (item, value, metadata) {
-      return this.$oh.api.put('/rest/items/' + item.name + '/metadata/' + value, metadata)
+    saveMetadata (item, namespace, metadata) {
+      return this.$oh.api.put('/rest/items/' + item.name + '/metadata/' + namespace, metadata)
+    },
+    deleteMetadata (item, namespace) {
+      return this.$oh.api.delete('/rest/items/' + item.name + '/metadata/' + namespace)
     }
   }
 }
