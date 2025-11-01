@@ -21,7 +21,7 @@ function hintTypes (context, line, position) {
   const apply = (view, completion, _from, _to) => {
     const insert = completion.label
     const from = line.from + position
-    const to = line.to
+    const to = view.state.doc.lineAt(context.pos).to
     view.dispatch(insertCompletionText(view.state, insert, from, to))
   }
 
@@ -41,7 +41,7 @@ function hintDimension (context, line, position) {
   const apply = (view, completion, _from, _to) => {
     const insert = completion.label
     const from = line.from + position
-    const to = line.to
+    const to = view.state.doc.lineAt(context.pos).to
     view.dispatch(insertCompletionText(view.state, insert, from, to))
   }
 
