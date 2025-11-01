@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { reactive } from 'vue'
+import { reactive, watch, computed } from 'vue'
 
 interface PinnedObjects {
   items: Array<string>
@@ -25,5 +25,51 @@ export const useDeveloperStore = defineStore('developer', () => {
     transformations: [],
     persistenceConfigs: []
   })
-  return { pinnedObjects }
+
+  const pinCollections = reactive<Record<string, PinnedObjects>>({})
+
+  const sortedCollectionNames = computed(() => Object.keys(pinCollections).sort((a, b) => a.localeCompare(b)))
+
+  const STORAGE_KEY = 'openhab.ui:developer.pinCollections'
+
+  function loadPinCollections () {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY)
+      if (!raw) return
+      const parsed = JSON.parse(raw)
+      if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+        Object.assign(pinCollections, parsed)
+      }
+    } catch (e) {
+      // ignore malformed data
+    }
+  }
+
+  function clearPinnedObjects () {
+    for (const key in pinnedObjects) {
+      pinnedObjects[key as keyof PinnedObjects] = []
+    }
+  }
+
+  watch(
+    pinCollections,
+    (val) => {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(val))
+      } catch (e) {
+        console.warn('Failed to persist pinCollections', e)
+      }
+    },
+    { deep: true }
+  )
+
+  loadPinCollections()
+
+  return {
+    pinnedObjects,
+    pinCollections,
+    sortedCollectionNames,
+
+    clearPinnedObjects
+  }
 })
