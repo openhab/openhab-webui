@@ -369,7 +369,7 @@ export default {
       return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     },
     allSelected () {
-      return this.selectedItems.length === this.listedItems.length
+      return this.selectedItems.length >= this.listedItems.length && this.listedItems.length > 0
     },
     listTitle () {
       let title = this.listedItems.length
@@ -455,8 +455,8 @@ export default {
         if (ruleData.status === 'fulfilled') {
           this.rules = ruleData.value
             .filter((r) => {
-              if (!this.showScripts && r.tags.includes('Script')) return false
-              if (!this.showScenes && r.tags.includes('Scene')) return false
+              if (!this.showScripts && r.tags?.includes('Script')) return false
+              if (!this.showScenes && r.tags?.includes('Scene')) return false
               return true
             })
             .sort((a, b) => a.name.localeCompare(b.name))

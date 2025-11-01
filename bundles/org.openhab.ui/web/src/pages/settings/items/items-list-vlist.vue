@@ -525,7 +525,7 @@ export default {
       return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     },
     allSelected () {
-      return this.selectedItems.length >= this.listedItems.length
+      return this.selectedItems.length >= this.listedItems.length && this.listedItems.length > 0
     },
     listTitle () {
       let title = this.listedItems.length

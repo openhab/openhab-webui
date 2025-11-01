@@ -387,7 +387,7 @@ export default {
       return this.inbox.length
     },
     allSelected () {
-      return this.selectedItems.length === this.filteredItems.length
+      return this.selectedItems.length >= this.listedItems.length && this.listedItems.length > 0
     },
     searchPlaceholder () {
       return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
