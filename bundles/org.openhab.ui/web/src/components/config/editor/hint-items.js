@@ -2,6 +2,7 @@ import { insertCompletionText } from '@codemirror/autocomplete'
 import { findParent } from './yaml-utils'
 import { completionStart, hintItems } from './hint-utils'
 
+import YAML from 'yaml'
 import * as Types from '@/assets/item-types.js'
 import Metadata from '@/assets/definitions/metadata/namespaces'
 
@@ -58,13 +59,32 @@ function hintDimension (context, line, position) {
   })
 }
 
+const MetadataCompletions = {
+  unit: { value: ''},
+  stateDescription: { value: '', config: { pattern: '%.2f' } },
+  commandDescription: { value: '', config: { options: '' } },
+  synonyms: { value: 'synonym1,synonym2' },
+  // widget
+  // listWidget
+  // cellWidget
+  // widgetOrder
+  autoupdate: { value: 'false' },
+  expire: { value: '3s' }
+  // voiceSystem
+  // matter
+  // alexa
+  // homekit
+  // ga
+  // link_to_more
+}
+
+const DefaultMetadataCompletion = { value: '', config: {} }
+
 function hintMetadata (context, line) {
   const apply = (view, completion, _from, _to) => {
-    const insert = [
-      '      ' + completion.label + ':',
-      '        value: ""',
-      '        config: {}'
-    ].join('\n')
+    const completionStructure = MetadataCompletions[completion.label] || DefaultMetadataCompletion
+    const indent = ' '.repeat(6)
+    const insert = YAML.stringify({ [completion.label]: completionStructure }).split('\n').map((l) => indent + l).join('\n')
     const from = line.from
     const to = view.state.doc.lineAt(context.pos).to
     view.dispatch(insertCompletionText(view.state, insert, from, to))
