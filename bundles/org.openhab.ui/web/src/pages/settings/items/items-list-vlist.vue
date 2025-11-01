@@ -424,10 +424,6 @@ export default {
       })
     },
     searchAll (query, items) {
-      if (query.trim() === '') {
-        return items.filter((item) => !this.excludedUids.has(item.name)).map((_, index) => index)
-      }
-
       query = query.toLowerCase()
       const found = []
       const foundUids = new Set()
