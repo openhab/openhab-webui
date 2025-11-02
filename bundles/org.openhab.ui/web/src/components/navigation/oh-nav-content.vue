@@ -11,10 +11,15 @@
              :href="backLinkUrl"
              @click="back" />
   </f7-nav-left>
-  <component :is="titleComponent">
+  <!-- if large is enabled, we need both the normal and the large title, as the navbar might collapse when scrolling down -->
+  <f7-nav-title>
     {{ title }}
     <span v-if="subtitle" class="subtitle">{{ subtitle }}</span>
-  </component>
+  </f7-nav-title>
+  <f7-nav-title-large v-if="large">
+    {{ title }}
+    <span v-if="subtitle" class="subtitle">{{ subtitle }}</span>
+  </f7-nav-title-large>
   <f7-nav-right>
     <developer-dock-icon />
     <f7-link v-if="editable === false"
@@ -45,10 +50,9 @@
  *
  * To use it, simply put it as the first component into the f7-navbar.
  */
-import { f7, theme, f7NavTitle, f7NavTitleLarge } from 'framework7-vue'
+import { f7, theme } from 'framework7-vue'
 import type { Router } from 'framework7'
 import DeveloperDockIcon from '@/components/developer/developer-dock-icon.vue'
-import { computed } from 'vue'
 
 const props = withDefaults(defineProps<{
   title: string,
@@ -71,14 +75,6 @@ defineEmits(['save'])
 defineSlots<{
   right: void,
 }>()
-
-const titleComponent = computed(() => {
-  if (props.large) {
-    return f7NavTitleLarge
-  } else {
-    return f7NavTitle
-  }
-})
 
 function back () {
   if (props.backLinkUrl) return
