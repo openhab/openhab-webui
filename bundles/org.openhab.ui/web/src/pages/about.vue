@@ -1,7 +1,7 @@
 <template>
   <f7-page name="about" class="page-about" @page:beforein="beforePageIn">
     <f7-navbar large>
-      <oh-nav-content :title="t('about.title')" :f7router />
+      <oh-nav-content :title="t('about.title')" :large="true" :f7router />
     </f7-navbar>
     <f7-block class="block-narrow after-big-title">
       <f7-row>
