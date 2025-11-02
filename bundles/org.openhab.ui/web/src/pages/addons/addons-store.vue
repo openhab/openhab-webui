@@ -3,9 +3,7 @@
            @page:beforeout="onPageBeforeOut"
            ref="addonstore"
            class="page-addon-store">
-    <f7-navbar large
-               :large-transparent="false"
-               class="store-nav">
+    <f7-navbar large class="store-nav">
       <oh-nav-content :title="AddonTitles[currentTab] || 'Add-on Store'" :f7router />
     </f7-navbar>
     <f7-toolbar v-show="$f7dim.width < 1024 || !leftPanelOpened" tabbar bottom>
@@ -257,14 +255,6 @@
 </template>
 
 <style lang="stylus">
-.theme-filled .store-nav .store-title-large .title-large-text
-  color var(--f7-text-color)
-.theme-filled .store-nav.navbar-large:not(.navbar-large-collapsed) .link
-  color var(--f7-theme-color)
-  transition color 0.3s
-.theme-filled .store-nav.navbar-large.navbar-large-collapsed .link
-  color var(--f7-navbar-link-color)
-  transition color 0.3s
 .searchbar-store
   margin-left 2em
   margin-right 2em
