@@ -4,7 +4,7 @@
            ref="addonstore"
            class="page-addon-store">
     <f7-navbar large class="store-nav">
-      <oh-nav-content :title="AddonTitles[currentTab] || 'Add-on Store'" :f7router />
+      <oh-nav-content :title="AddonTitles[currentTab] || 'Add-on Store'" :large="true" :f7router />
     </f7-navbar>
     <f7-toolbar v-show="$f7dim.width < 1024 || !leftPanelOpened" tabbar bottom>
       <f7-link tab-link="#main"
