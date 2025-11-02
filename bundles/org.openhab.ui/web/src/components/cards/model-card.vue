@@ -4,7 +4,7 @@
            ref="card"
            class="model-card"
            :class="type + '-card'"
-           :animate="uiOptionsStore.disableExpandableCardAnimation ? null : true"
+           :animate="uiOptionsStore.disableExpandableCardAnimation ? false : true"
            card-tablet-fullscreen
            @card:opened="cardOpening"
            @card:closed="cardClosed">
