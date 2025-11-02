@@ -184,7 +184,7 @@ export default {
     },
     canExpand () {
       if (!this.collapsed) return false
-      if (this.addons.length < this.addonCollapsedLimit) return false
+      if (this.addons.length <= this.addonCollapsedLimit) return false
       return true
     }
   },
