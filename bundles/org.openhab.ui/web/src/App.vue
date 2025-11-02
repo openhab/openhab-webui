@@ -416,7 +416,7 @@
       browser-history-separator=""
       browser-history-root=""
       v-show="ready"
-      :animate="uiOptionsStore.disablePageTransitionAnimation ? null : true" />
+      :animate="uiOptionsStore.disablePageTransitionAnimation ? false : true" />
   </f7-app>
 </template>
 

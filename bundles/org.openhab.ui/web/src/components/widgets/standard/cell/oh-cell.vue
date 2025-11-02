@@ -4,7 +4,7 @@
            class="card-prevent-open oh-cell"
            :swipeToClose="!(noSwipeToClose || config.swipeToClose === false)"
            :backdrop="config.backdrop === undefined || config.backdrop"
-           :animate="(config.animate === false || uiOptionsStore.expandableCardAnimation === 'disabled') ? false : undefined"
+           :animate="(config.animate === false || uiOptionsStore.disableExpandableCardAnimation) ? false : undefined"
            @card:open="cellOpen"
            @card:opened="cellOpened"
            @card:close="cellClose"
