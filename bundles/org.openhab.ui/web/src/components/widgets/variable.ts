@@ -1,5 +1,4 @@
-
-export function getLastVariableKeyValue (variableValue: any, variableKey: string) {
+export function getLastVariableKeyValue (variableValue: any, variableKey: string) : any | undefined  {
   const valueArray = (getVariableKeyValues(variableValue, variableKey)).valueArray
   if (valueArray[valueArray.length - 1]) {
     return valueArray[valueArray.length - 1]
@@ -8,7 +7,7 @@ export function getLastVariableKeyValue (variableValue: any, variableKey: string
   }
 }
 
-export function getVariableKeyValues (variableValue: any, variableKey: string) {
+export function getVariableKeyValues (variableValue: any, variableKey: string) : { keyArray: string[], valueArray: any[] } {
   let setValue = variableValue
   let valueArray = [setValue]
   let keyArray = variableKey.split('.')
@@ -19,7 +18,7 @@ export function getVariableKeyValues (variableValue: any, variableKey: string) {
   return { keyArray, valueArray }
 }
 
-export function getVariableKeyValue (obj: any, key: string) {
+export function getVariableKeyValue (obj: any, key: string) : any | undefined {
   if (obj === undefined) return undefined
   if (key.includes('[') && key.includes(']')) {
     let arrayIndex = key.split('[')[1].split(']')[0]
@@ -38,7 +37,7 @@ export function getVariableKeyValue (obj: any, key: string) {
   }
 }
 
-export function setVariableKeyValues (variableValue: any, variableKey: string, newValue: any) {
+export function setVariableKeyValues (variableValue: any, variableKey: string, newValue: any) : any {
   let variableKeyValues = getVariableKeyValues(variableValue, variableKey)
   let keyArray = variableKeyValues.keyArray
   let valueArray = variableKeyValues.valueArray
@@ -55,7 +54,7 @@ export function setVariableKeyValues (variableValue: any, variableKey: string, n
   return JSON.parse(JSON.stringify(valueArray[0]))
 }
 
-export function setVariableKeyValue (obj: any, key: string, value: any) {
+export function setVariableKeyValue (obj: any, key: string, value: any) : any {
   let objectHasContent = true
   if (obj === undefined) {
     obj = {}
