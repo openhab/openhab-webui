@@ -5,10 +5,11 @@
         Filter
         <template v-if="filtered">
           (active)
-          <f7-link @click="resetFilters"
-                   text="Reset filters"
-                   class="margin-right"
-                   href="javascript:void(0)" />
+          <f7-link
+            @click="resetFilters"
+            text="Reset filters"
+            class="margin-right"
+            href="javascript:void(0)" />
         </template>
       </template>
       <f7-accordion-content>
@@ -19,18 +20,20 @@
             </f7-list-item>
             <f7-list-item class="padding-bottom">
               <div class="chip-wrap">
-                <f7-chip v-for="(label, value) in filter.options"
-                         :key="value"
-                         :text="label"
-                         :color="isFilteredBy(type, value) ? 'blue' : ''"
-                         media-bg-color="blue"
-                         style="margin-right: 6px; cursor: pointer;"
-                         @click="toggleFilter(type, value)">
+                <f7-chip
+                  v-for="(label, value) in filter.options"
+                  :key="value"
+                  :text="label"
+                  :color="isFilteredBy(type, value) ? 'blue' : ''"
+                  media-bg-color="blue"
+                  style="margin-right: 6px; cursor: pointer;"
+                  @click="toggleFilter(type, value)">
                   <template #media>
-                    <f7-icon v-if="isFilteredBy(type, value)"
-                             ios="f7:checkmark_circle_fill"
-                             md="material:check_circle"
-                             aurora="f7:checkmark_circle_fill" />
+                    <f7-icon
+                      v-if="isFilteredBy(type, value)"
+                      ios="f7:checkmark_circle_fill"
+                      md="material:check_circle"
+                      aurora="f7:checkmark_circle_fill" />
                   </template>
                 </f7-chip>
               </div>
@@ -73,34 +76,24 @@
         }
       }
 
-  Data/Properties:
-    - selected: An object to track selected filters.
-      Example: { kind: Set(['editable']), status: Set(['online']) }
-      This tracks which values are selected for each filter type.
-      e.g. this.$refs.componentRef.selected.kind.has('editable') returns true
-      if 'editable' is selected in 'kind' filter.
-
-  Computed:
-    - filtered: Returns true if any filter has selections.
-
   Events:
     - toggled: Emitted when a filter is toggled, passing the type, value, and selection state.
     - reset: Emitted when all filters are reset.
-
-  Methods:
-    - isFilteredBy: Checks if a specific filter type has any selections, or if a specific value is selected.
-      Example:
-        isFilteredBy('kind') returns true if any 'kind' filter is selected.
-        isFilteredBy('kind', 'readonly') returns true if 'readonly' is selected in 'kind'.
-      It's easier to use the `selected` property directly, see above.
-
-    - toggleFilter: Toggles the selection state of a filter value and emits the change.
 */
 export default {
-  props: ['filters'],
+  props: {
+    filters: Object
+  },
   emits: ['toggled', 'reset'],
   data () {
     return {
+      /**
+       * This tracks which values are selected for each filter type,
+       *
+       * For example, `this.$refs.componentRef.selected.kind.has('editable')` returns true if 'editable' is selected in 'kind' filter:
+       * @example
+       * { kind: Set(['editable']), status: Set(['online']) }
+       */
       selected: Object.keys(this.filters || {}).reduce((acc, key) => {
         acc[key] = new Set()
         return acc
@@ -108,11 +101,28 @@ export default {
     }
   },
   computed: {
+    /**
+     * Whether filtering is active, i.e. any filter has selections.
+     * @return {boolean}
+     */
     filtered () {
       return Object.keys(this.filters).some((type) => this.isFilteredBy(type))
     }
   },
   methods: {
+    /**
+     * Checks if a specific filter type has any selections, or if a specific value is selected.
+     *
+     * Examples:
+     * - `isFilteredBy('kind')` returns true if any 'kind' filter is selected.
+     * - `isFilteredBy('kind', 'readonly')` returns true if 'readonly' is selected in 'kind'.
+     *
+     * Instead of using this method, you might also access the `selected` property directly.
+     *
+     * @param {script} type
+     * @param {*} value
+     * @return {boolean}
+     */
     isFilteredBy (type, value) {
       const selections = this.selected[type]
       if (!selections) {
@@ -126,6 +136,13 @@ export default {
         return selections.size > 0
       }
     },
+    /**
+     * Toggles the selection state of a filter value and emits the change.
+     * To be used internally only.
+     *
+     * @param {string} type
+     * @param {*} value
+     */
     toggleFilter (type, value) {
       const selections = this.selected[type]
       if (selections.has(value)) {
@@ -137,6 +154,10 @@ export default {
       let selected = selections.has(value)
       this.$emit('toggled', this, type, value, selected)
     },
+    /**
+     * Resets/Disables all filters and emits the reset event.
+     * To be used internally only.
+     */
     resetFilters () {
       Object.keys(this.selected).forEach((type) => {
         this.selected[type].clear()
