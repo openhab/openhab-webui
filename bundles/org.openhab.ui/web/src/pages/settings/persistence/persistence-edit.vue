@@ -460,6 +460,7 @@ export default {
 
       this.$oh.api.get('/rest/persistence/strategysuggestions?serviceId=' + this.serviceId).then((suggestions) => {
         this.suggestedStrategies = suggestions
+      })
 
       this.$oh.api.get('/rest/persistence/' + this.serviceId).then((data) => {
         this.$set(this, 'persistence', data)
