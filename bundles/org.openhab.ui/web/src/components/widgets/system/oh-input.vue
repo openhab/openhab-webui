@@ -54,19 +54,9 @@ import dayjs from 'dayjs'
 import mixin from '../widget-mixin'
 import variableMixin from '../variable-mixin'
 import { OhInputDefinition } from '@/assets/definitions/widgets/system'
+import { getDefaultInputType } from '@/assets/definitions/widgets/system/input.js'
 
 import { useStatesStore } from '@/js/stores/useStatesStore'
-
-export function getHtmlInputType (itemType) {
-  if (!itemType) return 'text'
-  if (itemType.startsWith('Number')) {
-    return 'number'
-  } else if(itemType === 'DateTime') {
-    return 'datetime-local'
-  } else {
-    return 'text'
-  }
-}
 
 export default {
   mixins: [mixin, variableMixin],
@@ -103,7 +93,7 @@ export default {
       return this.config.defaultValue
     },
     type () {
-      return this.config.type || getHtmlInputType(this.item?.type) || 'text'
+      return this.config.type || getDefaultInputType(this.item?.type) || 'text'
     },
     // Returns the unit from the item's displayState, state description pattern or the item's unit symbol
     unit () {

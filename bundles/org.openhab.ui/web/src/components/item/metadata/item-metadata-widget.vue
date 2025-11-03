@@ -104,8 +104,7 @@ import ItemMetadataMixin from '@/components/item/metadata/item-metadata-mixin'
 import { useStatesStore } from '@/js/stores/useStatesStore'
 import { useComponentsStore } from '@/js/stores/useComponentsStore'
 
-import { ptType } from '@/assets/definitions/widgets/system/input.js'
-import { getHtmlInputType } from '@/components/widgets/system/oh-input.vue'
+import { inputTypeParam, getDefaultInputType } from '@/assets/definitions/widgets/system/input.js'
 
 export default {
   props: {
@@ -136,7 +135,7 @@ export default {
       return [...useComponentsStore().widgets()].sort((a, b) => { return a.uid.localeCompare(b.uid) })
     },
     placeholderTextType () {
-      return getHtmlInputType(this.item.type)
+      return getDefaultInputType(this.item.type)
     },
     ...mapStores(useComponentsStore)
   },
@@ -226,8 +225,8 @@ export default {
       if (!desc.parameterGroups) desc.parameterGroups = []
 
       // special case setting of placeholder for default HTML type based on item type
-      const _ptParam = desc.parameters.find((p) => p.name === ptType.name && p.type === ptType.type)
-      if (_ptParam) _ptParam.placeholder = getHtmlInputType(this.item.type)
+      const _ptParam = desc.parameters.find((p) => p.name === inputTypeParam.name && p.type === inputTypeParam.type)
+      if (_ptParam) _ptParam.placeholder = getDefaultInputType(this.item.type)
 
       if (desc.parameters.length && (!this.metadata.value || this.metadata.value === ' ')) {
         // for the default system-suggested widget, take the default config and put it as default value
