@@ -16,13 +16,13 @@
 
 <script>
 import mixin from '../widget-mixin'
-import variableMixin from '../variable-mixin'
 import { OhStepperDefinition } from '@/assets/definitions/widgets/system'
+import { getVariableScope, getLastVariableKeyValue } from '@/components/widgets/variable'
 
 import { useStatesStore } from '@/js/stores/useStatesStore'
 
 export default {
-  mixins: [mixin, variableMixin],
+  mixins: [mixin],
   widget: OhStepperDefinition,
   mounted () {
     delete this.config.value
@@ -32,10 +32,10 @@ export default {
     value () {
       const applyOffset = (num) => (!isNaN(this.config.offset)) ? Number(this.toStepFixed(num + Number(this.config.offset))) : num
       if (this.config.variable) {
-        const variableScope = this.getVariableScope(this.context.ctxVars, this.context.varScope, this.config.variable)
+        const variableScope = getVariableScope(this.context.ctxVars, this.context.varScope, this.config.variable)
         const variableLocation = (variableScope) ? this.context.ctxVars[variableScope] : this.context.vars
         if (this.config.variableKey) {
-          return applyOffset(this.getLastVariableKeyValue(variableLocation[this.config.variable], this.config.variableKey))
+          return applyOffset(getLastVariableKeyValue(variableLocation[this.config.variable], this.config.variableKey))
         }
         return applyOffset(variableLocation[this.config.variable])
       }
@@ -81,7 +81,7 @@ export default {
       if (isNaN(newValue)) newValue = this.config.min || this.config.max || 0
       if (newValue === this.value) return
       if (this.config.variable) {
-        const variableScope = this.getVariableScope(this.context.ctxVars, this.context.varScope, this.config.variable)
+        const variableScope = getVariableScope(this.context.ctxVars, this.context.varScope, this.config.variable)
         const variableLocation = (variableScope) ? this.context.ctxVars[variableScope] : this.context.vars
         if (this.config.variableKey) {
           newValue = applyOffset(this.setVariableKeyValues(variableLocation[this.config.variable], this.config.variableKey, value))
