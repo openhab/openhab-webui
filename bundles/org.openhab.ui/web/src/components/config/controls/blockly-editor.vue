@@ -12,6 +12,7 @@
         <block type="logic_null" />
         <block type="oh_logic_undefined" />
         <block type="logic_ternary" />
+        <block type="oh_logic_multiple" />
       </category>
 
       <category name="Loops" colour="%{BKY_LOOPS_HUE}">

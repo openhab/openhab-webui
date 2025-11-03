@@ -18,6 +18,7 @@ export default {
     type: { type: String },
     config: { type: Object },
     startManually: { type: Boolean },
+    startMuted: { type: Boolean },
     hideControls: { type: Boolean },
     posterURL: { type: String }
   },
@@ -35,6 +36,9 @@ export default {
   },
   computed: {
     computedPosterUrl () {
+      if (this.posterURL && this.posterURL.startsWith('data:')) {
+        return this.posterURL
+      }
       const ts = (new Date()).toISOString()
       return this.posterURL ? this.posterURL.indexOf('?') === -1 ? `${this.posterURL}?_ts=${ts}` : `${this.posterURL}&_ts=${ts}` : this.posterURL
     }
@@ -54,7 +58,8 @@ export default {
       }
       const playerOpts = Object.assign({}, {
         liveui: true,
-        autoplay: this.startManually ? false : 'muted',
+        autoplay: this.startManually ? false : (this.startMuted ? 'muted' : 'play'),
+        muted: this.startMuted,
         controls: !this.hideControls
       }, this.config || {})
       this.player = videojs(

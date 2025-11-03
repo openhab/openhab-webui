@@ -5,12 +5,12 @@ import OhSheet from './modals/oh-sheet.vue'
 import OhPopover from './modals/oh-popover.vue'
 
 import GroupPopup from '@/pages/group/group-popup.vue'
-import variableMixin from './variable-mixin'
+
+import { getVariableScope, setVariableKeyValues } from '@/components/widgets/variable'
 
 import { useStatesStore } from '@/js/stores/useStatesStore'
 
 export const actionsMixin = {
-  mixins: [variableMixin],
   components: {
     OhPopup,
     OhSheet,
@@ -312,10 +312,10 @@ export const actionsMixin = {
             const actionVariable = actionConfig[prefix + 'actionVariable']
             let actionVariableValue = actionConfig[prefix + 'actionVariableValue']
             const actionVariableKey = actionConfig[prefix + 'actionVariableKey']
-            const actionVariableScope = this.getVariableScope(context.ctxVars, context.varScope, actionVariable)
+            const actionVariableScope = getVariableScope(context.ctxVars, context.varScope, actionVariable)
             const actionVariableLocation = (actionVariableScope) ? context.ctxVars[actionVariableScope] : context.vars
             if (actionVariableKey) {
-              actionVariableValue = this.setVariableKeyValues(actionVariableLocation[actionVariable], actionVariableKey, actionVariableValue)
+              actionVariableValue = setVariableKeyValues(actionVariableLocation[actionVariable], actionVariableKey, actionVariableValue)
             }
             actionVariableLocation[actionVariable] = actionVariableValue
             break

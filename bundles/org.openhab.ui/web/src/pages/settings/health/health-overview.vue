@@ -3,7 +3,7 @@
     <f7-navbar>
       <oh-nav-content title="Health Checks"
                       back-link="Settings"
-                      back-link-url="/settings"
+                      back-link-url="/settings/"
                       :f7router />
     </f7-navbar>
 

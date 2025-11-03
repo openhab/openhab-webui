@@ -1,8 +1,7 @@
-import variableMixin from '../variable-mixin'
+import { getVariableScope, getLastVariableKeyValue, setVariableKeyValues } from '@/components/widgets/variable'
 import { useStatesStore } from '@/js/stores/useStatesStore'
 
 export default {
-  mixins: [variableMixin],
   data () {
     return {
       pendingCommand: null
@@ -17,10 +16,10 @@ export default {
   computed: {
     value () {
       if (this.config.variable) {
-        const variableScope = this.getVariableScope(this.context.ctxVars, this.context.varScope, this.config.variable)
+        const variableScope = getVariableScope(this.context.ctxVars, this.context.varScope, this.config.variable)
         const variableLocation = (variableScope) ? this.context.ctxVars[variableScope] : this.context.vars
         if (this.config.variableKey) {
-          return this.getLastVariableKeyValue(variableLocation[this.config.variable], this.config.variableKey)
+          return getLastVariableKeyValue(variableLocation[this.config.variable], this.config.variableKey)
         } else {
           return variableLocation[this.config.variable]
         }
@@ -47,10 +46,10 @@ export default {
       if ((value === this.value && !stop) || value === this.lastValueSent) return
 
       if (this.config.variable) {
-        const variableScope = this.getVariableScope(this.context.ctxVars, this.context.varScope, this.config.variable)
+        const variableScope = getVariableScope(this.context.ctxVars, this.context.varScope, this.config.variable)
         const variableLocation = (variableScope) ? this.context.ctxVars[variableScope] : this.context.vars
         if (this.config.variableKey) {
-          value = this.setVariableKeyValues(variableLocation[this.config.variable], this.config.variableKey, value)
+          value = setVariableKeyValues(variableLocation[this.config.variable], this.config.variableKey, value)
         }
         variableLocation[this.config.variable] = value
         return

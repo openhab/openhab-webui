@@ -50,6 +50,9 @@ jobs:
       - name: Run ESLint
         run: npm run lint
 
+      - name: Run Vue Type-Checking Tool
+        run: npm run typescript:check
+
       - name: Run Unit Tests
         run: npm run test:unit
 

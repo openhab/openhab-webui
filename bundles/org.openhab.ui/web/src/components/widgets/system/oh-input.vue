@@ -52,14 +52,14 @@
 import dayjs from 'dayjs'
 
 import mixin from '../widget-mixin'
-import variableMixin from '../variable-mixin'
 import { OhInputDefinition } from '@/assets/definitions/widgets/system'
 import { getDefaultInputType } from '@/assets/definitions/widgets/system/input.js'
+import { getVariableScope, setVariableKeyValues } from '@/components/widgets/variable'
 
 import { useStatesStore } from '@/js/stores/useStatesStore'
 
 export default {
-  mixins: [mixin, variableMixin],
+  mixins: [mixin],
   widget: OhInputDefinition,
   data () {
     return {
@@ -181,10 +181,10 @@ export default {
       }
       this.pendingUpdate = value
       if (this.config.variable) {
-        const variableScope = this.getVariableScope(this.context.ctxVars, this.context.varScope, this.config.variable)
+        const variableScope = getVariableScope(this.context.ctxVars, this.context.varScope, this.config.variable)
         const variableLocation = (variableScope) ? this.context.ctxVars[variableScope] : this.context.vars
         if (this.config.variableKey) {
-          value = this.setVariableKeyValues(variableLocation[this.config.variable], this.config.variableKey, value)
+          value = setVariableKeyValues(variableLocation[this.config.variable], this.config.variableKey, value)
         }
         variableLocation[this.config.variable] = value
       }
