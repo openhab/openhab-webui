@@ -307,7 +307,10 @@
                   color="blue"
                   tab-link-active
                 ></f7-link>-->
-          <f7-login-screen-title>{{ t('setupwizard.welcome.title') }}</f7-login-screen-title>
+          <f7-login-screen-title>{{ $t('setupwizard.welcome.title') }}</f7-login-screen-title>
+        </f7-block>
+        <f7-block v-if="persistenceInstalled">
+          {{ $t('setupwizard.welcome.persistenceInstalled') }}
         </f7-block>
         <f7-block v-if="bindingInstalled">
           {{ t('setupwizard.welcome.bindingsInstalled') }}
@@ -405,7 +408,8 @@ export default {
       // final list of addons to install
       toInstallAddons: [],
       installingAddons: false,
-      bindingInstalled: false
+      bindingInstalled: false,
+      persistenceInstalled: false
     }
   },
   computed: {
@@ -624,7 +628,8 @@ export default {
       this.installingAddons = true
       f7.tab.show('#wait', false)
 
-      this.bindingInstalled = this.toInstallAddons.find((a) => a.type === 'binding')
+      this.bindingInstalled = this.toInstallAddons.find(a => (a.type === 'binding'))
+      this.persistenceInstalled = this.toInstallAddons.find(a => (a.type === 'persistence'))
       const addonsCount = this.toInstallAddons.length
       let progress = 0
 
