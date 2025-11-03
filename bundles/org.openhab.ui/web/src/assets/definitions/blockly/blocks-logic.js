@@ -37,9 +37,14 @@ export default function (f7) {
    */
   Blockly.Blocks['oh_logic_multiple'] = {
     init: function () {
+      const block = this
       this.appendDummyInput().appendField(new Blockly.FieldDropdown([
         ['AND', 'AND'], ['OR', 'OR']
-      ]), 'operand')
+      ], function (newValue) {
+        block.updateOperandLabel(newValue)
+        return newValue
+      }), 'operand')
+      this.appendDummyInput('OPERAND_LABEL').appendField('all of', 'OPERAND_LABEL_TEXT')
       this.appendValueInput('OPER1').setCheck('Boolean')
       this.appendValueInput('OPER2').setCheck('Boolean')
       this.setInputsInline(false)
@@ -49,6 +54,14 @@ export default function (f7) {
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-standard-ext.html#logic')
       this.setMutator(new Blockly.icons.MutatorIcon(['oh_logic_multiple_condition_block'], this))
       this.numberOfChildren = 2
+    },
+    updateOperandLabel: function (operandValue) {
+      const quantifierInput = this.getInput('OPERAND_LABEL')
+      if (quantifierInput) {
+        quantifierInput.removeField('OPERAND_LABEL_TEXT')
+        const text = operandValue === 'AND' ? 'all of' : 'any of'
+        quantifierInput.appendField(text, 'OPERAND_LABEL_TEXT')
+      }
     },
     mutationToDom: function () {
       if (!this.numberOfChildren) {
