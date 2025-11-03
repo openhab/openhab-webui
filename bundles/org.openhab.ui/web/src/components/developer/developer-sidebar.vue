@@ -24,16 +24,43 @@
             Pinned Objects
           </f7-block-title>
         </f7-block>
-        <f7-block class="no-margin no-padding"
-                  v-if="!developerStore.pinnedObjects.items.length &&
-                    !developerStore.pinnedObjects.things.length &&
-                    !developerStore.pinnedObjects.rules.length &&
-                    !developerStore.pinnedObjects.scenes.length &&
-                    !developerStore.pinnedObjects.scripts.length &&
-                    !developerStore.pinnedObjects.pages.length &&
-                    !developerStore.pinnedObjects.widgets.length &&
-                    !developerStore.pinnedObjects.transformations.length
-                  ">
+        <f7-list v-if="Object.keys(developerStore.pinCollections).length > 0 || isAnythingPinned">
+          <f7-list-item accordion-item
+                        title="Saved Pins"
+                        ref="pinCollectionsAccordion">
+            <f7-accordion-content>
+              <f7-list>
+                <f7-list-input v-if="isAnythingPinned"
+                               type="text"
+                               :input="false"
+                               clear-button>
+                  <template #input>
+                    <input type="text"
+                           placeholder="Save current pins as"
+                           v-model="newCollectionName"
+                           @keyup.enter="savePinCollection">
+                  </template>
+                </f7-list-input>
+              </f7-list>
+              <f7-list v-if="developerStore.sortedCollectionNames.length > 0" class="pin-collections">
+                <f7-list-item group-title title="Saved Pin Collections" class="padding-vertical" />
+                <f7-list-item v-for="collectionName in developerStore.sortedCollectionNames"
+                              :key="collectionName"
+                              :title="collectionName"
+                              :link="true"
+                              @click="loadPinCollection(collectionName)">
+                  <template #after>
+                    <f7-link color="red"
+                             icon-f7="trash"
+                             tooltip="Delete Collection"
+                             @click.stop="deletePinCollection(collectionName)" />
+                  </template>
+                </f7-list-item>
+              </f7-list>
+            </f7-accordion-content>
+          </f7-list-item>
+        </f7-list>
+        <f7-block class="no-margin no-padding" v-if="!isAnythingPinned">
           <p class="padding-horizontal">
             Use the search box above or the button below to temporarily pin objects here for quick access.
           </p>
@@ -73,7 +100,7 @@
                 <template #footer>
                   <div class="display-flex align-items-flex-end justify-content-flex-end" style="margin-top: 3px">
                     <f7-link color="gray" class="margin-right itemlist-actions">
-                      <clipboard-icon :value="item.name" size="18" tooltip="Copy Item name" />
+                      <clipboard-icon :value="item.name" :size="18" tooltip="Copy Item name" />
                     </f7-link>
                     <f7-link class="margin-right itemlist-actions"
                              color="gray"
@@ -122,7 +149,7 @@
                 <template #footer>
                   <div class="display-flex align-items-flex-end justify-content-flex-end" style="margin-top: 3px">
                     <f7-link color="gray" class="margin-right">
-                      <clipboard-icon :value="thing.UID" size="18" tooltip="Copy Thing UID" />
+                      <clipboard-icon :value="thing.UID" :size="18" tooltip="Copy Thing UID" />
                     </f7-link>
                     <f7-link class="margin-right"
                              :icon-color="thing.statusInfo.statusDetail === 'DISABLED' ? 'orange' : 'gray'"
@@ -176,7 +203,7 @@
                 <template #footer>
                   <div class="display-flex align-items-flex-end justify-content-flex-end" style="margin-top: 3px">
                     <f7-link color="gray" class="margin-right">
-                      <clipboard-icon :value="rule.uid" size="18" tooltip="Copy Rule UID" />
+                      <clipboard-icon :value="rule.uid" :size="18" tooltip="Copy Rule UID" />
                     </f7-link>
                     <f7-link class="margin-right"
                              :icon-color="rule.status.statusDetail === 'DISABLED' ? 'orange' : 'gray'"
@@ -236,7 +263,7 @@
                   <div class="display-flex align-items-flex-end justify-content-flex-end"
                        style="margin-top: 3px">
                     <f7-link color="gray" class="margin-right">
-                      <clipboard-icon :value="rule.uid" size="18" tooltip="Copy Rule UID" />
+                      <clipboard-icon :value="rule.uid" :size="18" tooltip="Copy Rule UID" />
                     </f7-link>
                     <f7-link class="margin-right"
                              :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'"
@@ -297,7 +324,7 @@
                   <div class="display-flex align-items-flex-end justify-content-flex-end"
                        style="margin-top: 3px">
                     <f7-link color="gray" class="margin-right">
-                      <clipboard-icon :value="rule.uid" size="18" tooltip="Copy Rule UID" />
+                      <clipboard-icon :value="rule.uid" :size="18" tooltip="Copy Rule UID" />
                     </f7-link>
                     <f7-link class="margin-right"
                              :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'"
@@ -352,7 +379,7 @@
                   <div class="display-flex align-items-flex-end justify-content-flex-end"
                        style="margin-top: 3px">
                     <f7-link color="gray" class="margin-right">
-                      <clipboard-icon :value="page.uid" size="18" tooltip="Copy Page UID" />
+                      <clipboard-icon :value="page.uid" :size="18" tooltip="Copy Page UID" />
                     </f7-link>
                     <!-- <f7-link class="margin-right" color="blue" icon-f7="rectangle_on_rectangle" icon-size="18" tooltip="Open in Popup" /> -->
                     <f7-link class="margin-right"
@@ -401,7 +428,7 @@
                 <template #footer>
                   <div class="display-flex align-items-flex-end justify-content-flex-end">
                     <f7-link color="gray" class="margin-right">
-                      <clipboard-icon :value="widget.uid" size="18" tooltip="Copy Widget UID" />
+                      <clipboard-icon :value="widget.uid" :size="18" tooltip="Copy Widget UID" />
                     </f7-link>
                     <f7-link class="margin-right"
                              color="gray"
@@ -444,7 +471,7 @@
                   <div class="display-flex align-items-flex-end justify-content-flex-end"
                        style="margin-top: 3px">
                     <f7-link color="gray" class="margin-right">
-                      <clipboard-icon :value="transformation.uid" size="18" tooltip="Copy Transformation UID" />
+                      <clipboard-icon :value="transformation.uid" :size="18" tooltip="Copy Transformation UID" />
                     </f7-link>
                     <f7-link class="margin-right"
                              color="gray"
@@ -487,7 +514,7 @@
                   <div class="display-flex align-items-flex-end justify-content-flex-end"
                        style="margin-top: 3px">
                     <f7-link color="gray" class="margin-right">
-                      <clipboard-icon :value="persistenceConfig.serviceId" size="18" tooltip="Copy Service ID" />
+                      <clipboard-icon :value="persistenceConfig.serviceId" :size="18" tooltip="Copy Service ID" />
                     </f7-link>
                     <f7-link class="margin-right"
                              color="gray"
@@ -670,6 +697,9 @@
 
   .developer-sidebar-content
     margin-top 1rem
+    .pin-collections
+      max-height 11rem /* Make the last item partially show to hint that there are more items */
+      overflow-y auto
 
   .searchbar
     width 100%
@@ -692,6 +722,10 @@ import { f7, theme } from 'framework7-vue'
 import { nextTick } from 'vue'
 import { mapStores } from 'pinia'
 
+import { useDeveloperStore } from '@/js/stores/useDeveloperStore'
+import { useStatesStore } from '@/js/stores/useStatesStore'
+import { useComponentsStore } from '@/js/stores/useComponentsStore'
+
 import Fuse from 'fuse.js'
 import Item from '@/components/item/item.vue'
 import ItemStandaloneControl from '@/components/item/item-standalone-control.vue'
@@ -702,10 +736,8 @@ import ClipboardIcon from '@/components/util/clipboard-icon.vue'
 
 import RuleStatus from '@/components/rule/rule-status-mixin'
 import ThingStatus from '@/components/thing/thing-status-mixin'
-
-import { useDeveloperStore } from '@/js/stores/useDeveloperStore'
-import { useStatesStore } from '@/js/stores/useStatesStore'
-import { useComponentsStore } from '@/js/stores/useComponentsStore'
+import cloneDeep from 'lodash/cloneDeep'
+import fastDeepEqual from 'fast-deep-equal/es6'
 
 export default {
   mixins: [RuleStatus, ThingStatus],
@@ -747,6 +779,7 @@ export default {
         transformations: [],
         persistenceConfigs: []
       },
+      newCollectionName: '',
       sseEvents: [],
       openedItem: null,
       pageTypes: [
@@ -835,6 +868,9 @@ export default {
       return {
         store: useStatesStore().trackedItems
       }
+    },
+    isAnythingPinned () {
+      return Object.values(useDeveloperStore().pinnedObjects).some((obj) => obj.length > 0)
     },
     ...mapStores(useDeveloperStore, useStatesStore)
   },
@@ -1015,6 +1051,56 @@ export default {
     },
     unpinAll (type) {
       useDeveloperStore().pinnedObjects[type] = []
+    },
+    savePinCollection (evt) {
+      this.newCollectionName = this.newCollectionName.trim()
+      if (!this.newCollectionName) return
+
+      const save = () => {
+        useDeveloperStore().pinCollections[this.newCollectionName] = cloneDeep(useDeveloperStore().pinnedObjects)
+        f7.accordion.close(this.$refs.pinCollectionsAccordion.$el)
+        this.newCollectionName = ''
+      }
+
+      if (useDeveloperStore().pinCollections[this.newCollectionName]) {
+        f7.dialog.confirm('A Pin Collection with this name already exists. Do you want to overwrite it?', 'Overwrite Collection?', () => {
+          save()
+        })
+      } else {
+        save()
+      }
+    },
+    deletePinCollection (name) {
+      f7.dialog.confirm(
+        `Are you sure you want to delete the '${name}' collection? This action cannot be undone.`,
+        'Delete Pin Collection?',
+        () => {
+          delete useDeveloperStore().pinCollections[name]
+        }
+      )
+    },
+    loadPinCollection (name) {
+      const pinCollection = useDeveloperStore().pinCollections[name]
+      if (!pinCollection) return
+
+      if (fastDeepEqual(pinCollection, useDeveloperStore().pinnedObjects)) {
+        f7.accordion.close(this.$refs.pinCollectionsAccordion.$el)
+        return
+      }
+
+      const load = () => {
+        useDeveloperStore().clearPinnedObjects()
+        Object.assign(useDeveloperStore().pinnedObjects, cloneDeep(pinCollection))
+        f7.accordion.close(this.$refs.pinCollectionsAccordion.$el)
+      }
+
+      if (this.isAnythingPinned) {
+        f7.dialog.confirm(`Discard the current set of pinned objects and load '${name}' collection?`, () => {
+          load()
+        })
+      } else {
+        load()
+      }
     },
     getPageType (page) {
       return this.pageTypes.find((t) => t.componentType === page.component)
