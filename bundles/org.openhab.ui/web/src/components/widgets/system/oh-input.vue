@@ -1,57 +1,35 @@
 <template>
-  <f7-row no-gap
-          v-if="!config.item || !config.sendButton"
-          class="oh-input"
-          :style="config.style">
-    <f7-input class="input-field"
-              ref="input"
-              v-bind="config"
-              :style="{ width: '100%', ...config.style }"
-              :value="((config.type && config.type.indexOf('date') === 0) || config.type === 'time') ? valueForDatepicker : value"
-              :calendar-params="calendarParams"
-              :step="config.step ? config.step : 'any'"
-              @focus="listenForEnterKey"
-              @blur="stopListeningForEnterKey"
-              @input="$evt => updated($evt.target.value)"
-              @calendar:change="updated"
-              @texteditor:change="updated"
-              @colorpicker:change="updated">
+  <f7-row no-gap class="oh-input" :style="config.style">
+    <f7-input
+      class="input-field"
+      ref="input"
+      :type="type"
+      v-bind="config"
+      :style="{ width: '100%', ...config.style }"
+      :value="((type && type.indexOf('date') === 0) || type === 'time') ? valueForDatepicker : value"
+      :calendar-params="calendarParams"
+      :step="config.step ? config.step : 'any'"
+      @focus="listenForEnterKey"
+      @blur="stopListeningForEnterKey"
+      @input="$evt => updated($evt.target.value)"
+      @calendar:change="updated"
+      @texteditor:change="updated"
+      @colorpicker:change="updated">
       <template v-if="context.component.slots && context.component.slots.default" #default>
-        <generic-widget-component v-for="(slotComponent, idx) in context.component.slots.default"
-                                  :context="childContext(slotComponent)"
-                                  :key="'default-' + idx" />
+        <generic-widget-component
+          v-for="(slotComponent, idx) in context.component.slots.default"
+          :context="childContext(slotComponent)"
+          :key="'default-' + idx" />
       </template>
     </f7-input>
+
     <span v-if="unit" class="unit">{{ unit }}</span>
-  </f7-row>
-  <f7-row no-gap
-          v-else
-          class="oh-input"
-          :style="config.style">
-    <f7-input class="input-field"
-              ref="input"
-              v-bind="config"
-              :value="((config.type && config.type.indexOf('date') === 0) || config.type === 'time') ? valueForDatepicker : value"
-              :calendar-params="calendarParams"
-              :step="config.step ? config.step : 'any'"
-              :style="{ width: '100%' }"
-              @focus="listenForEnterKey"
-              @blur="stopListeningForEnterKey"
-              @input="$evt => updated($evt.target.value)"
-              @calendar:change="updated"
-              @texteditor:change="updated"
-              @colorpicker:change="updated">
-      <template v-if="context.component.slots && context.component.slots.default" #default>
-        <generic-widget-component v-for="(slotComponent, idx) in context.component.slots.default"
-                                  :context="childContext(slotComponent)"
-                                  :key="'default-' + idx" />
-      </template>
-    </f7-input>
-    <span v-if="unit" class="unit">{{ unit }}</span>
-    <f7-button v-if="this.config.sendButton"
-               class="send-button col-10"
-               @click.stop="sendButtonClicked"
-               v-bind="config.sendButtonConfig || { iconMaterial: 'done', iconColor: 'gray' }" />
+
+    <f7-button
+      v-if="config.sendButton && config.item"
+      class="send-button col-10"
+      @click.stop="sendButtonClicked"
+      v-bind="config.sendButtonConfig || { iconMaterial: 'done', iconColor: 'gray' }" />
   </f7-row>
 </template>
 
@@ -75,6 +53,7 @@ import dayjs from 'dayjs'
 
 import mixin from '../widget-mixin'
 import { OhInputDefinition } from '@/assets/definitions/widgets/system'
+import { getDefaultInputType } from '@/assets/definitions/widgets/system/input.js'
 import { getVariableScope, setVariableKeyValues } from '@/components/widgets/variable'
 
 import { useStatesStore } from '@/js/stores/useStatesStore'
@@ -108,14 +87,17 @@ export default {
         const item = this.context.store[this.config.item]
         if (item.state !== 'NULL' && item.state !== 'UNDEF' && item.state !== 'Invalid Date') {
           const value = (this.config.useDisplayState && item.displayState) || item.state
-          return this.config.type === 'number' ? parseFloat(this.extractValue(value)) : value
+          return this.type === 'number' ? parseFloat(this.extractValue(value)) : value
         }
       }
       return this.config.defaultValue
     },
+    type () {
+      return this.config.type || getDefaultInputType(this.item?.type) || 'text'
+    },
     // Returns the unit from the item's displayState, state description pattern or the item's unit symbol
     unit () {
-      if (this.config.type !== 'number') return null
+      if (this.type !== 'number') return null
       if (!this.item?.unitSymbol) return null
 
       const storeItem = this.context.store[this.config.item]
@@ -135,7 +117,7 @@ export default {
       return parts.findLastIndex((part) => part.startsWith('%') && part !== '%unit%' && part !== '%%')
     },
     calendarParams () {
-      if (this.config.type !== 'datepicker') return null
+      if (this.type !== 'datepicker') return null
       let params = { dateFormat: { year: 'numeric', month: 'numeric', day: 'numeric' } }
       if (this.config.showTime) {
         params.timePicker = true
@@ -179,10 +161,10 @@ export default {
   },
   methods: {
     updated (value) {
-      if (this.config.type === 'texteditor') {
+      if (this.type === 'texteditor') {
         value = this.$$(this.$refs.input.$el).find('.text-editor-content')[0].innerHTML
         if (value === this.value) return
-      } else if (this.config.type === 'time') {
+      } else if (this.type === 'time') {
         const oldDate = dayjs(Array.isArray[this.value] ? this.value[0] : this.value).set('millisecond', 0)
         let time = value.match(/(?<hour>[0-9]{2}):(?<minute>[0-9]{2})(:(?<second>[0-9]{2}))?/)
         if (!time) return // avoid error being thrown because there is no match
@@ -190,11 +172,11 @@ export default {
         if (isNaN(time.hour) || isNaN(time.minute)) return
         value = dayjs(oldDate).set('hour', time.hour).set('minute', time.minute).set('second', isNaN(time.second) ? 0 : time.second).set('millisecond', 0).format()
         if ((new Date(oldDate)).getTime() === (new Date(value)).getTime()) return
-      } else if (this.config.type === 'date') {
+      } else if (this.type === 'date') {
         const oldDate = dayjs(Array.isArray[this.value] ? this.value[0] : this.value).set('millisecond', 0)
         value = dayjs(value).set('hour', oldDate.get('hour')).set('minute', oldDate.get('minute')).set('second', oldDate.get('second')).set('millisecond', 0).format()
         if ((new Date(oldDate)).getTime() === (new Date(value)).getTime()) return
-      } else if (this.config.type === 'datepicker' && Array.isArray(value) && this.valueForDatepicker[0].getTime() === value[0].getTime()) {
+      } else if (this.type === 'datepicker' && Array.isArray(value) && this.valueForDatepicker[0].getTime() === value[0].getTime()) {
         return
       }
       this.pendingUpdate = value
@@ -223,7 +205,7 @@ export default {
         let cmd = this.pendingUpdate
         if (this.unit) {
           cmd += ' ' + this.unit
-        } else if (this.config.type === 'datepicker' && Array.isArray(cmd)) {
+        } else if (this.type === 'datepicker' && Array.isArray(cmd)) {
           cmd = dayjs(cmd[0]).format()
           if (cmd === 'Invalid Date') return
         }

@@ -1,8 +1,36 @@
 import { pi, pb, pt, pd } from '../helpers.js'
 
+export const inputTypeParam = pt('type', 'Input Type',
+  'Input type for different openHAB Item types (the first listed type is the default):\
+  <div style="padding-left: 16px;">\
+  <li><b>String:</b> text, textarea, texteditor, password, email, tel, url</li>\
+  <li><b>DateTime:</b> datetime-local, date, datepicker</li>\
+  <li><b>Number:</b> number</li>\
+  </div>')
+
+/**
+ * Returns the default HTML or Framework7 input type for the given Item type.
+ *
+ * See {@link https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input#input_types HTML <input> types}.
+ * See {@link https://framework7.io/docs/inputs#supported-inputs Framework7 input types}.
+ *
+ * @param {string|undefined} itemType
+ * @return {string}
+ */
+export function getDefaultInputType (itemType) {
+  if (!itemType) return 'text'
+  if (itemType.startsWith('Number')) {
+    return 'number'
+  } else if (itemType === 'DateTime') {
+    return 'datetime-local'
+  } else {
+    return 'text'
+  }
+}
+
 export default () => [
   pt('name', 'Name', 'Input name'),
-  pt('type', 'Type', 'Type of input (see <a class="external text-color-blue" target="_blank" href="https://framework7.io/docs/inputs.html#supported-inputs">f7 input docs</a>, <code>time</code>, <code>date</code> or <code>datepicker</code>)'),
+  inputTypeParam,
   pt('inputmode', 'Input Mode', 'Type of data that might be entered (see <a class="external text-color-blue" target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/inputmode">MDN docs</a>)'),
   pt('placeholder', 'Placeholder', 'Placeholder text'),
   pb('sendButton', 'Send button', 'Display Send button to update the state with a command (needs a configured item)'),

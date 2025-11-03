@@ -60,7 +60,6 @@
     <div v-if="configDescriptions.parameters" class="widget-metadata-config-sheet">
       <f7-block-title>Configuration</f7-block-title>
       <f7-block-footer class="padding-horizontal margin-bottom">
-        // eslint-disable-next-line prettier/prettier
         Note: the parameter named 'item' will be set automatically with the name of the item ({{ this.item.name }}) unless it's set explicitely.
       </f7-block-footer>
       <f7-block-footer v-if="currentComponent.component && currentComponent.component.indexOf('widget:') === 0" class="padding-horizontal margin-bottom">
@@ -105,6 +104,8 @@ import ItemMetadataMixin from '@/components/item/metadata/item-metadata-mixin'
 import { useStatesStore } from '@/js/stores/useStatesStore'
 import { useComponentsStore } from '@/js/stores/useComponentsStore'
 
+import { inputTypeParam, getDefaultInputType } from '@/assets/definitions/widgets/system/input.js'
+
 export default {
   props: {
     item: Object,
@@ -132,6 +133,9 @@ export default {
   computed: {
     personalWidgets () {
       return [...useComponentsStore().widgets()].sort((a, b) => { return a.uid.localeCompare(b.uid) })
+    },
+    placeholderTextType () {
+      return getDefaultInputType(this.item.type)
     },
     ...mapStores(useComponentsStore)
   },
@@ -219,6 +223,10 @@ export default {
 
       if (!desc.parameters) desc.parameters = []
       if (!desc.parameterGroups) desc.parameterGroups = []
+
+      // special case setting of placeholder for default HTML type based on item type
+      const _ptParam = desc.parameters.find((p) => p.name === inputTypeParam.name && p.type === inputTypeParam.type)
+      if (_ptParam) _ptParam.placeholder = getDefaultInputType(this.item.type)
 
       if (desc.parameters.length && (!this.metadata.value || this.metadata.value === ' ')) {
         // for the default system-suggested widget, take the default config and put it as default value
