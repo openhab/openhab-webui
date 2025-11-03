@@ -450,8 +450,8 @@ export default {
       if (!query) {
         return
       }
-      this.$refs.searchbar?.f7Searchbar.search('')
-      this.$refs.searchbar?.f7Searchbar.search(query)
+      this.$refs.searchbar?.$el.f7Searchbar.search('')
+      this.$refs.searchbar?.$el.f7Searchbar.search(query)
     },
     resetFilter () {
       this.excludedUids.clear()
