@@ -56,7 +56,7 @@ export default {
         openIn: 'popup',
         virtualList: true,
         virtualListHeight: (this.$theme.aurora) ? 32 : undefined,
-        setValueText: false || this.value?.length
+        setValueText: this.value?.length
       }
     }
   },
@@ -68,7 +68,7 @@ export default {
       }
     })
   },
-  beforeDestroy () {
+  beforeUnmount () {
     const smartSelect = this.$refs.smartSelect?.f7SmartSelect
     if (smartSelect) {
       smartSelect.off('closed', this.select)

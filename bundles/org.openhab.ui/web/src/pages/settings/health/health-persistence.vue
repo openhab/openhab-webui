@@ -1,6 +1,9 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn">
-    <f7-navbar title="Persistence Configuration Issues" back-link="Health Checks" back-link-url="/settings/health/" back-link-force>
+    <f7-navbar title="Persistence Configuration Issues"
+               back-link="Health Checks"
+               back-link-url="/settings/health/"
+               back-link-force>
       <f7-nav-right>
         <developer-dock-icon />
       </f7-nav-right>
@@ -25,8 +28,13 @@
         <f7-block-title>&nbsp;Loading...</f7-block-title>
         <f7-list contacts-list class="col">
           <f7-list-group>
-            <f7-list-item media-item v-for="n in 10" :key="n" :class="`skeleton-text skeleton-effect-blink`"
-                          title="Type of problem" subtitle="Persistence service" footer="" />
+            <f7-list-item media-item
+                          v-for="n in 10"
+                          :key="n"
+                          :class="`skeleton-text skeleton-effect-blink`"
+                          title="Type of problem"
+                          subtitle="Persistence service"
+                          footer="" />
           </f7-list-group>
         </f7-list>
       </f7-col>
@@ -36,11 +44,19 @@
           {{ persistenceProblems.length }} persistence configuration problem{{ plural(persistenceProblems.length) }} found
         </f7-block-title>
         <f7-list class="col" contacts-list>
-          <f7-list-item v-for="persistenceProblem in persistenceProblems" :key="problemKey(persistenceProblem)" media-item
-                        :link="getLinkForProblem(persistenceProblem)" :title="'Problem: ' + explanation(persistenceProblem.reason)"
+          <f7-list-item v-for="persistenceProblem in persistenceProblems"
+                        :key="problemKey(persistenceProblem)"
+                        media-item
+                        :link="getLinkForProblem(persistenceProblem)"
+                        :title="'Problem: ' + explanation(persistenceProblem.reason)"
                         :subtitle="persistenceProblem.serviceId ? 'Persistence Service: ' + persistenceProblem.serviceId : ''"
                         :footer="persistenceProblem.items ? 'Items: ' + persistenceProblem.items.join(', ') : ''">
-            <f7-icon v-if="!persistenceProblem.editable" slot="after-title" f7="lock_fill" size="1rem" color="gray" />
+            <template #after-title>
+              <f7-icon v-if="!persistenceProblem.editable"
+                       f7="lock_fill"
+                       size="1rem"
+                       color="gray" />
+            </template>
           </f7-list-item>
         </f7-list>
       </f7-col>

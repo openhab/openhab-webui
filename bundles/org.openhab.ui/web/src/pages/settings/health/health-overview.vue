@@ -58,7 +58,9 @@
             :after="persistenceProblemsCount > 0 ? undefined : persistenceProblemsCount"
             :badge-color="persistenceProblemsCount ? 'red' : 'blue'"
             :footer="objectsSubtitles.persistenceProblems">
-            <f7-icon slot="media" f7="link" color="gray" />
+            <template #media>
+              <f7-icon f7="link" color="gray" />
+            </template>
           </f7-list-item>
         </f7-list>
       </f7-col>

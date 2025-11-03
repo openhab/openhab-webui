@@ -628,8 +628,8 @@ export default {
       this.installingAddons = true
       f7.tab.show('#wait', false)
 
-      this.bindingInstalled = this.toInstallAddons.find(a => (a.type === 'binding'))
-      this.persistenceInstalled = this.toInstallAddons.find(a => (a.type === 'persistence'))
+      this.bindingInstalled = this.toInstallAddons.find((a) => (a.type === 'binding'))
+      this.persistenceInstalled = this.toInstallAddons.find((a) => (a.type === 'persistence'))
       const addonsCount = this.toInstallAddons.length
       let progress = 0
 
