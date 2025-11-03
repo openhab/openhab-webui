@@ -108,10 +108,10 @@
       <f7-col v-show="ready">
         <f7-block-title>
           <span>{{ listTitle }}</span>
-          <span v-if="showCheckboxes && filteredThings.length">
+          <template v-if="showCheckboxes && listedItems.length">
             -
             <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
-          </span>
+          </template>
           <template v-if="groupBy === 'location'">
             <div style="text-align: right" class="padding-right">
               <label class="advanced-label">
@@ -120,6 +120,11 @@
             </div>
           </template>
         </f7-block-title>
+        <list-filter ref="filters"
+                     v-if="ready"
+                     :filters="filters"
+                     @toggled="updateFilteredItems"
+                     @reset="updateFilteredItems" />
       </f7-col>
       <!-- skeleton for not ready -->
       <f7-col v-if="!ready">
@@ -152,10 +157,10 @@
             </f7-button>
           </f7-segmented>
         </div>
-        <f7-list v-if="filteredThings.length === 0">
+        <f7-list v-if="!listedItems.length">
           <f7-list-item title="Nothing found" />
         </f7-list>
-        <f7-list v-else class="col things-list" :contacts-list="groupBy === 'alphabetical'">
+        <f7-list v-show="listedItems.length" class="col things-list" :contacts-list="groupBy === 'alphabetical'">
           <f7-list-group v-for="(thingsWithInitial, initial) in indexedThings" :key="initial">
             <f7-list-item v-if="thingsWithInitial.length"
                           :title="initial"
@@ -241,14 +246,28 @@ import { nextTick } from 'vue'
 import { f7, theme } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
+import { useLastSearchQueryStore } from '@/js/stores/useLastSearchQueryStore'
+import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
+
 import ThingStatus from '@/components/thing/thing-status-mixin'
 import ClipboardIcon from '@/components/util/clipboard-icon.vue'
 import FileDefinition from '@/pages/settings/file-definition-mixin'
 
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
+import ListFilter from '@/components/util/list-filter.vue'
 
-import { useLastSearchQueryStore } from '@/js/stores/useLastSearchQueryStore'
-import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+const ITEM_KINDS = {
+  editable: 'Editable',
+  readonly: 'Non-editable'
+}
+
+const ITEM_STATUSES = {
+  ONLINE: 'Online',
+  OFFLINE: 'Offline',
+  UNINITIALIZED: 'Disabled/Uninitialized',
+  OTHERS: 'Other Status'
+}
 
 export default {
   mixins: [ThingStatus, FileDefinition],
@@ -258,6 +277,7 @@ export default {
     f7router: Object
   },
   components: {
+    ListFilter,
     EmptyStatePlaceholder,
     ClipboardIcon
   },
@@ -271,8 +291,18 @@ export default {
       loading: false,
       things: [],
       inbox: [],
+      filters: {
+        kinds: {
+          label: 'Kind',
+          options: ITEM_KINDS
+        },
+        status: {
+          label: 'Status',
+          options: ITEM_STATUSES
+        }
+      },
       searchQuery: null,
-      filteredThings: [],
+      filteredItems: [],
       selectedItems: [],
       showCheckboxes: false,
       groupBy: 'alphabetical',
@@ -280,9 +310,31 @@ export default {
       eventSource: null
     }
   },
+  watch: {
+    listedUids () {
+      this.selectedItems = this.selectedItems.filter((i) => this.listedUids.has(i))
+    }
+  },
   computed: {
+    emptySearchOrFilterResults () {
+      return (this.searchQuery || this.$refs.filters?.filtered) && !this.listedItems.length && this.things.length
+    },
+    listedItems () {
+      if (!this.searchQuery) return this.filteredItems
+
+      const searchTerms = this.searchQuery.split(',').map((s) => s.trim()).filter((s) => s)
+      if (!searchTerms.length) return this.filteredItems
+
+      return this.filteredItems.filter((thing) => {
+        const haystack = [thing.UID, thing.label, thing.location, this.thingStatusBadgeText(thing.statusInfo)].join('|').toLowerCase()
+        return searchTerms.some((t) => haystack.includes(t))
+      })
+    },
+    listedUids () {
+      return new Set(this.listedItems.map((t) => t.UID))
+    },
     indexedThings () {
-      const things = this.filteredThings
+      const things = this.listedItems
       if (this.groupBy === 'alphabetical') {
         return things.reduce((prev, thing, i, things) => {
           const initial = (thing.label || thing.UID).substring(0, 1).toUpperCase()
@@ -335,14 +387,14 @@ export default {
       return this.inbox.length
     },
     allSelected () {
-      return this.selectedItems.length === this.filteredThings.length
+      return this.selectedItems.length >= this.listedItems.length && this.listedItems.length > 0
     },
     searchPlaceholder () {
       return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     },
     listTitle () {
-      let title = this.filteredThings.length
-      if (this.searchQuery) {
+      let title = this.listedItems.length
+      if (this.searchQuery || this.$refs.filters?.filtered) {
         title += ` of ${this.things.length} Things found`
       } else {
         title += ' Things'
@@ -352,7 +404,7 @@ export default {
       }
       return title
     },
-    ...mapStores(useRuntimeStore)
+    ...mapStores(useRuntimeStore, useUIOptionsStore)
   },
   methods: {
     onPageAfterIn () {
@@ -375,7 +427,7 @@ export default {
 
       this.$oh.api.get('/rest/things?summary=true').then((data) => {
         this.things = data.sort((a, b) => (a.label || a.UID).localeCompare(b.label || a.UID))
-        this.filteredThings = this.things
+        this.updateFilteredItems()
         this.initSearchbar = true
         this.loading = false
         this.ready = true
@@ -413,29 +465,33 @@ export default {
       this.showCheckboxes = !this.showCheckboxes
     },
     selectDeselectAll () {
-      if (this.selectedItems.length === this.filteredThings.length) {
+      if (this.allSelected) {
         this.selectedItems = []
       } else {
-        this.selectedItems = this.filteredThings.map((t) => t.UID)
+        this.selectedItems = Array.from(this.listedUids)
       }
     },
     search (searchbar, query, previousQuery) {
       this.searchQuery = query.trim().toLowerCase()
-      const searchTerms = this.searchQuery.split(',').map((s) => s.trim()).filter((s) => s)
-      if (!searchTerms.length) {
-        this.clearSearch()
-        return
-      }
-      this.filteredThings = this.things.filter((thing) => {
-        let haystack = [thing.UID, thing.label, thing.location, this.thingStatusBadgeText(thing.statusInfo)]
-          .filter((h) => h).join('|').toLowerCase()
-        return searchTerms.some((t) => haystack.includes(t))
-      })
-      this.selectedItems = this.selectedItems.filter((i) => this.filteredThings.find((thing) => thing.UID === i))
     },
     clearSearch () {
       this.searchQuery = null
-      this.filteredThings = this.things
+    },
+    updateFilteredItems () {
+      const filters = this.$refs.filters
+      if (!filters || !filters.filtered) {
+        this.filteredItems = this.things
+        return
+      }
+
+      const selected = filters.selected
+      this.filteredItems = this.things.filter((thing) => {
+        const kind = thing.editable ? 'editable' : 'readonly'
+        const kindMatch = !selected.kinds.size || selected.kinds.has(kind)
+        const status = ITEM_STATUSES[thing.statusInfo.status] ? thing.statusInfo.status : 'OTHERS'
+        const statusMatch = !selected.status.size || selected.status.has(status)
+        return kindMatch && statusMatch
+      })
     },
     isChecked (item) {
       return this.selectedItems.indexOf(item) >= 0
