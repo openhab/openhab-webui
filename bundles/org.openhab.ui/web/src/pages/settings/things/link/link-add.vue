@@ -48,7 +48,7 @@
           <f7-list>
             <f7-list-group>
               <item-picker key="itemLink"
-                           title="Item to Link"
+                           label="Item to Link"
                            name="item"
                            :value="selectedItemName"
                            :multiple="false"

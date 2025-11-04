@@ -21,7 +21,7 @@
                        clear-button />
         <f7-list-group v-if="widget.component !== 'Sitemap' && widget.component !== 'Frame'">
           <item-picker
-            title="Item"
+            label="Item"
             :value="widget.config.item"
             @input="(value) => widget.config.item = value" />
         </f7-list-group>

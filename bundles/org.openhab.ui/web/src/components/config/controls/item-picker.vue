@@ -1,7 +1,7 @@
 <template>
   <div class="item-picker-container">
     <f7-list-item v-if="ready"
-                  :title="itemTitle || 'Item'"
+                  :title="label || 'Item'"
                   smart-select
                   :smart-select-params="smartSelectParams"
                   :disabled="disabled ? true : null"
@@ -37,7 +37,7 @@
     <!-- for placeholder purposes before items are loaded -->
     <f7-list-item v-else
                   link
-                  :title="itemTitle"
+                  :title="label"
                   disabled
                   no-chevron>
       <template #media>
@@ -74,7 +74,7 @@ import ModelPickerPopup from '@/components/model/model-picker-popup.vue'
 
 export default {
   props: {
-    itemTitle: String,
+    label: String,
     name: String,
     value: [String, Array],
     items: Array,
@@ -174,7 +174,7 @@ export default {
           value: this.value,
           multiple: this.multiple,
           allowEmpty: true,
-          popupTitle: this.itemTitle,
+          popupTitle: this.label,
           groupsOnly: this.filterType && this.filterType === 'Group',
           editableOnly: this.editableOnly
         }

@@ -70,7 +70,7 @@
                   <f7-list style="width: 100%">
                     <f7-list-group>
                       <item-picker :key="itemsPickerKey"
-                                   title="Items"
+                                   label="Items"
                                    name="items-to-analyze"
                                    :value="itemNames"
                                    @input="updateItems"

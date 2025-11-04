@@ -72,7 +72,7 @@
         <div v-else-if="selectedThing.UID && selectedThingType.UID">
           <f7-list v-if="createEquipment" media-list class="equipment-group-picker">
             <f7-list-group>
-              <item-picker :title="selectedGroup ? 'Change Selected Group' : 'Pick Existing Group'"
+              <item-picker :label="selectedGroup ? 'Change Selected Group' : 'Pick Existing Group'"
                            textColor="blue"
                            :hideIcon="true"
                            :items="selectableGroups"

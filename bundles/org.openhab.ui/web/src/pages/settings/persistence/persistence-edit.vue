@@ -273,7 +273,7 @@
               <f7-list v-if="editable">
                 <f7-list-group>
                   <item-picker class="alias-item-picker"
-                               title="Add alias"
+                               label="Add alias"
                                name="items"
                                :multiple="true"
                                :noModelPicker="true"

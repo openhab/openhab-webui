@@ -32,7 +32,7 @@
           <f7-list>
             <f7-list-group>
               <item-picker key="groups"
-                           title="Select groups"
+                           label="Select groups"
                            name="groupItems"
                            :multiple="true"
                            filterType="Group"
@@ -45,7 +45,7 @@
           <f7-list>
             <f7-list-group>
               <item-picker key="items"
-                           title="Select Items"
+                           label="Select Items"
                            name="items"
                            :multiple="true"
                            :disabled="allItemsSelected ? true : null"
@@ -57,7 +57,7 @@
           <f7-list>
             <f7-list-group>
               <item-picker key="exclude-groups"
-                           title="Select exclude groups"
+                           label="Select exclude groups"
                            name="excludeGroupItems"
                            :multiple="true"
                            filterType="Group"
@@ -70,7 +70,7 @@
           <f7-list>
             <f7-list-group>
               <item-picker key="exclude-items"
-                           title="Select exclude Items"
+                           label="Select exclude Items"
                            name="excludeItems"
                            :multiple="true"
                            :disabled="!anySelected ? true : null"
