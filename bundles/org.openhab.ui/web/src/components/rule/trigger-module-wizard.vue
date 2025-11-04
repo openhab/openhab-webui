@@ -37,7 +37,7 @@
       <f7-list-group>
         <item-picker :required="true"
                      :value="currentItem.name"
-                     title="Item"
+                     label="Item"
                      @input="(val) => currentModule.configuration.itemName = val"
                      @item-selected="(value) => { currentItem = value; updateItemEventType('command') }" />
       </f7-list-group>

@@ -15,7 +15,7 @@
           <item-picker :multiple="true"
                        name="groupMembers"
                        :value="pickedMemberNames"
-                       title="Members"
+                       label="Members"
                        :editableOnly="true"
                        @input="(members) => pickedMemberNames = members" />
         </f7-list-group>

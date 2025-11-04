@@ -100,7 +100,7 @@
           </f7-list-item>
           <f7-list-group>
             <item-picker
-              :title="t('about.miscellaneous.commandItem.title')"
+              :label="t('about.miscellaneous.commandItem.title')"
               :multiple="false"
               :value="commandItem"
               @input="setCommandItem" />

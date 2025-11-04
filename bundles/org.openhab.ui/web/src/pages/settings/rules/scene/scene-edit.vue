@@ -154,7 +154,7 @@
                   </template>
                 </f7-list-item> -->
                 <f7-list-group>
-                  <item-picker title="Select Items"
+                  <item-picker label="Select Items"
                                name="newItem"
                                :multiple="true"
                                :value="selectedItems"

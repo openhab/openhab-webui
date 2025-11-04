@@ -35,7 +35,7 @@
   <f7-block class="no-margin no-padding" v-else-if="category === 'item'">
     <f7-list>
       <f7-list-group>
-        <item-picker :value="currentModule.configuration.itemName" title="Item" @input="(val) => currentModule.configuration.itemName = val" />
+        <item-picker :value="currentModule.configuration.itemName" label="Item" @input="(val) => currentModule.configuration.itemName = val" />
       </f7-list-group>
     </f7-list>
     <f7-list>

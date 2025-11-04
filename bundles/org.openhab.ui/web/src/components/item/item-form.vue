@@ -148,7 +148,7 @@
       </f7-list-item>
       <f7-list-group>
         <item-picker v-if="editable"
-                     title="Select"
+                     label="Select"
                      :value="item.groupNames"
                      :items="items"
                      @input="(value) => this.item.groupNames = value"
