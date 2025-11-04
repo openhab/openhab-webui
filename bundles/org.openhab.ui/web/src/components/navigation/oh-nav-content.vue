@@ -80,13 +80,21 @@ function back () {
   if (props.backLinkUrl) return
   const f7router : Router.Router = props.f7router || f7.views.main.router
 
-  f7router.history.pop()
-  const previousRoute : string | null = f7router.history.pop() ?? null
-  if (previousRoute === null) {
-    console.warn('No previous route found in history, cannot navigate back.')
-    return
+  const currentPath = f7router.currentRoute.path
+  let previousPath : string | null = null
+  for (let i = f7router.history.length - 1; i >= 0; i--) {
+    const path = f7router.history[i]
+    if (!path.startsWith(currentPath)) {
+      previousPath = path
+      break
+    }
   }
-  console.debug('Navigating back to previous route:', previousRoute)
-  f7router.navigate(previousRoute, { force: true })
+
+  if (previousPath === null) {
+    console.warn('No previous path found in history, falling back to root path.')
+    previousPath = '/'
+  }
+  console.debug('Navigating back to previous path:', previousPath)
+  f7router.navigate(previousPath, { force: true })
 }
 </script>
