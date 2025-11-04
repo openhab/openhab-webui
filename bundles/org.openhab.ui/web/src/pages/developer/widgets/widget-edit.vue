@@ -67,7 +67,7 @@
             </f7-link>
           </f7-nav-right>
         </f7-navbar>
-        <f7-block v-if="widget.props">
+        <f7-block v-if="widget.props" class="no-padding">
           <f7-col>
             <f7-block-footer>
               Please note that expressions in properties are not evaluated inside the widget editor,
