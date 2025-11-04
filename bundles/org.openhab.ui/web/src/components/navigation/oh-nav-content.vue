@@ -91,8 +91,8 @@ function back () {
   }
 
   if (previousPath === null) {
-    console.warn('No previous path found in history, cannot navigate back.')
-    return
+    console.warn('No previous path found in history, falling back to root path.')
+    previousPath = '/'
   }
   console.debug('Navigating back to previous path:', previousPath)
   f7router.navigate(previousPath, { force: true })
