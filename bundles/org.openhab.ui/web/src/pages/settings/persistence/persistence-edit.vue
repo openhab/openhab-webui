@@ -191,11 +191,16 @@
                                   :title="f.name"
                                   :footer="(typeof ft.footerFn === 'function') ? ft.footerFn(f) : ''"
                                   :link="editable"
-                                  @click.native="(ev) => editFilter(ev, ft, index, f)"
+                                  @click="(ev) => editFilter(ev, ft, index, f)"
                                   swipeout>
-                      <f7-link slot="media" v-if="editable" icon-color="red" icon-aurora="f7:minus_circle_filled"
-                               icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline"
-                               @click="showSwipeout" />
+                      <template #media>
+                        <f7-link v-if="editable"
+                                 icon-color="red"
+                                 icon-aurora="f7:minus_circle_filled"
+                                 icon-ios="f7:minus_circle_filled"
+                                 icon-md="material:remove_circle_outline"
+                                 @click="showSwipeout" />
+                      </template>
                       <f7-swipeout-actions right v-if="editable">
                         <f7-swipeout-button @click="(ev) => deleteFilter(ev, ft.name, index)"
                                             style="background-color: var(--f7-swipeout-delete-button-bg-color)">
@@ -205,11 +210,18 @@
                     </f7-list-item>
                   </f7-list>
                   <f7-list v-if="editable">
-                    <f7-list-item link no-chevron media-item :color="($theme.dark) ? 'black' : 'white'"
+                    <f7-list-item link
+                                  no-chevron
+                                  media-item
+                                  :color="($theme.dark) ? 'black' : 'white'"
                                   :subtitle="'Add ' + ft.label.toLowerCase() + ' filter'"
                                   @click="editFilter(undefined, ft, null)">
-                      <f7-icon slot="media" color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill"
-                               md="material:control_point" />
+                      <template #media>
+                        <f7-icon color="green"
+                                 aurora="f7:plus_circle_fill"
+                                 ios="f7:plus_circle_fill"
+                                 md="material:control_point" />
+                      </template>
                     </f7-list-item>
                   </f7-list>
                 </div>
@@ -463,7 +475,7 @@ export default {
       })
 
       this.$oh.api.get('/rest/persistence/' + this.serviceId).then((data) => {
-        this.$set(this, 'persistence', data)
+        this.persistence = data
         this.savedPersistence = cloneDeep(this.persistence)
         // Ensure arrays for all filter types defined in the FilterTypes object are existent
         this.FilterTypes.forEach((ft) => {
