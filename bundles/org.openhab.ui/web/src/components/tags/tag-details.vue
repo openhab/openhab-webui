@@ -57,7 +57,8 @@
                          clear-button />
           <f7-list-input v-if="supports('refresh')"
                          label="Refresh interval (ms)"
-                         type="number" min="1"
+                         type="number"
+                         min="1"
                          :value="tag.config.refresh"
                          @input="updateParameter('refresh', $event)"
                          clear-button />
@@ -78,12 +79,14 @@
           <persistence-picker v-if="supports('service')"
                               style="padding-left:0"
                               title="Persistence service"
-                              :value="tag.config.service" @input="(value) => tag.config.service = value" />
+                              :value="tag.config.service"
+                              @input="(value) => tag.config.service = value" />
           <f7-list-input v-if="supports('period')"
                          label="Period"
                          type="text"
                          placeholder="PnYnMnDTnHnMnS-PnYnMnDTnHnMnS"
-                         validate pattern="^((P(\d+Y)?(\d+M)?(\d+W)?(\d+D)?(T(\d+H)?(\d+M)?(\d+S)?)?|\d*[YMWDh])-)?-?(P(\d+Y)?(\d+M)?(\d+W)?(\d+D)?(T(\d+H)?(\d+M)?(\d+S)?)?|\d*[YMWDh])$"
+                         validate
+                         pattern="^((P(\d+Y)?(\d+M)?(\d+W)?(\d+D)?(T(\d+H)?(\d+M)?(\d+S)?)?|\d*[YMWDh])-)?-?(P(\d+Y)?(\d+M)?(\d+W)?(\d+D)?(T(\d+H)?(\d+M)?(\d+S)?)?|\d*[YMWDh])$"
                          :value="tag.config.period"
                          @input="updateParameter('period', $event)"
                          clear-button />
@@ -95,7 +98,8 @@
                          @input="updateParameter('height', $event)"
                          clear-button />
           <f7-list-input v-if="supports('minValue')"
-                         label="Minimum" type="number"
+                         label="Minimum"
+                         type="number"
                          :value="tag.config.minValue"
                          @input="updateParameter('minValue', $event)"
                          clear-button />
@@ -116,7 +120,8 @@
                          label="Y-axis decimal pattern"
                          type="text"
                          placeholder="##0.0"
-                         validate pattern="^(?:'[0#.,;E]?'|[^0#.,;E'])*((#[,#]*|0)[,0]*)(\.(0+#*|#+))?(?:E0+)?(?:';'|[^;])*(?:;(?:'[0#.,;E]?'|[^0#.,;E'])*((#[,#]*|0)[,0]*)(\.(0+#*|#+))?(?:E0+)?.*)?$"
+                         validate
+                         pattern="^(?:'[0#.,;E]?'|[^0#.,;E'])*((#[,#]*|0)[,0]*)(\.(0+#*|#+))?(?:E0+)?(?:';'|[^;])*(?:;(?:'[0#.,;E]?'|[^0#.,;E'])*((#[,#]*|0)[,0]*)(\.(0+#*|#+))?(?:E0+)?.*)?$"
                          :value="tag.config.yAxisDecimalPattern"
                          @input="updateParameter('yAxisDecimalPattern', $event)"
                          clear-button />
@@ -170,8 +175,8 @@
           <f7-list-item v-if="supports('releaseOnly')"
                         title="Release only">
             <template #after>
-            <f7-toggle :checked="tag.config.releaseOnly"
-                       @toggle:change="tag.config.releaseOnly = $event" />
+              <f7-toggle :checked="tag.config.releaseOnly"
+                         @toggle:change="tag.config.releaseOnly = $event" />
             </template>
           </f7-list-item>
           <f7-list-item v-if="supports('legend')"
@@ -185,7 +190,7 @@
                         title="Force as item">
             <template #after>
               <f7-toggle :checked="tag.config.forceAsItem"
-                        @toggle:change="tag.config.forceAsItem = $event" />
+                         @toggle:change="tag.config.forceAsItem = $event" />
             </template>
           </f7-list-item>
           <f7-list-item v-if="supports('inputHint')"
@@ -249,7 +254,7 @@ export default {
     PersistencePicker
   },
   props: ['tag', 'createMode'],
-  emits: ['moveUp', 'moveDown', 'remove'],
+  emits: ['moveup', 'movedown', 'remove'],
   data () {
     return {
       iconInputId: '',
