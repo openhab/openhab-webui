@@ -61,13 +61,21 @@ export default {
         const addItems = (items, item, up) => {
           items.push(item)
           if (up) {
-            item.parents?.forEach((p) => addItems(items, p, true))
+            item.parents?.filter((p) => {
+              const semanticsConfig = item.metadata?.semantics?.config
+              if (!semanticsConfig) return false
+              return p.name === semanticsConfig.hasLocation || p.name === semanticsConfig.isPartOf || p.name === semanticsConfig.isPointOf
+            }).forEach((p) => addItems(items, p, true))
           } else {
-            item.members?.forEach((p) => addItems(items, p, false))
+            item.members?.filter((m) => {
+              const semanticsConfig = m.metadata?.semantics?.config
+              if (!semanticsConfig) return false
+              return item.name === semanticsConfig.hasLocation || item.name === semanticsConfig.isPartOf || item.name === semanticsConfig.isPointOf
+            }).forEach((m) => addItems(items, m, false))
           }
         }
-        addItems(tempItems, relatedToItem, true) // add parent items
-        addItems(tempItems, relatedToItem, false) // add member items
+        addItems(tempItems, relatedToItem, true) // add semantic parent items
+        addItems(tempItems, relatedToItem, false) // add semantic member items
         const itemNames = [...new Set(tempItems.map((i) => i.name))] // remove doubles
         items = itemNames.map((n) => tempItems.find((i) => i.name === n))
         links = this.$oh.api.get('/rest/links?itemName=' + relatedToItem.name)
@@ -225,7 +233,7 @@ export default {
     },
     expandSelectedChild (child, selection) {
       return Object.values(child.children).flat().map((c) => {
-        if (this.expandSelectedChild(c, selection) || c.checked || c.item.name === this.selectedItem?.item?.name || (selection && c.item.name === selection)) {
+        if (this.expandSelectedChild(c, selection) || c.checked || c.item.name === this.selectedItem?.item?.name || (selection && c.item.name === selection.name)) {
           child.opened = true
           return true
         }

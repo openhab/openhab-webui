@@ -68,7 +68,7 @@
           <f7-block-title>Semantic Model</f7-block-title>
           <f7-card>
             <model-treeview class="model-treeview no-selection-style"
-                            :rootNodes="[rootLocations, rootEquipment, rootPoints, rootGroups, rootItems].flat()"
+                            :rootNodes="rootElements"
                             :includeItemName="true"
                             :includeItemTags="true"
                             :selected="modelItem(item)"
@@ -237,7 +237,9 @@ export default {
   },
   data () {
     return {
-      item: {}
+      item: {},
+      links: [],
+      ready: false
     }
   },
   computed: {
@@ -275,15 +277,13 @@ export default {
       }
     },
     async load () {
-      const promises = [
-        this.$oh.api.get(`/rest/items/${this.itemName}?parents=true&metadata=.+`),
-        this.$oh.api.get('/rest/links?itemName=' + this.itemName)
-      ]
-      Promise.all(promises).then((data) => {
-        this.item = data[0]
-        this.links = data[1]
+      this.$oh.api.get(`/rest/items/${this.itemName}?parents=true&metadata=.+`).then((data) => {
+        this.item = data
         this.iconUrl = '/icon/' + this.item.category + '?format=svg'
-        this.ready = true
+        this.loadModel(this.item).then(() => {
+          this.expandSelected(this.item)
+          this.ready = true
+        })
         useStatesStore().startTrackingStates()
       })
     },
@@ -312,7 +312,7 @@ export default {
       f7.emit('selectDeveloperDock', { 'dock': 'tools', 'toolTab': 'pin', 'searchFor': this.item.name })
     },
     navigateToItem (value) {
-      this.$f7router.navigate(this.itemLink(value.item.name))
+      this.f7router.navigate(this.itemLink(value.item.name))
     },
     itemLink (item) {
       return '/settings/items/' + item
@@ -326,6 +326,7 @@ export default {
     semanticTag (value) {
       if (!value) return null
       const valueArray = value.split('_')
+      if (valueArray.length === 0) return null
       return valueArray[valueArray.length - 1]
     }
   }
