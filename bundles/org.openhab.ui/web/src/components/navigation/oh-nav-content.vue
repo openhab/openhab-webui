@@ -38,6 +38,7 @@
     </template>
     <slot name="right" />
   </f7-nav-right>
+  <slot name="after" />
 </template>
 
 <script setup lang="ts">
@@ -74,6 +75,7 @@ defineEmits(['save'])
 
 defineSlots<{
   right: void,
+  after: void,
 }>()
 
 function back () {
