@@ -47,13 +47,17 @@
     			@click="openBrowserPopup"/>
     <f7-button color="blue"   					
     			large 		
-    			icon-material="speaker
+    			icon-material="speaker"
     			icon-size="24" 
     			icon-color="gray"  
     			@click="openDeviceSelectorPopup"/>
 				
-	<media-popup :opened="browserPopupOpened"  :player-item="config.item"  @update:opened="browserPopupOpened = $event"/>
-    <media-device-popup :opened="deviceSelectorPopupOpened"  :player-item="config.item"  @update:opened="deviceSelectorPopupOpened = $event"/>
+	<media-popup :opened="browserPopupOpened"  :player-item="config.item"  @update:opened=""/>
+  <!--
+  browserPopupOpened = $event
+  deviceSelectorPopupOpened = $event
+  -->
+    <media-device-popup :opened="deviceSelectorPopupOpened"  :player-item="config.item"  @update:opened=""/>
                
   </f7-segmented>
   </div>
@@ -68,14 +72,14 @@
   .segmented-highlight
     display none
 .aurora .player-controls
-  .button
+  .button 
     height 37px
 </style>
 
 <script>
 import mixin from '../widget-mixin'
 import { OhPlayerDefinition } from '@/assets/definitions/widgets/system'
-import MediaPopup from '@/pages/media/media-popup.vue'
+import MediaPopup from '@/pages/media/media-browser-popup.vue' 
 import MediaDevicePopup from '@/pages/media/media-device-selector-popup.vue'
 import { useStatesStore } from '@/js/stores/useStatesStore'
 
@@ -108,11 +112,12 @@ export default {
     isPlaying () {
       this.decodeState()
       return this.state === 'PLAY'
-    },
+    }
+  },
   methods: {
     openBrowserPopup() {
       this.browserPopupOpened = true
-  },
+    },
     openDeviceSelectorPopup() {
       this.deviceSelectorPopupOpened = true
     },
@@ -153,8 +158,8 @@ export default {
       useStatesStore().sendCommand(this.config.item, 'NEXT')
     },
     mediaChange (value) {
-      //this.$store.dispatch('sendCommand', { itemName: this.config.item, cmd: 'spotify:playlist:5Z4AD0u9fwnvtsj7ce5ZLS' 
-      })
+      // this.$store.dispatch('sendCommand', { itemName: this.config.item, cmd: 'spotify:playlist:5Z4AD0u9fwnvtsj7ce5ZLS' }
     }
+  }
 }
 </script>
