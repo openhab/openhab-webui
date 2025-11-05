@@ -38,6 +38,7 @@
     <br/>
 
     <table style="border:solid 1px #000000;background-color:#ffffff;color:#303030;display:inline-block;margin:20px;padding:0px;">
+      <tbody>
       <tr style="font-weight: bold;background-color: #c0c0c0;">
         <td>mediaBrowserMode</td>
         <td>globalPlayerItem</td>
@@ -63,6 +64,7 @@
         <td nowrap>{{ trackPositionPourcent }}</td>
         <td nowrap>{{ artUri }}</td>
       </tr>
+      </tbody>
     </table>
 
         
@@ -126,7 +128,7 @@
                 </div>
 
                 <div v-if="index==1" style="width:50px;padding-left:20px;">
-                    <img src="/static/hp.gif" style="padding-left:15px;width:24px;"/>
+                    <img src="@/images/hp.gif" style="padding-left:15px;width:24px;"/>
                 </div>
                 <div v-else-if="index!=1" style="width:50px;padding-left:20px;">
                   <f7-button outline style="height:30px;font-weight:bold;text-align:left;border:none 0px;" @click="doPlay(currentPlayerItem, child.path)" icon-material="play_arrow" small icon-size="24"/>
@@ -237,11 +239,12 @@
 
 <script>
 import OhSimplePlayerControls from '../../components/widgets/system/oh-simple-player-controls.vue'
-import media from '../../js/store/modules/media'
+
+//import media from '../../js/store/modules/media'
 import MediaBrowserThumbGrid from './media-browser-thumb-grid.vue'
 import mixin from '@/components/widgets/widget-mixin' 
 import { useStore } from 'vuex'
-import { useMediaStore } from '@/js/store/modules/media'
+//import { useMediaStore } from '@/js/store/modules/media'
 import { computed } from 'vue'
 import { p } from '@/assets/definitions/widgets/helpers'
 import { loadLocaleMessages } from '@/js/i18n'
@@ -258,7 +261,7 @@ export default {
       }
   },
   i18n: {
-    messages: loadLocaleMessages(require.context('@/assets/i18n/media'))
+    //messages: loadLocaleMessages(require.context('@/assets/i18n/media'))
   },
   components: {
     OhSimplePlayerControls,
