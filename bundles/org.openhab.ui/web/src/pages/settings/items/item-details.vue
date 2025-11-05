@@ -12,24 +12,26 @@
             {{ theme.md ? '' : 'Edit' }}
           </f7-link>
         </template>
+        <template #after>
+          <f7-subnavbar class="item-header">
+            <div class="item-icon" v-if="item.name">
+              <oh-icon v-if="item.category"
+                       :icon="item.category"
+                       :state="item.type === 'Image' ? null : (context.store[item.name].state || item.state)"
+                       height="60"
+                       width="60" />
+              <span v-else>
+                {{ item.label ? item.label[0] : item.name[0] }}
+              </span>
+            </div>
+            <h2>{{ item.label }}</h2>
+            <!-- <h4 v-show="item.label">{{item.name}}</h4> -->
+            <h5 v-show="item.type" style="margin-top: 10px; margin-bottom: 15px;">
+              <small>{{ getItemTypeLabel(item) }}</small>
+            </h5>
+          </f7-subnavbar>
+        </template>
       </oh-nav-content>
-      <f7-subnavbar sliding class="item-header">
-        <div class="item-icon" v-if="item.name">
-          <oh-icon v-if="item.category"
-                   :icon="item.category"
-                   :state="item.type === 'Image' ? null : (context.store[item.name].state || item.state)"
-                   height="60"
-                   width="60" />
-          <span v-else>
-            {{ item.label ? item.label[0] : item.name[0] }}
-          </span>
-        </div>
-        <h2>{{ item.label }}</h2>
-        <!-- <h4 v-show="item.label">{{item.name}}</h4> -->
-        <h5 v-show="item.type" style="margin-top: 10px; margin-bottom: 15px;">
-          <small>{{ getItemTypeLabel(item) }}</small>
-        </h5>
-      </f7-subnavbar>
     </f7-navbar>
     <f7-block class="block-narrow after-item-header" v-if="item">
       <f7-row v-if="item.state">
