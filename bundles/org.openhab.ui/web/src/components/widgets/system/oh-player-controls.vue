@@ -39,6 +39,8 @@
                icon-material="skip_next"
                icon-size="24"
                icon-color="gray" />
+
+               
     <f7-button color="blue"   			 
     			large 
     			icon-material="folder" 
@@ -51,14 +53,19 @@
     			icon-size="24" 
     			icon-color="gray"  
     			@click="openDeviceSelectorPopup"/>
-				
+		
+          
+  <!--    
+          <media-device-popup :opened="deviceSelectorPopupOpened"  :player-item="config.item"  @update:opened=""/>    
 	<media-popup :opened="browserPopupOpened"  :player-item="config.item"  @update:opened=""/>
-  <!--
+  
+    
+               -->
+
+               <!--
   browserPopupOpened = $event
   deviceSelectorPopupOpened = $event
   -->
-    <media-device-popup :opened="deviceSelectorPopupOpened"  :player-item="config.item"  @update:opened=""/>
-               
   </f7-segmented>
   </div>
 
@@ -79,9 +86,9 @@
 <script>
 import mixin from '../widget-mixin'
 import { OhPlayerDefinition } from '@/assets/definitions/widgets/system'
+import { useStatesStore } from '@/js/stores/useStatesStore'
 import MediaPopup from '@/pages/media/media-browser-popup.vue' 
 import MediaDevicePopup from '@/pages/media/media-device-selector-popup.vue'
-import { useStatesStore } from '@/js/stores/useStatesStore'
 
 export default {
   mixins: [mixin],
