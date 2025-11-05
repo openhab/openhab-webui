@@ -9,13 +9,17 @@
                       :editable="item.editable"
                       :f7router>
         <template v-if="ready" #right>
-          <f7-link v-if="item.editable" icon-md="material:edit" href="edit">
+          <f7-link v-if="item.editable"
+                   icon-md="material:edit"
+                   href="edit">
             {{ theme.md ? '' : 'Edit' }}
           </f7-link>
-          <f7-link v-else icon-f7="lock_fill" tooltip="This Item is not editable through the UI" href="edit">
+          <f7-link v-else
+                   icon-f7="lock_fill"
+                   tooltip="This Item is not editable through the UI"
+                   href="edit">
             Details
           </f7-link>
-
         </template>
         <template #after>
           <f7-subnavbar class="item-header">
@@ -195,8 +199,6 @@
 </style>
 
 <script setup>
-import cloneDeep from 'lodash/cloneDeep'
-
 import Item from '@/components/item/item.vue'
 import ItemStatePreview from '@/components/item/item-state-preview.vue'
 import LinkDetails from '@/components/model/link-details.vue'
