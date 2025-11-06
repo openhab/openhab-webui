@@ -54,7 +54,7 @@
       <tr>
         
         <td nowrap>{{ currentMediaBrowserMode }}</td>
-        <td nowrap>{{ $store.state.media.currentGlobalPlayerItem }}</td>
+        <td nowrap>{{ currentGlobalPlayerItem }}</td>
         <td nowrap>{{ currentPlayerItem }}</td>
         <td nowrap>{{ volume }}</td>
         <td nowrap>{{ artistName }}</td>
@@ -63,6 +63,7 @@
         <td nowrap>{{ formatTime(trackDuration) }}</td>
         <td nowrap>{{ trackPositionPourcent }}</td>
         <td nowrap>{{ artUri }}</td>
+        
       </tr>
       </tbody>
     </table>
@@ -240,25 +241,52 @@
 <script>
 import OhSimplePlayerControls from '../../components/widgets/system/oh-simple-player-controls.vue'
 
-//import media from '../../js/store/modules/media'
 import MediaBrowserThumbGrid from './media-browser-thumb-grid.vue'
 import mixin from '@/components/widgets/widget-mixin' 
 import { useStore } from 'vuex'
-//import { useMediaStore } from '@/js/store/modules/media'
-import { computed } from 'vue'
+import { useStatesStore } from '@/js/stores/useStatesStore'
+import { useComponentsStore } from '@/js/stores/useComponentsStore'
+import { useMediaStore } from '@/js/stores/useMediaStore'
+import { ref, onMounted, getCurrentInstance, computed } from 'vue'
 import { p } from '@/assets/definitions/widgets/helpers'
 import { loadLocaleMessages } from '@/js/i18n'
 
+
 export default {
-  props:  {
-      mediaBrowserMode: {
-        type: String,
-        required: false
-      },
-      playerItem: {
-        type: String,
-        required: false
+  props: {
+    f7route: Object,
+    f7router: Object,
+    mediaBrowserMode: {
+      type: String,
+      required: false
+    },
+    playerItem: {
+      type: String,
+      required: false
+    }
+  },
+  setup(props) {
+    const path = ref('');
+    const query = ref('');
+
+    const { proxy } = getCurrentInstance(); // pour accéder à this.$f7route, this.$f7, etc.
+
+    onMounted(() => {
+      const route = props.f7route;
+      console.log('f7route1:', route);
+      console.log('f7route2:', route.query);
+      console.log('f7route3:', route.query?.path);
+
+      if (route.query?.path && !route.query.path.startsWith('/page/')) {
+        path.value = route.query.path;
       }
+
+      if (route.query?.query) {
+        query.value = route.query.query;
+      }
+    });
+
+    return { path, query };
   },
   i18n: {
     //messages: loadLocaleMessages(require.context('@/assets/i18n/media'))
@@ -277,29 +305,28 @@ export default {
     }
   },
   data () {
-
-    this.$store.commit('setMapping', { key: 'Root', value: 'Racine' })
-    this.$store.commit('setMapping', { key: 'g', value: 'Genres' })
-    this.$store.commit('setMapping', { key: 'l', value: 'Albums' })
-    this.$store.commit('setMapping', { key: 'a', value: 'Artistes' })
-    this.$store.commit('setMapping', { key: 'm', value: 'Dossiers' })
-    this.$store.commit('setMapping', { key: 'n', value: 'New' })
-    this.$store.commit('setMapping', { key: 'y', value: 'Année' })
-    this.$store.commit('setMapping', { key: 't', value: 'Titres' })
-    this.$store.commit('setMapping', { key: 'Root', value: 'Racine' })
+    useMediaStore().setMapping('Root', 'Racine')
+    useMediaStore().setMapping('g', 'Genres')
+    useMediaStore().setMapping('l', 'Albums')
+    useMediaStore().setMapping('a', 'Artistes')
+    useMediaStore().setMapping('m', 'Dossiers')
+    useMediaStore().setMapping('n', 'New')
+    useMediaStore().setMapping('y', 'Année')
+    useMediaStore().setMapping('t', 'Titres')
+    useMediaStore().setMapping('Root', 'Racine')
 
     this.path = '/Root'
 
     let currentPlayerItem = this.playerItem
     if (currentPlayerItem === undefined || currentPlayerItem === null || currentPlayerItem === '') {
-      currentPlayerItem = this.$store.state.media.playerItem
+      currentPlayerItem = useMediaStore().playerItem
     }
 
     if (currentPlayerItem === undefined || currentPlayerItem === null || currentPlayerItem === '') {
-      currentPlayerItem = this.$store.state.media.currentGlobalPlayerItem
+      currentPlayerItem = useMediaStore().currentGlobalPlayerItem
     }
 
-    this.$store.commit('setPlayerItem', currentPlayerItem)
+    useMediaStore().setCurrentGlobalPlayerItem(currentPlayerItem)
     
     return {
       currentPlayerItem: currentPlayerItem,
@@ -330,30 +357,33 @@ export default {
   computed: {
     currentMediaBrowserMode() {
       if (!this.mediaBrowserMode) {
-        return this.$store.state.media.mediaBrowserMode
+        return useMediaStore().mediaBrowserMode
       }
 
-      this.$store.commit('setMediaBrowserMode', this.mediaBrowserMode)
+      useMediaStore().setMediaBrowserMode(this.mediaBrowserMode)
       return this.mediaBrowserMode
     },
+    currentGlobalPlayerItem() {
+      return useMediaStore().currentGlobalPlayerItem
+    },
     playerItemState() {
-      if (this.$store!== undefined && this.currentPlayerItem!== undefined && this.currentPlayerItem !== null && this.currentPlayerItem !== '') {
-        if (!this.$store.getters.isItemTracked(this.currentPlayerItem)) 
+      if (this.currentPlayerItem!== undefined && this.currentPlayerItem !== null && this.currentPlayerItem !== '') {
+        if (!useStatesStore().isItemTracked(this.currentPlayerItem)) 
         {
-          this.$store.commit('addToTrackingList', this.currentPlayerItem)
-          this.$store.dispatch('startTrackingStates')
+          useStatesStore().addToTrackingList(this.currentPlayerItem)
+          useStatesStore().startTrackingStates()
         }
       }
-        
-      if (this.$store.getters.trackedItems[this.currentPlayerItem]!== undefined) {
+      
+      if (useStatesStore().trackedItems[this.currentPlayerItem]!== undefined) {
         console.log('item tracked:', this.currentPlayerItem);
       }
       else  {
         console.log('item not tracked:', this.currentPlayerItem);
       }
-
+      
       this.decodeState()
-      return this.$store.getters.trackedItems[this.currentPlayerItem]?.state ?? '';
+      return useStatesStore().trackedItems[this.currentPlayerItem]?.state ?? '';
     },
     displayPlayer() {
       return this.currentMediaBrowserMode === 'Global'
@@ -374,19 +404,20 @@ export default {
       return res
     },
     currentPath () {
-      return this.$f7route.query.path || ''
+      return this.path;
     },
     currentPathSegments () {
-      const path = this.$f7route.query.path || '/Root'
+      const path = this.path || '/Root'
 
       const segments = path.split('/')
       let segName = ''
       const result = segments.map((segment, index) => {
-        if (this.$store.state.media.mappings[segment]) {
-          segName = this.$store.state.media.mappings[segment]
-        } else {
-          segName = segment
-        }
+
+      if (useMediaStore().mappings[segment]) {
+        segName = useMediaStore().mappings[segment]
+      } else {
+        segName = segment
+      }
 
         return {
           path: segments.slice(0, index + 1).join('/'),
@@ -400,7 +431,9 @@ export default {
   },
   methods: {
      decodeState () {
-      const value = this.$store.getters.trackedItems[this.currentPlayerItem].state
+
+      
+      const value = useStatesStore().trackedItems[this.currentPlayerItem].state
       if (!(value === undefined || value === null || value === '' || value==='-')) {
         if (value.indexOf('{') === 0) {
           let json = JSON.parse(value);
@@ -466,16 +499,10 @@ export default {
       })
     },
     async loadItems (start = 0) {
-      console.log('f7route:', this.$f7route.query)
-      console.log('f7route:', this.$f7route.query.query)
-      if (this.$f7route.query.path && !this.$f7route.query.path.startsWith('/page/')) {
-        this.path = this.$f7route.query.path
-      }
-      if (this.$f7route.query.query) {
-        this.query= this.$f7route.query.query
-      }
-
-
+      console.log('path:', this.path)
+      console.log('query:', this.query)
+     
+     
       return this.$oh.api.get('/rest/media/sources?path=' + this.path + '&query=' + this.query + '&start=' + start + '&size=' + this.size).then((data) => {
         this.node = data
         this.node.pres = 'thumb'
@@ -489,7 +516,7 @@ export default {
             idForMap.endsWith('/n')) {
           idForMap = idForMap.substring(0, idForMap.length - 2)
         }
-        this.$store.commit('setMapping', { key: idForMap, value: data.label })
+        //this.$store.commit('setMapping', { key: idForMap, value: data.label })
 
         if (data.child != null && data.childs.length === 0) {
           console.log('No more items to load, stopping infinite scroll :')
