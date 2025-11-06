@@ -30,20 +30,23 @@
 import mixin from '../widget-mixin'
 import { OhPlayerDefinition } from '@/assets/definitions/widgets/system'
 import MediaDeviceSelectorPopup from '@/pages/media/media-device-selector-popup.vue'
+import { useMediaStore } from '@/js/stores/useMediaStore'
+import { useStatesStore } from '@/js/stores/useStatesStore'
+import { useComponentsStore } from '@/js/stores/useComponentsStore'
 
 export default {
   mixins: [mixin],
   widget: OhPlayerDefinition,
   watch: {
-    '$store.state.media.currentGlobalPlayerItem'(newVal) {
-        this.currentPlayerItem = this.$store.state.media.currentGlobalPlayerItem
+    'useMediaStore().currentGlobalPlayerItem'(newVal) {
+        this.currentPlayerItem = useMediaStore().currentGlobalPlayerItem
     }
   },
    components: {        // ⚡ Ici on déclare le composant
     MediaDeviceSelectorPopup
   },
   data: function () {
-    let currentPlayerItem = this.$store.state.media.currentGlobalPlayerItem
+    let currentPlayerItem = useMediaStore().currentGlobalPlayerItem
 
     return {
       currentPlayerItem: currentPlayerItem,
@@ -74,9 +77,9 @@ export default {
     },
     decodeState () {
       console.log("decodeState called for " + this.currentPlayerItem);
-      const value = this.$store.getters.trackedItems[this.currentPlayerItem].state
+      const value = useStatesStore().trackedItems[this.currentPlayerItem].state
       
-      console.log("value:" + JSON.stringify(this.$store.getters.trackedItems));
+      console.log("value:" + JSON.stringify(useStatesStore().trackedItems));
       console.log("value:" + value);
       if (!(value === undefined || value === null || value === '' || value==='-')) {
         if (value.indexOf('{') === 0) {
