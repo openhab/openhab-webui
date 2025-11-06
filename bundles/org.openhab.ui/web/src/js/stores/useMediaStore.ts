@@ -1,36 +1,55 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref,reactive } from 'vue'
 
-interface PlayerItem {
-  commit: string
+export interface MediaStoreState {
+  mappings: Record<string, any>
+  currentGlobalPlayerItem: string | null
+  mediaBrowserMode: string | null
+  playerItem: string | null
 }
 
-interface MediaBrowseMode {
-  commit: string
-}
+export const useMediaStore = defineStore('media', {
+   state: (): MediaStoreState => ({
+      mappings: reactive({}),
+      currentGlobalPlayerItem: localStorage.getItem('currentGlobalPlayerItem'),
+      mediaBrowserMode: localStorage.getItem('mediaBrowserMode'),
+      playerItem: localStorage.getItem('playerItem'),
+   }),
+   actions: {
+    setMapping(key: string, value: any) {
+      this.mappings[key] = value
+    },
 
-//  currentGlobalPlayerItem: localStorage.getItem('currentGlobalPlayerItem'),
-//  mediaBrowserMode: localStorage.getItem('mediaBrowserMode'),
-//  playerItem: localStorage.getItem('playerItem')
+    removeItem(key: string) {
+      delete this.mappings[key]
+    },
 
-export const useMediaStore = defineStore('media', () => {
-  const currentGlobalPlayerItem = ref<PlayerItem | null>(null)
-  const curentPlayerItem = ref<PlayerItem | null>(null)
-  const mediaBrowseMode = ref<MediaBrowseMode | null>(null)
+     setCurrentGlobalPlayerItem(playerItem: string | null) {
+      this.currentGlobalPlayerItem = playerItem
+      if (playerItem === null) {
+        localStorage.removeItem('currentGlobalPlayerItem')
+      } else {
+        localStorage.setItem('currentGlobalPlayerItem', playerItem)
+      }
+    },
 
-  function setCurrentGlobalPlayerItem(playerItem : PlayerItem | null) {
-    currentGlobalPlayerItem.value = playerItem
-    localStorage.setItem('currentGlobalPlayerItem', "" + curentPlayerItem.value)
+    setMediaBrowserMode(mode: string | null) {
+      this.mediaBrowserMode = mode
+      if (mode === null) {
+        localStorage.removeItem('mediaBrowserMode')
+      } else {
+        localStorage.setItem('mediaBrowserMode', mode)
+      }
+    },
+
+    setPlayerItem(playerItem: string | null) {
+      this.playerItem = playerItem
+      if (playerItem === null) {
+        localStorage.removeItem('playerItem')
+      } else {
+        localStorage.setItem('playerItem', playerItem)
+      }
+    }
   }
-  function setMediaBrowserMode(mode : MediaBrowseMode | null) {
-    mediaBrowseMode.value = mode
-    localStorage.setItem('mediaBrowserMode', "" + mediaBrowseMode.value)
-  }
 
-  function setPlayerItem(playerItem : PlayerItem | null) {
-    curentPlayerItem.value = playerItem
-    localStorage.setItem('playerItem', "" + curentPlayerItem.value)
-  }
-
-  return { setCurrentGlobalPlayerItem, setMediaBrowserMode, setPlayerItem }
 })
