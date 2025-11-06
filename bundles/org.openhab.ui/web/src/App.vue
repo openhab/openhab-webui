@@ -62,6 +62,7 @@
          <f7-list class="media-links">
           <f7-list-item
             link="/mediabrowser/"
+            :route-props="{ mediaBrowserMode: 'Global' }" 
             :title="t('sidebar.mediaBrowser')"
             view=".view-main"
             panel-close
