@@ -198,8 +198,7 @@
           -->
           <div>
             <div style="width:300px;padding:20px;padding-left: 140px;">
-            
-              <oh-simple-player-controls />
+              <oh-simple-player-controls :f7route="f7route" :f7router="f7router"/>
             </div>
           </div>
           <!--

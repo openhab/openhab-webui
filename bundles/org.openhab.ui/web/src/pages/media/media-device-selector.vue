@@ -10,7 +10,8 @@
 
     <!--
     currentPlayerItem: {{  currentPlayerItem }}
-    -->
+    -->    
+
     <div v-if="node">
       <f7-list form>
         <f7-list-item v-for="item in node.childs" 
@@ -33,14 +34,45 @@
 </template>
 
 <script>
+import { ref, onMounted, getCurrentInstance, computed } from 'vue'
+import { useStatesStore } from '@/js/stores/useStatesStore'
+import { useComponentsStore } from '@/js/stores/useComponentsStore'
+import { useMediaStore } from '@/js/stores/useMediaStore'
+
+
 export default {
-  name: 'MediaBrowser',
+  name: 'MediaDeviceSelector',
   props: 
   {
+    f7route: Object,
+    f7router: Object,
     playerItem: {
       type: String,
       required: false
     }
+  },
+  setup(props) {
+    const path = ref('');
+    const query = ref('');
+
+    const { proxy } = getCurrentInstance(); // pour accéder à this.$f7route, this.$f7, etc.
+
+    onMounted(() => {
+      const route = props.f7route;
+      console.log('f7route1:', route);
+      console.log('f7route2:', route.query);
+      console.log('f7route3:', route.query?.path);
+
+      if (route.query?.path && !route.query.path.startsWith('/page/')) {
+        path.value = route.query.path;
+      }
+
+      if (route.query?.query) {
+        query.value = route.query.query;
+      }
+    });
+
+    return { path, query };
   },
   data () {
     let currentPlayerItem = this.playerItem
@@ -49,25 +81,22 @@ export default {
     
     if (currentPlayerItem === undefined || currentPlayerItem === null || currentPlayerItem === '') {
       console.log("p1");
-      currentPlayerItem = this.$store.state.media.playerItem
+      currentPlayerItem = useMediaStore().playerItem
     }
     console.log("p2");
     if (currentPlayerItem === undefined || currentPlayerItem === null || currentPlayerItem === '') {
       console.log("p3");
-      currentPlayerItem = this.$store.state.media.currentGlobalPlayerItem
+      currentPlayerItem =  useMediaStore().currentGlobalPlayerItem
     }
+    
 
-    this.$store.commit('setPlayerItem', currentPlayerItem)
-
+    useMediaStore().setCurrentGlobalPlayerItem(currentPlayerItem)
+    
     this.path = '/Root'
 
-    if (this.$f7route.query.path && !this.$f7route.query.path.startsWith('/page/')) {
-      this.path = this.$f7route.query.path
-    }
-
     console.log('MediaBrowser path: ' + this.path)
-
     let selectedOption= ""
+    
     this.$oh.api.get('/rest/media/sinks').then((data) => {
       data.childs = data.childs.sort((a, b) => {
         if (a.binding < b.binding) return -1
@@ -92,7 +121,7 @@ export default {
 
       this.node = data
     })
-
+    
     return {
       currentPlayerItem: currentPlayerItem,
       node: this.node,
