@@ -8,7 +8,7 @@
       <f7-button color="blue" @click.stop="skipNext()" large icon-material="skip_next" icon-size="24" icon-color="gray" style="vertical-align: middle;display: flex;"/>
 
       <f7-button color="blue" large icon-material="speaker" icon-size="24" icon-color="gray" @click="openDeviceSelectorPopup" style="vertical-align: middle;display: flex;"/>
-      <media-device-selector-popup :opened="deviceSelectorPopupOpened"  :player-item="currentPlayerItem"  @update:opened="deviceSelectorPopupOpened = $event"/>
+      <media-device-selector-popup :opened="deviceSelectorPopupOpened"  :player-item="currentPlayerItem"  @update:opened="deviceSelectorPopupOpened = $event" :f7route="f7route" :f7router="f7router"/>
 
       <f7-button color="blue" large icon-material="queue_music" icon-size="24" icon-color="gray" href="/mediabrowser/?path=/Root/CurrentQueue" style="vertical-align: middle;display: flex;"/>
     </f7-segmented>
@@ -36,6 +36,10 @@ import { useComponentsStore } from '@/js/stores/useComponentsStore'
 
 export default {
   mixins: [mixin],
+  props: {
+    f7route: Object, 
+    f7router: Object
+  },
   widget: OhPlayerDefinition,
   watch: {
     'useMediaStore().currentGlobalPlayerItem'(newVal) {

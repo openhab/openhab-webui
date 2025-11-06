@@ -54,18 +54,8 @@
     			icon-color="gray"  
     			@click="openDeviceSelectorPopup"/>
 		
-          
-  <!--    
-          <media-device-popup :opened="deviceSelectorPopupOpened"  :player-item="config.item"  @update:opened=""/>    
-	<media-popup :opened="browserPopupOpened"  :player-item="config.item"  @update:opened=""/>
-  
-    
-               -->
-
-               <!--
-  browserPopupOpened = $event
-  deviceSelectorPopupOpened = $event
-  -->
+  <media-popup :opened="browserPopupOpened"  :player-item="config.item"  @update:opened="browserPopupOpened = $event"/>        
+  <media-device-popup :opened="deviceSelectorPopupOpened"  :player-item="config.item"  @update:opened="deviceSelectorPopupOpened = $event"/>      
   </f7-segmented>
   </div>
 
@@ -165,7 +155,7 @@ export default {
       useStatesStore().sendCommand(this.config.item, 'NEXT')
     },
     mediaChange (value) {
-      // this.$store.dispatch('sendCommand', { itemName: this.config.item, cmd: 'spotify:playlist:5Z4AD0u9fwnvtsj7ce5ZLS' }
+      //useStatesStore().sendCommand(this.config.item, 'spotify:playlist:5Z4AD0u9fwnvtsj7ce5ZLS')
     }
   }
 }
