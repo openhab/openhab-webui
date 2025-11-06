@@ -100,19 +100,19 @@ export default {
       }
     },
     skipPrevious (value) {
-      this.$store.dispatch('sendCommand', { itemName: this.currentPlayerItem, cmd: 'PREVIOUS' })
+      useStatesStore().sendCommand(this.currentPlayerItem, 'PREVIOUS')
     },
     rewind (value) {
-      this.$store.dispatch('sendCommand', { itemName: this.currentPlayerItem, cmd: 'REWIND' })
+      useStatesStore().sendCommand(this.currentPlayerItem, 'REWIND')
     },
     playPause (value) {
-      this.$store.dispatch('sendCommand', { itemName: this.currentPlayerItem, cmd: this.isPlaying ? 'PAUSE' : 'PLAY' })
+      useStatesStore().sendCommand(this.currentPlayerItem, this.isPlaying ? 'PAUSE' : 'PLAY')
     },
     fastForward (value) {
-      this.$store.dispatch('sendCommand', { itemName: this.currentPlayerItem, cmd: 'FASTFORWARD' })
+      useStatesStore().sendCommand(this.currentPlayerItem, 'FASTFORWARD')
     },
     skipNext (value) {
-      this.$store.dispatch('sendCommand', { itemName: this.currentPlayerItem, cmd: 'NEXT' })
+      useStatesStore().sendCommand(this.currentPlayerItem, 'NEXT')
     }
 
   }

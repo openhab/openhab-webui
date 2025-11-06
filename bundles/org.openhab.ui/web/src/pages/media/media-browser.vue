@@ -466,10 +466,7 @@ export default {
     },
     onVolumeChange(event) {
       const itemName = this.item ?? this.$store.state.media.currentGlobalPlayerItem;
-      this.$store.dispatch('sendCommand', {
-        itemName,
-        cmd: this.createMediaType('VOLUME', event)
-      });
+      useStatesStore().sendCommand(itemName, this.createMediaType('VOLUME', event));
     },
     onClose () {
     },
@@ -488,10 +485,10 @@ export default {
     doPlay (item, id) {
       console.log('Playing item: ' + item + ' with id: ' + id)
       
-      this.$store.dispatch('sendCommand', { itemName: item, cmd: this.createMediaType('PLAY', id) })
+      useStatesStore().sendCommand(item, this.createMediaType('PLAY', id))
     },
     doEnqueue (item, id) {
-      this.$store.dispatch('sendCommand', { itemName: item, cmd: this.createMediaType('ENQUEUE', id) })
+      useStatesStore().sendCommand(item, this.createMediaType('ENQUEUE', id))
     },
     containsTrack (items) {
       return items.every((child) => {
@@ -584,7 +581,7 @@ export default {
     async fetchResults (query) {
       this.loading = true
       try {
-        this.$store.dispatch('sendCommand', { itemName: this.item, cmd: this.createMediaType('SEARCH', encodeURIComponent(query.query)) })
+        useStatesStore().sendCommand(this.item, this.createMediaType('SEARCH', encodeURIComponent(query.query)))
         this.$f7router.navigate('/mediabrowser/?path=/Root/Search&query=' + query.query, { reloadCurrent: true, reloadDetail: true })
 
         // Ici, adapte selon la structure de la réponse de ton API
