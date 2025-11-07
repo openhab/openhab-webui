@@ -80,11 +80,11 @@ export default {
       this.deviceSelectorPopupOpened = true
     },
     decodeState () {
-      console.log("decodeState called for " + this.currentPlayerItem);
+      //console.log("decodeState called for " + this.currentPlayerItem);
       const value = useStatesStore().trackedItems[this.currentPlayerItem].state
       
-      console.log("value:" + JSON.stringify(useStatesStore().trackedItems));
-      console.log("value:" + value);
+      //console.log("value:" + JSON.stringify(useStatesStore().trackedItems));
+      //console.log("value:" + value);
       if (!(value === undefined || value === null || value === '' || value==='-')) {
         if (value.indexOf('{') === 0) {
           let json = JSON.parse(value);

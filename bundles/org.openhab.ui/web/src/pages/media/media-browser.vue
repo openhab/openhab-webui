@@ -249,6 +249,7 @@ import { useMediaStore } from '@/js/stores/useMediaStore'
 import { ref, onMounted, getCurrentInstance, computed } from 'vue'
 import { p } from '@/assets/definitions/widgets/helpers'
 import { loadLocaleMessages } from '@/js/i18n'
+import { f7 } from 'framework7-vue'
 
 
 export default {
@@ -296,7 +297,7 @@ export default {
   },
   watch: {
     'playerItemState'(newVal) {
-      console.log("playerItemState(newVal):" + newVal)
+      //console.log("playerItemState(newVal):" + newVal)
       this.decodeState()
     },
     'useMediaStore().currentGlobalPlayerItem'(newVal) {
@@ -375,7 +376,7 @@ export default {
       }
       
       if (useStatesStore().trackedItems[this.currentPlayerItem]!== undefined) {
-        console.log('item tracked:', this.currentPlayerItem);
+        //console.log('item tracked:', this.currentPlayerItem);
       }
       else  {
         console.log('item not tracked:', this.currentPlayerItem);
@@ -543,7 +544,7 @@ export default {
       this.loadItems(0)
     },
     loadMore () {
-        this.$f7.toast.create({
+        f7.toast.create({
           text: this.$t("media.loading"),
           destroyOnClose: true,
           closeTimeout: 1000
