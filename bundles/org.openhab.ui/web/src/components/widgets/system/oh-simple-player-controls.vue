@@ -42,7 +42,7 @@ export default {
   },
   widget: OhPlayerDefinition,
   watch: {
-    'useMediaStore().currentGlobalPlayerItem'(newVal) {
+    'mediaStore.currentGlobalPlayerItem'(newVal) {
         this.currentPlayerItem = useMediaStore().currentGlobalPlayerItem
     }
   },
@@ -63,7 +63,8 @@ export default {
       trackPosition: 0,
       trackDuration: 0,
       volume: 0,
-      deviceSelectorPopupOpened: false
+      deviceSelectorPopupOpened: false,
+      mediaStore: useMediaStore()
     }
   },
   mounted () {
