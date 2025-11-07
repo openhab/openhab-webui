@@ -296,11 +296,13 @@ export default {
       //console.log("playerItemState(newVal):" + newVal)
       this.decodeState()
     },
-    'useMediaStore().currentGlobalPlayerItem'(newVal) {
+    'mediaStore.currentGlobalPlayerItem'(newVal) {
+      console.log('Updating currentPlayerItem to ' + newVal)
       this.currentPlayerItem = useMediaStore().currentGlobalPlayerItem
     }
   },
   data () {
+
     useMediaStore().setMapping('Root', 'Racine')
     useMediaStore().setMapping('g', 'Genres')
     useMediaStore().setMapping('l', 'Albums')
@@ -346,7 +348,8 @@ export default {
       artUri: '',
       trackPosition: 0,
       trackDuration: 0,
-      volume: 0
+      volume: 0,
+      mediaStore: useMediaStore()
 
     }
   },
