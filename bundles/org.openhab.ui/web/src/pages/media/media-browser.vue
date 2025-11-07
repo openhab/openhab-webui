@@ -211,6 +211,7 @@
                {{ formatTime(trackPosition)  }}
             </div>
             <div style="width:500px;">
+              {{ trackPositionPourcent }}
               <f7-range ref="rangeslider" class="oh-slider" :min="0" :max="100" :step="1" :value="trackPositionPourcent" :key="trackPositionPourcent"  />
             </div>
             <div style="padding-left:20px;">
@@ -269,13 +270,8 @@ export default {
     const path = ref('');
     const query = ref('');
 
-    const { proxy } = getCurrentInstance(); // pour accéder à this.$f7route, this.$f7, etc.
-
     onMounted(() => {
       const route = props.f7route;
-      console.log('f7route1:', route);
-      console.log('f7route2:', route.query);
-      console.log('f7route3:', route.query?.path);
 
       if (route.query?.path && !route.query.path.startsWith('/page/')) {
         path.value = route.query.path;
@@ -389,14 +385,17 @@ export default {
       return this.currentMediaBrowserMode === 'Global'
     },
     trackPositionPourcent() {
+      if (this.trackDuration === 0) {
+        return 0
+      }
       return this.trackPosition/this.trackDuration*100.00
     },
 
     
     currentRoute () {
       let res = ''
-      if (this.$f7router && this.$f7router.currentRoute) {
-        res = this.$f7router.currentRoute.path
+      if (this.f7router && this.f7router.currentRoute) {
+        res = this.f7router.currentRoute.path
       }
       if (res === undefined) {
         res = ''
@@ -496,10 +495,6 @@ export default {
       })
     },
     async loadItems (start = 0) {
-      console.log('path:', this.path)
-      console.log('query:', this.query)
-     
-     
       return this.$oh.api.get('/rest/media/sources?path=' + this.path + '&query=' + this.query + '&start=' + start + '&size=' + this.size).then((data) => {
         this.node = data
         this.node.pres = 'thumb'
@@ -551,7 +546,6 @@ export default {
         }).open()
 
       if (this.loading || !this.allowInfinite) {
-        console.log('==> returning because loading or no infinite :' + this.loading + ' / ' + this.allowInfinite)
         return
       }
 
@@ -583,7 +577,7 @@ export default {
       this.loading = true
       try {
         useStatesStore().sendCommand(this.item, this.createMediaType('SEARCH', encodeURIComponent(query.query)))
-        this.$f7router.navigate('/mediabrowser/?path=/Root/Search&query=' + query.query, { reloadCurrent: true, reloadDetail: true })
+        this.f7router.navigate('/mediabrowser/?path=/Root/Search&query=' + query.query, { reloadCurrent: true, reloadDetail: true })
 
         // Ici, adapte selon la structure de la réponse de ton API
         this.results = [{ 'name': 'name1', 'val': 'val1' }, { 'name': 'name2', 'val': 'val2' }]
