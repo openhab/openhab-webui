@@ -38,6 +38,7 @@ import { ref, onMounted, getCurrentInstance, computed } from 'vue'
 import { useStatesStore } from '@/js/stores/useStatesStore'
 import { useComponentsStore } from '@/js/stores/useComponentsStore'
 import { useMediaStore } from '@/js/stores/useMediaStore'
+import { use } from 'marked'
 
 
 export default {
@@ -117,7 +118,6 @@ export default {
       selectedOption = data.childs.find((device) => {
         return device.id === this.currentDevice
       })
-      // "8bf6830ca7a00068f294ca8016421b3678b7568b";
 
       this.node = data
     })
@@ -165,9 +165,9 @@ export default {
       console.log('this.selectedOption:', this.selectedOption)
       console.log('this.currentPlayerItem:', this.currentPlayerItem)
 
-      this.$store.commit('setMapping', { key: 'Root', value: 'Racine' })
-      this.$store.commit('setCurrentGlobalPlayerItem',  this.currentPlayerItem)
-      this.$store.dispatch('sendCommand', { itemName: this.currentPlayerItem, cmd: this.createMediaType('DEVICE', this.selectedOption.id)})
+      useMediaStore().setMapping('Root', 'Racine')
+      useMediaStore().setCurrentGlobalPlayerItem(this.currentPlayerItem)
+      useMediaStore().sendCommand(this.currentPlayerItem, this.createMediaType('DEVICE', this.selectedOption.id))
     },
     select (e) {
       console.log('Selected option: ' + this.selectedOption)
