@@ -152,7 +152,7 @@ export default {
 
       useMediaStore().setMapping('Root', 'Racine')
       useMediaStore().setCurrentGlobalPlayerItem(this.currentPlayerItem)
-      useMediaStore().sendCommand(this.currentPlayerItem, this.createMediaType('DEVICE', this.selectedOption.id))
+      useStatesStore().sendCommand(this.currentPlayerItem, this.createMediaType('DEVICE', this.selectedOption.id))
     },
     select (e) {
       console.log('Selected option: ' + this.selectedOption)
