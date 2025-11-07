@@ -60,9 +60,6 @@ export default {
 
     onMounted(() => {
       const route = props.f7route;
-      console.log('f7route1:', route);
-      console.log('f7route2:', route.query);
-      console.log('f7route3:', route.query?.path);
 
       if (route.query?.path && !route.query.path.startsWith('/page/')) {
         path.value = route.query.path;
@@ -77,16 +74,11 @@ export default {
   },
   data () {
     let currentPlayerItem = this.playerItem
-    console.log("p0:" + currentPlayerItem);
-
     
     if (currentPlayerItem === undefined || currentPlayerItem === null || currentPlayerItem === '') {
-      console.log("p1");
       currentPlayerItem = useMediaStore().playerItem
     }
-    console.log("p2");
     if (currentPlayerItem === undefined || currentPlayerItem === null || currentPlayerItem === '') {
-      console.log("p3");
       currentPlayerItem =  useMediaStore().currentGlobalPlayerItem
     }
     
@@ -95,7 +87,6 @@ export default {
     
     this.path = '/Root'
 
-    console.log('MediaBrowser path: ' + this.path)
     let selectedOption= ""
     
     this.$oh.api.get('/rest/media/sinks').then((data) => {
@@ -114,7 +105,6 @@ export default {
       //  return item.binding === this.$f7route.query.binding
       //})
 
-      console.log('item:' + this.item)
       selectedOption = data.childs.find((device) => {
         return device.id === this.currentDevice
       })
@@ -158,12 +148,7 @@ export default {
       return JSON.stringify(mediaType)
     },
     changeDevice () {
-      console.log('this.currentPlayerItem:', this.currentPlayerItem)
       this.currentPlayerItem = this.selectedOption.playerItemName
-      console.log('p2')
-
-      console.log('this.selectedOption:', this.selectedOption)
-      console.log('this.currentPlayerItem:', this.currentPlayerItem)
 
       useMediaStore().setMapping('Root', 'Racine')
       useMediaStore().setCurrentGlobalPlayerItem(this.currentPlayerItem)
