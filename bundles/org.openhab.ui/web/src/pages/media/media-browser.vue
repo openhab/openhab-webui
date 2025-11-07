@@ -299,8 +299,8 @@ export default {
       console.log("playerItemState(newVal):" + newVal)
       this.decodeState()
     },
-    '$store.state.media.currentGlobalPlayerItem'(newVal) {
-      this.currentPlayerItem = this.$store.state.media.currentGlobalPlayerItem
+    'useMediaStore().currentGlobalPlayerItem'(newVal) {
+      this.currentPlayerItem = useMediaStore().currentGlobalPlayerItem
     }
   },
   data () {
@@ -464,7 +464,7 @@ export default {
       return `${formattedMinutes}:${formattedSeconds}`;
     },
     onVolumeChange(event) {
-      const itemName = this.item ?? this.$store.state.media.currentGlobalPlayerItem;
+      const itemName = this.item ?? useMediaStore().currentGlobalPlayerItem
       useStatesStore().sendCommand(itemName, this.createMediaType('VOLUME', event));
     },
     onClose () {
@@ -512,7 +512,8 @@ export default {
             idForMap.endsWith('/n')) {
           idForMap = idForMap.substring(0, idForMap.length - 2)
         }
-        //this.$store.commit('setMapping', { key: idForMap, value: data.label })
+
+        useMediaStore().setMapping(idForMap, data.label)
 
         if (data.child != null && data.childs.length === 0) {
           console.log('No more items to load, stopping infinite scroll :')
