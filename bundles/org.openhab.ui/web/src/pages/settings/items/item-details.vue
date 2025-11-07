@@ -1,5 +1,6 @@
 <template>
-  <f7-page class="item-details-page"
+  <!-- page-with-subnavbar class required on Android -->
+  <f7-page class="item-details-page page-with-subnavbar"
            @page:beforein="onPageBeforeIn"
            @page:beforeout="onPageBeforeOut">
     <f7-navbar>
@@ -161,8 +162,10 @@
       font-weight normal
       text-align center
       margin-top 0
-.after-item-header
-  margin-top 10rem !important
+.item-details-page
+  --f7-page-subnavbar-offset 170px
+  .after-item-header
+    margin-bottom 0 !important
 .tags-block
   margin-bottom 0
   text-align center

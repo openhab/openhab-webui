@@ -337,9 +337,9 @@ export default {
     },
     height (item) {
       let vlHeight
-      if (theme.ios) vlHeight = 73.15
+      if (theme.ios) vlHeight = 79.19
       if (theme.aurora) vlHeight = 66.37
-      if (theme.md) vlHeight = 73.37
+      if (theme.md) vlHeight = 79.39
       if (this.$device.macos) {
         if (window.navigator.userAgent.includes('Safari') && !window.navigator.userAgent.includes('Chrome')) vlHeight -= 0.77
       }
