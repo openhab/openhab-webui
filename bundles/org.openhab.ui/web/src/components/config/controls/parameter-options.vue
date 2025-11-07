@@ -13,7 +13,7 @@
         <option v-for="option in configDescription.options"
                 :value="option.value"
                 :key="option.value"
-                :selected="isSelected(option) ? true : null">
+                :selected="isSelected(option)">
           {{ option.label }}
         </option>
       </select>
@@ -98,15 +98,14 @@ export default {
       this.$emit('input', value)
     },
     isSelected (option) {
-      let optVal = option.value
-      if (this.configDescription.type === 'INTEGER') optVal = parseInt(optVal)
-      if (this.configDescription.type === 'DECIMAL') optVal = parseFloat(optVal)
-
       if (this.value === null || this.value === undefined) return
       if (!this.configDescription.multiple) {
-        return this.value === optVal
+        return this.value === option.value
       } else {
-        return this.value && this.value.indexOf(optVal) >= 0
+        let optVal = option.value
+        if (this.configDescription.type === 'INTEGER') optVal = parseInt(optVal)
+        if (this.configDescription.type === 'DECIMAL') optVal = parseFloat(optVal)
+        return this.value && this.value.indexOf(option.value) >= 0
       }
     }
   }
