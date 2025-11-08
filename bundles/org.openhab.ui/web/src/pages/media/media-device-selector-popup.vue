@@ -3,7 +3,7 @@
             :closeByBackdropClick="true" class="popup">
     <f7-view class="view-sheet-modal" url="/mediadeviceselector/" :animate="false">
       <f7-page>
-            <media-device-selector @navigate="$emit('navigate', $event)" :player-item="playerItem" :f7route="f7route" :f7router="f7router"/>
+            <media-device-selector @navigate="$emit('navigate', $event)" :player-item="playerItem" />
       </f7-page>
     </f7-view>
   </f7-popup>
@@ -25,9 +25,7 @@ export default {
     playerItem: {
       type: String,
       required: false
-    },
-    f7route: Object, 
-    f7router: Object
+    }
   },
   methods: {
   }

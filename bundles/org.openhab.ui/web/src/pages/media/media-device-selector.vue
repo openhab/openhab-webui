@@ -52,26 +52,6 @@ export default {
       required: false
     }
   },
-  setup(props) {
-    const path = ref('');
-    const query = ref('');
-
-    const { proxy } = getCurrentInstance(); // pour accéder à this.$f7route, this.$f7, etc.
-
-    onMounted(() => {
-      const route = props.f7route;
-
-      if (route.query?.path && !route.query.path.startsWith('/page/')) {
-        path.value = route.query.path;
-      }
-
-      if (route.query?.query) {
-        query.value = route.query.query;
-      }
-    });
-
-    return { path, query };
-  },
   data () {
     let currentPlayerItem = this.playerItem
     
@@ -85,7 +65,6 @@ export default {
 
     useMediaStore().setCurrentGlobalPlayerItem(currentPlayerItem)
     
-    this.path = '/Root'
 
     let selectedOption= ""
     
@@ -101,10 +80,6 @@ export default {
       data.childs = data.childs.filter((device) => {
         return device.playerItemName !== ''
       })
-      //data.childs = data.childs.filter((item) => {
-      //  return item.binding === this.$f7route.query.binding
-      //})
-
       selectedOption = data.childs.find((device) => {
         return device.id === this.currentDevice
       })
@@ -120,21 +95,6 @@ export default {
       ready: true,
       selectedOption: selectedOption
     }
-  },
-  computed: {
-    currentRoute () {
-      let res = ''
-      if (this.$f7router && this.$f7router.currentRoute) {
-        res = this.$f7router.currentRoute.path
-      }
-      if (res === undefined) {
-        res = ''
-      }
-      return res
-    },
-    currentPath () {
-      return this.$f7route.query.path || ''
-    },
   },
   methods: {
     onClose () {

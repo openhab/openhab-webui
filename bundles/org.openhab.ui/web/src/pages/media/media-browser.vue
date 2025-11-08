@@ -250,8 +250,7 @@ import { useMediaStore } from '@/js/stores/useMediaStore'
 import { ref, onMounted, getCurrentInstance, computed } from 'vue'
 import { p } from '@/assets/definitions/widgets/helpers'
 import { loadLocaleMessages } from '@/js/i18n'
-import { f7 } from 'framework7-vue'
-
+import { f7, theme } from 'framework7-vue'
 
 export default {
   props: {
@@ -271,8 +270,19 @@ export default {
     const query = ref('');
 
     onMounted(() => {
-      const route = props.f7route;
+      const route = props.f7route || f7.views.main.router.currentRoute
+      const router = props.f7router || f7.views.main.router
 
+      
+      if (router.currentRoute.path !== route.path) {
+         f7.once('pageAfterIn', () => {
+              console.log('✅ Route après transition:', router.currentRoute)
+        })
+      }
+
+      console.log('Route:', route);
+      console.log('Router:', router);
+      
       if (route.query?.path && !route.query.path.startsWith('/page/')) {
         path.value = route.query.path;
       }
@@ -392,21 +402,6 @@ export default {
         return 0
       }
       return this.trackPosition/this.trackDuration*100.00
-    },
-
-    
-    currentRoute () {
-      let res = ''
-      if (this.f7router && this.f7router.currentRoute) {
-        res = this.f7router.currentRoute.path
-      }
-      if (res === undefined) {
-        res = ''
-      }
-      return res
-    },
-    currentPath () {
-      return this.path;
     },
     currentPathSegments () {
       const path = this.path || '/Root'
@@ -601,3 +596,4 @@ export default {
 
 }
 </script>
+
