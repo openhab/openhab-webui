@@ -49,6 +49,9 @@
  * - a save button if saveLink is provided and editable is not false - a click on this button emits a 'save' event and navigates to the saveLinkUrl if configured
  * - additional content can be added into <f7-nav-right> through the right slot
  *
+ * By setting the backLinkUrl property to null, the included back navigation can be disabled.
+ * Instead, the 'back' event is emitted and navigation has to be implemented explicitly.
+ *
  * To use it, simply put it as the first component into the f7-navbar.
  */
 import { f7, theme } from 'framework7-vue'
@@ -71,7 +74,7 @@ const props = withDefaults(defineProps<{
   large: false
 })
 
-defineEmits(['save'])
+const emit = defineEmits(['back', 'save'])
 
 defineSlots<{
   right: void,
@@ -79,7 +82,10 @@ defineSlots<{
 }>()
 
 function back () {
-  if (props.backLinkUrl) return
+  if (props.backLinkUrl || props.backLinkUrl === null) {
+    emit('back')
+    return
+  }
   const f7router : Router.Router = props.f7router || f7.views.main.router
 
   const currentPath = f7router.currentRoute.path

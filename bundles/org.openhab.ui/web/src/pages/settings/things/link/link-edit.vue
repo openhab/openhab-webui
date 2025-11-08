@@ -1,27 +1,15 @@
 <template>
   <f7-page @page:beforein="onPageBeforeIn" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar>
-      <f7-nav-left>
-        <f7-link icon-f7="chevron_left" @click="goBackWithDirtyCheck">
-          Back
-        </f7-link>
-      </f7-nav-left>
-      <f7-nav-title :title="(item.label || item.name) + dirtyIndicator" :subtitle="thing.label" />
-      <f7-nav-right v-show="ready">
-        <template #right>
-          <f7-link v-if="!link.editable"
-                   icon-f7="lock_fill"
-                   icon-only
-                   tooltip="links defined in a .items file are not editable from this screen" />
-          <f7-link v-else-if="theme.md"
-                   icon-md="material:save"
-                   icon-only
-                   @click="save()" />
-          <f7-link v-else @click="save()">
-            Save
-          </f7-link>
-        </template>
-      </f7-nav-right>
+      <oh-nav-content :title="(item.label || item.name) + dirtyIndicator"
+                      :subtitle="thing.label"
+                      back-link="Back"
+                      :back-link-url="null"
+                      :editable="link.editable"
+                      save-link="Save"
+                      @back="goBackWithDirtyCheck()"
+                      @save="save()"
+                      :f7router />
     </f7-navbar>
     <f7-block class="block-narrow">
       <f7-col>
