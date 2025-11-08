@@ -211,8 +211,10 @@
                {{ formatTime(trackPosition)  }}
             </div>
             <div style="width:500px;">
-              {{ trackPositionPourcent }}
-              <f7-range ref="rangeslider" class="oh-slider" :min="0" :max="100" :step="1" :value="trackPositionPourcent" :key="trackPositionPourcent"  />
+              
+              <f7-range ref="rangeslider" class="oh-slider" :min="0" :max="100" :step="1" :value="trackPositionPourcent" :key="trackPositionPourcent"
+                        label :format-label="(value) => value + '%'"  />
+              <div  style="text-align:center;width:500px;">{{ trackPositionPourcent }}%</div>
             </div>
             <div style="padding-left:20px;">
                {{ formatTime(trackDuration) }}
@@ -399,9 +401,9 @@ export default {
     },
     trackPositionPourcent() {
       if (this.trackDuration === 0) {
-        return 0
+        return 0.00
       }
-      return this.trackPosition/this.trackDuration*100.00
+      return (this.trackPosition/this.trackDuration*100.00).toFixed(2)
     },
     currentPathSegments () {
       const path = this.path || '/Root'
