@@ -1,16 +1,32 @@
-export function getLastVariableKeyValue (variableValue: any, variableKey: string) : any | undefined  {
-  const valueArray = (getVariableKeyValues(variableValue, variableKey)).valueArray
-  if (valueArray[valueArray.length - 1]) {
-    return valueArray[valueArray.length - 1]
-  } else {
+import { reactive, isReactive } from 'vue'
+
+type VariableScopeId = string
+type VariableScopeName = `varScope-${VariableScopeId}`
+type VariableName = string
+type VariableValue = number | string | boolean | VariableArray | VariableObject | null
+interface VariableArray extends Array<VariableValue> {}
+interface VariableObject extends Record<VariableName, VariableValue> {}
+
+type ContextVarObj = Record<VariableScopeName, VariableObject>
+
+export function getLastVariableKeyValue (variableValue: VariableValue, variableKey: VariableName) : VariableValue | undefined  {
+  const result = (getVariableKeyValues(variableValue, variableKey))
+  if (!result || result.valueArray.length === 0) {
     return undefined
   }
+
+  return result.valueArray[result.valueArray.length - 1]
 }
 
-export function getVariableKeyValues (variableValue: any, variableKey: string) : { keyArray: string[], valueArray: any[] } {
-  let setValue = variableValue
-  let valueArray = [setValue]
-  let keyArray = variableKey.split('.')
+function getVariableKeyValues (variableValue: VariableValue, variableKey: string) : { keyArray: VariableName[], valueArray: (VariableValue | undefined)[] } | undefined {
+  let setValue : VariableValue | undefined = variableValue
+  let valueArray : (VariableValue | undefined)[] = [setValue]
+  let keyArray = variableKey.split('.').filter((key) => key.trim() != '') as VariableName[]
+
+  if (keyArray.length === 0) {
+    throw new Error('Variable key must be a non-empty string')
+  }
+
   for (let i = 0; i <= keyArray.length - 1; i++) {
     setValue = getVariableKeyValue(setValue, keyArray[i])
     valueArray.push(setValue)
@@ -18,27 +34,56 @@ export function getVariableKeyValues (variableValue: any, variableKey: string) :
   return { keyArray, valueArray }
 }
 
-export function getVariableKeyValue (obj: any, key: string) : any | undefined {
-  if (obj === undefined) return undefined
-  if (key.includes('[') && key.includes(']')) {
-    let arrayIndex = key.split('[')[1].split(']')[0]
-    let destKey = key.split('[')[0]
-    if (key.startsWith('[')) {
-      return obj[arrayIndex]
-    } else {
-      if (obj[destKey]) {
-        return obj[destKey][arrayIndex]
-      } else {
-        return undefined
-      }
+function parseArrayIndex (key: string): { propertyName: string, index: number } | null {
+  const match = key.match(/^(.*?)\[(\d+)\]$/)
+  if (!match) return null
+
+  const propertyName = match[1]
+  const index = parseInt(match[2], 10)
+
+  if (isNaN(index) || index < 0) return null
+
+  return { propertyName, index }
+}
+
+function getVariableKeyValue (obj: VariableValue | undefined, key: string) : VariableValue | undefined {
+  if (obj === undefined || obj === null) return undefined
+
+  const parsed = parseArrayIndex(key)
+  if (parsed) {
+    const { propertyName, index } = parsed
+
+    if (propertyName === '') { // Direct array access [0]
+      if (!Array.isArray(obj)) return undefined
+      return obj[index]
+    } else { // Property array access propName[0]
+      if (typeof obj !== 'object' || Array.isArray(obj)) return undefined
+
+      const objAsObject = obj as VariableObject
+      const targetArray = objAsObject[propertyName]
+      if (!Array.isArray(targetArray)) return undefined
+      return targetArray[index]
     }
-  } else {
-    return obj[key]
+  } else if (key.includes('[') || key.includes(']')) {
+    throw new Error(`Invalid array index syntax in key ${key}`)
+  } else { // simple property access
+    if (typeof obj !== 'object' || obj === null || Array.isArray(obj)) return undefined
+    const objAsObject = obj as VariableObject
+    return objAsObject[key]
   }
 }
 
-export function setVariableKeyValues (variableValue: any, variableKey: string, newValue: any) : any {
+export function setVariableKeyValues (variableValue: VariableValue, variableKey: VariableName, newValue: VariableValue) : VariableValue {
+  if (!variableKey || typeof variableKey !== 'string' || variableKey.trim() === '') {
+    throw new Error('Variable key must be a non-empty string')
+  }
+
   let variableKeyValues = getVariableKeyValues(variableValue, variableKey)
+
+  if (!variableKeyValues) {
+    throw new Error(`Could not set variable key values for key ${variableKey}`)
+  }
+
   let keyArray = variableKeyValues.keyArray
   let valueArray = variableKeyValues.valueArray
   while (valueArray.length > 1) {
@@ -50,47 +95,75 @@ export function setVariableKeyValues (variableValue: any, variableKey: string, n
     valueArray[currentIdx] = setVariableKeyValue(valueArray[currentIdx], keyArray[valueArray.length - 2], lastObject)
     valueArray.pop()
   }
-  // JSON re-parsing is needed to build missing getter/setter so vue can render new objects
-  return JSON.parse(JSON.stringify(valueArray[0]))
+
+  const result = (valueArray[0] === undefined) ? null : valueArray[0]
+  // only make objects/arrays reactive if they aren't already
+  if ((typeof result === 'object' && result !== null) && !isReactive(result)) {
+    return reactive(result)
+  }
+
+  return result
 }
 
-export function setVariableKeyValue (obj: any, key: string, value: any) : any {
-  let objectHasContent = true
-  if (obj === undefined) {
-    obj = {}
-    objectHasContent = false
-  }
-  if (key.includes('[') && key.includes(']')) {
-    let arrayIndex = key.split('[')[1].split(']')[0]
-    let destKey = key.split('[')[0]
-    if (key.startsWith('[')) {
-      if (!objectHasContent) {
-        obj = []
+export function setVariableKeyValue (obj: VariableValue | undefined, key: VariableName, value: VariableValue | undefined) : VariableValue {
+  const parsed = parseArrayIndex(key)
+  if (parsed) {
+    const { propertyName, index } = parsed
+
+    if (obj === undefined) {
+      obj = propertyName === '' ? [] : {}
+    }
+
+    if (propertyName === '') { // Direct array access [0]
+      if (!Array.isArray(obj)) {
+        throw new Error(`Expected array for key ${key}, but got ${typeof obj}`)
       }
+
       if (value === undefined || value === 'undefined') {
-        if (objectHasContent) {
-          obj.splice(arrayIndex, 1)
-        }
+        obj.splice(index, 1)
       } else {
-        obj[arrayIndex] = value
+        obj[index] = value
       }
-    } else {
-      if (obj[destKey] === undefined) {
-        obj[destKey] = []
+    } else { // Property array access propName[0]
+      if (typeof obj !== 'object' || obj === null || Array.isArray(obj)) {
+        throw new Error(`Expected object for key ${key}, but got ${typeof obj}`)
       }
+
+      const objAsObject = obj as VariableObject
+      if (!objAsObject[propertyName]) {
+        objAsObject[propertyName] = []
+      }
+
+      const targetArray = objAsObject[propertyName]
+      if (!Array.isArray(targetArray)) {
+        throw new Error (`Property ${propertyName} is not an array`)
+      }
+
       if (value === undefined || value === 'undefined') {
-        obj[destKey].splice(arrayIndex, 1)
+        targetArray.splice(index, 1)
       } else {
-        obj[destKey][arrayIndex] = value
+        targetArray[index] = value
       }
     }
-  } else {
+  } else if (key.includes('[') || key.includes(']')) {
+    throw new Error(`Invalid array index syntax in key ${key}`)
+  } else { // simple property access
+    if (obj) {
+      if (typeof obj !== 'object' || Array.isArray(obj)) {
+        throw new Error(`Expected object for key ${key}, but got ${typeof obj}`)
+      }
+    } else {
+      obj = {}
+    }
+
+    const objAsObject = obj as VariableObject
     if (value === undefined || value === 'undefined') {
-      delete obj[key]
+      delete objAsObject[key]
     } else {
-      obj[key] = value
+      objAsObject[key] = value
     }
   }
+
   return obj
 }
 
@@ -105,16 +178,20 @@ export function setVariableKeyValue (obj: any, key: string, value: any) : any {
  * Changes to oh-context variables done by children are always propagated to the parent, which is not the case with normal variables used inside widgets.
  *
  * @param varObj the object containing the variables for each context/scope
- * @param scopeObj the key of the given variable context/scope
- * @param key the key of the variable
+ * @param scopeName the key of the given variable context/scope
+ * @param key the key (name) of the variable
  * @returns the key of the variable context/scope to be used
  */
-export function getVariableScope (varObj: Record<string, any>, scopeObj: string | null | undefined, key: string): string | null {
-  if (!scopeObj) return null
-  const scopeIDs = scopeObj.split('-')
+export function getVariableScope (varObj: ContextVarObj, scopeName: VariableScopeName | null | undefined, key: VariableName): VariableScopeName | null {
+  if (!scopeName) return null
+  const scopeIDs = scopeName.split('-')
   for (let scope_idx = scopeIDs.length; scope_idx > 1; scope_idx--) {
-    const scopeKey = scopeIDs.slice(0, scope_idx).join('-')
-    if (Object.keys(varObj[scopeKey]).includes(key)) return scopeKey
+    const scopeKey = scopeIDs.slice(0, scope_idx).join('-') as VariableScopeName
+    const scopeObj = varObj[scopeKey]
+
+    if (scopeObj && Object.prototype.hasOwnProperty.call(scopeObj, key)) {
+      return scopeKey
+    }
   }
   return null
 }
@@ -123,7 +200,5 @@ export default {
   getVariableScope,
   setVariableKeyValues,
   setVariableKeyValue,
-  getLastVariableKeyValue,
-  getVariableKeyValues,
-  getVariableKeyValue
+  getLastVariableKeyValue
 }
