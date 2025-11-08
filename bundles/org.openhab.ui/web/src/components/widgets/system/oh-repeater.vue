@@ -91,9 +91,9 @@ export default {
       let sourceResult
       if (this.config.sourceType === 'range') {
         const start = this.config.rangeStart || 0
-        const stop = this.config.rangeStop || 10
+        const stop = isNaN(this.config.rangeStop) ? 10 : this.config.rangeStop
         const step = this.config.rangeStep || 1
-        sourceResult = Promise.resolve(Array(Math.ceil((stop + 1 - start) / step)).fill(start).map((x, y) => x + y * step))
+        sourceResult = Promise.resolve(Array(Math.floor((stop + step - start) / step)).fill(start).map((x, y) => x + y * step))
       } else if (this.config.sourceType === 'itemsWithTags' && this.config.itemTags) {
         sourceResult = this.$oh.api.get('/rest/items?metadata=' + this.config.fetchMetadata + '&tags=' + this.config.itemTags).then((d) => Promise.resolve(d.sort(compareItems)))
         this.sourceCache = (this.config.cacheSource) ? sourceResult : null
