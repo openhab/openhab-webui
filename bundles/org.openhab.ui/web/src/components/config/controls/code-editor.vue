@@ -2,7 +2,7 @@
   <f7-icon v-if="readOnly"
            f7="lock"
            class="float-right margin"
-           style="opacity:0.5; z-index: 4000; user-select: none;"
+           style="opacity: 0.5; z-index: 4000; user-select: none;"
            size="50"
            color="gray"
            :tooltip="readOnlyMsg" />
