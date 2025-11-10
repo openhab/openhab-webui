@@ -95,7 +95,6 @@ import ItemForm from '@/components/item/item-form.vue'
 
 import DirtyMixin from '../dirty-mixin'
 import ItemMixin from '@/components/item/item-mixin'
-import { name } from 'jssip'
 
 export default {
   mixins: [DirtyMixin, ItemMixin],
