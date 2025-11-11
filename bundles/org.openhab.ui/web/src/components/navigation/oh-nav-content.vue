@@ -82,7 +82,8 @@ defineSlots<{
 }>()
 
 function back () {
-  if (props.backLinkUrl || props.backLinkUrl === null) {
+  if (props.backLinkUrl) return
+  if (props.backLinkUrl === null) {
     emit('back')
     return
   }
@@ -103,6 +104,7 @@ function back () {
     previousPath = '/'
   }
   console.debug('Navigating back to previous path:', previousPath)
+  f7router.history.pop()
   f7router.navigate(previousPath, { force: true })
 }
 </script>
