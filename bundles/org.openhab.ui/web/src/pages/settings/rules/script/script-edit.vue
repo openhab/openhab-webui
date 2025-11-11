@@ -485,7 +485,7 @@ export default {
         return
       }
       if (!this.rule.name) {
-        f7.dialog.alert('Please give a name to the script')
+        f7.dialog.alert('Please give a label to the script')
         return
       }
 
