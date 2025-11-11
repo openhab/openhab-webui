@@ -19,7 +19,7 @@ export default {
   mixins: [mixin, slideMixin],
   components: {
     // See https://roundsliderui.com/document.html for docs
-    RoundSlider: defineAsyncComponent(() => import(/* webpackChunkName: "vue-round-slider" */ 'vue-round-slider'))
+    RoundSlider: defineAsyncComponent(() => import(/* webpackChunkName: "vue-round-slider" */ 'vue-three-round-slider'))
   },
   widget: OhKnobDefinition,
   computed: {
