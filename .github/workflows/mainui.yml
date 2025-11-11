@@ -18,7 +18,7 @@ defaults:
     working-directory: bundles/org.openhab.ui/web
 
 env:
-  NODE_VERSION: '24.5.0'
+  NODE_VERSION: '24.11.0'
 
 jobs:
   checks:
