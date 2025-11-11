@@ -72,9 +72,11 @@ html
     --f7-typography-margin 0
     --f7-list-item-padding-vertical 10px
   // actions modal
-  --f7-actions-button-height 40px
-  --f7-actions-button-height-landscape 44px
-  --f7-actions-group-margin 24px
+  --f7-actions-button-height 44px
+  --f7-actions-button-height-landscape 48px
+  .actions-modal > .actions-group
+    margin-left 28px
+    margin-right 28px
 
 /* Adjustments for cards */
 :root
@@ -92,7 +94,7 @@ html
   .title
     left 0 !important
     right 0 !important
-    max-width calc(100% - var(--f7-navbar-inner-padding-left) - 50px - 50px - var(--f7-navbar-inner-padding-right))
+    max-width calc(100% - var(--f7-navbar-inner-padding-left) - 140px - var(--f7-navbar-inner-padding-right))
   .right
     position absolute
     right var(--f7-navbar-inner-padding-right)
