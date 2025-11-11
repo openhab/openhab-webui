@@ -20,6 +20,8 @@ import jsepArrow from '@jsep-plugin/arrow'
 import jsepObject from '@jsep-plugin/object'
 import jsepTemplate from '@jsep-plugin/template'
 
+import { i18n } from '@/js/i18n'
+
 expr.jsep.plugins.register(jsepRegex, jsepArrow, jsepObject, jsepTemplate)
 
 addUnaryOp('@', (itemName) => {
@@ -123,7 +125,8 @@ export default {
             screen: this.screenInfo,
             JSON,
             dayjs,
-            user: useUserStore().user
+            user: useUserStore().user,
+            t: i18n.global.t
           })
         } catch (e) {
           return e
