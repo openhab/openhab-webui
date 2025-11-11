@@ -1,5 +1,5 @@
 <template>
-  <f7-swiper v-bind="config" observer observe-parents>
+  <f7-swiper v-bind="mergedConfig" observer observe-parents>
     <!-- renders slides added through the add slide component below -->
     <f7-swiper-slide
       v-for="(slide, idx) in slides"
@@ -92,6 +92,15 @@ export default {
     repeater () {
       if (!this.context.component.slots || !this.context.component.slots.default) return []
       return this.context.component.slots.default.filter((c) => c.component === 'oh-repeater')
+    },
+    mergedConfig () {
+      const config = Object.assign({}, this.config)
+      // provide backwards compatibility for the params object as passed to f7-swiper in F7 v5
+      if (config.params) {
+        Object.assign(config, this.config.params)
+        delete config.params
+      }
+      return config
     }
   }
 }
