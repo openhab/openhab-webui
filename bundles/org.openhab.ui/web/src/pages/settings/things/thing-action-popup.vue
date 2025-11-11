@@ -1,5 +1,5 @@
 <template>
-  <f7-popup ref="modulePopup" class="moduleconfig-popup">
+  <f7-popup ref="modulePopup" class="thing-action-popup">
     <f7-page>
       <f7-navbar>
         <f7-nav-left>
@@ -94,7 +94,7 @@
                 </f7-list-item>
               </template>
               <f7-list-item accordion-item title="Raw Output Value">
-                <f7-accordion-content class="thing-type-description">
+                <f7-accordion-content class="raw-value">
                   <div class="margin">
                     <code> {{ actionOutput }} </code>
                   </div>
@@ -107,6 +107,14 @@
     </f7-page>
   </f7-popup>
 </template>
+
+<style lang="stylus">
+.thing-action-popup
+  .raw-value
+    padding-left calc(var(--f7-list-item-padding-horizontal) + var(--f7-safe-area-left) - var(--menu-list-offset))
+    div
+      padding-bottom calc(var(--f7-list-item-padding-vertical))
+</style>
 
 <script>
 import { defineAsyncComponent } from 'vue'
