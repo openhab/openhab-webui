@@ -32,8 +32,8 @@
   .sitemap-parser
     height 50%
     width 100%
-    .vue-codemirror
-      top 0
+    .v-codemirror
+      position absolute
       height calc(100% - var(--f7-grid-gap))
   .sitemap-results
     height 50%
