@@ -126,7 +126,7 @@ export const useStatesStore = defineStore('states', () => {
   async function sendCommand (itemName: string, command: string, updateState: boolean = false) {
     if (updateState) {
       const currentState = itemStates.value.get(itemName)
-      const newState : ItemState = currentState ? { ...currentState, state: command} : { state: command, type: '-' }
+      const newState : ItemState = currentState ? { ...currentState, state: command } : { state: command, type: '-' }
       setItemState(itemName, newState)
     }
     return openhab.api.postPlain(

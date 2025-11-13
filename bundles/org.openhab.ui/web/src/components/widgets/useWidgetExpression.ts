@@ -21,14 +21,14 @@ import { useStatesStore } from '@/js/stores/useStatesStore'
 import { useUserStore } from '@/js/stores/useUserStore'
 import { i18n } from '@/js/i18n.ts'
 
-import type { WidgetContext, WidgetProps } from './types.d.ts'
+import type { WidgetContext, WidgetProps } from './types'
 
 expr.jsep.plugins.register(jsepRegex, jsepArrow, jsepObject, jsepTemplate)
 
 addUnaryOp('@', (itemName: string | undefined): string => {
   if (itemName === undefined) return '-'
   const item = useStatesStore().trackedItems[itemName]
-  return (item.displayState !== undefined) ? item.displayState : item.state
+  return (item.displayState !== undefined ? item.displayState : item.state) ?? '-'
 })
 addUnaryOp('@@', (itemName: string | undefined): string => {
   if (itemName === undefined) return '-'
@@ -36,7 +36,7 @@ addUnaryOp('@@', (itemName: string | undefined): string => {
 })
 addUnaryOp('#', (itemName: string | undefined): number | undefined => {
   if (itemName === undefined) return undefined
-  return useStatesStore().trackedItems[itemName].numericState
+  return useStatesStore().trackedItems[itemName]?.numericState
 })
 
 dayjs.extend(relativeTime)
@@ -73,7 +73,7 @@ interface ScreenInfo {
  *
  * @param properties
  */
-export function useWidgetExpression (properties: { context?: WidgetContext, props?: WidgetProps }) {
+export function useWidgetExpression (properties: { context?: WidgetContext, props?: WidgetProps } = {}) {
   // imports
   const userStore = useUserStore()
   const uiOptionsStore = useUIOptionsStore()
