@@ -103,7 +103,6 @@ import { defineAsyncComponent } from 'vue'
 import { f7, theme } from 'framework7-vue'
 
 import OhLayoutPage from '@/components/widgets/layout/oh-layout-page.vue'
-import WidgetExpressionMixin from '@/components/widgets/widget-expression-mixin'
 import { actionsMixin } from '@/components/widgets/widget-actions'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 
@@ -111,9 +110,10 @@ import { useStatesStore } from '@/js/stores/useStatesStore'
 import { useComponentsStore } from '@/js/stores/useComponentsStore'
 import { useUserStore } from '@/js/stores/useUserStore'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
+import { useWidgetExpression } from '@/components/widgets/useWidgetExpression.ts'
 
 export default {
-  mixins: [WidgetExpressionMixin, actionsMixin],
+  mixins: [actionsMixin],
   components: {
     'oh-layout-page': OhLayoutPage,
     EmptyStatePlaceholder,
@@ -132,7 +132,8 @@ export default {
     f7router: Object
   },
   setup () {
-    return { theme }
+    const { evaluateExpression } = useWidgetExpression()
+    return { theme, evaluateExpression }
   },
   data () {
     return {

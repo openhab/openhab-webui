@@ -111,7 +111,7 @@ import { defineAsyncComponent } from 'vue'
 import { f7, theme } from 'framework7-vue'
 
 import PageDesignerMixin from '@/pages/settings/pages/pagedesigner-mixin'
-import WidgetExpressionMixin from '@/components/widgets/widget-expression-mixin'
+import { useWidgetExpression } from '@/components/widgets/useWidgetExpression.ts'
 
 import YAML from 'yaml'
 
@@ -122,7 +122,7 @@ import PageSettings from '@/components/pagedesigner/page-settings.vue'
 const ConfigurableWidgets = { OhTabDefinition }
 
 export default {
-  mixins: [PageDesignerMixin, WidgetExpressionMixin],
+  mixins: [PageDesignerMixin],
   components: {
     editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')),
     PageSettings
@@ -134,7 +134,8 @@ export default {
     f7route: Object
   },
   setup () {
-    return { theme }
+    const { evaluateExpression } = useWidgetExpression()
+    return { theme, evaluateExpression }
   },
   data () {
     return {
