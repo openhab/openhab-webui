@@ -66,6 +66,7 @@ import OhContext from './system/oh-context.vue'
 import mixin from './widget-mixin'
 
 export default {
+  inheritAttrs: false,
   mixins: [mixin],
   components: {
     ...SystemWidgets,
