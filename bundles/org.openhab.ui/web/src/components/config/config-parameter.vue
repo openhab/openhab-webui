@@ -88,7 +88,7 @@ export default {
     },
     control () {
       const configDescription = this.configDescription
-      if (configDescription.options?.length && configDescription.limitToOptions && (!configDescription.context || configDescription.context === 'network-interface')) {
+      if (configDescription.options?.length && configDescription.limitToOptions && (!configDescription.context || configDescription.context === 'network-interface' || configDescription.context === 'serial-port')) {
         return ParameterOptions
       } else if (configDescription.type === 'INTEGER' || configDescription.type === 'DECIMAL') {
         return ParameterNumber
