@@ -13,7 +13,7 @@
         <option v-for="(day, idx) in values"
                 :value="day"
                 :key="day"
-                :selected="isSelected(day) ? true : null">
+                :selected="isSelected(day) ? true : undefined">
           {{ labels[idx] }}
         </option>
       </select>
