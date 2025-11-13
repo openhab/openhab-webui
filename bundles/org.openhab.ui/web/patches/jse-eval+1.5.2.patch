@@ -1,0 +1,16 @@
+diff --git a/node_modules/jse-eval/package.json b/node_modules/jse-eval/package.json
+index 5149f84..e5c5193 100644
+--- a/node_modules/jse-eval/package.json
++++ b/node_modules/jse-eval/package.json
+@@ -7,7 +7,10 @@
+   "main": "dist/jse-eval.cjs",
+   "module": "dist/jse-eval.module.js",
+   "exports": {
+-    "import": "./dist/jse-eval.modern.js",
++    "import": {
++      "default": "./dist/jse-eval.modern.js",
++      "types": "./dist/index.d.ts"
++    },
+     "require": "./dist/jse-eval.cjs"
+   },
+   "unpkg": "dist/jse-eval.umd.js",
