@@ -38,6 +38,8 @@
 </template>
 
 <script>
+import { f7 } from 'framework7-vue'
+
 // import ScriptEditorPopup from './config/script-editor-popup.vue'
 import ParameterThing from './controls/parameter-thing.vue'
 import ParameterBoolean from './controls/parameter-boolean.vue'
@@ -58,7 +60,7 @@ import ParameterProps from './controls/parameter-props.vue'
 import ParameterTriggerChannel from './controls/parameter-triggerchannel.vue'
 import ParameterText from './controls/parameter-text.vue'
 import ParameterQrcode from './controls/parameter-qrcode.vue'
-import { f7 } from 'framework7-vue'
+import ParameterMonth from '@/components/config/controls/parameter-month.vue'
 
 export default {
   props: {
@@ -98,6 +100,8 @@ export default {
         return ParameterLocation
       } else if (configDescription.type === 'TEXT' && configDescription.context === 'cronexpression') {
         return ParameterCronExpression
+      } else if (configDescription.type === 'TEXT' && configDescription.context === 'month') {
+        return ParameterMonth
       } else if (configDescription.type === 'TEXT' && configDescription.context === 'dayOfWeek') {
         return ParameterDayOfWeek
       } else if (configDescription.type === 'TEXT' && configDescription.context === 'time') {
