@@ -2,7 +2,7 @@
   <thing-picker :title="configDescription.label"
                 :value="value"
                 @input="updateValue"
-                :filter-uid="configDescription.options.map((o) => o.value)"
+                :filter-uid="configDescription.options?.map((o) => o.value)"
                 :multiple="configDescription.multiple"
                 :required="configDescription.required" />
 </template>
