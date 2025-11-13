@@ -13,7 +13,7 @@
         <option v-for="option in configDescription.options"
                 :value="option.value"
                 :key="option.value"
-                :selected="isSelected(option)">
+                :selected="isSelected(option) ? true : null">
           {{ option.label }}
         </option>
       </select>
