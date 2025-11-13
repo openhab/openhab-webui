@@ -126,6 +126,7 @@ export default {
             JSON,
             dayjs,
             user: useUserStore().user,
+            translations: i18n.global.t,
             t: i18n.global.t
           })
         } catch (e) {
