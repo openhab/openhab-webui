@@ -22,11 +22,11 @@
           <f7-preloader />
           <div>Loading...</div>
         </f7-block>
-        <f7-block class="block-narrow" v-if="ready && !previewMode">
+        <f7-block v-if="ready && !previewMode" class="block-narrow no-margin-bottom">
           <page-settings :page="page" :createMode="createMode" :f7router />
         </f7-block>
 
-        <f7-block class="block-narrow" style="padding-bottom: 8rem" v-if="ready">
+        <f7-block v-if="ready" class="block-narrow no-margin-top" style="padding-bottom: 10rem">
           <f7-col>
             <f7-block-title>Tabs</f7-block-title>
             <f7-menu v-if="clipboardType === 'oh-tab'">
@@ -52,7 +52,7 @@
                            :height="32" />
                 </template>
                 <template #content-start>
-                  <f7-menu class="configure-layout-menu">
+                  <f7-menu class="configure-tabs-menu">
                     <f7-menu-item icon-f7="list_bullet" dropdown>
                       <f7-menu-dropdown>
                         <f7-menu-dropdown-item @click="configureWidget(tab, { component: page })" href="#" text="Configure Tab" />

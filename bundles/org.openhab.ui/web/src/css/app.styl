@@ -50,6 +50,9 @@ html
   // action modal
   --f7-actions-button-height 30px
   --f7-actions-button-height-landscape 34px
+  // dropdown menu
+  --f7-menu-item-height 36px
+  --f7-menu-dropdown-item-height 24px
 
 /* Fixes for desktop devices */
 .device-desktop
@@ -57,7 +60,11 @@ html
   .searchbar-backdrop
     display none
 
-/* Fixes an adjustments for list input */
+/* Fixes for dropdown menus */
+.menu-dropdown-content
+  z-index 7000 !important
+
+/* Fixes and adjustments for list input */
 .list
   textarea
     padding-top 0
@@ -77,6 +84,8 @@ html
   .actions-modal > .actions-group
     margin-left 28px
     margin-right 28px
+  // dropdown menu
+  --f7-menu-dropdown-item-height 28px
 
 /* Adjustments for cards */
 :root
