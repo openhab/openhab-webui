@@ -11,6 +11,7 @@
 import ThingPicker from './thing-picker.vue'
 
 export default {
+  inheritAttrs: false,
   props: {
     configDescription: Object,
     value: [String, Array]
