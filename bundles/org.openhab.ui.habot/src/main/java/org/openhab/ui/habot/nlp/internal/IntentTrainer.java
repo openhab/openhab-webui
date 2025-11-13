@@ -21,7 +21,7 @@ import java.util.SortedMap;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.openhab.ui.habot.nlp.Intent;
+import org.openhab.core.hli.Intent;
 import org.openhab.ui.habot.nlp.Skill;
 import org.openhab.ui.habot.nlp.UnsupportedLanguageException;
 import org.slf4j.Logger;

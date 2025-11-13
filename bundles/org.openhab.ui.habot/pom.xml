@@ -57,6 +57,11 @@
       <artifactId>org.openhab.core.voice</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.openhab.core.bundles</groupId>
+      <artifactId>org.openhab.core.hli</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 
   <build>
@@ -123,5 +128,4 @@
       </plugin>
     </plugins>
   </build>
-
 </project>

@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.junit.jupiter.api.Test;
-import org.openhab.ui.habot.nlp.Intent;
+import org.openhab.core.hli.Intent;
 import org.openhab.ui.habot.nlp.internal.IntentTrainer;
 
 /**
