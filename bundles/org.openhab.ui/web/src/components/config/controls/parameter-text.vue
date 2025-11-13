@@ -11,7 +11,7 @@
       no-hairline
       :key="idx"
       :type="controlType"
-      :pattern="configDescription.pattern"
+      :pattern="pattern"
       :autocomplete="options ? 'off' : ''"
       :clear-button="true"
       @input:clear="removeValueIdx(idx)"
@@ -22,7 +22,7 @@
       v-if="!configDescription.readOnly"
       ref="input"
       :type="controlType"
-      :pattern="configDescription.pattern"
+      :pattern="pattern"
       :autocomplete="options ? 'off' : ''"
       :clear-button="false"
       @input:notempty="addValue"
@@ -38,9 +38,10 @@
       :value="value"
       :autocomplete="options ? 'off' : ''"
       :placeholder="configDescription.placeholder"
-      :pattern="configDescription.pattern"
+      :pattern="pattern"
       :required="configDescription.required"
-      validate
+      :validate="(pattern && pattern.length > 40) ? null : true"
+      :validate-on-blur="(pattern && pattern.length > 40) ? true : null"
       :clear-button="!configDescription.required && configDescription.context !== 'password'"
       @input="updateValue"
       :readonly="configDescription.readOnly"
@@ -72,7 +73,20 @@ export default {
   computed: {
     controlType () {
       if (this.configDescription.context === 'password' && !this.showPassword) return 'password'
+      if (this.configDescription.context === 'email') return 'email'
+      if (this.configDescription.context === 'telephone') return 'tel'
+      if (this.configDescription.context === 'color') return 'color'
       return 'text'
+    },
+    pattern () {
+      // validation doesn't work as soon as hostname RegEx is added
+      // if (this.configDescription.context === 'network-address') {
+      //   const hostname = /(?:([a-zA-Z0-9-]+)\.)?([a-zA-Z0-9-]+)\.([a-zA-Z0-9]+)/
+      //   const ipv4 = /((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b){4}/
+      //   const ipv6 = /((?:[0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}|(?:[0-9A-Fa-f]{1,4}:){1,7}:|:(?::[0-9A-Fa-f]{1,4}){1,7}|(?:[0-9A-Fa-f]{1,4}:){1,6}:[0-9A-Fa-f]{1,4}|(?:[0-9A-Fa-f]{1,4}:){1,5}(?::[0-9A-Fa-f]{1,4}){1,2}|(?:[0-9A-Fa-f]{1,4}:){1,4}(?::[0-9A-Fa-f]{1,4}){1,3}|(?:[0-9A-Fa-f]{1,4}:){1,3}(?::[0-9A-Fa-f]{1,4}){1,4}|(?:[0-9A-Fa-f]{1,4}:){1,2}(?::[0-9A-Fa-f]{1,4}){1,5}|[0-9A-Fa-f]{1,4}:(?:(?::[0-9A-Fa-f]{1,4}){1,6})|:(?:(?::[0-9A-Fa-f]{1,4}){1,6}))/
+      //   return `^(?:${ipv4.source}|${ipv6.source}|${hostname.source})$`
+      // }
+      return this.configDescription.pattern
     },
     multiple () {
       return this.configDescription?.multiple
