@@ -25,10 +25,11 @@
         </f7-row>
       </f7-block>
     </f7-col>
-    <f7-col v-if="parameterGroups.length">
+    <f7-col v-if="displayedParameters.length">
       <f7-block width="100"
                 class="parameter-group"
-                v-for="group in parameterGroups"
+                v-for="group in displayedParameterGroups"
+
                 :key="group.name">
         <f7-row v-if="displayedParameters.some((p) => p.groupName === group.name)">
           <f7-col>
@@ -123,6 +124,11 @@ export default {
     },
     hasAdvanced () {
       return this.parameters.length > 0 && this.parameters.some((p) => p.advanced)
+    },
+    displayedParameterGroups () {
+      if (!this.parameterGroups || !this.parameterGroups.length) return []
+      if (this.showAdvanced) return this.parameterGroups
+      return this.parameterGroups.filter((pg) => !pg.advanced)
     },
     displayedParameters () {
       function notNullNotUndefined (value) {
