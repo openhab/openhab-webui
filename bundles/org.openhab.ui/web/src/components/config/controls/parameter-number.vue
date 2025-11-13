@@ -11,7 +11,6 @@
       @input="updateValue"
       :required="configDescription.required"
       validate
-      validate-on-blur
       :clear-button="false"
       type="number" />
   </ul>
