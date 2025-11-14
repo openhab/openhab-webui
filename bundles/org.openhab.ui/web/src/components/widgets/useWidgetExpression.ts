@@ -99,23 +99,17 @@ export function useWidgetExpression (properties: { context?: WidgetContext, prop
   })
 
   // computed
-  const screenWidth = computed(() => window.screen.width)
-  const screenHeight = computed(() => window.screen.height)
-  const screenAvailWidth = computed(() => window.screen.availWidth)
-  const screenAvailHeight = computed(() => window.screen.availHeight)
-  const screenColorDepth = computed(() => window.screen.colorDepth)
-  const screenPixelDepth = computed(() => window.screen.pixelDepth)
   const appWidth = computed(() => global?.$f7dim.width ?? 0)
   const appHeight = computed(() => global?.$f7dim.height ?? 0)
 
   const screenInfo = computed<ScreenInfo>(() => {
     return {
-      width: screenWidth.value,
-      height: screenHeight.value,
-      availWidth: screenAvailWidth.value,
-      availHeight: screenAvailHeight.value,
-      colorDepth: screenColorDepth.value,
-      pixelDepth: screenPixelDepth.value,
+      width: window.screen.width,
+      height: window.screen.height,
+      availWidth: window.screen.availWidth,
+      availHeight: window.screen.availHeight,
+      colorDepth: window.screen.colorDepth,
+      pixelDepth: window.screen.pixelDepth,
       viewAreaWidth: viewAreaWidth.value,
       viewAreaHeight: viewAreaHeight.value,
       appWidth: appWidth.value,
