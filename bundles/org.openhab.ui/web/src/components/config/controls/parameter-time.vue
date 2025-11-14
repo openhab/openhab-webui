@@ -78,7 +78,8 @@ export default {
         {
           values: (() => {
             let arr = []
-            for (let i = 0; i <= 59; i = i + this.configDescription.stepsize % 60) { arr.push(i < 10 ? `0${i}` : i) }
+            let step = this.configDescription.step | this.configDescription.stepsize
+            for (let i = 0; i <= 59; i = i + step % 60) { arr.push(i < 10 ? `0${i}` : i) }
             return arr
           })()
         })
@@ -122,7 +123,8 @@ export default {
   },
   computed: {
     hasSeconds () {
-      return this.configDescription.stepsize !== undefined && this.configDescription.stepsize % 60 !== 0
+      let result = this.configDescription.step || this.configDescription.stepsize
+      return result !== undefined && result % 60 !== 0
     }
   },
   methods: {
