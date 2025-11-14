@@ -78,24 +78,48 @@ export function useWidgetExpression (properties: { context?: WidgetContext, prop
   const userStore = useUserStore()
   const uiOptionsStore = useUIOptionsStore()
 
+  const instance = getCurrentInstance()
+  const global = instance?.appContext.config.globalProperties
+
   // data
   const exprAst: ExpressionAstCache = {}
   const viewAreaWidth = ref<number>(0)
   const viewAreaHeight = ref<number>(0)
 
-  const instance = getCurrentInstance()
-  const global = instance?.appContext.config.globalProperties
+  let resizeObserver: ResizeObserver | null = null
+  let observedElement: Element | null = null
 
   // lifecycle
   onMounted(() => {
     nextTick(() => {
       updateViewAreaDimensions()
+
+      // attempt to observe the current page content element; fall back to window resize event
+      observedElement = document.querySelector('.page-current > .page-content') as HTMLElement | null
+      if (observedElement && typeof ResizeObserver !== 'undefined') {
+        resizeObserver = new ResizeObserver(() => {
+          updateViewAreaDimensions()
+        })
+        resizeObserver.observe(observedElement)
+      } else {
+        console.warn('ResizeObserver not supported or page content element not found; falling back to window resize event for view area dimension updates.')
+        window.addEventListener('resize', updateViewAreaDimensions)
+      }
     })
-    window.addEventListener('resize', updateViewAreaDimensions)
   })
 
   onUnmounted(() => {
-    window.removeEventListener('resize', updateViewAreaDimensions)
+    if (resizeObserver) {
+      try {
+        resizeObserver.disconnect()
+      } catch (e) {
+        // ignore
+      }
+      resizeObserver = null
+    } else {
+      window.removeEventListener('resize', updateViewAreaDimensions)
+    }
+    observedElement = null
   })
 
   // computed
