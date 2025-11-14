@@ -41,7 +41,6 @@
                  icon-f7="chevron_up" />
       </div>
     </f7-toolbar>
-
     <f7-tabs class="semantics-editor-tabs">
       <f7-tab class="design" id="tree" :tab-active="currentTab === 'tree'">
         <f7-block v-if="!ready" class="text-align-center">
@@ -365,7 +364,6 @@ import { mapStores } from 'pinia'
 
 import YAML from 'yaml'
 import fastDeepEqual from 'fast-deep-equal/es6'
-
 import SemanticsTreeview from '@/components/tags/semantics-treeview.vue'
 import TagMixin from '@/components/tags/tag-mixin'
 import DirtyMixin from '@/pages/settings/dirty-mixin'
@@ -507,7 +505,6 @@ export default {
     },
     async save () {
       if (!this.dirty) return
-
       if (this.currentTab === 'code') {
         if (!this.fromYaml()) {
           f7.dialog.alert('Error parsing YAML, cannot save')

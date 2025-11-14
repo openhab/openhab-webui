@@ -43,16 +43,46 @@ export default {
     /**
      * Load the items and links from the REST API and build the model.
      *
+     * @param relatedToItem optional parameter for an item, only the part of the model related to the item will be build, including all parents and the semantic children.
+     *                      The items and links Array variable will also be limited to these related items, and not the full items and links list retrieved from the REST API.
+     *
      * @returns {Promise<void>}
      */
-    async loadModel () {
+    async loadModel (relatedToItem) {
       if (this.loading) return Promise.resolve()
       this.loading = true
 
       this.saveExpanded()
 
-      const items = this.$oh.api.get('/rest/items?staticDataOnly=true&metadata=.+')
-      const links = this.$oh.api.get('/rest/links')
+      let items, links
+      if (relatedToItem) {
+        // use the information already available in the argument to construct the response and avoid a REST call for the full model
+        const tempItems = []
+        const addItems = (items, item, up) => {
+          items.push(item)
+          if (up) {
+            item.parents?.filter((p) => {
+              const semanticsConfig = item.metadata?.semantics?.config
+              if (!semanticsConfig) return false
+              return p.name === semanticsConfig.hasLocation || p.name === semanticsConfig.isPartOf || p.name === semanticsConfig.isPointOf
+            }).forEach((p) => addItems(items, p, true))
+          } else {
+            item.members?.filter((m) => {
+              const semanticsConfig = m.metadata?.semantics?.config
+              if (!semanticsConfig) return false
+              return item.name === semanticsConfig.hasLocation || item.name === semanticsConfig.isPartOf || item.name === semanticsConfig.isPointOf
+            }).forEach((m) => addItems(items, m, false))
+          }
+        }
+        addItems(tempItems, relatedToItem, true) // add semantic parent items
+        addItems(tempItems, relatedToItem, false) // add semantic member items
+        const itemNames = [...new Set(tempItems.map((i) => i.name))] // remove doubles
+        items = itemNames.map((n) => tempItems.find((i) => i.name === n))
+        links = this.$oh.api.get('/rest/links?itemName=' + relatedToItem.name)
+      } else {
+        items = this.$oh.api.get('/rest/items?staticDataOnly=true&metadata=.+')
+        links = this.$oh.api.get('/rest/links')
+      }
       return Promise.all([items, links]).then((data) => {
         this.items = data[0]
         this.links = data[1]
@@ -197,13 +227,13 @@ export default {
         this.restoreExpandedChild(c, !child.opened)
       })
     },
-    expandSelected () {
+    expandSelected (selection) {
       // expand so all checked items are opened
-      this.rootElements.forEach((c) => this.expandSelectedChild(c))
+      this.rootElements.forEach((c) => this.expandSelectedChild(c, selection))
     },
-    expandSelectedChild (child) {
+    expandSelectedChild (child, selection) {
       return Object.values(child.children).flat().map((c) => {
-        if (this.expandSelectedChild(c) || c.checked || c.item.name === this.selectedItem?.item?.name) {
+        if (this.expandSelectedChild(c, selection) || c.checked || c.item.name === this.selectedItem?.item?.name || (selection && c.item.name === selection.name)) {
           child.opened = true
           return true
         }

@@ -107,7 +107,7 @@ export default {
         const parentTag = useSemanticsStore().Tags.find((t) => t.uid === parentTagId)
         parentTagId = parentTag.parent
         if (parentTagId) {
-          value = parentTag.name + '->' + value
+          value = parentTag.name + ' > ' + value
         }
       }
       return value

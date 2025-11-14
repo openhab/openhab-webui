@@ -9,8 +9,16 @@
                       :editable="item.editable"
                       :f7router>
         <template v-if="ready" #right>
-          <f7-link v-if="item.editable" icon-md="material:edit" href="edit">
+          <f7-link v-if="item.editable"
+                   icon-md="material:edit"
+                   href="edit">
             {{ theme.md ? '' : 'Edit' }}
+          </f7-link>
+          <f7-link v-else
+                   icon-f7="lock_fill"
+                   tooltip="This Item is not editable through the UI"
+                   href="edit">
+            Details
           </f7-link>
         </template>
         <template #after>
@@ -55,39 +63,41 @@
           </f7-block>
         </f7-col>
       </f7-row>
-      <f7-row v-if="item && item.metadata && item.metadata.semantics">
+      <f7-row v-if="item?.metadata?.semantics?.value">
         <f7-col>
-          <f7-block-title>Semantic Classification</f7-block-title>
-          <f7-list>
-            <f7-list-item v-if="semanticClass" :title="semanticClass" :after="semanticValue" />
-            <f7-list-item v-if="semanticProperty" title="Property" :after="semanticProperty" />
-            <f7-list-item
-              v-for="(value, key) in semanticAttributes"
-              :key="key"
-              :link="groupLink(value)"
-              :title="key"
-              :after="value" />
-          </f7-list>
+          <f7-block-title>Semantic Model</f7-block-title>
+          <f7-card>
+            <model-treeview class="model-treeview no-selection-style"
+                            :rootNodes="rootElements"
+                            :includeItemName="true"
+                            :includeItemTags="true"
+                            :selected="modelItem(item)"
+                            @selected="navigateToItem" />
+          </f7-card>
         </f7-col>
       </f7-row>
-      <f7-row v-if="item && item.groupNames && item.groupNames.length > 0">
+      <f7-row v-if="item?.groupNames?.length > 0">
         <f7-col>
-          <f7-block-title>Direct Non-Semantic Parent Groups</f7-block-title>
+          <f7-block-title>Parent Groups</f7-block-title>
           <f7-card>
             <f7-list>
-              <f7-list-item
-                v-for="group in nonSemanticGroupNames"
-                :key="group"
-                :link="groupLink(group)"
-                :title="group" />
+              <ul>
+                <item v-for="group in itemGroups"
+                      :key="group.name"
+                      :item="group"
+                      :link="itemLink(group.name)"
+                      :context="context" />
+              </ul>
             </f7-list>
           </f7-card>
         </f7-col>
       </f7-row>
-      <f7-row v-if="item && item.type === 'Group'">
+      <f7-row v-if="item?.type === 'Group'">
         <f7-col>
-          <f7-block-title>Direct Group Members</f7-block-title>
-          <group-members :group-item="item" :context="context" @updated="load" />
+          <f7-block-title>Members</f7-block-title>
+          <group-members :group-item="item"
+                         :context="context"
+                         @updated="load" />
         </f7-col>
       </f7-row>
       <f7-row v-if="item.name">
@@ -111,13 +121,16 @@
             <f7-list-button color="blue" @click="copyFileDefinitionToClipboard(ObjectType.ITEM, [item.name])">
               Copy File Definition
             </f7-list-button>
-            <f7-list-button v-if="item.editable" color="red" @click="deleteItem">
+            <f7-list-button v-if="item.editable"
+                            color="red"
+                            @click="deleteItem">
               Remove Item
             </f7-list-button>
           </f7-list>
           <p class="developer-sidebar-tip text-align-center">
             Tip: Use the developer sidebar (Shift+Alt+D) to
-            <f7-link text="search for usages of this Item" @click="searchInSidebar" />
+            <f7-link text="search for usages of this Item"
+                     @click="searchInSidebar" />
           </p>
         </f7-col>
       </f7-row>
@@ -177,9 +190,16 @@
 @media(max-width: 1279px)
   .developer-sidebar-tip
     visibility hidden
+.model-treeview.no-selection-style
+  .treeview-item-selected > .treeview-item-root,
+  .treeview-item-selected.treeview-item-root
+    background transparent !important
+    color inherit !important
+    border none !important
 </style>
 
 <script setup>
+import Item from '@/components/item/item.vue'
 import ItemStatePreview from '@/components/item/item-state-preview.vue'
 import LinkDetails from '@/components/model/link-details.vue'
 import GroupMembers from '@/components/item/group-members.vue'
@@ -194,13 +214,23 @@ import { f7, theme } from 'framework7-vue'
 import { useStatesStore } from '@/js/stores/useStatesStore'
 
 import ItemMixin from '@/components/item/item-mixin'
+import ModelMixin from '@/pages/settings/model/model-mixin'
+import ModelTreeview from '@/components/model/model-treeview.vue'
 import FileDefinition from '@/pages/settings/file-definition-mixin'
 
 export default {
-  mixins: [ItemMixin, FileDefinition],
+  mixins: [ItemMixin, ModelMixin, FileDefinition],
   props: {
     itemName: String,
     f7router: Object
+  },
+  components: {
+    Item,
+    LinkDetails,
+    GroupMembers,
+    ItemStatePreview,
+    MetadataMenu,
+    ModelTreeview
   },
   setup () {
     return { theme, utils }
@@ -218,49 +248,11 @@ export default {
         store: useStatesStore().trackedItems
       }
     },
-    semanticClass () {
-      return this.item?.metadata?.semantics?.value?.split('_')[0]
-    },
-    semanticValue () {
-      const valueArray = this.item?.metadata?.semantics?.value?.split('_')
-      if (!valueArray) return null
-      if (valueArray.length > 1) return valueArray.slice(1).join('->')
-      return valueArray[0]
-    },
-    semanticProperty () {
-      const config = this.item?.metadata?.semantics?.config
-      if (!config) return null
-      const propertyArray = config.relatesTo?.split('_')
-      if (!propertyArray) return null
-      if (propertyArray.length > 1) return propertyArray.slice(1).join('->')
-      return propertyArray[0]
-    },
-    /**
-     * Returns the semantic attributes of the item, i.e. "Point Of" - "X", "In Location" - "Y", "Part Of" - "Z".
-     *
-     * @return {{}|null}
-     */
-    semanticAttributes () {
-      const config = this.item?.metadata?.semantics?.config
-      if (!config) return null
-      const filteredAttributes = {
-        'isPointOf': 'Point Of',
-        'hasLocation': 'In Location',
-        'isPartOf': 'Part Of'
-      }
-      const attributes = {}
-      Object.keys(filteredAttributes).filter((key) => config[key]).forEach((key) => {
-        attributes[filteredAttributes[key]] = config[key]
-      })
-      return attributes
-    },
-    nonSemanticGroupNames () {
-      if (this.semanticAttributes === null) return this.item?.groupNames ?? []
-      const semanticGroupNames = Object.values(this.semanticAttributes)
-      return this.item?.groupNames?.filter((g) => !semanticGroupNames.includes(g)) ?? []
-    },
     nonSemanticTags () {
-      return this.item?.tags?.filter((tag) => tag !== this.semanticTag(this.semanticValue) && tag !== this.semanticTag(this.semanticProperty))
+      return this.item?.tags?.filter((tag) => tag !== this.semanticTag(this.item?.metadata?.semantics?.value) && tag !== this.semanticTag(this.item?.metadata?.semantics?.config?.relatesTo)) || []
+    },
+    itemGroups () {
+      return this.item?.parents?.toSorted((a, b) => (a.label || a.name).localeCompare(b.label || b.name))
     }
   },
   methods: {
@@ -270,17 +262,28 @@ export default {
     onPageBeforeOut () {
       useStatesStore().stopTrackingStates()
     },
+    modelItem (item) {
+      return {
+        item,
+        opened: false,
+        class: (item.metadata && item.metadata.semantics) ? item.metadata.semantics.value : '',
+        children: {
+          locations: [],
+          equipment: [],
+          points: [],
+          groups: [],
+          items: []
+        }
+      }
+    },
     async load () {
-      const promises = [
-        this.$oh.api.get(`/rest/items/${this.itemName}?metadata=.+`),
-        this.$oh.api.get('/rest/links?itemName=' + this.itemName)
-      ]
-
-      Promise.all(promises).then((data) => {
-        this.item = data[0]
-        this.links = data[1]
+      this.$oh.api.get(`/rest/items/${this.itemName}?parents=true&metadata=.+`).then((data) => {
+        this.item = data
         this.iconUrl = '/icon/' + this.item.category + '?format=svg'
-        this.ready = true
+        this.loadModel(this.item).then(() => {
+          this.expandSelected(this.item)
+          this.ready = true
+        })
         useStatesStore().startTrackingStates()
       })
     },
@@ -308,8 +311,11 @@ export default {
     searchInSidebar () {
       f7.emit('selectDeveloperDock', { 'dock': 'tools', 'toolTab': 'pin', 'searchFor': this.item.name })
     },
-    groupLink (group) {
-      return '/settings/items/' + group
+    navigateToItem (value) {
+      this.f7router.navigate(this.itemLink(value.item.name))
+    },
+    itemLink (item) {
+      return '/settings/items/' + item
     },
     /**
      * Extracts the semantic tag from the semantic metadata value field.
@@ -319,7 +325,7 @@ export default {
      */
     semanticTag (value) {
       if (!value) return null
-      const valueArray = value.split('->')
+      const valueArray = value.split('_')
       if (valueArray.length === 0) return null
       return valueArray[valueArray.length - 1]
     }
