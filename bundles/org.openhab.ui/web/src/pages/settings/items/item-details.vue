@@ -6,7 +6,6 @@
     <f7-navbar>
       <oh-nav-content v-if="ready"
                       :title="item.name"
-                      :editable="item.editable"
                       :f7router>
         <template v-if="ready" #right>
           <f7-link v-if="item.editable"
@@ -204,6 +203,7 @@ import ItemStatePreview from '@/components/item/item-state-preview.vue'
 import LinkDetails from '@/components/model/link-details.vue'
 import GroupMembers from '@/components/item/group-members.vue'
 import MetadataMenu from '@/components/item/metadata/item-metadata-menu.vue'
+import ModelTreeview from '@/components/model/model-treeview.vue'
 </script>
 
 <script>
@@ -215,7 +215,6 @@ import { useStatesStore } from '@/js/stores/useStatesStore'
 
 import ItemMixin from '@/components/item/item-mixin'
 import ModelMixin from '@/pages/settings/model/model-mixin'
-import ModelTreeview from '@/components/model/model-treeview.vue'
 import FileDefinition from '@/pages/settings/file-definition-mixin'
 
 export default {
@@ -223,14 +222,6 @@ export default {
   props: {
     itemName: String,
     f7router: Object
-  },
-  components: {
-    Item,
-    LinkDetails,
-    GroupMembers,
-    ItemStatePreview,
-    MetadataMenu,
-    ModelTreeview
   },
   setup () {
     return { theme, utils }
