@@ -88,6 +88,6 @@ export const sendCmd = (context, payload) => {
   }
   console.log('%cSending command to ' + payload.itemName + ': ' + payload.command, 'font-weight: bold')
   axios.post('/rest/items/' + payload.itemName, payload.command, {
-    headers: { 'Content-Type': 'text/plain' }
+    headers: { 'Content-Type': 'text/plain', 'X-OpenHAB-Source': 'org.openhab.ui.habot' }
   })
 }
