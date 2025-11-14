@@ -84,16 +84,16 @@ export default {
   },
   mounted () {
     if (this.context?.component?.config?.stylesheet) {
-      if (!this.$el.classList) return // widget is not rendered yet, skip scoped styling
+      if(this.$refs.component && this.$refs.component.$el) {
+        this.cssUid = 'scoped-' + f7.utils.id()
 
-      this.cssUid = 'scoped-' + f7.utils.id()
+        this.$refs.component.$el.classList.add(this.cssUid)
 
-      this.$el.classList.add(this.cssUid)
-
-      let style = document.createElement('style')
-      style.id = this.cssUid
-      style.innerHTML = scope(this.context.component.config.stylesheet, '.' + this.cssUid)
-      document.head.appendChild(style)
+        let style = document.createElement('style')
+        style.id = this.cssUid
+        style.innerHTML = scope(this.context.component.config.stylesheet, '.' + this.cssUid)
+        document.head.appendChild(style)
+      }
     }
   },
   beforeUnmount () {
