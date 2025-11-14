@@ -24,28 +24,58 @@ export const useSemanticsStore = defineStore('semantics', () => {
 
   // Actions
   function setSemantics (tags: ModelTag[], i18n: I18n) {
-    Tags.value = tags
-    Tags.value.forEach((tag) => {
-      const tagParts = tag.uid.split('_')
-      tag.parent = tagParts.slice(0, -1).join('_')
-    })
-    Locations.value = tags.filter((t) => t.uid.startsWith('Location')).map((t) => t.name)
-    Equipment.value = tags.filter((t) => t.uid.startsWith('Equipment')).map((t) => t.name)
-    Points.value = tags.filter((t) => t.uid.startsWith('Point')).map((t) => t.name)
-    Properties.value = tags.filter((t) => t.uid.startsWith('Property')).map((t) => t.name)
-    // Clear existing labels, descriptions & synonyms
-    Labels.value = {}
-    Descriptions.value = {}
-    Synonyms.value = {}
-    // Store labels, descriptions & synonyms
-    for (const i in tags) {
-      const t = tags[i]
-      Labels.value[t.name] = t.label || t.name
-      Descriptions.value[t.name] = t.description || ''
-      Synonyms.value[t.name] = t.synonyms || []
+    // local variables to avoid writing to reactive refs multiple times
+    const modelTags: ModelTag[] = []
+    const locations: string[] = []
+    const equipment: string[] = []
+    const points: string[] = []
+    const properties: string[] = []
+    const labels: { [key: string]: string } = {}
+    const descriptions: { [key: string]: string } = {}
+    const synonyms: { [key: string]: string | string[] } = {}
+
+    // perform all operations in a single loop to avoid looping through the tags multiple times
+    for (const t of tags) {
+      const uid = t.uid
+      // get parent tag
+      const parent = uid.split('_').slice(0, -1).join('_')
+      const mt: ModelTag = { ...t, parent } // copy into a new ModelTag so we don't mutate the incoming object in-place
+      modelTags.push(mt)
+
+      // categorise by type
+      if (uid.startsWith('Location')) {
+        locations.push(mt.name)
+      } else if (uid.startsWith('Equipment')) {
+        equipment.push(mt.name)
+      } else if (uid.startsWith('Point')) {
+        points.push(mt.name)
+      } else if (uid.startsWith('Property')) {
+        properties.push(mt.name)
+      }
+
+      // store labels, descriptions & synonyms
+      labels[mt.name] = mt.label || mt.name
+      descriptions[mt.name] = mt.description || ''
+      synonyms[mt.name] = mt.synonyms || []
     }
-    // Save labels as i18n messages
-    (i18n.global as Composer).mergeLocaleMessage((i18n.global as Composer).locale.value as string, Labels.value)
+
+    // single assignments to reactive refs to minimise reactivity churn
+    Tags.value = modelTags
+    Locations.value = locations
+    Equipment.value = equipment
+    Points.value = points
+    Properties.value = properties
+    Labels.value = labels
+    Descriptions.value = descriptions
+    Synonyms.value = synonyms
+
+    // merge labels into i18n once
+    try {
+      const locale = (i18n.global as Composer).locale.value as string
+      (i18n.global as Composer).mergeLocaleMessage(locale, labels)
+    } catch (e) {
+      console.warn('Failed to merge semantic labels into i18n globals', e)
+    }
   }
 
   async function loadSemantics (i18n: I18n) {
