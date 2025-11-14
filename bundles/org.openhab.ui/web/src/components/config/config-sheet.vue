@@ -25,11 +25,10 @@
         </f7-row>
       </f7-block>
     </f7-col>
-    <f7-col v-if="displayedParameters.length">
+    <f7-col v-if="displayedParameterGroups.length">
       <f7-block width="100"
                 class="parameter-group"
                 v-for="group in displayedParameterGroups"
-
                 :key="group.name">
         <f7-row v-if="displayedParameters.some((p) => p.groupName === group.name)">
           <f7-col>
