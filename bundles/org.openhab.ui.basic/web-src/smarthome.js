@@ -3045,7 +3045,10 @@
 			type: "POST",
 			url: "/rest/items/" + event.detail.item,
 			data: event.detail.value,
-			headers: {"Content-Type": "text/plain"}
+			headers: {
+								"Content-Type": "text/plain",
+								"X-OpenHAB-Source": "org.openhab.ui.basic$" + smarthome.UI.sitemap + ":" + smarthome.UI.page
+							}
 		});
 	}
 
