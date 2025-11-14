@@ -122,7 +122,7 @@ export const useStatesStore = defineStore('states', () => {
       command,
       'text/plain',
       'text/plain',
-      null
+      { 'X-OpenHAB-Source': 'org.openhab.ui'}
     )
   }
 
