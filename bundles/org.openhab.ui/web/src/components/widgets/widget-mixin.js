@@ -84,7 +84,7 @@ export default {
   },
   mounted () {
     if (this.context?.component?.config?.stylesheet) {
-      if(this.$refs.component && this.$refs.component.$el) {
+      if (this.$refs.component && this.$refs.component.$el) {
         this.cssUid = 'scoped-' + f7.utils.id()
 
         this.$refs.component.$el.classList.add(this.cssUid)
