@@ -1,0 +1,38 @@
+<template>
+  <f7-popup :opened="opened"  @popup:closed="$emit('update:opened', false)" :backdrop="true" :animate="false" :closeOnEscape="true" :push="false" :closeByBackdropClick="true" class="popup-media">
+    <f7-view class="view-sheet-modal" url="/mediabrowser/" :animate="false">
+      <f7-page>
+        <media-browser  media-browser-mode="Popup" @navigate="$emit('navigate', $event)" :player-item="playerItem" :f7route="f7route" :f7router="f7router" />
+      </f7-page>
+    </f7-view>
+  </f7-popup>
+</template>
+
+<script>
+import MediaBrowser from '@/pages/media/media-browser.vue'
+
+export default {
+  name: 'MediaPopup',
+  components: { MediaBrowser },
+  props: {
+    opened: {
+      type: Boolean,
+      required: true
+    },
+    playerItem: {
+      type: String,
+      required: true
+    },
+    f7route: Object, 
+    f7router: Object
+  },
+  methods: {
+    onNavigate (path) {
+      console.log('Navigating to:', path)
+      // Emit the navigate event to the parent component
+      this.$emit('navigate', path)
+    }
+  }
+}
+
+</script>

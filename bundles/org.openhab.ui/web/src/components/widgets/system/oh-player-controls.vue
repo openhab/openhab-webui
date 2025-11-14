@@ -1,4 +1,5 @@
 <template>
+  <div>
   <f7-segmented v-bind="config"
                 round
                 outline
@@ -38,7 +39,27 @@
                icon-material="skip_next"
                icon-size="24"
                icon-color="gray" />
+
+               
+    <f7-button color="blue"   			 
+    			large 
+    			icon-material="folder" 
+    			icon-size="24" 
+    			icon-color="gray"  
+    			@click="openBrowserPopup"/>
+    <f7-button color="blue"   					
+    			large 		
+    			icon-material="speaker"
+    			icon-size="24" 
+    			icon-color="gray"  
+    			@click="openDeviceSelectorPopup"/>
+		
+  <media-popup :opened="browserPopupOpened"  :player-item="config.item"  @update:opened="browserPopupOpened = $event"/>        
+  <media-device-popup :opened="deviceSelectorPopupOpened"  :player-item="config.item"  @update:opened="deviceSelectorPopupOpened = $event"/>      
   </f7-segmented>
+  </div>
+
+ 
 </template>
 
 <style lang="stylus">
@@ -48,15 +69,16 @@
   .segmented-highlight
     display none
 .aurora .player-controls
-  .button
+  .button 
     height 37px
 </style>
 
 <script>
 import mixin from '../widget-mixin'
 import { OhPlayerDefinition } from '@/assets/definitions/widgets/system'
-
 import { useStatesStore } from '@/js/stores/useStatesStore'
+import MediaPopup from '@/pages/media/media-browser-popup.vue' 
+import MediaDevicePopup from '@/pages/media/media-device-selector-popup.vue'
 
 export default {
   mixins: [mixin],
@@ -64,13 +86,59 @@ export default {
   mounted () {
     delete this.config.value
   },
+  components: {        // ⚡ Ici on déclare le composant
+    MediaPopup,
+    MediaDevicePopup
+  },
+  data () {
+    return {
+      state: '',
+      device: '',
+      binding:'',
+      artistName: '',
+      trackName: '',
+      artUri: '',
+      trackPosition: 0,
+      trackDuration: 0,
+      volume: 0,
+      browserPopupOpened: false,
+      deviceSelectorPopupOpened: false
+    }
+  },
   computed: {
     isPlaying () {
-      const value = this.context.store[this.config.item].state
-      return value === 'PLAY'
+      this.decodeState()
+      return this.state === 'PLAY'
     }
   },
   methods: {
+    openBrowserPopup() {
+      this.browserPopupOpened = true
+    },
+    openDeviceSelectorPopup() {
+      this.deviceSelectorPopupOpened = true
+    },
+    decodeState () {
+      const value = this.context.store[this.config.item].state
+      if (!(value === undefined || value === null || value === '' || value==='-')) {
+        if (value.indexOf('{') === 0) {
+          let json = JSON.parse(value);
+          this.state = json.state;
+          this.device = json.device.value;
+          this.binding = json.binding.value;
+          this.artistName = json.currentPlayingArtistName.value;
+          this.trackName = json.currentPlayingTrackName.value;
+          this.artUri = json.currentPlayingArtUri.value;
+          this.trackPosition = json.currentPlayingTrackPosition.value;
+          this.trackDuration = json.currentPlayingTrackDuration.value;
+          this.volume = json.currentPlayingVolume.value;
+        } else {
+          console.log("===========value:" + value)
+          let components = value.split(',')
+          this.state = components[0]
+        }
+      }
+    },
     skipPrevious (value) {
       useStatesStore().sendCommand(this.config.item, 'PREVIOUS')
     },
@@ -85,6 +153,9 @@ export default {
     },
     skipNext (value) {
       useStatesStore().sendCommand(this.config.item, 'NEXT')
+    },
+    mediaChange (value) {
+      //useStatesStore().sendCommand(this.config.item, 'spotify:playlist:5Z4AD0u9fwnvtsj7ce5ZLS')
     }
   }
 }
