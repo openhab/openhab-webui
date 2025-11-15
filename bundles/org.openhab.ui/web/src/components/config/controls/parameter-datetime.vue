@@ -35,8 +35,7 @@ export default {
   },
   computed: {
     step () {
-      if (this.configDescription.stepsize !== undefined) return this.configDescription.stepsize
-      return 60
+      return this.configDescription.step || this.configDescription.stepsize || 60
     }
   },
   methods: {
