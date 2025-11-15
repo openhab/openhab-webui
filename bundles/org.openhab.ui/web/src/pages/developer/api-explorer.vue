@@ -112,6 +112,8 @@
 .dark #swaggerUi
   .loading, .model-toggle, svg
     filter invert(1) opacity(0.5)
+.swagger-ui .download-contents
+  width auto
 </style>
 
 <script>
