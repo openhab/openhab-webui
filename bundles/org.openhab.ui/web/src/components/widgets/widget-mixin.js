@@ -4,14 +4,13 @@ import { f7 } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
 import scope from 'scope-css'
-import WidgetExpressionMixin from '@/components/widgets/widget-expression-mixin'
 
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 import { useUserStore } from '@/js/stores/useUserStore'
 import { useComponentsStore } from '@/js/stores/useComponentsStore'
+import { useWidgetExpression } from '@/components/widgets/useWidgetExpression.ts'
 
 export default {
-  mixins: [WidgetExpressionMixin],
   props: {
     context: Object
   },
@@ -20,7 +19,8 @@ export default {
       vars: (this.context) ? this.context.vars : {},
       ctxVars: (this.context) ? this.context.ctxVars : {},
       widgetVars: {},
-      varScope: null
+      varScope: null,
+      widgetExpression: useWidgetExpression()
     }
   },
   computed: {
@@ -103,6 +103,9 @@ export default {
     }
   },
   methods: {
+    evaluateExpression (key, value, context, props) {
+      return this.widgetExpression.evaluateExpression(key, value, context || this.context, props || this.props)
+    },
     childContext (component) {
       return {
         component,
