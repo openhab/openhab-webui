@@ -1,6 +1,8 @@
 <template>
   <round-slider v-bind="resolvedConfig"
-                :value="computedValue"
+                :startValue="knobValue"
+                :model-value="knobValue"
+                @update:model-value="onChange"
                 :style="`stroke-dasharray: ${(config.dottedPath) ? config.dottedPath : 0}`"
                 mouseScrollAction="true"
                 @input="onChange"
@@ -22,10 +24,26 @@ export default {
     RoundSlider: defineAsyncComponent(() => import(/* webpackChunkName: "vue-round-slider" */ 'vue-three-round-slider'))
   },
   widget: OhKnobDefinition,
+  data () {
+    return {
+      knobValue: null
+    }
+  },
+  watch: {
+    value (newValue) {
+      if (!isNaN(newValue)) {
+        this.knobValue = this.computeValue(newValue)
+      }
+    }
+  },
+  created () {
+    if (!isNaN(this.value)) {
+      this.knobValue = this.computeValue(this.value)
+    } else {
+      this.knobValue = this.config.min || 0
+    }
+  },
   computed: {
-    computedValue () {
-      return (typeof this.config.offset === 'number') ? (this.value + this.config.offset) : this.value
-    },
     resolvedConfig () {
       const cfg = this.config
       return {
@@ -44,7 +62,11 @@ export default {
     }
   },
   methods: {
+    computeValue (value) {
+      return (typeof this.config.offset === 'number') ? (value + this.config.offset) : value
+    },
     onChange (newValue) {
+      if (isNaN(this.value) || isNaN(newValue)) return
       if (typeof this.config.offset === 'number') newValue -= this.config.offset
       this.sendCommandDebounced(newValue)
     }
