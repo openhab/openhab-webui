@@ -133,9 +133,7 @@ export default {
     f7router: Object
   },
   setup () {
-    const { viewAreaWidth, viewAreaHeight } = useViewArea()
-    provide('viewAreaWidth', viewAreaWidth)
-    provide('viewAreaHeight', viewAreaHeight)
+    useViewArea()
 
     const { evaluateExpression } = useWidgetExpression()
     return { theme, evaluateExpression }

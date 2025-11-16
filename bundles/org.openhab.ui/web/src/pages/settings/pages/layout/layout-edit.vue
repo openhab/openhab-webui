@@ -226,9 +226,8 @@ export default {
     f7router: Object,
     f7route: Object
   },
-  setup () {const { viewAreaWidth, viewAreaHeight } = useViewArea()
-    provide('viewAreaWidth', viewAreaWidth)
-    provide('viewAreaHeight', viewAreaHeight)
+  setup () {
+    useViewArea()
 
     return { theme }
   },

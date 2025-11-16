@@ -1,4 +1,4 @@
-import { nextTick, onMounted, onUnmounted, ref } from 'vue'
+import { nextTick, onMounted, onUnmounted, provide, ref } from 'vue'
 
 /**
  * Composable providing the functionality to evaluate widget expressions.
@@ -25,6 +25,10 @@ export function useViewArea () {
 
   let resizeObserver: ResizeObserver | null = null
   let observedElement: Element | null = null
+
+  // dependency injection
+  provide('viewAreaWidth', viewAreaWidth)
+  provide('viewAreaHeight', viewAreaHeight)
 
   // lifecycle
   onMounted(() => {
