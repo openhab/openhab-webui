@@ -224,8 +224,7 @@ export default {
           visible: (value, configuration, configDescription, parameters) => {
             return configuration.categoryType === 'values'
           }
-        },
-        gridIndexParameter
+        }
       ]
     }
   },
