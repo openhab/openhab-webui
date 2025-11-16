@@ -99,7 +99,7 @@
 </style>
 
 <script>
-import { defineAsyncComponent } from 'vue'
+import { defineAsyncComponent, provide } from 'vue'
 import { f7, theme } from 'framework7-vue'
 
 import OhLayoutPage from '@/components/widgets/layout/oh-layout-page.vue'
@@ -111,6 +111,7 @@ import { useComponentsStore } from '@/js/stores/useComponentsStore'
 import { useUserStore } from '@/js/stores/useUserStore'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 import { useWidgetExpression } from '@/components/widgets/useWidgetExpression.ts'
+import { useViewArea } from '@/composables/useViewArea.ts'
 
 export default {
   mixins: [actionsMixin],
@@ -132,6 +133,10 @@ export default {
     f7router: Object
   },
   setup () {
+    const { viewAreaWidth, viewAreaHeight } = useViewArea()
+    provide('viewAreaWidth', viewAreaWidth)
+    provide('viewAreaHeight', viewAreaHeight)
+
     const { evaluateExpression } = useWidgetExpression()
     return { theme, evaluateExpression }
   },

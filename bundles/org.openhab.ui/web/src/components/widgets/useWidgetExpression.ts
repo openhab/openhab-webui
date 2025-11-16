@@ -1,4 +1,4 @@
-import { computed, getCurrentInstance, nextTick, onMounted, onUnmounted, ref } from 'vue'
+import { computed, getCurrentInstance, inject, type Ref } from 'vue'
 import { theme } from 'framework7-vue'
 
 import expr, { addUnaryOp, evaluate, parse } from 'jse-eval'
@@ -58,8 +58,8 @@ interface ScreenInfo {
   availHeight: number
   colorDepth: number
   pixelDepth: number
-  viewAreaWidth: number
-  viewAreaHeight: number
+  viewAreaWidth: number | null
+  viewAreaHeight: number | null
   appWidth: number
   appHeight: number
 }
@@ -67,9 +67,12 @@ interface ScreenInfo {
 /**
  * Composable providing the functionality to evaluate widget expressions.
  *
+ * The `screen.viewAreaWidth` and `screen.viewAreaHeight` properties are only available to expressions
+ * if `viewAreaWidth` and `viewAreaHeight` refs are provided via Vue's dependency injection mechanism.
+ *
  * Widget expression evaluations need access to the current widget context and props.
  * If they are available at composable instantiation, they can be passed as properties to the composable.
- * If they, however, aren't available at instantiation (e.g. because they are computed) they can be passed as function parameters later.
+ * If they, however, aren't available at instantiation (e.g. because they are computed), they can be passed as function parameters later.
  *
  * @param properties
  */
@@ -83,44 +86,8 @@ export function useWidgetExpression (properties: { context?: WidgetContext, prop
 
   // data
   const exprAst: ExpressionAstCache = {}
-  const viewAreaWidth = ref<number>(0)
-  const viewAreaHeight = ref<number>(0)
-
-  let resizeObserver: ResizeObserver | null = null
-  let observedElement: Element | null = null
-
-  // lifecycle
-  onMounted(() => {
-    nextTick(() => {
-      updateViewAreaDimensions()
-
-      // attempt to observe the current page content element; fall back to window resize event
-      observedElement = document.querySelector('.page-current > .page-content') as HTMLElement | null
-      if (observedElement && typeof ResizeObserver !== 'undefined') {
-        resizeObserver = new ResizeObserver(() => {
-          updateViewAreaDimensions()
-        })
-        resizeObserver.observe(observedElement)
-      } else {
-        console.warn('ResizeObserver not supported or page content element not found; falling back to window resize event for view area dimension updates.')
-        window.addEventListener('resize', updateViewAreaDimensions)
-      }
-    })
-  })
-
-  onUnmounted(() => {
-    if (resizeObserver) {
-      try {
-        resizeObserver.disconnect()
-      } catch (e) {
-        // ignore
-      }
-      resizeObserver = null
-    } else {
-      window.removeEventListener('resize', updateViewAreaDimensions)
-    }
-    observedElement = null
-  })
+  const viewAreaWidth = inject('viewAreaWidth', null) as Ref<number> | null
+  const viewAreaHeight = inject('viewAreaHeight', null) as Ref<number> | null
 
   // computed
   const appWidth = computed(() => global?.$f7dim.width ?? 0)
@@ -134,31 +101,35 @@ export function useWidgetExpression (properties: { context?: WidgetContext, prop
       availHeight: window.screen.availHeight,
       colorDepth: window.screen.colorDepth,
       pixelDepth: window.screen.pixelDepth,
-      viewAreaWidth: viewAreaWidth.value,
-      viewAreaHeight: viewAreaHeight.value,
+      viewAreaWidth: viewAreaWidth != null ? viewAreaWidth.value : null,
+      viewAreaHeight: viewAreaHeight != null ? viewAreaHeight.value : null,
       appWidth: appWidth.value,
       appHeight: appHeight.value
     }
   })
 
   // methods
-  function updateViewAreaDimensions () {
-    const pageContent = document.querySelector('.page-current > .page-content') as HTMLElement | null
-    if (pageContent) {
-      const pageContentStyle = window.getComputedStyle(pageContent)
-      viewAreaHeight.value = pageContent.clientHeight -
-        parseFloat(pageContentStyle.paddingTop) -
-        parseFloat(pageContentStyle.paddingBottom)
-      viewAreaWidth.value = pageContent.clientWidth -
-        parseFloat(pageContentStyle.paddingLeft) -
-        parseFloat(pageContentStyle.paddingRight)
-    } else {
-      viewAreaHeight.value = 0
-      viewAreaWidth.value = 0
+  function getAllVars (context: WidgetContext): Record<string, any> {
+    const vars: Record<string, any> = {}
+    if (context.vars) {
+      for (const varKey in context.vars) {
+        vars[varKey] = context.vars[varKey]
+      }
     }
+    if (context.varScope) {
+      const scopeIDs = context.varScope.split('-')
+      for (let scope_idx = 1; scope_idx < scopeIDs.length; scope_idx++) {
+        const scopeKey = scopeIDs.slice(0, scope_idx + 1).join('-')
+        if (context.ctxVars?.[scopeKey]) {
+          for (const varKey in context.ctxVars[scopeKey]) {
+            vars[varKey] = context.ctxVars[scopeKey][varKey]
+          }
+        }
+      }
+    }
+    return vars
   }
 
-  // methods
   /**
    * Evaluates a widget expression.
    * If widget context and props were not passed to the composable at instantiation, they have to be passed to the function.
@@ -218,27 +189,6 @@ export function useWidgetExpression (properties: { context?: WidgetContext, prop
     } else {
       return value
     }
-  }
-
-  function getAllVars (context: WidgetContext): Record<string, any> {
-    const vars: Record<string, any> = {}
-    if (context.vars) {
-      for (const varKey in context.vars) {
-        vars[varKey] = context.vars[varKey]
-      }
-    }
-    if (context.varScope) {
-      const scopeIDs = context.varScope.split('-')
-      for (let scope_idx = 1; scope_idx < scopeIDs.length; scope_idx++) {
-        const scopeKey = scopeIDs.slice(0, scope_idx + 1).join('-')
-        if (context.ctxVars?.[scopeKey]) {
-          for (const varKey in context.ctxVars[scopeKey]) {
-            vars[varKey] = context.ctxVars[scopeKey][varKey]
-          }
-        }
-      }
-    }
-    return vars
   }
 
   return {
