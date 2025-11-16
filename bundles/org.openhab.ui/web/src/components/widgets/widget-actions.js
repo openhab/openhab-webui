@@ -9,6 +9,7 @@ import GroupPopup from '@/pages/group/group-popup.vue'
 import { getVariableScope, setVariableKeyValues } from '@/components/widgets/variable'
 
 import { useStatesStore } from '@/js/stores/useStatesStore'
+import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore.ts'
 
 export const actionsMixin = {
   components: {
@@ -262,7 +263,7 @@ export const actionsMixin = {
               Promise.all(promises).then((resolvedPhotos) => {
                 let photoBrowserParams = Object.assign({}, photoBrowserConfig, { photos: resolvedPhotos })
                 // automatically select the dark theme if not specified
-                if (!photoBrowserParams.theme && f7.darkTheme) photoBrowserParams.theme = 'dark'
+                if (!photoBrowserParams.theme && useUIOptionsStore().getDarkMode() === 'dark') photoBrowserParams.theme = 'dark'
                 f7.photoBrowser.create(photoBrowserParams).open()
               })
             }
