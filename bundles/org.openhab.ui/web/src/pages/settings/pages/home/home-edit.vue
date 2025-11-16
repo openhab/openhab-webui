@@ -214,7 +214,7 @@
 </style>
 
 <script>
-import { nextTick, defineAsyncComponent } from 'vue'
+import { nextTick, defineAsyncComponent, provide } from 'vue'
 import { f7, theme } from 'framework7-vue'
 
 import PageDesigner from '../pagedesigner-mixin'
@@ -226,6 +226,7 @@ import { OhHomePageDefinition, OhLocationsTabParameters, OhEquipmentTabParameter
 
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import ModelTab from '@/pages/home/model-tab.vue'
+import { useViewArea } from '@/composables/useViewArea.ts'
 
 const ConfigurableWidgets = {
   'oh-location-card': OhLocationCardParameters,
@@ -247,6 +248,8 @@ export default {
     f7route: Object
   },
   setup () {
+    useViewArea()
+
     return { theme }
   },
   data () {

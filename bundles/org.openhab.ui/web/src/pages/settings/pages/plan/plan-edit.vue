@@ -145,7 +145,7 @@
 </style>
 
 <script>
-import { defineAsyncComponent } from 'vue'
+import { defineAsyncComponent, provide } from 'vue'
 import { f7, theme } from 'framework7-vue'
 
 import PageDesigner from '../pagedesigner-mixin'
@@ -162,6 +162,7 @@ const ConfigurableWidgets = {
 import PageSettings from '@/components/pagedesigner/page-settings.vue'
 
 import ConfigSheet from '@/components/config/config-sheet.vue'
+import { useViewArea } from '@/composables/useViewArea.ts'
 
 export default {
   mixins: [PageDesigner],
@@ -178,6 +179,8 @@ export default {
     f7route: Object
   },
   setup () {
+    useViewArea()
+
     return { theme }
   },
   data () {

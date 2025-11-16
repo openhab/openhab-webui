@@ -185,7 +185,7 @@
 </style>
 
 <script>
-import { nextTick, defineAsyncComponent } from 'vue'
+import { nextTick, defineAsyncComponent, provide } from 'vue'
 import { f7, theme } from 'framework7-vue'
 
 import YAML from 'yaml'
@@ -211,6 +211,7 @@ import { compareItems } from '@/components/widgets/widget-order'
 
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 import { useComponentsStore } from '@/js/stores/useComponentsStore'
+import { useViewArea } from '@/composables/useViewArea.ts'
 
 export default {
   mixins: [PageDesigner, actionsMixin],
@@ -226,6 +227,8 @@ export default {
     f7route: Object
   },
   setup () {
+    useViewArea()
+
     return { theme }
   },
   data () {

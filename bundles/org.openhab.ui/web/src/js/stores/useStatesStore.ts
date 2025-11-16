@@ -2,17 +2,18 @@ import { defineStore } from 'pinia'
 import { nextTick, ref } from 'vue'
 import openhab from '@/js/openhab'
 
+export type TrackedItems = Map<string, ItemState>
+
+export interface ItemState {
+  state: string,
+  displayState?: string,
+  numericState?: number,
+  unit?: string,
+  type: string
+}
+
 export const useStatesStore = defineStore('states', () => {
-  const trackedItems = ref<object | null>(null)
-  const items = ref<Array<string>>([])
-  const trackingList = ref<Array<string>>([])
-  const itemStates = ref<Map<string, object>>(new Map())
-  const trackerConnectionId = ref<string | null>(null)
-  const trackerEventSource = ref<EventSource | null>(null)
-  const pendingTrackingListUpdate = ref<boolean>(false)
-  const keepConnectionOpen = ref<boolean>(false)
-  const sseConnected = ref<boolean>(false)
-  const ready = ref<boolean>(false)
+  const itemStates = ref<TrackedItems>(new Map())
 
   /* global ProxyHandler:readonly */
   const handler: ProxyHandler<object> = {
@@ -24,6 +25,7 @@ export const useStatesStore = defineStore('states', () => {
       if (
         [
           'getters',
+          'effect',
           '_vm',
           'toJSON',
           '__v_isRef',
@@ -44,7 +46,7 @@ export const useStatesStore = defineStore('states', () => {
 
         // Return the previous state anyway even if it might be outdated (it will be refreshed quickly after)
         if (!itemStates.value.has(itemName)) {
-          setItemState(itemName, { state: '-' })
+          setItemState(itemName, { state: '-', type: '-' })
         }
 
         updateTrackingList()
@@ -52,12 +54,20 @@ export const useStatesStore = defineStore('states', () => {
       return itemStates.value.get(itemName)
     },
     set (_target: object, prop: string | symbol, _value: any, _receiver: any): boolean {
-      setItemState(prop.toString(), { state: _value })
+      setItemState(prop.toString(), { state: _value, type: '-' })
       return true
     }
   }
 
-  trackedItems.value = new Proxy({}, handler)
+  const trackedItems = ref<Record<string, ItemState>>(new Proxy({}, handler))
+  const items = ref<Array<string>>([])
+  const trackingList = ref<Array<string>>([])
+  const trackerConnectionId = ref<string | null>(null)
+  const trackerEventSource = ref<EventSource | null>(null)
+  const pendingTrackingListUpdate = ref<boolean>(false)
+  const keepConnectionOpen = ref<boolean>(false)
+  const sseConnected = ref<boolean>(false)
+  const ready = ref<boolean>(false)
 
   function startTrackingStates () {
     console.debug('Start tracking states')
@@ -115,7 +125,9 @@ export const useStatesStore = defineStore('states', () => {
 
   async function sendCommand (itemName: string, command: string, updateState: boolean = false) {
     if (updateState) {
-      setItemState(itemName, { state: command })
+      const currentState = itemStates.value.get(itemName)
+      const newState : ItemState = currentState ? { ...currentState, state: command } : { state: command, type: '-' }
+      setItemState(itemName, newState)
     }
     return openhab.api.postPlain(
       '/rest/items/' + itemName,
@@ -176,7 +188,7 @@ export const useStatesStore = defineStore('states', () => {
       addToTrackingList(itemName)
 
       if (!itemStates.value.has(itemName)) {
-        setItemState(itemName, { state: '-' })
+        setItemState(itemName, { state: '-', type: '-' })
       }
 
       updateTrackingList()
@@ -185,7 +197,7 @@ export const useStatesStore = defineStore('states', () => {
     return itemStates.value.get(itemName)
   }
 
-  function setItemState (itemName: string, itemState: object) {
+  function setItemState (itemName: string, itemState: ItemState) {
     itemStates.value.set(itemName, itemState)
     return true
   }

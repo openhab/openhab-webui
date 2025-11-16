@@ -173,6 +173,7 @@ export default {
             closeTimeout: 2000
           }).open()
           this.f7router.navigate(this.f7route.url.replace('/add', '/' + this.page.uid), { reloadCurrent: true })
+          this.createMode = false
           this.load()
         } else {
           f7.toast.create({
