@@ -119,6 +119,9 @@ import auth from '@/components/auth-mixin.js'
 
 export default {
   mixins: [auth],
+  props: {
+    f7router: Object
+  },
   methods: {
     onPageAfterIn () {
       const swaggerCss = import(/* webpackChunkName: "swagger-css" */ 'swagger-ui-dist/swagger-ui.css')
