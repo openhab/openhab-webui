@@ -461,6 +461,7 @@ export default {
           description: 'Choose from a selection of preset color palettes for the values in range. The default is a yellow (low) to red (high) gradient',
           limitToOptions: true,
           options: [
+            { value: 'yellowred', label: 'Yellow-Red' },
             { value: 'greenred', label: 'Green-Yellow-Red' },
             { value: 'whiteblue', label: 'White-Blue' },
             { value: 'bluered', label: 'Blue-red' }
