@@ -74,7 +74,7 @@ const isSelected = (option: string) => {
   if (!props.configDescription.multiple) {
     return props.value === option
   } else {
-    return props.value && props.value.indexOf(option) >= 0
+    return props.value.indexOf(option) >= 0
   }
 }
 </script>
