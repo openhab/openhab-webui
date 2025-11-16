@@ -1,5 +1,5 @@
 <template>
-  <ul>
+  <ul class="parameter-time">
     <f7-list-input
       ref="input"
       :floating-label="theme.md"
@@ -10,7 +10,7 @@
       validate
       :clear-button="!configDescription.required"
       @input="updateValue">
-      <template #content-end>
+      <template #root>
         <div class="display-flex justify-content-center">
           <div ref="picker" />
         </div>
@@ -18,6 +18,18 @@
     </f7-list-input>
   </ul>
 </template>
+
+<style lang="stylus">
+.parameter-time
+  .picker-columns
+    --f7-picker-mask-bg-color transparent
+  .picker-center-highlight
+    height var(--f7-picker-item-height)
+    left 0
+    margin-top calc(var(--f7-picker-item-height) * -1/2)
+    pointer-events none
+    width 100%
+</style>
 
 <script>
 import { f7, theme } from 'framework7-vue'
