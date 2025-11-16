@@ -20,7 +20,7 @@
   "analyzer.coords.period.dynamic": "Dinamisks",
   "analyzer.coords.period.fixed": "Fiksēts",
   "analyzer.coords.period.day": "Diena",
-  "analyzer.coords.period.week": "Nedēļa",
+  "analyzer.coords.period.isoWeek": "Nedēļa",
   "analyzer.coords.period.month": "Mēnesis",
   "analyzer.coords.period.year": "Gads",
   "analyzer.coords.coordSystem": "Koordinātu sistēma",

@@ -20,7 +20,7 @@
   "analyzer.coords.period.dynamic": "Dynamické",
   "analyzer.coords.period.fixed": "Pevné",
   "analyzer.coords.period.day": "Den",
-  "analyzer.coords.period.week": "Týden",
+  "analyzer.coords.period.isoWeek": "Týden",
   "analyzer.coords.period.month": "Měsíc",
   "analyzer.coords.period.year": "Rok",
   "analyzer.coords.coordSystem": "Systém souřadnic",

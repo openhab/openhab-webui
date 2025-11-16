@@ -20,7 +20,7 @@
   "analyzer.coords.period.dynamic": "Dinaminė",
   "analyzer.coords.period.fixed": "Pataisyta",
   "analyzer.coords.period.day": "Diena",
-  "analyzer.coords.period.week": "Savaitė",
+  "analyzer.coords.period.isoWeek": "Savaitė",
   "analyzer.coords.period.month": "Mėnuo",
   "analyzer.coords.period.year": "Metai",
   "analyzer.coords.coordSystem": "Koordinačių sistemos",

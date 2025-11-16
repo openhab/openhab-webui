@@ -20,7 +20,7 @@
   "analyzer.coords.period.dynamic": "Dynamic",
   "analyzer.coords.period.fixed": "Fixed",
   "analyzer.coords.period.day": "Araw",
-  "analyzer.coords.period.week": "Linggo",
+  "analyzer.coords.period.isoWeek": "Linggo",
   "analyzer.coords.period.month": "Buwan",
   "analyzer.coords.period.year": "Taon",
   "analyzer.coords.coordSystem": "Coordinate System",

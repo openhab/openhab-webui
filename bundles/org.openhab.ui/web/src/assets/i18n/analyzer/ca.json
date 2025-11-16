@@ -20,7 +20,7 @@
   "analyzer.coords.period.dynamic": "Dinàmic",
   "analyzer.coords.period.fixed": "Fixe",
   "analyzer.coords.period.day": "Dia",
-  "analyzer.coords.period.week": "Setmana",
+  "analyzer.coords.period.isoWeek": "Setmana",
   "analyzer.coords.period.month": "Mes",
   "analyzer.coords.period.year": "Any",
   "analyzer.coords.coordSystem": "Sistema de coordenades",
