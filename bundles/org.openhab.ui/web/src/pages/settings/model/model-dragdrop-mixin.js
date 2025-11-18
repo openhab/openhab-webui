@@ -468,7 +468,6 @@ export default {
       const nodeChildren = this.nodeChildren(node)
       nodeChildren.filter((n) => !n.class).forEach((n) => this.addIntoLocation(n, node))
       this.updateAfterAdd(node, parentNode, semantics)
-      this.saveUpdate()
       console.timeEnd('Timer: addLocation')
     },
     addEquipment (node, parentNode) {
@@ -486,7 +485,6 @@ export default {
       const nodeChildren = this.nodeChildren(node)
       nodeChildren.filter((n) => !n.class).forEach((n) => this.addIntoEquipment(n, node))
       this.updateAfterAdd(node, parentNode, semantics)
-      this.saveUpdate()
       console.timeEnd('Timer: addEquipment')
     },
     addPoint (node, parentNode) {
@@ -502,7 +500,6 @@ export default {
       if (!node.item.tags.includes(tag)) node.item.tags.push(tag)
       node.class = semantics.value
       this.updateAfterAdd(node, parentNode, semantics)
-      this.saveUpdate()
       console.timeEnd('Timer: addPoint')
     },
     addNonSemantic (node, parentNode) {
@@ -626,11 +623,13 @@ export default {
     saveModelUpdate () {
       console.time('Timer: saveModelUpdate')
       this.moveState.dragFinished = false
+      const promises = []
       this.moveState.nodesToUpdate.forEach((n) => {
         const updatedItem = n.item
         console.debug('Save - updatedItem: ', cloneDeep(updatedItem))
-        this.saveItem(updatedItem)
+        promises.push(this.saveItem(updatedItem))
       })
+      Promise.all(promises)
       this.moveState.saving = false
       console.timeEnd('Timer: saveModelUpdate')
       console.timeEnd('Timer: Drag')
