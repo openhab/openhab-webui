@@ -173,23 +173,16 @@ export default {
       }
 
       if (this.includeNonSemantic) {
-        // Only non-semantic groups in groups, avoids showing semantic groups as child of the wrong semantic group
-        parent.children.groups = this.items
-          .filter((i) => i.type === 'Group' && !i.metadata?.semantics && i.groupNames.indexOf(parent.item.name) >= 0)
+        const nonSemanticItems = this.items
+          .filter((i) => !i.metadata?.semantics && i.groupNames.indexOf(parent.item.name) >= 0)
           .map(this.modelItem).sort(compareModelItems)
+
+        // Only non-semantic groups in groups
+        parent.children.groups = nonSemanticItems.filter((i) => i.item.type === 'Group')
         parent.children.groups.forEach(this.getChildren)
 
-        if (!parent.item.metadata?.semantics) {
-          // Items in non-semantic groups
-          parent.children.items = this.items
-            .filter((i) => i.type !== 'Group' && i.groupNames.indexOf(parent.item.name) >= 0)
-            .map(this.modelItem).sort(compareModelItems)
-        } else {
-          // Only non-semantic items in semantic groups, avoids showing semantic item as child of the wrong semantic group
-          parent.children.items = this.items
-            .filter((i) => i.type !== 'Group' && !i.metadata?.semantics && i.groupNames.indexOf(parent.item.name) >= 0)
-            .map(this.modelItem).sort(compareModelItems)
-        }
+        // Only non-semantic items in groups
+        parent.children.items = nonSemanticItems.filter((i) => i.item.type !== 'Group')
       }
     },
     /**

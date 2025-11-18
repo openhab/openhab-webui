@@ -27,6 +27,7 @@
                            :includeItemTags="includeItemTags"
                            :canDragDrop="canDragDrop"
                            @selected="nodeSelected"
+                           @clear-selected="clearSelection"
                            :selected="selected"
                            @checked="(item, check) => $emit('checked', item, check)"
                            @reload="$emit('reload')" />
@@ -78,7 +79,7 @@ export default {
     includeItemTags: Boolean,
     canDragDrop: Boolean
   },
-  emits: ['reload', 'checked', 'selected'],
+  emits: ['reload', 'checked', 'selected', 'clear-selected'],
   components: {
     Draggable,
     ModelTreeviewItem
