@@ -90,7 +90,7 @@
     </f7-block>
     <f7-block v-else class="semantic-tree-wrapper" :class="{ 'sheet-opened': detailsOpened }">
       <f7-row>
-        <f7-col width="100" medium="50">
+        <f7-col width="100" medium="50" ref="treeContainer">
           <f7-block v-if="empty">
             <empty-state-placeholder icon="list_bullet_indent" title="model.title" text="model.text" />
             <f7-row class="display-flex justify-content-center">

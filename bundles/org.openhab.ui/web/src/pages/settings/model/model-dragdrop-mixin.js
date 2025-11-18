@@ -137,6 +137,8 @@ export default {
         return
       }
       console.debug('Drag end - event:', event)
+      this.moveState.movedNode = event.item
+      this.moveState.toNode = event.explicitOriginalTarget instanceof Element ? event.explicitOriginalTarget : event.explicitOriginalTarget.parentNode
       window.removeEventListener('keydown', this.keyDownHandler)
       if (this.moveState.cancelled) {
         console.debug('Drag end - cancelled')
@@ -635,6 +637,10 @@ export default {
       this.moveState.saving = false
       console.timeEnd('Timer: saveModelUpdate')
       console.timeEnd('Timer: Drag')
+
+      this.$nextTick(() => {
+        this.moveState.toNode?.scrollIntoView({ behavior: 'smooth'})
+      })
     },
     restoreModelUpdate () {
       console.time('Timer: restoreModelUpdate')
@@ -645,6 +651,10 @@ export default {
       this.moveState.removing = false
       this.moveState.saving = false
       this.$emit('reload')
+
+      this.$nextTick(() => {
+        this.moveState.movedNode?.scrollIntoView({ behavior: 'smooth' })
+      })
       console.timeEnd('Timer: restoreModelUpdate')
       console.timeEnd('Timer: Drag')
     },

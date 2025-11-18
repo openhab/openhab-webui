@@ -103,7 +103,9 @@ export default {
       dragStartTimestamp: null,
       nodesToUpdate: [],
       moveDelayedOpen: null,
-      moveTarget: null
+      moveTarget: null,
+      movedNode: null,
+      toNode: null
     })
 
     provide('moveState', moveState)
