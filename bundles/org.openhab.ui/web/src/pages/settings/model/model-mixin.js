@@ -119,11 +119,11 @@ export default {
 
         if (this.includeNonSemantic) {
           this.rootGroups = this.items
-            .filter((i) => i.type === 'Group' && (!i.metadata || !i.metadata.semantics) && i.groupNames.length === 0)
+            .filter((i) => i.type === 'Group' && !i.metadata?.semantics && i.groupNames.length === 0)
             .map(this.modelItem).sort(compareModelItems)
           this.rootGroups.forEach(this.getChildren)
           this.rootItems = this.items
-            .filter((i) => i.type !== 'Group' && (!i.metadata || !i.metadata.semantics) && i.groupNames.length === 0)
+            .filter((i) => i.type !== 'Group' && !i.metadata?.semantics && i.groupNames.length === 0)
             .map(this.modelItem).sort(compareModelItems)
         }
 
@@ -173,17 +173,21 @@ export default {
       }
 
       if (this.includeNonSemantic) {
+        // Only non-semantic groups in groups, avoids showing semantic groups as child of the wrong semantic group
         parent.children.groups = this.items
-          .filter((i) => i.type === 'Group' && !(parent.item.metadata && parent.item.metadata.semantics) && i.groupNames.indexOf(parent.item.name) >= 0)
+          .filter((i) => i.type === 'Group' && !i.metadata?.semantics && i.groupNames.indexOf(parent.item.name) >= 0)
           .map(this.modelItem).sort(compareModelItems)
         parent.children.groups.forEach(this.getChildren)
-        if (parent.item.metadata && parent.item.metadata.semantics) {
-          parent.children.items = this.items
-            .filter((i) => i.type !== 'Group' && (!i.metadata || (i.metadata && !i.metadata.semantics)) && i.groupNames.indexOf(parent.item.name) >= 0)
-            .map(this.modelItem).sort(compareModelItems)
-        } else {
+
+        if (!parent.item.metadata?.semantics) {
+          // Items in non-semantic groups
           parent.children.items = this.items
             .filter((i) => i.type !== 'Group' && i.groupNames.indexOf(parent.item.name) >= 0)
+            .map(this.modelItem).sort(compareModelItems)
+        } else {
+          // Only non-semantic items in semantic groups, avoids showing semantic item as child of the wrong semantic group
+          parent.children.items = this.items
+            .filter((i) => i.type !== 'Group' && !i.metadata?.semantics && i.groupNames.indexOf(parent.item.name) >= 0)
             .map(this.modelItem).sort(compareModelItems)
         }
       }
