@@ -794,9 +794,11 @@ export default {
           let dayjsLocalePromise = Promise.resolve(null)
           // try to resolve the dayjs file to load if it exists
           if (locale) {
-            const dayjsLocale = dayjsLocales.find(
-              (l) => l.key === locale || l.key === locale.split('-')[0]
+            let dayjsLocale = dayjsLocales.find(
+              (l) => l.key === locale || l.key === locale.toLowerCase() || l.key === locale.split('-')[0]
             )
+            // fix for missing definitions in en.js locale, see https://github.com/iamkun/dayjs/blob/dev/src/locale/en.js
+            if (dayjsLocale.key === 'en') dayjsLocale = dayjsLocales.find((l) => l.key === 'en-gb')
 
             dayjsLocalePromise = dayjsLocale
               ? import(`../node_modules/dayjs/esm/locale/${dayjsLocale.key}.js`)
@@ -826,9 +828,10 @@ export default {
             })
           this.updateTitle()
 
-          if (data[2]) dayjs.locale(data[2], null, false)
-          console.log('dayjs locale set to', dayjs.locale())
-
+          if (data[2]) {
+            dayjs.locale(data[2], null, false)
+            console.log('dayjs locale set to', dayjs.locale())
+          }
           // load & build the semantic model
           useModelStore().loadSemanticModel()
         })
