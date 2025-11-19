@@ -138,7 +138,9 @@ export default {
       }
       console.debug('Drag end - event:', event)
       this.moveState.movedNode = event.item
-      this.moveState.toNode = event.explicitOriginalTarget instanceof Element ? event.explicitOriginalTarget : event.explicitOriginalTarget.parentNode
+      this.moveState.toNode = event.explicitOriginalTarget
+        ? (event.explicitOriginalTarget instanceof Element ? event.explicitOriginalTarget : event.explicitOriginalTarget.parentNode)
+        : null
       window.removeEventListener('keydown', this.keyDownHandler)
       if (this.moveState.cancelled) {
         console.debug('Drag end - cancelled')
