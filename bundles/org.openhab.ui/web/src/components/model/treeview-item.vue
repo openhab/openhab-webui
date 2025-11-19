@@ -6,7 +6,7 @@
                     :icon-md="icon('md')"
                     :textColor="iconColor"
                     :color="(model.item.created !== false) ? 'blue' : 'orange'"
-                    :selected="selected && selected.item.name === model.item.name ? true : null"
+                    :selected="itemSelected"
                     :opened="model.opened"
                     :toggle="canHaveChildren"
                     @treeview:open="model.opened = true"
@@ -37,7 +37,8 @@
                              :parentNode="model"
                              :rootNode="rootNode"
                              @selected="(event) => $emit('selected', event)"
-                             :selected="node.selected"
+                             @clear-selected="clearSelection"
+                             :selected="selected"
                              :includeItemName="includeItemName"
                              :includeItemTags="includeItemTags"
                              :canDragDrop="canDragDrop"
@@ -94,7 +95,7 @@ export default {
     includeItemTags: Boolean,
     canDragDrop: Boolean
   },
-  emits: ['reload', 'selected', 'checked'],
+  emits: ['reload', 'selected', 'clear-selected', 'checked'],
   components: {
     Draggable,
     ModelTreeviewItem: 'model-treeview-item'
@@ -118,6 +119,9 @@ export default {
         ? semantics.config.relatesTo : null
       return this.model.class.substring(this.model.class.lastIndexOf('_') + 1) +
         ((property) ? ' (' + property.replace('Property_', '') + ')' : '')
+    },
+    itemSelected () {
+      return this.selected && this.selected.item.name === this.model.item.name ? true : null
     }
   },
   methods: {

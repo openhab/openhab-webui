@@ -6,10 +6,9 @@ import ItemMixin from '@/components/item/item-mixin'
 import TagMixin from '@/components/tags/tag-mixin'
 import fastDeepEqual from 'fast-deep-equal/es6'
 
-// TODO-V3.1 console.debug calls with cloneDeep - do we need to remove them?
-
 export default {
   mixins: [ItemMixin, TagMixin],
+  emits: ['clear-selected'],
   watch: {
     canSave (val) {
       if (val) this.saveUpdate()
@@ -64,6 +63,7 @@ export default {
   },
   methods: {
     onDragStart (event) {
+      this.$emit('clear-selected')
       this.moveState.node = this.children[event.oldIndex]
       if (!this.moveState.node.item.editable) return
       console.time('Timer: Drag')
@@ -137,6 +137,10 @@ export default {
         return
       }
       console.debug('Drag end - event:', event)
+      this.moveState.movedNode = event.item
+      this.moveState.toNode = event.explicitOriginalTarget
+        ? (event.explicitOriginalTarget instanceof Element ? event.explicitOriginalTarget : event.explicitOriginalTarget.parentNode)
+        : null
       window.removeEventListener('keydown', this.keyDownHandler)
       if (this.moveState.cancelled) {
         console.debug('Drag end - cancelled')
@@ -257,8 +261,6 @@ export default {
       } else {
         this.addIntoRoot(node, parentNode)
       }
-      this.moveState.canAdd = false
-      this.moveState.adding = false
       console.timeEnd('Timer: validateAdd')
     },
     isValidGroupType (node, parentNode) {
@@ -468,7 +470,6 @@ export default {
       const nodeChildren = this.nodeChildren(node)
       nodeChildren.filter((n) => !n.class).forEach((n) => this.addIntoLocation(n, node))
       this.updateAfterAdd(node, parentNode, semantics)
-      this.saveUpdate()
       console.timeEnd('Timer: addLocation')
     },
     addEquipment (node, parentNode) {
@@ -486,7 +487,6 @@ export default {
       const nodeChildren = this.nodeChildren(node)
       nodeChildren.filter((n) => !n.class).forEach((n) => this.addIntoEquipment(n, node))
       this.updateAfterAdd(node, parentNode, semantics)
-      this.saveUpdate()
       console.timeEnd('Timer: addEquipment')
     },
     addPoint (node, parentNode) {
@@ -502,7 +502,6 @@ export default {
       if (!node.item.tags.includes(tag)) node.item.tags.push(tag)
       node.class = semantics.value
       this.updateAfterAdd(node, parentNode, semantics)
-      this.saveUpdate()
       console.timeEnd('Timer: addPoint')
     },
     addNonSemantic (node, parentNode) {
@@ -541,6 +540,9 @@ export default {
       if (updateRequired) {
         this.moveState.nodesToUpdate.push(node)
       }
+      this.moveState.canAdd = false
+      this.moveState.adding = false
+      if (!this.moveState.canRemove) this.moveState.dragFinished = true
       console.debug('Add - finished, new moveState:', cloneDeep(this.moveState))
       console.timeEnd('Timer: updateAfterAdd')
     },
@@ -586,6 +588,7 @@ export default {
       const groupNameIndex = node.item.groupNames.findIndex((g) => g === parentNode.item?.name)
       if (groupNameIndex >= 0) {
         node.item.groupNames.splice(groupNameIndex, 1)
+        this.moveState.nodesToUpdate.push(node)
       }
       const newChildren = this.nodeChildren(parentNode)
       newChildren.splice(oldIndex, 1)
@@ -604,7 +607,7 @@ export default {
       console.time('Timer: updateAfterRemove')
       this.moveState.canRemove = false
       this.moveState.removing = false
-      this.moveState.dragFinished = true
+      if (!this.moveState.canAdd) this.moveState.dragFinished = true
       console.timeEnd('Timer: updateAfterRemove')
     },
     saveUpdate () {
@@ -626,14 +629,20 @@ export default {
     saveModelUpdate () {
       console.time('Timer: saveModelUpdate')
       this.moveState.dragFinished = false
+      const promises = []
       this.moveState.nodesToUpdate.forEach((n) => {
         const updatedItem = n.item
         console.debug('Save - updatedItem: ', cloneDeep(updatedItem))
-        this.saveItem(updatedItem)
+        promises.push(this.saveItem(updatedItem))
       })
+      Promise.all(promises)
       this.moveState.saving = false
       console.timeEnd('Timer: saveModelUpdate')
       console.timeEnd('Timer: Drag')
+
+      this.$nextTick(() => {
+        this.moveState.toNode?.scrollIntoView({ behavior: 'smooth'})
+      })
     },
     restoreModelUpdate () {
       console.time('Timer: restoreModelUpdate')
@@ -644,6 +653,10 @@ export default {
       this.moveState.removing = false
       this.moveState.saving = false
       this.$emit('reload')
+
+      this.$nextTick(() => {
+        this.moveState.movedNode?.scrollIntoView({ behavior: 'smooth' })
+      })
       console.timeEnd('Timer: restoreModelUpdate')
       console.timeEnd('Timer: Drag')
     },
@@ -662,6 +675,9 @@ export default {
         console.timeEnd('Timer: Drag')
         this.moveState.cancelled = true
       }
+    },
+    clearSelection () {
+      this.$emit('clear-selected')
     }
   }
 }

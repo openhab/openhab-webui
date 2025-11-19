@@ -119,11 +119,11 @@ export default {
 
         if (this.includeNonSemantic) {
           this.rootGroups = this.items
-            .filter((i) => i.type === 'Group' && (!i.metadata || !i.metadata.semantics) && i.groupNames.length === 0)
+            .filter((i) => i.type === 'Group' && !i.metadata?.semantics && i.groupNames.length === 0)
             .map(this.modelItem).sort(compareModelItems)
           this.rootGroups.forEach(this.getChildren)
           this.rootItems = this.items
-            .filter((i) => i.type !== 'Group' && (!i.metadata || !i.metadata.semantics) && i.groupNames.length === 0)
+            .filter((i) => i.type !== 'Group' && !i.metadata?.semantics && i.groupNames.length === 0)
             .map(this.modelItem).sort(compareModelItems)
         }
 
@@ -173,19 +173,16 @@ export default {
       }
 
       if (this.includeNonSemantic) {
-        parent.children.groups = this.items
-          .filter((i) => i.type === 'Group' && !(parent.item.metadata && parent.item.metadata.semantics) && i.groupNames.indexOf(parent.item.name) >= 0)
+        const nonSemanticItems = this.items
+          .filter((i) => !i.metadata?.semantics && i.groupNames.indexOf(parent.item.name) >= 0)
           .map(this.modelItem).sort(compareModelItems)
+
+        // Only non-semantic groups in groups
+        parent.children.groups = nonSemanticItems.filter((i) => i.item.type === 'Group')
         parent.children.groups.forEach(this.getChildren)
-        if (parent.item.metadata && parent.item.metadata.semantics) {
-          parent.children.items = this.items
-            .filter((i) => i.type !== 'Group' && (!i.metadata || (i.metadata && !i.metadata.semantics)) && i.groupNames.indexOf(parent.item.name) >= 0)
-            .map(this.modelItem).sort(compareModelItems)
-        } else {
-          parent.children.items = this.items
-            .filter((i) => i.type !== 'Group' && i.groupNames.indexOf(parent.item.name) >= 0)
-            .map(this.modelItem).sort(compareModelItems)
-        }
+
+        // Only non-semantic items in groups
+        parent.children.items = nonSemanticItems.filter((i) => i.item.type !== 'Group')
       }
     },
     /**

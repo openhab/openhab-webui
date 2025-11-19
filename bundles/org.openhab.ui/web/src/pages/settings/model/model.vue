@@ -115,6 +115,7 @@
                             :includeItemTags="includeItemTags"
                             :canDragDrop="true"
                             @selected="selectItem"
+                            @clear-selected="clearSelection"
                             :selected="selectedItem"
                             @reload="load"
                             @click.stop />
@@ -469,6 +470,11 @@ export default {
       this.eventSource = null
     },
     selectItem (item) {
+      // Allow deselecting by clicking a second time
+      if (this.selectedItem === item) {
+        this.clearSelection()
+        return
+      }
       this.selectedItem = item
       if (this.newItem && (!item || item.item.name !== this.newItem.name)) {
         this.newItem = null
@@ -482,8 +488,9 @@ export default {
       }
     },
     clearSelection (ev) {
-      if (ev.target && ev.currentTarget && ev.target === ev.currentTarget) {
+      if (!ev || (ev.target && ev.currentTarget && ev.target === ev.currentTarget)) {
         this.selectedItem = null
+        this.previousSelection = null
         this.detailsOpened = false
       }
     },
