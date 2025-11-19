@@ -1,5 +1,4 @@
 import dayjs from 'dayjs'
-import 'dayjs/locale/de'
 import LocalizedFormat from 'dayjs/plugin/localizedFormat'
 import ComponentId from '../../component-id'
 
