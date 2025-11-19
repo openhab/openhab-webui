@@ -522,6 +522,9 @@ import { request } from 'framework7'
 import { f7, f7ready } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
+import dayjs from 'dayjs'
+import dayjsLocales from 'dayjs/locale.json'
+
 import buildInfo from '@/assets/build-info'
 
 import routes from '@/js/routes.js'
@@ -535,8 +538,7 @@ import connectionHealth from '@/components/connection-health-mixin'
 import sseEvents from '@/components/sse-events-mixin'
 
 import { i18n, loadLocaleMessages } from '@/js/i18n'
-import dayjs from 'dayjs'
-import dayjsLocales from 'dayjs/locale.json'
+
 import { useI18n } from 'vue-i18n'
 
 import { AddonIcons, AddonTitles } from '@/assets/addon-store'
