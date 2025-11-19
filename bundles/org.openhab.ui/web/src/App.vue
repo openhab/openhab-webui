@@ -800,8 +800,8 @@ export default {
 
             dayjsLocalePromise = dayjsLocale
               ? import(`../node_modules/dayjs/esm/locale/${dayjsLocale.key}.js`)
-                .then(() => {
-                  return dayjsLocale
+                .then((data) => {
+                  return data.default
                 }).catch((error) => {
                   console.error('Error fetching dayjs: ', error, dayjsLocale)
                 })
@@ -826,7 +826,8 @@ export default {
             })
           this.updateTitle()
 
-          if (data[2]) dayjs.locale(data[2].key)
+          if (data[2]) dayjs.locale(data[2], null, false)
+          console.log('dayjs locale set to', dayjs.locale())
 
           // load & build the semantic model
           useModelStore().loadSemanticModel()
