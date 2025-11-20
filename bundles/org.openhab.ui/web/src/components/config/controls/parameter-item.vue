@@ -4,8 +4,9 @@
                @input="updateValue"
                :multiple="configDescription.multiple"
                :required="configDescription.required"
-               :filterType="filterType"
-               :filterTag="filterTag" />
+               :filterType="filter('type')"
+               :filterGroupType="filter('groupType')"
+               :filterTag="filter('tag')" />
 </template>
 
 <script>
@@ -19,20 +20,13 @@ export default {
   components: {
     ItemPicker
   },
-  computed: {
-    filterType () {
-      const types = this.configDescription.filterCriteria?.find((f) => f.name === 'type')?.value
-      if (types) return types.split(',').map((t) => t.trim())
-      return null
-    },
-    filterTag () {
-      const tags = this.configDescription.filterCriteria?.find((f) => f.name === 'tag')?.value
-      if (tags) return tags.split(',').map((t) => t.trim())
-      return null
-    }
-  },
   emits: ['input'],
   methods: {
+    filter (filterName) {
+      const values = this.configDescription.filterCriteria?.find((f) => f.name === filterName)?.value
+      if (values) return values.split(',').map((t) => t.trim())
+      return null
+    },
     updateValue (value) {
       this.$emit('input', value)
     }

@@ -80,6 +80,7 @@ export default {
     items: Array,
     multiple: Boolean,
     filterType: [String, Array],
+    filterGroupType: [String, Array],
     filterTag: [String, Array],
     required: Boolean,
     editableOnly: Boolean,
@@ -120,7 +121,7 @@ export default {
         staticDataOnly: 'true'
       })
       if (this.filterTag?.length) {
-        params.set('tags', this.filterTag.join(','))
+        params.set('tags', Array.isArray(this.filterTag) ? this.filterTag.join(',') : this.filterTag)
       }
       this.$oh.api.get(`/rest/items?${params}`).then((items) => {
         this.sortAndFilterItems(items)
@@ -131,22 +132,59 @@ export default {
   },
   methods: {
     sortAndFilterItems (items) {
-      this.preparedItems = items.sort((a, b) => {
+      this.preparedItems = items
+      if (this.editableOnly) {
+        this.preparedItems = this.preparedItems.filter((i) => i.editable)
+      }
+      if (this.filterGroupType?.length) {
+        if (Array.isArray(this.filterGroupType)) {
+          this.preparedItems = this.filterGroupItems(this.preparedItems, this.filterGroupType)
+        } else {
+          this.preparedItems = this.filterGroupItems(this.preparedItems, [this.filterGroupType])
+        }
+      } else if (this.filterType?.length) {
+        if (Array.isArray(this.filterType)) {
+          this.preparedItems = this.filterItems(this.preparedItems, this.filterType)
+        } else {
+          this.preparedItems = this.filterItems(this.preparedItems, [this.filterType])
+        }
+      }
+      this.preparedItems.sort((a, b) => {
         const labelA = a.label || a.name
         const labelB = b.label || b.name
         return labelA.localeCompare(labelB)
       })
-      if (this.filterType && this.filterType.length) {
-        if (Array.isArray(this.filterType)) {
-          this.preparedItems = this.preparedItems.filter((i) => this.filterType.includes(i.type.split(':', 1)[0]) || (i.type === 'Group' && this.filterType.includes(i.groupType?.split(':', 1)[0])))
-        } else {
-          this.preparedItems = this.preparedItems.filter((i) => (this.filterType === i.type.split(':', 1)[0]) || (i.type === 'Group' && this.filterType === i.groupType?.split(':', 1)[0]))
-        }
-      }
-      if (this.editableOnly) {
-        this.preparedItems = this.preparedItems.filter((i) => i.editable)
-      }
       this.ready = true
+    },
+    filterGroupItems (items, filterGroupType) {
+      let tempItems = []
+      filterGroupType.forEach((f) => {
+        tempItems.push(...items.filter((i) => {
+          if (i.type !== 'Group') return false
+          if (f === i.groupType) return true
+          if (f.split(':', 1)[0] === i.groupType) return true
+          if (!f.includes(':') && f === i.groupType?.split(':', 1)[0]) return true
+          return false
+        }))
+      })
+      return tempItems
+    },
+    filterItems (items, filterType) {
+      let tempItems = []
+      filterType.forEach((f) => {
+        tempItems.push(...items.filter((i) => {
+          if (f === i.type) return true
+          if (f.split(':', 1)[0] === i.type) return true
+          if (!f.includes(':') && f === i.type.split(':', 1)[0]) return true
+          if (i.type === 'Group') {
+            if (f === i.groupType) return true
+            if (f.split(':', 1)[0] === i.groupType) return true
+            if (!f.includes(':') && f === i.groupType?.split(':', 1)[0]) return true
+          }
+          return false
+        }))
+      })
+      return tempItems
     },
     select (e) {
       f7.input.validateInputs(this.$refs.smartSelect.$el)
