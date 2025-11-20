@@ -1,19 +1,9 @@
 import type { TrackedItems } from '@/js/stores/useStatesStore'
+import type { WidgetComponent, UIComponentConfig } from '@/types/openhab'
 
-type WidgetConfig = any
-type WidgetProps = Record<string, any>
-type WidgetPropDefinitions = any
-
-interface WidgetComponent {
-  component?: string,
-  config?: WidgetConfig,
-  props?: WidgetPropDefinitions,
-  slots?: Record<string, Array<any>>
-}
-
-interface WidgetContext {
+export interface WidgetContext {
   component: WidgetComponent,
-  config?: WidgetConfig,
+  config: UIComponentConfig,
   /**
    * oh-context constants
    */
