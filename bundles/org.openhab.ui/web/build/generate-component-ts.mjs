@@ -32,6 +32,18 @@ const widgetLibraries = {
   }
 }
 
+const widgetDirectories = {
+  SystemWidgets: 'system',
+  StdCardWidgets: 'standard',
+  StdListItemWidgets: 'standard',
+  StdCellWidgets: 'standard',
+  LayoutWidgets: 'layout',
+  PlanWidgets: 'plan',
+  MapWidgets: 'map',
+  ChartWidgets: 'chart',
+  HomePageWidgets: 'home'
+}
+
 function kebabToPascalCase(kebabCaseString) {
   return kebabCaseString
     .replace(/(^-*|-+)\S/g, (match) => match.slice(-1).toUpperCase()) // Capitalize letters after hyphens and handle leading hyphens
@@ -154,6 +166,7 @@ function generateCommonTS(mapCommonOptions) {
 function generateComponentTS(mapCommonOptions) {
   Object.keys(widgetLibraries).forEach((l) => {
     const library = widgetLibraries[l]
+    const widgetDir = widgetDirectories[l] || 'misc'
     Object.keys(library).forEach((w) => {
       const widget = (typeof library[w] === 'function') ? library[w]() : library[w]
       const widgetName = widget.name || w
@@ -163,10 +176,8 @@ function generateComponentTS(mapCommonOptions) {
       if (!widgetName.startsWith('oh-')) return
 
       const commonComponents = []
-      
-      // let content = `export namespace ${kebabToPascalCase(widgetName)} {\n`
-      let content = ''
 
+      let content = ''
       // component specific options
       widget.props.parameters.forEach((p) => {
         if (p.options) {
@@ -227,7 +238,7 @@ function generateComponentTS(mapCommonOptions) {
       if (commonComponents.length > 0) {
         preamble += 'import {\n'
         preamble += commonComponents.map(name => `  ${name}`).join(',\n')
-        preamble += `\n} from './common.ts'\n\n`
+        preamble += `\n} from '../common.ts'\n\n`
 
         postamble += '\nexport {\n'
         postamble += commonComponents.map(name => `  ${name}`).join(',\n')
@@ -240,7 +251,7 @@ function generateComponentTS(mapCommonOptions) {
         content = configWidget['_All'].modifier(content)
       }
 
-      fs.writeFileSync(`${outDir}/${widgetName}.ts`, content)
+      fs.writeFileSync(`${outDir}/${widgetDir}/${widgetName}.ts`, content)
     })
   })
 }
@@ -250,6 +261,7 @@ function generateIndexTS() {
   let content = `export * from './common.ts'\n\n`
   Object.keys(widgetLibraries).forEach((l) => {
     const library = widgetLibraries[l]
+    const widgetDir = widgetDirectories[l] || 'misc'
     Object.keys(library).forEach((w) => {
       const widget = (typeof library[w] === 'function') ? library[w]() : library[w]
       const widgetName = widget.name || w
@@ -257,7 +269,7 @@ function generateIndexTS() {
       if (!widgetName.startsWith('oh-')) return
 
       componentNames.push(kebabToPascalCase(widgetName))
-      content += `export * as ${kebabToPascalCase(widgetName)} from './${widgetName}.ts'\n`
+      content += `export * as ${kebabToPascalCase(widgetName)} from './${widgetDir}/${widgetName}.ts'\n`
     })
   })
 
@@ -265,6 +277,13 @@ function generateIndexTS() {
 }
 
 const config = await loadConfig()
+
+Object.keys(widgetLibraries).forEach((l) => {
+  const widgetDir = widgetDirectories[l] || 'misc'
+  if(!fs.existsSync(`${outDir}/${widgetDir}`)) {
+    fs.mkdirSync(`${outDir}/${widgetDir}`, { recursive: true })
+  }
+})
 
 const mapCommonOptions = createCommonOptionsMap()
 generateCommonTS(mapCommonOptions)
