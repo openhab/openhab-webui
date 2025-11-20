@@ -188,10 +188,11 @@ import { mapStores } from 'pinia'
 export default {
   mixins: [ItemMixin, uomMixin, LinkMixin],
   props: {
-    thing: String,
-    channel: String,
-    channelType: String,
-    item: String,
+    thing: Object,
+    channelGroup: Object,
+    channel: Object,
+    channelType: Object,
+    item: Object,
     f7router: Object
   },
   setup () {
@@ -243,6 +244,10 @@ export default {
       this.loadProfileTypes(this.channel)
       let newItemName = this.$oh.utils.normalizeLabel(this.thing.label)
       newItemName += '_'
+      if (this.channelGroup) {
+        newItemName += this.$oh.utils.normalizeLabel(this.channelGroup.label)
+        newItemName += '_'
+      }
       newItemName += this.$oh.utils.normalizeLabel(this.channel.label || this.channelType.label)
       const defaultTags = (this.channel.defaultTags.length > 0) ? this.channel.defaultTags : this.channelType.tags
       this.newItem = {
