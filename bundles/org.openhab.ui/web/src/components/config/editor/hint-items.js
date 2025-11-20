@@ -82,7 +82,7 @@ function hintIcon (context, line) {
 
 const MetadataCompletions = {
   unit: { value: '' },
-  stateDescription: { value: '', config: { pattern: '%.2f' } },
+  stateDescription: { value: '', config: { pattern: '%.2f %unit%' } },
   commandDescription: { value: '', config: { options: '' } },
   synonyms: { value: 'synonym1,synonym2' },
   // widget
