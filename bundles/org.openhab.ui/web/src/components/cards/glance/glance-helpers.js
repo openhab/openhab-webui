@@ -34,7 +34,7 @@ export function findEquipment (arr, value, partial, subEquipment) {
 /**
  * Retrieve the flattened list of points from the provided equipment collection
  * @param {Array} equipment the equipment collection
- * @param {boolean} subEquipment include points on sub-equipment
+ * @param {Boolean} subEquipment include points on sub-equipment
  * @return {Array} the flattened list of points
  */
 export function allEquipmentPoints (equipment, subEquipment) {
@@ -51,11 +51,11 @@ export function allEquipmentPoints (equipment, subEquipment) {
 }
 
 /**
- * Checks whether the provided equipment collection has any of the provided points.
- * @param {Array} equipment the equipment collection
- * @param {boolean} subEquipment include points on sub-equipment
+ * Checks whether the provided equipment item has any of the provided points.
+ * @param {Object} equipment the equipment collection
+ * @param {Boolean} subEquipment include points on sub-equipment
  * @param {Array|Set} points points to check for
- * @return {boolean}
+ * @return {Boolean}
  */
 export function equipmentHasPoint (equipment, subEquipment, points) {
   if (Array.isArray(points)) points = new Set(points)
