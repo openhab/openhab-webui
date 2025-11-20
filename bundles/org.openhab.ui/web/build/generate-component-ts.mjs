@@ -251,6 +251,10 @@ function generateComponentTS(mapCommonOptions) {
         content = configWidget['_All'].modifier(content)
       }
 
+      if(config['*'] && typeof config['*'].modifier === 'function') {
+        content = config['*'].modifier(content)
+      }
+
       fs.writeFileSync(`${outDir}/${widgetDir}/${widgetName}.ts`, content)
     })
   })

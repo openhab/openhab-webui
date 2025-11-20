@@ -27,7 +27,7 @@ export interface Config {
   actionPhotos?: string
   actionPhotoBrowserConfig?: string
   actionGroupPopupItem?: string
-  actionAnalyzerItems: string
+  actionAnalyzerItems?: string | string[]
   actionAnalyzerChartType?: ActionAnalyzerChartType
   actionAnalyzerCoordSystem?: ActionAnalyzerCoordSystem
   actionAnalyzerAggregation?: ActionAnalyzerAggregation
