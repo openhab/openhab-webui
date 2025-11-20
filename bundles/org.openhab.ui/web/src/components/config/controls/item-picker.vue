@@ -80,6 +80,7 @@ export default {
     items: Array,
     multiple: Boolean,
     filterType: [String, Array],
+    filterTag: [String, Array],
     required: Boolean,
     editableOnly: Boolean,
     disabled: Boolean,
@@ -115,7 +116,11 @@ export default {
     this.smartSelectParams.closeOnSelect = !(this.multiple)
     if (this.setValueText) this.smartSelectParams.setValueText = this.setValueText
     if (!this.items || !this.items.length) {
-      this.$oh.api.get('/rest/items?staticDataOnly=true').then((items) => {
+      let url = '/rest/items?staticDataOnly=true'
+      if (this.filterTag) {
+        url = url + '&tags=' + this.filterTag.join('%2C')
+      }
+      this.$oh.api.get(url).then((items) => {
         this.sortAndFilterItems(items)
       })
     } else {
@@ -131,9 +136,9 @@ export default {
       })
       if (this.filterType && this.filterType.length) {
         if (Array.isArray(this.filterType)) {
-          this.preparedItems = this.preparedItems.filter((i) => this.filterType.includes(i.type.split(':', 1)[0]) || (i.type === 'Group' && this.filterType.includes(i.groupType)))
+          this.preparedItems = this.preparedItems.filter((i) => this.filterType.includes(i.type.split(':', 1)[0]) || (i.type === 'Group' && this.filterType.includes(i.groupType?.split(':', 1)[0])))
         } else {
-          this.preparedItems = this.preparedItems.filter((i) => i.type === this.filterType || (i.type === 'Group' && this.filterType.includes(i.groupType)))
+          this.preparedItems = this.preparedItems.filter((i) => (this.filterType === i.type.split(':', 1)[0]) || (i.type === 'Group' && this.filterType === i.groupType?.split(':', 1)[0]))
         }
       }
       if (this.editableOnly) {
