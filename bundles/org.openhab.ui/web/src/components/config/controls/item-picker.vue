@@ -14,6 +14,7 @@
                    :icon-aurora="aurora"
                    :icon-ios="ios"
                    :icon-md="md"
+                   :tooltip="$t('dialogs.itemPicker.tooltip.pickFromModel')"
                    @click="pickFromModel" />
         <f7-icon v-else-if="!hideIcon"
                  :color="color"
@@ -25,7 +26,7 @@
 
     <f7-popup v-model:opened="popupOpen">
       <f7-page>
-        <f7-navbar :title="label || 'Select Item'">
+        <f7-navbar :title="label || $t('dialogs.itemPicker.popup.title')">
           <f7-nav-right>
             <f7-link @click="popupOpen = false">
               Close
@@ -36,12 +37,13 @@
         <f7-searchbar
           search-container=".item-list"
           search-in=".item-inner"
-          :placeholder="this.$t('dialogs.search.items')">
+          :placeholder="$t('dialogs.search.items')">
           <template #inner-start>
             <f7-button v-if="filterToggle"
                        :icon-f7="filtered ? 'funnel_fill' : 'funnel'"
                        icon-size="24px"
                        :icon-color="color"
+                       :tooltip="filtered ? this.$t('dialogs.search.items.tooltip.filtered') : this.$t('dialogs.search.items.tooltip.unfiltered')"
                        @click="toggleFilter" />
           </template>
         </f7-searchbar>
