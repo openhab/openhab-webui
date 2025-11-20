@@ -40,6 +40,7 @@
           :placeholder="$t('dialogs.search.items')">
           <template #inner-start>
             <f7-button v-if="filterToggle"
+                       style="margin-inline-end:5px"
                        :icon-f7="filtered ? 'funnel_fill' : 'funnel'"
                        icon-size="24px"
                        :icon-color="color"
