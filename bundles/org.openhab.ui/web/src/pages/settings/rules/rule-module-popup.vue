@@ -250,9 +250,9 @@ export default {
     },
     onBackClicked () {
       if (this.dirty) {
-        this.confirmLeaveWithoutSaving(this.$refs.modulePopup.$el.f7Modal.close)
+        this.confirmLeaveWithoutSaving(this.close)
       } else {
-        this.$refs.modulePopup.$el.f7Modal.close()
+        this.close()
       }
     },
     close () {
