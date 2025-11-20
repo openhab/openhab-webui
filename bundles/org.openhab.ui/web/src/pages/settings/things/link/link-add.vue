@@ -54,6 +54,7 @@
                            :multiple="false"
                            :items="items"
                            :filterType="getCompatibleItemTypes()"
+                           :filterToggle="true"
                            @input="(value) => selectedItemName = value" />
             </f7-list-group>
           </f7-list>
