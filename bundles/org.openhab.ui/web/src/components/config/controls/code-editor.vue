@@ -18,7 +18,7 @@
       @input="onEditorInput" />
   </div>
 
-  <f7-toolbar bottom>
+  <f7-toolbar bottom class="code-editor-toolbar">
     <f7-segmented>
       <f7-button
         v-for="type in Object.keys(mediaTypes)"
@@ -52,7 +52,7 @@
 
   <f7-popup
     ref="errors"
-    id="code-errors"
+    class="code-editor-errors"
     close-on-escape
     close-by-backdrop-click
     @popup:open="initializeMovablePopup($refs.errors, $refs.navbar)"
@@ -77,10 +77,10 @@
 .code-editor
   position absolute
   top calc(var(--f7-navbar-height) + var(--f7-toolbar-height))
-  bottom calc(var(--f7-navbar-height))
+  bottom calc(var(--f7-toolbar-height))
   width 100%
 
-.toolbar-bottom
+.code-editor-toolbar
   position absolute
   .toolbar-inner
     padding-left 8px
@@ -88,7 +88,7 @@
     .button
       width 5em
 
-#code-errors
+.code-editor-errors
   .item-title
     white-space normal
 </style>
@@ -269,7 +269,7 @@ export default {
             }
             if (errors && errors.length > 0) {
               this.errors = errors
-              f7.popup.open('#code-errors')
+              f7.popup.open(this.$refs.errors.$el)
             }
           } else {
             f7.dialog.alert(`Error parsing ${this.uiOptionsStore.codeEditorType}: ${err.message || err.status}`).open()
