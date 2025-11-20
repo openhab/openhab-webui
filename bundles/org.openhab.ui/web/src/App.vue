@@ -800,7 +800,7 @@ export default {
               (l) => l.key === locale || l.key === locale.toLowerCase() || l.key === locale.split('-')[0]
             )
             // fix for missing definitions in en.js locale, see https://github.com/iamkun/dayjs/blob/dev/src/locale/en.js
-            if (dayjsLocale.key === 'en') dayjsLocale = dayjsLocales.find((l) => l.key === 'en-gb')
+            if (dayjsLocale?.key === 'en') dayjsLocale = dayjsLocales.find((l) => l.key === 'en-gb')
 
             dayjsLocalePromise = dayjsLocale
               ? import(`../node_modules/dayjs/esm/locale/${dayjsLocale.key}.js`)
