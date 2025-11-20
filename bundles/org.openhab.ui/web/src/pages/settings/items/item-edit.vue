@@ -186,6 +186,10 @@ export default {
           this.item.metadata = this.item.metadata || {}
           this.item.metadata.unit = { value: this.item.unit }
         }
+        if (this.createMode && !this.item.name) {
+          // code generation fails without a Item name, instead present empty code tab
+          return
+        }
         this.$refs.codeEditor.generateCode()
       } else if (this.codeDirty) {
         this.$refs.codeEditor.parseCode(
