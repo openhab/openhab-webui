@@ -29,7 +29,8 @@
                               :footer="channel.uid + ' (' + getItemType(channel) + ')'"
                               :subtitle="thing.label"
                               :badge="thingStatusBadgeText(thing.statusInfo)"
-                              :badge-color="thingStatusBadgeColor(thing.statusInfo)">
+                              :badge-color="thingStatusBadgeColor(thing.statusInfo)"
+                              :link="'/settings/things/' + thing.UID">
                   <template #media>
                     <span class="item-initial">{{ (channel.label) ? channel.label[0] : channelType.label ? channelType.label[0] : '?' }}</span>
                   </template>
