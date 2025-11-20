@@ -21,7 +21,8 @@ import { useStatesStore } from '@/js/stores/useStatesStore'
 import { useUserStore } from '@/js/stores/useUserStore'
 import { i18n } from '@/js/i18n.ts'
 
-import type { WidgetContext, WidgetProps } from './types'
+import type { WidgetContext } from './types'
+import type { UIComponentProps } from '@/types/openhab'
 
 expr.jsep.plugins.register(jsepRegex, jsepArrow, jsepObject, jsepTemplate)
 
@@ -76,7 +77,7 @@ interface ScreenInfo {
  *
  * @param properties
  */
-export function useWidgetExpression (properties: { context?: WidgetContext, props?: WidgetProps } = {}) {
+export function useWidgetExpression (properties: { context?: WidgetContext, props?: UIComponentProps } = {}) {
   // imports
   const userStore = useUserStore()
   const uiOptionsStore = useUIOptionsStore()
@@ -140,7 +141,7 @@ export function useWidgetExpression (properties: { context?: WidgetContext, prop
    * @param props the props to make available to the expression (not required if already provided as composable property)
    * @returns the result of the expression evaluation
    */
-  function evaluateExpression (key: string, value: any, context?: WidgetContext, props?: WidgetProps): any {
+  function evaluateExpression (key: string, value: any, context?: WidgetContext, props?: UIComponentProps): any {
     if (value === null) return null
     const ctx = context || properties.context
     if (!ctx) return null
