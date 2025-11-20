@@ -13,7 +13,7 @@ export interface UIComponentProps {
 }
 
 /**
- * UI components have slots, in which other UI components can be placed them.
+ * UI components have slots, in which other UI components can be placed.
  */
 export type UIComponentSlots = Record<string, UIComponent[]>
 
