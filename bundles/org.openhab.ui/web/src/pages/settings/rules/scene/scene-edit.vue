@@ -1,5 +1,5 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:afterout="onPageAfterOut">
+  <f7-page @page:afterin="onPageAfterIn" @page:afterout="onPageAfterOut" class="scene-edit">
     <f7-navbar no-hairline>
       <oh-nav-content :title="(createMode ? 'Create scene' : rule.name) + dirtyIndicator"
                       :editable="isEditable"
@@ -74,7 +74,7 @@
           </f7-block-footer>
           <!-- <f7-col v-if="isEditable" class="text-align-right justify-content-flex-end">
             </f7-col> -->
-          <f7-col class="rule-modules">
+          <f7-col class="scene-modules">
             <div class="no-padding float-right" v-if="rule['actions'].length > 0">
               <f7-button @click="toggleModuleControls"
                          small
@@ -180,7 +180,7 @@
       </f7-tab>
       <f7-tab id="code" :tab-active="currentTab === 'code'">
         <editor v-if="currentTab === 'code'"
-                class="rule-code-editor"
+                class="scene-code-editor"
                 mode="application/vnd.openhab.rule+yaml"
                 :value="ruleYaml"
                 @input="onEditorInput" />
@@ -201,7 +201,7 @@
   .config-sheet, .parameter-group
     margin-top 0 !important
 
-.rule-modules
+.scene-modules
   .swipeout-opened
     .sortable-handler
       display none
@@ -231,6 +231,10 @@
 .scene-items-picker
   .item-after
     display none
+
+.scene-code-editor.v-codemirror
+  position absolute
+  height calc(100% - var(--f7-navbar-height) - var(--f7-toolbar-height))
 
 .yaml-message
   display block

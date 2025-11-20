@@ -92,6 +92,7 @@
 .tabs-editor
   .page-code-editor.v-codemirror
     position absolute
+    height calc(100% - var(--f7-navbar-height) - var(--f7-toolbar-height))
   .tabs-list
     .item-link
       overflow inherit

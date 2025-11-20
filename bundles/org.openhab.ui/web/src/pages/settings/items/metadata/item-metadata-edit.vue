@@ -70,6 +70,7 @@
 <style lang="stylus">
 .metadata-code-editor.v-codemirror
   position absolute
+  height calc(100% - var(--f7-navbar-height) - var(--f7-toolbar-height))
 </style>
 
 <script>
