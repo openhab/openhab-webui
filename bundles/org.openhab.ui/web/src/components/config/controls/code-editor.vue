@@ -1,56 +1,62 @@
 <template>
-  <f7-icon v-if="readOnly"
-           f7="lock"
-           class="float-right margin"
-           style="opacity: 0.5; z-index: 4000; user-select: none;"
-           size="50"
-           color="gray"
-           :tooltip="readOnlyMsg" />
+  <f7-icon
+    v-if="readOnly"
+    f7="lock"
+    class="float-right margin"
+    style="opacity: 0.5; z-index: 4000; user-select: none;"
+    size="50"
+    color="gray"
+    :tooltip="readOnlyMsg" />
 
   <div class="code-editor">
-    <editor ref="editor"
-            :mode="editorMode"
-            :value="code"
-            :hint-context="hintContext"
-            :read-only="readOnly"
-            @input="onEditorInput" />
+    <editor
+      ref="editor"
+      :mode="editorMode"
+      :value="code"
+      :hint-context="hintContext"
+      :read-only="readOnly"
+      @input="onEditorInput" />
   </div>
 
   <f7-toolbar bottom>
     <f7-segmented>
-      <f7-button v-for="type in Object.keys(mediaTypes)"
-                 outline
-                 small
-                 :key="type"
-                 :active="uiOptionsStore.codeEditorType === type"
-                 @click="switchCodeType(type)">
+      <f7-button
+        v-for="type in Object.keys(mediaTypes)"
+        outline
+        small
+        :key="type"
+        :active="uiOptionsStore.codeEditorType === type"
+        @click="switchCodeType(type)">
         {{ type }}
       </f7-button>
     </f7-segmented>
-    <f7-button @click="copy"
-               icon-ios="f7:square_on_square"
-               icon-aurora="f7:square_on_square"
-               color="blue"
-               class="copy display-flex flex-direction-row">
+    <f7-button
+      @click="copy"
+      icon-ios="f7:square_on_square"
+      icon-aurora="f7:square_on_square"
+      color="blue"
+      class="copy display-flex flex-direction-row">
       &nbsp;Copy
     </f7-button>
-    <f7-button v-if="!readOnly"
-               @click="revertChanges"
-               :disabled="!dirty"
-               icon-ios="f7:arrow_2_circlepath"
-               icon-aurora="f7:arrow_2_circlepath"
-               color="red"
-               class="reset display-flex flex-direction-row">
+    <f7-button
+      v-if="!readOnly"
+      @click="revertChanges"
+      :disabled="!dirty"
+      icon-ios="f7:arrow_2_circlepath"
+      icon-aurora="f7:arrow_2_circlepath"
+      color="red"
+      class="reset display-flex flex-direction-row">
       &nbsp;Revert
     </f7-button>
   </f7-toolbar>
 
-  <f7-popup ref="errors"
-            id="code-errors"
-            close-on-escape
-            close-by-backdrop-click
-            @popup:open="initializeMovablePopup($refs.errors, $refs.navbar)"
-            @popup:closed="cleanupMovablePopup">
+  <f7-popup
+    ref="errors"
+    id="code-errors"
+    close-on-escape
+    close-by-backdrop-click
+    @popup:open="initializeMovablePopup($refs.errors, $refs.navbar)"
+    @popup:closed="cleanupMovablePopup">
     <f7-page>
       <f7-navbar title="Parse Errors" ref="navbar">
         <f7-nav-right>
@@ -202,9 +208,10 @@ export default {
      * Parse code back into an object
      *
      * Called from the parent component to update the object from code.
-     * The resulting object is emitted in an {update} event.
+     * The resulting object is emitted in a `parsed` event.
      *
      * @param {function} onSuccessCallback - Optional. A callback function to call when the code has been parsed
+     * @param {function} onFailureCallback - Optional. A callback function to call when parsing fails or no object is found
      */
     parseCode (onSuccessCallback, onFailureCallback) {
       const sourceMediaType = this.mediaTypes[this.uiOptionsStore.codeEditorType]
@@ -309,5 +316,4 @@ export default {
     }
   }
 }
-
 </script>
