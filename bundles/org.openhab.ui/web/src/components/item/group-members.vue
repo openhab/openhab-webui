@@ -17,7 +17,7 @@
                        :value="pickedMemberNames"
                        label="Members"
                        :editableOnly="true"
-                       :filterType="getCompatibleItemTypes()"
+                       :filterType="compatibleItemTypes"
                        :filterToggle="true"
                        @input="(members) => pickedMemberNames = members" />
         </f7-list-group>
@@ -69,6 +69,19 @@ export default {
     },
     sortedGroupMembers () {
       return this.groupItem.members.toSorted((a, b) => (a.label || a.name).localeCompare(b.label || b.name))
+    },
+    compatibleItemTypes () {
+      const groupType = this.groupItem.groupType
+      if (groupType) {
+        let compatibleItemTypes = []
+        compatibleItemTypes.push(groupType)
+        if (groupType.startsWith('Number')) { compatibleItemTypes.push('Switch') }
+        if (groupType === 'Color') { compatibleItemTypes.push('Switch', 'Dimmer') }
+        if (groupType === 'Dimmer') { compatibleItemTypes.push('Switch') }
+        return compatibleItemTypes
+      } else {
+        return null
+      }
     }
   },
   methods: {
@@ -118,19 +131,6 @@ export default {
             })
         }
       )
-    },
-    getCompatibleItemTypes () {
-      const groupType = this.groupItem.groupType
-      if (groupType) {
-        let compatibleItemTypes = []
-        compatibleItemTypes.push(groupType)
-        if (groupType.startsWith('Number')) { compatibleItemTypes.push('Switch') }
-        if (groupType === 'Color') { compatibleItemTypes.push('Switch', 'Dimmer') }
-        if (groupType === 'Dimmer') { compatibleItemTypes.push('Switch') }
-        return compatibleItemTypes
-      } else {
-        return null
-      }
     }
   }
 }
