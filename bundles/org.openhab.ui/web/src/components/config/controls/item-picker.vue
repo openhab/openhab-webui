@@ -120,7 +120,7 @@ export default {
         staticDataOnly: 'true'
       })
       if (this.filterTag?.length) {
-        params.set('tags', this.filterTag.join(','));
+        params.set('tags', this.filterTag.join(','))
       }
       this.$oh.api.get(`/rest/items?${params}`).then((items) => {
         this.sortAndFilterItems(items)
