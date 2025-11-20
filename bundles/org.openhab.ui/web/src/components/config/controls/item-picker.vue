@@ -116,11 +116,13 @@ export default {
     this.smartSelectParams.closeOnSelect = !(this.multiple)
     if (this.setValueText) this.smartSelectParams.setValueText = this.setValueText
     if (!this.items || !this.items.length) {
-      let url = '/rest/items?staticDataOnly=true'
-      if (this.filterTag) {
-        url = url + '&tags=' + this.filterTag.join('%2C')
+      const params = new URLSearchParams({
+        staticDataOnly: 'true'
+      })
+      if (this.filterTag?.length) {
+        params.set('tags', this.filterTag.join(','));
       }
-      this.$oh.api.get(url).then((items) => {
+      this.$oh.api.get(`/rest/items?${params}`).then((items) => {
         this.sortAndFilterItems(items)
       })
     } else {
