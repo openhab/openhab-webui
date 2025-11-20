@@ -85,7 +85,6 @@
 </style>
 
 <script>
-import { nextTick } from 'vue'
 import { f7 } from 'framework7-vue'
 import ModelPickerPopup from '@/components/model/model-picker-popup.vue'
 
