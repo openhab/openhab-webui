@@ -297,7 +297,7 @@ export default {
       let compatibleItemTypes = []
       if (this.channel.itemType) {
         compatibleItemTypes.push(this.channel.itemType)
-        if (this.channel.itemType.startsWith('Number')) { compatibleItemTypes.push('Number', 'Switch') }
+        if (this.channel.itemType.startsWith('Number')) { compatibleItemTypes.push('Switch') }
         if (this.channel.itemType === 'Color') { compatibleItemTypes.push('Switch', 'Dimmer') }
         if (this.channel.itemType === 'Dimmer') { compatibleItemTypes.push('Switch') }
       }
