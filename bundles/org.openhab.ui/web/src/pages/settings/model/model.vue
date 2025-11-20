@@ -7,7 +7,7 @@
                       back-link="Settings"
                       back-link-url="/settings/"
                       :f7router />
-      <f7-subnavbar :inner="false" v-show="initSearchbar" style="height: var(--f7-searchbar-height)">
+      <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
           v-if="initSearchbar"
           ref="searchbar"
