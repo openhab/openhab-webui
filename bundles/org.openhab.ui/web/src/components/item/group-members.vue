@@ -17,6 +17,8 @@
                        :value="pickedMemberNames"
                        label="Members"
                        :editableOnly="true"
+                       :filterType="getCompatibleItemTypes()"
+                       :filterToggle="true"
                        @input="(members) => pickedMemberNames = members" />
         </f7-list-group>
       </f7-list>
@@ -116,6 +118,19 @@ export default {
             })
         }
       )
+    },
+    getCompatibleItemTypes () {
+      const groupType = this.groupItem.groupType
+      if (groupType) {
+        let compatibleItemTypes = []
+        compatibleItemTypes.push(groupType)
+        if (groupType.startsWith('Number')) { compatibleItemTypes.push('Switch') }
+        if (groupType === 'Color') { compatibleItemTypes.push('Switch', 'Dimmer') }
+        if (groupType === 'Dimmer') { compatibleItemTypes.push('Switch') }
+        return compatibleItemTypes
+      } else {
+        return null
+      }
     }
   }
 }

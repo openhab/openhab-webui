@@ -153,7 +153,8 @@
                      :items="items"
                      @input="(value) => this.item.groupNames = value"
                      :multiple="true"
-                     filterType="Group"
+                     :filterGroupType="getCompatibleGroupTypes()"
+                     :filterToggle="true"
                      :set-value-text="false" />
       </f7-list-group>
     </f7-list>
@@ -369,6 +370,17 @@ export default {
         inputElement.dispatchEvent(new Event('input'))
       }
       this.item.label = event.target.value
+    },
+    getCompatibleGroupTypes () {
+      if (!this.itemType) return
+      let compatibleGroupTypes = []
+      compatibleGroupTypes.push(this.item.type)
+      if (this.itemType === 'Number') {
+        compatibleGroupTypes.push('Switch')
+      }
+      if (this.itemType === 'Color') { compatibleGroupTypes.push('Switch', 'Dimmer') }
+      if (this.itemType === 'Dimmer') { compatibleGroupTypes.push('Switch') }
+      return compatibleGroupTypes
     }
   },
   mounted () {

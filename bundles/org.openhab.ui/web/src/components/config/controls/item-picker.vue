@@ -200,6 +200,8 @@ export default {
     },
     filterGroupItems (items, filterGroupType) {
       let tempItems = []
+      // Always include groups without groupType
+      tempItems.push(...items.filter((i) => i.type === 'Group' && !i.groupType))
       filterGroupType.forEach((f) => {
         tempItems.push(...items.filter((i) => {
           if (i.type !== 'Group') return false
