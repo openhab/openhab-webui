@@ -71,6 +71,14 @@ html
     padding-top 0
     padding-bottom 0
 
+/* Fixes for smart select popups with searchbar */
+.popup.smart-select-popup.modal-in
+  .page-content
+    /* Fix scrollbar hidden behind searchbar */
+    padding-top 0
+    margin-top calc(var(--f7-page-navbar-offset, 0px) + var(--f7-page-toolbar-top-offset, 0px) + var(--f7-page-subnavbar-offset, 0px) + var(--f7-page-searchbar-offset, 0px) + var(--f7-page-content-extra-padding-top, 0px))
+    height calc(100% - var(--f7-page-navbar-offset, 0px) - var(--f7-page-toolbar-top-offset, 0px) - var(--f7-page-subnavbar-offset, 0px) - var(--f7-page-searchbar-offset, 0px) - var(--f7-page-content-extra-padding-top, 0px))
+
 /* Adjustments for iOS & Material Design themes */
 .ios
 .md
