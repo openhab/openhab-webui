@@ -17,7 +17,7 @@
                    icon-f7="lock_fill"
                    tooltip="This Item is not editable through the UI"
                    href="edit">
-            Details
+            {{ theme.md ? '' : 'View' }}
           </f7-link>
         </template>
         <template #after>

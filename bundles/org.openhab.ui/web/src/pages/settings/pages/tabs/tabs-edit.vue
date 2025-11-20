@@ -90,11 +90,9 @@
 
 <style lang="stylus">
 .tabs-editor
-  .page-code-editor.vue-codemirror
-    display block
-    top calc(var(--f7-navbar-height) + var(--f7-tabbar-height))
-    height calc(100% - 2*var(--f7-navbar-height))
-    width 100%
+  .page-code-editor.v-codemirror
+    position absolute
+    height calc(100% - var(--f7-navbar-height) - var(--f7-toolbar-height))
   .tabs-list
     .item-link
       overflow inherit

@@ -36,11 +36,9 @@
 
 <style lang="stylus">
 .widgetcode-popup
-  .page-code-editor.vue-codemirror
-    display block
-    top calc(var(--f7-navbar-height))
+  .page-code-editor.v-codemirror
+    position absolute
     height calc(100% - var(--f7-navbar-height))
-    width 100%
   .yaml-message
     display block
     position absolute
