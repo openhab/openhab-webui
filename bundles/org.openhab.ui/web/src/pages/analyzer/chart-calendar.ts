@@ -1,8 +1,8 @@
 import { renderVisualMap } from './analyzer-helpers'
 
-import { SeriesType, type ChartPage, type CoordSettings, type CoordSystem, type CoordUIParams, type SeriesOptions, type VisualMap, type CoordSettingsBase } from './types'
-import type { Item } from '@/types/openhab'
-import { AggregationFunction, ChartType, OhChartPage, Orient, OhChartVisualmap, OhCalendarSeries, OhChartTooltip, OhCalendarAxis } from '@/types/components'
+import { SeriesType, type CoordSettings, type CoordSystem, type CoordUIParams, type SeriesOptions, type VisualMap, type CoordSettingsBase } from './types'
+import type { Item, Page } from '@/types/openhab'
+import { AggregationFunction, ChartType, OhChartPage, Orient, OhChartVisualmap, OhCalendarSeries, OhChartTooltip, OhCalendarAxis } from '@/types/components/widgets'
 
 export interface CalendarCoordSettings extends CoordSettingsBase {
   orientation: Orient
@@ -58,15 +58,16 @@ const calendarCoordSystem : CoordSystem = {
 
     return options
   },
-  getChartPage (coordSettings : CoordSettings, allSeriesOptions : Record<string, SeriesOptions>, items: Item[]) : ChartPage {
+  getChartPage (coordSettings : CoordSettings, allSeriesOptions : Record<string, SeriesOptions>, items: Item[]) : Page {
     const calendarCoordSettings = coordSettings as CalendarCoordSettings
 
-    let page : ChartPage = {} as ChartPage
+    let page : Page = {
+      component: 'oh-chart-page',
+      config: {
+        chartType: coordSettings.chartType
+      } satisfies OhChartPage.Config
+    }
 
-    page.component = 'oh-chart-page'
-    page.config = {
-      chartType: coordSettings.chartType
-    } satisfies OhChartPage.Config
     page.slots = {
       xAxis: [],
       yAxis: [],
