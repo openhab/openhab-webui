@@ -111,6 +111,7 @@ export default {
     channelId: String,
     channel: Object,
     thing: Object,
+    thingType: Object,
     opened: Boolean,
     extensible: Boolean,
     context: Object,
@@ -161,6 +162,7 @@ export default {
       }, {
         props: {
           thing: this.thing,
+          channelGroup: this.channelId.includes('#') ? this.thingType.channelGroups.find((cg) => cg.id === this.channelId.split('#', 1)[0]) : null,
           channel: this.thing.channels.find((c) => c.id === this.channelId),
           channelType: this.channelType
         }
