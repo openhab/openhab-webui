@@ -12,6 +12,8 @@ export interface ItemState {
   type: string
 }
 
+const PendingItemsProcessingInterval = 100
+
 export const useStatesStore = defineStore('states', () => {
   const itemStates = ref<TrackedItems>(new Map())
   const pendingNewItems = new Set<string>()
@@ -56,7 +58,7 @@ export const useStatesStore = defineStore('states', () => {
         if (processingIntervalId === null) {
           processingIntervalId = setInterval(() => {
             processPendingItems()
-          }, 100)
+          }, PendingItemsProcessingInterval)
         }
       }
       return itemStates.value.get(itemName)
@@ -153,6 +155,14 @@ export const useStatesStore = defineStore('states', () => {
     trackingList.value.push(itemName)
   }
 
+  /**
+   * Processes pending to be added items to the tracking list.
+   * This function is invoked by an interval to process pending Items in batches.
+   *
+   * When an Item state of an item is requested and not available, the Item needs to be added to the tracking list.
+   * This is done in batches because every modification of the tracking list triggers a lot of reactivity,
+   * causing major performance issues when many items are requested in a short time frame.
+   */
   function processPendingItems () {
     if (pendingNewItems.size === 0) {
       if (processingIntervalId !== null) {
@@ -181,11 +191,11 @@ export const useStatesStore = defineStore('states', () => {
     trackingList.value = []
     trackerConnectionId = null
     trackerEventSource = null
-    // Clean up processing interval
     if (processingIntervalId !== null) {
       clearInterval(processingIntervalId)
       processingIntervalId = null
     }
+    pendingNewItems.clear()
   }
 
   function updateTrackingList () {
@@ -228,7 +238,7 @@ export const useStatesStore = defineStore('states', () => {
       if (processingIntervalId === null) {
         processingIntervalId = setInterval(() => {
           processPendingItems()
-        }, 100)
+        }, PendingItemsProcessingInterval)
       }
     }
 
