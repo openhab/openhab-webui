@@ -1,14 +1,12 @@
 import {
-  CircleShape,
-  LineCap,
-  HandleShape,
+  Modules,
   Action,
   ActionHttpMethod,
   ActionPageTransition,
   ActionAnalyzerChartType,
   ActionAnalyzerCoordSystem,
   ActionAnalyzerAggregation
-} from '../common.ts'
+} from '../../common.ts'
 
 export interface Config {
   header?: string
@@ -19,30 +17,7 @@ export interface Config {
   color?: string
   on?: string
   item?: string
-  min?: number
-  max?: number
-  step?: number
-  offset?: number
-  ignoreDisplayState?: boolean
-  releaseOnly?: boolean
-  commandInterval?: number
-  delayStateDisplay?: number
-  disabled?: boolean
-  size?: number
-  responsive?: boolean
-  strokeWidth?: number
-  startAngle?: number
-  endAngle?: number
-  circleShape?: CircleShape
-  lineCap?: LineCap
-  dottedPath?: string
-  borderWidth?: number
-  handleSize?: string
-  handleShape?: HandleShape
-  borderColor?: string
-  pathColor?: string
-  rangeColor?: string
-  tooltipColor?: string
+  modules?: Modules
   action?: Action
   actionUrl?: string
   actionUrlSameWindow?: boolean
@@ -73,9 +48,7 @@ export interface Config {
 }
 
 export {
-  CircleShape,
-  LineCap,
-  HandleShape,
+  Modules,
   Action,
   ActionHttpMethod,
   ActionPageTransition,

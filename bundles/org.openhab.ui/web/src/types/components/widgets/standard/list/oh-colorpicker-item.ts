@@ -1,6 +1,6 @@
 import {
   Modules
-} from '../common.ts'
+} from '../../common.ts'
 
 export interface Config {
   title?: string

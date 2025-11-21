@@ -1,12 +1,13 @@
 import {
+  DirIconsStyle,
+  StopIconStyle,
   Action,
   ActionHttpMethod,
   ActionPageTransition,
   ActionAnalyzerChartType,
   ActionAnalyzerCoordSystem,
-  ActionAnalyzerAggregation,
-  TrendGradientDirection
-} from '../common.ts'
+  ActionAnalyzerAggregation
+} from '../../common.ts'
 
 export interface Config {
   header?: string
@@ -17,7 +18,9 @@ export interface Config {
   color?: string
   on?: string
   item?: string
-  label?: string
+  dirIconsStyle?: DirIconsStyle
+  stopIconStyle?: StopIconStyle
+  stateInCenter?: boolean
   action?: Action
   actionUrl?: string
   actionUrlSameWindow?: boolean
@@ -45,20 +48,15 @@ export interface Config {
   actionVariable?: string
   actionVariableValue?: string
   actionVariableKey?: string
-  trendItem?: string
-  trendStrokeWidth?: string
-  trendWidth?: string
-  trendGradient?: string
-  trendGradientDirection?: TrendGradientDirection
-  trendSampling?: number
 }
 
 export {
+  DirIconsStyle,
+  StopIconStyle,
   Action,
   ActionHttpMethod,
   ActionPageTransition,
   ActionAnalyzerChartType,
   ActionAnalyzerCoordSystem,
-  ActionAnalyzerAggregation,
-  TrendGradientDirection
+  ActionAnalyzerAggregation
 }

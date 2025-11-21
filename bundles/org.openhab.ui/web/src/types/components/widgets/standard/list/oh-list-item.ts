@@ -5,7 +5,7 @@ import {
   ActionAnalyzerChartType,
   ActionAnalyzerCoordSystem,
   ActionAnalyzerAggregation
-} from '../common.ts'
+} from '../../common.ts'
 
 export interface Config {
   title?: string
@@ -41,7 +41,10 @@ export interface Config {
   actionVariable?: string
   actionVariableValue?: string
   actionVariableKey?: string
-  item?: string
+  badge?: string
+  badgeColor?: string
+  listButton?: boolean
+  listButtonColor?: string
 }
 
 export {

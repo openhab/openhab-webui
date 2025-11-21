@@ -1,7 +1,7 @@
 import {
   DirIconsStyle,
   StopIconStyle
-} from '../common.ts'
+} from '../../common.ts'
 
 export interface Config {
   title?: string

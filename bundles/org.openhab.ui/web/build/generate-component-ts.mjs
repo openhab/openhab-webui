@@ -1,6 +1,6 @@
 import fs from 'fs'
 
-const outDir = './src/types/components'
+const outDir = './src/types/components/widgets'
 
 import * as SystemWidgets from '../src/assets/definitions/widgets/system/index.js'
 import * as StdCardWidgets from '../src/assets/definitions/widgets/standard/cards.js'
@@ -35,13 +35,13 @@ const widgetLibraries = {
 const widgetDirectories = {
   SystemWidgets: 'system',
   StdCardWidgets: 'standard',
-  StdListItemWidgets: 'standard',
-  StdCellWidgets: 'standard',
+  StdListItemWidgets: 'standard/list',
+  StdCellWidgets: 'standard/cell',
   LayoutWidgets: 'layout',
   PlanWidgets: 'plan',
   MapWidgets: 'map',
   ChartWidgets: 'chart',
-  HomePageWidgets: 'home'
+  HomePageWidgets: 'standard'
 }
 
 function kebabToPascalCase(kebabCaseString) {
@@ -238,13 +238,14 @@ function generateComponentTS(mapCommonOptions) {
       if (commonComponents.length > 0) {
         preamble += 'import {\n'
         preamble += commonComponents.map(name => `  ${name}`).join(',\n')
-        preamble += `\n} from '../common.ts'\n\n`
+        const depth = widgetDir.split('/').length
+        preamble += `\n} from '${'../'.repeat(depth)}common.ts'\n\n`
 
         postamble += '\nexport {\n'
         postamble += commonComponents.map(name => `  ${name}`).join(',\n')
         postamble += '\n}\n'
       }
-      
+
       content = preamble + content + postamble
 
       if(configWidget['_All'] && typeof configWidget['_All'].modifier === 'function') {

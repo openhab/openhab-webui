@@ -6,7 +6,7 @@ import {
   ActionAnalyzerCoordSystem,
   ActionAnalyzerAggregation,
   TrendGradientDirection
-} from '../common.ts'
+} from '../../common.ts'
 
 export interface Config {
   header?: string

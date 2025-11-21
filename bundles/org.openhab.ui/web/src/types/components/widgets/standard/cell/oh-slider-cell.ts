@@ -1,13 +1,11 @@
 import {
-  DirIconsStyle,
-  StopIconStyle,
   Action,
   ActionHttpMethod,
   ActionPageTransition,
   ActionAnalyzerChartType,
   ActionAnalyzerCoordSystem,
   ActionAnalyzerAggregation
-} from '../common.ts'
+} from '../../common.ts'
 
 export interface Config {
   header?: string
@@ -18,9 +16,19 @@ export interface Config {
   color?: string
   on?: string
   item?: string
-  dirIconsStyle?: DirIconsStyle
-  stopIconStyle?: StopIconStyle
-  stateInCenter?: boolean
+  min?: number
+  max?: number
+  step?: number
+  vertical?: boolean
+  label?: boolean
+  scale?: boolean
+  scaleSteps?: number
+  scaleSubSteps?: number
+  unit?: string
+  ignoreDisplayState?: boolean
+  releaseOnly?: boolean
+  commandInterval?: number
+  delayStateDisplay?: number
   action?: Action
   actionUrl?: string
   actionUrlSameWindow?: boolean
@@ -51,8 +59,6 @@ export interface Config {
 }
 
 export {
-  DirIconsStyle,
-  StopIconStyle,
   Action,
   ActionHttpMethod,
   ActionPageTransition,

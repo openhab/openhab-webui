@@ -4,16 +4,20 @@ import {
   ActionPageTransition,
   ActionAnalyzerChartType,
   ActionAnalyzerCoordSystem,
-  ActionAnalyzerAggregation
-} from '../common.ts'
+  ActionAnalyzerAggregation,
+  TrendGradientDirection
+} from '../../common.ts'
 
 export interface Config {
+  header?: string
   title?: string
   subtitle?: string
-  after?: string
+  footer?: string
   icon?: string
-  iconColor?: string
-  iconUseState?: boolean
+  color?: string
+  on?: string
+  item?: string
+  label?: string
   action?: Action
   actionUrl?: string
   actionUrlSameWindow?: boolean
@@ -41,10 +45,12 @@ export interface Config {
   actionVariable?: string
   actionVariableValue?: string
   actionVariableKey?: string
-  badge?: string
-  badgeColor?: string
-  listButton?: boolean
-  listButtonColor?: string
+  trendItem?: string
+  trendStrokeWidth?: string
+  trendWidth?: string
+  trendGradient?: string
+  trendGradientDirection?: TrendGradientDirection
+  trendSampling?: number
 }
 
 export {
@@ -53,5 +59,6 @@ export {
   ActionPageTransition,
   ActionAnalyzerChartType,
   ActionAnalyzerCoordSystem,
-  ActionAnalyzerAggregation
+  ActionAnalyzerAggregation,
+  TrendGradientDirection
 }

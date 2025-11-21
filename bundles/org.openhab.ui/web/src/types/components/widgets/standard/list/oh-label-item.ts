@@ -1,23 +1,19 @@
 import {
-  Modules,
   Action,
   ActionHttpMethod,
   ActionPageTransition,
   ActionAnalyzerChartType,
   ActionAnalyzerCoordSystem,
   ActionAnalyzerAggregation
-} from '../common.ts'
+} from '../../common.ts'
 
 export interface Config {
-  header?: string
   title?: string
   subtitle?: string
-  footer?: string
+  after?: string
   icon?: string
-  color?: string
-  on?: string
-  item?: string
-  modules?: Modules
+  iconColor?: string
+  iconUseState?: boolean
   action?: Action
   actionUrl?: string
   actionUrlSameWindow?: boolean
@@ -45,10 +41,10 @@ export interface Config {
   actionVariable?: string
   actionVariableValue?: string
   actionVariableKey?: string
+  item?: string
 }
 
 export {
-  Modules,
   Action,
   ActionHttpMethod,
   ActionPageTransition,
