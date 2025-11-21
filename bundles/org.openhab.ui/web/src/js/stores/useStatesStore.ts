@@ -68,7 +68,6 @@ export const useStatesStore = defineStore('states', () => {
   }
 
   const trackedItems = ref<Record<string, ItemState>>(new Proxy({}, handler))
-  const items = ref<Array<string>>([])
   const trackingList = ref<Array<string>>([])
   const trackerConnectionId = ref<string | null>(null)
   const trackerEventSource = ref<EventSource | null>(null)
@@ -245,12 +244,7 @@ export const useStatesStore = defineStore('states', () => {
 
   return {
     trackedItems,
-    items,
-    trackingList,
     itemStates,
-    trackerConnectionId,
-    trackerEventSource,
-    pendingTrackingListUpdate,
     keepConnectionOpen,
     sseConnected,
     ready,
