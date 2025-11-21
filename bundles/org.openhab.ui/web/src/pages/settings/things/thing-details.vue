@@ -249,13 +249,15 @@
                               color="blue"
                               title="Add Points to Model"
                               @click="addToModel(false)" />
-              <f7-list-button class="searchbar-ignore"
+              <f7-list-button v-if="hasLinkedItems"
+                              class="searchbar-ignore"
                               color="red"
                               title="Unlink all Items"
                               @click="unlinkAll(false)" />
-              <f7-list-button class="searchbar-ignore"
+              <f7-list-button v-if="hasLinkedItems"
+                              class="searchbar-ignore"
                               color="red"
-                              title="Unlink all and Remove Items"
+                              title="Unlink and Remove all Items"
                               @click="unlinkAll(true)" />
             </f7-list>
           </f7-col>
@@ -441,6 +443,9 @@ export default {
       return {
         store: useStatesStore().trackedItems
       }
+    },
+    hasLinkedItems () {
+      return this.thing?.channels?.find((c) => c.linkedItems?.length)
     }
   },
   watch: {
