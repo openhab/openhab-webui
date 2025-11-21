@@ -12,59 +12,67 @@ export interface ItemState {
   type: string
 }
 
+const UndefinedItemState: ItemState = { state: '-', type: '-' } 
+
 const PendingItemsProcessingInterval = 100
+
+const INVALID_PROPS = new Set([
+  'getters',
+  'effect',
+  '_vm',
+  'toJSON',
+  '__v_isRef',
+  '__v_isReadonly',
+  '__v_skip',
+  '__v_isShallow',
+  '__v_raw',
+  '__v_isReactive'
+])
 
 export const useStatesStore = defineStore('states', () => {
   const itemStates = ref<TrackedItems>(new Map())
   const pendingNewItems = new Set<string>()
   let processingIntervalId: number | null = null
 
+
+  function ensureItemTracking(itemName: string): ItemState {
+    if (itemName === 'undefined') return UndefinedItemState
+    
+    let itemState = itemStates.value.get(itemName)
+    if (!isItemTracked(itemName)) {
+      pendingNewItems.add(itemName)
+      
+      if (!itemState) {
+        itemState = UndefinedItemState
+        setItemState(itemName, itemState)
+      }
+
+      // Start processing interval if not already running
+      if (processingIntervalId === null) {
+        processingIntervalId = setInterval(() => {
+          processPendingItems()
+        }, PendingItemsProcessingInterval)
+      }
+    }
+    
+    return itemState!
+  }
+
   /* global ProxyHandler:readonly */
-  const handler: ProxyHandler<object> = {
-    get (obj: object, prop: string | symbol): object | undefined {
-      if (prop === '_keys') return Object.keys(itemStates.value)
+  const handler: ProxyHandler<Record<string, ItemState>> = {
+    get (obj: Record<string, ItemState>, prop: string | symbol): ItemState {
+      if (prop === '_keys') return Object.keys(itemStates.value) as any
       if (prop === '__ob__') return (obj as any).__ob__
 
       // to avoid the Vue devtools requesting invalid items in development
-      if (
-        [
-          'getters',
-          'effect',
-          '_vm',
-          'toJSON',
-          '__v_isRef',
-          '__v_isReadonly',
-          '__v_skip',
-          '__v_isShallow',
-          '__v_raw',
-          '__v_isReactive'
-        ].indexOf(prop.toString()) >= 0
-      )
-        return {}
-      if (typeof prop !== 'string') return {}
+      if (INVALID_PROPS.has(prop.toString())) return {} as any
+      if (typeof prop !== 'string') return {} as any
 
       const itemName = prop
-      if (itemName === 'undefined') return { state: '-' }
-      if (!isItemTracked(itemName)) {
-        // Add to non-reactive pending Set
-        pendingNewItems.add(itemName.toString())
-
-        // Return the previous state anyway even if it might be outdated (it will be refreshed quickly after)
-        if (!itemStates.value.has(itemName)) {
-          setItemState(itemName, { state: '-', type: '-' })
-        }
-
-        // Start processing interval if not already running
-        if (processingIntervalId === null) {
-          processingIntervalId = setInterval(() => {
-            processPendingItems()
-          }, PendingItemsProcessingInterval)
-        }
-      }
-      return itemStates.value.get(itemName)
+      return ensureItemTracking(itemName)
     },
-    set (_target: object, prop: string | symbol, _value: any, _receiver: any): boolean {
-      setItemState(prop.toString(), { state: _value, type: '-' })
+    set (_target: Record<string, ItemState>, prop: string | symbol, value: any, _receiver: Record<string, ItemState>): boolean {
+      setItemState(prop.toString(), { state: value, type: '-' })
       return true
     }
   }
@@ -224,25 +232,8 @@ export const useStatesStore = defineStore('states', () => {
     })
   }
 
-  function getTrackedItem (itemName: string): object | undefined {
-    if (itemName === 'undefined') return { state: '-' }
-    if (!isItemTracked(itemName)) {
-      // Add to non-reactive pending Set
-      pendingNewItems.add(itemName)
-
-      if (!itemStates.value.has(itemName)) {
-        setItemState(itemName, { state: '-', type: '-' })
-      }
-
-      // Start processing interval if not already running
-      if (processingIntervalId === null) {
-        processingIntervalId = setInterval(() => {
-          processPendingItems()
-        }, PendingItemsProcessingInterval)
-      }
-    }
-
-    return itemStates.value.get(itemName)
+  function getTrackedItem (itemName: string): ItemState {
+    return ensureItemTracking(itemName)
   }
 
   function setItemState (itemName: string, itemState: ItemState) {
