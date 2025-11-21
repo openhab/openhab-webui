@@ -20,9 +20,9 @@
                   :parameters="parameters"
                   :configuration="configuration"
                   :title="configDescription.title" />
-    <f7-list-item v-else :title="configDescription.label" :after="value !== undefined && value !== null ? value.toString() : 'N/A'" />
+    <f7-list-item v-else :after="value !== undefined && value !== null ? value.toString() : 'N/A'" />
     <template #after-list>
-      <f7-block-footer class="param-description">
+      <f7-block-footer class="config-parameter-description">
         <div v-if="status" class="param-status-info">
           <f7-chip v-if="status.type !== 'INFORMATION'"
                    :color="status.type === 'WARNING' ? 'orange' : status.type === 'ERROR' ? 'red' : 'gray'"
@@ -31,11 +31,27 @@
           <span v-if="status.statusCode">Status Code: &nbsp;{{ status.statusCode }}&nbsp;&nbsp;</span>
           <span v-if="status.message">{{ status.message }}</span>
         </div>
-        <small v-html="`${configDescription.required ? '<strong>Required</strong>&nbsp;' : ''}${description || ''}`" />
+        <small v-html="`${configDescription.required ? '<strong>Required</strong>&nbsp;' : ''}${description || (showNonDefaultBadge ? ' ' : '')}`" />
+        <f7-badge v-if="showNonDefaultBadge"
+                  style="margin-left:2px"
+                  color="blue"
+                  class="count-badge"
+                  tooltip="Non-default parameter">
+          1
+        </f7-badge>
       </f7-block-footer>
     </template>
   </f7-list>
 </template>
+
+<style lang="stylus">
+.config-parameter .config-parameter-description
+  padding-left calc(var(--f7-block-padding-horizontal) + var(--f7-safe-area-left))
+  padding-right calc(var(--f7-block-padding-horizontal) + var(--f7-safe-area-right))
+  display flex
+  justify-content space-between
+
+</style>
 
 <script>
 import { f7 } from 'framework7-vue'
@@ -69,7 +85,8 @@ export default {
     parameters: Array,
     configuration: Object,
     readOnly: Boolean,
-    status: Array
+    status: Array,
+    showNonDefaultBadge: Boolean
   },
   emits: ['update'],
   setup () {
