@@ -56,7 +56,7 @@ export const useStatesStore = defineStore('states', () => {
         if (processingIntervalId === null) {
           processingIntervalId = setInterval(() => {
             processPendingItems()
-          }, 200)
+          }, 100)
         }
       }
       return itemStates.value.get(itemName)
@@ -228,7 +228,7 @@ export const useStatesStore = defineStore('states', () => {
       if (processingIntervalId === null) {
         processingIntervalId = setInterval(() => {
           processPendingItems()
-        }, 200)
+        }, 100)
       }
     }
 
