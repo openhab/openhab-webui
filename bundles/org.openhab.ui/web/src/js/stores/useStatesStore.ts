@@ -14,6 +14,8 @@ export interface ItemState {
 
 export const useStatesStore = defineStore('states', () => {
   const itemStates = ref<TrackedItems>(new Map())
+  const pendingNewItems: string[] = []
+  let processingIntervalId: number | null = null
 
   /* global ProxyHandler:readonly */
   const handler: ProxyHandler<object> = {
@@ -42,14 +44,20 @@ export const useStatesStore = defineStore('states', () => {
       const itemName = prop
       if (itemName === 'undefined') return { state: '-' }
       if (!isItemTracked(itemName)) {
-        addToTrackingList(itemName.toString())
+        // Add to plain (non-reactive) pending array
+        pendingNewItems.push(itemName.toString())
 
         // Return the previous state anyway even if it might be outdated (it will be refreshed quickly after)
         if (!itemStates.value.has(itemName)) {
           setItemState(itemName, { state: '-', type: '-' })
         }
 
-        updateTrackingList()
+        // Start processing interval if not already running
+        if (processingIntervalId === null) {
+          processingIntervalId = setInterval(() => {
+            processPendingItems()
+          }, 200)
+        }
       }
       return itemStates.value.get(itemName)
     },
@@ -146,6 +154,28 @@ export const useStatesStore = defineStore('states', () => {
     trackingList.value.push(itemName)
   }
 
+  function processPendingItems () {
+    if (pendingNewItems.length === 0) {
+      // Stop the interval if no pending items
+      if (processingIntervalId !== null) {
+        clearInterval(processingIntervalId)
+        processingIntervalId = null
+      }
+      return
+    }
+
+    // Process all pending items in batch
+    for (const itemName of pendingNewItems) {
+      if (!isItemTracked(itemName)) addToTrackingList(itemName)
+    }
+
+    // Clear the plain array
+    pendingNewItems.length = 0
+
+    // Update the tracking list
+    updateTrackingList()
+  }
+
   function clearTrackingList () {
     trackingList.value = []
   }
@@ -154,6 +184,11 @@ export const useStatesStore = defineStore('states', () => {
     trackingList.value = []
     trackerConnectionId.value = null
     trackerEventSource.value = null
+    // Clean up processing interval
+    if (processingIntervalId !== null) {
+      clearInterval(processingIntervalId)
+      processingIntervalId = null
+    }
   }
 
   function updateTrackingList () {
@@ -185,13 +220,19 @@ export const useStatesStore = defineStore('states', () => {
   function getTrackedItem (itemName: string): object | undefined {
     if (itemName === 'undefined') return { state: '-' }
     if (!isItemTracked(itemName)) {
-      addToTrackingList(itemName)
+      // Add to plain (non-reactive) pending array
+      pendingNewItems.push(itemName)
 
       if (!itemStates.value.has(itemName)) {
         setItemState(itemName, { state: '-', type: '-' })
       }
 
-      updateTrackingList()
+      // Start processing interval if not already running
+      if (processingIntervalId === null) {
+        processingIntervalId = setInterval(() => {
+          processPendingItems()
+        }, 200)
+      }
     }
 
     return itemStates.value.get(itemName)
