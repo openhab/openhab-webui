@@ -12,7 +12,7 @@ export interface ItemState {
   type: string
 }
 
-const UndefinedItemState: ItemState = { state: '-', type: '-' } 
+const UndefinedItemState: ItemState = { state: '-', type: '-' }
 
 const PendingItemsProcessingInterval = 100
 
@@ -35,13 +35,13 @@ export const useStatesStore = defineStore('states', () => {
   let processingIntervalId: number | null = null
 
 
-  function ensureItemTracking(itemName: string): ItemState {
+  function ensureItemTracking (itemName: string): ItemState {
     if (itemName === 'undefined') return UndefinedItemState
-    
+
     let itemState = itemStates.value.get(itemName)
     if (!isItemTracked(itemName)) {
       pendingNewItems.add(itemName)
-      
+
       if (!itemState) {
         itemState = UndefinedItemState
         setItemState(itemName, itemState)
@@ -54,7 +54,7 @@ export const useStatesStore = defineStore('states', () => {
         }, PendingItemsProcessingInterval)
       }
     }
-    
+
     return itemState!
   }
 
