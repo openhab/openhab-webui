@@ -94,9 +94,6 @@
                           <th v-if="uiParams.isAggregate" class="label-cell">
                             {{ t('analyzer.series.table.header.aggregation') }}
                           </th>
-                          <th v-else class="label-cell">
-                            {{ t('analyzer.series.table.header.silent') }}
-                          </th>
                         </tr>
                       </thead>
                       <tbody>
@@ -143,7 +140,6 @@
                               {{ (options as AggregateSeriesOptions).aggregation ? t('analyzer.aggregations.' + (options as AggregateSeriesOptions).aggregation) : 'none' }}
                             </f7-link>
                           </td>
-                          <td v-else class="label-cell" />
                         </tr>
                       </tbody>
                     </table>
@@ -349,6 +345,18 @@
 </style>
 
 <script lang="ts">
+/*
+  Analyzer page for ad-hoc charting and data analysis.
+
+  There are separate chart-<coord-system>.ts files that implement the methods devfined in tthe CoordSystem interface.
+  These include methods to init the coord system settings, init the axes, init a series for an item on that coorsystem
+  and finally, generate the chart page.
+
+  To support what should be exposed in the UI, there are UIParams for both the coord system and for each series.
+ */
+
+
+
 import { nextTick, defineAsyncComponent } from 'vue'
 import { getDevice } from 'framework7'
 import { f7, theme } from 'framework7-vue'
@@ -367,7 +375,7 @@ import api from '@/js/openhab/api'
 import { useI18n } from 'vue-i18n'
 import { loadLocaleMessages } from '@/js/i18n'
 import { type CoordSettings, Marker, ValueAxisSplitOptions, type CoordSystem, type SeriesOptions, type VisualMap, type SeriesType, type ValueAxisOptions } from './types'
-import { AggregationFunction, ChartType, Orient, OhChartVisualmap } from '@/types/components'
+import { AggregationFunction, ChartType, Orient, OhChartVisualmap } from '@/types/components/widgets'
 import type { TimeCoordSettings, TimeSeriesOptions } from './chart-time'
 import type { AggregateCoordSettings, AggregateSeriesOptions } from './chart-aggregate'
 import type { CalendarCoordSettings, CalendarSeriesOptions } from './chart-calendar'

@@ -1,10 +1,10 @@
-import type { Item } from '@/types/openhab'
+import type { Item, UIComponent } from '@/types/openhab'
 import { Marker, type VisualMap } from './types'
 import type { AggregateCoordSettings } from './chart-aggregate'
 import type { TimeCoordSettings } from './chart-time'
-import { OhChartVisualmap, Orient, OhTimeSeries, OhAggregateSeries } from '@/types/components'
+import { OhChartVisualmap, Orient, OhTimeSeries, OhAggregateSeries } from '@/types/components/widgets'
 
-function parseUnit (item: Item) {
+function parseUnit (item: Item) : string {
   let unit =
     item.transformedState?.split(' ')[1] ??
     item.state?.split(' ')[1] ??
@@ -25,7 +25,7 @@ export function getYAxis (item : Item, coordSettings : TimeCoordSettings | Aggre
   }
 }
 
-export function renderVisualMap (visualMap: VisualMap) {
+export function renderVisualMap (visualMap: VisualMap) : UIComponent[] {
   const min = Number(visualMap.min)
   const max = Number(visualMap.max)
   return [
@@ -47,7 +47,7 @@ export function renderVisualMap (visualMap: VisualMap) {
   ]
 }
 
-export function renderValueAxis (a : any) {
+export function renderValueAxis (a : any) : UIComponent {
   return {
     component: 'oh-value-axis',
     config: {
@@ -65,6 +65,7 @@ export function renderValueAxis (a : any) {
 
 export function toPrimitiveMarkers (marker: Marker): Array<OhTimeSeries.Markers | OhAggregateSeries.Markers> {
   const markers : Array<OhTimeSeries.Markers>= []
+
   if (marker === Marker.all) markers.push(OhTimeSeries.Markers.min, OhTimeSeries.Markers.max, OhTimeSeries.Markers.avg)
   if (marker === Marker.min_max) markers.push(OhTimeSeries.Markers.min, OhTimeSeries.Markers.max)
   if (marker === Marker.avg) markers.push(OhTimeSeries.Markers.avg)

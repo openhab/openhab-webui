@@ -1,5 +1,5 @@
-import type { Item, Page, PageSlotComponent } from '@/types/openhab'
-import { ChartType, OhChartVisualmap } from '@/types/components'
+import type { Item, Page } from '@/types/openhab'
+import { ChartType, OhChartVisualmap } from '@/types/components/widgets'
 import type { TimeCoordSettings } from './chart-time'
 import type { AggregateCoordSettings } from './chart-aggregate'
 import type { CalendarCoordSettings } from './chart-calendar'
@@ -56,7 +56,7 @@ export interface CoordSystem {
     initCoordSystem: (settings?: CoordSettingsBase) => CoordSettings
     initAxes: (settings: CoordSettingsBase) => void
     initSeries: (item: Item, coordSettings: CoordSettings, seriesOptions: Partial<SeriesOptions>) => SeriesOptions
-    getChartPage: (coordSettings: CoordSettings, allSeriesOptions: Record<string, SeriesOptions>, items: Item[]) => ChartPage
+    getChartPage: (coordSettings: CoordSettings, allSeriesOptions: Record<string, SeriesOptions>, items: Item[]) => Page
 }
 
 export interface CoordUIParams {
@@ -80,18 +80,4 @@ export enum Marker {
     max = 'max',
     min_max = 'min-max',
     all = 'all'
-}
-
-export interface ChartPage extends Page {
-    slots: {
-        grid: PageSlotComponent[]
-        xAxis: PageSlotComponent[]
-        yAxis: PageSlotComponent[]
-        series: PageSlotComponent[]
-        tooltip: PageSlotComponent[]
-        legend: PageSlotComponent[]
-        dataZoom?: PageSlotComponent[]
-        calendar?: PageSlotComponent[]
-        visualMap?: PageSlotComponent[]
-    }
 }
