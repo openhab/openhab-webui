@@ -14,7 +14,7 @@ export interface ItemState {
 
 export const useStatesStore = defineStore('states', () => {
   const itemStates = ref<TrackedItems>(new Map())
-  const pendingNewItems: string[] = []
+  const pendingNewItems = new Set<string>()
   let processingIntervalId: number | null = null
 
   /* global ProxyHandler:readonly */
@@ -44,8 +44,8 @@ export const useStatesStore = defineStore('states', () => {
       const itemName = prop
       if (itemName === 'undefined') return { state: '-' }
       if (!isItemTracked(itemName)) {
-        // Add to plain (non-reactive) pending array
-        pendingNewItems.push(itemName.toString())
+        // Add to non-reactive pending Set
+        pendingNewItems.add(itemName.toString())
 
         // Return the previous state anyway even if it might be outdated (it will be refreshed quickly after)
         if (!itemStates.value.has(itemName)) {
@@ -154,7 +154,7 @@ export const useStatesStore = defineStore('states', () => {
   }
 
   function processPendingItems () {
-    if (pendingNewItems.length === 0) {
+    if (pendingNewItems.size === 0) {
       // Stop the interval if no pending items
       if (processingIntervalId !== null) {
         clearInterval(processingIntervalId)
@@ -164,12 +164,14 @@ export const useStatesStore = defineStore('states', () => {
     }
 
     // Process all pending items in batch
+    // use Set to allow O(1) lookup for tracking list
+    const trackedItems = new Set(trackingList.value)
     for (const itemName of pendingNewItems) {
-      if (!isItemTracked(itemName)) addToTrackingList(itemName)
+      if (!trackedItems.has(itemName)) addToTrackingList(itemName)
     }
 
-    // Clear the plain array
-    pendingNewItems.length = 0
+    // Clear pending items
+    pendingNewItems.clear()
 
     // Update the tracking list
     updateTrackingList()
@@ -219,8 +221,8 @@ export const useStatesStore = defineStore('states', () => {
   function getTrackedItem (itemName: string): object | undefined {
     if (itemName === 'undefined') return { state: '-' }
     if (!isItemTracked(itemName)) {
-      // Add to plain (non-reactive) pending array
-      pendingNewItems.push(itemName)
+      // Add to non-reactive pending Set
+      pendingNewItems.add(itemName)
 
       if (!itemStates.value.has(itemName)) {
         setItemState(itemName, { state: '-', type: '-' })
