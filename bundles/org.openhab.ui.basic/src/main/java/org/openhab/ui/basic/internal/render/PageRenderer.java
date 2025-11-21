@@ -13,21 +13,17 @@
 package org.openhab.ui.basic.internal.render;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
-import org.eclipse.emf.common.util.ECollections;
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.core.i18n.LocaleProvider;
 import org.openhab.core.i18n.TranslationProvider;
-import org.openhab.core.model.sitemap.SitemapProvider;
-import org.openhab.core.model.sitemap.sitemap.Frame;
-import org.openhab.core.model.sitemap.sitemap.Sitemap;
-import org.openhab.core.model.sitemap.sitemap.Widget;
+import org.openhab.core.sitemap.Frame;
+import org.openhab.core.sitemap.Parent;
+import org.openhab.core.sitemap.Sitemap;
+import org.openhab.core.sitemap.Widget;
+import org.openhab.core.sitemap.registry.SitemapRegistry;
 import org.openhab.core.ui.items.ItemUIRegistry;
 import org.openhab.ui.basic.internal.WebAppConfig;
 import org.openhab.ui.basic.internal.servlet.WebAppServlet;
@@ -55,6 +51,7 @@ import com.google.gson.JsonObject;
  * @author Vlad Ivanov - BasicUI changes
  * @author Laurent Garnier - primary/secondary colors
  * @author Laurent Garnier - Build of new page for app settings
+ * @author Mark Herwege - Implement sitemap registry
  */
 @Component(service = { PageRenderer.class })
 @NonNullByDefault
@@ -91,7 +88,7 @@ public class PageRenderer extends AbstractWidgetRenderer {
      * @return a string builder with the produced HTML code
      * @throws RenderException if an error occurs during the processing
      */
-    public StringBuilder processPage(String id, String sitemap, String label, EList<Widget> children, boolean async)
+    public StringBuilder processPage(String id, String sitemap, String label, List<Widget> children, boolean async)
             throws RenderException {
         String snippet = getSnippet(async ? "layer" : "main");
         snippet = snippet.replaceAll("%main.offline-msg%", localizeText("@text/main.offline-msg"));
@@ -129,12 +126,12 @@ public class PageRenderer extends AbstractWidgetRenderer {
         return preChildren.append(postChildren);
     }
 
-    private void processChildren(StringBuilder sbPre, StringBuilder sbPost, EList<Widget> children, String sitemap)
+    private void processChildren(StringBuilder sbPre, StringBuilder sbPost, List<Widget> children, String sitemap)
             throws RenderException {
         // put a single frame around all children widgets, if there are no explicit frames
         if (!children.isEmpty()) {
             Widget firstChild = children.get(0);
-            EObject parent = itemUIRegistry.getParent(firstChild);
+            Parent parent = itemUIRegistry.getParent(firstChild);
             if (!(firstChild instanceof Frame || parent instanceof Frame || parent instanceof Sitemap)) {
                 String frameSnippet = getSnippet("frame");
                 frameSnippet = frameSnippet.replace("%widget_id%", "");
@@ -156,7 +153,7 @@ public class PageRenderer extends AbstractWidgetRenderer {
             StringBuilder newPre = new StringBuilder();
             StringBuilder newPost = new StringBuilder();
             StringBuilder widgetSB = new StringBuilder();
-            EList<Widget> nextChildren = renderWidget(w, widgetSB, sitemap);
+            List<Widget> nextChildren = renderWidget(w, widgetSB, sitemap);
             if (!nextChildren.isEmpty()) {
                 String[] parts = widgetSB.toString().split("%children%");
                 // no %children% placeholder found or at the end
@@ -171,8 +168,7 @@ public class PageRenderer extends AbstractWidgetRenderer {
                 // multiple %children% sections found -> log an error and ignore all code starting from the second
                 // occurance
                 if (parts.length > 2) {
-                    String widgetType = w.eClass().getInstanceTypeName()
-                            .substring(w.eClass().getInstanceTypeName().lastIndexOf(".") + 1);
+                    String widgetType = w.getClass().getSimpleName();
                     logger.error(
                             "Snippet for widget '{}' contains multiple %children% sections, but only one is allowed!",
                             widgetType);
@@ -187,13 +183,13 @@ public class PageRenderer extends AbstractWidgetRenderer {
     }
 
     @Override
-    public EList<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException {
+    public List<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException {
         for (WidgetRenderer renderer : widgetRenderers) {
             if (renderer.canRender(w)) {
                 return renderer.renderWidget(w, sb, sitemap);
             }
         }
-        return ECollections.emptyEList();
+        return List.of();
     }
 
     @Override
@@ -209,20 +205,18 @@ public class PageRenderer extends AbstractWidgetRenderer {
         }
     }
 
-    public CharSequence renderSitemapList(Set<SitemapProvider> sitemapProviders) throws RenderException {
-        List<Sitemap> sitemapList = new LinkedList<>();
-
-        for (SitemapProvider sitemapProvider : sitemapProviders) {
-            Set<String> sitemaps = sitemapProvider.getSitemapNames();
-            for (String sitemapName : sitemaps) {
-                if (!"_default".equals(sitemapName)) {
-                    Sitemap sitemap = sitemapProvider.getSitemap(sitemapName);
-                    if (sitemap != null) {
-                        sitemapList.add(sitemap);
-                    }
-                }
+    public CharSequence renderSitemapList(SitemapRegistry sitemapRegistry) throws RenderException {
+        List<Sitemap> sitemapList = sitemapRegistry.getAll().stream().sorted((s1, s2) -> {
+            String s1Label = s1.getLabel();
+            String s2Label = s2.getLabel();
+            s1Label = s1Label != null ? s1Label : s1.getName();
+            s2Label = s2Label != null ? s2Label : s2.getName();
+            int result = s1Label.compareTo(s2Label);
+            if (result == 0) {
+                result = s1.getName().compareTo(s2.getName());
             }
-        }
+            return result;
+        }).toList();
 
         String listSnippet = getSnippet("sitemaps_list");
         String sitemapSnippet = getSnippet("sitemaps_list_item");
@@ -234,25 +228,16 @@ public class PageRenderer extends AbstractWidgetRenderer {
                     localizeText("@text/sitemaps-list-empty.info"));
             sb.append(listEmptySnippet);
         } else {
-            sitemapList.sort((s1, s2) -> {
-                String s1Label = s1.getLabel();
-                String s2Label = s2.getLabel();
-                s1Label = s1Label != null ? s1Label : s1.getName();
-                s2Label = s2Label != null ? s2Label : s2.getName();
-                int result = s1Label.compareTo(s2Label);
-                if (result == 0) {
-                    result = s1.getName().compareTo(s2.getName());
-                }
-                return result;
-            });
-
             for (Sitemap sitemap : sitemapList) {
-                String label = sitemap.getLabel();
+                final String sitemapLabel = sitemap.getLabel();
+                String label = sitemapLabel;
                 final String name = sitemap.getName();
                 if (label != null) {
-                    if (sitemapList.stream()
-                            .filter(s -> sitemap.getLabel().equals(s.getLabel() != null ? s.getLabel() : s.getName()))
-                            .count() > 1) {
+                    if (sitemapList.stream().filter(s -> {
+                        String sLabel = s.getLabel();
+                        sLabel = sLabel != null ? sLabel : s.getName();
+                        return sLabel.equals(sitemapLabel);
+                    }).count() > 1) {
                         label = label + " (" + name + ")";
                     }
                 } else {
