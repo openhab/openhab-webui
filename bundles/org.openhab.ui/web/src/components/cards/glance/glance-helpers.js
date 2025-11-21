@@ -13,30 +13,61 @@ export function isChildOf (semanticValue, potentialSemanticParent) {
 
 /**
  * Retrieves equipment based on their semantic class
- * @param {Array} arr the array of equipment items & points to search
+ * @param {Array} arr the array of equipment items and points to search
  * @param {String} value the semantic class (value) to find
  * @param {Boolean} partial match subclasses
  * @param {Boolean} subEquipment include sub-equipment
  */
 export function findEquipment (arr, value, partial, subEquipment) {
-  const equipment = [...(arr.filter((e) => (partial) ? isChildOf(e.metadata?.semantics?.value, value) : e.metadata?.semantics?.value === value))]
+  const equipment = arr.filter((e) => (partial) ? isChildOf(e.metadata?.semantics?.value, value) : e.metadata?.semantics?.value === value)
   if (subEquipment) {
-    equipment.push(...arr.filter((e) => e.equipment).map((e) => findEquipment(e.equipment, value, partial, subEquipment)).flat())
+    equipment.push(
+      ...arr
+        .filter((e) => e.equipment)
+        .map((e) => findEquipment(e.equipment, value, partial, subEquipment))
+        .flat()
+    )
   }
   return equipment
 }
 
 /**
- * Retrieve the flatten list of points from the provided equipment collection
+ * Retrieve the flattened list of points from the provided equipment collection
  * @param {Array} equipment the equipment collection
  * @param {Boolean} subEquipment include points on sub-equipment
+ * @return {Array} the flattened list of points
  */
 export function allEquipmentPoints (equipment, subEquipment) {
-  const points = [...(equipment.map((e) => e.points || []).flat())]
+  const points = equipment.flatMap((e) => e.points || [])
   if (subEquipment) {
-    points.push(...equipment.filter((e) => e.equipment).map((e) => allEquipmentPoints(e.equipment, subEquipment)).flat())
+    points.push(
+      ...equipment
+        .filter((e) => e.equipment)
+        .map((e) => allEquipmentPoints(e.equipment, subEquipment))
+        .flat()
+    )
   }
   return points
+}
+
+/**
+ * Checks whether the provided equipment item has any of the provided points.
+ * @param {Object} equipment the equipment collection
+ * @param {Boolean} subEquipment include points on sub-equipment
+ * @param {Array|Set} points points to check for
+ * @return {Boolean}
+ */
+export function equipmentHasPoint (equipment, subEquipment, points) {
+  if (Array.isArray(points)) points = new Set(points)
+  if (equipment.points && equipment.points.some((p) => points.has(p))) {
+    return true
+  }
+
+  if (subEquipment && equipment.equipment) {
+    return equipment.equipment.some((child) => equipmentHasPoint(child, subEquipment, points))
+  }
+
+  return false
 }
 
 /**
@@ -61,5 +92,8 @@ export function findPoints (arr, value, partial, property, children) {
  * @param {Boolean} subEquipment also check points on sub-equipment
  */
 export function equipmentNoPointsSelected (arr, points, subEquipment) {
-  return arr.filter((e) => !allEquipmentPoints([e], subEquipment).some((p) => points.includes(p)))
+  // use Set for lookup in O(1) time
+  const pointsSet = new Set(points)
+
+  return arr.filter((e) => !equipmentHasPoint(e, subEquipment, pointsSet))
 }
