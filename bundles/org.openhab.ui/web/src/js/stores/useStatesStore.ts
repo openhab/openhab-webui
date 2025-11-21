@@ -155,7 +155,6 @@ export const useStatesStore = defineStore('states', () => {
 
   function processPendingItems () {
     if (pendingNewItems.size === 0) {
-      // Stop the interval if no pending items
       if (processingIntervalId !== null) {
         clearInterval(processingIntervalId)
         processingIntervalId = null
@@ -163,17 +162,14 @@ export const useStatesStore = defineStore('states', () => {
       return
     }
 
-    // Process all pending items in batch
-    // use Set to allow O(1) lookup for tracking list
+    // use Set to allow O(1) lookup for tracking list, Set creation takes O(n) time
+    // overall reduction from O(n * m) (m times O(n) array lookup) to O(n + m) (O(n) Set creation + m times O(1) lookup)
     const trackedItems = new Set(trackingList.value)
     for (const itemName of pendingNewItems) {
       if (!trackedItems.has(itemName)) addToTrackingList(itemName)
     }
 
-    // Clear pending items
     pendingNewItems.clear()
-
-    // Update the tracking list
     updateTrackingList()
   }
 
