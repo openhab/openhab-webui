@@ -413,10 +413,10 @@
       class="safe-areas"
       :master-detail-breakpoint="960"
       :browser-history="true"
+      :browser-history-root="origin"
       browser-history-separator=""
-      browser-history-root=""
       v-show="ready"
-      :animate="uiOptionsStore.disablePageTransitionAnimation ? false : true" />
+      :animate="!uiOptionsStore.disablePageTransitionAnimation" />
   </f7-app>
 </template>
 
@@ -643,6 +643,9 @@ export default {
     }
   },
   computed: {
+    origin () {
+      return window.location.origin
+    },
     currentPath () {
       // Returns a hierarchical object representation of the currentUrl.
       //   '/settings/services/openhabcloud/' -> currentPath.settings.services.openhabcloud
