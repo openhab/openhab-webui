@@ -25,7 +25,7 @@
   },
   "scripts": {
     "generate-build-info": "node build/generate-build-info.mjs",
-    "generate-component-ts": "node build/generate-component-ts.mjs",
+    "generate-widget-component-ts": "node build/generate-widget-component-ts.mjs",
     "build:mvn": "cross-env NODE_ENV=production cross-env MAVEN=true node ./build/build.mjs",
     "build:grammar": "node build/compile-grammar.mjs",
     "dev": "vite",
@@ -34,7 +34,7 @@
     "lint:fix": "npx eslint --fix src",
     "typescript:check": "vue-tsc -b",
     "dependency-analyzer": "npx depcruise src",
-    "prebuild": "npm run generate-build-info && npm run generate-component-ts && npm run build:grammar",
+    "prebuild": "npm run generate-build-info && npm run generate-widget-component-ts && npm run build:grammar",
     "build": "cross-env NODE_ENV=production vite build",
     "webpack-analyzer-report-stats": "npm run generate-build-info && cross-env NODE_ENV=production cross-env STATS=true vite build",
     "preview": "vite preview",

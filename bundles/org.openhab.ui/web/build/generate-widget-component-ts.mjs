@@ -64,7 +64,7 @@ function optionsMapKey(prop) {
 }
 
 async function loadConfig() {
-  const configFile = 'generate-component-ts.config.js'
+  const configFile = 'generate-widget-component-ts.config.js'
   if (fs.existsSync(`./build/${configFile}`)) {
     const configModule = await import(`./${configFile}`)
     return configModule.default || {}
