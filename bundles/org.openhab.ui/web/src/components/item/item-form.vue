@@ -153,7 +153,8 @@
                      :items="items"
                      @input="(value) => this.item.groupNames = value"
                      :multiple="true"
-                     filterType="Group"
+                     :filterGroupType="compatibleGroupTypes"
+                     :filterToggle="true"
                      :set-value-text="false" />
       </f7-list-group>
     </f7-list>
@@ -272,6 +273,17 @@ export default {
       set (newPattern) {
         this.item.stateDescriptionPattern = newPattern
       }
+    },
+    compatibleGroupTypes () {
+      if (!this.itemType) return
+      let compatibleGroupTypes = []
+      compatibleGroupTypes.push(this.item.type)
+      if (this.itemType === 'Number') {
+        compatibleGroupTypes.push('Switch')
+      }
+      if (this.itemType === 'Color') { compatibleGroupTypes.push('Switch', 'Dimmer') }
+      if (this.itemType === 'Dimmer') { compatibleGroupTypes.push('Switch') }
+      return compatibleGroupTypes
     }
   },
   methods: {
