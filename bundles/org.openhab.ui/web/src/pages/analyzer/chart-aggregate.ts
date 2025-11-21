@@ -1,9 +1,9 @@
 import { getYAxis, renderVisualMap, renderValueAxis, toPrimitiveMarkers } from './analyzer-helpers.js'
 
-import { OhAggregateSeries, OhCategoryAxis, OhChartPage, OhValueAxis, ChartType, Orient, OhChartTooltip, OhChartLegend, OhChartVisualmap } from '@/types/components'
+import { OhAggregateSeries, OhCategoryAxis, OhChartPage, OhValueAxis, ChartType, Orient, OhChartTooltip, OhChartLegend, OhChartVisualmap } from '@/types/components/widgets'
 
-import { Marker, type CoordSystem, type SeriesOptions, type CoordSettings, type CoordUIParams, SeriesType, type ValueAxisOptions, type ChartPage, type VisualMap, type CoordSettingsBase } from './types.js'
-import type { PageSlotComponent, Item  } from '@/types/openhab'
+import { Marker, type CoordSystem, type SeriesOptions, type CoordSettings, type CoordUIParams, SeriesType, type ValueAxisOptions, type VisualMap, type CoordSettingsBase } from './types.js'
+import type { Item, Page, UIComponent  } from '@/types/openhab'
 
 
 const DIMENSION_MAP : Partial<Record<ChartType, [OhAggregateSeries.Dimension, OhCategoryAxis.CategoryType, OhAggregateSeries.Dimension] >> = { // dimension1, category2, dimension2
@@ -85,15 +85,15 @@ const aggregateCoordSystem : CoordSystem = {
 
     return options
   },
-  getChartPage (coordSettings : CoordSettings, allSeriesOptions : Record<string, SeriesOptions>, items: Item[]) : ChartPage {
+  getChartPage (coordSettings : CoordSettings, allSeriesOptions : Record<string, SeriesOptions>, items: Item[]) : Page {
     const aggregateCoordSettings = coordSettings as AggregateCoordSettings
 
-    let page : ChartPage = {} as ChartPage
-
-    page.component = 'oh-chart-page'
-    page.config = {
-      chartType: coordSettings.chartType
-    } satisfies OhChartPage.Config
+    let page : Page = {
+      component: 'oh-chart-page',
+      config : {
+        chartType: coordSettings.chartType
+      } satisfies OhChartPage.Config
+    }
     page.slots = {
       xAxis: [],
       yAxis: [],
@@ -122,7 +122,7 @@ const aggregateCoordSystem : CoordSystem = {
     const dims = DIMENSION_MAP[aggregateCoordSettings.chartType] ?? [OhAggregateSeries.Dimension.hour, OhCategoryAxis.CategoryType.hour, OhAggregateSeries.Dimension.minute]
     const dimension1 = dims[0]
 
-    let axis2 : PageSlotComponent[]
+    let axis2 : UIComponent[]
     let dimension2 : OhAggregateSeries.Dimension | undefined
     if (aggregateCoordSettings.dimensions === 2) {
       const category2 = dims[1]

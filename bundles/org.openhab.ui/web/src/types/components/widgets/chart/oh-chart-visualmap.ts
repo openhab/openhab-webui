@@ -10,6 +10,7 @@ export enum Type {
 }
 
 export enum PresetPalette {
+  yellowred = 'yellowred',
   greenred = 'greenred',
   whiteblue = 'whiteblue',
   bluered = 'bluered'

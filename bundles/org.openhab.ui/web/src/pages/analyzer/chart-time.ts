@@ -1,8 +1,8 @@
 import { getYAxis, renderValueAxis, toPrimitiveMarkers } from './analyzer-helpers.js'
 
-import { Marker, SeriesType, type CoordSystem, type CoordSettings, type CoordUIParams, type SeriesOptions, type ValueAxisOptions, type ChartPage, type CoordSettingsBase } from './types.js'
-import type { Item } from '@/types/openhab'
-import { OhCategoryAxis, OhChartPage, OhValueAxis, ChartType, Period, OhStateSeries, OhTimeSeries, OhChartTooltip, OhChartLegend } from '@/types/components'
+import { Marker, SeriesType, type CoordSystem, type CoordSettings, type CoordUIParams, type SeriesOptions, type ValueAxisOptions, type CoordSettingsBase } from './types.js'
+import type { Item, Page } from '@/types/openhab'
+import { OhCategoryAxis, OhChartPage, OhValueAxis, ChartType, Period, OhStateSeries, OhTimeSeries, OhChartTooltip, OhChartLegend } from '@/types/components/widgets'
 
 export interface TimeCoordSettings extends CoordSettingsBase {
     valueAxesOptions: Array<ValueAxisOptions>
@@ -72,16 +72,17 @@ const timeCoordSystem : CoordSystem = {
 
     return options
   },
-  getChartPage (coordSettings : CoordSettings, allSeriesOptions : Record<string, SeriesOptions>, items: Item[]) : ChartPage {
+  getChartPage (coordSettings : CoordSettings, allSeriesOptions : Record<string, SeriesOptions>, items: Item[]) : Page {
     const timeCoordSettings = coordSettings as unknown as TimeCoordSettings
 
-    let page : ChartPage = {} as ChartPage
+    let page : Page = {
+      component: 'oh-chart-page',
+      config: {
+        chartType: coordSettings.chartType,
+        period: timeCoordSettings.period
+      } satisfies OhChartPage.Config
+    }
 
-    page.component = 'oh-chart-page'
-    page.config = {
-      chartType: coordSettings.chartType,
-      period: timeCoordSettings.period
-    } satisfies OhChartPage.Config
     page.slots = {
       xAxis: [],
       yAxis: [],
@@ -142,7 +143,7 @@ const timeCoordSystem : CoordSystem = {
             item: item.name,
             name: seriesOptions.name,
             xAxisIndex: categoryGridIndex,
-            yAxisIndex: page.slots.yAxis.length - 1,
+            yAxisIndex: page.slots!.yAxis.length - 1,
             yValue: seriesOptions.yValue
           } satisfies OhStateSeries.Config
         }
