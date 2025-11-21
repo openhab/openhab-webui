@@ -1,3 +1,5 @@
+// note: this file is generated and should not be edited by hand
+
 import {
   ChartType,
   Period,

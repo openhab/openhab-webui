@@ -144,7 +144,7 @@ function createCommonOptionsMap() {
 }
 
 function generateCommonTS(mapCommonOptions) {
-  let content = ''
+  let content = '// note: this file is generated and should not be edited by hand\n\n'
   const configCommon = config['_Common'] || {}
   mapCommonOptions.forEach((components, optionProp) => {
     if (components.length > 1) {
@@ -233,7 +233,7 @@ function generateComponentTS(mapCommonOptions) {
 
       content += configStr
 
-      let preamble = ''
+      let preamble = '// note: this file is generated and should not be edited by hand\n\n'
       let postamble = ''
       if (commonComponents.length > 0) {
         preamble += 'import {\n'
