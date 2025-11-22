@@ -802,6 +802,9 @@ export default {
             // fix for missing definitions in en.js locale, see https://github.com/iamkun/dayjs/blob/dev/src/locale/en.js
             if (dayjsLocale?.key === 'en') dayjsLocale = dayjsLocales.find((l) => l.key === 'en-gb')
 
+            // there is no single Norwegian locale in dayjs, so use nb (Norwegian Bokmål)
+            if (dayjsLocale?.key === 'no') dayjsLocale = dayjsLocales.find((l) => l.key === 'nb')
+
             dayjsLocalePromise = dayjsLocale
               ? import(`../node_modules/dayjs/esm/locale/${dayjsLocale.key}.js`)
                 .then((data) => {
