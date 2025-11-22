@@ -192,7 +192,7 @@ export default {
           }
         },
         {
-          name: 'startonSunday',
+          name: 'startOnSunday',
           label: 'Start Week on Sunday',
           type: 'BOOLEAN',
           description: 'Check to start the week on Sundays instead of Mondays',
