@@ -68,8 +68,8 @@ export interface CoordUIParams {
 
 export interface VisualMap {
     palette: OhChartVisualmap.PresetPalette
-    min: number | null
-    max: number | null
+    min: number | string | null
+    max: number | string | null
     type: OhChartVisualmap.Type
 }
 

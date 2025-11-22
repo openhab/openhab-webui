@@ -113,7 +113,7 @@ const aggregateCoordSystem : CoordSystem = {
       config: {
         gridIndex: 0,
         categoryType: categoryType,
-        startonSunday: (aggregateCoordSettings.chartType === ChartType.week) ? true : undefined,
+        startOnSunday: (aggregateCoordSettings.chartType === ChartType.week) ? true : undefined,
         monthFormat: OhCategoryAxis.MonthFormat.short,
         weekdayFormat: OhCategoryAxis.WeekdayFormat.short
       } satisfies OhCategoryAxis.Config
@@ -204,7 +204,6 @@ const aggregateCoordSystem : CoordSystem = {
       ]
     }
 
-    console.log(page)
     return page
   }
 }

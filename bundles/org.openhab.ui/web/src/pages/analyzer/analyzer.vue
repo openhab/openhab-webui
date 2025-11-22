@@ -211,7 +211,7 @@
 
           <!-- ranges control tab -->
           <f7-tab id="tab-ranges" class="no-margin no-padding">
-            <f7-row v-if="dimensions === 2">
+            <f7-row v-if="'visualMap' in coordSettings && dimensions === 2">
               <f7-col :width="100" :medium="50">
                 <f7-list class="no-margin-vertical">
                   <f7-list-item divider>
@@ -221,7 +221,7 @@
                                 :key="palette"
                                 radio
                                 name="visualMap.palette"
-                                :checked="visualMap.palette === palette"
+                                :checked="coordSettings.visualMap.palette === palette"
                                 @change="changeVisualMapPalette(palette as OhChartVisualmap.PresetPalette)">
                     {{ t('analyzer.ranges.visualPalette.' + palette) }}
                   </f7-list-item>
@@ -233,15 +233,15 @@
                     {{ t('analyzer.ranges.range') }}
                   </f7-list-item>
                   <f7-list-input :label="t('analyzer.ranges.range.min')"
-                                 :value="visualMap.min"
+                                 :value="coordSettings.visualMap.min"
                                  type="number"
-                                 @input="visualMap.min = $event.target.value"
+                                 @input="coordSettings.visualMap.min = $event.target.value"
                                  placeholder="Auto"
                                  clear-button />
                   <f7-list-input :label="t('analyzer.ranges.range.max')"
-                                 :value="visualMap.max"
+                                 :value="coordSettings.visualMap.max"
                                  type="number"
-                                 @input="visualMap.max = $event.target.value"
+                                 @input="coordSettings.visualMap.max = $event.target.value"
                                  placeholder="Auto"
                                  clear-button />
                   <f7-list-item divider>
@@ -251,14 +251,14 @@
                                 :key="type"
                                 radio
                                 name="type"
-                                :checked="visualMap.type === type"
+                                :checked="coordSettings.visualMap.type === type"
                                 @change="changeVisualMapType(type as OhChartVisualmap.Type)">
                     {{ t('analyzer.ranges.range.type.' + type) }}
                   </f7-list-item>
                 </f7-list>
               </f7-col>
             </f7-row>
-            <f7-row v-else-if="(coordSettings as TimeCoordSettings | AggregateCoordSettings).valueAxesOptions.length > 0">
+            <f7-row v-else-if="'valueAxesOptions' in coordSettings && coordSettings.valueAxesOptions?.length > 0">
               <f7-col :width="100">
                 <div class="card data-table">
                   <div class="card-header">
@@ -286,7 +286,7 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <tr v-for="axis in (coordSettings as TimeCoordSettings | AggregateCoordSettings).valueAxesOptions" :key="axis.unit">
+                        <tr v-for="axis in coordSettings?.valueAxesOptions" :key="axis.unit">
                           <td class="label-cell">
                             <div class="input">
                               <input type="text" v-model.lazy="axis.name" style="min-width: 150px">
@@ -348,7 +348,7 @@
 /*
   Analyzer page for ad-hoc charting and data analysis.
 
-  There are separate chart-<coord-system>.ts files that implement the methods devfined in tthe CoordSystem interface.
+  There are separate chart-<coord-system>.ts files that implement the methods defined in the CoordSystem interface.
   These include methods to init the coord system settings, init the axes, init a series for an item on that coorsystem
   and finally, generate the chart page.
 
@@ -433,9 +433,6 @@ export default {
   computed: {
     uiParams () {
       return this.coordSettings.uiParams || {}
-    },
-    visualMap () {
-      return (this.coordSettings as AggregateCoordSettings | CalendarCoordSettings).visualMap as VisualMap
     },
     titleDisplayText () {
       if (this.label != null) return this.label
@@ -559,18 +556,22 @@ export default {
       })
     },
     toggleOrientation () {
-      if('orientation' in this.coordSettings) {
+      if ('orientation' in this.coordSettings) {
         this.coordSettings.orientation = (this.coordSettings.orientation === Orient.horizontal) ? Orient.vertical : Orient.horizontal
       }
     },
     changeVisualMapPalette (palette : OhChartVisualmap.PresetPalette) {
       this.refreshChart(() => {
-        this.visualMap.palette = palette
+        if ('visualMap' in this.coordSettings) {
+          this.coordSettings.visualMap.palette = palette
+        }
       })
     },
     changeVisualMapType (type : OhChartVisualmap.Type) {
       this.refreshChart(() => {
-        this.visualMap.type = type
+        if ('visualMap' in this.coordSettings) {
+          this.coordSettings.visualMap.type = type
+        }
       })
     },
     chooseMarkers (seriesOptions : TimeSeriesOptions | AggregateSeriesOptions) {
