@@ -37,8 +37,6 @@ const calendarCoordSystem : CoordSystem = {
   initAxes (coordSettings) {
   },
   initSeries (item : Item, coordSettings : CoordSettings, seriesOptions : Partial<CalendarSeriesOptions>) : CalendarSeriesOptions {
-    const calCoordSettings = coordSettings as CalendarCoordSettings
-
     const options : CalendarSeriesOptions = {
       name: item.label || item.name,
       type: SeriesType.heatmap,
