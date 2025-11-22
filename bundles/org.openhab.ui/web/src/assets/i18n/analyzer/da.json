@@ -20,7 +20,7 @@
   "analyzer.coords.period.dynamic": "Dynamisk",
   "analyzer.coords.period.fixed": "Fast",
   "analyzer.coords.period.day": "Dag",
-  "analyzer.coords.period.week": "Uge",
+  "analyzer.coords.period.isoWeek": "Uge",
   "analyzer.coords.period.month": "Måned",
   "analyzer.coords.period.year": "År",
   "analyzer.coords.coordSystem": "Koordinatsystem",

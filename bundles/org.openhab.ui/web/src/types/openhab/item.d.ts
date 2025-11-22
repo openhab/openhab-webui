@@ -38,6 +38,8 @@ export interface FunctionDescription {
 
 export interface Item {
   link: string
+  state?: string
+  transformedState?: string
   editable: boolean
   type: string
   name: string

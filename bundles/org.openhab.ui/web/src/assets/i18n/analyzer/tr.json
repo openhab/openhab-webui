@@ -20,7 +20,7 @@
   "analyzer.coords.period.dynamic": "Dinamik",
   "analyzer.coords.period.fixed": "Sabit",
   "analyzer.coords.period.day": "Gün",
-  "analyzer.coords.period.week": "Hafta",
+  "analyzer.coords.period.isoWeek": "Hafta",
   "analyzer.coords.period.month": "Ay",
   "analyzer.coords.period.year": "Yıl",
   "analyzer.coords.coordSystem": "Koordinat Sistemi",

@@ -5,7 +5,7 @@ declare namespace _default {
     data: any,
     contentType: any,
     responseType: any,
-    headers: any
+    headers?: any
   ): Promise<any>
   export async function post(uri: any, data: any, dataType: any): Promise<any>
   export async function postPlain(
@@ -13,7 +13,7 @@ declare namespace _default {
     data: any,
     dataType: any,
     contentType: any,
-    headers: any
+    headers?: any
   ): Promise<any>
   export async function put(uri: any, data: any): Promise<any>
   export async function putPlain(uri: any, data: any, dataType: any, contentType: any): Promise<any>
