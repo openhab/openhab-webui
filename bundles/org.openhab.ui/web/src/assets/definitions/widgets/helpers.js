@@ -56,6 +56,14 @@ Parameter.prototype = {
     return this
   },
   /**
+   * Sets the default value of the parameter
+   * @param {*} value the default value
+   */
+  d (value) {
+    this.default = value
+    return this
+  },
+  /**
    * Sets the parameter as required
    */
   r () {
