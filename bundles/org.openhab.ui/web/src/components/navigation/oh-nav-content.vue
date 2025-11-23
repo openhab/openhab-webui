@@ -88,7 +88,9 @@ function back () {
     return
   }
   const f7router : Router.Router = props.f7router || f7.views.main.router
+  f7router.back()
 
+  /*
   const currentPath = f7router.currentRoute.path
   let previousPath : string | null = null
   for (let i = f7router.history.length - 1; i >= 0; i--) {
@@ -106,5 +108,6 @@ function back () {
   console.debug('Navigating back to previous path:', previousPath)
   f7router.history.pop()
   f7router.navigate(previousPath, { force: true })
+  */
 }
 </script>
