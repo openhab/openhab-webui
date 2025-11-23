@@ -24,7 +24,7 @@ export default {
       const { sseConnected } = storeToRefs(useStatesStore())
 
       watch(sseConnected, (newValue) => {
-        if(newValue === false) {
+        if (newValue === false) {
           if (this.communicationFailureToast === null) {
             this.communicationFailureTimeoutId = setTimeout(() => {
               if (this.communicationFailureToast !== null) return
@@ -34,12 +34,13 @@ export default {
                 false
               )
               this.communicationFailureTimeoutId = null
-            }, 1000)
+            }, 2000)
           }
         } else if (newValue === true) {
-          if (this.communicationFailureTimeoutId !== null)
+          if (this.communicationFailureTimeoutId !== null) {
             clearTimeout(this.communicationFailureTimeoutId)
-          if (this.communicationFailureToast) {
+          }
+          if (this.communicationFailureToast !== null) {
             this.communicationFailureToast.close()
             this.communicationFailureToast = null
           }
