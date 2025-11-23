@@ -88,6 +88,8 @@
 .widget-editor
   margin-top 0 !important
   margin-bottom 0 !important
+  padding-left 0
+  padding-right 0
   z-index auto !important
   top 0
   height calc(100%)
