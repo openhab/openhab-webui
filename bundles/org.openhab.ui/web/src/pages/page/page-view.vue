@@ -151,7 +151,10 @@ export default {
       if (!this.context) return null
       const pageComponent =
         this.pageType === 'tabs'
-          ? this.tabContext(this.context.component.slots.default[this.currentTab]).component
+          ? (this.context.component.slots.default[this.currentTab]
+          // the tabbed page component can be null if this.currentTab is out of bounds
+            ? this.tabContext(this.context.component.slots.default[this.currentTab]).component
+            : null)
           : this.context.component
       if (!pageComponent || !pageComponent.config || !pageComponent.config.style) return null
       return pageComponent.config.style
