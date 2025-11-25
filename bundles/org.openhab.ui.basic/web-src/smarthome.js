@@ -2647,13 +2647,13 @@
 			}
 
 			if (itemState === "UNDEF" || itemState === "NULL") {
-				_t.parentNode.classList.add("unknown-state")
+				_t.parentNode.classList.add("unknown-state");
 			} else {
-				_t.parentNode.classList.remove("unknown-state")
+				_t.parentNode.classList.remove("unknown-state");
 			}
 			if (typeof componentHandler !== "undefined") {
-    			componentHandler.upgradeElement(_t.parentNode);
-  			}
+				componentHandler.upgradeElement(_t.parentNode);
+			}
 
 			if (_t.hasValue) {
 				_t.valueNode.innerHTML = value;
