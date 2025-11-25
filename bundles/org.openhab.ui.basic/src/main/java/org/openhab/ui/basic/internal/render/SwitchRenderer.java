@@ -33,6 +33,7 @@ import org.openhab.core.model.sitemap.sitemap.Widget;
 import org.openhab.core.types.CommandDescription;
 import org.openhab.core.types.CommandOption;
 import org.openhab.core.types.State;
+import org.openhab.core.types.UnDefType;
 import org.openhab.core.types.util.UnitUtils;
 import org.openhab.core.ui.items.ItemUIRegistry;
 import org.openhab.ui.basic.render.RenderException;
@@ -123,6 +124,11 @@ public class SwitchRenderer extends AbstractWidgetRenderer {
                 snippet = snippet.replaceAll("%checked%", "checked=true");
             } else {
                 snippet = snippet.replaceAll("%checked%", "");
+            }
+            if (UnDefType.UNDEF.equals(state) || UnDefType.NULL.equals(state)) {
+                snippet = snippet.replaceAll("%unknown_state%", "unknown-state");
+            } else {
+                snippet = snippet.replaceAll("%unknown_state%", "");
             }
         } else {
             // Show the value at left of all the buttons only if a state pattern is set on the sitemap widget
