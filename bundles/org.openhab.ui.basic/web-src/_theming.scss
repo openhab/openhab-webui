@@ -7,6 +7,7 @@ body[data-theme="light"] {
 	--container-text-color: #616161;
 	--switch-off-track-bg: rgba(0,0,0,.26);
 	--switch-on-track-bg: #9fa8da;
+	--switch-unknown-color: #616161;
 	--border-color: #ccc;
 	--radio-unchecked-color: rgba(0,0,0,.5);
 	--input-undef-color: rgba(0,0,0,.26);
@@ -23,6 +24,7 @@ body[data-theme="dark"] {
 	--container-text-color: #c0c0c0;
 	--switch-off-track-bg: rgba(255,255,255,.26);
 	--switch-on-track-bg: #9fa8da;
+	--switch-unknown-color: #616161;
 	--border-color: #545454;
 	--radio-unchecked-color: rgba(255,255,255,.5);
 	--input-undef-color: rgba(158,158,158,.26);
