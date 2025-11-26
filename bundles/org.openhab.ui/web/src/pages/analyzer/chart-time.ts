@@ -12,9 +12,20 @@ export interface TimeCoordSettings extends CoordSettingsBase {
 
 export interface TimeSeriesOptions extends SeriesOptions {
     valueAxisIndex: number
-    marker: Marker
+    marker?: Marker
     yValue?: number
 }
+
+const GRID_CONFIG = {
+  /** Pixels per category item in grid */
+  CATEGORY_HEIGHT_PER_ITEM_PERCENT: 20,
+  /** Maximum percentage of chart height for categories */
+  MAX_CATEGORY_GRID_PERCENT: 50,
+  /** Default bottom margin when no categories */
+  DEFAULT_BOTTOM_MARGIN_PIX: 60,
+  /** Padding between value and category grids */
+  GRID_PADDING_PERCENT: 10
+} as const
 
 const timeCoordSystem : CoordSystem = {
   initCoordSystem (coordSettings? : Partial<TimeCoordSettings>) : TimeCoordSettings {
@@ -31,7 +42,7 @@ const timeCoordSystem : CoordSystem = {
     }
   },
   initAxes (coordSettings : Partial<TimeCoordSettings>) : void {
-    (coordSettings as TimeCoordSettings).categoryAxisValues = []
+    coordSettings.categoryAxisValues = []
     coordSettings.valueAxesOptions = []
   },
   initSeries (item : Item, coordSettings : CoordSettings, seriesOptions: Partial<TimeSeriesOptions>) : SeriesOptions {
@@ -43,21 +54,19 @@ const timeCoordSystem : CoordSystem = {
         typeOptions: [SeriesType.line, SeriesType.area, SeriesType.state]
       },
       type: SeriesType.line,
-      valueAxisIndex: 0,
-      marker: Marker.none
+      valueAxisIndex: 0
     }
 
     if (item.type.startsWith('Number') || item.groupType?.startsWith('Number')) {
-      options.uiParams.showMarkerOptions = true
+      options.marker = Marker.none
       options.uiParams.showAxesOptions = true
       options.type = (seriesOptions?.type && options.uiParams.typeOptions.includes(seriesOptions.type)) ? seriesOptions.type : SeriesType.line
     } else if (item.type === 'Dimmer' || item.groupType === 'Dimmer') {
       options.uiParams.showAxesOptions = false
-      options.uiParams.showMarkerOptions = true
+      options.marker = Marker.none
       options.type = (seriesOptions?.type && options.uiParams.typeOptions.includes(seriesOptions.type)) ? seriesOptions.type : SeriesType.line
     } else {
       options.uiParams.typeOptions = [SeriesType.state]
-      options.uiParams.showMarkerOptions = false
       options.uiParams.showAxesOptions = false
       options.type = SeriesType.state
     }
@@ -96,11 +105,11 @@ const timeCoordSystem : CoordSystem = {
     let valueGrid = (timeCoordSettings.valueAxesOptions.length > 0)
     let categoryGrid = (timeCoordSettings.categoryAxisValues.length > 0)
 
-    let categoryGridSize = timeCoordSettings.categoryAxisValues.length * 20
-    categoryGridSize = Math.min(categoryGridSize, 50)
+    let categoryGridSize = timeCoordSettings.categoryAxisValues.length * GRID_CONFIG.CATEGORY_HEIGHT_PER_ITEM_PERCENT
+    categoryGridSize = Math.min(categoryGridSize, GRID_CONFIG.MAX_CATEGORY_GRID_PERCENT)
 
     if (valueGrid) {
-      page.slots.grid.push({ component: 'oh-chart-grid', config: { includeLabels: true, bottom: (categoryGrid) ? `${categoryGridSize + 10}%` : 60 } })
+      page.slots.grid.push({ component: 'oh-chart-grid', config: { includeLabels: true, bottom: (categoryGrid) ? `${categoryGridSize + GRID_CONFIG.GRID_PADDING_PERCENT}%` : GRID_CONFIG.DEFAULT_BOTTOM_MARGIN_PIX } })
       page.slots.xAxis.push({ component: 'oh-time-axis', config: { gridIndex: 0 } })
       page.slots.yAxis = timeCoordSettings.valueAxesOptions.map((a) => {
         return renderValueAxis(a)
@@ -109,7 +118,7 @@ const timeCoordSystem : CoordSystem = {
 
     let categoryGridIndex = (valueGrid) ? 1 : 0
     if (categoryGrid) {
-      page.slots.grid.push({ component: 'oh-chart-grid', config: { includeLabels: true, top: (valueGrid) ? `${100 - categoryGridSize}%` : 60 } })
+      page.slots.grid.push({ component: 'oh-chart-grid', config: { includeLabels: true, top: (valueGrid) ? `${100 - categoryGridSize}%` : GRID_CONFIG.DEFAULT_BOTTOM_MARGIN_PIX } })
       page.slots.xAxis.push({ component: 'oh-time-axis', config: { gridIndex: categoryGridIndex } })
       page.slots.yAxis.push({
         component: 'oh-category-axis',
@@ -176,13 +185,13 @@ const timeCoordSystem : CoordSystem = {
       config: {
         bottom: '3',
         type: 'scroll',
-        data: items.filter((item) => {
+        data: items.reduce<Array<{ name: string }>>((legendItems, item) => {
           const seriesOptions = allSeriesOptions[item.name] as TimeSeriesOptions
-          return seriesOptions.type !== SeriesType.state
-        }).map((item) => {
-          const seriesOptions = allSeriesOptions[item.name] as TimeSeriesOptions
-          return { name: seriesOptions.name }
-        })
+          if (seriesOptions.type !== SeriesType.state) {
+            legendItems.push({ name: seriesOptions.name })
+          }
+          return legendItems
+        }, [])
       } satisfies OhChartLegend.Config & Record<string, unknown>
     }]
 

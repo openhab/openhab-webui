@@ -13,7 +13,7 @@
       <f7-link class="right controls-link padding-right" ref="detailsLink" @click="openControls">
         {{ t('analyzer.controls') }}&nbsp;<f7-icon f7="chevron_up" />
       </f7-link>
-      <f7-link v-if="uiParams.showRotation"
+      <f7-link v-if="'orientation' in coordSettings"
                color="blue"
                icon-f7="crop_rotate"
                @click="toggleOrientation" />
@@ -34,8 +34,8 @@
     <f7-sheet class="analyzer-controls"
               :backdrop="false"
               :close-on-escape="true"
-              :opened="controlsOpened"
-              @sheet:closed="controlsOpened = false">
+              :opened="controlsOpened">
+              <!-- TODO @sheet:closed="controlsOpened = false"> -->
       <f7-page>
         <f7-toolbar tabbar :bottom="true">
           <f7-link class="padding-left padding-right"
@@ -60,7 +60,7 @@
           <f7-tab id="tab-series" class="no-margin no-padding" tab-active>
             <f7-row>
               <f7-col :width="100" />
-              <f7-col :width="100" v-if="showChart">
+              <f7-col :width="100">
                 <div class="card data-table">
                   <div class="card-header no-padding" style="min-height: auto">
                     <f7-list style="width: 100%">
@@ -91,8 +91,9 @@
                           <th class="label-cell">
                             {{ t('analyzer.series.table.header.markers') }}
                           </th>
-                          <th v-if="uiParams.isAggregate" class="label-cell">
-                            {{ t('analyzer.series.table.header.aggregation') }}
+                          <th class="label-cell">
+                            <span v-if="'auxColumn' in coordSettings">{{ t('analyzer.series.table.header.' + coordSettings.auxColumn) }}</span>
+                            <span v-else></span>
                           </th>
                         </tr>
                       </thead>
@@ -130,15 +131,16 @@
                             <span v-else>{{ t('analyzer.series.table.na') }}</span>
                           </td>
                           <td class="label-cell">
-                            <f7-link v-if="options.uiParams.showMarkerOptions" @click="chooseMarkers(options as TimeSeriesOptions | AggregateSeriesOptions)">
+                            <f7-link v-if="'marker' in options" @click="chooseMarkers(options as TimeSeriesOptions | AggregateSeriesOptions)">
                               {{ (options as TimeSeriesOptions | AggregateSeriesOptions).marker || 'none' }}
                             </f7-link>
                             <span v-else>{{ t('analyzer.series.table.na') }}</span>
                           </td>
-                          <td v-if="options.uiParams.showAggregationOptions" class="label-cell">
-                            <f7-link @click="chooseAggregation(options as AggregateSeriesOptions)">
+                          <td class="label-cell">
+                            <f7-link v-if="'aggregation' in options" @click="chooseAggregation(options as AggregateSeriesOptions)">
                               {{ (options as AggregateSeriesOptions).aggregation ? t('analyzer.aggregations.' + (options as AggregateSeriesOptions).aggregation) : 'none' }}
                             </f7-link>
+                            <span v-else></span>
                           </td>
                         </tr>
                       </tbody>
@@ -183,7 +185,7 @@
                              @click="changeCoordSystem(cs)"
                              :text="t('analyzer.coords.coordSystem.' + cs)" />
                 </f7-segmented>
-                <f7-segmented v-if="uiParams.showMultiDimension">
+                <f7-segmented v-if="'dimensions' in coordSettings">
                   <f7-button
                     :active="dimensions === 1"
                     @click="changeAggregateDimensions(1)"
@@ -195,7 +197,7 @@
                 </f7-segmented>
               </f7-col>
               <f7-col width="100" class="margin-top display-flex justify-content-center margin-bottom">
-                <f7-button v-if="uiParams.showRotation"
+                <f7-button v-if="'orientation' in coordSettings"
                            round
                            raised
                            fill
@@ -354,8 +356,6 @@
 
   To support what should be exposed in the UI, there are UIParams for both the coord system and for each series.
  */
-
-
 
 import { nextTick, defineAsyncComponent } from 'vue'
 import { getDevice } from 'framework7'

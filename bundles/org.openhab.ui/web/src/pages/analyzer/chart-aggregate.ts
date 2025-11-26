@@ -19,21 +19,19 @@ export interface AggregateCoordSettings extends CoordSettingsBase {
   dimensions: number
   valueAxesOptions: Array<ValueAxisOptions>
   visualMap: VisualMap
+  auxColumn: string
 }
 
 export interface AggregateSeriesOptions extends SeriesOptions {
   valueAxisIndex: number
-  aggregation: OhAggregateSeries.AggregationFunction
-  marker: Marker
+  aggregation?: OhAggregateSeries.AggregationFunction
+  marker?: Marker
 }
 
 const aggregateCoordSystem : CoordSystem = {
   initCoordSystem (coordSettings? : Partial<AggregateCoordSettings>) : AggregateCoordSettings {
     const uiParams : CoordUIParams= {
       typeOptions: [ChartType.day, ChartType.isoWeek, ChartType.month, ChartType.year],
-      showRotation: true,
-      showMultiDimension: true,
-      isAggregate: true
     }
     return {
       dimensions: (coordSettings && coordSettings.dimensions) ? coordSettings.dimensions : 1,
@@ -41,6 +39,7 @@ const aggregateCoordSystem : CoordSystem = {
       uiParams,
       chartType: (coordSettings && coordSettings.chartType && uiParams.typeOptions.includes(coordSettings.chartType)) ? coordSettings.chartType : ChartType.day,
       orientation: (coordSettings && coordSettings.orientation) ? coordSettings.orientation : Orient.horizontal,
+      auxColumn: 'aggregation',
       visualMap: {
         palette: OhChartVisualmap.PresetPalette.yellowred,
         min: null,
@@ -60,25 +59,22 @@ const aggregateCoordSystem : CoordSystem = {
       type: SeriesType.none,
       uiParams: {
         typeOptions: [],
-        showAggregationOptions: false
       },
-      aggregation: seriesOptions.aggregation || OhAggregateSeries.AggregationFunction.average,
-      valueAxisIndex: 0,
-      marker: Marker.none
+      valueAxisIndex: 0
     }
 
     if ((item.type.startsWith('Number') || item.type === 'Dimmer' ||
         item.groupType?.startsWith('Number') || item.groupType === 'Dimmer')) {
-      options.uiParams.showAggregationOptions = true
+      options.aggregation = seriesOptions.aggregation || OhAggregateSeries.AggregationFunction.average
 
       if (aggregateCoordSettings.dimensions === 2) {
         options.uiParams.typeOptions = [SeriesType.heatmap]
         options.type = SeriesType.heatmap
       } else {
         options.uiParams.typeOptions = [SeriesType.bar, SeriesType.line, SeriesType.area]
+        options.marker = Marker.none
         options.type = (seriesOptions.type && options.uiParams.typeOptions.includes(seriesOptions.type)) ? seriesOptions.type : SeriesType.bar
         options.uiParams.showAxesOptions = true
-        options.uiParams.showMarkerOptions = true
         options.valueAxisIndex = getYAxis(item, aggregateCoordSettings)
       }
     }
@@ -170,10 +166,10 @@ const aggregateCoordSystem : CoordSystem = {
           type: dimension2 ? OhAggregateSeries.Type.heatmap : (seriesOptions.type === SeriesType.bar) ? OhAggregateSeries.Type.bar : OhAggregateSeries.Type.line,
           dimension1,
           dimension2,
-          markers: toPrimitiveMarkers(seriesOptions.marker) as OhAggregateSeries.Markers[],
           transpose: aggregateCoordSettings.orientation === Orient.vertical ? true : undefined,
           areaStyle: seriesOptions.type === SeriesType.area ? { opacity: 0.2 } : undefined,
-          aggregationFunction: seriesOptions.aggregation
+          aggregationFunction: seriesOptions.aggregation,
+          markers: toPrimitiveMarkers(seriesOptions.marker) as OhAggregateSeries.Markers[]
         } satisfies OhAggregateSeries.Config & Record<string, unknown>
       }
     })

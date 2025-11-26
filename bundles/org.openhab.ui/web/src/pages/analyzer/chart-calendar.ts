@@ -6,8 +6,8 @@ import { AggregationFunction, ChartType, OhChartPage, Orient, OhChartVisualmap, 
 
 export interface CalendarCoordSettings extends CoordSettingsBase {
   orientation: Orient
-  dimensions: number
   visualMap: VisualMap
+  auxColumn: string
 }
 
 export interface CalendarSeriesOptions extends SeriesOptions {
@@ -17,15 +17,13 @@ export interface CalendarSeriesOptions extends SeriesOptions {
 const calendarCoordSystem : CoordSystem = {
   initCoordSystem (coordSettings? : Partial<CalendarCoordSettings>) : CalendarCoordSettings {
     const uiParams : CoordUIParams = {
-      showRotation: true,
-      isAggregate: true,
       typeOptions: [ChartType.month, ChartType.year]
     }
     return {
       uiParams,
       chartType: (coordSettings && coordSettings.chartType && uiParams.typeOptions.includes(coordSettings.chartType)) ? coordSettings.chartType : ChartType.month,
-      dimensions: 2,
       orientation: (coordSettings && coordSettings.orientation) ? coordSettings.orientation : Orient.horizontal,
+      auxColumn: 'aggregation',
       visualMap: {
         palette: OhChartVisualmap.PresetPalette.yellowred,
         min: null,
@@ -39,19 +37,17 @@ const calendarCoordSystem : CoordSystem = {
   initSeries (item : Item, coordSettings : CoordSettings, seriesOptions : Partial<CalendarSeriesOptions>) : CalendarSeriesOptions {
     const options : CalendarSeriesOptions = {
       name: item.label || item.name,
-      type: SeriesType.heatmap,
+      type: SeriesType.none,
       uiParams: {
-        typeOptions: [SeriesType.heatmap]
+        typeOptions: []
       },
       aggregation: AggregationFunction.average
     }
 
-    if (!(item.type.startsWith('Number') || item.type === 'Dimmer' ||
+    if ((item.type.startsWith('Number') || item.type === 'Dimmer' ||
       item.groupType?.startsWith('Number') || item.groupType === 'Dimmer')) {
-    } else {
       options.type = SeriesType.heatmap
       options.uiParams.typeOptions = [SeriesType.heatmap]
-      options.uiParams.showAggregationOptions = true
     }
 
     return options

@@ -22,9 +22,7 @@ export enum SeriesType {
 
 export interface SeriesUIParams {
     typeOptions: Array<SeriesType>,
-    showMarkerOptions?: boolean,
     showAxesOptions?: boolean
-    showAggregationOptions?: boolean
 }
 
 export interface SeriesOptions {
@@ -36,10 +34,10 @@ export interface SeriesOptions {
 export interface ValueAxisOptions {
     name: string,
     unit: string,
-    split: string,
+    split?: ValueAxisSplitOptions,
     min?: string,
     max?: string,
-    scale?: boolean
+    scale?: boolean,
 }
 
 export enum ValueAxisSplitOptions {
@@ -61,9 +59,6 @@ export interface CoordSystem {
 
 export interface CoordUIParams {
     typeOptions: Array<ChartType>
-    showRotation?: boolean
-    isAggregate?: boolean
-    showMultiDimension?: boolean
 }
 
 export interface VisualMap {
