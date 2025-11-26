@@ -7,6 +7,7 @@ body[data-theme="light"] {
 	--container-text-color: #616161;
 	--switch-off-track-bg: rgba(0,0,0,.26);
 	--switch-on-track-bg: #9fa8da;
+	--slider-upper-bg: rgba(0,0,0,.26);
 	--state-unknown-color: #616161;
 	--border-color: #ccc;
 	--radio-unchecked-color: rgba(0,0,0,.5);
@@ -24,6 +25,7 @@ body[data-theme="dark"] {
 	--container-text-color: #c0c0c0;
 	--switch-off-track-bg: rgba(255,255,255,.26);
 	--switch-on-track-bg: #9fa8da;
+	--slider-upper-bg: rgba(255,255,255,.26);
 	--state-unknown-color: #616161;
 	--border-color: #545454;
 	--radio-unchecked-color: rgba(255,255,255,.5);
@@ -78,6 +80,10 @@ body {
 .mdl-switch__ripple-container .mdl-ripple {
 	background: #3f51b5;
 	background: var(--primary-color, #3f51b5);
+}
+
+.mdl-slider__background-upper {
+	background: var(--slider-upper-bg);
 }
 
 .mdl-radio__group {
