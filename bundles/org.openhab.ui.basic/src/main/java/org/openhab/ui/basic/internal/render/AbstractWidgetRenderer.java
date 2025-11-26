@@ -141,6 +141,11 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
         String state = getState(w);
         snippet = snippet.replace("%state%", escapeHtml(state));
         snippet = snippet.replace("%state_in_url%", escapeURL(state));
+        if ("UNDEF".equals(state) || "NULL".equals(state)) {
+            snippet = snippet.replace("%unknown_state%", "unknown-state");
+        } else {
+            snippet = snippet.replace("%unknown_state%", "");
+        }
 
         return snippet;
     }

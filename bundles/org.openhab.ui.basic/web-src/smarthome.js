@@ -4,6 +4,7 @@
  * @author Vlad Ivanov — initial version
  * @author Mark Herwege - input widget
  * @author Laurent Garnier — handling of app settings stored in browser local storage
+ * @author Mark Herwege - represent NULL or UNDEF states
  */
 
 /*eslint-env browser */
@@ -2895,7 +2896,8 @@
 		var
 			_t = this,
 			unlockTimeout = null,
-			lastSentCmd = null;
+			lastSentCmd = null,
+			stateUnknown = false;
 
 		_t.input = _t.parentNode.querySelector("input[type=range]");
 		_t.releaseOnly = _t.input.getAttribute("data-release-only") === "true";
@@ -2910,7 +2912,10 @@
 				value = parseInt(_t.input.getAttribute("data-state"), 10);
 
 			if (isNaN(value)) {
+				stateUnknown = true;
 				_t.input.value = 0;
+				_t.input.parentElement.classList.add("unknown-state");
+				componentHandler.upgradeElement(_t.input.parentElement);
 			} else {
 				_t.input.value = value;
 			}
@@ -2929,6 +2934,8 @@
 				return;
 			}
 
+			stateUnknown = false
+			
 			if (_t.unit) {
 				command = command + " " + _t.unit;
 			}
@@ -2955,10 +2962,15 @@
 				_t.unit = valueAndUnit[1];
 			}
 			if (itemState === "NULL" || itemState === "UNDEF") {
+				stateUnknown = true;
 				_t.input.value = 0;
+				_t.input.parentElement.classList.add("unknown-state");
 			} else {
+				stateUnknown = false;
 				_t.input.value = itemState.split(" ")[0] * 1;
+				_t.input.parentElement.classList.remove("unknown-state");
 			}
+			componentHandler.upgradeElement(_t.input.parentElement);
 			_t.input.MaterialSlider.change();
 		};
 
@@ -2984,9 +2996,17 @@
 			}
 			_t.locked = true;
 			lastSentCmd = null;
+			_t.input.parentElement.classList.remove("unknown-state");
+			componentHandler.upgradeElement(_t.input.parentElement);
 		}
 
 		function onChangeEnd() {
+			if (stateUnknown && (_t.input.value * 1) === 0) {
+				// The dimmer was not moved so there will not be a change.
+				// If the value was NULL or UNDEF, show that again.
+				_t.input.parentElement.classList.add("unknown-state");
+				componentHandler.upgradeElement(_t.input.parentElement);
+			}
 			unlockTimeout = setTimeout(function() {
 				_t.locked = false;
 			}, 300);
