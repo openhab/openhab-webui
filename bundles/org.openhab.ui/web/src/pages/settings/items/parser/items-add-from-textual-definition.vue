@@ -2,8 +2,6 @@
   <f7-page @page:afterin="onPageAfterIn">
     <f7-navbar>
       <oh-nav-content title="Add Items from Textual Definition"
-                      back-link="Developer Tools"
-                      back-link-url="/developer/"
                       save-link="Add"
                       @save="add()"
                       :f7router />

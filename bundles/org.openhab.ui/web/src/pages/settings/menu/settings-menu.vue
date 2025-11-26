@@ -1,7 +1,10 @@
 <template>
   <f7-page @page:init="onPageInit" @page:afterin="onPageAfterIn" class="page-settings">
     <f7-navbar large>
-      <oh-nav-content title="Settings" :large="true" :f7router>
+      <oh-nav-content title="Settings"
+                      :large="true"
+                      back-link-url="/"
+                      :f7router>
         <template #right>
           <f7-link
             class="searchbar-enable"
