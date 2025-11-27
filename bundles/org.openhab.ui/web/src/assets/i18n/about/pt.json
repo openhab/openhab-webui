@@ -13,9 +13,9 @@
   "about.technicalInformation.viewDetails": "Ver detalhes",
   "about.appearanceOptions": "Aparência (apenas para este dispositivo)",
   "about.reload": "Atualizar",
-  "about.reload.purgeExplanation1": "Memoria e/ou serviços activos estão em uso para armazenar os recursos localmente e fazer com que este aplicativo seja carregado rapidamente, no entanto pode não detectar fiavelmente quando for actualizado para uma nova versão.",
-  "about.reload.purgeExplanation2": "Seleccione Botão Limpar Memórias e Actualizar para limpar todos as memórias, cancelar os registos activos dos serviços e baixar novamente tudo do servidor.",
-  "about.reload.purgeCachesAndRefresh": "Limpar Memórias e Actualizar",
-  "about.reload.confirmPurge": "Limpar todos as memórias dos aplicativos e cancelar o registo dos serviços? Esta opção também irá recarregar a página do servidor, o que pode demorar alguns segundos.",
+  "about.reload.purgeExplanation1": "Processos de cache e/ou serviço estão a ser usados para armazenar recursos localmente e fazer com que esta aplicação seja carregada mais rapidamente, mas podem não detetar quando for atualizada para uma nova versão.",
+  "about.reload.purgeExplanation2": "Selecione Limpar Memórias Cache e Atualizar para limpar todas as memórias cache, cancelar os registos dos serviços e descarregar novamente tudo do servidor.",
+  "about.reload.purgeCachesAndRefresh": "Limpar Cache e Atualizar",
+  "about.reload.confirmPurge": "Limpar todas as memórias cache da aplicação e cancelar o registo dos serviços? Esta opção também irá recarregar a página do servidor, o que pode demorar alguns segundos.",
   "about.reload.reloadApp": "Recarregar Aplicação"
 }
