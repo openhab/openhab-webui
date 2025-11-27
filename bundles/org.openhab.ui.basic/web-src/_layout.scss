@@ -1041,3 +1041,14 @@ input::-webkit-calendar-picker-indicator {
 	background: #fafafa;
 	text-align: center;
 }
+.mdl-form__colorpicker--pick.unknown-state::after {
+	content: "?";
+	color: var(--state-unknown-color);
+	font-size: 14px;
+	font-weight: bold;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	pointer-events: none;
+}

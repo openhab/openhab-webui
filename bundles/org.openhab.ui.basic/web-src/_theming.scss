@@ -83,7 +83,7 @@ body {
 }
 
 .mdl-slider__background-upper {
-	background: var(--slider-upper-bg);
+	background: var(--slider-upper-bg, rgba(0,0,0,.26));
 }
 
 .mdl-radio__group {

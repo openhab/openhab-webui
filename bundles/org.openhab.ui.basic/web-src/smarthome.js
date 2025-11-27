@@ -2297,9 +2297,11 @@
 				color;
 
 			if (itemState === "NULL" || itemState === "UNDEF") {
+				_t.buttonPick.classList.add("unknown-state");
 				color = "#ffffff";
 				_t.value = hex2rgb(color);
 			} else {
+				_t.buttonPick.classList.remove("unknown-state");
 				t = itemState.split(",");
 				hsv = {
 					h: t[0] / 360,
@@ -2934,8 +2936,8 @@
 				return;
 			}
 
-			stateUnknown = false
-			
+			stateUnknown = false;
+
 			if (_t.unit) {
 				command = command + " " + _t.unit;
 			}
