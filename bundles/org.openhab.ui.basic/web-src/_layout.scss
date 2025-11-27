@@ -1041,7 +1041,8 @@ input::-webkit-calendar-picker-indicator {
 	background: #fafafa;
 	text-align: center;
 }
-.mdl-form__colorpicker--pick.unknown-state::after {
+.mdl-form__colorpicker--pick.unknown-state::after,
+.mdl-form__colortemppicker--pick.unknown-state::after {
 	content: "?";
 	color: var(--state-unknown-color);
 	font-size: 14px;

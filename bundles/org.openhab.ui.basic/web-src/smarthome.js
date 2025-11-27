@@ -2539,12 +2539,15 @@
 			// itemState contains value + unit in the display unit (in case unit is set in label pattern)
 			if (itemState === "NULL" || itemState === "UNDEF") {
 				_t.value = NaN;
+				_t.buttonPick.classList.add("unknown-state");
 			} else  if (itemState.indexOf(" ") > 0) {
 				var stateAndUnit = itemState.split(" ");
 				_t.value = parseFloat(stateAndUnit[0]);
 				_t.value = isNaN(_t.value) ? NaN : (stateAndUnit[1] === "K" ? _t.value : 1000000.0 / _t.value);
+				_t.buttonPick.classList.remove("unknown-state");
 			} else {
 				_t.value = itemState * 1;
+				_t.buttonPick.classList.remove("unknown-state");
 			}
 
 			// Set the color in the preview rectange with the most approaching color used to generate the gradient
