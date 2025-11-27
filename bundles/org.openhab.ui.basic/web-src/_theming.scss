@@ -85,6 +85,15 @@ body {
 .mdl-slider__background-upper {
 	background: var(--slider-upper-bg, rgba(0,0,0,.26));
 }
+.mdl-slider.is-upgraded.is-lowest-value::-webkit-slider-thumb {
+	border: 2px solid var(--slider-upper-bg, rgba(0,0,0,.26)) !important;
+}
+.mdl-slider.is-upgraded.is-lowest-value::-moz-range-thumb {
+	border: 2px solid var(--slider-upper-bg, rgba(0,0,0,.26)) !important;
+}
+.mdl-slider.is-upgraded.is-lowest-value::-ms-thumb {
+	border: 2px solid var(--slider-upper-bg, rgba(0,0,0,.26)) !important;
+}
 
 .mdl-radio__group {
 	border: 3px solid #ccc;

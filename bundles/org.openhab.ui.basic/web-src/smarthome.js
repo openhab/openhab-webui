@@ -2913,11 +2913,13 @@
 			var
 				value = parseInt(_t.input.getAttribute("data-state"), 10);
 
+			// Make sure it is upgrade before applying the unknown state styling
+			componentHandler.upgradeElement(_t.input);
+
 			if (isNaN(value)) {
 				stateUnknown = true;
 				_t.input.value = 0;
 				_t.input.parentElement.classList.add("unknown-state");
-				componentHandler.upgradeElement(_t.input.parentElement);
 			} else {
 				_t.input.value = value;
 			}
@@ -2972,7 +2974,6 @@
 				_t.input.value = itemState.split(" ")[0] * 1;
 				_t.input.parentElement.classList.remove("unknown-state");
 			}
-			componentHandler.upgradeElement(_t.input.parentElement);
 			_t.input.MaterialSlider.change();
 		};
 
@@ -2999,17 +3000,16 @@
 			_t.locked = true;
 			lastSentCmd = null;
 			_t.input.parentElement.classList.remove("unknown-state");
-			componentHandler.upgradeElement(_t.input.parentElement);
 		}
 
 		function onChangeEnd() {
-			if (stateUnknown && (_t.input.value * 1) === 0) {
-				// The dimmer was not moved so there will not be a change.
-				// If the value was NULL or UNDEF, show that again.
-				_t.input.parentElement.classList.add("unknown-state");
-				componentHandler.upgradeElement(_t.input.parentElement);
-			}
 			unlockTimeout = setTimeout(function() {
+				if (stateUnknown && (_t.input.value * 1) === 0) {
+					// The dimmer was not moved so there will not be a change.
+					// If the value was NULL or UNDEF, show that again.
+					_t.input.parentElement.classList.add("unknown-state");
+					componentHandler.upgradeElement(_t.input.parentElement);
+				}
 				_t.locked = false;
 			}, 300);
 		}
