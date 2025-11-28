@@ -79,7 +79,7 @@ const checkDirtyBeforeLeave = function ({ router, to, from, resolve, reject }) {
 }
 
 const loadAsync = (page, props) => {
-  return async ({ f7router, to, from, resolve, reject }) => {
+  return async ({ router, to, from, direction, resolve, reject }) => {
     if (!props) {
       page().then((c) => {
         resolve({ component: c.default })
@@ -92,7 +92,7 @@ const loadAsync = (page, props) => {
       page().then((c) => {
         resolve(
           { component: c.default },
-          { props: props({ f7router, to, from, resolve, reject }) }
+          { props: props({ router, to, from, resolve, reject }) }
         )
       })
     }
