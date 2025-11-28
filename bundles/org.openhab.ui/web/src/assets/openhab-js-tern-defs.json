@@ -1,1014 +1,1026 @@
 {
-    "!name": "openhab-runtime",
-    "!define": {
-        "Item": {
-            "type": {
-                "!doc": "The type of the item: the Simple (without package) name of the Java Item type, such as 'Switch'.",
-                "!type": "string"
-            },
-            "name": {
-                "!doc": "The name of the item.",
-                "!type": "string"
-            },
-            "label": {
-                "!doc": "The label attached to the item",
-                "!type": "string"
-            },
-            "state": {
-                "!doc": "The state of the item, as a string.",
-                "!type": "string"
-            },
-            "numericState": {
-                "!doc": "Numeric representation of Item state, or null if state is not numeric",
-                "!type": "number|null"
-            },
-            "quantityState": {
-                "!doc": "Item state as Quantity or null if state is not Quantity-compatible",
-                "!type": "QuantityClass|null"
-            },
-            "persistence": {
-                "!doc": "Access persisted states for this item",
-                "!type": "ItemPersistence"
-            },
-            "semantics": {
-                "!doc": "Access the semantic features for this Item",
-                "!type": "ItemSemantics"
-            },
-            "rawState": {
-                "!doc": "The raw state of the item, as a java object.",
-                "!type": "?"
-            },
-            "previousState": {
-                "!doc": "The previous state of the item, as a string, or null if no previous state is available.",
-                "!type": "string|null"
-            },
-            "previousNumericState": {
-                "!doc": "Numeric representation of previous Item state, or null if state is not numeric",
-                "!type": "number|null"
-            },
-            "previousQuantityState": {
-                "!doc": "Previous Item state as Quantity or null if state is not Quantity-compatible",
-                "!type": "QuantityClass|null"
-            },
-            "previousRawState": {
-                "!doc": "The previous raw state of the item, as a java object.",
-                "!type": "?"
-            },
-            "lastStateUpdateTimestamp": {
-                "!doc": "The timestamp of the last state update of the item.",
-                "!type": "+ZonedDateTime"
-            },
-            "lastStateUpdateInstant": {
-                "!doc": "The timestamp of the last state update of the item.",
-                "!type": "+Instant"
-            },
-            "lastStateChangeTimestamp": {
-                "!doc": "The timestamp of the last state change of the item.",
-                "!type": "+ZonedDateTime"
-            },
-            "lastStateChangeInstant": {
-                "!doc": "The timestamp of the last state change of the item.",
-                "!type": "+Instant"
-            },
-            "members": {
-                "!doc": "Members / children / direct descendents of the current group Item (as returned by 'getMembers()'). Must be a group item.",
-                "!type": "[Item]"
-            },
-            "descendents": {
-                "!doc": "All descendents of the current group Item (as returned by 'getAllMembers()'). Must be a group item.",
-                "!type": "[Item]"
-            },
-            "isUninitialized": {
-                "!doc": "Whether this Item is initialized.",
-                "!type": "boolean"
-            },
-            "tags": {
-                "!doc": "Gets the tags from this item",
-                "!type": "[string]"
-            },
-            "groupNames": {
-                "!doc": "Gets the groups for this item",
-                "!type": "[string]"
-            },
-            "getMetadata": {
-                "!doc": "Gets metadata of a single namespace or of all namespaces from this Item (see JavaScript Scripting docs/Standard Library/Items).",
-                "!type": "fn(namespace?: string) -> object|null"
-            },
-            "replaceMetadata": {
-                "!doc": "Updates or adds metadata of a single namespace to this Item (see JavaScript Scripting docs/Standard Library/Items).",
-                "!type": "fn(namespace: string, value: string, configuration?: object) -> object|null"
-            },
-            "removeMetadata": {
-                "!doc": "Removes metadata of a single namespace or of all namespaces from a given Item (see JavaScript Scripting docs/Standard Library/Items).",
-                "!type": "fn(namespace?: string) -> object|null"
-            },
-            "sendCommand": {
-                "!doc": "Sends a command to the item. When expire is set to a time.Duration (see JavaScript Scripting docs/Standard Library/Time), the Item will return to the current status or onExpire after the given duration.",
-                "!type": "fn(value: ?, expire?: +Duration, onExpire?: ?)"
-            },
-            "sendCommandIfDifferent": {
-                "!doc": "Sends a command to the item, but only if the current state is not what is being sent.",
-                "!type": "fn(value: ?)"
-            },
-            "sendIncreaseCommand": {
-                "!doc": "Increases the value of the item to the given value by sending a command, but only if the current state is less than that value.",
-                "!type": "fn(value: number|QuantityClass)"
-            },
-            "sendDecreaseCommand": {
-                "!doc": "Decreases the value of the item to the given value by sending a command, but only if the current state is greater than that value.",
-                "!type": "fn(value: number|QuantityClass)"
-            },
-            "postUpdate": {
-                "!doc": "Posts an update to the item",
-                "!type": "fn(value: ?)"
-            },
-            "addGroups": {
-                "!doc": "Adds groups to this item",
-                "!type": "fn(...groupNamesOrItems: ?)"
-            },
-            "removeGroups": {
-                "!doc": "Removes groups to this item",
-                "!type": "fn(...groupNamesOrItems: ?)"
-            },
-            "addTags": {
-                "!doc": "Adds tags to this item",
-                "!type": "fn(...groupNamesOrItems: ?)"
-            },
-            "removeTags": {
-                "!doc": "Removes tags to this item",
-                "!type": "fn(...groupNamesOrItems: ?)"
-            }
-        },
-        "ItemPersistence": {
-            "averageBetween": {
-              "!doc": "Gets the average value of the state of a given Item between two points in time.",
-              "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, riemannType?: RiemannType, serviceId?: string) -> PersistedState|null"
-            },
-            "averageSince": {
-                "!doc": "Gets the average value of the state of a given Item since a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, riemannType?: RiemannType, serviceId?: string) -> PersistedState|null"
-            },
-            "averageUntil": {
-                "!doc": "Gets the average value of the state of a given Item until a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, riemannType?: RiemannType, serviceId?: string) -> PersistedState|null"
-            },
-            "changedBetween": {
-                "!doc": "Checks if the state of a given Item has changed between two points in time.",
-                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> boolean"
-            },
-            "changedSince": {
-                "!doc": "Checks if the state of a given Item has changed since a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> boolean"
-            },
-            "changedUntil": {
-                "!doc": "Checks if the state of a given Item will have changed until a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> boolean"
-            },
-            "countBetween": {
-                "!doc": "Gets the number of available persisted data points of a given Item between two points in time.",
-                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> number"
-            },
-            "countSince": {
-                "!doc": "Gets the number of available historic data points of a given Item since a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
-            },
-            "countUntil": {
-                "!doc": "Gets the number of available future data points of a given Item until a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
-            },
-            "countStateChangesBetween": {
-                "!doc": "Gets the number of changes in persisted data points of a given Item between two points in time.",
-                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> number"
-            },
-            "countStateChangesSince": {
-                "!doc": "Gets the number of changes in historic data points of a given Item since a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
-            },
-            "countStateChangesUntil": {
-                "!doc": "Gets the number of changes in future data points of a given Item until a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
-            },
-            "deltaBetween": {
-                "!doc": "Gets the difference value of the state of a given Item between two points in time.",
-                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> PersistedState|null"
-            },
-            "deltaSince": {
-                "!doc": "Gets the difference value of the state of a given Item since a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> PersistedState|null"
-            },
-            "deltaUntil": {
-                "!doc": "Gets the difference value of the state of a given Item until a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> PersistedState|null"
-            },
-            "deviationBetween": {
-                "!doc": "Gets the standard deviation of the state of the given Item between two points in time.",
-                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, riemannType?: RiemannType, serviceId?: string) -> PersistedState|null"
-            },
-            "deviationSince": {
-                "!doc": "Gets the standard deviation of the state of the given Item since a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, riemannType?: RiemannType, serviceId?: string) -> PersistedState|null"
-            },
-            "deviationUntil": {
-                "!doc": "Gets the standard deviation of the state of the given Item until a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, riemannType?: RiemannType, serviceId?: string) -> PersistedState|null"
-            },
-            "evolutionRateBetween": {
-                "!doc": "Gets the evolution rate of the state of a given Item between two points in time.",
-                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
-            },
-            "evolutionRateSince": {
-                "!doc": "Gets the evolution rate of the state of a given Item since a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
-            },
-            "evolutionRateUntil": {
-                "!doc": "Gets the evolution rate of the state of a given Item until a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
-            },
-            "getAllStatesBetween": {
-                "!doc": "Retrieves persisted data for a given Item between two points in time.",
-                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> [PersistedItem]"
-            },
-            "getAllStatesSince": {
-                "!doc": "Retrieves persisted data for a given Item since a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> [PersistedItem]"
-            },
-            "getAllStatesUntil": {
-                "!doc": "Retrieves persisted data for a given Item until a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> [PersistedItem]"
-            },
-            "lastUpdate": {
-                "!doc": "Query the last update time of a given item.",
-                "!type": "fn(serviceId?: string) -> ZonedDateTime|null"
-            },
-            "nextUpdate": {
-                "!doc": "Query the next update time of a given item.",
-                "!type": "fn(serviceId?: string) -> ZonedDateTime|null"
-            },
-            "lastChange": {
-                "!doc": "Query the last change time of a given item.",
-                "!type": "fn(serviceId?: string) -> ZonedDateTime|null"
-            },
-            "nextChange": {
-              "!doc": "Query the next change time of a given item.",
-              "!type": "fn(serviceId?: string) -> ZonedDateTime|null"
-            },
-            "maximumBetween": {
-                "!doc": "Gets the maximum value of the persisted states of a given Item between two points in time.",
-                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> PersistedItem|null"
-            },
-            "maximumSince": {
-                "!doc": "Gets the historic Item with the maximum value of the state of a given Item since a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> PersistedItem|null"
-            },
-            "maximumUntil": {
-                "!doc": "Gets the future Item with the maximum value of the state of a given Item until a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> PersistedItem|null"
-            },
-            "minimumBetween": {
-                "!doc": "Gets the minimum value of the persisted states of a given Item between two points in time.",
-                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> PersistedItem"
-            },
-            "minimumSince": {
-                "!doc": "Gets the historic Item with the minimum value of the state of a given Item since a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> PersistedItem"
-            },
-            "minimumUntil": {
-                "!doc": "Gets the future Item with the minimum value of the state of a given Item until a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> PersistedItem"
-            },
-            "persist": {
-                "!doc": "Persists the current state of a given item or the given state at a given timestamp or a TimeSeries (see JavaScript Scripting docs/Standard Library/Items)",
-                "!type": "fn(timestamp?: +Date|+ZonedDateTime, state?: ?, timeSeries?: TimeSeries, serviceId?: string)"
-            },
-            "previousState": {
-                "!doc": "Returns the previous state of a given item.",
-                "!type": "fn(skipEqual?: boolean, serviceId?: string) -> PersistedItem"
-            },
-            "nextState": {
-                "!doc": "Returns the next state of a given item.",
-                "!type": "fn(skipEqual?: boolean, serviceId?: string) -> PersistedItem"
-            },
-            "riemannSumBetween": {
-                "!doc": "Gets the Riemannsum of the state of the given Item between two points in time, time calculated in seconds.",
-                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, riemannType?: RiemannType, serviceId?: string) -> PersistedItem|null"
-            },
-            "riemannSumSince": {
-                "!doc": "Gets the Riemannsum of of the state of the given Item since a certain point in time, time calculated in seconds.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, riemannType?: RiemannType, serviceId?: string) -> PersistedItem|null"
-            },
-            "riemannSumUntil": {
-                "!doc": "Gets the Riemannsum of of the state of the given Item until a certain point in time, time calculated in seconds.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, riemannType?: RiemannType, serviceId?: string) -> PersistedItem|null"
-            },
-            "sumBetween": {
-                "!doc": "Gets the sum of the states of a given Item between two points in time.",
-                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> PersistedItem|null"
-            },
-            "sumSince": {
-                "!doc": "Gets the sum of the state of a given Item since a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> PersistedItem|null"
-            },
-            "sumUntil": {
-                "!doc": "Gets the sum of the state of a given Item until a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> PersistedItem|null"
-            },
-            "updatedBetween": {
-                "!doc": "Checks if the state of a given Item has been updated between two points in time.",
-                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> boolean"
-            },
-            "updatedSince": {
-                "!doc": "Checks if the state of a given Item has been updated since a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> boolean"
-            },
-            "updatedUntil": {
-                "!doc": "Checks if the state of a given Item will have been updated until a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> boolean"
-            },
-            "varianceBetween": {
-                "!doc": "Gets the variance of the state of the given Item between two points in time.",
-                "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, riemannType?: RiemannType, serviceId?: string) -> PersistedItem|null"
-            },
-            "varianceSince": {
-                "!doc": "Gets the variance of the state of the given Item since a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, riemannType?: RiemannType, serviceId?: string) -> PersistedItem|null"
-            },
-            "varianceUntil": {
-                "!doc": "Gets the variance of the state of the given Item until a certain point in time.",
-                "!type": "fn(timestamp: +Date|+ZonedDateTime, riemannType?: RiemannType, serviceId?: string) -> PersistedItem|null"
-            }
-        },
-        "PersistedItem": {
-            "state": {
-                "!doc": "Item state",
-                "!type": "string"
-            },
-            "numericState": {
-                "!doc": "Numeric representation of Item state, or null if state is not numeric",
-                "!type": "number|null"
-            },
-            "quantityState": {
-                "!doc": "Item state as Quantity or null if state is not Quantity-compatible",
-                "!type": "QuantityClass|null"
-            },
-            "timestamp": {
-                "!doc": "timestamp of the persisted Item",
-                "!type": "+ZonedDateTime"
-            },
-            "instant": {
-                "!doc": "timestamp of the persisted Item as Instant",
-                "!type": "+Instant"
-            }
-        },
-        "PersistedState": {
-            "state": {
-                "!doc": "Item state",
-                "!type": "string"
-            },
-            "numericState": {
-                "!doc": "Numeric representation of Item state, or null if state is not numeric",
-                "!type": "number|null"
-            },
-            "quantityState": {
-                "!doc": "Item state as Quantity or null if state is not Quantity-compatible",
-                "!type": "QuantityClass|null"
-            }
-        },
-        "TimeSeries": {
-            "policy": {
-                "!doc": "Policy of the TimeSeries",
-                "!type": "string"
-            },
-            "begin": {
-                "!doc": "Timestamp of the first element in the TimeSeries",
-                "!type": "+Instant"
-            },
-            "end": {
-                "!doc": "Timestamp of the last element in the TimeSeries",
-                "!type": "+Instant"
-            },
-            "size": {
-                "!doc": "Number of elements in the TimeSeries",
-                "!type": "number"
-            },
-            "states": {
-                "!doc": "Array of states in the TimeSeries",
-                "!type": "[?]"
-            },
-            "add": {
-                "!doc": "Adds a new element to the TimeSeries",
-                "!type": "fn(timestamp: ?, state: ?)"
-            }
-        },
-        "ItemSemantics": {
-            "equipmentType": {
-                "!doc": "The type of the semantic equipment.",
-                "!type": "string|null"
-            },
-            "locationType": {
-                "!doc": "The type of the semantic location.",
-                "!type": "string|null"
-            },
-            "pointType": {
-                "!doc": "The type of the semantic point.",
-                "!type": "string|null"
-            },
-            "propertyType": {
-                "!doc": "The type of the semantic property.",
-                "!type": "string|null"
-            },
-            "semanticType": {
-                "!doc": "Determines the semantic type (i.e. a sub-type of Location, Equipment or Point).",
-                "!type": "string|null"
-            },
-            "isLocation": {
-                "!doc": "Whether the Item is a Location.",
-                "!type": "boolean"
-            },
-            "isEquipment": {
-                "!doc": "Whether the Item is an Equipment.",
-                "!type": "boolean"
-            },
-            "isPoint": {
-                "!doc": "Whether the Item is a Point.",
-                "!type": "boolean"
-            },
-            "location": {
-                "!doc": "The Location Item where this Item is situated or `null` if it's not in a Location.",
-                "!type": "Item|null"
-            },
-            "equipment": {
-                "!doc": "The Equipment Item where this Item is situated or `null` if it's not in an Equipment.",
-                "!type": "Item|null"
-            }
-        },
-        "ItemConfig": {
-            "type": {
-                "!doc": "Type of the Item.",
-                "!type": "string"
-            },
-            "name": {
-                "!doc": "Name of the Item.",
-                "!type": "string"
-            },
-            "label": {
-                "!doc": "Label of the Item.",
-                "!type": "string"
-            },
-            "category": {
-                "!doc": "Category (icon) of the Item.",
-                "!type": "string"
-            },
-            "groups": {
-                "!doc": "Groups of the Item.",
-                "!type": "[string]"
-            },
-            "tags": {
-                "!doc": "Tags of the Item.",
-                "!type": "[string]"
-            },
-            "channels": {
-                "!doc": "Channel links for the Item (see JavaScript Scripting docs/Standard Library/Items).",
-                "!type": "string|object"
-            },
-            "metadata": {
-                "!doc": "Metadata for the Item (see JavaScript Scripting docs/Standard Library/Items).",
-                "!type": "object"
-            }
-        },
-        "RiemannType": {
-            "LEFT": {
-                "!doc": "Left riemann sum: takes the persisted value at the start of the bucket to represent the value for the whole bucket",
-                "!type": "string"
-            },
-            "RIGHT": {
-                "!doc": "Right riemann sum: takes the persisted value at the end of the bucket to represent the value for the whole bucket",
-                "!type": "string"
-            },
-            "TRAPEZOIDAL": {
-                "!doc": "Trapezoidal riemann sum: takes the average of the persisted value at the start end the end of the bucket, effectively making a linear interpolation to fit the curve",
-                "!type": "string"
-            },
-            "MIDPOINT": {
-                "!doc": "Midpoint riemann sum: uses 3 persisted values and uses the middle of the values as an approximation for the value halfway in the interval between the middle of point 1 and 2 and the middle of point 2 and 3",
-                "!type": "string"
-            }
-        },
-        "ItemsNamespace": {
-            "getItem": {
-                "!doc": "Gets an Item.",
-                "!type": "fn(name: string) -> Item"
-            },
-            "getItems": {
-                "!doc": "Gets all Items.",
-                "!type": "fn() -> [Item]"
-            },
-            "getItemsByTag": {
-                "!doc": "Gets a list of all Items containing all of the given tags.",
-                "!type": "fn(tag: [string]) -> [Item]"
-            },
-            "addItem": {
-                "!doc": "Creates a new Item within openHAB (see JavaScript Scripting docs/Standard Library/Items).",
-                "!type": "fn(itemConfig: ItemConfig) -> Item",
-                "!url": "https://openhab.org/addons/automation/jsscripting/#itemconfig"
-            },
-            "replaceItem": {
-                "!doc": "Replaces (upserts) an item. If an Item does not exist with this name, a new Item will be created with the supplied configuration (see JavaScript Scripting docs/Standard Library/Items).",
-                "!type": "fn(itemConfig: ItemConfig) -> Item",
-                "!url": "https://openhab.org/addons/automation/jsscripting/#itemconfig"
-            },
-            "removeItem": {
-                "!doc": "Removes an Item from openHAB. The Item is removed immediately and cannot be recovered.",
-                "!type": "fn(itemOrItemName: string|Item) -> bool"
-            },
-            "safeItemName": {
-                "!doc": "Helper function to ensure an Item name is valid. All invalid characters are replaced with an underscore.",
-                "!type": "fn(s: string) -> string"
-            },
-            "TimeSeries": {
-                "!doc":  "A TimeSeries is used to transport a set of states together with their timestamp.",
-                "!type": "fn(policy: string)",
-                "prototype": "TimeSeries"
-            },
-            "RiemannType": {
-                "!doc": "The type of approximation to use for calculating the Riemann sum.",
-                "!type": "RiemannType"
-            },
-            "NAME": {
-                "!doc": "Gets an Item using it's name on the items namespace, e.g. items.Hallway_Light",
-                "!type": "Item"
-            }
-        },
-        "Thing": {
-            "bridgeUID": {
-                "!doc": "UID of Thing's bridge.",
-                "!type": "string"
-            },
-            "label": {
-                "!doc": "Label of the Thing.",
-                "!type": "string"
-            },
-            "location": {
-                "!doc": "Physical location of the Thing.",
-                "!type": "string"
-            },
-            "status": {
-                "!doc": "Thing status (e.g. ONLINE or OFFLINE).",
-                "!type": "string"
-            },
-            "statusInfo": {
-                "!doc": "More detailed status of Thing.",
-                "!type": "string"
-            },
-            "thingTypeUID": {
-                "!doc": "UID of Thing's type.",
-                "!type": "string"
-            },
-            "uid": {
-                "!doc": "UID of Thing.",
-                "!type": "string"
-            },
-            "isEnabled": {
-                "!doc": "Whether the Thing is enabled or not.",
-                "!type": "boolean"
-            },
-            "setLabel": {
-                "!doc": "Set the Thing label.",
-                "!type": "fn(label: string)"
-            },
-            "setLocation": {
-                "!doc": "Set the physical location of the Thing.",
-                "!type": "fn(location: string)"
-            },
-            "setProperty": {
-                "!doc": "Set the value of a property of the Thing.",
-                "!type": "fn(name: string, value: string)"
-            },
-            "setEnabled": {
-                "!doc": "Enable or disable the Thing.",
-                "!type": "fn(enabled: boolean)"
-            }
-        },
-        "ThingsNamespace": {
-            "getThing": {
-                "!doc": "Get a single Thing from openHAB.",
-                "!type": "fn(uid: string, nullIfMissing?: boolean) -> Thing"
-            },
-            "getThings": {
-                "!doc": "Get all Things from openHAB.",
-                "!type": "fn() -> [Thing]"
-              }
-        },
-        "CacheNamespace": {
-            "shared": {
-                "!doc": "Shared cache that is shared across all rules and scripts, it can therefore be accessed from any automation language. A key is removed when all scripts that ever accessed it are unloaded, if the key stores a timer, the timer is cancelled.",
-                "!type": "JSCache"
-            },
-            "private": {
-                "!doc": "Private cache for each script. It can only be accessed by the same script and is cleared when the script is unloaded. When the script is unloaded, all timers in the script are cancelled.",
-                "!type": "JSCache"
-            }
-        },
-        "JSCache": {
-            "get": {
-                "!doc": "Returns the value to which the specified key is mapped. The optional defaultSupplier will return a default value if the key has no associated value.",
-                "!type": "fn(key: string, defaultSupplier?: fn()) -> ?"
-            },
-            "put": {
-                "!doc": "Associates the specified value with the specified key.",
-                "!type": "fn(key: string, value: ?) -> ?"
-            },
-            "remove": {
-                "!doc": "Removes the mapping for a key from this map if it is present.",
-                "!type": "fn(key: string) -> ?"
-            },
-            "exists": {
-                "!doc": "Checks whether a value is associated with the given key.",
-                "!type": "fn(key: string) -> boolean"
-            }
-        },
-        "QuantityClass": {
-            "dimension": {
-                "!doc": "Dimension of this Quantity, e.g. [L] for metres or [L]² for cubic-metres",
-                "!type": "string"
-            },
-            "unit": {
-                "!doc": "Unit of this Quantity, e.g. Metre, or null if not available",
-                "!type": "string|null"
-            },
-            "symbol": {
-                "!doc": "Unit symbol of this Quantity, e.g. m, or null if not available",
-                "!type": "string|null"
-            },
-            "float": {
-                "!doc": "Float (decimal number) value of this Quantity",
-                "!type": "number"
-            },
-            "int": {
-                "!doc": "Integer (non-decimal number) value of this Quantity",
-                "!type": "number"
-            },
-            "add": {
-                "!doc": "Add the given value to this Quantity.",
-                "!type": "fn(value: string|QuantityClass) -> QuantityClass"
-            },
-            "divide": {
-                "!doc": "Divide this Quantity by the given value.",
-                "!type": "fn(value: number|string|QuantityClass|Item) -> QuantityClass"
-            },
-            "multiply": {
-                "!doc": "Multiply this Quantity by the given value.",
-                "!type": "fn(value: number|string|QuantityClass|Item) -> QuantityClass"
-            },
-            "subtract": {
-                "!doc": "Subtract the given value from this Quantity.",
-                "!type": "fn(value: string|QuantityClass) -> QuantityClass"
-            },
-            "toUnit": {
-                "!doc": "Convert this Quantity to the given unit, e.g. cm or °F",
-                "!type": "fn(unit: string) -> QuantityClass"
-            },
-            "equal": {
-                "!doc": "Checks whether this Quantity is equal to the passed in value.",
-                "!type": "fn(value: string|QuantityClass) -> boolean"
-            },
-            "greaterThan": {
-                "!doc": "Checks whether this Quantity is larger than the passed in value.",
-               "!type": "fn(value: string|QuantityClass) -> boolean"
-            },
-            "greaterThanOrEqual": {
-                "!doc": "Checks whether this Quantity is larger than or equal to the passed in value.",
-                "!type": "fn(value: string|QuantityClass) -> boolean"
-            },
-            "lessThan": {
-                "!doc": "Checks whether this Quantity is smaller than the passed in value.",
-                "!type": "fn(value: string|QuantityClass) -> boolean"
-            },
-            "lessThanOrEqual": {
-                "!doc": "Checks whether this Quantity is smaller than or equal to the passed in value.",
-                "!type": "fn(value: string|QuantityClass) -> boolean"
-            }
-        },
-        "Timer": {
-            "cancel": {
-                "!doc": "Cancels the timer.",
-                "!type": "fn() -> boolean"
-            },
-            "getExecutionTime": {
-                "!doc": "The scheduled execution time or null if timer was cancelled.",
-                "!type": "fn() -> time.ZonedDateTime|null"
-            },
-            "isActive": {
-                "!doc": "Whether the scheduled execution is yet to happen.",
-                "!type": "fn() -> boolean"
-            },
-            "isCancelled": {
-                "!doc": "Whether the timer has been cancelled.",
-                "!type": "fn() -> boolean"
-            },
-            "hasTerminated": {
-                "!doc": "Whether the scheduled execution has already terminated.",
-                "!type": "fn() -> boolean"
-            },
-            "reschedule": {
-                "!doc": "Reschedules a timer to a new starting time. This can also be called after a timer has terminated, which will result in another execution of the same code.",
-                "!type": "fn(zonedDateTime: time.ZonedDateTime) -> boolean"
-            }
-        },
-        "TimeNamespace": {
-            "toZDT": {
-                "!doc": "Converts nearly any representation of a time to a time.ZonedDateTime (see JavaScript Scripting Docs/Standard Library/Time)",
-                "!type": "fn(time: ?) -> time.ZonedDateTime"
-            },
-            "toInstant": {
-                "!doc": "Converts nearly any representation of a time to a time.Instant (see JavaScript Scripting Docs/Standard Library/Time)",
-                "!type": "fn(time: ?) -> +Instant"
-            },
-            "ZonedDateTime": {
-                "!doc": "Represents a date-time with a time offset and/or a time zone in the ISO-8601 calendar system (see JavaScript Scripting Docs/Standard Library/Time)."
-            }
-        },
-        "Logger": {
-            "trace": {
-                "!doc": "Logs at the TRACE level.",
-                "!type": "fn(message: string, args?: ?)"
-            },
-            "debug": {
-                "!doc": "Logs at the DEBUG level.",
-                "!type": "fn(message: string, args?: ?)"
-            },
-            "info": {
-                "!doc": "Logs at the INFO level.",
-                "!type": "fn(message: string, args?: ?)"
-            },
-            "warn": {
-                "!doc": "Logs at the WARN level.",
-                "!type": "fn(message: string, args?: ?)"
-            },
-            "error": {
-                "!doc": "Logs at the ERROR level.",
-                "!type": "fn(message: string, args?: ?)"
-            },
-            "atLevel": {
-                "!doc": "Logs a message at the supplied level. The message may include placeholders {} which will be substituted into the message string only if the message is actually logged.",
-                "!type": "fn(level: string, message: string, args?: ?)"
-            }
-        },
-        "Console": {
-            "log": {
-                "!doc": "Logs a message.",
-                "!type": "fn(message: string, args?: ?)"
-            },
-            "trace": {
-                "!doc": "Logs at the TRACE level.",
-                "!type": "fn(message: string, args?: ?)"
-            },
-            "debug": {
-                "!doc": "Logs at the DEBUG level.",
-                "!type": "fn(message: string, args?: ?)"
-            },
-            "info": {
-                "!doc": "Logs at the INFO level.",
-                "!type": "fn(message: string, args?: ?)"
-            },
-            "warn": {
-                "!doc": "Logs at the WARN level.",
-                "!type": "fn(message: string, args?: ?)"
-            },
-            "error": {
-                "!doc": "Logs at the ERROR level.",
-                "!type": "fn(message: string, args?: ?)"
-            }
-        },
-        "EventData": {
-            "itemName": {
-                "!doc": "The name of the Item that triggered the event (core.ItemStateUpdateTrigger, core.ItemStateChangeTrigger, core.ItemCommandTrigger). Attention: Java type!",
-                "!type": "string"
-            },
-            "itemState": {
-                "!doc": "The state of the Item that triggered the event (core.ItemStateUpdateTrigger, core.ItemStateChangeTrigger). Attention: Java type!",
-                "!type": "string"
-            },
-            "oldItemState": {
-                "!doc": "The previous state of the Item that triggered the event (core.ItemStateChangeTrigger). Attention: Java type!",
-                "!type": "string"
-            },
-            "itemCommand": {
-                "!doc": "The command of the Item that triggered the event (core.ItemCommandTrigger). Attention: Java type!",
-                "!type": "string"
-            },
-            "type": {
-                "!doc": "The event type (core.GenericEventTrigger). Attention: Java type!",
-                "!type": "string"
-            }
-        },
+  "!name": "openhab-runtime",
+  "!define": {
+    "Item": {
+      "type": {
+        "!doc": "The type of the item: the Simple (without package) name of the Java Item type, such as 'Switch'.",
+        "!type": "string"
+      },
+      "name": {
+        "!doc": "The name of the item.",
+        "!type": "string"
+      },
+      "label": {
+        "!doc": "The label attached to the item",
+        "!type": "string"
+      },
+      "state": {
+        "!doc": "The state of the item, as a string.",
+        "!type": "string"
+      },
+      "numericState": {
+        "!doc": "Numeric representation of Item state, or null if state is not numeric",
+        "!type": "number|null"
+      },
+      "quantityState": {
+        "!doc": "Item state as Quantity or null if state is not Quantity-compatible",
+        "!type": "QuantityClass|null"
+      },
+      "persistence": {
+        "!doc": "Access persisted states for this item",
+        "!type": "ItemPersistence"
+      },
+      "semantics": {
+        "!doc": "Access the semantic features for this Item",
+        "!type": "ItemSemantics"
+      },
+      "rawState": {
+        "!doc": "The raw state of the item, as a java object.",
+        "!type": "?"
+      },
+      "previousState": {
+        "!doc": "The previous state of the item, as a string, or null if no previous state is available.",
+        "!type": "string|null"
+      },
+      "previousNumericState": {
+        "!doc": "Numeric representation of previous Item state, or null if state is not numeric",
+        "!type": "number|null"
+      },
+      "previousQuantityState": {
+        "!doc": "Previous Item state as Quantity or null if state is not Quantity-compatible",
+        "!type": "QuantityClass|null"
+      },
+      "previousRawState": {
+        "!doc": "The previous raw state of the item, as a java object.",
+        "!type": "?"
+      },
+      "lastStateUpdateTimestamp": {
+        "!doc": "The timestamp of the last state update of the item.",
+        "!type": "+ZonedDateTime"
+      },
+      "lastStateUpdateInstant": {
+        "!doc": "The timestamp of the last state update of the item.",
+        "!type": "+Instant"
+      },
+      "lastStateChangeTimestamp": {
+        "!doc": "The timestamp of the last state change of the item.",
+        "!type": "+ZonedDateTime"
+      },
+      "lastStateChangeInstant": {
+        "!doc": "The timestamp of the last state change of the item.",
+        "!type": "+Instant"
+      },
+      "members": {
+        "!doc": "Members / children / direct descendents of the current group Item (as returned by 'getMembers()'). Must be a group item.",
+        "!type": "[Item]"
+      },
+      "descendents": {
+        "!doc": "All descendents of the current group Item (as returned by 'getAllMembers()'). Must be a group item.",
+        "!type": "[Item]"
+      },
+      "isUninitialized": {
+        "!doc": "Whether this Item is initialized.",
+        "!type": "boolean"
+      },
+      "tags": {
+        "!doc": "Gets the tags from this item",
+        "!type": "[string]"
+      },
+      "groupNames": {
+        "!doc": "Gets the groups for this item",
+        "!type": "[string]"
+      },
+      "getMetadata": {
+        "!doc": "Gets metadata of a single namespace or of all namespaces from this Item (see JavaScript Scripting docs/Standard Library/Items).",
+        "!type": "fn(namespace?: string) -> object|null"
+      },
+      "replaceMetadata": {
+        "!doc": "Updates or adds metadata of a single namespace to this Item (see JavaScript Scripting docs/Standard Library/Items).",
+        "!type": "fn(namespace: string, value: string, configuration?: object) -> object|null"
+      },
+      "removeMetadata": {
+        "!doc": "Removes metadata of a single namespace or of all namespaces from a given Item (see JavaScript Scripting docs/Standard Library/Items).",
+        "!type": "fn(namespace?: string) -> object|null"
+      },
+      "sendCommand": {
+        "!doc": "Sends a command to the item. When expire is set to a time.Duration (see JavaScript Scripting docs/Standard Library/Time), the Item will return to the current status or onExpire after the given duration.",
+        "!type": "fn(value: ?, expire?: +Duration, onExpire?: ?)"
+      },
+      "sendCommandIfDifferent": {
+        "!doc": "Sends a command to the item, but only if the current state is not what is being sent.",
+        "!type": "fn(value: ?)"
+      },
+      "sendIncreaseCommand": {
+        "!doc": "Increases the value of the item to the given value by sending a command, but only if the current state is less than that value.",
+        "!type": "fn(value: number|QuantityClass)"
+      },
+      "sendDecreaseCommand": {
+        "!doc": "Decreases the value of the item to the given value by sending a command, but only if the current state is greater than that value.",
+        "!type": "fn(value: number|QuantityClass)"
+      },
+      "postUpdate": {
+        "!doc": "Posts an update to the item",
+        "!type": "fn(value: ?)"
+      },
+      "addGroups": {
+        "!doc": "Adds groups to this item",
+        "!type": "fn(...groupNamesOrItems: ?)"
+      },
+      "removeGroups": {
+        "!doc": "Removes groups to this item",
+        "!type": "fn(...groupNamesOrItems: ?)"
+      },
+      "addTags": {
+        "!doc": "Adds tags to this item",
+        "!type": "fn(...groupNamesOrItems: ?)"
+      },
+      "removeTags": {
+        "!doc": "Removes tags to this item",
+        "!type": "fn(...groupNamesOrItems: ?)"
+      }
+    },
+    "ItemPersistence": {
+      "averageBetween": {
+        "!doc": "Gets the average value of the state of a given Item between two points in time.",
+        "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, riemannType?: RiemannType, serviceId?: string) -> PersistedState|null"
+      },
+      "averageSince": {
+        "!doc": "Gets the average value of the state of a given Item since a certain point in time.",
+        "!type": "fn(timestamp: +Date|+ZonedDateTime, riemannType?: RiemannType, serviceId?: string) -> PersistedState|null"
+      },
+      "averageUntil": {
+        "!doc": "Gets the average value of the state of a given Item until a certain point in time.",
+        "!type": "fn(timestamp: +Date|+ZonedDateTime, riemannType?: RiemannType, serviceId?: string) -> PersistedState|null"
+      },
+      "changedBetween": {
+        "!doc": "Checks if the state of a given Item has changed between two points in time.",
+        "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> boolean"
+      },
+      "changedSince": {
+        "!doc": "Checks if the state of a given Item has changed since a certain point in time.",
+        "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> boolean"
+      },
+      "changedUntil": {
+        "!doc": "Checks if the state of a given Item will have changed until a certain point in time.",
+        "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> boolean"
+      },
+      "countBetween": {
+        "!doc": "Gets the number of available persisted data points of a given Item between two points in time.",
+        "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> number"
+      },
+      "countSince": {
+        "!doc": "Gets the number of available historic data points of a given Item since a certain point in time.",
+        "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
+      },
+      "countUntil": {
+        "!doc": "Gets the number of available future data points of a given Item until a certain point in time.",
+        "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
+      },
+      "countStateChangesBetween": {
+        "!doc": "Gets the number of changes in persisted data points of a given Item between two points in time.",
+        "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> number"
+      },
+      "countStateChangesSince": {
+        "!doc": "Gets the number of changes in historic data points of a given Item since a certain point in time.",
+        "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
+      },
+      "countStateChangesUntil": {
+        "!doc": "Gets the number of changes in future data points of a given Item until a certain point in time.",
+        "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number"
+      },
+      "deltaBetween": {
+        "!doc": "Gets the difference value of the state of a given Item between two points in time.",
+        "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> PersistedState|null"
+      },
+      "deltaSince": {
+        "!doc": "Gets the difference value of the state of a given Item since a certain point in time.",
+        "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> PersistedState|null"
+      },
+      "deltaUntil": {
+        "!doc": "Gets the difference value of the state of a given Item until a certain point in time.",
+        "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> PersistedState|null"
+      },
+      "deviationBetween": {
+        "!doc": "Gets the standard deviation of the state of the given Item between two points in time.",
+        "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, riemannType?: RiemannType, serviceId?: string) -> PersistedState|null"
+      },
+      "deviationSince": {
+        "!doc": "Gets the standard deviation of the state of the given Item since a certain point in time.",
+        "!type": "fn(timestamp: +Date|+ZonedDateTime, riemannType?: RiemannType, serviceId?: string) -> PersistedState|null"
+      },
+      "deviationUntil": {
+        "!doc": "Gets the standard deviation of the state of the given Item until a certain point in time.",
+        "!type": "fn(timestamp: +Date|+ZonedDateTime, riemannType?: RiemannType, serviceId?: string) -> PersistedState|null"
+      },
+      "evolutionRateBetween": {
+        "!doc": "Gets the evolution rate of the state of a given Item between two points in time.",
+        "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
+      },
+      "evolutionRateSince": {
+        "!doc": "Gets the evolution rate of the state of a given Item since a certain point in time.",
+        "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
+      },
+      "evolutionRateUntil": {
+        "!doc": "Gets the evolution rate of the state of a given Item until a certain point in time.",
+        "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> number|null"
+      },
+      "getAllStatesBetween": {
+        "!doc": "Retrieves persisted data for a given Item between two points in time.",
+        "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> [PersistedItem]"
+      },
+      "getAllStatesSince": {
+        "!doc": "Retrieves persisted data for a given Item since a certain point in time.",
+        "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> [PersistedItem]"
+      },
+      "getAllStatesUntil": {
+        "!doc": "Retrieves persisted data for a given Item until a certain point in time.",
+        "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> [PersistedItem]"
+      },
+      "lastUpdate": {
+        "!doc": "Query the last update time of a given item.",
+        "!type": "fn(serviceId?: string) -> ZonedDateTime|null"
+      },
+      "nextUpdate": {
+        "!doc": "Query the next update time of a given item.",
+        "!type": "fn(serviceId?: string) -> ZonedDateTime|null"
+      },
+      "lastChange": {
+        "!doc": "Query the last change time of a given item.",
+        "!type": "fn(serviceId?: string) -> ZonedDateTime|null"
+      },
+      "nextChange": {
+        "!doc": "Query the next change time of a given item.",
+        "!type": "fn(serviceId?: string) -> ZonedDateTime|null"
+      },
+      "maximumBetween": {
+        "!doc": "Gets the maximum value of the persisted states of a given Item between two points in time.",
+        "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> PersistedItem|null"
+      },
+      "maximumSince": {
+        "!doc": "Gets the historic Item with the maximum value of the state of a given Item since a certain point in time.",
+        "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> PersistedItem|null"
+      },
+      "maximumUntil": {
+        "!doc": "Gets the future Item with the maximum value of the state of a given Item until a certain point in time.",
+        "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> PersistedItem|null"
+      },
+      "minimumBetween": {
+        "!doc": "Gets the minimum value of the persisted states of a given Item between two points in time.",
+        "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> PersistedItem"
+      },
+      "minimumSince": {
+        "!doc": "Gets the historic Item with the minimum value of the state of a given Item since a certain point in time.",
+        "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> PersistedItem"
+      },
+      "minimumUntil": {
+        "!doc": "Gets the future Item with the minimum value of the state of a given Item until a certain point in time.",
+        "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> PersistedItem"
+      },
+      "persist": {
+        "!doc": "Persists the current state of a given item or the given state at a given timestamp or a TimeSeries (see JavaScript Scripting docs/Standard Library/Items)",
+        "!type": "fn(timestamp?: +Date|+ZonedDateTime, state?: ?, timeSeries?: TimeSeries, serviceId?: string)"
+      },
+      "previousState": {
+        "!doc": "Returns the previous state of a given item.",
+        "!type": "fn(skipEqual?: boolean, serviceId?: string) -> PersistedItem"
+      },
+      "nextState": {
+        "!doc": "Returns the next state of a given item.",
+        "!type": "fn(skipEqual?: boolean, serviceId?: string) -> PersistedItem"
+      },
+      "riemannSumBetween": {
+        "!doc": "Gets the Riemannsum of the state of the given Item between two points in time, time calculated in seconds.",
+        "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, riemannType?: RiemannType, serviceId?: string) -> PersistedItem|null"
+      },
+      "riemannSumSince": {
+        "!doc": "Gets the Riemannsum of of the state of the given Item since a certain point in time, time calculated in seconds.",
+        "!type": "fn(timestamp: +Date|+ZonedDateTime, riemannType?: RiemannType, serviceId?: string) -> PersistedItem|null"
+      },
+      "riemannSumUntil": {
+        "!doc": "Gets the Riemannsum of of the state of the given Item until a certain point in time, time calculated in seconds.",
+        "!type": "fn(timestamp: +Date|+ZonedDateTime, riemannType?: RiemannType, serviceId?: string) -> PersistedItem|null"
+      },
+      "sumBetween": {
+        "!doc": "Gets the sum of the states of a given Item between two points in time.",
+        "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> PersistedItem|null"
+      },
+      "sumSince": {
+        "!doc": "Gets the sum of the state of a given Item since a certain point in time.",
+        "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> PersistedItem|null"
+      },
+      "sumUntil": {
+        "!doc": "Gets the sum of the state of a given Item until a certain point in time.",
+        "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> PersistedItem|null"
+      },
+      "updatedBetween": {
+        "!doc": "Checks if the state of a given Item has been updated between two points in time.",
+        "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, serviceId?: string) -> boolean"
+      },
+      "updatedSince": {
+        "!doc": "Checks if the state of a given Item has been updated since a certain point in time.",
+        "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> boolean"
+      },
+      "updatedUntil": {
+        "!doc": "Checks if the state of a given Item will have been updated until a certain point in time.",
+        "!type": "fn(timestamp: +Date|+ZonedDateTime, serviceId?: string) -> boolean"
+      },
+      "varianceBetween": {
+        "!doc": "Gets the variance of the state of the given Item between two points in time.",
+        "!type": "fn(begin: +Date|+ZonedDateTime, end: +Date|+ZonedDateTime, riemannType?: RiemannType, serviceId?: string) -> PersistedItem|null"
+      },
+      "varianceSince": {
+        "!doc": "Gets the variance of the state of the given Item since a certain point in time.",
+        "!type": "fn(timestamp: +Date|+ZonedDateTime, riemannType?: RiemannType, serviceId?: string) -> PersistedItem|null"
+      },
+      "varianceUntil": {
+        "!doc": "Gets the variance of the state of the given Item until a certain point in time.",
+        "!type": "fn(timestamp: +Date|+ZonedDateTime, riemannType?: RiemannType, serviceId?: string) -> PersistedItem|null"
+      }
+    },
+    "PersistedItem": {
+      "state": {
+        "!doc": "Item state",
+        "!type": "string"
+      },
+      "numericState": {
+        "!doc": "Numeric representation of Item state, or null if state is not numeric",
+        "!type": "number|null"
+      },
+      "quantityState": {
+        "!doc": "Item state as Quantity or null if state is not Quantity-compatible",
+        "!type": "QuantityClass|null"
+      },
+      "timestamp": {
+        "!doc": "timestamp of the persisted Item",
+        "!type": "+ZonedDateTime"
+      },
+      "instant": {
+        "!doc": "timestamp of the persisted Item as Instant",
+        "!type": "+Instant"
+      }
+    },
+    "PersistedState": {
+      "state": {
+        "!doc": "Item state",
+        "!type": "string"
+      },
+      "numericState": {
+        "!doc": "Numeric representation of Item state, or null if state is not numeric",
+        "!type": "number|null"
+      },
+      "quantityState": {
+        "!doc": "Item state as Quantity or null if state is not Quantity-compatible",
+        "!type": "QuantityClass|null"
+      }
+    },
+    "TimeSeries": {
+      "policy": {
+        "!doc": "Policy of the TimeSeries",
+        "!type": "string"
+      },
+      "begin": {
+        "!doc": "Timestamp of the first element in the TimeSeries",
+        "!type": "+Instant"
+      },
+      "end": {
+        "!doc": "Timestamp of the last element in the TimeSeries",
+        "!type": "+Instant"
+      },
+      "size": {
+        "!doc": "Number of elements in the TimeSeries",
+        "!type": "number"
+      },
+      "states": {
+        "!doc": "Array of states in the TimeSeries",
+        "!type": "[?]"
+      },
+      "add": {
+        "!doc": "Adds a new element to the TimeSeries",
+        "!type": "fn(timestamp: ?, state: ?)"
+      }
+    },
+    "ItemSemantics": {
+      "equipmentType": {
+        "!doc": "The type of the semantic equipment.",
+        "!type": "string|null"
+      },
+      "locationType": {
+        "!doc": "The type of the semantic location.",
+        "!type": "string|null"
+      },
+      "pointType": {
+        "!doc": "The type of the semantic point.",
+        "!type": "string|null"
+      },
+      "propertyType": {
+        "!doc": "The type of the semantic property.",
+        "!type": "string|null"
+      },
+      "semanticType": {
+        "!doc": "Determines the semantic type (i.e. a sub-type of Location, Equipment or Point).",
+        "!type": "string|null"
+      },
+      "isLocation": {
+        "!doc": "Whether the Item is a Location.",
+        "!type": "boolean"
+      },
+      "isEquipment": {
+        "!doc": "Whether the Item is an Equipment.",
+        "!type": "boolean"
+      },
+      "isPoint": {
+        "!doc": "Whether the Item is a Point.",
+        "!type": "boolean"
+      },
+      "location": {
+        "!doc": "The Location Item where this Item is situated or `null` if it's not in a Location.",
+        "!type": "Item|null"
+      },
+      "equipment": {
+        "!doc": "The Equipment Item where this Item is situated or `null` if it's not in an Equipment.",
+        "!type": "Item|null"
+      }
+    },
+    "ItemConfig": {
+      "type": {
+        "!doc": "Type of the Item.",
+        "!type": "string"
+      },
+      "name": {
+        "!doc": "Name of the Item.",
+        "!type": "string"
+      },
+      "label": {
+        "!doc": "Label of the Item.",
+        "!type": "string"
+      },
+      "category": {
+        "!doc": "Category (icon) of the Item.",
+        "!type": "string"
+      },
+      "groups": {
+        "!doc": "Groups of the Item.",
+        "!type": "[string]"
+      },
+      "tags": {
+        "!doc": "Tags of the Item.",
+        "!type": "[string]"
+      },
+      "channels": {
+        "!doc": "Channel links for the Item (see JavaScript Scripting docs/Standard Library/Items).",
+        "!type": "string|object"
+      },
+      "metadata": {
+        "!doc": "Metadata for the Item (see JavaScript Scripting docs/Standard Library/Items).",
+        "!type": "object"
+      }
+    },
+    "RiemannType": {
+      "LEFT": {
+        "!doc": "Left riemann sum: takes the persisted value at the start of the bucket to represent the value for the whole bucket",
+        "!type": "string"
+      },
+      "RIGHT": {
+        "!doc": "Right riemann sum: takes the persisted value at the end of the bucket to represent the value for the whole bucket",
+        "!type": "string"
+      },
+      "TRAPEZOIDAL": {
+        "!doc": "Trapezoidal riemann sum: takes the average of the persisted value at the start end the end of the bucket, effectively making a linear interpolation to fit the curve",
+        "!type": "string"
+      },
+      "MIDPOINT": {
+        "!doc": "Midpoint riemann sum: uses 3 persisted values and uses the middle of the values as an approximation for the value halfway in the interval between the middle of point 1 and 2 and the middle of point 2 and 3",
+        "!type": "string"
+      }
+    },
+    "ItemsNamespace": {
+      "getItem": {
+        "!doc": "Gets an Item.",
+        "!type": "fn(name: string) -> Item"
+      },
+      "getItems": {
+        "!doc": "Gets all Items.",
+        "!type": "fn() -> [Item]"
+      },
+      "getItemsByTag": {
+        "!doc": "Gets a list of all Items containing all of the given tags.",
+        "!type": "fn(tag: [string]) -> [Item]"
+      },
+      "addItem": {
+        "!doc": "Creates a new Item within openHAB (see JavaScript Scripting docs/Standard Library/Items).",
+        "!type": "fn(itemConfig: ItemConfig) -> Item",
+        "!url": "https://openhab.org/addons/automation/jsscripting/#itemconfig"
+      },
+      "replaceItem": {
+        "!doc": "Replaces (upserts) an item. If an Item does not exist with this name, a new Item will be created with the supplied configuration (see JavaScript Scripting docs/Standard Library/Items).",
+        "!type": "fn(itemConfig: ItemConfig) -> Item",
+        "!url": "https://openhab.org/addons/automation/jsscripting/#itemconfig"
+      },
+      "removeItem": {
+        "!doc": "Removes an Item from openHAB. The Item is removed immediately and cannot be recovered.",
+        "!type": "fn(itemOrItemName: string|Item) -> bool"
+      },
+      "safeItemName": {
+        "!doc": "Helper function to ensure an Item name is valid. All invalid characters are replaced with an underscore.",
+        "!type": "fn(s: string) -> string"
+      },
+      "TimeSeries": {
+        "!doc": "A TimeSeries is used to transport a set of states together with their timestamp.",
+        "!type": "fn(policy: string)",
+        "prototype": "TimeSeries"
+      },
+      "RiemannType": {
+        "!doc": "The type of approximation to use for calculating the Riemann sum.",
+        "!type": "RiemannType"
+      },
+      "NAME": {
+        "!doc": "Gets an Item using it's name on the items namespace, e.g. items.Hallway_Light",
+        "!type": "Item"
+      }
+    },
+    "Thing": {
+      "bridgeUID": {
+        "!doc": "UID of Thing's bridge.",
+        "!type": "string"
+      },
+      "label": {
+        "!doc": "Label of the Thing.",
+        "!type": "string"
+      },
+      "location": {
+        "!doc": "Physical location of the Thing.",
+        "!type": "string"
+      },
+      "status": {
+        "!doc": "Thing status (e.g. ONLINE or OFFLINE).",
+        "!type": "string"
+      },
+      "statusInfo": {
+        "!doc": "More detailed status of Thing.",
+        "!type": "string"
+      },
+      "thingTypeUID": {
+        "!doc": "UID of Thing's type.",
+        "!type": "string"
+      },
+      "uid": {
+        "!doc": "UID of Thing.",
+        "!type": "string"
+      },
+      "isEnabled": {
+        "!doc": "Whether the Thing is enabled or not.",
+        "!type": "boolean"
+      },
+      "setLabel": {
+        "!doc": "Set the Thing label.",
+        "!type": "fn(label: string)"
+      },
+      "setLocation": {
+        "!doc": "Set the physical location of the Thing.",
+        "!type": "fn(location: string)"
+      },
+      "setProperty": {
+        "!doc": "Set the value of a property of the Thing.",
+        "!type": "fn(name: string, value: string)"
+      },
+      "setEnabled": {
+        "!doc": "Enable or disable the Thing.",
+        "!type": "fn(enabled: boolean)"
+      }
+    },
+    "ThingsNamespace": {
+      "getThing": {
+        "!doc": "Get a single Thing from openHAB.",
+        "!type": "fn(uid: string, nullIfMissing?: boolean) -> Thing"
+      },
+      "getThings": {
+        "!doc": "Get all Things from openHAB.",
+        "!type": "fn() -> [Thing]"
+      }
+    },
+    "CacheNamespace": {
+      "shared": {
+        "!doc": "Shared cache that is shared across all rules and scripts, it can therefore be accessed from any automation language. A key is removed when all scripts that ever accessed it are unloaded, if the key stores a timer, the timer is cancelled.",
+        "!type": "JSCache"
+      },
+      "private": {
+        "!doc": "Private cache for each script. It can only be accessed by the same script and is cleared when the script is unloaded. When the script is unloaded, all timers in the script are cancelled.",
+        "!type": "JSCache"
+      }
+    },
+    "JSCache": {
+      "get": {
+        "!doc": "Returns the value to which the specified key is mapped. The optional defaultSupplier will return a default value if the key has no associated value.",
+        "!type": "fn(key: string, defaultSupplier?: fn()) -> ?"
+      },
+      "put": {
+        "!doc": "Associates the specified value with the specified key.",
+        "!type": "fn(key: string, value: ?) -> ?"
+      },
+      "remove": {
+        "!doc": "Removes the mapping for a key from this map if it is present.",
+        "!type": "fn(key: string) -> ?"
+      },
+      "exists": {
+        "!doc": "Checks whether a value is associated with the given key.",
+        "!type": "fn(key: string) -> boolean"
+      }
+    },
+    "QuantityClass": {
+      "dimension": {
+        "!doc": "Dimension of this Quantity, e.g. [L] for metres or [L]² for cubic-metres",
+        "!type": "string"
+      },
+      "unit": {
+        "!doc": "Unit of this Quantity, e.g. Metre, or null if not available",
+        "!type": "string|null"
+      },
+      "symbol": {
+        "!doc": "Unit symbol of this Quantity, e.g. m, or null if not available",
+        "!type": "string|null"
+      },
+      "float": {
+        "!doc": "Float (decimal number) value of this Quantity",
+        "!type": "number"
+      },
+      "int": {
+        "!doc": "Integer (non-decimal number) value of this Quantity",
+        "!type": "number"
+      },
+      "add": {
+        "!doc": "Add the given value to this Quantity.",
+        "!type": "fn(value: string|QuantityClass) -> QuantityClass"
+      },
+      "divide": {
+        "!doc": "Divide this Quantity by the given value.",
+        "!type": "fn(value: number|string|QuantityClass|Item) -> QuantityClass"
+      },
+      "multiply": {
+        "!doc": "Multiply this Quantity by the given value.",
+        "!type": "fn(value: number|string|QuantityClass|Item) -> QuantityClass"
+      },
+      "subtract": {
+        "!doc": "Subtract the given value from this Quantity.",
+        "!type": "fn(value: string|QuantityClass) -> QuantityClass"
+      },
+      "toUnit": {
+        "!doc": "Convert this Quantity to the given unit, e.g. cm or °F",
+        "!type": "fn(unit: string) -> QuantityClass"
+      },
+      "equal": {
+        "!doc": "Checks whether this Quantity is equal to the passed in value.",
+        "!type": "fn(value: string|QuantityClass) -> boolean"
+      },
+      "greaterThan": {
+        "!doc": "Checks whether this Quantity is larger than the passed in value.",
+        "!type": "fn(value: string|QuantityClass) -> boolean"
+      },
+      "greaterThanOrEqual": {
+        "!doc": "Checks whether this Quantity is larger than or equal to the passed in value.",
+        "!type": "fn(value: string|QuantityClass) -> boolean"
+      },
+      "lessThan": {
+        "!doc": "Checks whether this Quantity is smaller than the passed in value.",
+        "!type": "fn(value: string|QuantityClass) -> boolean"
+      },
+      "lessThanOrEqual": {
+        "!doc": "Checks whether this Quantity is smaller than or equal to the passed in value.",
+        "!type": "fn(value: string|QuantityClass) -> boolean"
+      }
+    },
+    "Timer": {
+      "cancel": {
+        "!doc": "Cancels the timer.",
+        "!type": "fn() -> boolean"
+      },
+      "getExecutionTime": {
+        "!doc": "The scheduled execution time or null if timer was cancelled.",
+        "!type": "fn() -> time.ZonedDateTime|null"
+      },
+      "isActive": {
+        "!doc": "Whether the scheduled execution is yet to happen.",
+        "!type": "fn() -> boolean"
+      },
+      "isCancelled": {
+        "!doc": "Whether the timer has been cancelled.",
+        "!type": "fn() -> boolean"
+      },
+      "hasTerminated": {
+        "!doc": "Whether the scheduled execution has already terminated.",
+        "!type": "fn() -> boolean"
+      },
+      "reschedule": {
+        "!doc": "Reschedules a timer to a new starting time. This can also be called after a timer has terminated, which will result in another execution of the same code.",
+        "!type": "fn(zonedDateTime: time.ZonedDateTime) -> boolean"
+      }
+    },
+    "TimeNamespace": {
+      "toZDT": {
+        "!doc": "Converts nearly any representation of a time to a time.ZonedDateTime (see JavaScript Scripting Docs/Standard Library/Time)",
+        "!type": "fn(time: ?) -> time.ZonedDateTime"
+      },
+      "toInstant": {
+        "!doc": "Converts nearly any representation of a time to a time.Instant (see JavaScript Scripting Docs/Standard Library/Time)",
+        "!type": "fn(time: ?) -> +Instant"
+      },
+      "ZonedDateTime": {
+        "!doc": "Represents a date-time with a time offset and/or a time zone in the ISO-8601 calendar system (see JavaScript Scripting Docs/Standard Library/Time)."
+      }
+    },
+    "Logger": {
+      "trace": {
+        "!doc": "Logs at the TRACE level.",
+        "!type": "fn(message: string, args?: ?)"
+      },
+      "debug": {
+        "!doc": "Logs at the DEBUG level.",
+        "!type": "fn(message: string, args?: ?)"
+      },
+      "info": {
+        "!doc": "Logs at the INFO level.",
+        "!type": "fn(message: string, args?: ?)"
+      },
+      "warn": {
+        "!doc": "Logs at the WARN level.",
+        "!type": "fn(message: string, args?: ?)"
+      },
+      "error": {
+        "!doc": "Logs at the ERROR level.",
+        "!type": "fn(message: string, args?: ?)"
+      },
+      "atLevel": {
+        "!doc": "Logs a message at the supplied level. The message may include placeholders {} which will be substituted into the message string only if the message is actually logged.",
+        "!type": "fn(level: string, message: string, args?: ?)"
+      }
+    },
+    "Console": {
+      "log": {
+        "!doc": "Logs a message.",
+        "!type": "fn(message: string, args?: ?)"
+      },
+      "trace": {
+        "!doc": "Logs at the TRACE level.",
+        "!type": "fn(message: string, args?: ?)"
+      },
+      "debug": {
+        "!doc": "Logs at the DEBUG level.",
+        "!type": "fn(message: string, args?: ?)"
+      },
+      "info": {
+        "!doc": "Logs at the INFO level.",
+        "!type": "fn(message: string, args?: ?)"
+      },
+      "warn": {
+        "!doc": "Logs at the WARN level.",
+        "!type": "fn(message: string, args?: ?)"
+      },
+      "error": {
+        "!doc": "Logs at the ERROR level.",
+        "!type": "fn(message: string, args?: ?)"
+      }
+    },
+    "EventData": {
+      "itemName": {
+        "!doc": "The name of the Item that triggered the event (core.ItemStateUpdateTrigger, core.ItemStateChangeTrigger, core.ItemCommandTrigger). Attention: Java type!",
+        "!type": "string"
+      },
+      "itemState": {
+        "!doc": "The state of the Item that triggered the event (core.ItemStateUpdateTrigger, core.ItemStateChangeTrigger). Attention: Java type!",
+        "!type": "string"
+      },
+      "oldItemState": {
+        "!doc": "The previous state of the Item that triggered the event (core.ItemStateChangeTrigger). Attention: Java type!",
+        "!type": "string"
+      },
+      "itemCommand": {
+        "!doc": "The command of the Item that triggered the event (core.ItemCommandTrigger). Attention: Java type!",
+        "!type": "string"
+      },
+      "type": {
+        "!doc": "The event type (core.GenericEventTrigger). Attention: Java type!",
+        "!type": "string"
+      }
+    },
 
-        "AudioActions": {
-            "decreaseMasterVolume": { "!type": "fn(percent: float)" },
-            "increaseMasterVolume": { "!type": "fn(percent: float)" },
-            "getMasterVolume": { "!type": "fn() -> float" },
-            "playSound": { "!type": "fn(sink?: string, filename: string, volume?: float)" },
-            "playStream": { "!type": "fn(sink?: string, url: string)" },
-            "setMasterVolume": { "!type": "fn(percent: float)" }
-        },
-        "CoreUtilActions": {
-            "hsbToRgb": { "!type": "fn(hsb: HSBType) -> [number]" },
-            "hsbTosRgb": { "!type": "fn(hsb: HSBType) -> number" },
-            "hsbToRgbw": { "!type": "fn(hsb: HSBType) -> [number]" },
-            "rgbToHsb": { "!type": "fn(rgb: [number]) -> HSBType" },
-            "xyToDuv": { "!type": "fn(xy: [number]) -> number" },
-            "kelvinToXY": { "!type": "fn(kelvin: number) -> [number]" },
-            "xyToKelvin": { "!type": "fn(xy: [number]) -> number" }
-        },
-        "EphemerisActions": {
-            "getBankHolidayName": { "!type": "fn(offsetOrDay?: ?, filename?: string) -> string" },
-            "getDaysUntil": { "!type": "fn(searchedHoliday: string, offsetOrDay?: ?, filename?: string) -> number" },
-            "getHolidayDescription": { "!type": "fn(holiday?: string) -> string" },
-            "getNextBankHoliday": { "!type": "fn(offsetOrDay?: ?, filename?: string) -> string" },
-            "isBankHoliday": { "!type": "fn(offsetOrDay?: ?, filename?: string) -> bool" },
-            "isInDayset": { "!type": "fn(daysetName: string, offsetOrDay?: ?, filename?: string) -> bool" },
-            "isWeekend": { "!type": "fn(offsetOrDay?: ?, filename?: string) -> bool" }
-        },
-        "ExecActions": {
-            "executeCommandLine": { "!type": "fn(timeout?: integer, commandLine: string, args?: ?)" }
-        },
-        "HTTPActions": {
-            "sendHttpGetRequest": { "!type": "fn(url: string, headers?: object, timeout?: int) -> string" },
-            "sendHttpPostRequest": { "!type": "fn(url: string, contentType?: string, content?: string, headers?: object, timeout?: int) -> string" },
-            "sendHttpPutRequest": { "!type": "fn(url: string, contentType?: string, content?: string, headers?: object, timeout?: int) -> string" },
-            "sendHttpDeleteRequest": { "!type": "fn(url: string, headers?: object, timeout?: int) -> string" }
-        },
-        "NotificationBuilder": {
-            "logOnly": {
-                "!doc": "Send a log notification only.",
-                "!type": "fn() -> NotificationBuilder"
-            },
-            "hide": {
-                "!doc": "Hides/Removes the notification with the specified referenceId or tag.",
-                "!type": "fn() -> NotificationBuilder"
-            },
-            "addUserId": {
-                "!doc": "By adding the email address(es) of specific openHAB Cloud user(s), the notification is only sent to this (these) users.",
-                "!type": "fn(...userId: string) -> NotificationBuilder"
-            },
-            "withIcon": {
-                "!doc": "Sets the icon of the notification.",
-                "!type": "fn(icon: string) -> NotificationBuilder"
-            },
-            "withTag": {
-                "!doc": "Sets the tag of the notification.",
-                "!type": "fn(tag: string) -> NotificationBuilder"
-            },
-            "withTitle": {
-                "!doc": "Sets the title of the notification.",
-                "!type": "fn(title: string) -> NotificationBuilder"
-            },
-            "withReferenceId": {
-                "!doc": "Sets the referenceId of the notification. If none is set, but might be useful, a random UUID will be generated. The reference ID can be used to update or hide the notification later by using the same reference ID again.",
-                "!type": "fn(referenceId: string) -> NotificationBuilder"
-            },
-            "withOnClickAction": {
-                "!doc": "Sets the action to be executed when the notification is clicked.",
-                "!type": "fn(action: string) -> NotificationBuilder"
-            },
-            "withMediaAttachmentUrl": {
-                "!doc": "Sets the URL of a media attachment to be displayed with the notification. This URL must be reachable by the push notification client.",
-                "!type": "fn(mediaAttachmentUrl: string) -> NotificationBuilder"
-            },
-            "addActionButton": {
-                "!doc": "Adds an action button to the notification. Please note that due to Android and iOS limitations, only three action buttons are supported.",
-                "!type": "fn(label: string, action: string) -> NotificationBuilder"
-            },
-            "send": {
-                "!doc": "Sends the notification and returns the reference ID or null for log notifications and when hiding notifications.",
-                "!type": "fn() -> string|null"
-            }
-        },
-        "PingActions": {
-            "checkVitality": { "!type": "fn(host: string, port: int, timeout: int) -> boolean" }
-        },
-        "ScriptExecutionActions": {
-            "callScript": { "!type": "fn(scriptName: string)" },
-            "createTimer": {
-                "!doc": "Schedules a function for later execution.",
-                "!type": "fn(identifier?: string, zonedDateTime: time.ZonedDateTime, function: fn()) -> Timer"
-              }
-        },
-        "TransformationActions": {
-            "transform": {
-                "!doc": "Applies a transformation of a given type with some function to a value. Returns the original value if the transformation fails.",
-                "!type": "fn(type: string, fn: string, value: string) -> string"
-            },
-            "transformRaw": {
-                "!doc": "Applies a transformation of a given type with some function to a value. Throws an error if the transformation fails.",
-                "!type": "fn(type: string, fn: string, value: string) -> string"
-            }
-        },
-        "VoiceActions": {
-            "interpret": { "!type": "fn(text: string, interpreter?: string, sink?: string) -> ?" },
-            "say": { "!type": "fn(text: string, interpreter?: string, sink?: string, volume?: float)" }
-        },
+    "AudioActions": {
+      "decreaseMasterVolume": { "!type": "fn(percent: float)" },
+      "increaseMasterVolume": { "!type": "fn(percent: float)" },
+      "getMasterVolume": { "!type": "fn() -> float" },
+      "playSound": { "!type": "fn(sink?: string, filename: string, volume?: float)" },
+      "playStream": { "!type": "fn(sink?: string, url: string)" },
+      "setMasterVolume": { "!type": "fn(percent: float)" }
+    },
+    "CoreUtilActions": {
+      "hsbToRgb": { "!type": "fn(hsb: HSBType) -> [number]" },
+      "hsbTosRgb": { "!type": "fn(hsb: HSBType) -> number" },
+      "hsbToRgbw": { "!type": "fn(hsb: HSBType) -> [number]" },
+      "rgbToHsb": { "!type": "fn(rgb: [number]) -> HSBType" },
+      "xyToDuv": { "!type": "fn(xy: [number]) -> number" },
+      "kelvinToXY": { "!type": "fn(kelvin: number) -> [number]" },
+      "xyToKelvin": { "!type": "fn(xy: [number]) -> number" }
+    },
+    "EphemerisActions": {
+      "getBankHolidayName": { "!type": "fn(offsetOrDay?: ?, filename?: string) -> string" },
+      "getDaysUntil": {
+        "!type": "fn(searchedHoliday: string, offsetOrDay?: ?, filename?: string) -> number"
+      },
+      "getHolidayDescription": { "!type": "fn(holiday?: string) -> string" },
+      "getNextBankHoliday": { "!type": "fn(offsetOrDay?: ?, filename?: string) -> string" },
+      "isBankHoliday": { "!type": "fn(offsetOrDay?: ?, filename?: string) -> bool" },
+      "isInDayset": {
+        "!type": "fn(daysetName: string, offsetOrDay?: ?, filename?: string) -> bool"
+      },
+      "isWeekend": { "!type": "fn(offsetOrDay?: ?, filename?: string) -> bool" }
+    },
+    "ExecActions": {
+      "executeCommandLine": { "!type": "fn(timeout?: integer, commandLine: string, args?: ?)" }
+    },
+    "HTTPActions": {
+      "sendHttpGetRequest": {
+        "!type": "fn(url: string, headers?: object, timeout?: int) -> string"
+      },
+      "sendHttpPostRequest": {
+        "!type": "fn(url: string, contentType?: string, content?: string, headers?: object, timeout?: int) -> string"
+      },
+      "sendHttpPutRequest": {
+        "!type": "fn(url: string, contentType?: string, content?: string, headers?: object, timeout?: int) -> string"
+      },
+      "sendHttpDeleteRequest": {
+        "!type": "fn(url: string, headers?: object, timeout?: int) -> string"
+      }
+    },
+    "NotificationBuilder": {
+      "logOnly": {
+        "!doc": "Send a log notification only.",
+        "!type": "fn() -> NotificationBuilder"
+      },
+      "hide": {
+        "!doc": "Hides/Removes the notification with the specified referenceId or tag.",
+        "!type": "fn() -> NotificationBuilder"
+      },
+      "addUserId": {
+        "!doc": "By adding the email address(es) of specific openHAB Cloud user(s), the notification is only sent to this (these) users.",
+        "!type": "fn(...userId: string) -> NotificationBuilder"
+      },
+      "withIcon": {
+        "!doc": "Sets the icon of the notification.",
+        "!type": "fn(icon: string) -> NotificationBuilder"
+      },
+      "withTag": {
+        "!doc": "Sets the tag of the notification.",
+        "!type": "fn(tag: string) -> NotificationBuilder"
+      },
+      "withTitle": {
+        "!doc": "Sets the title of the notification.",
+        "!type": "fn(title: string) -> NotificationBuilder"
+      },
+      "withReferenceId": {
+        "!doc": "Sets the referenceId of the notification. If none is set, but might be useful, a random UUID will be generated. The reference ID can be used to update or hide the notification later by using the same reference ID again.",
+        "!type": "fn(referenceId: string) -> NotificationBuilder"
+      },
+      "withOnClickAction": {
+        "!doc": "Sets the action to be executed when the notification is clicked.",
+        "!type": "fn(action: string) -> NotificationBuilder"
+      },
+      "withMediaAttachmentUrl": {
+        "!doc": "Sets the URL of a media attachment to be displayed with the notification. This URL must be reachable by the push notification client.",
+        "!type": "fn(mediaAttachmentUrl: string) -> NotificationBuilder"
+      },
+      "addActionButton": {
+        "!doc": "Adds an action button to the notification. Please note that due to Android and iOS limitations, only three action buttons are supported.",
+        "!type": "fn(label: string, action: string) -> NotificationBuilder"
+      },
+      "send": {
+        "!doc": "Sends the notification and returns the reference ID or null for log notifications and when hiding notifications.",
+        "!type": "fn() -> string|null"
+      }
+    },
+    "PingActions": {
+      "checkVitality": { "!type": "fn(host: string, port: int, timeout: int) -> boolean" }
+    },
+    "ScriptExecutionActions": {
+      "callScript": { "!type": "fn(scriptName: string)" },
+      "createTimer": {
+        "!doc": "Schedules a function for later execution.",
+        "!type": "fn(identifier?: string, zonedDateTime: time.ZonedDateTime, function: fn()) -> Timer"
+      }
+    },
+    "TransformationActions": {
+      "transform": {
+        "!doc": "Applies a transformation of a given type with some function to a value. Returns the original value if the transformation fails.",
+        "!type": "fn(type: string, fn: string, value: string) -> string"
+      },
+      "transformRaw": {
+        "!doc": "Applies a transformation of a given type with some function to a value. Throws an error if the transformation fails.",
+        "!type": "fn(type: string, fn: string, value: string) -> string"
+      }
+    },
+    "VoiceActions": {
+      "interpret": { "!type": "fn(text: string, interpreter?: string, sink?: string) -> ?" },
+      "say": { "!type": "fn(text: string, interpreter?: string, sink?: string, volume?: float)" }
+    },
 
-        "ActionsNamespace": {
-            "Audio": {
-                "!doc": "Audio Actions. The static methods of this class are made available as functions in the scripts. This allows a script to use audio features.",
-                "!type": "AudioActions"
-            },
-            "Ephemeris": {
-                "!doc": "Ephemeris Actions. The static methods of this class are made available as functions in the scripts. This allows a script to use ephemeris features.",
-                "!type": "EphemerisActions"
-            },
-            "CoreUtil": {
-                "!doc": "CoreUtil Actions. This class provides static mapping methods from package org.openhab.core.util. Read the docs.",
-                "!type": "CoreUtilActions"
-            },
-            "Exec": {
-                "!doc": "Exec Actions. This class provides static methods that can be used in automation rules for executing commands on command line.",
-                "!type": "ExecActions"
-            },
-            "HTTP": {
-                "!doc": "HTTP Actions. This class provides static methods that can be used in automation rules for sending HTTP requests.",
-                "!type": "HTTPActions"
-            },
-            "notificationBuilder": {
-                "!doc": "Creates a new NotificationBuilder to send openHAB Cloud notifications. This requires the openHAB Cloud Connector to be installed.",
-                "!type": "fn(message?: string) -> NotificationBuilder"
-            },
-            "Ping": {
-                "!doc": "Ping Actions. This Action checks the vitality of the given host.",
-                "!type": "PingActions"
-            },
-            "ScriptExecution": {
-                "!doc": "ScriptExecution Actions. The static methods of this class are made available as functions in the scripts. This allows a script to call another script, which is available as a file.",
-                "!type": "ScriptExecutionActions"
-            },
-            "Transformation": {
-                "!doc": "Transformation Actions. The static methods of this class allow rules to execute transformations using one of the various data transformation services.",
-                "!type": "TransformationActions"
-            },
-            "Voice": {
-                "!doc": "Voice Actions. The static methods of this class are made available as functions in the scripts. This allows a script to use voice features.",
-                "!type": "VoiceActions"
-            },
-            "thingActions": {
-                "!doc": "Get the ThingActions of a given Thing.",
-                "!type": "fn(bindingId: string, thingUid: string) -> ?"
-            }
-        }
-    },
-    "items": {
-        "!doc": "Items namespace. This namespace handles querying and updating openHAB Items.",
-        "!type": "ItemsNamespace"
-    },
-    "Quantity": {
-        "!doc": "Quantity class. It greatly simplifies Quantity handling by providing unit conversion, comparisons and mathematical operations. A Quantity consists of a measurement and its Unit of Measurement (UoM), e.g. 5.7 m (the measurement is 5.7, the unit is m meters).",
-        "!type": "fn(value: string|Item|QuantityClass) -> QuantityClass"
-    },
-    "things": {
-        "!doc": "Things namespace. This namespace handles querying and updating openHAB Things.",
-        "!type": "ThingsNamespace"
-    },
-    "cache": {
-        "!doc": "Cache namespace. This namespace provides caches that can be used to set and retrieve objects that will be persisted between reloads of scripts.",
-        "!type": "CacheNamespace"
-    },
-    "log": {
-        "!doc": "Creates a logger with the specified name.",
-        "!type": "fn(name: string) -> Logger"
-    },
-    "actions": {
-        "!doc": "Actions namespace. This namespace provides access to openHAB actions. All available actions can be accessed as direct properties of this object (via their simple class name).",
-        "!type": "ActionsNamespace"
-    },
-    "time": {
-        "!doc": "Exports the excellent JS-Joda library which is a port of java.time which is used by openHAB.",
-        "!type": "TimeNamespace"
-    },
-    "console": {
-        "!doc": "Supports the standard console object for logging. Script debug logging is enabled by default at the TRACE level, but can be configured using the console logging commands.",
-        "!type": "Console"
-    },
-    "setTimeout": {
-        "!doc": "The global setTimeout() method sets a timer which executes a function or specified piece of code once the timer expires.",
-        "!type": "fn(fn(), delay?: number, args?: ?) -> number"
-    },
-    "clearTimeout": {
-        "!doc": "The global clearTimeout() method cancels a timeout previously established by calling setTimeout().",
-        "!type": "fn(id: number) -> number"
-    },
-    "setInterval": {
-        "!doc": "The setInterval() method repeatedly calls a function or executes a code snippet, with a fixed time delay between each call.",
-        "!type": "fn(fn(), delay?: number, args?: ?) -> number"
-    },
-    "clearInterval": {
-        "!doc": "The global clearInterval() method cancels a timed, repeating action which was previously established by a call to setInterval().",
-        "!type": "fn(id: number) -> number"
-    },
-    "require": {
-        "!doc": "Scripts may include standard NPM based libraries by using CommonJS require. The library search path will look in automation/js/node_modules in the user configuration directory.",
-        "!type": "fn(module: string) -> ?"
-    },
-    "event": {
-        "!doc": "Data passed from triggers. Attention: Java types (see JavaScript Scripting docs/UI Based Rules/Event Object)!",
-        "!type": "EventData"
+    "ActionsNamespace": {
+      "Audio": {
+        "!doc": "Audio Actions. The static methods of this class are made available as functions in the scripts. This allows a script to use audio features.",
+        "!type": "AudioActions"
+      },
+      "Ephemeris": {
+        "!doc": "Ephemeris Actions. The static methods of this class are made available as functions in the scripts. This allows a script to use ephemeris features.",
+        "!type": "EphemerisActions"
+      },
+      "CoreUtil": {
+        "!doc": "CoreUtil Actions. This class provides static mapping methods from package org.openhab.core.util. Read the docs.",
+        "!type": "CoreUtilActions"
+      },
+      "Exec": {
+        "!doc": "Exec Actions. This class provides static methods that can be used in automation rules for executing commands on command line.",
+        "!type": "ExecActions"
+      },
+      "HTTP": {
+        "!doc": "HTTP Actions. This class provides static methods that can be used in automation rules for sending HTTP requests.",
+        "!type": "HTTPActions"
+      },
+      "notificationBuilder": {
+        "!doc": "Creates a new NotificationBuilder to send openHAB Cloud notifications. This requires the openHAB Cloud Connector to be installed.",
+        "!type": "fn(message?: string) -> NotificationBuilder"
+      },
+      "Ping": {
+        "!doc": "Ping Actions. This Action checks the vitality of the given host.",
+        "!type": "PingActions"
+      },
+      "ScriptExecution": {
+        "!doc": "ScriptExecution Actions. The static methods of this class are made available as functions in the scripts. This allows a script to call another script, which is available as a file.",
+        "!type": "ScriptExecutionActions"
+      },
+      "Transformation": {
+        "!doc": "Transformation Actions. The static methods of this class allow rules to execute transformations using one of the various data transformation services.",
+        "!type": "TransformationActions"
+      },
+      "Voice": {
+        "!doc": "Voice Actions. The static methods of this class are made available as functions in the scripts. This allows a script to use voice features.",
+        "!type": "VoiceActions"
+      },
+      "thingActions": {
+        "!doc": "Get the ThingActions of a given Thing.",
+        "!type": "fn(bindingId: string, thingUid: string) -> ?"
+      }
     }
+  },
+  "items": {
+    "!doc": "Items namespace. This namespace handles querying and updating openHAB Items.",
+    "!type": "ItemsNamespace"
+  },
+  "Quantity": {
+    "!doc": "Quantity class. It greatly simplifies Quantity handling by providing unit conversion, comparisons and mathematical operations. A Quantity consists of a measurement and its Unit of Measurement (UoM), e.g. 5.7 m (the measurement is 5.7, the unit is m meters).",
+    "!type": "fn(value: string|Item|QuantityClass) -> QuantityClass"
+  },
+  "things": {
+    "!doc": "Things namespace. This namespace handles querying and updating openHAB Things.",
+    "!type": "ThingsNamespace"
+  },
+  "cache": {
+    "!doc": "Cache namespace. This namespace provides caches that can be used to set and retrieve objects that will be persisted between reloads of scripts.",
+    "!type": "CacheNamespace"
+  },
+  "log": {
+    "!doc": "Creates a logger with the specified name.",
+    "!type": "fn(name: string) -> Logger"
+  },
+  "actions": {
+    "!doc": "Actions namespace. This namespace provides access to openHAB actions. All available actions can be accessed as direct properties of this object (via their simple class name).",
+    "!type": "ActionsNamespace"
+  },
+  "time": {
+    "!doc": "Exports the excellent JS-Joda library which is a port of java.time which is used by openHAB.",
+    "!type": "TimeNamespace"
+  },
+  "console": {
+    "!doc": "Supports the standard console object for logging. Script debug logging is enabled by default at the TRACE level, but can be configured using the console logging commands.",
+    "!type": "Console"
+  },
+  "setTimeout": {
+    "!doc": "The global setTimeout() method sets a timer which executes a function or specified piece of code once the timer expires.",
+    "!type": "fn(fn(), delay?: number, args?: ?) -> number"
+  },
+  "clearTimeout": {
+    "!doc": "The global clearTimeout() method cancels a timeout previously established by calling setTimeout().",
+    "!type": "fn(id: number) -> number"
+  },
+  "setInterval": {
+    "!doc": "The setInterval() method repeatedly calls a function or executes a code snippet, with a fixed time delay between each call.",
+    "!type": "fn(fn(), delay?: number, args?: ?) -> number"
+  },
+  "clearInterval": {
+    "!doc": "The global clearInterval() method cancels a timed, repeating action which was previously established by a call to setInterval().",
+    "!type": "fn(id: number) -> number"
+  },
+  "require": {
+    "!doc": "Scripts may include standard NPM based libraries by using CommonJS require. The library search path will look in automation/js/node_modules in the user configuration directory.",
+    "!type": "fn(module: string) -> ?"
+  },
+  "event": {
+    "!doc": "Data passed from triggers. Attention: Java types (see JavaScript Scripting docs/UI Based Rules/Event Object)!",
+    "!type": "EventData"
+  }
 }
