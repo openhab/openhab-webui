@@ -781,24 +781,40 @@
     },
     "EventData": {
       "itemName": {
-        "!doc": "The name of the Item that triggered the event (core.ItemStateUpdateTrigger, core.ItemStateChangeTrigger, core.ItemCommandTrigger). Attention: Java type!",
+        "!doc": "The name of the Item that triggered the event (ItemStateUpdateTrigger, ItemStateChangeTrigger, ItemCommandTrigger, GroupStateUpdateTrigger, GroupStateChangeTrigger).",
         "!type": "string"
       },
-      "itemState": {
-        "!doc": "The state of the Item that triggered the event (core.ItemStateUpdateTrigger, core.ItemStateChangeTrigger). Attention: Java type!",
+      "groupName": {
+        "!doc": "The name of the Group whose member triggered the event (GroupStateUpdateTrigger, GroupStateChangeTrigger).",
         "!type": "string"
       },
-      "oldItemState": {
-        "!doc": "The previous state of the Item that triggered the event (core.ItemStateChangeTrigger). Attention: Java type!",
+      "oldState": {
+        "!doc": "The old state of the Item or Group that triggered the event ItemStateChangeTrigger, GroupStateChangeTrigger).",
         "!type": "string"
       },
-      "itemCommand": {
-        "!doc": "The command of the Item that triggered the event (core.ItemCommandTrigger). Attention: Java type!",
+      "newState" : {
+        "!doc": "The new state of the Item or Group that triggered the event (ItemStateChangeTrigger, GroupStateChangeTrigger).",
         "!type": "string"
       },
-      "type": {
-        "!doc": "The event type (core.GenericEventTrigger). Attention: Java type!",
+      "receivedState": {
+        "!doc": "The state of the Item or Group that triggered the event (ItemStateUpdateTrigger, GroupStateUpdateTrigger).",
         "!type": "string"
+      },
+      "receivedCommand": {
+        "!doc": "The command of the Item that triggered the event (ItemCommandTrigger, GroupCommandTrigger).",
+        "!type": "string"
+      },
+      "eventName": {
+        "!doc": "The simple Java class name of the triggering event, e.g. ExecutionEvent.",
+        "!type": "string"
+      },
+      "eventClass": {
+        "!doc": "The full Java class name of the triggering event, e.g. org.openhab.core.automation.events.ExecutionEvent.",
+        "!type": "string"
+      },
+      "eventSource": {
+        "!doc": "The source of the triggering event (if specified).",
+        "!type": "string|null"
       }
     },
 
