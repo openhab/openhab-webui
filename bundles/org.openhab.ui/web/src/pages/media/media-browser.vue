@@ -229,7 +229,7 @@
         -->
         <div style="width:400px;height:150px;padding:0px;display: flex; align-items: center; justify-content:left;">
           <f7-button icon-material="speaker" outline style="height:40px;font-weight:bold;padding:2px;padding-right:30px;text-align:left;border:none 0px;" large icon-size="36" />
-          <f7-range ref="volumesSlider" class="oh-slider" :min="0" :max="100" :step="1"  :value="volume" @range:changed="onVolumeChange" />
+          <f7-range ref="volumesSlider" class="oh-slider" :min="0" :max="100" :step="1"  :value="volume" @range:changed="onVolumeChangeFromUI" />
           <br/>
           <div style="padding-left:30px;width:50px">
             {{ volume }}  %
@@ -464,6 +464,9 @@ export default {
       return `${formattedMinutes}:${formattedSeconds}`;
     },
     onVolumeChange(event) {
+      const itemName = this.item ?? useMediaStore().currentGlobalPlayerItem
+    },
+    onVolumeChangeFromUI(event) {
       const itemName = this.item ?? useMediaStore().currentGlobalPlayerItem
       useStatesStore().sendCommand(itemName, this.createMediaType('VOLUME', event));
     },
