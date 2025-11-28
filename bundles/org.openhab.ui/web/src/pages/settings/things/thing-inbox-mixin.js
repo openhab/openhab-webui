@@ -34,6 +34,57 @@ export default {
         return Promise.reject(err)
       })
     },
+    ignoreEntry (entry, loadFn) {
+      this.$oh.api.postPlain(`/rest/inbox/${entry.thingUID}/ignore`).then((res) => {
+        f7.toast.create({
+          text: 'Entry ignored',
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
+        loadFn()
+      }).catch((err) => {
+        f7.toast.create({
+          text: 'Error while ignoring entry: ' + err,
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
+        loadFn()
+      })
+    },
+    unignoreEntry (entry, loadFn) {
+      this.$oh.api.postPlain(`/rest/inbox/${entry.thingUID}/unignore`).then((res) => {
+        f7.toast.create({
+          text: 'Entry unignored',
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
+        loadFn()
+      }).catch((err) => {
+        f7.toast.create({
+          text: 'Error while unignoring entry: ' + err,
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
+        loadFn()
+      })
+    },
+    removeEntry (entry, loadFn) {
+      this.$oh.api.delete('/rest/inbox/' + entry.thingUID).then((res) => {
+        f7.toast.create({
+          text: 'Entry removed',
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
+        loadFn()
+      }).catch((err) => {
+        f7.toast.create({
+          text: 'Error while removing entry: ' + err,
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
+        loadFn()
+      })
+    },
     entryActionsAddAsThingButton (entry, loadFn) {
       return {
         text: 'Add as Thing',
@@ -128,6 +179,30 @@ export default {
         color: 'blue',
         bold: true,
         onClick: () => this.copyFileDefinitionToClipboard(this.ObjectType.THING, [entry.thingUID])
+      }
+    },
+    entryActionsIgnoreButton (entry, loadFn, ignored) {
+      return {
+        text: (!ignored) ? 'Ignore' : 'Unignore',
+        color: (!ignored) ? 'orange' : 'blue',
+        onClick: () => {
+          if (ignored) {
+            this.unignoreEntry(entry, loadFn)
+          } else {
+            this.ignoreEntry(entry, loadFn)
+          }
+        }
+      }
+    },
+    entryActionsRemoveButton (entry, loadFn) {
+      return {
+        text: 'Remove',
+        color: 'red',
+        onClick: () => {
+          f7.dialog.confirm(`Remove ${entry.label} from the Inbox?`, 'Remove Entry', () => {
+            this.removeEntry(entry, loadFn)
+          })
+        }
       }
     }
   }
