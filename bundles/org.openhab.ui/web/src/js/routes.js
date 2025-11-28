@@ -102,10 +102,7 @@ const loadAsync = (page, props) => {
 export default [
   {
     path: '/',
-    beforeEnter: function ({ reject }) {
-      reject()
-      this.navigate('/overview/')
-    },
+    redirect: '/overview/',
     routes: [
       {
         path: 'overview/',
