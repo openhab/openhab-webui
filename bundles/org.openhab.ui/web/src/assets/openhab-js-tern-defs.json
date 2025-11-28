@@ -30,6 +30,10 @@
         "!doc": "Item state as Quantity or null if state is not Quantity-compatible",
         "!type": "QuantityClass|null"
       },
+      "boolState": {
+        "!doc": "Item state as boolean or null if state is not boolean-compatible.",
+        "!type": "boolean|null"
+      },
       "persistence": {
         "!doc": "Access persisted states for this item",
         "!type": "ItemPersistence"
