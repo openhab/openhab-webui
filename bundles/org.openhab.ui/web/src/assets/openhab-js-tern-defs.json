@@ -6,6 +6,10 @@
         "!doc": "The type of the item: the Simple (without package) name of the Java Item type, such as 'Switch'.",
         "!type": "string"
       },
+      "groupType": {
+        "!doc": "The type of the group, if this item is a Group item, else null.",
+        "!type": "string|null"
+      },
       "name": {
         "!doc": "The name of the item.",
         "!type": "string"
