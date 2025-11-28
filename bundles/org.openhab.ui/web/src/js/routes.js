@@ -143,11 +143,11 @@ export default [
     ]
   },
   {
-    path: '/page/:uid',
+    path: '/page/:uid/:initialTab',
     component: PageViewPage
   },
   {
-    path: '/page/:uid/:initialTab',
+    path: '/page/:uid',
     component: PageViewPage
   },
   {
