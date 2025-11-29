@@ -1,9 +1,8 @@
 <template>
   <f7-list :accordion-list="!pickerMode">
     <f7-list-item v-if="group && group.label && group.channels.length > 0"
-                  group-title
+                  class="channel-group-title"
                   :title="group.label"
-                  :description="group.description"
                   :footer="group.description" />
     <f7-list-item v-for="c in group.channels"
                   :key="c.channel.id"
@@ -63,6 +62,16 @@
 <style lang="stylus">
 .channel-clipboard-icon
   margin-left 3px
+
+.channel-group-title
+  --f7-list-item-padding-vertical 0
+  color var(--f7-list-group-title-text-color)
+  font-size var(--f7-list-group-title-font-size)
+  background-color var(--f7-list-group-title-bg-color)
+  text-overflow ellipsis
+  overflow hidden
+  .item-title
+    font-weight var(--f7-list-group-title-font-weight)
 </style>
 
 <script>
