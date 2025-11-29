@@ -1,7 +1,7 @@
 <template>
   <f7-page @page:beforein="onPageBeforeIn" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar>
-      <oh-nav-content :title="(item.label || item.name) + dirtyIndicator"
+      <oh-nav-content :title="(item.label || item.name || '') + dirtyIndicator"
                       :subtitle="thing.label"
                       back-link="Back"
                       :back-link-url="null"
