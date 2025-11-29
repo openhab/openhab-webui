@@ -62,6 +62,7 @@
                         #default="{ channelId, channelType, channel, extensible }">
                 <channel-link :opened="openedChannelId === channelId"
                               :thing="thing"
+                              :thingType="thingType"
                               :channelId="channelId"
                               :channelType="channelType"
                               :channel="channel"
