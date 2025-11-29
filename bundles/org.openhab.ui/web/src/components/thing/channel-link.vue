@@ -32,9 +32,8 @@
         v-for="link in links"
         :key="link.itemName"
         media-item
-        link
+        :link="`links/${link.itemName}/${channelId.replace('#', '%23')}`"
         class="channellist-linkeditem searchbar-ignore"
-        @click="configureLink(link)"
         :title="(link.item.label) ? link.item.label : link.item.name"
         :footer="(link.item.label) ? link.item.name : '\xa0'"
         :subtitle="getItemTypeAndMetaLabel(link.item)"
@@ -98,7 +97,6 @@
 import { f7 } from 'framework7-vue'
 
 import AddLinkPage from '@/pages/settings/things/link/link-add.vue'
-import ConfigureLinkPage from '@/pages/settings/things/link/link-edit.vue'
 import ConfigureChannelPage from '@/pages/settings/things/channel/channel-edit.vue'
 import DuplicateChannelPage from '@/pages/settings/things/channel/channel-duplicate.vue'
 
@@ -165,30 +163,6 @@ export default {
           channelGroup: this.channelId.includes('#') ? this.thingType.channelGroups.find((cg) => cg.id === this.channelId.split('#', 1)[0]) : null,
           channel: this.thing.channels.find((c) => c.id === this.channelId),
           channelType: this.channelType
-        }
-      })
-    },
-    configureLink (link) {
-      const path = 'links/' + link.itemName + '/' + this.channelId
-      this.f7router.navigate({
-        url: path,
-        route: {
-          component: ConfigureLinkPage,
-          path,
-          props: {
-          },
-          on: {
-            pageAfterOut (event, page) {
-            }
-          }
-        }
-      }, {
-        props: {
-          thing: this.thing,
-          channel: this.thing.channels.find((c) => c.id === this.channelId),
-          channelType: this.channelType,
-          item: link.item,
-          source: 'thing'
         }
       })
     },

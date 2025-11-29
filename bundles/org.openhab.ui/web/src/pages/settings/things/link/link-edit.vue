@@ -11,7 +11,7 @@
                       @save="save()"
                       :f7router />
     </f7-navbar>
-    <f7-block class="block-narrow">
+    <f7-block v-if="ready" class="block-narrow">
       <f7-col>
         <div v-if="item.state">
           <item-state-preview :item="item" :context="context" />
@@ -120,6 +120,7 @@ import fastDeepEqual from 'fast-deep-equal/es6'
 
 import { useStatesStore } from '@/js/stores/useStatesStore'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+import { nextTick } from 'vue'
 
 export default {
   mixins: [ThingStatus, LinkMixin, DirtyMixin],
@@ -129,9 +130,9 @@ export default {
     ItemStatePreview
   },
   props: {
-    thing: Object,
-    channel: Object,
-    item: Object,
+    thingId: String,
+    channelId: String,
+    itemName: String,
     source: String,
     f7router: Object
   },
@@ -141,6 +142,11 @@ export default {
   data () {
     return {
       ready: false,
+
+      thing: {},
+      channel: {},
+      item: {},
+
       originalLink: null,
       link: {
         itemName: null,
@@ -163,34 +169,47 @@ export default {
     ...mapStores(useRuntimeStore)
   },
   methods: {
-    onPageBeforeIn (event) {
+    onPageBeforeIn () {
       useStatesStore().startTrackingStates()
     },
-    onPageBeforeOut (event) {
+    onPageBeforeOut () {
       useStatesStore().stopTrackingStates()
     },
-    onPageAfterIn (event) {
-      const itemName = this.item.name
-      const itemType = this.item.type
-      const channelUID = this.channel.uid.replace('#', '%23')
-      this.$oh.api.get('/rest/profile-types?channelTypeUID=' + this.channel.channelTypeUID + '&itemType=' + itemType).then((data) => {
-        this.profileTypes = data
-        this.profileTypes.unshift(data.splice(data.findIndex((p) => p.uid === 'system:default'), 1)[0]) // move default to be first
-        this.profileTypes = this.profileTypes.filter((p) => this.isProfileTypeCompatible(this.channel, p, this.item)) // only show compatible profile types
+    onPageAfterIn () {
+      Promise.all([
+        this.$oh.api.get('/rest/things/' + this.thingId),
+        this.$oh.api.get('/rest/items/' + this.itemName)
+      ]).then(([thing, item]) => {
+        this.thing = thing
+        this.channel = this.thing.channels.find((c) => c.id === this.channelId)
+        this.item = item
 
-        this.$oh.api.get('/rest/links/' + itemName + '/' + channelUID).then((data2) => {
-          this.link = data2
-          if (this.link.configuration.profile) {
-            this.onProfileTypeChange(this.link.configuration.profile)
-          }
-          this.originalProfileType = this.currentProfileType
-          this.originalLink = cloneDeep(this.link)
-          this.dirty = false
-          this.ready = true
+        const itemType = this.item.type
+        Promise.all([
+          this.$oh.api.get('/rest/profile-types?channelTypeUID=' + this.channel.channelTypeUID + '&itemType=' + itemType),
+          this.$oh.api.get('/rest/channel-types/' + this.channel.channelTypeUID)
+        ]).then(([profileTypes, channelType]) => {
+          this.profileTypes = profileTypes
+          this.channelType = channelType
+
+          this.profileTypes.unshift(profileTypes.splice(profileTypes.findIndex((p) => p.uid === 'system:default'), 1)[0]) // move default to be first
+          this.profileTypes = this.profileTypes.filter((p) => this.isProfileTypeCompatible(this.channel, p, this.item)) // only show compatible profile types
+
+          const channelUID = this.channel.uid.replace('#', '%23')
+          this.$oh.api.get('/rest/links/' + this.itemName + '/' + channelUID).then((link) => {
+            this.link = link
+            if (this.link.configuration.profile) {
+              this.onProfileTypeChange(this.link.configuration.profile)
+            }
+            this.originalProfileType = this.currentProfileType
+            this.originalLink = cloneDeep(this.link)
+            this.dirty = false
+
+            nextTick(() => {
+              this.ready = true
+            })
+          })
         })
-      })
-      this.$oh.api.get('/rest/channel-types/' + this.channel.channelTypeUID).then((data3) => {
-        this.channelType = data3
       })
     },
     updated () {

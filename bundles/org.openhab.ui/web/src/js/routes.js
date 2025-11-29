@@ -26,6 +26,7 @@ const HealthOrphanLinksPage = () => import(/* webpackChunkName: "admin-config" *
 const HealthSemanticsPage = () => import(/* webpackChunkName: "admin-config" */ '@/pages/settings/health/health-semantics.vue')
 const ThingsListPage = () => import(/* webpackChunkName: "admin-config" */ '@/pages/settings/things/things-list.vue')
 const ThingDetailsPage = () => import(/* webpackChunkName: "admin-config" */ '@/pages/settings/things/thing-details.vue')
+const ChannelEditPage = () => import(/* webpackChunkName: "admin-config" */ '@/pages/settings/things/link/link-edit.vue')
 const AddThingChooseBindingPage = () => import(/* webpackChunkName: "admin-config" */ '@/pages/settings/things/add/choose-binding.vue')
 const AddThingChooseThingTypePage = () => import(/* webpackChunkName: "admin-config" */ '@/pages/settings/things/add/choose-thing-type.vue')
 const AddThingPage = () => import(/* webpackChunkName: "admin-config" */ '@/pages/settings/things/add/thing-add.vue')
@@ -219,6 +220,12 @@ export default [
                 beforeEnter: [enforceAdminForRoute],
                 beforeLeave: [checkDirtyBeforeLeave],
                 async: loadAsync(ItemMetadataEditPage)
+              },
+              {
+                path: 'links/edit/:thingId/:channelId',
+                beforeEnter: [enforceAdminForRoute],
+                beforeLeave: [checkDirtyBeforeLeave],
+                async: loadAsync(ChannelEditPage)
               }
             ]
           }
@@ -311,7 +318,15 @@ export default [
             path: ':thingId',
             beforeEnter: [enforceAdminForRoute],
             beforeLeave: [checkDirtyBeforeLeave],
-            async: loadAsync(ThingDetailsPage)
+            async: loadAsync(ThingDetailsPage),
+            routes: [
+              {
+                path: '/links/:itemName/:channelId',
+                beforeEnter: [enforceAdminForRoute],
+                beforeLeave: [checkDirtyBeforeLeave],
+                async: loadAsync(ChannelEditPage, { source: 'thing' })
+              }
+            ]
           }
         ]
       },
