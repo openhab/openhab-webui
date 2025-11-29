@@ -297,6 +297,7 @@ export default {
         this.$refs.itemsList.$el.f7VirtualList.replaceAllItems(this.items)
         this.initSearchbar = true
         this.loading = false
+        this.updateListedItems()
         this.processFilter()
 
         if (!this.eventSource) this.startEventSource()
