@@ -11,8 +11,12 @@
 
 <script>
 import modal from './modal-mixin'
+import { useViewArea } from '@/composables/useViewArea.ts'
 
 export default {
-  mixins: [modal]
+  mixins: [modal],
+  setup () {
+    useViewArea()
+  }
 }
 </script>

@@ -30,11 +30,15 @@
 <script>
 import modal from './modal-mixin'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
+import { useViewArea } from '@/composables/useViewArea.ts'
 
 export default {
   mixins: [modal],
   components: {
     EmptyStatePlaceholder
+  },
+  setup () {
+    useViewArea()
   }
 }
 </script>
