@@ -407,6 +407,9 @@
       </f7-col>
     </f7-block>
 
+    <!-- Do NOT preload previous page, because when using async/asyncComponent for routes,
+     a router bug incorrectly makes the preloaded page visible and hides the current page -->
+    <!-- Diable iOS swipe back as it requires preloading previous page -->
     <f7-view
       url="/"
       :main="true"
@@ -415,6 +418,8 @@
       :browser-history="true"
       :browser-history-root="origin"
       browser-history-separator=""
+      :preload-previous-page="false"
+      :ios-swipe-back="false"
       v-show="ready"
       :animate="!uiOptionsStore.disablePageTransitionAnimation" />
   </f7-app>
