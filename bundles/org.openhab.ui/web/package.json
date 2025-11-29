@@ -199,6 +199,7 @@
     "vite": "npm:rolldown-vite@^7.1.16",
     "vite-plugin-compression2": "^2.2.1",
     "vite-plugin-dynamic-import": "^1.6.0",
+    "vite-plugin-pwa": "^1.2.0",
     "vite-plugin-top-level-await": "^1.6.0",
     "vite-plugin-vue-devtools": "^8.0.0",
     "vitest": "^3.2.4",
