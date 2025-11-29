@@ -34,7 +34,7 @@ export default {
                 false
               )
               this.communicationFailureTimeoutId = null
-            }, 2000)
+            }, 5000)
           }
         } else if (newValue === true) {
           if (this.communicationFailureTimeoutId !== null) {
