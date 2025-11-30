@@ -78,11 +78,11 @@ module.exports = {
         target: apiBaseUrl
       },
       {
-        context: ['/ws/logs', '/ws/events'],
+        context: ['/ws/logs', '/ws/events', '/ws/audio-pcm'],
         target: apiBaseUrl,
         ws: true
       }
-    ]
+  ]
   },
   performance: {
     maxAssetSize: 2048000,

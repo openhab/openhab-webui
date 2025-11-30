@@ -24,6 +24,7 @@ export const useRuntimeStore = defineStore('runtime', () => {
   const docSrcUrl = ref<string | null>(null)
   const showDeveloperDock = ref<boolean>(false)
   const pagePath = ref<string | null>(null)
+  const voiceIcon = ref<string | null>(null)
   const sitemapIncludeItemName = ref<boolean>(false)
   const modelPicker = reactive<object>({
     includeItemNames: false,
@@ -67,6 +68,7 @@ export const useRuntimeStore = defineStore('runtime', () => {
     docSrcUrl,
     showDeveloperDock,
     pagePath,
+    voiceIcon,
     modelPicker,
     sitemapIncludeItemName,
     ready,
