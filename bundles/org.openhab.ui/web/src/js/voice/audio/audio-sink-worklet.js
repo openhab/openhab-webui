@@ -50,8 +50,7 @@ class AudioSinkWorklet extends AudioWorkletProcessor {
           )
           this.writeAudioSamples(audioData, outputs, channels)
           return true
-        }
-        if (!this.done) {
+        } else if (!this.done) {
           this.done = true
           // notify completion
           this.port.postMessage(false)
@@ -93,10 +92,10 @@ class AudioCache {
 
   readAudioData (n) {
     this.length -= n
-    const currentBuffer = this.buffers[0]
+    let currentBuffer = this.buffers[0]
     const nextOffset = n + this.offset
     if (nextOffset <= currentBuffer.length) {
-      const chunk = currentBuffer.subarray(this.offset, this.offset + n)
+      const chunk = currentBuffer.subarray(this.offset, nextOffset)
       if (nextOffset < currentBuffer.length) {
         this.offset = nextOffset
       } else {
@@ -106,16 +105,18 @@ class AudioCache {
       return chunk
     } else {
       const partialChunks = [currentBuffer.subarray(this.offset)]
+      this.offset = 0
       this.buffers.shift()
       let required = n - partialChunks[0].length
       while (required > 0) {
-        const nextBuffer = this.buffers[0]
-        if (required > nextBuffer.length) {
-          partialChunks.push(nextBuffer)
-          required -= nextBuffer.length
+        currentBuffer = this.buffers[0]
+        if (required >= currentBuffer.length) {
+          partialChunks.push(currentBuffer)
+          required -= currentBuffer.length
+          this.offset = 0
           this.buffers.shift()
         } else {
-          const partialBuffer = currentBuffer.subarray(0, required)
+          const partialBuffer = currentBuffer.subarray(this.offset, required)
           partialChunks.push(partialBuffer)
           this.offset = partialBuffer.length
           required -= partialBuffer.length
