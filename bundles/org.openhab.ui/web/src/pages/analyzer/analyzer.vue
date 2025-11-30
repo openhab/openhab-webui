@@ -22,7 +22,6 @@
 
     <oh-chart-page v-if="showChart"
                    class="analyzer-chart"
-                   :class="{ 'sheet-opened': controlsOpened }"
                    :key="chartKey"
                    :context="context" />
     <empty-state-placeholder v-else-if="invalidConfiguration"
@@ -32,10 +31,10 @@
 
     <!-- analyzer controls -->
     <f7-sheet class="analyzer-controls"
+              ref="controlsSheet"
               :backdrop="false"
               :close-on-escape="true"
-              :opened="controlsOpened">
-              <!-- TODO @sheet:closed="controlsOpened = false"> -->
+              :opened="false">
       <f7-page>
         <f7-toolbar tabbar :bottom="true">
           <f7-link class="padding-left padding-right"
@@ -378,7 +377,7 @@ import { type CoordSettings, Marker, ValueAxisSplitOptions, type CoordSystem, ty
 import { AggregationFunction, ChartType, Orient, OhChartVisualmap } from '@/types/components/widgets'
 import type { TimeCoordSettings, TimeSeriesOptions } from './chart-time'
 import type { AggregateCoordSettings, AggregateSeriesOptions } from './chart-aggregate'
-import type { CalendarCoordSettings, CalendarSeriesOptions } from './chart-calendar'
+import type { CalendarSeriesOptions } from './chart-calendar'
 import type { Item } from '@/types/openhab'
 
 enum CoordSystemsName {
@@ -424,7 +423,6 @@ export default {
       coordSystemName: CoordSystemsName.time,
       coordSystem: COORD_SYSTEMS[CoordSystemsName.time],
       coordSettings: COORD_SYSTEMS[CoordSystemsName.time].initCoordSystem() as CoordSettings,
-      controlsOpened: false,
       itemsPickerKey: f7.utils.id(),
       chartKey: f7.utils.id(),
       label: null as string | null
@@ -460,8 +458,11 @@ export default {
     ...mapStores(useUserStore)
   },
   methods: {
-    onClose () {
-      this.controlsOpened = false
+    close () {
+      f7.sheet.close(this.$refs.controlsSheet)
+    },
+    openControls () {
+      f7.sheet.open(this.$refs.controlsSheet)
     },
     initChart () {
       if (this.f7route?.query.period) (this.coordSettings as TimeCoordSettings).period = this.f7route.query.period
@@ -628,9 +629,6 @@ export default {
           [{ color: 'red', text: 'Cancel', close: true }]
         ]
       }).open()
-    },
-    openControls () {
-      this.controlsOpened = true
     },
     savePage () {
       if (!this.userStore.isAdmin()) return // shouldn't get here if not an admin
