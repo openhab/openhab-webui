@@ -21,6 +21,8 @@
       <f7-nav-right>
         <f7-link v-if="runtimeStore.voiceIcon"
                  :icon-aurora="runtimeStore.voiceIcon"
+                 :icon-ios="runtimeStore.voiceIcon"
+                 :icon-md="runtimeStore.voiceIcon"
                  :tooltip="$t('home.triggerVoice')"
                  @click="triggerDialog" />
         <developer-dock-icon />

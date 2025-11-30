@@ -56,7 +56,7 @@ export default {
             updatePageIcon(io.isRunning(), io.isListening(), io.isSpeaking())
           }
         })
-        const events = ['touchstart', 'touchend', 'mousedown', 'keydown']
+        const events = ['touchend', 'mousedown', 'keydown']
         const startAudio = () => {
           clean()
           this.audioMain.initialize(identifier, dialogListeningItem, dialogLocationItem)
