@@ -26,7 +26,6 @@
               :configuration="configurationWithDefaults"
               :read-only="readOnly"
               :status="parameterStatus(parameter)"
-              :showNonDefaultBadge="parameter.advanced && isNonDefault(parameter)"
               :f7router
               @update="(value) => updateParameter(parameter, value)" />
           </f7-col>
@@ -56,7 +55,6 @@
               :configuration="configurationWithDefaults"
               :read-only="readOnly"
               :status="parameterStatus(parameter)"
-              :showNonDefaultBadge="parameter.advanced && isNonDefault(parameter)"
               :f7router
               @update="(value) => updateParameter(parameter, value)" />
           </f7-col>

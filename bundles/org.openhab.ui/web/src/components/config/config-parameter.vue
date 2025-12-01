@@ -13,16 +13,11 @@
                  :f7router
                  @input="updateValue" />
     </f7-list-group>
-    <f7-list-item v-else-if="readOnly && configDescription.context === 'password'"
-                  :is="passwords"
-                  :config-description="configDescription"
-                  :value="value"
-                  :parameters="parameters"
-                  :configuration="configuration"
-                  :title="configDescription.title" />
-    <f7-list-item v-else :after="value !== undefined && value !== null ? value.toString() : 'N/A'" />
+    <f7-list-item v-else
+                  :title="configDescription.label"
+                  :after="value !== undefined && value !== null ? (configDescription.context === 'password' ? '•'.repeat(20) : value.toString()) : 'N/A'" />
     <template #after-list>
-      <f7-block-footer class="config-parameter-description">
+      <f7-block-footer class="param-description">
         <div v-if="status" class="param-status-info">
           <f7-chip v-if="status.type !== 'INFORMATION'"
                    :color="status.type === 'WARNING' ? 'orange' : status.type === 'ERROR' ? 'red' : 'gray'"
@@ -31,27 +26,11 @@
           <span v-if="status.statusCode">Status Code: &nbsp;{{ status.statusCode }}&nbsp;&nbsp;</span>
           <span v-if="status.message">{{ status.message }}</span>
         </div>
-        <small v-html="`${configDescription.required ? '<strong>Required</strong>&nbsp;' : ''}${description || (showNonDefaultBadge ? ' ' : '')}`" />
-        <f7-badge v-if="showNonDefaultBadge"
-                  style="margin-left:2px"
-                  color="blue"
-                  class="count-badge"
-                  tooltip="Non-default parameter">
-          1
-        </f7-badge>
+        <small v-html="`${configDescription.required ? '<strong>Required</strong>&nbsp;' : ''}${description || ''}`" />
       </f7-block-footer>
     </template>
   </f7-list>
 </template>
-
-<style lang="stylus">
-.config-parameter .config-parameter-description
-  padding-left calc(var(--f7-block-padding-horizontal) + var(--f7-safe-area-left))
-  padding-right calc(var(--f7-block-padding-horizontal) + var(--f7-safe-area-right))
-  display flex
-  justify-content space-between
-
-</style>
 
 <script>
 import { f7 } from 'framework7-vue'
@@ -85,8 +64,7 @@ export default {
     parameters: Array,
     configuration: Object,
     readOnly: Boolean,
-    status: Array,
-    showNonDefaultBadge: Boolean
+    status: Array
   },
   emits: ['update'],
   setup () {
@@ -98,10 +76,8 @@ export default {
     }
   },
   computed: {
-    passwords () {
-      const configDescription = this.configDescription
-      configDescription.readOnly = true
-      return ParameterText
+    maskedPassword () {
+      return '•'.repeat(20)
     },
     control () {
       const configDescription = this.configDescription
