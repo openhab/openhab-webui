@@ -2527,7 +2527,9 @@
 		_t.buttonPick = _t.parentNode.querySelector(o.colortemppicker.pick);
 		_t.colorPreview = _t.parentNode.querySelector(o.colortemppicker.rectSvg);
 		color = _t.parentNode.getAttribute("data-color");
-		if (color !== "") {
+		if (color === "") {
+			_t.colorPreview.setAttribute("fill", "#ffffff");
+		} else {
 			_t.colorPreview.setAttribute("fill", color);
 		}
 
@@ -2539,19 +2541,23 @@
 			// itemState contains value + unit in the display unit (in case unit is set in label pattern)
 			if (itemState === "NULL" || itemState === "UNDEF") {
 				_t.value = NaN;
-				_t.buttonPick.classList.add("unknown-state");
 			} else  if (itemState.indexOf(" ") > 0) {
 				var stateAndUnit = itemState.split(" ");
 				_t.value = parseFloat(stateAndUnit[0]);
 				_t.value = isNaN(_t.value) ? NaN : (stateAndUnit[1] === "K" ? _t.value : 1000000.0 / _t.value);
-				_t.buttonPick.classList.remove("unknown-state");
 			} else {
 				_t.value = itemState * 1;
+			}
+			if (isNaN(_t.value)) {
+				_t.buttonPick.classList.add("unknown-state");
+			} else {
 				_t.buttonPick.classList.remove("unknown-state");
 			}
 
 			// Set the color in the preview rectange with the most approaching color used to generate the gradient
-			_t.colorPreview.setAttribute("fill", (isNaN(_t.value) || _t.value < _t.min || _t.value > _t.max)
+			_t.colorPreview.setAttribute("fill", isNaN(_t.value)
+				? "#ffffff"
+				: _t.value < _t.min || _t.value > _t.max
 				? "Gray"
 				: _t.colors[Math.round((_t.value - _t.min) * (_t.colors.length - 1) / (_t.max - _t.min))]);
 
