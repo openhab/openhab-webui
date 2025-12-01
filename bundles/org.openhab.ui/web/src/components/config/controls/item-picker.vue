@@ -242,7 +242,6 @@ export default {
       this.popupOpen = false
     },
     selectItem (item) {
-      console.log("selectItem", item)
       if (this.multiple) {
         const idx = this.selectedValue.indexOf(item.name)
         if (idx >= 0) this.selectedValue.splice(idx, 1)
@@ -256,7 +255,6 @@ export default {
       }
     },
     updateFromModelPicker (value) {
-      console.log("updateFromModelPicker", value)
       if (this.multiple) {
         this.$emit('input', value.map((i) => i.name))
       } else {
@@ -265,7 +263,6 @@ export default {
       }
     },
     pickFromModel (evt) {
-      console.log("pickFromModel", evt)
       const popup = {
         component: ModelPickerPopup
       }

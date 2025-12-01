@@ -1,6 +1,6 @@
 import { renderVisualMap } from './analyzer-helpers'
 
-import { SeriesType, type CoordSettings, type CoordSystem, type CoordUIParams, type SeriesOptions, type VisualMap, type CoordSettingsBase } from './types'
+import { SeriesType, type CoordSettings, type CoordSystem, type SeriesOptions, type VisualMap, type CoordSettingsBase } from './types'
 import type { Item, Page } from '@/types/openhab'
 import { AggregationFunction, ChartType, OhChartPage, Orient, OhChartVisualmap, OhCalendarSeries, OhChartTooltip, OhCalendarAxis } from '@/types/components/widgets'
 
@@ -16,12 +16,10 @@ export interface CalendarSeriesOptions extends SeriesOptions {
 
 const calendarCoordSystem : CoordSystem = {
   initCoordSystem (coordSettings? : Partial<CalendarCoordSettings>) : CalendarCoordSettings {
-    const uiParams : CoordUIParams = {
-      typeOptions: [ChartType.month, ChartType.year]
-    }
+    const typeOptions : ChartType[] = [ChartType.month, ChartType.year]
     return {
-      uiParams,
-      chartType: (coordSettings && coordSettings.chartType && uiParams.typeOptions.includes(coordSettings.chartType)) ? coordSettings.chartType : ChartType.month,
+      typeOptions,
+      chartType: (coordSettings && coordSettings.chartType && typeOptions.includes(coordSettings.chartType)) ? coordSettings.chartType : ChartType.month,
       orientation: (coordSettings && coordSettings.orientation) ? coordSettings.orientation : Orient.horizontal,
       auxColumn: 'aggregation',
       visualMap: {
@@ -38,16 +36,14 @@ const calendarCoordSystem : CoordSystem = {
     const options : CalendarSeriesOptions = {
       name: item.label || item.name,
       type: SeriesType.none,
-      uiParams: {
-        typeOptions: []
-      },
+      typeOptions: [],
       aggregation: AggregationFunction.average
     }
 
     if ((item.type.startsWith('Number') || item.type === 'Dimmer' ||
       item.groupType?.startsWith('Number') || item.groupType === 'Dimmer')) {
       options.type = SeriesType.heatmap
-      options.uiParams.typeOptions = [SeriesType.heatmap]
+      options.typeOptions = [SeriesType.heatmap]
     }
 
     return options
