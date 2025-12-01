@@ -6,7 +6,14 @@ import type { CalendarCoordSettings } from './chart-calendar'
 
 export interface CoordSettingsBase {
     chartType: ChartType
-    uiParams: CoordUIParams
+    typeOptions: Array<ChartType>
+}
+
+export interface CoordSystem {
+    initCoordSystem: (settings?: CoordSettingsBase) => CoordSettings
+    initAxes: (settings: CoordSettingsBase) => void
+    initSeries: (item: Item, coordSettings: CoordSettings, seriesOptions: Partial<SeriesOptions>) => SeriesOptions
+    getChartPage: (coordSettings: CoordSettings, allSeriesOptions: Record<string, SeriesOptions>, items: Item[]) => Page
 }
 
 export type CoordSettings = TimeCoordSettings | AggregateCoordSettings | CalendarCoordSettings
@@ -20,21 +27,16 @@ export enum SeriesType {
     heatmap = 'heatmap'
 }
 
-export interface SeriesUIParams {
-    typeOptions: Array<SeriesType>,
-    showAxesOptions?: boolean
-}
-
 export interface SeriesOptions {
     name: string
     type: SeriesType
-    uiParams: SeriesUIParams
+    typeOptions: Array<SeriesType>
 }
 
 export interface ValueAxisOptions {
     name: string,
     unit: string,
-    split?: ValueAxisSplitOptions,
+    split?: string,
     min?: string,
     max?: string,
     scale?: boolean,
@@ -48,17 +50,6 @@ export enum ValueAxisSplitOptions {
     line_minor = 'line+minor',
     area_minor = 'area+minor',
     all = 'all'
-}
-
-export interface CoordSystem {
-    initCoordSystem: (settings?: CoordSettingsBase) => CoordSettings
-    initAxes: (settings: CoordSettingsBase) => void
-    initSeries: (item: Item, coordSettings: CoordSettings, seriesOptions: Partial<SeriesOptions>) => SeriesOptions
-    getChartPage: (coordSettings: CoordSettings, allSeriesOptions: Record<string, SeriesOptions>, items: Item[]) => Page
-}
-
-export interface CoordUIParams {
-    typeOptions: Array<ChartType>
 }
 
 export interface VisualMap {

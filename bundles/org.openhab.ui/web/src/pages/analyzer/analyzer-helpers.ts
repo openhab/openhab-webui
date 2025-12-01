@@ -56,20 +56,20 @@ export function renderVisualMap (visualMap: VisualMap) : UIComponent[] {
   }]
 }
 
-function getSplitLineConfig(split: ValueAxisSplitOptions | undefined): Record<string, any> {
+function getSplitLineConfig (split: ValueAxisSplitOptions | undefined): Record<string, any> {
   const config: Record<string, any> = {}
 
   const noSplitLine = [ValueAxisSplitOptions.none, ValueAxisSplitOptions.area, ValueAxisSplitOptions.area_minor]
   if (split && noSplitLine.includes(split)) {
     config.splitLine = { show: false }
   }
-  
+
   const showMinorTicks = [ValueAxisSplitOptions.line_minor, ValueAxisSplitOptions.area_minor, ValueAxisSplitOptions.all]
   if (split && showMinorTicks.includes(split)) {
     config.minorTick = { show: true }
     config.minorSplitLine = { show: true }
   }
-  
+
   const showSplitArea = [ValueAxisSplitOptions.area, ValueAxisSplitOptions.line_area, ValueAxisSplitOptions.area_minor, ValueAxisSplitOptions.all]
   if (split && showSplitArea.includes(split)) {
     config.splitArea = { show: true }

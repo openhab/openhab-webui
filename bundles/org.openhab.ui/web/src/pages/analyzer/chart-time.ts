@@ -1,6 +1,6 @@
 import { getYAxis, renderValueAxis, toPrimitiveMarkers } from './analyzer-helpers.js'
 
-import { Marker, SeriesType, type CoordSystem, type CoordSettings, type CoordUIParams, type SeriesOptions, type ValueAxisOptions, type CoordSettingsBase } from './types.js'
+import { Marker, SeriesType, type CoordSystem, type CoordSettings, type SeriesOptions, type ValueAxisOptions, type CoordSettingsBase } from './types.js'
 import type { Item, Page } from '@/types/openhab'
 import { OhCategoryAxis, OhChartPage, OhValueAxis, ChartType, Period, OhStateSeries, OhTimeSeries, OhChartTooltip, OhChartLegend } from '@/types/components/widgets'
 
@@ -14,6 +14,7 @@ export interface TimeSeriesOptions extends SeriesOptions {
     valueAxisIndex: number
     marker?: Marker
     yValue?: number
+    showAxesOptions?: boolean
 }
 
 const GRID_CONFIG = {
@@ -29,16 +30,13 @@ const GRID_CONFIG = {
 
 const timeCoordSystem : CoordSystem = {
   initCoordSystem (coordSettings? : Partial<TimeCoordSettings>) : TimeCoordSettings {
-    const uiParams : CoordUIParams = {
-      typeOptions: [ChartType.day, ChartType.isoWeek, ChartType.month, ChartType.year]
-    }
-
+    const typeOptions : ChartType[] = [ChartType.day, ChartType.isoWeek, ChartType.month, ChartType.year]
     return {
       period: coordSettings?.period || Period.D,
       categoryAxisValues: [],
       valueAxesOptions: [],
-      uiParams,
-      chartType: (coordSettings && coordSettings.chartType && uiParams.typeOptions.includes(coordSettings.chartType)) ? coordSettings.chartType : ChartType.dynamic
+      typeOptions,
+      chartType: (coordSettings && coordSettings.chartType && typeOptions.includes(coordSettings.chartType)) ? coordSettings.chartType : ChartType.dynamic
     }
   },
   initAxes (coordSettings : Partial<TimeCoordSettings>) : void {
@@ -50,28 +48,26 @@ const timeCoordSystem : CoordSystem = {
 
     const options : TimeSeriesOptions = {
       name: item.label || item.name,
-      uiParams: {
-        typeOptions: [SeriesType.line, SeriesType.area, SeriesType.state]
-      },
+      typeOptions: [SeriesType.line, SeriesType.area, SeriesType.state],
       type: SeriesType.line,
       valueAxisIndex: 0
     }
 
     if (item.type.startsWith('Number') || item.groupType?.startsWith('Number')) {
       options.marker = Marker.none
-      options.uiParams.showAxesOptions = true
-      options.type = (seriesOptions?.type && options.uiParams.typeOptions.includes(seriesOptions.type)) ? seriesOptions.type : SeriesType.line
+      options.showAxesOptions = true
+      options.type = (seriesOptions?.type && options.typeOptions.includes(seriesOptions.type)) ? seriesOptions.type : SeriesType.line
     } else if (item.type === 'Dimmer' || item.groupType === 'Dimmer') {
-      options.uiParams.showAxesOptions = false
+      options.showAxesOptions = false
       options.marker = Marker.none
-      options.type = (seriesOptions?.type && options.uiParams.typeOptions.includes(seriesOptions.type)) ? seriesOptions.type : SeriesType.line
+      options.type = (seriesOptions?.type && options.typeOptions.includes(seriesOptions.type)) ? seriesOptions.type : SeriesType.line
     } else {
-      options.uiParams.typeOptions = [SeriesType.state]
-      options.uiParams.showAxesOptions = false
+      options.typeOptions = [SeriesType.state]
+      options.showAxesOptions = false
       options.type = SeriesType.state
     }
 
-    // determine the Y axis for the item and uiParams
+    // determine the Y axis for the item
     if (options.type === SeriesType.state) {
       timeCoordSettings.categoryAxisValues.unshift(item.name)
       options.yValue = timeCoordSettings.categoryAxisValues.length - 1

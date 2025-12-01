@@ -22,6 +22,7 @@
 
     <oh-chart-page v-if="showChart"
                    class="analyzer-chart"
+                   :class="{ 'sheet-opened': controlsOpened }"
                    :key="chartKey"
                    :context="context" />
     <empty-state-placeholder v-else-if="invalidConfiguration"
@@ -34,7 +35,7 @@
               ref="controlsSheet"
               :backdrop="false"
               :close-on-escape="true"
-              :opened="false">
+              :opened="controlsOpened">
       <f7-page>
         <f7-toolbar tabbar :bottom="true">
           <f7-link class="padding-left padding-right"
@@ -92,7 +93,7 @@
                           </th>
                           <th class="label-cell">
                             <span v-if="'auxColumn' in coordSettings">{{ t('analyzer.series.table.header.' + coordSettings.auxColumn) }}</span>
-                            <span v-else></span>
+                            <span v-else />
                           </th>
                         </tr>
                       </thead>
@@ -105,7 +106,7 @@
                           </td>
                           <td class="label-cell">
                             <f7-segmented round>
-                              <f7-button v-for="type in options.uiParams.typeOptions"
+                              <f7-button v-for="type in options.typeOptions"
                                          small
                                          outline
                                          :key="type"
@@ -116,7 +117,7 @@
                             </f7-segmented>
                           </td>
                           <td class="label-cell">
-                            <f7-segmented v-if="options.uiParams.showAxesOptions" round>
+                            <f7-segmented v-if="'showAxesOptions' in options && options.showAxesOptions" round>
                               <f7-button v-for="(axis, $idx) in (coordSettings as TimeCoordSettings | AggregateCoordSettings).valueAxesOptions"
                                          :key="$idx"
                                          small
@@ -139,7 +140,7 @@
                             <f7-link v-if="'aggregation' in options" @click="chooseAggregation(options as AggregateSeriesOptions)">
                               {{ (options as AggregateSeriesOptions).aggregation ? t('analyzer.aggregations.' + (options as AggregateSeriesOptions).aggregation) : 'none' }}
                             </f7-link>
-                            <span v-else></span>
+                            <span v-else />
                           </td>
                         </tr>
                       </tbody>
@@ -168,7 +169,7 @@
                 <f7-segmented v-if="coordSettings.chartType !== ChartType.dynamic">
                   <f7-button v-for="type in [ChartType.day, ChartType.isoWeek, ChartType.month, ChartType.year]"
                              :key="type"
-                             :disabled="!uiParams.typeOptions.includes(type)"
+                             :disabled="!coordSettings.typeOptions.includes(type)"
                              :active="coordSettings.chartType === type"
                              @click="changeChartType(type)"
                              :text="t('analyzer.coords.period.' + type)" />
@@ -349,11 +350,9 @@
 /*
   Analyzer page for ad-hoc charting and data analysis.
 
-  There are separate chart-<coord-system>.ts files that implement the methods defined in the CoordSystem interface.
+  There are separate chart-<coord-system>.ts files that implement the methods defined for each CoordSystem interface.
   These include methods to init the coord system settings, init the axes, init a series for an item on that coorsystem
   and finally, generate the chart page.
-
-  To support what should be exposed in the UI, there are UIParams for both the coord system and for each series.
  */
 
 import { nextTick, defineAsyncComponent } from 'vue'
@@ -423,15 +422,13 @@ export default {
       coordSystemName: CoordSystemsName.time,
       coordSystem: COORD_SYSTEMS[CoordSystemsName.time],
       coordSettings: COORD_SYSTEMS[CoordSystemsName.time].initCoordSystem() as CoordSettings,
+      controlsOpened: false,
       itemsPickerKey: f7.utils.id(),
       chartKey: f7.utils.id(),
       label: null as string | null
     }
   },
   computed: {
-    uiParams () {
-      return this.coordSettings.uiParams || {}
-    },
     titleDisplayText () {
       if (this.label != null) return this.label
       if (!this.items || !this.items.length) return 'Analyze'
@@ -459,10 +456,11 @@ export default {
   },
   methods: {
     close () {
+      this.controlsOpened = false
       f7.sheet.close(this.$refs.controlsSheet)
     },
     openControls () {
-      f7.sheet.open(this.$refs.controlsSheet)
+      this.controlsOpened = true
     },
     initChart () {
       if (this.f7route?.query.period) (this.coordSettings as TimeCoordSettings).period = this.f7route.query.period
