@@ -91,10 +91,9 @@
   .page-content
     scrollbar-width none /* Firefox */
     -ms-overflow-style none  /* IE 10+ */
-
-.navbar-inner.navbar-inner-centered-title
-  .title
-    max-width none
+  .navbar-inner.navbar-inner-centered-title
+    .title
+      max-width none
 </style>
 
 <script>
