@@ -1,7 +1,7 @@
+import audioWorkerURL from './audio-worker?worker&url'
 import { AudioSink } from './audio/audio-sink'
 import { AudioSource } from './audio/audio-source'
 import { WorkerInCmd, WorkerOutCmd } from './audio-types'
-
 export class AudioMain {
   constructor (ohUrl, accessTokenGetter = null, events = {}) {
     this.ohUrl = ohUrl
@@ -35,8 +35,8 @@ export class AudioMain {
         this.postToWorker(WorkerInCmd.SUSPEND)
       }
     }
-    this.worker = new Worker(new URL('./audio-worker.js', import.meta.url), {
-      name: 'websocket-audio-worker',
+    this.worker = new Worker(audioWorkerURL, {
+      name: 'audio-worker',
       type: 'module'
     })
   }
@@ -100,17 +100,7 @@ export class AudioMain {
    * Returns an audio processor node connected to the audio worker, so the audio gets converted and streamed to the server.
    */
   async getWorkerAudioProcessor () {
-    const audioContext = this.getVoiceAudioContext()
-    const _webSocketWorkletNode = new AudioWorkletNode(
-      audioContext,
-      'websocket-source-worklet',
-      {
-        numberOfInputs: 1,
-        numberOfOutputs: 0,
-        channelCount: 1,
-        channelCountMode: 'explicit'
-      }
-    )
+    const _webSocketWorkletNode = this.getAudioSource().createWorkletNode()
     const portPromise = new Promise(
       (resolve) => (this.resolveSourcePort = resolve)
     )

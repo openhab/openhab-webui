@@ -1,3 +1,4 @@
+import sourceWorkletURL from './audio-source-worklet?worker&url'
 /**
  * Utility class to encapsulate the creation of a {@link MediaStreamAudioSourceNode}, and handle its connected {@link AudioNode} processors.
  *
@@ -13,7 +14,7 @@ export class AudioSource {
 
   static async configure (audioContext) {
     AudioSource.audioContext = audioContext
-    await audioContext.audioWorklet.addModule(new URL('./audio-source-worklet.js', import.meta.url))
+    await audioContext.audioWorklet.addModule(sourceWorkletURL, { name: 'audio-source-worklet' })
   }
 
   async init () {
@@ -36,6 +37,18 @@ export class AudioSource {
     }
   }
 
+  createWorkletNode () {
+    return new AudioWorkletNode(
+      AudioSource.audioContext,
+      'audio-source-worklet',
+      {
+        numberOfInputs: 1,
+        numberOfOutputs: 0,
+        channelCount: 1,
+        channelCountMode: 'explicit'
+      }
+    )
+  }
   isSuspended () {
     return this.getAudioContext().state !== 'running'
   }

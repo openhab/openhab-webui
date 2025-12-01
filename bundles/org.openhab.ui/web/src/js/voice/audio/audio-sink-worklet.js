@@ -152,4 +152,4 @@ class AudioCache {
   }
 }
 
-registerProcessor('websocket-sink-worklet', AudioSinkWorklet)
+registerProcessor('audio-sink-worklet', AudioSinkWorklet)

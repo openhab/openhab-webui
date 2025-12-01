@@ -1,3 +1,4 @@
+import sinkWorkletURL from './audio-sink-worklet?worker&url'
 /**
  * The {@link AudioSink} class plays the audio transmitted by an AudioNode using the audioContext destination or a MediaStreamDestination + a web AudioElement.
  */
@@ -7,7 +8,7 @@ export class AudioSink {
     this.channels = channels
     this.processorNode = new AudioWorkletNode(
       this.getAudioContext(),
-      'websocket-sink-worklet',
+      'audio-sink-worklet',
       {
         numberOfInputs: 0,
         numberOfOutputs: 1,
@@ -20,7 +21,7 @@ export class AudioSink {
   }
 
   static async configure (audioContext, useAudioElement) {
-    await audioContext.audioWorklet.addModule(new URL('./audio-sink-worklet.js', import.meta.url))
+    await audioContext.audioWorklet.addModule(sinkWorkletURL, { name: 'audio-sink-worklet' })
     AudioSink.audioContext = audioContext
     if (useAudioElement) {
       console.debug('Voice: Using audio element to render sound')
