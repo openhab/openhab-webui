@@ -11,4 +11,4 @@ class AudioSourceWorklet extends AudioWorkletProcessor {
   }
 }
 
-registerProcessor('websocket-source-worklet', AudioSourceWorklet)
+registerProcessor('audio-source-worklet', AudioSourceWorklet)
