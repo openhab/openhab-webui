@@ -611,14 +611,6 @@ export default {
           leftBreakpoint: 960,
           rightBreakpoint: 1280
         },
-
-        // Register service worker
-        serviceWorker:
-          location.hostname === 'localhost'
-            ? {}
-            : {
-              path: './service-worker.js'
-            },
         card: {
           swipeToClose: true
         },
