@@ -163,7 +163,7 @@ export default {
       const promise = (this.createMode)
         ? this.$oh.api.postPlain('/rest/ui/components/ui:page', JSON.stringify(this.page), 'text/plain', 'application/json')
         : this.$oh.api.put('/rest/ui/components/ui:page/' + this.page.uid, this.page)
-      promise.then((data) => {
+      promise.then(() => {
         this.dirty = false
         this.savedPage = cloneDeep(this.page)
         if (this.createMode) {
@@ -173,7 +173,6 @@ export default {
             closeTimeout: 2000
           }).open()
           this.f7router.navigate(this.f7route.url.replace('/add', '/' + this.page.uid), { reloadCurrent: true })
-          this.createMode = false
           this.load()
         } else {
           f7.toast.create({
