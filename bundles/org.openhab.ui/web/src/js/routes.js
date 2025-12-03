@@ -115,6 +115,10 @@ export default [
         }
       },
       {
+        path: 'overview',
+        redirect: '/overview/'
+      },
+      {
         path: 'locations/',
         component: HomePage,
         options: {
