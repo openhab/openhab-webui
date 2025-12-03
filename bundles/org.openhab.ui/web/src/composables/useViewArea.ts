@@ -63,7 +63,10 @@ export function useViewArea () {
 
   // methods
   function getPageContentEl (): HTMLElement | null {
-    return document.querySelector('.page-current > .page-content')
+    return document.querySelector('.modal-in > .page > .page-content')
+      ?? document.querySelector('.modal-in > .popover-inner')
+      ?? document.querySelector('.modal-in > .sheet-modal-inner')
+      ?? document.querySelector('.page-current > .page-content')
   }
 
   function updateViewAreaDimensions () {
