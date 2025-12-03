@@ -2,27 +2,35 @@
   <template v-if="visible">
     <!-- Render oh-swiper instead of f7-swiper as f7-swiper changes from F7 v5 -> v7 would require changing widgets,
     oh-swiper does the necessary adjustments so existing widgets continue to work fine -->
-    <oh-swiper v-if="componentType === 'f7-swiper'" :context="context" ref="component" />
+    <oh-swiper v-if="componentType === 'f7-swiper'"
+               v-bind="$attrs"
+               :context="context"
+               ref="component" />
 
     <component v-else-if="componentType && componentType.startsWith('f7-')"
                ref="component"
                :is="componentType"
-               v-bind="config">
+               v-bind="{ ...$attrs, ...config }">
       <!-- eslint-disable-next-line vue/no-unused-vars -->
       <template v-for="(slotComponents, slotName) in context.component.slots" :key="slotName" #[slotName]>
-        <ul v-if="componentType === 'f7-list'">
-          <generic-widget-component v-for="(slotComponent, idx) in slotComponents"
-                                    :context="childContext(slotComponent)"
-                                    :key="slotName + '-' + idx" />
+        <ul v-if="componentType === 'f7-list'" v-bind="$attrs">
+          <generic-widget-component
+            v-for="(slotComponent, idx) in slotComponents"
+            :context="childContext(slotComponent)"
+            :key="slotName + '-' + idx" />
         </ul>
         <template v-else>
           <generic-widget-component v-for="(slotComponent, idx) in slotComponents"
+                                    v-bind="$attrs"
                                     :context="childContext(slotComponent)"
                                     :key="slotName + '-' + idx" />
         </template>
       </template>
     </component>
-    <oh-card v-else-if="componentType && componentType === 'oh-card'" :context="context" ref="component">
+    <oh-card v-else-if="componentType && componentType === 'oh-card'"
+             v-bind="$attrs"
+             :context="context"
+             ref="component">
       <template v-for="(slotComponents, slotName) in context.component.slots" :key="slotName" #[slotName]>
         <generic-widget-component v-for="(slotComponent, idx) in slotComponents"
                                   :context="childContext(slotComponent)"
@@ -31,14 +39,17 @@
     </oh-card>
     <generic-widget-component v-else-if="componentType && componentType.startsWith('widget:')"
                               ref="component"
+                              v-bind="$attrs"
                               :context="childWidgetContext()" />
     <component v-else-if="componentType && componentType.startsWith('oh-')"
                ref="component"
+               v-bind="$attrs"
                :is="componentType"
                :context="context" />
     <!-- Label renders text inside <div> element -->
     <div
       v-else-if="componentType && componentType === 'Label'"
+      v-bind="$attrs"
       :class="config.class"
       :style="config.style"
       ref="component">
@@ -52,7 +63,7 @@
     <pre v-else-if="componentType && componentType === 'Error'" class="text-color-red" style="white-space: pre-wrap">{{ config.error }}</pre>
     <component v-else
                :is="componentType"
-               v-bind="config"
+               v-bind="{ ...$attrs, ...config }"
                ref="component">
       {{ config.content }}
       <template v-if="context.component.slots && context.component.slots.default">
