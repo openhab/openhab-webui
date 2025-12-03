@@ -15,6 +15,11 @@ import { useViewArea } from '@/composables/useViewArea.ts'
 
 export default {
   mixins: [modal],
+  props: {
+    uid: String,
+    el: Object,
+    modalConfig: Object
+  },
   setup () {
     useViewArea()
   }
