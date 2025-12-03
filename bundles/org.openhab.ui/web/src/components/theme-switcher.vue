@@ -111,26 +111,34 @@
         <f7-list>
           <f7-list-item>
             <span>{{ t('about.dialog.enable') }}</span>
-            <f7-toggle :checked="dialog === 'true'" @toggle:change="setDialog" />
+            <f7-toggle v-model:checked="dialogEnabled" />
           </f7-list-item>
           <f7-list-item>
             <span>{{ t('about.dialog.id') }}</span>
-            <f7-input type="button" :value="identifier" />
+            <f7-input type="button" :value="dialogIdentifier" />
           </f7-list-item>
           <f7-list-group>
             <item-picker
               :label="t('about.dialog.listeningItem')"
               :multiple="false"
-              :value="listeningItem"
+              :value="dialogListeningItem"
               @input="setDialogListeningItem" />
           </f7-list-group>
           <f7-list-group>
             <item-picker
               :label="t('about.dialog.locationItem')"
               :multiple="false"
-              :value="locationItem"
+              :value="dialogLocationItem"
               @input="setDialogLocationItem" />
           </f7-list-group>
+          <f7-list-item>
+            <span>{{ t('about.dialog.connectOnWindowEvent') }}</span>
+            <f7-toggle v-model:checked="dialogConnectOnWindowEvent" />
+          </f7-list-item>
+          <f7-list-item>
+            <span>{{ t('about.dialog.triggerOnConnect') }}</span>
+            <f7-toggle v-model:checked="dialogTriggerOnConnect" />
+          </f7-list-item>
         </f7-list>
       </f7-col>
     </f7-row>
@@ -176,17 +184,11 @@ export default {
       localStorage.setItem('openhab.ui:commandItem', value)
       setTimeout(() => { location.reload() }, 50) // Delay reload, otherwise it doesn't work
     },
-    setDialog (value) {
-      localStorage.setItem('openhab.ui:dialog.enabled', value)
-      setTimeout(() => { location.reload() }, 50) // Delay reload, otherwise it doesn't work
-    },
     setDialogListeningItem (value) {
-      localStorage.setItem('openhab.ui:dialog.listeningItem', value)
-      setTimeout(() => { location.reload() }, 50) // Delay reload, otherwise it doesn't work
+      useUIOptionsStore().dialogListeningItem = value
     },
     setDialogLocationItem (value) {
-      localStorage.setItem('openhab.ui:dialog.locationItem', value)
-      setTimeout(() => { location.reload() }, 50) // Delay reload, otherwise it doesn't work
+      useUIOptionsStore().dialogLocationItem = value
     }
   },
   computed: {
@@ -202,26 +204,8 @@ export default {
         !!window.AudioContext &&
         !!window.crypto
     },
-    dialog () {
-      return localStorage.getItem('openhab.ui:dialog.enabled') || 'default'
-    },
-    identifier () {
-      const key = 'openhab.ui:dialog.id'
-      let id = localStorage.getItem(key)
-      if (!id) {
-        id = `ui-${Math.round(Math.random() * 100)}-${Math.round(Math.random() * 100)}`
-        localStorage.setItem(key, id)
-      }
-      return id
-    },
-    listeningItem () {
-      return localStorage.getItem('openhab.ui:dialog.listeningItem') || ''
-    },
-    locationItem () {
-      return localStorage.getItem('openhab.ui:dialog.locationItem') || ''
-    },
     ...mapStores(useRuntimeStore, useUIOptionsStore),
-    ...mapWritableState(useUIOptionsStore, [ 'disablePageTransitionAnimation',  'bars', 'homeNavBar', 'homeBackground', 'hideChatInput', 'disableExpandableCardAnimation', 'webAudio' ])
+    ...mapWritableState(useUIOptionsStore, [ 'disablePageTransitionAnimation',  'bars', 'homeNavBar', 'homeBackground', 'hideChatInput', 'disableExpandableCardAnimation', 'webAudio', 'dialogEnabled', 'dialogIdentifier', 'dialogListeningItem', 'dialogLocationItem', 'dialogConnectOnWindowEvent', 'dialogTriggerOnConnect' ])
   }
 }
 </script>
