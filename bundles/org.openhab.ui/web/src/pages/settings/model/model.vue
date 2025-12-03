@@ -1,5 +1,6 @@
 <template>
   <f7-page name="Model"
+           class="model-page"
            @page:afterin="onPageAfterIn"
            @page:beforeout="onPageBeforeOut">
     <f7-navbar>
@@ -269,6 +270,8 @@
   user-select: none
   margin 0 !important
   border-right 1px solid var(--f7-block-strong-border-color)
+  overflow clip
+  text-overflow ellipsis
 .model-details-sheet
   .toolbar
     --f7-theme-color var(--f7-color-blue)
@@ -309,13 +312,16 @@
     padding-left 0px
     padding-right 0px
 
-.expand-button
-  height unset
-  margin-right 8px
-  text-overflow unset
-  align-self center
-  .icon
-    margin-bottom 2.75px !important
+.model-page
+  .subnavbar
+    background-color var(--f7-searchbar-bg-color, var(--f7-bars-bg-color))
+  .expand-button
+    height unset
+    margin-right 8px
+    text-overflow unset
+    align-self center
+    .icon
+      margin-bottom 2.75px !important
 </style>
 
 <script>
