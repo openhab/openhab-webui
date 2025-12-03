@@ -214,11 +214,16 @@ export const actionsMixin = {
               return
             }
 
+            const modalUrl = action + '/' + actionModal
+            if (f7.views.main.router?.currentRoute.url.endsWith(modalUrl)) {
+              console.log(`Modal ${actionModal} already open, not opening again`)
+              return
+            }
+
             console.log(`Opening ${actionModal} in ${action} modal`)
             let modalRoute = {
-              url: action + '/' + actionModal,
-              route: {
-              }
+              url: modalUrl,
+              route: {}
             }
             if (action === 'popup') modalRoute.route.popup = { component: OhPopup }
             if (action === 'popover') modalRoute.route.popup = { component: OhPopover }
