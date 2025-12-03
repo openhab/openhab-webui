@@ -4,6 +4,7 @@ import { AudioSource } from './audio/audio-source'
 import { WorkerInCmd, WorkerOutCmd } from './audio-types'
 export class AudioMain {
   constructor (ohUrl, accessTokenGetter = null, events = {}) {
+    this.initialized = false
     this.ohUrl = ohUrl
     this.events = events
     this.online = false
@@ -39,6 +40,10 @@ export class AudioMain {
       name: 'audio-worker',
       type: 'module'
     })
+  }
+
+  isInitialized () {
+    return this.initialized
   }
 
   isRunning () {
@@ -376,6 +381,7 @@ export class AudioMain {
    * @param customSampleRate Custom sample rate for the audio context, non functional in some browsers.
    */
   async initialize (speakerId, listeningItem, locationItem) {
+    this.initialized = true
     this.events.onMessage?.('Starting ws connection...', 'info', 500)
     this.startVoiceAudioContext()
     const audioContext = this.getVoiceAudioContext()
