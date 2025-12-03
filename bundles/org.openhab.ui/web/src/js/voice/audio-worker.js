@@ -7,7 +7,6 @@ import {
   WorkerInCmd,
   WorkerOutCmd
 } from './audio-types'
-import { ReentrantLock } from 'reentrant-lock'
 
 /** WebSocket reconnection timeout */
 const RECONNECT_MS = 5000
@@ -32,10 +31,6 @@ export default class AudioWorker {
     this.sampleRate = 0
     /** Stores each sink context by its id */
     this.sinkContextStorage = new Map()
-    /** Lock used to ensure sink data chunks are processed in order */
-    this.sinkLock = new ReentrantLock()
-    /** Lock used to ensure source data chunks are processed in order */
-    this.sourceLock = new ReentrantLock()
     /** Holds the openHAB server url */
     this.ohUrl = ''
     /** Waiting for main configuration confirmation */
@@ -248,12 +243,9 @@ export default class AudioWorker {
           if (msg.data instanceof Blob) {
             // incoming audio
             const blob = msg.data
-            this.sinkLock
-              .lock(() =>
-                blob
-                  .arrayBuffer()
-                  .then((buffer) => this.handleSinkAudioBuffer(buffer))
-              )
+            blob
+              .arrayBuffer()
+              .then((buffer) => this.handleSinkAudioBuffer(buffer))
               .catch((err) => console.error('audio-worker: error on sink blob', err))
           }
           break
