@@ -37,6 +37,11 @@ export default {
   components: {
     EmptyStatePlaceholder
   },
+  props: {
+    uid: String,
+    el: Object,
+    modalConfig: Object
+  },
   setup () {
     useViewArea()
   }
