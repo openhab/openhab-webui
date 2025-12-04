@@ -55,7 +55,6 @@ export default {
       : this.addOrSubtractPeriod(dayjs(), future)
 
     return {
-      items: {},
       speriod: config.period || DEFAULT_PERIOD,
       future,
       endTime,
@@ -175,14 +174,26 @@ export default {
         : isBetweenStartAndEnd
       if (component.config.noItemState === true) itemState = false
 
-      const itemPromises = neededItems.map((neededItem) => {
-        if (this.items[neededItem]) return Promise.resolve(this.items[neededItem])
-        return this.$oh.api.get(`/rest/items/${neededItem}`).then((item) => {
-          this.items[neededItem] = item
-          return item
-        })
+      // Store items to avoid querying them again; use underscore-prefixed property to avoid reactivity
+      if (!this._items) this._items = {}
+      // Store promises for ongoing item queries to avoid querying multiple times in parallel
+      if (!this._itemPromises) this._itemPromises = {}
+      neededItems.forEach((neededItem) => {
+        if (this._itemPromises[neededItem]) {
+          // do nothing, promise already exists
+        } else if (this._items[neededItem]) {
+          this._itemPromises[neededItem] = Promise.resolve(this._items[neededItem])
+        } else {
+          this._itemPromises[neededItem] = this.$oh.api.get(`/rest/items/${neededItem}`).then((item) => {
+            this._items[neededItem] = item
+            delete this._itemPromises[neededItem]
+            return item
+          })
+        }
       })
 
+      // Store promises for ongoing persistence queries to avoid querying multiple times in parallel
+      if (!this._persistencePromises) this._persistencePromises = {}
       const combinedPromises = neededItems.map((neededItem) => {
         const url = `/rest/persistence/items/${neededItem}`
         let seriesStartTime = this.startTime
@@ -199,8 +210,15 @@ export default {
           boundary,
           itemState
         }
+        const key = `${neededItem}-${query.serviceId}-${query.starttime}-${query.endtime}-${query.boundary}-${query.itemState}`
+        if (!this._persistencePromises[key]) {
+          this._persistencePromises[key] = this.$oh.api.get(url, query).then((result) => {
+            delete this._persistencePromises[key]
+            return result
+          })
+        }
 
-        return Promise.all([itemPromises[neededItem], this.$oh.api.get(url, query)])
+        return Promise.all([this._itemPromises[neededItem], this._persistencePromises[key]])
       })
 
       return Promise.all(combinedPromises).then(getter)
