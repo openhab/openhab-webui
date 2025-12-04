@@ -62,47 +62,66 @@ const zoneTypeParameter = p('TEXT', 'zoneType', 'Zone Type', 'Type of security z
 // Charger
 const isRechargeableParameter = p('BOOLEAN', 'isRechargeable', 'Rechargeable', 'Set to true if this device is rechargeable and may report capacityUntilFull, isCharging, isPluggedIn state, and can accept the Charge command')
 const unitParameter = p('TEXT', 'unit', 'Capacity Unit', 'Unit to be used for charger capacity, e.g. "PERCENTAGE", "SECONDS", "MILES", "KILOMETERS" or "KILOWATT_HOURS"')
+// Shutter
+const supportsDegreesParameter = p('BOOLEAN', 'supportsDegrees', 'Supports Degrees', 'Whether the shutter supports rotation in degrees (default is true)')
+const supportsContinuousRotationParameter = p('BOOLEAN', 'supportsContinuousRotation', 'Supports Continuous Rotation', 'Whether the shutter supports continuous rotation')
+const rotationDegreesRangeParameter = p('TEXT', 'rotationDegreesRange', 'Rotation Degrees Range', 'Supported rotation angle range in degrees (comma separated), e.g. "0,90"')
+// Temperature/Humidity
+const temperatureRangeParameter = p('TEXT', 'temperatureRange', 'Temperature Range', 'Supported temperature range (comma separated, in Celsius), e.g. "-10,40"')
+const humidityRangeParameter = p('TEXT', 'humidityRange', 'Humidity Range', 'Supported humidity range in percent (comma separated), e.g. "0,100"')
+const maxHumidityParameter = p('INTEGER', 'maxHumidity', 'Maximum Humidity Level', 'Maximum humidity value the device supports (default is 100)')
+// Modes
+const modeParameter = p('TEXT', 'mode', 'Mode', 'Mode name with synonyms (comma separated), e.g. "light mode,effect" or "input,source"')
+const settingsParameter = p('TEXT', 'settings', 'Settings', 'Mode settings with synonyms (comma separated), e.g. "rainbow=rainbow:colors,white=white light"')
+const fanModeNameParameter = p('TEXT', 'fanModeName', 'Fan Mode Name', 'Mode name for fan modes (comma separated), e.g. "fan mode,mode"')
+const fanModeSettingsParameter = p('TEXT', 'fanModeSettings', 'Fan Mode Settings', 'Fan mode settings with synonyms (comma separated), e.g. "sleep=sleep mode,normal=normal:standard"')
+// TV
+const orderedInputsParameter = p('BOOLEAN', 'orderedInputs', 'Ordered Inputs', 'Whether the available inputs should be ordered')
 
 const deviceTypes = {
-  // Switches
-  'Switch': [invertedParameter],
-  'Coffee_Maker': [invertedParameter],
-  'Fireplace': [invertedParameter],
-  'Outlet': [invertedParameter],
-  'WaterHeater': [invertedParameter],
-  // StartStopSwitches
+  // Switch-based devices
+  'Switch': [invertedParameter, queryOnlyParameter],
+  'Outlet': [invertedParameter, queryOnlyParameter],
+  'Coffee_Maker': [invertedParameter, queryOnlyParameter],
+  'Fireplace': [invertedParameter, queryOnlyParameter],
+  'WaterHeater': [invertedParameter, queryOnlyParameter],
+  // StartStopSwitch-based devices
   'Sprinkler': [invertedParameter],
-  'Vacuum': [invertedParameter],
-  // OpenCloseDevices
-  'Awning': [invertedParameter, discreteOnlyParameter, queryOnlyParameter],
-  'Blinds': [invertedParameter, discreteOnlyParameter, queryOnlyParameter],
-  'Curtain': [invertedParameter, discreteOnlyParameter, queryOnlyParameter],
+  'Dishwasher': [invertedParameter],
+  'Washer': [invertedParameter],
+  // OpenCloseDevice-based devices
   'Door': [invertedParameter, discreteOnlyParameter, queryOnlyParameter],
   'Gate': [invertedParameter, discreteOnlyParameter, queryOnlyParameter],
   'Garage': [invertedParameter, discreteOnlyParameter, queryOnlyParameter],
-  'Pergola': [invertedParameter, discreteOnlyParameter, queryOnlyParameter],
-  'Shutter': [invertedParameter, discreteOnlyParameter, queryOnlyParameter],
   'Window': [invertedParameter, discreteOnlyParameter, queryOnlyParameter],
-  // Fans
-  'Fan': [speedParameter, langParameter, orderedParameter],
-  'AirPurifier': [speedParameter, langParameter, orderedParameter],
-  'Hood': [speedParameter, langParameter, orderedParameter],
-  // Lights
-  'Light': [colorTemperatureRangeParameter],
-  'SpecialColorLight': [colorTemperatureRangeParameter, colorUnitParameter],
-  // Other Devices
-  'Charger': [isRechargeableParameter, unitParameter],
+  // Shutter-based devices (with rotation support)
+  'Shutter': [invertedParameter, discreteOnlyParameter, queryOnlyParameter, supportsDegreesParameter, supportsContinuousRotationParameter, rotationDegreesRangeParameter],
+  'Awning': [invertedParameter, discreteOnlyParameter, queryOnlyParameter, supportsDegreesParameter, supportsContinuousRotationParameter, rotationDegreesRangeParameter],
+  'Blinds': [invertedParameter, discreteOnlyParameter, queryOnlyParameter, supportsDegreesParameter, supportsContinuousRotationParameter, rotationDegreesRangeParameter],
+  'Curtain': [invertedParameter, discreteOnlyParameter, queryOnlyParameter, supportsDegreesParameter, supportsContinuousRotationParameter, rotationDegreesRangeParameter],
+  'Pergola': [invertedParameter, discreteOnlyParameter, queryOnlyParameter, supportsDegreesParameter, supportsContinuousRotationParameter, rotationDegreesRangeParameter],
+  // Fan-based devices
+  'Fan': [speedParameter, langParameter, orderedParameter, fanModeNameParameter, fanModeSettingsParameter],
+  'AirPurifier': [speedParameter, langParameter, orderedParameter, fanModeNameParameter, fanModeSettingsParameter],
+  'Hood': [speedParameter, langParameter, orderedParameter, fanModeNameParameter, fanModeSettingsParameter],
+  // Light devices (all variants use type LIGHT)
+  'Light': [colorTemperatureRangeParameter, colorUnitParameter, modeParameter, settingsParameter, langParameter, orderedParameter],
+  // Other devices
+  'ACUnit': [speedParameter, langParameter, orderedParameter, useFahrenheitParameter, thermostatModesParameter, thermostatTemperatureRangeParameter],
   'Camera': [protocolsParameter, tokenNeededParameter],
+  'Charger': [isRechargeableParameter, unitParameter],
+  'ClimateSensor': [useFahrenheitParameter, temperatureRangeParameter, maxHumidityParameter],
+  'Humidifier': [humidityRangeParameter, speedParameter, langParameter, orderedParameter],
+  'HumiditySensor': [maxHumidityParameter],
   'Lock': [invertedParameter],
   'Scene': [sceneReversibleParameter],
-  'SecuritySystem': [armLevelsParameter, pinOnDisarmOnlyParameter, waitForStateChangeParameter, invertedParameter],
+  'SecuritySystem': [armLevelsParameter, pinOnDisarmOnlyParameter, waitForStateChangeParameter, invertedParameter, langParameter, orderedParameter],
   'Sensor': [sensorNameParameter, valueUnitParameter, statesParameter],
   'Speaker': [volumeMaxLevelParameter, volumeDefaultPercentageParameter, levelStepSizeParameter],
-  'HumiditySensor': [],
-  'TemperatureSensor': [useFahrenheitParameter],
-  'ClimateSensor': [useFahrenheitParameter],
+  'TemperatureSensor': [useFahrenheitParameter, temperatureRangeParameter],
   'Thermostat': [useFahrenheitParameter, thermostatModesParameter, thermostatTemperatureRangeParameter],
-  'TV': [volumeMaxLevelParameter, volumeDefaultPercentageParameter, levelStepSizeParameter, langParameter, transportControlSupportedCommandsParameter, availableInputsParameter, availableChannelsParameter, availableApplicationsParameter],
+  'TV': [volumeMaxLevelParameter, volumeDefaultPercentageParameter, levelStepSizeParameter, langParameter, transportControlSupportedCommandsParameter, availableInputsParameter, availableChannelsParameter, availableApplicationsParameter, orderedInputsParameter],
+  'Vacuum': [],
   'Valve': [invertedParameter]
 }
 
@@ -111,14 +130,17 @@ for (let c in deviceTypes) {
 }
 
 const deviceAttributes = {
+  // Thermostat members
   'thermostatTemperatureAmbient': [],
   'thermostatHumidityAmbient': [],
   'thermostatTemperatureSetpoint': [],
   'thermostatTemperatureSetpointLow': [],
   'thermostatTemperatureSetpointHigh': [],
   'thermostatMode': [],
+  // Climate sensor members
   'temperatureAmbient': [],
   'humidityAmbient': [],
+  // TV members
   'tvPower': [],
   'tvMute': [],
   'tvVolume': [],
@@ -126,19 +148,45 @@ const deviceAttributes = {
   'tvInput': [],
   'tvApplication': [],
   'tvTransport': [],
+  // Light members (for grouped color lights)
   'lightPower': [],
   'lightBrightness': [],
   'lightColor': [],
   'lightColorTemperature': [],
+  // Charger members
   'chargerCharging': [],
   'chargerPluggedIn': [],
   'chargerCapacityRemaining': [],
   'chargerCapacityUntilFull': [],
+  // Security system members
   'securitySystemArmed': [],
   'securitySystemArmLevel': [],
   'securitySystemTrouble': [],
   'securitySystemTroubleCode': [],
-  'securitySystemZone': [zoneTypeParameter, blockingParameter]
+  'securitySystemZone': [zoneTypeParameter, blockingParameter],
+  // Fan members
+  'fanPower': [],
+  'fanSpeed': [],
+  'fanMode': [],
+  'fanFilterLifeTime': [],
+  'fanPM25': [],
+  // Humidifier members
+  'humidifierPower': [],
+  'humidifierHumiditySetpoint': [maxHumidityParameter],
+  'humidifierHumidityAmbient': [],
+  'humidifierFanSpeed': [],
+  // Vacuum members
+  'vacuumPower': [],
+  'vacuumDock': [],
+  'vacuumBattery': [],
+  'vacuumLocate': [],
+  'vacuumCurrentCycle': [],
+  // Dynamic modes members
+  'modesCurrentMode': [],
+  'modesSettings': [],
+  // Shutter members
+  'shutterPosition': [],
+  'shutterRotation': []
 }
 
 let classes = {}
