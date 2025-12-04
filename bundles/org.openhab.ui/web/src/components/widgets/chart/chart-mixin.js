@@ -212,7 +212,10 @@ export default {
         }
         const key = `${neededItem}-${query.serviceId}-${query.starttime}-${query.endtime}-${query.boundary}-${query.itemState}`
         if (!this._persistencePromises[key]) {
-          this._persistencePromises[key] = this.$oh.api.get(url, query)
+          this._persistencePromises[key] = this.$oh.api.get(url, query).then((result) => {
+            delete this._persistencePromises[key]
+            return result
+          })
         }
 
         return Promise.all([this._itemPromises[neededItem], this._persistencePromises[key]])
