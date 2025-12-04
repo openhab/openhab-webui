@@ -174,7 +174,7 @@ export default {
         : isBetweenStartAndEnd
       if (component.config.noItemState === true) itemState = false
 
-      // Store items to avoid querying them again; do not use reactive data as reactivity would retrigger asyncComputed series
+      // Store items to avoid querying them again; use underscore-prefixed property to avoid reactivity
       if (!this._items) this._items = {}
       // Store promises for ongoing item queries to avoid querying multiple times in parallel
       if (!this._itemPromises) this._itemPromises = {}
