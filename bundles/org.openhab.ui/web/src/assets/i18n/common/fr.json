@@ -49,5 +49,5 @@
   "error.communicationFailure": "Erreur de communication",
   "error.itemNotFound": "%s non trouvé",
   "error.notReachable.title": "openHAB est hors ligne",
-  "error.notReachable.msg": "Le serveur openHAB ne peut pas être atteint pour le moment. Veuillez vérifier votre connexion réseau et votre serveur."
+  "error.notReachable.msg": "Le serveur openHAB ne peut pas être atteint pour le moment. Veuillez vérifier votre connexion réseau et votre serveur."  
 }
