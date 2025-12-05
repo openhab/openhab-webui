@@ -13,14 +13,9 @@
                  :f7router
                  @input="updateValue" />
     </f7-list-group>
-    <f7-list-item v-else-if="readOnly && configDescription.context === 'password'"
-                  :is="passwords"
-                  :config-description="configDescription"
-                  :value="value"
-                  :parameters="parameters"
-                  :configuration="configuration"
-                  :title="configDescription.title" />
-    <f7-list-item v-else :title="configDescription.label" :after="value !== undefined && value !== null ? value.toString() : 'N/A'" />
+    <f7-list-item v-else
+                  :title="configDescription.label"
+                  :after="value !== undefined && value !== null ? (configDescription.context === 'password' ? '•'.repeat(20) : value.toString()) : 'N/A'" />
     <template #after-list>
       <f7-block-footer class="param-description">
         <div v-if="status" class="param-status-info">
@@ -81,10 +76,8 @@ export default {
     }
   },
   computed: {
-    passwords () {
-      const configDescription = this.configDescription
-      configDescription.readOnly = true
-      return ParameterText
+    maskedPassword () {
+      return '•'.repeat(20)
     },
     control () {
       const configDescription = this.configDescription
