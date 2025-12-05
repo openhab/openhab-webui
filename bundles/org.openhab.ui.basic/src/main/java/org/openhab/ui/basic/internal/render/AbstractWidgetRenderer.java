@@ -31,7 +31,7 @@ import org.openhab.core.items.Item;
 import org.openhab.core.items.ItemNotFoundException;
 import org.openhab.core.library.types.HSBType;
 import org.openhab.core.library.types.QuantityType;
-import org.openhab.core.model.sitemap.sitemap.Widget;
+import org.openhab.core.sitemap.Widget;
 import org.openhab.core.types.State;
 import org.openhab.core.ui.items.ItemUIRegistry;
 import org.openhab.core.util.ColorUtil;
@@ -53,6 +53,7 @@ import org.slf4j.LoggerFactory;
  * @author Vlad Ivanov - BasicUI changes
  * @author Laurent Garnier - Refactor icon management to support other iconsets
  * @author Laurent Garnier - primary/secondary colors
+ * @author Mark Herwege - Implement sitemap registry
  */
 @NonNullByDefault
 public abstract class AbstractWidgetRenderer implements WidgetRenderer {
@@ -112,7 +113,7 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
      * @return HTML code
      */
     protected String preprocessSnippet(String originalSnippet, Widget w) {
-        return preprocessSnippet(originalSnippet, w, w.getStaticIcon() != null || !w.getIconRules().isEmpty());
+        return preprocessSnippet(originalSnippet, w, w.isStaticIcon() || !w.getIconRules().isEmpty());
     }
 
     /**
@@ -130,7 +131,8 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
         snippet = snippet.replace("%cells_tablet%", String.valueOf(8 / DEFAULT_NB_COLUMNS_TABLET));
         snippet = snippet.replace("%widget_id%", itemUIRegistry.getWidgetId(w));
         snippet = snippet.replace("%icon_with_state%", Boolean.valueOf(!ignoreStateForIcon).toString());
-        snippet = snippet.replace("%item%", w.getItem() != null ? w.getItem() : "");
+        String itemName = w.getItem();
+        snippet = snippet.replace("%item%", itemName != null ? itemName : "");
         // Optimization: avoid calling 3 times itemUIRegistry.getLabel(w)
         String text = itemUIRegistry.getLabel(w);
         snippet = snippet.replace("%label%", getLabel(text));
@@ -358,9 +360,10 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
         String snippet = originalSnippet;
 
         State itemState = null;
-        if (w.getItem() != null) {
+        String itemName = w.getItem();
+        if (itemName != null) {
             try {
-                Item item = itemUIRegistry.getItem(w.getItem());
+                Item item = itemUIRegistry.getItem(itemName);
                 itemState = item.getState();
             } catch (ItemNotFoundException e) {
                 logger.debug("{}", e.getMessage());
