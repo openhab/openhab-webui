@@ -1,6 +1,21 @@
 export const PredefinedStrategies =
   ['everyChange', 'everyUpdate', 'restoreOnStartup', 'forecast']
 
+export const CommonCronStrategies = [
+  {
+    name: 'everyMinute',
+    cronExpression: '0 * * ? * *'
+  },
+  {
+    name: 'everyHour',
+    cronExpression: '0 0 * * * ?'
+  },
+  {
+    name: 'everyDay',
+    cronExpression: '0 0 0 * * ?'
+  }
+]
+
 const filterInvertedParameter = {
   advanced: false,
   description: 'Whether to invert the above filter, i.e. persist values that do not equal the above values or are outside of the specified range',
