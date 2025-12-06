@@ -49,7 +49,7 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
       configDirty.value = !fastDeepEqual(thingClone.configuration, savedThingClone.configuration)
 
       // check if the rest of the thing has changed between the thing and the original/saved version
-      delete thingClone?.statusInfo
+      delete thingClone.statusInfo
       delete thingClone.configuration
       delete savedThingClone.statusInfo
       delete savedThingClone.configuration
@@ -59,7 +59,7 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
 
   // computed
   const editable = computed(() => thing.value?.editable)
-  const isExtensible = computed(() => thingType.value.extensibleChannelTypeIds?.length > 0)
+  const isExtensible = computed(() => thingType.value?.extensibleChannelTypeIds?.length > 0)
   const hasLinkedItems = computed(() => thing.value?.channels?.find((c: Channel) => c.linkedItems?.length))
 
   // methods
@@ -111,15 +111,17 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
     api.get('/rest/things/' + thingUID).then((data: ThingResponse) => {
       thing.value = data
 
-      const promises = [api.get('/rest/thing-types/' + thing.value.thingTypeUID),
+      Promise.all([
+        api.get('/rest/thing-types/' + thing.value.thingTypeUID),
         api.get('/rest/channel-types?prefixes=system,' + thing.value.thingTypeUID.split(':')[0]),
-        loadThingActions(thingUID)]
-
-      Promise.all(promises).then((data2) => {
+        loadThingActions(thingUID)
+      ]).then((data2) => {
         thingType.value = data2[0]
         channelTypes.value = data2[1]
 
-        Promise.all([loadConfigDescriptions(thingUID), loadFirmwares(thingUID),
+        Promise.all([
+          loadConfigDescriptions(thingUID),
+          loadFirmwares(thingUID),
           api.get('/rest/things/' + thingUID + '/config/status').then((statusData: any) => {
             configStatusInfo.value = statusData
           })
@@ -128,10 +130,11 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
           loadingFinishedCallback(true)
           loading.value = false
         })
-      }).catch((err) => {
-        console.warn('Cannot load Thing: ' + err)
-        loadingFinishedCallback(false)
       })
+    }).catch((err) => {
+      console.warn('Cannot load Thing: ' + err)
+      loadingFinishedCallback(false)
+      loading.value = false
     })
   }
 

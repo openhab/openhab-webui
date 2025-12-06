@@ -584,7 +584,7 @@ export default {
         return
       }
 
-      if (this.configDirty && !this.$refs.thingConfiguration) {
+      if (this.$refs.thingConfiguration && !this.$refs.thingConfiguration.isValid()) {
         f7.dialog.alert('Please review the configuration and correct validation errors')
         return
       }
