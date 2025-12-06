@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { computed, readonly, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import fastDeepEqual from 'fast-deep-equal/es6'
 import cloneDeep from 'lodash/cloneDeep'
 
