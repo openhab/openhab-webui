@@ -14,6 +14,9 @@ import type {
   ThingActionsResponse
 } from '@/types/openhab'
 
+/**
+ * The thing edit store is used by thing-details.vue to store data independent of the component's lifecycle.
+ */
 export const useThingEditStore = defineStore('thingEditStore', () => {
   // data
   const loading = ref(false)
@@ -55,49 +58,45 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
   const hasLinkedItems = computed(() => thing.value?.thing?.channels?.find((c: any) => c.linkedItems?.length))
 
   // methods
-  function loadThingActions (thingUID: string) {
-    return api.get('/rest/actions/' + thingUID).then((data: ThingActionsResponse) => {
+  async function loadThingActions (thingUID: string): Promise<void> {
+    try {
+      const data: ThingActionsResponse = await api.get('/rest/actions/' + thingUID)
       thingActions.value = data
-        .filter((a: any) => a.visibility === 'VISIBLE')
-        .filter((a: any) => a.inputConfigDescriptions !== undefined)
-        .sort((a: any, b: any) => a.label.localeCompare(b.label))
-      return Promise.resolve()
-    }).catch((e: any) => {
+        .filter((a) => a.visibility === 'VISIBLE')
+        .filter((a) => a.inputConfigDescriptions !== undefined)
+        .sort((a: ThingAction, b: ThingAction) => a.label.localeCompare(b.label))
+    } catch (e: any) {
       if (e === 'Not Found' || e === 404) {
         console.log('No actions available for this Thing')
-        return Promise.resolve()
+        return
       }
       console.error('Error loading thing actions: ' + e)
-      return Promise.reject(e)
-    })
+      throw e
+    }
   }
 
-  function loadConfigDescriptions (thingUID: string) {
-    return api.get('/rest/config-descriptions/thing:' + thingUID).then((data: ConfigDescriptionResponse) => {
+  async function loadConfigDescriptions (thingUID: string): Promise<void> {
+    try {
+      const data: ConfigDescriptionResponse = await api.get('/rest/config-descriptions/thing:' + thingUID)
       configDescriptions.value = data
 
       // TODO: Can be removed once the config actions have been removed from all add-ons
       configDescriptions.value.parameters = configDescriptions.value.parameters.filter((p: ConfigDescriptionParameter) => p.groupName !== 'actions')
-
-      return Promise.resolve()
-    }).catch(() => {
+    } catch (e: any) {
       console.debug('No specific config description available for this thing, using config description from thing type instead.')
       configDescriptions.value = {
         parameterGroups: thingType.value.parameterGroups,
         parameters: thingType.value.configParameters,
       } as ConfigDescriptionResponse
-      return Promise.resolve()
-    })
+    }
   }
 
-  function loadFirmwares (thingUID: string) {
-    return api.get('/rest/things/' + thingUID + '/firmwares').then((data: FirmwareResponse) => {
-      firmwares.value = data
-      return Promise.resolve()
-    }).catch(() => {
+  async function loadFirmwares (thingUID: string) {
+    try {
+      firmwares.value = await api.get('/rest/things/' + thingUID + '/firmwares')
+    } catch (e: any) {
       console.debug(`Firmware info not available for Thing ${thingUID}`)
-      return Promise.resolve()
-    })
+    }
   }
 
   function load (thingUID: string, loadingFinishedCallback: (success: boolean) => void) {
