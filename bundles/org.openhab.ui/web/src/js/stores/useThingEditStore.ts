@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { computed, ref, watch } from 'vue'
+import { computed, readonly, ref, watch } from 'vue'
 import fastDeepEqual from 'fast-deep-equal/es6'
 import cloneDeep from 'lodash/cloneDeep'
 
@@ -13,6 +13,7 @@ import type {
   ThingAction,
   ThingActionsResponse
 } from '@/types/openhab'
+import { f7 } from 'framework7-vue'
 
 /**
  * The thing edit store is used by thing-details.vue to store data independent of the component's lifecycle.
@@ -130,11 +131,49 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
     })
   }
 
+  function save (forceSaveThing: boolean = false) {
+    if (!editable.value) return
+
+    let endpoint: string, payload: any, successMessage: string
+    // if configDirty flag is set, assume the config has to be saved with PUT /rest/things/:thingId/config
+    if (configDirty.value && !thingDirty.value && !forceSaveThing) {
+      endpoint = '/rest/things/' + thing.value.UID + '/config'
+      payload = thing.value.configuration
+      successMessage = 'Thing configuration updated'
+      // otherwise (for example, channels or label) use the regular PUT /rest/thing/:thingId
+    } else {
+      endpoint = '/rest/things/' + thing.value.UID
+      payload = thing.value
+      successMessage = 'Thing updated'
+    }
+
+    api.put(endpoint, payload).then((data) => {
+      if (configDirty.value && !thingDirty.value && !forceSaveThing) configDirty.value = false
+      thingDirty.value = false
+      if (configDirty.value) {
+        // if still dirty, save again to save the configuration
+        save()
+      }
+      f7.toast.create({
+        text: successMessage,
+        destroyOnClose: true,
+        closeTimeout: 2000
+      }).open()
+    }).catch((err) => {
+      if (err === 409 || err === 'Conflict') {
+        f7.toast.create({
+          text: 'Cannot modify configuration of uninitialized Thing',
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
+      }
+    })
+  }
+
   return {
     configDirty,
     thingDirty,
     thing,
-    savedThing,
     thingType,
     channelTypes,
     configDescriptions,
@@ -146,6 +185,7 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
     isExtensible,
     hasLinkedItems,
 
-    load
+    load,
+    save
   }
 })

@@ -470,7 +470,7 @@ export default {
         store: useStatesStore().trackedItems
       }
     },
-    ...mapState(useThingEditStore, ['thing', 'thingType', 'channelTypes', 'configDescriptions', 'configStatusInfo', 'thingActions', 'firmwares', 'editable', 'isExtensible', 'hasLinkedItems']),
+    ...mapState(useThingEditStore, ['configDirty', 'thingDirty', 'thing', 'thingType', 'channelTypes', 'configDescriptions', 'configStatusInfo', 'thingActions', 'firmwares', 'editable', 'isExtensible', 'hasLinkedItems'])
   },
   watch: {
     configDirty: function () { this.dirty = this.configDirty || this.thingDirty || this.codeDirty },
@@ -489,7 +489,7 @@ export default {
       if (window) {
         window.addEventListener('keydown', this.keyDown)
       }
-      // When coming back from the channel add/edit page with a change, let the handler below take care of the reloading logic (the thing has to be saved first)
+      // When coming back from the channel add/edit page with a change, use the data from the store
       if (event.pageFrom?.name?.indexOf('channel') >= 0) {
         if (!this.eventSource) this.startEventSource()
         nextTick(() => {
@@ -574,50 +574,18 @@ export default {
       if (this.currentTab === 'code' && this.codeDirty) {
         this.$refs.codeEditor.parseCode(() => {
           this.codeDirty = false
-          this.save(saveThing)
+          useThingEditStore().save(saveThing)
           this.$refs.codeEditor.generateCode()
         })
         return
       }
 
-      let endpoint, payload, successMessage
-      // if configDirty flag is set, assume the config has to be saved with PUT /rest/things/:thingId/config
-      if (this.configDirty && !this.thingDirty && !saveThing) {
-        endpoint = '/rest/things/' + this.thingId + '/config'
-        payload = this.thing.configuration
-        successMessage = 'Thing configuration updated'
-        // otherwise (for example, channels or label) use the regular PUT /rest/thing/:thingId
-      } else {
-        endpoint = '/rest/things/' + this.thingId
-        payload = this.thing
-        successMessage = 'Thing updated'
-      }
       if (this.configDirty && !this.$refs.thingConfiguration) {
         f7.dialog.alert('Please review the configuration and correct validation errors')
         return
       }
-      this.$oh.api.put(endpoint, payload).then((data) => {
-        // this.$set(this, 'thing', data)
-        if (this.configDirty && !this.thingDirty && !saveThing) this.configDirty = false
-        this.thingDirty = false
-        if (this.configDirty) {
-          // if still dirty, save again to save the configuration
-          this.save()
-        }
-        f7.toast.create({
-          text: successMessage,
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-      }).catch((err) => {
-        if (err === 409 || err === 'Conflict') {
-          f7.toast.create({
-            text: 'Cannot modify configuration of uninitialized Thing',
-            destroyOnClose: true,
-            closeTimeout: 2000
-          }).open()
-        }
-      })
+
+      useThingEditStore().save(saveThing)
     },
     doThingAction (action) {
       const popup = {
