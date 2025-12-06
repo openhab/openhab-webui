@@ -1,12 +1,12 @@
 // type definitions for DTOs returned from /rest/config-descriptions endpoints
 
 /**
- * The supported data types a configuration parameter can take (From ConfigDescriptionParameter.java).
+ * The supported data types a configuration parameter can take (From ConfigDescriptionParameter).
  */
 export type Type = 'TEXT' | 'INTEGER' | 'DECIMAL' | 'BOOLEAN';
 
 /**
- * Data transfer object for a static selection list option. (From ParameterOption.java structure)
+ * Data transfer object for a static selection list option. (From ParameterOption structure)
  */
 export interface ParameterOption {
   /** The value of the option. */
@@ -28,7 +28,7 @@ export interface FilterCriteria {
 
 /**
  * Data transfer object used to serialize a configuration parameter group.
- * Based on org.openhab.core.config.core.dto.ConfigDescriptionParameterGroupDTO.java.
+ * Based on org.openhab.core.config.core.dto.ConfigDescriptionParameterGroupDTO.
  */
 export interface ConfigDescriptionParameterGroup {
   /**
@@ -49,7 +49,7 @@ export interface ConfigDescriptionParameterGroup {
 
 /**
  * Data transfer object used to serialize a parameter of a configuration description.
- * Based on org.openhab.core.config.core.dto.ConfigDescriptionParameterDTO.java.
+ * Based on org.openhab.core.config.core.dto.ConfigDescriptionParameterDTO.
  */
 export interface ConfigDescriptionParameter {
   /** The name of the configuration parameter (must not be null or empty). */
