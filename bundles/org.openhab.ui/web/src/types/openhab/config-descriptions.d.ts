@@ -1,12 +1,12 @@
 // type definitions for DTOs returned from /rest/config-descriptions endpoints
 
 /**
- * The supported data types a configuration parameter can take (From ConfigDescriptionParameter.java).
+ * The supported data types a configuration parameter can take (From ConfigDescriptionParameter).
  */
 export type Type = 'TEXT' | 'INTEGER' | 'DECIMAL' | 'BOOLEAN';
 
 /**
- * Data transfer object for a static selection list option. (From ParameterOption.java structure)
+ * Data transfer object for a static selection list option. (From ParameterOption structure)
  */
 export interface ParameterOption {
   /** The value of the option. */
@@ -27,8 +27,29 @@ export interface FilterCriteria {
 }
 
 /**
+ * Data transfer object used to serialize a configuration parameter group.
+ * Based on org.openhab.core.config.core.dto.ConfigDescriptionParameterGroupDTO.
+ */
+export interface ConfigDescriptionParameterGroup {
+  /**
+   * The name of the configuration parameter group (must not be null or empty).
+   */
+  name: string;
+  /** Specifies if this is an advanced parameter group. An advanced parameter group can be hidden in the UI. */
+  advanced: boolean;
+  /**
+   * The human-readable label for the configuration parameter group.
+   */
+  label?: string;
+  /**
+   * The human-readable description for the configuration parameter group.
+   */
+  description?: string;
+}
+
+/**
  * Data transfer object used to serialize a parameter of a configuration description.
- * Based on org.openhab.core.config.core.dto.ConfigDescriptionParameterDTO.java.
+ * Based on org.openhab.core.config.core.dto.ConfigDescriptionParameterDTO.
  */
 export interface ConfigDescriptionParameter {
   /** The name of the configuration parameter (must not be null or empty). */
@@ -77,4 +98,13 @@ export interface ConfigDescriptionParameter {
   options?: ParameterOption[];
   /** A list of filter criteria for a dynamically created selection list. */
   filterCriteria?: FilterCriteria[];
+}
+
+/**
+ * Response object from the GET `/rest/config-descriptions/{uri}` endpoint.
+ */
+export interface ConfigDescriptionResponse {
+  parameters: ConfigDescriptionParameter[];
+  parameterGroups: ConfigDescriptionParameterGroup[];
+  uri?: string;
 }
