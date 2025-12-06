@@ -651,7 +651,7 @@ export default {
         payload = this.thing
         successMessage = 'Thing updated'
       }
-      if (!this.$refs.thingConfiguration.isValid()) {
+      if (this.configDirty && !this.$refs.thingConfiguration) {
         f7.dialog.alert('Please review the configuration and correct validation errors')
         return
       }
