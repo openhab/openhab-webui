@@ -356,7 +356,7 @@ export default {
       return this.rule && this.rule.editable !== false
     },
     isBlockly () {
-      return this.currentModule && this.currentModule.configuration && this.currentModule.configuration.blockSource
+      return this.currentModule?.configuration?.blockSource?.length > 0
     },
     isJsAvailable () {
       return this.isMimeTypeAvailable(this.GRAALJS_MIME_TYPE)
