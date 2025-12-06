@@ -21,6 +21,24 @@
   </f7-page>
 </template>
 
+<style lang="stylus">
+.other-apps
+  background-color #333 !important
+  .navbar-inner.navbar-inner-centered-title
+    .title
+      max-width none
+  .app-link
+    display block
+  .app-card
+    &:hover
+      background-color rgba(255, 255, 255, 0.12) !important
+
+    // background-color #333 !important
+    .app-card-name
+      width 100%
+      text-align center
+</style>
+
 <script>
 export default {
   data () {
@@ -35,23 +53,3 @@ export default {
   }
 }
 </script>
-
-<style lang="stylus">
-.other-apps {
-  background-color: #333 !important;
-  .app-link {
-    display block
-  }
-  .app-card {
-    &:hover {
-      background-color: rgba(255, 255, 255, 0.12) !important;
-    }
-
-    // background-color #333 !important
-    .app-card-name {
-      width: 100%;
-      text-align: center;
-    }
-  }
-}
-</style>
