@@ -1,5 +1,5 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="layout-editor">
+  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onLayoutEditPageBeforeOut" class="layout-editor">
     <f7-navbar
       v-if="!(previewMode && page.config.hideNavbar) && !fullscreen"
       no-hairline>
@@ -183,7 +183,7 @@
 </style>
 
 <script>
-import { nextTick, defineAsyncComponent, provide } from 'vue'
+import { nextTick, defineAsyncComponent } from 'vue'
 import { f7, theme } from 'framework7-vue'
 
 import YAML from 'yaml'
@@ -467,7 +467,8 @@ export default {
         }
       })
     },
-    onPageBeforeOut () {
+    onLayoutEditPageBeforeOut () {
+      this.onPageBeforeOut()
       this.$refs.detailsSheet.$el.f7Modal.close()
     },
     onSvgOnClickConfigUpdate (event) {
