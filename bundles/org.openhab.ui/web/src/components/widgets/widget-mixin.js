@@ -84,10 +84,12 @@ export default {
   },
   mounted () {
     if (this.context?.component?.config?.stylesheet) {
-      if (this.$refs.component && this.$refs.component.$el) {
+      // generic-widget-component .$el or oh-layout-page HTML element
+      const el = this.$refs.component?.$el ?? this.$refs.page
+      if (el) {
         this.cssUid = 'scoped-' + f7.utils.id()
 
-        this.$refs.component.$el.classList.add(this.cssUid)
+        el.classList.add(this.cssUid)
 
         let style = document.createElement('style')
         style.id = this.cssUid
