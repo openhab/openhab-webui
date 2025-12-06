@@ -101,7 +101,7 @@ export interface ConfigDescriptionParameter {
 }
 
 /**
- * The root response object for the `/rest/config-descriptions/{uri}` endpoint.
+ * Response object from the `/rest/config-descriptions/{uri}` endpoint.
  */
 export interface ConfigDescriptionResponse {
   parameters: ConfigDescriptionParameter[];

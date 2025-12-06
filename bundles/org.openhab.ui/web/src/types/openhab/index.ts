@@ -1,6 +1,8 @@
+export type * from './actions.d.ts'
 export type * from './config-descriptions.d.ts'
 export type * from './item.d.ts'
 export type * from './tag.d.ts'
 export type * from './page.d.ts'
+export type * from './things.d.ts'
 export type * from './widget.d.ts'
 export type * from './rootResponse.d.ts'

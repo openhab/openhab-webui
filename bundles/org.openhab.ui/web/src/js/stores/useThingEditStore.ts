@@ -5,7 +5,14 @@ import cloneDeep from 'lodash/cloneDeep'
 
 import api from '@/js/openhab/api'
 
-import type { ConfigDescriptionParameter, ConfigDescriptionResponse } from '@/types/openhab'
+import type {
+  ConfigDescriptionParameter,
+  ConfigDescriptionResponse,
+  Firmware,
+  FirmwareResponse,
+  ThingAction,
+  ThingActionsResponse
+} from '@/types/openhab'
 
 export const useThingEditStore = defineStore('thingEditStore', () => {
   // data
@@ -18,9 +25,9 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
   const thingType = ref<any>(null)
   const channelTypes = ref<any>(null)
   const configDescriptions = ref<ConfigDescriptionResponse | null>(null)
-  const thingActions = ref<any[]>([])
+  const thingActions = ref<ThingAction[]>([])
   const configStatusInfo = ref<any[]>([])
-  const firmwares = ref<any[]>([])
+  const firmwares = ref<Firmware[]>([])
 
   // watch
   watch(thing, () => {
@@ -49,7 +56,7 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
 
   // methods
   function loadThingActions (thingUID: string) {
-    return api.get('/rest/actions/' + thingUID).then((data: any) => {
+    return api.get('/rest/actions/' + thingUID).then((data: ThingActionsResponse) => {
       thingActions.value = data
         .filter((a: any) => a.visibility === 'VISIBLE')
         .filter((a: any) => a.inputConfigDescriptions !== undefined)
@@ -84,8 +91,8 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
   }
 
   function loadFirmwares (thingUID: string) {
-    return api.get('/rest/things/' + thingUID + '/firmwares').then((firmwareData: any) => {
-      firmwares.value = firmwareData
+    return api.get('/rest/things/' + thingUID + '/firmwares').then((data: FirmwareResponse) => {
+      firmwares.value = data
       return Promise.resolve()
     }).catch(() => {
       console.debug(`Firmware info not available for Thing ${thingUID}`)
