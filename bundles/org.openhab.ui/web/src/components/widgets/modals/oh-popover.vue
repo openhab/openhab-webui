@@ -1,5 +1,5 @@
 <template>
-  <f7-popover :target="el" :style="modalStyle">
+  <f7-popover :target-el="el" :style="modalStyle">
     <component :is="componentType" :context="context" :class="{ notready: !ready }" />
   </f7-popover>
 </template>
