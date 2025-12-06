@@ -4,8 +4,7 @@
       <oh-block v-for="(component, idx) in context.component.slots.default"
                 v-bind="$attrs"
                 :key="idx"
-                :context="childContext(component)"
-                style="z-index: 5000 !important" />
+                :context="childContext(component)" />
       <f7-block v-if="context.editmode">
         <f7-list>
           <f7-list-button color="blue" @click="$emit('add-block', context.component)">
