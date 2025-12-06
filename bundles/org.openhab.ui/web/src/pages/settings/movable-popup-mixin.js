@@ -1,3 +1,4 @@
+// eslint-disable-next-line import-x/named
 import { assign, pick } from 'lodash'
 
 export default {
