@@ -3,7 +3,7 @@
 import type { ConfigDescriptionParameter } from '@/types/openhab/config-descriptions'
 
 /**
- * Data transfer object for a Thing Actions.
+ * Data transfer object for a Thing Action.
  * Based on org.openhab.core.automation.rest.internal.ThingActionsResource.ThingActionDTO.
  */
 export interface ThingAction {
@@ -17,6 +17,6 @@ export interface ThingAction {
 }
 
 /**
- * Response object from the `/rest/actions/{thingUID}` endpoint.
+ * Response object from the GET `/rest/actions/{thingUID}` endpoint.
  */
-export type ThingActionsResponse = ThingAction[]
+export type ThingActionsResponse = ThingAction[];

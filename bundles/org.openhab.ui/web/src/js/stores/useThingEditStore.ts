@@ -6,12 +6,15 @@ import cloneDeep from 'lodash/cloneDeep'
 import api from '@/js/openhab/api'
 
 import type {
+  Channel,
   ConfigDescriptionParameter,
   ConfigDescriptionResponse,
   Firmware,
   FirmwareResponse,
+  Thing,
   ThingAction,
-  ThingActionsResponse
+  ThingActionsResponse,
+  ThingResponse
 } from '@/types/openhab'
 import { f7 } from 'framework7-vue'
 
@@ -24,8 +27,8 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
   const configDirty = ref(false)
   const thingDirty = ref(false)
 
-  const thing = ref<any>(null)
-  const savedThing = ref<any>(null)
+  const thing = ref<Thing | null>(null)
+  const savedThing = ref<Thing | null>(null)
   const thingType = ref<any>(null)
   const channelTypes = ref<any>(null)
   const configDescriptions = ref<ConfigDescriptionResponse | null>(null)
@@ -40,12 +43,13 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
       // which can change from eventsource but doesn't mean a thing modification
       let thingClone = cloneDeep(thing.value)
       let savedThingClone = cloneDeep(savedThing.value)
+      if (!thingClone || !savedThingClone) return
 
       // check if the configuration has changed between the thing and the original/saved version
       configDirty.value = !fastDeepEqual(thingClone.configuration, savedThingClone.configuration)
 
       // check if the rest of the thing has changed between the thing and the original/saved version
-      delete thingClone.statusInfo
+      delete thingClone?.statusInfo
       delete thingClone.configuration
       delete savedThingClone.statusInfo
       delete savedThingClone.configuration
@@ -56,7 +60,7 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
   // computed
   const editable = computed(() => thing.value?.editable)
   const isExtensible = computed(() => thingType.value.extensibleChannelTypeIds?.length > 0)
-  const hasLinkedItems = computed(() => thing.value?.thing?.channels?.find((c: any) => c.linkedItems?.length))
+  const hasLinkedItems = computed(() => thing.value?.channels?.find((c: Channel) => c.linkedItems?.length))
 
   // methods
   async function loadThingActions (thingUID: string): Promise<void> {
@@ -87,7 +91,7 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
       console.debug('No specific config description available for this thing, using config description from thing type instead.')
       configDescriptions.value = {
         parameterGroups: thingType.value.parameterGroups,
-        parameters: thingType.value.configParameters,
+        parameters: thingType.value.configParameters
       } as ConfigDescriptionResponse
     }
   }
@@ -104,7 +108,7 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
     if (loading.value) return
     loading.value = true
 
-    api.get('/rest/things/' + thingUID).then((data: any) => {
+    api.get('/rest/things/' + thingUID).then((data: ThingResponse) => {
       thing.value = data
 
       const promises = [api.get('/rest/thing-types/' + thing.value.thingTypeUID),
@@ -132,7 +136,7 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
   }
 
   function save (forceSaveThing: boolean = false) {
-    if (!editable.value) return
+    if (!editable.value || !thing.value) return
 
     let endpoint: string, payload: any, successMessage: string
     // if configDirty flag is set, assume the config has to be saved with PUT /rest/things/:thingId/config
@@ -173,6 +177,7 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
   return {
     configDirty,
     thingDirty,
+
     thing,
     thingType,
     channelTypes,
