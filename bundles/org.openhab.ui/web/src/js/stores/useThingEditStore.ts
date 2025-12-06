@@ -41,8 +41,8 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
     if (!loading.value) {// ignore changes during loading
       // create object clone to be able to delete the status part
       // which can change from eventsource but doesn't mean a thing modification
-      let thingClone = cloneDeep(thing.value)
-      let savedThingClone = cloneDeep(savedThing.value)
+      let thingClone: any = cloneDeep(thing.value)
+      let savedThingClone: any = cloneDeep(savedThing.value)
       if (!thingClone || !savedThingClone) return
 
       // check if the configuration has changed between the thing and the original/saved version
