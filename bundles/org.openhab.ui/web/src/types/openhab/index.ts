@@ -1,3 +1,4 @@
+export type * from './config-descriptions.d.ts'
 export type * from './item.d.ts'
 export type * from './tag.d.ts'
 export type * from './page.d.ts'

@@ -25,7 +25,7 @@
 import { ref } from 'vue'
 import { f7 } from 'framework7-vue'
 
-import type { ConfigDescriptionParameter } from '@/components/config/config-descriptions.d.ts'
+import type { ConfigDescriptionParameter } from '@/types/openhab'
 
 const props = defineProps<{
   configDescription: ConfigDescriptionParameter;
