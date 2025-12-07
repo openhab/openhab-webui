@@ -27,7 +27,7 @@ export default {
           if (s.seriesId) {
             const [seriesType, itemName] = s.seriesId.split('#')
             if (seriesType === 'oh-time-series') {
-              let item = chart.items[itemName]
+              let item = chart._items[itemName]
               let state = s.data[1]
               if (item) {
                 const stateDescription = item.stateDescription || {}
