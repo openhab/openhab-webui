@@ -5,6 +5,7 @@
 
 import * as Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript'
+import { valueToCode } from '@/assets/definitions/blockly/utils.js'
 
 export default function (f7) {
   Blockly.Blocks['oh_print'] = {
@@ -20,7 +21,7 @@ export default function (f7) {
   }
 
   javascriptGenerator.forBlock['oh_print'] = function (block) {
-    const message = javascriptGenerator.valueToCode(block, 'message', javascriptGenerator.ORDER_ATOMIC)
+    const message = valueToCode(block, 'message', javascriptGenerator.ORDER_ATOMIC)
     return `console.log(${message});\n`
   }
 
@@ -38,7 +39,7 @@ export default function (f7) {
   }
 
   javascriptGenerator.forBlock['oh_log'] = function (block) {
-    const message = javascriptGenerator.valueToCode(block, 'message', javascriptGenerator.ORDER_ATOMIC)
+    const message = valueToCode(block, 'message', javascriptGenerator.ORDER_ATOMIC)
     const severity = block.getFieldValue('severity')
     return `console.${severity}(${message});\n`
   }

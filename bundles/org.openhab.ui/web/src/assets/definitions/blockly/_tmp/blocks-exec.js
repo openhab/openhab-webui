@@ -1,5 +1,6 @@
 import * as Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript'
+import { valueToCode } from '@/assets/definitions/blockly/utils.js'
 
 export default function defineOHBlocks_Exec (f7) {
   Blockly.Blocks['oh_exec'] = {
@@ -24,7 +25,7 @@ export default function defineOHBlocks_Exec (f7) {
 
   javascriptGenerator.forBlock['oh_exec'] = function (block) {
     let runCommand = block.getFieldValue('execCommand')
-    const itemName = javascriptGenerator.valueToCode(block, 'sendTo', javascriptGenerator.ORDER_ATOMIC)
+    const itemName = valueToCode(block, 'sendTo', javascriptGenerator.ORDER_ATOMIC)
     let code = 'var exec = Java.type("org.openhab.core.model.script.actions.Exec");\n'
     code += 'var duration = Java.type("java.time.Duration");\n'
     code += 'var results = exec.executeCommandLine(duration.ofSeconds(1), "' + runCommand + '", "")\n'

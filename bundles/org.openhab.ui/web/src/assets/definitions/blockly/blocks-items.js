@@ -6,7 +6,7 @@
 import * as Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript'
 import { FieldItemModelPicker } from './fields/item-field.js'
-import { blockGetCheckedInputType } from './utils.js'
+import { blockGetCheckedInputType, valueToCode } from './utils.js'
 
 import api from '@/js/openhab/api'
 
@@ -79,7 +79,7 @@ export default function (f7) {
   }
 
   javascriptGenerator.forBlock['oh_groupmembers'] = function (block) {
-    const groupName = javascriptGenerator.valueToCode(block, 'groupName', javascriptGenerator.ORDER_ATOMIC)
+    const groupName = valueToCode(block, 'groupName', javascriptGenerator.ORDER_ATOMIC)
     return [`items.getItem(${groupName}).members`, 0]
   }
 
@@ -99,7 +99,7 @@ export default function (f7) {
   }
 
   javascriptGenerator.forBlock['oh_taggeditems'] = function (block) {
-    let tagNames = javascriptGenerator.valueToCode(block, 'tagName', javascriptGenerator.ORDER_ATOMIC).replace(/'/g, '')
+    let tagNames = valueToCode(block, 'tagName', javascriptGenerator.ORDER_ATOMIC).replace(/'/g, '')
     const inputType = blockGetCheckedInputType(block, 'tagName')
     let tags = ''
     if (inputType === '') {
@@ -134,7 +134,7 @@ export default function (f7) {
   }
 
   javascriptGenerator.forBlock['oh_getitem'] = function (block) {
-    const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
+    const itemName = valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
     return [`items.getItem(${itemName})`, 0]
   }
 

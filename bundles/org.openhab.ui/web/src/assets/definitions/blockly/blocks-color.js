@@ -5,7 +5,7 @@
 
 import * as Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript'
-import { blockGetCheckedInputType } from '@/assets/definitions/blockly/utils.js'
+import { blockGetCheckedInputType, valueToCode } from '@/assets/definitions/blockly/utils.js'
 
 export default function (f7) {
   /*
@@ -31,7 +31,7 @@ export default function (f7) {
   */
   javascriptGenerator.forBlock['oh_color_to_hsb'] = function (block) {
     let conversionFunction = addConvertColourHexToHSB()
-    const hexColor = javascriptGenerator.valueToCode(block, 'hexColor', javascriptGenerator.ORDER_ATOMIC)
+    const hexColor = valueToCode(block, 'hexColor', javascriptGenerator.ORDER_ATOMIC)
     let code = `${conversionFunction}(${hexColor})`
     return [code, 0]
   }
@@ -65,7 +65,7 @@ export default function (f7) {
   }
 
   javascriptGenerator.forBlock['oh_color_item'] = function (block) {
-    const theItem = javascriptGenerator.valueToCode(block, 'item', javascriptGenerator.ORDER_ATOMIC)
+    const theItem = valueToCode(block, 'item', javascriptGenerator.ORDER_ATOMIC)
     const inputType = blockGetCheckedInputType(block, 'item')
     let attributeName = block.getFieldValue('attributeName')
 

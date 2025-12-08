@@ -4,7 +4,7 @@
 */
 import * as Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript'
-import { blockGetCheckedInputType } from './utils.js'
+import { blockGetCheckedInputType, valueToCode } from './utils.js'
 
 export default function defineOHBlocks_Persistence (f7, persistenceServices) {
   /*
@@ -295,19 +295,19 @@ export default function defineOHBlocks_Persistence (f7, persistenceServices) {
   * Code part
   */
   javascriptGenerator.forBlock['oh_get_persistvalue'] = function (block) {
-    const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
+    const itemName = valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
     const inputType = blockGetCheckedInputType(block, 'itemName')
 
     const methodName = block.getFieldValue('methodName')
     const returnTypeName = block.getFieldValue('returnTypeName')
-    const persistenceName = javascriptGenerator.valueToCode(block, 'persistenceName', javascriptGenerator.ORDER_NONE)
+    const persistenceName = valueToCode(block, 'persistenceName', javascriptGenerator.ORDER_NONE)
 
     const itemCode = generateItemCode(itemName, inputType)
     let code = ''
-    const dayInfoSince = javascriptGenerator.valueToCode(block, 'dayInfoSince', javascriptGenerator.ORDER_NONE)
-    const dayInfoUntil = javascriptGenerator.valueToCode(block, 'dayInfoUntil', javascriptGenerator.ORDER_NONE)
+    const dayInfoSince = valueToCode(block, 'dayInfoSince', javascriptGenerator.ORDER_NONE)
+    const dayInfoUntil = valueToCode(block, 'dayInfoUntil', javascriptGenerator.ORDER_NONE)
     const dayInfo = dayInfoSince + ((dayInfoSince && dayInfoUntil) ? ', ' : '') + dayInfoUntil
-    let skipPrevious = javascriptGenerator.valueToCode(block, 'skipPrevious', javascriptGenerator.ORDER_NONE)
+    let skipPrevious = valueToCode(block, 'skipPrevious', javascriptGenerator.ORDER_NONE)
     skipPrevious = (skipPrevious === 'undefined') ? false : skipPrevious
 
     let riemannType = block.getFieldValue('riemannType')
@@ -465,12 +465,12 @@ export default function defineOHBlocks_Persistence (f7, persistenceServices) {
   * Code part
   */
   javascriptGenerator.forBlock['oh_persist_changed'] = function (block) {
-    const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
+    const itemName = valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
     const inputType = blockGetCheckedInputType(block, 'itemName')
 
     const methodName = block.getFieldValue('methodName')
-    const dayInfo1 = javascriptGenerator.valueToCode(block, 'dayInfo', javascriptGenerator.ORDER_NONE)
-    const dayInfo2 = methodName.endsWith('Between') ? javascriptGenerator.valueToCode(block, 'dayInfo2', javascriptGenerator.ORDER_NONE) : undefined
+    const dayInfo1 = valueToCode(block, 'dayInfo', javascriptGenerator.ORDER_NONE)
+    const dayInfo2 = methodName.endsWith('Between') ? valueToCode(block, 'dayInfo2', javascriptGenerator.ORDER_NONE) : undefined
     const dayInfo = dayInfo2 ? `${dayInfo1}, ${dayInfo2}` : dayInfo1
     const persistenceName = javascriptGenerator.valueToCode(block, 'persistenceName', javascriptGenerator.ORDER_NONE)
     const persistenceExtension = (persistenceName === '\'default\'') ? '' : `, ${persistenceName}`

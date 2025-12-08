@@ -5,7 +5,7 @@
 
 import * as Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript'
-import { blockGetCheckedInputType } from './utils.js'
+import { blockGetCheckedInputType, valueToCode } from './utils.js'
 
 export default function (f7) {
   Blockly.Blocks['oh_quantity_ext'] = {
@@ -25,9 +25,9 @@ export default function (f7) {
   }
 
   javascriptGenerator.forBlock['oh_quantity_ext'] = function (block) {
-    let value = javascriptGenerator.valueToCode(block, 'value', javascriptGenerator.ORDER_NONE)
+    let value = valueToCode(block, 'value', javascriptGenerator.ORDER_NONE)
 
-    const unit = javascriptGenerator.valueToCode(block, 'unit', javascriptGenerator.ORDER_NONE)
+    const unit = valueToCode(block, 'unit', javascriptGenerator.ORDER_NONE)
     const inputType = blockGetCheckedInputType(block, 'value')
 
     let code
@@ -94,7 +94,7 @@ export default function (f7) {
     const first = generateQuantityCode(block, 'first')
     const second = (blockGetCheckedInputType(block, 'second') !== 'Number')
       ? generateQuantityCode(block, 'second')
-      : javascriptGenerator.valueToCode(block, 'second', javascriptGenerator.ORDER_NONE)
+      : valueToCode(block, 'second', javascriptGenerator.ORDER_NONE)
     return [`${first}.${operand}(${second})`, javascriptGenerator.ORDER_NONE]
   }
 

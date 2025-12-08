@@ -4,7 +4,7 @@
 import * as Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript'
 import { FieldDatePicker } from './fields/date-field.js'
-import { addDateComparisonSupport } from './utils.js'
+import { addDateComparisonSupport, valueToCode } from './utils.js'
 
 export default function (f7) {
   /*
@@ -55,7 +55,7 @@ export default function (f7) {
   * Code part
   */
   javascriptGenerator.forBlock['oh_dayoffset'] = function (block) {
-    let offsetValue = javascriptGenerator.valueToCode(block, 'offset', javascriptGenerator.ORDER_ATOMIC)
+    let offsetValue = valueToCode(block, 'offset', javascriptGenerator.ORDER_ATOMIC)
     let code = `${offsetValue}`
     return [code, javascriptGenerator.ORDER_NONE]
   }
@@ -112,7 +112,7 @@ export default function (f7) {
   * Code part
   */
   javascriptGenerator.forBlock['oh_zdt_plusminus'] = function (block) {
-    const offsetValue = javascriptGenerator.valueToCode(block, 'offset', javascriptGenerator.ORDER_ATOMIC)
+    const offsetValue = valueToCode(block, 'offset', javascriptGenerator.ORDER_ATOMIC)
     const plusMinus = block.getFieldValue('plusminus')
     const period = block.getFieldValue('period')
 
@@ -159,12 +159,12 @@ export default function (f7) {
   * Code part
   */
   javascriptGenerator.forBlock['oh_zdt_create'] = function (block) {
-    const year = javascriptGenerator.valueToCode(block, 'year', javascriptGenerator.ORDER_ATOMIC)
-    const month = javascriptGenerator.valueToCode(block, 'month', javascriptGenerator.ORDER_ATOMIC)
-    const day = javascriptGenerator.valueToCode(block, 'day', javascriptGenerator.ORDER_ATOMIC)
-    const hour = javascriptGenerator.valueToCode(block, 'hour', javascriptGenerator.ORDER_ATOMIC)
-    const minute = javascriptGenerator.valueToCode(block, 'minute', javascriptGenerator.ORDER_ATOMIC)
-    const second = javascriptGenerator.valueToCode(block, 'second', javascriptGenerator.ORDER_ATOMIC)
+    const year = valueToCode(block, 'year', javascriptGenerator.ORDER_ATOMIC)
+    const month = valueToCode(block, 'month', javascriptGenerator.ORDER_ATOMIC)
+    const day = valueToCode(block, 'day', javascriptGenerator.ORDER_ATOMIC)
+    const hour = valueToCode(block, 'hour', javascriptGenerator.ORDER_ATOMIC)
+    const minute = valueToCode(block, 'minute', javascriptGenerator.ORDER_ATOMIC)
+    const second = valueToCode(block, 'second', javascriptGenerator.ORDER_ATOMIC)
 
     const code = `time.ZonedDateTime.now().withYear(${year}).withMonth(${month}).withDayOfMonth(${day}).withHour(${hour}).withMinute(${minute}).withSecond(${second}).withNano(0)`
     return [code, javascriptGenerator.ORDER_ATOMIC]
@@ -233,7 +233,7 @@ export default function (f7) {
   * Code part
   */
   javascriptGenerator.forBlock['oh_zdt_fromText'] = function (block) {
-    const day = javascriptGenerator.valueToCode(block, 'day', javascriptGenerator.ORDER_ATOMIC)
+    const day = valueToCode(block, 'day', javascriptGenerator.ORDER_ATOMIC)
     return [`time.toZDT(${day})`, javascriptGenerator.ORDER_NONE]
   }
 
@@ -259,7 +259,7 @@ export default function (f7) {
   * Code part
   */
   javascriptGenerator.forBlock['oh_zdt_fromItem'] = function (block) {
-    const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
+    const itemName = valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
     return [`time.toZDT(items.getItem(${itemName}))`, javascriptGenerator.ORDER_NONE]
   }
 

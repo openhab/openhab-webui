@@ -5,6 +5,7 @@
 
 import * as Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript'
+import { statementToCode, valueToCode } from '@/assets/definitions/blockly/utils.js'
 
 export default function defineOHBlocks_Timers (f7) {
   /*
@@ -80,10 +81,10 @@ export default function defineOHBlocks_Timers (f7) {
   */
   javascriptGenerator.forBlock['oh_timer'] = function (block) {
     const delayUnits = block.getFieldValue('delayUnits')
-    const delay = javascriptGenerator.valueToCode(block, 'delay', javascriptGenerator.ORDER_ATOMIC)
-    const timerName = javascriptGenerator.valueToCode(block, 'timerName', javascriptGenerator.ORDER_ATOMIC)
-    const timerCode = javascriptGenerator.statementToCode(block, 'timerCode')
-    const context = javascriptGenerator.valueToCode(block, 'context', javascriptGenerator.ORDER_ATOMIC)
+    const delay = valueToCode(block, 'delay', javascriptGenerator.ORDER_ATOMIC)
+    const timerName = valueToCode(block, 'timerName', javascriptGenerator.ORDER_ATOMIC)
+    const timerCode = statementToCode(block, 'timerCode')
+    const context = valueToCode(block, 'context', javascriptGenerator.ORDER_ATOMIC)
     const cacheType = getCacheType(this)
 
     let code = `if (cache.${cacheType}.exists(${timerName}) === false || cache.${cacheType}.get(${timerName}).hasTerminated()) {\n`
@@ -158,9 +159,9 @@ export default function defineOHBlocks_Timers (f7) {
   */
   javascriptGenerator.forBlock['oh_timer_ext'] = function (block) {
     const delayUnits = block.getFieldValue('delayUnits')
-    const delay = javascriptGenerator.valueToCode(block, 'delay', javascriptGenerator.ORDER_ATOMIC)
+    const delay = valueToCode(block, 'delay', javascriptGenerator.ORDER_ATOMIC)
     const timerName = javascriptGenerator.valueToCode(block, 'timerName', javascriptGenerator.ORDER_ATOMIC)
-    const timerCode = javascriptGenerator.statementToCode(block, 'timerCode')
+    const timerCode = statementToCode(block, 'timerCode')
     const retrigger = block.getFieldValue('retrigger')
     const context = javascriptGenerator.valueToCode(block, 'context', javascriptGenerator.ORDER_ATOMIC)
     const cacheType = getCacheType(this)

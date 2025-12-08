@@ -5,7 +5,7 @@
 
 import * as Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript'
-import { addGetItemMetaConfigValue } from './utils.js'
+import { addGetItemMetaConfigValue, valueToCode } from './utils.js'
 
 export default function (f7) {
   /*
@@ -29,8 +29,8 @@ export default function (f7) {
   }
 
   javascriptGenerator.forBlock['oh_get_meta_value'] = function (block) {
-    const theItem = javascriptGenerator.valueToCode(block, 'theItem', javascriptGenerator.ORDER_ATOMIC)
-    const namespace = javascriptGenerator.valueToCode(block, 'namespace', javascriptGenerator.ORDER_ATOMIC)
+    const theItem = valueToCode(block, 'theItem', javascriptGenerator.ORDER_ATOMIC)
+    const namespace = valueToCode(block, 'namespace', javascriptGenerator.ORDER_ATOMIC)
     return [`(items.metadata.getMetadata(${theItem}, ${namespace}) !== null) ? (items.metadata.getMetadata(${theItem}, ${namespace}).value) : 'undefined'`, javascriptGenerator.ORDER_CONDITIONAL]
   }
 
@@ -59,8 +59,8 @@ export default function (f7) {
   }
 
   javascriptGenerator.forBlock['oh_get_meta_config'] = function (block) {
-    const configKey = javascriptGenerator.valueToCode(block, 'configKey', javascriptGenerator.ORDER_ATOMIC)
-    const theItem = javascriptGenerator.valueToCode(block, 'theItem', javascriptGenerator.ORDER_ATOMIC)
+    const configKey = valueToCode(block, 'configKey', javascriptGenerator.ORDER_ATOMIC)
+    const theItem = valueToCode(block, 'theItem', javascriptGenerator.ORDER_ATOMIC)
     const namespace = javascriptGenerator.valueToCode(block, 'namespace', javascriptGenerator.ORDER_ATOMIC)
     addGetItemMetaConfigValue()
     return [`getItemMetaConfigValue(${theItem}, ${namespace}, ${configKey})`, javascriptGenerator.ORDER_CONDITIONAL]

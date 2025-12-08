@@ -5,7 +5,7 @@
 
 import * as Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript'
-import { blockGetCheckedInputType } from './utils.js'
+import { blockGetCheckedInputType, valueToCode } from './utils.js'
 
 export default function (f7) {
   /*
@@ -32,8 +32,8 @@ export default function (f7) {
 
   javascriptGenerator.forBlock['oh_event'] = function (block) {
     const eventType = block.getFieldValue('eventType')
-    const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
-    const value = javascriptGenerator.valueToCode(block, 'value', javascriptGenerator.ORDER_ATOMIC)
+    const itemName = valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
+    const value = valueToCode(block, 'value', javascriptGenerator.ORDER_ATOMIC)
 
     const inputType = blockGetCheckedInputType(block, 'itemName')
 

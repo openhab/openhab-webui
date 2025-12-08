@@ -13,6 +13,7 @@
 import * as Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript'
 import { FieldSlider } from '@blockly/field-slider'
+import { valueToCode } from '@/assets/definitions/blockly/utils.js'
 
 export default function (f7, sinks, voices) {
   Blockly.Blocks['oh_volumeslider'] = {
@@ -57,8 +58,8 @@ export default function (f7, sinks, voices) {
   * Code part
   */
   javascriptGenerator.forBlock['oh_playmedia_sink'] = function (block) {
-    let fileName = javascriptGenerator.valueToCode(block, 'fileName', javascriptGenerator.ORDER_ATOMIC)
-    let sinkName = javascriptGenerator.valueToCode(block, 'sinkName', javascriptGenerator.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
+    let fileName = valueToCode(block, 'fileName', javascriptGenerator.ORDER_ATOMIC)
+    let sinkName = valueToCode(block, 'sinkName', javascriptGenerator.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
 
     return `actions.Audio.playSound(${sinkName}, ${fileName});\n`
   }
@@ -93,9 +94,9 @@ export default function (f7, sinks, voices) {
   * Code part
   */
   javascriptGenerator.forBlock['oh_playmedia_sink_volume'] = function (block) {
-    let fileName = javascriptGenerator.valueToCode(block, 'fileName', javascriptGenerator.ORDER_ATOMIC)
-    let sinkName = javascriptGenerator.valueToCode(block, 'sinkName', javascriptGenerator.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
-    let volume = javascriptGenerator.valueToCode(block, 'volume', javascriptGenerator.ORDER_ATOMIC).replace(/'/g, '')
+    let fileName = valueToCode(block, 'fileName', javascriptGenerator.ORDER_ATOMIC)
+    let sinkName = valueToCode(block, 'sinkName', javascriptGenerator.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
+    let volume = valueToCode(block, 'volume', javascriptGenerator.ORDER_ATOMIC).replace(/'/g, '')
 
     return `actions.Audio.playSound(${sinkName}, ${fileName}, (${volume}/100));\n`
   }
@@ -126,8 +127,8 @@ export default function (f7, sinks, voices) {
   * Blockly part
   */
   javascriptGenerator.forBlock['oh_playstream_sink'] = function (block) {
-    let url = javascriptGenerator.valueToCode(block, 'url', javascriptGenerator.ORDER_ATOMIC)
-    let sinkName = javascriptGenerator.valueToCode(block, 'sinkName', javascriptGenerator.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
+    let url = valueToCode(block, 'url', javascriptGenerator.ORDER_ATOMIC)
+    let sinkName = valueToCode(block, 'sinkName', javascriptGenerator.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
 
     return `actions.Audio.playStream(${sinkName}, ${url});\n`
   }
@@ -156,7 +157,7 @@ export default function (f7, sinks, voices) {
   */
   javascriptGenerator.forBlock['oh_stopstream_sink'] = function (block) {
     let url = block.getFieldValue('url')
-    let sinkName = javascriptGenerator.valueToCode(block, 'sinkName', javascriptGenerator.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
+    let sinkName = valueToCode(block, 'sinkName', javascriptGenerator.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
 
     return `actions.Audio.playStream(${sinkName}, null);\n`
   }
@@ -189,9 +190,9 @@ export default function (f7, sinks, voices) {
   * Code part
   */
   javascriptGenerator.forBlock['oh_say'] = function (block) {
-    const textToSay = javascriptGenerator.valueToCode(block, 'textToSay', javascriptGenerator.ORDER_ATOMIC)
-    const voiceName = javascriptGenerator.valueToCode(block, 'voice', javascriptGenerator.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
-    const deviceSink = javascriptGenerator.valueToCode(block, 'deviceSink', javascriptGenerator.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
+    const textToSay = valueToCode(block, 'textToSay', javascriptGenerator.ORDER_ATOMIC)
+    const voiceName = valueToCode(block, 'voice', javascriptGenerator.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
+    const deviceSink = valueToCode(block, 'deviceSink', javascriptGenerator.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
 
     return `actions.Voice.say(${textToSay}, ${voiceName}, ${deviceSink});\n`
   }

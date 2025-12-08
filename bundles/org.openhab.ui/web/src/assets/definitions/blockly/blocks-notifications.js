@@ -5,7 +5,7 @@
 
 import * as Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript'
-import { blockGetCheckedInputType } from './utils.js'
+import { blockGetCheckedInputType, valueToCode } from './utils.js'
 
 export default function defineOHBlocks_Notifications (f7) {
   Blockly.Blocks['oh_sendNotification'] = {
@@ -24,8 +24,8 @@ export default function defineOHBlocks_Notifications (f7) {
   }
 
   javascriptGenerator.forBlock['oh_sendNotification'] = function (block) {
-    const email = javascriptGenerator.valueToCode(block, 'email', javascriptGenerator.ORDER_ATOMIC)
-    const message = javascriptGenerator.valueToCode(block, 'message', javascriptGenerator.ORDER_ATOMIC)
+    const email = valueToCode(block, 'email', javascriptGenerator.ORDER_ATOMIC)
+    const message = valueToCode(block, 'message', javascriptGenerator.ORDER_ATOMIC)
     return `actions.notificationBuilder(${message}).addUserId(${email}).send();\n`
   }
 
@@ -49,8 +49,8 @@ export default function defineOHBlocks_Notifications (f7) {
   }
 
   javascriptGenerator.forBlock['oh_sendBroadcastNotification'] = function (block) {
-    const message = javascriptGenerator.valueToCode(block, 'message', javascriptGenerator.ORDER_ATOMIC)
-    const icon = javascriptGenerator.valueToCode(block, 'icon', javascriptGenerator.ORDER_ATOMIC)
+    const message = valueToCode(block, 'message', javascriptGenerator.ORDER_ATOMIC)
+    const icon = valueToCode(block, 'icon', javascriptGenerator.ORDER_ATOMIC)
     const severity = block.getFieldValue('severity')
     return `actions.notificationBuilder(${message}).withIcon(${icon}).withTag('${severity}').send();\n`
   }
@@ -75,8 +75,8 @@ export default function defineOHBlocks_Notifications (f7) {
   }
 
   javascriptGenerator.forBlock['oh_sendLogNotification'] = function (block) {
-    const message = javascriptGenerator.valueToCode(block, 'message', javascriptGenerator.ORDER_ATOMIC)
-    const icon = javascriptGenerator.valueToCode(block, 'icon', javascriptGenerator.ORDER_ATOMIC)
+    const message = valueToCode(block, 'message', javascriptGenerator.ORDER_ATOMIC)
+    const icon = valueToCode(block, 'icon', javascriptGenerator.ORDER_ATOMIC)
     const severity = block.getFieldValue('severity')
     return `actions.notificationBuilder(${message}).logOnly().withIcon(${icon}).withTag('${severity}').send();\n`
   }

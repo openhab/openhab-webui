@@ -4,7 +4,7 @@
 
 import * as Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript'
-import { blockGetCheckedInputType } from './utils.js'
+import { blockGetCheckedInputType, valueToCode } from './utils.js'
 
 export default function (f7) {
   Blockly.Blocks['oh_toNumber'] = {
@@ -21,7 +21,7 @@ export default function (f7) {
   }
 
   javascriptGenerator.forBlock['oh_toNumber'] = function (block) {
-    const value = javascriptGenerator.valueToCode(block, 'valueAsText', javascriptGenerator.ORDER_FUNCTION_CALL)
+    const value = valueToCode(block, 'valueAsText', javascriptGenerator.ORDER_FUNCTION_CALL)
     return [`parseFloat(${value})`, 0]
   }
 
@@ -39,7 +39,7 @@ export default function (f7) {
   }
 
   javascriptGenerator.forBlock['oh_bit_not'] = function (block) {
-    const value = javascriptGenerator.valueToCode(block, 'value', javascriptGenerator.ORDER_BITWISE_NOT)
+    const value = valueToCode(block, 'value', javascriptGenerator.ORDER_BITWISE_NOT)
     return [`~${value}`, 0]
   }
 
@@ -75,8 +75,8 @@ export default function (f7) {
   }
 
   javascriptGenerator.forBlock['oh_bitwise'] = function (block) {
-    const first = javascriptGenerator.valueToCode(block, 'first', javascriptGenerator.ORDER_BITWISE_SHIFT)
-    const second = javascriptGenerator.valueToCode(block, 'second', javascriptGenerator.ORDER_NONE)
+    const first = valueToCode(block, 'first', javascriptGenerator.ORDER_BITWISE_SHIFT)
+    const second = valueToCode(block, 'second', javascriptGenerator.ORDER_NONE)
     const operand = block.getFieldValue('operand')
 
     let parentheses = 0
@@ -148,7 +148,7 @@ export default function (f7) {
 
   javascriptGenerator.forBlock['math_round'] = function (block) {
     const inputType = blockGetCheckedInputType(block, 'NUM')
-    const math_number_input = javascriptGenerator.valueToCode(block, 'NUM', javascriptGenerator.ORDER_FUNCTION_CALL)
+    const math_number_input = valueToCode(block, 'NUM', javascriptGenerator.ORDER_FUNCTION_CALL)
     let math_number = math_number_input
     if (inputType === 'oh_quantity') {
       math_number = math_number_input + '.float'

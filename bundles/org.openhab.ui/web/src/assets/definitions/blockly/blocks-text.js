@@ -5,6 +5,7 @@
 
 import * as Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript'
+import { valueToCode } from '@/assets/definitions/blockly/utils.js'
 
 export default function (f7) {
   /*
@@ -52,9 +53,9 @@ export default function (f7) {
   }
 
   javascriptGenerator.forBlock['oh_text_replace'] = function (block) {
-    const pattern = javascriptGenerator.valueToCode(block, 'pattern', javascriptGenerator.ORDER_ATOMIC)
-    const replacement = javascriptGenerator.valueToCode(block, 'replacement', javascriptGenerator.ORDER_ATOMIC)
-    const originText = javascriptGenerator.valueToCode(block, 'origin', javascriptGenerator.ORDER_ATOMIC)
+    const pattern = valueToCode(block, 'pattern', javascriptGenerator.ORDER_ATOMIC)
+    const replacement = valueToCode(block, 'replacement', javascriptGenerator.ORDER_ATOMIC)
+    const originText = valueToCode(block, 'origin', javascriptGenerator.ORDER_ATOMIC)
     const code = originText + '.replaceAll(' + pattern + ',' + replacement + ')'
     return [code, 0]
   }

@@ -8,6 +8,7 @@
 */
 import * as Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript'
+import { valueToCode } from '@/assets/definitions/blockly/utils.js'
 
 export default function (f7) {
   /*
@@ -38,7 +39,7 @@ export default function (f7) {
   * Code part
   */
   javascriptGenerator.forBlock['oh_ephemeris_check'] = function (block) {
-    const dayInfo = javascriptGenerator.valueToCode(block, 'dayInfo', javascriptGenerator.ORDER_NONE)
+    const dayInfo = valueToCode(block, 'dayInfo', javascriptGenerator.ORDER_NONE)
     const checkType = block.getFieldValue('checkType')
     let code = ''
 
@@ -79,7 +80,7 @@ export default function (f7) {
   * Code part
   */
   javascriptGenerator.forBlock['oh_ephemeris_getHolidayName'] = function (block) {
-    const dayInfo = javascriptGenerator.valueToCode(block, 'dayInfo', javascriptGenerator.ORDER_NONE)
+    const dayInfo = valueToCode(block, 'dayInfo', javascriptGenerator.ORDER_NONE)
     return [`actions.Ephemeris.getBankHolidayName(${dayInfo})`, javascriptGenerator.ORDER_NONE]
   }
 
@@ -105,7 +106,7 @@ export default function (f7) {
   * Code part
   */
   javascriptGenerator.forBlock['oh_ephemeris_getDaysUntilHoliday'] = function (block) {
-    const holidayName = javascriptGenerator.valueToCode(block, 'holidayName', javascriptGenerator.ORDER_NONE)
+    const holidayName = valueToCode(block, 'holidayName', javascriptGenerator.ORDER_NONE)
     return [`actions.Ephemeris.getDaysUntil(${holidayName})`, javascriptGenerator.ORDER_NONE]
   }
 }

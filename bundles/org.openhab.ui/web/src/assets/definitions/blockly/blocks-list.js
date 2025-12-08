@@ -4,6 +4,7 @@
 */
 import * as Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript'
+import { valueToCode } from '@/assets/definitions/blockly/utils.js'
 
 export default function (f7) {
   /*
@@ -28,8 +29,8 @@ export default function (f7) {
   }
 
   javascriptGenerator.forBlock['oh_list_concatenate'] = function (block) {
-    const list1 = javascriptGenerator.valueToCode(block, 'list1', javascriptGenerator.ORDER_ATOMIC)
-    const list2 = javascriptGenerator.valueToCode(block, 'list2', javascriptGenerator.ORDER_ATOMIC)
+    const list1 = valueToCode(block, 'list1', javascriptGenerator.ORDER_ATOMIC)
+    const list2 = valueToCode(block, 'list2', javascriptGenerator.ORDER_ATOMIC)
     const code = list1 + '.concat(' + list2 + ')'
     return [code, 0]
   }
