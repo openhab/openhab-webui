@@ -193,7 +193,7 @@ export default {
     ItemPicker,
     ConfigSheet
   },
-  emits: ['show-advanced', 'type-selece', 'start-script'],
+  emits: ['show-advanced', 'type-select', 'start-script'],
   data () {
     return {
       category: '',
@@ -241,13 +241,13 @@ export default {
       this.itemEventType = type
       switch (type) {
         case 'command':
-          this.$emit('type-selece', 'core.ItemCommandTrigger')
+          this.$emit('type-select', 'core.ItemCommandTrigger')
           break
         case 'updated':
-          this.$emit('type-selece', 'core.ItemStateUpdateTrigger')
+          this.$emit('type-select', 'core.ItemStateUpdateTrigger')
           break
         case 'changed':
-          this.$emit('type-selece', 'core.ItemStateChangeTrigger')
+          this.$emit('type-select', 'core.ItemStateChangeTrigger')
           break
       }
     },
@@ -255,13 +255,13 @@ export default {
       this.timeEventType = type
       switch (type) {
         case 'dayOfWeek':
-          this.$emit('type-selece', 'timer.DayOfWeekCondition')
+          this.$emit('type-select', 'timer.DayOfWeekCondition')
           break
         case 'timeOfDay':
-          this.$emit('type-selece', 'core.TimeOfDayCondition')
+          this.$emit('type-select', 'core.TimeOfDayCondition')
           break
         case 'interval':
-          this.$emit('type-selece', 'timer.IntervalCondition')
+          this.$emit('type-select', 'timer.IntervalCondition')
           break
       }
     },
@@ -269,24 +269,24 @@ export default {
       this.ephemerisEventType = type
       switch (type) {
         case 'weekdays':
-          this.$emit('type-selece', 'ephemeris.WeekdayCondition')
+          this.$emit('type-select', 'ephemeris.WeekdayCondition')
           break
         case 'weekends':
-          this.$emit('type-selece', 'ephemeris.WeekendCondition')
+          this.$emit('type-select', 'ephemeris.WeekendCondition')
           break
         case 'holidays':
-          this.$emit('type-selece', 'ephemeris.HolidayCondition')
+          this.$emit('type-select', 'ephemeris.HolidayCondition')
           break
         case 'notHolidays':
-          this.$emit('type-selece', 'ephemeris.NotHolidayCondition')
+          this.$emit('type-select', 'ephemeris.NotHolidayCondition')
           break
         case 'dayset':
-          this.$emit('type-selece', 'ephemeris.DaysetCondition')
+          this.$emit('type-select', 'ephemeris.DaysetCondition')
           break
       }
     },
     scriptLanguagePicked (value) {
-      this.$emit('type-selece', 'script.ScriptCondition')
+      this.$emit('type-select', 'script.ScriptCondition')
       nextTick(() => {
         this.$emit('start-script', value)
       })
@@ -296,7 +296,7 @@ export default {
       this.currentItem = value
       this.currentModule.configuration.itemName = value.name
       this.currentModule.configuration.operator = '='
-      this.$emit('type-selece', 'core.ItemStateCondition')
+      this.$emit('type-select', 'core.ItemStateCondition')
     }
   }
 }
