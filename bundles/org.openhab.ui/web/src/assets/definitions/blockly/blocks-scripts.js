@@ -5,9 +5,10 @@
 * Additionally there is a block that allows transformations based on the Map-File functionality, regular-expressions and applying JSON-paths
 * supports jsscripting
 */
-import Blockly from 'blockly'
-import { javascriptGenerator } from 'blockly/javascript.js'
-import { blockGetCheckedInputType } from '@/assets/definitions/blockly/utils.js'
+import * as Blockly from 'blockly'
+import { javascriptGenerator } from 'blockly/javascript'
+import { blockGetCheckedInputType, valueToCode } from '@/assets/definitions/blockly/utils.js'
+import { registerFieldMultilineInput, FieldMultilineInput } from '@blockly/field-multilineinput'
 
 export default function defineOHBlocks_Scripts (f7, transformationServices) {
   /*
@@ -33,7 +34,7 @@ export default function defineOHBlocks_Scripts (f7, transformationServices) {
   * Code part
   */
   javascriptGenerator.forBlock['oh_callscriptfile'] = function (block) {
-    const scriptfile = javascriptGenerator.valueToCode(block, 'scriptfile', javascriptGenerator.ORDER_ATOMIC)
+    const scriptfile = valueToCode(block, 'scriptfile', javascriptGenerator.ORDER_ATOMIC)
     return `actions.ScriptExecution.callScript(${scriptfile});\n`
   }
 
@@ -65,8 +66,8 @@ export default function defineOHBlocks_Scripts (f7, transformationServices) {
   * Code part
   */
   javascriptGenerator.forBlock['oh_runrule'] = function (block) {
-    const ruleUID = javascriptGenerator.valueToCode(block, 'ruleUID', javascriptGenerator.ORDER_ATOMIC)
-    const scriptParameters = javascriptGenerator.valueToCode(block, 'parameters', javascriptGenerator.ORDER_ATOMIC)
+    const ruleUID = valueToCode(block, 'ruleUID', javascriptGenerator.ORDER_ATOMIC)
+    const scriptParameters = valueToCode(block, 'parameters', javascriptGenerator.ORDER_ATOMIC)
     return `rules.runRule(${ruleUID}, ${scriptParameters});\n`
   }
 
@@ -81,7 +82,7 @@ export default function defineOHBlocks_Scripts (f7, transformationServices) {
   Blockly.Blocks['oh_transformation'] = {
     init: function () {
       this.appendValueInput('value')
-        .setAlign(Blockly.ALIGN_RIGHT)
+        .setAlign(Blockly.inputs.Align.RIGHT)
         .appendField('transform')
       this.appendValueInput('function')
         .appendField('apply')
@@ -129,8 +130,8 @@ export default function defineOHBlocks_Scripts (f7, transformationServices) {
   */
   javascriptGenerator.forBlock['oh_transformation'] = function (block) {
     const transformationType = block.getFieldValue('type')
-    const transformationFunction = javascriptGenerator.valueToCode(block, 'function', javascriptGenerator.ORDER_ATOMIC)
-    const transformationValue = javascriptGenerator.valueToCode(block, 'value', javascriptGenerator.ORDER_ATOMIC)
+    const transformationFunction = valueToCode(block, 'function', javascriptGenerator.ORDER_ATOMIC)
+    const transformationValue = valueToCode(block, 'value', javascriptGenerator.ORDER_ATOMIC)
     return [`actions.Transformation.transform('${transformationType}', ${transformationFunction}, ${transformationValue})`, 0]
   }
 
@@ -309,7 +310,7 @@ export default function defineOHBlocks_Scripts (f7, transformationServices) {
   * Code part
   */
   javascriptGenerator.forBlock['oh_context_attribute'] = function (block) {
-    const key = javascriptGenerator.valueToCode(block, 'key', javascriptGenerator.ORDER_ATOMIC)
+    const key = valueToCode(block, 'key', javascriptGenerator.ORDER_ATOMIC)
     let code = `ctx[${key}]`
     return [code, 0]
   }
@@ -318,13 +319,14 @@ export default function defineOHBlocks_Scripts (f7, transformationServices) {
   * Allows inlining arbitrary code
   * Blockly part
   */
+  registerFieldMultilineInput()
   Blockly.Blocks['oh_script_inline'] = {
     init: function () {
       this.appendDummyInput()
         .appendField('inline script (advanced)')
       const code = 'for (var i = 0; i < 10; i++) {\n  console.log(i.toString());\n}'
       this.appendDummyInput()
-        .appendField(new Blockly.FieldMultilineInput(code), 'inlineScript')
+        .appendField(new FieldMultilineInput(code), 'inlineScript')
       this.setInputsInline(false)
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
@@ -362,8 +364,8 @@ export default function defineOHBlocks_Scripts (f7, transformationServices) {
   }
 
   javascriptGenerator.forBlock['oh_rule_enable'] = function (block) {
-    const ruleUID = javascriptGenerator.valueToCode(block, 'ruleUID', javascriptGenerator.ORDER_ATOMIC)
-    const enableValue = javascriptGenerator.valueToCode(block, 'enable', javascriptGenerator.ORDER_ATOMIC)
+    const ruleUID = valueToCode(block, 'ruleUID', javascriptGenerator.ORDER_ATOMIC)
+    const enableValue = valueToCode(block, 'enable', javascriptGenerator.ORDER_ATOMIC)
     const enableType = blockGetCheckedInputType(block, 'enable')
     let enable = (enableType === 'Boolean') ? enableValue : (enableValue === '\'true\'' || enableValue === '\'enabled\'')
     return `rules.setEnabled(${ruleUID}, ${enable});\n`

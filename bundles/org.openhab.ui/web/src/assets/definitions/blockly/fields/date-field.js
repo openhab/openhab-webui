@@ -2,7 +2,7 @@
  * Field allowing to pick a date from a calendar
  */
 
-import Blockly from 'blockly'
+import * as Blockly from 'blockly'
 import dayjs from 'dayjs'
 
 export class FieldDatePicker extends Blockly.FieldTextInput {

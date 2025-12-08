@@ -2,8 +2,9 @@
 * Adds new blocks to the logic section
 */
 
-import Blockly from 'blockly'
-import { javascriptGenerator } from 'blockly/javascript.js'
+import * as Blockly from 'blockly'
+import { javascriptGenerator } from 'blockly/javascript'
+import { valueToCode } from '@/assets/definitions/blockly/utils.js'
 
 export default function (f7) {
   /*
@@ -131,7 +132,7 @@ export default function (f7) {
       if (i > 1) {
         code += ' ' + operator + ' '
       }
-      let input = javascriptGenerator.valueToCode(block, 'OPER' + i, javascriptGenerator.ORDER_ATOMIC) || 'false'
+      let input = valueToCode(block, 'OPER' + i, javascriptGenerator.ORDER_ATOMIC) || 'false'
       code += '(' + input + ')'
     }
     return [code, javascriptGenerator.ORDER_ATOMIC]

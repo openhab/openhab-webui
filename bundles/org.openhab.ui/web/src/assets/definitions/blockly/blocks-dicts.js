@@ -2,9 +2,13 @@
  * supports jsscripting
  */
 
-import Blockly from 'blockly'
-import { javascriptGenerator } from 'blockly/javascript.js'
-import { blockGetCheckedInputType } from '@/assets/definitions/blockly/utils.js'
+import * as Blockly from 'blockly'
+import { javascriptGenerator } from 'blockly/javascript'
+import {
+  blockGetCheckedInputType,
+  statementToCode,
+  valueToCode
+} from '@/assets/definitions/blockly/utils.js'
 
 export default function (f7) {
   Blockly.Blocks['dicts_create_with'] = {
@@ -121,7 +125,7 @@ export default function (f7) {
       for (i = 0; i < this.itemCount_; i++) {
         if (!this.getInput('ADD' + i)) {
           let input = this.appendValueInput('ADD' + i)
-            .setAlign(Blockly.ALIGN_RIGHT)
+            .setAlign(Blockly.inputs.Align.RIGHT)
           if (i === 0) {
             input.appendField('dictionary of')
           }
@@ -172,7 +176,7 @@ export default function (f7) {
     let elements = new Array(block.itemCount_)
     for (let i = 0; i < block.itemCount_; i++) {
       elements[i] = '\'' + block.getFieldValue('KEY' + i) + '\': '
-      elements[i] += javascriptGenerator.valueToCode(block, 'ADD' + i,
+      elements[i] += valueToCode(block, 'ADD' + i,
         javascriptGenerator.ORDER_NONE) || 'null'
     }
     let code = '{' + elements.join(', ') + '}'
@@ -205,9 +209,9 @@ export default function (f7) {
   * Code part
   */
   javascriptGenerator.forBlock['dicts_get'] = function (block) {
-    const key = javascriptGenerator.valueToCode(block, 'key', javascriptGenerator.ORDER_ATOMIC)
+    const key = valueToCode(block, 'key', javascriptGenerator.ORDER_ATOMIC)
     // note: even though the dict can be directly used without a variable, we need to keep the variable name as "varName" for backwards compatibility
-    let varName = javascriptGenerator.valueToCode(block, 'varName', javascriptGenerator.ORDER_ATOMIC)
+    let varName = valueToCode(block, 'varName', javascriptGenerator.ORDER_ATOMIC)
     const varNameType = blockGetCheckedInputType(block, 'varName')
     if (varNameType !== 'Dictionary') {
       varName = varName.replace(/'/g, '')
@@ -238,12 +242,12 @@ export default function (f7) {
   }
 
   javascriptGenerator.forBlock['dicts_set'] = function (block) {
-    const dict = javascriptGenerator.valueToCode(block, 'dictionary', javascriptGenerator.ORDER_ATOMIC).replace(/'/g, '')
-    const key = javascriptGenerator.valueToCode(block, 'key', javascriptGenerator.ORDER_ATOMIC)
+    const dict = valueToCode(block, 'dictionary', javascriptGenerator.ORDER_ATOMIC).replace(/'/g, '')
+    const key = valueToCode(block, 'key', javascriptGenerator.ORDER_ATOMIC)
     if (dict === '' || key === '\'\'') {
       throw new Error('dictionary and key name need to be provided')
     }
-    const value = javascriptGenerator.valueToCode(block, 'value', javascriptGenerator.ORDER_ATOMIC).replace(/'/g, '')
+    const value = valueToCode(block, 'value', javascriptGenerator.ORDER_ATOMIC).replace(/'/g, '')
     let code = `${dict}[${key}] = '${value}';\n`
     return code
   }
@@ -282,8 +286,8 @@ export default function (f7) {
     */
   javascriptGenerator.forBlock['dicts_for'] = function (block) {
     const loopVar = block.getField('loopVar').getVariable().name
-    const dict = javascriptGenerator.valueToCode(block, 'dict', javascriptGenerator.ORDER_ATOMIC)
-    const dictForCode = javascriptGenerator.statementToCode(block, 'dictForCode')
+    const dict = valueToCode(block, 'dict', javascriptGenerator.ORDER_ATOMIC)
+    const dictForCode = statementToCode(block, 'dictForCode')
 
     const dictCheck = block.getInput('dict').connection.targetBlock().outputConnection.getCheck()
     const dictType = (dictCheck) ? block.getInput('dict').connection.targetBlock().outputConnection.getCheck()[0] : ''

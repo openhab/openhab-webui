@@ -2,9 +2,9 @@
 * These blocks support the persistence module which stores the data in the database and allows to retrieve historical and statistical data
 * supports jsscripting
 */
-import Blockly from 'blockly'
-import { javascriptGenerator } from 'blockly/javascript.js'
-import { blockGetCheckedInputType } from './utils.js'
+import * as Blockly from 'blockly'
+import { javascriptGenerator } from 'blockly/javascript'
+import { blockGetCheckedInputType, valueToCode } from './utils.js'
 
 export default function defineOHBlocks_Persistence (f7, persistenceServices) {
   /*
@@ -38,7 +38,7 @@ export default function defineOHBlocks_Persistence (f7, persistenceServices) {
       this.methodName = this.getFieldValue('methodName')
       this.appendValueInput('itemName')
         .appendField('of item')
-        .setAlign(Blockly.ALIGN_RIGHT)
+        .setAlign(Blockly.inputs.Align.RIGHT)
         .setCheck(['String', 'oh_item', 'oh_itemtype'])
       this.appendValueInput('persistenceName')
         .appendField('from')
@@ -127,7 +127,7 @@ export default function defineOHBlocks_Persistence (f7, persistenceServices) {
         this.appendDummyInput('returnTypeInput')
           .appendField('as')
           .appendField(new Blockly.FieldDropdown(this.returnTypeNames()), 'returnTypeName')
-          .setAlign(Blockly.ALIGN_RIGHT)
+          .setAlign(Blockly.inputs.Align.RIGHT)
         this.moveInputBefore('returnTypeInput', 'itemName')
       }
 
@@ -149,7 +149,7 @@ export default function defineOHBlocks_Persistence (f7, persistenceServices) {
         if (!this.getInput('skipPrevious')) {
           this.appendValueInput('skipPrevious')
             .appendField('skip same ')
-            .setAlign(Blockly.ALIGN_RIGHT)
+            .setAlign(Blockly.inputs.Align.RIGHT)
             .setCheck(['Boolean'])
           this.getInput('skipPrevious').setShadowDom(
             Blockly.utils.xml.textToDom(`<shadow type="logic_boolean">
@@ -295,19 +295,19 @@ export default function defineOHBlocks_Persistence (f7, persistenceServices) {
   * Code part
   */
   javascriptGenerator.forBlock['oh_get_persistvalue'] = function (block) {
-    const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
+    const itemName = valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
     const inputType = blockGetCheckedInputType(block, 'itemName')
 
     const methodName = block.getFieldValue('methodName')
     const returnTypeName = block.getFieldValue('returnTypeName')
-    const persistenceName = javascriptGenerator.valueToCode(block, 'persistenceName', javascriptGenerator.ORDER_NONE)
+    const persistenceName = valueToCode(block, 'persistenceName', javascriptGenerator.ORDER_NONE)
 
     const itemCode = generateItemCode(itemName, inputType)
     let code = ''
-    const dayInfoSince = javascriptGenerator.valueToCode(block, 'dayInfoSince', javascriptGenerator.ORDER_NONE)
-    const dayInfoUntil = javascriptGenerator.valueToCode(block, 'dayInfoUntil', javascriptGenerator.ORDER_NONE)
+    const dayInfoSince = valueToCode(block, 'dayInfoSince', javascriptGenerator.ORDER_NONE)
+    const dayInfoUntil = valueToCode(block, 'dayInfoUntil', javascriptGenerator.ORDER_NONE)
     const dayInfo = dayInfoSince + ((dayInfoSince && dayInfoUntil) ? ', ' : '') + dayInfoUntil
-    let skipPrevious = javascriptGenerator.valueToCode(block, 'skipPrevious', javascriptGenerator.ORDER_NONE)
+    let skipPrevious = valueToCode(block, 'skipPrevious', javascriptGenerator.ORDER_NONE)
     skipPrevious = (skipPrevious === 'undefined') ? false : skipPrevious
 
     let riemannType = block.getFieldValue('riemannType')
@@ -393,7 +393,7 @@ export default function defineOHBlocks_Persistence (f7, persistenceServices) {
   Blockly.Blocks['oh_persist_changed'] = {
     init: function () {
       this.appendValueInput('itemName')
-        .setAlign(Blockly.ALIGN_RIGHT)
+        .setAlign(Blockly.inputs.Align.RIGHT)
         .appendField('the state of')
         .setCheck(['String', 'oh_item', 'oh_itemtype'])
       const persistenceNameInput = this.appendValueInput('persistenceName')
@@ -407,7 +407,7 @@ export default function defineOHBlocks_Persistence (f7, persistenceServices) {
           ['has changed since', 'changedSince'], ['will have changed until', 'changedUntil'], ['changes between', 'changedBetween'],
           ['has been updated since', 'updatedSince'], ['will have been updated until', 'updatedUntil'], ['is updated between', 'updatedBetween']
         ], this.handleTypeSelection.bind(this)), 'methodName')
-        .setAlign(Blockly.ALIGN_RIGHT)
+        .setAlign(Blockly.inputs.Align.RIGHT)
         .setCheck(['ZonedDateTime'])
       this.methodName = this.getFieldValue('methodName')
 
@@ -465,12 +465,12 @@ export default function defineOHBlocks_Persistence (f7, persistenceServices) {
   * Code part
   */
   javascriptGenerator.forBlock['oh_persist_changed'] = function (block) {
-    const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
+    const itemName = valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
     const inputType = blockGetCheckedInputType(block, 'itemName')
 
     const methodName = block.getFieldValue('methodName')
-    const dayInfo1 = javascriptGenerator.valueToCode(block, 'dayInfo', javascriptGenerator.ORDER_NONE)
-    const dayInfo2 = methodName.endsWith('Between') ? javascriptGenerator.valueToCode(block, 'dayInfo2', javascriptGenerator.ORDER_NONE) : undefined
+    const dayInfo1 = valueToCode(block, 'dayInfo', javascriptGenerator.ORDER_NONE)
+    const dayInfo2 = methodName.endsWith('Between') ? valueToCode(block, 'dayInfo2', javascriptGenerator.ORDER_NONE) : undefined
     const dayInfo = dayInfo2 ? `${dayInfo1}, ${dayInfo2}` : dayInfo1
     const persistenceName = javascriptGenerator.valueToCode(block, 'persistenceName', javascriptGenerator.ORDER_NONE)
     const persistenceExtension = (persistenceName === '\'default\'') ? '' : `, ${persistenceName}`
@@ -553,7 +553,7 @@ export default function defineOHBlocks_Persistence (f7, persistenceServices) {
         </shadow>`))
       this.appendValueInput('itemName')
         .appendField('for item')
-        .setAlign(Blockly.ALIGN_RIGHT)
+        .setAlign(Blockly.inputs.Align.RIGHT)
         .setCheck(['String', 'oh_item', 'oh_itemtype'])
       const persistenceNameInput = this.appendValueInput('persistenceName')
         .appendField('to')
@@ -702,7 +702,7 @@ export default function defineOHBlocks_Persistence (f7, persistenceServices) {
       this.methodName = this.getFieldValue('methodName')
       this.appendValueInput('itemName')
         .appendField('of item')
-        .setAlign(Blockly.ALIGN_RIGHT)
+        .setAlign(Blockly.inputs.Align.RIGHT)
         .setCheck(['String', 'oh_item', 'oh_itemtype'])
       this.appendValueInput('persistenceName')
         .appendField('from')
