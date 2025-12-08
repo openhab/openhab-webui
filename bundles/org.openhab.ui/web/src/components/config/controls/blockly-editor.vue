@@ -1223,7 +1223,7 @@ import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
 let workspace = null
 
-Blockly.ContextMenuItems.registerCommentOptions();
+Blockly.ContextMenuItems.registerCommentOptions()
 
 // Vue is configured to treat these elements as custom elements: ['field', 'block', 'category', 'xml', 'mutation', 'value', 'sep']
 
