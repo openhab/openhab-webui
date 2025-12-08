@@ -1,19 +1,6 @@
 import { nextTick, onMounted, onUnmounted, provide, ref } from 'vue'
 
 /**
- * Composable providing the functionality to evaluate widget expressions.
- *
- * The `screen.viewAreaWidth` and `screen.viewAreaHeight` properties are only available to expressions
- * if `viewAreaWidth` and `viewAreaHeight` refs are provided via Vue's dependency injection mechanism.
- *
- * Widget expression evaluations need access to the current widget context and props.
- * If they are available at composable instantiation, they can be passed as properties to the composable.
- * If they, however, aren't available at instantiation (e.g. because they are computed), they can be passed as function parameters later.
- *
- * @param properties
- */
-
-/**
  * Composable providing the view area dimensions of the current Framework7 page.
  *
  * The view area width and height are retrieved by observing the current page content element and reading its computed style.
