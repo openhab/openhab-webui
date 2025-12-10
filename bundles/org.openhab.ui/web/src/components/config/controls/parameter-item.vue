@@ -7,6 +7,8 @@
                :filterToggle="!!filter('filterToggle')"
                :filterType="filter('type')"
                :filterGroupType="filter('groupType')"
+               :filterExcludeSemantic="filter('excludeSemantic')"
+               :filterSemantic="filter('semantic')"
                :filterTag="filter('tag')" />
 </template>
 

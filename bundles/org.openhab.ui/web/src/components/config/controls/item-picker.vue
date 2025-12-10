@@ -100,6 +100,7 @@ export default {
     multiple: Boolean,
     filterType: [String, Array],
     filterGroupType: [String, Array],
+    filterSemantic: [String, Array],
     filterTag: [String, Array],
     required: Boolean,
     editableOnly: Boolean,
@@ -110,6 +111,7 @@ export default {
     },
     noModelPicker: Boolean,
     filterToggle: Boolean,
+    filterExcludeSemantic: Boolean,
     iconColor: String,
     auroraIcon: String,
     iosIcon: String,
@@ -179,6 +181,16 @@ export default {
       if (this.editableOnly) {
         this.filteredItems = this.filteredItems.filter((i) => i.editable)
       }
+      if (this.filterExcludeSemantic) {
+        this.filteredItems = this.filteredItems.filter((i) => !i.metadata?.semantics?.value)
+      }
+      if (this.filterSemantic?.length) {
+        if (Array.isArray(this.filterSemantic)) {
+          this.filteredItems = this.filterSemanticItems(this.filteredItems, this.filterSemantic)
+        } else {
+          this.filteredItems = this.filterSemanticItems(this.filteredItems, [this.filterSemantic])
+        }
+      }
       if (this.filterGroupType?.length) {
         const filterGroup = this.filterType === 'Group'
         if (Array.isArray(this.filterGroupType)) {
@@ -229,6 +241,16 @@ export default {
             if (f.split(':', 1)[0] === i.groupType) return true
             if (!f.includes(':') && f === i.groupType?.split(':', 1)[0]) return true
           }
+          return false
+        }))
+      })
+      return tempItems
+    },
+    filterSemanticItems (items, filterSemantic) {
+      let tempItems = []
+      filterSemantic.forEach((f) => {
+        tempItems.push(...items.filter((i) => {
+          if (i.metadata?.semantics?.value?.includes(f) || i.metadata?.semantics?.config?.relatesTo?.includes(f)) return true
           return false
         }))
       })
