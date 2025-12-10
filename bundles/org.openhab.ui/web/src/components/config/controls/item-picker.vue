@@ -180,10 +180,11 @@ export default {
         this.filteredItems = this.filteredItems.filter((i) => i.editable)
       }
       if (this.filterGroupType?.length) {
+        const filterGroup = this.filterType === 'Group'
         if (Array.isArray(this.filterGroupType)) {
-          this.filteredItems = this.filterGroupItems(this.filteredItems, this.filterGroupType)
+          this.filteredItems = this.filterGroupItems(this.filteredItems, this.filterGroupType, filterGroup)
         } else {
-          this.filteredItems = this.filterGroupItems(this.filteredItems, [this.filterGroupType])
+          this.filteredItems = this.filterGroupItems(this.filteredItems, [this.filterGroupType], filterGroup)
         }
       } else if (this.filterType?.length) {
         if (Array.isArray(this.filterType)) {
@@ -199,10 +200,12 @@ export default {
       })
       this.preparedItems = this.filteredItems
     },
-    filterGroupItems (items, filterGroupType) {
+    filterGroupItems (items, filterGroupType, filterGroup) {
       let tempItems = []
-      // Always include groups without groupType
-      tempItems.push(...items.filter((i) => i.type === 'Group' && !i.groupType))
+      // Include groups without groupType if filterGroup = true
+      if (filterGroup) {
+        tempItems.push(...items.filter((i) => i.type === 'Group' && !i.groupType))
+      }
       filterGroupType.forEach((f) => {
         tempItems.push(...items.filter((i) => {
           if (i.type !== 'Group') return false
