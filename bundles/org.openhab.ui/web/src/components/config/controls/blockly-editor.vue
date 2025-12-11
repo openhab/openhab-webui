@@ -1199,6 +1199,9 @@ textarea.blocklyHtmlTextAreaInput
 
 .blocklyComment .blocklyText
   color black
+
+.blocklyTextInputBubble .blocklyTextarea
+  color black
 </style>
 
 <script>
