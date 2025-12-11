@@ -871,7 +871,6 @@ export default {
 
       try {
         if (updatedThing.UID !== this.thing.UID) throw new Error('Changing the thing UID is not supported')
-        if (updatedThing.thingTypeUID !== this.thing.thingTypeUID) throw new Error('Changing the thing type is not supported')
         if (updatedThing.label) this.thing.label = updatedThing.label
         if (updatedThing.location) this.thing.location = updatedThing.location
         if (updatedThing.bridgeUID) this.thing.bridgeUID = updatedThing.bridgeUID

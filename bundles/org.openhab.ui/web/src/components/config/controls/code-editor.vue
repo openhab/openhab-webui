@@ -193,8 +193,10 @@ export default {
       payload[this.objectType] = [this.object]
       this.$oh.api.postPlain('/rest/file-format/create', JSON.stringify(payload), null, sourceMediaType, { accept: targetMediaType })
         .then((code) => {
-          this.code = code
-          this.originalCode = code.repeat(1) // duplicate the string
+          // DSL returns different line endings on different platforms and CodeMirror normalizes everything to \n, leading to dirty flag set on load for Windows,
+          // therefore normalize before loading in editor.
+          this.code = code.replaceAll('\r\n', '\n').replaceAll('\r', '\n')
+          this.originalCode = this.code
           this.uiOptionsStore.codeEditorType = codeType
           if (onSuccessCallback) {
             onSuccessCallback()
@@ -305,7 +307,7 @@ export default {
     },
     revertChanges () {
       f7.dialog.confirm('Are you sure you want to revert the changes?', () => {
-        this.code = this.originalCode.repeat(1) // duplicate the string
+        this.code = this.originalCode
         this.dirty = false
         f7.toast.create({
           text: 'Code reverted to original',
