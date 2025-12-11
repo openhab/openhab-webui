@@ -1,41 +1,46 @@
-import { request } from 'framework7/lite-bundle'
-
 import { getBasicCredentials } from '@/js/openhab/auth'
 
-export default {
-  getIcon: (icon, format, state, iconSet) => {
-    if (!format) format = 'svg'
-    let url = `/icon/${icon}?format=${format}&anyFormat=true`
-    if (state) url += `&state=${encodeURIComponent(state)}`
-    if (iconSet) url += `&iconset=${iconSet}`
+function blobToDataURL (blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onerror = () => reject(new Error('Failed to read blob as data URL'))
+    reader.onload = () => resolve(reader.result)
+    reader.readAsDataURL(blob)
+  })
+}
 
-    if (getBasicCredentials()) {
-      return new Promise((resolve, reject) => {
-        request.promise({ url, xhrFields: { responseType: 'blob' } }).then((resp) => {
-          let reader = new FileReader()
-          reader.readAsDataURL(resp.data)
-          reader.onload = () => {
-            return resolve(reader.result)
-          }
-        })
-      })
-    } else {
-      return Promise.resolve(url)
-    }
+/**
+ * Shared helper to fetch an image if credentials exist,
+ * otherwise returns the raw URL.
+ */
+async function fetchWithAuth (url) {
+  const creds = getBasicCredentials()
+
+  // If no credentials, return the URL (async function wraps it in a Promise)
+  if (!creds) return url
+
+  const headers = new Headers({
+    Authorization: 'Basic ' + btoa(`${creds.id}:${creds.password}`)
+  })
+
+  const resp = await fetch(url, { method: 'GET', headers, credentials: 'include' })
+
+  if (!resp.ok) throw new Error(resp.statusText || resp.status)
+
+  const blob = await resp.blob()
+  return blobToDataURL(blob)
+}
+
+export default {
+  getIcon: (icon, format = 'svg', state, iconSet) => {
+    const params = new URLSearchParams({ format, anyFormat: 'true' })
+    if (state) params.append('state', state)
+    if (iconSet) params.append('iconset', iconSet)
+
+    return fetchWithAuth(`/icon/${icon}?${params.toString()}`)
   },
+
   getImage: (url) => {
-    if (getBasicCredentials()) {
-      return new Promise((resolve, reject) => {
-        request.promise({ url, xhrFields: { responseType: 'blob' } }).then((resp) => {
-          let reader = new FileReader()
-          reader.readAsDataURL(resp.data)
-          reader.onload = () => {
-            return resolve(reader.result)
-          }
-        })
-      })
-    } else {
-      return Promise.resolve(url)
-    }
+    return fetchWithAuth(url)
   }
 }
