@@ -289,7 +289,7 @@ export default [
         async: loadAsync(ThingsListPage),
         routes: [
           {
-            path: 'add',
+            path: 'add/',
             beforeEnter: [enforceAdminForRoute],
             async: loadAsync(AddThingChooseBindingPage),
             routes: [

@@ -223,7 +223,7 @@
     </f7-block>
 
     <template #fixed>
-      <f7-fab position="right-bottom" color="blue" href="add">
+      <f7-fab position="right-bottom" color="blue" href="add/">
         <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
       </f7-fab>
       <f7-fab position="center-bottom"

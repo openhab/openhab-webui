@@ -213,7 +213,7 @@
       <f7-fab v-show="!showCheckboxes"
               position="right-bottom"
               color="blue"
-              href="/settings/things/add">
+              href="/settings/things/add/">
         <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
         <f7-icon ios="f7:close" md="material:close" aurora="f7:close" />
       </f7-fab>
@@ -313,7 +313,7 @@ export default {
         this.inbox = data.sort((a, b) => a.label.localeCompare(b.label))
         this.initSearchbar = true
         this.loading = false
-        setTimeout(() => {
+        nextTick(() => {
           this.$refs.listIndex.update()
           nextTick(() => {
             if (this.$device.desktop && this.$refs.searchbar) {
