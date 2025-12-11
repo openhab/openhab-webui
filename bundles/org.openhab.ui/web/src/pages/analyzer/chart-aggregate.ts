@@ -99,7 +99,7 @@ const aggregateCoordSystem : CoordSystem = {
 
     page.slots.grid = [{ component: 'oh-chart-grid', config: {} }]
 
-    const categoryType = (aggregateCoordSettings.chartType === ChartType.isoWeek || aggregateCoordSettings.chartType === ChartType.dynamic) ? OhCategoryAxis.CategoryType.week : (aggregateCoordSettings.chartType as unknown as OhCategoryAxis.CategoryType)
+    const categoryType = (aggregateCoordSettings.chartType === ChartType.isoWeek) ? OhCategoryAxis.CategoryType.week : (aggregateCoordSettings.chartType as unknown as OhCategoryAxis.CategoryType)
 
     const axis1 = [{
       component: 'oh-category-axis',
