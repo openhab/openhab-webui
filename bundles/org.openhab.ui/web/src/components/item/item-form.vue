@@ -153,8 +153,8 @@
                      :items="items"
                      @input="(value) => this.item.groupNames = value"
                      :multiple="true"
+                     filterType="Group"
                      :filterGroupType="compatibleGroupTypes"
-                     :filterToggle="true"
                      :set-value-text="false" />
       </f7-list-group>
     </f7-list>
