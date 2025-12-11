@@ -101,7 +101,10 @@ export function renderValueAxis (options : ValueAxisOptions) : UIComponent {
 
   return {
     component: 'oh-value-axis',
-    config
+    config: {
+      ...getSplitLineConfig(options.split),
+      ...config
+    }
   }
 }
 

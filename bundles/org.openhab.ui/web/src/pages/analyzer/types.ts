@@ -36,7 +36,7 @@ export interface SeriesOptions {
 export interface ValueAxisOptions {
     name: string,
     unit: string,
-    split?: string,
+    split?: ValueAxisSplitOptions,
     min?: string,
     max?: string,
     scale?: boolean,

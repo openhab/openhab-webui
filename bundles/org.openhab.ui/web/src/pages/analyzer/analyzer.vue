@@ -617,7 +617,7 @@ export default {
         return {
           text: ValueAxisSplitOptions[key as keyof typeof ValueAxisSplitOptions],
           color: 'blue',
-          onClick: () => { axis.split = key }
+          onClick: () => { axis.split = key as ValueAxisSplitOptions }
         }
       })
       f7.actions.create({
