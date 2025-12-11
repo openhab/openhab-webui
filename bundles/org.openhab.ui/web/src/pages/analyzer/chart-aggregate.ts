@@ -31,7 +31,7 @@ export interface AggregateSeriesOptions extends SeriesOptions {
 
 const aggregateCoordSystem : CoordSystem = {
   initCoordSystem (coordSettings? : Partial<AggregateCoordSettings>) : AggregateCoordSettings {
-    const typeOptions : ChartType[] = [ChartType.day, ChartType.isoWeek, ChartType.month, ChartType.year]
+    const typeOptions : ChartType[] = [ChartType.day, ChartType.isoWeek, ChartType.week, ChartType.month, ChartType.year]
     return {
       dimensions: (coordSettings && coordSettings.dimensions) ? coordSettings.dimensions : 1,
       valueAxesOptions: [],
