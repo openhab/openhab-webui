@@ -1,4 +1,4 @@
-import { getYAxis, renderVisualMap, renderValueAxis, toPrimitiveMarkers } from './analyzer-helpers.js'
+import { getYAxis, renderValueAxis, renderVisualMap, toPrimitiveMarkers } from './analyzer-helpers.ts'
 
 import { OhAggregateSeries, OhCategoryAxis, OhChartPage, OhValueAxis, ChartType, Orient, OhChartTooltip, OhChartLegend, OhChartVisualmap } from '@/types/components/widgets'
 
@@ -106,7 +106,7 @@ const aggregateCoordSystem : CoordSystem = {
       config: {
         gridIndex: 0,
         categoryType: categoryType,
-        startOnSunday: (aggregateCoordSettings.chartType === ChartType.week) ? true : undefined,
+        startOnSunday: aggregateCoordSettings.chartType === ChartType.week,
         monthFormat: OhCategoryAxis.MonthFormat.short,
         weekdayFormat: OhCategoryAxis.WeekdayFormat.short
       } satisfies OhCategoryAxis.Config

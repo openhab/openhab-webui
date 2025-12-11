@@ -1,4 +1,4 @@
-import { renderVisualMap } from './analyzer-helpers'
+import { renderVisualMap } from './analyzer-helpers.ts'
 
 import { SeriesType, type CoordSettings, type CoordSystem, type SeriesOptions, type VisualMap, type CoordSettingsBase } from './types'
 import type { Item, Page } from '@/types/openhab'
@@ -31,6 +31,7 @@ const calendarCoordSystem : CoordSystem = {
     }
   },
   initAxes (coordSettings) {
+    // calendar chart has no axes
   },
   initSeries (item : Item, coordSettings : CoordSettings, seriesOptions : Partial<CalendarSeriesOptions>) : CalendarSeriesOptions {
     const options : CalendarSeriesOptions = {

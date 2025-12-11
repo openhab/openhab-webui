@@ -1,4 +1,4 @@
-import { getYAxis, renderValueAxis, toPrimitiveMarkers } from './analyzer-helpers.js'
+import { getYAxis, renderValueAxis, toPrimitiveMarkers } from './analyzer-helpers.ts'
 
 import { Marker, SeriesType, type CoordSystem, type CoordSettings, type SeriesOptions, type ValueAxisOptions, type CoordSettingsBase } from './types.js'
 import type { Item, Page } from '@/types/openhab'
