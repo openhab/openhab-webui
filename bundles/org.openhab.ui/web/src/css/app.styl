@@ -84,6 +84,10 @@ html
     margin-top calc(var(--f7-page-navbar-offset, 0px) + var(--f7-page-toolbar-top-offset, 0px) + var(--f7-page-subnavbar-offset, 0px) + var(--f7-page-searchbar-offset, 0px) + var(--f7-page-content-extra-padding-top, 0px))
     height calc(100% - var(--f7-page-navbar-offset, 0px) - var(--f7-page-toolbar-top-offset, 0px) - var(--f7-page-subnavbar-offset, 0px) - var(--f7-page-searchbar-offset, 0px) - var(--f7-page-content-extra-padding-top, 0px))
 
+/* Fixes for oh-cell opened cards behind other oh-cells */
+.oh-cell.card-opened
+  z-index 5000 !important
+
 /* Adjustments for iOS & Material Design themes */
 .ios
 .md
