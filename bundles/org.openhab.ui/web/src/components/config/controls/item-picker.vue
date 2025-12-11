@@ -192,7 +192,7 @@ export default {
         }
       }
       if (this.filterGroupType?.length) {
-        const filterGroup = this.filterType === 'Group'
+        const filterGroup = this.filterType?.includes('Group')
         if (Array.isArray(this.filterGroupType)) {
           this.filteredItems = this.filterGroupItems(this.filteredItems, this.filterGroupType, filterGroup)
         } else {
