@@ -150,7 +150,7 @@ const aggregateCoordSystem : CoordSystem = {
       page.slots.yAxis = axis2
     }
 
-    page.slots.series = items.filter((item) => (item.type.startsWith('Number') || item.type === 'Dimmer')).map((item : Item) => {
+    page.slots.series = items.filter((item) => (item.type.startsWith('Number') || item.type === 'Dimmer') || item.type === 'Rollershutter').map((item : Item) => {
       const seriesOptions = allSeriesOptions[item.name] as AggregateSeriesOptions
 
       return {

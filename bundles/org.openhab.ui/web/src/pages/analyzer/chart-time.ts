@@ -57,7 +57,7 @@ const timeCoordSystem : CoordSystem = {
       options.marker = Marker.none
       options.showAxesOptions = true
       options.type = (seriesOptions?.type && options.typeOptions.includes(seriesOptions.type)) ? seriesOptions.type : SeriesType.line
-    } else if (item.type === 'Dimmer' || item.groupType === 'Dimmer') {
+    } else if (item.type === 'Dimmer' || item.groupType === 'Dimmer' || item.type === 'Rollershutter' || item.groupType === 'Rollershutter') {
       options.showAxesOptions = false
       options.marker = Marker.none
       options.type = (seriesOptions?.type && options.typeOptions.includes(seriesOptions.type)) ? seriesOptions.type : SeriesType.line
