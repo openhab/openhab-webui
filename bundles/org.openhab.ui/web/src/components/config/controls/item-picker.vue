@@ -15,7 +15,7 @@
                    :icon-ios="ios"
                    :icon-md="md"
                    :tooltip="$t('dialogs.itemPicker.tooltip.pickFromModel')"
-                   @click="pickFromModel" />
+                   @click.stop="pickFromModel" />
         <f7-icon v-else-if="!hideIcon"
                  :color="color"
                  :aurora="aurora"
@@ -28,7 +28,7 @@
       <f7-page>
         <f7-navbar :title="label || $t('dialogs.itemPicker.popup.title')">
           <f7-nav-right>
-            <f7-link @click="popupOpen = false">
+            <f7-link @click="closePopup()">
               Close
             </f7-link>
           </f7-nav-right>
@@ -263,6 +263,9 @@ export default {
     openPopup () {
       this.popupOpen = true
     },
+    closePopup () {
+      this.popupOpen = false
+    },
     selectItem (item) {
       if (this.multiple) {
         const idx = this.selectedValue.indexOf(item.name)
@@ -273,7 +276,7 @@ export default {
         this.selectedValue = item ? item.name : null
         this.$emit('input', this.selectedValue)
         this.$emit('item-selected', item)
-        this.popupOpen = false
+        this.closePopup()
       }
     },
     updateFromModelPicker (value) {
@@ -285,7 +288,6 @@ export default {
       }
     },
     pickFromModel (evt) {
-      evt.cancelBubble = true
       const popup = {
         component: ModelPickerPopup
       }
