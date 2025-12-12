@@ -108,6 +108,44 @@
         </f7-list>
       </f7-col>
     </f7-row>
+
+    <f7-row v-if="showDialogOptions">
+      <f7-col>
+        <f7-block-title>{{ t('about.dialog') }}</f7-block-title>
+        <f7-list>
+          <f7-list-item>
+            <span>{{ t('about.dialog.enable') }}</span>
+            <f7-toggle v-model:checked="dialogEnabled" />
+          </f7-list-item>
+          <f7-list-item>
+            <span>{{ t('about.dialog.id') }}</span>
+            <f7-input type="button" :value="dialogIdentifier" />
+          </f7-list-item>
+          <f7-list-group>
+            <item-picker
+              :label="t('about.dialog.listeningItem')"
+              :multiple="false"
+              :value="dialogListeningItem"
+              @input="setDialogListeningItem" />
+          </f7-list-group>
+          <f7-list-group>
+            <item-picker
+              :label="t('about.dialog.locationItem')"
+              :multiple="false"
+              :value="dialogLocationItem"
+              @input="setDialogLocationItem" />
+          </f7-list-group>
+          <f7-list-item>
+            <span>{{ t('about.dialog.connectOnWindowEvent') }}</span>
+            <f7-toggle v-model:checked="dialogConnectOnWindowEvent" />
+          </f7-list-item>
+          <f7-list-item>
+            <span>{{ t('about.dialog.triggerOnConnect') }}</span>
+            <f7-toggle v-model:checked="dialogTriggerOnConnect" />
+          </f7-list-item>
+        </f7-list>
+      </f7-col>
+    </f7-row>
   </f7-block>
 </template>
 
@@ -149,6 +187,12 @@ export default {
     setCommandItem (value) {
       localStorage.setItem('openhab.ui:commandItem', value)
       setTimeout(() => { location.reload() }, 50) // Delay reload, otherwise it doesn't work
+    },
+    setDialogListeningItem (value) {
+      useUIOptionsStore().dialogListeningItem = value
+    },
+    setDialogLocationItem (value) {
+      useUIOptionsStore().dialogLocationItem = value
     }
   },
   computed: {
@@ -158,8 +202,14 @@ export default {
     commandItem () {
       return localStorage.getItem('openhab.ui:commandItem') || ''
     },
+    showDialogOptions () {
+      const getUserMediaSupported = !!(window.navigator && window.navigator.mediaDevices && window.navigator.mediaDevices.getUserMedia)
+      return getUserMediaSupported &&
+        !!window.AudioContext &&
+        !!window.crypto
+    },
     ...mapStores(useRuntimeStore, useUIOptionsStore),
-    ...mapWritableState(useUIOptionsStore, [ 'disablePageTransitionAnimation',  'bars', 'homeNavBar', 'homeBackground', 'hideChatInput', 'disableExpandableCardAnimation', 'webAudio' ])
+    ...mapWritableState(useUIOptionsStore, [ 'disablePageTransitionAnimation',  'bars', 'homeNavBar', 'homeBackground', 'hideChatInput', 'disableExpandableCardAnimation', 'webAudio', 'dialogEnabled', 'dialogIdentifier', 'dialogListeningItem', 'dialogLocationItem', 'dialogConnectOnWindowEvent', 'dialogTriggerOnConnect' ])
   }
 }
 </script>
@@ -247,4 +297,8 @@ export default {
 .nav-bars-picker-fill .demo-navbar:before,
 .nav-bars-picker-fill .demo-navbar:after
   background #fff
+.title-fixed .item-title
+  width: 200%
+.input-right input
+  text-align: right
 </style>
