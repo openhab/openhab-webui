@@ -2,7 +2,7 @@ import { renderVisualMap } from './analyzer-helpers.ts'
 
 import { SeriesType, type CoordSettings, type CoordSystem, type SeriesOptions, type VisualMap, type CoordSettingsBase } from './types'
 import type { Item, Page } from '@/types/openhab'
-import { AggregationFunction, ChartType, OhChartPage, Orient, OhChartVisualmap, OhCalendarSeries, OhChartTooltip, OhCalendarAxis } from '@/types/components/widgets'
+import { AggregationFunction, ChartType, OhChartPage, Orient, OhChartVisualmap, OhCalendarSeries, OhChartTooltip, OhCalendarAxis, OhChartLegend } from '@/types/components/widgets'
 
 export interface CalendarCoordSettings extends CoordSettingsBase {
   orientation: Orient
@@ -101,6 +101,24 @@ const calendarCoordSystem : CoordSystem = {
           confine: true
           // smartFormatter: true
         } satisfies OhChartTooltip.Config
+      }
+    ]
+
+    page.slots.legend = [
+      {
+        component: 'oh-chart-legend',
+        config: {
+          top: '20',
+          left: '15',
+          type: 'scroll',
+          data: items.reduce<Array<{ name: string }>>((legendItems, item) => {
+            const seriesOptions = allSeriesOptions[item.name] as CalendarSeriesOptions
+            if (seriesOptions.type !== SeriesType.state) {
+              legendItems.push({ name: seriesOptions.name })
+            }
+            return legendItems
+          }, [])
+        } satisfies OhChartLegend.Config & Record<string, unknown>
       }
     ]
 
