@@ -211,6 +211,8 @@ export default {
             return types.ArithmeticFunctions
           case 'Contact':
             return types.LogicalOpenClosedFunctions
+          case 'MediaBrowser':
+            return types.LogicalMediaBrowserFunctions
           case 'Player':
             return types.LogicalPlayPauseFunctions
           case 'DateTime':
