@@ -17,16 +17,17 @@ class ApiError extends Error {
 }
 
 client.interceptors.request.use((request, options) => {
-  if (getAccessToken()) {
+  const accessToken = getAccessToken()
+  if (accessToken) {
     if (getTokenInCustomHeader()) {
-      request.headers.set('X-OPENHAB-TOKEN', getAccessToken())
+      request.headers.set('X-OPENHAB-TOKEN', accessToken)
     } else {
-      request.headers.set('Authorization', 'Bearer ' + getAccessToken())
+      request.headers.set('Authorization', 'Bearer ' + accessToken)
     }
   }
-  if (getBasicCredentials()) {
-    const creds = getBasicCredentials()
-    request.headers.set('Authorization', 'Basic ' + btoa(creds.id + ':' + creds.password))
+  const basicCredentials = getBasicCredentials()
+  if (basicCredentials) {
+    request.headers.set('Authorization', 'Basic ' + btoa(basicCredentials.id + ':' + basicCredentials.password))
   }
   return request
 })

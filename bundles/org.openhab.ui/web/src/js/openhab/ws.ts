@@ -122,13 +122,14 @@ function newWSConnection(
   heartbeatCallback: HeartbeatCallback | undefined,
   heartbeatInterval: number
 ): KeepaliveWebSocket {
-  const encodedToken = btoa(getAccessToken()).replace(/=*$/, '')
+  const accessToken = getAccessToken()
+  const encodedToken = accessToken ? btoa(accessToken).replace(/=*$/, '') : null
 
   // Create a new WebSocket connection and set the access token through the protocol field
-  const socket = new WebSocket(path, [
-    `org.openhab.ws.accessToken.base64.${encodedToken}`,
-    'org.openhab.ws.protocol.default'
-  ]) as KeepaliveWebSocket
+  const socket = new WebSocket(
+    path,
+    encodedToken ? [`org.openhab.ws.accessToken.base64.${encodedToken}`, 'org.openhab.ws.protocol.default'] : []
+  ) as KeepaliveWebSocket
 
   socket.id = 'ui-' + f7.utils.id()
 
