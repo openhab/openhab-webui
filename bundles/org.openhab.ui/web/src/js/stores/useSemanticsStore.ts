@@ -1,18 +1,18 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
-import api from '@/js/openhab/api'
 import { type Composer, type I18n } from 'vue-i18n'
 import { useRuntimeStore } from './useRuntimeStore'
 
-import { type Tag } from '@/types/openhab'
-interface ModelTag extends Tag {
+import { getSemanticTags, type EnrichedSemanticTag } from '@/api'
+
+interface SemanticTagWithParent extends EnrichedSemanticTag {
   parent: string
 }
 
 export const useSemanticsStore = defineStore('semantics', () => {
   // State
-  const Tags = ref<ModelTag[]>([])
+  const Tags = ref<EnrichedSemanticTag[]>([])
   const Locations = ref<string[]>([])
   const Equipment = ref<string[]>([])
   const Points = ref<string[]>([])
@@ -23,9 +23,9 @@ export const useSemanticsStore = defineStore('semantics', () => {
   const ready = ref<boolean>(false)
 
   // Actions
-  function setSemantics (tags: ModelTag[], i18n: I18n) {
+  function setSemantics (tags: EnrichedSemanticTag[], i18n: I18n) {
     // local variables to avoid writing to reactive refs multiple times
-    const modelTags: ModelTag[] = []
+    const modelTags: SemanticTagWithParent[] = []
     const locations: string[] = []
     const equipment: string[] = []
     const points: string[] = []
@@ -36,27 +36,28 @@ export const useSemanticsStore = defineStore('semantics', () => {
 
     // perform all operations in a single loop to avoid looping through the tags multiple times
     for (const t of tags) {
-      const uid = t.uid
+      const uid = t.uid as string
       // get parent tag
       const parent = uid.split('_').slice(0, -1).join('_')
-      const mt: ModelTag = { ...t, parent } // copy into a new ModelTag so we don't mutate the incoming object in-place
+      const mt: SemanticTagWithParent = { ...t, parent } // copy into a new ModelTag so we don't mutate the incoming object in-place
       modelTags.push(mt)
 
       // categorise by type
       if (uid.startsWith('Location')) {
-        locations.push(mt.name)
+        locations.push(mt.name!)
       } else if (uid.startsWith('Equipment')) {
-        equipment.push(mt.name)
+        equipment.push(mt.name!)
       } else if (uid.startsWith('Point')) {
-        points.push(mt.name)
+        points.push(mt.name!)
       } else if (uid.startsWith('Property')) {
-        properties.push(mt.name)
+        properties.push(mt.name!)
       }
 
       // store labels, descriptions & synonyms
-      labels[mt.name] = mt.label || mt.name
-      descriptions[mt.name] = mt.description || ''
-      synonyms[mt.name] = mt.synonyms || []
+      const name = mt.name!
+      labels[name] = mt.label || mt.name!
+      descriptions[name] = mt.description!
+      synonyms[name] = mt.synonyms || []
     }
 
     // single assignments to reactive refs to minimise reactivity churn
@@ -80,14 +81,12 @@ export const useSemanticsStore = defineStore('semantics', () => {
 
   async function loadSemantics (i18n: I18n) {
     if (useRuntimeStore().apiEndpoint('tags')) {
-      return api
-        .get('/rest/tags')
-        .then((tags : Tag[]) => {
-          let modelTags  = tags as ModelTag[]
-          setSemantics(modelTags, i18n)
-          console.debug('Successfully loaded semantic tags.')
-          ready.value = true
-        })
+      return getSemanticTags().then(({ data }) => {
+        let modelTags  = data as EnrichedSemanticTag[]
+        setSemantics(modelTags, i18n)
+        console.debug('Successfully loaded semantic tags.')
+        ready.value = true
+      })
         .catch((e) => {
           console.error('Failed to load semantic tags:')
           console.error(e)

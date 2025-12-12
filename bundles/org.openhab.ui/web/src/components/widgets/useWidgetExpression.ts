@@ -22,7 +22,12 @@ import { useUserStore } from '@/js/stores/useUserStore'
 import { i18n } from '@/js/i18n.ts'
 
 import type { WidgetContext } from './types'
-import type { UIComponentProps } from '@/types/openhab'
+
+// TODO-api: update openApi spec to geneate this type automatically
+interface UIComponentProps {
+  parameters: any[]
+  parameterGroups: any[]
+}
 
 expr.jsep.plugins.register(jsepRegex, jsepArrow, jsepObject, jsepTemplate)
 

@@ -1,6 +1,23 @@
 import { request } from 'framework7'
+import { client } from '@/api/client.gen'
 
 import { getAccessToken, getTokenInCustomHeader, getBasicCredentials } from './auth'
+
+// TODO-api: possibly move to auth.js or App.vue when we remove old api client usage
+client.interceptors.request.use((request, options) => {
+  if (getAccessToken()) {
+    if (getTokenInCustomHeader()) {
+      request.headers.set('X-OPENHAB-TOKEN', getAccessToken())
+    } else {
+      request.headers.set('Authorization', 'Bearer ' + getAccessToken())
+    }
+  }
+  if (getBasicCredentials()) {
+    const creds = getBasicCredentials()
+    request.headers.set('Authorization', 'Basic ' + btoa(creds.id + ':' + creds.password))
+  }
+  return request
+})
 
 async function wrapPromise (f7promise) {
   return new Promise((resolve, reject) => {
