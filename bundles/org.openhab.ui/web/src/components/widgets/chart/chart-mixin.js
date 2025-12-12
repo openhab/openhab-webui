@@ -51,7 +51,11 @@ export default {
     const chartType = config.chartType
     const future = config.future === true ? 1 : (config.future ?? 0)
     const endTime = (chartType)
-      ? this.addOrSubtractPeriod(dayjs().startOf(chartType), 1 + future)
+      ? chartType === 'week'
+        // Week starting on Sunday
+        ? this.addOrSubtractPeriod(dayjs().startOf(chartType).subtract(1, 'day'), 1 + future)
+        // Week starting on Monday and all other chart types
+        : this.addOrSubtractPeriod(dayjs().startOf(chartType === 'isoWeek' ? 'week' : chartType), 1 + future)
       : this.addOrSubtractPeriod(dayjs(), future)
 
     return {
