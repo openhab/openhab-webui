@@ -163,7 +163,7 @@ export default {
       this.itemConfigClosed()
     },
     updateCommandFromCurrentState () {
-      this.$oh.api.getPlain('/rest/items/' + this.itemName + '/state?metadata=semantics,widget').then((state) => {
+      this.$oh.api.getPlain('/rest/items/' + this.itemName + '/state').then((state) => {
         this.command = state
         f7.toast.create({
           text: `Updated desired state of ${this.itemName} to ${state}`,
