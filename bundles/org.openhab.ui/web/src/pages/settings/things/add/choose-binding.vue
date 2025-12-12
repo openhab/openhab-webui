@@ -1,7 +1,10 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn">
     <f7-navbar>
-      <oh-nav-content title="Choose Binding" back-link="Things" back-link-url="/settings/things/" :f7router />
+      <oh-nav-content title="Choose Binding"
+                      back-link="Things"
+                      back-link-url="/settings/things/"
+                      :f7router />
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
           v-if="initSearchbar"
