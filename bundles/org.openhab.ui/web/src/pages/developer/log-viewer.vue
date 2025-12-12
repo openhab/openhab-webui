@@ -325,9 +325,14 @@
 .theme-filled
   .log-viewer
     .subnavbar
+      .badge
+        color #000a
       .badge.color-red
-        background-color #300
-        color #ff4d4d
+        background-color #ffa899
+      .badge.color-orange
+        background-color #ffd580
+      .badge.color-green
+        background-color #b2ffab
 .log-viewer
 
   .subnavbar
