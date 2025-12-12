@@ -9,15 +9,15 @@ export type IconType = 'svg' | 'png'
 function blobToDataURL (blob: Blob): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader()
-    reader.onerror = () => reject(new Error('Failed to read blob as data URL'))
+    reader.onerror = () => reject(new Error('Failed to read blob as data URL: ' + reader.error))
     reader.onload = () => resolve(reader.result as string)
     reader.readAsDataURL(blob)
   })
 }
 
 /**
- * Fetch a URL with basic authentication if needed and return the result as a data URL.
- * If basic authentication is not needed, the URL is returned directly.
+ * Fetch a URL with basic authentication if needed (i.e. behind reverse proxy) and return the result as a data URL.
+ * If basic authentication is not needed, the URL is returned directly, as neither the IconServlet at `/icon` nor Jetty at `/static` require auth.
  * @param url
  */
 async function fetchWithAuth (url: string): Promise<string> {
@@ -32,7 +32,7 @@ async function fetchWithAuth (url: string): Promise<string> {
 
   const resp = await fetch(url, { method: 'GET', headers, credentials: 'include' })
 
-  if (!resp.ok) throw new Error(resp.statusText || resp.status.toString())
+  if (!resp.ok) throw new Error(`HTTP ${resp.status}: ${resp.statusText || 'Unknown error'}`)
 
   const blob = await resp.blob()
   return blobToDataURL(blob)
