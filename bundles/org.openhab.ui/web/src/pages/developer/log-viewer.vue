@@ -212,7 +212,9 @@
           <input type="search" placeholder="Filter..." v-model="filterText" @keyup.enter="handleFilter"></input>
         </div> -->
         <div style="display: flex; flex-wrap: nowrap">
-          <f7-badge class="log-period margin-left-half"> {{ logStart }}&nbsp;>&nbsp;{{ logEnd }} </f7-badge>
+          <f7-badge class="log-period margin-left-half" :color="periodRangeColor" :tooltip="periodRangeTooltip">
+            {{ logStart }}&nbsp;>&nbsp;{{ logEnd }}
+          </f7-badge>
           <f7-badge class="margin-horizontal" :color="countersBadgeColor" tooltip="Log entries filtered/total">
             {{ filterCount }}/{{ tableData.length }}
           </f7-badge>
@@ -286,6 +288,12 @@
 </template>
 
 <style lang="stylus">
+.theme-filled
+  .log-viewer
+    .subnavbar
+      .badge.color-red
+        background-color #300
+        color #ff4d4d
 .log-viewer
 
   .subnavbar
@@ -543,6 +551,14 @@ export default {
     filteredTableData() {
       return this.tableData.filter((item) => item.visible)
     },
+    periodRangeColor() {
+      if (!this.stateConnected) return 'red'
+      return this.stateProcessing ? 'green' : 'orange'
+    },
+    periodRangeTooltip() {
+      if (!this.stateConnected) return 'Log period - Disconnected'
+      return this.stateProcessing ? 'Log period - Receiving logs' : 'Log period - Paused'
+    },
     countersBadgeColor() {
       if (this.tableData.length >= this.maxEntries) return 'red'
       if (this.filterCount < this.tableData.length) return 'orange'
@@ -610,6 +626,10 @@ export default {
         nextTick(() => this.scrollToBottom())
       }
 
+      const closeCallback = () => {
+        this.stateConnected = false
+      }
+
       const messageCallback = (event) => {
         if (Array.isArray(event)) {
           event.forEach((ev) => {
@@ -621,10 +641,18 @@ export default {
       }
 
       const heartbeatCallback = () => {
-        this.socket.send('{}')
+        try {
+          this.socket.send('{}')
+        } catch (e) {
+          console.warn('WebSocket heartbeat failed:', e)
+        }
       }
 
-      this.socket = this.$oh.ws.connect('/ws/logs', messageCallback, heartbeatCallback, readyCallback, null, 9)
+      const errorCallback = (event) => {
+        console.error('WebSocket error:', event)
+      }
+
+      this.socket = this.$oh.ws.connect('/ws/logs', messageCallback, heartbeatCallback, readyCallback, closeCallback, errorCallback, 9)
 
       // TEMP
       // for (let i = 0; i < 1980; i++) {
