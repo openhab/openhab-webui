@@ -60,7 +60,7 @@ export default {
      * @param item
      * @returns {Promise}
      */
-    saveItem (item) {
+    async saveItem (item) {
       if (item.groupType === 'None') delete item.groupType
       if (item.function === 'None') delete item.groupType
 

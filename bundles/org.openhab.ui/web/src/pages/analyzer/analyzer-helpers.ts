@@ -1,10 +1,11 @@
-import type { Item, UIComponent } from '@/types/openhab'
 import { Marker, type VisualMap, type ValueAxisOptions, ValueAxisSplitOptions } from './types'
 import type { AggregateCoordSettings } from './chart-aggregate'
 import type { TimeCoordSettings } from './chart-time'
 import { OhChartVisualmap, Orient, OhTimeSeries, OhAggregateSeries, OhValueAxis } from '@/types/components/widgets'
 
-function parseUnit (item: Item) : string {
+import type { UiComponent, EnrichedItemDto } from '@/api'
+
+function parseUnit (item: EnrichedItemDto) : string {
   let unit =
     item.transformedState?.split(' ')[1] ??
     item.state?.split(' ')[1] ??
@@ -14,7 +15,7 @@ function parseUnit (item: Item) : string {
   return unit || ''
 }
 
-export function getYAxis (item : Item, coordSettings : TimeCoordSettings | AggregateCoordSettings) : number {
+export function getYAxis (item : EnrichedItemDto, coordSettings : TimeCoordSettings | AggregateCoordSettings) : number {
   let unit = parseUnit(item)
   let unitAxis = coordSettings.valueAxesOptions.findIndex((a) => a.unit === unit)
   if (unitAxis >= 0) {
@@ -25,7 +26,7 @@ export function getYAxis (item : Item, coordSettings : TimeCoordSettings | Aggre
   }
 }
 
-export function renderVisualMap (visualMap: VisualMap) : UIComponent[] {
+export function renderVisualMap (visualMap: VisualMap) : UiComponent[] {
   const config: OhChartVisualmap.Config = {
     show: true,
     orient: Orient.horizontal,

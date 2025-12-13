@@ -523,7 +523,6 @@
 
 <script>
 import { nextTick, defineAsyncComponent } from 'vue'
-import { request } from 'framework7'
 import { f7, f7ready } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
@@ -554,6 +553,8 @@ import { useUserStore } from '@/js/stores/useUserStore'
 import { useComponentsStore } from '@/js/stores/useComponentsStore'
 import { useSemanticsStore } from '@/js/stores/useSemanticsStore'
 import { useModelStore } from '@/js/stores/useModelStore'
+
+import { getRoot } from '@/api'
 
 export default {
   mixins: [auth, connectionHealth, sseEvents],
@@ -708,143 +709,129 @@ export default {
     loadData (useCredentials) {
       performance.mark('loadDataStart')
       const useCredentialsPromise = useCredentials ? this.setBasicCredentials() : Promise.resolve()
-      return useCredentialsPromise
-        .then(() => {
-          return request.json('/rest/')
-        })
-        .catch((err) => {
-          console.error('openHAB REST API connection failed with error:')
-          console.info(err)
-          if (err.message === 'Unauthorized' || err.status === 401) {
-            if (!useCredentials) {
-              // try again with credentials
-              this.loadData(true)
-              return Promise.reject()
-            }
-            nextTick(() => {
-              f7.dialog.login(
-                window.location.host,
-                'openHAB',
-                (username, password) => {
-                  this.setBasicCredentials(username, password)
-                  this.$oh.api
-                    .get('/rest/')
-                    .then((rootResponse) => {
-                      this.storeBasicCredentials()
-                      this.loadData()
-                    })
-                    .catch((err) => {
-                      if (err === 'Unauthorized' || err === 401) {
-                        this.clearBasicCredentials()
-                        this.loadData()
-                        return Promise.reject()
-                      }
-                    })
-                },
-                () => {
-                  return Promise.reject()
-                }
-              )
-            })
+      return useCredentialsPromise.then(() => {
+        return getRoot()
+      }).catch((err) => {
+        console.error('openHAB REST API connection failed with error:')
+        console.info(err)
+        if (err.message === 'Unauthorized' || err.status === 401) {
+          if (!useCredentials) {
+            // try again with credentials
+            this.loadData(true)
             return Promise.reject()
-            // Redirection handling (e.g. when using auth_request in nginx)
-          } else if (err.message === 'Found' || err.status === 302) {
-            // technically correct way, but unreliable because XhrHttpRequest follows the redirect itself and fails because of CORS policy
-            if (err.xhr.HEADERS_RECEIVED > 0) {
-              const headersObj = {}
-              err.xhr
-                .getAllResponseHeaders()
-                .trim()
-                .split(/[\r\n]+/)
-                .forEach((line) => {
-                  const parts = line.split(':\t')
-                  headersObj[parts[0]] = parts[1]
+          }
+          nextTick(() => {
+            f7.dialog.login(
+              window.location.host,
+              'openHAB',
+              (username, password) => {
+                this.setBasicCredentials(username, password)
+                getRoot().then(({ data: rootResponse }) => {
+                  this.storeBasicCredentials()
+                  this.loadData()
+                }).catch((err) => {
+                  if (err === 'Unauthorized' || err === 401) {
+                    this.clearBasicCredentials()
+                    this.loadData()
+                    return Promise.reject()
+                  }
                 })
-              // Redirect according to location header but modify URL arguments to redirect back to the UI and not the REST API after authentication
-              window.location.replace(
-                headersObj['location'].replace(window.location.href + 'rest', window.location.href)
-              )
-            }
-          } else if (err.message === 0 || err.status === 0) {
-            // XhrHttpRequest has message & status 0 if the redirected request failed due to CORS policy
-            // Follow the authentication redirect by unloading service-worker and reloading PWA
-            if ('serviceWorker' in window.navigator) {
-              window.navigator.serviceWorker.getRegistration().then((reg) => {
-                reg.unregister().then(() => {
-                  console.info('Unregistered service-worker, reloading now.')
-                  window.location.reload()
-                })
+              },
+              () => {
+                return Promise.reject()
+              }
+            )
+          })
+          return Promise.reject()
+          // Redirection handling (e.g. when using auth_request in nginx)
+        } else if (err.message === 'Found' || err.status === 302) {
+          // technically correct way, but unreliable because XhrHttpRequest follows the redirect itself and fails because of CORS policy
+          if (err.xhr.HEADERS_RECEIVED > 0) {
+            const headersObj = {}
+            err.xhr
+              .getAllResponseHeaders()
+              .trim()
+              .split(/[\r\n]+/)
+              .forEach((line) => {
+                const parts = line.split(':\t')
+                headersObj[parts[0]] = parts[1]
               })
-            }
-          } else {
-            // Make sure this is set to a value, otherwise the page won't show up
-            this.communicationFailureMsg = err.message || err.status || 'Unknown Error'
-            return Promise.reject(
-              'openHAB REST API connection failed with error: ' + err.message || err.status
+            // Redirect according to location header but modify URL arguments to redirect back to the UI and not the REST API after authentication
+            window.location.replace(
+              headersObj['location'].replace(window.location.href + 'rest', window.location.href)
             )
           }
-        })
-        .then((res) => res.data)
-        .then((rootResponse) => {
-          // store the REST API services present on the system
-          useRuntimeStore().setRootResource(rootResponse)
-          if (!useRuntimeStore().apiEndpoint('auth')) useUserStore().setNoAuth(true)
-          return rootResponse
-        })
-        .then((rootResponse) => {
-          const locale = useRuntimeStore().locale.toLocaleLowerCase()
-          let dayjsLocalePromise = Promise.resolve(null)
-          // try to resolve the dayjs file to load if it exists
-          if (locale) {
-            let dayjsLocale = dayjsLocales.find(
-              (l) => l.key === locale || l.key === locale.toLowerCase() || l.key === locale.split('-')[0]
-            )
-            // fix for missing definitions in en.js locale, see https://github.com/iamkun/dayjs/blob/dev/src/locale/en.js
-            if (dayjsLocale?.key === 'en') dayjsLocale = dayjsLocales.find((l) => l.key === 'en-gb')
-
-            // there is no single Norwegian locale in dayjs, so use nb (Norwegian Bokmål)
-            if (dayjsLocale?.key === 'no') dayjsLocale = dayjsLocales.find((l) => l.key === 'nb')
-
-            dayjsLocalePromise = dayjsLocale
-              ? import(`../node_modules/dayjs/esm/locale/${dayjsLocale.key}.js`)
-                .then((data) => {
-                  return data.default
-                }).catch((error) => {
-                  console.error('Error fetching dayjs: ', error, dayjsLocale)
-                })
-              : Promise.resolve(null)
-          }
-          return Promise.all([
-            ...(useRuntimeStore().apiEndpoint('ui'))
-              ? [this.$oh.api.get('/rest/ui/components/ui:page'), this.$oh.api.get('/rest/ui/components/ui:widget')]
-              : [Promise.resolve([]), Promise.resolve([])],
-            dayjsLocalePromise,
-            useSemanticsStore().loadSemantics(i18n)
-          ])
-        })
-        .then((data) => {
-          useComponentsStore().setPagesAndWidgets(data[0], data[1])
-          this.pages = useComponentsStore().pages()
-            .filter((p) => p.config.sidebar && this.pageIsVisible(p))
-            .sort((p1, p2) => {
-              const order1 = p1.config.order || 1000
-              const order2 = p2.config.order || 1000
-              return order1 - order2
+        } else if (err.message === 0 || err.status === 0) {
+          // XhrHttpRequest has message & status 0 if the redirected request failed due to CORS policy
+          // Follow the authentication redirect by unloading service-worker and reloading PWA
+          if ('serviceWorker' in window.navigator) {
+            window.navigator.serviceWorker.getRegistration().then((reg) => {
+              reg.unregister().then(() => {
+                console.info('Unregistered service-worker, reloading now.')
+                window.location.reload()
+              })
             })
-          this.updateTitle()
-
-          if (data[2]) {
-            dayjs.locale(data[2], null, false)
-            console.log('dayjs locale set to', dayjs.locale())
           }
-          // load & build the semantic model
-          useModelStore().loadSemanticModel()
-        })
-        .then(() => {
-          // finished with loading
-          this.ready = true
-          return Promise.resolve()
-        })
+        } else {
+          // Make sure this is set to a value, otherwise the page won't show up
+          this.communicationFailureMsg = err.message || err.status || 'Unknown Error'
+          return Promise.reject(
+            'openHAB REST API connection failed with error: ' + err.message || err.status
+          )
+        }
+      }).then(({ data: rootResponse }) => {
+        // store the REST API services present on the system
+        useRuntimeStore().setRootResource(rootResponse)
+        if (!useRuntimeStore().apiEndpoint('auth')) useUserStore().setNoAuth(true)
+        return rootResponse
+      }).then((rootResponse) => {
+        const locale = useRuntimeStore().locale.toLocaleLowerCase()
+        let dayjsLocalePromise = Promise.resolve(null)
+        // try to resolve the dayjs file to load if it exists
+        if (locale) {
+          let dayjsLocale = dayjsLocales.find(
+            (l) => l.key === locale || l.key === locale.toLowerCase() || l.key === locale.split('-')[0]
+          )
+          // fix for missing definitions in en.js locale, see https://github.com/iamkun/dayjs/blob/dev/src/locale/en.js
+          if (dayjsLocale?.key === 'en') dayjsLocale = dayjsLocales.find((l) => l.key === 'en-gb')
+
+          // there is no single Norwegian locale in dayjs, so use nb (Norwegian Bokmål)
+          if (dayjsLocale?.key === 'no') dayjsLocale = dayjsLocales.find((l) => l.key === 'nb')
+
+          dayjsLocalePromise = dayjsLocale
+            ? import(`../node_modules/dayjs/esm/locale/${dayjsLocale.key}.js`).then((data) => {
+              return data.default
+            }).catch((error) => {
+              console.error('Error fetching dayjs: ', error, dayjsLocale)
+            })
+            : Promise.resolve(null)
+        }
+        return Promise.all([
+          useRuntimeStore().apiEndpoint('ui') ? useComponentsStore().loadPagesAndWidgets() : Promise.resolve(),
+          dayjsLocalePromise,
+          useSemanticsStore().loadSemantics(i18n)
+        ])
+      }).then((data) => {
+        this.pages = useComponentsStore().pages()
+          .filter((p) => p.config.sidebar && this.pageIsVisible(p))
+          .sort((p1, p2) => {
+            const order1 = p1.config.order || 1000
+            const order2 = p2.config.order || 1000
+            return order1 - order2
+          })
+        this.updateTitle()
+
+        if (data[2]) {
+          dayjs.locale(data[2], null, false)
+          console.log('dayjs locale set to', dayjs.locale())
+        }
+        // load & build the semantic model
+        useModelStore().loadSemanticModel()
+      }).then(() => {
+        // finished with loading
+        this.ready = true
+        return Promise.resolve()
+      })
     },
     pageIsVisible (page) {
       if (!page.config.visibleTo) return true
