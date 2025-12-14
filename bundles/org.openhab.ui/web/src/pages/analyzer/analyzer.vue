@@ -167,7 +167,7 @@
                     :text="t('analyzer.coords.period.fixed')" />
                 </f7-segmented>
                 <f7-segmented v-if="coordSettings.chartType !== ChartType.dynamic">
-                  <f7-button v-for="type in [ChartType.day, ChartType.isoWeek, ChartType.month, ChartType.year]"
+                  <f7-button v-for="type in [ChartType.day, ChartType.isoWeek, ChartType.week, ChartType.month, ChartType.year]"
                              :key="type"
                              :disabled="!coordSettings.typeOptions.includes(type)"
                              :active="coordSettings.chartType === type"

@@ -30,7 +30,7 @@ const GRID_CONFIG = {
 
 const timeCoordSystem : CoordSystem = {
   initCoordSystem (coordSettings? : Partial<TimeCoordSettings>) : TimeCoordSettings {
-    const typeOptions : ChartType[] = [ChartType.day, ChartType.isoWeek, ChartType.month, ChartType.year]
+    const typeOptions : ChartType[] = [ChartType.day, ChartType.isoWeek, ChartType.week, ChartType.month, ChartType.year]
     return {
       period: coordSettings?.period || Period.D,
       categoryAxisValues: [],
