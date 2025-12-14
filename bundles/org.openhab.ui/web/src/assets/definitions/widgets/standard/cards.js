@@ -93,7 +93,7 @@ export const OhGaugeCardDefinition = () => new WidgetDefinition('oh-gauge-card',
 import KnobParameters from '../system/knob.js'
 export const OhKnobCardDefinition = () => new WidgetDefinition('oh-knob-card', 'Knob & Rounded Slider Card', 'Display a knob or a rounded slider in a card to visualize and control a quantifiable item')
   .paramGroup(CardParameterGroup(), CardParameters())
-  .paramGroup(pg('knob', 'Knob & Rounded Slider', 'Parameters are passed to the underlying <a target="_blank" class="external text-color-blue" href="https://github.com/soundar24/vue-round-slider#props">round-slider control</a>'), KnobParameters())
+  .paramGroup(pg('knob', 'Knob & Rounded Slider', 'Parameters are passed to the underlying <a target="_blank" class="external text-color-blue" href="https://github.com/Artem9989/vue-three-round-slider?tab=readme-ov-file#props">round-slider control</a>'), KnobParameters())
 
 // OhStepperCard
 import StepperParameters from '../system/stepper.js'

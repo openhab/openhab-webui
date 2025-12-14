@@ -1,7 +1,7 @@
 <template>
   <f7-page class="choose-thing-type" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar>
-      <oh-nav-content :title="`Add a new Thing: ${bindingId}`" />
+      <oh-nav-content :title="`Add a new Thing: ${bindingId}`" back-link-url="/settings/things/add/" :f7router />
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
           v-if="initSearchbar"
@@ -266,7 +266,11 @@ export default {
           ],
           [
             this.entryActionsAddAsThingButton(entry, this.loadInbox),
-            this.entryActionsCopyThingDefinitionButton(entry)
+            this.entryActionsCopyThingDefinitionButton(entry),
+            this.entryActionsIgnoreButton(entry, this.loadInbox)
+          ],
+          [
+            this.entryActionsRemoveButton(entry, this.loadInbox)
           ]
         ]
       })

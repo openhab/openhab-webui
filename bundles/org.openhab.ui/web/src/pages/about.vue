@@ -17,7 +17,7 @@
               <small>{{ runtimeStore.runtimeInfo.buildString }}</small>
             </h2>
             <p v-if="runtimeStore.uiInfo.commit">
-              Main UI Commit {{ runtimeStore.uiInfo.commit }}
+              Main UI Commit <a :href="'https://github.com/openhab/openhab-webui/commit/' + runtimeStore.uiInfo.commit" class="external" target="_blank">{{ runtimeStore.uiInfo.commit }}</a>
             </p>
             <p>
               <f7-link external

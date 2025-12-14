@@ -36,7 +36,6 @@
 
 <script>
 import AddLinkPage from '@/pages/settings/things/link/link-add.vue'
-import EditLinkPage from '@/pages/settings/things/link/link-edit.vue'
 import ThingStatus from '@/components/thing/thing-status-mixin'
 import { f7 } from 'framework7-vue'
 
@@ -132,19 +131,7 @@ export default {
         return
       }
 
-      this.f7router.navigate({
-        url: 'links/edit/' + link.channel.uid,
-        route: {
-          component: EditLinkPage,
-          path: 'links/edit/' + link.channel.uid
-        }
-      }, {
-        props: {
-          item: this.item,
-          channel: link.channel,
-          thing: link.thing
-        }
-      })
+      this.f7router.navigate('links/edit/' + link.thing.UID + '/' + link.channel.id.replace('#', '%23'))
     }
   },
   watch: {

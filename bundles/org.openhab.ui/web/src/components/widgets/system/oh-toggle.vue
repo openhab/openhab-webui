@@ -1,9 +1,25 @@
 <template>
   <f7-toggle v-bind="config"
              :checked="value ? true : null"
+             :class="['oh-toggle', (value === null ? 'unknown-state' : '')]"
              @toggle:change="onChange"
              @click.stop />
 </template>
+
+<style lang="stylus">
+.large-vertical-toggle.oh-toggle.unknown-state
+  .toggle-icon::after
+     transform rotate(90deg)
+
+.oh-toggle.unknown-state
+  .toggle-icon::after
+    content '?'
+    font-weight bold
+    color var(--f7-toggle-inactive-color)
+    display flex
+    justify-content center
+    align-items center
+</style>
 
 <script>
 import mixin from '../widget-mixin'
@@ -34,7 +50,8 @@ export default {
       if (value === 'ON') return true
       if (value === 'OFF') return false
       if (value.split(',').length === 3) return (value.split(',')[2] !== '0')
-      return (['0', 'UNDEF', 'NULL', '-'].indexOf(value.toString()) < 0)
+      if (value === 'UNDEF' || value === 'NULL' || value === '-') return null
+      return false
     }
   },
   methods: {

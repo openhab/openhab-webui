@@ -92,6 +92,7 @@
           <f7-list-group>
             <parameter-location :value="location"
                                 :config-description="{ label: t('setupwizard.location.parameterLabel'), name: 'Location' }"
+                                :f7router
                                 @input="(value) => location = value"
                                 :placeholder="t('setupwizard.location.placeholder')" />
           </f7-list-group>
@@ -337,6 +338,7 @@
   .page-content
     margin-top inherit
   .network
+    --f7-list-in-list-padding-left 0
     .block-header
       .item-label
         text-align left
@@ -369,6 +371,9 @@ import AddonsSetupWizard from '@/components/addons/addons-setup-wizard.vue'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
 export default {
+  props: {
+    f7router: Object
+  },
   components: {
     'parameter-location': defineAsyncComponent(() => import('@/components/config/controls/parameter-location.vue')),
     'parameter-options': defineAsyncComponent(() => import('@/components/config/controls/parameter-options.vue')),

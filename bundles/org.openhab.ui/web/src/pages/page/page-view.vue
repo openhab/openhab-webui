@@ -99,11 +99,10 @@
 </style>
 
 <script>
-import { defineAsyncComponent } from 'vue'
+import { defineAsyncComponent, provide } from 'vue'
 import { f7, theme } from 'framework7-vue'
 
 import OhLayoutPage from '@/components/widgets/layout/oh-layout-page.vue'
-import WidgetExpressionMixin from '@/components/widgets/widget-expression-mixin'
 import { actionsMixin } from '@/components/widgets/widget-actions'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 
@@ -111,9 +110,11 @@ import { useStatesStore } from '@/js/stores/useStatesStore'
 import { useComponentsStore } from '@/js/stores/useComponentsStore'
 import { useUserStore } from '@/js/stores/useUserStore'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
+import { useWidgetExpression } from '@/components/widgets/useWidgetExpression.ts'
+import { useViewArea } from '@/composables/useViewArea.ts'
 
 export default {
-  mixins: [WidgetExpressionMixin, actionsMixin],
+  mixins: [actionsMixin],
   components: {
     'oh-layout-page': OhLayoutPage,
     EmptyStatePlaceholder,
@@ -132,7 +133,10 @@ export default {
     f7router: Object
   },
   setup () {
-    return { theme }
+    useViewArea()
+
+    const { evaluateExpression } = useWidgetExpression()
+    return { theme, evaluateExpression }
   },
   data () {
     return {
@@ -147,7 +151,10 @@ export default {
       if (!this.context) return null
       const pageComponent =
         this.pageType === 'tabs'
-          ? this.tabContext(this.context.component.slots.default[this.currentTab]).component
+          ? (this.context.component.slots.default[this.currentTab]
+          // the tabbed page component can be null if this.currentTab is out of bounds
+            ? this.tabContext(this.context.component.slots.default[this.currentTab]).component
+            : null)
           : this.context.component
       if (!pageComponent || !pageComponent.config || !pageComponent.config.style) return null
       return pageComponent.config.style

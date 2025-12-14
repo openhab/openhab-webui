@@ -192,7 +192,7 @@ export default {
           }
         },
         {
-          name: 'startonSunday',
+          name: 'startOnSunday',
           label: 'Start Week on Sunday',
           type: 'BOOLEAN',
           description: 'Check to start the week on Sundays instead of Mondays',
@@ -224,8 +224,7 @@ export default {
           visible: (value, configuration, configDescription, parameters) => {
             return configuration.categoryType === 'values'
           }
-        },
-        gridIndexParameter
+        }
       ]
     }
   },
@@ -462,6 +461,7 @@ export default {
           description: 'Choose from a selection of preset color palettes for the values in range. The default is a yellow (low) to red (high) gradient',
           limitToOptions: true,
           options: [
+            { value: 'yellowred', label: 'Yellow-Red' },
             { value: 'greenred', label: 'Green-Yellow-Red' },
             { value: 'whiteblue', label: 'White-Blue' },
             { value: 'bluered', label: 'Blue-red' }

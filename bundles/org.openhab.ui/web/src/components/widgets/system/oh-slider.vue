@@ -66,7 +66,7 @@ export default {
       return parseFloat(Number(value).toFixed(nbDecimals ?? 0))
     },
     onChange (newValue) {
-      if (isNaN(this.value)) return
+      if (isNaN(this.value) || isNaN(newValue)) return
       const tsf = this.toStepFixed(newValue)
       // Do NOT send command if sliderValue is smaller than real value +-step
       if (Math.abs(tsf - this.value) < (this.config.step || 1)) {

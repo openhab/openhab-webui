@@ -1193,26 +1193,40 @@
 textarea.blocklyHtmlTextAreaInput
   background #ffffff
   color #000000
+
+.blocklyComment .blocklyCommentPreview.blocklyText
+  fill black
+
+.blocklyComment .blocklyText
+  color black
+
+.blocklyTextInputBubble .blocklyTextarea
+  color black
 </style>
 
 <script>
 import { f7 } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
-import Blockly from 'blockly'
+import * as Blockly from 'blockly'
 import { WorkspaceSearch } from '@blockly/plugin-workspace-search'
-import { javascriptGenerator } from 'blockly/javascript.js'
+import { javascriptGenerator } from 'blockly/javascript'
 import DarkTheme from '@blockly/theme-dark'
 import { ZoomToFitControl } from '@blockly/zoom-to-fit'
 import { shadowBlockConversionChangeListener } from '@blockly/shadow-block-converter'
-// TODO-V3.1 import { Multiselect, MultiselectBlockDragger } from '@mit-app-inventor/blockly-plugin-workspace-multiselect'
+import { Multiselect } from '@mit-app-inventor/blockly-plugin-workspace-multiselect'
 import { TypedVariableModal } from '@blockly/plugin-typed-variable-modal'
+import { installAllBlocks } from '@blockly/field-colour'
 
 
 import defineOHBlocks from '@/assets/definitions/blockly'
 import { defineLibraryToolboxCategory } from '@/assets/definitions/blockly/libraries'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+
+let workspace = null
+
+Blockly.ContextMenuItems.registerCommentOptions()
 
 // Vue is configured to treat these elements as custom elements: ['field', 'block', 'category', 'xml', 'mutation', 'value', 'sep']
 
@@ -1225,7 +1239,6 @@ export default {
   data () {
     return {
       blockLibraries: null,
-      workspace: null,
       sinks: [],
       voices: [],
       scripts: [],
@@ -1251,7 +1264,7 @@ export default {
     this.$emit('mounted')
   },
   methods: {
-    load () {
+    async load () {
       const dataPromises = [
         this.$oh.api.get('/rest/rules?summary=true'),
         this.$oh.api.get('/rest/audio/sinks'),
@@ -1314,13 +1327,15 @@ export default {
         persistenceServices: this.persistenceServices,
         transformationServices: this.transformationServices
       })
+
+      installAllBlocks({
+        javascript: javascriptGenerator
+      })
+
       this.addLibraryToToolbox(libraryDefinitions || [])
 
       const options = {
         toolbox: this.$refs.toolbox,
-        //TODO-V3.1 plugins: {
-        // 'blockDragger': MultiselectBlockDragger
-        // },
         horizontalLayout: !this.$device.desktop,
         theme: useUIOptionsStore().getDarkMode() === 'dark' ? DarkTheme : undefined,
         zoom: {
@@ -1351,9 +1366,10 @@ export default {
 
         renderer: this.getCurrentRenderer()
       }
-      this.workspace = Blockly.inject(this.$refs.blocklyEditor, options)
-      this.workspace.addChangeListener(shadowBlockConversionChangeListener)
-      const workspaceSearch = new WorkspaceSearch(this.workspace)
+
+      workspace = Blockly.inject(this.$refs.blocklyEditor, options)
+      workspace.addChangeListener(shadowBlockConversionChangeListener)
+      const workspaceSearch = new WorkspaceSearch(workspace)
       workspaceSearch.init()
 
       const createFlyout = function (workspace) {
@@ -1367,11 +1383,12 @@ export default {
         xmlList = xmlList.concat(blockList)
         return xmlList
       }
-      this.workspace.registerToolboxCategoryCallback(
+
+      workspace.registerToolboxCategoryCallback(
         'CREATE_TYPED_VARIABLE',
         createFlyout
       )
-      const typedVarModal = new TypedVariableModal(this.workspace, 'callbackName', [
+      const typedVarModal = new TypedVariableModal(workspace, 'callbackName', [
         ['Item name', 'oh_item'],
         ['Item object', 'oh_itemtype'],
         ['Thing name', 'oh_thing'],
@@ -1389,20 +1406,19 @@ export default {
       Blockly.utils.colour.setHsvSaturation(0.45) // default
       Blockly.utils.colour.setHsvValue(0.65) // a little bit more contrast for the different colors
 
-      const zoomToFit = new ZoomToFitControl(this.workspace)
+      const zoomToFit = new ZoomToFitControl(workspace)
       zoomToFit.init()
 
-      // TODO-V3.1
-      // const multiselectPlugin = new Multiselect(this.workspace)
-      // multiselectPlugin.init(options)
+      const multiselectPlugin = new Multiselect(workspace)
+      multiselectPlugin.init(options)
 
       this.registerLibraryCallbacks(libraryDefinitions)
       const xml = Blockly.utils.xml.textToDom(this.blocks)
-      Blockly.Xml.domToWorkspace(xml, this.workspace)
-      this.workspace.addChangeListener(this.onChange)
+      Blockly.Xml.domToWorkspace(xml, workspace)
+      workspace.addChangeListener(this.onChange)
 
-      this.workspace.helpurlPrefix = useRuntimeStore().runtimeInfo.buildString === 'Release Build' ? 'next' : 'www'
-      this.workspace.registerButtonCallback('ohBlocklyHelp', function (button) {
+      workspace.helpurlPrefix = useRuntimeStore().runtimeInfo.buildString === 'Release Build' ? 'next' : 'www'
+      workspace.registerButtonCallback('ohBlocklyHelp', function (button) {
         window.open(`https://${button.targetWorkspace.helpurlPrefix}.openhab.org/docs/${button.info.helpurl}`, '_blank')
       })
       Blockly.Workspace.prototype.refresh = function () {
@@ -1423,19 +1439,19 @@ export default {
     },
     registerLibraryCallbacks (definitions) {
       definitions.forEach((definition) => {
-        this.workspace.registerToolboxCategoryCallback('LIBRARY_' + definition.uid, defineLibraryToolboxCategory(definition, f7))
+        workspace.registerToolboxCategoryCallback('LIBRARY_' + definition.uid, defineLibraryToolboxCategory(definition, f7))
       })
     },
     showHideLabels (showLabels) {
-      this.workspace.showLabels = showLabels
-      this.workspace.refresh()
+      workspace.showLabels = showLabels
+      workspace.refresh()
     },
     getBlocks () {
-      const xml = Blockly.Xml.workspaceToDom(this.workspace)
+      const xml = Blockly.Xml.workspaceToDom(workspace)
       return Blockly.Xml.domToText(xml)
     },
     getCode () {
-      return javascriptGenerator.workspaceToCode(this.workspace)
+      return javascriptGenerator.workspaceToCode(workspace)
     },
     getRenderers () {
       const excludedRenderers = ['minimalist']
@@ -1450,12 +1466,12 @@ export default {
     changeRenderer (newRenderer) {
       this.uiOptionsStore.blocklyRenderer = newRenderer
 
-      const dom = Blockly.Xml.workspaceToDom(this.workspace)
-      this.workspace.dispose()
+      const dom = Blockly.Xml.workspaceToDom(workspace)
+      workspace.dispose()
       this.initBlockly(this.blockLibraries)
-      this.workspace.clear()
-      Blockly.Xml.domToWorkspace(dom, this.workspace)
-      this.workspace.refreshToolboxSelection()
+      workspace.clear()
+      Blockly.Xml.domToWorkspace(dom, workspace)
+      workspace.refreshToolboxSelection()
     },
     onChange (event) {
       if (event.type === Blockly.Events.FINISHED_LOADING) {

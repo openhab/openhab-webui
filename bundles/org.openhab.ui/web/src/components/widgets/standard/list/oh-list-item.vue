@@ -32,9 +32,9 @@
     <template #after v-if="$slots.after">
       <slot name="after" />
     </template>
-    <generic-widget-component v-if="context.component.slots && context.component.slots.after && context.component.slots.after.length"
-                              v-bind="$attrs"
-                              :context="childContext(context.component.slots.after[0])" />
+    <template #after v-if="context.component.slots && context.component.slots.after && context.component.slots.after.length">
+      <generic-widget-component v-bind="$attrs" :context="childContext(context.component.slots.after[0])" />
+    </template>
     <f7-accordion-content v-if="context.parent.component.config.accordionList && !context.editmode">
       <generic-widget-component v-if="isRegularAccordion"
                                 v-bind="$attrs"

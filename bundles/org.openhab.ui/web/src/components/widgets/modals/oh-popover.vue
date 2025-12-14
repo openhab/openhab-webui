@@ -1,5 +1,5 @@
 <template>
-  <f7-popover :target="el" :style="modalStyle">
+  <f7-popover :target-el="el" :style="modalStyle">
     <component :is="componentType" :context="context" :class="{ notready: !ready }" />
   </f7-popover>
 </template>
@@ -11,8 +11,17 @@
 
 <script>
 import modal from './modal-mixin'
+import { useViewArea } from '@/composables/useViewArea.ts'
 
 export default {
-  mixins: [modal]
+  mixins: [modal],
+  props: {
+    uid: String,
+    el: Object,
+    modalConfig: Object
+  },
+  setup () {
+    useViewArea()
+  }
 }
 </script>

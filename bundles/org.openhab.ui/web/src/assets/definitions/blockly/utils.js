@@ -1,4 +1,4 @@
-import { javascriptGenerator } from 'blockly/javascript.js'
+import { javascriptGenerator } from 'blockly/javascript'
 
 /*
 * Function allowing to call classes within the OSGi container
@@ -100,4 +100,55 @@ export function blockGetCheckedInputType (block, inputName) {
     }
   }
   return ''
+}
+
+/**
+ * Generate code representing the specified value input.
+ *
+ * Provides Blockly v10 behaviour for Blockly v11+: Don't throw a ReferenceError if specified input does not exist.
+ *
+ * @param {import('blockly/core/block.d.ts').Block} block The block containing the input.
+ * @param {string} name The name of the input.
+ * @param {number} outerOrder The maximum binding strength (minimum order value) of any
+ *     operators adjacent to "block".
+ * @returns {string} Generated code or '' if no blocks are connected or the specified input does not exist.
+ */
+export function valueToCode (block, name, outerOrder) {
+  let code = ''
+  try {
+    code = javascriptGenerator.valueToCode(block, name, outerOrder)
+  } catch (e) {
+    if (e instanceof ReferenceError) {
+      // Ignore to restore Blockly v10 behavior
+    } else {
+      throw e
+    }
+  }
+  return code
+}
+
+/**
+ * Generate a code string representing the blocks attached to the named
+ * statement input. Indent the code.
+ * This is mainly used in generators. When trying to generate code to evaluate
+ * look at using workspaceToCode or blockToCode.
+ *
+ * Provides Blockly v10 behaviour for Blockly v11+: Don't throw a ReferenceError if specified input does not exist.
+ *
+ * @param {import('blockly/core/block.d.ts').Block} block The block containing the input.
+ * @param {string} name The name of the input.
+ * @returns {string} Generated code or '' if no blocks are connected or the specified input does not exist.
+ */
+export function statementToCode (block, name) {
+  let code = ''
+  try {
+    code = javascriptGenerator.statementToCode(block, name)
+  } catch (e) {
+    if (e instanceof ReferenceError) {
+      // Ignore to restore Blockly v10 behavior
+    } else {
+      throw e
+    }
+  }
+  return code
 }

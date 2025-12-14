@@ -22,11 +22,11 @@
           <f7-preloader />
           <div>Loading...</div>
         </f7-block>
-        <f7-block class="block-narrow" v-if="ready && !previewMode">
+        <f7-block v-if="ready && !previewMode" class="block-narrow no-margin-bottom">
           <page-settings :page="page" :createMode="createMode" :f7router />
         </f7-block>
 
-        <f7-block class="block-narrow" style="padding-bottom: 8rem" v-if="ready">
+        <f7-block v-if="ready" class="block-narrow no-margin-top" style="padding-bottom: 10rem">
           <f7-col>
             <f7-block-title>Tabs</f7-block-title>
             <f7-menu v-if="clipboardType === 'oh-tab'">
@@ -52,7 +52,7 @@
                            :height="32" />
                 </template>
                 <template #content-start>
-                  <f7-menu class="configure-layout-menu">
+                  <f7-menu class="configure-tabs-menu">
                     <f7-menu-item icon-f7="list_bullet" dropdown>
                       <f7-menu-dropdown>
                         <f7-menu-dropdown-item @click="configureWidget(tab, { component: page })" href="#" text="Configure Tab" />
@@ -90,11 +90,9 @@
 
 <style lang="stylus">
 .tabs-editor
-  .page-code-editor.vue-codemirror
-    display block
-    top calc(var(--f7-navbar-height) + var(--f7-tabbar-height))
-    height calc(100% - 2*var(--f7-navbar-height))
-    width 100%
+  .page-code-editor.v-codemirror
+    position absolute
+    height calc(100% - var(--f7-navbar-height) - var(--f7-toolbar-height))
   .tabs-list
     .item-link
       overflow inherit
@@ -111,7 +109,7 @@ import { defineAsyncComponent } from 'vue'
 import { f7, theme } from 'framework7-vue'
 
 import PageDesignerMixin from '@/pages/settings/pages/pagedesigner-mixin'
-import WidgetExpressionMixin from '@/components/widgets/widget-expression-mixin'
+import { useWidgetExpression } from '@/components/widgets/useWidgetExpression.ts'
 
 import YAML from 'yaml'
 
@@ -122,7 +120,7 @@ import PageSettings from '@/components/pagedesigner/page-settings.vue'
 const ConfigurableWidgets = { OhTabDefinition }
 
 export default {
-  mixins: [PageDesignerMixin, WidgetExpressionMixin],
+  mixins: [PageDesignerMixin],
   components: {
     editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')),
     PageSettings
@@ -134,7 +132,8 @@ export default {
     f7route: Object
   },
   setup () {
-    return { theme }
+    const { evaluateExpression } = useWidgetExpression()
+    return { theme, evaluateExpression }
   },
   data () {
     return {

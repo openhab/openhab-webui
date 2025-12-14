@@ -3,6 +3,7 @@
   "HANDLER_INITIALIZING_ERROR": "שגיאה: מפעיל",
   "HANDLER_MISSING_ERROR": "שגיאה: מפעיל",
   "TEMPLATE_MISSING_ERROR": "שגיאה: תבנית",
+  "TEMPLATE_PENDING": "תבנית בהמתנה",
   "INVALID_RULE": "לא מאושר",
   "DISABLED": "מבוטל"
 }

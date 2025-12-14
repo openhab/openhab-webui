@@ -11,7 +11,6 @@
       @input="updateValue"
       :required="configDescription.required"
       validate
-      validate-on-blur
       :clear-button="false"
       type="number" />
   </ul>
@@ -34,8 +33,8 @@ export default {
       return (this.configDescription.type === 'DECIMAL') ? parseFloat(this.value) : parseInt(this.value)
     },
     step () {
-      if (this.configDescription.stepsize === 0) return 'any'
-      return this.configDescription.stepsize
+      let result = this.configDescription.step || this.configDescription.stepsize
+      return result === 0 ? 'any' : result
     }
   },
   methods: {

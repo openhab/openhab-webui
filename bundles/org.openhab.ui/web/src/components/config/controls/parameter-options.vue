@@ -13,7 +13,7 @@
         <option v-for="option in configDescription.options"
                 :value="option.value"
                 :key="option.value"
-                :selected="isSelected(option) ? true : null">
+                :selected="isSelected(option)">
           {{ option.label }}
         </option>
       </select>
@@ -57,7 +57,7 @@ import { f7, theme } from 'framework7-vue'
 export default {
   props: {
     configDescription: Object,
-    value: [String, Array]
+    value: [Number, String, Array]
   },
   emits: ['input'],
   data () {
@@ -98,15 +98,14 @@ export default {
       this.$emit('input', value)
     },
     isSelected (option) {
-      let optVal = option.value
-      if (this.configDescription.type === 'INTEGER') optVal = parseInt(optVal)
-      if (this.configDescription.type === 'DECIMAL') optVal = parseFloat(optVal)
-
       if (this.value === null || this.value === undefined) return
+      let castedVal = null
+      if (this.configDescription.type === 'INTEGER') castedVal = parseInt(option.value)
+      if (this.configDescription.type === 'DECIMAL') castedVal = parseFloat(option.value)
       if (!this.configDescription.multiple) {
-        return this.value === optVal
+        return this.value === option.value || this.value === castedVal
       } else {
-        return this.value && this.value.indexOf(optVal) >= 0
+        return this.value && (this.value.indexOf(option.value) >= 0 || this.value.indexOf(castedVal) >= 0)
       }
     }
   }

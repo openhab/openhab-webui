@@ -517,6 +517,9 @@ import copyToClipboard from '@/js/clipboard'
 
 export default {
   mixins: [MovablePopupMixin],
+  props: {
+    f7router: Object
+  },
   setup () {
     return {
       theme

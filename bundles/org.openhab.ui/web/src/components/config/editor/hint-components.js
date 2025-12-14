@@ -1,6 +1,6 @@
 import { insertCompletionText, pickedCompletion } from '@codemirror/autocomplete'
 import { lineIndent, findParent, isConfig, isComponent, isSlots, findComponentType } from './yaml-utils'
-import { completionStart, hintBooleanValue, hintItems, hintParameterOptions, hintParameters } from './hint-utils'
+import { completionStart, hintItems, hintParameterValues, hintParameters } from './hint-utils'
 
 import * as f7vue from 'framework7-vue'
 
@@ -264,17 +264,7 @@ function hintConfig (context, line, parentLine) {
     if (line.text.includes('=')) {
       return hintExpression(context, line)
     }
-    const parameterName = line.text.substring(0, colonPos).trim()
-    const parameter = parameters.find((p) => p.name === parameterName)
-    if (parameter) {
-      if (parameter.type === 'BOOLEAN') {
-        return hintBooleanValue(context, line, colonPos)
-      } else if (parameter.context === 'item') {
-        return hintItems(context, { replaceAfterColon: true })
-      } else if (parameter.options) {
-        return hintParameterOptions(context, parameter, colonPos)
-      }
-    }
+    return hintParameterValues(context, parameters, line, colonPos)
   } else {
     console.debug(widgetDefinition)
     const parentIndent = lineIndent(parentLine)

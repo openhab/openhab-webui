@@ -1,8 +1,4 @@
-import dayjs from 'dayjs'
-import LocalizedFormat from 'dayjs/plugin/localizedFormat'
 import ComponentId from '../../component-id'
-
-dayjs.extend(LocalizedFormat)
 
 export default {
   get (component, points, startTime, endTime, chart) {

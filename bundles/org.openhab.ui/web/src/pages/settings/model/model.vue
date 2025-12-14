@@ -1,5 +1,6 @@
 <template>
   <f7-page name="Model"
+           class="model-page"
            @page:afterin="onPageAfterIn"
            @page:beforeout="onPageBeforeOut">
     <f7-navbar>
@@ -7,7 +8,7 @@
                       back-link="Settings"
                       back-link-url="/settings/"
                       :f7router />
-      <f7-subnavbar :inner="false" v-show="initSearchbar" style="height: var(--f7-searchbar-height)">
+      <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
           v-if="initSearchbar"
           ref="searchbar"
@@ -115,6 +116,7 @@
                             :includeItemTags="includeItemTags"
                             :canDragDrop="true"
                             @selected="selectItem"
+                            @clear-selected="clearSelection"
                             :selected="selectedItem"
                             @reload="load"
                             @click.stop />
@@ -268,6 +270,8 @@
   user-select: none
   margin 0 !important
   border-right 1px solid var(--f7-block-strong-border-color)
+  overflow clip
+  text-overflow ellipsis
 .model-details-sheet
   .toolbar
     --f7-theme-color var(--f7-color-blue)
@@ -308,13 +312,16 @@
     padding-left 0px
     padding-right 0px
 
-.expand-button
-  height unset
-  margin-right 8px
-  text-overflow unset
-  align-self center
-  .icon
-    margin-bottom 2.75px !important
+.model-page
+  .subnavbar
+    background-color var(--f7-searchbar-bg-color, var(--f7-bars-bg-color))
+  .expand-button
+    height unset
+    margin-right 8px
+    text-overflow unset
+    align-self center
+    .icon
+      margin-bottom 2.75px !important
 </style>
 
 <script>
@@ -469,6 +476,11 @@ export default {
       this.eventSource = null
     },
     selectItem (item) {
+      // Allow deselecting by clicking a second time
+      if (this.selectedItem === item) {
+        this.clearSelection()
+        return
+      }
       this.selectedItem = item
       if (this.newItem && (!item || item.item.name !== this.newItem.name)) {
         this.newItem = null
@@ -482,8 +494,9 @@ export default {
       }
     },
     clearSelection (ev) {
-      if (ev.target && ev.currentTarget && ev.target === ev.currentTarget) {
+      if (!ev || (ev.target && ev.currentTarget && ev.target === ev.currentTarget)) {
         this.selectedItem = null
+        this.previousSelection = null
         this.detailsOpened = false
       }
     },

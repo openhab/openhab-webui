@@ -67,7 +67,7 @@
             </f7-link>
           </f7-nav-right>
         </f7-navbar>
-        <f7-block v-if="widget.props">
+        <f7-block v-if="widget.props" class="no-padding">
           <f7-col>
             <f7-block-footer>
               Please note that expressions in properties are not evaluated inside the widget editor,
@@ -88,7 +88,8 @@
 .widget-editor
   margin-top 0 !important
   margin-bottom 0 !important
-  padding 0
+  padding-left 0
+  padding-right 0
   z-index auto !important
   top 0
   height calc(100%)
@@ -101,8 +102,7 @@
       overflow auto
     .widget-code
       height 100%
-  .vue-codemirror
-    top 0
+  .v-codemirror
     height 100%
   &.vertical
     .block

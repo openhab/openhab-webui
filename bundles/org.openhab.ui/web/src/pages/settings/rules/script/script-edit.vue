@@ -262,9 +262,7 @@
 <style lang="stylus">
 .rule-script-editor.v-codemirror
   position absolute
-  top calc(var(--f7-navbar-height) + var(--f7-tabbar-height))
-  height calc(100% - var(--f7-navbar-height, 56px) - var(--f7-tabbar-height, 48px))
-  width 100%
+  height calc(100% - var(--f7-navbar-height) - var(--f7-toolbar-height))
 </style>
 
 <script>
@@ -358,7 +356,7 @@ export default {
       return this.rule && this.rule.editable !== false
     },
     isBlockly () {
-      return this.currentModule && this.currentModule.configuration && this.currentModule.configuration.blockSource
+      return this.currentModule?.configuration?.blockSource?.length > 0
     },
     isJsAvailable () {
       return this.isMimeTypeAvailable(this.GRAALJS_MIME_TYPE)
@@ -485,7 +483,7 @@ export default {
         return
       }
       if (!this.rule.name) {
-        f7.dialog.alert('Please give a name to the script')
+        f7.dialog.alert('Please give a label to the script')
         return
       }
 

@@ -97,9 +97,10 @@ let itemsCache = null
  * @param {number|null} [options.indent=null] - If set, replace the entire current line and prepend this many spaces to the insertion.
  * @param {string} [options.prefix=''] - Prefix to add before the item name when inserting.
  * @param {string} [options.suffix=''] - Suffix to add after the item name when inserting.
+ * @param {boolean} [options.groupsOnly=false] - If true, only include Group items in the completion list.
  * @returns {Promise<import("@codemirror/autocomplete").CompletionResult>} Promise that resolves to a CompletionResult.
  */
-export async function hintItems (context, { replaceAfterColon = false, indent = null, prefix = '', suffix = '' } = {}) {
+export async function hintItems (context, { replaceAfterColon = false, indent = null, prefix = '', suffix = '', groupsOnly = false } = {}) {
   const promise = itemsCache
     ? Promise.resolve(itemsCache)
     : context.view.$oh.api.get('/rest/items?staticDataOnly=true')
@@ -133,53 +134,20 @@ export async function hintItems (context, { replaceAfterColon = false, indent = 
       view.dispatch(insertCompletionText(view.state, insert, from, to))
     }
 
+    const items = groupsOnly ? data.filter((item) => item.type === 'Group') : data
     return {
       from: completionStart(context),
       validFor: /\w+/,
-      options: data
-        .map((item) => {
-          return {
-            label: item.name,
-            info: `${item.label ? item.label + ' ' : ''}(${item.type})`,
-            type: item.type === 'Group' ? 'groupitem' : 'item',
-            apply
-          }
-        })
+      options: items.map((item) => {
+        return {
+          label: item.name,
+          info: `${item.label ? item.label + ' ' : ''}(${item.type})`,
+          type: item.type === 'Group' ? 'groupitem' : 'item',
+          apply
+        }
+      })
     }
   })
-}
-
-/**
- * Provide completion entries for a parameter's allowed options.
- *
- * @param {import("@codemirror/autocomplete").CompletionContext} context - CodeMirror completion context.
- * @param {Object} parameter - Parameter descriptor containing an `options` array:
- *        { options: Array<{ value: string, label?: string }> }.
- * @param {number} colonPos - Zero-based index of the colon character on the line; insertion starts after `colonPos + 2`.
- * @returns {import("@codemirror/autocomplete").CompletionResult} CompletionResult.
- */
-export function hintParameterOptions (context, parameter, colonPos) {
-  const apply = (view, completion, _from, _to) => {
-    const line = view.state.doc.lineAt(context.pos)
-    const from = line.from + colonPos + 2
-    const to = line.to
-    const insert = completion.label
-    view.dispatch(insertCompletionText(view.state, insert, from, to))
-  }
-
-  let boost = 0
-  return {
-    from: completionStart(context, ParameterOptions),
-    validFor: ParameterOptions,
-    options: parameter.options.map((o) => {
-      return {
-        label: o.value,
-        info: o.label || o.value,
-        apply,
-        boost: boost-- // preserve the original order, don't sort alphabetically
-      }
-    }).filter((o) => o.label) // discard empty options
-  }
 }
 
 /**
@@ -216,5 +184,62 @@ export function hintParameters (context, parameters, indent) {
         type: getCompletionType(p.type)
       }
     })
+  }
+}
+
+/**
+ * Provide completion entries for a parameter's allowed options.
+ *
+ * @param {import("@codemirror/autocomplete").CompletionContext} context - CodeMirror completion context.
+ * @param {Object} parameter - Parameter descriptor containing an `options` array:
+ *        { options: Array<{ value: string, label?: string }> }.
+ * @param {number} colonPos - Zero-based index of the colon character on the line; insertion starts after `colonPos + 2`.
+ * @returns {import("@codemirror/autocomplete").CompletionResult} CompletionResult.
+ */
+export function hintParameterOptions (context, parameter, colonPos) {
+  const apply = (view, completion, _from, _to) => {
+    const line = view.state.doc.lineAt(context.pos)
+    const from = line.from + colonPos + 2
+    const to = line.to
+    const insert = completion.label
+    view.dispatch(insertCompletionText(view.state, insert, from, to))
+  }
+
+  let boost = 0
+  return {
+    from: completionStart(context, ParameterOptions),
+    validFor: ParameterOptions,
+    options: parameter.options.map((o) => {
+      return {
+        label: o.value,
+        info: o.label || o.value,
+        apply,
+        boost: boost-- // preserve the original order, don't sort alphabetically
+      }
+    }).filter((o) => o.label) // discard empty options
+  }
+}
+
+/**
+ * Provide completion entries for parameter values based on parameter type.
+ *
+ * @param {import("@codemirror/autocomplete").CompletionContext} context - CodeMirror completion context.
+ * @param {Array<{name: string, description?: string, type?: string}>} parameters - Array of parameter descriptors.
+ *        Each descriptor should have a `name` and may include `description` and `type`.
+ * @param {Line} line The current line
+ * @param {number} colonPos The position of the colon
+ * @returns {CompletionResult}
+ */
+export function hintParameterValues (context, parameters, line, colonPos) {
+  const parameterName = line.text.substring(0, colonPos).trim()
+  const parameter = parameters.find((p) => p.name === parameterName)
+  if (parameter) {
+    if (parameter.type === 'BOOLEAN') {
+      return hintBooleanValue(context, line, colonPos)
+    } else if (parameter.context === 'item') {
+      return hintItems(context, { replaceAfterColon: true })
+    } else if (parameter.options) {
+      return hintParameterOptions(context, parameter, colonPos)
+    }
   }
 }

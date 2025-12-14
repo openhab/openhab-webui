@@ -3,10 +3,10 @@
 * supports jsscripting
 */
 
-import Blockly from 'blockly'
-import { javascriptGenerator } from 'blockly/javascript.js'
+import * as Blockly from 'blockly'
+import { javascriptGenerator } from 'blockly/javascript'
 import { FieldThingPicker } from './fields/thing-field.js'
-import { blockGetCheckedInputType } from './utils.js'
+import { blockGetCheckedInputType, valueToCode } from './utils.js'
 
 export default function defineOHBlocks (f7) {
   Blockly.Blocks['oh_thing'] = {
@@ -42,7 +42,7 @@ export default function defineOHBlocks (f7) {
   }
 
   javascriptGenerator.forBlock['oh_getthing'] = function (block) {
-    const thingUid = javascriptGenerator.valueToCode(block, 'thingUid', javascriptGenerator.ORDER_ATOMIC)
+    const thingUid = valueToCode(block, 'thingUid', javascriptGenerator.ORDER_ATOMIC)
     return [`things.getThing(${thingUid})`, 0]
   }
 
@@ -60,7 +60,7 @@ export default function defineOHBlocks (f7) {
   }
 
   javascriptGenerator.forBlock['oh_getthing_state'] = function (block) {
-    const thingUid = javascriptGenerator.valueToCode(block, 'thingUid', javascriptGenerator.ORDER_ATOMIC)
+    const thingUid = valueToCode(block, 'thingUid', javascriptGenerator.ORDER_ATOMIC)
     const inputType = blockGetCheckedInputType(block, 'thingUid')
     const code = (inputType === 'oh_thingtype') ? `${thingUid}.status` : `things.getThing(${thingUid}).status`
     return [code, 0]
@@ -97,7 +97,7 @@ export default function defineOHBlocks (f7) {
   }
 
   javascriptGenerator.forBlock['oh_getthing'] = function (block) {
-    const thingUid = javascriptGenerator.valueToCode(block, 'thingUid', javascriptGenerator.ORDER_ATOMIC)
+    const thingUid = valueToCode(block, 'thingUid', javascriptGenerator.ORDER_ATOMIC)
     return [`things.getThing(${thingUid})`, 0]
   }
 
@@ -172,7 +172,7 @@ export default function defineOHBlocks (f7) {
 * Code part
 */
   javascriptGenerator.forBlock['oh_getthing_attribute'] = function (block) {
-    const thing = javascriptGenerator.valueToCode(block, 'thing', javascriptGenerator.ORDER_ATOMIC)
+    const thing = valueToCode(block, 'thing', javascriptGenerator.ORDER_ATOMIC)
     const inputType = blockGetCheckedInputType(block, 'thing')
     const attributeName = block.getFieldValue('attributeName')
     const code = (inputType === 'oh_thing') ? `things.getThing(${thing}).${attributeName}` : `${thing}.${attributeName}`

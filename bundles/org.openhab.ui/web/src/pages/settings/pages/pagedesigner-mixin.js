@@ -105,7 +105,7 @@ export default {
             ev.preventDefault()
             break
           case 83:
-            this.save(!this.createMode)
+            this.save()
             ev.stopPropagation()
             ev.preventDefault()
             break
@@ -137,7 +137,7 @@ export default {
         })
       }
     },
-    save (stay) {
+    save () {
       if (this.currentTab === 'code' && !this.fromYaml()) return
       if (!this.page.uid) {
         f7.dialog.alert('Please give an ID to the page')
@@ -163,7 +163,7 @@ export default {
       const promise = (this.createMode)
         ? this.$oh.api.postPlain('/rest/ui/components/ui:page', JSON.stringify(this.page), 'text/plain', 'application/json')
         : this.$oh.api.put('/rest/ui/components/ui:page/' + this.page.uid, this.page)
-      promise.then((data) => {
+      promise.then(() => {
         this.dirty = false
         this.savedPage = cloneDeep(this.page)
         if (this.createMode) {
@@ -182,7 +182,6 @@ export default {
           }).open()
         }
         f7.emit('sidebarRefresh', null)
-        // if (!stay) this.f7router.back()
       }).catch((err) => {
         console.error('Error while saving page: ', err)
         f7.toast.create({

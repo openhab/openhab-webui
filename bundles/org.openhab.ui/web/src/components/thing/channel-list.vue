@@ -62,6 +62,7 @@
                         #default="{ channelId, channelType, channel, extensible }">
                 <channel-link :opened="openedChannelId === channelId"
                               :thing="thing"
+                              :thingType="thingType"
                               :channelId="channelId"
                               :channelType="channelType"
                               :channel="channel"
@@ -72,7 +73,7 @@
               </template>
               <template v-else-if="multipleLinksMode" #default="{ channelType, channel }">
                 <item-picker v-if="isChecked(channel) && hasLinks(channel)"
-                             :title="selectedItem(channel) ? 'Change Item Selection' : 'Pick Existing Linked Item'"
+                             :label="selectedItem(channel) ? 'Change Item Selection' : 'Pick Existing Linked Item'"
                              textColor="blue"
                              :hideIcon="true"
                              :items="items.filter((i) => channel.linkedItems.includes(i.name))"

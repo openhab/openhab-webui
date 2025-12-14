@@ -1,6 +1,6 @@
-import Blockly from 'blockly'
-import { javascriptGenerator } from 'blockly/javascript.js'
-import { addOSGiService } from './utils.js'
+import * as Blockly from 'blockly'
+import { javascriptGenerator } from 'blockly/javascript'
+import { addOSGiService, statementToCode, valueToCode } from './utils.js'
 
 const generateCodeForBlock = (block) => {
   const blockTypeId = block.openhab.blockTypeId
@@ -57,7 +57,7 @@ const generateCodeForBlock = (block) => {
           return code.replace(placeholder, context.fields[placeholderName])
         case 'input':
           const order = placeholderOption ? javascriptGenerator.forBlock['ORDER_' + placeholderOption.replace('ORDER_', '')] : javascriptGenerator.ORDER_NONE
-          context.inputs[placeholderName] = javascriptGenerator.valueToCode(block, placeholderName, order)
+          context.inputs[placeholderName] = valueToCode(block, placeholderName, order)
           return code.replace(placeholder, context.inputs[placeholderName])
         case 'utility':
           if (!context.utilities[placeholderName]) {
@@ -66,13 +66,13 @@ const generateCodeForBlock = (block) => {
           return code.replace(placeholder, context.utilities[placeholderName])
         case 'temp_name':
           if (!context.uniqueIdentifiers[placeholderName]) {
-            const realm = placeholderOption ? Blockly.Variables[placeholderOption] : Blockly.Variables.NAME_TYPE
+            const realm = placeholderOption ? Blockly.Names[placeholderOption] : Blockly.Names.NameType
             context.uniqueIdentifiers[placeholderName] = javascriptGenerator.variableDB_.getDistinctName(placeholderName, realm)
           }
           return code.replace(placeholder, context.uniqueIdentifiers[placeholderName])
         case 'statements':
           if (!context.statements[placeholderName]) {
-            context.statements[placeholderName] = javascriptGenerator.statementToCode(block, placeholderName)
+            context.statements[placeholderName] = statementToCode(block, placeholderName)
           }
           return code.replace(placeholder, context.statements[placeholderName].replace(/^ {2}/, '').trim())
         default:

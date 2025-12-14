@@ -33,6 +33,7 @@ import org.openhab.core.library.types.HSBType;
 import org.openhab.core.library.types.QuantityType;
 import org.openhab.core.model.sitemap.sitemap.Widget;
 import org.openhab.core.types.State;
+import org.openhab.core.types.UnDefType;
 import org.openhab.core.ui.items.ItemUIRegistry;
 import org.openhab.core.util.ColorUtil;
 import org.openhab.ui.basic.internal.WebAppConfig;
@@ -141,6 +142,12 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
         String state = getState(w);
         snippet = snippet.replace("%state%", escapeHtml(state));
         snippet = snippet.replace("%state_in_url%", escapeURL(state));
+        State widgetState = itemUIRegistry.getState(w);
+        if (UnDefType.UNDEF.equals(widgetState) || UnDefType.NULL.equals(widgetState)) {
+            snippet = snippet.replace("%unknown_state%", "unknown-state");
+        } else {
+            snippet = snippet.replace("%unknown_state%", "");
+        }
 
         return snippet;
     }

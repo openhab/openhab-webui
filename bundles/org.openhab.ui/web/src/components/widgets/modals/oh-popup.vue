@@ -1,6 +1,6 @@
 <template>
   <f7-popup>
-    <f7-page :style="modalStyle">
+    <f7-page :style="modalStyle" class="oh-popup">
       <f7-navbar
         :title="(context.component.config && context.component.config.label) ? context.component.config.label : ''"
         :back-link="$t('dialogs.back')" />
@@ -41,13 +41,15 @@
 </template>
 
 <style lang="stylus">
-.notready
-  visibility hidden
+.oh-popup
+  .notready
+    visibility hidden
 </style>
 
 <script>
 import modal from './modal-mixin'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
+import { useViewArea } from '@/composables/useViewArea.ts'
 
 export default {
   mixins: [modal],
@@ -58,7 +60,9 @@ export default {
   },
   components: {
     EmptyStatePlaceholder
-
+  },
+  setup () {
+    useViewArea()
   }
 }
 </script>

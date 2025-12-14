@@ -112,6 +112,10 @@
 .dark #swaggerUi
   .loading, .model-toggle, svg
     filter invert(1) opacity(0.5)
+.swagger-ui .download-contents
+  display none !important
+.swagger-ui .copy-to-clipboard
+  right 10px !important
 </style>
 
 <script>
@@ -119,6 +123,9 @@ import auth from '@/components/auth-mixin.js'
 
 export default {
   mixins: [auth],
+  props: {
+    f7router: Object
+  },
   methods: {
     onPageAfterIn () {
       const swaggerCss = import(/* webpackChunkName: "swagger-css" */ 'swagger-ui-dist/swagger-ui.css')

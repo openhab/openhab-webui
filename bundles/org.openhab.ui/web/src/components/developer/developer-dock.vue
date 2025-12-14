@@ -91,11 +91,13 @@
   .page-content
     scrollbar-width none /* Firefox */
     -ms-overflow-style none  /* IE 10+ */
+  .navbar-inner.navbar-inner-centered-title
+    .title
+      max-width none
 </style>
 
 <script>
 import { f7 } from 'framework7-vue'
-import { nextTick } from 'vue'
 import { mapStores } from 'pinia'
 
 import DeveloperSidebar from './developer-sidebar.vue'

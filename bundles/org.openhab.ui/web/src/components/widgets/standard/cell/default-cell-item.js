@@ -99,7 +99,7 @@ export default function itemDefaultCellComponent (item, itemNameAsFooter) {
           config: {
             min: stateDescription.minimum,
             max: stateDescription.maximum,
-            stepSize: stateDescription.step
+            step: stateDescription.step
           }
         }
       }

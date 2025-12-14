@@ -13,14 +13,9 @@
                  :f7router
                  @input="updateValue" />
     </f7-list-group>
-    <f7-list-item v-else-if="readOnly && configDescription.context === 'password'"
-                  :is="passwords"
-                  :config-description="configDescription"
-                  :value="value"
-                  :parameters="parameters"
-                  :configuration="configuration"
-                  :title="configDescription.title" />
-    <f7-list-item v-else :title="configDescription.label" :after="value !== undefined && value !== null ? value.toString() : 'N/A'" />
+    <f7-list-item v-else
+                  :title="configDescription.label"
+                  :after="value !== undefined && value !== null ? (configDescription.context === 'password' ? '•'.repeat(20) : value.toString()) : 'N/A'" />
     <template #after-list>
       <f7-block-footer class="param-description">
         <div v-if="status" class="param-status-info">
@@ -38,6 +33,8 @@
 </template>
 
 <script>
+import { f7 } from 'framework7-vue'
+
 // import ScriptEditorPopup from './config/script-editor-popup.vue'
 import ParameterThing from './controls/parameter-thing.vue'
 import ParameterBoolean from './controls/parameter-boolean.vue'
@@ -58,7 +55,7 @@ import ParameterProps from './controls/parameter-props.vue'
 import ParameterTriggerChannel from './controls/parameter-triggerchannel.vue'
 import ParameterText from './controls/parameter-text.vue'
 import ParameterQrcode from './controls/parameter-qrcode.vue'
-import { f7 } from 'framework7-vue'
+import ParameterMonth from '@/components/config/controls/parameter-month.vue'
 
 export default {
   props: {
@@ -79,14 +76,12 @@ export default {
     }
   },
   computed: {
-    passwords () {
-      const configDescription = this.configDescription
-      configDescription.readOnly = true
-      return ParameterText
+    maskedPassword () {
+      return '•'.repeat(20)
     },
     control () {
       const configDescription = this.configDescription
-      if (configDescription.options?.length && configDescription.limitToOptions && (!configDescription.context || configDescription.context === 'network-interface')) {
+      if (configDescription.options?.length && configDescription.limitToOptions && (!configDescription.context || configDescription.context === 'network-interface' || configDescription.context === 'serial-port')) {
         return ParameterOptions
       } else if (configDescription.type === 'INTEGER' || configDescription.type === 'DECIMAL') {
         return ParameterNumber
@@ -98,6 +93,8 @@ export default {
         return ParameterLocation
       } else if (configDescription.type === 'TEXT' && configDescription.context === 'cronexpression') {
         return ParameterCronExpression
+      } else if (configDescription.type === 'TEXT' && configDescription.context === 'month') {
+        return ParameterMonth
       } else if (configDescription.type === 'TEXT' && configDescription.context === 'dayOfWeek') {
         return ParameterDayOfWeek
       } else if (configDescription.type === 'TEXT' && configDescription.context === 'time') {

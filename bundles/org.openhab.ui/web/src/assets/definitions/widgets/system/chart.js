@@ -36,5 +36,5 @@ export default () => [
     { value: 0.50, label: '50% - 1/2 past, 1/2 future' },
     { value: 0.75, label: '75% - 1/4 past, 3/4 future' },
     { value: 1, label: '100% - Future only' }
-  ])
+  ]).d(0)
 ]

@@ -213,7 +213,7 @@
       <f7-fab v-show="!showCheckboxes"
               position="right-bottom"
               color="blue"
-              href="/settings/things/add">
+              href="/settings/things/add/">
         <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
         <f7-icon ios="f7:close" md="material:close" aurora="f7:close" />
       </f7-fab>
@@ -313,7 +313,7 @@ export default {
         this.inbox = data.sort((a, b) => a.label.localeCompare(b.label))
         this.initSearchbar = true
         this.loading = false
-        setTimeout(() => {
+        nextTick(() => {
           this.$refs.listIndex.update()
           nextTick(() => {
             if (this.$device.desktop && this.$refs.searchbar) {
@@ -383,84 +383,15 @@ export default {
           [
             this.entryActionsAddAsThingButton(entry, this.load),
             this.entryActionsCopyThingDefinitionButton(entry),
-            {
-              text: (!ignored) ? 'Ignore' : 'Unignore',
-              color: (!ignored) ? 'orange' : 'blue',
-              onClick: () => {
-                if (ignored) {
-                  this.unignoreEntry(entry)
-                } else {
-                  this.ignoreEntry(entry)
-                }
-              }
-            }
+            this.entryActionsIgnoreButton(entry, this.load, ignored)
           ],
           [
-            {
-              text: 'Remove',
-              color: 'red',
-              onClick: () => {
-                f7.dialog.confirm(`Remove ${entry.label} from the Inbox?`, 'Remove Entry', () => {
-                  this.removeEntry(entry)
-                })
-              }
-            }
+            this.entryActionsRemoveButton(entry, this.load)
           ]
         ]
       })
 
       actions.open()
-    },
-    ignoreEntry (entry) {
-      this.$oh.api.postPlain(`/rest/inbox/${entry.thingUID}/ignore`).then((res) => {
-        f7.toast.create({
-          text: 'Entry ignored',
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-        this.load()
-      }).catch((err) => {
-        f7.toast.create({
-          text: 'Error while ignoring entry: ' + err,
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-        this.load()
-      })
-    },
-    unignoreEntry (entry) {
-      this.$oh.api.postPlain(`/rest/inbox/${entry.thingUID}/unignore`).then((res) => {
-        f7.toast.create({
-          text: 'Entry unignored',
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-        this.load()
-      }).catch((err) => {
-        f7.toast.create({
-          text: 'Error while unignoring entry: ' + err,
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-        this.load()
-      })
-    },
-    removeEntry (entry) {
-      this.$oh.api.delete('/rest/inbox/' + entry.thingUID).then((res) => {
-        f7.toast.create({
-          text: 'Entry removed',
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-        this.load()
-      }).catch((err) => {
-        f7.toast.create({
-          text: 'Error while removing entry: ' + err,
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-        this.load()
-      })
     },
     changeIgnored () {
       setTimeout(() => { this.$refs.listIndex.update() })

@@ -4,6 +4,13 @@
       <label class="advanced-label">
         <f7-checkbox v-model:checked="showAdvanced" />
         Show advanced
+        <f7-badge v-if="advancedNonDefaultCount"
+                  style="margin-left:2px"
+                  color="blue"
+                  class="count-badge"
+                  tooltip="Non-default advanced parameter">
+          {{ advancedNonDefaultCount }}
+        </f7-badge>
       </label>
     </div>
     <f7-col>
@@ -25,10 +32,10 @@
         </f7-row>
       </f7-block>
     </f7-col>
-    <f7-col v-if="parameterGroups.length">
+    <f7-col v-if="displayedParameterGroups.length">
       <f7-block width="100"
                 class="parameter-group"
-                v-for="group in parameterGroups"
+                v-for="group in displayedParameterGroups"
                 :key="group.name">
         <f7-row v-if="displayedParameters.some((p) => p.groupName === group.name)">
           <f7-col>
@@ -124,11 +131,12 @@ export default {
     hasAdvanced () {
       return this.parameters.length > 0 && this.parameters.some((p) => p.advanced)
     },
-    displayedParameters () {
-      function notNullNotUndefined (value) {
-        return value !== null && value !== undefined
-      }
-
+    displayedParameterGroups () {
+      if (!this.parameterGroups || !this.parameterGroups.length) return []
+      if (this.showAdvanced) return this.parameterGroups
+      return this.parameterGroups.filter((pg) => !pg.advanced)
+    },
+    allParameters () {
       if (!this.parameters.length) return []
       let finalParameters = [...this.parameters]
       if (this.parameterGroups && this.parameterGroups.some((g) => g.context === 'action')) {
@@ -137,14 +145,20 @@ export default {
           finalParameters = [...finalParameters, ...actionParams(g.name, prefix)]
         })
       }
-      if (this.showAdvanced) return finalParameters // show all parameters
-      // exclude advanced parameters:
-      return finalParameters.filter((p) =>
-        // parameter is not advanced: always show
-        !p.advanced ||
-        // parameter is advanced: show only if default is defined and value is different from default
-        (notNullNotUndefined(p.default) && notNullNotUndefined(this.configuration[p.name]) && this.configuration[p.name].toString() !== p.default)
-      )
+      return finalParameters
+    },
+    baseParameters () {
+      return this.allParameters.filter((p) => !p.advanced)
+    },
+    advancedParameters () {
+      return this.allParameters.filter((p) => p.advanced)
+    },
+    advancedNonDefaultCount () {
+      return this.advancedParameters.filter((p) => this.isNonDefault(p)).length
+    },
+    displayedParameters () {
+      if (this.showAdvanced) return this.allParameters // show all parameters
+      return this.baseParameters
     }
   },
   methods: {
@@ -168,6 +182,12 @@ export default {
     parameterStatus (parameter) {
       if (!this.status || !this.status.length) return null
       return this.status.find((ps) => ps.parameterName === parameter.name)
+    },
+    isNonDefault (parameter) {
+      function notNullNotUndefined (value) {
+        return value !== null && value !== undefined
+      }
+      return notNullNotUndefined(parameter.default) && notNullNotUndefined(this.configuration[parameter.name]) && this.configuration[parameter.name].toString() !== parameter.default
     }
   }
 }

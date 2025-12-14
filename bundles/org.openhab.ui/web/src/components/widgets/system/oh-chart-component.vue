@@ -105,20 +105,25 @@ export default {
     fixedPeriodLabel () {
       const startTime = this.startTime
       if (!this.startTime) return ''
-      switch (this.context.component.config.chartType) {
-        case 'hour':
-          return startTime.format('lll')
-        case 'day':
-          return startTime.format('ll')
-        case 'week':
-        case 'isoWeek':
-          return startTime.format('ll')
-        case 'month':
-          return startTime.format('MMM YYYY')
-        case 'year':
-          return startTime.format('YYYY')
-        default:
-          return startTime.format('ll')
+      try {
+        switch (this.context.component.config.chartType) {
+          case 'hour':
+            return startTime.format('lll')
+          case 'day':
+            return startTime.format('ll')
+          case 'week':
+          case 'isoWeek':
+            return startTime.format('ll')
+          case 'month':
+            return startTime.format('MMM YYYY')
+          case 'year':
+            return startTime.format('YYYY')
+          default:
+            return startTime.format('ll')
+        }
+      } catch (e) {
+        console.error('Error formatting fixed period label: ', e)
+        return startTime
       }
     },
     ...mapStores(useUIOptionsStore, useRuntimeStore)

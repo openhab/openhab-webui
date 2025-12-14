@@ -46,7 +46,6 @@ public class MultipartRequestMap extends HashMap<String, List<Object>> {
     }
 
     public MultipartRequestMap(HttpServletRequest request, String tempLocation) {
-        super();
         try {
             this.tempLocation = tempLocation;
 

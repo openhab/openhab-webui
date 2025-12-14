@@ -9,6 +9,7 @@ import GroupPopup from '@/pages/group/group-popup.vue'
 import { getVariableScope, setVariableKeyValues } from '@/components/widgets/variable'
 
 import { useStatesStore } from '@/js/stores/useStatesStore'
+import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore.ts'
 
 export const actionsMixin = {
   components: {
@@ -213,11 +214,16 @@ export const actionsMixin = {
               return
             }
 
+            const modalUrl = action + '/' + actionModal
+            if (f7.views.main.router?.currentRoute.url.endsWith(modalUrl)) {
+              console.log(`Modal ${actionModal} already open, not opening again`)
+              return
+            }
+
             console.log(`Opening ${actionModal} in ${action} modal`)
             let modalRoute = {
-              url: action + '/' + actionModal,
-              route: {
-              }
+              url: modalUrl,
+              route: {}
             }
             if (action === 'popup') modalRoute.route.popup = { component: OhPopup }
             if (action === 'popover') modalRoute.route.popup = { component: OhPopover }
@@ -262,7 +268,7 @@ export const actionsMixin = {
               Promise.all(promises).then((resolvedPhotos) => {
                 let photoBrowserParams = Object.assign({}, photoBrowserConfig, { photos: resolvedPhotos })
                 // automatically select the dark theme if not specified
-                if (!photoBrowserParams.theme && f7.darkTheme) photoBrowserParams.theme = 'dark'
+                if (!photoBrowserParams.theme && useUIOptionsStore().getDarkMode() === 'dark') photoBrowserParams.theme = 'dark'
                 f7.photoBrowser.create(photoBrowserParams).open()
               })
             }

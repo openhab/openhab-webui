@@ -4,8 +4,9 @@
 * supports jsscripting
 */
 
-import Blockly from 'blockly'
-import { javascriptGenerator } from 'blockly/javascript.js'
+import * as Blockly from 'blockly'
+import { javascriptGenerator } from 'blockly/javascript'
+import { valueToCode } from '@/assets/definitions/blockly/utils.js'
 
 export default function defineOHBlocks_Variables (f7) {
   Blockly.Blocks['oh_store_value'] = {
@@ -31,8 +32,8 @@ export default function defineOHBlocks_Variables (f7) {
   }
 
   javascriptGenerator.forBlock['oh_store_value'] = function (block) {
-    const key = javascriptGenerator.valueToCode(block, 'key', javascriptGenerator.ORDER_ATOMIC)
-    const value = javascriptGenerator.valueToCode(block, 'value', javascriptGenerator.ORDER_ATOMIC)
+    const key = valueToCode(block, 'key', javascriptGenerator.ORDER_ATOMIC)
+    const value = valueToCode(block, 'value', javascriptGenerator.ORDER_ATOMIC)
     const cacheType = block.getFieldValue('cacheType')
     return `cache${cacheType}.put(${key}, ${value});\n`
   }
@@ -55,7 +56,7 @@ export default function defineOHBlocks_Variables (f7) {
   }
 
   javascriptGenerator.forBlock['oh_get_value'] = function (block) {
-    const key = javascriptGenerator.valueToCode(block, 'key', javascriptGenerator.ORDER_ATOMIC)
+    const key = valueToCode(block, 'key', javascriptGenerator.ORDER_ATOMIC)
     const cacheType = block.getFieldValue('cacheType')
     return [`cache${cacheType}.get(${key})`, javascriptGenerator.ORDER_NONE]
   }
@@ -78,7 +79,7 @@ export default function defineOHBlocks_Variables (f7) {
   }
 
   javascriptGenerator.forBlock['oh_check_undefined_value'] = function (block) {
-    const key = javascriptGenerator.valueToCode(block, 'key', javascriptGenerator.ORDER_ATOMIC)
+    const key = valueToCode(block, 'key', javascriptGenerator.ORDER_ATOMIC)
     const cacheType = block.getFieldValue('cacheType')
     return [`cache${cacheType}.exists(${key}) === false`, javascriptGenerator.ORDER_NONE]
   }

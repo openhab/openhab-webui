@@ -1,5 +1,6 @@
 <template>
   <generic-widget-component v-for="(slotComponent, idx) in children"
+                            v-bind="$attrs"
                             :key="'default-' + idx"
                             :context="childrenContext(slotComponent)" />
 </template>
@@ -11,6 +12,7 @@ import mixin from '../widget-mixin'
 import { OhContextDefinition } from '@/assets/definitions/widgets/system'
 
 export default {
+  inheritAttrs: false,
   mixins: [mixin],
   widget: OhContextDefinition,
   data () {

@@ -48,12 +48,13 @@
           <f7-list>
             <f7-list-group>
               <item-picker key="itemLink"
-                           title="Item to Link"
+                           label="Item to Link"
                            name="item"
                            :value="selectedItemName"
                            :multiple="false"
                            :items="items"
                            :filterType="getCompatibleItemTypes()"
+                           :filterToggle="true"
                            @input="(value) => selectedItemName = value" />
             </f7-list-group>
           </f7-list>
@@ -188,10 +189,11 @@ import { mapStores } from 'pinia'
 export default {
   mixins: [ItemMixin, uomMixin, LinkMixin],
   props: {
-    thing: String,
-    channel: String,
-    channelType: String,
-    item: String,
+    thing: Object,
+    channelGroup: Object,
+    channel: Object,
+    channelType: Object,
+    item: Object,
     f7router: Object
   },
   setup () {
@@ -243,6 +245,10 @@ export default {
       this.loadProfileTypes(this.channel)
       let newItemName = this.$oh.utils.normalizeLabel(this.thing.label)
       newItemName += '_'
+      if (this.channelGroup) {
+        newItemName += this.$oh.utils.normalizeLabel(this.channelGroup.label)
+        newItemName += '_'
+      }
       newItemName += this.$oh.utils.normalizeLabel(this.channel.label || this.channelType.label)
       const defaultTags = (this.channel.defaultTags.length > 0) ? this.channel.defaultTags : this.channelType.tags
       this.newItem = {
@@ -296,7 +302,7 @@ export default {
       let compatibleItemTypes = []
       if (this.channel.itemType) {
         compatibleItemTypes.push(this.channel.itemType)
-        if (this.channel.itemType.startsWith('Number')) { compatibleItemTypes.push('Number', 'Switch') }
+        if (this.channel.itemType.startsWith('Number')) { compatibleItemTypes.push('Switch') }
         if (this.channel.itemType === 'Color') { compatibleItemTypes.push('Switch', 'Dimmer') }
         if (this.channel.itemType === 'Dimmer') { compatibleItemTypes.push('Switch') }
       }

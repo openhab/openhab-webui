@@ -407,16 +407,21 @@
       </f7-col>
     </f7-block>
 
+    <!-- Do NOT preload previous page, because when using async/asyncComponent for routes,
+     a router bug incorrectly makes the preloaded page visible and hides the current page -->
+    <!-- Diable iOS swipe back as it requires preloading previous page -->
     <f7-view
       url="/"
       :main="true"
       class="safe-areas"
       :master-detail-breakpoint="960"
       :browser-history="true"
+      :browser-history-root="origin"
       browser-history-separator=""
-      browser-history-root=""
+      :preload-previous-page="false"
+      :ios-swipe-back="false"
       v-show="ready"
-      :animate="uiOptionsStore.disablePageTransitionAnimation ? false : true" />
+      :animate="!uiOptionsStore.disablePageTransitionAnimation" />
   </f7-app>
 </template>
 
@@ -522,6 +527,9 @@ import { request } from 'framework7'
 import { f7, f7ready } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
+import dayjs from 'dayjs'
+import dayjsLocales from 'dayjs/locale.json'
+
 import buildInfo from '@/assets/build-info'
 
 import routes from '@/js/routes.js'
@@ -535,8 +543,7 @@ import connectionHealth from '@/components/connection-health-mixin'
 import sseEvents from '@/components/sse-events-mixin'
 
 import { i18n, loadLocaleMessages } from '@/js/i18n'
-import dayjs from 'dayjs'
-import dayjsLocales from 'dayjs/locale.json'
+
 import { useI18n } from 'vue-i18n'
 
 import { AddonIcons, AddonTitles } from '@/assets/addon-store'
@@ -603,14 +610,6 @@ export default {
           leftBreakpoint: 960,
           rightBreakpoint: 1280
         },
-
-        // Register service worker
-        serviceWorker:
-          location.hostname === 'localhost'
-            ? {}
-            : {
-              path: './service-worker.js'
-            },
         card: {
           swipeToClose: true
         },
@@ -641,6 +640,9 @@ export default {
     }
   },
   computed: {
+    origin () {
+      return window.location.origin
+    },
     currentPath () {
       // Returns a hierarchical object representation of the currentUrl.
       //   '/settings/services/openhabcloud/' -> currentPath.settings.services.openhabcloud
@@ -794,14 +796,19 @@ export default {
           let dayjsLocalePromise = Promise.resolve(null)
           // try to resolve the dayjs file to load if it exists
           if (locale) {
-            const dayjsLocale = dayjsLocales.find(
-              (l) => l.key === locale || l.key === locale.split('-')[0]
+            let dayjsLocale = dayjsLocales.find(
+              (l) => l.key === locale || l.key === locale.toLowerCase() || l.key === locale.split('-')[0]
             )
+            // fix for missing definitions in en.js locale, see https://github.com/iamkun/dayjs/blob/dev/src/locale/en.js
+            if (dayjsLocale?.key === 'en') dayjsLocale = dayjsLocales.find((l) => l.key === 'en-gb')
+
+            // there is no single Norwegian locale in dayjs, so use nb (Norwegian Bokmål)
+            if (dayjsLocale?.key === 'no') dayjsLocale = dayjsLocales.find((l) => l.key === 'nb')
 
             dayjsLocalePromise = dayjsLocale
               ? import(`../node_modules/dayjs/esm/locale/${dayjsLocale.key}.js`)
-                .then(() => {
-                  return dayjsLocale
+                .then((data) => {
+                  return data.default
                 }).catch((error) => {
                   console.error('Error fetching dayjs: ', error, dayjsLocale)
                 })
@@ -826,8 +833,10 @@ export default {
             })
           this.updateTitle()
 
-          if (data[2]) dayjs.locale(data[2].key)
-
+          if (data[2]) {
+            dayjs.locale(data[2], null, false)
+            console.log('dayjs locale set to', dayjs.locale())
+          }
           // load & build the semantic model
           useModelStore().loadSemanticModel()
         })

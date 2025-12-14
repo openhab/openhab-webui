@@ -6,6 +6,7 @@ html
 .aurora
   --f7-label-line-height 1.3
   --f7-searchbar-input-font-size 13px
+  --f7-searchbar-height var(--f7-subnavbar-height)
   --f7-button-font-size 14px
   --f7-chip-height 24px
   --f7-chip-font-size 13px
@@ -47,6 +48,21 @@ html
   // icons
   .f7-icons
      font-size 20px
+  // action modal
+  --f7-actions-button-height 30px
+  --f7-actions-button-height-landscape 34px
+  // dropdown menu
+  --f7-menu-item-height 36px
+  --f7-menu-dropdown-item-height 24px
+  // cards
+  --f7-card-header-min-height 38px
+  --f7-card-footer-min-height 38px
+  --f7-card-header-font-size 14px
+  --f7-card-header-padding-vertical 10px
+  // table
+  --f7-table-card-header-height 48px
+  --f7-table-head-cell-height 48px
+  --f7-table-body-cell-height 40px
 
 /* Fixes for desktop devices */
 .device-desktop
@@ -54,19 +70,44 @@ html
   .searchbar-backdrop
     display none
 
-/* Fixes an adjustments for list input */
+/* Fixes for dropdown menus */
+.menu-dropdown-content
+  z-index 7000 !important
+
+/* Fixes and adjustments for list input */
 .list
   textarea
     padding-top 0
     padding-bottom 0
 
+/* Fixes for smart select popups with searchbar */
+.popup.smart-select-popup.modal-in
+  .page-content
+    /* Fix scrollbar hidden behind searchbar */
+    padding-top 0
+    margin-top calc(var(--f7-page-navbar-offset, 0px) + var(--f7-page-toolbar-top-offset, 0px) + var(--f7-page-subnavbar-offset, 0px) + var(--f7-page-searchbar-offset, 0px) + var(--f7-page-content-extra-padding-top, 0px))
+    height calc(100% - var(--f7-page-navbar-offset, 0px) - var(--f7-page-toolbar-top-offset, 0px) - var(--f7-page-subnavbar-offset, 0px) - var(--f7-page-searchbar-offset, 0px) - var(--f7-page-content-extra-padding-top, 0px))
+
+/* Fixes for oh-cell opened cards behind other oh-cells */
+.oh-cell.card-opened
+  z-index 5000 !important
+
 /* Adjustments for iOS & Material Design themes */
 .ios
 .md
+  // list
   --f7-list-margin-vertical 20px
   li.media-item
     --f7-typography-margin 0
     --f7-list-item-padding-vertical 10px
+  // actions modal
+  --f7-actions-button-height 44px
+  --f7-actions-button-height-landscape 48px
+  .actions-modal > .actions-group
+    margin-left 28px
+    margin-right 28px
+  // dropdown menu
+  --f7-menu-dropdown-item-height 28px
 
 /* Adjustments for cards */
 :root
@@ -84,6 +125,7 @@ html
   .title
     left 0 !important
     right 0 !important
+    max-width calc(100% - var(--f7-navbar-inner-padding-left) - 140px - var(--f7-navbar-inner-padding-right))
   .right
     position absolute
     right var(--f7-navbar-inner-padding-right)
@@ -393,7 +435,7 @@ html
 // which breaks calculcations using the overwritten CSS variables.
 
 // Fix for grouped list indentation, e.g. Pages list
-.list ul .list-group ul
+.list:not(.accordion-list) ul .list-group ul
   --f7-list-in-list-padding-left 0px
   --f7-list-item-padding-horizontal 0px
 

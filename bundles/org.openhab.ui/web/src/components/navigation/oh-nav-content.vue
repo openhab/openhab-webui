@@ -38,6 +38,7 @@
     </template>
     <slot name="right" />
   </f7-nav-right>
+  <slot name="after" />
 </template>
 
 <script setup lang="ts">
@@ -47,6 +48,9 @@
  * - a lock icon if editable is false
  * - a save button if saveLink is provided and editable is not false - a click on this button emits a 'save' event and navigates to the saveLinkUrl if configured
  * - additional content can be added into <f7-nav-right> through the right slot
+ *
+ * By setting the backLinkUrl property to null, the included back navigation can be disabled.
+ * Instead, the 'back' event is emitted and navigation has to be implemented explicitly.
  *
  * To use it, simply put it as the first component into the f7-navbar.
  */
@@ -70,23 +74,40 @@ const props = withDefaults(defineProps<{
   large: false
 })
 
-defineEmits(['save'])
+const emit = defineEmits(['back', 'save'])
 
 defineSlots<{
   right: void,
+  after: void,
 }>()
 
 function back () {
   if (props.backLinkUrl) return
-  const f7router : Router.Router = props.f7router || f7.views.main.router
-
-  f7router.history.pop()
-  const previousRoute : string | null = f7router.history.pop() ?? null
-  if (previousRoute === null) {
-    console.warn('No previous route found in history, cannot navigate back.')
+  if (props.backLinkUrl === null) {
+    emit('back')
     return
   }
-  console.debug('Navigating back to previous route:', previousRoute)
-  f7router.navigate(previousRoute, { force: true })
+  const f7router : Router.Router = props.f7router || f7.views.main.router
+  f7router.back()
+
+  /*
+  const currentPath = f7router.currentRoute.path
+  let previousPath : string | null = null
+  for (let i = f7router.history.length - 1; i >= 0; i--) {
+    const path = f7router.history[i]
+    if (!path.startsWith(currentPath)) {
+      previousPath = path
+      break
+    }
+  }
+
+  if (previousPath === null) {
+    console.warn('No previous path found in history, falling back to root path.')
+    previousPath = '/'
+  }
+  console.debug('Navigating back to previous path:', previousPath)
+  f7router.history.pop()
+  f7router.navigate(previousPath, { force: true })
+  */
 }
 </script>

@@ -4,8 +4,8 @@ import vue from '@vitejs/plugin-vue'
 import pluginDynamicImport from 'vite-plugin-dynamic-import'
 import vitePluginTopLevelAwait from 'vite-plugin-top-level-await'
 import { compression } from 'vite-plugin-compression2'
+import { VitePWA } from 'vite-plugin-pwa'
 import { resolve } from 'path'
-import { plugin } from 'typescript-eslint'
 import vueDevtools from 'vite-plugin-vue-devtools'
 import { visualizer } from 'rollup-plugin-visualizer'
 import webpackStats from 'rollup-plugin-webpack-stats'
@@ -60,6 +60,23 @@ export default defineConfig({
       }
     }),
     vitePluginTopLevelAwait(),
+    VitePWA({
+      registerType: 'autoUpdate',
+      workbox: {
+        // restrict which URLs should be treated as part of Main UI SPA,
+        // thereby controlling which routes are loaded from the service worker cache instead of the server
+        navigateFallbackAllowlist: [
+          /^\/(overview|locations|equipment|properties)\//,
+          /^\/(about|analyzer|profile|setup-wizard)\//,
+          /^\/(addons|developer|page|settings)\/.*/
+        ],
+        maximumFileSizeToCacheInBytes: 100000000,
+        // these options encourage the ServiceWorkers to get in there fast
+        // and not allow any straggling "old" SWs to hang around
+        clientsClaim: true,
+        skipWaiting: true
+      }
+    }),
     ...(production ? [
       compression({
         algorithms: [
