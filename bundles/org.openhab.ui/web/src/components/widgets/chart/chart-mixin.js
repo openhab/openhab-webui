@@ -104,7 +104,7 @@ export default {
     },
     yAxis () {
       if (!this.context.component.slots || !this.context.component.slots.yAxis) return undefined
-      return this.context.component.slots.yAxis.map((a) => axisComponents[a.component].get(a, this.startTime, this.endTime, this.context.component, this, true)) // invert Y axis by default
+      return this.context.component.slots.yAxis.map((a) => axisComponents[a.component].get(a, this.startTime, this.endTime, this.context.component, this, true, this.numberFormatter)) // invert Y axis by default
     },
     calendar () {
       if (!this.context.component.slots || !this.context.component.slots.calendar) return undefined
@@ -116,12 +116,12 @@ export default {
     },
     tooltip () {
       if (!this.context.component.slots || !this.context.component.slots.tooltip) return undefined
-      return this.context.component.slots.tooltip.map((c) => OhChartTooltip.get(c, this.startTime, this.endTime, this, this.$device))
+      return this.context.component.slots.tooltip.map((c) => OhChartTooltip.get(c, this.startTime, this.endTime, this, this.$device, this.numberFormatter))
     },
     visualMap () {
       if (!this.context.component.slots) return undefined
       if (this.context.component.slots.visualMap) {
-        return this.context.component.slots.visualMap.map((c) => OhChartVisualMap.get(c, this.startTime, this.endTime, this, this.$device))
+        return this.context.component.slots.visualMap.map((c) => OhChartVisualMap.get(c, this.startTime, this.endTime, this, this.$device, this.numberFormatter))
       } else if (JSON.stringify(this.context.component.slots.series)?.includes('heatmap')) { // heatmap needs a visualMap, therefore fall back to a default
         const config = {
           calculable: true,
@@ -129,7 +129,7 @@ export default {
           show: false,
           type: 'continuous'
         }
-        return OhChartVisualMap.get({ config }, this.startTime, this.endTime, this, this.$device)
+        return OhChartVisualMap.get({ config }, this.startTime, this.endTime, this, this.$device, this.numberFormatter)
       }
       return undefined
     },
@@ -139,7 +139,7 @@ export default {
     },
     legend () {
       if (!this.context.component.slots || !this.context.component.slots.legend) return undefined
-      return this.context.component.slots.legend.map((c) => OhChartLegend.get(c, this.startTime, this.endTime, this, this.$device))
+      return this.context.component.slots.legend.map((c) => OhChartLegend.get(c, this.startTime, this.endTime, this, this.$device, this.numberFormatter))
     },
     title () {
       if (!this.context.component.slots || !this.context.component.slots.title) return undefined

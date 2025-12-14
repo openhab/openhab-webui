@@ -86,7 +86,9 @@ export default {
     let initOptions = echartsLocale ? {
       locale: echartsLocale
     } : null
-    return { echartsLocale, initOptions }
+
+    let numberFormatter = new Intl.NumberFormat(useRuntimeStore().locale)
+    return { echartsLocale, initOptions, numberFormatter }
   },
   computed: {
     activeHeight () {
