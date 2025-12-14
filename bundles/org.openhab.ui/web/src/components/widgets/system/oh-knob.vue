@@ -26,6 +26,7 @@ export default {
   widget: OhKnobDefinition,
   data () {
     return {
+      knobValue: null,
       measuredRadiusPx: null,
       measuredSize: null,
       boundResizeHandler: null,
