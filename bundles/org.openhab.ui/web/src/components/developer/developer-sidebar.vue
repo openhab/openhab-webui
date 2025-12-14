@@ -878,7 +878,7 @@ export default {
     this.startEventSource()
     nextTick(() => {
       if (this.$device.desktop && this.$refs.searchbar) {
-        f7.input.focus('searchbar')
+        this.$refs.searchbar.$el.f7Searchbar.$inputEl[0].focus()
         if (this.searchFor) this.$refs.searchbar.$el.f7Searchbar.search(this.searchFor)
       }
     })

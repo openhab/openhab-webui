@@ -24,7 +24,7 @@
       </template>
     </f7-list-item>
 
-    <f7-popup v-model:opened="popupOpen">
+    <f7-popup v-model:opened="popupOpen" @popup:opened="onPopupOpened">
       <f7-page>
         <f7-navbar :title="label || $t('dialogs.itemPicker.popup.title')">
           <f7-nav-right>
@@ -35,6 +35,7 @@
         </f7-navbar>
 
         <f7-searchbar
+          ref="searchbar"
           search-container=".item-list"
           search-in=".item-inner"
           :placeholder="$t('dialogs.search.items')">
@@ -90,6 +91,7 @@
 <script>
 import { f7 } from 'framework7-vue'
 import ModelPickerPopup from '@/components/model/model-picker-popup.vue'
+import { nextTick } from 'vue'
 
 export default {
   props: {
@@ -168,6 +170,13 @@ export default {
     }
   },
   methods: {
+    onPopupOpened () {
+      nextTick(() => {
+        if (this.$device.desktop && this.$refs.searchbar) {
+          this.$refs.searchbar.$el.f7Searchbar.$inputEl[0].focus()
+        }
+      })
+    },
     sortAndFilterItems (items) {
       this.unfilteredItems = items
       if (this.filterToggle) {
