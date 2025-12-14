@@ -88,6 +88,7 @@
                            name="strategies"
                            :strategies="strategies"
                            :value="currentConfiguration.strategies"
+                           :suggested="suggestedStrategies"
                            @strategies-selected="currentConfiguration.strategies = $event" />
         </f7-col>
         <f7-col>
@@ -115,16 +116,15 @@ export default {
   props: {
     configuration: Object,
     strategies: Array,
-    filters: Array
+    filters: Array,
+    suggestedStrategies: Array
   },
   emits: ['configurationUpdate'],
   data () {
     return {
       currentConfiguration: this.configuration || {
         items: [],
-        strategies: [
-          'everyChange'
-        ],
+        strategies: [],
         filters: []
       }
     }
