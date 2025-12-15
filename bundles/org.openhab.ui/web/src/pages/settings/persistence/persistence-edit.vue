@@ -502,6 +502,7 @@ export default {
       if (!saveConfirmed) return
 
       return this.$oh.api.put('/rest/persistence/' + this.persistence.serviceId, this.persistence).then((data) => {
+        this.savedPersistence = cloneDeep(this.persistence)
         this.dirty = false
         if (this.newPersistence) {
           this.newPersistence = false
@@ -781,7 +782,7 @@ export default {
       const toCode = {
         configurations: this.persistence.configs,
         aliases: this.persistence.aliases,
-        cronStrategies: this.persistence.cronStrategies,
+        cronStrategies: this.persistence.cronStrategies
       }
       this.FilterTypes.forEach((ft) => {
         toCode[ft.name] = this.persistence[ft.name]
