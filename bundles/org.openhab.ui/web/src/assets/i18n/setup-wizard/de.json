@@ -56,5 +56,6 @@
   "setupwizard.addons.waitMessage": "Es kann einen Moment dauern, bis alle ausgewählten Add-ons installiert sind.",
   "setupwizard.welcome.title": "Willkommen bei openHAB!",
   "setupwizard.welcome.bindingsInstalled": "Du hast eines oder mehrere Bindings installiert. Things, die von diesen Bindings bereitgestellt werden, werden in der Thing Inbox angezeigt. Du kannst diese dort hinzufügen und von dort aus weiter konfigurieren.",
+  "setupwizard.welcome.persistenceInstalled": "Sie haben einen oder mehrere Persistenz-Dienste installiert. Sie müssen diese Dienste aus dem Menü Einstellungen/Persistenz konfigurieren, damit sie verwendet werden können.",
   "setupwizard.welcome.getStarted": "Los geht's"
 }
