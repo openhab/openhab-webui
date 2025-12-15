@@ -782,7 +782,6 @@ export default {
         configurations: this.persistence.configs,
         aliases: this.persistence.aliases,
         cronStrategies: this.persistence.cronStrategies,
-        defaultStrategies: this.persistence.defaults
       }
       this.FilterTypes.forEach((ft) => {
         toCode[ft.name] = this.persistence[ft.name]
@@ -796,7 +795,6 @@ export default {
         this.persistence.configs = updatedPersistence.configurations
         this.persistence.aliases = updatedPersistence.aliases
         this.persistence.cronStrategies = updatedPersistence.cronStrategies
-        this.persistence.defaults = updatedPersistence.defaultStrategies
         this.FilterTypes.forEach((ft) => {
           this.persistence[ft.name] = updatedPersistence[ft.name]
         })
