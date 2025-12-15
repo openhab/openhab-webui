@@ -1,5 +1,5 @@
 <template>
-  <div ref="page">
+  <div ref="page" :class="scopedCssUid">
     <template v-if="!config.layoutType || config.layoutType === 'responsive'">
       <oh-block v-for="(component, idx) in context.component.slots.default"
                 v-bind="$attrs"
