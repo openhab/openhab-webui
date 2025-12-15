@@ -35,7 +35,8 @@
               ref="controlsSheet"
               :backdrop="false"
               :close-on-escape="true"
-              :opened="controlsOpened">
+              :opened="controlsOpened"
+              @sheet:closed="controlsOpened = false">
       <f7-page>
         <f7-toolbar tabbar :bottom="true">
           <f7-link class="padding-left padding-right"
@@ -455,7 +456,6 @@ export default {
   },
   methods: {
     close () {
-      this.controlsOpened = false
       f7.sheet.close(this.$refs.controlsSheet)
     },
     openControls () {
