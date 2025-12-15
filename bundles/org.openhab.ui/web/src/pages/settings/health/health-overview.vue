@@ -17,7 +17,7 @@
       </f7-col>
     </f7-block>
 
-    <f7-block v-if="orphanLinksCount" class="block-narrow">
+    <f7-block v-if="orphanLinksCount || semanticsProblemCount" class="block-narrow">
       <f7-col>
         <f7-list media-list>
           <f7-list-item
@@ -103,7 +103,6 @@ export default {
   },
   methods: {
     loadCounters () {
-      let self = this
       if (!this.apiEndpoints) return
       if (useRuntimeStore().apiEndpoint('links')) {
         this.$oh.api.get('/rest/links/orphans').then((data) => {
@@ -115,9 +114,9 @@ export default {
           this.semanticsProblemCount = data.length || 0
         })
       }
-      if (this.$store.getters.apiEndpoint('persistence')) {
+      if (useRuntimeStore().apiEndpoint('persistence')) {
         this.$oh.api.get('/rest/persistence/persistencehealth').then((data) => {
-          self.persistenceProblemsCount = data.length || 0
+          this.persistenceProblemsCount = data.length || 0
         })
       }
     },
