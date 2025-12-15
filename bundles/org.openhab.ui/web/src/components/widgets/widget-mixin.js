@@ -1,5 +1,3 @@
-// Import into widget components as a mixin!
-
 import { f7 } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
@@ -10,6 +8,14 @@ import { useUserStore } from '@/js/stores/useUserStore'
 import { useComponentsStore } from '@/js/stores/useComponentsStore'
 import { useWidgetExpression } from '@/components/widgets/useWidgetExpression.ts'
 
+/**
+ * The widget-mixin must be imported as a mixin into all widget components!
+ *
+ * A few requirements have to be met by components importing this mixin:
+ * - Widget components have to add a `component` ref to their root.
+ * - Page components have to add a `page` ref to their root.
+ * - All components using this mixin have to add the `scopedCssUid` as a class to their root element.
+ */
 export default {
   props: {
     context: Object
@@ -20,6 +26,7 @@ export default {
       ctxVars: (this.context) ? this.context.ctxVars : {},
       widgetVars: {},
       varScope: null,
+      scopedCssUid: null,
       widgetExpression: useWidgetExpression()
     }
   },
@@ -84,23 +91,16 @@ export default {
   },
   mounted () {
     if (this.context?.component?.config?.stylesheet) {
-      // generic-widget-component .$el or oh-layout-page HTML element
-      const el = this.$refs.component?.$el ?? this.$refs.page
-      if (el) {
-        this.cssUid = 'scoped-' + f7.utils.id()
-
-        el.classList.add(this.cssUid)
-
-        let style = document.createElement('style')
-        style.id = this.cssUid
-        style.innerHTML = scope(this.context.component.config.stylesheet, '.' + this.cssUid)
-        document.head.appendChild(style)
-      }
+      this.scopedCssUid = 'scoped-' + f7.utils.id()
+      let style = document.createElement('style')
+      style.id = this.scopedCssUid
+      style.innerHTML = scope(this.context.component.config.stylesheet, '.' + this.scopedCssUid)
+      document.head.appendChild(style)
     }
   },
   beforeUnmount () {
-    if (this.cssUid) {
-      const scoped_stylesheet = document.getElementById(this.cssUid)
+    if (this.scopedCssUid) {
+      const scoped_stylesheet = document.getElementById(this.scopedCssUid)
       if (scoped_stylesheet) scoped_stylesheet.remove()
     }
   },
