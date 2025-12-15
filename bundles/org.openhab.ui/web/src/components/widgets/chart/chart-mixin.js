@@ -28,6 +28,8 @@ import OhChartLegend from './misc/oh-chart-legend'
 import OhChartTitle from './misc/oh-chart-title'
 import OhChartToolbox from './misc/oh-chart-toolbox'
 
+import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+
 const DEFAULT_PERIOD = 'D'
 
 const axisComponents = {
@@ -46,6 +48,9 @@ const seriesComponents = {
 }
 
 export default {
+  beforeCreate () {
+    this.numberFormatter = new Intl.NumberFormat(useRuntimeStore().locale)
+  },
   data () {
     const config = this.context.component.config || {}
     const chartType = config.chartType
