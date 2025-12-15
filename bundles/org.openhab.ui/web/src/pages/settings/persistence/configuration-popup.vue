@@ -124,7 +124,7 @@ export default {
     return {
       currentConfiguration: this.configuration || {
         items: [],
-        strategies: [],
+        strategies: this.suggestedStrategies,
         filters: []
       }
     }

@@ -12,7 +12,7 @@
         <option v-for="s in strategies"
                 :key="s"
                 :value="s"
-                :selected="value.length ? value.includes(s) : suggested.includes(s)">
+                :selected="value.length ? value.includes(s) : null">
           {{ s }}
         </option>
       </select>
