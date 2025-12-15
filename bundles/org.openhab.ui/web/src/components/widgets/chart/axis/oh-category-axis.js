@@ -18,7 +18,7 @@ const weekdays = {
 }
 
 export default {
-  get (component, startTime, endTime, chart, chartWidget, inverse) {
+  get (component, startTime, endTime, chart, chartWidget, inverse, numberFormatter) {
     const config = component.config || {}
     let axis = chartWidget.evaluateExpression(ComponentId.get(component), component.config)
     axis.type = 'category'

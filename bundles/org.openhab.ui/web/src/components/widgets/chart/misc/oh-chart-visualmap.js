@@ -7,7 +7,7 @@ const presetPalettes = {
 }
 
 export default {
-  get (component, startTime, endTime, chart, device) {
+  get (component, startTime, endTime, chart, device, numberFormatter) {
     let options = chart.evaluateExpression(ComponentId.get(component), component.config)
     if (options.presetPalette && (!options.inRange || !options.inRange.color)) {
       if (presetPalettes[options.presetPalette]) {
@@ -25,6 +25,11 @@ export default {
     } else if (chart.series && chart.series[0]) {
       options.max = Math.max(...chart.series[0].data.map((p) => p[p.length - 1]))
     }
+
+    if (!options.formatter) {
+      options.formatter = (value1, value2) => { return (value2) ? numberFormatter.format(value1) + ' - ' + numberFormatter.format(value2) : numberFormatter.format(value1) }
+    }
+
     return options
   }
 }
