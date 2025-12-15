@@ -213,7 +213,7 @@
                     <f7-list-item link
                                   no-chevron
                                   media-item
-                                  :color="($theme.dark) ? 'black' : 'white'"
+                                  :color="(theme.dark) ? 'black' : 'white'"
                                   :subtitle="'Add ' + ft.label.toLowerCase() + ' filter'"
                                   @click="editFilter(undefined, ft, null)">
                       <template #media>
