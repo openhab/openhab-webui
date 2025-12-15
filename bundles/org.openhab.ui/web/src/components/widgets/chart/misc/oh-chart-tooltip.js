@@ -16,6 +16,9 @@ export default {
     if (options.smartFormatter) {
       options.formatter = (params, ticket, callback) => {
         let tooltip = ''
+        // special tooltip for mark area:
+        // - header: time range (start time to end time) in 'dd DD.MM.YYYY HH:mm:ss'
+        // - content: marker colour, series name and value (if available)
         if (params.componentType === 'markArea') {
           tooltip += `<div>${dayjs(params.data.coord[0][0]).format('llll')}<br />${dayjs(params.data.coord[1][0]).format('llll')}</div>`
           tooltip += params.marker
@@ -24,15 +27,17 @@ export default {
           return tooltip
         }
         if (!params[0] || !params[0].axisType) return
+        // header: x-axis time in 'dd DD.MM.YYYY HH:mm:ss'
         if (params[0].axisType === 'xAxis.time') {
-          tooltip += `<div>${dayjs(params[0].axisValue).format('llll')}</div>` // ('dd DD.MM.YYYY HH:mm:ss')
+          tooltip += `<div>${dayjs(params[0].axisValue).format('llll')}</div>`
         }
+        // content: for each oh-time-series marker colour, series name and formatted value
         params.forEach((s) => {
           if (s.seriesId) {
             const [seriesType, itemName] = s.seriesId.split('#')
             if (seriesType === 'oh-time-series') {
               let item = chart._items[itemName]
-              let state = s.data[1]
+              let state = numberFormatter.format(s.data[1])
               if (item) {
                 const stateDescription = item.stateDescription || {}
                 if (stateDescription.format) {
