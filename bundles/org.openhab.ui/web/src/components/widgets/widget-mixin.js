@@ -1,5 +1,3 @@
-// Import into widget components as a mixin!
-
 import { f7 } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
@@ -10,6 +8,14 @@ import { useUserStore } from '@/js/stores/useUserStore'
 import { useComponentsStore } from '@/js/stores/useComponentsStore'
 import { useWidgetExpression } from '@/components/widgets/useWidgetExpression.ts'
 
+/**
+ * The widget-mixin must be imported as a mixin into all widget components!
+ *
+ * A few requirements have to be met by components importing this mixin:
+ * - Widget components have to add a `component` ref to their root.
+ * - Page components have to add a `page` ref to their root.
+ * - All components using this mixin have to add the `scopedCssUid` as a class to their root element.
+ */
 export default {
   props: {
     context: Object
