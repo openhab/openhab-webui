@@ -365,7 +365,7 @@ export default {
       if (useRuntimeStore().apiEndpoint('items'))
         this.$oh.api.get('/rest/items/semantics/health').then((data) => { this.semanticsProblemCount = data.length })
       if (useRuntimeStore().apiEndpoint('persistence'))
-        this.$oh.api.get('/rest/persistence/persistencehealth').then((data) => { this.persistenceProblemCount = data.length })
+        this.$oh.api.get('/rest/persistence/health').then((data) => { this.persistenceProblemCount = data.length })
       if (useRuntimeStore().apiEndpoint('inbox'))
         this.$oh.api.get('/rest/inbox?includeIgnored=false').then((data) => { this.inboxCount = data.filter((e) => e.flag === 'NEW').length.toString() })
       if (useRuntimeStore().apiEndpoint('things'))

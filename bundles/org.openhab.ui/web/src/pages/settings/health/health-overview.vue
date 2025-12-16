@@ -115,7 +115,7 @@ export default {
         })
       }
       if (useRuntimeStore().apiEndpoint('persistence')) {
-        this.$oh.api.get('/rest/persistence/persistencehealth').then((data) => {
+        this.$oh.api.get('/rest/persistence/health').then((data) => {
           this.persistenceProblemsCount = data.length || 0
         })
       }
