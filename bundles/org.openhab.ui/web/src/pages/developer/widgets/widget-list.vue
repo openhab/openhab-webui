@@ -57,8 +57,8 @@
       <f7-list-item title="Nothing found" />
     </f7-list>
 
-    <!-- skeleton for not ready -->
     <f7-block class="block-narrow" v-show="!nowidgetEngine">
+      <!-- skeleton for not ready -->
       <f7-col v-show="!ready">
         <f7-block-title>&nbsp;Loading...</f7-block-title>
         <f7-list media-list class="col wide">
@@ -72,6 +72,7 @@
           </f7-list-group>
         </f7-list>
       </f7-col>
+
       <f7-col v-if="ready">
         <f7-block-title class="searchbar-hide-on-search">
           {{ widgets.length }} widgets
@@ -91,7 +92,7 @@
                         @click.exact="(e) => click(e, widget)"
                         link=""
                         :title="widget.uid">
-            <template #subitle>
+            <template #subtitle>
               <div>
                 <f7-chip v-for="tag in widget.tags"
                          :key="tag"
