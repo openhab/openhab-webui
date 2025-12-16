@@ -357,7 +357,7 @@
  */
 
 import { nextTick, defineAsyncComponent } from 'vue'
-import { getDevice } from 'framework7'
+import { getDevice, type Sheet } from 'framework7'
 import { f7, theme } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
@@ -456,7 +456,7 @@ export default {
   },
   methods: {
     close () {
-      f7.sheet.close(this.$refs.controlsSheet)
+      f7.sheet.close((this.$refs.controlsSheet as Sheet.Sheet).$el)
     },
     openControls () {
       this.controlsOpened = true
