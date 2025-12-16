@@ -201,7 +201,8 @@
           <addons-setup-wizard v-if="addonSuggestionsReady && recommendedAddonsByType('persistence').length"
                                :addons="recommendedAddonsByType('persistence')"
                                :preSelectedAddons="selectedAddons"
-                               @update="updateAddonSelection(recommendedAddonsByType('persistence'), $event)" />
+                               @update="updateAddonSelection(recommendedAddonsByType('persistence'), $event)"
+                               :t />
           <f7-block-footer class="margin-bottom">
             <small>{{ t('setupwizard.persistence.footer') }}</small>
           </f7-block-footer>
@@ -255,7 +256,8 @@
                                :enableAddonSelection="true"
                                :addons="mainAddons"
                                :preSelectedAddons="selectedAddons"
-                               @update="updateAddonSelection(mainAddonSelection, $event)" />
+                               @update="updateAddonSelection(mainAddonSelection, $event)"
+                               :t />
           <f7-block-footer class="margin-bottom">
             <small>{{ t('setupwizard.addons.footer') }}</small>
           </f7-block-footer>
@@ -308,10 +310,10 @@
                   color="blue"
                   tab-link-active
                 ></f7-link>-->
-          <f7-login-screen-title>{{ $t('setupwizard.welcome.title') }}</f7-login-screen-title>
+          <f7-login-screen-title>{{ t('setupwizard.welcome.title') }}</f7-login-screen-title>
         </f7-block>
         <f7-block v-if="persistenceInstalled">
-          {{ $t('setupwizard.welcome.persistenceInstalled') }}
+          {{ t('setupwizard.welcome.persistenceInstalled') }}
         </f7-block>
         <f7-block v-if="bindingInstalled">
           {{ t('setupwizard.welcome.bindingsInstalled') }}
