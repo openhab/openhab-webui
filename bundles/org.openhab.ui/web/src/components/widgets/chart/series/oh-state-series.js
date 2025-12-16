@@ -1,6 +1,5 @@
 import { f7 } from 'framework7-vue'
 import ComponentId from '../../component-id'
-import { graphic } from 'echarts/core'
 
 function renderState (params, api) {
   const yValue = api.value(0)
@@ -29,9 +28,7 @@ function renderState (params, api) {
 export default {
   neededItems (component, chart) {
     let series = chart.evaluateExpression(ComponentId.get(component), component.config)
-    return [
-      series.item
-    ]
+    return [series.item]
   },
   get (component, points, startTime, endTime, chart) {
     let series = chart.evaluateExpression(ComponentId.get(component), component.config)
@@ -73,17 +70,16 @@ export default {
 
       let data = []
       let itemStartTime = null
-      // fill data array - combine state updates where state does not change
       for (let i = 0; i < itemPoints.length; i++) {
+        // Merge timeframes with equal state
         if (itemPoints[i + 1] && itemPoints[i].state === itemPoints[i + 1].state) {
           itemStartTime = itemStartTime || new Date(itemPoints[i].time)
           continue
         }
 
         itemStartTime = itemStartTime || new Date(itemPoints[i].time)
-        let itemEndTime = new Date(itemPoints[i + 1] ? itemPoints[i + 1].time : endTime)
-
-        let stateColor = (series.stateColor) ? series.stateColor[itemPoints[i].state] : null
+        const itemEndTime = new Date(itemPoints[i + 1] ? itemPoints[i + 1].time : itemPoints[itemPoints.length - 1].time)
+        const stateColor = (series.stateColor) ? series.stateColor[itemPoints[i].state] : null
         data.push({
           value: [series.yValue || 0, itemStartTime, itemEndTime, itemPoints[i].state, series.yHeight || 0.6],
           itemStyle: {
