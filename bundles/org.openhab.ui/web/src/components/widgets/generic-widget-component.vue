@@ -55,7 +55,7 @@
       v-else-if="componentType && componentType === 'Label'"
       ref="component"
       v-bind="$attrs"
-      :class="[...config.class, scopedCssUid]"
+      :class="[...(Array.isArray(config.class) ? config.class : []), scopedCssUid]"
       :style="config.style">
       {{ config.text }}
     </div>
