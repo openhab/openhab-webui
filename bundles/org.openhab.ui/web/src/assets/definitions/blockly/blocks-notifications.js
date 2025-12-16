@@ -316,22 +316,22 @@ export default function defineOHBlocks_Notifications (f7) {
   }
 
   javascriptGenerator.forBlock['oh_sendCloudNotification'] = function (block) {
-    const message = javascriptGenerator.valueToCode(block, 'message', javascriptGenerator.ORDER_ATOMIC)
+    const message = valueToCode(block, 'message', javascriptGenerator.ORDER_ATOMIC)
     const type = block.getFieldValue('type')
-    const icon = javascriptGenerator.valueToCode(block, 'icon', javascriptGenerator.ORDER_ATOMIC)
-    const tag = javascriptGenerator.valueToCode(block, 'tag', javascriptGenerator.ORDER_ATOMIC)
-    const headerTitle = javascriptGenerator.valueToCode(block, 'headerTitle', javascriptGenerator.ORDER_ATOMIC)
-    const reference = javascriptGenerator.valueToCode(block, 'reference', javascriptGenerator.ORDER_ATOMIC)
-    const media = javascriptGenerator.valueToCode(block, 'media', javascriptGenerator.ORDER_ATOMIC)
-    const action = javascriptGenerator.valueToCode(block, 'action', javascriptGenerator.ORDER_ATOMIC)
+    const icon = valueToCode(block, 'icon', javascriptGenerator.ORDER_ATOMIC)
+    const tag = valueToCode(block, 'tag', javascriptGenerator.ORDER_ATOMIC)
+    const headerTitle = valueToCode(block, 'headerTitle', javascriptGenerator.ORDER_ATOMIC)
+    const reference = valueToCode(block, 'reference', javascriptGenerator.ORDER_ATOMIC)
+    const media = valueToCode(block, 'media', javascriptGenerator.ORDER_ATOMIC)
+    const action = valueToCode(block, 'action', javascriptGenerator.ORDER_ATOMIC)
     const actionType = (action !== '') ? blockGetCheckedInputType(block, 'action') : undefined
-    const actionButton1 = javascriptGenerator.valueToCode(block, 'actionButton1', javascriptGenerator.ORDER_ATOMIC)
+    const actionButton1 = valueToCode(block, 'actionButton1', javascriptGenerator.ORDER_ATOMIC)
     const actionButton1Type = (actionButton1 !== '') ? blockGetCheckedInputType(block, 'actionButton1') : undefined
-    const actionButton2 = javascriptGenerator.valueToCode(block, 'actionButton2', javascriptGenerator.ORDER_ATOMIC)
+    const actionButton2 = valueToCode(block, 'actionButton2', javascriptGenerator.ORDER_ATOMIC)
     const actionButton2Type = (actionButton2 !== '') ? blockGetCheckedInputType(block, 'actionButton2') : undefined
-    const actionButton3 = javascriptGenerator.valueToCode(block, 'actionButton3', javascriptGenerator.ORDER_ATOMIC)
+    const actionButton3 = valueToCode(block, 'actionButton3', javascriptGenerator.ORDER_ATOMIC)
     const actionButton3Type = (actionButton3 !== '') ? blockGetCheckedInputType(block, 'actionButton3') : undefined
-    const users = javascriptGenerator.valueToCode(block, 'usersInput', javascriptGenerator.ORDER_ATOMIC)
+    const users = valueToCode(block, 'usersInput', javascriptGenerator.ORDER_ATOMIC)
 
     function getActionButtonCode (titleAndAction, buttonActionType) {
       let actionButtonCode
@@ -384,8 +384,8 @@ export default function defineOHBlocks_Notifications (f7) {
   }
 
   javascriptGenerator.forBlock['oh_cloudNotificationButton'] = function (block) {
-    const label = javascriptGenerator.valueToCode(block, 'label', javascriptGenerator.ORDER_ATOMIC).replace(/'/g, '')
-    const action = javascriptGenerator.valueToCode(block, 'action', javascriptGenerator.ORDER_ATOMIC)
+    const label = valueToCode(block, 'label', javascriptGenerator.ORDER_ATOMIC).replace(/'/g, '')
+    const action = valueToCode(block, 'action', javascriptGenerator.ORDER_ATOMIC)
     return [`.addActionButton('${label}', ${action})`, javascriptGenerator.ORDER_ATOMIC]
   }
 
@@ -409,9 +409,9 @@ export default function defineOHBlocks_Notifications (f7) {
   }
 
   javascriptGenerator.forBlock['oh_cloudNotification_commandAction'] = function (block) {
-    const command = javascriptGenerator.valueToCode(block, 'command', javascriptGenerator.ORDER_ATOMIC)
+    const command = valueToCode(block, 'command', javascriptGenerator.ORDER_ATOMIC)
     const commandType = (command !== '') ? blockGetCheckedInputType(block, 'command') : undefined
-    const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC).replace(/'/g, '')
+    const itemName = valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC).replace(/'/g, '')
     const itemType = (itemName !== '') ? blockGetCheckedInputType(block, 'itemName') : undefined
     const commandCode = '\'command:' +
       ((itemType === '') ? '\' + ' + itemName + ' + \':\' ' : `${itemName}:'`) +
@@ -451,7 +451,7 @@ export default function defineOHBlocks_Notifications (f7) {
 
   javascriptGenerator.forBlock['oh_cloudNotification_uiAction'] = function (block) {
     const command = block.getFieldValue('command')
-    const path = javascriptGenerator.valueToCode(block, 'path', javascriptGenerator.ORDER_ATOMIC).replace(/'/g, '')
+    const path = valueToCode(block, 'path', javascriptGenerator.ORDER_ATOMIC).replace(/'/g, '')
     const pathType = (path !== '') ? blockGetCheckedInputType(block, 'path') : undefined
     const pathCode = (pathType === '') ? ' + ' + path : ` + '${path}'`
     const uiActionCode = `'${command}'${pathCode}`
@@ -474,8 +474,8 @@ export default function defineOHBlocks_Notifications (f7) {
   }
 
   javascriptGenerator.forBlock['oh_hideCloudNotification'] = function (block) {
-    const reference = javascriptGenerator.valueToCode(block, 'reference', javascriptGenerator.ORDER_ATOMIC)
-    const tag = javascriptGenerator.valueToCode(block, 'tag', javascriptGenerator.ORDER_ATOMIC)
+    const reference = valueToCode(block, 'reference', javascriptGenerator.ORDER_ATOMIC)
+    const tag = valueToCode(block, 'tag', javascriptGenerator.ORDER_ATOMIC)
     const tagCode = (tag === '') ? '' : `.withTag(${tag})`
     const referenceCode = (reference === '') ? '' : `.withReferenceId(${reference})`
     return `actions.notificationBuilder("hide notification")${referenceCode}${tagCode}.hide().send();\n`

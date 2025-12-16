@@ -472,7 +472,7 @@ export default function defineOHBlocks_Persistence (f7, persistenceServices) {
     const dayInfo1 = valueToCode(block, 'dayInfo', javascriptGenerator.ORDER_NONE)
     const dayInfo2 = methodName.endsWith('Between') ? valueToCode(block, 'dayInfo2', javascriptGenerator.ORDER_NONE) : undefined
     const dayInfo = dayInfo2 ? `${dayInfo1}, ${dayInfo2}` : dayInfo1
-    const persistenceName = javascriptGenerator.valueToCode(block, 'persistenceName', javascriptGenerator.ORDER_NONE)
+    const persistenceName = valueToCode(block, 'persistenceName', javascriptGenerator.ORDER_NONE)
     const persistenceExtension = (persistenceName === '\'default\'') ? '' : `, ${persistenceName}`
 
     let itemCode = generateItemCode(itemName, inputType)
@@ -526,9 +526,9 @@ export default function defineOHBlocks_Persistence (f7, persistenceServices) {
   */
   javascriptGenerator.forBlock['oh_get_persistence_lastupdate'] = function (block) {
     const methodName = block.getFieldValue('methodName')
-    const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
+    const itemName = valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
     const inputType = blockGetCheckedInputType(block, 'itemName')
-    const persistenceName = javascriptGenerator.valueToCode(block, 'persistenceName', javascriptGenerator.ORDER_NONE)
+    const persistenceName = valueToCode(block, 'persistenceName', javascriptGenerator.ORDER_NONE)
     const persistenceExtension = (persistenceName === '\'default\'') ? '' : `${persistenceName}`
     const itemCode = generateItemCode(itemName, inputType)
 
@@ -652,17 +652,17 @@ export default function defineOHBlocks_Persistence (f7, persistenceServices) {
   * Code part
   */
   javascriptGenerator.forBlock['oh_persist'] = function (block) {
-    const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
+    const itemName = valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
     const inputType = blockGetCheckedInputType(block, 'itemName')
     const itemCode = generateItemCode(itemName, inputType)
 
     const persistType = block.getFieldValue('persistType')
 
-    const states = javascriptGenerator.valueToCode(block, 'states', javascriptGenerator.ORDER_ATOMIC)
-    const at = javascriptGenerator.valueToCode(block, 'at', javascriptGenerator.ORDER_NONE)
+    const states = valueToCode(block, 'states', javascriptGenerator.ORDER_ATOMIC)
+    const at = valueToCode(block, 'at', javascriptGenerator.ORDER_NONE)
     const policy = persistType.endsWith('REPLACE') ? 'REPLACE' : 'ADD'
 
-    const persistenceName = javascriptGenerator.valueToCode(block, 'persistenceName', javascriptGenerator.ORDER_NONE)
+    const persistenceName = valueToCode(block, 'persistenceName', javascriptGenerator.ORDER_NONE)
     const persistenceExtension = (persistenceName === '\'default\'') ? '' : `, ${persistenceName}`
 
     let code = ''
@@ -809,17 +809,17 @@ export default function defineOHBlocks_Persistence (f7, persistenceServices) {
   * Code part
   */
   javascriptGenerator.forBlock['oh_delete_persistedvalues'] = function (block) {
-    const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
+    const itemName = valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
     const inputType = blockGetCheckedInputType(block, 'itemName')
     const itemCode = generateItemCode(itemName, inputType)
 
     const methodName = block.getFieldValue('methodName')
 
-    const dayInfoSince = javascriptGenerator.valueToCode(block, 'dayInfoSince', javascriptGenerator.ORDER_NONE)
-    const dayInfoUntil = javascriptGenerator.valueToCode(block, 'dayInfoUntil', javascriptGenerator.ORDER_NONE)
+    const dayInfoSince = valueToCode(block, 'dayInfoSince', javascriptGenerator.ORDER_NONE)
+    const dayInfoUntil = valueToCode(block, 'dayInfoUntil', javascriptGenerator.ORDER_NONE)
     const dayInfo = dayInfoSince + ((dayInfoSince && dayInfoUntil) ? ' ,' : '') + dayInfoUntil
 
-    const persistenceName = javascriptGenerator.valueToCode(block, 'persistenceName', javascriptGenerator.ORDER_NONE)
+    const persistenceName = valueToCode(block, 'persistenceName', javascriptGenerator.ORDER_NONE)
     const persistenceExtension = (persistenceName === '\'default\'') ? '' : `, ${persistenceName}`
 
     const code = `${itemCode}.persistence.${methodName}(${dayInfo}${persistenceExtension});\n`

@@ -153,7 +153,7 @@ export default function (f7) {
     if (inputType === 'oh_quantity') {
       math_number = math_number_input + '.float'
     }
-    const decimals = javascriptGenerator.valueToCode(block, 'DECIMALS', javascriptGenerator.ORDER_NONE)
+    const decimals = valueToCode(block, 'DECIMALS', javascriptGenerator.ORDER_NONE)
     const operand = block.getFieldValue('op')
 
     let code
@@ -218,7 +218,7 @@ export default function (f7) {
 
   javascriptGenerator.forBlock['math_single'] = function (block) {
     const inputType = blockGetCheckedInputType(block, 'NUM')
-    const math_number_input = javascriptGenerator.valueToCode(block, 'NUM', javascriptGenerator.ORDER_FUNCTION_CALL)
+    const math_number_input = valueToCode(block, 'NUM', javascriptGenerator.ORDER_FUNCTION_CALL)
     let math_number = math_number_input
     if (inputType === 'oh_quantity') {
       math_number = math_number_input + '.float'
@@ -301,8 +301,8 @@ export default function (f7) {
     const wasInitialized = javascriptGenerator.isInitialized
     try {
       javascriptGenerator.isInitialized = 1 // workaround to avoid console warnings
-      math_number_input1 = javascriptGenerator.valueToCode(block, 'NUM1', javascriptGenerator.ORDER_FUNCTION_CALL)
-      math_number_input2 = javascriptGenerator.valueToCode(block, 'NUM2', javascriptGenerator.ORDER_FUNCTION_CALL)
+      math_number_input1 = valueToCode(block, 'NUM1', javascriptGenerator.ORDER_FUNCTION_CALL)
+      math_number_input2 = valueToCode(block, 'NUM2', javascriptGenerator.ORDER_FUNCTION_CALL)
     } catch (e) {
       // may throw an exception on workspace startup in uninitialized state but in this case we can ignore
     } finally {
