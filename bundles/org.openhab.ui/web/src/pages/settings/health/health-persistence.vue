@@ -87,7 +87,7 @@ export default {
     },
     load () {
       this.loading = true
-      this.$oh.api.get('/rest/persistence/persistencehealth').then((data) => {
+      this.$oh.api.get('/rest/persistence/health').then((data) => {
         this.persistenceProblems = data
         this.loading = false
         this.ready = true
