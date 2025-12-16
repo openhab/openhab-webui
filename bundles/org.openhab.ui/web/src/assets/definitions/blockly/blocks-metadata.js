@@ -61,7 +61,7 @@ export default function (f7) {
   javascriptGenerator.forBlock['oh_get_meta_config'] = function (block) {
     const configKey = valueToCode(block, 'configKey', javascriptGenerator.ORDER_ATOMIC)
     const theItem = valueToCode(block, 'theItem', javascriptGenerator.ORDER_ATOMIC)
-    const namespace = javascriptGenerator.valueToCode(block, 'namespace', javascriptGenerator.ORDER_ATOMIC)
+    const namespace = valueToCode(block, 'namespace', javascriptGenerator.ORDER_ATOMIC)
     addGetItemMetaConfigValue()
     return [`getItemMetaConfigValue(${theItem}, ${namespace}, ${configKey})`, javascriptGenerator.ORDER_CONDITIONAL]
   }
@@ -94,9 +94,9 @@ export default function (f7) {
   }
 
   javascriptGenerator.forBlock['oh_store_meta_value'] = function (block) {
-    const value = javascriptGenerator.valueToCode(block, 'value', javascriptGenerator.ORDER_ATOMIC)
-    const theItem = javascriptGenerator.valueToCode(block, 'theItem', javascriptGenerator.ORDER_ATOMIC)
-    const namespace = javascriptGenerator.valueToCode(block, 'namespace', javascriptGenerator.ORDER_ATOMIC)
+    const value = valueToCode(block, 'value', javascriptGenerator.ORDER_ATOMIC)
+    const theItem = valueToCode(block, 'theItem', javascriptGenerator.ORDER_ATOMIC)
+    const namespace = valueToCode(block, 'namespace', javascriptGenerator.ORDER_ATOMIC)
 
     let itemMeta = addItemMeta()
     let code = `${itemMeta} = items.metadata.getMetadata(${theItem}, ${namespace});\n`
@@ -137,10 +137,10 @@ export default function (f7) {
   }
 
   javascriptGenerator.forBlock['oh_store_meta_config'] = function (block) {
-    const value = javascriptGenerator.valueToCode(block, 'value', javascriptGenerator.ORDER_ATOMIC)
-    const configKey = javascriptGenerator.valueToCode(block, 'configKey', javascriptGenerator.ORDER_ATOMIC).replaceAll('\'', '')
-    const theItem = javascriptGenerator.valueToCode(block, 'theItem', javascriptGenerator.ORDER_ATOMIC)
-    const namespace = javascriptGenerator.valueToCode(block, 'namespace', javascriptGenerator.ORDER_ATOMIC)
+    const value = valueToCode(block, 'value', javascriptGenerator.ORDER_ATOMIC)
+    const configKey = valueToCode(block, 'configKey', javascriptGenerator.ORDER_ATOMIC).replaceAll('\'', '')
+    const theItem = valueToCode(block, 'theItem', javascriptGenerator.ORDER_ATOMIC)
+    const namespace = valueToCode(block, 'namespace', javascriptGenerator.ORDER_ATOMIC)
 
     let itemMeta = addItemMeta()
     let code = `${itemMeta} = items.metadata.getMetadata(${theItem}, ${namespace});\n`

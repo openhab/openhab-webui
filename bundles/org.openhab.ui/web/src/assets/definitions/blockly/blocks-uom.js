@@ -146,8 +146,8 @@ export default function (f7) {
   }
 
   javascriptGenerator.forBlock['oh_quantity_to_unit'] = function (block) {
-    const quantity = javascriptGenerator.valueToCode(block, 'quantity', javascriptGenerator.ORDER_NONE)
-    const unit = javascriptGenerator.valueToCode(block, 'unit', javascriptGenerator.ORDER_NONE)
+    const quantity = valueToCode(block, 'quantity', javascriptGenerator.ORDER_NONE)
+    const unit = valueToCode(block, 'unit', javascriptGenerator.ORDER_NONE)
     return [`${quantity}.toUnit(${unit})`, javascriptGenerator.ORDER_NONE]
   }
 }
@@ -161,7 +161,7 @@ export default function (f7) {
  * @returns {string} generated Quantity code
  */
 function generateQuantityCode (block, inputName) {
-  const input = javascriptGenerator.valueToCode(block, inputName, javascriptGenerator.ORDER_NONE)
+  const input = valueToCode(block, inputName, javascriptGenerator.ORDER_NONE)
   const inputType = blockGetCheckedInputType(block, inputName)
 
   let code = ''

@@ -397,7 +397,7 @@ export default function defineOHBlocks_Scripts (f7, transformationServices) {
   javascriptGenerator.forBlock['oh_rule_return'] = function (block) {
     // we need to enable the wrapper to allow returning from the rule
     javascriptGenerator.provideFunction_('wrapper', ['"use wrapper;"'])
-    const value = javascriptGenerator.valueToCode(block, 'value', javascriptGenerator.ORDER_ATOMIC)
+    const value = valueToCode(block, 'value', javascriptGenerator.ORDER_ATOMIC)
     return `return ${value} \n`
   }
 }
