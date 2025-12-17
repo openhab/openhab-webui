@@ -1,6 +1,8 @@
 import mixin from '@/components/widgets/widget-mixin'
 import { f7 } from 'framework7-vue'
 
+// TODO: Restore functionality to close card with browser back.
+// This has been removed as the history manipulation caused double-back navigation to the overview page from the analyzer
 export default {
   mixins: [mixin],
   props: {
@@ -14,10 +16,10 @@ export default {
     }
   },
   mounted () {
-    window.addEventListener('popstate', this.back)
+    // window.addEventListener('popstate', this.back)
   },
   beforeUnmount () {
-    window.removeEventListener('popstate', this.back)
+    // window.removeEventListener('popstate', this.back)
   },
   computed: {
     title () {
@@ -71,15 +73,15 @@ export default {
   methods: {
     cardOpening () {
       this.cardId = this.title + '-' + f7.utils.id()
-      history.pushState({ cardId: this.cardId }, null, window.location.href.split('#card=')[0] + '#' + f7.utils.serializeObject({ card: this.element.key }))
+      // history.pushState({ cardId: this.cardId }, null, window.location.href.split('#card=')[0] + '#' + f7.utils.serializeObject({ card: this.element.key }))
       setTimeout(() => { this.opened = true })
     },
     cardClosed () {
-      if (history.state.cardId && history.state.cardId === this.cardId) history.back()
+      // if (history.state.cardId && history.state.cardId === this.cardId) history.back()
       this.opened = false
     },
     closeCard () {
-      setTimeout(() => { f7.card.close(this.$refs.card.$el) }, 100)
+      if (this.$refs.card) setTimeout(() => { f7.card.close(this.$refs.card.$el) }, 100)
     },
     back (evt) {
       console.debug(evt.state)
