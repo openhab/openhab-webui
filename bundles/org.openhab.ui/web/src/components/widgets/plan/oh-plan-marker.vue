@@ -7,8 +7,7 @@
             @update:lat-lng="onMove"
             @click="onClick">
     <l-tooltip v-if="tooltip && !config.useTooltipAsLabel"
-               :options="tooltipOptions"
-               @click="() => {}">
+               :options="tooltipOptions">
       <div style="white-space: nowrap" :style="tooltipStyle">
         {{ tooltip }}
       </div>
