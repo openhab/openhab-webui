@@ -1075,6 +1075,14 @@ export default {
       f7.on('pageAfterIn', (page) => {
         // console.log('pageAfterIn: current URL:', page.route.url)
         // console.log('Full route object:', page.route)
+
+        // Fix for back button issue: When redirected from '/' to '/overview/',
+        // sometimes F7's router history may be empty and the back button doesn't work at first.
+        const router = f7.views.main?.router
+        if (router && router.history.length === 0 && page.route?.url) {
+          router.history.push(page.route.url)
+        }
+
         nextTick(this.updateTitle)
       })
 
