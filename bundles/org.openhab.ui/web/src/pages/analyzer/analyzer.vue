@@ -340,11 +340,11 @@
   --f7-theme-color-rgb var(--f7-color-blue-rgb)
   --f7-theme-color-tint var(--f7-color-blue-tint)
   z-index 11000
+  .tabs .tab
+    padding-left calc(var(--f7-block-padding-horizontal) + var(--f7-safe-area-left))
+    padding-right calc(var(--f7-block-padding-horizontal) + var(--f7-safe-area-right))
 .md .analyzer-controls .toolbar .link
   width 28%
-.tabs .tab
-  padding-left calc(var(--f7-block-padding-horizontal) + var(--f7-safe-area-left))
-  padding-right calc(var(--f7-block-padding-horizontal) + var(--f7-safe-area-right))
 </style>
 
 <script lang="ts">
