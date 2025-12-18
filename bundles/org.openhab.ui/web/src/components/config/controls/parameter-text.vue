@@ -46,7 +46,7 @@
       @input="updateValue"
       :readonly="configDescription.readOnly"
       :type="controlType">
-      <template #slot-content-end>
+      <template #content-end>
         <div v-if="configDescription.context === 'password'" class="padding-left">
           <f7-link class="margin" color="gray" @click="showPassword = !showPassword">
             <f7-icon size="20" :f7="(showPassword) ? 'eye_slash_fill' : 'eye_fill'" />
