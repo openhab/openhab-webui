@@ -20,15 +20,20 @@
       <span v-else />
     </f7-toolbar>
 
-    <oh-chart-page v-if="showChart"
-                   class="analyzer-chart"
-                   :class="{ 'sheet-opened': controlsOpened }"
-                   :key="chartKey"
-                   :context="context" />
-    <empty-state-placeholder v-else-if="invalidConfiguration"
-                             icon="exclamationmark"
-                             :title="t('analyzer.invalid-configuration.title')"
-                             :text="t('analyzer.invalid-configuration.text')" />
+    <!-- wrap inside a div so Vue knows where to render oh-chart-page on rerender -->
+    <div class="chart-container">
+      <oh-chart-page
+        v-if="showChart"
+        class="analyzer-chart"
+        :class="{ 'sheet-opened': controlsOpened }"
+        :key="chartKey"
+        :context="context" />
+      <empty-state-placeholder
+        v-else-if="invalidConfiguration"
+        icon="exclamationmark"
+        :title="t('analyzer.invalid-configuration.title')"
+        :text="t('analyzer.invalid-configuration.text')" />
+    </div>
 
     <!-- analyzer controls -->
     <f7-sheet class="analyzer-controls"
@@ -508,7 +513,9 @@ export default {
             delete this.seriesOptions[optionKey]
           }
         }
-        this.showChart = true
+        nextTick(() => {
+          this.showChart = true
+        })
 
         return Promise.resolve()
       })
