@@ -20,7 +20,7 @@
   "setupwizard.location.setLocation": "Nastavit polohu",
   "setupwizard.network.title": "Vybrat hlavní síť",
   "setupwizard.network.header1": "openHAB ve výchozím nastavení omezuje objevování některých dalších síťových zařízení na vaši hlavní síť.",
-  "setupwizard.network.header2": "Vyberte primární IP adresu vašeho serveru, která je součástí vaší primární sítě.",
+  "setupwizard.network.header2": "Vyberte primární IP adresu vašeho serveru, která je částí vaší primární sítě.",
   "setupwizard.network.setNetwork": "Nastavit primární síť",
   "setupwizard.persistence.title": "Vybrat doplňky pro ukládání dat",
   "setupwizard.persistence.header1": "Pro ukládání a znovu načítání minulých stavů Items závisí openHAB na doplňcích pro ukládání dat.",
@@ -56,5 +56,6 @@
   "setupwizard.addons.waitMessage": "Instalace vybraných doplňků může trvat několik minut.",
   "setupwizard.welcome.title": "Vítejte v openHAB!",
   "setupwizard.welcome.bindingsInstalled": "Nainstalovali jste jednu nebo více bindings (doplňků). Things (reprezentace fyzických či virtuálních zařízení) poskytnuté těmito bindings se objeví v nastavení Things ve schránce Inbox. Zde je můžete přijmout a dále konfigurovat.",
+  "setupwizard.welcome.persistenceInstalled": "Nainstalovali jste jednu nebo více služeb pro ukládání dat. Abyste je mohli použít, budete muset tyto služby nakonfigurovat v Nastavení/Persistence.",
   "setupwizard.welcome.getStarted": "Začít"
 }

@@ -14,11 +14,11 @@
   "about.miscellaneous.home.background": "Barva pozadí domovské stránky",
   "about.miscellaneous.home.background.default": "Výchozí",
   "about.miscellaneous.home.background.standard": "Standardní",
-  "about.miscellaneous.home.background.white": "Bílý",
+  "about.miscellaneous.home.background.white": "Bílé",
   "about.miscellaneous.home.hideChatInput": "Skrýt chat na domovské stránce",
   "about.miscellaneous.home.disableCardExpansionAnimation": "Zakázat animace rozbalování karet",
   "about.miscellaneous.theme.disablePageTransition": "Zakázat animace přechodu stránek",
   "about.miscellaneous.webaudio.enable": "Povolit podporu Web Audio sink",
   "about.miscellaneous.commandItem.title": "Poslouchat příkazy UI ",
-  "about.miscellaneous.commandItem.selectItem": "Položka"
+  "about.miscellaneous.commandItem.selectItem": "Item"
 }
