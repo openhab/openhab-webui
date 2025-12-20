@@ -276,13 +276,13 @@ export default function defineOHBlocks_Scripts (f7, transformationServices) {
     if (contextInfo === 'eventAvailable') return ['(event !== undefined)', javascriptGenerator.ORDER_ATOMIC]
     if (contextInfo === 'ruleUID') return ['ctx.ruleUID', javascriptGenerator.ORDER_ATOMIC]
 
-    if (contextInfo === 'itemState' || contextInfo === 'oldState' || contextInfo === 'itemCommand') {
+    if (oldContextInfoName === 'itemState' || oldContextInfoName === 'oldItemState' || oldContextInfoName === 'itemCommand') {
       if (type === 'asNumber') {
-        return [`((${contextInfo} !== undefined) ? parseFloat(${contextInfo}.toString()) : undefined)`, javascriptGenerator.ORDER_ATOMIC]
+        return [`((${contextInfo} !== undefined) ? parseFloat(${contextInfo}) : undefined)`, javascriptGenerator.ORDER_ATOMIC]
       } else if (type === 'asQuantity') {
-        return [`((${contextInfo} !== undefined) ? Quantity(${contextInfo}.toString()) : undefined)`, javascriptGenerator.ORDER_ATOMIC]
+        return [`((${contextInfo} !== undefined) ? Quantity(${contextInfo}) : undefined)`, javascriptGenerator.ORDER_ATOMIC]
       } else {
-        return [`${contextInfo}?.toString()`, javascriptGenerator.ORDER_ATOMIC]
+        return [`${contextInfo}`, javascriptGenerator.ORDER_ATOMIC]
       }
     }
     return [`${contextInfo}`, javascriptGenerator.ORDER_ATOMIC]
