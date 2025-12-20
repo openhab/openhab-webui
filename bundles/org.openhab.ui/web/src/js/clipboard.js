@@ -15,13 +15,15 @@ import { copyText } from 'vue3-clipboard'
  */
 export default function copyToClipboard (data, { dialogTitle = 'Copy to Clipboard', dialogText = 'Click OK to copy data to clipboard', onSuccess, onError } = {}) {
   copyText(data, undefined, (error, event) => {
-    if (!error) {
-      if (typeof onSuccess === 'function') {
-        onSuccess()
-      }
+    if (error) {
+      showManualCopyDialog(data, dialogTitle, dialogText, onSuccess, onError)
+    } else if (typeof onSuccess === 'function') {
+      onSuccess()
     }
   })
+}
 
+function showManualCopyDialog (data, dialogTitle, dialogText, onSuccess, onError) {
   // Safari requires that the copy operation is triggered _directly_ by a user action
   // without any intervening asynchronous operations. So in case the copy didn't work,
   // Try to re-trigger the copy operation within a user action.
