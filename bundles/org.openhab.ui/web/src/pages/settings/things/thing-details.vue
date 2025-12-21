@@ -12,7 +12,8 @@
         @save="save()"
         :f7router />
     </f7-navbar>
-    <f7-toolbar tabbar position="top">
+    <!-- force rerender to properly highlight currentTab === 'channels' if coming from channel config by using ready as key -->
+    <f7-toolbar tabbar position="top" :key="ready">
       <f7-link
         @click="switchTab('thing')"
         :tab-link-active="currentTab === 'thing' ? true : null"
@@ -36,7 +37,7 @@
     </f7-toolbar>
 
     <f7-tabs>
-      <f7-tab id="thing" :tab-active="currentTab === 'thing'? true : null">
+      <f7-tab id="thing" :tab-active="currentTab === 'thing' ? true : null">
         <f7-block v-if="ready && thing.statusInfo" class="block-narrow" strong>
           <f7-col class="padding-horizontal">
             <div v-show="!error" class="float-right align-items-flex-start align-items-center">
@@ -266,7 +267,7 @@
 
       <f7-tab
         id="channels"
-        disabled="!thingType.channels ? true : null"
+        :disabled="!thingType?.channels ? true : null"
         :tab-active="currentTab === 'channels' ? true : null">
         <f7-block v-if="currentTab === 'channels'" class="block-narrow">
           <channel-list
@@ -495,6 +496,7 @@ export default {
       }
       // When coming back from the channel add/edit page with a change, use the data from the store
       if (event.pageFrom?.name?.indexOf('channel') >= 0) {
+        this.currentTab = 'channels'
         if (!this.eventSource) this.startEventSource()
         nextTick(() => {
           this.ready = true
