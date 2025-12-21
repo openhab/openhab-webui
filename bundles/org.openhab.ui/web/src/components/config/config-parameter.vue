@@ -3,8 +3,9 @@
            class="config-parameter"
            :no-hairlines-md="configDescription.type !== 'BOOLEAN' && (!configDescription.options || !configDescription.options.length) && ['item'].indexOf(configDescription.context) < 0"
            v-show="configDescription.visible ? configDescription.visible(value, configuration, configDescription, parameters) : true">
-    <f7-list-group v-if="!readOnly && !configDescription.readOnly">
+    <f7-list-group v-if="!readOnly && !configDescription.readOnly || configDescription.context === 'password'">
       <component :is="control"
+                 :read-only="readOnly"
                  :config-description="configDescription"
                  :value="value"
                  :parameters="parameters"
@@ -15,7 +16,7 @@
     </f7-list-group>
     <f7-list-item v-else
                   :title="configDescription.label"
-                  :after="value !== undefined && value !== null ? (configDescription.context === 'password' ? '•'.repeat(20) : value.toString()) : 'N/A'" />
+                  :after="value !== undefined && value !== null ? value.toString() : 'N/A'" />
     <template #after-list>
       <f7-block-footer class="param-description">
         <div v-if="status" class="param-status-info">
@@ -76,9 +77,6 @@ export default {
     }
   },
   computed: {
-    maskedPassword () {
-      return '•'.repeat(20)
-    },
     control () {
       const configDescription = this.configDescription
       if (configDescription.options?.length && configDescription.limitToOptions && (!configDescription.context || configDescription.context === 'network-interface' || configDescription.context === 'serial-port')) {
