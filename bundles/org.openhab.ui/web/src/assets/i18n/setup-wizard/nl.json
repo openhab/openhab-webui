@@ -56,5 +56,6 @@
   "setupwizard.addons.waitMessage": "Het kan enkele minuten duren om de add-ons die je geselecteerd hebt te installeren.",
   "setupwizard.welcome.title": "Welkom bij openHAB!",
   "setupwizard.welcome.bindingsInstalled": "U heeft één of meerdere bindings geïnstalleerd. Things van deze bindings verschijnen in de Inbox. U kunt daar accepteren en verder configureren.",
+  "setupwizard.welcome.persistenceInstalled": "Je hebt een of meerdere persistence services geïnstalleerd. Je dient deze services te configureren in het menu Instellingen/Persistence opdat ze zouden worden gebruikt.",
   "setupwizard.welcome.getStarted": "Aan de slag"
 }
