@@ -4,7 +4,7 @@
            ref="addondetails"
            class="page-addon-details">
     <f7-navbar :transparent="true" class="addon-details-nav">
-      <oh-nav-content :title="addon?.label" :f7router />
+      <oh-nav-content :title="addon?.label" back-link="Add-on Store" :back-link-url="`/addons/${addonId.split('-')[0]}`" :f7router />
     </f7-navbar>
     <f7-block class="block-narrow addon-details" v-if="ready && addon">
       <f7-row>
@@ -218,7 +218,8 @@ export default {
     AddonInfoTable
   },
   props: {
-    addonId: String
+    addonId: String,
+    f7router: Object
   },
   data () {
     return {
