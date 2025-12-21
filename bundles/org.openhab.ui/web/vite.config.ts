@@ -63,6 +63,14 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       workbox: {
+        globPatterns: [
+          // default pattern
+          '**/*.{js,wasm,css,html}',
+          // include static assets
+          'images/*.{png,jpg,jpeg,gif,svg}',
+          'media/*.{mp4,webm,ogg,mp3,wav,flac,aac,m4a}',
+          'fonts/*.{woff,woff2,eot,ttf,otf}'
+        ],
         // restrict which URLs should be treated as part of Main UI SPA,
         // thereby controlling which routes are loaded from the service worker cache instead of the server
         navigateFallbackAllowlist: [
@@ -147,6 +155,28 @@ export default defineConfig({
     outDir: resolve(outPath),
     emptyOutDir: true,
     target: ['chrome107', 'edge107', 'firefox104', 'safari11.1'],
+    rolldownOptions: {
+      output: {
+        assetFileNames: (assetInfo) => {
+          const name = assetInfo.name || ''
+          const ext = name.split('.').pop()?.toLowerCase() || ''
+          // Move fonts to fonts/ folder
+          if (['woff', 'woff2', 'eot', 'ttf', 'otf'].includes(ext)) {
+            return 'fonts/[name][extname]'
+          }
+          // Move images to images/ folder
+          if (['png', 'jpg', 'jpeg', 'gif', 'svg'].includes(ext)) {
+            return 'images/[name][extname]'
+          }
+          // Move media to media/ folder
+          if (['mp4', 'webm', 'ogg', 'mp3', 'wav', 'flac', 'aac', 'm4a'].includes(ext)) {
+            return 'media/[name][extname]'
+          }
+          // Default fallback for other assets
+          return 'assets/[name]-[hash][extname]'
+        }
+      }
+    }
   },
   resolve: {
     alias: {
