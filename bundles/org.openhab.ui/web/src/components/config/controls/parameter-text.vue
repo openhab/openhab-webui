@@ -44,7 +44,7 @@
       :validate-on-blur="pattern && pattern.length > 40"
       :clear-button="!configDescription.required && configDescription.context !== 'password'"
       @input="updateValue"
-      :readonly="configDescription.readOnly"
+      :readonly="readOnly || configDescription.readOnly"
       :type="controlType">
       <template #content-end>
         <div v-if="configDescription.context === 'password'" class="padding-left">
@@ -63,6 +63,7 @@ import { nextTick } from 'vue'
 
 export default {
   props: {
+    readOnly: Boolean,
     configDescription: Object,
     value: [String, Array]
   },
