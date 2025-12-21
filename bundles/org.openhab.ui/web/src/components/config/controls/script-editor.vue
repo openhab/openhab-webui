@@ -66,6 +66,9 @@
     // This affects the buttons in the search form
     .cm-button
       width auto
+    // Display the close button in the search form in upper right corner, not full width
+    .cm-panel.cm-search [name=close]
+      width unset
 </style>
 
 <script>
