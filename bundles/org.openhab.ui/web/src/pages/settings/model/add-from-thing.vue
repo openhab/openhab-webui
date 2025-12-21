@@ -22,7 +22,7 @@
         </f7-block-footer>
         <f7-list v-if="thingId">
           <ul v-if="parentGroup">
-            <item :item="parentGroup" :link="true" @click="openModelPicker" />
+            <item :item="parentGroup" link @click="openModelPicker" />
           </ul>
           <f7-list-item v-else
                         title="Pick From Model"
