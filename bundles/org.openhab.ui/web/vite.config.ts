@@ -165,7 +165,7 @@ export default defineConfig({
             return 'fonts/[name][extname]'
           }
           // Move images to images/ folder
-          if (['png', 'jpg', 'jpeg', 'gif', 'svg'].includes(ext!)) {
+          if (['png', 'jpg', 'jpeg', 'gif', 'svg'].includes(ext)) {
             return 'images/[name][extname]'
           }
           // Move media to media/ folder
