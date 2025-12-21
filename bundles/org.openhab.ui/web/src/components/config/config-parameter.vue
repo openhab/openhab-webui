@@ -3,7 +3,7 @@
            class="config-parameter"
            :no-hairlines-md="configDescription.type !== 'BOOLEAN' && (!configDescription.options || !configDescription.options.length) && ['item'].indexOf(configDescription.context) < 0"
            v-show="configDescription.visible ? configDescription.visible(value, configuration, configDescription, parameters) : true">
-    <f7-list-group v-if="!readOnly && !configDescription.readOnly || configDescription.context === 'password'">
+    <f7-list-group v-if="(!readOnly && !configDescription.readOnly) || configDescription.context === 'password'">
       <component :is="control"
                  :read-only="readOnly"
                  :config-description="configDescription"
