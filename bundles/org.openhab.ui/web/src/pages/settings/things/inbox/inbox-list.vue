@@ -37,7 +37,7 @@
                    icon-aurora="f7:trash">
           &nbsp;Remove
         </f7-button>
-        <f7-button v-if="selectedItems.map(uid => inbox.find(e => e.thingUID === uid)).filter(e => e.flag !== 'IGNORED').length"
+        <f7-button v-if="selectedItems.map(uid => inbox.find(e => e.thingUID === uid))?.filter(e => e.flag !== 'IGNORED').length"
                    @click="confirmActionOnSelection('ignore')"
                    color="orange"
                    class="ignore display-flex flex-direction-row margin-right"
@@ -237,6 +237,9 @@ import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 
 export default {
   mixins: [ThingInboxMixin],
+  props: {
+    f7router: Object
+  },
   components: {
     EmptyStatePlaceholder
   },
