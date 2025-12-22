@@ -20,7 +20,7 @@
       </f7-link>
       <div class="padding-right text-align-right">
         <label class="advanced-label">
-          <f7-checkbox style="margin-left: 5px; padding-right: 5px;" v-model:checked="runtimeStore.sitemapIncludeItemName" />
+          <f7-checkbox style="margin-left: 5px; padding-right: 5px;" v-model:checked="sitemapIncludeItemName" />
           Show item name
         </label>
       </div>
@@ -50,7 +50,7 @@
                         @click="clearSelection">
                 <f7-treeview>
                   <sitemap-treeview-item :widget="sitemap"
-                                         :includeItemName="runtimeStore.sitemapIncludeItemName"
+                                         :includeItemName="sitemapIncludeItemName"
                                          :itemsList="items"
                                          @selected="selectWidget"
                                          :selected="selectedWidget" />
@@ -354,11 +354,11 @@
 <script>
 import { nextTick } from 'vue'
 import { f7, theme } from 'framework7-vue'
-import { mapStores } from 'pinia'
+import { mapWritableState } from 'pinia'
 
 import cloneDeep from 'lodash/cloneDeep'
 
-import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
 import SitemapCode from '@/components/pagedesigner/sitemap/sitemap-code.vue'
 import WidgetDetails from '@/components/pagedesigner/sitemap/widget-details.vue'
@@ -422,7 +422,9 @@ export default {
       if (!this.selectedWidget) return
       return this.allowedWidgetTypes(this.selectedWidget)
     },
-    ...mapStores(useRuntimeStore)
+    ...mapWritableState(useUIOptionsStore, {
+      sitemapIncludeItemName: 'sitemapShowItemName'
+    })
   },
   watch: {
     sitemap: {
