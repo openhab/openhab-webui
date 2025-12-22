@@ -280,10 +280,13 @@ export default {
       }
       this.newPointItems.forEach((p) => {
         if (!p.name) valid = false
+        p.groupNames = p.groupNames || []
         if (this.createEquipment) {
-          p.groupNames = [this.equipmentItem.name]
-        } else {
-          p.groupNames = (this.parent) ? [this.parent.item.name] : (this.parentGroup) ? [this.parentGroup.name] : []
+          p.groupNames.push(this.equipmentItem.name)
+        } else if (this.parent) {
+          p.groupNames.push(this.parent.item.name)
+        } else if (this.parentGroup) {
+          p.groupNames.push(this.parentGroup.name)
         }
       })
 
