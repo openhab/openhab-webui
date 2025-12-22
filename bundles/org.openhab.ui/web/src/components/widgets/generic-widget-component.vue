@@ -11,7 +11,8 @@
     <component v-else-if="componentType && componentType.startsWith('f7-')"
                ref="component"
                :is="componentType"
-               v-bind="{ ...$attrs, ...config }">
+               v-bind="{ ...$attrs, ...config }"
+               :class="scopedCssUid">
       <!-- eslint-disable-next-line vue/no-unused-vars -->
       <template v-for="(slotComponents, slotName) in context.component.slots" :key="slotName" #[slotName]>
         <ul v-if="componentType === 'f7-list'" v-bind="$attrs">
@@ -68,7 +69,8 @@
     <component v-else
                ref="component"
                :is="componentType"
-               v-bind="{ ...$attrs, ...config }">
+               v-bind="{ ...$attrs, ...config }"
+               :class="scopedCssUid">
       {{ config.content }}
       <template v-if="context.component.slots && context.component.slots.default">
         <generic-widget-component v-for="(slotComponent, idx) in context.component.slots.default"
