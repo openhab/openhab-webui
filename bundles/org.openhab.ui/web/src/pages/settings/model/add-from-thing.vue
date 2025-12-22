@@ -280,14 +280,6 @@ export default {
       }
       this.newPointItems.forEach((p) => {
         if (!p.name) valid = false
-        p.groupNames = p.groupNames || []
-        if (this.createEquipment) {
-          p.groupNames.push(this.equipmentItem.name)
-        } else if (this.parent) {
-          p.groupNames.push(this.parent.item.name)
-        } else if (this.parentGroup) {
-          p.groupNames.push(this.parentGroup.name)
-        }
       })
 
       if (!valid) {
@@ -295,7 +287,9 @@ export default {
         return
       }
 
-      this.updatedPointItems.forEach((p) => {
+      const pointItems = [...this.newPointItems, ...this.updatedPointItems]
+      this.pointItems.forEach((p) => {
+        p.groupNames = p.groupNames || []
         if (this.createEquipment) {
           p.groupNames = [...p.groupNames, this.equipmentItem.name]
         } else {
@@ -308,7 +302,6 @@ export default {
       })
 
       let dialog = f7.dialog.progress('Creating the Equipment and Points...')
-      const pointItems = [...this.newPointItems, ...this.updatedPointItems]
       const payload = [...pointItems.map((p) => {
         let copy = Object.assign({}, p)
         delete (copy.channel)
