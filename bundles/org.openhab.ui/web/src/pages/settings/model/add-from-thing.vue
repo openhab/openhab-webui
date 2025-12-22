@@ -288,7 +288,7 @@ export default {
       }
 
       const pointItems = [...this.newPointItems, ...this.updatedPointItems]
-      this.pointItems.forEach((p) => {
+      pointItems.forEach((p) => {
         p.groupNames = p.groupNames || []
         if (this.createEquipment) {
           p.groupNames = [...p.groupNames, this.equipmentItem.name]
