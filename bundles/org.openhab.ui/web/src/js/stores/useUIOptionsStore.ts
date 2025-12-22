@@ -73,7 +73,7 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     localStorage.getItem('openhab.ui:modelPicker.showNonSemantic') === 'true'
   )
 
-    const sitemapShowItemName = ref<boolean>(
+  const sitemapShowItemName = ref<boolean>(
     localStorage.getItem('openhab.ui:sitemap.showItemName') === 'true'
   )
 
