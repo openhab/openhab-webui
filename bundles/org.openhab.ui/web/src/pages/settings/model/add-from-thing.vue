@@ -22,7 +22,7 @@
         </f7-block-footer>
         <f7-list v-if="thingId">
           <ul v-if="parentGroup">
-            <item :item="parentGroup" :link="true" @click="openModelPicker" />
+            <item :item="parentGroup" link @click="openModelPicker" />
           </ul>
           <f7-list-item v-else
                         title="Pick From Model"
@@ -280,11 +280,6 @@ export default {
       }
       this.newPointItems.forEach((p) => {
         if (!p.name) valid = false
-        if (this.createEquipment) {
-          p.groupNames = [this.equipmentItem.name]
-        } else {
-          p.groupNames = (this.parent) ? [this.parent.item.name] : (this.parentGroup) ? [this.parentGroup.name] : []
-        }
       })
 
       if (!valid) {
@@ -292,7 +287,9 @@ export default {
         return
       }
 
-      this.updatedPointItems.forEach((p) => {
+      const pointItems = [...this.newPointItems, ...this.updatedPointItems]
+      pointItems.forEach((p) => {
+        p.groupNames = p.groupNames || []
         if (this.createEquipment) {
           p.groupNames = [...p.groupNames, this.equipmentItem.name]
         } else {
@@ -305,7 +302,6 @@ export default {
       })
 
       let dialog = f7.dialog.progress('Creating the Equipment and Points...')
-      const pointItems = [...this.newPointItems, ...this.updatedPointItems]
       const payload = [...pointItems.map((p) => {
         let copy = Object.assign({}, p)
         delete (copy.channel)
