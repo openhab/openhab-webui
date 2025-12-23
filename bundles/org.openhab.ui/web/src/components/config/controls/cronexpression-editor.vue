@@ -589,7 +589,10 @@ export default {
     secondsText () {
       let seconds = ''
       let cronEvery = this.second.cronEvery
-      switch (cronEvery.toString()) {
+      switch (cronEvery.toString(), {
+        use24HourTimeFormat: true,
+        dayOfWeekStartIndexZero: false
+      }) {
         case '1':
           seconds = '*'
           break

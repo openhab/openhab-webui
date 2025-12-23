@@ -73,7 +73,8 @@ export default {
     translation () {
       try {
         const ret = toString(this.value, {
-          use24HourTimeFormat: true
+          use24HourTimeFormat: true,
+          dayOfWeekStartIndexZero: false
         })
         return ret
       } catch (err) {

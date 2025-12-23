@@ -38,7 +38,8 @@ export default {
           if (!config.cronExpression) return moduleType.label
           try {
             const cron = toString(config.cronExpression, {
-              use24HourTimeFormat: true
+              use24HourTimeFormat: true,
+              dayOfWeekStartIndexZero: false
             })
             return cron.charAt(0).toLowerCase() + cron.slice(1)
           } catch (err) {
