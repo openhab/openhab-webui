@@ -183,6 +183,7 @@
     "mini-css-extract-plugin": "^2.9.0",
     "npm": "^11.7.0",
     "npm-run-all2": "^8.0.4",
+    "ora": "^9.0.0",
     "patch-package": "^8.0.0",
     "postcss-loader": "^8.1.1",
     "postcss-preset-env": "^10.0.0",
