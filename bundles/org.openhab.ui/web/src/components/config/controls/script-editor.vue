@@ -294,6 +294,11 @@ export default {
               globals: { ...globals.node },
               parserOptions: { ecmaVersion: 2024, sourceType: 'module' }
             },
+            parserOptions: {
+              ecmaFeatures: {
+                globalReturn: true // allow return outside functions
+              }
+            },
             rules: {
               semi: 'off' // allow both with and without semicolons
             }
