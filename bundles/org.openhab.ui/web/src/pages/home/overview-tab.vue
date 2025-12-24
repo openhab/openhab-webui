@@ -10,8 +10,8 @@
         </em>
       </p>
     </div>
-    <f7-block class="block-narrow">
-      <habot v-if="showHABot" @session-started="inChatSession = true" @session-end="inChatSession = false" />
+    <f7-block v-if="showHABot" class="block-narrow">
+      <habot @session-started="inChatSession = true" @session-end="inChatSession = false" />
     </f7-block>
 
     <f7-block v-if="!ready" class="text-align-center">
