@@ -1,0 +1,88 @@
+@import "color-helpers.less";
+
+.generate-bg-color-gradient(@color_name) {
+    .bg-color-@{color_name} {
+      background: linear-gradient(var(--oh-gradient-angle), ~"var(--oh-@{color_name}-color-shade)", ~"var(--oh-@{color_name}-color-tint)");
+      opacity: .8;
+    }
+}
+
+:root {
+  .generate-color-tones(oh-theme-color, #9b2f9b);
+  .generate-color-tones(oh-theme-alt-color, #3636ae);
+  .generate-color-tones(oh-background-color, #f9f3ff, true);
+  .generate-color-tones(oh-text-color, #333333);
+  .generate-color-tones(oh-text-inverse-color, #ffffff);
+  .generate-color-tones(oh-text-alt-color, #00FF00);
+
+  .generate-color-tones(oh-palette-1-color, #d1d45a);
+  .generate-color-tones(oh-palette-2-color, #4eb8af);
+  .generate-color-tones(oh-palette-3-color, #3d8ed9);
+  .generate-color-tones(oh-palette-4-color, #d93d8e);
+  .generate-color-tones(oh-palette-5-color, #3dd9d7);
+  .generate-color-tones(oh-palette-6-color, #d9893d);
+  .generate-color-tones(oh-palette-7-color, #d93d40);
+  .generate-color-tones(oh-palette-8-color, #73b9bc); // TBD
+  .generate-color-tones(oh-palette-9-color, #7289ab); // TBD
+
+  .generate-color-tones(oh-red-color, #d82b45);
+  .generate-color-tones(oh-green-color, #74d92b);
+  .generate-color-tones(oh-yellow-color, #cbd92b);
+  .generate-color-tones(oh-blue-color, #2b74d9);
+  .generate-color-tones(oh-orange-color, #d9902b);
+  .generate-color-tones(oh-purple-color, #902bd9);
+  .generate-color-tones(oh-pink-color, #d92bcb);
+  .generate-color-tones(oh-deeppurple-color, #673ab7);
+  .generate-color-tones(oh-lightblue-color, #2bcbd9);
+  .generate-color-tones(oh-teal-color, #009688);
+  .generate-color-tones(oh-deeporange-color, #ff6b22);
+  .generate-color-tones(oh-lime-color, #cddc39);
+  .generate-color-tones(oh-gray-color, #969d93);
+  .generate-color-tones(oh-white-color, #ffffff);
+  .generate-color-tones(oh-black-color, #000000);
+
+  .page {
+    background: linear-gradient(var(--oh-background-color-tint), var(--oh-background-color-shade));
+  }
+
+  --oh-gradient-angle: 315deg;
+  --f7-card-bg-color: linear-gradient(var(--oh-gradient-angle), var(--oh-background-color-shade), var(--oh-background-color-tint-2));
+}
+
+:root .dark,
+:root.dark {
+  .generate-color-tones(oh-theme-color, #c22dc2);
+  .generate-color-tones(oh-theme-alt-color, #c6c633);
+  .generate-color-tones(oh-background-color, #19131f, true);
+  .generate-color-tones(oh-text-color, #eeeeee);
+  .generate-color-tones(oh-text-inverse-color, #000000);
+  .generate-color-tones(oh-text-alt-color, #00FF00);
+
+  .generate-color-tones(oh-palette-1-color, #d1d45a);
+  .generate-color-tones(oh-palette-2-color, #4eb8af);
+  .generate-color-tones(oh-palette-3-color, #3d8ed9);
+  .generate-color-tones(oh-palette-4-color, #d93d8e);
+  .generate-color-tones(oh-palette-5-color, #3dd9d7);
+  .generate-color-tones(oh-palette-6-color, #d9893d);
+  .generate-color-tones(oh-palette-7-color, #d93d40);
+  .generate-color-tones(oh-palette-8-color, #73b9bc); // TBD
+  .generate-color-tones(oh-palette-9-color, #7289ab); // TBD
+
+  .page {
+    background: linear-gradient(var(--oh-background-color-tint), var(--oh-background-color-shade-2));
+  }
+
+  --oh-gradient-angle: 135deg;
+  --f7-card-bg-color: linear-gradient(var(var(--oh-gradient-angle)), var(--oh-background-color-tint), var(--oh-background-color-shade-2));
+}
+
+// generate gradient bg colors
+@colors: red, green, blue, pink, yellow, orange, purple, deeppurple, lightblue, teal, lime, deeporange, gray, black, white;
+each(@colors, .(@color, @index) {
+    .generate-bg-color-gradient(@color);
+});
+
+@iterations: range(1, 9);
+each(@iterations, .(@value, @index) {
+    .generate-bg-color-gradient(~"palette-@{index}");
+});

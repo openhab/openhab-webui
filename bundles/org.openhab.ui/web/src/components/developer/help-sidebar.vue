@@ -147,29 +147,26 @@
   .help-sidebar-content
     padding-top 0.3rem
 
-  &.page
-    background #e7e7e7 !important
-
   .page-content
     overflow-x hidden
-.md .help-sidebar-content
-  margin-top 0
-.dark
-  .help-sidebar
-    &.page
-      background #232323 !important
+  .md .help-sidebar-content
+    margin-top 0
+  .dark
+    .help-sidebar
+      &.page
+        background var(--oh-background-color-shade) !important
 
-.add-button-icon
-  color: #2196f3
+  .add-button-icon
+    color: var(--oh-theme-alt-color)
 
-.link-item-icon
-  color: #4cd964
+  .link-item-icon
+    color: #4cd964
 
-.chevron-icon
-  color: #2196f3
+  .chevron-icon
+    color: var(--oh-theme-alt-color)
 
-.faq-title .item-title
-  white-space: normal !important
+  .faq-title .item-title
+    white-space: normal !important
 </style>
 
 <script>

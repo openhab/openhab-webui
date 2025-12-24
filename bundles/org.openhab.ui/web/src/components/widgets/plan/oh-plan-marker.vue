@@ -28,19 +28,19 @@
     <l-popup v-if="context.editmode && !dragging">
       <div class="display-flex">
         <f7-link href="#"
-                 class="text-color-blue display-flex flex-direction-column margin-right"
+                 class="text-color-alt display-flex flex-direction-column margin-right"
                  @click="context.editmode.configureWidget(context.component, context.parent)"
                  icon-f7="square_pencil">
           Configure
         </f7-link>
         <f7-link href="#"
-                 class="text-color-blue display-flex flex-direction-column margin-right"
+                 class="text-color-alt display-flex flex-direction-column margin-right"
                  @click="context.editmode.editWidgetCode(context.component, context.parent)"
                  icon-f7="doc_text">
           YAML
         </f7-link>
         <f7-link href="#"
-                 class="text-color-blue display-flex flex-direction-column margin-right"
+                 class="text-color-alt display-flex flex-direction-column margin-right"
                  @click="context.editmode.copyWidget(context.component, context.parent)"
                  icon-f7="scissors_alt">
           Copy

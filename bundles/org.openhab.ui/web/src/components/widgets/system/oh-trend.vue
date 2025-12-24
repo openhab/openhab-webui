@@ -17,6 +17,8 @@
 import mixin from '../widget-mixin'
 import { OhTrendDefinition } from '@/assets/definitions/widgets/system'
 
+import { useThemeStore } from '@/js/stores/useThemeStore'
+
 import Trend from '@hotdogee/vue3-trend'
 
 export default {
@@ -42,7 +44,8 @@ export default {
       return this.width || this.config.trendWidth
     },
     trendGradient () {
-      return this.config.trendGradient || ['#2196f3', '#5ac8fa']
+      const themeStore = useThemeStore()
+      return this.config.trendGradient || [themeStore.getVar('--oh-theme-alt-color'), '#5ac8fa']    // TODO:theme
     },
     trendGradientDirection () {
       return this.config.trendGradientDirection || 'top'

@@ -15,10 +15,13 @@ package org.openhab.ui.internal;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Map;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
@@ -32,6 +35,9 @@ import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.util.resource.Resource;
 import org.openhab.core.OpenHAB;
+import org.openhab.core.ui.components.RootUIComponent;
+import org.openhab.core.ui.components.UIComponentRegistry;
+import org.openhab.core.ui.components.UIComponentRegistryFactory;
 import org.ops4j.pax.web.service.WebContainer;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -66,14 +72,19 @@ public class UIServlet extends DefaultServlet {
     private static final String STATIC_PATH = "/static";
     private static final String STATIC_BASE = OpenHAB.getConfigFolder() + "/html";
     private static final String[] COMPRESS_EXT = { "gz", "br" };
+    private static final String THEME_RESOURCE_NAME = "__theme__";
+    private static final String THEME_NAMESPACE = "ui:theme";
 
     private final HttpContext defaultHttpContext;
+    private final UIComponentRegistryFactory uiComponentRegistryFactory;
     private final long bundleModifiedTime;
     private @Nullable ContextHandler contextHandler;
 
     @Activate
-    public UIServlet(final @Reference WebContainer webContainer) {
+    public UIServlet(final @Reference WebContainer webContainer,
+            final @Reference UIComponentRegistryFactory uiComponentRegistryFactory) {
         this.defaultHttpContext = webContainer.createDefaultHttpContext();
+        this.uiComponentRegistryFactory = uiComponentRegistryFactory;
         logger.debug("Starting up {} at {}", getClass().getSimpleName(), SERVLET_PATH);
         bundleModifiedTime = (System.currentTimeMillis() / 1000) * 1000; // round milliseconds
     }
@@ -135,6 +146,14 @@ public class UIServlet extends DefaultServlet {
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
             return;
         }
+
+        String pathInfo = request.getPathInfo();
+        if (("/" + THEME_RESOURCE_NAME + ".css").equals(pathInfo)) {
+            logger.debug("Serving theme CSS");
+            serveThemeCss(request, response);
+            return;
+        }
+
         super.doGet(request, response);
     }
 
@@ -145,6 +164,58 @@ public class UIServlet extends DefaultServlet {
             return null;
         }
         return "/index.html";
+    }
+
+    private void serveThemeCss(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setContentType("text/css;charset=UTF-8");
+        response.setCharacterEncoding("UTF-8");
+
+        PrintWriter writer = response.getWriter();
+
+        UIComponentRegistry uiComponentRegistry = uiComponentRegistryFactory.getRegistry(THEME_NAMESPACE);
+        if (uiComponentRegistry == null) {
+            writer.write("");
+            return;
+        }
+
+        RootUIComponent themeUIComponent = uiComponentRegistry.get(THEME_RESOURCE_NAME);
+        if (themeUIComponent == null) {
+            writer.write("");
+            return;
+        }
+
+        Map<String, Object> themeConfig = themeUIComponent.getConfig();
+
+        if (themeConfig.isEmpty()) {
+            writer.write("");
+            return;
+        }
+
+        // Write CSS file if configured
+        if (themeConfig.containsKey("css-file")) {
+            String cssFile = (String) themeConfig.get("css-file");
+            if (cssFile != null && (cssFile.contains("..") || cssFile.startsWith("/") || cssFile.contains("\\"))) {
+                logger.warn("Invalid css-file path: {}", cssFile);
+            } else if (cssFile != null) {
+                InputStream cssStream = getResource(cssFile).getInputStream();
+                if (cssStream != null) {
+                    try (InputStream is = cssStream) {
+                        writer.write(new String(is.readAllBytes(), StandardCharsets.UTF_8));
+                    }
+                }
+            }
+        }
+
+        // Write CSS variables
+        writer.write(":root {\n");
+        for (Map.Entry<String, Object> entry : themeConfig.entrySet()) {
+            String key = entry.getKey();
+            if (key.startsWith("--")) {
+                String value = entry.getValue().toString();
+                writer.write("  " + key + ": " + value + ";\n");
+            }
+        }
+        writer.write("}\n");
     }
 
     /**

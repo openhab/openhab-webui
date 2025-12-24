@@ -3,12 +3,12 @@
     <chart
       v-if="ready"
       ref="chart"
+      theme="oh-theme"
       :initOptions="initOptions"
       :option="options"
       class="oh-chart"
       @click="handleClick"
       :class="{ 'with-tabbar': context.tab, 'with-toolbar': context.analyzer }"
-      :theme="uiOptionsStore.getDarkMode() === 'dark' ? 'dark' : undefined"
       autoresize />
     <f7-menu class="padding float-right" v-if="periodVisible">
       <f7-menu-item @click="earlierPeriod()" icon-f7="chevron_left" />
@@ -58,6 +58,7 @@ dayjs.extend(LocalizedFormat)
 import { use, registerLocale } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
+import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
 import { LineChart, BarChart, GaugeChart, HeatmapChart, PieChart, ScatterChart, CustomChart } from 'echarts/charts'
 import { LabelLayout } from 'echarts/features'
@@ -67,14 +68,14 @@ import {
 } from 'echarts/components'
 
 import 'echarts/theme/dark.js'
+import { registerCustomTheme } from './echarts-oh-theme.js'
 
 import VChart from 'vue-echarts'
+import { next } from 'dom7'
 
 use([CanvasRenderer, LineChart, BarChart, GaugeChart, HeatmapChart, PieChart, ScatterChart, CustomChart, TitleComponent,
   LegendComponent, LegendScrollComponent, GridComponent, SingleAxisComponent, ToolboxComponent, TooltipComponent, DataZoomComponent,
   MarkLineComponent, MarkPointComponent, MarkAreaComponent, VisualMapComponent, CalendarComponent, LabelLayout])
-
-import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
 export default {
   mixins: [mixin, chart, actionsMixin],
@@ -86,6 +87,8 @@ export default {
     let initOptions = echartsLocale ? {
       locale: echartsLocale
     } : null
+
+    registerCustomTheme()
     return { echartsLocale, initOptions }
   },
   computed: {
@@ -135,6 +138,11 @@ export default {
     }
   },
   mounted () {
+    f7.on('darkModeChange', () => { //TODO:theme
+      nextTick(() => {
+        registerCustomTheme()
+      })
+    })
     // echarts localisation for EN and ZH are already included
     if(['EN', 'ZH'].includes(this.echartsLocale)) {
       this.ready = true

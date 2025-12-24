@@ -10,7 +10,7 @@
     <f7-tabs animated>
       <f7-tab id="intro" tab-active>
         <f7-login-screen-title>
-          <img class="intro-logo" src="@/images/openhab-logo.svg" type="image/svg+xml">
+          <img class="intro-logo" src="/images/openhab-logo.svg" type="image/svg+xml">
         </f7-login-screen-title>
         <f7-list form style="margin-top: 4rem" v-if="i18nReady">
           <f7-list-item
@@ -240,7 +240,7 @@
         </f7-block>
         <f7-block strong>
           {{ t('setupwizard.addons.header1') }}<br>{{ t('setupwizard.addons.header2') }}<br>{{ t('setupwizard.addons.header3') }} <br><br>
-          <a class="text-color-blue external"
+          <a class="text-color-alt external"
              target="_blank"
              href="https://www.openhab.org/addons/">
             {{ t('setupwizard.addons.browseAddonsOnWebsite') }}</a>

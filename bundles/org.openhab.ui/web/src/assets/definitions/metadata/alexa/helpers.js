@@ -16,7 +16,7 @@ export const titleCase = (string) =>
 
 export const docLink = (title, anchor) => {
   const link = `%DOC_URL%#${anchor || title.replace(/[. ]/g, '-').toLowerCase()}`
-  return `<a class="external text-color-blue" target="_blank" href="${link}">${title}</a>`
+  return `<a class="external text-color-alt" target="_blank" href="${link}">${title}</a>`
 }
 
 export const getGroupParameter = (parameter, groups = []) => {

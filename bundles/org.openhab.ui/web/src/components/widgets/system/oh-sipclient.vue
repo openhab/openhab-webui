@@ -14,7 +14,7 @@
              autoplay
              playsinline
              class="remote-video"
-             poster="@/images/openhab-logo.svg" />
+             poster="/images/openhab-logo.svg" />
       <!-- Conditionally show local video when ready to prevent ugly video placeholder on Android -->
       <video v-show="showLocalVideo"
              ref="localVideo"

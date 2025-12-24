@@ -37,32 +37,32 @@ export default {
       switch (this.type) {
         case 'location':
           const item = this.element.item
-          if (item.metadata.semantics.value.indexOf('LivingRoom') > 0) return 'orange'
-          if (item.metadata.semantics.value.indexOf('Kitchen') > 0) return 'deeporange'
-          if (item.metadata.semantics.value.indexOf('Bedroom') > 0) return 'pink'
-          if (item.metadata.semantics.value.indexOf('Bathroom') > 0) return 'blue'
-          if (item.metadata.semantics.value.indexOf('_Room') > 0) return 'lightblue'
-          if (item.metadata.semantics.value.indexOf('_Floor') > 0) return 'deeppurple'
-          if (item.metadata.semantics.value.indexOf('_Outdoor') > 0) return 'green'
+          if (item.metadata.semantics.value.indexOf('LivingRoom') > 0) return 'palette-7'
+          if (item.metadata.semantics.value.indexOf('Kitchen') > 0) return 'palette-9'
+          if (item.metadata.semantics.value.indexOf('Bedroom') > 0) return 'palette-4'
+          if (item.metadata.semantics.value.indexOf('Bathroom') > 0) return 'palette-1'
+          if (item.metadata.semantics.value.indexOf('_Room') > 0) return 'palette-5'
+          if (item.metadata.semantics.value.indexOf('_Floor') > 0) return 'palette-8'
+          if (item.metadata.semantics.value.indexOf('_Outdoor') > 0) return 'palette-2'
           return 'gray'
         case 'equipment':
           const equipmentType = this.element.key
-          if (equipmentType === 'HVAC') return 'red'
-          if (equipmentType === 'Lightbulb') return 'yellow'
-          if (equipmentType === 'Window') return 'blue'
-          if (equipmentType === 'Door') return 'green'
-          if (equipmentType === 'Camera') return 'pink'
-          if (equipmentType === 'Blinds') return 'teal'
-          if (equipmentType === 'SmokeDetector' || equipmentType === 'Siren') return 'deeppurple'
+          if (equipmentType === 'HVAC') return 'palette-7'
+          if (equipmentType === 'Lightbulb') return 'palette-3'
+          if (equipmentType === 'Window') return 'palette-1'
+          if (equipmentType === 'Door') return 'palette-3'
+          if (equipmentType === 'Camera') return 'palette-4'
+          if (equipmentType === 'Blinds') return 'paletter-6'
+          if (equipmentType === 'SmokeDetector' || equipmentType === 'Siren') return 'palette-8'
           // etc. - use a map
           return 'gray'
         case 'property':
           const property = this.element.key
-          if (property === 'Temperature') return 'red'
-          if (property === 'Light') return 'orange'
-          if (property === 'Humidity') return 'blue'
-          if (property === 'Presence') return 'teal'
-          if (property === 'Pressure') return 'deeppurple'
+          if (property === 'Temperature') return 'palette-4'
+          if (property === 'Light') return 'palette-7'
+          if (property === 'Humidity') return 'palette-1'
+          if (property === 'Presence') return 'palette-6'
+          if (property === 'Pressure') return 'palette-8'
           // etc. - use a map
           return 'gray'
         default:

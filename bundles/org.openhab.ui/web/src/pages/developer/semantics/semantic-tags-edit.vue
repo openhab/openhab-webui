@@ -292,8 +292,8 @@
 .semantics-tree
   padding 0
   border-right 1px solid var(--f7-block-strong-border-color)
-  --f7-theme-color var(--f7-color-blue)
-  --f7-theme-color-rgb var(--f7-color-blue-rgb)
+  --f7-theme-color var(--oh-theme-alt-color)
+  --f7-theme-color-rgb var(--oh-theme-alt-color-rgb)
   .treeview
     --f7-treeview-item-height 40px
     .treeview-item-label

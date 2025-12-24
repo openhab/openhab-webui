@@ -80,7 +80,7 @@ export const actionParams = (groupName, paramPrefix) => {
       .v((value, configuration, configDescription, parameters) => {
         return ['navigate'].indexOf(configuration[paramPrefix + 'action']) >= 0
       }),
-    po(paramPrefix + 'actionPageTransition', 'Transition Effect', 'Use a specific <a class="external text-color-blue" target="_blank" href="https://framework7.io/docs/view.html#custom-page-transitions">page transition animation</a>', [
+    po(paramPrefix + 'actionPageTransition', 'Transition Effect', 'Use a specific <a class="external text-color-alt" target="_blank" href="https://framework7.io/docs/view.html#custom-page-transitions">page transition animation</a>', [
       { value: 'f7-circle', label: 'Circle' },
       { value: 'f7-cover', label: 'Cover' },
       { value: 'f7-cover-v', label: 'Cover from bottom' },
@@ -100,11 +100,11 @@ export const actionParams = (groupName, paramPrefix) => {
       .v((value, configuration, configDescription, parameters) => {
         return ['navigate', 'popup', 'popover', 'sheet'].indexOf(configuration[paramPrefix + 'action']) >= 0
       }),
-    pt(paramPrefix + 'actionPhotos', 'Images to show', 'Array of URLs or objects representing the images. Auto-refresh is not supported.<br />Edit in YAML, e.g.<br /><code><pre>- item: ImageItem1<br />  caption: Camera</pre></code>or provide a JSON array, e.g.<br /><code>[ "url1", { "item": "ImageItem1", "caption": "Camera" } ]</code><br />Objects are in the <a class="external text-color-blue" target="_blank" href="https://framework7.io/docs/photo-browser.html#photos-array">photos array format</a> with an additional <code>item</code> property to specify an item to view.')
+    pt(paramPrefix + 'actionPhotos', 'Images to show', 'Array of URLs or objects representing the images. Auto-refresh is not supported.<br />Edit in YAML, e.g.<br /><code><pre>- item: ImageItem1<br />  caption: Camera</pre></code>or provide a JSON array, e.g.<br /><code>[ "url1", { "item": "ImageItem1", "caption": "Camera" } ]</code><br />Objects are in the <a class="external text-color-alt" target="_blank" href="https://framework7.io/docs/photo-browser.html#photos-array">photos array format</a> with an additional <code>item</code> property to specify an item to view.')
       .v((value, configuration, configDescription, parameters) => {
         return ['photos'].indexOf(configuration[paramPrefix + 'action']) >= 0
       }),
-    pt(paramPrefix + 'actionPhotoBrowserConfig', 'Photo browser configuration', 'Configuration for the photo browser.<br />Edit in YAML or provide a JSON object, e.g.<br /><code>{ "exposition": false, "type": "popup", "theme": "dark" }</code><br /> See <a class="external text-color-blue" target="_blank" href="https://framework7.io/docs/photo-browser.html#photo-browser-parameters">photo browser parameters</a> (not all are supported).')
+    pt(paramPrefix + 'actionPhotoBrowserConfig', 'Photo browser configuration', 'Configuration for the photo browser.<br />Edit in YAML or provide a JSON object, e.g.<br /><code>{ "exposition": false, "type": "popup", "theme": "dark" }</code><br /> See <a class="external text-color-alt" target="_blank" href="https://framework7.io/docs/photo-browser.html#photo-browser-parameters">photo browser parameters</a> (not all are supported).')
       .v((value, configuration, configDescription, parameters) => {
         return ['photos'].indexOf(configuration[paramPrefix + 'action']) >= 0
       }),
@@ -137,7 +137,7 @@ export const actionParams = (groupName, paramPrefix) => {
         return ['analyzer'].indexOf(configuration[paramPrefix + 'action']) >= 0 && configuration[paramPrefix + 'actionAnalyzerCoordSystem'] === 'aggregate'
       }),
     pt(paramPrefix + 'actionConfirmation', 'Action Confirmation', 'Shows a dialog or sheet to ask for confirmation before the action is executed. Can either be a text to show in the dialog or a JSON object <code>{ type: "dialog", title: "Confirm", text: "Are you sure?" }</code> or <code>{ type: "sheet", text: "Confirm", color: "green" }</code>').a(),
-    pt(paramPrefix + 'actionFeedback', 'Action Feedback', 'Shows a toast popup when the action has been executed. Can either be a text to show or a JSON object including some of the <a class="external text-color-blue" target="_blank" href="https://framework7.io/docs/toast.html#toast-parameters">supported parameters</a>').a()
+    pt(paramPrefix + 'actionFeedback', 'Action Feedback', 'Shows a toast popup when the action has been executed. Can either be a text to show or a JSON object including some of the <a class="external text-color-alt" target="_blank" href="https://framework7.io/docs/toast.html#toast-parameters">supported parameters</a>').a()
       .v((value, configuration, configDescription, parameters) => {
         return ['command', 'toggle', 'options', 'rule', 'http'].indexOf(configuration[paramPrefix + 'action']) >= 0
       }),

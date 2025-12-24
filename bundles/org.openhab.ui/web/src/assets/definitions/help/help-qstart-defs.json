@@ -10,7 +10,7 @@
       },
       {
         "title": "Install",
-        "text": "Scroll to the Binding you need and click the <span style=\"background: var(--f7-list-item-border-color); border-radius: 20% / 100%; color: #2196f3; padding: 0 5px 0 5px\">INSTALL</span> button"
+        "text": "Scroll to the Binding you need and click the <span style=\"background: var(--f7-list-item-border-color); border-radius: 20% / 100%; color: var(--oh-theme-alt-color); padding: 0 5px 0 5px\">INSTALL</span> button"
       }
     ],
     "button": {
@@ -37,7 +37,7 @@
       },
       {
         "title": "Scan",
-        "text": "Click the <span style=\"background: #2196f3; border-radius: 3px; color: white; padding: 0 5px 0 5px\">Scan</span> button to automatically search for related devices"
+        "text": "Click the <span style=\"background: var(--oh-theme-alt-color); border-radius: 3px; color: white; padding: 0 5px 0 5px\">Scan</span> button to automatically search for related devices"
       },
       {
         "title": "Add Thing",

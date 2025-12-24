@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="addon-section">
     <f7-block-title>
       Add-on Settings
     </f7-block-title>
@@ -11,7 +11,6 @@
         :title="a.label"
         v-show="!a.hidden" />
       <f7-list-button v-if="!expanded && addonsSettings.find((a) => a.hidden)"
-                      color="blue"
                       @click="$emit('expand')">
         {{ $t('dialogs.showAll') }}
       </f7-list-button>

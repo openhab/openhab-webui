@@ -56,6 +56,15 @@ export default defineConfig({
         ]
       }
     },
+    {
+      name: 'move-custom-css-to-end-prod',
+      apply: 'build',
+      transformIndexHtml(html) {
+        const linkTag = '<link rel="stylesheet" href="/__theme__.css" />';
+        return html
+          .replace('</head>', `  ${linkTag}\n  </head>`); // Place it before </head>
+      }
+    },
     pluginDynamicImport({
       filter (id) {
         if (id.includes('/node_modules/')) {
@@ -134,6 +143,10 @@ export default defineConfig({
         secure: false
       },
       '/audio': {
+        target: apiBaseUrl,
+        secure: false
+      },
+      '/__theme__.css': {
         target: apiBaseUrl,
         secure: false
       },

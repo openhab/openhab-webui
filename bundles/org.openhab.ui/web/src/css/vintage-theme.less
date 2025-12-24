@@ -1,0 +1,50 @@
+@import "color-helpers.less";
+
+:root {
+  .generate-color-tones(oh-theme-color, #993111);
+  .generate-color-tones(oh-theme-alt-color, #2196F3);
+  // .generate-color-tones(oh-theme-alt-color, #21FFF3);
+  .generate-color-tones(oh-background-color, #fef8ef);
+  .generate-color-tones(oh-text-color, #333333);
+  .generate-color-tones(oh-text-inverse-color, #ffffff);
+  .generate-color-tones(oh-text-alt-color, #00FF00);
+
+  .generate-color-tones(oh-palette-color-1, #d87c7c);
+  .generate-color-tones(oh-palette-color-2, #919e8b);
+  .generate-color-tones(oh-palette-color-3, #d7ab82);
+  .generate-color-tones(oh-palette-color-4, #6e7074);
+  .generate-color-tones(oh-palette-color-5, #61a0a8);
+  .generate-color-tones(oh-palette-color-6, #efa18d);
+  .generate-color-tones(oh-palette-color-7, #787464);
+  .generate-color-tones(oh-palette-color-8, #cc7e63);
+  .generate-color-tones(oh-palette-color-9, #724e58);
+
+  .generate-color-tones(oh-red-color, #e74d2e);
+  .generate-color-tones(oh-yellow-color, #e2cf1f);
+  .generate-color-tones(oh-orange-color, #f79c14);
+  .generate-color-tones(oh-green-color, #249067);
+  .generate-color-tones(oh-blue-color, #2156f3);
+  .generate-color-tones(oh-gray-color, #969d93);
+
+  --oh-logo: /static/custom-logo.svg;
+}
+
+:root .dark,
+:root.dark {
+  .generate-color-tones(oh-theme-color, var(--oh-branding-color));
+  .generate-color-tones(oh-theme-alt-color, #f49f42);
+  .generate-color-tones(oh-background-color, #333333);
+  .generate-color-tones(oh-text-color, #eeeeee);
+  .generate-color-tones(oh-text-inverse-color, #000000);
+  .generate-color-tones(oh-text-alt-color, #00FF00);
+
+  .generate-color-tones(oh-palette-color-1, #dd6d66);
+  .generate-color-tones(oh-palette-color-2, #759aa0);
+  .generate-color-tones(oh-palette-color-3, #e69d87);
+  .generate-color-tones(oh-palette-color-4, #8dc1a9);
+  .generate-color-tones(oh-palette-color-5, #ea7e53);
+  .generate-color-tones(oh-palette-color-6, #bcae5e);
+  .generate-color-tones(oh-palette-color-7, #73a373);
+  .generate-color-tones(oh-palette-color-8, #73b9bc);
+  .generate-color-tones(oh-palette-color-9, #7289ab);
+}

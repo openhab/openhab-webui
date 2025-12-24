@@ -180,7 +180,7 @@
   .addon-description
     --f7-block-strong-bg-color transparent
     width calc(100%)
-    --f7-theme-color var(--f7-color-blue)
+    --f7-theme-color var(--oh-theme-alt-color)
   .addon-description-text
     overflow-x clip
     .emoji

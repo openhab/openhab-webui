@@ -107,6 +107,7 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
 
     bars.value = 'light' // Reset bars to light when dark mode changes
     updateClasses()
+    f7.emit('darkModeChange', getDarkMode())
   }
 
   watch(bars, (newValue) => {

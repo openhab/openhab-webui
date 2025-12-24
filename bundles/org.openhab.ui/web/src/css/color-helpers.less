@@ -1,0 +1,41 @@
+/* Generate color tones: shade, tint, transparent variants */
+.generate-color-tones(@color_name, @value, @extra: false) {
+  @shade: oklch(from @value calc(l - 0.1) c h);
+  @tint: oklch(from @value calc(l + 0.1) c h);
+  @transparent: color-mix(in oklch, @value 60%, transparent);
+  --@{color_name}: @value;
+  --@{color_name}-shade: @shade;
+  --@{color_name}-tint: @tint;
+  --@{color_name}-transparent: @transparent;
+  & when (@extra = true) {
+    @shade2: oklch(from @value calc(l - 0.2) c h);
+    @tint2: oklch(from @value calc(l + 0.2) c h);
+    @transparent2: color-mix(in oklch, @value 80%, transparent);
+    --@{color_name}-shade-2: @shade2;
+    --@{color_name}-tint-2: @tint2;
+    --@{color_name}-transparent-2: @transparent2;
+  }
+}
+
+/* Generate F7 color classes based on OH color variables */
+.generate-f7-color-classes(@color_name) {
+  .color-@{color_name} {
+    --f7-theme-color: var(--oh-@{color_name}-color);
+    --f7-theme-color-rgb: var(--oh-@{color_name}-color-rgb);
+    --f7-theme-color-shade: var(--oh-@{color_name}-color-shade);
+    --f7-theme-color-tint: var(--oh-@{color_name}-color-tint);
+  }
+  .text-color-@{color_name} {
+    --f7-theme-color-text-color: var(--oh-@{color_name}-color);
+  }
+  .bg-color-@{color_name} {
+    --f7-theme-color-bg-color: var(--oh-@{color_name}-color);
+  }
+  .border-color-@{color_name} {
+    --f7-theme-color-border-color: var(--oh-@{color_name}-color);
+  }
+  .ripple-color-@{color_name},
+  .ripple-@{color_name} {
+    --f7-ripple-color: color-mix(from oklch, var(--oh-@{color_name}-color) 70%, transparent)
+  } 
+}

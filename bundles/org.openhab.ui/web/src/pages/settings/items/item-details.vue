@@ -114,10 +114,10 @@
       <f7-row>
         <f7-col>
           <f7-list>
-            <f7-list-button color="blue" @click="duplicateItem">
+            <f7-list-button @click="duplicateItem">
               Duplicate Item
             </f7-list-button>
-            <f7-list-button color="blue" @click="copyFileDefinitionToClipboard(ObjectType.ITEM, [item.name])">
+            <f7-list-button @click="copyFileDefinitionToClipboard(ObjectType.ITEM, [item.name])">
               Copy File Definition
             </f7-list-button>
             <f7-list-button v-if="item.editable"
@@ -138,63 +138,65 @@
 </template>
 
 <style lang="stylus">
-.item-header.subnavbar
-  height auto !important
-  .subnavbar-inner
-    flex-direction column !important
-    .item-icon
-      height 60px
-      width 60px
-      padding 10px
-      border-radius 40px
-      border 1px solid white
-      img
+.item-details-page
+  .item-header.subnavbar
+    height auto !important
+    .subnavbar-inner
+      flex-direction column !important
+      .item-icon
         height 60px
         width 60px
-      span
-        width 100%
-        display block
+        padding 10px
+        border-radius 40px
+        border 1px solid white
+        img
+          height 60px
+          width 60px
+        span
+          width 100%
+          display block
+          text-align center
+          color #c0c0c0
+          font-size 40px
+          font-weight thin
+      h2
+        white-space nowrap
+        text-overflow ellipsis
+        overflow-x hidden
+        width 95%
+        font-weight normal
         text-align center
-        color #c0c0c0
-        font-size 40px
-        font-weight thin
-    h2
-      white-space nowrap
-      text-overflow ellipsis
-      overflow-x hidden
-      width 95%
-      font-weight normal
-      text-align center
-      margin 0
-    h4
-      font-weight normal
-      text-align center
-      margin 0
-    h5
-      font-weight normal
-      text-align center
-      margin-top 0
-.item-details-page
+        margin 0
+      h4
+        font-weight normal
+        text-align center
+        margin 0
+      h5
+        font-weight normal
+        text-align center
+        margin-top 0
+  .tags-block
+    margin-bottom 0
+    text-align center
+    .chip
+      margin-left 3px
+      margin-right 3px
+  .developer-sidebar-tip
+      visibility visible
+  @media(max-width: 1279px)
+    .developer-sidebar-tip
+      visibility hidden
+  .model-treeview.no-selection-style
+    .treeview-item-selected > .treeview-item-root,
+    .treeview-item-selected.treeview-item-root
+      background transparent !important
+      color inherit !important
+      border none !important
   --f7-page-subnavbar-offset 170px
   .after-item-header
     margin-bottom 0 !important
-.tags-block
-  margin-bottom 0
-  text-align center
-  .chip
-    margin-left 3px
-    margin-right 3px
-.developer-sidebar-tip
-    visibility visible
-@media(max-width: 1279px)
-  .developer-sidebar-tip
-    visibility hidden
-.model-treeview.no-selection-style
-  .treeview-item-selected > .treeview-item-root,
-  .treeview-item-selected.treeview-item-root
-    background transparent !important
-    color inherit !important
-    border none !important
+  .list-button
+    color var(--oh-theme-alt-color)
 </style>
 
 <script setup>

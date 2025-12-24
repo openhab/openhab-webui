@@ -36,7 +36,7 @@
       </f7-list>
     </f7-card-content>
     <f7-card-footer>
-      <f7-button color="blue" @click="addMetadata">
+      <f7-button @click="addMetadata">
         Add Metadata
       </f7-button>
     </f7-card-footer>

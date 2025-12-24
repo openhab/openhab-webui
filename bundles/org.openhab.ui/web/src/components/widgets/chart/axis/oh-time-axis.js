@@ -12,7 +12,7 @@ export default {
     axis.max = endTime.toDate().getTime()
 
     if (!axis.axisPointer) {
-      axis.axisPointer = { show: true, label: { backgroundColor: '#2196f3' } }
+      axis.axisPointer = { show: true }
     }
 
     return axis

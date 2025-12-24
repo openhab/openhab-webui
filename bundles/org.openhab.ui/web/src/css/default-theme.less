@@ -1,0 +1,50 @@
+@import "color-helpers.less";
+
+:root {
+  .generate-color-tones(oh-theme-color, var(--oh-branding-color));
+  // .generate_color(oh-theme-alt-color, var(--oh-branding-alt-color));
+  .generate-color-tones(oh-theme-alt-color, #FF96F3);
+  .generate-color-tones(oh-background-color, #f3f4f6, true);
+  .generate-color-tones(oh-text-color, #000000);
+  .generate-color-tones(oh-text-inverse-color, #ffffff);
+
+  .generate-color-tones(oh-red-color, #ff3b30);
+  .generate-color-tones(oh-green-color, #4cd964);
+  .generate-color-tones(oh-blue-color, #2196f3);
+  .generate-color-tones(oh-pink-color, #ff2d55);
+  .generate-color-tones(oh-yellow-color, #ffcc00);
+  .generate-color-tones(oh-orange-color, #ff9500);
+  .generate-color-tones(oh-purple-color, #9c27b0);
+  .generate-color-tones(oh-deeppurple-color, #673ab7);
+  .generate-color-tones(oh-lightblue-color, #5ac8fa);
+  .generate-color-tones(oh-teal-color, #009688);
+  .generate-color-tones(oh-lime-color, #cddc39);
+  .generate-color-tones(oh-deeporange-color, #ff6b22);
+  .generate-color-tones(oh-gray-color, #8e8e93);
+  .generate-color-tones(oh-white-color, #ffffff);
+  .generate-color-tones(oh-black-color, #000000);
+
+  .generate-color-tones(oh-palette-1-color, var(--oh-blue-color));
+  .generate-color-tones(oh-palette-2-color, var(--oh-green-color));
+  .generate-color-tones(oh-palette-3-color, var(--oh-yellow-color));
+  .generate-color-tones(oh-palette-4-color, var(--oh-pink-color));
+  .generate-color-tones(oh-palette-5-color, var(--oh-lightblue-color));
+  .generate-color-tones(oh-palette-6-color, var(--oh-teal-color));
+  .generate-color-tones(oh-palette-7-color, var(--oh-orange-color));
+  .generate-color-tones(oh-palette-8-color, var(--oh-deeppurple-color));
+  .generate-color-tones(oh-palette-9-color, var(--oh-deeporange-color));
+}
+
+:root .dark,
+:root.dark {
+  .generate-color-tones(oh-background-color, #121212, true);
+  .generate-color-tones(oh-text-color, #ffffff);
+  .generate-color-tones(oh-text-inverse-color, #000000);
+}
+
+@iterations: range(1, 9, 1);
+each(@iterations, .(@value, @index) {
+  .bg-color-palette-@{index} {
+    --f7-theme-color-bg-color: var(~"--oh-palette-@{index}-color");
+  }
+});

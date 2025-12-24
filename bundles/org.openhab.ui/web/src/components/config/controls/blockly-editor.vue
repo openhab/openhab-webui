@@ -1179,8 +1179,9 @@
 .blocklyDropDownDiv
   z-index 9000
 .blockly-ws-search
-  background var(--blockly-ws-search-bg-color)
-  border-color var(--blockly-ws-search-border-color)
+  background var(--oh-background-color-tint-2)
+  border-color var(--oh-text-color)
+  color var(--oh-text-color)
   box-shadow none
   color var(--blockly-ws-search-text-color)
 .blocklyModalContainer
@@ -1252,13 +1253,6 @@ export default {
     }
   },
   computed: {
-    cssVars () {
-      return {
-        '--blockly-ws-search-bg-color': useUIOptionsStore().getDarkMode() === 'dark' ? '#1e1e1e' : 'white',
-        '--blockly-ws-search-border-color': useUIOptionsStore().getDarkMode() === 'dark' ? 'lightgrey' : 'grey',
-        '--blockly-ws-search-text-color': useUIOptionsStore().getDarkMode() === 'dark' ? 'white' : 'black'
-      }
-    },
     ...mapStores(useUIOptionsStore)
   },
   mounted () {

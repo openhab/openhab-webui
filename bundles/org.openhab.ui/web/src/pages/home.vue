@@ -134,12 +134,12 @@
 
 <style lang="stylus">
 .theme-filled .home-nav .home-title-large .title-large-text
-  color var(--f7-text-color)
+  color var(--oh-text-color)
 .theme-filled .home-nav.navbar-large:not(.navbar-large-collapsed) .link.icon-only
-  color var(--f7-theme-color)
+  color var(--oh-theme-color)
   transition color 0.3s
 .theme-filled .home-nav.navbar-large.navbar-large-collapsed .link.icon-only
-  color var(--f7-navbar-link-color)
+  color var(--oh-theme-color)
   transition color 0.3s
 .home-nav .home-title-large .title-large-text
   line-height 0.98
@@ -150,7 +150,7 @@
     text-transform uppercase
     top -6px
     letter-spacing 1px
-    color var(--f7-list-item-footer-text-color)
+    color var(--oh-theme-color)
 .edit-home-button
   float right
   display absolute

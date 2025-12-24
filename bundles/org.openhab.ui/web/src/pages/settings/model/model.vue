@@ -274,8 +274,8 @@
   text-overflow ellipsis
 .model-details-sheet
   .toolbar
-    --f7-theme-color var(--f7-color-blue)
-    --f7-theme-color-rgb var(--f7-color-blue-rgb)
+    --f7-theme-color var(--oh-theme-alt-color)
+    --f7-theme-color-rgb var(--theme-alt-rgb)
   z-index 10900
 .md .model-details-sheet .toolbar .link
   width 17%

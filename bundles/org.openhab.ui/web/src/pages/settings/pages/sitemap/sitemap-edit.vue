@@ -296,8 +296,8 @@
       color var(--f7-list-item-footer-text-color)
 .sitemap-details-sheet
   .toolbar
-    --f7-theme-color var(--f7-color-blue)
-    --f7-theme-color-rgb var(--f7-color-blue-rgb)
+    --f7-theme-color var(--oh-theme-alt-color)
+    --f7-theme-color-rgb var(--oh-theme-alt-color-rgb)
   z-index 10900
 .md .sitemap-details-sheet .toolbar .link
   width 35%

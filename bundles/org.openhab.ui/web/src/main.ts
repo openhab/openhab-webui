@@ -15,11 +15,12 @@ import DeveloperDockIcon from './components/developer/developer-dock-icon.vue'
 import Framework7 from 'framework7/lite-bundle'
 import Framework7Vue, { registerComponents } from 'framework7-vue/bundle'
 import { Dom7, getDevice } from 'framework7'
-import 'framework7/css/bundle'
 
 // Import Icons and App Custom Styles
 import '@/css/icons.css'
 import '@/css/nomini.css'
+import '@/css/framework7-sans-color.css'
+import '@/css/color.less'
 import '@/css/app.styl'
 
 // Import openHAB API helpers

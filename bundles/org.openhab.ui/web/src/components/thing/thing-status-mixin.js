@@ -25,7 +25,7 @@ export default {
           const { pretext, path, posttext } = result.groups
           if (!path) return description
           const root = location.protocol + '//' + location.host
-          return `${pretext}<a href="${root}/${path}" target="_blank" class="link color-blue external">${root}/${path}</a>${posttext}`
+          return `${pretext}<a href="${root}/${path}" target="_blank" class="link color-alt external">${root}/${path}</a>${posttext}`
         }
       }
       return description
