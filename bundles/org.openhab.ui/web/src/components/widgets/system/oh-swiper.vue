@@ -69,6 +69,11 @@
   </f7-swiper>
 </template>
 
+<style lang="stylus">
+.oh-swiper-slide
+  width unset !important
+</style>
+
 <script>
 import { defineAsyncComponent } from 'vue'
 
