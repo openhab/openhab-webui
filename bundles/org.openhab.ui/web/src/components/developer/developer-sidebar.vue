@@ -739,6 +739,8 @@ import ThingStatus from '@/components/thing/thing-status-mixin'
 import cloneDeep from 'lodash/cloneDeep'
 import fastDeepEqual from 'fast-deep-equal/es6'
 
+import * as api from '@/api'
+
 export default {
   mixins: [RuleStatus, ThingStatus],
   components: {
@@ -926,12 +928,12 @@ export default {
      * @returns {Promise} load promise
      */
     async loadPersistenceConfigs () {
-      return this.$oh.api.get('/rest/persistence').then((data) => {
+      return api.getPersistenceServices().then((data) => {
         const labels = {}
         data.forEach((p) => {
           labels[p.id] = p.label
         })
-        const loadPromises = data.map((p) => this.$oh.api.get('/rest/persistence/' + p.id))
+        const loadPromises = data.map((p) => api.getPersistenceServiceConfiguration({ serviceId: p.id }))
         const configs = []
 
         Promise.allSettled(loadPromises).then((results) => {

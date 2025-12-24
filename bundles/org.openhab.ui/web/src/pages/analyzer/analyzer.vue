@@ -376,14 +376,13 @@ import ChartCalendar from './chart-calendar'
 import { useUserStore } from '@/js/stores/useUserStore'
 import { useComponentsStore } from '@/js/stores/useComponentsStore'
 
-import api from '@/js/openhab/api'
+import * as api from '@/api'
 import { useI18n } from 'vue-i18n'
 import { loadLocaleMessages } from '@/js/i18n'
 import { type CoordSettings, Marker, ValueAxisSplitOptions, type CoordSystem, type SeriesOptions, type VisualMap, type SeriesType, type ValueAxisOptions } from './types'
 import { AggregationFunction, ChartType, Orient, OhChartVisualmap } from '@/types/components/widgets'
 import type { TimeCoordSettings, TimeSeriesOptions } from './chart-time'
 import type { CalendarSeriesOptions } from './chart-calendar'
-import type { Item } from '@/types/openhab'
 
 enum CoordSystemsName {
   time = 'time',
@@ -422,7 +421,7 @@ export default {
       showChart: false,
       invalidConfiguration: false,
       itemNames: [] as Array<string>,
-      items: [] as Array<Item>,
+      items: [] as Array<api.EnrichedItem>,
       seriesOptions: {} as Record<string, SeriesOptions>,
       coordSystems: Object.keys(COORD_SYSTEMS),
       coordSystemName: CoordSystemsName.time,
@@ -504,7 +503,7 @@ export default {
     async updateItems (itemNames : Array<string>) {
       this.itemNames = itemNames
       this.showChart = false
-      const promises = itemNames.map((n) => api.get('/rest/items/' + n))
+      const promises = itemNames.map((n) => api.getItemByName({ itemname : n }).then((data) => data as api.EnrichedItem))
       return Promise.all(promises).then((resp) => {
         this.items = [...resp]
         this.initItemsSeries(false)
@@ -683,8 +682,8 @@ export default {
       let chartPage = Object.assign({ uid }, this.page)
 
       const promise = (!overwrite)
-        ? api.postPlain('/rest/ui/components/ui:page', JSON.stringify(chartPage), 'text/plain', 'application/json')
-        : api.put('/rest/ui/components/ui:page/' + uid, chartPage)
+        ? api.addUiComponentToNamespace({ namespace: 'ui:page', rootUiComponent: chartPage })
+        : api.updateUiComponentInNamespace({ namespace: 'ui:page', componentUID: uid, rootUiComponent: chartPage })
       promise.then((data) => {
         if (overwrite) {
           f7.toast.create({

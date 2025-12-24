@@ -25,6 +25,8 @@
 import { f7 } from 'framework7-vue'
 import { nextTick } from 'vue'
 
+import * as api from '@/api'
+
 export default {
   props: {
     title: String,
@@ -70,7 +72,7 @@ export default {
   },
   created () {
     this.smartSelectParams.closeOnSelect = !(this.multiple)
-    this.$oh.api.get('/rest/things?staticDataOnly=true').then((data) => {
+    api.getThings({ staticDataOnly: true }).then((data) => {
       this.things = data.sort((a, b) => {
         const labelA = a.label || a.UID
         const labelB = b.label || b.UID

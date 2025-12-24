@@ -6,7 +6,7 @@ import { convertJavaLocale } from '@/js/i18n-utils.ts'
 
 import { useStatesStore } from '@/js/stores/useStatesStore'
 
-import { type RootResponse, type Link } from '@/types/openhab'
+import * as api from '@/api'
 
 interface UIInfo {
   commit: string
@@ -15,8 +15,8 @@ interface UIInfo {
 export const useRuntimeStore = defineStore('runtime', () => {
   // States
   const apiVersion = ref<string | null>(null)
-  const measurementSystem = ref<'SI' | 'US' | null>(null)
-  const apiEndpoints = ref<Link[] | null>(null)
+  const measurementSystem = ref<api.RootBean['measurementSystem'] | null>(null)
+  const apiEndpoints = ref<api.Links[] | null>(null)
   const locale = ref<string>(import.meta.env.VUE_APP_I18N_LOCALE || 'en')
   const runtimeInfo = ref<object | null>(null)
   const uiInfo = ref<UIInfo>({ commit: buildInfo.commit })
@@ -33,7 +33,7 @@ export const useRuntimeStore = defineStore('runtime', () => {
   }
 
   // Actions
-  function setRootResource (rootResponse: RootResponse) {
+  function setRootResource (rootResponse: api.RootBean) {
     locale.value = convertJavaLocale(rootResponse.locale)
     apiVersion.value = rootResponse.version
     measurementSystem.value = rootResponse.measurementSystem

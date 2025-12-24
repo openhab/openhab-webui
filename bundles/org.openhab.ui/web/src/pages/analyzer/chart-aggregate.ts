@@ -3,7 +3,7 @@ import { getYAxis, renderValueAxis, renderVisualMap, toPrimitiveMarkers } from '
 import { OhAggregateSeries, OhCategoryAxis, OhChartPage, OhValueAxis, ChartType, Orient, OhChartTooltip, OhChartLegend, OhChartVisualmap } from '@/types/components/widgets'
 
 import { Marker, type CoordSystem, type SeriesOptions, type CoordSettings, SeriesType, type ValueAxisOptions, type VisualMap, type CoordSettingsBase } from './types.js'
-import type { Item, Page, UIComponent  } from '@/types/openhab'
+import * as api from '@/api'
 
 
 const DIMENSION_MAP : Partial<Record<ChartType, [OhAggregateSeries.Dimension, OhCategoryAxis.CategoryType, OhAggregateSeries.Dimension] >> = { // dimension1, category2, dimension2
@@ -50,7 +50,7 @@ const aggregateCoordSystem : CoordSystem = {
   initAxes (coordSettings : Partial<AggregateCoordSettings>) : void {
     coordSettings.valueAxesOptions = []
   },
-  initSeries (item : Item, coordSettings : CoordSettings, seriesOptions : Partial<AggregateSeriesOptions>) : AggregateSeriesOptions {
+  initSeries (item : api.EnrichedItem | api.GroupItem, coordSettings : CoordSettings, seriesOptions : Partial<AggregateSeriesOptions>) : AggregateSeriesOptions {
     const aggregateCoordSettings = coordSettings as AggregateCoordSettings
 
     const options : AggregateSeriesOptions = {
@@ -60,8 +60,8 @@ const aggregateCoordSystem : CoordSystem = {
       valueAxisIndex: 0
     }
 
-    if ((item.type.startsWith('Number') || item.type === 'Dimmer' ||
-        item.groupType?.startsWith('Number') || item.groupType === 'Dimmer')) {
+    if ((item.type!.startsWith('Number') || item.type === 'Dimmer' ||
+        ('groupType' in item && (item.groupType?.startsWith('Number') || item.groupType === 'Dimmer')))) {
       options.aggregation = seriesOptions.aggregation || OhAggregateSeries.AggregationFunction.average
 
       if (aggregateCoordSettings.dimensions === 2) {
@@ -78,10 +78,10 @@ const aggregateCoordSystem : CoordSystem = {
 
     return options
   },
-  getChartPage (coordSettings : CoordSettings, allSeriesOptions : Record<string, SeriesOptions>, items: Item[]) : Page {
+  getChartPage (coordSettings : CoordSettings, allSeriesOptions : Record<string, SeriesOptions>, items: (api.EnrichedItem | api.GroupItem)[]) : api.RootUiComponent {
     const aggregateCoordSettings = coordSettings as AggregateCoordSettings
 
-    let page : Page = {
+    let page : Partial<api.RootUiComponent> = {
       component: 'oh-chart-page',
       config : {
         chartType: coordSettings.chartType
@@ -115,7 +115,7 @@ const aggregateCoordSystem : CoordSystem = {
     const dims = DIMENSION_MAP[aggregateCoordSettings.chartType] ?? [OhAggregateSeries.Dimension.hour, OhCategoryAxis.CategoryType.hour, OhAggregateSeries.Dimension.minute]
     const dimension1 = dims[0]
 
-    let axis2 : UIComponent[]
+    let axis2 : api.UiComponent[]
     let dimension2 : OhAggregateSeries.Dimension | undefined
     if (aggregateCoordSettings.dimensions === 2) {
       const category2 = dims[1]
@@ -150,7 +150,7 @@ const aggregateCoordSystem : CoordSystem = {
       page.slots.yAxis = axis2
     }
 
-    page.slots.series = items.filter((item) => (item.type.startsWith('Number') || item.type === 'Dimmer') || item.type === 'Rollershutter').map((item : Item) => {
+    page.slots.series = items.filter((item) => (item.type.startsWith('Number') || item.type === 'Dimmer') || item.type === 'Rollershutter').map((item : api.EnrichedItem | api.GroupItem) => {
       const seriesOptions = allSeriesOptions[item.name] as AggregateSeriesOptions
 
       return {
@@ -192,12 +192,12 @@ const aggregateCoordSystem : CoordSystem = {
           config: {
             bottom: '3',
             type: 'scroll'
-          } as OhChartLegend.Config
+          } satisfies OhChartLegend.Config & Record<string, unknown>
         }
       ]
     }
 
-    return page
+    return page as api.RootUiComponent
   }
 }
 

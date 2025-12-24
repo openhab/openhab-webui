@@ -1,20 +1,20 @@
-import type { Item, UIComponent } from '@/types/openhab'
 import { Marker, type VisualMap, type ValueAxisOptions, ValueAxisSplitOptions } from './types'
 import type { AggregateCoordSettings } from './chart-aggregate'
 import type { TimeCoordSettings } from './chart-time'
 import { OhChartVisualmap, Orient, OhTimeSeries, OhAggregateSeries, OhValueAxis } from '@/types/components/widgets'
 
-function parseUnit (item: Item) : string {
-  let unit =
-    item.transformedState?.split(' ')[1] ??
-    item.state?.split(' ')[1] ??
-    item.stateDescription?.pattern?.split(' ')[1]
+import * as api from '@/api'
+
+function parseUnit (item: api.EnrichedItem | api.GroupItem) : string {
+  let unit = ('transformedState' in item && item.transformedState) ? item.transformedState.split(' ')[1] :
+    ('state' in item) ? (typeof item.state === 'string' ? item.state.split(' ')[1] : undefined) :
+      ('stateDescription' in item) ? (item as any).stateDescription.pattern?.split(' ')[1] : null
   if (unit) unit = unit.replace(/^%%/, '%')
 
   return unit || ''
 }
 
-export function getYAxis (item : Item, coordSettings : TimeCoordSettings | AggregateCoordSettings) : number {
+export function getYAxis (item : api.EnrichedItem | api.GroupItem, coordSettings : TimeCoordSettings | AggregateCoordSettings) : number {
   let unit = parseUnit(item)
   let unitAxis = coordSettings.valueAxesOptions.findIndex((a) => a.unit === unit)
   if (unitAxis >= 0) {
@@ -25,7 +25,7 @@ export function getYAxis (item : Item, coordSettings : TimeCoordSettings | Aggre
   }
 }
 
-export function renderVisualMap (visualMap: VisualMap) : UIComponent[] {
+export function renderVisualMap (visualMap: VisualMap) : api.UiComponent[] {
   const config: OhChartVisualmap.Config = {
     show: true,
     orient: Orient.horizontal,
@@ -52,7 +52,7 @@ export function renderVisualMap (visualMap: VisualMap) : UIComponent[] {
 
   return [{
     component: 'oh-chart-visualmap',
-    config
+    config: config as Record<string, unknown>
   }]
 }
 
@@ -78,7 +78,7 @@ function getSplitLineConfig (split: ValueAxisSplitOptions | undefined): Record<s
   return config
 }
 
-export function renderValueAxis (options : ValueAxisOptions) : UIComponent {
+export function renderValueAxis (options : ValueAxisOptions) : api.UiComponent {
   const config : OhValueAxis.Config = {
     gridIndex: 0,
     name: options.name || options.unit,

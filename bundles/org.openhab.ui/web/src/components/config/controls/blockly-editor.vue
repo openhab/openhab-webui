@@ -1224,6 +1224,8 @@ import { defineLibraryToolboxCategory } from '@/assets/definitions/blockly/libra
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
+import * as api from '@/api'
+
 let workspace = null
 
 Blockly.ContextMenuItems.registerCommentOptions()
@@ -1266,12 +1268,13 @@ export default {
   methods: {
     async load () {
       const dataPromises = [
-        this.$oh.api.get('/rest/rules?summary=true'),
-        this.$oh.api.get('/rest/audio/sinks'),
-        this.$oh.api.get('/rest/voice/voices'),
-        this.libraryDefinitions ? Promise.resolve(this.libraryDefinitions) : this.$oh.api.get('/rest/ui/components/ui:blocks'),
-        this.$oh.api.get('/rest/persistence'),
-        this.$oh.api.get('/rest/transformations/services')
+        api.getRules({ summary : true }),
+        api.getAudioSinks(),
+        api.getVoices(),
+        (this.libraryDefinitions) ? Promise.resolve(this.libraryDefinitions) :
+          api.getRegisteredUiComponentsInNamespace({ namespace : 'ui:blocks' }),
+        api.getPersistenceServices(),
+        api.getTransformationServices()
       ]
       Promise.all(dataPromises)
         .then((data) => {

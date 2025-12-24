@@ -523,7 +523,6 @@
 
 <script>
 import { nextTick, defineAsyncComponent } from 'vue'
-import { request } from 'framework7'
 import { f7, f7ready } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
@@ -554,6 +553,8 @@ import { useUserStore } from '@/js/stores/useUserStore'
 import { useComponentsStore } from '@/js/stores/useComponentsStore'
 import { useSemanticsStore } from '@/js/stores/useSemanticsStore'
 import { useModelStore } from '@/js/stores/useModelStore'
+
+import { getRoot } from '@/api'
 
 export default {
   mixins: [auth, connectionHealth, sseEvents],
@@ -710,7 +711,7 @@ export default {
       const useCredentialsPromise = useCredentials ? this.setBasicCredentials() : Promise.resolve()
       return useCredentialsPromise
         .then(() => {
-          return request.json('/rest/')
+          return getRoot()
         })
         .catch((err) => {
           if (err.message === 'Unauthorized' || err.status === 401) {
@@ -727,7 +728,7 @@ export default {
                 (username, password) => {
                   this.setBasicCredentials(username, password)
                   this.$oh.api
-                    .get('/rest/')
+                    .getRoot()
                     .then((rootResponse) => {
                       this.storeBasicCredentials()
                       this.loadData()
@@ -786,7 +787,6 @@ export default {
             )
           }
         })
-        .then((res) => res.data)
         .then((rootResponse) => {
           // store the REST API services present on the system
           useRuntimeStore().setRootResource(rootResponse)
@@ -828,14 +828,11 @@ export default {
               : Promise.resolve(null)
           }
           return Promise.all([
-            ...(useRuntimeStore().apiEndpoint('ui'))
-              ? [this.$oh.api.get('/rest/ui/components/ui:page'), this.$oh.api.get('/rest/ui/components/ui:widget')]
-              : [Promise.resolve([]), Promise.resolve([])],
+            useRuntimeStore().apiEndpoint('ui') ? useComponentsStore().loadPagesAndWidgets() : Promise.resolve(),
             dayjsLocalePromise
           ])
         })
         .then((data) => {
-          useComponentsStore().setPagesAndWidgets(data[0], data[1])
           this.pages = useComponentsStore().pages()
             .filter((p) => p.config.sidebar && this.pageIsVisible(p))
             .sort((p1, p2) => {
@@ -845,15 +842,14 @@ export default {
             })
           this.updateTitle()
 
-          if (data[2]) {
-            dayjs.locale(data[2], null, false)
+          if (data[1]) {
+            dayjs.locale(data[1], null, false)
             console.log('dayjs locale set to', dayjs.locale())
           }
           // load & build the semantic model
           useModelStore().loadSemanticModel()
-        })
-        .then(() => {
-          // finished with loading
+        }).then(() => {
+        // finished with loading
           this.ready = true
           return Promise.resolve()
         })

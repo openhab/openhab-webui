@@ -1,8 +1,9 @@
-import type { Item, Page } from '@/types/openhab'
 import { ChartType, OhChartVisualmap } from '@/types/components/widgets'
 import type { TimeCoordSettings } from './chart-time'
 import type { AggregateCoordSettings } from './chart-aggregate'
 import type { CalendarCoordSettings } from './chart-calendar'
+
+import * as api from '@/api'
 
 export interface CoordSettingsBase {
     chartType: ChartType
@@ -12,8 +13,8 @@ export interface CoordSettingsBase {
 export interface CoordSystem {
     initCoordSystem: (settings?: CoordSettingsBase) => CoordSettings
     initAxes: (settings: CoordSettingsBase) => void
-    initSeries: (item: Item, coordSettings: CoordSettings, seriesOptions: Partial<SeriesOptions>) => SeriesOptions
-    getChartPage: (coordSettings: CoordSettings, allSeriesOptions: Record<string, SeriesOptions>, items: Item[]) => Page
+    initSeries: (item: api.EnrichedItem, coordSettings: CoordSettings, seriesOptions: Partial<SeriesOptions>) => SeriesOptions
+    getChartPage: (coordSettings: CoordSettings, allSeriesOptions: Record<string, SeriesOptions>, items: api.EnrichedItem[]) => api.RootUiComponent
 }
 
 export type CoordSettings = TimeCoordSettings | AggregateCoordSettings | CalendarCoordSettings

@@ -158,6 +158,7 @@ import reloadMixin from '../components/reload-mixin.js'
 
 import { loadLocaleMessages } from '@/js/i18n'
 import { useI18n } from 'vue-i18n'
+import * as api from '@/api'
 
 export default {
   mixins: [reloadMixin],
@@ -214,8 +215,12 @@ export default {
   methods: {
     beforePageIn () {
       if (useUserStore().isAdmin()) {
-        this.$oh.api.get('/rest/systeminfo').then((data) => { this.systemInfo = data.systemInfo })
-        this.$oh.api.get('/rest/addons').then((data) => { this.addons = data.filter((a) => a.installed).map((a) => a.uid).sort() })
+        api.getSystemInformation().then((data) => {
+          this.systemInfo = data.systemInfo
+        })
+        api.getAddons().then((data) => {
+          this.addons = data.filter((a) => a.installed).map((a) => a.uid).sort()
+        })
       }
       this.checkPurgeServiceWorkerAndCachesAvailable()
     },

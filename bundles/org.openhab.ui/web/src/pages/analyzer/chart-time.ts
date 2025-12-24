@@ -1,7 +1,8 @@
+import type { Group } from 'vue-draggable-next'
 import { getYAxis, renderValueAxis, toPrimitiveMarkers } from './analyzer-helpers.ts'
 
 import { Marker, SeriesType, type CoordSystem, type CoordSettings, type SeriesOptions, type ValueAxisOptions, type CoordSettingsBase } from './types.js'
-import type { Item, Page } from '@/types/openhab'
+import * as api from '@/api'
 import { OhCategoryAxis, OhChartPage, OhValueAxis, ChartType, Period, OhStateSeries, OhTimeSeries, OhChartTooltip, OhChartLegend } from '@/types/components/widgets'
 
 export interface TimeCoordSettings extends CoordSettingsBase {
@@ -43,21 +44,21 @@ const timeCoordSystem : CoordSystem = {
     coordSettings.categoryAxisValues = []
     coordSettings.valueAxesOptions = []
   },
-  initSeries (item : Item, coordSettings : CoordSettings, seriesOptions: Partial<TimeSeriesOptions>) : SeriesOptions {
+  initSeries (item : api.EnrichedItem | api.GroupItem, coordSettings : CoordSettings, seriesOptions: Partial<TimeSeriesOptions>) : SeriesOptions {
     const timeCoordSettings = coordSettings as unknown as TimeCoordSettings
 
     const options : TimeSeriesOptions = {
-      name: item.label || item.name,
+      name: item.label || item.name || '',
       typeOptions: [SeriesType.line, SeriesType.area, SeriesType.state],
       type: SeriesType.line,
       valueAxisIndex: 0
     }
 
-    if (item.type.startsWith('Number') || item.groupType?.startsWith('Number')) {
+    if (item.type.startsWith('Number') || ('groupType' in item && item.groupType?.startsWith('Number'))) {
       options.marker = Marker.none
       options.showAxesOptions = true
       options.type = (seriesOptions?.type && options.typeOptions.includes(seriesOptions.type)) ? seriesOptions.type : SeriesType.line
-    } else if (item.type === 'Dimmer' || item.groupType === 'Dimmer' || item.type === 'Rollershutter' || item.groupType === 'Rollershutter') {
+    } else if (item.type === 'Dimmer' || ('groupType' in item && item.groupType === 'Dimmer') || item.type === 'Rollershutter' || ('groupType' in item && item.groupType === 'Rollershutter')) {
       options.showAxesOptions = false
       options.marker = Marker.none
       options.type = (seriesOptions?.type && options.typeOptions.includes(seriesOptions.type)) ? seriesOptions.type : SeriesType.line
@@ -69,7 +70,7 @@ const timeCoordSystem : CoordSystem = {
 
     // determine the Y axis for the item
     if (options.type === SeriesType.state) {
-      timeCoordSettings.categoryAxisValues.unshift(item.name)
+      timeCoordSettings.categoryAxisValues.unshift(item.name!)
       options.yValue = timeCoordSettings.categoryAxisValues.length - 1
     } else if (options.type === SeriesType.line || options.type === SeriesType.area || options.type === SeriesType.bar) {
       options.valueAxisIndex = getYAxis(item, timeCoordSettings)
@@ -77,10 +78,10 @@ const timeCoordSystem : CoordSystem = {
 
     return options
   },
-  getChartPage (coordSettings : CoordSettings, allSeriesOptions : Record<string, SeriesOptions>, items: Item[]) : Page {
+  getChartPage (coordSettings : CoordSettings, allSeriesOptions : Record<string, SeriesOptions>, items: (api.EnrichedItem | api.GroupItem)[]) : api.RootUiComponent {
     const timeCoordSettings = coordSettings as unknown as TimeCoordSettings
 
-    let page : Page = {
+    let page : Partial<api.RootUiComponent> = {
       component: 'oh-chart-page',
       config: {
         chartType: coordSettings.chartType,
@@ -114,7 +115,7 @@ const timeCoordSystem : CoordSystem = {
 
     let categoryGridIndex = (valueGrid) ? 1 : 0
     if (categoryGrid) {
-      page.slots.grid.push({ component: 'oh-chart-grid', config: { includeLabels: true, top: (valueGrid) ? `${100 - categoryGridSize}%` : GRID_CONFIG.DEFAULT_BOTTOM_MARGIN_PIX } })
+      page.slots.grid.push({ component: 'oh-chart-grid', config: { includeLabels: true, top: (valueGrid) ? `${100 - categoryGridSize}%` : `${GRID_CONFIG.DEFAULT_BOTTOM_MARGIN_PIX}` } })
       page.slots.xAxis.push({ component: 'oh-time-axis', config: { gridIndex: categoryGridIndex } })
       page.slots.yAxis.push({
         component: 'oh-category-axis',
@@ -138,8 +139,8 @@ const timeCoordSystem : CoordSystem = {
       })
     }
 
-    page.slots.series = items.map((item : Item) => {
-      const seriesOptions = allSeriesOptions[item.name] as TimeSeriesOptions
+    page.slots.series = items.map((item : api.EnrichedItem | api.GroupItem) => {
+      const seriesOptions = allSeriesOptions[item.name!] as TimeSeriesOptions
 
       if (seriesOptions.type === 'state') {
         return {
@@ -199,7 +200,7 @@ const timeCoordSystem : CoordSystem = {
       }
     }]
 
-    return page
+    return page as api.RootUiComponent
   }
 }
 

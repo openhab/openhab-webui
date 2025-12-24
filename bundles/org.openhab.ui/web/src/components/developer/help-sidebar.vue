@@ -183,6 +183,8 @@ import Qstart from '@/assets/definitions/help/help-qstart-defs.json'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { mapStores } from 'pinia'
 
+import * as api from '@/api'
+
 export default {
   components: {
     Context
@@ -205,11 +207,11 @@ export default {
     }
   },
   created () {
-    this.$oh.api.get('/rest/addons').then((data) => {
+    api.getAddons().then((data) => {
       this.addons = data.filter((addon) => addon.installed).sort((a, b) => a.label.toUpperCase().localeCompare(b.label.toUpperCase()))
     }).catch((err) => {
       // sometimes we get 502 errors ('Jersey is not ready yet!'), keep trying
-      if (err === 'Bad Gateway' || err === 502) {
+      if (err.response?.statusText === 'Bad Gateway' || err.response?.status === 502) {
         console.log('Error while accessing the API, retrying every 5 seconds: ', err)
         setTimeout(this.load, 5000)
       }

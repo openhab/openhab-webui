@@ -1,7 +1,7 @@
 import { renderVisualMap } from './analyzer-helpers.ts'
 
 import { SeriesType, type CoordSettings, type CoordSystem, type SeriesOptions, type VisualMap, type CoordSettingsBase } from './types'
-import type { Item, Page } from '@/types/openhab'
+import * as api from '@/api'
 import { AggregationFunction, ChartType, OhChartPage, Orient, OhChartVisualmap, OhCalendarSeries, OhChartTooltip, OhCalendarAxis, OhChartLegend } from '@/types/components/widgets'
 
 export interface CalendarCoordSettings extends CoordSettingsBase {
@@ -33,26 +33,26 @@ const calendarCoordSystem : CoordSystem = {
   initAxes (coordSettings) {
     // calendar chart has no axes
   },
-  initSeries (item : Item, coordSettings : CoordSettings, seriesOptions : Partial<CalendarSeriesOptions>) : CalendarSeriesOptions {
+  initSeries (item : api.EnrichedItem | api.GroupItem, coordSettings : CoordSettings, seriesOptions : Partial<CalendarSeriesOptions>) : CalendarSeriesOptions {
     const options : CalendarSeriesOptions = {
-      name: item.label || item.name,
+      name: item.label || item.name || '',
       type: SeriesType.none,
       typeOptions: [],
       aggregation: AggregationFunction.average
     }
 
     if ((item.type.startsWith('Number') || item.type === 'Dimmer' ||
-      item.groupType?.startsWith('Number') || item.groupType === 'Dimmer')) {
+      ('groupType' in item && (item.groupType?.startsWith('Number') || item.groupType === 'Dimmer')))) {
       options.type = SeriesType.heatmap
       options.typeOptions = [SeriesType.heatmap]
     }
 
     return options
   },
-  getChartPage (coordSettings : CoordSettings, allSeriesOptions : Record<string, SeriesOptions>, items: Item[]) : Page {
+  getChartPage (coordSettings : CoordSettings, allSeriesOptions : Record<string, SeriesOptions>, items: api.EnrichedItem[]) : api.RootUiComponent {
     const calendarCoordSettings = coordSettings as CalendarCoordSettings
 
-    let page : Page = {
+    let page : Partial<api.RootUiComponent> = {
       component: 'oh-chart-page',
       config: {
         chartType: coordSettings.chartType
@@ -78,8 +78,8 @@ const calendarCoordSystem : CoordSystem = {
 
     page.slots.calendar = [calendar]
 
-    page.slots.series = items.map((item : Item) => {
-      const seriesOptions = allSeriesOptions[item.name] as CalendarSeriesOptions
+    page.slots.series = items.map((item : api.EnrichedItem) => {
+      const seriesOptions = allSeriesOptions[item.name!] as CalendarSeriesOptions
       return {
         component: 'oh-calendar-series',
         config: {
@@ -122,7 +122,7 @@ const calendarCoordSystem : CoordSystem = {
       }
     ]
 
-    return page
+    return page as api.RootUiComponent
   }
 }
 
