@@ -107,7 +107,7 @@ export default {
     return {
       types,
       groupUnitAutocomplete: null,
-      oldGroupType: !this.createMode ? this.item.groupType?.split(':')[0] : '',
+      old: !this.createMode ? this.item.groupType?.split(':')[0] : '',
       oldGroupDimension: (!this.createMode && this.item.groupType?.split(':').length > 1) ? this.item.groupType.split(':')[1] : '',
       oldGroupUnit: ''
     }
