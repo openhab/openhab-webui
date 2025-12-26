@@ -89,10 +89,10 @@ export const useSemanticsStore = defineStore('semantics', () => {
           ready.value = true
         })
         .catch((e) => {
-          console.error('Failed to load semantic tags:')
-          console.error(e)
+          console.error('Failed to load semantic tags:', e)
           ready.value = false
-          return Promise.reject('Failed to load semantic tags: ' + e)
+          // Return the plain error so consumers can handle it; you must NOT modify it!
+          return Promise.reject(e)
         })
     } else {
       ready.value = true
