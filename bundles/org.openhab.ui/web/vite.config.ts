@@ -145,6 +145,10 @@ export default defineConfig({
         target: apiBaseUrl,
         ws: true
       },
+      '/ws/audio-pcm': {
+        target: apiBaseUrl,
+        ws: true
+      },
       '/ws/events': {
         target: apiBaseUrl,
         ws: true
