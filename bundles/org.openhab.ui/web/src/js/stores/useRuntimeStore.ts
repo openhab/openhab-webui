@@ -24,13 +24,7 @@ export const useRuntimeStore = defineStore('runtime', () => {
   const docSrcUrl = ref<string | null>(null)
   const showDeveloperDock = ref<boolean>(false)
   const pagePath = ref<string | null>(null)
-  const sitemapIncludeItemName = ref<boolean>(false)
-  const modelPicker = reactive<object>({
-    includeItemNames: false,
-    includeItemTags: false,
-    expanded: false,
-    includeNonSemantic: false
-  })
+  const modelPickerExpanded = ref<boolean>(false)
   const ready = ref<boolean>(false)
 
   // Getters
@@ -67,8 +61,7 @@ export const useRuntimeStore = defineStore('runtime', () => {
     docSrcUrl,
     showDeveloperDock,
     pagePath,
-    modelPicker,
-    sitemapIncludeItemName,
+    modelPickerExpanded,
     ready,
 
     setRootResource

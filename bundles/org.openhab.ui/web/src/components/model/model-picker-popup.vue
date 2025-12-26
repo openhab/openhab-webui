@@ -132,6 +132,7 @@ import { mapWritableState } from 'pinia'
 import ModelTreeview from '@/components/model/model-treeview.vue'
 import ModelMixin from '@/pages/settings/model/model-mixin'
 
+import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
 export default {
@@ -170,10 +171,12 @@ export default {
       }
     },
     ...mapWritableState(useRuntimeStore, {
-      includeItemName: 'modelPickerIncludeItemName',
-      includeItemTags: 'modelPickerIncludeItemTags',
-      includeNonSemantic: 'modelPickerIncludeNonSemantic',
       expanded: 'modelPickerExpanded'
+    }),
+    ...mapWritableState(useUIOptionsStore, {
+      includeItemName: 'modelPickerShowItemName',
+      includeItemTags: 'modelPickerShowItemTags',
+      includeNonSemantic: 'modelPickerShowNonSemantic'
     })
   },
   methods: {
