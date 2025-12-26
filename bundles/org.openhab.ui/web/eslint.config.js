@@ -157,7 +157,7 @@ export default defineConfig([
       }
     }
   },
-  globalIgnores(['dist', 'build', 'public', '**/*.nearley.js'])
+  globalIgnores(['dist', 'build', 'public', '**/*.nearley.js', 'src/api/**'])
 
   // eslintConfigPrettier, // This is the Prettier config that disables all ESLint rules that conflict with Prettier
 ])

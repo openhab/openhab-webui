@@ -183,6 +183,8 @@ import Qstart from '@/assets/definitions/help/help-qstart-defs.json'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { mapStores } from 'pinia'
 
+import * as api from '@/api'
+
 export default {
   components: {
     Context
@@ -205,7 +207,7 @@ export default {
     }
   },
   created () {
-    this.$oh.api.get('/rest/addons').then((data) => {
+    api.getAddons().then((data) => {
       this.addons = data.filter((addon) => addon.installed).sort((a, b) => a.label.toUpperCase().localeCompare(b.label.toUpperCase()))
     }).catch((err) => {
       // sometimes we get 502 errors ('Jersey is not ready yet!'), keep trying
