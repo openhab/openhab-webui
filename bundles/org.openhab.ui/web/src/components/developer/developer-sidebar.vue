@@ -834,16 +834,19 @@ export default {
           'triggers.configuration.itemName',
           'triggers.configuration.groupName',
           'triggers.configuration.thingUID',
+          'triggers.type',
           'actions.configuration.itemName',
           'actions.configuration.thingUID',
           'actions.configuration.type',
           'actions.configuration.blockSource',
           'actions.configuration.script',
+          'actions.type',
           'conditions.configuration.itemName',
           'conditions.configuration.thingUID',
           'conditions.configuration.type',
           'conditions.configuration.blockSource',
-          'conditions.configuration.script'
+          'conditions.configuration.script',
+          'conditions.type'
         ]
       },
       pages: {
