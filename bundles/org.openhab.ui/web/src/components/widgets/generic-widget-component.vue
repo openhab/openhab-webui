@@ -23,7 +23,6 @@
         </ul>
         <template v-else>
           <generic-widget-component v-for="(slotComponent, idx) in slotComponents"
-                                    v-bind="$attrs"
                                     :context="childContext(slotComponent)"
                                     :key="slotName + '-' + idx" />
         </template>
