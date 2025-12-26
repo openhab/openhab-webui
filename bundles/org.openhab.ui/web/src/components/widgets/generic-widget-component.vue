@@ -41,7 +41,8 @@
     </oh-card>
     <generic-widget-component v-else-if="componentType && componentType.startsWith('widget:')"
                               ref="component"
-                              v-bind="$attrs"
+                              v-bind="isChild ? null : $attrs"
+                              :is-child="true"
                               :context="childWidgetContext()"
                               :class="scopedCssUid" />
     <component v-else-if="componentType && componentType.startsWith('oh-')"
@@ -95,6 +96,12 @@ import mixin from './widget-mixin'
 export default {
   inheritAttrs: false,
   mixins: [mixin],
+  props: {
+    isChild: {
+      type: Boolean,
+      default: false
+    }
+  },
   components: {
     ...SystemWidgets,
     ...StandardWidgets,
