@@ -70,7 +70,7 @@ export default function itemDefaultListComponent (item, footer) {
         component: 'oh-player-item'
       }
     }
-
+    
     if (item.type === 'Image') {
       component = {
         component: 'oh-list-item',

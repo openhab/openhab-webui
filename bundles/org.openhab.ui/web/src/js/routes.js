@@ -4,6 +4,10 @@ import HomePage from '../pages/home.vue'
 import NotFoundPage from '../pages/not-found.vue'
 import PageViewPage from '../pages/page/page-view.vue'
 import AnalyzerPopup from '../pages/analyzer/analyzer-popup.vue'
+import MediaPopup from '../pages/media/media-browser-popup.vue'
+import MediaBrowser from '../pages/media/media-browser.vue'
+import MediaDeviceSelectorPopup from '../pages/media/media-device-selector-popup.vue'
+import MediaDeviceSelector from '../pages/media/media-device-selector.vue'
 import { AddonTitles } from '@/assets/addon-store'
 
 const AboutPage = () => import(/* webpackChunkName: "about-page" */ '@/pages/about.vue')
@@ -567,6 +571,32 @@ export default [
     path: '/analyzer/',
     popup: {
       component: AnalyzerPopup
+    }
+  },
+  {
+    path: '/mediapopup/',
+    popup: {
+      component: MediaPopup
+    }
+  },
+  {
+    path: '/mediabrowser/',
+    component: MediaBrowser,
+    options: {
+      transition: 'f7-dive',
+      animate: false,
+    }
+  },
+  {
+    path: '/mediadeviceselector/',
+    popup: {
+      component: MediaDeviceSelector
+    }
+  },
+  {
+    path: '/mediadeviceselectorpopup/',
+    popup: {
+      component: MediaDeviceSelectorPopup
     }
   },
   {
