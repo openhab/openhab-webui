@@ -73,6 +73,7 @@ export default {
       persistenceProblems: [],
 
       persistenceProblemExplanation: {
+        PERSISTENCE_DUPLICATE_CONFIG: 'Both managed and file based configuration exists for persistence service',
         PERSISTENCE_NO_DEFAULT: 'No default persistence service defined',
         PERSISTENCE_SERVICE_NO_CONFIG: 'No configuration for persistence service',
         PERSISTENCE_SERVICE_NO_ITEMS: 'No persistence items defined for persistence service',
