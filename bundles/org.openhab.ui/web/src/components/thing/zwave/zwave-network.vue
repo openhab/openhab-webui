@@ -26,6 +26,7 @@ import { use } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { GraphChart } from 'echarts/charts'
 import { TooltipComponent, ToolboxComponent } from 'echarts/components'
+import 'echarts/theme/dark.js'
 import VChart from 'vue-echarts'
 
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'

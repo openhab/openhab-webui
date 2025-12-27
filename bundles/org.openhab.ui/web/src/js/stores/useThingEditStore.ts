@@ -7,7 +7,6 @@ import api from '@/js/openhab/api'
 
 import type {
   Channel,
-  ConfigDescriptionParameter,
   ConfigDescriptionResponse,
   Firmware,
   FirmwareResponse,
@@ -73,6 +72,7 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
     } catch (e: any) {
       if (e === 'Not Found' || e === 404) {
         console.log('No actions available for this Thing')
+        thingActions.value = []
         return
       }
       console.error('Error loading thing actions: ' + e)
@@ -84,9 +84,6 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
     try {
       const data: ConfigDescriptionResponse = await api.get('/rest/config-descriptions/thing:' + thingUID)
       configDescriptions.value = data
-
-      // TODO: Can be removed once the config actions have been removed from all add-ons
-      configDescriptions.value.parameters = configDescriptions.value.parameters.filter((p: ConfigDescriptionParameter) => p.groupName !== 'actions')
     } catch (e: any) {
       console.debug('No specific config description available for this thing, using config description from thing type instead.')
       configDescriptions.value = {
