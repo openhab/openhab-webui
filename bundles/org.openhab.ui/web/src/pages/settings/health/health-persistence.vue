@@ -102,7 +102,7 @@ export default {
       if (persistenceProblem.serviceId) {
         return '/settings/persistence/' + persistenceProblem.serviceId
       }
-      return '/settings/persistence'
+      return '/settings/persistence/'
     },
     explanation (reason) {
       return this.persistenceProblemExplanation[reason] || reason

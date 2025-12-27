@@ -58,9 +58,10 @@ export default {
   computed: {
     config () {
       if (this.badgeOverrides) {
+        const badges = Object.assign({}, this.badgeConfigs)
         const override = this.badgeOverrides[this.type]
         if (override && override.badge) {
-          return Object.assign(this.badgeConfigs[this.type], override.badge)
+          return Object.assign(badges[this.type], override.badge)
         }
       }
       return this.badgeConfigs[this.type]

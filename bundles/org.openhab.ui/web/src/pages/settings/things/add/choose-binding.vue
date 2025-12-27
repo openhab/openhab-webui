@@ -24,7 +24,7 @@
 
     <f7-block class="block-narrow">
       <f7-col>
-        <f7-list v-if="!ready" class="col binding-list">
+        <f7-list v-if="!ready" class="col">
           <f7-list-group>
             <f7-list-item
               v-for="n in 10"
@@ -36,7 +36,7 @@
               footer="This contains the description of the binding" />
           </f7-list-group>
         </f7-list>
-        <f7-list v-else class="col">
+        <f7-list v-else class="col binding-list">
           <f7-list-item
             v-for="binding in bindings"
             media-item
