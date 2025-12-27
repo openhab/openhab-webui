@@ -13,6 +13,7 @@ declare global {
 
 export const useUIOptionsStore = defineStore('uiOptions', () => {
   // States
+  // shared with basicUI
   const _storedDarkMode = localStorage.getItem('openhab.ui:theme.dark')
   const storedDarkMode = ref<'auto' | 'dark' | 'light'>(
     _storedDarkMode === 'auto' || _storedDarkMode === 'dark' || _storedDarkMode === 'light'
@@ -55,13 +56,15 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     localStorage.getItem('openhab.ui:theme.home.hidechatinput') === 'true'
   )
 
+  // shared with basicUI
   const webAudio = ref<boolean>(localStorage.getItem('openhab.ui:webaudio.enable') === 'true')
 
   const visibleBreakpointDisabled = ref<boolean>(
     localStorage.getItem('openhab.ui:panel.visibleBreakpointDisabled') === 'true'
   )
 
-  const codeEditorType = ref<string>(localStorage.getItem('openhab.ui:codeEditor.type') || 'YAML')
+  const _storedCodeEditorType = localStorage.getItem('openhab.ui:codeEditor.type') || 'YAML'
+  const codeEditorType = ref<'DSL' | 'YAML'>(['DSL', 'YAML'].includes(_storedCodeEditorType as any) ? (_storedCodeEditorType as 'DSL' | 'YAML') : 'YAML')
 
   // Getters
   function getDarkMode () {
