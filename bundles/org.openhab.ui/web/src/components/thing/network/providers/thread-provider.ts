@@ -132,10 +132,10 @@ export class ThreadNetworkProvider implements NetworkGraphProvider {
     const links = this.createLinks(processedNodes, nodesByRloc16, nodesByExtAddr)
 
     // Get network name from first node that has it
-    const networkName = processedNodes.find(n => n.properties?.network)?.properties?.network as string || 'Thread'
+    const networkName = processedNodes.find((n) => n.properties?.network)?.properties?.network as string || 'Thread'
 
     // Convert to output format
-    const nodes: NetworkNode[] = processedNodes.map(n => ({
+    const nodes: NetworkNode[] = processedNodes.map((n) => ({
       id: n.id,
       label: n.label,
       role: n.role,

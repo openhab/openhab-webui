@@ -35,7 +35,7 @@ export const networkProviders: NetworkProviderRegistry = {
   zwave: zwaveNetworkProvider
 }
 
-// Vue Component (default export)
-import NetworkGraph from './network-graph.vue'
-export { NetworkGraph }
-export default NetworkGraph
+// Vue Component
+import NetworkGraphComponent from './network-graph.vue'
+export { NetworkGraphComponent }
+export default NetworkGraphComponent

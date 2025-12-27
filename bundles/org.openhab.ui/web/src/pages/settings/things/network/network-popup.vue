@@ -46,11 +46,11 @@
 </style>
 
 <script>
-import { NetworkGraph, networkProviders } from '@/components/thing/network'
+import { NetworkGraphComponent, networkProviders } from '@/components/thing/network'
 
 export default {
   components: {
-    NetworkGraph
+    NetworkGraph: NetworkGraphComponent
   },
   props: {
     bridgeUID: {
