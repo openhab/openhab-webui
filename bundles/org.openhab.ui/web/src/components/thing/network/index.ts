@@ -16,10 +16,8 @@
 
 import type { NetworkProviderRegistry } from './types'
 
-// Types
 export * from './types'
 
-// Providers
 import { threadNetworkProvider, ThreadNetworkProvider } from './providers/thread-provider'
 import { zwaveNetworkProvider, ZWaveNetworkProvider } from './providers/zwave-provider'
 
@@ -35,7 +33,7 @@ export const networkProviders: NetworkProviderRegistry = {
   zwave: zwaveNetworkProvider
 }
 
-// Vue Component
+// Vue Component exports
 import NetworkGraphComponent from './network-graph.vue'
 export { NetworkGraphComponent }
 export default NetworkGraphComponent

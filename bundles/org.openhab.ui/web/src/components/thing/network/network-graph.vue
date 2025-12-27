@@ -190,7 +190,6 @@ export default {
       const nodes = this.graph.nodes.map((node) => this.buildNodeData(node))
       const links = this.graph.links.map((link) => this.buildLinkData(link))
 
-      // Use display options from graph with sensible defaults
       const opts = this.graph.displayOptions || {}
 
       return {
@@ -275,7 +274,6 @@ export default {
         ? this.graph.legend.linkQualities.find((q) => q.value === link.quality)
         : null
 
-      // Determine symbols based on link type
       let symbol, symbolSize
       switch (linkTypeInfo?.symbol) {
         case 'double_arrow':

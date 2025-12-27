@@ -112,7 +112,6 @@ export class ThreadNetworkProvider implements NetworkGraphProvider {
     const nodesByRloc16 = new Map<number, ProcessedNode>()
     const nodesByExtAddr = new Map<string, ProcessedNode>()
 
-    // First pass: create nodes
     matterNodes.forEach((thing) => {
       const node = this.createNode(thing)
       processedNodes.push(node)
@@ -128,7 +127,6 @@ export class ThreadNetworkProvider implements NetworkGraphProvider {
     // Infer rloc16 for end devices
     this.inferEndDeviceRloc16(processedNodes, nodesByRloc16)
 
-    // Create links
     const links = this.createLinks(processedNodes, nodesByRloc16, nodesByExtAddr)
 
     // Get network name from first node that has it
