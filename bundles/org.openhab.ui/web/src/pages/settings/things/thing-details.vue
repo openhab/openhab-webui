@@ -178,16 +178,21 @@
               :f7router />
 
             <!-- Thing Actions & UI Actions -->
-            <template v-if="thingActions?.length > 0 || thingType?.UID?.startsWith('zwave:')">
+            <template v-if="thingActions?.length > 0 || thingType?.UID?.startsWith('zwave:') || hasMatterThreadProperties">
               <f7-block-title medium class="no-margin-top">
                 Actions
               </f7-block-title>
               <f7-list class="margin-top" media-list>
                 <f7-list-item
                   v-if="thingType?.UID?.startsWith('zwave:')"
-                  title="View Network Map"
+                  title="View Z-Wave Network Map"
                   link=""
-                  @click="openZWaveNetworkPopup()" />
+                  @click="openNetworkPopup('zwave')" />
+                <f7-list-item
+                  v-if="hasMatterThreadProperties"
+                  title="View Thread Network Map"
+                  link=""
+                  @click="openNetworkPopup('thread')" />
                 <f7-list-item
                   v-for="action in thingActions"
                   :key="action.name"
@@ -426,7 +431,7 @@ import ConfigSheet from '@/components/config/config-sheet.vue'
 import ChannelList from '@/components/thing/channel-list.vue'
 import ThingGeneralSettings from '@/components/thing/thing-general-settings.vue'
 
-import ZWaveNetworkPopup from '@/pages/settings/things/zwave/zwave-network-popup.vue'
+import NetworkPopup from '@/pages/settings/things/network/network-popup.vue'
 
 import AddChannelPage from '@/pages/settings/things/channel/channel-add.vue'
 import AddFromThingPage from '@/pages/settings/model/add-from-thing.vue'
@@ -474,6 +479,18 @@ export default {
       return {
         store: useStatesStore().trackedItems
       }
+    },
+    /**
+     * Check if this is a Matter Thread device with Thread diagnostics properties
+     */
+    hasMatterThreadProperties () {
+      if (!this.thing?.UID?.startsWith('matter:node')) return false
+      if (!this.thing?.properties) return false
+      // Check for Thread network diagnostics properties
+      return Object.keys(this.thing.properties).some((key) =>
+        key.startsWith('ThreadNetworkDiagnostics-') ||
+        key.startsWith('ThreadBorderRouterManagement-')
+      )
     },
     ...mapState(useThingEditStore, ['configDirty', 'thingDirty', 'thing', 'thingType', 'channelTypes', 'configDescriptions', 'configStatusInfo', 'thingActions', 'firmwares', 'editable', 'isExtensible', 'hasLinkedItems'])
   },
@@ -637,19 +654,20 @@ export default {
         }
       )
     },
-    openZWaveNetworkPopup () {
+    openNetworkPopup (networkType) {
       const popup = {
-        component: ZWaveNetworkPopup
+        component: NetworkPopup
       }
       this.f7router.navigate({
-        url: 'zwave-network',
+        url: `${networkType}-network`,
         route: {
-          path: 'zwave-network',
+          path: `${networkType}-network`,
           popup
         }
       }, {
         props: {
-          bridgeUID: this.thing.bridgeUID || this.thing.UID
+          bridgeUID: this.thing.bridgeUID || this.thing.UID,
+          networkType
         }
       })
     },
