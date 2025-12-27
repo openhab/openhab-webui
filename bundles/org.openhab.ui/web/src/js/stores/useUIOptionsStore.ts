@@ -61,7 +61,8 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     localStorage.getItem('openhab.ui:panel.visibleBreakpointDisabled') === 'true'
   )
 
-  const codeEditorType = ref<string>(localStorage.getItem('openhab.ui:codeEditor.type') || 'YAML')
+  const _storedCodeEditorType = localStorage.getItem('openhab.ui:codeEditor.type') || 'YAML'
+  const codeEditorType = ref<'DSL' | 'YAML'>(['DSL', 'YAML'].includes(_storedCodeEditorType as any) ? (_storedCodeEditorType as 'DSL' | 'YAML') : 'YAML')
 
   // Getters
   function getDarkMode () {
