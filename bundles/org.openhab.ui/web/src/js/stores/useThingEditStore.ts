@@ -73,6 +73,7 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
     } catch (e: any) {
       if (e === 'Not Found' || e === 404) {
         console.log('No actions available for this Thing')
+        thingActions.value = []
         return
       }
       console.error('Error loading thing actions: ' + e)

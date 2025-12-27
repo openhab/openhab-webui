@@ -536,6 +536,9 @@ export default {
       this.codeDirty = codeDirty
     },
     load () {
+      this.ready = false
+      this.error = false
+
       const loadingFinished = (success) => {
         if (!success) {
           this.error = true
