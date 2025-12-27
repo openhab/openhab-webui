@@ -185,14 +185,14 @@
               <f7-list class="margin-top" media-list>
                 <f7-list-item
                   v-if="thingType?.UID?.startsWith('zwave:')"
-                  title="View Network Map"
+                  title="View Z-Wave Network Map"
                   link=""
-                  @click="openZWaveNetworkPopup()" />
+                  @click="openNetworkPopup('zwave')" />
                 <f7-list-item
                   v-if="hasMatterThreadProperties"
                   title="View Thread Network Map"
                   link=""
-                  @click="openMatterNetworkPopup()" />
+                  @click="openNetworkPopup('thread')" />
                 <f7-list-item
                   v-for="action in thingActions"
                   :key="action.name"
@@ -431,8 +431,7 @@ import ConfigSheet from '@/components/config/config-sheet.vue'
 import ChannelList from '@/components/thing/channel-list.vue'
 import ThingGeneralSettings from '@/components/thing/thing-general-settings.vue'
 
-import ZWaveNetworkPopup from '@/pages/settings/things/zwave/zwave-network-popup.vue'
-import MatterNetworkPopup from '@/pages/settings/things/matter/matter-network-popup.vue'
+import NetworkPopup from '@/pages/settings/things/network/network-popup.vue'
 
 import AddChannelPage from '@/pages/settings/things/channel/channel-add.vue'
 import AddFromThingPage from '@/pages/settings/model/add-from-thing.vue'
@@ -655,35 +654,20 @@ export default {
         }
       )
     },
-    openZWaveNetworkPopup () {
+    openNetworkPopup (networkType) {
       const popup = {
-        component: ZWaveNetworkPopup
+        component: NetworkPopup
       }
       this.f7router.navigate({
-        url: 'zwave-network',
+        url: `${networkType}-network`,
         route: {
-          path: 'zwave-network',
+          path: `${networkType}-network`,
           popup
         }
       }, {
         props: {
-          bridgeUID: this.thing.bridgeUID || this.thing.UID
-        }
-      })
-    },
-    openMatterNetworkPopup () {
-      const popup = {
-        component: MatterNetworkPopup
-      }
-      this.f7router.navigate({
-        url: 'matter-network',
-        route: {
-          path: 'matter-network',
-          popup
-        }
-      }, {
-        props: {
-          bridgeUID: this.thing.bridgeUID || this.thing.UID
+          bridgeUID: this.thing.bridgeUID || this.thing.UID,
+          networkType
         }
       })
     },
