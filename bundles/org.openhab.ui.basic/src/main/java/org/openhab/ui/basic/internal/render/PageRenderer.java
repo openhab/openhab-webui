@@ -377,7 +377,7 @@ public class PageRenderer extends AbstractWidgetRenderer {
 
         renderSwitchSetting(localizeText("@text/ui.config.basic.webAudio.label"),
                 localizeText("@text/ui.config.basic.webAudio.description"), "webAudio", "openhab.ui:webaudio.enable",
-                "enabled", "", false, sb);
+                "true", "false", false, sb);
 
         return getSnippet("main_static") //
                 .replace("%title%", localizeText("@text/preferences.title")) //
