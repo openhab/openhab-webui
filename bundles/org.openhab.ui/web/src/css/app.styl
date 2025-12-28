@@ -218,8 +218,15 @@ html
   --f7-navbar-large-collapse-progress 1
   opacity 0
 
-.navbar-large-hidden:not(.navbar-large-collapsed) .navbar-bg
-  opacity 0
+  .navbar-bg
+    opacity 0
+
+.navbar-hidden
+  .navbar-bg
+    opacity 0
+
+.navbar-bg
+  transition opacity 0.3s ease
 
 .toolbar.toolbar-bottom, .tabbar.tabbar-bottom
   --f7-theme-color #2196f3
