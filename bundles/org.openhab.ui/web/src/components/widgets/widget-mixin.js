@@ -7,6 +7,7 @@ import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 import { useUserStore } from '@/js/stores/useUserStore'
 import { useComponentsStore } from '@/js/stores/useComponentsStore'
 import { useWidgetExpression } from '@/components/widgets/useWidgetExpression.ts'
+import cloneDeep from 'lodash/cloneDeep'
 
 /**
  * The widget-mixin must be imported as a mixin into all widget components!
@@ -125,6 +126,12 @@ export default {
         clipboardtype: this.context.clipboardtype,
         parent: this.context
       }
+    },
+    cardChildContext (component) {
+      const cmp = cloneDeep(component)
+      // remove style config as it should only apply to top-level element and not children
+      if (cmp.config?.style) delete cmp.config.style
+      return this.childContext(cmp)
     },
     childWidgetContext () {
       if (!this.componentType.startsWith('widget:')) return null

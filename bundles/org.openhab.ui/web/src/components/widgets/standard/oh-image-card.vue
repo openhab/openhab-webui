@@ -13,11 +13,11 @@
                         no-chevron
                         @click="performAction">
             <template #content-start>
-              <oh-image :context="childContext(context.component)" />
+              <oh-image :context="cardChildContext(context.component)" />
             </template>
           </f7-list-item>
         </f7-list>
-        <oh-image v-else :context="childContext(context.component)" />
+        <oh-image v-else :context="cardChildContext(context.component)" />
       </f7-card-content>
     </template>
   </oh-card>
