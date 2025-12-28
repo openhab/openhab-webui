@@ -295,6 +295,9 @@ export class ThreadNetworkProvider implements NetworkGraphProvider {
       if (!nodeData.neighbors || nodeData.neighbors.length === 0) return
 
       const parentNeighbor = nodeData.neighbors[0]
+      if (!parentNeighbor || parentNeighbor.rloc16 == null) {
+        return
+      }
       const parentRloc16 = parentNeighbor.rloc16
       const parentNode = nodesByRloc16.get(parentRloc16)
 

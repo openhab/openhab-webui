@@ -67,7 +67,7 @@ export interface NetworkDisplayOptions {
   symbolSize?: number
   /** Label font size */
   fontSize?: number
-  /** Label position: 'inside' shows ID in node, 'bottom' shows label below */
+  /** Label position: 'inside' places the label inside the node, 'bottom' places it below (text is chosen via labelContent) */
   labelPosition?: 'inside' | 'bottom'
   /** What to display as the node label: 'id' or 'label' */
   labelContent?: 'id' | 'label'

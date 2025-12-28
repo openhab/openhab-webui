@@ -77,6 +77,9 @@
       background rgba(30, 30, 30, 0.95)
       color #e0e0e0
 
+      .legend-subtitle
+        color #aaa
+
     .legend-title
       font-weight bold
       font-size 13px
@@ -97,9 +100,6 @@
       margin-bottom 6px
       text-transform uppercase
       letter-spacing 0.5px
-
-    .dark .legend-subtitle
-      color #aaa
 
     .legend-item
       display flex
