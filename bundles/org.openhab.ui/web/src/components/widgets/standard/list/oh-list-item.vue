@@ -33,16 +33,14 @@
       <slot name="after" />
     </template>
     <template #after v-if="context.component.slots && context.component.slots.after && context.component.slots.after.length">
-      <generic-widget-component v-bind="$attrs" :context="childContext(context.component.slots.after[0])" />
+      <generic-widget-component :context="childContext(context.component.slots.after[0])" />
     </template>
     <f7-accordion-content v-if="context.parent.component.config.accordionList && !context.editmode">
-      <generic-widget-component v-if="isRegularAccordion"
-                                v-bind="$attrs"
-                                :context="childContext(context.component.slots.accordion[0])" />
+      <generic-widget-component v-if="isRegularAccordion" :context="childContext(context.component.slots.accordion[0])" />
     </f7-accordion-content>
     <template #root>
       <f7-accordion-content v-if="isEquipmentAccordion && !context.editmode">
-        <generic-widget-component v-bind="$attrs" :context="childContext(context.component.slots.accordion[0])" />
+        <generic-widget-component :context="childContext(context.component.slots.accordion[0])" />
       </f7-accordion-content>
     </template>
     <template #media v-if="$slots.media || config.icon || (config.fallbackIconToInitial && config.title && context.parent.component.config && context.parent.component.config.mediaList)">
