@@ -66,6 +66,14 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
   const _storedCodeEditorType = localStorage.getItem('openhab.ui:codeEditor.type') || 'YAML'
   const codeEditorType = ref<'DSL' | 'YAML'>(['DSL', 'YAML'].includes(_storedCodeEditorType as any) ? (_storedCodeEditorType as 'DSL' | 'YAML') : 'YAML')
 
+
+  const dialogEnabled = ref<boolean>(localStorage.getItem('openhab.ui:dialog.enabled') === 'true')
+  const dialogIdentifier = ref<string>(localStorage.getItem('openhab.ui:dialog.id') || '')
+  const dialogListeningItem = ref<string>(localStorage.getItem('openhab.ui:dialog.listeningItem') || '')
+  const dialogLocationItem = ref<string>(localStorage.getItem('openhab.ui:dialog.locationItem') || '')
+  const dialogConnectOnWindowEvent = ref<boolean>(localStorage.getItem('openhab.ui:dialog.connectOnWindowEvent') === 'true')
+  const dialogTriggerOnConnect = ref<boolean>(localStorage.getItem('openhab.ui:dialog.triggerOnLaunch') === 'true')
+
   // Getters
   function getDarkMode () {
     if (storedDarkMode.value === 'auto') {
@@ -141,6 +149,34 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     localStorage.setItem('openhab.ui:codeEditor.type', newValue)
   })
 
+  watch(dialogEnabled, (newValue) => {
+    localStorage.setItem('openhab.ui:dialog.enabled', newValue ? 'true' : 'false')
+    setTimeout(() => { location.reload() }, 50)
+  })
+
+  watch(dialogIdentifier, (newValue) => {
+    localStorage.setItem('openhab.ui:dialog.id', newValue)
+  })
+  if(!dialogIdentifier.value.length) {
+    dialogIdentifier.value = `ui-${Math.round(Math.random() * 100)}-${Math.round(Math.random() * 100)}`
+  }
+
+  watch(dialogListeningItem, (newValue) => {
+    localStorage.setItem('openhab.ui:dialog.listeningItem', newValue)
+  })
+
+  watch(dialogLocationItem, (newValue) => {
+    localStorage.setItem('openhab.ui:dialog.locationItem', newValue)
+  })
+
+  watch(dialogConnectOnWindowEvent, (newValue) => {
+    localStorage.setItem('openhab.ui:dialog.connectOnWindowEvent', newValue ? 'true' : 'false')
+  })
+
+  watch(dialogTriggerOnConnect, (newValue) => {
+    localStorage.setItem('openhab.ui:dialog.triggerOnLaunch', newValue ? 'true' : 'false')
+  })
+
   function updateClasses () {
     if (getDarkMode() === 'dark') {
       Dom7('html').addClass('dark')
@@ -190,6 +226,12 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     webAudio,
     visibleBreakpointDisabled,
     codeEditorType,
+    dialogEnabled,
+    dialogIdentifier,
+    dialogListeningItem,
+    dialogLocationItem,
+    dialogConnectOnWindowEvent,
+    dialogTriggerOnConnect,
 
     updateClasses,
     themeOptions
