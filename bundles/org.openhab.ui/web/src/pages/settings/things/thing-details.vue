@@ -170,7 +170,7 @@
             <config-sheet
               ref="thingConfiguration"
               :parameter-groups="configDescriptions.parameterGroups"
-              :parameters="configDescriptions.parameters"
+              :parameters="filteredConfigParameters"
               :configuration="thing.configuration"
               :status="configStatusInfo"
               :set-empty-config-as-null="true"
@@ -492,6 +492,29 @@ export default {
         key.startsWith('ThreadBorderRouterManagement-')
       )
     },
+    /**
+     * Returns config parameters with deprecated action parameters filtered out.
+     * Action parameters are BOOLEAN parameters in groups with context='actions' or (name='actions' AND label='Actions').
+     * @deprecated Can be removed once all bindings have migrated from config actions to real Thing actions.
+     */
+    filteredConfigParameters () {
+      if (!this.configDescriptions?.parameters || !this.configDescriptions?.parameterGroups) {
+        return this.configDescriptions?.parameters || []
+      }
+      // Find action groups: first by context, then fall back to name+label heuristic
+      let actionGroupNames = this.configDescriptions.parameterGroups
+        .filter((pg) => pg.context === 'actions')
+        .map((pg) => pg.name)
+      if (actionGroupNames.length === 0) {
+        actionGroupNames = this.configDescriptions.parameterGroups
+          .filter((pg) => pg.name === 'actions' && pg.label === 'Actions')
+          .map((pg) => pg.name)
+      }
+      // Filter out BOOLEAN parameters in action groups (these are rendered as action buttons instead)
+      return this.configDescriptions.parameters.filter(
+        (p) => !(actionGroupNames.includes(p.groupName) && p.type === 'BOOLEAN')
+      )
+    },
     ...mapState(useThingEditStore, ['configDirty', 'thingDirty', 'thing', 'thingType', 'channelTypes', 'configDescriptions', 'configStatusInfo', 'thingActions', 'firmwares', 'editable', 'isExtensible', 'hasLinkedItems'])
   },
   watch: {
@@ -553,6 +576,9 @@ export default {
       this.codeDirty = codeDirty
     },
     load () {
+      this.ready = false
+      this.error = false
+
       const loadingFinished = (success) => {
         if (!success) {
           this.error = true
