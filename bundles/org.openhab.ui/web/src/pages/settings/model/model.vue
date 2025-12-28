@@ -342,6 +342,7 @@ import LinkDetails from '@/components/model/link-details.vue'
 import ModelMixin from '@/pages/settings/model/model-mixin'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 
+import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { useStatesStore } from '@/js/stores/useStatesStore'
 import { useLastSearchQueryStore } from '@/js/stores/useLastSearchQueryStore'
@@ -390,10 +391,12 @@ export default {
       return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     },
     ...mapWritableState(useRuntimeStore, {
-      includeItemName: 'modelPicker.includeItemName',
-      includeItemTags: 'modelPicker.includeItemTags',
-      includeNonSemantic: 'modelPicker.includeNonSemantic',
-      expanded: 'modelPicker.expanded'
+      expanded: 'modelPickerExpanded'
+    }),
+    ...mapWritableState(useUIOptionsStore, {
+      includeItemName: 'modelPickerShowItemName',
+      includeItemTags: 'modelPickerShowItemTags',
+      includeNonSemantic: 'modelPickerShowNonSemantic'
     })
   },
   methods: {
