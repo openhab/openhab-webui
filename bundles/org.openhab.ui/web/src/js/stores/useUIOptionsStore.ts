@@ -66,6 +66,20 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
   const _storedCodeEditorType = localStorage.getItem('openhab.ui:codeEditor.type') || 'YAML'
   const codeEditorType = ref<'DSL' | 'YAML'>(['DSL', 'YAML'].includes(_storedCodeEditorType as any) ? (_storedCodeEditorType as 'DSL' | 'YAML') : 'YAML')
 
+  const modelPickerShowItemName = ref<boolean>(
+    localStorage.getItem('openhab.ui:modelPicker.showItemName') === 'true'
+  )
+  const modelPickerShowItemTags = ref<boolean>(
+    localStorage.getItem('openhab.ui:modelPicker.showItemTags') === 'true'
+  )
+  const modelPickerShowNonSemantic = ref<boolean>(
+    localStorage.getItem('openhab.ui:modelPicker.showNonSemantic') === 'true'
+  )
+
+  const sitemapShowItemName = ref<boolean>(
+    localStorage.getItem('openhab.ui:sitemap.showItemName') === 'true'
+  )
+
   // Getters
   function getDarkMode () {
     if (storedDarkMode.value === 'auto') {
@@ -141,6 +155,20 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     localStorage.setItem('openhab.ui:codeEditor.type', newValue)
   })
 
+  watch(modelPickerShowItemName, (newValue) => {
+    localStorage.setItem('openhab.ui:modelPicker.showItemName', newValue?.toString())
+  })
+  watch(modelPickerShowItemTags, (newValue) => {
+    localStorage.setItem('openhab.ui:modelPicker.showItemTags', newValue?.toString())
+  })
+  watch(modelPickerShowNonSemantic, (newValue) => {
+    localStorage.setItem('openhab.ui:modelPicker.showNonSemantic', newValue?.toString())
+  })
+
+  watch(sitemapShowItemName, (newValue) => {
+    localStorage.setItem('openhab.ui:sitemap.showItemName', newValue?.toString())
+  })
+
   function updateClasses () {
     if (getDarkMode() === 'dark') {
       Dom7('html').addClass('dark')
@@ -190,6 +218,10 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     webAudio,
     visibleBreakpointDisabled,
     codeEditorType,
+    modelPickerShowItemName,
+    modelPickerShowItemTags,
+    modelPickerShowNonSemantic,
+    sitemapShowItemName,
 
     updateClasses,
     themeOptions
