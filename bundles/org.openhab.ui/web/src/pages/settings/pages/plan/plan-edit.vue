@@ -97,11 +97,6 @@
             </f7-block-footer>
           </f7-col>
         </f7-block>
-
-        <oh-plan-page v-else-if="ready && previewMode"
-                      class="plan-page"
-                      :context="context"
-                      :key="pageKey" />
       </f7-tab>
 
       <f7-tab id="code" :tab-active="currentTab === 'code'">
@@ -112,13 +107,14 @@
                 :value="pageYaml"
                 @input="onEditorInput" />
         <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
-
-        <oh-plan-page v-if="ready && previewMode"
-                      class="plan-page"
-                      :context="context"
-                      :key="pageKey + '2'" />
       </f7-tab>
     </f7-tabs>
+
+    <oh-plan-page
+      v-if="ready && previewMode"
+      class="plan-page"
+      :context="context"
+      :key="pageKey" />
   </f7-page>
 </template>
 
