@@ -100,7 +100,6 @@ dark-tooltip()
 // Make tooltips non-interactive so touch events pass through to markers on mobile
 .oh-plan-page-lmap .leaflet-tooltip
   pointer-events none
-
 </style>
 
 <script>

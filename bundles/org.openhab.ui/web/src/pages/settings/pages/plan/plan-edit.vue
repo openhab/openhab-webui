@@ -132,10 +132,9 @@
     position absolute
     top 80%
     white-space pre-wrap
-  .plan-editor
-    .oh-plan-page-lmap
-      top calc(var(--f7-navbar-height) + var(--f7-toolbar-height)) !important
-      height calc(100% - var(--f7-navbar-height) - 2 * var(--f7-toolbar-height)) !important
+  .oh-plan-page-lmap
+    top calc(var(--f7-safe-area-top) + var(--f7-navbar-height) + var(--f7-toolbar-height)) !important
+    height calc(100% - var(--f7-safe-area-top) - var(--f7-navbar-height) - 2 * var(--f7-toolbar-height)) !important
   .markers-list
     .item-link
       overflow inherit
