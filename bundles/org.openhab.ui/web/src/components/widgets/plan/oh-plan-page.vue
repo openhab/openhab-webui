@@ -106,23 +106,12 @@ import { nextTick } from 'vue'
 import { f7 } from 'framework7-vue'
 
 import mixin from '../widget-mixin'
-import { CRS, Icon } from 'leaflet'
+import { CRS } from 'leaflet'
 import { LMap, LImageOverlay, LFeatureGroup, LControl } from '@vue-leaflet/vue-leaflet'
 import 'leaflet/dist/leaflet.css'
 
 import OhPlanMarker from './oh-plan-marker.vue'
 import { OhPlanPageDefinition } from '@/assets/definitions/widgets/plan'
-
-import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png'
-import markerIcon from 'leaflet/dist/images/marker-icon.png'
-import markerShadow from 'leaflet/dist/images/marker-shadow.png'
-
-delete Icon.Default.prototype._getIconUrl
-Icon.Default.mergeOptions({
-  iconRetinaUrl: markerIcon2x,
-  iconUrl: markerIcon,
-  shadowUrl: markerShadow
-})
 
 export default {
   mixins: [mixin],

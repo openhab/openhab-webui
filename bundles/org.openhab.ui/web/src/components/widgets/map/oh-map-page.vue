@@ -40,7 +40,7 @@ import { nextTick } from 'vue'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
 import mixin from '../widget-mixin'
-import { tileLayer, latLng, Icon } from 'leaflet'
+import { tileLayer, latLng } from 'leaflet'
 import { LMap, LTileLayer, LFeatureGroup } from '@vue-leaflet/vue-leaflet'
 import 'leaflet/dist/leaflet.css'
 
@@ -50,17 +50,6 @@ import OhMapMarker from './oh-map-marker.vue'
 import OhMapCircleMarker from './oh-map-circle-marker.vue'
 
 import 'leaflet-providers'
-
-import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png'
-import markerIcon from 'leaflet/dist/images/marker-icon.png'
-import markerShadow from 'leaflet/dist/images/marker-shadow.png'
-
-delete Icon.Default.prototype._getIconUrl
-Icon.Default.mergeOptions({
-  iconRetinaUrl: markerIcon2x,
-  iconUrl: markerIcon,
-  shadowUrl: markerShadow
-})
 
 export default {
   mixins: [mixin],
