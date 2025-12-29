@@ -10,7 +10,6 @@
     :marker-zoom-animation="!config.noMarkerZoomAnimation"
     :max-bounds="bounds"
     :key="mapKey"
-    @update:bounds="ready = true"
     class="oh-plan-page-lmap"
     @ready="fitMapBounds"
     :class="{ 'with-tabbar': context.tab,
@@ -24,14 +23,14 @@
     @update:center="centerUpdate"
     @update:zoom="zoomUpdate">
     <l-image-overlay :url="backgroundImageUrl" :bounds="bounds" />
-    <l-feature-group ref="featureGroup" v-if="context.component.slots && ready">
+    <l-feature-group ref="featureGroup" v-if="context.component.slots">
       <component v-for="(marker, idx) in markers"
                  :key="idx"
                  :is="markerComponent(marker)"
                  :context="childContext(marker)"
                  @update="onMarkerUpdate" />
     </l-feature-group>
-    <l-control v-if="context.editmode != null" position="topright">
+    <l-control v-if="context.editmode" position="topright">
       <f7-menu class="padding">
         <f7-menu-item @click="context.editmode.addWidget(context.component, 'oh-plan-marker')" icon-f7="plus" text="Add Marker" />
         <f7-menu-item v-if="context.clipboardtype"
@@ -39,7 +38,7 @@
                       icon-f7="square_on_square" />
       </f7-menu>
     </l-control>
-    <l-control v-if="context.editmode != null" position="bottomleft">
+    <l-control v-if="context.editmode" position="bottomleft">
       <span>Zoom Level: {{ currentZoom.toFixed(2) }}</span>
     </l-control>
   </l-map>
@@ -137,7 +136,6 @@ export default {
   widget: OhPlanPageDefinition,
   data () {
     return {
-      ready: false,
       currentZoom: 13,
       currentCenter: null,
       minZoom: -2,
@@ -192,7 +190,7 @@ export default {
         const isVisibleMax = isNaN(zoomVisibilityMax) || zoomVisibilityMax > this.currentZoom
         return this.context.editmode != null || (isVisibleMin && isVisibleMax)
       })
-      // only update our markers if the list has changed to avoid unessesary rendering
+      // only update our markers if the list has changed to avoid unnecessary rendering
       if (visibleMarkers.length !== this.markers.length ||
         visibleMarkers.every((e) => this.markers.indexOf(e) < 0)) {
         this.markers = visibleMarkers
@@ -207,7 +205,9 @@ export default {
     onMarkerUpdate () {
     },
     fitMapBounds () {
-      if (this.$refs.map) this.$refs.map.leafletObject?.fitBounds(this.bounds)
+      if (this.$refs.map) {
+        this.$refs.map.leafletObject?.fitBounds(this.bounds)
+      }
     },
     refreshMap () {
       this.mapKey = f7.utils.id()
