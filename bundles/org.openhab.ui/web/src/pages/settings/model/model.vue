@@ -491,9 +491,11 @@ export default {
         this.load()
       }
       const detailsLink = this.$refs.detailsLink
-      const visibility = window.getComputedStyle(detailsLink.$el).visibility
-      if (!visibility || visibility !== 'hidden') {
-        this.detailsOpened = true
+      if (detailsLink) {
+        const visibility = window.getComputedStyle(detailsLink.$el).visibility
+        if (!visibility || visibility !== 'hidden') {
+          this.detailsOpened = true
+        }
       }
     },
     clearSelection (ev) {
