@@ -6,7 +6,7 @@
              'justify-content-center',
            ]">
     <template #content>
-      <oh-slider :context="childContext(context.component)"
+      <oh-slider :context="cardChildContext(context.component)"
                  :class="{ 'slider-card-vertical': config.vertical }" />
     </template>
   </oh-card>

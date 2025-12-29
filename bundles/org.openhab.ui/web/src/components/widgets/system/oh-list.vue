@@ -45,7 +45,7 @@
             </f7-menu-dropdown>
           </f7-menu-item>
         </f7-menu>
-        <generic-widget-component v-bind="$attrs" :context="childContext(slotComponent)" />
+        <generic-widget-component :context="childContext(slotComponent)" />
       </template>
     </ul>
   </f7-list>

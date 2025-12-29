@@ -126,6 +126,16 @@ export default {
         parent: this.context
       }
     },
+    cardChildContext (component) {
+      // clone object to avoid mutating the original object
+      const cmp = { ...component }
+      if (cmp.config?.style) {
+        cmp.config = { ...cmp.config }
+        // remove style config as it should only apply to top-level element and not children
+        delete cmp.config.style
+      }
+      return this.childContext(cmp)
+    },
     childWidgetContext () {
       if (!this.componentType.startsWith('widget:')) return null
       let widget = useComponentsStore().widget(this.componentType.substring(7))

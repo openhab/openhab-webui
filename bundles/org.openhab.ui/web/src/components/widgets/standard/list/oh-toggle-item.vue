@@ -2,7 +2,7 @@
   <oh-list-item :context="context">
     <template #after>
       <div>
-        <generic-widget-component v-bind="$attrs" :context="childContext(afterComponent)" />
+        <generic-widget-component :context="childContext(afterComponent)" />
       </div>
     </template>
   </oh-list-item>
