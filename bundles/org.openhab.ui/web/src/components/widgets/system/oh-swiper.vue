@@ -50,7 +50,7 @@
     <template
       v-if="context.component.slots && context.component.slots.slides && Array.isArray(context.component.slots.slides)">
       <f7-swiper-slide v-for="(slide, idx) in context.component.slots.slides" :key="idx">
-        <generic-widget-component v-bind="$attrs" :context="childContext(slide)" />
+        <generic-widget-component :context="childContext(slide)" />
       </f7-swiper-slide>
     </template>
 

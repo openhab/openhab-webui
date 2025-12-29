@@ -1,7 +1,7 @@
 <template>
   <oh-card :context="context" :content-class="['oh-video-card', 'no-padding']">
     <template #content>
-      <oh-video :context="childContext(context.component)" />
+      <oh-video :context="cardChildContext(context.component)" />
     </template>
   </oh-card>
 </template>

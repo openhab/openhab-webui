@@ -1,7 +1,7 @@
 <template>
   <oh-card :context="context" :content-class="!config.borders ? ['no-padding'] : []">
     <template #content>
-      <oh-webframe :context="childContext(context.component)" />
+      <oh-webframe :context="cardChildContext(context.component)" />
     </template>
   </oh-card>
 </template>
