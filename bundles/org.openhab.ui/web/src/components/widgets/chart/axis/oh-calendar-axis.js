@@ -3,10 +3,10 @@ import ComponentId from '../../component-id'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
 export default {
-  get (component, startTime, endTime, chart, chartWidget, orient) {
+  get (component, startTime, endTime, chart, chartWidget, inverse, numberFormatter) {
     let calendar = chartWidget.evaluateExpression(ComponentId.get(component), component.config)
     calendar.range = [startTime.toDate(), endTime.subtract(1, 'day').toDate()]
-    if (orient) calendar.orient = orient
+    if (inverse) calendar.orient = inverse
     if (!calendar.dayLabel) calendar.dayLabel = {}
     if (calendar.dayLabel.firstDay === undefined) calendar.dayLabel.firstDay = 1
     if (calendar.dayLabel.margin === undefined) calendar.dayLabel.margin = 5
