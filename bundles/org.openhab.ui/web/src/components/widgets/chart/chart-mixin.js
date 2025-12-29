@@ -105,7 +105,7 @@ export default {
     },
     xAxis () {
       if (!this.context.component.slots || !this.context.component.slots.xAxis) return undefined
-      return this.context.component.slots.xAxis.map((a) => axisComponents[a.component].get(a, this.startTime, this.endTime, this.context.component, this))
+      return this.context.component.slots.xAxis.map((a) => axisComponents[a.component].get(a, this.startTime, this.endTime, this.context.component, this, true, this.numberFormatter))
     },
     yAxis () {
       if (!this.context.component.slots || !this.context.component.slots.yAxis) return undefined
