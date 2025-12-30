@@ -88,8 +88,8 @@ export default {
   methods: {
     mapClicked (evt) {
       this.marker = latLng(evt.latlng)
-      this.marker.lat = Math.round(this.marker.lat, 6)
-      this.marker.lng = Math.round(this.marker.lng, 6)
+      this.marker.lat = Number.parseFloat(this.marker.lat).toFixed(6)
+      this.marker.lng = Number.parseFloat(this.marker.lng).toFixed(6)
       this.$emit('input', this.marker)
     }
   }
