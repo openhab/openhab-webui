@@ -62,8 +62,8 @@
                             link="#"
                             @click="(ev) => configureMarker(ev, marker, context)">
                 <template #media>
-                  <oh-icon v-if="marker.config.icon"
-                           :icon="marker.config.icon"
+                  <oh-icon v-if="markerIcon(marker)"
+                           :icon="markerIcon(marker)"
                            height="32"
                            width="32" />
                 </template>
@@ -156,6 +156,7 @@ import PageSettings from '@/components/pagedesigner/page-settings.vue'
 
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import { useViewArea } from '@/composables/useViewArea.ts'
+import { useWidgetExpression } from '@/components/widgets/useWidgetExpression.ts'
 
 export default {
   mixins: [PageDesigner],
@@ -173,8 +174,9 @@ export default {
   },
   setup () {
     useViewArea()
+    const { evaluateExpression } = useWidgetExpression()
 
-    return { theme }
+    return { theme, evaluateExpression }
   },
   data () {
     return {
@@ -190,12 +192,10 @@ export default {
     }
   },
   methods: {
-    markerDefaultIcon (marker) {
-      const widgetDefinition = Object.values(ConfigurableWidgets).find((c) => c.widget && typeof c.widget === 'function' && c.widget().name === marker.component)
-      if (widgetDefinition) {
-        return widgetDefinition.widget().icon
-      }
-      return null
+    markerIcon (marker) {
+      if (!marker?.config?.icon) return null
+      const key = marker.component + '-' + marker.config.coords + ':icon'
+      return this.evaluateExpression(key, marker.config.icon, this.context)
     },
     addWidget (component, widgetType, parentContext, slot) {
       if (!slot) slot = 'default'
