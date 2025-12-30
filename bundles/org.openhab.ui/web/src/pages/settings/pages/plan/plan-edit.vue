@@ -62,8 +62,8 @@
                             link="#"
                             @click="(ev) => configureMarker(ev, marker, context)">
                 <template #media>
-                  <oh-icon v-if="marker.config.icon"
-                           :icon="marker.config.icon"
+                  <oh-icon v-if="markerIcon(marker)"
+                           :icon="markerIcon(marker)"
                            height="32"
                            width="32" />
                 </template>
@@ -97,11 +97,6 @@
             </f7-block-footer>
           </f7-col>
         </f7-block>
-
-        <oh-plan-page v-else-if="ready && previewMode"
-                      class="plan-page"
-                      :context="context"
-                      :key="pageKey" />
       </f7-tab>
 
       <f7-tab id="code" :tab-active="currentTab === 'code'">
@@ -112,13 +107,14 @@
                 :value="pageYaml"
                 @input="onEditorInput" />
         <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
-
-        <oh-plan-page v-if="ready && previewMode"
-                      class="plan-page"
-                      :context="context"
-                      :key="pageKey + '2'" />
       </f7-tab>
     </f7-tabs>
+
+    <oh-plan-page
+      v-if="ready && previewMode"
+      class="plan-page"
+      :context="context"
+      :key="pageKey" />
   </f7-page>
 </template>
 
@@ -132,10 +128,9 @@
     position absolute
     top 80%
     white-space pre-wrap
-  .plan-editor
-    .oh-plan-page-lmap
-      top calc(var(--f7-navbar-height) + var(--f7-toolbar-height)) !important
-      height calc(100% - var(--f7-navbar-height) - 2 * var(--f7-toolbar-height)) !important
+  .oh-plan-page-lmap
+    top calc(var(--f7-safe-area-top) + var(--f7-navbar-height) + var(--f7-toolbar-height)) !important
+    height calc(100% - var(--f7-safe-area-top) - var(--f7-navbar-height) - 2 * var(--f7-toolbar-height)) !important
   .markers-list
     .item-link
       overflow inherit
@@ -161,6 +156,7 @@ import PageSettings from '@/components/pagedesigner/page-settings.vue'
 
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import { useViewArea } from '@/composables/useViewArea.ts'
+import { useWidgetExpression } from '@/components/widgets/useWidgetExpression.ts'
 
 export default {
   mixins: [PageDesigner],
@@ -178,8 +174,9 @@ export default {
   },
   setup () {
     useViewArea()
+    const { evaluateExpression } = useWidgetExpression()
 
-    return { theme }
+    return { theme, evaluateExpression }
   },
   data () {
     return {
@@ -195,12 +192,10 @@ export default {
     }
   },
   methods: {
-    markerDefaultIcon (marker) {
-      const widgetDefinition = Object.values(ConfigurableWidgets).find((c) => c.widget && typeof c.widget === 'function' && c.widget().name === marker.component)
-      if (widgetDefinition) {
-        return widgetDefinition.widget().icon
-      }
-      return null
+    markerIcon (marker) {
+      if (!marker?.config?.icon) return null
+      const key = marker.component + '-' + marker.config.coords + ':icon'
+      return this.evaluateExpression(key, marker.config.icon, this.context)
     },
     addWidget (component, widgetType, parentContext, slot) {
       if (!slot) slot = 'default'
