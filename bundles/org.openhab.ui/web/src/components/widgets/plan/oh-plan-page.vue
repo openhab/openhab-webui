@@ -22,7 +22,7 @@
     }"
     @update:center="centerUpdate"
     @update:zoom="zoomUpdate">
-    <l-image-overlay :url="backgroundImageUrl" :bounds="bounds" />
+    <l-image-overlay v-if="backgroundImageUrl" :url="backgroundImageUrl" :bounds="bounds" />
     <l-feature-group ref="featureGroup" v-if="context.component.slots">
       <component v-for="(marker, idx) in markers"
                  :key="idx"
