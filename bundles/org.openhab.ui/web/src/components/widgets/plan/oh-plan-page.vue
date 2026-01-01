@@ -106,12 +106,20 @@ import { nextTick } from 'vue'
 import { f7 } from 'framework7-vue'
 
 import mixin from '../widget-mixin'
-import { CRS } from 'leaflet'
+import { Icon, CRS } from 'leaflet'
 import { LMap, LImageOverlay, LFeatureGroup, LControl } from '@vue-leaflet/vue-leaflet'
 import 'leaflet/dist/leaflet.css'
 
 import OhPlanMarker from './oh-plan-marker.vue'
 import { OhPlanPageDefinition } from '@/assets/definitions/widgets/plan'
+
+// Do NOT remove: required for Leaflet to render in prod build
+delete Icon.Default.prototype._getIconUrl
+Icon.Default.mergeOptions({
+  iconRetinaUrl: import('leaflet/dist/images/marker-icon-2x.png'),
+  iconUrl: import('leaflet/dist/images/marker-icon.png'),
+  shadowUrl: import('leaflet/dist/images/marker-shadow.png')
+})
 
 export default {
   mixins: [mixin],

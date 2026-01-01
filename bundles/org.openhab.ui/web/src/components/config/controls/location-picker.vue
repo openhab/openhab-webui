@@ -24,15 +24,12 @@ import 'leaflet/dist/leaflet.css'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 import { mapStores } from 'pinia'
 
-import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png'
-import markerIcon from 'leaflet/dist/images/marker-icon.png'
-import markerShadow from 'leaflet/dist/images/marker-shadow.png'
-
+// Do NOT remove: required for Leaflet to render in prod build
 delete Icon.Default.prototype._getIconUrl
 Icon.Default.mergeOptions({
-  iconRetinaUrl: markerIcon2x,
-  iconUrl: markerIcon,
-  shadowUrl: markerShadow
+  iconRetinaUrl: import('leaflet/dist/images/marker-icon-2x.png'),
+  iconUrl: import('leaflet/dist/images/marker-icon.png'),
+  shadowUrl: import('leaflet/dist/images/marker-shadow.png')
 })
 
 export default {

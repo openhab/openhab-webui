@@ -40,7 +40,7 @@ import { nextTick } from 'vue'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
 import mixin from '../widget-mixin'
-import { tileLayer, latLng } from 'leaflet'
+import { tileLayer, latLng, Icon } from 'leaflet'
 import { LMap, LTileLayer, LFeatureGroup } from '@vue-leaflet/vue-leaflet'
 import 'leaflet/dist/leaflet.css'
 
@@ -50,6 +50,14 @@ import OhMapMarker from './oh-map-marker.vue'
 import OhMapCircleMarker from './oh-map-circle-marker.vue'
 
 import 'leaflet-providers'
+
+// Do NOT remove: required for Leaflet to render in prod build
+delete Icon.Default.prototype._getIconUrl
+Icon.Default.mergeOptions({
+  iconRetinaUrl: import('leaflet/dist/images/marker-icon-2x.png'),
+  iconUrl: import('leaflet/dist/images/marker-icon.png'),
+  shadowUrl: import('leaflet/dist/images/marker-shadow.png')
+})
 
 export default {
   mixins: [mixin],
