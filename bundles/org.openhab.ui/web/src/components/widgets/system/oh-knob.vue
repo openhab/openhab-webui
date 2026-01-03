@@ -1,6 +1,5 @@
 <template>
   <round-slider v-bind="resolvedConfig"
-                :startValue="knobValue"
                 :model-value="knobValue"
                 @update:model-value="onChange"
                 :style="`stroke-dasharray: ${(config.dottedPath) ? config.dottedPath : 0}`"
