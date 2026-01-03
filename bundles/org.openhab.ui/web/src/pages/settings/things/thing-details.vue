@@ -575,8 +575,14 @@ export default {
     onCodeChanged (codeDirty) {
       this.codeDirty = codeDirty
     },
-    load () {
-      this.ready = false
+    /**
+     * Load required data from the REST API.
+     * @param {boolean} [stay=false] stay ready: do not reset ready state, only reload data
+     */
+    load (stay = false) {
+      if (!stay) {
+        this.ready = false
+      }
       this.error = false
 
       const loadingFinished = (success) => {
@@ -891,7 +897,7 @@ export default {
                 break
               case 'updated':
                 console.log('Thing updated according to SSE, reloading')
-                this.load()
+                this.load(true)
                 break
             }
             break
