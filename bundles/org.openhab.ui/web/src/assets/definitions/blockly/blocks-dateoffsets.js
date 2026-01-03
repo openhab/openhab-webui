@@ -561,7 +561,7 @@ export default function (f7) {
           }
         }
       }
-      let nanoCode = ''
+      let nanoCode = '0'
       if (millisChanged || microsChanged || nanosChanged) {
         nanoCode += (!millisChanged) ? `(${baseZdt}.get(time.ChronoField.NANO_OF_SECOND) / 1000000 | 0) * 1000000  + ` : `${millis}  * 1000000 +`
         nanoCode += (!microsChanged) ? `((${baseZdt}.get(time.ChronoField.NANO_OF_SECOND) / 1000) % 1000 | 0) * 1000 + ` : `${micros} * 1000 +`
