@@ -29,11 +29,13 @@
     <template #footer v-if="$slots.footer">
       <slot name="footer" />
     </template>
-    <template #after v-if="$slots.after">
-      <slot name="after" />
-    </template>
-    <template #after v-if="context.component.slots && context.component.slots.after && context.component.slots.after.length">
-      <generic-widget-component :context="childContext(context.component.slots.after[0])" />
+    <template #after v-if="$slots.after || context.component.slots?.after?.length">
+      <template v-if="context.component.slots?.after?.length">
+        <generic-widget-component :context="childContext(context.component.slots.after[0])" />
+      </template>
+      <template v-if="$slots.after">
+        <slot name="after" />
+      </template>
     </template>
     <f7-accordion-content v-if="context.parent.component.config.accordionList && !context.editmode">
       <generic-widget-component v-if="isRegularAccordion" :context="childContext(context.component.slots.accordion[0])" />
