@@ -118,6 +118,8 @@
             </f7-list>
             <p class="text-align-center">
               Tip: Use <code>{{ itemStateTransformationCode }}</code> <clipboard-icon :value="itemStateTransformationCode" tooltip="Copy transformation" /> as pattern for Item state description metadata.
+              <br>
+              Tip: Use <code>{{ channelTransformationCode }}</code> <clipboard-icon :value="channelTransformationCode" tooltip="Copy transformation" /> for channel transformations, e.g. in the MQTT binding.
             </p>
           </f7-col>
         </f7-block>
@@ -200,6 +202,9 @@ export default {
     itemStateTransformationCode () {
       return `${this.transformation.type.toUpperCase()}(${this.transformation.uid}):%s`
     },
+    channelTransformationCode () {
+      return `${this.transformation.type.toUpperCase()}:${this.transformation.uid}`
+    },
     ...mapStores(useRuntimeStore)
   },
   methods: {
@@ -215,7 +220,7 @@ export default {
       this.load()
     },
     onPageBeforeOut () {
-      f7.sheet.close('detailsSheet')
+      f7.sheet.close(this.$refs.detailsSheet.$el)
       if (window) {
         window.removeEventListener('keydown', this.keyDown)
       }
