@@ -175,7 +175,7 @@
     "eslint-plugin-prettier": "^5.5.2",
     "eslint-plugin-vue": "^10.6.2",
     "global-prefix": "^3.0.0",
-    "globals": "^16.5.0",
+    "globals": "^17.0.0",
     "i": "^0.3.7",
     "jiti": "^2.4.2",
     "mini-css-extract-plugin": "^2.9.0",
