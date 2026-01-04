@@ -114,7 +114,6 @@ import { f7, theme } from 'framework7-vue'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 
 import { useLastSearchQueryStore } from '@/js/stores/useLastSearchQueryStore'
-import { use } from 'marked'
 
 export default {
   components: {
