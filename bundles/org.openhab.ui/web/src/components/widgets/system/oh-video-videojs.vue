@@ -1,13 +1,11 @@
 <template>
-  <video
-    ref="videoPlayer"
-    class="video-js vjs-fluid"
-    :poster="computedPosterUrl">
+  <video ref="videoPlayer" class="video-js vjs-fluid" :poster="computedPosterUrl">
     Sorry, your browser doesn't support embedded videos.
   </video>
 </template>
 
 <script>
+import { markRaw } from 'vue'
 import videojs from 'video.js'
 import 'video.js/dist/video-js.css'
 
@@ -28,9 +26,14 @@ export default {
     }
   },
   watch: {
-    src (value) {
-      if (this.player) {
-        this.player.src({ type: this.type, src: this.src })
+    src (newSrc, oldSrc) {
+      if (this.player && newSrc !== oldSrc) {
+        this.player.ready(() => {
+          this.player.src({ type: this.type, src: newSrc })
+          if (!this.startManually) {
+            this.player.play().catch((e) => console.error('Play failed:', e))
+          }
+        })
       }
     }
   },
@@ -44,7 +47,9 @@ export default {
     }
   },
   mounted () {
-    this.createPlayer()
+    this.$nextTick(() => {
+      this.createPlayer()
+    })
   },
   beforeUnmount () {
     if (this.player) {
@@ -62,13 +67,15 @@ export default {
         muted: this.startMuted,
         controls: !this.hideControls
       }, this.config || {})
-      this.player = videojs(
-        this.$refs.videoPlayer,
-        playerOpts
-      )
-      if (this.src) {
-        this.player.src({ type: this.type, src: this.src })
-      }
+      this.player = markRaw(videojs(this.$refs.videoPlayer, playerOpts))
+      this.player.ready(() => {
+        if (this.src) {
+          this.player.src({ type: this.type, src: this.src })
+          if (!this.startManually) {
+            this.player.play().catch((e) => console.error('Autoplay failed:', e))
+          }
+        }
+      })
     }
   }
 }

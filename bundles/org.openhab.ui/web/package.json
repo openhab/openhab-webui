@@ -125,7 +125,7 @@
     "template7": "^1.4.2",
     "tslib": "^2.8.1",
     "uuid": "^11.1.0",
-    "video.js": "^7.10.2",
+    "video.js": "^8.23.6",
     "vite": "^7.0.2",
     "vue": "^3.5.21",
     "vue-async-computed": "^4.0.1",
