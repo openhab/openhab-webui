@@ -21,6 +21,7 @@ Change to the `web` directory, gather the necessary dependencies with `npm insta
 
 * `npm run build` - build web app for production (note: no need to prepare a production version when submitting a PR, the build server will do it)
 * `npm run build:mvn` - build web app through Maven for production (note: no need to prepare a production version when submitting a PR, the build server will do it)
+* `npm run preview` - test the built version using a local static web server that serves the production-ready files
 
 ### Development
 
@@ -58,7 +59,7 @@ Some of its very helpful features are:
   Bad style:
 
   ```html
-  <div ref="someDiv" color="blue" @click="toggle" v-if="ready>
+  <div ref="someDiv" color="blue" @click="toggle" v-if="ready">
   ```
 
   Good style:
