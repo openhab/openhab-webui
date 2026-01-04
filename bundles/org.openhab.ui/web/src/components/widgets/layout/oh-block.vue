@@ -28,7 +28,7 @@
         </f7-menu-dropdown>
       </f7-menu-item>
     </f7-menu>
-    <component v-for="(component, idx) in context.component.slots.default"
+    <component v-for="(component, idx) in context.component.slots?.default"
                :is="component.component"
                :key="idx"
                :context="childContext(component)" />

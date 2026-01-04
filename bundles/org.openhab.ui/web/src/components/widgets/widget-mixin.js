@@ -32,6 +32,7 @@ export default {
   },
   computed: {
     componentType () {
+      if (!this.context?.component?.component) return null
       return this.evaluateExpression('type', this.context.component.component)
     },
     childWidgetComponentType () {
@@ -71,7 +72,7 @@ export default {
       }
     },
     visible () {
-      if (this.context.editmode || !this.context.component.config) return true
+      if (this.context?.editmode || !this.context?.component?.config) return true
       const visible = this.evaluateExpression('visible', this.context.component.config.visible)
       const visibleTo = this.context.component.config.visibleTo
       if (visible === undefined && visibleTo === undefined) return true
