@@ -128,6 +128,9 @@ export default {
           this.things = things
           this.ready = true
         })
+      }).catch((err) => {
+        f7.dialog.alert('Error loading thing type: ' + err)
+        this.f7router.back()
       })
     },
     save () {

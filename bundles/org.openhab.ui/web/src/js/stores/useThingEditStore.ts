@@ -146,6 +146,11 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
             loading.value = false
           })
         })
+      }).catch((err) => {
+        f7.dialog.alert('Cannot load Thing Type or Channel Types:: ' + err)
+        console.warn('Cannot load Thing Type or Channel Types: ' + err)
+        loadingFinishedCallback(false)
+        loading.value = false
       })
       .catch((err) => {
         console.warn('Cannot load Thing: ' + err.message)
