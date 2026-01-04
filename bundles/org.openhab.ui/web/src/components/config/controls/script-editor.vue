@@ -291,7 +291,24 @@ export default {
           const config = {
             // eslint configuration
             languageOptions: {
-              globals: { ...globals.node },
+              globals: {
+                ...globals.node,
+                // context:
+                ctx: 'readonly',
+                event: 'readonly',
+                ruleUID: 'readonly',
+                // openhab-js namespaces:
+                Java: 'readonly',
+                actions: 'readonly',
+                cache: 'readonly',
+                environment: 'readonly',
+                items: 'readonly',
+                rules: 'readonly',
+                things: 'readonly',
+                time: 'readonly',
+                utils: 'readonly',
+                Quantity: 'readonly'
+              },
               sourceType: 'commonjs',
               parserOptions: {
                 ecmaVersion: 2024,
@@ -301,7 +318,10 @@ export default {
               }
             },
             rules: {
-              semi: 'off' // allow both with and without semicolons
+              semi: 'off', // allow both with and without semicolons
+              'no-undef': 'error',
+              'no-const-assign': 'error',
+              'no-unreachable': 'warn'
             }
           }
           return linter(esLint(new eslint.Linter(), config))
