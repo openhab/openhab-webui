@@ -292,11 +292,12 @@ export default {
             // eslint configuration
             languageOptions: {
               globals: { ...globals.node },
-              parserOptions: { ecmaVersion: 2024, sourceType: 'module' }
-            },
-            parserOptions: {
-              ecmaFeatures: {
-                globalReturn: true // allow return outside functions
+              sourceType: 'commonjs',
+              parserOptions: {
+                ecmaVersion: 2024,
+                ecmaFeatures: {
+                  globalReturn: true // allow return outside functions
+                }
               }
             },
             rules: {
