@@ -93,7 +93,7 @@
     "cronstrue": "^3.9.0",
     "crypto-browserify": "^3.12.0",
     "dayjs": "^1.11.12",
-    "debounce": "^1.2.1",
+    "debounce": "^3.0.0",
     "diacritic": "^0.0.2",
     "dom7": "^4.0.6",
     "echarts": "^5.6.0",
