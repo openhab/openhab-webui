@@ -112,7 +112,7 @@
     "leaflet": "^1.9.4",
     "leaflet-providers": "^2.0.0",
     "lodash": "^4.17.21",
-    "marked": "^13.0.3",
+    "marked": "^17.0.1",
     "moo": "^0.5.2",
     "nearley": "^2.20.1",
     "path-browserify": "^1.0.1",
