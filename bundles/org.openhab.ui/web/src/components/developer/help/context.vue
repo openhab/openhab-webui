@@ -17,12 +17,6 @@
 import { mapStores } from 'pinia'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
-const renderer = {
-  list (body, ordered, start) {
-    return `<ul style="padding-left: 20px">${body}</ul>`
-  }
-}
-
 export default {
   props: {
     path: String
@@ -71,7 +65,17 @@ export default {
         }
         response.text().then((text) => {
           import('marked').then((marked) => {
+            const renderer = new marked.Renderer()
+            renderer.list = function(token) {
+              var out = '<ul style="padding-left: 20px">\n';
+              for (let j = 0; j < token.items.length; j++) {
+                out += this.listitem(token.items[j])
+              }
+              out += '</ul>\n'
+              return out
+            }
             marked.use({ renderer })
+
             const startComment = '<!-- START MAINUI SIDEBAR DOC - DO NOT REMOVE -->'
             const endComment = '<!-- END MAINUI SIDEBAR DOC - DO NOT REMOVE -->'
 
