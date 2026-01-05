@@ -1,6 +1,6 @@
 <template>
   <f7-block class="no-margin no-padding">
-    <f7-block>
+    <f7-block class="parsed-docs">
       <div v-show="ready" v-html="parsedDocs" />
     </f7-block>
     <f7-block>
@@ -12,6 +12,12 @@
     </f7-block>
   </f7-block>
 </template>
+
+<style lang="stylus">
+.parsed-docs
+  ul
+    padding-left 20px
+</style>
 
 <script>
 import { mapStores } from 'pinia'
@@ -65,17 +71,6 @@ export default {
         }
         response.text().then((text) => {
           import('marked').then((marked) => {
-            const renderer = new marked.Renderer()
-            renderer.list = function(token) {
-              var out = '<ul style="padding-left: 20px">\n';
-              for (let j = 0; j < token.items.length; j++) {
-                out += this.listitem(token.items[j])
-              }
-              out += '</ul>\n'
-              return out
-            }
-            marked.use({ renderer })
-
             const startComment = '<!-- START MAINUI SIDEBAR DOC - DO NOT REMOVE -->'
             const endComment = '<!-- END MAINUI SIDEBAR DOC - DO NOT REMOVE -->'
 
