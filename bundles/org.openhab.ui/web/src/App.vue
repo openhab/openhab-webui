@@ -19,14 +19,8 @@
         <f7-link href="/overview/" class="openhab-logo no-ripple" panel-close>
           <div class="logo-inner">
             <img
-              v-if="uiOptionsStore.getDarkMode() === 'dark'"
-              src="@/images/openhab-logo-white.svg"
-              type="image/svg+xml"
+              :src="themeStore.getVar('--oh-logo') || uiOptionsStore.getDarkMode() === 'dark' ? '/images/openhab-logo-white.svg' : '/images/openhab-logo.svg'"
               width="196px">
-            <img v-else
-                 src="@/images/openhab-logo.svg"
-                 type="image/svg+xml"
-                 width="196px">
           </div>
         </f7-link>
         <f7-link class="breakpoint-pin" @click="toggleVisibleBreakpoint">
@@ -36,7 +30,7 @@
             color="gray" />
         </f7-link>
 
-        <f7-list v-if="ready">
+        <f7-list v-if="ready" class="page-links">
           <f7-list-item v-if="runtimeStore.apiEndpoint('ui') && (!pages || !pages.length)">
             <span><em>{{ t('sidebar.noPages') }}</em></span>
           </f7-list-item>
@@ -438,15 +432,18 @@
     margin-left var(--f7-block-padding-horizontal)
 
   .page
-    background #f5f5f5 !important
+    background var(--oh-background-color-shade)
     padding-bottom calc(var(--f7-tabbar-labels-height) + var(--f7-safe-area-bottom))
     padding-left var(--f7-safe-area-left)
     width calc(var(--f7-panel-width) + var(--f7-safe-area-left))
   .openhab-logo
     margin-top var(--f7-safe-area-top)
     .logo-inner
-      background-color #fff
+      background-color var(--oh-background-tint-2)
       padding 2.25rem 2rem
+  .page-links
+    ul
+      background-color var(--oh-background-color-tint-transparent)
   .list
     margin-top 0
     .item-link
@@ -516,9 +513,6 @@
   padding-left 0
   margin-bottom var(--f7-list-margin-vertical)
   background-color red
-  // --f7-list-item-media-margin 24px
-  // --f7-list-item-padding-horizontal 32px
-  // --f7-list-chevron-icon-color var(--f7-color-blue-tint) !important
 </style>
 
 <script>
@@ -553,6 +547,7 @@ import { useUserStore } from '@/js/stores/useUserStore'
 import { useComponentsStore } from '@/js/stores/useComponentsStore'
 import { useSemanticsStore } from '@/js/stores/useSemanticsStore'
 import { useModelStore } from '@/js/stores/useModelStore'
+import { useThemeStore } from '@/js/stores/useThemeStore'
 
 import { getRoot } from '@/api'
 
@@ -667,7 +662,7 @@ export default {
     serverDisplayUrl () {
       return window.location.origin
     },
-    ...mapStores(useUIOptionsStore, useComponentsStore, useUserStore, useRuntimeStore)
+    ...mapStores(useUIOptionsStore, useComponentsStore, useUserStore, useRuntimeStore, useThemeStore)
   },
   watch: {
     'statesStore.sseConnected': {
