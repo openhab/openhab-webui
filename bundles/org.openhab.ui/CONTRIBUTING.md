@@ -23,10 +23,13 @@ Change to the `web` directory, gather the necessary dependencies with `npm insta
 * `npm run build:mvn` - build web app through Maven for production (note: no need to prepare a production version when submitting a PR, the build server will do it)
 * `npm run preview` - test the built version using a local static web server that serves the production-ready files
 
+If source maps are needed for debugging, prepend `SOURCE_MAPS=1` to the build command and Vite will generate source maps when building the app.
+The source maps have the `.js.map` extension and are available from the same path as the deployed `.js` files, i.e. `/assets/example.js.map` for `/assets/example.js`.
+Note that the source maps have to be manually loaded in the browser, e.g. for Chrome: Right-click in the source file → _Add source map..._ → Enter the URl according to the file name.
+
 ### Development
 
 * `npm run start` / `npm run dev` - run the development server
-* `npm run OLD:dev:blockly` - run the development server with Blockly source-maps (allows Blockly debugging)
 * `npm run test:unit` - start the Vitest test runner and run the unit tests
 * `npm run test:unit:watch` - start the Vitest test runner, run the unit tests, keep running and watch for changes
 * `npm run lint` - run linter to detect code style errors
