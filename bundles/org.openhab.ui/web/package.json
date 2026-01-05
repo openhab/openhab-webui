@@ -138,7 +138,6 @@
     "vue-qrcode": "^2.2.2",
     "vue-three-round-slider": "^1.2.7",
     "vue3-clipboard": "^1.0.0",
-    "vuex": "^4.1.0",
     "yaml": "^2.8.0"
   },
   "devDependencies": {
