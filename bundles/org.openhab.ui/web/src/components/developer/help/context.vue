@@ -1,22 +1,24 @@
 <template>
-  <f7-block class="no-margin no-padding">
+  <f7-block class="help-sidebar-context no-margin no-padding">
     <f7-block class="parsed-docs">
       <div v-show="ready" v-html="parsedDocs" />
     </f7-block>
     <f7-block>
-      <f7-link external
-               :href="documentationLink"
-               target="_blank"
-               text="Open full documentation"
-               color="blue" />
+      <f7-link
+        external
+        :href="documentationLink"
+        target="_blank"
+        text="Open full documentation"
+        color="blue" />
     </f7-block>
   </f7-block>
 </template>
 
 <style lang="stylus">
-.parsed-docs
-  ul
-    padding-left 20px
+.help-sidebar-context
+  .parsed-docs
+    ul
+      padding-left 20px
 </style>
 
 <script>
