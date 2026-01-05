@@ -26,12 +26,12 @@
 
     <f7-tabs>
       <f7-tab id="thing" :tab-active="currentTab === 'thing' ? true : null">
-        <f7-block v-if="ready && thing.statusInfo" class="block-narrow" strong>
+        <f7-block v-if="ready && thing?.statusInfo" class="block-narrow" strong>
           <f7-col class="padding-horizontal">
             <div v-show="!error" class="float-right align-items-flex-start align-items-center">
               <f7-link
-                :icon-color="(thing.statusInfo.statusDetail === 'DISABLED') ? 'orange' : 'gray'"
-                :tooltip="((thing.statusInfo.statusDetail === 'DISABLED') ? 'Enable' : 'Disable') + (($device.desktop) ? ' (Ctrl-D)' : '')"
+                :icon-color="(thing?.statusInfo?.statusDetail === 'DISABLED') ? 'orange' : 'gray'"
+                :tooltip="((thing?.statusInfo?.statusDetail === 'DISABLED') ? 'Enable' : 'Disable') + (($device.desktop) ? ' (Ctrl-D)' : '')"
                 icon-ios="f7:pause_circle"
                 icon-md="f7:pause_circle"
                 icon-aurora="f7:pause_circle"
@@ -40,9 +40,9 @@
                 @click="toggleDisabled" />
             </div>
             Status:
-            <f7-chip class="margin-left" :text="thing.statusInfo.status" :color="thingStatusBadgeColor(thing.statusInfo)" />
+            <f7-chip class="margin-left" :text="thing?.statusInfo?.status" :color="thingStatusBadgeColor(thing.statusInfo)" />
             <div>
-              <strong>{{ (thing.statusInfo.statusDetail !== 'NONE') ? thing.statusInfo.statusDetail : '&nbsp;' }}</strong>
+              <strong>{{ (thing?.statusInfo?.statusDetail !== 'NONE') ? thing.statusInfo.statusDetail : '&nbsp;' }}</strong>
               <br />
               <div v-if="thingStatusDescription(thing.statusInfo)" v-html="thingStatusDescription(thing.statusInfo)" />
             </div>
@@ -70,13 +70,13 @@
               <f7-icon f7="lock_fill" size="12" color="gray" />&nbsp;Note: {{ notEditableMsg }}
             </f7-block-footer>
             <f7-list accordion-opposite>
-              <f7-list-item accordion-item title="Thing Type" :after="thingType.label">
+              <f7-list-item v-if="thingType" accordion-item title="Thing Type" :after="thingType.label">
                 <f7-accordion-content class="thing-type-description">
                   <div class="margin" v-html="thingType.description" />
                 </f7-accordion-content>
               </f7-list-item>
               <f7-list-item
-                v-if="Object.keys(thing.properties).length > 0"
+                v-if="thing && Object.keys(thing.properties).length > 0"
                 accordion-item
                 title="Thing Properties"
                 :badge="Object.keys(thing.properties).length">
@@ -218,7 +218,7 @@
           <f7-col>
             <f7-list>
               <f7-list-button
-                v-if="thing.statusInfo.statusDetail === 'HANDLER_MISSING_ERROR'"
+                v-if="thing?.statusInfo?.statusDetail === 'HANDLER_MISSING_ERROR'"
                 color="blue"
                 title="Install Binding"
                 @click="installBinding" />
@@ -270,7 +270,7 @@
         </f7-block>
       </f7-tab>
 
-      <f7-tab id="code" :tab-active="currentTab === 'code' ? true : null">
+      <f7-tab id="code" v-if="thing" :tab-active="currentTab === 'code' ? true : null">
         <!-- v-if="ready" ensures that thingType and channelTypes are populated -->
         <code-editor
           v-if="ready"
@@ -479,11 +479,11 @@ export default {
       )
     },
     advancedThingActionsCount () {
-      return this.thingActions.filter((a) => a.visibility === 'EXPERT').length
+      return this.thingActions && Array.isArray(this.thingActions) ? this.thingActions.filter((a) => a.visibility === 'EXPERT').length : 0
     },
     filteredThingActions () {
       if (this.showAdvancedThingActions) return this.thingActions
-      return this.thingActions.filter((a) => a.visibility !== 'EXPERT')
+      return this.thingActions && Array.isArray(this.thingActions) ? this.thingActions.filter((a) => a.visibility !== 'EXPERT') : []
     },
     ...mapState(useThingEditStore, ['configDirty', 'thingDirty', 'thing', 'thingType', 'channelTypes', 'configDescriptions', 'configStatusInfo', 'thingActions', 'firmwares', 'editable', 'isExtensible', 'hasLinkedItems'])
   },
@@ -558,6 +558,9 @@ export default {
       const loadingFinished = (success) => {
         if (!success) {
           this.error = true
+          nextTick(() => {
+            this.ready = true
+          })
           return
         }
 
@@ -578,6 +581,9 @@ export default {
      * @deprecated to be removed once all Things that use config actions use real Thing actions instead
      */
     getBindingActions (configDescriptionsResponse) {
+      if (!configDescriptionsResponse?.parameterGroups || !configDescriptionsResponse?.parameters) {
+        return []
+      }
       // Returns an array of parameters which qualify as "actions", grouped by the paramGroup. The actions themselves are enriched by execute() method
       let actionContextGroups = configDescriptionsResponse.parameterGroups.filter((pg) => pg.context === 'actions')
       if (actionContextGroups.length === 0) {

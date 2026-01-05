@@ -126,34 +126,60 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
 
         thing.value = data
 
-        Promise.all([
+        Promise.allSettled([
           api.getThingTypeById({ thingTypeUID: thing.value!.thingTypeUID }),
           api.getChannelTypes({ prefixes: 'system,' + thing.value.thingTypeUID.split(':')[0] }),
           loadThingActions(thingUID)
-        ]).then((data2) => {
-          thingType.value = data2[0]
-          channelTypes.value = data2[1]
+        ]).then((results) => {
+          if (results[0].status === 'fulfilled') {
+            thingType.value = results[0].value
+          } else {
+            let message = `Cannot load thing-type '${data.thingTypeUID}': ${results[0].reason}`
+            console.error(message)
+            f7.dialog.alert(message)
+          }
 
-          Promise.all([
+          if (results[1].status === 'fulfilled') {
+            channelTypes.value = results[1].value
+          } else {
+            let message = `Cannot load channel-types for thing-type '${data.thingTypeUID}': ${results[1].reason}`
+            console.error(message)
+            f7.dialog.alert(message)
+          }
+
+          if (results[2].status !== 'fulfilled') {
+            console.warn(`Cannot load '${thingUID}' thing actions: ${results[2].reason}`)
+          }
+
+          Promise.allSettled([
             loadConfigDescriptions(thingUID),
             loadFirmwares(thingUID),
             api.getThingConfigStatus({ thingUID }).then((data) => {
               configStatusInfo.value = data ?? null
             })
-          ]).then(() => {
+          ]).then((results) => {
+            if (results[0].status !== 'fulfilled') {
+              console.error(`Cannot load '${thingUID}' config descriptions: ${results[0].reason}`)
+              configDescriptions.value = null
+            }
+            if (results[1].status !== 'fulfilled') {
+              console.warn(`Cannot load '${thingUID}' firmwares: ${results[1].reason}`)
+              firmwares.value = null
+            }
+            if (results[2].status !== 'fulfilled') {
+              console.warn(`Cannot load '${thingUID}' config status: ${results[2].reason}`)
+              configStatusInfo.value = []
+            }
             savedThing.value = cloneDeep(thing.value)
             loadingFinishedCallback(true)
             loading.value = false
           })
         })
-      }).catch((err) => {
-        f7.dialog.alert('Cannot load Thing Type or Channel Types:: ' + err)
-        console.warn('Cannot load Thing Type or Channel Types: ' + err)
-        loadingFinishedCallback(false)
-        loading.value = false
       })
       .catch((err) => {
-        console.warn('Cannot load Thing: ' + err.message)
+        let message = `Cannot load Thing '${thingUID}': ${err}`
+        console.error(message)
+        f7.dialog.alert(message)
         loadingFinishedCallback(false)
         loading.value = false
       })

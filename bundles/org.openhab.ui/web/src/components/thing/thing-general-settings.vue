@@ -57,13 +57,13 @@
                 @input="thing.location = $event.target.value"
                 :clear-button="ready && !readOnly" />
             </f7-list>
-            <f7-block-title v-if="ready && thingType.supportedBridgeTypeUIDs.length"> Parent Bridge </f7-block-title>
+            <f7-block-title v-if="ready && thingType?.supportedBridgeTypeUIDs?.length"> Parent Bridge </f7-block-title>
             <f7-block-footer
-              v-if="ready && thingType.supportedBridgeTypeUIDs.length && !thing.bridgeUID"
+              v-if="ready && thingType?.supportedBridgeTypeUIDs?.length && !thing?.bridgeUID"
               class="padding-left padding-right">
               This type of Thing needs to be associated to a working Bridge to function properly.
             </f7-block-footer>
-            <f7-list v-if="ready && thingType.supportedBridgeTypeUIDs.length" inline-labels no-hairlines-md>
+            <f7-list v-if="ready && thingType?.supportedBridgeTypeUIDs?.length" inline-labels no-hairlines-md>
               <f7-list-group v-if="editable">
                 <thing-picker
                   title="Bridge"
