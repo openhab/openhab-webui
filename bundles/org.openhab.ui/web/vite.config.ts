@@ -12,10 +12,11 @@ import webpackStats from 'rollup-plugin-webpack-stats'
 
 const projectRootDir = resolve(__dirname)
 
-const production = process.env.NODE_ENV === 'production'
+const production: boolean = process.env.NODE_ENV === 'production'
 const apiBaseUrl = process.env.OH_APIBASE || 'http://localhost:8080'
-const maven = process.env.MAVEN || false
-const stats = process.env.STATS || false
+const maven: boolean = !!(process.env.MAVEN || false)
+const stats: boolean = !!(process.env.STATS || false)
+const sourceMaps: boolean = !!(process.env.SOURCE_MAPS || false)
 const outPath = maven ? '../target/classes/app' : 'www'
 
 if (production) {
@@ -25,6 +26,9 @@ if (production) {
 }
 if (stats) {
   console.log(`Build will generate webpack stats file: ${outPath}/webpack-stats.json`)
+}
+if (sourceMaps) {
+  console.log('Build will include source maps.')
 }
 
 export default defineConfig({
@@ -85,17 +89,9 @@ export default defineConfig({
         skipWaiting: true
       }
     }),
-    ...(production ? [
-      compression({
-        algorithms: [
-          'gzip',
-          'brotliCompress'
-        ]
-      })
-    ] : [
-      vueDevtools(),
-      visualizer({ open: false })
-    ]),
+    ...(production
+      ? [compression({ algorithms: ['gzip', 'brotliCompress'] })]
+      : [vueDevtools(), visualizer({ open: false })]),
     stats ? webpackStats() : null
   ],
   define: {
@@ -155,6 +151,7 @@ export default defineConfig({
     outDir: resolve(outPath),
     emptyOutDir: true,
     target: ['chrome107', 'edge107', 'firefox104', 'safari11.1'],
+    sourcemap: sourceMaps ? 'hidden' : false,
     rolldownOptions: {
       output: {
         assetFileNames: (assetInfo) => {
