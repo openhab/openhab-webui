@@ -7,4 +7,5 @@
 	<name>Main UI</name>
 	<description>This is the openHAB Main UI.</description>
 
+	<config-description-ref uri="ui:main"/>
 </addon:addon>

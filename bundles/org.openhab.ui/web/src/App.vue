@@ -454,7 +454,7 @@
       .item-inner:before // chevron
         right var(--f7-list-item-padding-horizontal)
   .currentsection
-    background-color var(--f7-color-blue-tint)
+    background-color var(--oh-theme-alt-color-tint)
     color var(--f7-color-white)
     --f7-list-chevron-icon-color var(--f7-color-white)
     .icon
@@ -503,7 +503,7 @@
     .account
       background #232323 !important
     .currentsection
-      background-color var(--f7-color-blue-shade)
+      background-color var(--oh-theme-alt-color-shade)
   .openhab-logo
     .logo-inner
       background #111111 !important

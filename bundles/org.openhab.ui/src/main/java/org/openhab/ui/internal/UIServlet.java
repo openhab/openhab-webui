@@ -35,6 +35,7 @@ import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.util.resource.Resource;
 import org.openhab.core.OpenHAB;
+import org.openhab.core.config.core.Configuration;
 import org.openhab.core.ui.components.RootUIComponent;
 import org.openhab.core.ui.components.UIComponentRegistry;
 import org.openhab.core.ui.components.UIComponentRegistryFactory;
@@ -80,13 +81,19 @@ public class UIServlet extends DefaultServlet {
     private final long bundleModifiedTime;
     private @Nullable ContextHandler contextHandler;
 
+    private UIConfiguration configuration;
+
     @Activate
     public UIServlet(final @Reference WebContainer webContainer,
-            final @Reference UIComponentRegistryFactory uiComponentRegistryFactory) {
+            final @Reference UIComponentRegistryFactory uiComponentRegistryFactory, Map<String, Object> config) {
         this.defaultHttpContext = webContainer.createDefaultHttpContext();
         this.uiComponentRegistryFactory = uiComponentRegistryFactory;
         logger.debug("Starting up {} at {}", getClass().getSimpleName(), SERVLET_PATH);
         bundleModifiedTime = (System.currentTimeMillis() / 1000) * 1000; // round milliseconds
+
+        this.configuration = new Configuration(config).as(UIConfiguration.class);
+
+        logger.debug("Configuration: {}", this.configuration);
     }
 
     @Override
@@ -148,7 +155,7 @@ public class UIServlet extends DefaultServlet {
         }
 
         String pathInfo = request.getPathInfo();
-        if (("/" + THEME_RESOURCE_NAME + ".css").equals(pathInfo)) {
+        if (pathInfo.startsWith("/__theme__")) {
             logger.debug("Serving theme CSS");
             serveThemeCss(request, response);
             return;
@@ -167,6 +174,13 @@ public class UIServlet extends DefaultServlet {
     }
 
     private void serveThemeCss(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setContentType("text/css;charset=UTF-8");
+        response.setCharacterEncoding("UTF-8");
+
+        PrintWriter writer = response.getWriter();
+    }
+
+    private void serveThemeCssOld(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/css;charset=UTF-8");
         response.setCharacterEncoding("UTF-8");
 

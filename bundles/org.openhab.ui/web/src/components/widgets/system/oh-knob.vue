@@ -1,5 +1,5 @@
 <template>
-  <round-slider v-bind="resolvedConfig"
+  <round-slider class="oh-knob" v-bind="resolvedConfig"
                 :model-value="knobValue"
                 @update:model-value="onChange"
                 :style="`stroke-dasharray: ${(config.dottedPath) ? config.dottedPath : 0}`"
@@ -8,6 +8,12 @@
                 @click.stop="sendCommandDebounced(value, true)"
                 @touchend.stop="sendCommandDebounced(value, true)" />
 </template>
+
+<style lang="stylus">
+.oh-knob
+  .rs-range
+    stroke: red
+</style>
 
 <script>
 import { defineAsyncComponent } from 'vue'

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config-description:config-descriptions
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:config-description="https://openhab.org/schemas/config-description/v1.0.0"
+	xsi:schemaLocation="https://openhab.org/schemas/config-description/v1.0.0 https://openhab.org/schemas/config-description-1.0.0.xsd">
+
+	<config-description uri="ui:main">
+		<parameter-group name="themeCssFile">
+			<label>Theme</label>
+		</parameter-group>
+		<parameter-group name="mainColors">
+			<label>Main Colors</label>
+		</parameter-group>
+		<parameter-group name="paletteColors">
+			<label>Palette Colors</label>
+		</parameter-group>
+
+		<parameter name="themeCssFile" type="text" groupName="themeCssFile">
+			<label>Custom CSS File</label>
+			<description>Custom CSS file to override the default theme.</description>
+			<limitToOptions>false</limitToOptions>
+			<default>default</default>
+			<options>
+				<option value="default">(default)</option>
+				<option value="vintage">Vintage Theme</option>
+				<option value="modern">Modern Theme</option>
+			</options>
+			<required>false</required>
+		</parameter>
+
+		<parameter name="themeColor" type="text" groupName="mainColors">
+			<label>Theme Color</label>
+			<description>Main theme color.</description>
+			<context>color</context>
+			<required>false</required>
+		</parameter>
+		<parameter name="themeAltColor" type="text" groupName="mainColors">
+			<context>color</context>
+			<label>Secondary Theme Color</label>
+			<description>Secondary theme color.</description>
+			<required>false</required>
+		</parameter>
+		<parameter name="backgroundColor" type="text" groupName="mainColors">
+			<context>color</context>
+			<label>Background Color</label>
+			<description>Background color.</description>
+			<required>false</required>
+		</parameter>
+		<parameter name="textColor" type="text" groupName="mainColors">
+			<context>color</context>
+			<label>Text Color</label>
+			<description>Text color.</description>
+			<required>false</required>
+		</parameter>
+		<parameter name="textAltColor" type="text" groupName="mainColors">
+			<context>color</context>
+			<label>Secondary Text Color</label>
+			<description>Secondary text color.</description>
+			<required>false</required>
+		</parameter>
+
+		<parameter name="palette1Color" type="text" groupName="paletteColors">
+			<context>color</context>
+			<label>Palette Color 1</label>
+			<description>First palette color.</description>
+			<required>false</required>
+		</parameter>
+		<parameter name="palette2Color" type="text" groupName="paletteColors">
+			<context>color</context>
+			<label>Palette Color 2</label>
+			<description>Second palette color.</description>
+			<required>false</required>
+		</parameter>
+		<parameter name="palette3Color" type="text" groupName="paletteColors">
+			<context>color</context>
+			<label>Palette Color 3</label>
+			<description>Third palette color.</description>
+			<required>false</required>
+		</parameter>
+	</config-description>
+</config-description:config-descriptions>

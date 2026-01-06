@@ -179,7 +179,6 @@
     "mini-css-extract-plugin": "^2.9.0",
     "node-fetch": "^3.3.2",
     "npm": "^11.7.0",
-    "node-fetch": "^3.3.2",
     "npm-run-all2": "^8.0.4",
     "ora": "^9.0.0",
     "patch-package": "^8.0.0",

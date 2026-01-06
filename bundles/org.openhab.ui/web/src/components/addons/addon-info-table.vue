@@ -18,7 +18,7 @@
 <style lang="stylus">
 .information-table
   --f7-list-bg-color transparent
-  --f7-theme-color var(--f7-color-blue)
+  --f7-theme-color var(--oh-blue-color)
   .item-title
     --f7-list-item-title-text-color var(--f7-list-item-footer-text-color)
   .item-after

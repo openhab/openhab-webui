@@ -341,9 +341,9 @@
 
 <style lang="stylus">
 .analyzer-controls
-  --f7-theme-color var(--f7-color-blue)
-  --f7-theme-color-rgb var(--f7-color-blue-rgb)
-  --f7-theme-color-tint var(--f7-color-blue-tint)
+  --f7-theme-color var(--oh-theme-alt-color)
+  --f7-theme-color-rgb var(--oh-theme-alt-color-rgb)
+  --f7-theme-color-tint var(--oh-theme-alt-color-tint)
   --f7-block-margin-vertical 16px
   z-index 11000
   .tabs .tab
