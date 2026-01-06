@@ -112,5 +112,5 @@ updates:
           - "@typescript-eslint/*"
           - "vue-eslint-parser"
     ignore:
-      - "pkce-challenge" # Newer versions don't work in insecure contexts
-      - "@types/node" # Upgrade manually when switching Node.js version
+      - dependency-name: "pkce-challenge" # Newer versions don't work in insecure contexts
+      - dependency-name: "@types/node" # Upgrade manually when switching Node.js version
