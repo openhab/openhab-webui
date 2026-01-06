@@ -27,7 +27,7 @@ export const useRuntimeStore = defineStore('runtime', () => {
   const modelExpanded = ref<boolean>(false)
   const modelPickerExpanded = ref<boolean>(false)
   const modelSelectedItem = ref<object | null>(null)
-  const modelExpandedTreeviewItems = ref<Link[] | null>([])
+  const modelExpandedTreeviewItems = ref<string[]>([])
   const ready = ref<boolean>(false)
 
   // Getters
