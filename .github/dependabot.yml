@@ -114,3 +114,5 @@ updates:
     ignore:
       - dependency-name: "pkce-challenge" # Newer versions don't work in insecure contexts
       - dependency-name: "@types/node" # Upgrade manually when switching Node.js version
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
