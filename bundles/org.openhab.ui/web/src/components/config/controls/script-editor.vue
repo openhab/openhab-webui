@@ -66,6 +66,9 @@
     // This affects the buttons in the search form
     .cm-button
       width auto
+    // Display the close button in the search form in upper right corner, not full width
+    .cm-panel.cm-search [name=close]
+      width unset
 </style>
 
 <script>
@@ -288,11 +291,37 @@ export default {
           const config = {
             // eslint configuration
             languageOptions: {
-              globals: { ...globals.node },
-              parserOptions: { ecmaVersion: 2024, sourceType: 'module' }
+              globals: {
+                ...globals.node,
+                // context:
+                ctx: 'readonly',
+                event: 'readonly',
+                ruleUID: 'readonly',
+                // openhab-js namespaces:
+                Java: 'readonly',
+                actions: 'readonly',
+                cache: 'readonly',
+                environment: 'readonly',
+                items: 'readonly',
+                rules: 'readonly',
+                things: 'readonly',
+                time: 'readonly',
+                utils: 'readonly',
+                Quantity: 'readonly'
+              },
+              sourceType: 'commonjs',
+              parserOptions: {
+                ecmaVersion: 2024,
+                ecmaFeatures: {
+                  globalReturn: true // allow return outside functions
+                }
+              }
             },
             rules: {
-              semi: 'off' // allow both with and without semicolons
+              semi: 'off', // allow both with and without semicolons
+              'no-undef': 'error',
+              'no-const-assign': 'error',
+              'no-unreachable': 'warn'
             }
           }
           return linter(esLint(new eslint.Linter(), config))

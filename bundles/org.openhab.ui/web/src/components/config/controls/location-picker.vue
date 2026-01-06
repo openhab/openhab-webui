@@ -24,6 +24,7 @@ import 'leaflet/dist/leaflet.css'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 import { mapStores } from 'pinia'
 
+// Do NOT remove: required for Leaflet to render in prod build
 delete Icon.Default.prototype._getIconUrl
 Icon.Default.mergeOptions({
   iconRetinaUrl: import('leaflet/dist/images/marker-icon-2x.png'),
@@ -88,6 +89,8 @@ export default {
   methods: {
     mapClicked (evt) {
       this.marker = latLng(evt.latlng)
+      this.marker.lat = Number.parseFloat(this.marker.lat).toFixed(6)
+      this.marker.lng = Number.parseFloat(this.marker.lng).toFixed(6)
       this.$emit('input', this.marker)
     }
   }

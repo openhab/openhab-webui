@@ -213,7 +213,7 @@
                     <f7-list-item link
                                   no-chevron
                                   media-item
-                                  :color="($theme.dark) ? 'black' : 'white'"
+                                  :color="(theme.dark) ? 'black' : 'white'"
                                   :subtitle="'Add ' + ft.label.toLowerCase() + ' filter'"
                                   @click="editFilter(undefined, ft, null)">
                       <template #media>
@@ -502,6 +502,7 @@ export default {
       if (!saveConfirmed) return
 
       return this.$oh.api.put('/rest/persistence/' + this.persistence.serviceId, this.persistence).then((data) => {
+        this.savedPersistence = cloneDeep(this.persistence)
         this.dirty = false
         if (this.newPersistence) {
           this.newPersistence = false
@@ -781,8 +782,7 @@ export default {
       const toCode = {
         configurations: this.persistence.configs,
         aliases: this.persistence.aliases,
-        cronStrategies: this.persistence.cronStrategies,
-        defaultStrategies: this.persistence.defaults
+        cronStrategies: this.persistence.cronStrategies
       }
       this.FilterTypes.forEach((ft) => {
         toCode[ft.name] = this.persistence[ft.name]
@@ -796,7 +796,6 @@ export default {
         this.persistence.configs = updatedPersistence.configurations
         this.persistence.aliases = updatedPersistence.aliases
         this.persistence.cronStrategies = updatedPersistence.cronStrategies
-        this.persistence.defaults = updatedPersistence.defaultStrategies
         this.FilterTypes.forEach((ft) => {
           this.persistence[ft.name] = updatedPersistence[ft.name]
         })

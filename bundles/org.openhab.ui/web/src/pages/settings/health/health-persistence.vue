@@ -87,7 +87,7 @@ export default {
     },
     load () {
       this.loading = true
-      this.$oh.api.get('/rest/persistence/persistencehealth').then((data) => {
+      this.$oh.api.get('/rest/persistence/health').then((data) => {
         this.persistenceProblems = data
         this.loading = false
         this.ready = true
@@ -102,7 +102,7 @@ export default {
       if (persistenceProblem.serviceId) {
         return '/settings/persistence/' + persistenceProblem.serviceId
       }
-      return '/settings/persistence'
+      return '/settings/persistence/'
     },
     explanation (reason) {
       return this.persistenceProblemExplanation[reason] || reason

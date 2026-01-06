@@ -2,8 +2,8 @@
   <oh-list-item :context="context">
     <template #after>
       <div class="display-flex">
-        <generic-widget-component v-bind="$attrs" :context="childContext(colorPickerComponent)" />
-        <generic-widget-component v-bind="$attrs" class="margin-left" :context="childContext(switchComponent)" />
+        <generic-widget-component :context="childContext(colorPickerComponent)" />
+        <generic-widget-component class="margin-left" :context="childContext(switchComponent)" />
       </div>
     </template>
   </oh-list-item>

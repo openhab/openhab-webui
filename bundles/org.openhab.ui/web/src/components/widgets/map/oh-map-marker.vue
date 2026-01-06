@@ -7,9 +7,11 @@
     <l-tooltip v-if="config.label">
       {{ config.label }}
     </l-tooltip>
-    <l-icon v-if="icon"
-            :icon-size="[40,40]"
-            :icon-url="icon" />
+    <l-icon
+      v-if="icon"
+      :icon-size="icon.iconSize"
+      :icon-url="icon.iconUrl"
+      :shadow-url="icon?.shadowUrl" />
   </l-marker>
 </template>
 
@@ -20,6 +22,9 @@ import mixin from '../widget-mixin'
 import { LMarker, LTooltip, LIcon } from '@vue-leaflet/vue-leaflet'
 import { actionsMixin } from '../widget-actions'
 import { OhMapMarkerDefinition } from '@/assets/definitions/widgets/map'
+
+import markerIcon from 'leaflet/dist/images/marker-icon.png'
+import markerShadow from 'leaflet/dist/images/marker-shadow.png'
 
 export default {
   mixins: [mixin, actionsMixin],
@@ -47,21 +52,26 @@ export default {
         return this.config.location.split(',')
       }
       return null
-    },
-    hasIcon () {
-      return this.config.icon
     }
   },
   asyncComputed: {
-    icon () {
-      if (this.config.icon && this.config.icon.indexOf('oh:') === 0) {
-        return this.$oh.media.getIcon(this.config.icon.substring(3)).then((icon) => {
-          this.markerKey = f7.utils.id()
-          this.$emit('update')
-          return icon
-        })
+    async icon () {
+      if (!this.config.icon?.startsWith('oh:')) {
+        this.markerKey = f7.utils.id()
+        return {
+          iconUrl: markerIcon,
+          shadowUrl: markerShadow,
+          iconSize: null
+        }
       }
-      return null
+
+      const iconData = await this.$oh.media.getIcon(this.config.icon.substring(3))
+      this.markerKey = f7.utils.id()
+      this.$emit('update')
+      return {
+        iconUrl: iconData,
+        iconSize: [40, 40]
+      }
     }
   },
   watch: {

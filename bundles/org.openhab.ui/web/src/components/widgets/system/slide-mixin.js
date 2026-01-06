@@ -14,6 +14,9 @@ export default {
     this.delayStateDisplay = this.config.delayStateDisplay ? this.config.delayStateDisplay : 2000
   },
   computed: {
+    itemState () {
+      return (this.config.ignoreDisplayState === true) ? this.context.store[this.config.item].state : (this.context.store[this.config.item].displayState ?? this.context.store[this.config.item].state)
+    },
     value () {
       if (this.config.variable) {
         const variableScope = getVariableScope(this.context.ctxVars, this.context.varScope, this.config.variable)
@@ -25,7 +28,7 @@ export default {
         }
       }
       if (this.pendingCommand !== null) return this.pendingCommand // to keep the control reactive when operating
-      const value = (this.config.ignoreDisplayState === true) ? this.context.store[this.config.item].state : this.context.store[this.config.item].displayState || this.context.store[this.config.item].state
+      const value = this.itemState
       // use as a brightness control for HSB values
       if (value.split && value.split(',').length === 3) {
         return parseFloat(value.split(',')[2])

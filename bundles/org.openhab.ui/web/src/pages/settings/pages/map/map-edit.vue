@@ -91,11 +91,6 @@
             </f7-list>
           </f7-col>
         </f7-block>
-
-        <oh-map-page v-else-if="ready && previewMode"
-                     class="map-page"
-                     :context="context"
-                     :key="pageKey" />
       </f7-tab>
 
       <f7-tab id="code" :tab-active="currentTab === 'code'">
@@ -106,13 +101,13 @@
                 :value="pageYaml"
                 @input="onEditorInput" />
         <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
-
-        <oh-map-page v-if="ready && previewMode"
-                     class="map-page"
-                     :context="context"
-                     :key="pageKey + '2'" />
       </f7-tab>
     </f7-tabs>
+    <oh-map-page
+      v-if="ready && previewMode"
+      class="map-page"
+      :context="context"
+      :key="pageKey" />
   </f7-page>
 </template>
 
@@ -126,10 +121,9 @@
     position absolute
     top 80%
     white-space pre-wrap
-  .map-editor
-    .oh-map-page-lmap
-      top calc(var(--f7-navbar-height) + var(--f7-toolbar-height)) !important
-      height calc(100% - var(--f7-navbar-height) - 2 * var(--f7-toolbar-height)) !important
+  .oh-map-page-lmap
+    top calc(var(--f7-safe-area-top) + var(--f7-navbar-height) + var(--f7-toolbar-height)) !important
+    height calc(100% - var(--f7-safe-area-top) - var(--f7-navbar-height) - 2 * var(--f7-toolbar-height)) !important
   .markers-list
     .item-link
       overflow inherit

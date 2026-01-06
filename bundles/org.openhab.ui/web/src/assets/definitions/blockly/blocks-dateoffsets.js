@@ -392,7 +392,7 @@ export default function (f7) {
   * Code part
   */
   javascriptGenerator.forBlock['oh_zdt_temporal_unit_input'] = function (block) {
-    const value = javascriptGenerator.valueToCode(block, 'value', javascriptGenerator.ORDER_ATOMIC)
+    const value = valueToCode(block, 'value', javascriptGenerator.ORDER_ATOMIC)
     return [`(${value})`, javascriptGenerator.ORDER_NONE]
   }
 
@@ -518,7 +518,7 @@ export default function (f7) {
   }
 
   javascriptGenerator.forBlock['oh_zdt_amend'] = function (block) {
-    const baseZdt = javascriptGenerator.valueToCode(block, 'baseZdt', javascriptGenerator.ORDER_ATOMIC)
+    const baseZdt = valueToCode(block, 'baseZdt', javascriptGenerator.ORDER_ATOMIC)
     const operation = block.getFieldValue('operation')
 
     let code = baseZdt
@@ -533,7 +533,7 @@ export default function (f7) {
     if (operationBlock) {
       let i
       for (i = 0; i < this.itemCount_; i++) {
-        let temporal = javascriptGenerator.valueToCode(block, 'ADD' + i, javascriptGenerator.ORDER_ATOMIC)
+        let temporal = valueToCode(block, 'ADD' + i, javascriptGenerator.ORDER_ATOMIC)
         temporal = temporal.replace(/\(/g, '').replace(/\)/g, '')
 
         let inputBlock = this.getInputTargetBlock('ADD' + i)
@@ -561,7 +561,7 @@ export default function (f7) {
           }
         }
       }
-      let nanoCode = ''
+      let nanoCode = '0'
       if (millisChanged || microsChanged || nanosChanged) {
         nanoCode += (!millisChanged) ? `(${baseZdt}.get(time.ChronoField.NANO_OF_SECOND) / 1000000 | 0) * 1000000  + ` : `${millis}  * 1000000 +`
         nanoCode += (!microsChanged) ? `((${baseZdt}.get(time.ChronoField.NANO_OF_SECOND) / 1000) % 1000 | 0) * 1000 + ` : `${micros} * 1000 +`
@@ -637,7 +637,7 @@ export default function (f7) {
   * Code part
   */
   javascriptGenerator.forBlock['oh_zdt_toText'] = function (block) {
-    const date = javascriptGenerator.valueToCode(block, 'date', javascriptGenerator.ORDER_ATOMIC)
+    const date = valueToCode(block, 'date', javascriptGenerator.ORDER_ATOMIC)
     const withtime = block.getFieldValue('withtime')
 
     let code = ''
@@ -646,7 +646,7 @@ export default function (f7) {
     } else if (withtime === 'without') {
       code = `${date}.format(time.DateTimeFormatter.ofPattern('yyyy-MM-dd'))`
     } else if (withtime === 'withPattern') {
-      const pattern = javascriptGenerator.valueToCode(block, 'pattern', javascriptGenerator.ORDER_ATOMIC)
+      const pattern = valueToCode(block, 'pattern', javascriptGenerator.ORDER_ATOMIC)
       code = `${date}.format(time.DateTimeFormatter.ofPattern(${pattern}))`
     } else {
       code = `${date}.format(time.DateTimeFormatter.ofPattern('yyyy-MM-dd\\'T\\'HH:mm:ss.SSSZ'))`
@@ -688,8 +688,8 @@ export default function (f7) {
   * Code part
   */
   javascriptGenerator.forBlock['oh_zdt_compare'] = function (block) {
-    const zdtOne = javascriptGenerator.valueToCode(block, 'zdtOne', javascriptGenerator.ORDER_ATOMIC)
-    const zdtTwo = javascriptGenerator.valueToCode(block, 'zdtTwo', javascriptGenerator.ORDER_ATOMIC)
+    const zdtOne = valueToCode(block, 'zdtOne', javascriptGenerator.ORDER_ATOMIC)
+    const zdtTwo = valueToCode(block, 'zdtTwo', javascriptGenerator.ORDER_ATOMIC)
     const operation = block.getFieldValue('operation')
     const precision = block.getFieldValue('precision')
     const dateComparison = block.getFieldValue('dateComparison')
@@ -731,9 +731,9 @@ export default function (f7) {
   */
   javascriptGenerator.forBlock['oh_zdt_between'] = function (block) {
     let zdtCompare = addDateComparisonSupport()
-    let zdtOne = javascriptGenerator.valueToCode(block, 'zdtOne', javascriptGenerator.ORDER_ATOMIC)
-    let zdtTwo = javascriptGenerator.valueToCode(block, 'zdtTwo', javascriptGenerator.ORDER_ATOMIC)
-    let zdtThree = javascriptGenerator.valueToCode(block, 'zdtThree', javascriptGenerator.ORDER_ATOMIC)
+    let zdtOne = valueToCode(block, 'zdtOne', javascriptGenerator.ORDER_ATOMIC)
+    let zdtTwo = valueToCode(block, 'zdtTwo', javascriptGenerator.ORDER_ATOMIC)
+    let zdtThree = valueToCode(block, 'zdtThree', javascriptGenerator.ORDER_ATOMIC)
     let dateComparison = block.getFieldValue('dateComparison')
 
     const op = new Map([['dateandtime', 'isBetweenDateTimes'], ['date', 'isBetweenDates'], ['time', 'isBetweenTimes']]).get(dateComparison)
@@ -764,7 +764,7 @@ export default function (f7) {
   * Code part
   */
   javascriptGenerator.forBlock['oh_get_zdt_part'] = function (block) {
-    const zdt = javascriptGenerator.valueToCode(block, 'zdt', javascriptGenerator.ORDER_ATOMIC)
+    const zdt = valueToCode(block, 'zdt', javascriptGenerator.ORDER_ATOMIC)
     let temporalPart = block.getFieldValue('temporalPart')
 
     const op = new Map([['getYear', 'year'], ['getMonthValue', 'monthValue'], ['getDayOfMonth', 'dayOfMonth'], ['getDayOfWeek', 'dayOfWeek().value'], ['getDayOfYear', 'dayOfYear'], ['getHour', 'hour'], ['getMinute', 'minute'], ['getSecond', 'second'], ['getNanoTotal', 'get(time.ChronoField.NANO_OF_SECOND)']])
@@ -816,8 +816,8 @@ export default function (f7) {
   */
   javascriptGenerator.forBlock['oh_get_time_between'] = function (block) {
     const temporalPart = block.getFieldValue('temporalPart')
-    const zdtOne = javascriptGenerator.valueToCode(block, 'zdtOne', javascriptGenerator.ORDER_ATOMIC)
-    const zdtTwo = javascriptGenerator.valueToCode(block, 'zdtTwo', javascriptGenerator.ORDER_ATOMIC)
+    const zdtOne = valueToCode(block, 'zdtOne', javascriptGenerator.ORDER_ATOMIC)
+    const zdtTwo = valueToCode(block, 'zdtTwo', javascriptGenerator.ORDER_ATOMIC)
 
     const code = `time.ChronoUnit.${temporalPart}.between(${zdtOne},${zdtTwo})`
     return [code, javascriptGenerator.ORDER_NONE]

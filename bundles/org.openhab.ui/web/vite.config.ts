@@ -12,10 +12,11 @@ import webpackStats from 'rollup-plugin-webpack-stats'
 
 const projectRootDir = resolve(__dirname)
 
-const production = process.env.NODE_ENV === 'production'
+const production: boolean = process.env.NODE_ENV === 'production'
 const apiBaseUrl = process.env.OH_APIBASE || 'http://localhost:8080'
-const maven = process.env.MAVEN || false
-const stats = process.env.STATS || false
+const maven: boolean = !!(process.env.MAVEN || false)
+const stats: boolean = !!(process.env.STATS || false)
+const sourceMaps: boolean = !!(process.env.SOURCE_MAPS || false)
 const outPath = maven ? '../target/classes/app' : 'www'
 
 if (production) {
@@ -25,6 +26,9 @@ if (production) {
 }
 if (stats) {
   console.log(`Build will generate webpack stats file: ${outPath}/webpack-stats.json`)
+}
+if (sourceMaps) {
+  console.log('Build will include source maps.')
 }
 
 export default defineConfig({
@@ -63,6 +67,14 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       workbox: {
+        globPatterns: [
+          // default pattern
+          '**/*.{js,wasm,css,html}',
+          // include static assets
+          'images/*.{png,jpg,jpeg,gif,svg}',
+          'media/*.{mp4,webm,ogg,mp3,wav,flac,aac,m4a}',
+          'fonts/*.{woff,woff2,eot,ttf,otf}'
+        ],
         // restrict which URLs should be treated as part of Main UI SPA,
         // thereby controlling which routes are loaded from the service worker cache instead of the server
         navigateFallbackAllowlist: [
@@ -77,17 +89,9 @@ export default defineConfig({
         skipWaiting: true
       }
     }),
-    ...(production ? [
-      compression({
-        algorithms: [
-          'gzip',
-          'brotliCompress'
-        ]
-      })
-    ] : [
-      vueDevtools(),
-      visualizer({ open: false })
-    ]),
+    ...(production
+      ? [compression({ algorithms: ['gzip', 'brotliCompress'] })]
+      : [vueDevtools(), visualizer({ open: false })]),
     stats ? webpackStats() : null
   ],
   define: {
@@ -147,6 +151,29 @@ export default defineConfig({
     outDir: resolve(outPath),
     emptyOutDir: true,
     target: ['chrome107', 'edge107', 'firefox104', 'safari11.1'],
+    sourcemap: sourceMaps ? 'hidden' : false,
+    rolldownOptions: {
+      output: {
+        assetFileNames: (assetInfo) => {
+          const name = assetInfo.name || ''
+          const ext = name.split('.').pop()?.toLowerCase() || ''
+          // Move fonts to fonts/ folder
+          if (['woff', 'woff2', 'eot', 'ttf', 'otf'].includes(ext)) {
+            return 'fonts/[name][extname]'
+          }
+          // Move images to images/ folder
+          if (['png', 'jpg', 'jpeg', 'gif', 'svg'].includes(ext)) {
+            return 'images/[name][extname]'
+          }
+          // Move media to media/ folder
+          if (['mp4', 'webm', 'ogg', 'mp3', 'wav', 'flac', 'aac', 'm4a'].includes(ext)) {
+            return 'media/[name][extname]'
+          }
+          // Default fallback for other assets
+          return 'assets/[name]-[hash][extname]'
+        }
+      }
+    }
   },
   resolve: {
     alias: {

@@ -5,12 +5,14 @@
     <oh-swiper v-if="componentType === 'f7-swiper'"
                v-bind="$attrs"
                :context="context"
+               :class="scopedCssUid"
                ref="component" />
 
     <component v-else-if="componentType && componentType.startsWith('f7-')"
                ref="component"
                :is="componentType"
-               v-bind="{ ...$attrs, ...config }">
+               v-bind="{ ...$attrs, ...config }"
+               :class="scopedCssUid">
       <!-- eslint-disable-next-line vue/no-unused-vars -->
       <template v-for="(slotComponents, slotName) in context.component.slots" :key="slotName" #[slotName]>
         <ul v-if="componentType === 'f7-list'" v-bind="$attrs">
@@ -21,16 +23,16 @@
         </ul>
         <template v-else>
           <generic-widget-component v-for="(slotComponent, idx) in slotComponents"
-                                    v-bind="$attrs"
                                     :context="childContext(slotComponent)"
                                     :key="slotName + '-' + idx" />
         </template>
       </template>
     </component>
     <oh-card v-else-if="componentType && componentType === 'oh-card'"
+             ref="component"
              v-bind="$attrs"
              :context="context"
-             ref="component">
+             :class="scopedCssUid">
       <template v-for="(slotComponents, slotName) in context.component.slots" :key="slotName" #[slotName]>
         <generic-widget-component v-for="(slotComponent, idx) in slotComponents"
                                   :context="childContext(slotComponent)"
@@ -39,20 +41,23 @@
     </oh-card>
     <generic-widget-component v-else-if="componentType && componentType.startsWith('widget:')"
                               ref="component"
-                              v-bind="$attrs"
-                              :context="childWidgetContext()" />
+                              v-bind="isChild ? null : $attrs"
+                              :is-child="true"
+                              :context="childWidgetContext()"
+                              :class="scopedCssUid" />
     <component v-else-if="componentType && componentType.startsWith('oh-')"
                ref="component"
                v-bind="$attrs"
                :is="componentType"
-               :context="context" />
+               :context="context"
+               :class="scopedCssUid" />
     <!-- Label renders text inside <div> element -->
     <div
       v-else-if="componentType && componentType === 'Label'"
+      ref="component"
       v-bind="$attrs"
-      :class="config.class"
-      :style="config.style"
-      ref="component">
+      :class="[...(Array.isArray(config.class) ? config.class : []), scopedCssUid]"
+      :style="config.style">
       {{ config.text }}
     </div>
     <!-- Content renders text without any additional container -->
@@ -62,9 +67,10 @@
     </template>
     <pre v-else-if="componentType && componentType === 'Error'" class="text-color-red" style="white-space: pre-wrap">{{ config.error }}</pre>
     <component v-else
+               ref="component"
                :is="componentType"
                v-bind="{ ...$attrs, ...config }"
-               ref="component">
+               :class="scopedCssUid">
       {{ config.content }}
       <template v-if="context.component.slots && context.component.slots.default">
         <generic-widget-component v-for="(slotComponent, idx) in context.component.slots.default"
@@ -90,6 +96,12 @@ import mixin from './widget-mixin'
 export default {
   inheritAttrs: false,
   mixins: [mixin],
+  props: {
+    isChild: {
+      type: Boolean,
+      default: false
+    }
+  },
   components: {
     ...SystemWidgets,
     ...StandardWidgets,

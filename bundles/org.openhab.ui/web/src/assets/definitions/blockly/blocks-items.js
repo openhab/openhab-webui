@@ -153,7 +153,7 @@ export default function (f7) {
   }
 
   javascriptGenerator.forBlock['oh_getitem_state'] = function (block) {
-    const itemName = javascriptGenerator.valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
+    const itemName = valueToCode(block, 'itemName', javascriptGenerator.ORDER_ATOMIC)
     return [`items.getItem(${itemName}).state`, 0]
   }
 
@@ -257,7 +257,7 @@ export default function (f7) {
   * Code part
   */
   javascriptGenerator.forBlock['oh_getitem_attribute'] = function (block) {
-    const theItem = javascriptGenerator.valueToCode(block, 'item', javascriptGenerator.ORDER_ATOMIC)
+    const theItem = valueToCode(block, 'item', javascriptGenerator.ORDER_ATOMIC)
     const inputType = blockGetCheckedInputType(block, 'item')
     let attributeName = block.getFieldValue('attributeName')
 

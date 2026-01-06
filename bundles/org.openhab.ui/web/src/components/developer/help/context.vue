@@ -1,27 +1,29 @@
 <template>
-  <f7-block class="no-margin no-padding">
-    <f7-block>
+  <f7-block class="help-sidebar-context no-margin no-padding">
+    <f7-block class="parsed-docs">
       <div v-show="ready" v-html="parsedDocs" />
     </f7-block>
     <f7-block>
-      <f7-link external
-               :href="documentationLink"
-               target="_blank"
-               text="Open full documentation"
-               color="blue" />
+      <f7-link
+        external
+        :href="documentationLink"
+        target="_blank"
+        text="Open full documentation"
+        color="blue" />
     </f7-block>
   </f7-block>
 </template>
 
+<style lang="stylus">
+.help-sidebar-context
+  .parsed-docs
+    ul
+      padding-left 20px
+</style>
+
 <script>
 import { mapStores } from 'pinia'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
-
-const renderer = {
-  list (body, ordered, start) {
-    return `<ul style="padding-left: 20px">${body}</ul>`
-  }
-}
 
 export default {
   props: {
@@ -71,7 +73,6 @@ export default {
         }
         response.text().then((text) => {
           import('marked').then((marked) => {
-            marked.use({ renderer })
             const startComment = '<!-- START MAINUI SIDEBAR DOC - DO NOT REMOVE -->'
             const endComment = '<!-- END MAINUI SIDEBAR DOC - DO NOT REMOVE -->'
 
@@ -105,7 +106,7 @@ export default {
             body = body.replace(/<a href="http/gm, '<a class="external" target="_blank" href="http')
 
             // Fix links to other pages if on overview or semantic model tabs
-            body = body.replace(/(<a href=")(\/overview\/)([A-z-]+)(\/")/gm, '$1$3$4')
+            body = body.replace(/(<a href=")(\/overview\/)([A-z-]+)(\/")/gm, '$1/$3$4')
 
             // Allow embedding framework7 icons by using <!--F7(:blue|:green) ICON_NAME --> comments
             body = body.replace(/<!--F7 ([A-z]*) -->/gm, '<i class="f7-icons size-22">$1</i>')

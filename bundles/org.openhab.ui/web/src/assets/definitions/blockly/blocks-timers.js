@@ -160,10 +160,10 @@ export default function defineOHBlocks_Timers (f7) {
   javascriptGenerator.forBlock['oh_timer_ext'] = function (block) {
     const delayUnits = block.getFieldValue('delayUnits')
     const delay = valueToCode(block, 'delay', javascriptGenerator.ORDER_ATOMIC)
-    const timerName = javascriptGenerator.valueToCode(block, 'timerName', javascriptGenerator.ORDER_ATOMIC)
+    const timerName = valueToCode(block, 'timerName', javascriptGenerator.ORDER_ATOMIC)
     const timerCode = statementToCode(block, 'timerCode')
     const retrigger = block.getFieldValue('retrigger')
-    const context = javascriptGenerator.valueToCode(block, 'context', javascriptGenerator.ORDER_ATOMIC)
+    const context = valueToCode(block, 'context', javascriptGenerator.ORDER_ATOMIC)
     const cacheType = getCacheType(this)
 
     let code = `if (cache.${cacheType}.exists(${timerName}) === false || cache.${cacheType}.get(${timerName}).hasTerminated()) {\n`
@@ -215,7 +215,7 @@ export default function defineOHBlocks_Timers (f7) {
   * Code generation
   */
   javascriptGenerator.forBlock['oh_timer_isActive'] = function (block) {
-    const timerName = javascriptGenerator.valueToCode(block, 'timerName', javascriptGenerator.ORDER_ATOMIC)
+    const timerName = valueToCode(block, 'timerName', javascriptGenerator.ORDER_ATOMIC)
     const cacheType = getCacheType(this)
     return [`cache.${cacheType}.exists(${timerName}) && cache.${cacheType}.get(${timerName}).isActive()`, javascriptGenerator.ORDER_NONE]
   }
@@ -248,7 +248,7 @@ export default function defineOHBlocks_Timers (f7) {
   */
   javascriptGenerator.forBlock['oh_timer_isRunning'] = function (block) {
     // Keep the isRunning block although it doesn't make sense because in GraalJS access to the context is synchronized and therefore it is not possible to run some code the same time a timer is running
-    const timerName = javascriptGenerator.valueToCode(block, 'timerName', javascriptGenerator.ORDER_ATOMIC)
+    const timerName = valueToCode(block, 'timerName', javascriptGenerator.ORDER_ATOMIC)
     const cacheType = getCacheType(this)
     return [`cache.${cacheType}.exists(${timerName}) && cache.${cacheType}.get(${timerName}).isRunning()`, javascriptGenerator.ORDER_NONE]
   }
@@ -280,7 +280,7 @@ export default function defineOHBlocks_Timers (f7) {
   * Code generation
   */
   javascriptGenerator.forBlock['oh_timer_hasTerminated'] = function (block) {
-    const timerName = javascriptGenerator.valueToCode(block, 'timerName', javascriptGenerator.ORDER_ATOMIC)
+    const timerName = valueToCode(block, 'timerName', javascriptGenerator.ORDER_ATOMIC)
     const cacheType = getCacheType(this)
     return [`cache.${cacheType}.exists(${timerName}) && cache.${cacheType}.get(${timerName}).hasTerminated()`, javascriptGenerator.ORDER_NONE]
   }
@@ -311,7 +311,7 @@ export default function defineOHBlocks_Timers (f7) {
   * Code generation
   */
   javascriptGenerator.forBlock['oh_timer_cancel'] = function (block) {
-    const timerName = javascriptGenerator.valueToCode(block, 'timerName', javascriptGenerator.ORDER_ATOMIC)
+    const timerName = valueToCode(block, 'timerName', javascriptGenerator.ORDER_ATOMIC)
     const cacheType = getCacheType(this)
     return `if (cache.${cacheType}.exists(${timerName})) { cache.${cacheType}.remove(${timerName}).cancel(); };\n`
   }
@@ -350,8 +350,8 @@ export default function defineOHBlocks_Timers (f7) {
   */
   javascriptGenerator.forBlock['oh_timer_reschedule'] = function (block) {
     const delayUnits = block.getFieldValue('delayUnits')
-    const delay = javascriptGenerator.valueToCode(block, 'delay', javascriptGenerator.ORDER_ATOMIC)
-    const timerName = javascriptGenerator.valueToCode(block, 'timerName', javascriptGenerator.ORDER_ATOMIC)
+    const delay = valueToCode(block, 'delay', javascriptGenerator.ORDER_ATOMIC)
+    const timerName = valueToCode(block, 'timerName', javascriptGenerator.ORDER_ATOMIC)
     const cacheType = getCacheType(this)
     return `if (cache.${cacheType}.exists(${timerName})) { cache.${cacheType}.get(${timerName}).reschedule(time.ZonedDateTime.now().${delayUnits}(${delay})); };\n`
   }

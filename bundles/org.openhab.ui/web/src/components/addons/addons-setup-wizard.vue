@@ -71,25 +71,16 @@
 import { f7 } from 'framework7-vue'
 import AddonLogo from '@/components/addons/addon-logo.vue'
 
-import { useI18n } from 'vue-i18n'
-import { loadLocaleMessages } from '@/js/i18n'
-
 export default {
   props: {
     addons: Array,
     preSelectedAddons: Array,
-    enableAddonSelection: Boolean
+    enableAddonSelection: Boolean,
+    t: Function
   },
   emits: ['update'],
   components: {
     AddonLogo
-  },
-  setup () {
-    const { t, mergeLocaleMessage } = useI18n({ useScope: 'local' })
-    loadLocaleMessages('setup-wizard', mergeLocaleMessage)
-    return {
-      t
-    }
   },
   data () {
     return {
@@ -179,21 +170,21 @@ export default {
       source: (query, render) => {
         // Exclude installed and pre-selected add-ons from the selection popup.
         if (query.length === 0) {
-          render(self.addons.filter((a) => !a.installed && !self.preSelectedAddon(a)).map((a) => a.label))
+          render(this.addons.filter((a) => !a.installed && !this.preSelectedAddon(a)).map((a) => a.label))
         } else {
           render(
-            self.addons
+            this.addons
               .filter(
-                (a) => !a.installed && !self.preSelectedAddon(a) && (a.label.toLowerCase().indexOf(query.toLowerCase()) >= 0 || a.uid.toLowerCase().indexOf(query.toLowerCase()) >= 0))
+                (a) => !a.installed && !this.preSelectedAddon(a) && (a.label.toLowerCase().indexOf(query.toLowerCase()) >= 0 || a.uid.toLowerCase().indexOf(query.toLowerCase()) >= 0))
               .map((a) => a.label))
         }
       },
       on: {
-        change (value) {
-          const selected = value.map((label) => self.addons.find((a) => a.label === label))
+        change:  (value) => {
+          const selected = value.map((label) => this.addons.find((a) => a.label === label))
           // If we added addons, keep them visible on the main list, even if we deselect them again later.
-          self.shownAddons = [...new Set(self.selectedAddons.concat(selected))]
-          self.updateAddonSelection(selected)
+          this.shownAddons = [...new Set(this.selectedAddons.concat(selected))]
+          this.updateAddonSelection(selected)
         }
       }
     })

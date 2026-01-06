@@ -20,22 +20,28 @@
       <span v-else />
     </f7-toolbar>
 
-    <oh-chart-page v-if="showChart"
-                   class="analyzer-chart"
-                   :class="{ 'sheet-opened': controlsOpened }"
-                   :key="chartKey"
-                   :context="context" />
-    <empty-state-placeholder v-else-if="invalidConfiguration"
-                             icon="exclamationmark"
-                             :title="t('analyzer.invalid-configuration.title')"
-                             :text="t('analyzer.invalid-configuration.text')" />
+    <!-- wrap inside a div so Vue knows where to render oh-chart-page on rerender -->
+    <div class="chart-container">
+      <oh-chart-page
+        v-if="showChart"
+        class="analyzer-chart"
+        :class="{ 'sheet-opened': controlsOpened }"
+        :key="chartKey"
+        :context="context" />
+      <empty-state-placeholder
+        v-else-if="invalidConfiguration"
+        icon="exclamationmark"
+        :title="t('analyzer.invalid-configuration.title')"
+        :text="t('analyzer.invalid-configuration.text')" />
+    </div>
 
     <!-- analyzer controls -->
     <f7-sheet class="analyzer-controls"
               ref="controlsSheet"
               :backdrop="false"
               :close-on-escape="true"
-              :opened="controlsOpened">
+              :opened="controlsOpened"
+              @sheet:closed="controlsOpened = false">
       <f7-page>
         <f7-toolbar tabbar :bottom="true">
           <f7-link class="padding-left padding-right"
@@ -338,12 +344,13 @@
   --f7-theme-color var(--f7-color-blue)
   --f7-theme-color-rgb var(--f7-color-blue-rgb)
   --f7-theme-color-tint var(--f7-color-blue-tint)
+  --f7-block-margin-vertical 16px
   z-index 11000
+  .tabs .tab
+    padding-left calc(var(--f7-block-padding-horizontal) + var(--f7-safe-area-left))
+    padding-right calc(var(--f7-block-padding-horizontal) + var(--f7-safe-area-right))
 .md .analyzer-controls .toolbar .link
   width 28%
-.tabs .tab
-  padding-left calc(var(--f7-block-padding-horizontal) + var(--f7-safe-area-left))
-  padding-right calc(var(--f7-block-padding-horizontal) + var(--f7-safe-area-right))
 </style>
 
 <script lang="ts">
@@ -356,7 +363,7 @@
  */
 
 import { nextTick, defineAsyncComponent } from 'vue'
-import { getDevice } from 'framework7'
+import { getDevice, type Sheet } from 'framework7'
 import { f7, theme } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
@@ -455,8 +462,7 @@ export default {
   },
   methods: {
     close () {
-      this.controlsOpened = false
-      f7.sheet.close(this.$refs.controlsSheet)
+      f7.sheet.close((this.$refs.controlsSheet as Sheet.Sheet).$el)
     },
     openControls () {
       this.controlsOpened = true
@@ -507,7 +513,9 @@ export default {
             delete this.seriesOptions[optionKey]
           }
         }
-        this.showChart = true
+        nextTick(() => {
+          this.showChart = true
+        })
 
         return Promise.resolve()
       })

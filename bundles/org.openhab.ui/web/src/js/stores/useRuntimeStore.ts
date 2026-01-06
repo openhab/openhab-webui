@@ -24,13 +24,7 @@ export const useRuntimeStore = defineStore('runtime', () => {
   const docSrcUrl = ref<string | null>(null)
   const showDeveloperDock = ref<boolean>(false)
   const pagePath = ref<string | null>(null)
-  const sitemapIncludeItemName = ref<boolean>(false)
-  const modelPicker = reactive<object>({
-    includeItemNames: false,
-    includeItemTags: false,
-    expanded: false,
-    includeNonSemantic: false
-  })
+  const modelPickerExpanded = ref<boolean>(false)
   const ready = ref<boolean>(false)
 
   // Getters
@@ -46,7 +40,7 @@ export const useRuntimeStore = defineStore('runtime', () => {
     runtimeInfo.value = rootResponse.runtimeInfo
     apiEndpoints.value = rootResponse.links
     websiteUrl.value = `https://${rootResponse.runtimeInfo?.buildString !== 'Release Build' ? 'next' : 'www'}.openhab.org`
-    docSrcUrl.value = `https://www.openhab.org/link/docs-src/${rootResponse.runtimeInfo.version.replace(/(\d+\.\d+)\.\d+(\.M\d+)?/g, '$1.x')}`
+    docSrcUrl.value = `https://www.openhab.org/link/docs-src/${rootResponse.runtimeInfo.version.replace(/(\d+\.\d+)\.\d+(\.(M|RC)\d+)?/g, '$1.x')}`
 
     ready.value = true
   }
@@ -67,8 +61,7 @@ export const useRuntimeStore = defineStore('runtime', () => {
     docSrcUrl,
     showDeveloperDock,
     pagePath,
-    modelPicker,
-    sitemapIncludeItemName,
+    modelPickerExpanded,
     ready,
 
     setRootResource

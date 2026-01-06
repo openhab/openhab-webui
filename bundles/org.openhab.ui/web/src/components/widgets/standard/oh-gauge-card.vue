@@ -9,9 +9,9 @@
                          'justify-content-center',
                        ]">
         <f7-link v-if="hasAction" class="oh-gauge-link" @click="performAction">
-          <oh-gauge :context="childContext(context.component)" />
+          <oh-gauge :context="cardChildContext(context.component)" />
         </f7-link>
-        <oh-gauge v-else :context="childContext(context.component)" />
+        <oh-gauge v-else :context="cardChildContext(context.component)" />
       </f7-card-content>
     </template>
   </oh-card>

@@ -1,19 +1,18 @@
 <template>
-  <l-marker v-if="visible && coords"
-            ref="marker"
-            :key="markerKey"
-            :draggable="context.editmode != undefined"
-            :lat-lng="coords"
-            @update:lat-lng="onMove"
-            @click="onClick">
-    <l-tooltip v-if="tooltip && !config.useTooltipAsLabel"
-               :options="tooltipOptions"
-               @click="() => {}">
+  <l-marker
+    v-if="visible && coords"
+    ref="marker"
+    :key="markerKey"
+    :draggable="context.editmode !== undefined && context.editmode !== null"
+    :lat-lng="coords"
+    @update:lat-lng="onMove"
+    @click="onClick">
+    <l-tooltip v-if="tooltip && !config.useTooltipAsLabel" :options="tooltipOptions">
       <div style="white-space: nowrap" :style="tooltipStyle">
         {{ tooltip }}
       </div>
     </l-tooltip>
-    <l-icon :icon-size="[config.iconSize || 40, config.iconSize || 40]">
+    <l-icon v-if="hasCustomIcon" :icon-size="iconSize">
       <div v-if="config.useTooltipAsLabel" style="white-space: nowrap" :style="tooltipStyle">
         {{ tooltip }}
       </div>
@@ -25,7 +24,8 @@
                :height="config.iconHeight || config.iconSize || 40"
                :state="config.iconUseState ? state : undefined" />
     </l-icon>
-    <l-popup v-if="context.editmode != null && !dragging">
+    <l-icon v-else :icon-url="DefaultIcon.iconUrl" :shadow-url="DefaultIcon.shadowUrl" />
+    <l-popup v-if="context.editmode && !dragging">
       <div class="display-flex">
         <f7-link href="#"
                  class="text-color-blue display-flex flex-direction-column margin-right"
@@ -64,6 +64,9 @@ import { LMarker, LTooltip, LIcon, LPopup } from '@vue-leaflet/vue-leaflet'
 import { actionsMixin } from '../widget-actions'
 import { OhPlanMarkerDefinition } from '@/assets/definitions/widgets/plan'
 
+import markerIcon from 'leaflet/dist/images/marker-icon.png'
+import markerShadow from 'leaflet/dist/images/marker-shadow.png'
+
 export default {
   mixins: [mixin, actionsMixin],
   components: {
@@ -80,12 +83,23 @@ export default {
       dragging: false
     }
   },
+  created () {
+    this.DefaultIcon = {
+      iconUrl: markerIcon,
+      shadowUrl: markerShadow
+    }
+  },
   computed: {
     coords () {
       return (this.config.coords) ? this.config.coords.split(',') : [250, 250]
     },
-    hasIcon () {
-      return this.config.icon
+    hasCustomIcon () {
+      return this.config.useTooltipAsLabel || this.config.icon
+    },
+    iconSize () {
+      if (this.hasCustomIcon) return null
+      const iconSize = this.config.iconSize || 40
+      return [iconSize, iconSize]
     },
     tooltipOptions () {
       return {

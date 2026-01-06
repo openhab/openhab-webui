@@ -5,7 +5,7 @@
 *       @openhab/webui-maintainers
 
 # Add-on maintainers:
-/bundles/org.openhab.ui/ @ghys @florian-h05
+/bundles/org.openhab.ui/ @ghys @florian-h05 @jsjames
 /bundles/org.openhab.ui.iconset.classic/ @kaikreuzer
 /bundles/org.openhab.ui.basic/ @kaikreuzer @lolodomo
 /bundles/org.openhab.ui.cometvisu/ @peuter
@@ -13,5 +13,5 @@
 /bundles/org.openhab.ui.habpanel/ @ghys
 
 # Blockly maintainers:
-/bundles/org.openhab.ui/web/src/assets/definitions/blockly/ @stefan-hoehn @ghys @florian-h05
-/bundles/org.openhab.ui/web/src/components/config/controls/blockly-editor.vue @stefan-hoehn @ghys @florian-h05
+/bundles/org.openhab.ui/web/src/assets/definitions/blockly/ @stefan-hoehn @ghys @florian-h05 @jsjames
+/bundles/org.openhab.ui/web/src/components/config/controls/blockly-editor.vue @stefan-hoehn @ghys @florian-h05 @jsjames

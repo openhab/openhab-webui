@@ -12,7 +12,8 @@
         @save="save()"
         :f7router />
     </f7-navbar>
-    <f7-toolbar tabbar position="top">
+    <!-- force rerender to properly highlight currentTab === 'channels' if coming from channel config by using ready as key -->
+    <f7-toolbar tabbar position="top" :key="ready">
       <f7-link
         @click="switchTab('thing')"
         :tab-link-active="currentTab === 'thing' ? true : null"
@@ -36,7 +37,7 @@
     </f7-toolbar>
 
     <f7-tabs>
-      <f7-tab id="thing" :tab-active="currentTab === 'thing'? true : null">
+      <f7-tab id="thing" :tab-active="currentTab === 'thing' ? true : null">
         <f7-block v-if="ready && thing.statusInfo" class="block-narrow" strong>
           <f7-col class="padding-horizontal">
             <div v-show="!error" class="float-right align-items-flex-start align-items-center">
@@ -169,7 +170,7 @@
             <config-sheet
               ref="thingConfiguration"
               :parameter-groups="configDescriptions.parameterGroups"
-              :parameters="configDescriptions.parameters"
+              :parameters="filteredConfigParameters"
               :configuration="thing.configuration"
               :status="configStatusInfo"
               :set-empty-config-as-null="true"
@@ -177,16 +178,21 @@
               :f7router />
 
             <!-- Thing Actions & UI Actions -->
-            <template v-if="thingActions?.length > 0 || thingType?.UID?.startsWith('zwave:')">
+            <template v-if="thingActions?.length > 0 || thingType?.UID?.startsWith('zwave:') || hasMatterThreadProperties">
               <f7-block-title medium class="no-margin-top">
                 Actions
               </f7-block-title>
               <f7-list class="margin-top" media-list>
                 <f7-list-item
                   v-if="thingType?.UID?.startsWith('zwave:')"
-                  title="View Network Map"
+                  title="View Z-Wave Network Map"
                   link=""
-                  @click="openZWaveNetworkPopup()" />
+                  @click="openNetworkPopup('zwave')" />
+                <f7-list-item
+                  v-if="hasMatterThreadProperties"
+                  title="View Thread Network Map"
+                  link=""
+                  @click="openNetworkPopup('thread')" />
                 <f7-list-item
                   v-for="action in thingActions"
                   :key="action.name"
@@ -266,7 +272,7 @@
 
       <f7-tab
         id="channels"
-        disabled="!thingType.channels ? true : null"
+        :disabled="!thingType?.channels ? true : null"
         :tab-active="currentTab === 'channels' ? true : null">
         <f7-block v-if="currentTab === 'channels'" class="block-narrow">
           <channel-list
@@ -425,7 +431,7 @@ import ConfigSheet from '@/components/config/config-sheet.vue'
 import ChannelList from '@/components/thing/channel-list.vue'
 import ThingGeneralSettings from '@/components/thing/thing-general-settings.vue'
 
-import ZWaveNetworkPopup from '@/pages/settings/things/zwave/zwave-network-popup.vue'
+import NetworkPopup from '@/pages/settings/things/network/network-popup.vue'
 
 import AddChannelPage from '@/pages/settings/things/channel/channel-add.vue'
 import AddFromThingPage from '@/pages/settings/model/add-from-thing.vue'
@@ -474,6 +480,41 @@ export default {
         store: useStatesStore().trackedItems
       }
     },
+    /**
+     * Check if this is a Matter Thread device with Thread diagnostics properties
+     */
+    hasMatterThreadProperties () {
+      if (!this.thing?.UID?.startsWith('matter:node')) return false
+      if (!this.thing?.properties) return false
+      // Check for Thread network diagnostics properties
+      return Object.keys(this.thing.properties).some((key) =>
+        key.startsWith('ThreadNetworkDiagnostics-') ||
+        key.startsWith('ThreadBorderRouterManagement-')
+      )
+    },
+    /**
+     * Returns config parameters with deprecated action parameters filtered out.
+     * Action parameters are BOOLEAN parameters in groups with context='actions' or (name='actions' AND label='Actions').
+     * @deprecated Can be removed once all bindings have migrated from config actions to real Thing actions.
+     */
+    filteredConfigParameters () {
+      if (!this.configDescriptions?.parameters || !this.configDescriptions?.parameterGroups) {
+        return this.configDescriptions?.parameters || []
+      }
+      // Find action groups: first by context, then fall back to name+label heuristic
+      let actionGroupNames = this.configDescriptions.parameterGroups
+        .filter((pg) => pg.context === 'actions')
+        .map((pg) => pg.name)
+      if (actionGroupNames.length === 0) {
+        actionGroupNames = this.configDescriptions.parameterGroups
+          .filter((pg) => pg.name === 'actions' && pg.label === 'Actions')
+          .map((pg) => pg.name)
+      }
+      // Filter out BOOLEAN parameters in action groups (these are rendered as action buttons instead)
+      return this.configDescriptions.parameters.filter(
+        (p) => !(actionGroupNames.includes(p.groupName) && p.type === 'BOOLEAN')
+      )
+    },
     ...mapState(useThingEditStore, ['configDirty', 'thingDirty', 'thing', 'thingType', 'channelTypes', 'configDescriptions', 'configStatusInfo', 'thingActions', 'firmwares', 'editable', 'isExtensible', 'hasLinkedItems'])
   },
   watch: {
@@ -495,6 +536,7 @@ export default {
       }
       // When coming back from the channel add/edit page with a change, use the data from the store
       if (event.pageFrom?.name?.indexOf('channel') >= 0) {
+        this.currentTab = 'channels'
         if (!this.eventSource) this.startEventSource()
         nextTick(() => {
           this.ready = true
@@ -533,7 +575,16 @@ export default {
     onCodeChanged (codeDirty) {
       this.codeDirty = codeDirty
     },
-    load () {
+    /**
+     * Load required data from the REST API.
+     * @param {boolean} [stay=false] stay ready: do not reset ready state, only reload data
+     */
+    load (stay = false) {
+      if (!stay) {
+        this.ready = false
+      }
+      this.error = false
+
       const loadingFinished = (success) => {
         if (!success) {
           this.error = true
@@ -635,19 +686,20 @@ export default {
         }
       )
     },
-    openZWaveNetworkPopup () {
+    openNetworkPopup (networkType) {
       const popup = {
-        component: ZWaveNetworkPopup
+        component: NetworkPopup
       }
       this.f7router.navigate({
-        url: 'zwave-network',
+        url: `${networkType}-network`,
         route: {
-          path: 'zwave-network',
+          path: `${networkType}-network`,
           popup
         }
       }, {
         props: {
-          bridgeUID: this.thing.bridgeUID || this.thing.UID
+          bridgeUID: this.thing.bridgeUID || this.thing.UID,
+          networkType
         }
       })
     },
@@ -845,7 +897,7 @@ export default {
                 break
               case 'updated':
                 console.log('Thing updated according to SSE, reloading')
-                this.load()
+                this.load(true)
                 break
             }
             break

@@ -713,9 +713,8 @@ export default {
           return request.json('/rest/')
         })
         .catch((err) => {
-          console.error('openHAB REST API connection failed with error:')
-          console.info(err)
           if (err.message === 'Unauthorized' || err.status === 401) {
+            console.info('openHAB REST API connection failed: 401 Unauthorized. Authorizing against reverse proxy ...')
             if (!useCredentials) {
               // try again with credentials
               this.loadData(true)
@@ -747,8 +746,9 @@ export default {
               )
             })
             return Promise.reject()
-            // Redirection handling (e.g. when using auth_request in nginx)
           } else if (err.message === 'Found' || err.status === 302) {
+            console.info('openHAB REST API connection failed: 302 (Found). Redirecting ...')
+            // Redirection handling (e.g. when using auth_request in nginx)
             // technically correct way, but unreliable because XhrHttpRequest follows the redirect itself and fails because of CORS policy
             if (err.xhr.HEADERS_RECEIVED > 0) {
               const headersObj = {}
@@ -766,6 +766,7 @@ export default {
               )
             }
           } else if (err.message === 0 || err.status === 0) {
+            console.info('openHAB REST API connection failed: 0 (unknown). Unloading service-worker and reloading PWA ...')
             // XhrHttpRequest has message & status 0 if the redirected request failed due to CORS policy
             // Follow the authentication redirect by unloading service-worker and reloading PWA
             if ('serviceWorker' in window.navigator) {
@@ -777,6 +778,7 @@ export default {
               })
             }
           } else {
+            console.error('openHAB REST API connection failed fatal:', err)
             // Make sure this is set to a value, otherwise the page won't show up
             this.communicationFailureMsg = err.message || err.status || 'Unknown Error'
             return Promise.reject(
@@ -791,7 +793,18 @@ export default {
           if (!useRuntimeStore().apiEndpoint('auth')) useUserStore().setNoAuth(true)
           return rootResponse
         })
-        .then((rootResponse) => {
+        .then(() => {
+          return useSemanticsStore().loadSemantics(i18n)
+        })
+        .catch((err) => {
+          if (err === 'Unauthorized' || err === 401) {
+            console.info('openHAB REST API implicit user role is disabled. Authorizing ...')
+            this.authorize(false) // will redirect to auth page, redirecting back to Main UI triggers new load
+          } else {
+            return Promise.reject(err)
+          }
+        })
+        .then(() => {
           const locale = useRuntimeStore().locale.toLocaleLowerCase()
           let dayjsLocalePromise = Promise.resolve(null)
           // try to resolve the dayjs file to load if it exists
@@ -818,8 +831,7 @@ export default {
             ...(useRuntimeStore().apiEndpoint('ui'))
               ? [this.$oh.api.get('/rest/ui/components/ui:page'), this.$oh.api.get('/rest/ui/components/ui:widget')]
               : [Promise.resolve([]), Promise.resolve([])],
-            dayjsLocalePromise,
-            useSemanticsStore().loadSemantics(i18n)
+            dayjsLocalePromise
           ])
         })
         .then((data) => {
@@ -1075,6 +1087,14 @@ export default {
       f7.on('pageAfterIn', (page) => {
         // console.log('pageAfterIn: current URL:', page.route.url)
         // console.log('Full route object:', page.route)
+
+        // Fix for back button issue: When redirected from '/' to '/overview/',
+        // sometimes F7's router history may be empty and the back button doesn't work at first.
+        const router = f7.views.main?.router
+        if (router && router.history.length === 0 && page.route?.url) {
+          router.history.push(page.route.url)
+        }
+
         nextTick(this.updateTitle)
       })
 

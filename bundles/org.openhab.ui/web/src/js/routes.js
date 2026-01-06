@@ -281,14 +281,7 @@ export default [
             path: 'semantics',
             beforeEnter: [enforceAdminForRoute],
             async: loadAsync(HealthSemanticsPage)
-          }
-        ]
-      },
-      {
-        path: 'health',
-        beforeEnter: [enforceAdminForRoute],
-        async: loadAsync(HealthOverviewPage),
-        routes: [
+          },
           {
             path: 'persistence',
             beforeEnter: [enforceAdminForRoute],

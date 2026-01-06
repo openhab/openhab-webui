@@ -1,6 +1,5 @@
 <template>
-  <f7-page stacked
-           name="HomePage"
+  <f7-page name="HomePage"
            class="page-home"
            :class="{ 'standard-background': standardBackground }"
            @page:init="onPageInit"
@@ -8,7 +7,7 @@
            @page:afterin="onPageAfterIn"
            @page:beforeout="onPageBeforeOut">
     <f7-navbar :large="!simpleNavbar"
-               :large-transparent="!simpleNavbar"
+               :transparent="!simpleNavbar"
                class="home-nav disable-user-select"
                ref="navbar">
       <f7-nav-left>

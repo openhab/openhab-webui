@@ -51,7 +51,7 @@ export default {
       if (value === 'OFF') return false
       if (value.split(',').length === 3) return (value.split(',')[2] !== '0')
       if (value === 'UNDEF' || value === 'NULL' || value === '-') return null
-      return false
+      return value !== '0'
     }
   },
   methods: {

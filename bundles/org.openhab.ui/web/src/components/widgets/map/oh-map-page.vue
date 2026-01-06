@@ -51,6 +51,7 @@ import OhMapCircleMarker from './oh-map-circle-marker.vue'
 
 import 'leaflet-providers'
 
+// Do NOT remove: required for Leaflet to render in prod build
 delete Icon.Default.prototype._getIconUrl
 Icon.Default.mergeOptions({
   iconRetinaUrl: import('leaflet/dist/images/marker-icon-2x.png'),

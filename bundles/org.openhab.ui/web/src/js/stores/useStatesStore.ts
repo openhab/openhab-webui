@@ -17,6 +17,7 @@ const UndefinedItemState: ItemState = { state: '-', type: '-' }
 const PendingItemsProcessingInterval = 100
 
 const INVALID_PROPS = new Set([
+  'constructor',
   'getters',
   'effect',
   '_vm',
