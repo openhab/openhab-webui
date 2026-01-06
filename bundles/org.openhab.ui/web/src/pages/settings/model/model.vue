@@ -119,6 +119,7 @@
                             @clear-selected="clearSelection"
                             :selected="selectedItem"
                             @reload="load"
+                            @opened="expandChild"
                             @click.stop />
           </f7-block>
         </f7-col>
@@ -391,7 +392,9 @@ export default {
       return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     },
     ...mapWritableState(useRuntimeStore, {
-      expanded: 'modelPickerExpanded'
+      expanded: 'modelExpanded',
+      selectedItem: 'modelSelectedItem',
+      expandedTreeviewItems: 'modelExpandedTreeviewItems'
     }),
     ...mapWritableState(useUIOptionsStore, {
       includeItemName: 'modelPickerShowItemName',
@@ -405,6 +408,7 @@ export default {
       if (this.selectedItem) {
         this.update()
       } else {
+        this.expandedTreeviewItems = []
         this.load()
       }
     },

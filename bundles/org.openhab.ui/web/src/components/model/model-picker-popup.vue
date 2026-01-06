@@ -159,6 +159,7 @@ export default {
       initSearchbar: false,
       doubleClickStarted: null,
       doubleClickItem: null,
+      selectedItem: null,
       checkedItems: []
     }
   },
@@ -171,7 +172,8 @@ export default {
       }
     },
     ...mapWritableState(useRuntimeStore, {
-      expanded: 'modelPickerExpanded'
+      expanded: 'modelPickerExpanded',
+      expandedTreeviewItems: 'modelPickerExpandedTreeviewItems'
     }),
     ...mapWritableState(useUIOptionsStore, {
       includeItemName: 'modelPickerShowItemName',
@@ -240,7 +242,6 @@ export default {
       this.loadModel().then(() => {
         nextTick(() => {
           this.initSearchbar = true
-          this.restoreExpanded()
           this.expandSelected()
         })
       })

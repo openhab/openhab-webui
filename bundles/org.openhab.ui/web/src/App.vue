@@ -105,6 +105,7 @@
                 panel-close
                 :animate="false"
                 no-chevron
+                @click="modelSelectedItem = null"
                 :class="{ currentsection: currentPath.settings?.model }">
                 <template #media>
                   <f7-icon f7="list_bullet_indent" color="gray" />
@@ -525,7 +526,7 @@
 import { nextTick, defineAsyncComponent } from 'vue'
 import { request } from 'framework7'
 import { f7, f7ready } from 'framework7-vue'
-import { mapStores } from 'pinia'
+import { mapStores, mapWritableState } from 'pinia'
 
 import dayjs from 'dayjs'
 import dayjsLocales from 'dayjs/locale.json'
@@ -666,7 +667,10 @@ export default {
     serverDisplayUrl () {
       return window.location.origin
     },
-    ...mapStores(useUIOptionsStore, useComponentsStore, useUserStore, useRuntimeStore)
+    ...mapStores(useUIOptionsStore, useComponentsStore, useUserStore, useRuntimeStore),
+    ...mapWritableState(useRuntimeStore, {
+      modelSelectedItem: 'modelSelectedItem'
+    })
   },
   watch: {
     'statesStore.sseConnected': {
