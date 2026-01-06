@@ -66,6 +66,7 @@ export const useRuntimeStore = defineStore('runtime', () => {
     pagePath,
     modelExpanded,
     modelPickerExpanded,
+    modelSelectedItem,
     modelExpandedTreeviewItems,
     ready,
 
