@@ -59,6 +59,7 @@ import { use, registerLocale } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+import { useThemeStore } from '@/js/stores/useThemeStore.js'
 
 import { LineChart, BarChart, GaugeChart, HeatmapChart, PieChart, ScatterChart, CustomChart } from 'echarts/charts'
 import { LabelLayout } from 'echarts/features'
@@ -71,7 +72,6 @@ import 'echarts/theme/dark.js'
 import { registerCustomTheme } from './echarts-oh-theme.js'
 
 import VChart from 'vue-echarts'
-import { next } from 'dom7'
 
 use([CanvasRenderer, LineChart, BarChart, GaugeChart, HeatmapChart, PieChart, ScatterChart, CustomChart, TitleComponent,
   LegendComponent, LegendScrollComponent, GridComponent, SingleAxisComponent, ToolboxComponent, TooltipComponent, DataZoomComponent,

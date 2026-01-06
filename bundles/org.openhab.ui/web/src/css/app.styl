@@ -154,8 +154,8 @@ html
   // --f7-bars-border-color transparent
 
   .tabbar.toolbar-top
-    --f7-bars-bg-color var(--oh-branding-color)
-    --f7-bars-bg-color-rgb var(--oh-branding-color-rgb)
+    --f7-bars-bg-color var(--oh-theme-color)
+    --f7-bars-bg-color-rgb var(--oh-theme-color-rgb)
     --f7-bars-translucent-opacity 0.9
     --f7-bars-text-color var(--oh-text-color)
     --f7-bars-link-color var(--oh-text-color)
@@ -166,8 +166,8 @@ html
     --f7-tabbar-link-active-border-color var(--oh-text-color)
 
   .navbar
-    --f7-bars-bg-color var(--oh-branding-color)
-    --f7-bars-bg-color-rgb var(--oh-branding-color-rgb)
+    --f7-bars-bg-color var(--oh-theme-color)
+    --f7-bars-bg-color-rgb var(--oh-theme-color-rgb)
     --f7-bars-text-color var(--oh-text-color)
     --f7-bars-translucent-opacity 0.9
     --f7-bars-link-color var(--oh-text-color)
@@ -223,11 +223,11 @@ html
 
 .toolbar.toolbar-bottom, .tabbar.tabbar-bottom
   --f7-theme-color var(--oh-theme-alt-color)
-  --f7-theme-color-rgb var(--f7-color-blue-rgb)
+  --f7-theme-color-rgb var(--oh-theme-alt-color-rgb)
   --f7-theme-color-tint var(--f7-theme-alt-color-tint)
 
 .home-tabs
-  --f7-theme-color var(--oh-branding-alt-color)
+  --f7-theme-color var(--oh-theme-alt-color)
   --f7-bars-bg-color rgb(247, 247, 248)
   --f7-bars-text-color #000
   --f7-tabbar-link-inactive-color rgba(0, 0, 0, 0.54)
@@ -248,7 +248,7 @@ html
 
 .ios .contextual-toolbar
    .delete
-     --f7-bars-link-color var(--oh-branding-color)
+     --f7-bars-link-color var(--oh-theme-color)
 
 // Fix actions-modal/popup is placed behind the notch or outside of the screen on iPhone in openHAB iOS app
 .device-ios .actions-modal
@@ -448,7 +448,3 @@ html
 
 .advanced-label + .advanced-label
   margin-left 5px
-
-.button
-  color var(--oh-theme-alt-color)
-  background-color var(--oh-background-color-tint)

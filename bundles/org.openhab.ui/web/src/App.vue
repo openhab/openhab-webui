@@ -1071,6 +1071,7 @@ export default {
       f7.on('pageBeforeIn', (page) => {
         if (page.route && page.route.url) {
           // console.log('pageBeforeIn: current URL:', page.route.url)
+          useThemeStore().buildCache()
           this.updateUrl(page.route.url)
         }
       })
