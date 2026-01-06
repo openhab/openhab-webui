@@ -9,8 +9,8 @@
                     :selected="itemSelected"
                     :opened="model.opened"
                     :toggle="canHaveChildren"
-                    @treeview:open="model.opened = true"
-                    @treeview:close="model.opened = false"
+                    @treeview:open="open(true)"
+                    @treeview:close="open(false)"
                     @click="select">
     <draggable :disabled="!canDragDrop ? true : null"
                :list="children"
@@ -43,6 +43,7 @@
                              :includeItemTags="includeItemTags"
                              :canDragDrop="canDragDrop"
                              @checked="(item, check) => $emit('checked', item, check)"
+                             @opened="(node) => $emit('opened', node)"
                              @reload="$emit('reload')" />
       </template>
     </draggable>
@@ -95,7 +96,7 @@ export default {
     includeItemTags: Boolean,
     canDragDrop: Boolean
   },
-  emits: ['reload', 'selected', 'clear-selected', 'checked'],
+  emits: ['reload', 'selected', 'clear-selected', 'checked', 'opened'],
   components: {
     Draggable,
     ModelTreeviewItem: 'model-treeview-item'
@@ -149,6 +150,10 @@ export default {
       if (this.model.disabled) return
       this.model.checked = event.target.checked
       this.$emit('checked', this.model, event.target.checked)
+    },
+    open (opened) {
+      this.model.opened = opened
+      this.$emit('opened', this.model)
     }
   }
 }

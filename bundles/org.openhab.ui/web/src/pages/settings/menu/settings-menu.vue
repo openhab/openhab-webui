@@ -45,7 +45,8 @@
                           link="model/"
                           title="Model"
                           badge-color="blue"
-                          :footer="objectsSubtitles.model">
+                          :footer="objectsSubtitles.model"
+                          @click="modelSelectedItem = null">
               <template #media>
                 <f7-icon f7="list_bullet_indent" color="gray" />
               </template>
@@ -240,7 +241,7 @@
 
 <script>
 import { f7, theme } from 'framework7-vue'
-import { mapStores } from 'pinia'
+import { mapStores, mapWritableState } from 'pinia'
 
 import AddonSection from './addon-section.vue'
 
@@ -323,7 +324,11 @@ export default {
       const problemCount = this.orphanLinkCount + this.semanticsProblemCount + this.persistenceProblemCount
       return problemCount.toString()
     },
-    ...mapStores(useComponentsStore, useRuntimeStore)
+    ...mapStores(useComponentsStore, useRuntimeStore),
+    ...mapWritableState(useRuntimeStore, {
+      modelSelectedItem: 'modelSelectedItem'
+    })
+
   },
   watch: {
     apiEndpoints () {
