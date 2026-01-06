@@ -106,7 +106,7 @@
     "jse-eval": "^1.5.2",
     "jssip": "^3.10.9",
     "leaflet": "^1.9.4",
-    "leaflet-providers": "^2.0.0",
+    "leaflet-providers": "^3.0.0",
     "lodash": "^4.17.21",
     "marked": "^17.0.1",
     "moo": "^0.5.2",
