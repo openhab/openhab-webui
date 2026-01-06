@@ -49,7 +49,7 @@ export default {
       if (this.loading) return Promise.resolve()
       this.loading = true
 
-      // this.saveExpanded()
+      // this.saveExpanded() // expanded state is saved directly on expansion
 
       let items, links
       if (relatedToItem) {
