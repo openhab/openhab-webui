@@ -30,7 +30,8 @@
                            @clear-selected="clearSelection"
                            :selected="selected"
                            @checked="(item, check) => $emit('checked', item, check)"
-                           @reload="$emit('reload')" />
+                           @reload="$emit('reload')"
+                           @opened="$emit('opened', node)" />
       <!-- Drop zone for adding at root level -->
       <div v-if="canDragDrop" class="root-drop-zone">
         <!-- empty space to catch drops outside children -->
@@ -79,7 +80,7 @@ export default {
     includeItemTags: Boolean,
     canDragDrop: Boolean
   },
-  emits: ['reload', 'checked', 'selected', 'clear-selected'],
+  emits: ['reload', 'checked', 'selected', 'clear-selected', 'opened'],
   components: {
     Draggable,
     ModelTreeviewItem
