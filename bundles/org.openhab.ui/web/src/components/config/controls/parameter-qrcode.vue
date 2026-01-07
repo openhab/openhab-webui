@@ -1,8 +1,6 @@
 <template>
   <ul>
-    <f7-list-item
-      :floating-label="theme.md"
-      :title="configDescription.label">
+    <f7-list-item :floating-label="theme.md" :title="configDescription.label">
       <template #media>
         <vue-qrcode :value="value" />
       </template>

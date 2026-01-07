@@ -1,24 +1,29 @@
 <template>
   <div>
     <f7-list>
-      <f7-list-input ref="input"
-                     type="textarea"
-                     :floating-label="theme.md"
-                     :label="'Custom Rules'"
-                     name="custom-rules"
-                     :value="customRules"
-                     :disabled="!editable ? true : null"
-                     @input="updateValue" />
+      <f7-list-input
+        ref="input"
+        type="textarea"
+        :floating-label="theme.md"
+        :label="'Custom Rules'"
+        name="custom-rules"
+        :value="customRules"
+        :disabled="!editable ? true : null"
+        @input="updateValue" />
       <template #after-list>
         <f7-block-footer class="param-description">
-          <small>Enter each rule on a separate line. Available placeholders: $name$, $cmd$ and $*$</small>
+          <small
+            >Enter each rule on a separate line. Available placeholders: $name$, $cmd$ and
+            $*$</small
+          >
         </f7-block-footer>
       </template>
     </f7-list>
-    <config-sheet :parameterGroups="[]"
-                  :parameters="ruleOptionParameters"
-                  :configuration="metadata.config"
-                  :read-only="!editable" />
+    <config-sheet
+      :parameterGroups="[]"
+      :parameters="ruleOptionParameters"
+      :configuration="metadata.config"
+      :read-only="!editable" />
   </div>
 </template>
 

@@ -4,10 +4,17 @@ let wksr = null
 let device = getDevice()
 
 export default {
-  isRecognitionSupported () {
+  isRecognitionSupported() {
     return 'webkitSpeechRecognition' in window
   },
-  startRecognition (lang, startCallback, errorCallback, activityCallback, resultCallback, endCallback) {
+  startRecognition(
+    lang,
+    startCallback,
+    errorCallback,
+    activityCallback,
+    resultCallback,
+    endCallback
+  ) {
     let interimResult = ''
 
     wksr = new window.webkitSpeechRecognition()
@@ -24,7 +31,7 @@ export default {
       }
       endCallback()
     }
-    wksr.onresult = (event) => {
+    wksr.onresult = event => {
       if (device.android) {
         let bestConfidence = 0
         for (let result of event.results) {
@@ -57,7 +64,7 @@ export default {
 
     wksr.start()
   },
-  stopRecognition () {
+  stopRecognition() {
     if (wksr) {
       wksr.stop()
       wksr = null

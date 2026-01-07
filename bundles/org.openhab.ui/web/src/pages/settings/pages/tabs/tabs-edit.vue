@@ -1,23 +1,28 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="tabs-editor">
     <f7-navbar no-hairline>
-      <oh-nav-content :title="!ready ? '' : ((createMode ? 'Create tabbed page' : page.config.label) + dirtyIndicator)"
-                      :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
-                      @save="save()"
-                      :f7router />
+      <oh-nav-content
+        :title="!ready ? '' : ((createMode ? 'Create tabbed page' : page.config.label) + dirtyIndicator)"
+        :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
+        @save="save()"
+        :f7router />
     </f7-navbar>
     <f7-toolbar tabbar position="top">
-      <f7-link @click="switchTab('design', fromYaml)" :tab-link-active="currentTab === 'design'" tab-link="#design">
+      <f7-link
+        @click="switchTab('design', fromYaml)"
+        :tab-link-active="currentTab === 'design'"
+        tab-link="#design">
         Design
       </f7-link>
-      <f7-link @click="switchTab('code', toYaml)" :tab-link-active="currentTab === 'code'" tab-link="#code">
+      <f7-link
+        @click="switchTab('code', toYaml)"
+        :tab-link-active="currentTab === 'code'"
+        tab-link="#code">
         Code
       </f7-link>
     </f7-toolbar>
     <f7-tabs class="tabs-editor-tabs">
-      <f7-tab id="design"
-              class="tabs-editor-design-tab"
-              :tab-active="currentTab === 'design'">
+      <f7-tab id="design" class="tabs-editor-design-tab" :tab-active="currentTab === 'design'">
         <f7-block v-if="!ready" class="text-align-center">
           <f7-preloader />
           <div>Loading...</div>
@@ -38,33 +43,56 @@
             </f7-menu>
 
             <f7-list media-list class="tabs-list">
-              <f7-list-item v-for="(tab, idx) in page.slots.default"
-                            media-item
-                            :key="idx"
-                            :title="tabEvaluateExpression(tab, idx, 'title')"
-                            :subtitle="tab.config.page"
-                            link="#"
-                            @click="(ev) => configureTab(ev, tab, context)">
+              <f7-list-item
+                v-for="(tab, idx) in page.slots.default"
+                media-item
+                :key="idx"
+                :title="tabEvaluateExpression(tab, idx, 'title')"
+                :subtitle="tab.config.page"
+                link="#"
+                @click="(ev) => configureTab(ev, tab, context)">
                 <template #media>
-                  <oh-icon :icon="tabEvaluateExpression(tab, idx, 'icon')"
-                           :color="'gray'"
-                           :width="32"
-                           :height="32" />
+                  <oh-icon
+                    :icon="tabEvaluateExpression(tab, idx, 'icon')"
+                    :color="'gray'"
+                    :width="32"
+                    :height="32" />
                 </template>
                 <template #content-start>
                   <f7-menu class="configure-tabs-menu">
                     <f7-menu-item icon-f7="list_bullet" dropdown>
                       <f7-menu-dropdown>
-                        <f7-menu-dropdown-item @click="configureWidget(tab, { component: page })" href="#" text="Configure Tab" />
-                        <f7-menu-dropdown-item @click="editWidgetCode(tab, { component: page })" href="#" text="Edit YAML" />
+                        <f7-menu-dropdown-item
+                          @click="configureWidget(tab, { component: page })"
+                          href="#"
+                          text="Configure Tab" />
+                        <f7-menu-dropdown-item
+                          @click="editWidgetCode(tab, { component: page })"
+                          href="#"
+                          text="Edit YAML" />
                         <f7-menu-dropdown-item divider />
-                        <f7-menu-dropdown-item @click="cutWidget(tab, { component: page })" href="#" text="Cut" />
-                        <f7-menu-dropdown-item @click="copyWidget(tab, { component: page })" href="#" text="Copy" />
+                        <f7-menu-dropdown-item
+                          @click="cutWidget(tab, { component: page })"
+                          href="#"
+                          text="Cut" />
+                        <f7-menu-dropdown-item
+                          @click="copyWidget(tab, { component: page })"
+                          href="#"
+                          text="Copy" />
                         <f7-menu-dropdown-item divider />
-                        <f7-menu-dropdown-item @click="moveWidgetUp(tab, { component: page })" href="#" text="Move Up" />
-                        <f7-menu-dropdown-item @click="moveWidgetDown(tab, { component: page })" href="#" text="Move Down" />
+                        <f7-menu-dropdown-item
+                          @click="moveWidgetUp(tab, { component: page })"
+                          href="#"
+                          text="Move Up" />
+                        <f7-menu-dropdown-item
+                          @click="moveWidgetDown(tab, { component: page })"
+                          href="#"
+                          text="Move Down" />
                         <f7-menu-dropdown-item divider />
-                        <f7-menu-dropdown-item @click="removeWidget(tab, { component: page })" href="#" text="Remove Tab" />
+                        <f7-menu-dropdown-item
+                          @click="removeWidget(tab, { component: page })"
+                          href="#"
+                          text="Remove Tab" />
                       </f7-menu-dropdown>
                     </f7-menu-item>
                   </f7-menu>
@@ -77,11 +105,12 @@
       </f7-tab>
 
       <f7-tab id="code" :tab-active="currentTab === 'code'">
-        <editor v-if="currentTab === 'code'"
-                class="page-code-editor"
-                mode="application/vnd.openhab.uicomponent+yaml;type=tabs"
-                :value="pageYaml"
-                @input="onEditorInput" />
+        <editor
+          v-if="currentTab === 'code'"
+          class="page-code-editor"
+          mode="application/vnd.openhab.uicomponent+yaml;type=tabs"
+          :value="pageYaml"
+          @input="onEditorInput" />
         <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
       </f7-tab>
     </f7-tabs>

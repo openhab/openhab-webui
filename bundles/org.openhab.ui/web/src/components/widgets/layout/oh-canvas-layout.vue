@@ -1,16 +1,13 @@
 <template>
-  <div ref="ohCanvasLayout"
-       class="oh-canvas-layout disable-user-select"
-       :class="context.editmode ? 'margin-top' : ''"
-       @keydown="onKeyDown"
-       @keyup="onKeyUp">
+  <div
+    ref="ohCanvasLayout"
+    class="oh-canvas-layout disable-user-select"
+    :class="context.editmode ? 'margin-top' : ''"
+    @keydown="onKeyDown"
+    @keyup="onKeyUp">
     <f7-block v-if="context.editmode">
       <f7-menu class="configure-layout-menu">
-        <f7-menu-item
-          @click="addItem"
-          icon="margin-left"
-          icon-f7="plus"
-          text="Add Widget" />
+        <f7-menu-item @click="addItem" icon="margin-left" icon-f7="plus" text="Add Widget" />
         <f7-menu-item
           v-if="context.clipboardtype"
           @click="
@@ -24,10 +21,7 @@
           :icon-f7="grid.enable ? 'circle_grid_3x3_fill' : 'scircle_grid_3x3'"
           style="margin-left: auto"
           text="Grid" />
-        <f7-menu-item
-          v-if="config.embedSvg"
-          @click="flashEmbeddedSvgComponents()"
-          icon-f7="bolt" />
+        <f7-menu-item v-if="config.embedSvg" @click="flashEmbeddedSvgComponents()" icon-f7="bolt" />
         <f7-menu-item dropdown icon-f7="rectangle_3_offgrid">
           <f7-menu-dropdown right>
             <f7-menu-dropdown-item
@@ -51,25 +45,43 @@
                 :key="idx"
                 @click="setActiveLayer(layout.length - idx - 1)"
                 href="#">
-                <span>{{ (obj.item.config && obj.item.config.layerName) ? obj.item.config.layerName : `Layer ${layout.length - idx}` }}</span>
-                <f7-icon class="margin-left" :f7="(layout.length - idx - 1) == actLyrIdx ? 'pencil_circle_fill' : ''" />
-                <f7-icon class="margin-left" :f7="!(obj.item.config && (obj.item.config.editVisible === false)) ? 'eye_fill' : 'eye_slash_fill'" />
+                <span
+                  >{{ (obj.item.config && obj.item.config.layerName) ? obj.item.config.layerName : `Layer ${layout.length - idx}` }}</span
+                >
+                <f7-icon
+                  class="margin-left"
+                  :f7="(layout.length - idx - 1) == actLyrIdx ? 'pencil_circle_fill' : ''" />
+                <f7-icon
+                  class="margin-left"
+                  :f7="!(obj.item.config && (obj.item.config.editVisible === false)) ? 'eye_fill' : 'eye_slash_fill'" />
               </f7-menu-dropdown-item>
               <f7-menu-dropdown-item divider />
               <f7-menu-dropdown-item @click="hideOtherLayers()" href="#" text="Hide Other Layers" />
               <f7-menu-dropdown-item @click="showOtherLayers()" href="#" text="Show Other Layers" />
               <f7-menu-dropdown-item divider />
-              <f7-menu-dropdown-item @click="setActiveLayer(context.editmode.bringWidgetToFront(activeLayer, context, 'canvas'))" href="#" text="Bring Layer to Front" />
-              <f7-menu-dropdown-item @click="setActiveLayer(context.editmode.moveWidgetDown(activeLayer, context, 'canvas'))" href="#" text="Move Layer Up" />
-              <f7-menu-dropdown-item @click="setActiveLayer(context.editmode.moveWidgetUp(activeLayer, context, 'canvas'))" href="#" text="Move Layer Down" />
-              <f7-menu-dropdown-item @click="setActiveLayer(context.editmode.sendWidgetToBack(activeLayer, context, 'canvas'))" href="#" text="Send Layer to Back" />
+              <f7-menu-dropdown-item
+                @click="setActiveLayer(context.editmode.bringWidgetToFront(activeLayer, context, 'canvas'))"
+                href="#"
+                text="Bring Layer to Front" />
+              <f7-menu-dropdown-item
+                @click="setActiveLayer(context.editmode.moveWidgetDown(activeLayer, context, 'canvas'))"
+                href="#"
+                text="Move Layer Up" />
+              <f7-menu-dropdown-item
+                @click="setActiveLayer(context.editmode.moveWidgetUp(activeLayer, context, 'canvas'))"
+                href="#"
+                text="Move Layer Down" />
+              <f7-menu-dropdown-item
+                @click="setActiveLayer(context.editmode.sendWidgetToBack(activeLayer, context, 'canvas'))"
+                href="#"
+                text="Send Layer to Back" />
               <f7-menu-dropdown-item divider />
               <f7-menu-dropdown-item @click="removeLayer()" href="#" text="Remove Layer" />
             </template>
           </f7-menu-dropdown>
         </f7-menu-item>
       </f7-menu>
-      <hr>
+      <hr />
     </f7-block>
     <div
       ref="canvasLayoutContainer"
@@ -111,7 +123,7 @@
           v-if="!config.embedSvg"
           class="oh-canvas-background disable-user-drag"
           :src="config.imageUrl"
-          :srcset="config.imageSrcSet">
+          :srcset="config.imageSrcSet" />
       </div>
       <!-- Grid lines -->
       <div
@@ -135,9 +147,11 @@
           width: 100%;
         ">
         {{ getCurrentScreenResolution() }}
-        <span v-if="isRetina()"><f7-icon
-          tooltip="Screen resolution shown is the fullscreen resolution for websites. Real screen resolution is bigger."
-          f7="info_circle" /></span>
+        <span v-if="isRetina()"
+          ><f7-icon
+            tooltip="Screen resolution shown is the fullscreen resolution for websites. Real screen resolution is bigger."
+            f7="info_circle"
+        /></span>
       </div>
       <oh-canvas-layer
         v-for="obj in layout"

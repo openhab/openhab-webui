@@ -1,32 +1,36 @@
 <template>
   <oh-card :context="context">
     <template #content-root>
-      <f7-card-content ref="cardContent"
-                       @click="performAction"
-                       @taphold="onTaphold($event)"
-                       @contextmenu="onContextMenu($event)"
-                       :class="[
+      <f7-card-content
+        ref="cardContent"
+        @click="performAction"
+        @taphold="onTaphold($event)"
+        @contextmenu="onContextMenu($event)"
+        :class="[
                          'label-card-content',
                          config.vertical ? 'vertical-arrangement' : '',
                          ...(Array.isArray(config.contentClass) ? config.contentClass : []),
                        ]"
-                       :style="{ background: config.background, ...config.contentStyle }">
-        <oh-trend v-if="config.trendItem"
-                  :key="'trend' + config.item"
-                  class="trend"
-                  :width="trendWidth"
-                  :context="context" />
+        :style="{ background: config.background, ...config.contentStyle }">
+        <oh-trend
+          v-if="config.trendItem"
+          :key="'trend' + config.item"
+          class="trend"
+          :width="trendWidth"
+          :context="context" />
         <f7-list>
           <f7-list-item :link="hasAction ? true : false" no-chevron>
             <template #media v-if="config.icon">
-              <oh-icon :icon="config.icon"
-                       :height="config.iconSize || 32"
-                       :width="config.iconSize || 32"
-                       :state="(config.item && config.iconUseState) ? context.store[config.item].state : null"
-                       :color="config.iconColor" />
+              <oh-icon
+                :icon="config.icon"
+                :height="config.iconSize || 32"
+                :width="config.iconSize || 32"
+                :state="(config.item && config.iconUseState) ? context.store[config.item].state : null"
+                :color="config.iconColor" />
             </template>
             <div v-if="config.label || config.item" :class="config.class">
-              <span :style="{ 'font-size': config.fontSize || '24px', 'font-weight': config.fontWeight || 'normal' }">
+              <span
+                :style="{ 'font-size': config.fontSize || '24px', 'font-weight': config.fontWeight || 'normal' }">
                 {{ label }}
               </span>
             </div>

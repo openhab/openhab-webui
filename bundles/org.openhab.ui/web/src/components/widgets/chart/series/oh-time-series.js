@@ -5,7 +5,7 @@ import MarkArea from './oh-mark-area'
 import applyMarkers from '@/components/widgets/chart/series/markers'
 
 export default {
-  neededItems (component, chart) {
+  neededItems(component, chart) {
     let markAreaItems = []
     if (component.slots && component.slots.markArea) {
       markAreaItems = component.slots.markArea.map((a, i) =>
@@ -13,20 +13,20 @@ export default {
       )
     }
     let series = chart.evaluateExpression(ComponentId.get(component), component.config)
-    return [
-      series.item,
-      ...markAreaItems
-    ]
+    return [series.item, ...markAreaItems]
   },
-  get (component, points, startTime, endTime, chart) {
+  get(component, points, startTime, endTime, chart) {
     let series = chart.evaluateExpression(ComponentId.get(component), component.config)
     series.data = []
 
     if (series.item) {
-      const itemPoints = points.find((p) => p.name === series.item).data
+      const itemPoints = points.find(p => p.name === series.item).data
 
-      const formatter = new Intl.NumberFormat('en', { useGrouping: false, maximumFractionDigits: 3 })
-      const data = itemPoints.map((p) => {
+      const formatter = new Intl.NumberFormat('en', {
+        useGrouping: false,
+        maximumFractionDigits: 3
+      })
+      const data = itemPoints.map(p => {
         return [new Date(p.time), formatter.format(p.state)]
       })
 

@@ -9,7 +9,7 @@ import {
 
 // Mock Vue reactivity for testing
 vi.mock('vue', () => ({
-  reactive: vi.fn((obj) => obj),
+  reactive: vi.fn(obj => obj),
   isReactive: vi.fn(() => false)
 }))
 

@@ -17,75 +17,106 @@ export default {
      * @param {string} [newThingId] Optional custom Thing ID
      * @return {Promise<void>}
      */
-    approveEntry (entry, label, newThingId) {
-      return this.$oh.api.postPlain(`/rest/inbox/${entry.thingUID}/approve${newThingId ? '?newThingId=' + newThingId : ''}`, label).then(() => {
-        f7.toast.create({
-          text: 'Entry approved',
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-        return Promise.resolve()
-      }).catch((err) => {
-        f7.toast.create({
-          text: 'Error during thing creation: ' + err,
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-        return Promise.reject(err)
-      })
+    approveEntry(entry, label, newThingId) {
+      return this.$oh.api
+        .postPlain(
+          `/rest/inbox/${entry.thingUID}/approve${newThingId ? '?newThingId=' + newThingId : ''}`,
+          label
+        )
+        .then(() => {
+          f7.toast
+            .create({
+              text: 'Entry approved',
+              destroyOnClose: true,
+              closeTimeout: 2000
+            })
+            .open()
+          return Promise.resolve()
+        })
+        .catch(err => {
+          f7.toast
+            .create({
+              text: 'Error during thing creation: ' + err,
+              destroyOnClose: true,
+              closeTimeout: 2000
+            })
+            .open()
+          return Promise.reject(err)
+        })
     },
-    ignoreEntry (entry, loadFn) {
-      this.$oh.api.postPlain(`/rest/inbox/${entry.thingUID}/ignore`).then((res) => {
-        f7.toast.create({
-          text: 'Entry ignored',
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-        loadFn()
-      }).catch((err) => {
-        f7.toast.create({
-          text: 'Error while ignoring entry: ' + err,
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-        loadFn()
-      })
+    ignoreEntry(entry, loadFn) {
+      this.$oh.api
+        .postPlain(`/rest/inbox/${entry.thingUID}/ignore`)
+        .then(res => {
+          f7.toast
+            .create({
+              text: 'Entry ignored',
+              destroyOnClose: true,
+              closeTimeout: 2000
+            })
+            .open()
+          loadFn()
+        })
+        .catch(err => {
+          f7.toast
+            .create({
+              text: 'Error while ignoring entry: ' + err,
+              destroyOnClose: true,
+              closeTimeout: 2000
+            })
+            .open()
+          loadFn()
+        })
     },
-    unignoreEntry (entry, loadFn) {
-      this.$oh.api.postPlain(`/rest/inbox/${entry.thingUID}/unignore`).then((res) => {
-        f7.toast.create({
-          text: 'Entry unignored',
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-        loadFn()
-      }).catch((err) => {
-        f7.toast.create({
-          text: 'Error while unignoring entry: ' + err,
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-        loadFn()
-      })
+    unignoreEntry(entry, loadFn) {
+      this.$oh.api
+        .postPlain(`/rest/inbox/${entry.thingUID}/unignore`)
+        .then(res => {
+          f7.toast
+            .create({
+              text: 'Entry unignored',
+              destroyOnClose: true,
+              closeTimeout: 2000
+            })
+            .open()
+          loadFn()
+        })
+        .catch(err => {
+          f7.toast
+            .create({
+              text: 'Error while unignoring entry: ' + err,
+              destroyOnClose: true,
+              closeTimeout: 2000
+            })
+            .open()
+          loadFn()
+        })
     },
-    removeEntry (entry, loadFn) {
-      this.$oh.api.delete('/rest/inbox/' + entry.thingUID).then((res) => {
-        f7.toast.create({
-          text: 'Entry removed',
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-        loadFn()
-      }).catch((err) => {
-        f7.toast.create({
-          text: 'Error while removing entry: ' + err,
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-        loadFn()
-      })
+    removeEntry(entry, loadFn) {
+      this.$oh.api
+        .delete('/rest/inbox/' + entry.thingUID)
+        .then(res => {
+          f7.toast
+            .create({
+              text: 'Entry removed',
+              destroyOnClose: true,
+              closeTimeout: 2000
+            })
+            .open()
+          loadFn()
+        })
+        .catch(err => {
+          f7.toast
+            .create({
+              text: 'Error while removing entry: ' + err,
+              destroyOnClose: true,
+              closeTimeout: 2000
+            })
+            .open()
+          loadFn()
+        })
     },
-    entryActionsAddAsThingButton (entry, loadFn) {
+    entryActionsAddAsThingButton(entry, loadFn) {
       return {
         text: 'Add as Thing',
         color: 'green',
@@ -105,17 +136,19 @@ export default {
               dialog.close()
               this.approveEntry(entry, label, newThingId)
                 .then(() => {
-                  if (redirect) this.f7router.navigate('/settings/things/' + newThingUID, {}) // empty options are required
+                  if (redirect)
+                    this.f7router.navigate('/settings/things/' + newThingUID, {}) // empty options are required
                   else loadFn()
                 })
                 .catch(() => loadFn())
             }
           }
 
-          f7.dialog.create({
-            title: 'Add as Thing',
-            text: `This will create a new Thing of type ${entry.thingTypeUID}.`,
-            content: `
+          f7.dialog
+            .create({
+              title: 'Add as Thing',
+              text: `This will create a new Thing of type ${entry.thingTypeUID}.`,
+              content: `
                 <div class="dialog-text">Thing ID:</div>
                 <div class="dialog-input-field input"><input type="text" class="dialog-input id-input"></div>
                 <div class="input-info id-info"></div>
@@ -124,56 +157,57 @@ export default {
                 <div class="dialog-input-field input"><input type="text" class="dialog-input label-input"></div>
                 <div class="input-info label-info"></div>
               `,
-            buttons: [
-              {
-                text: f7.params.dialog.buttonCancel,
-                color: 'gray',
-                keyCodes: [27],
-                close: true
-              },
-              {
-                text: 'OK &rarr; Edit',
-                bold: true,
-                close: false,
-                onClick: (dialog) => okButtonClicked(dialog, true)
-              },
-              {
-                text: 'OK',
-                bold: true,
-                keyCodes: [13],
-                close: false,
-                onClick: (dialog) => okButtonClicked(dialog, false)
-              }
-            ],
-            destroyOnClose: true,
-            cssClass: 'thing-inbox-approve-dialog',
-            on: {
-              opened: (dialog) => {
-                const id = dialog.$el.find('.id-input')
-                id.val(defaultId)
-                id.focus()
+              buttons: [
+                {
+                  text: f7.params.dialog.buttonCancel,
+                  color: 'gray',
+                  keyCodes: [27],
+                  close: true
+                },
+                {
+                  text: 'OK &rarr; Edit',
+                  bold: true,
+                  close: false,
+                  onClick: dialog => okButtonClicked(dialog, true)
+                },
+                {
+                  text: 'OK',
+                  bold: true,
+                  keyCodes: [13],
+                  close: false,
+                  onClick: dialog => okButtonClicked(dialog, false)
+                }
+              ],
+              destroyOnClose: true,
+              cssClass: 'thing-inbox-approve-dialog',
+              on: {
+                opened: dialog => {
+                  const id = dialog.$el.find('.id-input')
+                  id.val(defaultId)
+                  id.focus()
 
-                id.on('input', () => {
-                  const error = this.validateThingUID(uidPrefix + id.val(), id.val())
-                  const info = dialog.$el.find('.id-info')
-                  info.text(error)
-                  info[0].style.color = error ? 'red' : ''
-                })
+                  id.on('input', () => {
+                    const error = this.validateThingUID(uidPrefix + id.val(), id.val())
+                    const info = dialog.$el.find('.id-info')
+                    info.text(error)
+                    info[0].style.color = error ? 'red' : ''
+                  })
 
-                const label = dialog.$el.find('.label-input')
-                label.val(entry.label)
-                label.on('input', () => {
-                  const info = dialog.$el.find('.label-info')
-                  info.text(label.val() ? '' : 'Label is required')
-                  info[0].style.color = label.val() ? '' : 'red'
-                })
+                  const label = dialog.$el.find('.label-input')
+                  label.val(entry.label)
+                  label.on('input', () => {
+                    const info = dialog.$el.find('.label-info')
+                    info.text(label.val() ? '' : 'Label is required')
+                    info[0].style.color = label.val() ? '' : 'red'
+                  })
+                }
               }
-            }
-          }).open()
+            })
+            .open()
         }
       }
     },
-    entryActionsCopyThingDefinitionButton (entry) {
+    entryActionsCopyThingDefinitionButton(entry) {
       return {
         text: 'Copy Thing File Definition',
         color: 'blue',
@@ -181,10 +215,10 @@ export default {
         onClick: () => this.copyFileDefinitionToClipboard(this.ObjectType.THING, [entry.thingUID])
       }
     },
-    entryActionsIgnoreButton (entry, loadFn, ignored) {
+    entryActionsIgnoreButton(entry, loadFn, ignored) {
       return {
-        text: (!ignored) ? 'Ignore' : 'Unignore',
-        color: (!ignored) ? 'orange' : 'blue',
+        text: !ignored ? 'Ignore' : 'Unignore',
+        color: !ignored ? 'orange' : 'blue',
         onClick: () => {
           if (ignored) {
             this.unignoreEntry(entry, loadFn)
@@ -194,7 +228,7 @@ export default {
         }
       }
     },
-    entryActionsRemoveButton (entry, loadFn) {
+    entryActionsRemoveButton(entry, loadFn) {
       return {
         text: 'Remove',
         color: 'red',

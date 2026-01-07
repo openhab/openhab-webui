@@ -3,16 +3,16 @@
 /**
  * The supported data types a configuration parameter can take (From ConfigDescriptionParameter).
  */
-export type Type = 'TEXT' | 'INTEGER' | 'DECIMAL' | 'BOOLEAN';
+export type Type = 'TEXT' | 'INTEGER' | 'DECIMAL' | 'BOOLEAN'
 
 /**
  * Data transfer object for a static selection list option. (From ParameterOption structure)
  */
 export interface ParameterOption {
   /** The value of the option. */
-  value: string;
+  value: string
   /** A human-readable label for the option. */
-  label: string;
+  label: string
 }
 
 /**
@@ -21,9 +21,9 @@ export interface ParameterOption {
  */
 export interface FilterCriteria {
   /** The name of the criterion. */
-  name: string;
+  name: string
   /** The value of the criterion. */
-  value: string;
+  value: string
 }
 
 /**
@@ -34,17 +34,17 @@ export interface ConfigDescriptionParameterGroup {
   /**
    * The name of the configuration parameter group (must not be null or empty).
    */
-  name: string;
+  name: string
   /** Specifies if this is an advanced parameter group. An advanced parameter group can be hidden in the UI. */
-  advanced: boolean;
+  advanced: boolean
   /**
    * The human-readable label for the configuration parameter group.
    */
-  label?: string;
+  label?: string
   /**
    * The human-readable description for the configuration parameter group.
    */
-  description?: string;
+  description?: string
 }
 
 /**
@@ -53,58 +53,58 @@ export interface ConfigDescriptionParameterGroup {
  */
 export interface ConfigDescriptionParameter {
   /** The name of the configuration parameter (must not be null or empty). */
-  name: string;
+  name: string
   /** The data type of the configuration parameter (must not be null). */
-  type: Type;
+  type: Type
   /** The context of the configuration parameter, a hint for user interfaces and input validators. */
-  context?: string;
+  context?: string
   /** The default value of the configuration parameter (JSON field 'default' or 'defaultValue'). */
-  default?: string;
+  default?: string
   /** The default value of the configuration parameter (JSON field 'default' or 'defaultValue'). */
-  defaultValue?: string;
+  defaultValue?: string
   /** A human-readable description for the configuration parameter. */
-  description?: string;
+  description?: string
   /** A human-readable label for the configuration parameter. */
-  label?: string;
+  label?: string
   /** The minimal value for numeric types, minimal length for strings, or minimal number of selected options. */
-  min?: number | string;
+  min?: number | string
   /** The maximal value for numeric types, maximal length for strings, or maximal number of selected options. */
-  max?: number | string;
+  max?: number | string
   /** The value granularity for a numeric value. By setting the step size to 0, any granularity is allowed. */
-  stepsize?: number | string;
+  stepsize?: number | string
   /** The regular expression pattern for a text type. */
-  pattern?: string;
+  pattern?: string
   /** Specifies whether the value is required. */
-  required?: boolean;
+  required?: boolean
   /** Specifies whether the value is read-only. */
-  readOnly?: boolean;
+  readOnly?: boolean
   /** Specifies whether multiple selections of options are allowed. */
-  multiple?: boolean;
+  multiple?: boolean
   /** The maximum number of options that can be selected when multiple is true. */
-  multipleLimit?: number;
+  multipleLimit?: number
   /** A string used to group parameters together into logical blocks so that the UI can display them together. */
-  groupName?: string;
+  groupName?: string
   /** Specifies if this is an advanced parameter. An advanced parameter can be hidden in the UI. */
-  advanced?: boolean;
+  advanced?: boolean
   /** Specifies whether the parameter should be considered dangerous and alert the user. */
-  verify?: boolean;
+  verify?: boolean
   /** Specifies that the user's input is limited to the provided options). */
-  limitToOptions?: boolean;
+  limitToOptions?: boolean
   /** Specifies the unit of measurements for the configuration parameter. */
-  unit?: string;
+  unit?: string
   /** Specifies the unit label for the configuration parameter. */
-  unitLabel?: string;
+  unitLabel?: string
   /** A list of element definitions of a static selection list. */
-  options?: ParameterOption[];
+  options?: ParameterOption[]
   /** A list of filter criteria for a dynamically created selection list. */
-  filterCriteria?: FilterCriteria[];
+  filterCriteria?: FilterCriteria[]
 }
 
 /**
  * Response object from the GET `/rest/config-descriptions/{uri}` endpoint.
  */
 export interface ConfigDescriptionResponse {
-  parameters: ConfigDescriptionParameter[];
-  parameterGroups: ConfigDescriptionParameterGroup[];
-  uri?: string;
+  parameters: ConfigDescriptionParameter[]
+  parameterGroups: ConfigDescriptionParameterGroup[]
+  uri?: string
 }

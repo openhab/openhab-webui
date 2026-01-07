@@ -60,9 +60,7 @@
     <f7-page>
       <f7-navbar title="Parse Errors" ref="navbar">
         <f7-nav-right>
-          <f7-link class="popup-close">
-            Close
-          </f7-link>
+          <f7-link class="popup-close"> Close </f7-link>
         </f7-nav-right>
       </f7-navbar>
 

@@ -1,34 +1,31 @@
 <template>
-  <f7-popup ref="widgetCode"
-            class="widgetcode-popup"
-            :close-by-backdrop-click="false"
-            @popup:open="widgetCodeOpened"
-            @popup:closed="widgetCodeClosed">
+  <f7-popup
+    ref="widgetCode"
+    class="widgetcode-popup"
+    :close-by-backdrop-click="false"
+    @popup:open="widgetCodeOpened"
+    @popup:closed="widgetCodeClosed">
     <f7-page v-if="component && code">
       <f7-navbar ref="navbar">
         <f7-nav-left>
-          <f7-link icon-ios="f7:arrow_left"
-                   icon-md="material:arrow_back"
-                   icon-aurora="f7:arrow_left"
-                   @click="closeWithDirtyCheck" />
+          <f7-link
+            icon-ios="f7:arrow_left"
+            icon-md="material:arrow_back"
+            icon-aurora="f7:arrow_left"
+            @click="closeWithDirtyCheck" />
         </f7-nav-left>
         <f7-nav-title>Edit Widget Code{{ dirtyIndicator }}</f7-nav-title>
         <f7-nav-right>
-          <f7-link v-if="dirty" @click="reset">
-            Reset
-          </f7-link>
-          <f7-link v-if="dirty" @click="save">
-            Save
-          </f7-link>
-          <f7-link v-else popup-close>
-            Close
-          </f7-link>
+          <f7-link v-if="dirty" @click="reset"> Reset </f7-link>
+          <f7-link v-if="dirty" @click="save"> Save </f7-link>
+          <f7-link v-else popup-close> Close </f7-link>
         </f7-nav-right>
       </f7-navbar>
-      <editor class="page-code-editor"
-              :mode="`application/vnd.openhab.uicomponent+yaml;type=${componentType || 'widget'}`"
-              :value="code"
-              @input="update" />
+      <editor
+        class="page-code-editor"
+        :mode="`application/vnd.openhab.uicomponent+yaml;type=${componentType || 'widget'}`"
+        :value="code"
+        @input="update" />
       <!-- <pre class="yaml-message padding-horizontal" :class="[widgetYamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{widgetYamlError}}</pre> -->
     </f7-page>
   </f7-popup>

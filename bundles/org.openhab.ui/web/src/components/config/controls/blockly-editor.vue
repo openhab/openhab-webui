@@ -828,9 +828,7 @@
           <block type="oh_dayoffset">
             <value name="offset">
               <shadow type="math_number">
-                <field name="NUM">
-                  0
-                </field>
+                <field name="NUM"> 0 </field>
               </shadow>
             </value>
           </block>
@@ -1158,10 +1156,16 @@
 
       <sep />
 
-      <category name="Typed Variables" colour="%{BKY_VARIABLES_HUE}" custom="CREATE_TYPED_VARIABLE" />
+      <category
+        name="Typed Variables"
+        colour="%{BKY_VARIABLES_HUE}"
+        custom="CREATE_TYPED_VARIABLE" />
       <category name="Variables" colour="%{BKY_VARIABLES_HUE}" custom="VARIABLE" />
       <category name="Functions" colour="%{BKY_PROCEDURES_HUE}" custom="PROCEDURE" />
-      <category :name="libraryDefinitions ? 'This Library' : 'Libraries'" colour="gray" ref="libraryCategory" />
+      <category
+        :name="libraryDefinitions ? 'This Library' : 'Libraries'"
+        colour="gray"
+        ref="libraryCategory" />
     </xml>
   </div>
 </template>

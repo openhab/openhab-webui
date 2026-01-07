@@ -1,10 +1,11 @@
 <template>
   <f7-page name="apiexplorer" @page:afterin="onPageAfterIn">
     <f7-navbar>
-      <oh-nav-content title="API Explorer"
-                      back-link="Developer Tools"
-                      back-link-url="/developer/"
-                      :f7router />
+      <oh-nav-content
+        title="API Explorer"
+        back-link="Developer Tools"
+        back-link-url="/developer/"
+        :f7router />
     </f7-navbar>
     <f7-block>
       <f7-col>

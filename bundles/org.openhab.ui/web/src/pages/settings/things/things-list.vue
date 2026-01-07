@@ -1,14 +1,12 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar>
-      <oh-nav-content title="Things"
-                      back-link="Settings"
-                      back-link-url="/settings/"
-                      :f7router>
+      <oh-nav-content title="Things" back-link="Settings" back-link-url="/settings/" :f7router>
         <template #right>
-          <f7-link icon-md="material:done_all"
-                   @click="toggleCheck()"
-                   :text="!theme.md ? (showCheckboxes ? 'Done' : 'Select') : ''" />
+          <f7-link
+            icon-md="material:done_all"
+            @click="toggleCheck()"
+            :text="!theme.md ? (showCheckboxes ? 'Done' : 'Select') : ''" />
         </template>
       </oh-nav-content>
       <f7-subnavbar :inner="false" v-show="initSearchbar">
@@ -24,75 +22,84 @@
           :disable-button="!theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
-    <f7-toolbar v-if="showCheckboxes"
-                class="contextual-toolbar"
-                :class="{ navbar: theme.md }"
-                bottom-ios
-                bottom-aurora>
-      <div v-if="!theme.md && selectedItems.length > 0"
-           class="display-flex justify-content-center"
-           style="width: 100%">
-        <f7-link color="red"
-                 v-show="selectedItems.length"
-                 class="delete display-flex flex-direction-row margin-right"
-                 icon-ios="f7:trash"
-                 icon-aurora="f7:trash"
-                 @click="removeSelected">
+    <f7-toolbar
+      v-if="showCheckboxes"
+      class="contextual-toolbar"
+      :class="{ navbar: theme.md }"
+      bottom-ios
+      bottom-aurora>
+      <div
+        v-if="!theme.md && selectedItems.length > 0"
+        class="display-flex justify-content-center"
+        style="width: 100%">
+        <f7-link
+          color="red"
+          v-show="selectedItems.length"
+          class="delete display-flex flex-direction-row margin-right"
+          icon-ios="f7:trash"
+          icon-aurora="f7:trash"
+          @click="removeSelected">
           Remove
         </f7-link>
-        <f7-link v-show="selectedItems.length"
-                 color="orange"
-                 class="disable display-flex flex-direction-row margin-right"
-                 @click="doDisableEnableSelected(false)"
-                 icon-ios="f7:pause_circle"
-                 icon-aurora="f7:pause_circle">
+        <f7-link
+          v-show="selectedItems.length"
+          color="orange"
+          class="disable display-flex flex-direction-row margin-right"
+          @click="doDisableEnableSelected(false)"
+          icon-ios="f7:pause_circle"
+          icon-aurora="f7:pause_circle">
           &nbsp;Disable
         </f7-link>
-        <f7-link v-show="selectedItems.length"
-                 color="green"
-                 class="enable display-flex flex-direction-row margin-right"
-                 @click="doDisableEnableSelected(true)"
-                 icon-ios="f7:play_circle"
-                 icon-aurora="f7:play_circle">
+        <f7-link
+          v-show="selectedItems.length"
+          color="green"
+          class="enable display-flex flex-direction-row margin-right"
+          @click="doDisableEnableSelected(true)"
+          icon-ios="f7:play_circle"
+          icon-aurora="f7:play_circle">
           &nbsp;Enable
         </f7-link>
-        <f7-link v-show="selectedItems.length"
-                 color="blue"
-                 class="copy display-flex flex-direction-row"
-                 @click="copyFileDefinitionToClipboard(ObjectType.THING, selectedItems)"
-                 icon-ios="f7:square_on_square"
-                 icon-aurora="f7:square_on_square">
+        <f7-link
+          v-show="selectedItems.length"
+          color="blue"
+          class="copy display-flex flex-direction-row"
+          @click="copyFileDefinitionToClipboard(ObjectType.THING, selectedItems)"
+          icon-ios="f7:square_on_square"
+          icon-aurora="f7:square_on_square">
           &nbsp;Copy
         </f7-link>
       </div>
-      <f7-link v-if="theme.md"
-               icon-md="material:close"
-               icon-color="white"
-               @click="showCheckboxes = false" />
-      <div class="title" v-if="theme.md">
-        {{ selectedItems.length }} selected
-      </div>
+      <f7-link
+        v-if="theme.md"
+        icon-md="material:close"
+        icon-color="white"
+        @click="showCheckboxes = false" />
+      <div class="title" v-if="theme.md">{{ selectedItems.length }} selected</div>
       <div class="right" v-if="theme.md">
-        <f7-link v-show="selectedItems.length"
-                 tooltip="Disable selected"
-                 icon-md="material:pause_circle_outline"
-                 icon-color="white"
-                 @click="doDisableEnableSelected(false)" />
-        <f7-link v-show="selectedItems.length"
-                 tooltip="Enable selected"
-                 icon-md="material:play_circle_outline"
-                 icon-color="white"
-                 @click="doDisableEnableSelected(true)" />
-        <f7-link v-show="selectedItems.length"
-                 tooltip="Remove selected"
-                 icon-md="material:delete"
-                 icon-color="white"
-                 @click="removeSelected" />
-        <f7-link v-show="selectedItems.length"
-                 tooltip="Copy selected"
-                 icon-md="material:content_copy"
-                 icon-color="white"
-                 @click="copyFileDefinitionToClipboard(ObjectType.THING, selectedItems)" />
+        <f7-link
+          v-show="selectedItems.length"
+          tooltip="Disable selected"
+          icon-md="material:pause_circle_outline"
+          icon-color="white"
+          @click="doDisableEnableSelected(false)" />
+        <f7-link
+          v-show="selectedItems.length"
+          tooltip="Enable selected"
+          icon-md="material:play_circle_outline"
+          icon-color="white"
+          @click="doDisableEnableSelected(true)" />
+        <f7-link
+          v-show="selectedItems.length"
+          tooltip="Remove selected"
+          icon-md="material:delete"
+          icon-color="white"
+          @click="removeSelected" />
+        <f7-link
+          v-show="selectedItems.length"
+          tooltip="Copy selected"
+          icon-md="material:content_copy"
+          icon-color="white"
+          @click="copyFileDefinitionToClipboard(ObjectType.THING, selectedItems)" />
       </div>
     </f7-toolbar>
 
@@ -110,21 +117,25 @@
           <span>{{ listTitle }}</span>
           <template v-if="showCheckboxes && listedItems.length">
             -
-            <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
+            <f7-link
+              @click="selectDeselectAll"
+              :text="allSelected ? 'Deselect all' : 'Select all'" />
           </template>
           <template v-if="groupBy === 'location'">
             <div style="text-align: right" class="padding-right">
               <label class="advanced-label">
                 <f7-checkbox v-model:checked="showNoLocation" />
-                Show no location</label>
+                Show no location</label
+              >
             </div>
           </template>
         </f7-block-title>
-        <list-filter ref="filters"
-                     v-if="ready"
-                     :filters="filters"
-                     @toggled="updateFilteredItems"
-                     @reset="updateFilteredItems" />
+        <list-filter
+          ref="filters"
+          v-if="ready"
+          :filters="filters"
+          @toggled="updateFilteredItems"
+          @reset="updateFilteredItems" />
       </f7-col>
       <!-- skeleton for not ready -->
       <f7-col v-if="!ready">
@@ -146,7 +157,9 @@
       <f7-col v-else-if="things.length > 0">
         <div class="padding-left padding-right">
           <f7-segmented strong tag="p">
-            <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')">
+            <f7-button
+              :active="groupBy === 'alphabetical'"
+              @click="switchGroupOrder('alphabetical')">
               Alphabetical
             </f7-button>
             <f7-button :active="groupBy === 'binding'" @click="switchGroupOrder('binding')">
@@ -160,12 +173,12 @@
         <f7-list v-if="!listedItems.length">
           <f7-list-item title="Nothing found" />
         </f7-list>
-        <f7-list v-show="listedItems.length" class="col things-list" :contacts-list="groupBy === 'alphabetical'">
+        <f7-list
+          v-show="listedItems.length"
+          class="col things-list"
+          :contacts-list="groupBy === 'alphabetical'">
           <f7-list-group v-for="(thingsWithInitial, initial) in indexedThings" :key="initial">
-            <f7-list-item v-if="thingsWithInitial.length"
-                          :title="initial"
-                          group-title
-                          media-item />
+            <f7-list-item v-if="thingsWithInitial.length" :title="initial" group-title media-item />
             <f7-list-item
               v-for="(thing, index) in thingsWithInitial"
               :key="index"
@@ -189,19 +202,21 @@
               <template #subtitle>
                 <div v-if="thing.location && groupBy !== 'location'">
                   {{ thing.location }}
-                  <f7-icon f7="placemark" color="gray" style="font-size: 16px; width: 16px; height: 16px" />
+                  <f7-icon
+                    f7="placemark"
+                    color="gray"
+                    style="font-size: 16px; width: 16px; height: 16px" />
                 </div>
               </template>
               <template #after>
-                <f7-badge :color="thingStatusBadgeColor(thing.statusInfo)" :tooltip="thing.statusInfo.description">
+                <f7-badge
+                  :color="thingStatusBadgeColor(thing.statusInfo)"
+                  :tooltip="thing.statusInfo.description">
                   {{ thingStatusBadgeText(thing.statusInfo) }}
                 </f7-badge>
               </template>
               <template #after-title>
-                <f7-icon v-if="!thing.editable"
-                         f7="lock_fill"
-                         size="1rem"
-                         color="gray" />
+                <f7-icon v-if="!thing.editable" f7="lock_fill" size="1rem" color="gray" />
               </template>
             </f7-list-item>
           </f7-list-group>
@@ -212,13 +227,14 @@
     <f7-block v-if="ready && !things.length" class="block-narrow">
       <empty-state-placeholder icon="lightbulb" title="things.title" text="things.text" />
       <f7-row v-if="$f7dim.width < 1280" class="display-flex justify-content-center">
-        <f7-button large
-                   fill
-                   color="blue"
-                   external
-                   :href="`${runtimeStore.websiteUrl}/link/thing`"
-                   target="_blank"
-                   :text="$t('home.overview.button.documentation')" />
+        <f7-button
+          large
+          fill
+          color="blue"
+          external
+          :href="`${runtimeStore.websiteUrl}/link/thing`"
+          target="_blank"
+          :text="$t('home.overview.button.documentation')" />
       </f7-row>
     </f7-block>
 
@@ -226,10 +242,11 @@
       <f7-fab position="right-bottom" color="blue" href="add/">
         <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
       </f7-fab>
-      <f7-fab position="center-bottom"
-              :text="`Inbox (${inboxCount})`"
-              :color="inboxCount > 0 ? 'red' : 'gray'"
-              href="inbox">
+      <f7-fab
+        position="center-bottom"
+        :text="`Inbox (${inboxCount})`"
+        :color="inboxCount > 0 ? 'red' : 'gray'"
+        href="inbox">
         <f7-icon f7="tray" />
       </f7-fab>
     </template>

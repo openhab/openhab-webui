@@ -28,11 +28,13 @@ export const useDeveloperStore = defineStore('developer', () => {
 
   const pinCollections = reactive<Record<string, PinnedObjects>>({})
 
-  const sortedCollectionNames = computed(() => Object.keys(pinCollections).sort((a, b) => a.localeCompare(b)))
+  const sortedCollectionNames = computed(() =>
+    Object.keys(pinCollections).sort((a, b) => a.localeCompare(b))
+  )
 
   const STORAGE_KEY = 'openhab.ui:developer.pinCollections'
 
-  function loadPinCollections () {
+  function loadPinCollections() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY)
       if (!raw) return
@@ -45,7 +47,7 @@ export const useDeveloperStore = defineStore('developer', () => {
     }
   }
 
-  function clearPinnedObjects () {
+  function clearPinnedObjects() {
     for (const key in pinnedObjects) {
       pinnedObjects[key as keyof PinnedObjects] = []
     }
@@ -53,7 +55,7 @@ export const useDeveloperStore = defineStore('developer', () => {
 
   watch(
     pinCollections,
-    (val) => {
+    val => {
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(val))
       } catch (e) {

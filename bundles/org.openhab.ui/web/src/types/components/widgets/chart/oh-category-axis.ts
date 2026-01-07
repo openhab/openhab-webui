@@ -1,8 +1,6 @@
 // note: this file is generated and should not be edited by hand
 
-import {
-  NameLocation
-} from '../common.ts'
+import { NameLocation } from '../common.ts'
 
 export enum CategoryType {
   hour = 'hour',
@@ -37,6 +35,4 @@ export interface Config {
   data?: string[]
 }
 
-export {
-  NameLocation
-}
+export { NameLocation }

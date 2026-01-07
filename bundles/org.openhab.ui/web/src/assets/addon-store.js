@@ -33,7 +33,8 @@ export const AddonSuggestionLabels = {
   },
   transformation: {
     title: 'Suggested Transformation Add-ons',
-    subtitle: 'Suggested transformation add-ons to translate raw values into processed or human-readable representations, identified from network scan'
+    subtitle:
+      'Suggested transformation add-ons to translate raw values into processed or human-readable representations, identified from network scan'
   },
   voice: {
     title: 'Suggested Voice &amp; Speech Add-ons',
@@ -77,30 +78,36 @@ export const ContentTypes = {
 }
 
 export const Formats = {
-  'yaml_content': 'Inline YAML Code',
-  'json_content': 'Inline JSON Code',
-  'yaml_download_url': 'Linked YAML File',
-  'json_download_url': 'Linked JSON File',
-  'jar_download_url': 'Linked JAR file',
-  'kar_download_url': 'Linked KAR file',
-  'eclipse': 'Eclipse',
-  'karaf': 'Karaf'
+  yaml_content: 'Inline YAML Code',
+  json_content: 'Inline JSON Code',
+  yaml_download_url: 'Linked YAML File',
+  json_download_url: 'Linked JSON File',
+  jar_download_url: 'Linked JAR file',
+  kar_download_url: 'Linked KAR file',
+  eclipse: 'Eclipse',
+  karaf: 'Karaf'
 }
 
-export function compareAddons (a1, a2) {
+export function compareAddons(a1, a2) {
   if (a1.installed && !a2.installed) return -1
   if (a2.installed && !a1.installed) return 1
   if (a1.verifiedAuthor && !a2.verifiedAuthor) return -1
   if (a2.verifiedAuthor && !a1.verifiedAuthor) return 1
   if (a2.properties && a2.properties) {
-    if (a1.properties.like_count >= 0 && a2.properties.like_count >= 0 &&
-      a1.properties.like_count !== a2.properties.like_count) {
-      return (a1.properties.like_count > a2.properties.like_count) ? -1 : 1
+    if (
+      a1.properties.like_count >= 0 &&
+      a2.properties.like_count >= 0 &&
+      a1.properties.like_count !== a2.properties.like_count
+    ) {
+      return a1.properties.like_count > a2.properties.like_count ? -1 : 1
     }
 
-    if (a1.properties.views >= 0 && a2.properties.views >= 0 &&
-      a1.properties.views !== a2.properties.views) {
-      return (a1.properties.views > a2.properties.views) ? -1 : 1
+    if (
+      a1.properties.views >= 0 &&
+      a2.properties.views >= 0 &&
+      a1.properties.views !== a2.properties.views
+    ) {
+      return a1.properties.views > a2.properties.views ? -1 : 1
     }
   }
 

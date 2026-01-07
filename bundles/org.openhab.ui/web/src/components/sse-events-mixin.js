@@ -7,7 +7,7 @@ import OhPopover from '@/components/widgets/modals/oh-popover.vue'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
 export default {
-  data () {
+  data() {
     return {
       eventSource: null,
       audioContext: null,
@@ -15,7 +15,7 @@ export default {
     }
   },
   methods: {
-    startEventSource () {
+    startEventSource() {
       const topicAudio = 'openhab/webaudio/playurl'
       const commandItem = localStorage.getItem('openhab.ui:commandItem')
       const topicCommand = `openhab/items/${commandItem || ''}/command`
@@ -27,7 +27,7 @@ export default {
         topics = topics ? `${topics},${topicCommand}` : topicCommand
       }
       if (!topics) return
-      this.eventSource = this.$oh.sse.connect(`/rest/events?topics=${topics}`, null, (event) => {
+      this.eventSource = this.$oh.sse.connect(`/rest/events?topics=${topics}`, null, event => {
         console.debug('Received SSE event: ' + JSON.stringify(event))
         switch (event.topic) {
           case topicAudio:
@@ -47,11 +47,11 @@ export default {
         }
       })
     },
-    stopEventSource () {
+    stopEventSource() {
       this.$oh.sse.close(this.eventSource)
       this.eventSource = null
     },
-    playAudioUrl (audioUrl) {
+    playAudioUrl(audioUrl) {
       try {
         if (audioUrl === '') {
           this.audioSources.forEach(function (value, key) {
@@ -62,14 +62,14 @@ export default {
         }
         if (!this.audioContext) {
           window.AudioContext = window.AudioContext || window.webkitAudioContext
-          if (typeof (window.AudioContext) !== 'undefined') {
+          if (typeof window.AudioContext !== 'undefined') {
             this.audioContext = new AudioContext()
             unlockAudioContext(this.audioContext)
           }
         }
         console.log('Playing audio URL: ' + audioUrl)
-        this.$oh.api.getPlain(audioUrl, '', '*/*', 'arraybuffer').then((data) => {
-          this.audioContext.decodeAudioData(data, (buffer) => {
+        this.$oh.api.getPlain(audioUrl, '', '*/*', 'arraybuffer').then(data => {
+          this.audioContext.decodeAudioData(data, buffer => {
             let source = this.audioContext.createBufferSource()
             source.buffer = buffer
             source.connect(this.audioContext.destination)
@@ -87,16 +87,20 @@ export default {
       }
       // Safari requires a touch event after the stream has started, hence this workaround
       // Credit: https://www.mattmontag.com/web/unlock-web-audio-in-safari-for-ios-and-macos
-      function unlockAudioContext (audioContext) {
+      function unlockAudioContext(audioContext) {
         if (audioContext.state !== 'suspended') return
         const b = document.body
         const events = ['touchstart', 'touchend', 'mousedown', 'keydown']
-        events.forEach((e) => b.addEventListener(e, unlock, false))
-        function unlock () { audioContext.resume().then(clean) }
-        function clean () { events.forEach((e) => b.removeEventListener(e, unlock)) }
+        events.forEach(e => b.addEventListener(e, unlock, false))
+        function unlock() {
+          audioContext.resume().then(clean)
+        }
+        function clean() {
+          events.forEach(e => b.removeEventListener(e, unlock))
+        }
       }
     },
-    closePopups () {
+    closePopups() {
       const popupEl = this.$el.querySelector('.popup')
       if (popupEl) {
         f7.popup.close(popupEl)
@@ -110,7 +114,7 @@ export default {
         f7.sheet.close(sheetEl)
       }
     },
-    handleCommand (commandString) {
+    handleCommand(commandString) {
       console.log('Handling command: ' + commandString)
       const [command, ...segments] = commandString.trim().split(':') // NOT use a RegEx lookbehind assertions here, because they are unsupported on Safari < 16.4, i.e. iOS 15.x
       const combined = segments.join(':')
@@ -121,15 +125,18 @@ export default {
         case 'popup':
         case 'popover':
         case 'sheet':
-          if (combined.indexOf('page:') !== 0 && combined.indexOf('widget:') !== 0 && combined.indexOf('oh-') !== 0) {
+          if (
+            combined.indexOf('page:') !== 0 &&
+            combined.indexOf('widget:') !== 0 &&
+            combined.indexOf('oh-') !== 0
+          ) {
             console.error('Action target is not of the format page:uid or widget:uid or oh-')
             return
           }
           console.debug(`Opening ${combined} in ${command} modal`)
           const modalRoute = {
             url: combined + '/' + command,
-            route: {
-            }
+            route: {}
           }
           if (command === 'popup') modalRoute.route.popup = { component: OhPopup }
           if (command === 'popover') modalRoute.route.popup = { component: OhPopover }

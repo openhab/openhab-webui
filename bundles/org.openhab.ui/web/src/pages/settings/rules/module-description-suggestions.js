@@ -2,27 +2,27 @@ import { toString } from 'cronstrue'
 
 export default {
   methods: {
-    findModuleType (mod, section) {
+    findModuleType(mod, section) {
       if (!mod || !this.moduleTypes) {
         return undefined
       }
       let result
       if (section) {
-        return this.moduleTypes[section]?.find((m) => m.uid === mod.type)
+        return this.moduleTypes[section]?.find(m => m.uid === mod.type)
       } else {
         if (this.moduleTypes.actions) {
-          result = this.moduleTypes.actions.find((m) => m.uid === mod.type)
+          result = this.moduleTypes.actions.find(m => m.uid === mod.type)
         }
         if (!result && this.moduleTypes.triggers) {
-          result = this.moduleTypes.triggers.find((m) => m.uid === mod.type)
+          result = this.moduleTypes.triggers.find(m => m.uid === mod.type)
         }
         if (!result && this.moduleTypes.conditions) {
-          result = this.moduleTypes.conditions.find((m) => m.uid === mod.type)
+          result = this.moduleTypes.conditions.find(m => m.uid === mod.type)
         }
         return result
       }
     },
-    suggestedModuleTitle (mod, moduleType, section) {
+    suggestedModuleTitle(mod, moduleType, section) {
       if (!moduleType) {
         if (!this.moduleTypes) return 'Name'
         moduleType = this.findModuleType(mod, section)
@@ -51,13 +51,18 @@ export default {
           return 'item ' + config.itemName + ' received command ' + config.command
         case 'core.ItemStateUpdateTrigger':
           if (!config.itemName) return moduleType.label
-          return 'item ' + config.itemName + ' was updated' +
-                        ((config.state) ? ' to ' + config.state : '')
+          return (
+            'item ' + config.itemName + ' was updated' + (config.state ? ' to ' + config.state : '')
+          )
         case 'core.ItemStateChangeTrigger':
           if (!config.itemName) return moduleType.label
-          return 'item ' + config.itemName + ' changed' +
-              ((config.previousState) ? ' from ' + config.previousState : '') +
-              ((config.state) ? ' to ' + config.state : '')
+          return (
+            'item ' +
+            config.itemName +
+            ' changed' +
+            (config.previousState ? ' from ' + config.previousState : '') +
+            (config.state ? ' to ' + config.state : '')
+          )
         case 'core.ChannelEventTrigger':
           if (!config.channelUID) return moduleType.label
           return 'channel ' + config.channelUID + ' was triggered'
@@ -67,22 +72,38 @@ export default {
           return 'a member of ' + config.groupName + ' received command ' + config.command
         case 'core.GroupStateUpdateTrigger':
           if (!config.groupName) return moduleType.label
-          return 'a member of ' + config.groupName + ' was updated' +
-                        ((config.state) ? ' to ' + config.state : '')
+          return (
+            'a member of ' +
+            config.groupName +
+            ' was updated' +
+            (config.state ? ' to ' + config.state : '')
+          )
         case 'core.GroupStateChangeTrigger':
           if (!config.groupName) return moduleType.label
-          return 'a member of ' + config.groupName + ' changed' +
-              ((config.previousState) ? ' from ' + config.previousState : '') +
-              ((config.state) ? ' to ' + config.state : '')
+          return (
+            'a member of ' +
+            config.groupName +
+            ' changed' +
+            (config.previousState ? ' from ' + config.previousState : '') +
+            (config.state ? ' to ' + config.state : '')
+          )
         case 'core.ThingStatusUpdateTrigger':
           if (!config.thingUID) return moduleType.label
-          return 'thing ' + config.thingUID + ' status was updated' +
-                        ((config.status) ? ' to ' + config.status : '')
+          return (
+            'thing ' +
+            config.thingUID +
+            ' status was updated' +
+            (config.status ? ' to ' + config.status : '')
+          )
         case 'core.ThingStatusChangeTrigger':
           if (!config.thingUID) return moduleType.label
-          return 'thing ' + config.thingUID + ' status changed' +
-              ((config.previousStatus) ? ' from ' + config.previousStatus : '') +
-              ((config.status) ? ' to ' + config.status : '')
+          return (
+            'thing ' +
+            config.thingUID +
+            ' status changed' +
+            (config.previousStatus ? ' from ' + config.previousStatus : '') +
+            (config.status ? ' to ' + config.status : '')
+          )
         case 'core.SystemStartlevelTrigger':
           if (config.startlevel === undefined) return moduleType.label
           return 'the system has reached start level ' + config.startlevel
@@ -113,7 +134,7 @@ export default {
           return moduleType.label
       }
     },
-    suggestedModuleDescription (mod, moduleType, section) {
+    suggestedModuleDescription(mod, moduleType, section) {
       if (!moduleType) {
         if (!this.moduleTypes) return 'Description'
         moduleType = this.findModuleType(mod, section)

@@ -17,7 +17,7 @@ const ParameterOptions = /\S+/
  * @param regex a regex that matches the characters of the completion options
  * @returns the position from the start of the document
  */
-export function completionStart (context, regex = /\w+/) {
+export function completionStart(context, regex = /\w+/) {
   return context.matchBefore(regex)?.from ?? context.pos
 }
 
@@ -47,12 +47,16 @@ export function completionStart (context, regex = /\w+/) {
  * - type
  * - variable
  */
-export function getCompletionType (parameterType) {
+export function getCompletionType(parameterType) {
   switch (parameterType) {
-    case 'TEXT': return 'string'
-    case 'INTEGER': return 'number'
-    case 'BOOLEAN': return 'boolean'
-    default: return 'unknown'
+    case 'TEXT':
+      return 'string'
+    case 'INTEGER':
+      return 'number'
+    case 'BOOLEAN':
+      return 'boolean'
+    default:
+      return 'unknown'
   }
 }
 
@@ -64,7 +68,7 @@ export function getCompletionType (parameterType) {
  * @param {number} colonPos The position of the colon
  * @returns {CompletionResult}
  */
-export function hintBooleanValue (context, line, colonPos) {
+export function hintBooleanValue(context, line, colonPos) {
   const trimmedLine = line.text.trimEnd()
   if (trimmedLine.endsWith('true') || trimmedLine.endsWith('false')) return
 
@@ -78,7 +82,10 @@ export function hintBooleanValue (context, line, colonPos) {
   return {
     from: completionStart(context),
     validFor: /\w+/,
-    options: [{ label: 'true', apply, boost: 1 }, { label: 'false', apply }]
+    options: [
+      { label: 'true', apply, boost: 1 },
+      { label: 'false', apply }
+    ]
   }
 }
 
@@ -100,12 +107,15 @@ let itemsCache = null
  * @param {boolean} [options.groupsOnly=false] - If true, only include Group items in the completion list.
  * @returns {Promise<import("@codemirror/autocomplete").CompletionResult>} Promise that resolves to a CompletionResult.
  */
-export async function hintItems (context, { replaceAfterColon = false, indent = null, prefix = '', suffix = '', groupsOnly = false } = {}) {
+export async function hintItems(
+  context,
+  { replaceAfterColon = false, indent = null, prefix = '', suffix = '', groupsOnly = false } = {}
+) {
   const promise = itemsCache
     ? Promise.resolve(itemsCache)
     : context.view.$oh.api.get('/rest/items?staticDataOnly=true')
 
-  return promise.then((data) => {
+  return promise.then(data => {
     if (!itemsCache) itemsCache = data
 
     const apply = (view, completion, _from, _to) => {
@@ -134,11 +144,11 @@ export async function hintItems (context, { replaceAfterColon = false, indent = 
       view.dispatch(insertCompletionText(view.state, insert, from, to))
     }
 
-    const items = groupsOnly ? data.filter((item) => item.type === 'Group') : data
+    const items = groupsOnly ? data.filter(item => item.type === 'Group') : data
     return {
       from: completionStart(context),
       validFor: /\w+/,
-      options: items.map((item) => {
+      options: items.map(item => {
         return {
           label: item.name,
           info: `${item.label ? item.label + ' ' : ''}(${item.type})`,
@@ -162,7 +172,7 @@ export async function hintItems (context, { replaceAfterColon = false, indent = 
  * @param {number} indent - Number of spaces to prepend so the inserted parameter lines match the target indent.
  * @returns {import("@codemirror/autocomplete").CompletionResult} A CompletionResult with `from`, `validFor` and `options`.
  */
-export function hintParameters (context, parameters, indent) {
+export function hintParameters(context, parameters, indent) {
   const apply = (view, completion, _from, _to) => {
     const line = view.state.doc.lineAt(context.pos)
     const { from, to } = line
@@ -176,7 +186,7 @@ export function hintParameters (context, parameters, indent) {
   return {
     from: completionStart(context),
     validFor: /\w+/,
-    options: parameters.map((p) => {
+    options: parameters.map(p => {
       return {
         label: p.name,
         info: p.description,
@@ -196,7 +206,7 @@ export function hintParameters (context, parameters, indent) {
  * @param {number} colonPos - Zero-based index of the colon character on the line; insertion starts after `colonPos + 2`.
  * @returns {import("@codemirror/autocomplete").CompletionResult} CompletionResult.
  */
-export function hintParameterOptions (context, parameter, colonPos) {
+export function hintParameterOptions(context, parameter, colonPos) {
   const apply = (view, completion, _from, _to) => {
     const line = view.state.doc.lineAt(context.pos)
     const from = line.from + colonPos + 2
@@ -209,14 +219,16 @@ export function hintParameterOptions (context, parameter, colonPos) {
   return {
     from: completionStart(context, ParameterOptions),
     validFor: ParameterOptions,
-    options: parameter.options.map((o) => {
-      return {
-        label: o.value,
-        info: o.label || o.value,
-        apply,
-        boost: boost-- // preserve the original order, don't sort alphabetically
-      }
-    }).filter((o) => o.label) // discard empty options
+    options: parameter.options
+      .map(o => {
+        return {
+          label: o.value,
+          info: o.label || o.value,
+          apply,
+          boost: boost-- // preserve the original order, don't sort alphabetically
+        }
+      })
+      .filter(o => o.label) // discard empty options
   }
 }
 
@@ -230,9 +242,9 @@ export function hintParameterOptions (context, parameter, colonPos) {
  * @param {number} colonPos The position of the colon
  * @returns {CompletionResult}
  */
-export function hintParameterValues (context, parameters, line, colonPos) {
+export function hintParameterValues(context, parameters, line, colonPos) {
   const parameterName = line.text.substring(0, colonPos).trim()
-  const parameter = parameters.find((p) => p.name === parameterName)
+  const parameter = parameters.find(p => p.name === parameterName)
   if (parameter) {
     if (parameter.type === 'BOOLEAN') {
       return hintBooleanValue(context, line, colonPos)

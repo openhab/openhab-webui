@@ -15,8 +15,13 @@ export default function (f7) {
   */
   Blockly.Blocks['oh_event'] = {
     init: function () {
-      this.appendValueInput('value')
-        .appendField(new Blockly.FieldDropdown([['send command', 'sendCommand'], ['post update', 'postUpdate']]), 'eventType')
+      this.appendValueInput('value').appendField(
+        new Blockly.FieldDropdown([
+          ['send command', 'sendCommand'],
+          ['post update', 'postUpdate']
+        ]),
+        'eventType'
+      )
       this.appendValueInput('itemName')
         .appendField('to')
         .setAlign(Blockly.inputs.Align.RIGHT)
@@ -26,7 +31,9 @@ export default function (f7) {
       this.setNextStatement(true, null)
       this.setColour(0)
       this.setTooltip('Send a command to an item')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-items-things.html#send-command')
+      this.setHelpUrl(
+        'https://www.openhab.org/docs/configuration/blockly/rules-blockly-items-things.html#send-command'
+      )
     }
   }
 
@@ -38,6 +45,8 @@ export default function (f7) {
     const inputType = blockGetCheckedInputType(block, 'itemName')
 
     // Expect oh_itemtype as default because oh_groupmembers & oh_taggeditems return them
-    return (inputType === 'oh_item' || inputType === 'String') ? `items.getItem(${itemName}).${eventType}(${value});\n` : `${itemName}.${eventType}(${value});\n`
+    return inputType === 'oh_item' || inputType === 'String'
+      ? `items.getItem(${itemName}).${eventType}(${value});\n`
+      : `${itemName}.${eventType}(${value});\n`
   }
 }

@@ -25,12 +25,12 @@ export type UIComponentSlots = Record<string, UIComponent[]>
  * Due to their dynamic type nature, most of their properties are not always defined.
  */
 export interface UIComponent {
-  component: string, // always provided, required for rendering
-  config: UIComponentConfig, // always provided, even if empty
-  props?: UIComponentProps,
-  slots?: UIComponentSlots,
-  tags?: string[],
-  timestamp?: string,
+  component: string // always provided, required for rendering
+  config: UIComponentConfig // always provided, even if empty
+  props?: UIComponentProps
+  slots?: UIComponentSlots
+  tags?: string[]
+  timestamp?: string
   uid?: string
 }
 

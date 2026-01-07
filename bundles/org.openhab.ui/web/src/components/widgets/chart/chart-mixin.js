@@ -48,19 +48,22 @@ const seriesComponents = {
 }
 
 export default {
-  beforeCreate () {
+  beforeCreate() {
     this.numberFormatter = new Intl.NumberFormat(useRuntimeStore().locale)
   },
-  data () {
+  data() {
     const config = this.context.component.config || {}
     const chartType = config.chartType
     const future = config.future === true ? 1 : (config.future ?? 0)
-    const endTime = (chartType)
+    const endTime = chartType
       ? chartType === 'week'
-        // Week starting on Sunday
-        ? this.addOrSubtractPeriod(dayjs().startOf(chartType).subtract(1, 'day'), 1 + future)
-        // Week starting on Monday and all other chart types
-        : this.addOrSubtractPeriod(dayjs().startOf(chartType === 'isoWeek' ? 'week' : chartType), 1 + future)
+        ? // Week starting on Sunday
+          this.addOrSubtractPeriod(dayjs().startOf(chartType).subtract(1, 'day'), 1 + future)
+        : // Week starting on Monday and all other chart types
+          this.addOrSubtractPeriod(
+            dayjs().startOf(chartType === 'isoWeek' ? 'week' : chartType),
+            1 + future
+          )
       : this.addOrSubtractPeriod(dayjs(), future)
 
     return {
@@ -71,13 +74,13 @@ export default {
     }
   },
   computed: {
-    startTime () {
+    startTime() {
       return this.addOrSubtractPeriod(this.endTime, -1)
     },
-    period () {
+    period() {
       return this.evaluateExpression('.period', this.speriod)
     },
-    options () {
+    options() {
       if (!this.config) return {}
       const chartConfig = this.config.options || {}
       if (!chartConfig.backgroundColor && useUIOptionsStore().getDarkMode() === 'dark') {
@@ -99,119 +102,215 @@ export default {
         series: this.series
       }
     },
-    grid () {
+    grid() {
       if (!this.context.component.slots || !this.context.component.slots.grid) return undefined
-      return this.context.component.slots.grid.map((g) => g.config)
+      return this.context.component.slots.grid.map(g => g.config)
     },
-    xAxis () {
+    xAxis() {
       if (!this.context.component.slots || !this.context.component.slots.xAxis) return undefined
-      return this.context.component.slots.xAxis.map((a) => axisComponents[a.component].get(a, this.startTime, this.endTime, this.context.component, this, undefined, this.numberFormatter))
+      return this.context.component.slots.xAxis.map(a =>
+        axisComponents[a.component].get(
+          a,
+          this.startTime,
+          this.endTime,
+          this.context.component,
+          this,
+          undefined,
+          this.numberFormatter
+        )
+      )
     },
-    yAxis () {
+    yAxis() {
       if (!this.context.component.slots || !this.context.component.slots.yAxis) return undefined
-      return this.context.component.slots.yAxis.map((a) => axisComponents[a.component].get(a, this.startTime, this.endTime, this.context.component, this, true, this.numberFormatter)) // invert Y axis by default
+      return this.context.component.slots.yAxis.map(a =>
+        axisComponents[a.component].get(
+          a,
+          this.startTime,
+          this.endTime,
+          this.context.component,
+          this,
+          true,
+          this.numberFormatter
+        )
+      ) // invert Y axis by default
     },
-    calendar () {
+    calendar() {
       if (!this.context.component.slots || !this.context.component.slots.calendar) return undefined
-      return this.context.component.slots.calendar.map((a) => axisComponents[a.component].get(a, this.startTime, this.endTime, this.context.component, this, this.orient))
+      return this.context.component.slots.calendar.map(a =>
+        axisComponents[a.component].get(
+          a,
+          this.startTime,
+          this.endTime,
+          this.context.component,
+          this,
+          this.orient
+        )
+      )
     },
-    singleAxis () {
-      if (!this.context.component.slots || !this.context.component.slots.singleAxis) return undefined
-      return this.context.component.slots.xAxis.map((a) => axisComponents[a.component].get(a, this.startTime, this.endTime, this.context.component, this))
+    singleAxis() {
+      if (!this.context.component.slots || !this.context.component.slots.singleAxis)
+        return undefined
+      return this.context.component.slots.xAxis.map(a =>
+        axisComponents[a.component].get(
+          a,
+          this.startTime,
+          this.endTime,
+          this.context.component,
+          this
+        )
+      )
     },
-    tooltip () {
+    tooltip() {
       if (!this.context.component.slots || !this.context.component.slots.tooltip) return undefined
-      return this.context.component.slots.tooltip.map((c) => OhChartTooltip.get(c, this.startTime, this.endTime, this, this.$device, this.numberFormatter))
+      return this.context.component.slots.tooltip.map(c =>
+        OhChartTooltip.get(
+          c,
+          this.startTime,
+          this.endTime,
+          this,
+          this.$device,
+          this.numberFormatter
+        )
+      )
     },
-    visualMap () {
+    visualMap() {
       if (!this.context.component.slots) return undefined
       if (this.context.component.slots.visualMap) {
-        return this.context.component.slots.visualMap.map((c) => OhChartVisualMap.get(c, this.startTime, this.endTime, this, this.$device, this.numberFormatter))
-      } else if (JSON.stringify(this.context.component.slots.series)?.includes('heatmap')) { // heatmap needs a visualMap, therefore fall back to a default
+        return this.context.component.slots.visualMap.map(c =>
+          OhChartVisualMap.get(
+            c,
+            this.startTime,
+            this.endTime,
+            this,
+            this.$device,
+            this.numberFormatter
+          )
+        )
+      } else if (JSON.stringify(this.context.component.slots.series)?.includes('heatmap')) {
+        // heatmap needs a visualMap, therefore fall back to a default
         const config = {
           calculable: true,
           presetPalette: 'bluered',
           show: false,
           type: 'continuous'
         }
-        return OhChartVisualMap.get({ config }, this.startTime, this.endTime, this, this.$device, this.numberFormatter)
+        return OhChartVisualMap.get(
+          { config },
+          this.startTime,
+          this.endTime,
+          this,
+          this.$device,
+          this.numberFormatter
+        )
       }
       return undefined
     },
-    dataZoom () {
+    dataZoom() {
       if (!this.context.component.slots || !this.context.component.slots.dataZoom) return undefined
-      return this.context.component.slots.dataZoom.map((c) => OhChartDataZoom.get(c, this.startTime, this.endTime, this, this.$device))
+      return this.context.component.slots.dataZoom.map(c =>
+        OhChartDataZoom.get(c, this.startTime, this.endTime, this, this.$device)
+      )
     },
-    legend () {
+    legend() {
       if (!this.context.component.slots || !this.context.component.slots.legend) return undefined
-      return this.context.component.slots.legend.map((c) => OhChartLegend.get(c, this.startTime, this.endTime, this, this.$device, this.numberFormatter))
+      return this.context.component.slots.legend.map(c =>
+        OhChartLegend.get(c, this.startTime, this.endTime, this, this.$device, this.numberFormatter)
+      )
     },
-    title () {
+    title() {
       if (!this.context.component.slots || !this.context.component.slots.title) return undefined
-      return this.context.component.slots.title.map((c) => OhChartTitle.get(c, this.startTime, this.endTime, this, this.$device))
+      return this.context.component.slots.title.map(c =>
+        OhChartTitle.get(c, this.startTime, this.endTime, this, this.$device)
+      )
     },
-    toolbox () {
+    toolbox() {
       if (!this.context.component.slots || !this.context.component.slots.toolbox) return undefined
-      return this.context.component.slots.toolbox.map((c) => OhChartToolbox.get(c, this.startTime, this.endTime, this, this.$device))
+      return this.context.component.slots.toolbox.map(c =>
+        OhChartToolbox.get(c, this.startTime, this.endTime, this, this.$device)
+      )
     }
   },
   asyncComputed: {
-    series () {
-      if (!this.context.component.slots || !this.context.component.slots.series) return Promise.resolve([])
-      return Promise.all(this.context.component.slots.series.map((s) => this.getSeriesPromises(s)))
+    series() {
+      if (!this.context.component.slots || !this.context.component.slots.series)
+        return Promise.resolve([])
+      return Promise.all(this.context.component.slots.series.map(s => this.getSeriesPromises(s)))
     }
   },
   methods: {
-    async getSeriesPromises (component) {
-      const getter = (data) => seriesComponents[component.component].get(component, data.map((d) => d[1]), this.startTime, this.endTime, this)
+    async getSeriesPromises(component) {
+      const getter = data =>
+        seriesComponents[component.component].get(
+          component,
+          data.map(d => d[1]),
+          this.startTime,
+          this.endTime,
+          this
+        )
 
-      const neededItems = seriesComponents[component.component].neededItems(component, this).filter((i) => !!i)
+      const neededItems = seriesComponents[component.component]
+        .neededItems(component, this)
+        .filter(i => !!i)
       if (neededItems.length === 0) {
         return Promise.resolve(getter([]))
       }
 
       const now = dayjs()
-      const isBetweenStartAndEnd = dayjs(this.startTime).subtract(5, 'minutes').isBefore(now) && dayjs(this.endTime).add(5, 'minutes').isAfter(now)
+      const isBetweenStartAndEnd =
+        dayjs(this.startTime).subtract(5, 'minutes').isBefore(now) &&
+        dayjs(this.endTime).add(5, 'minutes').isAfter(now)
 
-      let boundary = seriesComponents[component.component].includeBoundary?.(component) !== undefined
-        ? seriesComponents[component.component].includeBoundary(component)
-        : isBetweenStartAndEnd
+      let boundary =
+        seriesComponents[component.component].includeBoundary?.(component) !== undefined
+          ? seriesComponents[component.component].includeBoundary(component)
+          : isBetweenStartAndEnd
       if (component.config.noBoundary === true) boundary = false
 
-      let itemState = seriesComponents[component.component].includeItemState?.(component) !== undefined
-        ? seriesComponents[component.component].includeItemState(component)
-        : isBetweenStartAndEnd
+      let itemState =
+        seriesComponents[component.component].includeItemState?.(component) !== undefined
+          ? seriesComponents[component.component].includeItemState(component)
+          : isBetweenStartAndEnd
       if (component.config.noItemState === true) itemState = false
 
       // Store items to avoid querying them again; use underscore-prefixed property to avoid reactivity
       if (!this._items) this._items = {}
       // Store promises for ongoing item queries to avoid querying multiple times in parallel
       if (!this._itemPromises) this._itemPromises = {}
-      neededItems.forEach((neededItem) => {
+      neededItems.forEach(neededItem => {
         if (this._itemPromises[neededItem]) {
           // do nothing, promise already exists
         } else if (this._items[neededItem]) {
           this._itemPromises[neededItem] = Promise.resolve(this._items[neededItem])
         } else {
-          this._itemPromises[neededItem] = this.$oh.api.get(`/rest/items/${neededItem}`).then((item) => {
-            this._items[neededItem] = item
-            delete this._itemPromises[neededItem]
-            return item
-          })
+          this._itemPromises[neededItem] = this.$oh.api
+            .get(`/rest/items/${neededItem}`)
+            .then(item => {
+              this._items[neededItem] = item
+              delete this._itemPromises[neededItem]
+              return item
+            })
         }
       })
 
       // Store promises for ongoing persistence queries to avoid querying multiple times in parallel
       if (!this._persistencePromises) this._persistencePromises = {}
-      const combinedPromises = neededItems.map((neededItem) => {
+      const combinedPromises = neededItems.map(neededItem => {
         const url = `/rest/persistence/items/${neededItem}`
         let seriesStartTime = this.startTime
         let seriesEndTime = this.endTime
         if (component.config.offsetAmount && component.config.offsetUnit) {
-          seriesStartTime = seriesStartTime.subtract(component.config.offsetAmount, component.config.offsetUnit)
-          seriesEndTime = seriesEndTime.subtract(component.config.offsetAmount, component.config.offsetUnit)
+          seriesStartTime = seriesStartTime.subtract(
+            component.config.offsetAmount,
+            component.config.offsetUnit
+          )
+          seriesEndTime = seriesEndTime.subtract(
+            component.config.offsetAmount,
+            component.config.offsetUnit
+          )
         }
-        const serviceId = component.config.service ? this.evaluateExpression('.serviceId', component.config.service) : undefined
+        const serviceId = component.config.service
+          ? this.evaluateExpression('.serviceId', component.config.service)
+          : undefined
         const query = {
           serviceId,
           starttime: seriesStartTime.toISOString(),
@@ -221,7 +320,7 @@ export default {
         }
         const key = `${neededItem}-${query.serviceId}-${query.starttime}-${query.endtime}-${query.boundary}-${query.itemState}`
         if (!this._persistencePromises[key]) {
-          this._persistencePromises[key] = this.$oh.api.get(url, query).then((result) => {
+          this._persistencePromises[key] = this.$oh.api.get(url, query).then(result => {
             delete this._persistencePromises[key]
             return result
           })
@@ -232,35 +331,42 @@ export default {
 
       return Promise.all(combinedPromises).then(getter)
     },
-    setPeriod (period) {
+    setPeriod(period) {
       this.speriod = period
       this.endTime = this.addOrSubtractPeriod(dayjs(), this.future)
     },
-    setDate (date) {
+    setDate(date) {
       const chartType = this.context.component.config.chartType
       const day = dayjs(date)
-      this.endTime = this.addOrSubtractPeriod((chartType) ? day.startOf(chartType) : day, 1)
+      this.endTime = this.addOrSubtractPeriod(chartType ? day.startOf(chartType) : day, 1)
     },
-    earlierPeriod () {
+    earlierPeriod() {
       this.endTime = this.addOrSubtractPeriod(this.endTime, -1)
     },
-    laterPeriod () {
+    laterPeriod() {
       this.endTime = this.addOrSubtractPeriod(this.endTime, 1)
     },
-    addOrSubtractPeriod (day, direction) {
+    addOrSubtractPeriod(day, direction) {
       if (!this.context.component.config) return
       if (direction === 0) return day
-      const fn = (direction < 0) ? day.subtract : day.add
+      const fn = direction < 0 ? day.subtract : day.add
       const chartType = this.context.component.config.chartType
       direction = Math.abs(direction)
       if (chartType) {
-        const millis = dayjs.duration({ [chartType === 'isoWeek' ? 'week' : chartType]: 1 }).asMilliseconds() * direction
+        const millis =
+          dayjs.duration({ [chartType === 'isoWeek' ? 'week' : chartType]: 1 }).asMilliseconds() *
+          direction
         day = fn.apply(day, [millis, 'millisecond'])
       } else {
         const period = this.period || this.context.component.config.period || DEFAULT_PERIOD
         const span = period.match(/^([\d]*)([smhdDwWMQyY])$/)
         if (span) {
-          const millis = dayjs.duration({ [span[2].replace(/[DWY]/, (x) => x.toLowerCase())]: parseInt(span[1]) || 1 }).asMilliseconds() * direction
+          const millis =
+            dayjs
+              .duration({
+                [span[2].replace(/[DWY]/, x => x.toLowerCase())]: parseInt(span[1]) || 1
+              })
+              .asMilliseconds() * direction
           day = fn.apply(day, [millis, 'millisecond'])
         }
       }

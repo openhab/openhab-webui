@@ -3,9 +3,10 @@
     <f7-navbar>
       <oh-nav-content title="Transformations" back-link="Settings" back-link-url="/settings/">
         <template #right>
-          <f7-link icon-md="material:done_all"
-                   @click="toggleCheck()"
-                   :text="(!theme.md) ? (showCheckboxes ? 'Done' : 'Select') : ''" />
+          <f7-link
+            icon-md="material:done_all"
+            @click="toggleCheck()"
+            :text="(!theme.md) ? (showCheckboxes ? 'Done' : 'Select') : ''" />
         </template>
       </oh-nav-content>
       <f7-subnavbar :inner="false" v-show="initSearchbar">
@@ -20,32 +21,34 @@
           :disable-button="!theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
-    <f7-toolbar v-if="showCheckboxes"
-                class="contextual-toolbar"
-                :class="{ navbar: theme.md }"
-                bottom-ios
-                bottom-aurora>
-      <f7-link v-if="!theme.md"
-               color="red"
-               v-show="selectedTransformations.length"
-               class="delete"
-               icon-ios="f7:trash"
-               icon-aurora="f7:trash"
-               @click="removeSelected">
+    <f7-toolbar
+      v-if="showCheckboxes"
+      class="contextual-toolbar"
+      :class="{ navbar: theme.md }"
+      bottom-ios
+      bottom-aurora>
+      <f7-link
+        v-if="!theme.md"
+        color="red"
+        v-show="selectedTransformations.length"
+        class="delete"
+        icon-ios="f7:trash"
+        icon-aurora="f7:trash"
+        @click="removeSelected">
         Remove {{ selectedTransformations.length }}
       </f7-link>
-      <f7-link v-if="theme.md"
-               icon-md="material:close"
-               icon-color="white"
-               @click="showCheckboxes = false" />
-      <div v-if="theme.md" class="title">
-        {{ selectedTransformations.length }} selected
-      </div>
+      <f7-link
+        v-if="theme.md"
+        icon-md="material:close"
+        icon-color="white"
+        @click="showCheckboxes = false" />
+      <div v-if="theme.md" class="title">{{ selectedTransformations.length }} selected</div>
       <div v-if="theme.md" class="right">
-        <f7-link v-show="selectedTransformations.length"
-                 icon-md="material:delete"
-                 icon-color="white"
-                 @click="removeSelected" />
+        <f7-link
+          v-show="selectedTransformations.length"
+          icon-md="material:delete"
+          icon-color="white"
+          @click="removeSelected" />
       </div>
     </f7-toolbar>
 
@@ -81,7 +84,9 @@
         </f7-block-title>
         <div class="searchbar-found padding-left padding-right">
           <f7-segmented strong tag="p">
-            <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')">
+            <f7-button
+              :active="groupBy === 'alphabetical'"
+              @click="switchGroupOrder('alphabetical')">
               Alphabetical
             </f7-button>
             <f7-button :active="groupBy === 'type'" @click="switchGroupOrder('type')">
@@ -98,7 +103,9 @@
           ref="transformationsList"
           :contacts-list="groupBy === 'alphabetical'"
           media-list>
-          <f7-list-group v-for="(transformationsWithInitial, initial) in indexedTransformations" :key="initial">
+          <f7-list-group
+            v-for="(transformationsWithInitial, initial) in indexedTransformations"
+            :key="initial">
             <f7-list-item v-if="transformationsWithInitial.length" :title="initial" group-title />
             <f7-list-item
               v-for="transformation in transformationsWithInitial"
@@ -114,10 +121,7 @@
               :title="transformation.label"
               :subtitle="transformation.type">
               <template #after-title>
-                <f7-icon v-if="!transformation.editable"
-                         f7="lock_fill"
-                         size="1rem"
-                         color="gray" />
+                <f7-icon v-if="!transformation.editable" f7="lock_fill" size="1rem" color="gray" />
               </template>
               <template #footer>
                 {{ transformation.uid }}
@@ -130,23 +134,24 @@
     </f7-block>
 
     <f7-block v-if="ready && !transformations.length" class="block-narrow">
-      <empty-state-placeholder icon="arrow_2_squarepath" title="transformations.title" text="transformations.text" />
+      <empty-state-placeholder
+        icon="arrow_2_squarepath"
+        title="transformations.title"
+        text="transformations.text" />
       <f7-row v-if="$f7dim.width < 1280" class="display-flex justify-content-center">
-        <f7-button large
-                   fill
-                   color="blue"
-                   external
-                   :href="`${runtimeStore.websiteUrl}/link/transformations`"
-                   target="_blank"
-                   :text="$t('home.overview.button.documentation')" />
+        <f7-button
+          large
+          fill
+          color="blue"
+          external
+          :href="`${runtimeStore.websiteUrl}/link/transformations`"
+          target="_blank"
+          :text="$t('home.overview.button.documentation')" />
       </f7-row>
     </f7-block>
 
     <template #fixed>
-      <f7-fab v-show="ready && !showCheckboxes"
-              position="right-bottom"
-              color="blue"
-              href="add">
+      <f7-fab v-show="ready && !showCheckboxes" position="right-bottom" color="blue" href="add">
         <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
       </f7-fab>
     </template>

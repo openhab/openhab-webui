@@ -5,10 +5,10 @@ import openhab from '@/js/openhab'
 export type TrackedItems = Map<string, ItemState>
 
 export interface ItemState {
-  state: string,
-  displayState?: string,
-  numericState?: number,
-  unit?: string,
+  state: string
+  displayState?: string
+  numericState?: number
+  unit?: string
   type: string
 }
 
@@ -35,8 +35,7 @@ export const useStatesStore = defineStore('states', () => {
   const pendingNewItems = new Set<string>()
   let processingIntervalId: number | null = null
 
-
-  function ensureItemTracking (itemName: string): ItemState {
+  function ensureItemTracking(itemName: string): ItemState {
     if (itemName === 'undefined') return UndefinedItemState
 
     let itemState = itemStates.value.get(itemName)
@@ -61,7 +60,7 @@ export const useStatesStore = defineStore('states', () => {
 
   /* global ProxyHandler:readonly */
   const handler: ProxyHandler<Record<string, ItemState>> = {
-    get (obj: Record<string, ItemState>, prop: string | symbol): ItemState {
+    get(obj: Record<string, ItemState>, prop: string | symbol): ItemState {
       if (prop === '_keys') return Object.keys(itemStates.value) as any
       if (prop === '__ob__') return (obj as any).__ob__
 
@@ -72,7 +71,12 @@ export const useStatesStore = defineStore('states', () => {
       const itemName = prop
       return ensureItemTracking(itemName)
     },
-    set (_target: Record<string, ItemState>, prop: string | symbol, value: any, _receiver: Record<string, ItemState>): boolean {
+    set(
+      _target: Record<string, ItemState>,
+      prop: string | symbol,
+      value: any,
+      _receiver: Record<string, ItemState>
+    ): boolean {
       setItemState(prop.toString(), { state: value, type: '-' })
       return true
     }
@@ -87,7 +91,7 @@ export const useStatesStore = defineStore('states', () => {
   const sseConnected = ref<boolean>(false)
   const ready = ref<boolean>(false)
 
-  function startTrackingStates () {
+  function startTrackingStates() {
     console.debug('Start tracking states')
     if (keepConnectionOpen.value && trackerEventSource) return
     clearTrackingList()
@@ -98,13 +102,13 @@ export const useStatesStore = defineStore('states', () => {
     }
     const eventSource = openhab.sse.connectStateTracker(
       '/rest/events/states',
-      (connectionId) => {
+      connectionId => {
         // only one state tracker at any given time!
         trackerConnectionId = connectionId
         const trackingListJson = JSON.stringify(trackingList.value)
         console.debug(
           `Setting initial tracking list (${trackingList.value.length} tracked Items): ` +
-          trackingListJson
+            trackingListJson
         )
         openhab.api.postPlain(
           '/rest/events/states/' + connectionId,
@@ -116,7 +120,7 @@ export const useStatesStore = defineStore('states', () => {
         sseConnected.value = true
         ready.value = true
       },
-      (updates) => {
+      updates => {
         for (const item in updates) {
           setItemState(item, updates[item])
         }
@@ -124,14 +128,14 @@ export const useStatesStore = defineStore('states', () => {
       () => {
         sseConnected.value = false
       },
-      (healthy) => {
+      healthy => {
         sseConnected.value = healthy
       }
     )
     trackerEventSource = eventSource
   }
 
-  function stopTrackingStates () {
+  function stopTrackingStates() {
     console.debug('Stop tracking states')
     if (keepConnectionOpen.value) return
     clearTrackingList()
@@ -141,26 +145,24 @@ export const useStatesStore = defineStore('states', () => {
     clearStateTracker()
   }
 
-  async function sendCommand (itemName: string, command: string, updateState: boolean = false) {
+  async function sendCommand(itemName: string, command: string, updateState: boolean = false) {
     if (updateState) {
       const currentState = itemStates.value.get(itemName)
-      const newState : ItemState = currentState ? { ...currentState, state: command } : { state: command, type: '-' }
+      const newState: ItemState = currentState
+        ? { ...currentState, state: command }
+        : { state: command, type: '-' }
       setItemState(itemName, newState)
     }
-    return openhab.api.postPlain(
-      '/rest/items/' + itemName,
-      command,
-      'text/plain',
-      'text/plain',
-      { 'X-OpenHAB-Source': 'org.openhab.ui'}
-    )
+    return openhab.api.postPlain('/rest/items/' + itemName, command, 'text/plain', 'text/plain', {
+      'X-OpenHAB-Source': 'org.openhab.ui'
+    })
   }
 
-  function isItemTracked (itemName: string) {
+  function isItemTracked(itemName: string) {
     return trackingList.value.includes(itemName)
   }
 
-  function addToTrackingList (itemName: string) {
+  function addToTrackingList(itemName: string) {
     trackingList.value.push(itemName)
   }
 
@@ -172,7 +174,7 @@ export const useStatesStore = defineStore('states', () => {
    * This is done in batches because every modification of the tracking list triggers a lot of reactivity,
    * causing major performance issues when many items are requested in a short time frame.
    */
-  function processPendingItems () {
+  function processPendingItems() {
     if (pendingNewItems.size === 0) {
       if (processingIntervalId !== null) {
         clearInterval(processingIntervalId)
@@ -192,11 +194,11 @@ export const useStatesStore = defineStore('states', () => {
     updateTrackingList()
   }
 
-  function clearTrackingList () {
+  function clearTrackingList() {
     trackingList.value = []
   }
 
-  function clearStateTracker () {
+  function clearStateTracker() {
     trackingList.value = []
     trackerConnectionId = null
     trackerEventSource = null
@@ -207,7 +209,7 @@ export const useStatesStore = defineStore('states', () => {
     pendingNewItems.clear()
   }
 
-  function updateTrackingList () {
+  function updateTrackingList() {
     if (!trackerConnectionId || pendingTrackingListUpdate) {
       return
     }
@@ -233,11 +235,11 @@ export const useStatesStore = defineStore('states', () => {
     })
   }
 
-  function getTrackedItem (itemName: string): ItemState {
+  function getTrackedItem(itemName: string): ItemState {
     return ensureItemTracking(itemName)
   }
 
-  function setItemState (itemName: string, itemState: ItemState) {
+  function setItemState(itemName: string, itemState: ItemState) {
     itemStates.value.set(itemName, itemState)
     return true
   }

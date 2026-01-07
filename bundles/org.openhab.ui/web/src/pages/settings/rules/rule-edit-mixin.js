@@ -3,7 +3,7 @@ import { f7 } from 'framework7-vue'
 import YAML from 'yaml'
 
 export default {
-  data () {
+  data() {
     return {
       showModuleControls: false,
       eventSource: null,
@@ -11,10 +11,10 @@ export default {
     }
   },
   computed: {
-    isEditable () {
+    isEditable() {
       return this.rule && this.rule.editable !== false
     },
-    yamlError () {
+    yamlError() {
       if (this.currentTab !== 'code') return null
       try {
         YAML.parse(this.ruleYaml, { prettyErrors: true })
@@ -25,41 +25,48 @@ export default {
     }
   },
   methods: {
-    onPageAfterIn () {
+    onPageAfterIn() {
       if (window) {
         window.addEventListener('keydown', this.keyDown)
       }
       this.load()
     },
-    onPageAfterOut () {
+    onPageAfterOut() {
       this.stopEventSource()
       if (window) {
         window.removeEventListener('keydown', this.keyDown)
       }
     },
-    onEditorInput (value) {
+    onEditorInput(value) {
       this.ruleYaml = value
       this.dirty = true
     },
-    toggleDisabled () {
+    toggleDisabled() {
       if (this.createMode) return
       if (this.copyMode) return
-      const enable = (this.rule.status.statusDetail === 'DISABLED')
-      this.$oh.api.postPlain('/rest/rules/' + this.rule.uid + '/enable', enable.toString()).then((data) => {
-        f7.toast.create({
-          text: (enable) ? 'Enabled' : 'Disabled',
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-      }).catch((err) => {
-        f7.toast.create({
-          text: 'Error while disabling or enabling: ' + err,
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-      })
+      const enable = this.rule.status.statusDetail === 'DISABLED'
+      this.$oh.api
+        .postPlain('/rest/rules/' + this.rule.uid + '/enable', enable.toString())
+        .then(data => {
+          f7.toast
+            .create({
+              text: enable ? 'Enabled' : 'Disabled',
+              destroyOnClose: true,
+              closeTimeout: 2000
+            })
+            .open()
+        })
+        .catch(err => {
+          f7.toast
+            .create({
+              text: 'Error while disabling or enabling: ' + err,
+              destroyOnClose: true,
+              closeTimeout: 2000
+            })
+            .open()
+        })
     },
-    keyDown (ev) {
+    keyDown(ev) {
       if ((ev.ctrlKey || ev.metaKey) && !(ev.altKey || ev.shiftKey)) {
         if (this.currentModule) return
         switch (ev.keyCode) {
@@ -81,10 +88,10 @@ export default {
         }
       }
     },
-    toggleModuleControls () {
+    toggleModuleControls() {
       this.showModuleControls = !this.showModuleControls
     },
-    showSwipeout (ev) {
+    showSwipeout(ev) {
       let swipeoutElement = ev.target
       ev.cancelBubble = true
       while (!swipeoutElement.classList.contains('swipeout')) {
@@ -95,23 +102,27 @@ export default {
         f7.swipeout.open(swipeoutElement)
       }
     },
-    startEventSource () {
-      this.eventSource = this.$oh.sse.connect('/rest/events?topics=openhab/rules/' + this.ruleId + '/*', null, (event) => {
-        const topicParts = event.topic.split('/')
-        switch (topicParts[3]) {
-          case 'state':
-            this.rule.status = JSON.parse(event.payload) // e.g. {"status":"RUNNING","statusDetail":"NONE"}
-            break
-          case 'added':
-          case 'updated':
-            if (!this.dirty) {
-              this.load()
-            }
-            break
+    startEventSource() {
+      this.eventSource = this.$oh.sse.connect(
+        '/rest/events?topics=openhab/rules/' + this.ruleId + '/*',
+        null,
+        event => {
+          const topicParts = event.topic.split('/')
+          switch (topicParts[3]) {
+            case 'state':
+              this.rule.status = JSON.parse(event.payload) // e.g. {"status":"RUNNING","statusDetail":"NONE"}
+              break
+            case 'added':
+            case 'updated':
+              if (!this.dirty) {
+                this.load()
+              }
+              break
+          }
         }
-      })
+      )
     },
-    stopEventSource () {
+    stopEventSource() {
       this.$oh.sse.close(this.eventSource)
       this.eventSource = null
     }

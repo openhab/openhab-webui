@@ -61,25 +61,27 @@
           <f7-list-item>
             <span>{{ t('about.miscellaneous.home.navbar') }}</span>
             <f7-segmented class="home-navbar-selection">
-              <f7-button v-for="navbarstyle in ['default', 'simple', 'large']"
-                         outline
-                         small
-                         :active="homeNavBar === navbarstyle"
-                         @click="homeNavBar = navbarstyle"
-                         :text="t('about.miscellaneous.home.navbar.' + navbarstyle)"
-                         :key="navbarstyle" />
+              <f7-button
+                v-for="navbarstyle in ['default', 'simple', 'large']"
+                outline
+                small
+                :active="homeNavBar === navbarstyle"
+                @click="homeNavBar = navbarstyle"
+                :text="t('about.miscellaneous.home.navbar.' + navbarstyle)"
+                :key="navbarstyle" />
             </f7-segmented>
           </f7-list-item>
           <f7-list-item>
             <span>{{ t('about.miscellaneous.home.background') }}</span>
             <f7-segmented class="home-navbar-selection">
-              <f7-button v-for="background in ['default', 'standard', 'white']"
-                         outline
-                         small
-                         :active="homeBackground === background"
-                         @click="homeBackground = background"
-                         :text="t('about.miscellaneous.home.background.' + background)"
-                         :key="background" />
+              <f7-button
+                v-for="background in ['default', 'standard', 'white']"
+                outline
+                small
+                :active="homeBackground === background"
+                @click="homeBackground = background"
+                :text="t('about.miscellaneous.home.background.' + background)"
+                :key="background" />
             </f7-segmented>
           </f7-list-item>
           <f7-list-item v-show="runtimeStore.apiEndpoint('habot')">

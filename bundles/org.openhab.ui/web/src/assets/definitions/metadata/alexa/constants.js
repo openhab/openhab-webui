@@ -24,7 +24,16 @@ export const OPEN_STATES = ['CLOSED', 'OPEN']
 
 export const PLAYBACK_OPERATIONS = ['Play', 'Pause', 'Previous', 'Next', 'Rewind', 'FastForward']
 
-export const PLAYBACK_STEPS = ['PLAY', 'PAUSE', 'STOP', 'START_OVER', 'PREVIOUS', 'NEXT', 'REWIND', 'FAST_FORWARD']
+export const PLAYBACK_STEPS = [
+  'PLAY',
+  'PAUSE',
+  'STOP',
+  'START_OVER',
+  'PREVIOUS',
+  'NEXT',
+  'REWIND',
+  'FAST_FORWARD'
+]
 
 export const STATE_DESCRIPTION_OPTIONS_LIMIT = 150
 
@@ -39,7 +48,7 @@ export const VACUUM_MODES = ['CLEAN', 'DOCK', 'SPOT', 'PAUSE', 'STOP']
 export const UNITS_OF_MEASURE = {
   'Angle.Degrees': '°',
   'Angle.Radians': 'rad',
-  'Percent': '%',
+  Percent: '%',
   'Distance.Yards': 'yd',
   'Distance.Inches': 'in',
   'Distance.Meters': 'm',

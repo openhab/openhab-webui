@@ -5,12 +5,12 @@ import ComponentId from '../../component-id'
 dayjs.extend(LocalizedFormat)
 
 export default {
-  get (component, startTime, endTime, chart, device, numberFormatter) {
+  get(component, startTime, endTime, chart, device, numberFormatter) {
     let options = chart.evaluateExpression(ComponentId.get(component), component.config)
     if (options.confine === undefined) options.confine = true
 
     if (!options.valueFormatter) {
-      options.valueFormatter = (value) => numberFormatter.format(value)
+      options.valueFormatter = value => numberFormatter.format(value)
     }
 
     if (options.smartFormatter) {
@@ -32,7 +32,7 @@ export default {
           tooltip += `<div>${dayjs(params[0].axisValue).format('llll')}</div>`
         }
         // content: for each oh-time-series marker colour, series name and formatted value
-        params.forEach((s) => {
+        params.forEach(s => {
           if (s.seriesId) {
             const [seriesType, itemName] = s.seriesId.split('#')
             if (seriesType === 'oh-time-series') {

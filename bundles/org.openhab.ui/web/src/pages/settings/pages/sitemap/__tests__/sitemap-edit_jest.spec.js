@@ -16,7 +16,7 @@ describe('SitemapEdit', () => {
         utils: (await import('framework7')).utils,
         params: { navbar: {} },
         dialog: {
-          create: (config) => {
+          create: config => {
             lastDialogConfig = config
             return {
               open: () => {}
@@ -27,7 +27,6 @@ describe('SitemapEdit', () => {
       }
     }
   })
-
 
   beforeEach(() => {
     wrapper = shallowMount(SitemapEdit, {
@@ -447,9 +446,7 @@ describe('SitemapEdit', () => {
     lastDialogConfig = null
     wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0], wrapper.vm.sitemap])
     await wrapper.vm.$nextTick()
-    wrapper.vm.selectedWidget.config.mappings = [
-      '"ON command":"OFF command"=ON=icon'
-    ]
+    wrapper.vm.selectedWidget.config.mappings = ['"ON command":"OFF command"=ON=icon']
     wrapper.vm.validateWidgets()
     expect(lastDialogConfig).toBeFalsy()
   })
@@ -484,9 +481,7 @@ describe('SitemapEdit', () => {
 
     // configure a correct row, should not validate as wrong column set
     lastDialogConfig = null
-    wrapper.vm.selectedWidget.config.buttons = [
-      { row: 1, column: 'column', command: '1=Morning' }
-    ]
+    wrapper.vm.selectedWidget.config.buttons = [{ row: 1, column: 'column', command: '1=Morning' }]
     wrapper.vm.validateWidgets()
     expect(lastDialogConfig).toBeTruthy()
     expect(lastDialogConfig.content).toMatch(
@@ -495,9 +490,7 @@ describe('SitemapEdit', () => {
 
     // configure a correct column, should not validate as wrong command set
     lastDialogConfig = null
-    wrapper.vm.selectedWidget.config.buttons = [
-      { row: 1, column: 2, command: 'Morning' }
-    ]
+    wrapper.vm.selectedWidget.config.buttons = [{ row: 1, column: 2, command: 'Morning' }]
     wrapper.vm.validateWidgets()
     expect(lastDialogConfig).toBeTruthy()
     expect(lastDialogConfig.content).toMatch(

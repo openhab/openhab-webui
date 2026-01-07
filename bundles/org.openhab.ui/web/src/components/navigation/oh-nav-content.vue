@@ -1,15 +1,9 @@
 <template>
   <f7-nav-left v-if="backLink">
-    <f7-link v-if="!theme.md"
-             icon-f7="chevron_left"
-             :href="backLinkUrl"
-             @click="back">
+    <f7-link v-if="!theme.md" icon-f7="chevron_left" :href="backLinkUrl" @click="back">
       {{ backLink }}
     </f7-link>
-    <f7-link v-else
-             icon-f7="arrow_left_md"
-             :href="backLinkUrl"
-             @click="back" />
+    <f7-link v-else icon-f7="arrow_left_md" :href="backLinkUrl" @click="back" />
   </f7-nav-left>
   <!-- if large is enabled, we need both the normal and the large title, as the navbar might collapse when scrolling down -->
   <f7-nav-title>
@@ -22,16 +16,18 @@
   </f7-nav-title-large>
   <f7-nav-right>
     <developer-dock-icon />
-    <f7-link v-if="editable === false"
-             icon-f7="lock_fill"
-             icon-only
-             tooltip="Not editable through the UI" />
+    <f7-link
+      v-if="editable === false"
+      icon-f7="lock_fill"
+      icon-only
+      tooltip="Not editable through the UI" />
     <template v-if="saveLink && (editable === undefined || editable === true)">
-      <f7-link v-if="theme.md"
-               :href="saveLinkUrl"
-               @click="$emit('save')"
-               icon-md="material:save"
-               icon-only />
+      <f7-link
+        v-if="theme.md"
+        :href="saveLinkUrl"
+        @click="$emit('save')"
+        icon-md="material:save"
+        icon-only />
       <f7-link v-if="!theme.md" @click="$emit('save')">
         {{ saveLink }}
       </f7-link>

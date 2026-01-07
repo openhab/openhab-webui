@@ -1,10 +1,11 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar no-hairline>
-      <oh-nav-content :title="!ready ? '' : ((createMode ? 'Create sitemap' : 'Sitemap: ' + sitemap.config.label) + dirtyIndicator)"
-                      :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
-                      @save="save()"
-                      :f7router />
+      <oh-nav-content
+        :title="!ready ? '' : ((createMode ? 'Create sitemap' : 'Sitemap: ' + sitemap.config.label) + dirtyIndicator)"
+        :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
+        @save="save()"
+        :f7router />
     </f7-navbar>
     <f7-toolbar tabbar position="top">
       <f7-link @click="currentTab = 'tree'" :tab-link-active="currentTab === 'tree'">
@@ -15,27 +16,31 @@
       </f7-link>
     </f7-toolbar>
     <f7-toolbar bottom class="toolbar-details" v-if="currentTab === 'tree'">
-      <f7-link class="left" :class="{ disabled: selectedWidget == null }" @click="selectedWidget = null">
+      <f7-link
+        class="left"
+        :class="{ disabled: selectedWidget == null }"
+        @click="selectedWidget = null">
         Clear
       </f7-link>
       <div class="padding-right text-align-right">
         <label class="advanced-label">
-          <f7-checkbox style="margin-left: 5px; padding-right: 5px;" v-model:checked="sitemapIncludeItemName" />
+          <f7-checkbox
+            style="margin-left: 5px; padding-right: 5px;"
+            v-model:checked="sitemapIncludeItemName" />
           Show item name
         </label>
       </div>
       <div>
-        <f7-link v-if="selectedWidget"
-                 class="right details-link padding-right"
-                 ref="detailsLink"
-                 @click="detailsOpened = true"
-                 icon-f7="chevron_up" />
+        <f7-link
+          v-if="selectedWidget"
+          class="right details-link padding-right"
+          ref="detailsLink"
+          @click="detailsOpened = true"
+          icon-f7="chevron_up" />
       </div>
     </f7-toolbar>
     <f7-tabs class="sitemap-editor-tabs">
-      <f7-tab class="design"
-              id="tree"
-              :tab-active="currentTab === 'tree'">
+      <f7-tab class="design" id="tree" :tab-active="currentTab === 'tree'">
         <f7-block v-if="!ready" class="text-align-center">
           <f7-preloader />
           <div>Loading...</div>
@@ -44,81 +49,106 @@
           <f7-row v-if="currentTab === 'tree'">
             <!-- do not set column width as usual, instead use custom CSS because of https://github.com/openhab/openhab-webui/issues/2574 -->
             <f7-col>
-              <f7-block strong
-                        class="sitemap-tree"
-                        no-gap
-                        @click="clearSelection">
+              <f7-block strong class="sitemap-tree" no-gap @click="clearSelection">
                 <f7-treeview>
-                  <sitemap-treeview-item :widget="sitemap"
-                                         :includeItemName="sitemapIncludeItemName"
-                                         :itemsList="items"
-                                         @selected="selectWidget"
-                                         :selected="selectedWidget" />
+                  <sitemap-treeview-item
+                    :widget="sitemap"
+                    :includeItemName="sitemapIncludeItemName"
+                    :itemsList="items"
+                    @selected="selectWidget"
+                    :selected="selectedWidget" />
                 </f7-treeview>
               </f7-block>
             </f7-col>
             <f7-col class="details-pane">
               <f7-block v-if="selectedWidget" no-gap>
-                <widget-details :widget="selectedWidget"
-                                :createMode="createMode"
-                                @duplicate="duplicateWidget"
-                                @remove="removeWidget"
-                                @movedown="moveWidgetDown"
-                                @moveup="moveWidgetUp" />
+                <widget-details
+                  :widget="selectedWidget"
+                  :createMode="createMode"
+                  @duplicate="duplicateWidget"
+                  @remove="removeWidget"
+                  @movedown="moveWidgetDown"
+                  @moveup="moveWidgetUp" />
               </f7-block>
               <f7-block v-else>
-                <div class="padding text-align-center">
-                  Nothing selected
-                </div>
+                <div class="padding text-align-center">Nothing selected</div>
               </f7-block>
               <f7-block v-if="selectedWidget && selectedWidget.component !== 'Sitemap'">
                 <div><f7-block-title>Visibility</f7-block-title></div>
-                <attribute-details :widget="selectedWidget" attribute="visibility" placeholder="item_name operator value" />
+                <attribute-details
+                  :widget="selectedWidget"
+                  attribute="visibility"
+                  placeholder="item_name operator value" />
               </f7-block>
-              <f7-block v-if="selectedWidget && selectedWidget.component === 'Buttongrid' && !hasChildren">
+              <f7-block
+                v-if="selectedWidget && selectedWidget.component === 'Buttongrid' && !hasChildren">
                 <div><f7-block-title>Buttons</f7-block-title></div>
-                <attribute-details :widget="selectedWidget"
-                                   attribute="buttons"
-                                   placeholder="command = label = icon"
-                                   :fields="JSON.stringify([{row: {width: '10%', type: 'number', min: 1, placeholder: 'row'}},
+                <attribute-details
+                  :widget="selectedWidget"
+                  attribute="buttons"
+                  placeholder="command = label = icon"
+                  :fields="JSON.stringify([{row: {width: '10%', type: 'number', min: 1, placeholder: 'row'}},
                                                             {column: {width: '10%', type: 'number', min: 1, placeholder: 'col'}},
                                                             {command: {}}])" />
               </f7-block>
               <f7-block v-if="selectedWidget && selectedWidget.component === 'Switch'">
                 <div><f7-block-title>Mappings</f7-block-title></div>
-                <attribute-details :widget="selectedWidget" attribute="mappings" placeholder="command:releaseCommand = label = icon" />
+                <attribute-details
+                  :widget="selectedWidget"
+                  attribute="mappings"
+                  placeholder="command:releaseCommand = label = icon" />
               </f7-block>
               <f7-block v-if="selectedWidget && selectedWidget.component === 'Selection'">
                 <div><f7-block-title>Mappings</f7-block-title></div>
-                <attribute-details :widget="selectedWidget" attribute="mappings" placeholder="command = label = icon" />
+                <attribute-details
+                  :widget="selectedWidget"
+                  attribute="mappings"
+                  placeholder="command = label = icon" />
               </f7-block>
               <f7-block v-if="selectedWidget && selectedWidget.component !== 'Sitemap'">
                 <div><f7-block-title>Icon Rules</f7-block-title></div>
-                <attribute-details :widget="selectedWidget" attribute="iconrules" placeholder="item_name operator value = icon" />
+                <attribute-details
+                  :widget="selectedWidget"
+                  attribute="iconrules"
+                  placeholder="item_name operator value = icon" />
               </f7-block>
               <f7-block v-if="selectedWidget && selectedWidget.component !== 'Sitemap'">
                 <div><f7-block-title>Label Color</f7-block-title></div>
-                <attribute-details :widget="selectedWidget" attribute="labelcolor" placeholder="item_name operator value = color" />
+                <attribute-details
+                  :widget="selectedWidget"
+                  attribute="labelcolor"
+                  placeholder="item_name operator value = color" />
               </f7-block>
               <f7-block v-if="selectedWidget && canShowValue">
                 <div><f7-block-title>Value Color</f7-block-title></div>
-                <attribute-details :widget="selectedWidget" attribute="valuecolor" placeholder="item_name operator value = color" />
+                <attribute-details
+                  :widget="selectedWidget"
+                  attribute="valuecolor"
+                  placeholder="item_name operator value = color" />
               </f7-block>
               <f7-block v-if="selectedWidget && selectedWidget.component !== 'Sitemap'">
                 <div><f7-block-title>Icon Color</f7-block-title></div>
-                <attribute-details :widget="selectedWidget" attribute="iconcolor" placeholder="item_name operator value = color" />
+                <attribute-details
+                  :widget="selectedWidget"
+                  attribute="iconcolor"
+                  placeholder="item_name operator value = color" />
               </f7-block>
-              <f7-block v-if="selectedWidget && canAddChildren(selectedWidget) && selectedWidget.component !== 'Buttongrid'">
+              <f7-block
+                v-if="selectedWidget && canAddChildren(selectedWidget) && selectedWidget.component !== 'Buttongrid'">
                 <div><f7-block-title>Add Child Widget</f7-block-title></div>
                 <f7-card>
                   <f7-card-content>
                     <f7-list>
-                      <f7-list-button color="blue" :title="`Insert Widget Inside ${selectedWidget.component}`" actions-open="#widget-type-selection" />
+                      <f7-list-button
+                        color="blue"
+                        :title="`Insert Widget Inside ${selectedWidget.component}`"
+                        actions-open="#widget-type-selection" />
                     </f7-list>
                   </f7-card-content>
                 </f7-card>
               </f7-block>
-              <f7-block v-if="selectedWidget && canAddChildren(selectedWidget) && selectedWidget.component === 'Buttongrid'">
+              <f7-block
+                v-if="selectedWidget && canAddChildren(selectedWidget) && selectedWidget.component === 'Buttongrid'">
                 <div><f7-block-title>Add Button Widget</f7-block-title></div>
                 <f7-card>
                   <f7-card-content>
@@ -136,10 +166,11 @@
 
         <f7-actions ref="widgetTypeSelection" id="widget-type-selection" :grid="true">
           <f7-actions-group>
-            <f7-actions-button class="widget-button"
-                               v-for="widgetType in addableWidgetTypes"
-                               :key="widgetType.type"
-                               @click="addWidget(widgetType.type)">
+            <f7-actions-button
+              class="widget-button"
+              v-for="widgetType in addableWidgetTypes"
+              :key="widgetType.type"
+              @click="addWidget(widgetType.type)">
               <template #media>
                 <f7-icon :f7="widgetTypeIcon(widgetType.type)" />
               </template>
@@ -149,35 +180,41 @@
         </f7-actions>
       </f7-tab>
       <f7-tab id="code" :tab-active="currentTab === 'code'">
-        <sitemap-code v-if="currentTab === 'code'" :sitemap="sitemap" @updated="(value) => update(value)" />
+        <sitemap-code
+          v-if="currentTab === 'code'"
+          :sitemap="sitemap"
+          @updated="(value) => update(value)" />
       </f7-tab>
     </f7-tabs>
 
     <template #fixed>
-      <f7-fab v-if="canAddChildren(selectedWidget) && selectedWidget.component !== 'Buttongrid'"
-              class="add-to-sitemap-fab"
-              position="right-center"
-              color="blue"
-              @click="$refs.widgetTypeSelection.open()">
+      <f7-fab
+        v-if="canAddChildren(selectedWidget) && selectedWidget.component !== 'Buttongrid'"
+        class="add-to-sitemap-fab"
+        position="right-center"
+        color="blue"
+        @click="$refs.widgetTypeSelection.open()">
         <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
         <f7-icon ios="f7:multiply" md="material:close" aurora="f7:multiply" />
       </f7-fab>
-      <f7-fab v-if="canAddChildren(selectedWidget) && selectedWidget.component === 'Buttongrid'"
-              class="add-to-sitemap-fab"
-              position="right-center"
-              color="blue"
-              @click="addWidget('Button')">
+      <f7-fab
+        v-if="canAddChildren(selectedWidget) && selectedWidget.component === 'Buttongrid'"
+        class="add-to-sitemap-fab"
+        position="right-center"
+        color="blue"
+        @click="addWidget('Button')">
         <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
         <f7-icon ios="f7:multiply" md="material:close" aurora="f7:multiply" />
       </f7-fab>
     </template>
-    <f7-sheet v-if="currentTab === 'tree'"
-              ref="detailsSheet"
-              class="sitemap-details-sheet"
-              :backdrop="false"
-              :close-on-escape="true"
-              :opened="detailsOpened"
-              @sheet:closed="detailsOpened = false">
+    <f7-sheet
+      v-if="currentTab === 'tree'"
+      ref="detailsSheet"
+      class="sitemap-details-sheet"
+      :backdrop="false"
+      :close-on-escape="true"
+      :opened="detailsOpened"
+      @sheet:closed="detailsOpened = false">
       <f7-page>
         <f7-toolbar tabbar bottom scrollable>
           <div class="left">
@@ -185,81 +222,103 @@
               <f7-icon f7="chevron_down" />
             </f7-link>
           </div>
-          <f7-link class="padding-left padding-right" :tab-link-active="detailsTab === 'widget'" @click="detailsTab = 'widget'">
+          <f7-link
+            class="padding-left padding-right"
+            :tab-link-active="detailsTab === 'widget'"
+            @click="detailsTab = 'widget'">
             Widget
           </f7-link>
-          <f7-link v-if="selectedWidget && selectedWidget.component !== 'Sitemap'"
-                   class="padding-left padding-right"
-                   :tab-link-active="detailsTab === 'visibility'"
-                   @click="detailsTab = 'visibility'">
+          <f7-link
+            v-if="selectedWidget && selectedWidget.component !== 'Sitemap'"
+            class="padding-left padding-right"
+            :tab-link-active="detailsTab === 'visibility'"
+            @click="detailsTab = 'visibility'">
             Visibility
           </f7-link>
-          <f7-link v-if="selectedWidget && selectedWidget.component === 'Buttongrid' && !hasChildren"
-                   class="padding-left padding-right"
-                   :tab-link-active="detailsTab === 'buttons'"
-                   @click="detailsTab = 'buttons'">
+          <f7-link
+            v-if="selectedWidget && selectedWidget.component === 'Buttongrid' && !hasChildren"
+            class="padding-left padding-right"
+            :tab-link-active="detailsTab === 'buttons'"
+            @click="detailsTab = 'buttons'">
             Buttons
           </f7-link>
-          <f7-link v-if="selectedWidget && ['Switch', 'Selection'].includes(selectedWidget.component) >= 0"
-                   class="padding-left padding-right"
-                   :tab-link-active="detailsTab === 'mappings'"
-                   @click="detailsTab = 'mappings'">
+          <f7-link
+            v-if="selectedWidget && ['Switch', 'Selection'].includes(selectedWidget.component) >= 0"
+            class="padding-left padding-right"
+            :tab-link-active="detailsTab === 'mappings'"
+            @click="detailsTab = 'mappings'">
             Mappings
           </f7-link>
-          <f7-link v-if="selectedWidget && selectedWidget.component !== 'Sitemap'"
-                   class="padding-left padding-right"
-                   :tab-link-active="detailsTab === 'icons'"
-                   @click="detailsTab = 'icons'">
+          <f7-link
+            v-if="selectedWidget && selectedWidget.component !== 'Sitemap'"
+            class="padding-left padding-right"
+            :tab-link-active="detailsTab === 'icons'"
+            @click="detailsTab = 'icons'">
             Icons
           </f7-link>
-          <f7-link v-if="selectedWidget && selectedWidget.component !== 'Sitemap'"
-                   class="padding-left padding-right"
-                   :tab-link-active="detailsTab === 'colors'"
-                   @click="detailsTab = 'colors'">
+          <f7-link
+            v-if="selectedWidget && selectedWidget.component !== 'Sitemap'"
+            class="padding-left padding-right"
+            :tab-link-active="detailsTab === 'colors'"
+            @click="detailsTab = 'colors'">
             Colors
           </f7-link>
         </f7-toolbar>
         <f7-block style="margin-bottom: 6rem" v-if="selectedWidget && detailsTab === 'widget'">
-          <widget-details :widget="selectedWidget"
-                          :createMode="createMode"
-                          @duplicate="duplicateWidget"
-                          @remove="removeWidget"
-                          @movedown="moveWidgetDown"
-                          @moveup="moveWidgetUp" />
+          <widget-details
+            :widget="selectedWidget"
+            :createMode="createMode"
+            @duplicate="duplicateWidget"
+            @remove="removeWidget"
+            @movedown="moveWidgetDown"
+            @moveup="moveWidgetUp" />
         </f7-block>
         <f7-block style="margin-bottom: 6rem" v-if="selectedWidget && detailsTab === 'visibility'">
-          <attribute-details :widget="selectedWidget"
-                             attribute="visibility"
-                             placeholder="item_name operator value" />
+          <attribute-details
+            :widget="selectedWidget"
+            attribute="visibility"
+            placeholder="item_name operator value" />
         </f7-block>
         <f7-block style="margin-bottom: 6rem" v-if="selectedWidget && detailsTab === 'buttons'">
-          <attribute-details :widget="selectedWidget"
-                             attribute="buttons"
-                             placeholder="command = label = icon"
-                             :fields="JSON.stringify([{row: {width: '10%', type: 'number', min: 1, placeholder: 'row'}},
+          <attribute-details
+            :widget="selectedWidget"
+            attribute="buttons"
+            placeholder="command = label = icon"
+            :fields="JSON.stringify([{row: {width: '10%', type: 'number', min: 1, placeholder: 'row'}},
                                                       {column: {width: '10%', type: 'number', min: 1, placeholder: 'col'}},
                                                       {command: {}}])" />
         </f7-block>
         <f7-block style="margin-bottom: 6rem" v-if="selectedWidget && detailsTab === 'mappings'">
-          <attribute-details :widget="selectedWidget"
-                             attribute="mappings"
-                             :placeholder="selectedWidget.component === 'Switch' ? 'cmd:releaseCmd = label = icon' : 'command = label = icon'" />
+          <attribute-details
+            :widget="selectedWidget"
+            attribute="mappings"
+            :placeholder="selectedWidget.component === 'Switch' ? 'cmd:releaseCmd = label = icon' : 'command = label = icon'" />
         </f7-block>
         <f7-block style="margin-bottom: 6rem" v-if="selectedWidget && detailsTab === 'icons'">
-          <attribute-details :widget="selectedWidget" attribute="iconrules" placeholder="item_name operator value = icon" />
+          <attribute-details
+            :widget="selectedWidget"
+            attribute="iconrules"
+            placeholder="item_name operator value = icon" />
         </f7-block>
         <f7-block style="margin-bottom: 6rem" v-if="selectedWidget && detailsTab === 'colors'">
           <div><f7-block-title>Label Color</f7-block-title></div>
-          <attribute-details :widget="selectedWidget" attribute="labelcolor" placeholder="item_name operator value = color" />
+          <attribute-details
+            :widget="selectedWidget"
+            attribute="labelcolor"
+            placeholder="item_name operator value = color" />
           <div v-if="canShowValue">
             <f7-block-title>Value Color</f7-block-title>
           </div>
-          <attribute-details v-if="canShowValue"
-                             :widget="selectedWidget"
-                             attribute="valuecolor"
-                             placeholder="item_name operator value = color" />
+          <attribute-details
+            v-if="canShowValue"
+            :widget="selectedWidget"
+            attribute="valuecolor"
+            placeholder="item_name operator value = color" />
           <div><f7-block-title>Icon Color</f7-block-title></div>
-          <attribute-details :widget="selectedWidget" attribute="iconcolor" placeholder="item_name operator value = color" />
+          <attribute-details
+            :widget="selectedWidget"
+            attribute="iconcolor"
+            placeholder="item_name operator value = color" />
         </f7-block>
       </f7-page>
     </f7-sheet>

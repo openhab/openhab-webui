@@ -77,7 +77,9 @@ interface ScreenInfo {
  *
  * @param properties
  */
-export function useWidgetExpression (properties: { context?: WidgetContext, props?: UIComponentProps } = {}) {
+export function useWidgetExpression(
+  properties: { context?: WidgetContext; props?: UIComponentProps } = {}
+) {
   // imports
   const userStore = useUserStore()
   const uiOptionsStore = useUIOptionsStore()
@@ -110,7 +112,7 @@ export function useWidgetExpression (properties: { context?: WidgetContext, prop
   })
 
   // methods
-  function getAllVars (context: WidgetContext): Record<string, any> {
+  function getAllVars(context: WidgetContext): Record<string, any> {
     const vars: Record<string, any> = {}
     if (context.vars) {
       for (const varKey in context.vars) {
@@ -141,7 +143,12 @@ export function useWidgetExpression (properties: { context?: WidgetContext, prop
    * @param props the props to make available to the expression (not required if already provided as composable property)
    * @returns the result of the expression evaluation
    */
-  function evaluateExpression (key: string, value: any, context?: WidgetContext, props?: UIComponentProps): any {
+  function evaluateExpression(
+    key: string,
+    value: any,
+    context?: WidgetContext,
+    props?: UIComponentProps
+  ): any {
     if (value === null) return null
     const ctx = context || properties.context
     if (!ctx) return null
@@ -178,7 +185,12 @@ export function useWidgetExpression (properties: { context?: WidgetContext, prop
     } else if (typeof value === 'object' && !Array.isArray(value)) {
       const evalObj: Record<string, any> = {}
       for (const objKey in value) {
-        evalObj[objKey] = evaluateExpression(key + '.' + objKey, value[objKey], ctx, props || properties?.props)
+        evalObj[objKey] = evaluateExpression(
+          key + '.' + objKey,
+          value[objKey],
+          ctx,
+          props || properties?.props
+        )
       }
       return evalObj
     } else if (typeof value === 'object' && Array.isArray(value)) {

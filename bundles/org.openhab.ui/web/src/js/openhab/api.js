@@ -2,17 +2,15 @@ import { request } from 'framework7'
 
 import { getAccessToken, getTokenInCustomHeader, getBasicCredentials } from './auth'
 
-async function wrapPromise (f7promise) {
+async function wrapPromise(f7promise) {
   return new Promise((resolve, reject) => {
-    f7promise
-      .then((data) => resolve(data.data))
-      .catch((err) => reject(err.message || err.status))
+    f7promise.then(data => resolve(data.data)).catch(err => reject(err.message || err.status))
   })
 }
 
 request.setup({
   xhrFields: { withCredentials: true },
-  beforeSend (xhr) {
+  beforeSend(xhr) {
     if (getAccessToken() && xhr.requestParameters.method !== 'HEAD') {
       if (getTokenInCustomHeader()) {
         xhr.setRequestHeader('X-OPENHAB-TOKEN', getAccessToken())
@@ -28,13 +26,13 @@ request.setup({
 })
 
 export default {
-  async request (parameters) {
+  async request(parameters) {
     return request(parameters)
   },
-  async get (uri, data) {
+  async get(uri, data) {
     return wrapPromise(request.json(uri, data))
   },
-  async getPlain (uri, data, contentType, responseType, headers) {
+  async getPlain(uri, data, contentType, responseType, headers) {
     return wrapPromise(
       request({
         method: 'GET',
@@ -47,10 +45,10 @@ export default {
       })
     )
   },
-  async post (uri, data, dataType) {
+  async post(uri, data, dataType) {
     return wrapPromise(request.postJSON(uri, data, dataType))
   },
-  async postPlain (uri, data, dataType, contentType, headers) {
+  async postPlain(uri, data, dataType, contentType, headers) {
     return wrapPromise(
       request({
         method: 'POST',
@@ -63,7 +61,7 @@ export default {
       })
     )
   },
-  async put (uri, data) {
+  async put(uri, data) {
     return wrapPromise(
       request({
         method: 'PUT',
@@ -75,7 +73,7 @@ export default {
       })
     )
   },
-  async putPlain (uri, data, dataType, contentType) {
+  async putPlain(uri, data, dataType, contentType) {
     return wrapPromise(
       request({
         method: 'PUT',
@@ -88,7 +86,7 @@ export default {
       })
     )
   },
-  async head (uri) {
+  async head(uri) {
     return wrapPromise(
       request({
         method: 'HEAD',
@@ -96,7 +94,7 @@ export default {
       })
     )
   },
-  async delete (uri, data) {
+  async delete(uri, data) {
     return wrapPromise(
       request({
         method: 'DELETE',

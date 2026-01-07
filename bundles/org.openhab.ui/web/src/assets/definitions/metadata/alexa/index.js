@@ -4,7 +4,11 @@ import deviceTypes, { defaultParameters } from './devicetypes.js'
 const classes = {}
 
 for (const type of Object.keys(deviceTypes)) {
-  const { defaultAttributes = [], supportedAttributes = [], supportsGroup = true } = deviceTypes[type]
+  const {
+    defaultAttributes = [],
+    supportedAttributes = [],
+    supportsGroup = true
+  } = deviceTypes[type]
   classes[type] = {}
 
   if (supportsGroup) {
@@ -21,10 +25,18 @@ for (const type of Object.keys(deviceTypes)) {
   }
 
   for (const attribute of supportedAttributes) {
-    const { itemTypes = [], customTypes = [], parameters = [], ...properties } = deviceAttributes[attribute]
+    const {
+      itemTypes = [],
+      customTypes = [],
+      parameters = [],
+      ...properties
+    } = deviceAttributes[attribute]
     classes[`${type}.${attribute}`] = {}
     for (const itemType of [...itemTypes, ...customTypes]) {
-      classes[`${type}.${attribute}`][itemType] = { parameters: [defaultParameters].concat(parameters), ...properties }
+      classes[`${type}.${attribute}`][itemType] = {
+        parameters: [defaultParameters].concat(parameters),
+        ...properties
+      }
     }
   }
 }

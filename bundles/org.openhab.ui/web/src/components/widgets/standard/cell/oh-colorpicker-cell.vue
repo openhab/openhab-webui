@@ -1,20 +1,28 @@
 <template>
   <oh-cell :context="context" :no-swipe-to-close="true" :state="state">
     <f7-row>
-      <f7-col width="100" class="cell-colorpicker display-flex flex-direction-column justify-content-center">
+      <f7-col
+        width="100"
+        class="cell-colorpicker display-flex flex-direction-column justify-content-center">
         <slot name="beforeColorpicker">
-          <div v-if="context.component.slots" class="margin-top display-flex flex-direction-column justify-content-center">
-            <generic-widget-component v-for="(slotComponent, idx) in context.component.slots.beforeColorpicker"
-                                      :context="childContext(slotComponent)"
-                                      :key="'beforeColorpicker-' + idx" />
+          <div
+            v-if="context.component.slots"
+            class="margin-top display-flex flex-direction-column justify-content-center">
+            <generic-widget-component
+              v-for="(slotComponent, idx) in context.component.slots.beforeColorpicker"
+              :context="childContext(slotComponent)"
+              :key="'beforeColorpicker-' + idx" />
           </div>
         </slot>
         <oh-colorpicker :context="colorpickerContext" />
         <slot name="afterColorpicker">
-          <div v-if="context.component.slots" class="margin-top display-flex flex-direction-column justify-content-center">
-            <generic-widget-component v-for="(slotComponent, idx) in context.component.slots.afterColorpicker"
-                                      :context="childContext(slotComponent)"
-                                      :key="'afterColorpicker-' + idx" />
+          <div
+            v-if="context.component.slots"
+            class="margin-top display-flex flex-direction-column justify-content-center">
+            <generic-widget-component
+              v-for="(slotComponent, idx) in context.component.slots.afterColorpicker"
+              :context="childContext(slotComponent)"
+              :key="'afterColorpicker-' + idx" />
           </div>
         </slot>
       </f7-col>

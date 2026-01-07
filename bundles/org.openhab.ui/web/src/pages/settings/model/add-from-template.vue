@@ -1,51 +1,48 @@
 <template>
   <f7-page>
     <f7-navbar>
-      <oh-nav-content title="Add Locations from Template"
-                      save-link="Add"
-                      @save="add()"
-                      :f7router />
+      <oh-nav-content title="Add Locations from Template" save-link="Add" @save="add()" :f7router />
     </f7-navbar>
 
     <f7-block class="block-narrow">
       <f7-col>
         <f7-block class="no-padding">
-          <f7-block-title class="padding-horizontal">
-            Location Template
-          </f7-block-title>
+          <f7-block-title class="padding-horizontal"> Location Template </f7-block-title>
           <f7-list>
-            <f7-list-item radio
-                          value="0"
-                          @change="onSelectTemplate(0)"
-                          title="One Bedroom Apartment"
-                          name="select-template" />
-            <f7-list-item radio
-                          value="1"
-                          @change="onSelectTemplate(1)"
-                          title="One Story House"
-                          name="select-template" />
-            <f7-list-item radio
-                          value="2"
-                          @change="onSelectTemplate(2)"
-                          title="Two Story House"
-                          name="select-template" />
+            <f7-list-item
+              radio
+              value="0"
+              @change="onSelectTemplate(0)"
+              title="One Bedroom Apartment"
+              name="select-template" />
+            <f7-list-item
+              radio
+              value="1"
+              @change="onSelectTemplate(1)"
+              title="One Story House"
+              name="select-template" />
+            <f7-list-item
+              radio
+              value="2"
+              @change="onSelectTemplate(2)"
+              title="Two Story House"
+              name="select-template" />
           </f7-list>
           <f7-block-footer class="padding-left padding-right">
             Select the template that best matches the description of your property.
           </f7-block-footer>
         </f7-block>
         <f7-block class="no-padding">
-          <f7-block-title class="padding-horizontal">
-            Item Name Prefix
-          </f7-block-title>
+          <f7-block-title class="padding-horizontal"> Item Name Prefix </f7-block-title>
           <f7-list>
-            <f7-list-input label="Prefix"
-                           type="text"
-                           placeholder="item prefix"
-                           @input="onPrefixInput"
-                           clear-button
-                           :error-message="prefixErrorMessage"
-                           :error-message-force="!!prefixErrorMessage" />
+            <f7-list-input
+              label="Prefix"
+              type="text"
+              placeholder="item prefix"
+              @input="onPrefixInput"
+              clear-button
+              :error-message="prefixErrorMessage"
+              :error-message-force="!!prefixErrorMessage" />
           </f7-list>
           <f7-block-footer class="padding-horizontal">
             Add a prefix to each created item's name (optional, default is 'l')
@@ -53,28 +50,33 @@
         </f7-block>
         <f7-block v-if="selectedTemplate !== null" class="semantic-tree-wrapper">
           <f7-block-footer class="padding-left padding-right">
-            Select the locations to add to your model (you may add others from the model page at a later time).
+            Select the locations to add to your model (you may add others from the model page at a
+            later time).
           </f7-block-footer>
           <f7-block class="semantic-tree">
-            <model-treeview class="model-picker-treeview"
-                            :rootNodes="rootLocations"
-                            :selected="selectedItem"
-                            @selected="selectItem"
-                            @checked="checkItem" />
+            <model-treeview
+              class="model-picker-treeview"
+              :rootNodes="rootLocations"
+              :selected="selectedItem"
+              @selected="selectItem"
+              @checked="checkItem" />
           </f7-block>
         </f7-block>
       </f7-col>
     </f7-block>
 
-    <div v-if="selectedTemplate !== null && (checkedItems.length > 0)" class="if-aurora display-flex justify-content-center margin padding">
+    <div
+      v-if="selectedTemplate !== null && (checkedItems.length > 0)"
+      class="if-aurora display-flex justify-content-center margin padding">
       <div class="flex-shrink-0">
-        <f7-button class="padding-left padding-right"
-                   style="width: 150px"
-                   color="blue"
-                   large
-                   raised
-                   fill
-                   @click="add">
+        <f7-button
+          class="padding-left padding-right"
+          style="width: 150px"
+          color="blue"
+          large
+          raised
+          fill
+          @click="add">
           Add to Model
         </f7-button>
       </div>

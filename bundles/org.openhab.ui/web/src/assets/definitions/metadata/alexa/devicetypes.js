@@ -60,8 +60,11 @@ const thermostatAttributes = [
 
 const blindParameters = (_, item) => {
   const attributes = ['PositionState', 'TiltAngle']
-  const metadata = item.members.map((mbr) => mbr.metadata?.alexa?.value).filter(Boolean).join(',')
-  return attributes.every((attr) => metadata.includes(attr)) ? [p.primaryControl()] : []
+  const metadata = item.members
+    .map(mbr => mbr.metadata?.alexa?.value)
+    .filter(Boolean)
+    .join(',')
+  return attributes.every(attr => metadata.includes(attr)) ? [p.primaryControl()] : []
 }
 
 export const defaultParameters = (itemType, item) => {
@@ -102,7 +105,13 @@ export default {
     ]
   },
   AutomobileAccessory: {
-    supportedAttributes: ['BatteryLevel', 'CameraStream', 'FanSpeed', 'PowerState', ...genericAttributes]
+    supportedAttributes: [
+      'BatteryLevel',
+      'CameraStream',
+      'FanSpeed',
+      'PowerState',
+      ...genericAttributes
+    ]
   },
   Awning: {
     defaultAttributes: ['PositionState', 'OpenState'],
@@ -189,7 +198,13 @@ export default {
   },
   Lock: {
     defaultAttributes: ['LockState'],
-    supportedAttributes: ['LockState', 'TargetLockState', 'CurrentLockState', 'BatteryLevel', ...genericAttributes]
+    supportedAttributes: [
+      'LockState',
+      'TargetLockState',
+      'CurrentLockState',
+      'BatteryLevel',
+      ...genericAttributes
+    ]
   },
   Microwave: {
     defaultAttributes: ['PowerState'],
@@ -311,6 +326,6 @@ export default {
     supportedAttributes: mobileDeviceAttributes
   },
   Other: {
-    supportedAttributes: Object.keys(attributes).filter((attr) => attr !== 'Scene')
+    supportedAttributes: Object.keys(attributes).filter(attr => attr !== 'Scene')
   }
 }

@@ -1,59 +1,59 @@
 <template>
   <f7-block class="developer-sidebar">
     <f7-row :inner="false" v-if="!theme.md">
-      <f7-searchbar ref="searchbar"
-                    style="width: 100%"
-                    custom-search
-                    placeholder="Search and Pin"
-                    :backdrop="false"
-                    @searchbar:search="search"
-                    @searchbar:clear="clearSearch" />
+      <f7-searchbar
+        ref="searchbar"
+        style="width: 100%"
+        custom-search
+        placeholder="Search and Pin"
+        :backdrop="false"
+        @searchbar:search="search"
+        @searchbar:clear="clearSearch" />
     </f7-row>
     <f7-row style="width: 100%" :inner="false" v-else>
-      <f7-searchbar ref="searchbar"
-                    custom-search
-                    placeholder="Search and Pin"
-                    :backdrop="false"
-                    @searchbar:search="search"
-                    @searchbar:clear="clearSearch" />
+      <f7-searchbar
+        ref="searchbar"
+        custom-search
+        placeholder="Search and Pin"
+        :backdrop="false"
+        @searchbar:search="search"
+        @searchbar:clear="clearSearch" />
     </f7-row>
     <div v-if="!searching" class="developer-sidebar-content">
       <div v-if="activeToolTab === 'pin'">
         <f7-block class="no-margin no-padding">
-          <f7-block-title class="padding-horizontal" medium>
-            Pinned Objects
-          </f7-block-title>
+          <f7-block-title class="padding-horizontal" medium> Pinned Objects </f7-block-title>
         </f7-block>
         <f7-list v-if="Object.keys(developerStore.pinCollections).length > 0 || isAnythingPinned">
-          <f7-list-item accordion-item
-                        title="Saved Pins"
-                        ref="pinCollectionsAccordion">
+          <f7-list-item accordion-item title="Saved Pins" ref="pinCollectionsAccordion">
             <f7-accordion-content>
               <f7-list>
-                <f7-list-input v-if="isAnythingPinned"
-                               type="text"
-                               :input="false"
-                               clear-button>
+                <f7-list-input v-if="isAnythingPinned" type="text" :input="false" clear-button>
                   <template #input>
-                    <input type="text"
-                           placeholder="Save current pins as"
-                           v-model="newCollectionName"
-                           @keyup.enter="savePinCollection">
+                    <input
+                      type="text"
+                      placeholder="Save current pins as"
+                      v-model="newCollectionName"
+                      @keyup.enter="savePinCollection" />
                   </template>
                 </f7-list-input>
               </f7-list>
-              <f7-list v-if="developerStore.sortedCollectionNames.length > 0" class="pin-collections">
+              <f7-list
+                v-if="developerStore.sortedCollectionNames.length > 0"
+                class="pin-collections">
                 <f7-list-item group-title title="Saved Pin Collections" class="padding-vertical" />
-                <f7-list-item v-for="collectionName in developerStore.sortedCollectionNames"
-                              :key="collectionName"
-                              :title="collectionName"
-                              :link="true"
-                              @click="loadPinCollection(collectionName)">
+                <f7-list-item
+                  v-for="collectionName in developerStore.sortedCollectionNames"
+                  :key="collectionName"
+                  :title="collectionName"
+                  :link="true"
+                  @click="loadPinCollection(collectionName)">
                   <template #after>
-                    <f7-link color="red"
-                             icon-f7="trash"
-                             tooltip="Delete Collection"
-                             @click.stop="deletePinCollection(collectionName)" />
+                    <f7-link
+                      color="red"
+                      icon-f7="trash"
+                      tooltip="Delete Collection"
+                      @click.stop="deletePinCollection(collectionName)" />
                   </template>
                 </f7-list-item>
               </f7-list>
@@ -62,12 +62,11 @@
         </f7-list>
         <f7-block class="no-margin no-padding" v-if="!isAnythingPinned">
           <p class="padding-horizontal">
-            Use the search box above or the button below to temporarily pin objects here for quick access.
+            Use the search box above or the button below to temporarily pin objects here for quick
+            access.
           </p>
           <p class="padding-horizontal">
-            <f7-button fill color="blue" @click="openModelPicker">
-              Pin Items from Model
-            </f7-button>
+            <f7-button fill color="blue" @click="openModelPicker"> Pin Items from Model </f7-button>
           </p>
         </f7-block>
         <!-- Pinned Items -->
@@ -76,45 +75,48 @@
             <span>Pinned Items</span>
             <span style="margin-left: auto">
               <!-- <f7-link color="gray" icon-f7="eye" icon-size="14"></f7-link> -->
-              <f7-link color="gray"
-                       icon-f7="list_bullet_indent"
-                       icon-size="14"
-                       @click="openModelPicker" />
-              <f7-link color="gray"
-                       icon-f7="multiply"
-                       icon-size="14"
-                       @click="unpinAll('items')" />
+              <f7-link
+                color="gray"
+                icon-f7="list_bullet_indent"
+                icon-size="14"
+                @click="openModelPicker" />
+              <f7-link color="gray" icon-f7="multiply" icon-size="14" @click="unpinAll('items')" />
             </span>
           </f7-block-title>
           <f7-list>
             <ul>
-              <item v-for="item in developerStore.pinnedObjects.items"
-                    :key="item.name"
-                    link=""
-                    :item="item"
-                    :context="context"
-                    :no-icon="true"
-                    :no-type="true"
-                    :no-tags="true"
-                    @click="(evt) => showItem(evt, item)">
+              <item
+                v-for="item in developerStore.pinnedObjects.items"
+                :key="item.name"
+                link=""
+                :item="item"
+                :context="context"
+                :no-icon="true"
+                :no-type="true"
+                :no-tags="true"
+                @click="(evt) => showItem(evt, item)">
                 <template #footer>
-                  <div class="display-flex align-items-flex-end justify-content-flex-end" style="margin-top: 3px">
+                  <div
+                    class="display-flex align-items-flex-end justify-content-flex-end"
+                    style="margin-top: 3px">
                     <f7-link color="gray" class="margin-right itemlist-actions">
                       <clipboard-icon :value="item.name" :size="18" tooltip="Copy Item name" />
                     </f7-link>
-                    <f7-link class="margin-right itemlist-actions"
-                             color="gray"
-                             icon-f7="pencil"
-                             icon-size="18"
-                             tooltip="Edit"
-                             :href="'/settings/items/' + item.name"
-                             :animate="false" />
-                    <f7-link class="itemlist-actions"
-                             color="blue"
-                             icon-f7="pin_fill"
-                             icon-size="18"
-                             tooltip="Unpin"
-                             @click="unpin('items', item, 'name')" />
+                    <f7-link
+                      class="margin-right itemlist-actions"
+                      color="gray"
+                      icon-f7="pencil"
+                      icon-size="18"
+                      tooltip="Edit"
+                      :href="'/settings/items/' + item.name"
+                      :animate="false" />
+                    <f7-link
+                      class="itemlist-actions"
+                      color="blue"
+                      icon-f7="pin_fill"
+                      icon-size="18"
+                      tooltip="Unpin"
+                      @click="unpin('items', item, 'name')" />
                   </div>
                 </template>
               </item>
@@ -127,48 +129,52 @@
           <f7-block-title class="padding-horizontal display-flex">
             <span>Pinned Things</span>
             <span style="margin-left: auto">
-              <f7-link color="gray"
-                       icon-f7="multiply"
-                       icon-size="14"
-                       @click="unpinAll('things')" />
+              <f7-link color="gray" icon-f7="multiply" icon-size="14" @click="unpinAll('things')" />
             </span>
           </f7-block-title>
           <f7-list media-list>
             <ul>
-              <f7-list-item v-for="thing in developerStore.pinnedObjects.things"
-                            :key="thing.UID"
-                            media-item
-                            :title="thing.label"
-                            :footer="thing.UID">
+              <f7-list-item
+                v-for="thing in developerStore.pinnedObjects.things"
+                :key="thing.UID"
+                media-item
+                :title="thing.label"
+                :footer="thing.UID">
                 <template #after>
-                  <f7-badge :color="thingStatusBadgeColor(thing.statusInfo)"
-                            :tooltip="thing.statusInfo.description">
+                  <f7-badge
+                    :color="thingStatusBadgeColor(thing.statusInfo)"
+                    :tooltip="thing.statusInfo.description">
                     {{ thingStatusBadgeText(thing.statusInfo) }}
                   </f7-badge>
                 </template>
                 <template #footer>
-                  <div class="display-flex align-items-flex-end justify-content-flex-end" style="margin-top: 3px">
+                  <div
+                    class="display-flex align-items-flex-end justify-content-flex-end"
+                    style="margin-top: 3px">
                     <f7-link color="gray" class="margin-right">
                       <clipboard-icon :value="thing.UID" :size="18" tooltip="Copy Thing UID" />
                     </f7-link>
-                    <f7-link class="margin-right"
-                             :icon-color="thing.statusInfo.statusDetail === 'DISABLED' ? 'orange' : 'gray'"
-                             :tooltip="thing.statusInfo.statusDetail === 'DISABLED' ? 'Enable' : 'Disable'"
-                             icon-f7="pause_circle"
-                             icon-size="18"
-                             @click="toggleThingDisabled(thing)" />
-                    <f7-link class="margin-right"
-                             color="gray"
-                             icon-f7="pencil"
-                             icon-size="18"
-                             tooltip="Edit"
-                             :href="'/settings/things/' + thing.UID"
-                             :animate="false" />
-                    <f7-link color="blue"
-                             icon-f7="pin_fill"
-                             icon-size="18"
-                             tooltip="Unpin"
-                             @click="unpin('things', thing, 'UID')" />
+                    <f7-link
+                      class="margin-right"
+                      :icon-color="thing.statusInfo.statusDetail === 'DISABLED' ? 'orange' : 'gray'"
+                      :tooltip="thing.statusInfo.statusDetail === 'DISABLED' ? 'Enable' : 'Disable'"
+                      icon-f7="pause_circle"
+                      icon-size="18"
+                      @click="toggleThingDisabled(thing)" />
+                    <f7-link
+                      class="margin-right"
+                      color="gray"
+                      icon-f7="pencil"
+                      icon-size="18"
+                      tooltip="Edit"
+                      :href="'/settings/things/' + thing.UID"
+                      :animate="false" />
+                    <f7-link
+                      color="blue"
+                      icon-f7="pin_fill"
+                      icon-size="18"
+                      tooltip="Unpin"
+                      @click="unpin('things', thing, 'UID')" />
                   </div>
                 </template>
               </f7-list-item>
@@ -176,59 +182,63 @@
           </f7-list>
         </f7-block>
         <!-- Pinned Rules -->
-        <f7-block class="no-margin no-padding"
-                  v-if="developerStore.pinnedObjects.rules.length">
+        <f7-block class="no-margin no-padding" v-if="developerStore.pinnedObjects.rules.length">
           <f7-block-title class="padding-horizontal display-flex">
             <span>Pinned Rules</span>
             <span style="margin-left: auto">
-              <f7-link color="gray"
-                       icon-f7="multiply"
-                       icon-size="14"
-                       @click="unpinAll('rules')" />
+              <f7-link color="gray" icon-f7="multiply" icon-size="14" @click="unpinAll('rules')" />
             </span>
           </f7-block-title>
           <f7-list media-list>
             <ul>
-              <f7-list-item v-for="rule in developerStore.pinnedObjects.rules"
-                            :key="rule.uid"
-                            media-item
-                            :title="rule.name"
-                            :footer="rule.uid">
+              <f7-list-item
+                v-for="rule in developerStore.pinnedObjects.rules"
+                :key="rule.uid"
+                media-item
+                :title="rule.name"
+                :footer="rule.uid">
                 <template #after>
-                  <f7-badge :color="ruleStatusBadgeColor(rule.status)"
-                            :tooltip="rule.status.description">
+                  <f7-badge
+                    :color="ruleStatusBadgeColor(rule.status)"
+                    :tooltip="rule.status.description">
                     {{ ruleStatusBadgeText(rule.status) }}
                   </f7-badge>
                 </template>
                 <template #footer>
-                  <div class="display-flex align-items-flex-end justify-content-flex-end" style="margin-top: 3px">
+                  <div
+                    class="display-flex align-items-flex-end justify-content-flex-end"
+                    style="margin-top: 3px">
                     <f7-link color="gray" class="margin-right">
                       <clipboard-icon :value="rule.uid" :size="18" tooltip="Copy Rule UID" />
                     </f7-link>
-                    <f7-link class="margin-right"
-                             :icon-color="rule.status.statusDetail === 'DISABLED' ? 'orange' : 'gray'"
-                             :tooltip="rule.status.statusDetail === 'DISABLED' ? 'Enable' : 'Disable'"
-                             icon-f7="pause_circle"
-                             icon-size="18"
-                             @click="toggleRuleDisabled(rule)" />
-                    <f7-link class="margin-right"
-                             :color="rule.status.status === 'IDLE' ? 'blue' : 'gray'"
-                             icon-f7="play"
-                             icon-size="18"
-                             tooltip="Run"
-                             @click="runRuleNow(rule)" />
-                    <f7-link class="margin-right"
-                             color="gray"
-                             icon-f7="pencil"
-                             icon-size="18"
-                             tooltip="Edit"
-                             :href="'/settings/' + (rule.tags.indexOf('Script') >= 0 ? 'scripts' : 'rules') + '/' + rule.uid"
-                             :animate="false" />
-                    <f7-link color="blue"
-                             icon-f7="pin_fill"
-                             icon-size="18"
-                             tooltip="Unpin"
-                             @click="unpin('rules', rule, 'uid')" />
+                    <f7-link
+                      class="margin-right"
+                      :icon-color="rule.status.statusDetail === 'DISABLED' ? 'orange' : 'gray'"
+                      :tooltip="rule.status.statusDetail === 'DISABLED' ? 'Enable' : 'Disable'"
+                      icon-f7="pause_circle"
+                      icon-size="18"
+                      @click="toggleRuleDisabled(rule)" />
+                    <f7-link
+                      class="margin-right"
+                      :color="rule.status.status === 'IDLE' ? 'blue' : 'gray'"
+                      icon-f7="play"
+                      icon-size="18"
+                      tooltip="Run"
+                      @click="runRuleNow(rule)" />
+                    <f7-link
+                      class="margin-right"
+                      color="gray"
+                      icon-f7="pencil"
+                      icon-size="18"
+                      tooltip="Edit"
+                      :href="'/settings/' + (rule.tags.indexOf('Script') >= 0 ? 'scripts' : 'rules') + '/' + rule.uid"
+                      :animate="false" />
+                    <f7-link
+                      color="blue"
+                      icon-f7="pin_fill"
+                      icon-size="18"
+                      tooltip="Unpin"
+                      @click="unpin('rules', rule, 'uid')" />
                   </div>
                 </template>
               </f7-list-item>
@@ -236,59 +246,63 @@
           </f7-list>
         </f7-block>
         <!-- Pinned Scenes -->
-        <f7-block class="no-margin no-padding"
-                  v-if="developerStore.pinnedObjects.scenes.length">
+        <f7-block class="no-margin no-padding" v-if="developerStore.pinnedObjects.scenes.length">
           <f7-block-title class="padding-horizontal display-flex">
             <span>Pinned Scenes</span>
             <span style="margin-left: auto">
-              <f7-link color="gray"
-                       icon-f7="multiply"
-                       icon-size="14"
-                       @click="unpinAll('scenes')" />
+              <f7-link color="gray" icon-f7="multiply" icon-size="14" @click="unpinAll('scenes')" />
             </span>
           </f7-block-title>
           <f7-list media-list>
             <ul>
-              <f7-list-item v-for="rule in developerStore.pinnedObjects.scenes"
-                            :key="rule.uid"
-                            media-item
-                            :title="rule.name"
-                            :footer="rule.uid">
+              <f7-list-item
+                v-for="rule in developerStore.pinnedObjects.scenes"
+                :key="rule.uid"
+                media-item
+                :title="rule.name"
+                :footer="rule.uid">
                 <template #after>
-                  <f7-badge :color="ruleStatusBadgeColor(rule.status)" :tooltip="rule.status.description">
+                  <f7-badge
+                    :color="ruleStatusBadgeColor(rule.status)"
+                    :tooltip="rule.status.description">
                     {{ ruleStatusBadgeText(rule.status) }}
                   </f7-badge>
                 </template>
                 <template #footer>
-                  <div class="display-flex align-items-flex-end justify-content-flex-end"
-                       style="margin-top: 3px">
+                  <div
+                    class="display-flex align-items-flex-end justify-content-flex-end"
+                    style="margin-top: 3px">
                     <f7-link color="gray" class="margin-right">
                       <clipboard-icon :value="rule.uid" :size="18" tooltip="Copy Rule UID" />
                     </f7-link>
-                    <f7-link class="margin-right"
-                             :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'"
-                             :tooltip="(rule.status.statusDetail === 'DISABLED') ? 'Enable' : 'Disable'"
-                             icon-f7="pause_circle"
-                             icon-size="18"
-                             @click="toggleRuleDisabled(rule, 'Scene')" />
-                    <f7-link class="margin-right"
-                             :color="(rule.status.status === 'IDLE') ? 'blue' : 'gray'"
-                             icon-f7="play"
-                             icon-size="18"
-                             tooltip="Run"
-                             @click="runRuleNow(rule, 'Scene')" />
-                    <f7-link class="margin-right"
-                             color="gray"
-                             icon-f7="pencil"
-                             icon-size="18"
-                             tooltip="Edit"
-                             :href="'/settings/' + (rule.tags.indexOf('Script') >= 0 ? 'scripts' : 'rules') + '/' + rule.uid"
-                             :animate="false" />
-                    <f7-link color="blue"
-                             icon-f7="pin_fill"
-                             icon-size="18"
-                             tooltip="Unpin"
-                             @click="unpin('scenes', rule, 'uid')" />
+                    <f7-link
+                      class="margin-right"
+                      :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'"
+                      :tooltip="(rule.status.statusDetail === 'DISABLED') ? 'Enable' : 'Disable'"
+                      icon-f7="pause_circle"
+                      icon-size="18"
+                      @click="toggleRuleDisabled(rule, 'Scene')" />
+                    <f7-link
+                      class="margin-right"
+                      :color="(rule.status.status === 'IDLE') ? 'blue' : 'gray'"
+                      icon-f7="play"
+                      icon-size="18"
+                      tooltip="Run"
+                      @click="runRuleNow(rule, 'Scene')" />
+                    <f7-link
+                      class="margin-right"
+                      color="gray"
+                      icon-f7="pencil"
+                      icon-size="18"
+                      tooltip="Edit"
+                      :href="'/settings/' + (rule.tags.indexOf('Script') >= 0 ? 'scripts' : 'rules') + '/' + rule.uid"
+                      :animate="false" />
+                    <f7-link
+                      color="blue"
+                      icon-f7="pin_fill"
+                      icon-size="18"
+                      tooltip="Unpin"
+                      @click="unpin('scenes', rule, 'uid')" />
                   </div>
                 </template>
               </f7-list-item>
@@ -296,60 +310,67 @@
           </f7-list>
         </f7-block>
         <!-- Pinned Scripts -->
-        <f7-block class="no-margin no-padding"
-                  v-if="developerStore.pinnedObjects.scripts.length">
+        <f7-block class="no-margin no-padding" v-if="developerStore.pinnedObjects.scripts.length">
           <f7-block-title class="padding-horizontal display-flex">
             <span>Pinned Scripts</span>
             <span style="margin-left: auto">
-              <f7-link color="gray"
-                       icon-f7="multiply"
-                       icon-size="14"
-                       @click="unpinAll('scripts')" />
+              <f7-link
+                color="gray"
+                icon-f7="multiply"
+                icon-size="14"
+                @click="unpinAll('scripts')" />
             </span>
           </f7-block-title>
           <f7-list media-list>
             <ul>
-              <f7-list-item v-for="rule in developerStore.pinnedObjects.scripts"
-                            :key="rule.uid"
-                            media-item
-                            :title="rule.name"
-                            :footer="rule.uid">
+              <f7-list-item
+                v-for="rule in developerStore.pinnedObjects.scripts"
+                :key="rule.uid"
+                media-item
+                :title="rule.name"
+                :footer="rule.uid">
                 <template #after>
-                  <f7-badge :color="ruleStatusBadgeColor(rule.status)"
-                            :tooltip="rule.status.description">
+                  <f7-badge
+                    :color="ruleStatusBadgeColor(rule.status)"
+                    :tooltip="rule.status.description">
                     {{ ruleStatusBadgeText(rule.status) }}
                   </f7-badge>
                 </template>
                 <template #footer>
-                  <div class="display-flex align-items-flex-end justify-content-flex-end"
-                       style="margin-top: 3px">
+                  <div
+                    class="display-flex align-items-flex-end justify-content-flex-end"
+                    style="margin-top: 3px">
                     <f7-link color="gray" class="margin-right">
                       <clipboard-icon :value="rule.uid" :size="18" tooltip="Copy Rule UID" />
                     </f7-link>
-                    <f7-link class="margin-right"
-                             :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'"
-                             :tooltip="(rule.status.statusDetail === 'DISABLED') ? 'Enable' : 'Disable'"
-                             icon-f7="pause_circle"
-                             icon-size="18"
-                             @click="toggleRuleDisabled(rule, 'Script')" />
-                    <f7-link class="margin-right"
-                             :color="(rule.status.status === 'IDLE') ? 'blue' : 'gray'"
-                             icon-f7="play"
-                             icon-size="18"
-                             tooltip="Run"
-                             @click="runRuleNow(rule, 'Script')" />
-                    <f7-link class="margin-right"
-                             color="gray"
-                             icon-f7="pencil"
-                             icon-size="18"
-                             tooltip="Edit"
-                             :href="'/settings/' + (rule.tags.indexOf('Script') >= 0 ? 'scripts' : 'rules') + '/' + rule.uid"
-                             :animate="false" />
-                    <f7-link color="blue"
-                             icon-f7="pin_fill"
-                             icon-size="18"
-                             tooltip="Unpin"
-                             @click="unpin('scripts', rule, 'uid')" />
+                    <f7-link
+                      class="margin-right"
+                      :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'"
+                      :tooltip="(rule.status.statusDetail === 'DISABLED') ? 'Enable' : 'Disable'"
+                      icon-f7="pause_circle"
+                      icon-size="18"
+                      @click="toggleRuleDisabled(rule, 'Script')" />
+                    <f7-link
+                      class="margin-right"
+                      :color="(rule.status.status === 'IDLE') ? 'blue' : 'gray'"
+                      icon-f7="play"
+                      icon-size="18"
+                      tooltip="Run"
+                      @click="runRuleNow(rule, 'Script')" />
+                    <f7-link
+                      class="margin-right"
+                      color="gray"
+                      icon-f7="pencil"
+                      icon-size="18"
+                      tooltip="Edit"
+                      :href="'/settings/' + (rule.tags.indexOf('Script') >= 0 ? 'scripts' : 'rules') + '/' + rule.uid"
+                      :animate="false" />
+                    <f7-link
+                      color="blue"
+                      icon-f7="pin_fill"
+                      icon-size="18"
+                      tooltip="Unpin"
+                      @click="unpin('scripts', rule, 'uid')" />
                   </div>
                 </template>
               </f7-list-item>
@@ -357,50 +378,51 @@
           </f7-list>
         </f7-block>
         <!-- Pinned Pages -->
-        <f7-block class="no-margin no-padding"
-                  v-if="developerStore.pinnedObjects.pages.length">
+        <f7-block class="no-margin no-padding" v-if="developerStore.pinnedObjects.pages.length">
           <f7-block-title class="padding-horizontal display-flex">
             <span>Pinned Pages</span>
             <span style="margin-left: auto">
-              <f7-link color="gray"
-                       icon-f7="multiply"
-                       icon-size="14"
-                       @click="unpinAll('pages')" />
+              <f7-link color="gray" icon-f7="multiply" icon-size="14" @click="unpinAll('pages')" />
             </span>
           </f7-block-title>
           <f7-list media-list>
             <ul>
-              <f7-list-item v-for="page in developerStore.pinnedObjects.pages"
-                            :key="page.uid"
-                            media-item
-                            :title="page.config.label"
-                            :footer="page.uid">
+              <f7-list-item
+                v-for="page in developerStore.pinnedObjects.pages"
+                :key="page.uid"
+                media-item
+                :title="page.config.label"
+                :footer="page.uid">
                 <template #footer>
-                  <div class="display-flex align-items-flex-end justify-content-flex-end"
-                       style="margin-top: 3px">
+                  <div
+                    class="display-flex align-items-flex-end justify-content-flex-end"
+                    style="margin-top: 3px">
                     <f7-link color="gray" class="margin-right">
                       <clipboard-icon :value="page.uid" :size="18" tooltip="Copy Page UID" />
                     </f7-link>
                     <!-- <f7-link class="margin-right" color="blue" icon-f7="rectangle_on_rectangle" icon-size="18" tooltip="Open in Popup" /> -->
-                    <f7-link class="margin-right"
-                             color="blue"
-                             icon-f7="play"
-                             icon-size="18"
-                             tooltip="View"
-                             :href="'/page/' + page.uid"
-                             :animate="false" />
-                    <f7-link class="margin-right"
-                             color="gray"
-                             icon-f7="pencil"
-                             icon-size="18"
-                             tooltip="Edit"
-                             :href="'/settings/pages/' + getPageType(page).type + '/' + page.uid"
-                             :animate="false" />
-                    <f7-link color="blue"
-                             icon-f7="pin_fill"
-                             icon-size="18"
-                             tooltip="Unpin"
-                             @click="unpin('pages', page, 'uid')" />
+                    <f7-link
+                      class="margin-right"
+                      color="blue"
+                      icon-f7="play"
+                      icon-size="18"
+                      tooltip="View"
+                      :href="'/page/' + page.uid"
+                      :animate="false" />
+                    <f7-link
+                      class="margin-right"
+                      color="gray"
+                      icon-f7="pencil"
+                      icon-size="18"
+                      tooltip="Edit"
+                      :href="'/settings/pages/' + getPageType(page).type + '/' + page.uid"
+                      :animate="false" />
+                    <f7-link
+                      color="blue"
+                      icon-f7="pin_fill"
+                      icon-size="18"
+                      tooltip="Unpin"
+                      @click="unpin('pages', page, 'uid')" />
                   </div>
                 </template>
               </f7-list-item>
@@ -408,40 +430,43 @@
           </f7-list>
         </f7-block>
         <!-- Pinned Widgets -->
-        <f7-block class="no-margin no-padding"
-                  v-if="developerStore.pinnedObjects.widgets.length">
+        <f7-block class="no-margin no-padding" v-if="developerStore.pinnedObjects.widgets.length">
           <f7-block-title class="padding-horizontal display-flex">
             <span>Pinned Widgets</span>
             <span style="margin-left: auto">
-              <f7-link color="gray"
-                       icon-f7="multiply"
-                       icon-size="14"
-                       @click="unpinAll('widgets')" />
+              <f7-link
+                color="gray"
+                icon-f7="multiply"
+                icon-size="14"
+                @click="unpinAll('widgets')" />
             </span>
           </f7-block-title>
           <f7-list media-list>
             <ul>
-              <f7-list-item v-for="widget in developerStore.pinnedObjects.widgets"
-                            :key="widget.uid"
-                            media-item
-                            :title="widget.uid">
+              <f7-list-item
+                v-for="widget in developerStore.pinnedObjects.widgets"
+                :key="widget.uid"
+                media-item
+                :title="widget.uid">
                 <template #footer>
                   <div class="display-flex align-items-flex-end justify-content-flex-end">
                     <f7-link color="gray" class="margin-right">
                       <clipboard-icon :value="widget.uid" :size="18" tooltip="Copy Widget UID" />
                     </f7-link>
-                    <f7-link class="margin-right"
-                             color="gray"
-                             icon-f7="pencil"
-                             icon-size="18"
-                             tooltip="Edit"
-                             :href="'/developer/widgets/' + widget.uid"
-                             :animate="false" />
-                    <f7-link color="blue"
-                             icon-f7="pin_fill"
-                             icon-size="18"
-                             tooltip="Unpin"
-                             @click="unpin('widgets', widget, 'uid')" />
+                    <f7-link
+                      class="margin-right"
+                      color="gray"
+                      icon-f7="pencil"
+                      icon-size="18"
+                      tooltip="Edit"
+                      :href="'/developer/widgets/' + widget.uid"
+                      :animate="false" />
+                    <f7-link
+                      color="blue"
+                      icon-f7="pin_fill"
+                      icon-size="18"
+                      tooltip="Unpin"
+                      @click="unpin('widgets', widget, 'uid')" />
                   </div>
                 </template>
               </f7-list-item>
@@ -449,42 +474,51 @@
           </f7-list>
         </f7-block>
         <!-- Pinned Transformations -->
-        <f7-block class="no-margin no-padding"
-                  v-if="developerStore.pinnedObjects.transformations.length">
+        <f7-block
+          class="no-margin no-padding"
+          v-if="developerStore.pinnedObjects.transformations.length">
           <f7-block-title class="padding-horizontal display-flex">
             <span>Pinned Transformations</span>
             <span style="margin-left: auto">
-              <f7-link color="gray"
-                       icon-f7="multiply"
-                       icon-size="14"
-                       @click="unpinAll('transformations')" />
+              <f7-link
+                color="gray"
+                icon-f7="multiply"
+                icon-size="14"
+                @click="unpinAll('transformations')" />
             </span>
           </f7-block-title>
           <f7-list media-list>
             <ul>
-              <f7-list-item v-for="transformation in developerStore.pinnedObjects.transformations"
-                            :key="transformation.uid"
-                            media-item
-                            :title="transformation.label"
-                            :footer="transformation.uid">
+              <f7-list-item
+                v-for="transformation in developerStore.pinnedObjects.transformations"
+                :key="transformation.uid"
+                media-item
+                :title="transformation.label"
+                :footer="transformation.uid">
                 <template #footer>
-                  <div class="display-flex align-items-flex-end justify-content-flex-end"
-                       style="margin-top: 3px">
+                  <div
+                    class="display-flex align-items-flex-end justify-content-flex-end"
+                    style="margin-top: 3px">
                     <f7-link color="gray" class="margin-right">
-                      <clipboard-icon :value="transformation.uid" :size="18" tooltip="Copy Transformation UID" />
+                      <clipboard-icon
+                        :value="transformation.uid"
+                        :size="18"
+                        tooltip="Copy Transformation UID" />
                     </f7-link>
-                    <f7-link class="margin-right"
-                             color="gray"
-                             icon-f7="pencil"
-                             icon-size="18"
-                             tooltip="Edit"
-                             :href="'/settings/transformations/' + transformation.uid"
-                             :animate="false" />
-                    <f7-link color="blue"
-                             icon-f7="pin_fill"
-                             icon-size="18"
-                             tooltip="Unpin"
-                             @click="unpin('transformations', transformation, 'uid')" />
+                    <f7-link
+                      class="margin-right"
+                      color="gray"
+                      icon-f7="pencil"
+                      icon-size="18"
+                      tooltip="Edit"
+                      :href="'/settings/transformations/' + transformation.uid"
+                      :animate="false" />
+                    <f7-link
+                      color="blue"
+                      icon-f7="pin_fill"
+                      icon-size="18"
+                      tooltip="Unpin"
+                      @click="unpin('transformations', transformation, 'uid')" />
                   </div>
                 </template>
               </f7-list-item>
@@ -492,42 +526,51 @@
           </f7-list>
         </f7-block>
         <!-- Pinned Persistence configs -->
-        <f7-block class="no-margin no-padding"
-                  v-if="developerStore.pinnedObjects.persistenceConfigs.length">
+        <f7-block
+          class="no-margin no-padding"
+          v-if="developerStore.pinnedObjects.persistenceConfigs.length">
           <f7-block-title class="padding-horizontal display-flex">
             <span>Pinned Persistence Configs</span>
             <span style="margin-left: auto">
-              <f7-link color="gray"
-                       icon-f7="multiply"
-                       icon-size="14"
-                       @click="unpinAll('persistenceConfigs')" />
+              <f7-link
+                color="gray"
+                icon-f7="multiply"
+                icon-size="14"
+                @click="unpinAll('persistenceConfigs')" />
             </span>
           </f7-block-title>
           <f7-list media-list>
             <ul>
-              <f7-list-item v-for="persistenceConfig in developerStore.pinnedObjects.persistenceConfigs"
-                            :key="persistenceConfig.serviceId"
-                            media-item
-                            :title="persistenceConfig.label"
-                            :footer="persistenceConfig.serviceId">
+              <f7-list-item
+                v-for="persistenceConfig in developerStore.pinnedObjects.persistenceConfigs"
+                :key="persistenceConfig.serviceId"
+                media-item
+                :title="persistenceConfig.label"
+                :footer="persistenceConfig.serviceId">
                 <template #footer>
-                  <div class="display-flex align-items-flex-end justify-content-flex-end"
-                       style="margin-top: 3px">
+                  <div
+                    class="display-flex align-items-flex-end justify-content-flex-end"
+                    style="margin-top: 3px">
                     <f7-link color="gray" class="margin-right">
-                      <clipboard-icon :value="persistenceConfig.serviceId" :size="18" tooltip="Copy Service ID" />
+                      <clipboard-icon
+                        :value="persistenceConfig.serviceId"
+                        :size="18"
+                        tooltip="Copy Service ID" />
                     </f7-link>
-                    <f7-link class="margin-right"
-                             color="gray"
-                             icon-f7="pencil"
-                             icon-size="18"
-                             tooltip="Edit"
-                             :href="'/settings/persistence/' + persistenceConfig.serviceId"
-                             :animate="false" />
-                    <f7-link color="blue"
-                             icon-f7="pin_fill"
-                             icon-size="18"
-                             tooltip="Unpin"
-                             @click="unpin('persistenceConfig', persistenceConfig, 'serviceId')" />
+                    <f7-link
+                      class="margin-right"
+                      color="gray"
+                      icon-f7="pencil"
+                      icon-size="18"
+                      tooltip="Edit"
+                      :href="'/settings/persistence/' + persistenceConfig.serviceId"
+                      :animate="false" />
+                    <f7-link
+                      color="blue"
+                      icon-f7="pin_fill"
+                      icon-size="18"
+                      tooltip="Unpin"
+                      @click="unpin('persistenceConfig', persistenceConfig, 'serviceId')" />
                   </div>
                 </template>
               </f7-list-item>
@@ -541,42 +584,39 @@
           <f7-block-title class="padding-horizontal display-flex" medium>
             <span>Event Monitor</span>
             <span style="margin-left: auto">
-              <f7-link :color="eventTopicFilter ? 'blue' : 'gray'"
-                       :icon-f7="eventTopicFilter ? 'line_horizontal_3_decrease_circle_fill' : 'line_horizontal_3_decrease_circle'"
-                       icon-size="14"
-                       tooltip="Filter topics"
-                       @click="changeEventTopicFilter" />
+              <f7-link
+                :color="eventTopicFilter ? 'blue' : 'gray'"
+                :icon-f7="eventTopicFilter ? 'line_horizontal_3_decrease_circle_fill' : 'line_horizontal_3_decrease_circle'"
+                icon-size="14"
+                tooltip="Filter topics"
+                @click="changeEventTopicFilter" />
             </span>
           </f7-block-title>
           <f7-block>
             <p v-if="!sseClient">
-              <f7-button fill color="blue" @click="startSSE">
-                Stream Events
-              </f7-button>
+              <f7-button fill color="blue" @click="startSSE"> Stream Events </f7-button>
             </p>
             <p v-if="sseClient">
-              <f7-button fill color="red" @click="stopSSE">
-                Stop Streaming
-              </f7-button>
+              <f7-button fill color="red" @click="stopSSE"> Stop Streaming </f7-button>
             </p>
           </f7-block>
           <f7-list media-list>
-            <f7-list-item v-for="event in sseEvents"
-                          :key="event.time.getTime()"
-                          :title="event.topic"
-                          :subtitle="event.type"
-                          :footer="event.payload" />
+            <f7-list-item
+              v-for="event in sseEvents"
+              :key="event.time.getTime()"
+              :title="event.topic"
+              :subtitle="event.type"
+              :footer="event.payload" />
           </f7-list>
         </f7-block>
       </div>
 
       <div v-else-if="activeToolTab === 'scripting'">
         <f7-block class="no-margin no-padding">
-          <f7-block-title class="padding-horizontal" medium>
-            Code Tools
-          </f7-block-title>
+          <f7-block-title class="padding-horizontal" medium> Code Tools </f7-block-title>
         </f7-block>
-        <expression-tester :context="{
+        <expression-tester
+          :context="{
           component: {
             config: {
               style: {
@@ -592,9 +632,7 @@
           store: statesStore.trackedItems
         }" />
         <f7-block class="no-margin no-padding">
-          <f7-block-title class="padding-horizontal">
-            Scripting Scratchpad
-          </f7-block-title>
+          <f7-block-title class="padding-horizontal"> Scripting Scratchpad </f7-block-title>
           <f7-list>
             <f7-list-button @click="openScriptingScratchpad" color="blue">
               Open Scratchpad
@@ -605,9 +643,7 @@
 
       <div v-else-if="activeToolTab === 'tools'">
         <f7-block class="no-margin no-padding">
-          <f7-block-title class="padding-horizontal" medium>
-            Create Shortcuts
-          </f7-block-title>
+          <f7-block-title class="padding-horizontal" medium> Create Shortcuts </f7-block-title>
         </f7-block>
         <f7-block class="no-margin no-padding">
           <f7-list>
@@ -615,9 +651,7 @@
             <f7-list-button href="/settings/things/add" color="blue" :animate="false">
               Add Thing
             </f7-list-button>
-            <f7-list-button @click="quickAddThing" color="blue">
-              Add Thing (quick)
-            </f7-list-button>
+            <f7-list-button @click="quickAddThing" color="blue"> Add Thing (quick) </f7-list-button>
             <f7-list-button href="/settings/things/inbox" color="blue" :animate="false">
               Inbox
             </f7-list-button>
@@ -625,7 +659,10 @@
             <f7-list-button href="/settings/items/add" color="blue" :animate="false">
               Create Item
             </f7-list-button>
-            <f7-list-button href="/settings/items/add-from-textual-definition" color="blue" :animate="false">
+            <f7-list-button
+              href="/settings/items/add-from-textual-definition"
+              color="blue"
+              :animate="false">
               Add Items (textual)
             </f7-list-button>
             <f7-list-item divider title="Pages" />
@@ -670,19 +707,21 @@
     </div>
 
     <f7-popover ref="itemPopover" class="item-popover">
-      <item-standalone-control v-if="openedItem"
-                               :item="openedItem"
-                               :context="context"
-                               :no-border="true" />
+      <item-standalone-control
+        v-if="openedItem"
+        :item="openedItem"
+        :context="context"
+        :no-border="true" />
     </f7-popover>
-    <search-results v-if="searching"
-                    class="margin-top"
-                    :searchResults="searchResults"
-                    :pinnedObjects="developerStore.pinnedObjects"
-                    @pin="pin"
-                    @unpin="unpin"
-                    :cachedObjects="cachedObjects"
-                    :loading="searchResultsLoading" />
+    <search-results
+      v-if="searching"
+      class="margin-top"
+      :searchResults="searchResults"
+      :pinnedObjects="developerStore.pinnedObjects"
+      @pin="pin"
+      @unpin="unpin"
+      :cachedObjects="cachedObjects"
+      :loading="searchResultsLoading" />
   </f7-block>
 </template>
 

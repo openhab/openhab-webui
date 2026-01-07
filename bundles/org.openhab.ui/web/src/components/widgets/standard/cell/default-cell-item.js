@@ -5,9 +5,9 @@
 
 import { useSemanticsStore } from '@/js/stores/useSemanticsStore'
 
-export default function itemDefaultCellComponent (item, itemNameAsFooter) {
+export default function itemDefaultCellComponent(item, itemNameAsFooter) {
   const stateDescription = item.stateDescription || {}
-  const metadata = (item.metadata && item.metadata.cellWidget) ? item.metadata.cellWidget : {}
+  const metadata = item.metadata && item.metadata.cellWidget ? item.metadata.cellWidget : {}
   let component = null
   let semanticClass = {}
   let semanticProperty = {}
@@ -18,7 +18,7 @@ export default function itemDefaultCellComponent (item, itemNameAsFooter) {
       config: Object.assign({}, metadata.config)
     }
   } else {
-    item.tags.forEach((tag) => {
+    item.tags.forEach(tag => {
       if (useSemanticsStore().Points.indexOf(tag) >= 0) {
         semanticClass = tag
       }
@@ -92,7 +92,10 @@ export default function itemDefaultCellComponent (item, itemNameAsFooter) {
     //   }
     // }
 
-    if ((semanticClass === 'Control' || semanticClass === 'Setpoint') && !stateDescription.readOnly) {
+    if (
+      (semanticClass === 'Control' || semanticClass === 'Setpoint') &&
+      !stateDescription.readOnly
+    ) {
       if (item.type === 'Number:Temperature' || semanticProperty === 'Temperature') {
         component = {
           component: 'oh-knob-cell',
@@ -103,7 +106,11 @@ export default function itemDefaultCellComponent (item, itemNameAsFooter) {
           }
         }
       }
-      if (semanticProperty === 'ColorTemperature' || semanticProperty === 'Level' || semanticProperty === 'SoundVolume') {
+      if (
+        semanticProperty === 'ColorTemperature' ||
+        semanticProperty === 'Level' ||
+        semanticProperty === 'SoundVolume'
+      ) {
         component = {
           component: 'oh-slider-cell',
           config: {
@@ -140,13 +147,22 @@ export default function itemDefaultCellComponent (item, itemNameAsFooter) {
       component: 'oh-label-cell'
     }
 
-    if (item.type.indexOf('Number') === 0 && (!item.commandDescription || !item.commandDescription.commandOptions || stateDescription.readOnly)) {
+    if (
+      item.type.indexOf('Number') === 0 &&
+      (!item.commandDescription ||
+        !item.commandDescription.commandOptions ||
+        stateDescription.readOnly)
+    ) {
       component.config = {
         trendItem: item.name,
         action: 'analyzer',
         actionAnalyzerItems: [item.name]
       }
-    } else if (item.commandDescription && item.commandDescription.commandOptions && !stateDescription.readOnly) {
+    } else if (
+      item.commandDescription &&
+      item.commandDescription.commandOptions &&
+      !stateDescription.readOnly
+    ) {
       component.config = {
         action: 'options',
         actionItem: item.name
@@ -166,7 +182,8 @@ export default function itemDefaultCellComponent (item, itemNameAsFooter) {
   }
   if (!component.config.item) component.config.item = item.name
   if (!component.config.title) component.config.title = item.label || item.name
-  if (item.label && itemNameAsFooter && !component.config.footer) component.config.footer = item.name
+  if (item.label && itemNameAsFooter && !component.config.footer)
+    component.config.footer = item.name
   component.config.stateAsHeader = true
   if (component.component === 'oh-label-cell') component.config.expandable = false
 

@@ -1,8 +1,6 @@
 // note: this file is generated and should not be edited by hand
 
-import {
-  Modules
-} from '../common.ts'
+import { Modules } from '../common.ts'
 
 export interface Config {
   title?: string
@@ -14,6 +12,4 @@ export interface Config {
   modules?: Modules
 }
 
-export {
-  Modules
-}
+export { Modules }

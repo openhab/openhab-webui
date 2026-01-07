@@ -2,13 +2,13 @@ import { f7 } from 'framework7-vue'
 import { nextTick } from 'vue'
 
 export default {
-  data () {
+  data() {
     return {
       dirty: false
     }
   },
   computed: {
-    dirtyIndicator () {
+    dirtyIndicator() {
       if (this.dirty) {
         return ' ●' // &#9679;
       }
@@ -16,7 +16,7 @@ export default {
     }
   },
   methods: {
-    confirmLeaveWithoutSaving (callbackLeave, callbackCancel) {
+    confirmLeaveWithoutSaving(callbackLeave, callbackCancel) {
       f7.dialog.confirm(
         'Do you want to leave this page without saving?',
         'Changes have not been saved',
@@ -24,11 +24,13 @@ export default {
         callbackCancel
       )
     },
-    beforeLeave ({ resolve, reject, router, from }) {
+    beforeLeave({ resolve, reject, router, from }) {
       console.info('Checking dirty before leave ...')
       if (this.dirty) {
         this.confirmLeaveWithoutSaving(
-          function () { resolve() },
+          function () {
+            resolve()
+          },
           function () {
             router.allowPageChange = true
             reject()
@@ -38,7 +40,7 @@ export default {
         resolve()
       }
     },
-    switchTab (tab, onSuccessCallback) {
+    switchTab(tab, onSuccessCallback) {
       if (this.currentTab !== tab) {
         this.currentTab = tab
         if (onSuccessCallback) {
@@ -47,14 +49,14 @@ export default {
       }
     }
   },
-  mounted () {
+  mounted() {
     void nextTick(() => {
       const pageEl = this.$el
       if (!pageEl) return
       if (!pageEl.classList.contains('page')) return
 
       // store a wrapped function so `this` inside beforeLeave is the Vue component instance
-      pageEl.beforeLeave = (args) => this.beforeLeave(args)
+      pageEl.beforeLeave = args => this.beforeLeave(args)
     })
   }
 }

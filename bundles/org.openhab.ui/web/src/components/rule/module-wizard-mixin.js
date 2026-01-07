@@ -2,81 +2,110 @@ import ModelPickerPopup from '@/components/model/model-picker-popup.vue'
 import { f7 } from 'framework7-vue'
 
 export default {
-  data () {
+  data() {
     return {
       category: '',
       currentItem: null
     }
   },
   computed: {
-    commandSuggestions () {
+    commandSuggestions() {
       if (!this.currentItem || this.category !== 'item') return []
-      let type = (this.currentItem.type === 'Group' && this.currentItem.groupType) ? this.currentItem.groupType : this.currentItem.type
+      let type =
+        this.currentItem.type === 'Group' && this.currentItem.groupType
+          ? this.currentItem.groupType
+          : this.currentItem.type
 
-      if (this.currentItem.commandDescription && this.currentItem.commandDescription.commandOptions) {
+      if (
+        this.currentItem.commandDescription &&
+        this.currentItem.commandDescription.commandOptions
+      ) {
         return this.currentItem.commandDescription.commandOptions
       }
       if (type === 'Switch') {
-        return ['ON', 'OFF'].map((c) => { return { command: c, label: c } })
+        return ['ON', 'OFF'].map(c => {
+          return { command: c, label: c }
+        })
       }
       if (type === 'Rollershutter') {
-        return ['UP', 'DOWN', 'STOP'].map((c) => { return { command: c, label: c } })
+        return ['UP', 'DOWN', 'STOP'].map(c => {
+          return { command: c, label: c }
+        })
       }
       if (type === 'Color') {
-        return ['ON', 'OFF'].map((c) => { return { command: c, label: c } })
+        return ['ON', 'OFF'].map(c => {
+          return { command: c, label: c }
+        })
       }
 
-      return ['ON', 'OFF'].map((c) => { return { command: c, label: c } })
+      return ['ON', 'OFF'].map(c => {
+        return { command: c, label: c }
+      })
     },
-    stateSuggestions () {
+    stateSuggestions() {
       if (!this.currentItem || this.category !== 'item') return []
-      let type = (this.currentItem.type === 'Group' && this.currentItem.groupType) ? this.currentItem.groupType : this.currentItem.type
+      let type =
+        this.currentItem.type === 'Group' && this.currentItem.groupType
+          ? this.currentItem.groupType
+          : this.currentItem.type
 
       if (this.currentItem.stateDescription && this.currentItem.stateDescription.options) {
         return this.currentItem.stateDescription.options
       }
       if (type === 'Switch') {
-        return ['ON', 'OFF'].map((c) => { return { value: c, label: c } })
+        return ['ON', 'OFF'].map(c => {
+          return { value: c, label: c }
+        })
       }
       if (type === 'Rollershutter') {
-        return ['UP', 'DOWN', 'STOP'].map((c) => { return { value: c, label: c } })
+        return ['UP', 'DOWN', 'STOP'].map(c => {
+          return { value: c, label: c }
+        })
       }
       if (type === 'Contact') {
-        return ['OPEN', 'CLOSED'].map((c) => { return { value: c, label: c } })
+        return ['OPEN', 'CLOSED'].map(c => {
+          return { value: c, label: c }
+        })
       }
 
-      return ['ON', 'OFF'].map((c) => { return { value: c, label: c } })
+      return ['ON', 'OFF'].map(c => {
+        return { value: c, label: c }
+      })
     },
-    isJsAvailable () {
+    isJsAvailable() {
       return this.isMimeTypeAvailable('application/javascript')
     }
   },
   methods: {
-    openModelPicker () {
+    openModelPicker() {
       const popup = {
         component: ModelPickerPopup
       }
 
-      f7.views.main.router.navigate({
-        url: 'pick-from-model',
-        route: {
-          path: 'pick-from-model',
-          popup
+      f7.views.main.router.navigate(
+        {
+          url: 'pick-from-model',
+          route: {
+            path: 'pick-from-model',
+            popup
+          }
+        },
+        {
+          props: {
+            multiple: false
+          }
         }
-      }, {
-        props: {
-          multiple: false
-        }
-      })
+      )
 
       f7.once('itemsPicked', this.itemPicked)
       f7.once('modelPickerClosed', () => {
         f7.off('itemsPicked', this.itemPicked)
       })
     },
-    isMimeTypeAvailable (mimeType) {
-      if (mimeType === 'application/javascript;version=ECMAScript-2021') mimeType = 'application/javascript'
-      return this.languages.map((l) => l.contentType).includes(mimeType)
+    isMimeTypeAvailable(mimeType) {
+      if (mimeType === 'application/javascript;version=ECMAScript-2021')
+        mimeType = 'application/javascript'
+      return this.languages.map(l => l.contentType).includes(mimeType)
     }
   }
 }

@@ -1,21 +1,19 @@
 /*
-* Adds new blocks to the list section
-* supports jsscripting
-*/
+ * Adds new blocks to the list section
+ * supports jsscripting
+ */
 import * as Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript'
 import { valueToCode } from '@/assets/definitions/blockly/utils.js'
 
 export default function (f7) {
   /*
-  * allows to concatenate a list into a new list
-  * Block
-  */
+   * allows to concatenate a list into a new list
+   * Block
+   */
   Blockly.Blocks['oh_list_concatenate'] = {
     init: function () {
-      this.appendValueInput('list1')
-        .appendField('concatenate')
-        .setCheck('Array')
+      this.appendValueInput('list1').appendField('concatenate').setCheck('Array')
       this.appendValueInput('list2')
         .appendField('to')
         .setAlign(Blockly.inputs.Align.RIGHT)
@@ -24,7 +22,9 @@ export default function (f7) {
       this.setOutput(true, 'Array')
       this.setColour('%{BKY_LISTS_HUE}')
       this.setTooltip('concatenate two arrays returning a new array')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-standard-ext.html#concatenate-list')
+      this.setHelpUrl(
+        'https://www.openhab.org/docs/configuration/blockly/rules-blockly-standard-ext.html#concatenate-list'
+      )
     }
   }
 

@@ -4,14 +4,16 @@ export const camelCase = (string, pascalCase = false) =>
   string
     .toLowerCase()
     .split(/[ _-]/)
-    .map((word, index) => (!index && !pascalCase ? word : word.charAt(0).toUpperCase() + word.slice(1)))
+    .map((word, index) =>
+      !index && !pascalCase ? word : word.charAt(0).toUpperCase() + word.slice(1)
+    )
     .join('')
 
-export const titleCase = (string) =>
+export const titleCase = string =>
   string
     .toLowerCase()
     .split(/[ _-]/)
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ')
 
 export const docLink = (title, anchor) => {
@@ -28,8 +30,8 @@ export const getGroupParameter = (parameter, groups = []) => {
 
 export const getOptions = (options, preserve = false) =>
   Array.isArray(options)
-    ? options.map((value) => ({ value, label: preserve ? value : titleCase(value) }))
-    : Object.keys(options).map((value) => ({ value, label: options[value] }))
+    ? options.map(value => ({ value, label: preserve ? value : titleCase(value) }))
+    : Object.keys(options).map(value => ({ value, label: options[value] }))
 
 export const getSemanticFormat = (type, format) =>
   Object.keys(format).reduce(
@@ -44,7 +46,8 @@ export const getSupportedRange = (item, config, defaultValue) => {
   if (!isNaN(minimum) && !isNaN(maximum) && !isNaN(step)) return `${minimum}:${maximum}:${step}`
   const itemType = item.groupType || item.type
   if (itemType.startsWith('Number') && config.nonControllable) {
-    const { precision, specifier } = pattern?.match(/%\d*(?:\.(?<precision>\d+))?(?<specifier>[df])/)?.groups || {}
+    const { precision, specifier } =
+      pattern?.match(/%\d*(?:\.(?<precision>\d+))?(?<specifier>[df])/)?.groups || {}
     const [minimum, maximum] = defaultValue.split(':', 2)
     if (specifier === 'd') return `${minimum}:${maximum}:1`
     if (precision <= 16) return `${minimum}:${maximum}:${1 / 10 ** precision}`
@@ -52,11 +55,12 @@ export const getSupportedRange = (item, config, defaultValue) => {
   return defaultValue
 }
 
-export const getTemperatureScale = (item) => {
+export const getTemperatureScale = item => {
   const scale = getGroupParameter('scale', item.groups)
   if (scale) return scale
   const itemType = item.groupType || item.type
-  const format = (itemType === 'Number:Temperature' && item.unitSymbol) || item.stateDescription?.pattern
+  const format =
+    (itemType === 'Number:Temperature' && item.unitSymbol) || item.stateDescription?.pattern
   if (format?.endsWith('°C')) return 'CELSIUS'
   if (format?.endsWith('°F')) return 'FAHRENHEIT'
   const measurementSystem = item.settings?.regional?.measurementSystem
@@ -64,11 +68,11 @@ export const getTemperatureScale = (item) => {
   if (measurementSystem === 'US') return 'FAHRENHEIT'
 }
 
-export const getUnitOfMeasure = (item) => {
+export const getUnitOfMeasure = item => {
   const itemType = item.groupType || item.type
   const format =
     ((itemType === 'Dimmer' || itemType === 'Rollershutter') && '%') ||
     (itemType.startsWith('Number:') && item.unitSymbol) ||
     item.stateDescription?.pattern
-  return Object.keys(UNITS_OF_MEASURE).find((id) => format?.endsWith(UNITS_OF_MEASURE[id]))
+  return Object.keys(UNITS_OF_MEASURE).find(id => format?.endsWith(UNITS_OF_MEASURE[id]))
 }

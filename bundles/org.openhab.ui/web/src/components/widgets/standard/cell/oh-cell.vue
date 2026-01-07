@@ -1,53 +1,59 @@
 <template>
-  <f7-card ref="card"
-           :expandable="true"
-           class="card-prevent-open oh-cell"
-           :swipeToClose="!(noSwipeToClose || config.swipeToClose === false)"
-           :backdrop="config.backdrop === undefined || config.backdrop"
-           :animate="(config.animate === false || uiOptionsStore.disableExpandableCardAnimation) ? false : undefined"
-           @card:open="cellOpen"
-           @card:opened="cellOpened"
-           @card:close="cellClose"
-           @card:closed="cellClosed">
+  <f7-card
+    ref="card"
+    :expandable="true"
+    class="card-prevent-open oh-cell"
+    :swipeToClose="!(noSwipeToClose || config.swipeToClose === false)"
+    :backdrop="config.backdrop === undefined || config.backdrop"
+    :animate="(config.animate === false || uiOptionsStore.disableExpandableCardAnimation) ? false : undefined"
+    @card:open="cellOpen"
+    @card:opened="cellOpened"
+    @card:close="cellClose"
+    @card:closed="cellClosed">
     <slot name="background">
       <div v-if="context.component.slots && context.component.slots.background">
-        <generic-widget-component v-for="(slotComponent, idx) in context.component.slots.background"
-                                  :context="childContext(slotComponent)"
-                                  :key="'background-' + idx" />
+        <generic-widget-component
+          v-for="(slotComponent, idx) in context.component.slots.background"
+          :context="childContext(slotComponent)"
+          :key="'background-' + idx" />
       </div>
-      <oh-trend v-else-if="config.trendItem"
-                :key="'trend' + config.item"
-                class="trend card-opened-fade-out"
-                :width="trendWidth"
-                :context="context" />
-      <div v-else class="cell-background" :class="[(config.color) ? 'bg-color-' + config.color : '', { on: isOn }, { 'card-opened-fade-out': !config.keepColorWhenOpened }]" />
+      <oh-trend
+        v-else-if="config.trendItem"
+        :key="'trend' + config.item"
+        class="trend card-opened-fade-out"
+        :width="trendWidth"
+        :context="context" />
+      <div
+        v-else
+        class="cell-background"
+        :class="[(config.color) ? 'bg-color-' + config.color : '', { on: isOn }, { 'card-opened-fade-out': !config.keepColorWhenOpened }]" />
     </slot>
-    <f7-link v-show="!opened && hasExpandedControls && hasAction"
-             icon-f7="ellipsis_vertical"
-             icon-size="30"
-             @click="openCell"
-             class="float-right cell-open-button card-opened-fade-out no-ripple" />
+    <f7-link
+      v-show="!opened && hasExpandedControls && hasAction"
+      icon-f7="ellipsis_vertical"
+      icon-size="30"
+      @click="openCell"
+      class="float-right cell-open-button card-opened-fade-out no-ripple" />
     <f7-card-content ref="cell" class="cell-contents">
       <f7-card-header class="cell-button card-opened-fade-out no-padding" v-show="!opened">
         <slot name="header">
           <f7-list media-list>
             <div v-if="context.component.slots && context.component.slots.header">
-              <generic-widget-component v-for="(slotComponent, idx) in context.component.slots.header"
-                                        :context="childContext(slotComponent)"
-                                        :key="'header-' + idx" />
+              <generic-widget-component
+                v-for="(slotComponent, idx) in context.component.slots.header"
+                :context="childContext(slotComponent)"
+                :key="'header-' + idx" />
             </div>
-            <f7-list-item v-else
-                          media-item
-                          :subtitle="config.subtitle"
-                          :footer="config.footer">
+            <f7-list-item v-else media-item :subtitle="config.subtitle" :footer="config.footer">
               <template v-if="header" #header>
                 <div class="button-header display-flex">
-                  <oh-icon v-if="config.icon"
-                           class="header-icon"
-                           :icon="config.icon"
-                           :color="config.iconColor"
-                           width="20"
-                           height="20" />
+                  <oh-icon
+                    v-if="config.icon"
+                    class="header-icon"
+                    :icon="config.icon"
+                    :color="config.iconColor"
+                    width="20"
+                    height="20" />
                   <span class="header-text">{{ header }}</span>
                   <f7-badge v-if="config.headerBadge" :color="config.headerBadgeColor">
                     {{ config.headerBadge }}
@@ -56,12 +62,13 @@
               </template>
               <template v-if="config.title" #title>
                 <div class="button-header display-flex">
-                  <oh-icon v-if="!header && config.icon"
-                           class="header-icon"
-                           :icon="config.icon"
-                           :color="config.iconColor"
-                           width="20"
-                           height="20" />
+                  <oh-icon
+                    v-if="!header && config.icon"
+                    class="header-icon"
+                    :icon="config.icon"
+                    :color="config.iconColor"
+                    width="20"
+                    height="20" />
                   <span class="header-text">{{ config.title }}</span>
                   <f7-badge v-if="config.headerBadge" :color="config.headerBadgeColor">
                     {{ config.headerBadge }}
@@ -72,11 +79,14 @@
           </f7-list>
         </slot>
       </f7-card-header>
-      <f7-link class="card-opened-fade-in cell-close-button float-right"
-               icon-size="30"
-               icon-f7="multiply_circle_fill"
-               @click="closeCell" />
-      <f7-card-header v-if="opened" class="cell-expanded-header card-opened-fade-in display-flex flex-direction-column">
+      <f7-link
+        class="card-opened-fade-in cell-close-button float-right"
+        icon-size="30"
+        icon-f7="multiply_circle_fill"
+        @click="closeCell" />
+      <f7-card-header
+        v-if="opened"
+        class="cell-expanded-header card-opened-fade-in display-flex flex-direction-column">
         <div class="text-align-center cell-expanded-title">
           {{ config.title }}
         </div>
@@ -87,12 +97,15 @@
           {{ config.footer }}
         </div>
       </f7-card-header>
-      <div v-if="opened" class="cell-expanded-contents card-opened-fade-in display-flex flex-direction-column align-items-center">
+      <div
+        v-if="opened"
+        class="cell-expanded-contents card-opened-fade-in display-flex flex-direction-column align-items-center">
         <slot>
           <div v-if="context.component.slots && context.component.slots.default">
-            <generic-widget-component v-for="(slotComponent, idx) in context.component.slots.default"
-                                      :context="childContext(slotComponent)"
-                                      :key="'default-' + idx" />
+            <generic-widget-component
+              v-for="(slotComponent, idx) in context.component.slots.default"
+              :context="childContext(slotComponent)"
+              :key="'default-' + idx" />
           </div>
         </slot>
       </div>

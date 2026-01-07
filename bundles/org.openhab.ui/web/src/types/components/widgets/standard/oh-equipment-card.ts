@@ -1,9 +1,6 @@
 // note: this file is generated and should not be edited by hand
 
-import {
-  Item,
-  BackgroundColor
-} from '../common.ts'
+import { Item, BackgroundColor } from '../common.ts'
 
 export interface Config {
   item?: Item
@@ -14,7 +11,4 @@ export interface Config {
   invertText?: boolean
 }
 
-export {
-  Item,
-  BackgroundColor
-}
+export { Item, BackgroundColor }

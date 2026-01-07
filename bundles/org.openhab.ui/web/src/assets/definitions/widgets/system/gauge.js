@@ -8,13 +8,25 @@ export default () => [
     { value: 'circle', label: 'Circle' },
     { value: 'semicircle', label: 'Semicircle' }
   ]),
-  pt('value', 'Value', 'Value, if the item is not set - between min & max (for instance, defined with an expression)'),
+  pt(
+    'value',
+    'Value',
+    'Value, if the item is not set - between min & max (for instance, defined with an expression)'
+  ),
   pn('size', 'Size', 'Visual size of the control in px (default 200)'),
-  pt('bgColor', 'Background Color', 'Gauge background color. Can be any valid color string, e.g. #ff00ff, rgb(0,0,255), etc.'),
+  pt(
+    'bgColor',
+    'Background Color',
+    'Gauge background color. Can be any valid color string, e.g. #ff00ff, rgb(0,0,255), etc.'
+  ),
   pt('borderBgColor', 'Border Background Color', 'Main border/stroke background color'),
   pt('borderColor', 'Border Color', 'Main border/stroke color'),
   pt('borderWidth', 'Border Width', 'Main border/stroke width'),
-  pt('valueText', 'Value Text', 'Value text, if the item is not set (for instance, defined with an expression)'),
+  pt(
+    'valueText',
+    'Value Text',
+    'Value text, if the item is not set (for instance, defined with an expression)'
+  ),
   pt('valueTextColor', 'Value Text Color', 'Value text color'),
   pt('valueFontSize', 'Value Font Size', 'Value text font size'),
   pt('valueFontWeight', 'Value Font Weight', 'Value text font weight'),

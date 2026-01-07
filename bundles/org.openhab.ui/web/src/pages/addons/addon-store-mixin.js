@@ -6,7 +6,7 @@ export default {
   components: {
     AddonDetailsSheet
   },
-  data () {
+  data() {
     return {
       addons: {},
       currentAddon: null,
@@ -20,68 +20,79 @@ export default {
     }
   },
   methods: {
-    openAddonPopup (addonId, serviceId, addon) {
+    openAddonPopup(addonId, serviceId, addon) {
       this.currentAddonId = addonId
       this.currentServiceId = serviceId
       if (addon) this.currentAddon = addon
       this.addonPopupOpened = true
     },
-    installAddon (addon) {
+    installAddon(addon) {
       this.addonPopupOpened = false
       this.currentlyInstalling.push(addon.uid)
       if (this.currentAddon) this.currentAddon.pending = 'INSTALL'
     },
-    uninstallAddon (addon) {
+    uninstallAddon(addon) {
       this.addonPopupOpened = false
       this.currentlyUninstalling.push(addon.uid)
       if (this.currentAddon) this.currentAddon.pending = 'UNINSTALL'
     },
-    installableAddon (addon) {
-      return (addon && (addon.contentType === 'application/vnd.openhab.bundle' || addon.contentType.indexOf('application/vnd.openhab.feature') === 0))
+    installableAddon(addon) {
+      return (
+        addon &&
+        (addon.contentType === 'application/vnd.openhab.bundle' ||
+          addon.contentType.indexOf('application/vnd.openhab.feature') === 0)
+      )
     },
-    isInstalling (addon) {
+    isInstalling(addon) {
       return this.currentlyInstalling.indexOf(addon.uid) >= 0
     },
-    isUninstalling (addon) {
+    isUninstalling(addon) {
       return this.currentlyUninstalling.indexOf(addon.uid) >= 0
     },
-    isPending (addon) {
+    isPending(addon) {
       return this.isInstalling(addon) || this.isUninstalling(addon)
     },
-    resetPending () {
+    resetPending() {
       this.currentlyInstalling = []
       this.currentlyUninstalling = []
       this.currentAddon = null
       this.currentAddonId = null
       this.currentServiceId = null
     },
-    startEventSource () {
-      this.eventSource = this.$oh.sse.connect('/rest/events?topics=openhab/addons/*/*', null, (event) => {
-        const topicParts = event.topic.split('/')
-        switch (topicParts[3]) {
-          case 'installed':
-          case 'uninstalled':
-            this.stopEventSource()
-            this.load()
-            f7.emit('addonChange', null)
-            break
-          case 'failed':
-            f7.toast.create({
-              text: `Installation of add-on ${topicParts[2]} failed`,
-              closeButton: true,
-              destroyOnClose: true
-            }).open()
-            this.stopEventSource()
-            this.load()
-            break
+    startEventSource() {
+      this.eventSource = this.$oh.sse.connect(
+        '/rest/events?topics=openhab/addons/*/*',
+        null,
+        event => {
+          const topicParts = event.topic.split('/')
+          switch (topicParts[3]) {
+            case 'installed':
+            case 'uninstalled':
+              this.stopEventSource()
+              this.load()
+              f7.emit('addonChange', null)
+              break
+            case 'failed':
+              f7.toast
+                .create({
+                  text: `Installation of add-on ${topicParts[2]} failed`,
+                  closeButton: true,
+                  destroyOnClose: true
+                })
+                .open()
+              this.stopEventSource()
+              this.load()
+              break
+          }
+        },
+        () => {
+          // in case of error, maybe the SSE connection was closed by the add-ons change itself - try reloading to refresh
+          this.stopEventSource()
+          this.load()
         }
-      }, () => {
-        // in case of error, maybe the SSE connection was closed by the add-ons change itself - try reloading to refresh
-        this.stopEventSource()
-        this.load()
-      })
+      )
     },
-    stopEventSource () {
+    stopEventSource() {
       this.$oh.sse.close(this.eventSource)
       this.eventSource = null
     }

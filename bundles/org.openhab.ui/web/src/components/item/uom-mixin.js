@@ -2,23 +2,26 @@ import { Units, MetricPrefixes, BinaryPrefixes } from '@/assets/units'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
 export default {
-  data () {
+  data() {
     return {
       measurementSystem: useRuntimeStore().measurementSystem,
       dimensions: [],
       dimensionsReady: false
     }
   },
-  created () {
-    this.$oh.api.get('/rest/systeminfo/uom').then((data) => {
-      data.uomInfo.dimensions.forEach((d) => {
-        this.dimensions.push({
-          name: d.dimension,
-          label: d.dimension + ' (' + d.systemUnit + ')',
-          systemUnit: d.systemUnit
+  created() {
+    this.$oh.api
+      .get('/rest/systeminfo/uom')
+      .then(data => {
+        data.uomInfo.dimensions.forEach(d => {
+          this.dimensions.push({
+            name: d.dimension,
+            label: d.dimension + ' (' + d.systemUnit + ')',
+            systemUnit: d.systemUnit
+          })
         })
       })
-    }).then(this.dimensionsReady = true)
+      .then((this.dimensionsReady = true))
   },
   computed: {
     /**
@@ -26,35 +29,43 @@ export default {
      * It is pre-filled with the unit hint if in `createMode`, or else the {@link configuredUnit}.
      * @returns {string}
      */
-    unit () {
+    unit() {
       if (!this.item) return ''
       if (!this.dimensionsReady) return ''
-      return this.item.unit ? this.item.unit : (this.createMode ? this.getUnitHint(this.dimension) : this.configuredUnit)
+      return this.item.unit
+        ? this.item.unit
+        : this.createMode
+          ? this.getUnitHint(this.dimension)
+          : this.configuredUnit
     },
     /**
      * The unit currently configured and used by the openHAB server.
      * @returns {string}
      */
-    configuredUnit () {
+    configuredUnit() {
       if (!this.item) return ''
       if (this.item.unitSymbol) return this.item.unitSymbol
       if (!this.dimensionsReady) return ''
-      return this.item.type === 'Group' ? this.getSystemUnit(this.groupDimension) : this.getSystemUnit(this.itemDimension)
+      return this.item.type === 'Group'
+        ? this.getSystemUnit(this.groupDimension)
+        : this.getSystemUnit(this.itemDimension)
     },
-    dimension () {
-      const parts = this.item.type === 'Group' ? this.item.groupType?.split(':') : this.item.type?.split(':')
+    dimension() {
+      const parts =
+        this.item.type === 'Group' ? this.item.groupType?.split(':') : this.item.type?.split(':')
       return parts && parts.length > 1 ? parts[1] : ''
     }
   },
   methods: {
-    getSystemUnit (dimension) {
-      return this.dimensions.find((d) => d.name === dimension)?.systemUnit
+    getSystemUnit(dimension) {
+      return this.dimensions.find(d => d.name === dimension)?.systemUnit
     },
-    getUnitHint (dimension, channelType) {
-      const units = ((channelType && channelType.unitHint) ? channelType.unitHint : '').split(',')
-      let unitHint = (this.measurementSystem === 'US' && units.length > 1) ? units[1].trim() : units[0].trim()
+    getUnitHint(dimension, channelType) {
+      const units = (channelType && channelType.unitHint ? channelType.unitHint : '').split(',')
+      let unitHint =
+        this.measurementSystem === 'US' && units.length > 1 ? units[1].trim() : units[0].trim()
       if (!unitHint) {
-        const unitCurated = Units.find((u) => u.dimension === dimension)
+        const unitCurated = Units.find(u => u.dimension === dimension)
         if (unitCurated) {
           if (this.measurementSystem === 'SI' && unitCurated.defaultSI) {
             unitHint = unitCurated.defaultSI
@@ -75,9 +86,9 @@ export default {
      * @param dimension
      * @returns {string[]}
      */
-    getUnitList (dimension) {
+    getUnitList(dimension) {
       let unitList = []
-      const unitCurated = Units.find((u) => u.dimension === dimension)
+      const unitCurated = Units.find(u => u.dimension === dimension)
       if (unitCurated?.units) {
         unitList = unitList.concat(unitCurated.units)
       }
@@ -109,24 +120,18 @@ export default {
      * @param dimension
      * @returns {string[]}
      */
-    getFullUnitList (dimension) {
+    getFullUnitList(dimension) {
       let unitList = []
-      const unit = Units.find((u) => u.dimension === dimension)
+      const unit = Units.find(u => u.dimension === dimension)
       let units = unit?.baseUnits
       if (units) {
         unitList = unitList.concat(units)
       }
-      let metricUnits = unit?.baseUnitsMetric?.flatMap(
-        (u) => MetricPrefixes.map(
-          (p) => p.concat(u)
-        ))
+      let metricUnits = unit?.baseUnitsMetric?.flatMap(u => MetricPrefixes.map(p => p.concat(u)))
       if (metricUnits) {
         unitList = unitList.concat(metricUnits)
       }
-      let binaryUnits = unit?.baseUnitsBinary?.flatMap(
-        (u) => BinaryPrefixes.map(
-          (p) => p.concat(u)
-        ))
+      let binaryUnits = unit?.baseUnitsBinary?.flatMap(u => BinaryPrefixes.map(p => p.concat(u)))
       if (binaryUnits) {
         unitList = unitList.concat(binaryUnits)
       }

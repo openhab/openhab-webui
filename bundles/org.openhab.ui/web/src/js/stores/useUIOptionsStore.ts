@@ -45,9 +45,7 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     localStorage.getItem('openhab.ui:theme.home.cardanimation') || 'default'
   const disableExpandableCardAnimation = ref<boolean>(_storedExpandableCardAnimation === 'disabled')
 
-  const blocklyRenderer = ref<string | null>(
-    localStorage.getItem('openhab.ui:blockly.renderer')
-  )
+  const blocklyRenderer = ref<string | null>(localStorage.getItem('openhab.ui:blockly.renderer'))
   const disablePageTransitionAnimation = ref<boolean>(
     localStorage.getItem('openhab.ui:theme.disablepagetransition') === 'true'
   )
@@ -64,7 +62,11 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
   )
 
   const _storedCodeEditorType = localStorage.getItem('openhab.ui:codeEditor.type') || 'YAML'
-  const codeEditorType = ref<'DSL' | 'YAML'>(['DSL', 'YAML'].includes(_storedCodeEditorType as any) ? (_storedCodeEditorType as 'DSL' | 'YAML') : 'YAML')
+  const codeEditorType = ref<'DSL' | 'YAML'>(
+    ['DSL', 'YAML'].includes(_storedCodeEditorType as any)
+      ? (_storedCodeEditorType as 'DSL' | 'YAML')
+      : 'YAML'
+  )
 
   const modelPickerShowItemName = ref<boolean>(
     localStorage.getItem('openhab.ui:modelPicker.showItemName') === 'true'
@@ -81,20 +83,24 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
   )
 
   // Getters
-  function getDarkMode () {
+  function getDarkMode() {
     if (storedDarkMode.value === 'auto') {
-      return typeof window.OHApp?.preferDarkMode === 'function' ? window.OHApp.preferDarkMode() : f7.darkMode ? 'dark' : 'light'
+      return typeof window.OHApp?.preferDarkMode === 'function'
+        ? window.OHApp.preferDarkMode()
+        : f7.darkMode
+          ? 'dark'
+          : 'light'
     }
 
     return storedDarkMode.value
   }
 
-  function isAutoDarkMode () {
+  function isAutoDarkMode() {
     return storedDarkMode.value === 'auto'
   }
 
   // Actions
-  function setDarkMode (value: 'auto' | 'dark' | 'light') {
+  function setDarkMode(value: 'auto' | 'dark' | 'light') {
     storedDarkMode.value = value
 
     if (value === 'auto') {
@@ -109,29 +115,29 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     updateClasses()
   }
 
-  watch(bars, (newValue) => {
+  watch(bars, newValue => {
     localStorage.setItem('openhab.ui:theme.bars', newValue)
     updateClasses()
   })
 
-  watch(disablePageTransitionAnimation, (newValue) => {
+  watch(disablePageTransitionAnimation, newValue => {
     localStorage.setItem('openhab.ui:theme.disablepagetransition', newValue.toString())
     updateClasses()
   })
 
-  watch(homeNavBar, (newValue) => {
+  watch(homeNavBar, newValue => {
     localStorage.setItem('openhab.ui:theme.home.navbar', newValue)
   })
 
-  watch(disableExpandableCardAnimation, (newValue) => {
+  watch(disableExpandableCardAnimation, newValue => {
     localStorage.setItem('openhab.ui:theme.home.cardanimation', newValue ? 'disabled' : 'default')
   })
 
-  watch(homeBackground, (newValue) => {
+  watch(homeBackground, newValue => {
     localStorage.setItem('openhab.ui:theme.home.background', newValue)
   })
 
-  watch(blocklyRenderer, (newValue) => {
+  watch(blocklyRenderer, newValue => {
     if (newValue === null) {
       localStorage.removeItem('openhab.ui:blockly.renderer')
     } else {
@@ -139,37 +145,37 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     }
   })
 
-  watch(hideChatInput, (newValue) => {
+  watch(hideChatInput, newValue => {
     localStorage.setItem('openhab.ui:theme.home.hidechatinput', newValue.toString())
   })
 
-  watch(webAudio, (newValue) => {
+  watch(webAudio, newValue => {
     localStorage.setItem('openhab.ui:webaudio.enable', newValue ? 'true' : 'false')
   })
 
-  watch(visibleBreakpointDisabled, (newValue) => {
+  watch(visibleBreakpointDisabled, newValue => {
     localStorage.setItem('openhab.ui:panel.visibleBreakpointDisabled', newValue.toString())
   })
 
-  watch(codeEditorType, (newValue) => {
+  watch(codeEditorType, newValue => {
     localStorage.setItem('openhab.ui:codeEditor.type', newValue)
   })
 
-  watch(modelPickerShowItemName, (newValue) => {
+  watch(modelPickerShowItemName, newValue => {
     localStorage.setItem('openhab.ui:modelPicker.showItemName', newValue?.toString())
   })
-  watch(modelPickerShowItemTags, (newValue) => {
+  watch(modelPickerShowItemTags, newValue => {
     localStorage.setItem('openhab.ui:modelPicker.showItemTags', newValue?.toString())
   })
-  watch(modelPickerShowNonSemantic, (newValue) => {
+  watch(modelPickerShowNonSemantic, newValue => {
     localStorage.setItem('openhab.ui:modelPicker.showNonSemantic', newValue?.toString())
   })
 
-  watch(sitemapShowItemName, (newValue) => {
+  watch(sitemapShowItemName, newValue => {
     localStorage.setItem('openhab.ui:sitemap.showItemName', newValue?.toString())
   })
 
-  function updateClasses () {
+  function updateClasses() {
     if (getDarkMode() === 'dark') {
       Dom7('html').addClass('dark')
     } else {
@@ -187,7 +193,7 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     }
   }
 
-  function themeOptions () {
+  function themeOptions() {
     return {
       dark: getDarkMode(),
       autoDarkMode: isAutoDarkMode(),

@@ -1,6 +1,6 @@
 import dayjs from 'dayjs'
 
-export default (series) => {
+export default series => {
   if (Array.isArray(series.markers)) {
     if (!series.markLine) {
       series.markLine = {

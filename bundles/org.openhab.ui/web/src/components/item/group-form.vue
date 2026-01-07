@@ -1,83 +1,92 @@
 <template>
   <div class="group-form no-padding">
     <!-- Type -->
-    <f7-list-item v-if="item.type === 'Group'"
-                  :disabled="!editable ? true : null"
-                  :key="'type-' + groupType"
-                  title="Members Base Type"
-                  class="aligned-smart-select"
-                  smart-select
-                  :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
+    <f7-list-item
+      v-if="item.type === 'Group'"
+      :disabled="!editable ? true : null"
+      :key="'type-' + groupType"
+      title="Members Base Type"
+      class="aligned-smart-select"
+      smart-select
+      :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
       <select name="select-basetype" @change="groupType = $event.target.value">
-        <option v-for="type in types.GroupTypes"
-                :key="type"
-                :value="type"
-                :selected="type === groupType ? true : null">
+        <option
+          v-for="type in types.GroupTypes"
+          :key="type"
+          :value="type"
+          :selected="type === groupType ? true : null">
           {{ type }}
         </option>
       </select>
     </f7-list-item>
     <!-- Dimension -->
-    <f7-list-item v-if="dimensions.length && groupType && groupType === 'Number'"
-                  :disabled="!editable ? true : null"
-                  :key="'dimension-' + groupDimension"
-                  title="Dimension"
-                  class="aligned-smart-select"
-                  smart-select
-                  :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
+    <f7-list-item
+      v-if="dimensions.length && groupType && groupType === 'Number'"
+      :disabled="!editable ? true : null"
+      :key="'dimension-' + groupDimension"
+      title="Dimension"
+      class="aligned-smart-select"
+      smart-select
+      :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
       <select name="select-dimension" @change="groupDimension = $event.target.value">
         <option key="" value="Number" :selected="groupType === 'Number' ? true : null" />
-        <option v-for="d in dimensions"
-                :key="d.name"
-                :value="d.name"
-                :selected="d.name === groupDimension ? true : null">
+        <option
+          v-for="d in dimensions"
+          :key="d.name"
+          :value="d.name"
+          :selected="d.name === groupDimension ? true : null">
           {{ d.label }}
         </option>
       </select>
     </f7-list-item>
     <!-- (Internal) Unit & State Description -->
-    <f7-list-input v-show="groupType && groupDimension && dimensionsReady"
-                   :disabled="!editable ? true : null"
-                   ref="groupUnit"
-                   label="Unit"
-                   type="text"
-                   :info="(createMode) ? 'Type a valid unit for the dimension or select from the proposed units. Used internally, for persistence and external systems. Is independent from state visualization in the UI, which is defined through the state description pattern.' : ''"
-                   :value="groupDimension ? groupUnit : ''"
-                   @change="groupUnit = $event.target.value"
-                   :clear-button="editable" />
-    <f7-list-input v-show="groupType && groupDimension"
-                   :disabled="!editable ? true : null"
-                   label="State Description Pattern"
-                   type="text"
-                   :info="(createMode) ? 'Pattern or transformation applied to the state for display purposes. Only saved if you change the pre-filled default value.' : ''"
-                   :value="stateDescriptionPattern"
-                   @input="stateDescriptionPattern = $event.target.value"
-                   :clear-button:="editable" />
+    <f7-list-input
+      v-show="groupType && groupDimension && dimensionsReady"
+      :disabled="!editable ? true : null"
+      ref="groupUnit"
+      label="Unit"
+      type="text"
+      :info="(createMode) ? 'Type a valid unit for the dimension or select from the proposed units. Used internally, for persistence and external systems. Is independent from state visualization in the UI, which is defined through the state description pattern.' : ''"
+      :value="groupDimension ? groupUnit : ''"
+      @change="groupUnit = $event.target.value"
+      :clear-button="editable" />
+    <f7-list-input
+      v-show="groupType && groupDimension"
+      :disabled="!editable ? true : null"
+      label="State Description Pattern"
+      type="text"
+      :info="(createMode) ? 'Pattern or transformation applied to the state for display purposes. Only saved if you change the pre-filled default value.' : ''"
+      :value="stateDescriptionPattern"
+      @input="stateDescriptionPattern = $event.target.value"
+      :clear-button:="editable" />
     <!-- Aggregation Functions -->
-    <f7-list-item v-if="aggregationFunctions"
-                  :disabled="!editable ? true : null"
-                  title="Aggregation Function"
-                  class="aligned-smart-select"
-                  smart-select
-                  :smart-select-params="{openIn: 'popup', closeOnSelect: true}">
+    <f7-list-item
+      v-if="aggregationFunctions"
+      :disabled="!editable ? true : null"
+      title="Aggregation Function"
+      class="aligned-smart-select"
+      smart-select
+      :smart-select-params="{openIn: 'popup', closeOnSelect: true}">
       <select name="select-function" @change="groupFunctionKey = $event.target.value">
-        <option v-for="type in aggregationFunctions"
-                :key="type.name"
-                :value="type.name"
-                :selected="type.name === groupFunctionKey ? true : null">
+        <option
+          v-for="type in aggregationFunctions"
+          :key="type.name"
+          :value="type.name"
+          :selected="type.name === groupFunctionKey ? true : null">
           {{ type.value }}
         </option>
       </select>
     </f7-list-item>
     <!-- COUNT aggregation function regular expression input -->
-    <f7-list-input v-if="aggregationFunctions && groupFunctionKey === 'COUNT'"
-                   :disabled="!editable ? true : null"
-                   label="COUNT Expression"
-                   type="text"
-                   info="Specify the regular expression used to to match the states of the members."
-                   :value="groupFunctionParam"
-                   @input="groupFunctionParam = $event.target.value"
-                   :clear-button="editable" />
+    <f7-list-input
+      v-if="aggregationFunctions && groupFunctionKey === 'COUNT'"
+      :disabled="!editable ? true : null"
+      label="COUNT Expression"
+      type="text"
+      info="Specify the regular expression used to to match the states of the members."
+      :value="groupFunctionParam"
+      @input="groupFunctionParam = $event.target.value"
+      :clear-button="editable" />
   </div>
 </template>
 

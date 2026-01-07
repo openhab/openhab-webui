@@ -1,30 +1,50 @@
 <template>
   <f7-block v-if="!category">
     <f7-row class="margin-bottom">
-      <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 triggertype-big-button" width="50">
-        <f7-link class="display-flex flex-direction-column no-ripple" no-ripple @click="chooseItemCategory">
+      <f7-col
+        class="elevation-2 elevation-hover-6 elevation-pressed-1 triggertype-big-button"
+        width="50">
+        <f7-link
+          class="display-flex flex-direction-column no-ripple"
+          no-ripple
+          @click="chooseItemCategory">
           <f7-icon size="35" f7="square_on_circle" class="margin" />
-          Item<br>Condition
+          Item<br />Condition
         </f7-link>
       </f7-col>
-      <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 triggertype-big-button" width="50">
-        <f7-link class="display-flex flex-direction-column no-ripple" no-ripple @click="chooseScriptCategory">
+      <f7-col
+        class="elevation-2 elevation-hover-6 elevation-pressed-1 triggertype-big-button"
+        width="50">
+        <f7-link
+          class="display-flex flex-direction-column no-ripple"
+          no-ripple
+          @click="chooseScriptCategory">
           <f7-icon size="35" f7="doc_plaintext" class="margin" />
-          Script<br>Condition
+          Script<br />Condition
         </f7-link>
       </f7-col>
     </f7-row>
     <f7-row class="margin-bottom">
-      <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 triggertype-big-button" width="50">
-        <f7-link class="display-flex flex-direction-column no-ripple" no-ripple @click="chooseTimeCategory">
+      <f7-col
+        class="elevation-2 elevation-hover-6 elevation-pressed-1 triggertype-big-button"
+        width="50">
+        <f7-link
+          class="display-flex flex-direction-column no-ripple"
+          no-ripple
+          @click="chooseTimeCategory">
           <f7-icon size="35" f7="clock" class="margin" />
-          Time<br>Condition
+          Time<br />Condition
         </f7-link>
       </f7-col>
-      <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 triggertype-big-button" width="50">
-        <f7-link class="display-flex flex-direction-column no-ripple" no-ripple @click="chooseEphemerisCategory">
+      <f7-col
+        class="elevation-2 elevation-hover-6 elevation-pressed-1 triggertype-big-button"
+        width="50">
+        <f7-link
+          class="display-flex flex-direction-column no-ripple"
+          no-ripple
+          @click="chooseEphemerisCategory">
           <f7-icon size="35" f7="calendar_today" class="margin" />
-          Ephemeris<br>Schedule
+          Ephemeris<br />Schedule
         </f7-link>
       </f7-col>
     </f7-row>
@@ -35,17 +55,21 @@
   <f7-block class="no-margin no-padding" v-else-if="category === 'item'">
     <f7-list>
       <f7-list-group>
-        <item-picker :value="currentModule.configuration.itemName" label="Item" @input="(val) => currentModule.configuration.itemName = val" />
+        <item-picker
+          :value="currentModule.configuration.itemName"
+          label="Item"
+          @input="(val) => currentModule.configuration.itemName = val" />
       </f7-list-group>
     </f7-list>
     <f7-list>
-      <f7-list-item v-for="operator in operators"
-                    radio
-                    :key="operator.value"
-                    :title="operator.label"
-                    name="itemStateOperator"
-                    :checked="currentModule.configuration.operator === operator.value ? true : null"
-                    @click="currentModule.configuration.operator = operator.value" />
+      <f7-list-item
+        v-for="operator in operators"
+        radio
+        :key="operator.value"
+        :title="operator.label"
+        name="itemStateOperator"
+        :checked="currentModule.configuration.operator === operator.value ? true : null"
+        @click="currentModule.configuration.operator = operator.value" />
       <f7-list-input
         label="State"
         name="itemState"
@@ -54,27 +78,27 @@
         @blur="(evt) => currentModule.configuration.state = evt.target.value" />
     </f7-list>
     <f7-list v-if="stateSuggestions.length">
-      <f7-list-item v-for="suggestion in stateSuggestions"
-                    radio
-                    :checked="currentModule.configuration.state === suggestion.value ? true : null"
-                    :key="suggestion.value"
-                    :title="suggestion.label"
-                    @click="currentModule.configuration.state = suggestion.value" />
+      <f7-list-item
+        v-for="suggestion in stateSuggestions"
+        radio
+        :checked="currentModule.configuration.state === suggestion.value ? true : null"
+        :key="suggestion.value"
+        :title="suggestion.label"
+        @click="currentModule.configuration.state = suggestion.value" />
     </f7-list>
   </f7-block>
   <f7-block class="no-margin no-padding" v-else-if="category === 'script'">
-    <f7-block-title class="padding-horizontal">
-      A script evaluates to true
-    </f7-block-title>
+    <f7-block-title class="padding-horizontal"> A script evaluates to true </f7-block-title>
     <f7-list media-list>
-      <f7-list-item media-item
-                    title="Design with Blockly"
-                    text="A beginner-friendly way to build scripts visually by assembling blocks"
-                    :footer="!isJsAvailable ? 'You need to install the JavaScript Scripting addon before you will be able to run' : undefined"
-                    link=""
-                    @click="scriptLanguagePicked('blockly')">
+      <f7-list-item
+        media-item
+        title="Design with Blockly"
+        text="A beginner-friendly way to build scripts visually by assembling blocks"
+        :footer="!isJsAvailable ? 'You need to install the JavaScript Scripting addon before you will be able to run' : undefined"
+        link=""
+        @click="scriptLanguagePicked('blockly')">
         <template #media>
-          <img src="@/images/blockly.svg" height="32" width="32">
+          <img src="@/images/blockly.svg" height="32" width="32" />
         </template>
       </f7-list-item>
     </f7-list>
@@ -82,86 +106,99 @@
       or choose the scripting language:
     </f7-block-footer>
     <f7-list media-list>
-      <f7-list-item v-for="language in languages"
-                    media-item
-                    :key="language.contentType"
-                    :title="language.name"
-                    :after="language.version"
-                    :footer="language.contentType"
-                    link=""
-                    @click="scriptLanguagePicked(language.contentType)">
+      <f7-list-item
+        v-for="language in languages"
+        media-item
+        :key="language.contentType"
+        :title="language.name"
+        :after="language.version"
+        :footer="language.contentType"
+        link=""
+        @click="scriptLanguagePicked(language.contentType)">
         <template #media>
           <span class="item-initial">{{ language.name[0] }}</span>
         </template>
       </f7-list-item>
     </f7-list>
     <f7-block-footer class="padding-horizontal margin-bottom">
-      <small><strong>Note:</strong> Creating a new scripted module will <em>save the rule</em> before
-        launching the script editor.</small>
+      <small
+        ><strong>Note:</strong> Creating a new scripted module will <em>save the rule</em> before
+        launching the script editor.</small
+      >
     </f7-block-footer>
   </f7-block>
   <f7-block class="no-margin no-padding" v-else-if="category === 'time'">
     <f7-list>
-      <f7-list-item radio
-                    :checked="timeEventType === 'dayOfWeek' ? true : null"
-                    name="timeEventType"
-                    title="the current day of the week is"
-                    @click="updateTimeEventType('dayOfWeek')" />
-      <f7-list-item radio
-                    :checked="timeEventType === 'timeOfDay' ? true : null"
-                    name="timeEventType"
-                    title="inside a time range"
-                    @click="updateTimeEventType('timeOfDay')" />
-      <f7-list-item radio
-                    :checked="timeEventType === 'interval' ? true : null"
-                    name="timeEventType"
-                    title="a minimum interval is met"
-                    @click="updateTimeEventType('interval')" />
+      <f7-list-item
+        radio
+        :checked="timeEventType === 'dayOfWeek' ? true : null"
+        name="timeEventType"
+        title="the current day of the week is"
+        @click="updateTimeEventType('dayOfWeek')" />
+      <f7-list-item
+        radio
+        :checked="timeEventType === 'timeOfDay' ? true : null"
+        name="timeEventType"
+        title="inside a time range"
+        @click="updateTimeEventType('timeOfDay')" />
+      <f7-list-item
+        radio
+        :checked="timeEventType === 'interval' ? true : null"
+        name="timeEventType"
+        title="a minimum interval is met"
+        @click="updateTimeEventType('interval')" />
     </f7-list>
-    <config-sheet v-if="currentModuleType"
-                  :key="currentModule.id"
-                  :parameterGroups="[]"
-                  :parameters="currentModuleType.configDescriptions"
-                  :configuration="currentModule.configuration"
-                  @updated="dirty = true" />
+    <config-sheet
+      v-if="currentModuleType"
+      :key="currentModule.id"
+      :parameterGroups="[]"
+      :parameters="currentModuleType.configDescriptions"
+      :configuration="currentModule.configuration"
+      @updated="dirty = true" />
   </f7-block>
   <f7-block class="no-margin no-padding" v-else-if="category === 'ephemeris'">
     <f7-list>
-      <f7-list-item radio
-                    :checked="ephemerisEventType === 'weekdays' ? true : null"
-                    name="EphemerisEventType"
-                    title="it's a weekday"
-                    @click="updateEphemerisEventType('weekdays')" />
-      <f7-list-item radio
-                    :checked="ephemerisEventType === 'weekends' ? true : null"
-                    name="EphemerisEventType"
-                    title="it's the weekend"
-                    @click="updateEphemerisEventType('weekends')" />
-      <f7-list-item radio
-                    :checked="ephemerisEventType === 'holidays' ? true : null"
-                    name="EphemerisEventType"
-                    title="it's a holiday"
-                    @click="updateEphemerisEventType('holidays')" />
-      <f7-list-item radio
-                    :checked="ephemerisEventType === 'notHolidays' ? true : null"
-                    name="EphemerisEventType"
-                    title="it's not a holiday"
-                    @click="updateEphemerisEventType('notHolidays')" />
-      <f7-list-item radio
-                    :checked="ephemerisEventType === 'dayset' ? true : null"
-                    name="EphemerisEventType"
-                    title="today is in a specific dayset"
-                    @click="updateEphemerisEventType('dayset')" />
+      <f7-list-item
+        radio
+        :checked="ephemerisEventType === 'weekdays' ? true : null"
+        name="EphemerisEventType"
+        title="it's a weekday"
+        @click="updateEphemerisEventType('weekdays')" />
+      <f7-list-item
+        radio
+        :checked="ephemerisEventType === 'weekends' ? true : null"
+        name="EphemerisEventType"
+        title="it's the weekend"
+        @click="updateEphemerisEventType('weekends')" />
+      <f7-list-item
+        radio
+        :checked="ephemerisEventType === 'holidays' ? true : null"
+        name="EphemerisEventType"
+        title="it's a holiday"
+        @click="updateEphemerisEventType('holidays')" />
+      <f7-list-item
+        radio
+        :checked="ephemerisEventType === 'notHolidays' ? true : null"
+        name="EphemerisEventType"
+        title="it's not a holiday"
+        @click="updateEphemerisEventType('notHolidays')" />
+      <f7-list-item
+        radio
+        :checked="ephemerisEventType === 'dayset' ? true : null"
+        name="EphemerisEventType"
+        title="today is in a specific dayset"
+        @click="updateEphemerisEventType('dayset')" />
     </f7-list>
     <f7-block-footer class="padding-horizontal">
       Remember to configure Ephemeris in Settings before using these conditions.
     </f7-block-footer>
-    <config-sheet v-if="currentModuleType"
-                  :key="currentModule.id"
-                  :parameterGroups="[]"
-                  :parameters="currentModuleType.configDescriptions"
-                  :configuration="currentModule.configuration"
-                  @updated="dirty = true" />
+    <config-sheet
+      v-if="currentModuleType"
+      :key="currentModule.id"
+      :parameterGroups="[]"
+      :parameters="currentModuleType.configDescriptions"
+      :configuration="currentModule.configuration"
+      @updated="dirty = true" />
   </f7-block>
 </template>
 

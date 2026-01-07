@@ -1,21 +1,21 @@
 <template>
-  <f7-popup ref="mapPicker"
-            class="mappicker-popup"
-            @popup:open="mapPickerOpen"
-            @popup:closed="mapPickerClosed">
+  <f7-popup
+    ref="mapPicker"
+    class="mappicker-popup"
+    @popup:open="mapPickerOpen"
+    @popup:closed="mapPickerClosed">
     <f7-page>
       <f7-navbar>
         <f7-nav-left>
-          <f7-link icon-ios="f7:arrow_left"
-                   icon-md="material:arrow_back"
-                   icon-aurora="f7:arrow_left"
-                   popup-close />
+          <f7-link
+            icon-ios="f7:arrow_left"
+            icon-md="material:arrow_back"
+            icon-aurora="f7:arrow_left"
+            popup-close />
         </f7-nav-left>
         <f7-nav-title>{{ title }}</f7-nav-title>
         <f7-nav-right>
-          <f7-link class="popup-close" @click="updateValue(currentPosition)">
-            Done
-          </f7-link>
+          <f7-link class="popup-close" @click="updateValue(currentPosition)"> Done </f7-link>
         </f7-nav-right>
       </f7-navbar>
 

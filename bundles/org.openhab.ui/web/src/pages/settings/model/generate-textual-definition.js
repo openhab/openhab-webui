@@ -6,8 +6,14 @@ import utils from '@/js/openhab/utils'
  * Generate a textual definition for the items provided by the "add from thing" page,
  * for expert users who prefer to edit their items that way
  */
-export default (thing, channelTypes, newEquipmentItem, parentGroupsForEquipment, parentGroupsForPoints) => {
-  const channelTypesMap = new Map(channelTypes.map((ct) => [ct.UID, ct]))
+export default (
+  thing,
+  channelTypes,
+  newEquipmentItem,
+  parentGroupsForEquipment,
+  parentGroupsForPoints
+) => {
+  const channelTypesMap = new Map(channelTypes.map(ct => [ct.UID, ct]))
 
   let def = ''
   if (newEquipmentItem && newEquipmentItem.name) {
@@ -17,7 +23,8 @@ export default (thing, channelTypes, newEquipmentItem, parentGroupsForEquipment,
     def += `Group ${newEquipmentItem.name} "${newEquipmentItem.label}" `
     if (newEquipmentItem.category) def += `<${newEquipmentItem.category}> `
     if (parentGroupsForEquipment.length) def += `(${parentGroupsForEquipment.join(', ')}) `
-    if (newEquipmentItem.tags.length) def += `[${newEquipmentItem.tags.map((t) => `"${t}"`).join(', ')}] `
+    if (newEquipmentItem.tags.length)
+      def += `[${newEquipmentItem.tags.map(t => `"${t}"`).join(', ')}] `
     def = def.trim() + '\n\n'
   }
 
@@ -25,23 +32,35 @@ export default (thing, channelTypes, newEquipmentItem, parentGroupsForEquipment,
   for (const channel of thing.channels) {
     if (channel.kind !== 'STATE') continue
     const channelType = channelTypesMap.get(channel.channelTypeUID)
-    let newItemName = (newEquipmentItem) ? newEquipmentItem.name : utils.normalizeLabel(thing.label)
+    let newItemName = newEquipmentItem ? newEquipmentItem.name : utils.normalizeLabel(thing.label)
     newItemName += '_'
     let suffix = channel.label || channel.id
-    if (thing.channels.filter((c) => c.label === suffix || (c.channelTypeUID && channelTypesMap[c.channelTypeUID] && channelTypesMap[c.channelTypeUID].label === suffix)).length > 1) {
-      suffix = channel.id.replace('#', '_').replace(/(^\w{1})|(_+\w{1})/g, (letter) => letter.toUpperCase())
+    if (
+      thing.channels.filter(
+        c =>
+          c.label === suffix ||
+          (c.channelTypeUID &&
+            channelTypesMap[c.channelTypeUID] &&
+            channelTypesMap[c.channelTypeUID].label === suffix)
+      ).length > 1
+    ) {
+      suffix = channel.id
+        .replace('#', '_')
+        .replace(/(^\w{1})|(_+\w{1})/g, letter => letter.toUpperCase())
     }
     newItemName += utils.normalizeLabel(suffix)
-    const defaultTags = (channel.defaultTags.length > 0) ? channel.defaultTags : channelType.tags
+    const defaultTags = channel.defaultTags.length > 0 ? channel.defaultTags : channelType.tags
     const newItem = {
       channel,
       channelType,
       name: newItemName,
       label: channel.label || channelType.label,
       groupNames: parentGroupsForPoints,
-      category: (channelType) ? channelType.category : '',
+      category: channelType ? channelType.category : '',
       type: channel.itemType,
-      tags: (defaultTags.find((t) => useSemanticsStore().Points.indexOf(t) >= 0)) ? defaultTags : [...defaultTags, 'Point']
+      tags: defaultTags.find(t => useSemanticsStore().Points.indexOf(t) >= 0)
+        ? defaultTags
+        : [...defaultTags, 'Point']
     }
 
     let line = []
@@ -49,9 +68,9 @@ export default (thing, channelTypes, newEquipmentItem, parentGroupsForEquipment,
     line.push(newItem.name)
     line.push(`"${newItem.label}"`)
     if (channelType.advanced) line[0] = '// ' + line[0] // comment the advanced channels by default
-    line.push((newItem.category) ? `<${newItem.category}>` : '')
-    line.push((newItem.groupNames.length) ? `(${newItem.groupNames.join(', ')})` : '')
-    line.push((newItem.tags.length) ? `[${newItem.tags.map((t) => `"${t}"`).join(', ')}] ` : '')
+    line.push(newItem.category ? `<${newItem.category}>` : '')
+    line.push(newItem.groupNames.length ? `(${newItem.groupNames.join(', ')})` : '')
+    line.push(newItem.tags.length ? `[${newItem.tags.map(t => `"${t}"`).join(', ')}] ` : '')
     line.push(`{ channel="${channel.uid}" }`)
     lines.push(line)
   }
@@ -60,11 +79,11 @@ export default (thing, channelTypes, newEquipmentItem, parentGroupsForEquipment,
 
   let columnsWidths = []
   for (let c = 0; c < lines[0].length; c++) {
-    columnsWidths.push(Math.max(...lines.map((l) => l[c].length)) + 1)
+    columnsWidths.push(Math.max(...lines.map(l => l[c].length)) + 1)
   }
 
   def += '// Points:\n\n'
-  lines.forEach((l) => {
+  lines.forEach(l => {
     for (let c = 0; c < l.length; c++) {
       def += l[c] + ' '.repeat(columnsWidths[c] - l[c].length)
     }

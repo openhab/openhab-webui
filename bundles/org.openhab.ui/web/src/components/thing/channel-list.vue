@@ -17,28 +17,32 @@
     <div v-if="hasAdvanced" style="text-align: right" class="padding-right">
       <label class="advanced-label">
         <f7-checkbox name="channel-advanced" v-model:checked="showAdvanced" />
-        Show advanced</label>
+        Show advanced</label
+      >
     </div>
     <f7-col v-if="thing.channels.length > 0">
       <f7-block width="100" class="channel-group no-margin no-padding" ref="channelList">
         <f7-row class="searchbar-ignore">
           <f7-col class="padding-left padding-right searchbar-ignore">
             <f7-segmented class="searchbar-ignore" strong tag="p">
-              <f7-button class="searchbar-ignore"
-                         @click="toggleLinkFilter(undefined)"
-                         small
-                         :active="showLinked === undefined"
-                         text="All" />
-              <f7-button class="searchbar-ignore"
-                         @click="toggleLinkFilter(true)"
-                         small
-                         :active="showLinked === true"
-                         text="Linked" />
-              <f7-button class="searchbar-ignore"
-                         @click="toggleLinkFilter(false)"
-                         small
-                         :active="showLinked === false"
-                         text="Unlinked" />
+              <f7-button
+                class="searchbar-ignore"
+                @click="toggleLinkFilter(undefined)"
+                small
+                :active="showLinked === undefined"
+                text="All" />
+              <f7-button
+                class="searchbar-ignore"
+                @click="toggleLinkFilter(true)"
+                small
+                :active="showLinked === true"
+                text="Linked" />
+              <f7-button
+                class="searchbar-ignore"
+                @click="toggleLinkFilter(false)"
+                small
+                :active="showLinked === false"
+                text="Unlinked" />
             </f7-segmented>
           </f7-col>
         </f7-row>
@@ -58,49 +62,55 @@
               :selection="(multipleLinksMode) ? selectedChannels : selectedChannel"
               @selected="selectChannel"
               @channel-opened="channelOpened">
-              <template v-if="!pickerMode && !multipleLinksMode"
-                        #default="{ channelId, channelType, channel, extensible }">
-                <channel-link :opened="openedChannelId === channelId"
-                              :thing="thing"
-                              :thingType="thingType"
-                              :channelId="channelId"
-                              :channelType="channelType"
-                              :channel="channel"
-                              :extensible="extensible"
-                              :context="context"
-                              :f7router
-                              @channel-updated="e => $emit('channels-updated', e)" />
+              <template
+                v-if="!pickerMode && !multipleLinksMode"
+                #default="{ channelId, channelType, channel, extensible }">
+                <channel-link
+                  :opened="openedChannelId === channelId"
+                  :thing="thing"
+                  :thingType="thingType"
+                  :channelId="channelId"
+                  :channelType="channelType"
+                  :channel="channel"
+                  :extensible="extensible"
+                  :context="context"
+                  :f7router
+                  @channel-updated="e => $emit('channels-updated', e)" />
               </template>
               <template v-else-if="multipleLinksMode" #default="{ channelType, channel }">
-                <item-picker v-if="isChecked(channel) && hasLinks(channel)"
-                             :label="selectedItem(channel) ? 'Change Item Selection' : 'Pick Existing Linked Item'"
-                             textColor="blue"
-                             :hideIcon="true"
-                             :items="items.filter((i) => channel.linkedItems.includes(i.name))"
-                             :multiple="false"
-                             :noModelPicker="true"
-                             :setValueText="false"
-                             :value="selectedItem(channel)?.name"
-                             @input="selectExistingItem($event, channel, channelType)" />
-                <item-form v-if="selectedItem(channel)"
-                           :item="selectedItem(channel)"
-                           :items="items"
-                           :createMode="false" />
-                <item-form v-else-if="isChecked(channel)"
-                           :item="newItem(channel)"
-                           :items="items"
-                           :createMode="true"
-                           :unitHint="getUnitHint(channel, channelType)"
-                           :stateDescription="stateDescription(channelType)" />
+                <item-picker
+                  v-if="isChecked(channel) && hasLinks(channel)"
+                  :label="selectedItem(channel) ? 'Change Item Selection' : 'Pick Existing Linked Item'"
+                  textColor="blue"
+                  :hideIcon="true"
+                  :items="items.filter((i) => channel.linkedItems.includes(i.name))"
+                  :multiple="false"
+                  :noModelPicker="true"
+                  :setValueText="false"
+                  :value="selectedItem(channel)?.name"
+                  @input="selectExistingItem($event, channel, channelType)" />
+                <item-form
+                  v-if="selectedItem(channel)"
+                  :item="selectedItem(channel)"
+                  :items="items"
+                  :createMode="false" />
+                <item-form
+                  v-else-if="isChecked(channel)"
+                  :item="newItem(channel)"
+                  :items="items"
+                  :createMode="true"
+                  :unitHint="getUnitHint(channel, channelType)"
+                  :stateDescription="stateDescription(channelType)" />
               </template>
               <!-- <channel-link #default="{ channelId }" /> -->
             </channel-group>
           </f7-col>
         </f7-row>
         <f7-list v-if="multipleLinksMode">
-          <f7-list-button style="padding-left: 0; text-align: left"
-                          color="blue"
-                          @click="toggleAllChecks(true)">
+          <f7-list-button
+            style="padding-left: 0; text-align: left"
+            color="blue"
+            @click="toggleAllChecks(true)">
             Select All
           </f7-list-button>
           <f7-list-button color="blue" @click="toggleAllChecks(false)">
@@ -113,7 +123,8 @@
       <f7-block strong>
         <f7-row>
           <f7-col class="padding-left">
-            This thing has no channels. Either the thing type doesn't define channels, or they may be detected and appear later.
+            This thing has no channels. Either the thing type doesn't define channels, or they may
+            be detected and appear later.
           </f7-col>
         </f7-row>
       </f7-block>

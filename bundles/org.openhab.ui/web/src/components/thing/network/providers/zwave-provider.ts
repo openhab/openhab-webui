@@ -4,7 +4,13 @@
  * Transforms Z-Wave thing data into a unified NetworkGraph format
  */
 
-import type { NetworkGraph, NetworkGraphProvider, NetworkNode, NetworkLink, NetworkLegend } from '../types'
+import type {
+  NetworkGraph,
+  NetworkGraphProvider,
+  NetworkNode,
+  NetworkLink,
+  NetworkLegend
+} from '../types'
 
 /**
  * Color constants for Z-Wave node types
@@ -31,9 +37,24 @@ export class ZWaveNetworkProvider implements NetworkGraphProvider {
 
   private static readonly LEGEND: NetworkLegend = {
     nodeRoles: [
-      { id: 'controller', label: 'Controller', color: RoleColors.controller, size: RoleSizes.controller },
-      { id: 'listening', label: 'Always Listening', color: RoleColors.listening, size: RoleSizes.listening },
-      { id: 'sleeping', label: 'Battery/Sleeping', color: RoleColors.sleeping, size: RoleSizes.sleeping }
+      {
+        id: 'controller',
+        label: 'Controller',
+        color: RoleColors.controller,
+        size: RoleSizes.controller
+      },
+      {
+        id: 'listening',
+        label: 'Always Listening',
+        color: RoleColors.listening,
+        size: RoleSizes.listening
+      },
+      {
+        id: 'sleeping',
+        label: 'Battery/Sleeping',
+        color: RoleColors.sleeping,
+        size: RoleSizes.sleeping
+      }
     ],
     linkQualities: [],
     linkTypes: [
@@ -42,18 +63,19 @@ export class ZWaveNetworkProvider implements NetworkGraphProvider {
     ]
   }
 
-  buildGraph (things: any[], bridgeUID: string): NetworkGraph {
-    const zWaveNodes = things.filter((t) =>
-      (t.bridgeUID === bridgeUID || t.UID === bridgeUID) &&
-      t.properties &&
-      t.properties.zwave_nodeid &&
-      t.properties.zwave_neighbours
+  buildGraph(things: any[], bridgeUID: string): NetworkGraph {
+    const zWaveNodes = things.filter(
+      t =>
+        (t.bridgeUID === bridgeUID || t.UID === bridgeUID) &&
+        t.properties &&
+        t.properties.zwave_nodeid &&
+        t.properties.zwave_neighbours
     )
 
     const nodes: NetworkNode[] = []
     const linkData: Array<[string, string]> = []
 
-    zWaveNodes.forEach((thing) => {
+    zWaveNodes.forEach(thing => {
       const nodeId = thing.properties.zwave_nodeid
       const isController = !thing.bridgeUID
       const listening = thing.properties.zwave_listening === 'true'
@@ -107,14 +129,14 @@ export class ZWaveNetworkProvider implements NetworkGraphProvider {
     }
   }
 
-  private createLinks (linkData: Array<[string, string]>): NetworkLink[] {
+  private createLinks(linkData: Array<[string, string]>): NetworkLink[] {
     const links: NetworkLink[] = []
     const linkMap = new Map<string, NetworkLink>()
 
     linkData.forEach(([nodeId, neighbours]) => {
       if (!neighbours) return
 
-      neighbours.split(',').forEach((n) => {
+      neighbours.split(',').forEach(n => {
         if (!n) return
 
         const reverseKey = `${n}|${nodeId}`
@@ -140,16 +162,19 @@ export class ZWaveNetworkProvider implements NetworkGraphProvider {
     return links
   }
 
-  private getStatusColor (statusInfo: any): string {
+  private getStatusColor(statusInfo: any): string {
     if (!statusInfo) return '#9E9E9E'
     switch (statusInfo.status) {
-      case 'ONLINE': return '#4CAF50'
-      case 'OFFLINE': return '#F44336'
-      case 'UNKNOWN': return '#9E9E9E'
-      default: return '#9E9E9E'
+      case 'ONLINE':
+        return '#4CAF50'
+      case 'OFFLINE':
+        return '#F44336'
+      case 'UNKNOWN':
+        return '#9E9E9E'
+      default:
+        return '#9E9E9E'
     }
   }
 }
 
 export const zwaveNetworkProvider = new ZWaveNetworkProvider()
-

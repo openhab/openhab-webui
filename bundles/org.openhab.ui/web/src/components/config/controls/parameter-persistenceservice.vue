@@ -1,5 +1,8 @@
 <template>
-  <persistence-service-picker :title="configDescription.label" :value="value" @input="updateValue" />
+  <persistence-service-picker
+    :title="configDescription.label"
+    :value="value"
+    @input="updateValue" />
 </template>
 
 <script>

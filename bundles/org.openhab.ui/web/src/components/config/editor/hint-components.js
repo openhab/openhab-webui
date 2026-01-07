@@ -1,5 +1,12 @@
 import { insertCompletionText, pickedCompletion } from '@codemirror/autocomplete'
-import { lineIndent, findParent, isConfig, isComponent, isSlots, findComponentType } from './yaml-utils'
+import {
+  lineIndent,
+  findParent,
+  isConfig,
+  isComponent,
+  isSlots,
+  findComponentType
+} from './yaml-utils'
 import { completionStart, hintItems, hintParameterValues, hintParameters } from './hint-utils'
 
 import * as f7vue from 'framework7-vue'
@@ -25,43 +32,50 @@ const ComponentID = /[\w-]+/
 let ohComponents = null
 let f7Components = null
 
-function getOhComponents () {
-  ohComponents ??= Object
-    .values({
-      ...SystemWidgets,
-      ...LayoutWidgets,
-      ...StandardWidgets,
-      ...StandardListWidgets,
-      ...StandardCellWidgets
-    })
-    .filter((w) => w.widget && typeof w.widget === 'function')
-    .map((c) => c.widget())
+function getOhComponents() {
+  ohComponents ??= Object.values({
+    ...SystemWidgets,
+    ...LayoutWidgets,
+    ...StandardWidgets,
+    ...StandardListWidgets,
+    ...StandardCellWidgets
+  })
+    .filter(w => w.widget && typeof w.widget === 'function')
+    .map(c => c.widget())
     .sort((c1, c2) => c1.name.localeCompare(c2.name))
   return ohComponents
 }
 
-function getF7Components () {
-  f7Components ??= Object.values(f7vue).filter((m) => m.name && m.name.startsWith('f7-')).sort((c1, c2) => c1.name.localeCompare(c2.name))
+function getF7Components() {
+  f7Components ??= Object.values(f7vue)
+    .filter(m => m.name && m.name.startsWith('f7-'))
+    .sort((c1, c2) => c1.name.localeCompare(c2.name))
   return f7Components
 }
 
-function getWidgetDefinitions (context) {
+function getWidgetDefinitions(context) {
   const mode = context.view.originalMode
   const componentType = mode.includes(';type=') ? mode.split('=')[1] : undefined
   switch (componentType) {
     case 'chart':
       return [
         OhChartPageDefinition(),
-        ...Object.keys(ChartWidgetsDefinitions).map((name) => {
+        ...Object.keys(ChartWidgetsDefinitions).map(name => {
           return Object.assign({}, ChartWidgetsDefinitions[name], { name })
         })
       ]
     case 'plan':
-      return Object.values(PlanWidgets).map((c) => c.widget()).sort((c1, c2) => c1.name.localeCompare(c2.name))
+      return Object.values(PlanWidgets)
+        .map(c => c.widget())
+        .sort((c1, c2) => c1.name.localeCompare(c2.name))
     case 'map':
-      return Object.values(MapWidgets).map((c) => c.widget()).sort((c1, c2) => c1.name.localeCompare(c2.name))
+      return Object.values(MapWidgets)
+        .map(c => c.widget())
+        .sort((c1, c2) => c1.name.localeCompare(c2.name))
     case 'blocks':
-      return Object.values(BlockLibrariesComponentDefinitions).map((c) => c()).sort((c1, c2) => c1.name.localeCompare(c2.name))
+      return Object.values(BlockLibrariesComponentDefinitions)
+        .map(c => c())
+        .sort((c1, c2) => c1.name.localeCompare(c2.name))
     default:
       return [
         ...(componentType === 'home'
@@ -69,19 +83,19 @@ function getWidgetDefinitions (context) {
           : []),
         ...getOhComponents(),
         ...getF7Components(),
-        ...Object.keys(ChartWidgetsDefinitions).map((name) => {
+        ...Object.keys(ChartWidgetsDefinitions).map(name => {
           return Object.assign({}, ChartWidgetsDefinitions[name], { name })
         })
       ]
   }
 }
 
-function hintExpression (context, line) {
+function hintExpression(context, line) {
   const cursor = context.pos - line.from
 
   const lastOp = line.text.substring(0, cursor).replace(/([@#.])[A-Za-z0-9_-]*$/, '$1')
   if (lastOp.endsWith('@') || lastOp.endsWith('#')) {
-    return hintItems(context, { prefix: '\'', suffix: '\'' })
+    return hintItems(context, { prefix: "'", suffix: "'" })
   } else if (lastOp.endsWith('items.')) {
     return hintItems(context, { suffix: '.state' })
   } else if (lastOp.endsWith('.')) {
@@ -185,29 +199,30 @@ function hintExpression (context, line) {
         label: 'dayjs',
         info: 'Access to the Day.js object for date manipulation & formatting'
       }
-    ].map((option) => {
+    ].map(option => {
       // Enforce insertion order by applying boost to override CodeMirror's automatic sorting
       return { ...option, boost: boost-- }
     })
   }
 }
 
-function f7ComponentParameters (componentName) {
+function f7ComponentParameters(componentName) {
   console.debug(f7vue)
-  const f7vueComponent = Object.values(f7vue).find((c) => c.name === componentName)
+  const f7vueComponent = Object.values(f7vue).find(c => c.name === componentName)
   console.debug(f7vueComponent)
   if (!f7vueComponent) return []
 
   const defaultProps = {}
   if (typeof f7vueComponent.props === 'object') {
     for (const [name, props] of Object.entries(f7vueComponent.props)) {
-      if (props && typeof props === 'object' && 'default' in props) defaultProps[name] = props.default
+      if (props && typeof props === 'object' && 'default' in props)
+        defaultProps[name] = props.default
     }
   }
 
-  const resolvePropTypeName = (p) => {
+  const resolvePropTypeName = p => {
     if (!p) return null
-    const extract = (t) => {
+    const extract = t => {
       if (!t) return null
       if (typeof t === 'function') return t.name || 'Object'
       if (Array.isArray(t)) return t.map(extract).join(' | ')
@@ -226,7 +241,10 @@ function f7ComponentParameters (componentName) {
 
   const params = Object.entries(f7vueComponent.props).map(([propName, prop]) => {
     const propType = resolvePropTypeName(prop)
-    const defaultValue = defaultProps[propName] !== undefined ? 'Default value: ' + JSON.stringify(defaultProps[propName]) : ''
+    const defaultValue =
+      defaultProps[propName] !== undefined
+        ? 'Default value: ' + JSON.stringify(defaultProps[propName])
+        : ''
     return {
       name: propName,
       description: `${propType}\n${defaultValue}\n\nSee ${componentName} docs`,
@@ -237,27 +255,26 @@ function f7ComponentParameters (componentName) {
   return params
 }
 
-function hintConfig (context, line, parentLine) {
+function hintConfig(context, line, parentLine) {
   const componentType = findComponentType(context, parentLine)
   console.debug('hinting config for component type:', componentType)
   if (!componentType) return
   const colonPos = line.text.indexOf(':')
   const column = context.pos - line.from
   const afterColon = colonPos > 0 && column > colonPos
-  const widgetDefinition = getWidgetDefinitions(context).find((d) => d.name === componentType)
-  const parameters =
-    componentType.startsWith('f7-')
-      ? f7ComponentParameters(componentType)
-      : widgetDefinition && widgetDefinition.props
-        ? widgetDefinition.props.parameters
-        : []
+  const widgetDefinition = getWidgetDefinitions(context).find(d => d.name === componentType)
+  const parameters = componentType.startsWith('f7-')
+    ? f7ComponentParameters(componentType)
+    : widgetDefinition && widgetDefinition.props
+      ? widgetDefinition.props.parameters
+      : []
   if (componentType.startsWith('oh-')) {
     // try our luck and find a matching underlying f7-vue component...
     const f7parameters = f7ComponentParameters(
       componentType.replace('oh-', 'f7-').replace('-card', '')
     )
     if (f7parameters.length) {
-      parameters.push(...f7parameters.filter((p) => !parameters.find((p2) => p2.name === p.name)))
+      parameters.push(...f7parameters.filter(p => !parameters.find(p2 => p2.name === p.name)))
     }
   }
   if (afterColon) {
@@ -272,7 +289,7 @@ function hintConfig (context, line, parentLine) {
   }
 }
 
-function hintComponents (context, line) {
+function hintComponents(context, line) {
   const colonPos = line.text.indexOf(':')
   const column = context.pos - line.from
   if (column < colonPos + 2) return
@@ -289,7 +306,7 @@ function hintComponents (context, line) {
   return {
     from: completionStart(context, ComponentID),
     validFor: ComponentID,
-    options: components.map((c) => {
+    options: components.map(c => {
       return {
         label: c.name,
         info: c.description || 'A component of type ' + c.name,
@@ -300,7 +317,7 @@ function hintComponents (context, line) {
   }
 }
 
-function hintComponentStructure (context, parentLine) {
+function hintComponentStructure(context, parentLine) {
   const indent = parentLine ? lineIndent(parentLine) : -2
   const apply = (view, completion, _from, _to) => {
     const line = view.state.doc.lineAt(context.pos)
@@ -329,7 +346,8 @@ function hintComponentStructure (context, parentLine) {
       {
         label: 'default slot',
         apply,
-        code: ' '.repeat(indent + 2) +
+        code:
+          ' '.repeat(indent + 2) +
           'slots:\n' +
           ' '.repeat(indent + 4) +
           'default:\n' +
@@ -340,14 +358,14 @@ function hintComponentStructure (context, parentLine) {
   }
 }
 
-function hintSlots (context, line, parentLine) {
+function hintSlots(context, line, parentLine) {
   const apply = (view, completion, _from, _to) => {
     const indent = lineIndent(parentLine)
     const insert =
-          ' '.repeat(indent + 2) +
-          `- component: ${completion.label}\n` +
-          // ' '.repeat(indent + 4) + 'config:\n' +
-          ' '.repeat(indent + 4)
+      ' '.repeat(indent + 2) +
+      `- component: ${completion.label}\n` +
+      // ' '.repeat(indent + 4) + 'config:\n' +
+      ' '.repeat(indent + 4)
     const from = line.from
     const to = view.state.doc.lineAt(context.pos).to
     view.dispatch({
@@ -361,7 +379,7 @@ function hintSlots (context, line, parentLine) {
   return {
     from: completionStart(context, ComponentID),
     validFor: ComponentID,
-    options: definitions.map((c) => {
+    options: definitions.map(c => {
       return {
         label: c.name,
         info: c.description || 'A component of type ' + c.name,
@@ -372,7 +390,7 @@ function hintSlots (context, line, parentLine) {
   }
 }
 
-export default function hint (context) {
+export default function hint(context) {
   const currentLine = context.state.doc.lineAt(context.pos)
   const parentLine = findParent(context, currentLine)
   console.debug('parent line', parentLine)

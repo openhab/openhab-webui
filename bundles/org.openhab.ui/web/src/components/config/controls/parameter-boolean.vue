@@ -2,9 +2,10 @@
   <ul>
     <f7-list-item :title="configDescription.label">
       <template #after>
-        <f7-toggle :name="configDescription.name"
-                   :checked="actualValue ? true : null"
-                   @toggle:change="updateValue" />
+        <f7-toggle
+          :name="configDescription.name"
+          :checked="actualValue ? true : null"
+          @toggle:change="updateValue" />
       </template>
     </f7-list-item>
   </ul>

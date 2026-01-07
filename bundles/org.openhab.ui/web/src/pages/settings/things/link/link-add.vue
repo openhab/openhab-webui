@@ -1,21 +1,23 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn">
     <f7-navbar>
-      <oh-nav-content title="Link Channel to Item"
-                      back-link="Cancel"
-                      save-link="Link"
-                      @save="save()"
-                      :f7router />
+      <oh-nav-content
+        title="Link Channel to Item"
+        back-link="Cancel"
+        save-link="Link"
+        @save="save()"
+        :f7router />
     </f7-navbar>
     <f7-block class="block-narrow">
       <f7-col v-if="channel">
         <f7-block-title>Channel</f7-block-title>
         <f7-list media-list>
-          <f7-list-item media-item
-                        class="channel-item"
-                        :title="channel.label || channelType.label"
-                        :footer="channel.description || channelType.description"
-                        :subtitle="channel.uid + ' (' + getItemType(channel) + ')'" />
+          <f7-list-item
+            media-item
+            class="channel-item"
+            :title="channel.label || channelType.label"
+            :footer="channel.description || channelType.description"
+            :subtitle="channel.uid + ' (' + getItemType(channel) + ')'" />
         </f7-list>
       </f7-col>
 
@@ -28,18 +30,20 @@
         <f7-col>
           <f7-block-title>Item</f7-block-title>
           <f7-list media-list>
-            <f7-list-item radio
-                          :checked="!createMode ? true : null"
-                          value="false"
-                          @change="createMode = false"
-                          title="Use an existing Item"
-                          name="item-creation-choice" />
-            <f7-list-item radio
-                          :checked="createMode ? true : null"
-                          value="true"
-                          @change="createMode = true"
-                          title="Create a new Item"
-                          name="item-creation-choice" />
+            <f7-list-item
+              radio
+              :checked="!createMode ? true : null"
+              value="false"
+              @change="createMode = false"
+              title="Use an existing Item"
+              name="item-creation-choice" />
+            <f7-list-item
+              radio
+              :checked="createMode ? true : null"
+              value="true"
+              @change="createMode = true"
+              title="Create a new Item"
+              name="item-creation-choice" />
           </f7-list>
         </f7-col>
 
@@ -47,27 +51,29 @@
         <f7-col v-if="!createMode">
           <f7-list>
             <f7-list-group>
-              <item-picker key="itemLink"
-                           label="Item to Link"
-                           name="item"
-                           :value="selectedItemName"
-                           :multiple="false"
-                           :items="items"
-                           :filterType="getCompatibleItemTypes()"
-                           :filterToggle="true"
-                           @input="(value) => selectedItemName = value" />
+              <item-picker
+                key="itemLink"
+                label="Item to Link"
+                name="item"
+                :value="selectedItemName"
+                :multiple="false"
+                :items="items"
+                :filterType="getCompatibleItemTypes()"
+                :filterToggle="true"
+                @input="(value) => selectedItemName = value" />
             </f7-list-group>
           </f7-list>
         </f7-col>
 
         <!-- Create new item -->
         <f7-col v-else>
-          <item-form ref="itemForm"
-                     :item="newItem"
-                     :items="items"
-                     :createMode="true"
-                     :unitHint="linkUnit()"
-                     :stateDescription="stateDescription()" />
+          <item-form
+            ref="itemForm"
+            :item="newItem"
+            :items="items"
+            :createMode="true"
+            :unitHint="linkUnit()"
+            :stateDescription="stateDescription()" />
         </f7-col>
       </template>
 
@@ -82,20 +88,22 @@
         <f7-block-title>Thing</f7-block-title>
         <f7-list inline-labels no-hairlines-md>
           <f7-list-group>
-            <thing-picker title="Thing"
-                          name="thing"
-                          :value="selectedThingId"
-                          @input="(e) => selectedThingId = e" />
+            <thing-picker
+              title="Thing"
+              name="thing"
+              :value="selectedThingId"
+              @input="(e) => selectedThingId = e" />
           </f7-list-group>
         </f7-list>
         <div v-if="selectedThing.UID && selectedThingType.UID">
           <f7-block-title>Channel</f7-block-title>
-          <channel-list :thing="selectedThing"
-                        :thingType="selectedThingType"
-                        :picker-mode="true"
-                        :item-type-filter="item.type"
-                        :channel-types="selectedThingChannelTypes"
-                        @selected="(channel) => loadProfileTypes(channel)" />
+          <channel-list
+            :thing="selectedThing"
+            :thingType="selectedThingType"
+            :picker-mode="true"
+            :item-type-filter="item.type"
+            :channel-types="selectedThingChannelTypes"
+            @selected="(channel) => loadProfileTypes(channel)" />
         </div>
       </f7-col>
 
@@ -108,46 +116,53 @@
       <f7-col v-else-if="profileTypes.length && currentItem">
         <f7-block-title>Profile</f7-block-title>
         <f7-block-footer class="padding-left padding-right">
-          Profiles define how Channels and Items work together. Install transformation add-ons to get additional profiles.
-          <f7-link external
-                   color="blue"
-                   target="_blank"
-                   :href="`${runtimeStore.websiteUrl}/link/profiles`">
+          Profiles define how Channels and Items work together. Install transformation add-ons to
+          get additional profiles.
+          <f7-link
+            external
+            color="blue"
+            target="_blank"
+            :href="`${runtimeStore.websiteUrl}/link/profiles`">
             Learn more about profiles.
           </f7-link>
         </f7-block-footer>
         <f7-list class="profile-list">
-          <f7-list-item v-for="profileType in profileTypes"
-                        radio
-                        class="profile-item"
-                        :checked="(!currentProfileType && profileType.uid === 'system:default' && itemTypeCompatibleWithChannelType(currentItem, channel)) || (currentProfileType && profileType.uid === currentProfileType.uid) ? true : null"
-                        :disabled="!compatibleProfileTypes.includes(profileType) ? true : null"
-                        :class="{ 'profile-disabled': !compatibleProfileTypes.includes(profileType) }"
-                        @change="onProfileTypeChange(profileType.uid)"
-                        :key="profileType.uid"
-                        :title="profileType.label"
-                        name="profile-type" />
+          <f7-list-item
+            v-for="profileType in profileTypes"
+            radio
+            class="profile-item"
+            :checked="(!currentProfileType && profileType.uid === 'system:default' && itemTypeCompatibleWithChannelType(currentItem, channel)) || (currentProfileType && profileType.uid === currentProfileType.uid) ? true : null"
+            :disabled="!compatibleProfileTypes.includes(profileType) ? true : null"
+            :class="{ 'profile-disabled': !compatibleProfileTypes.includes(profileType) }"
+            @change="onProfileTypeChange(profileType.uid)"
+            :key="profileType.uid"
+            :title="profileType.label"
+            name="profile-type" />
         </f7-list>
       </f7-col>
       <f7-col v-if="profileTypeConfiguration != null">
         <f7-block-title>Profile Configuration</f7-block-title>
-        <config-sheet ref="profileConfiguration"
-                      :key="'profileTypeConfiguration-' + currentProfileType.uid"
-                      :parameter-groups="profileTypeConfiguration.parameterGroups"
-                      :parameters="profileTypeConfiguration.parameters"
-                      :configuration="configuration" />
+        <config-sheet
+          ref="profileConfiguration"
+          :key="'profileTypeConfiguration-' + currentProfileType.uid"
+          :parameter-groups="profileTypeConfiguration.parameterGroups"
+          :parameters="profileTypeConfiguration.parameters"
+          :configuration="configuration" />
       </f7-col>
     </f7-block>
 
-    <div v-if="ready && profileTypes.length" class="if-aurora display-flex justify-content-center padding margin">
+    <div
+      v-if="ready && profileTypes.length"
+      class="if-aurora display-flex justify-content-center padding margin">
       <div class="flex-shrink-0">
-        <f7-button class="padding-left padding-right"
-                   style="width: 150px"
-                   color="blue"
-                   large
-                   raised
-                   fill
-                   @click="save">
+        <f7-button
+          class="padding-left padding-right"
+          style="width: 150px"
+          color="blue"
+          large
+          raised
+          fill
+          @click="save">
           Link
         </f7-button>
       </div>

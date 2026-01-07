@@ -1,8 +1,6 @@
 // note: this file is generated and should not be edited by hand
 
-import {
-  GaugeType
-} from '../common.ts'
+import { GaugeType } from '../common.ts'
 
 export interface Config {
   item?: string
@@ -25,6 +23,4 @@ export interface Config {
   labelFontWeight?: string
 }
 
-export {
-  GaugeType
-}
+export { GaugeType }

@@ -1,29 +1,32 @@
 <template>
-  <f7-popup ref="sceneItemPopup"
-            class="sceneitemconfig-popup"
-            close-on-escape
-            @popup:open="itemConfigOpened"
-            @popup:closed="itemConfigClosed">
+  <f7-popup
+    ref="sceneItemPopup"
+    class="sceneitemconfig-popup"
+    close-on-escape
+    @popup:open="itemConfigOpened"
+    @popup:closed="itemConfigClosed">
     <f7-page>
       <f7-navbar>
         <f7-nav-left>
-          <f7-link icon-ios="f7:arrow_left"
-                   icon-md="material:arrow_back"
-                   icon-aurora="f7:arrow_left"
-                   popup-close />
+          <f7-link
+            icon-ios="f7:arrow_left"
+            icon-md="material:arrow_back"
+            icon-aurora="f7:arrow_left"
+            popup-close />
         </f7-nav-left>
         <f7-nav-title>
           Configure Item:
           {{ itemName }}
         </f7-nav-title>
         <f7-nav-right>
-          <f7-link @click="updateItemConfig" popup-close>
-            Done
-          </f7-link>
+          <f7-link @click="updateItemConfig" popup-close> Done </f7-link>
         </f7-nav-right>
       </f7-navbar>
       <f7-toolbar bottom>
-        <f7-link class="left" icon-f7="arrow_uturn_left_circle" @click="updateCommandFromCurrentState">
+        <f7-link
+          class="left"
+          icon-f7="arrow_uturn_left_circle"
+          @click="updateCommandFromCurrentState">
           Set to current state
         </f7-link>
         <f7-link class="right" icon-f7="arrowtriangle_right_circle" @click="testCommand">
@@ -40,45 +43,54 @@
               @input="command = $event.target.value"
               type="text" />
             <ul v-if="commandSuggestions.length">
-              <f7-list-item v-for="suggestion in commandSuggestions"
-                            radio
-                            :checked="command === suggestion.command ? true : null"
-                            :key="suggestion.command"
-                            :title="suggestion.label"
-                            @click="command = suggestion.command" />
+              <f7-list-item
+                v-for="suggestion in commandSuggestions"
+                radio
+                :checked="command === suggestion.command ? true : null"
+                :key="suggestion.command"
+                :title="suggestion.label"
+                @click="command = suggestion.command" />
             </ul>
           </f7-list>
         </f7-col>
       </f7-block>
       <f7-block v-show="control" class="scene-item-control" strong>
         <f7-col>
-          <div v-show="control === 'colorpicker'" class="scene-item-control-colorpicker" ref="colorpicker" />
+          <div
+            v-show="control === 'colorpicker'"
+            class="scene-item-control-colorpicker"
+            ref="colorpicker" />
           <div v-if="control === 'toggle'" class="scene-item-control-toggle">
-            <f7-toggle :checked="command === 'ON' ? true : null" @toggle:change="(value) => (command = value ? 'ON' : 'OFF')" />
+            <f7-toggle
+              :checked="command === 'ON' ? true : null"
+              @toggle:change="(value) => (command = value ? 'ON' : 'OFF')" />
           </div>
           <div v-else-if="control === 'slider'" class="scene-item-control-slider">
-            <f7-range v-bind="sliderConfig" :value="command" @range:change="command = $event.toString()" />
+            <f7-range
+              v-bind="sliderConfig"
+              :value="command"
+              @range:change="command = $event.toString()" />
           </div>
           <div v-else-if="control === 'rollershutter'" class="scene-item-control-rollershutter">
-            <f7-segmented round
-                          outline
-                          strong
-                          class="rollershutter-controls">
-              <f7-button @click="command = 'UP'"
-                         large
-                         icon-f7="arrowtriangle_left"
-                         icon-size="24"
-                         icon-color="gray" />
-              <f7-button @click="command = 'STOP'"
-                         large
-                         icon-f7="stop"
-                         icon-size="24"
-                         icon-color="red" />
-              <f7-button @click="command = 'DOWN'"
-                         large
-                         icon-f7="arrowtriangle_right"
-                         icon-size="24"
-                         icon-color="gray" />
+            <f7-segmented round outline strong class="rollershutter-controls">
+              <f7-button
+                @click="command = 'UP'"
+                large
+                icon-f7="arrowtriangle_left"
+                icon-size="24"
+                icon-color="gray" />
+              <f7-button
+                @click="command = 'STOP'"
+                large
+                icon-f7="stop"
+                icon-size="24"
+                icon-color="red" />
+              <f7-button
+                @click="command = 'DOWN'"
+                large
+                icon-f7="arrowtriangle_right"
+                icon-size="24"
+                icon-color="gray" />
             </f7-segmented>
           </div>
         </f7-col>

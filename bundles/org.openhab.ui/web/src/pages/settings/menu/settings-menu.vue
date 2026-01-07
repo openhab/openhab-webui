@@ -1,10 +1,7 @@
 <template>
   <f7-page @page:init="onPageInit" @page:afterin="onPageAfterIn" class="page-settings">
     <f7-navbar large>
-      <oh-nav-content title="Settings"
-                      :large="true"
-                      back-link-url="/"
-                      :f7router>
+      <oh-nav-content title="Settings" :large="true" back-link-url="/" :f7router>
         <template #right>
           <f7-link
             class="searchbar-enable"
@@ -25,62 +22,70 @@
 
     <f7-block class="block-narrow after-big-title settings-menu">
       <f7-row>
-        <f7-col :class="!addonsLoaded || (addonsLoaded && addonsInstalled.length > 0) ? 'settings-col' : ''" width="100" medium="50">
+        <f7-col
+          :class="!addonsLoaded || (addonsLoaded && addonsInstalled.length > 0) ? 'settings-col' : ''"
+          width="100"
+          medium="50">
           <f7-block-title>Configuration</f7-block-title>
           <f7-list media-list class="search-list">
-            <f7-list-item v-if="runtimeStore.apiEndpoint('things')"
-                          media-item
-                          link="things/"
-                          title="Things"
-                          :badge="inboxCount > 0 ? inboxCount : undefined"
-                          :after="inboxCount > 0 ? thingsCount + '+' : thingsCount"
-                          :badge-color="inboxCount ? 'red' : 'blue'"
-                          :footer="objectsSubtitles.things">
+            <f7-list-item
+              v-if="runtimeStore.apiEndpoint('things')"
+              media-item
+              link="things/"
+              title="Things"
+              :badge="inboxCount > 0 ? inboxCount : undefined"
+              :after="inboxCount > 0 ? thingsCount + '+' : thingsCount"
+              :badge-color="inboxCount ? 'red' : 'blue'"
+              :footer="objectsSubtitles.things">
               <template #media>
                 <f7-icon f7="lightbulb" color="gray" />
               </template>
             </f7-list-item>
-            <f7-list-item v-if="runtimeStore.apiEndpoint('items')"
-                          media-item
-                          link="model/"
-                          title="Model"
-                          badge-color="blue"
-                          :footer="objectsSubtitles.model"
-                          @click="modelSelectedItem = null">
+            <f7-list-item
+              v-if="runtimeStore.apiEndpoint('items')"
+              media-item
+              link="model/"
+              title="Model"
+              badge-color="blue"
+              :footer="objectsSubtitles.model"
+              @click="modelSelectedItem = null">
               <template #media>
                 <f7-icon f7="list_bullet_indent" color="gray" />
               </template>
             </f7-list-item>
-            <f7-list-item v-if="runtimeStore.apiEndpoint('items')"
-                          media-item
-                          link="items/"
-                          title="Items"
-                          :after="itemsCount"
-                          badge-color="blue"
-                          :footer="objectsSubtitles.items">
+            <f7-list-item
+              v-if="runtimeStore.apiEndpoint('items')"
+              media-item
+              link="items/"
+              title="Items"
+              :after="itemsCount"
+              badge-color="blue"
+              :footer="objectsSubtitles.items">
               <template #media>
                 <f7-icon f7="square_on_circle" color="gray" />
               </template>
             </f7-list-item>
-            <f7-list-item v-if="runtimeStore.apiEndpoint('ui')"
-                          link="pages/"
-                          title="Pages"
-                          :after="componentsStore.pages().length + sitemapsCount"
-                          badge-color="blue"
-                          :footer="objectsSubtitles.pages">
+            <f7-list-item
+              v-if="runtimeStore.apiEndpoint('ui')"
+              link="pages/"
+              title="Pages"
+              :after="componentsStore.pages().length + sitemapsCount"
+              badge-color="blue"
+              :footer="objectsSubtitles.pages">
               <template #media>
                 <f7-icon f7="tv" color="gray" />
               </template>
             </f7-list-item>
           </f7-list>
           <f7-list media-list class="search-list">
-            <f7-list-item v-if="runtimeStore.apiEndpoint('transformations')"
-                          media-item
-                          link="transformations/"
-                          title="Transformations"
-                          :after="transformationsCount"
-                          badge-color="blue"
-                          :footer="objectsSubtitles.transform">
+            <f7-list-item
+              v-if="runtimeStore.apiEndpoint('transformations')"
+              media-item
+              link="transformations/"
+              title="Transformations"
+              :after="transformationsCount"
+              badge-color="blue"
+              :footer="objectsSubtitles.transform">
               <template #media>
                 <f7-icon f7="function" color="gray" />
               </template>
@@ -96,9 +101,7 @@
               </template>
             </f7-list-item>
           </f7-list>
-          <f7-block-title v-if="runtimeStore.apiEndpoint('rules')">
-            Automation
-          </f7-block-title>
+          <f7-block-title v-if="runtimeStore.apiEndpoint('rules')"> Automation </f7-block-title>
           <f7-list media-list class="search-list">
             <f7-list-item
               media-item
@@ -145,7 +148,10 @@
             </f7-list-item>
           </f7-list>
         </f7-col>
-        <f7-col :class="!addonsLoaded || (addonsLoaded && addonsInstalled.length > 0) ? 'settings-col' : ''" width="100" medium="50">
+        <f7-col
+          :class="!addonsLoaded || (addonsLoaded && addonsInstalled.length > 0) ? 'settings-col' : ''"
+          width="100"
+          medium="50">
           <div v-show="servicesLoaded">
             <f7-block-title>System Settings</f7-block-title>
             <f7-list class="search-list">
@@ -155,9 +161,10 @@
                 :link="'services/' + service.id"
                 :title="service.label"
                 v-show="!service.hidden" />
-              <f7-list-button v-if="!expandedTypes.systemSettingsExpanded"
-                              color="blue"
-                              @click="expand('systemSettingsExpanded')">
+              <f7-list-button
+                v-if="!expandedTypes.systemSettingsExpanded"
+                color="blue"
+                @click="expand('systemSettingsExpanded')">
                 {{ $t('dialogs.showAll') }}
               </f7-list-button>
             </f7-list>
@@ -175,11 +182,12 @@
           </div>
           <div v-show="$f7dim.width < 1450">
             <div v-show="addonsLoaded && addonsInstalled.length > 0">
-              <addon-section class="add-on-section"
-                             :addonsInstalled="addonsInstalled"
-                             :addonsServices="addonsServices"
-                             :expanded="expandedTypes.addonsExpanded"
-                             @expand="expand('addonsExpanded')" />
+              <addon-section
+                class="add-on-section"
+                :addonsInstalled="addonsInstalled"
+                :addonsServices="addonsServices"
+                :expanded="expandedTypes.addonsExpanded"
+                @expand="expand('addonsExpanded')" />
             </div>
             <!-- skeleton for not addonsLoaded -->
             <div v-if="!addonsLoaded">
@@ -196,10 +204,11 @@
         </f7-col>
         <f7-col width="33" class="add-on-col" v-show="$f7dim.width >= 1450">
           <div v-show="addonsLoaded && addonsInstalled.length > 0">
-            <addon-section :addonsInstalled="addonsInstalled"
-                           :addonsServices="addonsServices"
-                           :expanded="expandedTypes.addonsExpanded"
-                           @expand="expand('addonsExpanded')" />
+            <addon-section
+              :addonsInstalled="addonsInstalled"
+              :addonsServices="addonsServices"
+              :expanded="expandedTypes.addonsExpanded"
+              @expand="expand('addonsExpanded')" />
           </div>
           <!-- skeleton for not addonsLoaded -->
           <div v-if="!addonsLoaded">
@@ -214,17 +223,20 @@
           </div>
         </f7-col>
       </f7-row>
-      <f7-block-footer v-if="$t('home.overview.title') !== 'Overview'" class="margin text-align-center">
+      <f7-block-footer
+        v-if="$t('home.overview.title') !== 'Overview'"
+        class="margin text-align-center">
         <small>{{ $t('admin.notTranslatedYet') }}</small>
       </f7-block-footer>
     </f7-block>
 
     <template #fixed>
-      <f7-fab v-if="healthCount > 0"
-              position="center-bottom"
-              :text="`Health Issues (${healthCount})`"
-              color="red"
-              href="health/">
+      <f7-fab
+        v-if="healthCount > 0"
+        position="center-bottom"
+        :text="`Health Issues (${healthCount})`"
+        color="red"
+        href="health/">
         <f7-icon f7="heart" />
       </f7-fab>
     </template>

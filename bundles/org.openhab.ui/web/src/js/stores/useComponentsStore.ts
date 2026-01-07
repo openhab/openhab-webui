@@ -20,31 +20,31 @@ export const useComponentsStore = defineStore('components', () => {
   const ready = ref<boolean>(false)
 
   // Getters
-  function widget (uid: string) {
-    return _widgets.value.find((widget) => widget.uid === uid)
+  function widget(uid: string) {
+    return _widgets.value.find(widget => widget.uid === uid)
   }
 
-  function widgets () {
+  function widgets() {
     return _widgets.value.sort((a, b) => a.uid.localeCompare(b.uid))
   }
 
-  function page (uid: string) {
-    return _pages.value.find((page) => page.uid === uid)
+  function page(uid: string) {
+    return _pages.value.find(page => page.uid === uid)
   }
 
-  function pages (): Page[] {
+  function pages(): Page[] {
     const pages = _pages.value.sort((a, b) => a.uid.localeCompare(b.uid))
     return pages
   }
 
   // Actions
-  function setPagesAndWidgets (pages: Page[], widgets: Widget[]): void {
+  function setPagesAndWidgets(pages: Page[], widgets: Widget[]): void {
     _pages.value = pages
     _widgets.value = widgets
     ready.value = true
   }
 
-  async function loadPagesAndWidgets (): Promise<void> {
+  async function loadPagesAndWidgets(): Promise<void> {
     if (useRuntimeStore().apiEndpoint('ui')) {
       return Promise.all([
         api.get('/rest/ui/components/ui:page'),

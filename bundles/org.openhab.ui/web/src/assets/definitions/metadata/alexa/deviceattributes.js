@@ -17,7 +17,12 @@ export default {
   // Camera Attributes
   CameraStream: {
     itemTypes: ['String'],
-    parameters: () => [p.proxyBaseUrl(), p.resolution(), p.basicAuthUsername(), p.basicAuthPassword()]
+    parameters: () => [
+      p.proxyBaseUrl(),
+      p.resolution(),
+      p.basicAuthUsername(),
+      p.basicAuthPassword()
+    ]
   },
 
   // Cover Attributes
@@ -33,10 +38,10 @@ export default {
   CurrentOpenState: {
     itemTypes: ['Contact', 'Number', 'String', 'Switch'],
     requires: ['TargetOpenState'],
-    parameters: (itemType) =>
+    parameters: itemType =>
       itemType === 'Contact' || itemType === 'Switch'
         ? [p.inverted()]
-        : OPEN_STATES.map((state) => p.valueMapping(state))
+        : OPEN_STATES.map(state => p.valueMapping(state))
   },
   ObstacleAlert: {
     itemTypes: ['Contact ', 'Switch'],
@@ -49,7 +54,7 @@ export default {
       p.inverted(itemType === 'Rollershutter'),
       p.presets(item.stateDescription, '20=Morning,60=Afternoon,80=Evening:@Setting.Night'),
       p.language(item.settings?.regional?.language),
-      p.actionMappings({ default: 'value' }, 'Close=0,Open=100,Lower=0,Raise=100', (config) => {
+      p.actionMappings({ default: 'value' }, 'Close=0,Open=100,Lower=0,Raise=100', config => {
         const primaryControl = getGroupParameter('primaryControl', item.groups) || 'position'
         if (itemType === 'Dimmer') {
           return primaryControl === 'position'
@@ -74,26 +79,28 @@ export default {
       p.inverted(itemType === 'Rollershutter'),
       p.presets(item.stateDescription, '20=Morning,60=Afternoon,80=Evening:@Setting.Night'),
       p.language(item.settings?.regional?.language),
-      ...(getGroupParameter('primaryControl', item.groups) !== 'tilt' ? [] : [
-        p.actionMappings({ default: 'value' }, 'Close=0,Open=100', (config) => {
-          if (itemType === 'Dimmer') {
-            return config.inverted === true ? ['Close=100', 'Open=0'] : ['Close=0', 'Open=100']
-          }
-          if (itemType === 'Number' || itemType === 'Number:Angle') {
-            return config.inverted === true ? ['Close=90', 'Open=0'] : ['Close=-90', 'Open=0']
-          }
-          if (itemType === 'Rollershutter') {
-            return ['Close=DOWN', 'Open=UP', 'Stop=STOP']
-          }
-        })
-      ])
+      ...(getGroupParameter('primaryControl', item.groups) !== 'tilt'
+        ? []
+        : [
+            p.actionMappings({ default: 'value' }, 'Close=0,Open=100', config => {
+              if (itemType === 'Dimmer') {
+                return config.inverted === true ? ['Close=100', 'Open=0'] : ['Close=0', 'Open=100']
+              }
+              if (itemType === 'Number' || itemType === 'Number:Angle') {
+                return config.inverted === true ? ['Close=90', 'Open=0'] : ['Close=-90', 'Open=0']
+              }
+              if (itemType === 'Rollershutter') {
+                return ['Close=DOWN', 'Open=UP', 'Stop=STOP']
+              }
+            })
+          ])
     ]
   },
 
   // Entertainment Attributes
   Channel: {
     itemTypes: ['Number', 'String'],
-    parameters: (itemType) => [
+    parameters: itemType => [
       p.channelMappings(itemType === 'String'),
       ...(itemType === 'Number' ? [p.channelRange()] : [p.supportsChannelNumber()]),
       p.retrievable()
@@ -106,7 +113,10 @@ export default {
   Input: {
     itemTypes: ['Number', 'String'],
     parameters: (itemType, item) => [
-      p.supportedInputs(item.stateDescription, itemType === 'String' ? 'HDMI1=Cable,HDMI2=Kodi' : '1=Cable,2=Kodi'),
+      p.supportedInputs(
+        item.stateDescription,
+        itemType === 'String' ? 'HDMI1=Cable,HDMI2=Kodi' : '1=Cable,2=Kodi'
+      ),
       p.language(item.settings?.regional?.language),
       p.retrievable()
     ]
@@ -129,7 +139,7 @@ export default {
   },
   EqualizerBass: {
     itemTypes: ['Dimmer', 'Number'],
-    parameters: (itemType) => [
+    parameters: itemType => [
       p.equalizerRange(itemType === 'Dimmer' ? '0:100' : '-10:10'),
       p.equalizerDefaultLevel(itemType === 'Dimmer' ? 50 : 0),
       p.increment(itemType === 'Dimmer' ? 'INCREASE/DECREASE' : 1),
@@ -138,7 +148,7 @@ export default {
   },
   EqualizerMidrange: {
     itemTypes: ['Dimmer', 'Number'],
-    parameters: (itemType) => [
+    parameters: itemType => [
       p.equalizerRange(itemType === 'Dimmer' ? '0:100' : '-10:10'),
       p.equalizerDefaultLevel(itemType === 'Dimmer' ? 50 : 0),
       p.increment(itemType === 'Dimmer' ? 'INCREASE/DECREASE' : 1),
@@ -147,7 +157,7 @@ export default {
   },
   EqualizerTreble: {
     itemTypes: ['Dimmer', 'Number'],
-    parameters: (itemType) => [
+    parameters: itemType => [
       p.equalizerRange(itemType === 'Dimmer' ? '0:100' : '-10:10'),
       p.equalizerDefaultLevel(itemType === 'Dimmer' ? 50 : 0),
       p.increment(itemType === 'Dimmer' ? 'INCREASE/DECREASE' : 1),
@@ -157,7 +167,7 @@ export default {
   EqualizerMode: {
     itemTypes: ['Number', 'String'],
     parameters: () => [
-      ...EQUALIZER_MODES.map((mode) => p.valueMapping(mode)),
+      ...EQUALIZER_MODES.map(mode => p.valueMapping(mode)),
       p.supportedEqualizerModes(),
       p.retrievable()
     ]
@@ -173,14 +183,16 @@ export default {
   },
   PlaybackStep: {
     itemTypes: ['String'],
-    parameters: () => PLAYBACK_STEPS.map((step) => p.valueMapping(step))
+    parameters: () => PLAYBACK_STEPS.map(step => p.valueMapping(step))
   },
 
   // Fan Attributes
   FanDirection: {
     itemTypes: ['String', 'Switch'],
-    parameters: (itemType) => [
-      ...(itemType === 'Switch' ? [p.inverted()] : FAN_DIRECTIONS.map((direction) => p.valueMapping(direction))),
+    parameters: itemType => [
+      ...(itemType === 'Switch'
+        ? [p.inverted()]
+        : FAN_DIRECTIONS.map(direction => p.valueMapping(direction))),
       p.retrievable()
     ]
   },
@@ -190,12 +202,12 @@ export default {
   },
   FanSpeed: {
     itemTypes: ['Dimmer', 'Number', 'String'],
-    parameters: (itemType) => [
+    parameters: itemType => [
       ...(itemType === 'Dimmer'
         ? [p.inverted()]
         : itemType === 'Number'
           ? [p.speedLevels()]
-          : FAN_SPEEDS.map((speed) => p.valueMapping(speed))),
+          : FAN_SPEEDS.map(speed => p.valueMapping(speed))),
       p.retrievable()
     ]
   },
@@ -211,7 +223,7 @@ export default {
   },
   ColorTemperature: {
     itemTypes: ['Dimmer', 'Number', 'Number:Temperature'],
-    parameters: (itemType) => [
+    parameters: itemType => [
       ...(itemType === 'Dimmer' ? [p.colorTemperatureBinding()] : []),
       p.colorTemperatureRange(),
       p.increment(itemType === 'Dimmer' ? 'INCREASE/DECREASE' : 500),
@@ -245,15 +257,15 @@ export default {
   CurrentLockState: {
     itemTypes: ['Contact', 'Number', 'String', 'Switch'],
     requires: ['TargetLockState'],
-    parameters: (itemType) =>
+    parameters: itemType =>
       itemType === 'Contact' || itemType === 'Switch'
         ? [p.inverted()]
-        : LOCK_STATES.map((state) => p.valueMapping(state))
+        : LOCK_STATES.map(state => p.valueMapping(state))
   },
   ArmState: {
     itemTypes: ['Number', 'String', 'Switch'],
     parameters: () => [
-      ...ARM_STATES.map((state) => p.valueMapping(state)),
+      ...ARM_STATES.map(state => p.valueMapping(state)),
       p.supportedArmStates(),
       p.pinCodes(),
       p.exitDelay(),
@@ -321,7 +333,7 @@ export default {
   PowerState: {
     itemTypes: ['Color', 'Dimmer', 'Switch'],
     customTypes: ['Number', 'String'],
-    parameters: (itemType) => [
+    parameters: itemType => [
       ...(itemType === 'Number' || itemType === 'String'
         ? [p.valueMapping('OFF', true), p.valueMapping('ON', true)]
         : []),
@@ -334,7 +346,7 @@ export default {
   },
   Percentage: {
     itemTypes: ['Dimmer', 'Rollershutter'],
-    parameters: (itemType) => [p.inverted(itemType === 'Rollershutter'), p.retrievable()]
+    parameters: itemType => [p.inverted(itemType === 'Rollershutter'), p.retrievable()]
   },
 
   // Thermostat Attributes
@@ -345,27 +357,47 @@ export default {
   CoolingSetpoint: {
     itemTypes: ['Number', 'Number:Temperature'],
     requires: ['HeatingSetpoint'],
-    parameters: (_, item) => [p.scale(item), p.comfortRange(item), p.setpointRange(item), p.retrievable()]
+    parameters: (_, item) => [
+      p.scale(item),
+      p.comfortRange(item),
+      p.setpointRange(item),
+      p.retrievable()
+    ]
   },
   HeatingSetpoint: {
     itemTypes: ['Number', 'Number:Temperature'],
     requires: ['CoolingSetpoint'],
-    parameters: (_, item) => [p.scale(item), p.comfortRange(item), p.setpointRange(item), p.retrievable()]
+    parameters: (_, item) => [
+      p.scale(item),
+      p.comfortRange(item),
+      p.setpointRange(item),
+      p.retrievable()
+    ]
   },
   EcoCoolingSetpoint: {
     itemTypes: ['Number', 'Number:Temperature'],
     requires: ['EcoHeatingSetpoint'],
-    parameters: (_, item) => [p.scale(item), p.comfortRange(item), p.setpointRange(item), p.retrievable()]
+    parameters: (_, item) => [
+      p.scale(item),
+      p.comfortRange(item),
+      p.setpointRange(item),
+      p.retrievable()
+    ]
   },
   EcoHeatingSetpoint: {
     itemTypes: ['Number', 'Number:Temperature'],
     requires: ['EcoCoolingSetpoint'],
-    parameters: (_, item) => [p.scale(item), p.comfortRange(item), p.setpointRange(item), p.retrievable()]
+    parameters: (_, item) => [
+      p.scale(item),
+      p.comfortRange(item),
+      p.setpointRange(item),
+      p.retrievable()
+    ]
   },
   HeatingCoolingMode: {
     itemTypes: ['Number', 'String', 'Switch'],
     parameters: () => [
-      ...THERMOSTAT_MODES.map((mode) => p.thermostatModeMapping(mode)),
+      ...THERMOSTAT_MODES.map(mode => p.thermostatModeMapping(mode)),
       p.thermostatModeBinding(),
       p.supportedThermostatModes(),
       p.supportsSetpointMode(),
@@ -375,15 +407,17 @@ export default {
   ThermostatHold: {
     itemTypes: ['Number', 'String', 'Switch'],
     requires: ['HeatingCoolingMode'],
-    parameters: (itemType) => [
+    parameters: itemType => [
       ...(itemType === 'Switch' ? [p.inverted()] : [p.valueMapping('OFF'), p.valueMapping('ON')]),
       p.requiresSetpointHold()
     ]
   },
   ThermostatFan: {
     itemTypes: ['String', 'Switch'],
-    parameters: (itemType) => [
-      ...(itemType === 'Switch' ? [p.inverted()] : THERMOSTAT_FAN_MODES.map((mode) => p.valueMapping(mode))),
+    parameters: itemType => [
+      ...(itemType === 'Switch'
+        ? [p.inverted()]
+        : THERMOSTAT_FAN_MODES.map(mode => p.valueMapping(mode))),
       p.retrievable()
     ]
   },
@@ -391,7 +425,7 @@ export default {
   // Vacuum Attributes
   VacuumMode: {
     itemTypes: ['Number', 'String'],
-    parameters: () => [...VACUUM_MODES.map((mode) => p.valueMapping(mode)), p.retrievable()]
+    parameters: () => [...VACUUM_MODES.map(mode => p.valueMapping(mode)), p.retrievable()]
   },
 
   // Generic Attributes
@@ -419,14 +453,27 @@ export default {
     itemTypes: ['Dimmer', 'Number', 'Number:*', 'Rollershutter'],
     supports: ['multiInstance'],
     parameters: (itemType, item, config) => [
-      p.capabilityNames(item.groups.length ? item.label : '@Setting.RangeValue', '@Setting.FanSpeed,Speed'),
+      p.capabilityNames(
+        item.groups.length ? item.label : '@Setting.RangeValue',
+        '@Setting.FanSpeed,Speed'
+      ),
       p.inverted(itemType === 'Rollershutter'),
       p.nonControllable(item.stateDescription),
       p.retrievable(),
       ...(itemType === 'Dimmer'
-        ? [p.supportedCommands(['ON', 'OFF', 'INCREASE', 'DECREASE'], 'INCREASE=@Value.Up,DECREASE=@Value.Down')]
+        ? [
+            p.supportedCommands(
+              ['ON', 'OFF', 'INCREASE', 'DECREASE'],
+              'INCREASE=@Value.Up,DECREASE=@Value.Down'
+            )
+          ]
         : itemType === 'Rollershutter'
-          ? [p.supportedCommands(['UP', 'DOWN', 'MOVE', 'STOP'], 'UP=@Value.Open,DOWN=@Value.Close,STOP=@Value.Stop')]
+          ? [
+              p.supportedCommands(
+                ['UP', 'DOWN', 'MOVE', 'STOP'],
+                'UP=@Value.Open,DOWN=@Value.Close,STOP=@Value.Stop'
+              )
+            ]
           : []),
       p.supportedRange(
         item,
@@ -440,7 +487,10 @@ export default {
       p.presets(item.stateDescription, '1=@Value.Low:Lowest,10=@Value.High:Highest'),
       p.unitOfMeasure(item),
       p.language(item.settings?.regional?.language),
-      p.actionMappings({ set: 'value', adjust: '(±deltaValue)' }, 'Close=0,Open=100,Lower=(-10),Raise=(+10)'),
+      p.actionMappings(
+        { set: 'value', adjust: '(±deltaValue)' },
+        'Close=0,Open=100,Lower=(-10),Raise=(+10)'
+      ),
       p.stateMappings({ default: 'value', range: 'minValue:maxValue' }, 'Closed=0,Open=1:100')
     ]
   },
@@ -448,7 +498,10 @@ export default {
     itemTypes: ['Number', 'String', 'Switch'],
     supports: ['multiInstance'],
     parameters: (itemType, item) => [
-      p.capabilityNames(item.groups.length ? item.label : '@Setting.ToggleState', '@Setting.Oscillate,Rotate'),
+      p.capabilityNames(
+        item.groups.length ? item.label : '@Setting.ToggleState',
+        '@Setting.Oscillate,Rotate'
+      ),
       ...(itemType === 'Number' || itemType === 'String'
         ? [p.valueMapping('OFF', true), p.valueMapping('ON', true)]
         : [p.inverted()]),

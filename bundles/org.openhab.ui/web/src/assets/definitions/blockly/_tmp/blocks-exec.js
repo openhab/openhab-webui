@@ -2,7 +2,7 @@ import * as Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript'
 import { valueToCode } from '@/assets/definitions/blockly/utils.js'
 
-export default function defineOHBlocks_Exec (f7) {
+export default function defineOHBlocks_Exec(f7) {
   Blockly.Blocks['oh_exec'] = {
     init: function () {
       this.appendValueInput('sendTo')
@@ -28,7 +28,8 @@ export default function defineOHBlocks_Exec (f7) {
     const itemName = valueToCode(block, 'sendTo', javascriptGenerator.ORDER_ATOMIC)
     let code = 'var exec = Java.type("org.openhab.core.model.script.actions.Exec");\n'
     code += 'var duration = Java.type("java.time.Duration");\n'
-    code += 'var results = exec.executeCommandLine(duration.ofSeconds(1), "' + runCommand + '", "")\n'
+    code +=
+      'var results = exec.executeCommandLine(duration.ofSeconds(1), "' + runCommand + '", "")\n'
     code += 'events.sendCommand(' + itemName + ', results );\n'
     return code
   }
@@ -50,15 +51,27 @@ export default function defineOHBlocks_Exec (f7) {
   }
 
   javascriptGenerator.forBlock['oh_exec2'] = function (block) {
-    const exec = javascriptGenerator.provideFunction_(
-      'exec',
-      ['var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Exec");'])
-    const duration = javascriptGenerator.provideFunction_(
-      'duration',
-      ['var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("java.time.Duration");'])
+    const exec = javascriptGenerator.provideFunction_('exec', [
+      'var ' +
+        javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ +
+        ' = Java.type("org.openhab.core.model.script.actions.Exec");'
+    ])
+    const duration = javascriptGenerator.provideFunction_('duration', [
+      'var ' +
+        javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ +
+        ' = Java.type("java.time.Duration");'
+    ])
     let runCommand = block.getFieldValue('cmdExecute').replace(/ /g, '","')
     let timeout = block.getFieldValue('timeout')
-    let code = exec + '.executeCommandLine(' + duration + '.ofSeconds(' + timeout + '),"' + runCommand + '")\n'
+    let code =
+      exec +
+      '.executeCommandLine(' +
+      duration +
+      '.ofSeconds(' +
+      timeout +
+      '),"' +
+      runCommand +
+      '")\n'
     return [code, javascriptGenerator.ORDER_NONE]
   }
 
@@ -80,15 +93,27 @@ export default function defineOHBlocks_Exec (f7) {
   }
 
   javascriptGenerator.forBlock['oh_exec3'] = function (block) {
-    const exec = javascriptGenerator.provideFunction_(
-      'exec',
-      ['var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.core.model.script.actions.Exec\');'])
-    const duration = javascriptGenerator.provideFunction_(
-      'duration',
-      ['var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'java.time.Duration\');'])
+    const exec = javascriptGenerator.provideFunction_('exec', [
+      'var ' +
+        javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ +
+        " = Java.type('org.openhab.core.model.script.actions.Exec');"
+    ])
+    const duration = javascriptGenerator.provideFunction_('duration', [
+      'var ' +
+        javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ +
+        " = Java.type('java.time.Duration');"
+    ])
     let runCommand = block.getFieldValue('cmdExecute').replace(/ /g, '","')
     let timeout = block.getFieldValue('timeout')
-    let code = exec + '.executeCommandLine(' + duration + '.ofSeconds(' + timeout + '),"' + runCommand + '")\n'
+    let code =
+      exec +
+      '.executeCommandLine(' +
+      duration +
+      '.ofSeconds(' +
+      timeout +
+      '),"' +
+      runCommand +
+      '")\n'
     return [code, javascriptGenerator.ORDER_NONE]
   }
 }

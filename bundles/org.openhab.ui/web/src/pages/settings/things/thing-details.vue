@@ -57,8 +57,10 @@
               :text="thing.statusInfo.status"
               :color="thingStatusBadgeColor(thing.statusInfo)" />
             <div>
-              <strong>{{ (thing.statusInfo.statusDetail !== 'NONE') ? thing.statusInfo.statusDetail : '&nbsp;' }}</strong>
-              <br>
+              <strong
+                >{{ (thing.statusInfo.statusDetail !== 'NONE') ? thing.statusInfo.statusDetail : '&nbsp;' }}</strong
+              >
+              <br />
               <div
                 v-if="thingStatusDescription(thing.statusInfo)"
                 v-html="thingStatusDescription(thing.statusInfo)" />
@@ -72,7 +74,7 @@
             <f7-chip class="margin-left" text="________" />
             <div>
               <strong>____ _______</strong>
-              <br>
+              <br />
             </div>
           </f7-col>
         </f7-block>
@@ -164,9 +166,7 @@
               </f7-list-item>
             </f7-list>
 
-            <f7-block-title medium class="no-margin-bottom">
-              Configuration
-            </f7-block-title>
+            <f7-block-title medium class="no-margin-bottom"> Configuration </f7-block-title>
             <config-sheet
               ref="thingConfiguration"
               :parameter-groups="configDescriptions.parameterGroups"
@@ -178,10 +178,9 @@
               :f7router />
 
             <!-- Thing Actions & UI Actions -->
-            <template v-if="thingActions?.length > 0 || thingType?.UID?.startsWith('zwave:') || hasMatterThreadProperties">
-              <f7-block-title medium class="no-margin-top">
-                Actions
-              </f7-block-title>
+            <template
+              v-if="thingActions?.length > 0 || thingType?.UID?.startsWith('zwave:') || hasMatterThreadProperties">
+              <f7-block-title medium class="no-margin-top"> Actions </f7-block-title>
               <f7-list class="margin-top" media-list>
                 <f7-list-item
                   v-if="thingType?.UID?.startsWith('zwave:')"
@@ -208,9 +207,7 @@
         <f7-block v-else-if="!error" class="block-narrow skeleton-text skeleton-effect-blink">
           <f7-col>
             <thing-general-settings :thing="{}" :thing-type="{}" :ready="false" />
-            <f7-block-title medium>
-              ____ _______
-            </f7-block-title>
+            <f7-block-title medium> ____ _______ </f7-block-title>
             <div class="margin-left">
               ____ ____ ____ _____ ___ __ ____ __ ________ __ ____ ___ ____
             </div>

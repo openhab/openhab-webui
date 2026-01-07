@@ -9,16 +9,16 @@ import { Categories } from '@/assets/categories.js'
 
 let dimensions = null
 
-function getDimensions (context) {
+function getDimensions(context) {
   if (dimensions) return Promise.resolve(dimensions)
 
-  return context.view.$oh.api.get('/rest/systeminfo/uom').then((data) => {
-    dimensions = data.uomInfo.dimensions.map((d) => d.dimension)
+  return context.view.$oh.api.get('/rest/systeminfo/uom').then(data => {
+    dimensions = data.uomInfo.dimensions.map(d => d.dimension)
     return dimensions
   })
 }
 
-function hintTypes (context, line, position) {
+function hintTypes(context, line, position) {
   const apply = (view, completion, _from, _to) => {
     const insert = completion.label
     const from = line.from + position
@@ -29,7 +29,7 @@ function hintTypes (context, line, position) {
   return {
     from: completionStart(context),
     validFor: /\w+/,
-    options: Types.ItemTypes.map((t) => {
+    options: Types.ItemTypes.map(t => {
       return {
         label: t,
         apply
@@ -38,7 +38,7 @@ function hintTypes (context, line, position) {
   }
 }
 
-function hintDimension (context, line, position) {
+function hintDimension(context, line, position) {
   const apply = (view, completion, _from, _to) => {
     const insert = completion.label
     const from = line.from + position
@@ -46,11 +46,11 @@ function hintDimension (context, line, position) {
     view.dispatch(insertCompletionText(view.state, insert, from, to))
   }
 
-  return getDimensions(context).then((dimensions) => {
+  return getDimensions(context).then(dimensions => {
     return {
       from: completionStart(context),
       validFor: /\w+/,
-      options: dimensions.map((d) => {
+      options: dimensions.map(d => {
         return {
           label: d,
           apply
@@ -60,7 +60,7 @@ function hintDimension (context, line, position) {
   })
 }
 
-function hintIcon (context, line) {
+function hintIcon(context, line) {
   const apply = (view, completion, _from, _to) => {
     const insert = completion.label
     const from = line.from + 10 // after 'icon: '
@@ -71,7 +71,7 @@ function hintIcon (context, line) {
   return {
     from: completionStart(context),
     validFor: /\w+/,
-    options: Categories.map((label) => {
+    options: Categories.map(label => {
       return {
         label,
         apply
@@ -101,11 +101,14 @@ const MetadataCompletions = {
 
 const DefaultMetadataCompletion = { value: '', config: {} }
 
-function hintMetadata (context, line) {
+function hintMetadata(context, line) {
   const apply = (view, completion, _from, _to) => {
     const completionStructure = MetadataCompletions[completion.label] || DefaultMetadataCompletion
     const indent = ' '.repeat(6)
-    const insert = YAML.stringify({ [completion.label]: completionStructure }).split('\n').map((l) => indent + l).join('\n')
+    const insert = YAML.stringify({ [completion.label]: completionStructure })
+      .split('\n')
+      .map(l => indent + l)
+      .join('\n')
     const from = line.from
     const to = view.state.doc.lineAt(context.pos).to
     view.dispatch(insertCompletionText(view.state, insert, from, to))
@@ -114,7 +117,7 @@ function hintMetadata (context, line) {
   return {
     from: completionStart(context),
     validFor: /\w+/,
-    options: Metadata.map((m) => {
+    options: Metadata.map(m => {
       return {
         label: m.name,
         info: m.label,
@@ -124,7 +127,7 @@ function hintMetadata (context, line) {
   }
 }
 
-export default function hint (context) {
+export default function hint(context) {
   const line = context.state.doc.lineAt(context.pos)
   if (!line) return
   const parentLine = findParent(context, line)
@@ -133,9 +136,11 @@ export default function hint (context) {
     return hintTypes(context, line, 10)
   } else if (line.text.match(/^ {4}dimension: /)) {
     return hintDimension(context, line, 15)
-  } else if (line.text.match(/^ {6}type: /)) { // Group type
+  } else if (line.text.match(/^ {6}type: /)) {
+    // Group type
     return hintTypes(context, line, 12)
-  } else if (line.text.match(/^ {6}dimension: /)) { // Group dimension
+  } else if (line.text.match(/^ {6}dimension: /)) {
+    // Group dimension
     return hintDimension(context, line, 17)
   } else if (line.text.match(/^ {4}icon: /)) {
     return hintIcon(context, line)

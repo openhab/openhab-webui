@@ -2,7 +2,10 @@
   <f7-block class="sitemap-code">
     <div class="row sitemap-parser resizable">
       <div class="col">
-        <editor :value="sitemapDsl" @input="updateSitemap" mode="application/vnd.openhab.sitemap+dsl" />
+        <editor
+          :value="sitemapDsl"
+          @input="updateSitemap"
+          mode="application/vnd.openhab.sitemap+dsl" />
       </div>
       <span class="resize-handler" />
     </div>

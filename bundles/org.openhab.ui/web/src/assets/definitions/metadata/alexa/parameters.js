@@ -51,7 +51,7 @@ export default {
     multiple: true,
     required: !defaultValue
   }),
-  channelMappings: (required) => ({
+  channelMappings: required => ({
     name: 'channelMappings',
     label: 'Channel Mappings',
     description: 'Each mapping formatted as <code>channelId=channelName<code>',
@@ -100,21 +100,21 @@ export default {
     pattern: '[0-9]+:[0-9]+',
     visible: (_, config) => !config.binding
   }),
-  comfortRange: (item) => ({
+  comfortRange: item => ({
     name: 'comfortRange',
     label: 'Comfort Range',
     type: 'INTEGER',
     min: 1,
-    default: (config) => (config.scale || getTemperatureScale(item)) === 'FAHRENHEIT' ? 2 : 1
+    default: config => ((config.scale || getTemperatureScale(item)) === 'FAHRENHEIT' ? 2 : 1)
   }),
-  deviceDescription: (defaultValue) => ({
+  deviceDescription: defaultValue => ({
     name: 'description',
     label: 'Device Description',
     type: 'TEXT',
     default: defaultValue,
     advanced: true
   }),
-  deviceName: (defaultValue) => ({
+  deviceName: defaultValue => ({
     name: 'name',
     label: 'Device Name',
     type: 'TEXT',
@@ -122,18 +122,18 @@ export default {
     advanced: !!defaultValue,
     required: !defaultValue
   }),
-  equalizerDefaultLevel: (defaultValue) => ({
+  equalizerDefaultLevel: defaultValue => ({
     name: 'defaultLevel',
     label: 'Default Level',
     description: 'Defaults to equalizer range midpoint',
     type: 'INTEGER',
-    default: (config) => {
+    default: config => {
       if (!config.range) return defaultValue
-      const range = config.range.split(':').map((n) => parseInt(n))
+      const range = config.range.split(':').map(n => parseInt(n))
       if (range[0] < range[1]) return Math.round((range[0] + range[1]) / 2)
     }
   }),
-  equalizerRange: (defaultValue) => ({
+  equalizerRange: defaultValue => ({
     name: 'range',
     label: 'Equalizer Range',
     description: 'Formatted as <code>minValue:maxValue</code>',
@@ -149,7 +149,7 @@ export default {
     max: 255,
     advanced: true
   }),
-  increment: (defaultValue) => ({
+  increment: defaultValue => ({
     name: 'increment',
     label: 'Default Increment',
     ...(isNaN(defaultValue) && { description: `Defaults to ${defaultValue}` }),
@@ -163,7 +163,7 @@ export default {
     type: 'BOOLEAN',
     default: defaultValue
   }),
-  language: (defaultValue) => ({
+  language: defaultValue => ({
     name: 'language',
     label: 'Language',
     description: 'Language for text-based names',
@@ -173,7 +173,7 @@ export default {
     limitToOptions: true,
     advanced: true
   }),
-  nonControllable: (stateDescription) => ({
+  nonControllable: stateDescription => ({
     name: 'nonControllable',
     label: 'Non-Controllable',
     type: 'BOOLEAN',
@@ -203,10 +203,10 @@ export default {
       'Each preset formatted as <code>presetValue=@assetIdOrName1:@assetIdOrName2:...</code>' +
       ` (${docLink('Asset Catalog')})`,
     type: 'TEXT',
-    default:
-      stateDescription?.options?.filter((option) => !isNaN(option.value))
-        .map((option) => `${option.value}=${option.label}`)
-        .slice(0, STATE_DESCRIPTION_OPTIONS_LIMIT),
+    default: stateDescription?.options
+      ?.filter(option => !isNaN(option.value))
+      .map(option => `${option.value}=${option.label}`)
+      .slice(0, STATE_DESCRIPTION_OPTIONS_LIMIT),
     placeholder: placeholder.replace(/,/g, '\n'),
     multiple: true,
     visible: (_, config) => !config.nonControllable
@@ -265,12 +265,13 @@ export default {
     limitToOptions: true,
     advanced
   }),
-  setpointRange: (item) => ({
+  setpointRange: item => ({
     name: 'setpointRange',
     label: 'Setpoint Range',
     description: 'Formatted as <code>minValue:maxValue</code>',
     type: 'TEXT',
-    default: (config) => (config.scale || getTemperatureScale(item)) === 'FAHRENHEIT' ? '40:90' : '4:32',
+    default: config =>
+      (config.scale || getTemperatureScale(item)) === 'FAHRENHEIT' ? '40:90' : '4:32',
     pattern: '[+-]?[0-9]+:[+-]?[0-9]+'
   }),
   speedLevels: () => ({
@@ -293,7 +294,7 @@ export default {
     name: 'supportedArmStates',
     label: 'Supported Arm States',
     type: 'TEXT',
-    default: (config) => ARM_STATES.filter((state) => !!config[state]),
+    default: config => ARM_STATES.filter(state => !!config[state]),
     options: getOptions(ARM_STATES),
     limitToOptions: true,
     multiple: true,
@@ -313,7 +314,7 @@ export default {
     name: 'supportedModes',
     label: 'Supported Modes',
     type: 'TEXT',
-    default: (config) => EQUALIZER_MODES.filter((mode) => !!config[mode]),
+    default: config => EQUALIZER_MODES.filter(mode => !!config[mode]),
     options: getOptions(EQUALIZER_MODES),
     limitToOptions: true,
     multiple: true,
@@ -324,22 +325,21 @@ export default {
     label: 'Supported Inputs',
     description: 'Each input formatted as <code>inputValue=inputName1:inputName2:...</code>',
     type: 'TEXT',
-    default:
-      stateDescription?.options?.map((option) => `${option.value}=${option.label}`)
-        .slice(0, STATE_DESCRIPTION_OPTIONS_LIMIT),
+    default: stateDescription?.options
+      ?.map(option => `${option.value}=${option.label}`)
+      .slice(0, STATE_DESCRIPTION_OPTIONS_LIMIT),
     placeholder: placeholder.replace(/,/g, '\n'),
     multiple: true,
     required: !stateDescription?.options?.length
   }),
-  supportedModes: (stateDescription) => ({
+  supportedModes: stateDescription => ({
     name: 'supportedModes',
     label: 'Supported Modes',
-    description:
-      `Each mode formatted as <code>mode=@assetIdOrName1:@assetIdOrName2:...</code> (${docLink('Asset Catalog')})`,
+    description: `Each mode formatted as <code>mode=@assetIdOrName1:@assetIdOrName2:...</code> (${docLink('Asset Catalog')})`,
     type: 'TEXT',
-    default:
-      stateDescription?.options?.map((option) => `${option.value}=${option.label}`)
-        .slice(0, STATE_DESCRIPTION_OPTIONS_LIMIT),
+    default: stateDescription?.options
+      ?.map(option => `${option.value}=${option.label}`)
+      .slice(0, STATE_DESCRIPTION_OPTIONS_LIMIT),
     placeholder: 'Normal=Normal:Cottons\nWhites=Whites',
     multiple: true,
     required: !stateDescription?.options?.length
@@ -366,7 +366,7 @@ export default {
     name: 'supportedModes',
     label: 'Supported Modes',
     type: 'TEXT',
-    default: (config) => THERMOSTAT_MODES.filter((mode) => !!config[mode]),
+    default: config => THERMOSTAT_MODES.filter(mode => !!config[mode]),
     options: getOptions(THERMOSTAT_MODES),
     limitToOptions: true,
     multiple: true,
@@ -410,9 +410,10 @@ export default {
       zwave: 'Z-Wave'
     }),
     limitToOptions: true,
-    visible: (_, config) => THERMOSTAT_MODES.every((mode) => !config[mode]) && !config.supportedModes.length
+    visible: (_, config) =>
+      THERMOSTAT_MODES.every(mode => !config[mode]) && !config.supportedModes.length
   }),
-  thermostatModeMapping: (mode) => ({
+  thermostatModeMapping: mode => ({
     name: mode,
     label: `${titleCase(mode)} Mapping`,
     type: 'TEXT',
@@ -424,7 +425,7 @@ export default {
     type: 'TEXT',
     required
   }),
-  unitOfMeasure: (item) => ({
+  unitOfMeasure: item => ({
     name: 'unitOfMeasure',
     label: 'Unit of Measure',
     type: 'TEXT',

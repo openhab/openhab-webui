@@ -3,13 +3,13 @@ import aggregate from './aggregators'
 import ComponentId from '../../component-id'
 
 export default {
-  neededItems (component) {
+  neededItems(component) {
     if (!component || !component.config || !component.config.item) return []
     return [component.config.item]
   },
-  get (component, points, startTime, endTime, chart) {
+  get(component, points, startTime, endTime, chart) {
     let series = chart.evaluateExpression(ComponentId.get(component), component.config)
-    const itemPoints = points.find((p) => p.name === series.item).data
+    const itemPoints = points.find(p => p.name === series.item).data
     const groups = itemPoints.reduce((acc, p) => {
       let day = dayjs(p.time).startOf('day')
       if (acc.length && acc[acc.length - 1][0].isSame(day)) {
@@ -34,7 +34,7 @@ export default {
 
     if (series.type === 'scatter') {
       const symbolSizeFactor = series.scatterSymbolSizeFactor || 1
-      series.symbolSize = (v) => {
+      series.symbolSize = v => {
         return v.pop() * symbolSizeFactor
       }
     }

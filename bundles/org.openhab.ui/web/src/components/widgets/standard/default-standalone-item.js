@@ -5,9 +5,9 @@
 
 import { useSemanticsStore } from '@/js/stores/useSemanticsStore'
 
-export default function itemDefaultStandaloneComponent (item) {
+export default function itemDefaultStandaloneComponent(item) {
   const stateDescription = item.stateDescription || {}
-  const metadata = (item.metadata && item.metadata.widget) ? item.metadata.widget : {}
+  const metadata = item.metadata && item.metadata.widget ? item.metadata.widget : {}
   let component = null
   let semanticClass = {}
   let semanticProperty = {}
@@ -18,7 +18,7 @@ export default function itemDefaultStandaloneComponent (item) {
       config: Object.assign({}, metadata.config)
     }
   } else {
-    item.tags.forEach((tag) => {
+    item.tags.forEach(tag => {
       if (useSemanticsStore().Points.indexOf(tag) >= 0) {
         semanticClass = tag
       }
@@ -87,7 +87,10 @@ export default function itemDefaultStandaloneComponent (item) {
       }
     }
 
-    if ((semanticClass === 'Control' || semanticClass === 'Setpoint') && !stateDescription.readOnly) {
+    if (
+      (semanticClass === 'Control' || semanticClass === 'Setpoint') &&
+      !stateDescription.readOnly
+    ) {
       if (item.type === 'DateTime') {
         component = {
           component: 'oh-input-card',
@@ -118,7 +121,11 @@ export default function itemDefaultStandaloneComponent (item) {
           }
         }
       }
-      if (semanticProperty === 'ColorTemperature' || semanticProperty === 'Level' || semanticProperty === 'SoundVolume') {
+      if (
+        semanticProperty === 'ColorTemperature' ||
+        semanticProperty === 'Level' ||
+        semanticProperty === 'SoundVolume'
+      ) {
         component = {
           component: 'oh-slider-card',
           config: {
@@ -145,13 +152,22 @@ export default function itemDefaultStandaloneComponent (item) {
       component: 'oh-label-card'
     }
 
-    if (item.type.indexOf('Number') === 0 && (!item.commandDescription || !item.commandDescription.commandOptions || stateDescription.readOnly)) {
+    if (
+      item.type.indexOf('Number') === 0 &&
+      (!item.commandDescription ||
+        !item.commandDescription.commandOptions ||
+        stateDescription.readOnly)
+    ) {
       component.config = {
         trendItem: item.name,
         action: 'analyzer',
         actionAnalyzerItems: [item.name]
       }
-    } else if (item.commandDescription && item.commandDescription.commandOptions && !stateDescription.readOnly) {
+    } else if (
+      item.commandDescription &&
+      item.commandDescription.commandOptions &&
+      !stateDescription.readOnly
+    ) {
       component.config = {
         action: 'options',
         actionItem: item.name

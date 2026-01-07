@@ -4,11 +4,12 @@
       <oh-nav-content :title="t('profile.title')" :f7router />
       <f7-subnavbar sliding class="profile-header">
         <div class="profile-icon">
-          <f7-icon size="60"
-                   ios="f7:person_alt_circle_fill"
-                   aurora="f7:person_alt_circle_fill"
-                   md="f7:person_alt_circle_fill"
-                   color="gray" />
+          <f7-icon
+            size="60"
+            ios="f7:person_alt_circle_fill"
+            aurora="f7:person_alt_circle_fill"
+            md="f7:person_alt_circle_fill"
+            color="gray" />
         </div>
         <h2>{{ userStore.user.name }}</h2>
         <h5>
@@ -53,12 +54,17 @@
                     @click="showSwipeout" />
                 </template>
                 <f7-swipeout-actions right>
-                  <f7-swipeout-button @click="(ev) => deleteSession(ev, session)" style="background-color: var(--f7-swipeout-delete-button-bg-color)">
+                  <f7-swipeout-button
+                    @click="(ev) => deleteSession(ev, session)"
+                    style="background-color: var(--f7-swipeout-delete-button-bg-color)">
                     {{ t('dialogs.delete') }}
                   </f7-swipeout-button>
                 </f7-swipeout-actions>
               </f7-list-item>
-              <f7-list-button v-if="!expandedTypes.sessions && sessions.length > 10" color="blue" @click="expandedTypes.sessions = true">
+              <f7-list-button
+                v-if="!expandedTypes.sessions && sessions.length > 10"
+                color="blue"
+                @click="expandedTypes.sessions = true">
                 {{ t('dialogs.showAll') }}
               </f7-list-button>
               <f7-list-button color="red" @click="logout()">
@@ -87,14 +93,17 @@
                 :subtitle="t('profile.apiTokens.created') + new Date(apiToken.createdTime).toLocaleString(runtimeStore.locale | 'default')"
                 :text="t('profile.apiTokens.validForScope') + (apiToken.scope || 'N/A')">
                 <template #media>
-                  <f7-link icon-color="red"
-                           icon-aurora="f7:minus_circle_filled"
-                           icon-ios="f7:minus_circle_filled"
-                           icon-md="material:remove_circle_outline"
-                           @click="showSwipeout" />
+                  <f7-link
+                    icon-color="red"
+                    icon-aurora="f7:minus_circle_filled"
+                    icon-ios="f7:minus_circle_filled"
+                    icon-md="material:remove_circle_outline"
+                    @click="showSwipeout" />
                 </template>
                 <f7-swipeout-actions right>
-                  <f7-swipeout-button @click="(ev) => deleteApiToken(ev, apiToken)" style="background-color: var(--f7-swipeout-delete-button-bg-color)">
+                  <f7-swipeout-button
+                    @click="(ev) => deleteApiToken(ev, apiToken)"
+                    style="background-color: var(--f7-swipeout-delete-button-bg-color)">
                     {{ t('dialogs.delete') }}
                   </f7-swipeout-button>
                 </f7-swipeout-actions>

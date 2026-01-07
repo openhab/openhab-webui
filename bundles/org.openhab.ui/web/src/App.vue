@@ -22,11 +22,8 @@
               v-if="uiOptionsStore.getDarkMode() === 'dark'"
               src="@/images/openhab-logo-white.svg"
               type="image/svg+xml"
-              width="196px">
-            <img v-else
-                 src="@/images/openhab-logo.svg"
-                 type="image/svg+xml"
-                 width="196px">
+              width="196px" />
+            <img v-else src="@/images/openhab-logo.svg" type="image/svg+xml" width="196px" />
           </div>
         </f7-link>
         <f7-link class="breakpoint-pin" @click="toggleVisibleBreakpoint">
@@ -38,7 +35,9 @@
 
         <f7-list v-if="ready">
           <f7-list-item v-if="runtimeStore.apiEndpoint('ui') && (!pages || !pages.length)">
-            <span><em>{{ t('sidebar.noPages') }}</em></span>
+            <span
+              ><em>{{ t('sidebar.noPages') }}</em></span
+            >
           </f7-list-item>
           <f7-list-item
             v-for="page in pages"
@@ -54,8 +53,7 @@
             </template>
           </f7-list-item>
         </f7-list>
-        <f7-block-title
-          v-if="userStore.isAdmin()">
+        <f7-block-title v-if="userStore.isAdmin()">
           {{ t('sidebar.administration') }}
         </f7-block-title>
         <!-- Settings -->
@@ -330,7 +328,7 @@
                   !userStore.user &&
                     !componentsStore.pages().filter(p => p.uid !== 'overview').length"
                 class="hint-signin">
-                <em>{{ t('sidebar.tip.signIn') }}<br><f7-icon f7="arrow_down" size="20" /></em>
+                <em>{{ t('sidebar.tip.signIn') }}<br /><f7-icon f7="arrow_down" size="20" /></em>
               </div>
               <f7-button
                 @click="authorize(false)"
@@ -366,18 +364,12 @@
     </f7-panel>
 
     <!-- Right Panel -->
-    <f7-panel right
-              reveal
-              dark
-              v-if="ready">
+    <f7-panel right reveal dark v-if="ready">
       <panel-right />
       <!-- <f7-view url="/panel-right/"></f7-view> -->
     </f7-panel>
 
-    <f7-panel v-if="runtimeStore.showDeveloperDock"
-              right
-              :visible-breakpoint="1280"
-              resizable>
+    <f7-panel v-if="runtimeStore.showDeveloperDock" right :visible-breakpoint="1280" resizable>
       <developer-dock
         :dock="activeDock"
         :helpTab="activeHelpTab"

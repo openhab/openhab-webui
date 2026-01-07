@@ -1,13 +1,14 @@
 <template>
-  <f7-range ref="rangeslider"
-            class="oh-slider"
-            v-bind="config"
-            :value="sliderValue"
-            :format-label="formatLabel"
-            :format-scale-label="formatScaleLabel"
-            @range:change="onChange($event)"
-            @click.stop="sendCommandDebounced(sliderValue, true)"
-            @touchend="sendCommandDebounced(sliderValue, true)" />
+  <f7-range
+    ref="rangeslider"
+    class="oh-slider"
+    v-bind="config"
+    :value="sliderValue"
+    :format-label="formatLabel"
+    :format-scale-label="formatScaleLabel"
+    @range:change="onChange($event)"
+    @click.stop="sendCommandDebounced(sliderValue, true)"
+    @touchend="sendCommandDebounced(sliderValue, true)" />
 </template>
 
 <style lang="stylus">

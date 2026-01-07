@@ -1,9 +1,10 @@
 <template>
-  <rule-picker :title="configDescription.label"
-               :value="value"
-               @input="updateValue"
-               :multiple="configDescription.multiple"
-               :required="configDescription.required" />
+  <rule-picker
+    :title="configDescription.label"
+    :value="value"
+    @input="updateValue"
+    :multiple="configDescription.multiple"
+    :required="configDescription.required" />
 </template>
 
 <script>

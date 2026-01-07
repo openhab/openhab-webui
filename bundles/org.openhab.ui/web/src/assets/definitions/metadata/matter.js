@@ -55,8 +55,16 @@ export const deviceTypes = {
     attributes: [
       { label: 'Local Temperature', name: 'thermostat.localTemperature', mandatory: true },
       { label: 'Outdoor Temperature', name: 'thermostat.outdoorTemperature', mandatory: false },
-      { label: 'Occupied Heating Setpoint', name: 'thermostat.occupiedHeatingSetpoint', mandatory: false },
-      { label: 'Occupied Cooling Setpoint', name: 'thermostat.occupiedCoolingSetpoint', mandatory: false },
+      {
+        label: 'Occupied Heating Setpoint',
+        name: 'thermostat.occupiedHeatingSetpoint',
+        mandatory: false
+      },
+      {
+        label: 'Occupied Cooling Setpoint',
+        name: 'thermostat.occupiedCoolingSetpoint',
+        mandatory: false
+      },
       {
         label: 'System Mode',
         name: 'thermostat.systemMode',
@@ -93,12 +101,14 @@ export const deviceTypes = {
   }
 }
 
-export const deviceTypesAndAttributes = Object.entries(deviceTypes).flatMap(([type, attributes]) => [
-  type,
-  ...(attributes.length > 0 ? attributes.map((cluster) => `${type}.${cluster.label}`) : [])
-])
+export const deviceTypesAndAttributes = Object.entries(deviceTypes).flatMap(
+  ([type, attributes]) => [
+    type,
+    ...(attributes.length > 0 ? attributes.map(cluster => `${type}.${cluster.label}`) : [])
+  ]
+)
 
-export const isComplexDeviceType = (deviceType) => {
+export const isComplexDeviceType = deviceType => {
   return deviceTypes[deviceType]?.length > 0
 }
 
@@ -113,15 +123,41 @@ const fixedLabelsParameter = {
   name: 'fixedLabels',
   label: 'Fixed Labels',
   type: 'TEXT',
-  description: 'Comma-separated list of key=value pairs for fixed labels (e.g. room=Office, floor=1)'
+  description:
+    'Comma-separated list of key=value pairs for fixed labels (e.g. room=Office, floor=1)'
 }
 
 const thermostatLimitsParameters = [
-  { name: 'thermostat-minHeatSetpointLimit', label: 'Min Heat Setpoint', type: 'DECIMAL', description: 'Minimum allowable heat setpoint (in 0.01°C)' },
-  { name: 'thermostat-maxHeatSetpointLimit', label: 'Max Heat Setpoint', type: 'DECIMAL', description: 'Maximum allowable heat setpoint (in 0.01°C)' },
-  { name: 'thermostat-minCoolSetpointLimit', label: 'Min Cool Setpoint', type: 'DECIMAL', description: 'Minimum allowable cool setpoint (in 0.01°C)' },
-  { name: 'thermostat-maxCoolSetpointLimit', label: 'Max Cool Setpoint', type: 'DECIMAL', description: 'Maximum allowable cool setpoint (in 0.01°C)' },
-  { name: 'thermostat-minSetpointDeadBand', label: 'Min Setpoint Deadband', type: 'DECIMAL', description: 'Minimum temperature gap between heating and cooling setpoints (in 0.01°C)' }
+  {
+    name: 'thermostat-minHeatSetpointLimit',
+    label: 'Min Heat Setpoint',
+    type: 'DECIMAL',
+    description: 'Minimum allowable heat setpoint (in 0.01°C)'
+  },
+  {
+    name: 'thermostat-maxHeatSetpointLimit',
+    label: 'Max Heat Setpoint',
+    type: 'DECIMAL',
+    description: 'Maximum allowable heat setpoint (in 0.01°C)'
+  },
+  {
+    name: 'thermostat-minCoolSetpointLimit',
+    label: 'Min Cool Setpoint',
+    type: 'DECIMAL',
+    description: 'Minimum allowable cool setpoint (in 0.01°C)'
+  },
+  {
+    name: 'thermostat-maxCoolSetpointLimit',
+    label: 'Max Cool Setpoint',
+    type: 'DECIMAL',
+    description: 'Maximum allowable cool setpoint (in 0.01°C)'
+  },
+  {
+    name: 'thermostat-minSetpointDeadBand',
+    label: 'Min Setpoint Deadband',
+    type: 'DECIMAL',
+    description: 'Minimum temperature gap between heating and cooling setpoints (in 0.01°C)'
+  }
 ]
 
 const fanModeSequenceParameter = {

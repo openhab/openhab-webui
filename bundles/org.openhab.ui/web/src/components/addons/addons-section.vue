@@ -10,69 +10,72 @@
       {{ subtitle }}
     </f7-block-footer>
     <template v-if="featuredAddons?.length > 0">
-      <addons-swiper v-if="!$device.desktop && !$device.ipad"
-                     :addons-list="featuredAddons"
-                     :install-action-text="installActionText"
-                     :headline="'Featured'"
-                     @addon-button-click="addonButtonClick" />
+      <addons-swiper
+        v-if="!$device.desktop && !$device.ipad"
+        :addons-list="featuredAddons"
+        :install-action-text="installActionText"
+        :headline="'Featured'"
+        @addon-button-click="addonButtonClick" />
       <div v-else class="addons-cards">
-        <addon-card class="addon-card-desktop"
-                    v-for="addon in featuredAddons"
-                    :key="addon.uid"
-                    :addon="addon"
-                    :install-action-text="installActionText"
-                    :headline="'Featured'"
-                    @addon-button-click="addonButtonClick" />
+        <addon-card
+          class="addon-card-desktop"
+          v-for="addon in featuredAddons"
+          :key="addon.uid"
+          :addon="addon"
+          :install-action-text="installActionText"
+          :headline="'Featured'"
+          @addon-button-click="addonButtonClick" />
       </div>
     </template>
     <template v-if="suggested">
-      <addons-swiper v-if="!$device.desktop && !$device.ipad"
-                     :addons-list="addonsList"
-                     :install-action-text="installActionText"
-                     :headline="'Suggested'"
-                     @addon-button-click="addonButtonClick" />
+      <addons-swiper
+        v-if="!$device.desktop && !$device.ipad"
+        :addons-list="addonsList"
+        :install-action-text="installActionText"
+        :headline="'Suggested'"
+        @addon-button-click="addonButtonClick" />
       <div v-else class="addons-cards">
-        <addon-card class="addon-card-desktop"
-                    v-for="addon in addonsList"
-                    :key="addon.uid"
-                    :addon="addon"
-                    :install-action-text="installActionText"
-                    :headline="'Suggested'"
-                    @addon-button-click="addonButtonClick" />
+        <addon-card
+          class="addon-card-desktop"
+          v-for="addon in addonsList"
+          :key="addon.uid"
+          :addon="addon"
+          :install-action-text="installActionText"
+          :headline="'Suggested'"
+          @addon-button-click="addonButtonClick" />
       </div>
     </template>
     <template v-else-if="showAsCards">
-      <addons-swiper v-if="!$device.desktop && !$device.ipad && (this.addons.length < this.addonCollapsedLimit)"
-                     :addons-list="addonsList"
-                     :install-action-text="installActionText"
-                     @addon-button-click="addonButtonClick" />
+      <addons-swiper
+        v-if="!$device.desktop && !$device.ipad && (this.addons.length < this.addonCollapsedLimit)"
+        :addons-list="addonsList"
+        :install-action-text="installActionText"
+        @addon-button-click="addonButtonClick" />
       <div v-else class="addons-cards">
-        <addon-card class="addon-card-desktop"
-                    v-for="addon in addonsList"
-                    :key="addon.uid"
-                    :addon="addon"
-                    :install-action-text="installActionText"
-                    @addon-button-click="addonButtonClick" />
+        <addon-card
+          class="addon-card-desktop"
+          v-for="addon in addonsList"
+          :key="addon.uid"
+          :addon="addon"
+          :install-action-text="installActionText"
+          @addon-button-click="addonButtonClick" />
       </div>
     </template>
-    <f7-list v-else
-             media-list
-             ref="addonlist"
-             class="addons-table-list"
-             no-chevron
-             no-hairlines>
-      <addon-list-item v-for="addon in addonsList"
-                       :key="addon.uid"
-                       :addon="addon"
-                       :install-action-text="installActionText"
-                       @addon-button-click="addonButtonClick" />
+    <f7-list v-else media-list ref="addonlist" class="addons-table-list" no-chevron no-hairlines>
+      <addon-list-item
+        v-for="addon in addonsList"
+        :key="addon.uid"
+        :addon="addon"
+        :install-action-text="installActionText"
+        @addon-button-click="addonButtonClick" />
     </f7-list>
     <f7-block v-if="canExpand" class="display-flex justify-content-center">
-      <f7-button class=""
-                 outline
-                 color="blue"
-                 @click="expand"
-                 :text="`Show ${addons.length - addonCollapsedLimit} More`" />
+      <f7-button
+        class=""
+        outline
+        color="blue"
+        @click="expand"
+        :text="`Show ${addons.length - addonCollapsedLimit} More`" />
     </f7-block>
   </f7-block>
 </template>

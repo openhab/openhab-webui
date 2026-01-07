@@ -1,14 +1,16 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn">
     <f7-navbar>
-      <oh-nav-content title="Widgets"
-                      back-link="Developer Tools"
-                      back-link-url="/developer/"
-                      :f7router>
+      <oh-nav-content
+        title="Widgets"
+        back-link="Developer Tools"
+        back-link-url="/developer/"
+        :f7router>
         <template #right>
-          <f7-link icon-md="material:done_all"
-                   @click="toggleCheck()"
-                   :text="(!theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
+          <f7-link
+            icon-md="material:done_all"
+            @click="toggleCheck()"
+            :text="(!theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
         </template>
       </oh-nav-content>
       <f7-subnavbar :inner="false" v-show="initSearchbar">
@@ -24,32 +26,34 @@
       </f7-subnavbar>
     </f7-navbar>
 
-    <f7-toolbar v-if="showCheckboxes"
-                class="contextual-toolbar"
-                :class="{ navbar: theme.md }"
-                bottom-ios
-                bottom-aurora>
-      <f7-link v-if="!theme.md"
-               v-show="selectedItems.length"
-               color="red"
-               class="delete"
-               icon-ios="f7:trash"
-               icon-aurora="f7:trash"
-               @click="removeSelected">
+    <f7-toolbar
+      v-if="showCheckboxes"
+      class="contextual-toolbar"
+      :class="{ navbar: theme.md }"
+      bottom-ios
+      bottom-aurora>
+      <f7-link
+        v-if="!theme.md"
+        v-show="selectedItems.length"
+        color="red"
+        class="delete"
+        icon-ios="f7:trash"
+        icon-aurora="f7:trash"
+        @click="removeSelected">
         Remove {{ selectedItems.length }}
       </f7-link>
-      <f7-link v-if="theme.md"
-               icon-md="material:close"
-               icon-color="white"
-               @click="showCheckboxes = false" />
-      <div v-if="theme.md" class="title">
-        {{ selectedItems.length }} selected
-      </div>
+      <f7-link
+        v-if="theme.md"
+        icon-md="material:close"
+        icon-color="white"
+        @click="showCheckboxes = false" />
+      <div v-if="theme.md" class="title">{{ selectedItems.length }} selected</div>
       <div v-if="theme.md" class="right">
-        <f7-link v-show="selectedItems.length"
-                 icon-md="material:delete"
-                 icon-color="white"
-                 @click="removeSelected" />
+        <f7-link
+          v-show="selectedItems.length"
+          icon-md="material:delete"
+          icon-color="white"
+          @click="removeSelected" />
       </div>
     </f7-toolbar>
 
@@ -63,12 +67,13 @@
         <f7-block-title>&nbsp;Loading...</f7-block-title>
         <f7-list media-list class="col wide">
           <f7-list-group>
-            <f7-list-item v-for="n in 20"
-                          media-item
-                          :key="n"
-                          :class="`skeleton-text skeleton-effect-blink`"
-                          title="Title of the widget"
-                          subtitle="Tag1, Tag2, Tag3..." />
+            <f7-list-item
+              v-for="n in 20"
+              media-item
+              :key="n"
+              :class="`skeleton-text skeleton-effect-blink`"
+              title="Title of the widget"
+              subtitle="Tag1, Tag2, Tag3..." />
           </f7-list-group>
         </f7-list>
       </f7-col>
@@ -77,28 +82,31 @@
         <f7-block-title class="searchbar-hide-on-search">
           {{ widgets.length }} widgets
         </f7-block-title>
-        <f7-list v-show="widgets.length > 0"
-                 class="searchbar-found col widgets-list"
-                 ref="widgetsList"
-                 media-list>
-          <f7-list-item v-for="(widget, index) in widgets"
-                        :key="index"
-                        media-item
-                        class="widgetlist-item"
-                        :checkbox="showCheckboxes"
-                        :checked="isChecked(widget.uid)"
-                        @click.ctrl="(e) => ctrlClick(e, widget)"
-                        @click.meta="(e) => ctrlClick(e, widget)"
-                        @click.exact="(e) => click(e, widget)"
-                        link=""
-                        :title="widget.uid">
+        <f7-list
+          v-show="widgets.length > 0"
+          class="searchbar-found col widgets-list"
+          ref="widgetsList"
+          media-list>
+          <f7-list-item
+            v-for="(widget, index) in widgets"
+            :key="index"
+            media-item
+            class="widgetlist-item"
+            :checkbox="showCheckboxes"
+            :checked="isChecked(widget.uid)"
+            @click.ctrl="(e) => ctrlClick(e, widget)"
+            @click.meta="(e) => ctrlClick(e, widget)"
+            @click.exact="(e) => click(e, widget)"
+            link=""
+            :title="widget.uid">
             <template #subtitle>
               <div>
-                <f7-chip v-for="tag in widget.tags"
-                         :key="tag"
-                         :text="tag"
-                         media-bg-color="blue"
-                         style="margin-right: 6px">
+                <f7-chip
+                  v-for="tag in widget.tags"
+                  :key="tag"
+                  :text="tag"
+                  media-bg-color="blue"
+                  style="margin-right: 6px">
                   <template #media>
                     <f7-icon ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
                   </template>
@@ -113,10 +121,7 @@
       </f7-col>
     </f7-block>
     <template #fixed>
-      <f7-fab v-show="ready && !showCheckboxes"
-              position="right-bottom"
-              color="blue"
-              href="add">
+      <f7-fab v-show="ready && !showCheckboxes" position="right-bottom" color="blue" href="add">
         <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
         <f7-icon ios="f7:close" md="material:close" aurora="f7:close" />
       </f7-fab>

@@ -6,187 +6,522 @@ const p = (type, name, label, description, options, advanced) => {
     description,
     advanced,
     limitToOptions: !!options,
-    options: (!options) ? undefined : options.split(',').map((o) => {
-      const parts = o.split('=')
-      return { value: parts[0], label: parts[1] || parts[0] }
-    })
+    options: !options
+      ? undefined
+      : options.split(',').map(o => {
+          const parts = o.split('=')
+          return { value: parts[0], label: parts[1] || parts[0] }
+        })
   }
 }
 
 // Common
-const checkStateParameter = p('BOOLEAN', 'checkState', 'Check Current State', 'When this is enabled, the current state of the target item is queried and compared to the potential new state triggered by the command. If it is identical, a special error message is triggered and communicated to the user', null, true)
-const tfaAckParameter = p('BOOLEAN', 'ackNeeded', 'Secondary User Verification - Acknowledgement needed', 'When this is set, Google will ask for acknowledgement (yes or no) before executing the action', null, true)
-const tfaPinParameter = p('TEXT', 'pinNeeded', 'Secondary User Verification - PIN', 'When this is set, Google will require this PIN before executing the action', null, true)
-const nameParameter = p('TEXT', 'name', 'Custom name', 'The name of the device used in Google (use synonyms instead if possible)', null, true)
-const roomHintParameter = p('TEXT', 'roomHint', 'Room hint', 'Suggested name for the room where this device is installed', null, true)
-const structureHintParameter = p('TEXT', 'structureHint', 'Structure hint', 'Suggested name for the structure where this device is installed', null, true)
-const invertedParameter = p('BOOLEAN', 'inverted', 'Inverted', 'Inverts the values, e.g. ON becomes OFF for a switch or 0% becomes 100% for a curtain')
-const langParameter = p('TEXT', 'lang', 'Language', 'Language used for parsing text in the other parameters, e.g. "en"')
+const checkStateParameter = p(
+  'BOOLEAN',
+  'checkState',
+  'Check Current State',
+  'When this is enabled, the current state of the target item is queried and compared to the potential new state triggered by the command. If it is identical, a special error message is triggered and communicated to the user',
+  null,
+  true
+)
+const tfaAckParameter = p(
+  'BOOLEAN',
+  'ackNeeded',
+  'Secondary User Verification - Acknowledgement needed',
+  'When this is set, Google will ask for acknowledgement (yes or no) before executing the action',
+  null,
+  true
+)
+const tfaPinParameter = p(
+  'TEXT',
+  'pinNeeded',
+  'Secondary User Verification - PIN',
+  'When this is set, Google will require this PIN before executing the action',
+  null,
+  true
+)
+const nameParameter = p(
+  'TEXT',
+  'name',
+  'Custom name',
+  'The name of the device used in Google (use synonyms instead if possible)',
+  null,
+  true
+)
+const roomHintParameter = p(
+  'TEXT',
+  'roomHint',
+  'Room hint',
+  'Suggested name for the room where this device is installed',
+  null,
+  true
+)
+const structureHintParameter = p(
+  'TEXT',
+  'structureHint',
+  'Structure hint',
+  'Suggested name for the structure where this device is installed',
+  null,
+  true
+)
+const invertedParameter = p(
+  'BOOLEAN',
+  'inverted',
+  'Inverted',
+  'Inverts the values, e.g. ON becomes OFF for a switch or 0% becomes 100% for a curtain'
+)
+const langParameter = p(
+  'TEXT',
+  'lang',
+  'Language',
+  'Language used for parsing text in the other parameters, e.g. "en"'
+)
 // Camera
-const protocolsParameter = p('TEXT', 'protocols', 'Protocols', 'List of supported protocols (comma separated), e.g. "hls,dash,smooth_stream,progressive_mp4"')
+const protocolsParameter = p(
+  'TEXT',
+  'protocols',
+  'Protocols',
+  'List of supported protocols (comma separated), e.g. "hls,dash,smooth_stream,progressive_mp4"'
+)
 const tokenNeededParameter = p('BOOLEAN', 'token', 'Authentification token needed')
 // Fans
-const speedParameter = p('TEXT', 'speeds', 'Speeds', 'Mappings between items states and Google modes (comma separated), e.g. "0=away:zero,50=default:standard:one,100=high:two"')
+const speedParameter = p(
+  'TEXT',
+  'speeds',
+  'Speeds',
+  'Mappings between items states and Google modes (comma separated), e.g. "0=away:zero,50=default:standard:one,100=high:two"'
+)
 const orderedParameter = p('BOOLEAN', 'ordered', 'Ordered')
 // Lights
-const colorTemperatureRangeParameter = p('TEXT', 'colorTemperatureRange', 'Color temperature range', '(Color lights only) Supported color temperature range in Kelvin (comma separated), e.g. "2000,9000"')
-const colorUnitParameter = p('TEXT', 'colorUnit', 'Color Unit', '(Color lights only) Specify the unit to be used for the "lightColorTemperature" child in a grouped light, e.g. "kelvin", "mired" or "percent"')
+const colorTemperatureRangeParameter = p(
+  'TEXT',
+  'colorTemperatureRange',
+  'Color temperature range',
+  '(Color lights only) Supported color temperature range in Kelvin (comma separated), e.g. "2000,9000"'
+)
+const colorUnitParameter = p(
+  'TEXT',
+  'colorUnit',
+  'Color Unit',
+  '(Color lights only) Specify the unit to be used for the "lightColorTemperature" child in a grouped light, e.g. "kelvin", "mired" or "percent"'
+)
 // OpenCloseDevices
-const discreteOnlyParameter = p('BOOLEAN', 'discreteOnly', 'Discrete values only', 'Device must either be fully open or fully closed (no states in between)')
-const queryOnlyParameter = p('BOOLEAN', 'queryOnly', 'Read-only', 'Device is read-only (can not be controlled)')
+const discreteOnlyParameter = p(
+  'BOOLEAN',
+  'discreteOnly',
+  'Discrete values only',
+  'Device must either be fully open or fully closed (no states in between)'
+)
+const queryOnlyParameter = p(
+  'BOOLEAN',
+  'queryOnly',
+  'Read-only',
+  'Device is read-only (can not be controlled)'
+)
 // Scenes
-const sceneReversibleParameter = p('BOOLEAN', 'sceneReversible', 'Reversible', 'Scene can be reversed ("turned off")')
+const sceneReversibleParameter = p(
+  'BOOLEAN',
+  'sceneReversible',
+  'Reversible',
+  'Scene can be reversed ("turned off")'
+)
 // Sensors
-const sensorNameParameter = p('TEXT', 'sensorName', 'Sensor name', 'Sensor name (type), see <a class="link external" target="_blank" external href="https://developers.google.com/assistant/smarthome/traits/sensorstate?hl=en#supported-sensors">the docs</a> for supported values')
-const valueUnitParameter = p('TEXT', 'valueUnit', 'Value unit', 'Sensor value unit, see <a class="link external" target="_blank" external href="https://developers.google.com/assistant/smarthome/traits/sensorstate?hl=en#supported-sensors">the docs</a> for supported values')
-const statesParameter = p('TEXT', 'states', 'states', 'Sensor states with mappings from Google values to openHAB item values (comma seperated), e.g. "no smoke detected=0,smoke detected=1". See <a class="link external" target="_blank" external href="https://developers.google.com/assistant/smarthome/traits/sensorstate?hl=en#supported-sensors">the docs</a> for supported values')
+const sensorNameParameter = p(
+  'TEXT',
+  'sensorName',
+  'Sensor name',
+  'Sensor name (type), see <a class="link external" target="_blank" external href="https://developers.google.com/assistant/smarthome/traits/sensorstate?hl=en#supported-sensors">the docs</a> for supported values'
+)
+const valueUnitParameter = p(
+  'TEXT',
+  'valueUnit',
+  'Value unit',
+  'Sensor value unit, see <a class="link external" target="_blank" external href="https://developers.google.com/assistant/smarthome/traits/sensorstate?hl=en#supported-sensors">the docs</a> for supported values'
+)
+const statesParameter = p(
+  'TEXT',
+  'states',
+  'states',
+  'Sensor states with mappings from Google values to openHAB item values (comma seperated), e.g. "no smoke detected=0,smoke detected=1". See <a class="link external" target="_blank" external href="https://developers.google.com/assistant/smarthome/traits/sensorstate?hl=en#supported-sensors">the docs</a> for supported values'
+)
 // Speakers
-const volumeMaxLevelParameter = p('INTEGER', 'volumeMaxLevel', 'Maximum volume level', 'Depends on the device, e.g. "10"')
-const volumeDefaultPercentageParameter = p('INTEGER', 'volumeDefaultPercentage', 'Default volume', 'Default volume in percent of the maximum volume (default is 40%)')
-const levelStepSizeParameter = p('INTEGER', 'levelStepSize', 'Step size', 'Step size for relative volume queries like "volume up" (default is 1)')
+const volumeMaxLevelParameter = p(
+  'INTEGER',
+  'volumeMaxLevel',
+  'Maximum volume level',
+  'Depends on the device, e.g. "10"'
+)
+const volumeDefaultPercentageParameter = p(
+  'INTEGER',
+  'volumeDefaultPercentage',
+  'Default volume',
+  'Default volume in percent of the maximum volume (default is 40%)'
+)
+const levelStepSizeParameter = p(
+  'INTEGER',
+  'levelStepSize',
+  'Step size',
+  'Step size for relative volume queries like "volume up" (default is 1)'
+)
 // Thermostat
-const thermostatModesParameter = p('TEXT', 'modes', 'Thermostat modes', 'Mappings from Google values to openHAB item values (comma separated), e.g. "off=OFF:WINDOW_OPEN,heat=COMFORT:BOOST,eco=ECO,on=ON,auto"')
-const thermostatTemperatureRangeParameter = p('TEXT', 'thermostatTemperatureRange', 'Thermostat temperature range', 'The temperature range your thermostat supports (comma separated, in Celsius), e.g. "10,30"')
+const thermostatModesParameter = p(
+  'TEXT',
+  'modes',
+  'Thermostat modes',
+  'Mappings from Google values to openHAB item values (comma separated), e.g. "off=OFF:WINDOW_OPEN,heat=COMFORT:BOOST,eco=ECO,on=ON,auto"'
+)
+const thermostatTemperatureRangeParameter = p(
+  'TEXT',
+  'thermostatTemperatureRange',
+  'Thermostat temperature range',
+  'The temperature range your thermostat supports (comma separated, in Celsius), e.g. "10,30"'
+)
 const useFahrenheitParameter = p('BOOLEAN', 'useFahrenheit', 'Use Fahrenheit')
 // TV
-const transportControlSupportedCommandsParameter = p('TEXT', 'transportControlSupportedCommands', 'Supported transport controls', 'List of supported controls, e.g. "NEXT,PREVIOUS,PAUSE,RESUME"')
-const availableInputsParameter = p('TEXT', 'availableInputs', 'Available inputs', 'List of available inputs with mapping (comma separated), e.g. "inputKey=inputName:inputSynonym1:inputSynonym2:..."')
-const availableChannelsParameter = p('TEXT', 'availableChannels', 'Available channels', 'List of available channels with mapping (comma separated), e.g. "channelNumber=channelId=channelName:channelSynonym1:channelSynonym2:..."')
-const availableApplicationsParameter = p('TEXT', 'availableApplications', 'Available applications', 'List of available applications with mapping (comma separated), e.g. "applicationKey=applicationName:applicationSynonym:..."')
+const transportControlSupportedCommandsParameter = p(
+  'TEXT',
+  'transportControlSupportedCommands',
+  'Supported transport controls',
+  'List of supported controls, e.g. "NEXT,PREVIOUS,PAUSE,RESUME"'
+)
+const availableInputsParameter = p(
+  'TEXT',
+  'availableInputs',
+  'Available inputs',
+  'List of available inputs with mapping (comma separated), e.g. "inputKey=inputName:inputSynonym1:inputSynonym2:..."'
+)
+const availableChannelsParameter = p(
+  'TEXT',
+  'availableChannels',
+  'Available channels',
+  'List of available channels with mapping (comma separated), e.g. "channelNumber=channelId=channelName:channelSynonym1:channelSynonym2:..."'
+)
+const availableApplicationsParameter = p(
+  'TEXT',
+  'availableApplications',
+  'Available applications',
+  'List of available applications with mapping (comma separated), e.g. "applicationKey=applicationName:applicationSynonym:..."'
+)
 // SecuritySystem
-const waitForStateChangeParameter = p('INTEGER', 'waitForStateChange', 'Waiting time for state verification', 'Defines the number of seconds to wait for the security system state to update before checking that the arm/disarm was successful, e.g. "5"')
-const pinOnDisarmOnlyParameter = p('BOOLEAN', 'pinOnDisarmOnly', 'Require PIN only for Disarm', 'Will enforce the PIN on disarming only. Arming will be done without the PIN')
-const armLevelsParameter = p('TEXT', 'armLevels', 'Arm Levels', 'List of supported arm levels as "Key=Label" (comma separated) where the label is used for the command and the key is sent to openHAB, e.g. "L1=Level 1,L2=Level 2"')
-const blockingParameter = p('BOOLEAN', 'blocking', 'Blocking zone', 'If set Google will attempt to check for zones that are causing the arming to fail')
-const zoneTypeParameter = p('TEXT', 'zoneType', 'Zone Type', 'Type of security zone sensor, e.g. "OpenClose" or "Motion"')
+const waitForStateChangeParameter = p(
+  'INTEGER',
+  'waitForStateChange',
+  'Waiting time for state verification',
+  'Defines the number of seconds to wait for the security system state to update before checking that the arm/disarm was successful, e.g. "5"'
+)
+const pinOnDisarmOnlyParameter = p(
+  'BOOLEAN',
+  'pinOnDisarmOnly',
+  'Require PIN only for Disarm',
+  'Will enforce the PIN on disarming only. Arming will be done without the PIN'
+)
+const armLevelsParameter = p(
+  'TEXT',
+  'armLevels',
+  'Arm Levels',
+  'List of supported arm levels as "Key=Label" (comma separated) where the label is used for the command and the key is sent to openHAB, e.g. "L1=Level 1,L2=Level 2"'
+)
+const blockingParameter = p(
+  'BOOLEAN',
+  'blocking',
+  'Blocking zone',
+  'If set Google will attempt to check for zones that are causing the arming to fail'
+)
+const zoneTypeParameter = p(
+  'TEXT',
+  'zoneType',
+  'Zone Type',
+  'Type of security zone sensor, e.g. "OpenClose" or "Motion"'
+)
 // Charger
-const isRechargeableParameter = p('BOOLEAN', 'isRechargeable', 'Rechargeable', 'Set to true if this device is rechargeable and may report capacityUntilFull, isCharging, isPluggedIn state, and can accept the Charge command')
-const unitParameter = p('TEXT', 'unit', 'Capacity Unit', 'Unit to be used for charger capacity, e.g. "PERCENTAGE", "SECONDS", "MILES", "KILOMETERS" or "KILOWATT_HOURS"')
+const isRechargeableParameter = p(
+  'BOOLEAN',
+  'isRechargeable',
+  'Rechargeable',
+  'Set to true if this device is rechargeable and may report capacityUntilFull, isCharging, isPluggedIn state, and can accept the Charge command'
+)
+const unitParameter = p(
+  'TEXT',
+  'unit',
+  'Capacity Unit',
+  'Unit to be used for charger capacity, e.g. "PERCENTAGE", "SECONDS", "MILES", "KILOMETERS" or "KILOWATT_HOURS"'
+)
 // Shutter
-const supportsDegreesParameter = p('BOOLEAN', 'supportsDegrees', 'Supports Degrees', 'Whether the shutter supports rotation in degrees (default is true)')
-const supportsContinuousRotationParameter = p('BOOLEAN', 'supportsContinuousRotation', 'Supports Continuous Rotation', 'Whether the shutter supports continuous rotation')
-const rotationDegreesRangeParameter = p('TEXT', 'rotationDegreesRange', 'Rotation Degrees Range', 'Supported rotation angle range in degrees (comma separated), e.g. "0,90"')
+const supportsDegreesParameter = p(
+  'BOOLEAN',
+  'supportsDegrees',
+  'Supports Degrees',
+  'Whether the shutter supports rotation in degrees (default is true)'
+)
+const supportsContinuousRotationParameter = p(
+  'BOOLEAN',
+  'supportsContinuousRotation',
+  'Supports Continuous Rotation',
+  'Whether the shutter supports continuous rotation'
+)
+const rotationDegreesRangeParameter = p(
+  'TEXT',
+  'rotationDegreesRange',
+  'Rotation Degrees Range',
+  'Supported rotation angle range in degrees (comma separated), e.g. "0,90"'
+)
 // Temperature/Humidity
-const temperatureRangeParameter = p('TEXT', 'temperatureRange', 'Temperature Range', 'Supported temperature range (comma separated, in Celsius), e.g. "-10,40"')
-const humidityRangeParameter = p('TEXT', 'humidityRange', 'Humidity Range', 'Supported humidity range in percent (comma separated), e.g. "0,100"')
-const maxHumidityParameter = p('INTEGER', 'maxHumidity', 'Maximum Humidity Level', 'Maximum humidity value the device supports (default is 100)')
+const temperatureRangeParameter = p(
+  'TEXT',
+  'temperatureRange',
+  'Temperature Range',
+  'Supported temperature range (comma separated, in Celsius), e.g. "-10,40"'
+)
+const humidityRangeParameter = p(
+  'TEXT',
+  'humidityRange',
+  'Humidity Range',
+  'Supported humidity range in percent (comma separated), e.g. "0,100"'
+)
+const maxHumidityParameter = p(
+  'INTEGER',
+  'maxHumidity',
+  'Maximum Humidity Level',
+  'Maximum humidity value the device supports (default is 100)'
+)
 // Modes
-const modeParameter = p('TEXT', 'mode', 'Mode', 'Mode name with synonyms (comma separated), e.g. "light mode,effect" or "input,source"')
-const settingsParameter = p('TEXT', 'settings', 'Settings', 'Mode settings with synonyms (comma separated), e.g. "rainbow=rainbow:colors,white=white light"')
-const fanModeNameParameter = p('TEXT', 'fanModeName', 'Fan Mode Name', 'Mode name for fan modes (comma separated), e.g. "fan mode,mode"')
-const fanModeSettingsParameter = p('TEXT', 'fanModeSettings', 'Fan Mode Settings', 'Fan mode settings with synonyms (comma separated), e.g. "sleep=sleep mode,normal=normal:standard"')
+const modeParameter = p(
+  'TEXT',
+  'mode',
+  'Mode',
+  'Mode name with synonyms (comma separated), e.g. "light mode,effect" or "input,source"'
+)
+const settingsParameter = p(
+  'TEXT',
+  'settings',
+  'Settings',
+  'Mode settings with synonyms (comma separated), e.g. "rainbow=rainbow:colors,white=white light"'
+)
+const fanModeNameParameter = p(
+  'TEXT',
+  'fanModeName',
+  'Fan Mode Name',
+  'Mode name for fan modes (comma separated), e.g. "fan mode,mode"'
+)
+const fanModeSettingsParameter = p(
+  'TEXT',
+  'fanModeSettings',
+  'Fan Mode Settings',
+  'Fan mode settings with synonyms (comma separated), e.g. "sleep=sleep mode,normal=normal:standard"'
+)
 // TV
-const orderedInputsParameter = p('BOOLEAN', 'orderedInputs', 'Ordered Inputs', 'Whether the available inputs should be ordered')
+const orderedInputsParameter = p(
+  'BOOLEAN',
+  'orderedInputs',
+  'Ordered Inputs',
+  'Whether the available inputs should be ordered'
+)
 
 const deviceTypes = {
   // Switch-based devices
-  'Switch': [invertedParameter, queryOnlyParameter],
-  'Outlet': [invertedParameter, queryOnlyParameter],
-  'Coffee_Maker': [invertedParameter, queryOnlyParameter],
-  'Fireplace': [invertedParameter, queryOnlyParameter],
-  'WaterHeater': [invertedParameter, queryOnlyParameter],
+  Switch: [invertedParameter, queryOnlyParameter],
+  Outlet: [invertedParameter, queryOnlyParameter],
+  Coffee_Maker: [invertedParameter, queryOnlyParameter],
+  Fireplace: [invertedParameter, queryOnlyParameter],
+  WaterHeater: [invertedParameter, queryOnlyParameter],
   // StartStopSwitch-based devices
-  'Sprinkler': [invertedParameter],
-  'Dishwasher': [invertedParameter],
-  'Washer': [invertedParameter],
+  Sprinkler: [invertedParameter],
+  Dishwasher: [invertedParameter],
+  Washer: [invertedParameter],
   // OpenCloseDevice-based devices
-  'Door': [invertedParameter, discreteOnlyParameter, queryOnlyParameter],
-  'Gate': [invertedParameter, discreteOnlyParameter, queryOnlyParameter],
-  'Garage': [invertedParameter, discreteOnlyParameter, queryOnlyParameter],
-  'Window': [invertedParameter, discreteOnlyParameter, queryOnlyParameter],
+  Door: [invertedParameter, discreteOnlyParameter, queryOnlyParameter],
+  Gate: [invertedParameter, discreteOnlyParameter, queryOnlyParameter],
+  Garage: [invertedParameter, discreteOnlyParameter, queryOnlyParameter],
+  Window: [invertedParameter, discreteOnlyParameter, queryOnlyParameter],
   // Shutter-based devices (with rotation support)
-  'Shutter': [invertedParameter, discreteOnlyParameter, queryOnlyParameter, supportsDegreesParameter, supportsContinuousRotationParameter, rotationDegreesRangeParameter],
-  'Awning': [invertedParameter, discreteOnlyParameter, queryOnlyParameter, supportsDegreesParameter, supportsContinuousRotationParameter, rotationDegreesRangeParameter],
-  'Blinds': [invertedParameter, discreteOnlyParameter, queryOnlyParameter, supportsDegreesParameter, supportsContinuousRotationParameter, rotationDegreesRangeParameter],
-  'Curtain': [invertedParameter, discreteOnlyParameter, queryOnlyParameter, supportsDegreesParameter, supportsContinuousRotationParameter, rotationDegreesRangeParameter],
-  'Pergola': [invertedParameter, discreteOnlyParameter, queryOnlyParameter, supportsDegreesParameter, supportsContinuousRotationParameter, rotationDegreesRangeParameter],
+  Shutter: [
+    invertedParameter,
+    discreteOnlyParameter,
+    queryOnlyParameter,
+    supportsDegreesParameter,
+    supportsContinuousRotationParameter,
+    rotationDegreesRangeParameter
+  ],
+  Awning: [
+    invertedParameter,
+    discreteOnlyParameter,
+    queryOnlyParameter,
+    supportsDegreesParameter,
+    supportsContinuousRotationParameter,
+    rotationDegreesRangeParameter
+  ],
+  Blinds: [
+    invertedParameter,
+    discreteOnlyParameter,
+    queryOnlyParameter,
+    supportsDegreesParameter,
+    supportsContinuousRotationParameter,
+    rotationDegreesRangeParameter
+  ],
+  Curtain: [
+    invertedParameter,
+    discreteOnlyParameter,
+    queryOnlyParameter,
+    supportsDegreesParameter,
+    supportsContinuousRotationParameter,
+    rotationDegreesRangeParameter
+  ],
+  Pergola: [
+    invertedParameter,
+    discreteOnlyParameter,
+    queryOnlyParameter,
+    supportsDegreesParameter,
+    supportsContinuousRotationParameter,
+    rotationDegreesRangeParameter
+  ],
   // Fan-based devices
-  'Fan': [speedParameter, langParameter, orderedParameter, fanModeNameParameter, fanModeSettingsParameter],
-  'AirPurifier': [speedParameter, langParameter, orderedParameter, fanModeNameParameter, fanModeSettingsParameter],
-  'Hood': [speedParameter, langParameter, orderedParameter, fanModeNameParameter, fanModeSettingsParameter],
+  Fan: [
+    speedParameter,
+    langParameter,
+    orderedParameter,
+    fanModeNameParameter,
+    fanModeSettingsParameter
+  ],
+  AirPurifier: [
+    speedParameter,
+    langParameter,
+    orderedParameter,
+    fanModeNameParameter,
+    fanModeSettingsParameter
+  ],
+  Hood: [
+    speedParameter,
+    langParameter,
+    orderedParameter,
+    fanModeNameParameter,
+    fanModeSettingsParameter
+  ],
   // Light devices (all variants use type LIGHT)
-  'Light': [colorTemperatureRangeParameter, colorUnitParameter, modeParameter, settingsParameter, langParameter, orderedParameter],
+  Light: [
+    colorTemperatureRangeParameter,
+    colorUnitParameter,
+    modeParameter,
+    settingsParameter,
+    langParameter,
+    orderedParameter
+  ],
   // Other devices
-  'ACUnit': [speedParameter, langParameter, orderedParameter, useFahrenheitParameter, thermostatModesParameter, thermostatTemperatureRangeParameter],
-  'Camera': [protocolsParameter, tokenNeededParameter],
-  'Charger': [isRechargeableParameter, unitParameter],
-  'ClimateSensor': [useFahrenheitParameter, temperatureRangeParameter, maxHumidityParameter],
-  'Humidifier': [humidityRangeParameter, speedParameter, langParameter, orderedParameter],
-  'HumiditySensor': [maxHumidityParameter],
-  'Lock': [invertedParameter],
-  'Scene': [sceneReversibleParameter],
-  'SecuritySystem': [armLevelsParameter, pinOnDisarmOnlyParameter, waitForStateChangeParameter, invertedParameter, langParameter, orderedParameter],
-  'Sensor': [sensorNameParameter, valueUnitParameter, statesParameter],
-  'Speaker': [volumeMaxLevelParameter, volumeDefaultPercentageParameter, levelStepSizeParameter],
-  'TemperatureSensor': [useFahrenheitParameter, temperatureRangeParameter],
-  'Thermostat': [useFahrenheitParameter, thermostatModesParameter, thermostatTemperatureRangeParameter],
-  'TV': [volumeMaxLevelParameter, volumeDefaultPercentageParameter, levelStepSizeParameter, langParameter, transportControlSupportedCommandsParameter, availableInputsParameter, availableChannelsParameter, availableApplicationsParameter, orderedInputsParameter],
-  'Vacuum': [],
-  'Valve': [invertedParameter]
+  ACUnit: [
+    speedParameter,
+    langParameter,
+    orderedParameter,
+    useFahrenheitParameter,
+    thermostatModesParameter,
+    thermostatTemperatureRangeParameter
+  ],
+  Camera: [protocolsParameter, tokenNeededParameter],
+  Charger: [isRechargeableParameter, unitParameter],
+  ClimateSensor: [useFahrenheitParameter, temperatureRangeParameter, maxHumidityParameter],
+  Humidifier: [humidityRangeParameter, speedParameter, langParameter, orderedParameter],
+  HumiditySensor: [maxHumidityParameter],
+  Lock: [invertedParameter],
+  Scene: [sceneReversibleParameter],
+  SecuritySystem: [
+    armLevelsParameter,
+    pinOnDisarmOnlyParameter,
+    waitForStateChangeParameter,
+    invertedParameter,
+    langParameter,
+    orderedParameter
+  ],
+  Sensor: [sensorNameParameter, valueUnitParameter, statesParameter],
+  Speaker: [volumeMaxLevelParameter, volumeDefaultPercentageParameter, levelStepSizeParameter],
+  TemperatureSensor: [useFahrenheitParameter, temperatureRangeParameter],
+  Thermostat: [
+    useFahrenheitParameter,
+    thermostatModesParameter,
+    thermostatTemperatureRangeParameter
+  ],
+  TV: [
+    volumeMaxLevelParameter,
+    volumeDefaultPercentageParameter,
+    levelStepSizeParameter,
+    langParameter,
+    transportControlSupportedCommandsParameter,
+    availableInputsParameter,
+    availableChannelsParameter,
+    availableApplicationsParameter,
+    orderedInputsParameter
+  ],
+  Vacuum: [],
+  Valve: [invertedParameter]
 }
 
 for (let c in deviceTypes) {
-  deviceTypes[c] = [...deviceTypes[c], nameParameter, roomHintParameter, structureHintParameter, checkStateParameter, tfaAckParameter, tfaPinParameter]
+  deviceTypes[c] = [
+    ...deviceTypes[c],
+    nameParameter,
+    roomHintParameter,
+    structureHintParameter,
+    checkStateParameter,
+    tfaAckParameter,
+    tfaPinParameter
+  ]
 }
 
 const deviceAttributes = {
   // Thermostat members
-  'thermostatTemperatureAmbient': [],
-  'thermostatHumidityAmbient': [],
-  'thermostatTemperatureSetpoint': [],
-  'thermostatTemperatureSetpointLow': [],
-  'thermostatTemperatureSetpointHigh': [],
-  'thermostatMode': [],
+  thermostatTemperatureAmbient: [],
+  thermostatHumidityAmbient: [],
+  thermostatTemperatureSetpoint: [],
+  thermostatTemperatureSetpointLow: [],
+  thermostatTemperatureSetpointHigh: [],
+  thermostatMode: [],
   // Climate sensor members
-  'temperatureAmbient': [],
-  'humidityAmbient': [],
+  temperatureAmbient: [],
+  humidityAmbient: [],
   // TV members
-  'tvPower': [],
-  'tvMute': [],
-  'tvVolume': [],
-  'tvChannel': [],
-  'tvInput': [],
-  'tvApplication': [],
-  'tvTransport': [],
+  tvPower: [],
+  tvMute: [],
+  tvVolume: [],
+  tvChannel: [],
+  tvInput: [],
+  tvApplication: [],
+  tvTransport: [],
   // Light members (for grouped color lights)
-  'lightPower': [],
-  'lightBrightness': [],
-  'lightColor': [],
-  'lightColorTemperature': [],
+  lightPower: [],
+  lightBrightness: [],
+  lightColor: [],
+  lightColorTemperature: [],
   // Charger members
-  'chargerCharging': [],
-  'chargerPluggedIn': [],
-  'chargerCapacityRemaining': [],
-  'chargerCapacityUntilFull': [],
+  chargerCharging: [],
+  chargerPluggedIn: [],
+  chargerCapacityRemaining: [],
+  chargerCapacityUntilFull: [],
   // Security system members
-  'securitySystemArmed': [],
-  'securitySystemArmLevel': [],
-  'securitySystemTrouble': [],
-  'securitySystemTroubleCode': [],
-  'securitySystemZone': [zoneTypeParameter, blockingParameter],
+  securitySystemArmed: [],
+  securitySystemArmLevel: [],
+  securitySystemTrouble: [],
+  securitySystemTroubleCode: [],
+  securitySystemZone: [zoneTypeParameter, blockingParameter],
   // Fan members
-  'fanPower': [],
-  'fanSpeed': [],
-  'fanMode': [],
-  'fanFilterLifeTime': [],
-  'fanPM25': [],
+  fanPower: [],
+  fanSpeed: [],
+  fanMode: [],
+  fanFilterLifeTime: [],
+  fanPM25: [],
   // Humidifier members
-  'humidifierPower': [],
-  'humidifierHumiditySetpoint': [maxHumidityParameter],
-  'humidifierHumidityAmbient': [],
-  'humidifierFanSpeed': [],
+  humidifierPower: [],
+  humidifierHumiditySetpoint: [maxHumidityParameter],
+  humidifierHumidityAmbient: [],
+  humidifierFanSpeed: [],
   // Vacuum members
-  'vacuumPower': [],
-  'vacuumDock': [],
-  'vacuumBattery': [],
-  'vacuumLocate': [],
-  'vacuumCurrentCycle': [],
+  vacuumPower: [],
+  vacuumDock: [],
+  vacuumBattery: [],
+  vacuumLocate: [],
+  vacuumCurrentCycle: [],
   // Dynamic modes members
-  'modesCurrentMode': [],
-  'modesSettings': [],
+  modesCurrentMode: [],
+  modesSettings: [],
   // Shutter members
-  'shutterPosition': [],
-  'shutterRotation': []
+  shutterPosition: [],
+  shutterRotation: []
 }
 
 let classes = {}

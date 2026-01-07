@@ -3,7 +3,10 @@
     <f7-page class="group-popup-content disable-user-select">
       <f7-navbar :title="(item) ? item.label || item.name : ''" :back-link="$t('dialogs.back')" />
       <div class="group-item-control no-padding no-margin">
-        <generic-widget-component v-if="ready && groupControlContext" v-bind="$attrs" :context="groupControlContext" />
+        <generic-widget-component
+          v-if="ready && groupControlContext"
+          v-bind="$attrs"
+          :context="groupControlContext" />
       </div>
 
       <generic-widget-component v-if="ready" v-bind="$attrs" :context="context" />

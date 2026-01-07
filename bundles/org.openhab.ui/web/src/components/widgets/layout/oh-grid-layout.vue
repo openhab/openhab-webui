@@ -7,11 +7,14 @@
           <f7-menu-item @click="addItem" icon-f7="plus" text="Add Widget" />
           <f7-menu-item style="margin-left: auto" icon-f7="grid" dropdown>
             <f7-menu-dropdown right>
-              <f7-menu-dropdown-item @click="context.editmode.configureWidget(context.component, context.parent, 'oh-grid-layout')" href="#" text="Configure Grid Layout" />
+              <f7-menu-dropdown-item
+                @click="context.editmode.configureWidget(context.component, context.parent, 'oh-grid-layout')"
+                href="#"
+                text="Configure Grid Layout" />
             </f7-menu-dropdown>
           </f7-menu-item>
         </f7-menu>
-        <hr>
+        <hr />
       </f7-block>
 
       <!-- fullscreen fab menu -->
@@ -24,7 +27,10 @@
             <f7-fab-button label="Exit Fullscreen" fab-close @click="exitFullscreen">
               <f7-icon size="20" f7="rectangle_arrow_up_right_arrow_down_left_slash" />
             </f7-fab-button>
-            <f7-fab-button label="Configure Grid Layout" fab-close @click="context.editmode.configureWidget(context.component, context.parent, 'oh-grid-layout')">
+            <f7-fab-button
+              label="Configure Grid Layout"
+              fab-close
+              @click="context.editmode.configureWidget(context.component, context.parent, 'oh-grid-layout')">
               <f7-icon size="20" f7="square_pencil" />
             </f7-fab-button>
             <f7-fab-button label="Add Widget" fab-close @click="addItem">
@@ -57,7 +63,11 @@
       :use-css-transforms="false">
       <div v-if="context.editmode" style="opacity: 0.3; padding: 4px; user-select: none;">
         {{ getCurrentScreenResolution() }}
-        <span v-if="isRetina()"><f7-icon tooltip="Screen resolution shown is the fullscreen resolution for websites. Real screen resolution is bigger." f7="info_circle" /></span>
+        <span v-if="isRetina()"
+          ><f7-icon
+            tooltip="Screen resolution shown is the fullscreen resolution for websites. Real screen resolution is bigger."
+            f7="info_circle"
+        /></span>
       </div>
       <oh-grid-item
         v-for="item in layout"

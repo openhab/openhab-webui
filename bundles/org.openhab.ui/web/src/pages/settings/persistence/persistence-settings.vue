@@ -1,19 +1,18 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar>
-      <oh-nav-content title="Persistence Settings"
-                      back-link="Settings"
-                      back-link-url="/settings/"
-                      :save-link="persistenceList.length > 0 ? `Save${$device.desktop ? ' (Ctrl-S)' : ''}` : ''"
-                      @save="save()"
-                      :f7router />
+      <oh-nav-content
+        title="Persistence Settings"
+        back-link="Settings"
+        back-link-url="/settings/"
+        :save-link="persistenceList.length > 0 ? `Save${$device.desktop ? ' (Ctrl-S)' : ''}` : ''"
+        @save="save()"
+        :f7router />
     </f7-navbar>
 
     <f7-block form v-if="ready && persistenceList.length" class="block-narrow">
       <f7-col>
-        <f7-block-title medium>
-          General Settings
-        </f7-block-title>
+        <f7-block-title medium> General Settings </f7-block-title>
         <config-sheet
           :parameter-groups="configDescriptions.parameterGroups"
           :parameters="configDescriptions.parameters"
@@ -23,9 +22,7 @@
     </f7-block>
     <f7-block v-if="ready && persistenceList.length" class="block-narrow">
       <f7-col>
-        <f7-block-title medium>
-          Configure Persistence Policies
-        </f7-block-title>
+        <f7-block-title medium> Configure Persistence Policies </f7-block-title>
         <f7-list>
           <f7-list-item
             v-for="persistence in persistenceList"
@@ -34,16 +31,18 @@
             :link="persistence.id"
             :title="persistence.label"
             :footer="persistence.id" />
-          <f7-list-item link="/addons/persistence/"
-                        no-chevron
-                        media-item
-                        :color="theme.dark ? 'black' : 'white'"
-                        subtitle="Install more persistence add-ons">
+          <f7-list-item
+            link="/addons/persistence/"
+            no-chevron
+            media-item
+            :color="theme.dark ? 'black' : 'white'"
+            subtitle="Install more persistence add-ons">
             <template #media>
-              <f7-icon color="green"
-                       aurora="f7:plus_circle_fill"
-                       ios="f7:plus_circle_fill"
-                       md="material:control_point" />
+              <f7-icon
+                color="green"
+                aurora="f7:plus_circle_fill"
+                ios="f7:plus_circle_fill"
+                md="material:control_point" />
             </template>
           </f7-list-item>
         </f7-list>
@@ -51,20 +50,21 @@
     </f7-block>
 
     <f7-block v-if="ready && !persistenceList.length" class="block-narrow">
-      <empty-state-placeholder icon="download_circle" title="persistence.title" text="persistence.text" />
+      <empty-state-placeholder
+        icon="download_circle"
+        title="persistence.title"
+        text="persistence.text" />
       <f7-row class="display-flex justify-content-center">
-        <f7-button large
-                   fill
-                   color="blue"
-                   external
-                   :href="`${runtimeStore.websiteUrl}/link/persistence`"
-                   target="_blank"
-                   :text="$t('home.overview.button.documentation')" />
+        <f7-button
+          large
+          fill
+          color="blue"
+          external
+          :href="`${runtimeStore.websiteUrl}/link/persistence`"
+          target="_blank"
+          :text="$t('home.overview.button.documentation')" />
         <span style="width: 8px" />
-        <f7-button large
-                   fill
-                   color="blue"
-                   href="/addons/persistence/">
+        <f7-button large fill color="blue" href="/addons/persistence/">
           Install a persistence add-on
         </f7-button>
       </f7-row>

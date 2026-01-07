@@ -1,28 +1,24 @@
 <template>
-  <f7-popup ref="widgetConfig"
-            class="widgetconfig-popup"
-            :close-by-backdrop-click="false"
-            @popup:opened="widgetConfigOpened"
-            @popup:closed="widgetConfigClosed">
+  <f7-popup
+    ref="widgetConfig"
+    class="widgetconfig-popup"
+    :close-by-backdrop-click="false"
+    @popup:opened="widgetConfigOpened"
+    @popup:closed="widgetConfigClosed">
     <f7-page v-if="component && widget">
       <f7-navbar ref="navbar">
         <f7-nav-left>
-          <f7-link icon-ios="f7:arrow_left"
-                   icon-md="material:arrow_back"
-                   icon-aurora="f7:arrow_left"
-                   @click="closeWithDirtyCheck" />
+          <f7-link
+            icon-ios="f7:arrow_left"
+            icon-md="material:arrow_back"
+            icon-aurora="f7:arrow_left"
+            @click="closeWithDirtyCheck" />
         </f7-nav-left>
         <f7-nav-title>Edit {{ widget.label || widget.uid }}{{ dirtyIndicator }}</f7-nav-title>
         <f7-nav-right>
-          <f7-link v-if="dirty" @click="reset">
-            Reset
-          </f7-link>
-          <f7-link v-if="dirty" @click="save">
-            Save
-          </f7-link>
-          <f7-link v-else popup-close>
-            Close
-          </f7-link>
+          <f7-link v-if="dirty" @click="reset"> Reset </f7-link>
+          <f7-link v-if="dirty" @click="save"> Save </f7-link>
+          <f7-link v-else popup-close> Close </f7-link>
         </f7-nav-right>
       </f7-navbar>
       <f7-block v-if="widget.props && config" class="no-margin no-padding">

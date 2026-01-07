@@ -22,33 +22,46 @@ let basicCredentials = null
  */
 let requireToken
 
-export function getAccessToken () { return accessToken }
-export function getTokenInCustomHeader () { return tokenInCustomHeader }
-export function getBasicCredentials () { return basicCredentials }
-export function getRequireToken () { return requireToken }
+export function getAccessToken() {
+  return accessToken
+}
+export function getTokenInCustomHeader() {
+  return tokenInCustomHeader
+}
+export function getBasicCredentials() {
+  return basicCredentials
+}
+export function getRequireToken() {
+  return requireToken
+}
 
 if (document.cookie.indexOf('X-OPENHAB-AUTH-HEADER') >= 0) tokenInCustomHeader = true
 
-export async function authorize (setup) {
-  import('pkce-challenge').then((PkceChallenge) => {
+export async function authorize(setup) {
+  import('pkce-challenge').then(PkceChallenge => {
     const pkceChallenge = PkceChallenge.default()
     const authState = (setup ? 'setup-' : '') + f7.utils.id()
 
     sessionStorage.setItem('openhab.ui:codeVerifier', pkceChallenge.code_verifier)
     sessionStorage.setItem('openhab.ui:authState', authState)
 
-    window.location = '/auth' +
+    window.location =
+      '/auth' +
       '?response_type=code' +
-      '&client_id=' + encodeURIComponent(window.location.origin) +
-      '&redirect_uri=' + encodeURIComponent(window.location.origin) +
+      '&client_id=' +
+      encodeURIComponent(window.location.origin) +
+      '&redirect_uri=' +
+      encodeURIComponent(window.location.origin) +
       '&scope=admin' +
       '&code_challenge_method=S256' +
-      '&code_challenge=' + encodeURIComponent(pkceChallenge.code_challenge) +
-      '&state=' + authState
+      '&code_challenge=' +
+      encodeURIComponent(pkceChallenge.code_challenge) +
+      '&state=' +
+      authState
   })
 }
 
-export async function setBasicCredentials (username, password) {
+export async function setBasicCredentials(username, password) {
   if (username && password) {
     console.log('Using passed credentials')
     basicCredentials = { id: username, password }
@@ -60,8 +73,12 @@ export async function setBasicCredentials (username, password) {
     basicCredentials = { id: usernameFromApp, password: passwordFromApp }
     tokenInCustomHeader = true
     return Promise.resolve()
-  } else if (navigator.credentials && navigator.credentials.preventSilentAccess && window.PasswordCredential) {
-    return navigator.credentials.get({ password: true }).then((creds) => {
+  } else if (
+    navigator.credentials &&
+    navigator.credentials.preventSilentAccess &&
+    window.PasswordCredential
+  ) {
+    return navigator.credentials.get({ password: true }).then(creds => {
       if (creds) {
         console.log('Using stored Basic credentials to sign in to a reverse proxy service')
         basicCredentials = { id: creds.id, password: creds.password }
@@ -74,50 +91,58 @@ export async function setBasicCredentials (username, password) {
   }
 }
 
-export function clearBasicCredentials () {
+export function clearBasicCredentials() {
   basicCredentials = null
   tokenInCustomHeader = document.cookie.indexOf('X-OPENHAB-AUTH-HEADER') >= 0
 }
 
-export function storeBasicCredentials () {
-  if (basicCredentials && navigator.credentials && navigator.credentials.preventSilentAccess && window.PasswordCredential) {
+export function storeBasicCredentials() {
+  if (
+    basicCredentials &&
+    navigator.credentials &&
+    navigator.credentials.preventSilentAccess &&
+    window.PasswordCredential
+  ) {
     navigator.credentials.store(new window.PasswordCredential(basicCredentials))
   }
 }
 
-export function setAccessToken (token, api) {
+export function setAccessToken(token, api) {
   if (!token || !api) return Promise.resolve()
   if (requireToken === undefined) {
     // determine whether the token is required for user operations
-    return api.get('/rest/sitemaps').then((resp) => {
-      accessToken = token
-      requireToken = false
-      return Promise.resolve()
-    }).catch((err) => {
-      if (err === 'Unauthorized' || err === 401) requireToken = true
-      accessToken = token
-      return Promise.resolve()
-    })
+    return api
+      .get('/rest/sitemaps')
+      .then(resp => {
+        accessToken = token
+        requireToken = false
+        return Promise.resolve()
+      })
+      .catch(err => {
+        if (err === 'Unauthorized' || err === 401) requireToken = true
+        accessToken = token
+        return Promise.resolve()
+      })
   } else {
     accessToken = token
     return Promise.resolve()
   }
 }
 
-export function clearAccessToken () {
+export function clearAccessToken() {
   accessToken = null
 }
 
-export function isLoggedIn () {
+export function isLoggedIn() {
   return useUserStore().user !== null
 }
 
-export function isAdmin () {
+export function isAdmin() {
   const user = useUserStore().user
   return user && user.roles && user.roles.indexOf('administrator') >= 0
 }
 
-export function enforceAdminForRoute ({ resolve, reject }) {
+export function enforceAdminForRoute({ resolve, reject }) {
   if (!isAdmin()) {
     reject()
     authorize()

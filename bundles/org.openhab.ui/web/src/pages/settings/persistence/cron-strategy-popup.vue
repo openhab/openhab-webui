@@ -3,16 +3,17 @@
     <f7-page>
       <f7-navbar>
         <f7-nav-left>
-          <f7-link icon-ios="f7:arrow_left"
-                   icon-md="material:arrow_back"
-                   icon-aurora="f7:arrow_left"
-                   popup-close />
+          <f7-link
+            icon-ios="f7:arrow_left"
+            icon-md="material:arrow_back"
+            icon-aurora="f7:arrow_left"
+            popup-close />
         </f7-nav-left>
-        <f7-nav-title>
-          Configure cron strategy
-        </f7-nav-title>
+        <f7-nav-title> Configure cron strategy </f7-nav-title>
         <f7-nav-right>
-          <f7-link v-show="currentCronStrategy.name && currentCronStrategy.cronExpression" @click="updateModuleConfig">
+          <f7-link
+            v-show="currentCronStrategy.name && currentCronStrategy.cronExpression"
+            @click="updateModuleConfig">
             Done
           </f7-link>
         </f7-nav-right>
@@ -20,30 +21,30 @@
       <f7-block class="no-margin no-padding">
         <f7-col>
           <f7-list>
-            <f7-list-input ref="name"
-                           label="Name"
-                           type="text"
-                           placeholder="Required"
-                           :value="currentCronStrategy.name"
-                           @input="currentCronStrategy.name = $event.target.value"
-                           :disabled="!createMode ? true : null"
-                           :info="(createMode) ? 'Note: cannot be changed after the creation' : ''"
-                           required
-                           validate
-                           pattern="[A-Za-z0-9_]+"
-                           error-message="Required. A-Z,a-z only" />
+            <f7-list-input
+              ref="name"
+              label="Name"
+              type="text"
+              placeholder="Required"
+              :value="currentCronStrategy.name"
+              @input="currentCronStrategy.name = $event.target.value"
+              :disabled="!createMode ? true : null"
+              :info="(createMode) ? 'Note: cannot be changed after the creation' : ''"
+              required
+              validate
+              pattern="[A-Za-z0-9_]+"
+              error-message="Required. A-Z,a-z only" />
           </f7-list>
         </f7-col>
         <f7-col>
-          <f7-block-title medium class="padding-bottom">
-            Configuration
-          </f7-block-title>
+          <f7-block-title medium class="padding-bottom"> Configuration </f7-block-title>
           <f7-list>
             <f7-list-group>
-              <parameter-cronexpression ref="cronExpression"
-                                        :configDescription="cronExpressionConfigDescription"
-                                        :value="currentCronStrategy.cronExpression"
-                                        @input="currentCronStrategy.cronExpression = $event" />
+              <parameter-cronexpression
+                ref="cronExpression"
+                :configDescription="cronExpressionConfigDescription"
+                :value="currentCronStrategy.cronExpression"
+                @input="currentCronStrategy.cronExpression = $event" />
             </f7-list-group>
           </f7-list>
         </f7-col>

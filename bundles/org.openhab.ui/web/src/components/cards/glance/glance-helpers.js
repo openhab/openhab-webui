@@ -4,10 +4,13 @@
  * @param {String} potentialSemanticParent the potential parent semantic value
  * @returns true if semanticValue is a child of potentialSemanticParent
  */
-export function isChildOf (semanticValue, potentialSemanticParent) {
-  return (!semanticValue || semanticValue.trim() === '') ? false
-    : semanticValue.indexOf(potentialSemanticParent) !== 0 ? false
-      : semanticValue.length === potentialSemanticParent.length ? true
+export function isChildOf(semanticValue, potentialSemanticParent) {
+  return !semanticValue || semanticValue.trim() === ''
+    ? false
+    : semanticValue.indexOf(potentialSemanticParent) !== 0
+      ? false
+      : semanticValue.length === potentialSemanticParent.length
+        ? true
         : semanticValue.charAt(potentialSemanticParent.length) === '_'
 }
 
@@ -18,13 +21,17 @@ export function isChildOf (semanticValue, potentialSemanticParent) {
  * @param {Boolean} partial match subclasses
  * @param {Boolean} subEquipment include sub-equipment
  */
-export function findEquipment (arr, value, partial, subEquipment) {
-  const equipment = arr.filter((e) => (partial) ? isChildOf(e.metadata?.semantics?.value, value) : e.metadata?.semantics?.value === value)
+export function findEquipment(arr, value, partial, subEquipment) {
+  const equipment = arr.filter(e =>
+    partial
+      ? isChildOf(e.metadata?.semantics?.value, value)
+      : e.metadata?.semantics?.value === value
+  )
   if (subEquipment) {
     equipment.push(
       ...arr
-        .filter((e) => e.equipment)
-        .map((e) => findEquipment(e.equipment, value, partial, subEquipment))
+        .filter(e => e.equipment)
+        .map(e => findEquipment(e.equipment, value, partial, subEquipment))
         .flat()
     )
   }
@@ -37,13 +44,13 @@ export function findEquipment (arr, value, partial, subEquipment) {
  * @param {Boolean} subEquipment include points on sub-equipment
  * @return {Array} the flattened list of points
  */
-export function allEquipmentPoints (equipment, subEquipment) {
-  const points = equipment.flatMap((e) => e.points || [])
+export function allEquipmentPoints(equipment, subEquipment) {
+  const points = equipment.flatMap(e => e.points || [])
   if (subEquipment) {
     points.push(
       ...equipment
-        .filter((e) => e.equipment)
-        .map((e) => allEquipmentPoints(e.equipment, subEquipment))
+        .filter(e => e.equipment)
+        .map(e => allEquipmentPoints(e.equipment, subEquipment))
         .flat()
     )
   }
@@ -57,14 +64,14 @@ export function allEquipmentPoints (equipment, subEquipment) {
  * @param {Array|Set} points points to check for
  * @return {Boolean}
  */
-export function equipmentHasPoint (equipment, subEquipment, points) {
+export function equipmentHasPoint(equipment, subEquipment, points) {
   if (Array.isArray(points)) points = new Set(points)
-  if (equipment.points && equipment.points.some((p) => points.has(p))) {
+  if (equipment.points && equipment.points.some(p => points.has(p))) {
     return true
   }
 
   if (subEquipment && equipment.equipment) {
-    return equipment.equipment.some((child) => equipmentHasPoint(child, subEquipment, points))
+    return equipment.equipment.some(child => equipmentHasPoint(child, subEquipment, points))
   }
 
   return false
@@ -78,11 +85,19 @@ export function equipmentHasPoint (equipment, subEquipment, points) {
  * @param {String} property return only points also related to this property
  * @param {Boolean} children match child properties
  */
-export function findPoints (arr, value, partial, property, children) {
+export function findPoints(arr, value, partial, property, children) {
   if (!arr) return []
-  const points = arr.filter((p) => (partial) ? isChildOf(p.metadata?.semantics?.value, value) : p.metadata?.semantics?.value === value)
+  const points = arr.filter(p =>
+    partial
+      ? isChildOf(p.metadata?.semantics?.value, value)
+      : p.metadata?.semantics?.value === value
+  )
   if (!property) return points
-  return points.filter((p) => (children) ? isChildOf(p.metadata?.semantics?.config?.relatesTo, property) : p.metadata?.semantics?.config?.relatesTo === property)
+  return points.filter(p =>
+    children
+      ? isChildOf(p.metadata?.semantics?.config?.relatesTo, property)
+      : p.metadata?.semantics?.config?.relatesTo === property
+  )
 }
 
 /**
@@ -91,9 +106,9 @@ export function findPoints (arr, value, partial, property, children) {
  * @param {Array} points an array of points to check against
  * @param {Boolean} subEquipment also check points on sub-equipment
  */
-export function equipmentNoPointsSelected (arr, points, subEquipment) {
+export function equipmentNoPointsSelected(arr, points, subEquipment) {
   // use Set for lookup in O(1) time
   const pointsSet = new Set(points)
 
-  return arr.filter((e) => !equipmentHasPoint(e, subEquipment, pointsSet))
+  return arr.filter(e => !equipmentHasPoint(e, subEquipment, pointsSet))
 }

@@ -800,7 +800,7 @@
         "!doc": "The old state of the Item or Group that triggered the event ItemStateChangeTrigger, GroupStateChangeTrigger).",
         "!type": "string"
       },
-      "newState" : {
+      "newState": {
         "!doc": "The new state of the Item or Group that triggered the event (ItemStateChangeTrigger, GroupStateChangeTrigger).",
         "!type": "string"
       },

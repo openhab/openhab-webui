@@ -11,9 +11,7 @@
         </f7-nav-left>
         <f7-nav-title>{{ title }}</f7-nav-title>
         <f7-nav-right>
-          <f7-link popup-close>
-            Close
-          </f7-link>
+          <f7-link popup-close> Close </f7-link>
         </f7-nav-right>
       </f7-navbar>
       <network-graph v-if="networkGraph" :graph="networkGraph" />

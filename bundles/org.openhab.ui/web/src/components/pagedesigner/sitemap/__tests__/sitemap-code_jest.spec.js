@@ -481,9 +481,7 @@ describe('SitemapCode', () => {
       component: 'Switch',
       config: {
         item: 'PressAndRelease',
-        mappings: [
-          'ON:OFF=ON'
-        ]
+        mappings: ['ON:OFF=ON']
       }
     })
   })
@@ -516,9 +514,7 @@ describe('SitemapCode', () => {
       component: 'Switch',
       config: {
         item: 'PressAndRelease',
-        mappings: [
-          '"ON command":"OFF command"="ON"'
-        ]
+        mappings: ['"ON command":"OFF command"="ON"']
       }
     })
   })
@@ -584,10 +580,7 @@ describe('SitemapCode', () => {
       component: 'Switch',
       config: {
         item: 'Test',
-        visibility: [
-          'Day_Time=="Morning Time"',
-          'Temperature>19'
-        ]
+        visibility: ['Day_Time=="Morning Time"', 'Temperature>19']
       }
     })
   })
@@ -660,9 +653,7 @@ describe('SitemapCode', () => {
       component: 'Text',
       config: {
         item: 'Temperature',
-        valuecolor: [
-          'Heat_Warning=="It is hot"=gray'
-        ]
+        valuecolor: ['Heat_Warning=="It is hot"=gray']
       }
     })
   })

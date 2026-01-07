@@ -1,13 +1,15 @@
 <template>
-  <f7-page @page:beforein="onPageBeforeIn"
-           @page:beforeout="onPageBeforeOut"
-           ref="addondetails"
-           class="page-addon-details">
+  <f7-page
+    @page:beforein="onPageBeforeIn"
+    @page:beforeout="onPageBeforeOut"
+    ref="addondetails"
+    class="page-addon-details">
     <f7-navbar :transparent="true" class="addon-details-nav">
-      <oh-nav-content :title="addon?.label"
-                      back-link="Add-on Store"
-                      :back-link-url="`/addons/${addonId.split('-')[0]}`"
-                      :f7router />
+      <oh-nav-content
+        :title="addon?.label"
+        back-link="Add-on Store"
+        :back-link-url="`/addons/${addonId.split('-')[0]}`"
+        :f7router />
     </f7-navbar>
     <f7-block class="block-narrow addon-details" v-if="ready && addon">
       <f7-row>
@@ -22,38 +24,45 @@
               </div>
               <div v-if="addon.verifiedAuthor" class="addon-header-subtitle">
                 {{ addon.author }}
-                <f7-icon :color="uiOptionsStore.getDarkMode() === 'dark' ? 'white' : 'blue'" f7="checkmark_seal_fill" />
+                <f7-icon
+                  :color="uiOptionsStore.getDarkMode() === 'dark' ? 'white' : 'blue'"
+                  f7="checkmark_seal_fill" />
               </div>
-              <div v-else-if="addon.properties && addon.properties.views" class="addon-header-subtitle">
+              <div
+                v-else-if="addon.properties && addon.properties.views"
+                class="addon-header-subtitle">
                 <addon-stats-line :addon="addon" :iconSize="15" />
               </div>
               <div class="addon-header-actions">
                 <div v-if="showInstallActions">
                   <f7-preloader v-if="isPending(addon)" color="blue" />
-                  <f7-button v-else-if="addon.installed"
-                             class="install-button"
-                             text="Remove"
-                             color="red"
-                             round
-                             small
-                             fill
-                             @click="openAddonPopup" />
-                  <f7-button v-else
-                             class="install-button"
-                             :text="installableAddon(addon) ? 'Install' : 'Add'"
-                             color="blue"
-                             round
-                             small
-                             fill
-                             @click="openAddonPopup" />
+                  <f7-button
+                    v-else-if="addon.installed"
+                    class="install-button"
+                    text="Remove"
+                    color="red"
+                    round
+                    small
+                    fill
+                    @click="openAddonPopup" />
+                  <f7-button
+                    v-else
+                    class="install-button"
+                    :text="installableAddon(addon) ? 'Install' : 'Add'"
+                    color="blue"
+                    round
+                    small
+                    fill
+                    @click="openAddonPopup" />
                 </div>
-                <f7-link v-if="showConfig"
-                         icon-f7="gears"
-                         tooltip="Configure add-on"
-                         color="blue"
-                         :href="'/settings/addons/' + addonId"
-                         round
-                         small />
+                <f7-link
+                  v-if="showConfig"
+                  icon-f7="gears"
+                  tooltip="Configure add-on"
+                  color="blue"
+                  :href="'/settings/addons/' + addonId"
+                  round
+                  small />
               </div>
             </div>
           </div>
@@ -62,12 +71,16 @@
       <f7-row>
         <f7-col>
           <f7-block strong class="addon-description" v-if="descriptionReady">
-            <div v-show="descriptionExpanded" v-html="parsedDescription" class="addon-description-text" />
-            <div v-show="!descriptionExpanded" v-html="addonDescription" class="addon-description-text" />
+            <div
+              v-show="descriptionExpanded"
+              v-html="parsedDescription"
+              class="addon-description-text" />
+            <div
+              v-show="!descriptionExpanded"
+              v-html="addonDescription"
+              class="addon-description-text" />
             <div v-show="!descriptionExpanded" class="text-align-right">
-              <f7-link @click="descriptionExpanded = true">
-                more
-              </f7-link>
+              <f7-link @click="descriptionExpanded = true"> more </f7-link>
             </div>
           </f7-block>
           <f7-block v-else class="skeleton-text skeleton-effect-blink">

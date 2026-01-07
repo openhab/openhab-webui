@@ -1,8 +1,11 @@
 <template>
-  <oh-card :context="context" :content-class="['oh-gauge-card', 'display-flex', 'justify-content-center']">
+  <oh-card
+    :context="context"
+    :content-class="['oh-gauge-card', 'display-flex', 'justify-content-center']">
     <template #content-root>
-      <f7-card-content :style="config.contentStyle"
-                       :class="[
+      <f7-card-content
+        :style="config.contentStyle"
+        :class="[
                          ...(Array.isArray(config.contentClass) ? config.contentClass : []),
                          'oh-gauge-card',
                          'display-flex',
