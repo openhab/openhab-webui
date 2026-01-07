@@ -69,6 +69,8 @@
       <f7-block-title>Configuration</f7-block-title>
       <f7-block-footer class="padding-horizontal margin-bottom">
         Note: the parameter named 'item' will be set automatically with the name of the item ({{ this.item.name
+
+
         }}) unless it's set explicitely.
       </f7-block-footer>
       <f7-block-footer
