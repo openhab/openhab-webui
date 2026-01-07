@@ -60,7 +60,7 @@ export default defineConfig({
       name: 'move-custom-css-to-end-prod',
       apply: 'build',
       transformIndexHtml(html) {
-        const linkTag = '<link rel="stylesheet" href="/__theme__.css" />';
+        const linkTag = '<link rel="stylesheet" id="theme-css" href="/__theme__" />';
         return html
           .replace('</head>', `  ${linkTag}\n  </head>`); // Place it before </head>
       }

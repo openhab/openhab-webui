@@ -25,7 +25,8 @@
         <config-sheet
           :parameter-groups="configDescription.parameterGroups"
           :parameters="configDescription.parameters"
-          :configuration="config" />
+          :configuration="config"
+          :setEmptyConfigAsNull="true" />
       </f7-col>
     </f7-block>
     <f7-block form v-if="loggerPackages.length > 0" class="block-narrow">
@@ -157,10 +158,18 @@ export default {
       })
 
       if (this.configDescription && this.config) {
+        console.log("Saving config", this.config)
         promises.push(this.$oh.api.put('/rest/addons/' + this.strippedAddonId + '/config' + (this.serviceId ? '?serviceId=' + this.serviceId : ''), this.config))
       }
 
       Promise.all(promises).then(() => {
+        setTimeout(() => {    // allow time for server to restart (delay can likely be removed with @Modified works)
+          // Notify app to it can implement cache busting on the __theme_.css file
+          if (this.addonId.includes('ui-ui')) {
+            f7.emit('themeChange')
+          }
+        }, 500)
+
         f7.toast.create({
           text: 'Saved',
           destroyOnClose: true,

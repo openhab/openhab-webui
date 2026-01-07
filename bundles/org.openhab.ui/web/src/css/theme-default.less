@@ -2,8 +2,7 @@
 
 :root {
   .generate-color-tones(oh-theme-color, var(--oh-branding-color));
-  // .generate_color(oh-theme-alt-color, var(--oh-branding-alt-color));
-  .generate-color-tones(oh-theme-alt-color, #FF96F3);
+  .generate-color-tones(oh-theme-alt-color, var(--oh-branding-alt-color));
   .generate-color-tones(oh-background-color, #f3f4f6, true);
   .generate-color-tones(oh-text-color, #000000);
   .generate-color-tones(oh-text-inverse-color, #ffffff);
@@ -33,6 +32,8 @@
   .generate-color-tones(oh-palette-7-color, var(--oh-orange-color));
   .generate-color-tones(oh-palette-8-color, var(--oh-deeppurple-color));
   .generate-color-tones(oh-palette-9-color, var(--oh-deeporange-color));
+
+  --oh-logo: unset;
 }
 
 :root .dark,

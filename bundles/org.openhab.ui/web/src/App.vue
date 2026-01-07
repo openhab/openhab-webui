@@ -19,7 +19,7 @@
         <f7-link href="/overview/" class="openhab-logo no-ripple" panel-close>
           <div class="logo-inner">
             <img
-              :src="themeStore.getVar('--oh-logo') || uiOptionsStore.getDarkMode() === 'dark' ? '/images/openhab-logo-white.svg' : '/images/openhab-logo.svg'"
+              :src="themeStore.ohVariables.get('--oh-logo') || (uiOptionsStore.getDarkMode() === 'dark' ? '/images/openhab-logo-white.svg' : '/images/openhab-logo.svg')"
               width="196px">
           </div>
         </f7-link>
@@ -1111,6 +1111,19 @@ export default {
 
       f7.on('darkModeChange', () => {
         this.updateThemeOptions()
+      })
+
+      f7.on('themeChange', () => {
+        console.log('themeChange event received')
+        let stylesheetEl = this.$$('#theme-css')
+        stylesheetEl.attr('href', '/css/theme-default.css') // reset to default first
+        setTimeout(() => { 
+          stylesheetEl.attr('href', '/__theme__' + f7.utils.id())  // force reload of theme CSS
+          setTimeout(() => {    // wait a bit for css to be applied
+            this.updateThemeOptions()
+            this.themeStore.buildCache()
+          }, 500)
+        }, 500 )
       })
 
       f7.on('toggleDeveloperDock', () => {

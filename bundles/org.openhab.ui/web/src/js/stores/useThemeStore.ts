@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 
 export const useThemeStore = defineStore('theme', () => {
@@ -19,9 +19,7 @@ export const useThemeStore = defineStore('theme', () => {
         if (varValue.startsWith('oklch')) {
           dummyColorElement.style.setProperty('color', varValue)
           varValue = getComputedStyle(dummyColorElement).color
-          console.log(varValue)
           varValue = oklchToHex(varValue)
-          console.log(`Computed rgb value: ${varValue}`)
         }
         ohVariables.value.set(varName, varValue)
       }
@@ -54,7 +52,14 @@ export const useThemeStore = defineStore('theme', () => {
   function oklchToHex(oklchString) {
     // Parse OKLCH string
     const namedRegex = /oklch\((?<l>\d+(?:\.\d+)?)\s+(?<c>\d+(?:\.\d+)?)\s+(?<h>none|\d+(?:\.\d+)?)(?:\s+\/\s+(?<a>\d+(?:\.\d+)?))?\)/;
-    let { l, c, h, t } = oklchString.match(namedRegex).groups;
+
+    const matchResult = oklchString.match(namedRegex)
+    if(!matchResult){
+      console.warn(`Invalid OKLCH color string: ${oklchString}`);
+      return '#000000'; // Return black for invalid input
+    }
+
+    let { l, c, h, t } = matchResult.groups;
     
     l = parseFloat(l);
     c = parseFloat(c);

@@ -4,8 +4,8 @@
 	xmlns:config-description="https://openhab.org/schemas/config-description/v1.0.0"
 	xsi:schemaLocation="https://openhab.org/schemas/config-description/v1.0.0 https://openhab.org/schemas/config-description-1.0.0.xsd">
 
-	<config-description uri="ui:main">
-		<parameter-group name="themeCssFile">
+	<config-description uri="ui:ui">
+		<parameter-group name="theme">
 			<label>Theme</label>
 		</parameter-group>
 		<parameter-group name="mainColors">
@@ -13,68 +13,76 @@
 		</parameter-group>
 		<parameter-group name="paletteColors">
 			<label>Palette Colors</label>
+			<description>Palette colors are used throughtout the UI for charts semantic block background colors, etc. These are
+				utilized to ensure a consistent look and feel across the UI.</description>
 		</parameter-group>
 
-		<parameter name="themeCssFile" type="text" groupName="themeCssFile">
-			<label>Custom CSS File</label>
-			<description>Custom CSS file to override the default theme.</description>
+
+		<parameter name="themeCssFile" type="text" groupName="theme">
+			<label>Theme CSS File</label>
+			<description>The path to the css file to use for the theme. This can be one of the default themes or a custom file
+				located in the /html directory.</description>
 			<limitToOptions>false</limitToOptions>
-			<default>default</default>
 			<options>
-				<option value="default">(default)</option>
-				<option value="vintage">Vintage Theme</option>
-				<option value="modern">Modern Theme</option>
+				<option value="/css/theme-vintage.css">Vintage Theme</option>
+				<option value="/css/theme-modern.css">Modern Theme</option>
 			</options>
 			<required>false</required>
 		</parameter>
 
-		<parameter name="themeColor" type="text" groupName="mainColors">
-			<label>Theme Color</label>
-			<description>Main theme color.</description>
-			<context>color</context>
-			<required>false</required>
-		</parameter>
-		<parameter name="themeAltColor" type="text" groupName="mainColors">
-			<context>color</context>
-			<label>Secondary Theme Color</label>
-			<description>Secondary theme color.</description>
-			<required>false</required>
-		</parameter>
-		<parameter name="backgroundColor" type="text" groupName="mainColors">
-			<context>color</context>
-			<label>Background Color</label>
-			<description>Background color.</description>
-			<required>false</required>
-		</parameter>
-		<parameter name="textColor" type="text" groupName="mainColors">
-			<context>color</context>
-			<label>Text Color</label>
-			<description>Text color.</description>
-			<required>false</required>
-		</parameter>
-		<parameter name="textAltColor" type="text" groupName="mainColors">
-			<context>color</context>
-			<label>Secondary Text Color</label>
-			<description>Secondary text color.</description>
+		<parameter name="--oh-logo" type="text" groupName="theme">
+			<label>Logo URL</label>
+			<description>URL of the logo to be displayed in the Main UI. CSS: var(--oh-logo)</description>
 			<required>false</required>
 		</parameter>
 
-		<parameter name="palette1Color" type="text" groupName="paletteColors">
+		<parameter name="--oh-theme-color" type="text" groupName="mainColors">
+			<label>Theme Color</label>
+			<description>Main theme color. CSS: var(--oh-theme-color)</description>
+			<context>color</context>
+			<required>false</required>
+		</parameter>
+		<parameter name="--oh-theme-alt-color" type="text" groupName="mainColors">
+			<context>color</context>
+			<label>Secondary Theme Color</label>
+			<description>Secondary theme color. CSS: var(--oh-theme-alt-color)</description>
+			<required>false</required>
+		</parameter>
+		<parameter name="--oh-background-color" type="text" groupName="mainColors">
+			<context>color</context>
+			<label>Background Color</label>
+			<description>Background color. CSS: var(--oh-background-color)</description>
+			<required>false</required>
+		</parameter>
+		<parameter name="--oh-text-color" type="text" groupName="mainColors">
+			<context>color</context>
+			<label>Text Color</label>
+			<description>Text color. CSS: var(--oh-text-color)</description>
+			<required>false</required>
+		</parameter>
+		<parameter name="--oh-text-alt-color" type="text" groupName="mainColors">
+			<context>color</context>
+			<label>Secondary Text Color</label>
+			<description>Secondary text color. CSS: var(--oh-text-alt-color)</description>
+			<required>false</required>
+		</parameter>
+
+		<parameter name="--oh-palette-1-color" type="text" groupName="paletteColors">
 			<context>color</context>
 			<label>Palette Color 1</label>
-			<description>First palette color.</description>
+			<description>First palette color. CSS: var(--oh-palette-1-color)</description>
 			<required>false</required>
 		</parameter>
-		<parameter name="palette2Color" type="text" groupName="paletteColors">
+		<parameter name="--oh-palette-2-color" type="text" groupName="paletteColors">
 			<context>color</context>
 			<label>Palette Color 2</label>
-			<description>Second palette color.</description>
+			<description>Second palette color. CSS: var(--oh-palette-2-color)</description>
 			<required>false</required>
 		</parameter>
-		<parameter name="palette3Color" type="text" groupName="paletteColors">
+		<parameter name="--oh-palette-3-color" type="text" groupName="paletteColors">
 			<context>color</context>
 			<label>Palette Color 3</label>
-			<description>Third palette color.</description>
+			<description>Third palette color. CSS: var(--oh-palette-3-color)</description>
 			<required>false</required>
 		</parameter>
 	</config-description>

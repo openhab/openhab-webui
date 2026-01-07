@@ -4,7 +4,7 @@
   .generate-color-tones(oh-theme-color, #993111);
   .generate-color-tones(oh-theme-alt-color, #2196F3);
   // .generate-color-tones(oh-theme-alt-color, #21FFF3);
-  .generate-color-tones(oh-background-color, #fef8ef);
+  .generate-color-tones(oh-background-color, #fef8ef, true);
   .generate-color-tones(oh-text-color, #333333);
   .generate-color-tones(oh-text-inverse-color, #ffffff);
   .generate-color-tones(oh-text-alt-color, #00FF00);
@@ -25,15 +25,13 @@
   .generate-color-tones(oh-green-color, #249067);
   .generate-color-tones(oh-blue-color, #2156f3);
   .generate-color-tones(oh-gray-color, #969d93);
-
-  --oh-logo: /static/custom-logo.svg;
 }
 
 :root .dark,
 :root.dark {
   .generate-color-tones(oh-theme-color, var(--oh-branding-color));
   .generate-color-tones(oh-theme-alt-color, #f49f42);
-  .generate-color-tones(oh-background-color, #333333);
+  .generate-color-tones(oh-background-color, #333333, true);
   .generate-color-tones(oh-text-color, #eeeeee);
   .generate-color-tones(oh-text-inverse-color, #000000);
   .generate-color-tones(oh-text-alt-color, #00FF00);

@@ -19,8 +19,8 @@ import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.ReadableByteChannel;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 
 import javax.servlet.Servlet;
@@ -35,11 +35,9 @@ import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.util.resource.Resource;
 import org.openhab.core.OpenHAB;
-import org.openhab.core.config.core.Configuration;
-import org.openhab.core.ui.components.RootUIComponent;
-import org.openhab.core.ui.components.UIComponentRegistry;
-import org.openhab.core.ui.components.UIComponentRegistryFactory;
+import org.openhab.core.config.core.ConfigurableService;
 import org.ops4j.pax.web.service.WebContainer;
+import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -58,10 +56,11 @@ import org.slf4j.LoggerFactory;
  * @author Dan Cunningham - Convert file serving to a custom servlet
  */
 @Component(immediate = true, service = Servlet.class, name = "org.openhab.ui")
-@NonNullByDefault
+@ConfigurableService(category = "ui", label = "Main UI", description_uri = UIServlet.CONFIG_URI)
 @HttpWhiteboardServletName(UIServlet.SERVLET_PATH)
 @HttpWhiteboardServletPattern(UIServlet.SERVLET_PATH + "*")
 @HttpWhiteboardContext(name = "=org.openhab.ui.context", path = "=/")
+@NonNullByDefault
 public class UIServlet extends DefaultServlet {
 
     private static final long serialVersionUID = 1L;
@@ -73,28 +72,37 @@ public class UIServlet extends DefaultServlet {
     private static final String STATIC_PATH = "/static";
     private static final String STATIC_BASE = OpenHAB.getConfigFolder() + "/html";
     private static final String[] COMPRESS_EXT = { "gz", "br" };
-    private static final String THEME_RESOURCE_NAME = "__theme__";
-    private static final String THEME_NAMESPACE = "ui:theme";
+    private static final String THEME_RESOURCE_NAME = "/__theme__";
+    private static final String CONFIG_URI = "ui:ui";
 
     private final HttpContext defaultHttpContext;
-    private final UIComponentRegistryFactory uiComponentRegistryFactory;
     private final long bundleModifiedTime;
     private @Nullable ContextHandler contextHandler;
 
-    private UIConfiguration configuration;
+    private Map<String, Object> configuration = Collections.emptyMap();
 
     @Activate
-    public UIServlet(final @Reference WebContainer webContainer,
-            final @Reference UIComponentRegistryFactory uiComponentRegistryFactory, Map<String, Object> config) {
+    public UIServlet(final @Reference WebContainer webContainer) {
         this.defaultHttpContext = webContainer.createDefaultHttpContext();
-        this.uiComponentRegistryFactory = uiComponentRegistryFactory;
         logger.debug("Starting up {} at {}", getClass().getSimpleName(), SERVLET_PATH);
         bundleModifiedTime = (System.currentTimeMillis() / 1000) * 1000; // round milliseconds
-
-        this.configuration = new Configuration(config).as(UIConfiguration.class);
-
-        logger.debug("Configuration: {}", this.configuration);
     }
+
+    @Activate
+    protected void activate(Map<String, Object> config, BundleContext bundleContext) {
+        logger.info("UIServlet configuration: {}", config);
+        this.configuration = config;
+    }
+
+    /*
+     * TODO - not sure why, but enabling the modified causes a thread dump
+     * 
+     * @Modified
+     * protected void modified(Map<String, Object> config) {
+     * logger.info("UIServlet modified configuration: {}", config);
+     * this.configuration = config;
+     * }
+     */
 
     @Override
     public void init() throws UnavailableException {
@@ -155,7 +163,8 @@ public class UIServlet extends DefaultServlet {
         }
 
         String pathInfo = request.getPathInfo();
-        if (pathInfo.startsWith("/__theme__")) {
+        // only look for startsWith so client can implement cache-busting mechansim like __theme__12345
+        if (pathInfo.startsWith(THEME_RESOURCE_NAME)) {
             logger.debug("Serving theme CSS");
             serveThemeCss(request, response);
             return;
@@ -178,54 +187,38 @@ public class UIServlet extends DefaultServlet {
         response.setCharacterEncoding("UTF-8");
 
         PrintWriter writer = response.getWriter();
-    }
 
-    private void serveThemeCssOld(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.setContentType("text/css;charset=UTF-8");
-        response.setCharacterEncoding("UTF-8");
+        // Write out css file if specified in configuration
+        String themeCssFile = (String) this.configuration.get("themeCssFile");
+        if (themeCssFile != null && !themeCssFile.isEmpty()) {
+            if (themeCssFile.contains("..") || themeCssFile.contains("\\")
+                    || !(themeCssFile.startsWith("/css") || !themeCssFile.startsWith("/static"))) {
+                logger.warn("Invalid themeCssFile path: {}", themeCssFile);
+            } else {
+                Resource themeCssResource = getResource(themeCssFile);
+                if (themeCssResource == null || !themeCssResource.exists()) {
+                    logger.warn("themeCssFile not found: {}", themeCssFile);
+                    return;
+                }
 
-        PrintWriter writer = response.getWriter();
-
-        UIComponentRegistry uiComponentRegistry = uiComponentRegistryFactory.getRegistry(THEME_NAMESPACE);
-        if (uiComponentRegistry == null) {
-            writer.write("");
-            return;
-        }
-
-        RootUIComponent themeUIComponent = uiComponentRegistry.get(THEME_RESOURCE_NAME);
-        if (themeUIComponent == null) {
-            writer.write("");
-            return;
-        }
-
-        Map<String, Object> themeConfig = themeUIComponent.getConfig();
-
-        if (themeConfig.isEmpty()) {
-            writer.write("");
-            return;
-        }
-
-        // Write CSS file if configured
-        if (themeConfig.containsKey("css-file")) {
-            String cssFile = (String) themeConfig.get("css-file");
-            if (cssFile != null && (cssFile.contains("..") || cssFile.startsWith("/") || cssFile.contains("\\"))) {
-                logger.warn("Invalid css-file path: {}", cssFile);
-            } else if (cssFile != null) {
-                InputStream cssStream = getResource(cssFile).getInputStream();
+                InputStream cssStream = themeCssResource.getInputStream();
                 if (cssStream != null) {
                     try (InputStream is = cssStream) {
-                        writer.write(new String(is.readAllBytes(), StandardCharsets.UTF_8));
+                        writer.write(new String(is.readAllBytes(), "UTF-8"));
                     }
                 }
             }
         }
 
-        // Write CSS variables
-        writer.write(":root {\n");
-        for (Map.Entry<String, Object> entry : themeConfig.entrySet()) {
+        // Write out custom theme css vars in configuration
+        writer.write("\n:root,\n");
+        writer.write(":root .dark,");
+        writer.write(":root.dark {");
+        for (Map.Entry<String, Object> entry : this.configuration.entrySet()) {
             String key = entry.getKey();
-            if (key.startsWith("--")) {
+            if (key.startsWith("--oh")) {
                 String value = entry.getValue().toString();
+                logger.info("Writing theme variable {}: {}", key, value);
                 writer.write("  " + key + ": " + value + ";\n");
             }
         }

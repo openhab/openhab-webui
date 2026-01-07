@@ -102,6 +102,7 @@ function newSSEConnection (
 
     es.onmessage = (event: MessageEvent) => {
       let evt: any
+      console.log('SSE message received:', event.data)
       try {
         evt = JSON.parse(event.data)
       } catch (error) {
