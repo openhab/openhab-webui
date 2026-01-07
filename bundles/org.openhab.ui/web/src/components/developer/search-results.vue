@@ -21,6 +21,7 @@
         <f7-icon class="margin-right" f7="square_on_circle" />Items ({{ searchResults.items.length
 
 
+
         }})
       </f7-block-title>
       <f7-list media-list>
@@ -224,6 +225,7 @@
         <f7-icon class="margin-right" f7="doc_plaintext" />Scripts ({{ searchResults.scripts.length
 
 
+
         }})
       </f7-block-title>
       <f7-list media-list>
@@ -327,6 +329,7 @@
         <f7-icon class="margin-right" f7="rectangle_on_rectangle_angled" />Widgets ({{ searchResults.widgets.length
 
 
+
         }})
       </f7-block-title>
       <f7-list media-list>
@@ -377,6 +380,7 @@
     <f7-block class="no-margin no-padding" v-if="searchResults.transformations.length">
       <f7-block-title class="padding-left">
         <f7-icon class="margin-right" f7="arrow_2_squarepath" />Transformations ({{ searchResults.transformations.length
+
 
 
         }})
@@ -430,6 +434,7 @@
     <f7-block class="no-margin no-padding" v-if="searchResults.persistenceConfigs.length">
       <f7-block-title class="padding-left">
         <f7-icon class="margin-right" f7="download_circle" />Persistence Configs ({{ searchResults.persistenceConfigs.length
+
 
 
         }})
