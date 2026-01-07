@@ -47,6 +47,9 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
 
+      - name: Run Prettier
+        run: npm run format:check
+
       - name: Run ESLint
         run: npm run lint
 
