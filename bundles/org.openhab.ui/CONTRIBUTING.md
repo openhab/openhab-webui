@@ -35,6 +35,8 @@ Note that the source maps have to be manually loaded in the browser, e.g. for Ch
 * `npm run lint` - run linter to detect code style errors
 * `npm run lint:fix` - run linter and fix code style errors
 * `npm run typescript:check` - run TypeScript compiler and check for type errors
+* `npm run format` - run Prettier and format code
+* `npm run format:check` - run Prettier and verify formatting
 
 ## Development server
 
