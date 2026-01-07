@@ -10,7 +10,7 @@ import { type Item } from '@/types/openhab'
 import type { Composer } from 'vue-i18n'
 
 interface ModelItem extends Item {
-  modelPath: Item[]
+  modelPath?: Item[]
   parent: ModelItem | null
   children: ModelItem[]
   points: ModelItem[]
@@ -181,7 +181,18 @@ export const useModelStore = defineStore('model', () => {
 
   async function loadSemanticModel () {
     api.get('/rest/items?staticDataOnly=true&metadata=semantics,listWidget,widgetOrder').then((data: Item[]) => {
-      let modelItems = data as ModelItem[]
+      let modelItems: ModelItem[] = data.map((item) => {
+        return {
+          ...item,
+          parent: null,
+          children: [],
+          points: [],
+          locations: [],
+          properties: [],
+          equipment: [],
+          equipmentOrPoints: []
+        } satisfies ModelItem
+      })
 
       let filteredItems: FilteredItems = {
         equipment: [],
