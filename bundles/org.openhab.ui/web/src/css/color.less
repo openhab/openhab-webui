@@ -1,9 +1,24 @@
 @import "color-helpers.less";
 
+@colors: red, green, blue, pink, yellow, orange, purple, deeppurple, lightblue, teal, lime, deeporange, gray, black, white;
+
 // openHAB Branding Colors
 :root {
   .generate-color-tones(oh-branding-color, #e64a19);
   .generate-color-tones(oh-branding-alt-color, #2196F3);
+
+  .generate-color-tones(oh-background-color, var(--oh-lightmode-background-color), true);
+  .generate-color-tones(oh-text-color, var(--oh-lightmode-text-color));
+  .generate-color-tones(oh-text-alt-color, var(--oh-lightmode-text-alt-color));
+  .generate-color-tones(oh-text-inverse-color, var(--oh-darkmode-text-color));
+}
+
+:root .dark,
+:root.dark {
+  .generate-color-tones(oh-background-color, var(--oh-darkmode-background-color), true);
+  .generate-color-tones(oh-text-color, var(--oh-darkmode-text-color));
+  .generate-color-tones(oh-text-alt-color, var(--oh-darkmode-text-alt-color));
+  .generate-color-tones(oh-text-inverse-color, var(--oh-lightmode-text-color));
 }
 
 // f7 color variables
@@ -14,6 +29,10 @@
   --f7-theme-color-tint: var(--oh-theme-color-tint);
 
   --f7-text-color: var(--oh-text-color);
+
+  each(@colors, .(@color, @index) {
+    .generate-color-tones(~"f7-color-@{color}", ~"var(--oh-@{color}-color)");
+  });
 
   --f7-button-bg-color: var(--oh-background-color-shade);
   --f7-button-fill-bg-color: var(--oh-theme-alt-color);
@@ -49,6 +68,8 @@
   --f7-menu-bg-color: color-mix(in srgb, var(--oh-theme-alt-color-shade) 50%, transparent);
 
   --f7-navbar-subtitle-text-color: var(--oh-text-color-transparent);
+
+
 }
 
 // TODO ios f7-bars-bg-color
@@ -59,26 +80,11 @@
   --f7-bars-border-color: rgba(255, 255, 255, 0.1);
 }
 
-.color-alt {
-  --f7-theme-color: var(--oh-theme-alt-color);
-  --f7-theme-color-rgb: var(--oh-theme-alt-color-rgb);
-  --f7-theme-color-shade: var(--oh-theme-alt-color-shade);
-  --f7-theme-color-tint: var(--oh-theme-alt-color-tint);
-}
+.generate-f7-color-classes(theme-color);
+.generate-f7-color-classes(theme-alt-color);
 
-.text-color-alt {
-  --f7-theme-color-text-color: var(--oh-theme-alt-color);
-}
-.bg-color-alt {
-  --f7-theme-color-bg-color: var(--oh-theme-alt-color);
-}
-.border-color-alt {
-  --f7-theme-color-border-color: var(--oh-theme-alt-color);
-}
-
-@colors: red, green, blue, pink, yellow, orange, purple, deeppurple, lightblue, teal, lime, deeporange, gray, black, white;
 each(@colors, .(@color, @index) {
-    .generate-f7-color-classes(@color);
+  .generate-f7-color-classes(@color);
 });
 
 @import "theme-default.less";

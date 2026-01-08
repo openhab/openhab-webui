@@ -43,6 +43,7 @@
       :validate="!(pattern && pattern.length > 40)"
       :validate-on-blur="pattern && pattern.length > 40"
       :clear-button="!configDescription.required && configDescription.context !== 'password'"
+      @input:clear="$emit('input', '')"
       @input="updateValue"
       :readonly="readOnly || configDescription.readOnly"
       :type="controlType">

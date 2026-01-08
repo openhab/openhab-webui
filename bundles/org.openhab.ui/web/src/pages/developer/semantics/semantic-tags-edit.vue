@@ -162,7 +162,7 @@
                 <f7-card>
                   <f7-card-content>
                     <f7-list>
-                      <f7-list-button color="blue" :title="`Insert ${semanticType(selectedTag.name)} Child Tag in ${selectedTag.name}`" @click="addTag()" />
+                      <f7-list-button :title="`Insert ${semanticType(selectedTag.name)} Child Tag in ${selectedTag.name}`" @click="addTag()" />
                     </f7-list>
                   </f7-card-content>
                 </f7-card>
@@ -184,7 +184,7 @@
       <f7-fab v-if="currentTab === 'tree'"
               class="add-to-semantics-fab"
               position="right-center"
-              color="blue"
+              color="theme-alt"
               @click="addTag()">
         <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
         <f7-icon ios="f7:multiply" md="material:close" aurora="f7:multiply" />
@@ -305,8 +305,8 @@
       color var(--f7-list-item-footer-text-color)
 .semantics-details-sheet
   .toolbar
-    --f7-theme-color var(--f7-color-blue)
-    --f7-theme-color-rgb var(--f7-color-blue-tint)
+    --f7-theme-color var(--oh-theme-alt-color)
+    --f7-theme-color-rgb var(--oh-theme-alt-color-rgb)
   z-index 10900
 .md .semantics-details-sheet .toolbar .link
   width 35%

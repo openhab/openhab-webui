@@ -1,6 +1,27 @@
 /* Generate color tones: shade, tint, transparent variants */
 /* Generate F7 color classes based on OH color variables */
 :root {
+  --oh-lightmode-text-color: #000000;
+  --oh-darkmode-text-color: #ffffff;
+  --oh-lightmode-text-alt-color: var(--oh-branding-alt-color);
+  --oh-darkmode-text-alt-color: var(--oh-branding-alt-color);
+  --oh-lightmode-background-color: #f3f4f6;
+  --oh-darkmode-background-color: #ffffff;
+  --oh-text-color: var(--oh-lightmode-text-color);
+  --oh-text-color-shade: oklch(from var(--oh-lightmode-text-color) calc(l - 0.1) c h);
+  --oh-text-color-tint: oklch(from var(--oh-lightmode-text-color) calc(l + 0.1) c h);
+  --oh-text-color-transparent: color-mix(in oklch, var(--oh-lightmode-text-color) 60%, transparent);
+  --oh-text-inverse-color: var(--oh-darkmode-text-color);
+  --oh-text-inverse-color-shade: oklch(from var(--oh-darkmode-text-color) calc(l - 0.1) c h);
+  --oh-text-inverse-color-tint: oklch(from var(--oh-darkmode-text-color) calc(l + 0.1) c h);
+  --oh-text-inverse-color-transparent: color-mix(in oklch, var(--oh-darkmode-text-color) 60%, transparent);
+  --oh-background-color: var(--oh-lightmode-background-color);
+  --oh-background-color-shade: oklch(from var(--oh-lightmode-background-color) calc(l - 0.1) c h);
+  --oh-background-color-tint: oklch(from var(--oh-lightmode-background-color) calc(l + 0.1) c h);
+  --oh-background-color-transparent: color-mix(in oklch, var(--oh-lightmode-background-color) 60%, transparent);
+  --oh-background-color-shade-2: oklch(from var(--oh-lightmode-background-color) calc(l - 0.2) c h);
+  --oh-background-color-tint-2: oklch(from var(--oh-lightmode-background-color) calc(l + 0.2) c h);
+  --oh-background-color-transparent-2: color-mix(in oklch, var(--oh-lightmode-background-color) 80%, transparent);
   --oh-theme-color: var(--oh-branding-color);
   --oh-theme-color-shade: oklch(from var(--oh-branding-color) calc(l - 0.1) c h);
   --oh-theme-color-tint: oklch(from var(--oh-branding-color) calc(l + 0.1) c h);
@@ -9,21 +30,6 @@
   --oh-theme-alt-color-shade: oklch(from var(--oh-branding-alt-color) calc(l - 0.1) c h);
   --oh-theme-alt-color-tint: oklch(from var(--oh-branding-alt-color) calc(l + 0.1) c h);
   --oh-theme-alt-color-transparent: color-mix(in oklch, var(--oh-branding-alt-color) 60%, transparent);
-  --oh-background-color: #f3f4f6;
-  --oh-background-color-shade: oklch(from #f3f4f6 calc(l - 0.1) c h);
-  --oh-background-color-tint: oklch(from #f3f4f6 calc(l + 0.1) c h);
-  --oh-background-color-transparent: color-mix(in oklch, #f3f4f6 60%, transparent);
-  --oh-background-color-shade-2: oklch(from #f3f4f6 calc(l - 0.2) c h);
-  --oh-background-color-tint-2: oklch(from #f3f4f6 calc(l + 0.2) c h);
-  --oh-background-color-transparent-2: color-mix(in oklch, #f3f4f6 80%, transparent);
-  --oh-text-color: #000000;
-  --oh-text-color-shade: oklch(from #000000 calc(l - 0.1) c h);
-  --oh-text-color-tint: oklch(from #000000 calc(l + 0.1) c h);
-  --oh-text-color-transparent: color-mix(in oklch, #000000 60%, transparent);
-  --oh-text-inverse-color: #ffffff;
-  --oh-text-inverse-color-shade: oklch(from #ffffff calc(l - 0.1) c h);
-  --oh-text-inverse-color-tint: oklch(from #ffffff calc(l + 0.1) c h);
-  --oh-text-inverse-color-transparent: color-mix(in oklch, #ffffff 60%, transparent);
   --oh-red-color: #ff3b30;
   --oh-red-color-shade: oklch(from #ff3b30 calc(l - 0.1) c h);
   --oh-red-color-tint: oklch(from #ff3b30 calc(l + 0.1) c h);
@@ -124,21 +130,21 @@
 }
 :root .dark,
 :root.dark {
-  --oh-background-color: #121212;
-  --oh-background-color-shade: oklch(from #121212 calc(l - 0.1) c h);
-  --oh-background-color-tint: oklch(from #121212 calc(l + 0.1) c h);
-  --oh-background-color-transparent: color-mix(in oklch, #121212 60%, transparent);
-  --oh-background-color-shade-2: oklch(from #121212 calc(l - 0.2) c h);
-  --oh-background-color-tint-2: oklch(from #121212 calc(l + 0.2) c h);
-  --oh-background-color-transparent-2: color-mix(in oklch, #121212 80%, transparent);
-  --oh-text-color: #ffffff;
-  --oh-text-color-shade: oklch(from #ffffff calc(l - 0.1) c h);
-  --oh-text-color-tint: oklch(from #ffffff calc(l + 0.1) c h);
-  --oh-text-color-transparent: color-mix(in oklch, #ffffff 60%, transparent);
-  --oh-text-inverse-color: #000000;
-  --oh-text-inverse-color-shade: oklch(from #000000 calc(l - 0.1) c h);
-  --oh-text-inverse-color-tint: oklch(from #000000 calc(l + 0.1) c h);
-  --oh-text-inverse-color-transparent: color-mix(in oklch, #000000 60%, transparent);
+  --oh-background-color: var(--oh-darkmode-background-color);
+  --oh-background-color-shade: oklch(from var(--oh-darkmode-background-color) calc(l - 0.1) c h);
+  --oh-background-color-tint: oklch(from var(--oh-darkmode-background-color) calc(l + 0.1) c h);
+  --oh-background-color-transparent: color-mix(in oklch, var(--oh-darkmode-background-color) 60%, transparent);
+  --oh-background-color-shade-2: oklch(from var(--oh-darkmode-background-color) calc(l - 0.2) c h);
+  --oh-background-color-tint-2: oklch(from var(--oh-darkmode-background-color) calc(l + 0.2) c h);
+  --oh-background-color-transparent-2: color-mix(in oklch, var(--oh-darkmode-background-color) 80%, transparent);
+  --oh-text-color: var(--oh-darkmode-text-color);
+  --oh-text-color-shade: oklch(from var(--oh-darkmode-text-color) calc(l - 0.1) c h);
+  --oh-text-color-tint: oklch(from var(--oh-darkmode-text-color) calc(l + 0.1) c h);
+  --oh-text-color-transparent: color-mix(in oklch, var(--oh-darkmode-text-color) 60%, transparent);
+  --oh-text-inverse-color: var(--oh-lightmode-text-color);
+  --oh-text-inverse-color-shade: oklch(from var(--oh-lightmode-text-color) calc(l - 0.1) c h);
+  --oh-text-inverse-color-tint: oklch(from var(--oh-lightmode-text-color) calc(l + 0.1) c h);
+  --oh-text-inverse-color-transparent: color-mix(in oklch, var(--oh-lightmode-text-color) 60%, transparent);
 }
 .bg-color-palette-1 {
   --f7-theme-color-bg-color: var(--oh-palette-1-color);

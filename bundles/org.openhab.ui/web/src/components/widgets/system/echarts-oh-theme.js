@@ -2,22 +2,23 @@ import { registerTheme } from 'echarts/core'
 import { useThemeStore } from '@/js/stores/useThemeStore';
 
 export function registerCustomTheme() {
+    console.log('Registering OH Theme for ECharts');
     const themeStore = useThemeStore();
 
-    var backgroundColor = themeStore.getVar('--oh-background-color') || '#FFFFFF';
+    var backgroundColor = themeStore.ohVariables.get('--oh-background-color') || '#FFFFFF';
     var axisCommon = function () {
         return {
             axisLabel: {
-                color: themeStore.getVar('--oh-text-color') || '#000000'
+                color: themeStore.ohVariables.get('--oh-text-color') || '#000000'
             },
             axisLine: {
                 lineStyle: {
-                    color: themeStore.getVar('--oh-text-color') || '#000000'
+                    color: themeStore.ohVariables.get('--oh-text-color') || '#000000'
                 }
             },
             splitLine: {
                 lineStyle: {
-                    color: themeStore.getVar('--oh-text-color') || '#484753'
+                    color: themeStore.ohVariables.get('--oh-text-color') || '#484753'
                 }
             },
             splitArea: {
@@ -36,15 +37,13 @@ export function registerCustomTheme() {
     function getColorPalette() {
       const colors = []
       for (let i = 1; i <= 10; i++) {
-        const color = useThemeStore().getVar(`--oh-palette-${i}-color`)
+        const color = themeStore.ohVariables.get(`--oh-palette-${i}-color`)
         if (color) {
           colors.push(color.trim())
         }
       }
       return colors
     }
-
-    console.log('color: ', themeStore.getVar('--oh-theme-alt-color-shade'))
 
     var theme = {
         dark: true,
@@ -58,35 +57,35 @@ export function registerCustomTheme() {
                 color: '#817f91'
             },
             label: {
-                color: themeStore.getVar('--oh-text-color') || '#000000',
-                backgroundColor: themeStore.getVar('--oh-theme-alt-color-shade') || '#AAA'
+                color: themeStore.ohVariables.get('--oh-text-color') || '#000000',
+                backgroundColor: themeStore.ohVariables.get('--oh-theme-alt-color-shade') || '#AAA'
             }
         },
         legend: {
             textStyle: {
-                color: themeStore.getVar('--oh-text-color') || '#000000'
+                color: themeStore.ohVariables.get('--oh-text-color') || '#000000'
             }
         },
         textStyle: {
-            color: themeStore.getVar('--oh-text-color') || '#000000'
+            color: themeStore.ohVariables.get('--oh-text-color') || '#000000'
         },
         title: {
             textStyle: {
-                color: themeStore.getVar('--oh-text-color') || '#000000'
+                color: themeStore.ohVariables.get('--oh-text-color') || '#000000'
             },
             subtextStyle: {
-                color: themeStore.getVar('--oh-text-alt-color') || '#000000'
+                color: themeStore.ohVariables.get('--oh-text-alt-color') || '#000000'
             }
         },
         toolbox: {
             iconStyle: {
-                borderColor: themeStore.getVar('--oh-text-color') || '#000000'
+                borderColor: themeStore.ohVariables.get('--oh-text-color') || '#000000'
             }
         },
         dataZoom: {
             borderColor: '#71708A',
             textStyle: {
-                color: themeStore.getVar('--oh-text-color') || '#000000'
+                color: themeStore.ohVariables.get('--oh-text-color') || '#000000'
             },
             brushStyle: {
                 color: 'rgba(135,163,206,0.3)'
@@ -130,7 +129,7 @@ export function registerCustomTheme() {
         },
         visualMap: {
             textStyle: {
-                color: themeStore.getVar('--oh-text-color') || '#000000'
+                color: themeStore.ohVariables.get('--oh-text-color') || '#000000'
             }
         },
         timeline: {
@@ -150,13 +149,13 @@ export function registerCustomTheme() {
                 color: backgroundColor
             },
             dayLabel: {
-                color: themeStore.getVar('--oh-text-color') || '#000000'
+                color: themeStore.ohVariables.get('--oh-text-color') || '#000000'
             },
             monthLabel: {
-                color: themeStore.getVar('--oh-text-color') || '#000000'
+                color: themeStore.ohVariables.get('--oh-text-color') || '#000000'
             },
             yearLabel: {
-                color: themeStore.getVar('--oh-text-color') || '#000000'
+                color: themeStore.ohVariables.get('--oh-text-color') || '#000000'
             }
         },
         timeAxis: axisCommon(),
@@ -172,15 +171,15 @@ export function registerCustomTheme() {
         },
         gauge: {
             title: {
-                color: themeStore.getVar('--oh-text-color') || '#000000'
+                color: themeStore.ohVariables.get('--oh-text-color') || '#000000'
             }
         },
         candlestick: {
             itemStyle: {
-                color: themeStore.getVar('--oh-red-color') || '#FF0000',
-                color0: themeStore.getVar('--oh-green-color') || '#0CF49B',
-                borderColor: themeStore.getVar('--oh-red-color-shade') || '#FF0000',
-                borderColor0: themeStore.getVar('--oh-green-color-shade') || '#0CF49B'
+                color: themeStore.ohVariables.get('--oh-red-color') || '#FF0000',
+                color0: themeStore.ohVariables.get('--oh-green-color') || '#0CF49B',
+                borderColor: themeStore.ohVariables.get('--oh-red-color-shade') || '#FF0000',
+                borderColor0: themeStore.ohVariables.get('--oh-green-color-shade') || '#0CF49B'
             }
         }
     };

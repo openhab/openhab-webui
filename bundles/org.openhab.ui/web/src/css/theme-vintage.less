@@ -1,40 +1,48 @@
 @import "color-helpers.less";
+@import "theme-default.less"; // reset all colors to default if they aren't specified in the theme
 
 :root {
-  .generate-color-tones(oh-theme-color, #993111);
-  .generate-color-tones(oh-theme-alt-color, #2196F3);
-  // .generate-color-tones(oh-theme-alt-color, #21FFF3);
-  .generate-color-tones(oh-background-color, #fef8ef, true);
-  .generate-color-tones(oh-text-color, #333333);
-  .generate-color-tones(oh-text-inverse-color, #ffffff);
-  .generate-color-tones(oh-text-alt-color, #00FF00);
+  --oh-lightmode-text-color: #333333;
+  --oh-darkmode-text-color: #eeeeee;
+  --oh-lightmode-text-alt-color: #00FF00;
+  --oh-darkmode-text-alt-color: #00FF00;
+  --oh-lightmode-background-color: #fef8ef;
+  --oh-darkmode-background-color: #333333;
 
-  .generate-color-tones(oh-palette-color-1, #d87c7c);
-  .generate-color-tones(oh-palette-color-2, #919e8b);
-  .generate-color-tones(oh-palette-color-3, #d7ab82);
-  .generate-color-tones(oh-palette-color-4, #6e7074);
-  .generate-color-tones(oh-palette-color-5, #61a0a8);
-  .generate-color-tones(oh-palette-color-6, #efa18d);
-  .generate-color-tones(oh-palette-color-7, #787464);
-  .generate-color-tones(oh-palette-color-8, #cc7e63);
-  .generate-color-tones(oh-palette-color-9, #724e58);
+  .generate-color-tones(oh-theme-color, #c06944);
+  .generate-color-tones(oh-theme-alt-color, #324947);
+
+  .generate-color-tones(oh-palette-1-color, #d87c7c);
+  .generate-color-tones(oh-palette-2-color, #919e8b);
+  .generate-color-tones(oh-palette-3-color, #d7ab82);
+  .generate-color-tones(oh-palette-4-color, #aaafb9);
+  .generate-color-tones(oh-palette-5-color, #61a0a8);
+  .generate-color-tones(oh-palette-6-color, #efa18d);
+  .generate-color-tones(oh-palette-7-color, #787464);
+  .generate-color-tones(oh-palette-8-color, #cc7e63);
+  .generate-color-tones(oh-palette-9-color, #724e58);
 
   .generate-color-tones(oh-red-color, #e74d2e);
-  .generate-color-tones(oh-yellow-color, #e2cf1f);
-  .generate-color-tones(oh-orange-color, #f79c14);
   .generate-color-tones(oh-green-color, #249067);
+  .generate-color-tones(oh-yellow-color, #e2cf1f);
   .generate-color-tones(oh-blue-color, #2156f3);
+  .generate-color-tones(oh-orange-color, #f79c14);
+  .generate-color-tones(oh-purple-color, #902bd9);
+  .generate-color-tones(oh-pink-color, #d92bcb);
+  .generate-color-tones(oh-deeppurple-color, #673ab7);
+  .generate-color-tones(oh-lightblue-color, #2bcbd9);
+  .generate-color-tones(oh-teal-color, #009688);
+  .generate-color-tones(oh-deeporange-color, #ff6b22);
+  .generate-color-tones(oh-lime-color, #cddc39);
   .generate-color-tones(oh-gray-color, #969d93);
+  .generate-color-tones(oh-white-color, #ffffff);
+  .generate-color-tones(oh-black-color, #000000);
 }
 
 :root .dark,
 :root.dark {
-  .generate-color-tones(oh-theme-color, var(--oh-branding-color));
-  .generate-color-tones(oh-theme-alt-color, #f49f42);
-  .generate-color-tones(oh-background-color, #333333, true);
-  .generate-color-tones(oh-text-color, #eeeeee);
-  .generate-color-tones(oh-text-inverse-color, #000000);
-  .generate-color-tones(oh-text-alt-color, #00FF00);
+  .generate-color-tones(oh-theme-color, #c06944);
+  .generate-color-tones(oh-theme-alt-color, #26877f);;
 
   .generate-color-tones(oh-palette-color-1, #dd6d66);
   .generate-color-tones(oh-palette-color-2, #759aa0);

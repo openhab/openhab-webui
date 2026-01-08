@@ -26,6 +26,8 @@
 			<options>
 				<option value="/css/theme-vintage.css">Vintage Theme</option>
 				<option value="/css/theme-modern.css">Modern Theme</option>
+				<option value="/css/theme-coastalblues.css">Coastal Blues Theme</option>
+				<option value="/css/theme-starrynight.css">Starry Night Theme</option>
 			</options>
 			<required>false</required>
 		</parameter>
@@ -48,16 +50,40 @@
 			<description>Secondary theme color. CSS: var(--oh-theme-alt-color)</description>
 			<required>false</required>
 		</parameter>
-		<parameter name="--oh-background-color" type="text" groupName="mainColors">
+		<parameter name="--oh-lightmode-text-color" type="text" groupName="mainColors">
 			<context>color</context>
-			<label>Background Color</label>
-			<description>Background color. CSS: var(--oh-background-color)</description>
+			<label>Light Text Color</label>
+			<description>Text color used in light-mode (and inverse-color used in dark-mode). CSS: var(--oh-lightmode-text-color)</description>
 			<required>false</required>
 		</parameter>
-		<parameter name="--oh-text-color" type="text" groupName="mainColors">
+		<parameter name="--oh-darkmode-text-color" type="text" groupName="mainColors">
 			<context>color</context>
-			<label>Text Color</label>
-			<description>Text color. CSS: var(--oh-text-color)</description>
+			<label>Dark Text Color</label>
+			<description>Text color used in dark-mode (and inverse-color used in light-mode). CSS: var(--oh-darkmode-text-color)</description>
+			<required>false</required>
+		</parameter>
+		<parameter name="--oh-lightmode-text-alt-color" type="text" groupName="mainColors">
+			<context>color</context>
+			<label>Light Alt Text Color</label>
+			<description>Alternative text color used in light-mode. CSS: var(--oh-lightmode-text-alt-color)</description>
+			<required>false</required>
+		</parameter>
+		<parameter name="--oh-darkmode-text-alt-color" type="text" groupName="mainColors">
+			<context>color</context>
+			<label>Dark Alt Text Color</label>
+			<description>Alternative text color used in dark-mode. CSS: var(--oh-darkmode-text-alt-color)</description>
+			<required>false</required>
+		</parameter>
+		<parameter name="--oh-lightmode-background-color" type="text" groupName="mainColors">
+			<context>color</context>
+			<label>Light Background Color</label>
+			<description>Background color used in light-mode. CSS: var(--oh-lightmode-background-color)</description>
+			<required>false</required>
+		</parameter>
+		<parameter name="--oh-darkmode-background-color" type="text" groupName="mainColors">
+			<context>color</context>
+			<label>Dark Background Color</label>
+			<description>Background color used in dark-mode. CSS: var(--oh-darkmode-background-color)</description>
 			<required>false</required>
 		</parameter>
 		<parameter name="--oh-text-alt-color" type="text" groupName="mainColors">
@@ -70,19 +96,55 @@
 		<parameter name="--oh-palette-1-color" type="text" groupName="paletteColors">
 			<context>color</context>
 			<label>Palette Color 1</label>
-			<description>First palette color. CSS: var(--oh-palette-1-color)</description>
+			<description>Palette #1 color. CSS: var(--oh-palette-1-color)</description>
 			<required>false</required>
 		</parameter>
 		<parameter name="--oh-palette-2-color" type="text" groupName="paletteColors">
 			<context>color</context>
 			<label>Palette Color 2</label>
-			<description>Second palette color. CSS: var(--oh-palette-2-color)</description>
+			<description>Palette #2 color. CSS: var(--oh-palette-2-color)</description>
 			<required>false</required>
 		</parameter>
 		<parameter name="--oh-palette-3-color" type="text" groupName="paletteColors">
 			<context>color</context>
 			<label>Palette Color 3</label>
-			<description>Third palette color. CSS: var(--oh-palette-3-color)</description>
+			<description>Palette #3 color. CSS: var(--oh-palette-3-color)</description>
+			<required>false</required>
+		</parameter>
+		<parameter name="--oh-palette-4-color" type="text" groupName="paletteColors">
+			<context>color</context>
+			<label>Palette Color 4</label>
+			<description>Palette #4 color. CSS: var(--oh-palette-4-color)</description>
+			<required>false</required>
+		</parameter>
+		<parameter name="--oh-palette-5-color" type="text" groupName="paletteColors">
+			<context>color</context>
+			<label>Palette Color 5</label>
+			<description>Palette #5 color. CSS: var(--oh-palette-5-color)</description>
+			<required>false</required>
+		</parameter>
+		<parameter name="--oh-palette-6-color" type="text" groupName="paletteColors">
+			<context>color</context>
+			<label>Palette Color 6</label>
+			<description>Palette #6 color. CSS: var(--oh-palette-6-color)</description>
+			<required>false</required>
+		</parameter>
+		<parameter name="--oh-palette-7-color" type="text" groupName="paletteColors">
+			<context>color</context>
+			<label>Palette Color 7</label>
+			<description>Palette #7 color. CSS: var(--oh-palette-7-color)</description>
+			<required>false</required>
+		</parameter>
+		<parameter name="--oh-palette-8-color" type="text" groupName="paletteColors">
+			<context>color</context>
+			<label>Palette Color 8</label>
+			<description>Palette #8 color. CSS: var(--oh-palette-8-color)</description>
+			<required>false</required>
+		</parameter>
+		<parameter name="--oh-palette-9-color" type="text" groupName="paletteColors">
+			<context>color</context>
+			<label>Palette Color 9</label>
+			<description>Palette #9 color. CSS: var(--oh-palette-9-color)</description>
 			<required>false</required>
 		</parameter>
 	</config-description>

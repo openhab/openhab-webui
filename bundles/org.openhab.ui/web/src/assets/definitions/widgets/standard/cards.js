@@ -31,7 +31,7 @@ export const OhLabelCardDefinition = () => new WidgetDefinition('oh-label-card',
     pt('background', 'Background style', 'Background style (in CSS "background" attribute format)'),
     pt('fontSize', 'Font Size', 'Font size (e.g. "34px")'),
     pt('fontWeight', 'Font Weight', 'Font weight (e.g. "normal" or "bold")'),
-    pt('icon', 'Icon', 'Use <code>oh:iconName</code> (<a class="external text-color-alt" target="_blank" href="https://www.openhab.org/link/icons">openHAB icon</a>), <code>f7:iconName</code> (<a class="external text-color-alt" target="_blank" href="https://framework7.io/icons/">Framework7 icon</a>), <code>material:iconName</code> (<a class="external text-color-alt" target="_blank" href="https://jossef.github.io/material-design-icons-iconfont/">Material icon</a>) or <code>iconify:iconSet:iconName</code> (<a class="external text-color-alt" target="_blank" href="https://icon-sets.iconify.design">Iconify icon</a>, requires being online if not in cache)'),
+    pt('icon', 'Icon', 'Use <code>oh:iconName</code> (<a class="external text-color-theme-alt" target="_blank" href="https://www.openhab.org/link/icons">openHAB icon</a>), <code>f7:iconName</code> (<a class="external text-color-theme-alt" target="_blank" href="https://framework7.io/icons/">Framework7 icon</a>), <code>material:iconName</code> (<a class="external text-color-theme-alt" target="_blank" href="https://jossef.github.io/material-design-icons-iconfont/">Material icon</a>) or <code>iconify:iconSet:iconName</code> (<a class="external text-color-theme-alt" target="_blank" href="https://icon-sets.iconify.design">Iconify icon</a>, requires being online if not in cache)'),
     pt('iconColor', 'Icon Color', 'Not applicable to openHAB icons').a(),
     pn('iconSize', 'Icon Size', 'Size of the icon in px').a(),
     pb('iconUseState', 'Icon depends on state', 'Use the state of the Item to get a dynamic icon (enabled by default for <code>Contact</code>, <code>Dimmer</code>, <code>Rollershutter</code> & <code>Switch</code> Item types) (for openHAB icons only)'),
@@ -86,14 +86,14 @@ export const OhSliderCardDefinition = () => new WidgetDefinition('oh-slider-card
 import GaugeParameters from '../system/gauge.js'
 export const OhGaugeCardDefinition = () => new WidgetDefinition('oh-gauge-card', 'Gauge Card', 'Display a read-only gauge in a card to visualize a quantifiable item')
   .paramGroup(CardParameterGroup(), CardParameters())
-  .paramGroup(pg('gauge', 'Gauge', 'Parameters are passed to the underlying <a target="_blank" class="external text-color-alt" href="https://framework7.io/vue/gauge.html#gauge-properties">gauge</a>'), GaugeParameters())
+  .paramGroup(pg('gauge', 'Gauge', 'Parameters are passed to the underlying <a target="_blank" class="external text-color-theme-alt" href="https://framework7.io/vue/gauge.html#gauge-properties">gauge</a>'), GaugeParameters())
   .paramGroup(actionGroup(null, 'Action to perform when the gauge is clicked'), actionParams())
 
 // OhKnobCard
 import KnobParameters from '../system/knob.js'
 export const OhKnobCardDefinition = () => new WidgetDefinition('oh-knob-card', 'Knob & Rounded Slider Card', 'Display a knob or a rounded slider in a card to visualize and control a quantifiable item')
   .paramGroup(CardParameterGroup(), CardParameters())
-  .paramGroup(pg('knob', 'Knob & Rounded Slider', 'Parameters are passed to the underlying <a target="_blank" class="external text-color-alt" href="https://github.com/Artem9989/vue-three-round-slider?tab=readme-ov-file#props">round-slider control</a>'), KnobParameters())
+  .paramGroup(pg('knob', 'Knob & Rounded Slider', 'Parameters are passed to the underlying <a target="_blank" class="external text-color-theme-alt" href="https://github.com/Artem9989/vue-three-round-slider?tab=readme-ov-file#props">round-slider control</a>'), KnobParameters())
 
 // OhStepperCard
 import StepperParameters from '../system/stepper.js'
@@ -138,7 +138,7 @@ export const OhWebFrameCardDefinition = () => new WidgetDefinition('oh-webframe-
 export const OhClockCardDefinition = () => new WidgetDefinition('oh-clock-card', 'Digital Clock Card', 'Display a digital clock in a card')
   .paramGroup(CardParameterGroup(), CardParameters())
   .paramGroup(pg('clock', 'Clock'), [
-    pt('timeFormat', 'Time Format', 'Time format, see <a class="external text-color-alt" target="_blank" href="https://day.js.org/docs/en/display/format">dayjs docs</a>').o([
+    pt('timeFormat', 'Time Format', 'Time format, see <a class="external text-color-theme-alt" target="_blank" href="https://day.js.org/docs/en/display/format">dayjs docs</a>').o([
       { value: 'LTS', label: 'Localized time including seconds (\'LTS\', e.g. \'8:02:18 PM\')' },
       { value: 'LT', label: 'Localized time (\'LT\'. e.g. \'8:02 PM\')' },
       { value: 'HH:mm:ss', label: 'Current time (\'HH:mm:ss\')' }
@@ -146,7 +146,7 @@ export const OhClockCardDefinition = () => new WidgetDefinition('oh-clock-card',
     pt('timeFontSize', 'Time Font Size', 'Time font size (e.g. "34px")'),
     pt('timeFontWeight', 'Time Font Weight', 'Time font weight (e.g. "normal" or "bold")'),
     pb('showDate', 'Show the date', 'Show the current date in addition to the time'),
-    pt('dateFormat', 'Date Format', 'Date format, see <a class="external text-color-alt" target="_blank" href="https://day.js.org/docs/en/display/format">dayjs docs</a>').o([
+    pt('dateFormat', 'Date Format', 'Date format, see <a class="external text-color-theme-alt" target="_blank" href="https://day.js.org/docs/en/display/format">dayjs docs</a>').o([
       { value: 'LL', label: 'Localized long date (\'LL\', e.g. \'August 16, 2018\')' },
       { value: 'L', label: 'Localized short date (\'L\', e.g. \'08/16/2018\')' },
       { value: 'MM/DD/YYYY', label: 'Current date (\'MM/DD/YYYY\')' }

@@ -15,20 +15,20 @@ export const OhMapPageDefinition = () => new WidgetDefinition('oh-map-page', 'Ma
     pb('noZoomAnimation', 'No Zoom Animation', 'Change zoom levels without animation, can also avoid graphic glitches with persistent tooltips'),
     pb('noMarkerZoomAnimation', 'Hide Markers during Zoom Animation').a(),
     pt('tileLayerProvider', 'Provider for the background tiles', 'The provider of tiles to use for the background of the map. ' +
-      'Use one from <a class="external text-color-alt" target="_blank" href="https://leaflet-extras.github.io/leaflet-providers/preview/">Leaflet Providers</a>, ' +
+      'Use one from <a class="external text-color-theme-alt" target="_blank" href="https://leaflet-extras.github.io/leaflet-providers/preview/">Leaflet Providers</a>, ' +
       'Some providers will not work until you set options, like access tokens, in the <code>tileLayerProviderOptions</code> parameter (in Code view). ' +
-      'See <a class="external text-color-alt" target="_blank" href="https://github.com/leaflet-extras/leaflet-providers#providers-requiring-registration">here</a> for more info. ' +
+      'See <a class="external text-color-theme-alt" target="_blank" href="https://github.com/leaflet-extras/leaflet-providers#providers-requiring-registration">here</a> for more info. ' +
       'The default is CartoDB, the variant depending on the dark mode setting.'),
     pt('overlayTileLayerProvider', 'Provider for the overlay tiles', 'The provider of tiles to use for the overlay layer above the background of the map. ' +
-      'Use one from <a class="external text-color-alt" target="_blank" href="https://leaflet-extras.github.io/leaflet-providers/preview/">Leaflet Providers</a>, ' +
+      'Use one from <a class="external text-color-theme-alt" target="_blank" href="https://leaflet-extras.github.io/leaflet-providers/preview/">Leaflet Providers</a>, ' +
       'Some providers will not work until you set options, like access tokens, in the <code>overlayTileLayerProviderOptions</code> parameter (in Code view). ' +
-      'See <a class="external text-color-alt" target="_blank" href="https://github.com/leaflet-extras/leaflet-providers#providers-requiring-registration">here</a> for more info. ')
+      'See <a class="external text-color-theme-alt" target="_blank" href="https://github.com/leaflet-extras/leaflet-providers#providers-requiring-registration">here</a> for more info. ')
   ])
 
 export const OhMapMarkerDefinition = () => new WidgetDefinition('oh-map-marker', 'Map Marker', 'An icon on a map', 'map_pin')
   .paramGroup(pg('marker', 'Marker', 'General marker settings'), [
     LabelParam(),
-    pt('icon', 'Icon', 'Use <code>oh:iconName</code> (<a class="external text-color-alt" target="_blank" href="https://www.openhab.org/link/icons">openHAB icon</a>)')
+    pt('icon', 'Icon', 'Use <code>oh:iconName</code> (<a class="external text-color-theme-alt" target="_blank" href="https://www.openhab.org/link/icons">openHAB icon</a>)')
   ])
   .paramGroup(pg('position', 'Position', 'Position'), [
     ItemParam(),

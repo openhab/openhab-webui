@@ -1,0 +1,40 @@
+@import "color-helpers.less";
+@import "theme-default.less"; // reset all colors to default if they aren't specified in the theme
+
+:root {
+  --oh-lightmode-text-color: #062a74;
+  --oh-darkmode-text-color: #dae1f1;
+  --oh-lightmode-text-alt-color: #2862dc;
+  --oh-darkmode-text-alt-color: #7d94c5;
+  --oh-lightmode-background-color: #ffffff;
+  --oh-darkmode-background-color: #223459;
+
+  .generate-color-tones(oh-theme-color, #cdf80c);
+  .generate-color-tones(oh-theme-alt-color, #2196F3);
+
+  .generate-color-tones(oh-palette-1-color, #cdf80c);
+  .generate-color-tones(oh-palette-2-color, #abd006);
+  .generate-color-tones(oh-palette-3-color, #86a305);
+  .generate-color-tones(oh-palette-4-color, #5572af);
+  .generate-color-tones(oh-palette-5-color, #7d94c4);
+  .generate-color-tones(oh-palette-6-color, #b8c6e5);
+  .generate-color-tones(oh-palette-7-color, #ff9179);
+  .generate-color-tones(oh-palette-8-color, #2cc990);
+  .generate-color-tones(oh-palette-9-color, #724e58); // TODO
+
+  .generate-color-tones(oh-red-color, #ff9179);
+  .generate-color-tones(oh-green-color, #2cc990);
+  .generate-color-tones(oh-yellow-color, #e2cf1f); // TODO and below
+  .generate-color-tones(oh-blue-color, #2156f3);
+  .generate-color-tones(oh-orange-color, #f79c14);
+  .generate-color-tones(oh-purple-color, #902bd9);
+  .generate-color-tones(oh-pink-color, #d92bcb);
+  .generate-color-tones(oh-deeppurple-color, #673ab7);
+  .generate-color-tones(oh-lightblue-color, #2bcbd9);
+  .generate-color-tones(oh-teal-color, #009688);
+  .generate-color-tones(oh-deeporange-color, #ff6b22);
+  .generate-color-tones(oh-lime-color, #cddc39);
+  .generate-color-tones(oh-gray-color, #969d93);
+  .generate-color-tones(oh-white-color, #ffffff);
+  .generate-color-tones(oh-black-color, #000000);
+}

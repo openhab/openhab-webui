@@ -174,76 +174,76 @@
   --f7-theme-color-bg-color: var(--oh-palette-9-color);
 }
 :root {
-  --oh-lightmode-text-color: #333333;
-  --oh-darkmode-text-color: #eeeeee;
-  --oh-lightmode-text-alt-color: #3636ae;
-  --oh-darkmode-text-alt-color: #36FFae;
-  --oh-lightmode-background-color: #f9f3ff;
-  --oh-darkmode-background-color: #19131f;
-  --oh-theme-color: #9b2f9b;
-  --oh-theme-color-shade: oklch(from #9b2f9b calc(l - 0.1) c h);
-  --oh-theme-color-tint: oklch(from #9b2f9b calc(l + 0.1) c h);
-  --oh-theme-color-transparent: color-mix(in oklch, #9b2f9b 60%, transparent);
-  --oh-theme-alt-color: #3636ae;
-  --oh-theme-alt-color-shade: oklch(from #3636ae calc(l - 0.1) c h);
-  --oh-theme-alt-color-tint: oklch(from #3636ae calc(l + 0.1) c h);
-  --oh-theme-alt-color-transparent: color-mix(in oklch, #3636ae 60%, transparent);
-  --oh-palette-1-color: #d1d45a;
-  --oh-palette-1-color-shade: oklch(from #d1d45a calc(l - 0.1) c h);
-  --oh-palette-1-color-tint: oklch(from #d1d45a calc(l + 0.1) c h);
-  --oh-palette-1-color-transparent: color-mix(in oklch, #d1d45a 60%, transparent);
-  --oh-palette-2-color: #4eb8af;
-  --oh-palette-2-color-shade: oklch(from #4eb8af calc(l - 0.1) c h);
-  --oh-palette-2-color-tint: oklch(from #4eb8af calc(l + 0.1) c h);
-  --oh-palette-2-color-transparent: color-mix(in oklch, #4eb8af 60%, transparent);
-  --oh-palette-3-color: #3d8ed9;
-  --oh-palette-3-color-shade: oklch(from #3d8ed9 calc(l - 0.1) c h);
-  --oh-palette-3-color-tint: oklch(from #3d8ed9 calc(l + 0.1) c h);
-  --oh-palette-3-color-transparent: color-mix(in oklch, #3d8ed9 60%, transparent);
-  --oh-palette-4-color: #d93d8e;
-  --oh-palette-4-color-shade: oklch(from #d93d8e calc(l - 0.1) c h);
-  --oh-palette-4-color-tint: oklch(from #d93d8e calc(l + 0.1) c h);
-  --oh-palette-4-color-transparent: color-mix(in oklch, #d93d8e 60%, transparent);
-  --oh-palette-5-color: #3dd9d7;
-  --oh-palette-5-color-shade: oklch(from #3dd9d7 calc(l - 0.1) c h);
-  --oh-palette-5-color-tint: oklch(from #3dd9d7 calc(l + 0.1) c h);
-  --oh-palette-5-color-transparent: color-mix(in oklch, #3dd9d7 60%, transparent);
-  --oh-palette-6-color: #d9893d;
-  --oh-palette-6-color-shade: oklch(from #d9893d calc(l - 0.1) c h);
-  --oh-palette-6-color-tint: oklch(from #d9893d calc(l + 0.1) c h);
-  --oh-palette-6-color-transparent: color-mix(in oklch, #d9893d 60%, transparent);
-  --oh-palette-7-color: #d93d40;
-  --oh-palette-7-color-shade: oklch(from #d93d40 calc(l - 0.1) c h);
-  --oh-palette-7-color-tint: oklch(from #d93d40 calc(l + 0.1) c h);
-  --oh-palette-7-color-transparent: color-mix(in oklch, #d93d40 60%, transparent);
-  --oh-palette-8-color: #73b9bc;
-  --oh-palette-8-color-shade: oklch(from #73b9bc calc(l - 0.1) c h);
-  --oh-palette-8-color-tint: oklch(from #73b9bc calc(l + 0.1) c h);
-  --oh-palette-8-color-transparent: color-mix(in oklch, #73b9bc 60%, transparent);
-  --oh-palette-9-color: #7289ab;
-  --oh-palette-9-color-shade: oklch(from #7289ab calc(l - 0.1) c h);
-  --oh-palette-9-color-tint: oklch(from #7289ab calc(l + 0.1) c h);
-  --oh-palette-9-color-transparent: color-mix(in oklch, #7289ab 60%, transparent);
-  --oh-red-color: #d82b45;
-  --oh-red-color-shade: oklch(from #d82b45 calc(l - 0.1) c h);
-  --oh-red-color-tint: oklch(from #d82b45 calc(l + 0.1) c h);
-  --oh-red-color-transparent: color-mix(in oklch, #d82b45 60%, transparent);
-  --oh-green-color: #74d92b;
-  --oh-green-color-shade: oklch(from #74d92b calc(l - 0.1) c h);
-  --oh-green-color-tint: oklch(from #74d92b calc(l + 0.1) c h);
-  --oh-green-color-transparent: color-mix(in oklch, #74d92b 60%, transparent);
-  --oh-yellow-color: #cbd92b;
-  --oh-yellow-color-shade: oklch(from #cbd92b calc(l - 0.1) c h);
-  --oh-yellow-color-tint: oklch(from #cbd92b calc(l + 0.1) c h);
-  --oh-yellow-color-transparent: color-mix(in oklch, #cbd92b 60%, transparent);
-  --oh-blue-color: #2b74d9;
-  --oh-blue-color-shade: oklch(from #2b74d9 calc(l - 0.1) c h);
-  --oh-blue-color-tint: oklch(from #2b74d9 calc(l + 0.1) c h);
-  --oh-blue-color-transparent: color-mix(in oklch, #2b74d9 60%, transparent);
-  --oh-orange-color: #d9902b;
-  --oh-orange-color-shade: oklch(from #d9902b calc(l - 0.1) c h);
-  --oh-orange-color-tint: oklch(from #d9902b calc(l + 0.1) c h);
-  --oh-orange-color-transparent: color-mix(in oklch, #d9902b 60%, transparent);
+  --oh-lightmode-text-color: #000000;
+  --oh-darkmode-text-color: #ffffff;
+  --oh-lightmode-text-alt-color: #013a63;
+  --oh-darkmode-text-alt-color: #468faf;
+  --oh-lightmode-background-color: #a9d6e5;
+  --oh-darkmode-background-color: #012a4a;
+  --oh-theme-color: #613dc1;
+  --oh-theme-color-shade: oklch(from #613dc1 calc(l - 0.1) c h);
+  --oh-theme-color-tint: oklch(from #613dc1 calc(l + 0.1) c h);
+  --oh-theme-color-transparent: color-mix(in oklch, #613dc1 60%, transparent);
+  --oh-theme-alt-color: #2196F3;
+  --oh-theme-alt-color-shade: oklch(from #2196F3 calc(l - 0.1) c h);
+  --oh-theme-alt-color-tint: oklch(from #2196F3 calc(l + 0.1) c h);
+  --oh-theme-alt-color-transparent: color-mix(in oklch, #2196F3 60%, transparent);
+  --oh-palette-1-color: #89c2d9;
+  --oh-palette-1-color-shade: oklch(from #89c2d9 calc(l - 0.1) c h);
+  --oh-palette-1-color-tint: oklch(from #89c2d9 calc(l + 0.1) c h);
+  --oh-palette-1-color-transparent: color-mix(in oklch, #89c2d9 60%, transparent);
+  --oh-palette-2-color: #61a5c2;
+  --oh-palette-2-color-shade: oklch(from #61a5c2 calc(l - 0.1) c h);
+  --oh-palette-2-color-tint: oklch(from #61a5c2 calc(l + 0.1) c h);
+  --oh-palette-2-color-transparent: color-mix(in oklch, #61a5c2 60%, transparent);
+  --oh-palette-3-color: #468faf;
+  --oh-palette-3-color-shade: oklch(from #468faf calc(l - 0.1) c h);
+  --oh-palette-3-color-tint: oklch(from #468faf calc(l + 0.1) c h);
+  --oh-palette-3-color-transparent: color-mix(in oklch, #468faf 60%, transparent);
+  --oh-palette-4-color: #2c7da0;
+  --oh-palette-4-color-shade: oklch(from #2c7da0 calc(l - 0.1) c h);
+  --oh-palette-4-color-tint: oklch(from #2c7da0 calc(l + 0.1) c h);
+  --oh-palette-4-color-transparent: color-mix(in oklch, #2c7da0 60%, transparent);
+  --oh-palette-5-color: #2a6f97;
+  --oh-palette-5-color-shade: oklch(from #2a6f97 calc(l - 0.1) c h);
+  --oh-palette-5-color-tint: oklch(from #2a6f97 calc(l + 0.1) c h);
+  --oh-palette-5-color-transparent: color-mix(in oklch, #2a6f97 60%, transparent);
+  --oh-palette-6-color: #014f86;
+  --oh-palette-6-color-shade: oklch(from #014f86 calc(l - 0.1) c h);
+  --oh-palette-6-color-tint: oklch(from #014f86 calc(l + 0.1) c h);
+  --oh-palette-6-color-transparent: color-mix(in oklch, #014f86 60%, transparent);
+  --oh-palette-7-color: #01497c;
+  --oh-palette-7-color-shade: oklch(from #01497c calc(l - 0.1) c h);
+  --oh-palette-7-color-tint: oklch(from #01497c calc(l + 0.1) c h);
+  --oh-palette-7-color-transparent: color-mix(in oklch, #01497c 60%, transparent);
+  --oh-palette-8-color: #013a63;
+  --oh-palette-8-color-shade: oklch(from #013a63 calc(l - 0.1) c h);
+  --oh-palette-8-color-tint: oklch(from #013a63 calc(l + 0.1) c h);
+  --oh-palette-8-color-transparent: color-mix(in oklch, #013a63 60%, transparent);
+  --oh-palette-9-color: #724e58;
+  --oh-palette-9-color-shade: oklch(from #724e58 calc(l - 0.1) c h);
+  --oh-palette-9-color-tint: oklch(from #724e58 calc(l + 0.1) c h);
+  --oh-palette-9-color-transparent: color-mix(in oklch, #724e58 60%, transparent);
+  --oh-red-color: #ff9179;
+  --oh-red-color-shade: oklch(from #ff9179 calc(l - 0.1) c h);
+  --oh-red-color-tint: oklch(from #ff9179 calc(l + 0.1) c h);
+  --oh-red-color-transparent: color-mix(in oklch, #ff9179 60%, transparent);
+  --oh-green-color: #2cc990;
+  --oh-green-color-shade: oklch(from #2cc990 calc(l - 0.1) c h);
+  --oh-green-color-tint: oklch(from #2cc990 calc(l + 0.1) c h);
+  --oh-green-color-transparent: color-mix(in oklch, #2cc990 60%, transparent);
+  --oh-yellow-color: #e2cf1f;
+  --oh-yellow-color-shade: oklch(from #e2cf1f calc(l - 0.1) c h);
+  --oh-yellow-color-tint: oklch(from #e2cf1f calc(l + 0.1) c h);
+  --oh-yellow-color-transparent: color-mix(in oklch, #e2cf1f 60%, transparent);
+  --oh-blue-color: #2156f3;
+  --oh-blue-color-shade: oklch(from #2156f3 calc(l - 0.1) c h);
+  --oh-blue-color-tint: oklch(from #2156f3 calc(l + 0.1) c h);
+  --oh-blue-color-transparent: color-mix(in oklch, #2156f3 60%, transparent);
+  --oh-orange-color: #f79c14;
+  --oh-orange-color-shade: oklch(from #f79c14 calc(l - 0.1) c h);
+  --oh-orange-color-tint: oklch(from #f79c14 calc(l + 0.1) c h);
+  --oh-orange-color-transparent: color-mix(in oklch, #f79c14 60%, transparent);
   --oh-purple-color: #902bd9;
   --oh-purple-color-shade: oklch(from #902bd9 calc(l - 0.1) c h);
   --oh-purple-color-tint: oklch(from #902bd9 calc(l + 0.1) c h);
@@ -284,134 +284,4 @@
   --oh-black-color-shade: oklch(from #000000 calc(l - 0.1) c h);
   --oh-black-color-tint: oklch(from #000000 calc(l + 0.1) c h);
   --oh-black-color-transparent: color-mix(in oklch, #000000 60%, transparent);
-  --oh-gradient-angle: 315deg;
-  --f7-card-bg-color: linear-gradient(var(--oh-gradient-angle), var(--oh-background-color-shade), var(--oh-background-color-tint-2));
-}
-:root .page {
-  background: linear-gradient(var(--oh-background-color-tint), var(--oh-background-color-shade));
-}
-:root .dark,
-:root.dark {
-  --oh-theme-color: #c22dc2;
-  --oh-theme-color-shade: oklch(from #c22dc2 calc(l - 0.1) c h);
-  --oh-theme-color-tint: oklch(from #c22dc2 calc(l + 0.1) c h);
-  --oh-theme-color-transparent: color-mix(in oklch, #c22dc2 60%, transparent);
-  --oh-theme-alt-color: #c6c633;
-  --oh-theme-alt-color-shade: oklch(from #c6c633 calc(l - 0.1) c h);
-  --oh-theme-alt-color-tint: oklch(from #c6c633 calc(l + 0.1) c h);
-  --oh-theme-alt-color-transparent: color-mix(in oklch, #c6c633 60%, transparent);
-  --oh-palette-1-color: #d1d45a;
-  --oh-palette-1-color-shade: oklch(from #d1d45a calc(l - 0.1) c h);
-  --oh-palette-1-color-tint: oklch(from #d1d45a calc(l + 0.1) c h);
-  --oh-palette-1-color-transparent: color-mix(in oklch, #d1d45a 60%, transparent);
-  --oh-palette-2-color: #4eb8af;
-  --oh-palette-2-color-shade: oklch(from #4eb8af calc(l - 0.1) c h);
-  --oh-palette-2-color-tint: oklch(from #4eb8af calc(l + 0.1) c h);
-  --oh-palette-2-color-transparent: color-mix(in oklch, #4eb8af 60%, transparent);
-  --oh-palette-3-color: #3d8ed9;
-  --oh-palette-3-color-shade: oklch(from #3d8ed9 calc(l - 0.1) c h);
-  --oh-palette-3-color-tint: oklch(from #3d8ed9 calc(l + 0.1) c h);
-  --oh-palette-3-color-transparent: color-mix(in oklch, #3d8ed9 60%, transparent);
-  --oh-palette-4-color: #d93d8e;
-  --oh-palette-4-color-shade: oklch(from #d93d8e calc(l - 0.1) c h);
-  --oh-palette-4-color-tint: oklch(from #d93d8e calc(l + 0.1) c h);
-  --oh-palette-4-color-transparent: color-mix(in oklch, #d93d8e 60%, transparent);
-  --oh-palette-5-color: #3dd9d7;
-  --oh-palette-5-color-shade: oklch(from #3dd9d7 calc(l - 0.1) c h);
-  --oh-palette-5-color-tint: oklch(from #3dd9d7 calc(l + 0.1) c h);
-  --oh-palette-5-color-transparent: color-mix(in oklch, #3dd9d7 60%, transparent);
-  --oh-palette-6-color: #d9893d;
-  --oh-palette-6-color-shade: oklch(from #d9893d calc(l - 0.1) c h);
-  --oh-palette-6-color-tint: oklch(from #d9893d calc(l + 0.1) c h);
-  --oh-palette-6-color-transparent: color-mix(in oklch, #d9893d 60%, transparent);
-  --oh-palette-7-color: #d93d40;
-  --oh-palette-7-color-shade: oklch(from #d93d40 calc(l - 0.1) c h);
-  --oh-palette-7-color-tint: oklch(from #d93d40 calc(l + 0.1) c h);
-  --oh-palette-7-color-transparent: color-mix(in oklch, #d93d40 60%, transparent);
-  --oh-palette-8-color: #73b9bc;
-  --oh-palette-8-color-shade: oklch(from #73b9bc calc(l - 0.1) c h);
-  --oh-palette-8-color-tint: oklch(from #73b9bc calc(l + 0.1) c h);
-  --oh-palette-8-color-transparent: color-mix(in oklch, #73b9bc 60%, transparent);
-  --oh-palette-9-color: #7289ab;
-  --oh-palette-9-color-shade: oklch(from #7289ab calc(l - 0.1) c h);
-  --oh-palette-9-color-tint: oklch(from #7289ab calc(l + 0.1) c h);
-  --oh-palette-9-color-transparent: color-mix(in oklch, #7289ab 60%, transparent);
-  --oh-gradient-angle: 135deg;
-  --f7-card-bg-color: linear-gradient(var(--oh-gradient-angle), var(--oh-background-color-tint), var(--oh-background-color-shade-2));
-}
-:root .dark .page,
-:root.dark .page {
-  background: linear-gradient(var(--oh-background-color-tint), var(--oh-background-color-shade-2));
-}
-.bg-color-red {
-  background: linear-gradient(var(--oh-gradient-angle), var(--oh-red-color-shade), var(--oh-red-color-tint));
-}
-.bg-color-green {
-  background: linear-gradient(var(--oh-gradient-angle), var(--oh-green-color-shade), var(--oh-green-color-tint));
-}
-.bg-color-blue {
-  background: linear-gradient(var(--oh-gradient-angle), var(--oh-blue-color-shade), var(--oh-blue-color-tint));
-}
-.bg-color-pink {
-  background: linear-gradient(var(--oh-gradient-angle), var(--oh-pink-color-shade), var(--oh-pink-color-tint));
-}
-.bg-color-yellow {
-  background: linear-gradient(var(--oh-gradient-angle), var(--oh-yellow-color-shade), var(--oh-yellow-color-tint));
-}
-.bg-color-orange {
-  background: linear-gradient(var(--oh-gradient-angle), var(--oh-orange-color-shade), var(--oh-orange-color-tint));
-}
-.bg-color-purple {
-  background: linear-gradient(var(--oh-gradient-angle), var(--oh-purple-color-shade), var(--oh-purple-color-tint));
-}
-.bg-color-deeppurple {
-  background: linear-gradient(var(--oh-gradient-angle), var(--oh-deeppurple-color-shade), var(--oh-deeppurple-color-tint));
-}
-.bg-color-lightblue {
-  background: linear-gradient(var(--oh-gradient-angle), var(--oh-lightblue-color-shade), var(--oh-lightblue-color-tint));
-}
-.bg-color-teal {
-  background: linear-gradient(var(--oh-gradient-angle), var(--oh-teal-color-shade), var(--oh-teal-color-tint));
-}
-.bg-color-lime {
-  background: linear-gradient(var(--oh-gradient-angle), var(--oh-lime-color-shade), var(--oh-lime-color-tint));
-}
-.bg-color-deeporange {
-  background: linear-gradient(var(--oh-gradient-angle), var(--oh-deeporange-color-shade), var(--oh-deeporange-color-tint));
-}
-.bg-color-gray {
-  background: linear-gradient(var(--oh-gradient-angle), var(--oh-gray-color-shade), var(--oh-gray-color-tint));
-}
-.bg-color-black {
-  background: linear-gradient(var(--oh-gradient-angle), var(--oh-black-color-shade), var(--oh-black-color-tint));
-}
-.bg-color-white {
-  background: linear-gradient(var(--oh-gradient-angle), var(--oh-white-color-shade), var(--oh-white-color-tint));
-}
-.bg-color-palette-1 {
-  background: linear-gradient(var(--oh-gradient-angle), var(--oh-palette-1-color-shade), var(--oh-palette-1-color-tint));
-}
-.bg-color-palette-2 {
-  background: linear-gradient(var(--oh-gradient-angle), var(--oh-palette-2-color-shade), var(--oh-palette-2-color-tint));
-}
-.bg-color-palette-3 {
-  background: linear-gradient(var(--oh-gradient-angle), var(--oh-palette-3-color-shade), var(--oh-palette-3-color-tint));
-}
-.bg-color-palette-4 {
-  background: linear-gradient(var(--oh-gradient-angle), var(--oh-palette-4-color-shade), var(--oh-palette-4-color-tint));
-}
-.bg-color-palette-5 {
-  background: linear-gradient(var(--oh-gradient-angle), var(--oh-palette-5-color-shade), var(--oh-palette-5-color-tint));
-}
-.bg-color-palette-6 {
-  background: linear-gradient(var(--oh-gradient-angle), var(--oh-palette-6-color-shade), var(--oh-palette-6-color-tint));
-}
-.bg-color-palette-7 {
-  background: linear-gradient(var(--oh-gradient-angle), var(--oh-palette-7-color-shade), var(--oh-palette-7-color-tint));
-}
-.bg-color-palette-8 {
-  background: linear-gradient(var(--oh-gradient-angle), var(--oh-palette-8-color-shade), var(--oh-palette-8-color-tint));
-}
-.bg-color-palette-9 {
-  background: linear-gradient(var(--oh-gradient-angle), var(--oh-palette-9-color-shade), var(--oh-palette-9-color-tint));
 }

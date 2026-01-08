@@ -31,6 +31,58 @@ if (sourceMaps) {
   console.log('Build will include source maps.')
 }
 
+function insertSecurityHeader() {
+  return {
+    name: 'html-injector',
+    apply: 'build',
+    transformIndexHtml () {
+      return [
+        {
+          tag: 'meta',
+          injectTo: 'head-prepend',
+          attrs: {
+            'http-equiv': 'Content-Security-Policy',
+            content: "default-src 'self' 'unsafe-inline' 'unsafe-eval'; font-src 'self' data:; img-src * data:; media-src * data: blob: media:; frame-src *; connect-src 'self' *.openhab.org raw.githubusercontent.com api.iconify.design api.unisvg.com api.simplesvg.com *; worker-src 'self' blob:;"
+          }
+        }
+      ]
+    }
+  }
+}
+
+function insertThemeCss() {
+  if (!production) {
+    console.log('Development mode: injecting theme CSS link tag at the start of <body>.');
+    return {
+      name: 'move-custom-css-to-end-dev',
+      apply: 'serve',
+      transformIndexHtml(html) {
+        console.log('Injecting theme CSS link tag at the start of <body>.');
+        return [{
+          tag: 'link',
+          attrs: {
+            rel: 'stylesheet',
+            id: 'theme-css',
+            href: '/__theme__'
+          },
+          injectTo: 'body-prepend'
+        }]
+      }
+    }
+  } else  {
+    console.log('Production mode: injecting theme CSS link tag before </head>.');
+    return {
+      name: 'move-custom-css-to-end-prod',
+      apply: 'build',
+      transformIndexHtml(html) {
+        const linkTag = '<link rel="stylesheet" id="theme-css" href="/__theme__" />';
+        return html
+          .replace('</head>', `  ${linkTag}\n  </head>`); // Place it before </head>
+      }
+    }
+  }
+}
+
 export default defineConfig({
   plugins: [
     vue({
@@ -40,31 +92,8 @@ export default defineConfig({
         }
       }
     }),
-    {
-      name: 'html-injector',
-      apply: 'build',
-      transformIndexHtml () {
-        return [
-          {
-            tag: 'meta',
-            injectTo: 'head-prepend',
-            attrs: {
-              'http-equiv': 'Content-Security-Policy',
-              content: "default-src 'self' 'unsafe-inline' 'unsafe-eval'; font-src 'self' data:; img-src * data:; media-src * data: blob: media:; frame-src *; connect-src 'self' *.openhab.org raw.githubusercontent.com api.iconify.design api.unisvg.com api.simplesvg.com *; worker-src 'self' blob:;"
-            }
-          }
-        ]
-      }
-    },
-    {
-      name: 'move-custom-css-to-end-prod',
-      apply: 'build',
-      transformIndexHtml(html) {
-        const linkTag = '<link rel="stylesheet" id="theme-css" href="/__theme__" />';
-        return html
-          .replace('</head>', `  ${linkTag}\n  </head>`); // Place it before </head>
-      }
-    },
+    insertSecurityHeader(),
+    insertThemeCss(),
     pluginDynamicImport({
       filter (id) {
         if (id.includes('/node_modules/')) {
@@ -146,7 +175,7 @@ export default defineConfig({
         target: apiBaseUrl,
         secure: false
       },
-      '/__theme__.css': {
+      '^\/__theme__.*': {
         target: apiBaseUrl,
         secure: false
       },

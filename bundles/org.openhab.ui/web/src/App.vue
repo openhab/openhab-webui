@@ -432,18 +432,25 @@
     margin-left var(--f7-block-padding-horizontal)
 
   .page
-    background var(--oh-background-color-shade)
     padding-bottom calc(var(--f7-tabbar-labels-height) + var(--f7-safe-area-bottom))
     padding-left var(--f7-safe-area-left)
     width calc(var(--f7-panel-width) + var(--f7-safe-area-left))
   .openhab-logo
     margin-top var(--f7-safe-area-top)
     .logo-inner
-      background-color var(--oh-background-tint-2)
       padding 2.25rem 2rem
+  .page
+    background var(--oh-background-color-shade)
   .page-links
-    ul
-      background-color var(--oh-background-color-tint-transparent)
+      background var(--oh-background-color-tint)
+  .account
+    .list ul
+      background unset
+    background var(--oh-background-color-tint)
+  .currentsection
+    background-color var(--oh-theme-alt-color-shade)
+  .openhab-logo
+    background var(--oh-background-color-tint)
   .list
     margin-top 0
     .item-link
@@ -462,7 +469,6 @@
   .account
     z-index 300
     height calc(var(--f7-tabbar-labels-height) + var(--f7-safe-area-bottom))
-    background #f5f5f5 !important
     position fixed
     bottom 0
     width 100%
@@ -499,14 +505,17 @@
 .dark
   .panel-left
     .page
-      background #232323 !important
+      background var(--oh-background-color-shade)
+    .page-links
+      background var(--oh-background-color-transparent)
     .account
-      background #232323 !important
+      .list ul
+        background unset
+      background var(--oh-background-color-shade)
     .currentsection
       background-color var(--oh-theme-alt-color-shade)
-  .openhab-logo
-    .logo-inner
-      background #111111 !important
+    .openhab-logo
+      background var(--oh-background-color-shade-2)
 
 .menu-sublinks
   color var(--f7-list-item-footer-text-color)

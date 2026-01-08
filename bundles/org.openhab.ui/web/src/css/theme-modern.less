@@ -1,4 +1,5 @@
 @import "color-helpers.less";
+@import "theme-default.less"; // reset all colors to default if they aren't specified in the theme
 
 .generate-bg-color-gradient(@color_name) {
     .bg-color-@{color_name} {
@@ -7,12 +8,15 @@
 }
 
 :root {
+  --oh-lightmode-text-color: #333333;
+  --oh-darkmode-text-color: #eeeeee;
+  --oh-lightmode-text-alt-color: #3636ae;
+  --oh-darkmode-text-alt-color: #36FFae;
+  --oh-lightmode-background-color: #f9f3ff;
+  --oh-darkmode-background-color: #19131f;
+
   .generate-color-tones(oh-theme-color, #9b2f9b);
   .generate-color-tones(oh-theme-alt-color, #3636ae);
-  .generate-color-tones(oh-background-color, #f9f3ff, true);
-  .generate-color-tones(oh-text-color, #333333);
-  .generate-color-tones(oh-text-inverse-color, #ffffff);
-  .generate-color-tones(oh-text-alt-color, #00FF00);
 
   .generate-color-tones(oh-palette-1-color, #d1d45a);
   .generate-color-tones(oh-palette-2-color, #4eb8af);
@@ -52,10 +56,6 @@
 :root.dark {
   .generate-color-tones(oh-theme-color, #c22dc2);
   .generate-color-tones(oh-theme-alt-color, #c6c633);
-  .generate-color-tones(oh-background-color, #19131f, true);
-  .generate-color-tones(oh-text-color, #eeeeee);
-  .generate-color-tones(oh-text-inverse-color, #000000);
-  .generate-color-tones(oh-text-alt-color, #00FF00);
 
   .generate-color-tones(oh-palette-1-color, #d1d45a);
   .generate-color-tones(oh-palette-2-color, #4eb8af);

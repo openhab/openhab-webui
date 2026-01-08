@@ -2,7 +2,7 @@ import { pt, pn } from '../helpers.js'
 
 export default () => [
   pt('text', 'Text', 'Link label'),
-  pt('iconF7', 'Icon', 'Framework7 icon to display (<a class="external text-color-alt" target="_blank" href="https://framework7.io/icons/">Framework7 icon</a>)'),
+  pt('iconF7', 'Icon', 'Framework7 icon to display (<a class="external text-color-theme-alt" target="_blank" href="https://framework7.io/icons/">Framework7 icon</a>)'),
   pt('iconMaterial', 'Icon', 'Material design icon to display'),
   pt('iconColor', 'Icon Color', 'Color of the icon'),
   pn('iconSize', 'Icon Size', 'Size of the icon in px'),

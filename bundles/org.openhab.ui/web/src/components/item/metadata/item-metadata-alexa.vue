@@ -182,7 +182,7 @@ export default {
     },
     groupLinks () {
       return this.item.groups
-        .map((g) => `<a class="text-color-alt" href="/settings/items/${g.name}/metadata/alexa">${g.label || g.name}</a>`)
+        .map((g) => `<a class="text-color-theme-alt" href="/settings/items/${g.name}/metadata/alexa">${g.label || g.name}</a>`)
         .join(', ')
     },
     isPartOfGroupEndpoint () {

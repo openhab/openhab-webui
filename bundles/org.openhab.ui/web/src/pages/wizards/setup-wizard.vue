@@ -240,7 +240,7 @@
         </f7-block>
         <f7-block strong>
           {{ t('setupwizard.addons.header1') }}<br>{{ t('setupwizard.addons.header2') }}<br>{{ t('setupwizard.addons.header3') }} <br><br>
-          <a class="text-color-alt external"
+          <a class="text-color-theme-alt external"
              target="_blank"
              href="https://www.openhab.org/addons/">
             {{ t('setupwizard.addons.browseAddonsOnWebsite') }}</a>

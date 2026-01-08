@@ -54,7 +54,7 @@
                v-for="tag in getNonSemanticTags(model.item)"
                :key="tag"
                style="height: 16px; margin-left: 4px">
-            <div class="chip-media bg-color-alt" style="height: 16px; width: 16px">
+            <div class="chip-media bg-color-theme-alt" style="height: 16px; width: 16px">
               <f7-icon ios="f7:tag_fill"
                        md="material:label"
                        aurora="f7:tag_fill"

@@ -1,0 +1,145 @@
+# Proposal for openHAB UI theme support (color-only)
+
+## Features 
+- Support for the admin to apply a global theme (across all users - unlike Dark/Light which can be set on a per-device basis)
+- Support for both built-in and custom themes
+- Utilizes CSS color styles / variables to support customizable themes
+- Special server theme endpoint (/__theme__) to serves the dynamic theme page based on theme settings
+- Implements overridable colors via admin configurable options for the UI bundle
+- Allows for custom graphic in upper-left of the left-panel
+- Dark/Light mode supported in each theme, so users can still set their preference
+- Theme color palette is configured for echarts
+- Automatic update of certain css variables will eliminate need for many widgets/code to check dark mode
+
+## How it works
+
+### New CSS variables for theme definition
+A set of openHAB specific variables are defined that then propagate and redefined the hard-coded f7 color variables and are utilized for echarts, etc.
+
+| CSS Var Name                       | Default Setting           | Description                                                    |
+|------------------------------------|---------------------------|----------------------------------------------------------------|
+| <b>openHAB Branding Colors</b>     |                           |                                                                |
+| --oh-branding-color                | #e64a19                   | Official openHAB branding color (do not change)                |
+| --oh-branding-alt-color            | #2196F3                   | Un-official alternate color used in UI (do not change)         |
+| <b>Key Theme Parameters</b>        |                           |                                                                |
+| --oh-lightmode-text-color **       | #000000                   | Text color to use in light-mode                                |
+| --oh-darkmode-text-color **        | #ffffff                   | Text color to use in dark-mode                                 |
+| --oh-lightmode-text-alt-color **   | --oh-branding-alt-color   | Alternative highlight color to use in light-mode               |
+| --oh-darkmode-text-alt-color **    | --oh-branding-alt-color   | Alternative highlight color to use in dark-mode                |
+| --oh-lightmode-background-color ** | #ffffff                   | Background color to use in light-mode                          |
+| --oh-darkmode-background-color **  | #121212                   | Background color to use in dark-mode                           |
+| --oh-theme-color                   | --oh-branding-color       | Primary theme color to use                                     |
+| --oh-theme-alt-color               | --oh-branding-alt-color   | Secondary theme color to use                                   |
+| --oh-text-color *                  | --oh-*-text-color         | Automatically set to either light or dark text variety         |
+| --oh-text-alt-color *              | --oh-*-text-alt-color     | Automatically set to either light or dark text-alt variety     |
+| --oh-text-inverse-color *          | --oh-*-text-inverse-color | Automatically set to the inverse of light or dark mode variety |
+| --oh-background-color *            | --oh-*-background-color   | Automatically set to either light or dark mode variety         |
+| <b>Primitive Colors</b>            |                           |                                                                |
+| --oh-red-color                     | #ff3b30                   |                                                                |
+| --oh-green-color                   | #4cd964                   |                                                                |
+| --oh-blue-color                    | #2196f3                   |                                                                |
+| --oh-pink-color                    | #ff2d55                   |                                                                |
+| --oh-yellow-color                  | #ffcc00                   |                                                                |
+| --oh-orange-color                  | #ff9500                   |                                                                |
+| --oh-purple-color                  | #9c27b0                   |                                                                |
+| --oh-deeppurple-color              | #673ab7                   |                                                                |
+| --oh-lightblue-color               | #5ac8fa                   |                                                                |
+| --oh-teal-color                    | #009688                   |                                                                |
+| --oh-lime-color                    | #cddc39                   |                                                                |
+| --oh-deeporange-color              | #ff6b22                   |                                                                |
+| --oh-gray-color                    | #8e8e93                   |                                                                |
+| --oh-white-color                   | #ffffff                   |                                                                |
+| --oh-black-color                   | #000000                   |                                                                |
+| <b>Palette Colors</b>              |                           |                                                                |
+| --oh-palette-1-color               | --oh-blue-color           |                                                                |
+| --oh-palette-2-color               | --oh-green-color          |                                                                |
+| --oh-palette-3-color               | --oh-yellow-color         |                                                                |
+| --oh-palette-4-color               | --oh-pink-color           |                                                                |
+| --oh-palette-5-color               | --oh-lightblue-color      |                                                                |
+| --oh-palette-6-color               | --oh-teal-color           |                                                                |
+| --oh-palette-7-color               | --oh-orange-color         |                                                                |
+| --oh-palette-8-color               | --oh-deeppurple-color     |                                                                |
+| --oh-palette-9-color               | --oh-deeporange-color     |                                                                |
+
+
+In addition to these variables, there are also color tone varients for each of these colors automatically created (see Further Work below on limitations). Note, colors designated with ** do not have these varients.
+
+| Variant                                           | Description                                                                              | Example                                                |
+|---------------------------------------------------|------------------------------------------------------------------------------------------|--------------------------------------------------------|
+| *-shade                                           | Darker shade of the specific color                                                       | --oh-background-color-shade, -oh-palette-1-color-shade |
+| *-tint                                            | Lighter tint of the specific color                                                       | --oh-theme-color-tint, --oh-theme-alt-color-tint       |
+| --oh-background-shade-2<br>--oh-background-tint-2 | Another level darker/lighter than -shade/-tint (only availble for --oh-background-color) |                                                        |
+
+
+#### Notes
+
+##### Key Theme Parmeters
+- These are the key parameters used in defining a theme. With the exception of the parameters with the *, these are available to be customized via the settings menu.
+- The variables with the * should be used by widgets, etc. as they will adjust automatically depending on dark or light theme setting.
+
+##### Primitive Colors
+- Should be only utilized when a specific color is required (i.e red for warning, green for success).
+- Key parameter or palette colors should be utlized in most places so that theme colors can be appropriately applied.
+- These can be set to align with the theme (for instance a muted theme can tone down these colors to deliver a consistent look/feel).
+- Default values are based on f7 default values.
+- f7-color-* values are assigned to these values so that current UIs will adjust accordingly.
+- These can be further customized via the settings menu.
+##### Palette Colors
+- Palette colors provide a consistent palette to use for elements where color variety is needed (for instance the color of semantic boxes in the UI or echart color scheme).
+- For instance, if you have a monotone palette, these may be all different shades of a single color (see theme-coastalblue)
+- These can be further customized via the settings menu.
+
+### Framework7 Variables
+
+- Hard-coding of specific colors in the framework7 have been updated to use the above parameters. For instance, the background colors in f7 were hard-coded as black/white depending on mode - these are now based on the above --oh-background-color paramater.
+- All f7-color-* (red, blue, ...) are assigned to use the above Primitive Colors. For instance, is one uses --f7-color-red, the --oh-red-color value will be returned. To reduce the dependency on f7, it is recommended that the --oh-*-color variable be utilized directly in the future.
+- All color classes (.color-*, .text-color-*, .bg-color-*, .border-color-*, .ripple-color-*) now utilize the above colors. The allows all f7 components to adapt to the theme. For instance, to apply a color to an element, one simply needs to apply the specific color class. Further, if f7 components offer a "color" prop the appropriate palette color will be used.
+
+### Additional Color Classes
+
+Several additional color classes are available to be used to align with theme. These can also be used as "color" props for f7 components (i.e. color: 'theme-alt').
+
+* .color-palette-#, .text-color-palette-#, .bg-color-pallete-#, .border-color-palette-# - these should be used if the element color should adapt to the theme. For instance, for the semantic model cards, these are now used so they adapt. This also allows the "palette-*" to be used directly when specifying a f7 color prop for an element (i.e. color: palette-1)
+* .color-theme, .text-color-theme, .bg-color-theme, .border-color-theme
+* .color-theme-alt, .text-color-theme-alt, .bg-color-theme-alt, .border-color-theme-alt
+
+### UI configuration settings
+
+Several of the key parameters are available for the admin to override via the configuration settings for the bundle.
+These values are then included to the file served from the server endpoint /__theme__.
+One special css value is --oh-logo parameter which can be used to specfy a custom image to use for the upper-left branding left-panel of the ui.
+
+### Theme css file insertion
+
+The theme file is imported via a special endpoint from the server (/__theme__).
+The server will look at the ui configuration settings to determine what to serve.
+* If a css file name is specified, the server will serve this file to the client.
+Note, the acceptable fields will either be /css/theme-*.css for built-in themes, or /static/* for custom themes installed in the conf/html directory on the server.
+* If additional color (and logo) settings are configured, the served file is appended.
+Note, any color override based on these settings will override any other parameter.
+
+Given that CSS settings are determined by the "last" specified setting, it is important that the /__theme__ css files are loaded in the correct place.
+This is accomplished via a special plugin in the vite.config.ts.
+Also, to support updates to settings without having to refresh the client app, the client will append a random id to the endpoint (/__theme--123456) which will bust the cache and force a reload.
+
+### useThemeStore
+
+The primary ways to use color in componets/widgets/elements are:
+* use of color classes (ie. color-*, text-color-*, ...)
+* using the "color" prop for a component, if available (i.e. color: "theme-alt")
+* directly referencing the css var (i.e. var(--oh-text-color))
+
+However, there are times, you might need to get the raw hex value of a color.
+To get these values, they can be pulled from the reactive useThemeStore.ohVariables store.
+Whenever a new theme is applied (or dark/light mode changes), the css variables are reloaded into the store.
+The store is used to set the palette for echarts and also for extracting the --oh-logo variable if one exists to show a custom logo.
+
+## Further Work
+- Currently utilizes modern css features for variable/dynamic color (oklch | color-mixin) which are not supported in older browers. Need to add a fallback mechanism to support older browsers
+- Only tested on chrome and limited safari on desktop to date.
+- Framework 7 has several color variables which change for md and ios. These have currently not been implemented.
+- When the configuration is updated for the ui bundle (via settings menu), the bundle is re-activated.
+I tried implementing a @Modified handler, but this was causing stack reset issues in the bundle.
+- Need further review of the removed color settings in the default framework7 css file.
+Even with the default theme applied, things are a bit different
+- some widgets (i.e. oh-knob) colors are not supported via classes yet

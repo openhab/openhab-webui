@@ -16,7 +16,7 @@
         <div class="display-flex margin justify-content-center">
           <f7-link v-if="context.component.slots.default.length > 0"
                    href="#"
-                   class="text-color-alt display-flex flex-direction-column margin-right"
+                   class="text-color-theme-alt display-flex flex-direction-column margin-right"
                    :popover-close="'.item-popover-' + uid"
                    @click="context.editmode.configureWidget(context.component.slots.default[0], context)"
                    icon-f7="square_pencil">
@@ -24,7 +24,7 @@
           </f7-link>
           <f7-link v-if="context.component.slots.default.length > 0"
                    href="#"
-                   class="text-color-alt display-flex flex-direction-column margin-right"
+                   class="text-color-theme-alt display-flex flex-direction-column margin-right"
                    :popover-close="'.item-popover-' + uid"
                    @click="context.editmode.editWidgetCode(context.component.slots.default[0], context)"
                    icon-f7="doc_text">

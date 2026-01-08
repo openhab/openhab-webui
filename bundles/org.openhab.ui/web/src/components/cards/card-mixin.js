@@ -52,7 +52,7 @@ export default {
           if (equipmentType === 'Window') return 'palette-1'
           if (equipmentType === 'Door') return 'palette-3'
           if (equipmentType === 'Camera') return 'palette-4'
-          if (equipmentType === 'Blinds') return 'paletter-6'
+          if (equipmentType === 'Blinds') return 'palette-6'
           if (equipmentType === 'SmokeDetector' || equipmentType === 'Siren') return 'palette-8'
           // etc. - use a map
           return 'gray'

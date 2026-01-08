@@ -88,7 +88,7 @@ export default {
       locale: echartsLocale
     } : null
 
-    registerCustomTheme()
+    registerCustomTheme()   // TODO - don't have to do this every time
     return { echartsLocale, initOptions }
   },
   computed: {

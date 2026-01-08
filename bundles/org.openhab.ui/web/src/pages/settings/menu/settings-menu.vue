@@ -457,9 +457,9 @@ export default {
     .settings-col
       width 33%
 .settings-menu .icon
-  color var(--f7-color-blue)
+  color var(--oh-theme-color)
 .theme-filled .settings-menu .icon
-  color var(--f7-color-gray) !important
+  color var(--oh-gray-color) !important
 .aurora .settings-menu .icon
   font-size 24px
 </style>
