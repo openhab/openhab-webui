@@ -1,10 +1,10 @@
 {
   "$schema": "./node_modules/oxfmt/configuration_schema.json",
   "bracketSameLine": true,
-  "bracketSpacing": false,
+  "bracketSpacing": true,
   "embeddedLanguageFormatting": "off",
   "endOfLine": "lf",
-  "printWidth": 100,
+  "printWidth": 140,
   "semi": false,
   "singleQuote": true,
   "tabWidth": 2,
