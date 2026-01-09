@@ -4,18 +4,16 @@ import { completionStart, hintItems, hintParameterValues, hintParameters } from 
 
 let moduleTypesCache = null
 
-function getModuleTypes (context, section) {
+function getModuleTypes(context, section) {
   if (moduleTypesCache) return Promise.resolve(moduleTypesCache)
 
-  return context.view.$oh.api
-    .get('/rest/module-types' + (section ? '?type=' + section : ''))
-    .then((data) => {
-      moduleTypesCache = data
-      return data
-    })
+  return context.view.$oh.api.get('/rest/module-types' + (section ? '?type=' + section : '')).then((data) => {
+    moduleTypesCache = data
+    return data
+  })
 }
 
-function findModuleType (context, line) {
+function findModuleType(context, line) {
   const parentLine = findParent(context, line)
   const grandParentLine = findParent(context, parentLine)
   for (let l = grandParentLine.number + 1; l <= context.state.doc.lines; l++) {
@@ -26,7 +24,7 @@ function findModuleType (context, line) {
   }
 }
 
-function hintConfig (context, line, parentLine) {
+function hintConfig(context, line, parentLine) {
   const cursor = context.pos - line.from
   const moduleTypeUid = findModuleType(context, line)
   console.debug(`hinting config for module type: ${moduleTypeUid}`)
@@ -52,7 +50,7 @@ function hintConfig (context, line, parentLine) {
   })
 }
 
-function getNextId (view) {
+function getNextId(view) {
   let nextId = 1
   const lineIterator = view.state.doc.iterLines()
   while (!lineIterator.next().done) {
@@ -65,7 +63,7 @@ function getNextId (view) {
   return nextId
 }
 
-function buildModuleStructure (view, moduleType) {
+function buildModuleStructure(view, moduleType) {
   const nextId = getNextId(view)
   let ret = `  - inputs: {}\n    id: "${nextId}"\n`
   if (moduleType.configDescriptions.some((p) => p.required)) {
@@ -78,12 +76,12 @@ function buildModuleStructure (view, moduleType) {
   return ret
 }
 
-function hintSceneItems (context) {
+function hintSceneItems(context) {
   console.info('hinting in the items section (scenes)')
   return hintItems(context, { indent: 2, suffix: ': ' })
 }
 
-function hintModuleStructure (context, line, parentLine) {
+function hintModuleStructure(context, line, parentLine) {
   const section = parentLine.text.replace('s:', '').trim()
   if (section === 'item') {
     if (!line.text.includes(':')) return hintSceneItems(context)
@@ -111,7 +109,7 @@ function hintModuleStructure (context, line, parentLine) {
   })
 }
 
-export default function hint (context) {
+export default function hint(context) {
   const line = context.state.doc.lineAt(context.pos)
   const parentLine = findParent(context, line)
   console.debug('parent line', parentLine)

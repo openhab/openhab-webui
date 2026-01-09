@@ -5,12 +5,7 @@
       <f7-list-item v-if="tags.length > 0">
         <template #inner>
           <div>
-            <f7-chip v-for="tag in tags"
-                     :key="tag"
-                     :text="tag"
-                     :deleteable="!disabled"
-                     @delete="deleteTag"
-                     media-bg-color="blue">
+            <f7-chip v-for="tag in tags" :key="tag" :text="tag" :deleteable="!disabled" @delete="deleteTag" media-bg-color="blue">
               <template #media>
                 <f7-icon ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
               </template>
@@ -20,18 +15,16 @@
       </f7-list-item>
     </f7-list>
     <f7-list>
-      <f7-list-input v-if="!disabled"
-                     type="text"
-                     placeholder="Add tag"
-                     :value="pendingTag"
-                     @input="pendingTag = $event.target.value"
-                     :input="false"
-                     class="add-tag-input">
+      <f7-list-input
+        v-if="!disabled"
+        type="text"
+        placeholder="Add tag"
+        :value="pendingTag"
+        @input="pendingTag = $event.target.value"
+        :input="false"
+        class="add-tag-input">
         <template #input>
-          <input type="text"
-                 placeholder="Add tag"
-                 @keyup="keyUp"
-                 @blur="addTag">
+          <input type="text" placeholder="Add tag" @keyup="keyUp" @blur="addTag" />
         </template>
       </f7-list-input>
     </f7-list>

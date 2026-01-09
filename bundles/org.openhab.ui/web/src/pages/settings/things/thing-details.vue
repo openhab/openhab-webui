@@ -1,8 +1,5 @@
 <template>
-  <f7-page
-    @page:afterin="onPageAfterIn"
-    @page:beforeout="onPageBeforeOut"
-    class="thing-details-page">
+  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="thing-details-page">
     <f7-navbar no-hairline>
       <oh-nav-content
         :title="pageTitle + dirtyIndicator"
@@ -14,12 +11,7 @@
     </f7-navbar>
     <!-- force rerender to properly highlight currentTab === 'channels' if coming from channel config by using ready as key -->
     <f7-toolbar tabbar position="top" :key="ready">
-      <f7-link
-        @click="switchTab('thing')"
-        :tab-link-active="currentTab === 'thing' ? true : null"
-        tab-link="#thing">
-        Thing
-      </f7-link>
+      <f7-link @click="switchTab('thing')" :tab-link-active="currentTab === 'thing' ? true : null" tab-link="#thing"> Thing </f7-link>
       <f7-link
         v-show="!error"
         @click="switchTab('channels')"
@@ -27,11 +19,7 @@
         tab-link="#channels">
         Channels
       </f7-link>
-      <f7-link
-        v-show="!error"
-        @click="switchTab('code')"
-        :tab-link-active="currentTab === 'code' ? true : null"
-        tab-link="#code">
+      <f7-link v-show="!error" @click="switchTab('code')" :tab-link-active="currentTab === 'code' ? true : null" tab-link="#code">
         Code
       </f7-link>
     </f7-toolbar>
@@ -52,16 +40,11 @@
                 @click="toggleDisabled" />
             </div>
             Status:
-            <f7-chip
-              class="margin-left"
-              :text="thing.statusInfo.status"
-              :color="thingStatusBadgeColor(thing.statusInfo)" />
+            <f7-chip class="margin-left" :text="thing.statusInfo.status" :color="thingStatusBadgeColor(thing.statusInfo)" />
             <div>
               <strong>{{ (thing.statusInfo.statusDetail !== 'NONE') ? thing.statusInfo.statusDetail : '&nbsp;' }}</strong>
-              <br>
-              <div
-                v-if="thingStatusDescription(thing.statusInfo)"
-                v-html="thingStatusDescription(thing.statusInfo)" />
+              <br />
+              <div v-if="thingStatusDescription(thing.statusInfo)" v-html="thingStatusDescription(thing.statusInfo)" />
             </div>
           </f7-col>
         </f7-block>
@@ -72,22 +55,15 @@
             <f7-chip class="margin-left" text="________" />
             <div>
               <strong>____ _______</strong>
-              <br>
+              <br />
             </div>
           </f7-col>
         </f7-block>
 
         <f7-block v-if="ready && !error" class="block-narrow no-margin-bottom">
           <f7-col>
-            <thing-general-settings
-              :thing="thing"
-              :thing-type="thingType"
-              :ready="true"
-              :read-only="!editable" />
-            <f7-block-title
-              v-if="thingType && thingType.UID"
-              medium
-              style="margin-bottom: var(--f7-list-margin-vertical)">
+            <thing-general-settings :thing="thing" :thing-type="thingType" :ready="true" :read-only="!editable" />
+            <f7-block-title v-if="thingType && thingType.UID" medium style="margin-bottom: var(--f7-list-margin-vertical)">
               Information
             </f7-block-title>
             <f7-block-footer v-if="!editable" class="no-margin padding-left">
@@ -138,14 +114,8 @@
                 :badge-color="(thing.firmwareStatus.status) === 'UPDATE_EXECUTABLE' ? 'green' : 'gray'">
                 <f7-accordion-content>
                   <f7-list>
-                    <f7-list-item
-                      class="thing-property"
-                      title="Status"
-                      :after="thing.firmwareStatus.status" />
-                    <f7-list-item
-                      class="thing-property"
-                      title="Current Version"
-                      :after="thing.properties.firmwareVersion" />
+                    <f7-list-item class="thing-property" title="Status" :after="thing.firmwareStatus.status" />
+                    <f7-list-item class="thing-property" title="Current Version" :after="thing.properties.firmwareVersion" />
                     <f7-list-item
                       v-for="firmware in firmwares"
                       class="thing-property"
@@ -154,19 +124,14 @@
                       :title="firmware.version"
                       :after="firmware.description"
                       :footer="firmware.changelog">
-                      <f7-icon
-                        v-if="firmware.version === thing.properties.firmwareVersion"
-                        f7="checkmark"
-                        color="green" />
+                      <f7-icon v-if="firmware.version === thing.properties.firmwareVersion" f7="checkmark" color="green" />
                     </f7-list-item>
                   </f7-list>
                 </f7-accordion-content>
               </f7-list-item>
             </f7-list>
 
-            <f7-block-title medium class="no-margin-bottom">
-              Configuration
-            </f7-block-title>
+            <f7-block-title medium class="no-margin-bottom"> Configuration </f7-block-title>
             <config-sheet
               ref="thingConfiguration"
               :parameter-groups="configDescriptions.parameterGroups"
@@ -179,9 +144,7 @@
 
             <!-- Thing Actions & UI Actions -->
             <template v-if="thingActions?.length > 0 || thingType?.UID?.startsWith('zwave:') || hasMatterThreadProperties">
-              <f7-block-title medium class="no-margin-top">
-                Actions
-              </f7-block-title>
+              <f7-block-title medium class="no-margin-top"> Actions </f7-block-title>
               <f7-list class="margin-top" media-list>
                 <f7-list-item
                   v-if="thingType?.UID?.startsWith('zwave:')"
@@ -208,21 +171,14 @@
         <f7-block v-else-if="!error" class="block-narrow skeleton-text skeleton-effect-blink">
           <f7-col>
             <thing-general-settings :thing="{}" :thing-type="{}" :ready="false" />
-            <f7-block-title medium>
-              ____ _______
-            </f7-block-title>
-            <div class="margin-left">
-              ____ ____ ____ _____ ___ __ ____ __ ________ __ ____ ___ ____
-            </div>
+            <f7-block-title medium> ____ _______ </f7-block-title>
+            <div class="margin-left">____ ____ ____ _____ ___ __ ____ __ ________ __ ____ ___ ____</div>
           </f7-col>
         </f7-block>
 
         <!-- Config Actions (DEPRECATED) -->
         <div v-if="ready && !error">
-          <f7-block
-            v-for="actionGroup in configActionsByGroup"
-            class="block-narrow"
-            :key="actionGroup.group.name">
+          <f7-block v-for="actionGroup in configActionsByGroup" class="block-narrow" :key="actionGroup.group.name">
             <f7-col>
               <f7-block-title class="parameter-group-title">
                 {{ actionGroup.group.label }}
@@ -250,30 +206,19 @@
                 color="blue"
                 title="Install Binding"
                 @click="installBinding" />
-              <f7-list-button
-                v-if="!error"
-                color="blue"
-                title="Duplicate Thing"
-                @click="duplicateThing" />
+              <f7-list-button v-if="!error" color="blue" title="Duplicate Thing" @click="duplicateThing" />
               <f7-list-button
                 v-if="!error"
                 color="blue"
                 title="Copy File Definition"
                 @click="copyFileDefinitionToClipboard(ObjectType.THING, [thingId])" />
-              <f7-list-button
-                v-if="editable"
-                color="red"
-                title="Remove Thing"
-                @click="deleteThing" />
+              <f7-list-button v-if="editable" color="red" title="Remove Thing" @click="deleteThing" />
             </f7-list>
           </f7-col>
         </f7-block>
       </f7-tab>
 
-      <f7-tab
-        id="channels"
-        :disabled="!thingType?.channels ? true : null"
-        :tab-active="currentTab === 'channels' ? true : null">
+      <f7-tab id="channels" :disabled="!thingType?.channels ? true : null" :tab-active="currentTab === 'channels' ? true : null">
         <f7-block v-if="currentTab === 'channels'" class="block-narrow">
           <channel-list
             :thingType="thingType"
@@ -290,16 +235,8 @@
                 color="blue"
                 title="Add Channel"
                 @click="addChannel()" />
-              <f7-list-button
-                class="searchbar-ignore"
-                color="blue"
-                title="Add Equipment to Model"
-                @click="addToModel(true)" />
-              <f7-list-button
-                class="searchbar-ignore"
-                color="blue"
-                title="Add Points to Model"
-                @click="addToModel(false)" />
+              <f7-list-button class="searchbar-ignore" color="blue" title="Add Equipment to Model" @click="addToModel(true)" />
+              <f7-list-button class="searchbar-ignore" color="blue" title="Add Points to Model" @click="addToModel(false)" />
               <f7-list-button
                 v-if="hasLinkedItems"
                 class="searchbar-ignore"

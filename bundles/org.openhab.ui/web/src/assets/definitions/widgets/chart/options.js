@@ -18,7 +18,7 @@ export const aggregationTypeOptions = [
   { value: 'diff_last', label: 'Difference of lasts' }
 ]
 
-export function markerOptions (withTime = false) {
+export function markerOptions(withTime = false) {
   const opts = [
     { value: 'avg', label: 'Average' },
     { value: 'min', label: 'Minimum' },

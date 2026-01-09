@@ -36,25 +36,30 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
   const firmwares = ref<Firmware[]>([])
 
   // watch
-  watch(thing, () => {
-    if (!loading.value) {// ignore changes during loading
-      // create object clone to be able to delete the status part
-      // which can change from eventsource but doesn't mean a thing modification
-      let thingClone: any = cloneDeep(thing.value)
-      let savedThingClone: any = cloneDeep(savedThing.value)
-      if (!thingClone || !savedThingClone) return
+  watch(
+    thing,
+    () => {
+      if (!loading.value) {
+        // ignore changes during loading
+        // create object clone to be able to delete the status part
+        // which can change from eventsource but doesn't mean a thing modification
+        let thingClone: any = cloneDeep(thing.value)
+        let savedThingClone: any = cloneDeep(savedThing.value)
+        if (!thingClone || !savedThingClone) return
 
-      // check if the configuration has changed between the thing and the original/saved version
-      configDirty.value = !fastDeepEqual(thingClone.configuration, savedThingClone.configuration)
+        // check if the configuration has changed between the thing and the original/saved version
+        configDirty.value = !fastDeepEqual(thingClone.configuration, savedThingClone.configuration)
 
-      // check if the rest of the thing has changed between the thing and the original/saved version
-      delete thingClone.statusInfo
-      delete thingClone.configuration
-      delete savedThingClone.statusInfo
-      delete savedThingClone.configuration
-      thingDirty.value = !fastDeepEqual(thingClone, savedThingClone)
-    }
-  }, { deep: true })
+        // check if the rest of the thing has changed between the thing and the original/saved version
+        delete thingClone.statusInfo
+        delete thingClone.configuration
+        delete savedThingClone.statusInfo
+        delete savedThingClone.configuration
+        thingDirty.value = !fastDeepEqual(thingClone, savedThingClone)
+      }
+    },
+    { deep: true }
+  )
 
   // computed
   const editable = computed(() => thing.value?.editable)
@@ -62,7 +67,7 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
   const hasLinkedItems = computed(() => thing.value?.channels?.find((c: Channel) => c.linkedItems?.length))
 
   // methods
-  async function loadThingActions (thingUID: string): Promise<void> {
+  async function loadThingActions(thingUID: string): Promise<void> {
     try {
       const data: ThingActionsResponse = await api.get('/rest/actions/' + thingUID)
       thingActions.value = data
@@ -80,7 +85,7 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
     }
   }
 
-  async function loadConfigDescriptions (thingUID: string): Promise<void> {
+  async function loadConfigDescriptions(thingUID: string): Promise<void> {
     try {
       const data: ConfigDescriptionResponse = await api.get('/rest/config-descriptions/thing:' + thingUID)
       configDescriptions.value = data
@@ -93,7 +98,7 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
     }
   }
 
-  async function loadFirmwares (thingUID: string) {
+  async function loadFirmwares(thingUID: string) {
     try {
       firmwares.value = await api.get('/rest/things/' + thingUID + '/firmwares')
     } catch (e: any) {
@@ -101,41 +106,44 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
     }
   }
 
-  function load (thingUID: string, loadingFinishedCallback: (success: boolean) => void) {
+  function load(thingUID: string, loadingFinishedCallback: (success: boolean) => void) {
     if (loading.value) return
     loading.value = true
 
-    api.get('/rest/things/' + thingUID).then((data: ThingResponse) => {
-      thing.value = data
-
-      Promise.all([
-        api.get('/rest/thing-types/' + thing.value.thingTypeUID),
-        api.get('/rest/channel-types?prefixes=system,' + thing.value.thingTypeUID.split(':')[0]),
-        loadThingActions(thingUID)
-      ]).then((data2) => {
-        thingType.value = data2[0]
-        channelTypes.value = data2[1]
+    api
+      .get('/rest/things/' + thingUID)
+      .then((data: ThingResponse) => {
+        thing.value = data
 
         Promise.all([
-          loadConfigDescriptions(thingUID),
-          loadFirmwares(thingUID),
-          api.get('/rest/things/' + thingUID + '/config/status').then((statusData: any) => {
-            configStatusInfo.value = statusData
+          api.get('/rest/thing-types/' + thing.value.thingTypeUID),
+          api.get('/rest/channel-types?prefixes=system,' + thing.value.thingTypeUID.split(':')[0]),
+          loadThingActions(thingUID)
+        ]).then((data2) => {
+          thingType.value = data2[0]
+          channelTypes.value = data2[1]
+
+          Promise.all([
+            loadConfigDescriptions(thingUID),
+            loadFirmwares(thingUID),
+            api.get('/rest/things/' + thingUID + '/config/status').then((statusData: any) => {
+              configStatusInfo.value = statusData
+            })
+          ]).then(() => {
+            savedThing.value = cloneDeep(thing.value)
+            loadingFinishedCallback(true)
+            loading.value = false
           })
-        ]).then(() => {
-          savedThing.value = cloneDeep(thing.value)
-          loadingFinishedCallback(true)
-          loading.value = false
         })
       })
-    }).catch((err) => {
-      console.warn('Cannot load Thing: ' + err)
-      loadingFinishedCallback(false)
-      loading.value = false
-    })
+      .catch((err) => {
+        console.warn('Cannot load Thing: ' + err)
+        loadingFinishedCallback(false)
+        loading.value = false
+      })
   }
 
-  function save (forceSaveThing: boolean = false) {
+  function save(forceSaveThing: boolean = false) {
     if (!editable.value || !thing.value) return
 
     let endpoint: string, payload: any, successMessage: string
@@ -151,27 +159,34 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
       successMessage = 'Thing updated'
     }
 
-    api.put(endpoint, payload).then((data) => {
-      if (configDirty.value && !thingDirty.value && !forceSaveThing) configDirty.value = false
-      thingDirty.value = false
-      if (configDirty.value) {
-        // if still dirty, save again to save the configuration
-        save()
-      }
-      f7.toast.create({
-        text: successMessage,
-        destroyOnClose: true,
-        closeTimeout: 2000
-      }).open()
-    }).catch((err) => {
-      if (err === 409 || err === 'Conflict') {
-        f7.toast.create({
-          text: 'Cannot modify configuration of uninitialized Thing',
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-      }
-    })
+    api
+      .put(endpoint, payload)
+      .then((data) => {
+        if (configDirty.value && !thingDirty.value && !forceSaveThing) configDirty.value = false
+        thingDirty.value = false
+        if (configDirty.value) {
+          // if still dirty, save again to save the configuration
+          save()
+        }
+        f7.toast
+          .create({
+            text: successMessage,
+            destroyOnClose: true,
+            closeTimeout: 2000
+          })
+          .open()
+      })
+      .catch((err) => {
+        if (err === 409 || err === 'Conflict') {
+          f7.toast
+            .create({
+              text: 'Cannot modify configuration of uninitialized Thing',
+              destroyOnClose: true,
+              closeTimeout: 2000
+            })
+            .open()
+        }
+      })
   }
 
   return {

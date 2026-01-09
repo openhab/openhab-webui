@@ -1,123 +1,113 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:afterout="stopEventSource">
     <f7-navbar>
-      <oh-nav-content title="Inbox"
-                      back-link="Things"
-                      back-link-url="/settings/things/"
-                      :f7router>
+      <oh-nav-content title="Inbox" back-link="Things" back-link-url="/settings/things/" :f7router>
         <template #right>
-          <f7-link icon-md="material:done_all"
-                   @click="toggleCheck()"
-                   :text="(!theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
+          <f7-link icon-md="material:done_all" @click="toggleCheck()" :text="(!theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
         </template>
       </oh-nav-content>
       <f7-subnavbar :inner="false" v-show="initSearchbar">
-        <f7-searchbar v-if="initSearchbar"
-                      ref="searchbar"
-                      class="searchbar-inbox"
-                      :init="initSearchbar"
-                      custom-search
-                      @searchbar:search="search"
-                      @searchbar:clear="clearSearch"
-                      :disable-button="!theme.aurora" />
+        <f7-searchbar
+          v-if="initSearchbar"
+          ref="searchbar"
+          class="searchbar-inbox"
+          :init="initSearchbar"
+          custom-search
+          @searchbar:search="search"
+          @searchbar:clear="clearSearch"
+          :disable-button="!theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
-    <f7-toolbar v-if="showCheckboxes"
-                class="contextual-toolbar"
-                :class="{ navbar: theme.md }"
-                bottom-ios
-                bottom-aurora>
-      <div v-if="!theme.md && selectedItems.length > 0"
-           class="display-flex justify-content-center"
-           style="width: 100%">
-        <f7-button @click="confirmActionOnSelection('delete')"
-                   color="red"
-                   class="delete display-flex flex-direction-row margin-right"
-                   icon-ios="f7:trash"
-                   icon-aurora="f7:trash">
+    <f7-toolbar v-if="showCheckboxes" class="contextual-toolbar" :class="{ navbar: theme.md }" bottom-ios bottom-aurora>
+      <div v-if="!theme.md && selectedItems.length > 0" class="display-flex justify-content-center" style="width: 100%">
+        <f7-button
+          @click="confirmActionOnSelection('delete')"
+          color="red"
+          class="delete display-flex flex-direction-row margin-right"
+          icon-ios="f7:trash"
+          icon-aurora="f7:trash">
           &nbsp;Remove
         </f7-button>
-        <f7-button v-if="selectedItems.map(uid => inbox.find(e => e.thingUID === uid))?.filter(e => e.flag !== 'IGNORED').length"
-                   @click="confirmActionOnSelection('ignore')"
-                   color="orange"
-                   class="ignore display-flex flex-direction-row margin-right"
-                   icon-ios="f7:eye_slash"
-                   icon-aurora="f7:eye_slash">
+        <f7-button
+          v-if="selectedItems.map(uid => inbox.find(e => e.thingUID === uid))?.filter(e => e.flag !== 'IGNORED').length"
+          @click="confirmActionOnSelection('ignore')"
+          color="orange"
+          class="ignore display-flex flex-direction-row margin-right"
+          icon-ios="f7:eye_slash"
+          icon-aurora="f7:eye_slash">
           &nbsp;Ignore
         </f7-button>
-        <f7-button v-else
-                   @click="confirmActionOnSelection('unignore')"
-                   color="orange"
-                   class="unignore display-flex flex-direction-row margin-right"
-                   icon-ios="f7:eye"
-                   icon-aurora="f7:eye">
+        <f7-button
+          v-else
+          @click="confirmActionOnSelection('unignore')"
+          color="orange"
+          class="unignore display-flex flex-direction-row margin-right"
+          icon-ios="f7:eye"
+          icon-aurora="f7:eye">
           &nbsp;Unignore
         </f7-button>
-        <f7-button @click="confirmActionOnSelection('approve')"
-                   color="green"
-                   class="approve display-flex flex-direction-row margin-right"
-                   icon-ios="f7:hand_thumbsup"
-                   icon-aurora="f7:hand_thumbsup">
+        <f7-button
+          @click="confirmActionOnSelection('approve')"
+          color="green"
+          class="approve display-flex flex-direction-row margin-right"
+          icon-ios="f7:hand_thumbsup"
+          icon-aurora="f7:hand_thumbsup">
           &nbsp;Approve
         </f7-button>
         <!-- buttons for wider screen -->
         <template v-if="$f7dim.width >= 500">
-          <f7-button @click="copyFileDefinitionToClipboard(ObjectType.THING, selectedItems)"
-                     color="blue"
-                     class="copy wider-screen display-flex flex-direction-row"
-                     icon-ios="f7:square_on_square"
-                     icon-aurora="f7:square_on_square">
+          <f7-button
+            @click="copyFileDefinitionToClipboard(ObjectType.THING, selectedItems)"
+            color="blue"
+            class="copy wider-screen display-flex flex-direction-row"
+            icon-ios="f7:square_on_square"
+            icon-aurora="f7:square_on_square">
             &nbsp;Copy
           </f7-button>
         </template>
         <!-- buttons for narrower screen -->
         <template v-else>
-          <f7-button color="blue" class="popover-button narrower-screen" popover-open=".item-popover">
-            ...
-          </f7-button>
-          <f7-popover class="item-popover"
-                      ref="popover"
-                      :backdrop="false"
-                      :close-by-backdrop-click="true"
-                      :style="{ width: '96px' }"
-                      :animate="false">
+          <f7-button color="blue" class="popover-button narrower-screen" popover-open=".item-popover"> ... </f7-button>
+          <f7-popover
+            class="item-popover"
+            ref="popover"
+            :backdrop="false"
+            :close-by-backdrop-click="true"
+            :style="{ width: '96px' }"
+            :animate="false">
             <div class="margin-vertical display-flex justify-content-center" style="width: 100%">
-              <f7-link @click="performActionOnSelection('copy')"
-                       color="blue"
-                       class="copy display-flex flex-direction-column margin-right"
-                       icon-ios="f7:square_on_square"
-                       icon-aurora="f7:square_on_square"
-                       popover-close=".item-popover">
+              <f7-link
+                @click="performActionOnSelection('copy')"
+                color="blue"
+                class="copy display-flex flex-direction-column margin-right"
+                icon-ios="f7:square_on_square"
+                icon-aurora="f7:square_on_square"
+                popover-close=".item-popover">
                 Copy
               </f7-link>
             </div>
           </f7-popover>
         </template>
       </div>
-      <f7-link v-if="theme.md"
-               icon-md="material:close"
-               icon-color="white"
-               @click="showCheckboxes = false" />
-      <div v-if="theme.md" class="title">
-        {{ selectedItems.length }} selected
-      </div>
+      <f7-link v-if="theme.md" icon-md="material:close" icon-color="white" @click="showCheckboxes = false" />
+      <div v-if="theme.md" class="title">{{ selectedItems.length }} selected</div>
       <div v-if="theme.md && selectedItems.length > 0" class="right">
-        <f7-link v-show="selectedItems.length"
-                 icon-md="material:delete"
-                 icon-color="white"
-                 @click="confirmActionOnSelection('delete')" />
-        <f7-link v-show="selectedItems.length"
-                 icon-md="material:visibility_off"
-                 icon-color="white"
-                 @click="confirmActionOnSelection('ignore')" />
-        <f7-link v-show="selectedItems.length"
-                 icon-md="material:thumb_up"
-                 icon-color="white"
-                 @click="confirmActionOnSelection('approve')" />
-        <f7-link v-show="selectedItems.length"
-                 icon-md="material:content_copy"
-                 icon-color="white"
-                 @click="copyFileDefinitionToClipboard(ObjectType.THING, selectedItems)" />
+        <f7-link v-show="selectedItems.length" icon-md="material:delete" icon-color="white" @click="confirmActionOnSelection('delete')" />
+        <f7-link
+          v-show="selectedItems.length"
+          icon-md="material:visibility_off"
+          icon-color="white"
+          @click="confirmActionOnSelection('ignore')" />
+        <f7-link
+          v-show="selectedItems.length"
+          icon-md="material:thumb_up"
+          icon-color="white"
+          @click="confirmActionOnSelection('approve')" />
+        <f7-link
+          v-show="selectedItems.length"
+          icon-md="material:content_copy"
+          icon-color="white"
+          @click="copyFileDefinitionToClipboard(ObjectType.THING, selectedItems)" />
       </div>
     </f7-toolbar>
 
@@ -139,7 +129,10 @@
               <f7-link @click="selectDeselectAll" :text="areAllSelected ? 'Deselect all' : 'Select all'" />
             </template>
           </span>
-          <div v-if="!$device.desktop && $f7dim.width < 1024" style="text-align: right; color: var(--f7-block-text-color); font-weight: normal" class="float-right">
+          <div
+            v-if="!$device.desktop && $f7dim.width < 1024"
+            style="text-align: right; color: var(--f7-block-text-color); font-weight: normal"
+            class="float-right">
             <label class="advanced-label">
               <f7-checkbox v-model:checked="showIgnored" @change="changeIgnored" />
               Show ignored
@@ -154,12 +147,8 @@
         </f7-block-title>
         <div class="searchbar-found padding-left padding-right" v-show="!ready || inboxCount > 0">
           <f7-segmented strong tag="p">
-            <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')">
-              Alphabetical
-            </f7-button>
-            <f7-button :active="groupBy === 'binding'" @click="switchGroupOrder('binding')">
-              By binding
-            </f7-button>
+            <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')"> Alphabetical </f7-button>
+            <f7-button :active="groupBy === 'binding'" @click="switchGroupOrder('binding')"> By binding </f7-button>
           </f7-segmented>
         </div>
 
@@ -177,26 +166,24 @@
           </f7-list-group>
         </f7-list>
 
-        <f7-list v-else
-                 media-list
-                 class="searchbar-found col"
-                 :contacts-list="groupBy === 'alphabetical'">
+        <f7-list v-else media-list class="searchbar-found col" :contacts-list="groupBy === 'alphabetical'">
           <f7-list-group v-for="(inboxWithInitial, initial) in filteredIndexedInbox" :key="initial">
             <f7-list-item v-if="inboxWithInitial.length" :title="initial" group-title />
-            <f7-list-item v-for="entry in inboxWithInitial"
-                          :key="entry.thingUID"
-                          :link="true"
-                          media-item
-                          :checkbox="showCheckboxes"
-                          :checked="isChecked(entry.thingUID) ? true : null"
-                          @change="(e) => toggleItemCheck(e, entry.thingUID)"
-                          @click.ctrl="(e) => ctrlClick(e, entry)"
-                          @click.meta="(e) => ctrlClick(e, entry)"
-                          @click.exact="(e) => click(e, entry)"
-                          :title="entry.label"
-                          :subtitle="entry.representationProperty ? entry.properties[entry.representationProperty] : ''"
-                          :footer="entry.thingUID"
-                          :badge="(entry.flag === 'IGNORED') ? 'IGNORED' : ''" />
+            <f7-list-item
+              v-for="entry in inboxWithInitial"
+              :key="entry.thingUID"
+              :link="true"
+              media-item
+              :checkbox="showCheckboxes"
+              :checked="isChecked(entry.thingUID) ? true : null"
+              @change="(e) => toggleItemCheck(e, entry.thingUID)"
+              @click.ctrl="(e) => ctrlClick(e, entry)"
+              @click.meta="(e) => ctrlClick(e, entry)"
+              @click.exact="(e) => click(e, entry)"
+              :title="entry.label"
+              :subtitle="entry.representationProperty ? entry.properties[entry.representationProperty] : ''"
+              :footer="entry.thingUID"
+              :badge="(entry.flag === 'IGNORED') ? 'IGNORED' : ''" />
           </f7-list-group>
         </f7-list>
         <f7-list v-if="ready && searchQuery && filteredItems.length === 0">
@@ -210,10 +197,7 @@
     </f7-block>
 
     <template #fixed>
-      <f7-fab v-show="!showCheckboxes"
-              position="right-bottom"
-              color="blue"
-              href="/settings/things/add/">
+      <f7-fab v-show="!showCheckboxes" position="right-bottom" color="blue" href="/settings/things/add/">
         <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
         <f7-icon ios="f7:close" md="material:close" aurora="f7:close" />
       </f7-fab>

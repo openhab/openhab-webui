@@ -1,14 +1,14 @@
 /*
-* Notes:
-* - Master volume has been removed as it isn't reliable in openhab: see https://github.com/openhab/openhab-distro/issues/1237
-* - Play or streaming from the default sink have been omitted as they are felt not be so useful.
-* - It is known that "webaudio" isn't working on OH3 at the moment: https://github.com/openhab/openhab-webui/issues/743
-* - Even though "enhancedjavasound" is provided as a sink, currently it is not clear what the intention is
-*
-* See more background info on openHAB multimedia here: https://www.openhab.org/docs/configuration/multimedia.html
-*
-* supports jsscripting
-*/
+ * Notes:
+ * - Master volume has been removed as it isn't reliable in openhab: see https://github.com/openhab/openhab-distro/issues/1237
+ * - Play or streaming from the default sink have been omitted as they are felt not be so useful.
+ * - It is known that "webaudio" isn't working on OH3 at the moment: https://github.com/openhab/openhab-webui/issues/743
+ * - Even though "enhancedjavasound" is provided as a sink, currently it is not clear what the intention is
+ *
+ * See more background info on openHAB multimedia here: https://www.openhab.org/docs/configuration/multimedia.html
+ *
+ * supports jsscripting
+ */
 
 import * as Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript'
@@ -18,8 +18,7 @@ import { valueToCode } from '@/assets/definitions/blockly/utils.js'
 export default function (f7, sinks, voices) {
   Blockly.Blocks['oh_volumeslider'] = {
     init: function () {
-      this.appendDummyInput()
-        .appendField(new FieldSlider(50), 'volume')
+      this.appendDummyInput().appendField(new FieldSlider(50), 'volume')
       this.setColour(210)
       this.setInputsInline(true)
       this.setOutput(true, null)
@@ -33,17 +32,13 @@ export default function (f7, sinks, voices) {
   }
 
   /*
-  * Plays a file (like mp3) which resides in conf/sounds to the given sink
-  * Blockly part
-  */
+   * Plays a file (like mp3) which resides in conf/sounds to the given sink
+   * Blockly part
+   */
   Blockly.Blocks['oh_playmedia_sink'] = {
     init: function () {
-      this.appendValueInput('fileName')
-        .appendField('play audio')
-        .setCheck('String')
-      this.appendValueInput('sinkName')
-        .setCheck(null)
-        .appendField('on')
+      this.appendValueInput('fileName').appendField('play audio').setCheck('String')
+      this.appendValueInput('sinkName').setCheck(null).appendField('on')
       this.setInputsInline(false)
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
@@ -54,9 +49,9 @@ export default function (f7, sinks, voices) {
   }
 
   /*
-  * Plays a file (like mp3) which resides in conf/sounds to the given sink
-  * Code part
-  */
+   * Plays a file (like mp3) which resides in conf/sounds to the given sink
+   * Code part
+   */
   javascriptGenerator.forBlock['oh_playmedia_sink'] = function (block) {
     let fileName = valueToCode(block, 'fileName', javascriptGenerator.ORDER_ATOMIC)
     let sinkName = valueToCode(block, 'sinkName', javascriptGenerator.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
@@ -65,34 +60,30 @@ export default function (f7, sinks, voices) {
   }
 
   /*
-  * Plays a file (like mp3) which resides in conf/sounds to the given sink at a given volume
-  * Blockly part
-  */
+   * Plays a file (like mp3) which resides in conf/sounds to the given sink at a given volume
+   * Blockly part
+   */
   Blockly.Blocks['oh_playmedia_sink_volume'] = {
     init: function () {
-      this.appendValueInput('fileName')
-        .appendField('play audio')
-        .setCheck('String')
-      this.appendValueInput('sinkName')
-        .setCheck(null)
-        .appendField('on')
-      this.appendValueInput('volume')
-        .setCheck(null)
-        .appendField('at volume')
+      this.appendValueInput('fileName').appendField('play audio').setCheck('String')
+      this.appendValueInput('sinkName').setCheck(null).appendField('on')
+      this.appendValueInput('volume').setCheck(null).appendField('at volume')
       this.setInputsInline(false)
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
       this.setColour(0)
-      this.setTooltip('Plays a sound file from the sounds folder to the given sink at a given volume. \n Note: rather set volume first via thing volume channel, then play sound without volume parameter as it may be more reliable.')
+      this.setTooltip(
+        'Plays a sound file from the sounds folder to the given sink at a given volume. \n Note: rather set volume first via thing volume channel, then play sound without volume parameter as it may be more reliable.'
+      )
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-voice-and-multimedia.html#play-audio-with-volume')
     }
   }
 
   /*
-  * Plays a file (like mp3) which resides in conf/sounds to the given sink at a given volume
-  * Note: In general, though more complex, rather create a volume item for that device and set the volume first as it is more reliable.
-  * Code part
-  */
+   * Plays a file (like mp3) which resides in conf/sounds to the given sink at a given volume
+   * Note: In general, though more complex, rather create a volume item for that device and set the volume first as it is more reliable.
+   * Code part
+   */
   javascriptGenerator.forBlock['oh_playmedia_sink_volume'] = function (block) {
     let fileName = valueToCode(block, 'fileName', javascriptGenerator.ORDER_ATOMIC)
     let sinkName = valueToCode(block, 'sinkName', javascriptGenerator.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
@@ -102,17 +93,13 @@ export default function (f7, sinks, voices) {
   }
 
   /*
-  * Plays a stream from a URL on a specific sink
-  * Blockly part
-  */
+   * Plays a stream from a URL on a specific sink
+   * Blockly part
+   */
   Blockly.Blocks['oh_playstream_sink'] = {
     init: function () {
-      this.appendValueInput('url')
-        .appendField('play stream')
-        .setCheck('String')
-      this.appendValueInput('sinkName')
-        .setCheck(null)
-        .appendField('on')
+      this.appendValueInput('url').appendField('play stream').setCheck('String')
+      this.appendValueInput('sinkName').setCheck(null).appendField('on')
       this.setInputsInline(false)
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
@@ -123,9 +110,9 @@ export default function (f7, sinks, voices) {
   }
 
   /*
-  * Plays a stream from a URL on a specific sink
-  * Blockly part
-  */
+   * Plays a stream from a URL on a specific sink
+   * Blockly part
+   */
   javascriptGenerator.forBlock['oh_playstream_sink'] = function (block) {
     let url = valueToCode(block, 'url', javascriptGenerator.ORDER_ATOMIC)
     let sinkName = valueToCode(block, 'sinkName', javascriptGenerator.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
@@ -134,14 +121,12 @@ export default function (f7, sinks, voices) {
   }
 
   /*
-  * Stops a stream at a specific sink
-  * Blockly part
-  */
+   * Stops a stream at a specific sink
+   * Blockly part
+   */
   Blockly.Blocks['oh_stopstream_sink'] = {
     init: function () {
-      this.appendValueInput('sinkName')
-        .setCheck(null)
-        .appendField('stop stream on')
+      this.appendValueInput('sinkName').setCheck(null).appendField('stop stream on')
       this.setInputsInline(true)
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
@@ -152,9 +137,9 @@ export default function (f7, sinks, voices) {
   }
 
   /*
-  * Stops a stream on a specific sink
-  * Blockly part
-  */
+   * Stops a stream on a specific sink
+   * Blockly part
+   */
   javascriptGenerator.forBlock['oh_stopstream_sink'] = function (block) {
     let url = block.getFieldValue('url')
     let sinkName = valueToCode(block, 'sinkName', javascriptGenerator.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
@@ -163,19 +148,14 @@ export default function (f7, sinks, voices) {
   }
 
   /*
-  * Says some words via a device sink - TTS has to be installed for that
-  * Blockly part
-  */
+   * Says some words via a device sink - TTS has to be installed for that
+   * Blockly part
+   */
   Blockly.Blocks['oh_say'] = {
     init: function () {
-      this.appendValueInput('textToSay')
-        .appendField('say')
-      this.appendValueInput('deviceSink')
-        .appendField('on')
-        .setCheck('String')
-      this.appendValueInput('voice')
-        .appendField('with')
-        .setCheck('String')
+      this.appendValueInput('textToSay').appendField('say')
+      this.appendValueInput('deviceSink').appendField('on').setCheck('String')
+      this.appendValueInput('voice').appendField('with').setCheck('String')
       this.setInputsInline(false)
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
@@ -186,9 +166,9 @@ export default function (f7, sinks, voices) {
   }
 
   /*
-  * Says some text via a device sink - TTS has to be installed for that
-  * Code part
-  */
+   * Says some text via a device sink - TTS has to be installed for that
+   * Code part
+   */
   javascriptGenerator.forBlock['oh_say'] = function (block) {
     const textToSay = valueToCode(block, 'textToSay', javascriptGenerator.ORDER_ATOMIC)
     const voiceName = valueToCode(block, 'voice', javascriptGenerator.ORDER_ATOMIC).replace('(', '').replace(/[()]/g, '')
@@ -198,13 +178,11 @@ export default function (f7, sinks, voices) {
   }
 
   /*
-  * Provides all available audio sinks as a dropdown
-  */
+   * Provides all available audio sinks as a dropdown
+   */
   Blockly.Blocks['oh_audiosink_dropdown'] = {
     init: function () {
-      let input = this.appendDummyInput()
-        .appendField('audio sink')
-        .appendField(new Blockly.FieldDropdown(this.generateOptions), 'sinks')
+      let input = this.appendDummyInput().appendField('audio sink').appendField(new Blockly.FieldDropdown(this.generateOptions), 'sinks')
       this.setOutput(true, null)
     },
     generateOptions: function () {
@@ -227,14 +205,12 @@ export default function (f7, sinks, voices) {
   }
 
   /*
-  * Provides all available voices as a dropdown
-  */
+   * Provides all available voices as a dropdown
+   */
 
   Blockly.Blocks['oh_voices_dropdown'] = {
     init: function () {
-      let input = this.appendDummyInput()
-        .appendField('voice')
-        .appendField(new Blockly.FieldDropdown(this.generateOptions), 'voiceName')
+      let input = this.appendDummyInput().appendField('voice').appendField(new Blockly.FieldDropdown(this.generateOptions), 'voiceName')
       this.setOutput(true, null)
     },
     generateOptions: function () {

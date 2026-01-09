@@ -4,17 +4,14 @@ import type { AggregateCoordSettings } from './chart-aggregate'
 import type { TimeCoordSettings } from './chart-time'
 import { OhChartVisualmap, Orient, OhTimeSeries, OhAggregateSeries, OhValueAxis } from '@/types/components/widgets/index.gen.ts'
 
-function parseUnit (item: Item) : string {
-  let unit =
-    item.transformedState?.split(' ')[1] ??
-    item.state?.split(' ')[1] ??
-    item.stateDescription?.pattern?.split(' ')[1]
+function parseUnit(item: Item): string {
+  let unit = item.transformedState?.split(' ')[1] ?? item.state?.split(' ')[1] ?? item.stateDescription?.pattern?.split(' ')[1]
   if (unit) unit = unit.replace(/^%%/, '%')
 
   return unit || ''
 }
 
-export function getYAxis (item : Item, coordSettings : TimeCoordSettings | AggregateCoordSettings) : number {
+export function getYAxis(item: Item, coordSettings: TimeCoordSettings | AggregateCoordSettings): number {
   let unit = parseUnit(item)
   let unitAxis = coordSettings.valueAxesOptions.findIndex((a) => a.unit === unit)
   if (unitAxis >= 0) {
@@ -25,7 +22,7 @@ export function getYAxis (item : Item, coordSettings : TimeCoordSettings | Aggre
   }
 }
 
-export function renderVisualMap (visualMap: VisualMap) : UIComponent[] {
+export function renderVisualMap(visualMap: VisualMap): UIComponent[] {
   const config: OhChartVisualmap.Config = {
     show: true,
     orient: Orient.horizontal,
@@ -50,13 +47,15 @@ export function renderVisualMap (visualMap: VisualMap) : UIComponent[] {
     }
   }
 
-  return [{
-    component: 'oh-chart-visualmap',
-    config
-  }]
+  return [
+    {
+      component: 'oh-chart-visualmap',
+      config
+    }
+  ]
 }
 
-function getSplitLineConfig (split: ValueAxisSplitOptions | undefined): Record<string, any> {
+function getSplitLineConfig(split: ValueAxisSplitOptions | undefined): Record<string, any> {
   const config: Record<string, any> = {}
 
   const noSplitLine = [ValueAxisSplitOptions.none, ValueAxisSplitOptions.area, ValueAxisSplitOptions.area_minor]
@@ -70,7 +69,12 @@ function getSplitLineConfig (split: ValueAxisSplitOptions | undefined): Record<s
     config.minorSplitLine = { show: true }
   }
 
-  const showSplitArea = [ValueAxisSplitOptions.area, ValueAxisSplitOptions.line_area, ValueAxisSplitOptions.area_minor, ValueAxisSplitOptions.all]
+  const showSplitArea = [
+    ValueAxisSplitOptions.area,
+    ValueAxisSplitOptions.line_area,
+    ValueAxisSplitOptions.area_minor,
+    ValueAxisSplitOptions.all
+  ]
   if (split && showSplitArea.includes(split)) {
     config.splitArea = { show: true }
   }
@@ -78,8 +82,8 @@ function getSplitLineConfig (split: ValueAxisSplitOptions | undefined): Record<s
   return config
 }
 
-export function renderValueAxis (options : ValueAxisOptions) : UIComponent {
-  const config : OhValueAxis.Config = {
+export function renderValueAxis(options: ValueAxisOptions): UIComponent {
+  const config: OhValueAxis.Config = {
     gridIndex: 0,
     name: options.name || options.unit,
     scale: options.scale
@@ -108,12 +112,12 @@ export function renderValueAxis (options : ValueAxisOptions) : UIComponent {
   }
 }
 
-export function toPrimitiveMarkers (marker: Marker | undefined): Array<OhTimeSeries.Markers | OhAggregateSeries.Markers> {
-  const markers : Array<OhTimeSeries.Markers | OhAggregateSeries.Markers> = []
+export function toPrimitiveMarkers(marker: Marker | undefined): Array<OhTimeSeries.Markers | OhAggregateSeries.Markers> {
+  const markers: Array<OhTimeSeries.Markers | OhAggregateSeries.Markers> = []
 
   if (!marker || marker === Marker.none) return markers
 
-  switch(marker) {
+  switch (marker) {
     case Marker.all:
       markers.push(OhTimeSeries.Markers.min, OhTimeSeries.Markers.max, OhTimeSeries.Markers.avg)
       break

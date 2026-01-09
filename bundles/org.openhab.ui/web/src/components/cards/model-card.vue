@@ -1,25 +1,29 @@
 <template>
-  <f7-card v-if="visible"
-           expandable
-           ref="card"
-           class="model-card"
-           :class="type + '-card'"
-           :animate="uiOptionsStore.disableExpandableCardAnimation ? false : true"
-           card-tablet-fullscreen
-           @card:opened="cardOpening"
-           @card:closed="cardClosed">
+  <f7-card
+    v-if="visible"
+    expandable
+    ref="card"
+    class="model-card"
+    :class="type + '-card'"
+    :animate="uiOptionsStore.disableExpandableCardAnimation ? false : true"
+    card-tablet-fullscreen
+    @card:opened="cardOpening"
+    @card:closed="cardClosed">
     <f7-card-content :padding="false">
-      <div :class="(!backgroundImageUrl) ? `bg-color-${color}` : undefined" :style="{ height: `calc(var(--f7-safe-area-top) + ${headerHeight})` }">
-        <f7-card-header :text-color="config.invertText ? 'black' : 'white'" class="display-block card-header" :style="{ height: `calc(var(--f7-safe-area-top) + ${headerHeight})` }">
-          <img v-if="config.backgroundImage"
-               class="card-background lazy"
-               :src="backgroundImageUrl"
-               :style="config.backgroundImageStyle">
+      <div
+        :class="(!backgroundImageUrl) ? `bg-color-${color}` : undefined"
+        :style="{ height: `calc(var(--f7-safe-area-top) + ${headerHeight})` }">
+        <f7-card-header
+          :text-color="config.invertText ? 'black' : 'white'"
+          class="display-block card-header"
+          :style="{ height: `calc(var(--f7-safe-area-top) + ${headerHeight})` }">
+          <img v-if="config.backgroundImage" class="card-background lazy" :src="backgroundImageUrl" :style="config.backgroundImageStyle" />
           <slot name="header">
             <div v-if="context && context.component.slots && context.component.slots.header">
-              <generic-widget-component :context="childContext(slotComponent)"
-                                        v-for="(slotComponent, idx) in context.component.slots.header"
-                                        :key="'header-' + idx" />
+              <generic-widget-component
+                :context="childContext(slotComponent)"
+                v-for="(slotComponent, idx) in context.component.slots.header"
+                :key="'header-' + idx" />
             </div>
             <div v-else>
               <div class="title">
@@ -32,11 +36,7 @@
           </slot>
           <slot name="glance" />
         </f7-card-header>
-        <f7-link
-          card-close
-          color="white"
-          class="card-opened-fade-in card-close-button"
-          icon-f7="multiply_circle_fill" />
+        <f7-link card-close color="white" class="card-opened-fade-in card-close-button" icon-f7="multiply_circle_fill" />
       </div>
       <div v-if="opened">
         <slot />

@@ -5,7 +5,7 @@ import ComponentId from '../../component-id'
 dayjs.extend(IsoWeek)
 
 export default {
-  get (component, startTime, endTime, chart, chartWidget, inverse, numberFormatter) {
+  get(component, startTime, endTime, chart, chartWidget, inverse, numberFormatter) {
     let axis = chartWidget.evaluateExpression(ComponentId.get(component), component.config)
     axis.type = 'time'
     axis.min = startTime.toDate().getTime()

@@ -19,7 +19,8 @@ const ItemsListPage = () => import(/* webpackChunkName: "admin-config" */ '@/pag
 const ItemDetailsPage = () => import(/* webpackChunkName: "admin-config" */ '@/pages/settings/items/item-details.vue')
 const ItemEditPage = () => import(/* webpackChunkName: "admin-config" */ '@/pages/settings/items/item-edit.vue')
 const ItemMetadataEditPage = () => import(/* webpackChunkName: "admin-config" */ '@/pages/settings/items/metadata/item-metadata-edit.vue')
-const ItemsAddFromTextualDefinition = () => import(/* webpackChunkName: "admin-config" */ '@/pages/settings/items/parser/items-add-from-textual-definition.vue')
+const ItemsAddFromTextualDefinition = () =>
+  import(/* webpackChunkName: "admin-config" */ '@/pages/settings/items/parser/items-add-from-textual-definition.vue')
 
 const HealthOverviewPage = () => import(/* webpackChunkName: "admin-config" */ '@/pages/settings/health/health-overview.vue')
 const HealthOrphanLinksPage = () => import(/* webpackChunkName: "admin-config" */ '@/pages/settings/health/health-orphanlinks.vue')
@@ -34,9 +35,10 @@ const AddThingPage = () => import(/* webpackChunkName: "admin-config" */ '@/page
 
 const InboxListPage = () => import(/* webpackChunkName: "admin-config" */ '@/pages/settings/things/inbox/inbox-list.vue')
 
-const TransformationsListPage = () => import(/* webpackChunkName: "admin-config" */ '@/pages/settings/transformations/transformations-list.vue')
-const TransformationsEditPage = () => import(/* webpackChunkName: "admin-rules" */ '@/pages/settings/transformations/transformation-edit.vue'
-)
+const TransformationsListPage = () =>
+  import(/* webpackChunkName: "admin-config" */ '@/pages/settings/transformations/transformations-list.vue')
+const TransformationsEditPage = () =>
+  import(/* webpackChunkName: "admin-rules" */ '@/pages/settings/transformations/transformation-edit.vue')
 
 const PersistenceSettingsPage = () => import(/* webpackChunkName: "admin-config" */ '@/pages/settings/persistence/persistence-settings.vue')
 const PersistenceEditPage = () => import(/* webpackChunkName: "admin-config" */ '@/pages/settings/persistence/persistence-edit.vue')
@@ -72,8 +74,7 @@ const LogViewerPage = () => import(/* webpackChunkName: "admin-devtools" */ '@/p
 const SetupWizardPage = () => import(/* webpackChunkName: "setup-wizard" */ '@/pages/wizards/setup-wizard.vue')
 
 const checkDirtyBeforeLeave = function ({ router, to, from, resolve, reject }) {
-  if (this.currentPageEl?.beforeLeave &&
-    !to.path.startsWith(from.path)) {
+  if (this.currentPageEl?.beforeLeave && !to.path.startsWith(from.path)) {
     this.currentPageEl.beforeLeave({ router, to, from, resolve, reject })
   } else {
     resolve()
@@ -92,10 +93,7 @@ const loadAsync = (page, props) => {
       })
     } else if (typeof props === 'function') {
       page().then((c) => {
-        resolve(
-          { component: c.default },
-          { props: props({ router, to, from, resolve, reject }) }
-        )
+        resolve({ component: c.default }, { props: props({ router, to, from, resolve, reject }) })
       })
     }
   }
@@ -170,14 +168,16 @@ export default [
   },
   {
     path: '/profile/',
-    beforeEnter: [({ resolve, reject }) => {
-      if (isLoggedIn()) {
-        resolve()
-      } else {
-        reject()
-        authorize()
+    beforeEnter: [
+      ({ resolve, reject }) => {
+        if (isLoggedIn()) {
+          resolve()
+        } else {
+          reject()
+          authorize()
+        }
       }
-    }],
+    ],
     async: loadAsync(UserProfilePage),
     options: {
       animate: false
@@ -247,8 +247,7 @@ export default [
             beforeLeave: [checkDirtyBeforeLeave],
             async: ({ to, resolve }) => {
               PageEditors[to.params.type]().then((c) => {
-                resolve({ component: c.default }, (to.params.uid === 'add') ? { props: { createMode: true } } : {}
-                )
+                resolve({ component: c.default }, to.params.uid === 'add' ? { props: { createMode: true } } : {})
               })
             }
           }
@@ -261,9 +260,7 @@ export default [
           {
             path: ':transformationId',
             beforeLeave: checkDirtyBeforeLeave,
-            async: loadAsync(TransformationsEditPage, ({ to }) =>
-              to.params.transformationId === 'add' ? { createMode: true } : {}
-            )
+            async: loadAsync(TransformationsEditPage, ({ to }) => (to.params.transformationId === 'add' ? { createMode: true } : {}))
           }
         ]
       },
@@ -380,7 +377,7 @@ export default [
             path: 'stub',
             beforeEnter: [enforceAdminForRoute],
             beforeLeave: [checkDirtyBeforeLeave],
-            async: loadAsync(RuleEditPage, { createMode: false, stubMode: true})
+            async: loadAsync(RuleEditPage, { createMode: false, stubMode: true })
           },
           {
             path: ':ruleId',
@@ -392,9 +389,7 @@ export default [
                 path: 'script/:moduleId',
                 beforeEnter: [enforceAdminForRoute],
                 beforeLeave: [checkDirtyBeforeLeave],
-                async: loadAsync(ScriptEditPage, ({ to }) =>
-                  to.params.ruleId === 'add' ? { createMode: true } : {}
-                )
+                async: loadAsync(ScriptEditPage, ({ to }) => (to.params.ruleId === 'add' ? { createMode: true } : {}))
               }
             ]
           }
@@ -491,12 +486,14 @@ export default [
         path: '/',
         id: 'main'
       }
-    ].concat(Object.keys(AddonTitles).map((section) => {
-      return {
-        path: section,
-        id: section
-      }
-    })),
+    ].concat(
+      Object.keys(AddonTitles).map((section) => {
+        return {
+          path: section,
+          id: section
+        }
+      })
+    ),
     routes: [
       {
         path: ':section/:addonId',
@@ -519,9 +516,7 @@ export default [
             path: ':uid',
             beforeEnter: [enforceAdminForRoute],
             beforeLeave: [checkDirtyBeforeLeave],
-            async: loadAsync(WidgetEditPage, ({ to }) =>
-              to.params.uid === 'add' ? { createMode: true } : {}
-            )
+            async: loadAsync(WidgetEditPage, ({ to }) => (to.params.uid === 'add' ? { createMode: true } : {}))
           }
         ]
       },
@@ -534,9 +529,7 @@ export default [
             path: ':uid',
             beforeEnter: [enforceAdminForRoute],
             beforeLeave: [checkDirtyBeforeLeave],
-            async: loadAsync(BlocksEditPage, ({ to }) =>
-              to.params.uid === 'add' ? { createMode: true } : {}
-            )
+            async: loadAsync(BlocksEditPage, ({ to }) => (to.params.uid === 'add' ? { createMode: true } : {}))
           }
         ]
       },

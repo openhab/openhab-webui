@@ -1,27 +1,27 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar>
-      <oh-nav-content :title="(createMode ? 'Create Widget' : 'Widget: ' + widget.uid) + dirtyIndicator"
-                      :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
-                      @save="save()"
-                      :f7router />
+      <oh-nav-content
+        :title="(createMode ? 'Create Widget' : 'Widget: ' + widget.uid) + dirtyIndicator"
+        :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
+        @save="save()"
+        :f7router />
     </f7-navbar>
     <f7-toolbar position="bottom">
-      <f7-link @click="widgetPropsOpened = true">
-        Set Props<span v-if="$device.desktop">&nbsp;(Ctrl-P)</span>
-      </f7-link>
-      <f7-link icon-f7="uiwindow_split_2x1" @click="split = (split === 'horizontal') ? 'vertical' : 'horizontal'; blockKey = f7.utils.id()" />
-      <f7-link @click="redrawWidget">
-        Redraw<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span>
-      </f7-link>
+      <f7-link @click="widgetPropsOpened = true"> Set Props<span v-if="$device.desktop">&nbsp;(Ctrl-P)</span> </f7-link>
+      <f7-link
+        icon-f7="uiwindow_split_2x1"
+        @click="split = (split === 'horizontal') ? 'vertical' : 'horizontal'; blockKey = f7.utils.id()" />
+      <f7-link @click="redrawWidget"> Redraw<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span> </f7-link>
     </f7-toolbar>
     <f7-block :key="blockKey + '-h'" v-if="split === 'horizontal'" class="widget-editor horizontal">
       <f7-row resizable>
         <f7-col style="min-width: 20px" class="widget-code">
-          <editor class="widget-component-editor"
-                  mode="application/vnd.openhab.uicomponent+yaml;type=widget"
-                  :value="widgetDefinition"
-                  @input="onEditorInput" />
+          <editor
+            class="widget-component-editor"
+            mode="application/vnd.openhab.uicomponent+yaml;type=widget"
+            :value="widgetDefinition"
+            @input="onEditorInput" />
         </f7-col>
       </f7-row>
       <f7-row v-if="ready" resizable>
@@ -33,45 +33,34 @@
     <f7-block v-else :key="blockKey + 'b'" class="widget-editor vertical">
       <f7-row resizable>
         <f7-col resizable style="min-width: 20px" class="widget-code">
-          <editor class="widget-component-editor"
-                  mode="application/vnd.openhab.uicomponent+yaml;type=widget"
-                  :value="widgetDefinition"
-                  @input="onEditorInput" />
+          <editor
+            class="widget-component-editor"
+            mode="application/vnd.openhab.uicomponent+yaml;type=widget"
+            :value="widgetDefinition"
+            @input="onEditorInput" />
         </f7-col>
-        <f7-col v-if="ready"
-                resizable
-                style="min-width: 20px"
-                class="widget-preview padding-right margin-bottom">
+        <f7-col v-if="ready" resizable style="min-width: 20px" class="widget-preview padding-right margin-bottom">
           <generic-widget-component :key="widgetKey" :context="context" />
         </f7-col>
       </f7-row>
     </f7-block>
 
-    <f7-popup ref="widgetProps"
-              close-on-escape
-              class="widgetprops-popup"
-              :opened="widgetPropsOpened"
-              @popup:closed="widgetPropsClosed">
+    <f7-popup ref="widgetProps" close-on-escape class="widgetprops-popup" :opened="widgetPropsOpened" @popup:closed="widgetPropsClosed">
       <f7-page v-if="widgetPropsOpened">
         <f7-navbar>
           <f7-nav-left>
-            <f7-link icon-ios="f7:arrow_left"
-                     icon-md="material:arrow_back"
-                     icon-aurora="f7:arrow_left"
-                     popup-close />
+            <f7-link icon-ios="f7:arrow_left" icon-md="material:arrow_back" icon-aurora="f7:arrow_left" popup-close />
           </f7-nav-left>
           <f7-nav-title>Set Widget Props</f7-nav-title>
           <f7-nav-right>
-            <f7-link @click="updateWidgetProps">
-              Done
-            </f7-link>
+            <f7-link @click="updateWidgetProps"> Done </f7-link>
           </f7-nav-right>
         </f7-navbar>
         <f7-block v-if="widget.props" class="no-padding">
           <f7-col>
             <f7-block-footer>
-              Please note that expressions in properties are not evaluated inside the widget editor,
-              but are evaluated when the widget is used on pages.
+              Please note that expressions in properties are not evaluated inside the widget editor, but are evaluated when the widget is
+              used on pages.
             </f7-block-footer>
             <config-sheet
               :parameterGroups="widget.props.parameterGroups || []"

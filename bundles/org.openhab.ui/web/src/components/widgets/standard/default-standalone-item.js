@@ -5,9 +5,9 @@
 
 import { useSemanticsStore } from '@/js/stores/useSemanticsStore'
 
-export default function itemDefaultStandaloneComponent (item) {
+export default function itemDefaultStandaloneComponent(item) {
   const stateDescription = item.stateDescription || {}
-  const metadata = (item.metadata && item.metadata.widget) ? item.metadata.widget : {}
+  const metadata = item.metadata && item.metadata.widget ? item.metadata.widget : {}
   let component = null
   let semanticClass = {}
   let semanticProperty = {}
@@ -145,7 +145,10 @@ export default function itemDefaultStandaloneComponent (item) {
       component: 'oh-label-card'
     }
 
-    if (item.type.indexOf('Number') === 0 && (!item.commandDescription || !item.commandDescription.commandOptions || stateDescription.readOnly)) {
+    if (
+      item.type.indexOf('Number') === 0 &&
+      (!item.commandDescription || !item.commandDescription.commandOptions || stateDescription.readOnly)
+    ) {
       component.config = {
         trendItem: item.name,
         action: 'analyzer',

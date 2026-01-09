@@ -13,11 +13,7 @@ import * as PlanWidgets from '@/components/widgets/plan'
 import * as MapWidgets from '@/components/widgets/map'
 import { OhChartPageDefinition } from '@/assets/definitions/widgets/chart/page'
 import ChartWidgetsDefinitions from '@/assets/definitions/widgets/chart/index'
-import {
-  OhLocationCardParameters,
-  OhEquipmentCardParameters,
-  OhPropertyCardParameters
-} from '@/assets/definitions/widgets/home'
+import { OhLocationCardParameters, OhEquipmentCardParameters, OhPropertyCardParameters } from '@/assets/definitions/widgets/home'
 import { BlockLibrariesComponentDefinitions } from '@/assets/definitions/blockly/libraries-components'
 
 const ComponentID = /[\w-]+/
@@ -25,27 +21,28 @@ const ComponentID = /[\w-]+/
 let ohComponents = null
 let f7Components = null
 
-function getOhComponents () {
-  ohComponents ??= Object
-    .values({
-      ...SystemWidgets,
-      ...LayoutWidgets,
-      ...StandardWidgets,
-      ...StandardListWidgets,
-      ...StandardCellWidgets
-    })
+function getOhComponents() {
+  ohComponents ??= Object.values({
+    ...SystemWidgets,
+    ...LayoutWidgets,
+    ...StandardWidgets,
+    ...StandardListWidgets,
+    ...StandardCellWidgets
+  })
     .filter((w) => w.widget && typeof w.widget === 'function')
     .map((c) => c.widget())
     .sort((c1, c2) => c1.name.localeCompare(c2.name))
   return ohComponents
 }
 
-function getF7Components () {
-  f7Components ??= Object.values(f7vue).filter((m) => m.name && m.name.startsWith('f7-')).sort((c1, c2) => c1.name.localeCompare(c2.name))
+function getF7Components() {
+  f7Components ??= Object.values(f7vue)
+    .filter((m) => m.name && m.name.startsWith('f7-'))
+    .sort((c1, c2) => c1.name.localeCompare(c2.name))
   return f7Components
 }
 
-function getWidgetDefinitions (context) {
+function getWidgetDefinitions(context) {
   const mode = context.view.originalMode
   const componentType = mode.includes(';type=') ? mode.split('=')[1] : undefined
   switch (componentType) {
@@ -57,16 +54,20 @@ function getWidgetDefinitions (context) {
         })
       ]
     case 'plan':
-      return Object.values(PlanWidgets).map((c) => c.widget()).sort((c1, c2) => c1.name.localeCompare(c2.name))
+      return Object.values(PlanWidgets)
+        .map((c) => c.widget())
+        .sort((c1, c2) => c1.name.localeCompare(c2.name))
     case 'map':
-      return Object.values(MapWidgets).map((c) => c.widget()).sort((c1, c2) => c1.name.localeCompare(c2.name))
+      return Object.values(MapWidgets)
+        .map((c) => c.widget())
+        .sort((c1, c2) => c1.name.localeCompare(c2.name))
     case 'blocks':
-      return Object.values(BlockLibrariesComponentDefinitions).map((c) => c()).sort((c1, c2) => c1.name.localeCompare(c2.name))
+      return Object.values(BlockLibrariesComponentDefinitions)
+        .map((c) => c())
+        .sort((c1, c2) => c1.name.localeCompare(c2.name))
     default:
       return [
-        ...(componentType === 'home'
-          ? [OhLocationCardParameters(), OhEquipmentCardParameters(), OhPropertyCardParameters()]
-          : []),
+        ...(componentType === 'home' ? [OhLocationCardParameters(), OhEquipmentCardParameters(), OhPropertyCardParameters()] : []),
         ...getOhComponents(),
         ...getF7Components(),
         ...Object.keys(ChartWidgetsDefinitions).map((name) => {
@@ -76,12 +77,12 @@ function getWidgetDefinitions (context) {
   }
 }
 
-function hintExpression (context, line) {
+function hintExpression(context, line) {
   const cursor = context.pos - line.from
 
   const lastOp = line.text.substring(0, cursor).replace(/([@#.])[A-Za-z0-9_-]*$/, '$1')
   if (lastOp.endsWith('@') || lastOp.endsWith('#')) {
-    return hintItems(context, { prefix: '\'', suffix: '\'' })
+    return hintItems(context, { prefix: "'", suffix: "'" })
   } else if (lastOp.endsWith('items.')) {
     return hintItems(context, { suffix: '.state' })
   } else if (lastOp.endsWith('.')) {
@@ -192,7 +193,7 @@ function hintExpression (context, line) {
   }
 }
 
-function f7ComponentParameters (componentName) {
+function f7ComponentParameters(componentName) {
   console.debug(f7vue)
   const f7vueComponent = Object.values(f7vue).find((c) => c.name === componentName)
   console.debug(f7vueComponent)
@@ -237,7 +238,7 @@ function f7ComponentParameters (componentName) {
   return params
 }
 
-function hintConfig (context, line, parentLine) {
+function hintConfig(context, line, parentLine) {
   const componentType = findComponentType(context, parentLine)
   console.debug('hinting config for component type:', componentType)
   if (!componentType) return
@@ -245,17 +246,14 @@ function hintConfig (context, line, parentLine) {
   const column = context.pos - line.from
   const afterColon = colonPos > 0 && column > colonPos
   const widgetDefinition = getWidgetDefinitions(context).find((d) => d.name === componentType)
-  const parameters =
-    componentType.startsWith('f7-')
-      ? f7ComponentParameters(componentType)
-      : widgetDefinition && widgetDefinition.props
-        ? widgetDefinition.props.parameters
-        : []
+  const parameters = componentType.startsWith('f7-')
+    ? f7ComponentParameters(componentType)
+    : widgetDefinition && widgetDefinition.props
+      ? widgetDefinition.props.parameters
+      : []
   if (componentType.startsWith('oh-')) {
     // try our luck and find a matching underlying f7-vue component...
-    const f7parameters = f7ComponentParameters(
-      componentType.replace('oh-', 'f7-').replace('-card', '')
-    )
+    const f7parameters = f7ComponentParameters(componentType.replace('oh-', 'f7-').replace('-card', ''))
     if (f7parameters.length) {
       parameters.push(...f7parameters.filter((p) => !parameters.find((p2) => p2.name === p.name)))
     }
@@ -272,7 +270,7 @@ function hintConfig (context, line, parentLine) {
   }
 }
 
-function hintComponents (context, line) {
+function hintComponents(context, line) {
   const colonPos = line.text.indexOf(':')
   const column = context.pos - line.from
   if (column < colonPos + 2) return
@@ -300,7 +298,7 @@ function hintComponents (context, line) {
   }
 }
 
-function hintComponentStructure (context, parentLine) {
+function hintComponentStructure(context, parentLine) {
   const indent = parentLine ? lineIndent(parentLine) : -2
   const apply = (view, completion, _from, _to) => {
     const line = view.state.doc.lineAt(context.pos)
@@ -329,25 +327,20 @@ function hintComponentStructure (context, parentLine) {
       {
         label: 'default slot',
         apply,
-        code: ' '.repeat(indent + 2) +
-          'slots:\n' +
-          ' '.repeat(indent + 4) +
-          'default:\n' +
-          ' '.repeat(indent + 6) +
-          '- component: '
+        code: ' '.repeat(indent + 2) + 'slots:\n' + ' '.repeat(indent + 4) + 'default:\n' + ' '.repeat(indent + 6) + '- component: '
       }
     ]
   }
 }
 
-function hintSlots (context, line, parentLine) {
+function hintSlots(context, line, parentLine) {
   const apply = (view, completion, _from, _to) => {
     const indent = lineIndent(parentLine)
     const insert =
-          ' '.repeat(indent + 2) +
-          `- component: ${completion.label}\n` +
-          // ' '.repeat(indent + 4) + 'config:\n' +
-          ' '.repeat(indent + 4)
+      ' '.repeat(indent + 2) +
+      `- component: ${completion.label}\n` +
+      // ' '.repeat(indent + 4) + 'config:\n' +
+      ' '.repeat(indent + 4)
     const from = line.from
     const to = view.state.doc.lineAt(context.pos).to
     view.dispatch({
@@ -372,7 +365,7 @@ function hintSlots (context, line, parentLine) {
   }
 }
 
-export default function hint (context) {
+export default function hint(context) {
   const currentLine = context.state.doc.lineAt(context.pos)
   const parentLine = findParent(context, currentLine)
   console.debug('parent line', parentLine)

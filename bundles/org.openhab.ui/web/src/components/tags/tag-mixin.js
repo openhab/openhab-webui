@@ -2,7 +2,7 @@ import { useSemanticsStore } from '@/js/stores/useSemanticsStore'
 
 export default {
   methods: {
-    isSemanticTag (tag) {
+    isSemanticTag(tag) {
       return [
         useSemanticsStore().Locations,
         useSemanticsStore().Equipment,
@@ -10,13 +10,13 @@ export default {
         useSemanticsStore().Properties
       ].some((t) => t.indexOf(tag) >= 0)
     },
-    semanticType (tag) {
+    semanticType(tag) {
       if (useSemanticsStore().Locations.indexOf(tag) >= 0) return 'Location'
       if (useSemanticsStore().Equipment.indexOf(tag) >= 0) return 'Equipment'
       if (useSemanticsStore().Points.indexOf(tag) >= 0) return 'Point'
       return ''
     },
-    isSemanticPropertyTag (tag) {
+    isSemanticPropertyTag(tag) {
       return useSemanticsStore().Properties.indexOf(tag) >= 0
     }
   }

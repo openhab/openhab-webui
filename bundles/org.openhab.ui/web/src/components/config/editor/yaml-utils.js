@@ -1,10 +1,10 @@
-export function lineIndent (line) {
+export function lineIndent(line) {
   const match = line.text.match(/^ +/)
   if (match && match.length === 1) return match[0].length
   return 0
 }
 
-export function findParent (context, line) {
+export function findParent(context, line) {
   // If the line is all blank, assume the current indent is at the cursor
   const currentIndent = line.text.match(/^\s*$/) ? context.pos - line.from : lineIndent(line)
   for (let l = line.number - 1; l >= 1; l--) {
@@ -14,14 +14,14 @@ export function findParent (context, line) {
   }
 }
 
-export function findParentRoot (context, line) {
+export function findParentRoot(context, line) {
   while (lineIndent(line) > 0 && line.number > 1) {
     line = context.state.doc.line(line.number - 1)
   }
   return line
 }
 
-export function findComponentType (context, line) {
+export function findComponentType(context, line) {
   const currentIndent = lineIndent(line)
   for (let l = line.number - 1; l >= 1; l--) {
     line = context.state.doc.line(l)
@@ -33,22 +33,22 @@ export function findComponentType (context, line) {
   }
 }
 
-export function isConfig (line) {
+export function isConfig(line) {
   if (!line) return false
   return line.text.match(/^ *config(uration)?:/)
 }
 
-export function isSlots (line) {
+export function isSlots(line) {
   if (!line) return false
   return line.text.match(/^ *slots:/)
 }
 
-export function isComponent (line) {
+export function isComponent(line) {
   if (!line) return false
   return line.text.match(/^ *-? ?component:/)
 }
 
-export function isRuleSection (line) {
+export function isRuleSection(line) {
   if (!line) return false
   return line.text.match(/^(triggers|conditions|actions|items):/)
 }

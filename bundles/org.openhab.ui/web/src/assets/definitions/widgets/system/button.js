@@ -9,7 +9,11 @@ export default () => [
   pb('raised', 'Raised', 'Makes button raised'),
   pb('outline', 'Outline', 'Makes button outline'),
   pt('active', 'Active', 'Button is active (when part of a f7-segmented').a(),
-  pt('iconF7', 'Icon', 'Framework7 icon to display (<a class="external text-color-blue" target="_blank" href="https://framework7.io/icons/">Framework7 icon</a>)'),
+  pt(
+    'iconF7',
+    'Icon',
+    'Framework7 icon to display (<a class="external text-color-blue" target="_blank" href="https://framework7.io/icons/">Framework7 icon</a>)'
+  ),
   pt('iconMaterial', 'Icon', 'Material design icon to display'),
   pt('iconColor', 'Icon Color', 'Not applicable to openHAB icons'),
   pn('iconSize', 'Icon Size', 'Size of the icon in px'),

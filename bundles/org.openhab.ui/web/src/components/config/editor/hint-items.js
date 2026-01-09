@@ -9,7 +9,7 @@ import { Categories } from '@/assets/categories.js'
 
 let dimensions = null
 
-function getDimensions (context) {
+function getDimensions(context) {
   if (dimensions) return Promise.resolve(dimensions)
 
   return context.view.$oh.api.get('/rest/systeminfo/uom').then((data) => {
@@ -18,7 +18,7 @@ function getDimensions (context) {
   })
 }
 
-function hintTypes (context, line, position) {
+function hintTypes(context, line, position) {
   const apply = (view, completion, _from, _to) => {
     const insert = completion.label
     const from = line.from + position
@@ -38,7 +38,7 @@ function hintTypes (context, line, position) {
   }
 }
 
-function hintDimension (context, line, position) {
+function hintDimension(context, line, position) {
   const apply = (view, completion, _from, _to) => {
     const insert = completion.label
     const from = line.from + position
@@ -60,7 +60,7 @@ function hintDimension (context, line, position) {
   })
 }
 
-function hintIcon (context, line) {
+function hintIcon(context, line) {
   const apply = (view, completion, _from, _to) => {
     const insert = completion.label
     const from = line.from + 10 // after 'icon: '
@@ -101,11 +101,14 @@ const MetadataCompletions = {
 
 const DefaultMetadataCompletion = { value: '', config: {} }
 
-function hintMetadata (context, line) {
+function hintMetadata(context, line) {
   const apply = (view, completion, _from, _to) => {
     const completionStructure = MetadataCompletions[completion.label] || DefaultMetadataCompletion
     const indent = ' '.repeat(6)
-    const insert = YAML.stringify({ [completion.label]: completionStructure }).split('\n').map((l) => indent + l).join('\n')
+    const insert = YAML.stringify({ [completion.label]: completionStructure })
+      .split('\n')
+      .map((l) => indent + l)
+      .join('\n')
     const from = line.from
     const to = view.state.doc.lineAt(context.pos).to
     view.dispatch(insertCompletionText(view.state, insert, from, to))
@@ -124,7 +127,7 @@ function hintMetadata (context, line) {
   }
 }
 
-export default function hint (context) {
+export default function hint(context) {
   const line = context.state.doc.lineAt(context.pos)
   if (!line) return
   const parentLine = findParent(context, line)
@@ -133,9 +136,11 @@ export default function hint (context) {
     return hintTypes(context, line, 10)
   } else if (line.text.match(/^ {4}dimension: /)) {
     return hintDimension(context, line, 15)
-  } else if (line.text.match(/^ {6}type: /)) { // Group type
+  } else if (line.text.match(/^ {6}type: /)) {
+    // Group type
     return hintTypes(context, line, 12)
-  } else if (line.text.match(/^ {6}dimension: /)) { // Group dimension
+  } else if (line.text.match(/^ {6}dimension: /)) {
+    // Group dimension
     return hintDimension(context, line, 17)
   } else if (line.text.match(/^ {4}icon: /)) {
     return hintIcon(context, line)

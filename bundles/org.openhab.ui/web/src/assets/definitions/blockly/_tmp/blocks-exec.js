@@ -2,7 +2,7 @@ import * as Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript'
 import { valueToCode } from '@/assets/definitions/blockly/utils.js'
 
-export default function defineOHBlocks_Exec (f7) {
+export default function defineOHBlocks_Exec(f7) {
   Blockly.Blocks['oh_exec'] = {
     init: function () {
       this.appendValueInput('sendTo')
@@ -10,10 +10,7 @@ export default function defineOHBlocks_Exec (f7) {
         .appendField('Execute command')
         .appendField(new Blockly.FieldTextInput('/usr/bin/command'), 'execCommand')
         .appendField('output to')
-      this.appendDummyInput()
-        .appendField('Timeout')
-        .appendField(new Blockly.FieldNumber(60), 'timeout')
-        .appendField('Seconds')
+      this.appendDummyInput().appendField('Timeout').appendField(new Blockly.FieldNumber(60), 'timeout').appendField('Seconds')
       this.setInputsInline(false)
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
@@ -35,13 +32,8 @@ export default function defineOHBlocks_Exec (f7) {
 
   Blockly.Blocks['oh_exec2'] = {
     init: function () {
-      this.appendDummyInput()
-        .appendField('Execute command')
-        .appendField(new Blockly.FieldTextInput('/usr/bin/command'), 'cmdExecute')
-      this.appendDummyInput()
-        .appendField('Timeout')
-        .appendField(new Blockly.FieldNumber(60), 'timeout')
-        .appendField('Seconds')
+      this.appendDummyInput().appendField('Execute command').appendField(new Blockly.FieldTextInput('/usr/bin/command'), 'cmdExecute')
+      this.appendDummyInput().appendField('Timeout').appendField(new Blockly.FieldNumber(60), 'timeout').appendField('Seconds')
       this.setOutput(true, null)
       this.setColour(230)
       this.setTooltip('')
@@ -50,12 +42,12 @@ export default function defineOHBlocks_Exec (f7) {
   }
 
   javascriptGenerator.forBlock['oh_exec2'] = function (block) {
-    const exec = javascriptGenerator.provideFunction_(
-      'exec',
-      ['var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Exec");'])
-    const duration = javascriptGenerator.provideFunction_(
-      'duration',
-      ['var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("java.time.Duration");'])
+    const exec = javascriptGenerator.provideFunction_('exec', [
+      'var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("org.openhab.core.model.script.actions.Exec");'
+    ])
+    const duration = javascriptGenerator.provideFunction_('duration', [
+      'var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type("java.time.Duration");'
+    ])
     let runCommand = block.getFieldValue('cmdExecute').replace(/ /g, '","')
     let timeout = block.getFieldValue('timeout')
     let code = exec + '.executeCommandLine(' + duration + '.ofSeconds(' + timeout + '),"' + runCommand + '")\n'
@@ -64,13 +56,8 @@ export default function defineOHBlocks_Exec (f7) {
 
   Blockly.Blocks['oh_exec3'] = {
     init: function () {
-      this.appendDummyInput()
-        .appendField('Execute command')
-        .appendField(new Blockly.FieldTextInput('/usr/bin/command'), 'cmdExecute')
-      this.appendDummyInput()
-        .appendField('Timeout')
-        .appendField(new Blockly.FieldNumber(60), 'timeout')
-        .appendField('Seconds')
+      this.appendDummyInput().appendField('Execute command').appendField(new Blockly.FieldTextInput('/usr/bin/command'), 'cmdExecute')
+      this.appendDummyInput().appendField('Timeout').appendField(new Blockly.FieldNumber(60), 'timeout').appendField('Seconds')
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
       this.setColour(230)
@@ -80,12 +67,12 @@ export default function defineOHBlocks_Exec (f7) {
   }
 
   javascriptGenerator.forBlock['oh_exec3'] = function (block) {
-    const exec = javascriptGenerator.provideFunction_(
-      'exec',
-      ['var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'org.openhab.core.model.script.actions.Exec\');'])
-    const duration = javascriptGenerator.provideFunction_(
-      'duration',
-      ['var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + ' = Java.type(\'java.time.Duration\');'])
+    const exec = javascriptGenerator.provideFunction_('exec', [
+      'var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + " = Java.type('org.openhab.core.model.script.actions.Exec');"
+    ])
+    const duration = javascriptGenerator.provideFunction_('duration', [
+      'var ' + javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_ + " = Java.type('java.time.Duration');"
+    ])
     let runCommand = block.getFieldValue('cmdExecute').replace(/ /g, '","')
     let timeout = block.getFieldValue('timeout')
     let code = exec + '.executeCommandLine(' + duration + '.ofSeconds(' + timeout + '),"' + runCommand + '")\n'

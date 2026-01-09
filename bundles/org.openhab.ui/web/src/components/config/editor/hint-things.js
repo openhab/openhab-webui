@@ -2,7 +2,7 @@ import { insertCompletionText, pickedCompletion } from '@codemirror/autocomplete
 import { lineIndent, findParent, isConfig } from './yaml-utils'
 import { completionStart, hintParameterValues, hintParameters } from './hint-utils'
 
-function hintThingConfig (context, line, colonPos, afterColon) {
+function hintThingConfig(context, line, colonPos, afterColon) {
   const parameters = context.view.hintContext.thingType.configParameters
 
   if (afterColon) {
@@ -12,7 +12,7 @@ function hintThingConfig (context, line, colonPos, afterColon) {
   }
 }
 
-function findChannelTypeUID (context, configLine, configIndent) {
+function findChannelTypeUID(context, configLine, configIndent) {
   const channelUidLine = findParent(context, configLine)
   const section = context.state.doc.slice(channelUidLine.to, configLine.from)
   const typeLine = section.text.find((line) => line.match(/^ {8}type: /))
@@ -26,7 +26,7 @@ function findChannelTypeUID (context, configLine, configIndent) {
   return bindingId + ':' + type
 }
 
-function hintChannelConfig (context, line, configLine, configIndent, colonPos, afterColon) {
+function hintChannelConfig(context, line, configLine, configIndent, colonPos, afterColon) {
   const channelTypeUID = findChannelTypeUID(context, configLine, configIndent)
   const channelType = context.view.hintContext.channelTypes.find((m) => m.UID === channelTypeUID)
   if (!channelType) return null
@@ -37,16 +37,18 @@ function hintChannelConfig (context, line, configLine, configIndent, colonPos, a
   }
 }
 
-function isChannelsSection (line) {
+function isChannelsSection(line) {
   if (!line) return false
   return line.text.match(/^ {4}channels:/)
 }
 
-function hintChannelStructure (context, line, parentLine) {
+function hintChannelStructure(context, line, parentLine) {
   const thingType = context.view.hintContext.thingType
   const bindingId = thingType.UID.split(':')[0]
   const extensibleChannelTypeUIDs = thingType.extensibleChannelTypeIds.map((t) => bindingId + ':' + t)
-  const channelTypes = context.view.hintContext.channelTypes.filter((c) => extensibleChannelTypeUIDs.indexOf(c.UID) >= 0).sort((a, b) => a.UID.localeCompare(b.UID))
+  const channelTypes = context.view.hintContext.channelTypes
+    .filter((c) => extensibleChannelTypeUIDs.indexOf(c.UID) >= 0)
+    .sort((a, b) => a.UID.localeCompare(b.UID))
 
   const apply = (view, completion, _from, _to) => {
     const insert = [
@@ -80,7 +82,7 @@ function hintChannelStructure (context, line, parentLine) {
   }
 }
 
-function isChannelType (context, line, parentLine) {
+function isChannelType(context, line, parentLine) {
   if (!line || !line.text.match(/^ {8}type:/)) return false
 
   const grandParentLine = findParent(context, parentLine)
@@ -89,11 +91,13 @@ function isChannelType (context, line, parentLine) {
   return isChannelsSection(grandParentLine)
 }
 
-function hintChannelType (context, line, parentLine) {
+function hintChannelType(context, line, parentLine) {
   const thingType = context.view.hintContext.thingType
   const bindingId = thingType.UID.split(':')[0]
   const extensibleChannelTypeUIDs = thingType.extensibleChannelTypeIds.map((t) => bindingId + ':' + t)
-  const channelTypes = context.view.hintContext.channelTypes.filter((c) => extensibleChannelTypeUIDs.indexOf(c.UID) >= 0).sort((a, b) => a.UID.localeCompare(b.UID))
+  const channelTypes = context.view.hintContext.channelTypes
+    .filter((c) => extensibleChannelTypeUIDs.indexOf(c.UID) >= 0)
+    .sort((a, b) => a.UID.localeCompare(b.UID))
 
   const apply = (view, completion, _from, _to) => {
     const insert = completion.label
@@ -116,7 +120,7 @@ function hintChannelType (context, line, parentLine) {
   }
 }
 
-export default function hint (context) {
+export default function hint(context) {
   const line = context.state.doc.lineAt(context.pos)
   const parentLine = findParent(context, line)
 
@@ -127,8 +131,10 @@ export default function hint (context) {
 
     const configIndent = lineIndent(parentLine)
     switch (configIndent) {
-      case 4: return hintThingConfig(context, line, colonPos, afterColon)
-      case 8: return hintChannelConfig(context, line, parentLine, configIndent, colonPos, afterColon)
+      case 4:
+        return hintThingConfig(context, line, colonPos, afterColon)
+      case 8:
+        return hintChannelConfig(context, line, parentLine, configIndent, colonPos, afterColon)
     }
   } else if (isChannelsSection(parentLine)) {
     return hintChannelStructure(context, line, parentLine)

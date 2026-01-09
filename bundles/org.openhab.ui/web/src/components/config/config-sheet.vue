@@ -4,11 +4,12 @@
       <label class="advanced-label">
         <f7-checkbox v-model:checked="showAdvanced" />
         Show advanced
-        <f7-badge v-if="advancedNonDefaultCount"
-                  style="margin-left:2px"
-                  color="blue"
-                  class="count-badge"
-                  tooltip="Non-default advanced parameter">
+        <f7-badge
+          v-if="advancedNonDefaultCount"
+          style="margin-left:2px"
+          color="blue"
+          class="count-badge"
+          tooltip="Non-default advanced parameter">
           {{ advancedNonDefaultCount }}
         </f7-badge>
       </label>
@@ -33,10 +34,7 @@
       </f7-block>
     </f7-col>
     <f7-col v-if="displayedParameterGroups.length">
-      <f7-block width="100"
-                class="parameter-group"
-                v-for="group in displayedParameterGroups"
-                :key="group.name">
+      <f7-block width="100" class="parameter-group" v-for="group in displayedParameterGroups" :key="group.name">
         <f7-row v-if="displayedParameters.some((p) => p.groupName === group.name)">
           <f7-col>
             <f7-block-title class="parameter-group-title">

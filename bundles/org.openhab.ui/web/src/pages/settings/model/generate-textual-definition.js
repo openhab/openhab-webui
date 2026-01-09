@@ -25,23 +25,29 @@ export default (thing, channelTypes, newEquipmentItem, parentGroupsForEquipment,
   for (const channel of thing.channels) {
     if (channel.kind !== 'STATE') continue
     const channelType = channelTypesMap.get(channel.channelTypeUID)
-    let newItemName = (newEquipmentItem) ? newEquipmentItem.name : utils.normalizeLabel(thing.label)
+    let newItemName = newEquipmentItem ? newEquipmentItem.name : utils.normalizeLabel(thing.label)
     newItemName += '_'
     let suffix = channel.label || channel.id
-    if (thing.channels.filter((c) => c.label === suffix || (c.channelTypeUID && channelTypesMap[c.channelTypeUID] && channelTypesMap[c.channelTypeUID].label === suffix)).length > 1) {
+    if (
+      thing.channels.filter(
+        (c) =>
+          c.label === suffix ||
+          (c.channelTypeUID && channelTypesMap[c.channelTypeUID] && channelTypesMap[c.channelTypeUID].label === suffix)
+      ).length > 1
+    ) {
       suffix = channel.id.replace('#', '_').replace(/(^\w{1})|(_+\w{1})/g, (letter) => letter.toUpperCase())
     }
     newItemName += utils.normalizeLabel(suffix)
-    const defaultTags = (channel.defaultTags.length > 0) ? channel.defaultTags : channelType.tags
+    const defaultTags = channel.defaultTags.length > 0 ? channel.defaultTags : channelType.tags
     const newItem = {
       channel,
       channelType,
       name: newItemName,
       label: channel.label || channelType.label,
       groupNames: parentGroupsForPoints,
-      category: (channelType) ? channelType.category : '',
+      category: channelType ? channelType.category : '',
       type: channel.itemType,
-      tags: (defaultTags.find((t) => useSemanticsStore().Points.indexOf(t) >= 0)) ? defaultTags : [...defaultTags, 'Point']
+      tags: defaultTags.find((t) => useSemanticsStore().Points.indexOf(t) >= 0) ? defaultTags : [...defaultTags, 'Point']
     }
 
     let line = []
@@ -49,9 +55,9 @@ export default (thing, channelTypes, newEquipmentItem, parentGroupsForEquipment,
     line.push(newItem.name)
     line.push(`"${newItem.label}"`)
     if (channelType.advanced) line[0] = '// ' + line[0] // comment the advanced channels by default
-    line.push((newItem.category) ? `<${newItem.category}>` : '')
-    line.push((newItem.groupNames.length) ? `(${newItem.groupNames.join(', ')})` : '')
-    line.push((newItem.tags.length) ? `[${newItem.tags.map((t) => `"${t}"`).join(', ')}] ` : '')
+    line.push(newItem.category ? `<${newItem.category}>` : '')
+    line.push(newItem.groupNames.length ? `(${newItem.groupNames.join(', ')})` : '')
+    line.push(newItem.tags.length ? `[${newItem.tags.map((t) => `"${t}"`).join(', ')}] ` : '')
     line.push(`{ channel="${channel.uid}" }`)
     lines.push(line)
   }

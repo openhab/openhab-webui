@@ -39,7 +39,7 @@ export const VACUUM_MODES = ['CLEAN', 'DOCK', 'SPOT', 'PAUSE', 'STOP']
 export const UNITS_OF_MEASURE = {
   'Angle.Degrees': '°',
   'Angle.Radians': 'rad',
-  'Percent': '%',
+  Percent: '%',
   'Distance.Yards': 'yd',
   'Distance.Inches': 'in',
   'Distance.Meters': 'm',

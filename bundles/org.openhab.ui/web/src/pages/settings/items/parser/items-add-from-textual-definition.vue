@@ -1,18 +1,12 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn">
     <f7-navbar>
-      <oh-nav-content title="Add Items from Textual Definition"
-                      save-link="Add"
-                      @save="add()"
-                      :f7router />
+      <oh-nav-content title="Add Items from Textual Definition" save-link="Add" @save="add()" :f7router />
     </f7-navbar>
     <f7-block class="items-add-from-textual-definition">
       <div class="row items-parser resizable" v-if="ready">
         <div class="col">
-          <editor class="editor"
-                  :value="itemsDsl"
-                  @input="(value) => itemsDsl = value"
-                  mode="application/vnd.openhab.items+dsl" />
+          <editor class="editor" :value="itemsDsl" @input="(value) => itemsDsl = value" mode="application/vnd.openhab.items+dsl" />
         </div>
         <span class="resize-handler" />
       </div>
@@ -29,30 +23,14 @@
               <table>
                 <thead>
                   <tr>
-                    <th class="label-cell">
-                      Type
-                    </th>
-                    <th class="label-cell">
-                      Name
-                    </th>
-                    <th class="label-cell">
-                      Label
-                    </th>
-                    <th class="label-cell">
-                      Icon
-                    </th>
-                    <th class="label-cell">
-                      Groups
-                    </th>
-                    <th class="label-cell">
-                      Tags
-                    </th>
-                    <th class="numerical-cell">
-                      Link(s)
-                    </th>
-                    <th class="numerical-cell">
-                      Metadata
-                    </th>
+                    <th class="label-cell">Type</th>
+                    <th class="label-cell">Name</th>
+                    <th class="label-cell">Label</th>
+                    <th class="label-cell">Icon</th>
+                    <th class="label-cell">Groups</th>
+                    <th class="label-cell">Tags</th>
+                    <th class="numerical-cell">Link(s)</th>
+                    <th class="numerical-cell">Metadata</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -62,35 +40,30 @@
                     </td>
                     <td class="label-cell">
                       {{ item.name }}
-                      <f7-icon v-if="item.existing && item.existing.editable"
-                               f7="exclamationmark_octagon_fill"
-                               color="yellow"
-                               size="22"
-                               tooltip="Item already exists" />
-                      <f7-icon v-if="item.existing && !item.existing.editable"
-                               f7="multiply_circle_fill"
-                               color="red"
-                               size="22"
-                               tooltip="Item already exists and is not editable" />
+                      <f7-icon
+                        v-if="item.existing && item.existing.editable"
+                        f7="exclamationmark_octagon_fill"
+                        color="yellow"
+                        size="22"
+                        tooltip="Item already exists" />
+                      <f7-icon
+                        v-if="item.existing && !item.existing.editable"
+                        f7="multiply_circle_fill"
+                        color="red"
+                        size="22"
+                        tooltip="Item already exists and is not editable" />
                     </td>
                     <td class="label-cell">
                       {{ item.label }}
                     </td>
                     <td class="label-cell">
-                      <oh-icon v-if="item.category"
-                               :icon="item.category"
-                               :width="20"
-                               :height="20" />
+                      <oh-icon v-if="item.category" :icon="item.category" :width="20" :height="20" />
                     </td>
                     <td class="label-cell">
                       {{ (item.groupNames) ? item.groupNames.join(', ') : '' }}
                     </td>
                     <td class="label-cell" v-if="item.tags">
-                      <f7-chip v-for="tag in item.tags"
-                               class="margin-right"
-                               :key="tag"
-                               :text="tag"
-                               media-bg-color="blue">
+                      <f7-chip v-for="tag in item.tags" class="margin-right" :key="tag" :text="tag" media-bg-color="blue">
                         <template #media>
                           <f7-icon ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
                         </template>
@@ -101,7 +74,9 @@
                     <td class="label-cell" v-if="item.links">
                       <div class="margin-right" v-for="(link, lidx) in item.links" :key="lidx">
                         <div v-if="link.value">
-                          <div><em>{{ link.value }}</em></div>
+                          <div>
+                            <em>{{ link.value }}</em>
+                          </div>
                           <small>{{ link.config.map((c) => c.key + '=' + c.value).join(', ') }}</small>
                         </div>
                         <em v-else>{{ link }}</em>
@@ -110,16 +85,12 @@
                     <td class="label-cell" v-else />
                     <!-- metadata -->
                     <td class="label-cell" v-if="item.metadata">
-                      <div v-for="(metadata, lidx) in item.metadata"
-                           class="margin-right"
-                           :key="lidx">
+                      <div v-for="(metadata, lidx) in item.metadata" class="margin-right" :key="lidx">
                         <div v-if="metadata.value.value">
                           <div>{{ metadata.key }}="{{ metadata.value.value }}"</div>
                           <small>{{ metadata.value.config.map((c) => c.key + '=' + c.value).join(', ') }}</small>
                         </div>
-                        <div v-else>
-                          {{ metadata.key }}="{{ metadata.value }}"
-                        </div>
+                        <div v-else>{{ metadata.key }}="{{ metadata.value }}"</div>
                       </div>
                     </td>
                     <td class="label-cell" v-else />

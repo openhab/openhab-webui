@@ -1,30 +1,28 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" name="channel-edit">
     <f7-navbar>
-      <oh-nav-content :title="channel.label"
-                      :subtitle="thing.label"
-                      back-link="Cancel"
-                      :editable="thing.editable"
-                      save-link="Done"
-                      @save="save()"
-                      :f7router />
+      <oh-nav-content
+        :title="channel.label"
+        :subtitle="thing.label"
+        back-link="Cancel"
+        :editable="thing.editable"
+        save-link="Done"
+        @save="save()"
+        :f7router />
     </f7-navbar>
     <f7-block class="block-narrow">
       <f7-col v-if="channel">
         <f7-block-title>Channel</f7-block-title>
-        <channel-general-settings :channel="channel"
-                                  :channelType="channelType"
-                                  :createMode="false"
-                                  :disabled="!thing.editable ? true : null" />
+        <channel-general-settings
+          :channel="channel"
+          :channelType="channelType"
+          :createMode="false"
+          :disabled="!thing.editable ? true : null" />
       </f7-col>
       <f7-col v-if="channelType != null">
-        <f7-block-title v-if="configDescription.parameters">
-          Configuration
-        </f7-block-title>
+        <f7-block-title v-if="configDescription.parameters"> Configuration </f7-block-title>
         <f7-block-footer v-else-if="noConfig" class="padding">
-          This channel has no configuration.<br><br><f7-link back>
-            Go Back
-          </f7-link>
+          This channel has no configuration.<br /><br /><f7-link back> Go Back </f7-link>
         </f7-block-footer>
         <config-sheet
           :parameter-groups="configDescription.parameterGroups"

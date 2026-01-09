@@ -1,8 +1,6 @@
 <template>
   <ul v-if="config.listContainer" :class="config.containerClasses" :style="config.containerStyle">
-    <generic-widget-component v-for="(ctx, idx) in childrenContexts"
-                              :context="ctx"
-                              :key="'repeater-' + idx" />
+    <generic-widget-component v-for="(ctx, idx) in childrenContexts" :context="ctx" :key="'repeater-' + idx" />
   </ul>
   <!-- render without any additional container -->
   <template v-else-if="config.fragment">
@@ -14,15 +12,11 @@
     </template>
     <!-- else render -->
     <template v-else>
-      <generic-widget-component v-for="(ctx, idx) in childrenContexts"
-                                :context="ctx"
-                                :key="'repeater-' + idx" />
+      <generic-widget-component v-for="(ctx, idx) in childrenContexts" :context="ctx" :key="'repeater-' + idx" />
     </template>
   </template>
   <div v-else :class="config.containerClasses" :style="config.containerStyle">
-    <generic-widget-component v-for="(ctx, idx) in childrenContexts"
-                              :context="ctx"
-                              :key="'repeater-' + idx" />
+    <generic-widget-component v-for="(ctx, idx) in childrenContexts" :context="ctx" :key="'repeater-' + idx" />
   </div>
 </template>
 

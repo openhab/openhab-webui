@@ -1,13 +1,13 @@
 import ComponentId from '../../component-id'
 
 const presetPalettes = {
-  'greenred': ['#50a3ba', '#eac736', '#d94e5d'],
-  'whiteblue': ['#ffffff', '#4c9ffb'],
-  'bluered': ['#313695', '#4575b4', '#74add1', '#abd9e9', '#e0f3f8', '#fee090', '#fdae61', '#f46d43', '#d73027', '#a50026']
+  greenred: ['#50a3ba', '#eac736', '#d94e5d'],
+  whiteblue: ['#ffffff', '#4c9ffb'],
+  bluered: ['#313695', '#4575b4', '#74add1', '#abd9e9', '#e0f3f8', '#fee090', '#fdae61', '#f46d43', '#d73027', '#a50026']
 }
 
 export default {
-  get (component, startTime, endTime, chart, device, numberFormatter) {
+  get(component, startTime, endTime, chart, device, numberFormatter) {
     let options = chart.evaluateExpression(ComponentId.get(component), component.config)
     if (options.presetPalette && (!options.inRange || !options.inRange.color)) {
       if (presetPalettes[options.presetPalette]) {
@@ -27,7 +27,9 @@ export default {
     }
 
     if (!options.formatter) {
-      options.formatter = (value1, value2) => { return (value2) ? numberFormatter.format(value1) + ' - ' + numberFormatter.format(value2) : numberFormatter.format(value1) }
+      options.formatter = (value1, value2) => {
+        return value2 ? numberFormatter.format(value1) + ' - ' + numberFormatter.format(value2) : numberFormatter.format(value1)
+      }
     }
 
     return options

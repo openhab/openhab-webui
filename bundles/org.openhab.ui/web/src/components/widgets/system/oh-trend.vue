@@ -1,16 +1,17 @@
 <template>
-  <trend v-if="showTrend"
-         :key="'trend' + config.item"
-         :style="config.style"
-         :width="trendWidth"
-         :viewWidth="trendWidth"
-         class="trend"
-         :data="trendData"
-         :gradient="trendGradient"
-         :gradientDirection="trendGradientDirection"
-         :stroke-width="trendStrokeWidth"
-         auto-draw
-         smooth />
+  <trend
+    v-if="showTrend"
+    :key="'trend' + config.item"
+    :style="config.style"
+    :width="trendWidth"
+    :viewWidth="trendWidth"
+    class="trend"
+    :data="trendData"
+    :gradient="trendGradient"
+    :gradientDirection="trendGradientDirection"
+    :stroke-width="trendStrokeWidth"
+    auto-draw
+    smooth />
 </template>
 
 <script>

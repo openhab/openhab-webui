@@ -1,8 +1,5 @@
 <template>
-  <f7-popup tablet-fullscreen
-            :backdrop="false"
-            class="analyzer-popup"
-            @popup:close="$refs.analyzer.close()">
+  <f7-popup tablet-fullscreen :backdrop="false" class="analyzer-popup" @popup:close="$refs.analyzer.close()">
     <analyzer ref="analyzer" :f7router="f7router" :f7route="f7route" />
   </f7-popup>
 </template>

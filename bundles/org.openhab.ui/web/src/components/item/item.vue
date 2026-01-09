@@ -1,34 +1,29 @@
 <template>
-  <f7-list-item v-bind="$attrs"
-                media-item
-                class="itemlist-item"
-                :link="link"
-                :title="(item.label) ? item.label : item.name"
-                :footer="(item.label) ? item.name : '\xa0'"
-                :subtitle="noType ? '' : getItemTypeAndMetaLabel(item)"
-                :after="state">
+  <f7-list-item
+    v-bind="$attrs"
+    media-item
+    class="itemlist-item"
+    :link="link"
+    :title="(item.label) ? item.label : item.name"
+    :footer="(item.label) ? item.name : '\xa0'"
+    :subtitle="noType ? '' : getItemTypeAndMetaLabel(item)"
+    :after="state">
     <template #media>
-      <oh-icon v-if="!noIcon && item.category"
-               :icon="item.category"
-               :state="(noState || item.type === 'Image') ? null : context?.store[item.name]?.state || item.state"
-               height="32"
-               width="32" />
+      <oh-icon
+        v-if="!noIcon && item.category"
+        :icon="item.category"
+        :state="(noState || item.type === 'Image') ? null : context?.store[item.name]?.state || item.state"
+        height="32"
+        width="32" />
       <span v-else-if="!noIcon" class="item-initial">{{ item.name[0] }}</span>
     </template>
     <template #after-title>
-      <f7-icon v-if="!item.editable"
-               f7="lock_fill"
-               size="1rem"
-               color="gray" />
+      <f7-icon v-if="!item.editable" f7="lock_fill" size="1rem" color="gray" />
     </template>
     <slot name="footer" />
     <template #subtitle>
       <div v-if="!noTags">
-        <f7-chip v-for="tag in getNonSemanticTags(item)"
-                 :key="tag"
-                 :text="tag"
-                 media-bg-color="blue"
-                 style="margin-right: 6px">
+        <f7-chip v-for="tag in getNonSemanticTags(item)" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
           <template #media>
             <f7-icon ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
           </template>

@@ -12,31 +12,22 @@
           <!-- <f7-list-button @click="enableEditMode" color="blue" title="Add or Remove Members" /> -->
         </ul>
         <f7-list-group v-if="editMembers">
-          <item-picker :multiple="true"
-                       name="groupMembers"
-                       :value="pickedMemberNames"
-                       label="Members"
-                       :editableOnly="true"
-                       :filterType="compatibleItemTypes"
-                       :filterToggle="true"
-                       @input="(members) => pickedMemberNames = members" />
+          <item-picker
+            :multiple="true"
+            name="groupMembers"
+            :value="pickedMemberNames"
+            label="Members"
+            :editableOnly="true"
+            :filterType="compatibleItemTypes"
+            :filterToggle="true"
+            @input="(members) => pickedMemberNames = members" />
         </f7-list-group>
       </f7-list>
     </f7-card-content>
     <f7-card-footer>
-      <f7-button color="blue" v-if="!editMembers" @click="enableEditMode">
-        Change
-      </f7-button>
-      <f7-button color="blue"
-                 v-if="editMembers"
-                 fill
-                 raised
-                 @click="updateMembers">
-        Apply
-      </f7-button>
-      <f7-button color="blue" v-if="editMembers" @click="cancelEditMode">
-        Cancel
-      </f7-button>
+      <f7-button color="blue" v-if="!editMembers" @click="enableEditMode"> Change </f7-button>
+      <f7-button color="blue" v-if="editMembers" fill raised @click="updateMembers"> Apply </f7-button>
+      <f7-button color="blue" v-if="editMembers" @click="cancelEditMode"> Cancel </f7-button>
     </f7-card-footer>
   </f7-card>
 </template>

@@ -9,36 +9,23 @@
           : 'hidden'
     }">
     <!-- Left Panel -->
-    <f7-panel
-      v-show="ready"
-      left
-      :cover="showSidebar ? true : null"
-      class="sidebar"
-      :visible-breakpoint="1024">
+    <f7-panel v-show="ready" left :cover="showSidebar ? true : null" class="sidebar" :visible-breakpoint="1024">
       <f7-page>
         <f7-link href="/overview/" class="openhab-logo no-ripple" panel-close>
           <div class="logo-inner">
-            <img
-              v-if="uiOptionsStore.getDarkMode() === 'dark'"
-              src="@/images/openhab-logo-white.svg"
-              type="image/svg+xml"
-              width="196px">
-            <img v-else
-                 src="@/images/openhab-logo.svg"
-                 type="image/svg+xml"
-                 width="196px">
+            <img v-if="uiOptionsStore.getDarkMode() === 'dark'" src="@/images/openhab-logo-white.svg" type="image/svg+xml" width="196px" />
+            <img v-else src="@/images/openhab-logo.svg" type="image/svg+xml" width="196px" />
           </div>
         </f7-link>
         <f7-link class="breakpoint-pin" @click="toggleVisibleBreakpoint">
-          <f7-icon
-            size="14"
-            :f7="uiOptionsStore.visibleBreakpointDisabled ? 'pin' : 'pin_filled'"
-            color="gray" />
+          <f7-icon size="14" :f7="uiOptionsStore.visibleBreakpointDisabled ? 'pin' : 'pin_filled'" color="gray" />
         </f7-link>
 
         <f7-list v-if="ready">
           <f7-list-item v-if="runtimeStore.apiEndpoint('ui') && (!pages || !pages.length)">
-            <span><em>{{ t('sidebar.noPages') }}</em></span>
+            <span
+              ><em>{{ t('sidebar.noPages') }}</em></span
+            >
           </f7-list-item>
           <f7-list-item
             v-for="page in pages"
@@ -54,8 +41,7 @@
             </template>
           </f7-list-item>
         </f7-list>
-        <f7-block-title
-          v-if="userStore.isAdmin()">
+        <f7-block-title v-if="userStore.isAdmin()">
           {{ t('sidebar.administration') }}
         </f7-block-title>
         <!-- Settings -->
@@ -75,11 +61,7 @@
                 currentPath.settings?.transformations,
             }">
             <template #media>
-              <f7-icon
-                ios="f7:gear_alt_fill"
-                aurora="f7:gear_alt_fill"
-                md="material:settings"
-                color="gray" />
+              <f7-icon ios="f7:gear_alt_fill" aurora="f7:gear_alt_fill" md="material:settings" color="gray" />
             </template>
           </f7-list-item>
           <li v-if="currentPath.settings">
@@ -201,11 +183,7 @@
             :animate="false"
             :class="{ currentsection: currentPath.addons?.$end }">
             <template #media>
-              <f7-icon
-                ios="f7:bag_fill"
-                aurora="f7:bag_fill"
-                md="material:shopping_bag"
-                color="gray" />
+              <f7-icon ios="f7:bag_fill" aurora="f7:bag_fill" md="material:shopping_bag" color="gray" />
             </template>
           </f7-list-item>
           <li v-if="currentPath.addons && runtimeStore.apiEndpoint('addons')">
@@ -235,11 +213,7 @@
             :animate="false"
             :class="{ currentsection: currentPath.developer?.$end }">
             <template #media>
-              <f7-icon
-                ios="f7:wrench_fill"
-                aurora="f7:wrench_fill"
-                md="material:construction"
-                color="gray" />
+              <f7-icon ios="f7:wrench_fill" aurora="f7:wrench_fill" md="material:construction" color="gray" />
             </template>
           </f7-list-item>
           <li v-if="currentPath.developer">
@@ -313,11 +287,7 @@
             panel-close
             :class="{ currentsection: currentPath.about }">
             <template #media>
-              <f7-icon
-                ios="f7:question_circle_fill"
-                aurora="f7:question_circle_fill"
-                md="material:help"
-                color="gray" />
+              <f7-icon ios="f7:question_circle_fill" aurora="f7:question_circle_fill" md="material:help" color="gray" />
             </template>
           </f7-list-item>
         </f7-list>
@@ -330,7 +300,7 @@
                   !userStore.user &&
                     !componentsStore.pages().filter(p => p.uid !== 'overview').length"
                 class="hint-signin">
-                <em>{{ t('sidebar.tip.signIn') }}<br><f7-icon f7="arrow_down" size="20" /></em>
+                <em>{{ t('sidebar.tip.signIn') }}<br /><f7-icon f7="arrow_down" size="20" /></em>
               </div>
               <f7-button
                 @click="authorize(false)"
@@ -366,23 +336,13 @@
     </f7-panel>
 
     <!-- Right Panel -->
-    <f7-panel right
-              reveal
-              dark
-              v-if="ready">
+    <f7-panel right reveal dark v-if="ready">
       <panel-right />
       <!-- <f7-view url="/panel-right/"></f7-view> -->
     </f7-panel>
 
-    <f7-panel v-if="runtimeStore.showDeveloperDock"
-              right
-              :visible-breakpoint="1280"
-              resizable>
-      <developer-dock
-        :dock="activeDock"
-        :helpTab="activeHelpTab"
-        :toolTab="activeToolTab"
-        :searchFor="developerSearch" />
+    <f7-panel v-if="runtimeStore.showDeveloperDock" right :visible-breakpoint="1280" resizable>
+      <developer-dock :dock="activeDock" :helpTab="activeHelpTab" :toolTab="activeToolTab" :searchFor="developerSearch" />
     </f7-panel>
 
     <f7-block v-if="!ready && communicationFailureMsg" class="block-narrow">
@@ -398,10 +358,7 @@
           <f7-list-button color="blue" @click="reload">
             {{ t('about.reload.reloadApp') }}
           </f7-list-button>
-          <f7-list-button
-            v-if="showCachePurgeOption"
-            color="red"
-            @click="purgeServiceWorkerAndCaches">
+          <f7-list-button v-if="showCachePurgeOption" color="red" @click="purgeServiceWorkerAndCaches">
             {{ t('about.reload.purgeCachesAndRefresh') }}
           </f7-list-button>
         </f7-list>
