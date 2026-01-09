@@ -4,12 +4,9 @@
     <template #before-list>
       <f7-menu v-if="context.editmode" class="configure-layout-menu margin-vertical padding-left">
         <f7-menu-item @click="context.editmode.addWidget(context.component)" icon-f7="plus" />
-        <f7-menu-item style="margin-left: auto" icon-f7="square_list" dropdown>
+        <f7-menu-item v-if="context.clipboardtype" style="margin-left: auto" icon-f7="square_list" dropdown>
           <f7-menu-dropdown right>
-            <f7-menu-dropdown-item @click="context.editmode.configureWidget(context.component, context.parent, 'oh-list')" href="#" text="Configure List" />
-            <f7-menu-dropdown-item v-if="context.clipboardtype" divider />
-            <f7-menu-dropdown-item v-if="context.clipboardtype"
-                                   @click="context.editmode.pasteWidget(context.component, context.parent)"
+            <f7-menu-dropdown-item @click="context.editmode.pasteWidget(context.component, context.parent)"
                                    href="#"
                                    text="Paste Item" />
           </f7-menu-dropdown>
