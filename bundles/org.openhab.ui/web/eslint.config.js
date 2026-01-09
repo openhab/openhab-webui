@@ -8,9 +8,7 @@ import pluginVue from 'eslint-plugin-vue'
 import pluginVueI18n from '@intlify/eslint-plugin-vue-i18n'
 import pluginImport from 'eslint-plugin-import-x'
 
-
-// import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended'
-// import eslintConfigPrettier from 'eslint-config-prettier/flat'
+import eslintConfigPrettier from 'eslint-config-prettier/flat'
 
 const rules = {
     'arrow-parens': 'off',
@@ -157,8 +155,6 @@ export default defineConfig([
       }
     }
   },
-  globalIgnores(['dist', 'build', 'public', '**/*.nearley.js'])
-
-  // eslintConfigPrettier, // This is the Prettier config that disables all ESLint rules that conflict with Prettier
+  globalIgnores(['dist', 'build', 'public', '**/*.nearley.js']),
+  eslintConfigPrettier, // Disables all ESLint rules that conflict with Prettier/oxfmt
 ])
-
