@@ -156,7 +156,7 @@
     "@vue/eslint-config-standard": "^9.0.1",
     "@vue/eslint-config-typescript": "^14.6.0",
     "@vue/test-utils": "^2.0.0",
-    "@vue/tsconfig": "^0.7.0",
+    "@vue/tsconfig": "^0.8.1",
     "chalk": "^5.4.1",
     "cross-env": "^10.1.0",
     "css-loader": "^7.1.2",
