@@ -86,11 +86,11 @@ export const actionsMixin = {
       prefix = (actionPropsParameterGroup) ? actionPropsParameterGroup.replace(/action/gi, '') : prefix
       prefix = (prefix) ? prefix += '_' : ''
       const action = actionConfig[prefix + 'action']
+      if (!action) return
       if (context.editmode) {
         this.showActionFeedback(prefix, actionConfig, `Action '${action}' not performed while in edit mode`)
         return
       }
-      if (!action) return
 
       const actionConfirmation = actionConfig[prefix + 'actionConfirmation']
       const confirmationPromise = (actionConfirmation) ? this.requestActionConfirmation(prefix, actionConfig) : Promise.resolve()

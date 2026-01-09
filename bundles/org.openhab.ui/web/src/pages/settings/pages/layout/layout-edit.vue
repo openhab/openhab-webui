@@ -257,11 +257,13 @@ export default {
     f7.off('svgOnclickConfigUpdate', this.onSvgOnClickConfigUpdate)
   },
   methods: {
-    addWidget (component, widgetType, parentContext, slot) {
+    addWidget (component, widgetType, parentContext, slot = 'default') {
       const isList = component.component.indexOf('oh-list') === 0
       const isCells = component.component.indexOf('oh-grid-cells') === 0
-      if (!slot) slot = 'default'
-      if (!component.slots) component.slots = {}
+      if (!component.slots) {
+        console.warn(`slots property is missing on ${component.component}! If adding children fails, add the slots property manually in the code tab:\nslots: {}`)
+        component.slots = {}
+      }
       if (!component.slots[slot]) component.slots[slot] = []
       if (widgetType) {
         component.slots[slot].push({
@@ -275,7 +277,8 @@ export default {
         const doAddWidget = (choice) => {
           component.slots[slot].push({
             component: choice,
-            config: {}
+            config: {},
+            slots: { default: [] }
           })
           nextTick(() => actions.destroy())
           this.forceUpdate()
@@ -323,7 +326,6 @@ export default {
           }
         }).sort((a, b) => a.text.localeCompare(b.text))
         actions = f7.actions.create({
-          // grid: true,
           buttons: [
             [
               {
@@ -351,7 +353,8 @@ export default {
               { color: 'red', 'text': 'Cancel', close: true }
             ]
           ]
-        }).open()
+        })
+        actions.open()
       }
     },
     doAddFromModel (value) {
