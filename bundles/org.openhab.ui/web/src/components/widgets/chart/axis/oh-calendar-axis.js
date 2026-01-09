@@ -3,7 +3,7 @@ import ComponentId from '../../component-id'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
 export default {
-  get (component, startTime, endTime, chart, chartWidget, inverse, numberFormatter) {
+  get(component, startTime, endTime, chart, chartWidget, inverse, numberFormatter) {
     let calendar = chartWidget.evaluateExpression(ComponentId.get(component), component.config)
     calendar.range = [startTime.toDate(), endTime.subtract(1, 'day').toDate()]
     if (inverse) calendar.orient = inverse

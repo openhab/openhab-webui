@@ -1,10 +1,7 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn">
     <f7-navbar>
-      <oh-nav-content title="Choose Binding"
-                      back-link="Things"
-                      back-link-url="/settings/things/"
-                      :f7router />
+      <oh-nav-content title="Choose Binding" back-link="Things" back-link-url="/settings/things/" :f7router />
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
           v-if="initSearchbar"
@@ -17,10 +14,11 @@
       </f7-subnavbar>
     </f7-navbar>
 
-    <empty-state-placeholder v-if="ready && !bindings.length"
-                             icon="circle_grid_hex"
-                             title="things.nobindings.title"
-                             text="things.nobindings.text" />
+    <empty-state-placeholder
+      v-if="ready && !bindings.length"
+      icon="circle_grid_hex"
+      title="things.nobindings.title"
+      text="things.nobindings.text" />
 
     <f7-block class="block-narrow">
       <f7-col>
@@ -58,12 +56,7 @@
         </f7-list>
       </f7-col>
       <f7-row v-else-if="ready" class="display-flex justify-content-center">
-        <f7-button large
-                   fill
-                   color="blue"
-                   href="/addons/binding/">
-          Install Bindings
-        </f7-button>
+        <f7-button large fill color="blue" href="/addons/binding/"> Install Bindings </f7-button>
       </f7-row>
     </f7-block>
   </f7-page>

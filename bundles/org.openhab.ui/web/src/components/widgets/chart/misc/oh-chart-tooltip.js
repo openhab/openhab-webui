@@ -5,7 +5,7 @@ import ComponentId from '../../component-id'
 dayjs.extend(LocalizedFormat)
 
 export default {
-  get (component, startTime, endTime, chart, device, numberFormatter) {
+  get(component, startTime, endTime, chart, device, numberFormatter) {
     let options = chart.evaluateExpression(ComponentId.get(component), component.config)
     if (options.confine === undefined) options.confine = true
 

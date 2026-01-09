@@ -1,25 +1,23 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="home-editor">
     <f7-navbar no-hairline>
-      <oh-nav-content :title="'Edit Home Page' + dirtyIndicator"
-                      :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
-                      @save="save()"
-                      :f7router />
+      <oh-nav-content
+        :title="'Edit Home Page' + dirtyIndicator"
+        :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
+        @save="save()"
+        :f7router />
     </f7-navbar>
     <f7-toolbar tabbar position="top" v-if="!previewMode">
-      <f7-link @click="switchTab('design', fromYaml)" :tab-link-active="currentTab === 'design'" tab-link="#design">
-        Design
-      </f7-link>
-      <f7-link @click="switchTab('code', toYaml)" :tab-link-active="currentTab === 'code'" tab-link="#code">
-        Code
-      </f7-link>
+      <f7-link @click="switchTab('design', fromYaml)" :tab-link-active="currentTab === 'design'" tab-link="#design"> Design </f7-link>
+      <f7-link @click="switchTab('code', toYaml)" :tab-link-active="currentTab === 'code'" tab-link="#code"> Code </f7-link>
     </f7-toolbar>
     <f7-toolbar v-else tabbar position="top">
-      <f7-link v-for="tab in modelTabs"
-               :key="tab.value"
-               @click="showCardControls = false; currentModelTab = tab.value"
-               :tab-link-active="currentModelTab === tab.value"
-               :tab-link="'#' + tab.value">
+      <f7-link
+        v-for="tab in modelTabs"
+        :key="tab.value"
+        @click="showCardControls = false; currentModelTab = tab.value"
+        :tab-link-active="currentModelTab === tab.value"
+        :tab-link="'#' + tab.value">
         {{ tab.label }}
       </f7-link>
     </f7-toolbar>
@@ -30,9 +28,7 @@
       </div>
     </f7-toolbar>
     <f7-tabs class="tabs-editor-tabs">
-      <f7-tab id="design"
-              class="tabs-editor-design-tab"
-              :tab-active="currentTab === 'design'">
+      <f7-tab id="design" class="tabs-editor-design-tab" :tab-active="currentTab === 'design'">
         <f7-block v-if="!ready || !modelReady" class="text-align-center">
           <f7-preloader />
           <div>Loading...</div>
@@ -53,78 +49,70 @@
 
           <f7-block class="no-margin-bottom">
             <f7-segmented strong tag="p">
-              <f7-button v-for="tab in modelTabs"
-                         :key="tab.value"
-                         @click="showCardControls = false; currentModelTab = tab.value"
-                         :active="currentModelTab === tab.value"
-                         :text="tab.label" />
+              <f7-button
+                v-for="tab in modelTabs"
+                :key="tab.value"
+                @click="showCardControls = false; currentModelTab = tab.value"
+                :active="currentModelTab === tab.value"
+                :text="tab.label" />
             </f7-segmented>
 
-            <f7-block-title class="no-margin-bottom">
-              Cards
-            </f7-block-title>
+            <f7-block-title class="no-margin-bottom"> Cards </f7-block-title>
             <div>
               <div class="display-block padding">
                 <div class="no-padding float-right">
-                  <f7-button @click="showCardControls = !showCardControls"
-                             small
-                             outline
-                             :fill="showCardControls"
-                             sortable-toggle=".sortable"
-                             style="margin-top: -3px; margin-right: 5px"
-                             color="gray"
-                             icon-size="12"
-                             icon-ios="material:wrap_text"
-                             icon-md="material:wrap_text"
-                             icon-aurora="material:wrap_text">
+                  <f7-button
+                    @click="showCardControls = !showCardControls"
+                    small
+                    outline
+                    :fill="showCardControls"
+                    sortable-toggle=".sortable"
+                    style="margin-top: -3px; margin-right: 5px"
+                    color="gray"
+                    icon-size="12"
+                    icon-ios="material:wrap_text"
+                    icon-md="material:wrap_text"
+                    icon-aurora="material:wrap_text">
                     &nbsp;Reorder
                   </f7-button>
                 </div>
               </div>
 
-              <f7-list media-list
-                       class="homecards-list"
-                       sortable
-                       :key="'cards-' + currentModelTab + cardListId"
-                       @sortable:sort="reorderCard">
-                <f7-list-item v-for="(card, idx) in cardGroups(currentModelTab, page).flat()"
-                              media-item
-                              :link="(showCardControls) ? undefined : ''"
-                              @click="(ev) => cardClicked(ev, card, idx)"
-                              :key="idx"
-                              :title="card.separator || card.defaultTitle"
-                              :footer="(card.separator) ? '(separator)' : card.key">
+              <f7-list
+                media-list
+                class="homecards-list"
+                sortable
+                :key="'cards-' + currentModelTab + cardListId"
+                @sortable:sort="reorderCard">
+                <f7-list-item
+                  v-for="(card, idx) in cardGroups(currentModelTab, page).flat()"
+                  media-item
+                  :link="(showCardControls) ? undefined : ''"
+                  @click="(ev) => cardClicked(ev, card, idx)"
+                  :key="idx"
+                  :title="card.separator || card.defaultTitle"
+                  :footer="(card.separator) ? '(separator)' : card.key">
                   <template #content-start>
                     <f7-menu class="configure-layout-menu">
                       <f7-menu-item icon-f7="list_bullet" dropdown>
                         <f7-menu-dropdown>
-                          <f7-menu-dropdown-item v-if="!card.separator"
-                                                 @click="configureCard(card)"
-                                                 href="#"
-                                                 text="Configure Card" />
-                          <f7-menu-dropdown-item v-if="!card.separator"
-                                                 @click="editCardCode(card)"
-                                                 href="#"
-                                                 text="Edit YAML" />
-                          <f7-menu-dropdown-item v-if="card.separator"
-                                                 @click="renameCardSeparator(idx)"
-                                                 href="#"
-                                                 text="Rename" />
+                          <f7-menu-dropdown-item v-if="!card.separator" @click="configureCard(card)" href="#" text="Configure Card" />
+                          <f7-menu-dropdown-item v-if="!card.separator" @click="editCardCode(card)" href="#" text="Edit YAML" />
+                          <f7-menu-dropdown-item v-if="card.separator" @click="renameCardSeparator(idx)" href="#" text="Rename" />
                           <f7-menu-dropdown-item divider />
-                          <f7-menu-dropdown-item v-if="!card.separator"
-                                                 @click="addCardSeparator(idx)"
-                                                 href="#"
-                                                 text="Add Separator Before" />
-                          <f7-menu-dropdown-item v-if="card.separator"
-                                                 @click="removeCardSeparator(idx)"
-                                                 href="#"
-                                                 text="Remove Separator" />
+                          <f7-menu-dropdown-item
+                            v-if="!card.separator"
+                            @click="addCardSeparator(idx)"
+                            href="#"
+                            text="Add Separator Before" />
+                          <f7-menu-dropdown-item v-if="card.separator" @click="removeCardSeparator(idx)" href="#" text="Remove Separator" />
                         </f7-menu-dropdown>
                       </f7-menu-item>
                     </f7-menu>
-                    <f7-checkbox :checked="!isCardExcluded(card) ? true : null"
-                                 :disabled="card.separator !== undefined ? true : null"
-                                 class="margin-right" />
+                    <f7-checkbox
+                      :checked="!isCardExcluded(card) ? true : null"
+                      :disabled="card.separator !== undefined ? true : null"
+                      class="margin-right" />
                   </template>
                 </f7-list-item>
               </f7-list>
@@ -161,26 +149,21 @@
         </div>
 
         <div v-else :context="context" :key="pageKey">
-          <model-tab style="margin-bottom: 4rem"
-                     :context="context"
-                     :type="currentModelTab"
-                     :page="page" />
+          <model-tab style="margin-bottom: 4rem" :context="context" :type="currentModelTab" :page="page" />
         </div>
       </f7-tab>
 
       <f7-tab id="code" :tab-active="currentTab === 'code'">
-        <editor v-if="currentTab === 'code'"
-                :style="{ opacity: previewMode ? '0' : '' }"
-                class="page-code-editor"
-                mode="application/vnd.openhab.uicomponent+yaml;type=home"
-                :value="pageYaml"
-                @input="onEditorInput" />
+        <editor
+          v-if="currentTab === 'code'"
+          :style="{ opacity: previewMode ? '0' : '' }"
+          class="page-code-editor"
+          mode="application/vnd.openhab.uicomponent+yaml;type=home"
+          :value="pageYaml"
+          @input="onEditorInput" />
         <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
         <div v-if="ready && previewMode" :context="context" :key="pageKey">
-          <model-tab style="margin-bottom: 4rem"
-                     :context="context"
-                     :type="currentModelTab"
-                     :page="page" />
+          <model-tab style="margin-bottom: 4rem" :context="context" :type="currentModelTab" :page="page" />
         </div>
       </f7-tab>
     </f7-tabs>

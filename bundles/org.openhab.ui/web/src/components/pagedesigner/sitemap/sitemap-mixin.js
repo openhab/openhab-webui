@@ -1,11 +1,11 @@
 export default {
-  data () {
+  data() {
     return {
       items: [],
       itemsReady: false
     }
   },
-  created () {
+  created() {
     this.WIDGET_TYPES = [
       { type: 'Sitemap', icon: 'slider_horizontal_below_rectangle' },
       { type: 'Text', icon: 'textformat' },
@@ -28,15 +28,31 @@ export default {
       { type: 'Video', icon: 'videocam' }
     ]
     this.LINKABLE_WIDGET_TYPES = ['Sitemap', 'Text', 'Frame', 'Group', 'Image', 'Buttongrid']
-    this.WIDGET_TYPES_REQUIRING_ITEM = ['Group', 'Chart', 'Switch', 'Mapview', 'Slider', 'Selection', 'Setpoint', 'Input', 'Colorpicker', 'Colortemperaturepicker', 'Default']
+    this.WIDGET_TYPES_REQUIRING_ITEM = [
+      'Group',
+      'Chart',
+      'Switch',
+      'Mapview',
+      'Slider',
+      'Selection',
+      'Setpoint',
+      'Input',
+      'Colorpicker',
+      'Colortemperaturepicker',
+      'Default'
+    ]
     this.WIDGET_TYPES_SHOWING_VALUE = ['Text', 'Switch', 'Selection', 'Slider', 'Setpoint', 'Input', 'Default', 'Group']
 
-    this.REGEX_PERIOD = /^((P(\d+Y)?(\d+M)?(\d+W)?(\d+D)?(T(\d+H)?(\d+M)?(\d+S)?)?|\d*[YMWDh])-)?-?(P(\d+Y)?(\d+M)?(\d+W)?(\d+D)?(T(\d+H)?(\d+M)?(\d+S)?)?|\d*[YMWDh])$/
-    this.REGEX_DECIMAL_PATTERN = /^(?:'[0#.,;E]?'|[^0#.,;E'])*((#[,#]*|0)[,0]*)(\.(0+#*|#+))?(?:E0+)?(?:';'|[^;])*(?:;(?:'[0#.,;E]?'|[^0#.,;E'])*((#[,#]*|0)[,0]*)(\.(0+#*|#+))?(?:E0+)?.*)?$/
+    this.REGEX_PERIOD =
+      /^((P(\d+Y)?(\d+M)?(\d+W)?(\d+D)?(T(\d+H)?(\d+M)?(\d+S)?)?|\d*[YMWDh])-)?-?(P(\d+Y)?(\d+M)?(\d+W)?(\d+D)?(T(\d+H)?(\d+M)?(\d+S)?)?|\d*[YMWDh])$/
+    this.REGEX_DECIMAL_PATTERN =
+      /^(?:'[0#.,;E]?'|[^0#.,;E'])*((#[,#]*|0)[,0]*)(\.(0+#*|#+))?(?:E0+)?(?:';'|[^;])*(?:;(?:'[0#.,;E]?'|[^0#.,;E'])*((#[,#]*|0)[,0]*)(\.(0+#*|#+))?(?:E0+)?.*)?$/
     this.REGEX_MAPPING = /^\s*("[^\n"]*"|\w+)\s*=\s*("[^\n"]*"|\w+)\s*(=\s*("[^\n"]*"|[\w:-]+))?$/u
     this.REGEX_MAPPING_SWITCH = /^\s*("[^\n"]*"|\w+)\s*(:\s*("[^\n"]*"|\w+)\s*)?=\s*("[^\n"]*"|\w+)\s*(=\s*("[^\n"]*"|\w+))?$/u
-    this.REGEX_RULE_VISIBILITY = /^(\s*((\w+\s*)?(==|>=|<=|!=|>|<)\s*)?("[^\n"]*"|\w+)\s*AND)*\s*((\w+\s*)?(==|>=|<=|!=|>|<)\s*)?("[^\n"]*"|\w+)\s*$/u
-    this.REGEX_RULE = /^(((\s*((\w+\s*)?(==|>=|<=|!=|>|<)\s*)?("[^\n"]*"|\w+)\s*AND)*\s*((\w+\s*)?(==|>=|<=|!=|>|<)\s*)?("[^\n"]*"|\w+)\s*)?\s*=)?\s*("#?(\w|:|-)+"|#?(\w|:|-)+)$/u
+    this.REGEX_RULE_VISIBILITY =
+      /^(\s*((\w+\s*)?(==|>=|<=|!=|>|<)\s*)?("[^\n"]*"|\w+)\s*AND)*\s*((\w+\s*)?(==|>=|<=|!=|>|<)\s*)?("[^\n"]*"|\w+)\s*$/u
+    this.REGEX_RULE =
+      /^(((\s*((\w+\s*)?(==|>=|<=|!=|>|<)\s*)?("[^\n"]*"|\w+)\s*AND)*\s*((\w+\s*)?(==|>=|<=|!=|>|<)\s*)?("[^\n"]*"|\w+)\s*)?\s*=)?\s*("#?(\w|:|-)+"|#?(\w|:|-)+)$/u
 
     this.ADDITIONAL_CONTROLS = {
       Image: ['url', 'refresh'],
@@ -78,7 +94,7 @@ export default {
     }
   },
   methods: {
-    allowedWidgetTypes (parentWidget) {
+    allowedWidgetTypes(parentWidget) {
       let types = this.WIDGET_TYPES.filter((w) => w.type !== 'Sitemap')
       // Button only allowed inside Buttongrid
       if (parentWidget.component === 'Buttongrid') return types.filter((t) => t.type === 'Button')
@@ -97,7 +113,7 @@ export default {
       }
       return types
     },
-    canAddChildren (widget) {
+    canAddChildren(widget) {
       if (!widget) return false
       if (widget.component === 'Buttongrid') {
         const buttons = widget.config.buttons
@@ -105,25 +121,26 @@ export default {
       }
       return this.LINKABLE_WIDGET_TYPES.includes(widget.component)
     },
-    widgetTypeDef (component) {
+    widgetTypeDef(component) {
       const componentType = component ?? this.widget.component
       return this.WIDGET_TYPES.find((w) => w.type === componentType)
     },
-    widgetTypeIcon (component) {
+    widgetTypeIcon(component) {
       return this.widgetTypeDef(component).icon
     },
-    widgetTypeLabel (component) {
+    widgetTypeLabel(component) {
       return this.widgetTypeDef(component).label ?? this.widgetTypeDef(component).type
     },
-    widgetConfigLabel () {
-      return this.widget.config.label ?? ((this.widget.component === 'Button') ? this.widget.config.cmd : '')
+    widgetConfigLabel() {
+      return this.widget.config.label ?? (this.widget.component === 'Button' ? this.widget.config.cmd : '')
     },
-    widgetItemLabel (includeItemName) {
+    widgetItemLabel(includeItemName) {
       const item = this.items.find((i) => i.name === this.widget.config.item)
       return (item?.label || this.widget.config.item) + (includeItemName && item ? ` (${item.name})` : '')
     },
-    widgetConfigDescription (includeItemName) {
-      const buttonPosition = this.widget.component === 'Button' ? ` (${this.widget.config?.row ?? '-'},${this.widget.config?.column ?? '-'})` : ''
+    widgetConfigDescription(includeItemName) {
+      const buttonPosition =
+        this.widget.component === 'Button' ? ` (${this.widget.config?.row ?? '-'},${this.widget.config?.column ?? '-'})` : ''
       return (this.widget.config?.item ? ': ' + this.widgetItemLabel(includeItemName) : '') + buttonPosition
     }
   }

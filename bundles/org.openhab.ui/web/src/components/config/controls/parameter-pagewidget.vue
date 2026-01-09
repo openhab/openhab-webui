@@ -1,28 +1,27 @@
 <template>
   <ul>
-    <f7-list-item
-      :title="configDescription.label"
-      smart-select
-      :smart-select-params="smartSelectParams"
-      ref="item">
-      <select :name="configDescription.name"
-              @change="updateValue"
-              :multiple="configDescription.multiple"
-              :required="configDescription.required">
+    <f7-list-item :title="configDescription.label" smart-select :smart-select-params="smartSelectParams" ref="item">
+      <select
+        :name="configDescription.name"
+        @change="updateValue"
+        :multiple="configDescription.multiple"
+        :required="configDescription.required">
         <option v-if="!configDescription.required" :value="undefined" :selected="value === null || value === undefined ? true : null" />
         <optgroup v-if="configDescription.context.indexOf('page') >= 0" label="Pages">
-          <option v-for="option in componentsStore.pages()"
-                  :value="'page:' + option.uid"
-                  :key="option.uid"
-                  :selected="isSelected(option, 'page') ? true : null">
+          <option
+            v-for="option in componentsStore.pages()"
+            :value="'page:' + option.uid"
+            :key="option.uid"
+            :selected="isSelected(option, 'page') ? true : null">
             {{ option.config.label }}
           </option>
         </optgroup>
         <optgroup v-if="configDescription.context.indexOf('widget') >= 0" label="Widgets">
-          <option v-for="option in componentsStore.widgets()"
-                  :value="'widget:' + option.uid"
-                  :key="option.uid"
-                  :selected="isSelected(option, 'widget') ? true : null">
+          <option
+            v-for="option in componentsStore.widgets()"
+            :value="'widget:' + option.uid"
+            :key="option.uid"
+            :selected="isSelected(option, 'widget') ? true : null">
             {{ option.uid }}
           </option>
         </optgroup>

@@ -1,10 +1,6 @@
 <template>
   <div class="network-fit">
-    <chart
-      v-if="chartOptions"
-      :option="chartOptions"
-      :theme="isDarkMode ? 'dark' : undefined"
-      autoresize />
+    <chart v-if="chartOptions" :option="chartOptions" :theme="isDarkMode ? 'dark' : undefined" autoresize />
     <div v-if="graph" class="network-legend" :class="{ dark: isDarkMode }">
       <div class="legend-title">
         {{ graph.title }}
@@ -12,9 +8,7 @@
 
       <!-- Node Roles -->
       <div v-if="graph.legend.nodeRoles.length" class="legend-section">
-        <div class="legend-subtitle">
-          Node Roles
-        </div>
+        <div class="legend-subtitle">Node Roles</div>
         <div v-for="role in graph.legend.nodeRoles" :key="role.id" class="legend-item">
           <span class="legend-node" :style="{ 'border-color': role.color }" />
           <span>{{ role.label }}</span>
@@ -23,9 +17,7 @@
 
       <!-- Link Quality -->
       <div v-if="graph.legend.linkQualities.length" class="legend-section">
-        <div class="legend-subtitle">
-          Link Quality
-        </div>
+        <div class="legend-subtitle">Link Quality</div>
         <div v-for="quality in graph.legend.linkQualities" :key="quality.value" class="legend-item">
           <span class="legend-line" :style="{ background: quality.color, height: quality.width + 'px' }" />
           <span>{{ quality.label }} ({{ quality.value }})</span>
@@ -34,9 +26,7 @@
 
       <!-- Link Types -->
       <div v-if="graph.legend.linkTypes.length" class="legend-section">
-        <div class="legend-subtitle">
-          Connections
-        </div>
+        <div class="legend-subtitle">Connections</div>
         <div v-for="linkType in graph.legend.linkTypes" :key="linkType.id" class="legend-item">
           <span class="legend-arrow">{{ getLinkSymbol(linkType) }}</span>
           <span>{{ linkType.label }}</span>
@@ -358,4 +348,3 @@ export default {
   }
 }
 </script>
-

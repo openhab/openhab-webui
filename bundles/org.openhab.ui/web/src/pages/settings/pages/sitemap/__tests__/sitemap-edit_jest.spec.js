@@ -28,7 +28,6 @@ describe('SitemapEdit', () => {
     }
   })
 
-
   beforeEach(() => {
     wrapper = shallowMount(SitemapEdit, {
       props: {
@@ -63,10 +62,7 @@ describe('SitemapEdit', () => {
     await wrapper.vm.$nextTick()
     wrapper.vm.addWidget('Frame')
     await wrapper.vm.$nextTick()
-    wrapper.vm.selectWidget([
-      wrapper.vm.sitemap.slots.widgets[0].slots.widgets[0],
-      wrapper.vm.sitemap.slots.widgets[0]
-    ])
+    wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0].slots.widgets[0], wrapper.vm.sitemap.slots.widgets[0]])
     await wrapper.vm.$nextTick()
     wrapper.vm.selectedWidget.config.label = 'Frame Test'
 
@@ -86,10 +82,7 @@ describe('SitemapEdit', () => {
     await wrapper.vm.$nextTick()
     wrapper.vm.addWidget('Text')
     await wrapper.vm.$nextTick()
-    wrapper.vm.selectWidget([
-      wrapper.vm.sitemap.slots.widgets[0].slots.widgets[0],
-      wrapper.vm.sitemap.slots.widgets[0]
-    ])
+    wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0].slots.widgets[0], wrapper.vm.sitemap.slots.widgets[0]])
     await wrapper.vm.$nextTick()
     wrapper.vm.addWidget('Frame')
     await wrapper.vm.$nextTick()
@@ -158,9 +151,7 @@ describe('SitemapEdit', () => {
     lastDialogConfig = null
     wrapper.vm.validateWidgets()
     expect(lastDialogConfig).toBeTruthy()
-    expect(lastDialogConfig.content).toMatch(
-      /Widget without label, only frames or no frames at all allowed in linkable widget/
-    )
+    expect(lastDialogConfig.content).toMatch(/Widget without label, only frames or no frames at all allowed in linkable widget/)
   })
 
   it('validates item name is checked', async () => {
@@ -180,10 +171,7 @@ describe('SitemapEdit', () => {
 
     // configure an item for the Switch and check that there are no validation errors anymore
     lastDialogConfig = null
-    wrapper.vm.selectWidget([
-      wrapper.vm.sitemap.slots.widgets[0].slots.widgets[0],
-      wrapper.vm.sitemap.slots.widgets[0]
-    ])
+    wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0].slots.widgets[0], wrapper.vm.sitemap.slots.widgets[0]])
     await wrapper.vm.$nextTick()
     wrapper.vm.selectedWidget.config.item = 'Item1'
     wrapper.vm.validateWidgets()
@@ -229,9 +217,7 @@ describe('SitemapEdit', () => {
     lastDialogConfig = null
     wrapper.vm.validateWidgets()
     expect(lastDialogConfig).toBeTruthy()
-    expect(lastDialogConfig.content).toMatch(
-      /Chart widget Chart Test, invalid period configured: undefined/
-    )
+    expect(lastDialogConfig.content).toMatch(/Chart widget Chart Test, invalid period configured: undefined/)
 
     // configure an invalid period for the Chart
     lastDialogConfig = null
@@ -240,9 +226,7 @@ describe('SitemapEdit', () => {
     wrapper.vm.selectedWidget.config.period = '5d'
     wrapper.vm.validateWidgets()
     expect(lastDialogConfig).toBeTruthy()
-    expect(lastDialogConfig.content).toMatch(
-      /Chart widget Chart Test, invalid period configured: 5d/
-    )
+    expect(lastDialogConfig.content).toMatch(/Chart widget Chart Test, invalid period configured: 5d/)
 
     // configure a period for the Chart and check that there are no validation errors anymore
     lastDialogConfig = null
@@ -307,9 +291,7 @@ describe('SitemapEdit', () => {
     lastDialogConfig = null
     wrapper.vm.validateWidgets()
     expect(lastDialogConfig).toBeTruthy()
-    expect(lastDialogConfig.content).toMatch(
-      /Slider widget Slider Test, step size cannot be 0 or negative: -1/
-    )
+    expect(lastDialogConfig.content).toMatch(/Slider widget Slider Test, step size cannot be 0 or negative: -1/)
 
     // configure a 0 step, should not validate
     wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0], wrapper.vm.sitemap])
@@ -318,9 +300,7 @@ describe('SitemapEdit', () => {
     lastDialogConfig = null
     wrapper.vm.validateWidgets()
     expect(lastDialogConfig).toBeTruthy()
-    expect(lastDialogConfig.content).toMatch(
-      /Slider widget Slider Test, step size cannot be 0 or negative: 0/
-    )
+    expect(lastDialogConfig.content).toMatch(/Slider widget Slider Test, step size cannot be 0 or negative: 0/)
 
     // configure a positive step, should validate
     wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0], wrapper.vm.sitemap])
@@ -352,9 +332,7 @@ describe('SitemapEdit', () => {
     wrapper.vm.selectedWidget.config.maxValue = 5
     wrapper.vm.validateWidgets()
     expect(lastDialogConfig).toBeTruthy()
-    expect(lastDialogConfig.content).toMatch(
-      /Setpoint widget Setpoint Test, minValue must be less than or equal maxValue: 10 > 5/
-    )
+    expect(lastDialogConfig.content).toMatch(/Setpoint widget Setpoint Test, minValue must be less than or equal maxValue: 10 > 5/)
 
     // configure a minValue equal to maxValue, should validate
     lastDialogConfig = null
@@ -388,22 +366,13 @@ describe('SitemapEdit', () => {
     lastDialogConfig = null
     wrapper.vm.validateWidgets()
     expect(lastDialogConfig).toBeTruthy()
-    expect(lastDialogConfig.content).toMatch(
-      /Selection widget Selection Test, syntax error in mappings: Morning/
-    )
+    expect(lastDialogConfig.content).toMatch(/Selection widget Selection Test, syntax error in mappings: Morning/)
 
     // configure a correct mapping and check that there are no validation errors anymore
     lastDialogConfig = null
     wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0], wrapper.vm.sitemap])
     await wrapper.vm.$nextTick()
-    wrapper.vm.selectedWidget.config.mappings = [
-      '1=Morning',
-      '2=Evening',
-      '10="Cinéma"',
-      '11=TV',
-      '"3 time"="Bed time"',
-      '4=Night=moon'
-    ]
+    wrapper.vm.selectedWidget.config.mappings = ['1=Morning', '2=Evening', '10="Cinéma"', '11=TV', '"3 time"="Bed time"', '4=Night=moon']
     wrapper.vm.validateWidgets()
     expect(lastDialogConfig).toBeFalsy()
   })
@@ -423,9 +392,7 @@ describe('SitemapEdit', () => {
     lastDialogConfig = null
     wrapper.vm.validateWidgets()
     expect(lastDialogConfig).toBeTruthy()
-    expect(lastDialogConfig.content).toMatch(
-      /Switch widget Switch Test, syntax error in mappings: Morning/
-    )
+    expect(lastDialogConfig.content).toMatch(/Switch widget Switch Test, syntax error in mappings: Morning/)
 
     // configure a correct mapping and check that there are no validation errors anymore
     lastDialogConfig = null
@@ -447,9 +414,7 @@ describe('SitemapEdit', () => {
     lastDialogConfig = null
     wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0], wrapper.vm.sitemap])
     await wrapper.vm.$nextTick()
-    wrapper.vm.selectedWidget.config.mappings = [
-      '"ON command":"OFF command"=ON=icon'
-    ]
+    wrapper.vm.selectedWidget.config.mappings = ['"ON command":"OFF command"=ON=icon']
     wrapper.vm.validateWidgets()
     expect(lastDialogConfig).toBeFalsy()
   })
@@ -468,9 +433,7 @@ describe('SitemapEdit', () => {
     lastDialogConfig = null
     wrapper.vm.validateWidgets()
     expect(lastDialogConfig).toBeTruthy()
-    expect(lastDialogConfig.content).toMatch(
-      /Buttongrid widget Buttongrid Test, no buttons defined/
-    )
+    expect(lastDialogConfig.content).toMatch(/Buttongrid widget Buttongrid Test, no buttons defined/)
 
     // add button, should not validate as the button has no row defined
     lastDialogConfig = null
@@ -478,31 +441,21 @@ describe('SitemapEdit', () => {
     wrapper.vm.selectedWidget.config.buttons = [{ column: 1, command: '1=Morning' }]
     wrapper.vm.validateWidgets()
     expect(lastDialogConfig).toBeTruthy()
-    expect(lastDialogConfig.content).toMatch(
-      /Buttongrid widget Buttongrid Test, invalid row configured: undefined/
-    )
+    expect(lastDialogConfig.content).toMatch(/Buttongrid widget Buttongrid Test, invalid row configured: undefined/)
 
     // configure a correct row, should not validate as wrong column set
     lastDialogConfig = null
-    wrapper.vm.selectedWidget.config.buttons = [
-      { row: 1, column: 'column', command: '1=Morning' }
-    ]
+    wrapper.vm.selectedWidget.config.buttons = [{ row: 1, column: 'column', command: '1=Morning' }]
     wrapper.vm.validateWidgets()
     expect(lastDialogConfig).toBeTruthy()
-    expect(lastDialogConfig.content).toMatch(
-      /Buttongrid widget Buttongrid Test, invalid column configured: column/
-    )
+    expect(lastDialogConfig.content).toMatch(/Buttongrid widget Buttongrid Test, invalid column configured: column/)
 
     // configure a correct column, should not validate as wrong command set
     lastDialogConfig = null
-    wrapper.vm.selectedWidget.config.buttons = [
-      { row: 1, column: 2, command: 'Morning' }
-    ]
+    wrapper.vm.selectedWidget.config.buttons = [{ row: 1, column: 2, command: 'Morning' }]
     wrapper.vm.validateWidgets()
     expect(lastDialogConfig).toBeTruthy()
-    expect(lastDialogConfig.content).toMatch(
-      /Buttongrid widget Buttongrid Test, syntax error in button command: Morning/
-    )
+    expect(lastDialogConfig.content).toMatch(/Buttongrid widget Buttongrid Test, syntax error in button command: Morning/)
 
     // configure correct commands, should not validate as duplicate positions
     lastDialogConfig = null
@@ -512,9 +465,7 @@ describe('SitemapEdit', () => {
     ]
     wrapper.vm.validateWidgets()
     expect(lastDialogConfig).toBeTruthy()
-    expect(lastDialogConfig.content).toMatch(
-      /Buttongrid widget Buttongrid Test, duplicate button position : row 1 column 1/
-    )
+    expect(lastDialogConfig.content).toMatch(/Buttongrid widget Buttongrid Test, duplicate button position : row 1 column 1/)
 
     // configure a correct command and check that there are no validation errors anymore
     lastDialogConfig = null
@@ -545,12 +496,8 @@ describe('SitemapEdit', () => {
     lastDialogConfig = null
     wrapper.vm.validateWidgets()
     expect(lastDialogConfig).toBeTruthy()
-    expect(lastDialogConfig.content).toMatch(
-      /Buttongrid widget Buttongrid Test, no item configured/
-    )
-    expect(lastDialogConfig.content).toMatch(
-      /Buttongrid widget Buttongrid Test, no buttons defined/
-    )
+    expect(lastDialogConfig.content).toMatch(/Buttongrid widget Buttongrid Test, no item configured/)
+    expect(lastDialogConfig.content).toMatch(/Buttongrid widget Buttongrid Test, no buttons defined/)
 
     // add button, should not validate as the button has no row defined
     lastDialogConfig = null
@@ -562,9 +509,7 @@ describe('SitemapEdit', () => {
     await wrapper.vm.$nextTick()
     wrapper.vm.validateWidgets()
     expect(lastDialogConfig).toBeTruthy()
-    expect(lastDialogConfig.content).toMatch(
-      /Button widget Morning, invalid row configured: undefined/
-    )
+    expect(lastDialogConfig.content).toMatch(/Button widget Morning, invalid row configured: undefined/)
 
     // configure a correct row, should not validate as wrong column set
     lastDialogConfig = null
@@ -573,9 +518,7 @@ describe('SitemapEdit', () => {
     await wrapper.vm.$nextTick()
     wrapper.vm.validateWidgets()
     expect(lastDialogConfig).toBeTruthy()
-    expect(lastDialogConfig.content).toMatch(
-      /Button widget Morning, invalid column configured: column/
-    )
+    expect(lastDialogConfig.content).toMatch(/Button widget Morning, invalid column configured: column/)
 
     // configure a correct column, should not validate as no item set
     lastDialogConfig = null
@@ -607,9 +550,7 @@ describe('SitemapEdit', () => {
     await wrapper.vm.$nextTick()
     wrapper.vm.validateWidgets()
     expect(lastDialogConfig).toBeTruthy()
-    expect(lastDialogConfig.content).toMatch(
-      /Buttongrid widget Buttongrid Test, duplicate button position : row 1 column 1/
-    )
+    expect(lastDialogConfig.content).toMatch(/Buttongrid widget Buttongrid Test, duplicate button position : row 1 column 1/)
 
     // configure a correct command and check that there are no validation errors anymore
     lastDialogConfig = null
@@ -643,20 +584,13 @@ describe('SitemapEdit', () => {
     lastDialogConfig = null
     wrapper.vm.validateWidgets()
     expect(lastDialogConfig).toBeTruthy()
-    expect(lastDialogConfig.content).toMatch(
-      /Text widget Text Test, syntax error in visibility: true/
-    )
+    expect(lastDialogConfig.content).toMatch(/Text widget Text Test, syntax error in visibility: true/)
 
     // configure a correct visibility and check that there are no validation errors anymore
     lastDialogConfig = null
     wrapper.vm.selectWidget([wrapper.vm.sitemap.slots.widgets[0], wrapper.vm.sitemap])
     await wrapper.vm.$nextTick()
-    wrapper.vm.selectedWidget.config.visibility = [
-      'Day_time=="Morning Time"',
-      'Battery<30',
-      'Battery>50',
-      'Battery_Level>=20'
-    ]
+    wrapper.vm.selectedWidget.config.visibility = ['Day_time=="Morning Time"', 'Battery<30', 'Battery>50', 'Battery_Level>=20']
     wrapper.vm.validateWidgets()
     expect(lastDialogConfig).toBeFalsy()
   })
@@ -676,9 +610,7 @@ describe('SitemapEdit', () => {
     lastDialogConfig = null
     wrapper.vm.validateWidgets()
     expect(lastDialogConfig).toBeTruthy()
-    expect(lastDialogConfig.content).toMatch(
-      /Text widget Text Test, syntax error in valuecolor: false>=/
-    )
+    expect(lastDialogConfig.content).toMatch(/Text widget Text Test, syntax error in valuecolor: false>=/)
 
     // configure a correct valuecolor and check that there are no validation errors anymore
     lastDialogConfig = null

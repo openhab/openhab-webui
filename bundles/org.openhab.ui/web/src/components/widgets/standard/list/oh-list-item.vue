@@ -1,22 +1,21 @@
 <template>
-  <f7-list-button v-if="config.listButton && !context.editmode"
-                  :title="config.title || 'Action'"
-                  :color="config.color || 'blue'"
-                  @click.stop="performAction" />
-  <f7-list-item v-else-if="config.divider && !context.editmode"
-                divider
-                ref="divider"
-                :title="config.title" />
-  <f7-list-item v-else
-                v-bind="config"
-                :divider="config.divider && !context.editmode"
-                :media-item="context.parent.component.config.mediaList && !config.divider"
-                :badge="(config.divider) ? 'Divider' : (config.listButton) ? 'List button' : config.badge"
-                :accordion-item="isRegularAccordion && !config.divider && !context.editmode"
-                :link="(hasAction && !context.editmode) ? true : undefined"
-                @click.stop="openAccordionOrPerformAction"
-                :class="{ 'oh-equipment-accordion-item': isEquipmentAccordion }"
-                ref="f7AccordionContent">
+  <f7-list-button
+    v-if="config.listButton && !context.editmode"
+    :title="config.title || 'Action'"
+    :color="config.color || 'blue'"
+    @click.stop="performAction" />
+  <f7-list-item v-else-if="config.divider && !context.editmode" divider ref="divider" :title="config.title" />
+  <f7-list-item
+    v-else
+    v-bind="config"
+    :divider="config.divider && !context.editmode"
+    :media-item="context.parent.component.config.mediaList && !config.divider"
+    :badge="(config.divider) ? 'Divider' : (config.listButton) ? 'List button' : config.badge"
+    :accordion-item="isRegularAccordion && !config.divider && !context.editmode"
+    :link="(hasAction && !context.editmode) ? true : undefined"
+    @click.stop="openAccordionOrPerformAction"
+    :class="{ 'oh-equipment-accordion-item': isEquipmentAccordion }"
+    ref="f7AccordionContent">
     <template #inner v-if="$slots.inner">
       <slot name="inner" />
     </template>
@@ -45,15 +44,21 @@
         <generic-widget-component :context="childContext(context.component.slots.accordion[0])" />
       </f7-accordion-content>
     </template>
-    <template #media v-if="$slots.media || config.icon || (config.fallbackIconToInitial && config.title && context.parent.component.config && context.parent.component.config.mediaList)">
-      <oh-icon v-if="config.icon"
-               :icon="config.icon"
-               height="32"
-               width="32"
-               :color="config.iconColor"
-               :state="config.item && config.iconUseState ? context.store[config.item].state : null" />
-      <span v-else-if="config.fallbackIconToInitial && config.title && context.parent.component.config && context.parent.component.config.mediaList"
-            class="item-initial">{{ config.title[0].toUpperCase() }}</span>
+    <template
+      #media
+      v-if="$slots.media || config.icon || (config.fallbackIconToInitial && config.title && context.parent.component.config && context.parent.component.config.mediaList)">
+      <oh-icon
+        v-if="config.icon"
+        :icon="config.icon"
+        height="32"
+        width="32"
+        :color="config.iconColor"
+        :state="config.item && config.iconUseState ? context.store[config.item].state : null" />
+      <span
+        v-else-if="config.fallbackIconToInitial && config.title && context.parent.component.config && context.parent.component.config.mediaList"
+        class="item-initial"
+        >{{ config.title[0].toUpperCase() }}</span
+      >
     </template>
   </f7-list-item>
 </template>

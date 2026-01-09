@@ -1,11 +1,12 @@
 <template>
   <f7-page class="analyzer-content">
     <f7-navbar>
-      <oh-nav-content :title="titleDisplayText"
-                      :back-link="t('analyzer.back')"
-                      :save-link="userStore.isAdmin() ? t('analyzer.save') : undefined"
-                      @save="savePage"
-                      :f7router />
+      <oh-nav-content
+        :title="titleDisplayText"
+        :back-link="t('analyzer.back')"
+        :save-link="userStore.isAdmin() ? t('analyzer.save') : undefined"
+        @save="savePage"
+        :f7router />
     </f7-navbar>
 
     <f7-toolbar bottom>
@@ -13,10 +14,7 @@
       <f7-link class="right controls-link padding-right" ref="detailsLink" @click="openControls">
         {{ t('analyzer.controls') }}&nbsp;<f7-icon f7="chevron_up" />
       </f7-link>
-      <f7-link v-if="'orientation' in coordSettings"
-               color="blue"
-               icon-f7="crop_rotate"
-               @click="toggleOrientation" />
+      <f7-link v-if="'orientation' in coordSettings" color="blue" icon-f7="crop_rotate" @click="toggleOrientation" />
       <span v-else />
     </f7-toolbar>
 
@@ -36,24 +34,18 @@
     </div>
 
     <!-- analyzer controls -->
-    <f7-sheet class="analyzer-controls"
-              ref="controlsSheet"
-              :backdrop="false"
-              :close-on-escape="true"
-              :opened="controlsOpened"
-              @sheet:closed="controlsOpened = false">
+    <f7-sheet
+      class="analyzer-controls"
+      ref="controlsSheet"
+      :backdrop="false"
+      :close-on-escape="true"
+      :opened="controlsOpened"
+      @sheet:closed="controlsOpened = false">
       <f7-page>
         <f7-toolbar tabbar :bottom="true">
-          <f7-link class="padding-left padding-right"
-                   tab-link="#tab-series"
-                   tab-link-active
-                   :text="t('analyzer.series')" />
-          <f7-link class="padding-left padding-right"
-                   tab-link="#tab-coords"
-                   :text="t('analyzer.coords')" />
-          <f7-link class="padding-left padding-right"
-                   tab-link="#tab-ranges"
-                   :text="t('analyzer.ranges')" />
+          <f7-link class="padding-left padding-right" tab-link="#tab-series" tab-link-active :text="t('analyzer.series')" />
+          <f7-link class="padding-left padding-right" tab-link="#tab-coords" :text="t('analyzer.coords')" />
+          <f7-link class="padding-left padding-right" tab-link="#tab-ranges" :text="t('analyzer.ranges')" />
           <div class="right">
             <f7-link sheet-close class="padding-right">
               <f7-icon f7="chevron_down" />
@@ -71,12 +63,13 @@
                   <div class="card-header no-padding" style="min-height: auto">
                     <f7-list style="width: 100%">
                       <f7-list-group>
-                        <item-picker :key="itemsPickerKey"
-                                     label="Items"
-                                     name="items-to-analyze"
-                                     :value="itemNames"
-                                     @input="updateItems"
-                                     :multiple="true" />
+                        <item-picker
+                          :key="itemsPickerKey"
+                          label="Items"
+                          name="items-to-analyze"
+                          :value="itemNames"
+                          @input="updateItems"
+                          :multiple="true" />
                       </f7-list-group>
                     </f7-list>
                     <!-- <div class="data-table-title">Options</div> -->
@@ -98,7 +91,10 @@
                             {{ t('analyzer.series.table.header.markers') }}
                           </th>
                           <th class="label-cell">
-                            <span v-if="'auxColumn' in coordSettings">{{ t('analyzer.series.table.header.' + coordSettings.auxColumn) }}</span>
+                            <span
+                              v-if="'auxColumn' in coordSettings"
+                              >{{ t('analyzer.series.table.header.' + coordSettings.auxColumn) }}</span
+                            >
                             <span v-else />
                           </th>
                         </tr>
@@ -107,37 +103,41 @@
                         <tr v-for="(options, idx) in seriesOptions" :key="idx">
                           <td class="label-cell">
                             <div class="input">
-                              <input type="text" v-model.lazy="options.name" style="min-width: 150px">
+                              <input type="text" v-model.lazy="options.name" style="min-width: 150px" />
                             </div>
                           </td>
                           <td class="label-cell">
                             <f7-segmented round>
-                              <f7-button v-for="type in options.typeOptions"
-                                         small
-                                         outline
-                                         :key="type"
-                                         style="width: auto"
-                                         :fill="options.type === type"
-                                         @click="changeSeriesType(options, type)"
-                                         :text="t('analyzer.series.table.type.' + type)" />
+                              <f7-button
+                                v-for="type in options.typeOptions"
+                                small
+                                outline
+                                :key="type"
+                                style="width: auto"
+                                :fill="options.type === type"
+                                @click="changeSeriesType(options, type)"
+                                :text="t('analyzer.series.table.type.' + type)" />
                             </f7-segmented>
                           </td>
                           <td class="label-cell">
                             <f7-segmented v-if="'showAxesOptions' in options && options.showAxesOptions" round>
-                              <f7-button v-for="(axis, $idx) in (coordSettings as TimeCoordSettings | AggregateCoordSettings).valueAxesOptions"
-                                         :key="$idx"
-                                         small
-                                         outline
-                                         style="width: auto"
-                                         :fill="(options as TimeSeriesOptions | AggregateSeriesOptions).valueAxisIndex === $idx"
-                                         @click="(options as TimeSeriesOptions | AggregateSeriesOptions).valueAxisIndex = $idx">
+                              <f7-button
+                                v-for="(axis, $idx) in (coordSettings as TimeCoordSettings | AggregateCoordSettings).valueAxesOptions"
+                                :key="$idx"
+                                small
+                                outline
+                                style="width: auto"
+                                :fill="(options as TimeSeriesOptions | AggregateSeriesOptions).valueAxisIndex === $idx"
+                                @click="(options as TimeSeriesOptions | AggregateSeriesOptions).valueAxisIndex = $idx">
                                 {{ axis.unit }}
                               </f7-button>
                             </f7-segmented>
                             <span v-else>{{ t('analyzer.series.table.na') }}</span>
                           </td>
                           <td class="label-cell">
-                            <f7-link v-if="'marker' in options" @click="chooseMarkers(options as TimeSeriesOptions | AggregateSeriesOptions)">
+                            <f7-link
+                              v-if="'marker' in options"
+                              @click="chooseMarkers(options as TimeSeriesOptions | AggregateSeriesOptions)">
                               {{ (options as TimeSeriesOptions | AggregateSeriesOptions).marker || 'none' }}
                             </f7-link>
                             <span v-else>{{ t('analyzer.series.table.na') }}</span>
@@ -173,23 +173,25 @@
                     :text="t('analyzer.coords.period.fixed')" />
                 </f7-segmented>
                 <f7-segmented v-if="coordSettings.chartType !== ChartType.dynamic">
-                  <f7-button v-for="type in [ChartType.day, ChartType.isoWeek, ChartType.week, ChartType.month, ChartType.year]"
-                             :key="type"
-                             :disabled="!coordSettings.typeOptions.includes(type)"
-                             :active="coordSettings.chartType === type"
-                             @click="changeChartType(type)"
-                             :text="t('analyzer.coords.period.' + type)" />
+                  <f7-button
+                    v-for="type in [ChartType.day, ChartType.isoWeek, ChartType.week, ChartType.month, ChartType.year]"
+                    :key="type"
+                    :disabled="!coordSettings.typeOptions.includes(type)"
+                    :active="coordSettings.chartType === type"
+                    @click="changeChartType(type)"
+                    :text="t('analyzer.coords.period.' + type)" />
                 </f7-segmented>
               </f7-col>
               <f7-col :width="100" :medium="50" class="margin-bottom">
                 <f7-block-header>{{ t('analyzer.coords.coordSystem') }}</f7-block-header>
                 <f7-segmented strong class="margin-bottom">
-                  <f7-button v-for="cs in coordSystemsName"
-                             :key="cs"
-                             :disabled="coordSettings.chartType === ChartType.dynamic"
-                             :active="coordSystemName === cs"
-                             @click="changeCoordSystem(cs)"
-                             :text="t('analyzer.coords.coordSystem.' + cs)" />
+                  <f7-button
+                    v-for="cs in coordSystemsName"
+                    :key="cs"
+                    :disabled="coordSettings.chartType === ChartType.dynamic"
+                    :active="coordSystemName === cs"
+                    @click="changeCoordSystem(cs)"
+                    :text="t('analyzer.coords.coordSystem.' + cs)" />
                 </f7-segmented>
                 <f7-segmented v-if="'dimensions' in coordSettings">
                   <f7-button
@@ -203,14 +205,15 @@
                 </f7-segmented>
               </f7-col>
               <f7-col width="100" class="margin-top display-flex justify-content-center margin-bottom">
-                <f7-button v-if="'orientation' in coordSettings"
-                           round
-                           raised
-                           fill
-                           color="black"
-                           icon-f7="crop_rotate"
-                           icon-size="20"
-                           @click="toggleOrientation">
+                <f7-button
+                  v-if="'orientation' in coordSettings"
+                  round
+                  raised
+                  fill
+                  color="black"
+                  icon-f7="crop_rotate"
+                  icon-size="20"
+                  @click="toggleOrientation">
                   {{ t('analyzer.coords.rotate') }}
                 </f7-button>
               </f7-col>
@@ -225,12 +228,13 @@
                   <f7-list-item divider>
                     {{ t('analyzer.ranges.visualPalette') }}
                   </f7-list-item>
-                  <f7-list-item v-for="palette in OhChartVisualmap.PresetPalette"
-                                :key="palette"
-                                radio
-                                name="visualMap.palette"
-                                :checked="coordSettings.visualMap.palette === palette"
-                                @change="changeVisualMapPalette(palette as OhChartVisualmap.PresetPalette)">
+                  <f7-list-item
+                    v-for="palette in OhChartVisualmap.PresetPalette"
+                    :key="palette"
+                    radio
+                    name="visualMap.palette"
+                    :checked="coordSettings.visualMap.palette === palette"
+                    @change="changeVisualMapPalette(palette as OhChartVisualmap.PresetPalette)">
                     {{ t('analyzer.ranges.visualPalette.' + palette) }}
                   </f7-list-item>
                 </f7-list>
@@ -240,27 +244,30 @@
                   <f7-list-item divider>
                     {{ t('analyzer.ranges.range') }}
                   </f7-list-item>
-                  <f7-list-input :label="t('analyzer.ranges.range.min')"
-                                 :value="coordSettings.visualMap.min"
-                                 type="number"
-                                 @input="coordSettings.visualMap.min = $event.target.value"
-                                 placeholder="Auto"
-                                 clear-button />
-                  <f7-list-input :label="t('analyzer.ranges.range.max')"
-                                 :value="coordSettings.visualMap.max"
-                                 type="number"
-                                 @input="coordSettings.visualMap.max = $event.target.value"
-                                 placeholder="Auto"
-                                 clear-button />
+                  <f7-list-input
+                    :label="t('analyzer.ranges.range.min')"
+                    :value="coordSettings.visualMap.min"
+                    type="number"
+                    @input="coordSettings.visualMap.min = $event.target.value"
+                    placeholder="Auto"
+                    clear-button />
+                  <f7-list-input
+                    :label="t('analyzer.ranges.range.max')"
+                    :value="coordSettings.visualMap.max"
+                    type="number"
+                    @input="coordSettings.visualMap.max = $event.target.value"
+                    placeholder="Auto"
+                    clear-button />
                   <f7-list-item divider>
                     {{ t('analyzer.ranges.range.type') }}
                   </f7-list-item>
-                  <f7-list-item v-for="type in ['continuous', 'piecewise']"
-                                :key="type"
-                                radio
-                                name="type"
-                                :checked="coordSettings.visualMap.type === type"
-                                @change="changeVisualMapType(type as OhChartVisualmap.Type)">
+                  <f7-list-item
+                    v-for="type in ['continuous', 'piecewise']"
+                    :key="type"
+                    radio
+                    name="type"
+                    :checked="coordSettings.visualMap.type === type"
+                    @change="changeVisualMapType(type as OhChartVisualmap.Type)">
                     {{ t('analyzer.ranges.range.type.' + type) }}
                   </f7-list-item>
                 </f7-list>
@@ -297,28 +304,31 @@
                         <tr v-for="axis in coordSettings?.valueAxesOptions" :key="axis.unit">
                           <td class="label-cell">
                             <div class="input">
-                              <input type="text" v-model.lazy="axis.name" style="min-width: 150px">
+                              <input type="text" v-model.lazy="axis.name" style="min-width: 150px" />
                             </div>
                           </td>
                           <td class="label-cell">
                             <div class="input">
-                              <input type="number"
-                                     v-model.lazy="axis.min"
-                                     style="min-width: 100px"
-                                     :placeholder="t('analyzer.ranges.valueAxes.placeholder.auto')">
+                              <input
+                                type="number"
+                                v-model.lazy="axis.min"
+                                style="min-width: 100px"
+                                :placeholder="t('analyzer.ranges.valueAxes.placeholder.auto')" />
                             </div>
                           </td>
                           <td class="label-cell">
                             <div class="input">
-                              <input type="number"
-                                     v-model.lazy="axis.max"
-                                     style="min-width: 100px"
-                                     :placeholder="t('analyzer.ranges.valueAxes.placeholder.auto')">
+                              <input
+                                type="number"
+                                v-model.lazy="axis.max"
+                                style="min-width: 100px"
+                                :placeholder="t('analyzer.ranges.valueAxes.placeholder.auto')" />
                             </div>
                           </td>
                           <td class="label-cell">
-                            <f7-checkbox :checked="axis.scale ? true : null"
-                                         @change="(evt : Event) => axis.scale = (evt.target as HTMLInputElement).checked" />
+                            <f7-checkbox
+                              :checked="axis.scale ? true : null"
+                              @change="(evt : Event) => axis.scale = (evt.target as HTMLInputElement).checked" />
                           </td>
                           <td class="label-cell">
                             <f7-link @click="chooseAxisSplit(axis)">
@@ -380,7 +390,7 @@ import api from '@/js/openhab/api'
 import { useI18n } from 'vue-i18n'
 import { loadLocaleMessages } from '@/js/i18n'
 import { type CoordSettings, Marker, ValueAxisSplitOptions, type CoordSystem, type SeriesOptions, type VisualMap, type SeriesType, type ValueAxisOptions } from './types'
-import { AggregationFunction, ChartType, Orient, OhChartVisualmap } from '@/types/components/widgets'
+import { AggregationFunction, ChartType, Orient, OhChartVisualmap } from '@/types/components/widgets/index.gen.ts'
 import type { TimeCoordSettings, TimeSeriesOptions } from './chart-time'
 import type { CalendarSeriesOptions } from './chart-calendar'
 import type { Item } from '@/types/openhab'

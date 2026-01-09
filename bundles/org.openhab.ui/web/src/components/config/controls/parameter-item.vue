@@ -1,15 +1,16 @@
 <template>
-  <item-picker :label="configDescription.label || 'Item'"
-               :value="value"
-               @input="updateValue"
-               :multiple="configDescription.multiple"
-               :required="configDescription.required"
-               :filterToggle="!!filter('filterToggle')"
-               :filterType="filter('type')"
-               :filterGroupType="filter('groupType')"
-               :filterExcludeSemantic="filter('excludeSemantic')"
-               :filterSemantic="filter('semantic')"
-               :filterTag="filter('tag')" />
+  <item-picker
+    :label="configDescription.label || 'Item'"
+    :value="value"
+    @input="updateValue"
+    :multiple="configDescription.multiple"
+    :required="configDescription.required"
+    :filterToggle="!!filter('filterToggle')"
+    :filterType="filter('type')"
+    :filterGroupType="filter('groupType')"
+    :filterExcludeSemantic="filter('excludeSemantic')"
+    :filterSemantic="filter('semantic')"
+    :filterTag="filter('tag')" />
 </template>
 
 <script>

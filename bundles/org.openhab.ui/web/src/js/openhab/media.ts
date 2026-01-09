@@ -6,7 +6,7 @@ export type IconType = 'svg' | 'png'
  * Convert a Blob to a data URL.
  * @param blob
  */
-function blobToDataURL (blob: Blob): Promise<string> {
+function blobToDataURL(blob: Blob): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader()
     reader.onerror = () => reject(new Error('Failed to read blob as data URL: ' + reader.error))
@@ -20,7 +20,7 @@ function blobToDataURL (blob: Blob): Promise<string> {
  * If basic authentication is not needed, the URL is returned directly, as neither the IconServlet at `/icon` nor Jetty at `/static` require auth.
  * @param url
  */
-async function fetchWithAuth (url: string): Promise<string> {
+async function fetchWithAuth(url: string): Promise<string> {
   const creds: any = getBasicCredentials()
 
   // If no credentials, return the URL (async function wraps it in a Promise)

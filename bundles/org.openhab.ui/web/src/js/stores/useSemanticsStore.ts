@@ -23,7 +23,7 @@ export const useSemanticsStore = defineStore('semantics', () => {
   const ready = ref<boolean>(false)
 
   // Actions
-  function setSemantics (tags: ModelTag[], i18n: I18n) {
+  function setSemantics(tags: ModelTag[], i18n: I18n) {
     // local variables to avoid writing to reactive refs multiple times
     const modelTags: ModelTag[] = []
     const locations: string[] = []
@@ -72,18 +72,18 @@ export const useSemanticsStore = defineStore('semantics', () => {
     // merge labels into i18n once
     try {
       const locale = (i18n.global as Composer).locale.value as string
-      (i18n.global as Composer).mergeLocaleMessage(locale, labels)
+      ;(i18n.global as Composer).mergeLocaleMessage(locale, labels)
     } catch (e) {
       console.warn('Failed to merge semantic labels into i18n globals', e)
     }
   }
 
-  async function loadSemantics (i18n: I18n) {
+  async function loadSemantics(i18n: I18n) {
     if (useRuntimeStore().apiEndpoint('tags')) {
       return api
         .get('/rest/tags')
-        .then((tags : Tag[]) => {
-          let modelTags  = tags as ModelTag[]
+        .then((tags: Tag[]) => {
+          let modelTags = tags as ModelTag[]
           setSemantics(modelTags, i18n)
           console.debug('Successfully loaded semantic tags.')
           ready.value = true

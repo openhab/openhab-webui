@@ -7,16 +7,16 @@ import type { ConfigDescriptionParameter } from '@/types/openhab/config-descript
  * Based on org.openhab.core.automation.rest.internal.ThingActionsResource.ThingActionDTO.
  */
 export interface ThingAction {
-  actionUid: string;
-  label: string;
-  description?: string;
-  visibility?: 'VISIBLE' | 'HIDDEN' | 'EXPERT';
-  inputs: any[];
-  inputConfigDescriptions?: ConfigDescriptionParameter[];
-  outputs?: any[];
+  actionUid: string
+  label: string
+  description?: string
+  visibility?: 'VISIBLE' | 'HIDDEN' | 'EXPERT'
+  inputs: any[]
+  inputConfigDescriptions?: ConfigDescriptionParameter[]
+  outputs?: any[]
 }
 
 /**
  * Response object from the GET `/rest/actions/{thingUID}` endpoint.
  */
-export type ThingActionsResponse = ThingAction[];
+export type ThingActionsResponse = ThingAction[]

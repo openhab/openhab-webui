@@ -5,12 +5,7 @@
         <f7-list-item media-item :subtitle="config.subtitle" :footer="config.footer">
           <template #title>
             <div class="button-header display-flex">
-              <oh-icon v-if="config.icon"
-                       class="header-icon"
-                       :icon="config.icon"
-                       :color="config.iconColor"
-                       width="20"
-                       height="20" />
+              <oh-icon v-if="config.icon" class="header-icon" :icon="config.icon" :color="config.iconColor" width="20" height="20" />
               <span>{{ config.title || config.header }}</span>
               <f7-badge v-if="config.headerBadge" :color="config.headerBadgeColor">
                 {{ config.headerBadge }}

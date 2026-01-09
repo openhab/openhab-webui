@@ -5,10 +5,10 @@ export default (aggregationFunction, arr, idx, values) => {
       aggregate = arr[1].reduce((sum, state) => sum + parseFloat(state), 0)
       break
     case 'min':
-      aggregate = arr[1].reduce((min, state) => parseFloat(state) < min ? parseFloat(state) : min, +Infinity)
+      aggregate = arr[1].reduce((min, state) => (parseFloat(state) < min ? parseFloat(state) : min), +Infinity)
       break
     case 'max':
-      aggregate = arr[1].reduce((max, state) => parseFloat(state) > max ? parseFloat(state) : max, -Infinity)
+      aggregate = arr[1].reduce((max, state) => (parseFloat(state) > max ? parseFloat(state) : max), -Infinity)
       break
     case 'first':
       aggregate = arr[1][0]

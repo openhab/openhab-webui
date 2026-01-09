@@ -8,7 +8,7 @@ export default {
      * @param {object} channel
      * @return {boolean}
      */
-    itemTypeCompatibleWithChannelType (item, channel) {
+    itemTypeCompatibleWithChannelType(item, channel) {
       if (!channel || !channel.itemType) return true
       if (!item || !item.type) return true
       if (channel.itemType === 'Dimmer' && ['Switch', 'Dimmer'].includes(item.type)) return true
@@ -27,8 +27,9 @@ export default {
      * @param {object} item
      * @return {boolean}
      */
-    isProfileTypeCompatible (channel, profileType, item) {
-      if (!this.itemTypeCompatibleWithChannelType(item, channel) && PROFILES_REQUIRING_TYPE_COMPATIBILITY.includes(profileType.uid)) return false
+    isProfileTypeCompatible(channel, profileType, item) {
+      if (!this.itemTypeCompatibleWithChannelType(item, channel) && PROFILES_REQUIRING_TYPE_COMPATIBILITY.includes(profileType.uid))
+        return false
       if (!profileType.supportedItemTypes || profileType.supportedItemTypes.length === 0) return true
       return profileType.supportedItemTypes.includes(item.type.split(':', 1)[0])
     }

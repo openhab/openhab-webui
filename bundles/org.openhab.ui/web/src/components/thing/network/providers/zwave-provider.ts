@@ -42,12 +42,10 @@ export class ZWaveNetworkProvider implements NetworkGraphProvider {
     ]
   }
 
-  buildGraph (things: any[], bridgeUID: string): NetworkGraph {
-    const zWaveNodes = things.filter((t) =>
-      (t.bridgeUID === bridgeUID || t.UID === bridgeUID) &&
-      t.properties &&
-      t.properties.zwave_nodeid &&
-      t.properties.zwave_neighbours
+  buildGraph(things: any[], bridgeUID: string): NetworkGraph {
+    const zWaveNodes = things.filter(
+      (t) =>
+        (t.bridgeUID === bridgeUID || t.UID === bridgeUID) && t.properties && t.properties.zwave_nodeid && t.properties.zwave_neighbours
     )
 
     const nodes: NetworkNode[] = []
@@ -107,7 +105,7 @@ export class ZWaveNetworkProvider implements NetworkGraphProvider {
     }
   }
 
-  private createLinks (linkData: Array<[string, string]>): NetworkLink[] {
+  private createLinks(linkData: Array<[string, string]>): NetworkLink[] {
     const links: NetworkLink[] = []
     const linkMap = new Map<string, NetworkLink>()
 
@@ -140,16 +138,19 @@ export class ZWaveNetworkProvider implements NetworkGraphProvider {
     return links
   }
 
-  private getStatusColor (statusInfo: any): string {
+  private getStatusColor(statusInfo: any): string {
     if (!statusInfo) return '#9E9E9E'
     switch (statusInfo.status) {
-      case 'ONLINE': return '#4CAF50'
-      case 'OFFLINE': return '#F44336'
-      case 'UNKNOWN': return '#9E9E9E'
-      default: return '#9E9E9E'
+      case 'ONLINE':
+        return '#4CAF50'
+      case 'OFFLINE':
+        return '#F44336'
+      case 'UNKNOWN':
+        return '#9E9E9E'
+      default:
+        return '#9E9E9E'
     }
   }
 }
 
 export const zwaveNetworkProvider = new ZWaveNetworkProvider()
-

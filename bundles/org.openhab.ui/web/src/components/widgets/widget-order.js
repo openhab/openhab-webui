@@ -1,11 +1,16 @@
-export function compareItems (i1, i2) {
-  const isLocationContext = i1.metadata && i1.metadata.semantics && i1.metadata.semantics.value.indexOf('Location') === 0 &&
-    i2.metadata && i2.metadata.semantics && i2.metadata.semantics.value.indexOf('Location') === 0
+export function compareItems(i1, i2) {
+  const isLocationContext =
+    i1.metadata &&
+    i1.metadata.semantics &&
+    i1.metadata.semantics.value.indexOf('Location') === 0 &&
+    i2.metadata &&
+    i2.metadata.semantics &&
+    i2.metadata.semantics.value.indexOf('Location') === 0
 
   // Compare widgetOrder
-  const order1 = (i1.metadata && i1.metadata.widgetOrder) ? parseFloat(i1.metadata.widgetOrder.value) : Infinity
-  const order2 = (i2.metadata && i2.metadata.widgetOrder) ? parseFloat(i2.metadata.widgetOrder.value) : Infinity
-  const widgetOrder = (order1 !== order2) ? ((order1 < order2) ? -1 : 1) : 0
+  const order1 = i1.metadata && i1.metadata.widgetOrder ? parseFloat(i1.metadata.widgetOrder.value) : Infinity
+  const order2 = i2.metadata && i2.metadata.widgetOrder ? parseFloat(i2.metadata.widgetOrder.value) : Infinity
+  const widgetOrder = order1 !== order2 ? (order1 < order2 ? -1 : 1) : 0
 
   // Unless comparing Location Items simply return the order based on widgetOrder metadata if determined
   if (!isLocationContext && widgetOrder !== 0) return widgetOrder
@@ -23,7 +28,7 @@ export function compareItems (i1, i2) {
 
 // Compares items based on widgetOrder or lexicographical order of their ancestors in Model (starting at the top level)
 // Returns 0 if both items are siblings.
-export function compareParents (i1, i2) {
+export function compareParents(i1, i2) {
   let modelOrder = 0
   if (i1.modelPath && i2.modelPath) {
     const minDepth = Math.min(i1.modelPath.length, i2.modelPath.length) // Compare shortest path
@@ -31,10 +36,12 @@ export function compareParents (i1, i2) {
       if (i1.modelPath[d] === i2.modelPath[d]) continue
 
       // widgetOrder comparison...
-      const order1 = (i1.modelPath[d].metadata && i1.modelPath[d].metadata.widgetOrder) ? i1.modelPath[d].metadata.widgetOrder.value : Infinity
-      const order2 = (i2.modelPath[d].metadata && i2.modelPath[d].metadata.widgetOrder) ? i2.modelPath[d].metadata.widgetOrder.value : Infinity
+      const order1 =
+        i1.modelPath[d].metadata && i1.modelPath[d].metadata.widgetOrder ? i1.modelPath[d].metadata.widgetOrder.value : Infinity
+      const order2 =
+        i2.modelPath[d].metadata && i2.modelPath[d].metadata.widgetOrder ? i2.modelPath[d].metadata.widgetOrder.value : Infinity
       if (order1 !== order2) {
-        modelOrder = (order1 < order2) ? -1 : 1
+        modelOrder = order1 < order2 ? -1 : 1
         break
       }
 
@@ -46,11 +53,11 @@ export function compareParents (i1, i2) {
     }
 
     // A parent compares greater than its children
-    if (modelOrder === 0 && (i1.modelPath.length !== i2.modelPath.length)) modelOrder = (i1.modelPath.length < i2.modelPath.length) ? -1 : 1
+    if (modelOrder === 0 && i1.modelPath.length !== i2.modelPath.length) modelOrder = i1.modelPath.length < i2.modelPath.length ? -1 : 1
   }
   return modelOrder
 }
 
-export function compareRules (r1, r2) {
+export function compareRules(r1, r2) {
   return r1.name.localeCompare(r2.name)
 }

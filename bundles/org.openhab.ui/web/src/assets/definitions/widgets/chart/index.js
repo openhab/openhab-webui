@@ -5,7 +5,11 @@ import { actionGroup, actionParams } from '../actions.js'
 import { pg, pb, pt, pn, pi } from '../helpers.js'
 import { aggregationTypeOptions, dimensionTypeOptions, markerOptions } from './options.js'
 
-const positionGroup = pg('position', 'Position', 'Each parameter accepts pixel values or percentages. Additionally, top accepts "top", "middle" and "bottom" to align the component vertically, and left accepts "left", "center" and "right" to align the component horizontally')
+const positionGroup = pg(
+  'position',
+  'Position',
+  'Each parameter accepts pixel values or percentages. Additionally, top accepts "top", "middle" and "bottom" to align the component vertically, and left accepts "left", "center" and "right" to align the component horizontally'
+)
 
 const componentRelationsGroup = pg('componentRelations', 'Axis and Coordinate System Assignments', '')
 
@@ -20,11 +24,13 @@ const positionParameters = [
   { name: 'height', type: 'TEXT', label: 'Height', groupName: 'position' }
 ]
 
-const orientParameter = pt('orient', 'Orientation', '')
-  .o([
+const orientParameter = pt('orient', 'Orientation', '').o(
+  [
     { value: 'horizontal', label: 'Horizontal' },
     { value: 'vertical', label: 'Vertical' }
-  ], true)
+  ],
+  true
+)
 
 const showParameter = pb('show', 'Show', 'Whether to show or not this component')
 
@@ -34,11 +40,14 @@ const itemParameter = pi('item', 'Item', 'The item whose persisted data to displ
 
 const nameLocationParameter = pt('nameLocation', 'Name Location', 'Location of axis name')
   .g('nameDisplay')
-  .o([
-    { value: 'start', label: 'Start' },
-    { value: 'center', label: 'Center' },
-    { value: 'end', label: 'End (default)' }
-  ], true)
+  .o(
+    [
+      { value: 'start', label: 'Start' },
+      { value: 'center', label: 'Center' },
+      { value: 'end', label: 'End (default)' }
+    ],
+    true
+  )
 
 const nameGapParameter = pn('nameGap', 'Name Gap', 'Gap between axis name and axis line.').g('nameDisplay')
 
@@ -48,52 +57,67 @@ const minParameter = pt('min', 'Min', 'Minimum boundary')
 
 const maxParameter = pt('max', 'Max', 'Maximum boundary')
 
-const gridIndexParameter = pn('gridIndex', 'Grid Index', 'The index of the grid for this axis')
-  .c('chartGrid').g('componentRelations')
+const gridIndexParameter = pn('gridIndex', 'Grid Index', 'The index of the grid for this axis').c('chartGrid').g('componentRelations')
 
 const calendarIndexParameter = pn('calendarIndex', 'Calendar Index', 'The index of the calendar for this series')
-  .c('chartCalendar').g('componentRelations')
+  .c('chartCalendar')
+  .g('componentRelations')
 
-const xAxisIndexParameter = pn('xAxisIndex', 'X Axis Index', 'The index of the X axis for this series')
-  .c('xAxis').g('componentRelations')
+const xAxisIndexParameter = pn('xAxisIndex', 'X Axis Index', 'The index of the X axis for this series').c('xAxis').g('componentRelations')
 
-const yAxisIndexParameter = pn('yAxisIndex', 'Y Axis Index', 'The index of the Y axis for this series')
-  .c('yAxis').g('componentRelations')
+const yAxisIndexParameter = pn('yAxisIndex', 'Y Axis Index', 'The index of the Y axis for this series').c('yAxis').g('componentRelations')
 
-const persistenceServiceParameter = pt('service', 'Persistence Service', 'The identifier of the persistence service to retrieve the data from. Leave blank to the use the default.')
-  .c('persistenceService').a()
+const persistenceServiceParameter = pt(
+  'service',
+  'Persistence Service',
+  'The identifier of the persistence service to retrieve the data from. Leave blank to the use the default.'
+)
+  .c('persistenceService')
+  .a()
 
-const markersParameter = (withTime) => pt('markers', 'Markers', 'The markers to display for the series').o(markerOptions(withTime), true, true)
+const markersParameter = (withTime) =>
+  pt('markers', 'Markers', 'The markers to display for the series').o(markerOptions(withTime), true, true)
 
-const boundaryParameter = pb('noBoundary', 'Don\'t Include Boundary', 'Do not get one value before and after the requested period and move them to the start and end of the period').a()
+const boundaryParameter = pb(
+  'noBoundary',
+  "Don't Include Boundary",
+  'Do not get one value before and after the requested period and move them to the start and end of the period'
+).a()
 
-const itemStateParameter = pb('noItemState', 'Don\'t Include Item State', 'Do not add the current Item state into the requested period (the item state will be before or at the end time)').a()
+const itemStateParameter = pb(
+  'noItemState',
+  "Don't Include Item State",
+  'Do not add the current Item state into the requested period (the item state will be before or at the end time)'
+).a()
 
-const offsetAmountParameter = pn('offsetAmount', 'Offset Amount', 'Offset to <em>subtract</em> from the displayed period, use if you want to do period comparisons (see also Offset Unit).').a()
+const offsetAmountParameter = pn(
+  'offsetAmount',
+  'Offset Amount',
+  'Offset to <em>subtract</em> from the displayed period, use if you want to do period comparisons (see also Offset Unit).'
+).a()
 
-const offsetUnitParameter = pt('offsetUnit', 'Offset Unit', 'Offset to <em>subtract</em> from the displayed period, use if you want to do period comparisons (see also Offset Amount).')
+const offsetUnitParameter = pt(
+  'offsetUnit',
+  'Offset Unit',
+  'Offset to <em>subtract</em> from the displayed period, use if you want to do period comparisons (see also Offset Amount).'
+)
   .a()
   .c('offsetUnit')
-  .o([
-    { value: 'hour', label: 'Hour' },
-    { value: 'minute', label: 'Minute' },
-    { value: 'day', label: 'Day' },
-    { value: 'week', label: 'Week' },
-    { value: 'month', label: 'Month' },
-    { value: 'year', label: 'Year' }
-  ], true)
+  .o(
+    [
+      { value: 'hour', label: 'Hour' },
+      { value: 'minute', label: 'Minute' },
+      { value: 'day', label: 'Day' },
+      { value: 'week', label: 'Week' },
+      { value: 'month', label: 'Month' },
+      { value: 'year', label: 'Year' }
+    ],
+    true
+  )
 
-const axisNameParameters = [
-  nameParameter,
-  nameLocationParameter,
-  nameGapParameter,
-  nameRotateParameter
-]
+const axisNameParameters = [nameParameter, nameLocationParameter, nameGapParameter, nameRotateParameter]
 
-const dateAxisParameters = [
-  ...axisNameParameters,
-  gridIndexParameter
-]
+const dateAxisParameters = [...axisNameParameters, gridIndexParameter]
 
 const seriesParameters = [
   nameParameter,
@@ -119,14 +143,20 @@ const seriesTypeParameter = (...types) => {
     name: 'type',
     type: 'TEXT',
     label: 'Type',
-    description: 'The type of the series.<br/><em>Note: <code>heatmap</code> needs a configured visual map or uses the default and is not supported for time series!</em>',
+    description:
+      'The type of the series.<br/><em>Note: <code>heatmap</code> needs a configured visual map or uses the default and is not supported for time series!</em>',
     limitToOptions: true,
-    options: types.map((o) => { return { value: o, label: seriesTypesLabels[o] } })
+    options: types.map((o) => {
+      return { value: o, label: seriesTypesLabels[o] }
+    })
   }
 }
 
-const aggregationFunctionParameter = pt('aggregationFunction', 'Aggregation Function', 'How to reduce the data points in a same aggregation cluster to a single value. If not specified, the average function will be used.')
-  .o(aggregationTypeOptions, true)
+const aggregationFunctionParameter = pt(
+  'aggregationFunction',
+  'Aggregation Function',
+  'How to reduce the data points in a same aggregation cluster to a single value. If not specified, the average function will be used.'
+).o(aggregationTypeOptions, true)
 
 export default {
   'oh-chart-grid': {
@@ -254,10 +284,7 @@ export default {
     docLink: 'https://echarts.apache.org/en/option.html#xAxis',
     props: {
       parameterGroups: [nameDisplayGroup, componentRelationsGroup],
-      parameters: [
-        ...axisNameParameters,
-        gridIndexParameter
-      ]
+      parameters: [...axisNameParameters, gridIndexParameter]
     }
   },
 
@@ -266,12 +293,7 @@ export default {
     docLink: 'https://echarts.apache.org/en/option.html#calendar',
     props: {
       parameterGroups: [nameDisplayGroup, componentRelationsGroup, actionGroup()],
-      parameters: [
-        ...positionParameters,
-        orientParameter,
-        gridIndexParameter,
-        ...actionParams()
-      ]
+      parameters: [...positionParameters, orientParameter, gridIndexParameter, ...actionParams()]
     }
   },
 
@@ -280,10 +302,7 @@ export default {
     docLink: 'https://echarts.apache.org/en/option.html#series',
     props: {
       parameterGroups: [actionGroup()],
-      parameters: [
-        seriesTypeParameter('line', 'bar', 'heatmap', 'scatter', 'gauge', 'pie'),
-        ...actionParams()
-      ]
+      parameters: [seriesTypeParameter('line', 'bar', 'heatmap', 'scatter', 'gauge', 'pie'), ...actionParams()]
     }
   },
 
@@ -313,7 +332,8 @@ export default {
           name: 'yValue',
           label: 'Y Value',
           type: 'DECIMAL',
-          description: 'The position the state timeline should appear on the Y axis (in graph coordinates). If Y axis is a category axis, this should be the index of the category'
+          description:
+            'The position the state timeline should appear on the Y axis (in graph coordinates). If Y axis is a category axis, this should be the index of the category'
         },
         {
           name: 'yHeight',
@@ -341,7 +361,8 @@ export default {
           name: 'dimension1',
           label: 'First Dimension',
           type: 'TEXT',
-          description: 'The largest data point cluster size.<br />It should be consistent with the chart type, and match the type of a category axis where this series will appear.',
+          description:
+            'The largest data point cluster size.<br />It should be consistent with the chart type, and match the type of a category axis where this series will appear.',
           limitToOptions: true,
           options: dimensionTypeOptions
         },
@@ -349,7 +370,8 @@ export default {
           name: 'dimension2',
           label: 'Second Dimension',
           type: 'TEXT',
-          description: 'The smallest data point cluster size.<br />Set only when you have 2 category axes (for instance day of the week and hour of the day), and make sure to match the type of the 2nd axis.',
+          description:
+            'The smallest data point cluster size.<br />Set only when you have 2 category axes (for instance day of the week and hour of the day), and make sure to match the type of the 2nd axis.',
           limitToOptions: true,
           options: dimensionTypeOptions
         },
@@ -408,7 +430,8 @@ export default {
         {
           name: 'boundariesGroup',
           label: 'Boundaries',
-          description: 'Values considered in range for this visual map (by default [0, 200])<br/><strong>These cannot be determined from the series and have to be defined manually!</strong>'
+          description:
+            'Values considered in range for this visual map (by default [0, 200])<br/><strong>These cannot be determined from the series and have to be defined manually!</strong>'
         },
         {
           name: 'appearanceGroup',
@@ -458,7 +481,8 @@ export default {
           label: 'Preset color palette',
           type: 'TEXT',
           groupName: 'appearanceGroup',
-          description: 'Choose from a selection of preset color palettes for the values in range. The default is a yellow (low) to red (high) gradient',
+          description:
+            'Choose from a selection of preset color palettes for the values in range. The default is a yellow (low) to red (high) gradient',
           limitToOptions: true,
           options: [
             { value: 'yellowred', label: 'Yellow-Red' },
@@ -517,12 +541,7 @@ export default {
     docLink: 'https://echarts.apache.org/en/option.html#legend',
     props: {
       parameterGroups: [positionGroup],
-      parameters: [
-
-        showParameter,
-        orientParameter,
-        ...positionParameters
-      ]
+      parameters: [showParameter, orientParameter, ...positionParameters]
     }
   },
 
@@ -574,5 +593,4 @@ export default {
       ]
     }
   }
-
 }

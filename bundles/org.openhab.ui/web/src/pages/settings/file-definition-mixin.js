@@ -7,24 +7,27 @@ import api from '@/js/openhab/api'
 
 import copyToClipboard from '@/js/clipboard'
 
-function executeFileDefinitionCopy (vueInstance, copyOptions) {
+function executeFileDefinitionCopy(vueInstance, copyOptions) {
   const progressDialog = f7.dialog.progress(`Loading ${copyOptions.label} ${copyOptions.format} definition...`)
 
   const path = `/rest/file-format/${copyOptions.type}s`
   const headers = { accept: copyOptions.mediaType }
   const data = JSON.stringify(copyOptions.objectIds)
-  api.postPlain(path, data, 'text', 'application/json', headers)
+  api
+    .postPlain(path, data, 'text', 'application/json', headers)
     .then((definition) => {
       progressDialog.close()
       copyToClipboard(definition, {
         dialogTitle: `Copy ${copyOptions.label} File Definition`,
         dialogText: 'File definition retrieved successfully. Click OK to copy it to the clipboard.',
         onSuccess: () => {
-          f7.toast.create({
-            text: `${copyOptions.label} ${copyOptions.format} definition copied to clipboard:\n${copyOptions.objectName}`,
-            destroyOnClose: true,
-            closeTimeout: 2000
-          }).open()
+          f7.toast
+            .create({
+              text: `${copyOptions.label} ${copyOptions.format} definition copied to clipboard:\n${copyOptions.objectName}`,
+              destroyOnClose: true,
+              closeTimeout: 2000
+            })
+            .open()
         },
         onError: () => {
           f7.dialog.alert(`Error copying ${copyOptions.label} ${copyOptions.format} definition to the clipboard`, 'Error')
@@ -38,7 +41,7 @@ function executeFileDefinitionCopy (vueInstance, copyOptions) {
 }
 
 export default {
-  created () {
+  created() {
     // Define the ObjectType enum to be used when calling the copyFileDefinitionToClipboard method
     this.ObjectType = Object.freeze({
       THING: 'thing',
@@ -54,7 +57,7 @@ export default {
      *                            For Items, this should be an array of Item names.
      *                            When `null`, all objects of the given type will be copied.
      */
-    copyFileDefinitionToClipboard (objectType, objectIds = null) {
+    copyFileDefinitionToClipboard(objectType, objectIds = null) {
       const copyOptions = {
         type: objectType,
         label: objectType.charAt(0).toUpperCase() + objectType.slice(1) + 's',

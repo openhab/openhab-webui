@@ -1,33 +1,30 @@
 <template>
-  <img v-if="iconType === 'oh'"
-       :src="iconUrl"
-       v-bind="config"
-       @click="performAction()"
-       :style="{
+  <img
+    v-if="iconType === 'oh'"
+    :src="iconUrl"
+    v-bind="config"
+    @click="performAction()"
+    :style="{
          width: (resolvedConfig.width !== null) ? resolvedConfig.width + 'px' : 'auto',
          height: (resolvedConfig.height !== null) ? resolvedConfig.height + 'px' : 'auto',
          cursor: (hasAction) ? 'pointer' : 'auto',
          ...resolvedStyle }"
-       :class="{ 'no-icon': !iconLoaded }"
-       @load="iconLoaded = true">
+    :class="{ 'no-icon': !iconLoaded }"
+    @load="iconLoaded = true" />
   <f7-link v-else-if="hasAction" @click="performAction()">
-    <f7-icon v-if="iconType === 'f7'"
-             v-bind="resolvedConfig"
-             :size="resolvedConfig.width || resolvedConfig.height || null"
-             :style="resolvedStyle" />
-    <iconify-icon v-else-if="iconType === 'iconify'"
-                  v-bind="resolvedConfig"
-                  :icon="resolvedIcon.iconName"
-                  :style="resolvedStyle" />
+    <f7-icon
+      v-if="iconType === 'f7'"
+      v-bind="resolvedConfig"
+      :size="resolvedConfig.width || resolvedConfig.height || null"
+      :style="resolvedStyle" />
+    <iconify-icon v-else-if="iconType === 'iconify'" v-bind="resolvedConfig" :icon="resolvedIcon.iconName" :style="resolvedStyle" />
   </f7-link>
-  <f7-icon v-else-if="iconType === 'f7'"
-           v-bind="resolvedConfig"
-           :size="resolvedConfig.width || resolvedConfig.height || null"
-           :style="resolvedStyle" />
-  <iconify-icon v-else-if="iconType === 'iconify'"
-                v-bind="resolvedConfig"
-                :icon="resolvedIcon.iconName"
-                :style="resolvedStyle" />
+  <f7-icon
+    v-else-if="iconType === 'f7'"
+    v-bind="resolvedConfig"
+    :size="resolvedConfig.width || resolvedConfig.height || null"
+    :style="resolvedStyle" />
+  <iconify-icon v-else-if="iconType === 'iconify'" v-bind="resolvedConfig" :icon="resolvedIcon.iconName" :style="resolvedStyle" />
 </template>
 
 <style lang="stylus">

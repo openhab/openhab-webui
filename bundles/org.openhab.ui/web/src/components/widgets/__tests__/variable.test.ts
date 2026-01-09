@@ -1,11 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { reactive, isReactive } from 'vue'
-import {
-  getLastVariableKeyValue,
-  setVariableKeyValues,
-  setVariableKeyValue,
-  getVariableScope
-} from '../variable'
+import { getLastVariableKeyValue, setVariableKeyValues, setVariableKeyValue, getVariableScope } from '../variable'
 
 // Mock Vue reactivity for testing
 vi.mock('vue', () => ({

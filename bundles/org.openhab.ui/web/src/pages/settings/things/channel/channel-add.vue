@@ -1,20 +1,12 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" name="channel-add">
     <f7-navbar>
-      <oh-nav-content title="Add Channel"
-                      :subtitle="thing.label"
-                      back-link="Cancel"
-                      save-link="Done"
-                      @save="save()"
-                      :f7router />
+      <oh-nav-content title="Add Channel" :subtitle="thing.label" back-link="Cancel" save-link="Done" @save="save()" :f7router />
     </f7-navbar>
     <f7-block class="block-narrow">
       <f7-col>
         <f7-block-title>Channel</f7-block-title>
-        <channel-general-settings v-if="ready"
-                                  :channel="channel"
-                                  :channelType="currentChannelType"
-                                  :createMode="true" />
+        <channel-general-settings v-if="ready" :channel="channel" :channelType="currentChannelType" :createMode="true" />
       </f7-col>
       <f7-col>
         <f7-block-title>Channel type</f7-block-title>
@@ -23,14 +15,15 @@
           <div>Loading...</div>
         </f7-block>
         <f7-list v-else>
-          <f7-list-item v-for="channelType in channelTypes"
-                        radio
-                        :value="channelType.UID"
-                        @change="currentChannelType = channelTypes.find((m) => m.UID === $event.target.value)"
-                        :key="channelType.UID"
-                        :title="channelType.label"
-                        :footer="channelType.description"
-                        name="channel-type" />
+          <f7-list-item
+            v-for="channelType in channelTypes"
+            radio
+            :value="channelType.UID"
+            @change="currentChannelType = channelTypes.find((m) => m.UID === $event.target.value)"
+            :key="channelType.UID"
+            :title="channelType.label"
+            :footer="channelType.description"
+            name="channel-type" />
         </f7-list>
       </f7-col>
       <f7-col v-if="currentChannelType != null">
@@ -44,15 +37,7 @@
 
     <div v-if="ready && currentChannelType" class="if-aurora display-flex justify-content-center margin padding">
       <div class="flex-shrink-0">
-        <f7-button class="padding-left padding-right"
-                   style="width: 150px"
-                   color="blue"
-                   large
-                   raised
-                   fill
-                   @click="save">
-          Create
-        </f7-button>
+        <f7-button class="padding-left padding-right" style="width: 150px" color="blue" large raised fill @click="save"> Create </f7-button>
       </div>
     </div>
   </f7-page>

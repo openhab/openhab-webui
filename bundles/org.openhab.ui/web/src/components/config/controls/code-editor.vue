@@ -9,13 +9,7 @@
     :tooltip="readOnlyMsg" />
 
   <div class="code-editor">
-    <editor
-      ref="editor"
-      :mode="editorMode"
-      :value="code"
-      :hint-context="hintContext"
-      :read-only="readOnly"
-      @input="onEditorInput" />
+    <editor ref="editor" :mode="editorMode" :value="code" :hint-context="hintContext" :read-only="readOnly" @input="onEditorInput" />
   </div>
 
   <f7-toolbar bottom class="code-editor-toolbar">
@@ -60,9 +54,7 @@
     <f7-page>
       <f7-navbar title="Parse Errors" ref="navbar">
         <f7-nav-right>
-          <f7-link class="popup-close">
-            Close
-          </f7-link>
+          <f7-link class="popup-close"> Close </f7-link>
         </f7-nav-right>
       </f7-navbar>
 

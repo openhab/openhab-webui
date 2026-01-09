@@ -10,7 +10,10 @@
       <f7-menu-dropdown-item @click="context.editmode.moveWidgetUp(component, context, parentSlot)" href="#" text="Move Up" />
       <f7-menu-dropdown-item @click="context.editmode.moveWidgetDown(component, context, parentSlot)" href="#" text="Move Down" />
       <f7-menu-dropdown-item divider />
-      <f7-menu-dropdown-item @click="context.editmode.removeWidget(component, context, parentSlot)" href="#" :text="removeLabel || 'Remove'" />
+      <f7-menu-dropdown-item
+        @click="context.editmode.removeWidget(component, context, parentSlot)"
+        href="#"
+        :text="removeLabel || 'Remove'" />
     </f7-menu-dropdown>
   </f7-menu-item>
 </template>
