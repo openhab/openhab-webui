@@ -54,6 +54,29 @@
             </template>
           </f7-list-item>
         </f7-list>
+
+        <f7-block-title>
+          {{ t('sidebar.media') }}
+        </f7-block-title>
+
+         <f7-list class="media-links">
+          <f7-list-item
+            link="/mediabrowser/"
+            :route-props="{ mediaBrowserMode: 'Global' }" 
+            :title="t('sidebar.mediaBrowser')"
+            view=".view-main"
+            panel-close
+            :class="{ currentsection: currentPath.about }">
+            <template #media>
+              <f7-icon
+                ios="f7:question_circle_fill"
+                aurora="f7:question_circle_fill"
+                md="material:help"
+                color="gray" />
+            </template>
+          </f7-list-item>
+        </f7-list>
+
         <f7-block-title
           v-if="userStore.isAdmin()">
           {{ t('sidebar.administration') }}

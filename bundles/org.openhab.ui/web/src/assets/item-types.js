@@ -1,4 +1,4 @@
-const SharedTypes = ['Call', 'Color', 'Contact', 'DateTime', 'Dimmer', 'Image', 'Location', 'Number', 'Player', 'Rollershutter', 'String', 'Switch']
+const SharedTypes = ['Call', 'Color', 'Contact', 'DateTime', 'Dimmer', 'Image', 'Location', 'MediaBrowser', 'Number', 'Player', 'Rollershutter', 'String', 'Switch']
 
 export const ItemTypes = SharedTypes.concat(['Group'])
 export const GroupTypes = ['None'].concat(SharedTypes)
@@ -78,6 +78,20 @@ export const LogicalOpenClosedFunctions = [{
 }, {
   name: 'NOR_CLOSED_OPEN',
   value: 'One CLOSED then OPEN else CLOSED'
+}]
+
+export const LogicalMediaBrowserFunctions = [{
+  name: 'AND_PLAY_PAUSE',
+  value: 'All PLAY then PLAY else PAUSE'
+}, {
+  name: 'AND_PAUSE_PLAY',
+  value: 'All PAUSE then PAUSE else PLAY'
+}, {
+  name: 'OR_PLAY_PAUSE',
+  value: 'One PLAY then PLAY else PAUSE'
+}, {
+  name: 'OR_PAUSE_PLAY',
+  value: 'One PAUSE then PAUSE else PLAY'
 }]
 
 export const LogicalPlayPauseFunctions = [{
