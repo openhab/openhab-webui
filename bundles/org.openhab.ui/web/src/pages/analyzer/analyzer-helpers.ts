@@ -2,7 +2,7 @@ import type { Item, UIComponent } from '@/types/openhab'
 import { Marker, type VisualMap, type ValueAxisOptions, ValueAxisSplitOptions } from './types'
 import type { AggregateCoordSettings } from './chart-aggregate'
 import type { TimeCoordSettings } from './chart-time'
-import { OhChartVisualmap, Orient, OhTimeSeries, OhAggregateSeries, OhValueAxis } from '@/types/components/widgets'
+import { OhChartVisualmap, Orient, OhTimeSeries, OhAggregateSeries, OhValueAxis } from '@/types/components/widgets/index.gen.ts'
 
 function parseUnit (item: Item) : string {
   let unit =

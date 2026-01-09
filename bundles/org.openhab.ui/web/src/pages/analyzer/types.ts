@@ -1,5 +1,5 @@
 import type { Item, Page } from '@/types/openhab'
-import { ChartType, OhChartVisualmap } from '@/types/components/widgets'
+import { ChartType, OhChartVisualmap } from '@/types/components/widgets/index.gen.ts'
 import type { TimeCoordSettings } from './chart-time'
 import type { AggregateCoordSettings } from './chart-aggregate'
 import type { CalendarCoordSettings } from './chart-calendar'

@@ -2,7 +2,7 @@ import { renderVisualMap } from './analyzer-helpers.ts'
 
 import { SeriesType, type CoordSettings, type CoordSystem, type SeriesOptions, type VisualMap, type CoordSettingsBase } from './types'
 import type { Item, Page } from '@/types/openhab'
-import { AggregationFunction, ChartType, OhChartPage, Orient, OhChartVisualmap, OhCalendarSeries, OhChartTooltip, OhCalendarAxis, OhChartLegend } from '@/types/components/widgets'
+import { AggregationFunction, ChartType, OhChartPage, Orient, OhChartVisualmap, OhCalendarSeries, OhChartTooltip, OhCalendarAxis, OhChartLegend } from '@/types/components/widgets/index.gen.ts'
 
 export interface CalendarCoordSettings extends CoordSettingsBase {
   orientation: Orient

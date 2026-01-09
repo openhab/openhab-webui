@@ -2,7 +2,7 @@ import { getYAxis, renderValueAxis, toPrimitiveMarkers } from './analyzer-helper
 
 import { Marker, SeriesType, type CoordSystem, type CoordSettings, type SeriesOptions, type ValueAxisOptions, type CoordSettingsBase } from './types.js'
 import type { Item, Page } from '@/types/openhab'
-import { OhCategoryAxis, OhChartPage, OhValueAxis, ChartType, Period, OhStateSeries, OhTimeSeries, OhChartTooltip, OhChartLegend } from '@/types/components/widgets'
+import { OhCategoryAxis, OhChartPage, OhValueAxis, ChartType, Period, OhStateSeries, OhTimeSeries, OhChartTooltip, OhChartLegend } from '@/types/components/widgets/index.gen.ts'
 
 export interface TimeCoordSettings extends CoordSettingsBase {
     valueAxesOptions: Array<ValueAxisOptions>

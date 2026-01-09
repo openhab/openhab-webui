@@ -1,6 +1,6 @@
 import { getYAxis, renderValueAxis, renderVisualMap, toPrimitiveMarkers } from './analyzer-helpers.ts'
 
-import { OhAggregateSeries, OhCategoryAxis, OhChartPage, OhValueAxis, ChartType, Orient, OhChartTooltip, OhChartLegend, OhChartVisualmap } from '@/types/components/widgets'
+import { OhAggregateSeries, OhCategoryAxis, OhChartPage, OhValueAxis, ChartType, Orient, OhChartTooltip, OhChartLegend, OhChartVisualmap } from '@/types/components/widgets/index.gen.ts'
 
 import { Marker, type CoordSystem, type SeriesOptions, type CoordSettings, SeriesType, type ValueAxisOptions, type VisualMap, type CoordSettingsBase } from './types.js'
 import type { Item, Page, UIComponent  } from '@/types/openhab'
