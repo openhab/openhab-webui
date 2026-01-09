@@ -1,7 +1,6 @@
 <template>
   <f7-list v-bind="config"
-           :title="null"
-           :style="{ 'z-index': context.editmode ? 'inherit' : undefined }">
+           :title="null">
     <template #before-list>
       <f7-menu v-if="context.editmode" class="configure-layout-menu margin-vertical padding-left">
         <f7-menu-item @click="context.editmode.addWidget(context.component)" icon-f7="plus" />
