@@ -28,6 +28,7 @@
 				<option value="/css/theme-modern.css">Modern Theme</option>
 				<option value="/css/theme-coastalblues.css">Coastal Blues Theme</option>
 				<option value="/css/theme-starrynight.css">Starry Night Theme</option>
+				<option value="/css/theme-vibrant.css">Vibrant Theme</option>
 			</options>
 			<required>false</required>
 		</parameter>

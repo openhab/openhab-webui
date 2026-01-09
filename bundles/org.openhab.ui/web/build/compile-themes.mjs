@@ -6,7 +6,8 @@ const themes = [
     { src: 'src/css/theme-coastalblues.less', dest: 'public/css/theme-coastalblues.css' },
     { src: 'src/css/theme-vintage.less', dest: 'public/css/theme-vintage.css' },
     { src: 'src/css/theme-modern.less', dest: 'public/css/theme-modern.css' },
-    { src: 'src/css/theme-starrynight.less', dest: 'public/css/theme-starrynight.css' }
+    { src: 'src/css/theme-starrynight.less', dest: 'public/css/theme-starrynight.css' },
+    { src: 'src/css/theme-vibrant.less', dest: 'public/css/theme-vibrant.css' }
 ]
 
 for (const theme of themes) {

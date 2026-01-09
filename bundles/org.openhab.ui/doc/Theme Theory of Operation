@@ -73,13 +73,13 @@ In addition to these variables, there are also color tone varients for each of t
 
 #### Notes
 
-##### Key Theme Parmeters
+##### Key Theme Parameters
 - These are the key parameters used in defining a theme. With the exception of the parameters with the *, these are available to be customized via the settings menu.
 - The variables with the * should be used by widgets, etc. as they will adjust automatically depending on dark or light theme setting.
 
 ##### Primitive Colors
 - Should be only utilized when a specific color is required (i.e red for warning, green for success).
-- Key parameter or palette colors should be utlized in most places so that theme colors can be appropriately applied.
+- Key parameter or palette colors should be utilized in most places so that theme colors can be appropriately applied.
 - These can be set to align with the theme (for instance a muted theme can tone down these colors to deliver a consistent look/feel).
 - Default values are based on f7 default values.
 - f7-color-* values are assigned to these values so that current UIs will adjust accordingly.
@@ -92,8 +92,10 @@ In addition to these variables, there are also color tone varients for each of t
 ### Framework7 Variables
 
 - Hard-coding of specific colors in the framework7 have been updated to use the above parameters. For instance, the background colors in f7 were hard-coded as black/white depending on mode - these are now based on the above --oh-background-color paramater.
-- All f7-color-* (red, blue, ...) are assigned to use the above Primitive Colors. For instance, is one uses --f7-color-red, the --oh-red-color value will be returned. To reduce the dependency on f7, it is recommended that the --oh-*-color variable be utilized directly in the future.
-- All color classes (.color-*, .text-color-*, .bg-color-*, .border-color-*, .ripple-color-*) now utilize the above colors. The allows all f7 components to adapt to the theme. For instance, to apply a color to an element, one simply needs to apply the specific color class. Further, if f7 components offer a "color" prop the appropriate palette color will be used.
+- All f7-color-* (red, blue, ...) are assigned to use the above Primitive Colors.
+For instance, is one uses --f7-color-red, the --oh-red-color value will be returned. To reduce the dependency on f7, it is recommended that the --oh-*-color variable be utilized directly in the future.
+- All color classes (.color-*, .text-color-*, .bg-color-*, .border-color-*, .ripple-color-*) now utilize the above colors.
+This allows all f7 components to adapt to the theme. For instance, to apply a color to an element, one simply needs to apply the specific color class. Further, if f7 components offer a "color" prop the appropriate palette color will be used.
 
 ### Additional Color Classes
 
@@ -109,7 +111,7 @@ Several of the key parameters are available for the admin to override via the co
 These values are then included to the file served from the server endpoint /__theme__.
 One special css value is --oh-logo parameter which can be used to specfy a custom image to use for the upper-left branding left-panel of the ui.
 
-### Theme css file insertion
+### Theme CSS file insertion
 
 The theme file is imported via a special endpoint from the server (/__theme__).
 The server will look at the ui configuration settings to determine what to serve.
@@ -121,6 +123,8 @@ Note, any color override based on these settings will override any other paramet
 Given that CSS settings are determined by the "last" specified setting, it is important that the /__theme__ css files are loaded in the correct place.
 This is accomplished via a special plugin in the vite.config.ts.
 Also, to support updates to settings without having to refresh the client app, the client will append a random id to the endpoint (/__theme--123456) which will bust the cache and force a reload.
+
+Also, because this involves new capabilities in the server bundle, the only way to test these features is by installing the new bundle onto the server.
 
 ### useThemeStore
 
@@ -136,10 +140,11 @@ The store is used to set the palette for echarts and also for extracting the --o
 
 ## Further Work
 - Currently utilizes modern css features for variable/dynamic color (oklch | color-mixin) which are not supported in older browers. Need to add a fallback mechanism to support older browsers
-- Only tested on chrome and limited safari on desktop to date.
+- Only tested on chrome and limited safari on desktop to date. No mobile testing
 - Framework 7 has several color variables which change for md and ios. These have currently not been implemented.
-- When the configuration is updated for the ui bundle (via settings menu), the bundle is re-activated.
-I tried implementing a @Modified handler, but this was causing stack reset issues in the bundle.
-- Need further review of the removed color settings in the default framework7 css file.
-Even with the default theme applied, things are a bit different
-- some widgets (i.e. oh-knob) colors are not supported via classes yet
+- When the configuration is updated for the ui bundle (via settings menu), the bundle in openHAB is re-activated.
+I tried implementing a @Modified handler, but this was causing stack reset issues in the bundle. (may need help on this one)
+- Need detailed review of the settings of all the --f7-- variables removed from the framework7.css file.
+Even with the default theme applied, there are still a few areas where things aren't right yet.
+- some widgets (i.e. oh-knob) colors are not supported yet.
+- further refinement/testing of built-in themes
