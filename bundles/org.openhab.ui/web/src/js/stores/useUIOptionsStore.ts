@@ -3,14 +3,6 @@ import { ref, watch } from 'vue'
 import { Dom7 } from 'framework7'
 import { f7 } from 'framework7-vue'
 
-declare global {
-  interface Window {
-    OHApp?: {
-      preferDarkMode: () => boolean
-    }
-  }
-}
-
 export const useUIOptionsStore = defineStore('uiOptions', () => {
   // States
   // shared with basicUI

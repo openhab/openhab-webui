@@ -2,25 +2,30 @@ import { f7 } from 'framework7-vue'
 
 import { useUserStore } from '@/js/stores/useUserStore'
 
+export interface BasicCredentials {
+  id: string
+  password: string
+}
+
 /**
  * The current access token
  */
-let accessToken = null
+let accessToken: string | null = null
 
 /**
- * The access token should be passed in the X-OPENHAB-TOKEN header instead of Authorization: Bearer
+ * The access token should be passed in the `X-OPENHAB-TOKEN` header instead of `Authorization: Bearer ...`
  */
-let tokenInCustomHeader = false
+let tokenInCustomHeader: boolean = false
 
 /**
  * The PasswordCredential to authenticate to a reverse proxy service like openHAB Cloud
  */
-let basicCredentials = null
+let basicCredentials: BasicCredentials | null = null
 
 /**
- * The token is required for all requests, including SSE
+ * Whether the access token is required for all requests, including SSE
  */
-let requireToken
+let requireToken: boolean | null = null
 
 export function getAccessToken () { return accessToken }
 export function getTokenInCustomHeader () { return tokenInCustomHeader }
@@ -29,7 +34,7 @@ export function getRequireToken () { return requireToken }
 
 if (document.cookie.indexOf('X-OPENHAB-AUTH-HEADER') >= 0) tokenInCustomHeader = true
 
-export async function authorize (setup) {
+export async function authorize (setup: boolean = false): Promise<void> {
   import('pkce-challenge').then((PkceChallenge) => {
     const pkceChallenge = PkceChallenge.default()
     const authState = (setup ? 'setup-' : '') + f7.utils.id()
@@ -37,7 +42,7 @@ export async function authorize (setup) {
     sessionStorage.setItem('openhab.ui:codeVerifier', pkceChallenge.code_verifier)
     sessionStorage.setItem('openhab.ui:authState', authState)
 
-    window.location = '/auth' +
+    window.location.href = '/auth' +
       '?response_type=code' +
       '&client_id=' + encodeURIComponent(window.location.origin) +
       '&redirect_uri=' + encodeURIComponent(window.location.origin) +
@@ -48,23 +53,32 @@ export async function authorize (setup) {
   })
 }
 
-export async function setBasicCredentials (username, password) {
+export async function setBasicCredentials (username: string, password: string): Promise<void> {
   if (username && password) {
     console.log('Using passed credentials')
     basicCredentials = { id: username, password }
     tokenInCustomHeader = true
     return Promise.resolve()
-  } else if (typeof window.OHApp?.getBasicCredentialsUsername === 'function') {
+  } else if (
+    typeof window.OHApp?.getBasicCredentialsUsername === 'function' &&
+    typeof window.OHApp?.getBasicCredentialsPassword === 'function'
+  ) {
     const usernameFromApp = window.OHApp.getBasicCredentialsUsername()
     const passwordFromApp = window.OHApp.getBasicCredentialsPassword()
     basicCredentials = { id: usernameFromApp, password: passwordFromApp }
     tokenInCustomHeader = true
     return Promise.resolve()
-  } else if (navigator.credentials && navigator.credentials.preventSilentAccess && window.PasswordCredential) {
-    return navigator.credentials.get({ password: true }).then((creds) => {
-      if (creds) {
+  } else if (
+    'credentials' in navigator &&
+    'preventSilentAccess' in navigator.credentials &&
+    'PasswordCredential' in window
+  ) {
+    // @ts-expect-error PasswordCredential not included in type defs, see https://github.com/microsoft/TypeScript/issues/34550
+    return navigator.credentials.get({ password: true }).then((credentials) => {
+      if (credentials) {
         console.log('Using stored Basic credentials to sign in to a reverse proxy service')
-        basicCredentials = { id: creds.id, password: creds.password }
+        // @ts-expect-error PasswordCredential not included in type defs, see https://github.com/microsoft/TypeScript/issues/34550
+        basicCredentials = { id: credentials.id, password: credentials.password }
         tokenInCustomHeader = true
       }
       return Promise.resolve()
@@ -74,26 +88,27 @@ export async function setBasicCredentials (username, password) {
   }
 }
 
-export function clearBasicCredentials () {
+export function clearBasicCredentials (): void {
   basicCredentials = null
   tokenInCustomHeader = document.cookie.indexOf('X-OPENHAB-AUTH-HEADER') >= 0
 }
 
-export function storeBasicCredentials () {
-  if (basicCredentials && navigator.credentials && navigator.credentials.preventSilentAccess && window.PasswordCredential) {
+export function storeBasicCredentials (): void {
+  if (basicCredentials && 'credentials' in navigator && 'preventSilentAccess' in navigator.credentials && 'PasswordCredential' in window) {
+    // @ts-expect-error PasswordCredential not included in type defs, see https://github.com/microsoft/TypeScript/issues/34550
     navigator.credentials.store(new window.PasswordCredential(basicCredentials))
   }
 }
 
-export function setAccessToken (token, api) {
+export function setAccessToken (token: string, api: any): Promise<void> {
   if (!token || !api) return Promise.resolve()
-  if (requireToken === undefined) {
+  if (requireToken === null) {
     // determine whether the token is required for user operations
-    return api.get('/rest/sitemaps').then((resp) => {
+    return api.get('/rest/sitemaps').then(() => {
       accessToken = token
       requireToken = false
       return Promise.resolve()
-    }).catch((err) => {
+    }).catch((err: any) => {
       if (err === 'Unauthorized' || err === 401) requireToken = true
       accessToken = token
       return Promise.resolve()
@@ -104,7 +119,7 @@ export function setAccessToken (token, api) {
   }
 }
 
-export function clearAccessToken () {
+export function clearAccessToken (): void {
   accessToken = null
 }
 
@@ -112,12 +127,15 @@ export function isLoggedIn () {
   return useUserStore().user !== null
 }
 
-export function isAdmin () {
+export function isAdmin (): boolean {
   const user = useUserStore().user
-  return user && user.roles && user.roles.indexOf('administrator') >= 0
+  if (!user || !user.roles) return false
+  return user.roles.indexOf('administrator') >= 0
 }
 
-export function enforceAdminForRoute ({ resolve, reject }) {
+// As Framework7 RouteCallbackCtx uses Function type:
+// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+export function enforceAdminForRoute ({ resolve, reject }: { resolve: Function, reject: Function }): void {
   if (!isAdmin()) {
     reject()
     authorize()
