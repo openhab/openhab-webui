@@ -36,12 +36,12 @@
         <slot name="after" />
       </template>
     </template>
-    <f7-accordion-content v-if="context.parent.component.config.accordionList && !context.editmode">
-      <generic-widget-component v-if="isRegularAccordion" :context="childContext(context.component.slots.accordion[0])" />
+    <f7-accordion-content v-if="isRegularAccordion && !context.editmode">
+      <generic-widget-component :context="childContext(accordionSlots[0])" />
     </f7-accordion-content>
     <template #root>
       <f7-accordion-content v-if="isEquipmentAccordion && !context.editmode">
-        <generic-widget-component :context="childContext(context.component.slots.accordion[0])" />
+        <generic-widget-component :context="childContext(accordionSlots[0])" />
       </f7-accordion-content>
     </template>
     <template
@@ -165,10 +165,14 @@ export default {
   widget: OhListItemDefinition,
   computed: {
     isEquipmentAccordion () {
-      return this.context.parent.component.config.accordionEquipment && this.context.component.slots && this.context.component.slots.accordion && this.context.component.slots.accordion.length
+      return this.context.parent.component.config.accordionEquipment && this.accordionSlots.length > 0
     },
     isRegularAccordion () {
-      return this.context.parent.component.config.accordionList && this.context.component.slots && this.context.component.slots.accordion && this.context.component.slots.accordion.length
+      return this.context.parent.component.config.accordionList && this.accordionSlots.length > 0
+    },
+    accordionSlots () {
+      if (!this.context.component.slots?.accordion?.length) return []
+      return this.context.component.slots.accordion
     }
   },
   mounted () {
