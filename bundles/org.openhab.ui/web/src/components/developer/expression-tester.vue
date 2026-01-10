@@ -29,7 +29,7 @@ export default {
   },
   computed: {
     result () {
-      return this.evaluateExpression('tester', this.testExpression)
+      return this.evaluateExpression('tester', this.testExpression)?.toString()
     }
   }
 }
