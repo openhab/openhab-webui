@@ -15,6 +15,8 @@ import 'leaflet/dist/leaflet.css'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 import { mapStores } from 'pinia'
 
+import * as api from '@/api'
+
 // Do NOT remove: required for Leaflet to render in prod build
 delete Icon.Default.prototype._getIconUrl
 Icon.Default.mergeOptions({
@@ -57,23 +59,21 @@ export default {
       this.center = (this.value) ? latLng(this.value.split(',')) : latLng(48, 6)
       this.showMap = true
       if (!this.value) {
-        this.$oh.api.get('/rest/services/org.openhab.i18n/config')
-          .then((data) => {
-            if (data.location) {
-              this.center = latLng(data.location.split(','))
-              this.zoom = 15
-              this.showMap = false
-              nextTick(() => {
-                this.showMap = true
-              })
-            }
-          })
-          .catch((err) => {
-            // silently ignore if the request is not permitted for the user
-            if (!(err === 'Forbidden' || err === 403)) {
-              return Promise.reject(err)
-            }
-          })
+        api.getServiceConfig({ serviceId: 'org.openhab.i18n' }).then((data) => {
+          if (data.location) {
+            this.center = latLng(data.location.split(','))
+            this.zoom = 15
+            this.showMap = false
+            nextTick(() => {
+              this.showMap = true
+            })
+          }
+        }).catch((err) => {
+          // silently ignore if the request is not permitted for the user
+          if (!(err.response?.statusText === 'Forbidden' || err.response?.status === 403)) {
+            return Promise.reject(err)
+          }
+        })
       }
     })
   },

@@ -155,6 +155,6 @@ export default defineConfig([
       }
     }
   },
-  globalIgnores(['dist', 'build', 'public', '**/*.nearley.js']),
-  eslintConfigPrettier, // Disables all ESLint rules that conflict with Prettier/oxfmt
+  globalIgnores(['dist', 'build', 'public', '**/*.nearley.js', 'src/api/**']),
+  eslintConfigPrettier // Disables all ESLint rules that conflict with Prettier/oxfmt
 ])
