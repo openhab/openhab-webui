@@ -1,9 +1,9 @@
 <template>
   <oh-list-item :context="context">
     <template #after>
-      <div class="display-flex">
+      <div style="display: flex; gap: 0.5rem;">
         <generic-widget-component :context="childContext(colorPickerComponent)" />
-        <generic-widget-component class="margin-left" :context="childContext(switchComponent)" />
+        <generic-widget-component :context="childContext(switchComponent)" />
       </div>
     </template>
   </oh-list-item>
