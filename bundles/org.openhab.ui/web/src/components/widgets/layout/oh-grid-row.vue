@@ -1,5 +1,5 @@
 <template>
-  <div class="oh-row">
+  <div class="oh-row" :class="scopedCssUid">
     <hr v-if="context.editmode" style="opacity: 0.5; border-top: 1px #777 dashed" />
     <div width="100%" v-if="context.editmode">
       <f7-menu class="configure-layout-menu margin-bottom padding-horizontal">
