@@ -1,5 +1,5 @@
 <template>
-  <f7-list v-bind="config" :title="null">
+  <f7-list v-bind="config" :title="null" class="oh-list">
     <template #before-list>
       <f7-menu v-if="context.editmode" class="configure-layout-menu margin-vertical padding-left">
         <f7-menu-item @click="context.editmode.addWidget(context.component)" icon-f7="plus" />
@@ -57,12 +57,21 @@
               </f7-menu-dropdown>
             </f7-menu-item>
           </f7-menu>
-          <generic-widget-component :context="childContext(slotComponent)" style="flex-grow: 1;" />
+          <generic-widget-component :context="childContext(slotComponent)" class="list-item" />
         </div>
       </template>
     </ul>
   </f7-list>
 </template>
+
+<style lang="stylus">
+.oh-list
+  .list-item
+    flex-grow 1
+    white-space nowrap
+    overflow hidden
+    text-overflow ellipsis
+</style>
 
 <script>
 import mixin from '../widget-mixin'
