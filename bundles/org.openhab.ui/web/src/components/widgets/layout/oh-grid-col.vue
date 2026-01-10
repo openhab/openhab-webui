@@ -1,5 +1,5 @@
 <template>
-  <f7-col v-bind="config" v-if="visible" class="oh-col">
+  <f7-col v-bind="config" v-if="visible" class="oh-col" :class="scopedCssUid">
     <div width="100%" v-if="context.editmode">
       <f7-menu class="configure-layout-menu padding-horizontal">
         <f7-menu-item style="margin-left: auto" icon-f7="rectangle_split_3x1" dropdown>

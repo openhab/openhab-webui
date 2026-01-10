@@ -91,11 +91,12 @@ export default {
     ...mapStores(useUIOptionsStore)
   },
   mounted () {
-    if (this.context?.component?.config?.stylesheet) {
+    const stylesheet = this.context?.component?.config?.stylesheet
+    if (stylesheet) {
       this.scopedCssUid = 'scoped-' + f7.utils.id()
       let style = document.createElement('style')
       style.id = this.scopedCssUid
-      style.innerHTML = scope(this.context.component.config.stylesheet, '.' + this.scopedCssUid)
+      style.innerHTML = scope(stylesheet, '.' + this.scopedCssUid)
       document.head.appendChild(style)
     }
   },
@@ -109,7 +110,7 @@ export default {
     evaluateExpression (key, value, context, props) {
       return this.widgetExpression.evaluateExpression(key, value, context || this.context, props || this.props)
     },
-    childContext (component) {
+    childContext(component) {
       return {
         component,
         rootcomponent: this.context.root || this.context.component,

@@ -1,8 +1,10 @@
 <template>
-  <f7-block v-if="visible"
-            class="oh-block"
-            :style="{ 'z-index': (context.editmode) ? 100 - context.parent.component.slots.default.indexOf(context.component) : 'auto !important', ...config.style }">
-    <hr v-if="context.editmode">
+  <f7-block
+    v-if="visible"
+    class="oh-block"
+    :class="scopedCssUid"
+    :style="{ 'z-index': (context.editmode) ? 100 - context.parent.component.slots.default.indexOf(context.component) : 'auto !important', ...config.style }">
+    <hr v-if="context.editmode" />
     <f7-block-title v-if="config.title">
       {{ config.title }}
     </f7-block-title>
