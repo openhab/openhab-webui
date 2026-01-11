@@ -25,7 +25,7 @@
         :height="config.iconHeight || config.iconSize || 40"
         :state="config.iconUseState ? state : undefined" />
     </l-icon>
-    <l-icon v-else :icon-url="DefaultIcon.iconUrl" :shadow-url="DefaultIcon.shadowUrl" />
+    <l-icon v-else :icon-url="DefaultIcon.iconUrl" :icon-size="DefaultIcon.iconSize" />
     <l-popup v-if="context.editmode && !dragging">
       <div class="display-flex">
         <f7-link
@@ -70,7 +70,6 @@ import { actionsMixin } from '../widget-actions'
 import { OhPlanMarkerDefinition } from '@/assets/definitions/widgets/plan'
 
 import markerIcon from 'leaflet/dist/images/marker-icon.png'
-import markerShadow from 'leaflet/dist/images/marker-shadow.png'
 
 export default {
   mixins: [mixin, actionsMixin],
@@ -91,7 +90,7 @@ export default {
   created () {
     this.DefaultIcon = {
       iconUrl: markerIcon,
-      shadowUrl: markerShadow
+      iconSize: [25, 41],
     }
   },
   computed: {
@@ -102,7 +101,6 @@ export default {
       return this.config.useTooltipAsLabel || this.config.icon
     },
     iconSize () {
-      if (this.hasCustomIcon) return null
       const iconSize = this.config.iconSize || 40
       return [iconSize, iconSize]
     },
