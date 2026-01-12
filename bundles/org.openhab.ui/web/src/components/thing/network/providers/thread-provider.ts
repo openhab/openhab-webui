@@ -9,57 +9,60 @@ import type { NetworkGraph, NetworkGraphProvider, NetworkNode, NetworkLink, Netw
 /**
  * Thread routing roles from Matter spec (ThreadNetworkDiagnostics cluster)
  */
-const RoutingRole = {
-  UNSPECIFIED: 0,
-  UNASSIGNED: 1,
-  SLEEPY_END_DEVICE: 2,
-  END_DEVICE: 3,
-  REED: 4,
-  ROUTER: 5,
-  LEADER: 6
-} as const
+enum RoutingRole {
+  UNSPECIFIED = 0,
+  UNASSIGNED = 1,
+  SLEEPY_END_DEVICE = 2,
+  END_DEVICE = 3,
+  REED = 4,
+  ROUTER = 5,
+  LEADER = 6
+}
 
 /**
  * Color constants for node borders based on device role
  */
-const RoleColors: Record<string, string> = {
-  leader: '#FFD700',
-  border_router: '#FF9800',
-  router: '#2196F3',
-  reed: '#00BCD4',
-  end_device: '#9C27B0',
-  sleepy_end_device: '#673AB7',
-  unknown: '#9E9E9E'
+enum RoleColors {
+  leader = '#FFD700',
+  border_router = '#FF9800',
+  router = '#2196F3',
+  reed = '#00BCD4',
+  end_device = '#9C27B0',
+  sleepy_end_device = '#673AB7',
+  unknown = '#9E9E9E'
 }
 
 /**
  * Size constants for nodes based on role
  */
-const RoleSizes: Record<string, number> = {
-  leader: 55,
-  border_router: 50,
-  router: 45,
-  reed: 38,
-  end_device: 30,
-  sleepy_end_device: 30,
-  unknown: 30
+enum RoleSizes {
+  leader = 55,
+  border_router = 50,
+  router = 45,
+  reed = 38,
+  end_device = 30,
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
+  sleepy_end_device = 30,
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
+  unknown = 30
 }
 
 /**
  * LQI color mapping
  */
-const LqiColors: Record<number, string> = {
-  3: '#4CAF50',
-  2: '#8BC34A',
-  1: '#FFC107',
-  0: '#F44336'
+enum LqiColors {
+  _3 = '#4CAF50',
+  _2 = '#8BC34A',
+  _1 = '#FFC107',
+  _0 = '#F44336'
 }
 
-const LqiWidths: Record<number, number> = {
-  3: 4,
-  2: 3,
-  1: 2,
-  0: 2
+enum LqiWidths {
+  _3 = 4,
+  _2 = 3,
+  _1 = 2,
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
+  _0 = 2
 }
 
 interface ProcessedNode extends NetworkNode {
@@ -85,13 +88,18 @@ export class ThreadNetworkProvider implements NetworkGraphProvider {
       { id: 'router', label: 'Router', color: RoleColors.router, size: RoleSizes.router },
       { id: 'reed', label: 'REED', color: RoleColors.reed, size: RoleSizes.reed },
       { id: 'end_device', label: 'End Device', color: RoleColors.end_device, size: RoleSizes.end_device },
-      { id: 'sleepy_end_device', label: 'Sleepy End Device', color: RoleColors.sleepy_end_device, size: RoleSizes.sleepy_end_device }
+      {
+        id: 'sleepy_end_device',
+        label: 'Sleepy End Device',
+        color: RoleColors.sleepy_end_device,
+        size: RoleSizes.sleepy_end_device
+      }
     ],
     linkQualities: [
-      { value: 3, label: 'Excellent', color: LqiColors[3], width: LqiWidths[3] },
-      { value: 2, label: 'Good', color: LqiColors[2], width: LqiWidths[2] },
-      { value: 1, label: 'Fair', color: LqiColors[1], width: LqiWidths[1] },
-      { value: 0, label: 'Poor', color: LqiColors[0], width: LqiWidths[0] }
+      { value: 3, label: 'Excellent', color: LqiColors._3, width: LqiWidths._3 },
+      { value: 2, label: 'Good', color: LqiColors._2, width: LqiWidths._2 },
+      { value: 1, label: 'Fair', color: LqiColors._1, width: LqiWidths._1 },
+      { value: 0, label: 'Poor', color: LqiColors._0, width: LqiWidths._0 }
     ],
     linkTypes: [
       { id: 'peer', label: 'Router Link', symbol: 'double_arrow' },

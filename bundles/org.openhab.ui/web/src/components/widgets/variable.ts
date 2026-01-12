@@ -31,7 +31,9 @@ function getVariableKeyValues(
   }
 
   for (let i = 0; i <= keyArray.length - 1; i++) {
-    setValue = getVariableKeyValue(setValue, keyArray[i])
+    const key = keyArray[i]
+    if (key === undefined) break
+    setValue = getVariableKeyValue(setValue, key)
     valueArray.push(setValue)
   }
   return { keyArray, valueArray }
@@ -41,8 +43,8 @@ function parseArrayIndex(key: string): { propertyName: string; index: number } |
   const match = key.match(/^(.*?)\[(\d+)\]$/)
   if (!match) return null
 
-  const propertyName = match[1]
-  const index = parseInt(match[2], 10)
+  const propertyName = match[1]!
+  const index = parseInt(match[2]!, 10)
 
   if (isNaN(index) || index < 0) return null
 
@@ -103,8 +105,8 @@ export function setVariableKeyValues(
       lastObject = newValue
     }
     valueArray[currentIdx] = setVariableKeyValue(
-      valueArray[currentIdx] as VariableArray | VariableObject | undefined | null,
-      keyArray[valueArray.length - 2],
+      valueArray[currentIdx] as VariableObject | VariableArray | undefined | null,
+      keyArray[valueArray.length - 2]!,
       lastObject
     )
     valueArray.pop()

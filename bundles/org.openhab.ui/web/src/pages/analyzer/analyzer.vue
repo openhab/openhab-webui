@@ -437,7 +437,7 @@ export default {
       coordSystems: Object.keys(COORD_SYSTEMS),
       coordSystemName: CoordSystemsName.time,
       coordSystem: COORD_SYSTEMS[CoordSystemsName.time],
-      coordSettings: COORD_SYSTEMS[CoordSystemsName.time].initCoordSystem() as CoordSettings,
+      coordSettings: COORD_SYSTEMS[CoordSystemsName.time]!.initCoordSystem() as CoordSettings,
       controlsOpened: false,
       itemsPickerKey: f7.utils.id(),
       chartKey: f7.utils.id(),
@@ -448,8 +448,10 @@ export default {
     titleDisplayText () {
       if (this.label != null) return this.label
       if (!this.items || !this.items.length) return 'Analyze'
-      if (this.items.length === 1) return (this.items[0].label) ? this.items[0].label : this.items[0].name
-      return ((this.items[0].label) ? this.items[0].label : this.items[0].name) + ' + ' + (this.items.length - 1)
+      const firstItem = this.items[0]
+      if (!firstItem) return 'Analyze'
+      if (this.items.length === 1) return (firstItem?.label) ? firstItem.label : firstItem.name
+      return ((firstItem.label) ? firstItem.label : firstItem.name) + ' + ' + (this.items.length - 1)
     },
     context () {
       return {
@@ -458,7 +460,12 @@ export default {
       }
     },
     page () {
-      const chartPage = this.coordSystem.getChartPage(this.coordSettings, this.seriesOptions, this.items)
+      const coordSystem = this.coordSystem
+      if(!coordSystem) {
+        return {}
+      }
+
+      const chartPage = coordSystem.getChartPage(this.coordSettings, this.seriesOptions, this.items)
       chartPage.config.label = this.label
       return chartPage
     },
@@ -487,9 +494,9 @@ export default {
         if (this.f7route?.query.chartType) this.changeChartType(this.f7route.query.chartType)
         if (this.f7route?.query.coordSystem) this.changeCoordSystem(this.f7route.query.coordSystem)
         if (this.f7route?.query.aggregation) {
-          for (const options in this.seriesOptions) {
-            if ('aggregation' in this.seriesOptions[options]) {
-              this.seriesOptions[options].aggregation = this.f7route.query.aggregation
+          for (const [key, options] of Object.entries(this.seriesOptions)) {
+            if ('aggregation' in options) {
+              options.aggregation = this.f7route.query.aggregation
             }
           }
         }
@@ -506,9 +513,18 @@ export default {
       if (freshInit) {
         this.seriesOptions = {}
       }
-      this.coordSystem.initAxes(this.coordSettings)
+      const coordSystem = this.coordSystem
+      if(!coordSystem) {
+        return
+      }
+      coordSystem.initAxes(this.coordSettings)
       for (const item of this.items) {
-        this.seriesOptions[item.name] = this.coordSystem.initSeries(item, this.coordSettings, freshInit ? {} : this.seriesOptions[item.name])
+        const seriesOption = this.seriesOptions[item.name]
+        this.seriesOptions[item.name] = coordSystem.initSeries(
+          item,
+          this.coordSettings,
+          freshInit || !seriesOption ? {} : seriesOption
+        )
       }
     },
     async updateItems (itemNames : Array<string>) {
@@ -546,14 +562,15 @@ export default {
       })
     },
     changeCoordSystem (coordSystem : CoordSystemsName) {
-      if (!COORD_SYSTEMS[coordSystem]) {
+      const newCoordSystem = COORD_SYSTEMS[coordSystem]
+      if (!newCoordSystem) {
         this.invalidConfiguration = true
         return
       }
 
       this.refreshChart(() => {
         this.coordSystemName = coordSystem
-        this.coordSystem = COORD_SYSTEMS[coordSystem]
+        this.coordSystem = newCoordSystem
         const device = getDevice()
         this.coordSettings = this.coordSystem.initCoordSystem({
           ...this.coordSettings,
