@@ -5,17 +5,10 @@
     </f7-block-title>
     {{ t('setupwizard.persistence-config.default.header') }}
     <f7-list v-if="servicesLoaded" form>
-      <f7-list-item
-        title="Default"
-        smart-select
-        :smart-select-params="{ openIn: 'popup', closeOnSelect: true }">
+      <f7-list-item title="Default" smart-select :smart-select-params="{ openIn: 'popup', closeOnSelect: true }">
         <select name="defaultPersistence" v-model="defaultPersistence">
-          <option v-if="!services.length" disabled value="">
-            No services available
-          </option>
-          <option v-for="service in services"
-                  :key="service.id"
-                  :value="service.id">
+          <option v-if="!services.length" disabled value="">No services available</option>
+          <option v-for="service in services" :key="service.id" :value="service.id">
             {{ service.label }}
           </option>
         </select>
@@ -26,18 +19,18 @@
     <f7-block-title>
       {{ t('setupwizard.persistence-config.services.title') }}
     </f7-block-title>
-    {{ t('setupwizard.persistence-config.services.header1') }}<br>
-    <br>
-    {{ t('setupwizard.persistence-config.services.header2') }}<br>
-    {{ t('setupwizard.persistence-config.services.header3') }}<br>
-    {{ t('setupwizard.persistence-config.services.header4') }}<br>
-    <br>
-    {{ t('setupwizard.persistence-config.services.header5') }}<br>
-    {{ t('setupwizard.persistence-config.services.header6') }}<br>
-    {{ t('setupwizard.persistence-config.services.header7') }}<br>
-    {{ t('setupwizard.persistence-config.services.header8') }}<br>
-    <br>
-    {{ t('setupwizard.persistence-config.services.header9') }}<br>
+    {{ t('setupwizard.persistence-config.services.header1') }}<br />
+    <br />
+    {{ t('setupwizard.persistence-config.services.header2') }}<br />
+    {{ t('setupwizard.persistence-config.services.header3') }}<br />
+    {{ t('setupwizard.persistence-config.services.header4') }}<br />
+    <br />
+    {{ t('setupwizard.persistence-config.services.header5') }}<br />
+    {{ t('setupwizard.persistence-config.services.header6') }}<br />
+    {{ t('setupwizard.persistence-config.services.header7') }}<br />
+    {{ t('setupwizard.persistence-config.services.header8') }}<br />
+    <br />
+    {{ t('setupwizard.persistence-config.services.header9') }}<br />
     <f7-block v-for="service in services" :key="service.id" class="persistence-config-setup-wizard">
       <f7-block-title>
         {{ service.label }}
@@ -47,10 +40,7 @@
           <addon-logo class="logo-square" :addon="addons.find((addon) => addon.uid === 'persistence-' + service.id)" size="54" />
           <span class="config">
             <f7-list form v-if="servicesLoaded">
-              <f7-list-item
-                title="Items"
-                smart-select
-                :smart-select-params="{ openIn: 'popup', closeOnSelect: true }">
+              <f7-list-item title="Items" smart-select :smart-select-params="{ openIn: 'popup', closeOnSelect: true }">
                 <select :name="'items_' + service.id" v-model="items[service.id]">
                   <option value="*">
                     {{ this.t('setupwizard.persistence-config.services.items.all') }}
@@ -63,15 +53,13 @@
                   </option>
                 </select>
               </f7-list-item>
-              <f7-list-item
-                title="Strategies"
-                smart-select
-                :smart-select-params="{ openIn: 'popup' }">
+              <f7-list-item title="Strategies" smart-select :smart-select-params="{ openIn: 'popup' }">
                 <select :name="'strategies_' + service.id" multiple v-model="selectedStrategies[service.id]">
-                  <option v-for="strategy in strategies[service.id]"
-                          :key="service.id + '_' + strategy"
-                          :value="strategy"
-                          :disabled="service.id === 'rrd4j' && strategy === 'everyMinute'">
+                  <option
+                    v-for="strategy in strategies[service.id]"
+                    :key="service.id + '_' + strategy"
+                    :value="strategy"
+                    :disabled="service.id === 'rrd4j' && strategy === 'everyMinute'">
                     {{ this.t('setupwizard.persistence.strategy.' + strategy) || strategy }}
                   </option>
                 </select>

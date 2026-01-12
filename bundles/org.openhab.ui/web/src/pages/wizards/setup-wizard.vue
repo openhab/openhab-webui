@@ -278,28 +278,20 @@
             {{ t('setupwizard.persistence-config.title') }}
           </f7-login-screen-title>
         </f7-block>
-        <f7-block strong>
-          {{ t('setupwizard.persistence-config.header1') }}<br>
-        </f7-block>
-        <persistence-config-setup-wizard :addons="addons"
-                                         :addonsReady="addonsReady"
-                                         :confirm="persistenceConfigConfirm"
-                                         :t />
+        <f7-block strong> {{ t('setupwizard.persistence-config.header1') }}<br /> </f7-block>
+        <persistence-config-setup-wizard :addons="addons" :addonsReady="addonsReady" :confirm="persistenceConfigConfirm" :t />
         <f7-block-footer class="margin-bottom">
           <small>{{ t('setupwizard.persistence-config.footer') }}</small>
         </f7-block-footer>
         <f7-block class="padding">
           <div>
-            <f7-button large
-                       fill
-                       color="blue"
-                       :text="t('setupwizard.persistence-config.config')"
-                       @click="persistenceConfig" />
-            <f7-button large
-                       color="blue"
-                       :text="t('setupwizard.persistence-config.configLater')"
-                       class="margin-top"
-                       @click="skipPersistenceConfig" />
+            <f7-button large fill color="blue" :text="t('setupwizard.persistence-config.config')" @click="persistenceConfig" />
+            <f7-button
+              large
+              color="blue"
+              :text="t('setupwizard.persistence-config.configLater')"
+              class="margin-top"
+              @click="skipPersistenceConfig" />
           </div>
         </f7-block>
       </f7-tab>
