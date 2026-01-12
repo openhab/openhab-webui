@@ -99,13 +99,13 @@ export class ThreadNetworkProvider implements NetworkGraphProvider {
     ]
   }
 
-  buildGraph (things: any[], bridgeUID: string): NetworkGraph {
-    const matterNodes = things.filter((t) =>
-      (t.bridgeUID === bridgeUID || t.UID === bridgeUID) &&
-      t.UID.startsWith('matter:node') &&
-      t.properties &&
-      (t.properties['ThreadNetworkDiagnostics-neighborTable'] ||
-       t.properties['ThreadNetworkDiagnostics-routingRole'] !== undefined)
+  buildGraph(things: any[], bridgeUID: string): NetworkGraph {
+    const matterNodes = things.filter(
+      (t) =>
+        (t.bridgeUID === bridgeUID || t.UID === bridgeUID) &&
+        t.UID.startsWith('matter:node') &&
+        t.properties &&
+        (t.properties['ThreadNetworkDiagnostics-neighborTable'] || t.properties['ThreadNetworkDiagnostics-routingRole'] !== undefined)
     )
 
     const processedNodes: ProcessedNode[] = []
@@ -130,7 +130,7 @@ export class ThreadNetworkProvider implements NetworkGraphProvider {
     const links = this.createLinks(processedNodes, nodesByRloc16, nodesByExtAddr)
 
     // Get network name from first node that has it
-    const networkName = processedNodes.find((n) => n.properties?.network)?.properties?.network as string || 'Thread'
+    const networkName = (processedNodes.find((n) => n.properties?.network)?.properties?.network as string) || 'Thread'
 
     // Convert to output format
     const nodes: NetworkNode[] = processedNodes.map((n) => ({
@@ -164,7 +164,7 @@ export class ThreadNetworkProvider implements NetworkGraphProvider {
     }
   }
 
-  private createNode (thing: any): ProcessedNode {
+  private createNode(thing: any): ProcessedNode {
     const props = thing.properties
     const routingRole = this.parseRoutingRole(props['ThreadNetworkDiagnostics-routingRole'])
     const isBorderRouter = props['ThreadBorderRouterManagement-interfaceEnabled'] !== undefined
@@ -180,9 +180,7 @@ export class ThreadNetworkProvider implements NetworkGraphProvider {
     const ownRloc16 = ownIdentity?.rloc16 || null
     const ownExtAddress = ownIdentity?.extAddress || null
 
-    const isRouter = isBorderRouter ||
-      routingRole >= RoutingRole.ROUTER ||
-      ownRloc16 !== null
+    const isRouter = isBorderRouter || routingRole >= RoutingRole.ROUTER || ownRloc16 !== null
 
     const { role, secondaryRole } = this.getRoleInfo(routingRole, isBorderRouter, isRouter)
 
@@ -209,25 +207,28 @@ export class ThreadNetworkProvider implements NetworkGraphProvider {
     }
   }
 
-  private getRoleInfo (routingRole: number, isBorderRouter: boolean, isRouter: boolean): { role: string; secondaryRole?: string } {
+  private getRoleInfo(routingRole: number, isBorderRouter: boolean, isRouter: boolean): { role: string; secondaryRole?: string } {
     if (routingRole === RoutingRole.LEADER) {
-      return isBorderRouter
-        ? { role: 'leader', secondaryRole: 'border_router' }
-        : { role: 'leader' }
+      return isBorderRouter ? { role: 'leader', secondaryRole: 'border_router' } : { role: 'leader' }
     }
     if (isBorderRouter) return { role: 'border_router' }
     if (isRouter && routingRole < RoutingRole.ROUTER) return { role: 'router' }
 
     switch (routingRole) {
-      case RoutingRole.ROUTER: return { role: 'router' }
-      case RoutingRole.REED: return { role: 'reed' }
-      case RoutingRole.END_DEVICE: return { role: 'end_device' }
-      case RoutingRole.SLEEPY_END_DEVICE: return { role: 'sleepy_end_device' }
-      default: return { role: 'end_device' }
+      case RoutingRole.ROUTER:
+        return { role: 'router' }
+      case RoutingRole.REED:
+        return { role: 'reed' }
+      case RoutingRole.END_DEVICE:
+        return { role: 'end_device' }
+      case RoutingRole.SLEEPY_END_DEVICE:
+        return { role: 'sleepy_end_device' }
+      default:
+        return { role: 'end_device' }
     }
   }
 
-  private parseRoutingRole (value: any): number {
+  private parseRoutingRole(value: any): number {
     if (value === undefined || value === null || value === '') {
       return RoutingRole.UNSPECIFIED
     }
@@ -239,17 +240,24 @@ export class ThreadNetworkProvider implements NetworkGraphProvider {
 
     const strValue = String(value).toUpperCase().trim()
     switch (strValue) {
-      case 'LEADER': return RoutingRole.LEADER
-      case 'ROUTER': return RoutingRole.ROUTER
-      case 'REED': return RoutingRole.REED
-      case 'END_DEVICE': return RoutingRole.END_DEVICE
-      case 'SLEEPY_END_DEVICE': return RoutingRole.SLEEPY_END_DEVICE
-      case 'UNASSIGNED': return RoutingRole.UNASSIGNED
-      default: return RoutingRole.UNSPECIFIED
+      case 'LEADER':
+        return RoutingRole.LEADER
+      case 'ROUTER':
+        return RoutingRole.ROUTER
+      case 'REED':
+        return RoutingRole.REED
+      case 'END_DEVICE':
+        return RoutingRole.END_DEVICE
+      case 'SLEEPY_END_DEVICE':
+        return RoutingRole.SLEEPY_END_DEVICE
+      case 'UNASSIGNED':
+        return RoutingRole.UNASSIGNED
+      default:
+        return RoutingRole.UNSPECIFIED
     }
   }
 
-  private parseJsonProperty (value: any): any[] {
+  private parseJsonProperty(value: any): any[] {
     if (!value) return []
     if (Array.isArray(value)) return value
     try {
@@ -259,13 +267,13 @@ export class ThreadNetworkProvider implements NetworkGraphProvider {
     }
   }
 
-  private normalizeExtAddress (extAddr: any): string | null {
+  private normalizeExtAddress(extAddr: any): string | null {
     if (!extAddr) return null
     const str = String(extAddr)
     return str === '0' || str === '' ? null : str
   }
 
-  private getOwnIdentity (routes: any[]): { rloc16: number; extAddress: string | null } | null {
+  private getOwnIdentity(routes: any[]): { rloc16: number; extAddress: string | null } | null {
     if (!routes || routes.length === 0) return null
 
     for (const route of routes) {
@@ -279,17 +287,21 @@ export class ThreadNetworkProvider implements NetworkGraphProvider {
     return null
   }
 
-  private getStatusColor (statusInfo: any): string {
+  private getStatusColor(statusInfo: any): string {
     if (!statusInfo) return '#9E9E9E'
     switch (statusInfo.status) {
-      case 'ONLINE': return '#4CAF50'
-      case 'OFFLINE': return '#F44336'
-      case 'UNKNOWN': return '#9E9E9E'
-      default: return '#9E9E9E'
+      case 'ONLINE':
+        return '#4CAF50'
+      case 'OFFLINE':
+        return '#F44336'
+      case 'UNKNOWN':
+        return '#9E9E9E'
+      default:
+        return '#9E9E9E'
     }
   }
 
-  private inferEndDeviceRloc16 (nodes: ProcessedNode[], nodesByRloc16: Map<number, ProcessedNode>): void {
+  private inferEndDeviceRloc16(nodes: ProcessedNode[], nodesByRloc16: Map<number, ProcessedNode>): void {
     nodes.forEach((nodeData) => {
       if (nodeData.ownRloc16) return
       if (!nodeData.neighbors || nodeData.neighbors.length === 0) return
@@ -302,9 +314,7 @@ export class ThreadNetworkProvider implements NetworkGraphProvider {
       const parentNode = nodesByRloc16.get(parentRloc16)
 
       if (parentNode && parentNode.neighbors) {
-        const childEntry = parentNode.neighbors.find((n: any) =>
-          n.isChild && !nodesByRloc16.has(n.rloc16)
-        )
+        const childEntry = parentNode.neighbors.find((n: any) => n.isChild && !nodesByRloc16.has(n.rloc16))
         if (childEntry) {
           nodeData.ownRloc16 = childEntry.rloc16
           nodesByRloc16.set(childEntry.rloc16, nodeData)
@@ -313,7 +323,7 @@ export class ThreadNetworkProvider implements NetworkGraphProvider {
     })
   }
 
-  private createLinks (
+  private createLinks(
     nodes: ProcessedNode[],
     nodesByRloc16: Map<number, ProcessedNode>,
     nodesByExtAddr: Map<string, ProcessedNode>
@@ -347,7 +357,7 @@ export class ThreadNetworkProvider implements NetworkGraphProvider {
     return links
   }
 
-  private createLinkData (sourceNode: ProcessedNode, targetNode: ProcessedNode, neighbor: any): NetworkLink {
+  private createLinkData(sourceNode: ProcessedNode, targetNode: ProcessedNode, neighbor: any): NetworkLink {
     let type: NetworkLink['type'] = 'peer'
     let source = sourceNode.id
     let target = targetNode.id
@@ -375,4 +385,3 @@ export class ThreadNetworkProvider implements NetworkGraphProvider {
 }
 
 export const threadNetworkProvider = new ThreadNetworkProvider()
-

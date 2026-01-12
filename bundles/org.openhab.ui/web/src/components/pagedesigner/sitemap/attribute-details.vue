@@ -1,42 +1,39 @@
 <template>
   <f7-card v-if="widget">
     <f7-card-content v-if="attributes.length">
-      <f7-list inline-labels
-               sortable
-               sortable-opposite
-               sortable-enabled
-               @sortable:sort="onSort">
+      <f7-list inline-labels sortable sortable-opposite sortable-enabled @sortable:sort="onSort">
         <f7-list-item v-for="(attr, idx) in attributes" :key="attr.key">
-          <f7-input v-if="!fields"
-                    style="flex: 1"
-                    inputStyle="width: 100%"
-                    type="text"
-                    :placeholder="placeholder"
-                    :value="attr.value"
-                    @change="updateAttribute($event, idx, attr)" />
-          <f7-input v-for="(field, fieldidx) in fieldDefs"
-                    :key="JSON.stringify(field)"
-                    :style="fieldStyle(field, fieldidx)"
-                    :inputStyle="inputFieldStyle(field, fieldidx)"
-                    :type="fieldProp(field, 'type')"
-                    :min="fieldProp(field, 'min')"
-                    :max="fieldProp(field, 'max')"
-                    :placeholder="fieldProp(field, 'placeholder')"
-                    :value="attr.value[Object.keys(field)[0]]"
-                    validate
-                    @change="updateAttribute($event, idx, attr, Object.keys(field)[0])" />
-          <f7-button style="padding-left: 5px; padding-right: 0; flex-shrink: 0"
-                     text=""
-                     icon-material="clear"
-                     small
-                     @click="removeAttribute(idx)" />
+          <f7-input
+            v-if="!fields"
+            style="flex: 1"
+            inputStyle="width: 100%"
+            type="text"
+            :placeholder="placeholder"
+            :value="attr.value"
+            @change="updateAttribute($event, idx, attr)" />
+          <f7-input
+            v-for="(field, fieldidx) in fieldDefs"
+            :key="JSON.stringify(field)"
+            :style="fieldStyle(field, fieldidx)"
+            :inputStyle="inputFieldStyle(field, fieldidx)"
+            :type="fieldProp(field, 'type')"
+            :min="fieldProp(field, 'min')"
+            :max="fieldProp(field, 'max')"
+            :placeholder="fieldProp(field, 'placeholder')"
+            :value="attr.value[Object.keys(field)[0]]"
+            validate
+            @change="updateAttribute($event, idx, attr, Object.keys(field)[0])" />
+          <f7-button
+            style="padding-left: 5px; padding-right: 0; flex-shrink: 0"
+            text=""
+            icon-material="clear"
+            small
+            @click="removeAttribute(idx)" />
         </f7-list-item>
       </f7-list>
     </f7-card-content>
     <f7-card-footer key="item-card-buttons-edit-mode" v-if="widget.component !== 'Sitemap'">
-      <f7-button color="blue" @click="addAttribute">
-        Add
-      </f7-button>
+      <f7-button color="blue" @click="addAttribute"> Add </f7-button>
     </f7-card-footer>
   </f7-card>
 </template>

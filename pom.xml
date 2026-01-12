@@ -69,6 +69,7 @@
     <eea.version>2.4.0</eea.version>
     <jackson.annotations.version>2.20</jackson.annotations.version>
     <karaf.version>4.4.9</karaf.version>
+    <karaf.maven.plugin.version>4.4.8</karaf.maven.plugin.version>
     <ohc.version>5.2.0-SNAPSHOT</ohc.version>
     <sat.version>0.18.0</sat.version>
     <spotless.version>2.44.3</spotless.version>
@@ -364,7 +365,7 @@ Import-Package: \\
             </mapping>
             <useDefaultExcludes>true</useDefaultExcludes>
             <properties>
-              <year>2025</year>
+              <year>2026</year>
             </properties>
             <encoding>UTF-8</encoding>
             <licenseSets>

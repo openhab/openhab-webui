@@ -1,37 +1,41 @@
 <template>
   <f7-list inline-labels no-hairlines-md>
-    <f7-list-item :title="'Semantic ' + semanticValueTitle"
-                  :after="semanticValue || 'None'"
-                  :disabled="!editable ? true : null"
-                  @click="openPopup('class')"
-                  class="aligned-smart-select"
-                  :link="editable" />
-    <f7-list-item v-if="currentSemanticType === 'Point'"
-                  title="Semantic Property"
-                  :after="tagWithHierarchy(semanticProperty) || 'None'"
-                  :disabled="!editable ? true : null"
-                  @click="openPopup('property')"
-                  class="aligned-smart-select"
-                  :link="editable" />
+    <f7-list-item
+      :title="'Semantic ' + semanticValueTitle"
+      :after="semanticValue || 'None'"
+      :disabled="!editable ? true : null"
+      @click="openPopup('class')"
+      class="aligned-smart-select"
+      :link="editable" />
+    <f7-list-item
+      v-if="currentSemanticType === 'Point'"
+      title="Semantic Property"
+      :after="tagWithHierarchy(semanticProperty) || 'None'"
+      :disabled="!editable ? true : null"
+      @click="openPopup('property')"
+      class="aligned-smart-select"
+      :link="editable" />
     <f7-list-group>
-      <semantics-picker-popup v-if="popupType === 'class'"
-                              ref="classPopup"
-                              :key="'semantics-class'"
-                              :item="item"
-                              :hideNone="hideNone"
-                              :classMode="true"
-                              :semanticClass="semanticClass"
-                              @changed="itemChanged"
-                              @close="closePopup" />
-      <semantics-picker-popup v-if="popupType === 'property'"
-                              ref="propertyPopup"
-                              :key="'semantics-property'"
-                              :item="item"
-                              :hideNone="hideNone"
-                              :propertyMode="true"
-                              @changed="itemChanged"
-                              :semanticProperty="semanticProperty"
-                              @close="closePopup" />
+      <semantics-picker-popup
+        v-if="popupType === 'class'"
+        ref="classPopup"
+        :key="'semantics-class'"
+        :item="item"
+        :hideNone="hideNone"
+        :classMode="true"
+        :semanticClass="semanticClass"
+        @changed="itemChanged"
+        @close="closePopup" />
+      <semantics-picker-popup
+        v-if="popupType === 'property'"
+        ref="propertyPopup"
+        :key="'semantics-property'"
+        :item="item"
+        :hideNone="hideNone"
+        :propertyMode="true"
+        @changed="itemChanged"
+        :semanticProperty="semanticProperty"
+        @close="closePopup" />
     </f7-list-group>
   </f7-list>
 </template>

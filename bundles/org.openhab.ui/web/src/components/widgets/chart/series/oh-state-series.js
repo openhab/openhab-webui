@@ -1,7 +1,7 @@
 import { f7 } from 'framework7-vue'
 import ComponentId from '../../component-id'
 
-function renderState (params, api) {
+function renderState(params, api) {
   const yValue = api.value(0)
   const start = api.coord([api.value(1), yValue])
   const end = api.coord([api.value(2), yValue])
@@ -26,11 +26,11 @@ function renderState (params, api) {
 }
 
 export default {
-  neededItems (component, chart) {
+  neededItems(component, chart) {
     let series = chart.evaluateExpression(ComponentId.get(component), component.config)
     return [series.item]
   },
-  get (component, points, startTime, endTime, chart) {
+  get(component, points, startTime, endTime, chart) {
     let series = chart.evaluateExpression(ComponentId.get(component), component.config)
     series.type = 'custom'
     series.renderItem = renderState
@@ -42,17 +42,21 @@ export default {
     }
     series.colorBy = 'data'
     series.clip = true
-    series.label = series.label || { }
+    series.label = series.label || {}
     if (series.label.show === undefined) series.label.show = true
     series.label.position = series.label.position || 'insideLeft'
     series.label.formatter = series.label.formatter || '{@[3]}'
     series.labelLayout = series.labelLayout || { hideOverlap: true }
-    series.tooltip = series.tooltip || { }
+    series.tooltip = series.tooltip || {}
     if (series.tooltip.formatter === undefined) {
       series.tooltip.formatter = (params) => {
         let durationSec = (params.value[2] - params.value[1]) / 1000
-        let hours = Math.floor(durationSec / 3600).toString().padStart(2, '0')
-        let minutes = Math.floor((durationSec - (hours * 3600)) / 60).toString().padStart(2, '0')
+        let hours = Math.floor(durationSec / 3600)
+          .toString()
+          .padStart(2, '0')
+        let minutes = Math.floor((durationSec - hours * 3600) / 60)
+          .toString()
+          .padStart(2, '0')
         return params.seriesName + '<br />' + params.marker + params.name + '&#9;(' + hours + ':' + minutes + ')'
       }
     }
@@ -79,7 +83,7 @@ export default {
 
         itemStartTime = itemStartTime || new Date(itemPoints[i].time)
         const itemEndTime = new Date(itemPoints[i + 1] ? itemPoints[i + 1].time : itemPoints[itemPoints.length - 1].time)
-        const stateColor = (series.stateColor) ? series.stateColor[itemPoints[i].state] : null
+        const stateColor = series.stateColor ? series.stateColor[itemPoints[i].state] : null
         data.push({
           value: [series.yValue || 0, itemStartTime, itemEndTime, itemPoints[i].state, series.yHeight || 0.6],
           itemStyle: {

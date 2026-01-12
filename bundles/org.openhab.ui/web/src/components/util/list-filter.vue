@@ -5,19 +5,13 @@
         Filter
         <template v-if="filtered">
           (active)
-          <f7-link
-            @click="resetFilters"
-            text="Reset filters"
-            class="margin-right"
-            href="javascript:void(0)" />
+          <f7-link @click="resetFilters" text="Reset filters" class="margin-right" href="javascript:void(0)" />
         </template>
       </template>
       <f7-accordion-content>
         <f7-list class="no-hairlines-between">
           <div v-for="(filter, type) in filters" :key="type">
-            <f7-list-item group-title style="height: 2em;">
-              Filter by {{ filter.label }}
-            </f7-list-item>
+            <f7-list-item group-title style="height: 2em;"> Filter by {{ filter.label }} </f7-list-item>
             <f7-list-item class="padding-bottom">
               <div class="chip-wrap">
                 <f7-chip

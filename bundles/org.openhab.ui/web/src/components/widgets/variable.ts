@@ -9,8 +9,8 @@ interface VariableObject extends Record<VariableName, VariableValue> {}
 
 type ContextVarObj = Record<VariableScopeName, VariableObject>
 
-export function getLastVariableKeyValue (variableValue: VariableValue, variableKey: VariableName) : VariableValue | undefined  {
-  const result = (getVariableKeyValues(variableValue, variableKey))
+export function getLastVariableKeyValue(variableValue: VariableValue, variableKey: VariableName): VariableValue | undefined {
+  const result = getVariableKeyValues(variableValue, variableKey)
   if (!result || result.valueArray.length === 0) {
     return undefined
   }
@@ -18,9 +18,12 @@ export function getLastVariableKeyValue (variableValue: VariableValue, variableK
   return result.valueArray[result.valueArray.length - 1]
 }
 
-function getVariableKeyValues (variableValue: VariableValue, variableKey: string) : { keyArray: VariableName[], valueArray: (VariableValue | undefined)[] } | undefined {
-  let setValue : VariableValue | undefined = variableValue
-  let valueArray : (VariableValue | undefined)[] = [setValue]
+function getVariableKeyValues(
+  variableValue: VariableValue,
+  variableKey: string
+): { keyArray: VariableName[]; valueArray: (VariableValue | undefined)[] } | undefined {
+  let setValue: VariableValue | undefined = variableValue
+  let valueArray: (VariableValue | undefined)[] = [setValue]
   let keyArray = variableKey.split('.').filter((key) => key.trim() !== '') as VariableName[]
 
   if (keyArray.length === 0) {
@@ -34,7 +37,7 @@ function getVariableKeyValues (variableValue: VariableValue, variableKey: string
   return { keyArray, valueArray }
 }
 
-function parseArrayIndex (key: string): { propertyName: string, index: number } | null {
+function parseArrayIndex(key: string): { propertyName: string; index: number } | null {
   const match = key.match(/^(.*?)\[(\d+)\]$/)
   if (!match) return null
 
@@ -46,17 +49,19 @@ function parseArrayIndex (key: string): { propertyName: string, index: number } 
   return { propertyName, index }
 }
 
-function getVariableKeyValue (obj: VariableValue | undefined, key: string) : VariableValue | undefined {
+function getVariableKeyValue(obj: VariableValue | undefined, key: string): VariableValue | undefined {
   if (obj === undefined || obj === null) return undefined
 
   const parsed = parseArrayIndex(key)
   if (parsed) {
     const { propertyName, index } = parsed
 
-    if (propertyName === '') {  // Direct array access [0]
+    if (propertyName === '') {
+      // Direct array access [0]
       if (!Array.isArray(obj)) return undefined
       return obj[index]
-    } else {                    // Property array access propName[0]
+    } else {
+      // Property array access propName[0]
       if (typeof obj !== 'object' || Array.isArray(obj)) return undefined
 
       const objAsObject = obj as VariableObject
@@ -66,14 +71,19 @@ function getVariableKeyValue (obj: VariableValue | undefined, key: string) : Var
     }
   } else if (key.includes('[') || key.includes(']')) {
     throw new Error(`Invalid array index syntax in key ${key}`)
-  } else {                      // simple property access
+  } else {
+    // simple property access
     if (typeof obj !== 'object' || Array.isArray(obj)) return undefined
     const objAsObject = obj as VariableObject
     return objAsObject[key]
   }
 }
 
-export function setVariableKeyValues (variableValue: VariableValue, variableKey: VariableName, newValue: VariableValue | undefined | null) : VariableValue {
+export function setVariableKeyValues(
+  variableValue: VariableValue,
+  variableKey: VariableName,
+  newValue: VariableValue | undefined | null
+): VariableValue {
   if (!variableKey || typeof variableKey !== 'string' || variableKey.trim() === '') {
     throw new Error('Variable key must be a non-empty string')
   }
@@ -92,20 +102,28 @@ export function setVariableKeyValues (variableValue: VariableValue, variableKey:
     if (valueArray.length - 1 === keyArray.length) {
       lastObject = newValue
     }
-    valueArray[currentIdx] = setVariableKeyValue(valueArray[currentIdx] as VariableArray | VariableObject | undefined | null, keyArray[valueArray.length - 2], lastObject)
+    valueArray[currentIdx] = setVariableKeyValue(
+      valueArray[currentIdx] as VariableArray | VariableObject | undefined | null,
+      keyArray[valueArray.length - 2],
+      lastObject
+    )
     valueArray.pop()
   }
 
-  const result = (valueArray[0] === undefined) ? null : valueArray[0]
+  const result = valueArray[0] === undefined ? null : valueArray[0]
   // only make objects/arrays reactive if they aren't already
-  if ((typeof result === 'object' && result !== null) && !isReactive(result)) {
+  if (typeof result === 'object' && result !== null && !isReactive(result)) {
     return reactive(result)
   }
 
   return result
 }
 
-export function setVariableKeyValue (obj: VariableObject | VariableArray | undefined | null, key: VariableName, value: VariableValue | undefined | null) : VariableValue {
+export function setVariableKeyValue(
+  obj: VariableObject | VariableArray | undefined | null,
+  key: VariableName,
+  value: VariableValue | undefined | null
+): VariableValue {
   const parsed = parseArrayIndex(key)
   if (parsed) {
     const { propertyName, index } = parsed
@@ -114,7 +132,8 @@ export function setVariableKeyValue (obj: VariableObject | VariableArray | undef
       obj = propertyName === '' ? [] : {}
     }
 
-    if (propertyName === '') {        // Direct array access [0]
+    if (propertyName === '') {
+      // Direct array access [0]
       if (!Array.isArray(obj)) {
         throw new Error(`Expected array for key ${key}, but got ${typeof obj}`)
       }
@@ -124,7 +143,8 @@ export function setVariableKeyValue (obj: VariableObject | VariableArray | undef
       } else {
         obj[index] = value
       }
-    } else {                         // Property array access propName[0]
+    } else {
+      // Property array access propName[0]
       if (typeof obj !== 'object' || obj === null || Array.isArray(obj)) {
         throw new Error(`Expected object for key ${key}, but got ${typeof obj}`)
       }
@@ -147,7 +167,8 @@ export function setVariableKeyValue (obj: VariableObject | VariableArray | undef
     }
   } else if (key.includes('[') || key.includes(']')) {
     throw new Error(`Invalid array index syntax in key ${key}`)
-  } else {                          // simple property access
+  } else {
+    // simple property access
     if (obj) {
       if (typeof obj !== 'object' || Array.isArray(obj)) {
         throw new Error(`Expected object for key ${key}, but got ${typeof obj}`)
@@ -182,7 +203,11 @@ export function setVariableKeyValue (obj: VariableObject | VariableArray | undef
  * @param key the key (name) of the variable
  * @returns the key of the variable context/scope to be used
  */
-export function getVariableScope (varObj: ContextVarObj, scopeName: VariableScopeName | null | undefined, key: VariableName): VariableScopeName | null {
+export function getVariableScope(
+  varObj: ContextVarObj,
+  scopeName: VariableScopeName | null | undefined,
+  key: VariableName
+): VariableScopeName | null {
   if (!scopeName) return null
   const scopeIDs = scopeName.split('-')
   for (let scope_idx = scopeIDs.length; scope_idx > 1; scope_idx--) {

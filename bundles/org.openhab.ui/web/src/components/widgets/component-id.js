@@ -2,7 +2,7 @@ const ids = new WeakMap()
 let index = 1
 
 export default {
-  get (component) {
+  get(component) {
     if (!component || typeof component !== 'object') return undefined
 
     let id = ids.get(component)

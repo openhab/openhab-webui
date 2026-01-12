@@ -107,7 +107,7 @@ updates:
           - "eslint*"
           - "@eslint/*"
           - "*eslint-plugin*"
-          - "prettier"
+          - "oxfmt"
           - "typescript-eslint"
           - "@typescript-eslint/*"
           - "vue-eslint-parser"

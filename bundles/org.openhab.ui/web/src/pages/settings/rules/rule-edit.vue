@@ -1,29 +1,26 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:afterout="onPageAfterOut">
     <f7-navbar no-hairline>
-      <oh-nav-content :title="pageTitle + dirtyIndicator"
-                      :subtitle="hasOpaqueModule ? opaqueModulesTypeText : undefined"
-                      :editable="isEditable"
-                      :save-link="(stubMode ? $t('dialogs.regenerate') : $t(createMode ? 'dialogs.create' : 'dialogs.save')) + `${$device.desktop ? ' (Ctrl-S)' : ''}`"
-                      @save="save()"
-                      :f7router />
+      <oh-nav-content
+        :title="pageTitle + dirtyIndicator"
+        :subtitle="hasOpaqueModule ? opaqueModulesTypeText : undefined"
+        :editable="isEditable"
+        :save-link="(stubMode ? $t('dialogs.regenerate') : $t(createMode ? 'dialogs.create' : 'dialogs.save')) + `${$device.desktop ? ' (Ctrl-S)' : ''}`"
+        @save="save()"
+        :f7router />
     </f7-navbar>
     <f7-toolbar tabbar position="top" v-if="ready">
-      <f7-link @click="switchTab('design', fromYaml)"
-               :tab-link-active="currentTab === 'design' ? true : null"
-               tab-link="#design">
+      <f7-link @click="switchTab('design', fromYaml)" :tab-link-active="currentTab === 'design' ? true : null" tab-link="#design">
         Design
       </f7-link>
-      <f7-link v-if="!(hasSource && hasOpaqueModule)"
-               @click="switchTab('code', toYaml)"
-               :tab-link-active="currentTab === 'code' ? true : null"
-               tab-link="#code">
+      <f7-link
+        v-if="!(hasSource && hasOpaqueModule)"
+        @click="switchTab('code', toYaml)"
+        :tab-link-active="currentTab === 'code' ? true : null"
+        tab-link="#code">
         Code
       </f7-link>
-      <f7-link v-if="hasSource"
-               @click="switchTab('source')"
-               :tab-link-active="currentTab === 'source' ? true : null"
-               tab-link="#source">
+      <f7-link v-if="hasSource" @click="switchTab('source')" :tab-link-active="currentTab === 'source' ? true : null" tab-link="#source">
         Source
       </f7-link>
     </f7-toolbar>
@@ -33,36 +30,37 @@
           <f7-col v-if="!createMode && !stubMode">
             <div class="float-right align-items-flex-start align-items-center">
               <!-- <f7-toggle class="enable-toggle"></f7-toggle> -->
-              <f7-link v-if="canRegenerate"
-                       :color="uiOptionsStore.getDarkMode() === 'dark' ? 'purple' : 'deeppurple'"
-                       :tooltip="'Regenerate from template'"
-                       icon-md="f7:arrow_2_circlepath"
-                       icon-ios="f7:arrow_2_circlepath"
-                       icon-aurora="f7:arrow_2_circlepath"
-                       icon-size="32"
-                       @click="regenerateFromTemplate" />
-              <f7-link :color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'"
-                       :tooltip="((rule.status.statusDetail === 'DISABLED') ? 'Enable' : 'Disable') + (($device.desktop) ? ' (Ctrl-D)' : '')"
-                       icon-ios="f7:pause_circle"
-                       icon-md="f7:pause_circle"
-                       icon-aurora="f7:pause_circle"
-                       icon-size="32"
-                       @click="toggleDisabled" />
-              <f7-link :tooltip="'Run Now' + (($device.desktop) ? ' (Ctrl-R)' : '')"
-                       icon-ios="f7:play_round"
-                       icon-md="f7:play_round"
-                       icon-aurora="f7:play_round"
-                       icon-size="32"
-                       :color="(rule.status.status === 'IDLE') ? 'blue' : 'gray'"
-                       @click="runNow" />
+              <f7-link
+                v-if="canRegenerate"
+                :color="uiOptionsStore.getDarkMode() === 'dark' ? 'purple' : 'deeppurple'"
+                :tooltip="'Regenerate from template'"
+                icon-md="f7:arrow_2_circlepath"
+                icon-ios="f7:arrow_2_circlepath"
+                icon-aurora="f7:arrow_2_circlepath"
+                icon-size="32"
+                @click="regenerateFromTemplate" />
+              <f7-link
+                :color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'"
+                :tooltip="((rule.status.statusDetail === 'DISABLED') ? 'Enable' : 'Disable') + (($device.desktop) ? ' (Ctrl-D)' : '')"
+                icon-ios="f7:pause_circle"
+                icon-md="f7:pause_circle"
+                icon-aurora="f7:pause_circle"
+                icon-size="32"
+                @click="toggleDisabled" />
+              <f7-link
+                :tooltip="'Run Now' + (($device.desktop) ? ' (Ctrl-R)' : '')"
+                icon-ios="f7:play_round"
+                icon-md="f7:play_round"
+                icon-aurora="f7:play_round"
+                icon-size="32"
+                :color="(rule.status.status === 'IDLE') ? 'blue' : 'gray'"
+                @click="runNow" />
             </div>
             Status:
-            <f7-chip class="margin-left"
-                     :text="rule.status.status"
-                     :color="ruleStatusBadgeColor(rule.status)" />
+            <f7-chip class="margin-left" :text="rule.status.status" :color="ruleStatusBadgeColor(rule.status)" />
             <div>
               <strong>{{ (rule.status.statusDetail !== 'NONE') ? rule.status.statusDetail : '&nbsp;' }}</strong>
-              <br>
+              <br />
               <div v-if="rule.status.description">
                 {{ rule.status.description }}
               </div>
@@ -70,22 +68,21 @@
           </f7-col>
         </f7-block>
         <!-- skeletons for not ready -->
-        <f7-block v-else-if="!createMode && !stubMode" class="block-narrow padding-left padding-right skeleton-text skeleton-effect-blink" strong>
+        <f7-block
+          v-else-if="!createMode && !stubMode"
+          class="block-narrow padding-left padding-right skeleton-text skeleton-effect-blink"
+          strong>
           <f7-col>
             ______:
             <f7-chip class="margin-left" text="________" />
             <div>
               <strong>____ _______</strong>
-              <br>
+              <br />
             </div>
           </f7-col>
         </f7-block>
 
-        <rule-general-settings :rule="rule"
-                               :ready="ready"
-                               :createMode="createMode"
-                               :stubMode="stubMode"
-                               :templateName="templateName" />
+        <rule-general-settings :rule="rule" :ready="ready" :createMode="createMode" :stubMode="stubMode" :templateName="templateName" />
 
         <f7-block v-if="ready" class="block-narrow">
           <f7-block-footer v-if="!isEditable" class="no-margin padding-left">
@@ -95,49 +92,46 @@
             <f7-list>
               <f7-list-item ref="templateAccordion" accordion-item>
                 <template #title>
-                  <template v-if="currentTemplate">
-                    Create from Template: {{ currentTemplate.label }}
-                  </template>
-                  <template v-else>
-                    Create a new rule from scratch (or expand to select a template)
-                  </template>
+                  <template v-if="currentTemplate"> Create from Template: {{ currentTemplate.label }} </template>
+                  <template v-else> Create a new rule from scratch (or expand to select a template) </template>
                 </template>
                 <f7-accordion-content>
                   <f7-list media-list>
-                    <f7-list-item title="No template"
-                                  footer="Create a new rule from scratch"
-                                  radio
-                                  :checked="!hasTemplate"
-                                  radio-icon="start"
-                                  :value="''"
-                                  @change="selectTemplate(null)" />
+                    <f7-list-item
+                      title="No template"
+                      footer="Create a new rule from scratch"
+                      radio
+                      :checked="!hasTemplate"
+                      radio-icon="start"
+                      :value="''"
+                      @change="selectTemplate(null)" />
                   </f7-list>
-                  <f7-block-header class="margin-left margin-top">
-                    or choose a rule template:
-                  </f7-block-header>
+                  <f7-block-header class="margin-left margin-top"> or choose a rule template: </f7-block-header>
                   <f7-list media-list>
-                    <f7-list-item v-for="template in templates"
-                                  :key="template.uid"
-                                  :footer="template.description"
-                                  :value="template.uid"
-                                  radio
-                                  :checked="currentTemplate && currentTemplate.uid === template.uid ? true : null"
-                                  radio-icon="start"
-                                  @change="selectTemplate(template.uid)">
+                    <f7-list-item
+                      v-for="template in templates"
+                      :key="template.uid"
+                      :footer="template.description"
+                      :value="template.uid"
+                      radio
+                      :checked="currentTemplate && currentTemplate.uid === template.uid ? true : null"
+                      radio-icon="start"
+                      @change="selectTemplate(template.uid)">
                       <template #title>
                         {{ template.label }}
                         <template v-if="getTopicLink(template)">
                           &nbsp;
-                          <f7-link :href="getTopicLink(template)"
-                                   tooltip="View openHAB Community Marketplace topic for this template"
-                                   target="_blank"
-                                   class="external"
-                                   color="gray"
-                                   :icon-size="18"
-                                   icon="info_circle"
-                                   icon-ios="f7:info_circle"
-                                   icon-md="f7:info_circle"
-                                   icon-aurora="f7:info_circle" />
+                          <f7-link
+                            :href="getTopicLink(template)"
+                            tooltip="View openHAB Community Marketplace topic for this template"
+                            target="_blank"
+                            class="external"
+                            color="gray"
+                            :icon-size="18"
+                            icon="info_circle"
+                            icon-ios="f7:info_circle"
+                            icon-md="f7:info_circle"
+                            icon-aurora="f7:info_circle" />
                         </template>
                       </template>
                     </f7-list-item>
@@ -147,25 +141,24 @@
             </f7-list>
           </f7-col>
           <f7-col v-if="currentTemplate && (createMode || stubMode)">
-            <f7-block-title medium>
-              Template
-            </f7-block-title>
+            <f7-block-title medium> Template </f7-block-title>
             <f7-list media-list>
               <f7-list-item :footer="currentTemplate.description">
                 <template #title>
                   {{ currentTemplate.label }}
                   <template v-if="currentTemplateTopicLink">
                     &nbsp;
-                    <f7-link :href="currentTemplateTopicLink"
-                             tooltip="View openHAB Community Marketplace topic for this template"
-                             target="_blank"
-                             class="external"
-                             color="gray"
-                             :icon-size="18"
-                             icon="info_circle"
-                             icon-ios="f7:info_circle"
-                             icon-md="f7:info_circle"
-                             icon-aurora="f7:info_circle" />
+                    <f7-link
+                      :href="currentTemplateTopicLink"
+                      tooltip="View openHAB Community Marketplace topic for this template"
+                      target="_blank"
+                      class="external"
+                      color="gray"
+                      :icon-size="18"
+                      icon="info_circle"
+                      icon-ios="f7:info_circle"
+                      icon-md="f7:info_circle"
+                      icon-aurora="f7:info_circle" />
                   </template>
                 </template>
               </f7-list-item>
@@ -191,25 +184,24 @@
             </f7-list>
             <!-- Show Template Configuration only if template is kept or not integrating -->
             <template v-if="rule.templateUID || (!createMode || !ruleCopy?.templateUID)">
-              <f7-block-title medium class="margin-vertical padding-top">
-                Template Configuration
-              </f7-block-title>
+              <f7-block-title medium class="margin-vertical padding-top"> Template Configuration </f7-block-title>
               <config-sheet :parameter-groups="[]" :parameters="currentTemplate.configDescriptions" :configuration="rule.configuration" />
             </template>
           </f7-col>
           <f7-col v-if="!hasTemplate || (createMode && ruleCopy?.templateUID && !rule.templateUID)" class="rule-modules">
             <div v-if="isEditable" class="no-padding float-right">
-              <f7-button @click="toggleModuleControls"
-                         small
-                         outline
-                         :fill="showModuleControls"
-                         sortable-toggle=".sortable"
-                         style="margin-top: -3px; margin-right: 5px"
-                         color="gray"
-                         icon-size="12"
-                         icon-ios="material:wrap_text"
-                         icon-md="material:wrap_text"
-                         icon-aurora="material:wrap_text">
+              <f7-button
+                @click="toggleModuleControls"
+                small
+                outline
+                :fill="showModuleControls"
+                sortable-toggle=".sortable"
+                style="margin-top: -3px; margin-right: 5px"
+                color="gray"
+                icon-size="12"
+                icon-ios="material:wrap_text"
+                icon-md="material:wrap_text"
+                icon-aurora="material:wrap_text">
                 &nbsp;Reorder
               </f7-button>
             </div>
@@ -222,45 +214,44 @@
                   {{ SECTION_LABELS[section][1] }}
                 </f7-block-footer>
               </template>
-              <f7-list sortable
-                       swipeout
-                       media-list
-                       @sortable:sort="(ev) => reorderModule(ev, section)">
-                <f7-list-item media
-                              :title="mod.label || suggestedModuleTitle(mod, null, section)"
-                              :footer="mod.description || suggestedModuleDescription(mod, null, section)"
-                              v-for="mod in rule[section]"
-                              :key="mod.id"
-                              :link="!showModuleControls && !isOpaqueModule(mod)"
-                              @click="(ev) => editModule(ev, section, mod)"
-                              swipeout>
+              <f7-list sortable swipeout media-list @sortable:sort="(ev) => reorderModule(ev, section)">
+                <f7-list-item
+                  media
+                  :title="mod.label || suggestedModuleTitle(mod, null, section)"
+                  :footer="mod.description || suggestedModuleDescription(mod, null, section)"
+                  v-for="mod in rule[section]"
+                  :key="mod.id"
+                  :link="!showModuleControls && !isOpaqueModule(mod)"
+                  @click="(ev) => editModule(ev, section, mod)"
+                  swipeout>
                   <template #media>
-                    <f7-link v-if="isEditable"
-                             icon-color="red"
-                             icon-aurora="f7:minus_circle_filled"
-                             icon-ios="f7:minus_circle_filled"
-                             icon-md="material:remove_circle_outline"
-                             @click="showSwipeout" />
+                    <f7-link
+                      v-if="isEditable"
+                      icon-color="red"
+                      icon-aurora="f7:minus_circle_filled"
+                      icon-ios="f7:minus_circle_filled"
+                      icon-md="material:remove_circle_outline"
+                      @click="showSwipeout" />
                   </template>
                   <f7-swipeout-actions right v-if="isEditable">
-                    <f7-swipeout-button @click="(ev) => deleteModule(ev, section, mod)" style="background-color: var(--f7-swipeout-delete-button-bg-color)">
+                    <f7-swipeout-button
+                      @click="(ev) => deleteModule(ev, section, mod)"
+                      style="background-color: var(--f7-swipeout-delete-button-bg-color)">
                       Delete
                     </f7-swipeout-button>
                   </f7-swipeout-actions>
                 </f7-list-item>
               </f7-list>
               <f7-list v-if="isEditable">
-                <f7-list-item link
-                              no-chevron
-                              media-item
-                              :color="(theme.dark) ? 'black' : 'white'"
-                              :subtitle="SECTION_LABELS[section][2]"
-                              @click="addModule(section)">
+                <f7-list-item
+                  link
+                  no-chevron
+                  media-item
+                  :color="(theme.dark) ? 'black' : 'white'"
+                  :subtitle="SECTION_LABELS[section][2]"
+                  @click="addModule(section)">
                   <template #media>
-                    <f7-icon color="green"
-                             aurora="f7:plus_circle_fill"
-                             ios="f7:plus_circle_fill"
-                             md="material:control_point" />
+                    <f7-icon color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
                   </template>
                 </f7-list-item>
                 <!-- <f7-list-button :color="(showModuleControls) ? 'gray' : 'blue'" :title="sectionLabels[section][1]"></f7-list-button> -->
@@ -269,46 +260,39 @@
           </f7-col>
           <f7-col v-if="!createMode && !stubMode">
             <f7-list>
-              <f7-list-button v-if="isEditable || !hasOpaqueModule" color="blue" @click="duplicateRule">
-                Duplicate Rule
-              </f7-list-button>
-              <f7-list-button v-if="isEditable" color="red" @click="deleteRule">
-                Delete Rule
-              </f7-list-button>
+              <f7-list-button v-if="isEditable || !hasOpaqueModule" color="blue" @click="duplicateRule"> Duplicate Rule </f7-list-button>
+              <f7-list-button v-if="isEditable" color="red" @click="deleteRule"> Delete Rule </f7-list-button>
             </f7-list>
           </f7-col>
         </f7-block>
       </f7-tab>
       <f7-tab id="code" :tab-active="currentTab === 'code'">
-        <f7-icon v-if="!createMode && !isEditable"
-                 f7="lock"
-                 class="float-right margin"
-                 style="opacity: 0.5; z-index: 4000; user-select: none"
-                 size="50"
-                 color="gray"
-                 tooltip="This code is not editable" />
-        <editor v-if="currentTab === 'code'"
-                class="rule-code-editor"
-                mode="application/vnd.openhab.rule+yaml"
-                :value="ruleYaml"
-                :readOnly="!isEditable"
-                @input="onEditorInput" />
+        <f7-icon
+          v-if="!createMode && !isEditable"
+          f7="lock"
+          class="float-right margin"
+          style="opacity: 0.5; z-index: 4000; user-select: none"
+          size="50"
+          color="gray"
+          tooltip="This code is not editable" />
+        <editor
+          v-if="currentTab === 'code'"
+          class="rule-code-editor"
+          mode="application/vnd.openhab.rule+yaml"
+          :value="ruleYaml"
+          :readOnly="!isEditable"
+          @input="onEditorInput" />
         <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
       </f7-tab>
-      <f7-tab v-if="ready && hasSource"
-              id="source"
-              :tab-active="currentTab === 'source'">
-        <f7-icon f7="lock"
-                 class="float-right margin"
-                 style="opacity:0.5; z-index: 4000; user-select: none;"
-                 size="50"
-                 color="gray"
-                 tooltip="Source code is not editable" />
-        <editor v-if="currentTab === 'source'"
-                class="rule-source-viewer"
-                :mode="sourceType"
-                :value="source"
-                :readOnly="true" />
+      <f7-tab v-if="ready && hasSource" id="source" :tab-active="currentTab === 'source'">
+        <f7-icon
+          f7="lock"
+          class="float-right margin"
+          style="opacity:0.5; z-index: 4000; user-select: none;"
+          size="50"
+          color="gray"
+          tooltip="Source code is not editable" />
+        <editor v-if="currentTab === 'source'" class="rule-source-viewer" :mode="sourceType" :value="source" :readOnly="true" />
       </f7-tab>
     </f7-tabs>
   </f7-page>

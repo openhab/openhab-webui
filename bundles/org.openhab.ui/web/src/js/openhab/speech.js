@@ -4,10 +4,10 @@ let wksr = null
 let device = getDevice()
 
 export default {
-  isRecognitionSupported () {
+  isRecognitionSupported() {
     return 'webkitSpeechRecognition' in window
   },
-  startRecognition (lang, startCallback, errorCallback, activityCallback, resultCallback, endCallback) {
+  startRecognition(lang, startCallback, errorCallback, activityCallback, resultCallback, endCallback) {
     let interimResult = ''
 
     wksr = new window.webkitSpeechRecognition()
@@ -57,7 +57,7 @@ export default {
 
     wksr.start()
   },
-  stopRecognition () {
+  stopRecognition() {
     if (wksr) {
       wksr.stop()
       wksr = null

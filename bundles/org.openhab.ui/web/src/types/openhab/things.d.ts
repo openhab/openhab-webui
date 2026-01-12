@@ -4,15 +4,15 @@ export interface Firmware {
   /**
    * The Thing Type UID this firmware is associated with.
    */
-  thingTypeUID: string;
+  thingTypeUID: string
   /**
    * The vendor of the firmware.
    */
-  vendor?: string;
+  vendor?: string
   /**
    * The model of the firmware.
    */
-  model?: string;
+  model?: string
   /**
    * Whether this firmware is restricted to things with the above model.
    */
@@ -20,28 +20,22 @@ export interface Firmware {
   /**
    * The description of the firmware.
    */
-  description?: string;
+  description?: string
   /**
    * The version of the firmware.
    */
-  version: string;
+  version: string
   /**
    * The prerequisite version of the firmware.
    */
-  prerequisiteVersion?: string;
+  prerequisiteVersion?: string
   /**
    * The changelog of the firmware.
    */
-  changelog?: string;
+  changelog?: string
 }
 
-export type ThingStatus = 'UNINITIALIZED'
-  | 'INITIALIZING'
-  | 'UNKNOWN'
-  | 'ONLINE'
-  | 'OFFLINE'
-  | 'REMOVING'
-  | 'REMOVED';
+export type ThingStatus = 'UNINITIALIZED' | 'INITIALIZING' | 'UNKNOWN' | 'ONLINE' | 'OFFLINE' | 'REMOVING' | 'REMOVED'
 
 export type ThingStatusDetail =
   | 'NONE'
@@ -58,20 +52,20 @@ export type ThingStatusDetail =
   | 'DUTY_CYCLE'
   | 'BRIDGE_UNINITIALIZED'
   | 'GONE'
-  | 'DISABLED';
+  | 'DISABLED'
 
 /**
  * Based on org.openhab.core.thing.ThingStatusInfo.
  */
 export interface ThingStatusInfo {
-  status: ThingStatus;
-  statusDetail: ThingStatusDetail;
-  description?: string;
+  status: ThingStatus
+  statusDetail: ThingStatusDetail
+  description?: string
 }
 
-export type ChannelKind = 'STATE' | 'TRIGGER';
+export type ChannelKind = 'STATE' | 'TRIGGER'
 
-export type AutoUpdatePolicy = 'VETO' | 'DEFAULT' | 'RECOMMENDED';
+export type AutoUpdatePolicy = 'VETO' | 'DEFAULT' | 'RECOMMENDED'
 
 /**
  * Data transfer object for a Thing Channel.
@@ -81,50 +75,50 @@ export interface Channel {
   /**
    * The unique id of the channel, uniquely identifying the channel across all things (not null and not empty).
    */
-  uid: string;
+  uid: string
   /**
    * The id of the channel, uniquely identifying the channel on its thing (not null, not empty).
    */
-  id: string;
+  id: string
   /**
    * The channel type UID (if a channel type is specified).
    */
-  channelTypeUID?: string;
+  channelTypeUID?: string
 
   /**
    * The accepted item type of the channel (if specified).
    */
-  itemType?: string;
+  itemType?: string
   /**
    * The channel kind.
    */
-  kind: ChannelKind;
+  kind: ChannelKind
   /**
    * The human-readable label of the channel (if set).
    */
-  label?: string;
+  label?: string
   /**
    * The human-readable description of the channel (if set).
    */
-  description?: string;
+  description?: string
   /**
    * The configuration of the channel.
    */
-  configuration: Record<string, any>;
+  configuration: Record<string, any>
   /**
    * The properties of the channel.
    */
-  properties: Record<string, string>;
+  properties: Record<string, string>
   /**
    * The default tags of the channel.
    */
-  defaultTags: string[];
-  autoupdatePolicy?: AutoUpdatePolicy;
+  defaultTags: string[]
+  autoupdatePolicy?: AutoUpdatePolicy
 
   /**
    * The items linked to the channel.
    */
-  linkedItems?: string[];
+  linkedItems?: string[]
 }
 
 /**
@@ -135,60 +129,60 @@ export interface Thing {
   /**
    * The Thing Type UID of the thing (not null and not empty).
    */
-  thingTypeUID: string;
+  thingTypeUID: string
   /**
    * The UID of the thing (not null and not empty).
    */
-  UID: string;
+  UID: string
   /**
    * The human-readable label of the thing.
    */
-  label?: string;
+  label?: string
   /**
    * The bridge UID (if any bridge) of the thing.
    */
-  bridgeUID?: string;
+  bridgeUID?: string
   /**
    * The configuration of the thing.
    */
-  configuration: Record<string, any>;
+  configuration: Record<string, any>
   /**
    * The properties of the thing.
    */
-  properties: Record<string, any>;
+  properties: Record<string, any>
   /**
    * The phsyical location of the thing.
    */
-  location?: string;
+  location?: string
   /**
    * The semantic (equipment) tag of the thing.
    */
-  semanticEquipmentTag?: string;
+  semanticEquipmentTag?: string
 
   /**
    * The channels of the thing.
    */
-  channels: Channel[];
+  channels: Channel[]
   /**
    * The status information of the thing.
    */
-  statusInfo: ThingStatusInfo;
+  statusInfo: ThingStatusInfo
   /**
    * The firmware status of the thing (if any).
    */
-  firmwareStatus?: Firmware;
+  firmwareStatus?: Firmware
   /**
    * Whether the thing is editable.
    */
-  editable: boolean;
+  editable: boolean
 }
 
 /**
  * Response object from the GET `/rest/things/{thingUID}/firmware` endpoint.
  */
-export type FirmwareResponse = Firmware[];
+export type FirmwareResponse = Firmware[]
 
 /**
  * Response object from the GET `/rest/things/{thingUID}` endpoint.
  */
-export type ThingResponse = Thing;
+export type ThingResponse = Thing

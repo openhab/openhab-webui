@@ -3,30 +3,27 @@
     <div class="help-sidebar-content">
       <div v-if="activeHelpTab === 'quick'">
         <f7-block class="no-margin no-padding">
-          <f7-block-title class="padding-horizontal" medium>
-            Quick Start
-          </f7-block-title>
+          <f7-block-title class="padding-horizontal" medium> Quick Start </f7-block-title>
         </f7-block>
         <f7-block class="no-margin no-padding">
           <f7-list accordion-list>
-            <f7-list-item v-for="instruct in qstart"
-                          :key="instruct.title"
-                          accordion-item
-                          :accordion-item-opened="instruct.opened"
-                          :title="instruct.title">
+            <f7-list-item
+              v-for="instruct in qstart"
+              :key="instruct.title"
+              accordion-item
+              :accordion-item-opened="instruct.opened"
+              :title="instruct.title">
               <f7-accordion-content>
                 <f7-list media-list>
-                  <f7-list-item v-for="step in instruct.steps"
-                                :key="step.title"
-                                :link="step.link"
-                                :title="step.title">
+                  <f7-list-item v-for="step in instruct.steps" :key="step.title" :link="step.link" :title="step.title">
                     <div class="item-text" v-html="step.text" />
                   </f7-list-item>
-                  <f7-list-button v-if="instruct.button"
-                                  :external="true"
-                                  :title="instruct.button.title"
-                                  :href="runtimeStore.websiteUrl + '/' + instruct.button.link"
-                                  target="_blank" />
+                  <f7-list-button
+                    v-if="instruct.button"
+                    :external="true"
+                    :title="instruct.button.title"
+                    :href="runtimeStore.websiteUrl + '/' + instruct.button.link"
+                    target="_blank" />
                 </f7-list>
               </f7-accordion-content>
             </f7-list-item>
@@ -42,11 +39,7 @@
         </f7-block>
         <f7-block class="no-margin no-padding">
           <f7-list accordion-list>
-            <f7-list-item class="faq-title"
-                          accordion-item
-                          v-for="faq in faqs"
-                          :key="faq.title"
-                          :title="faq.title">
+            <f7-list-item class="faq-title" accordion-item v-for="faq in faqs" :key="faq.title" :title="faq.title">
               <f7-accordion-content>
                 <f7-block>
                   <p v-if="faq.goto">
@@ -57,9 +50,7 @@
                   </p>
                   <p v-html="faq.text" />
                   <p v-if="faq.doclink">
-                    <f7-link external target="_blank" :href="runtimeStore.websiteUrl + '/' + faq.doclink">
-                      Full Help Docs
-                    </f7-link>
+                    <f7-link external target="_blank" :href="runtimeStore.websiteUrl + '/' + faq.doclink"> Full Help Docs </f7-link>
                   </p>
                 </f7-block>
               </f7-accordion-content>
@@ -70,63 +61,50 @@
 
       <div v-else-if="activeHelpTab === 'binding'">
         <f7-block class="no-margin no-padding">
-          <f7-block-title class="padding-horizontal" medium>
-            Add-on Docs
-          </f7-block-title>
+          <f7-block-title class="padding-horizontal" medium> Add-on Docs </f7-block-title>
         </f7-block>
         <f7-block class="no-margin no-padding">
           <f7-list media-list>
-            <f7-list-item v-for="addon in addons"
-                          :key="addon.uid"
-                          :link="addon.link.replace('https://www.openhab.org', runtimeStore.websiteUrl)"
-                          :external="true"
-                          target="_blank"
-                          :title="addon.label.replaceAll(/Binding|Transformation|Persistence/gi, '')"
-                          :text="addon.type" />
+            <f7-list-item
+              v-for="addon in addons"
+              :key="addon.uid"
+              :link="addon.link.replace('https://www.openhab.org', runtimeStore.websiteUrl)"
+              :external="true"
+              target="_blank"
+              :title="addon.label.replaceAll(/Binding|Transformation|Persistence/gi, '')"
+              :text="addon.type" />
           </f7-list>
         </f7-block>
       </div>
 
       <div v-else-if="activeHelpTab === 'current'">
         <f7-block class="no-margin no-padding">
-          <f7-block-title class="padding-horizontal" medium>
-            Page Help
-          </f7-block-title>
+          <f7-block-title class="padding-horizontal" medium> Page Help </f7-block-title>
         </f7-block>
 
         <context :path="contextPath" />
 
         <f7-block class="no-padding no-margin">
-          <f7-block-title class="padding-horizontal" medium>
-            More Help
-          </f7-block-title>
+          <f7-block-title class="padding-horizontal" medium> More Help </f7-block-title>
         </f7-block>
         <f7-block>
           You can find many more details and help at these resources:
           <ul>
             <li>
-              <f7-link external
-                       target="_blank"
-                       href="https://www.openhab.org/"
-                       :text="$t('about.homePage')" />
+              <f7-link external target="_blank" href="https://www.openhab.org/" :text="$t('about.homePage')" />
             </li>
             <li>
-              <f7-link external
-                       target="_blank"
-                       :href="`${runtimeStore.websiteUrl}/link/docs`"
-                       :text="$t('about.documentation')" />
+              <f7-link external target="_blank" :href="`${runtimeStore.websiteUrl}/link/docs`" :text="$t('about.documentation')" />
             </li>
             <li>
-              <f7-link external
-                       :href="`${runtimeStore.websiteUrl}/link/tutorial`"
-                       target="_blank"
-                       :text="$t('home.overview.button.tutorial')" />
+              <f7-link
+                external
+                :href="`${runtimeStore.websiteUrl}/link/tutorial`"
+                target="_blank"
+                :text="$t('home.overview.button.tutorial')" />
             </li>
             <li>
-              <f7-link external
-                       target="_blank"
-                       href="https://community.openhab.org/"
-                       :text="$t('about.communityForum')" />
+              <f7-link external target="_blank" href="https://community.openhab.org/" :text="$t('about.communityForum')" />
             </li>
           </ul>
         </f7-block>

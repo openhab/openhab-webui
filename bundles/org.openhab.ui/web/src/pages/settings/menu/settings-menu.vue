@@ -1,10 +1,7 @@
 <template>
   <f7-page @page:init="onPageInit" @page:afterin="onPageAfterIn" class="page-settings">
     <f7-navbar large>
-      <oh-nav-content title="Settings"
-                      :large="true"
-                      back-link-url="/"
-                      :f7router>
+      <oh-nav-content title="Settings" :large="true" back-link-url="/" :f7router>
         <template #right>
           <f7-link
             class="searchbar-enable"
@@ -28,84 +25,77 @@
         <f7-col :class="!addonsLoaded || (addonsLoaded && addonsInstalled.length > 0) ? 'settings-col' : ''" width="100" medium="50">
           <f7-block-title>Configuration</f7-block-title>
           <f7-list media-list class="search-list">
-            <f7-list-item v-if="runtimeStore.apiEndpoint('things')"
-                          media-item
-                          link="things/"
-                          title="Things"
-                          :badge="inboxCount > 0 ? inboxCount : undefined"
-                          :after="inboxCount > 0 ? thingsCount + '+' : thingsCount"
-                          :badge-color="inboxCount ? 'red' : 'blue'"
-                          :footer="objectsSubtitles.things">
+            <f7-list-item
+              v-if="runtimeStore.apiEndpoint('things')"
+              media-item
+              link="things/"
+              title="Things"
+              :badge="inboxCount > 0 ? inboxCount : undefined"
+              :after="inboxCount > 0 ? thingsCount + '+' : thingsCount"
+              :badge-color="inboxCount ? 'red' : 'blue'"
+              :footer="objectsSubtitles.things">
               <template #media>
                 <f7-icon f7="lightbulb" color="gray" />
               </template>
             </f7-list-item>
-            <f7-list-item v-if="runtimeStore.apiEndpoint('items')"
-                          media-item
-                          link="model/"
-                          title="Model"
-                          badge-color="blue"
-                          :footer="objectsSubtitles.model">
+            <f7-list-item
+              v-if="runtimeStore.apiEndpoint('items')"
+              media-item
+              link="model/"
+              title="Model"
+              badge-color="blue"
+              :footer="objectsSubtitles.model"
+              @click="modelSelectedItem = null">
               <template #media>
                 <f7-icon f7="list_bullet_indent" color="gray" />
               </template>
             </f7-list-item>
-            <f7-list-item v-if="runtimeStore.apiEndpoint('items')"
-                          media-item
-                          link="items/"
-                          title="Items"
-                          :after="itemsCount"
-                          badge-color="blue"
-                          :footer="objectsSubtitles.items">
+            <f7-list-item
+              v-if="runtimeStore.apiEndpoint('items')"
+              media-item
+              link="items/"
+              title="Items"
+              :after="itemsCount"
+              badge-color="blue"
+              :footer="objectsSubtitles.items">
               <template #media>
                 <f7-icon f7="square_on_circle" color="gray" />
               </template>
             </f7-list-item>
-            <f7-list-item v-if="runtimeStore.apiEndpoint('ui')"
-                          link="pages/"
-                          title="Pages"
-                          :after="componentsStore.pages().length + sitemapsCount"
-                          badge-color="blue"
-                          :footer="objectsSubtitles.pages">
+            <f7-list-item
+              v-if="runtimeStore.apiEndpoint('ui')"
+              link="pages/"
+              title="Pages"
+              :after="componentsStore.pages().length + sitemapsCount"
+              badge-color="blue"
+              :footer="objectsSubtitles.pages">
               <template #media>
                 <f7-icon f7="tv" color="gray" />
               </template>
             </f7-list-item>
           </f7-list>
           <f7-list media-list class="search-list">
-            <f7-list-item v-if="runtimeStore.apiEndpoint('transformations')"
-                          media-item
-                          link="transformations/"
-                          title="Transformations"
-                          :after="transformationsCount"
-                          badge-color="blue"
-                          :footer="objectsSubtitles.transform">
+            <f7-list-item
+              v-if="runtimeStore.apiEndpoint('transformations')"
+              media-item
+              link="transformations/"
+              title="Transformations"
+              :after="transformationsCount"
+              badge-color="blue"
+              :footer="objectsSubtitles.transform">
               <template #media>
                 <f7-icon f7="function" color="gray" />
               </template>
             </f7-list-item>
-            <f7-list-item
-              media-item
-              link="persistence/"
-              title="Persistence"
-              badge-color="blue"
-              :footer="objectsSubtitles.persistence">
+            <f7-list-item media-item link="persistence/" title="Persistence" badge-color="blue" :footer="objectsSubtitles.persistence">
               <template #media>
                 <f7-icon f7="download_circle" color="gray" />
               </template>
             </f7-list-item>
           </f7-list>
-          <f7-block-title v-if="runtimeStore.apiEndpoint('rules')">
-            Automation
-          </f7-block-title>
+          <f7-block-title v-if="runtimeStore.apiEndpoint('rules')"> Automation </f7-block-title>
           <f7-list media-list class="search-list">
-            <f7-list-item
-              media-item
-              link="rules/"
-              title="Rules"
-              :after="rulesCount"
-              badge-color="blue"
-              :footer="objectsSubtitles.rules">
+            <f7-list-item media-item link="rules/" title="Rules" :after="rulesCount" badge-color="blue" :footer="objectsSubtitles.rules">
               <template #media>
                 <f7-icon f7="wand_stars" color="gray" />
               </template>
@@ -132,12 +122,7 @@
                 <f7-icon f7="doc_plaintext" color="gray" />
               </template>
             </f7-list-item>
-            <f7-list-item
-              media-item
-              link="schedule/"
-              title="Schedule"
-              badge-color="blue"
-              :footer="objectsSubtitles.schedule">
+            <f7-list-item media-item link="schedule/" title="Schedule" badge-color="blue" :footer="objectsSubtitles.schedule">
               <template #media>
                 <f7-icon f7="calendar" color="gray" />
               </template>
@@ -154,9 +139,7 @@
                 :link="'services/' + service.id"
                 :title="service.label"
                 v-show="!service.hidden" />
-              <f7-list-button v-if="!expandedTypes.systemSettingsExpanded"
-                              color="blue"
-                              @click="expand('systemSettingsExpanded')">
+              <f7-list-button v-if="!expandedTypes.systemSettingsExpanded" color="blue" @click="expand('systemSettingsExpanded')">
                 {{ $t('dialogs.showAll') }}
               </f7-list-button>
             </f7-list>
@@ -165,50 +148,40 @@
           <div v-if="!servicesLoaded">
             <f7-block-title>System Settings</f7-block-title>
             <f7-list>
-              <f7-list-item
-                v-for="n in 9"
-                :key="n"
-                :class="`skeleton-text skeleton-effect-blink`"
-                title="Service Label" />
+              <f7-list-item v-for="n in 9" :key="n" :class="`skeleton-text skeleton-effect-blink`" title="Service Label" />
             </f7-list>
           </div>
           <div v-show="$f7dim.width < 1450">
             <div v-show="addonsLoaded && addonsInstalled.length > 0">
-              <addon-section class="add-on-section"
-                             :addonsInstalled="addonsInstalled"
-                             :addonsServices="addonsServices"
-                             :expanded="expandedTypes.addonsExpanded"
-                             @expand="expand('addonsExpanded')" />
+              <addon-section
+                class="add-on-section"
+                :addonsInstalled="addonsInstalled"
+                :addonsServices="addonsServices"
+                :expanded="expandedTypes.addonsExpanded"
+                @expand="expand('addonsExpanded')" />
             </div>
             <!-- skeleton for not addonsLoaded -->
             <div v-if="!addonsLoaded">
               <f7-block-title>Add-on Settings</f7-block-title>
               <f7-list>
-                <f7-list-item
-                  v-for="n in 4"
-                  :key="n"
-                  :class="`skeleton-text skeleton-effect-blink`"
-                  title="Service Label" />
+                <f7-list-item v-for="n in 4" :key="n" :class="`skeleton-text skeleton-effect-blink`" title="Service Label" />
               </f7-list>
             </div>
           </div>
         </f7-col>
         <f7-col width="33" class="add-on-col" v-show="$f7dim.width >= 1450">
           <div v-show="addonsLoaded && addonsInstalled.length > 0">
-            <addon-section :addonsInstalled="addonsInstalled"
-                           :addonsServices="addonsServices"
-                           :expanded="expandedTypes.addonsExpanded"
-                           @expand="expand('addonsExpanded')" />
+            <addon-section
+              :addonsInstalled="addonsInstalled"
+              :addonsServices="addonsServices"
+              :expanded="expandedTypes.addonsExpanded"
+              @expand="expand('addonsExpanded')" />
           </div>
           <!-- skeleton for not addonsLoaded -->
           <div v-if="!addonsLoaded">
             <f7-block-title>Add-on Settings</f7-block-title>
             <f7-list>
-              <f7-list-item
-                v-for="n in 9"
-                :key="n"
-                :class="`skeleton-text skeleton-effect-blink`"
-                title="Service Label" />
+              <f7-list-item v-for="n in 9" :key="n" :class="`skeleton-text skeleton-effect-blink`" title="Service Label" />
             </f7-list>
           </div>
         </f7-col>
@@ -219,11 +192,7 @@
     </f7-block>
 
     <template #fixed>
-      <f7-fab v-if="healthCount > 0"
-              position="center-bottom"
-              :text="`Health Issues (${healthCount})`"
-              color="red"
-              href="health/">
+      <f7-fab v-if="healthCount > 0" position="center-bottom" :text="`Health Issues (${healthCount})`" color="red" href="health/">
         <f7-icon f7="heart" />
       </f7-fab>
     </template>
@@ -240,7 +209,7 @@
 
 <script>
 import { f7, theme } from 'framework7-vue'
-import { mapStores } from 'pinia'
+import { mapStores, mapWritableState } from 'pinia'
 
 import AddonSection from './addon-section.vue'
 
@@ -323,7 +292,11 @@ export default {
       const problemCount = this.orphanLinkCount + this.semanticsProblemCount + this.persistenceProblemCount
       return problemCount.toString()
     },
-    ...mapStores(useComponentsStore, useRuntimeStore)
+    ...mapStores(useComponentsStore, useRuntimeStore),
+    ...mapWritableState(useRuntimeStore, {
+      modelSelectedItem: 'modelSelectedItem'
+    })
+
   },
   watch: {
     apiEndpoints () {

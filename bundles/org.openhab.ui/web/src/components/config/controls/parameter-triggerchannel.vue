@@ -1,9 +1,10 @@
 <template>
-  <trigger-channel-picker :title="configDescription.label"
-                          :value="value"
-                          @input="updateValue"
-                          :multiple="configDescription.multiple"
-                          :required="configDescription.required" />
+  <trigger-channel-picker
+    :title="configDescription.label"
+    :value="value"
+    @input="updateValue"
+    :multiple="configDescription.multiple"
+    :required="configDescription.required" />
 </template>
 
 <script>

@@ -1,12 +1,13 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar>
-      <oh-nav-content :title="service.label + dirtyIndicator"
-                      back-link="Settings"
-                      back-link-url="/settings/"
-                      :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
-                      @save="save()"
-                      :f7router />
+      <oh-nav-content
+        :title="service.label + dirtyIndicator"
+        back-link="Settings"
+        back-link-url="/settings/"
+        :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
+        @save="save()"
+        :f7router />
     </f7-navbar>
     <f7-block form v-if="configDescriptions && config" class="block-narrow">
       <f7-col>

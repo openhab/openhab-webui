@@ -24,16 +24,19 @@ export const useRuntimeStore = defineStore('runtime', () => {
   const docSrcUrl = ref<string | null>(null)
   const showDeveloperDock = ref<boolean>(false)
   const pagePath = ref<string | null>(null)
+  const modelExpanded = ref<boolean>(false)
   const modelPickerExpanded = ref<boolean>(false)
+  const modelSelectedItem = ref<object | null>(null)
+  const modelExpandedTreeviewItems = ref<string[]>([])
   const ready = ref<boolean>(false)
 
   // Getters
-  function apiEndpoint (type: string): string | null {
+  function apiEndpoint(type: string): string | null {
     return !apiEndpoints.value ? null : apiEndpoints.value?.find((e) => e.type === type)?.url || null
   }
 
   // Actions
-  function setRootResource (rootResponse: RootResponse) {
+  function setRootResource(rootResponse: RootResponse) {
     locale.value = convertJavaLocale(rootResponse.locale)
     apiVersion.value = rootResponse.version
     measurementSystem.value = rootResponse.measurementSystem
@@ -61,7 +64,10 @@ export const useRuntimeStore = defineStore('runtime', () => {
     docSrcUrl,
     showDeveloperDock,
     pagePath,
+    modelExpanded,
     modelPickerExpanded,
+    modelSelectedItem,
+    modelExpandedTreeviewItems,
     ready,
 
     setRootResource

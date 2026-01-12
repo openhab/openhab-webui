@@ -5,9 +5,9 @@
 
 import { useSemanticsStore } from '@/js/stores/useSemanticsStore'
 
-export default function itemDefaultCellComponent (item, itemNameAsFooter) {
+export default function itemDefaultCellComponent(item, itemNameAsFooter) {
   const stateDescription = item.stateDescription || {}
-  const metadata = (item.metadata && item.metadata.cellWidget) ? item.metadata.cellWidget : {}
+  const metadata = item.metadata && item.metadata.cellWidget ? item.metadata.cellWidget : {}
   let component = null
   let semanticClass = {}
   let semanticProperty = {}
@@ -140,7 +140,10 @@ export default function itemDefaultCellComponent (item, itemNameAsFooter) {
       component: 'oh-label-cell'
     }
 
-    if (item.type.indexOf('Number') === 0 && (!item.commandDescription || !item.commandDescription.commandOptions || stateDescription.readOnly)) {
+    if (
+      item.type.indexOf('Number') === 0 &&
+      (!item.commandDescription || !item.commandDescription.commandOptions || stateDescription.readOnly)
+    ) {
       component.config = {
         trendItem: item.name,
         action: 'analyzer',

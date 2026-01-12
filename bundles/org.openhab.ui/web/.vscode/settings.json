@@ -1,9 +1,8 @@
 {
-  "vetur.format.defaultFormatter.js": "vscode-typescript",
-  "vetur.format.defaultFormatter.html": "js-beautify-html",
-  "javascript.format.insertSpaceBeforeFunctionParenthesis": true,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "never"
   },
-  "eslint.validate": ["vue", "html", "javascript"]
+  "eslint.validate": ["vue", "html", "javascript"],
+  "oxc.fmt.experimental": true,
+  "editor.defaultFormatter": "oxc.oxc-vscode"
 }

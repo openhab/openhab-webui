@@ -1,8 +1,5 @@
 <template>
-  <location-card :element="element"
-                 :context="context"
-                 :tab-context="config"
-                 :parent-location="parentLocationName" />
+  <location-card :element="element" :context="context" :tab-context="config" :parent-location="parentLocationName" />
 </template>
 
 <script>

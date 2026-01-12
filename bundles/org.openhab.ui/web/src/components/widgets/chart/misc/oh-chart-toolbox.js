@@ -9,13 +9,13 @@ const presetFeatures = {
 }
 
 export default {
-  get (component, startTime, endTime, chart, device) {
+  get(component, startTime, endTime, chart, device) {
     const options = chart.evaluateExpression(ComponentId.get(component), component.config)
 
     if (options.presetFeatures && !options.feature) {
       options.feature = Object.assign({}, presetFeatures)
       for (const featureName in options.feature) {
-        options.feature[featureName].show = (options.presetFeatures.indexOf(featureName) >= 0)
+        options.feature[featureName].show = options.presetFeatures.indexOf(featureName) >= 0
       }
     }
 

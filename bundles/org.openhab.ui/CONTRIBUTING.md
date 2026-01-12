@@ -35,6 +35,8 @@ Note that the source maps have to be manually loaded in the browser, e.g. for Ch
 * `npm run lint` - run linter to detect code style errors
 * `npm run lint:fix` - run linter and fix code style errors
 * `npm run typescript:check` - run TypeScript compiler and check for type errors
+* `npm run format` - run `oxfmt` and apply Prettier formatting
+* `npm run format:check` - run `oxfmt` to verify Prettier formatting is intact
 
 ## Development server
 
@@ -56,6 +58,7 @@ Some of its very helpful features are:
 
 ## Coding Guidelines
 
+- [oxfmt](https://oxc.rs/docs/guide/usage/formatter.html) is used as formatter, enforcing Prettier formatting.
 - Vue Reactivity (see [Vue.js: Essentials: Reactivity Fundamentals](https://vuejs.org/guide/essentials/reactivity-fundamentals)) must be used where possible. No direct DOM manipulation!
 - Vue directives such as `v-if`, `v-else`, `v-show`, `v-for` should be placed before other attributes in the `<template>`:
 

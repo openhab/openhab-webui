@@ -1,12 +1,13 @@
 <template>
-  <round-slider v-bind="resolvedConfig"
-                :model-value="knobValue"
-                @update:model-value="onChange"
-                :style="`stroke-dasharray: ${(config.dottedPath) ? config.dottedPath : 0}`"
-                mouseScrollAction="true"
-                @input="onChange"
-                @click.stop="sendCommandDebounced(value, true)"
-                @touchend.stop="sendCommandDebounced(value, true)" />
+  <round-slider
+    v-bind="resolvedConfig"
+    :model-value="knobValue"
+    @update:model-value="onChange"
+    :style="`stroke-dasharray: ${(config.dottedPath) ? config.dottedPath : 0}`"
+    mouseScrollAction="true"
+    @input="onChange"
+    @click.stop="sendCommandDebounced(value, true)"
+    @touchend.stop="sendCommandDebounced(value, true)" />
 </template>
 
 <script>

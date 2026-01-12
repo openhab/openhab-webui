@@ -101,12 +101,7 @@ describe('SitemapCode', () => {
   it('parses attribute values correctly', async () => {
     expect(wrapper.vm.sitemapDsl).toBeDefined()
     // simulate updating the sitemap in code
-    const sitemap = [
-      'sitemap test label="Test" {',
-      '    Setpoint item=Item_Setpoint minValue=-5 maxValue=10',
-      '}',
-      ''
-    ].join('\n')
+    const sitemap = ['sitemap test label="Test" {', '    Setpoint item=Item_Setpoint minValue=-5 maxValue=10', '}', ''].join('\n')
     wrapper.vm.updateSitemap(sitemap)
     expect(wrapper.vm.sitemapDsl).toMatch(/^sitemap test label="Test"/)
     expect(wrapper.vm.parsedSitemap.error).toBeFalsy()
@@ -267,11 +262,7 @@ describe('SitemapCode', () => {
       component: 'Default',
       config: {
         item: 'Item_Icon',
-        iconrules: [
-          'NULL=empty',
-          '>5=iconify:wi:day-sunny-overcast',
-          '<=5 AND Test_Item=="check error"=error'
-        ]
+        iconrules: ['NULL=empty', '>5=iconify:wi:day-sunny-overcast', '<=5 AND Test_Item=="check error"=error']
       }
     })
   })
@@ -408,14 +399,7 @@ describe('SitemapCode', () => {
       component: 'Selection',
       config: {
         item: 'Scene_General',
-        mappings: [
-          '1=Morning',
-          '2="Evening"',
-          '10="Cinéma"',
-          '11=TV',
-          '3="Bed time"',
-          '4=Night=moon'
-        ]
+        mappings: ['1=Morning', '2="Evening"', '10="Cinéma"', '11=TV', '3="Bed time"', '4=Night=moon']
       }
     })
   })
@@ -456,12 +440,7 @@ describe('SitemapCode', () => {
   it('parses a mapping with release command', async () => {
     expect(wrapper.vm.sitemapDsl).toBeDefined()
     // simulate updating the sitemap in code
-    const sitemap = [
-      'sitemap test label="Test" {',
-      '    Switch item=PressAndRelease mappings=[ON:OFF=ON]',
-      '}',
-      ''
-    ].join('\n')
+    const sitemap = ['sitemap test label="Test" {', '    Switch item=PressAndRelease mappings=[ON:OFF=ON]', '}', ''].join('\n')
     wrapper.vm.updateSitemap(sitemap)
     expect(wrapper.vm.sitemapDsl).toMatch(/^sitemap test label="Test"/)
     expect(wrapper.vm.parsedSitemap.error).toBeFalsy()
@@ -481,9 +460,7 @@ describe('SitemapCode', () => {
       component: 'Switch',
       config: {
         item: 'PressAndRelease',
-        mappings: [
-          'ON:OFF=ON'
-        ]
+        mappings: ['ON:OFF=ON']
       }
     })
   })
@@ -516,9 +493,7 @@ describe('SitemapCode', () => {
       component: 'Switch',
       config: {
         item: 'PressAndRelease',
-        mappings: [
-          '"ON command":"OFF command"="ON"'
-        ]
+        mappings: ['"ON command":"OFF command"="ON"']
       }
     })
   })
@@ -584,10 +559,7 @@ describe('SitemapCode', () => {
       component: 'Switch',
       config: {
         item: 'Test',
-        visibility: [
-          'Day_Time=="Morning Time"',
-          'Temperature>19'
-        ]
+        visibility: ['Day_Time=="Morning Time"', 'Temperature>19']
       }
     })
   })
@@ -620,14 +592,7 @@ describe('SitemapCode', () => {
       component: 'Text',
       config: {
         item: 'Temperature',
-        valuecolor: [
-          'Last_Update==Uninitialized=gray',
-          '>=25=orange',
-          '==15=green',
-          '0=white',
-          '<=-10=purple',
-          'blue'
-        ]
+        valuecolor: ['Last_Update==Uninitialized=gray', '>=25=orange', '==15=green', '0=white', '<=-10=purple', 'blue']
       }
     })
   })
@@ -635,12 +600,9 @@ describe('SitemapCode', () => {
   it('parses a widget with valuecolor and text condition correctly', async () => {
     expect(wrapper.vm.sitemapDsl).toBeDefined()
     // simulate updating the sitemap in code
-    const sitemap = [
-      'sitemap test label="Test" {',
-      '    Text item=Temperature valuecolor=[Heat_Warning=="It is hot"=gray]',
-      '}',
-      ''
-    ].join('\n')
+    const sitemap = ['sitemap test label="Test" {', '    Text item=Temperature valuecolor=[Heat_Warning=="It is hot"=gray]', '}', ''].join(
+      '\n'
+    )
     wrapper.vm.updateSitemap(sitemap)
     expect(wrapper.vm.sitemapDsl).toMatch(/^sitemap test label="Test"/)
     expect(wrapper.vm.parsedSitemap.error).toBeFalsy()
@@ -660,9 +622,7 @@ describe('SitemapCode', () => {
       component: 'Text',
       config: {
         item: 'Temperature',
-        valuecolor: [
-          'Heat_Warning=="It is hot"=gray'
-        ]
+        valuecolor: ['Heat_Warning=="It is hot"=gray']
       }
     })
   })
@@ -670,12 +630,7 @@ describe('SitemapCode', () => {
   it('parses a chart widget correctly', async () => {
     expect(wrapper.vm.sitemapDsl).toBeDefined()
     // simulate updating the sitemap in code
-    const sitemap = [
-      'sitemap test label="Test" {',
-      '    Chart item=Temperature period=4h',
-      '}',
-      ''
-    ].join('\n')
+    const sitemap = ['sitemap test label="Test" {', '    Chart item=Temperature period=4h', '}', ''].join('\n')
     wrapper.vm.updateSitemap(sitemap)
     expect(wrapper.vm.sitemapDsl).toMatch(/^sitemap test label="Test"/)
     expect(wrapper.vm.parsedSitemap.error).toBeFalsy()
@@ -703,12 +658,7 @@ describe('SitemapCode', () => {
   it('parses a chart widget with future period correctly', async () => {
     expect(wrapper.vm.sitemapDsl).toBeDefined()
     // simulate updating the sitemap in code
-    const sitemap = [
-      'sitemap test label="Test" {',
-      '    Chart item=Temperature period=-4h',
-      '}',
-      ''
-    ].join('\n')
+    const sitemap = ['sitemap test label="Test" {', '    Chart item=Temperature period=-4h', '}', ''].join('\n')
     wrapper.vm.updateSitemap(sitemap)
     expect(wrapper.vm.sitemapDsl).toMatch(/^sitemap test label="Test"/)
     expect(wrapper.vm.parsedSitemap.error).toBeFalsy()
@@ -736,12 +686,7 @@ describe('SitemapCode', () => {
   it('parses a chart widget with past and ISO-8601 future period correctly', async () => {
     expect(wrapper.vm.sitemapDsl).toBeDefined()
     // simulate updating the sitemap in code
-    const sitemap = [
-      'sitemap test label="Test" {',
-      '    Chart item=Temperature period=4h-P1DT12H',
-      '}',
-      ''
-    ].join('\n')
+    const sitemap = ['sitemap test label="Test" {', '    Chart item=Temperature period=4h-P1DT12H', '}', ''].join('\n')
     wrapper.vm.updateSitemap(sitemap)
     expect(wrapper.vm.sitemapDsl).toMatch(/^sitemap test label="Test"/)
     expect(wrapper.vm.parsedSitemap.error).toBeFalsy()

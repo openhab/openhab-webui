@@ -34,9 +34,7 @@ export default {
     itemTypes: ['Contact', 'Number', 'String', 'Switch'],
     requires: ['TargetOpenState'],
     parameters: (itemType) =>
-      itemType === 'Contact' || itemType === 'Switch'
-        ? [p.inverted()]
-        : OPEN_STATES.map((state) => p.valueMapping(state))
+      itemType === 'Contact' || itemType === 'Switch' ? [p.inverted()] : OPEN_STATES.map((state) => p.valueMapping(state))
   },
   ObstacleAlert: {
     itemTypes: ['Contact ', 'Switch'],
@@ -74,19 +72,21 @@ export default {
       p.inverted(itemType === 'Rollershutter'),
       p.presets(item.stateDescription, '20=Morning,60=Afternoon,80=Evening:@Setting.Night'),
       p.language(item.settings?.regional?.language),
-      ...(getGroupParameter('primaryControl', item.groups) !== 'tilt' ? [] : [
-        p.actionMappings({ default: 'value' }, 'Close=0,Open=100', (config) => {
-          if (itemType === 'Dimmer') {
-            return config.inverted === true ? ['Close=100', 'Open=0'] : ['Close=0', 'Open=100']
-          }
-          if (itemType === 'Number' || itemType === 'Number:Angle') {
-            return config.inverted === true ? ['Close=90', 'Open=0'] : ['Close=-90', 'Open=0']
-          }
-          if (itemType === 'Rollershutter') {
-            return ['Close=DOWN', 'Open=UP', 'Stop=STOP']
-          }
-        })
-      ])
+      ...(getGroupParameter('primaryControl', item.groups) !== 'tilt'
+        ? []
+        : [
+            p.actionMappings({ default: 'value' }, 'Close=0,Open=100', (config) => {
+              if (itemType === 'Dimmer') {
+                return config.inverted === true ? ['Close=100', 'Open=0'] : ['Close=0', 'Open=100']
+              }
+              if (itemType === 'Number' || itemType === 'Number:Angle') {
+                return config.inverted === true ? ['Close=90', 'Open=0'] : ['Close=-90', 'Open=0']
+              }
+              if (itemType === 'Rollershutter') {
+                return ['Close=DOWN', 'Open=UP', 'Stop=STOP']
+              }
+            })
+          ])
     ]
   },
 
@@ -156,11 +156,7 @@ export default {
   },
   EqualizerMode: {
     itemTypes: ['Number', 'String'],
-    parameters: () => [
-      ...EQUALIZER_MODES.map((mode) => p.valueMapping(mode)),
-      p.supportedEqualizerModes(),
-      p.retrievable()
-    ]
+    parameters: () => [...EQUALIZER_MODES.map((mode) => p.valueMapping(mode)), p.supportedEqualizerModes(), p.retrievable()]
   },
   Playback: {
     itemTypes: ['Player'],
@@ -246,9 +242,7 @@ export default {
     itemTypes: ['Contact', 'Number', 'String', 'Switch'],
     requires: ['TargetLockState'],
     parameters: (itemType) =>
-      itemType === 'Contact' || itemType === 'Switch'
-        ? [p.inverted()]
-        : LOCK_STATES.map((state) => p.valueMapping(state))
+      itemType === 'Contact' || itemType === 'Switch' ? [p.inverted()] : LOCK_STATES.map((state) => p.valueMapping(state))
   },
   ArmState: {
     itemTypes: ['Number', 'String', 'Switch'],
@@ -322,9 +316,7 @@ export default {
     itemTypes: ['Color', 'Dimmer', 'Switch'],
     customTypes: ['Number', 'String'],
     parameters: (itemType) => [
-      ...(itemType === 'Number' || itemType === 'String'
-        ? [p.valueMapping('OFF', true), p.valueMapping('ON', true)]
-        : []),
+      ...(itemType === 'Number' || itemType === 'String' ? [p.valueMapping('OFF', true), p.valueMapping('ON', true)] : []),
       p.retrievable()
     ]
   },
@@ -399,19 +391,13 @@ export default {
     itemTypes: ['Number', 'String', 'Switch'],
     supports: ['multiInstance'],
     parameters: (_, item, config) => [
-      p.capabilityNames(
-        item.groups.length ? item.label : '@Setting.Mode',
-        'Wash Temperature,@Setting.WaterTemperature'
-      ),
+      p.capabilityNames(item.groups.length ? item.label : '@Setting.Mode', 'Wash Temperature,@Setting.WaterTemperature'),
       p.nonControllable(item.stateDescription),
       p.retrievable(),
       p.supportedModes(item.stateDescription),
       p.ordered(),
       p.language(item.settings?.regional?.language),
-      p.actionMappings(
-        { set: 'mode', ...(config.ordered && { adjust: '(±deltaValue)' }) },
-        'Close=Down,Open=Up,Lower=Down,Raise=Up'
-      ),
+      p.actionMappings({ set: 'mode', ...(config.ordered && { adjust: '(±deltaValue)' }) }, 'Close=Down,Open=Up,Lower=Down,Raise=Up'),
       p.stateMappings(['mode'], 'Closed=Down,Open=Up')
     ]
   },
@@ -431,11 +417,7 @@ export default {
       p.supportedRange(
         item,
         config,
-        itemType === 'Dimmer' || itemType === 'Rollershutter'
-          ? '0:100:1'
-          : config.nonControllable
-            ? '0:10:0.01'
-            : '0:10:1'
+        itemType === 'Dimmer' || itemType === 'Rollershutter' ? '0:100:1' : config.nonControllable ? '0:10:0.01' : '0:10:1'
       ),
       p.presets(item.stateDescription, '1=@Value.Low:Lowest,10=@Value.High:Highest'),
       p.unitOfMeasure(item),
@@ -449,9 +431,7 @@ export default {
     supports: ['multiInstance'],
     parameters: (itemType, item) => [
       p.capabilityNames(item.groups.length ? item.label : '@Setting.ToggleState', '@Setting.Oscillate,Rotate'),
-      ...(itemType === 'Number' || itemType === 'String'
-        ? [p.valueMapping('OFF', true), p.valueMapping('ON', true)]
-        : [p.inverted()]),
+      ...(itemType === 'Number' || itemType === 'String' ? [p.valueMapping('OFF', true), p.valueMapping('ON', true)] : [p.inverted()]),
       p.nonControllable(item.stateDescription),
       p.retrievable(),
       p.language(item.settings?.regional?.language),

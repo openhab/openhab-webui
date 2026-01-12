@@ -13,9 +13,7 @@
       type="text">
       <template #content-end>
         <div class="padding-left">
-          <f7-button @click="openPopup">
-            <f7-icon f7="calendar" /> Build
-          </f7-button>
+          <f7-button @click="openPopup"> <f7-icon f7="calendar" /> Build </f7-button>
         </div>
       </template>
       <template #info>
