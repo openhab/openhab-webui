@@ -76,6 +76,7 @@
   "setupwizard.persistence-config.services.items.all": "All",
   "setupwizard.persistence-config.services.items.group": "Group",
   "setupwizard.persistence-config.services.items.none": "None",
+  "setupwizard.persistence-config.services.advancedConfig": "The existing persistence configuration has configuration settings that cannot be reconfigured in the wizard. Please use Settings -> Persistence for configuration.",
   "setupwizard.persistence.strategy.everyUpdate": "Every Update",
   "setupwizard.persistence.strategy.everyChange": "Every Change",
   "setupwizard.persistence.strategy.restoreOnStartup": "Restore on Startup",

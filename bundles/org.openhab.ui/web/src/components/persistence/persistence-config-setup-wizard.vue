@@ -38,11 +38,11 @@
     {{ t('setupwizard.persistence-config.services.header8') }}<br>
     <br>
     {{ t('setupwizard.persistence-config.services.header9') }}<br>
-    <f7-block v-for="service in basicConfigServices" :key="service.id" class="persistence-config-setup-wizard">
+    <f7-block v-for="service in services" :key="service.id" class="persistence-config-setup-wizard">
       <f7-block-title>
         {{ service.label }}
       </f7-block-title>
-      <f7-row no-gap style="margin-top: 0.5rem; margin-bottom: 0">
+      <f7-row v-if="basicConfigs.includes(service.id)" no-gap style="margin-top: 0.5rem; margin-bottom: 0">
         <div class="service">
           <addon-logo class="logo-square" :addon="addons.find((addon) => addon.uid === 'persistence-' + service.id)" size="54" />
           <span class="config">
@@ -80,6 +80,18 @@
           </span>
         </div>
       </f7-row>
+      <f7-row v-else no-gap style="margin-top: 0.5rem; margin-bottom: 0">
+        <div class="service">
+          <addon-logo class="logo-square" :addon="addons.find((addon) => addon.uid === 'persistence-' + service.id)" size="54" />
+          <span class="config">
+            <f7-list>
+              <f7-list-item>
+                {{ this.t('setupwizard.persistence-config.services.advancedConfig') }}
+              </f7-list-item>
+            </f7-list>
+          </span>
+        </div>
+      </f7-row>
     </f7-block>
   </f7-block>
 </template>
@@ -89,6 +101,7 @@
     .service
       width 100%
       display flex
+      align-items center
       .logo-square
         background white
         border-radius 10%
@@ -107,6 +120,7 @@
         width calc(100% - 64px - 0.5rem)
         .list
           margin-top 4px
+          margin-bottom 0
 </style>
 
 <script>
@@ -142,11 +156,6 @@ export default {
       configuredStrategies: {},
       selectedStrategies: {},
       servicesLoaded: false
-    }
-  },
-  computed: {
-    basicConfigServices () {
-      return this.services.filter((service) => this.basicConfigs.includes(service.id))
     }
   },
   watch: {
@@ -296,6 +305,7 @@ export default {
         if (!this.configuration[serviceId]) {
           this.configuration[serviceId] = {}
         }
+        this.configuration[serviceId].serviceId = serviceId
         this.configuration[serviceId].configs = [{
           items: [ this.items[serviceId] ],
           strategies: this.selectedStrategies[serviceId]
