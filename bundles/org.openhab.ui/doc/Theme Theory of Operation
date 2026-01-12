@@ -11,17 +11,23 @@
 - Theme color palette is configured for echarts
 - Automatic update of certain css variables will eliminate need for many widgets/code to check dark mode
 
-## How it works
-
-### New CSS variables for theme definition
+## New Theme CSS variables
 A set of openHAB specific variables are defined that then propagate and redefined the hard-coded f7 color variables and are utilized for echarts, etc.
+
+### openHAB Branding Colors</b>
 
 | CSS Var Name                       | Default Setting           | Description                                                    |
 |------------------------------------|---------------------------|----------------------------------------------------------------|
-| <b>openHAB Branding Colors</b>     |                           |                                                                |
 | --oh-branding-color                | #e64a19                   | Official openHAB branding color (do not change)                |
 | --oh-branding-alt-color            | #2196F3                   | Un-official alternate color used in UI (do not change)         |
-| <b>Key Theme Parameters</b>        |                           |                                                                |
+
+### Key Theme Parameters
+
+- These are the key parameters used in defining a theme. With the exception of the parameters with the *, these are available to be customized via the settings menu.
+- The variables with the * should be used by widgets, etc. as they will adjust automatically depending on dark or light theme setting, eliminating the need to perform a check for light or dark mode.
+
+| CSS Var Name                       | Default Setting           | Description                                                    |
+|------------------------------------|---------------------------|----------------------------------------------------------------|
 | --oh-lightmode-text-color **       | #000000                   | Text color to use in light-mode                                |
 | --oh-darkmode-text-color **        | #ffffff                   | Text color to use in dark-mode                                 |
 | --oh-lightmode-text-alt-color **   | --oh-branding-alt-color   | Alternative highlight color to use in light-mode               |
@@ -34,7 +40,21 @@ A set of openHAB specific variables are defined that then propagate and redefine
 | --oh-text-alt-color *              | --oh-*-text-alt-color     | Automatically set to either light or dark text-alt variety     |
 | --oh-text-inverse-color *          | --oh-*-text-inverse-color | Automatically set to the inverse of light or dark mode variety |
 | --oh-background-color *            | --oh-*-background-color   | Automatically set to either light or dark mode variety         |
-| <b>Primitive Colors</b>            |                           |                                                                |
+
+
+
+
+### Primitive Colors
+
+- Should be only utilized when a specific color is required (i.e red for warning, green for success).
+- Key parameter or palette colors should be utilized in most places so that theme colors can be appropriately applied.
+- These can be set to align with the theme (for instance a muted theme can tone down these colors to deliver a consistent look/feel).
+- Default values are based on f7 default values.
+- f7-color-* values are assigned to these values so that current UIs will adjust accordingly.
+- These can be further customized via the settings menu.
+
+| CSS Var Name                       | Default Setting           | Description                                                    |
+|------------------------------------|---------------------------|----------------------------------------------------------------|
 | --oh-red-color                     | #ff3b30                   |                                                                |
 | --oh-green-color                   | #4cd964                   |                                                                |
 | --oh-blue-color                    | #2196f3                   |                                                                |
@@ -50,7 +70,16 @@ A set of openHAB specific variables are defined that then propagate and redefine
 | --oh-gray-color                    | #8e8e93                   |                                                                |
 | --oh-white-color                   | #ffffff                   |                                                                |
 | --oh-black-color                   | #000000                   |                                                                |
-| <b>Palette Colors</b>              |                           |                                                                |
+
+
+### Palette Colors
+
+- Palette colors provide a consistent palette to use for elements where color variety is needed (for instance the color of semantic boxes in the UI or echart color scheme).
+- For instance, if you have a monotone palette, these may be all different shades of a single color (see theme-coastalblue)
+- These can be further customized via the settings menu.
+
+| CSS Var Name                       | Default Setting           | Description                                                    |
+|------------------------------------|---------------------------|----------------------------------------------------------------|
 | --oh-palette-1-color               | --oh-blue-color           |                                                                |
 | --oh-palette-2-color               | --oh-green-color          |                                                                |
 | --oh-palette-3-color               | --oh-yellow-color         |                                                                |
@@ -61,44 +90,40 @@ A set of openHAB specific variables are defined that then propagate and redefine
 | --oh-palette-8-color               | --oh-deeppurple-color     |                                                                |
 | --oh-palette-9-color               | --oh-deeporange-color     |                                                                |
 
+### Color Tone Varations
 
 In addition to these variables, there are also color tone varients for each of these colors automatically created (see Further Work below on limitations). Note, colors designated with ** do not have these varients.
 
-| Variant                                           | Description                                                                              | Example                                                |
-|---------------------------------------------------|------------------------------------------------------------------------------------------|--------------------------------------------------------|
-| *-shade                                           | Darker shade of the specific color                                                       | --oh-background-color-shade, -oh-palette-1-color-shade |
-| *-tint                                            | Lighter tint of the specific color                                                       | --oh-theme-color-tint, --oh-theme-alt-color-tint       |
-| --oh-background-shade-2<br>--oh-background-tint-2 | Another level darker/lighter than -shade/-tint (only availble for --oh-background-color) |                                                        |
+| Variant                 | Description                        | Example                                                |
+|-------------------------|------------------------------------|--------------------------------------------------------|
+| *-shade                 | Darker shade of the specific color | --oh-background-color-shade, -oh-palette-1-color-shade |
+| *-tint                  | Lighter tint of the specific color | --oh-theme-color-tint, --oh-theme-alt-color-tint       |
+| *-transparent           | Transparent variety of the color   |                                                        |
+| --oh-background-shade-2 | Another level darker than -shade   |                                                        |
+| --oh-background-tint-2  | Another level lighter than -tint   |                                                        |
 
 
-#### Notes
+## Framework7
 
-##### Key Theme Parameters
-- These are the key parameters used in defining a theme. With the exception of the parameters with the *, these are available to be customized via the settings menu.
-- The variables with the * should be used by widgets, etc. as they will adjust automatically depending on dark or light theme setting.
+### Primitive Color variables
 
-##### Primitive Colors
-- Should be only utilized when a specific color is required (i.e red for warning, green for success).
-- Key parameter or palette colors should be utilized in most places so that theme colors can be appropriately applied.
-- These can be set to align with the theme (for instance a muted theme can tone down these colors to deliver a consistent look/feel).
-- Default values are based on f7 default values.
-- f7-color-* values are assigned to these values so that current UIs will adjust accordingly.
-- These can be further customized via the settings menu.
-##### Palette Colors
-- Palette colors provide a consistent palette to use for elements where color variety is needed (for instance the color of semantic boxes in the UI or echart color scheme).
-- For instance, if you have a monotone palette, these may be all different shades of a single color (see theme-coastalblue)
-- These can be further customized via the settings menu.
+Framework7 has defined a set of css variables which defined a set of primitive colors. These now will adapt to the primitive theme colors above.
+For instance, the color variable --f7-color-red will now be assigned the value of --oh-red-color. To reduce the dependency on f7, it is recommended that the --oh-*-color variable be utilized in the future vs. relying on the f7 variables.
 
-### Framework7 Variables
+### Color properties / classes
 
-- Hard-coding of specific colors in the framework7 have been updated to use the above parameters. For instance, the background colors in f7 were hard-coded as black/white depending on mode - these are now based on the above --oh-background-color paramater.
-- All f7-color-* (red, blue, ...) are assigned to use the above Primitive Colors.
-For instance, is one uses --f7-color-red, the --oh-red-color value will be returned. To reduce the dependency on f7, it is recommended that the --oh-*-color variable be utilized directly in the future.
-- All color classes (.color-*, .text-color-*, .bg-color-*, .border-color-*, .ripple-color-*) now utilize the above colors.
-This allows all f7 components to adapt to the theme. For instance, to apply a color to an element, one simply needs to apply the specific color class. Further, if f7 components offer a "color" prop the appropriate palette color will be used.
+All framework7 components allow colors to be defined with the following properties on components. Under the hood, framework7 accomplishes this by assign the respective class to that component in html. For instance, if the property "text-color: red" was provided for a component in a widget, then a class "text-color-red" would be added to the html element. These color class definitions now adapt to the primitive color variables above.
+
+| Prop         | Description                                                 | Class          |
+|--------------|-------------------------------------------------------------|----------------|
+| color        | Single element color. One of the default colors.            | color-*        |
+| text-color   | Sets element's text color. One of the default colors.       | text-color-*   |
+| bg-color     | Sets element's background color. One of the default colors. | bg-color-*     |
+| ripple-color | Sets element ripple wave color. One of the default colors.  | ripple-color-* |
 
 ### Additional Color Classes
 
+In addition to the above color classes for primitives, openHAB will 
 Several additional color classes are available to be used to align with theme. These can also be used as "color" props for f7 components (i.e. color: 'theme-alt').
 
 * .color-palette-#, .text-color-palette-#, .bg-color-pallete-#, .border-color-palette-# - these should be used if the element color should adapt to the theme. For instance, for the semantic model cards, these are now used so they adapt. This also allows the "palette-*" to be used directly when specifying a f7 color prop for an element (i.e. color: palette-1)
