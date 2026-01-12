@@ -35,7 +35,7 @@ export async function loadLocaleMessages(dir: string, mergeLocaleMessage: (local
   return Promise.allSettled(localeFilesArray.map((locale) => import(`../assets/i18n/${dir}/${locale}.json`))).then((results) => {
     results.forEach((result, index) => {
       const locale = localeFilesArray[index]
-      if (locale != undefined && result.status === 'fulfilled') {
+      if (locale !== undefined && result.status === 'fulfilled') {
         mergeLocaleMessage(locale, { ...result.value.default })
       }
     })

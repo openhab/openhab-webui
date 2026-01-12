@@ -450,7 +450,7 @@ export default {
       if (!this.items || !this.items.length) return 'Analyze'
       const firstItem = this.items[0]
       if (!firstItem) return 'Analyze'
-      if (this.items.length === 1) return (firstItem?.label) ? firstItem.label : firstItem.name
+      if (this.items.length === 1) return (firstItem.label) ? firstItem.label : firstItem.name
       return ((firstItem.label) ? firstItem.label : firstItem.name) + ' + ' + (this.items.length - 1)
     },
     context () {
@@ -461,7 +461,7 @@ export default {
     },
     page () {
       const coordSystem = this.coordSystem
-      if(!coordSystem) {
+      if (!coordSystem) {
         return {}
       }
 
@@ -514,7 +514,7 @@ export default {
         this.seriesOptions = {}
       }
       const coordSystem = this.coordSystem
-      if(!coordSystem) {
+      if (!coordSystem) {
         return
       }
       coordSystem.initAxes(this.coordSettings)
