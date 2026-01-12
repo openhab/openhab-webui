@@ -3,7 +3,7 @@
     <l-tooltip v-if="config.label">
       {{ config.label }}
     </l-tooltip>
-    <l-icon v-if="icon" :icon-size="icon.iconSize" :icon-url="icon.iconUrl" :shadow-url="icon?.shadowUrl" />
+    <l-icon v-if="icon" :icon-size="icon.iconSize" :icon-url="icon.iconUrl" />
   </l-marker>
 </template>
 
@@ -16,7 +16,6 @@ import { actionsMixin } from '../widget-actions'
 import { OhMapMarkerDefinition } from '@/assets/definitions/widgets/map'
 
 import markerIcon from 'leaflet/dist/images/marker-icon.png'
-import markerShadow from 'leaflet/dist/images/marker-shadow.png'
 
 export default {
   mixins: [mixin, actionsMixin],
@@ -52,8 +51,7 @@ export default {
         this.markerKey = f7.utils.id()
         return {
           iconUrl: markerIcon,
-          shadowUrl: markerShadow,
-          iconSize: null
+          iconSize: [25,41],
         }
       }
 
