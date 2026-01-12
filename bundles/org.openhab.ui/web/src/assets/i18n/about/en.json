@@ -17,5 +17,6 @@
   "about.reload.purgeExplanation2": "Select Purge Caches and Refresh below to clear all caches, unregister service workers and download everything from the server again.",
   "about.reload.purgeCachesAndRefresh": "Purge Caches and Refresh",
   "about.reload.confirmPurge": "Purge all application caches and unregister the service workers? This will also reload the page from the server, which might take a few seconds.",
-  "about.reload.reloadApp": "Reload App"
+  "about.reload.reloadApp": "Reload App",
+  "about.reload.setupWizard": "Setup Wizard"
 }
