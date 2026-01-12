@@ -658,7 +658,6 @@ export default {
         if (!this.toInstallAddons.length) {
           progressDialog.close()
           progressDialog.destroy()
-          this.addonsInstalled = true
           this.showPersistenceConfig()
           return
         }

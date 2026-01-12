@@ -78,7 +78,7 @@
   "setupwizard.persistence-config.services.items.none": "None",
   "setupwizard.persistence-config.services.advancedConfig": "The existing persistence configuration has configuration settings that cannot be reconfigured in the wizard. Use Settings -> Persistence for configuration or reset the configuration.",
   "setupwizard.persistence-config.services.resetConfig": "Reset Configuration",
-  "setupwizard.persistence-config.services.resetConfig.confirm": "Are you sure you want to reset the {config} configuration ?",
+  "setupwizard.persistence-config.services.resetConfig.confirm": "Are you sure you want to reset the {config} configuration?",
   "setupwizard.persistence-config.services.notEditable": "The existing persistence configuration is defined in a configuration file and cannot be reconfigured from the wizard.",
   "setupwizard.persistence.strategy.everyUpdate": "Every Update",
   "setupwizard.persistence.strategy.everyChange": "Every Change",

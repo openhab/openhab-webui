@@ -255,14 +255,14 @@ export default {
       // If there is an existing configuration, we will only present it for configuration in the wizard if it has a basic configuration:
       // - Editable (not defined in a file)
       // - A single configuration
-      // - No, or a single item defition (all, or group)
+      // - No, or a single item definition (all, or group)
       // - No filters
       // When there is no item definition, we default to all items.
       // If there is an existing, non-basic configuration (file-based, multiple configuration, other or multiple item definitions, filters),
       // we don't show any configuration option in the wizard to avoid overwriting the existing configuration.
       if (!this.isEditable(configuration)) return false
       const configs = configuration.configs
-      if (!configs?.length === 1) return false
+      if (configs?.length !== 1) return false
       const items = configs[0].items || ['']
       const filters = configs[0].filters || []
       const itemsAll = items.length === 1 && items[0] === '*'
@@ -276,17 +276,23 @@ export default {
       const common = this.CommonCronStrategies.map((strategy) => strategy.name)
       const strategies = [...new Set([...suggested, ...configured, ...PredefinedStrategies, ...common])]
       if (service.id === 'inmemory') {
-        strategies.splice(strategies.indexOf('restoreOnStartup'), 1)
+        const index = strategies.indexOf('restoreOnStartup')
+        if (index >= 0) {
+          strategies.splice(index, 1)
+        }
       }
       if (service.type !== 'Modifiable') {
-        strategies.splice(strategies.indexOf('forecast'), 1)
+        const index = strategies.indexOf('forecast')
+        if (index >= 0) {
+          strategies.splice(index, 1)
+        }
       }
       return strategies
     },
     resetConfiguration (serviceId) {
-      const label = this.services[this.services.findIndex((service) => service.id === serviceId)] || serviceId
+      const label = this.services.find((service) => service.id === serviceId)?.label || serviceId
       f7.dialog.confirm(this.t('setupwizard.persistence-config.services.resetConfig.confirm', label), () => {
-        this.updateOrCreateConfiguration(serviceId)
+        this.configuration[serviceId] = this.updateOrCreateConfiguration(serviceId)
       })
     },
     updateOrCreateConfiguration (serviceId) {
