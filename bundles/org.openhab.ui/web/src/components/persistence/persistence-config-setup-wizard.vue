@@ -42,7 +42,7 @@
       <f7-block-title>
         {{ service.label }}
       </f7-block-title>
-      <f7-row v-if="basicConfigs.includes(service.id)" no-gap style="margin-top: 0.5rem; margin-bottom: 0">
+      <f7-row v-if="isBasicConfig(configuration[service.id])" no-gap style="margin-top: 0rem; margin-bottom: 0">
         <div class="service">
           <addon-logo class="logo-square" :addon="addons.find((addon) => addon.uid === 'persistence-' + service.id)" size="54" />
           <span class="config">
@@ -80,13 +80,28 @@
           </span>
         </div>
       </f7-row>
-      <f7-row v-else no-gap style="margin-top: 0.5rem; margin-bottom: 0">
+      <f7-row v-else-if="isEditable(configuration[service.id])" no-gap style="margin-top: 0.5rem; margin-bottom: 0">
         <div class="service">
           <addon-logo class="logo-square" :addon="addons.find((addon) => addon.uid === 'persistence-' + service.id)" size="54" />
           <span class="config">
             <f7-list>
               <f7-list-item>
                 {{ this.t('setupwizard.persistence-config.services.advancedConfig') }}
+              </f7-list-item>
+              <f7-list-button color="blue" @click="resetConfiguration(service.id)">
+                {{ this.t('setupwizard.persistence-config.services.resetConfig') }}
+              </f7-list-button>
+            </f7-list>
+          </span>
+        </div>
+      </f7-row>
+      <f7-row v-else-if="configuration[service.id]" no-gap style="margin-top: 0.5rem; margin-bottom: 0">
+        <div class="service">
+          <addon-logo class="logo-square" :addon="addons.find((addon) => addon.uid === 'persistence-' + service.id)" size="54" />
+          <span class="config">
+            <f7-list>
+              <f7-list-item>
+                {{ this.t('setupwizard.persistence-config.services.notEditable') }}
               </f7-list-item>
             </f7-list>
           </span>
@@ -101,13 +116,13 @@
     .service
       width 100%
       display flex
-      align-items center
+      align-items top
       .logo-square
         background white
         border-radius 10%
         width 64px
         height 64px
-        margin-top 5.5px
+        margin-top 10px
         display flex
         justify-content center
         align-items center
@@ -119,11 +134,12 @@
         margin-left 0.5rem
         width calc(100% - 64px - 0.5rem)
         .list
-          margin-top 4px
+          margin-top 0px
           margin-bottom 0
 </style>
 
 <script>
+import { f7 } from 'framework7-vue'
 import AddonLogo from '@/components/addons/addon-logo.vue'
 import { PredefinedStrategies, CommonCronStrategies } from '@/assets/definitions/persistence'
 
@@ -143,7 +159,6 @@ export default {
       defaultPersistence: null,
       configuration: {},
       services: [],
-      basicConfigs: [],
       items: {},
       itemPersistGroups: {},
       groupExists: {},
@@ -189,12 +204,12 @@ export default {
           const groupName = 'gPersist_' + service.id
           this.itemPersistGroups[service.id] = groupName
           this.groupLabels[groupName] = 'Persistence ' + this.t('setupwizard.persistence-config.services.items.group') + ' ' + service.label
-        })
 
-        if (!this.defaultPersistence && this.services.includes('rrd4j')) {
-          // Use rrd4j as the default service if it is installed and nothing was set as a default before
-          this.defaultPersistence = 'rrd4j'
-        }
+          if (!this.defaultPersistence && service.id === 'rrd4j') {
+            // Use rrd4j as the default service if it is installed and nothing was set as a default before
+            this.defaultPersistence = 'rrd4j'
+          }
+        })
 
         await Promise.all(services.map((service) => this.loadServiceConfig(service)))
       } finally {
@@ -211,38 +226,26 @@ export default {
 
       try {
         const persistenceConfig = await this.$oh.api.get('/rest/persistence/' + service.id)
-        // If there is an existing configuration, we will only present it for configuration in the wizard if it has a basic configuration:
-        // - Editable (not defined in a file)
-        // - A single configuration
-        // - No, or a single item defition (all, or group)
-        // - No filters
-        // When there is no item definition, we default to all items.
-        // If there is an existing, non-basic configuration (file-based, multiple configuration, other or multiple item definitions, filters),
-        // we don't show any configuration option in the wizard to avoid overwriting the existing configuration.
         this.configuration[service.id] = persistenceConfig
-        const editable = this.configuration[service.id].editable
-        const configs = this.configuration[service.id].configs
-        const singleConfig = configs.length && configs.length === 1
-        const items = singleConfig ? (configs[0].items || ['']) : ['*']
-        const filters = singleConfig ? (configs[0].filters || []) : []
-        if (editable && items.length === 1 && (items[0] === '*' || items[0].match(/[^!].+\*/) || items[0] === '') && !filters.length) {
+        if (this.isBasicConfig(persistenceConfig)) {
+          const configs = persistenceConfig.configs
+          const items = configs[0].items || ['']
           this.items[service.id] = items[0]
           if (items[0].match(/[^!].+\*/)) {
             this.itemPersistGroups[service.id] = items[0].slice(0, -1)
           }
           this.configuredStrategies[service.id] = configs[0].strategies
-          this.strategies[service.id] = this.getStrategies(service)
-          this.selectedStrategies[service.id] = this.getPreSelectedStrategies(service)
-          this.basicConfigs = [...this.basicConfigs, service.id]
+        } else {
+          this.items[service.id] = '*'
         }
       } catch(err) {
         if (err === 'Not Found' || err === 404) {
           this.items[service.id] = '*'
-          this.strategies[service.id] = this.getStrategies(service)
-          this.selectedStrategies[service.id] = this.getPreSelectedStrategies(service)
-          this.basicConfigs = [...this.basicConfigs, service.id]
+          this.configuration[service.id] = this.updateOrCreateConfiguration(service.id)
         }
       }
+      this.strategies[service.id] = this.getStrategies(service)
+      this.selectedStrategies[service.id] = this.getPreSelectedStrategies(service)
 
       const groupName = this.itemPersistGroups[service.id]
       this.groupExists[groupName] = true
@@ -257,6 +260,28 @@ export default {
         }
       }
     },
+    isEditable (configuration) {
+      return configuration?.editable
+    },
+    isBasicConfig (configuration) {
+      // If there is an existing configuration, we will only present it for configuration in the wizard if it has a basic configuration:
+      // - Editable (not defined in a file)
+      // - A single configuration
+      // - No, or a single item defition (all, or group)
+      // - No filters
+      // When there is no item definition, we default to all items.
+      // If there is an existing, non-basic configuration (file-based, multiple configuration, other or multiple item definitions, filters),
+      // we don't show any configuration option in the wizard to avoid overwriting the existing configuration.
+      if (!this.isEditable(configuration)) return false
+      const configs = configuration.configs
+      if (!configs?.length === 1) return false
+      const items = configs[0].items || ['']
+      const filters = configs[0].filters || []
+      const itemsAll = items.length === 1 && items[0] === '*'
+      const itemsGroup = items.length === 1 && items[0].match(/[^!].+\*/)
+      const itemsEmpty = !items.length || (items.length === 1 && items[0] === '')
+      return (itemsAll || itemsGroup || itemsEmpty) && !filters.length
+    },
     getStrategies (service) {
       const suggested = this.suggestedStrategies[service.id] || []
       const configured = this.configuredStrategies[service.id] || []
@@ -269,6 +294,22 @@ export default {
         strategies.splice(strategies.indexOf('forecast'), 1)
       }
       return strategies
+    },
+    resetConfiguration (serviceId) {
+      const label = this.services[this.services.findIndex((service) => service.id === serviceId)] || serviceId
+      f7.dialog.confirm(this.t('setupwizard.persistence-config.services.resetConfig.confirm', label), () => {
+        this.updateOrCreateConfiguration(serviceId)
+      })
+    },
+    updateOrCreateConfiguration (serviceId) {
+      const configuration = this.configuration[serviceId] || {}
+      configuration.serviceId = serviceId
+      configuration.configs = [{
+        items: [ this.items[serviceId] ],
+        strategies: this.selectedStrategies[serviceId]
+      }]
+      configuration.editable = true
+      return configuration
     },
     getPreSelectedStrategies (service) {
       const suggested = this.suggestedStrategies[service.id] || []
@@ -301,36 +342,31 @@ export default {
         default: this.defaultPersistence
       })
       const groupsToAdd = []
-      this.basicConfigs.forEach((serviceId) => {
-        if (!this.configuration[serviceId]) {
-          this.configuration[serviceId] = {}
-        }
-        this.configuration[serviceId].serviceId = serviceId
-        this.configuration[serviceId].configs = [{
-          items: [ this.items[serviceId] ],
-          strategies: this.selectedStrategies[serviceId]
-        }]
-        // Define all common cron strategies in the persistence configuration
-        const cronStrategies = this.configuration[serviceId].cronStrategies || []
-        const cronStrategyNames = cronStrategies.map((strategy) => strategy.name)
-        this.CommonCronStrategies.forEach((strategy) => {
-          if (!cronStrategyNames.includes(strategy.name)) {
-            cronStrategies.push(strategy)
+      this.services.map((service) => service.id)
+        .filter((serviceId) => this.isBasicConfig(this.configuration[serviceId]))
+        .forEach((serviceId) => {
+          this.configuration[serviceId] = this.updateOrCreateConfiguration(serviceId)
+          // Define all common cron strategies in the persistence configuration
+          const cronStrategies = this.configuration[serviceId].cronStrategies || []
+          const cronStrategyNames = cronStrategies.map((strategy) => strategy.name)
+          this.CommonCronStrategies.forEach((strategy) => {
+            if (!cronStrategyNames.includes(strategy.name)) {
+              cronStrategies.push(strategy)
+            }
+          })
+          this.configuration[serviceId].cronStrategies = cronStrategies
+          this.$oh.api.put('/rest/persistence/' + serviceId, this.configuration[serviceId])
+          if (this.items[serviceId].length > 1) {
+            const groupName = this.items[serviceId].slice(0, -1)
+            if (!this.groupExists[groupName]) {
+              groupsToAdd.push({
+                type: 'Group',
+                name: groupName,
+                label: this.groupLabels[groupName]
+              })
+            }
           }
         })
-        this.configuration[serviceId].cronStrategies = cronStrategies
-        this.$oh.api.put('/rest/persistence/' + serviceId, this.configuration[serviceId])
-        if (this.items[serviceId].length > 1) {
-          const groupName = this.items[serviceId].slice(0, -1)
-          if (!this.groupExists[groupName]) {
-            groupsToAdd.push({
-              type: 'Group',
-              name: groupName,
-              label: this.groupLabels[groupName]
-            })
-          }
-        }
-      })
       if (groupsToAdd.length) {
         this.$oh.api.put('/rest/items', groupsToAdd)
       }
