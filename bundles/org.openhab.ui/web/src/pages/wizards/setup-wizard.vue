@@ -262,6 +262,40 @@
         </f7-block>
       </f7-tab>
 
+      <f7-tab id="persistence-config">
+        <f7-block>
+          <f7-link
+            icon-ios="f7:arrow_left"
+            icon-aurora="f7:arrow_left"
+            icon-md="material:arrow_back"
+            tab-link="#addons"
+            color="blue"
+            tab-link-active />
+          <f7-login-screen-title>
+            <div class="padding">
+              <f7-icon size="48" color="blue" f7="download_circle" />
+            </div>
+            {{ t('setupwizard.persistence-config.title') }}
+          </f7-login-screen-title>
+        </f7-block>
+        <f7-block strong> {{ t('setupwizard.persistence-config.header1') }}<br /> </f7-block>
+        <persistence-config-setup-wizard :addons="addons" :addonsReady="addonsReady" :confirm="persistenceConfigConfirm" :t />
+        <f7-block-footer class="margin-bottom">
+          <small>{{ t('setupwizard.persistence-config.footer') }}</small>
+        </f7-block-footer>
+        <f7-block class="padding">
+          <div>
+            <f7-button large fill color="blue" :text="t('setupwizard.persistence-config.config')" @click="persistenceConfig" />
+            <f7-button
+              large
+              color="blue"
+              :text="t('setupwizard.persistence-config.configLater')"
+              class="margin-top"
+              @click="skipPersistenceConfig" />
+          </div>
+        </f7-block>
+      </f7-tab>
+
       <f7-tab id="finish">
         <f7-block style="margin-top: 8rem">
           <!-- no going back on this last screen!
@@ -274,9 +308,6 @@
                   tab-link-active
                 ></f7-link>-->
           <f7-login-screen-title>{{ t('setupwizard.welcome.title') }}</f7-login-screen-title>
-        </f7-block>
-        <f7-block v-if="persistenceInstalled">
-          {{ t('setupwizard.welcome.persistenceInstalled') }}
         </f7-block>
         <f7-block v-if="bindingInstalled">
           {{ t('setupwizard.welcome.bindingsInstalled') }}
@@ -329,6 +360,7 @@ import { useI18n } from 'vue-i18n'
 import { loadLocaleMessages } from '@/js/i18n'
 
 import AddonsSetupWizard from '@/components/addons/addons-setup-wizard.vue'
+import PersistenceConfigSetupWizard from '@/components/persistence/persistence-config-setup-wizard.vue'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
@@ -339,7 +371,8 @@ export default {
   components: {
     'parameter-location': defineAsyncComponent(() => import('@/components/config/controls/parameter-location.vue')),
     'parameter-options': defineAsyncComponent(() => import('@/components/config/controls/parameter-options.vue')),
-    AddonsSetupWizard
+    AddonsSetupWizard,
+    PersistenceConfigSetupWizard
   },
   setup () {
     const { t, mergeLocaleMessage } = useI18n({ useScope: 'local' })
@@ -376,7 +409,8 @@ export default {
       toInstallAddons: [],
       installingAddons: false,
       bindingInstalled: false,
-      persistenceInstalled: false
+      addonsReady: false,
+      persistenceConfigConfirm: false
     }
   },
   computed: {
@@ -591,12 +625,12 @@ export default {
     installAddons () {
       const checkInterval = 2 // check the add-ons statuses every 2 seconds
 
+      this.addonsReady = false
       this.toInstallAddons = this.toInstallAddons.filter((a) => !a.installed)
       this.installingAddons = true
       f7.tab.show('#wait', false)
 
       this.bindingInstalled = this.toInstallAddons.find((a) => (a.type === 'binding'))
-      this.persistenceInstalled = this.toInstallAddons.find((a) => (a.type === 'persistence'))
       const addonsCount = this.toInstallAddons.length
       let progress = 0
 
@@ -624,7 +658,7 @@ export default {
         if (!this.toInstallAddons.length) {
           progressDialog.close()
           progressDialog.destroy()
-          this.showFinish()
+          this.showPersistenceConfig()
           return
         }
 
@@ -656,9 +690,23 @@ export default {
         this.installAddons()
         return
       }
+      this.showPersistenceConfig()
+    },
+    showPersistenceConfig () {
+      this.addonsReady = true
+      f7.tab.show('#persistence-config')
+    },
+    persistenceConfig () {
+      this.persistenceConfigConfirm = true
+      nextTick(() => {
+        this.showFinish()
+      })
+    },
+    skipPersistenceConfig () {
       this.showFinish()
     },
     showFinish () {
+      this.persistenceConfigConfirm = false
       f7.tab.show('#finish')
     },
     finish () {
@@ -693,7 +741,7 @@ export default {
     }
   },
   mounted () {
-    // hack to eliminate issue in framework7 router where the the intro page (after a login) is unresponsive. Note,
+    // hack to eliminate issue in framework7 router where the intro page (after a login) is unresponsive. Note,
     // if the setup-wizard page is reloaded, the page works correctly and is responsive.
     // Diagnosis: While the animate option is set to false when navigating to the setup-wizard (in auth-mixin),
     // framework7 seems to ignore and initiates the animation by setting the router-transition and router-transition-forward

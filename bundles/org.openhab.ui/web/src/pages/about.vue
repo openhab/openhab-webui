@@ -99,6 +99,9 @@
           <f7-list-button color="blue" @click="reload">
             {{ t('about.reload.reloadApp') }}
           </f7-list-button>
+          <f7-list-button color="blue" href="/setup-wizard/">
+            {{ t('about.reload.setupWizard') }}
+          </f7-list-button>
         </f7-list>
       </f7-col>
     </f7-block>
