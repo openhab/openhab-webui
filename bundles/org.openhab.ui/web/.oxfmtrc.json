@@ -9,5 +9,5 @@
   "singleQuote": true,
   "tabWidth": 2,
   "trailingComma": "none",
-  "ignorePatterns": ["*.gen.ts"]
+  "ignorePatterns": ["*.gen.ts", "src/api/index.ts", "src/types/components/widgets/index.ts"]
 }
