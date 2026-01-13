@@ -173,7 +173,7 @@ function completionType(properties: Record<string, any>) {
 function getReturnType(type: string | null) {
   if (!isFunction(type)) return
   const ret = String(type).split(' -> ')
-  const returnType = extractType(ret.length > 1 ? ret[ret.length - 1] || null : null)
+  const returnType = extractType(ret[ret.length - 1] ?? null)
   if (!returnType) return
   return returnType.charAt(0).toUpperCase() + returnType.slice(1)
 }
