@@ -21,9 +21,13 @@
     </f7-block-title>
     {{ t('setupwizard.persistence-config.services.header1') }}<br />
     <br />
-    {{ t('setupwizard.persistence-config.services.header2') }} {{ t('setupwizard.persistence-config.services.header3') }} {{ t('setupwizard.persistence-config.services.header4') }}<br />
+    {{ t('setupwizard.persistence-config.services.header2') }}
+    {{ t('setupwizard.persistence-config.services.header3') }}
+    {{ t('setupwizard.persistence-config.services.header4') }}<br />
     <br />
-    {{ t('setupwizard.persistence-config.services.header5') }} {{ t('setupwizard.persistence-config.services.header6') }} {{ t('setupwizard.persistence-config.services.header7') }}<br />
+    {{ t('setupwizard.persistence-config.services.header5') }}
+    {{ t('setupwizard.persistence-config.services.header6') }}
+    {{ t('setupwizard.persistence-config.services.header7') }}<br />
     <br />
     {{ t('setupwizard.persistence-config.services.header8') }}<br />
     <f7-block v-for="service in services" :key="service.id" class="persistence-config-setup-wizard">
