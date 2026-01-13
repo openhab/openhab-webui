@@ -4,13 +4,11 @@ import { compareItems } from '@/components/widgets/widget-order'
 import { authorize } from '@/js/openhab/auth'
 import { i18n } from '@/js/i18n'
 
-import api from '@/js/openhab/api'
-
-import { type Item } from '@/types/openhab'
 import type { Composer } from 'vue-i18n'
+import * as api from '@/api'
 
-interface ModelItem extends Item {
-  modelPath?: Item[]
+interface ModelItem extends api.EnrichedItem {
+  modelPath?: ModelItem[]
   parent: ModelItem | null
   children: ModelItem[]
   points: ModelItem[]
@@ -127,17 +125,19 @@ export const useModelStore = defineStore('model', () => {
    * @param items
    * @param filteredItems
    */
-  function buildPathInModel(item: ModelItem, items: ModelItem[], filteredItems: FilteredItems): Item[] {
+  function buildPathInModel(item: ModelItem, items: ModelItem[], filteredItems: FilteredItems): ModelItem[] {
     if (!item.metadata || !item.metadata.semantics) return []
 
     if (item.modelPath) return item.modelPath
     let parent: ModelItem | null | undefined = null
-    if (item.metadata.semantics.config && item.metadata.semantics.config.hasLocation) {
-      parent = items.find((i) => i.name === item.metadata?.semantics?.config?.hasLocation)
-    } else if (item.metadata.semantics.config && item.metadata.semantics.config.isPointOf) {
-      parent = items.find((i) => i.name === item.metadata?.semantics?.config?.isPointOf)
-    } else if (item.metadata.semantics.config && item.metadata.semantics.config.isPartOf) {
-      parent = items.find((i) => i.name === item.metadata?.semantics?.config?.isPartOf)
+
+    const config = (item.metadata.semantics.config as any) || {}
+    if (config.hasLocation) {
+      parent = items.find((i) => i.name === config.hasLocation)
+    } else if (config.isPointOf) {
+      parent = items.find((i) => i.name === config.isPointOf)
+    } else if (config.isPartOf) {
+      parent = items.find((i) => i.name === config.isPartOf)
     }
     if (parent && parent.semanticLoopDetector) {
       throw new Error(`A a loop has been detected in the semantic model: ${parent.name} is both descendant and parent of ${item.name}`)
@@ -147,33 +147,28 @@ export const useModelStore = defineStore('model', () => {
     item.semanticLoopDetector = true
     item.modelPath = item.parent ? [...buildPathInModel(item.parent, items, filteredItems), item.parent] : []
     delete item.semanticLoopDetector
-    item.children = []
-    item.locations = []
-    item.points = []
-    item.properties = []
-    item.equipment = []
-    item.equipmentOrPoints = []
 
     if (parent) parent.children?.push(item)
 
-    if (item.metadata.semantics.value?.startsWith('Location')) {
+    const semanticsValue = (item.metadata.semantics.value as string) || ''
+    if (semanticsValue.startsWith('Location')) {
       if (parent) parent.locations.push(item)
       filteredItems.locations.push(item)
     }
 
-    if (item.metadata.semantics.value?.startsWith('Point')) {
+    if (semanticsValue.startsWith('Point')) {
       if (parent) {
         parent.points.push(item)
         parent.equipmentOrPoints.push(item)
       }
     }
 
-    if (item.metadata.semantics.config && item.metadata.semantics.config.relatesTo) {
+    if (config.relatesTo) {
       if (parent) parent.properties.push(item)
       filteredItems.properties.push(item)
     }
 
-    if (item.metadata.semantics.value?.startsWith('Equipment')) {
+    if (semanticsValue.startsWith('Equipment')) {
       if (parent) {
         parent.equipment.push(item)
         parent.equipmentOrPoints.push(item)
@@ -186,8 +181,13 @@ export const useModelStore = defineStore('model', () => {
 
   async function loadSemanticModel() {
     api
-      .get('/rest/items?staticDataOnly=true&metadata=semantics,listWidget,widgetOrder')
-      .then((data: Item[]) => {
+      .getItems({ staticDataOnly: true, metadata: 'semantics,listWidget,widgetOrder' })
+      .then((data) => {
+        if (!data) {
+          ready.value = true
+          return
+        }
+
         let modelItems: ModelItem[] = data.map((item) => {
           return {
             ...item,
@@ -215,13 +215,17 @@ export const useModelStore = defineStore('model', () => {
         // Sort each semantic model item children arrays (start at top-level nodes)
         modelItems.filter((item) => item.modelPath && item.modelPath.length === 0).forEach((item) => _sortModel(item))
 
+        // Sort each semantic model item children arrays (start at top-level nodes)
+        modelItems.filter((item) => item.modelPath && item.modelPath.length === 0).forEach((item) => _sortModel(item))
+
         // get the location items
         const locationItems = filteredItems.locations.sort(_compareObjects)
 
         // get the equipment items
         const equipmentStruct: { [key: string]: ModelItem[] } = {}
         filteredItems.equipment.sort(_compareObjects).forEach((item) => {
-          const equipmentType = item.metadata?.semantics?.value?.substring(item.metadata.semantics.value.lastIndexOf('_')).replace('_', '')
+          const semanticsValue = (item.metadata?.semantics?.value as string) || ''
+          const equipmentType = semanticsValue?.substring(semanticsValue.lastIndexOf('_')).replace('_', '')
           if (equipmentType) {
             if (!equipmentStruct[equipmentType]) equipmentStruct[equipmentType] = []
             equipmentStruct[equipmentType].push(item)
@@ -231,14 +235,15 @@ export const useModelStore = defineStore('model', () => {
         // get the property items
         const propertyStruct: { [key: string]: ModelItem[] } = {}
         filteredItems.properties.sort(_compareObjects).forEach((item) => {
-          const property = item.metadata?.semantics?.config?.relatesTo.split('_')[1]
+          const config = (item.metadata?.semantics?.config as any) || {}
+          const property = config.relatesTo.split('_')[1]
           if (property) {
             if (!propertyStruct[property]) propertyStruct[property] = []
             propertyStruct[property].push(item)
           }
         })
 
-        locations.value = locationItems.map((l) => _buildLocationModelCard(l, l.name))
+        locations.value = locationItems.map((l) => _buildLocationModelCard(l, l.name || ''))
         equipment.value = Object.keys(equipmentStruct)
           .sort((a: string, b: string) => (i18n.global as Composer).t(a).localeCompare((i18n.global as Composer).t(b)))
           .map((k) => _buildEquipmentModelCard(equipmentStruct[k]!, k))
@@ -251,7 +256,7 @@ export const useModelStore = defineStore('model', () => {
       .catch((e) => {
         console.error('Error while loading model:')
         console.error(e)
-        if (e === 'Unauthorized' || e === 401) {
+        if (e.response?.statusText === 'Unauthorized' || e.response?.status === 401) {
           authorize()
         }
         Promise.reject('Failed to load semantic model: ' + e)

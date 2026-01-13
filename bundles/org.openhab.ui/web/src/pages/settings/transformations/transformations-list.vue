@@ -149,6 +149,8 @@ import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { useLastSearchQueryStore } from '@/js/stores/useLastSearchQueryStore'
 
+import * as api from '@/api'
+
 const lastSearchQueryStore = useLastSearchQueryStore()
 
 export default {
@@ -220,7 +222,7 @@ export default {
       }
       this.initSearchbar = false
 
-      this.$oh.api.get('/rest/transformations').then((data) => {
+      api.getTransformations().then((data) => {
         this.transformations = data.sort((a, b) => (a.label || a.uid).localeCompare(b.label || a.uid))
         this.loading = false
         this.ready = true
@@ -286,7 +288,7 @@ export default {
       let dialog = f7.dialog.progress('Deleting Transformations...')
 
       const promises = this.selectedTransformations.map((p) => {
-        return this.$oh.api.delete('/rest/transformations/' + p)
+        return api.deleteTransformation({ uid: p })
       })
       Promise.all(promises).then((data) => {
         f7.toast.create({

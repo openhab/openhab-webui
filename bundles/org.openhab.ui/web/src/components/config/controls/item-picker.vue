@@ -85,6 +85,8 @@ import { f7 } from 'framework7-vue'
 import ModelPickerPopup from '@/components/model/model-picker-popup.vue'
 import { nextTick } from 'vue'
 
+import * as api from '@/api'
+
 export default {
   props: {
     label: String,
@@ -150,13 +152,13 @@ export default {
     if (this.items && this.items.length) {
       this.sortAndFilterItems(this.items)
     } else {
-      const params = new URLSearchParams({
+      const query = {
         staticDataOnly: 'true'
-      })
-      if (this.filterTag?.length) {
-        params.set('tags', Array.isArray(this.filterTag) ? this.filterTag.join(',') : this.filterTag)
       }
-      this.$oh.api.get(`/rest/items?${params}`).then((items) => {
+      if (this.filterTag?.length) {
+        query.tags = Array.isArray(this.filterTag) ? this.filterTag.join(',') : this.filterTag
+      }
+      api.getItems(query).then((items) => {
         this.sortAndFilterItems(items)
       })
     }
