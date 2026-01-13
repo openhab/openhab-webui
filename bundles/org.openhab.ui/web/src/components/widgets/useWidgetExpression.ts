@@ -29,6 +29,7 @@ expr.jsep.plugins.register(jsepRegex, jsepArrow, jsepObject, jsepTemplate)
 addUnaryOp('@', (itemName: string | undefined): string => {
   if (itemName === undefined) return '-'
   const item = useStatesStore().trackedItems[itemName]
+  if (item === undefined) return '-'
   return (item.displayState !== undefined ? item.displayState : item.state) ?? '-'
 })
 addUnaryOp('@@', (itemName: string | undefined): string => {

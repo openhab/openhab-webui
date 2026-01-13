@@ -124,11 +124,11 @@ export const useModelStore = defineStore('model', () => {
     if (item.modelPath) return item.modelPath
     let parent: ModelItem | null | undefined = null
     if (item.metadata.semantics.config && item.metadata.semantics.config.hasLocation) {
-      parent = items.find((i) => i.name === item.metadata?.semantics.config?.hasLocation)
+      parent = items.find((i) => i.name === item.metadata?.semantics?.config?.hasLocation)
     } else if (item.metadata.semantics.config && item.metadata.semantics.config.isPointOf) {
-      parent = items.find((i) => i.name === item.metadata?.semantics.config?.isPointOf)
+      parent = items.find((i) => i.name === item.metadata?.semantics?.config?.isPointOf)
     } else if (item.metadata.semantics.config && item.metadata.semantics.config.isPartOf) {
-      parent = items.find((i) => i.name === item.metadata?.semantics.config?.isPartOf)
+      parent = items.find((i) => i.name === item.metadata?.semantics?.config?.isPartOf)
     }
     if (parent && parent.semanticLoopDetector) {
       throw new Error(`A a loop has been detected in the semantic model: ${parent.name} is both descendant and parent of ${item.name}`)
@@ -212,7 +212,7 @@ export const useModelStore = defineStore('model', () => {
         // get the equipment items
         const equipmentStruct: { [key: string]: ModelItem[] } = {}
         filteredItems.equipment.sort(_compareObjects).forEach((item) => {
-          const equipmentType = item.metadata?.semantics.value?.substring(item.metadata.semantics.value.lastIndexOf('_')).replace('_', '')
+          const equipmentType = item.metadata?.semantics?.value?.substring(item.metadata.semantics.value.lastIndexOf('_')).replace('_', '')
           if (equipmentType) {
             if (!equipmentStruct[equipmentType]) equipmentStruct[equipmentType] = []
             equipmentStruct[equipmentType].push(item)
@@ -222,7 +222,7 @@ export const useModelStore = defineStore('model', () => {
         // get the property items
         const propertyStruct: { [key: string]: ModelItem[] } = {}
         filteredItems.properties.sort(_compareObjects).forEach((item) => {
-          const property = item.metadata?.semantics.config?.relatesTo.split('_')[1]
+          const property = item.metadata?.semantics?.config?.relatesTo.split('_')[1]
           if (property) {
             if (!propertyStruct[property]) propertyStruct[property] = []
             propertyStruct[property].push(item)
@@ -232,10 +232,10 @@ export const useModelStore = defineStore('model', () => {
         locations.value = locationItems.map((l) => _buildLocationModelCard(l, l.name))
         equipment.value = Object.keys(equipmentStruct)
           .sort((a: string, b: string) => (i18n.global as Composer).t(a).localeCompare((i18n.global as Composer).t(b)))
-          .map((k) => _buildEquipmentModelCard(equipmentStruct[k], k))
+          .map((k) => _buildEquipmentModelCard(equipmentStruct[k]!, k))
         properties.value = Object.keys(propertyStruct)
           .sort((a: string, b: string) => (i18n.global as Composer).t(a).localeCompare((i18n.global as Composer).t(b)))
-          .map((k) => _buildPropertyModelCard(propertyStruct[k], k))
+          .map((k) => _buildPropertyModelCard(propertyStruct[k]!, k))
 
         ready.value = true
       })

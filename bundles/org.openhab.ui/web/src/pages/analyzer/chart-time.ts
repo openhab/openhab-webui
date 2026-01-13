@@ -9,7 +9,7 @@ import {
   type ValueAxisOptions,
   type CoordSettingsBase
 } from './types.js'
-import type { Item, Page } from '@/types/openhab'
+import type { Item, Page, UIComponentSlots, UIComponent } from '@/types/openhab'
 import {
   OhCategoryAxis,
   OhChartPage,
@@ -106,15 +106,7 @@ const timeCoordSystem: CoordSystem = {
   getChartPage(coordSettings: CoordSettings, allSeriesOptions: Record<string, SeriesOptions>, items: Item[]): Page {
     const timeCoordSettings = coordSettings as unknown as TimeCoordSettings
 
-    let page: Page = {
-      component: 'oh-chart-page',
-      config: {
-        chartType: coordSettings.chartType,
-        period: timeCoordSettings.period
-      } satisfies OhChartPage.Config
-    }
-
-    page.slots = {
+    const slots: UIComponentSlots = {
       xAxis: [],
       yAxis: [],
       series: [],
@@ -124,6 +116,15 @@ const timeCoordSystem: CoordSystem = {
       dataZoom: []
     }
 
+    let page: Page = {
+      component: 'oh-chart-page',
+      config: {
+        chartType: coordSettings.chartType,
+        period: timeCoordSettings.period
+      } satisfies OhChartPage.Config,
+      slots
+    }
+
     let valueGrid = timeCoordSettings.valueAxesOptions.length > 0
     let categoryGrid = timeCoordSettings.categoryAxisValues.length > 0
 
@@ -131,31 +132,31 @@ const timeCoordSystem: CoordSystem = {
     categoryGridSize = Math.min(categoryGridSize, GRID_CONFIG.MAX_CATEGORY_GRID_PERCENT)
 
     if (valueGrid) {
-      page.slots.grid.push({
+      slots.grid!.push({
         component: 'oh-chart-grid',
         config: {
           includeLabels: true,
           bottom: categoryGrid ? `${categoryGridSize + GRID_CONFIG.GRID_PADDING_PERCENT}%` : GRID_CONFIG.DEFAULT_BOTTOM_MARGIN_PIX
         }
       })
-      page.slots.xAxis.push({ component: 'oh-time-axis', config: { gridIndex: 0 } })
-      page.slots.yAxis = timeCoordSettings.valueAxesOptions.map((a) => {
+      slots.xAxis!.push({ component: 'oh-time-axis', config: { gridIndex: 0 } })
+      slots.yAxis = timeCoordSettings.valueAxesOptions.map((a) => {
         return renderValueAxis(a)
       })
     }
 
     let categoryGridIndex = valueGrid ? 1 : 0
     if (categoryGrid) {
-      page.slots.grid.push({
+      slots.grid!.push({
         component: 'oh-chart-grid',
         config: { includeLabels: true, top: valueGrid ? `${100 - categoryGridSize}%` : GRID_CONFIG.DEFAULT_BOTTOM_MARGIN_PIX }
       })
-      page.slots.xAxis.push({ component: 'oh-time-axis', config: { gridIndex: categoryGridIndex } })
-      page.slots.yAxis.push({
+      slots.xAxis!.push({ component: 'oh-time-axis', config: { gridIndex: categoryGridIndex } })
+      slots.yAxis!.push({
         component: 'oh-category-axis',
         config: {
           data: timeCoordSettings.categoryAxisValues.map((item) => {
-            return allSeriesOptions[item].name
+            return allSeriesOptions[item]?.name ?? ''
           }),
           gridIndex: categoryGridIndex,
           categoryType: OhCategoryAxis.CategoryType.values,
@@ -165,9 +166,9 @@ const timeCoordSystem: CoordSystem = {
       })
     }
 
-    if (page.slots.yAxis.length === 0) {
+    if (slots.yAxis!.length === 0) {
       // add a default axis if none was found (for instance, only discrete values)
-      page.slots.yAxis.push({
+      slots.yAxis!.push({
         component: 'oh-value-axis',
         config: {
           gridIndex: 0
@@ -175,7 +176,7 @@ const timeCoordSystem: CoordSystem = {
       })
     }
 
-    page.slots.series = items.map((item: Item) => {
+    slots.series = items.map((item: Item) => {
       const seriesOptions = allSeriesOptions[item.name] as TimeSeriesOptions
 
       if (seriesOptions.type === 'state') {
@@ -185,7 +186,7 @@ const timeCoordSystem: CoordSystem = {
             item: item.name,
             name: seriesOptions.name,
             xAxisIndex: categoryGridIndex,
-            yAxisIndex: page.slots!.yAxis.length - 1,
+            yAxisIndex: slots.yAxis!.length - 1,
             yValue: seriesOptions.yValue
           } satisfies OhStateSeries.Config
         }
@@ -205,7 +206,7 @@ const timeCoordSystem: CoordSystem = {
       }
     })
 
-    page.slots.tooltip = [
+    slots.tooltip = [
       {
         component: 'oh-chart-tooltip',
         config: {
@@ -215,7 +216,7 @@ const timeCoordSystem: CoordSystem = {
       }
     ]
 
-    page.slots.legend = [
+    slots.legend = [
       {
         component: 'oh-chart-legend',
         config: {
@@ -232,7 +233,7 @@ const timeCoordSystem: CoordSystem = {
       }
     ]
 
-    page.slots.dataZoom = [
+    slots.dataZoom = [
       {
         component: 'oh-chart-datazoom',
         config: {

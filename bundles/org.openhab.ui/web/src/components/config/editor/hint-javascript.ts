@@ -36,8 +36,9 @@ function getPath(read: (n: any) => string, callNode: any, name: string | null) {
     callExpression = false
 
     // '', 12.5 or [] -> String, Number, or ArrayExprression
-    if (Literals[obj.name]) {
-      path.push(Literals[obj.name]) // resolve the literal to its prototype
+    const literal = Literals[obj.name]
+    if (literal) {
+      path.push(literal) // resolve the literal to its prototype
       if (obj.name === 'ArrayExpression') {
       }
       if (!obj.firstChild || obj.name === 'ArrayExpression') {
@@ -172,7 +173,7 @@ function completionType(properties: Record<string, any>) {
 function getReturnType(type: string | null) {
   if (!isFunction(type)) return
   const ret = String(type).split(' -> ')
-  const returnType = extractType(ret.length > 1 ? ret[ret.length - 1] : null)
+  const returnType = extractType(ret[ret.length - 1] ?? null)
   if (!returnType) return
   return returnType.charAt(0).toUpperCase() + returnType.slice(1)
 }

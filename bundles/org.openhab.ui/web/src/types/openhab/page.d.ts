@@ -15,7 +15,7 @@ export interface UIComponentProps {
 /**
  * UI components have slots, in which other UI components can be placed.
  */
-export type UIComponentSlots = Record<string, UIComponent[]>
+export type UIComponentSlots = Record<string, UIComponent[] | undefined>
 
 /**
  * A UI component as returned by the GET `/rest/ui/components` REST endpoint.

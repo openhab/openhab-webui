@@ -26,16 +26,16 @@ export async function loadLocaleMessages(dir: string, mergeLocaleMessage: (local
   // use set to avoid loading the same locale multiple times
   const localeFiles: Set<string> = new Set([
     useRuntimeStore().locale,
-    useRuntimeStore().locale.split('-')[0],
+    useRuntimeStore().locale.split('-')[0] || '',
     fallbackLocale,
-    fallbackLocale.split('-')[0]
+    fallbackLocale.split('-')[0] || ''
   ])
   const localeFilesArray = Array.from(localeFiles)
 
   return Promise.allSettled(localeFilesArray.map((locale) => import(`../assets/i18n/${dir}/${locale}.json`))).then((results) => {
     results.forEach((result, index) => {
       const locale = localeFilesArray[index]
-      if (result.status === 'fulfilled') {
+      if (locale !== undefined && result.status === 'fulfilled') {
         mergeLocaleMessage(locale, { ...result.value.default })
       }
     })

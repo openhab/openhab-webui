@@ -9,18 +9,18 @@ import type { NetworkGraph, NetworkGraphProvider, NetworkNode, NetworkLink, Netw
 /**
  * Color constants for Z-Wave node types
  */
-const RoleColors: Record<string, string> = {
-  controller: '#FF9800',
-  listening: '#FFEB3B',
-  sleeping: '#607D8B',
-  unknown: '#9E9E9E'
+enum RoleColors {
+  controller = '#FF9800',
+  listening = '#FFEB3B',
+  sleeping = '#607D8B',
+  unknown = '#9E9E9E'
 }
 
-const RoleSizes: Record<string, number> = {
-  controller: 50,
-  listening: 35,
-  sleeping: 30,
-  unknown: 28
+enum RoleSizes {
+  controller = 50,
+  listening = 35,
+  sleeping = 30,
+  unknown = 28
 }
 
 /**

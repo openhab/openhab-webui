@@ -74,7 +74,10 @@ const getChildItemsInColumnsArray = () => {
     }
 
     // add child item to column
-    columns[columnIndex].push(childItems[i])
+    const childItem = childItems[i]
+    if (childItem) {
+      columns[columnIndex].push(childItem)
+    }
   }
 
   return columns
