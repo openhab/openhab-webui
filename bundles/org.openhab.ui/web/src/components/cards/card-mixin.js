@@ -9,28 +9,28 @@ export default {
     type: String,
     element: Object
   },
-  data () {
+  data() {
     return {
       opened: false,
       cardId: this.title
     }
   },
-  mounted () {
+  mounted() {
     // window.addEventListener('popstate', this.back)
   },
-  beforeUnmount () {
+  beforeUnmount() {
     // window.removeEventListener('popstate', this.back)
   },
   computed: {
-    title () {
+    title() {
       if (this.config.title) return this.config.title
-      return (this.element) ? this.element.defaultTitle : '?'
+      return this.element ? this.element.defaultTitle : '?'
     },
-    subtitle () {
+    subtitle() {
       if (this.config.subtitle) return this.config.subtitle
-      return (this.element) ? this.element.defaultSubtitle : '?'
+      return this.element ? this.element.defaultSubtitle : '?'
     },
-    color () {
+    color() {
       if (this.config.backgroundColor) {
         return this.config.backgroundColor
       }
@@ -71,19 +71,24 @@ export default {
     }
   },
   methods: {
-    cardOpening () {
+    cardOpening() {
       this.cardId = this.title + '-' + f7.utils.id()
       // history.pushState({ cardId: this.cardId }, null, window.location.href.split('#card=')[0] + '#' + f7.utils.serializeObject({ card: this.element.key }))
-      setTimeout(() => { this.opened = true })
+      setTimeout(() => {
+        this.opened = true
+      })
     },
-    cardClosed () {
+    cardClosed() {
       // if (history.state.cardId && history.state.cardId === this.cardId) history.back()
       this.opened = false
     },
-    closeCard () {
-      if (this.$refs.card) setTimeout(() => { f7.card.close(this.$refs.card.$el) }, 100)
+    closeCard() {
+      if (this.$refs.card)
+        setTimeout(() => {
+          f7.card.close(this.$refs.card.$el)
+        }, 100)
     },
-    back (evt) {
+    back(evt) {
       console.debug(evt.state)
       if (!evt.state || evt.state.cardId === this.cardId) return
       if (this.opened) this.closeCard()

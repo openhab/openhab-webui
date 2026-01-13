@@ -1,10 +1,6 @@
 // note: this file is generated and should not be edited by hand
 
-import {
-  CircleShape,
-  LineCap,
-  HandleShape
-} from '../common.ts'
+import { CircleShape, LineCap, HandleShape } from '../common.ts'
 
 export interface Config {
   item?: string
@@ -36,8 +32,4 @@ export interface Config {
   variableKey?: string
 }
 
-export {
-  CircleShape,
-  LineCap,
-  HandleShape
-}
+export { CircleShape, LineCap, HandleShape }

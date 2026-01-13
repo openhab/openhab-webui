@@ -1,33 +1,25 @@
 <template>
   <!-- page-with-subnavbar class required on Android -->
-  <f7-page class="item-details-page page-with-subnavbar"
-           @page:beforein="onPageBeforeIn"
-           @page:beforeout="onPageBeforeOut">
+  <f7-page class="item-details-page page-with-subnavbar" @page:beforein="onPageBeforeIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar>
-      <oh-nav-content v-if="ready"
-                      :title="item.name"
-                      :f7router>
+      <oh-nav-content v-if="ready" :title="item.name" :f7router>
         <template v-if="ready" #right>
-          <f7-link v-if="item.editable"
-                   icon-md="material:edit"
-                   href="edit">
+          <f7-link v-if="item.editable" icon-md="material:edit" href="edit">
             {{ theme.md ? '' : 'Edit' }}
           </f7-link>
-          <f7-link v-else
-                   icon-f7="lock_fill"
-                   tooltip="This Item is not editable through the UI"
-                   href="edit">
+          <f7-link v-else icon-f7="lock_fill" tooltip="This Item is not editable through the UI" href="edit">
             {{ theme.md ? '' : 'View' }}
           </f7-link>
         </template>
         <template #after>
           <f7-subnavbar class="item-header">
             <div class="item-icon" v-if="item.name">
-              <oh-icon v-if="item.category"
-                       :icon="item.category"
-                       :state="item.type === 'Image' ? null : (context.store[item.name].state || item.state)"
-                       height="60"
-                       width="60" />
+              <oh-icon
+                v-if="item.category"
+                :icon="item.category"
+                :state="item.type === 'Image' ? null : (context.store[item.name].state || item.state)"
+                height="60"
+                width="60" />
               <span v-else>
                 {{ item.label ? item.label[0] : item.name[0] }}
               </span>
@@ -51,10 +43,7 @@
         <f7-col>
           <f7-block-title>Non-Semantic Tags</f7-block-title>
           <f7-block strong class="tags-block">
-            <f7-chip v-for="tag in nonSemanticTags"
-                     :key="tag"
-                     :text="tag"
-                     media-bg-color="blue">
+            <f7-chip v-for="tag in nonSemanticTags" :key="tag" :text="tag" media-bg-color="blue">
               <template #media>
                 <f7-icon ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
               </template>
@@ -66,12 +55,13 @@
         <f7-col>
           <f7-block-title>Semantic Model</f7-block-title>
           <f7-card>
-            <model-treeview class="model-treeview no-selection-style"
-                            :rootNodes="rootElements"
-                            :includeItemName="true"
-                            :includeItemTags="true"
-                            :selected="modelItem(item)"
-                            @selected="navigateToItem" />
+            <model-treeview
+              class="model-treeview no-selection-style"
+              :rootNodes="rootElements"
+              :includeItemName="true"
+              :includeItemTags="true"
+              :selected="modelItem(item)"
+              @selected="navigateToItem" />
           </f7-card>
         </f7-col>
       </f7-row>
@@ -81,11 +71,7 @@
           <f7-card>
             <f7-list>
               <ul>
-                <item v-for="group in itemGroups"
-                      :key="group.name"
-                      :item="group"
-                      :link="itemLink(group.name)"
-                      :context="context" />
+                <item v-for="group in itemGroups" :key="group.name" :item="group" :link="itemLink(group.name)" :context="context" />
               </ul>
             </f7-list>
           </f7-card>
@@ -94,9 +80,7 @@
       <f7-row v-if="item?.type === 'Group'">
         <f7-col>
           <f7-block-title>Members</f7-block-title>
-          <group-members :group-item="item"
-                         :context="context"
-                         @updated="load" />
+          <group-members :group-item="item" :context="context" @updated="load" />
         </f7-col>
       </f7-row>
       <f7-row v-if="item.name">
@@ -114,22 +98,13 @@
       <f7-row>
         <f7-col>
           <f7-list>
-            <f7-list-button @click="duplicateItem">
-              Duplicate Item
-            </f7-list-button>
-            <f7-list-button @click="copyFileDefinitionToClipboard(ObjectType.ITEM, [item.name])">
-              Copy File Definition
-            </f7-list-button>
-            <f7-list-button v-if="item.editable"
-                            color="red"
-                            @click="deleteItem">
-              Remove Item
-            </f7-list-button>
+            <f7-list-button @click="duplicateItem"> Duplicate Item </f7-list-button>
+            <f7-list-button @click="copyFileDefinitionToClipboard(ObjectType.ITEM, [item.name])"> Copy File Definition </f7-list-button>
+            <f7-list-button v-if="item.editable" color="red" @click="deleteItem"> Remove Item </f7-list-button>
           </f7-list>
           <p class="developer-sidebar-tip text-align-center">
             Tip: Use the developer sidebar (Shift+Alt+D) to
-            <f7-link text="search for usages of this Item"
-                     @click="searchInSidebar" />
+            <f7-link text="search for usages of this Item" @click="searchInSidebar" />
           </p>
         </f7-col>
       </f7-row>

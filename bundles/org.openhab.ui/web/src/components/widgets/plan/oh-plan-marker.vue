@@ -16,39 +16,44 @@
       <div v-if="config.useTooltipAsLabel" style="white-space: nowrap" :style="tooltipStyle">
         {{ tooltip }}
       </div>
-      <oh-icon v-else-if="config.icon"
-               :style="iconStyle"
-               :icon="config.icon"
-               :color="config.iconColor"
-               :width="config.iconWidth || config.iconSize || 40"
-               :height="config.iconHeight || config.iconSize || 40"
-               :state="config.iconUseState ? state : undefined" />
+      <oh-icon
+        v-else-if="config.icon"
+        :style="iconStyle"
+        :icon="config.icon"
+        :color="config.iconColor"
+        :width="config.iconWidth || config.iconSize || 40"
+        :height="config.iconHeight || config.iconSize || 40"
+        :state="config.iconUseState ? state : undefined" />
     </l-icon>
     <l-icon v-else :icon-url="DefaultIcon.iconUrl" :shadow-url="DefaultIcon.shadowUrl" />
     <l-popup v-if="context.editmode && !dragging">
       <div class="display-flex">
-        <f7-link href="#"
-                 class="text-color-theme-alt display-flex flex-direction-column margin-right"
-                 @click="context.editmode.configureWidget(context.component, context.parent)"
-                 icon-f7="square_pencil">
+        <f7-link
+          href="#"
+          class="text-color-theme-alt display-flex flex-direction-column margin-right"
+          @click="context.editmode.configureWidget(context.component, context.parent)"
+          icon-f7="square_pencil">
           Configure
         </f7-link>
-        <f7-link href="#"
-                 class="text-color-theme-alt display-flex flex-direction-column margin-right"
-                 @click="context.editmode.editWidgetCode(context.component, context.parent)"
-                 icon-f7="doc_text">
+        <f7-link
+          href="#"
+          class="text-color-theme-alt display-flex flex-direction-column margin-right"
+          @click="context.editmode.editWidgetCode(context.component, context.parent)"
+          icon-f7="doc_text">
           YAML
         </f7-link>
-        <f7-link href="#"
-                 class="text-color-theme-alt display-flex flex-direction-column margin-right"
-                 @click="context.editmode.copyWidget(context.component, context.parent)"
-                 icon-f7="scissors_alt">
+        <f7-link
+          href="#"
+          class="text-color-theme-alt display-flex flex-direction-column margin-right"
+          @click="context.editmode.copyWidget(context.component, context.parent)"
+          icon-f7="scissors_alt">
           Copy
         </f7-link>
-        <f7-link href="#"
-                 class="text-color-red display-flex flex-direction-column"
-                 @click="context.editmode.removeWidget(context.component, context.parent)"
-                 icon-f7="trash">
+        <f7-link
+          href="#"
+          class="text-color-red display-flex flex-direction-column"
+          @click="context.editmode.removeWidget(context.component, context.parent)"
+          icon-f7="trash">
           Remove
         </f7-link>
       </div>

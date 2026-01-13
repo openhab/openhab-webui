@@ -1,18 +1,15 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="map-editor">
     <f7-navbar no-hairline>
-      <oh-nav-content :title="!ready ? '' : ((createMode ? 'Create map page' : page.config.label) + dirtyIndicator)"
-                      :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
-                      @save="save()"
-                      :f7router />
+      <oh-nav-content
+        :title="!ready ? '' : ((createMode ? 'Create map page' : page.config.label) + dirtyIndicator)"
+        :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
+        @save="save()"
+        :f7router />
     </f7-navbar>
     <f7-toolbar tabbar position="top">
-      <f7-link @click="switchTab('design', fromYaml)" :tab-link-active="currentTab === 'design'" tab-link="#design">
-        Design
-      </f7-link>
-      <f7-link @click="switchTab('code', toYaml)" :tab-link-active="currentTab === 'code'" tab-link="#code">
-        Code
-      </f7-link>
+      <f7-link @click="switchTab('design', fromYaml)" :tab-link-active="currentTab === 'design'" tab-link="#design"> Design </f7-link>
+      <f7-link @click="switchTab('code', toYaml)" :tab-link-active="currentTab === 'code'" tab-link="#code"> Code </f7-link>
     </f7-toolbar>
     <f7-toolbar bottom class="toolbar-details">
       <div style="margin-left: auto">
@@ -22,9 +19,7 @@
     </f7-toolbar>
 
     <f7-tabs class="map-editor-tabs">
-      <f7-tab id="design"
-              class="map-editor-design-tab"
-              :tab-active="currentTab === 'design'">
+      <f7-tab id="design" class="map-editor-design-tab" :tab-active="currentTab === 'design'">
         <f7-block v-if="!ready" class="text-align-center">
           <f7-preloader />
           <div>Loading...</div>
@@ -53,18 +48,20 @@
             </f7-menu>
 
             <f7-list media-list class="markers-list">
-              <f7-list-item v-for="(marker, idx) in page.slots.default"
-                            media-item
-                            :key="idx"
-                            :title="marker.config.label"
-                            :subtitle="marker.config.item || marker.config.location"
-                            link="#"
-                            @click="(ev) => configureMarker(ev, marker, context)">
+              <f7-list-item
+                v-for="(marker, idx) in page.slots.default"
+                media-item
+                :key="idx"
+                :title="marker.config.label"
+                :subtitle="marker.config.item || marker.config.location"
+                link="#"
+                @click="(ev) => configureMarker(ev, marker, context)">
                 <template #media>
-                  <oh-icon v-if="marker.config.icon && marker.config.icon.indexOf('oh:') === 0"
-                           :icon="marker.config.icon.substring(3)"
-                           height="32"
-                           width="32" />
+                  <oh-icon
+                    v-if="marker.config.icon && marker.config.icon.indexOf('oh:') === 0"
+                    :icon="marker.config.icon.substring(3)"
+                    height="32"
+                    width="32" />
                   <f7-icon v-else :f7="markerDefaultIcon(marker)" :size="32" />
                 </template>
                 <template #content-start>
@@ -94,20 +91,17 @@
       </f7-tab>
 
       <f7-tab id="code" :tab-active="currentTab === 'code'">
-        <editor v-if="currentTab === 'code'"
-                :style="{ opacity: previewMode ? '0' : '' }"
-                class="page-code-editor"
-                mode="application/vnd.openhab.uicomponent+yaml;type=map"
-                :value="pageYaml"
-                @input="onEditorInput" />
+        <editor
+          v-if="currentTab === 'code'"
+          :style="{ opacity: previewMode ? '0' : '' }"
+          class="page-code-editor"
+          mode="application/vnd.openhab.uicomponent+yaml;type=map"
+          :value="pageYaml"
+          @input="onEditorInput" />
         <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
       </f7-tab>
     </f7-tabs>
-    <oh-map-page
-      v-if="ready && previewMode"
-      class="map-page"
-      :context="context"
-      :key="pageKey" />
+    <oh-map-page v-if="ready && previewMode" class="map-page" :context="context" :key="pageKey" />
   </f7-page>
 </template>
 

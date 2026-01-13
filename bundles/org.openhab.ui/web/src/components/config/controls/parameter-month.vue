@@ -1,19 +1,16 @@
 <template>
   <ul>
-    <f7-list-item
-      :title="configDescription.label"
-      smart-select
-      :smart-select-params="smartSelectParams"
-      ref="itemRef">
-      <select :name="configDescription.name"
-              @change="updateValue"
-              :multiple="configDescription.multiple"
-              :required="configDescription.required">
-        <option v-if="!configDescription.required && !configDescription.multiple" :value="undefined" :selected="value === null || value === undefined" />
-        <option v-for="(day, idx) in values"
-                :value="day"
-                :key="day"
-                :selected="isSelected(day)">
+    <f7-list-item :title="configDescription.label" smart-select :smart-select-params="smartSelectParams" ref="itemRef">
+      <select
+        :name="configDescription.name"
+        @change="updateValue"
+        :multiple="configDescription.multiple"
+        :required="configDescription.required">
+        <option
+          v-if="!configDescription.required && !configDescription.multiple"
+          :value="undefined"
+          :selected="value === null || value === undefined" />
+        <option v-for="(day, idx) in values" :value="day" :key="day" :selected="isSelected(day)">
           {{ labels[idx] }}
         </option>
       </select>

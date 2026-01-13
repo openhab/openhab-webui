@@ -1,8 +1,5 @@
 <template>
-  <f7-link
-    v-if="iconVisible && runtimeStore.showDeveloperDock"
-    icon-f7="question_circle_fill"
-    @click="f7.emit('toggleDeveloperDock')" />
+  <f7-link v-if="iconVisible && runtimeStore.showDeveloperDock" icon-f7="question_circle_fill" @click="f7.emit('toggleDeveloperDock')" />
   <f7-link
     v-else-if="iconVisible"
     icon-f7="question_circle"

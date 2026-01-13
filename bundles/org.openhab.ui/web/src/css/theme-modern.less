@@ -1,9 +1,9 @@
-@import "color-helpers.less";
-@import "theme-default.less"; // reset all colors to default if they aren't specified in the theme
+@import 'color-helpers.less';
+@import 'theme-default.less'; // reset all colors to default if they aren't specified in the theme
 
 .generate-bg-color-gradient(@color_name) {
   .bg-color-@{color_name} {
-    background: linear-gradient(var(--oh-gradient-angle), ~"var(--oh-@{color_name}-color-shade)", ~"var(--oh-@{color_name}-color-tint)");
+    background: linear-gradient(var(--oh-gradient-angle), ~'var(--oh-@{color_name}-color-shade)', ~'var(--oh-@{color_name}-color-tint)');
   }
 }
 
@@ -11,7 +11,7 @@
   --oh-lightmode-text-color: #333333;
   --oh-darkmode-text-color: #eeeeee;
   --oh-lightmode-text-alt-color: #3636ae;
-  --oh-darkmode-text-alt-color: #36FFae;
+  --oh-darkmode-text-alt-color: #36ffae;
   --oh-lightmode-background-color: #f9f3ff;
   --oh-darkmode-background-color: #19131f;
 

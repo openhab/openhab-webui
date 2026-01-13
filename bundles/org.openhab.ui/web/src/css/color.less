@@ -1,4 +1,4 @@
-@import "color-helpers.less";
+@import 'color-helpers.less';
 
 @colors: red, green, blue, pink, yellow, orange, purple, deeppurple, lightblue, teal, lime, deeporange, gray, black, white;
 
@@ -68,8 +68,6 @@
   --f7-menu-bg-color: color-mix(in srgb, var(--oh-theme-alt-color-shade) 50%, transparent);
 
   --f7-navbar-subtitle-text-color: var(--oh-text-color-transparent);
-
-
 }
 
 // TODO ios f7-bars-bg-color
@@ -88,7 +86,7 @@ each(@colors, .(@color, @index) {
 });
 
 // uncomment to hardcode theme for easy development, have to also comment out the /__theme__ insertion form vite.config.js
-@import "theme-default.less";
+@import 'theme-default.less';
 // @import "theme-vintage.less";
 // @import "theme-modern.less";
 // @import "theme-coastalblues.less";

@@ -6,7 +6,7 @@ const generateCodeForBlock = (block) => {
   const blockTypeId = block.openhab.blockTypeId
   const definition = block.openhab.definition
   const library = block.openhab.library
-  const codeComponent = (definition.slots && definition.slots.code && definition.slots.code[0]) ? definition.slots.code[0] : null
+  const codeComponent = definition.slots && definition.slots.code && definition.slots.code[0] ? definition.slots.code[0] : null
 
   const context = {
     fields: {},
@@ -48,7 +48,11 @@ const generateCodeForBlock = (block) => {
   }
 
   const processPlaceholder = (code, placeholder) => {
-    const placeholderFields = placeholder.replace('{{', '').replace('}}', '').split(':').map((f) => f.trim())
+    const placeholderFields = placeholder
+      .replace('{{', '')
+      .replace('}}', '')
+      .split(':')
+      .map((f) => f.trim())
     if (placeholderFields.length >= 2) {
       const [placeholderType, placeholderName, placeholderOption] = placeholderFields
       switch (placeholderType) {
@@ -56,7 +60,9 @@ const generateCodeForBlock = (block) => {
           context.fields[placeholderName] = block.getFieldValue(placeholderName)
           return code.replace(placeholder, context.fields[placeholderName])
         case 'input':
-          const order = placeholderOption ? javascriptGenerator.forBlock['ORDER_' + placeholderOption.replace('ORDER_', '')] : javascriptGenerator.ORDER_NONE
+          const order = placeholderOption
+            ? javascriptGenerator.forBlock['ORDER_' + placeholderOption.replace('ORDER_', '')]
+            : javascriptGenerator.ORDER_NONE
           context.inputs[placeholderName] = valueToCode(block, placeholderName, order)
           return code.replace(placeholder, context.inputs[placeholderName])
         case 'utility':
@@ -118,14 +124,14 @@ export const defineLibraryToolboxCategory = (library, f7) => (workspace) => {
               switch (b.component) {
                 case 'PresetInput':
                   xml += `<value name="${b.config.name}">`
-                  xml += (b.config.shadow) ? '<shadow ' : '<block '
+                  xml += b.config.shadow ? '<shadow ' : '<block '
                   xml += 'type="' + b.config.type + '">'
                   if (b.config.fields) {
                     for (const fieldName in b.config.fields) {
                       xml += `<field name="${fieldName}">${b.config.fields[fieldName]}</field>`
                     }
                   }
-                  xml += (b.config.shadow) ? '</shadow>' : '</block>'
+                  xml += b.config.shadow ? '</shadow>' : '</block>'
                   xml += '</value>'
                   break
                 case 'PresetField':

@@ -1,10 +1,6 @@
 <template>
   <div>
-    <item-state-preview
-      v-if="model.item.created !== false"
-      :item="model.item"
-      :context="context"
-      :key="f7.utils.id()" />
+    <item-state-preview v-if="model.item.created !== false" :item="model.item" :context="context" :key="f7.utils.id()" />
 
     <f7-block-title>Item</f7-block-title>
     <item-details
@@ -16,13 +12,9 @@
       @item-created="$emit('item-created')"
       @item-removed="$emit('item-removed')"
       @cancel-create="$emit('cancel-create')" />
-    <f7-block-title v-if="model.item.created !== false">
-      Metadata
-    </f7-block-title>
+    <f7-block-title v-if="model.item.created !== false"> Metadata </f7-block-title>
     <metadata-menu v-if="model.item.created !== false" :item="model.item" :f7router />
-    <f7-block-title v-if="model.item.type !== 'Group' && model.item.created !== false">
-      Channel Links
-    </f7-block-title>
+    <f7-block-title v-if="model.item.type !== 'Group' && model.item.created !== false"> Channel Links </f7-block-title>
     <link-details :item="model.item" :links="links" :f7router />
   </div>
 </template>

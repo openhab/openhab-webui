@@ -1,7 +1,7 @@
 import { type VNode } from 'vue'
 
 // recursive function to find VNodes with the class 'item'
-export function findChildNodesWithClassName (nodes: any[], className: string): VNode[] {
+export function findChildNodesWithClassName(nodes: any[], className: string): VNode[] {
   let result: VNode[] = []
 
   nodes.forEach((node) => {

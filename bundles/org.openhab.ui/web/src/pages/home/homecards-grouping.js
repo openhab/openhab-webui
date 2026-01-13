@@ -1,9 +1,15 @@
 export default (model, type, page) => {
   if (!model || !model[type]) return []
-  const cardOrder = (page && page.slots && page.slots[type] && page.slots[type][0] && page.slots[type][0].config && page.slots[type][0].config.cardOrder) ? page.slots[type][0].config.cardOrder : []
+  const cardOrder =
+    page && page.slots && page.slots[type] && page.slots[type][0] && page.slots[type][0].config && page.slots[type][0].config.cardOrder
+      ? page.slots[type][0].config.cardOrder
+      : []
   const elements = [...model[type]].map((e) => {
     if (e.separator) return e
-    const card = (page && page.slots && page.slots[type] && page.slots[type][0] && page.slots[type][0].slots && page.slots[type][0].slots[e.key]) ? page.slots[type][0].slots[e.key][0] : null
+    const card =
+      page && page.slots && page.slots[type] && page.slots[type][0] && page.slots[type][0].slots && page.slots[type][0].slots[e.key]
+        ? page.slots[type][0].slots[e.key][0]
+        : null
     if (card) e.card = card
     return e
   })

@@ -1,42 +1,32 @@
 <template>
   <f7-page>
-        <f7-navbar no-hairline>
-            <oh-nav-content :title="!ready ? '' : ((createMode ? 'Create Theme' : 'Theme: ' + theme.config.label) + dirtyIndicator)"
-                      :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
-                      @save="save()"
-                      :f7router />
+    <f7-navbar no-hairline>
+      <oh-nav-content
+        :title="!ready ? '' : ((createMode ? 'Create Theme' : 'Theme: ' + theme.config.label) + dirtyIndicator)"
+        :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
+        @save="save()"
+        :f7router />
     </f7-navbar>
     <f7-toolbar tabbar position="top">
-      <f7-link tab-link="#design" tab-link-active>
-        Design
-      </f7-link>
-      <f7-link tab-link="#code">
-        Code
-      </f7-link>
+      <f7-link tab-link="#design" tab-link-active> Design </f7-link>
+      <f7-link tab-link="#code"> Code </f7-link>
     </f7-toolbar>
 
     <f7-tabs class="theme-editor-tabs">
-        <f7-tab class="design"
-                id="design"
-                tab-active>
-            <f7-block form class="block-narrow">
-                <f7-col>
-                    <f7-block-title medium>
-                        Theme configuration
-                    </f7-block-title>
-                    <config-sheet
-                        :parameter-groups="configDescription.parameterGroups"
-                        :parameters="configDescription.parameters"
-                        :configuration="theme.config" />
-                </f7-col>
-            </f7-block>
-        </f7-tab>
-        <f7-tab class="code"
-                id="code">
-        </f7-tab>
+      <f7-tab class="design" id="design" tab-active>
+        <f7-block form class="block-narrow">
+          <f7-col>
+            <f7-block-title medium> Theme configuration </f7-block-title>
+            <config-sheet
+              :parameter-groups="configDescription.parameterGroups"
+              :parameters="configDescription.parameters"
+              :configuration="theme.config" />
+          </f7-col>
+        </f7-block>
+      </f7-tab>
+      <f7-tab class="code" id="code"> </f7-tab>
     </f7-tabs>
   </f7-page>
-
 </template>
 
 <script lang="ts">
@@ -52,7 +42,7 @@ const pageDescription : RootUiComponent = {
     tags: [],
     config: { },
     props: {
-        parameterGroups: [ 
+        parameterGroups: [
             {
                 name: 'general',
                 label: 'General Settings',
@@ -61,7 +51,7 @@ const pageDescription : RootUiComponent = {
                 context: ""
             } satisfies ConfigDescriptionParameterGroup
         ],
-        parameters: [ 
+        parameters: [
             {
                 name: 'page-setting-1',
                 type: 'TEXT',
@@ -73,17 +63,17 @@ const pageDescription : RootUiComponent = {
             } satisfies ConfigDescriptionParameter
         ]
     }
-}   
+}
 
 const slotRootConfigDescription = {
-    parameterGroups: [ 
+    parameterGroups: [
         {
             name: ':root',
             label: 'Base Settings',
             description: 'Settings that apply to all themes'
         } as Partial<ConfigDescriptionParameterGroup>,
     ],
-    parameters: [ 
+    parameters: [
         {
             name: 'css-file',
             type: 'TEXT',
@@ -125,7 +115,7 @@ const slotRootConfigDescription = {
 }
 
 const slotDarkConfigDescription = {
-    parameterGroups: [ 
+    parameterGroups: [
         {
             name: ':root',
             label: 'Base Settings',
@@ -181,5 +171,4 @@ export default {
         }
     }
 }
-
 </script>

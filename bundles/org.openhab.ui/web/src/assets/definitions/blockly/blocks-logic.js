@@ -1,6 +1,6 @@
 /*
-* Adds new blocks to the logic section
-*/
+ * Adds new blocks to the logic section
+ */
 
 import * as Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript'
@@ -8,13 +8,12 @@ import { valueToCode } from '@/assets/definitions/blockly/utils.js'
 
 export default function (f7) {
   /*
-* Add a block returning undefined
-* Blockly part
-*/
+   * Add a block returning undefined
+   * Blockly part
+   */
   Blockly.Blocks['oh_logic_undefined'] = {
     init: function () {
-      this.appendDummyInput()
-        .appendField('undefined')
+      this.appendDummyInput().appendField('undefined')
       this.setOutput(true, null)
       this.setColour('%{BKY_LOGIC_HUE}')
       this.setTooltip('returns undefined as value')
@@ -23,9 +22,9 @@ export default function (f7) {
   }
 
   /*
-  * returns undefined
-  * Code part
-  */
+   * returns undefined
+   * Code part
+   */
   javascriptGenerator.forBlock['oh_logic_undefined'] = function (block) {
     return ['undefined', javascriptGenerator.ORDER_ATOMIC]
   }
@@ -39,12 +38,19 @@ export default function (f7) {
   Blockly.Blocks['oh_logic_multiple'] = {
     init: function () {
       const block = this
-      this.appendDummyInput().appendField(new Blockly.FieldDropdown([
-        ['AND', 'AND'], ['OR', 'OR']
-      ], function (newValue) {
-        block.updateOperandLabel(newValue)
-        return newValue
-      }), 'operand')
+      this.appendDummyInput().appendField(
+        new Blockly.FieldDropdown(
+          [
+            ['AND', 'AND'],
+            ['OR', 'OR']
+          ],
+          function (newValue) {
+            block.updateOperandLabel(newValue)
+            return newValue
+          }
+        ),
+        'operand'
+      )
       this.appendDummyInput('OPERAND_LABEL').appendField('all of', 'OPERAND_LABEL_TEXT')
       this.appendValueInput('OPER1').setCheck('Boolean')
       this.appendValueInput('OPER2').setCheck('Boolean')
@@ -77,8 +83,7 @@ export default function (f7) {
     domToMutation: function (xmlElement) {
       this.numberOfChildren = parseInt(xmlElement.getAttribute('children'), 10) || 0
       for (let i = 3; i <= this.numberOfChildren; i++) {
-        this.appendValueInput('OPER' + i)
-          .setCheck('Boolean')
+        this.appendValueInput('OPER' + i).setCheck('Boolean')
       }
     },
     decompose: function (workspace) {
@@ -101,8 +106,7 @@ export default function (f7) {
       let clauseBlock = containerBlock.getInputTargetBlock('STACK')
       while (clauseBlock) {
         this.numberOfChildren++
-        let operatorInput = this.appendValueInput('OPER' + this.numberOfChildren)
-          .setCheck('Boolean')
+        let operatorInput = this.appendValueInput('OPER' + this.numberOfChildren).setCheck('Boolean')
         if (clauseBlock.valueConnection_) {
           operatorInput.connection.connect(clauseBlock.valueConnection_)
         }
@@ -122,9 +126,9 @@ export default function (f7) {
   }
 
   /*
-  * Generates the JS code for the AND / OR block
-  * Code part
-  */
+   * Generates the JS code for the AND / OR block
+   * Code part
+   */
   javascriptGenerator.forBlock['oh_logic_multiple'] = function (block) {
     let operator = block.getFieldValue('operand') === 'AND' ? '&&' : '||'
     let code = ''
@@ -139,33 +143,29 @@ export default function (f7) {
   }
 
   /*
-  * Block for the mutator container that holds the condition blocks
-  */
-  Blockly.Blocks['oh_logic_multiple_container_block'] =
-    {
-      init: function () {
-        this.setColour('%{BKY_LOGIC_HUE}')
-        this.appendDummyInput()
-          .appendField('Operation AND/OR')
-        this.appendStatementInput('STACK')
-        this.setTooltip('multiple and control')
-        this.contextMenu = false
-      }
+   * Block for the mutator container that holds the condition blocks
+   */
+  Blockly.Blocks['oh_logic_multiple_container_block'] = {
+    init: function () {
+      this.setColour('%{BKY_LOGIC_HUE}')
+      this.appendDummyInput().appendField('Operation AND/OR')
+      this.appendStatementInput('STACK')
+      this.setTooltip('multiple and control')
+      this.contextMenu = false
     }
+  }
 
   /*
-  * Block for the condition operands in the mutator
-  */
-  Blockly.Blocks['oh_logic_multiple_condition_block'] =
-    {
-      init: function () {
-        this.setColour('%{BKY_LOGIC_HUE}')
-        this.appendDummyInput()
-          .appendField('condition')
-        this.setPreviousStatement(true)
-        this.setNextStatement(true)
-        this.setTooltip('conditionalStatement')
-        this.contextMenu = false
-      }
+   * Block for the condition operands in the mutator
+   */
+  Blockly.Blocks['oh_logic_multiple_condition_block'] = {
+    init: function () {
+      this.setColour('%{BKY_LOGIC_HUE}')
+      this.appendDummyInput().appendField('condition')
+      this.setPreviousStatement(true)
+      this.setNextStatement(true)
+      this.setTooltip('conditionalStatement')
+      this.contextMenu = false
     }
+  }
 }

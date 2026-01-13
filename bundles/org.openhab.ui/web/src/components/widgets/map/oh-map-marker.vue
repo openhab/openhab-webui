@@ -1,17 +1,9 @@
 <template>
-  <l-marker ref="marker"
-            v-if="coords"
-            :key="markerKey"
-            :lat-lng="coords"
-            @click="performAction">
+  <l-marker ref="marker" v-if="coords" :key="markerKey" :lat-lng="coords" @click="performAction">
     <l-tooltip v-if="config.label">
       {{ config.label }}
     </l-tooltip>
-    <l-icon
-      v-if="icon"
-      :icon-size="icon.iconSize"
-      :icon-url="icon.iconUrl"
-      :shadow-url="icon?.shadowUrl" />
+    <l-icon v-if="icon" :icon-size="icon.iconSize" :icon-url="icon.iconUrl" :shadow-url="icon?.shadowUrl" />
   </l-marker>
 </template>
 

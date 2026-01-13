@@ -1,18 +1,12 @@
 <template>
-  <f7-list-item v-if="ready"
-                :title="title || 'Thing'"
-                smart-select
-                :smart-select-params="smartSelectParams"
-                ref="smartSelect">
-    <select :name="name"
-            :multiple="multiple"
-            @change="select"
-            :required="required">
+  <f7-list-item v-if="ready" :title="title || 'Thing'" smart-select :smart-select-params="smartSelectParams" ref="smartSelect">
+    <select :name="name" :multiple="multiple" @change="select" :required="required">
       <option v-if="!multiple" value="" />
-      <option v-for="thing in things"
-              :value="thing.UID"
-              :key="thing.UID"
-              :selected="multiple ? value.indexOf(thing.UID) >= 0 : value === thing.UID">
+      <option
+        v-for="thing in things"
+        :value="thing.UID"
+        :key="thing.UID"
+        :selected="multiple ? value.indexOf(thing.UID) >= 0 : value === thing.UID">
         {{ thing.label ? thing.label + ' (' + thing.UID + ')' : thing.UID }}
       </option>
     </select>

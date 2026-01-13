@@ -1,12 +1,7 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" name="channel-duplicate">
     <f7-navbar>
-      <oh-nav-content title="Duplicate channel"
-                      :subtitle="thing.label"
-                      back-link="Cancel"
-                      save-link="Save"
-                      @save="save()"
-                      :f7router />
+      <oh-nav-content title="Duplicate channel" :subtitle="thing.label" back-link="Cancel" save-link="Save" @save="save()" :f7router />
     </f7-navbar>
     <f7-block class="block-narrow">
       <f7-col v-if="channel">
@@ -14,13 +9,9 @@
         <channel-general-settings :channel="channel" :channelType="channelType" :createMode="true" />
       </f7-col>
       <f7-col v-if="channelType != null">
-        <f7-block-title v-if="configDescription.parameters">
-          Configuration
-        </f7-block-title>
+        <f7-block-title v-if="configDescription.parameters"> Configuration </f7-block-title>
         <f7-block-footer v-else-if="noConfig" class="padding">
-          This channel has no configuration.<br><br><f7-link back>
-            Go Back
-          </f7-link>
+          This channel has no configuration.<br /><br /><f7-link back> Go Back </f7-link>
         </f7-block-footer>
         <config-sheet
           :parameter-groups="configDescription.parameterGroups"

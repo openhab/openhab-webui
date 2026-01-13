@@ -5,16 +5,23 @@ import { OhChartVisualmap, Orient, OhTimeSeries, OhAggregateSeries, OhValueAxis 
 
 import * as api from '@/api'
 
-function parseUnit (item: api.EnrichedItem | api.GroupItem) : string {
-  let unit = ('transformedState' in item && item.transformedState) ? item.transformedState.split(' ')[1] :
-    ('state' in item) ? (typeof item.state === 'string' ? item.state.split(' ')[1] : undefined) :
-      ('stateDescription' in item) ? (item as any).stateDescription.pattern?.split(' ')[1] : null
+function parseUnit(item: api.EnrichedItem | api.GroupItem): string {
+  let unit =
+    'transformedState' in item && item.transformedState
+      ? item.transformedState.split(' ')[1]
+      : 'state' in item
+        ? typeof item.state === 'string'
+          ? item.state.split(' ')[1]
+          : undefined
+        : 'stateDescription' in item
+          ? (item as any).stateDescription.pattern?.split(' ')[1]
+          : null
   if (unit) unit = unit.replace(/^%%/, '%')
 
   return unit || ''
 }
 
-export function getYAxis (item : api.EnrichedItem | api.GroupItem, coordSettings : TimeCoordSettings | AggregateCoordSettings) : number {
+export function getYAxis(item: api.EnrichedItem | api.GroupItem, coordSettings: TimeCoordSettings | AggregateCoordSettings): number {
   let unit = parseUnit(item)
   let unitAxis = coordSettings.valueAxesOptions.findIndex((a) => a.unit === unit)
   if (unitAxis >= 0) {
@@ -25,7 +32,7 @@ export function getYAxis (item : api.EnrichedItem | api.GroupItem, coordSettings
   }
 }
 
-export function renderVisualMap (visualMap: VisualMap) : api.UiComponent[] {
+export function renderVisualMap(visualMap: VisualMap): api.UiComponent[] {
   const config: OhChartVisualmap.Config = {
     show: true,
     orient: Orient.horizontal,
@@ -50,13 +57,15 @@ export function renderVisualMap (visualMap: VisualMap) : api.UiComponent[] {
     }
   }
 
-  return [{
-    component: 'oh-chart-visualmap',
-    config: config as Record<string, unknown>
-  }]
+  return [
+    {
+      component: 'oh-chart-visualmap',
+      config: config as Record<string, unknown>
+    }
+  ]
 }
 
-function getSplitLineConfig (split: ValueAxisSplitOptions | undefined): Record<string, any> {
+function getSplitLineConfig(split: ValueAxisSplitOptions | undefined): Record<string, any> {
   const config: Record<string, any> = {}
 
   const noSplitLine = [ValueAxisSplitOptions.none, ValueAxisSplitOptions.area, ValueAxisSplitOptions.area_minor]
@@ -70,7 +79,12 @@ function getSplitLineConfig (split: ValueAxisSplitOptions | undefined): Record<s
     config.minorSplitLine = { show: true }
   }
 
-  const showSplitArea = [ValueAxisSplitOptions.area, ValueAxisSplitOptions.line_area, ValueAxisSplitOptions.area_minor, ValueAxisSplitOptions.all]
+  const showSplitArea = [
+    ValueAxisSplitOptions.area,
+    ValueAxisSplitOptions.line_area,
+    ValueAxisSplitOptions.area_minor,
+    ValueAxisSplitOptions.all
+  ]
   if (split && showSplitArea.includes(split)) {
     config.splitArea = { show: true }
   }
@@ -78,8 +92,8 @@ function getSplitLineConfig (split: ValueAxisSplitOptions | undefined): Record<s
   return config
 }
 
-export function renderValueAxis (options : ValueAxisOptions) : api.UiComponent {
-  const config : OhValueAxis.Config = {
+export function renderValueAxis(options: ValueAxisOptions): api.UiComponent {
+  const config: OhValueAxis.Config = {
     gridIndex: 0,
     name: options.name || options.unit,
     scale: options.scale
@@ -108,12 +122,12 @@ export function renderValueAxis (options : ValueAxisOptions) : api.UiComponent {
   }
 }
 
-export function toPrimitiveMarkers (marker: Marker | undefined): Array<OhTimeSeries.Markers | OhAggregateSeries.Markers> {
-  const markers : Array<OhTimeSeries.Markers | OhAggregateSeries.Markers> = []
+export function toPrimitiveMarkers(marker: Marker | undefined): Array<OhTimeSeries.Markers | OhAggregateSeries.Markers> {
+  const markers: Array<OhTimeSeries.Markers | OhAggregateSeries.Markers> = []
 
   if (!marker || marker === Marker.none) return markers
 
-  switch(marker) {
+  switch (marker) {
     case Marker.all:
       markers.push(OhTimeSeries.Markers.min, OhTimeSeries.Markers.max, OhTimeSeries.Markers.avg)
       break

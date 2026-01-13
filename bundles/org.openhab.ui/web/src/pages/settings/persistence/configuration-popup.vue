@@ -3,25 +3,16 @@
     <f7-page>
       <f7-navbar>
         <f7-nav-left>
-          <f7-link icon-ios="f7:arrow_left"
-                   icon-md="material:arrow_back"
-                   icon-aurora="f7:arrow_left"
-                   popup-close />
+          <f7-link icon-ios="f7:arrow_left" icon-md="material:arrow_back" icon-aurora="f7:arrow_left" popup-close />
         </f7-nav-left>
-        <f7-nav-title>
-          Configure strategies and filters for Item(s)
-        </f7-nav-title>
+        <f7-nav-title> Configure strategies and filters for Item(s) </f7-nav-title>
         <f7-nav-right>
-          <f7-link v-show="currentConfiguration.items.length > 0" @click="updateModuleConfig">
-            Done
-          </f7-link>
+          <f7-link v-show="currentConfiguration.items.length > 0" @click="updateModuleConfig"> Done </f7-link>
         </f7-nav-right>
       </f7-navbar>
       <f7-block class="no-margin no-padding">
         <f7-col>
-          <f7-block-title medium class="padding-bottom">
-            Items
-          </f7-block-title>
+          <f7-block-title medium class="padding-bottom"> Items </f7-block-title>
           <f7-list>
             <f7-list-item title="Persist all Items">
               <template #after>
@@ -31,73 +22,75 @@
           </f7-list>
           <f7-list>
             <f7-list-group>
-              <item-picker key="groups"
-                           label="Select groups"
-                           name="groupItems"
-                           :multiple="true"
-                           filterType="Group"
-                           :disabled="allItemsSelected ? true : null"
-                           :value="groupItems"
-                           @input="groupItems = $event" />
+              <item-picker
+                key="groups"
+                label="Select groups"
+                name="groupItems"
+                :multiple="true"
+                filterType="Group"
+                :disabled="allItemsSelected ? true : null"
+                :value="groupItems"
+                @input="groupItems = $event" />
             </f7-list-group>
             <f7-list-item>... whose members are to be persisted.</f7-list-item>
           </f7-list>
           <f7-list>
             <f7-list-group>
-              <item-picker key="items"
-                           label="Select Items"
-                           name="items"
-                           :multiple="true"
-                           :disabled="allItemsSelected ? true : null"
-                           :value="items"
-                           @input="items = $event" />
+              <item-picker
+                key="items"
+                label="Select Items"
+                name="items"
+                :multiple="true"
+                :disabled="allItemsSelected ? true : null"
+                :value="items"
+                @input="items = $event" />
             </f7-list-group>
             <f7-list-item>... to be persisted.</f7-list-item>
           </f7-list>
           <f7-list>
             <f7-list-group>
-              <item-picker key="exclude-groups"
-                           label="Select exclude groups"
-                           name="excludeGroupItems"
-                           :multiple="true"
-                           filterType="Group"
-                           :disabled="!anySelected ? true : null"
-                           :value="excludeGroupItems"
-                           @input="excludeGroupItems = $event" />
+              <item-picker
+                key="exclude-groups"
+                label="Select exclude groups"
+                name="excludeGroupItems"
+                :multiple="true"
+                filterType="Group"
+                :disabled="!anySelected ? true : null"
+                :value="excludeGroupItems"
+                @input="excludeGroupItems = $event" />
             </f7-list-group>
             <f7-list-item>... whose members are to be excluded from persistence.</f7-list-item>
           </f7-list>
           <f7-list>
             <f7-list-group>
-              <item-picker key="exclude-items"
-                           label="Select exclude Items"
-                           name="excludeItems"
-                           :multiple="true"
-                           :disabled="!anySelected ? true : null"
-                           :value="excludeItems"
-                           @input="excludeItems = $event" />
+              <item-picker
+                key="exclude-items"
+                label="Select exclude Items"
+                name="excludeItems"
+                :multiple="true"
+                :disabled="!anySelected ? true : null"
+                :value="excludeItems"
+                @input="excludeItems = $event" />
             </f7-list-group>
             <f7-list-item>... to be excluded from persistence.</f7-list-item>
           </f7-list>
         </f7-col>
         <f7-col>
-          <f7-block-title medium class="padding-bottom">
-            Strategies
-          </f7-block-title>
-          <strategy-picker title="Select strategies"
-                           name="strategies"
-                           :strategies="strategies"
-                           :value="currentConfiguration.strategies"
-                           :suggested="suggestedStrategies"
-                           @strategies-selected="currentConfiguration.strategies = $event" />
+          <f7-block-title medium class="padding-bottom"> Strategies </f7-block-title>
+          <strategy-picker
+            title="Select strategies"
+            name="strategies"
+            :strategies="strategies"
+            :value="currentConfiguration.strategies"
+            :suggested="suggestedStrategies"
+            @strategies-selected="currentConfiguration.strategies = $event" />
         </f7-col>
         <f7-col>
-          <f7-block-title medium class="padding-bottom">
-            Filters
-          </f7-block-title>
-          <filter-picker :filters="filters"
-                         :value="currentConfiguration.filters"
-                         @filters-selected="currentConfiguration.filters = $event" />
+          <f7-block-title medium class="padding-bottom"> Filters </f7-block-title>
+          <filter-picker
+            :filters="filters"
+            :value="currentConfiguration.filters"
+            @filters-selected="currentConfiguration.filters = $event" />
         </f7-col>
       </f7-block>
     </f7-page>

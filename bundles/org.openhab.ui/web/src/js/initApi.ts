@@ -4,7 +4,7 @@ import { getAccessToken, getTokenInCustomHeader, getBasicCredentials } from '@/j
 class ApiError extends Error {
   public response: Response
 
-  constructor (message : string, response: Response) {
+  constructor(message: string, response: Response) {
     super(message + ` (status: ${response?.status}, url: ${response?.url})`)
 
     this.name = 'ApiError'
@@ -29,13 +29,13 @@ client.interceptors.request.use((request, options) => {
 
 client.interceptors.response.use((response) => {
   if (response.status >= 500 && response.status <= 599) {
-    throw new ApiError('Server error',  response)
+    throw new ApiError('Server error', response)
   } else if (response.status === 400) {
-    throw new ApiError('Bad request',  response)
+    throw new ApiError('Bad request', response)
   } else if (response.status === 404) {
-    throw new ApiError('Not Found',  response)
+    throw new ApiError('Not Found', response)
   } else if (response.status >= 400) {
-    throw new ApiError('Client error',  response)
+    throw new ApiError('Client error', response)
   }
 
   return response

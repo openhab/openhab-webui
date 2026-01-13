@@ -25,25 +25,30 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
   const firmwares = ref<api.FirmwareStatus>()
 
   // watch
-  watch(thing, () => {
-    if (!loading.value) {// ignore changes during loading
-      // create object clone to be able to delete the status part
-      // which can change from eventsource but doesn't mean a thing modification
-      let thingClone: any = cloneDeep(thing.value)
-      let savedThingClone: any = cloneDeep(savedThing.value)
-      if (!thingClone || !savedThingClone) return
+  watch(
+    thing,
+    () => {
+      if (!loading.value) {
+        // ignore changes during loading
+        // create object clone to be able to delete the status part
+        // which can change from eventsource but doesn't mean a thing modification
+        let thingClone: any = cloneDeep(thing.value)
+        let savedThingClone: any = cloneDeep(savedThing.value)
+        if (!thingClone || !savedThingClone) return
 
-      // check if the configuration has changed between the thing and the original/saved version
-      configDirty.value = !fastDeepEqual(thingClone.configuration, savedThingClone.configuration)
+        // check if the configuration has changed between the thing and the original/saved version
+        configDirty.value = !fastDeepEqual(thingClone.configuration, savedThingClone.configuration)
 
-      // check if the rest of the thing has changed between the thing and the original/saved version
-      delete thingClone.statusInfo
-      delete thingClone.configuration
-      delete savedThingClone.statusInfo
-      delete savedThingClone.configuration
-      thingDirty.value = !fastDeepEqual(thingClone, savedThingClone)
-    }
-  }, { deep: true })
+        // check if the rest of the thing has changed between the thing and the original/saved version
+        delete thingClone.statusInfo
+        delete thingClone.configuration
+        delete savedThingClone.statusInfo
+        delete savedThingClone.configuration
+        thingDirty.value = !fastDeepEqual(thingClone, savedThingClone)
+      }
+    },
+    { deep: true }
+  )
 
   // computed
   const editable = computed(() => thing.value?.editable)
@@ -51,7 +56,7 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
   const hasLinkedItems = computed(() => thing.value?.channels?.find((c) => c.linkedItems?.length))
 
   // methods
-  async function loadThingActions (thingUID: string): Promise<void> {
+  async function loadThingActions(thingUID: string): Promise<void> {
     try {
       const data = await api.getAvailableActionsForThing({ thingUID })
       if (!data) {
@@ -73,10 +78,10 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
     }
   }
 
-  async function loadConfigDescriptions (thingUID: string): Promise<void> {
+  async function loadConfigDescriptions(thingUID: string): Promise<void> {
     try {
       const data = await api.getConfigDescriptionByUri({ uri: 'thing:' + thingUID })
-      if(!data) {
+      if (!data) {
         configDescriptions.value = null
         return
       }
@@ -90,65 +95,71 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
     }
   }
 
-  async function loadFirmwares (thingUID: string) {
+  async function loadFirmwares(thingUID: string) {
     // hey-api still looks for Content-Type with a 204 response and if not found, returns the stream. By forcing parsing as json, it will return an empty object.
-    api.getThingFirmwareStatus({ thingUID }, { parseAs: 'json' }).then((data) => {
-      if (data && Object.keys(data).length === 0) {
-        console.debug(`Firmware info not available for Thing ${thingUID}`)
-      }
-      firmwares.value = data!
-    }).catch((err) => {
-      console.debug(`Firmware info not available for Thing ${thingUID}: ` + err.message)
-    })
+    api
+      .getThingFirmwareStatus({ thingUID }, { parseAs: 'json' })
+      .then((data) => {
+        if (data && Object.keys(data).length === 0) {
+          console.debug(`Firmware info not available for Thing ${thingUID}`)
+        }
+        firmwares.value = data!
+      })
+      .catch((err) => {
+        console.debug(`Firmware info not available for Thing ${thingUID}: ` + err.message)
+      })
   }
 
-  function load (thingUID: string, loadingFinishedCallback: (success: boolean) => void) {
+  function load(thingUID: string, loadingFinishedCallback: (success: boolean) => void) {
     if (loading.value) return
     loading.value = true
 
-    api.getThingById({ thingUID }).then((data) => {
-      if(!data) {
-        console.warn('Thing not found')
-        loadingFinishedCallback(false)
-        loading.value = false
-        return
-      }
+    api
+      .getThingById({ thingUID })
+      .then((data) => {
+        if (!data) {
+          console.warn('Thing not found')
+          loadingFinishedCallback(false)
+          loading.value = false
+          return
+        }
 
-      thing.value = data
-
-      Promise.all([
-        api.getThingTypeById({ thingTypeUID: thing.value!.thingTypeUID }),
-        api.getChannelTypes({ prefixes: 'system,' + thing.value.thingTypeUID.split(':')[0] }),
-        loadThingActions(thingUID)
-      ]).then((data2) => {
-        thingType.value = data2[0]
-        channelTypes.value = data2[1]
+        thing.value = data
 
         Promise.all([
-          loadConfigDescriptions(thingUID),
-          loadFirmwares(thingUID),
-          // api.get('/rest/things/' + thingUID + '/config/status').then((statusData: any) => {
-          api.getThingConfigStatus({ thingUID }).then((data) => {
-            configStatusInfo.value = data || null
+          api.getThingTypeById({ thingTypeUID: thing.value!.thingTypeUID }),
+          api.getChannelTypes({ prefixes: 'system,' + thing.value.thingTypeUID.split(':')[0] }),
+          loadThingActions(thingUID)
+        ]).then((data2) => {
+          thingType.value = data2[0]
+          channelTypes.value = data2[1]
+
+          Promise.all([
+            loadConfigDescriptions(thingUID),
+            loadFirmwares(thingUID),
+            // api.get('/rest/things/' + thingUID + '/config/status').then((statusData: any) => {
+            api.getThingConfigStatus({ thingUID }).then((data) => {
+              configStatusInfo.value = data || null
+            })
+          ]).then(() => {
+            savedThing.value = cloneDeep(thing.value)
+            loadingFinishedCallback(true)
+            loading.value = false
           })
-        ]).then(() => {
-          savedThing.value = cloneDeep(thing.value)
-          loadingFinishedCallback(true)
-          loading.value = false
         })
       })
-    }).catch((err) => {
-      console.warn('Cannot load Thing: ' + err.message)
-      loadingFinishedCallback(false)
-      loading.value = false
-    })
+      .catch((err) => {
+        console.warn('Cannot load Thing: ' + err.message)
+        loadingFinishedCallback(false)
+        loading.value = false
+      })
   }
 
-  function save (forceSaveThing: boolean = false) {
+  function save(forceSaveThing: boolean = false) {
     if (!editable.value || !thing.value) return
 
     let endpoint: string, payload: any, successMessage: string
-    let promise : Promise<api.EnrichedThing | undefined>
+    let promise: Promise<api.EnrichedThing | undefined>
     // if configDirty flag is set, assume the config has to be saved with PUT /rest/things/:thingId/config
     if (configDirty.value && !thingDirty.value && !forceSaveThing) {
       successMessage = 'Thing configuration updated'
@@ -159,27 +170,33 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
       promise = api.updateThing({ thingUID: thing.value.UID, thing: thing.value })
     }
 
-    promise.then((data) => {
-      if (configDirty.value && !thingDirty.value && !forceSaveThing) configDirty.value = false
-      thingDirty.value = false
-      if (configDirty.value) {
-        // if still dirty, save again to save the configuration
-        save()
-      }
-      f7.toast.create({
-        text: successMessage,
-        destroyOnClose: true,
-        closeTimeout: 2000
-      }).open()
-    }).catch((err) => {
-      if (err.response?.status === 409 || err.response?.statusText === 'Conflict') {
-        f7.toast.create({
-          text: 'Cannot modify configuration of uninitialized Thing',
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-      }
-    })
+    promise
+      .then((data) => {
+        if (configDirty.value && !thingDirty.value && !forceSaveThing) configDirty.value = false
+        thingDirty.value = false
+        if (configDirty.value) {
+          // if still dirty, save again to save the configuration
+          save()
+        }
+        f7.toast
+          .create({
+            text: successMessage,
+            destroyOnClose: true,
+            closeTimeout: 2000
+          })
+          .open()
+      })
+      .catch((err) => {
+        if (err.response?.status === 409 || err.response?.statusText === 'Conflict') {
+          f7.toast
+            .create({
+              text: 'Cannot modify configuration of uninitialized Thing',
+              destroyOnClose: true,
+              closeTimeout: 2000
+            })
+            .open()
+        }
+      })
   }
 
   return {

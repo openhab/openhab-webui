@@ -77,7 +77,7 @@ interface ScreenInfo {
  *
  * @param properties
  */
-export function useWidgetExpression (properties: { context?: WidgetContext, props?: api.ConfigDescription } = {}) {
+export function useWidgetExpression(properties: { context?: WidgetContext; props?: api.ConfigDescription } = {}) {
   // imports
   const userStore = useUserStore()
   const uiOptionsStore = useUIOptionsStore()
@@ -110,7 +110,7 @@ export function useWidgetExpression (properties: { context?: WidgetContext, prop
   })
 
   // methods
-  function getAllVars (context: WidgetContext): Record<string, any> {
+  function getAllVars(context: WidgetContext): Record<string, any> {
     const vars: Record<string, any> = {}
     if (context.vars) {
       for (const varKey in context.vars) {
@@ -141,7 +141,7 @@ export function useWidgetExpression (properties: { context?: WidgetContext, prop
    * @param props the props to make available to the expression (not required if already provided as composable property)
    * @returns the result of the expression evaluation
    */
-  function evaluateExpression (key: string, value: any, context?: WidgetContext, props?: api.ConfigDescription): any {
+  function evaluateExpression(key: string, value: any, context?: WidgetContext, props?: api.ConfigDescription): any {
     if (value === null) return null
     const ctx = context || properties.context
     if (!ctx) return null

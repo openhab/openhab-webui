@@ -1,14 +1,9 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar>
-      <oh-nav-content title="Items"
-                      back-link="Settings"
-                      back-link-url="/settings/"
-                      :f7router>
+      <oh-nav-content title="Items" back-link="Settings" back-link-url="/settings/" :f7router>
         <template #right>
-          <f7-link icon-md="material:done_all"
-                   @click="toggleCheck()"
-                   :text="(!theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
+          <f7-link icon-md="material:done_all" @click="toggleCheck()" :text="(!theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
         </template>
       </oh-nav-content>
       <f7-subnavbar :inner="false" v-show="initSearchbar">
@@ -24,36 +19,29 @@
       </f7-subnavbar>
     </f7-navbar>
 
-    <f7-toolbar v-if="showCheckboxes"
-                class="contextual-toolbar"
-                :class="{ navbar: theme.md }"
-                bottom-ios
-                bottom-aurora>
+    <f7-toolbar v-if="showCheckboxes" class="contextual-toolbar" :class="{ navbar: theme.md }" bottom-ios bottom-aurora>
       <div v-if="!theme.md && selectedItems.length > 0" class="display-flex justify-content-center" style="width: 100%">
-        <f7-link v-show="selectedItems.length"
-                 color="red"
-                 class="delete display-flex flex-direction-row margin-right"
-                 icon-ios="f7:trash"
-                 icon-aurora="f7:trash"
-                 @click="removeSelected">
+        <f7-link
+          v-show="selectedItems.length"
+          color="red"
+          class="delete display-flex flex-direction-row margin-right"
+          icon-ios="f7:trash"
+          icon-aurora="f7:trash"
+          @click="removeSelected">
           Remove
         </f7-link>
-        <f7-link v-show="selectedItems.length"
-                 color="blue"
-                 class="copy display-flex flex-direction-row"
-                 icon-ios="f7:square_on_square"
-                 icon-aurora="f7:square_on_square"
-                 @click="copySelected">
+        <f7-link
+          v-show="selectedItems.length"
+          color="blue"
+          class="copy display-flex flex-direction-row"
+          icon-ios="f7:square_on_square"
+          icon-aurora="f7:square_on_square"
+          @click="copySelected">
           &nbsp;Copy
         </f7-link>
       </div>
-      <f7-link v-if="theme.md"
-               icon-md="material:close"
-               icon-color="white"
-               @click="showCheckboxes = false" />
-      <div v-if="theme.md" class="title">
-        {{ selectedItems.length }} selected
-      </div>
+      <f7-link v-if="theme.md" icon-md="material:close" icon-color="white" @click="showCheckboxes = false" />
+      <div v-if="theme.md" class="title">{{ selectedItems.length }} selected</div>
       <div v-if="theme.md && selectedItems.length" class="right">
         <f7-link icon-md="material:delete" icon-color="white" @click="removeSelected" />
         <f7-link icon-md="material:content_copy" icon-color="white" @click="copySelected" />
@@ -71,9 +59,7 @@
 
       <!-- skeleton for not ready -->
       <f7-col v-show="!ready">
-        <f7-block-title class="no-margin-top">
-          &nbsp;Loading...
-        </f7-block-title>
+        <f7-block-title class="no-margin-top"> &nbsp;Loading... </f7-block-title>
         <f7-list media-list class="col wide">
           <f7-list-group>
             <f7-list-item
@@ -101,11 +87,7 @@
             <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
           </template>
         </f7-block-title>
-        <list-filter v-if="ready"
-                     ref="filters"
-                     :filters="filters"
-                     @toggled="processFilter"
-                     @reset="resetFilter" />
+        <list-filter v-if="ready" ref="filters" :filters="filters" @toggled="processFilter" @reset="resetFilter" />
 
         <f7-list v-if="!listedItems.length">
           <f7-list-item title="Nothing found" />
@@ -136,27 +118,21 @@
               :after="(item.state) ? item.state : '\xa0'">
               <!-- Note: Using dynamic states is not possible since state tracking has a heavy performance impact -->
               <template #media>
-                <oh-icon v-if="item.category"
-                         :icon="item.category"
-                         :state="item.type === 'Image' ? null : item.state"
-                         height="32"
-                         width="32" />
+                <oh-icon
+                  v-if="item.category"
+                  :icon="item.category"
+                  :state="item.type === 'Image' ? null : item.state"
+                  height="32"
+                  width="32" />
                 <span v-else class="item-initial">{{ item.name[0] }}</span>
               </template>
               <template #after-title>
-                <f7-icon v-if="!item.editable"
-                         f7="lock_fill"
-                         size="1rem"
-                         color="gray" />
+                <f7-icon v-if="!item.editable" f7="lock_fill" size="1rem" color="gray" />
               </template>
               <!-- <f7-button color="blue" icon-f7="compose" icon-size="24px" :link="`${item.name}/edit`"></f7-button> -->
               <template #subtitle>
                 <div>
-                  <f7-chip v-for="tag in getNonSemanticTags(item)"
-                           :key="tag"
-                           :text="tag"
-                           media-bg-color="blue"
-                           style="margin-right: 6px">
+                  <f7-chip v-for="tag in getNonSemanticTags(item)" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
                     <template #media>
                       <f7-icon ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
                     </template>
@@ -172,28 +148,22 @@
     <f7-block v-if="ready && !items.length" class="block-narrow">
       <empty-state-placeholder icon="square_on_circle" title="items.title" text="items.text" />
       <f7-row v-if="$f7dim.width < 1280" class="display-flex justify-content-center">
-        <f7-button large
-                   fill
-                   color="blue"
-                   external
-                   :href="`${runtimeStore.websiteUrl}/link/items`"
-                   target="_blank"
-                   :text="$t('home.overview.button.documentation')" />
+        <f7-button
+          large
+          fill
+          color="blue"
+          external
+          :href="`${runtimeStore.websiteUrl}/link/items`"
+          target="_blank"
+          :text="$t('home.overview.button.documentation')" />
       </f7-row>
     </f7-block>
 
     <template #fixed>
-      <f7-fab v-show="!showCheckboxes"
-              position="center-bottom"
-              text="Refresh"
-              color="blue"
-              @click="load()">
+      <f7-fab v-show="!showCheckboxes" position="center-bottom" text="Refresh" color="blue" @click="load()">
         <f7-icon ios="f7:arrow_clockwise" md="material:refresh" aurora="f7:arrow_clockwise" />
       </f7-fab>
-      <f7-fab v-show="!showCheckboxes"
-              position="right-bottom"
-              color="blue"
-              href="add">
+      <f7-fab v-show="!showCheckboxes" position="right-bottom" color="blue" href="add">
         <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
       </f7-fab>
     </template>

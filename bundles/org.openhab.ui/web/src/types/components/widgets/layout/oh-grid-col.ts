@@ -1,28 +1,16 @@
 // note: this file is generated and should not be edited by hand
 
-export enum Width {
+export enum Width {}
 
-}
+export enum Xsmall {}
 
-export enum Xsmall {
+export enum Small {}
 
-}
+export enum Medium {}
 
-export enum Small {
+export enum Large {}
 
-}
-
-export enum Medium {
-
-}
-
-export enum Large {
-
-}
-
-export enum Xlarge {
-
-}
+export enum Xlarge {}
 
 export interface Config {
   width?: Width

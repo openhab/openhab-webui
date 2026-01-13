@@ -1,27 +1,22 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar>
-      <oh-nav-content :title="'Configure ' + addon.label + dirtyIndicator"
-                      :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
-                      @save="save()"
-                      :f7router />
+      <oh-nav-content
+        :title="'Configure ' + addon.label + dirtyIndicator"
+        :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
+        @save="save()"
+        :f7router />
     </f7-navbar>
     <f7-block v-if="type === 'persistence'" class="block-narrow">
       <f7-col>
-        <f7-button large
-                   fill
-                   color="blue"
-                   :href="'/settings/persistence/' + name"
-                   class="persistence-button">
+        <f7-button large fill color="blue" :href="'/settings/persistence/' + name" class="persistence-button">
           Configure Persistence Policies
         </f7-button>
       </f7-col>
     </f7-block>
     <f7-block form v-if="configDescription && config" class="block-narrow">
       <f7-col>
-        <f7-block-title medium>
-          Add-on configuration
-        </f7-block-title>
+        <f7-block-title medium> Add-on configuration </f7-block-title>
         <config-sheet
           :parameter-groups="configDescription.parameterGroups"
           :parameters="configDescription.parameters"
@@ -31,34 +26,16 @@
     </f7-block>
     <f7-block form v-if="loggerPackages.length > 0" class="block-narrow">
       <f7-col>
-        <f7-block-title medium>
-          Add-on log settings
-        </f7-block-title>
+        <f7-block-title medium> Add-on log settings </f7-block-title>
         <f7-list class="col wide">
-          <f7-list-item v-for="loggerPackage in loggerPackages"
-                        :key="loggerPackage.loggerName"
-                        :title="loggerPackage.loggerName">
-            <f7-input type="select"
-                      :value="loggerPackage.level"
-                      @input="loggerPackage.level = $event.target.value">
-              <option value="DEFAULT">
-                Default
-              </option>
-              <option value="TRACE">
-                Trace
-              </option>
-              <option value="DEBUG">
-                Debug
-              </option>
-              <option value="INFO">
-                Info
-              </option>
-              <option value="WARN">
-                Warning
-              </option>
-              <option value="ERROR">
-                Error
-              </option>
+          <f7-list-item v-for="loggerPackage in loggerPackages" :key="loggerPackage.loggerName" :title="loggerPackage.loggerName">
+            <f7-input type="select" :value="loggerPackage.level" @input="loggerPackage.level = $event.target.value">
+              <option value="DEFAULT">Default</option>
+              <option value="TRACE">Trace</option>
+              <option value="DEBUG">Debug</option>
+              <option value="INFO">Info</option>
+              <option value="WARN">Warning</option>
+              <option value="ERROR">Error</option>
             </f7-input>
           </f7-list-item>
         </f7-list>

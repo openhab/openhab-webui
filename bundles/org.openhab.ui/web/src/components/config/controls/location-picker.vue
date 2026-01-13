@@ -1,15 +1,6 @@
 <template>
-  <l-map
-    v-if="showMap"
-    :zoom="zoom"
-    :center="center"
-    :options="mapOptions"
-    @click="mapClicked"
-    ref="map"
-    class="oh-map-picker-lmap">
-    <l-tile-layer
-      :url="url"
-      :attribution="attribution" />
+  <l-map v-if="showMap" :zoom="zoom" :center="center" :options="mapOptions" @click="mapClicked" ref="map" class="oh-map-picker-lmap">
+    <l-tile-layer :url="url" :attribution="attribution" />
     <l-marker v-if="marker" :lat-lng="marker" />
   </l-map>
 </template>

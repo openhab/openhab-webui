@@ -28,12 +28,12 @@ export const useRuntimeStore = defineStore('runtime', () => {
   const ready = ref<boolean>(false)
 
   // Getters
-  function apiEndpoint (type: string): string | null {
+  function apiEndpoint(type: string): string | null {
     return !apiEndpoints.value ? null : apiEndpoints.value?.find((e) => e.type === type)?.url || null
   }
 
   // Actions
-  function setRootResource (rootResponse: api.RootBean) {
+  function setRootResource(rootResponse: api.RootBean) {
     locale.value = convertJavaLocale(rootResponse.locale)
     apiVersion.value = rootResponse.version
     measurementSystem.value = rootResponse.measurementSystem

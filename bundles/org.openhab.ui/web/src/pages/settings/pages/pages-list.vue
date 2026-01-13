@@ -1,14 +1,9 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar>
-      <oh-nav-content title="Pages"
-                      back-link="Settings"
-                      back-link-url="/settings/"
-                      :f7router>
+      <oh-nav-content title="Pages" back-link="Settings" back-link-url="/settings/" :f7router>
         <template #right>
-          <f7-link icon-md="material:done_all"
-                   @click="toggleCheck()"
-                   :text="(!theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
+          <f7-link icon-md="material:done_all" @click="toggleCheck()" :text="(!theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
         </template>
       </oh-nav-content>
       <f7-subnavbar :inner="false" v-show="initSearchbar">
@@ -24,32 +19,21 @@
       </f7-subnavbar>
     </f7-navbar>
 
-    <f7-toolbar v-if="showCheckboxes"
-                class="contextual-toolbar"
-                :class="{ navbar: theme.md }"
-                bottom-ios
-                bottom-aurora>
-      <f7-link v-if="!theme.md"
-               color="red"
-               v-show="selectedItems.length"
-               class="delete"
-               icon-ios="f7:trash"
-               icon-aurora="f7:trash"
-               @click="removeSelected">
+    <f7-toolbar v-if="showCheckboxes" class="contextual-toolbar" :class="{ navbar: theme.md }" bottom-ios bottom-aurora>
+      <f7-link
+        v-if="!theme.md"
+        color="red"
+        v-show="selectedItems.length"
+        class="delete"
+        icon-ios="f7:trash"
+        icon-aurora="f7:trash"
+        @click="removeSelected">
         Remove {{ selectedItems.length }}
       </f7-link>
-      <f7-link v-if="theme.md"
-               icon-md="material:close"
-               icon-color="white"
-               @click="showCheckboxes = false" />
-      <div class="title" v-if="theme.md">
-        {{ selectedItems.length }} selected
-      </div>
+      <f7-link v-if="theme.md" icon-md="material:close" icon-color="white" @click="showCheckboxes = false" />
+      <div class="title" v-if="theme.md">{{ selectedItems.length }} selected</div>
       <div class="right" v-if="theme.md">
-        <f7-link v-show="selectedItems.length"
-                 icon-md="material:delete"
-                 icon-color="white"
-                 @click="removeSelected" />
+        <f7-link v-show="selectedItems.length" icon-md="material:delete" icon-color="white" @click="removeSelected" />
       </div>
     </f7-toolbar>
 
@@ -86,28 +70,18 @@
       </f7-col>
 
       <f7-col v-show="ready">
-        <f7-block-title class="searchbar-hide-on-search">
-          {{ pages.length }} pages
-        </f7-block-title>
+        <f7-block-title class="searchbar-hide-on-search"> {{ pages.length }} pages </f7-block-title>
         <div class="padding-left padding-right" v-show="!ready || pages.length > 0">
           <f7-segmented strong tag="p">
-            <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')">
-              Alphabetical
-            </f7-button>
-            <f7-button :active="groupBy === 'type'" @click="switchGroupOrder('type')">
-              By type
-            </f7-button>
+            <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')"> Alphabetical </f7-button>
+            <f7-button :active="groupBy === 'type'" @click="switchGroupOrder('type')"> By type </f7-button>
           </f7-segmented>
         </div>
 
         <f7-list class="searchbar-not-found">
           <f7-list-item title="Nothing found" />
         </f7-list>
-        <f7-list v-show="pages.length > 0"
-                 class="col pages-list"
-                 ref="pagesList"
-                 :contacts-list="groupBy === 'alphabetical'"
-                 media-list>
+        <f7-list v-show="pages.length > 0" class="col pages-list" ref="pagesList" :contacts-list="groupBy === 'alphabetical'" media-list>
           <f7-list-group v-for="(pagesWithInitial, initial) in indexedPages" :key="initial">
             <f7-list-item v-if="pagesWithInitial.length" :title="initial" group-title />
             <f7-list-item
@@ -128,20 +102,17 @@
               :badge="page.config.order">
               <template #subtitle>
                 <div>
-                  <f7-chip v-for="tag in page.tags"
-                           :key="tag"
-                           :text="tag"
-                           media-bg-color="blue"
-                           style="margin-right: 6px">
+                  <f7-chip v-for="tag in page.tags" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
                     <template #media>
                       <f7-icon ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
                     </template>
                   </f7-chip>
-                  <f7-chip v-for="userrole in page.config.visibleTo || []"
-                           :key="userrole"
-                           :text="userrole"
-                           media-bg-color="green"
-                           style="margin-right: 6px">
+                  <f7-chip
+                    v-for="userrole in page.config.visibleTo || []"
+                    :key="userrole"
+                    :text="userrole"
+                    media-bg-color="green"
+                    style="margin-right: 6px">
                     <template #media>
                       <f7-icon f7="person_crop_circle_fill_badge_checkmark" />
                     </template>
@@ -150,10 +121,11 @@
               </template>
               <!-- <span class="item-initial">{{page.config.label[0].toUpperCase()}}</span> -->
               <template #media>
-                <oh-icon :color="page.config.sidebar || page.uid === 'overview' ? '' : 'gray'"
-                         :icon="getPageIcon(page)"
-                         :height="32"
-                         :width="32" />
+                <oh-icon
+                  :color="page.config.sidebar || page.uid === 'overview' ? '' : 'gray'"
+                  :icon="getPageIcon(page)"
+                  :height="32"
+                  :width="32" />
               </template>
             </f7-list-item>
           </f7-list-group>
@@ -164,9 +136,7 @@
     <!-- empty-state-placeholder not needed because the overview page cannot be deleted, so there is at least 1 page -->
 
     <template #fixed>
-      <f7-fab v-show="ready && !showCheckboxes"
-              position="right-bottom"
-              color="blue">
+      <f7-fab v-show="ready && !showCheckboxes" position="right-bottom" color="blue">
         <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
         <f7-icon ios="f7:multiply" md="material:close" aurora="f7:multiply" />
         <f7-fab-buttons position="top">

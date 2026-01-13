@@ -10,10 +10,7 @@
             :title="namespace.label"
             :after="namespace.value || 'Not Set'">
             <template #title>
-              <f7-icon v-if="!namespace.editable"
-                       f7="lock_fill"
-                       size="1rem"
-                       color="gray" />
+              <f7-icon v-if="!namespace.editable" f7="lock_fill" size="1rem" color="gray" />
             </template>
           </f7-list-item>
         </ul>
@@ -26,19 +23,14 @@
             :title="namespace.label"
             :after="namespace.value || 'Not Set'">
             <template #title>
-              <f7-icon v-if="!namespace.editable"
-                       f7="lock_fill"
-                       size="1rem"
-                       color="gray" />
+              <f7-icon v-if="!namespace.editable" f7="lock_fill" size="1rem" color="gray" />
             </template>
           </f7-list-item>
         </ul>
       </f7-list>
     </f7-card-content>
     <f7-card-footer>
-      <f7-button @click="addMetadata">
-        Add Metadata
-      </f7-button>
+      <f7-button @click="addMetadata"> Add Metadata </f7-button>
     </f7-card-footer>
   </f7-card>
 </template>

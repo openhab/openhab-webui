@@ -2,7 +2,17 @@ import { renderVisualMap } from './analyzer-helpers.ts'
 
 import { SeriesType, type CoordSettings, type CoordSystem, type SeriesOptions, type VisualMap, type CoordSettingsBase } from './types'
 import * as api from '@/api'
-import { AggregationFunction, ChartType, OhChartPage, Orient, OhChartVisualmap, OhCalendarSeries, OhChartTooltip, OhCalendarAxis, OhChartLegend } from '@/types/components/widgets'
+import {
+  AggregationFunction,
+  ChartType,
+  OhChartPage,
+  Orient,
+  OhChartVisualmap,
+  OhCalendarSeries,
+  OhChartTooltip,
+  OhCalendarAxis,
+  OhChartLegend
+} from '@/types/components/widgets'
 
 export interface CalendarCoordSettings extends CoordSettingsBase {
   orientation: Orient
@@ -14,13 +24,16 @@ export interface CalendarSeriesOptions extends SeriesOptions {
   aggregation: AggregationFunction
 }
 
-const calendarCoordSystem : CoordSystem = {
-  initCoordSystem (coordSettings? : Partial<CalendarCoordSettings>) : CalendarCoordSettings {
-    const typeOptions : ChartType[] = [ChartType.month, ChartType.year]
+const calendarCoordSystem: CoordSystem = {
+  initCoordSystem(coordSettings?: Partial<CalendarCoordSettings>): CalendarCoordSettings {
+    const typeOptions: ChartType[] = [ChartType.month, ChartType.year]
     return {
       typeOptions,
-      chartType: (coordSettings && coordSettings.chartType && typeOptions.includes(coordSettings.chartType)) ? coordSettings.chartType : ChartType.month,
-      orientation: (coordSettings && coordSettings.orientation) ? coordSettings.orientation : Orient.horizontal,
+      chartType:
+        coordSettings && coordSettings.chartType && typeOptions.includes(coordSettings.chartType)
+          ? coordSettings.chartType
+          : ChartType.month,
+      orientation: coordSettings && coordSettings.orientation ? coordSettings.orientation : Orient.horizontal,
       auxColumn: 'aggregation',
       visualMap: {
         palette: OhChartVisualmap.PresetPalette.yellowred,
@@ -30,29 +43,40 @@ const calendarCoordSystem : CoordSystem = {
       }
     }
   },
-  initAxes (coordSettings) {
+  initAxes(coordSettings) {
     // calendar chart has no axes
   },
-  initSeries (item : api.EnrichedItem | api.GroupItem, coordSettings : CoordSettings, seriesOptions : Partial<CalendarSeriesOptions>) : CalendarSeriesOptions {
-    const options : CalendarSeriesOptions = {
+  initSeries(
+    item: api.EnrichedItem | api.GroupItem,
+    coordSettings: CoordSettings,
+    seriesOptions: Partial<CalendarSeriesOptions>
+  ): CalendarSeriesOptions {
+    const options: CalendarSeriesOptions = {
       name: item.label || item.name || '',
       type: SeriesType.none,
       typeOptions: [],
       aggregation: AggregationFunction.average
     }
 
-    if ((item.type.startsWith('Number') || item.type === 'Dimmer' ||
-      ('groupType' in item && (item.groupType?.startsWith('Number') || item.groupType === 'Dimmer')))) {
+    if (
+      item.type.startsWith('Number') ||
+      item.type === 'Dimmer' ||
+      ('groupType' in item && (item.groupType?.startsWith('Number') || item.groupType === 'Dimmer'))
+    ) {
       options.type = SeriesType.heatmap
       options.typeOptions = [SeriesType.heatmap]
     }
 
     return options
   },
-  getChartPage (coordSettings : CoordSettings, allSeriesOptions : Record<string, SeriesOptions>, items: api.EnrichedItem[]) : api.RootUiComponent {
+  getChartPage(
+    coordSettings: CoordSettings,
+    allSeriesOptions: Record<string, SeriesOptions>,
+    items: api.EnrichedItem[]
+  ): api.RootUiComponent {
     const calendarCoordSettings = coordSettings as CalendarCoordSettings
 
-    let page : Partial<api.RootUiComponent> = {
+    let page: Partial<api.RootUiComponent> = {
       component: 'oh-chart-page',
       config: {
         chartType: coordSettings.chartType
@@ -78,7 +102,7 @@ const calendarCoordSystem : CoordSystem = {
 
     page.slots.calendar = [calendar]
 
-    page.slots.series = items.map((item : api.EnrichedItem) => {
+    page.slots.series = items.map((item: api.EnrichedItem) => {
       const seriesOptions = allSeriesOptions[item.name!] as CalendarSeriesOptions
       return {
         component: 'oh-calendar-series',

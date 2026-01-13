@@ -1,8 +1,7 @@
 <template>
   <ul v-if="multiple" ref="inputs">
     <f7-block-header class="no-margin">
-      <div class="margin-horizontal item-label"
-           style="padding-top: var(--f7-list-item-padding-vertical); color: var(--f7-text-color)">
+      <div class="margin-horizontal item-label" style="padding-top: var(--f7-list-item-padding-vertical); color: var(--f7-text-color)">
         {{ configDescription.label }}
       </div>
     </f7-block-header>

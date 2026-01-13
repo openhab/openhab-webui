@@ -1,11 +1,5 @@
 <template>
-  <codemirror
-    ref="cm"
-    class="code-editor-fit"
-    :model-value="value"
-    :extensions="extensions"
-    @ready="onCmReady"
-    @change="onCmCodeChange" />
+  <codemirror ref="cm" class="code-editor-fit" :model-value="value" :extensions="extensions" @ready="onCmReady" @change="onCmCodeChange" />
 </template>
 
 <style lang="stylus">

@@ -1,8 +1,7 @@
 <template>
   <oh-card :context="context">
     <template #content>
-      <oh-input class="input-card-content"
-                :context="cardChildContext(context.component)" />
+      <oh-input class="input-card-content" :context="cardChildContext(context.component)" />
     </template>
   </oh-card>
 </template>

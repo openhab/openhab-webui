@@ -109,4 +109,3 @@ export interface NetworkGraphProvider {
  * Registry of all available network providers
  */
 export type NetworkProviderRegistry = Record<string, NetworkGraphProvider>
-

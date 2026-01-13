@@ -20,22 +20,22 @@
 /* Generate F7 color classes based on OH color variables */
 .generate-f7-color-classes(@color_name) {
   .color-@{color_name} {
-    --f7-theme-color: var(--oh-@{color_name}-color);
-    --f7-theme-color-rgb: var(--oh-@{color_name}-color-rgb);
-    --f7-theme-color-shade: var(--oh-@{color_name}-color-shade);
-    --f7-theme-color-tint: var(--oh-@{color_name}-color-tint);
+    --f7-theme-color: var(--oh- @{color_name}-color);
+    --f7-theme-color-rgb: var(--oh- @{color_name}-color-rgb);
+    --f7-theme-color-shade: var(--oh- @{color_name}-color-shade);
+    --f7-theme-color-tint: var(--oh- @{color_name}-color-tint);
   }
   .text-color-@{color_name} {
-    --f7-theme-color-text-color: var(--oh-@{color_name}-color);
+    --f7-theme-color-text-color: var(--oh- @{color_name}-color);
   }
   .bg-color-@{color_name} {
-    --f7-theme-color-bg-color: var(--oh-@{color_name}-color);
+    --f7-theme-color-bg-color: var(--oh- @{color_name}-color);
   }
   .border-color-@{color_name} {
-    --f7-theme-color-border-color: var(--oh-@{color_name}-color);
+    --f7-theme-color-border-color: var(--oh- @{color_name}-color);
   }
   .ripple-color-@{color_name},
   .ripple-@{color_name} {
-    --f7-ripple-color: color-mix(from oklch, var(--oh-@{color_name}-color) 70%, transparent)
-  } 
+    --f7-ripple-color: color-mix(from oklch, var(--oh- @{color_name}-color) 70%, transparent);
+  }
 }

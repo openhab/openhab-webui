@@ -1,17 +1,15 @@
 <template>
   <oh-card :context="context" :content-class="['oh-image-card', 'no-padding']">
     <template #content-root>
-      <f7-card-content :style="config.contentStyle"
-                       :class="[
+      <f7-card-content
+        :style="config.contentStyle"
+        :class="[
                          ...(Array.isArray(config.contentClass) ? config.contentClass : []),
                          'oh-image-card',
                          'no-padding',
                        ]">
         <f7-list v-if="hasAction" class="image-link">
-          <f7-list-item class="oh-image-clickable"
-                        link="#"
-                        no-chevron
-                        @click="performAction">
+          <f7-list-item class="oh-image-clickable" link="#" no-chevron @click="performAction">
             <template #content-start>
               <oh-image :context="cardChildContext(context.component)" />
             </template>

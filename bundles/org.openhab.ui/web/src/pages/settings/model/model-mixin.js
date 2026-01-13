@@ -1,6 +1,6 @@
 import { compareItems } from '@/components/widgets/widget-order'
 
-function compareModelItems (o1, o2) {
+function compareModelItems(o1, o2) {
   return compareItems(o1.item || o1, o2.item || o2)
 }
 
@@ -12,7 +12,7 @@ function compareModelItems (o1, o2) {
  * - `modelItem(item)`: Called to create a model item from an item.
  */
 export default {
-  data () {
+  data() {
     return {
       ready: false,
       loading: false,
@@ -35,7 +35,7 @@ export default {
     }
   },
   computed: {
-    rootElements () {
+    rootElements() {
       return [...this.rootLocations, ...this.rootEquipment, ...this.rootPoints, ...this.rootGroups, ...this.rootItems]
     }
   },
@@ -48,7 +48,7 @@ export default {
      *
      * @returns {Promise<void>}
      */
-    async loadModel (relatedToItem) {
+    async loadModel(relatedToItem) {
       if (this.loading) return Promise.resolve()
       this.loading = true
 
@@ -61,17 +61,25 @@ export default {
         const addItems = (items, item, up) => {
           items.push(item)
           if (up) {
-            item.parents?.filter((p) => {
-              const semanticsConfig = item.metadata?.semantics?.config
-              if (!semanticsConfig) return false
-              return p.name === semanticsConfig.hasLocation || p.name === semanticsConfig.isPartOf || p.name === semanticsConfig.isPointOf
-            }).forEach((p) => addItems(items, p, true))
+            item.parents
+              ?.filter((p) => {
+                const semanticsConfig = item.metadata?.semantics?.config
+                if (!semanticsConfig) return false
+                return p.name === semanticsConfig.hasLocation || p.name === semanticsConfig.isPartOf || p.name === semanticsConfig.isPointOf
+              })
+              .forEach((p) => addItems(items, p, true))
           } else {
-            item.members?.filter((m) => {
-              const semanticsConfig = m.metadata?.semantics?.config
-              if (!semanticsConfig) return false
-              return item.name === semanticsConfig.hasLocation || item.name === semanticsConfig.isPartOf || item.name === semanticsConfig.isPointOf
-            }).forEach((m) => addItems(items, m, false))
+            item.members
+              ?.filter((m) => {
+                const semanticsConfig = m.metadata?.semantics?.config
+                if (!semanticsConfig) return false
+                return (
+                  item.name === semanticsConfig.hasLocation ||
+                  item.name === semanticsConfig.isPartOf ||
+                  item.name === semanticsConfig.isPointOf
+                )
+              })
+              .forEach((m) => addItems(items, m, false))
           }
         }
         addItems(tempItems, relatedToItem, true) // add semantic parent items
@@ -83,59 +91,77 @@ export default {
         items = this.$oh.api.get('/rest/items?staticDataOnly=true&metadata=.+')
         links = this.$oh.api.get('/rest/links')
       }
-      return Promise.all([items, links]).then((data) => {
-        this.items = data[0]
-        this.links = data[1]
+      return Promise.all([items, links])
+        .then((data) => {
+          this.items = data[0]
+          this.links = data[1]
 
-        if (this.newItem) {
-          this.items.push(this.newItem)
-        }
+          if (this.newItem) {
+            this.items.push(this.newItem)
+          }
 
-        this.locations = this.items.filter((i) => i.metadata && i.metadata.semantics && i.metadata.semantics.value.indexOf('Location') === 0)
-        this.equipment = this.items.filter((i) => i.metadata && i.metadata.semantics && i.metadata.semantics.value.indexOf('Equipment') === 0)
-        this.points = this.items.filter((i) => i.metadata && i.metadata.semantics && i.metadata.semantics.value.indexOf('Point') === 0)
+          this.locations = this.items.filter(
+            (i) => i.metadata && i.metadata.semantics && i.metadata.semantics.value.indexOf('Location') === 0
+          )
+          this.equipment = this.items.filter(
+            (i) => i.metadata && i.metadata.semantics && i.metadata.semantics.value.indexOf('Equipment') === 0
+          )
+          this.points = this.items.filter((i) => i.metadata && i.metadata.semantics && i.metadata.semantics.value.indexOf('Point') === 0)
 
-        this.rootLocations = this.locations
-          .filter((i) => !i.metadata.semantics.config || !i.metadata.semantics.config.isPartOf)
-          .map(this.modelItem).sort(compareModelItems)
-        this.rootLocations.forEach(this.getChildren)
-        this.rootEquipment = this.equipment
-          .filter((i) => !i.metadata.semantics.config || (!i.metadata.semantics.config.isPartOf && !i.metadata.semantics.config.hasLocation))
-          .map(this.modelItem).sort(compareModelItems)
-        this.rootEquipment.forEach(this.getChildren)
-        this.rootPoints = this.points
-          .filter((i) => !i.metadata.semantics.config || (!i.metadata.semantics.config.isPointOf && !i.metadata.semantics.config.hasLocation))
-          .map(this.modelItem).sort(compareModelItems)
+          this.rootLocations = this.locations
+            .filter((i) => !i.metadata.semantics.config || !i.metadata.semantics.config.isPartOf)
+            .map(this.modelItem)
+            .sort(compareModelItems)
+          this.rootLocations.forEach(this.getChildren)
+          this.rootEquipment = this.equipment
+            .filter(
+              (i) => !i.metadata.semantics.config || (!i.metadata.semantics.config.isPartOf && !i.metadata.semantics.config.hasLocation)
+            )
+            .map(this.modelItem)
+            .sort(compareModelItems)
+          this.rootEquipment.forEach(this.getChildren)
+          this.rootPoints = this.points
+            .filter(
+              (i) => !i.metadata.semantics.config || (!i.metadata.semantics.config.isPointOf && !i.metadata.semantics.config.hasLocation)
+            )
+            .map(this.modelItem)
+            .sort(compareModelItems)
 
-        // look for checked or selected items and include non semantic checked items in model tree
-        const selectedItems = this.value ? (Array.isArray(this.value) ? [...this.value] : [this.value]) : null
-        this.includeNonSemantic = this.includeNonSemantic || selectedItems?.some((selected) => {
-          const item = this.items.find((i) => selected === i.name)
-          const isNonSemantic = !item?.metadata?.semantics
-          const hasSemanticGroup = item?.groupNames.some((g) => this.items.some((gi) => g === gi.name && gi.metadata?.semantics))
-          const onlyNonSemanticGroup = !hasSemanticGroup && !item?.groupNames.some((g) => !this.items.some((gi) => g === gi.name && gi.metadata?.semantics))
-          return isNonSemantic || onlyNonSemanticGroup
+          // look for checked or selected items and include non semantic checked items in model tree
+          const selectedItems = this.value ? (Array.isArray(this.value) ? [...this.value] : [this.value]) : null
+          this.includeNonSemantic =
+            this.includeNonSemantic ||
+            selectedItems?.some((selected) => {
+              const item = this.items.find((i) => selected === i.name)
+              const isNonSemantic = !item?.metadata?.semantics
+              const hasSemanticGroup = item?.groupNames.some((g) => this.items.some((gi) => g === gi.name && gi.metadata?.semantics))
+              const onlyNonSemanticGroup =
+                !hasSemanticGroup && !item?.groupNames.some((g) => !this.items.some((gi) => g === gi.name && gi.metadata?.semantics))
+              return isNonSemantic || onlyNonSemanticGroup
+            })
+
+          if (this.includeNonSemantic) {
+            this.rootGroups = this.items
+              .filter((i) => i.type === 'Group' && !i.metadata?.semantics && i.groupNames.length === 0)
+              .map(this.modelItem)
+              .sort(compareModelItems)
+            this.rootGroups.forEach(this.getChildren)
+            this.rootItems = this.items
+              .filter((i) => i.type !== 'Group' && !i.metadata?.semantics && i.groupNames.length === 0)
+              .map(this.modelItem)
+              .sort(compareModelItems)
+          }
+
+          this.loading = false
+          this.ready = true
+
+          return Promise.resolve()
         })
-
-        if (this.includeNonSemantic) {
-          this.rootGroups = this.items
-            .filter((i) => i.type === 'Group' && !i.metadata?.semantics && i.groupNames.length === 0)
-            .map(this.modelItem).sort(compareModelItems)
-          this.rootGroups.forEach(this.getChildren)
-          this.rootItems = this.items
-            .filter((i) => i.type !== 'Group' && !i.metadata?.semantics && i.groupNames.length === 0)
-            .map(this.modelItem).sort(compareModelItems)
-        }
-
-        this.loading = false
-        this.ready = true
-
-        return Promise.resolve()
-      }).catch((error) => {
-        return Promise.reject(error)
-      })
+        .catch((error) => {
+          return Promise.reject(error)
+        })
     },
-    getChildren (parent) {
+    getChildren(parent) {
       // open the parent node of the placeholder
       if (this.newItemParent && this.newItemParent === parent.item.name) {
         parent.opened = true
@@ -151,31 +177,37 @@ export default {
       if (parent.class.indexOf('Location') === 0) {
         parent.children.locations = this.locations
           .filter((i) => i.metadata.semantics.config && i.metadata.semantics.config.isPartOf === parent.item.name)
-          .map(this.modelItem).sort(compareModelItems)
+          .map(this.modelItem)
+          .sort(compareModelItems)
         parent.children.locations.forEach(this.getChildren)
         parent.children.equipment = this.equipment
           .filter((i) => i.metadata.semantics.config && i.metadata.semantics.config.hasLocation === parent.item.name)
-          .map(this.modelItem).sort(compareModelItems)
+          .map(this.modelItem)
+          .sort(compareModelItems)
         parent.children.equipment.forEach(this.getChildren)
 
         parent.children.points = this.points
           .filter((i) => i.metadata.semantics.config && i.metadata.semantics.config.hasLocation === parent.item.name)
-          .map(this.modelItem).sort(compareModelItems)
+          .map(this.modelItem)
+          .sort(compareModelItems)
       } else {
         parent.children.equipment = this.equipment
           .filter((i) => i.metadata.semantics.config && i.metadata.semantics.config.isPartOf === parent.item.name)
-          .map(this.modelItem).sort(compareModelItems)
+          .map(this.modelItem)
+          .sort(compareModelItems)
         parent.children.equipment.forEach(this.getChildren)
 
         parent.children.points = this.points
           .filter((i) => i.metadata.semantics.config && i.metadata.semantics.config.isPointOf === parent.item.name)
-          .map(this.modelItem).sort(compareModelItems)
+          .map(this.modelItem)
+          .sort(compareModelItems)
       }
 
       if (this.includeNonSemantic) {
         const nonSemanticItems = this.items
           .filter((i) => !i.metadata?.semantics && i.groupNames.indexOf(parent.item.name) >= 0)
-          .map(this.modelItem).sort(compareModelItems)
+          .map(this.modelItem)
+          .sort(compareModelItems)
 
         // Only non-semantic groups in groups
         parent.children.groups = nonSemanticItems.filter((i) => i.item.type === 'Group')
@@ -189,53 +221,67 @@ export default {
      * Expands or collapses all treeview items based on the current state of `this.expanded`.
      * `this.expanded` has to be provided by the component using this mixin.
      */
-    applyExpandedOption () {
+    applyExpandedOption() {
       // Don't directly update the item classlist as items are only conditionaly rendered in the DOM to improve performance on large trees
       this.rootElements.forEach((c) => this.applyExpandedOptionChild(c))
     },
-    applyExpandedOptionChild (child) {
+    applyExpandedOptionChild(child) {
       child.opened = this.expanded
-      Object.values(child.children).flat().forEach((c) => {
-        this.applyExpandedOptionChild(c)
-      })
+      Object.values(child.children)
+        .flat()
+        .forEach((c) => {
+          this.applyExpandedOptionChild(c)
+        })
     },
-    saveExpanded () {
+    saveExpanded() {
       this.expandedTreeviewItems.splice(0)
       this.rootElements.forEach((c) => this.saveExpandedChild(c))
     },
-    saveExpandedChild (child) {
+    saveExpandedChild(child) {
       if (child.opened) {
         this.expandedTreeviewItems.push(child.item.name)
       }
-      Object.values(child.children).flat().forEach((c) => {
-        this.saveExpandedChild(c)
-      })
+      Object.values(child.children)
+        .flat()
+        .forEach((c) => {
+          this.saveExpandedChild(c)
+        })
     },
-    restoreExpanded () {
+    restoreExpanded() {
       this.rootElements.forEach((child) => this.restoreExpandedChild(child, false))
     },
-    restoreExpandedChild (child, parentClosed) {
+    restoreExpandedChild(child, parentClosed) {
       if (parentClosed) {
         child.opened = false
       } else {
         child.opened = this.expandedTreeviewItems.includes(child.item.name)
       }
-      Object.values(child.children).flat().forEach((c) => {
-        this.restoreExpandedChild(c, !child.opened)
-      })
+      Object.values(child.children)
+        .flat()
+        .forEach((c) => {
+          this.restoreExpandedChild(c, !child.opened)
+        })
     },
-    expandSelected (selection) {
+    expandSelected(selection) {
       // expand so all checked items are opened
       this.rootElements.forEach((c) => this.expandSelectedChild(c, selection))
     },
-    expandSelectedChild (child, selection) {
-      return Object.values(child.children).flat().map((c) => {
-        if (this.expandSelectedChild(c, selection) || c.checked || c.item.name === this.selectedItem?.item?.name || (selection && c.item.name === selection.name)) {
-          child.opened = true
-          return true
-        }
-        return false
-      }).reduce((prev, curr) => prev || curr, false)
+    expandSelectedChild(child, selection) {
+      return Object.values(child.children)
+        .flat()
+        .map((c) => {
+          if (
+            this.expandSelectedChild(c, selection) ||
+            c.checked ||
+            c.item.name === this.selectedItem?.item?.name ||
+            (selection && c.item.name === selection.name)
+          ) {
+            child.opened = true
+            return true
+          }
+          return false
+        })
+        .reduce((prev, curr) => prev || curr, false)
     }
   }
 }

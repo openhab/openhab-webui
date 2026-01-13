@@ -1,40 +1,34 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onLayoutEditPageBeforeOut" class="layout-editor">
-    <f7-navbar
-      v-if="!(previewMode && page.config.hideNavbar) && !fullscreen"
-      no-hairline>
-      <oh-nav-content :title="!ready ? '' : ((createMode ? 'Create layout page' : page.config.label) + dirtyIndicator)"
-                      :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
-                      @save="save()"
-                      :f7router />
+    <f7-navbar v-if="!(previewMode && page.config.hideNavbar) && !fullscreen" no-hairline>
+      <oh-nav-content
+        :title="!ready ? '' : ((createMode ? 'Create layout page' : page.config.label) + dirtyIndicator)"
+        :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
+        @save="save()"
+        :f7router />
     </f7-navbar>
     <f7-toolbar v-if="!previewMode && !fullscreen" tabbar position="top">
-      <f7-link @click="switchTab('design', fromYaml)" :tab-link-active="currentTab === 'design'" tab-link="#design">
-        Design
-      </f7-link>
-      <f7-link @click="switchTab('code', toYaml)" :tab-link-active="currentTab === 'code'" tab-link="#code">
-        Code
-      </f7-link>
+      <f7-link @click="switchTab('design', fromYaml)" :tab-link-active="currentTab === 'design'" tab-link="#design"> Design </f7-link>
+      <f7-link @click="switchTab('code', toYaml)" :tab-link-active="currentTab === 'code'" tab-link="#code"> Code </f7-link>
     </f7-toolbar>
     <f7-toolbar v-if="!fullscreen" bottom class="toolbar-details">
-      <f7-link v-if="$fullscreen.isEnabled"
-               class="fullscreen-link"
-               icon-f7="rectangle_arrow_up_right_arrow_down_left"
-               text="Fullscreen"
-               color="blue"
-               @click="toggleFullscreen" />
+      <f7-link
+        v-if="$fullscreen.isEnabled"
+        class="fullscreen-link"
+        icon-f7="rectangle_arrow_up_right_arrow_down_left"
+        text="Fullscreen"
+        color="blue"
+        @click="toggleFullscreen" />
       <div class="display-flex flex-direction-row align-items-center">
-        <f7-toggle :checked="previewMode ? true : null" @toggle:change="(value) => togglePreviewMode(value)" />&nbsp;Run mode<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span>
-        <f7-link v-if="!createMode"
-                 class="right margin-left padding-right"
-                 @click="detailsOpened = true"
-                 icon-f7="chevron_up" />
+        <f7-toggle :checked="previewMode ? true : null" @toggle:change="(value) => togglePreviewMode(value)" />&nbsp;Run mode<span
+          v-if="$device.desktop"
+          >&nbsp;(Ctrl-R)</span
+        >
+        <f7-link v-if="!createMode" class="right margin-left padding-right" @click="detailsOpened = true" icon-f7="chevron_up" />
       </div>
     </f7-toolbar>
     <f7-tabs class="layout-editor-tabs">
-      <f7-tab id="design"
-              class="layout-editor-design-tab"
-              :tab-active="currentTab === 'design'">
+      <f7-tab id="design" class="layout-editor-design-tab" :tab-active="currentTab === 'design'">
         <f7-block v-if="!ready" class="text-align-center">
           <f7-preloader />
           <div>Loading...</div>
@@ -43,26 +37,25 @@
           <page-settings :page="page" :createMode="createMode" :f7router />
           <f7-col>
             <f7-block-footer class="padding-horizontal margin-bottom">
-              Note: After saving this page, you can view the page settings by clicking the chevron
-              up icon (<f7-icon color="blue" f7="chevron_up" />) at the bottom right corner of the
-              screen, next to "Run mode"
+              Note: After saving this page, you can view the page settings by clicking the chevron up icon (<f7-icon
+                color="blue"
+                f7="chevron_up" />) at the bottom right corner of the screen, next to "Run mode"
             </f7-block-footer>
           </f7-col>
         </f7-block>
 
-        <f7-block v-if="ready &&
+        <f7-block
+          v-if="ready &&
                     !(context.component.slots.default && context.component.slots.default.length) &&
                     !(context.component.slots.masonry && context.component.slots.masonry.length) &&
                     !(context.component.slots.grid && context.component.slots.grid.length) &&
                     !(context.component.slots.canvas && context.component.slots.canvas.length) &&
                     page.uid !== 'overview' &&
                     !['responsive', 'fixed'].includes(page.config.layoutType)"
-                  class="block-narrow no-padding">
+          class="block-narrow no-padding">
           <f7-col>
             <f7-list accordion-list>
-              <f7-block-title class="margin-left">
-                Layout Type
-              </f7-block-title>
+              <f7-block-title class="margin-left"> Layout Type </f7-block-title>
               <f7-list-item accordion-item title="Switch to Fixed Layout">
                 <f7-accordion-content>
                   <f7-block class="margin text-align-center">
@@ -70,26 +63,24 @@
                   </f7-block>
                   <f7-row class="text-align-center align-items-stretch margin-vertical" no-gap>
                     <f7-col width="50">
-                      <f7-link @click="setLayoutType('fixed', 'grid')"
-                               class="flex-direction-column padding margin-left-half elevation-1 elevation-hover-3"
-                               style="color: var(--f7-theme-color-text-color)">
+                      <f7-link
+                        @click="setLayoutType('fixed', 'grid')"
+                        class="flex-direction-column padding margin-left-half elevation-1 elevation-hover-3"
+                        style="color: var(--f7-theme-color-text-color)">
                         <f7-icon size="70px" f7="grid" />
-                        <div class="margin-bottom">
-                          Fixed Grid
-                        </div>
+                        <div class="margin-bottom">Fixed Grid</div>
                         <f7-block-footer class="margin-top">
                           <small>Position and resize widgets on a grid with fixed dimensions.</small>
                         </f7-block-footer>
                       </f7-link>
                     </f7-col>
                     <f7-col width="50">
-                      <f7-link @click="setLayoutType('fixed', 'canvas')"
-                               class="flex-direction-column padding margin-right-half elevation-1 elevation-hover-3"
-                               style="color: var(--f7-theme-color-text-color)">
+                      <f7-link
+                        @click="setLayoutType('fixed', 'canvas')"
+                        class="flex-direction-column padding margin-right-half elevation-1 elevation-hover-3"
+                        style="color: var(--f7-theme-color-text-color)">
                         <f7-icon size="70px" f7="rectangle_3_offgrid" />
-                        <div class="margin-bottom">
-                          Fixed Canvas
-                        </div>
+                        <div class="margin-bottom">Fixed Canvas</div>
                         <f7-block-footer class="margin-top">
                           <small>Position and resize widgets freely over a fixed background.</small>
                         </f7-block-footer>
@@ -102,23 +93,25 @@
           </f7-col>
         </f7-block>
 
-        <oh-layout-page v-if="ready"
-                        class="layout-page"
-                        :context="context"
-                        :key="pageKey"
-                        :style="page.config.style"
-                        :f7router
-                        @action="performAction($event.ev, $event.prefix, $event.config, $event.context)"
-                        @add-block="addBlock"
-                        @add-masonry="addMasonry"
-                        @add-grid-item="addGridItem"
-                        @add-canvas-item="addCanvasItem" />
+        <oh-layout-page
+          v-if="ready"
+          class="layout-page"
+          :context="context"
+          :key="pageKey"
+          :style="page.config.style"
+          :f7router
+          @action="performAction($event.ev, $event.prefix, $event.config, $event.context)"
+          @add-block="addBlock"
+          @add-masonry="addMasonry"
+          @add-grid-item="addGridItem"
+          @add-canvas-item="addCanvasItem" />
 
-        <f7-sheet ref="detailsSheet"
-                  :backdrop="false"
-                  :close-on-escape="true"
-                  :opened="detailsOpened"
-                  @sheet:closed="detailsOpened = false">
+        <f7-sheet
+          ref="detailsSheet"
+          :backdrop="false"
+          :close-on-escape="true"
+          :opened="detailsOpened"
+          @sheet:closed="detailsOpened = false">
           <f7-page>
             <f7-toolbar tabbar bottom>
               <span class="margin-left">Page Settings</span>
@@ -135,21 +128,23 @@
         </f7-sheet>
       </f7-tab>
       <f7-tab id="code" :tab-active="currentTab === 'code'">
-        <editor v-if="currentTab === 'code'"
-                :style="{ opacity: previewMode ? '0' : '' }"
-                class="page-code-editor"
-                mode="application/vnd.openhab.uicomponent+yaml?type=layout"
-                :value="pageYaml"
-                @input="onEditorInput" />
+        <editor
+          v-if="currentTab === 'code'"
+          :style="{ opacity: previewMode ? '0' : '' }"
+          class="page-code-editor"
+          mode="application/vnd.openhab.uicomponent+yaml?type=layout"
+          :value="pageYaml"
+          @input="onEditorInput" />
         <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
 
-        <oh-layout-page v-if="ready && previewMode"
-                        class="layout-page"
-                        :context="context"
-                        :key="pageKey"
-                        :style="page.config.style"
-                        :f7router
-                        @action="performAction($event.ev, $event.prefix, $event.config, $event.context)" />
+        <oh-layout-page
+          v-if="ready && previewMode"
+          class="layout-page"
+          :context="context"
+          :key="pageKey"
+          :style="page.config.style"
+          :f7router
+          @action="performAction($event.ev, $event.prefix, $event.config, $event.context)" />
       </f7-tab>
     </f7-tabs>
   </f7-page>

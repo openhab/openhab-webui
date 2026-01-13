@@ -10,16 +10,16 @@ export const useUserStore = defineStore('user', () => {
   const user = ref<User | null>(null)
   const noAuth = ref(false)
 
-  function isAdmin (): boolean {
+  function isAdmin(): boolean {
     const admin = noAuth.value || (user.value?.roles?.indexOf('administrator') ?? -1) >= 0
     return admin
   }
 
-  function setUser (newUser: User | null) {
+  function setUser(newUser: User | null) {
     user.value = newUser
   }
 
-  function setNoAuth (value: boolean) {
+  function setNoAuth(value: boolean) {
     noAuth.value = value
   }
 
