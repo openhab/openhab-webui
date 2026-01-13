@@ -49,7 +49,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Servlet that serves files from both the filesystem and the local bundle. Supports general file caching as well as
+ * Servlet that serves files from both the filesystem and the local bundle.
+ * Supports general file caching as well as
  * serving compressed files
  *
  * @author Yannick Schaus - Initial contribution
@@ -136,8 +137,8 @@ public class UIServlet extends DefaultServlet {
         } else {
             URL url = defaultHttpContext.getResource(APP_BASE + name);
             // if we don't find a resource, and it's not a check for a compressed version,
-            // let the UIErrorPageServlet return the app base with a proper response code that lets
-            // the Vue.js main UI handle routing
+            // let the UIErrorPageServlet return the app base with a proper response code
+            // that lets Vue.js main UI handle routing
             if (url == null && Arrays.stream(COMPRESS_EXT).noneMatch(name::endsWith)) {
                 return null;
             }
@@ -163,7 +164,8 @@ public class UIServlet extends DefaultServlet {
         }
 
         String pathInfo = request.getPathInfo();
-        // only look for startsWith so client can implement cache-busting mechansim like __theme__12345
+        // only look for startsWith so client can implement cache-busting mechansim like
+        // __theme__12345
         if (pathInfo.startsWith(THEME_RESOURCE_NAME)) {
             logger.debug("Serving theme CSS");
             serveThemeCss(request, response);

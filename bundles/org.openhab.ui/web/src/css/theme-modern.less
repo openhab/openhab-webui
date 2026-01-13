@@ -2,9 +2,9 @@
 @import "theme-default.less"; // reset all colors to default if they aren't specified in the theme
 
 .generate-bg-color-gradient(@color_name) {
-    .bg-color-@{color_name} {
-      background: linear-gradient(var(--oh-gradient-angle), ~"var(--oh-@{color_name}-color-shade)", ~"var(--oh-@{color_name}-color-tint)");
-    }
+  .bg-color-@{color_name} {
+    background: linear-gradient(var(--oh-gradient-angle), ~"var(--oh-@{color_name}-color-shade)", ~"var(--oh-@{color_name}-color-tint)");
+  }
 }
 
 :root {
@@ -77,11 +77,17 @@
 
 // generate gradient bg colors
 @colors: red, green, blue, pink, yellow, orange, purple, deeppurple, lightblue, teal, lime, deeporange, gray, black, white;
+
 each(@colors, .(@color, @index) {
     .generate-bg-color-gradient(@color);
-});
+  });
 
 @iterations: range(1, 9);
+
 each(@iterations, .(@value, @index) {
     .generate-bg-color-gradient(~"palette-@{index}");
-});
+  });
+
+.panel-left .openhab-logo .openhab-branding-string {
+  display: none !important;
+}

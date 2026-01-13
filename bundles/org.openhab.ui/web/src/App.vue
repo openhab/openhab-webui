@@ -17,10 +17,7 @@
       :visible-breakpoint="1024">
       <f7-page>
         <f7-link href="/overview/" class="openhab-logo no-ripple" panel-close>
-          <div class="logo-inner">
-            <img
-              :src="themeStore.ohVariables.get('--oh-logo') || (uiOptionsStore.getDarkMode() === 'dark' ? '/images/openhab-logo-white.svg' : '/images/openhab-logo.svg')"
-              width="196px">
+          <div class="logo-inner" v-html="themeStore.renderLogo">
           </div>
         </f7-link>
         <f7-link class="breakpoint-pin" @click="toggleVisibleBreakpoint">
@@ -437,7 +434,9 @@
     width calc(var(--f7-panel-width) + var(--f7-safe-area-left))
   .openhab-logo
     margin-top var(--f7-safe-area-top)
+    position relative
     .logo-inner
+      width 196px
       padding 2.25rem 2rem
   .page
     background var(--oh-background-color-shade)

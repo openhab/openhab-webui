@@ -113,33 +113,43 @@
   --oh-palette-9-color-transparent: color-mix(in oklch, var(--oh-deeporange-color) 60%, transparent);
   --oh-logo: unset;
 }
+
 .bg-color-palette-1 {
   --f7-theme-color-bg-color: var(--oh-palette-1-color);
 }
+
 .bg-color-palette-2 {
   --f7-theme-color-bg-color: var(--oh-palette-2-color);
 }
+
 .bg-color-palette-3 {
   --f7-theme-color-bg-color: var(--oh-palette-3-color);
 }
+
 .bg-color-palette-4 {
   --f7-theme-color-bg-color: var(--oh-palette-4-color);
 }
+
 .bg-color-palette-5 {
   --f7-theme-color-bg-color: var(--oh-palette-5-color);
 }
+
 .bg-color-palette-6 {
   --f7-theme-color-bg-color: var(--oh-palette-6-color);
 }
+
 .bg-color-palette-7 {
   --f7-theme-color-bg-color: var(--oh-palette-7-color);
 }
+
 .bg-color-palette-8 {
   --f7-theme-color-bg-color: var(--oh-palette-8-color);
 }
+
 .bg-color-palette-9 {
   --f7-theme-color-bg-color: var(--oh-palette-9-color);
 }
+
 :root {
   --oh-lightmode-text-color: #333333;
   --oh-darkmode-text-color: #eeeeee;
@@ -254,9 +264,11 @@
   --oh-gradient-angle: 315deg;
   --f7-card-bg-color: linear-gradient(var(--oh-gradient-angle), var(--oh-background-color-shade), var(--oh-background-color-tint-2));
 }
+
 :root .page {
   background: linear-gradient(var(--oh-background-color-tint), var(--oh-background-color-shade));
 }
+
 :root .dark,
 :root.dark {
   --oh-theme-color: #c22dc2;
@@ -306,79 +318,104 @@
   --oh-gradient-angle: 135deg;
   --f7-card-bg-color: linear-gradient(var(--oh-gradient-angle), var(--oh-background-color-tint), var(--oh-background-color-shade-2));
 }
+
 :root .dark .page,
 :root.dark .page {
   background: linear-gradient(var(--oh-background-color-tint), var(--oh-background-color-shade-2));
 }
+
 .bg-color-red {
   background: linear-gradient(var(--oh-gradient-angle), var(--oh-red-color-shade), var(--oh-red-color-tint));
 }
+
 .bg-color-green {
   background: linear-gradient(var(--oh-gradient-angle), var(--oh-green-color-shade), var(--oh-green-color-tint));
 }
+
 .bg-color-blue {
   background: linear-gradient(var(--oh-gradient-angle), var(--oh-blue-color-shade), var(--oh-blue-color-tint));
 }
+
 .bg-color-pink {
   background: linear-gradient(var(--oh-gradient-angle), var(--oh-pink-color-shade), var(--oh-pink-color-tint));
 }
+
 .bg-color-yellow {
   background: linear-gradient(var(--oh-gradient-angle), var(--oh-yellow-color-shade), var(--oh-yellow-color-tint));
 }
+
 .bg-color-orange {
   background: linear-gradient(var(--oh-gradient-angle), var(--oh-orange-color-shade), var(--oh-orange-color-tint));
 }
+
 .bg-color-purple {
   background: linear-gradient(var(--oh-gradient-angle), var(--oh-purple-color-shade), var(--oh-purple-color-tint));
 }
+
 .bg-color-deeppurple {
   background: linear-gradient(var(--oh-gradient-angle), var(--oh-deeppurple-color-shade), var(--oh-deeppurple-color-tint));
 }
+
 .bg-color-lightblue {
   background: linear-gradient(var(--oh-gradient-angle), var(--oh-lightblue-color-shade), var(--oh-lightblue-color-tint));
 }
+
 .bg-color-teal {
   background: linear-gradient(var(--oh-gradient-angle), var(--oh-teal-color-shade), var(--oh-teal-color-tint));
 }
+
 .bg-color-lime {
   background: linear-gradient(var(--oh-gradient-angle), var(--oh-lime-color-shade), var(--oh-lime-color-tint));
 }
+
 .bg-color-deeporange {
   background: linear-gradient(var(--oh-gradient-angle), var(--oh-deeporange-color-shade), var(--oh-deeporange-color-tint));
 }
+
 .bg-color-gray {
   background: linear-gradient(var(--oh-gradient-angle), var(--oh-gray-color-shade), var(--oh-gray-color-tint));
 }
+
 .bg-color-black {
   background: linear-gradient(var(--oh-gradient-angle), var(--oh-black-color-shade), var(--oh-black-color-tint));
 }
+
 .bg-color-white {
   background: linear-gradient(var(--oh-gradient-angle), var(--oh-white-color-shade), var(--oh-white-color-tint));
 }
+
 .bg-color-palette-1 {
   background: linear-gradient(var(--oh-gradient-angle), var(--oh-palette-1-color-shade), var(--oh-palette-1-color-tint));
 }
+
 .bg-color-palette-2 {
   background: linear-gradient(var(--oh-gradient-angle), var(--oh-palette-2-color-shade), var(--oh-palette-2-color-tint));
 }
+
 .bg-color-palette-3 {
   background: linear-gradient(var(--oh-gradient-angle), var(--oh-palette-3-color-shade), var(--oh-palette-3-color-tint));
 }
+
 .bg-color-palette-4 {
   background: linear-gradient(var(--oh-gradient-angle), var(--oh-palette-4-color-shade), var(--oh-palette-4-color-tint));
 }
+
 .bg-color-palette-5 {
   background: linear-gradient(var(--oh-gradient-angle), var(--oh-palette-5-color-shade), var(--oh-palette-5-color-tint));
 }
+
 .bg-color-palette-6 {
   background: linear-gradient(var(--oh-gradient-angle), var(--oh-palette-6-color-shade), var(--oh-palette-6-color-tint));
 }
+
 .bg-color-palette-7 {
   background: linear-gradient(var(--oh-gradient-angle), var(--oh-palette-7-color-shade), var(--oh-palette-7-color-tint));
 }
+
 .bg-color-palette-8 {
   background: linear-gradient(var(--oh-gradient-angle), var(--oh-palette-8-color-shade), var(--oh-palette-8-color-tint));
 }
+
 .bg-color-palette-9 {
   background: linear-gradient(var(--oh-gradient-angle), var(--oh-palette-9-color-shade), var(--oh-palette-9-color-tint));
 }
