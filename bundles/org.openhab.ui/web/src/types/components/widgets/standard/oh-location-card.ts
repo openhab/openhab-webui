@@ -1,6 +1,8 @@
 // note: this file is generated and should not be edited by hand
 
-import { BackgroundColor } from '../common.ts'
+import {
+  BackgroundColor
+} from '../common.ts'
 
 export enum Badges {
   battery = 'battery',
@@ -32,4 +34,6 @@ export interface Config {
   badges?: Badges
 }
 
-export { BackgroundColor }
+export {
+  BackgroundColor
+}

@@ -46,4 +46,11 @@ export interface Config {
   item?: string
 }
 
-export { Action, ActionHttpMethod, ActionPageTransition, ActionAnalyzerChartType, ActionAnalyzerCoordSystem, ActionAnalyzerAggregation }
+export {
+  Action,
+  ActionHttpMethod,
+  ActionPageTransition,
+  ActionAnalyzerChartType,
+  ActionAnalyzerCoordSystem,
+  ActionAnalyzerAggregation
+}

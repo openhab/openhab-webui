@@ -70,4 +70,11 @@ export interface Config {
   actionVariableKey?: string
 }
 
-export { Action, ActionHttpMethod, ActionPageTransition, ActionAnalyzerChartType, ActionAnalyzerCoordSystem, ActionAnalyzerAggregation }
+export {
+  Action,
+  ActionHttpMethod,
+  ActionPageTransition,
+  ActionAnalyzerChartType,
+  ActionAnalyzerCoordSystem,
+  ActionAnalyzerAggregation
+}

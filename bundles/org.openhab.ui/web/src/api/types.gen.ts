@@ -38,8 +38,8 @@ export type ModuleType = {
     uid: string;
     visibility: 'VISIBLE' | 'HIDDEN' | 'EXPERT';
     tags: Array<string>;
-    label: string;
-    description: string;
+    label?: string;
+    description?: string;
     configDescriptions: Array<ConfigDescriptionParameter>;
 };
 
@@ -50,8 +50,8 @@ export type ParameterOption = {
 
 export type Action = {
     id: string;
-    label: string;
-    description: string;
+    label?: string;
+    description?: string;
     configuration: {
         [key: string]: {
             [key: string]: unknown;
@@ -65,8 +65,8 @@ export type Action = {
 
 export type Condition = {
     id: string;
-    label: string;
-    description: string;
+    label?: string;
+    description?: string;
     configuration: {
         [key: string]: {
             [key: string]: unknown;
@@ -88,19 +88,19 @@ export type Rule = {
         };
     };
     configDescriptions: Array<ConfigDescriptionParameter>;
-    templateUID: string;
+    templateUID?: string;
     templateState: string;
     uid: string;
-    name: string;
+    name?: string;
     tags: Array<string>;
     visibility: 'VISIBLE' | 'HIDDEN' | 'EXPERT';
-    description: string;
+    description?: string;
 };
 
 export type Trigger = {
     id: string;
-    label: string;
-    description: string;
+    label?: string;
+    description?: string;
     configuration: {
         [key: string]: {
             [key: string]: unknown;
@@ -119,14 +119,14 @@ export type EnrichedRule = {
         };
     };
     configDescriptions: Array<ConfigDescriptionParameter>;
-    templateUID: string;
+    templateUID?: string;
     templateState: string;
     uid: string;
-    name: string;
+    name?: string;
     tags: Array<string>;
     visibility: 'VISIBLE' | 'HIDDEN' | 'EXPERT';
-    description: string;
-    status: RuleStatusInfo;
+    description?: string;
+    status?: RuleStatusInfo;
     editable: boolean;
 };
 
@@ -137,10 +137,10 @@ export type RuleStatusInfo = {
 };
 
 export type Module = {
-    typeUID: string;
     configuration: Configuration;
-    label: string;
+    typeUID: string;
     description: string;
+    label: string;
     id: string;
 };
 
@@ -161,8 +161,8 @@ export type Template = {
     uid: string;
     visibility: 'VISIBLE' | 'HIDDEN' | 'EXPERT';
     tags: Array<string>;
-    label: string;
     description: string;
+    label: string;
 };
 
 export type Input = {
@@ -188,7 +188,7 @@ export type Output = {
 
 export type ThingAction = {
     actionUid: string;
-    label: string;
+    label?: string;
     description?: string;
     visibility?: 'VISIBLE' | 'HIDDEN' | 'EXPERT';
     inputs: Array<Input>;
@@ -198,12 +198,12 @@ export type ThingAction = {
 
 export type AudioSink = {
     id: string;
-    label: string;
+    label?: string;
 };
 
 export type AudioSource = {
     id: string;
-    label: string;
+    label?: string;
 };
 
 export type UserApiToken = {
@@ -272,17 +272,17 @@ export type AddonType = {
 export type ChannelType = {
     parameters: Array<ConfigDescriptionParameter>;
     parameterGroups: Array<ConfigDescriptionParameterGroup>;
-    description: string;
+    description?: string;
     label: string;
-    category: string;
-    itemType: string;
-    unitHint: string;
-    kind: string;
-    stateDescription: StateDescription;
+    category?: string;
+    itemType?: string;
+    unitHint?: string;
+    kind: 'STATE' | 'TRIGGER';
+    stateDescription?: StateDescription;
     tags: Array<string>;
     UID: string;
     advanced: boolean;
-    commandDescription: CommandDescription;
+    commandDescription?: CommandDescription;
 };
 
 export type CommandDescription = {
@@ -324,12 +324,12 @@ export type ConfigDescription = {
 
 export type DiscoveryInfo = {
     inputSupported: boolean;
-    inputLabel: string;
-    inputDescription: string;
+    inputLabel?: string;
+    inputDescription?: string;
 };
 
 export type DiscoveryResult = {
-    bridgeUID: string;
+    bridgeUID?: string;
     flag: 'NEW' | 'IGNORED';
     label: string;
     properties: {
@@ -337,9 +337,9 @@ export type DiscoveryResult = {
             [key: string]: unknown;
         };
     };
-    representationProperty: string;
+    representationProperty?: string;
     thingUID: string;
-    thingTypeUID: string;
+    thingTypeUID?: string;
 };
 
 export type Channel = {
@@ -369,7 +369,7 @@ export type FileFormat = {
 
 export type FileFormatChannelLink = {
     channelUID: string;
-    configuration: {
+    configuration?: {
         [key: string]: {
             [key: string]: unknown;
         };
@@ -394,12 +394,12 @@ export type FileFormatItem = {
 
 export type GroupFunction = {
     name: string;
-    params: Array<string>;
+    params?: Array<string>;
 };
 
 export type Metadata = {
     value: string;
-    config: {
+    config?: {
         [key: string]: {
             [key: string]: unknown;
         };
@@ -438,7 +438,7 @@ export type EnrichedItem = {
     category?: string;
     tags?: Array<string>;
     groupNames?: Array<string>;
-    link: string;
+    link?: string;
     state: string;
     transformedState?: string;
     stateDescription?: StateDescription;
@@ -467,6 +467,34 @@ export type GroupItem = {
     function?: GroupFunction;
 };
 
+export type EnrichedGroupItem = {
+    type: string;
+    name: string;
+    label?: string;
+    category?: string;
+    tags?: Array<string>;
+    groupNames?: Array<string>;
+    link?: string;
+    state: string;
+    transformedState?: string;
+    stateDescription?: StateDescription;
+    commandDescription?: CommandDescription;
+    lastState?: string;
+    lastStateUpdate?: number;
+    lastStateChange?: number;
+    unitSymbol?: string;
+    metadata?: {
+        [key: string]: {
+            [key: string]: unknown;
+        };
+    };
+    parents?: Array<EnrichedItem>;
+    editable: boolean;
+    members?: Array<EnrichedItem>;
+    groupType?: string;
+    function?: GroupFunction;
+};
+
 export type ItemSemanticsProblem = {
     item: string;
     semanticType: string;
@@ -489,6 +517,11 @@ export type EnrichedItemChannelLink = {
         };
     };
     editable: boolean;
+};
+
+export type BrokenItemChannelLink = {
+    itemChannelLink: EnrichedItemChannelLink;
+    problem: 'THING_CHANNEL_MISSING' | 'ITEM_MISSING' | 'ITEM_AND_THING_CHANNEL_MISSING';
 };
 
 export type ItemChannelLink = {
@@ -515,7 +548,6 @@ export type HistoryDataBean = {
 
 export type ItemHistory = {
     name: string;
-    totalrecords: string;
     datapoints: string;
     data: Array<HistoryDataBean>;
 };
@@ -527,13 +559,13 @@ export type PersistenceCronStrategy = {
 
 export type PersistenceFilter = {
     name: string;
-    value: number;
-    relative: boolean;
-    unit: string;
-    lower: number;
-    upper: number;
-    values: Array<string>;
-    inverted: boolean;
+    value?: number;
+    relative?: boolean;
+    unit?: string;
+    lower?: number;
+    upper?: number;
+    values?: Array<string>;
+    inverted?: boolean;
 };
 
 export type PersistenceItemConfiguration = {
@@ -558,8 +590,8 @@ export type PersistenceServiceConfiguration = {
 };
 
 export type PersistenceItemInfo = {
-    latest: string;
     earliest: string;
+    latest: string;
     name: string;
     count: number;
 };
@@ -586,7 +618,7 @@ export type ConfigurableService = {
     id: string;
     label: string;
     category: string;
-    configDescriptionURI: string;
+    configDescriptionURI?: string;
     multiple: boolean;
 };
 
@@ -617,7 +649,7 @@ export type EnrichedChannel = {
         };
     };
     autoUpdatePolicy?: string;
-    linkedItems?: Array<string>;
+    linkedItems: Array<string>;
 };
 
 export type EnrichedThing = {
@@ -673,52 +705,52 @@ export type Firmware = {
 export type StrippedThingType = {
     UID: string;
     label: string;
-    description: string;
-    category: string;
+    description?: string;
+    category?: string;
     listed: boolean;
     supportedBridgeTypeUIDs: Array<string>;
     bridge: boolean;
-    semanticEquipmentTag: string;
+    semanticEquipmentTag?: string;
 };
 
 export type ChannelDefinition = {
-    description: string;
+    description?: string;
     id: string;
     label: string;
     tags: Array<string>;
     properties: {
         [key: string]: string;
     };
-    category: string;
-    stateDescription: StateDescription;
+    category?: string;
+    stateDescription?: StateDescription;
     advanced: boolean;
     typeUID: string;
 };
 
 export type ChannelGroupDefinition = {
     id: string;
-    description: string;
-    label: string;
+    description?: string;
+    label?: string;
     channels: Array<ChannelDefinition>;
 };
 
 export type ThingType = {
     UID: string;
     label: string;
-    description: string;
-    category: string;
+    description?: string;
+    category?: string;
     listed: boolean;
     supportedBridgeTypeUIDs: Array<string>;
     bridge: boolean;
-    semanticEquipmentTag: string;
-    channels: Array<ChannelDefinition>;
-    channelGroups: Array<ChannelGroupDefinition>;
-    configParameters: Array<ConfigDescriptionParameter>;
-    parameterGroups: Array<ConfigDescriptionParameterGroup>;
-    properties: {
+    semanticEquipmentTag?: string;
+    channels?: Array<ChannelDefinition>;
+    channelGroups?: Array<ChannelGroupDefinition>;
+    configParameters?: Array<ConfigDescriptionParameter>;
+    parameterGroups?: Array<ConfigDescriptionParameterGroup>;
+    properties?: {
         [key: string]: string;
     };
-    extensibleChannelTypeIds: Array<string>;
+    extensibleChannelTypeIds?: Array<string>;
 };
 
 export type Links = {
@@ -877,7 +909,7 @@ export type UiComponent = {
 export type Tile = {
     name: string;
     url: string;
-    overlay: string;
+    overlay?: string;
     imageUrl: string;
 };
 
@@ -890,7 +922,7 @@ export type Voice = {
 export type HumanLanguageInterpreter = {
     id: string;
     label: string;
-    locales: Array<string>;
+    locales?: Array<string>;
 };
 
 export type LoggerInfo = {
@@ -3197,7 +3229,7 @@ export type GetItemsResponses = {
     /**
      * OK
      */
-    200: Array<EnrichedItem>;
+    200: Array<EnrichedItem | EnrichedGroupItem>;
 };
 
 export type GetItemsResponse = GetItemsResponses[keyof GetItemsResponses];
@@ -3554,10 +3586,12 @@ export type GetOrphanLinksData = {
 
 export type GetOrphanLinksResponses = {
     /**
-     * List of broken links
+     * OK
      */
-    200: unknown;
+    200: Array<BrokenItemChannelLink>;
 };
+
+export type GetOrphanLinksResponse = GetOrphanLinksResponses[keyof GetOrphanLinksResponses];
 
 export type PurgeDatabase1Data = {
     body?: never;
@@ -3838,7 +3872,7 @@ export type GetPersistenceHealthData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/persistence/persistencehealth';
+    url: '/persistence/health';
 };
 
 export type GetPersistenceHealthResponses = {

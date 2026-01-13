@@ -48,4 +48,11 @@ export interface Config {
   state?: boolean
 }
 
-export { Action, ActionHttpMethod, ActionPageTransition, ActionAnalyzerChartType, ActionAnalyzerCoordSystem, ActionAnalyzerAggregation }
+export {
+  Action,
+  ActionHttpMethod,
+  ActionPageTransition,
+  ActionAnalyzerChartType,
+  ActionAnalyzerCoordSystem,
+  ActionAnalyzerAggregation
+}

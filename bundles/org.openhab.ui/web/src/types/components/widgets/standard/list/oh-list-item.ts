@@ -49,4 +49,11 @@ export interface Config {
   listButtonColor?: string
 }
 
-export { Action, ActionHttpMethod, ActionPageTransition, ActionAnalyzerChartType, ActionAnalyzerCoordSystem, ActionAnalyzerAggregation }
+export {
+  Action,
+  ActionHttpMethod,
+  ActionPageTransition,
+  ActionAnalyzerChartType,
+  ActionAnalyzerCoordSystem,
+  ActionAnalyzerAggregation
+}

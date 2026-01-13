@@ -1,6 +1,8 @@
 // note: this file is generated and should not be edited by hand
 
-import { Orient } from '../common.ts'
+import {
+  Orient
+} from '../common.ts'
 
 export interface Config {
   show?: boolean
@@ -8,4 +10,6 @@ export interface Config {
   confine?: boolean
 }
 
-export { Orient }
+export {
+  Orient
+}

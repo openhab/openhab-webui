@@ -1,6 +1,8 @@
 // note: this file is generated and should not be edited by hand
 
-import { NameLocation } from '../common.ts'
+import {
+  NameLocation
+} from '../common.ts'
 
 export interface Config {
   name?: string
@@ -13,4 +15,6 @@ export interface Config {
   gridIndex?: number
 }
 
-export { NameLocation }
+export {
+  NameLocation
+}

@@ -1,6 +1,8 @@
 // note: this file is generated and should not be edited by hand
 
-import { PlayerType } from '../common.ts'
+import {
+  PlayerType
+} from '../common.ts'
 
 export interface Config {
   title?: string
@@ -22,4 +24,6 @@ export interface Config {
   sendAudio?: boolean
 }
 
-export { PlayerType }
+export {
+  PlayerType
+}

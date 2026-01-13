@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+
 import fetch from 'node-fetch'
 import fs from 'node:fs'
 import { createClient } from '@hey-api/openapi-ts'

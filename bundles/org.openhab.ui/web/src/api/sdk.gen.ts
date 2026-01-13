@@ -1784,7 +1784,7 @@ export const storeItemDataInPersistenceService = <ThrowOnError extends boolean =
 export const getPersistenceHealth = <ThrowOnError extends boolean = false>(options?: Options<never, ThrowOnError>) => (options?.client ?? client).get<GetPersistenceHealthResponses, unknown, ThrowOnError, 'data'>({
     responseStyle: 'data',
     security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/persistence/persistencehealth',
+    url: '/persistence/health',
     ...options
 });
 

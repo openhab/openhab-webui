@@ -1,6 +1,8 @@
 // note: this file is generated and should not be edited by hand
 
-import { Orient } from '../common.ts'
+import {
+  Orient
+} from '../common.ts'
 
 export enum Type {
   continuous = 'continuous',
@@ -31,4 +33,6 @@ export interface Config {
   height?: string
 }
 
-export { Orient }
+export {
+  Orient
+}

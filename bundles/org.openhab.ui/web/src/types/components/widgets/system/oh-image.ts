@@ -44,4 +44,11 @@ export interface Config {
   refreshInterval?: number
 }
 
-export { Action, ActionHttpMethod, ActionPageTransition, ActionAnalyzerChartType, ActionAnalyzerCoordSystem, ActionAnalyzerAggregation }
+export {
+  Action,
+  ActionHttpMethod,
+  ActionPageTransition,
+  ActionAnalyzerChartType,
+  ActionAnalyzerCoordSystem,
+  ActionAnalyzerAggregation
+}

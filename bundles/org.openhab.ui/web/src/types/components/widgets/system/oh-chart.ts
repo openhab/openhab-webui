@@ -1,6 +1,10 @@
 // note: this file is generated and should not be edited by hand
 
-import { ChartType, Period, Future } from '../common.ts'
+import {
+  ChartType,
+  Period,
+  Future
+} from '../common.ts'
 
 export interface Config {
   chartType: ChartType
@@ -8,4 +12,8 @@ export interface Config {
   future?: Future
 }
 
-export { ChartType, Period, Future }
+export {
+  ChartType,
+  Period,
+  Future
+}

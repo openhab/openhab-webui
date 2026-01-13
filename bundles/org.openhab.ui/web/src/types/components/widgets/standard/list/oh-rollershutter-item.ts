@@ -1,6 +1,9 @@
 // note: this file is generated and should not be edited by hand
 
-import { DirIconsStyle, StopIconStyle } from '../../common.ts'
+import {
+  DirIconsStyle,
+  StopIconStyle
+} from '../../common.ts'
 
 export interface Config {
   title?: string
@@ -16,4 +19,7 @@ export interface Config {
   stateInCenter?: boolean
 }
 
-export { DirIconsStyle, StopIconStyle }
+export {
+  DirIconsStyle,
+  StopIconStyle
+}

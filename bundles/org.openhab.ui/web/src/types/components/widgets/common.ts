@@ -137,7 +137,9 @@ export enum Period {
   Y = 'Y'
 }
 
-export enum Future {}
+export enum Future {
+
+}
 
 export enum Modules {
   wheel = 'wheel',
@@ -286,4 +288,7 @@ export enum BackgroundColor {
   black = 'black'
 }
 
-export enum Item {}
+export enum Item {
+
+}
+
