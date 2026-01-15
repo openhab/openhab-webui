@@ -199,10 +199,10 @@ export default {
     }
   },
   created () {
-    this.x = this.config.x || 20
-    this.y = this.config.y || 20
-    this.w = this.config.w || 100
-    this.h = this.config.h || 100
+    this.x = this.config.x ?? 20
+    this.y = this.config.y ?? 20
+    this.w = this.config.w ?? 100
+    this.h = this.config.h ?? 100
     this.shadow = !this.config.noCanvasShadow
     this.styled = !this.config.notStyled
   },
