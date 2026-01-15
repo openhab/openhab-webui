@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { readonly, ref } from 'vue'
 
 import api from '@/js/openhab/api'
 
@@ -48,9 +48,7 @@ export const useComponentsStore = defineStore('components', () => {
     if (useRuntimeStore().apiEndpoint('ui')) {
       return Promise.all([api.get('/rest/ui/components/ui:page'), api.get('/rest/ui/components/ui:widget')]).then(
         (data: [Page[], Widget[]]) => {
-          _pages.value = data[0]
-          _widgets.value = data[1]
-          ready.value = true
+          setPagesAndWidgets(data[0], data[1])
         }
       )
     } else {
@@ -58,5 +56,5 @@ export const useComponentsStore = defineStore('components', () => {
     }
   }
 
-  return { ready, widget, widgets, page, pages, loadPagesAndWidgets, setPagesAndWidgets }
+  return { ready: readonly(ready), widget, widgets, page, pages, loadPagesAndWidgets }
 })
