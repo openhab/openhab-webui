@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { readonly, ref } from 'vue'
 
 import api from '@/js/openhab/api'
 
@@ -20,21 +20,23 @@ export const useComponentsStore = defineStore('components', () => {
   const ready = ref<boolean>(false)
 
   // Getters
-  function widget (uid: string) {
-    return _widgets.value.find((widget) => widget.uid === uid)
+  function widget(uid: string): Readonly<Widget> | null {
+    const widget = _widgets.value.find((widget) => widget.uid === uid)
+    return widget ? readonly(widget) : null
   }
 
-  function widgets () {
-    return _widgets.value.sort((a, b) => a.uid.localeCompare(b.uid))
+  function widgets(): Readonly<Widget[]> {
+    return readonly(_widgets.value.sort((a, b) => a.uid.localeCompare(b.uid)))
   }
 
-  function page (uid: string) {
-    return _pages.value.find((page) => page.uid === uid)
+  function page(uid: string): Readonly<Page> | null {
+    const page = _pages.value.find((page) => page.uid === uid)
+    return page ? readonly(page) : null
   }
 
-  function pages (): Page[] {
+  function pages(): Readonly<Page[]> {
     const pages = _pages.value.sort((a, b) => a.uid.localeCompare(b.uid))
-    return pages
+    return readonly(pages)
   }
 
   // Actions
