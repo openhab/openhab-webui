@@ -156,7 +156,8 @@ export default {
           ? {
             component: 'oh-list-card',
             config: {
-              mediaList: true
+              mediaList: true,
+              accordionList: true
             },
             slots: {
               default: [this.widget]
