@@ -273,7 +273,7 @@ export default {
           component.slots[slot].push({
             component: choice,
             config: {},
-            slots: { default: [] }
+            slots: choice === 'oh-list-card' ? { default: [] } : undefined
           })
           nextTick(() => actions.destroy())
           this.forceUpdate()
