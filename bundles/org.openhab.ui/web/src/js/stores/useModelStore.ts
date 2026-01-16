@@ -98,7 +98,10 @@ export const useModelStore = defineStore('model', () => {
   const ready = ref<boolean>(false)
 
   // Getters
-  function getSemanticModelElement(key: string, type: string): DeepReadonly<LocationModelCard | EquipmentModelCard | PropertyModelCard> | null {
+  function getSemanticModelElement(
+    key: string,
+    type: string
+  ): DeepReadonly<LocationModelCard | EquipmentModelCard | PropertyModelCard> | null {
     if (!ready.value) return null
 
     switch (type) {
