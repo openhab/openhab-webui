@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { readonly, ref } from 'vue'
 
 import api from '@/js/openhab/api'
 import { type Composer, type I18n } from 'vue-i18n'
@@ -100,5 +100,16 @@ export const useSemanticsStore = defineStore('semantics', () => {
     }
   }
 
-  return { Locations, Equipment, Points, Properties, Labels, Descriptions, Synonyms, Tags, ready, loadSemantics }
+  return {
+    Locations: readonly(Locations),
+    Equipment: readonly(Equipment),
+    Points: readonly(Points),
+    Properties: readonly(Properties),
+    Labels: readonly(Labels),
+    Descriptions: readonly(Descriptions),
+    Synonyms: readonly(Synonyms),
+    Tags: readonly(Tags),
+    ready: readonly(ready),
+    loadSemantics
+  }
 })

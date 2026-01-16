@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { readonly, ref, type DeepReadonly } from 'vue'
 import { compareItems } from '@/components/widgets/widget-order'
 import { authorize } from '@/js/openhab/auth'
 import { i18n } from '@/js/i18n'
@@ -95,29 +95,38 @@ export const useModelStore = defineStore('model', () => {
   const locations = ref<LocationModelCard[]>([])
   const equipment = ref<EquipmentModelCard[]>([])
   const properties = ref<PropertyModelCard[]>([])
-  const error = ref<any>(null)
   const ready = ref<boolean>(false)
 
   // Getters
-  function getSemanticModelElement(key: string, type: string): LocationModelCard | EquipmentModelCard | PropertyModelCard | null {
+  function getSemanticModelElement(
+    key: string,
+    type: string
+  ): DeepReadonly<LocationModelCard | EquipmentModelCard | PropertyModelCard> | null {
     if (!ready.value) return null
 
     switch (type) {
       case 'location':
-        return locations.value.find((e) => e.key === key) || null
+        const loc = locations.value.find((e) => e.key === key)
+        return loc ? readonly(loc) : null
       case 'equipment':
-        return equipment.value.find((e) => e.key === key) || null
+        const equip = equipment.value.find((e) => e.key === key)
+        return equip ? readonly(equip) : null
       case 'property':
-        return properties.value.find((e) => e.key === key) || null
+        const prop = properties.value.find((e) => e.key === key)
+        return prop ? readonly(prop) : null
       default:
         return null
     }
   }
 
   // Actions
-  // Recursively builds path in model (sorted array of relations to ancestors, either Equipment or Location) for an item
-  // that has semantics configuration and returns it.
-  // At the same time, adds all items not already processed to the filteredItems property depending on their semantic type.
+  /**
+   * Recursively builds a path in the model (sorted array of relations to ancestors, either Equipment or Location) for an item that has semantics configured.
+   * At the same time, it adds all items not already processed to the filteredItems property depending on their semantic type.
+   * @param item
+   * @param items
+   * @param filteredItems
+   */
   function buildPathInModel(item: ModelItem, items: ModelItem[], filteredItems: FilteredItems): Item[] {
     if (!item.metadata || !item.metadata.semantics) return []
 
@@ -245,10 +254,16 @@ export const useModelStore = defineStore('model', () => {
         if (e === 'Unauthorized' || e === 401) {
           authorize()
         }
-        error.value = e
         Promise.reject('Failed to load semantic model: ' + e)
       })
   }
 
-  return { locations, equipment, properties, ready, loadSemanticModel, getSemanticModelElement }
+  return {
+    locations: readonly(locations),
+    equipment: readonly(equipment),
+    properties: readonly(properties),
+    ready: readonly(ready),
+    loadSemanticModel,
+    getSemanticModelElement
+  }
 })

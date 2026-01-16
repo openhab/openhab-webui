@@ -789,14 +789,11 @@ export default {
               : Promise.resolve(null)
           }
           return Promise.all([
-            ...(useRuntimeStore().apiEndpoint('ui'))
-              ? [this.$oh.api.get('/rest/ui/components/ui:page'), this.$oh.api.get('/rest/ui/components/ui:widget')]
-              : [Promise.resolve([]), Promise.resolve([])],
+            useComponentsStore().loadPagesAndWidgets(),
             dayjsLocalePromise
           ])
         })
         .then((data) => {
-          useComponentsStore().setPagesAndWidgets(data[0], data[1])
           this.pages = useComponentsStore().pages()
             .filter((p) => p.config.sidebar && this.pageIsVisible(p))
             .sort((p1, p2) => {
@@ -806,8 +803,8 @@ export default {
             })
           this.updateTitle()
 
-          if (data[2]) {
-            dayjs.locale(data[2], null, false)
+          if (data[1]) {
+            dayjs.locale(data[1], null, false)
             console.log('dayjs locale set to', dayjs.locale())
           }
           // load & build the semantic model
