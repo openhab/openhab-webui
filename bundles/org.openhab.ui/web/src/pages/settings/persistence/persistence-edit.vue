@@ -315,6 +315,8 @@
 .modules
   width 100%
   .block
+    padding-left var(--f7-safe-area-left)
+    padding-right var(--f7-safe-area-right)
     .block-title
       padding-left calc(var(--f7-block-padding-horizontal) + var(--f7-safe-area-left))
     .block-header
