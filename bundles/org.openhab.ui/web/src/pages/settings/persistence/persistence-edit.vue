@@ -27,37 +27,34 @@
         <!-- Skeletons for not ready -->
         <f7-block v-if="!ready" class="block-narrow">
           <f7-col class="modules">
-            <div>
-              <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)"> Configuration </f7-block-title>
+            <f7-block>
+              <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)"> Configurations </f7-block-title>
+              <f7-block-header style="padding-right: 16px"> Items to persist with strategies to use. </f7-block-header>
               <f7-list class="skeleton-text skeleton-effect-blink">
                 <f7-list-item />
               </f7-list>
-            </div>
-            <div>
-              <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)"> Strategies </f7-block-title>
+            </f7-block>
+            <f7-block>
+              <f7-block-title medium> Definitions </f7-block-title>
+              <f7-block-header> Cron strategy and filter definitions used in a persistence configuration. </f7-block-header>
+              <!-- Cron Strategies -->
+              <f7-block-title small style="margin-bottom: var(--f7-list-margin-vertical)"> Cron Strategies </f7-block-title>
               <f7-list class="skeleton-text skeleton-effect-blink">
                 <f7-list-item />
               </f7-list>
-              <!-- Default Strategies -->
-              <strategy-picker title="Default Strategies" class="skeleton-text skeleton-effect-blink" />
-            </div>
-            <div>
-              <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)"> Filters </f7-block-title>
-              <div v-for="ft in FilterTypes" :key="ft.name">
-                <f7-block-title>
-                  {{ ft.label }}
-                </f7-block-title>
-                <f7-list class="skeleton-text skeleton-effect-blink">
-                  <f7-list-item />
-                </f7-list>
-              </div>
-            </div>
-            <div>
+              <!-- Filters -->
+              <f7-block-title small style="margin-bottom: var(--f7-list-margin-vertical)"> Filters </f7-block-title>
+              <f7-list class="skeleton-text skeleton-effect-blink">
+                <f7-list-item />
+              </f7-list>
+            </f7-block>
+            <f7-block>
               <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)"> Aliases </f7-block-title>
+              <f7-block-header style="padding-right: 16px">Item names mapped to aliases used in persistence store.</f7-block-header>
               <f7-list class="skeleton-text skeleton-effect-blink">
                 <f7-list-item />
               </f7-list>
-            </div>
+            </f7-block>
           </f7-col>
         </f7-block>
 
@@ -67,14 +64,13 @@
           </f7-col>
           <f7-col class="modules">
             <!-- Configuration -->
-            <div>
-              <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)"> Configuration </f7-block-title>
+            <f7-block>
+              <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)"> Configurations </f7-block-title>
+              <f7-block-header style="padding-right: 16px"> Items to persist with strategies to use. </f7-block-header>
               <f7-list :media-list="editable" swipeout>
                 <f7-list-item
                   v-for="(cfg, index) in persistence.configs"
                   :key="cfg.items.join()"
-                  :title="cfg.items.join(', ')"
-                  :footer="cfg.strategies.join(', ') + (cfg.filters.length > 0 ? ' - ' + cfg.filters.join(', ') : '')"
                   :link="editable"
                   @click="(ev) => editConfiguration(ev, index, cfg)"
                   swipeout>
@@ -86,6 +82,17 @@
                       icon-ios="f7:minus_circle_filled"
                       icon-md="material:remove_circle_outline"
                       @click="showSwipeout" />
+                  </template>
+                  <template #title>
+                    <div v-if="configurationAllItemsTitle(cfg.items)">{{ configurationAllItemsTitle(cfg.items) }}</div>
+                    <div v-if="configurationGroupsTitle(cfg.items)">{{ configurationGroupsTitle(cfg.items) }}</div>
+                    <div v-if="configurationItemsTitle(cfg.items)">{{ configurationItemsTitle(cfg.items) }}</div>
+                    <div v-if="configurationGroupsTitle(cfg.items, true)">{{ configurationGroupsTitle(cfg.items, true) }}</div>
+                    <div v-if="configurationItemsTitle(cfg.items, true)">{{ configurationItemsTitle(cfg.items, true) }}</div>
+                  </template>
+                  <template #footer>
+                    <div v-if="cfg.strategies?.length">{{ configurationStrategiesTitle(cfg.strategies) }}</div>
+                    <div v-if="cfg.filters?.length">{{ configurationFiltersTitle(cfg.filters) }}</div>
                   </template>
                   <f7-swipeout-actions right v-if="editable">
                     <f7-swipeout-button
@@ -109,11 +116,12 @@
                   </template>
                 </f7-list-item>
               </f7-list>
-            </div>
-            <!-- Strategies -->
-            <div>
-              <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)"> Strategies </f7-block-title>
+            </f7-block>
+            <f7-block>
+              <f7-block-title medium> Definitions </f7-block-title>
+              <f7-block-header> Cron strategy and filter definitions used in a persistence configuration. </f7-block-header>
               <!-- Cron Strategies -->
+              <f7-block-title small style="margin-bottom: var(--f7-list-margin-vertical)"> Cron Strategies </f7-block-title>
               <f7-list :media-list="editable" swipeout>
                 <f7-list-item
                   v-for="(cs, index) in persistence.cronStrategies"
@@ -155,58 +163,52 @@
                 </f7-list-item>
               </f7-list>
               <!-- Filters -->
-              <div>
-                <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)"> Filters </f7-block-title>
-                <div v-for="ft in FilterTypes" :key="ft.name">
-                  <f7-block-title>
-                    {{ ft.label }}
-                  </f7-block-title>
-                  <f7-list :media-list="editable" swipeout>
-                    <f7-list-item
-                      v-for="(f, index) in persistence[ft.name]"
-                      :key="f.name"
-                      :title="f.name"
-                      :footer="(typeof ft.footerFn === 'function') ? ft.footerFn(f) : ''"
-                      :link="editable"
-                      @click="(ev) => editFilter(ev, ft, index, f)"
-                      swipeout>
-                      <template #media>
-                        <f7-link
-                          v-if="editable"
-                          icon-color="red"
-                          icon-aurora="f7:minus_circle_filled"
-                          icon-ios="f7:minus_circle_filled"
-                          icon-md="material:remove_circle_outline"
-                          @click="showSwipeout" />
-                      </template>
-                      <f7-swipeout-actions right v-if="editable">
-                        <f7-swipeout-button
-                          @click="(ev) => deleteFilter(ev, ft.name, index)"
-                          style="background-color: var(--f7-swipeout-delete-button-bg-color)">
-                          Delete
-                        </f7-swipeout-button>
-                      </f7-swipeout-actions>
-                    </f7-list-item>
-                  </f7-list>
-                  <f7-list v-if="editable">
-                    <f7-list-item
-                      link
-                      no-chevron
-                      media-item
-                      :color="(theme.dark) ? 'black' : 'white'"
-                      :subtitle="'Add ' + ft.label.toLowerCase() + ' filter'"
-                      @click="editFilter(undefined, ft, null)">
-                      <template #media>
-                        <f7-icon color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
-                      </template>
-                    </f7-list-item>
-                  </f7-list>
-                </div>
-              </div>
-            </div>
-            <!-- Aliases -->
-            <div>
+              <f7-block-title small style="margin-bottom: var(--f7-list-margin-vertical)"> Filters </f7-block-title>
+              <f7-list v-for="ft in FilterTypes" :key="ft.name" :media-list="editable" swipeout>
+                <f7-list-item
+                  v-for="(f, index) in persistence[ft.name]"
+                  :key="f.name"
+                  :title="f.name"
+                  :footer="(typeof ft.footerFn === 'function') ? ft.footerFn(f) : ''"
+                  :link="editable"
+                  @click="(ev) => editFilter(ev, ft, index, f)"
+                  swipeout>
+                  <template #media>
+                    <f7-link
+                      v-if="editable"
+                      icon-color="red"
+                      icon-aurora="f7:minus_circle_filled"
+                      icon-ios="f7:minus_circle_filled"
+                      icon-md="material:remove_circle_outline"
+                      @click="showSwipeout" />
+                  </template>
+                  <f7-swipeout-actions right v-if="editable">
+                    <f7-swipeout-button
+                      @click="(ev) => deleteFilter(ev, ft, index)"
+                      style="background-color: var(--f7-swipeout-delete-button-bg-color)">
+                      Delete
+                    </f7-swipeout-button>
+                  </f7-swipeout-actions>
+                </f7-list-item>
+              </f7-list>
+              <f7-list v-if="editable">
+                <f7-list-item
+                  link
+                  no-chevron
+                  media-item
+                  :color="(theme.dark) ? 'black' : 'white'"
+                  subtitle="Add filter"
+                  @click="openFilterTypePopup">
+                  <template #media>
+                    <f7-icon color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
+                  </template>
+                </f7-list-item>
+              </f7-list>
+            </f7-block>
+            <f7-block>
+              <!-- Aliases -->
               <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)"> Aliases </f7-block-title>
+              <f7-block-header style="padding-right: 16px">Item names mapped to aliases used in persistence store.</f7-block-header>
               <f7-list :media-list="editable" swipeout no-swipeout-opened>
                 <f7-list-item v-for="(i, index) in currentItemsWithAlias" class="swipeout list-alias-item" :key="i">
                   <template #media>
@@ -258,7 +260,7 @@
                     @input="updateAliasItems($event)" />
                 </f7-list-group>
               </f7-list>
-            </div>
+            </f7-block>
           </f7-col>
           <f7-col v-if="editable && !newPersistence">
             <f7-list>
@@ -288,6 +290,19 @@
       </f7-tab>
     </f7-tabs>
   </f7-page>
+
+  <f7-popup v-if="ready" v-model:opened="addFilterTypePopup" class="filtertype-selection-popup">
+    <f7-page>
+      <f7-navbar title="Select Filter Type">
+        <f7-nav-right>
+          <f7-link popup-close>Close</f7-link>
+        </f7-nav-right>
+      </f7-navbar>
+      <f7-list>
+        <f7-list-item v-for="ft in FilterTypes" :key="ft.name" link :title="ft.label" @click="selectFilterType(ft)" />
+      </f7-list>
+    </f7-page>
+  </f7-popup>
 </template>
 
 <style lang="stylus">
@@ -298,6 +313,15 @@
     margin-top 0 !important
 
 .modules
+  width 100%
+  .block
+    padding-left var(--f7-safe-area-left)
+    padding-right var(--f7-safe-area-right)
+    .block-title
+      padding-left calc(var(--f7-block-padding-horizontal) + var(--f7-safe-area-left))
+    .block-header
+      padding-left calc(var(--f7-block-padding-horizontal) + var(--f7-safe-area-left))
+      padding-right calc(var(--f7-block-padding-horizontal) + var(--f7-safe-area-right))
   .swipeout-opened
     .sortable-handler
       display none
@@ -307,6 +331,7 @@
     margin-bottom 0
   .list
     margin-top 0
+    margin-bottom 0
 
 .list-alias-item .item-content .item-inner
   display: flex
@@ -322,6 +347,8 @@
     text-align: right
 .alias-item-picker .item-picker .item-content
   padding-left: calc(var(--f7-list-item-padding-horizontal) + var(--f7-safe-area-left))
+  .item-inner::before
+    visibility: hidden
 
 .persistence-code-editor.v-codemirror
   position absolute
@@ -329,7 +356,7 @@
 </style>
 
 <script>
-import { defineAsyncComponent } from 'vue'
+import { nextTick, defineAsyncComponent } from 'vue'
 import { f7, theme } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
@@ -341,17 +368,16 @@ import DirtyMixin from '../dirty-mixin'
 import { FilterTypes, PredefinedStrategies, CommonCronStrategies } from '@/assets/definitions/persistence'
 import CronStrategyPopup from '@/pages/settings/persistence/cron-strategy-popup.vue'
 import ItemPicker from '@/components/config/controls/item-picker.vue'
-import StrategyPicker from '@/pages/settings/persistence/strategy-picker.vue'
 import ConfigurationPopup from '@/pages/settings/persistence/configuration-popup.vue'
 import FilterPopup from '@/pages/settings/persistence/filter-popup.vue'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+import { config } from 'blockly'
 
 export default {
   mixins: [DirtyMixin],
   components: {
     ItemPicker,
-    StrategyPicker,
     editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue'))
   },
   props: {
@@ -374,6 +400,7 @@ export default {
       currentConfiguration: null,
       currentCronStrategy: null,
       currentFilter: null,
+      addFilterTypePopup: false,
 
       notEditableMgs: 'This persistence configuration is not editable because it has been provisioned from a file.'
     }
@@ -529,6 +556,39 @@ export default {
         f7.swipeout.open(swipeoutElement)
       }
     },
+    configurationAllItemsTitle (items) {
+      if (!items) return null
+      const itemList = items.filter((item) => item === '*')
+      return itemList.length ? 'All Items' : null
+    },
+    configurationGroupsTitle (items, exclude) {
+      if (!items) return null
+      let itemList = []
+      if (exclude) {
+        itemList = items.filter((item) => item.match(/^![^!*]+\*$/)).map((item) =>  item.slice(1, -1))
+      } else {
+        itemList = items.filter((item) => item.match(/^[^!*]+\*$/)).map((item) => item.slice(0, -1))
+      }
+      return itemList.length ? (exclude ? 'Not members of: ' : 'Members of: ') + itemList.join(', ') : null
+    },
+    configurationItemsTitle (items, exclude) {
+      if (!items) return null
+      let itemList = []
+      if (exclude) {
+        itemList = items.filter((item) => item.match(/^![^!*]+$/)).map((item) =>  item.slice(1))
+      } else {
+        itemList = items.filter((item) => item.match(/^[^!*]+$/))
+      }
+      return itemList.length ? (exclude ? 'Not : ' : '') + itemList.join(', ') : null
+    },
+    configurationStrategiesTitle (strategies) {
+      if (!(strategies && strategies.length)) return null
+      return strategies.join(', ')
+    },
+    configurationFiltersTitle (filters) {
+      if (!(filters && filters.length)) return null
+      return 'filters: ' + filters.join(', ')
+    },
     editConfiguration (ev, index, configuration) {
       if (!this.editable) return
       this.currentConfiguration = configuration
@@ -599,6 +659,16 @@ export default {
       })
       this.deleteModule(ev, 'cronStrategies', index)
     },
+    openFilterTypePopup () {
+      if (!this.editable) return
+      this.addFilterTypePopup = true
+    },
+    selectFilterType (filterType) {
+      this.addFilterTypePopup = false
+      nextTick(() => {
+        this.editFilter(undefined, filterType, null)
+      })
+    },
     editFilter (ev, filterType, index, filter) {
       if (!this.editable) return
       this.currentFilter = filter
@@ -641,12 +711,12 @@ export default {
     },
     deleteFilter (ev, module, index) {
       // Remove filter from configs, otherwise we get a 400
-      const filterName = this.persistence[module][index].name
+      const filterName = this.persistence[module.name][index].name
       this.persistence.configs.forEach((cfg) => {
         const i = cfg.filters.findIndex((f) => f === filterName)
         if (i > -1) cfg.filters.splice(i, 1)
       })
-      this.deleteModule(ev, module, index)
+      this.deleteModule(ev, module.name, index)
     },
     updateAliasItems (items) {
       if (!this.editable) return
