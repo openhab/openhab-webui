@@ -644,12 +644,12 @@ export default {
     },
     deleteFilter (ev, module, index) {
       // Remove filter from configs, otherwise we get a 400
-      const filterName = this.persistence[module][index].name
+      const filterName = this.persistence[module.name][index].name
       this.persistence.configs.forEach((cfg) => {
         const i = cfg.filters.findIndex((f) => f === filterName)
         if (i > -1) cfg.filters.splice(i, 1)
       })
-      this.deleteModule(ev, module, index)
+      this.deleteModule(ev, module.name, index)
     },
     updateAliasItems (items) {
       if (!this.editable) return
