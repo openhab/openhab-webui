@@ -282,7 +282,7 @@
     </f7-tabs>
   </f7-page>
 
-  <f7-popup v-if="ready" v-model:opened="addFilterTypePopup"  class="filtertype-selection-popup">
+  <f7-popup v-if="ready" v-model:opened="addFilterTypePopup" class="filtertype-selection-popup">
     <f7-page>
       <f7-navbar title="Select Filter Type">
         <f7-nav-right>
@@ -290,13 +290,7 @@
         </f7-nav-right>
       </f7-navbar>
       <f7-list>
-        <f7-list-item
-          v-for="ft in FilterTypes"
-          :key="ft.name"
-          link
-          :title="ft.label"
-          @click="selectFilterType(ft)"
-        />
+        <f7-list-item v-for="ft in FilterTypes" :key="ft.name" link :title="ft.label" @click="selectFilterType(ft)" />
       </f7-list>
     </f7-page>
   </f7-popup>
