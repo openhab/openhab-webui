@@ -71,8 +71,6 @@
                 <f7-list-item
                   v-for="(cfg, index) in persistence.configs"
                   :key="cfg.items.join()"
-                  :title="cfg.items.join(', ')"
-                  :footer="cfg.strategies.join(', ') + (cfg.filters.length > 0 ? ' - ' + cfg.filters.join(', ') : '')"
                   :link="editable"
                   @click="(ev) => editConfiguration(ev, index, cfg)"
                   swipeout>
@@ -84,6 +82,17 @@
                       icon-ios="f7:minus_circle_filled"
                       icon-md="material:remove_circle_outline"
                       @click="showSwipeout" />
+                  </template>
+                  <template #title>
+                    <div v-if="configurationAllItemsTitle(cfg.items)">{{ configurationAllItemsTitle(cfg.items) }}</div>
+                    <div v-if="configurationGroupsTitle(cfg.items)">{{ configurationGroupsTitle(cfg.items) }}</div>
+                    <div v-if="configurationItemsTitle(cfg.items)">{{ configurationItemsTitle(cfg.items) }}</div>
+                    <div v-if="configurationGroupsTitle(cfg.items, true)">{{ configurationGroupsTitle(cfg.items, true) }}</div>
+                    <div v-if="configurationItemsTitle(cfg.items, true)">{{ configurationItemsTitle(cfg.items, true) }}</div>
+                  </template>
+                  <template #footer>
+                    <div v-if="cfg.strategies?.length">{{ configurationStrategiesTitle(cfg.strategies) }}</div>
+                    <div v-if="cfg.filters?.length">{{ configurationFiltersTitle(cfg.filters) }}</div>
                   </template>
                   <f7-swipeout-actions right v-if="editable">
                     <f7-swipeout-button
@@ -361,6 +370,7 @@ import ConfigurationPopup from '@/pages/settings/persistence/configuration-popup
 import FilterPopup from '@/pages/settings/persistence/filter-popup.vue'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+import { config } from 'blockly'
 
 export default {
   mixins: [DirtyMixin],
@@ -543,6 +553,39 @@ export default {
       if (swipeoutElement) {
         f7.swipeout.open(swipeoutElement)
       }
+    },
+    configurationAllItemsTitle (items) {
+      if (!items) return null
+      const itemList = items.filter((item) => item === '*')
+      return itemList.length ? 'All Items' : null
+    },
+    configurationGroupsTitle (items, exclude) {
+      if (!items) return null
+      let itemList = []
+      if (exclude) {
+        itemList = items.filter((item) => item.match(/^![^!*]+\*$/)).map((item) =>  item.slice(1, -1))
+      } else {
+        itemList = items.filter((item) => item.match(/^[^!*]+\*$/)).map((item) => item.slice(0, -1))
+      }
+      return itemList.length ? (exclude ? 'Not members of: ' : 'Members of: ') + itemList.join(', ') : null
+    },
+    configurationItemsTitle (items, exclude) {
+      if (!items) return null
+      let itemList = []
+      if (exclude) {
+        itemList = items.filter((item) => item.match(/^![^!*]+$/)).map((item) =>  item.slice(1))
+      } else {
+        itemList = items.filter((item) => item.match(/^[^!*]+$/))
+      }
+      return itemList.length ? (exclude ? 'Not : ' : '') + itemList.join(', ') : null
+    },
+    configurationStrategiesTitle (strategies) {
+      if (!(strategies && strategies.length)) return null
+      return strategies.join(', ')
+    },
+    configurationFiltersTitle (filters) {
+      if (!(filters && filters.length)) return null
+      return 'filters: ' + filters.join(', ')
     },
     editConfiguration (ev, index, configuration) {
       if (!this.editable) return
