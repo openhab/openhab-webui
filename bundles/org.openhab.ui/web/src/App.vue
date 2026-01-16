@@ -803,8 +803,8 @@ export default {
             })
           this.updateTitle()
 
-          if (data[2]) {
-            dayjs.locale(data[2], null, false)
+          if (data[1]) {
+            dayjs.locale(data[1], null, false)
             console.log('dayjs locale set to', dayjs.locale())
           }
           // load & build the semantic model
