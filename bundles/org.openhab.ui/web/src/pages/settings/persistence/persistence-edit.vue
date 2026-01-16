@@ -155,48 +155,46 @@
               </f7-list>
               <!-- Filters -->
               <f7-block-title small style="margin-bottom: var(--f7-list-margin-vertical)"> Filters </f7-block-title>
-              <div v-for="ft in FilterTypes" :key="ft.name">
-                <f7-list :media-list="editable" swipeout>
-                  <f7-list-item
-                    v-for="(f, index) in persistence[ft.name]"
-                    :key="f.name"
-                    :title="f.name"
-                    :footer="(typeof ft.footerFn === 'function') ? ft.footerFn(f) : ''"
-                    :link="editable"
-                    @click="(ev) => editFilter(ev, ft, index, f)"
-                    swipeout>
-                    <template #media>
-                      <f7-link
-                        v-if="editable"
-                        icon-color="red"
-                        icon-aurora="f7:minus_circle_filled"
-                        icon-ios="f7:minus_circle_filled"
-                        icon-md="material:remove_circle_outline"
-                        @click="showSwipeout" />
-                    </template>
-                    <f7-swipeout-actions right v-if="editable">
-                      <f7-swipeout-button
-                        @click="(ev) => deleteFilter(ev, ft, index)"
-                        style="background-color: var(--f7-swipeout-delete-button-bg-color)">
-                        Delete
-                      </f7-swipeout-button>
-                    </f7-swipeout-actions>
-                  </f7-list-item>
-                </f7-list>
-                <f7-list v-if="editable">
-                  <f7-list-item
-                    link
-                    no-chevron
-                    media-item
-                    :color="(theme.dark) ? 'black' : 'white'"
-                    :subtitle="'Add ' + ft.label.toLowerCase() + ' filter'"
-                    @click="editFilter(undefined, ft, null)">
-                    <template #media>
-                      <f7-icon color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
-                    </template>
-                  </f7-list-item>
-                </f7-list>
-              </div>
+              <f7-list v-for="ft in FilterTypes" :key="ft.name" :media-list="editable" swipeout>
+                <f7-list-item
+                  v-for="(f, index) in persistence[ft.name]"
+                  :key="f.name"
+                  :title="f.name"
+                  :footer="(typeof ft.footerFn === 'function') ? ft.footerFn(f) : ''"
+                  :link="editable"
+                  @click="(ev) => editFilter(ev, ft, index, f)"
+                  swipeout>
+                  <template #media>
+                    <f7-link
+                      v-if="editable"
+                      icon-color="red"
+                      icon-aurora="f7:minus_circle_filled"
+                      icon-ios="f7:minus_circle_filled"
+                      icon-md="material:remove_circle_outline"
+                      @click="showSwipeout" />
+                  </template>
+                  <f7-swipeout-actions right v-if="editable">
+                    <f7-swipeout-button
+                      @click="(ev) => deleteFilter(ev, ft, index)"
+                      style="background-color: var(--f7-swipeout-delete-button-bg-color)">
+                      Delete
+                    </f7-swipeout-button>
+                  </f7-swipeout-actions>
+                </f7-list-item>
+              </f7-list>
+              <f7-list v-if="editable">
+                <f7-list-item
+                  link
+                  no-chevron
+                  media-item
+                  :color="(theme.dark) ? 'black' : 'white'"
+                  subtitle="Add filter"
+                  @click="openFilterTypePopup">
+                  <template #media>
+                    <f7-icon color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
+                  </template>
+                </f7-list-item>
+              </f7-list>
             </f7-block>
             <f7-block>
               <!-- Aliases -->
@@ -283,6 +281,25 @@
       </f7-tab>
     </f7-tabs>
   </f7-page>
+
+  <f7-popup v-if="ready" v-model:opened="addFilterTypePopup"  class="filtertype-selection-popup">
+    <f7-page>
+      <f7-navbar title="Select Filter Type">
+        <f7-nav-right>
+          <f7-link popup-close>Close</f7-link>
+        </f7-nav-right>
+      </f7-navbar>
+      <f7-list>
+        <f7-list-item
+          v-for="ft in FilterTypes"
+          :key="ft.name"
+          link
+          :title="ft.label"
+          @click="selectFilterType(ft)"
+        />
+      </f7-list>
+    </f7-page>
+  </f7-popup>
 </template>
 
 <style lang="stylus">
@@ -334,7 +351,7 @@
 </style>
 
 <script>
-import { defineAsyncComponent } from 'vue'
+import { nextTick, defineAsyncComponent } from 'vue'
 import { f7, theme } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
@@ -377,6 +394,7 @@ export default {
       currentConfiguration: null,
       currentCronStrategy: null,
       currentFilter: null,
+      addFilterTypePopup: false,
 
       notEditableMgs: 'This persistence configuration is not editable because it has been provisioned from a file.'
     }
@@ -601,6 +619,16 @@ export default {
         cfg.strategies.splice(i, 1)
       })
       this.deleteModule(ev, 'cronStrategies', index)
+    },
+    openFilterTypePopup () {
+      if (!this.editable) return
+      this.addFilterTypePopup = true
+    },
+    selectFilterType (filterType) {
+      this.addFilterTypePopup = false
+      nextTick(() => {
+        this.editFilter(undefined, filterType, null)
+      })
     },
     editFilter (ev, filterType, index, filter) {
       if (!this.editable) return
