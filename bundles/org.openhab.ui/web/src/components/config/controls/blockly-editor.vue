@@ -1451,7 +1451,20 @@ export default {
       return Blockly.Xml.domToText(xml)
     },
     getCode () {
-      return javascriptGenerator.workspaceToCode(workspace)
+      let code = javascriptGenerator.workspaceToCode(workspace)
+      // Extracts all lines that contain a directive and moves them to the top
+      const lines = code.split(/\r?\n/)
+      const matches = []
+      const nonMatches = []
+      lines.forEach((line) => {
+        console.log(line)
+        if (line.startsWith('"use ') || line.startsWith('\'use ')) {
+          matches.push(line)
+        } else {
+          nonMatches.push(line)
+        }
+      })
+      return [...matches, ...nonMatches].join('\n');
     },
     getRenderers () {
       const excludedRenderers = ['minimalist']
