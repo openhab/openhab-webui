@@ -197,7 +197,6 @@ export default {
       if (!this.editable) return
 
       if (this.currentTab === 'code' && !this.fromYaml()) return
-      if (!this.metadata.value) this.metadata.value = ' '
       this.saveMetadata(this.item, this.namespace, this.metadata).then((data) => {
         if (this.creationMode) {
           f7.toast.create({
