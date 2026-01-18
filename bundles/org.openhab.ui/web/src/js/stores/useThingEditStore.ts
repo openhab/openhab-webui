@@ -70,9 +70,9 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
         .filter((a) => a.inputConfigDescriptions !== undefined)
         .sort((a: ThingAction, b: ThingAction) => a.label.localeCompare(b.label))
     } catch (e: any) {
+      thingActions.value = []
       if (e === 'Not Found' || e === 404) {
         console.log('No actions available for this Thing')
-        thingActions.value = []
         return
       }
       console.error('Error loading thing actions: ' + e)
@@ -98,6 +98,7 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
       firmwares.value = await api.get('/rest/things/' + thingUID + '/firmwares')
     } catch (e: any) {
       console.debug(`Firmware info not available for Thing ${thingUID}`)
+      firmwares.value = []
     }
   }
 
