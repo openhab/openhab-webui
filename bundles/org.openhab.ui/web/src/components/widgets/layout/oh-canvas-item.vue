@@ -1,94 +1,117 @@
 <template>
-  <vue-draggable-resizable
-    :id="'oh-canvas-item-vdr-' + id"
-    :key="reloadKey"
-    :x="x"
-    :y="y"
-    :w="w"
-    :h="h"
-    :z="active ? 10 : 0"
-    :parent="false"
-    :draggable="!!context.editmode"
-    :resizable="!!context.editmode && !autosize"
-    :class-name="!!context.editmode ? 'oh-canvas-item-editmode' : 'oh-canvas-item-runmode'"
-    :grid="gridEnable ? [gridPitch, gridPitch] : undefined"
-    :min-height="gridEnable ? gridPitch : undefined"
-    :min-width="gridEnable ? gridPitch : undefined"
-    v-if="visible"
-    class="oh-canvas-item no-margin"
-    @dragging="onDrag"
-    @resizing="onResize"
-    :on-drag-start="onDragStartCallback"
-    :on-resize-start="onResizeStartCallback"
-    @drag-stop="onDragStop"
-    @resize-stop="onResizeStop"
-    v-model:active="active"
-    :prevent-deactivation="preventDeactivation">
-    <f7-menu v-if="context.editmode" class="configure-canvas-menu disable-user-select">
-      <f7-menu-item icon-f7="menu" dropdown icon-only>
-        <f7-menu-dropdown right>
-          <f7-menu-dropdown-item
-            @click="context.editmode.configureWidget(context.component, context.parent)"
-            href="#"
-            text="Configure container" />
-          <f7-menu-dropdown-item
-            v-if="context.component.slots.default.length > 0"
-            @click="context.editmode.configureWidget(context.component.slots.default[0], context)"
-            href="#"
-            text="Configure Widget" />
-          <f7-menu-dropdown-item @click="context.editmode.editWidgetCode(context.component, context.parent)" href="#" text="Edit YAML" />
-          <f7-menu-dropdown-item v-if="context.component.slots.default.length > 0" @click="toggleAutoSize()" href="#">
-            <span>Auto Size</span>
-            <f7-icon class="margin-left" :f7="autosize ? 'checkmark_square' : 'square'" />
-          </f7-menu-dropdown-item>
-          <f7-menu-dropdown-item v-if="context.component.slots.default.length > 0" @click="toggleShadow()" href="#">
-            <span>Shadow</span>
-            <f7-icon class="margin-left" :f7="shadow ? 'checkmark_square' : 'square'" />
-          </f7-menu-dropdown-item>
-          <f7-menu-dropdown-item v-if="context.component.slots.default.length > 0" divider />
-          <f7-menu-dropdown-item @click="context.editmode.copyWidget(context.component, context.parent)" href="#" text="Copy" />
-          <f7-menu-dropdown-item @click="context.editmode.cutWidget(context.component, context.parent)" href="#" text="Cut" />
-          <f7-menu-dropdown-item divider />
-          <f7-menu-dropdown-item
-            @click="context.editmode.bringWidgetToFront(context.component, context.parent)"
-            href="#"
-            text="Bring to Front" />
-          <f7-menu-dropdown-item @click="context.editmode.moveWidgetDown(context.component, context.parent)" href="#" text="Move Up" />
-          <f7-menu-dropdown-item @click="context.editmode.moveWidgetUp(context.component, context.parent)" href="#" text="Move Down" />
-          <f7-menu-dropdown-item
-            @click="context.editmode.sendWidgetToBack(context.component, context.parent)"
-            href="#"
-            text="Send to Back" />
-          <f7-menu-dropdown-item divider />
-          <f7-menu-dropdown-item @click="context.editmode.removeWidget(context.component, context.parent)" href="#" text="Remove Item" />
-        </f7-menu-dropdown>
-      </f7-menu-item>
-    </f7-menu>
-    <div @click.capture="eventControl" style="width: 100%; height: 100%; position: absolute" class="disable-user-select">
-      <oh-placeholder-widget
-        v-if="context.editmode && !context.component.slots.default.length"
-        @click="context.editmode.addWidget(context.component, null, context.parent)"
-        class="oh-canvas-item-content" />
+  <template v-if="visible">
+    <vue-draggable-resizable
+      v-if="context.editmode"
+      v-model:active="active"
+      :id="'oh-canvas-item-vdr-' + id"
+      :key="reloadKey"
+      :x="x"
+      :y="y"
+      :w="w"
+      :h="h"
+      :z="active ? 10 : 0"
+      :parent="false"
+      :draggable="true"
+      :resizable="!autosize"
+      class="oh-canvas-item oh-canvas-item-editmode no-margin"
+      :grid="gridEnable ? [gridPitch, gridPitch] : undefined"
+      :min-height="gridEnable ? gridPitch : undefined"
+      :min-width="gridEnable ? gridPitch : undefined"
+      :on-drag-start="onDragStartCallback"
+      :on-resize-start="onResizeStartCallback"
+      :prevent-deactivation="preventDeactivation"
+      @dragging="onDrag"
+      @resizing="onResize"
+      @drag-stop="onDragStop"
+      @resize-stop="onResizeStop">
+      <f7-menu class="configure-canvas-menu disable-user-select">
+        <f7-menu-item icon-f7="menu" dropdown icon-only>
+          <f7-menu-dropdown right>
+            <f7-menu-dropdown-item
+              @click="context.editmode.configureWidget(context.component, context.parent)"
+              href="#"
+              text="Configure container" />
+            <f7-menu-dropdown-item
+              v-if="context.component.slots.default.length > 0"
+              @click="context.editmode.configureWidget(context.component.slots.default[0], context)"
+              href="#"
+              text="Configure Widget" />
+            <f7-menu-dropdown-item @click="context.editmode.editWidgetCode(context.component, context.parent)" href="#" text="Edit YAML" />
+            <f7-menu-dropdown-item v-if="context.component.slots.default.length > 0" @click="toggleAutoSize()" href="#">
+              <span>Auto Size</span>
+              <f7-icon class="margin-left" :f7="autosize ? 'checkmark_square' : 'square'" />
+            </f7-menu-dropdown-item>
+            <f7-menu-dropdown-item v-if="context.component.slots.default.length > 0" @click="toggleShadow()" href="#">
+              <span>Shadow</span>
+              <f7-icon class="margin-left" :f7="shadow ? 'checkmark_square' : 'square'" />
+            </f7-menu-dropdown-item>
+            <f7-menu-dropdown-item v-if="context.component.slots.default.length > 0" divider />
+            <f7-menu-dropdown-item @click="context.editmode.copyWidget(context.component, context.parent)" href="#" text="Copy" />
+            <f7-menu-dropdown-item @click="context.editmode.cutWidget(context.component, context.parent)" href="#" text="Cut" />
+            <f7-menu-dropdown-item divider />
+            <f7-menu-dropdown-item
+              @click="context.editmode.bringWidgetToFront(context.component, context.parent)"
+              href="#"
+              text="Bring to Front" />
+            <f7-menu-dropdown-item @click="context.editmode.moveWidgetDown(context.component, context.parent)" href="#" text="Move Up" />
+            <f7-menu-dropdown-item @click="context.editmode.moveWidgetUp(context.component, context.parent)" href="#" text="Move Down" />
+            <f7-menu-dropdown-item
+              @click="context.editmode.sendWidgetToBack(context.component, context.parent)"
+              href="#"
+              text="Send to Back" />
+            <f7-menu-dropdown-item divider />
+            <f7-menu-dropdown-item @click="context.editmode.removeWidget(context.component, context.parent)" href="#" text="Remove Item" />
+          </f7-menu-dropdown>
+        </f7-menu-item>
+      </f7-menu>
+      <div
+        @click.capture="eventControl"
+        :style="{
+        width: autosize ? 'auto' : w + 'px',
+        height: autosize ? 'auto' : h + 'px'
+      }"
+        class="disable-user-select">
+        <oh-placeholder-widget
+          v-if="!context.component.slots.default.length"
+          @click="context.editmode.addWidget(context.component, null, context.parent)"
+          class="oh-canvas-item-content" />
+        <generic-widget-component
+          v-else-if="context.component.slots.default.length"
+          :context="childContext(context.component.slots.default[0])"
+          class="oh-canvas-item-content"
+          :class="{
+            'oh-canvas-item-styled': styled,
+            'oh-canvas-item-shadow': styled && shadow,
+          }" />
+        <f7-icon class="drag-handle disable-user-select" f7="move" size="15" color="gray" />
+        <div class="oh-canvas-item-id disable-user-select">{{ config.id }}</div>
+        <div v-if="active" class="oh-canvas-item-msg disable-user-select">{{ editMessage }}</div>
+      </div>
+    </vue-draggable-resizable>
+    <div
+      v-else
+      :style="{
+        left: x + 'px',
+        top: y + 'px',
+        width: autosize ? 'auto' : w + 'px',
+        height: autosize ? 'auto' : h + 'px'
+      }"
+      class="oh-canvas-item oh-canvas-item-runmode">
       <generic-widget-component
-        v-else-if="context.component.slots.default.length"
         :context="childContext(context.component.slots.default[0])"
         class="oh-canvas-item-content"
         :class="{
-                                  'oh-canvas-item-styled': styled,
-                                  'oh-canvas-item-shadow': styled && shadow,
-                                }" />
-      <f7-icon v-if="context.editmode" class="drag-handle disable-user-select" f7="move" size="15" color="gray" />
-      <div v-if="context.editmode" class="oh-canvas-item-id disable-user-select">
-        {{ config.id }}
-      </div>
-      <div v-if="context.editmode && active" class="oh-canvas-item-msg disable-user-select">
-        {{ editMessage }}
-      </div>
+          'oh-canvas-item-styled': styled,
+          'oh-canvas-item-shadow': styled && shadow,
+        }" />
     </div>
-  </vue-draggable-resizable>
+  </template>
 </template>
 
 <style lang="stylus">
+.oh-canvas-item-runmode
+  display block
+
 .oh-canvas-item-editmode
   outline 1px dashed #F00
   cursor move
@@ -166,7 +189,6 @@ import VueDraggableResizable from 'vue-draggable-resizable'
 </script>
 
 <script>
-import { defineAsyncComponent } from 'vue'
 import mixin from '../widget-mixin'
 import OhPlaceholderWidget from './oh-placeholder-widget.vue'
 import { OhCanvasItemDefinition } from '@/assets/definitions/widgets/layout'
