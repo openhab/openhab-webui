@@ -44,9 +44,6 @@ export default {
       this.services.forEach((service) => strategies[service.id] = this.serviceStrategies(service.id))
       return strategies
     },
-    configuredServices () {
-      return this.services.filter((service) => this.strategies[service.id]?.length)
-    },
     persistedBadges () {
       const badges = {}
       this.services.forEach((service) => {
@@ -58,7 +55,6 @@ export default {
   data () {
     return {
       services: [],
-      currentState: null,
       loaded: false
     }
   },
@@ -69,11 +65,9 @@ export default {
     async load () {
       this.loaded = false
       const services = await this.$oh.api.get('/rest/persistence')
-      this.ready = false
       this.services = await Promise.all(
         services.map((service) => this.loadService(service))
       )
-      this.currentState = this.item.state
       this.loaded = true
     },
     async loadService (service) {
@@ -95,10 +89,10 @@ export default {
 
       return {
         ...service,
-        configs: serviceConfig.configs  || [],
+        configs: serviceConfig.configs || [],
         aliases: serviceConfig.aliases,
         editable: serviceConfig.editable === undefined ? true : serviceConfig.editable,
-        persisted: itemsPersisted.findIndex((item) => item.name === this.item.name) >= 0
+        persisted: itemsPersisted.find((item) => item.name === this.item.name) || null
       }
     },
     serviceStrategies (serviceId) {
@@ -109,19 +103,34 @@ export default {
         if (items && config.strategies?.length) {
           let match = false
           // First find all positive matches for the item
-          if (items.includes('*') || items.includes(this.item.name) || items.filter((configItem) => !configItem.startsWith('!') && configItem.endsWith('*')).map((configItem) => configItem.slice(0, -1)).find((groupName) => this.item.groupNames.includes(groupName))) {
-            match = true
-          }
+          if (this.matchesItem(this.item, items, false)) match = true
           // Remove negative matches
-          if (items.includes('!' + this.item.name) || items.filter((configItem) => configItem.startsWith('!') && configItem.endsWith('*')).map((configItem) => configItem.slice(1, -1)).find((groupName) => this.item.groupNames.includes(groupName))) {
-            match = false
-          }
+          if (this.matchesItem(this.item, items, true)) match = true
           if (match) {
             strategies = [...strategies, ...config.strategies]
           }
         }
       })
       return [...new Set(strategies)]
+    },
+    matchesItem (item, items, negativeMatch) {
+      if (!items || !Array.isArray(items)) {
+        return false
+      }
+      const itemName = item.name
+      const groupNames = item.groupNames
+      let itemPattern
+      let groupPatterns
+      if (!negativeMatch) {
+        if (items.includes('*')) return true
+        itemPattern = itemName
+        groupPatterns = items.filter((configItem) => !configItem.startsWith('!') && configItem.endsWith('*')).map((configItem) => configItem.slice(0, -1))
+      } else {
+        itemPattern = '!' + itemName
+        groupPatterns = items.filter((configItem) => configItem.startsWith('!') && configItem.endsWith('*')).map((configItem) => configItem.slice(1, -1))
+      }
+      if (items.includes(itemPattern)) return true
+      return groupPatterns.some((groupName) => groupNames?.includes(groupName))
     }
   }
 }
