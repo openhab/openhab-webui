@@ -11,7 +11,7 @@
           :badge="persistedBadges[p.id]"
           badge-color="green"
           :class="!p.editable ? 'item-persistence-badge-non-editable' : ''"
-          :link="p.editable ? ('/settings/persistence/' + p.id) : null">
+          :link="p.editable ? '/settings/persistence/' + p.id : null">
           <template #media>
             <span class="item-initial">{{ p.id ? p.id[0] : '?' }}</span>
           </template>
@@ -50,8 +50,7 @@ export default {
     persistedBadges () {
       const badges = {}
       this.services.forEach((service) => {
-        const persisted = this.itemPersisted[service.id]
-        badges[service.id] = persisted ? 'values' + (persisted.count ? ': ' + persisted.count : '') : null
+        badges[service.id] = service.persisted ? (service.persisted.count || 'values') : null
       })
       return badges
     }
@@ -59,7 +58,7 @@ export default {
   data () {
     return {
       services: [],
-      itemPersisted: {},
+      currentState: null,
       loaded: false
     }
   },
@@ -74,9 +73,7 @@ export default {
       this.services = await Promise.all(
         services.map((service) => this.loadService(service))
       )
-      await Promise.all(
-        services.map((service) => this.loadItemPersisted(service))
-      )
+      this.currentState = this.item.state
       this.loaded = true
     },
     async loadService (service) {
@@ -88,16 +85,21 @@ export default {
           // No configuration yet, continue with an empty one
         }
       }
+      
+      let itemsPersisted = []
+      try {
+        itemsPersisted = await this.$oh.api.get('/rest/persistence/items?serviceId=' + service.id)
+      } catch (err) {
+        // Do nothing if not found
+      }
+
       return {
         ...service,
         configs: serviceConfig.configs  || [],
         aliases: serviceConfig.aliases,
-        editable: serviceConfig.editable === undefined ? true : serviceConfig.editable
+        editable: serviceConfig.editable === undefined ? true : serviceConfig.editable,
+        persisted: itemsPersisted.findIndex((item) => item.name === this.item.name) >= 0
       }
-    },
-    async loadItemPersisted (service) {
-      const itemsPersisted = await this.$oh.api.get('/rest/persistence/items?serviceId=' + service.id)
-      this.itemPersisted[service.id] = itemsPersisted.find((item) => item.name === this.item.name)
     },
     serviceStrategies (serviceId) {
       let strategies = []
