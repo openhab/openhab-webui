@@ -109,7 +109,7 @@ export default {
         if (items && config.strategies?.length) {
           let match = false
           // First find all positive matches for the item
-          if (items.includes('*') || items.includes(this.item.name) || items.filter((configItem) => configItem.endsWith('*')).map((configItem) => configItem.slice(0, -1)).find((groupName) => this.item.groupNames.includes(groupName))) {
+          if (items.includes('*') || items.includes(this.item.name) || items.filter((configItem) => !configItem.startsWith('!') && configItem.endsWith('*')).map((configItem) => configItem.slice(0, -1)).find((groupName) => this.item.groupNames.includes(groupName))) {
             match = true
           }
           // Remove negative matches
