@@ -8,11 +8,14 @@
           media-item
           :title="p.label"
           :subtitle="strategies[p.id]?.join(', ') || 'Not persisted'"
+          :badge="persistedBadges[p.id]"
+          badge-color="green"
+          :class="!p.editable ? 'item-persistence-badge-non-editable' : ''"
           :link="p.editable ? ('/settings/persistence/' + p.id) : null">
           <template #media>
             <span class="item-initial">{{ p.id ? p.id[0] : '?' }}</span>
           </template>
-          <template #after-title>
+          <template #after>
             <f7-icon v-if="!p.editable" f7="lock_fill" size="1rem" color="gray" />
           </template>
         </f7-list-item>
@@ -23,6 +26,12 @@
     </f7-card-footer>
   </f7-card>
 </template>
+
+<style lang="stylus">
+.item-persistence-badge-non-editable
+  .badge
+    right 6px
+</style>
 
 <script>
 export default {
@@ -37,11 +46,20 @@ export default {
     },
     configuredServices () {
       return this.services.filter((service) => this.strategies[service.id]?.length)
+    },
+    persistedBadges () {
+      const badges = {}
+      this.services.forEach((service) => {
+        const persisted = this.itemPersisted[service.id]
+        badges[service.id] = persisted ? 'values' + (persisted.count ? ': ' + persisted.count : '') : null
+      })
+      return badges
     }
   },
   data () {
     return {
       services: [],
+      itemPersisted: {},
       loaded: false
     }
   },
@@ -56,13 +74,15 @@ export default {
       this.services = await Promise.all(
         services.map((service) => this.loadService(service))
       )
+      await Promise.all(
+        services.map((service) => this.loadItemPersisted(service))
+      )
       this.loaded = true
     },
     async loadService (service) {
-      const serviceId = service.id
       let serviceConfig = {}
       try {
-        serviceConfig = await this.$oh.api.get('/rest/persistence/' + serviceId)
+        serviceConfig = await this.$oh.api.get('/rest/persistence/' + service.id)
       } catch (err) {
         if (err?.response?.status === 404) {
           // No configuration yet, continue with an empty one
@@ -74,6 +94,10 @@ export default {
         aliases: serviceConfig.aliases,
         editable: serviceConfig.editable === undefined ? true : serviceConfig.editable
       }
+    },
+    async loadItemPersisted (service) {
+      const itemsPersisted = await this.$oh.api.get('/rest/persistence/items?serviceId=' + service.id)
+      this.itemPersisted[service.id] = itemsPersisted.find((item) => item.name === this.item.name)
     },
     serviceStrategies (serviceId) {
       let strategies = []
