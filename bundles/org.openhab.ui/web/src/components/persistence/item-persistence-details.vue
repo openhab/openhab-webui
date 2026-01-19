@@ -47,7 +47,24 @@ export default {
     persistedBadges () {
       const badges = {}
       this.services.forEach((service) => {
-        badges[service.id] = service.persisted ? (Number.isInteger(service.persisted.count) ? service.persisted.count : 'values') : null
+        const persisted = service.persisted
+        if (!persisted) {
+          // Query for persistence items not supported
+          badges[service.id] = null
+        } else if (persisted.count != null && Number.isInteger(Number(persisted.count))) {
+          // Show numeric count when available
+          badges[service.id] = String(persisted.count)
+        } else if (persisted.name) {
+          // No numeric count, but persisted value(s): show a presence indicator (empty badge)
+          badges[service.id] = ' '
+        } else {
+          // Item has not been persisted
+          // badges[service.id] = '0'
+          // TODO: Currently, the API call does not distinguish between API call not supported for service and item not persisted.
+          // To avoid showing misleading information, don't show badge if we don't get anything back (should be covered by first case if REST API is fixed.)
+          // This can be reverted to showing 0 if the API is fixed.
+          badges[service.id] = null
+        }
       })
       return badges
     }
@@ -65,9 +82,9 @@ export default {
     async load () {
       this.loaded = false
       const services = await this.$oh.api.get('/rest/persistence')
-      this.services = await Promise.all(
+      this.services = (await Promise.all(
         services.map((service) => this.loadService(service))
-      ).sort((s1, s2) => s1.label.localCompare(s2.label))
+      )).sort((s1, s2) => s1.label.localeCompare(s2.label))
       this.loaded = true
     },
     async loadService (service) {
@@ -77,14 +94,20 @@ export default {
       } catch (err) {
         if (err?.response?.status === 404) {
           // No configuration yet, continue with an empty one
+        } else {
+          console.debug('Error loading persistence config for', service.id, err)
         }
       }
 
-      let itemsPersisted = []
+      let itemsPersisted = null
       try {
         itemsPersisted = await this.$oh.api.get('/rest/persistence/items?serviceId=' + service.id)
       } catch (err) {
-        // Do nothing if not found
+        if (err?.response?.status === 400) {
+          // Not supported for service, leave itemsPersisted null
+        } else {
+          console.debug('Error loading persistence items for', service.id, err)
+        }
       }
 
       return {
@@ -92,7 +115,7 @@ export default {
         configs: serviceConfig.configs || [],
         aliases: serviceConfig.aliases,
         editable: serviceConfig.editable === undefined ? true : serviceConfig.editable,
-        persisted: itemsPersisted.find((item) => item.name === this.item.name) || null
+        persisted: itemsPersisted ? (itemsPersisted.find((item) => item.name === this.item.name) || {}) : null
       }
     },
     serviceStrategies (serviceId) {
