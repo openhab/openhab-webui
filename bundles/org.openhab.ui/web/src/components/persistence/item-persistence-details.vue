@@ -85,7 +85,7 @@ export default {
           // No configuration yet, continue with an empty one
         }
       }
-      
+
       let itemsPersisted = []
       try {
         itemsPersisted = await this.$oh.api.get('/rest/persistence/items?serviceId=' + service.id)
