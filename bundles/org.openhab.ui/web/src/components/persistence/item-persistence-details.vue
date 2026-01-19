@@ -67,7 +67,7 @@ export default {
       const services = await this.$oh.api.get('/rest/persistence')
       this.services = await Promise.all(
         services.map((service) => this.loadService(service))
-      )
+      ).sort((s1, s2) => s1.label.localCompare(s2.label))
       this.loaded = true
     },
     async loadService (service) {
