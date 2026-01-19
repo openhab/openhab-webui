@@ -1,5 +1,7 @@
 <template>
   <vue-draggable-resizable
+    v-if="visible"
+    v-model:active="active"
     :id="'oh-canvas-item-vdr-' + id"
     :key="reloadKey"
     :x="x"
@@ -14,16 +16,14 @@
     :grid="gridEnable ? [gridPitch, gridPitch] : undefined"
     :min-height="gridEnable ? gridPitch : undefined"
     :min-width="gridEnable ? gridPitch : undefined"
-    v-if="visible"
     class="oh-canvas-item no-margin"
-    @dragging="onDrag"
-    @resizing="onResize"
     :on-drag-start="onDragStartCallback"
     :on-resize-start="onResizeStartCallback"
+    :prevent-deactivation="preventDeactivation"
+    @dragging="onDrag"
+    @resizing="onResize"
     @drag-stop="onDragStop"
-    @resize-stop="onResizeStop"
-    v-model:active="active"
-    :prevent-deactivation="preventDeactivation">
+    @resize-stop="onResizeStop">
     <f7-menu v-if="context.editmode" class="configure-canvas-menu disable-user-select">
       <f7-menu-item icon-f7="menu" dropdown icon-only>
         <f7-menu-dropdown right>
@@ -166,7 +166,6 @@ import VueDraggableResizable from 'vue-draggable-resizable'
 </script>
 
 <script>
-import { defineAsyncComponent } from 'vue'
 import mixin from '../widget-mixin'
 import OhPlaceholderWidget from './oh-placeholder-widget.vue'
 import { OhCanvasItemDefinition } from '@/assets/definitions/widgets/layout'
