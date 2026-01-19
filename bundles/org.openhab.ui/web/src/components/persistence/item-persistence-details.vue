@@ -105,7 +105,7 @@ export default {
           // First find all positive matches for the item
           if (this.matchesItem(this.item, items, false)) match = true
           // Remove negative matches
-          if (this.matchesItem(this.item, items, true)) match = true
+          if (this.matchesItem(this.item, items, true)) match = false
           if (match) {
             strategies = [...strategies, ...config.strategies]
           }
