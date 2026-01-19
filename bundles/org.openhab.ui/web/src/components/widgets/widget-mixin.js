@@ -143,6 +143,7 @@ export default {
       let widget = useComponentsStore().widget(this.componentType.substring(7))
       if (!widget) {
         console.warn('widget not found, cannot render: ' + this.componentType)
+        return null
       }
       if (this.context.vars) {
         for (const varKey in this.context.vars) {
