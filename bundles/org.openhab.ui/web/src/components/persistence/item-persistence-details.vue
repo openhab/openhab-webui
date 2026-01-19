@@ -47,7 +47,7 @@ export default {
     persistedBadges () {
       const badges = {}
       this.services.forEach((service) => {
-        badges[service.id] = service.persisted ? (service.persisted.count || 'values') : null
+        badges[service.id] = service.persisted ? (Number.isInteger(service.persisted.count) ? service.persisted.count : 'values') : null
       })
       return badges
     }
@@ -101,12 +101,8 @@ export default {
       persistenceConfig?.configs?.forEach((config) => {
         const items = config.items
         if (items && config.strategies?.length) {
-          let match = false
-          // First find all positive matches for the item
-          if (this.matchesItem(this.item, items, false)) match = true
-          // Remove negative matches
-          if (this.matchesItem(this.item, items, true)) match = false
-          if (match) {
+          if (!this.matchesItem(this.item, items, true) && this.matchesItem(this.item, items, false)) {
+            // No negative match and a positive match
             strategies = [...strategies, ...config.strategies]
           }
         }
@@ -118,7 +114,7 @@ export default {
         return false
       }
       const itemName = item.name
-      const groupNames = item.groupNames
+      const groupNames = item.groupNames || []
       let itemPattern
       let groupPatterns
       if (!negativeMatch) {
@@ -130,7 +126,7 @@ export default {
         groupPatterns = items.filter((configItem) => configItem.startsWith('!') && configItem.endsWith('*')).map((configItem) => configItem.slice(1, -1))
       }
       if (items.includes(itemPattern)) return true
-      return groupPatterns.some((groupName) => groupNames?.includes(groupName))
+      return groupPatterns.some((groupName) => groupNames.includes(groupName))
     }
   }
 }
