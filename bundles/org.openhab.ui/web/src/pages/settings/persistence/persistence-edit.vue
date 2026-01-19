@@ -293,14 +293,24 @@
 
   <f7-popup v-if="ready" v-model:opened="addFilterTypePopup" class="filtertype-selection-popup">
     <f7-page>
-      <f7-navbar title="Select Filter Type">
+      <f7-navbar title="Configure Filter">
         <f7-nav-right>
           <f7-link popup-close>Close</f7-link>
         </f7-nav-right>
       </f7-navbar>
-      <f7-list>
-        <f7-list-item v-for="ft in FilterTypes" :key="ft.name" link :title="ft.label" @click="selectFilterType(ft)" />
-      </f7-list>
+      <f7-block-title class="no-margin padding-horizontal margin-vertical" medium>
+        Filter Type
+      </f7-block-title>
+      <f7-block>
+        <f7-row v-for="ftRow in filtersMatrix" :key="ftRow" class="margin-bottom">
+          <f7-col v-for="ft in ftRow" :key="ft.name" class="elevation-2 elevation-hover-6 elevation-pressed-1 persistence-filter-big-button" width="50">
+            <f7-link class="display-flex flex-direction-column no-ripple" no-ripple @click="selectFilterType(ft)">
+              <f7-icon size="35" :f7="ft.icon" class="margin" />
+              {{ ft.label }}<br />Filter
+            </f7-link>
+          </f7-col>
+        </f7-row>
+      </f7-block>
     </f7-page>
   </f7-popup>
 </template>
@@ -349,6 +359,13 @@
   padding-left: calc(var(--f7-list-item-padding-horizontal) + var(--f7-safe-area-left))
   .item-inner::before
     visibility: hidden
+
+.persistence-filter-big-button
+  background var(--f7-card-bg-color)
+  text-align center
+  height 7.5rem
+  .link
+    color var(--f7-text-color)
 
 .persistence-code-editor.v-codemirror
   position absolute
@@ -425,6 +442,14 @@ export default {
         if (this.persistence[filterTypeName]) names = names.concat(this.persistence[filterTypeName].map((f) => f.name))
       }
       return names
+    },
+    filtersMatrix () {
+      const matrix = []
+      const columns = 2
+      for (let i = 0; i < FilterTypes.length; i += columns) {
+        matrix.push(FilterTypes.slice(i, i + columns))
+      }
+      return matrix
     },
     currentItemsWithAlias () {
       return Object.keys(this.persistence.aliases).sort()
