@@ -64,7 +64,13 @@
           </f7-menu-dropdown>
         </f7-menu-item>
       </f7-menu>
-      <div @click.capture="eventControl" style="width: 100%; height: 100%; position: absolute" class="disable-user-select">
+      <div
+        @click.capture="eventControl"
+        :style="{
+        width: autosize ? 'auto' : w + 'px',
+        height: autosize ? 'auto' : h + 'px'
+      }"
+        class="disable-user-select">
         <oh-placeholder-widget
           v-if="!context.component.slots.default.length"
           @click="context.editmode.addWidget(context.component, null, context.parent)"
