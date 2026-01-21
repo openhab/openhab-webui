@@ -115,7 +115,7 @@
                 :badge-color="(thing.firmwareStatus.status) === 'UPDATE_EXECUTABLE' ? 'green' : 'gray'">
                 <f7-accordion-content>
                   <f7-list>
-                    <f7-list-item class="thing-property" title="Status" :after="firmwareStatusText()" />
+                    <f7-list-item class="thing-property" title="Status" :after="firmwareStatusText" />
                     <f7-list-item class="thing-property" title="Current Version" :after="thing.properties.firmwareVersion" />
                     <f7-list-item
                       v-for="firmware in firmwares"
@@ -126,28 +126,15 @@
                       :after="firmware.description"
                       :footer="firmware.changelog">
                       <div class="item-after">
-                        <f7-badge v-if="firmware.version === thing.properties.firmwareVersion" color="gray"> Current Version </f7-badge>
-                        <f7-badge v-if="firmware.version > thing.properties.firmwareVersion" color="green">
-                          Upgrade
+                        <f7-badge
+                          :color="firmware.version === thing.properties.firmwareVersion ? 'gray' : (firmware.version > thing.properties.firmwareVersion ? 'green' : 'red')">
+                          {{ firmware.version === thing.properties.firmwareVersion ? 'Current Version' :
+                            (firmware.version > thing.properties.firmwareVersion ? 'Upgrade' : 'Downgrade') }}
 
                           <f7-link
-                            v-if="!firmwareUpdating()"
+                            v-if="firmware.version !== thing.properties.firmwareVersion && !firmwareUpdating"
                             icon-color="white"
-                            tooltip="Start Downgrade"
-                            style="margin-left: 4px;"
-                            icon-ios="f7:play_fill"
-                            icon-md="f7:play_fill"
-                            icon-aurora="f7:play_fill"
-                            icon-size="16"
-                            @click="startFirmwareUpdate(firmware)" />
-                        </f7-badge>
-                        <f7-badge v-if="firmware.version < thing.properties.firmwareVersion" color="red">
-                          Downgrade
-
-                          <f7-link
-                            v-if="!firmwareUpdating()"
-                            icon-color="white"
-                            tooltip="Start Downgrade"
+                            :tooltip="firmware.version > thing.properties.firmwareVersion ? 'Start Upgrade' : 'Start Downgrade'"
                             style="margin-left: 4px;"
                             icon-ios="f7:play_fill"
                             icon-md="f7:play_fill"
@@ -517,6 +504,38 @@ export default {
     filteredThingActions () {
       if (this.showAdvancedThingActions) return this.thingActions ?? []
       return this.thingActions?.filter((a) => a.visibility !== 'EXPERT') ?? []
+    },
+    firmwareStatusText() {
+      if (this.firmwareUpdating) {
+        switch (this.transferStep) {
+          case "WAITING":
+            return "Waiting to start update"
+          case "DOWNLOADING":
+            return "Downloading firmware from provider";
+          case "TRANSFERRING":
+            return "Transfer in progress " + this.transferProgress + "% complete";
+          case "UPDATING":
+            return "Updating firmware"
+          case "REBOOTING":
+            return "Rebooting device";
+          default:
+            return "Unknown - " + this.transferStep;
+        }
+      }
+
+      switch (this.thing.firmwareStatus.status) {
+        case "UP_TO_DATE":
+          return "Up to date";
+        case "UPDATE_AVAILABLE":
+          return "Update Available";
+        case "UPDATE_EXECUTABLE":
+          return "Update Executable";
+        default:
+          return "Unknown";
+      }
+    },
+    firmwareUpdating() {
+      return this.thing.statusInfo.status == "OFFLINE" && this.thing.statusInfo.statusDetail == "FIRMWARE_UPDATING";
     },
     ...mapState(useThingEditStore, ['configDirty', 'thingDirty', 'thing', 'thingType', 'channelTypes', 'configDescriptions', 'configStatusInfo', 'thingActions', 'firmwares', 'editable', 'isExtensible', 'hasLinkedItems'])
   },
@@ -922,13 +941,13 @@ export default {
                     console.log('event firmware update')
                     switch (topicParts[5]) {
                       case 'progress':
-                        var firmwareProgress = JSON.parse(event.payload)
+                        let firmwareProgress = JSON.parse(event.payload)
                         this.transferStep = firmwareProgress.progressStep
                         this.transferProgress = firmwareProgress.progress
                         console.log('event firmware update progress -' + firmwareProgress.transferStep + " - " + firmwareProgress.progress)
                         break;
                       case 'result':
-                        var firmwareResult = JSON.parse(event.payload)
+                        let firmwareResult = JSON.parse(event.payload)
                         f7.toast.create({
                           text: firmwareResult.errorMessage,
                           destroyOnClose: true,
@@ -1087,36 +1106,6 @@ export default {
       }
     },
 
-    firmwareStatusText() {
-      if (this.firmwareUpdating()) {
-        switch (this.transferStep) {
-          case "WAITING":
-            return "Waiting to start update"
-          case "DOWNLOADING":
-            return "Downloading firmware from provider";
-          case "TRANSFERRING":
-            return "Transfer in progress " + this.transferProgress + "% complete";
-          case "UPDATING":
-            return "Updating firmware"
-          case "REBOOTING":
-            return "Rebooting device";
-          default:
-            return "Unknown - " + this.transferStep;
-        }
-      }
-
-      switch (this.thing.firmwareStatus.status) {
-        case "UP_TO_DATE":
-          return "Up to date";
-        case "UPDATE_AVAILABLE":
-          return "Update Available";
-        case "UPDATE_EXECUTABLE":
-          return "Update Executable";
-        default:
-          return "Unknown";
-      }
-    },
-
     startFirmwareUpdate(firmware) {
       this.$oh.api.put('/rest/things/' + this.thingId + '/firmware/' + firmware.version).then(() => {
         f7.toast.create({
@@ -1125,11 +1114,6 @@ export default {
           closeTimeout: 2000
         }).open()
       })
-
-    },
-
-    firmwareUpdating() {
-      return this.thing.statusInfo.status == "OFFLINE" && this.thing.statusInfo.statusDetail == "FIRMWARE_UPDATING";
     }
   },
   mounted () {
