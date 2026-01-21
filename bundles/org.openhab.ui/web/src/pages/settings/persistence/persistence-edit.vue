@@ -701,13 +701,26 @@ export default {
       this.saveModule('cronStrategies', index, cronStrategy)
     },
     deleteCronStrategy (ev, index) {
-      // Remove cron strategy from configs, otherwise we get a 400
       const csName = this.persistence.cronStrategies[index].name
-      this.persistence.configs.forEach((cfg) => {
-        const i = cfg.strategies.findIndex((cs) => cs === csName)
-        cfg.strategies.splice(i, 1)
-      })
-      this.deleteModule(ev, 'cronStrategies', index)
+      // Check if filter is used and show dialog if so
+      if (this.isUsedCronStrategy(csName)) {
+        f7.dialog.confirm(
+          'Cron strategy used in configuration(s), delete usage and definition?',
+          () => {
+            // Remove cron strategy from configs, otherwise we get a 400
+            this.persistence.configs.forEach((cfg) => {
+              const i = cfg.strategies.findIndex((cs) => cs === csName)
+              cfg.strategies.splice(i, 1)
+            })
+            this.deleteModule(ev, 'cronStrategies', index)
+          }
+        )
+      } else {
+        this.deleteModule(ev, 'cronStrategies', index)
+      }
+    },
+    isUsedCronstrategy (csName) {
+      return this.persistence.configs.findIndex((cfg) => cfg.strategies.findIndex((cs) => cs === csName) >= 0) >= 0
     },
     openFilterTypePopup () {
       if (!this.editable) return
@@ -760,13 +773,26 @@ export default {
       this.saveModule(filterTypeName, index, filter)
     },
     deleteFilter (ev, module, index) {
-      // Remove filter from configs, otherwise we get a 400
       const filterName = this.persistence[module.name][index].name
-      this.persistence.configs.forEach((cfg) => {
-        const i = cfg.filters.findIndex((f) => f === filterName)
-        if (i > -1) cfg.filters.splice(i, 1)
-      })
-      this.deleteModule(ev, module.name, index)
+      // Check if filter is used and show dialog if so
+      if (this.isUsedFilter(filterName)) {
+        f7.dialog.confirm(
+          'Filter used in configuration(s), delete usage and definition?',
+          () => {
+            // Remove filter from configs, otherwise we get a 400
+            this.persistence.configs.forEach((cfg) => {
+              const i = cfg.filters.findIndex((f) => f === filterName)
+              if (i > -1) cfg.filters.splice(i, 1)
+            })
+            this.deleteModule(ev, module.name, index)
+          }
+        )
+      } else {
+        this.deleteModule(ev, module.name, index)
+      }
+    },
+    isUsedFilter (filterName) {
+      return this.persistence.configs.findIndex((cfg) => cfg.filters.findIndex((f) => f === filterName) >= 0) >= 0
     },
     updateAliasItems (items) {
       if (!this.editable) return
