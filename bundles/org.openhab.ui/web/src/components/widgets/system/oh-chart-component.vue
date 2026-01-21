@@ -8,7 +8,7 @@
       class="oh-chart"
       @click="handleClick"
       :class="{ 'with-tabbar': context.tab, 'with-toolbar': context.analyzer }"
-      :theme="uiOptionsStore.getDarkMode() === 'dark' ? 'dark' : undefined"
+      :theme="uiOptionsStore.darkMode === 'dark' ? 'dark' : undefined"
       autoresize />
     <f7-menu class="padding float-right" v-if="periodVisible">
       <f7-menu-item @click="earlierPeriod()" icon-f7="chevron_left" />

@@ -32,7 +32,7 @@
               <!-- <f7-toggle class="enable-toggle"></f7-toggle> -->
               <f7-link
                 v-if="canRegenerate"
-                :color="uiOptionsStore.getDarkMode() === 'dark' ? 'purple' : 'deeppurple'"
+                :color="uiOptionsStore.darkMode === 'dark' ? 'purple' : 'deeppurple'"
                 :tooltip="'Regenerate from template'"
                 icon-md="f7:arrow_2_circlepath"
                 icon-ios="f7:arrow_2_circlepath"

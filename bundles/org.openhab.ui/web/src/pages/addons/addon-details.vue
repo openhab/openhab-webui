@@ -16,7 +16,7 @@
               </div>
               <div v-if="addon.verifiedAuthor" class="addon-header-subtitle">
                 {{ addon.author }}
-                <f7-icon :color="uiOptionsStore.getDarkMode() === 'dark' ? 'white' : 'blue'" f7="checkmark_seal_fill" />
+                <f7-icon :color="uiOptionsStore.darkMode === 'dark' ? 'white' : 'blue'" f7="checkmark_seal_fill" />
               </div>
               <div v-else-if="addon.properties && addon.properties.views" class="addon-header-subtitle">
                 <addon-stats-line :addon="addon" :iconSize="15" />

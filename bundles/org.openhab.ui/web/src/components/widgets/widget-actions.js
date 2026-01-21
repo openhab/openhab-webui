@@ -309,7 +309,7 @@ export const actionsMixin = {
                 Promise.all(promises).then((resolvedPhotos) => {
                   let photoBrowserParams = Object.assign({}, photoBrowserConfig, { photos: resolvedPhotos })
                   // automatically select the dark theme if not specified
-                  if (!photoBrowserParams.theme && useUIOptionsStore().getDarkMode() === 'dark') photoBrowserParams.theme = 'dark'
+                  if (!photoBrowserParams.theme && useUIOptionsStore().darkMode === 'dark') photoBrowserParams.theme = 'dark'
                   f7.photoBrowser.create(photoBrowserParams).open()
                 })
               }
