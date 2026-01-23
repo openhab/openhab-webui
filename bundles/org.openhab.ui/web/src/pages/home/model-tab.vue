@@ -112,7 +112,7 @@ export default {
     ready () {
       return useModelStore().ready
     },
-    groups (state) {
+    groups () {
       return cardGroups(useModelStore(), this.type, this.page)
     }
   },
