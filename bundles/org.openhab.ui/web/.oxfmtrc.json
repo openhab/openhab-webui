@@ -9,5 +9,5 @@
   "singleQuote": true,
   "tabWidth": 2,
   "trailingComma": "none",
-  "ignorePatterns": ["*.gen.ts"]
+  "ignorePatterns": ["*.nearley.js", "*.gen.ts"]
 }
