@@ -1,4 +1,3 @@
-import type { Group } from 'vue-draggable-next'
 import { getYAxis, renderValueAxis, toPrimitiveMarkers } from './analyzer-helpers.ts'
 
 import {

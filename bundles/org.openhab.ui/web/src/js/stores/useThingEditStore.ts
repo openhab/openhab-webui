@@ -138,7 +138,7 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
             loadConfigDescriptions(thingUID),
             loadFirmwares(thingUID),
             api.getThingConfigStatus({ thingUID }).then((data) => {
-              configStatusInfo.value = data || null
+              configStatusInfo.value = data ?? null
             })
           ]).then(() => {
             savedThing.value = cloneDeep(thing.value)
