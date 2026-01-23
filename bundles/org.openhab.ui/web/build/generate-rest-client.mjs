@@ -14,6 +14,7 @@ const outpath = './src/api'
 let openApi = null
 
 if (url) {
+  console.log('Fetching OpenAPI spec from URL:', url);
   try {
     openApi = await fetch(url).then(res => res.json())
   } catch (error) {
