@@ -270,10 +270,11 @@ export default {
       } else {
         let actions
         const doAddWidget = (choice) => {
+          const addDefaultSlot = choice.startsWith('oh-list-') || choice.startsWith('oh-swiper-')
           component.slots[slot].push({
             component: choice,
             config: {},
-            slots: choice === 'oh-list-card' ? { default: [] } : undefined
+            slots: addDefaultSlot ? { default: [] } : undefined
           })
           nextTick(() => actions.destroy())
           this.forceUpdate()
