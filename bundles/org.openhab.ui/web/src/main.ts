@@ -24,7 +24,7 @@ import '@/css/app.styl'
 
 // Import openHAB API helpers
 import openhab from '@/js/openhab/index'
-import '@/js/initApi'
+import '@/js/hey-api'
 
 import AsyncComputed from 'vue-async-computed'
 

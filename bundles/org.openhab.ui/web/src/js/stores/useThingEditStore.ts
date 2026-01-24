@@ -97,7 +97,7 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
   async function loadFirmwares(thingUID: string) {
     // force parse as JSON to ensure hey-api parses 204 as empty object
     api
-      .getThingFirmwareStatus({ thingUID }, { parseAs: 'json' })
+      .getThingFirmwareStatus({ thingUID })
       .then((data) => {
         if (data && Object.keys(data).length === 0) {
           console.debug(`Firmware info not available for Thing ${thingUID}`)

@@ -1,6 +1,10 @@
 import { client } from '@/api/client.gen'
 import { getAccessToken, getTokenInCustomHeader, getBasicCredentials } from '@/js/openhab/auth'
 
+client.setConfig({
+  parseAs: 'json'
+})
+
 class ApiError extends Error {
   public response: Response
 
