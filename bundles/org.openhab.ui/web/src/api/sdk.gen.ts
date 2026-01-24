@@ -109,7 +109,7 @@ export const enableRule = <ThrowOnError extends boolean = false>(parameters: {
     ruleUID: string;
     body: string;
 }, options?: Options<never, ThrowOnError>) => {
-    const params = buildClientParams([parameters], [{ args: [{ in: 'path', key: 'ruleUID' }, { in: 'body' }] }]);
+    const params = buildClientParams([parameters], [{ args: [{ in: 'path', key: 'ruleUID' }, { key: 'body', map: 'body' }] }]);
     return (options?.client ?? client).post<EnableRuleResponses, EnableRuleErrors, ThrowOnError, 'data'>({
         bodySerializer: null,
         responseStyle: 'data',
@@ -238,7 +238,7 @@ export const updateRuleConfiguration = <ThrowOnError extends boolean = false>(pa
         };
     };
 }, options?: Options<never, ThrowOnError>) => {
-    const params = buildClientParams([parameters], [{ args: [{ in: 'path', key: 'ruleUID' }, { in: 'body' }] }]);
+    const params = buildClientParams([parameters], [{ args: [{ in: 'path', key: 'ruleUID' }, { key: 'body', map: 'body' }] }]);
     return (options?.client ?? client).put<UpdateRuleConfigurationResponses, UpdateRuleConfigurationErrors, ThrowOnError, 'data'>({
         responseStyle: 'data',
         security: [{ scheme: 'bearer', type: 'http' }],
@@ -336,7 +336,7 @@ export const setRuleModuleConfigParameter = <ThrowOnError extends boolean = fals
                 { in: 'path', key: 'moduleCategory' },
                 { in: 'path', key: 'id' },
                 { in: 'path', key: 'param' },
-                { in: 'body' }
+                { key: 'body', map: 'body' }
             ] }]);
     return (options?.client ?? client).put<SetRuleModuleConfigParameterResponses, SetRuleModuleConfigParameterErrors, ThrowOnError, 'data'>({
         bodySerializer: null,
@@ -396,7 +396,7 @@ export const runRuleNow1 = <ThrowOnError extends boolean = false>(parameters: {
         };
     };
 }, options?: Options<never, ThrowOnError>) => {
-    const params = buildClientParams([parameters], [{ args: [{ in: 'path', key: 'ruleUID' }, { in: 'body' }] }]);
+    const params = buildClientParams([parameters], [{ args: [{ in: 'path', key: 'ruleUID' }, { key: 'body', map: 'body' }] }]);
     return (options?.client ?? client).post<RunRuleNow1Responses, RunRuleNow1Errors, ThrowOnError, 'data'>({
         responseStyle: 'data',
         security: [{ scheme: 'bearer', type: 'http' }],
@@ -476,7 +476,7 @@ export const executeThingAction = <ThrowOnError extends boolean = false>(paramet
                 { in: 'headers', key: 'Accept-Language' },
                 { in: 'path', key: 'thingUID' },
                 { in: 'path', key: 'actionUid' },
-                { in: 'body' }
+                { key: 'body', map: 'body' }
             ] }]);
     return (options?.client ?? client).post<ExecuteThingActionResponses, ExecuteThingActionErrors, ThrowOnError, 'data'>({
         responseStyle: 'data',
@@ -737,7 +737,7 @@ export const updateAddonConfiguration = <ThrowOnError extends boolean = false>(p
     const params = buildClientParams([parameters], [{ args: [
                 { in: 'path', key: 'addonId' },
                 { in: 'query', key: 'serviceId' },
-                { in: 'body' }
+                { key: 'body', map: 'body' }
             ] }]);
     return (options?.client ?? client).put<UpdateAddonConfigurationResponses, UpdateAddonConfigurationErrors, ThrowOnError, 'data'>({
         responseStyle: 'data',
@@ -993,7 +993,7 @@ export const approveInboxItemById = <ThrowOnError extends boolean = false>(param
                 { in: 'headers', key: 'Accept-Language' },
                 { in: 'path', key: 'thingUID' },
                 { in: 'query', key: 'newThingId' },
-                { in: 'body' }
+                { key: 'body', map: 'body' }
             ] }]);
     return (options?.client ?? client).post<ApproveInboxItemByIdResponses, ApproveInboxItemByIdErrors, ThrowOnError, 'data'>({
         bodySerializer: null,
@@ -1110,7 +1110,7 @@ export const createFileFormatForItems = <ThrowOnError extends boolean = false>(p
     hideDefaultParameters?: boolean;
     body?: Array<string>;
 }, options?: Options<never, ThrowOnError>) => {
-    const params = buildClientParams([parameters], [{ args: [{ in: 'query', key: 'hideDefaultParameters' }, { in: 'body' }] }]);
+    const params = buildClientParams([parameters], [{ args: [{ in: 'query', key: 'hideDefaultParameters' }, { key: 'body', map: 'body' }] }]);
     return (options?.client ?? client).post<CreateFileFormatForItemsResponses, CreateFileFormatForItemsErrors, ThrowOnError, 'data'>({
         responseStyle: 'data',
         security: [{ scheme: 'bearer', type: 'http' }],
@@ -1132,7 +1132,7 @@ export const createFileFormatForThings = <ThrowOnError extends boolean = false>(
     hideDefaultParameters?: boolean;
     body?: Array<string>;
 }, options?: Options<never, ThrowOnError>) => {
-    const params = buildClientParams([parameters], [{ args: [{ in: 'query', key: 'hideDefaultParameters' }, { in: 'body' }] }]);
+    const params = buildClientParams([parameters], [{ args: [{ in: 'query', key: 'hideDefaultParameters' }, { key: 'body', map: 'body' }] }]);
     return (options?.client ?? client).post<CreateFileFormatForThingsResponses, CreateFileFormatForThingsErrors, ThrowOnError, 'data'>({
         responseStyle: 'data',
         security: [{ scheme: 'bearer', type: 'http' }],
@@ -1153,7 +1153,7 @@ export const createFileFormatForThings = <ThrowOnError extends boolean = false>(
 export const parse = <ThrowOnError extends boolean = false>(parameters: {
     body: string;
 }, options?: Options<never, ThrowOnError>) => {
-    const params = buildClientParams([parameters], [{ args: [{ in: 'body' }] }]);
+    const params = buildClientParams([parameters], [{ args: [{ key: 'body', map: 'body' }] }]);
     return (options?.client ?? client).post<ParseResponses, ParseErrors, ThrowOnError, 'data'>({
         bodySerializer: null,
         responseStyle: 'data',
@@ -1335,7 +1335,7 @@ export const sendItemCommand = <ThrowOnError extends boolean = false>(parameters
                 { in: 'headers', key: 'X-OpenHAB-Source' },
                 { in: 'path', key: 'itemname' },
                 { in: 'query', key: 'source' },
-                { in: 'body' }
+                { key: 'body', map: 'body' }
             ] }]);
     return (options?.client ?? client).post<SendItemCommandResponses, SendItemCommandErrors, ThrowOnError, 'data'>({
         responseStyle: 'data',
@@ -1414,7 +1414,7 @@ export const getItems = <ThrowOnError extends boolean = false>(parameters?: {
 export const addOrUpdateItemsInRegistry = <ThrowOnError extends boolean = false>(parameters: {
     body: Array<GroupItem>;
 }, options?: Options<never, ThrowOnError>) => {
-    const params = buildClientParams([parameters], [{ args: [{ in: 'body' }] }]);
+    const params = buildClientParams([parameters], [{ args: [{ key: 'body', map: 'body' }] }]);
     return (options?.client ?? client).put<AddOrUpdateItemsInRegistryResponses, AddOrUpdateItemsInRegistryErrors, ThrowOnError, 'data'>({
         responseStyle: 'data',
         security: [{ scheme: 'bearer', type: 'http' }],
@@ -1459,7 +1459,7 @@ export const updateItemState = <ThrowOnError extends boolean = false>(parameters
                 { in: 'headers', key: 'X-OpenHAB-Source' },
                 { in: 'path', key: 'itemname' },
                 { in: 'query', key: 'source' },
-                { in: 'body' }
+                { key: 'body', map: 'body' }
             ] }]);
     return (options?.client ?? client).put<UpdateItemStateResponses, UpdateItemStateErrors, ThrowOnError, 'data'>({
         responseStyle: 'data',
@@ -1905,7 +1905,7 @@ export const updateServiceConfig = <ThrowOnError extends boolean = false>(parame
     const params = buildClientParams([parameters], [{ args: [
                 { in: 'headers', key: 'Accept-Language' },
                 { in: 'path', key: 'serviceId' },
-                { in: 'body' }
+                { key: 'body', map: 'body' }
             ] }]);
     return (options?.client ?? client).put<UpdateServiceConfigResponses, UpdateServiceConfigErrors, ThrowOnError, 'data'>({
         responseStyle: 'data',
@@ -2257,7 +2257,7 @@ export const enableThing = <ThrowOnError extends boolean = false>(parameters: {
     const params = buildClientParams([parameters], [{ args: [
                 { in: 'headers', key: 'Accept-Language' },
                 { in: 'path', key: 'thingUID' },
-                { in: 'body' }
+                { key: 'body', map: 'body' }
             ] }]);
     return (options?.client ?? client).put<EnableThingResponses, EnableThingErrors, ThrowOnError, 'data'>({
         bodySerializer: null,
@@ -2289,7 +2289,7 @@ export const updateThingConfig = <ThrowOnError extends boolean = false>(paramete
     const params = buildClientParams([parameters], [{ args: [
                 { in: 'headers', key: 'Accept-Language' },
                 { in: 'path', key: 'thingUID' },
-                { in: 'body' }
+                { key: 'body', map: 'body' }
             ] }]);
     return (options?.client ?? client).put<UpdateThingConfigResponses, UpdateThingConfigErrors, ThrowOnError, 'data'>({
         responseStyle: 'data',
@@ -2547,7 +2547,7 @@ export const updateItemListForStateUpdates = <ThrowOnError extends boolean = fal
     connectionId: string;
     body?: Array<string>;
 }, options?: Options<never, ThrowOnError>) => {
-    const params = buildClientParams([parameters], [{ args: [{ in: 'path', key: 'connectionId' }, { in: 'body' }] }]);
+    const params = buildClientParams([parameters], [{ args: [{ in: 'path', key: 'connectionId' }, { key: 'body', map: 'body' }] }]);
     return (options?.client ?? client).post<UpdateItemListForStateUpdatesResponses, UpdateItemListForStateUpdatesErrors, ThrowOnError, 'data'>({
         responseStyle: 'data',
         url: '/events/states/{connectionId}',
@@ -2789,7 +2789,7 @@ export const interpretTextByDefaultInterpreter = <ThrowOnError extends boolean =
     'Accept-Language'?: string;
     body: string;
 }, options?: Options<never, ThrowOnError>) => {
-    const params = buildClientParams([parameters], [{ args: [{ in: 'headers', key: 'Accept-Language' }, { in: 'body' }] }]);
+    const params = buildClientParams([parameters], [{ args: [{ in: 'headers', key: 'Accept-Language' }, { key: 'body', map: 'body' }] }]);
     return (options?.client ?? client).post<InterpretTextByDefaultInterpreterResponses, InterpretTextByDefaultInterpreterErrors, ThrowOnError, 'data'>({
         bodySerializer: null,
         responseStyle: 'data',
@@ -2824,7 +2824,7 @@ export const interpretText = <ThrowOnError extends boolean = false>(parameters: 
     const params = buildClientParams([parameters], [{ args: [
                 { in: 'headers', key: 'Accept-Language' },
                 { in: 'path', key: 'ids' },
-                { in: 'body' }
+                { key: 'body', map: 'body' }
             ] }]);
     return (options?.client ?? client).post<InterpretTextResponses, InterpretTextErrors, ThrowOnError, 'data'>({
         bodySerializer: null,
@@ -2884,7 +2884,7 @@ export const textToSpeech = <ThrowOnError extends boolean = false>(parameters: {
                 { in: 'query', key: 'voiceid' },
                 { in: 'query', key: 'sinkid' },
                 { in: 'query', key: 'volume' },
-                { in: 'body' }
+                { key: 'body', map: 'body' }
             ] }]);
     return (options?.client ?? client).post<TextToSpeechResponses, unknown, ThrowOnError, 'data'>({
         bodySerializer: null,

@@ -14,27 +14,27 @@ const outpath = './src/api'
 let openApi = null
 
 if (url) {
-  console.log('Fetching OpenAPI spec from URL:', url);
+  console.log('Fetching OpenAPI spec from URL:', url)
   try {
-    openApi = await fetch(url).then(res => res.json())
+    openApi = await fetch(url).then((res) => res.json())
   } catch (error) {
-    console.error('Error fetching OpenAPI spec:', error);
+    console.error('Error fetching OpenAPI spec:', error)
   }
 }
 
 if (file) {
-  console.log('Reading OpenAPI spec from file:', file);
+  console.log('Reading OpenAPI spec from file:', file)
   try {
     const data = fs.readFileSync(file, 'utf8')
     openApi = JSON.parse(data)
   } catch (error) {
-    console.error('Error reading OpenAPI spec from file:', error);
+    console.error('Error reading OpenAPI spec from file:', error)
   }
 }
 
 try {
   await createClient({
-    client: "@hey-api/client-fetch",
+    client: '@hey-api/client-fetch',
     input: openApi,
     output: outpath,
     parser: {
@@ -44,7 +44,7 @@ try {
     },
     plugins: [
       {
-        name: "@hey-api/sdk",
+        name: '@hey-api/sdk',
         responseStyle: 'data',
         paramsStructure: 'flat'
       }

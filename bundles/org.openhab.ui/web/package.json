@@ -143,7 +143,7 @@
     "@eslint/compat": "^2.0.0",
     "@eslint/eslintrc": "^3.3.3",
     "@eslint/js": "^9.33.0",
-    "@hey-api/openapi-ts": "^0.90.2",
+    "@hey-api/openapi-ts": "^0.90.10",
     "@intlify/eslint-plugin-vue-i18n": "^4.0.1",
     "@tsconfig/node24": "^24.0.3",
     "@types/css-modules": "^1.0.5",
