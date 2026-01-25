@@ -3001,7 +3001,7 @@
                 ]
             }
         },
-        "/items/{itemname}/metadata/{namespace}": {
+        "/items/{itemName}/metadata/{namespace}": {
             "put": {
                 "tags": [
                     "items"
@@ -3010,7 +3010,7 @@
                 "operationId": "addMetadataToItem",
                 "parameters": [
                     {
-                        "name": "itemname",
+                        "name": "itemName",
                         "in": "path",
                         "description": "item name",
                         "required": true,
@@ -3047,9 +3047,6 @@
                     "201": {
                         "description": "Created"
                     },
-                    "400": {
-                        "description": "Metadata value empty."
-                    },
                     "404": {
                         "description": "Item not found."
                     },
@@ -3073,7 +3070,7 @@
                 "operationId": "removeMetadataFromItem",
                 "parameters": [
                     {
-                        "name": "itemname",
+                        "name": "itemName",
                         "in": "path",
                         "description": "item name",
                         "required": true,
@@ -3112,7 +3109,7 @@
                 ]
             }
         },
-        "/items/{itemname}/tags/{tag}": {
+        "/items/{itemName}/tags/{tag}": {
             "put": {
                 "tags": [
                     "items"
@@ -3121,7 +3118,7 @@
                 "operationId": "addTagToItem",
                 "parameters": [
                     {
-                        "name": "itemname",
+                        "name": "itemName",
                         "in": "path",
                         "description": "item name",
                         "required": true,
@@ -3167,7 +3164,7 @@
                 "operationId": "removeTagFromItem",
                 "parameters": [
                     {
-                        "name": "itemname",
+                        "name": "itemName",
                         "in": "path",
                         "description": "item name",
                         "required": true,
@@ -3206,7 +3203,7 @@
                 ]
             }
         },
-        "/items/{itemname}": {
+        "/items/{itemName}": {
             "get": {
                 "tags": [
                     "items"
@@ -3250,7 +3247,7 @@
                         }
                     },
                     {
-                        "name": "itemname",
+                        "name": "itemName",
                         "in": "path",
                         "description": "item name",
                         "required": true,
@@ -3292,7 +3289,7 @@
                         }
                     },
                     {
-                        "name": "itemname",
+                        "name": "itemName",
                         "in": "path",
                         "description": "item name",
                         "required": true,
@@ -3361,7 +3358,7 @@
                         }
                     },
                     {
-                        "name": "itemname",
+                        "name": "itemName",
                         "in": "path",
                         "description": "item name",
                         "required": true,
@@ -3420,7 +3417,7 @@
                 "operationId": "removeItemFromRegistry",
                 "parameters": [
                     {
-                        "name": "itemname",
+                        "name": "itemName",
                         "in": "path",
                         "description": "item name",
                         "required": true,
@@ -3592,7 +3589,7 @@
                 ]
             }
         },
-        "/items/{itemname}/state": {
+        "/items/{itemName}/state": {
             "get": {
                 "tags": [
                     "items"
@@ -3601,7 +3598,7 @@
                 "operationId": "getItemState_1",
                 "parameters": [
                     {
-                        "name": "itemname",
+                        "name": "itemName",
                         "in": "path",
                         "description": "item name",
                         "required": true,
@@ -3651,7 +3648,7 @@
                         }
                     },
                     {
-                        "name": "itemname",
+                        "name": "itemName",
                         "in": "path",
                         "description": "item name",
                         "required": true,
@@ -3702,7 +3699,7 @@
                 }
             }
         },
-        "/items/{itemname}/metadata/namespaces": {
+        "/items/{itemName}/metadata/namespaces": {
             "get": {
                 "tags": [
                     "items"
@@ -3711,7 +3708,7 @@
                 "operationId": "getItemNamespaces",
                 "parameters": [
                     {
-                        "name": "itemname",
+                        "name": "itemName",
                         "in": "path",
                         "description": "item name",
                         "required": true,
@@ -4280,7 +4277,7 @@
                 ]
             }
         },
-        "/persistence/items/{itemname}": {
+        "/persistence/items/{itemName}": {
             "get": {
                 "tags": [
                     "persistence"
@@ -4297,7 +4294,7 @@
                         }
                     },
                     {
-                        "name": "itemname",
+                        "name": "itemName",
                         "in": "path",
                         "description": "The item name",
                         "required": true,
@@ -4389,7 +4386,7 @@
                         }
                     },
                     {
-                        "name": "itemname",
+                        "name": "itemName",
                         "in": "path",
                         "description": "The item name.",
                         "required": true,
@@ -4453,7 +4450,7 @@
                         }
                     },
                     {
-                        "name": "itemname",
+                        "name": "itemName",
                         "in": "path",
                         "description": "The item name.",
                         "required": true,
@@ -8067,16 +8064,16 @@
             "Module": {
                 "type": "object",
                 "properties": {
-                    "configuration": {
-                        "$ref": "#/components/schemas/Configuration"
-                    },
                     "typeUID": {
                         "type": "string"
                     },
-                    "description": {
-                        "type": "string"
+                    "configuration": {
+                        "$ref": "#/components/schemas/Configuration"
                     },
                     "label": {
+                        "type": "string"
+                    },
+                    "description": {
                         "type": "string"
                     },
                     "id": {
@@ -8110,8 +8107,12 @@
             "Template": {
                 "type": "object",
                 "properties": {
-                    "uid": {
-                        "type": "string"
+                    "tags": {
+                        "uniqueItems": true,
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
                     },
                     "visibility": {
                         "type": "string",
@@ -8121,17 +8122,13 @@
                             "EXPERT"
                         ]
                     },
-                    "tags": {
-                        "uniqueItems": true,
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
-                    },
-                    "description": {
+                    "uid": {
                         "type": "string"
                     },
                     "label": {
+                        "type": "string"
+                    },
+                    "description": {
                         "type": "string"
                     }
                 }

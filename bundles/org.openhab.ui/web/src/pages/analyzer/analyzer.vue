@@ -530,7 +530,7 @@ export default {
     async updateItems (itemNames : Array<string>) {
       this.itemNames = itemNames
       this.showChart = false
-      const promises = itemNames.map((n) => api.getItemByName({ itemname : n }).then((data) => data as api.EnrichedItem))
+      const promises = itemNames.map((n) => api.getItemByName({ itemName : n }).then((data) => data as api.EnrichedItem))
       return Promise.all(promises).then((resp) => {
         this.items = [...resp]
         this.initItemsSeries(false)

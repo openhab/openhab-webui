@@ -137,10 +137,10 @@ export type RuleStatusInfo = {
 };
 
 export type Module = {
-    configuration: Configuration;
     typeUID: string;
-    description: string;
+    configuration: Configuration;
     label: string;
+    description: string;
     id: string;
 };
 
@@ -158,11 +158,11 @@ export type RuleExecution = {
 };
 
 export type Template = {
-    uid: string;
-    visibility: 'VISIBLE' | 'HIDDEN' | 'EXPERT';
     tags: Array<string>;
-    description: string;
+    visibility: 'VISIBLE' | 'HIDDEN' | 'EXPERT';
+    uid: string;
     label: string;
+    description: string;
 };
 
 export type Input = {
@@ -2876,14 +2876,14 @@ export type RemoveMetadataFromItemData = {
         /**
          * item name
          */
-        itemname: string;
+        itemName: string;
         /**
          * namespace
          */
         namespace: string;
     };
     query?: never;
-    url: '/items/{itemname}/metadata/{namespace}';
+    url: '/items/{itemName}/metadata/{namespace}';
 };
 
 export type RemoveMetadataFromItemErrors = {
@@ -2913,21 +2913,17 @@ export type AddMetadataToItemData = {
         /**
          * item name
          */
-        itemname: string;
+        itemName: string;
         /**
          * namespace
          */
         namespace: string;
     };
     query?: never;
-    url: '/items/{itemname}/metadata/{namespace}';
+    url: '/items/{itemName}/metadata/{namespace}';
 };
 
 export type AddMetadataToItemErrors = {
-    /**
-     * Metadata value empty.
-     */
-    400: unknown;
     /**
      * Item not found.
      */
@@ -2955,14 +2951,14 @@ export type RemoveTagFromItemData = {
         /**
          * item name
          */
-        itemname: string;
+        itemName: string;
         /**
          * tag
          */
         tag: string;
     };
     query?: never;
-    url: '/items/{itemname}/tags/{tag}';
+    url: '/items/{itemName}/tags/{tag}';
 };
 
 export type RemoveTagFromItemErrors = {
@@ -2989,14 +2985,14 @@ export type AddTagToItemData = {
         /**
          * item name
          */
-        itemname: string;
+        itemName: string;
         /**
          * tag
          */
         tag: string;
     };
     query?: never;
-    url: '/items/{itemname}/tags/{tag}';
+    url: '/items/{itemName}/tags/{tag}';
 };
 
 export type AddTagToItemErrors = {
@@ -3023,10 +3019,10 @@ export type RemoveItemFromRegistryData = {
         /**
          * item name
          */
-        itemname: string;
+        itemName: string;
     };
     query?: never;
-    url: '/items/{itemname}';
+    url: '/items/{itemName}';
 };
 
 export type RemoveItemFromRegistryErrors = {
@@ -3055,7 +3051,7 @@ export type GetItemByNameData = {
         /**
          * item name
          */
-        itemname: string;
+        itemName: string;
     };
     query?: {
         /**
@@ -3071,7 +3067,7 @@ export type GetItemByNameData = {
          */
         parents?: boolean;
     };
-    url: '/items/{itemname}';
+    url: '/items/{itemName}';
 };
 
 export type GetItemByNameErrors = {
@@ -3105,7 +3101,7 @@ export type SendItemCommandData = {
         /**
          * item name
          */
-        itemname: string;
+        itemName: string;
     };
     query?: {
         /**
@@ -3113,7 +3109,7 @@ export type SendItemCommandData = {
          */
         source?: string;
     };
-    url: '/items/{itemname}';
+    url: '/items/{itemName}';
 };
 
 export type SendItemCommandErrors = {
@@ -3149,10 +3145,10 @@ export type AddOrUpdateItemInRegistryData = {
         /**
          * item name
          */
-        itemname: string;
+        itemName: string;
     };
     query?: never;
-    url: '/items/{itemname}';
+    url: '/items/{itemName}';
 };
 
 export type AddOrUpdateItemInRegistryErrors = {
@@ -3266,10 +3262,10 @@ export type GetItemState1Data = {
         /**
          * item name
          */
-        itemname: string;
+        itemName: string;
     };
     query?: never;
-    url: '/items/{itemname}/state';
+    url: '/items/{itemName}/state';
 };
 
 export type GetItemState1Errors = {
@@ -3307,7 +3303,7 @@ export type UpdateItemStateData = {
         /**
          * item name
          */
-        itemname: string;
+        itemName: string;
     };
     query?: {
         /**
@@ -3315,7 +3311,7 @@ export type UpdateItemStateData = {
          */
         source?: string;
     };
-    url: '/items/{itemname}/state';
+    url: '/items/{itemName}/state';
 };
 
 export type UpdateItemStateErrors = {
@@ -3348,10 +3344,10 @@ export type GetItemNamespacesData = {
         /**
          * item name
          */
-        itemname: string;
+        itemName: string;
     };
     query?: never;
-    url: '/items/{itemname}/metadata/namespaces';
+    url: '/items/{itemName}/metadata/namespaces';
 };
 
 export type GetItemNamespacesErrors = {
@@ -3729,7 +3725,7 @@ export type DeleteItemFromPersistenceServiceData = {
         /**
          * The item name.
          */
-        itemname: string;
+        itemName: string;
     };
     query: {
         /**
@@ -3745,7 +3741,7 @@ export type DeleteItemFromPersistenceServiceData = {
          */
         endtime: string;
     };
-    url: '/persistence/items/{itemname}';
+    url: '/persistence/items/{itemName}';
 };
 
 export type DeleteItemFromPersistenceServiceErrors = {
@@ -3774,7 +3770,7 @@ export type GetItemDataFromPersistenceServiceData = {
         /**
          * The item name
          */
-        itemname: string;
+        itemName: string;
     };
     query?: {
         /**
@@ -3806,7 +3802,7 @@ export type GetItemDataFromPersistenceServiceData = {
          */
         itemState?: boolean;
     };
-    url: '/persistence/items/{itemname}';
+    url: '/persistence/items/{itemName}';
 };
 
 export type GetItemDataFromPersistenceServiceErrors = {
@@ -3831,7 +3827,7 @@ export type StoreItemDataInPersistenceServiceData = {
         /**
          * The item name.
          */
-        itemname: string;
+        itemName: string;
     };
     query: {
         /**
@@ -3847,7 +3843,7 @@ export type StoreItemDataInPersistenceServiceData = {
          */
         state: string;
     };
-    url: '/persistence/items/{itemname}';
+    url: '/persistence/items/{itemName}';
 };
 
 export type StoreItemDataInPersistenceServiceErrors = {

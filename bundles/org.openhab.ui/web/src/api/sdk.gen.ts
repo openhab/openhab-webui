@@ -1207,14 +1207,14 @@ export const addMemberToGroupItem = <ThrowOnError extends boolean = false>(param
  * Removes metadata from an item.
  */
 export const removeMetadataFromItem = <ThrowOnError extends boolean = false>(parameters: {
-    itemname: string;
+    itemName: string;
     namespace: string;
 }, options?: Options<never, ThrowOnError>) => {
-    const params = buildClientParams([parameters], [{ args: [{ in: 'path', key: 'itemname' }, { in: 'path', key: 'namespace' }] }]);
+    const params = buildClientParams([parameters], [{ args: [{ in: 'path', key: 'itemName' }, { in: 'path', key: 'namespace' }] }]);
     return (options?.client ?? client).delete<RemoveMetadataFromItemResponses, RemoveMetadataFromItemErrors, ThrowOnError, 'data'>({
         responseStyle: 'data',
         security: [{ scheme: 'bearer', type: 'http' }],
-        url: '/items/{itemname}/metadata/{namespace}',
+        url: '/items/{itemName}/metadata/{namespace}',
         ...options,
         ...params
     });
@@ -1224,19 +1224,19 @@ export const removeMetadataFromItem = <ThrowOnError extends boolean = false>(par
  * Adds metadata to an item.
  */
 export const addMetadataToItem = <ThrowOnError extends boolean = false>(parameters: {
-    itemname: string;
+    itemName: string;
     namespace: string;
     metadata: Metadata;
 }, options?: Options<never, ThrowOnError>) => {
     const params = buildClientParams([parameters], [{ args: [
-                { in: 'path', key: 'itemname' },
+                { in: 'path', key: 'itemName' },
                 { in: 'path', key: 'namespace' },
                 { key: 'metadata', map: 'body' }
             ] }]);
     return (options?.client ?? client).put<AddMetadataToItemResponses, AddMetadataToItemErrors, ThrowOnError, 'data'>({
         responseStyle: 'data',
         security: [{ scheme: 'bearer', type: 'http' }],
-        url: '/items/{itemname}/metadata/{namespace}',
+        url: '/items/{itemName}/metadata/{namespace}',
         ...options,
         ...params,
         headers: {
@@ -1251,14 +1251,14 @@ export const addMetadataToItem = <ThrowOnError extends boolean = false>(paramete
  * Removes a tag from an item.
  */
 export const removeTagFromItem = <ThrowOnError extends boolean = false>(parameters: {
-    itemname: string;
+    itemName: string;
     tag: string;
 }, options?: Options<never, ThrowOnError>) => {
-    const params = buildClientParams([parameters], [{ args: [{ in: 'path', key: 'itemname' }, { in: 'path', key: 'tag' }] }]);
+    const params = buildClientParams([parameters], [{ args: [{ in: 'path', key: 'itemName' }, { in: 'path', key: 'tag' }] }]);
     return (options?.client ?? client).delete<RemoveTagFromItemResponses, RemoveTagFromItemErrors, ThrowOnError, 'data'>({
         responseStyle: 'data',
         security: [{ scheme: 'bearer', type: 'http' }],
-        url: '/items/{itemname}/tags/{tag}',
+        url: '/items/{itemName}/tags/{tag}',
         ...options,
         ...params
     });
@@ -1268,14 +1268,14 @@ export const removeTagFromItem = <ThrowOnError extends boolean = false>(paramete
  * Adds a tag to an item.
  */
 export const addTagToItem = <ThrowOnError extends boolean = false>(parameters: {
-    itemname: string;
+    itemName: string;
     tag: string;
 }, options?: Options<never, ThrowOnError>) => {
-    const params = buildClientParams([parameters], [{ args: [{ in: 'path', key: 'itemname' }, { in: 'path', key: 'tag' }] }]);
+    const params = buildClientParams([parameters], [{ args: [{ in: 'path', key: 'itemName' }, { in: 'path', key: 'tag' }] }]);
     return (options?.client ?? client).put<AddTagToItemResponses, AddTagToItemErrors, ThrowOnError, 'data'>({
         responseStyle: 'data',
         security: [{ scheme: 'bearer', type: 'http' }],
-        url: '/items/{itemname}/tags/{tag}',
+        url: '/items/{itemName}/tags/{tag}',
         ...options,
         ...params
     });
@@ -1285,13 +1285,13 @@ export const addTagToItem = <ThrowOnError extends boolean = false>(parameters: {
  * Removes an item from the registry.
  */
 export const removeItemFromRegistry = <ThrowOnError extends boolean = false>(parameters: {
-    itemname: string;
+    itemName: string;
 }, options?: Options<never, ThrowOnError>) => {
-    const params = buildClientParams([parameters], [{ args: [{ in: 'path', key: 'itemname' }] }]);
+    const params = buildClientParams([parameters], [{ args: [{ in: 'path', key: 'itemName' }] }]);
     return (options?.client ?? client).delete<RemoveItemFromRegistryResponses, RemoveItemFromRegistryErrors, ThrowOnError, 'data'>({
         responseStyle: 'data',
         security: [{ scheme: 'bearer', type: 'http' }],
-        url: '/items/{itemname}',
+        url: '/items/{itemName}',
         ...options,
         ...params
     });
@@ -1302,21 +1302,21 @@ export const removeItemFromRegistry = <ThrowOnError extends boolean = false>(par
  */
 export const getItemByName = <ThrowOnError extends boolean = false>(parameters: {
     'Accept-Language'?: string;
-    itemname: string;
+    itemName: string;
     metadata?: string;
     recursive?: boolean;
     parents?: boolean;
 }, options?: Options<never, ThrowOnError>) => {
     const params = buildClientParams([parameters], [{ args: [
                 { in: 'headers', key: 'Accept-Language' },
-                { in: 'path', key: 'itemname' },
+                { in: 'path', key: 'itemName' },
                 { in: 'query', key: 'metadata' },
                 { in: 'query', key: 'recursive' },
                 { in: 'query', key: 'parents' }
             ] }]);
     return (options?.client ?? client).get<GetItemByNameResponses, GetItemByNameErrors, ThrowOnError, 'data'>({
         responseStyle: 'data',
-        url: '/items/{itemname}',
+        url: '/items/{itemName}',
         ...options,
         ...params
     });
@@ -1327,19 +1327,19 @@ export const getItemByName = <ThrowOnError extends boolean = false>(parameters: 
  */
 export const sendItemCommand = <ThrowOnError extends boolean = false>(parameters: {
     'X-OpenHAB-Source'?: string;
-    itemname: string;
+    itemName: string;
     source?: string;
     body: string;
 }, options?: Options<never, ThrowOnError>) => {
     const params = buildClientParams([parameters], [{ args: [
                 { in: 'headers', key: 'X-OpenHAB-Source' },
-                { in: 'path', key: 'itemname' },
+                { in: 'path', key: 'itemName' },
                 { in: 'query', key: 'source' },
                 { key: 'body', map: 'body' }
             ] }]);
     return (options?.client ?? client).post<SendItemCommandResponses, SendItemCommandErrors, ThrowOnError, 'data'>({
         responseStyle: 'data',
-        url: '/items/{itemname}',
+        url: '/items/{itemName}',
         ...options,
         ...params,
         headers: {
@@ -1355,18 +1355,18 @@ export const sendItemCommand = <ThrowOnError extends boolean = false>(parameters
  */
 export const addOrUpdateItemInRegistry = <ThrowOnError extends boolean = false>(parameters: {
     'Accept-Language'?: string;
-    itemname: string;
+    itemName: string;
     groupItem: GroupItem;
 }, options?: Options<never, ThrowOnError>) => {
     const params = buildClientParams([parameters], [{ args: [
                 { in: 'headers', key: 'Accept-Language' },
-                { in: 'path', key: 'itemname' },
+                { in: 'path', key: 'itemName' },
                 { key: 'groupItem', map: 'body' }
             ] }]);
     return (options?.client ?? client).put<AddOrUpdateItemInRegistryResponses, AddOrUpdateItemInRegistryErrors, ThrowOnError, 'data'>({
         responseStyle: 'data',
         security: [{ scheme: 'bearer', type: 'http' }],
-        url: '/items/{itemname}',
+        url: '/items/{itemName}',
         ...options,
         ...params,
         headers: {
@@ -1433,12 +1433,12 @@ export const addOrUpdateItemsInRegistry = <ThrowOnError extends boolean = false>
  * Gets the state of an item.
  */
 export const getItemState1 = <ThrowOnError extends boolean = false>(parameters: {
-    itemname: string;
+    itemName: string;
 }, options?: Options<never, ThrowOnError>) => {
-    const params = buildClientParams([parameters], [{ args: [{ in: 'path', key: 'itemname' }] }]);
+    const params = buildClientParams([parameters], [{ args: [{ in: 'path', key: 'itemName' }] }]);
     return (options?.client ?? client).get<GetItemState1Responses, GetItemState1Errors, ThrowOnError, 'data'>({
         responseStyle: 'data',
-        url: '/items/{itemname}/state',
+        url: '/items/{itemName}/state',
         ...options,
         ...params
     });
@@ -1450,20 +1450,20 @@ export const getItemState1 = <ThrowOnError extends boolean = false>(parameters: 
 export const updateItemState = <ThrowOnError extends boolean = false>(parameters: {
     'Accept-Language'?: string;
     'X-OpenHAB-Source'?: string;
-    itemname: string;
+    itemName: string;
     source?: string;
     body: string;
 }, options?: Options<never, ThrowOnError>) => {
     const params = buildClientParams([parameters], [{ args: [
                 { in: 'headers', key: 'Accept-Language' },
                 { in: 'headers', key: 'X-OpenHAB-Source' },
-                { in: 'path', key: 'itemname' },
+                { in: 'path', key: 'itemName' },
                 { in: 'query', key: 'source' },
                 { key: 'body', map: 'body' }
             ] }]);
     return (options?.client ?? client).put<UpdateItemStateResponses, UpdateItemStateErrors, ThrowOnError, 'data'>({
         responseStyle: 'data',
-        url: '/items/{itemname}/state',
+        url: '/items/{itemName}/state',
         ...options,
         ...params,
         headers: {
@@ -1479,12 +1479,12 @@ export const updateItemState = <ThrowOnError extends boolean = false>(parameters
  */
 export const getItemNamespaces = <ThrowOnError extends boolean = false>(parameters: {
     'Accept-Language'?: string;
-    itemname: string;
+    itemName: string;
 }, options?: Options<never, ThrowOnError>) => {
-    const params = buildClientParams([parameters], [{ args: [{ in: 'headers', key: 'Accept-Language' }, { in: 'path', key: 'itemname' }] }]);
+    const params = buildClientParams([parameters], [{ args: [{ in: 'headers', key: 'Accept-Language' }, { in: 'path', key: 'itemName' }] }]);
     return (options?.client ?? client).get<GetItemNamespacesResponses, GetItemNamespacesErrors, ThrowOnError, 'data'>({
         responseStyle: 'data',
-        url: '/items/{itemname}/metadata/namespaces',
+        url: '/items/{itemName}/metadata/namespaces',
         ...options,
         ...params
     });
@@ -1703,13 +1703,13 @@ export const putPersistenceServiceConfiguration = <ThrowOnError extends boolean 
  * Deletes item persistence data from a specific persistence service in a given time range.
  */
 export const deleteItemFromPersistenceService = <ThrowOnError extends boolean = false>(parameters: {
-    itemname: string;
+    itemName: string;
     serviceId: string;
     starttime: string;
     endtime: string;
 }, options?: Options<never, ThrowOnError>) => {
     const params = buildClientParams([parameters], [{ args: [
-                { in: 'path', key: 'itemname' },
+                { in: 'path', key: 'itemName' },
                 { in: 'query', key: 'serviceId' },
                 { in: 'query', key: 'starttime' },
                 { in: 'query', key: 'endtime' }
@@ -1717,7 +1717,7 @@ export const deleteItemFromPersistenceService = <ThrowOnError extends boolean = 
     return (options?.client ?? client).delete<DeleteItemFromPersistenceServiceResponses, DeleteItemFromPersistenceServiceErrors, ThrowOnError, 'data'>({
         responseStyle: 'data',
         security: [{ scheme: 'bearer', type: 'http' }],
-        url: '/persistence/items/{itemname}',
+        url: '/persistence/items/{itemName}',
         ...options,
         ...params
     });
@@ -1727,7 +1727,7 @@ export const deleteItemFromPersistenceService = <ThrowOnError extends boolean = 
  * Gets item persistence data from the persistence service.
  */
 export const getItemDataFromPersistenceService = <ThrowOnError extends boolean = false>(parameters: {
-    itemname: string;
+    itemName: string;
     serviceId?: string;
     starttime?: string;
     endtime?: string;
@@ -1737,7 +1737,7 @@ export const getItemDataFromPersistenceService = <ThrowOnError extends boolean =
     itemState?: boolean;
 }, options?: Options<never, ThrowOnError>) => {
     const params = buildClientParams([parameters], [{ args: [
-                { in: 'path', key: 'itemname' },
+                { in: 'path', key: 'itemName' },
                 { in: 'query', key: 'serviceId' },
                 { in: 'query', key: 'starttime' },
                 { in: 'query', key: 'endtime' },
@@ -1748,7 +1748,7 @@ export const getItemDataFromPersistenceService = <ThrowOnError extends boolean =
             ] }]);
     return (options?.client ?? client).get<GetItemDataFromPersistenceServiceResponses, GetItemDataFromPersistenceServiceErrors, ThrowOnError, 'data'>({
         responseStyle: 'data',
-        url: '/persistence/items/{itemname}',
+        url: '/persistence/items/{itemName}',
         ...options,
         ...params
     });
@@ -1758,13 +1758,13 @@ export const getItemDataFromPersistenceService = <ThrowOnError extends boolean =
  * Stores item persistence data into the persistence service.
  */
 export const storeItemDataInPersistenceService = <ThrowOnError extends boolean = false>(parameters: {
-    itemname: string;
+    itemName: string;
     serviceId?: string;
     time: string;
     state: string;
 }, options?: Options<never, ThrowOnError>) => {
     const params = buildClientParams([parameters], [{ args: [
-                { in: 'path', key: 'itemname' },
+                { in: 'path', key: 'itemName' },
                 { in: 'query', key: 'serviceId' },
                 { in: 'query', key: 'time' },
                 { in: 'query', key: 'state' }
@@ -1772,7 +1772,7 @@ export const storeItemDataInPersistenceService = <ThrowOnError extends boolean =
     return (options?.client ?? client).put<StoreItemDataInPersistenceServiceResponses, StoreItemDataInPersistenceServiceErrors, ThrowOnError, 'data'>({
         responseStyle: 'data',
         security: [{ scheme: 'bearer', type: 'http' }],
-        url: '/persistence/items/{itemname}',
+        url: '/persistence/items/{itemName}',
         ...options,
         ...params
     });

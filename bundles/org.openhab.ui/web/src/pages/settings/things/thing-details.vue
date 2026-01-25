@@ -785,7 +785,7 @@ export default {
             Promise.all(unlinkPromises).then(() => {
               if (removeItems) {
                 dialog.setText('Removing items...')
-                const deletePromises = links.map((l) => api.removeItemFromRegistry( { itemname: l.itemName } ))
+                const deletePromises = links.map((l) => api.removeItemFromRegistry( { itemName: l.itemName } ))
                 Promise.all(deletePromises).then(() => {
                   dialog.close()
                   f7.toast.create({
