@@ -303,7 +303,7 @@
                 <em>{{ t('sidebar.tip.signIn') }}<br /><f7-icon f7="arrow_down" size="20" /></em>
               </div>
               <f7-button
-                @click="authorize(false)"
+                @click="authorize()"
                 v-if="!loggedIn"
                 icon-f7="lock_shield_fill"
                 large

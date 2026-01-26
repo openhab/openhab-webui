@@ -21,7 +21,7 @@ function blobToDataURL(blob: Blob): Promise<string> {
  * @param url
  */
 async function fetchWithAuth(url: string): Promise<string> {
-  const creds: any = getBasicCredentials()
+  const creds = getBasicCredentials()
 
   // If no credentials, return the URL (async function wraps it in a Promise)
   if (!creds) return url
