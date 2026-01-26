@@ -1,24 +1,26 @@
 <template>
-  <l-map
-    ref="map"
-    :zoom="zoom"
-    :center="center"
-    :options="mapOptions"
-    :zoom-animation="!config.noZoomAnimation"
-    :marker-zoom-animation="!config.noMarkerZoomAnimation"
-    class="oh-map-page-lmap"
-    :class="{ 'with-tabbar': context.tab }"
-    @update:center="centerUpdate"
-    @update:zoom="zoomUpdate">
-    <l-feature-group ref="featureGroup" v-if="showMarkers">
-      <component
-        v-for="(marker, idx) in context.component.slots.default"
-        :key="idx"
-        :is="markerComponent(marker)"
-        :context="childContext(marker)"
-        @update="onMarkerUpdate" />
-    </l-feature-group>
-  </l-map>
+  <div ref="page" :class="scopedCssUid">
+    <l-map
+      ref="map"
+      :zoom="zoom"
+      :center="center"
+      :options="mapOptions"
+      :zoom-animation="!config.noZoomAnimation"
+      :marker-zoom-animation="!config.noMarkerZoomAnimation"
+      class="oh-map-page-lmap"
+      :class="{ 'with-tabbar': context.tab }"
+      @update:center="centerUpdate"
+      @update:zoom="zoomUpdate">
+      <l-feature-group ref="featureGroup" v-if="showMarkers">
+        <component
+          v-for="(marker, idx) in context.component.slots.default"
+          :key="idx"
+          :is="markerComponent(marker)"
+          :context="childContext(marker)"
+          @update="onMarkerUpdate" />
+      </l-feature-group>
+    </l-map>
+  </div>
 </template>
 
 <style lang="stylus">
