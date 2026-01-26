@@ -119,7 +119,10 @@ export default {
                 destroyOnClose: true,
                 closeTimeout: 2000
               }).open()
-              delete this.enrichedLinks[this.enrichedLinks.indexOf(link)]
+              const index = this.enrichedLinks.indexOf(link)
+              if (index > -1) {
+                this.enrichedLinks.splice(index, 1)
+              }
             }).catch((err) => {
               f7.toast.create({
                 text: 'Link not deleted (links defined in a .items file are not editable from this screen): ' + err,
