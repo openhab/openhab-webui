@@ -18,6 +18,7 @@
       <f7-col>
         <f7-list media-list>
           <f7-list-item
+            v-if="orphanLinksCount"
             media-item
             link="orphanlinks/"
             title="Orphan Links"
@@ -30,6 +31,7 @@
             </template>
           </f7-list-item>
           <f7-list-item
+            v-if="semanticsProblemCount"
             media-item
             link="semantics/"
             title="Semantic Model Conflicts"
