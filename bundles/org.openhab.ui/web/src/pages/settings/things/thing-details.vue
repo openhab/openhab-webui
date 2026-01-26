@@ -144,7 +144,23 @@
 
             <!-- Thing Actions & UI Actions -->
             <template v-if="thingActions?.length > 0 || thingType?.UID?.startsWith('zwave:') || hasMatterThreadProperties">
-              <f7-block-title medium class="no-margin-top"> Actions </f7-block-title>
+              <f7-block-title medium class="no-margin-top" style="display: flex; align-items: center; justify-content: space-between;">
+                Actions
+                <div v-if="advancedThingActionsCount" class="advanced-actions-toggle">
+                  <label class="advanced-label">
+                    <f7-checkbox v-model:checked="showAdvancedThingActions" />
+                    Show advanced
+                    <f7-badge
+                      v-if="advancedThingActionsCount"
+                      style="margin-left: 2px"
+                      color="blue"
+                      class="count-badge"
+                      tooltip="Advanced/Expert Thing actions">
+                      {{ advancedThingActionsCount }}
+                    </f7-badge>
+                  </label>
+                </div>
+              </f7-block-title>
               <f7-list class="margin-top" media-list>
                 <f7-list-item
                   v-if="thingType?.UID?.startsWith('zwave:')"
@@ -157,7 +173,7 @@
                   link=""
                   @click="openNetworkPopup('thread')" />
                 <f7-list-item
-                  v-for="action in thingActions"
+                  v-for="action in filteredThingActions"
                   :key="action.name"
                   :title="action.label"
                   :footer="action.description"
@@ -335,6 +351,13 @@ p.action-description
     flex-shrink 0
     color var(--f7-text-color-secondary)
 
+  .advanced-actions-toggle
+    text-align right
+    font-size var(--f7-toolbar-font-size)
+    font-weight normal
+    .advanced-actions-label
+      cursor pointer
+
 .thing-code-editor.v-codemirror
   position absolute
   top calc(var(--f7-navbar-height) + var(--f7-tabbar-height))
@@ -401,6 +424,7 @@ export default {
       error: false,
       codeDirty: false,
       currentTab: 'thing',
+      showAdvancedThingActions: false,
       /**
        * @deprecated
        */
@@ -453,6 +477,13 @@ export default {
       return this.configDescriptions.parameters.filter(
         (p) => !(actionGroupNames.includes(p.groupName) && p.type === 'BOOLEAN')
       )
+    },
+    advancedThingActionsCount () {
+      return this.thingActions.filter((a) => a.visibility === 'EXPERT').length
+    },
+    filteredThingActions () {
+      if (this.showAdvancedThingActions) return this.thingActions
+      return this.thingActions.filter((a) => a.visibility !== 'EXPERT')
     },
     ...mapState(useThingEditStore, ['configDirty', 'thingDirty', 'thing', 'thingType', 'channelTypes', 'configDescriptions', 'configStatusInfo', 'thingActions', 'firmwares', 'editable', 'isExtensible', 'hasLinkedItems'])
   },
