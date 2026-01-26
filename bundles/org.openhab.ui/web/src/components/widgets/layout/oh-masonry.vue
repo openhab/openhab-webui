@@ -131,7 +131,6 @@ export default {
       z-index inherit
     &.placeholder
       width calc(100% - 16px)
-
-.menu
-  z-index 6000 !important
+  .menu
+    z-index 6000 !important
 </style>

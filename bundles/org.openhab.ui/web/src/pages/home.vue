@@ -138,10 +138,6 @@
     top -6px
     letter-spacing 1px
     color var(--f7-list-item-footer-text-color)
-.edit-home-button
-  float right
-  display absolute
-  z-index 9000
 </style>
 
 <script>
