@@ -64,7 +64,7 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
         return
       }
       thingActions.value = data
-        .filter((a) => a.visibility === 'VISIBLE')
+        .filter((a) => a.visibility === 'VISIBLE' || a.visibility === 'EXPERT')
         .filter((a) => a.inputConfigDescriptions !== undefined)
         .sort((a, b) => (a.label || '').localeCompare(b.label || ''))
     } catch (e: any) {
