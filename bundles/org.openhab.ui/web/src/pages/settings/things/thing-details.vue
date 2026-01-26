@@ -128,13 +128,12 @@
                       <div class="item-after">
                         <f7-badge
                           :color="firmware.version === thing.properties.firmwareVersion ? 'gray' : (firmware.version > thing.properties.firmwareVersion ? 'green' : 'red')">
-                          {{ firmware.version === thing.properties.firmwareVersion ? 'Current Version' :
-                            (firmware.version > thing.properties.firmwareVersion ? 'Upgrade' : 'Downgrade') }}
-
+                          {{ compareVersions(firmware.version, thing.properties.firmwareVersion) === 0 ? 'Current Version' :
+                            (compareVersions(firmware.version, thing.properties.firmwareVersion) > 1 ? 'Upgrade' : 'Downgrade') }}
                           <f7-link
-                            v-if="firmware.version !== thing.properties.firmwareVersion && !firmwareUpdating"
+                            v-if="compareVersions(firmware.version, thing.properties.firmwareVersion) !== 0 && !firmwareUpdating"
                             icon-color="white"
-                            :tooltip="firmware.version > thing.properties.firmwareVersion ? 'Start Upgrade' : 'Start Downgrade'"
+                            :tooltip="compareVersions(firmware.version, thing.properties.firmwareVersion) === 1 ? 'Start Upgrade' : 'Start Downgrade'"
                             style="margin-left: 4px;"
                             icon-ios="f7:play_fill"
                             icon-md="f7:play_fill"
@@ -511,15 +510,15 @@ export default {
           case "WAITING":
             return "Waiting to start update"
           case "DOWNLOADING":
-            return "Downloading firmware from provider";
+            return "Downloading firmware from provider"
           case "TRANSFERRING":
-            return "Transfer in progress " + this.transferProgress + "% complete";
+            return "Transfer in progress " + this.transferProgress + "% complete"
           case "UPDATING":
             return "Updating firmware"
           case "REBOOTING":
-            return "Rebooting device";
+            return "Rebooting device"
           default:
-            return "Unknown - " + this.transferStep;
+            return "Unknown - " + this.transferStep
         }
       }
 
@@ -535,7 +534,7 @@ export default {
       }
     },
     firmwareUpdating() {
-      return this.thing.statusInfo.status == "OFFLINE" && this.thing.statusInfo.statusDetail == "FIRMWARE_UPDATING";
+      return this.thing.statusInfo.status === "OFFLINE" && this.thing.statusInfo.statusDetail === "FIRMWARE_UPDATING";
     },
     ...mapState(useThingEditStore, ['configDirty', 'thingDirty', 'thing', 'thingType', 'channelTypes', 'configDescriptions', 'configStatusInfo', 'thingActions', 'firmwares', 'editable', 'isExtensible', 'hasLinkedItems'])
   },
@@ -936,24 +935,38 @@ export default {
                 console.log('event firmware')
                 switch (topicParts[4]) {
                   case 'status':
-                    break;
+                    this.load(true)
+                    break
                   case 'update':
-                    console.log('event firmware update')
                     switch (topicParts[5]) {
                       case 'progress':
                         let firmwareProgress = JSON.parse(event.payload)
                         this.transferStep = firmwareProgress.progressStep
                         this.transferProgress = firmwareProgress.progress
-                        console.log('event firmware update progress -' + firmwareProgress.transferStep + " - " + firmwareProgress.progress)
-                        break;
+                        break
                       case 'result':
                         let firmwareResult = JSON.parse(event.payload)
+                        let resultMessage = "Unknown firmware result"
+                        switch (firmwareResult.result) {
+                          case "SUCCESS":
+                            resultMessage = "Firmware update completed successfully"
+                            break
+                          case "CANCELED":
+                            resultMessage = "Firmware update cancelled"
+                            break
+                          case "ERROR":
+                            resultMessage = "Error during firmware update: " + firmwareResult.errorMessage
+                            break
+                          default:
+                            break
+                        }
                         f7.toast.create({
-                          text: firmwareResult.errorMessage,
+                          text: resultMessage,
                           destroyOnClose: true,
                           closeTimeout: 2000
                         }).open()
-                        break;
+                        this.load(true)
+                        break
                     }
                     break;
                 }
@@ -968,11 +981,11 @@ export default {
         }
       })
     },
-    stopEventSource() {
+    stopEventSource () {
       this.$oh.sse.close(this.eventSource)
       this.eventSource = null
     },
-    updateThing(updatedThing) {
+    updateThing (updatedThing) {
       const isExtensible = (channel, thingType) => {
         if (!channel || !channel.channelTypeUID) return false
         const bindingId = thingType.UID.split(':')[0]
@@ -1107,13 +1120,41 @@ export default {
     },
 
     startFirmwareUpdate(firmware) {
-      this.$oh.api.put('/rest/things/' + this.thingId + '/firmware/' + firmware.version).then(() => {
-        f7.toast.create({
-          text: 'Firmware update started',
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
+      const version = firmware && firmware.version ? firmware.version : ''
+      const message = version
+        ? `Are you sure you want to start the firmware update to version "${version}"?\n\n` +
+        'This operation may take several minutes and should not be interrupted.'
+        : 'Are you sure you want to start the firmware update?\n\n' +
+        'This operation may take several minutes and should not be interrupted.'
+
+      f7.dialog.confirm(message, 'Confirm Firmware Update', () => {
+        api.updateThingFirmware({ thingUID: this.thingId, firmwareVersion: firmware.version }).then(() => {
+          f7.toast.create({
+            text: 'Firmware update started',
+            destroyOnClose: true,
+            closeTimeout: 2000
+          }).open()
+        }).catch((err) => {
+          f7.toast.create({
+            text: 'Error starting firmware update: ' + err,
+            destroyOnClose: true,
+            closeTimeout: 2000
+          }).open()
+        })
       })
+    },
+
+    compareVersions(v1, v2) {
+      const a = (v1 || '').split('.').map((p) => Number(p) || 0)
+      const b = (v2 || '').split('.').map((p) => Number(p) || 0)
+      const len = Math.max(a.length, b.length)
+      for (let i = 0; i < len; i++) {
+        const na = a[i] ?? 0
+        const nb = b[i] ?? 0
+        if (na > nb) return 1
+        if (na < nb) return -1
+      }
+      return 0
     }
   },
   mounted () {
