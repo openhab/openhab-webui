@@ -278,7 +278,7 @@ function generateIndexTS() {
     })
   })
 
-  fs.writeFileSync(`${outDir}/index.gen.ts`, content)
+  fs.writeFileSync(`${outDir}/index.ts`, content)
 }
 
 const config = await loadConfig()

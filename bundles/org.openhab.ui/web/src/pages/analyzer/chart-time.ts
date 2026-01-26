@@ -9,7 +9,7 @@ import {
   type ValueAxisOptions,
   type CoordSettingsBase
 } from './types.js'
-import type { Item, Page, UIComponentSlots, UIComponent } from '@/types/openhab'
+import * as api from '@/api'
 import {
   OhCategoryAxis,
   OhChartPage,
@@ -20,7 +20,7 @@ import {
   OhTimeSeries,
   OhChartTooltip,
   OhChartLegend
-} from '@/types/components/widgets/index.gen.ts'
+} from '@/types/components/widgets'
 
 export interface TimeCoordSettings extends CoordSettingsBase {
   valueAxesOptions: Array<ValueAxisOptions>
@@ -64,25 +64,29 @@ const timeCoordSystem: CoordSystem = {
     coordSettings.categoryAxisValues = []
     coordSettings.valueAxesOptions = []
   },
-  initSeries(item: Item, coordSettings: CoordSettings, seriesOptions: Partial<TimeSeriesOptions>): SeriesOptions {
+  initSeries(
+    item: api.EnrichedItem | api.EnrichedGroupItem,
+    coordSettings: CoordSettings,
+    seriesOptions: Partial<TimeSeriesOptions>
+  ): SeriesOptions {
     const timeCoordSettings = coordSettings as unknown as TimeCoordSettings
 
     const options: TimeSeriesOptions = {
-      name: item.label || item.name,
+      name: item.label || item.name || '',
       typeOptions: [SeriesType.line, SeriesType.area, SeriesType.state],
       type: SeriesType.line,
       valueAxisIndex: 0
     }
 
-    if (item.type.startsWith('Number') || item.groupType?.startsWith('Number')) {
+    if (item.type.startsWith('Number') || ('groupType' in item && item.groupType?.startsWith('Number'))) {
       options.marker = Marker.none
       options.showAxesOptions = true
       options.type = seriesOptions?.type && options.typeOptions.includes(seriesOptions.type) ? seriesOptions.type : SeriesType.line
     } else if (
       item.type === 'Dimmer' ||
-      item.groupType === 'Dimmer' ||
+      ('groupType' in item && item.groupType === 'Dimmer') ||
       item.type === 'Rollershutter' ||
-      item.groupType === 'Rollershutter'
+      ('groupType' in item && item.groupType === 'Rollershutter')
     ) {
       options.showAxesOptions = false
       options.marker = Marker.none
@@ -95,7 +99,7 @@ const timeCoordSystem: CoordSystem = {
 
     // determine the Y axis for the item
     if (options.type === SeriesType.state) {
-      timeCoordSettings.categoryAxisValues.unshift(item.name)
+      timeCoordSettings.categoryAxisValues.unshift(item.name!)
       options.yValue = timeCoordSettings.categoryAxisValues.length - 1
     } else if (options.type === SeriesType.line || options.type === SeriesType.area || options.type === SeriesType.bar) {
       options.valueAxisIndex = getYAxis(item, timeCoordSettings)
@@ -103,10 +107,14 @@ const timeCoordSystem: CoordSystem = {
 
     return options
   },
-  getChartPage(coordSettings: CoordSettings, allSeriesOptions: Record<string, SeriesOptions>, items: Item[]): Page {
+  getChartPage(
+    coordSettings: CoordSettings,
+    allSeriesOptions: Record<string, SeriesOptions>,
+    items: (api.EnrichedItem | api.EnrichedGroupItem)[]
+  ): Partial<api.RootUiComponent> {
     const timeCoordSettings = coordSettings as unknown as TimeCoordSettings
 
-    const slots: UIComponentSlots = {
+    const slots: Record<string, Array<api.UiComponent>> = {
       xAxis: [],
       yAxis: [],
       series: [],
@@ -116,7 +124,7 @@ const timeCoordSystem: CoordSystem = {
       dataZoom: []
     }
 
-    let page: Page = {
+    let page: Partial<api.RootUiComponent> = {
       component: 'oh-chart-page',
       config: {
         chartType: coordSettings.chartType,
@@ -176,7 +184,7 @@ const timeCoordSystem: CoordSystem = {
       })
     }
 
-    slots.series = items.map((item: Item) => {
+    slots.series = items.map((item: api.EnrichedItem | api.EnrichedGroupItem) => {
       const seriesOptions = allSeriesOptions[item.name] as TimeSeriesOptions
 
       if (seriesOptions.type === 'state') {

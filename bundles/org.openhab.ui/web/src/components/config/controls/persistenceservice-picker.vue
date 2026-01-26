@@ -25,6 +25,8 @@
 <script>
 import { f7 } from 'framework7-vue'
 
+import * as api from '@/api'
+
 export default {
   props: {
     title: String,
@@ -48,7 +50,7 @@ export default {
   created () {
     this.smartSelectParams.closeOnSelect = !(this.multiple)
     // TODO use a Vuex store
-    this.$oh.api.get('/rest/persistence').then((data) => {
+    api.getPersistenceServices().then((data) => {
       this.services = data.sort((a, b) => {
         const labelA = a.label
         const labelB = b.label

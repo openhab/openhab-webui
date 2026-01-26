@@ -1,46 +1,38 @@
 import { defineStore } from 'pinia'
-import { readonly, ref } from 'vue'
-
-import api from '@/js/openhab/api'
+import { readonly, ref, type DeepReadonly } from 'vue'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
-interface Widget {
-  uid: string
-}
-
-interface Page {
-  uid: string
-}
+import * as api from '@/api'
 
 export const useComponentsStore = defineStore('components', () => {
   // States
-  const _widgets = ref<Widget[]>([])
-  const _pages = ref<Page[]>([])
+  const _widgets = ref<api.RootUiComponent[]>([])
+  const _pages = ref<api.RootUiComponent[]>([])
   const ready = ref<boolean>(false)
 
   // Getters
-  function widget(uid: string): Readonly<Widget> | null {
+  function widget(uid: string): DeepReadonly<api.RootUiComponent> | null {
     const widget = _widgets.value.find((widget) => widget.uid === uid)
     return widget ? readonly(widget) : null
   }
 
-  function widgets(): Readonly<Widget[]> {
+  function widgets(): DeepReadonly<api.RootUiComponent[]> {
     return readonly(_widgets.value.sort((a, b) => a.uid.localeCompare(b.uid)))
   }
 
-  function page(uid: string): Readonly<Page> | null {
+  function page(uid: string): DeepReadonly<api.RootUiComponent> | null {
     const page = _pages.value.find((page) => page.uid === uid)
     return page ? readonly(page) : null
   }
 
-  function pages(): Readonly<Page[]> {
+  function pages(): DeepReadonly<api.RootUiComponent[]> {
     const pages = _pages.value.sort((a, b) => a.uid.localeCompare(b.uid))
     return readonly(pages)
   }
 
   // Actions
-  function setPagesAndWidgets(pages: Page[], widgets: Widget[]): void {
+  function setPagesAndWidgets(pages: api.RootUiComponent[], widgets: api.RootUiComponent[]): void {
     _pages.value = pages
     _widgets.value = widgets
     ready.value = true
@@ -48,11 +40,12 @@ export const useComponentsStore = defineStore('components', () => {
 
   async function loadPagesAndWidgets(): Promise<void> {
     if (useRuntimeStore().apiEndpoint('ui')) {
-      return Promise.all([api.get('/rest/ui/components/ui:page'), api.get('/rest/ui/components/ui:widget')]).then(
-        (data: [Page[], Widget[]]) => {
-          setPagesAndWidgets(data[0], data[1])
-        }
-      )
+      return Promise.all([
+        api.getRegisteredUiComponentsInNamespace({ namespace: 'ui:page' }),
+        api.getRegisteredUiComponentsInNamespace({ namespace: 'ui:widget' })
+      ]).then((data) => {
+        setPagesAndWidgets(data[0] as api.RootUiComponent[], data[1] as api.RootUiComponent[])
+      })
     } else {
       return Promise.resolve()
     }

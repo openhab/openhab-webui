@@ -379,7 +379,9 @@ import DirtyMixin from '../dirty-mixin'
 import ThingActionPopup from '@/pages/settings/things/thing-action-popup.vue'
 import FileDefinition from '@/pages/settings/file-definition-mixin'
 import { useThingEditStore } from '@/js/stores/useThingEditStore.ts'
-import { mapState, mapStores } from 'pinia'
+import { mapState } from 'pinia'
+
+import * as api from '@/api'
 
 export default {
   mixins: [ThingStatus, DirtyMixin, FileDefinition],
@@ -652,21 +654,22 @@ export default {
       })
     },
     deleteThing () {
-      let url, message
-      if (this.thing.statusInfo.status === 'REMOVING') {
-        message = `${this.thing.label || this.thing.UID} is currently being removed but the binding has not confirmed it has finished the operation yet. Would you like to force its removal? Warning: this could cause stability issues with the binding!`
-        url = '/rest/things/' + this.thingId + '?force=true'
-      } else {
-        message = `Are you sure you want to delete ${this.thing.label || this.thing.UID}?`
-        url = '/rest/things/' + this.thingId
-      }
+      let url
+
+      const force = (this.thing.statusInfo.status === 'REMOVING')
+      const message = (force)
+        ? `${this.thing.label || this.thing.UID} is currently being removed but the binding has not confirmed it has finished the operation yet. Would you like to force its removal? Warning: this could cause stability issues with the binding!`
+        : `Are you sure you want to delete ${this.thing.label || this.thing.UID}?`
+
       f7.dialog.confirm(
         message,
         'Delete Thing',
         () => {
-          this.$oh.api.delete(url).then(() => {
+          api.removeThingById({ thingUID: this.thingId, force }).then(() => {
             this.dirty = this.configDirty = this.thingDirty = this.codeDirty = false
             this.f7router.back('/settings/things/', { force: true })
+          }).catch((error) => {
+            f7.dialog.alert('Error while deleting the Thing: ' + error.message)
           })
         }
       )
@@ -682,17 +685,17 @@ export default {
     },
     toggleDisabled () {
       const enable = (this.thing.statusInfo.statusDetail === 'DISABLED')
-      this.$oh.api.putPlain('/rest/things/' + this.thingId + '/enable', enable.toString()).then((data) => {
+      api.enableThing({ thingUID: this.thingId, body: enable.toString() }).then((data) => {
         f7.toast.create({
           text: (enable) ? 'Thing enabled' : 'Thing disabled',
           destroyOnClose: true,
-          closeTimeout: 2000
+          closeTimeout: 3000
         }).open()
       }).catch((err) => {
         f7.toast.create({
           text: 'Error while disabling or enabling: ' + err,
           destroyOnClose: true,
-          closeTimeout: 2000
+          closeTimeout: 4000
         }).open()
       })
     },
@@ -773,16 +776,16 @@ export default {
         : 'Are you sure you wish to unlink all items currently linked to this thing?'
       f7.dialog.confirm(message, 'Unlink all',
         () => {
-          this.$oh.api.get('/rest/links').then((data) => {
+          api.getItemLinks().then((data) => {
             let dialog = f7.dialog.progress('Unlinking all items...')
             this.stopEventSource()
             const links = data.filter((l) => l.channelUID.indexOf(this.thingId) === 0)
 
-            const unlinkPromises = links.map((l) => this.$oh.api.delete(`/rest/links/${l.itemName}/${encodeURIComponent(l.channelUID)}`))
+            const unlinkPromises = links.map((l) => api.unlinkItemFromChannel( { itemName: l.itemName, channelUID: l.channelUID } ))
             Promise.all(unlinkPromises).then(() => {
               if (removeItems) {
                 dialog.setText('Removing items...')
-                const deletePromises = links.map((l) => this.$oh.api.delete(`/rest/items/${l.itemName}`))
+                const deletePromises = links.map((l) => api.removeItemFromRegistry( { itemName: l.itemName } ))
                 Promise.all(deletePromises).then(() => {
                   dialog.close()
                   f7.toast.create({
@@ -794,6 +797,7 @@ export default {
                 }).catch((err) => {
                   dialog.close()
                   f7.dialog.alert('Some of the items could not be unlinked: ' + err)
+                  console.error('Some of the items could not be unlinked: ' + err)
                   this.load()
                 })
               } else {
@@ -808,6 +812,7 @@ export default {
             }).catch((err) => {
               dialog.close()
               f7.dialog.alert('Some of the items could not be removed: ' + err)
+              console.error('Some of the items could not be removed: ' + err)
               this.load()
             })
           })

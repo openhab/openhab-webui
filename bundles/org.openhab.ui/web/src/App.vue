@@ -481,7 +481,6 @@
 
 <script>
 import { nextTick, defineAsyncComponent } from 'vue'
-import { request } from 'framework7'
 import { f7, f7ready } from 'framework7-vue'
 import { mapStores, mapWritableState } from 'pinia'
 
@@ -512,6 +511,8 @@ import { useUserStore } from '@/js/stores/useUserStore'
 import { useComponentsStore } from '@/js/stores/useComponentsStore'
 import { useSemanticsStore } from '@/js/stores/useSemanticsStore'
 import { useModelStore } from '@/js/stores/useModelStore'
+
+import { getRoot } from '@/api'
 
 export default {
   mixins: [auth, connectionHealth, sseEvents],
@@ -671,7 +672,7 @@ export default {
       const useCredentialsPromise = useCredentials ? this.setBasicCredentials() : Promise.resolve()
       return useCredentialsPromise
         .then(() => {
-          return request.json('/rest/')
+          return getRoot()
         })
         .catch((err) => {
           if (err.message === 'Unauthorized' || err.status === 401) {
@@ -688,7 +689,7 @@ export default {
                 (username, password) => {
                   this.setBasicCredentials(username, password)
                   this.$oh.api
-                    .get('/rest/')
+                    .getRoot()
                     .then((rootResponse) => {
                       this.storeBasicCredentials()
                       this.loadData()
@@ -747,7 +748,6 @@ export default {
             )
           }
         })
-        .then((res) => res.data)
         .then((rootResponse) => {
           // store the REST API services present on the system
           useRuntimeStore().setRootResource(rootResponse)
@@ -809,9 +809,8 @@ export default {
           }
           // load & build the semantic model
           useModelStore().loadSemanticModel()
-        })
-        .then(() => {
-          // finished with loading
+        }).then(() => {
+        // finished with loading
           this.ready = true
           return Promise.resolve()
         })
