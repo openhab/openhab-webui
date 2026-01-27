@@ -80,7 +80,7 @@ export default {
   methods: {
     initWorkspace () {
       this.workspace = Blockly.inject(this.$refs.blockPreview, {
-        theme: useUIOptionsStore().getDarkMode() === 'dark' ? 'dark' : undefined,
+        theme: useUIOptionsStore().darkMode === 'dark' ? 'dark' : undefined,
         trashcan: false,
         readOnly: false
       })

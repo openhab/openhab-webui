@@ -95,7 +95,7 @@ export default {
       })
     },
     iconColor () {
-      return (this.tag.editable || this.picker) ? (useUIOptionsStore().getDarkMode() === 'dark' ? 'white' : 'black') : 'gray'
+      return (this.tag.editable || this.picker) ? (useUIOptionsStore().darkMode === 'dark' ? 'white' : 'black') : 'gray'
     },
     canHaveChildren () {
       return (this.children.length > 0 || this.moveState.moving) === true

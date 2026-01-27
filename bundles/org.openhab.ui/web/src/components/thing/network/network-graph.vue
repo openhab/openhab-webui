@@ -152,7 +152,7 @@ export default {
   computed: {
     ...mapStores(useUIOptionsStore),
     isDarkMode () {
-      return this.uiOptionsStore.getDarkMode() === 'dark'
+      return this.uiOptionsStore.darkMode === 'dark'
     },
     chartOptions () {
       if (!this.graph) return null

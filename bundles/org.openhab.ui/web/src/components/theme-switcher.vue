@@ -23,15 +23,15 @@
     </f7-row>
     <f7-block-title>{{ t('about.darkMode') }}</f7-block-title>
     <f7-row>
-      <f7-col width="33" class="theme-picker auto" @click="uiOptionsStore.setDarkMode('auto')">
+      <f7-col width="33" class="theme-picker auto" @click="uiOptionsStore.darkMode = 'auto'">
         <span class="text-color-gray">{{ t('about.darkMode.auto') }}</span>
         <f7-checkbox checked disabled v-if="uiOptionsStore.storedDarkMode === 'auto'" />
       </f7-col>
-      <f7-col width="33" class="bg-color-white theme-picker" @click="uiOptionsStore.setDarkMode('light')">
+      <f7-col width="33" class="bg-color-white theme-picker" @click="uiOptionsStore.darkMode = 'light'">
         <span class="text-color-gray">{{ t('about.darkMode.light') }}</span>
         <f7-checkbox checked disabled v-if="uiOptionsStore.storedDarkMode === 'light'" />
       </f7-col>
-      <f7-col width="33" class="bg-color-black theme-picker" @click="uiOptionsStore.setDarkMode('dark')">
+      <f7-col width="33" class="bg-color-black theme-picker" @click="uiOptionsStore.darkMode = 'dark'">
         <span class="text-color-gray">{{ t('about.darkMode.dark') }}</span>
         <f7-checkbox checked disabled v-if="uiOptionsStore.storedDarkMode === 'dark'" />
       </f7-col>
