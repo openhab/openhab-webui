@@ -75,7 +75,7 @@ export default {
     options () {
       if (!this.config) return {}
       const chartConfig = this.config.options || {}
-      if (!chartConfig.backgroundColor && useUIOptionsStore().getDarkMode() === 'dark') {
+      if (!chartConfig.backgroundColor && useUIOptionsStore().darkMode === 'dark') {
         chartConfig.backgroundColor = '#121212'
       }
       return {

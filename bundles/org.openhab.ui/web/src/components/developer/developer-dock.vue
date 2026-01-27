@@ -1,10 +1,11 @@
 <template>
   <f7-page class="developer-dock">
     <!-- note: title is left aligned in Material theme, this is no bug -->
-    <f7-navbar title="Developer Sidebar" subtitle="(Shift+Alt+D)" :color="uiOptionsStore.getDarkMode() === 'dark' ? '' : 'black'" />
-    <f7-segmented strong
-                  tag="p"
-                  style="margin-right: calc(var(--f7-searchbar-inner-padding-right) + var(--f7-searchbar-in-page-content-margin) + var(--f7-safe-area-right));
+    <f7-navbar title="Developer Sidebar" subtitle="(Shift+Alt+D)" :color="uiOptionsStore.darkMode === 'dark' ? '' : 'black'" />
+    <f7-segmented
+      strong
+      tag="p"
+      style="margin-right: calc(var(--f7-searchbar-inner-padding-right) + var(--f7-searchbar-in-page-content-margin) + var(--f7-safe-area-right));
                     margin-left: calc(var(--f7-searchbar-inner-padding-right) + var(--f7-searchbar-in-page-content-margin) + var(--f7-safe-area-left));
                     margin-top: 5px;
                     margin-bottom: 5px;">

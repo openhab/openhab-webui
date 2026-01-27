@@ -330,7 +330,7 @@ export default {
         ...autocompletions,
         linter,
         linter && lintGutter(),
-        useUIOptionsStore().getDarkMode() === 'dark' ? gruvboxDark : null
+        useUIOptionsStore().darkMode === 'dark' ? gruvboxDark : null
       ].filter((ext) => ext)
 
       return extensions

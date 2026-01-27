@@ -27,11 +27,12 @@
         </div>
         <div v-if="addon.verifiedAuthor" class="addon-card-subtitle">
           {{ addon.author }}
-          <f7-icon v-if="addon.verifiedAuthor"
-                   size="15"
-                   :color="uiOptionsStore.getDarkMode() === 'dark' ? 'white' : 'blue'"
-                   f7="checkmark_seal_fill"
-                   style="margin-top: -3px;" />
+          <f7-icon
+            v-if="addon.verifiedAuthor"
+            size="15"
+            :color="uiOptionsStore.darkMode === 'dark' ? 'white' : 'blue'"
+            f7="checkmark_seal_fill"
+            style="margin-top: -3px;" />
         </div>
         <div v-else-if="addon.properties && addon.properties.views" class="addon-card-subtitle">
           <addon-stats-line :addon="addon" :iconSize="15" />

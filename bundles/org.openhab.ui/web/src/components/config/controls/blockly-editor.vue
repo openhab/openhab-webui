@@ -1252,9 +1252,9 @@ export default {
   computed: {
     cssVars () {
       return {
-        '--blockly-ws-search-bg-color': useUIOptionsStore().getDarkMode() === 'dark' ? '#1e1e1e' : 'white',
-        '--blockly-ws-search-border-color': useUIOptionsStore().getDarkMode() === 'dark' ? 'lightgrey' : 'grey',
-        '--blockly-ws-search-text-color': useUIOptionsStore().getDarkMode() === 'dark' ? 'white' : 'black'
+        '--blockly-ws-search-bg-color': useUIOptionsStore().darkMode === 'dark' ? '#1e1e1e' : 'white',
+        '--blockly-ws-search-border-color': useUIOptionsStore().darkMode === 'dark' ? 'lightgrey' : 'grey',
+        '--blockly-ws-search-text-color': useUIOptionsStore().darkMode === 'dark' ? 'white' : 'black'
       }
     },
     ...mapStores(useUIOptionsStore)
@@ -1337,7 +1337,7 @@ export default {
       const options = {
         toolbox: this.$refs.toolbox,
         horizontalLayout: !this.$device.desktop,
-        theme: useUIOptionsStore().getDarkMode() === 'dark' ? DarkTheme : undefined,
+        theme: useUIOptionsStore().darkMode === 'dark' ? DarkTheme : undefined,
         zoom: {
           controls: true,
           wheel: true,

@@ -57,13 +57,14 @@
                icon-aurora="f7:play_circle">
         &nbsp;{{ $t('dialogs.enable') }}&nbsp;{{ enablableItems }}
       </f7-link>
-      <f7-link v-if="!theme.md && !showScenes"
-               :color="uiOptionsStore.getDarkMode() === 'dark' ? 'purple' : 'deeppurple'"
-               v-show="selectedItems.length && canRegenerate"
-               class="enable"
-               @click="regenerateSelected()"
-               icon-ios="f7:arrow_2_circlepath"
-               icon-aurora="f7:arrow_2_circlepath">
+      <f7-link
+        v-if="!theme.md && !showScenes"
+        :color="uiOptionsStore.darkMode === 'dark' ? 'purple' : 'deeppurple'"
+        v-show="selectedItems.length && canRegenerate"
+        class="enable"
+        @click="regenerateSelected()"
+        icon-ios="f7:arrow_2_circlepath"
+        icon-aurora="f7:arrow_2_circlepath">
         &nbsp;{{ $t('dialogs.regenerate') }}&nbsp;{{ regeneratableItemsCount }}
       </f7-link>
       <f7-link v-if="theme.md"

@@ -1,7 +1,9 @@
 import { defineStore } from 'pinia'
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { Dom7 } from 'framework7'
-import { f7 } from 'framework7-vue'
+import { f7, f7ready } from 'framework7-vue'
+
+type StoredDarkModeType = 'auto' | 'dark' | 'light'
 
 declare global {
   interface Window {
@@ -14,11 +16,10 @@ declare global {
 export const useUIOptionsStore = defineStore('uiOptions', () => {
   // States
   const _storedDarkMode = localStorage.getItem('openhab.ui:theme.dark')
-  const storedDarkMode = ref<'auto' | 'dark' | 'light'>(
-    _storedDarkMode === 'auto' || _storedDarkMode === 'dark' || _storedDarkMode === 'light'
-      ? _storedDarkMode
-      : 'auto'
+  const storedDarkMode = ref<StoredDarkModeType>(
+    ['auto', 'dark', 'light'].includes(_storedDarkMode as any) ? (_storedDarkMode as StoredDarkModeType) : 'auto'
   )
+  const darkModeChange = ref<number>(0) // Used to trigger recomputation of darkMode
 
   const _storedBars = localStorage.getItem('openhab.ui:theme.bars') || 'light'
   const bars = ref<'light' | 'filled'>(
@@ -77,33 +78,44 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     localStorage.getItem('openhab.ui:sitemap.showItemName') === 'true'
   )
 
-  // Getters
-  function getDarkMode () {
-    if (storedDarkMode.value === 'auto') {
-      return typeof window.OHApp?.preferDarkMode === 'function' ? window.OHApp.preferDarkMode() : f7.darkMode ? 'dark' : 'light'
+  const darkMode = computed({
+    get: (): 'dark' | 'light' => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      darkModeChange.value // darkModeChange to force re-computation
+      if (storedDarkMode.value === 'auto') {
+        if (typeof window.OHApp?.preferDarkMode === 'function') {
+          return window.OHApp.preferDarkMode() ? 'dark' : 'light'
+        }
+        return f7.darkMode ? 'dark' : 'light'
+      }
+      return storedDarkMode.value
+    },
+    set: (value: StoredDarkModeType) => {
+      storedDarkMode.value = value
+      if (value === 'auto') {
+        f7.enableAutoDarkMode()
+        localStorage.removeItem('openhab.ui:theme.dark')
+      } else {
+        f7.disableAutoDarkMode()
+        localStorage.setItem('openhab.ui:theme.dark', value)
+      }
+
+      bars.value = 'light' // Reset bars to light when dark mode changes
+      updateClasses()
     }
+  })
 
-    return storedDarkMode.value
-  }
-
-  function isAutoDarkMode () {
-    return storedDarkMode.value === 'auto'
-  }
-
-  // Actions
-  function setDarkMode (value: 'auto' | 'dark' | 'light') {
-    storedDarkMode.value = value
-
-    if (value === 'auto') {
-      f7.enableAutoDarkMode()
-      localStorage.removeItem('openhab.ui:theme.dark')
-    } else {
-      f7.disableAutoDarkMode()
-      localStorage.setItem('openhab.ui:theme.dark', value)
-    }
-
-    bars.value = 'light' // Reset bars to light when dark mode changes
+  f7ready(() => {
     updateClasses()
+    f7.on('darkModeChange', () => {
+      darkModeChange.value++
+      updateClasses()
+    })
+  })
+
+  // Getters
+  function isAutoDarkMode() {
+    return storedDarkMode.value === 'auto'
   }
 
   watch(bars, (newValue) => {
@@ -166,8 +178,8 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     localStorage.setItem('openhab.ui:sitemap.showItemName', newValue?.toString())
   })
 
-  function updateClasses () {
-    if (getDarkMode() === 'dark') {
+  function updateClasses() {
+    if (darkMode.value === 'dark') {
       Dom7('html').addClass('dark')
     } else {
       Dom7('html').removeClass('dark')
@@ -186,7 +198,7 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
 
   function themeOptions () {
     return {
-      dark: getDarkMode(),
+      dark: darkMode,
       autoDarkMode: isAutoDarkMode(),
       bars: bars.value,
       homeNavBar: homeNavBar.value,
@@ -202,8 +214,7 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
 
   return {
     storedDarkMode,
-    getDarkMode,
-    setDarkMode,
+    darkMode,
     isAutoDarkMode,
     bars,
     homeNavBar,
