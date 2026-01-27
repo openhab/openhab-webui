@@ -13,7 +13,7 @@
       <f7-page>
         <f7-link href="/overview/" class="openhab-logo no-ripple" panel-close>
           <div class="logo-inner">
-            <img v-if="uiOptionsStore.getDarkMode() === 'dark'" src="@/images/openhab-logo-white.svg" type="image/svg+xml" width="196px" />
+            <img v-if="uiOptionsStore.darkMode === 'dark'" src="@/images/openhab-logo-white.svg" type="image/svg+xml" width="196px" />
             <img v-else src="@/images/openhab-logo.svg" type="image/svg+xml" width="196px" />
           </div>
         </f7-link>
@@ -843,7 +843,6 @@ export default {
       }
     },
     updateThemeOptions () {
-      useUIOptionsStore().updateClasses()
       if (useUIOptionsStore().visibleBreakpointDisabled) {
         nextTick(() => {
           f7.panel.get('left').disableVisibleBreakpoint()
@@ -1072,10 +1071,6 @@ export default {
 
       f7.on('addonChange', () => {
         this.loadData()
-      })
-
-      f7.on('darkModeChange', () => {
-        this.updateThemeOptions()
       })
 
       f7.on('toggleDeveloperDock', () => {

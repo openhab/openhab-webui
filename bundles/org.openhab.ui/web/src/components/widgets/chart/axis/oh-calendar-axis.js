@@ -18,7 +18,7 @@ export default {
     if (!calendar.left) calendar.left = 60
     if (!calendar.right) calendar.right = 50
 
-    if (useUIOptionsStore().getDarkMode() === 'dark') {
+    if (useUIOptionsStore().darkMode === 'dark') {
       if (!calendar.itemStyle) calendar.itemStyle = {}
       if (!calendar.itemStyle.color) calendar.itemStyle.color = '#333'
       if (!calendar.itemStyle.borderColor) calendar.itemStyle.borderColor = '#555'

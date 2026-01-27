@@ -58,7 +58,7 @@
       </f7-link>
       <f7-link
         v-if="!theme.md && !showScenes"
-        :color="uiOptionsStore.getDarkMode() === 'dark' ? 'purple' : 'deeppurple'"
+        :color="uiOptionsStore.darkMode === 'dark' ? 'purple' : 'deeppurple'"
         v-show="selectedItems.length && canRegenerate"
         class="enable"
         @click="regenerateSelected()"
