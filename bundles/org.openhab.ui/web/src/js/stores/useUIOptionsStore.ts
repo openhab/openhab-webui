@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
 import { Dom7 } from 'framework7'
 import { f7 } from 'framework7-vue'
+import type { CodeEditorType } from '@/assets/definitions/media-types.ts'
 
 export const useUIOptionsStore = defineStore('uiOptions', () => {
   // States
@@ -40,8 +41,8 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
   const visibleBreakpointDisabled = ref<boolean>(localStorage.getItem('openhab.ui:panel.visibleBreakpointDisabled') === 'true')
 
   const _storedCodeEditorType = localStorage.getItem('openhab.ui:codeEditor.type') || 'YAML'
-  const codeEditorType = ref<'DSL' | 'YAML'>(
-    ['DSL', 'YAML'].includes(_storedCodeEditorType as any) ? (_storedCodeEditorType as 'DSL' | 'YAML') : 'YAML'
+  const codeEditorType = ref<CodeEditorType>(
+    ['DSL', 'YAML'].includes(_storedCodeEditorType as any) ? (_storedCodeEditorType as CodeEditorType) : 'YAML'
   )
 
   const modelPickerShowItemName = ref<boolean>(localStorage.getItem('openhab.ui:modelPicker.showItemName') === 'true')
