@@ -1,24 +1,25 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn">
     <f7-navbar>
-      <oh-nav-content title="Add Items from DSL Definition" save-link="Add" @save="add()" :f7router />
+      <oh-nav-content title="Add Items from Textual Definition" save-link="Add" @save="add()" :f7router />
     </f7-navbar>
+
     <f7-block class="items-add-from-textual-definition">
       <div class="row items-parser resizable" v-if="ready">
         <div class="col">
-          <editor class="editor" :value="code" @input="(value: string) => code = value" mode="text/vnd.openhab.dsl.item" />
+          <editor class="editor" :value="code" @input="(value: string) => code = value" :mode="mediaType" />
         </div>
         <span class="resize-handler" />
       </div>
       <div class="row items-results resizable" v-if="ready">
         <div class="col">
-          <div v-if="parseError" class="error">
+          <div v-if="!code || parseError" class="error">
             <div v-if="!code">
               <empty-state-placeholder icon="text_badge_plus" title="items.add.title" text="items.add.text" />
             </div>
             <pre v-else><code>{{ parseError }}</code></pre>
           </div>
-          <div v-if="!parseError" class="items-table">
+          <div v-else class="items-table">
             <div class="card data-table data-table-init">
               <table>
                 <thead>
@@ -106,6 +107,20 @@
         <span class="resize-handler" />
       </div>
     </f7-block>
+
+    <f7-toolbar bottom>
+      <f7-segmented>
+        <f7-button
+          v-for="type in Object.keys(SupportedMediaTypes.items)"
+          outline
+          small
+          :key="type"
+          :active="codeEditorType === type"
+          @click="codeEditorType = (type as CodeEditorType)">
+          {{ type }}
+        </f7-button>
+      </f7-segmented>
+    </f7-toolbar>
   </f7-page>
 </template>
 
@@ -135,19 +150,27 @@
 </style>
 
 <script setup lang="ts">
-import { defineAsyncComponent, ref, watch } from 'vue'
+import { computed, defineAsyncComponent, ref, watch } from 'vue'
 import { f7 } from 'framework7-vue'
 import { type Router } from 'framework7'
 import debounce from 'debounce'
 
+import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore.ts'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
-const editor = defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue'))
 import * as api from '@/api'
+import { type CodeEditorType, MediaType, SupportedMediaTypes } from '@/assets/definitions/media-types.ts'
+import { storeToRefs } from 'pinia'
 
+const uiOptionsStore = useUIOptionsStore()
+
+const editor = defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue'))
+
+// props
 const props = defineProps<{
   f7router: Router.Router
 }>()
 
+// data
 interface ExtendedFileFormatItem extends api.FileFormatItem {
   existing?: api.EnrichedItem,
   existingLinks?: api.ItemChannelLink[]
@@ -161,10 +184,21 @@ const code = ref('')
 const parsedItems = ref<ExtendedFileFormatItem[]>([])
 const parseError = ref<string | null>(null)
 
+const { codeEditorType } = storeToRefs(uiOptionsStore)
+
+// computed
+const mediaType = computed(() => SupportedMediaTypes.items[codeEditorType.value])
+
+// watchers
 watch(code, debounce(() => {
   parseItems()
 }, 300))
 
+watch(codeEditorType, () => {
+  parseItems()
+})
+
+// methods
 const onPageAfterIn = () => {
   load()
 }
@@ -186,7 +220,7 @@ const parseItems = () => {
     body: code.value
   }, {
     headers: {
-      'Content-Type': 'text/vnd.openhab.dsl.item',
+      'Content-Type': mediaType.value,
       accept: 'application/json'
     }
   }).then((data) => {

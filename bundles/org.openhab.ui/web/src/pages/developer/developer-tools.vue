@@ -52,7 +52,7 @@
                 </f7-list-item>
                 <f7-list-item
                   media-item
-                  title="Add Items from DSL Definition"
+                  title="Add Items from Textual Definition"
                   footer="Create or update items &amp; links in bulk"
                   link="add-items-dsl/">
                   <template #media>

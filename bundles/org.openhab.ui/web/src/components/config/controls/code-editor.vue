@@ -94,28 +94,7 @@ import Editor from '@/components/config/controls/script-editor.vue'
 
 import MovablePopup from '@/pages/settings/movable-popup-mixin'
 import copyToClipboard from '@/js/clipboard'
-
-const MediaType = Object.freeze({
-  YAML: 'application/yaml',
-  THING_DSL: 'text/vnd.openhab.dsl.thing',
-  ITEM_DSL: 'text/vnd.openhab.dsl.item',
-  JSON: 'application/json'
-})
-
-const SupportedMediaTypes = {
-  items: {
-    YAML: MediaType.YAML,
-    DSL: MediaType.ITEM_DSL
-  },
-  things: {
-    YAML: MediaType.YAML,
-    DSL: MediaType.THING_DSL
-  }
-}
-
-const DefaultMediaTypes = {
-  YAML: MediaType.YAML
-}
+import { DefaultMediaTypes, MediaType, SupportedMediaTypes } from '@/assets/definitions/media-types.ts'
 
 export default {
   mixins: [MovablePopup],
@@ -148,14 +127,6 @@ export default {
   },
   computed: {
     editorMode () {
-      if (this.uiOptionsStore.codeEditorType === 'YAML') {
-        switch (this.objectType) {
-          case 'items':
-            return 'application/vnd.openhab.item+yaml'
-          case 'things':
-            return 'application/vnd.openhab.thing+yaml'
-        }
-      }
       return this.mediaTypes[this.uiOptionsStore.codeEditorType]
     },
     mediaTypes () {
