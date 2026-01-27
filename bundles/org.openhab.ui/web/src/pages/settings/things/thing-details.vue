@@ -72,9 +72,10 @@
             <f7-list accordion-opposite>
               <f7-list-item v-if="thingType" accordion-item title="Thing Type" :after="thingType.label">
                 <f7-accordion-content class="thing-type-description">
-                  <div class="margin" v-html="thingType.description" />
+                  <div class="margin" v-html="thingType?.description" />
                 </f7-accordion-content>
               </f7-list-item>
+              <f7-list-item v-else title="Missing Thing-Type (is the binding installed?)" :after="thing.thingTypeUID" text-color="red" />
               <f7-list-item
                 v-if="thing && Object.keys(thing.properties).length > 0"
                 accordion-item
@@ -134,9 +135,9 @@
             <f7-block-title medium class="no-margin-bottom"> Configuration </f7-block-title>
             <config-sheet
               ref="thingConfiguration"
-              :parameter-groups="configDescriptions.parameterGroups"
+              :parameter-groups="configDescriptions?.parameterGroups"
               :parameters="filteredConfigParameters"
-              :configuration="thing.configuration"
+              :configuration="thing?.configuration"
               :status="configStatusInfo"
               :set-empty-config-as-null="true"
               :read-only="!editable"
@@ -564,8 +565,10 @@ export default {
           return
         }
 
-        // gather actions (rendered as buttons at the bottom)
-        this.configActionsByGroup = this.getBindingActions(useThingEditStore().configDescriptions)
+        if (useThingEditStore().thing.configDescription) {
+          // gather actions (rendered as buttons at the bottom)
+          this.configActionsByGroup = this.getBindingActions(useThingEditStore().configDescriptions)
+        }
 
         if (!this.eventSource) this.startEventSource()
 

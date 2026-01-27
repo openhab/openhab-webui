@@ -17,10 +17,10 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
 
   const thing = ref<api.EnrichedThing | null>(null)
   const savedThing = ref<api.EnrichedThing | null>(null)
-  const thingType = ref<any>(null)
-  const channelTypes = ref<any>(null)
+  const thingType = ref<api.ThingType | null>(null)
+  const channelTypes = ref<api.ChannelType[] | null>(null)
   const configDescriptions = ref<api.ConfigDescription | null>(null)
-  const thingActions = ref<api.ThingAction[]>([])
+  const thingActions = ref<api.ThingAction[] | null>(null)
   const configStatusInfo = ref<api.ConfigStatusMessage[] | null>(null)
   const firmwares = ref<api.FirmwareStatus | null>(null)
 
@@ -52,67 +52,78 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
 
   // computed
   const editable = computed(() => thing.value?.editable)
-  const isExtensible = computed(() => thingType.value?.extensibleChannelTypeIds?.length > 0)
+  const isExtensible = computed(() => (thingType?.value?.extensibleChannelTypeIds?.length ?? 0) > 0)
   const hasLinkedItems = computed(() => thing.value?.channels?.find((c) => c.linkedItems?.length))
 
   // methods
   async function loadThingActions(thingUID: string): Promise<void> {
-    try {
-      const data = await api.getAvailableActionsForThing({ thingUID })
-      if (!data) {
-        thingActions.value = []
-        return
-      }
-      thingActions.value = data
-        .filter((a) => a.visibility === 'VISIBLE' || a.visibility === 'EXPERT')
-        .filter((a) => a.inputConfigDescriptions !== undefined)
-        .sort((a, b) => (a.label || '').localeCompare(b.label || ''))
-    } catch (e: any) {
+    // getAvailableActionsForThing will return 404 if no actions are available for this thing (204 would be better response)
+    const data = await api.getAvailableActionsForThing({ thingUID }).catch((e) => {
       if (e.response?.statusText === 'Not Found' || e.response?.status === 404) {
         console.log('No actions available for this Thing')
         return
       }
-      console.error('Error loading thing actions: ' + e)
       throw e
+    })
+
+    if (!data) {
+      return
     }
+
+    thingActions.value = data
+      .filter((a) => a.visibility === 'VISIBLE' || a.visibility === 'EXPERT')
+      .filter((a) => a.inputConfigDescriptions !== undefined)
+      .sort((a, b) => (a.label || '').localeCompare(b.label || ''))
   }
 
   async function loadConfigDescriptions(thingUID: string): Promise<void> {
+    // getConfigDescriptionByUri will return 404 if no specific config description is available for this thing
+    // if an error or no specific description is available, try to use the config description from the Thing Type
     try {
-      const data = await api.getConfigDescriptionByUri({ uri: 'thing:' + thingUID })
-      if (!data) {
-        configDescriptions.value = null
-        return
-      }
-      configDescriptions.value = data
-    } catch (e: any) {
-      console.debug('No specific config description available for this thing, using config description from thing type instead.')
-      configDescriptions.value = {
-        parameterGroups: thingType.value.parameterGroups,
-        parameters: thingType.value.configParameters
+      const data = await api.getConfigDescriptionByUri({ uri: 'thing:' + thingUID }).catch((e) => {
+        if (e.response?.statusText === 'Not Found' || e.response?.status === 404) {
+          return
+        }
+        throw e
+      })
+      configDescriptions.value =  data || null
+    } finally {
+      if (configDescriptions.value) return
+      if (thingType.value && thingType.value.configParameters && thingType.value.parameterGroups) {
+        console.debug('No specific config description available for this thing, using config description from thing type instead.')
+        configDescriptions.value = {
+          parameterGroups: thingType.value.parameterGroups,
+          parameters: thingType.value.configParameters
+        }
+      } else {
+        console.debug('No config description available for this thing.')
       }
     }
   }
 
   async function loadFirmwares(thingUID: string) {
-    // force parse as JSON to ensure hey-api parses 204 as empty object
+    // getThingFirmwareStatus will return 204 if no firmware info is available for this thing
     api
       .getThingFirmwareStatus({ thingUID })
       .then((data) => {
-        if (data && Object.keys(data).length === 0) {
-          console.debug(`Firmware info not available for Thing ${thingUID}`)
+        if (data && Object.keys(data).length > 0) {
+          firmwares.value = data
         }
-        firmwares.value = data!
-      })
-      .catch((err) => {
-        firmwares.value = null
-        console.debug(`Firmware info not available for Thing ${thingUID}: ` + err.message)
       })
   }
 
   function load(thingUID: string, loadingFinishedCallback: (success: boolean) => void) {
     if (loading.value) return
     loading.value = true
+
+    // reset data to initial state
+    thing.value = null
+    thingType.value = null
+    channelTypes.value = null
+    thingActions.value = null
+    configDescriptions.value = null
+    configStatusInfo.value = null
+    firmwares.value = null
 
     api
       .getThingById({ thingUID })
@@ -127,30 +138,15 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
         thing.value = data
 
         Promise.allSettled([
-          api.getThingTypeById({ thingTypeUID: thing.value!.thingTypeUID }),
-          api.getChannelTypes({ prefixes: 'system,' + thing.value.thingTypeUID.split(':')[0] }),
+          // if no typeType found, it will respond with 204
+          api.getThingTypeById({ thingTypeUID: thing.value!.thingTypeUID }).then((data) => {
+            if (data && Object.keys(data).length > 0) {
+              thingType.value = data
+            }
+          }),
+          api.getChannelTypes({ prefixes: 'system,' + thing.value.thingTypeUID.split(':')[0] }).then((data) => channelTypes.value = data || []),
           loadThingActions(thingUID)
         ]).then((results) => {
-          if (results[0].status === 'fulfilled') {
-            thingType.value = results[0].value
-          } else {
-            let message = `Cannot load thing-type '${data.thingTypeUID}': ${results[0].reason}`
-            console.error(message)
-            f7.dialog.alert(message)
-          }
-
-          if (results[1].status === 'fulfilled') {
-            channelTypes.value = results[1].value
-          } else {
-            let message = `Cannot load channel-types for thing-type '${data.thingTypeUID}': ${results[1].reason}`
-            console.error(message)
-            f7.dialog.alert(message)
-          }
-
-          if (results[2].status !== 'fulfilled') {
-            console.warn(`Cannot load '${thingUID}' thing actions: ${results[2].reason}`)
-          }
-
           Promise.allSettled([
             loadConfigDescriptions(thingUID),
             loadFirmwares(thingUID),
@@ -158,18 +154,6 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
               configStatusInfo.value = data ?? null
             })
           ]).then((results) => {
-            if (results[0].status !== 'fulfilled') {
-              console.error(`Cannot load '${thingUID}' config descriptions: ${results[0].reason}`)
-              configDescriptions.value = null
-            }
-            if (results[1].status !== 'fulfilled') {
-              console.warn(`Cannot load '${thingUID}' firmwares: ${results[1].reason}`)
-              firmwares.value = null
-            }
-            if (results[2].status !== 'fulfilled') {
-              console.warn(`Cannot load '${thingUID}' config status: ${results[2].reason}`)
-              configStatusInfo.value = []
-            }
             savedThing.value = cloneDeep(thing.value)
             loadingFinishedCallback(true)
             loading.value = false

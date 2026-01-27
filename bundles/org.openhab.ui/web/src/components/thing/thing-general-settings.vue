@@ -59,7 +59,7 @@
             </f7-list>
             <f7-block-title v-if="ready && thingType?.supportedBridgeTypeUIDs?.length"> Parent Bridge </f7-block-title>
             <f7-block-footer
-              v-if="ready && thingType?.supportedBridgeTypeUIDs?.length && !thing?.bridgeUID"
+              v-if="ready && thingType?.supportedBridgeTypeUIDs?.length && !thing.bridgeUID"
               class="padding-left padding-right">
               This type of Thing needs to be associated to a working Bridge to function properly.
             </f7-block-footer>
@@ -70,7 +70,7 @@
                   name="bridge"
                   :value="thing.bridgeUID"
                   @input="updateBridge"
-                  :filterType="thingType.supportedBridgeTypeUIDs" />
+                  :filterType="thingType?.supportedBridgeTypeUIDs" />
               </f7-list-group>
               <f7-list-item v-else title="Bridge" :after="thing.bridgeUID" />
             </f7-list>
