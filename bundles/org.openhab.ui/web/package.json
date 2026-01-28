@@ -139,6 +139,11 @@
     "vue3-clipboard": "^1.0.0",
     "yaml": "^2.8.0"
   },
+  "overrides": {
+    "scope-css": {
+      "escaper": "3.0.6"
+    }
+  },
   "devDependencies": {
     "@eslint/compat": "^2.0.0",
     "@eslint/eslintrc": "^3.3.3",
