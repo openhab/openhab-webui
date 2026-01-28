@@ -5,6 +5,7 @@ import fastDeepEqual from 'fast-deep-equal/es6'
 import cloneDeep from 'lodash/cloneDeep'
 
 import * as api from '@/api'
+import { getErrorMessage } from '../hey-api'
 
 /**
  * The thing edit store is used by thing-details.vue to store data independent of the component's lifecycle.
@@ -57,16 +58,10 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
 
   // methods
   async function loadThingActions(thingUID: string): Promise<void> {
-    // getAvailableActionsForThing will return 404 if no actions are available for this thing (204 would be better response)
-    const data = await api.getAvailableActionsForThing({ thingUID }).catch((e) => {
-      if (e.response?.statusText === 'Not Found' || e.response?.status === 404) {
-        console.log('No actions available for this Thing')
-        return
-      }
-      throw e
-    })
+    // getAvailableActionsForThing will return 204 if no actions are available for this thing
+    const data = await api.getAvailableActionsForThing({ thingUID })
 
-    if (!data) {
+    if (!data || Array.isArray(data) === false) {
       return
     }
 
@@ -80,13 +75,8 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
     // getConfigDescriptionByUri will return 404 if no specific config description is available for this thing
     // if an error or no specific description is available, try to use the config description from the Thing Type
     try {
-      const data = await api.getConfigDescriptionByUri({ uri: 'thing:' + thingUID }).catch((e) => {
-        if (e.response?.statusText === 'Not Found' || e.response?.status === 404) {
-          return
-        }
-        throw e
-      })
-      configDescriptions.value =  data || null
+      const data = await api.getConfigDescriptionByUri({ uri: 'thing:' + thingUID })
+      configDescriptions.value = data || null
     } finally {
       if (configDescriptions.value) return
       if (thingType.value && thingType.value.configParameters && thingType.value.parameterGroups) {
@@ -97,19 +87,18 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
         }
       } else {
         console.debug('No config description available for this thing.')
+        configDescriptions.value = null
       }
     }
   }
 
-  async function loadFirmwares(thingUID: string) {
+  async function loadFirmwares(thingUID: string): Promise<void> {
     // getThingFirmwareStatus will return 204 if no firmware info is available for this thing
-    api
-      .getThingFirmwareStatus({ thingUID })
-      .then((data) => {
-        if (data && Object.keys(data).length > 0) {
-          firmwares.value = data
-        }
-      })
+    await api.getThingFirmwareStatus({ thingUID }).then((data) => {
+      if (data && Object.keys(data).length > 0) {
+        firmwares.value = data
+      }
+    })
   }
 
   function load(thingUID: string, loadingFinishedCallback: (success: boolean) => void) {
@@ -138,26 +127,49 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
         thing.value = data
 
         Promise.allSettled([
-          // if no typeType found, it will respond with 204
-          api.getThingTypeById({ thingTypeUID: thing.value!.thingTypeUID }).then((data) => {
-            if (data && Object.keys(data).length > 0) {
-              thingType.value = data
-            }
-          }),
-          api.getChannelTypes({ prefixes: 'system,' + thing.value.thingTypeUID.split(':')[0] }).then((data) => channelTypes.value = data || []),
+          api.getThingTypeById({ thingTypeUID: thing.value.thingTypeUID }),
+          api.getChannelTypes({ prefixes: 'system,' + thing.value.thingTypeUID.split(':')[0] }),
           loadThingActions(thingUID)
         ]).then((results) => {
-          Promise.allSettled([
-            loadConfigDescriptions(thingUID),
-            loadFirmwares(thingUID),
-            api.getThingConfigStatus({ thingUID }).then((data) => {
-              configStatusInfo.value = data ?? null
-            })
-          ]).then((results) => {
-            savedThing.value = cloneDeep(thing.value)
-            loadingFinishedCallback(true)
-            loading.value = false
-          })
+          if (results[0].status === 'fulfilled') {
+            thingType.value = results[0].value || null
+          } else {
+            const message = `Cannot load thing-type '${data.thingTypeUID}': `
+            console.error(message + getErrorMessage(results[0].reason, true))
+            f7.dialog.alert(message + getErrorMessage(results[0].reason))
+          }
+
+          if (results[1].status === 'fulfilled') {
+            channelTypes.value = results[1].value || []
+          } else {
+            const message = `Cannot load channel-types for thing-type '${data.thingTypeUID}': `
+            console.error(message + getErrorMessage(results[1].reason, true))
+            f7.dialog.alert(message + getErrorMessage(results[1].reason))
+          }
+
+          if (results[2].status !== 'fulfilled') {
+            const message = getErrorMessage(results[2].reason, true)
+            console.error(`Cannot load '${thingUID}' thing actions: ${message}`)
+          }
+
+          Promise.allSettled([loadConfigDescriptions(thingUID), loadFirmwares(thingUID), api.getThingConfigStatus({ thingUID })]).then(
+            (results) => {
+              if (results[0].status !== 'fulfilled') {
+                console.error(`Cannot load '${thingUID}' config descriptions: ` + getErrorMessage(results[0].reason, true))
+              }
+              if (results[1].status !== 'fulfilled') {
+                console.error(`Cannot load '${thingUID}' firmwares: ` + getErrorMessage(results[1].reason, true))
+              }
+              if (results[2].status === 'fulfilled') {
+                configStatusInfo.value = results[2].value ?? null
+              } else {
+                console.error(`Cannot load '${thingUID}' config status: ` + getErrorMessage(results[2].reason, true))
+              }
+              savedThing.value = cloneDeep(thing.value)
+              loadingFinishedCallback(true)
+              loading.value = false
+            }
+          )
         })
       })
       .catch((err) => {
