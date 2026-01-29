@@ -20,7 +20,10 @@ export default {
       axis.max = (v) => {
         if (isNaN(v.min)) return endTime.toDate().getTime()
         if (!isFinite(v.max)) return v.max
-        return startOf(chartType, v.min).add(1, chartType === 'isoWeek' ? 'week' : chartType).toDate().getTime()
+        return startOf(chartType, v.min)
+          .add(1, chartType === 'isoWeek' ? 'week' : chartType)
+          .toDate()
+          .getTime()
       }
     } else {
       axis.min = startTime.toDate().getTime()

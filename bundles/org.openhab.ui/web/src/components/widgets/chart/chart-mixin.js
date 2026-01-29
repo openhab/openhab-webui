@@ -56,9 +56,7 @@ export default {
     const config = this.context.component.config || {}
     const chartType = config.chartType
     const future = config.future === true ? 1 : (config.future ?? 0)
-    const endTime = (chartType)
-      ? this.addOrSubtractPeriod(startOf(chartType), 1 + future)
-      : this.addOrSubtractPeriod(dayjs(), future)
+    const endTime = chartType ? this.addOrSubtractPeriod(startOf(chartType), 1 + future) : this.addOrSubtractPeriod(dayjs(), future)
 
     return {
       speriod: config.period || DEFAULT_PERIOD,
@@ -261,7 +259,7 @@ export default {
     setDate(date) {
       const chartType = this.context.component.config.chartType
       const day = dayjs(date)
-      this.endTime = this.addOrSubtractPeriod((chartType) ? startOf(chartType) : day, 1)
+      this.endTime = this.addOrSubtractPeriod(chartType ? startOf(chartType) : day, 1)
     },
     earlierPeriod() {
       this.endTime = this.addOrSubtractPeriod(this.endTime, -1)
