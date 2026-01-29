@@ -82,6 +82,7 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
   })
 
   f7ready(() => {
+    darkModeChange.value++ // trigger computed darkMode now f7 is ready
     updateClasses()
     f7.on('darkModeChange', () => {
       darkModeChange.value++
