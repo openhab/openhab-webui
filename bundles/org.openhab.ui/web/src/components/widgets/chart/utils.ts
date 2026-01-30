@@ -14,7 +14,7 @@ dayjs.extend(DayDuration)
  * @param chartType
  * @param date
  */
-export function startOf (chartType: ChartType, date?: any): Dayjs {
+export function startOf(chartType: ChartType, date?: any): Dayjs {
   if (chartType === 'week') {
     // Week starting on Sunday & passed-in date is on Sunday: pass through to avoid shifting back by one week
     if (date && dayjs(date).day() === 0) return dayjs(date)
