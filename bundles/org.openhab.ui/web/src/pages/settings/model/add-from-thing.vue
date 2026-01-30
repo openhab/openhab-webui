@@ -391,6 +391,18 @@ export default {
               this.ready = true
             })
           }
+        }).catch((err) => {
+          f7.dialog.alert('Error loading thing type or channel types: ' + err)
+
+          this.selectedThingId = ''
+          if (this.items) {
+            this.ready = true
+          } else {
+            this.$oh.api.get('/rest/items').then((items) => {
+              this.items = items
+              this.ready = true
+            })
+          }
         })
       })
     }
