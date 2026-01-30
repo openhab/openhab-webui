@@ -166,7 +166,7 @@ export default {
       openedChannel: null,
       selectedChannel: null,
       selectedChannels: [],
-      channelTypesMap: new Map(this.channelTypes.map((ct) => [ct.UID, ct]))
+      channelTypesMap: this.channelTypes?.map ? new Map(this.channelTypes.map((ct) => [ct.UID, ct])) : new Map()
     }
   },
   watch: {
@@ -215,7 +215,7 @@ export default {
       return groups
     },
     hasAdvanced () {
-      return this.channelGroups.some((g) => g.hasAdvanced)
+      return this.channelGroups && Array.isArray(this.channelGroups) && this.channelGroups?.some((g) => g.hasAdvanced)
     }
   },
   methods: {

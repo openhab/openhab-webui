@@ -5,6 +5,7 @@ import fastDeepEqual from 'fast-deep-equal/es6'
 import cloneDeep from 'lodash/cloneDeep'
 
 import * as api from '@/api'
+import { getErrorMessage } from '../hey-api'
 
 /**
  * The thing edit store is used by thing-details.vue to store data independent of the component's lifecycle.
@@ -17,10 +18,10 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
 
   const thing = ref<api.EnrichedThing | null>(null)
   const savedThing = ref<api.EnrichedThing | null>(null)
-  const thingType = ref<any>(null)
-  const channelTypes = ref<any>(null)
+  const thingType = ref<api.ThingType | null>(null)
+  const channelTypes = ref<api.ChannelType[] | null>(null)
   const configDescriptions = ref<api.ConfigDescription | null>(null)
-  const thingActions = ref<api.ThingAction[]>([])
+  const thingActions = ref<api.ThingAction[] | null>(null)
   const configStatusInfo = ref<api.ConfigStatusMessage[] | null>(null)
   const firmwares = ref<api.FirmwareStatus | null>(null)
 
@@ -52,62 +53,20 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
 
   // computed
   const editable = computed(() => thing.value?.editable)
-  const isExtensible = computed(() => thingType.value?.extensibleChannelTypeIds?.length > 0)
+  const isExtensible = computed(() => (thingType?.value?.extensibleChannelTypeIds?.length ?? 0) > 0)
   const hasLinkedItems = computed(() => thing.value?.channels?.find((c) => c.linkedItems?.length))
 
   // methods
-  async function loadThingActions(thingUID: string): Promise<void> {
-    try {
-      const data = await api.getAvailableActionsForThing({ thingUID })
-      if (!data) {
-        thingActions.value = []
-        return
-      }
-      thingActions.value = data
-        .filter((a) => a.visibility === 'VISIBLE' || a.visibility === 'EXPERT')
-        .filter((a) => a.inputConfigDescriptions !== undefined)
-        .sort((a, b) => (a.label || '').localeCompare(b.label || ''))
-    } catch (e: any) {
-      if (e.response?.statusText === 'Not Found' || e.response?.status === 404) {
-        console.log('No actions available for this Thing')
-        return
-      }
-      console.error('Error loading thing actions: ' + e)
-      throw e
-    }
-  }
-
-  async function loadConfigDescriptions(thingUID: string): Promise<void> {
-    try {
-      const data = await api.getConfigDescriptionByUri({ uri: 'thing:' + thingUID })
-      if (!data) {
-        configDescriptions.value = null
-        return
-      }
-      configDescriptions.value = data
-    } catch (e: any) {
+  function applyThingTypeConfigDescriptions(): boolean {
+    if (thingType.value && thingType.value.configParameters && thingType.value.parameterGroups) {
       console.debug('No specific config description available for this thing, using config description from thing type instead.')
       configDescriptions.value = {
         parameterGroups: thingType.value.parameterGroups,
         parameters: thingType.value.configParameters
       }
+      return true
     }
-  }
-
-  async function loadFirmwares(thingUID: string) {
-    // force parse as JSON to ensure hey-api parses 204 as empty object
-    api
-      .getThingFirmwareStatus({ thingUID })
-      .then((data) => {
-        if (data && Object.keys(data).length === 0) {
-          console.debug(`Firmware info not available for Thing ${thingUID}`)
-        }
-        firmwares.value = data!
-      })
-      .catch((err) => {
-        firmwares.value = null
-        console.debug(`Firmware info not available for Thing ${thingUID}: ` + err.message)
-      })
+    return false
   }
 
   function load(thingUID: string, loadingFinishedCallback: (success: boolean) => void) {
@@ -118,6 +77,7 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
       .getThingById({ thingUID })
       .then((data) => {
         if (!data) {
+          thing.value = null
           console.warn('Thing not found')
           loadingFinishedCallback(false)
           loading.value = false
@@ -126,29 +86,90 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
 
         thing.value = data
 
-        Promise.all([
-          api.getThingTypeById({ thingTypeUID: thing.value!.thingTypeUID }),
+        Promise.allSettled([
+          api.getThingTypeById({ thingTypeUID: thing.value.thingTypeUID }),
           api.getChannelTypes({ prefixes: 'system,' + thing.value.thingTypeUID.split(':')[0] }),
-          loadThingActions(thingUID)
-        ]).then((data2) => {
-          thingType.value = data2[0]
-          channelTypes.value = data2[1]
+          api.getAvailableActionsForThing({ thingUID }),
+          api.getConfigDescriptionByUri({ uri: 'thing:' + thingUID }),
+          api.getThingFirmwareStatus({ thingUID }),
+          api.getThingConfigStatus({ thingUID })
+        ]).then(([thingTypeResult, channelTypesResult, actionsResult, configDescResult, firmwareResult, configStatusResult]) => {
+          if (thingTypeResult.status === 'fulfilled') {
+            thingType.value = thingTypeResult.value && Object.keys(thingTypeResult.value).length > 0 ? thingTypeResult.value : null
+          } else {
+            thingType.value = null
+            const message = `Cannot load thing-type '${data.thingTypeUID}': `
+            console.error(message + getErrorMessage(thingTypeResult.reason, true))
+            f7.dialog.alert(message + getErrorMessage(thingTypeResult.reason))
+          }
 
-          Promise.all([
-            loadConfigDescriptions(thingUID),
-            loadFirmwares(thingUID),
-            api.getThingConfigStatus({ thingUID }).then((data) => {
-              configStatusInfo.value = data ?? null
-            })
-          ]).then(() => {
-            savedThing.value = cloneDeep(thing.value)
-            loadingFinishedCallback(true)
-            loading.value = false
-          })
+          if (channelTypesResult.status === 'fulfilled') {
+            channelTypes.value = channelTypesResult.value || []
+          } else {
+            channelTypes.value = null
+            const message = `Cannot load channel-types for thing-type '${data.thingTypeUID}': `
+            console.error(message + getErrorMessage(channelTypesResult.reason, true))
+            f7.dialog.alert(message + getErrorMessage(channelTypesResult.reason))
+          }
+
+          if (actionsResult.status === 'fulfilled') {
+            if (!actionsResult.value || Array.isArray(actionsResult.value) === false) {
+              thingActions.value = []
+            } else {
+              thingActions.value = actionsResult.value
+                .filter((a) => a.visibility === 'VISIBLE' || a.visibility === 'EXPERT')
+                .filter((a) => a.inputConfigDescriptions !== undefined)
+                .sort((a, b) => (a.label || '').localeCompare(b.label || ''))
+            }
+          } else {
+            thingActions.value = []
+            const message = getErrorMessage(actionsResult.reason, true)
+            console.error(`Cannot load '${thingUID}' thing actions: ${message}`)
+          }
+
+          if (configDescResult.status === 'fulfilled') {
+            if (configDescResult.value && Object.keys(configDescResult.value).length > 0) {
+              configDescriptions.value = configDescResult.value
+            } else {
+              // no specific config description available for this thing, try to use the thing type config description
+              if (!applyThingTypeConfigDescriptions()) {
+                console.debug(`No config description available for Thing '${thingUID}'`)
+              }
+            }
+          } else {
+            if (!applyThingTypeConfigDescriptions()) {
+              configDescriptions.value = null
+            }
+            console.error(`Cannot load '${thingUID}' config descriptions: ` + getErrorMessage(configDescResult.reason, true))
+          }
+          if (firmwareResult.status === 'fulfilled') {
+            firmwares.value = firmwareResult.value && Object.keys(firmwareResult.value).length > 0 ? firmwareResult.value : null
+          } else {
+            firmwares.value = null
+            console.error(`Cannot load '${thingUID}' firmwares: ` + getErrorMessage(firmwareResult.reason, true))
+          }
+          if (configStatusResult.status === 'fulfilled') {
+            configStatusInfo.value = configStatusResult.value ?? null
+          } else {
+            configStatusInfo.value = null
+            console.error(`Cannot load '${thingUID}' config status: ` + getErrorMessage(configStatusResult.reason, true))
+          }
+          savedThing.value = cloneDeep(thing.value)
+          loadingFinishedCallback(true)
+          loading.value = false
         })
       })
       .catch((err) => {
-        console.warn('Cannot load Thing: ' + err.message)
+        thing.value = null
+        thingType.value = null
+        channelTypes.value = null
+        thingActions.value = []
+        configDescriptions.value = null
+        configStatusInfo.value = null
+        firmwares.value = null
+        let message = `Cannot load Thing '${thingUID}': ${err}`
+        console.error(message)
+        f7.dialog.alert(message)
         loadingFinishedCallback(false)
         loading.value = false
       })
