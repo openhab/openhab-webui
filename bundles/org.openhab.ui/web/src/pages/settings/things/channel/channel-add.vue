@@ -81,6 +81,9 @@ export default {
       Promise.all(promises).then((ct) => {
         this.channelTypes = ct
         this.ready = true
+      }).catch((err) => {
+        f7.dialog.alert('Error loading channel type: ' + err)
+        this.f7router.back()
       })
     },
     save () {
