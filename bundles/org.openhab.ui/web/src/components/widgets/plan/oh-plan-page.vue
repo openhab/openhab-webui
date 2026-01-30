@@ -1,47 +1,48 @@
 <template>
-  <l-map
-    ref="map"
-    v-if="showMap"
-    :zoom="zoom"
-    :min-zoom="minZoom"
-    :crs="crs"
-    :options="mapOptions"
-    :zoom-animation="!config.noZoomAnimation"
-    :marker-zoom-animation="!config.noMarkerZoomAnimation"
-    :max-bounds="bounds"
-    :key="mapKey"
-    class="oh-plan-page-lmap"
-    @ready="fitMapBounds"
-    :class="{ 'with-tabbar': context.tab,
-              'oh-plan-white-background': config.backgroundColor === 'white',
-              'oh-plan-black-background': config.backgroundColor === 'black',
-              'oh-plan-blackwhite-background': config.backgroundColor === 'blackwhite',
-              'oh-plan-dark-mode-invert': config.darkModeInvert,
-              'oh-plan-tooltip-black': config.tooltipColor === 'black',
-              'oh-plan-tooltip-blackwhite': config.tooltipColor === 'blackwhite',
-    }"
-    @update:center="centerUpdate"
-    @update:zoom="zoomUpdate">
-    <l-image-overlay v-if="backgroundImageUrl" :url="backgroundImageUrl" :bounds="bounds" />
-    <l-feature-group ref="featureGroup" v-if="context.component.slots">
-      <component v-for="(marker, idx) in markers"
-                 :key="idx"
-                 :is="markerComponent(marker)"
-                 :context="childContext(marker)"
-                 @update="onMarkerUpdate" />
-    </l-feature-group>
-    <l-control v-if="context.editmode" position="topright">
-      <f7-menu class="padding">
-        <f7-menu-item @click="context.editmode.addWidget(context.component, 'oh-plan-marker')" icon-f7="plus" text="Add Marker" />
-        <f7-menu-item v-if="context.clipboardtype"
-                      @click="context.editmode.pasteWidget(context.component)"
-                      icon-f7="square_on_square" />
-      </f7-menu>
-    </l-control>
-    <l-control v-if="context.editmode" position="bottomleft">
-      <span>Zoom Level: {{ currentZoom.toFixed(2) }}</span>
-    </l-control>
-  </l-map>
+  <div ref="page" :class="scopedCssUid">
+    <l-map
+      ref="map"
+      v-if="showMap"
+      :zoom="zoom"
+      :min-zoom="minZoom"
+      :crs="crs"
+      :options="mapOptions"
+      :zoom-animation="!config.noZoomAnimation"
+      :marker-zoom-animation="!config.noMarkerZoomAnimation"
+      :max-bounds="bounds"
+      :key="mapKey"
+      class="oh-plan-page-lmap"
+      @ready="fitMapBounds"
+      :class="{ 'with-tabbar': context.tab,
+                'oh-plan-white-background': config.backgroundColor === 'white',
+                'oh-plan-black-background': config.backgroundColor === 'black',
+                'oh-plan-blackwhite-background': config.backgroundColor === 'blackwhite',
+                'oh-plan-dark-mode-invert': config.darkModeInvert,
+                'oh-plan-tooltip-black': config.tooltipColor === 'black',
+                'oh-plan-tooltip-blackwhite': config.tooltipColor === 'blackwhite',
+      }"
+      @update:center="centerUpdate"
+      @update:zoom="zoomUpdate">
+      <l-image-overlay v-if="backgroundImageUrl" :url="backgroundImageUrl" :bounds="bounds" />
+      <l-feature-group ref="featureGroup" v-if="context.component.slots">
+        <component
+          v-for="(marker, idx) in markers"
+          :key="idx"
+          :is="markerComponent(marker)"
+          :context="childContext(marker)"
+          @update="onMarkerUpdate" />
+      </l-feature-group>
+      <l-control v-if="context.editmode" position="topright">
+        <f7-menu class="padding">
+          <f7-menu-item @click="context.editmode.addWidget(context.component, 'oh-plan-marker')" icon-f7="plus" text="Add Marker" />
+          <f7-menu-item v-if="context.clipboardtype" @click="context.editmode.pasteWidget(context.component)" icon-f7="square_on_square" />
+        </f7-menu>
+      </l-control>
+      <l-control v-if="context.editmode" position="bottomleft">
+        <span>Zoom Level: {{ currentZoom.toFixed(2) }}</span>
+      </l-control>
+    </l-map>
+  </div>
 </template>
 
 <style lang="stylus">
