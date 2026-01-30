@@ -1,18 +1,18 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { readonly, ref } from 'vue'
 
-import api from '@/js/openhab/api'
 import { type Composer, type I18n } from 'vue-i18n'
 import { useRuntimeStore } from './useRuntimeStore'
 
-import { type Tag } from '@/types/openhab'
-interface ModelTag extends Tag {
+import * as api from '@/api'
+
+interface SemanticTagWithParent extends api.EnrichedSemanticTag {
   parent: string
 }
 
 export const useSemanticsStore = defineStore('semantics', () => {
   // State
-  const Tags = ref<ModelTag[]>([])
+  const Tags = ref<api.EnrichedSemanticTag[]>([])
   const Locations = ref<string[]>([])
   const Equipment = ref<string[]>([])
   const Points = ref<string[]>([])
@@ -23,9 +23,9 @@ export const useSemanticsStore = defineStore('semantics', () => {
   const ready = ref<boolean>(false)
 
   // Actions
-  function setSemantics (tags: ModelTag[], i18n: I18n) {
+  function setSemantics(tags: api.EnrichedSemanticTag[], i18n: I18n) {
     // local variables to avoid writing to reactive refs multiple times
-    const modelTags: ModelTag[] = []
+    const modelTags: SemanticTagWithParent[] = []
     const locations: string[] = []
     const equipment: string[] = []
     const points: string[] = []
@@ -39,7 +39,7 @@ export const useSemanticsStore = defineStore('semantics', () => {
       const uid = t.uid
       // get parent tag
       const parent = uid.split('_').slice(0, -1).join('_')
-      const mt: ModelTag = { ...t, parent } // copy into a new ModelTag so we don't mutate the incoming object in-place
+      const mt: SemanticTagWithParent = { ...t, parent } // copy into a new ModelTag so we don't mutate the incoming object in-place
       modelTags.push(mt)
 
       // categorise by type
@@ -72,27 +72,31 @@ export const useSemanticsStore = defineStore('semantics', () => {
     // merge labels into i18n once
     try {
       const locale = (i18n.global as Composer).locale.value as string
-      (i18n.global as Composer).mergeLocaleMessage(locale, labels)
+      ;(i18n.global as Composer).mergeLocaleMessage(locale, labels)
     } catch (e) {
       console.warn('Failed to merge semantic labels into i18n globals', e)
     }
   }
 
-  async function loadSemantics (i18n: I18n) {
+  async function loadSemantics(i18n: I18n) {
     if (useRuntimeStore().apiEndpoint('tags')) {
       return api
-        .get('/rest/tags')
-        .then((tags : Tag[]) => {
-          let modelTags  = tags as ModelTag[]
-          setSemantics(modelTags, i18n)
+        .getSemanticTags()
+        .then((data) => {
+          if (!data || !data.length) {
+            console.warn('No semantic tags found in the API response.')
+            ready.value = true
+            return Promise.resolve()
+          }
+
+          setSemantics(data, i18n)
           console.debug('Successfully loaded semantic tags.')
           ready.value = true
         })
         .catch((e) => {
-          console.error('Failed to load semantic tags:')
-          console.error(e)
+          console.error('Failed to load semantic tags:', e.message)
           ready.value = false
-          return Promise.reject('Failed to load semantic tags: ' + e)
+          return Promise.reject(e)
         })
     } else {
       ready.value = true
@@ -100,5 +104,16 @@ export const useSemanticsStore = defineStore('semantics', () => {
     }
   }
 
-  return { Locations, Equipment, Points, Properties, Labels, Descriptions, Synonyms, Tags, ready, loadSemantics }
+  return {
+    Locations: readonly(Locations),
+    Equipment: readonly(Equipment),
+    Points: readonly(Points),
+    Properties: readonly(Properties),
+    Labels: readonly(Labels),
+    Descriptions: readonly(Descriptions),
+    Synonyms: readonly(Synonyms),
+    Tags: readonly(Tags),
+    ready: readonly(ready),
+    loadSemantics
+  }
 })

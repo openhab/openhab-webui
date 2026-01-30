@@ -60,14 +60,15 @@ const thermostatAttributes = [
 
 const blindParameters = (_, item) => {
   const attributes = ['PositionState', 'TiltAngle']
-  const metadata = item.members.map((mbr) => mbr.metadata?.alexa?.value).filter(Boolean).join(',')
+  const metadata = item.members
+    .map((mbr) => mbr.metadata?.alexa?.value)
+    .filter(Boolean)
+    .join(',')
   return attributes.every((attr) => metadata.includes(attr)) ? [p.primaryControl()] : []
 }
 
 export const defaultParameters = (itemType, item) => {
-  return itemType === 'Group' || !item.groups.length
-    ? [p.deviceName(item.label), p.deviceDescription(`${itemType} ${item.name}`)]
-    : []
+  return itemType === 'Group' || !item.groups.length ? [p.deviceName(item.label), p.deviceDescription(`${itemType} ${item.name}`)] : []
 }
 
 export default {

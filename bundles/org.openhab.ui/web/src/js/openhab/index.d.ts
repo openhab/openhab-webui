@@ -1,11 +1,11 @@
 declare namespace _default {
-    export { api }
-    export { auth }
-    export { sse }
-    export { ws }
-    export { media }
-    export { speech }
-    export { utils }
+  export { api }
+  export { auth }
+  export { sse }
+  export { ws }
+  export { media }
+  export { speech }
+  export { utils }
 }
 export default _default
 import api from './api'

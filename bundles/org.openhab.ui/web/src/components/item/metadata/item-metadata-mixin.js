@@ -1,6 +1,6 @@
 export default {
   computed: {
-    editable () {
+    editable() {
       return this.metadata.editable !== false
     }
   }

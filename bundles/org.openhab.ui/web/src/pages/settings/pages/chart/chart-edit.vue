@@ -1,18 +1,15 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="chart-editor">
     <f7-navbar no-hairline>
-      <oh-nav-content :title="(createMode ? 'Create chart page' : page.config.label) + dirtyIndicator"
-                      :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
-                      @save="save()"
-                      :f7router />
+      <oh-nav-content
+        :title="(createMode ? 'Create chart page' : page.config.label) + dirtyIndicator"
+        :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
+        @save="save()"
+        :f7router />
     </f7-navbar>
     <f7-toolbar tabbar position="top">
-      <f7-link @click="switchTab('design', fromYaml)" :tab-link-active="currentTab === 'design'" tab-link="#design">
-        Design
-      </f7-link>
-      <f7-link @click="switchTab('code', toYaml)" :tab-link-active="currentTab === 'code' ? true : null" tab-link="#code">
-        Code
-      </f7-link>
+      <f7-link @click="switchTab('design', fromYaml)" :tab-link-active="currentTab === 'design'" tab-link="#design"> Design </f7-link>
+      <f7-link @click="switchTab('code', toYaml)" :tab-link-active="currentTab === 'code' ? true : null" tab-link="#code"> Code </f7-link>
     </f7-toolbar>
     <f7-toolbar bottom class="toolbar-details">
       <div style="margin-left: auto">
@@ -22,9 +19,7 @@
       </div>
     </f7-toolbar>
     <f7-tabs class="chart-editor-tabs">
-      <f7-tab id="design"
-              class="chart-editor-design-tab"
-              :tab-active="currentTab === 'design'">
+      <f7-tab id="design" class="chart-editor-design-tab" :tab-active="currentTab === 'design'">
         <f7-block v-if="!ready" class="text-align-center">
           <f7-preloader />
           <div>Loading...</div>
@@ -39,29 +34,22 @@
             :f7router />
         </f7-block>
 
-        <chart-designer v-if="ready && !previewMode && currentTab === 'design'"
-                        class="chart-designer"
-                        :context="context" />
+        <chart-designer v-if="ready && !previewMode && currentTab === 'design'" class="chart-designer" :context="context" />
 
-        <oh-chart-page v-else-if="ready && previewMode && currentTab === 'design'"
-                       class="chart-page"
-                       :context="context"
-                       :key="pageKey" />
+        <oh-chart-page v-else-if="ready && previewMode && currentTab === 'design'" class="chart-page" :context="context" :key="pageKey" />
       </f7-tab>
 
       <f7-tab id="code" :tab-active="currentTab === 'code'">
-        <editor v-if="currentTab === 'code'"
-                :style="{ opacity: previewMode ? '0' : '' }"
-                class="page-code-editor"
-                mode="application/vnd.openhab.uicomponent+yaml;type=chart"
-                :value="pageYaml"
-                @input="onEditorInput" />
+        <editor
+          v-if="currentTab === 'code'"
+          :style="{ opacity: previewMode ? '0' : '' }"
+          class="page-code-editor"
+          mode="application/vnd.openhab.uicomponent+yaml;type=chart"
+          :value="pageYaml"
+          @input="onEditorInput" />
         <!-- <pre v-show="!previewMode" class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
 
-        <oh-chart-page v-if="ready && previewMode"
-                       class="chart-page"
-                       :context="context"
-                       :key="pageKey" />
+        <oh-chart-page v-if="ready && previewMode" class="chart-page" :context="context" :key="pageKey" />
       </f7-tab>
     </f7-tabs>
   </f7-page>

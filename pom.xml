@@ -67,10 +67,11 @@
 
     <bnd.version>7.1.0</bnd.version>
     <eea.version>2.4.0</eea.version>
-    <jackson.version>2.18.2</jackson.version>
-    <karaf.version>4.4.8</karaf.version>
+    <jackson.annotations.version>2.20</jackson.annotations.version>
+    <karaf.version>4.4.9</karaf.version>
+    <karaf.maven.plugin.version>4.4.8</karaf.maven.plugin.version>
     <ohc.version>5.2.0-SNAPSHOT</ohc.version>
-    <sat.version>0.17.0</sat.version>
+    <sat.version>0.18.0</sat.version>
     <spotless.version>2.44.3</spotless.version>
     <!-- Eclipse Java formatter version 4.26+ does not check test files -->
     <spotless.eclipse.version>4.25</spotless.eclipse.version>
@@ -364,7 +365,7 @@ Import-Package: \\
             </mapping>
             <useDefaultExcludes>true</useDefaultExcludes>
             <properties>
-              <year>2025</year>
+              <year>2026</year>
             </properties>
             <encoding>UTF-8</encoding>
             <licenseSets>

@@ -1,11 +1,5 @@
 <template>
-  <codemirror
-    ref="cm"
-    class="code-editor-fit"
-    :model-value="value"
-    :extensions="extensions"
-    @ready="onCmReady"
-    @change="onCmCodeChange" />
+  <codemirror ref="cm" class="code-editor-fit" :model-value="value" :extensions="extensions" @ready="onCmReady" @change="onCmCodeChange" />
 </template>
 
 <style lang="stylus">
@@ -291,11 +285,37 @@ export default {
           const config = {
             // eslint configuration
             languageOptions: {
-              globals: { ...globals.node },
-              parserOptions: { ecmaVersion: 2024, sourceType: 'module' }
+              globals: {
+                ...globals.node,
+                // context:
+                ctx: 'readonly',
+                event: 'readonly',
+                ruleUID: 'readonly',
+                // openhab-js namespaces:
+                Java: 'readonly',
+                actions: 'readonly',
+                cache: 'readonly',
+                environment: 'readonly',
+                items: 'readonly',
+                rules: 'readonly',
+                things: 'readonly',
+                time: 'readonly',
+                utils: 'readonly',
+                Quantity: 'readonly'
+              },
+              sourceType: 'commonjs',
+              parserOptions: {
+                ecmaVersion: 2024,
+                ecmaFeatures: {
+                  globalReturn: true // allow return outside functions
+                }
+              }
             },
             rules: {
-              semi: 'off' // allow both with and without semicolons
+              semi: 'off', // allow both with and without semicolons
+              'no-undef': 'error',
+              'no-const-assign': 'error',
+              'no-unreachable': 'warn'
             }
           }
           return linter(esLint(new eslint.Linter(), config))
@@ -324,7 +344,7 @@ export default {
         ...autocompletions,
         linter,
         linter && lintGutter(),
-        useUIOptionsStore().getDarkMode() === 'dark' ? gruvboxDark : null
+        useUIOptionsStore().darkMode === 'dark' ? gruvboxDark : null
       ].filter((ext) => ext)
 
       return extensions

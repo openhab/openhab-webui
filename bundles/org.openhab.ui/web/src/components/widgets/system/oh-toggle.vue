@@ -1,9 +1,10 @@
 <template>
-  <f7-toggle v-bind="config"
-             :checked="value ? true : null"
-             :class="['oh-toggle', (value === null ? 'unknown-state' : '')]"
-             @toggle:change="onChange"
-             @click.stop />
+  <f7-toggle
+    v-bind="config"
+    :checked="value ? true : null"
+    :class="['oh-toggle', (value === null ? 'unknown-state' : '')]"
+    @toggle:change="onChange"
+    @click.stop />
 </template>
 
 <style lang="stylus">

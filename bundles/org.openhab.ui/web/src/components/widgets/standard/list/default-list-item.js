@@ -8,9 +8,9 @@
 
 import { useSemanticsStore } from '@/js/stores/useSemanticsStore'
 
-export default function itemDefaultListComponent (item, footer) {
+export default function itemDefaultListComponent(item, footer) {
   const stateDescription = item.stateDescription || {}
-  const metadata = (item.metadata && item.metadata.listWidget) ? item.metadata.listWidget : {}
+  const metadata = item.metadata && item.metadata.listWidget ? item.metadata.listWidget : {}
   let component = null
   let semanticClass = {}
   let semanticProperty = {}
@@ -140,7 +140,10 @@ export default function itemDefaultListComponent (item, footer) {
       component: 'oh-label-item'
     }
 
-    if (item.type.indexOf('Number') === 0 && (!item.commandDescription || !item.commandDescription.commandOptions || stateDescription.readOnly)) {
+    if (
+      item.type.indexOf('Number') === 0 &&
+      (!item.commandDescription || !item.commandDescription.commandOptions || stateDescription.readOnly)
+    ) {
       component.config = {
         action: 'analyzer',
         actionAnalyzerItems: [item.name]
@@ -165,10 +168,17 @@ export default function itemDefaultListComponent (item, footer) {
   }
   if (!component.config.item) component.config.item = item.name
   if (!component.config.title) component.config.title = item.label || item.name
+  if (!component.slots) component.slots = { default: [] }
+  if (!component.slots.default) component.slots.default = []
   if (item.category && !component.config.icon) component.config.icon = item.category
   // Only enable dynamic icon by default for Item types with good support for dynamic icons and "predictable" states
   const discreteItemTypes = ['Contact', 'Dimmer', 'Rollershutter', 'Switch']
-  if (item.category && component.config.iconUseState === undefined && (discreteItemTypes.includes(item.type) || (item.type === 'Group' && discreteItemTypes.includes(item.groupType)))) component.config.iconUseState = true
+  if (
+    item.category &&
+    component.config.iconUseState === undefined &&
+    (discreteItemTypes.includes(item.type) || (item.type === 'Group' && discreteItemTypes.includes(item.groupType)))
+  )
+    component.config.iconUseState = true
   if (item.label && footer && footer.contextLabelSource) {
     let text = itemContextLabel(item, footer)
     if (text) component.config.footer = text
@@ -185,7 +195,7 @@ export default function itemDefaultListComponent (item, footer) {
  * @param {number} config.[contextLabelPathTrimEnd] number of elements to trim from the end of the path
  * @param {boolean} considerItem consider the item itself as part of the context (for path/parent options)
  */
-export function itemContextLabel (item, config, considerItem) {
+export function itemContextLabel(item, config, considerItem) {
   let label
   if (config && config.contextLabelSource && config.contextLabelSource !== 'none') {
     switch (config.contextLabelSource) {
@@ -206,31 +216,36 @@ export function itemContextLabel (item, config, considerItem) {
   return label
 }
 
-export function itemPathLabel (item, trimStart, trimEnd, includeItem) {
+export function itemPathLabel(item, trimStart, trimEnd, includeItem) {
   if (!item.modelPath) return '(?) > ' + item.name
   const path = includeItem ? item.modelPath.concat([item]) : item.modelPath
-  return path.slice(trimStart, trimEnd ? -trimEnd : undefined).map((parent) => {
-    return parent.label || parent.name
-  }).join(' > ')
+  return path
+    .slice(trimStart, trimEnd ? -trimEnd : undefined)
+    .map((parent) => {
+      return parent.label || parent.name
+    })
+    .join(' > ')
 }
 
 /* The functions below deal with specifically with equipment representation in the home page cards */
 
-function promotedEquipmentComponent (item, config, hasLocationContext) {
+function promotedEquipmentComponent(item, config, hasLocationContext) {
   let c = itemDefaultListComponent(item)
   // Item is promoted so consider parent for context label
   let text = itemContextLabel(item.parent, hasLocationContext ? undefined : config)
   if (text) c.config.footer = text
-  const parts = (config.equipmentPromotedLabel && config.equipmentPromotedLabel.length > 0) ? config.equipmentPromotedLabel : false
+  const parts = config.equipmentPromotedLabel && config.equipmentPromotedLabel.length > 0 ? config.equipmentPromotedLabel : false
   c.config.title = [
-    !parts || parts.includes('equipment') ? (item.parent.label || item.parent.name) : null, // Default setting: display parent name
+    !parts || parts.includes('equipment') ? item.parent.label || item.parent.name : null, // Default setting: display parent name
     parts && parts.includes('separator') ? '>' : null,
-    parts && parts.includes('item') ? (item.label || item.name) : null
-  ].flat().join(' ')
+    parts && parts.includes('item') ? item.label || item.name : null
+  ]
+    .flat()
+    .join(' ')
   return c
 }
 
-export function itemAccordionEquipmentComponent (item, config, hasLocationContext) {
+export function itemAccordionEquipmentComponent(item, config, hasLocationContext) {
   if (item.equipmentOrPoints.length === 0) {
     // Item is a point or equipment without points or sub-equipment
     return itemDefaultListComponent(item, hasLocationContext ? undefined : config)
@@ -242,11 +257,21 @@ export function itemAccordionEquipmentComponent (item, config, hasLocationContex
   }
 
   // Try to promote main item based on widgetOrder metadata
-  let promoted = config.equipmentPromoteMain ? item.points.find((p) => {
-    return p.metadata && p.metadata.widgetOrder && p.metadata.widgetOrder && p.metadata.widgetOrder.value && (+p.metadata.widgetOrder.value) === 0
-  }) : null
+  let promoted = config.equipmentPromoteMain
+    ? item.points.find((p) => {
+        return (
+          p.metadata &&
+          p.metadata.widgetOrder &&
+          p.metadata.widgetOrder &&
+          p.metadata.widgetOrder.value &&
+          +p.metadata.widgetOrder.value === 0
+        )
+      })
+    : null
 
-  let c = promoted ? promotedEquipmentComponent(promoted, config, hasLocationContext) : itemDefaultListComponent(item, hasLocationContext ? undefined : config)
+  let c = promoted
+    ? promotedEquipmentComponent(promoted, config, hasLocationContext)
+    : itemDefaultListComponent(item, hasLocationContext ? undefined : config)
   c.config.action = undefined
   c.slots = {
     accordion: [
@@ -257,7 +282,11 @@ export function itemAccordionEquipmentComponent (item, config, hasLocationContex
           accordionEquipment: true
         },
         slots: {
-          default: item.equipmentOrPoints.filter((i) => { return i !== promoted }).map((i) => itemAccordionEquipmentComponent(i, config, true))
+          default: item.equipmentOrPoints
+            .filter((i) => {
+              return i !== promoted
+            })
+            .map((i) => itemAccordionEquipmentComponent(i, config, true))
         }
       }
     ]
@@ -266,23 +295,27 @@ export function itemAccordionEquipmentComponent (item, config, hasLocationContex
   return c
 }
 
-export function equipmentListComponent (items, config, hasLocationContext) {
+export function equipmentListComponent(items, config, hasLocationContext) {
   let components = []
   const isAccordion = config && config.equipmentNesting && config.equipmentNesting === 'accordion'
   if (!isAccordion) {
-    const standaloneEquipment = items.filter((eqpt) => eqpt.equipmentOrPoints.length === 0).map((eqpt) => itemDefaultListComponent(eqpt, hasLocationContext ? undefined : config))
-    const equipmentWithPoints = items.filter((eqpt) => eqpt.equipmentOrPoints.length !== 0).map((eqpt) => {
-      return [
-        {
-          component: 'oh-list-item',
-          config: {
-            title: hasLocationContext ? (eqpt.label || eqpt.name) : itemContextLabel(eqpt, config, true),
-            divider: true
-          }
-        },
-        ...eqpt.equipmentOrPoints.map((p) => itemDefaultListComponent(p))
-      ]
-    })
+    const standaloneEquipment = items
+      .filter((eqpt) => eqpt.equipmentOrPoints.length === 0)
+      .map((eqpt) => itemDefaultListComponent(eqpt, hasLocationContext ? undefined : config))
+    const equipmentWithPoints = items
+      .filter((eqpt) => eqpt.equipmentOrPoints.length !== 0)
+      .map((eqpt) => {
+        return [
+          {
+            component: 'oh-list-item',
+            config: {
+              title: hasLocationContext ? eqpt.label || eqpt.name : itemContextLabel(eqpt, config, true),
+              divider: true
+            }
+          },
+          ...eqpt.equipmentOrPoints.map((p) => itemDefaultListComponent(p))
+        ]
+      })
     components = [...standaloneEquipment, ...equipmentWithPoints].flat()
   } else {
     components = items.map((item) => itemAccordionEquipmentComponent(item, config || {}))

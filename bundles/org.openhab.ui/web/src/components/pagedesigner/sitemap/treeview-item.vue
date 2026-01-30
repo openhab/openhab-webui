@@ -1,40 +1,43 @@
 <template>
-  <f7-treeview-item v-if="itemsReady"
-                    selectable
-                    :label="widgetConfigLabel()"
-                    :icon-f7="widgetTypeIcon()"
-                    :textColor="iconColor"
-                    :color="'blue'"
-                    :selected="selected && selected === widget ? true : null"
-                    :opened="!widget.closed"
-                    :toggle="canHaveChildren"
-                    @treeview:open="setWidgetClosed(false)"
-                    @treeview:close="setWidgetClosed(true)"
-                    @click="select">
-    <draggable :disabled="!dropAllowed(widget) ? true : null"
-               :list="children"
-               group="sitemap-treeview"
-               animation="150"
-               fallbackOnBody="true"
-               swapThreshold="0.6"
-               scrollSensitivity="200"
-               delay="400"
-               delayOnTouchOnly="true"
-               touchStartThreshold="10"
-               @start="onStart"
-               @end="onEnd"
-               :move="onMove">
-      <sitemap-treeview-item v-for="(childwidget, idx) in children"
-                             class="sitemap-treeview-item"
-                             :key="idx"
-                             :includeItemName="includeItemName"
-                             :widget="childwidget"
-                             :parentWidget="widget"
-                             :itemsList="items"
-                             @selected="(event) => $emit('selected', event)"
-                             :selected="selected"
-                             :sitemap="localSitemap"
-                             :moveState="localMoveState" />
+  <f7-treeview-item
+    v-if="itemsReady"
+    selectable
+    :label="widgetConfigLabel()"
+    :icon-f7="widgetTypeIcon()"
+    :textColor="iconColor"
+    :color="'blue'"
+    :selected="selected && selected === widget ? true : null"
+    :opened="!widget.closed"
+    :toggle="canHaveChildren"
+    @treeview:open="setWidgetClosed(false)"
+    @treeview:close="setWidgetClosed(true)"
+    @click="select">
+    <draggable
+      :disabled="!dropAllowed(widget) ? true : null"
+      :list="children"
+      group="sitemap-treeview"
+      animation="150"
+      fallbackOnBody="true"
+      swapThreshold="0.6"
+      scrollSensitivity="200"
+      delay="400"
+      delayOnTouchOnly="true"
+      touchStartThreshold="10"
+      @start="onStart"
+      @end="onEnd"
+      :move="onMove">
+      <sitemap-treeview-item
+        v-for="(childwidget, idx) in children"
+        class="sitemap-treeview-item"
+        :key="idx"
+        :includeItemName="includeItemName"
+        :widget="childwidget"
+        :parentWidget="widget"
+        :itemsList="items"
+        @selected="(event) => $emit('selected', event)"
+        :selected="selected"
+        :sitemap="localSitemap"
+        :moveState="localMoveState" />
     </draggable>
     <template #label>
       <div class="subtitle">

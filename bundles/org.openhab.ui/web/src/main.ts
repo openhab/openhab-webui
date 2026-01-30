@@ -24,10 +24,17 @@ import '@/css/app.styl'
 
 // Import openHAB API helpers
 import openhab from '@/js/openhab/index'
+import '@/js/hey-api'
 
 import AsyncComputed from 'vue-async-computed'
 
 import App from './App.vue'
+
+declare global {
+  interface Window {
+    OHApp?: OHApp
+  }
+}
 
 // Init Framework7-Vue Plugin
 Framework7.use(Framework7Vue)

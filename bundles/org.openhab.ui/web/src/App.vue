@@ -9,36 +9,23 @@
           : 'hidden'
     }">
     <!-- Left Panel -->
-    <f7-panel
-      v-show="ready"
-      left
-      :cover="showSidebar ? true : null"
-      class="sidebar"
-      :visible-breakpoint="1024">
+    <f7-panel v-show="ready" left :cover="showSidebar ? true : null" class="sidebar" :visible-breakpoint="1024">
       <f7-page>
         <f7-link href="/overview/" class="openhab-logo no-ripple" panel-close>
           <div class="logo-inner">
-            <img
-              v-if="uiOptionsStore.getDarkMode() === 'dark'"
-              src="@/images/openhab-logo-white.svg"
-              type="image/svg+xml"
-              width="196px">
-            <img v-else
-                 src="@/images/openhab-logo.svg"
-                 type="image/svg+xml"
-                 width="196px">
+            <img v-if="uiOptionsStore.darkMode === 'dark'" src="@/images/openhab-logo-white.svg" type="image/svg+xml" width="196px" />
+            <img v-else src="@/images/openhab-logo.svg" type="image/svg+xml" width="196px" />
           </div>
         </f7-link>
         <f7-link class="breakpoint-pin" @click="toggleVisibleBreakpoint">
-          <f7-icon
-            size="14"
-            :f7="uiOptionsStore.visibleBreakpointDisabled ? 'pin' : 'pin_filled'"
-            color="gray" />
+          <f7-icon size="14" :f7="uiOptionsStore.visibleBreakpointDisabled ? 'pin' : 'pin_filled'" color="gray" />
         </f7-link>
 
         <f7-list v-if="ready">
           <f7-list-item v-if="runtimeStore.apiEndpoint('ui') && (!pages || !pages.length)">
-            <span><em>{{ t('sidebar.noPages') }}</em></span>
+            <span
+              ><em>{{ t('sidebar.noPages') }}</em></span
+            >
           </f7-list-item>
           <f7-list-item
             v-for="page in pages"
@@ -54,8 +41,7 @@
             </template>
           </f7-list-item>
         </f7-list>
-        <f7-block-title
-          v-if="userStore.isAdmin()">
+        <f7-block-title v-if="userStore.isAdmin()">
           {{ t('sidebar.administration') }}
         </f7-block-title>
         <!-- Settings -->
@@ -75,11 +61,7 @@
                 currentPath.settings?.transformations,
             }">
             <template #media>
-              <f7-icon
-                ios="f7:gear_alt_fill"
-                aurora="f7:gear_alt_fill"
-                md="material:settings"
-                color="gray" />
+              <f7-icon ios="f7:gear_alt_fill" aurora="f7:gear_alt_fill" md="material:settings" color="gray" />
             </template>
           </f7-list-item>
           <li v-if="currentPath.settings">
@@ -105,6 +87,7 @@
                 panel-close
                 :animate="false"
                 no-chevron
+                @click="modelSelectedItem = null"
                 :class="{ currentsection: currentPath.settings?.model }">
                 <template #media>
                   <f7-icon f7="list_bullet_indent" color="gray" />
@@ -200,11 +183,7 @@
             :animate="false"
             :class="{ currentsection: currentPath.addons?.$end }">
             <template #media>
-              <f7-icon
-                ios="f7:bag_fill"
-                aurora="f7:bag_fill"
-                md="material:shopping_bag"
-                color="gray" />
+              <f7-icon ios="f7:bag_fill" aurora="f7:bag_fill" md="material:shopping_bag" color="gray" />
             </template>
           </f7-list-item>
           <li v-if="currentPath.addons && runtimeStore.apiEndpoint('addons')">
@@ -234,11 +213,7 @@
             :animate="false"
             :class="{ currentsection: currentPath.developer?.$end }">
             <template #media>
-              <f7-icon
-                ios="f7:wrench_fill"
-                aurora="f7:wrench_fill"
-                md="material:construction"
-                color="gray" />
+              <f7-icon ios="f7:wrench_fill" aurora="f7:wrench_fill" md="material:construction" color="gray" />
             </template>
           </f7-list-item>
           <li v-if="currentPath.developer">
@@ -312,11 +287,7 @@
             panel-close
             :class="{ currentsection: currentPath.about }">
             <template #media>
-              <f7-icon
-                ios="f7:question_circle_fill"
-                aurora="f7:question_circle_fill"
-                md="material:help"
-                color="gray" />
+              <f7-icon ios="f7:question_circle_fill" aurora="f7:question_circle_fill" md="material:help" color="gray" />
             </template>
           </f7-list-item>
         </f7-list>
@@ -329,10 +300,10 @@
                   !userStore.user &&
                     !componentsStore.pages().filter(p => p.uid !== 'overview').length"
                 class="hint-signin">
-                <em>{{ t('sidebar.tip.signIn') }}<br><f7-icon f7="arrow_down" size="20" /></em>
+                <em>{{ t('sidebar.tip.signIn') }}<br /><f7-icon f7="arrow_down" size="20" /></em>
               </div>
               <f7-button
-                @click="authorize(false)"
+                @click="authorize()"
                 v-if="!loggedIn"
                 icon-f7="lock_shield_fill"
                 large
@@ -365,23 +336,13 @@
     </f7-panel>
 
     <!-- Right Panel -->
-    <f7-panel right
-              reveal
-              dark
-              v-if="ready">
+    <f7-panel right reveal dark v-if="ready">
       <panel-right />
       <!-- <f7-view url="/panel-right/"></f7-view> -->
     </f7-panel>
 
-    <f7-panel v-if="runtimeStore.showDeveloperDock"
-              right
-              :visible-breakpoint="1280"
-              resizable>
-      <developer-dock
-        :dock="activeDock"
-        :helpTab="activeHelpTab"
-        :toolTab="activeToolTab"
-        :searchFor="developerSearch" />
+    <f7-panel v-if="runtimeStore.showDeveloperDock" right :visible-breakpoint="1280" resizable>
+      <developer-dock :dock="activeDock" :helpTab="activeHelpTab" :toolTab="activeToolTab" :searchFor="developerSearch" />
     </f7-panel>
 
     <f7-block v-if="!ready && communicationFailureMsg" class="block-narrow">
@@ -397,10 +358,7 @@
           <f7-list-button color="blue" @click="reload">
             {{ t('about.reload.reloadApp') }}
           </f7-list-button>
-          <f7-list-button
-            v-if="showCachePurgeOption"
-            color="red"
-            @click="purgeServiceWorkerAndCaches">
+          <f7-list-button v-if="showCachePurgeOption" color="red" @click="purgeServiceWorkerAndCaches">
             {{ t('about.reload.purgeCachesAndRefresh') }}
           </f7-list-button>
         </f7-list>
@@ -523,9 +481,8 @@
 
 <script>
 import { nextTick, defineAsyncComponent } from 'vue'
-import { request } from 'framework7'
 import { f7, f7ready } from 'framework7-vue'
-import { mapStores } from 'pinia'
+import { mapStores, mapWritableState } from 'pinia'
 
 import dayjs from 'dayjs'
 import dayjsLocales from 'dayjs/locale.json'
@@ -554,6 +511,8 @@ import { useUserStore } from '@/js/stores/useUserStore'
 import { useComponentsStore } from '@/js/stores/useComponentsStore'
 import { useSemanticsStore } from '@/js/stores/useSemanticsStore'
 import { useModelStore } from '@/js/stores/useModelStore'
+
+import { getRoot } from '@/api'
 
 export default {
   mixins: [auth, connectionHealth, sseEvents],
@@ -666,7 +625,10 @@ export default {
     serverDisplayUrl () {
       return window.location.origin
     },
-    ...mapStores(useUIOptionsStore, useComponentsStore, useUserStore, useRuntimeStore)
+    ...mapStores(useUIOptionsStore, useComponentsStore, useUserStore, useRuntimeStore),
+    ...mapWritableState(useRuntimeStore, {
+      modelSelectedItem: 'modelSelectedItem'
+    })
   },
   watch: {
     'statesStore.sseConnected': {
@@ -710,12 +672,11 @@ export default {
       const useCredentialsPromise = useCredentials ? this.setBasicCredentials() : Promise.resolve()
       return useCredentialsPromise
         .then(() => {
-          return request.json('/rest/')
+          return getRoot()
         })
         .catch((err) => {
-          console.error('openHAB REST API connection failed with error:')
-          console.info(err)
           if (err.message === 'Unauthorized' || err.status === 401) {
+            console.info('openHAB REST API connection failed: 401 Unauthorized. Authorizing against reverse proxy ...')
             if (!useCredentials) {
               // try again with credentials
               this.loadData(true)
@@ -728,7 +689,7 @@ export default {
                 (username, password) => {
                   this.setBasicCredentials(username, password)
                   this.$oh.api
-                    .get('/rest/')
+                    .getRoot()
                     .then((rootResponse) => {
                       this.storeBasicCredentials()
                       this.loadData()
@@ -747,8 +708,9 @@ export default {
               )
             })
             return Promise.reject()
-            // Redirection handling (e.g. when using auth_request in nginx)
           } else if (err.message === 'Found' || err.status === 302) {
+            console.info('openHAB REST API connection failed: 302 (Found). Redirecting ...')
+            // Redirection handling (e.g. when using auth_request in nginx)
             // technically correct way, but unreliable because XhrHttpRequest follows the redirect itself and fails because of CORS policy
             if (err.xhr.HEADERS_RECEIVED > 0) {
               const headersObj = {}
@@ -766,6 +728,7 @@ export default {
               )
             }
           } else if (err.message === 0 || err.status === 0) {
+            console.info('openHAB REST API connection failed: 0 (unknown). Unloading service-worker and reloading PWA ...')
             // XhrHttpRequest has message & status 0 if the redirected request failed due to CORS policy
             // Follow the authentication redirect by unloading service-worker and reloading PWA
             if ('serviceWorker' in window.navigator) {
@@ -777,6 +740,7 @@ export default {
               })
             }
           } else {
+            console.error('openHAB REST API connection failed fatal:', err)
             // Make sure this is set to a value, otherwise the page won't show up
             this.communicationFailureMsg = err.message || err.status || 'Unknown Error'
             return Promise.reject(
@@ -784,14 +748,24 @@ export default {
             )
           }
         })
-        .then((res) => res.data)
         .then((rootResponse) => {
           // store the REST API services present on the system
           useRuntimeStore().setRootResource(rootResponse)
           if (!useRuntimeStore().apiEndpoint('auth')) useUserStore().setNoAuth(true)
           return rootResponse
         })
-        .then((rootResponse) => {
+        .then(() => {
+          return useSemanticsStore().loadSemantics(i18n)
+        })
+        .catch((err) => {
+          if (err === 'Unauthorized' || err === 401) {
+            console.info('openHAB REST API implicit user role is disabled. Authorizing ...')
+            this.authorize(false) // will redirect to auth page, redirecting back to Main UI triggers new load
+          } else {
+            return Promise.reject(err)
+          }
+        })
+        .then(() => {
           const locale = useRuntimeStore().locale.toLocaleLowerCase()
           let dayjsLocalePromise = Promise.resolve(null)
           // try to resolve the dayjs file to load if it exists
@@ -815,15 +789,11 @@ export default {
               : Promise.resolve(null)
           }
           return Promise.all([
-            ...(useRuntimeStore().apiEndpoint('ui'))
-              ? [this.$oh.api.get('/rest/ui/components/ui:page'), this.$oh.api.get('/rest/ui/components/ui:widget')]
-              : [Promise.resolve([]), Promise.resolve([])],
-            dayjsLocalePromise,
-            useSemanticsStore().loadSemantics(i18n)
+            useComponentsStore().loadPagesAndWidgets(),
+            dayjsLocalePromise
           ])
         })
         .then((data) => {
-          useComponentsStore().setPagesAndWidgets(data[0], data[1])
           this.pages = useComponentsStore().pages()
             .filter((p) => p.config.sidebar && this.pageIsVisible(p))
             .sort((p1, p2) => {
@@ -833,15 +803,14 @@ export default {
             })
           this.updateTitle()
 
-          if (data[2]) {
-            dayjs.locale(data[2], null, false)
+          if (data[1]) {
+            dayjs.locale(data[1], null, false)
             console.log('dayjs locale set to', dayjs.locale())
           }
           // load & build the semantic model
           useModelStore().loadSemanticModel()
-        })
-        .then(() => {
-          // finished with loading
+        }).then(() => {
+        // finished with loading
           this.ready = true
           return Promise.resolve()
         })
@@ -874,7 +843,6 @@ export default {
       }
     },
     updateThemeOptions () {
-      useUIOptionsStore().updateClasses()
       if (useUIOptionsStore().visibleBreakpointDisabled) {
         nextTick(() => {
           f7.panel.get('left').disableVisibleBreakpoint()
@@ -1103,10 +1071,6 @@ export default {
 
       f7.on('addonChange', () => {
         this.loadData()
-      })
-
-      f7.on('darkModeChange', () => {
-        this.updateThemeOptions()
       })
 
       f7.on('toggleDeveloperDock', () => {

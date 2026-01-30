@@ -42,7 +42,8 @@ export default {
           component: {
             component: 'oh-list-card',
             config: {
-              mediaList: true
+              mediaList: true,
+              accordionList: true
             },
             slots: {
               default: this.item.members.map((i) => itemDefaultListComponent(i))

@@ -1,14 +1,14 @@
 /*
-* General Thing functionality for blockly
-* supports jsscripting
-*/
+ * General Thing functionality for blockly
+ * supports jsscripting
+ */
 
 import * as Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript'
 import { FieldThingPicker } from './fields/thing-field.js'
 import { blockGetCheckedInputType, valueToCode } from './utils.js'
 
-export default function defineOHBlocks (f7) {
+export default function defineOHBlocks(f7) {
   Blockly.Blocks['oh_thing'] = {
     init: function () {
       this.appendDummyInput()
@@ -30,9 +30,7 @@ export default function defineOHBlocks (f7) {
 
   Blockly.Blocks['oh_getthing'] = {
     init: function () {
-      this.appendValueInput('thingUid')
-        .appendField('get thing')
-        .setCheck(['String', 'oh_thing'])
+      this.appendValueInput('thingUid').appendField('get thing').setCheck(['String', 'oh_thing'])
       this.setInputsInline(false)
       this.setOutput(true, 'oh_thingtype')
       this.setColour(0)
@@ -48,9 +46,7 @@ export default function defineOHBlocks (f7) {
 
   Blockly.Blocks['oh_getthing_state'] = {
     init: function () {
-      this.appendValueInput('thingUid')
-        .appendField('get thing status')
-        .setCheck(['String', 'oh_thing', 'oh_thingtype'])
+      this.appendValueInput('thingUid').appendField('get thing status').setCheck(['String', 'oh_thing', 'oh_thingtype'])
       this.setInputsInline(false)
       this.setOutput(true, 'String')
       this.setColour(0)
@@ -62,14 +58,13 @@ export default function defineOHBlocks (f7) {
   javascriptGenerator.forBlock['oh_getthing_state'] = function (block) {
     const thingUid = valueToCode(block, 'thingUid', javascriptGenerator.ORDER_ATOMIC)
     const inputType = blockGetCheckedInputType(block, 'thingUid')
-    const code = (inputType === 'oh_thingtype') ? `${thingUid}.status` : `things.getThing(${thingUid}).status`
+    const code = inputType === 'oh_thingtype' ? `${thingUid}.status` : `things.getThing(${thingUid}).status`
     return [code, 0]
   }
 
   Blockly.Blocks['oh_getthings'] = {
     init: function () {
-      this.appendDummyInput()
-        .appendField('get things')
+      this.appendDummyInput().appendField('get things')
       this.setInputsInline(false)
       this.setOutput(true, 'Array')
       this.setColour(0)
@@ -85,9 +80,7 @@ export default function defineOHBlocks (f7) {
 
   Blockly.Blocks['oh_getthing'] = {
     init: function () {
-      this.appendValueInput('thingUid')
-        .appendField('get thing')
-        .setCheck(['String', 'oh_thing'])
+      this.appendValueInput('thingUid').appendField('get thing').setCheck(['String', 'oh_thing'])
       this.setInputsInline(false)
       this.setOutput(true, 'oh_thingtype')
       this.setColour(0)
@@ -105,10 +98,20 @@ export default function defineOHBlocks (f7) {
     init: function () {
       const block = this
       const dropdown = new Blockly.FieldDropdown(
-        [['UID', 'uid'], ['label', 'label'], ['status', 'status'], ['status info', 'statusInfo'], ['location', 'location'], ['is enabled', 'isEnabled'], ['thing type UID', 'thingTypeUID'], ['bridge UID', 'bridgeUID']],
+        [
+          ['UID', 'uid'],
+          ['label', 'label'],
+          ['status', 'status'],
+          ['status info', 'statusInfo'],
+          ['location', 'location'],
+          ['is enabled', 'isEnabled'],
+          ['thing type UID', 'thingTypeUID'],
+          ['bridge UID', 'bridgeUID']
+        ],
         function (newMode) {
           block._updateType(newMode)
-        })
+        }
+      )
       this.appendValueInput('thing')
         .setCheck(['oh_thingtype', 'oh_thing'])
         .appendField('get ')
@@ -118,22 +121,29 @@ export default function defineOHBlocks (f7) {
 
       this.setOutput(true, 'String')
       this.setColour(0)
-      this.setTooltip('Retrieve a specific attribute from the thing. Note that groups and tags return a list and should be used with the loops-block \'for each item ... in list\'. ')
+      this.setTooltip(
+        "Retrieve a specific attribute from the thing. Note that groups and tags return a list and should be used with the loops-block 'for each item ... in list'. "
+      )
       this.setTooltip(function () {
         const attributeName = block.getFieldValue('attributeName')
         let TIP = {
-          'uid': 'unique id of the Thing (string)',
-          'label': 'label of the Thing (string)',
-          'status': 'status of the Thing (string)',
-          'statusInfo': 'detailed status of the Thing (string)',
-          'location': 'location of the Thing (string)',
-          'enabled': 'is the thing enabled (boolean)',
-          'thingTypeUID': 'unique id of the Thing\'s type (string)',
-          'bridgeUID': 'unique id of the Thing\'s bridge (string)'
+          uid: 'unique id of the Thing (string)',
+          label: 'label of the Thing (string)',
+          status: 'status of the Thing (string)',
+          statusInfo: 'detailed status of the Thing (string)',
+          location: 'location of the Thing (string)',
+          enabled: 'is the thing enabled (boolean)',
+          thingTypeUID: "unique id of the Thing's type (string)",
+          bridgeUID: "unique id of the Thing's bridge (string)"
         }
-        return TIP[attributeName] + ' \n Note: make sure to use "get thing xxx"-Block for the connected block when working with Variables, not "thing xxx"-Block'
+        return (
+          TIP[attributeName] +
+          ' \n Note: make sure to use "get thing xxx"-Block for the connected block when working with Variables, not "thing xxx"-Block'
+        )
       })
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-items-things.html#get-particular-attributes-of-a-thing')
+      this.setHelpUrl(
+        'https://www.openhab.org/docs/configuration/blockly/rules-blockly-items-things.html#get-particular-attributes-of-a-thing'
+      )
     },
     /**
      * Modify this block to have the correct output type based on the attribute.
@@ -168,14 +178,14 @@ export default function defineOHBlocks (f7) {
   }
 
   /*
-* Provides all attributes from a Thing
-* Code part
-*/
+   * Provides all attributes from a Thing
+   * Code part
+   */
   javascriptGenerator.forBlock['oh_getthing_attribute'] = function (block) {
     const thing = valueToCode(block, 'thing', javascriptGenerator.ORDER_ATOMIC)
     const inputType = blockGetCheckedInputType(block, 'thing')
     const attributeName = block.getFieldValue('attributeName')
-    const code = (inputType === 'oh_thing') ? `things.getThing(${thing}).${attributeName}` : `${thing}.${attributeName}`
+    const code = inputType === 'oh_thing' ? `things.getThing(${thing}).${attributeName}` : `${thing}.${attributeName}`
     return [code, 0]
   }
 }

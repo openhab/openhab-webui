@@ -1,10 +1,11 @@
 <template>
   <div v-if="ready">
-    <config-sheet v-if="namespace === 'stateDescription'"
-                  :parameterGroups="[]"
-                  :parameters="stateDescriptionParameters"
-                  :configuration="metadata.config"
-                  :read-only="!editable" />
+    <config-sheet
+      v-if="namespace === 'stateDescription'"
+      :parameterGroups="[]"
+      :parameters="stateDescriptionParameters"
+      :configuration="metadata.config"
+      :read-only="!editable" />
     <f7-list>
       <f7-list-input
         ref="input"
@@ -16,23 +17,17 @@
         :value="options"
         @input="updateOptions" />
       <f7-block-footer class="param-description" alot="after-list">
-        <small>Enter each option on a separate line.<br>Use <code>value=label</code> format to provide
-          a label different than the option.</small>
+        <small
+          >Enter each option on a separate line.<br />Use <code>value=label</code> format to provide a label different than the
+          option.</small
+        >
       </f7-block-footer>
     </f7-list>
     <p class="padding">
-      <f7-link v-if="namespace === 'stateDescription'"
-               color="blue"
-               external
-               target="_blank"
-               :href="docLink">
+      <f7-link v-if="namespace === 'stateDescription'" color="blue" external target="_blank" :href="docLink">
         State Description Documentation
       </f7-link>
-      <f7-link v-if="namespace === 'commandDescription'"
-               color="blue"
-               external
-               target="_blank"
-               :href="docLink">
+      <f7-link v-if="namespace === 'commandDescription'" color="blue" external target="_blank" :href="docLink">
         Command Description Documentation
       </f7-link>
     </p>

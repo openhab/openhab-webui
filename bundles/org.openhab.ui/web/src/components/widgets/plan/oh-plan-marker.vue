@@ -1,53 +1,59 @@
 <template>
-  <l-marker v-if="visible && coords"
-            ref="marker"
-            :key="markerKey"
-            :draggable="context.editmode != undefined"
-            :lat-lng="coords"
-            @update:lat-lng="onMove"
-            @click="onClick">
-    <l-tooltip v-if="tooltip && !config.useTooltipAsLabel"
-               :options="tooltipOptions">
+  <l-marker
+    v-if="visible && coords"
+    ref="marker"
+    :key="markerKey"
+    :draggable="context.editmode !== undefined && context.editmode !== null"
+    :lat-lng="coords"
+    @update:lat-lng="onMove"
+    @click="onClick">
+    <l-tooltip v-if="tooltip && !config.useTooltipAsLabel" :options="tooltipOptions">
       <div style="white-space: nowrap" :style="tooltipStyle">
         {{ tooltip }}
       </div>
     </l-tooltip>
-    <l-icon :icon-size="[config.iconSize || 40, config.iconSize || 40]">
+    <l-icon v-if="hasCustomIcon" :icon-size="iconSize">
       <div v-if="config.useTooltipAsLabel" style="white-space: nowrap" :style="tooltipStyle">
         {{ tooltip }}
       </div>
-      <oh-icon v-else-if="config.icon"
-               :style="iconStyle"
-               :icon="config.icon"
-               :color="config.iconColor"
-               :width="config.iconWidth || config.iconSize || 40"
-               :height="config.iconHeight || config.iconSize || 40"
-               :state="config.iconUseState ? state : undefined" />
+      <oh-icon
+        v-else-if="config.icon"
+        :style="iconStyle"
+        :icon="config.icon"
+        :color="config.iconColor"
+        :width="config.iconWidth || config.iconSize || 40"
+        :height="config.iconHeight || config.iconSize || 40"
+        :state="config.iconUseState ? state : undefined" />
     </l-icon>
-    <l-popup v-if="context.editmode != null && !dragging">
+    <l-icon v-else :icon-url="DefaultIcon.iconUrl" :icon-size="DefaultIcon.iconSize" />
+    <l-popup v-if="context.editmode && !dragging">
       <div class="display-flex">
-        <f7-link href="#"
-                 class="text-color-blue display-flex flex-direction-column margin-right"
-                 @click="context.editmode.configureWidget(context.component, context.parent)"
-                 icon-f7="square_pencil">
+        <f7-link
+          href="#"
+          class="text-color-blue display-flex flex-direction-column margin-right"
+          @click="context.editmode.configureWidget(context.component, context.parent)"
+          icon-f7="square_pencil">
           Configure
         </f7-link>
-        <f7-link href="#"
-                 class="text-color-blue display-flex flex-direction-column margin-right"
-                 @click="context.editmode.editWidgetCode(context.component, context.parent)"
-                 icon-f7="doc_text">
+        <f7-link
+          href="#"
+          class="text-color-blue display-flex flex-direction-column margin-right"
+          @click="context.editmode.editWidgetCode(context.component, context.parent)"
+          icon-f7="doc_text">
           YAML
         </f7-link>
-        <f7-link href="#"
-                 class="text-color-blue display-flex flex-direction-column margin-right"
-                 @click="context.editmode.copyWidget(context.component, context.parent)"
-                 icon-f7="scissors_alt">
+        <f7-link
+          href="#"
+          class="text-color-blue display-flex flex-direction-column margin-right"
+          @click="context.editmode.copyWidget(context.component, context.parent)"
+          icon-f7="scissors_alt">
           Copy
         </f7-link>
-        <f7-link href="#"
-                 class="text-color-red display-flex flex-direction-column"
-                 @click="context.editmode.removeWidget(context.component, context.parent)"
-                 icon-f7="trash">
+        <f7-link
+          href="#"
+          class="text-color-red display-flex flex-direction-column"
+          @click="context.editmode.removeWidget(context.component, context.parent)"
+          icon-f7="trash">
           Remove
         </f7-link>
       </div>
@@ -62,6 +68,8 @@ import mixin from '../widget-mixin'
 import { LMarker, LTooltip, LIcon, LPopup } from '@vue-leaflet/vue-leaflet'
 import { actionsMixin } from '../widget-actions'
 import { OhPlanMarkerDefinition } from '@/assets/definitions/widgets/plan'
+
+import markerIcon from 'leaflet/dist/images/marker-icon.png'
 
 export default {
   mixins: [mixin, actionsMixin],
@@ -79,12 +87,22 @@ export default {
       dragging: false
     }
   },
+  created () {
+    this.DefaultIcon = {
+      iconUrl: markerIcon,
+      iconSize: [25, 41],
+    }
+  },
   computed: {
     coords () {
       return (this.config.coords) ? this.config.coords.split(',') : [250, 250]
     },
-    hasIcon () {
-      return this.config.icon
+    hasCustomIcon () {
+      return this.config.useTooltipAsLabel || this.config.icon
+    },
+    iconSize () {
+      const iconSize = this.config.iconSize || 40
+      return [iconSize, iconSize]
     },
     tooltipOptions () {
       return {

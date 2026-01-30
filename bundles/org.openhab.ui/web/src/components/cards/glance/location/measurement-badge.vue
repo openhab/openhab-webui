@@ -1,16 +1,18 @@
 <template>
   <span class="padding-right location-status-badge" v-show="map.length" :class="{ invert: invertColor }">
-    <oh-icon v-if="config.icon.indexOf('oh:') === 0"
-             :icon="config.icon.replace('oh:', '')"
-             :state="config.state"
-             class="oh-icon-badge"
-             width="20"
-             height="20" />
-    <f7-icon v-else-if="config.icon.indexOf('f7:') === 0"
-             :f7="config.icon.replace('f7:', '')"
-             :color="invertColor ? 'black' : 'white'"
-             class="f7-icon-badge"
-             size="20" />
+    <oh-icon
+      v-if="config.icon.indexOf('oh:') === 0"
+      :icon="config.icon.replace('oh:', '')"
+      :state="config.state"
+      class="oh-icon-badge"
+      width="20"
+      height="20" />
+    <f7-icon
+      v-else-if="config.icon.indexOf('f7:') === 0"
+      :f7="config.icon.replace('f7:', '')"
+      :color="invertColor ? 'black' : 'white'"
+      class="f7-icon-badge"
+      size="20" />
     <!-- <oh-icon v-if="config.icon.indexOf('oh:') === 0 && config.stateOff" v-show="!reduce" icon="config.icon.replace('oh:', '')"  :state="config.stateOff" class="oh-icon-badge" width="20" height="20" /> -->
     <span class="glance-label">{{ reduce }} {{ config.unit }}</span>
     <span class="glance-label" v-show="mapAux.length" style="opacity: 0.7">({{ reduceAux }} {{ config.unit }})</span>
@@ -58,9 +60,10 @@ export default {
   computed: {
     config () {
       if (this.badgeOverrides) {
+        const badges = Object.assign({}, this.badgeConfigs)
         const override = this.badgeOverrides[this.type]
         if (override && override.badge) {
-          return Object.assign(this.badgeConfigs[this.type], override.badge)
+          return Object.assign(badges[this.type], override.badge)
         }
       }
       return this.badgeConfigs[this.type]

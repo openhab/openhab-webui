@@ -3295,7 +3295,7 @@
 
 			if (param === null || param === "openhab.ui:webaudio.enable") {
 				oldValue = _t.webAudioEnabled;
-				newValue = window.localStorage.getItem("openhab.ui:webaudio.enable") === "enabled";
+				newValue = window.localStorage.getItem("openhab.ui:webaudio.enable") === "true";
 				_t.webAudioEnabled = newValue;
 				if (oldValue !== newValue) {
 					if (newValue) {

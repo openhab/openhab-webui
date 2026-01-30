@@ -16,7 +16,7 @@ export type MasonryProps = {
    * ```
    * @default 2
    */
-  columns?: Breakpoint<number>;
+  columns?: Breakpoint<number>
 
   /**
    * Define static gutter width or dynamic gutter width using breakpoints.
@@ -36,54 +36,54 @@ export type MasonryProps = {
    * <masonry :gutter="{ default: 50, 1920: '30px', 1366: '2rem' }">...</masonry>
    * ```
    */
-  gutter?: Breakpoint<string | number>;
+  gutter?: Breakpoint<string | number>
 
   /**
    * Set to `false` if you want to use custom styling.
    * @default true
    */
-  css?: boolean;
+  css?: boolean
 
   /**
    * Wrapper tag name.
    * @default 'div'
    */
-  tag?: string;
+  tag?: string
 
   /**
    * Custom wrapper class.
    */
-  class?: any;
+  class?: any
 
   /**
    * Column tag name.
    * @default 'div'
    */
-  columnTag?: string;
+  columnTag?: string
 
   /**
    * Custom column class.
    */
-  columnClass?: any;
+  columnClass?: any
 
   /**
    * Custom column attributes.
    */
-  columnAttr?: any;
+  columnAttr?: any
 
   /**
    * Child tag name.
    * @default 'div'
    */
-  childTag?: string;
+  childTag?: string
 
   /**
    * Custom child class.
    */
-  childClass?: any;
+  childClass?: any
 
   /**
    * Custom child attributes.
    */
-  childAttr?: any;
-};
+  childAttr?: any
+}

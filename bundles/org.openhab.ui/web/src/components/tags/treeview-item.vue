@@ -1,40 +1,43 @@
 <template>
-  <f7-treeview-item selectable
-                    :label="tag.label + (showNames && tag.name ? ' (' + tag.name + ')': '')"
-                    :icon-ios="icon('ios')"
-                    :icon-aurora="icon('aurora')"
-                    :icon-md="icon('md')"
-                    :iconColor="iconColor"
-                    :textColor="iconColor"
-                    :selected="!picker && selected"
-                    :opened="expandedTags[tag.uid]"
-                    :toggle="canHaveChildren"
-                    @treeview:open="setTagOpened(true)"
-                    @treeview:close="setTagOpened(false)"
-                    @click="select">
-    <draggable :disabled="!canDragDrop ? true : null"
-               :list="children"
-               group="semantic-tags-treeview"
-               filter=".non-draggable"
-               animation="150"
-               fallbackOnBody="true"
-               swapThreshold="0.6"
-               @start="onDragStart"
-               @change="onDragChange"
-               @end="onDragEnd"
-               :move="onDragMove">
-      <semantics-treeview-item v-for="(childTag, idx) in children"
-                               :key="idx"
-                               :tag="childTag"
-                               :semanticTags="semanticTags"
-                               :expandedTags="expandedTags"
-                               :showNames="showNames"
-                               :showSynonyms="showSynonyms"
-                               :canDragDrop="canDragDrop"
-                               :picker="picker"
-                               @selected="(event) => $emit('selected', event)"
-                               :selectedTag="selectedTag"
-                               :class="{ 'non-draggable': !childTag.editable }" />
+  <f7-treeview-item
+    selectable
+    :label="tag.label + (showNames && tag.name ? ' (' + tag.name + ')': '')"
+    :icon-ios="icon('ios')"
+    :icon-aurora="icon('aurora')"
+    :icon-md="icon('md')"
+    :iconColor="iconColor"
+    :textColor="iconColor"
+    :selected="!picker && selected"
+    :opened="expandedTags[tag.uid]"
+    :toggle="canHaveChildren"
+    @treeview:open="setTagOpened(true)"
+    @treeview:close="setTagOpened(false)"
+    @click="select">
+    <draggable
+      :disabled="!canDragDrop ? true : null"
+      :list="children"
+      group="semantic-tags-treeview"
+      filter=".non-draggable"
+      animation="150"
+      fallbackOnBody="true"
+      swapThreshold="0.6"
+      @start="onDragStart"
+      @change="onDragChange"
+      @end="onDragEnd"
+      :move="onDragMove">
+      <semantics-treeview-item
+        v-for="(childTag, idx) in children"
+        :key="idx"
+        :tag="childTag"
+        :semanticTags="semanticTags"
+        :expandedTags="expandedTags"
+        :showNames="showNames"
+        :showSynonyms="showSynonyms"
+        :canDragDrop="canDragDrop"
+        :picker="picker"
+        @selected="(event) => $emit('selected', event)"
+        :selectedTag="selectedTag"
+        :class="{ 'non-draggable': !childTag.editable }" />
     </draggable>
     <template #label>
       <div v-if="showSynonyms" class="synonyms-class">
@@ -42,20 +45,11 @@
       </div>
     </template>
     <template #content-start>
-      <f7-radio v-if="picker"
-                name="semantic-tag-radio"
-                :checked="selected"
-                @change="select" />
+      <f7-radio v-if="picker" name="semantic-tag-radio" :checked="selected" @change="select" />
     </template>
     <template #content-end>
-      <f7-badge v-if="tag.description"
-                class="semantic-tag-tooltip-badge"
-                :tooltip="tooltip">
-        <f7-icon class="tooltip-icon"
-                 f7="info_circle"
-                 ios="f7:info_circle"
-                 md="material:info"
-                 color="gray" />
+      <f7-badge v-if="tag.description" class="semantic-tag-tooltip-badge" :tooltip="tooltip">
+        <f7-icon class="tooltip-icon" f7="info_circle" ios="f7:info_circle" md="material:info" color="gray" />
       </f7-badge>
     </template>
   </f7-treeview-item>
@@ -101,7 +95,7 @@ export default {
       })
     },
     iconColor () {
-      return (this.tag.editable || this.picker) ? (useUIOptionsStore().getDarkMode() === 'dark' ? 'white' : 'black') : 'gray'
+      return (this.tag.editable || this.picker) ? (useUIOptionsStore().darkMode === 'dark' ? 'white' : 'black') : 'gray'
     },
     canHaveChildren () {
       return (this.children.length > 0 || this.moveState.moving) === true

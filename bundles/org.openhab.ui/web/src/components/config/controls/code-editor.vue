@@ -9,13 +9,7 @@
     :tooltip="readOnlyMsg" />
 
   <div class="code-editor">
-    <editor
-      ref="editor"
-      :mode="editorMode"
-      :value="code"
-      :hint-context="hintContext"
-      :read-only="readOnly"
-      @input="onEditorInput" />
+    <editor ref="editor" :mode="editorMode" :value="code" :hint-context="hintContext" :read-only="readOnly" @input="onEditorInput" />
   </div>
 
   <f7-toolbar bottom class="code-editor-toolbar">
@@ -60,9 +54,7 @@
     <f7-page>
       <f7-navbar title="Parse Errors" ref="navbar">
         <f7-nav-right>
-          <f7-link class="popup-close">
-            Close
-          </f7-link>
+          <f7-link class="popup-close"> Close </f7-link>
         </f7-nav-right>
       </f7-navbar>
 
@@ -102,28 +94,7 @@ import Editor from '@/components/config/controls/script-editor.vue'
 
 import MovablePopup from '@/pages/settings/movable-popup-mixin'
 import copyToClipboard from '@/js/clipboard'
-
-const MediaType = Object.freeze({
-  YAML: 'application/yaml',
-  THING_DSL: 'text/vnd.openhab.dsl.thing',
-  ITEM_DSL: 'text/vnd.openhab.dsl.item',
-  JSON: 'application/json'
-})
-
-const SupportedMediaTypes = {
-  items: {
-    YAML: MediaType.YAML,
-    DSL: MediaType.ITEM_DSL
-  },
-  things: {
-    YAML: MediaType.YAML,
-    DSL: MediaType.THING_DSL
-  }
-}
-
-const DefaultMediaTypes = {
-  YAML: MediaType.YAML
-}
+import { DefaultMediaTypes, MediaType, SupportedMediaTypes } from '@/assets/definitions/media-types.ts'
 
 export default {
   mixins: [MovablePopup],
@@ -156,14 +127,6 @@ export default {
   },
   computed: {
     editorMode () {
-      if (this.uiOptionsStore.codeEditorType === 'YAML') {
-        switch (this.objectType) {
-          case 'items':
-            return 'application/vnd.openhab.item+yaml'
-          case 'things':
-            return 'application/vnd.openhab.thing+yaml'
-        }
-      }
       return this.mediaTypes[this.uiOptionsStore.codeEditorType]
     },
     mediaTypes () {

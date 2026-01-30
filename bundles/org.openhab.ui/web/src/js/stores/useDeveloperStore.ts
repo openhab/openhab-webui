@@ -32,7 +32,7 @@ export const useDeveloperStore = defineStore('developer', () => {
 
   const STORAGE_KEY = 'openhab.ui:developer.pinCollections'
 
-  function loadPinCollections () {
+  function loadPinCollections() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY)
       if (!raw) return
@@ -45,7 +45,7 @@ export const useDeveloperStore = defineStore('developer', () => {
     }
   }
 
-  function clearPinnedObjects () {
+  function clearPinnedObjects() {
     for (const key in pinnedObjects) {
       pinnedObjects[key as keyof PinnedObjects] = []
     }

@@ -1,19 +1,12 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" class="thing-add-page">
     <f7-navbar>
-      <oh-nav-content :title="(ready) ? 'New ' + thingType.label : 'New Thing'"
-                      save-link="Add"
-                      @save="save()"
-                      :f7router />
+      <oh-nav-content :title="(ready) ? 'New ' + thingType.label : 'New Thing'" save-link="Add" @save="save()" :f7router />
     </f7-navbar>
 
     <f7-block v-if="ready" class="block-narrow">
       <f7-col>
-        <thing-general-settings :thing="thing"
-                                :thing-type="thingType"
-                                :createMode="true"
-                                :things="things"
-                                :ready="true" />
+        <thing-general-settings :thing="thing" :thing-type="thingType" :createMode="true" :things="things" :ready="true" />
         <f7-block-title medium>
           {{ thingType.label }}
         </f7-block-title>
@@ -22,34 +15,24 @@
     </f7-block>
     <!-- skeletons for not ready -->
     <f7-block v-else class="block-narrow skeleton-text skeleton-effect-blink">
-      <thing-general-settings :thing="thing"
-                              :thing-type="thingType"
-                              :createMode="true"
-                              :ready="false" />
+      <thing-general-settings :thing="thing" :thing-type="thingType" :createMode="true" :ready="false" />
       <f7-col>
         <f7-block-title>____ _______</f7-block-title>
-        <div class="margin">
-          ____ ____ ____ _____ ___ __ ____ __ ________ __ ____ ___ ____
-        </div>
+        <div class="margin">____ ____ ____ _____ ___ __ ____ __ ________ __ ____ ___ ____</div>
       </f7-col>
     </f7-block>
 
     <f7-block v-if="ready" class="block-narrow">
-      <config-sheet ref="parameters"
-                    :parameter-groups="thingType.parameterGroups"
-                    :parameters="thingType.configParameters"
-                    :configuration="thing.configuration" />
+      <config-sheet
+        ref="parameters"
+        :parameter-groups="thingType.parameterGroups"
+        :parameters="thingType.configParameters"
+        :configuration="thing.configuration" />
     </f7-block>
 
     <div v-if="ready" class="if-aurora display-flex justify-content-center margin">
       <div class="flex-shrink-0">
-        <f7-button class="padding-left padding-right"
-                   style="width: 150px"
-                   color="blue"
-                   large
-                   raised
-                   fill
-                   @click="save">
+        <f7-button class="padding-left padding-right" style="width: 150px" color="blue" large raised fill @click="save">
           Create Thing
         </f7-button>
       </div>

@@ -3,33 +3,29 @@
     <f7-card-content v-if="enrichedLinks.length > 0">
       <f7-list media-list>
         <ul>
-          <f7-list-item v-for="l in enrichedLinks"
-                        :key="l.itemName"
-                        media-item
-                        :title="l.thing.label"
-                        :subtitle="l.channel.label || '?'"
-                        :footer="l.link.channelUID"
-                        :badge="thingStatusBadgeText(l.thing.statusInfo)"
-                        :badge-color="thingStatusBadgeColor(l.thing.statusInfo)"
-                        :link="!l.link.editable && l._invalid ? undefined : '#'"
-                        @click="!l.link.editable && l._invalid ? undefined : editLink(l)">
+          <f7-list-item
+            v-for="l in enrichedLinks"
+            :key="l.itemName"
+            media-item
+            :title="l.thing.label"
+            :subtitle="l.channel.label || '?'"
+            :footer="l.link.channelUID"
+            :badge="thingStatusBadgeText(l.thing.statusInfo)"
+            :badge-color="thingStatusBadgeColor(l.thing.statusInfo)"
+            :link="!l.link.editable && l._invalid ? undefined : '#'"
+            @click="!l.link.editable && l._invalid ? undefined : editLink(l)">
             <template #media>
               <span class="item-initial">{{ !l._invalid && l.channel.label ? l.channel.label[0] : '?' }}</span>
             </template>
             <template #title>
-              <f7-icon v-if="!l.link.editable"
-                       f7="lock_fill"
-                       size="1rem"
-                       color="gray" />
+              <f7-icon v-if="!l.link.editable" f7="lock_fill" size="1rem" color="gray" />
             </template>
           </f7-list-item>
         </ul>
       </f7-list>
     </f7-card-content>
     <f7-card-footer>
-      <f7-button color="blue" @click="addLink">
-        Add Link
-      </f7-button>
+      <f7-button color="blue" @click="addLink"> Add Link </f7-button>
     </f7-card-footer>
   </f7-card>
 </template>
@@ -119,7 +115,10 @@ export default {
                 destroyOnClose: true,
                 closeTimeout: 2000
               }).open()
-              delete this.enrichedLinks[this.enrichedLinks.indexOf(link)]
+              const index = this.enrichedLinks.indexOf(link)
+              if (index > -1) {
+                this.enrichedLinks.splice(index, 1)
+              }
             }).catch((err) => {
               f7.toast.create({
                 text: 'Link not deleted (links defined in a .items file are not editable from this screen): ' + err,

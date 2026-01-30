@@ -1,23 +1,26 @@
 <template>
-  <l-map
-    ref="map"
-    :zoom="zoom"
-    :center="center"
-    :options="mapOptions"
-    :zoom-animation="!config.noZoomAnimation"
-    :marker-zoom-animation="!config.noMarkerZoomAnimation"
-    class="oh-map-page-lmap"
-    :class="{ 'with-tabbar': context.tab }"
-    @update:center="centerUpdate"
-    @update:zoom="zoomUpdate">
-    <l-feature-group ref="featureGroup" v-if="showMarkers">
-      <component v-for="(marker, idx) in context.component.slots.default"
-                 :key="idx"
-                 :is="markerComponent(marker)"
-                 :context="childContext(marker)"
-                 @update="onMarkerUpdate" />
-    </l-feature-group>
-  </l-map>
+  <div ref="page" :class="scopedCssUid">
+    <l-map
+      ref="map"
+      :zoom="zoom"
+      :center="center"
+      :options="mapOptions"
+      :zoom-animation="!config.noZoomAnimation"
+      :marker-zoom-animation="!config.noMarkerZoomAnimation"
+      class="oh-map-page-lmap"
+      :class="{ 'with-tabbar': context.tab }"
+      @update:center="centerUpdate"
+      @update:zoom="zoomUpdate">
+      <l-feature-group ref="featureGroup" v-if="showMarkers">
+        <component
+          v-for="(marker, idx) in context.component.slots.default"
+          :key="idx"
+          :is="markerComponent(marker)"
+          :context="childContext(marker)"
+          @update="onMarkerUpdate" />
+      </l-feature-group>
+    </l-map>
+  </div>
 </template>
 
 <style lang="stylus">
@@ -51,6 +54,7 @@ import OhMapCircleMarker from './oh-map-circle-marker.vue'
 
 import 'leaflet-providers'
 
+// Do NOT remove: required for Leaflet to render in prod build
 delete Icon.Default.prototype._getIconUrl
 Icon.Default.mergeOptions({
   iconRetinaUrl: import('leaflet/dist/images/marker-icon-2x.png'),
@@ -75,7 +79,7 @@ export default {
       currentCenter: null,
       center: (this.context.component.config.initialCenter) ? latLng(this.context.component.config.initialCenter.split(',')) : latLng(48, 6),
       // url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      url: `https://a.basemaps.cartocdn.com/${useUIOptionsStore().getDarkMode()}_all/{z}/{x}/{y}.png`,
+      url: `https://a.basemaps.cartocdn.com/${useUIOptionsStore().darkMode}_all/{z}/{x}/{y}.png`,
       attribution: '&copy; <a class="external" target="_blank" href="http://osm.org/copyright">OpenStreetMap</a>, &copy; <a class="external" target="_blank" href="https://carto.com/attribution/">CARTO</a>',
       showMarkers: false
     }
@@ -121,7 +125,7 @@ export default {
       }
     },
     setBackgroundLayer () {
-      const defaultProvider = (useUIOptionsStore().getDarkMode() === 'dark') ? 'CartoDB.DarkMatter' : 'CartoDB.Positron'
+      const defaultProvider = (useUIOptionsStore().darkMode === 'dark') ? 'CartoDB.DarkMatter' : 'CartoDB.Positron'
       const provider = this.config.tileLayerProvider || defaultProvider
       let layer, overlayLayer
       try {

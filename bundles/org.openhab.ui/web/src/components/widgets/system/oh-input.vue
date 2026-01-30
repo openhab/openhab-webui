@@ -71,7 +71,7 @@ export default {
     value () {
       let variableLocation = this.context.vars
       if (this.config.variable) {
-        const variableScope = this.getVariableScope(this.context.ctxVars, this.context.varScope, this.config.variable)
+        const variableScope = getVariableScope(this.context.ctxVars, this.context.varScope, this.config.variable)
         if (variableScope) variableLocation = this.context.ctxVars[variableScope]
       }
       if (this.config.variable && this.config.variableKey) {

@@ -7,7 +7,7 @@
     </template>
     <template #footer>
       <div class="padding">
-        <generic-widget-component v-bind="$attrs" :context="childContext(sliderComponent)" />
+        <generic-widget-component :context="childContext(sliderComponent)" />
       </div>
     </template>
   </oh-list-item>

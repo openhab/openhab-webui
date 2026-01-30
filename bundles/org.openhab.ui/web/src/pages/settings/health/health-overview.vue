@@ -1,17 +1,14 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn">
     <f7-navbar>
-      <oh-nav-content title="Health Checks"
-                      back-link="Settings"
-                      back-link-url="/settings/"
-                      :f7router />
+      <oh-nav-content title="Health Checks" back-link="Settings" back-link-url="/settings/" :f7router />
     </f7-navbar>
 
     <f7-block class="block-narrow">
       <f7-col>
         <f7-block-footer class="padding-horizontal">
           This page provides information about potential issues with your openHAB setup.
-          <br>
+          <br />
           It is recommended to fix these issues to ensure a stable and reliable system.
         </f7-block-footer>
       </f7-col>
@@ -21,6 +18,7 @@
       <f7-col>
         <f7-list media-list>
           <f7-list-item
+            v-if="orphanLinksCount"
             media-item
             link="orphanlinks/"
             title="Orphan Links"
@@ -33,6 +31,7 @@
             </template>
           </f7-list-item>
           <f7-list-item
+            v-if="semanticsProblemCount"
             media-item
             link="semantics/"
             title="Semantic Model Conflicts"

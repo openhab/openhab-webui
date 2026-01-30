@@ -1,25 +1,23 @@
 /*
-* These blocks allow to run scripts from the current rule. There are two types of scripts which are supported by different blocks
-*  - Script Files that are stored on the openHAB server in the "$OPENHAB_CONF/scripts" folder
-*  - Scripts that have been provided via the openHAB UI
-* Additionally there is a block that allows transformations based on the Map-File functionality, regular-expressions and applying JSON-paths
-* supports jsscripting
-*/
+ * These blocks allow to run scripts from the current rule. There are two types of scripts which are supported by different blocks
+ *  - Script Files that are stored on the openHAB server in the "$OPENHAB_CONF/scripts" folder
+ *  - Scripts that have been provided via the openHAB UI
+ * Additionally there is a block that allows transformations based on the Map-File functionality, regular-expressions and applying JSON-paths
+ * supports jsscripting
+ */
 import * as Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript'
 import { blockGetCheckedInputType, valueToCode } from '@/assets/definitions/blockly/utils.js'
 import { registerFieldMultilineInput, FieldMultilineInput } from '@blockly/field-multilineinput'
 
-export default function defineOHBlocks_Scripts (f7, transformationServices) {
+export default function defineOHBlocks_Scripts(f7, transformationServices) {
   /*
-  * Calls a script that is provided in openHABs scripts folder
-  * Blockly part
-  */
+   * Calls a script that is provided in openHABs scripts folder
+   * Blockly part
+   */
   Blockly.Blocks['oh_callscriptfile'] = {
     init: function () {
-      this.appendValueInput('scriptfile')
-        .setCheck('String')
-        .appendField('call script file')
+      this.appendValueInput('scriptfile').setCheck('String').appendField('call script file')
       this.setInputsInline(true)
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
@@ -30,41 +28,39 @@ export default function defineOHBlocks_Scripts (f7, transformationServices) {
   }
 
   /*
-  * Calls a script that is provided in openHABs scripts folder
-  * Code part
-  */
+   * Calls a script that is provided in openHABs scripts folder
+   * Code part
+   */
   javascriptGenerator.forBlock['oh_callscriptfile'] = function (block) {
     const scriptfile = valueToCode(block, 'scriptfile', javascriptGenerator.ORDER_ATOMIC)
     return `actions.ScriptExecution.callScript(${scriptfile});\n`
   }
 
   /*
-  * Calls a script that has been provided via the UI.
-  * Parameters can be provided with the special parameter block oh_scriptparam
-  * Blockly part
-  */
+   * Calls a script that has been provided via the UI.
+   * Parameters can be provided with the special parameter block oh_scriptparam
+   * Blockly part
+   */
   Blockly.Blocks['oh_runrule'] = {
     init: function () {
-      this.appendValueInput('ruleUID')
-        .setCheck('String')
-        .appendField('run rule or script')
-      this.appendValueInput('parameters')
-        .appendField('with context')
-        .setCheck('Dictionary')
+      this.appendValueInput('ruleUID').setCheck('String').appendField('run rule or script')
+      this.appendValueInput('parameters').appendField('with context').setCheck('Dictionary')
       this.setInputsInline(false)
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
       this.setColour(0)
       this.setTooltip('Run a rule or script with a certain UID, and optional parameters')
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-run-and-process.html#run-rule-or-script-created-in-ui')
+      this.setHelpUrl(
+        'https://www.openhab.org/docs/configuration/blockly/rules-blockly-run-and-process.html#run-rule-or-script-created-in-ui'
+      )
     }
   }
 
   /*
-  * Calls a script that has been provided via the UI.
-  * Parameters can be provided with the special parameter block oh_scriptparam
-  * Code part
-  */
+   * Calls a script that has been provided via the UI.
+   * Parameters can be provided with the special parameter block oh_scriptparam
+   * Code part
+   */
   javascriptGenerator.forBlock['oh_runrule'] = function (block) {
     const ruleUID = valueToCode(block, 'ruleUID', javascriptGenerator.ORDER_ATOMIC)
     const scriptParameters = valueToCode(block, 'parameters', javascriptGenerator.ORDER_ATOMIC)
@@ -72,18 +68,16 @@ export default function defineOHBlocks_Scripts (f7, transformationServices) {
   }
 
   /*
-  * Allow transformations via different methods
-  * inputs
-  *   - value to be transformed
-  *   - method Map, Regular Expression, JSON-Path
-  *   - transformation method input
-  * Blockly part
-  */
+   * Allow transformations via different methods
+   * inputs
+   *   - value to be transformed
+   *   - method Map, Regular Expression, JSON-Path
+   *   - transformation method input
+   * Blockly part
+   */
   Blockly.Blocks['oh_transformation'] = {
     init: function () {
-      this.appendValueInput('value')
-        .setAlign(Blockly.inputs.Align.RIGHT)
-        .appendField('transform')
+      this.appendValueInput('value').setAlign(Blockly.inputs.Align.RIGHT).appendField('transform')
       this.appendValueInput('function')
         .appendField('apply')
         .appendField(new Blockly.FieldDropdown(transformationOptions()), 'type')
@@ -112,12 +106,16 @@ export default function defineOHBlocks_Scripts (f7, transformationServices) {
       })
       this.setHelpUrl(function () {
         const type = thisBlock.getFieldValue('type')
-        return 'https://www.openhab.org/docs/configuration/blockly/rules-blockly-run-and-process.html#transform-values-via-map-regex-or-jsonpath-and-others' + type.toLowerCase() + '/'
+        return (
+          'https://www.openhab.org/docs/configuration/blockly/rules-blockly-run-and-process.html#transform-values-via-map-regex-or-jsonpath-and-others' +
+          type.toLowerCase() +
+          '/'
+        )
       })
     }
   }
 
-  function transformationOptions () {
+  function transformationOptions() {
     if (transformationServices && transformationServices.length > 0) {
       return transformationServices.map((service) => [service, service])
     }
@@ -125,9 +123,9 @@ export default function defineOHBlocks_Scripts (f7, transformationServices) {
   }
 
   /*
-  * Allow transformations via different methods
-  * Code part
-  */
+   * Allow transformations via different methods
+   * Code part
+   */
   javascriptGenerator.forBlock['oh_transformation'] = function (block) {
     const transformationType = block.getFieldValue('type')
     const transformationFunction = valueToCode(block, 'function', javascriptGenerator.ORDER_ATOMIC)
@@ -139,18 +137,23 @@ export default function defineOHBlocks_Scripts (f7, transformationServices) {
     init: function () {
       this.appendDummyInput()
         .appendField('contextual info')
-        .appendField(new Blockly.FieldDropdown([
-          ['rule UID', 'ruleUID'],
-          ['event available', 'eventAvailable'],
-          ['event type', 'type'],
-          ['new state of item', 'itemState'],
-          ['previous state of item', 'oldItemState'],
-          ['triggering item name', 'itemName'],
-          ['received command', 'itemCommand'],
-          ['triggered channel', 'channel'],
-          ['triggered event', 'event']
-        ], this.handleTypeSelection.bind(this)),
-        'contextInfo')
+        .appendField(
+          new Blockly.FieldDropdown(
+            [
+              ['rule UID', 'ruleUID'],
+              ['event available', 'eventAvailable'],
+              ['event type', 'type'],
+              ['new state of item', 'itemState'],
+              ['previous state of item', 'oldItemState'],
+              ['triggering item name', 'itemName'],
+              ['received command', 'itemCommand'],
+              ['triggered channel', 'channel'],
+              ['triggered event', 'event']
+            ],
+            this.handleTypeSelection.bind(this)
+          ),
+          'contextInfo'
+        )
       this.contextInfo = this.getFieldValue('contextInfo')
       this.setInputsInline(true)
       this.setOutput(true, null)
@@ -159,19 +162,21 @@ export default function defineOHBlocks_Scripts (f7, transformationServices) {
       this.setTooltip(function () {
         const contextData = thisBlock.getFieldValue('contextInfo')
         const TIP = {
-          'ruleUID': 'The current rule\'s UID',
-          'eventAvailable': 'check if the event information is available',
-          'type': 'the event type name',
-          'itemState': 'the new item state (only applicable for rules with triggers related to changed and updated items)',
-          'oldItemState': 'the old item state (only applicable for rules with triggers related to changed and updated items)',
-          'itemName': 'the item name that caused the event (if relevant)',
-          'itemCommand': 'the command name that triggered the event',
-          'channel': 'the channel UID that triggered the event (only applicable for rules including a "trigger channel fired" event)',
-          'event': 'the channel event type that triggered the event (only applicable for rules including a "trigger channel fired" event)'
+          ruleUID: "The current rule's UID",
+          eventAvailable: 'check if the event information is available',
+          type: 'the event type name',
+          itemState: 'the new item state (only applicable for rules with triggers related to changed and updated items)',
+          oldItemState: 'the old item state (only applicable for rules with triggers related to changed and updated items)',
+          itemName: 'the item name that caused the event (if relevant)',
+          itemCommand: 'the command name that triggered the event',
+          channel: 'the channel UID that triggered the event (only applicable for rules including a "trigger channel fired" event)',
+          event: 'the channel event type that triggered the event (only applicable for rules including a "trigger channel fired" event)'
         }
         return TIP[contextData]
       })
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-run-and-process.html#retrieve-rule-context-information')
+      this.setHelpUrl(
+        'https://www.openhab.org/docs/configuration/blockly/rules-blockly-run-and-process.html#retrieve-rule-context-information'
+      )
     },
     onchange: function (event) {
       const contextInfo = this.getFieldValue('contextInfo')
@@ -238,12 +243,14 @@ export default function defineOHBlocks_Scripts (f7, transformationServices) {
     updateShape: function () {
       if (this.methodName === 'itemState' || this.methodName === 'oldItemState' || this.methodName === 'itemCommand') {
         if (!this.getInput('asTypeInput')) {
-          this.appendDummyInput('asTypeInput').appendField(new Blockly.FieldDropdown([
-            ['as String', 'asString'],
-            ['as Number', 'asNumber'],
-            ['as Quantity', 'asQuantity']
-          ]),
-          'asType')
+          this.appendDummyInput('asTypeInput').appendField(
+            new Blockly.FieldDropdown([
+              ['as String', 'asString'],
+              ['as Number', 'asNumber'],
+              ['as Quantity', 'asQuantity']
+            ]),
+            'asType'
+          )
         }
       } else {
         if (this.getInput('asTypeInput')) {
@@ -254,18 +261,17 @@ export default function defineOHBlocks_Scripts (f7, transformationServices) {
   }
 
   // mapping of old event  names to the new ones
-  let attributeMap =
-    {
-      'ruleUID': 'ruleUID',
-      'eventAvailable': 'true', // event always available in new approach
-      'type': 'event.eventName',
-      'itemState': '(event.receivedState ?? event.newState)',
-      'oldItemState': 'event.oldState',
-      'itemName': 'event.itemName',
-      'itemCommand': 'event.receivedCommand',
-      'channel': 'event.channelUID',
-      'event': 'event.receivedEvent'
-    }
+  let attributeMap = {
+    ruleUID: 'ruleUID',
+    eventAvailable: 'true', // event always available in new approach
+    type: 'event.eventName',
+    itemState: '(event.receivedState ?? event.newState)',
+    oldItemState: 'event.oldState',
+    itemName: 'event.itemName',
+    itemCommand: 'event.receivedCommand',
+    channel: 'event.channelUID',
+    event: 'event.receivedEvent'
+  }
 
   javascriptGenerator.forBlock['oh_context_info'] = function (block) {
     const oldContextInfoName = block.getFieldValue('contextInfo')
@@ -289,26 +295,26 @@ export default function defineOHBlocks_Scripts (f7, transformationServices) {
   }
 
   /*
-  * Allows retrieving parameters provided by a rule
-  * Blockly part
-  */
+   * Allows retrieving parameters provided by a rule
+   * Blockly part
+   */
   Blockly.Blocks['oh_context_attribute'] = {
     init: function () {
-      this.appendValueInput('key')
-        .appendField('get context attribute')
-        .setCheck('String')
+      this.appendValueInput('key').appendField('get context attribute').setCheck('String')
       this.setInputsInline(false)
       this.setOutput(true, 'any')
       this.setColour(0)
-      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-run-and-process.html#retrieve-context-attribute-from-rule')
+      this.setHelpUrl(
+        'https://www.openhab.org/docs/configuration/blockly/rules-blockly-run-and-process.html#retrieve-context-attribute-from-rule'
+      )
       this.setTooltip('Retrieve a specified attribute from the context that could be set from a calling rule or script')
     }
   }
 
   /*
-  * Allows retrieving parameters provided by a rule
-  * Code part
-  */
+   * Allows retrieving parameters provided by a rule
+   * Code part
+   */
   javascriptGenerator.forBlock['oh_context_attribute'] = function (block) {
     const key = valueToCode(block, 'key', javascriptGenerator.ORDER_ATOMIC)
     let code = `ctx[${key}]`
@@ -316,17 +322,15 @@ export default function defineOHBlocks_Scripts (f7, transformationServices) {
   }
 
   /*
-  * Allows inlining arbitrary code
-  * Blockly part
-  */
+   * Allows inlining arbitrary code
+   * Blockly part
+   */
   registerFieldMultilineInput()
   Blockly.Blocks['oh_script_inline'] = {
     init: function () {
-      this.appendDummyInput()
-        .appendField('inline script (advanced)')
+      this.appendDummyInput().appendField('inline script (advanced)')
       const code = 'for (var i = 0; i < 10; i++) {\n  console.log(i.toString());\n}'
-      this.appendDummyInput()
-        .appendField(new FieldMultilineInput(code), 'inlineScript')
+      this.appendDummyInput().appendField(new FieldMultilineInput(code), 'inlineScript')
       this.setInputsInline(false)
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
@@ -337,9 +341,9 @@ export default function defineOHBlocks_Scripts (f7, transformationServices) {
   }
 
   /*
-  * Allows inlining arbitrary code
-  * Code part
-  */
+   * Allows inlining arbitrary code
+   * Code part
+   */
   javascriptGenerator.forBlock['oh_script_inline'] = function (block) {
     const code = block.getFieldValue('inlineScript') + '\n'
     return code
@@ -347,12 +351,8 @@ export default function defineOHBlocks_Scripts (f7, transformationServices) {
 
   Blockly.Blocks['oh_rule_enable'] = {
     init: function () {
-      this.appendValueInput('ruleUID')
-        .setCheck('String')
-        .appendField('Set Rule ')
-      this.appendValueInput('enable')
-        .appendField('as ')
-        .setCheck(['Boolean', 'String'])
+      this.appendValueInput('ruleUID').setCheck('String').appendField('Set Rule ')
+      this.appendValueInput('enable').appendField('as ').setCheck(['Boolean', 'String'])
       this.setInputsInline(true)
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
@@ -367,19 +367,18 @@ export default function defineOHBlocks_Scripts (f7, transformationServices) {
     const ruleUID = valueToCode(block, 'ruleUID', javascriptGenerator.ORDER_ATOMIC)
     const enableValue = valueToCode(block, 'enable', javascriptGenerator.ORDER_ATOMIC)
     const enableType = blockGetCheckedInputType(block, 'enable')
-    let enable = (enableType === 'Boolean') ? enableValue : (enableValue === '\'true\'' || enableValue === '\'enabled\'')
+    let enable = enableType === 'Boolean' ? enableValue : enableValue === "'true'" || enableValue === "'enabled'"
     return `rules.setEnabled(${ruleUID}, ${enable});\n`
   }
 
   /*
-  * Allows quick return from a rule. This is useful to stop further processing of a rule.
-  * Also allows returning a value from a rule if required which allows using blockly for a script condition
-  * Blockly part
-  */
+   * Allows quick return from a rule. This is useful to stop further processing of a rule.
+   * Also allows returning a value from a rule if required which allows using blockly for a script condition
+   * Blockly part
+   */
   Blockly.Blocks['oh_rule_return'] = {
     init: function () {
-      this.appendValueInput('value')
-        .appendField('return')
+      this.appendValueInput('value').appendField('return')
       this.setInputsInline(true)
       this.setPreviousStatement(true, null)
       this.setNextStatement(false, null)
@@ -391,9 +390,9 @@ export default function defineOHBlocks_Scripts (f7, transformationServices) {
   }
 
   /*
-  * Allows quick return from a rule.
-  * Code part
-  */
+   * Allows quick return from a rule.
+   * Code part
+   */
   javascriptGenerator.forBlock['oh_rule_return'] = function (block) {
     // we need to enable the wrapper to allow returning from the rule
     javascriptGenerator.provideFunction_('wrapper', ['"use wrapper;"'])

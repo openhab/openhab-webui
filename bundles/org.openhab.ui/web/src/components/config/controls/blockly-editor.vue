@@ -16,10 +16,7 @@
       </category>
 
       <category name="Loops" colour="%{BKY_LOOPS_HUE}">
-        <button
-          helpUrl="configuration/blockly/rules-blockly-standard-ext.html#loops"
-          text="Help"
-          callbackKey="ohBlocklyHelp" />
+        <button helpUrl="configuration/blockly/rules-blockly-standard-ext.html#loops" text="Help" callbackKey="ohBlocklyHelp" />
         <block type="controls_repeat_ext">
           <value name="TIMES">
             <shadow type="math_number">
@@ -51,10 +48,7 @@
       </category>
 
       <category name="Math" colour="%{BKY_MATH_HUE}">
-        <button
-          helpUrl="configuration/blockly/rules-blockly-standard-ext.html#math"
-          text="Help"
-          callbackKey="ohBlocklyHelp" />
+        <button helpUrl="configuration/blockly/rules-blockly-standard-ext.html#math" text="Help" callbackKey="ohBlocklyHelp" />
         <block type="math_number">
           <field name="NUM">123</field>
         </block>
@@ -195,10 +189,7 @@
       </category>
 
       <category name="Text" colour="%{BKY_TEXTS_HUE}">
-        <button
-          helpUrl="configuration/blockly/rules-blockly-standard-ext.html#text"
-          text="Help"
-          callbackKey="ohBlocklyHelp" />
+        <button helpUrl="configuration/blockly/rules-blockly-standard-ext.html#text" text="Help" callbackKey="ohBlocklyHelp" />
         <block type="text" />
         <block type="text_join">
           <mutation items="0" />
@@ -283,10 +274,7 @@
       </category>
 
       <category name="Lists" colour="%{BKY_LISTS_HUE}">
-        <button
-          helpUrl="configuration/blockly/rules-blockly-standard-ext.html#lists"
-          text="Help"
-          callbackKey="ohBlocklyHelp" />
+        <button helpUrl="configuration/blockly/rules-blockly-standard-ext.html#lists" text="Help" callbackKey="ohBlocklyHelp" />
         <block type="lists_create_with">
           <mutation items="0" />
         </block>
@@ -360,10 +348,7 @@
       </category>
 
       <category name="Color" colour="%{BKY_COLOUR_HUE}">
-        <button
-          helpUrl="configuration/blockly/rules-blockly-standard-ext.html#colors"
-          text="Help"
-          callbackKey="ohBlocklyHelp" />
+        <button helpUrl="configuration/blockly/rules-blockly-standard-ext.html#colors" text="Help" callbackKey="ohBlocklyHelp" />
         <block type="colour_picker" />
         <block type="colour_random" />
         <block type="colour_rgb">
@@ -420,10 +405,7 @@
 
       <category name="openHAB" colour="0" :expanded="$device.desktop">
         <category name="Items &amp; Things">
-          <button
-            helpUrl="configuration/blockly/rules-blockly-items-things.html"
-            text="Help"
-            callbackKey="ohBlocklyHelp" />
+          <button helpUrl="configuration/blockly/rules-blockly-items-things.html" text="Help" callbackKey="ohBlocklyHelp" />
           <block type="oh_getitem_state">
             <value name="itemName">
               <shadow type="oh_item" />
@@ -533,10 +515,7 @@
         </category>
 
         <category name="Timers &amp; Delays">
-          <button
-            helpUrl="configuration/blockly/rules-blockly-timers-and-delays.html"
-            text="Help"
-            callbackKey="ohBlocklyHelp" />
+          <button helpUrl="configuration/blockly/rules-blockly-timers-and-delays.html" text="Help" callbackKey="ohBlocklyHelp" />
           <block type="oh_sleep" />
           <sep gap="48" />
           <block type="oh_timer">
@@ -607,10 +586,7 @@
         </category>
 
         <category name="Voice &amp; Multimedia">
-          <button
-            helpUrl="configuration/blockly/rules-blockly-voice-and-multimedia.html"
-            text="Help"
-            callbackKey="ohBlocklyHelp" />
+          <button helpUrl="configuration/blockly/rules-blockly-voice-and-multimedia.html" text="Help" callbackKey="ohBlocklyHelp" />
           <block type="oh_playmedia_sink">
             <value name="fileName">
               <shadow type="text">
@@ -667,10 +643,7 @@
           </block>
         </category>
         <category name="Units of Measurement">
-          <button
-            helpUrl="configuration/blockly/rules-blockly-uom.html"
-            text="Help"
-            callbackKey="ohBlocklyHelp" />
+          <button helpUrl="configuration/blockly/rules-blockly-uom.html" text="Help" callbackKey="ohBlocklyHelp" />
           <block type="oh_quantity">
             <value name="quantity">
               <shadow type="text">
@@ -718,10 +691,7 @@
           </block>
         </category>
         <category name="Dates &amp; Times">
-          <button
-            helpUrl="configuration/blockly/rules-blockly-date-handling.html"
-            text="Help"
-            callbackKey="ohBlocklyHelp" />
+          <button helpUrl="configuration/blockly/rules-blockly-date-handling.html" text="Help" callbackKey="ohBlocklyHelp" />
           <block type="oh_zdt_now" />
           <block type="oh_zdt_plusminus">
             <value name="offset">
@@ -828,19 +798,14 @@
           <block type="oh_dayoffset">
             <value name="offset">
               <shadow type="math_number">
-                <field name="NUM">
-                  0
-                </field>
+                <field name="NUM"> 0 </field>
               </shadow>
             </value>
           </block>
         </category>
 
         <category name="Ephemeris">
-          <button
-            helpUrl="configuration/blockly/rules-blockly-ephemeris.html"
-            text="Help"
-            callbackKey="ohBlocklyHelp" />
+          <button helpUrl="configuration/blockly/rules-blockly-ephemeris.html" text="Help" callbackKey="ohBlocklyHelp" />
           <block type="oh_ephemeris_check">
             <value name="dayInfo">
               <shadow type="oh_dayoffset_today" />
@@ -861,10 +826,7 @@
         </category>
 
         <category name="Notifications">
-          <button
-            helpUrl="configuration/blockly/rules-blockly-notifications.html"
-            text="Help"
-            callbackKey="ohBlocklyHelp" />
+          <button helpUrl="configuration/blockly/rules-blockly-notifications.html" text="Help" callbackKey="ohBlocklyHelp" />
           <block type="oh_sendCloudNotification">
             <value name="message">
               <shadow type="text">
@@ -935,10 +897,7 @@
         </category>
 
         <category name="Persistence">
-          <button
-            helpUrl="configuration/blockly/rules-blockly-persistence.html"
-            text="Help"
-            callbackKey="ohBlocklyHelp" />
+          <button helpUrl="configuration/blockly/rules-blockly-persistence.html" text="Help" callbackKey="ohBlocklyHelp" />
           <block type="oh_zdt_plusminus">
             <value name="offset">
               <shadow type="math_number">
@@ -1021,10 +980,7 @@
         </category>
 
         <category name="Value Storage">
-          <button
-            helpUrl="configuration/blockly/rules-blockly-value-storage.html"
-            text="Help"
-            callbackKey="ohBlocklyHelp" />
+          <button helpUrl="configuration/blockly/rules-blockly-value-storage.html" text="Help" callbackKey="ohBlocklyHelp" />
           <block type="oh_store_value">
             <value name="value">
               <shadow type="text">
@@ -1053,10 +1009,7 @@
           </block>
         </category>
         <category name="HTTP">
-          <button
-            helpUrl="configuration/blockly/rules-blockly-http.html"
-            text="Help"
-            callbackKey="ohBlocklyHelp" />
+          <button helpUrl="configuration/blockly/rules-blockly-http.html" text="Help" callbackKey="ohBlocklyHelp" />
           <block type="oh_httprequest">
             <value name="url">
               <shadow type="text">
@@ -1066,10 +1019,7 @@
           </block>
         </category>
         <category name="Run &amp; Process">
-          <button
-            helpUrl="configuration/blockly/rules-blockly-run-and-process.html"
-            text="Help"
-            callbackKey="ohBlocklyHelp" />
+          <button helpUrl="configuration/blockly/rules-blockly-run-and-process.html" text="Help" callbackKey="ohBlocklyHelp" />
           <block type="oh_callscriptfile">
             <value name="scriptfile">
               <shadow type="text">
@@ -1135,10 +1085,7 @@
         </category>
 
         <category name="Logging &amp; Output">
-          <button
-            helpUrl="configuration/blockly/rules-blockly-logging.html"
-            text="Help"
-            callbackKey="ohBlocklyHelp" />
+          <button helpUrl="configuration/blockly/rules-blockly-logging.html" text="Help" callbackKey="ohBlocklyHelp" />
           <block type="oh_log">
             <value name="message">
               <shadow type="text">
@@ -1224,6 +1171,8 @@ import { defineLibraryToolboxCategory } from '@/assets/definitions/blockly/libra
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
+import * as api from '@/api'
+
 let workspace = null
 
 Blockly.ContextMenuItems.registerCommentOptions()
@@ -1252,9 +1201,9 @@ export default {
   computed: {
     cssVars () {
       return {
-        '--blockly-ws-search-bg-color': useUIOptionsStore().getDarkMode() === 'dark' ? '#1e1e1e' : 'white',
-        '--blockly-ws-search-border-color': useUIOptionsStore().getDarkMode() === 'dark' ? 'lightgrey' : 'grey',
-        '--blockly-ws-search-text-color': useUIOptionsStore().getDarkMode() === 'dark' ? 'white' : 'black'
+        '--blockly-ws-search-bg-color': useUIOptionsStore().darkMode === 'dark' ? '#1e1e1e' : 'white',
+        '--blockly-ws-search-border-color': useUIOptionsStore().darkMode === 'dark' ? 'lightgrey' : 'grey',
+        '--blockly-ws-search-text-color': useUIOptionsStore().darkMode === 'dark' ? 'white' : 'black'
       }
     },
     ...mapStores(useUIOptionsStore)
@@ -1266,12 +1215,13 @@ export default {
   methods: {
     async load () {
       const dataPromises = [
-        this.$oh.api.get('/rest/rules?summary=true'),
-        this.$oh.api.get('/rest/audio/sinks'),
-        this.$oh.api.get('/rest/voice/voices'),
-        this.libraryDefinitions ? Promise.resolve(this.libraryDefinitions) : this.$oh.api.get('/rest/ui/components/ui:blocks'),
-        this.$oh.api.get('/rest/persistence'),
-        this.$oh.api.get('/rest/transformations/services')
+        api.getRules({ summary : true }),
+        api.getAudioSinks(),
+        api.getVoices(),
+        (this.libraryDefinitions) ? Promise.resolve(this.libraryDefinitions) :
+          api.getRegisteredUiComponentsInNamespace({ namespace : 'ui:blocks' }),
+        api.getPersistenceServices(),
+        api.getTransformationServices()
       ]
       Promise.all(dataPromises)
         .then((data) => {
@@ -1337,7 +1287,7 @@ export default {
       const options = {
         toolbox: this.$refs.toolbox,
         horizontalLayout: !this.$device.desktop,
-        theme: useUIOptionsStore().getDarkMode() === 'dark' ? DarkTheme : undefined,
+        theme: useUIOptionsStore().darkMode === 'dark' ? DarkTheme : undefined,
         zoom: {
           controls: true,
           wheel: true,
@@ -1451,7 +1401,20 @@ export default {
       return Blockly.Xml.domToText(xml)
     },
     getCode () {
-      return javascriptGenerator.workspaceToCode(workspace)
+      let code = javascriptGenerator.workspaceToCode(workspace)
+      // Extracts all lines that contain a directive and moves them to the top
+      const lines = code.split(/\r?\n/)
+      const matches = []
+      const nonMatches = []
+      lines.forEach((line) => {
+        console.log(line)
+        if (line.startsWith('"use ') || line.startsWith('\'use ')) {
+          matches.push(line)
+        } else {
+          nonMatches.push(line)
+        }
+      })
+      return [...matches, ...nonMatches].join('\n');
     },
     getRenderers () {
       const excludedRenderers = ['minimalist']

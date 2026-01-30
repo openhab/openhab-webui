@@ -23,7 +23,7 @@ let GlobalIdentifiers: Definitions = {}
  * We need to use `completionPath` but
  * with `pathFor` altered to support "CallExpression"
  **************************************************************/
-function getPath (read: (n: any) => string, callNode: any, name: string | null) {
+function getPath(read: (n: any) => string, callNode: any, name: string | null) {
   let path: string[] = []
   let member = callNode
   let callExpression = false
@@ -36,10 +36,10 @@ function getPath (read: (n: any) => string, callNode: any, name: string | null) 
     callExpression = false
 
     // '', 12.5 or [] -> String, Number, or ArrayExprression
-    if (Literals[obj.name]) {
-      path.push(Literals[obj.name]) // resolve the literal to its prototype
+    const literal = Literals[obj.name]
+    if (literal) {
+      path.push(literal) // resolve the literal to its prototype
       if (obj.name === 'ArrayExpression') {
-
       }
       if (!obj.firstChild || obj.name === 'ArrayExpression') {
         return { path: path.reverse(), name: '' }
@@ -76,7 +76,7 @@ function getPath (read: (n: any) => string, callNode: any, name: string | null) 
   }
 }
 
-function completionPathWithCallExpression (context: CompletionContext, from: number) {
+function completionPathWithCallExpression(context: CompletionContext, from: number) {
   const read = (node: any) => context.state.doc.sliceString(node.from, node.to)
   const inner = syntaxTree(context.state).resolveInner(from, -1)
   if (inner && (inner.name === '.' || inner.name === '?.') && inner.parent?.name === 'MemberExpression') {
@@ -88,18 +88,19 @@ function completionPathWithCallExpression (context: CompletionContext, from: num
 // Deal with definition that returns a reference (string instead of an object) to another definition.
 // e.g. "Int8Array": "TypedArray"
 // Recursively look up the reference until we find the actual definition
-function dereferencedDefinition (definition: Definitions | string | undefined, depth: number = 0): Definitions | undefined {
+function dereferencedDefinition(definition: Definitions | string | undefined, depth: number = 0): Definitions | undefined {
   if (depth > 10) {
     console.error('Maximum dereference depth reached for', definition)
     return // Just support up to 10 deep to prevent infinite recursion
   }
-  if (typeof definition === 'string') { // string -> alias to another definition
+  if (typeof definition === 'string') {
+    // string -> alias to another definition
     return dereferencedDefinition(GlobalTypes[definition], depth + 1) || dereferencedDefinition(GlobalIdentifiers[definition], depth + 1)
   }
   return definition
 }
 
-function resolveDefinition (identifier: string, scopedDef: Definitions): Definitions | undefined {
+function resolveDefinition(identifier: string, scopedDef: Definitions): Definitions | undefined {
   const isCallExpression = identifier.endsWith('()')
   if (isCallExpression) {
     identifier = identifier.slice(0, -2)
@@ -132,7 +133,7 @@ function resolveDefinition (identifier: string, scopedDef: Definitions): Definit
   return ret
 }
 
-function resolveDefinitionFromPath (path: readonly string[]) {
+function resolveDefinitionFromPath(path: readonly string[]) {
   let def: Definitions | undefined = GlobalIdentifiers
   for (let segment of path) {
     def = resolveDefinition(segment, def!)
@@ -142,17 +143,17 @@ function resolveDefinitionFromPath (path: readonly string[]) {
 }
 
 // Split multiple alternative types and return the first non null: null|a|b -> a
-function extractType (def: string | null) {
+function extractType(def: string | null) {
   if (!def || def === '?') return null
   if (def.startsWith('[')) return 'array'
   return def?.split('|').filter((t: string) => t !== 'null')[0]
 }
 
-function isFunction (type: string | null) {
+function isFunction(type: string | null) {
   return type ? String(type).startsWith('fn(') : false
 }
 
-function isObject (properties: Record<string, any>) {
+function isObject(properties: Record<string, any>) {
   const type = properties['!type']
   if (type) {
     return !!String(type).match(/^\+?[A-Z]/)
@@ -160,7 +161,7 @@ function isObject (properties: Record<string, any>) {
   return Object.keys(properties).some((key) => !key.startsWith('!'))
 }
 
-function completionType (properties: Record<string, any>) {
+function completionType(properties: Record<string, any>) {
   if (isObject(properties)) return 'object'
 
   const type = properties['!type']
@@ -169,18 +170,17 @@ function completionType (properties: Record<string, any>) {
   return extractType(type)
 }
 
-function getReturnType (type: string | null) {
+function getReturnType(type: string | null) {
   if (!isFunction(type)) return
   const ret = String(type).split(' -> ')
-  const returnType = extractType(ret.length > 1 ? ret[ret.length - 1] : null)
+  const returnType = extractType(ret[ret.length - 1] ?? null)
   if (!returnType) return
   return returnType.charAt(0).toUpperCase() + returnType.slice(1)
 }
 
-function convertDefinitionToCompletionOptions (def: Definitions | undefined) {
+function convertDefinitionToCompletionOptions(def: Definitions | undefined) {
   if (!def) return null
-  return Object
-    .entries(def)
+  return Object.entries(def)
     .filter(([key]) => !key.startsWith('!') && !key.startsWith(':') && key !== '<i>')
     .map(([name, properties]) => {
       return {
@@ -191,7 +191,7 @@ function convertDefinitionToCompletionOptions (def: Definitions | undefined) {
     })
 }
 
-function setObjectDefs (...defs: Definitions[]) {
+function setObjectDefs(...defs: Definitions[]) {
   GlobalTypes = {}
   GlobalIdentifiers = {}
   defs.forEach((def) => {
@@ -200,7 +200,7 @@ function setObjectDefs (...defs: Definitions[]) {
   })
 }
 
-function hintOpenhabJs (context: CompletionContext) {
+function hintOpenhabJs(context: CompletionContext) {
   const from = hintUtils.completionStart(context)
   const path = completionPathWithCallExpression(context, from)
   const defs = resolveDefinitionFromPath(path?.path || [])
@@ -214,13 +214,13 @@ function hintOpenhabJs (context: CompletionContext) {
   }
 }
 
-function hintJsItems (context: any) {
+function hintJsItems(context: any) {
   if (context.matchBefore(/(\s|^)items\.(getItem\(['"])?[\w]*/)) {
     return hintUtils.hintItems(context)
   }
 }
 
-export default function javascriptAutocompletions (mode: string) {
+export default function javascriptAutocompletions(mode: string) {
   setObjectDefs(EcmascriptDefs, mode.includes('ECMAScript-5.1') ? NashornDefs : OpenhabJsDefs)
 
   return [

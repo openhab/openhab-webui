@@ -1,8 +1,9 @@
 <template>
-  <generic-widget-component v-for="(slotComponent, idx) in children"
-                            v-bind="$attrs"
-                            :key="'default-' + idx"
-                            :context="childrenContext(slotComponent)" />
+  <generic-widget-component
+    v-for="(slotComponent, idx) in children"
+    v-bind="$attrs"
+    :key="'default-' + idx"
+    :context="childrenContext(slotComponent)" />
 </template>
 
 <script>

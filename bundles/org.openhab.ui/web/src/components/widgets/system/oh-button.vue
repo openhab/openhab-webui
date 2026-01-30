@@ -1,12 +1,10 @@
 <template>
-  <f7-button v-bind="config"
-             @click.stop="clicked"
-             @taphold="onTaphold($event)"
-             @contextmenu="onContextMenu($event)">
+  <f7-button v-bind="config" @click.stop="clicked" @taphold="onTaphold($event)" @contextmenu="onContextMenu($event)">
     <template v-if="context.component.slots && context.component.slots.default">
-      <generic-widget-component v-for="(slotComponent, idx) in context.component.slots.default"
-                                :context="childContext(slotComponent)"
-                                :key="'default-' + idx" />
+      <generic-widget-component
+        v-for="(slotComponent, idx) in context.component.slots.default"
+        :context="childContext(slotComponent)"
+        :key="'default-' + idx" />
     </template>
   </f7-button>
 </template>

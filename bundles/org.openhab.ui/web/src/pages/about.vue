@@ -8,34 +8,28 @@
         <f7-col>
           <!-- <f7-block-title>About openHAB</f7-block-title> -->
           <f7-block>
-            <img src="/res/icons/favicon.svg"
-                 type="image/svg+xml"
-                 width="96"
-                 class="padding float-right">
+            <img src="/res/icons/favicon.svg" type="image/svg+xml" width="96" class="padding float-right" />
             <h2 v-if="runtimeStore.runtimeInfo" class="block-title-medium">
-              openHAB {{ runtimeStore.runtimeInfo.version }}<br>
+              openHAB {{ runtimeStore.runtimeInfo.version }}<br />
               <small>{{ runtimeStore.runtimeInfo.buildString }}</small>
             </h2>
             <p v-if="runtimeStore.uiInfo.commit">
-              Main UI Commit <a :href="'https://github.com/openhab/openhab-webui/commit/' + runtimeStore.uiInfo.commit" class="external" target="_blank">{{ runtimeStore.uiInfo.commit }}</a>
+              Main UI Commit
+              <a
+                :href="'https://github.com/openhab/openhab-webui/commit/' + runtimeStore.uiInfo.commit"
+                class="external"
+                target="_blank"
+                >{{ runtimeStore.uiInfo.commit }}</a
+              >
             </p>
             <p>
-              <f7-link external
-                       target="_blank"
-                       href="https://www.openhab.org/"
-                       :text="t('about.homePage')" />
+              <f7-link external target="_blank" href="https://www.openhab.org/" :text="t('about.homePage')" />
             </p>
             <p>
-              <f7-link external
-                       target="_blank"
-                       href="https://www.openhab.org/docs/"
-                       :text="t('about.documentation')" />
+              <f7-link external target="_blank" href="https://www.openhab.org/docs/" :text="t('about.documentation')" />
             </p>
             <p>
-              <f7-link external
-                       target="_blank"
-                       href="https://community.openhab.org/"
-                       :text="t('about.communityForum')" />
+              <f7-link external target="_blank" href="https://community.openhab.org/" :text="t('about.communityForum')" />
             </p>
           </f7-block>
         </f7-col>
@@ -49,8 +43,13 @@
                   <f7-list-item :title="t('about.technicalInformation.configurationFolder')" :after="systemInfo.configFolder" />
                   <f7-list-item :title="t('about.technicalInformation.userdataFolder')" :after="systemInfo.userdataFolder" />
                   <f7-list-item :title="t('about.technicalInformation.logsFolder')" :after="systemInfo.logFolder" />
-                  <f7-list-item :title="t('about.technicalInformation.operatingSystem')" :after="`${systemInfo.osName}/${systemInfo.osVersion} (${systemInfo.osArchitecture})`" />
-                  <f7-list-item :title="t('about.technicalInformation.javaRuntime')" :footer="systemInfo.javaVendor" :after="`${systemInfo.javaVersion} (${systemInfo.javaVendorVersion})`">
+                  <f7-list-item
+                    :title="t('about.technicalInformation.operatingSystem')"
+                    :after="`${systemInfo.osName}/${systemInfo.osVersion} (${systemInfo.osArchitecture})`" />
+                  <f7-list-item
+                    :title="t('about.technicalInformation.javaRuntime')"
+                    :footer="systemInfo.javaVendor"
+                    :after="`${systemInfo.javaVersion} (${systemInfo.javaVendorVersion})`">
                     <template #root-end>
                       <div class="item-content" style="flex-direction: column">
                         <f7-progressbar
@@ -94,13 +93,14 @@
       </f7-col>
       <f7-col>
         <f7-list>
-          <f7-list-button v-if="showCachePurgeOption"
-                          color="red"
-                          @click="purgeServiceWorkerAndCaches()">
+          <f7-list-button v-if="showCachePurgeOption" color="red" @click="purgeServiceWorkerAndCaches()">
             {{ t('about.reload.purgeCachesAndRefresh') }}
           </f7-list-button>
           <f7-list-button color="blue" @click="reload">
             {{ t('about.reload.reloadApp') }}
+          </f7-list-button>
+          <f7-list-button color="blue" href="/setup-wizard/">
+            {{ t('about.reload.setupWizard') }}
           </f7-list-button>
         </f7-list>
       </f7-col>
@@ -115,10 +115,7 @@
         </div>
       </f7-navbar>
       <!-- <pre class="textual-definition" v-html="textualDefinition"></pre> -->
-      <textarea readonly
-                class="textual-systeminfo"
-                id="textual-systeminfo"
-                :value="textualSystemInfo" />
+      <textarea readonly class="textual-systeminfo" id="textual-systeminfo" :value="textualSystemInfo" />
     </f7-popup>
   </f7-page>
 </template>
@@ -158,6 +155,7 @@ import reloadMixin from '../components/reload-mixin.js'
 
 import { loadLocaleMessages } from '@/js/i18n'
 import { useI18n } from 'vue-i18n'
+import * as api from '@/api'
 
 export default {
   mixins: [reloadMixin],
@@ -214,8 +212,12 @@ export default {
   methods: {
     beforePageIn () {
       if (useUserStore().isAdmin()) {
-        this.$oh.api.get('/rest/systeminfo').then((data) => { this.systemInfo = data.systemInfo })
-        this.$oh.api.get('/rest/addons').then((data) => { this.addons = data.filter((a) => a.installed).map((a) => a.uid).sort() })
+        api.getSystemInformation().then((data) => {
+          this.systemInfo = data.systemInfo
+        })
+        api.getAddons().then((data) => {
+          this.addons = data.filter((a) => a.installed).map((a) => a.uid).sort()
+        })
       }
       this.checkPurgeServiceWorkerAndCachesAvailable()
     },

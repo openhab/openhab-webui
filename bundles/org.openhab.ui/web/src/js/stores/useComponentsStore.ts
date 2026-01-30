@@ -1,63 +1,55 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
-
-import api from '@/js/openhab/api'
+import { readonly, ref, type DeepReadonly } from 'vue'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
-interface Widget {
-  uid: string
-}
-
-interface Page {
-  uid: string
-}
+import * as api from '@/api'
 
 export const useComponentsStore = defineStore('components', () => {
   // States
-  const _widgets = ref<Widget[]>([])
-  const _pages = ref<Page[]>([])
+  const _widgets = ref<api.RootUiComponent[]>([])
+  const _pages = ref<api.RootUiComponent[]>([])
   const ready = ref<boolean>(false)
 
   // Getters
-  function widget (uid: string) {
-    return _widgets.value.find((widget) => widget.uid === uid)
+  function widget(uid: string): DeepReadonly<api.RootUiComponent> | null {
+    const widget = _widgets.value.find((widget) => widget.uid === uid)
+    return widget ? readonly(widget) : null
   }
 
-  function widgets () {
-    return _widgets.value.sort((a, b) => a.uid.localeCompare(b.uid))
+  function widgets(): DeepReadonly<api.RootUiComponent[]> {
+    return readonly(_widgets.value.sort((a, b) => a.uid.localeCompare(b.uid)))
   }
 
-  function page (uid: string) {
-    return _pages.value.find((page) => page.uid === uid)
+  function page(uid: string): DeepReadonly<api.RootUiComponent> | null {
+    const page = _pages.value.find((page) => page.uid === uid)
+    return page ? readonly(page) : null
   }
 
-  function pages (): Page[] {
+  function pages(): DeepReadonly<api.RootUiComponent[]> {
     const pages = _pages.value.sort((a, b) => a.uid.localeCompare(b.uid))
-    return pages
+    return readonly(pages)
   }
 
   // Actions
-  function setPagesAndWidgets (pages: Page[], widgets: Widget[]): void {
+  function setPagesAndWidgets(pages: api.RootUiComponent[], widgets: api.RootUiComponent[]): void {
     _pages.value = pages
     _widgets.value = widgets
     ready.value = true
   }
 
-  async function loadPagesAndWidgets (): Promise<void> {
+  async function loadPagesAndWidgets(): Promise<void> {
     if (useRuntimeStore().apiEndpoint('ui')) {
       return Promise.all([
-        api.get('/rest/ui/components/ui:page'),
-        api.get('/rest/ui/components/ui:widget')
-      ]).then((data: [Page[], Widget[]]) => {
-        _pages.value = data[0]
-        _widgets.value = data[1]
-        ready.value = true
+        api.getRegisteredUiComponentsInNamespace({ namespace: 'ui:page' }),
+        api.getRegisteredUiComponentsInNamespace({ namespace: 'ui:widget' })
+      ]).then((data) => {
+        setPagesAndWidgets(data[0] as api.RootUiComponent[], data[1] as api.RootUiComponent[])
       })
     } else {
       return Promise.resolve()
     }
   }
 
-  return { ready, widget, widgets, page, pages, loadPagesAndWidgets, setPagesAndWidgets }
+  return { ready: readonly(ready), widget, widgets, page, pages, loadPagesAndWidgets }
 })

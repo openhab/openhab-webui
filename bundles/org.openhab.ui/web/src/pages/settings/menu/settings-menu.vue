@@ -1,10 +1,7 @@
 <template>
   <f7-page @page:init="onPageInit" @page:afterin="onPageAfterIn" class="page-settings">
     <f7-navbar large>
-      <oh-nav-content title="Settings"
-                      :large="true"
-                      back-link-url="/"
-                      :f7router>
+      <oh-nav-content title="Settings" :large="true" back-link-url="/" :f7router>
         <template #right>
           <f7-link
             class="searchbar-enable"
@@ -28,84 +25,77 @@
         <f7-col :class="!addonsLoaded || (addonsLoaded && addonsInstalled.length > 0) ? 'settings-col' : ''" width="100" medium="50">
           <f7-block-title>Configuration</f7-block-title>
           <f7-list media-list class="search-list">
-            <f7-list-item v-if="runtimeStore.apiEndpoint('things')"
-                          media-item
-                          link="things/"
-                          title="Things"
-                          :badge="inboxCount > 0 ? inboxCount : undefined"
-                          :after="inboxCount > 0 ? thingsCount + '+' : thingsCount"
-                          :badge-color="inboxCount ? 'red' : 'blue'"
-                          :footer="objectsSubtitles.things">
+            <f7-list-item
+              v-if="runtimeStore.apiEndpoint('things')"
+              media-item
+              link="things/"
+              title="Things"
+              :badge="inboxCount > 0 ? inboxCount : undefined"
+              :after="inboxCount > 0 ? thingsCount + '+' : thingsCount"
+              :badge-color="inboxCount ? 'red' : 'blue'"
+              :footer="objectsSubtitles.things">
               <template #media>
                 <f7-icon f7="lightbulb" color="gray" />
               </template>
             </f7-list-item>
-            <f7-list-item v-if="runtimeStore.apiEndpoint('items')"
-                          media-item
-                          link="model/"
-                          title="Model"
-                          badge-color="blue"
-                          :footer="objectsSubtitles.model">
+            <f7-list-item
+              v-if="runtimeStore.apiEndpoint('items')"
+              media-item
+              link="model/"
+              title="Model"
+              badge-color="blue"
+              :footer="objectsSubtitles.model"
+              @click="modelSelectedItem = null">
               <template #media>
                 <f7-icon f7="list_bullet_indent" color="gray" />
               </template>
             </f7-list-item>
-            <f7-list-item v-if="runtimeStore.apiEndpoint('items')"
-                          media-item
-                          link="items/"
-                          title="Items"
-                          :after="itemsCount"
-                          badge-color="blue"
-                          :footer="objectsSubtitles.items">
+            <f7-list-item
+              v-if="runtimeStore.apiEndpoint('items')"
+              media-item
+              link="items/"
+              title="Items"
+              :after="itemsCount"
+              badge-color="blue"
+              :footer="objectsSubtitles.items">
               <template #media>
                 <f7-icon f7="square_on_circle" color="gray" />
               </template>
             </f7-list-item>
-            <f7-list-item v-if="runtimeStore.apiEndpoint('ui')"
-                          link="pages/"
-                          title="Pages"
-                          :after="componentsStore.pages().length + sitemapsCount"
-                          badge-color="blue"
-                          :footer="objectsSubtitles.pages">
+            <f7-list-item
+              v-if="runtimeStore.apiEndpoint('ui')"
+              link="pages/"
+              title="Pages"
+              :after="componentsStore.pages().length + sitemapsCount"
+              badge-color="blue"
+              :footer="objectsSubtitles.pages">
               <template #media>
                 <f7-icon f7="tv" color="gray" />
               </template>
             </f7-list-item>
           </f7-list>
           <f7-list media-list class="search-list">
-            <f7-list-item v-if="runtimeStore.apiEndpoint('transformations')"
-                          media-item
-                          link="transformations/"
-                          title="Transformations"
-                          :after="transformationsCount"
-                          badge-color="blue"
-                          :footer="objectsSubtitles.transform">
+            <f7-list-item
+              v-if="runtimeStore.apiEndpoint('transformations')"
+              media-item
+              link="transformations/"
+              title="Transformations"
+              :after="transformationsCount"
+              badge-color="blue"
+              :footer="objectsSubtitles.transform">
               <template #media>
                 <f7-icon f7="function" color="gray" />
               </template>
             </f7-list-item>
-            <f7-list-item
-              media-item
-              link="persistence/"
-              title="Persistence"
-              badge-color="blue"
-              :footer="objectsSubtitles.persistence">
+            <f7-list-item media-item link="persistence/" title="Persistence" badge-color="blue" :footer="objectsSubtitles.persistence">
               <template #media>
                 <f7-icon f7="download_circle" color="gray" />
               </template>
             </f7-list-item>
           </f7-list>
-          <f7-block-title v-if="runtimeStore.apiEndpoint('rules')">
-            Automation
-          </f7-block-title>
+          <f7-block-title v-if="runtimeStore.apiEndpoint('rules')"> Automation </f7-block-title>
           <f7-list media-list class="search-list">
-            <f7-list-item
-              media-item
-              link="rules/"
-              title="Rules"
-              :after="rulesCount"
-              badge-color="blue"
-              :footer="objectsSubtitles.rules">
+            <f7-list-item media-item link="rules/" title="Rules" :after="rulesCount" badge-color="blue" :footer="objectsSubtitles.rules">
               <template #media>
                 <f7-icon f7="wand_stars" color="gray" />
               </template>
@@ -132,12 +122,7 @@
                 <f7-icon f7="doc_plaintext" color="gray" />
               </template>
             </f7-list-item>
-            <f7-list-item
-              media-item
-              link="schedule/"
-              title="Schedule"
-              badge-color="blue"
-              :footer="objectsSubtitles.schedule">
+            <f7-list-item media-item link="schedule/" title="Schedule" badge-color="blue" :footer="objectsSubtitles.schedule">
               <template #media>
                 <f7-icon f7="calendar" color="gray" />
               </template>
@@ -154,9 +139,7 @@
                 :link="'services/' + service.id"
                 :title="service.label"
                 v-show="!service.hidden" />
-              <f7-list-button v-if="!expandedTypes.systemSettingsExpanded"
-                              color="blue"
-                              @click="expand('systemSettingsExpanded')">
+              <f7-list-button v-if="!expandedTypes.systemSettingsExpanded" color="blue" @click="expand('systemSettingsExpanded')">
                 {{ $t('dialogs.showAll') }}
               </f7-list-button>
             </f7-list>
@@ -165,50 +148,40 @@
           <div v-if="!servicesLoaded">
             <f7-block-title>System Settings</f7-block-title>
             <f7-list>
-              <f7-list-item
-                v-for="n in 9"
-                :key="n"
-                :class="`skeleton-text skeleton-effect-blink`"
-                title="Service Label" />
+              <f7-list-item v-for="n in 9" :key="n" :class="`skeleton-text skeleton-effect-blink`" title="Service Label" />
             </f7-list>
           </div>
           <div v-show="$f7dim.width < 1450">
             <div v-show="addonsLoaded && addonsInstalled.length > 0">
-              <addon-section class="add-on-section"
-                             :addonsInstalled="addonsInstalled"
-                             :addonsServices="addonsServices"
-                             :expanded="expandedTypes.addonsExpanded"
-                             @expand="expand('addonsExpanded')" />
+              <addon-section
+                class="add-on-section"
+                :addonsInstalled="addonsInstalled"
+                :addonsServices="addonsServices"
+                :expanded="expandedTypes.addonsExpanded"
+                @expand="expand('addonsExpanded')" />
             </div>
             <!-- skeleton for not addonsLoaded -->
             <div v-if="!addonsLoaded">
               <f7-block-title>Add-on Settings</f7-block-title>
               <f7-list>
-                <f7-list-item
-                  v-for="n in 4"
-                  :key="n"
-                  :class="`skeleton-text skeleton-effect-blink`"
-                  title="Service Label" />
+                <f7-list-item v-for="n in 4" :key="n" :class="`skeleton-text skeleton-effect-blink`" title="Service Label" />
               </f7-list>
             </div>
           </div>
         </f7-col>
         <f7-col width="33" class="add-on-col" v-show="$f7dim.width >= 1450">
           <div v-show="addonsLoaded && addonsInstalled.length > 0">
-            <addon-section :addonsInstalled="addonsInstalled"
-                           :addonsServices="addonsServices"
-                           :expanded="expandedTypes.addonsExpanded"
-                           @expand="expand('addonsExpanded')" />
+            <addon-section
+              :addonsInstalled="addonsInstalled"
+              :addonsServices="addonsServices"
+              :expanded="expandedTypes.addonsExpanded"
+              @expand="expand('addonsExpanded')" />
           </div>
           <!-- skeleton for not addonsLoaded -->
           <div v-if="!addonsLoaded">
             <f7-block-title>Add-on Settings</f7-block-title>
             <f7-list>
-              <f7-list-item
-                v-for="n in 9"
-                :key="n"
-                :class="`skeleton-text skeleton-effect-blink`"
-                title="Service Label" />
+              <f7-list-item v-for="n in 9" :key="n" :class="`skeleton-text skeleton-effect-blink`" title="Service Label" />
             </f7-list>
           </div>
         </f7-col>
@@ -219,11 +192,7 @@
     </f7-block>
 
     <template #fixed>
-      <f7-fab v-if="healthCount > 0"
-              position="center-bottom"
-              :text="`Health Issues (${healthCount})`"
-              color="red"
-              href="health/">
+      <f7-fab v-if="healthCount > 0" position="center-bottom" :text="`Health Issues (${healthCount})`" color="red" href="health/">
         <f7-icon f7="heart" />
       </f7-fab>
     </template>
@@ -239,13 +208,15 @@
 </style>
 
 <script>
-import { f7, theme } from 'framework7-vue'
-import { mapStores } from 'pinia'
+import { theme } from 'framework7-vue'
+import { mapStores, mapWritableState } from 'pinia'
 
 import AddonSection from './addon-section.vue'
 
 import { useComponentsStore } from '@/js/stores/useComponentsStore'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+
+import * as api from '@/api'
 
 export default {
   components: {
@@ -323,7 +294,11 @@ export default {
       const problemCount = this.orphanLinkCount + this.semanticsProblemCount + this.persistenceProblemCount
       return problemCount.toString()
     },
-    ...mapStores(useComponentsStore, useRuntimeStore)
+    ...mapStores(useComponentsStore, useRuntimeStore),
+    ...mapWritableState(useRuntimeStore, {
+      modelSelectedItem: 'modelSelectedItem'
+    })
+
   },
   watch: {
     apiEndpoints () {
@@ -337,7 +312,7 @@ export default {
 
       // can be done in parallel!
       if (useRuntimeStore().apiEndpoint('services')) {
-        this.$oh.api.get('/rest/services').then((data) => {
+        api.getServices().then((data) => {
           this.systemServices = data
             .filter((s) => (s.category === 'system') && (s.id !== 'org.openhab.persistence'))
             .sort((s1, s2) => this.sortByLabel(s1, s2))
@@ -346,11 +321,14 @@ export default {
         })
       }
       if (useRuntimeStore().apiEndpoint('addons')) {
-        this.$oh.api.get('/rest/addons?serviceId=all').then((data) => {
+        api.getAddons({ serviceId: 'all' }).then((data) => {
           this.addonsInstalled = data
             .filter((a) => a.installed && !['application/vnd.openhab.ruletemplate', 'application/vnd.openhab.uicomponent;type=widget', 'application/vnd.openhab.uicomponent;type=blocks'].includes(a.contentType))
             .sort((s1, s2) => this.sortByLabel(s1, s2))
           this.persistenceAddonsInstalled = this.addonsInstalled.filter((a) => a.installed && a.type === 'persistence')
+          this.addonsLoaded = true
+        }).catch((error) => {
+          console.error('Error loading addons:', error.message)
           this.addonsLoaded = true
         })
       }
@@ -361,28 +339,69 @@ export default {
     loadCounters () {
       if (!this.apiEndpoints) return
       if (useRuntimeStore().apiEndpoint('links'))
-        this.$oh.api.get('/rest/links/orphans').then((data) => { this.orphanLinkCount = data.length })
+        api.getOrphanLinks().then((data) => {
+          this.orphanLinkCount = data.length
+        }).catch((error) => {
+          console.error('Error loading orphan links:', error.message)
+        })
+
       if (useRuntimeStore().apiEndpoint('items'))
-        this.$oh.api.get('/rest/items/semantics/health').then((data) => { this.semanticsProblemCount = data.length })
+        api.getSemanticsHealth().then((data) => {
+          this.semanticsProblemCount = data.length
+        }).catch((error) => {
+          console.error('Error loading semantics health:', error.message)
+        })
+
       if (useRuntimeStore().apiEndpoint('persistence'))
-        this.$oh.api.get('/rest/persistence/health').then((data) => { this.persistenceProblemCount = data.length })
+        api.getPersistenceHealth().then((data) => {
+          this.persistenceProblemCount = data.length
+        }).catch((error) => {
+          console.error('Error loading persistence health:', error.message)
+        })
+
       if (useRuntimeStore().apiEndpoint('inbox'))
-        this.$oh.api.get('/rest/inbox?includeIgnored=false').then((data) => { this.inboxCount = data.filter((e) => e.flag === 'NEW').length.toString() })
+        api.getDiscoveredInboxItems({ includeIgnored: false }).then((data) => {
+          this.inboxCount = data.filter((e) => e.flag === 'NEW').length.toString()
+        }).catch((error) => {
+          console.error('Error loading inbox items:', error.message)
+        })
+
       if (useRuntimeStore().apiEndpoint('things'))
-        this.$oh.api.get('/rest/things?staticDataOnly=true').then((data) => { this.thingsCount = data.length.toString() })
+        api.getThings({ staticDataOnly: true }).then((data) => {
+          this.thingsCount = data.length.toString()
+        }).catch((error) => {
+          console.error('Error loading things:', error.message)
+        })
+
       if (useRuntimeStore().apiEndpoint('items'))
-        this.$oh.api.get('/rest/items?staticDataOnly=true').then((data) => { this.itemsCount = data.length.toString() })
+        api.getItems({ staticDataOnly: true }).then((data) => {
+          this.itemsCount = data.length.toString()
+        }).catch((error) => {
+          console.error('Error loading items:', error.message)
+        })
+
       if (useRuntimeStore().apiEndpoint('ui'))
-        this.$oh.api.get('/rest/ui/components/system:sitemap').then((data) => { this.sitemapsCount = data.length })
+        api.getRegisteredUiComponentsInNamespace({ namespace: 'system:sitemap' }).then((data) => {
+          this.sitemapsCount = data.length
+        }).catch((error) => {
+          console.error('Error loading sitemaps:', error.message)
+        })
+
       if (useRuntimeStore().apiEndpoint('transformations'))
-        this.$oh.api.get('/rest/transformations').then((data) => { this.transformationsCount = data.length.toString() })
-      if (useRuntimeStore().apiEndpoint('rules')) {
-        this.$oh.api.get('/rest/rules?staticDataOnly=true').then((data) => {
+        api.getTransformations().then((data) => {
+          this.transformationsCount = data.length.toString()
+        }).catch((error) => {
+          console.error('Error loading transformations:', error.message)
+        })
+
+      if (useRuntimeStore().apiEndpoint('rules'))
+        api.getRules({ staticDataOnly: true }).then((data) => {
           this.rulesCount = data.filter((r) => r.tags.indexOf('Scene') < 0 && r.tags.indexOf('Script') < 0).length.toString()
           this.scenesCount = data.filter((r) => r.tags.indexOf('Scene') >= 0).length.toString()
           this.scriptsCount = data.filter((r) => r.tags.indexOf('Script') >= 0).length.toString()
+        }).catch((error) => {
+          console.error('Error loading rules:', error.message)
         })
-      }
     },
     expand (type) {
       this.expandedTypes[type] = true

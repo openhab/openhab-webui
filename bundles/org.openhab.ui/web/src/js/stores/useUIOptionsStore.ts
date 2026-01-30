@@ -1,95 +1,98 @@
 import { defineStore } from 'pinia'
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { Dom7 } from 'framework7'
-import { f7 } from 'framework7-vue'
+import { f7, f7ready } from 'framework7-vue'
+import type { CodeEditorType } from '@/assets/definitions/media-types.ts'
 
-declare global {
-  interface Window {
-    OHApp?: {
-      preferDarkMode: () => boolean
-    }
-  }
-}
+type StoredDarkModeType = 'auto' | 'dark' | 'light'
 
 export const useUIOptionsStore = defineStore('uiOptions', () => {
   // States
+  // shared with basicUI
   const _storedDarkMode = localStorage.getItem('openhab.ui:theme.dark')
-  const storedDarkMode = ref<'auto' | 'dark' | 'light'>(
-    _storedDarkMode === 'auto' || _storedDarkMode === 'dark' || _storedDarkMode === 'light'
-      ? _storedDarkMode
-      : 'auto'
+  const storedDarkMode = ref<StoredDarkModeType>(
+    ['auto', 'dark', 'light'].includes(_storedDarkMode as any) ? (_storedDarkMode as StoredDarkModeType) : 'auto'
   )
+  const darkModeChange = ref<number>(0) // Used to trigger recomputation of darkMode
 
   const _storedBars = localStorage.getItem('openhab.ui:theme.bars') || 'light'
-  const bars = ref<'light' | 'filled'>(
-    ['light', 'filled'].includes(_storedBars as any) ? (_storedBars as 'light' | 'filled') : 'light'
-  )
+  const bars = ref<'light' | 'filled'>(['light', 'filled'].includes(_storedBars as any) ? (_storedBars as 'light' | 'filled') : 'light')
 
   const _storedNavBar = localStorage.getItem('openhab.ui:theme.home.navbar') || 'default'
   const homeNavBar = ref<'default' | 'simple' | 'large'>(
-    ['default', 'simple', 'large'].includes(_storedNavBar as any)
-      ? (_storedNavBar as 'default' | 'simple' | 'large')
-      : 'default'
+    ['default', 'simple', 'large'].includes(_storedNavBar as any) ? (_storedNavBar as 'default' | 'simple' | 'large') : 'default'
   )
 
-  const _storedHomeBackground =
-    localStorage.getItem('openhab.ui:theme.home.background') || 'default'
+  const _storedHomeBackground = localStorage.getItem('openhab.ui:theme.home.background') || 'default'
   const homeBackground = ref<'default' | 'standard' | 'white'>(
     ['default', 'standard', 'white'].includes(_storedHomeBackground as any)
       ? (_storedHomeBackground as 'default' | 'standard' | 'white')
       : 'default'
   )
 
-  const _storedExpandableCardAnimation =
-    localStorage.getItem('openhab.ui:theme.home.cardanimation') || 'default'
+  const _storedExpandableCardAnimation = localStorage.getItem('openhab.ui:theme.home.cardanimation') || 'default'
   const disableExpandableCardAnimation = ref<boolean>(_storedExpandableCardAnimation === 'disabled')
 
-  const blocklyRenderer = ref<string | null>(
-    localStorage.getItem('openhab.ui:blockly.renderer')
-  )
-  const disablePageTransitionAnimation = ref<boolean>(
-    localStorage.getItem('openhab.ui:theme.disablepagetransition') === 'true'
-  )
+  const blocklyRenderer = ref<string | null>(localStorage.getItem('openhab.ui:blockly.renderer'))
+  const disablePageTransitionAnimation = ref<boolean>(localStorage.getItem('openhab.ui:theme.disablepagetransition') === 'true')
 
-  const hideChatInput = ref<boolean>(
-    localStorage.getItem('openhab.ui:theme.home.hidechatinput') === 'true'
-  )
+  const hideChatInput = ref<boolean>(localStorage.getItem('openhab.ui:theme.home.hidechatinput') === 'true')
 
+  // shared with basicUI
   const webAudio = ref<boolean>(localStorage.getItem('openhab.ui:webaudio.enable') === 'true')
 
-  const visibleBreakpointDisabled = ref<boolean>(
-    localStorage.getItem('openhab.ui:panel.visibleBreakpointDisabled') === 'true'
+  const visibleBreakpointDisabled = ref<boolean>(localStorage.getItem('openhab.ui:panel.visibleBreakpointDisabled') === 'true')
+
+  const _storedCodeEditorType = localStorage.getItem('openhab.ui:codeEditor.type') || 'YAML'
+  const codeEditorType = ref<CodeEditorType>(
+    ['DSL', 'YAML'].includes(_storedCodeEditorType as any) ? (_storedCodeEditorType as CodeEditorType) : 'YAML'
   )
 
-  const codeEditorType = ref<string>(localStorage.getItem('openhab.ui:codeEditor.type') || 'YAML')
+  const modelPickerShowItemName = ref<boolean>(localStorage.getItem('openhab.ui:modelPicker.showItemName') === 'true')
+  const modelPickerShowItemTags = ref<boolean>(localStorage.getItem('openhab.ui:modelPicker.showItemTags') === 'true')
+  const modelPickerShowNonSemantic = ref<boolean>(localStorage.getItem('openhab.ui:modelPicker.showNonSemantic') === 'true')
+
+  const sitemapShowItemName = ref<boolean>(localStorage.getItem('openhab.ui:sitemap.showItemName') === 'true')
+
+  const darkMode = computed({
+    get: (): 'dark' | 'light' => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      darkModeChange.value // darkModeChange to force re-computation
+      if (storedDarkMode.value === 'auto') {
+        if (typeof window.OHApp?.preferDarkMode === 'function') {
+          return window.OHApp.preferDarkMode() ? 'dark' : 'light'
+        }
+        return f7.darkMode ? 'dark' : 'light'
+      }
+      return storedDarkMode.value
+    },
+    set: (value: StoredDarkModeType) => {
+      storedDarkMode.value = value
+      if (value === 'auto') {
+        f7.enableAutoDarkMode()
+        localStorage.removeItem('openhab.ui:theme.dark')
+      } else {
+        f7.disableAutoDarkMode()
+        localStorage.setItem('openhab.ui:theme.dark', value)
+      }
+
+      bars.value = 'light' // Reset bars to light when dark mode changes
+      updateClasses()
+    }
+  })
+
+  f7ready(() => {
+    darkModeChange.value++ // trigger computed darkMode now f7 is ready
+    updateClasses()
+    f7.on('darkModeChange', () => {
+      darkModeChange.value++
+      updateClasses()
+    })
+  })
 
   // Getters
-  function getDarkMode () {
-    if (storedDarkMode.value === 'auto') {
-      return typeof window.OHApp?.preferDarkMode === 'function' ? window.OHApp.preferDarkMode() : f7.darkMode ? 'dark' : 'light'
-    }
-
-    return storedDarkMode.value
-  }
-
-  function isAutoDarkMode () {
+  function isAutoDarkMode() {
     return storedDarkMode.value === 'auto'
-  }
-
-  // Actions
-  function setDarkMode (value: 'auto' | 'dark' | 'light') {
-    storedDarkMode.value = value
-
-    if (value === 'auto') {
-      f7.enableAutoDarkMode()
-      localStorage.removeItem('openhab.ui:theme.dark')
-    } else {
-      f7.disableAutoDarkMode()
-      localStorage.setItem('openhab.ui:theme.dark', value)
-    }
-
-    bars.value = 'light' // Reset bars to light when dark mode changes
-    updateClasses()
   }
 
   watch(bars, (newValue) => {
@@ -138,8 +141,22 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     localStorage.setItem('openhab.ui:codeEditor.type', newValue)
   })
 
-  function updateClasses () {
-    if (getDarkMode() === 'dark') {
+  watch(modelPickerShowItemName, (newValue) => {
+    localStorage.setItem('openhab.ui:modelPicker.showItemName', newValue?.toString())
+  })
+  watch(modelPickerShowItemTags, (newValue) => {
+    localStorage.setItem('openhab.ui:modelPicker.showItemTags', newValue?.toString())
+  })
+  watch(modelPickerShowNonSemantic, (newValue) => {
+    localStorage.setItem('openhab.ui:modelPicker.showNonSemantic', newValue?.toString())
+  })
+
+  watch(sitemapShowItemName, (newValue) => {
+    localStorage.setItem('openhab.ui:sitemap.showItemName', newValue?.toString())
+  })
+
+  function updateClasses() {
+    if (darkMode.value === 'dark') {
       Dom7('html').addClass('dark')
     } else {
       Dom7('html').removeClass('dark')
@@ -156,9 +173,9 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     }
   }
 
-  function themeOptions () {
+  function themeOptions() {
     return {
-      dark: getDarkMode(),
+      dark: darkMode,
       autoDarkMode: isAutoDarkMode(),
       bars: bars.value,
       homeNavBar: homeNavBar.value,
@@ -174,8 +191,7 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
 
   return {
     storedDarkMode,
-    getDarkMode,
-    setDarkMode,
+    darkMode,
     isAutoDarkMode,
     bars,
     homeNavBar,
@@ -187,6 +203,10 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     webAudio,
     visibleBreakpointDisabled,
     codeEditorType,
+    modelPickerShowItemName,
+    modelPickerShowItemTags,
+    modelPickerShowNonSemantic,
+    sitemapShowItemName,
 
     updateClasses,
     themeOptions

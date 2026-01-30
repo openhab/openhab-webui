@@ -8,15 +8,7 @@ import {
   THERMOSTAT_MODES,
   UNITS_OF_MEASURE
 } from './constants.js'
-import {
-  docLink,
-  getOptions,
-  getSemanticFormat,
-  getSupportedRange,
-  getTemperatureScale,
-  getUnitOfMeasure,
-  titleCase
-} from './helpers.js'
+import { docLink, getOptions, getSemanticFormat, getSupportedRange, getTemperatureScale, getUnitOfMeasure, titleCase } from './helpers.js'
 
 export default {
   actionMappings: (format, placeholder, defaultValue) => ({
@@ -105,7 +97,7 @@ export default {
     label: 'Comfort Range',
     type: 'INTEGER',
     min: 1,
-    default: (config) => (config.scale || getTemperatureScale(item)) === 'FAHRENHEIT' ? 2 : 1
+    default: (config) => ((config.scale || getTemperatureScale(item)) === 'FAHRENHEIT' ? 2 : 1)
   }),
   deviceDescription: (defaultValue) => ({
     name: 'description',
@@ -199,14 +191,12 @@ export default {
   presets: (stateDescription, placeholder) => ({
     name: 'presets',
     label: 'Presets',
-    description:
-      'Each preset formatted as <code>presetValue=@assetIdOrName1:@assetIdOrName2:...</code>' +
-      ` (${docLink('Asset Catalog')})`,
+    description: 'Each preset formatted as <code>presetValue=@assetIdOrName1:@assetIdOrName2:...</code>' + ` (${docLink('Asset Catalog')})`,
     type: 'TEXT',
-    default:
-      stateDescription?.options?.filter((option) => !isNaN(option.value))
-        .map((option) => `${option.value}=${option.label}`)
-        .slice(0, STATE_DESCRIPTION_OPTIONS_LIMIT),
+    default: stateDescription?.options
+      ?.filter((option) => !isNaN(option.value))
+      .map((option) => `${option.value}=${option.label}`)
+      .slice(0, STATE_DESCRIPTION_OPTIONS_LIMIT),
     placeholder: placeholder.replace(/,/g, '\n'),
     multiple: true,
     visible: (_, config) => !config.nonControllable
@@ -270,7 +260,7 @@ export default {
     label: 'Setpoint Range',
     description: 'Formatted as <code>minValue:maxValue</code>',
     type: 'TEXT',
-    default: (config) => (config.scale || getTemperatureScale(item)) === 'FAHRENHEIT' ? '40:90' : '4:32',
+    default: (config) => ((config.scale || getTemperatureScale(item)) === 'FAHRENHEIT' ? '40:90' : '4:32'),
     pattern: '[+-]?[0-9]+:[+-]?[0-9]+'
   }),
   speedLevels: () => ({
@@ -324,9 +314,7 @@ export default {
     label: 'Supported Inputs',
     description: 'Each input formatted as <code>inputValue=inputName1:inputName2:...</code>',
     type: 'TEXT',
-    default:
-      stateDescription?.options?.map((option) => `${option.value}=${option.label}`)
-        .slice(0, STATE_DESCRIPTION_OPTIONS_LIMIT),
+    default: stateDescription?.options?.map((option) => `${option.value}=${option.label}`).slice(0, STATE_DESCRIPTION_OPTIONS_LIMIT),
     placeholder: placeholder.replace(/,/g, '\n'),
     multiple: true,
     required: !stateDescription?.options?.length
@@ -334,12 +322,9 @@ export default {
   supportedModes: (stateDescription) => ({
     name: 'supportedModes',
     label: 'Supported Modes',
-    description:
-      `Each mode formatted as <code>mode=@assetIdOrName1:@assetIdOrName2:...</code> (${docLink('Asset Catalog')})`,
+    description: `Each mode formatted as <code>mode=@assetIdOrName1:@assetIdOrName2:...</code> (${docLink('Asset Catalog')})`,
     type: 'TEXT',
-    default:
-      stateDescription?.options?.map((option) => `${option.value}=${option.label}`)
-        .slice(0, STATE_DESCRIPTION_OPTIONS_LIMIT),
+    default: stateDescription?.options?.map((option) => `${option.value}=${option.label}`).slice(0, STATE_DESCRIPTION_OPTIONS_LIMIT),
     placeholder: 'Normal=Normal:Cottons\nWhites=Whites',
     multiple: true,
     required: !stateDescription?.options?.length

@@ -1,5 +1,4 @@
-export const PredefinedStrategies =
-  ['everyChange', 'everyUpdate', 'restoreOnStartup', 'forecast']
+export const PredefinedStrategies = ['everyChange', 'everyUpdate', 'restoreOnStartup', 'forecast']
 
 export const CommonCronStrategies = [
   {
@@ -18,7 +17,8 @@ export const CommonCronStrategies = [
 
 const filterInvertedParameter = {
   advanced: false,
-  description: 'Whether to invert the above filter, i.e. persist values that do not equal the above values or are outside of the specified range',
+  description:
+    'Whether to invert the above filter, i.e. persist values that do not equal the above values or are outside of the specified range',
   label: 'Inverted',
   name: 'inverted',
   required: false,
@@ -61,7 +61,7 @@ export const FilterTypes = [
         type: 'TEXT'
       }
     ],
-    footerFn: (f) => f.relative ? f.value + ' %' : (f.unit ? f.value + ' ' + f.unit : f.value)
+    footerFn: (f) => (f.relative ? f.value + ' %' : f.unit ? f.value + ' ' + f.unit : f.value)
   },
   {
     name: 'timeFilters',
@@ -100,7 +100,8 @@ export const FilterTypes = [
     configDescriptionParameters: [
       {
         advanced: false,
-        description: 'Enter values separated by comma (use point <code>.</code> as decimal point), e.g. <code>one, two, three</code>, to be persisted',
+        description:
+          'Enter values separated by comma (use point <code>.</code> as decimal point), e.g. <code>one, two, three</code>, to be persisted',
         label: 'Values',
         name: 'values',
         required: true,
@@ -140,6 +141,7 @@ export const FilterTypes = [
       },
       filterInvertedParameter
     ],
-    footerFn: (f) => (f.inverted === true ? ']' : '[') + f.lower + ';' + f.upper + (f.inverted === true ? '[' : ']' + (f.unit ? ' ' + f.unit : ''))
+    footerFn: (f) =>
+      (f.inverted === true ? ']' : '[') + f.lower + ';' + f.upper + (f.inverted === true ? '[' : ']' + (f.unit ? ' ' + f.unit : ''))
   }
 ]

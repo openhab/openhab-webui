@@ -5,7 +5,7 @@
       v-for="(slide, idx) in slides"
       :key="'editmode-' + idx"
       class="oh-swiper-slide"
-      :class="{ 'edit-mode': context.editmode }">
+      :class="{ 'unset-width': mergedConfig.slidesPerView === 'auto', 'edit-mode': context.editmode }">
       <f7-menu v-if="context.editmode" class="configure-layout-menu padding-horizontal">
         <f7-menu-item style="margin-left: auto" icon-f7="rectangle_on_rectangle" dropdown>
           <f7-menu-dropdown right>
@@ -47,27 +47,27 @@
     </f7-swiper-slide>
 
     <!-- renders slides defined in the slides slot -->
-    <template
-      v-if="context.component.slots && context.component.slots.slides && Array.isArray(context.component.slots.slides)">
+    <template v-if="context.component.slots && context.component.slots.slides && Array.isArray(context.component.slots.slides)">
       <f7-swiper-slide v-for="(slide, idx) in context.component.slots.slides" :key="idx">
-        <generic-widget-component v-bind="$attrs" :context="childContext(slide)" />
+        <generic-widget-component :context="childContext(slide)" />
       </f7-swiper-slide>
     </template>
 
     <!-- TODO-V3.1: Refactor oh-repeater logic to a mixin so we can replicate oh-repeater's handling here directly??? -->
     <!-- special rendering for oh-repeater so its children properly render directly inside f7-swiper-slide -->
-    <generic-widget-component
-      v-for="(repeater, idx) in repeater"
-      :key="'gwc-repeater-' + idx"
-      :context="childContext(repeater)" />
+    <generic-widget-component v-for="(repeater, idx) in repeater" :key="'gwc-repeater-' + idx" :context="childContext(repeater)" />
 
     <!-- add slide component to add slides in the page editor -->
     <f7-swiper-slide v-if="context.editmode">
-      <oh-placeholder-widget
-        @click="context.editmode.addWidget(context.component, null, context.parent)" />
+      <oh-placeholder-widget @click="context.editmode.addWidget(context.component, null, context.parent)" />
     </f7-swiper-slide>
   </f7-swiper>
 </template>
+
+<style lang="stylus">
+.oh-swiper-slide.unset-width
+    width unset !important
+</style>
 
 <script>
 import { defineAsyncComponent } from 'vue'

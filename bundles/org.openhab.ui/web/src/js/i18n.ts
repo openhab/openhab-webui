@@ -22,22 +22,20 @@ const fallbackLocale = import.meta.env.VUE_APP_I18N_FALLBACK_LOCALE || 'en'
  * @param mergeLocaleMessage Function to merge the loaded locale messages - should be obtained from useI18n with either 'local' or 'global' useScope from the setup function
  * @returns Promise that resolves when all messages are loaded.
  */
-export async function loadLocaleMessages (dir: string, mergeLocaleMessage: (locale: string, messages: any) => void) {
+export async function loadLocaleMessages(dir: string, mergeLocaleMessage: (locale: string, messages: any) => void) {
   // use set to avoid loading the same locale multiple times
   const localeFiles: Set<string> = new Set([
     useRuntimeStore().locale,
-    useRuntimeStore().locale.split('-')[0],
+    useRuntimeStore().locale.split('-')[0] || '',
     fallbackLocale,
-    fallbackLocale.split('-')[0]
+    fallbackLocale.split('-')[0] || ''
   ])
   const localeFilesArray = Array.from(localeFiles)
 
-  return Promise.allSettled(
-    localeFilesArray.map((locale) => import(`../assets/i18n/${dir}/${locale}.json`))
-  ).then((results) => {
+  return Promise.allSettled(localeFilesArray.map((locale) => import(`../assets/i18n/${dir}/${locale}.json`))).then((results) => {
     results.forEach((result, index) => {
       const locale = localeFilesArray[index]
-      if (result.status === 'fulfilled') {
+      if (locale !== undefined && result.status === 'fulfilled') {
         mergeLocaleMessage(locale, { ...result.value.default })
       }
     })
@@ -46,8 +44,8 @@ export async function loadLocaleMessages (dir: string, mergeLocaleMessage: (loca
 
 export const i18n: I18n = createI18n({
   legacy: false,
-  locale: '',           // this will be updated when useRuntimeStore is available
-  fallbackLocale,       // set here so it is set even if REST API connection completely fails and useRuntimeStore is not available
+  locale: '', // this will be updated when useRuntimeStore is available
+  fallbackLocale, // set here so it is set even if REST API connection completely fails and useRuntimeStore is not available
   fallbackWarn: false,
   missingWarn: false,
   globalInjection: true,

@@ -44,3 +44,75 @@ updates:
       - dependency-name: "*graalvm*" # do not touch graalvm related stuff
       - dependency-name: "org.openapitools:openapi*" # updated togeter with openapi generator
       - dependency-name: "org.apache.openjpa:openjpa*" # should be done with openjpa upgrades"
+
+  # Main UI:
+  - package-ecosystem: "npm"
+    directory: "/bundles/org.openhab.ui/web/" # Location of package manifests
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 15
+    labels:
+      - "main ui"
+      - dependencies
+    cooldown: # Delay Dependabot updates
+      default-days: 14
+      semver-major-days: 28
+    groups: # Groups Dependabot updates
+      # Core Vue & State Management
+      vue-ecosystem:
+        patterns:
+          - "vue"
+          - "pinia"
+          - "@vue/*"
+          - "@vitejs/plugin-vue"
+      # Framework7
+      framework7-ecosystem:
+        patterns:
+          - "framework7*"
+          - "template7"
+          - "dom7"
+      # Blockly
+      blockly-ecosystem:
+        patterns:
+          - "blockly"
+          - "@blockly/*"
+          - "@mit-app-inventor/blockly-plugin-*"
+      # CodeMirror Code Editor
+      codemirror-ecosystem:
+        patterns:
+          - "codemirror"
+          - "vue-codemirror"
+          - "@codemirror/*"
+          - "@uiw/codemirror-*"
+          - "@replit/codemirror-*"
+      # Echarts
+      echarts-ecosystem:
+        patterns:
+          - "*echarts*"
+      # Leaflet
+      leaflet-ecosystem:
+        patterns:
+          - "*leaflet*"
+      # Vite and related Build tooling
+      build-vite:
+        patterns:
+          - "vite*"
+          - "rollup*"
+          - "esbuild"
+          - "typescript"
+          - "vue-tsc"
+      # Linting & Formatting
+      linting-formatting:
+        patterns:
+          - "eslint*"
+          - "@eslint/*"
+          - "*eslint-plugin*"
+          - "oxfmt"
+          - "typescript-eslint"
+          - "@typescript-eslint/*"
+          - "vue-eslint-parser"
+    ignore:
+      - dependency-name: "pkce-challenge" # Newer versions don't work in insecure contexts
+      - dependency-name: "@types/node" # Upgrade manually when switching Node.js version
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]

@@ -20,10 +20,10 @@ export default {
   props: {
     context: Object
   },
-  data () {
+  data() {
     return {
-      vars: (this.context) ? this.context.vars : {},
-      ctxVars: (this.context) ? this.context.ctxVars : {},
+      vars: this.context ? this.context.vars : {},
+      ctxVars: this.context ? this.context.ctxVars : {},
       widgetVars: {},
       varScope: null,
       scopedCssUid: null,
@@ -31,10 +31,11 @@ export default {
     }
   },
   computed: {
-    componentType () {
+    componentType() {
+      if (!this.context?.component?.component) return null
       return this.evaluateExpression('type', this.context.component.component)
     },
-    childWidgetComponentType () {
+    childWidgetComponentType() {
       if (!this.componentType.startsWith('widget:')) return null
       const widget = useComponentsStore().widget(this.componentType.substring(7))
       if (!widget) {
@@ -42,7 +43,7 @@ export default {
       }
       return widget.component
     },
-    config () {
+    config() {
       if (!this.context?.component) return null
       let evalConfig = {}
       // Fallback to modelConfig for oh- components to allow configuring them in modals
@@ -56,7 +57,7 @@ export default {
       }
       return evalConfig
     },
-    props () {
+    props() {
       if (!this.context?.component) return {}
       if (this.context.component.props?.parameters) {
         let defaultValues = {}
@@ -70,8 +71,8 @@ export default {
         return this.context.props || {}
       }
     },
-    visible () {
-      if (this.context.editmode || !this.context.component.config) return true
+    visible() {
+      if (this.context?.editmode || !this.context?.component?.config) return true
       const visible = this.evaluateExpression('visible', this.context.component.config.visible)
       const visibleTo = this.context.component.config.visibleTo
       if (visible === undefined && visibleTo === undefined) return true
@@ -84,31 +85,32 @@ export default {
       }
       return true
     },
-    hasAction () {
+    hasAction() {
       return this.config && (this.config.action || this.config.actionPropsParameterGroup)
     },
     ...mapStores(useUIOptionsStore)
   },
-  mounted () {
-    if (this.context?.component?.config?.stylesheet) {
+  mounted() {
+    const stylesheet = this.context?.component?.config?.stylesheet
+    if (stylesheet) {
       this.scopedCssUid = 'scoped-' + f7.utils.id()
       let style = document.createElement('style')
       style.id = this.scopedCssUid
-      style.innerHTML = scope(this.context.component.config.stylesheet, '.' + this.scopedCssUid)
+      style.innerHTML = scope(stylesheet, '.' + this.scopedCssUid)
       document.head.appendChild(style)
     }
   },
-  beforeUnmount () {
+  beforeUnmount() {
     if (this.scopedCssUid) {
       const scoped_stylesheet = document.getElementById(this.scopedCssUid)
       if (scoped_stylesheet) scoped_stylesheet.remove()
     }
   },
   methods: {
-    evaluateExpression (key, value, context, props) {
+    evaluateExpression(key, value, context, props) {
       return this.widgetExpression.evaluateExpression(key, value, context || this.context, props || this.props)
     },
-    childContext (component) {
+    childContext(component) {
       return {
         component,
         rootcomponent: this.context.root || this.context.component,
@@ -126,11 +128,22 @@ export default {
         parent: this.context
       }
     },
-    childWidgetContext () {
+    cardChildContext(component) {
+      // clone object to avoid mutating the original object
+      const cmp = { ...component }
+      if (cmp.config?.style) {
+        cmp.config = { ...cmp.config }
+        // remove style config as it should only apply to top-level element and not children
+        delete cmp.config.style
+      }
+      return this.childContext(cmp)
+    },
+    childWidgetContext() {
       if (!this.componentType.startsWith('widget:')) return null
       let widget = useComponentsStore().widget(this.componentType.substring(7))
       if (!widget) {
         console.warn('widget not found, cannot render: ' + this.componentType)
+        return null
       }
       if (this.context.vars) {
         for (const varKey in this.context.vars) {

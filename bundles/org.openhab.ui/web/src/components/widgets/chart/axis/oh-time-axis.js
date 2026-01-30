@@ -6,7 +6,7 @@ import { startOf } from '@/components/widgets/chart/utils.ts'
 dayjs.extend(IsoWeek)
 
 export default {
-  get (component, startTime, endTime, chart, chartWidget) {
+  get(component, startTime, endTime, chart, chartWidget, inverse, numberFormatter) {
     let axis = chartWidget.evaluateExpression(ComponentId.get(component), component.config)
     axis.type = 'time'
     const chartType = chart.config.chartType

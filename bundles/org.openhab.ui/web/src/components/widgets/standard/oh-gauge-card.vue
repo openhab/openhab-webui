@@ -1,17 +1,18 @@
 <template>
   <oh-card :context="context" :content-class="['oh-gauge-card', 'display-flex', 'justify-content-center']">
     <template #content-root>
-      <f7-card-content :style="config.contentStyle"
-                       :class="[
+      <f7-card-content
+        :style="config.contentStyle"
+        :class="[
                          ...(Array.isArray(config.contentClass) ? config.contentClass : []),
                          'oh-gauge-card',
                          'display-flex',
                          'justify-content-center',
                        ]">
         <f7-link v-if="hasAction" class="oh-gauge-link" @click="performAction">
-          <oh-gauge :context="childContext(context.component)" />
+          <oh-gauge :context="cardChildContext(context.component)" />
         </f7-link>
-        <oh-gauge v-else :context="childContext(context.component)" />
+        <oh-gauge v-else :context="cardChildContext(context.component)" />
       </f7-card-content>
     </template>
   </oh-card>

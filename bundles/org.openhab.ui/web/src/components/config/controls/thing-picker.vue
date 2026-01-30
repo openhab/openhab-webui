@@ -1,18 +1,12 @@
 <template>
-  <f7-list-item v-if="ready"
-                :title="title || 'Thing'"
-                smart-select
-                :smart-select-params="smartSelectParams"
-                ref="smartSelect">
-    <select :name="name"
-            :multiple="multiple"
-            @change="select"
-            :required="required">
+  <f7-list-item v-if="ready" :title="title || 'Thing'" smart-select :smart-select-params="smartSelectParams" ref="smartSelect">
+    <select :name="name" :multiple="multiple" @change="select" :required="required">
       <option v-if="!multiple" value="" />
-      <option v-for="thing in things"
-              :value="thing.UID"
-              :key="thing.UID"
-              :selected="multiple ? value.indexOf(thing.UID) >= 0 : value === thing.UID">
+      <option
+        v-for="thing in things"
+        :value="thing.UID"
+        :key="thing.UID"
+        :selected="multiple ? value.indexOf(thing.UID) >= 0 : value === thing.UID">
         {{ thing.label ? thing.label + ' (' + thing.UID + ')' : thing.UID }}
       </option>
     </select>
@@ -24,6 +18,8 @@
 <script>
 import { f7 } from 'framework7-vue'
 import { nextTick } from 'vue'
+
+import * as api from '@/api'
 
 export default {
   props: {
@@ -70,7 +66,7 @@ export default {
   },
   created () {
     this.smartSelectParams.closeOnSelect = !(this.multiple)
-    this.$oh.api.get('/rest/things?staticDataOnly=true').then((data) => {
+    api.getThings({ staticDataOnly: true }).then((data) => {
       this.things = data.sort((a, b) => {
         const labelA = a.label || a.UID
         const labelB = b.label || b.UID

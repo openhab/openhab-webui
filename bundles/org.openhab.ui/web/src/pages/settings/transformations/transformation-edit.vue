@@ -1,32 +1,28 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar>
-      <oh-nav-content :title="(createMode ? 'Create' : 'Edit') + ' Transformation' + dirtyIndicator"
-                      :subtitle="(!createMode && transformation) ? editorMode : ''"
-                      back-link="Transformations"
-                      back-link-url="/settings/transformations/"
-                      :editable="isEditable"
-                      :save-link="createMode ? 'Create' : `Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
-                      @save="createMode ? createTransformation() : save()" />
+      <oh-nav-content
+        :title="(createMode ? 'Create' : 'Edit') + ' Transformation' + dirtyIndicator"
+        :subtitle="(!createMode && transformation) ? editorMode : ''"
+        back-link="Transformations"
+        back-link-url="/settings/transformations/"
+        :editable="isEditable"
+        :save-link="createMode ? 'Create' : `Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
+        @save="createMode ? createTransformation() : save()" />
     </f7-navbar>
     <!-- Create Transformation -->
-    <transformation-general-settings v-if="createMode && ready"
-                                     :createMode="true"
-                                     :transformation="transformation"
-                                     :types="types"
-                                     :languages="languages"
-                                     :language="language"
-                                     @new-type="transformation.type = $event"
-                                     @new-language="language = $event" />
+    <transformation-general-settings
+      v-if="createMode && ready"
+      :createMode="true"
+      :transformation="transformation"
+      :types="types"
+      :languages="languages"
+      :language="language"
+      @new-type="transformation.type = $event"
+      @new-language="language = $event" />
     <div v-if="ready && createMode" class="if-aurora display-flex justify-content-center margin padding">
       <div class="flex-shrink-0">
-        <f7-button class="padding-left padding-right"
-                   style="width: 150px"
-                   color="blue"
-                   large
-                   raised
-                   fill
-                   @click="createTransformation">
+        <f7-button class="padding-left padding-right" style="width: 150px" color="blue" large raised fill @click="createTransformation">
           Create
         </f7-button>
       </div>
@@ -36,69 +32,73 @@
       <span class="display-flex flex-direction-row align-items-center" />
       <span class="display-flex flex-direction-row align-items-center">
         <f7-segmented v-if="isBlockly" class="margin-right">
-          <f7-button outline
-                     small
-                     :active="!blocklyCodePreview"
-                     icon-f7="ticket"
-                     :icon-size="(theme.aurora) ? 20 : 22"
-                     class="no-ripple"
-                     @click="blocklyCodePreview = false" />
-          <f7-button outline
-                     small
-                     :active="blocklyCodePreview"
-                     icon-f7="doc_text"
-                     :icon-size="(theme.aurora) ? 20 : 22"
-                     class="no-ripple"
-                     @click="showBlocklyCode" />
+          <f7-button
+            outline
+            small
+            :active="!blocklyCodePreview"
+            icon-f7="ticket"
+            :icon-size="(theme.aurora) ? 20 : 22"
+            class="no-ripple"
+            @click="blocklyCodePreview = false" />
+          <f7-button
+            outline
+            small
+            :active="blocklyCodePreview"
+            icon-f7="doc_text"
+            :icon-size="(theme.aurora) ? 20 : 22"
+            class="no-ripple"
+            @click="showBlocklyCode" />
         </f7-segmented>
-        <f7-link v-if="DocumentationLinks[transformation.type]"
-                 icon-color="blue"
-                 :text="$device.desktop ? 'Open Documentation' : 'Docs'"
-                 tooltip="Open documentation"
-                 icon-ios="f7:question_circle"
-                 icon-md="f7:question_circle"
-                 icon-aurora="f7:question_circle"
-                 color="blue"
-                 :href="runtimeStore.websiteUrl + DocumentationLinks[transformation.type]"
-                 target="_blank"
-                 external />
-        <f7-link class="right details-link margin-left padding-right"
-                 ref="detailsLink"
-                 @click="detailsOpened = true"
-                 icon-f7="chevron_up" />
+        <f7-link
+          v-if="DocumentationLinks[transformation.type]"
+          icon-color="blue"
+          :text="$device.desktop ? 'Open Documentation' : 'Docs'"
+          tooltip="Open documentation"
+          icon-ios="f7:question_circle"
+          icon-md="f7:question_circle"
+          icon-aurora="f7:question_circle"
+          color="blue"
+          :href="runtimeStore.websiteUrl + DocumentationLinks[transformation.type]"
+          target="_blank"
+          external />
+        <f7-link
+          class="right details-link margin-left padding-right"
+          ref="detailsLink"
+          @click="detailsOpened = true"
+          icon-f7="chevron_up" />
       </span>
     </f7-toolbar>
-    <f7-icon v-if="!createMode && ready && (!isBlockly && !isEditable) || (blocklyCodePreview && isBlockly)"
-             f7="lock"
-             class="float-right margin"
-             style="opacity: 0.5; z-index: 4000; user-select: none"
-             size="50"
-             color="gray"
-             :tooltip="(isBlockly) ? 'Cannot edit the code generated by Blockly' : 'This transformation is not editable because it has been provisioned from a file'" />
-    <editor v-if="!createMode && ready && (!isBlockly || blocklyCodePreview)"
-            class="transformation-editor"
-            :mode="editorMode"
-            :value="transformation.configuration.function"
-            @input="onEditorInput"
-            :read-only="isBlockly || !isEditable"
-            :tern-autocompletion-hook="true" />
-    <blockly-editor v-else-if="isBlockly"
-                    ref="blocklyEditor"
-                    :blocks="transformation.configuration.blockSource"
-                    @change="dirty = true" />
+    <f7-icon
+      v-if="!createMode && ready && (!isBlockly && !isEditable) || (blocklyCodePreview && isBlockly)"
+      f7="lock"
+      class="float-right margin"
+      style="opacity: 0.5; z-index: 4000; user-select: none"
+      size="50"
+      color="gray"
+      :tooltip="(isBlockly) ? 'Cannot edit the code generated by Blockly' : 'This transformation is not editable because it has been provisioned from a file'" />
+    <editor
+      v-if="!createMode && ready && (!isBlockly || blocklyCodePreview)"
+      class="transformation-editor"
+      :mode="editorMode"
+      :value="transformation.configuration.function"
+      @input="onEditorInput"
+      :read-only="isBlockly || !isEditable"
+      :tern-autocompletion-hook="true" />
+    <blockly-editor v-else-if="isBlockly" ref="blocklyEditor" :blocks="transformation.configuration.blockSource" @change="dirty = true" />
     <!-- TODO: Enable Blockly after blocks have been adjusted
     <f7-fab v-show="transformation.configuration && !transformation.configuration.function && transformation.configuration.mode === 'application/javascript' && !isBlockly" position="center-bottom" color="blue" @click="convertToBlockly" text="Design with Blockly">
       <f7-icon f7="ticket_fill" />
     </f7-fab>
     -->
 
-    <f7-sheet v-if="ready"
-              ref="detailsSheet"
-              class="transformation-details-sheet"
-              :backdrop="false"
-              :close-on-escape="true"
-              :opened="detailsOpened"
-              @sheet:closed="detailsOpened = false">
+    <f7-sheet
+      v-if="ready"
+      ref="detailsSheet"
+      class="transformation-details-sheet"
+      :backdrop="false"
+      :close-on-escape="true"
+      :opened="detailsOpened"
+      @sheet:closed="detailsOpened = false">
       <f7-page>
         <f7-toolbar tabbar bottom>
           <span class="margin-left">Transformation details</span>
@@ -112,12 +112,16 @@
         <f7-block class="block-narrow">
           <f7-col>
             <f7-list v-if="isEditable">
-              <f7-list-button color="red" @click="deleteTransformation">
-                Remove Transformation
-              </f7-list-button>
+              <f7-list-button color="red" @click="deleteTransformation"> Remove Transformation </f7-list-button>
             </f7-list>
             <p class="text-align-center">
-              Tip: Use <code>{{ itemStateTransformationCode }}</code> <clipboard-icon :value="itemStateTransformationCode" tooltip="Copy transformation" /> as pattern for Item state description metadata.
+              Tip: Use <code>{{ itemStateTransformationCode }}</code>
+              <clipboard-icon :value="itemStateTransformationCode" tooltip="Copy transformation" /> as pattern for Item state description
+              metadata.
+              <br />
+              Tip: Use <code>{{ channelTransformationCode }}</code>
+              <clipboard-icon :value="channelTransformationCode" tooltip="Copy transformation" /> for channel transformations, e.g. in the
+              MQTT binding.
             </p>
           </f7-col>
         </f7-block>
@@ -200,6 +204,9 @@ export default {
     itemStateTransformationCode () {
       return `${this.transformation.type.toUpperCase()}(${this.transformation.uid}):%s`
     },
+    channelTransformationCode () {
+      return `${this.transformation.type.toUpperCase()}:${this.transformation.uid}`
+    },
     ...mapStores(useRuntimeStore)
   },
   methods: {
@@ -215,7 +222,7 @@ export default {
       this.load()
     },
     onPageBeforeOut () {
-      f7.sheet.close('detailsSheet')
+      f7.sheet.close(this.$refs.detailsSheet.$el)
       if (window) {
         window.removeEventListener('keydown', this.keyDown)
       }

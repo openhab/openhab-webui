@@ -4,12 +4,8 @@
       <oh-nav-content title="Developer Tools" back-link-url="/" :f7router />
     </f7-navbar>
     <f7-toolbar tabbar position="top">
-      <f7-link @click="currentTab = 'menu'" :tab-link-active="currentTab === 'menu'" tab-link="#tab-menu">
-        Expert Features
-      </f7-link>
-      <f7-link @click="currentTab = 'debug'" :tab-link-active="currentTab === 'debug'" tab-link="#tab-debug">
-        Debug
-      </f7-link>
+      <f7-link @click="currentTab = 'menu'" :tab-link-active="currentTab === 'menu'" tab-link="#tab-menu"> Expert Features </f7-link>
+      <f7-link @click="currentTab = 'debug'" :tab-link-active="currentTab === 'debug'" tab-link="#tab-debug"> Debug </f7-link>
     </f7-toolbar>
 
     <f7-tabs>
@@ -19,52 +15,46 @@
             <f7-col width="100" medium="50">
               <f7-block-title>Advanced Object Management</f7-block-title>
               <f7-list media-item>
-                <f7-list-item media-item
-                              title="Widgets"
-                              footer="Develop custom widgets to use on pages"
-                              link="widgets/">
+                <f7-list-item media-item title="Widgets" footer="Develop custom widgets to use on pages" link="widgets/">
                   <template #media>
                     <f7-icon f7="rectangle_on_rectangle_angled" color="gray" />
                   </template>
                 </f7-list-item>
-                <f7-list-item media-item
-                              title="Block Libraries"
-                              footer="Develop custom extensions for Blockly scripts"
-                              link="blocks/">
+                <f7-list-item media-item title="Block Libraries" footer="Develop custom extensions for Blockly scripts" link="blocks/">
                   <template #media>
                     <f7-icon f7="ticket" color="gray" />
                   </template>
                 </f7-list-item>
-                <f7-list-item media-item
-                              title="Semantic Tags"
-                              footer="Extend the list of semantic tags for the model"
-                              link="semantics/">
+                <f7-list-item media-item title="Semantic Tags" footer="Extend the list of semantic tags for the model" link="semantics/">
                   <template #media>
                     <f7-icon f7="list_bullet_indent" color="gray" />
                   </template>
                 </f7-list-item>
-                <f7-list-item media-item
-                              title="Things File Definitions"
-                              footer="Copy all Things' file definitions to clipboard"
-                              link="#"
-                              @click="copyFileDefinitionToClipboard(ObjectType.THING)">
+                <f7-list-item
+                  media-item
+                  title="Things File Definitions"
+                  footer="Copy all Things' file definitions to clipboard"
+                  link="#"
+                  @click="copyFileDefinitionToClipboard(ObjectType.THING)">
                   <template #media>
                     <f7-icon f7="lightbulb" color="gray" />
                   </template>
                 </f7-list-item>
-                <f7-list-item media-item
-                              title="Items File Definitions"
-                              footer="Copy all Items' file definitions to clipboard"
-                              link="#"
-                              @click="copyFileDefinitionToClipboard(ObjectType.ITEM)">
+                <f7-list-item
+                  media-item
+                  title="Items File Definitions"
+                  footer="Copy all Items' file definitions to clipboard"
+                  link="#"
+                  @click="copyFileDefinitionToClipboard(ObjectType.ITEM)">
                   <template #media>
                     <f7-icon f7="square_on_circle" color="gray" />
                   </template>
                 </f7-list-item>
-                <f7-list-item media-item
-                              title="Add Items from DSL Definition"
-                              footer="Create or update items &amp; links in bulk"
-                              link="add-items-dsl/">
+                <f7-list-item
+                  media-item
+                  title="Add Items from Textual Definition"
+                  footer="Create or update items &amp; links in bulk"
+                  link="add-items-dsl/">
                   <template #media>
                     <f7-icon f7="text_badge_plus" color="gray" />
                   </template>
@@ -74,13 +64,14 @@
             <f7-col width="100" medium="50">
               <f7-block-title>Maintenance Tools</f7-block-title>
               <f7-list media-item>
-                <f7-list-item media-item
-                              title="Developer Sidebar"
-                              class="developer-sidebar-toggle"
-                              footer="Show a panel with various tools and help"
-                              link=""
-                              no-chevron
-                              @click="f7.emit('toggleDeveloperDock')">
+                <f7-list-item
+                  media-item
+                  title="Developer Sidebar"
+                  class="developer-sidebar-toggle"
+                  footer="Show a panel with various tools and help"
+                  link=""
+                  no-chevron
+                  @click="f7.emit('toggleDeveloperDock')">
                   <template #media>
                     <f7-icon f7="wrench" color="gray" />
                   </template>
@@ -90,49 +81,32 @@
                     </div>
                   </template>
                 </f7-list-item>
-                <f7-list-item media-item
-                              title="API Explorer"
-                              footer="Discover and access the REST API directly"
-                              link="api-explorer/">
+                <f7-list-item media-item title="API Explorer" footer="Discover and access the REST API directly" link="api-explorer/">
                   <template #media>
                     <f7-icon f7="burn" color="gray" />
                   </template>
                 </f7-list-item>
-                <f7-list-item media-item
-                              title="Log Viewer"
-                              footer="Monitor openHAB log output"
-                              link="log-viewer/">
+                <f7-list-item media-item title="Log Viewer" footer="Monitor openHAB log output" link="log-viewer/">
                   <template #media>
                     <f7-icon f7="square_list" color="gray" />
                   </template>
                 </f7-list-item>
-                <f7-list-item smart-select
-                              :smartSelectParams="{ openIn: 'popup', closeOnSelect: true }"
-                              media-item
-                              title="UI Logging"
-                              footer="Set the log level for the browser console logs">
+                <f7-list-item
+                  smart-select
+                  :smartSelectParams="{ openIn: 'popup', closeOnSelect: true }"
+                  media-item
+                  title="UI Logging"
+                  footer="Set the log level for the browser console logs">
                   <template #media>
                     <f7-icon f7="exclamationmark_circle" color="gray" />
                   </template>
                   <select v-model="logLevel" @change="onLogLevelChange">
-                    <option value="TRACE">
-                      Trace
-                    </option>
-                    <option value="DEBUG">
-                      Debug
-                    </option>
-                    <option value="INFO">
-                      Info
-                    </option>
-                    <option value="WARN">
-                      Warn
-                    </option>
-                    <option value="ERROR">
-                      Error
-                    </option>
-                    <option value="OFF">
-                      Off
-                    </option>
+                    <option value="TRACE">Trace</option>
+                    <option value="DEBUG">Debug</option>
+                    <option value="INFO">Info</option>
+                    <option value="WARN">Warn</option>
+                    <option value="ERROR">Error</option>
+                    <option value="OFF">Off</option>
                   </select>
                 </f7-list-item>
               </f7-list>
@@ -149,17 +123,16 @@
           <f7-row>
             <f7-col>
               <f7-block>
-                <f7-block-title class="after-big-title">
-                  Test SSE connection
-                </f7-block-title>
+                <f7-block-title class="after-big-title"> Test SSE connection </f7-block-title>
                 <f7-button text="Stream Events" @click="startSSE()" v-if="!sseClient" />
                 <f7-button text="Stop Streaming" @click="stopSSE()" v-if="sseClient" />
                 <f7-list media-list>
-                  <f7-list-item v-for="event in sseEvents"
-                                :key="event.time.getTime() + '#' + f7.utils.id()"
-                                :title="event.topic"
-                                :subtitle="event.payload"
-                                :after="event.type" />
+                  <f7-list-item
+                    v-for="event in sseEvents"
+                    :key="event.time.getTime() + '#' + f7.utils.id()"
+                    :title="event.topic"
+                    :subtitle="event.payload"
+                    :after="event.type" />
                 </f7-list>
               </f7-block>
             </f7-col>
@@ -170,17 +143,16 @@
           <f7-row>
             <f7-col>
               <f7-block>
-                <f7-block-title class="after-big-title">
-                  Test WebSocket connection
-                </f7-block-title>
+                <f7-block-title class="after-big-title"> Test WebSocket connection </f7-block-title>
                 <f7-button text="Stream Events" @click="startWS()" v-if="!wsClient" />
                 <f7-button text="Stop Streaming" @click="stopWS()" v-if="wsClient" />
                 <f7-list media-list>
-                  <f7-list-item v-for="event in wsEvents"
-                                :key="event.time.getTime() + '#' + f7.utils.id()"
-                                :title="event.topic"
-                                :subtitle="event.payload"
-                                :after="event.type" />
+                  <f7-list-item
+                    v-for="event in wsEvents"
+                    :key="event.time.getTime() + '#' + f7.utils.id()"
+                    :title="event.topic"
+                    :subtitle="event.payload"
+                    :after="event.type" />
                 </f7-list>
               </f7-block>
             </f7-col>
@@ -202,7 +174,7 @@
                     :info="iconUrl"
                     clear-button>
                     <template #media>
-                      <img :src="iconUrl" width="44">
+                      <img :src="iconUrl" width="44" />
                     </template>
                   </f7-list-input>
                 </f7-list>

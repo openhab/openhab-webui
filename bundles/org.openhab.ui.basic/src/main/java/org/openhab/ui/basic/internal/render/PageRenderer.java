@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2025 Contributors to the openHAB project
+ * Copyright (c) 2010-2026 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -377,7 +377,7 @@ public class PageRenderer extends AbstractWidgetRenderer {
 
         renderSwitchSetting(localizeText("@text/ui.config.basic.webAudio.label"),
                 localizeText("@text/ui.config.basic.webAudio.description"), "webAudio", "openhab.ui:webaudio.enable",
-                "enabled", "", false, sb);
+                "true", "false", false, sb);
 
         return getSnippet("main_static") //
                 .replace("%title%", localizeText("@text/preferences.title")) //

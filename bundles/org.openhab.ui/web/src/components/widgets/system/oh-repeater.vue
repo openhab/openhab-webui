@@ -1,28 +1,22 @@
 <template>
-  <ul v-if="config.listContainer" :class="config.containerClasses" :style="config.containerStyle">
-    <generic-widget-component v-for="(ctx, idx) in childrenContexts"
-                              :context="ctx"
-                              :key="'repeater-' + idx" />
+  <ul v-bind="$attrs" v-if="config.listContainer" :class="config.containerClasses" :style="config.containerStyle">
+    <generic-widget-component v-for="(ctx, idx) in childrenContexts" :context="ctx" :key="'repeater-' + idx" />
   </ul>
   <!-- render without any additional container -->
   <template v-else-if="config.fragment">
     <!-- if parent is oh-swiper, render inside f7-swiper-slide -->
     <template v-if="['oh-swiper', 'f7-swiper'].includes(context.parent.component.component)">
-      <f7-swiper-slide v-for="(ctx, idx) in childrenContexts" :key="'repeater-' + idx">
+      <f7-swiper-slide v-bind="$attrs" v-for="(ctx, idx) in childrenContexts" :key="'repeater-' + idx">
         <generic-widget-component :context="ctx" />
       </f7-swiper-slide>
     </template>
     <!-- else render -->
     <template v-else>
-      <generic-widget-component v-for="(ctx, idx) in childrenContexts"
-                                :context="ctx"
-                                :key="'repeater-' + idx" />
+      <generic-widget-component v-bind="$attrs" v-for="(ctx, idx) in childrenContexts" :context="ctx" :key="'repeater-' + idx" />
     </template>
   </template>
   <div v-else :class="config.containerClasses" :style="config.containerStyle">
-    <generic-widget-component v-for="(ctx, idx) in childrenContexts"
-                              :context="ctx"
-                              :key="'repeater-' + idx" />
+    <generic-widget-component v-bind="$attrs" v-for="(ctx, idx) in childrenContexts" :context="ctx" :key="'repeater-' + idx" />
   </div>
 </template>
 
@@ -32,6 +26,7 @@ import { OhRepeaterDefinition } from '@/assets/definitions/widgets/system'
 import { compareItems, compareRules } from '@/components/widgets/widget-order'
 
 export default {
+  inheritAttrs: false,
   mixins: [mixin],
   widget: OhRepeaterDefinition,
   data () {

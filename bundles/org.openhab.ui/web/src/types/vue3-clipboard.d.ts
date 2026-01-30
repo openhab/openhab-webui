@@ -1,1 +1,1 @@
-declare module 'vue3-clipboard';
+declare module 'vue3-clipboard'

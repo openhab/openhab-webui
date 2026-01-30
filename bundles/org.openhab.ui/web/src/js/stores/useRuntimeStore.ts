@@ -6,7 +6,7 @@ import { convertJavaLocale } from '@/js/i18n-utils.ts'
 
 import { useStatesStore } from '@/js/stores/useStatesStore'
 
-import { type RootResponse, type Link } from '@/types/openhab'
+import * as api from '@/api'
 
 interface UIInfo {
   commit: string
@@ -15,8 +15,8 @@ interface UIInfo {
 export const useRuntimeStore = defineStore('runtime', () => {
   // States
   const apiVersion = ref<string | null>(null)
-  const measurementSystem = ref<'SI' | 'US' | null>(null)
-  const apiEndpoints = ref<Link[] | null>(null)
+  const measurementSystem = ref<api.RootBean['measurementSystem'] | null>(null)
+  const apiEndpoints = ref<api.Links[] | null>(null)
   const locale = ref<string>(import.meta.env.VUE_APP_I18N_LOCALE || 'en')
   const runtimeInfo = ref<object | null>(null)
   const uiInfo = ref<UIInfo>({ commit: buildInfo.commit })
@@ -24,22 +24,19 @@ export const useRuntimeStore = defineStore('runtime', () => {
   const docSrcUrl = ref<string | null>(null)
   const showDeveloperDock = ref<boolean>(false)
   const pagePath = ref<string | null>(null)
-  const sitemapIncludeItemName = ref<boolean>(false)
-  const modelPicker = reactive<object>({
-    includeItemNames: false,
-    includeItemTags: false,
-    expanded: false,
-    includeNonSemantic: false
-  })
+  const modelExpanded = ref<boolean>(false)
+  const modelPickerExpanded = ref<boolean>(false)
+  const modelSelectedItem = ref<object | null>(null)
+  const modelExpandedTreeviewItems = ref<string[]>([])
   const ready = ref<boolean>(false)
 
   // Getters
-  function apiEndpoint (type: string): string | null {
+  function apiEndpoint(type: string): string | null {
     return !apiEndpoints.value ? null : apiEndpoints.value?.find((e) => e.type === type)?.url || null
   }
 
   // Actions
-  function setRootResource (rootResponse: RootResponse) {
+  function setRootResource(rootResponse: api.RootBean) {
     locale.value = convertJavaLocale(rootResponse.locale)
     apiVersion.value = rootResponse.version
     measurementSystem.value = rootResponse.measurementSystem
@@ -67,8 +64,10 @@ export const useRuntimeStore = defineStore('runtime', () => {
     docSrcUrl,
     showDeveloperDock,
     pagePath,
-    modelPicker,
-    sitemapIncludeItemName,
+    modelExpanded,
+    modelPickerExpanded,
+    modelSelectedItem,
+    modelExpandedTreeviewItems,
     ready,
 
     setRootResource

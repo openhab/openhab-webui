@@ -3,15 +3,12 @@
     <div class="hint-apps" v-if="!overviewPage && !userStore.user && !showHABot">
       <p>
         <em>
-          <f7-icon
-            class="float-right margin-left margin-bottom"
-            f7="arrow_turn_right_up"
-            size="20" />{{ $t('home.tip.otherApps') }}
+          <f7-icon class="float-right margin-left margin-bottom" f7="arrow_turn_right_up" size="20" />{{ $t('home.tip.otherApps') }}
         </em>
       </p>
     </div>
-    <f7-block class="block-narrow">
-      <habot v-if="showHABot" @session-started="inChatSession = true" @session-end="inChatSession = false" />
+    <f7-block v-if="showHABot" class="block-narrow">
+      <habot @session-started="inChatSession = true" @session-end="inChatSession = false" />
     </f7-block>
 
     <f7-block v-if="!ready" class="text-align-center">
@@ -20,36 +17,40 @@
     </f7-block>
 
     <template v-else>
-      <component v-if="overviewPage"
-                 :is="overviewPage.component"
-                 v-show="!inChatSession"
-                 :context="overviewPageContext"
-                 :class="{ notready: !ready }"
-                 :f7router />
+      <component
+        v-if="overviewPage"
+        :is="overviewPage.component"
+        v-show="!inChatSession"
+        :context="overviewPageContext"
+        :class="{ notready: !ready }"
+        :f7router />
       <div v-else-if="!inChatSession" class="empty-overview">
         <empty-state-placeholder icon="house" title="overview.title" text="overview.text" />
         <f7-row v-if="!userStore.isAdmin() || $f7dim.width < 1280" class="display-flex justify-content-center">
-          <f7-button large
-                     fill
-                     color="blue"
-                     external
-                     :href="`${runtimeStore.websiteUrl}/link/docs`"
-                     target="_blank"
-                     :text="$t('home.overview.button.documentation')" />
+          <f7-button
+            large
+            fill
+            color="blue"
+            external
+            :href="`${runtimeStore.websiteUrl}/link/docs`"
+            target="_blank"
+            :text="$t('home.overview.button.documentation')" />
           <span style="width: 8px" />
-          <f7-button large
-                     color="blue"
-                     external
-                     :href="`${runtimeStore.websiteUrl}/link/tutorial`"
-                     target="_blank"
-                     :text="$t('home.overview.button.tutorial')" />
+          <f7-button
+            large
+            color="blue"
+            external
+            :href="`${runtimeStore.websiteUrl}/link/tutorial`"
+            target="_blank"
+            :text="$t('home.overview.button.tutorial')" />
         </f7-row>
         <f7-row v-else class="display-flex justify-content-center">
-          <f7-button large
-                     fill
-                     color="blue"
-                     @click="f7.emit('selectDeveloperDock', { dock: 'help', helpTab: 'quick' })"
-                     :text="$t('home.overview.button.quickstart')" />
+          <f7-button
+            large
+            fill
+            color="blue"
+            @click="f7.emit('selectDeveloperDock', { dock: 'help', helpTab: 'quick' })"
+            :text="$t('home.overview.button.quickstart')" />
         </f7-row>
       </div>
     </template>

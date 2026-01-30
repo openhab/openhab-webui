@@ -160,7 +160,7 @@ function generateCommonTS(mapCommonOptions) {
       content += optionStr
     }
   })
-  fs.writeFileSync(`${outDir}/common.ts`, content)
+  fs.writeFileSync(`${outDir}/common.gen.ts`, content)
 }
 
 function generateComponentTS(mapCommonOptions) {
@@ -239,7 +239,7 @@ function generateComponentTS(mapCommonOptions) {
         preamble += 'import {\n'
         preamble += commonComponents.map(name => `  ${name}`).join(',\n')
         const depth = widgetDir.split('/').length
-        preamble += `\n} from '${'../'.repeat(depth)}common.ts'\n\n`
+        preamble += `\n} from '${'../'.repeat(depth)}common.gen.ts'\n\n`
 
         postamble += '\nexport {\n'
         postamble += commonComponents.map(name => `  ${name}`).join(',\n')
@@ -256,14 +256,14 @@ function generateComponentTS(mapCommonOptions) {
         content = config['*'].modifier(content)
       }
 
-      fs.writeFileSync(`${outDir}/${widgetDir}/${widgetName}.ts`, content)
+      fs.writeFileSync(`${outDir}/${widgetDir}/${widgetName}.gen.ts`, content)
     })
   })
 }
 
 function generateIndexTS() {
   const componentNames = []
-  let content = `export * from './common.ts'\n\n`
+  let content = `export * from './common.gen.ts'\n\n`
   Object.keys(widgetLibraries).forEach((l) => {
     const library = widgetLibraries[l]
     const widgetDir = widgetDirectories[l] || 'misc'
@@ -274,7 +274,7 @@ function generateIndexTS() {
       if (!widgetName.startsWith('oh-')) return
 
       componentNames.push(kebabToPascalCase(widgetName))
-      content += `export * as ${kebabToPascalCase(widgetName)} from './${widgetDir}/${widgetName}.ts'\n`
+      content += `export * as ${kebabToPascalCase(widgetName)} from './${widgetDir}/${widgetName}.gen.ts'\n`
     })
   })
 

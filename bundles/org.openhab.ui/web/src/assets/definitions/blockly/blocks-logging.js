@@ -1,7 +1,7 @@
 /*
-* Logging functionality for blockly
-* supports jsscripting
-*/
+ * Logging functionality for blockly
+ * supports jsscripting
+ */
 
 import * as Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript'
@@ -10,8 +10,7 @@ import { valueToCode } from '@/assets/definitions/blockly/utils.js'
 export default function (f7) {
   Blockly.Blocks['oh_print'] = {
     init: function () {
-      this.appendValueInput('message')
-        .appendField('print')
+      this.appendValueInput('message').appendField('print')
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
       this.setColour(0)
@@ -29,7 +28,16 @@ export default function (f7) {
     init: function () {
       this.appendValueInput('message')
         .appendField('log')
-        .appendField(new Blockly.FieldDropdown([['info', 'info'], ['error', 'error'], ['warn', 'warn'], ['debug', 'debug'], ['trace', 'trace']]), 'severity')
+        .appendField(
+          new Blockly.FieldDropdown([
+            ['info', 'info'],
+            ['error', 'error'],
+            ['warn', 'warn'],
+            ['debug', 'debug'],
+            ['trace', 'trace']
+          ]),
+          'severity'
+        )
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
       this.setColour(0)

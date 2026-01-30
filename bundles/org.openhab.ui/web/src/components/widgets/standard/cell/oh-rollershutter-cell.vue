@@ -4,17 +4,19 @@
       <f7-col width="100" class="cell-rollershutter display-flex flex-direction-column justify-content-center">
         <slot name="beforeRollershutter">
           <div v-if="context.component.slots" class="margin-top display-flex flex-direction-column justify-content-center">
-            <generic-widget-component v-for="(slotComponent, idx) in context.component.slots.beforeRollershutter"
-                                      :context="childContext(slotComponent)"
-                                      :key="'beforeRollershutter-' + idx" />
+            <generic-widget-component
+              v-for="(slotComponent, idx) in context.component.slots.beforeRollershutter"
+              :context="childContext(slotComponent)"
+              :key="'beforeRollershutter-' + idx" />
           </div>
         </slot>
         <oh-rollershutter class="rollershutter-controls" :context="rollershutterContext" />
         <slot name="afterRollershutter">
           <div v-if="context.component.slots" class="margin-top display-flex flex-direction-column justify-content-center">
-            <generic-widget-component v-for="(slotComponent, idx) in context.component.slots.afterRollershutter"
-                                      :context="childContext(slotComponent)"
-                                      :key="'afterRollershutter-' + idx" />
+            <generic-widget-component
+              v-for="(slotComponent, idx) in context.component.slots.afterRollershutter"
+              :context="childContext(slotComponent)"
+              :key="'afterRollershutter-' + idx" />
           </div>
         </slot>
       </f7-col>

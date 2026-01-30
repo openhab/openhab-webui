@@ -9,7 +9,7 @@ export default {
     loopError: () => useModelStore().error
   },
   methods: {
-    cardGroups (type, page) {
+    cardGroups(type, page) {
       return cardGroups(this.model, type, page)
     }
   }

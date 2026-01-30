@@ -1,13 +1,13 @@
 <template>
-  <round-slider v-bind="resolvedConfig"
-                :startValue="knobValue"
-                :model-value="knobValue"
-                @update:model-value="onChange"
-                :style="`stroke-dasharray: ${(config.dottedPath) ? config.dottedPath : 0}`"
-                mouseScrollAction="true"
-                @input="onChange"
-                @click.stop="sendCommandDebounced(value, true)"
-                @touchend.stop="sendCommandDebounced(value, true)" />
+  <round-slider
+    v-bind="resolvedConfig"
+    :model-value="knobValue"
+    @update:model-value="onChange"
+    :style="`stroke-dasharray: ${(config.dottedPath) ? config.dottedPath : 0}`"
+    mouseScrollAction="true"
+    @input="onChange"
+    @click.stop="sendCommandDebounced(value, true)"
+    @touchend.stop="sendCommandDebounced(value, true)" />
 </template>
 
 <script>
@@ -66,7 +66,8 @@ export default {
       return (typeof this.config.offset === 'number') ? (value + this.config.offset) : value
     },
     onChange (newValue) {
-      if (isNaN(this.value) || isNaN(newValue)) return
+      if (isNaN(newValue)) return
+      if (!['UNDEF', 'NULL'].includes(this.itemState) && isNaN(this.value)) return
       if (typeof this.config.offset === 'number') newValue -= this.config.offset
       this.sendCommandDebounced(newValue)
     }

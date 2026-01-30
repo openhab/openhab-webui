@@ -1,26 +1,24 @@
 <template>
   <div class="item-picker-container">
-    <f7-list-item :title="label || 'Item'"
-                  :after="displayValue"
-                  link
-                  :disabled="disabled ? true : null"
-                  :textColor="textColor"
-                  class="item-picker"
-                  :no-chevron="false"
-                  @click="openPopup">
+    <f7-list-item
+      :title="label || 'Item'"
+      :after="displayValue"
+      link
+      :disabled="disabled ? true : null"
+      :textColor="textColor"
+      class="item-picker"
+      :no-chevron="false"
+      @click="openPopup">
       <template #media>
-        <f7-button v-if="!noModelPicker"
-                   :icon-color="color"
-                   :icon-aurora="aurora"
-                   :icon-ios="ios"
-                   :icon-md="md"
-                   :tooltip="$t('dialogs.itemPicker.tooltip.pickFromModel')"
-                   @click.stop="pickFromModel" />
-        <f7-icon v-else-if="!hideIcon"
-                 :color="color"
-                 :aurora="aurora"
-                 :ios="ios"
-                 :md="md" />
+        <f7-button
+          v-if="!noModelPicker"
+          :icon-color="color"
+          :icon-aurora="aurora"
+          :icon-ios="ios"
+          :icon-md="md"
+          :tooltip="$t('dialogs.itemPicker.tooltip.pickFromModel')"
+          @click.stop="pickFromModel" />
+        <f7-icon v-else-if="!hideIcon" :color="color" :aurora="aurora" :ios="ios" :md="md" />
       </template>
     </f7-list-item>
 
@@ -28,48 +26,42 @@
       <f7-page>
         <f7-navbar :title="label || $t('dialogs.itemPicker.popup.title')">
           <f7-nav-right>
-            <f7-link @click="closePopup()">
-              Close
-            </f7-link>
+            <f7-link @click="closePopup()"> Close </f7-link>
           </f7-nav-right>
         </f7-navbar>
 
-        <f7-searchbar
-          ref="searchbar"
-          search-container=".item-list"
-          search-in=".item-inner"
-          :placeholder="$t('dialogs.search.items')">
+        <f7-searchbar ref="searchbar" search-container=".item-list" search-in=".item-inner" :placeholder="$t('dialogs.search.items')">
           <template #inner-start>
-            <f7-button v-if="filterToggle && (filterType || filterGroupType || filterTag)"
-                       style="margin-inline-end: 5px"
-                       :icon-f7="filtered ? 'funnel_fill' : 'funnel'"
-                       icon-size="24px"
-                       :icon-color="color"
-                       :tooltip="filtered ? this.$t('dialogs.search.items.tooltip.filtered') : this.$t('dialogs.search.items.tooltip.unfiltered')"
-                       @click="toggleFilter" />
+            <f7-button
+              v-if="filterToggle && (filterType || filterGroupType || filterTag)"
+              style="margin-inline-end: 5px"
+              :icon-f7="filtered ? 'funnel_fill' : 'funnel'"
+              icon-size="24px"
+              :icon-color="color"
+              :tooltip="filtered ? this.$t('dialogs.search.items.tooltip.filtered') : this.$t('dialogs.search.items.tooltip.unfiltered')"
+              @click="toggleFilter" />
           </template>
         </f7-searchbar>
 
         <f7-list v-if="multiple" class="item-list">
-          <f7-list-item v-for="item in preparedItems"
-                        :key="item.name"
-                        checkbox
-                        :checked="selectedValue?.includes(item.name)"
-                        @change="selectItem(item)">
+          <f7-list-item
+            v-for="item in preparedItems"
+            :key="item.name"
+            checkbox
+            :checked="selectedValue?.includes(item.name)"
+            @change="selectItem(item)">
             {{ item.label ? item.label + ' (' + item.name + ')' : item.name }}
           </f7-list-item>
         </f7-list>
         <f7-list v-else class="item-list">
-          <f7-list-item radio
-                        :name="radioGroupName"
-                        :checked="selectedValue === null"
-                        @change="selectItem(null)" />
-          <f7-list-item v-for="item in preparedItems"
-                        :key="item.name"
-                        radio
-                        :name="radioGroupName"
-                        :checked="selectedValue === item.name"
-                        @change="selectItem(item)">
+          <f7-list-item radio :name="radioGroupName" :checked="selectedValue === null" @change="selectItem(null)" />
+          <f7-list-item
+            v-for="item in preparedItems"
+            :key="item.name"
+            radio
+            :name="radioGroupName"
+            :checked="selectedValue === item.name"
+            @change="selectItem(item)">
             {{ item.label ? item.label + ' (' + item.name + ')' : item.name }}
           </f7-list-item>
         </f7-list>
@@ -92,6 +84,8 @@
 import { f7 } from 'framework7-vue'
 import ModelPickerPopup from '@/components/model/model-picker-popup.vue'
 import { nextTick } from 'vue'
+
+import * as api from '@/api'
 
 export default {
   props: {
@@ -158,13 +152,13 @@ export default {
     if (this.items && this.items.length) {
       this.sortAndFilterItems(this.items)
     } else {
-      const params = new URLSearchParams({
+      const query = {
         staticDataOnly: 'true'
-      })
-      if (this.filterTag?.length) {
-        params.set('tags', Array.isArray(this.filterTag) ? this.filterTag.join(',') : this.filterTag)
       }
-      this.$oh.api.get(`/rest/items?${params}`).then((items) => {
+      if (this.filterTag?.length) {
+        query.tags = Array.isArray(this.filterTag) ? this.filterTag.join(',') : this.filterTag
+      }
+      api.getItems(query).then((items) => {
         this.sortAndFilterItems(items)
       })
     }
