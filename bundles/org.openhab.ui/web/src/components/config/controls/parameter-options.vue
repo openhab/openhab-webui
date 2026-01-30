@@ -54,7 +54,7 @@ import { f7, theme } from 'framework7-vue'
 export default {
   props: {
     configDescription: Object,
-    value: [Number, String, Array]
+    value: [Number, String, Array, Boolean]
   },
   emits: ['input'],
   data () {
@@ -91,6 +91,7 @@ export default {
       if (!this.configDescription.multiple) {
         if (this.configDescription.type === 'INTEGER') value = parseInt(value)
         if (this.configDescription.type === 'DECIMAL') value = parseFloat(value)
+        if (this.configDescription.type === 'BOOLEAN') value = value === 'true'
       }
       this.$emit('input', value)
     },
@@ -99,6 +100,7 @@ export default {
       let castedVal = null
       if (this.configDescription.type === 'INTEGER') castedVal = parseInt(option.value)
       if (this.configDescription.type === 'DECIMAL') castedVal = parseFloat(option.value)
+      if (this.configDescription.type === 'BOOLEAN' && typeof this.value === 'boolean') castedVal = option.value === 'true'
       if (!this.configDescription.multiple) {
         return this.value === option.value || this.value === castedVal
       } else {
