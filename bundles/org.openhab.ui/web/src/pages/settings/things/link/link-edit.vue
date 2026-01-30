@@ -210,6 +210,9 @@ export default {
               this.ready = true
             })
           })
+        }).catch((err) => {
+          f7.dialog.alert('Error loading profile type or channel type: ' + err)
+          this.f7router.back()
         })
       })
     },
