@@ -34,36 +34,37 @@ export default {
     configDescription: Object,
     value: String
   },
-  emits: ['input'],
+  emits: ['input', 'update:value'],
   setup () {
     return { theme }
   },
   methods: {
     updateValue (value) {
       this.$emit('input', value)
+      this.$emit('update:value', value)
     },
-    openPopup () {
-      import(/* webpackChunkName: "cronexpression-editor" */ '@/components/config/controls/cronexpression-editor.vue').then((c) => {
-        const popup = {
-          component: c.default
+    async openPopup () {
+      const c = await import(/* webpackChunkName: "cronexpression-editor" */ '@/components/config/controls/cronexpression-editor.vue')
+
+      const popup = {
+        component: c.default
+      }
+
+      f7.views.main.router.navigate({
+        url: 'cron-edit',
+        route: {
+          path: 'cron-edit',
+          popup
         }
+      }, {
+        props: {
+          value: this.value
+        }
+      })
 
-        f7.views.main.router.navigate({
-          url: 'cron-edit',
-          route: {
-            path: 'cron-edit',
-            popup
-          }
-        }, {
-          props: {
-            value: this.value
-          }
-        })
-
-        f7.once('cronEditorUpdate', this.updateValue)
-        f7.once('cronEditorClosed', () => {
-          f7.off('cronEditorUpdate', this.updateValue)
-        })
+      f7.once('cronEditorUpdate', this.updateValue)
+      f7.once('cronEditorClosed', () => {
+        f7.off('cronEditorUpdate', this.updateValue)
       })
     }
   },

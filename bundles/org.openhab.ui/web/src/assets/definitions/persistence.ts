@@ -1,6 +1,16 @@
-export const PredefinedStrategies = ['everyChange', 'everyUpdate', 'restoreOnStartup', 'forecast']
+import type { InjectionKey, Ref } from 'vue'
+import * as api from '@/api'
 
-export const CommonCronStrategies = [
+export const persistenceKey: InjectionKey<Ref<api.PersistenceServiceConfiguration>> = Symbol('persistence')
+
+export const PredefinedStrategies: api.PersistenceStrategy[] = [
+  { name: 'everyChange' },
+  { name: 'everyUpdate' },
+  { name: 'restoreOnStartup' },
+  { name: 'forecast' }
+]
+
+export const CommonCronStrategies: api.PersistenceCronStrategy[] = [
   {
     name: 'everyMinute',
     cronExpression: '0 * * ? * *'
@@ -23,18 +33,45 @@ const filterInvertedParameter = {
   name: 'inverted',
   required: false,
   type: 'BOOLEAN'
+} satisfies api.ConfigDescriptionParameter
+
+export interface FilterType {
+  footerFn: (f: api.PersistenceFilter) => string
+  configDescriptionParameters: api.ConfigDescriptionParameter[]
+  name: string
+  icon: string
+  label: string
+}
+
+export enum FilterTypeName {
+  ThresholdFilters = 'thresholdFilters',
+  TimeFilters = 'timeFilters',
+  EqualsFilters = 'equalsFilters',
+  IncludeFilters = 'includeFilters'
+}
+
+export interface FiltersDefinition {
+  [FilterTypeName.ThresholdFilters]: api.PersistenceFilter[]
+  [FilterTypeName.TimeFilters]: api.PersistenceFilter[]
+  [FilterTypeName.EqualsFilters]: api.PersistenceFilter[]
+  [FilterTypeName.IncludeFilters]: api.PersistenceFilter[]
+}
+
+export interface Filter {
+  filterTypeName: FilterTypeName
+  filter: api.PersistenceFilter
 }
 
 /**
  * Filter configuration is completely based on these definitions.
  * However, please note that some for some filter types validation and checks are added to persistence-edit.vue in editFilter(), saveFilter() and filter-popup.vue.
  *
- * @type {[{footerFn: (function(*): string|*), configDescriptionParameters: [{advanced: boolean, name: string, description: string, label: string, type: string, required: boolean},{advanced: boolean, name: string, description: string, label: string, type: string, required: boolean},{advanced: boolean, name: string, description: string, label: string, type: string, required: boolean}], name: string, label: string},{footerFn: (function(*): string), configDescriptionParameters: [{advanced: boolean, name: string, description: string, label: string, type: string, required: boolean},{limitToOptions: boolean, advanced: boolean, multiple: boolean, name: string, options: [{label: string, value: string},{label: string, value: string},{label: string, value: string},{label: string, value: string}], description: string, label: string, type: string, required: boolean}], name: string, label: string},{footerFn: (function(*): string), configDescriptionParameters: [{advanced: boolean, name: string, description: string, label: string, type: string, required: boolean},{advanced: boolean, name: string, description: string, label: string, type: string, required: boolean}], name: string, label: string},{footerFn: (function(*): string), configDescriptionParameters: [{advanced: boolean, name: string, description: string, label: string, type: string, required: boolean},{advanced: boolean, name: string, description: string, label: string, type: string, required: boolean},{advanced: boolean, name: string, description: string, label: string, type: string, required: boolean},{advanced: boolean, name: string, description: string, label: string, type: string, required: boolean}], name: string, label: string}]}
  */
-export const FilterTypes = [
-  {
+export const FilterTypes: Record<FilterTypeName, FilterType> = {
+  [FilterTypeName.ThresholdFilters]: {
     name: 'thresholdFilters',
     label: 'Threshold',
+    icon: 'arrow_up_right_circle',
     configDescriptionParameters: [
       {
         advanced: false,
@@ -61,11 +98,12 @@ export const FilterTypes = [
         type: 'TEXT'
       }
     ],
-    footerFn: (f) => (f.relative ? f.value + ' %' : f.unit ? f.value + ' ' + f.unit : f.value)
+    footerFn: (f) => (f.relative ? `${f.value} %` : f.unit ? `${f.value} ${f.unit}` : `${f.value ?? ''}`)
   },
-  {
+  [FilterTypeName.TimeFilters]: {
     name: 'timeFilters',
     label: 'Time',
+    icon: 'clock',
     configDescriptionParameters: [
       {
         advanced: false,
@@ -94,9 +132,10 @@ export const FilterTypes = [
     ],
     footerFn: (f) => f.value + ' ' + (f.unit || 's')
   },
-  {
+  [FilterTypeName.EqualsFilters]: {
     name: 'equalsFilters',
     label: 'Equals/Not Equals',
+    icon: 'equal_circle',
     configDescriptionParameters: [
       {
         advanced: false,
@@ -105,15 +144,16 @@ export const FilterTypes = [
         label: 'Values',
         name: 'values',
         required: true,
-        type: ''
+        type: 'TEXT'
       },
       filterInvertedParameter
     ],
-    footerFn: (f) => (f.inverted === true ? 'not ' : '') + 'equals ' + f.values.join(', ')
+    footerFn: (f) => (f.inverted === true ? 'not ' : '') + 'equals ' + f.values?.join(', ')
   },
-  {
+  [FilterTypeName.IncludeFilters]: {
     name: 'includeFilters',
     label: 'Include/Exclude',
+    icon: 'arrow_left_right_square',
     configDescriptionParameters: [
       {
         advanced: false,
@@ -144,4 +184,17 @@ export const FilterTypes = [
     footerFn: (f) =>
       (f.inverted === true ? ']' : '[') + f.lower + ';' + f.upper + (f.inverted === true ? '[' : ']' + (f.unit ? ' ' + f.unit : ''))
   }
-]
+}
+
+export const emptyPersistenceServiceConfig = {
+  serviceId: '',
+  configs: [],
+  aliases: {},
+  cronStrategies: [],
+  defaults: [],
+  timeFilters: [],
+  equalsFilters: [],
+  thresholdFilters: [],
+  includeFilters: [],
+  editable: true
+} satisfies api.PersistenceServiceConfiguration
