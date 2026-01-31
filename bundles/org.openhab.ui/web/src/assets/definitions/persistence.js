@@ -112,7 +112,7 @@ export const FilterTypes = [
       },
       filterInvertedParameter
     ],
-    footerFn: (f) => (f.inverted === true ? 'not ' : '') + 'equals ' + f.values.join(', ')
+    footerFn: (f) => (f.inverted === true ? 'not ' : '') + 'equals ' + f.values?.join(', ')
   },
   {
     name: 'includeFilters',
