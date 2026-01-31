@@ -48,7 +48,7 @@ export default {
     void nextTick(() => {
       const pageEl = this.$el
       if (!pageEl) return
-      if (!pageEl.classList.contains('page')) return
+      if (!pageEl.classList?.contains('page')) return
 
       // store a wrapped function so `this` inside beforeLeave is the Vue component instance
       pageEl.beforeLeave = (args) => this.beforeLeave(args)
