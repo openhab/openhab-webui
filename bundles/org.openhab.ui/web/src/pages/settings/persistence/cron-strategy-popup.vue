@@ -96,24 +96,24 @@ export default {
         f7.dialog.alert('Please review the configuration and correct validation errors')
         return
       }
-      
+
       // Modify persistence directly and save the strategy
       if (!this.persistence.cronStrategies) this.persistence.cronStrategies = []
-      
+
       // Check for duplicates (unless editing existing)
       const existingIndex = this.persistence.cronStrategies.findIndex((cs) => cs.name === this.currentCronStrategy.name)
       if (this.createMode && existingIndex !== -1) {
         f7.dialog.alert('A (cron) strategy with the same name already exists!')
         return
       }
-      
+
       // Add or update in persistence
       if (this.createMode) {
         this.persistence.cronStrategies.push(cloneDeep(this.currentCronStrategy))
       } else if (existingIndex !== -1) {
         this.persistence.cronStrategies[existingIndex] = cloneDeep(this.currentCronStrategy)
       }
-      
+
       // Emit via Vue event system so parent can listen directly
       this.$emit('cronStrategyConfigUpdate', this.currentCronStrategy)
       this.$emit('close')

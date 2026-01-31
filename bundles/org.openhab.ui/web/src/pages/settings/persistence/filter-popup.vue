@@ -111,30 +111,30 @@ export default {
           return
         }
       }
-      
+
       // Modify persistence directly and save the filter
       if (!this.persistence[this.currentFilterType.name]) this.persistence[this.currentFilterType.name] = []
-      
+
       // Check for duplicates (unless editing existing)
       const existingIndex = this.persistence[this.currentFilterType.name].findIndex((f) => f.name === this.currentFilter.name)
       if (this.createMode && existingIndex !== -1) {
         f7.dialog.alert('A filter with the same name already exists!')
         return
       }
-      
+
       // Handle comma-separated values for equalsFilters
       let filterToSave = cloneDeep(this.currentFilter)
       if (this.currentFilterType.name === 'equalsFilters' && typeof filterToSave.values === 'string') {
         filterToSave.values = filterToSave.values.split(',').map((v) => v.trim())
       }
-      
+
       // Add or update in persistence
       if (this.createMode) {
         this.persistence[this.currentFilterType.name].push(filterToSave)
       } else if (existingIndex !== -1) {
         this.persistence[this.filterType.name][existingIndex] = filterToSave
       }
-      
+
       // Emit via Vue event system so parent can listen directly
       this.$emit('filterConfigUpdate', this.currentFilter)
       this.$emit('close')

@@ -90,9 +90,7 @@
                 </f7-list-item>
               </f7-list>
               <f7-list v-else-if="!editable">
-                <f7-list-item>
-                  No configurations defined
-                </f7-list-item>
+                <f7-list-item> No configurations defined </f7-list-item>
               </f7-list>
               <f7-list v-if="editable">
                 <f7-list-item
@@ -147,9 +145,7 @@
                 </f7-list-item>
               </f7-list>
               <f7-list v-else-if="!editable">
-                <f7-list-item>
-                  No aliases defined
-                </f7-list-item>
+                <f7-list-item> No aliases defined </f7-list-item>
               </f7-list>
               <f7-list v-if="editable">
                 <f7-list-group>
@@ -511,7 +507,7 @@ export default {
           this.persistence.configs[this.currentConfigurationIndex] = updatedConfig
         }
       }
-      
+
       // Merge any new strategies/filters that were added in the nested popups
       if (persistenceWithUpdatedConfig.cronStrategies) {
         this.persistence.cronStrategies = persistenceWithUpdatedConfig.cronStrategies
@@ -607,7 +603,7 @@ export default {
           this.persistence[key] = persistenceWithUpdates[key]
         }
       })
-      
+
       this.dirty = true
     },
     onEditorInput (value) {

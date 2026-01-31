@@ -226,7 +226,7 @@
                 :smart-select-params="smartSelectParams"
                 :checked="day.cronEvery === 4 ? true : null"
                 @click="day.cronEvery = 4">
-                <select multiple @change="week.specificSpecific = getSmartSelectValue('specificDayOfWeek').map((v) => v)"> 
+                <select multiple @change="week.specificSpecific = getSmartSelectValue('specificDayOfWeek').map((v) => v)">
                   <option
                     v-for="val in 7"
                     :key="val"
@@ -731,11 +731,11 @@ export default {
     updateSmartSelectOptions (refName, selectedValues) {
       const selectEl = this.$refs[refName]?.$el?.querySelector('select')
       if (!selectEl) return
-      
+
       Array.from(selectEl.options).forEach(option => {
         option.selected = selectedValues.includes(option.value) || selectedValues.includes(parseInt(option.value))
       })
-      
+
       // Trigger change to update smart-select UI
       selectEl.dispatchEvent(new Event('change', { bubbles: true }))
     },
