@@ -35,6 +35,7 @@ export const FilterTypes = [
   {
     name: 'thresholdFilters',
     label: 'Threshold',
+    icon: 'arrow_up_right_circle',
     configDescriptionParameters: [
       {
         advanced: false,
@@ -66,6 +67,7 @@ export const FilterTypes = [
   {
     name: 'timeFilters',
     label: 'Time',
+    icon: 'clock',
     configDescriptionParameters: [
       {
         advanced: false,
@@ -97,6 +99,7 @@ export const FilterTypes = [
   {
     name: 'equalsFilters',
     label: 'Equals/Not Equals',
+    icon: 'equal_circle',
     configDescriptionParameters: [
       {
         advanced: false,
@@ -114,6 +117,7 @@ export const FilterTypes = [
   {
     name: 'includeFilters',
     label: 'Include/Exclude',
+    icon: 'arrow_left_right_square',
     configDescriptionParameters: [
       {
         advanced: false,
