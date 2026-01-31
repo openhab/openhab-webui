@@ -118,94 +118,6 @@
               </f7-list>
             </f7-block>
             <f7-block>
-              <f7-block-title medium> Definitions </f7-block-title>
-              <f7-block-header> Cron strategy and filter definitions used in a persistence configuration. </f7-block-header>
-              <!-- Cron Strategies -->
-              <f7-block-title small style="margin-bottom: var(--f7-list-margin-vertical)"> Cron Strategies </f7-block-title>
-              <f7-list :media-list="editable" swipeout>
-                <f7-list-item
-                  v-for="(cs, index) in persistence.cronStrategies"
-                  :key="cs.name"
-                  :title="cs.name"
-                  :footer="cs.cronExpression"
-                  :link="editable"
-                  @click="(ev) => editCronStrategy(ev, index, cs)"
-                  swipeout>
-                  <template #media>
-                    <f7-link
-                      v-if="editable"
-                      icon-color="red"
-                      icon-aurora="f7:minus_circle_filled"
-                      icon-ios="f7:minus_circle_filled"
-                      icon-md="material:remove_circle_outline"
-                      @click="showSwipeout" />
-                  </template>
-                  <f7-swipeout-actions right v-if="editable">
-                    <f7-swipeout-button
-                      @click="(ev) => deleteCronStrategy(ev, index)"
-                      style="background-color: var(--f7-swipeout-delete-button-bg-color)">
-                      Delete
-                    </f7-swipeout-button>
-                  </f7-swipeout-actions>
-                </f7-list-item>
-              </f7-list>
-              <f7-list v-if="editable">
-                <f7-list-item
-                  link
-                  no-chevron
-                  media-item
-                  :color="(theme.dark) ? 'black' : 'white'"
-                  subtitle="Add cron strategy"
-                  @click="editCronStrategy(undefined, null)">
-                  <template #media>
-                    <f7-icon color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
-                  </template>
-                </f7-list-item>
-              </f7-list>
-              <!-- Filters -->
-              <f7-block-title small style="margin-bottom: var(--f7-list-margin-vertical)"> Filters </f7-block-title>
-              <f7-list v-for="ft in FilterTypes" :key="ft.name" :media-list="editable" swipeout>
-                <f7-list-item
-                  v-for="(f, index) in persistence[ft.name]"
-                  :key="f.name"
-                  :title="f.name"
-                  :footer="(typeof ft.footerFn === 'function') ? ft.footerFn(f) : ''"
-                  :link="editable"
-                  @click="(ev) => editFilter(ev, ft, index, f)"
-                  swipeout>
-                  <template #media>
-                    <f7-link
-                      v-if="editable"
-                      icon-color="red"
-                      icon-aurora="f7:minus_circle_filled"
-                      icon-ios="f7:minus_circle_filled"
-                      icon-md="material:remove_circle_outline"
-                      @click="showSwipeout" />
-                  </template>
-                  <f7-swipeout-actions right v-if="editable">
-                    <f7-swipeout-button
-                      @click="(ev) => deleteFilter(ev, ft, index)"
-                      style="background-color: var(--f7-swipeout-delete-button-bg-color)">
-                      Delete
-                    </f7-swipeout-button>
-                  </f7-swipeout-actions>
-                </f7-list-item>
-              </f7-list>
-              <f7-list v-if="editable">
-                <f7-list-item
-                  link
-                  no-chevron
-                  media-item
-                  :color="(theme.dark) ? 'black' : 'white'"
-                  subtitle="Add filter"
-                  @click="openFilterTypePopup">
-                  <template #media>
-                    <f7-icon color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
-                  </template>
-                </f7-list-item>
-              </f7-list>
-            </f7-block>
-            <f7-block>
               <!-- Aliases -->
               <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)"> Aliases </f7-block-title>
               <f7-block-header style="padding-right: 16px">Item names mapped to aliases used in persistence store.</f7-block-header>
@@ -262,9 +174,10 @@
               </f7-list>
             </f7-block>
           </f7-col>
-          <f7-col v-if="editable && !newPersistence">
+          <f7-col v-if="editable" class="persistence-config-links">
             <f7-list>
-              <f7-list-button color="red" @click="deletePersistence"> Remove persistence configuration </f7-list-button>
+              <f7-list-button color="blue" @click="manageDefinitionsPopup = true"> Manage definitions </f7-list-button>
+              <f7-list-button v-if="!newPersistence" color="red" @click="deletePersistence"> Remove persistence configuration </f7-list-button>
             </f7-list>
           </f7-col>
         </f7-block>
@@ -290,6 +203,104 @@
       </f7-tab>
     </f7-tabs>
   </f7-page>
+
+  <f7-popup v-if="ready" v-model:opened="manageDefinitionsPopup" class="persistence-definitions-popup">
+    <f7-page>
+      <f7-navbar title="Manage Definitions">
+        <f7-nav-left>
+          <f7-link icon-ios="f7:arrow_left" icon-md="material:arrow_back" icon-aurora="f7:arrow_left" popup-close />
+        </f7-nav-left>
+      </f7-navbar>
+      <f7-block>
+        <f7-block-title medium> Definitions </f7-block-title>
+        <f7-block-header> Cron strategy and filter definitions used in a persistence configuration. </f7-block-header>
+        <!-- Cron Strategies -->
+        <f7-block-title small style="margin-bottom: var(--f7-list-margin-vertical)"> Cron Strategies </f7-block-title>
+        <f7-list media-list swipeout>
+          <f7-list-item
+            v-for="(cs, index) in persistence.cronStrategies"
+            :key="cs.name"
+            :title="cs.name"
+            :footer="cs.cronExpression"
+            :link="editable"
+            @click="(ev) => editCronStrategy(ev, index, cs)"
+            swipeout>
+            <template #media>
+              <f7-link
+                v-if="editable"
+                icon-color="red"
+                icon-aurora="f7:minus_circle_filled"
+                icon-ios="f7:minus_circle_filled"
+                icon-md="material:remove_circle_outline"
+                @click="showSwipeout" />
+            </template>
+            <f7-swipeout-actions right v-if="editable">
+              <f7-swipeout-button
+                @click="(ev) => deleteCronStrategy(ev, index)"
+                style="background-color: var(--f7-swipeout-delete-button-bg-color)">
+                Delete
+              </f7-swipeout-button>
+            </f7-swipeout-actions>
+          </f7-list-item>
+        </f7-list>
+        <f7-list>
+          <f7-list-item
+            link
+            no-chevron
+            media-item
+            :color="(theme.dark) ? 'black' : 'white'"
+            subtitle="Add cron strategy"
+            @click="editCronStrategy(undefined, null)">
+            <template #media>
+              <f7-icon color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
+            </template>
+          </f7-list-item>
+        </f7-list>
+        <!-- Filters -->
+        <f7-block-title small style="margin-bottom: var(--f7-list-margin-vertical)"> Filters </f7-block-title>
+        <f7-list v-for="ft in FilterTypes" :key="ft.name" :media-list="editable" swipeout>
+          <f7-list-item
+            v-for="(f, index) in persistence[ft.name]"
+            :key="f.name"
+            :title="f.name"
+            :footer="(typeof ft.footerFn === 'function') ? ft.footerFn(f) : ''"
+            :link="editable"
+            @click="(ev) => editFilter(ev, ft, index, f)"
+            swipeout>
+            <template #media>
+              <f7-link
+                v-if="editable"
+                icon-color="red"
+                icon-aurora="f7:minus_circle_filled"
+                icon-ios="f7:minus_circle_filled"
+                icon-md="material:remove_circle_outline"
+                @click="showSwipeout" />
+            </template>
+            <f7-swipeout-actions right v-if="editable">
+              <f7-swipeout-button
+                @click="(ev) => deleteFilter(ev, ft, index)"
+                style="background-color: var(--f7-swipeout-delete-button-bg-color)">
+                Delete
+              </f7-swipeout-button>
+            </f7-swipeout-actions>
+          </f7-list-item>
+        </f7-list>
+        <f7-list>
+          <f7-list-item
+            link
+            no-chevron
+            media-item
+            :color="(theme.dark) ? 'black' : 'white'"
+            subtitle="Add filter"
+            @click="openFilterTypePopup">
+            <template #media>
+              <f7-icon color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
+            </template>
+          </f7-list-item>
+        </f7-list>
+      </f7-block>
+    </f7-page>
+  </f7-popup>
 
   <f7-popup v-if="ready" v-model:opened="addFilterTypePopup" class="filtertype-selection-popup">
     <f7-page>
@@ -360,6 +371,19 @@
   .item-inner::before
     visibility: hidden
 
+.persistence-config-links
+  margin-top: 2.5rem
+
+.persistence-definitions-popup
+  .block
+    padding-left var(--f7-safe-area-left)
+    padding-right var(--f7-safe-area-right)
+  .media-list
+    margin-bottom 0
+  .list
+    margin-top 0
+    margin-bottom 0
+
 .persistence-filter-big-button
   background var(--f7-card-bg-color)
   text-align center
@@ -417,6 +441,7 @@ export default {
       currentConfiguration: null,
       currentCronStrategy: null,
       currentFilter: null,
+      manageDefinitionsPopup: false,
       addFilterTypePopup: false,
 
       notEditableMgs: 'This persistence configuration is not editable because it has been provisioned from a file.'
