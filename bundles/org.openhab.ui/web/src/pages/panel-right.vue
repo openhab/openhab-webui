@@ -34,17 +34,18 @@
       text-align center
 </style>
 
-<script>
-export default {
-  data () {
-    return {
-      apps: []
-    }
-  },
-  created () {
-    this.$oh.api.get('/rest/ui/tiles').then((data) => {
-      this.apps = data
-    })
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import * as api from '@/api'
+
+const apps = ref<api.Tile[]>([])
+
+onMounted(async () => {
+  try {
+    const data = await api.getUiTiles()
+    apps.value = data!
+  } catch (error) {
+    console.error('Failed to fetch apps:', error)
   }
-}
+})
 </script>
