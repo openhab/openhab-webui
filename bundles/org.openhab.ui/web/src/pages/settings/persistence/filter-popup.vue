@@ -40,7 +40,7 @@
     </f7-page>
   </f7-popup>
 
-  <filter-type-picker :opened="opened && !currentFilterType" @close="$emit('close')" @filter-type-selected="currentFilterType = $event" />
+  <filter-type-picker :opened="opened && !currentFilterType" @close="$emit('close')" @filter-type-selected="setFilterType" />
 </template>
 
 <script>
@@ -59,10 +59,14 @@ export default {
   },
   emits: ['close', 'filterConfigUpdate'],
   data () {
-    const initialFilter = this.filter || { name: null }
-    // Initialize values property for equalsFilters if creating new
-    if (!this.filter && this.filterType?.name === 'equalsFilters') {
-      initialFilter.values = ''
+    const initialFilter = this.filter ? cloneDeep(this.filter) : { name: null }
+    // Initialize values property for equalsFilters
+    if (this.filterType?.name === 'equalsFilters') {
+      if (!this.filter) {
+        initialFilter.values = ''
+      } else if (Array.isArray(initialFilter.values)) {
+        initialFilter.values = initialFilter.values.join(', ')
+      }
     }
     return {
       currentFilterType: this.filterType,
@@ -83,10 +87,14 @@ export default {
   watch: {
     filter: {
       handler (newVal) {
-        const initialFilter = newVal || { name: null }
-        // Initialize values property for equalsFilters if creating new
-        if (!newVal && this.currentFilterType?.name === 'equalsFilters') {
-          initialFilter.values = ''
+        const initialFilter = newVal ? cloneDeep(newVal) : { name: null }
+        // Initialize values property for equalsFilters
+        if (this.currentFilterType?.name === 'equalsFilters') {
+          if (!newVal) {
+            initialFilter.values = ''
+          } else if (Array.isArray(initialFilter.values)) {
+            initialFilter.values = initialFilter.values.join(', ')
+          }
         }
         this.currentFilter = initialFilter
       },
@@ -95,11 +103,28 @@ export default {
     filterType: {
       handler (newVal) {
         this.currentFilterType = newVal
+        if (this.currentFilterType?.name === 'equalsFilters') {
+          if (this.currentFilter?.values == null) {
+            this.currentFilter.values = ''
+          } else if (Array.isArray(this.currentFilter.values)) {
+            this.currentFilter.values = this.currentFilter.values.join(', ')
+          }
+        }
       },
       immediate: true
     }
   },
   methods: {
+    setFilterType (filterType) {
+      this.currentFilterType = filterType
+      if (this.currentFilterType?.name === 'equalsFilters') {
+        if (this.currentFilter?.values == null) {
+          this.currentFilter.values = ''
+        } else if (Array.isArray(this.currentFilter.values)) {
+          this.currentFilter.values = this.currentFilter.values.join(', ')
+        }
+      }
+    },
     updateFilter () {
       if (!this.$refs['config-sheet'].isValid()) {
         f7.dialog.alert('Please review the configuration and correct validation errors')
@@ -132,7 +157,7 @@ export default {
       if (this.createMode) {
         this.persistence[this.currentFilterType.name].push(filterToSave)
       } else if (existingIndex !== -1) {
-        this.persistence[this.filterType.name][existingIndex] = filterToSave
+        this.persistence[this.currentFilterType.name][existingIndex] = filterToSave
       }
 
       // Emit via Vue event system so parent can listen directly
