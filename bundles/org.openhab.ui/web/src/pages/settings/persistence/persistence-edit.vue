@@ -132,7 +132,8 @@
                       pattern="[A-Za-z_][A-Za-z0-9_]*"
                       error-message="Required. Must not start with a number. A-Z,a-z,0-9,_ only"
                       :value="persistence.aliases[i]"
-                      @input="editAlias($event, i, $event.target.value)"
+                      @input="editAlias(i, $event.target.value)"
+                      @blur="checkAliasForDuplicates(i, $event.target.value)"
                       @keydown="keyDown($event, index)" />
                   </div>
                   <f7-swipeout-actions right v-if="editable">
@@ -537,16 +538,18 @@ export default {
         }, {})
       this.persistence.aliases = newAliases
     },
-    editAlias (ev, item, alias) {
+    editAlias (item, alias) {
       if (!this.editable) return
+      this.persistence.aliases[item] = alias
+    },
+    checkAliasForDuplicates (item, alias) {
+      if (!this.editable || !alias) return
       // Warn when alias already exists
       const duplicate = Object.entries(this.persistence.aliases).find(([i, a]) => (item !== i) && (alias === a))
       if (duplicate) {
         f7.dialog.alert('Alias ' + alias + ' for item ' + item + ' already exists for item ' + duplicate[0])
         this.persistence.aliases[item] = ''
-        return
       }
-      this.persistence.aliases[item] = alias
     },
     deleteAlias (ev, item) {
       if (!this.editable) return
@@ -556,10 +559,7 @@ export default {
         swipeoutElement = swipeoutElement.parentElement
       }
       f7.swipeout.delete(swipeoutElement, () => {
-        const index = this.persistence.aliases.findIndex((k) => k === item)
-        if (index >= 0) {
-          this.persistence.aliases.splice(index, 1)
-        }
+        delete this.persistence.aliases[item]
       })
     },
     async validateAliases () {
