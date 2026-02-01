@@ -95,7 +95,7 @@ export const usePersistenceEditStore = defineStore('persistenceEdit', () => {
 
     const serviceId = persistence.value.serviceId
     api
-      .putPersistenceServiceConfiguration({ serviceId: serviceId, persistenceServiceConfiguration: persistence.value})
+      .putPersistenceServiceConfiguration({ serviceId: serviceId, persistenceServiceConfiguration: persistence.value })
       .then(() => {
         if (persistence.value) {
           persistence.value.editable = true
@@ -128,7 +128,7 @@ export const usePersistenceEditStore = defineStore('persistenceEdit', () => {
 
     const serviceId = persistence.value.serviceId
     api
-      .deletePersistenceServiceConfiguration({serviceId: serviceId})
+      .deletePersistenceServiceConfiguration({ serviceId: serviceId })
       .then(() => {
         persistence.value = null
         savedPersistence.value = null
