@@ -3,7 +3,7 @@ import { watch, computed, ref } from 'vue'
 import fastDeepEqual from 'fast-deep-equal/es6'
 import cloneDeep from 'lodash/cloneDeep'
 
-import api from '@/js/openhab/api'
+import * as api from '@/api'
 import { f7 } from 'framework7-vue'
 
 /**
@@ -18,9 +18,9 @@ export const usePersistenceEditStore = defineStore('persistenceEdit', () => {
   const skipLoadOnReturn = ref(false)
 
   // Store both the current (potentially dirty) and saved (clean) persistence data
-  const persistence = ref<any>({})
-  const savedPersistence = ref<any>({})
-  const suggestedStrategies = ref<string[]>([])
+  const persistence = ref<api.PersistenceServiceConfiguration>({})
+  const savedPersistence = ref<api.PersistenceServiceConfiguration>({})
+  const suggestedStrategies = ref<Array<api.PersistenceStrategy>>([])
 
   // watch
   watch(
@@ -47,7 +47,7 @@ export const usePersistenceEditStore = defineStore('persistenceEdit', () => {
     loading.value = true
 
     api
-      .get('/rest/persistence/strategysuggestions?serviceId=' + serviceId)
+      .getPersistenceServiceStrategySuggestions({ serviceId })
       .then((suggestions) => {
         suggestedStrategies.value = suggestions
       })
@@ -56,7 +56,7 @@ export const usePersistenceEditStore = defineStore('persistenceEdit', () => {
         suggestedStrategies.value = []
       })
       .then(() => {
-        return api.get('/rest/persistence/' + serviceId)
+        return api.getPersistenceServiceConfiguration({ serviceId })
       })
       .then((data) => {
         persistence.value = data
@@ -94,7 +94,7 @@ export const usePersistenceEditStore = defineStore('persistenceEdit', () => {
 
     const serviceId = persistence.value.serviceId
     api
-      .put('/rest/persistence/' + serviceId, persistence.value)
+      .updatePersistenceServiceConfiguration({ serviceId: serviceId, body: persistence.value})
       .then(() => {
         persistence.value.editable = true
         newPersistence.value = false
@@ -122,7 +122,7 @@ export const usePersistenceEditStore = defineStore('persistenceEdit', () => {
   async function deletePersistence() {
     const serviceId = persistence.value.serviceId
     api
-      .delete('/rest/persistence/' + serviceId, null)
+      .deletePersistenceServiceConfiguration({serviceId: serviceId})
       .then(() => {
         persistence.value = {}
         savedPersistence.value = {}
