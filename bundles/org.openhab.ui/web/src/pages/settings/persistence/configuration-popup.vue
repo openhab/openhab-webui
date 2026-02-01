@@ -116,14 +116,15 @@ export default {
     opened: Boolean,
     persistence: Object,
     configurationIndex: Number,
-    predefinedStrategies: Array
+    predefinedStrategies: Array,
+    suggestedStrategies: Array
   },
   data () {
     return {
       persistenceLocal: {},
       currentConfiguration: {
         items: ['*'],
-        strategies: [],
+        strategies: this.suggestedStrategies,
         filters: []
       }
     }
@@ -202,7 +203,7 @@ export default {
       this.persistenceLocal = cloneDeep(this.persistence || {})
       this.currentConfiguration = this.persistenceLocal?.configs?.[this.configurationIndex] || {
         items: ['*'],
-        strategies: [],
+        strategies: this.suggestedStrategies,
         filters: []
       }
     },

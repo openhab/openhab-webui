@@ -18,8 +18,8 @@ export const usePersistenceEditStore = defineStore('persistenceEdit', () => {
   const skipLoadOnReturn = ref(false)
 
   // Store both the current (potentially dirty) and saved (clean) persistence data
-  const persistence = ref<api.PersistenceServiceConfiguration>({})
-  const savedPersistence = ref<api.PersistenceServiceConfiguration>({})
+  const persistence = ref<api.PersistenceServiceConfiguration | null>(null)
+  const savedPersistence = ref<api.PersistenceServiceConfiguration | null>(null)
   const suggestedStrategies = ref<Array<api.PersistenceStrategy>>([])
 
   // watch
@@ -49,7 +49,7 @@ export const usePersistenceEditStore = defineStore('persistenceEdit', () => {
     api
       .getPersistenceServiceStrategySuggestions({ serviceId })
       .then((suggestions) => {
-        suggestedStrategies.value = suggestions
+        suggestedStrategies.value = suggestions || []
       })
       .catch(() => {
         console.log('Getting persistence strategy suggestions failed for serviceId:', serviceId, '- default to no suggestions')
@@ -59,7 +59,7 @@ export const usePersistenceEditStore = defineStore('persistenceEdit', () => {
         return api.getPersistenceServiceConfiguration({ serviceId })
       })
       .then((data) => {
-        persistence.value = data
+        persistence.value = data || null
         savedPersistence.value = cloneDeep(persistence.value)
         loadingFinishedCallback(true)
         skipLoadOnReturn.value = false
@@ -91,12 +91,15 @@ export const usePersistenceEditStore = defineStore('persistenceEdit', () => {
 
   async function savePersistence() {
     if (!editable.value) return
+    if (!persistence.value) return
 
     const serviceId = persistence.value.serviceId
     api
-      .updatePersistenceServiceConfiguration({ serviceId: serviceId, body: persistence.value})
+      .putPersistenceServiceConfiguration({ serviceId: serviceId, persistenceServiceConfiguration: persistence.value})
       .then(() => {
-        persistence.value.editable = true
+        if (persistence.value) {
+          persistence.value.editable = true
+        }
         newPersistence.value = false
         savedPersistence.value = cloneDeep(persistence.value)
         persistenceDirty.value = false
@@ -120,12 +123,15 @@ export const usePersistenceEditStore = defineStore('persistenceEdit', () => {
   }
 
   async function deletePersistence() {
+    if (!editable.value) return
+    if (!persistence.value) return
+
     const serviceId = persistence.value.serviceId
     api
       .deletePersistenceServiceConfiguration({serviceId: serviceId})
       .then(() => {
-        persistence.value = {}
-        savedPersistence.value = {}
+        persistence.value = null
+        savedPersistence.value = null
         newPersistence.value = true
         persistenceDirty.value = false
       })

@@ -205,6 +205,7 @@
     :persistence="persistence"
     :configurationIndex="currentConfigurationIndex"
     :predefinedStrategies="PredefinedStrategies"
+    :suggestedStrategies="suggestedStrategyNames"
     @close="configurationPopupOpen = false"
     @configuration-update="saveConfiguration($event); configurationPopupOpen = false" />
 
@@ -351,10 +352,12 @@ export default {
     currentItemsWithAlias () {
       return Object.keys(this.persistence.aliases || {}).sort()
     },
+    suggestedStrategyNames () {
+      return this.suggestedStrategies.map((ss) => ss.name)
+    },
     ...mapStores(useRuntimeStore),
     ...mapState(usePersistenceEditStore, ['persistenceDirty', 'skipLoadOnReturn', 'suggestedStrategies', 'editable', 'newPersistence']),
     ...mapWritableState(usePersistenceEditStore, ['persistence'])
-
   },
   watch: {
     persistenceDirty: function () { this.dirty = this.persistenceDirty }
