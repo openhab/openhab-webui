@@ -497,7 +497,9 @@ export default {
     saveConfiguration (persistenceWithUpdatedConfig) {
       // Merge the returned persistence back into our main persistence
       // The nested popups have already modified cronStrategies/filters in persistenceWithUpdatedConfig
-      const updatedConfig = persistenceWithUpdatedConfig.configs[this.currentConfigurationIndex || (persistenceWithUpdatedConfig.configs.length - 1)]
+      const updatedConfig = persistenceWithUpdatedConfig.configs[
+        this.currentConfigurationIndex ?? (persistenceWithUpdatedConfig.configs.length - 1)
+      ]
       if (updatedConfig) {
         // Update the configuration
         const idx = this.persistence.configs.findIndex((cfg) => cfg.items.join() === updatedConfig.items.join())
