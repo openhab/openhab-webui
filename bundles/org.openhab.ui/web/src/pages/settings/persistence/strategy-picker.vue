@@ -26,7 +26,7 @@
           no-chevron
           media-item
           :color="(theme.dark) ? 'black' : 'white'"
-          subtitle="Add cron strategy"
+          subtitle="Add cron strategy definition"
           @click="openCronPopup">
           <template #media>
             <f7-icon color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
