@@ -51,7 +51,11 @@
                 :checked="second.cronEvery === 3 ? true : null"
                 @click="second.cronEvery = 3">
                 <select multiple v-model="second.specificSpecfic">
-                  <option v-for="val in 60" :key="val" :value="val - 1">
+                  <option
+                    v-for="val in 60"
+                    :key="val"
+                    :value="val - 1"
+                    :selected="second.specificSpecific.indexOf(val - 1) >= 0 ? true : null">
                     {{ val - 1 }}
                   </option>
                 </select>
@@ -100,7 +104,11 @@
                 :checked="minute.cronEvery === 3 ? true : null"
                 @click="minute.cronEvery = 3">
                 <select multiple v-model="minute.specificSpecific">
-                  <option v-for="val in 60" :key="val" :value="val - 1">
+                  <option
+                    v-for="val in 60"
+                    :key="val"
+                    :value="val - 1"
+                    :selected="minute.specificSpecific.indexOf(val - 1) >= 0 ? true : null">
                     {{ val - 1 }}
                   </option>
                 </select>
@@ -149,7 +157,11 @@
                 :checked="hour.cronEvery === 3 ? true : null"
                 @click="hour.cronEvery = 3">
                 <select multiple v-model="hour.specificSpecific">
-                  <option v-for="val in 24" :key="val" :value="val - 1">
+                  <option
+                    v-for="val in 24"
+                    :key="val"
+                    :value="val - 1"
+                    :selected="hour.specificSpecific.indexOf(val - 1) >= 0 ? true : null">
                     {{ val - 1 }}
                   </option>
                 </select>
@@ -206,8 +218,12 @@
                 :smart-select-params="smartSelectParams"
                 :checked="day.cronEvery === 4 ? true : null"
                 @click="day.cronEvery = 4">
-                <select multiple v-model="week.specficSpecific">
-                  <option v-for="val in 7" :key="val" :value="['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'][val - 1]">
+                <select multiple v-model="week.specificSpecific">
+                  <option
+                    v-for="val in 7"
+                    :key="val"
+                    :value="['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'][val - 1]"
+                    :selected="week.specificSpecific.indexOf( ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'][val - 1]) >= 0 ? true : null">
                     {{ text.Week[val - 1] }}
                   </option>
                 </select>
@@ -305,7 +321,7 @@
                 :checked="month.cronEvery === 3 ? true : null"
                 @click="month.cronEvery = 3">
                 <select multiple v-model="month.specificSpecific">
-                  <option v-for="val in 12" :key="val" :value="val">
+                  <option v-for="val in 12" :key="val" :value="val" :selected="month.specificSpecific.indexOf(val) >= 0 ? true : null">
                     {{ val }}
                   </option>
                 </select>
@@ -352,8 +368,12 @@
                 :smart-select-params="smartSelectParams"
                 :checked="year.cronEvery === 3 ? true : null"
                 @click="year.cronEvery = 3">
-                <select multiple v-model="year.specficSpecific">
-                  <option v-for="val in 100" :key="val" :value="val + year.currentYear - 1">
+                <select multiple v-model="year.specificSpecific">
+                  <option
+                    v-for="val in 100"
+                    :key="val"
+                    :value="val + year.currentYear - 1"
+                    :selected="year.specificSpecific.indexOf(val + year.currentYear - 1) >= 0 ? true : null">
                     {{ val + year.currentYear - 1 }}
                   </option>
                 </select>
