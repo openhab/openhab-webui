@@ -97,7 +97,7 @@
                   link
                   no-chevron
                   media-item
-                  :color="useUiOptionsStore().darkMode"
+                  :color="uiOptionsStore.darkMode"
                   subtitle="Add configuration"
                   @click="editConfiguration(undefined, null)">
                   <template #media>
@@ -305,6 +305,7 @@ import ConfigurationPopup from '@/pages/settings/persistence/configuration-popup
 import DefinitionsPopup from '@/pages/settings/persistence/definitions-popup.vue'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+import { useUIOptionsStore } from  '@/js/stores/useUIOptionsStore'
 import { usePersistenceEditStore } from '@/js/stores/usePersistenceEditStore'
 
 export default {
@@ -356,7 +357,7 @@ export default {
     suggestedStrategyNames () {
       return this.suggestedStrategies.map((ss) => ss.name)
     },
-    ...mapStores(useRuntimeStore),
+    ...mapStores(useRuntimeStore, useUIOptionsStore),
     ...mapState(usePersistenceEditStore, ['persistenceDirty', 'suggestedStrategies', 'editable', 'newPersistence']),
     ...mapWritableState(usePersistenceEditStore, ['persistence'])
   },
