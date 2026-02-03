@@ -49,9 +49,8 @@ export const usePersistenceEditStore = defineStore('persistenceEdit', () => {
         console.log('Getting persistence strategy suggestions failed for serviceId:', serviceId, '- default to no suggestions')
         suggestedStrategies.value = []
       })
-      .then(() => {
-        return api.getPersistenceServiceConfiguration({ serviceId })
-      })
+    api
+      .getPersistenceServiceConfiguration({ serviceId })
       .then((data) => {
         persistence.value = data || null
         savedPersistence.value = cloneDeep(persistence.value)
