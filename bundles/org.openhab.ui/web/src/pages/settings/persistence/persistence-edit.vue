@@ -396,7 +396,7 @@ export default {
         // Failed to load - go back or show error
         return
       }
-      
+
       // Success or new persistence - initialize if needed
       if (this.newPersistence) {
         this.initializeNewPersistence()

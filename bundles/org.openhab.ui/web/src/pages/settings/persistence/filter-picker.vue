@@ -21,13 +21,7 @@
         <f7-list-item v-for="s in localFilters" :key="s" checkbox :checked="localValue.includes(s)" @change="toggleFilter(s)">
           {{ s }}
         </f7-list-item>
-        <f7-list-item
-          link
-          no-chevron
-          media-item
-          :color="uiOptionsStore.darkMode"
-          subtitle="Add filter definition"
-          @click="openFilterPopup">
+        <f7-list-item link no-chevron media-item :color="uiOptionsStore.darkMode" subtitle="Add filter definition" @click="openFilterPopup">
           <template #media>
             <f7-icon color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
           </template>

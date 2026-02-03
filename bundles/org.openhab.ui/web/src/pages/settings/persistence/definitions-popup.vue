@@ -42,13 +42,7 @@
           </f7-list-item>
         </f7-list>
         <f7-list>
-          <f7-list-item
-            link
-            no-chevron
-            media-item
-            :color="uiOptionsStore.darkMode"
-            subtitle="Add cron strategy"
-            @click="addCronStrategy">
+          <f7-list-item link no-chevron media-item :color="uiOptionsStore.darkMode" subtitle="Add cron strategy" @click="addCronStrategy">
             <template #media>
               <f7-icon color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
             </template>

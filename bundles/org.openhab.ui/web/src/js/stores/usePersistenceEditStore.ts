@@ -44,7 +44,8 @@ export const usePersistenceEditStore = defineStore('persistenceEdit', () => {
     loading = true
 
     // Load suggestions in parallel (don't await, failure is OK)
-    api.getPersistenceServiceStrategySuggestions({ serviceId })
+    api
+      .getPersistenceServiceStrategySuggestions({ serviceId })
       .then((suggestions) => {
         suggestedStrategies.value = suggestions || []
       })
