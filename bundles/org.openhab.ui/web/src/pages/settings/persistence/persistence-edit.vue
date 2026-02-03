@@ -395,23 +395,23 @@ export default {
     /**
      * Load required data from the REST API.
      */
-    load () {
-      const loadingFinished = (success) => {
-        if (!success) return
-
-        nextTick(() => {
-          if (this.newPersistence) {
-            this.initializeNewPersistence()
-          }
-          if (this.FilterTypes && this.persistence) {
-            this.FilterTypes.forEach((ft) => {
-              if (!this.persistence[ft.name]) this.persistence[ft.name] = []
-            })
-          }
-          this.ready = true
+    async load () {
+      const success = await usePersistenceEditStore().loadPersistence(this.serviceId)
+      if (!success) {
+        // Failed to load - go back or show error
+        return
+      }
+      
+      // Success or new persistence - initialize if needed
+      if (this.newPersistence) {
+        this.initializeNewPersistence()
+      }
+      if (this.FilterTypes && this.persistence) {
+        this.FilterTypes.forEach((ft) => {
+          if (!this.persistence[ft.name]) this.persistence[ft.name] = []
         })
       }
-      usePersistenceEditStore().loadPersistence(this.serviceId, loadingFinished)
+      this.ready = true
     },
     async save () {
       if (!this.editable) return

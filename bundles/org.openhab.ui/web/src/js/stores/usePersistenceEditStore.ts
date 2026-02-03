@@ -4,6 +4,7 @@ import fastDeepEqual from 'fast-deep-equal/es6'
 import cloneDeep from 'lodash/cloneDeep'
 
 import * as api from '@/api'
+import { ApiError } from '@/js/hey-api'
 import { f7 } from 'framework7-vue'
 
 /**
@@ -36,12 +37,12 @@ export const usePersistenceEditStore = defineStore('persistenceEdit', () => {
   // computed
   const editable = computed(() => newPersistence.value || persistence.value?.editable)
 
-  function loadPersistence(serviceId: string, loadingFinishedCallback: (success: boolean) => void) {
-    if (loading.value) return
+  async function loadPersistence(serviceId: string) {
+    if (loading.value) return false
     loading.value = true
 
-    api
-      .getPersistenceServiceStrategySuggestions({ serviceId })
+    // Load suggestions in parallel (don't await, failure is OK)
+    api.getPersistenceServiceStrategySuggestions({ serviceId })
       .then((suggestions) => {
         suggestedStrategies.value = suggestions || []
       })
@@ -49,34 +50,33 @@ export const usePersistenceEditStore = defineStore('persistenceEdit', () => {
         console.log('Getting persistence strategy suggestions failed for serviceId:', serviceId, '- default to no suggestions')
         suggestedStrategies.value = []
       })
-    api
-      .getPersistenceServiceConfiguration({ serviceId })
-      .then((data) => {
-        persistence.value = data || null
-        savedPersistence.value = cloneDeep(persistence.value)
-        loadingFinishedCallback(true)
+
+    try {
+      const data = await api.getPersistenceServiceConfiguration({ serviceId })
+      persistence.value = data || null
+      savedPersistence.value = cloneDeep(persistence.value)
+      loading.value = false
+      return true
+    } catch (err) {
+      // Only handle 404 from persistence endpoint as "new persistence"
+      if (err instanceof ApiError && err.response.status === 404) {
+        console.log('Persistence configuration not found (404) for serviceId:', serviceId, '- creating new configuration')
+        newPersistence.value = true
         loading.value = false
-      })
-      .catch((err) => {
-        // Only handle 404 from persistence endpoint as "new persistence"
-        if (err.status === 404 || err.statusCode === 404 || err === 404 || err === 'Not Found' || err.message === 'Not Found') {
-          console.log('Persistence configuration not found (404) for serviceId:', serviceId, '- creating new configuration')
-          newPersistence.value = true
-          loadingFinishedCallback(true)
-          loading.value = false
-        } else {
-          console.error('Error loading persistence configuration for serviceId:', serviceId, '- Error:', err)
-          f7.toast
-            .create({
-              text: 'Error loading persistence configuration',
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
-          loadingFinishedCallback(false)
-          loading.value = false
-        }
-      })
+        return true
+      } else {
+        console.error('Error loading persistence configuration for serviceId:', serviceId, '- Error:', err)
+        f7.toast
+          .create({
+            text: 'Error loading persistence configuration',
+            destroyOnClose: true,
+            closeTimeout: 2000
+          })
+          .open()
+        loading.value = false
+        return false
+      }
+    }
   }
 
   async function savePersistence() {
