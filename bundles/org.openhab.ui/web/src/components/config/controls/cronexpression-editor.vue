@@ -58,7 +58,7 @@
                 :smart-select-params="smartSelectParams"
                 :checked="second.cronEvery === 3 ? true : null"
                 @click="second.cronEvery = 3">
-                <select multiple @change="second.specificSpecific = getSmartSelectValue('specificSecond').map((v) => parseInt(v))">
+                <select multiple v-model="second.specificSpecific">
                   <option
                     v-for="val in 60"
                     :key="val"
@@ -111,7 +111,7 @@
                 :smart-select-params="smartSelectParams"
                 :checked="minute.cronEvery === 3 ? true : null"
                 @click="minute.cronEvery = 3">
-                <select multiple @change="minute.specificSpecific = getSmartSelectValue('specificMinute').map((v) => parseInt(v))">
+                <select multiple v-model="minute.specificSpecific">
                   <option
                     v-for="val in 60"
                     :key="val"
@@ -164,7 +164,7 @@
                 :smart-select-params="smartSelectParams"
                 :checked="hour.cronEvery === 3 ? true : null"
                 @click="hour.cronEvery = 3">
-                <select multiple @change="hour.specificSpecific = getSmartSelectValue('specificHour').map((v) => parseInt(v))">
+                <select multiple v-model="hour.specificSpecific">
                   <option
                     v-for="val in 24"
                     :key="val"
@@ -226,7 +226,7 @@
                 :smart-select-params="smartSelectParams"
                 :checked="day.cronEvery === 4 ? true : null"
                 @click="day.cronEvery = 4">
-                <select multiple @change="week.specificSpecific = getSmartSelectValue('specificDayOfWeek').map((v) => v)">
+                <select multiple v-model="week.specificSpecific">
                   <option
                     v-for="val in 7"
                     :key="val"
@@ -246,7 +246,7 @@
                 :smart-select-params="smartSelectParams"
                 :checked="day.cronEvery === 5 ? true : null"
                 @click="day.cronEvery = 5">
-                <select multiple @change="day.specificSpecific = getSmartSelectValue('specificDayOfMonth').map((v) => parseInt(v))">
+                <select multiple v-model="day.specificSpecific">
                   <option v-for="val in 31" :key="val" :value="val" :selected="day.specificSpecific.indexOf(val) >= 0 ? true : null">
                     {{ val }}
                   </option>
@@ -328,7 +328,7 @@
                 :smart-select-params="smartSelectParams"
                 :checked="month.cronEvery === 3 ? true : null"
                 @click="month.cronEvery = 3">
-                <select multiple @change="month.specificSpecific = getSmartSelectValue('specificMonth').map((v) => parseInt(v))">
+                <select multiple v-model="month.specificSpecific">
                   <option v-for="val in 12" :key="val" :value="val" :selected="month.specificSpecific.indexOf(val) >= 0 ? true : null">
                     {{ val }}
                   </option>
@@ -376,7 +376,7 @@
                 :smart-select-params="smartSelectParams"
                 :checked="year.cronEvery === 3 ? true : null"
                 @click="year.cronEvery = 3">
-                <select multiple @change="year.specificSpecific = getSmartSelectValue('specificYear').map((v) => parseInt(v))">
+                <select multiple v-model="year.specificSpecific">
                   <option
                     v-for="val in 100"
                     :key="val"
@@ -825,10 +825,6 @@ export default {
         this.day.cronEvery = 5
         this.day.specificSpecific = dayExpr.split(',')
       }
-    },
-    getSmartSelectValue (refName) {
-      const ref = this.$refs[refName]
-      return ref?.$el?.children[0]?.f7SmartSelect?.getValue() || []
     }
   }
 }
