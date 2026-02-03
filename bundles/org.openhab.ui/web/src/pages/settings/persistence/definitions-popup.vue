@@ -46,7 +46,7 @@
             link
             no-chevron
             media-item
-            :color="(theme.dark) ? 'black' : 'white'"
+            :color="uiOptionsStore.darkMode"
             subtitle="Add cron strategy"
             @click="addCronStrategy">
             <template #media>
@@ -84,7 +84,7 @@
           </f7-list-item>
         </f7-list>
         <f7-list>
-          <f7-list-item link no-chevron media-item :color="(theme.dark) ? 'black' : 'white'" subtitle="Add filter" @click="addFilter">
+          <f7-list-item link no-chevron media-item :color="uiOptionsStore.darkMode" subtitle="Add filter" @click="addFilter">
             <template #media>
               <f7-icon color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
             </template>
@@ -125,10 +125,13 @@
 </style>
 
 <script>
-import { theme, f7 } from 'framework7-vue'
+import { f7 } from 'framework7-vue'
 import cloneDeep from 'lodash/cloneDeep'
 import fastDeepEqual from 'fast-deep-equal/es6'
+import { mapStores } from 'pinia'
 
+
+import { useUIOptionsStore } from  '@/js/stores/useUIOptionsStore'
 import { FilterTypes } from '@/assets/definitions/persistence'
 import CronStrategyPopup from '@/pages/settings/persistence/cron-strategy-popup.vue'
 import FilterPopup from '@/pages/settings/persistence/filter-popup.vue'
@@ -146,7 +149,6 @@ export default {
   },
   data () {
     return {
-      theme,
       FilterTypes,
       persistenceLocal: cloneDeep(this.persistence || {}),
 
@@ -177,6 +179,7 @@ export default {
       }
       return false
     },
+    ...mapStores(useUIOptionsStore)
   },
   methods: {
     addCronStrategy () {

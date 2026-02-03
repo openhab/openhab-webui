@@ -25,7 +25,7 @@
           link
           no-chevron
           media-item
-          :color="(theme.dark) ? 'black' : 'white'"
+          :color="uiOptionsStore.darkMode"
           subtitle="Add cron strategy definition"
           @click="openCronPopup">
           <template #media>
@@ -44,8 +44,10 @@
 </template>
 
 <script>
-import { theme } from 'framework7-vue'
+import { mapStores } from 'pinia'
+
 import CronStrategyPopup from '@/pages/settings/persistence/cron-strategy-popup.vue'
+import { useUIOptionsStore } from  '@/js/stores/useUIOptionsStore'
 
 export default {
   components: { CronStrategyPopup },
@@ -66,9 +68,8 @@ export default {
     }
   },
   computed: {
-    theme () {
-      return theme
-    }
+    ...mapStores(useUIOptionsStore)
+
   },
   watch: {
     value: {

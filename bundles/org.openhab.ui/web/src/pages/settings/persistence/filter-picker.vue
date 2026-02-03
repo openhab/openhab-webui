@@ -25,7 +25,7 @@
           link
           no-chevron
           media-item
-          :color="(theme.dark) ? 'black' : 'white'"
+          :color="uiOptionsStore.darkMode"
           subtitle="Add filter definition"
           @click="openFilterPopup">
           <template #media>
@@ -44,8 +44,9 @@
 </template>
 
 <script>
-import { theme } from 'framework7-vue'
+import { mapStores } from 'pinia'
 import FilterPopup from '@/pages/settings/persistence/filter-popup.vue'
+import { useUIOptionsStore } from  '@/js/stores/useUIOptionsStore'
 
 export default {
   components: { FilterPopup },
@@ -66,9 +67,7 @@ export default {
     }
   },
   computed: {
-    theme () {
-      return theme
-    }
+    ...mapStores(useUIOptionsStore),
   },
   watch: {
     value: {

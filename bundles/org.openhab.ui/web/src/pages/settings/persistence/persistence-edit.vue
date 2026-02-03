@@ -292,7 +292,7 @@
 
 <script>
 import { defineAsyncComponent } from 'vue'
-import { f7, theme } from 'framework7-vue'
+import { f7 } from 'framework7-vue'
 import { mapState, mapWritableState, mapStores } from 'pinia'
 
 import YAML from 'yaml'
@@ -318,9 +318,6 @@ export default {
   props: {
     serviceId: String,
     f7router: Object
-  },
-  setup () {
-    return { theme }
   },
   data () {
     return {
