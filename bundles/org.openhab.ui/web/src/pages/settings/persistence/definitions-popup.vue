@@ -175,7 +175,7 @@ export default {
       for (const filterType of FilterTypes.map((ft) => ft.name)) {
         if (!fastDeepEqual(this.persistence[filterType], this.persistenceLocal[filterType])) return true
       }
-        return false
+      return false
     },
   },
   methods: {

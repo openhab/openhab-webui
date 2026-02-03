@@ -109,6 +109,8 @@ import ItemPicker from '@/components/config/controls/item-picker.vue'
 import StrategyPicker from '@/pages/settings/persistence/strategy-picker.vue'
 import FilterPicker from '@/pages/settings/persistence/filter-picker.vue'
 
+import { PredefinedStrategies } from '@/assets/definitions/persistence'
+
 export default {
   components: { FilterPicker, StrategyPicker, ItemPicker },
   emits: ['close', 'configurationUpdate'],
@@ -116,7 +118,6 @@ export default {
     opened: Boolean,
     persistence: Object,
     configurationIndex: Number,
-    predefinedStrategies: Array,
     suggestedStrategies: Array
   },
   data () {
@@ -141,7 +142,7 @@ export default {
   },
   computed: {
     strategies () {
-      const predefinedNames = this.predefinedStrategies || []
+      const predefinedNames = PredefinedStrategies
       const cronStrategyNames = (this.persistenceLocal.cronStrategies || []).map(cs => cs.name)
       return [...predefinedNames, ...cronStrategyNames]
     },

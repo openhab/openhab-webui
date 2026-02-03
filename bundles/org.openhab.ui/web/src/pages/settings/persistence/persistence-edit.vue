@@ -205,7 +205,6 @@
     v-model:opened="configurationPopupOpen"
     :persistence="persistence"
     :configurationIndex="currentConfigurationIndex"
-    :predefinedStrategies="PredefinedStrategies"
     :suggestedStrategies="suggestedStrategyNames"
     @close="configurationPopupOpen = false"
     @configuration-update="saveConfiguration($event); configurationPopupOpen = false" />
@@ -292,14 +291,14 @@
 </style>
 
 <script>
-import { nextTick, defineAsyncComponent } from 'vue'
+import { defineAsyncComponent } from 'vue'
 import { f7, theme } from 'framework7-vue'
 import { mapState, mapWritableState, mapStores } from 'pinia'
 
 import YAML from 'yaml'
 
 import DirtyMixin from '../dirty-mixin'
-import { FilterTypes, PredefinedStrategies, CommonCronStrategies } from '@/assets/definitions/persistence'
+import { FilterTypes, CommonCronStrategies } from '@/assets/definitions/persistence'
 import ItemPicker from '@/components/config/controls/item-picker.vue'
 import ConfigurationPopup from '@/pages/settings/persistence/configuration-popup.vue'
 import DefinitionsPopup from '@/pages/settings/persistence/definitions-popup.vue'
@@ -673,7 +672,6 @@ export default {
     }
   },
   created () {
-    this.PredefinedStrategies = PredefinedStrategies
     this.FilterTypes = FilterTypes
     this.CommonCronStrategies = CommonCronStrategies
   }
