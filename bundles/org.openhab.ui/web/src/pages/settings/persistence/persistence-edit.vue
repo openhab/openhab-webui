@@ -70,11 +70,11 @@
                       @click="showSwipeout" />
                   </template>
                   <template #title>
-                    <div v-if="configurationAllItemsTitle(cfg.items)">{{ configurationAllItemsTitle(cfg.items) }}</div>
-                    <div v-if="configurationGroupsTitle(cfg.items)">{{ configurationGroupsTitle(cfg.items) }}</div>
-                    <div v-if="configurationItemsTitle(cfg.items)">{{ configurationItemsTitle(cfg.items) }}</div>
-                    <div v-if="configurationGroupsTitle(cfg.items, true)">{{ configurationGroupsTitle(cfg.items, true) }}</div>
-                    <div v-if="configurationItemsTitle(cfg.items, true)">{{ configurationItemsTitle(cfg.items, true) }}</div>
+                    <div v-if="configurationAllItemsTitle(cfg.items)" v-text="configurationAllItemsTitle(cfg.items)" />
+                    <div v-if="configurationGroupsTitle(cfg.items)" v-text="configurationGroupsTitle(cfg.items)" />
+                    <div v-if="configurationItemsTitle(cfg.items)" v-text="configurationItemsTitle(cfg.items)" />
+                    <div v-if="configurationGroupsTitle(cfg.items, true)" v-text="configurationGroupsTitle(cfg.items, true)" />
+                    <div v-if="configurationItemsTitle(cfg.items, true)" v-text="configurationItemsTitle(cfg.items, true)" />
                   </template>
                   <template #footer>
                     <div v-if="cfg.strategies?.length">{{ configurationStrategiesTitle(cfg.strategies) }}</div>
@@ -97,7 +97,7 @@
                   link
                   no-chevron
                   media-item
-                  :color="(theme.dark) ? 'black' : 'white'"
+                  :color="useUiOptionsStore().darkMode"
                   subtitle="Add configuration"
                   @click="editConfiguration(undefined, null)">
                   <template #media>
