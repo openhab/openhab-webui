@@ -59,7 +59,7 @@ export const usePersistenceEditStore = defineStore('persistenceEdit', () => {
       })
       .catch((err) => {
         // Only handle 404 from persistence endpoint as "new persistence"
-        if (err === 404 || err === 'Not Found') {
+        if (err.status === 404 || err.statusCode === 404 || err === 404 || err === 'Not Found' || err.message === 'Not Found') {
           console.log('Persistence configuration not found (404) for serviceId:', serviceId, '- creating new configuration')
           newPersistence.value = true
           loadingFinishedCallback(true)
