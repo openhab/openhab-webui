@@ -129,7 +129,7 @@
                         <f7-badge
                           :color="firmware.version === thing.properties.firmwareVersion ? 'gray' : (firmware.version > thing.properties.firmwareVersion ? 'green' : 'red')">
                           {{ compareVersions(firmware.version, thing.properties.firmwareVersion) === 0 ? 'Current Version' :
-                            (compareVersions(firmware.version, thing.properties.firmwareVersion) > 1 ? 'Upgrade' : 'Downgrade') }}
+                            (compareVersions(firmware.version, thing.properties.firmwareVersion) > 0 ? 'Upgrade' : 'Downgrade') }}
                           <f7-link
                             v-if="compareVersions(firmware.version, thing.properties.firmwareVersion) !== 0 && !firmwareUpdating"
                             icon-color="white"
