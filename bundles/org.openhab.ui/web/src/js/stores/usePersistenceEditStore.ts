@@ -13,7 +13,6 @@ import { f7 } from 'framework7-vue'
 
 export const usePersistenceEditStore = defineStore('persistenceEdit', () => {
   // data
-  const loading = ref(false)
   const persistenceDirty = ref(false)
   const newPersistence = ref(false)
 
@@ -22,11 +21,14 @@ export const usePersistenceEditStore = defineStore('persistenceEdit', () => {
   const savedPersistence = ref<api.PersistenceServiceConfiguration | null>(null)
   const suggestedStrategies = ref<Array<api.PersistenceStrategy>>([])
 
+  // local variables
+  let loading = false
+
   // watch
   watch(
     persistence,
     () => {
-      if (!loading.value) {
+      if (!loading) {
         // ignore changes during loading
         persistenceDirty.value = !fastDeepEqual(persistence.value, savedPersistence.value)
       }
@@ -38,8 +40,8 @@ export const usePersistenceEditStore = defineStore('persistenceEdit', () => {
   const editable = computed(() => newPersistence.value || persistence.value?.editable)
 
   async function loadPersistence(serviceId: string) {
-    if (loading.value) return false
-    loading.value = true
+    if (loading) return false
+    loading = true
 
     // Load suggestions in parallel (don't await, failure is OK)
     api.getPersistenceServiceStrategySuggestions({ serviceId })
@@ -55,14 +57,14 @@ export const usePersistenceEditStore = defineStore('persistenceEdit', () => {
       const data = await api.getPersistenceServiceConfiguration({ serviceId })
       persistence.value = data || null
       savedPersistence.value = cloneDeep(persistence.value)
-      loading.value = false
+      loading = false
       return true
     } catch (err) {
       // Only handle 404 from persistence endpoint as "new persistence"
-      if (err instanceof ApiError && err.response.status === 404) {
-        console.log('Persistence configuration not found (404) for serviceId:', serviceId, '- creating new configuration')
+      if (err instanceof ApiError && (err.response.status === 204 || err.response.status === 404)) {
+        console.log('Persistence configuration not found (204) for serviceId:', serviceId, '- creating new configuration')
         newPersistence.value = true
-        loading.value = false
+        loading = false
         return true
       } else {
         console.error('Error loading persistence configuration for serviceId:', serviceId, '- Error:', err)
@@ -73,7 +75,7 @@ export const usePersistenceEditStore = defineStore('persistenceEdit', () => {
             closeTimeout: 2000
           })
           .open()
-        loading.value = false
+        loading = false
         return false
       }
     }
