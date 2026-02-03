@@ -357,7 +357,7 @@ export default {
       return this.suggestedStrategies.map((ss) => ss.name)
     },
     ...mapStores(useRuntimeStore),
-    ...mapState(usePersistenceEditStore, ['persistenceDirty', 'skipLoadOnReturn', 'suggestedStrategies', 'editable', 'newPersistence']),
+    ...mapState(usePersistenceEditStore, ['persistenceDirty', 'suggestedStrategies', 'editable', 'newPersistence']),
     ...mapWritableState(usePersistenceEditStore, ['persistence'])
   },
   watch: {

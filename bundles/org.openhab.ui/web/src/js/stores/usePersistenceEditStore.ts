@@ -15,7 +15,6 @@ export const usePersistenceEditStore = defineStore('persistenceEdit', () => {
   const loading = ref(false)
   const persistenceDirty = ref(false)
   const newPersistence = ref(false)
-  const skipLoadOnReturn = ref(false)
 
   // Store both the current (potentially dirty) and saved (clean) persistence data
   const persistence = ref<api.PersistenceServiceConfiguration | null>(null)
@@ -39,11 +38,6 @@ export const usePersistenceEditStore = defineStore('persistenceEdit', () => {
 
   function loadPersistence(serviceId: string, loadingFinishedCallback: (success: boolean) => void) {
     if (loading.value) return
-    if (skipLoadOnReturn.value) {
-      loadingFinishedCallback(true)
-      skipLoadOnReturn.value = false
-      return
-    }
     loading.value = true
 
     api
@@ -62,7 +56,6 @@ export const usePersistenceEditStore = defineStore('persistenceEdit', () => {
         persistence.value = data || null
         savedPersistence.value = cloneDeep(persistence.value)
         loadingFinishedCallback(true)
-        skipLoadOnReturn.value = false
         loading.value = false
       })
       .catch((err) => {
@@ -71,7 +64,6 @@ export const usePersistenceEditStore = defineStore('persistenceEdit', () => {
           console.log('Persistence configuration not found (404) for serviceId:', serviceId, '- creating new configuration')
           newPersistence.value = true
           loadingFinishedCallback(true)
-          skipLoadOnReturn.value = false
           loading.value = false
         } else {
           console.error('Error loading persistence configuration for serviceId:', serviceId, '- Error:', err)
@@ -83,7 +75,6 @@ export const usePersistenceEditStore = defineStore('persistenceEdit', () => {
             })
             .open()
           loadingFinishedCallback(false)
-          skipLoadOnReturn.value = false
           loading.value = false
         }
       })
@@ -153,7 +144,6 @@ export const usePersistenceEditStore = defineStore('persistenceEdit', () => {
 
   return {
     persistenceDirty,
-    skipLoadOnReturn,
 
     persistence,
     suggestedStrategies,
