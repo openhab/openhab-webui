@@ -9,10 +9,16 @@
     @page:init="pageBeforeIn"
     @page:beforeout="pageBeforeOut">
     <f7-tabs animated>
-      <f7-tab id="intro" tab-active>
-        <f7-login-screen-title>
-          <img class="intro-logo" src="@/images/openhab-logo.svg" type="image/svg+xml" />
-        </f7-login-screen-title>
+      <!-- Intro Tab -->
+      <f7-tab id="intro" tab-active @tab:show="handleTabShow">
+        <tab-header
+          :image="introLogo"
+          :prev="prev"
+          :step="currentStep"
+          :link="wizardSteps[currentStep].link"
+          :t="t"
+          @back="handlerPrev(prev)"
+          @close="skipSetup" />
         <f7-list form style="margin-top: 4rem" v-if="i18nReady">
           <f7-list-item
             :title="t('setupwizard.language')"
@@ -50,37 +56,37 @@
         </f7-list>
         <f7-block class="display-flex flex-direction-column padding">
           <div>
-            <f7-button large fill color="blue" :text="t('setupwizard.beginSetup')" @click="beginSetup" />
-            <f7-button large color="blue" :text="t('setupwizard.skipSetup')" class="margin-top" @click="skipSetup" />
+            <f7-button v-if="next" large fill color="blue" :text="t('setupwizard.beginSetup')" @click="handlerNext(next)" />
+            <f7-button v-if="skip" large color="blue" :text="t('setupwizard.skipSetup')" @click="handlerNext(skip)" />
           </div>
         </f7-block>
+        <f7-list>
+          <f7-list-item :title="t('setupwizard.short')">
+            <template #after>
+              <f7-toggle v-model:checked="setupWizardShort" />
+            </template>
+          </f7-list-item>
+        </f7-list>
       </f7-tab>
 
-      <f7-tab id="location">
-        <f7-block>
-          <f7-link
-            icon-ios="f7:arrow_left"
-            icon-aurora="f7:arrow_left"
-            icon-md="material:arrow_back"
-            tab-link="#intro"
-            color="blue"
-            tab-link-active />
-          <f7-login-screen-title>
-            <div class="padding">
-              <f7-icon size="48" color="blue" f7="map_pin_ellipse" />
-            </div>
-            {{ t('setupwizard.location.title') }}
-          </f7-login-screen-title>
-        </f7-block>
-        <f7-block strong> {{ t('setupwizard.location.header1') }}<br />{{ t('setupwizard.location.header2') }} </f7-block>
+      <f7-tab id="location" @tab:show="handleTabShow">
+        <tab-header
+          :icon="wizardSteps[currentStep].icon"
+          :title="t('setupwizard.' + currentStep + '.title')"
+          :prev="prev"
+          :step="currentStep"
+          :link="wizardSteps[currentStep].link"
+          :t="t"
+          @back="handlerPrev(prev)"
+          @close="skipSetup" />
         <f7-list>
           <f7-list-group>
             <parameter-location
-              :value="location"
-              :config-description="{ label: t('setupwizard.location.parameterLabel'), name: 'Location' }"
+              :value="updatedLocation"
+              :config-description="{ label: t('setupwizard.' + currentStep + '.parameterLabel'), name: 'Location' }"
               :f7router
-              @input="(value) => location = value"
-              :placeholder="t('setupwizard.location.placeholder')" />
+              @input="(value) => updatedLocation = value"
+              :placeholder="t('setupwizard.' + currentStep + '.placeholder')" />
           </f7-list-group>
         </f7-list>
         <f7-block class="padding">
@@ -91,38 +97,31 @@
                 icon-f7="location_fill"
                 icon-size="24"
                 @click="getCurrentPosition()"
-                :text="t('setupwizard.location.retrieveFromDevice')" />
+                :text="t('setupwizard.' + currentStep + '.retrieveFromDevice')" />
             </f7-col>
           </f7-row>
           <f7-block-footer>
-            <small>{{ t('setupwizard.location.footer') }}</small>
+            <small>{{ t('setupwizard.' + currentStep + '.footer') }}</small>
           </f7-block-footer>
         </f7-block>
         <f7-block class="display-flex flex-direction-column padding" v-if="networksReady">
           <div>
-            <f7-button v-if="location" large fill color="blue" :text="t('setupwizard.location.setLocation')" @click="setLocation" />
-            <f7-button large color="blue" :text="t('setupwizard.configureLater')" class="margin-top" @click="skipLocation" />
+            <f7-button v-if="updatedLocation && next" large fill color="blue" :text="t('setupwizard.' + currentStep + '.next')" @click="handlerNext(next)" />
+            <f7-button v-if="skip" large color="blue" :text="t('setupwizard.skip')" class="margin-top" @click="handlerNext(skip)" />
           </div>
         </f7-block>
       </f7-tab>
 
-      <f7-tab id="network">
-        <f7-block>
-          <f7-link
-            icon-ios="f7:arrow_left"
-            icon-aurora="f7:arrow_left"
-            icon-md="material:arrow_back"
-            tab-link="#location"
-            color="blue"
-            tab-link-active />
-          <f7-login-screen-title>
-            <div class="padding">
-              <f7-icon size="48" color="blue" f7="wifi" />
-            </div>
-            {{ t('setupwizard.network.title') }}
-          </f7-login-screen-title>
-        </f7-block>
-        <f7-block strong> {{ t('setupwizard.network.header1') }} {{ t('setupwizard.network.header2') }} </f7-block>
+      <f7-tab id="network" @tab:show="handleTabShow">
+        <tab-header
+          :icon="wizardSteps[currentStep].icon"
+          :title="t('setupwizard.' + currentStep + '.title')"
+          :prev="prev"
+          :step="currentStep"
+          :link="wizardSteps[currentStep].link"
+          :t="t"
+          @back="handlerPrev(prev)"
+          @close="skipSetup" />
         <f7-list>
           <f7-list-group>
             <parameter-options
@@ -135,81 +134,55 @@
         </f7-list>
         <f7-block class="display-flex flex-direction-column padding">
           <div>
-            <f7-button large fill color="blue" :text="t('setupwizard.network.setNetwork')" @click="setNetwork" />
-            <f7-button large color="blue" :text="t('setupwizard.configureLater')" class="margin-top" @click="skipNetwork" />
+            <f7-button v-if="network && next" large fill color="blue" :text="t('setupwizard.' + currentStep + '.next')" @click="handlerNext(next)" />
+            <f7-button v-if="skip" large color="blue" :text="t('setupwizard.skip')" class="margin-top" @click="handlerNext(skip)" />
           </div>
         </f7-block>
       </f7-tab>
 
-      <f7-tab id="persistence">
+      <f7-tab id="concepts-text" @tab:show="handleTabShow">
+        <tab-header
+          :icon="wizardSteps[currentStep].icon"
+          :title="t('setupwizard.' + currentStep + '.title')"
+          :prev="prev"
+          :step="currentStep"
+          :link="wizardSteps[currentStep].link"
+          :t="t"
+          @back="handlerPrev(prev)"
+          @close="skipSetup" />
+        <f7-login-screen-title>
+          <div class="padding">
+            <img style="width: 85%" :src="conceptsImage" />
+          </div>
+        </f7-login-screen-title>
         <f7-block>
-          <f7-link
-            icon-ios="f7:arrow_left"
-            icon-aurora="f7:arrow_left"
-            icon-md="material:arrow_back"
-            :tab-link="(networkConfigDescription && networkConfigDescription.options && networkConfigDescription.options.length > 1) ? '#network' : '#location'"
-            color="blue"
-            tab-link-active />
-          <f7-login-screen-title>
-            <div class="padding">
-              <f7-icon size="48" color="blue" f7="download_circle" />
-            </div>
-            {{ t('setupwizard.persistence.title') }}
-          </f7-login-screen-title>
+          {{ t('setupwizard.' + currentStep + '.body1') }}
+          {{ t('setupwizard.' + currentStep + '.body2') }}
+          <br /><br />
+          <a class="text-color-blue external" target="_blank" href="https://www.openhab.org/docs/concepts/">
+            {{ t('setupwizard.documentationLink') }}</a
+          >
+          <br /><br />
+          {{ t('setupwizard.' + currentStep + '.nextDescription') }}
         </f7-block>
-        <f7-block strong> {{ t('setupwizard.persistence.header1') }} {{ t('setupwizard.persistence.header2') }} </f7-block>
-        <f7-block style="margin-top: 0; margin-bottom: 2em">
-          <f7-block v-if="waitingForAddonSuggestions">
-            <div class="display-flex justify-content-center margin-bottom">
-              <f7-progressbar id="suggestions-progress-bar-persistence" :progress="0" />
-            </div>
-            <div>{{ t('setupwizard.addons.suggestionsWaitMessage') }}</div>
-          </f7-block>
-          <addons-setup-wizard
-            v-if="addonSuggestionsReady && recommendedAddonsByType('persistence').length"
-            :addons="recommendedAddonsByType('persistence')"
-            :preSelectedAddons="selectedAddons"
-            @update="updateAddonSelection(recommendedAddonsByType('persistence'), $event)"
-            :t />
-          <f7-block-footer class="margin-bottom">
-            <small>{{ t('setupwizard.persistence.footer') }}</small>
-          </f7-block-footer>
+        <f7-block class="display-flex flex-direction-column padding">
           <div>
             <f7-button
-              v-if="addonSuggestionsReady && selectedAddons.length > 0"
-              large
-              fill
-              color="blue"
-              :text="t('setupwizard.persistence.install')"
-              @click="selectPersistence" />
-            <f7-button large color="blue" :text="t('setupwizard.persistence.installLater')" class="margin-top" @click="skipPersistence" />
+              v-if="next" large fill color="blue" :text="t('setupwizard.next')" @click="handlerNext(next)" />
           </div>
         </f7-block>
       </f7-tab>
 
-      <f7-tab id="addons">
-        <f7-block>
-          <f7-link
-            icon-ios="f7:arrow_left"
-            icon-aurora="f7:arrow_left"
-            icon-md="material:arrow_back"
-            tab-link="#persistence"
-            color="blue"
-            tab-link-active />
-          <f7-login-screen-title>
-            <div class="padding">
-              <f7-icon size="48" color="blue" f7="bag_badge_plus" />
-            </div>
-            {{ t('setupwizard.addons.title') }}
-          </f7-login-screen-title>
-        </f7-block>
-        <f7-block strong>
-          {{ t('setupwizard.addons.header1') }}<br />{{ t('setupwizard.addons.header2') }}<br />{{ t('setupwizard.addons.header3') }}
-          <br /><br />
-          <a class="text-color-blue external" target="_blank" href="https://www.openhab.org/addons/">
-            {{ t('setupwizard.addons.browseAddonsOnWebsite') }}</a
-          >
-        </f7-block>
+      <f7-tab v-for="addonType in preSelectingAddonTypes" :key="addonType" :id="addonType" @tab:show="handleTabShow">
+        <tab-header
+          :icon="wizardSteps[currentStep].icon"
+          :title="t('setupwizard.' + currentStep + '.title')"
+          :prev="prev"
+          :step="currentStep"
+          :link="wizardSteps[currentStep].link"
+          :t="t"
+          @back="handlerPrev(prev)"
+          @close="skipSetup" />
         <f7-block class="padding">
           <f7-block v-if="waitingForAddonSuggestions">
             <div class="display-flex justify-content-center margin-bottom">
@@ -218,38 +191,31 @@
             <div>{{ t('setupwizard.addons.suggestionsWaitMessage') }}</div>
           </f7-block>
           <addons-setup-wizard
-            v-if="addonSuggestionsReady && mainAddons.length"
+            v-if="addonSuggestionsReady"
             :enableAddonSelection="true"
-            :addons="mainAddons"
+            :addons="addonsByType[addonType]"
+            :type="addonType"
             :preSelectedAddons="selectedAddons"
-            @update="updateAddonSelection(mainAddonSelection, $event)"
+            @update="updateAddonSelection"
             :t />
           <f7-block-footer class="margin-bottom">
-            <small>{{ t('setupwizard.addons.footer') }}</small>
+            <small>{{ t('setupwizard.' + currentStep + '.footer') }}</small>
           </f7-block-footer>
           <div>
             <f7-button
-              v-if="addonSuggestionsReady && (toInstallAddons.filter(a => (!preSelectedAddon(a) && !a.installed)).length > 0)"
+              v-if="addonSuggestionsReady && (toInstallAddonsByType[addonType]?.length > 0) && next"
               large
               fill
               color="blue"
-              :text="t('setupwizard.addons.installAddons', toInstallAddons.filter(a => (!preSelectedAddon(a) && !a.installed)).length)"
-              @click="installAddons" />
-            <f7-button large color="blue" :text="t('setupwizard.addons.installLater')" class="margin-top" @click="skipAddons" />
+              :text="t('setupwizard.' + currentStep + '.next', toInstallAddonsByType[addonType]?.length)"
+              @click="handlerNext(next)" />
+            <f7-button v-if="skip" large color="blue" :text="t('setupwizard.' + currentStep + '.skip')" class="margin-top" @click="handlerNext(skip)" />
           </div>
         </f7-block>
       </f7-tab>
 
-      <f7-tab id="wait">
+      <f7-tab id="wait" @tab:show="handleTabShow">
         <f7-block>
-          <f7-link
-            icon-ios="f7:arrow_left"
-            icon-aurora="f7:arrow_left"
-            icon-md="material:arrow_back"
-            tab-link="#intro"
-            color="blue"
-            tab-link-active
-            style="visibility: hidden" />
           <f7-login-screen-title class="text-color-gray">
             {{ t('setupwizard.addons.pleaseWait') }}
           </f7-login-screen-title>
@@ -262,59 +228,46 @@
         </f7-block>
       </f7-tab>
 
-      <f7-tab id="persistence-config">
-        <f7-block>
-          <f7-link
-            icon-ios="f7:arrow_left"
-            icon-aurora="f7:arrow_left"
-            icon-md="material:arrow_back"
-            tab-link="#addons"
-            color="blue"
-            tab-link-active />
-          <f7-login-screen-title>
-            <div class="padding">
-              <f7-icon size="48" color="blue" f7="download_circle" />
-            </div>
-            {{ t('setupwizard.persistence-config.title') }}
-          </f7-login-screen-title>
-        </f7-block>
-        <f7-block strong> {{ t('setupwizard.persistence-config.header1') }}<br /> </f7-block>
-        <persistence-config-setup-wizard :addons="addons" :addonsReady="addonsReady" :confirm="persistenceConfigConfirm" :t />
+      <f7-tab id="persistence-config" @tab:show="handleTabShow">
+        <tab-header
+          :icon="wizardSteps[currentStep].icon"
+          :title="t('setupwizard.' + currentStep + '.title')"
+          :prev="prev"
+          :step="currentStep"
+          :link="wizardSteps[currentStep].link"
+          :t="t"
+          @back="handlerPrev(prev)"
+          @close="skipSetup" />
+        <persistence-config-setup-wizard :addons="addons" :addonsReady="persistenceAddonsReady" :confirm="persistenceConfigConfirm" :t />
         <f7-block-footer class="margin-bottom">
-          <small>{{ t('setupwizard.persistence-config.footer') }}</small>
+          <small>{{ t('setupwizard.' + currentStep + '.footer') }}</small>
         </f7-block-footer>
         <f7-block class="padding">
           <div>
-            <f7-button large fill color="blue" :text="t('setupwizard.persistence-config.config')" @click="persistenceConfig" />
+            <f7-button v-if="next" large fill color="blue" :text="t('setupwizard.' + currentStep + '.config')" @click="handlerNext(next)" />
             <f7-button
+              v-if="skip"
               large
               color="blue"
-              :text="t('setupwizard.persistence-config.configLater')"
+              :text="t('setupwizard.' + currentStep + '.configLater')"
               class="margin-top"
-              @click="skipPersistenceConfig" />
+              @click="handlerNext(skip)" />
           </div>
         </f7-block>
       </f7-tab>
 
-      <f7-tab id="finish">
-        <f7-block style="margin-top: 8rem">
-          <!-- no going back on this last screen!
-                  <f7-link
-                  icon-ios="f7:arrow_left"
-                  icon-aurora="f7:arrow_left"
-                  icon-md="material:arrow_back"
-                  tab-link="#package"
-                  color="blue"
-                  tab-link-active
-                ></f7-link>-->
-          <f7-login-screen-title>{{ t('setupwizard.welcome.title') }}</f7-login-screen-title>
-        </f7-block>
-        <f7-block v-if="bindingInstalled">
+      <f7-tab id="finish" @tab:show="handleTabShow">
+        <tab-header
+          :title="t('setupwizard.welcome.title')"
+          :prev="prev"
+          @back="handlerPrev(prev)"
+          @close="skipSetup" />
+        <f7-block v-if="bindingsInstalled">
           {{ t('setupwizard.welcome.bindingsInstalled') }}
         </f7-block>
         <f7-block class="display-flex flex-direction-column padding" style="margin-top: 4rem">
           <div>
-            <f7-button large color="blue" :text="t('setupwizard.welcome.getStarted')" @click="finish" />
+            <f7-button v-if="next" large color="blue" :text="t('setupwizard.welcome.getStarted')" @click="handlerNext(next)" />
           </div>
         </f7-block>
       </f7-tab>
@@ -337,6 +290,10 @@
         text-align left
         margin-left 0 !important
         margin-right 0 !important
+  .block.padding
+    margin-top 0
+  .block.block-strong
+    margin-bottom 0
 
 .tab-active
   scroll-snap-align start
@@ -355,14 +312,19 @@
 <script>
 import { nextTick, defineAsyncComponent } from 'vue'
 import { f7, theme } from 'framework7-vue'
+import { mapWritableState } from 'pinia'
 
 import { useI18n } from 'vue-i18n'
 import { loadLocaleMessages } from '@/js/i18n'
+
+import introLogo from '@/images/openhab-logo.svg'
+import conceptsImage from '@/images/concepts.png'
 
 import AddonsSetupWizard from '@/components/addons/addons-setup-wizard.vue'
 import PersistenceConfigSetupWizard from '@/components/persistence/persistence-config-setup-wizard.vue'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
 export default {
   props: {
@@ -371,17 +333,96 @@ export default {
   components: {
     'parameter-location': defineAsyncComponent(() => import('@/components/config/controls/parameter-location.vue')),
     'parameter-options': defineAsyncComponent(() => import('@/components/config/controls/parameter-options.vue')),
+    'tab-header': defineAsyncComponent(() => import('./setup-wizard-tab-header.vue')),
     AddonsSetupWizard,
     PersistenceConfigSetupWizard
   },
   setup () {
     const { t, mergeLocaleMessage } = useI18n({ useScope: 'local' })
     loadLocaleMessages('setup-wizard', mergeLocaleMessage)
-    return { t, theme, mergeLocaleMessage }
+    return { t, theme, mergeLocaleMessage, introLogo, conceptsImage }
   },
   data () {
     return {
       i18nReady: false,
+
+      // wizard sequence of steps and functions to be called when changing step
+      wizardSteps: {
+        'intro': {
+          next: { handler: () => this.beginSetup(), step: 'location' },
+          skip: { handler: () => this.skipSetup() }
+        },
+        'location': {
+          icon: 'map_pin_ellipse',
+          show: { handler: () => this.updatedLocation = this.location },
+          prev: { step: 'intro' },
+          next: { handler: () => this.setLocation(), step: 'network' },
+          skip: { step: 'network' }
+        },
+        'network': {
+          icon: 'wifi',
+          show: { handler: () => { if (!this.multiNetwork) this.skipStep() } },
+          prev: { step: 'location' },
+          next: { handler: () => this.setNetwork(), step: 'concepts-text' },
+          skip: { step: 'concepts-text' }
+        },
+        'concepts-text': {
+          icon: 'lightbulb',
+          skipShort: true,
+          prev: { step: 'network' },
+          next: { step: 'binding' }
+        },
+        'binding': {
+          icon: 'circle_grid_hex_fill',
+          link: 'https://www.openhab.org/addons/#binding',
+          show: { handler: () => this.getSuggestedAddons() },
+          prev: { handler: () => this.skipAddons(), step: 'network' },
+          next: { handler: () => this.selectAddons(), step: 'automation' },
+          skip: { handler: () => this.skipAddons(), step: 'automation' }
+        },
+        'automation': {
+          icon: 'wand_stars',
+          link: 'https://www.openhab.org/addons/#automation',
+          show: { handler: () => this.getSuggestedAddons() },
+          prev: { handler: () => this.skipAddons(), step: 'binding' },
+          next: { handler: () => this.selectAddons(), step: 'ui' },
+          skip: { handler: () => this.skipAddons(), step: 'ui' }
+        },
+        'ui': {
+          icon: 'play_rectangle',
+          link: 'https://www.openhab.org/addons/#ui',
+          show: { handler: () => this.getSuggestedAddons() },
+          prev: { handler: () => this.skipAddons(), step: 'automation' },
+          next: { handler: () => this.selectAddons(), step: 'persistence' },
+          skip: { handler: () => this.skipAddons(), step: 'persistence' }
+        },
+        'persistence': {
+          icon: 'download_circle',
+          link: 'https://www.openhab.org/addons/#persistence',
+          show: { handler: () => this.getSuggestedAddons() },
+          prev: { handler: () => this.skipAddons(), step: 'ui' },
+          next: { handler: () => { this.selectAddons() }, step: 'wait' },
+          skip: { handler: () => { this.skipAddons() }, step: 'wait' }
+        },
+        'wait': {
+          show: { handler: () => { this.installAddons(); this.skipStep() } },
+          skip: { step: 'persistence-config' }
+         },
+        'persistence-config': {
+          icon: 'download_circle',
+          show: { handler: () => { if (!this.persistenceInstalled) this.skipStep() } },
+          prev: { step: 'persistence' },
+          next: { handler: () => this.persistenceConfig(), step: 'finish' },
+          skip: { step: 'finish' }
+        },
+        'finish': {
+          prev: { step: 'intro' },
+          next: { handler: () => this.finish() }
+        }
+      },
+      currentStep: 'intro',
+      skipStepDirection: 'skip',
+
       availableLanguages: null,
       availableRegions: null,
       availableTimezones: null,
@@ -389,51 +430,89 @@ export default {
       region: null,
       timezone: null,
       location: null,
+      updatedLocation: null,
       networksReady: false,
       networkConfigDescription: null,
       network: null,
       networkChanged: false,
+
       waitingForAddonSuggestions: false,
       waitingTimeout: null,
       addonSuggestionsReady: false,
       addons: [],
       // all recommended addons, pre-defined
-      recommendedAddons: ['persistence-rrd4j', 'persistence-mapdb', 'persistence-inmemory', 'automation-jsscripting', 'ui-basic', 'binding-astro'],
-      // addon types that can be selected in wizard before main addon selection step, to be excluded from main selection step, pre-defined
-      preSelectingAddonTypes: ['persistence'],
-      // addons that can be selected in wizard before main addon selection step, to be excluded from main selection step, pre-defined
-      preSelectingAddons: [],
+      recommendedAddons: ['binding-astro', 'automation-jsscripting', 'ui-basic', 'misc-openhabcloud', 'persistence-rrd4j', 'persistence-mapdb', 'persistence-inmemory'],
+      // addon types that can be selected in wizard
+      preSelectingAddonTypes: ['binding', 'automation', 'ui', 'persistence'],
       // all recommended and suggested addons, list created in code
       selectedAddons: [],
-      // final list of addons to install
-      toInstallAddons: [],
+      oldSelection: [],
       installingAddons: false,
-      bindingInstalled: false,
-      addonsReady: false,
+      bindingsInstalled: false,
+      persistenceAddonsReady: false,
+
       persistenceConfigConfirm: false
     }
   },
   computed: {
+    show () {
+      if (!this.currentStep) return null
+      return this.wizardSteps[this.currentStep].show || null
+    },
+    prev () {
+      if (!this.currentStep) return null
+      return this.wizardSteps[this.currentStep].prev || null
+    },
+    next () {
+      if (!this.currentStep) return null
+      return this.wizardSteps[this.currentStep].next || null
+    },
+    skip () {
+      if (!this.currentStep) return null
+      return this.wizardSteps[this.currentStep].skip || null
+    },
     locale () {
       if (!this.language) return null
       if (!this.region) return this.language
       return this.language + '-' + this.region.toLowerCase()
     },
-    /**
-     * Add-ons that can be selected in the main add-on selection step, with add-on types handled before the main selection step excluded.
-     * @returns {*[]}
-     */
-    mainAddons () {
-      return this.addons.filter((a) => !this.preSelectingAddonTypes.includes(a.type))
+    multiNetwork () {
+      return (this.networkConfigDescription?.options?.length > 1)
     },
-    /**
-     * Add-ons that are currently selected in the main add-on selection step, with installed and pre-selected add-ons excluded.
-     * @returns {*[]}
-     */
-    mainAddonSelection () {
-      const addons = this.selectedAddons.concat(this.toInstallAddons).filter((a) => (!a.installed && !this.preSelectedAddon(a)))
-      return [...new Set(addons)]
-    }
+    toInstallAddons () {
+      return this.addons.filter((a) => this.selectedAddons.includes(a) && !a.installed)
+    },
+    addonsByType () {
+      const addons = {}
+      this.addons.forEach((a) => {
+        let type = a.type
+        // Special case, we want to show the openHAB cloud connector in the ui addon step for this wizard.
+        if (a.uid === 'misc-openhabcloud' && this.recommendedAddons.includes('misc-openhabcloud')) type = 'ui'
+        if (!addons[type]) addons[type] = []
+        addons[type].push(a)
+      })
+      return addons
+    },
+    toInstallAddonsByType () {
+      const addons = {}
+      this.preSelectingAddonTypes.forEach((t) => {
+        addons[t] = this.toInstallAddons.filter((a) => (this.addonsByType[t].includes(a)))
+      })
+      return addons
+    },
+    recommendedAddonsByType () {
+      const addons = {}
+      Object.keys(this.addonsByType).forEach((type) => {
+        addons[type] = this.addonsByType[type].filter((a) => this.recommendedAddons.includes(a.uid))
+      })
+      return addons
+    },
+    persistenceInstalled () {
+      return this.addons.find((a) => a.type === 'persistence' && a.installed)
+    },
+    ...mapWritableState(useUIOptionsStore, {
+      setupWizardShort: 'setupWizardShort'
+    })
   },
   watch: {
     locale (val) {
@@ -443,6 +522,46 @@ export default {
     }
   },
   methods: {
+    handleTabShow (arg1, arg2) {
+      // Framework7 tab:show can pass (el) or (event, el) - handle both
+      const tabEl = arg2 || arg1
+      const id = tabEl?.id || tabEl?.target?.id
+      if (id) this.currentStep = id
+      // Scroll the active tab to top
+      nextTick(() => {
+        const activeTab = this.$el?.querySelector('#' + id)
+        if (activeTab) {
+          activeTab.scrollTop = 0
+        }
+        this.show?.handler?.()
+      })
+    },
+    handlerPrev (prev) {
+      this.skipStepDirection = 'prev'
+      this.handler(prev)
+
+    },
+    handlerNext (next) {
+      this.skipStepDirection = 'skip'
+      this.handler(next)
+    },
+    handler (direction) {
+      if (!direction) return
+      direction?.handler?.()
+      let nextStep = direction?.step
+      // skip setup tabs marked as skipShort when short wizard is selected
+      if (this.setupWizardShort) {
+        while (nextStep && this.wizardSteps[nextStep].skipShort) {
+          nextStep = this.wizardSteps[nextStep].next?.step
+        }
+      }
+      if (nextStep) {
+        f7.tab.show('#' + nextStep)
+      }
+    },
+    skipStep () {
+      this.handler(this.wizardSteps[this.currentStep][this.skipStepDirection])
+    },
     beginSetup () {
       this.$oh.api.put('/rest/services/org.openhab.i18n/config', {
         language: this.language,
@@ -450,13 +569,12 @@ export default {
         timezone: this.timezone
       }).then(() => {
         f7.emit('localeChanged')
-        f7.tab.show('#location')
       })
     },
     getCurrentPosition () {
       if ('geolocation' in navigator) {
         navigator.geolocation.getCurrentPosition((position) => {
-          this.location = position.coords.latitude + ',' + position.coords.longitude
+          this.updatedLocation = position.coords.latitude + ',' + position.coords.longitude
         }, (error) => {
           f7.dialog.alert(
             error.message,
@@ -486,21 +604,10 @@ export default {
       )
     },
     setLocation () {
+      this.location = this.updatedLocation
       this.$oh.api.put('/rest/services/org.openhab.i18n/config', {
         location: this.location
-      }).then(() => {
-        this.showNetwork()
       })
-    },
-    skipLocation () {
-      this.showNetwork()
-    },
-    showNetwork () {
-      if (this.networkConfigDescription?.options?.length > 1) {
-        f7.tab.show('#network')
-      } else {
-        this.skipNetwork()
-      }
     },
     changeNetwork (newNetwork) {
       if (newNetwork && (this.network !== newNetwork)) {
@@ -512,51 +619,9 @@ export default {
       if (this.networkChanged) {
         this.$oh.api.put('/rest/services/org.openhab.network/config', {
           primaryAddress: this.network
-        }).then(() => {
-          this.addonSuggestionsReady = false
-          this.getSuggestedAddons()
-          this.showPersistence()
-        })
-      } else {
-        this.skipNetwork()
-      }
-    },
-    skipNetwork () {
-      this.getSuggestedAddons()
-      this.showPersistence()
-    },
-    showPersistence () {
-      if (this.addonSuggestionsReady) {
-        this.updateAddonSelection([], this.recommendedAddonsByType('persistence'))
-      } else {
-        f7.once('addonSuggestionsReady', () => {
-          this.updateAddonSelection([], this.recommendedAddonsByType('persistence'))
         })
       }
-      f7.tab.show('#persistence')
-    },
-    selectPersistence () {
-      this.showAddons()
-    },
-    skipPersistence () {
-      if (this.addonSuggestionsReady) {
-        this.updateAddonSelection(this.recommendedAddonsByType('persistence'), [])
-      } else {
-        f7.once('addonSuggestionsReady', () => {
-          this.updateAddonSelection(this.recommendedAddonsByType('persistence'), [])
-        })
-      }
-      this.showAddons()
-    },
-    showAddons () {
-      if (this.addonSuggestionsReady) {
-        this.updateAddonSelection([], this.selectedAddons.filter((a) => !this.preSelectedAddon(a)))
-      } else {
-        f7.once('addonSuggestionsReady', () => {
-          this.updateAddonSelection([], this.selectedAddons.filter((a) => !this.preSelectedAddon(a)))
-        })
-      }
-      f7.tab.show('#addons')
+      this.addonSuggestionsReady = false
     },
     /**
      * Manages the loading process of suggested add-ons.
@@ -603,35 +668,57 @@ export default {
      */
     getSuggestions () {
       this.$oh.api.get('/rest/addons/suggestions').then((suggestions) => {
-        const suggestedAddons = suggestions.flatMap((s) => s.id)
-        this.selectedAddons = this.addons.filter((a) => (this.recommendedAddons.includes(a.uid) || suggestedAddons.includes(a.id)))
-          .sort((a, b) => a.uid.toUpperCase().localeCompare(b.uid.toUpperCase()))
+        const suggestedAddons = suggestions.flatMap((s) => s.id).filter((id) => !this.recommendedAddons.includes(id))
+        // Keep the recommended addons first
+        this.selectedAddons = [
+          ...this.addons.filter((a) => this.recommendedAddons.includes(a.uid)).sort((a, b) => a.uid.toUpperCase().localeCompare(b.uid.toUpperCase())),
+          ...this.addons.filter((a) => suggestedAddons.includes(a.id)).sort((a, b) => a.uid.toUpperCase().localeCompare(b.uid.toUpperCase()))
+        ]
+        this.oldSelection = [...this.selectedAddons]
         this.addonSuggestionsReady = true
         f7.emit('addonSuggestionsReady')
       })
     },
+    selectAddons () {
+      if (this.addonSuggestionsReady) {
+        this.oldSelection = [...this.selectedAddons]
+      } else {
+        f7.once('addonSuggestionsReady', () => {
+        this.oldSelection = [...this.selectedAddons]
+        })
+      }
+    },
+    skipAddons () {
+      if (this.addonSuggestionsReady) {
+        this.selectedAddons = [...this.oldSelection]
+      } else {
+        f7.once('addonSuggestionsReady', () => {
+          this.selectedAddons = [...this.oldSelection]
+        })
+      }
+    },
     preSelectedAddon (addon) {
-      return (this.preSelectingAddonTypes.includes(addon.type) || this.preSelectingAddons.includes(addon.uid))
+      return this.preSelectingAddonTypes.includes(addon.type)
     },
-    recommendedAddonsByType (type) {
-      return this.addons.filter((a) => ((a.type === type) && this.recommendedAddons.includes(a.uid)))
-    },
-    updateAddonSelection (oldSelected, newSelected) {
+    updateAddonSelection (newSelected) {
+      const oldSelected = this.selectedAddons
+      this.selectedAddons = newSelected
       console.debug('Updating add-on selection:', oldSelected.map((a) => a.uid), newSelected.map((a) => a.uid))
-      const addons = this.toInstallAddons.filter((a) => !oldSelected.includes(a)).concat(newSelected)
-      this.toInstallAddons = [...new Set(addons)]
-      console.log('Add-ons to install:', this.toInstallAddons.map((a) => a.uid))
+      nextTick(() => {
+        console.log('Add-ons to install:', this.toInstallAddons.map((a) => a.uid))
+      })
     },
     installAddons () {
       const checkInterval = 2 // check the add-ons statuses every 2 seconds
 
-      this.addonsReady = false
-      this.toInstallAddons = this.toInstallAddons.filter((a) => !a.installed)
-      this.installingAddons = true
-      f7.tab.show('#wait', false)
+      if (this.toInstallAddons.filter((a) => a.type === 'persistence').length === 0) this.persistenceAddonsReady = true
 
-      this.bindingInstalled = this.toInstallAddons.find((a) => (a.type === 'binding'))
       const addonsCount = this.toInstallAddons.length
+      if (addonsCount === 0)  return
+
+      this.installingAddons = true
+
+      this.bindingsInstalled = this.toInstallAddons.find((a) => (a.type === 'binding'))
       let progress = 0
 
       const progressDialog = f7.dialog.progress(this.t('setupwizard.addons.installing'), progress)
@@ -658,22 +745,28 @@ export default {
         if (!this.toInstallAddons.length) {
           progressDialog.close()
           progressDialog.destroy()
-          this.showPersistenceConfig()
+          this.persistenceAddonsReady = true
           return
         }
 
+        // check if all persistence add-ons have already been installed, so the persistence config tab can be prepared
+        if (this.toInstallAddons.filter((a) => a.type === 'persistence').length === 0) this.persistenceAddonsReady = true
+        
         // install next add-on
         progressDialog.setText(this.t('setupwizard.addons.progress', { current: addonsCount - this.toInstallAddons.length + 1, total: addonsCount }))
         progressDialog.setProgress(((addonsCount - this.toInstallAddons.length + 1) / addonsCount) * 100)
-        const addon = this.toInstallAddons.shift()
+        const addon = this.toInstallAddons[0]
         console.log('Installing add-on: ' + addon.uid)
         progressDialog.setTitle(this.t('setupwizard.addons.installingAddon', { addon: addon.label }))
 
         this.$oh.api.post('/rest/addons/' + addon.uid + '/install', {}, 'text').then(() => {
           const checkTimer = setInterval(() => {
             checkAddonStatus(addon).then(() => {
+              addon.installed = true
               clearInterval(checkTimer)
-              installNextAddon()
+              nextTick(() => {
+                installNextAddon()
+              })
             }).catch(() => {
               // just keep going... TODO: implement failure mechanism after a number of failed checks?
             })
@@ -684,30 +777,8 @@ export default {
       progressDialog.open()
       installNextAddon()
     },
-    skipAddons () {
-      this.updateAddonSelection(this.mainAddons, [])
-      if (this.toInstallAddons.filter((a) => !a.installed).length) {
-        this.installAddons()
-        return
-      }
-      this.showPersistenceConfig()
-    },
-    showPersistenceConfig () {
-      this.addonsReady = true
-      f7.tab.show('#persistence-config')
-    },
     persistenceConfig () {
       this.persistenceConfigConfirm = true
-      nextTick(() => {
-        this.showFinish()
-      })
-    },
-    skipPersistenceConfig () {
-      this.showFinish()
-    },
-    showFinish () {
-      this.persistenceConfigConfirm = false
-      f7.tab.show('#finish')
     },
     finish () {
       f7.panel.get('left').enableVisibleBreakpoint()
@@ -789,6 +860,12 @@ export default {
 
       // addons
       this.addons = data[4].sort((a, b) => a.label.toUpperCase().localeCompare(b.label.toUpperCase()))
+
+      // if there is only one network configuration option,
+      // load the addon suggestion immediately and don't wait for the network to be configured
+      if (!this.multiNetwork) {
+        this.getSuggestions()
+      }
     })
   }
 }
