@@ -84,7 +84,7 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
       darkModeChange.value // darkModeChange to force re-computation
       if (storedDarkMode.value === 'auto') {
         if (typeof window.OHApp?.preferDarkMode === 'function') {
-          return window.OHApp.preferDarkMode() ? 'dark' : 'light'
+          return window.OHApp.preferDarkMode() == 'dark' ? 'dark' : 'light'
         }
         return f7.darkMode ? 'dark' : 'light'
       }
