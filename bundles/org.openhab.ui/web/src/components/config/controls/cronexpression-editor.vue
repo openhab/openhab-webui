@@ -9,23 +9,15 @@
         </f7-nav-right>
       </f7-navbar>
       <f7-toolbar tabbar position="top">
-        <f7-link class="padding-left padding-right" :tab-link-active="currentTab === 'seconds'" @click="currentTab = 'seconds'">
-          Seconds
-        </f7-link>
-        <f7-link class="padding-left padding-right" :tab-link-active="currentTab === 'minutes'" @click="currentTab = 'minutes'">
-          Minutes
-        </f7-link>
-        <f7-link class="padding-left padding-right" :tab-link-active="currentTab === 'hours'" @click="currentTab = 'hours'">
-          Hours
-        </f7-link>
-        <f7-link class="padding-left padding-right" :tab-link-active="currentTab === 'days'" @click="currentTab = 'days'"> Days </f7-link>
-        <f7-link class="padding-left padding-right" :tab-link-active="currentTab === 'month'" @click="currentTab = 'month'">
-          Month
-        </f7-link>
-        <f7-link class="padding-left padding-right" :tab-link-active="currentTab === 'year'" @click="currentTab = 'year'"> Year </f7-link>
+        <f7-link class="padding-left padding-right" tab-link="#seconds" tab-link-active> Seconds </f7-link>
+        <f7-link class="padding-left padding-right" tab-link="#minutes"> Minutes </f7-link>
+        <f7-link class="padding-left padding-right" tab-link="#hours"> Hours </f7-link>
+        <f7-link class="padding-left padding-right" tab-link="#days"> Days </f7-link>
+        <f7-link class="padding-left padding-right" tab-link="#month"> Month </f7-link>
+        <f7-link class="padding-left padding-right" tab-link="#year"> Year </f7-link>
       </f7-toolbar>
       <f7-tabs type="border-card">
-        <f7-tab :tab-active="currentTab === 'seconds'">
+        <f7-tab id="seconds" tab-active>
           <template #label>
             <span>
               <i class="el-icon-date" />
@@ -58,12 +50,8 @@
                 :smart-select-params="smartSelectParams"
                 :checked="second.cronEvery === 3 ? true : null"
                 @click="second.cronEvery = 3">
-                <select multiple @change="second.specificSpecific = getSmartSelectValue('specificSecond').map((v) => parseInt(v))">
-                  <option
-                    v-for="val in 60"
-                    :key="val"
-                    :value="val - 1"
-                    :selected="second.specificSpecific.indexOf(val - 1) >= 0 ? true : null">
+                <select multiple v-model="second.specificSpecfic">
+                  <option v-for="val in 60" :key="val" :value="val - 1">
                     {{ val - 1 }}
                   </option>
                 </select>
@@ -78,7 +66,7 @@
             </f7-list>
           </f7-block>
         </f7-tab>
-        <f7-tab :tab-active="currentTab === 'minutes'">
+        <f7-tab id="minutes">
           <template #label>
             <span>
               <i class="el-icon-date" />
@@ -111,12 +99,8 @@
                 :smart-select-params="smartSelectParams"
                 :checked="minute.cronEvery === 3 ? true : null"
                 @click="minute.cronEvery = 3">
-                <select multiple @change="minute.specificSpecific = getSmartSelectValue('specificMinute').map((v) => parseInt(v))">
-                  <option
-                    v-for="val in 60"
-                    :key="val"
-                    :value="val - 1"
-                    :selected="minute.specificSpecific.indexOf(val - 1) >= 0 ? true : null">
+                <select multiple v-model="minute.specificSpecific">
+                  <option v-for="val in 60" :key="val" :value="val - 1">
                     {{ val - 1 }}
                   </option>
                 </select>
@@ -131,7 +115,7 @@
             </f7-list>
           </f7-block>
         </f7-tab>
-        <f7-tab :tab-active="currentTab === 'hours'">
+        <f7-tab id="hours">
           <template #label>
             <span>
               <i class="el-icon-date" />
@@ -164,12 +148,8 @@
                 :smart-select-params="smartSelectParams"
                 :checked="hour.cronEvery === 3 ? true : null"
                 @click="hour.cronEvery = 3">
-                <select multiple @change="hour.specificSpecific = getSmartSelectValue('specificHour').map((v) => parseInt(v))">
-                  <option
-                    v-for="val in 24"
-                    :key="val"
-                    :value="val - 1"
-                    :selected="hour.specificSpecific.indexOf(val - 1) >= 0 ? true : null">
+                <select multiple v-model="hour.specificSpecific">
+                  <option v-for="val in 24" :key="val" :value="val - 1">
                     {{ val - 1 }}
                   </option>
                 </select>
@@ -184,7 +164,7 @@
             </f7-list>
           </f7-block>
         </f7-tab>
-        <f7-tab :tab-active="currentTab === 'days'">
+        <f7-tab id="days">
           <template #label>
             <span>
               <i class="el-icon-date" />
@@ -226,12 +206,8 @@
                 :smart-select-params="smartSelectParams"
                 :checked="day.cronEvery === 4 ? true : null"
                 @click="day.cronEvery = 4">
-                <select multiple @change="week.specificSpecific = getSmartSelectValue('specificDayOfWeek').map((v) => v)">
-                  <option
-                    v-for="val in 7"
-                    :key="val"
-                    :value="['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'][val - 1]"
-                    :selected="week.specificSpecific.indexOf( ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'][val - 1]) >= 0 ? true : null">
+                <select multiple v-model="week.specficSpecific">
+                  <option v-for="val in 7" :key="val" :value="['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'][val - 1]">
                     {{ text.Week[val - 1] }}
                   </option>
                 </select>
@@ -246,8 +222,8 @@
                 :smart-select-params="smartSelectParams"
                 :checked="day.cronEvery === 5 ? true : null"
                 @click="day.cronEvery = 5">
-                <select multiple @change="day.specificSpecific = getSmartSelectValue('specificDayOfMonth').map((v) => parseInt(v))">
-                  <option v-for="val in 31" :key="val" :value="val" :selected="day.specificSpecific.indexOf(val) >= 0 ? true : null">
+                <select multiple v-model="day.specificSpecific">
+                  <option v-for="val in 31" :key="val" :value="val">
                     {{ val }}
                   </option>
                 </select>
@@ -301,7 +277,7 @@
             </f7-list>
           </f7-block>
         </f7-tab>
-        <f7-tab :tab-active="currentTab === 'month'">
+        <f7-tab id="month">
           <f7-block>
             <f7-list>
               <f7-list-item radio :checked="month.cronEvery === 1 ? true : null" @change="month.cronEvery = 1">
@@ -328,8 +304,8 @@
                 :smart-select-params="smartSelectParams"
                 :checked="month.cronEvery === 3 ? true : null"
                 @click="month.cronEvery = 3">
-                <select multiple @change="month.specificSpecific = getSmartSelectValue('specificMonth').map((v) => parseInt(v))">
-                  <option v-for="val in 12" :key="val" :value="val" :selected="month.specificSpecific.indexOf(val) >= 0 ? true : null">
+                <select multiple v-model="month.specificSpecific">
+                  <option v-for="val in 12" :key="val" :value="val">
                     {{ val }}
                   </option>
                 </select>
@@ -344,7 +320,7 @@
             </f7-list>
           </f7-block>
         </f7-tab>
-        <f7-tab :tab-active="currentTab === 'year'">
+        <f7-tab id="year">
           <f7-block>
             <f7-list>
               <f7-list-item radio :checked="year.cronEvery === 1 ? true : null" @change="year.cronEvery = 1">
@@ -376,12 +352,8 @@
                 :smart-select-params="smartSelectParams"
                 :checked="year.cronEvery === 3 ? true : null"
                 @click="year.cronEvery = 3">
-                <select multiple @change="year.specificSpecific = getSmartSelectValue('specificYear').map((v) => parseInt(v))">
-                  <option
-                    v-for="val in 100"
-                    :key="val"
-                    :value="val + year.currentYear - 1"
-                    :selected="year.specificSpecific.indexOf(val + year.currentYear - 1) >= 0 ? true : null">
+                <select multiple v-model="year.specficSpecific">
+                  <option v-for="val in 100" :key="val" :value="val + year.currentYear - 1">
                     {{ val + year.currentYear - 1 }}
                   </option>
                 </select>
@@ -424,9 +396,9 @@
 </style>
 
 <script>
+import { f7 } from 'framework7-vue'
 import Labels from '@/assets/i18n/cron/en.js'
 import { toString } from 'cronstrue'
-import { f7 } from 'framework7-vue'
 
 export default {
   name: 'vueCron',
@@ -443,7 +415,6 @@ export default {
     const currentMonth = date.getMonth() + 1
     const currentYear = date.getFullYear()
     return {
-      currentTab: 'seconds',
       second: {
         cronEvery: 3,
         incrementStart: 0,
@@ -714,30 +685,9 @@ export default {
     },
     open () {
       this.restore(this.value)
-      this.$nextTick(() => {
-        // Manually update select elements to reflect restored data
-        this.updateSmartSelectOptions('specificSecond', this.second.specificSpecific)
-        this.updateSmartSelectOptions('specificMinute', this.minute.specificSpecific)
-        this.updateSmartSelectOptions('specificHour', this.hour.specificSpecific)
-        this.updateSmartSelectOptions('specificDayOfWeek', this.week.specificSpecific)
-        this.updateSmartSelectOptions('specificDayOfMonth', this.day.specificSpecific)
-        this.updateSmartSelectOptions('specificMonth', this.month.specificSpecific)
-        this.updateSmartSelectOptions('specificYear', this.year.specificSpecific)
-      })
     },
     close () {
       f7.emit('cronEditorClosed')
-    },
-    updateSmartSelectOptions (refName, selectedValues) {
-      const selectEl = this.$refs[refName]?.$el?.querySelector('select')
-      if (!selectEl) return
-
-      Array.from(selectEl.options).forEach(option => {
-        option.selected = selectedValues.includes(option.value) || selectedValues.includes(parseInt(option.value))
-      })
-
-      // Trigger change to update smart-select UI
-      selectEl.dispatchEvent(new Event('change', { bubbles: true }))
     },
     restore (val) {
       if (!val) return
@@ -825,10 +775,6 @@ export default {
         this.day.cronEvery = 5
         this.day.specificSpecific = dayExpr.split(',')
       }
-    },
-    getSmartSelectValue (refName) {
-      const ref = this.$refs[refName]
-      return ref?.$el?.children[0]?.f7SmartSelect?.getValue() || []
     }
   }
 }
