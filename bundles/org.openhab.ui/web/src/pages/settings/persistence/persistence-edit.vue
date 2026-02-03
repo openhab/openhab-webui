@@ -387,8 +387,7 @@ export default {
         serviceId: this.serviceId,
         configs: [],
         aliases: {},
-        cronStrategies: cronStrategies,
-        filters: []
+        cronStrategies: cronStrategies
       }
     },
     /**
