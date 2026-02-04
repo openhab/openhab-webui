@@ -749,7 +749,7 @@ export default {
         newVal.incrementStart = parseInt(increment[0])
         newVal.incrementIncrement = parseInt(increment[1])
       } else if (expr.includes('-')) {
-        this.second.cronEvery = 4
+        newVal.cronEvery = 4
         const range = expr.split('-')
         newVal.rangeStart = parseInt(range[0])
         newVal.rangeEnd = parseInt(range[1])
@@ -763,13 +763,13 @@ export default {
       if (weekExpr.includes('/')) {
         this.day.cronEvery = 2
         const weekIncrement = weekExpr.split('/')
-        this.week.incrementStart = weekIncrement[0]
-        this.week.incrementEnd = weekIncrement[1]
+        this.week.incrementStart = parseInt(weekIncrement[0])
+        this.week.incrementIncrement = parseInt(weekIncrement[1])
       } else if (dayExpr.includes('/')) {
         this.day.cronEvery = 3
         const dayIncrement = dayExpr.split('/')
-        this.day.incrementStart = dayIncrement[0]
-        this.day.incrementEnd = dayIncrement[1]
+        this.day.incrementStart = parseInt(dayIncrement[0])
+        this.day.incrementIncrement = parseInt(dayIncrement[1])
       } else if (dayExpr === 'L') {
         this.day.cronEvery = 6
       } else if (dayExpr === 'LW') {

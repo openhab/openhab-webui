@@ -55,15 +55,22 @@ export const usePersistenceEditStore = defineStore('persistenceEdit', () => {
       })
 
     try {
+      savedPersistence.value = null
+      newPersistence.value = false
       const data = await api.getPersistenceServiceConfiguration({ serviceId })
       persistence.value = data || null
+      if (!persistence.value || Object.keys(persistence.value).length === 0) {
+        // Empty object would be because of a 204
+        console.log('Persistence configuration not found (204) for serviceId:', serviceId, '- creating new configuration')
+        newPersistence.value = true
+      }
       savedPersistence.value = cloneDeep(persistence.value)
       loading = false
       return true
     } catch (err) {
       // Only handle 404 from persistence endpoint as "new persistence"
-      if (err instanceof ApiError && (err.response.status === 204 || err.response.status === 404)) {
-        console.log('Persistence configuration not found (204) for serviceId:', serviceId, '- creating new configuration')
+      if (err instanceof ApiError && (err.response.status === 404)) {
+        console.log('Persistence configuration not found (404) for serviceId:', serviceId, '- creating new configuration')
         newPersistence.value = true
         loading = false
         return true

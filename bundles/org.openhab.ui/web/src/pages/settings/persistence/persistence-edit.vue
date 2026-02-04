@@ -462,7 +462,7 @@ export default {
       } else {
         itemList = items.filter((item) => item.match(/^[^!*]+$/))
       }
-      return itemList.length ? (exclude ? 'Not : ' : '') + itemList.join(', ') : null
+      return itemList.length ? (exclude ? 'Not: ' : '') + itemList.join(', ') : null
     },
     configurationStrategiesTitle (strategies) {
       if (!(strategies && strategies.length)) return null

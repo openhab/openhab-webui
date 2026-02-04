@@ -8,7 +8,7 @@
       </f7-navbar>
       <f7-block-title class="no-margin padding-horizontal margin-vertical" medium> Filter Type </f7-block-title>
       <f7-block>
-        <f7-row v-for="ftRow in filterTypesMatrix" :key="ftRow" class="margin-bottom">
+        <f7-row v-for="(ftRow, rowIndex) in filterTypesMatrix" :key="rowIndex" class="margin-bottom">
           <f7-col
             v-for="ft in ftRow"
             :key="ft.name"
