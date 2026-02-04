@@ -69,7 +69,7 @@ export const usePersistenceEditStore = defineStore('persistenceEdit', () => {
       return true
     } catch (err) {
       // Only handle 404 from persistence endpoint as "new persistence"
-      if (err instanceof ApiError && (err.response.status === 404)) {
+      if (err instanceof ApiError && err.response.status === 404) {
         console.log('Persistence configuration not found (404) for serviceId:', serviceId, '- creating new configuration')
         newPersistence.value = true
         loading = false
