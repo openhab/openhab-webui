@@ -54,14 +54,12 @@
       :context="context"
       :class="scopedCssUid" />
     <!-- Label renders text inside <div> element -->
-    <div
+    <Label
       v-else-if="componentType && componentType === 'Label'"
       ref="component"
       v-bind="$attrs"
-      :class="[...(Array.isArray(config.class) ? config.class : []), scopedCssUid]"
-      :style="config.style">
-      {{ config.text }}
-    </div>
+      :context="context"
+      :class="scopedCssUid" />
     <!-- Content renders text without any additional container -->
     <template v-else-if="componentType && componentType === 'Content'">
       {{ config.text }}
@@ -91,6 +89,7 @@ import * as StandardListWidgets from './standard/list'
 import * as StandardCellWidgets from './standard/cell'
 import * as LayoutWidgets from './layout/index'
 import OhContext from './system/oh-context.vue'
+import Label from './Label.vue'
 </script>
 
 <script>
