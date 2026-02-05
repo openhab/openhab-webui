@@ -1,24 +1,55 @@
 <template>
   <f7-page
     no-toolbar
-    no-navbar
     no-swipeback
     no-swipe-panel
     login-screen
     class="setup-wizard"
     @page:init="pageBeforeIn"
     @page:beforeout="pageBeforeOut">
+    <!-- Navbar with steps link -->
+    <f7-navbar no-hairline class="navbar-header-row">
+      <f7-nav-left>
+        <f7-link
+          v-if="prev"
+          icon-ios="f7:arrow_left"
+          icon-aurora="f7:arrow_left"
+          icon-md="material:arrow_back"
+          color="blue"
+          @click="handler(prev)" />
+      </f7-nav-left>
+      <f7-nav-title v-if="currentStep !== 'welcome'" class="wizard-progress-title">
+        <f7-link popover-open="#wizard-steps-popover">
+          <span v-html="wizardProgress"></span>
+        </f7-link>
+      </f7-nav-title>
+      <f7-nav-right>
+        <f7-link icon-ios="f7:xmark" icon-aurora="f7:xmark" icon-md="material:close" color="blue" @click="skipSetup" />
+      </f7-nav-right>
+    </f7-navbar>
+
+    <!-- List of steps popover -->
+    <f7-popover id="wizard-steps-popover">
+      <f7-list menuList>
+        <f7-list-item
+          v-for="(step, index) in wizardStepKeysFiltered"
+          :key="index"
+          :title="t('setupwizard.' + step + '.title')"
+          :selected="step === currentStep"
+          :checked="setupWizardStepsDone?.[step]"
+          checkbox
+          readonly
+          link
+          no-chevron
+          popover-close
+          @click="toStep(step)" />
+      </f7-list>
+    </f7-popover>
+
     <f7-tabs animated>
       <!-- Intro Tab -->
       <f7-tab id="intro" tab-active @tab:show="handleTabShow">
-        <tab-header
-          :image="introLogo"
-          :prev="prev"
-          :step="currentStep"
-          :link="wizardSteps[currentStep].link"
-          :t="t"
-          @back="handlerPrev(prev)"
-          @close="skipSetup" />
+        <tab-header :image="introLogo" :step="currentStep" :link="wizardSteps[currentStep].link" :t="t" />
         <f7-list form style="margin-top: 4rem" v-if="i18nReady">
           <f7-list-item
             :title="t('setupwizard.language')"
@@ -56,8 +87,8 @@
         </f7-list>
         <f7-block class="display-flex flex-direction-column padding">
           <div>
-            <f7-button v-if="next" large fill color="blue" :text="t('setupwizard.beginSetup')" @click="handlerNext(next)" />
-            <f7-button v-if="skip" large color="blue" :text="t('setupwizard.skipSetup')" @click="handlerNext(skip)" />
+            <f7-button v-if="next" large fill color="blue" :text="t('setupwizard.beginSetup')" @click="handler(next)" />
+            <f7-button large color="blue" :text="t('setupwizard.skipSetup')" @click="skipSetup" />
           </div>
         </f7-block>
         <f7-list>
@@ -73,12 +104,9 @@
         <tab-header
           :icon="wizardSteps[currentStep].icon"
           :title="t('setupwizard.' + currentStep + '.title')"
-          :prev="prev"
           :step="currentStep"
           :link="wizardSteps[currentStep].link"
-          :t="t"
-          @back="handlerPrev(prev)"
-          @close="skipSetup" />
+          :t="t" />
         <f7-list>
           <f7-list-group>
             <parameter-location
@@ -106,8 +134,14 @@
         </f7-block>
         <f7-block class="display-flex flex-direction-column padding" v-if="networksReady">
           <div>
-            <f7-button v-if="updatedLocation && next" large fill color="blue" :text="t('setupwizard.' + currentStep + '.next')" @click="handlerNext(next)" />
-            <f7-button v-if="skip" large color="blue" :text="t('setupwizard.skip')" class="margin-top" @click="handlerNext(skip)" />
+            <f7-button
+              v-if="updatedLocation && next"
+              large
+              fill
+              color="blue"
+              :text="t('setupwizard.' + currentStep + '.next')"
+              @click="handler(next)" />
+            <f7-button v-if="skip" large color="blue" :text="t('setupwizard.skip')" class="margin-top" @click="handler(skip)" />
           </div>
         </f7-block>
       </f7-tab>
@@ -116,12 +150,9 @@
         <tab-header
           :icon="wizardSteps[currentStep].icon"
           :title="t('setupwizard.' + currentStep + '.title')"
-          :prev="prev"
           :step="currentStep"
           :link="wizardSteps[currentStep].link"
-          :t="t"
-          @back="handlerPrev(prev)"
-          @close="skipSetup" />
+          :t="t" />
         <f7-list>
           <f7-list-group>
             <parameter-options
@@ -134,8 +165,14 @@
         </f7-list>
         <f7-block class="display-flex flex-direction-column padding">
           <div>
-            <f7-button v-if="network && next" large fill color="blue" :text="t('setupwizard.' + currentStep + '.next')" @click="handlerNext(next)" />
-            <f7-button v-if="skip" large color="blue" :text="t('setupwizard.skip')" class="margin-top" @click="handlerNext(skip)" />
+            <f7-button
+              v-if="network && next"
+              large
+              fill
+              color="blue"
+              :text="t('setupwizard.' + currentStep + '.next')"
+              @click="handler(next)" />
+            <f7-button v-if="skip" large color="blue" :text="t('setupwizard.skip')" class="margin-top" @click="handler(skip)" />
           </div>
         </f7-block>
       </f7-tab>
@@ -144,12 +181,9 @@
         <tab-header
           :icon="wizardSteps[currentStep].icon"
           :title="t('setupwizard.' + currentStep + '.title')"
-          :prev="prev"
           :step="currentStep"
           :link="wizardSteps[currentStep].link"
-          :t="t"
-          @back="handlerPrev(prev)"
-          @close="skipSetup" />
+          :t="t" />
         <f7-login-screen-title>
           <div class="padding">
             <img style="width: 85%" :src="conceptsImage" />
@@ -167,8 +201,7 @@
         </f7-block>
         <f7-block class="display-flex flex-direction-column padding">
           <div>
-            <f7-button
-              v-if="next" large fill color="blue" :text="t('setupwizard.next')" @click="handlerNext(next)" />
+            <f7-button v-if="next" large fill color="blue" :text="t('setupwizard.next')" @click="handler(next)" />
           </div>
         </f7-block>
       </f7-tab>
@@ -177,53 +210,65 @@
         <tab-header
           :icon="wizardSteps[currentStep].icon"
           :title="t('setupwizard.' + currentStep + '.title')"
-          :prev="prev"
           :step="currentStep"
           :link="wizardSteps[currentStep].link"
-          :t="t"
-          @back="handlerPrev(prev)"
-          @close="skipSetup" />
+          :t="t" />
         <f7-block class="padding">
           <f7-block v-if="waitingForAddonSuggestions">
             <div class="display-flex justify-content-center margin-bottom">
-              <f7-progressbar id="suggestions-progress-bar-addons" :progress="0" />
+              <f7-progressbar :id="'suggestions-progress-bar-' + addonType" :progress="waitingProgress" />
             </div>
             <div>{{ t('setupwizard.addons.suggestionsWaitMessage') }}</div>
           </f7-block>
-          <addons-setup-wizard
-            v-if="addonSuggestionsReady"
-            :enableAddonSelection="true"
-            :addons="addonsByType[addonType]"
-            :type="addonType"
-            :preSelectedAddons="selectedAddons"
-            @update="updateAddonSelection"
-            :t />
-          <f7-block-footer class="margin-bottom">
-            <small>{{ t('setupwizard.' + currentStep + '.footer') }}</small>
-          </f7-block-footer>
+          <div v-if="!installingAddons">
+            <addons-setup-wizard
+              v-if="addonSuggestionsReady"
+              :enableAddonSelection="true"
+              :addons="addonsByType[addonType]"
+              :type="addonType"
+              :selectedAddons="selectedAddonsByType[addonType] || []"
+              :preSelectedAddons="preSelectedAddonsByType(addonType)"
+              @added="addAddonSelection"
+              @removed="removeAddonSelection"
+              :t />
+            <f7-block-footer class="margin-bottom">
+              <small>{{ t('setupwizard.' + currentStep + '.footer') }}</small>
+            </f7-block-footer>
+          </div>
+          <div v-else>
+            <f7-block-header class="padding">
+              {{ waitingProgressTitle }}
+            </f7-block-header>
+            <f7-block>
+              <div class="display-flex justify-content-center margin-bottom">
+                <f7-progressbar :id="'installing-progress-bar-' + addonType" :progress="waitingProgress" />
+              </div>
+              <div>{{ waitingProgressText }}</div>
+            </f7-block>
+          </div>
           <div>
             <f7-button
-              v-if="addonSuggestionsReady && (toInstallAddonsByType[addonType]?.length > 0) && next"
+              v-if="!installingAddons && addonSuggestionsReady && (toInstallAddons.length > 0) && next"
               large
               fill
               color="blue"
-              :text="t('setupwizard.' + currentStep + '.next', toInstallAddonsByType[addonType]?.length)"
-              @click="handlerNext(next)" />
-            <f7-button v-if="skip" large color="blue" :text="t('setupwizard.' + currentStep + '.skip')" class="margin-top" @click="handlerNext(skip)" />
-          </div>
-        </f7-block>
-      </f7-tab>
-
-      <f7-tab id="wait" @tab:show="handleTabShow">
-        <f7-block>
-          <f7-login-screen-title class="text-color-gray">
-            {{ t('setupwizard.addons.pleaseWait') }}
-          </f7-login-screen-title>
-          <div class="display-flex justify-content-center flex-direction-column text-align-center text-color-gray" style="margin-top: 4rem">
-            <div class="display-flex justify-content-center margin-bottom">
-              <f7-preloader size="24" />
-            </div>
-            <div>{{ t('setupwizard.addons.waitMessage') }}</div>
+              :text="t('setupwizard.' + currentStep + '.next', toInstallAddons.length)"
+              @click="handler(next)" />
+            <f7-button
+              v-if="!installingAddons && skip"
+              large
+              color="blue"
+              :text="t('setupwizard.' + currentStep + '.skip')"
+              class="margin-top"
+              @click="handler(skip)" />
+            <f7-button
+              v-if="installingAddons"
+              large
+              fill
+              color="blue"
+              :text="t('setupwizard.addons.cancelInstall')"
+              class="margin-top"
+              @click="cancelInstall" />
           </div>
         </f7-block>
       </f7-tab>
@@ -232,42 +277,35 @@
         <tab-header
           :icon="wizardSteps[currentStep].icon"
           :title="t('setupwizard.' + currentStep + '.title')"
-          :prev="prev"
           :step="currentStep"
           :link="wizardSteps[currentStep].link"
-          :t="t"
-          @back="handlerPrev(prev)"
-          @close="skipSetup" />
-        <persistence-config-setup-wizard :addons="addons" :addonsReady="persistenceAddonsReady" :confirm="persistenceConfigConfirm" :t />
+          :t="t" />
+        <persistence-config-setup-wizard :addons="addons" :addonsReady="persistenceInstalled" :confirm="persistenceConfigConfirm" :t />
         <f7-block-footer class="margin-bottom">
           <small>{{ t('setupwizard.' + currentStep + '.footer') }}</small>
         </f7-block-footer>
         <f7-block class="padding">
           <div>
-            <f7-button v-if="next" large fill color="blue" :text="t('setupwizard.' + currentStep + '.config')" @click="handlerNext(next)" />
+            <f7-button v-if="next" large fill color="blue" :text="t('setupwizard.' + currentStep + '.config')" @click="handler(next)" />
             <f7-button
               v-if="skip"
               large
               color="blue"
               :text="t('setupwizard.' + currentStep + '.configLater')"
               class="margin-top"
-              @click="handlerNext(skip)" />
+              @click="handler(skip)" />
           </div>
         </f7-block>
       </f7-tab>
 
-      <f7-tab id="finish" @tab:show="handleTabShow">
-        <tab-header
-          :title="t('setupwizard.welcome.title')"
-          :prev="prev"
-          @back="handlerPrev(prev)"
-          @close="skipSetup" />
+      <f7-tab id="welcome" @tab:show="handleTabShow">
+        <tab-header :title="t('setupwizard.welcome.title')" />
         <f7-block v-if="bindingsInstalled">
           {{ t('setupwizard.welcome.bindingsInstalled') }}
         </f7-block>
         <f7-block class="display-flex flex-direction-column padding" style="margin-top: 4rem">
           <div>
-            <f7-button v-if="next" large color="blue" :text="t('setupwizard.welcome.getStarted')" @click="handlerNext(next)" />
+            <f7-button v-if="next" large color="blue" :text="t('setupwizard.welcome.getStarted')" @click="handler(next)" />
           </div>
         </f7-block>
       </f7-tab>
@@ -278,11 +316,34 @@
 <style lang="stylus">
 .setup-wizard
   .intro-logo
-    margin-top 3rem
+    margin-top 4rem
     margin-bottom 2rem
     width 240px
+  .login-screen-content
+    padding-top 0
   .page-content
     margin-top inherit
+  .navbar-header-row
+    max-width var(--f7-login-screen-blocks-max-width)
+    position relative
+    margin 0.5rem auto
+    box-sizing border-box
+    .navbar-bg
+      background-color transparent
+  .wizard-progress-title
+    .progress-circle
+      display inline-block
+      width 8px
+      height 8px
+      border-radius 50%
+      margin-right 6px
+      &:last-child
+        margin-right 0
+      &.filled
+        background-color #007aff
+      &.empty
+        border 1px solid #007aff
+        box-sizing border-box
   .network
     --f7-list-in-list-padding-left 0
     .block-header
@@ -349,8 +410,7 @@ export default {
       // wizard sequence of steps and functions to be called when changing step
       wizardSteps: {
         'intro': {
-          next: { handler: () => this.beginSetup(), step: 'location' },
-          skip: { handler: () => this.skipSetup() }
+          next: { handler: () => this.beginSetup(), step: 'location' }
         },
         'location': {
           icon: 'map_pin_ellipse',
@@ -375,53 +435,58 @@ export default {
         'binding': {
           icon: 'circle_grid_hex_fill',
           link: 'https://www.openhab.org/addons/#binding',
-          show: { handler: () => this.getSuggestedAddons() },
-          prev: { handler: () => this.skipAddons(), step: 'network' },
-          next: { handler: () => this.selectAddons(), step: 'automation' },
-          skip: { handler: () => this.skipAddons(), step: 'automation' }
+          show: { handler: () => this.initSelectedAddons() },
+          prev: { step: 'network' },
+          next: { handler: () => this.installAddons(), step: 'automation' },
+          skip: { step: 'automation' }
         },
         'automation': {
           icon: 'wand_stars',
           link: 'https://www.openhab.org/addons/#automation',
-          show: { handler: () => this.getSuggestedAddons() },
-          prev: { handler: () => this.skipAddons(), step: 'binding' },
+          show: { handler: () => this.initSelectedAddons() },
+          prev: { step: 'binding' },
           next: { handler: () => this.selectAddons(), step: 'ui' },
-          skip: { handler: () => this.skipAddons(), step: 'ui' }
+          skip: { step: 'ui' }
         },
         'ui': {
           icon: 'play_rectangle',
           link: 'https://www.openhab.org/addons/#ui',
-          show: { handler: () => this.getSuggestedAddons() },
-          prev: { handler: () => this.skipAddons(), step: 'automation' },
+          show: { handler: () => this.initSelectedAddons() },
+          prev: { step: 'automation' },
           next: { handler: () => this.selectAddons(), step: 'persistence' },
-          skip: { handler: () => this.skipAddons(), step: 'persistence' }
+          skip: { step: 'persistence' }
         },
         'persistence': {
           icon: 'download_circle',
           link: 'https://www.openhab.org/addons/#persistence',
-          show: { handler: () => this.getSuggestedAddons() },
-          prev: { handler: () => this.skipAddons(), step: 'ui' },
-          next: { handler: () => { this.selectAddons() }, step: 'wait' },
-          skip: { handler: () => { this.skipAddons() }, step: 'wait' }
-        },
-        'wait': {
-          show: { handler: () => { this.installAddons(); this.skipStep() } },
+          show: { handler: () => this.initSelectedAddons() },
+          prev: { step: 'ui' },
+          next: { handler: () => { this.selectAddons() }, step: 'persistence-config' },
           skip: { step: 'persistence-config' }
-         },
+        },
         'persistence-config': {
           icon: 'download_circle',
-          show: { handler: () => { if (!this.persistenceInstalled) this.skipStep() } },
+          show: { handler: () => {
+            this.persistenceConfigConfirm = false
+            if (!this.persistenceInstalled) this.skipStep()
+          }},
           prev: { step: 'persistence' },
-          next: { handler: () => this.persistenceConfig(), step: 'finish' },
-          skip: { step: 'finish' }
+          next: { handler: () => this.persistenceConfigConfirm = true, step: 'welcome' },
+          skip: { step: 'welcome' }
         },
-        'finish': {
+        'welcome': {
           prev: { step: 'intro' },
           next: { handler: () => this.finish() }
         }
       },
       currentStep: 'intro',
       skipStepDirection: 'skip',
+
+      // progress bar state
+      waitingProgress: 0,
+      waitingProgressTitle: '',
+      waitingProgressText: '',
+      waitingTimeout: null,
 
       availableLanguages: null,
       availableRegions: null,
@@ -431,25 +496,25 @@ export default {
       timezone: null,
       location: null,
       updatedLocation: null,
+
       networksReady: false,
       networkConfigDescription: null,
       network: null,
       networkChanged: false,
 
       waitingForAddonSuggestions: false,
-      waitingTimeout: null,
       addonSuggestionsReady: false,
       addons: [],
       // all recommended addons, pre-defined
       recommendedAddons: ['binding-astro', 'automation-jsscripting', 'ui-basic', 'misc-openhabcloud', 'persistence-rrd4j', 'persistence-mapdb', 'persistence-inmemory'],
+      // addons suggested from suggestion finders
+      suggestedAddons: [],
       // addon types that can be selected in wizard
       preSelectingAddonTypes: ['binding', 'automation', 'ui', 'persistence'],
-      // all recommended and suggested addons, list created in code
-      selectedAddons: [],
-      oldSelection: [],
+      // list of addons per step, will include pre-selected and already installed, updated in addons setup wizard
+      selectedAddonsByType: {},
       installingAddons: false,
-      bindingsInstalled: false,
-      persistenceAddonsReady: false,
+      installingAddonsCancelled: false,
 
       persistenceConfigConfirm: false
     }
@@ -457,19 +522,19 @@ export default {
   computed: {
     show () {
       if (!this.currentStep) return null
-      return this.wizardSteps[this.currentStep].show || null
+      return { action: 'show', ...this.wizardSteps[this.currentStep].show }
     },
     prev () {
       if (!this.currentStep) return null
-      return this.wizardSteps[this.currentStep].prev || null
+      return { action: 'prev', ...this.wizardSteps[this.currentStep].prev }
     },
     next () {
       if (!this.currentStep) return null
-      return this.wizardSteps[this.currentStep].next || null
+      return { action: 'next', ...this.wizardSteps[this.currentStep].next }
     },
     skip () {
       if (!this.currentStep) return null
-      return this.wizardSteps[this.currentStep].skip || null
+      return { action: 'skip', ...this.wizardSteps[this.currentStep].skip }
     },
     locale () {
       if (!this.language) return null
@@ -478,9 +543,6 @@ export default {
     },
     multiNetwork () {
       return (this.networkConfigDescription?.options?.length > 1)
-    },
-    toInstallAddons () {
-      return this.addons.filter((a) => this.selectedAddons.includes(a) && !a.installed)
     },
     addonsByType () {
       const addons = {}
@@ -493,25 +555,57 @@ export default {
       })
       return addons
     },
-    toInstallAddonsByType () {
-      const addons = {}
-      this.preSelectingAddonTypes.forEach((t) => {
-        addons[t] = this.toInstallAddons.filter((a) => (this.addonsByType[t].includes(a)))
-      })
-      return addons
-    },
-    recommendedAddonsByType () {
+    installedAddonsByType () {
       const addons = {}
       Object.keys(this.addonsByType).forEach((type) => {
-        addons[type] = this.addonsByType[type].filter((a) => this.recommendedAddons.includes(a.uid))
+        addons[type] = this.addonsByType[type].filter((a) => a.installed)
       })
       return addons
     },
+    toInstallAddons () {
+      return this.selectedAddonsByType[this.currentStep]?.filter((a => !a.installed)) || []
+    },
+    preSelectedAddons () {
+      // all recommended and suggested addons
+      return [
+        ...this.addons.filter((a) => this.recommendedAddons.includes(a.uid)).sort((a, b) => a.uid.toUpperCase().localeCompare(b.uid.toUpperCase())),
+        ...this.addons.filter((a) => this.suggestedAddons.includes(a.id)).sort((a, b) => a.uid.toUpperCase().localeCompare(b.uid.toUpperCase()))
+      ]
+    },
+    bindingsInstalled () {
+      return !this.installingAddons && (this.addons.findIndex((a) => a.type === 'binding' && a.installed) >= 0)
+    },
     persistenceInstalled () {
-      return this.addons.find((a) => a.type === 'persistence' && a.installed)
+      return !this.installingAddons && (this.addons.findIndex((a) => a.type === 'persistence' && a.installed) >= 0)
+    },
+    wizardStepKeys () {
+      const steps = []
+      let step = 'intro'
+      while (step) {
+        steps.push(step)
+        step = this.wizardSteps[step].next?.step || this.wizardSteps[step].skip?.step
+      }
+      return steps
+    },
+    wizardStepKeysFiltered () {
+      let steps = this.wizardStepKeys
+      if (this.setupWizardShort) steps = steps.filter((step) => !this.wizardSteps[step].skipShort)
+      return steps
+    },
+    wizardStepCount () {
+      return this.wizardStepKeysFiltered.length
+    },
+    wizardCurrentCount () {
+      return this.wizardStepKeysFiltered.findIndex((step) => this.currentStep === step) + 1
+    },
+    wizardProgress () {
+      const filled = '<span class="progress-circle filled"></span>'
+      const empty = '<span class="progress-circle empty"></span>'
+      return filled.repeat(this.wizardCurrentCount) + empty.repeat(this.wizardStepCount - this.wizardCurrentCount)
     },
     ...mapWritableState(useUIOptionsStore, {
-      setupWizardShort: 'setupWizardShort'
+      setupWizardShort: 'setupWizardShort',
+      setupWizardStepsDone: 'setupWizardStepsDone'
     })
   },
   watch: {
@@ -522,32 +616,41 @@ export default {
     }
   },
   methods: {
-    handleTabShow (arg1, arg2) {
+    async execHandler (handler) {
+      const result = handler?.()
+      // Wait for handler if it returns a Promise
+      if (result instanceof Promise) {
+        try {
+          await result
+        } catch (error) {
+          // Handler rejected (e.g., installation cancelled)
+          console.log('Handler was cancelled or failed:', error.message)
+          return false
+        }
+      }
+      return true
+    },
+    async handleTabShow (arg1, arg2) {
       // Framework7 tab:show can pass (el) or (event, el) - handle both
       const tabEl = arg2 || arg1
       const id = tabEl?.id || tabEl?.target?.id
       if (id) this.currentStep = id
+      await this.execHandler(this.show?.handler)
       // Scroll the active tab to top
       nextTick(() => {
-        const activeTab = this.$el?.querySelector('#' + id)
+        const activeTab = document.querySelector('#' + id)
         if (activeTab) {
           activeTab.scrollTop = 0
         }
-        this.show?.handler?.()
       })
     },
-    handlerPrev (prev) {
-      this.skipStepDirection = 'prev'
-      this.handler(prev)
-
-    },
-    handlerNext (next) {
-      this.skipStepDirection = 'skip'
-      this.handler(next)
-    },
-    handler (direction) {
+    async handler (direction) {
       if (!direction) return
-      direction?.handler?.()
+      this.skipDirection = direction.action === 'next' ? 'skip' : direction.action
+      if  (!await this.execHandler(direction?.handler)) {
+        // an error occurred or operation was cancelled, don't move tabs
+        return
+      }
       let nextStep = direction?.step
       // skip setup tabs marked as skipShort when short wizard is selected
       if (this.setupWizardShort) {
@@ -555,12 +658,25 @@ export default {
           nextStep = this.wizardSteps[nextStep].next?.step
         }
       }
+      if (direction?.action === 'next') {
+        // we completed this step, store it
+        const stepsDone = { ...(this.setupWizardStepsDone) }
+        stepsDone[this.currentStep] = true
+        this.setupWizardStepsDone = stepsDone
+      }
       if (nextStep) {
         f7.tab.show('#' + nextStep)
       }
     },
     skipStep () {
       this.handler(this.wizardSteps[this.currentStep][this.skipStepDirection])
+    },
+    async toStep (step) {
+      if (!await this.execHandler(this.wizardSteps[this.currentStep].skip?.handler)) {
+        // an error occurred or operation was cancelled, don't move tabs
+        return
+      }
+      f7.tab.show('#' + step)
     },
     beginSetup () {
       this.$oh.api.put('/rest/services/org.openhab.i18n/config', {
@@ -623,6 +739,9 @@ export default {
       }
       this.addonSuggestionsReady = false
     },
+    initSelectedAddons () {
+      this.getSuggestedAddons()
+    },
     /**
      * Manages the loading process of suggested add-ons.
      *
@@ -632,14 +751,10 @@ export default {
      */
     getSuggestedAddons () {
       if (this.addonSuggestionsReady) return
-      let progress = 0
       const loading = () => {
         this.waitingTimeout = setTimeout(() => {
-          const progressBefore = progress
-          progress += 10
-          f7.progressbar.set('#suggestions-progress-bar-persistence', progress)
-          f7.progressbar.set('#suggestions-progress-bar-addons', progress)
-          if (progressBefore < 100) {
+          if (this.waitingProgress < 100) {
+            this.waitingProgress += 10
             loading()
           } else {
             this.getSuggestions()
@@ -650,9 +765,8 @@ export default {
       if (this.networkChanged) {
         // wait 10 seconds for suggestions to refresh after network scan
         this.networkChanged = false
+        this.waitingProgress = 0
         this.waitingForAddonSuggestions = true
-        f7.progressbar.set('#suggestions-progress-bar-persistence', 0)
-        f7.progressbar.set('#suggestions-progress-bar-addons', 0)
         clearTimeout(this.waitingTimeout)
         loading()
       } else if (!this.waitingForAddonSuggestions) {
@@ -663,124 +777,134 @@ export default {
      * Load and process the list of suggested add-ons.
      *
      * Sets <code>this.addonSuggestionsReady</code> to <code>true</code> once addon-suggestions are ready.
-     *
-     * @emits addonSuggestionsReady once add-on suggestions are ready
      */
     getSuggestions () {
       this.$oh.api.get('/rest/addons/suggestions').then((suggestions) => {
-        const suggestedAddons = suggestions.flatMap((s) => s.id).filter((id) => !this.recommendedAddons.includes(id))
-        // Keep the recommended addons first
-        this.selectedAddons = [
-          ...this.addons.filter((a) => this.recommendedAddons.includes(a.uid)).sort((a, b) => a.uid.toUpperCase().localeCompare(b.uid.toUpperCase())),
-          ...this.addons.filter((a) => suggestedAddons.includes(a.id)).sort((a, b) => a.uid.toUpperCase().localeCompare(b.uid.toUpperCase()))
-        ]
-        this.oldSelection = [...this.selectedAddons]
+        // Filter out the recommendaed addons so they can be put first in preSelectedAddons
+        this.suggestedAddons = suggestions.flatMap((s) => s.id).filter((id) => !this.recommendedAddons.includes(id))
+        nextTick(() => {
+          this.preSelectingAddonTypes.forEach((type) => this.initAddonSelection(type))
+        })
         this.addonSuggestionsReady = true
-        f7.emit('addonSuggestionsReady')
       })
     },
-    selectAddons () {
-      if (this.addonSuggestionsReady) {
-        this.oldSelection = [...this.selectedAddons]
-      } else {
-        f7.once('addonSuggestionsReady', () => {
-        this.oldSelection = [...this.selectedAddons]
-        })
-      }
+    preSelectedAddonsByType (type) {
+      return this.addonsByType[type].filter((a) => this.preSelectedAddons.includes(a))
     },
-    skipAddons () {
-      if (this.addonSuggestionsReady) {
-        this.selectedAddons = [...this.oldSelection]
-      } else {
-        f7.once('addonSuggestionsReady', () => {
-          this.selectedAddons = [...this.oldSelection]
-        })
-      }
+    initAddonSelection (type) {
+      const installed = this.installedAddonsByType[type]
+      this.selectedAddonsByType[type] = [...new Set([...(this.preSelectedAddonsByType(type) || []), ...installed])]
     },
-    preSelectedAddon (addon) {
-      return this.preSelectingAddonTypes.includes(addon.type)
-    },
-    updateAddonSelection (newSelected) {
-      const oldSelected = this.selectedAddons
-      this.selectedAddons = newSelected
-      console.debug('Updating add-on selection:', oldSelected.map((a) => a.uid), newSelected.map((a) => a.uid))
+    addAddonSelection (addon) {
+      const oldSelected = this.selectedAddonsByType[this.currentStep]
+      if (!this.selectedAddonsByType[this.currentStep]) this.selectedAddonsByType[this.currentStep] = []
+      this.selectedAddonsByType[this.currentStep].push(addon)
+      const newSelected = this.selectedAddonsByType[this.currentStep]
+      console.debug('Adding to add-on selection:', oldSelected.map((a) => a.uid), newSelected.map((a) => a.uid))
       nextTick(() => {
         console.log('Add-ons to install:', this.toInstallAddons.map((a) => a.uid))
       })
     },
+    removeAddonSelection (addon) {
+      const oldSelected = this.selectedAddonsByType[this.currentStep]
+      if (!this.selectedAddonsByType[this.currentStep]) this.selectedAddonsByType[this.currentStep] = []
+      this.selectedAddonsByType[this.currentStep] = this.selectedAddonsByType[this.currentStep].filter((a) => a.uid !== addon.uid)
+      const newSelected = this.selectedAddonsByType[this.currentStep]
+      console.debug('removing from add-on selection:', oldSelected.map((a) => a.uid), newSelected.map((a) => a.uid))
+      nextTick(() => {
+        console.log('Add-ons to install:', this.toInstallAddons.map((a) => a.uid))
+      })
+    },
+    async selectAddons () {
+      // Needs to be async, so wizard can stay on page until all add-ons are installed
+      await this.installAddons()
+    },
     installAddons () {
-      const checkInterval = 2 // check the add-ons statuses every 2 seconds
+      return new Promise((resolve, reject) => {
+        const checkInterval = 2 // check the add-ons statuses every 2 seconds
 
-      if (this.toInstallAddons.filter((a) => a.type === 'persistence').length === 0) this.persistenceAddonsReady = true
-
-      const addonsCount = this.toInstallAddons.length
-      if (addonsCount === 0)  return
-
-      this.installingAddons = true
-
-      this.bindingsInstalled = this.toInstallAddons.find((a) => (a.type === 'binding'))
-      let progress = 0
-
-      const progressDialog = f7.dialog.progress(this.t('setupwizard.addons.installing'), progress)
-
-      const checkAddonStatus = (addon) => {
-        return new Promise((resolve, reject) => {
-          this.$oh.api.get('/rest/addons/' + addon.uid).then((data) => {
-            if (data.installed) {
-              console.log(`Add-on ${addon.uid} installed!`)
-              resolve(data)
-            } else {
-              console.log(`Add-on ${addon.uid} still not installed. Trying again in ${checkInterval} secs...`)
-              reject(data)
-            }
-          }).catch((err) => {
-            console.log(`Error while querying API to check addon: ${addon.uid}: ${err}'. Trying again in ${checkInterval} secs...`)
-            reject(err)
-          })
-        })
-      }
-
-      const installNextAddon = () => {
-        // no more add-ons to install => go to next screen
-        if (!this.toInstallAddons.length) {
-          progressDialog.close()
-          progressDialog.destroy()
-          this.persistenceAddonsReady = true
+        const addons = [...this.toInstallAddons]
+        const addonsCount = addons.length
+        if (addonsCount === 0) {
+          resolve()
           return
         }
 
-        // check if all persistence add-ons have already been installed, so the persistence config tab can be prepared
-        if (this.toInstallAddons.filter((a) => a.type === 'persistence').length === 0) this.persistenceAddonsReady = true
-        
-        // install next add-on
-        progressDialog.setText(this.t('setupwizard.addons.progress', { current: addonsCount - this.toInstallAddons.length + 1, total: addonsCount }))
-        progressDialog.setProgress(((addonsCount - this.toInstallAddons.length + 1) / addonsCount) * 100)
-        const addon = this.toInstallAddons[0]
-        console.log('Installing add-on: ' + addon.uid)
-        progressDialog.setTitle(this.t('setupwizard.addons.installingAddon', { addon: addon.label }))
+        this.installingAddons = true
+        this.isInstallCancelled = false
+        this.waitingProgressTitle = this.t('setupwizard.addons.installing')
+        this.waitingProgress = 0
 
-        this.$oh.api.post('/rest/addons/' + addon.uid + '/install', {}, 'text').then(() => {
-          const checkTimer = setInterval(() => {
-            checkAddonStatus(addon).then(() => {
-              addon.installed = true
-              clearInterval(checkTimer)
-              nextTick(() => {
-                installNextAddon()
-              })
-            }).catch(() => {
-              // just keep going... TODO: implement failure mechanism after a number of failed checks?
+        const checkAddonStatus = (addon) => {
+          return new Promise((resolve, reject) => {
+            this.$oh.api.get('/rest/addons/' + addon.uid).then((data) => {
+              if (data.installed) {
+                console.log(`Add-on ${addon.uid} installed!`)
+                resolve(data)
+              } else {
+                console.log(`Add-on ${addon.uid} still not installed. Trying again in ${checkInterval} secs...`)
+                reject(data)
+              }
+            }).catch((err) => {
+              console.log(`Error while querying API to check addon: ${addon.uid}: ${err}'. Trying again in ${checkInterval} secs...`)
+              reject(err)
             })
-          }, checkInterval * 1000)
-        })
-      }
+          })
+        }
 
-      progressDialog.open()
-      installNextAddon()
+        const installNextAddon = () => {
+          // no more add-ons to install => go to next screen
+          if (!addons.length) {
+            this.installingAddons = false
+            resolve()
+            return
+          }
+
+          // cancelled, not installing the next one anymore
+          if (this.isInstallCancelled) {
+              this.installingAddons = false
+              reject(new Error('cancelled'))
+              return
+          }
+
+          // install next add-on
+          const addon = addons.shift()
+          this.waitingProgress = ((addonsCount - addons.length) / addonsCount) * 100
+          this.waitingProgressText = this.t('setupwizard.addons.progress', { current: addonsCount - addons.length, total: addonsCount })
+          console.log('Installing add-on: ' + addon.uid)
+          this.waitingProgressTitle = this.t('setupwizard.addons.installingAddon', { addon: addon.label })
+
+          this.$oh.api.post('/rest/addons/' + addon.uid + '/install', {}, 'text').then(() => {
+            if (this.isInstallCancelled) return
+            const checkTimer = setInterval(() => {
+              checkAddonStatus(addon).then(() => {
+                addon.installed = true
+                clearInterval(checkTimer)
+                nextTick(() => {
+                  installNextAddon()
+                })
+              }).catch(() => {
+                // just keep going... TODO: implement failure mechanism after a number of failed checks?
+              })
+            }, checkInterval * 1000)
+          })
+        }
+
+        installNextAddon()
+      })
     },
-    persistenceConfig () {
-      this.persistenceConfigConfirm = true
+    cancelInstall () {
+      this.isInstallCancelled = true
+      this.waitingProgressTitle = this.t('setupwizard.addons.installCancelled')
+      this.waitingProgress = 100
+
     },
     finish () {
+      // we completed this step, store it
+      const stepsDone = { ...(this.setupWizardStepsDone) }
+      stepsDone['welcome'] = true
+      this.setupWizardStepsDone = stepsDone
+
       f7.panel.get('left').enableVisibleBreakpoint()
       nextTick(() => {
         f7.views.main.router.navigate('/', { transition: 'f7-circle', clearPreviousHistory: true })

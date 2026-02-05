@@ -7,7 +7,7 @@
             <div style="width: 100%">
               <f7-checkbox
                 style="margin-right: 0.5rem"
-                :checked="selectedAddon(addon)"
+                :checked="isAddonSelected(addon)"
                 :disabled="addon.installed"
                 @change="toggleAddonSelection(addon, $event)" />
               {{ addon.label }}
@@ -35,10 +35,7 @@
     </f7-row>
 
     <!-- Addon Selection Modal -->
-    <f7-popup
-      v-if="enableAddonSelection"
-      :opened="showAddonSelectionModal"
-      @popup:closed="closeAddonSelectionModal">
+    <f7-popup v-if="enableAddonSelection" :opened="showAddonSelectionModal" @popup:closed="closeAddonSelectionModal">
       <f7-page>
         <f7-navbar>
           <f7-nav-left>
@@ -140,18 +137,18 @@ export default {
     addons: Array,
     type: String,
     preSelectedAddons: Array,
+    selectedAddons: Array,
     enableAddonSelection: Boolean,
     t: Function
   },
-  emits: ['update'],
+  emits: ['added', 'removed'],
   components: {
     AddonLogo
   },
   data () {
     return {
-      shownAddons: [],
-      modalShownAddons: [],
-      selectedAddons: [],
+      shownAddons: [...(this.preSelectedAddons || [])],
+      modalShownAddons: this.addons?.filter((a) => !a.installed && !this.isPreSelectedAddon(a)) || [],
       showAddonSelectionModal: false,
       addonSearchQuery: ''
     }
@@ -178,24 +175,16 @@ export default {
      * @param addon
      * @returns {boolean}
      */
-    selectedAddon (addon) {
-      return this.selectedAddons.includes(addon)
-    },
-    /**
-     * Whether the given add-on is selected in the modal.
-     * @param addon
-     * @returns {boolean}
-     */
     isAddonSelected (addon) {
-      return this.selectedAddons.includes(addon)
+      return this.selectedAddons?.includes(addon)
     },
     /**
      * Whether the given add-on is pre-selected.
      * @param addon
      * @returns {boolean}
      */
-    preSelectedAddon (addon) {
-      return this.preSelectedAddons.includes(addon)
+    isPreSelectedAddon (addon) {
+      return this.preSelectedAddons?.includes(addon)
     },
     /**
      * Returns the add-on description.
@@ -218,14 +207,13 @@ export default {
      */
     toggleAddonSelection (addon, event) {
       if (event.target.checked) {
-        this.selectedAddons.push(addon)
+        this.$emit('added', addon)
         if (!this.shownAddons.includes(addon)) {
           this.shownAddons.push(addon)
         }
       } else {
-        this.selectedAddons = this.selectedAddons.filter((a) => a.uid !== addon.uid)
+        this.$emit('removed', addon)
       }
-      this.$emit('update', this.selectedAddons)
     },
     /**
      * Opens the add-on selection modal.
@@ -240,15 +228,6 @@ export default {
       this.showAddonSelectionModal = false
       this.addonSearchQuery = ''
     }
-  },
-  mounted () {
-    // Update the list of shown and selected add-ons with the pre-selected add-ons.
-    if (Array.isArray(this.preSelectedAddons)) {
-      this.selectedAddons = this.preSelectedAddons
-    }
-    const shownAddons = [...this.preSelectedAddons.filter((a) => this.addons.includes(a)), ...this.addons.filter((a) => a.installed)]
-    this.shownAddons = [...new Set(shownAddons)]
-    this.modalShownAddons = this.addons.filter((a) => !a.installed && !this.preSelectedAddon(a))
   }
 }
 </script>
