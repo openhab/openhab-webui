@@ -2554,7 +2554,7 @@ export const updateItemListForStateUpdates = <ThrowOnError extends boolean = fal
         ...options,
         ...params,
         headers: {
-            'Content-Type': '*/*',
+            'Content-Type': 'application/json',
             ...options?.headers,
             ...params.headers
         }
