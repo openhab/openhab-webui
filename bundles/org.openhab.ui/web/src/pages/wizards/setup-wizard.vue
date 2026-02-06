@@ -54,7 +54,7 @@
     <f7-tabs animated>
       <!-- Intro step -->
       <f7-tab id="intro" tab-active @tab:show="handleTabShow">
-        <tab-header :image="introLogo" :step="currentStep" :link="wizardSteps[currentStep].link" :t="t" />
+        <tab-header :image="wizardSteps[currentStep].image" :step="currentStep" :link="wizardSteps[currentStep].link" :t="t" />
         <f7-list form style="margin-top: 4rem" v-if="i18nReady">
           <f7-list-item
             :title="t('setupwizard.language')"
@@ -308,7 +308,7 @@
 
       <!-- Welcome -->
       <f7-tab id="welcome" @tab:show="handleTabShow">
-        <tab-header :title="t('setupwizard.welcome.title')" />
+        <tab-header :title="t('setupwizard.welcome.title')" :image="wizardSteps[currentStep].image" :step="currentStep" :link="wizardSteps[currentStep].link" :t="t" />
         <f7-block>
           {{ t('setupwizard.welcome.model') }}
         </f7-block>
@@ -323,13 +323,14 @@
             <f7-button
               v-if="next"
               large
-              fill
+              :fill="!setupWizardStepsDone.modelLinkClicked"
               color="blue"
               :text="t('setupwizard.welcome.modelLink')"
               @click="handler({ ...next, link: '/settings/model/' })" />
             <f7-button
               v-if="next && bindingsInstalled"
               large
+              :fill="setupWizardStepsDone.modelLinkClicked && !setupWizardStepsDone.inboxLinkClicked"
               color="blue"
               :text="t('setupwizard.welcome.inboxLink')"
               @click="handler({ ...next, link: '/settings/things/inbox' })" />
@@ -456,6 +457,7 @@ export default {
       wizardSteps: {
         // Intro does have to be the first step. Code forces no next step is possible before completing it.
         'intro': {
+          image: introLogo,
           next: { handler: () => this.beginSetup(), step: 'location' }
         },
         'location': {
@@ -552,6 +554,7 @@ export default {
           next: { step: 'welcome' }
         },
         'welcome': {
+          image: introLogo,
           prev: { step: 'intro' },
           next: { handler: (link) => this.finish(link) }
         }
@@ -997,6 +1000,8 @@ export default {
       // we completed this step, store it
       const stepsDone = { ...(this.setupWizardStepsDone) }
       stepsDone['welcome'] = true
+      if (link.indexOf('model') >= 0) stepsDone.modelLinkClicked = true
+      if (link.indexOf('inbox') >= 0) stepsDone.inboxLinkClicked = true
       this.setupWizardStepsDone = stepsDone
 
       f7.panel.get('left').enableVisibleBreakpoint()

@@ -152,9 +152,9 @@
   "setupwizard.semantics-intro.body3": "The first step in using a Semantic Model is creating a model of your locations. You get help the first time you open the Model.",
   "setupwizard.semantics-intro.nextDescription": "In the next step you can follow the link to the Semantic Model to use a template to create your Model.",
   "setupwizard.welcome.title": "Welcome to openHAB!",
-  "setupwizard.welcome.model": "Now is the right time to create your model. You find it in the Settings menu, or you can follow the link.",
-  "setupwizard.welcome.bindingsInstalled": "You have installed one or more bindings. Things provided by these bindings will appear in the Things Inbox. You can accept and further configure from there.",
-  "setupwizard.welcome.footer": "You can come always back to this wizard from the Help & About menu. I will remember what you have done already!",
+  "setupwizard.welcome.model": "Now is the right time to create your model. You find it in the Settings menu, or you can click the button.",
+  "setupwizard.welcome.bindingsInstalled": "You have installed one or more bindings. Things provided by these bindings will appear in the Settings menu Things Inbox. You can accept and further configure from there.",
+  "setupwizard.welcome.footer": "You can always come back to this wizard from the Help & About menu. I will remember what you have done already!",
   "setupwizard.welcome.modelLink": "Create Model",
   "setupwizard.welcome.inboxLink": "Inbox",
   "setupwizard.welcome.getStarted": "Overview"
