@@ -36,14 +36,18 @@
           :key="index"
           :title="t('setupwizard.' + step + '.title')"
           :selected="step === currentStep"
-          :style="!wizardStepKeysActive.includes(step) ? 'color: grey; pointer-events: none; opacity: 0.6' : ''"
+          :style="!wizardStepKeysActive.includes(step) ? 'color: grey; pointerEvents: none; opacity: 0.6' : ''"
           :checked="setupWizardStepsDone?.[step]"
           checkbox
           readonly
           link
           no-chevron
           :popover-close="wizardStepKeysActive.includes(step)"
-          @click="toStep(step)" />
+          @click="toStep(step)">
+          <template #after>
+            <f7-icon v-if="wizardSteps[step].show?.extended" f7="info_circle" :tooltip="t('setupwizard.extended')" />
+          </template>
+        </f7-list-item>
       </f7-list>
     </f7-popover>
 
@@ -191,7 +195,92 @@
         </f7-block>
       </f7-tab>
 
-      <f7-tab id="concepts-text" @tab:show="handleTabShow">
+      <!-- Tabs explaining concepts -->
+      <f7-tab id="concepts-intro" @tab:show="handleTabShow">
+        <tab-header
+          :icon="wizardSteps[currentStep].icon"
+          :title="t('setupwizard.' + currentStep + '.title')"
+          :step="currentStep"
+          :link="wizardSteps[currentStep].link"
+          :t="t" />
+        <f7-login-screen-title>
+          <div class="padding">
+            <img style="width: 85%" :src="conceptsImage" />
+          </div>
+        </f7-login-screen-title>
+        <f7-block>
+          {{ t('setupwizard.' + currentStep + '.body1') }}
+          {{ t('setupwizard.' + currentStep + '.body2') }}
+          <br /><br />
+          <a class="text-color-blue external" target="_blank" href="https://www.openhab.org/docs/concepts/">
+            {{ t('setupwizard.documentationLink') }}</a
+          >
+          <br /><br />
+          {{ t('setupwizard.' + currentStep + '.nextDescription') }}
+        </f7-block>
+        <f7-block class="display-flex flex-direction-column padding">
+          <div>
+            <f7-button v-if="next" large fill color="blue" :text="t('setupwizard.next')" @click="handler(next)" />
+          </div>
+        </f7-block>
+      </f7-tab>
+      <f7-tab id="concepts-rules" @tab:show="handleTabShow">
+        <tab-header
+          :icon="wizardSteps[currentStep].icon"
+          :title="t('setupwizard.' + currentStep + '.title')"
+          :step="currentStep"
+          :link="wizardSteps[currentStep].link"
+          :t="t" />
+        <f7-login-screen-title>
+          <div class="padding">
+            <img style="width: 85%" :src="conceptsImage" />
+          </div>
+        </f7-login-screen-title>
+        <f7-block>
+          {{ t('setupwizard.' + currentStep + '.body1') }}
+          {{ t('setupwizard.' + currentStep + '.body2') }}
+          <br /><br />
+          <a class="text-color-blue external" target="_blank" href="https://www.openhab.org/docs/concepts/">
+            {{ t('setupwizard.documentationLink') }}</a
+          >
+          <br /><br />
+          {{ t('setupwizard.' + currentStep + '.nextDescription') }}
+        </f7-block>
+        <f7-block class="display-flex flex-direction-column padding">
+          <div>
+            <f7-button v-if="next" large fill color="blue" :text="t('setupwizard.next')" @click="handler(next)" />
+          </div>
+        </f7-block>
+      </f7-tab>
+      <f7-tab id="concepts-ui" @tab:show="handleTabShow">
+        <tab-header
+          :icon="wizardSteps[currentStep].icon"
+          :title="t('setupwizard.' + currentStep + '.title')"
+          :step="currentStep"
+          :link="wizardSteps[currentStep].link"
+          :t="t" />
+        <f7-login-screen-title>
+          <div class="padding">
+            <img style="width: 85%" :src="conceptsImage" />
+          </div>
+        </f7-login-screen-title>
+        <f7-block>
+          {{ t('setupwizard.' + currentStep + '.body1') }}
+          {{ t('setupwizard.' + currentStep + '.body2') }}
+          <br /><br />
+          <a class="text-color-blue external" target="_blank" href="https://www.openhab.org/docs/concepts/">
+            {{ t('setupwizard.documentationLink') }}</a
+          >
+          <br /><br />
+          {{ t('setupwizard.' + currentStep + '.nextDescription') }}
+        </f7-block>
+        <f7-block class="display-flex flex-direction-column padding">
+          <div>
+            <f7-button v-if="next" large fill color="blue" :text="t('setupwizard.next')" @click="handler(next)" />
+          </div>
+        </f7-block>
+      </f7-tab>
+      <f7-tab id="concepts-persistence" @tab:show="handleTabShow">
         <tab-header
           :icon="wizardSteps[currentStep].icon"
           :title="t('setupwizard.' + currentStep + '.title')"
@@ -220,6 +309,7 @@
         </f7-block>
       </f7-tab>
 
+      <!-- Tabs for add-on selection and installation -->
       <f7-tab v-for="addonType in preSelectingAddonTypes" :key="addonType" :id="addonType" @tab:show="handleTabShow">
         <tab-header
           :icon="wizardSteps[currentStep].icon"
@@ -312,6 +402,7 @@
         </f7-block>
       </f7-tab>
 
+      <!-- Welcome tab -->
       <f7-tab id="welcome" @tab:show="handleTabShow">
         <tab-header :title="t('setupwizard.welcome.title')" />
         <f7-block v-if="bindingsInstalled">
@@ -438,10 +529,10 @@ export default {
           icon: 'wifi',
           show: { isInvisible: () => !this.multiNetwork },
           prev: { step: 'location' },
-          next: { handler: () => this.setNetwork(), step: 'concepts-text' },
-          skip: { step: 'concepts-text' }
+          next: { handler: () => this.setNetwork(), step: 'concepts-intro' },
+          skip: { step: 'concepts-intro' }
         },
-        'concepts-text': {
+        'concepts-intro': {
           icon: 'lightbulb',
           show: { extended: true },
           prev: { step: 'network' },
@@ -452,24 +543,42 @@ export default {
           link: 'https://www.openhab.org/addons/#binding',
           show: { handler: () => this.initSelectedAddons() },
           prev: { step: 'network' },
-          next: { handler: () => this.installAddons(), step: 'automation' },
-          skip: { step: 'automation' }
+          next: { handler: () => this.installAddons(), step: 'rules-intro' },
+          skip: { step: 'rules-intro' }
+        },
+        'rules-intro': {
+          icon: 'automation',
+          show: { extended: true },
+          prev: { step: 'binding' },
+          next: { step: 'automation' }
         },
         'automation': {
           icon: 'wand_stars',
           link: 'https://www.openhab.org/addons/#automation',
           show: { handler: () => this.initSelectedAddons() },
           prev: { step: 'binding' },
-          next: { handler: () => this.selectAddons(), step: 'ui' },
-          skip: { step: 'ui' }
+          next: { handler: () => this.selectAddons(), step: 'ui-intro' },
+          skip: { step: 'ui-intro' }
+        },
+        'ui-intro': {
+          icon: 'play_rectangle',
+          show: { extended: true },
+          prev: { step: 'automation' },
+          next: { step: 'ui' }
         },
         'ui': {
           icon: 'play_rectangle',
           link: 'https://www.openhab.org/addons/#ui',
           show: { handler: () => this.initSelectedAddons() },
           prev: { step: 'automation' },
-          next: { handler: () => this.selectAddons(), step: 'persistence' },
-          skip: { step: 'persistence' }
+          next: { handler: () => this.selectAddons(), step: 'persistence-intro' },
+          skip: { step: 'persistence-intro' }
+        },
+        'persistence-intro': {
+          icon: 'download_circle',
+          show: { extended: true },
+          prev: { step: 'ui' },
+          next: { step: 'persistence' }
         },
         'persistence': {
           icon: 'download_circle',
