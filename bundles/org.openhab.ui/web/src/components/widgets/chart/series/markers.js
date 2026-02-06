@@ -16,9 +16,7 @@ export default (series) => {
       }
     }
     if (series.markers.includes('avg')) {
-      series.markLine.data.push({
-        type: 'average'
-      })
+      series.markLine.data.push({ type: 'average', name: 'avg' })
     }
     if (series.markers.includes('time')) {
       series.markLine.data.push({
@@ -30,6 +28,7 @@ export default (series) => {
           type: 'solid',
           width: 1
         },
+        name: 'now',
         symbol: 'none',
         xAxis: dayjs().format()
       })
