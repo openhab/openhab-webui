@@ -175,7 +175,7 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
 
   function themeOptions() {
     return {
-      dark: darkMode,
+      dark: darkMode.value,
       autoDarkMode: isAutoDarkMode(),
       bars: bars.value,
       homeNavBar: homeNavBar.value,
