@@ -36,6 +36,7 @@
           :key="index"
           :title="t('setupwizard.' + step + '.title')"
           :selected="step === currentStep"
+          :style="!wizardStepKeysActive.includes(step) ? 'color: grey' : ''"
           :checked="setupWizardStepsDone?.[step]"
           checkbox
           readonly
@@ -87,7 +88,20 @@
         </f7-list>
         <f7-block class="display-flex flex-direction-column padding">
           <div>
-            <f7-button v-if="next" large fill color="blue" :text="t('setupwizard.beginSetup')" @click="handler(next)" />
+            <f7-button
+              v-if="next && firstStepNotDone && firstStepNotDone !== 'intro'"
+              large
+              fill
+              color="blue"
+              :text="t('setupwizard.skipToNext')"
+              @click="toStep(firstStepNotDone)" />
+            <f7-button
+              v-if="next"
+              large
+              :fill="!firstStepNotDone || firstStepNotDone === 'intro'"
+              color="blue"
+              :text="t('setupwizard.beginSetup')"
+              @click="handler(next)" />
             <f7-button large color="blue" :text="t('setupwizard.skipSetup')" @click="skipSetup" />
           </div>
         </f7-block>
@@ -421,14 +435,14 @@ export default {
         },
         'network': {
           icon: 'wifi',
-          show: { handler: () => { if (!this.multiNetwork) this.skipStep() } },
+          show: { isInvisible: () => !this.multiNetwork },
           prev: { step: 'location' },
           next: { handler: () => this.setNetwork(), step: 'concepts-text' },
           skip: { step: 'concepts-text' }
         },
         'concepts-text': {
           icon: 'lightbulb',
-          skipShort: true,
+          show: { extended: true },
           prev: { step: 'network' },
           next: { step: 'binding' }
         },
@@ -466,10 +480,7 @@ export default {
         },
         'persistence-config': {
           icon: 'download_circle',
-          show: { handler: () => {
-            this.persistenceConfigConfirm = false
-            if (!this.persistenceInstalled) this.skipStep()
-          }},
+          show: { isInvisible: () => !this.persistenceInstalled, handler: () => this.persistenceConfigConfirm = false },
           prev: { step: 'persistence' },
           next: { handler: () => this.persistenceConfigConfirm = true, step: 'welcome' },
           skip: { step: 'welcome' }
@@ -589,8 +600,11 @@ export default {
     },
     wizardStepKeysFiltered () {
       let steps = this.wizardStepKeys
-      if (this.setupWizardShort) steps = steps.filter((step) => !this.wizardSteps[step].skipShort)
+      if (this.setupWizardShort) steps = steps.filter((step) => !this.wizardSteps[step].show?.extended)
       return steps
+    },
+    wizardStepKeysActive () {
+      return this.wizardStepKeysFiltered.filter((step) => !this.wizardSteps[step].show?.isInvisible?.())
     },
     wizardStepCount () {
       return this.wizardStepKeysFiltered.length
@@ -602,6 +616,9 @@ export default {
       const filled = '<span class="progress-circle filled"></span>'
       const empty = '<span class="progress-circle empty"></span>'
       return filled.repeat(this.wizardCurrentCount) + empty.repeat(this.wizardStepCount - this.wizardCurrentCount)
+    },
+    firstStepNotDone () {
+      return this.wizardStepKeysFiltered.find((step) => !this.setupWizardStepsDone?.[step])
     },
     ...mapWritableState(useUIOptionsStore, {
       setupWizardShort: 'setupWizardShort',
@@ -646,17 +663,16 @@ export default {
     },
     async handler (direction) {
       if (!direction) return
-      this.skipDirection = direction.action === 'next' ? 'skip' : direction.action
       if  (!await this.execHandler(direction?.handler)) {
         // an error occurred or operation was cancelled, don't move tabs
         return
       }
-      let nextStep = direction?.step
-      // skip setup tabs marked as skipShort when short wizard is selected
-      if (this.setupWizardShort) {
-        while (nextStep && this.wizardSteps[nextStep].skipShort) {
-          nextStep = this.wizardSteps[nextStep].next?.step
-        }
+      let nextStep = direction.step
+      const action = direction.action === 'next' ? 'skip' : direction.action
+      // skip setup tabs that are marked invisble because step is not required with current configuration
+      // and steps marked as extended when using the short wizard
+      while (nextStep && this.isInvisible(nextStep)) {
+        nextStep = this.wizardSteps[nextStep][action].step
       }
       if (direction?.action === 'next') {
         // we completed this step, store it
@@ -668,15 +684,17 @@ export default {
         f7.tab.show('#' + nextStep)
       }
     },
-    skipStep () {
-      this.handler(this.wizardSteps[this.currentStep][this.skipStepDirection])
-    },
     async toStep (step) {
+      if (step === this.currentStep) return
+      if (this.isInvisible(step)) return
       if (!await this.execHandler(this.wizardSteps[this.currentStep].skip?.handler)) {
         // an error occurred or operation was cancelled, don't move tabs
         return
       }
       f7.tab.show('#' + step)
+    },
+    isInvisible (step) {
+      return (this.wizardSteps[step].show?.isInvisible?.() || (this.setupWizardShort && this.wizardSteps[step].show?.extended))
     },
     beginSetup () {
       this.$oh.api.put('/rest/services/org.openhab.i18n/config', {
