@@ -57,6 +57,7 @@ updates:
     cooldown: # Delay Dependabot updates
       default-days: 14
       semver-major-days: 28
+    versioning-strategy: increase # Always update the version in package.json
     groups: # Groups Dependabot updates
       # Core Vue & State Management
       vue-ecosystem:
