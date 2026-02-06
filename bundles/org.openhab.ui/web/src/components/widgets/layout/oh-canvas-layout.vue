@@ -182,16 +182,23 @@
 import { nextTick } from 'vue'
 import { f7 } from 'framework7-vue'
 
-import mixin from '../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import embeddedSvgMixin from '@/components/widgets/layout/oh-canvas-embedded-svg-mixin'
 import OhCanvasLayer from './oh-canvas-layer.vue'
 import { OhCanvasLayoutDefinition } from '@/assets/definitions/widgets/layout'
 
 export default {
-  mixins: [mixin, embeddedSvgMixin],
+  mixins: [embeddedSvgMixin],
   widget: OhCanvasLayoutDefinition,
+  props: {
+    context: Object
+  },
   components: {
     OhCanvasLayer
+  },
+  setup (props) {
+    const { config, childContext } = useWidgetContext(props.context)
+    return { config, childContext }
   },
   data () {
     return {

@@ -2,10 +2,13 @@
   <div v-bind="config">{{ config.text }}</div>
 </template>
 
-<script>
-import mixin from './widget-mixin'
+<script setup lang="ts">
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
+import type { WidgetContext } from './types'
 
-export default {
-    mixins: [mixin]
-}
+const props = defineProps<{
+  context: WidgetContext
+}>()
+
+const { config } = useWidgetContext(props.context)
 </script>

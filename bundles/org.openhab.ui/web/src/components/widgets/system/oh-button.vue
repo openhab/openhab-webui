@@ -10,14 +10,22 @@
 </template>
 
 <script>
-import mixin from '../widget-mixin'
 import { getVariableScope, setVariableKeyValues } from '@/components/widgets/variable'
 import { OhButtonDefinition } from '@/assets/definitions/widgets/system'
 import { actionsMixin } from '../widget-actions'
 
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
+
 export default {
-  mixins: [mixin, actionsMixin],
+  mixins: [actionsMixin],
+  props: {
+    context: Object
+  },
   widget: OhButtonDefinition,
+  setup (props) {
+    const { config, childContext, hasAction } = useWidgetContext(props.context)
+    return { config, childContext, hasAction }
+  },
   methods: {
     clicked () {
       if (this.hasAction) {

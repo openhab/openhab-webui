@@ -19,17 +19,23 @@
 </style>
 
 <script>
-import mixin from '../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhCard from '@/components/widgets/standard/oh-card.vue'
 import OhVideo from '../system/oh-video.vue'
 import { OhVideoCardDefinition } from '@/assets/definitions/widgets/standard/cards'
 
 export default {
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
   components: {
     OhCard,
     OhVideo
   },
-  widget: OhVideoCardDefinition
+  widget: OhVideoCardDefinition,
+  setup (props) {
+    const { cardChildContext } = useWidgetContext(props.context)
+    return { cardChildContext }
+  }
 }
 </script>

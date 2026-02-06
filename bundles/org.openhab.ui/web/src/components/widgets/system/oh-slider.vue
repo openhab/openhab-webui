@@ -18,13 +18,20 @@
 </style>
 
 <script>
-import mixin from '../widget-mixin'
 import slideMixin from './slide-mixin'
 import { OhSliderDefinition } from '@/assets/definitions/widgets/system'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 
 export default {
-  mixins: [mixin, slideMixin],
+  mixins: [slideMixin],
   widget: OhSliderDefinition,
+  props: {
+    context: Object
+  },
+  setup (props) {
+    const { config } = useWidgetContext(props.context)
+    return { config }
+  },
   data () {
     return {
       sliderValue: null

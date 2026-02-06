@@ -71,14 +71,20 @@ app.use(VueClipboard, {
   appendToBody: true // add this line to append the popup to body
 })
 
-// Register global components
-app.component('OhNavContent', OhNavContent)
-app.component('OhIcon', OHIconComponent)
-app.component('GenericWidgetComponent', GenericWidgetComponent)
+// Register key components prior to mounting the app to ensure they are available to eliminate warnings
 app.component('DeveloperDockIcon', DeveloperDockIcon)
 
-app.mount('#app')
+// statically import all widget components to ensure they are registered globally
+// Note: This is necessary because widget components are used in dynamic contexts with reference by name
+const widgetFiles: Record<string, any> = import.meta.glob('./components/widgets/**/*.vue', { eager: true })
+Object.entries(widgetFiles).forEach(([path, module]) => {
+  const componentName = path.split('/').pop()?.replace('.vue', '')
+  if (module.default && componentName) {
+    app.component(componentName, module.default)
+  }
+})
 
+app.mount('#app')
 performance.mark('app-mounted')
 
 const measure = performance.measure('main', 'main-start', 'app-mounted')

@@ -13,10 +13,16 @@
 </template>
 
 <script>
-import Mixin from '@/components/widgets/widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 
 export default {
-  mixins: [Mixin],
+  props: {
+    context: Object
+  },
+  setup (props) {
+    const { config, evaluateExpression } = useWidgetContext(props.context)
+    return { config, evaluateExpression }
+  },
   data () {
     return {
       testExpression: ''

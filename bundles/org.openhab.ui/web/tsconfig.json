@@ -6,6 +6,7 @@
     "target": "esnext",
     "module": "esnext",
     "moduleResolution": "bundler",
+    "noUnusedLocals": false,    // must set to false to allow unused variables in .vue files, which is common when using the composition API
     "strict": true,
     "importHelpers": true,
     "esModuleInterop": true,
@@ -16,7 +17,7 @@
     "paths": {
       "@/*": ["src/*"]
     },
-    "types": ["audioworklet"]
+    "types": ["audioworklet", "vite/client"]
   },
   "include": [
     "env.d.ts",

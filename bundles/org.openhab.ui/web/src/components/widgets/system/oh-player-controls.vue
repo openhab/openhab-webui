@@ -34,14 +34,20 @@
 </style>
 
 <script>
-import mixin from '../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhPlayerDefinition } from '@/assets/definitions/widgets/system'
 
 import { useStatesStore } from '@/js/stores/useStatesStore'
 
 export default {
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
   widget: OhPlayerDefinition,
+  setup (props) {
+    const { config } = useWidgetContext(props.context)
+    return { config }
+  },
   mounted () {
     delete this.config.value
   },

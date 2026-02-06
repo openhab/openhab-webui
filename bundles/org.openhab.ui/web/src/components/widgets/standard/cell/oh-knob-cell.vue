@@ -25,18 +25,24 @@
 </template>
 
 <script>
-import mixin from '../../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhKnobCellDefinition } from '@/assets/definitions/widgets/standard/cells'
 import OhCell from './oh-cell.vue'
 import OhKnob from '../../system/oh-knob.vue'
 
 export default {
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
   components: {
     OhCell,
     OhKnob
   },
   widget: OhKnobCellDefinition,
+  setup (props) {
+    const { childContext } = useWidgetContext(props.context)
+    return { childContext }
+  },
   computed: {
     knobContext () {
       return Object.assign({}, this.context, {
