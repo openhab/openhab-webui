@@ -52,7 +52,7 @@
     </f7-popover>
 
     <f7-tabs animated>
-      <!-- Intro Tab -->
+      <!-- Intro step -->
       <f7-tab id="intro" tab-active @tab:show="handleTabShow">
         <tab-header :image="introLogo" :step="currentStep" :link="wizardSteps[currentStep].link" :t="t" />
         <f7-list form style="margin-top: 4rem" v-if="i18nReady">
@@ -118,6 +118,7 @@
         </f7-list>
       </f7-tab>
 
+      <!-- Location setup -->
       <f7-tab id="location" @tab:show="handleTabShow">
         <tab-header
           :icon="wizardSteps[currentStep].icon"
@@ -164,6 +165,7 @@
         </f7-block>
       </f7-tab>
 
+      <!-- Primary network selection -->
       <f7-tab id="network" @tab:show="handleTabShow">
         <tab-header
           :icon="wizardSteps[currentStep].icon"
@@ -195,113 +197,14 @@
         </f7-block>
       </f7-tab>
 
-      <!-- Tabs explaining concepts -->
-      <f7-tab id="concepts-intro" @tab:show="handleTabShow">
-        <tab-header
-          :icon="wizardSteps[currentStep].icon"
-          :title="t('setupwizard.' + currentStep + '.title')"
+      <!-- Intro steps explaining concepts -->
+      <f7-tab v-for="introStep in wizardIntroStepKeys" :key="introStep" :id="introStep" @tab:show="handleTabShow">
+        <info 
           :step="currentStep"
+          :icon="wizardSteps[currentStep].icon"
+          :image="wizardSteps[currentStep].image"
           :link="wizardSteps[currentStep].link"
           :t="t" />
-        <f7-login-screen-title>
-          <div class="padding">
-            <img style="width: 85%" :src="conceptsImage" />
-          </div>
-        </f7-login-screen-title>
-        <f7-block>
-          {{ t('setupwizard.' + currentStep + '.body1') }}
-          {{ t('setupwizard.' + currentStep + '.body2') }}
-          <br /><br />
-          <a class="text-color-blue external" target="_blank" href="https://www.openhab.org/docs/concepts/">
-            {{ t('setupwizard.documentationLink') }}</a
-          >
-          <br /><br />
-          {{ t('setupwizard.' + currentStep + '.nextDescription') }}
-        </f7-block>
-        <f7-block class="display-flex flex-direction-column padding">
-          <div>
-            <f7-button v-if="next" large fill color="blue" :text="t('setupwizard.next')" @click="handler(next)" />
-          </div>
-        </f7-block>
-      </f7-tab>
-      <f7-tab id="concepts-rules" @tab:show="handleTabShow">
-        <tab-header
-          :icon="wizardSteps[currentStep].icon"
-          :title="t('setupwizard.' + currentStep + '.title')"
-          :step="currentStep"
-          :link="wizardSteps[currentStep].link"
-          :t="t" />
-        <f7-login-screen-title>
-          <div class="padding">
-            <img style="width: 85%" :src="conceptsImage" />
-          </div>
-        </f7-login-screen-title>
-        <f7-block>
-          {{ t('setupwizard.' + currentStep + '.body1') }}
-          {{ t('setupwizard.' + currentStep + '.body2') }}
-          <br /><br />
-          <a class="text-color-blue external" target="_blank" href="https://www.openhab.org/docs/concepts/">
-            {{ t('setupwizard.documentationLink') }}</a
-          >
-          <br /><br />
-          {{ t('setupwizard.' + currentStep + '.nextDescription') }}
-        </f7-block>
-        <f7-block class="display-flex flex-direction-column padding">
-          <div>
-            <f7-button v-if="next" large fill color="blue" :text="t('setupwizard.next')" @click="handler(next)" />
-          </div>
-        </f7-block>
-      </f7-tab>
-      <f7-tab id="concepts-ui" @tab:show="handleTabShow">
-        <tab-header
-          :icon="wizardSteps[currentStep].icon"
-          :title="t('setupwizard.' + currentStep + '.title')"
-          :step="currentStep"
-          :link="wizardSteps[currentStep].link"
-          :t="t" />
-        <f7-login-screen-title>
-          <div class="padding">
-            <img style="width: 85%" :src="conceptsImage" />
-          </div>
-        </f7-login-screen-title>
-        <f7-block>
-          {{ t('setupwizard.' + currentStep + '.body1') }}
-          {{ t('setupwizard.' + currentStep + '.body2') }}
-          <br /><br />
-          <a class="text-color-blue external" target="_blank" href="https://www.openhab.org/docs/concepts/">
-            {{ t('setupwizard.documentationLink') }}</a
-          >
-          <br /><br />
-          {{ t('setupwizard.' + currentStep + '.nextDescription') }}
-        </f7-block>
-        <f7-block class="display-flex flex-direction-column padding">
-          <div>
-            <f7-button v-if="next" large fill color="blue" :text="t('setupwizard.next')" @click="handler(next)" />
-          </div>
-        </f7-block>
-      </f7-tab>
-      <f7-tab id="concepts-persistence" @tab:show="handleTabShow">
-        <tab-header
-          :icon="wizardSteps[currentStep].icon"
-          :title="t('setupwizard.' + currentStep + '.title')"
-          :step="currentStep"
-          :link="wizardSteps[currentStep].link"
-          :t="t" />
-        <f7-login-screen-title>
-          <div class="padding">
-            <img style="width: 85%" :src="conceptsImage" />
-          </div>
-        </f7-login-screen-title>
-        <f7-block>
-          {{ t('setupwizard.' + currentStep + '.body1') }}
-          {{ t('setupwizard.' + currentStep + '.body2') }}
-          <br /><br />
-          <a class="text-color-blue external" target="_blank" href="https://www.openhab.org/docs/concepts/">
-            {{ t('setupwizard.documentationLink') }}</a
-          >
-          <br /><br />
-          {{ t('setupwizard.' + currentStep + '.nextDescription') }}
-        </f7-block>
         <f7-block class="display-flex flex-direction-column padding">
           <div>
             <f7-button v-if="next" large fill color="blue" :text="t('setupwizard.next')" @click="handler(next)" />
@@ -309,7 +212,7 @@
         </f7-block>
       </f7-tab>
 
-      <!-- Tabs for add-on selection and installation -->
+      <!-- Steps for add-on selection and installation -->
       <f7-tab v-for="addonType in preSelectingAddonTypes" :key="addonType" :id="addonType" @tab:show="handleTabShow">
         <tab-header
           :icon="wizardSteps[currentStep].icon"
@@ -377,6 +280,7 @@
         </f7-block>
       </f7-tab>
 
+      <!-- Configure persistence -->
       <f7-tab id="persistence-config" @tab:show="handleTabShow">
         <tab-header
           :icon="wizardSteps[currentStep].icon"
@@ -402,15 +306,23 @@
         </f7-block>
       </f7-tab>
 
-      <!-- Welcome tab -->
+      <!-- Welcome -->
       <f7-tab id="welcome" @tab:show="handleTabShow">
         <tab-header :title="t('setupwizard.welcome.title')" />
+        <f7-block>
+          {{ t('setupwizard.welcome.model') }}
+        </f7-block>
         <f7-block v-if="bindingsInstalled">
           {{ t('setupwizard.welcome.bindingsInstalled') }}
         </f7-block>
+        <f7-block-footer class="margin-bottom">
+          <small>{{ t('setupwizard.' + currentStep + '.footer') }}</small>
+        </f7-block-footer>
         <f7-block class="display-flex flex-direction-column padding" style="margin-top: 4rem">
           <div>
-            <f7-button v-if="next" large color="blue" :text="t('setupwizard.welcome.getStarted')" @click="handler(next)" />
+            <f7-button v-if="next" large fill color="blue" :text="t('setupwizard.welcome.modelLink')" @click="handler({ ...next, link: '/settings/model/' })" />
+            <f7-button v-if="next && bindingsInstalled" large color="blue" :text="t('setupwizard.welcome.inboxLink')" @click="handler({ ...next, link: '/settings/things/inbox' })" />
+          <f7-button v-if="next" large color="blue" :text="t('setupwizard.welcome.getStarted')" @click="handler({ ...next, link: '/' })" />
           </div>
         </f7-block>
       </f7-tab>
@@ -466,6 +378,13 @@
   overflow-y auto
   overscroll-behavior-y contain
 
+// Disable tab switching animation while keeping scrollable tabs,
+// this avoids animation flashing tabs that are not defined in the right order
+.tabs-animated-wrap .tabs
+  transition none
+.tab
+  transition none
+
 .view-master-detail
   .setup-wizard
     .intro-logo
@@ -484,7 +403,11 @@ import { useI18n } from 'vue-i18n'
 import { loadLocaleMessages } from '@/js/i18n'
 
 import introLogo from '@/images/openhab-logo.svg'
-import conceptsImage from '@/images/concepts.png'
+import conceptsImage from '@/images/wizard-concepts.png'
+import rulesImage from '@/images/wizard-rules.png'
+import uiImage from '@/images/wizard-ui.png'
+import persistenceImage from '@/images/wizard-persistence.png'
+import semanticsImage from '@/images/wizard-semantics.png'
 
 import AddonsSetupWizard from '@/components/addons/addons-setup-wizard.vue'
 import PersistenceConfigSetupWizard from '@/components/persistence/persistence-config-setup-wizard.vue'
@@ -500,13 +423,14 @@ export default {
     'parameter-location': defineAsyncComponent(() => import('@/components/config/controls/parameter-location.vue')),
     'parameter-options': defineAsyncComponent(() => import('@/components/config/controls/parameter-options.vue')),
     'tab-header': defineAsyncComponent(() => import('./setup-wizard-tab-header.vue')),
+    'info': defineAsyncComponent(() => import('./setup-wizard-info.vue')),
     AddonsSetupWizard,
     PersistenceConfigSetupWizard
   },
   setup () {
     const { t, mergeLocaleMessage } = useI18n({ useScope: 'local' })
     loadLocaleMessages('setup-wizard', mergeLocaleMessage)
-    return { t, theme, mergeLocaleMessage, introLogo, conceptsImage }
+    return { t, theme, mergeLocaleMessage, introLogo, conceptsImage, rulesImage, uiImage, persistenceImage, semanticsImage }
   },
   data () {
     return {
@@ -534,6 +458,8 @@ export default {
         },
         'concepts-intro': {
           icon: 'lightbulb',
+          image: conceptsImage,
+          link: 'https://www.openhab.org/docs/concepts/',
           show: { extended: true },
           prev: { step: 'network' },
           next: { step: 'binding' }
@@ -547,7 +473,9 @@ export default {
           skip: { step: 'rules-intro' }
         },
         'rules-intro': {
-          icon: 'automation',
+          icon: 'wand_stars',
+          image: rulesImage,
+          link: 'https://www.openhab.org/docs/tutorial/rules_introduction/',
           show: { extended: true },
           prev: { step: 'binding' },
           next: { step: 'automation' }
@@ -562,6 +490,8 @@ export default {
         },
         'ui-intro': {
           icon: 'play_rectangle',
+          image: uiImage,
+          link: 'https://www.openhab.org/docs/tutorial/pages_intro/',
           show: { extended: true },
           prev: { step: 'automation' },
           next: { step: 'ui' }
@@ -576,6 +506,8 @@ export default {
         },
         'persistence-intro': {
           icon: 'download_circle',
+          image: persistenceImage,
+          link: 'https://www.openhab.org/docs/tutorial/persistence/',
           show: { extended: true },
           prev: { step: 'ui' },
           next: { step: 'persistence' }
@@ -592,16 +524,23 @@ export default {
           icon: 'download_circle',
           show: { isInvisible: () => !this.persistenceInstalled, handler: () => this.persistenceConfigConfirm = false },
           prev: { step: 'persistence' },
-          next: { handler: () => this.persistenceConfigConfirm = true, step: 'welcome' },
-          skip: { step: 'welcome' }
+          next: { handler: () => this.persistenceConfigConfirm = true, step: 'semantics-intro' },
+          skip: { step: 'semantics-intro' }
+        },
+        'semantics-intro': {
+          icon: 'list_bullet_indent',
+          image: semanticsImage,
+          link: 'https://www.openhab.org/docs/tutorial/model/',
+          show: { extended: true },
+          prev: { step: 'persistence-config' },
+          next: { step: 'welcome' }
         },
         'welcome': {
           prev: { step: 'intro' },
-          next: { handler: () => this.finish() }
+          next: { handler: (link) => this.finish(link) }
         }
       },
       currentStep: 'intro',
-      skipStepDirection: 'skip',
 
       // progress bar state
       waitingProgress: 0,
@@ -708,6 +647,10 @@ export default {
       }
       return steps
     },
+    wizardIntroStepKeys () {
+      // Collect all steps the are used as concept intro
+      return this.wizardStepKeys.filter((step) => this.wizardSteps[step].show?.extended)
+    },
     wizardStepKeysFiltered () {
       let steps = this.wizardStepKeys
       if (this.setupWizardShort) steps = steps.filter((step) => !this.wizardSteps[step].show?.extended)
@@ -743,8 +686,8 @@ export default {
     }
   },
   methods: {
-    async execHandler (handler) {
-      const result = handler?.()
+    async execHandler (handler, ...args) {
+      const result = handler?.(...args)
       // Wait for handler if it returns a Promise
       if (result instanceof Promise) {
         try {
@@ -773,7 +716,9 @@ export default {
     },
     async handler (direction) {
       if (!direction) return
-      if  (!await this.execHandler(direction?.handler)) {
+      // Extract link if passed as parameter (e.g., when direction is a computed object with link property)
+      const link = direction?.link
+      if  (!await this.execHandler(direction?.handler, link)) {
         // an error occurred or operation was cancelled, don't move tabs
         return
       }
@@ -1031,7 +976,8 @@ export default {
       this.waitingProgress = 100
 
     },
-    finish () {
+    finish (link) {
+      const target = link || '/'
       // we completed this step, store it
       const stepsDone = { ...(this.setupWizardStepsDone) }
       stepsDone['welcome'] = true
@@ -1039,7 +985,7 @@ export default {
 
       f7.panel.get('left').enableVisibleBreakpoint()
       nextTick(() => {
-        f7.views.main.router.navigate('/', { transition: 'f7-circle', clearPreviousHistory: true })
+        f7.views.main.router.navigate(target, { transition: 'f7-circle', clearPreviousHistory: true })
         if (this.$f7dim.width >= 1280) {
           f7.emit('selectDeveloperDock', { dock: 'help', helpTab: 'quick' })
         }
@@ -1047,10 +993,11 @@ export default {
     },
     pageBeforeIn () {
       f7.panel.get('left').disableVisibleBreakpoint()
+      this.currentStep = 'intro'
     },
     pageBeforeOut () {
       f7.panel.get('left').enableVisibleBreakpoint()
-      // create the overview page to prevent this setup wizard from being launched again
+      // create the overview page to prevent this setup wizard from being launched again automatically
       this.$oh.api.post('/rest/ui/components/ui:page', {
         uid: 'overview',
         component: 'oh-layout-page',
