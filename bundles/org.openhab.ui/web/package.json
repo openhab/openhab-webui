@@ -105,7 +105,7 @@
     "fuse.js": "^7.0.0",
     "grid-layout-plus": "^1.1.0",
     "jse-eval": "^1.5.2",
-    "jssip": "^3.10.9",
+    "jssip": "^3.12.0",
     "leaflet": "^1.9.4",
     "leaflet-providers": "^2.0.0",
     "lodash": "^4.17.21",
