@@ -199,7 +199,7 @@
 
       <!-- Intro steps explaining concepts -->
       <f7-tab v-for="introStep in wizardIntroStepKeys" :key="introStep" :id="introStep" @tab:show="handleTabShow">
-        <info 
+        <info
           :step="currentStep"
           :icon="wizardSteps[currentStep].icon"
           :image="wizardSteps[currentStep].image"
@@ -320,9 +320,25 @@
         </f7-block-footer>
         <f7-block class="display-flex flex-direction-column padding" style="margin-top: 4rem">
           <div>
-            <f7-button v-if="next" large fill color="blue" :text="t('setupwizard.welcome.modelLink')" @click="handler({ ...next, link: '/settings/model/' })" />
-            <f7-button v-if="next && bindingsInstalled" large color="blue" :text="t('setupwizard.welcome.inboxLink')" @click="handler({ ...next, link: '/settings/things/inbox' })" />
-          <f7-button v-if="next" large color="blue" :text="t('setupwizard.welcome.getStarted')" @click="handler({ ...next, link: '/' })" />
+            <f7-button
+              v-if="next"
+              large
+              fill
+              color="blue"
+              :text="t('setupwizard.welcome.modelLink')"
+              @click="handler({ ...next, link: '/settings/model/' })" />
+            <f7-button
+              v-if="next && bindingsInstalled"
+              large
+              color="blue"
+              :text="t('setupwizard.welcome.inboxLink')"
+              @click="handler({ ...next, link: '/settings/things/inbox' })" />
+            <f7-button
+              v-if="next"
+              large
+              color="blue"
+              :text="t('setupwizard.welcome.getStarted')"
+              @click="handler({ ...next, link: '/' })" />
           </div>
         </f7-block>
       </f7-tab>

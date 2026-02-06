@@ -1,23 +1,17 @@
 <template>
-    <tab-header
-        :icon="icon"
-        :title="t('setupwizard.' + step + '.title')"
-        :step="step"
-        :t="t" />
-    <f7-login-screen-title>
-        <div class="padding">
-        <img style="width: 85%" :src="image" />
-        </div>
-    </f7-login-screen-title>
-    <f7-block>
-        {{ body }}
-        <br /><br />
-        <a class="text-color-blue external" target="_blank" :href="link">
-        {{ t('setupwizard.documentationLink') }}</a
-        >
-        <br /><br />
-        {{ t('setupwizard.' + step + '.nextDescription') }}
-    </f7-block>
+  <tab-header :icon="icon" :title="t('setupwizard.' + step + '.title')" :step="step" :t="t" />
+  <f7-login-screen-title>
+    <div class="padding">
+      <img style="width: 85%" :src="image" />
+    </div>
+  </f7-login-screen-title>
+  <f7-block>
+    {{ body }}
+    <br /><br />
+    <a class="text-color-blue external" target="_blank" :href="link"> {{ t('setupwizard.documentationLink') }}</a>
+    <br /><br />
+    {{ t('setupwizard.' + step + '.nextDescription') }}
+  </f7-block>
 </template>
 
 <script>
