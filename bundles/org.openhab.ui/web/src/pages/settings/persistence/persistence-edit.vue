@@ -368,6 +368,7 @@ export default {
       this.load()
     },
     onPageBeforeOut () {
+      this.ready = false
       if (window) {
         window.removeEventListener('keydown', this.keyDown)
       }
