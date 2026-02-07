@@ -1,7 +1,7 @@
 <!-- Adapted from https://github.com/1615450788/vue-cron - license: MIT -->
 
 <template>
-  <f7-popup class="cron-select" close-on-escape @popup:opened="open" @popup:closed="close">
+  <f7-popup class="cron-select" close-on-escape @popup:closed="close">
     <f7-page class="cron-select-content">
       <f7-navbar :title="'Cron: ' + cron" :subtitle="translation">
         <f7-nav-right>
