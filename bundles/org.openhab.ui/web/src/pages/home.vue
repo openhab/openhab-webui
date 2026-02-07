@@ -19,12 +19,13 @@
         {{ title }}
       </f7-nav-title>
       <f7-nav-right>
-        <f7-link v-if="runtimeStore.voiceIcon"
-                 :icon-aurora="runtimeStore.voiceIcon"
-                 :icon-ios="runtimeStore.voiceIcon"
-                 :icon-md="runtimeStore.voiceIcon"
-                 :tooltip="$t('home.triggerVoice')"
-                 @click="triggerDialog" />
+        <f7-link
+          v-if="runtimeStore.voiceIcon"
+          :icon-aurora="runtimeStore.voiceIcon"
+          :icon-ios="runtimeStore.voiceIcon"
+          :icon-md="runtimeStore.voiceIcon"
+          :tooltip="$t('home.triggerVoice')"
+          @click="triggerDialog" />
         <developer-dock-icon />
         <f7-link
           v-if="userStore.isAdmin"

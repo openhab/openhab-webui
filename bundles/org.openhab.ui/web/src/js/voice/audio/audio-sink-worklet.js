@@ -4,7 +4,7 @@
  *
  */
 class AudioSinkWorklet extends AudioWorkletProcessor {
-  constructor () {
+  constructor() {
     super()
     /**
      * Audio Cache
@@ -22,7 +22,7 @@ class AudioSinkWorklet extends AudioWorkletProcessor {
     this.port.onmessage = (ev) => this.handlePortMessage(ev.data)
   }
 
-  handlePortMessage (data) {
+  handlePortMessage(data) {
     if (data instanceof Float32Array) {
       this.audioCache.writeAudioData(data)
     } else if (Array.isArray(data)) {
@@ -32,7 +32,7 @@ class AudioSinkWorklet extends AudioWorkletProcessor {
     }
   }
 
-  process (_, outputs) {
+  process(_, outputs) {
     const frameLength = outputs[0][0].length
     const channels = outputs[0].length
     const bufferSize = frameLength * channels
@@ -44,10 +44,7 @@ class AudioSinkWorklet extends AudioWorkletProcessor {
         if (this.audioCache.size() !== 0) {
           // send remaining audio
           const audioData = new Float32Array(bufferSize)
-          audioData.set(
-            this.audioCache.readAudioData(this.audioCache.size()),
-            0
-          )
+          audioData.set(this.audioCache.readAudioData(this.audioCache.size()), 0)
           this.writeAudioSamples(audioData, outputs, channels)
           return true
         } else if (!this.done) {
@@ -64,7 +61,7 @@ class AudioSinkWorklet extends AudioWorkletProcessor {
     return true
   }
 
-  writeAudioSamples (audioData, outputs, channels) {
+  writeAudioSamples(audioData, outputs, channels) {
     if (channels === 1) {
       outputs[0][0].set(audioData, 0)
     } else {
@@ -72,9 +69,7 @@ class AudioSinkWorklet extends AudioWorkletProcessor {
       const channelsData = outputs[0]
       audioData.forEach((sample, sampleNumber) => {
         const channelIndex = sampleNumber % channels
-        channelsData[channelIndex][
-          (sampleNumber - channelIndex) / channels
-        ] = sample
+        channelsData[channelIndex][(sampleNumber - channelIndex) / channels] = sample
       })
     }
   }
@@ -84,13 +79,13 @@ class AudioSinkWorklet extends AudioWorkletProcessor {
  * The {@link AudioCache} class is an util to store the audio data received through the {@link MessagePort} so it can be consumed progressively.
  */
 class AudioCache {
-  constructor () {
+  constructor() {
     this.buffers = []
     this.offset = 0
     this.length = 0
   }
 
-  readAudioData (n) {
+  readAudioData(n) {
     this.length -= n
     let currentBuffer = this.buffers[0]
     const nextOffset = n + this.offset
@@ -132,20 +127,20 @@ class AudioCache {
     }
   }
 
-  writeAudioData (buffer) {
+  writeAudioData(buffer) {
     this.length += buffer.length
     this.buffers.push(buffer)
   }
 
-  available (size) {
+  available(size) {
     return this.length >= size
   }
 
-  size () {
+  size() {
     return this.length
   }
 
-  clean () {
+  clean() {
     this.buffers = []
     this.offset = 0
     this.length = 0

@@ -7,17 +7,17 @@ import sourceWorkletURL from './audio-source-worklet?worker&url'
  * We keep the gain node connected to the media source stream to avoid it gets paused.
  */
 export class AudioSource {
-  constructor (volume) {
+  constructor(volume) {
     this.gainNode = this.getAudioContext().createGain()
     this.setVolume(volume)
   }
 
-  static async configure (audioContext) {
+  static async configure(audioContext) {
     AudioSource.audioContext = audioContext
     await audioContext.audioWorklet.addModule(sourceWorkletURL, { name: 'audio-source-worklet' })
   }
 
-  async init () {
+  async init() {
     if (!this.stream) {
       this.stream = await navigator.mediaDevices.getUserMedia({
         audio: {
@@ -29,31 +29,25 @@ export class AudioSource {
       })
     }
     if (!this.sourceNode) {
-      this.sourceNode = this.getAudioContext().createMediaStreamSource(
-        this.stream
-      )
+      this.sourceNode = this.getAudioContext().createMediaStreamSource(this.stream)
       // connect processor to source
       this.sourceNode.connect(this.gainNode)
     }
   }
 
-  createWorkletNode () {
-    return new AudioWorkletNode(
-      AudioSource.audioContext,
-      'audio-source-worklet',
-      {
-        numberOfInputs: 1,
-        numberOfOutputs: 0,
-        channelCount: 1,
-        channelCountMode: 'explicit'
-      }
-    )
+  createWorkletNode() {
+    return new AudioWorkletNode(AudioSource.audioContext, 'audio-source-worklet', {
+      numberOfInputs: 1,
+      numberOfOutputs: 0,
+      channelCount: 1,
+      channelCountMode: 'explicit'
+    })
   }
-  isSuspended () {
+  isSuspended() {
     return this.getAudioContext().state !== 'running'
   }
 
-  async resume () {
+  async resume() {
     if (this.getAudioContext().state !== 'running') {
       console.debug('Voice: Resuming voice audio context')
       await this.getAudioContext().resume()
@@ -67,26 +61,19 @@ export class AudioSource {
     }
   }
 
-  async start (...audioProcessors) {
+  async start(...audioProcessors) {
     await this.resume()
     const currentProcessors = this.nodeProcessors ?? []
-    audioProcessors
-      .filter((p) => !currentProcessors.includes(p))
-      .forEach((audioNode) => this.connectNode(audioNode))
-    currentProcessors
-      .filter((p) => !audioProcessors.includes(p))
-      .forEach((audioNode) => this.disconnectNode(audioNode))
+    audioProcessors.filter((p) => !currentProcessors.includes(p)).forEach((audioNode) => this.connectNode(audioNode))
+    currentProcessors.filter((p) => !audioProcessors.includes(p)).forEach((audioNode) => this.disconnectNode(audioNode))
     this.nodeProcessors = audioProcessors
   }
 
-  setVolume (value) {
-    this.gainNode.gain.setValueAtTime(
-      value / 100,
-      this.getAudioContext().currentTime
-    )
+  setVolume(value) {
+    this.gainNode.gain.setValueAtTime(value / 100, this.getAudioContext().currentTime)
   }
 
-  stop () {
+  stop() {
     if (this.nodeProcessors) {
       for (const audioNode of this.nodeProcessors) {
         this.disconnectNode(audioNode)
@@ -95,21 +82,21 @@ export class AudioSource {
     }
   }
 
-  connectNode (audioNode) {
+  connectNode(audioNode) {
     this.gainNode.connect(audioNode)
     if (audioNode.numberOfOutputs > 0) {
       audioNode.connect(this.getAudioContext().destination)
     }
   }
 
-  disconnectNode (audioNode) {
+  disconnectNode(audioNode) {
     this.gainNode.disconnect(audioNode)
     if (audioNode.numberOfOutputs > 0) {
       audioNode.disconnect(this.getAudioContext().destination)
     }
   }
 
-  getAudioContext () {
+  getAudioContext() {
     if (!AudioSource.audioContext) {
       throw new Error('Source class must be configured')
     }

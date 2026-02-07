@@ -3,7 +3,7 @@ import { AudioSink } from './audio/audio-sink'
 import { AudioSource } from './audio/audio-source'
 import { WorkerInCmd, WorkerOutCmd } from './audio-types'
 export class AudioMain {
-  constructor (ohUrl, accessTokenGetter = null, events = {}) {
+  constructor(ohUrl, accessTokenGetter = null, events = {}) {
     this.initialized = false
     this.ohUrl = ohUrl
     this.events = events
@@ -42,26 +42,26 @@ export class AudioMain {
     })
   }
 
-  isInitialized () {
+  isInitialized() {
     return this.initialized
   }
 
-  isRunning () {
+  isRunning() {
     return this.online && this.audioContext?.state === 'running'
   }
 
-  isListening () {
+  isListening() {
     return this.listening
   }
 
-  isSpeaking () {
+  isSpeaking() {
     return this.activeSinks.size > 0
   }
 
   /**
    * Initializes the audio context used for the sink and source.
    */
-  startVoiceAudioContext () {
+  startVoiceAudioContext() {
     if (!this.audioContext) {
       const options = {}
       // setting a custom sample rate only seems to work correctly in Chrome
@@ -70,10 +70,7 @@ export class AudioMain {
       // }
       this.audioContext = new AudioContext(options)
 
-      this.events.onMessage?.(
-        `Created audio context with sample rate ${this.audioContext.sampleRate}`,
-        'error'
-      )
+      this.events.onMessage?.(`Created audio context with sample rate ${this.audioContext.sampleRate}`, 'error')
     }
   }
 
@@ -82,7 +79,7 @@ export class AudioMain {
    *
    * @returns the shared audio context.
    */
-  getVoiceAudioContext () {
+  getVoiceAudioContext() {
     if (!this.audioContext) {
       throw new Error('AudioContext not initialized')
     }
@@ -94,7 +91,7 @@ export class AudioMain {
    *
    * @returns the audio source implementation.
    */
-  getAudioSource () {
+  getAudioSource() {
     if (!this.audioSource) {
       throw new Error('AudioSource not initialized')
     }
@@ -104,11 +101,9 @@ export class AudioMain {
   /**
    * Returns an audio processor node connected to the audio worker, so the audio gets converted and streamed to the server.
    */
-  async getWorkerAudioProcessor () {
+  async getWorkerAudioProcessor() {
     const _webSocketWorkletNode = this.getAudioSource().createWorkletNode()
-    const portPromise = new Promise(
-      (resolve) => (this.resolveSourcePort = resolve)
-    )
+    const portPromise = new Promise((resolve) => (this.resolveSourcePort = resolve))
     const command = {
       cmd: WorkerInCmd.SOURCE_PORT,
       port: _webSocketWorkletNode.port
@@ -118,35 +113,29 @@ export class AudioMain {
     return _webSocketWorkletNode
   }
 
-  postToWorker (cmd, args = {}) {
+  postToWorker(cmd, args = {}) {
     try {
       if (this.worker) {
         this.worker.postMessage({ cmd, ...args })
       } else {
-        this.events.onMessage?.(
-          'Worker not running',
-          'error'
-        )
+        this.events.onMessage?.('Worker not running', 'error')
       }
     } catch (error) {
-      this.events.onMessage?.(
-        'Unable to post to worker',
-        'error'
-      )
+      this.events.onMessage?.('Unable to post to worker', 'error')
     }
   }
 
-  sendSpot () {
+  sendSpot() {
     if (this.online && this.audioSource && !this.audioSource.isSuspended()) {
       this.postToWorker(WorkerInCmd.ON_SPOT)
     }
   }
 
-  resetConnection (id) {
+  resetConnection(id) {
     this.postToWorker(WorkerInCmd.RESET_CONNECTION, { id })
   }
 
-  setAuthToken (token) {
+  setAuthToken(token) {
     if (token && this.worker) {
       this.postToWorker(WorkerInCmd.TOKEN_RENEW, { token })
     }
@@ -156,28 +145,20 @@ export class AudioMain {
    * Connect the worker input audio node to the audio context media stream output,
    * it keeps the keyword spotter input audio node connected if exists.
    */
-  async startMicStreaming () {
+  async startMicStreaming() {
     if (!this.micStreaming) {
       this.micStreaming = true
-      this.events.onMessage?.(
-        'Starting microphone audio streaming'
-      )
+      this.events.onMessage?.('Starting microphone audio streaming')
       const processors = [await this.getWorkerAudioProcessor()]
       if (!this.micStreaming) {
-        this.events.onMessage?.(
-          'Start microphone audio aborted',
-          'error'
-        )
+        this.events.onMessage?.('Start microphone audio aborted', 'error')
         return
       }
       this.getAudioSource()
         .start(...processors)
         .catch((err) => this.events.onMessage?.(err))
     } else {
-      this.events.onMessage?.(
-        'trying to start microphone streaming but it\'s already started!',
-        'error'
-      )
+      this.events.onMessage?.("trying to start microphone streaming but it's already started!", 'error')
     }
   }
 
@@ -185,23 +166,20 @@ export class AudioMain {
    * Disconnect the worker input audio node from the audio context media stream output,
    * it keeps the keyword spotter input audio node connected if exists.
    */
-  stopMicStreaming () {
+  stopMicStreaming() {
     if (this.micStreaming) {
       this.micStreaming = false
       // stop audio node
       this.audioSource?.stop()
     } else {
-      this.events.onMessage?.(
-        'trying to stop microphone streaming but it\'s already stopped!',
-        'error'
-      )
+      this.events.onMessage?.("trying to stop microphone streaming but it's already stopped!", 'error')
     }
   }
 
   /**
    * Clean up function, tries to dispose worker and keyword spotter input audio nodes.
    */
-  async killMicProcessors () {
+  async killMicProcessors() {
     this.audioSource?.stop()
   }
 
@@ -211,7 +189,7 @@ export class AudioMain {
    * @param command the command name.
    * @param data the command data.
    */
-  handleWorkerMessage (command, data) {
+  handleWorkerMessage(command, data) {
     switch (command) {
       case WorkerOutCmd.SOURCE_READY:
         this.resolveSourcePort?.()
@@ -227,11 +205,7 @@ export class AudioMain {
         if (accessToken) {
           this.setAuthToken(accessToken)
         }
-        this.events.onMessage?.(
-          'Disconnected, trying to reconnect',
-          'error',
-          2000
-        )
+        this.events.onMessage?.('Disconnected, trying to reconnect', 'error', 2000)
         this.resolveSourcePort?.()
         this.resolveSourcePort = undefined
         this.audioSource?.stop()
@@ -246,11 +220,7 @@ export class AudioMain {
         break
       case WorkerOutCmd.START_SINK: {
         const startSinkCmd = data
-        const sink = new AudioSink(
-          startSinkCmd.id,
-          startSinkCmd.channels,
-          this.sinkVolume
-        )
+        const sink = new AudioSink(startSinkCmd.id, startSinkCmd.channels, this.sinkVolume)
         const sinkPortCmd = {
           cmd: WorkerInCmd.SINK_PORT,
           id: sink.getId(),
@@ -259,9 +229,7 @@ export class AudioMain {
         this.worker.postMessage(sinkPortCmd, [sinkPortCmd.port])
         this.activeSinks.set(sink.getId(), sink)
         const startSpeaking = this.activeSinks.size === 1
-        this.events.onMessage?.(
-          `Starting sink stream ${sink.getId()}`
-        )
+        this.events.onMessage?.(`Starting sink stream ${sink.getId()}`)
         sink
           .start()
           .then(() => {
@@ -331,13 +299,10 @@ export class AudioMain {
    *
    * @param speakerConfig The speaker configuration instructed by the server.
    */
-  async updateConfiguration (speakerConfig) {
+  async updateConfiguration(speakerConfig) {
     const audioContext = this.getVoiceAudioContext()
     const resumeAudioContext = () => audioContext.resume()
-    const closeMsg = this.events.onMessage?.(
-      'Resuming audio context, click to continue',
-      'info'
-    )
+    const closeMsg = this.events.onMessage?.('Resuming audio context, click to continue', 'info')
     document.addEventListener('click', resumeAudioContext)
     await this.getAudioSource().resume()
     document.removeEventListener('click', resumeAudioContext)
@@ -348,18 +313,13 @@ export class AudioMain {
     }
     await AudioSink.configure(audioContext, speakerConfig.useAudioElement)
     this.sinkVolume = speakerConfig.sinkVolume ?? this.sinkVolume
-    this.events.onMessage?.(
-      'No keyword spotter, click the widget to trigger the dialog',
-      'info',
-      5000
-    )
+    this.events.onMessage?.('No keyword spotter, click the widget to trigger the dialog', 'info', 5000)
   }
 
-  startSourceCheckInterval () {
+  startSourceCheckInterval() {
     this.stopSourceCheckInterval()
     this.sourceCheckIntervalRef = setInterval(
       () =>
-
         this.getAudioSource()
           .resume()
           .catch((err) => this.events.onMessage?.('Unable to resume audio source', err)),
@@ -367,7 +327,7 @@ export class AudioMain {
     )
   }
 
-  stopSourceCheckInterval () {
+  stopSourceCheckInterval() {
     if (this.sourceCheckIntervalRef) {
       clearInterval(this.sourceCheckIntervalRef)
       this.sourceCheckIntervalRef = undefined
@@ -380,7 +340,7 @@ export class AudioMain {
    * @param speakerId the speaker identifier used by the server.
    * @param customSampleRate Custom sample rate for the audio context, non functional in some browsers.
    */
-  async initialize (speakerId, listeningItem, locationItem) {
+  async initialize(speakerId, listeningItem, locationItem) {
     this.initialized = true
     this.events.onMessage?.('Starting ws connection...', 'info', 500)
     this.startVoiceAudioContext()
@@ -418,16 +378,12 @@ export class AudioMain {
         ohUrl: this.ohUrl
       })
     } catch (error) {
-      this.events.onMessage?.(
-        'Unable to start WebWorker, try reloading the page',
-        'error',
-        2000
-      )
+      this.events.onMessage?.('Unable to start WebWorker, try reloading the page', 'error', 2000)
       throw error
     }
   }
 
-  close () {
+  close() {
     this.worker.terminate()
     this.worker = null
   }

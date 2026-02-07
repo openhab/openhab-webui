@@ -3,17 +3,24 @@ import { useRuntimeStore } from '@/js/stores/useRuntimeStore.js'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore.js'
 
 export default {
-  data () {
+  data() {
     return {
       audioMain: null
     }
   },
   methods: {
-    startAudioWebSocket () {
+    startAudioWebSocket() {
       if (this.audioMain) {
         return
       }
-      const { dialogEnabled, dialogIdentifier, dialogLocationItem, dialogListeningItem, dialogConnectOnWindowEvent, dialogTriggerOnConnect } = useUIOptionsStore()
+      const {
+        dialogEnabled,
+        dialogIdentifier,
+        dialogLocationItem,
+        dialogListeningItem,
+        dialogConnectOnWindowEvent,
+        dialogTriggerOnConnect
+      } = useUIOptionsStore()
       if (!dialogEnabled) {
         return
       }
@@ -41,24 +48,24 @@ export default {
         }
         updatePageIcon(false)
         let forceTrigger = dialogTriggerOnConnect
-        const audioMain = this.audioMain = new AudioMain(ohURL, getAccessToken, {
+        const audioMain = (this.audioMain = new AudioMain(ohURL, getAccessToken, {
           onMessage: (...args) => {
             console.debug('Voice: ' + args[0])
           },
-          onRunningChange (io) {
+          onRunningChange(io) {
             updatePageIcon(io.isRunning(), io.isListening(), io.isSpeaking())
             if (forceTrigger && io.isRunning()) {
               forceTrigger = false
               io.sendSpot()
             }
           },
-          onListeningChange (io) {
+          onListeningChange(io) {
             updatePageIcon(io.isRunning(), io.isListening(), io.isSpeaking())
           },
-          onSpeakingChange (io) {
+          onSpeakingChange(io) {
             updatePageIcon(io.isRunning(), io.isListening(), io.isSpeaking())
           }
-        })
+        }))
         if (dialogConnectOnWindowEvent) {
           const events = ['touchend', 'mousedown', 'keydown']
           const startAudio = () => {
@@ -72,7 +79,7 @@ export default {
         }
       })
     },
-    triggerDialog () {
+    triggerDialog() {
       if (this.audioMain != null) {
         if (this.audioMain.isInitialized()) {
           this.audioMain.sendSpot()

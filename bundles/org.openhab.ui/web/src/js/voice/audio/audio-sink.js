@@ -3,24 +3,20 @@ import sinkWorkletURL from './audio-sink-worklet?worker&url'
  * The {@link AudioSink} class plays the audio transmitted by an AudioNode using the audioContext destination or a MediaStreamDestination + a web AudioElement.
  */
 export class AudioSink {
-  constructor (id, channels, volume) {
+  constructor(id, channels, volume) {
     this.id = id
     this.channels = channels
-    this.processorNode = new AudioWorkletNode(
-      this.getAudioContext(),
-      'audio-sink-worklet',
-      {
-        numberOfInputs: 0,
-        numberOfOutputs: 1,
-        outputChannelCount: [channels],
-        channelCountMode: 'explicit'
-      }
-    )
+    this.processorNode = new AudioWorkletNode(this.getAudioContext(), 'audio-sink-worklet', {
+      numberOfInputs: 0,
+      numberOfOutputs: 1,
+      outputChannelCount: [channels],
+      channelCountMode: 'explicit'
+    })
     this.gainNode = this.getAudioContext().createGain()
     this.gainNode.gain.value = volume / 100
   }
 
-  static async configure (audioContext, useAudioElement) {
+  static async configure(audioContext, useAudioElement) {
     await audioContext.audioWorklet.addModule(sinkWorkletURL, { name: 'audio-sink-worklet' })
     AudioSink.audioContext = audioContext
     if (useAudioElement) {
@@ -33,9 +29,7 @@ export class AudioSink {
         AudioSink.audioElement.srcObject = AudioSink.destination.stream
       }
     } else {
-      console.debug(
-        'Voice: Using audio context destination to render sound'
-      )
+      console.debug('Voice: Using audio context destination to render sound')
       AudioSink.destination?.stream.getTracks().forEach((t) => t.stop())
       AudioSink.destination = undefined
       AudioSink.audioElement?.remove()
@@ -43,7 +37,7 @@ export class AudioSink {
     }
   }
 
-  async start () {
+  async start() {
     AudioSink.connectedNodes++
     this.processorNode.connect(this.gainNode)
     if (!AudioSink.destination || !AudioSink.audioElement) {
@@ -57,18 +51,15 @@ export class AudioSink {
     }
   }
 
-  getId () {
+  getId() {
     return this.id
   }
 
-  setVolume (value) {
-    this.gainNode.gain.setValueAtTime(
-      value / 100,
-      this.getAudioContext().currentTime
-    )
+  setVolume(value) {
+    this.gainNode.gain.setValueAtTime(value / 100, this.getAudioContext().currentTime)
   }
 
-  close () {
+  close() {
     AudioSink.connectedNodes--
     const audioElement = AudioSink.audioElement
     if (audioElement) {
@@ -81,11 +72,11 @@ export class AudioSink {
     this.gainNode.disconnect()
   }
 
-  getMessagePort () {
+  getMessagePort() {
     return this.processorNode.port
   }
 
-  getAudioContext () {
+  getAudioContext() {
     if (!AudioSink.audioContext) {
       throw new Error('Sink class must be configured')
     }

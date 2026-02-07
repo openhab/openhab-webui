@@ -164,13 +164,15 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
 
   watch(dialogEnabled, (newValue) => {
     localStorage.setItem('openhab.ui:dialog.enabled', newValue ? 'true' : 'false')
-    setTimeout(() => { location.reload() }, 50)
+    setTimeout(() => {
+      location.reload()
+    }, 50)
   })
 
   watch(dialogIdentifier, (newValue) => {
     localStorage.setItem('openhab.ui:dialog.id', newValue)
   })
-  if(!dialogIdentifier.value.length) {
+  if (!dialogIdentifier.value.length) {
     dialogIdentifier.value = `ui-${Math.round(Math.random() * 100)}-${Math.round(Math.random() * 100)}`
   }
 

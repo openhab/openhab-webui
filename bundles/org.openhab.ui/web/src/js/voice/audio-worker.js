@@ -1,12 +1,6 @@
 /// <reference lib="webworker" />
 
-import {
-  SINK_TERMINATION_BYTE,
-  WebSocketInCmd,
-  WebSocketOutCmd,
-  WorkerInCmd,
-  WorkerOutCmd
-} from './audio-types'
+import { SINK_TERMINATION_BYTE, WebSocketInCmd, WebSocketOutCmd, WorkerInCmd, WorkerOutCmd } from './audio-types'
 
 /** WebSocket reconnection timeout */
 const RECONNECT_MS = 5000
@@ -15,7 +9,7 @@ const RECONNECT_MS = 5000
  * Handles the websocket connection and the required audio format conversions.
  */
 export default class AudioWorker {
-  constructor (postMessage) {
+  constructor(postMessage) {
     this.postMessage = postMessage
     /** Speaker id */
     this.id = ''
@@ -42,7 +36,7 @@ export default class AudioWorker {
   /**
    * Sends a {@link WorkerOutCmd} to the main thread
    */
-  postToMainThread (cmd, args) {
+  postToMainThread(cmd, args) {
     this.postMessage({ cmd, ...(args ?? {}) })
   }
 
@@ -50,7 +44,7 @@ export default class AudioWorker {
    *
    * Send a {@link WebSocketInCmd} to the openHAB server
    */
-  postToWebSocket (cmd, args) {
+  postToWebSocket(cmd, args) {
     if (this.socket && this.socket.readyState === this.socket.OPEN) {
       this.socket.send(JSON.stringify({ cmd, args }))
     } else {
@@ -61,7 +55,7 @@ export default class AudioWorker {
   /**
    * Handles the {@link WorkerInCmd} received from the main thread
    */
-  async onMainThreadCommand (ev) {
+  async onMainThreadCommand(ev) {
     try {
       if (ev.origin !== '' || typeof ev.data !== 'object') {
         return
@@ -75,9 +69,7 @@ export default class AudioWorker {
           this.locationItem = initData.locationItem
           this.listeningItem = initData.listeningItem
           this.token = initData.token ?? ''
-          this.ohUrl = initData.ohUrl
-            .replace('https:', 'wss:')
-            .replace('http:', 'ws:')
+          this.ohUrl = initData.ohUrl.replace('https:', 'wss:').replace('http:', 'ws:')
           this.reconnect = true
           this.connectWebSocket()
           break
@@ -98,8 +90,7 @@ export default class AudioWorker {
           const listenData = ev.data
           this.sourcePort?.close()
           this.sourcePort = listenData.port
-          this.sourcePort.onmessage = (ev) =>
-            this.handleSourceAudioBuffer(ev.data)
+          this.sourcePort.onmessage = (ev) => this.handleSourceAudioBuffer(ev.data)
           this.sourcePort.start()
           this.postToMainThread(WorkerOutCmd.SOURCE_READY)
           break
@@ -157,7 +148,7 @@ export default class AudioWorker {
   /**
    * Handles the {@link WebSocketOutCmd} received from OpenHAB
    */
-  onWebSocketCommand (data) {
+  onWebSocketCommand(data) {
     try {
       const command = data.cmd
       switch (command) {
@@ -191,16 +182,13 @@ export default class AudioWorker {
   /**
    *  Starts the websocket connection to the openHAB server, with retry on error/disconnection.
    */
-  connectWebSocket () {
+  connectWebSocket() {
     const retry = () => {
       if (this.reconnectTimeoutRef) {
         clearTimeout(this.reconnectTimeoutRef)
         this.reconnectTimeoutRef = undefined
       }
-      this.reconnectTimeoutRef = setTimeout(
-        this.connectWebSocket.bind(this),
-        RECONNECT_MS
-      )
+      this.reconnectTimeoutRef = setTimeout(this.connectWebSocket.bind(this), RECONNECT_MS)
     }
     let wsRef = this.socket
     let secHeader = []
@@ -250,9 +238,7 @@ export default class AudioWorker {
           }
           break
         default:
-          console.error(
-            'websocket => audio-worker: unprocessed message typeof ' + msgType
-          )
+          console.error('websocket => audio-worker: unprocessed message typeof ' + msgType)
       }
     })
     wsRef.addEventListener('close', () => {
@@ -275,7 +261,7 @@ export default class AudioWorker {
   /**
    * Closes the active socket connection if any
    */
-  disconnectWebSocket () {
+  disconnectWebSocket() {
     if (this.socket) {
       this.socket.close()
     } else {
@@ -287,7 +273,7 @@ export default class AudioWorker {
    * Sends audio though a {@link WebSocket} after encode it as a int 16 lower-endian buffer.
    * Prepends the audio data with a header that contains the identity and format.
    */
-  handleSourceAudioBuffer (buffer) {
+  handleSourceAudioBuffer(buffer) {
     if (this.socket) {
       if (!this.sourcePacketHeader) {
         this.sourcePacketHeader = generateAudioPacketHeader(this.sampleRate, 16, 1)
@@ -311,7 +297,7 @@ export default class AudioWorker {
    *
    * Resamples the audio when needed from stream sample rate to the audio context sample rate.
    */
-  async handleSinkAudioBuffer (buffer) {
+  async handleSinkAudioBuffer(buffer) {
     // First 2 bytes from each chunk contains the stream id
     const streamId = new Uint8Array(buffer.slice(0, 2)).join('-')
     // skip packet header
@@ -377,7 +363,7 @@ export default class AudioWorker {
 
 const AUDIO_PACKET_HEADER_LENGTH = 2 + 4 + 1 + 1
 
-function generateAudioPacketHeader (sampleRate, bitDepth, channels) {
+function generateAudioPacketHeader(sampleRate, bitDepth, channels) {
   const view = new DataView(new ArrayBuffer(AUDIO_PACKET_HEADER_LENGTH))
   let id = new Uint8Array(2)
   crypto.getRandomValues(id)
@@ -389,7 +375,7 @@ function generateAudioPacketHeader (sampleRate, bitDepth, channels) {
   return view.buffer
 }
 
-function parseAudioFormat (buffer) {
+function parseAudioFormat(buffer) {
   const view = new DataView(buffer)
   const sampleRate = view.getInt32(2, true)
   const bitDepth = view.getUint8(6)
@@ -401,7 +387,7 @@ function parseAudioFormat (buffer) {
 /**
  * Converts a Float32Array into a int16 ArrayBuffer, the required by the server.
  */
-function audioToInt16Buffer (audioSamples) {
+function audioToInt16Buffer(audioSamples) {
   const bytesPerSample = 2
   const output = new DataView(new ArrayBuffer(audioSamples.length * bytesPerSample))
   let offset = 0
@@ -415,14 +401,14 @@ function audioToInt16Buffer (audioSamples) {
 /**
  * Converts a int8 ArrayBuffer into a Float32Array of samples, the required by the browser.
  */
-function audioFromInt8Buffer (buffer) {
+function audioFromInt8Buffer(buffer) {
   const view = new DataView(buffer)
   const bytesPerSample = 1
   const nSamples = buffer.byteLength / bytesPerSample
   const audioSamples = new Float32Array(nSamples)
   for (let i = 0, offset = 0; i < nSamples; i += 1, offset += bytesPerSample) {
     const intValue = view.getInt8(offset, true)
-    const floatValue = intValue < 0 ? intValue / 0x80 : intValue / 0x7F
+    const floatValue = intValue < 0 ? intValue / 0x80 : intValue / 0x7f
     audioSamples[i] = Math.max(-1, Math.min(1, floatValue))
   }
   return audioSamples
@@ -431,12 +417,12 @@ function audioFromInt8Buffer (buffer) {
 /**
  * Converts a int16 ArrayBuffer into a Float32Array of samples, the required by the browser.
  */
-function audioFromInt16Buffer (buffer) {
+function audioFromInt16Buffer(buffer) {
   const view = new DataView(buffer)
   const bytesPerSample = 2
   const nSamples = buffer.byteLength / bytesPerSample
   if (buffer.byteLength % bytesPerSample) {
-    console.warn('Voice: Missing bytes on audio data ' + buffer.byteLength % bytesPerSample)
+    console.warn('Voice: Missing bytes on audio data ' + (buffer.byteLength % bytesPerSample))
   }
   const audioSamples = new Float32Array(nSamples)
   for (let i = 0, offset = 0; i < nSamples; i += 1, offset += bytesPerSample) {
@@ -450,12 +436,12 @@ function audioFromInt16Buffer (buffer) {
 /**
  * Converts a int32 ArrayBuffer into a Float32Array of samples, the required by the browser.
  */
-function audioFromInt32Buffer (buffer) {
+function audioFromInt32Buffer(buffer) {
   const view = new DataView(buffer)
   const bytesPerSample = 4
   const nSamples = buffer.byteLength / bytesPerSample
   if (buffer.byteLength % bytesPerSample) {
-    console.warn('Voice: Missing bytes on audio data ' + buffer.byteLength % bytesPerSample)
+    console.warn('Voice: Missing bytes on audio data ' + (buffer.byteLength % bytesPerSample))
   }
   const audioSamples = new Float32Array(nSamples)
   for (let i = 0, offset = 0; i < nSamples; i += 1, offset += bytesPerSample) {
@@ -467,28 +453,28 @@ function audioFromInt32Buffer (buffer) {
 }
 
 class DataViewExtended extends DataView {
-  getUint24 (byteOffset = 0, littleEndian = false) {
+  getUint24(byteOffset = 0, littleEndian = false) {
     return littleEndian
       ? this.getUint8(byteOffset) + (this.getUint16(byteOffset + 1, littleEndian) << 8)
       : (this.getUint16(byteOffset, littleEndian) << 8) + this.getUint8(byteOffset + 2)
   }
 
-  getInt24 (byteOffset = 0, littleEndian = false) {
+  getInt24(byteOffset = 0, littleEndian = false) {
     const valU24 = this.getUint24(byteOffset, littleEndian)
     const isNeg = valU24 & 0x800000
-    return (!isNeg) ? valU24 : ((0xffffff - valU24 + 1) * -1)
+    return !isNeg ? valU24 : (0xffffff - valU24 + 1) * -1
   }
 }
 
 /**
  * Converts a int24 ArrayBuffer into a Float32Array of samples, the required by the browser.
  */
-function audioFromInt24Buffer (buffer) {
+function audioFromInt24Buffer(buffer) {
   const view = new DataViewExtended(buffer)
   const bytesPerSample = 3
   const nSamples = buffer.byteLength / bytesPerSample
   if (buffer.byteLength % bytesPerSample) {
-    console.warn('Voice: Missing bytes on audio data ' + buffer.byteLength % bytesPerSample)
+    console.warn('Voice: Missing bytes on audio data ' + (buffer.byteLength % bytesPerSample))
   }
   const audioSamples = new Float32Array(nSamples)
   for (let i = 0, offset = 0; i < nSamples; i += 1, offset += bytesPerSample) {
