@@ -1,6 +1,6 @@
 <template>
   <f7-popup :opened="opened" class="persistence-definitions-popup">
-    <f7-page>
+    <f7-page v-if="opened">
       <f7-navbar title="Manage Definitions">
         <f7-nav-left>
           <f7-link icon-ios="f7:arrow_left" icon-md="material:arrow_back" icon-aurora="f7:arrow_left" @click="onClose" />
@@ -167,6 +167,7 @@ export default {
   },
   computed: {
     hasChanges () {
+      if (!this.persistence || !this.persistenceLocal) return false
       if (!fastDeepEqual(this.persistence.cronStrategies, this.persistenceLocal.cronStrategies)) return true
       for (const filterType of FilterTypes.map((ft) => ft.name)) {
         if (!fastDeepEqual(this.persistence[filterType], this.persistenceLocal[filterType])) return true

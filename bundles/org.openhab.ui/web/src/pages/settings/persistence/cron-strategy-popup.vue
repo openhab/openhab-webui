@@ -1,6 +1,6 @@
 <template>
   <f7-popup :opened="opened" class="moduleconfig-popup">
-    <f7-page>
+    <f7-page v-if="opened">
       <f7-navbar>
         <f7-nav-left>
           <f7-link icon-ios="f7:arrow_left" icon-md="material:arrow_back" icon-aurora="f7:arrow_left" @click="$emit('close')" />
