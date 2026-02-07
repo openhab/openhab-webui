@@ -82,6 +82,7 @@ export default {
         this.channelTypes = ct
         this.ready = true
       }).catch((err) => {
+        console.error('Error loading channel types', err)
         f7.dialog.alert('Error loading channel type: ' + err)
         this.f7router.back()
       })

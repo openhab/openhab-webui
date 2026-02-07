@@ -98,18 +98,18 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
             thingType.value = thingTypeResult.value && Object.keys(thingTypeResult.value).length > 0 ? thingTypeResult.value : null
           } else {
             thingType.value = null
-            const message = `Cannot load thing-type '${data.thingTypeUID}': `
-            console.error(message + getErrorMessage(thingTypeResult.reason, true))
-            f7.dialog.alert(message + getErrorMessage(thingTypeResult.reason))
+            const message = `Cannot load thing-type '${data.thingTypeUID}'`
+            console.error(message, thingTypeResult.reason)
+            f7.dialog.alert(message + ': ' + getErrorMessage(thingTypeResult.reason))
           }
 
           if (channelTypesResult.status === 'fulfilled') {
-            channelTypes.value = channelTypesResult.value || []
+            channelTypes.value = channelTypesResult.value ?? []
           } else {
             channelTypes.value = null
-            const message = `Cannot load channel-types for thing-type '${data.thingTypeUID}': `
-            console.error(message + getErrorMessage(channelTypesResult.reason, true))
-            f7.dialog.alert(message + getErrorMessage(channelTypesResult.reason))
+            const message = `Cannot load channel-types for thing-type '${data.thingTypeUID}'`
+            console.error(message, channelTypesResult.reason)
+            f7.dialog.alert(message + ': ' + getErrorMessage(channelTypesResult.reason))
           }
 
           if (actionsResult.status === 'fulfilled') {
@@ -123,8 +123,7 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
             }
           } else {
             thingActions.value = []
-            const message = getErrorMessage(actionsResult.reason, true)
-            console.error(`Cannot load '${thingUID}' thing actions: ${message}`)
+            console.error(`Cannot load '${thingUID}' thing actions`, actionsResult.reason)
           }
 
           if (configDescResult.status === 'fulfilled') {
@@ -140,20 +139,23 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
             if (!applyThingTypeConfigDescriptions()) {
               configDescriptions.value = null
             }
-            console.error(`Cannot load '${thingUID}' config descriptions: ` + getErrorMessage(configDescResult.reason, true))
+            console.error(`Cannot load '${thingUID}' config descriptions`, configDescResult.reason)
           }
+
           if (firmwareResult.status === 'fulfilled') {
             firmwares.value = firmwareResult.value && Object.keys(firmwareResult.value).length > 0 ? firmwareResult.value : null
           } else {
             firmwares.value = null
-            console.error(`Cannot load '${thingUID}' firmwares: ` + getErrorMessage(firmwareResult.reason, true))
+            console.error(`Cannot load '${thingUID}' firmwares`, firmwareResult.reason)
           }
+
           if (configStatusResult.status === 'fulfilled') {
             configStatusInfo.value = configStatusResult.value ?? null
           } else {
             configStatusInfo.value = null
-            console.error(`Cannot load '${thingUID}' config status: ` + getErrorMessage(configStatusResult.reason, true))
+            console.error(`Cannot load '${thingUID}' config status`, configStatusResult.reason)
           }
+
           savedThing.value = cloneDeep(thing.value)
           loadingFinishedCallback(true)
           loading.value = false

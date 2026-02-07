@@ -483,8 +483,8 @@ export default {
       return this.thingActions && Array.isArray(this.thingActions) ? this.thingActions.filter((a) => a.visibility === 'EXPERT').length : 0
     },
     filteredThingActions () {
-      if (this.showAdvancedThingActions) return this.thingActions
-      return this.thingActions && Array.isArray(this.thingActions) ? this.thingActions.filter((a) => a.visibility !== 'EXPERT') : []
+      if (this.showAdvancedThingActions) return this.thingActions ?? []
+      return this.thingActions?.filter((a) => a.visibility !== 'EXPERT') ?? []
     },
     ...mapState(useThingEditStore, ['configDirty', 'thingDirty', 'thing', 'thingType', 'channelTypes', 'configDescriptions', 'configStatusInfo', 'thingActions', 'firmwares', 'editable', 'isExtensible', 'hasLinkedItems'])
   },
@@ -565,9 +565,9 @@ export default {
           return
         }
 
-        if (useThingEditStore().thing.configDescription) {
+        if (this.configDescription) {
           // gather actions (rendered as buttons at the bottom)
-          this.configActionsByGroup = this.getBindingActions(useThingEditStore().configDescriptions)
+          this.configActionsByGroup = this.getBindingActions(this.configDescriptions)
         }
 
         if (!this.eventSource) this.startEventSource()
