@@ -423,6 +423,7 @@ export default {
         `Are you sure you want to delete persistence configuration for ${this.serviceId}?`,
         'Delete persistence configuration',
         () => {
+          this.ready = false
           usePersistenceEditStore().deletePersistence()
           this.f7router.back({ force: true })
         }
