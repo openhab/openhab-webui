@@ -498,6 +498,7 @@ import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import auth from '@/components/auth-mixin'
 import connectionHealth from '@/components/connection-health-mixin'
 import sseEvents from '@/components/sse-events-mixin'
+import dialog from '@/components/dialog-mixin'
 
 import { i18n, loadLocaleMessages } from '@/js/i18n'
 
@@ -515,7 +516,7 @@ import { useModelStore } from '@/js/stores/useModelStore'
 import { getRoot } from '@/api'
 
 export default {
-  mixins: [auth, connectionHealth, sseEvents],
+  mixins: [auth, connectionHealth, sseEvents, dialog],
   components: {
     EmptyStatePlaceholder,
     PanelRight,
@@ -1093,11 +1094,16 @@ export default {
         this.$f7dim.height = f7.height
       })
 
+      f7.on('triggerDialog', () => {
+        this.triggerDialog()
+      })
+
       if (window) {
         window.addEventListener('keydown', this.keyDown)
       }
 
       this.startEventSource()
+      this.startAudioWebSocket()
     })
   }
 }

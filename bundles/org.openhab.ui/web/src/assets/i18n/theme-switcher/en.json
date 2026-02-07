@@ -20,5 +20,10 @@
   "about.miscellaneous.theme.disablePageTransition": "Disable page transition animations",
   "about.miscellaneous.webaudio.enable": "Enable Web Audio sink support",
   "about.miscellaneous.commandItem.title": "Listen for UI commands to ",
-  "about.miscellaneous.commandItem.selectItem": "Item"
+  "about.miscellaneous.commandItem.selectItem": "Item",
+  "about.dialog": "Voice Support",
+  "about.dialog.enable": "Enable Voice Dialog",
+  "about.dialog.id": "Connection Id",
+  "about.dialog.listeningItem": "Listening Item",
+  "about.dialog.locationItem": "Location Item"
 }
