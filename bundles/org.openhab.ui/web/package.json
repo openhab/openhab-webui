@@ -124,7 +124,7 @@
     "tslib": "^2.8.1",
     "video.js": "^8.23.6",
     "vite": "^7.0.2",
-    "vue": "^3.5.26",
+    "vue": "^3.5.27",
     "vue-async-computed": "^4.0.1",
     "vue-codemirror": "^6.1.1",
     "vue-draggable-next": "^2.2.1",
