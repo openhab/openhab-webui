@@ -1,3 +1,5 @@
+performance.mark('main-start')
+
 import '@/js/compatibility'
 import '@/js/logging'
 import '@/js/monkeypatch'
@@ -76,3 +78,8 @@ app.component('GenericWidgetComponent', GenericWidgetComponent)
 app.component('DeveloperDockIcon', DeveloperDockIcon)
 
 app.mount('#app')
+
+performance.mark('app-mounted')
+
+const measure = performance.measure('main', 'main-start', 'app-mounted')
+console.info(`App initialization: ${measure.duration.toFixed(2)} ms`)
