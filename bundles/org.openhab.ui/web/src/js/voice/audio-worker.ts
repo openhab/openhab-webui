@@ -1,14 +1,6 @@
 /// <reference lib="webworker" />
 
-import {
-  SINK_TERMINATION_BYTE,
-  WebSocketInCmd,
-  WebSocketOutCmd,
-  type WebSocketOutMessage,
-  WorkerInCmd,
-  WorkerOutCmd,
-  type WorkerOutMessage
-} from './types.ts'
+import { WebSocketInCmd, WebSocketOutCmd, type WebSocketOutMessage, WorkerInCmd, WorkerOutCmd, type WorkerOutMessage } from './types.ts'
 
 /** WebSocket reconnection timeout */
 const RECONNECT_MS = 5000
@@ -389,7 +381,18 @@ export default class AudioWorker {
 
 // Audio packet header parser/generator
 
+/**
+ * Audio packet header length in bytes:
+ * - 2 bytes stream ID
+ * - 4 bytes sample rate
+ * - 1 byte bit depth
+ * - 1 byte number of channels
+ */
 const AUDIO_PACKET_HEADER_LENGTH = 2 + 4 + 1 + 1
+/**
+ * Byte that indicates stream termination (prefixed by the header bytes).
+ */
+const SINK_TERMINATION_BYTE = '254'
 
 function generateAudioPacketHeader(sampleRate: number, bitDepth: number, channels: number): ArrayBuffer {
   const view = new DataView(new ArrayBuffer(AUDIO_PACKET_HEADER_LENGTH))

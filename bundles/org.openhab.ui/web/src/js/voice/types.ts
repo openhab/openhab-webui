@@ -1,9 +1,4 @@
 /**
- * Byte that indicates stream termination, (prefixed by "4 bytes id" + "stream type byte" )
- */
-export const SINK_TERMINATION_BYTE = '254'
-
-/**
  * Commands from worker to server (no command for sending audio as it is sent as binary message).
  */
 export enum WebSocketInCmd {
