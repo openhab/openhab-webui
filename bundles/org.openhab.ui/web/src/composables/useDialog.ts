@@ -46,7 +46,10 @@ export function useDialog() {
         return
       }
       let port = ''
-      if (!((location.protocol === 'https:' && location.port === '443') || (location.protocol === 'http:' && location.port === '80'))) {
+      if (
+        !((location.protocol === 'https:' && location.port === '443') || (location.protocol === 'http:' && location.port === '80')) &&
+        location.port.length > 0
+      ) {
         port = `:${location.port}`
       }
       const ohURL = `${location.protocol}//${location.hostname}${port}`

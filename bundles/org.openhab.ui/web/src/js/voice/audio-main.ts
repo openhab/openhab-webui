@@ -50,14 +50,14 @@ export class AudioMain {
       if (!document.hidden) {
         this.getVoiceAudioContext()
           .resume()
-          .catch((err) => this.events.onMessage?.('Error resuming audio context', err))
+          .catch((err) => this.events.onMessage?.(`Error resuming audio context: ${err}`, 'error'))
         this.startSourceCheckInterval()
         this.postToWorker(WorkerInCmd.RESUME)
       } else {
         this.stopSourceCheckInterval()
         this.getVoiceAudioContext()
           .suspend()
-          .catch((err) => this.events.onMessage?.('Error suspending audio context', err))
+          .catch((err) => this.events.onMessage?.(`Error suspending audio context: ${err}`, 'error'))
         this.postToWorker(WorkerInCmd.SUSPEND)
       }
     }
@@ -273,7 +273,7 @@ export class AudioMain {
         }
         const activeSink = this.activeSinks.get(data.id)
         if (activeSink) {
-          this.events.onMessage?.(`Stoping sink stream ${data.id}`)
+          this.events.onMessage?.(`Stopping sink stream ${data.id}`)
           this.activeSinks.delete(data.id)
           activeSink.close()
           if (this.activeSinks.size === 0) {
@@ -379,7 +379,6 @@ export class AudioMain {
    * @param locationItem
    */
   async initialize(speakerId: string, listeningItem?: string, locationItem?: string) {
-    this.initialized = true
     this.events.onMessage?.('Starting ws connection...', 'info', 500)
     this.startVoiceAudioContext()
     const audioContext = this.getVoiceAudioContext()
@@ -419,6 +418,7 @@ export class AudioMain {
       this.events.onMessage?.('Unable to start WebWorker, try reloading the page', 'error', 2000)
       throw error
     }
+    this.initialized = true
   }
 
   close() {

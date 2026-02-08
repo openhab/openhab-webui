@@ -303,7 +303,7 @@ export default class AudioWorker {
    * Prepends the audio data with a header that contains the identity and format.
    */
   handleSourceAudioBuffer(buffer: Float32Array) {
-    if (this.socket) {
+    if (this.socket && this.socket.readyState === this.socket.OPEN) {
       if (!this.sourcePacketHeader) {
         this.sourcePacketHeader = generateAudioPacketHeader(this.sampleRate, 16, 1)
       }
@@ -313,7 +313,7 @@ export default class AudioWorker {
       audioPacketByteArray.set(new Uint8Array(audioChunk), this.sourcePacketHeader.byteLength)
       this.socket.send(audioPacketByteArray.buffer)
     } else {
-      console.error('Error sending audio to oh: WebSocket is not connected')
+      console.error('Error sending audio to openHAB: WebSocket is not connected')
     }
   }
 
@@ -345,7 +345,7 @@ export default class AudioWorker {
         port: undefined
       }
       this.sinkContextStorage.set(streamId, sinkContext)
-      // request the setup of a sink to the main thead
+      // request the setup of a sink to the main thread
       this.postToMainThread(WorkerOutCmd.START_SINK, {
         id: streamId,
         channels
