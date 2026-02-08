@@ -4,8 +4,10 @@
  */
 function mergeChannels(input: Float32Array[]): Float32Array {
   const channels = input.length
-  if (channels === 1) return input[0]!
-  const samples = input[0]!.length
+  const c0 = input[0]
+  if (!c0) return new Float32Array(0)
+  if (channels === 1) return c0
+  const samples = c0.length
   const mixRatio = Math.sqrt(channels) / channels
 
   const output = new Float32Array(samples)
