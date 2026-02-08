@@ -425,6 +425,8 @@ export class AudioMain {
   }
 
   close() {
+    this.stopSourceCheckInterval()
+    this.stopMicStreaming()
     this.worker!.terminate()
     this.worker = null
   }

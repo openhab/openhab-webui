@@ -64,10 +64,13 @@ class AudioSinkWorklet extends AudioWorkletProcessor {
     } else {
       // move the interlaced audio samples to the correct channel
       const channelsData = outputs[0]!
-      audioData.forEach((sample, sampleNumber) => {
+      const audioDataLength = audioData.length
+      for (let sampleNumber = 0; sampleNumber < audioDataLength; sampleNumber++) {
+        const sample = audioData[sampleNumber]!
         const channelIndex = sampleNumber % channels
-        channelsData[channelIndex]![(sampleNumber - channelIndex) / channels] = sample
-      })
+        const frameIndex = (sampleNumber - channelIndex) / channels
+        channelsData[channelIndex]![frameIndex] = sample
+      }
     }
   }
 }
