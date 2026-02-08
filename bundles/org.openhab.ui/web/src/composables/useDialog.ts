@@ -34,14 +34,8 @@ export function useDialog() {
     if (audioMain.value) {
       return
     }
-    const {
-      dialogEnabled,
-      dialogIdentifier,
-      dialogLocationItem,
-      dialogListeningItem,
-      dialogConnectOnWindowEvent,
-      dialogTriggerOnConnect
-    } = uiOptionsStore
+    const { dialogEnabled, dialogIdentifier, dialogLocationItem, dialogListeningItem, dialogConnectOnWindowEvent, dialogTriggerOnConnect } =
+      uiOptionsStore
 
     if (!dialogEnabled) {
       return
