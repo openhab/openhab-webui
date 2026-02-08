@@ -24,7 +24,7 @@ export default {
       if (!dialogEnabled) {
         return
       }
-      import('../js/voice/audio-main.js').then(({ AudioMain }) => {
+      import('../js/voice/audio-main.ts').then(({ AudioMain }) => {
         if (this.audioMain) {
           return
         }
@@ -48,7 +48,7 @@ export default {
         }
         updatePageIcon(false)
         let forceTrigger = dialogTriggerOnConnect
-        const audioMain = (this.audioMain = new AudioMain(ohURL, getAccessToken, {
+        this.audioMain = new AudioMain(ohURL, getAccessToken, {
           onMessage: (...args) => {
             console.debug('Voice: ' + args[0])
           },
@@ -65,7 +65,7 @@ export default {
           onSpeakingChange(io) {
             updatePageIcon(io.isRunning(), io.isListening(), io.isSpeaking())
           }
-        }))
+        })
         if (dialogConnectOnWindowEvent) {
           const events = ['touchend', 'mousedown', 'keydown']
           const startAudio = () => {

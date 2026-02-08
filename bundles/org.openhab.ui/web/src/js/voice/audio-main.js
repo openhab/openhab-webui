@@ -1,6 +1,6 @@
 import audioWorkerURL from './audio-worker?worker&url'
-import { AudioSink } from './audio/audio-sink'
-import { AudioSource } from './audio/audio-source'
+import { AudioSink } from './audio/audio-sink.ts'
+import { AudioSource } from './audio/audio-source.ts'
 import { WorkerInCmd, WorkerOutCmd } from './audio-types'
 export class AudioMain {
   constructor(ohUrl, accessTokenGetter = null, events = {}) {
