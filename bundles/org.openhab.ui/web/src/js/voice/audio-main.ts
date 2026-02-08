@@ -1,26 +1,51 @@
 import audioWorkerURL from './audio-worker?worker&url'
 import { AudioSink } from './audio/audio-sink.ts'
 import { AudioSource } from './audio/audio-source.ts'
-import { WorkerInCmd, WorkerOutCmd } from './audio-types'
+import { WorkerInCmd, WorkerOutCmd, type WorkerOutMessage } from './types.ts'
+
+export interface AudioMainEvents {
+  onMessage?: (message: string, level?: 'info' | 'error', duration?: number) => (() => void) | void
+  onRunningChange: (instance: AudioMain) => void
+  onSpeakingChange: (instance: AudioMain) => void
+  onListeningChange: (instance: AudioMain) => void
+}
+
+export interface SpeakerConfiguration {
+  suspendOnHide: boolean
+  useAudioElement: boolean
+  sourceVolume?: number
+  sinkVolume?: number
+}
+
 export class AudioMain {
-  constructor(ohUrl, accessTokenGetter = null, events = {}) {
-    this.initialized = false
+  private readonly ohUrl: string
+  private readonly accessTokenGetter: () => string | null
+  private readonly events: AudioMainEvents
+
+  // worker & state
+  private worker: Worker | null
+  private initialized: boolean = false
+  private online: boolean = false
+  // voice audio context
+  private audioContext: AudioContext | null = null
+  // audio source
+  private audioSource: AudioSource | null = null
+  private sourceVolume: number = 50
+  private micStreaming: boolean = false
+  private listening: boolean = false
+  // audio sink
+  private readonly activeSinks: Map<string, AudioSink> = new Map()
+  private sinkVolume: number = 50
+
+  private readonly handleSuspendOnHidden: () => void
+  private resolveSourcePort?: () => void
+  private sourceCheckIntervalRef?: ReturnType<typeof setInterval>
+
+  constructor(ohUrl: string, accessTokenGetter: () => string | null, events: AudioMainEvents) {
     this.ohUrl = ohUrl
     this.events = events
-    this.online = false
     this.accessTokenGetter = accessTokenGetter
-    // voice audio context
-    this.audioContext = null
-    /// audio source
-    this.audioSource = null
-    this.sourceVolume = 50
-    this.micStreaming = false
-    this.listening = false
-    ///
-    /// audio sink
-    this.activeSinks = new Map()
-    this.sinkVolume = 50
-    ///
+
     this.handleSuspendOnHidden = () => {
       if (!document.hidden) {
         this.getVoiceAudioContext()
@@ -63,7 +88,7 @@ export class AudioMain {
    */
   startVoiceAudioContext() {
     if (!this.audioContext) {
-      const options = {}
+      const options: AudioContextOptions = {}
       // setting a custom sample rate only seems to work correctly in Chrome
       // if (customSampleRate) {
       //   options.sampleRate = customSampleRate
@@ -103,17 +128,17 @@ export class AudioMain {
    */
   async getWorkerAudioProcessor() {
     const _webSocketWorkletNode = this.getAudioSource().createWorkletNode()
-    const portPromise = new Promise((resolve) => (this.resolveSourcePort = resolve))
+    const portPromise = new Promise<void>((resolve) => (this.resolveSourcePort = resolve))
     const command = {
       cmd: WorkerInCmd.SOURCE_PORT,
       port: _webSocketWorkletNode.port
     }
-    this.worker.postMessage(command, [command.port])
+    this.worker!.postMessage(command, [command.port])
     await portPromise
     return _webSocketWorkletNode
   }
 
-  postToWorker(cmd, args = {}) {
+  postToWorker(cmd: WorkerInCmd, args: Record<string, any> = {}) {
     try {
       if (this.worker) {
         this.worker.postMessage({ cmd, ...args })
@@ -131,11 +156,11 @@ export class AudioMain {
     }
   }
 
-  resetConnection(id) {
+  resetConnection(id: string) {
     this.postToWorker(WorkerInCmd.RESET_CONNECTION, { id })
   }
 
-  setAuthToken(token) {
+  setAuthToken(token: string | null) {
     if (token && this.worker) {
       this.postToWorker(WorkerInCmd.TOKEN_RENEW, { token })
     }
@@ -189,7 +214,7 @@ export class AudioMain {
    * @param command the command name.
    * @param data the command data.
    */
-  handleWorkerMessage(command, data) {
+  handleWorkerMessage(command: WorkerOutCmd, data: WorkerOutMessage) {
     switch (command) {
       case WorkerOutCmd.SOURCE_READY:
         this.resolveSourcePort?.()
@@ -219,14 +244,17 @@ export class AudioMain {
         }
         break
       case WorkerOutCmd.START_SINK: {
-        const startSinkCmd = data
-        const sink = new AudioSink(startSinkCmd.id, startSinkCmd.channels, this.sinkVolume)
+        if (!data.id || data.channels === undefined) {
+          console.error('Invalid START_SINK message', data)
+          break
+        }
+        const sink = new AudioSink(data.id, data.channels, this.sinkVolume)
         const sinkPortCmd = {
           cmd: WorkerInCmd.SINK_PORT,
           id: sink.getId(),
           port: sink.getMessagePort()
         }
-        this.worker.postMessage(sinkPortCmd, [sinkPortCmd.port])
+        this.worker!.postMessage(sinkPortCmd, [sinkPortCmd.port])
         this.activeSinks.set(sink.getId(), sink)
         const startSpeaking = this.activeSinks.size === 1
         this.events.onMessage?.(`Starting sink stream ${sink.getId()}`)
@@ -241,17 +269,20 @@ export class AudioMain {
         break
       }
       case WorkerOutCmd.STOP_SINK: {
-        const stopSinkCmd = data
-        const activeSink = this.activeSinks.get(stopSinkCmd.id)
+        if (!data.id) {
+          console.error('Invalid STOP_SINK message', data)
+          break
+        }
+        const activeSink = this.activeSinks.get(data.id)
         if (activeSink) {
-          this.events.onMessage?.(`Stoping sink stream ${stopSinkCmd.id}`)
-          this.activeSinks.delete(stopSinkCmd.id)
+          this.events.onMessage?.(`Stoping sink stream ${data.id}`)
+          this.activeSinks.delete(data.id)
           activeSink.close()
           if (this.activeSinks.size === 0) {
             this.events.onSpeakingChange?.(this)
           }
         } else {
-          this.events.onMessage?.('Unable to stop sink, not found ' + stopSinkCmd.id)
+          this.events.onMessage?.('Unable to stop sink, not found ' + data.id)
         }
         break
       }
@@ -276,14 +307,22 @@ export class AudioMain {
         }
         break
       case WorkerOutCmd.SINK_VOLUME: {
-        const { value: sinkVolume } = data
+        const sinkVolume = data.value
+        if (sinkVolume === undefined) {
+          console.error('Invalid SINK_VOLUME message', data)
+          break
+        }
         this.events.onMessage?.(`Sink volume: ${sinkVolume}`, 'info', 1000)
         this.sinkVolume = sinkVolume
         this.activeSinks.forEach((sink) => sink.setVolume(this.sinkVolume))
         break
       }
       case WorkerOutCmd.SOURCE_VOLUME: {
-        const { value: sourceVolume } = data
+        const sourceVolume = data.value
+        if (sourceVolume === undefined) {
+          console.error('Invalid SOURCE_VOLUME message', data)
+          break
+        }
         this.events.onMessage?.(`Source volume: ${sourceVolume}`, 'info', 1000)
         this.sourceVolume = sourceVolume
         this.getAudioSource().setVolume(sourceVolume)
@@ -299,7 +338,7 @@ export class AudioMain {
    *
    * @param speakerConfig The speaker configuration instructed by the server.
    */
-  async updateConfiguration(speakerConfig) {
+  async updateConfiguration(speakerConfig: SpeakerConfiguration) {
     const audioContext = this.getVoiceAudioContext()
     const resumeAudioContext = () => audioContext.resume()
     const closeMsg = this.events.onMessage?.('Resuming audio context, click to continue', 'info')
@@ -338,9 +377,10 @@ export class AudioMain {
    * Initializes the workers instance.
    *
    * @param speakerId the speaker identifier used by the server.
-   * @param customSampleRate Custom sample rate for the audio context, non functional in some browsers.
+   * @param listeningItem
+   * @param locationItem
    */
-  async initialize(speakerId, listeningItem, locationItem) {
+  async initialize(speakerId: string, listeningItem?: string, locationItem?: string) {
     this.initialized = true
     this.events.onMessage?.('Starting ws connection...', 'info', 500)
     this.startVoiceAudioContext()
@@ -354,7 +394,7 @@ export class AudioMain {
     this.audioSource = new AudioSource(50)
     await this.audioSource.resume()
     this.startSourceCheckInterval()
-    // TODO: allow configure options
+    // TODO: Allow to configure options
     await this.updateConfiguration({
       suspendOnHide: false,
       useAudioElement: true,
@@ -362,13 +402,13 @@ export class AudioMain {
       sinkVolume: 100
     })
     try {
-      this.worker.onmessage = (ev) => {
+      this.worker!.onmessage = (ev: MessageEvent) => {
         this.handleWorkerMessage(ev.data.cmd, ev.data)
       }
-      this.worker.onerror = (err) => {
+      this.worker!.onerror = (err: ErrorEvent) => {
         this.events.onMessage?.('Worker error.' + err.message)
       }
-      this.worker.postMessage({
+      this.worker!.postMessage({
         cmd: WorkerInCmd.INITIALIZE,
         id: speakerId,
         token: this.accessTokenGetter?.() ?? null,
@@ -384,7 +424,7 @@ export class AudioMain {
   }
 
   close() {
-    this.worker.terminate()
+    this.worker!.terminate()
     this.worker = null
   }
 }

@@ -1,42 +1,67 @@
 /// <reference lib="webworker" />
 
-import { SINK_TERMINATION_BYTE, WebSocketInCmd, WebSocketOutCmd, WorkerInCmd, WorkerOutCmd } from './audio-types'
+import {
+  SINK_TERMINATION_BYTE,
+  WebSocketInCmd,
+  WebSocketOutCmd,
+  type WebSocketOutMessage,
+  WorkerInCmd,
+  WorkerOutCmd,
+  type WorkerOutMessage
+} from './types.ts'
 
 /** WebSocket reconnection timeout */
 const RECONNECT_MS = 5000
+
+interface SinkContext {
+  bitDepth: number
+  buffersCache: Float32Array[]
+  streamEnded: boolean
+  port?: MessagePort
+}
+
+type MessageCallback = (message: any, transfer?: Transferable[]) => void
 
 /**
  * Handles the websocket connection and the required audio format conversions.
  */
 export default class AudioWorker {
-  constructor(postMessage) {
+  private readonly postMessage: MessageCallback
+  /**
+   * openHAB server URL
+   */
+  private ohUrl: string = ''
+  /**
+   * openHAB access token
+   */
+  private token: string = ''
+  /**
+   * Speaker ID
+   */
+  private id: string = ''
+  private listeningItem: string = ''
+  private locationItem: string = ''
+  private sampleRate: number = 0
+  private readonly sinkContextStorage: Map<string, SinkContext> = new Map()
+  /**
+   * Enables automatic reconnection.
+   */
+  private reconnect: boolean = false
+
+  private socket?: WebSocket
+  private reconnectTimeoutRef?: ReturnType<typeof setTimeout>
+  private sourcePort?: MessagePort
+  private sourceProcessor?: AudioWorkletProcessor
+  private sourcePacketHeader?: ArrayBuffer
+
+  constructor(postMessage: MessageCallback) {
     this.postMessage = postMessage
-    /** Speaker id */
-    this.id = ''
-    /** Listening Item */
-    this.listeningItem = ''
-    /** Location Item */
-    this.locationItem = ''
-    /** Speaker id */
-    this.id = ''
-    /** OpenHAB token */
-    this.token = ''
-    /** Sample rate of the audio context sample rate */
-    this.sampleRate = 0
-    /** Stores each sink context by its id */
-    this.sinkContextStorage = new Map()
-    /** Holds the openHAB server url */
-    this.ohUrl = ''
-    /** Waiting for main configuration confirmation */
-    this.configuring = false
-    /** Enables auto reconnection */
-    this.reconnect = false
   }
 
   /**
    * Sends a {@link WorkerOutCmd} to the main thread
    */
-  postToMainThread(cmd, args) {
+  postToMainThread(cmd: WorkerOutCmd, args?: Partial<WorkerOutMessage>): void {
     this.postMessage({ cmd, ...(args ?? {}) })
   }
 
@@ -44,7 +69,7 @@ export default class AudioWorker {
    *
    * Send a {@link WebSocketInCmd} to the openHAB server
    */
-  postToWebSocket(cmd, args) {
+  postToWebSocket(cmd: WebSocketInCmd, args?: Record<string, any>): void {
     if (this.socket && this.socket.readyState === this.socket.OPEN) {
       this.socket.send(JSON.stringify({ cmd, args }))
     } else {
@@ -55,7 +80,7 @@ export default class AudioWorker {
   /**
    * Handles the {@link WorkerInCmd} received from the main thread
    */
-  async onMainThreadCommand(ev) {
+  async onMainThreadCommand(ev: MessageEvent): Promise<void> {
     try {
       if (ev.origin !== '' || typeof ev.data !== 'object') {
         return
@@ -90,8 +115,10 @@ export default class AudioWorker {
           const listenData = ev.data
           this.sourcePort?.close()
           this.sourcePort = listenData.port
-          this.sourcePort.onmessage = (ev) => this.handleSourceAudioBuffer(ev.data)
-          this.sourcePort.start()
+          if (this.sourcePort) {
+            this.sourcePort.onmessage = (ev) => this.handleSourceAudioBuffer(ev.data)
+            this.sourcePort.start()
+          }
           this.postToMainThread(WorkerOutCmd.SOURCE_READY)
           break
         }
@@ -100,23 +127,25 @@ export default class AudioWorker {
           const sinkContext = this.sinkContextStorage.get(speakPortData.id)
           if (sinkContext) {
             const sinkPort = (sinkContext.port = speakPortData.port)
-            sinkPort.onmessage = (ev) => {
-              if (ev.data === false) {
-                // clean up sink context
-                this.sinkContextStorage.delete(speakPortData.id)
-                sinkPort.close()
-                this.postToMainThread(WorkerOutCmd.STOP_SINK, {
-                  id: speakPortData.id
-                })
+            if (sinkPort) {
+              sinkPort.onmessage = (ev: MessageEvent) => {
+                if (ev.data === false) {
+                  // clean up sink context
+                  this.sinkContextStorage.delete(speakPortData.id)
+                  sinkPort.close()
+                  this.postToMainThread(WorkerOutCmd.STOP_SINK, {
+                    id: speakPortData.id
+                  })
+                }
               }
-            }
-            sinkPort.start()
-            if (sinkContext.buffersCache.length) {
-              sinkPort.postMessage(sinkContext.buffersCache)
-            }
-            if (sinkContext.streamEnded) {
-              // notify streamCompletion
-              sinkPort.postMessage(false)
+              sinkPort.start()
+              if (sinkContext.buffersCache.length) {
+                sinkPort.postMessage(sinkContext.buffersCache)
+              }
+              if (sinkContext.streamEnded) {
+                // notify streamCompletion
+                sinkPort.postMessage(false)
+              }
             }
           } else {
             console.error('Unable to handle sink port, missing sink context')
@@ -146,9 +175,9 @@ export default class AudioWorker {
   }
 
   /**
-   * Handles the {@link WebSocketOutCmd} received from OpenHAB
+   * Handles the {@link WebSocketOutCmd} received from openHAB
    */
-  onWebSocketCommand(data) {
+  onWebSocketCommand(data: WebSocketOutMessage): void {
     try {
       const command = data.cmd
       switch (command) {
@@ -162,12 +191,12 @@ export default class AudioWorker {
           this.postToMainThread(WorkerOutCmd.STOP_LISTENING)
           break
         case WebSocketOutCmd.SINK_VOLUME: {
-          const sinkVolumeData = data
+          const sinkVolumeData = data.args
           this.postToMainThread(WorkerOutCmd.SINK_VOLUME, sinkVolumeData)
           break
         }
         case WebSocketOutCmd.SOURCE_VOLUME: {
-          const sourceVolumeData = data
+          const sourceVolumeData = data.args
           this.postToMainThread(WorkerOutCmd.SOURCE_VOLUME, sourceVolumeData)
           break
         }
@@ -191,7 +220,7 @@ export default class AudioWorker {
       this.reconnectTimeoutRef = setTimeout(this.connectWebSocket.bind(this), RECONNECT_MS)
     }
     let wsRef = this.socket
-    let secHeader = []
+    let secHeader: string[] = []
     if (this.token.length) {
       const encodedToken = btoa(this.token).replace(/=*$/, '')
       secHeader = [`org.openhab.ws.accessToken.base64.${encodedToken}`, 'org.openhab.ws.protocol.default']
@@ -200,7 +229,8 @@ export default class AudioWorker {
       wsRef = this.socket = new WebSocket(`${this.ohUrl}/ws/audio-pcm`, secHeader)
     } catch (error) {
       console.error(error)
-      return retry()
+      retry()
+      return wsRef as WebSocket
     }
     wsRef.addEventListener('open', async () => {
       this.sourcePacketHeader = undefined
@@ -243,7 +273,6 @@ export default class AudioWorker {
     })
     wsRef.addEventListener('close', () => {
       console.warn('websocket => audio-worker: connection closed')
-      this.configuring = false
       this.sourcePort?.close()
       this.sourcePacketHeader = undefined
       this.sourcePort = undefined
@@ -273,7 +302,7 @@ export default class AudioWorker {
    * Sends audio though a {@link WebSocket} after encode it as a int 16 lower-endian buffer.
    * Prepends the audio data with a header that contains the identity and format.
    */
-  handleSourceAudioBuffer(buffer) {
+  handleSourceAudioBuffer(buffer: Float32Array) {
     if (this.socket) {
       if (!this.sourcePacketHeader) {
         this.sourcePacketHeader = generateAudioPacketHeader(this.sampleRate, 16, 1)
@@ -297,7 +326,7 @@ export default class AudioWorker {
    *
    * Resamples the audio when needed from stream sample rate to the audio context sample rate.
    */
-  async handleSinkAudioBuffer(buffer) {
+  async handleSinkAudioBuffer(buffer: ArrayBuffer) {
     // First 2 bytes from each chunk contains the stream id
     const streamId = new Uint8Array(buffer.slice(0, 2)).join('-')
     // skip packet header
@@ -331,7 +360,7 @@ export default class AudioWorker {
         }
       }
     }
-    let decodeFn
+    let decodeFn: (buffer: ArrayBuffer) => Float32Array
     switch (sinkContext.bitDepth) {
       case 8:
         decodeFn = audioFromInt8Buffer
@@ -363,19 +392,19 @@ export default class AudioWorker {
 
 const AUDIO_PACKET_HEADER_LENGTH = 2 + 4 + 1 + 1
 
-function generateAudioPacketHeader(sampleRate, bitDepth, channels) {
+function generateAudioPacketHeader(sampleRate: number, bitDepth: number, channels: number): ArrayBuffer {
   const view = new DataView(new ArrayBuffer(AUDIO_PACKET_HEADER_LENGTH))
   let id = new Uint8Array(2)
   crypto.getRandomValues(id)
-  view.setUint8(0, id[0])
-  view.setUint8(1, id[1])
+  view.setUint8(0, id[0]!)
+  view.setUint8(1, id[1]!)
   view.setInt32(2, sampleRate, true)
   view.setUint8(6, bitDepth)
   view.setUint8(7, channels)
   return view.buffer
 }
 
-function parseAudioFormat(buffer) {
+function parseAudioFormat(buffer: ArrayBuffer): { sampleRate: number; bitDepth: number; channels: number } {
   const view = new DataView(buffer)
   const sampleRate = view.getInt32(2, true)
   const bitDepth = view.getUint8(6)
@@ -387,12 +416,12 @@ function parseAudioFormat(buffer) {
 /**
  * Converts a Float32Array into a int16 ArrayBuffer, the required by the server.
  */
-function audioToInt16Buffer(audioSamples) {
+function audioToInt16Buffer(audioSamples: Float32Array): ArrayBuffer {
   const bytesPerSample = 2
   const output = new DataView(new ArrayBuffer(audioSamples.length * bytesPerSample))
   let offset = 0
   for (let i = 0; i < audioSamples.length; i += 1, offset += bytesPerSample) {
-    const floatValue = Math.max(-1, Math.min(1, audioSamples[i]))
+    const floatValue = Math.max(-1, Math.min(1, audioSamples[i]!))
     output.setInt16(offset, floatValue < 0 ? floatValue * 0x8000 : floatValue * 0x7fff, true)
   }
   return output.buffer
@@ -401,13 +430,13 @@ function audioToInt16Buffer(audioSamples) {
 /**
  * Converts a int8 ArrayBuffer into a Float32Array of samples, the required by the browser.
  */
-function audioFromInt8Buffer(buffer) {
+function audioFromInt8Buffer(buffer: ArrayBuffer): Float32Array {
   const view = new DataView(buffer)
   const bytesPerSample = 1
   const nSamples = buffer.byteLength / bytesPerSample
   const audioSamples = new Float32Array(nSamples)
   for (let i = 0, offset = 0; i < nSamples; i += 1, offset += bytesPerSample) {
-    const intValue = view.getInt8(offset, true)
+    const intValue = view.getInt8(offset)
     const floatValue = intValue < 0 ? intValue / 0x80 : intValue / 0x7f
     audioSamples[i] = Math.max(-1, Math.min(1, floatValue))
   }
@@ -417,7 +446,7 @@ function audioFromInt8Buffer(buffer) {
 /**
  * Converts a int16 ArrayBuffer into a Float32Array of samples, the required by the browser.
  */
-function audioFromInt16Buffer(buffer) {
+function audioFromInt16Buffer(buffer: ArrayBuffer): Float32Array {
   const view = new DataView(buffer)
   const bytesPerSample = 2
   const nSamples = buffer.byteLength / bytesPerSample
@@ -436,7 +465,7 @@ function audioFromInt16Buffer(buffer) {
 /**
  * Converts a int32 ArrayBuffer into a Float32Array of samples, the required by the browser.
  */
-function audioFromInt32Buffer(buffer) {
+function audioFromInt32Buffer(buffer: ArrayBuffer): Float32Array {
   const view = new DataView(buffer)
   const bytesPerSample = 4
   const nSamples = buffer.byteLength / bytesPerSample
@@ -452,25 +481,23 @@ function audioFromInt32Buffer(buffer) {
   return audioSamples
 }
 
-class DataViewExtended extends DataView {
-  getUint24(byteOffset = 0, littleEndian = false) {
-    return littleEndian
-      ? this.getUint8(byteOffset) + (this.getUint16(byteOffset + 1, littleEndian) << 8)
-      : (this.getUint16(byteOffset, littleEndian) << 8) + this.getUint8(byteOffset + 2)
-  }
+function getUint24(view: DataView, byteOffset = 0, littleEndian = false): number {
+  return littleEndian
+    ? view.getUint8(byteOffset) + (view.getUint16(byteOffset + 1, littleEndian) << 8)
+    : (view.getUint16(byteOffset, littleEndian) << 8) + view.getUint8(byteOffset + 2)
+}
 
-  getInt24(byteOffset = 0, littleEndian = false) {
-    const valU24 = this.getUint24(byteOffset, littleEndian)
-    const isNeg = valU24 & 0x800000
-    return !isNeg ? valU24 : (0xffffff - valU24 + 1) * -1
-  }
+function getInt24(view: DataView, byteOffset = 0, littleEndian = false): number {
+  const valU24 = getUint24(view, byteOffset, littleEndian)
+  const isNeg = valU24 & 0x800000
+  return !isNeg ? valU24 : (0xffffff - valU24 + 1) * -1
 }
 
 /**
- * Converts a int24 ArrayBuffer into a Float32Array of samples, the required by the browser.
+ * Converts an int24 ArrayBuffer into a Float32Array of samples as required by the browser.
  */
-function audioFromInt24Buffer(buffer) {
-  const view = new DataViewExtended(buffer)
+function audioFromInt24Buffer(buffer: ArrayBuffer): Float32Array {
+  const view = new DataView(buffer)
   const bytesPerSample = 3
   const nSamples = buffer.byteLength / bytesPerSample
   if (buffer.byteLength % bytesPerSample) {
@@ -478,7 +505,7 @@ function audioFromInt24Buffer(buffer) {
   }
   const audioSamples = new Float32Array(nSamples)
   for (let i = 0, offset = 0; i < nSamples; i += 1, offset += bytesPerSample) {
-    const intValue = view.getInt24(offset, true)
+    const intValue = getInt24(view, offset, true)
     const floatValue = intValue < 0 ? intValue / 0x800000 : intValue / 0x7fffff
     audioSamples[i] = Math.max(-1, Math.min(1, floatValue))
   }
@@ -487,6 +514,6 @@ function audioFromInt24Buffer(buffer) {
 
 // bind the WebWorker context to an AudioWorker instance
 if (typeof postMessage !== 'undefined') {
-  const ioWorker = new AudioWorker(postMessage.bind(this))
+  const ioWorker = new AudioWorker(postMessage.bind(self) as MessageCallback)
   onmessage = ioWorker.onMainThreadCommand.bind(ioWorker)
 }
