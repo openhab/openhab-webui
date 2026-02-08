@@ -84,8 +84,8 @@ export class AudioSink {
    * Connects the internal nodes and triggers the {@link HTMLAudioElement} playback if this is the first active sink.
    */
   async start() {
-    AudioSink.connectedNodes++
     this.processorNode.connect(this.gainNode)
+    AudioSink.connectedNodes++
     if (!AudioSink.destination || !AudioSink.audioElement) {
       this.gainNode.connect(this.getAudioContext().destination)
     } else {

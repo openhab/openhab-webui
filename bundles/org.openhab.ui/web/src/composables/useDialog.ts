@@ -2,7 +2,7 @@ import { ref } from 'vue'
 import { getAccessToken } from '@/js/openhab/auth'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
-import { AudioMain } from '@/js/voice/audio-main'
+import type { AudioMain } from '@/js/voice/audio-main'
 
 /**
  * Composable for managing the voice dialog.

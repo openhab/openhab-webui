@@ -95,7 +95,7 @@ export class AudioMain {
       // }
       this.audioContext = new AudioContext(options)
 
-      this.events.onMessage?.(`Created audio context with sample rate ${this.audioContext.sampleRate}`, 'error')
+      this.events.onMessage?.(`Created audio context with sample rate ${this.audioContext.sampleRate}`, 'info')
     }
   }
 
@@ -180,7 +180,7 @@ export class AudioMain {
       }
       this.getAudioSource()
         .start(...processors)
-        .catch((err) => this.events.onMessage?.(err))
+        .catch((err) => this.events.onMessage?.(`Failed to start microphone streaming: ${err}`, 'error'))
     } else {
       this.events.onMessage?.("trying to start microphone streaming but it's already started!", 'error')
     }
@@ -341,8 +341,11 @@ export class AudioMain {
     const resumeAudioContext = () => audioContext.resume()
     const closeMsg = this.events.onMessage?.('Resuming audio context, click to continue', 'info')
     document.addEventListener('click', resumeAudioContext)
-    await this.getAudioSource().resume()
-    document.removeEventListener('click', resumeAudioContext)
+    try {
+      await this.getAudioSource().resume()
+    } finally {
+      document.removeEventListener('click', resumeAudioContext)
+    }
     closeMsg?.()
     document.removeEventListener('visibilitychange', this.handleSuspendOnHidden)
     if (speakerConfig.suspendOnHide) {
@@ -359,7 +362,7 @@ export class AudioMain {
       () =>
         this.getAudioSource()
           .resume()
-          .catch((err) => this.events.onMessage?.('Unable to resume audio source', err)),
+          .catch((err) => this.events.onMessage?.(`Unable to resume audio source: ${err}`, 'error')),
       5000
     )
   }

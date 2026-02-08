@@ -51,7 +51,6 @@ export default class AudioWorker {
   private socket?: WebSocket
   private reconnectTimeoutRef?: ReturnType<typeof setTimeout>
   private sourcePort?: MessagePort
-  private sourceProcessor?: AudioWorkletProcessor
   private sourcePacketHeader?: ArrayBuffer
 
   constructor(postMessage: MessageCallback) {
@@ -277,7 +276,6 @@ export default class AudioWorker {
       this.sourcePort?.close()
       this.sourcePacketHeader = undefined
       this.sourcePort = undefined
-      this.sourceProcessor = undefined
       this.socket = undefined
       this.postToMainThread(WorkerOutCmd.OFFLINE)
       if (this.reconnect) {
@@ -319,13 +317,13 @@ export default class AudioWorker {
   }
 
   /**
-   * Sends audio to the audio system, after encode it as a float 32 buffer.
-   * When it gets a new sink id (extracted from the buffer), it creates a sink context, request the required setup to the main thread.
+   * Sends audio to the audio system after encoding it as a float32 buffer.
+   * When it gets a new sink id (extracted from the buffer), it creates a sink context and requests the required setup from the main thread.
    *
-   * If there is message port in the correspondent {@link SinkContext} sends audio though it,
-   * else cache the audio into the sink context cache, so it can be send when the port is ready.
+   * If there is a message port in the corresponding {@link SinkContext}, it sends audio through it;
+   * otherwise it caches the audio in the sink context cache so it can be sent when the port is ready.
    *
-   * Resamples the audio when needed from stream sample rate to the audio context sample rate.
+   * Validates that the stream sample rate matches the audio context sample rate.
    */
   async handleSinkAudioBuffer(buffer: ArrayBuffer) {
     // First 2 bytes from each chunk contains the stream id
@@ -357,8 +355,8 @@ export default class AudioWorker {
         sinkContext.streamEnded = true
         if (sinkContext.port) {
           sinkContext.port.postMessage(false)
-          return
         }
+        return
       }
     }
     let decodeFn: (buffer: ArrayBuffer) => Float32Array
