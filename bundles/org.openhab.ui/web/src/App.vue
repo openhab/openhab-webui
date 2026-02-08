@@ -498,7 +498,8 @@ import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import auth from '@/components/auth-mixin'
 import connectionHealth from '@/components/connection-health-mixin'
 import sseEvents from '@/components/sse-events-mixin'
-import dialog from '@/components/dialog-mixin'
+
+import { useDialog } from '@/composables/useDialog'
 
 import { i18n, loadLocaleMessages } from '@/js/i18n'
 
@@ -516,7 +517,7 @@ import { useModelStore } from '@/js/stores/useModelStore'
 import { getRoot } from '@/api'
 
 export default {
-  mixins: [auth, connectionHealth, sseEvents, dialog],
+  mixins: [auth, connectionHealth, sseEvents],
   components: {
     EmptyStatePlaceholder,
     PanelRight,
@@ -525,6 +526,7 @@ export default {
   setup () {
     const { locale, mergeLocaleMessage : globalMergeLocaleMessage } = useI18n({ useScope: 'global'})
     const { t, mergeLocaleMessage : localMergeLocaleMessage } = useI18n({ useScope: 'local'})
+    const { startAudioWebSocket, triggerDialog } = useDialog()
     // required for notReachable error screen:
     loadLocaleMessages('common', globalMergeLocaleMessage)
     loadLocaleMessages('about', localMergeLocaleMessage)
@@ -534,7 +536,9 @@ export default {
       t,
       localMergeLocaleMessage,
       globalMergeLocaleMessage,
-      locale
+      locale,
+      startAudioWebSocket,
+      triggerDialog
     }
   },
   data () {
