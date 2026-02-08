@@ -499,6 +499,8 @@ import auth from '@/components/auth-mixin'
 import connectionHealth from '@/components/connection-health-mixin'
 import sseEvents from '@/components/sse-events-mixin'
 
+import { useDialog } from '@/composables/useDialog'
+
 import { i18n, loadLocaleMessages } from '@/js/i18n'
 
 import { useI18n } from 'vue-i18n'
@@ -524,6 +526,7 @@ export default {
   setup () {
     const { locale, mergeLocaleMessage : globalMergeLocaleMessage } = useI18n({ useScope: 'global'})
     const { t, mergeLocaleMessage : localMergeLocaleMessage } = useI18n({ useScope: 'local'})
+    const { startAudioWebSocket, triggerDialog } = useDialog()
     // required for notReachable error screen:
     loadLocaleMessages('common', globalMergeLocaleMessage)
     loadLocaleMessages('about', localMergeLocaleMessage)
@@ -533,7 +536,9 @@ export default {
       t,
       localMergeLocaleMessage,
       globalMergeLocaleMessage,
-      locale
+      locale,
+      startAudioWebSocket,
+      triggerDialog
     }
   },
   data () {
@@ -1093,11 +1098,16 @@ export default {
         this.$f7dim.height = f7.height
       })
 
+      f7.on('triggerDialog', () => {
+        this.triggerDialog()
+      })
+
       if (window) {
         window.addEventListener('keydown', this.keyDown)
       }
 
       this.startEventSource()
+      this.startAudioWebSocket()
     })
   }
 }

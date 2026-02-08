@@ -8,7 +8,7 @@ type StoredDarkModeType = 'auto' | 'dark' | 'light'
 
 export const useUIOptionsStore = defineStore('uiOptions', () => {
   // States
-  // shared with basicUI
+  // shared with Basic UI
   const _storedDarkMode = localStorage.getItem('openhab.ui:theme.dark')
   const storedDarkMode = ref<StoredDarkModeType>(
     ['auto', 'dark', 'light'].includes(_storedDarkMode as any) ? (_storedDarkMode as StoredDarkModeType) : 'auto'
@@ -38,7 +38,7 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
 
   const hideChatInput = ref<boolean>(localStorage.getItem('openhab.ui:theme.home.hidechatinput') === 'true')
 
-  // shared with basicUI
+  // shared with Basic UI
   const webAudio = ref<boolean>(localStorage.getItem('openhab.ui:webaudio.enable') === 'true')
 
   const visibleBreakpointDisabled = ref<boolean>(localStorage.getItem('openhab.ui:panel.visibleBreakpointDisabled') === 'true')
@@ -53,6 +53,13 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
   const modelPickerShowNonSemantic = ref<boolean>(localStorage.getItem('openhab.ui:modelPicker.showNonSemantic') === 'true')
 
   const sitemapShowItemName = ref<boolean>(localStorage.getItem('openhab.ui:sitemap.showItemName') === 'true')
+
+  const dialogEnabled = ref<boolean>(localStorage.getItem('openhab.ui:dialog.enabled') === 'true')
+  const dialogIdentifier = ref<string>(localStorage.getItem('openhab.ui:dialog.id') || '')
+  const dialogListeningItem = ref<string>(localStorage.getItem('openhab.ui:dialog.listeningItem') || '')
+  const dialogLocationItem = ref<string>(localStorage.getItem('openhab.ui:dialog.locationItem') || '')
+  const dialogConnectOnWindowEvent = ref<boolean>(localStorage.getItem('openhab.ui:dialog.connectOnWindowEvent') === 'true')
+  const dialogTriggerOnConnect = ref<boolean>(localStorage.getItem('openhab.ui:dialog.triggerOnLaunch') === 'true')
 
   const darkMode = computed({
     get: (): 'dark' | 'light' => {
@@ -155,6 +162,36 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     localStorage.setItem('openhab.ui:sitemap.showItemName', newValue?.toString())
   })
 
+  watch(dialogEnabled, (newValue) => {
+    localStorage.setItem('openhab.ui:dialog.enabled', newValue ? 'true' : 'false')
+    setTimeout(() => {
+      location.reload()
+    }, 50)
+  })
+
+  watch(dialogIdentifier, (newValue) => {
+    localStorage.setItem('openhab.ui:dialog.id', newValue)
+  })
+  if (!dialogIdentifier.value.length) {
+    dialogIdentifier.value = `ui-${Math.round(Math.random() * 100)}-${Math.round(Math.random() * 100)}`
+  }
+
+  watch(dialogListeningItem, (newValue) => {
+    localStorage.setItem('openhab.ui:dialog.listeningItem', newValue)
+  })
+
+  watch(dialogLocationItem, (newValue) => {
+    localStorage.setItem('openhab.ui:dialog.locationItem', newValue)
+  })
+
+  watch(dialogConnectOnWindowEvent, (newValue) => {
+    localStorage.setItem('openhab.ui:dialog.connectOnWindowEvent', newValue ? 'true' : 'false')
+  })
+
+  watch(dialogTriggerOnConnect, (newValue) => {
+    localStorage.setItem('openhab.ui:dialog.triggerOnLaunch', newValue ? 'true' : 'false')
+  })
+
   function updateClasses() {
     if (darkMode.value === 'dark') {
       Dom7('html').addClass('dark')
@@ -207,6 +244,12 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     modelPickerShowItemTags,
     modelPickerShowNonSemantic,
     sitemapShowItemName,
+    dialogEnabled,
+    dialogIdentifier,
+    dialogListeningItem,
+    dialogLocationItem,
+    dialogConnectOnWindowEvent,
+    dialogTriggerOnConnect,
 
     updateClasses,
     themeOptions

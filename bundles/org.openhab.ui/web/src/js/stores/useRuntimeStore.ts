@@ -24,6 +24,7 @@ export const useRuntimeStore = defineStore('runtime', () => {
   const docSrcUrl = ref<string | null>(null)
   const showDeveloperDock = ref<boolean>(false)
   const pagePath = ref<string | null>(null)
+  const voiceIcon = ref<string | null>(null)
   const modelExpanded = ref<boolean>(false)
   const modelPickerExpanded = ref<boolean>(false)
   const modelSelectedItem = ref<object | null>(null)
@@ -64,6 +65,7 @@ export const useRuntimeStore = defineStore('runtime', () => {
     docSrcUrl,
     showDeveloperDock,
     pagePath,
+    voiceIcon,
     modelExpanded,
     modelPickerExpanded,
     modelSelectedItem,

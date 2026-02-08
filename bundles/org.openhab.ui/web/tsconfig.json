@@ -15,7 +15,8 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
-    }
+    },
+    "types": ["audioworklet"]
   },
   "include": [
     "env.d.ts",
