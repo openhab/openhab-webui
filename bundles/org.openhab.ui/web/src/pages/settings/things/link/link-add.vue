@@ -392,6 +392,7 @@ export default {
           this.selectedThingChannelTypes = data2[1]
           this.ready = true
         }).catch((err) => {
+          console.error('Error loading thing type or channel types', err)
           f7.dialog.alert('Error loading thing type or channel types: ' + err)
           this.selectedThingId = ''
           this.ready = true

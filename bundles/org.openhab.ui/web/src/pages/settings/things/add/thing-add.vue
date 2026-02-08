@@ -129,6 +129,7 @@ export default {
           this.ready = true
         })
       }).catch((err) => {
+        console.error('Error loading thing type', err)
         f7.dialog.alert('Error loading thing type: ' + err)
         this.f7router.back()
       })
