@@ -54,6 +54,10 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
 
   const sitemapShowItemName = ref<boolean>(localStorage.getItem('openhab.ui:sitemap.showItemName') === 'true')
 
+  const setupWizardShort = ref<boolean>(localStorage.getItem('openhab.ui:setupWizard.short') === 'true')
+  const _storedWizardStepsDone = localStorage.getItem('openhab.ui:setupWizard.stepsDone')
+  const setupWizardStepsDone = ref<Record<string, boolean>>(_storedWizardStepsDone ? JSON.parse(_storedWizardStepsDone) : {})
+
   const darkMode = computed({
     get: (): 'dark' | 'light' => {
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions
@@ -155,6 +159,17 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     localStorage.setItem('openhab.ui:sitemap.showItemName', newValue?.toString())
   })
 
+  watch(setupWizardShort, (newValue) => {
+    localStorage.setItem('openhab.ui:setupWizard.short', newValue?.toString())
+  })
+  watch(
+    setupWizardStepsDone,
+    (newValue) => {
+      localStorage.setItem('openhab.ui:setupWizard.stepsDone', JSON.stringify(newValue || {}))
+    },
+    { deep: true }
+  )
+
   function updateClasses() {
     if (darkMode.value === 'dark') {
       Dom7('html').addClass('dark')
@@ -207,6 +222,8 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     modelPickerShowItemTags,
     modelPickerShowNonSemantic,
     sitemapShowItemName,
+    setupWizardShort,
+    setupWizardStepsDone,
 
     updateClasses,
     themeOptions
