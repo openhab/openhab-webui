@@ -90,6 +90,7 @@
     </vue-draggable-resizable>
     <div
       v-else
+      ref="root"
       :style="{
         left: x + 'px',
         top: y + 'px',
@@ -98,6 +99,7 @@
       }"
       class="oh-canvas-item oh-canvas-item-runmode">
       <generic-widget-component
+        v-if="ready"
         :context="childContext(context.component.slots.default[0])"
         class="oh-canvas-item-content"
         :class="{
@@ -218,7 +220,10 @@ export default {
       styled: true,
       dragging: false,
       resizing: false,
-      active: false
+      active: false,
+      // run mode only:
+      ready: false,
+      resizeObserver: null
     }
   },
   created () {
@@ -228,6 +233,36 @@ export default {
     this.h = this.config.h ?? 100
     this.shadow = !this.config.noCanvasShadow
     this.styled = !this.config.notStyled
+  },
+  mounted () {
+    // In Edit Mode: No need to wait for the root element to have actual dimensions
+    if (this.context.editmode) {
+      this.ready = true
+      return
+    }
+
+    // In Run Mode: Wait for the element to have actual dimensions
+    this.resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        // Once width/height is non-zero, the layout is stable enough for f7-swiper
+        if (entry.contentRect.width > 0 && entry.contentRect.height > 0) {
+          this.ready = true
+          this.resizeObserver.disconnect()
+        }
+      }
+    })
+
+    // Start observing the root element of this component
+    if (this.$refs.root) {
+      this.resizeObserver.observe(this.$refs.root)
+    } else {
+      this.ready = true
+    }
+  },
+  beforeUnmount () {
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect()
+    }
   },
   computed: {
     autosize () {
