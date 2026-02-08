@@ -86,7 +86,7 @@ export class AudioMain {
   /**
    * Initializes the audio context used for the sink and source.
    */
-  startVoiceAudioContext() {
+  private startVoiceAudioContext() {
     if (!this.audioContext) {
       const options: AudioContextOptions = {}
       // setting a custom sample rate only seems to work correctly in Chrome
@@ -104,7 +104,7 @@ export class AudioMain {
    *
    * @returns the shared audio context.
    */
-  getVoiceAudioContext() {
+  private getVoiceAudioContext() {
     if (!this.audioContext) {
       throw new Error('AudioContext not initialized')
     }
@@ -116,7 +116,7 @@ export class AudioMain {
    *
    * @returns the audio source implementation.
    */
-  getAudioSource() {
+  private getAudioSource() {
     if (!this.audioSource) {
       throw new Error('AudioSource not initialized')
     }
@@ -126,7 +126,7 @@ export class AudioMain {
   /**
    * Returns an audio processor node connected to the audio worker, so the audio gets converted and streamed to the server.
    */
-  async getWorkerAudioProcessor() {
+  private async getWorkerAudioProcessor() {
     const _webSocketWorkletNode = this.getAudioSource().createWorkletNode()
     const portPromise = new Promise<void>((resolve) => (this.resolveSourcePort = resolve))
     const command = {
@@ -138,7 +138,7 @@ export class AudioMain {
     return _webSocketWorkletNode
   }
 
-  postToWorker(cmd: WorkerInCmd, args: Record<string, any> = {}) {
+  private postToWorker(cmd: WorkerInCmd, args: Record<string, any> = {}) {
     try {
       if (this.worker) {
         this.worker.postMessage({ cmd, ...args })
@@ -156,11 +156,11 @@ export class AudioMain {
     }
   }
 
-  resetConnection(id: string) {
+  private resetConnection(id: string) {
     this.postToWorker(WorkerInCmd.RESET_CONNECTION, { id })
   }
 
-  setAuthToken(token: string | null) {
+  private setAuthToken(token: string | null) {
     if (token && this.worker) {
       this.postToWorker(WorkerInCmd.TOKEN_RENEW, { token })
     }
@@ -169,7 +169,7 @@ export class AudioMain {
   /**
    * Connect the worker input audio node to the audio context media stream output.
    */
-  async startMicStreaming() {
+  private async startMicStreaming() {
     if (!this.micStreaming) {
       this.micStreaming = true
       this.events.onMessage?.('Starting microphone audio streaming')
@@ -189,7 +189,7 @@ export class AudioMain {
   /**
    * Disconnect the worker input audio node from the audio context media stream output.
    */
-  stopMicStreaming() {
+  private stopMicStreaming() {
     if (this.micStreaming) {
       this.micStreaming = false
       // stop audio node
@@ -200,19 +200,12 @@ export class AudioMain {
   }
 
   /**
-   * Cleanup function, tries to dispose worker and input audio nodes.
-   */
-  async killMicProcessors() {
-    this.audioSource?.stop()
-  }
-
-  /**
    * Handle messages from the websocket.
    *
    * @param command the command name.
    * @param data the command data.
    */
-  handleWorkerMessage(command: WorkerOutCmd, data: WorkerOutMessage) {
+  private handleWorkerMessage(command: WorkerOutCmd, data: WorkerOutMessage) {
     switch (command) {
       case WorkerOutCmd.SOURCE_READY:
         this.resolveSourcePort?.()
@@ -353,10 +346,14 @@ export class AudioMain {
     }
     await AudioSink.configure(audioContext, speakerConfig.useAudioElement)
     this.sinkVolume = speakerConfig.sinkVolume ?? this.sinkVolume
+    if (speakerConfig.sourceVolume != null) {
+      this.sourceVolume = speakerConfig.sourceVolume
+      this.audioSource?.setVolume(this.sourceVolume)
+    }
     this.events.onMessage?.('Click the widget to trigger the dialog', 'info', 5000)
   }
 
-  startSourceCheckInterval() {
+  private startSourceCheckInterval() {
     this.stopSourceCheckInterval()
     this.sourceCheckIntervalRef = setInterval(
       () =>
@@ -367,7 +364,7 @@ export class AudioMain {
     )
   }
 
-  stopSourceCheckInterval() {
+  private stopSourceCheckInterval() {
     if (this.sourceCheckIntervalRef) {
       clearInterval(this.sourceCheckIntervalRef)
       this.sourceCheckIntervalRef = undefined
