@@ -812,6 +812,9 @@ export default {
         }).then(() => {
         // finished with loading
           this.ready = true
+          performance.mark('loadDataEnd')
+          const measure = performance.measure('loadData', 'loadDataStart', 'loadDataEnd')
+          console.info(`Init data loading: ${measure.duration.toFixed(2)} ms`)
           return Promise.resolve()
         })
     },
@@ -1003,7 +1006,6 @@ export default {
       this.$f7dim.width = f7.width
       this.$f7dim.height = f7.height
 
-      performance.mark('f7ready')
       this.updateThemeOptions()
 
       this.tryExchangeAuthorizationCode().then((user) => {
