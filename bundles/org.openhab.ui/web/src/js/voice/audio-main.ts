@@ -167,8 +167,7 @@ export class AudioMain {
   }
 
   /**
-   * Connect the worker input audio node to the audio context media stream output,
-   * it keeps the keyword spotter input audio node connected if exists.
+   * Connect the worker input audio node to the audio context media stream output.
    */
   async startMicStreaming() {
     if (!this.micStreaming) {
@@ -188,8 +187,7 @@ export class AudioMain {
   }
 
   /**
-   * Disconnect the worker input audio node from the audio context media stream output,
-   * it keeps the keyword spotter input audio node connected if exists.
+   * Disconnect the worker input audio node from the audio context media stream output.
    */
   stopMicStreaming() {
     if (this.micStreaming) {
@@ -202,7 +200,7 @@ export class AudioMain {
   }
 
   /**
-   * Clean up function, tries to dispose worker and keyword spotter input audio nodes.
+   * Cleanup function, tries to dispose worker and input audio nodes.
    */
   async killMicProcessors() {
     this.audioSource?.stop()
@@ -352,7 +350,7 @@ export class AudioMain {
     }
     await AudioSink.configure(audioContext, speakerConfig.useAudioElement)
     this.sinkVolume = speakerConfig.sinkVolume ?? this.sinkVolume
-    this.events.onMessage?.('No keyword spotter, click the widget to trigger the dialog', 'info', 5000)
+    this.events.onMessage?.('Click the widget to trigger the dialog', 'info', 5000)
   }
 
   startSourceCheckInterval() {

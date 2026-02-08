@@ -105,7 +105,7 @@
       </f7-col>
     </f7-row>
 
-    <f7-row v-if="showDialogOptions">
+    <f7-row v-if="showDialogOptions" class="dialog-options">
       <f7-col>
         <f7-block-title>{{ t('about.dialog') }}</f7-block-title>
         <f7-list>
@@ -150,7 +150,13 @@
   .home-navbar-selection
     .button
       width auto
+  .dialog-options
+    .title-fixed .item-title
+      width 200%
+    .input-right input
+      text-align right
 </style>
+
 <script>
 import { mapStores, mapWritableState } from 'pinia'
 
@@ -293,8 +299,4 @@ export default {
 .nav-bars-picker-fill .demo-navbar:before,
 .nav-bars-picker-fill .demo-navbar:after
   background #fff
-.title-fixed .item-title
-  width: 200%
-.input-right input
-  text-align: right
 </style>
