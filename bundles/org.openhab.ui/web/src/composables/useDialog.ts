@@ -57,8 +57,12 @@ export function useDialog() {
       updatePageIcon(false, false, false)
       let forceTrigger = dialogTriggerOnConnect
       audioMain.value = new AudioMain(ohURL, getAccessToken, {
-        onMessage: (...args) => {
-          console.debug('Voice: ' + args[0])
+        onMessage: (message, level) => {
+          if (level === 'error') {
+            console.error(`Voice: ${message}`)
+          } else {
+            console.log(`Voice: ${message}`)
+          }
         },
         onRunningChange(io) {
           updatePageIcon(io.isRunning(), io.isListening(), io.isSpeaking())
