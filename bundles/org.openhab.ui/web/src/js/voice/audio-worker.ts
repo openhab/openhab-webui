@@ -141,6 +141,7 @@ export default class AudioWorker {
               sinkPort.start()
               if (sinkContext.buffersCache.length) {
                 sinkPort.postMessage(sinkContext.buffersCache)
+                sinkContext.buffersCache = []
               }
               if (sinkContext.streamEnded) {
                 // notify streamCompletion
