@@ -115,7 +115,7 @@
                 :badge-color="(thing.firmwareStatus.status) === 'UPDATE_EXECUTABLE' ? 'green' : 'gray'">
                 <f7-accordion-content>
                   <f7-list>
-                    <f7-list-item class="thing-property" title="Status" :after="thing.firmwareStatus.status" />
+                    <f7-list-item class="thing-property" title="Status" :after="firmwareStatusText" />
                     <f7-list-item class="thing-property" title="Current Version" :after="thing.properties.firmwareVersion" />
                     <f7-list-item
                       v-for="firmware in firmwares"
@@ -125,7 +125,23 @@
                       :title="firmware.version"
                       :after="firmware.description"
                       :footer="firmware.changelog">
-                      <f7-icon v-if="firmware.version === thing.properties.firmwareVersion" f7="checkmark" color="green" />
+                      <div class="item-after">
+                        <f7-badge
+                          :color="firmware.version === thing.properties.firmwareVersion ? 'gray' : (firmware.version > thing.properties.firmwareVersion ? 'green' : 'red')">
+                          {{ compareVersions(firmware.version, thing.properties.firmwareVersion) === 0 ? 'Current Version' :
+                            (compareVersions(firmware.version, thing.properties.firmwareVersion) > 0 ? 'Upgrade' : 'Downgrade') }}
+                          <f7-link
+                            v-if="compareVersions(firmware.version, thing.properties.firmwareVersion) !== 0 && !firmwareUpdating"
+                            icon-color="white"
+                            :tooltip="compareVersions(firmware.version, thing.properties.firmwareVersion) === 1 ? 'Start Upgrade' : 'Start Downgrade'"
+                            style="margin-left: 4px;"
+                            icon-ios="f7:play_fill"
+                            icon-md="f7:play_fill"
+                            icon-aurora="f7:play_fill"
+                            icon-size="16"
+                            @click="startFirmwareUpdate(firmware)" />
+                        </f7-badge>
+                      </div>
                     </f7-list-item>
                   </f7-list>
                 </f7-accordion-content>
@@ -426,6 +442,8 @@ export default {
       codeDirty: false,
       currentTab: 'thing',
       showAdvancedThingActions: false,
+      transferProgress: 0,
+      transferStep: "",
       /**
        * @deprecated
        */
@@ -485,6 +503,38 @@ export default {
     filteredThingActions () {
       if (this.showAdvancedThingActions) return this.thingActions ?? []
       return this.thingActions?.filter((a) => a.visibility !== 'EXPERT') ?? []
+    },
+    firmwareStatusText() {
+      if (this.firmwareUpdating) {
+        switch (this.transferStep) {
+          case "WAITING":
+            return "Waiting to start update"
+          case "DOWNLOADING":
+            return "Downloading firmware from provider"
+          case "TRANSFERRING":
+            return "Transfer in progress " + this.transferProgress + "% complete"
+          case "UPDATING":
+            return "Updating firmware"
+          case "REBOOTING":
+            return "Rebooting device"
+          default:
+            return "Unknown - " + this.transferStep
+        }
+      }
+
+      switch (this.thing.firmwareStatus.status) {
+        case "UP_TO_DATE":
+          return "Up to date"
+        case "UPDATE_AVAILABLE":
+          return "Update Available"
+        case "UPDATE_EXECUTABLE":
+          return "Update Executable"
+        default:
+          return "Unknown"
+      }
+    },
+    firmwareUpdating() {
+      return this.thing.statusInfo.status === "OFFLINE" && this.thing.statusInfo.statusDetail === "FIRMWARE_UPDATING";
     },
     ...mapState(useThingEditStore, ['configDirty', 'thingDirty', 'thing', 'thingType', 'channelTypes', 'configDescriptions', 'configStatusInfo', 'thingActions', 'firmwares', 'editable', 'isExtensible', 'hasLinkedItems'])
   },
@@ -881,14 +931,53 @@ export default {
                 console.log('Thing updated according to SSE, reloading')
                 this.load(true)
                 break
+              case 'firmware':
+                console.log('event firmware')
+                switch (topicParts[4]) {
+                  case 'status':
+                    this.load(true)
+                    break
+                  case 'update':
+                    switch (topicParts[5]) {
+                      case 'progress':
+                        let firmwareProgress = JSON.parse(event.payload)
+                        this.transferStep = firmwareProgress.progressStep
+                        this.transferProgress = firmwareProgress.progress
+                        break
+                      case 'result':
+                        let firmwareResult = JSON.parse(event.payload)
+                        let resultMessage = "Unknown firmware result"
+                        switch (firmwareResult.result) {
+                          case "SUCCESS":
+                            resultMessage = "Firmware update completed successfully"
+                            break
+                          case "CANCELED":
+                            resultMessage = "Firmware update cancelled"
+                            break
+                          case "ERROR":
+                            resultMessage = "Error during firmware update: " + firmwareResult.errorMessage
+                            break
+                          default:
+                            break
+                        }
+                        f7.toast.create({
+                          text: resultMessage,
+                          destroyOnClose: true,
+                          closeTimeout: 2000
+                        }).open()
+                        this.load(true)
+                        break
+                    }
+                    break;
+                }
+                break
+              case 'links':
+                // if (topicParts[2].indexOf(this.thingId) < 0) return
+                // console.log('Links updated according to SSE, reloading')
+                // this.ready = false
+                // this.load()
+                break
             }
-            break
-          case 'links':
-            // if (topicParts[2].indexOf(this.thingId) < 0) return
-            // console.log('Links updated according to SSE, reloading')
-            // this.ready = false
-            // this.load()
-            break
         }
       })
     },
@@ -1028,6 +1117,44 @@ export default {
       if (isTitleTruncated || isValueTruncated) {
         this.showFullProperty(key, value)
       }
+    },
+
+    startFirmwareUpdate(firmware) {
+      const version = firmware && firmware.version ? firmware.version : ''
+      const message = version
+        ? `Are you sure you want to start the firmware update to version "${version}"?\n\n` +
+        'This operation may take several minutes and should not be interrupted.'
+        : 'Are you sure you want to start the firmware update?\n\n' +
+        'This operation may take several minutes and should not be interrupted.'
+
+      f7.dialog.confirm(message, 'Confirm Firmware Update', () => {
+        api.updateThingFirmware({ thingUID: this.thingId, firmwareVersion: firmware.version }).then(() => {
+          f7.toast.create({
+            text: 'Firmware update started',
+            destroyOnClose: true,
+            closeTimeout: 2000
+          }).open()
+        }).catch((err) => {
+          f7.toast.create({
+            text: 'Error starting firmware update: ' + err,
+            destroyOnClose: true,
+            closeTimeout: 2000
+          }).open()
+        })
+      })
+    },
+
+    compareVersions(v1, v2) {
+      const a = (v1 || '').split('.').map((p) => Number(p) || 0)
+      const b = (v2 || '').split('.').map((p) => Number(p) || 0)
+      const len = Math.max(a.length, b.length)
+      for (let i = 0; i < len; i++) {
+        const na = a[i] ?? 0
+        const nb = b[i] ?? 0
+        if (na > nb) return 1
+        if (na < nb) return -1
+      }
+      return 0
     }
   },
   mounted () {

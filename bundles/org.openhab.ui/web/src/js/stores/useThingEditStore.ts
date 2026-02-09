@@ -23,7 +23,7 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
   const configDescriptions = ref<api.ConfigDescription | null>(null)
   const thingActions = ref<api.ThingAction[] | null>(null)
   const configStatusInfo = ref<api.ConfigStatusMessage[] | null>(null)
-  const firmwares = ref<api.FirmwareStatus | null>(null)
+  const firmwares = ref<api.Firmware[] | null>(null)
 
   // watch
   watch(
@@ -91,7 +91,7 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
           api.getChannelTypes({ prefixes: 'system,' + thing.value.thingTypeUID.split(':')[0] }),
           api.getAvailableActionsForThing({ thingUID }),
           api.getConfigDescriptionByUri({ uri: 'thing:' + thingUID }),
-          api.getThingFirmwareStatus({ thingUID }),
+          api.getAvailableFirmwaresForThing({ thingUID }),
           api.getThingConfigStatus({ thingUID })
         ]).then(([thingTypeResult, channelTypesResult, actionsResult, configDescResult, firmwareResult, configStatusResult]) => {
           if (thingTypeResult.status === 'fulfilled') {
@@ -143,7 +143,7 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
           }
 
           if (firmwareResult.status === 'fulfilled') {
-            firmwares.value = firmwareResult.value && Object.keys(firmwareResult.value).length > 0 ? firmwareResult.value : null
+            firmwares.value = firmwareResult.value && Object.keys(firmwareResult.value).length > 0 ? firmwareResult.value : []
           } else {
             firmwares.value = null
             console.error(`Cannot load '${thingUID}' firmwares`, firmwareResult.reason)
