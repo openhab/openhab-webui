@@ -524,13 +524,13 @@ export default {
 
       switch (this.thing.firmwareStatus.status) {
         case "UP_TO_DATE":
-          return "Up to date";
+          return "Up to date"
         case "UPDATE_AVAILABLE":
-          return "Update Available";
+          return "Update Available"
         case "UPDATE_EXECUTABLE":
-          return "Update Executable";
+          return "Update Executable"
         default:
-          return "Unknown";
+          return "Unknown"
       }
     },
     firmwareUpdating() {
