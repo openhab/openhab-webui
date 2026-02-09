@@ -12,7 +12,7 @@
     </template>
     <ul v-if="context.component.slots && context.component.slots.default">
       <template v-for="(slotComponent, idx) in context.component.slots.default" :key="idx">
-        <div :style="context.editmode ? { display: 'flex', 'align-items': 'center' } : { display: 'contents' }">
+        <div v-if="context.editmode" style="display: flex; align-items: center;">
           <f7-menu v-if="context.editmode">
             <f7-menu-item icon-f7="list_bullet" class="margin-left configure-layout-menu" dropdown>
               <f7-menu-dropdown>
@@ -57,8 +57,9 @@
               </f7-menu-dropdown>
             </f7-menu-item>
           </f7-menu>
-          <generic-widget-component :context="childContext(slotComponent)" :class="{ 'list-item': context.editmode }" />
+          <generic-widget-component :context="childContext(slotComponent)" class="list-item" />
         </div>
+        <generic-widget-component v-else :context="childContext(slotComponent)" />
       </template>
     </ul>
   </f7-list>
