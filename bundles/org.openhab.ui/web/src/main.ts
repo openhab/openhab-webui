@@ -72,6 +72,7 @@ app.use(VueClipboard, {
 })
 
 // Register key components prior to mounting the app to ensure they are available to eliminate warnings
+app.component('OhNavContent', OhNavContent)
 app.component('DeveloperDockIcon', DeveloperDockIcon)
 
 // statically import all widget components to ensure they are registered globally
