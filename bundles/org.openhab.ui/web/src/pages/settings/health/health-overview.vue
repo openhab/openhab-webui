@@ -67,61 +67,53 @@
   </f7-page>
 </template>
 
-<script>
+<script setup lang="ts">
+import { computed, ref, watch } from 'vue'
+import type { Router } from 'framework7'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+import * as api from '@/api'
 
-export default {
-  props: {
-    f7router: Object
-  },
-  data () {
-    return {
-      objectsSubtitles: {
-        orphanLinks: 'Items pointing to non-existent thing channels or vica versa',
-        semanticsProblems: 'Issues with semantic model configuration',
-        persistenceProblems: 'Persistence configurations missing items or strategies'
-      },
-      orphanLinksCount: 0,
-      semanticsProblemCount: 0,
-      persistenceProblemsCount: 0,
+defineProps<{
+  f7router: Router.Router
+}>()
 
-      expandedTypes: {
-        systemSettings: this.$f7dim.width >= 1450
-      }
-    }
-  },
-  computed: {
-    apiEndpoints () {
-      return useRuntimeStore().apiEndpoints
-    }
-  },
-  watch: {
-    apiEndpoints () {
-      this.loadCounters()
-    }
-  },
-  methods: {
-    loadCounters () {
-      if (!this.apiEndpoints) return
-      if (useRuntimeStore().apiEndpoint('links')) {
-        this.$oh.api.get('/rest/links/orphans').then((data) => {
-          this.orphanLinksCount = data.length || 0
-        })
-      }
-      if (useRuntimeStore().apiEndpoint('items')) {
-        this.$oh.api.get('/rest/items/semantics/health').then((data) => {
-          this.semanticsProblemCount = data.length || 0
-        })
-      }
-      if (useRuntimeStore().apiEndpoint('persistence')) {
-        this.$oh.api.get('/rest/persistence/health').then((data) => {
-          this.persistenceProblemsCount = data.length || 0
-        })
-      }
-    },
-    onPageAfterIn () {
-      this.loadCounters()
-    }
+const runtimeStore = useRuntimeStore()
+const apiEndpoints = computed(() => runtimeStore.apiEndpoints)
+
+const objectsSubtitles = {
+  orphanLinks: 'Items pointing to non-existent thing channels or vica versa',
+  semanticsProblems: 'Issues with semantic model configuration',
+  persistenceProblems: 'Persistence configurations missing items or strategies'
+}
+
+const orphanLinksCount = ref(0)
+const semanticsProblemCount = ref(0)
+const persistenceProblemsCount = ref(0)
+
+const loadCounters = async () => {
+  if (!apiEndpoints.value) return
+
+  if (runtimeStore.apiEndpoint('links')) {
+    const data = await api.getOrphanLinks()
+    orphanLinksCount.value = data?.length ?? 0
   }
+
+  if (runtimeStore.apiEndpoint('items')) {
+    const data = await api.getSemanticsHealth()
+    semanticsProblemCount.value = data?.length ?? 0
+  }
+
+  if (runtimeStore.apiEndpoint('persistence')) {
+    const data = await api.getPersistenceHealth()
+    persistenceProblemsCount.value = data?.length ?? 0
+  }
+}
+
+watch(apiEndpoints, () => {
+  loadCounters()
+}, { immediate: true })
+
+const onPageAfterIn = () => {
+  loadCounters()
 }
 </script>
