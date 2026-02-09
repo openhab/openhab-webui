@@ -1,6 +1,6 @@
 <template>
   <div class="network-fit">
-    <chart :option="finalOptions" :theme="uiOptionsStore.getDarkMode() === 'dark' ? 'dark' : undefined" autoresize />
+    <chart :option="finalOptions" :theme="uiOptionsStore.darkMode === 'dark' ? 'dark' : undefined" autoresize />
   </div>
 </template>
 
@@ -52,7 +52,7 @@ export default {
           x: 10,
           y: 10
         },
-        backgroundColor: this.uiOptionsStore.getDarkMode() === 'dark' ? '#121212' : undefined,
+        backgroundColor: this.uiOptionsStore.darkMode === 'dark' ? '#121212' : undefined,
         series: this.series
       }
     },
