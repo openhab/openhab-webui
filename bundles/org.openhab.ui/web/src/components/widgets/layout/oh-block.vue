@@ -50,8 +50,6 @@
 <script setup lang="ts">
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import type { WidgetContext } from '@/components/widgets/types'
-
-// @ts-expect-error - assets are not typee
 import { OhBlockDescription } from '@/assets/definitions/widgets/layout'
 
 defineOptions({
