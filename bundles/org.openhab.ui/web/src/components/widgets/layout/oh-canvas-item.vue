@@ -191,24 +191,28 @@ import VueDraggableResizable from 'vue-draggable-resizable'
 </script>
 
 <script>
-import mixin from '../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhPlaceholderWidget from './oh-placeholder-widget.vue'
 import { OhCanvasItemDefinition } from '@/assets/definitions/widgets/layout'
 
 export default {
-  mixins: [mixin],
   widget: OhCanvasItemDefinition,
   components: {
     VueDraggableResizable,
     OhPlaceholderWidget
   },
   props: {
+    context: Object,
     gridPitch: Number,
     gridEnable: Boolean,
     id: String,
     preventDeactivation: Boolean
   },
   emits: ['oci-selected', 'oci-deselected', 'oci-drag-stop', 'oci-dragged'],
+  setup (props) {
+    const { config, childContext } = useWidgetContext(props.context)
+    return { config, childContext }
+  },
   data () {
     return {
       x: 0,

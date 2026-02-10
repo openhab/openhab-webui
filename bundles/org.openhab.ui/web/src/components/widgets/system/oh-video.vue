@@ -26,18 +26,22 @@
 import { defineAsyncComponent } from 'vue'
 import { f7 } from 'framework7-vue'
 
-import mixin from '../widget-mixin'
 import { OhVideoDefinition } from '@/assets/definitions/widgets/system'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 
 export default {
-  mixins: [mixin],
   widget: OhVideoDefinition,
   components: {
     'oh-video-videojs': defineAsyncComponent(() => import(/* webpackChunkName: "oh-video-videojs" */ './oh-video-videojs.vue')),
     'oh-video-webrtc': defineAsyncComponent(() => import(/* webpackChunkName: "oh-video-webrtc" */ './oh-video-webrtc.vue'))
   },
   props: {
+    context: Object,
     sendAudio: { type: Boolean }
+  },
+  setup(props) {
+    const { config } = useWidgetContext(props.context)
+    return { config }
   },
   data () {
     return {

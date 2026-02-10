@@ -10,15 +10,22 @@
 </template>
 
 <script>
-import mixin from '../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhLinkDefinition } from '@/assets/definitions/widgets/system'
 import { actionsMixin } from '../widget-actions'
 
 import { getVariableScope, setVariableKeyValues } from '@/components/widgets/variable'
 
 export default {
-  mixins: [mixin, actionsMixin],
+  mixins: [actionsMixin],
+  props: {
+    context: Object
+  },
   widget: OhLinkDefinition,
+  setup (props) {
+    const { config, childContext, hasAction } = useWidgetContext(props.context)
+    return { config, childContext, hasAction }
+  },
   methods: {
     clicked () {
       if (this.hasAction) {

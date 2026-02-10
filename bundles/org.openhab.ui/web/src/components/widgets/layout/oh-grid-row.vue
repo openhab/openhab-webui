@@ -50,16 +50,22 @@
 </style>
 
 <script>
-import mixin from '../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhGridCol from './oh-grid-col.vue'
 
 import { OhGridRowDefinition } from '@/assets/definitions/widgets/layout'
 
 export default {
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
   components: {
     OhGridCol
   },
-  widget: OhGridRowDefinition
+  widget: OhGridRowDefinition,
+  setup(props) {
+    const { config, childContext, scopedCssUid, visible } = useWidgetContext(props.context)
+    return { config, childContext, scopedCssUid, visible }
+  }
 }
 </script>

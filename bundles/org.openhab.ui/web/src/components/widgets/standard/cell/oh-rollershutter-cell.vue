@@ -39,18 +39,24 @@
 </style>
 
 <script>
-import mixin from '../../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhRollershutterCellDefinition } from '@/assets/definitions/widgets/standard/cells'
 import OhCell from './oh-cell.vue'
 import OhRollershutter from '../../system/oh-rollershutter.vue'
 
 export default {
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
   components: {
     OhCell,
     OhRollershutter
   },
   widget: OhRollershutterCellDefinition,
+  setup (props) {
+    const { config, childContext } = useWidgetContext(props.context)
+    return { config, childContext }
+  },
   computed: {
     rollershutterContext () {
       return Object.assign({}, this.context, {
