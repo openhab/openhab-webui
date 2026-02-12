@@ -1,13 +1,13 @@
 <template>
-  <f7-popup ref="modulePopup" class="moduleconfig-popup">
-    <f7-page>
+  <f7-popup :opened="opened" class="moduleconfig-popup">
+    <f7-page v-if="opened">
       <f7-navbar>
         <f7-nav-left>
-          <f7-link icon-ios="f7:arrow_left" icon-md="material:arrow_back" icon-aurora="f7:arrow_left" popup-close />
+          <f7-link icon-ios="f7:arrow_left" icon-md="material:arrow_back" icon-aurora="f7:arrow_left" @click="$emit('close')" />
         </f7-nav-left>
         <f7-nav-title> Configure cron strategy </f7-nav-title>
         <f7-nav-right>
-          <f7-link v-show="currentCronStrategy.name && currentCronStrategy.cronExpression" @click="updateModuleConfig"> Done </f7-link>
+          <f7-link v-show="currentCronStrategy.name && currentCronStrategy.cronExpression" @click="updateCronStrategy"> Done </f7-link>
         </f7-nav-right>
       </f7-navbar>
       <f7-block class="no-margin no-padding">
@@ -47,20 +47,21 @@
 
 <script>
 import { f7 } from 'framework7-vue'
-
+import cloneDeep from 'lodash/cloneDeep'
 import ParameterCronexpression from '@/components/config/controls/parameter-cronexpression.vue'
 
 export default {
   components: {
     ParameterCronexpression
   },
+  emits: ['close', 'cronStrategyConfigUpdate'],
   props: {
+    opened: Boolean,
+    persistence: Object,
     cronStrategy: Object
   },
-  emits: ['cronStrategyConfigUpdate'],
   data () {
     return {
-      createMode: !this.cronStrategy,
       currentCronStrategy: this.cronStrategy || {
         name: null,
         cronExpression: null
@@ -73,14 +74,49 @@ export default {
       }
     }
   },
+  computed: {
+    createMode () {
+      return !this.cronStrategy
+    }
+  },
+  watch: {
+    cronStrategy: {
+      handler (newVal) {
+        this.currentCronStrategy = newVal || {
+          name: null,
+          cronExpression: null
+        }
+      },
+      immediate: true
+    }
+  },
   methods: {
-    updateModuleConfig () {
-      if (!f7.input.validateInputs(this.$refs.name.$el) && !f7.input.validateInputs(this.$refs.cronExpression.$el)) {
+    updateCronStrategy () {
+      if (!f7.input.validateInputs(this.$refs.name.$el) || !f7.input.validateInputs(this.$refs.cronExpression.$el)) {
         f7.dialog.alert('Please review the configuration and correct validation errors')
         return
       }
-      f7.emit('cronStrategyConfigUpdate', this.currentCronStrategy)
-      this.$refs.modulePopup.$el.f7Modal.close()
+
+      // Modify persistence directly and save the strategy
+      if (!this.persistence.cronStrategies) this.persistence.cronStrategies = []
+
+      // Check for duplicates (unless editing existing)
+      const existingIndex = this.persistence.cronStrategies.findIndex((cs) => cs.name === this.currentCronStrategy.name)
+      if (this.createMode && existingIndex !== -1) {
+        f7.dialog.alert('A (cron) strategy with the same name already exists!')
+        return
+      }
+
+      // Add or update in persistence
+      if (this.createMode) {
+        this.persistence.cronStrategies.push(cloneDeep(this.currentCronStrategy))
+      } else if (existingIndex !== -1) {
+        this.persistence.cronStrategies[existingIndex] = cloneDeep(this.currentCronStrategy)
+      }
+
+      // Emit via Vue event system so parent can listen directly
+      this.$emit('cronStrategyConfigUpdate', this.currentCronStrategy)
+      this.$emit('close')
     }
   }
 }
