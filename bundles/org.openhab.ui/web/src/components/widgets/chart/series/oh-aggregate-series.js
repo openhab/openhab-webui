@@ -18,7 +18,8 @@ function dimensionFromDate(d, dimension, invert) {
     case 'isoWeekday':
       return invert ? 7 - d.isoWeekday() : d.isoWeekday() - 1
     case 'date':
-      return invert ? 31 - d.date() : d.date() - 1
+      const daysInMonth = dayjs(d.time).daysInMonth()
+      return invert ? daysInMonth - d.date() : d.date() - 1
     case 'month':
       return invert ? 11 - d.month() : d.month()
     default:
