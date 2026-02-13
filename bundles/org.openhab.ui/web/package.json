@@ -172,7 +172,7 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^5.5.2",
     "eslint-plugin-vue": "^10.6.2",
-    "globals": "^17.1.0",
+    "globals": "^17.2.0",
     "i": "^0.3.7",
     "jiti": "^2.4.2",
     "node-fetch": "^3.3.2",
