@@ -48,6 +48,7 @@ export interface NetworkLink {
   target: string
   type: 'peer' | 'hierarchical' | 'asymmetric'
   quality?: number
+  lineStyle?: 'solid' | 'dashed'
   properties?: Record<string, string | number | boolean>
 }
 
