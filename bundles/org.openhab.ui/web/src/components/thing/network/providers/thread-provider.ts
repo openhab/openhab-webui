@@ -445,7 +445,7 @@ export class ThreadNetworkProvider implements NetworkGraphProvider {
       target,
       type,
       quality: neighbor.lqi,
-      ...(involvesUnknown || involvesOffline) && { lineStyle: 'dashed' as const },
+      ...((involvesUnknown || involvesOffline) && { lineStyle: 'dashed' as const }),
       properties: {
         rssi: neighbor.averageRssi || neighbor.lastRssi
       }

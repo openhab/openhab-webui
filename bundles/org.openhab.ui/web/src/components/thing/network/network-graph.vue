@@ -28,7 +28,11 @@
       <div v-if="graph.legend.linkTypes.length" class="legend-section">
         <div class="legend-subtitle">Connections</div>
         <div v-for="linkType in graph.legend.linkTypes" :key="linkType.id" class="legend-item">
-          <span class="legend-arrow" :class="{ 'legend-arrow--dashed': linkType.lineStyle === 'dashed' }">{{ getLinkSymbol(linkType) }}</span>
+          <span
+            class="legend-arrow"
+            :class="{ 'legend-arrow--dashed': linkType.lineStyle === 'dashed' }"
+            >{{ getLinkSymbol(linkType) }}</span
+          >
           <span>{{ linkType.label }}</span>
         </div>
       </div>
@@ -36,7 +40,7 @@
       <!-- Non-fabric toggle -->
       <div v-if="hasNonFabricNodes" class="legend-section">
         <label class="legend-toggle">
-          <input type="checkbox" v-model="showNonFabric">
+          <input type="checkbox" v-model="showNonFabric" />
           <span>Show non-fabric devices</span>
         </label>
       </div>
