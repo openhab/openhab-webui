@@ -413,7 +413,7 @@ export default {
         results = results.filter((a) => a.type === this.currentTab)
       }
       query = query.toLowerCase()
-      results = results.filter((a) => a.id.includes(query) || a.label.toLowerCase().includes(query) || a.description?.toLowerCase()?.includes(query) || a.keywords?.toLowerCase()?.includes(query))
+      results = results.filter((a) => a.id.includes(query) || a.label.toLowerCase().includes(query) || a.description?.toLowerCase()?.includes(query) || (query !== ',' && a.keywords?.toLowerCase()?.includes(query)))
 
       this.query = query
       this.searchResults = results
