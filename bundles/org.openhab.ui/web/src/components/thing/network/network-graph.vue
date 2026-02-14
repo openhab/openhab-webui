@@ -28,9 +28,17 @@
       <div v-if="graph.legend.linkTypes.length" class="legend-section">
         <div class="legend-subtitle">Connections</div>
         <div v-for="linkType in graph.legend.linkTypes" :key="linkType.id" class="legend-item">
-          <span class="legend-arrow">{{ getLinkSymbol(linkType) }}</span>
+          <span class="legend-arrow" :class="{ 'legend-arrow--dashed': linkType.lineStyle === 'dashed' }">{{ getLinkSymbol(linkType) }}</span>
           <span>{{ linkType.label }}</span>
         </div>
+      </div>
+
+      <!-- Non-fabric toggle -->
+      <div v-if="hasNonFabricNodes" class="legend-section">
+        <label class="legend-toggle">
+          <input type="checkbox" v-model="showNonFabric">
+          <span>Show non-fabric devices</span>
+        </label>
       </div>
     </div>
   </div>
@@ -120,6 +128,22 @@
       font-weight bold
       font-size 14px
       flex-shrink 0
+
+      &--dashed
+        text-decoration-line underline
+        text-decoration-style dashed
+        text-underline-offset 4px
+
+    .legend-toggle
+      display flex
+      align-items center
+      gap 6px
+      cursor pointer
+      font-size 11px
+
+      input[type="checkbox"]
+        margin 0
+        cursor pointer
 </style>
 
 <script>
@@ -149,10 +173,30 @@ export default {
       required: true
     }
   },
+  data () {
+    return {
+      showNonFabric: false
+    }
+  },
   computed: {
     ...mapStores(useUIOptionsStore),
     isDarkMode () {
       return this.uiOptionsStore.darkMode === 'dark'
+    },
+    hasNonFabricNodes () {
+      if (!this.graph) return false
+      return this.graph.nodes.some((n) => n.status === 'unknown')
+    },
+    filteredNodes () {
+      if (!this.graph) return []
+      if (this.showNonFabric) return this.graph.nodes
+      return this.graph.nodes.filter((n) => n.status !== 'unknown')
+    },
+    filteredLinks () {
+      if (!this.graph) return []
+      if (this.showNonFabric) return this.graph.links
+      const visibleIds = new Set(this.filteredNodes.map((n) => n.id))
+      return this.graph.links.filter((l) => visibleIds.has(l.source) && visibleIds.has(l.target))
     },
     chartOptions () {
       if (!this.graph) return null
@@ -177,8 +221,8 @@ export default {
       }
     },
     buildSeries () {
-      const nodes = this.graph.nodes.map((node) => this.buildNodeData(node))
-      const links = this.graph.links.map((link) => this.buildLinkData(link))
+      const nodes = this.filteredNodes.map((node) => this.buildNodeData(node))
+      const links = this.filteredLinks.map((link) => this.buildLinkData(link))
 
       const opts = this.graph.displayOptions || {}
 
@@ -293,7 +337,7 @@ export default {
         lineStyle: {
           color: qualityInfo?.color || '#9E9E9E',
           width: qualityInfo?.width || 2,
-          type: linkTypeInfo?.lineStyle || 'solid'
+          type: link.lineStyle || linkTypeInfo?.lineStyle || 'solid'
         }
       }
     },
@@ -323,6 +367,12 @@ export default {
         if (data.properties.rloc16) {
           tooltip += `<br/>RLOC16: ${data.properties.rloc16}`
         }
+        if (data.properties.extAddress) {
+          tooltip += `<br/>Ext Address: ${data.properties.extAddress}`
+        }
+        if (data.properties.seenBy) {
+          tooltip += `<br/>Seen by: ${data.properties.seenBy} node(s)`
+        }
       }
 
       return tooltip
@@ -341,6 +391,14 @@ export default {
 
       if (data.properties?.rssi !== undefined && data.properties.rssi !== null) {
         tooltip += `<br/>RSSI: ${data.properties.rssi} dBm`
+      }
+
+      if (data.properties?.pathCost !== undefined) {
+        tooltip += `<br/>Path Cost: ${data.properties.pathCost}`
+      }
+
+      if (data.properties?.fromRouteTable) {
+        tooltip += `<br/><span style="color: #888">Source: Route Table</span>`
       }
 
       return tooltip
