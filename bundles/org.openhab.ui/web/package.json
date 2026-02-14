@@ -183,9 +183,9 @@
     "patch-package": "^8.0.0",
     "process": "^0.11.10",
     "rimraf": "^6.1.2",
-    "rollup": "^4.56.0",
+    "rollup": "^4.57.1",
     "rollup-plugin-visualizer": "^6.0.5",
-    "rollup-plugin-webpack-stats": "^2.1.8",
+    "rollup-plugin-webpack-stats": "^2.1.10",
     "stylus": "^0.64.0",
     "tar": "^7.4.3",
     "typescript": "^5.9.3",
@@ -198,6 +198,6 @@
     "vite-plugin-vue-devtools": "^8.0.5",
     "vitest": "^4.0.18",
     "vue-eslint-parser": "^10.2.0",
-    "vue-tsc": "^3.2.3"
+    "vue-tsc": "^3.2.4"
   }
 }
