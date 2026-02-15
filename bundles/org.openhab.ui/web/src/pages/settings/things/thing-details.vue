@@ -201,6 +201,7 @@
               </f7-block-title>
               <f7-list class="margin-top" media-list>
                 <f7-list-item
+                  key="zwave-network-map"
                   v-if="thingType?.UID?.startsWith('zwave:')"
                   title="View Network Map"
                   link=""
