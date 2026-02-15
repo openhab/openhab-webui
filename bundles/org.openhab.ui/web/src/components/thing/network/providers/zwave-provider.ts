@@ -10,16 +10,16 @@ import type {
   NetworkNode,
   NetworkLink,
   NetworkLegend,
-} from "../types";
+} from '../types';
 
 /**
  * Color constants for Z-Wave node types
  */
 enum RoleColors {
-  controller = "#FF9800",
-  listening = "#FFEB3B",
-  sleeping = "#607D8B",
-  unknown = "#9E9E9E",
+  controller = '#FF9800',
+  listening = '#FFEB3B',
+  sleeping = '#607D8B',
+  unknown = '#9E9E9E',
 }
 
 enum RoleSizes {
@@ -33,33 +33,33 @@ enum RoleSizes {
  * Z-Wave Network Graph Provider
  */
 export class ZWaveNetworkProvider implements NetworkGraphProvider {
-  readonly title = "Z-Wave Network Map";
+  readonly title = 'Z-Wave Network Map';
 
   private static readonly LEGEND: NetworkLegend = {
     nodeRoles: [
       {
-        id: "controller",
-        label: "Controller",
+        id: 'controller',
+        label: 'Controller',
         color: RoleColors.controller,
         size: RoleSizes.controller,
       },
       {
-        id: "listening",
-        label: "Always Listening",
+        id: 'listening',
+        label: 'Always Listening',
         color: RoleColors.listening,
         size: RoleSizes.listening,
       },
       {
-        id: "sleeping",
-        label: "Battery/Sleeping",
+        id: 'sleeping',
+        label: 'Battery/Sleeping',
         color: RoleColors.sleeping,
         size: RoleSizes.sleeping,
       },
     ],
     linkQualities: [],
     linkTypes: [
-      { id: "peer", label: "Bidirectional", symbol: "none" },
-      { id: "asymmetric", label: "Unidirectional", symbol: "arrow", lineStyle: "dashed" },
+      { id: 'peer', label: 'Bidirectional', symbol: 'none' },
+      { id: 'asymmetric', label: 'Unidirectional', symbol: 'arrow', lineStyle: 'dashed' },
     ],
   };
 
@@ -79,7 +79,7 @@ export class ZWaveNetworkProvider implements NetworkGraphProvider {
     zWaveNodes.forEach((thing) => {
       const nodeId = thing.properties.zwave_nodeid;
       const isController = !thing.bridgeUID;
-      const listening = thing.properties.zwave_listening === "true";
+      const listening = thing.properties.zwave_listening === 'true';
 
       if (isController) {
         controllerIds.add(nodeId);
@@ -87,18 +87,18 @@ export class ZWaveNetworkProvider implements NetworkGraphProvider {
 
       let role: string;
       if (isController) {
-        role = "controller";
+        role = 'controller';
       } else if (listening) {
-        role = "listening";
+        role = 'listening';
       } else {
-        role = "sleeping";
+        role = 'sleeping';
       }
 
       nodes.push({
         id: nodeId,
         label: thing.label || `Node ${nodeId}`,
         role,
-        status: thing.statusInfo?.status === "ONLINE" ? "online" : "offline",
+        status: thing.statusInfo?.status === 'ONLINE' ? 'online' : 'offline',
         statusColor: this.getStatusColor(thing.statusInfo),
         properties: {
           thingUID: thing.UID,
@@ -106,15 +106,15 @@ export class ZWaveNetworkProvider implements NetworkGraphProvider {
         },
       });
 
-      linkData.push([nodeId, thing.properties.zwave_neighbours || ""]);
+      linkData.push([nodeId, thing.properties.zwave_neighbours || '']);
     });
 
     const links = this.createLinks(linkData, controllerIds);
 
     return {
-      networkType: "zwave",
+      networkType: 'zwave',
       networkId: bridgeUID,
-      title: "Z-Wave Network Map",
+      title: 'Z-Wave Network Map',
       legend: ZWaveNetworkProvider.LEGEND,
       nodes,
       links,
@@ -125,8 +125,8 @@ export class ZWaveNetworkProvider implements NetworkGraphProvider {
         layoutAnimation: false,
         symbolSize: 28,
         fontSize: 16,
-        labelPosition: "inside",
-        labelContent: "id",
+        labelPosition: 'inside',
+        labelContent: 'id',
         lineWidth: 1,
         lineCurveness: 0.3,
         lineOpacity: 0.7,
@@ -144,7 +144,7 @@ export class ZWaveNetworkProvider implements NetworkGraphProvider {
     linkData.forEach(([nodeId, neighbours]) => {
       if (!neighbours) return;
 
-      neighbours.split(",").forEach((n) => {
+      neighbours.split(',').forEach((n) => {
         if (!n) return;
 
         const reverseKey = `${n}|${nodeId}`;
@@ -153,11 +153,11 @@ export class ZWaveNetworkProvider implements NetworkGraphProvider {
         const existingReverse = linkMap.get(reverseKey);
         if (existingReverse) {
           // Found reverse link - make it bidirectional (peer)
-          existingReverse.type = "peer";
+          existingReverse.type = 'peer';
           const backLink: NetworkLink = {
             source: nodeId,
             target: n,
-            type: "peer",
+            type: 'peer',
           };
           linkMap.set(forwardKey, backLink);
           links.push(backLink);
@@ -174,7 +174,7 @@ export class ZWaveNetworkProvider implements NetworkGraphProvider {
           const link: NetworkLink = {
             source: nodeId,
             target: n,
-            type: "peer",
+            type: 'peer',
           };
           linkMap.set(forwardKey, link);
           links.push(link);
@@ -185,7 +185,7 @@ export class ZWaveNetworkProvider implements NetworkGraphProvider {
         const link: NetworkLink = {
           source: nodeId,
           target: n,
-          type: "asymmetric",
+          type: 'asymmetric',
         };
         linkMap.set(forwardKey, link);
         links.push(link);
@@ -196,16 +196,16 @@ export class ZWaveNetworkProvider implements NetworkGraphProvider {
   }
 
   private getStatusColor(statusInfo: any): string {
-    if (!statusInfo) return "#9E9E9E";
+    if (!statusInfo) return '#9E9E9E';
     switch (statusInfo.status) {
-      case "ONLINE":
-        return "#4CAF50";
-      case "OFFLINE":
-        return "#F44336";
-      case "UNKNOWN":
-        return "#9E9E9E";
+      case 'ONLINE':
+        return '#4CAF50';
+      case 'OFFLINE':
+        return '#F44336';
+      case 'UNKNOWN':
+        return '#9E9E9E';
       default:
-        return "#9E9E9E";
+        return '#9E9E9E';
     }
   }
 }
