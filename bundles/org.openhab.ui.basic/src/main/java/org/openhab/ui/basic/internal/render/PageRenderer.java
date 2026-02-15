@@ -168,7 +168,7 @@ public class PageRenderer extends AbstractWidgetRenderer {
                 // multiple %children% sections found -> log an error and ignore all code starting from the second
                 // occurance
                 if (parts.length > 2) {
-                    String widgetType = w.getClass().getSimpleName();
+                    String widgetType = w.getWidgetType();
                     logger.error(
                             "Snippet for widget '{}' contains multiple %children% sections, but only one is allowed!",
                             widgetType);
