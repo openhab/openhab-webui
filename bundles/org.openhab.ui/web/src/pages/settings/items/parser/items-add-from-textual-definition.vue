@@ -7,7 +7,7 @@
     <f7-block class="items-add-from-textual-definition">
       <div v-if="ready" class="row items-parser resizable">
         <div class="col">
-          <editor class="editor" :value="code" @input="(value: string) => code = value" :mode="mediaType" />
+          <editor class="editor" :value="code" @input="(value: string) => code = value" :mode="mediaType" @save="add()" />
         </div>
         <span class="resize-handler" />
       </div>

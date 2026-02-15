@@ -166,7 +166,8 @@
         :value="script"
         @input="onEditorInput"
         :read-only="isBlockly || !editable"
-        :tern-autocompletion-hook="true" />
+        :tern-autocompletion-hook="true"
+        @save="createMode ? createScript() : save()" />
       <blockly-editor
         v-else-if="!createMode && isBlockly"
         ref="blocklyEditor"

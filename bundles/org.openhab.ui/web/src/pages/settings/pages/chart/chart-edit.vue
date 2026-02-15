@@ -46,7 +46,8 @@
           class="page-code-editor"
           mode="application/vnd.openhab.uicomponent+yaml;type=chart"
           :value="pageYaml"
-          @input="onEditorInput" />
+          @input="onEditorInput"
+          @save="save()" />
         <!-- <pre v-show="!previewMode" class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
 
         <oh-chart-page v-if="ready && previewMode" class="chart-page" :context="context" :key="pageKey" />

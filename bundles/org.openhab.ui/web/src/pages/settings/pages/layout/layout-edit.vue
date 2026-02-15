@@ -134,7 +134,8 @@
           class="page-code-editor"
           mode="application/vnd.openhab.uicomponent+yaml?type=layout"
           :value="pageYaml"
-          @input="onEditorInput" />
+          @input="onEditorInput"
+          @save="save()" />
         <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
 
         <oh-layout-page
