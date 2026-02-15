@@ -73,9 +73,8 @@ public class ChartRenderer extends AbstractWidgetRenderer {
         try {
             String itemParam = null;
             boolean forceAsItem = chart.forceAsItem();
-            Item item = null;
             String itemName = Objects.requireNonNull(w.getItem()); // Checked at creation there is an item
-            item = itemUIRegistry.getItem(itemName);
+            Item item = itemUIRegistry.getItem(itemName);
             if (item instanceof GroupItem && !forceAsItem) {
                 itemParam = "groups=" + chart.getItem();
             } else {
