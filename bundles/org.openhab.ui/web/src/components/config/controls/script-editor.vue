@@ -66,7 +66,7 @@
 </style>
 
 <script setup lang="ts">
-import { computed, ref, shallowRef, watch } from 'vue'
+import { computed, ref, shallowRef, watch, type ShallowRef } from 'vue'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
 // codemirror core
@@ -75,15 +75,13 @@ import { keymap, tooltips, EditorView, type KeyBinding } from '@codemirror/view'
 import { EditorState, EditorSelection, Prec, Compartment, type Extension } from '@codemirror/state'
 import { defaultKeymap, historyKeymap, indentMore } from '@codemirror/commands'
 import { codeFolding, getIndentUnit } from '@codemirror/language'
-// import { StreamLanguage, LanguageSupport, getIndentUnit, codeFolding } from '@codemirror/language'
-import { autocompletion, closeBrackets } from '@codemirror/autocomplete'
+import { closeBrackets } from '@codemirror/autocomplete'
 
 import { languageCompartmentExtension } from '../editor/editor-languages'
 
 // other extensions
 import { indentationMarkers } from '@replit/codemirror-indentation-markers'
 import { gruvboxDark } from '@uiw/codemirror-theme-gruvbox-dark'
-import { vim, Vim } from '@replit/codemirror-vim'
 
 interface ExtendedEditorView extends EditorView {
   originalMode?: string
@@ -135,26 +133,25 @@ const props = defineProps({
   readOnly: Boolean
 })
 
-const emit = defineEmits(['input', 'save'])
+const emit = defineEmits<{
+  input: [newCode: string]
+  save: []
+}>()
 
-const cmView = shallowRef()
-const code = ref(props.value)
+const cmView : ShallowRef<ExtendedEditorView | null> = shallowRef(null)
 
 const dynamicCompartment = new Compartment()
 const languageCompartment = new Compartment()
+const asyncCompartment = new Compartment()
 
-const dynamicExtensions = computed(() : Extension[] => {
+const dynamicExtensions = computed((): Extension[] => {
   const extensions : Extension[] = []
-  if (uiOptionsStore.codeMirrorSettings.vimMode) {
-    extensions.push(Prec.high(vim()))
-    Vim.defineEx('write', 'w', (cm) => {
-      emit('save')
-    })
-  }
 
   if (uiOptionsStore.darkMode === 'dark') {
     extensions.push(gruvboxDark)
   }
+
+  extensions.push(EditorState.readOnly.of(props.readOnly))
 
   return extensions
 })
@@ -173,7 +170,7 @@ const extensions = [
   }),
   dynamicCompartment.of(dynamicExtensions.value),
   languageCompartment.of(languageCompartmentExtension(props.mode || '')),
-  EditorState.readOnly.of(props.readOnly)
+  asyncCompartment.of([])
 ]
 
 watch(dynamicExtensions, (newExtensions) => {
@@ -185,12 +182,11 @@ watch(dynamicExtensions, (newExtensions) => {
 })
 
 watch(() => props.mode, (newMode) => {
-  if (cmView.value) {
-    const extensions = languageCompartmentExtension(newMode)
-    cmView.value.dispatch({
-      effects: languageCompartment.reconfigure(extensions)
+  if (!cmView.value || !newMode) return
+  const extensions = languageCompartmentExtension(newMode)
+  cmView.value.dispatch({
+    effects: languageCompartment.reconfigure(extensions)
     });
-  }
 })
 
 function onCmReady ({ view }: { view: EditorView }) {
@@ -198,30 +194,23 @@ function onCmReady ({ view }: { view: EditorView }) {
   extendedView.originalMode = props.mode
   if (props.hintContext) extendedView.hintContext = Object.assign({}, props.hintContext)
   cmView.value = view
+  loadAsyncCompartmentExtensions(view)
 }
 
 function onCmCodeChange (newCode : string) {
   emit('input', newCode)
 }
 
-/*
-extensionsOld () {
-  const linter = this.linterExtension(this.mode)
+async function loadAsyncCompartmentExtensions (cmView: EditorView) {
+  if (uiOptionsStore.codeMirrorSettings.vimMode) {
+    const { Vim, vim } = await import('@replit/codemirror-vim')
+    Vim.defineEx('write', 'w', () => {
+      emit('save')
+    })
 
-  let autocompletions = this.autocompletionExtension(this.mode)
-  autocompletions = Array.isArray(autocompletions) ? autocompletions : [autocompletions]
-
-  const extensions = [
-    ...STANDARD_EXTENSIONS,
-    EditorState.readOnly.of(this.readOnly),
-    this.languageExtension(this.mode),
-    ...autocompletions,
-    linter,
-    linter && lintGutter(),
-    useUIOptionsStore().darkMode === 'dark' ? gruvboxDark : null,
-  ].filter((ext) => ext)
-
-  return extensions
+    cmView.dispatch({
+      effects: asyncCompartment.reconfigure([Prec.high(vim())])
+    })
+  }
 }
-*/
 </script>
