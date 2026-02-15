@@ -174,7 +174,8 @@
           class="semantic-tag-code-editor"
           mode="application/vnd.openhab.tag+yaml"
           :value="editingTagsYaml"
-          @input="onEditorInput" />
+          @input="onEditorInput"
+          @save="save()" />
       </f7-tab>
     </f7-tabs>
 

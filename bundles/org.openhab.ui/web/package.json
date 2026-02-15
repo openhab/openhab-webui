@@ -85,6 +85,7 @@
     "@jsep-plugin/template": "^1.0.4",
     "@mit-app-inventor/blockly-plugin-workspace-multiselect": "^1.0.2",
     "@replit/codemirror-indentation-markers": "^6.5.3",
+    "@replit/codemirror-vim": "^6.3.0",
     "@uiw/codemirror-theme-gruvbox-dark": "^4.25.4",
     "@vue-leaflet/vue-leaflet": "^0.10.1",
     "blockly": "^11.2.2",

@@ -21,7 +21,8 @@
             class="widget-component-editor"
             mode="application/vnd.openhab.uicomponent+yaml;type=widget"
             :value="widgetDefinition"
-            @input="onEditorInput" />
+            @input="onEditorInput"
+            @save="save()" />
         </f7-col>
       </f7-row>
       <f7-row v-if="ready" resizable>
@@ -37,7 +38,8 @@
             class="widget-component-editor"
             mode="application/vnd.openhab.uicomponent+yaml;type=widget"
             :value="widgetDefinition"
-            @input="onEditorInput" />
+            @input="onEditorInput"
+            @save="save()" />
         </f7-col>
         <f7-col v-if="ready" resizable style="min-width: 20px" class="widget-preview padding-right margin-bottom">
           <generic-widget-component :key="widgetKey" :context="context" />

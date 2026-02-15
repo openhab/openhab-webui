@@ -21,7 +21,8 @@
             class="blocks-component-editor"
             mode="application/vnd.openhab.uicomponent+yaml;type=blocks"
             :value="blocksDefinition"
-            @input="onEditorInput" />
+            @input="onEditorInput"
+            @save="save()" />
         </f7-col>
       </f7-row>
       <f7-row v-if="ready" resizable>
@@ -38,7 +39,8 @@
             class="blocks-component-editor"
             mode="application/vnd.openhab.uicomponent+yaml;type=blocks"
             :value="blocksDefinition"
-            @input="onEditorInput" />
+            @input="onEditorInput"
+            @save="save()" />
         </f7-col>
         <f7-col v-if="ready" resizable style="min-width: 20px" class="block-preview-pane padding-right margin-bottom">
           <block-preview :blocks-definition="blocks" :key="previewKey" />
