@@ -93,12 +93,15 @@ public class ChartRenderer extends AbstractWidgetRenderer {
             }
 
             // if legend parameter is given, add corresponding GET parameter
-            boolean legend = chart.hasLegend();
-            legend = legend || (item instanceof GroupItem && !forceAsItem);
-            if (legend) {
-                chartUrl += "&legend=true";
-            } else {
-                chartUrl += "&legend=false";
+            boolean legend = item instanceof GroupItem && !forceAsItem;
+            Boolean configuredLegend = chart.hasLegend();
+            if (configuredLegend != null) {
+                legend = configuredLegend;
+                if (configuredLegend) {
+                    chartUrl += "&legend=true";
+                } else {
+                    chartUrl += "&legend=false";
+                }
             }
 
             if (chart.getInterpolation() instanceof String interpolationMethod) {
