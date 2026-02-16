@@ -286,6 +286,17 @@ export default {
         })
       })
     },
+    getSubBindingLinks(bindingId) {
+      // from the runtime store find the sub-bindings, whose ID starts like e.g. "modbus."
+      const bindingPrefix = bindingId + '.'
+      const subBindingLinks = useRuntimeStore().addons.filter(binding => binding.id.startsWith(bindingPrefix))
+        .map(binding => {
+          const path = binding.id
+          const label = binding.label || binding.name || path
+          return [label, path]
+        })
+      return subBindingLinks
+    },
     processDescription () {
       if (this.addon.author === 'openHAB') {
         // assuming the add-on is an official one (distribution), try to fetch the documentation from GitHub
@@ -298,6 +309,21 @@ export default {
 
         fetch(docSrcUrl + '/readme.md').then((readme) => {
           readme.text().then((text) => {
+
+            // expand <!-- list-subs -->
+            if (this.addon.type === 'binding') {
+              let sourcePlaceHolder = /<!--\s*list-subs\s*-->/
+              if (text.match(sourcePlaceHolder)) {
+                const subBindingLinks = this.getSubBindingLinks(this.addon.id)
+                let targetBulletList = "\n"
+                subBindingLinks.forEach(subBinding => {
+                  targetBulletList += `- [${subBinding[0]}](../${subBinding[1]}/)\n`
+                })
+                targetBulletList += "\n"
+                text = text.replace(sourcePlaceHolder, targetBulletList)
+              }
+            }
+
             import('marked').then((marked) => {
               const frontmatterSeparators = [...text.matchAll(/^---$/gm)]
               let body
