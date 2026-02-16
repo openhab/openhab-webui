@@ -204,6 +204,8 @@ import AddonLogo from '@/components/addons/addon-logo.vue'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
+import { marked } from 'marked'
+
 export default {
   mixins: [AddonStoreMixin],
   components: {
@@ -297,60 +299,54 @@ export default {
         })
       return subBindingLinks
     },
-    processDescription () {
+    async processDescription () {
       if (this.addon.author === 'openHAB') {
         // assuming the add-on is an official one (distribution), try to fetch the documentation from GitHub
-        let docsBranch = 'final'
-        if (useRuntimeStore().runtimeInfo.buildString === 'Release Build') docsBranch = 'final-stable'
+        const docsBranch = useRuntimeStore().runtimeInfo.buildString === 'Release Build' ? 'final-stable' : 'final'
+
         let addonTypeFolder = '_addons_' + this.addon.type
         if (this.addon.type === 'misc') addonTypeFolder = '_addons_io'
         if (this.addon.type !== 'automation') addonTypeFolder += 's'
-        let docSrcUrl = `${useRuntimeStore().docSrcUrl}/${addonTypeFolder}/${this.addon.id}`
+        const docSrcUrl = `${useRuntimeStore().docSrcUrl}/${addonTypeFolder}/${this.addon.id}`
 
-        fetch(docSrcUrl + '/readme.md').then((readme) => {
-          readme.text().then((text) => {
+        fetch(docSrcUrl + '/readme.md').then(async (readme) => {
+          let text = await readme.text()
 
-            // expand <!-- list-subs -->
-            if (this.addon.type === 'binding') {
-              let sourcePlaceHolder = /<!--\s*list-subs\s*-->/
-              if (text.match(sourcePlaceHolder)) {
-                const subBindingLinks = this.getSubBindingLinks(this.addon.id)
-                let targetBulletList = "\n"
-                subBindingLinks.forEach(subBinding => {
-                  targetBulletList += `- [${subBinding[0]}](../${subBinding[1]}/)\n`
-                })
-                targetBulletList += "\n"
-                text = text.replace(sourcePlaceHolder, targetBulletList)
-              }
+          // expand <!-- list-subs -->
+          if (this.addon.type === 'binding') {
+            let sourcePlaceHolder = /<!--\s*list-subs\s*-->/
+            if (text.match(sourcePlaceHolder)) {
+              const subBindingLinks = this.getSubBindingLinks(this.addon.id)
+              const targetBulletList = "\n" + 
+                subBindingLinks.map(([label, path]) => `- [${label}](../${path}/)`).join('\n') + "\n\n"
+              text = text.replace(sourcePlaceHolder, targetBulletList)
             }
+          }
 
-            import('marked').then((marked) => {
-              const frontmatterSeparators = [...text.matchAll(/^---$/gm)]
-              let body
+          const frontmatterSeparators = [...text.matchAll(/^---$/gm)]
+          let body
 
-              if (frontmatterSeparators.length !== 2) {
-                body = '<p>The description is not available for this add-on.</p><h3>Debug Information</h3><blockquote>' + text + '</blockquote>'
-              } else {
-                const frontmatter = text.substring(4, frontmatterSeparators[1].index)
-                body = marked.parse(text.substring(frontmatterSeparators[1].index + 4))
+          if (frontmatterSeparators.length !== 2) {
+            body = '<p>The description is not available for this add-on.</p><h3>Debug Information</h3><blockquote>' + text + '</blockquote>'
+          } else {
+            const frontmatter = text.substring(4, frontmatterSeparators[1].index)
+            body = marked.parse(text.substring(frontmatterSeparators[1].index + 4))
 
-                // perform a few replaces on HTML body for Markdown readmes on GitHub
-                body = body.replace(/<p>{% include base.html %}<\/p>\n/gm, '')
-                body = body.replace(/<h1.*$/gm, '')
-                body = body.replace(/<pre>/gm, '<div class="block block-strong no-padding"><pre class="padding-half">')
-                body = body.replace(/<\/pre>/gm, '</pre></div>')
-                body = body.replace(/<table>/gm, '<div class="data-table"><table>')
-                body = body.replace(/<\/table>/gm, '</table></div>')
-                body = body.replace(/<a href="http/gm, '<a class="external" target="_blank" href="http')
-                body = body.replace(/<img src="doc/gm, '<img class="lazy lazy-fade-in" data-src="' + docSrcUrl + '/doc')
-                body = body.replace(/<img src="contrib/gm, '<img class="lazy lazy-fade-in" data-src="' + docSrcUrl + '/contrib')
-              }
+            // perform a few replaces on HTML body for Markdown readmes on GitHub
+            body = body.replace(/<p>{% include base.html %}<\/p>\n/gm, '')
+            body = body.replace(/<h1.*$/gm, '')
+            body = body.replace(/<pre>/gm, '<div class="block block-strong no-padding"><pre class="padding-half">')
+            body = body.replace(/<\/pre>/gm, '</pre></div>')
+            body = body.replace(/<table>/gm, '<div class="data-table"><table>')
+            body = body.replace(/<\/table>/gm, '</table></div>')
+            body = body.replace(/<a href="http/gm, '<a class="external" target="_blank" href="http')
+            body = body.replace(/<img src="doc/gm, '<img class="lazy lazy-fade-in" data-src="' + docSrcUrl + '/doc')
+            body = body.replace(/<img src="contrib/gm, '<img class="lazy lazy-fade-in" data-src="' + docSrcUrl + '/contrib')
+          }
 
-              this.parsedDescription = body
-              this.descriptionReady = true
-              setTimeout(() => { f7.lazy.create('.addon-description-text') })
-            })
-          })
+          this.parsedDescription = body
+          this.descriptionReady = true
+            setTimeout(() => { f7.lazy.create('.addon-description-text') })
         }).catch((err) => {
           this.parsedDescription = '<p>The description is unavailable for this add-on.</p><h3>Debug Information</h3><blockquote>' + err + '</blockquote>'
           this.descriptionReady = true
