@@ -317,7 +317,7 @@ export default {
             let sourcePlaceHolder = /<!--\s*list-subs\s*-->/
             if (text.match(sourcePlaceHolder)) {
               const subBindingLinks = this.getSubBindingLinks(this.addon.id)
-              const targetBulletList = "\n" + 
+              const targetBulletList = "\n" +
                 subBindingLinks.map(([label, path]) => `- [${label}](../${path}/)`).join('\n') + "\n\n"
               text = text.replace(sourcePlaceHolder, targetBulletList)
             }
