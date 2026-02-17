@@ -372,7 +372,7 @@ export default {
 
           this.parsedDescription = body
           this.descriptionReady = true
-            setTimeout(() => { f7.lazy.create('.addon-description-text') })
+          setTimeout(() => { f7.lazy.create('.addon-description-text') })
         }).catch((err) => {
           this.parsedDescription = '<p>The description is unavailable for this add-on.</p><h3>Debug Information</h3><blockquote>' + err + '</blockquote>'
           this.descriptionReady = true
