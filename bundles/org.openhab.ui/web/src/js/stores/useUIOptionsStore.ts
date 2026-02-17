@@ -5,14 +5,6 @@ import { f7, f7ready } from 'framework7-vue'
 
 type StoredDarkModeType = 'auto' | 'dark' | 'light'
 
-declare global {
-  interface Window {
-    OHApp?: {
-      preferDarkMode: () => boolean
-    }
-  }
-}
-
 export const useUIOptionsStore = defineStore('uiOptions', () => {
   // States
   const _storedDarkMode = localStorage.getItem('openhab.ui:theme.dark')
