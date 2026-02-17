@@ -307,7 +307,7 @@ export default {
             const text = await (await fetch(rawTextUrl)).text()
             const heading = text.match(/^# (.*)$/m)
             const label = heading ? heading[1].trim() : nameSuffix
-            return `- [${label}](${displayUrl})\n` // create markdown link to GitHub rendered README
+            return `- [${label}](${displayUrl})\n` // create markdown link to read me
           } catch (e) {
             return `- _Failed to fetch README for ${nameSuffix} (${e})_\n`
           }
@@ -317,8 +317,6 @@ export default {
     async processDescription () {
       if (this.addon.author === 'openHAB') {
         // assuming the add-on is an official one (distribution), try to fetch the documentation from GitHub
-        const docsBranch = useRuntimeStore().runtimeInfo.buildString === 'Release Build' ? 'final-stable' : 'final'
-
         let addonTypeFolder = '_addons_' + this.addon.type
         if (this.addon.type === 'misc') addonTypeFolder = '_addons_io'
         if (this.addon.type !== 'automation') addonTypeFolder += 's'
