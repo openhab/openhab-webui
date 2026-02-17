@@ -288,16 +288,31 @@ export default {
         })
       })
     },
-    getSubBindingLinks(bindingId) {
-      // from the runtime store find the sub-bindings, whose ID starts like e.g. "modbus."
-      const bindingPrefix = bindingId + '.'
-      const subBindingLinks = useRuntimeStore().addons.filter(binding => binding.id.startsWith(bindingPrefix))
-        .map(binding => {
-          const path = binding.id
-          const label = binding.label || binding.name || path
-          return [label, path]
+    async getSubBindingLinks(bindingId) {
+      // fetch all bundles including all bindings
+      const bundlesUrl = `https://api.github.com/repos/openhab/openhab-addons/contents/bundles?ref=main`
+      const allBindings = await (await fetch(bundlesUrl)).json()
+
+      // apply filter for sub-bundles
+      const subBindingPrefix =  `org.openhab.binding.${bindingId}.`
+      const subBindings = allBindings.filter(b => b.type === "dir" && b.name.startsWith(subBindingPrefix))
+
+      // map each sub-bundle to a Promise that fetches its README + extracts label
+      return await Promise.all(
+        subBindings.map(async (subBinding) => {
+          const nameSuffix = subBinding.name.replace(`org.openhab.binding.`, ``)
+          const rawTextUrl = `https://raw.githubusercontent.com/openhab/openhab-addons/main/bundles/${subBinding.name}/README.md`
+          const displayUrl = `https://www.openhab.org/addons/bindings/${nameSuffix}`
+          try {
+            const text = await (await fetch(rawTextUrl)).text()
+            const heading = text.match(/^# (.*)$/m)
+            const label = heading ? heading[1].trim() : nameSuffix
+            return `- [${label}](${displayUrl})\n` // create markdown link to GitHub rendered README
+          } catch (e) {
+            return `- _Failed to fetch README for ${nameSuffix} (${e})_\n`
+          }
         })
-      return subBindingLinks
+      )
     },
     async processDescription () {
       if (this.addon.author === 'openHAB') {
@@ -312,17 +327,6 @@ export default {
         fetch(docSrcUrl + '/readme.md').then(async (readme) => {
           let text = await readme.text()
 
-          // expand <!-- list-subs -->
-          if (this.addon.type === 'binding') {
-            let sourcePlaceHolder = /<!--\s*list-subs\s*-->/
-            if (text.match(sourcePlaceHolder)) {
-              const subBindingLinks = this.getSubBindingLinks(this.addon.id)
-              const targetBulletList = "\n" +
-                subBindingLinks.map(([label, path]) => `- [${label}](../${path}/)`).join('\n') + "\n\n"
-              text = text.replace(sourcePlaceHolder, targetBulletList)
-            }
-          }
-
           const frontmatterSeparators = [...text.matchAll(/^---$/gm)]
           let body
 
@@ -330,7 +334,29 @@ export default {
             body = '<p>The description is not available for this add-on.</p><h3>Debug Information</h3><blockquote>' + text + '</blockquote>'
           } else {
             const frontmatter = text.substring(4, frontmatterSeparators[1].index)
-            body = marked.parse(text.substring(frontmatterSeparators[1].index + 4))
+            text = text.substring(frontmatterSeparators[1].index + 4)
+
+            // expand <!--list-subs--> placeholder
+            const sourcePlaceHolder = /<!--\s*list-subs\s*-->/
+            if (text.match(sourcePlaceHolder)) {
+              let targetBulletList = "\n"
+              const subBindingLinks = await this.getSubBindingLinks(this.addon.id)
+              if (subBindingLinks.length === 0) {
+                targetBulletList += "- _This binding has no sub-bindings._\n"
+              } else {
+                subBindingLinks.forEach(subBindingLink => {
+                  targetBulletList += subBindingLink
+                })
+              }
+              targetBulletList += "\n"
+              text = text.replace(sourcePlaceHolder, targetBulletList)
+            }
+
+            // simply remove [[toc]] as expanding wastes too much space in dialog box
+            text = text.replace(/\[\[toc\]\]/gi, "")
+
+            // convert MD to HTML
+            body = marked.parse(text)
 
             // perform a few replaces on HTML body for Markdown readmes on GitHub
             body = body.replace(/<p>{% include base.html %}<\/p>\n/gm, '')
