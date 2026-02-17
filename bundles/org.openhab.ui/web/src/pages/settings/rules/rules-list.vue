@@ -6,7 +6,7 @@
           <f7-link icon-md="material:done_all" @click="toggleCheck()" :text="(!theme.md) ? (showCheckboxes ? 'Done' : 'Select') : ''" />
         </template>
       </oh-nav-content>
-      <f7-subnavbar :inner="false" v-show="initSearchbar">
+      <f7-subnavbar v-show="initSearchbar" :inner="false">
         <!-- Only render searchbar, if page is ready. Otherwise searchbar is broken after changes to the rules list. -->
         <f7-searchbar
           v-if="initSearchbar"
@@ -28,8 +28,8 @@
       bottom-aurora>
       <f7-link
         v-if="!theme.md"
-        color="red"
         v-show="selectedDeletableItems.length"
+        color="red"
         class="delete"
         icon-ios="f7:trash"
         icon-aurora="f7:trash"
@@ -38,8 +38,8 @@
       </f7-link>
       <f7-link
         v-if="!theme.md && !showScenes"
-        color="orange"
         v-show="selectedItems.length && canDisable"
+        color="orange"
         class="disable"
         @click="doDisableEnableSelected(false)"
         icon-ios="f7:pause_circle"
@@ -48,8 +48,8 @@
       </f7-link>
       <f7-link
         v-if="!theme.md && !showScenes"
-        color="green"
         v-show="selectedItems.length && canEnable"
+        color="green"
         class="enable"
         @click="doDisableEnableSelected(true)"
         icon-ios="f7:play_circle"
@@ -58,8 +58,8 @@
       </f7-link>
       <f7-link
         v-if="!theme.md && !showScenes"
-        :color="uiOptionsStore.darkMode === 'dark' ? 'purple' : 'deeppurple'"
         v-show="selectedItems.length && canRegenerate"
+        :color="uiOptionsStore.darkMode === 'dark' ? 'purple' : 'deeppurple'"
         class="enable"
         @click="regenerateSelected()"
         icon-ios="f7:arrow_2_circlepath"
@@ -100,9 +100,9 @@
     </f7-toolbar>
 
     <f7-list-index
-      ref="listIndex"
       v-if="$refs.rulesList"
       v-show="!$device.desktop"
+      ref="listIndex"
       :listEl="$refs.rulesList ? $$($refs.rulesList.$el) : undefined"
       :scroll-list="true"
       :label="true" />
@@ -150,7 +150,7 @@
     </f7-block>
 
     <!-- rule engine available and ready and has rules -->
-    <f7-block class="block-narrow" v-show="!noRuleEngine && ready && rules.length > 0">
+    <f7-block v-show="!noRuleEngine && ready && rules.length > 0" class="block-narrow">
       <f7-col>
         <f7-block-title class="no-margin-top">
           <span>{{ listTitle }}</span>

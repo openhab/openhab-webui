@@ -2,7 +2,7 @@
   <f7-page name="Model" class="model-page" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar>
       <oh-nav-content title="Semantic Model" back-link="Settings" back-link-url="/settings/" :f7router />
-      <f7-subnavbar :inner="false" v-show="initSearchbar">
+      <f7-subnavbar v-show="initSearchbar" :inner="false">
         <f7-searchbar
           v-if="initSearchbar"
           ref="searchbar"
@@ -127,7 +127,7 @@
                   <f7-list-button color="blue" title="Create Points from Thing" @click="addFromThing(false)" />
                   <f7-list-button color="blue" title="Add Equipment" @click="addSemanticItem('Equipment')" />
                   <f7-list-button color="blue" title="Add Point" @click="addSemanticItem('Point')" />
-                  <f7-list-button color="blue" v-if="includeNonSemantic" title="Add Item" @click="addNonSemanticItem(false)" />
+                  <f7-list-button v-if="includeNonSemantic" color="blue" title="Add Item" @click="addNonSemanticItem(false)" />
                 </f7-list>
               </f7-card-content>
             </f7-card>
@@ -193,7 +193,7 @@
             </f7-link>
           </div>
         </f7-toolbar>
-        <f7-block style="margin-bottom: 6rem" v-if="selectedItem">
+        <f7-block v-if="selectedItem" style="margin-bottom: 6rem">
           <item-state-preview v-if="detailsTab === 'state' && !newItem" :item="selectedItem.item" :context="context" />
           <item-details
             v-if="detailsTab === 'item'"

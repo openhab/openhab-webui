@@ -9,7 +9,7 @@
       </div>
     </f7-toolbar>
 
-    <component v-if="visibleToCurrentUser" :is="componentType" :context="context" :class="{ notready: !ready }" />
+    <component :is="componentType" v-if="visibleToCurrentUser" :context="context" :class="{ notready: !ready }" />
     <empty-state-placeholder
       v-if="page && !visibleToCurrentUser"
       icon="multiply_circle_fill"

@@ -13,7 +13,7 @@
           </f7-link>
         </f7-nav-right>
       </f7-navbar>
-      <f7-subnavbar :inner="false" v-show="initSearchbar">
+      <f7-subnavbar v-show="initSearchbar" :inner="false">
         <f7-searchbar
           v-if="initSearchbar"
           :init="initSearchbar"
@@ -77,7 +77,7 @@
         <span />
       </f7-toolbar>
 
-      <f7-block strong class="no-padding" v-if="ready">
+      <f7-block v-if="ready" strong class="no-padding">
         <model-treeview
           class="model-picker-treeview"
           :root-nodes="rootNodes"

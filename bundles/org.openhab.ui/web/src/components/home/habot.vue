@@ -11,7 +11,7 @@
         :value="value"
         @change="chatboxSend"
         @blur="chatboxBlur" />
-      <speech-button class="habot-icon" v-show="!focused" :lang="language" @result="speechResult" />
+      <speech-button v-show="!focused" class="habot-icon" :lang="language" @result="speechResult" />
     </div>
     <f7-list v-if="focused && !value" class="chat-suggestions" no-hairlines-md>
       <f7-list-item

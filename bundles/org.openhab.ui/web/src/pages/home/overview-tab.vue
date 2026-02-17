@@ -1,6 +1,6 @@
 <template>
   <div :style="pageStyle">
-    <div class="hint-apps" v-if="!overviewPage && !userStore.user && !showHABot">
+    <div v-if="!overviewPage && !userStore.user && !showHABot" class="hint-apps">
       <p>
         <em>
           <f7-icon class="float-right margin-left margin-bottom" f7="arrow_turn_right_up" size="20" />{{ $t('home.tip.otherApps') }}
@@ -18,8 +18,8 @@
 
     <template v-else>
       <component
-        v-if="overviewPage"
         :is="overviewPage.component"
+        v-if="overviewPage"
         v-show="!inChatSession"
         :context="overviewPageContext"
         :class="{ notready: !ready }"

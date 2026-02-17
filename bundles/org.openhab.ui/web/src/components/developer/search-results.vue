@@ -16,14 +16,14 @@
       <div>Nothing found</div>
     </f7-block>
     <!-- Items -->
-    <f7-block class="no-margin no-padding" v-if="searchResults.items.length">
+    <f7-block v-if="searchResults.items.length" class="no-margin no-padding">
       <f7-block-title class="padding-left">
         <f7-icon class="margin-right" f7="square_on_circle" />Items ({{ searchResults.items.length }})
       </f7-block-title>
       <f7-list media-list>
         <f7-list-item
-          media-item
           v-for="item in filteredSearchResults.items"
+          media-item
           :key="item.name"
           :title="item.label || item.name"
           :footer="(item.label) ? item.name : ''"
@@ -55,7 +55,7 @@
       </f7-list>
     </f7-block>
     <!-- Things -->
-    <f7-block class="no-margin no-padding" v-if="searchResults.things.length">
+    <f7-block v-if="searchResults.things.length" class="no-margin no-padding">
       <f7-block-title class="padding-left">
         <f7-icon class="margin-right" f7="lightbulb" />Things ({{ searchResults.things.length }})
       </f7-block-title>
@@ -88,7 +88,7 @@
       </f7-list>
     </f7-block>
     <!-- Rules -->
-    <f7-block class="no-margin no-padding" v-if="searchResults.rules.length">
+    <f7-block v-if="searchResults.rules.length" class="no-margin no-padding">
       <f7-block-title class="padding-left">
         <f7-icon class="margin-right" f7="wand_stars" />Rules ({{ searchResults.rules.length }})
       </f7-block-title>
@@ -127,7 +127,7 @@
       </f7-list>
     </f7-block>
     <!-- Scenes -->
-    <f7-block class="no-margin no-padding" v-if="searchResults.scenes.length">
+    <f7-block v-if="searchResults.scenes.length" class="no-margin no-padding">
       <f7-block-title class="padding-left">
         <f7-icon class="margin-right" f7="film" />Scenes ({{ searchResults.scenes.length }})
       </f7-block-title>
@@ -166,7 +166,7 @@
       </f7-list>
     </f7-block>
     <!-- Scripts -->
-    <f7-block class="no-margin no-padding" v-if="searchResults.scripts.length">
+    <f7-block v-if="searchResults.scripts.length" class="no-margin no-padding">
       <f7-block-title class="padding-left">
         <f7-icon class="margin-right" f7="doc_plaintext" />Scripts ({{ searchResults.scripts.length }})
       </f7-block-title>
@@ -205,7 +205,7 @@
       </f7-list>
     </f7-block>
     <!-- Pages -->
-    <f7-block class="no-margin no-padding" v-if="searchResults.pages.length">
+    <f7-block v-if="searchResults.pages.length" class="no-margin no-padding">
       <f7-block-title class="padding-left">
         <f7-icon class="margin-right" f7="tv" />Pages ({{ searchResults.pages.length }})
       </f7-block-title>
@@ -244,7 +244,7 @@
       </f7-list>
     </f7-block>
     <!-- Widgets -->
-    <f7-block class="no-margin no-padding" v-if="searchResults.widgets.length">
+    <f7-block v-if="searchResults.widgets.length" class="no-margin no-padding">
       <f7-block-title class="padding-left">
         <f7-icon class="margin-right" f7="rectangle_on_rectangle_angled" />Widgets ({{ searchResults.widgets.length }})
       </f7-block-title>
@@ -282,7 +282,7 @@
       </f7-list>
     </f7-block>
     <!-- Transformations -->
-    <f7-block class="no-margin no-padding" v-if="searchResults.transformations.length">
+    <f7-block v-if="searchResults.transformations.length" class="no-margin no-padding">
       <f7-block-title class="padding-left">
         <f7-icon class="margin-right" f7="arrow_2_squarepath" />Transformations ({{ searchResults.transformations.length }})
       </f7-block-title>
@@ -329,7 +329,7 @@
       </f7-list>
     </f7-block>
     <!-- Persistence configs -->
-    <f7-block class="no-margin no-padding" v-if="searchResults.persistenceConfigs.length">
+    <f7-block v-if="searchResults.persistenceConfigs.length" class="no-margin no-padding">
       <f7-block-title class="padding-left">
         <f7-icon class="margin-right" f7="download_circle" />Persistence Configs ({{ searchResults.persistenceConfigs.length }})
       </f7-block-title>

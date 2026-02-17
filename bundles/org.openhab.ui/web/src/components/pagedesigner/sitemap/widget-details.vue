@@ -217,7 +217,7 @@
         </ul>
       </f7-list>
     </f7-card-content>
-    <f7-card-footer key="sitemap-widget-buttons-edit-mode" v-if="widget.component !== 'Sitemap'">
+    <f7-card-footer v-if="widget.component !== 'Sitemap'" key="sitemap-widget-buttons-edit-mode">
       <!-- <f7-button v-if="!editMode && !createMode" color="blue" @click="editMode = true" icon-ios="material:expand_more" icon-md="material:expand_more" icon-aurora="material:expand_more">Edit</f7-button> -->
       <f7-segmented>
         <f7-button color="blue" @click="$emit('moveup', widget)" icon-f7="chevron_up" />

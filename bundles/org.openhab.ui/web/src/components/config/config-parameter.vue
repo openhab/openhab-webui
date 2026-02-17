@@ -1,9 +1,9 @@
 <template>
   <f7-list
+    v-show="configDescription.visible ? configDescription.visible(value, configuration, configDescription, parameters) : true"
     ref="parameter"
     class="config-parameter"
-    :no-hairlines-md="configDescription.type !== 'BOOLEAN' && (!configDescription.options || !configDescription.options.length) && ['item'].indexOf(configDescription.context) < 0"
-    v-show="configDescription.visible ? configDescription.visible(value, configuration, configDescription, parameters) : true">
+    :no-hairlines-md="configDescription.type !== 'BOOLEAN' && (!configDescription.options || !configDescription.options.length) && ['item'].indexOf(configDescription.context) < 0">
     <f7-list-group v-if="(!readOnly && !configDescription.readOnly) || configDescription.context === 'password'">
       <component
         :is="control"

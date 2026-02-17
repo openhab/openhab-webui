@@ -7,9 +7,9 @@
       :footer="group.description" />
     <f7-list-item
       v-for="c in group.channels"
+      v-show="!(pickerMode || multipleLinksMode) || c.channelType.kind !== 'TRIGGER'"
       :key="c.channel.id"
       :title="c.channel.label || c.channelType.label"
-      v-show="!(pickerMode || multipleLinksMode) || c.channelType.kind !== 'TRIGGER'"
       :accordion-item="!pickerMode && !multipleLinksMode"
       :radio="pickerMode"
       :checkbox="multipleLinksMode"

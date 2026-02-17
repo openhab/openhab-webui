@@ -10,7 +10,7 @@
       :class="{ 'with-tabbar': context.tab, 'with-toolbar': context.analyzer }"
       :theme="uiOptionsStore.darkMode === 'dark' ? 'dark' : undefined"
       autoresize />
-    <f7-menu class="padding float-right" v-if="periodVisible">
+    <f7-menu v-if="periodVisible" class="padding float-right">
       <f7-menu-item @click="earlierPeriod()" icon-f7="chevron_left" />
       <f7-menu-item v-if="context.component.config.chartType" :text="fixedPeriodLabel" type="text" @click="pickFixedStartDate">
         <input ref="calendarInput" type="text" style="width: 40px; height: 0; visibility: hidden" />

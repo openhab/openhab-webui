@@ -6,45 +6,45 @@
     <f7-row>
       <f7-col width="25" class="theme-picker auto" @click="switchTheme('auto')">
         <span class="text-color-gray"> {{ t('about.theme.auto') }}</span>
-        <f7-checkbox checked disabled v-if="theme === 'auto'" />
+        <f7-checkbox v-if="theme === 'auto'" checked disabled />
       </f7-col>
       <f7-col width="25" class="theme-picker" @click="switchTheme('md')">
         <span><f7-icon f7="logo_android" size="20" color="gray" /></span>
-        <f7-checkbox checked disabled v-if="theme === 'md'" />
+        <f7-checkbox v-if="theme === 'md'" checked disabled />
       </f7-col>
       <f7-col width="25" class="theme-picker" @click="switchTheme('ios')">
         <span><f7-icon f7="logo_ios" size="25" color="gray" /></span>
-        <f7-checkbox checked disabled v-if="theme === 'ios'" />
+        <f7-checkbox v-if="theme === 'ios'" checked disabled />
       </f7-col>
       <f7-col width="25" class="theme-picker" @click="switchTheme('aurora')">
         <span><f7-icon f7="desktopcomputer" size="20" color="gray" /></span>
-        <f7-checkbox checked disabled v-if="theme === 'aurora'" />
+        <f7-checkbox v-if="theme === 'aurora'" checked disabled />
       </f7-col>
     </f7-row>
     <f7-block-title>{{ t('about.darkMode') }}</f7-block-title>
     <f7-row>
       <f7-col width="33" class="theme-picker auto" @click="uiOptionsStore.darkMode = 'auto'">
         <span class="text-color-gray">{{ t('about.darkMode.auto') }}</span>
-        <f7-checkbox checked disabled v-if="uiOptionsStore.storedDarkMode === 'auto'" />
+        <f7-checkbox v-if="uiOptionsStore.storedDarkMode === 'auto'" checked disabled />
       </f7-col>
       <f7-col width="33" class="bg-color-white theme-picker" @click="uiOptionsStore.darkMode = 'light'">
         <span class="text-color-gray">{{ t('about.darkMode.light') }}</span>
-        <f7-checkbox checked disabled v-if="uiOptionsStore.storedDarkMode === 'light'" />
+        <f7-checkbox v-if="uiOptionsStore.storedDarkMode === 'light'" checked disabled />
       </f7-col>
       <f7-col width="33" class="bg-color-black theme-picker" @click="uiOptionsStore.darkMode = 'dark'">
         <span class="text-color-gray">{{ t('about.darkMode.dark') }}</span>
-        <f7-checkbox checked disabled v-if="uiOptionsStore.storedDarkMode === 'dark'" />
+        <f7-checkbox v-if="uiOptionsStore.storedDarkMode === 'dark'" checked disabled />
       </f7-col>
     </f7-row>
     <f7-block-title>{{ t('about.navigationBarsStyle') }}</f7-block-title>
     <f7-row>
       <f7-col width="50" class="nav-bars-picker nav-bars-picker-empty" @click="bars='light'">
         <div class="demo-navbar" />
-        <f7-checkbox checked disabled v-if="bars === 'light'" />
+        <f7-checkbox v-if="bars === 'light'" checked disabled />
       </f7-col>
       <f7-col width="50" class="nav-bars-picker nav-bars-picker-fill" @click="bars='filled'">
         <div class="demo-navbar" />
-        <f7-checkbox checked disabled v-if="bars === 'filled'" />
+        <f7-checkbox v-if="bars === 'filled'" checked disabled />
       </f7-col>
     </f7-row>
 

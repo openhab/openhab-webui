@@ -32,7 +32,7 @@
       <f7-list-button title="Show All" color="blue" @click="$emit('show-advanced')" />
     </f7-list>
   </f7-block>
-  <f7-block class="no-margin no-padding" v-else-if="category === 'item'">
+  <f7-block v-else-if="category === 'item'" class="no-margin no-padding">
     <f7-list>
       <f7-list-group>
         <item-picker
@@ -67,7 +67,7 @@
         @click="currentModule.configuration.state = suggestion.value" />
     </f7-list>
   </f7-block>
-  <f7-block class="no-margin no-padding" v-else-if="category === 'script'">
+  <f7-block v-else-if="category === 'script'" class="no-margin no-padding">
     <f7-block-title class="padding-horizontal"> A script evaluates to true </f7-block-title>
     <f7-list media-list>
       <f7-list-item
@@ -102,7 +102,7 @@
       <small><strong>Note:</strong> Creating a new scripted module will <em>save the rule</em> before launching the script editor.</small>
     </f7-block-footer>
   </f7-block>
-  <f7-block class="no-margin no-padding" v-else-if="category === 'time'">
+  <f7-block v-else-if="category === 'time'" class="no-margin no-padding">
     <f7-list>
       <f7-list-item
         radio
@@ -131,7 +131,7 @@
       :configuration="currentModule.configuration"
       @updated="dirty = true" />
   </f7-block>
-  <f7-block class="no-margin no-padding" v-else-if="category === 'ephemeris'">
+  <f7-block v-else-if="category === 'ephemeris'" class="no-margin no-padding">
     <f7-list>
       <f7-list-item
         radio

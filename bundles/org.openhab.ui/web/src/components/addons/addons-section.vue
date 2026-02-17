@@ -1,5 +1,5 @@
 <template>
-  <f7-block class="addons-section" ref="addongroup" v-if="addons && addons.length > 0">
+  <f7-block v-if="addons && addons.length > 0" class="addons-section" ref="addongroup">
     <f7-block-title medium>
       {{ title }}
       <!-- <f7-link v-if="canExpand" color="blue" class="see-all-button margin-right" @click="expand">
@@ -18,8 +18,8 @@
         @addon-button-click="addonButtonClick" />
       <div v-else class="addons-cards">
         <addon-card
-          class="addon-card-desktop"
           v-for="addon in featuredAddons"
+          class="addon-card-desktop"
           :key="addon.uid"
           :addon="addon"
           :install-action-text="installActionText"
@@ -36,8 +36,8 @@
         @addon-button-click="addonButtonClick" />
       <div v-else class="addons-cards">
         <addon-card
-          class="addon-card-desktop"
           v-for="addon in addonsList"
+          class="addon-card-desktop"
           :key="addon.uid"
           :addon="addon"
           :install-action-text="installActionText"
@@ -53,8 +53,8 @@
         @addon-button-click="addonButtonClick" />
       <div v-else class="addons-cards">
         <addon-card
-          class="addon-card-desktop"
           v-for="addon in addonsList"
+          class="addon-card-desktop"
           :key="addon.uid"
           :addon="addon"
           :install-action-text="installActionText"

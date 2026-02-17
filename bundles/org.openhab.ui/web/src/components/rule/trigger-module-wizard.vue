@@ -32,7 +32,7 @@
       <f7-list-button title="Show All" color="blue" @click="$emit('show-advanced')" />
     </f7-list>
   </f7-block>
-  <f7-block class="no-margin no-padding" v-else-if="category === 'item'">
+  <f7-block v-else-if="category === 'item'" class="no-margin no-padding">
     <f7-list>
       <f7-list-group>
         <item-picker
@@ -137,7 +137,7 @@
         @click="currentModule.configuration.state = suggestion.value" />
     </f7-list>
   </f7-block>
-  <f7-block class="no-margin no-padding" v-else-if="category === 'thing'">
+  <f7-block v-else-if="category === 'thing'" class="no-margin no-padding">
     <f7-list>
       <f7-list-group>
         <thing-picker
@@ -239,7 +239,7 @@
         @blur="(evt) => currentModule.configuration.event = evt.target.value" />
     </f7-list>
   </f7-block>
-  <f7-block class="no-margin no-padding" v-else-if="category === 'time'">
+  <f7-block v-else-if="category === 'time'" class="no-margin no-padding">
     <f7-list>
       <f7-list-item
         radio
@@ -268,7 +268,7 @@
       :configuration="currentModule.configuration"
       @updated="dirty = true" />
   </f7-block>
-  <f7-block class="no-margin no-padding" v-else-if="category === 'system'">
+  <f7-block v-else-if="category === 'system'" class="no-margin no-padding">
     <f7-list>
       <f7-list-item
         radio

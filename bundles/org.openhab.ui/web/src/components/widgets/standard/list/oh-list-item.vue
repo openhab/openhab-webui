@@ -16,19 +16,19 @@
     @click.stop="openAccordionOrPerformAction"
     :class="{ 'oh-equipment-accordion-item': isEquipmentAccordion }"
     ref="f7AccordionContent">
-    <template #inner v-if="$slots.inner">
+    <template v-if="$slots.inner" #inner>
       <slot name="inner" />
     </template>
-    <template #content v-if="$slots.content">
+    <template v-if="$slots.content" #content>
       <slot name="content" />
     </template>
-    <template #root-end v-if="$slots['root-end']">
+    <template v-if="$slots['root-end']" #root-end>
       <slot name="root-end" />
     </template>
-    <template #footer v-if="$slots.footer">
+    <template v-if="$slots.footer" #footer>
       <slot name="footer" />
     </template>
-    <template #after v-if="$slots.after || context.component.slots?.after?.length">
+    <template v-if="$slots.after || context.component.slots?.after?.length" #after>
       <template v-if="context.component.slots?.after?.length">
         <generic-widget-component :context="childContext(context.component.slots.after[0])" />
       </template>
@@ -45,8 +45,8 @@
       </f7-accordion-content>
     </template>
     <template
-      #media
-      v-if="$slots.media || config.icon || (config.fallbackIconToInitial && config.title && context.parent.component.config && context.parent.component.config.mediaList)">
+      v-if="$slots.media || config.icon || (config.fallbackIconToInitial && config.title && context.parent.component.config && context.parent.component.config.mediaList)"
+      #media>
       <oh-icon
         v-if="config.icon"
         :icon="config.icon"

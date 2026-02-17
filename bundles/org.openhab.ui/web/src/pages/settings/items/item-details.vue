@@ -13,7 +13,7 @@
         </template>
         <template #after>
           <f7-subnavbar class="item-header">
-            <div class="item-icon" v-if="item.name">
+            <div v-if="item.name" class="item-icon">
               <oh-icon
                 v-if="item.category"
                 :icon="item.category"
@@ -33,7 +33,7 @@
         </template>
       </oh-nav-content>
     </f7-navbar>
-    <f7-block class="block-narrow after-item-header" v-if="item">
+    <f7-block v-if="item" class="block-narrow after-item-header">
       <f7-row v-if="item.state">
         <f7-col>
           <item-state-preview :item="item" :context="context" />

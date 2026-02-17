@@ -12,7 +12,7 @@
     </select>
   </f7-list-item>
   <!-- for placeholder purposes before items are loaded -->
-  <f7-list-item link v-show="!ready" :title="title" />
+  <f7-list-item v-show="!ready" link :title="title" />
 </template>
 
 <script>

@@ -1,6 +1,6 @@
 <template>
   <ul>
-    <f7-list-item :title="title || 'Thing'" smart-select :smart-select-params="smartSelectParams" v-if="ready" ref="smartSelect">
+    <f7-list-item v-if="ready" :title="title || 'Thing'" smart-select :smart-select-params="smartSelectParams" ref="smartSelect">
       <select :name="name" :multiple="multiple" @change="select" :required="required">
         <option v-if="!multiple" value="" />
         <optgroup v-for="thing in things.filter((t) => (filterThing) ? t.UID === filterThing : true)" :label="thing.label" :key="thing.UID">
@@ -15,7 +15,7 @@
       </select>
     </f7-list-item>
     <!-- for placeholder purposes before items are loaded -->
-    <f7-list-item link v-show="!ready" :title="title" />
+    <f7-list-item v-show="!ready" link :title="title" />
   </ul>
 </template>
 

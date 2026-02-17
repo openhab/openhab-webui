@@ -6,7 +6,7 @@
           <f7-link icon-md="material:done_all" @click="toggleCheck()" :text="(!theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
         </template>
       </oh-nav-content>
-      <f7-subnavbar :inner="false" v-show="initSearchbar">
+      <f7-subnavbar v-show="initSearchbar" :inner="false">
         <f7-searchbar
           v-if="initSearchbar"
           ref="searchbar"
@@ -22,8 +22,8 @@
     <f7-toolbar v-if="showCheckboxes" class="contextual-toolbar" :class="{ navbar: theme.md }" bottom-ios bottom-aurora>
       <f7-link
         v-if="!theme.md"
-        color="red"
         v-show="selectedItems.length"
+        color="red"
         class="delete"
         icon-ios="f7:trash"
         icon-aurora="f7:trash"
@@ -31,17 +31,17 @@
         Remove {{ selectedItems.length }}
       </f7-link>
       <f7-link v-if="theme.md" icon-md="material:close" icon-color="white" @click="showCheckboxes = false" />
-      <div class="title" v-if="theme.md">{{ selectedItems.length }} selected</div>
-      <div class="right" v-if="theme.md">
+      <div v-if="theme.md" class="title">{{ selectedItems.length }} selected</div>
+      <div v-if="theme.md" class="right">
         <f7-link v-show="selectedItems.length" icon-md="material:delete" icon-color="white" @click="removeSelected" />
       </div>
     </f7-toolbar>
 
     <f7-list-index
       v-if="ready"
+      v-show="groupBy === 'alphabetical' && !$device.desktop"
       ref="listIndex"
       :key="'pages-index'"
-      v-show="groupBy === 'alphabetical' && !$device.desktop"
       list-el=".pages-list"
       :scroll-list="true"
       :label="true" />
@@ -53,8 +53,8 @@
         <f7-list v-if="!ready" contacts-list class="col wide pages-list">
           <f7-list-group>
             <f7-list-item
-              media-item
               v-for="n in 20"
+              media-item
               :key="n"
               :class="`skeleton-text skeleton-effect-blink`"
               title="Title of the page"
@@ -71,7 +71,7 @@
 
       <f7-col v-show="ready">
         <f7-block-title class="searchbar-hide-on-search"> {{ pages.length }} pages </f7-block-title>
-        <div class="padding-left padding-right" v-show="!ready || pages.length > 0">
+        <div v-show="!ready || pages.length > 0" class="padding-left padding-right">
           <f7-segmented strong tag="p">
             <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')"> Alphabetical </f7-button>
             <f7-button :active="groupBy === 'type'" @click="switchGroupOrder('type')"> By type </f7-button>

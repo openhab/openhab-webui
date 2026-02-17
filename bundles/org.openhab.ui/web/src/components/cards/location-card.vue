@@ -12,7 +12,7 @@
           :context="childContext(slotComponent)"
           :key="'glance-' + idx" />
       </div>
-      <div class="location-stats margin-top-half" v-if="!config.disableBadges">
+      <div v-if="!config.disableBadges" class="location-stats margin-top-half">
         <span v-for="badgeType in ['temperature', 'humidity', 'co2', 'luminance']" :key="badgeType">
           <measurement-badge
             v-if="!config.badges || !config.badges.length || config.badges.indexOf(badgeType) >= 0"
@@ -23,7 +23,7 @@
             :badgeOverrides="badgeOverrides" />
         </span>
       </div>
-      <div class="location-stats margin-top" :class="config.invertText ? 'invert-text' : ''" v-if="!config.disableBadges">
+      <div v-if="!config.disableBadges" class="location-stats margin-top" :class="config.invertText ? 'invert-text' : ''">
         <span
           v-for="badgeType in ['alarms', 'battery', 'lights', 'windows', 'doors', 'garagedoors', 'blinds', 'presence', 'lock', 'climate', 'screens', 'projectors', 'speakers']"
           :key="badgeType">
@@ -38,7 +38,7 @@
       </div>
     </template>
     <div class="card-content-padding">
-      <f7-segmented round tag="p" v-if="element.equipment.length > 0 && element.properties.length > 0">
+      <f7-segmented v-if="element.equipment.length > 0 && element.properties.length > 0" round tag="p">
         <f7-button
           round
           outline
