@@ -33,19 +33,19 @@
         <f7-searchbar ref="searchbar" search-container=".item-list" search-in=".item-inner" :placeholder="$t('dialogs.search.items')">
           <template #inner-start>
             <f7-button
-              v-if="filterToggle && (filterType || filterGroupType || filterTag)"
+              v-if="showFilterToggle && (filterType || filterGroupType || filterTag)"
+              v-model="filtered"
               style="margin-inline-end: 5px"
               :icon-f7="filtered ? 'funnel_fill' : 'funnel'"
               icon-size="24px"
               :icon-color="color"
-              :tooltip="filtered ? this.$t('dialogs.search.items.tooltip.filtered') : this.$t('dialogs.search.items.tooltip.unfiltered')"
-              @click="toggleFilter" />
+              :tooltip="filtered ? this.$t('dialogs.search.items.tooltip.filtered') : this.$t('dialogs.search.items.tooltip.unfiltered')" />
           </template>
         </f7-searchbar>
 
         <f7-list v-if="multiple" class="item-list">
           <f7-list-item
-            v-for="item in preparedItems"
+            v-for="item in filteredItems"
             :key="item.name"
             checkbox
             :checked="selectedValue?.includes(item.name)"
@@ -56,7 +56,7 @@
         <f7-list v-else class="item-list">
           <f7-list-item radio :name="radioGroupName" :checked="selectedValue === null" @change="selectItem(null)" />
           <f7-list-item
-            v-for="item in preparedItems"
+            v-for="item in filteredItems"
             :key="item.name"
             radio
             :name="radioGroupName"
@@ -106,7 +106,7 @@ export default {
       default: true
     },
     noModelPicker: Boolean,
-    filterToggle: Boolean,
+    showFilterToggle: Boolean,
     filterExcludeSemantic: Boolean,
     iconColor: String,
     auroraIcon: String,
@@ -119,9 +119,7 @@ export default {
   data () {
     return {
       popupOpen: false,
-      preparedItems: [],
-      unfilteredItems: [],
-      filteredItems: [],
+      unfilteredItems: this.items ?? [],
       aurora: !this.hideIcon ? (this.auroraIcon || 'f7:list_bullet_indent') : undefined,
       ios: !this.hideIcon ? (this.iosIcon || 'f7:list_bullet_indent') : undefined,
       md: !this.hideIcon ? (this.mdIcon || 'f7:list_bullet_indent') : undefined,
@@ -141,6 +139,32 @@ export default {
         const item = this.unfilteredItems.find((i) => i.name === v)
         return item ? item.label || item.name : ''
       }
+    },
+    filteredItems() {
+      if (this.showFilterToggle && !this.filtered) return this.unfilteredItems
+
+      let filteredItems = this.unfilteredItems
+      if (this.editableOnly) {
+        filteredItems = filteredItems.filter((i) => i.editable)
+      }
+      if (this.filterExcludeSemantic) {
+        filteredItems = filteredItems.filter((i) => !i.metadata?.semantics?.value)
+      }
+      if (this.filterSemantic?.length) {
+        filteredItems = this.filterSemanticItems(filteredItems, this.filterSemantic)
+      }
+      if (this.filterGroupType?.length) {
+        const filterGroup = this.filterType?.includes('Group')
+        filteredItems = this.filterGroupItems(filteredItems, this.filterGroupType, filterGroup)
+      } else if (this.filterType?.length) {
+        filteredItems = this.filterItems(filteredItems, this.filterType)
+      }
+      filteredItems.sort((a, b) => {
+        const labelA = a.label || a.name
+        const labelB = b.label || b.name
+        return labelA.localeCompare(labelB)
+      })
+      return filteredItems
     }
   },
   watch: {
@@ -148,19 +172,15 @@ export default {
       this.selectedValue = this.multiple ? Array.isArray(newVal) ? [...newVal] : [] : newVal ?? null
     }
   },
-  created () {
-    if (this.items && this.items.length) {
-      this.sortAndFilterItems(this.items)
-    } else {
+  async created () {
+    if (!this.items || this.items.length === 0) {
       const query = {
         staticDataOnly: 'true'
       }
       if (this.filterTag?.length) {
         query.tags = Array.isArray(this.filterTag) ? this.filterTag.join(',') : this.filterTag
       }
-      api.getItems(query).then((items) => {
-        this.sortAndFilterItems(items)
-      })
+      this.unfilteredItems = await api.getItems(query)
     }
   },
   methods: {
@@ -171,97 +191,44 @@ export default {
         }
       })
     },
-    sortAndFilterItems (items) {
-      this.unfilteredItems = items
-      if (this.filterToggle) {
-        this.unfilteredItems.sort((a, b) => {
-          const labelA = a.label || a.name
-          const labelB = b.label || b.name
-          return labelA.localeCompare(labelB)
-        })
-      }
-      this.filteredItems = this.unfilteredItems
-      if (this.editableOnly) {
-        this.filteredItems = this.filteredItems.filter((i) => i.editable)
-      }
-      if (this.filterExcludeSemantic) {
-        this.filteredItems = this.filteredItems.filter((i) => !i.metadata?.semantics?.value)
-      }
-      if (this.filterSemantic?.length) {
-        if (Array.isArray(this.filterSemantic)) {
-          this.filteredItems = this.filterSemanticItems(this.filteredItems, this.filterSemantic)
-        } else {
-          this.filteredItems = this.filterSemanticItems(this.filteredItems, [this.filterSemantic])
-        }
-      }
-      if (this.filterGroupType?.length) {
-        const filterGroup = this.filterType?.includes('Group')
-        if (Array.isArray(this.filterGroupType)) {
-          this.filteredItems = this.filterGroupItems(this.filteredItems, this.filterGroupType, filterGroup)
-        } else {
-          this.filteredItems = this.filterGroupItems(this.filteredItems, [this.filterGroupType], filterGroup)
-        }
-      } else if (this.filterType?.length) {
-        if (Array.isArray(this.filterType)) {
-          this.filteredItems = this.filterItems(this.filteredItems, this.filterType)
-        } else {
-          this.filteredItems = this.filterItems(this.filteredItems, [this.filterType])
-        }
-      }
-      this.filteredItems.sort((a, b) => {
-        const labelA = a.label || a.name
-        const labelB = b.label || b.name
-        return labelA.localeCompare(labelB)
-      })
-      this.preparedItems = this.filteredItems
+    _groupTypeMatches (filter, item) {
+      if (filter === item.groupType) return true
+      if (filter.split(':', 1)[0] === item.groupType) return true
+      if (!filter.includes(':') && filter === item.groupType?.split(':', 1)[0]) return true
+      return false
     },
     filterGroupItems (items, filterGroupType, filterGroup) {
-      let tempItems = []
-      // Include groups without groupType if filterGroup = true
-      if (filterGroup) {
-        tempItems.push(...items.filter((i) => i.type === 'Group' && !i.groupType))
+      const filterGroupTypeArray = Array.isArray(filterGroupType) ? filterGroupType : [filterGroupType]
+      const groupsWithoutType = filterGroup ? items.filter((i) => i.type === 'Group' && !i.groupType) : []
+      const groupsWithType = filterGroupTypeArray.flatMap((f) =>
+        items.filter((i) => i.type === 'Group' && this._groupTypeMatches(f, i))
+      )
+      return [...groupsWithoutType, ...groupsWithType]
+    },
+    _itemTypeMatches (filter, item) {
+      if (filter === item.type) return true
+      if (filter.split(':', 1)[0] === item.type) return true
+      if (!filter.includes(':') && filter === item.type.split(':', 1)[0]) return true
+      if (item.type === 'Group') {
+        if (filter === item.groupType) return true
+        if (filter.split(':', 1)[0] === item.groupType) return true
+        if (!filter.includes(':') && filter === item.groupType?.split(':', 1)[0]) return true
       }
-      filterGroupType.forEach((f) => {
-        tempItems.push(...items.filter((i) => {
-          if (i.type !== 'Group') return false
-          if (f === i.groupType) return true
-          if (f.split(':', 1)[0] === i.groupType) return true
-          if (!f.includes(':') && f === i.groupType?.split(':', 1)[0]) return true
-          return false
-        }))
-      })
-      return tempItems
+      return false
     },
     filterItems (items, filterType) {
-      let tempItems = []
-      filterType.forEach((f) => {
-        tempItems.push(...items.filter((i) => {
-          if (f === i.type) return true
-          if (f.split(':', 1)[0] === i.type) return true
-          if (!f.includes(':') && f === i.type.split(':', 1)[0]) return true
-          if (i.type === 'Group') {
-            if (f === i.groupType) return true
-            if (f.split(':', 1)[0] === i.groupType) return true
-            if (!f.includes(':') && f === i.groupType?.split(':', 1)[0]) return true
-          }
-          return false
-        }))
-      })
-      return tempItems
+      const filterTypeArray = Array.isArray(filterType) ? filterType : [filterType]
+      return filterTypeArray.flatMap((f) =>
+        items.filter((i) => this._itemTypeMatches(f, i))
+      )
     },
     filterSemanticItems (items, filterSemantic) {
-      let tempItems = []
-      filterSemantic.forEach((f) => {
-        tempItems.push(...items.filter((i) => {
-          if (i.metadata?.semantics?.value?.includes(f) || i.metadata?.semantics?.config?.relatesTo?.includes(f)) return true
-          return false
-        }))
-      })
-      return tempItems
-    },
-    toggleFilter () {
-      this.filtered = !this.filtered
-      this.preparedItems = this.filtered ? this.filteredItems : this.unfilteredItems
+      const filterSemanticArray = (Array.isArray(filterSemantic)) ? filterSemantic : [filterSemantic]
+      return filterSemanticArray.flatMap((f) =>
+        items.filter((i) =>
+          i.metadata?.semantics?.value?.includes(f) || i.metadata?.semantics?.config?.relatesTo?.includes(f)
+        )
+      )
     },
     openPopup () {
       this.popupOpen = true
