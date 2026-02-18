@@ -63,6 +63,7 @@ export const useStatesStore = defineStore('states', () => {
     get(obj: Record<string, ItemState>, prop: string | symbol): ItemState {
       if (prop === '_keys') return Object.keys(itemStates.value) as any
       if (prop === '__ob__') return (obj as any).__ob__
+      if (prop === 'toString') return (() => '[object TrackedItems]') as any
 
       // to avoid the Vue devtools requesting invalid items in development
       if (INVALID_PROPS.has(prop.toString())) return {} as any
