@@ -31,9 +31,24 @@ export class ZWaveNetworkProvider implements NetworkGraphProvider {
 
   private static readonly LEGEND: NetworkLegend = {
     nodeRoles: [
-      { id: 'controller', label: 'Controller', color: RoleColors.controller, size: RoleSizes.controller },
-      { id: 'listening', label: 'Always Listening', color: RoleColors.listening, size: RoleSizes.listening },
-      { id: 'sleeping', label: 'Battery/Sleeping', color: RoleColors.sleeping, size: RoleSizes.sleeping }
+      {
+        id: 'controller',
+        label: 'Controller',
+        color: RoleColors.controller,
+        size: RoleSizes.controller
+      },
+      {
+        id: 'listening',
+        label: 'Always Listening',
+        color: RoleColors.listening,
+        size: RoleSizes.listening
+      },
+      {
+        id: 'sleeping',
+        label: 'Battery/Sleeping',
+        color: RoleColors.sleeping,
+        size: RoleSizes.sleeping
+      }
     ],
     linkQualities: [],
     linkTypes: [
@@ -50,11 +65,16 @@ export class ZWaveNetworkProvider implements NetworkGraphProvider {
 
     const nodes: NetworkNode[] = []
     const linkData: Array<[string, string]> = []
+    const controllerIds = new Set<string>()
 
     zWaveNodes.forEach((thing) => {
       const nodeId = thing.properties.zwave_nodeid
       const isController = !thing.bridgeUID
       const listening = thing.properties.zwave_listening === 'true'
+
+      if (isController) {
+        controllerIds.add(nodeId)
+      }
 
       let role: string
       if (isController) {
@@ -80,7 +100,7 @@ export class ZWaveNetworkProvider implements NetworkGraphProvider {
       linkData.push([nodeId, thing.properties.zwave_neighbours || ''])
     })
 
-    const links = this.createLinks(linkData)
+    const links = this.createLinks(linkData, controllerIds)
 
     return {
       networkType: 'zwave',
@@ -105,7 +125,7 @@ export class ZWaveNetworkProvider implements NetworkGraphProvider {
     }
   }
 
-  private createLinks(linkData: Array<[string, string]>): NetworkLink[] {
+  private createLinks(linkData: Array<[string, string]>, controllerIds: Set<string>): NetworkLink[] {
     const links: NetworkLink[] = []
     const linkMap = new Map<string, NetworkLink>()
 
@@ -122,16 +142,39 @@ export class ZWaveNetworkProvider implements NetworkGraphProvider {
         if (existingReverse) {
           // Found reverse link - make it bidirectional (peer)
           existingReverse.type = 'peer'
-        } else {
-          // Create new unidirectional link
+          const backLink: NetworkLink = {
+            source: nodeId,
+            target: n,
+            type: 'peer'
+          }
+          linkMap.set(forwardKey, backLink)
+          links.push(backLink)
+          return
+        }
+
+        // SPECIAL CASE: controller never reports neighbors
+        const isControllerPair = !controllerIds.has(nodeId) && controllerIds.has(n)
+
+        if (isControllerPair) {
+          // Force bidirectional links
           const link: NetworkLink = {
             source: nodeId,
             target: n,
-            type: 'asymmetric'
+            type: 'peer'
           }
           linkMap.set(forwardKey, link)
           links.push(link)
+          return
         }
+
+        // Create new unidirectional link
+        const link: NetworkLink = {
+          source: nodeId,
+          target: n,
+          type: 'asymmetric'
+        }
+        linkMap.set(forwardKey, link)
+        links.push(link)
       })
     })
 
