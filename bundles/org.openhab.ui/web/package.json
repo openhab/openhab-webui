@@ -162,7 +162,7 @@
     "chalk": "^5.4.1",
     "cross-env": "^10.1.0",
     "dependency-cruiser": "^17.3.7",
-    "esbuild": "^0.27.2",
+    "esbuild": "^0.27.3",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
     "eslint-import-resolver-typescript": "^4.4.4",
@@ -195,7 +195,7 @@
     "vite-plugin-dynamic-import": "^1.6.0",
     "vite-plugin-pwa": "^1.2.0",
     "vite-plugin-top-level-await": "^1.6.0",
-    "vite-plugin-vue-devtools": "^8.0.5",
+    "vite-plugin-vue-devtools": "^8.0.6",
     "vitest": "^4.0.18",
     "vue-eslint-parser": "^10.2.0",
     "vue-tsc": "^3.2.4"
