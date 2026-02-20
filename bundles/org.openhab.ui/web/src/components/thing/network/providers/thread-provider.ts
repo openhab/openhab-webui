@@ -76,7 +76,6 @@ interface Route {
   rloc16: number
   extAddress: string
 }
-
 interface UnknownDevice {
   extAddress: string
   seenBy: string[]
