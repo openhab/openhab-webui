@@ -9,7 +9,7 @@ export type IconType = 'svg' | 'png'
 function blobToDataURL(blob: Blob): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader()
-    reader.onerror = () => reject(new Error('Failed to read blob as data URL: ' + reader.error))
+    reader.onerror = () => reject(new Error('Failed to read blob as data URL: ' + reader.error?.toString()))
     reader.onload = () => resolve(reader.result as string)
     reader.readAsDataURL(blob)
   })

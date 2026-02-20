@@ -6,6 +6,8 @@ import { i18n } from '@/js/i18n'
 
 import type { Composer } from 'vue-i18n'
 import * as api from '@/api'
+import { ApiError } from '../hey-api'
+import type { SemanticsConfig } from '@/types/semantics-config'
 
 interface ModelItem extends api.EnrichedItem {
   modelPath?: ModelItem[]
@@ -48,7 +50,7 @@ function _compareObjects(o1: ModelItem | { item: ModelItem }, o2: ModelItem | { 
   const obj1 = o1 && typeof o1 === 'object' && 'item' in o1 ? o1.item : o1
   const obj2 = o2 && typeof o2 === 'object' && 'item' in o2 ? o2.item : o2
 
-  return compareItems(obj1 as ModelItem, obj2 as ModelItem)
+  return compareItems(obj1, obj2)
 }
 
 function _buildLocationModelCard(item: ModelItem, key: string): LocationModelCard {
@@ -131,7 +133,7 @@ export const useModelStore = defineStore('model', () => {
     if (item.modelPath) return item.modelPath
     let parent: ModelItem | null | undefined = null
 
-    const config = (item.metadata.semantics.config as any) || {}
+    const config: SemanticsConfig = item.metadata.semantics.config || {}
     if (config.hasLocation) {
       parent = items.find((i) => i.name === config.hasLocation)
     } else if (config.isPointOf) {
@@ -180,7 +182,7 @@ export const useModelStore = defineStore('model', () => {
   }
 
   async function loadSemanticModel() {
-    api
+    return api
       .getItems({ staticDataOnly: true, metadata: 'semantics,listWidget,widgetOrder' })
       .then((data) => {
         if (!data) {
@@ -235,8 +237,8 @@ export const useModelStore = defineStore('model', () => {
         // get the property items
         const propertyStruct: { [key: string]: ModelItem[] } = {}
         filteredItems.properties.sort(_compareObjects).forEach((item) => {
-          const config = (item.metadata?.semantics?.config as any) || {}
-          const property = config.relatesTo.split('_')[1]
+          const config: SemanticsConfig = item.metadata?.semantics?.config || {}
+          const property = config.relatesTo?.split('_')[1] || null
           if (property) {
             if (!propertyStruct[property]) propertyStruct[property] = []
             propertyStruct[property].push(item)
@@ -253,13 +255,13 @@ export const useModelStore = defineStore('model', () => {
 
         ready.value = true
       })
-      .catch((e) => {
+      .catch(async (e: unknown) => {
         console.error('Error while loading model:')
         console.error(e)
-        if (e.response?.statusText === 'Unauthorized' || e.response?.status === 401) {
-          authorize()
+        if (e instanceof ApiError && (e.response.statusText === 'Unauthorized' || e.response.status === 401)) {
+          await authorize()
         }
-        Promise.reject('Failed to load semantic model: ' + e)
+        throw e
       })
   }
 

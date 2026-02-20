@@ -36,7 +36,11 @@ export async function loadLocaleMessages(dir: string, mergeLocaleMessage: (local
     results.forEach((result, index) => {
       const locale = localeFilesArray[index]
       if (locale !== undefined && result.status === 'fulfilled') {
-        mergeLocaleMessage(locale, { ...result.value.default })
+        const mod: unknown = result.value
+        if (mod && typeof mod === 'object' && 'default' in mod) {
+          const messages = (mod as { default: unknown }).default
+          mergeLocaleMessage(locale, { ...(messages as Record<string, unknown>) })
+        }
       }
     })
   })

@@ -36,9 +36,9 @@ export const useDeveloperStore = defineStore('developer', () => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY)
       if (!raw) return
-      const parsed = JSON.parse(raw)
+      const parsed: unknown = JSON.parse(raw)
       if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
-        Object.assign(pinCollections, parsed)
+        Object.assign(pinCollections, parsed as Record<string, PinnedObjects>)
       }
     } catch (e) {
       // ignore malformed data

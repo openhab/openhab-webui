@@ -1,28 +1,28 @@
 import type { TrackedItems } from '@/js/stores/useStatesStore'
-import type { WidgetComponent, UIComponentConfig } from '@/types/openhab'
+import * as api from '@/api'
 
 export interface WidgetContext {
-  component: WidgetComponent
-  config: UIComponentConfig
+  component: api.UiComponent
+  config: Record<string, any>
   /**
    * oh-context constants
    */
   const?: Record<string, any>
-  ctxVars?: any
+  ctxVars?: Record<string, Record<string, any>>
   editmode?: boolean
   /**
    * oh-context functions
    */
-  fn?: Record<string, function>
+  fn?: Record<string, () => unknown>
   /**
    * oh-repeater loop variables
    */
   loop?: Record<string, any>
-  props: WidgetProps
+  props: Record<string, any>
   store: TrackedItems
   /**
    * variable.ts variable scope
    */
   varScope?: string
-  vars?: any
+  vars?: Record<string, any>
 }
