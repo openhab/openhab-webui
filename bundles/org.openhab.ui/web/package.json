@@ -76,7 +76,7 @@
     "@codemirror/language": "^6.12.1",
     "@codemirror/legacy-modes": "^6.5.1",
     "@codemirror/state": "^6.5.3",
-    "@codemirror/view": "^6.39.6",
+    "@codemirror/view": "^6.39.12",
     "@hotdogee/vue3-trend": "^2.0.4",
     "@iconify/vue": "^5.0.0",
     "@jsep-plugin/arrow": "^1.0.5",
