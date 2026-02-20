@@ -152,7 +152,7 @@
     "@types/node": "^24.10.4",
     "@typescript-eslint/eslint-plugin": "^8.54.0",
     "@typescript-eslint/parser": "^8.54.0",
-    "@vitejs/plugin-vue": "^6.0.3",
+    "@vitejs/plugin-vue": "^6.0.4",
     "@vue/compiler-sfc": "^3.5.26",
     "@vue/eslint-config-prettier": "^10.2.0",
     "@vue/eslint-config-standard": "^9.0.1",
