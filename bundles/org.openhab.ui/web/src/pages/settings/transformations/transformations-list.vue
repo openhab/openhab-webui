@@ -151,8 +151,6 @@ import { useLastSearchQueryStore } from '@/js/stores/useLastSearchQueryStore'
 
 import * as api from '@/api'
 
-const lastSearchQueryStore = useLastSearchQueryStore()
-
 export default {
   props: {
     f7router: Object
@@ -162,7 +160,8 @@ export default {
     ClipboardIcon
   },
   setup () {
-    return { f7, theme }
+    const lastSearchQueryStore = useLastSearchQueryStore()
+    return { f7, theme, lastSearchQueryStore }
   },
   data () {
     return {
@@ -211,14 +210,14 @@ export default {
       this.load()
     },
     onPageBeforeOut (event) {
-      lastSearchQueryStore.lastTransformationSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
+      this.lastSearchQueryStore.lastTransformationSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
     },
     load () {
       if (this.loading) return
       this.loading = true
 
       if (this.initSearchbar) {
-        lastSearchQueryStore.lastTransformationSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
+        this.lastSearchQueryStore.lastTransformationSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
       }
       this.initSearchbar = false
 
@@ -231,7 +230,7 @@ export default {
         nextTick(() => {
           if (this.$refs.listIndex) this.$refs.listIndex.update()
           if (this.$device.desktop && this.$refs.searchbar) this.$refs.searchbar.$el.f7Searchbar.$inputEl[0].focus()
-          this.$refs.searchbar?.$el.f7Searchbar.search(lastSearchQueryStore.lastTransformationSearchQuery || '')
+          this.$refs.searchbar?.$el.f7Searchbar.search(this.lastSearchQueryStore.lastTransformationSearchQuery || '')
         })
       })
     },

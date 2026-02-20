@@ -100,13 +100,21 @@
 <script>
 import { mapStores } from 'pinia'
 import CardMixin from './card-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
 export default {
   mixins: [CardMixin],
   props: {
-    headerHeight: [String, Number]
+    context: Object,
+    headerHeight: [String, Number],
+    type: String,
+    element: Object
+  },
+  setup (props) {
+    const { config, childContext, visible } = useWidgetContext(props.context)
+    return { config, childContext, visible }
   },
   computed: {
     ...mapStores(useUIOptionsStore)

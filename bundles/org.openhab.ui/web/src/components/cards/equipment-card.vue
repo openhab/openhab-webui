@@ -28,7 +28,7 @@
 </style>
 
 <script>
-import mixin from '@/components/widgets/widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { equipmentListComponent } from '@/components/widgets/standard/list/default-list-item'
 import CardMixin from './card-mixin'
 import ModelCard from './model-card.vue'
@@ -36,12 +36,19 @@ import ModelCard from './model-card.vue'
 import { useStatesStore } from '@/js/stores/useStatesStore'
 
 export default {
-  mixins: [mixin, CardMixin],
+  mixins: [CardMixin],
   props: {
-    tabContext: Object
+    context: Object,
+    tabContext: Object,
+    type: String,
+    element: Object
   },
   components: {
     ModelCard
+  },
+  setup (props) {
+    const { config, childContext } = useWidgetContext(props.context)
+    return { config, childContext }
   },
   computed: {
     listContext () {

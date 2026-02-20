@@ -42,12 +42,12 @@
 </style>
 
 <script>
-import mixin from '../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { actionsMixin } from '@/components/widgets/widget-actions'
 import { OhCardDefinition } from '@/assets/definitions/widgets/standard/cards'
 
 export default {
-  mixins: [mixin, actionsMixin],
+  mixins: [actionsMixin],
   widget: OhCardDefinition,
   props: {
     context: Object,
@@ -58,6 +58,10 @@ export default {
     // eslint-disable-next-line vue/prop-name-casing
     'content-root': Object,
     footer: Object
+  },
+  setup(props) {
+    const { config, hasAction } = useWidgetContext(props.context)
+    return { config, hasAction }
   },
   computed: {
     computedContentClass () {

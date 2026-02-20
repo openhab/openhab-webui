@@ -21,14 +21,21 @@
 </template>
 
 <script>
-import mixin from '../widget-mixin'
 import { OhRepeaterDefinition } from '@/assets/definitions/widgets/system'
 import { compareItems, compareRules } from '@/components/widgets/widget-order'
 
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
+
 export default {
   inheritAttrs: false,
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
   widget: OhRepeaterDefinition,
+  setup (props) {
+    const { config, childContext, evaluateExpression } = useWidgetContext(props.context)
+    return { config, childContext, evaluateExpression }
+  },
   data () {
     return {
       sourceCache: null

@@ -86,28 +86,6 @@
   </div>
 </template>
 
-<script>
-import mixin from '../widget-mixin'
-import OhPlaceholderWidget from './oh-placeholder-widget.vue'
-import { OhMasonryDefinition } from '@/assets/definitions/widgets/layout'
-import { MasonryGrid, MasonryGridItem } from '../../../components/vue3-masonry-css'
-
-export default {
-  mixins: [mixin],
-  components: {
-    OhPlaceholderWidget,
-    MasonryGrid,
-    MasonryGridItem
-  },
-  data () {
-    return {
-      dropdownMenuOpened: null
-    }
-  },
-  widget: OhMasonryDefinition
-}
-</script>
-
 <style lang="stylus">
 .oh-magic-grid
   // columns 6
@@ -134,3 +112,24 @@ export default {
   .menu
     z-index 6000 !important
 </style>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
+import { OhMasonryDefinition } from '@/assets/definitions/widgets/layout'
+import { MasonryGrid, MasonryGridItem } from '../../../components/vue3-masonry-css'
+import type { WidgetContext } from '@/components/widgets/types'
+
+const props = defineProps<{
+  context: WidgetContext
+}>()
+
+defineOptions({
+  widget: OhMasonryDefinition
+})
+
+const { config, childContext } = useWidgetContext(props.context)
+
+// reactive state
+const dropdownMenuOpened = ref<number | null>(null)
+</script>

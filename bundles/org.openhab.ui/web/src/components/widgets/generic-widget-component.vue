@@ -82,35 +82,18 @@
   </template>
 </template>
 
-<script setup>
-import * as SystemWidgets from './system/index'
-import * as StandardWidgets from './standard/index'
-import * as StandardListWidgets from './standard/list'
-import * as StandardCellWidgets from './standard/cell'
-import * as LayoutWidgets from './layout/index'
-import OhContext from './system/oh-context.vue'
-import Label from './Label.vue'
-</script>
+<script setup lang="ts">
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
+import type { WidgetContext } from '@/components/widgets/types'
 
-<script>
-import mixin from './widget-mixin'
+defineOptions({
+  inheritAttrs: false
+})
 
-export default {
-  inheritAttrs: false,
-  mixins: [mixin],
-  props: {
-    isChild: {
-      type: Boolean,
-      default: false
-    }
-  },
-  components: {
-    ...SystemWidgets,
-    ...StandardWidgets,
-    ...StandardListWidgets,
-    ...StandardCellWidgets,
-    ...LayoutWidgets,
-    OhContext
-  }
-}
+const props = withDefaults(defineProps<{
+  context: WidgetContext,
+  isChild?: boolean
+}>(), { isChild: false })
+
+const { config, childContext, childWidgetContext, scopedCssUid, visible, componentType } = useWidgetContext(props.context)
 </script>

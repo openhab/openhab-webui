@@ -25,18 +25,24 @@
 </template>
 
 <script>
-import mixin from '../../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhColorpickerCellDefinition } from '@/assets/definitions/widgets/standard/cells'
 import OhCell from './oh-cell.vue'
 import OhColorpicker from '../../system/oh-colorpicker.vue'
 
 export default {
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
   components: {
     OhCell,
     OhColorpicker
   },
   widget: OhColorpickerCellDefinition,
+  setup (props) {
+    const { config, childContext } = useWidgetContext(props.context)
+    return { config, childContext }
+  },
   computed: {
     colorpickerContext () {
       return Object.assign({}, this.context, {

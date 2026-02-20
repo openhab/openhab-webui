@@ -42,6 +42,7 @@ const rules = {
     'no-case-declarations': 'off',
     'no-console': 'off',
     'no-debugger': 'off',
+    'no-unsed-vars': 'off',
     'no-irregular-whitespace': 'off',
     // 'es/no-regexp-lookbehind-assertions': 'error', // Supported in Safari  >= 16.4, which breaks iOS 15.x.
     'no-trailing-spaces': 'error',
@@ -77,6 +78,7 @@ const rules = {
     'vue/singleline-html-element-content-newline': 'error',
     'vue/v-on-style': 'error',
     'vue/v-slot-style': 'error',
+    '@typescript-eslint/no-unused-vars': 'warn',
 
     // The following rules should be activated successively. Due to the large amount
     // of required changes, the activations should be clustered in several pull requests.

@@ -9,13 +9,19 @@
 <script>
 import { f7 } from 'framework7-vue'
 
-import mixin from '../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhContextDefinition } from '@/assets/definitions/widgets/system'
 
 export default {
   inheritAttrs: false,
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
   widget: OhContextDefinition,
+  setup (props) {
+    const { childContext, evaluateExpression } = useWidgetContext(props.context)
+    return { childContext, evaluateExpression }
+  },
   data () {
     return {
       varScope: (this.context.varScope || 'varScope') + '-' + f7.utils.id()

@@ -150,14 +150,20 @@
 import { defineAsyncComponent } from 'vue'
 import { f7 } from 'framework7-vue'
 
-import mixin from '../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhPlaceholderWidget from '../layout/oh-placeholder-widget.vue'
 
 export default {
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
   components: {
     'grid-item': defineAsyncComponent(() => import('grid-layout-plus').then((mod) => mod.GridItem)),
     OhPlaceholderWidget
+  },
+  setup (props) {
+    const { config, childContext, visible } = useWidgetContext(props.context)
+    return { config, childContext, visible }
   },
   data () {
     return {

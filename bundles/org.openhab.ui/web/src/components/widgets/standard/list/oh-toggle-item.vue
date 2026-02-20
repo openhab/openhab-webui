@@ -9,16 +9,22 @@
 </template>
 
 <script>
-import mixin from '../../widget-mixin'
 import OhListItem from './oh-list-item.vue'
 import { OhToggleItemDefinition } from '@/assets/definitions/widgets/standard/listitems'
+import { useWidgetContext } from '../../useWidgetContext'
 
 export default {
   components: {
     OhListItem
   },
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
   widget: OhToggleItemDefinition,
+  setup (props) {
+    const { config, childContext } = useWidgetContext(props.context)
+    return { config, childContext }
+  },
   computed: {
     afterComponent () {
       return {

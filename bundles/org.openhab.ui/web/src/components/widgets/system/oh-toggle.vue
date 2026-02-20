@@ -23,16 +23,22 @@
 </style>
 
 <script>
-import mixin from '../widget-mixin'
 import { OhToggleDefinition } from '@/assets/definitions/widgets/system'
 
 import { getVariableScope, getLastVariableKeyValue, setVariableKeyValues } from '@/components/widgets/variable'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 
 import { useStatesStore } from '@/js/stores/useStatesStore'
 
 export default {
-  mixins: [mixin],
   widget: OhToggleDefinition,
+  props: {
+    context: Object
+  },
+  setup (props) {
+    const { config } = useWidgetContext(props.context)
+    return { config }
+  },
   mounted () {
     delete this.config.value
   },

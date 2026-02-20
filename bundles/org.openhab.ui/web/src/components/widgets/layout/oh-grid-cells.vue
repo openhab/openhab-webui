@@ -79,16 +79,22 @@
 </style>
 
 <script>
-import mixin from '../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhPlaceholderWidget from './oh-placeholder-widget.vue'
 import { MasonryGrid, MasonryGridItem } from '../../../components/vue3-masonry-css'
 
 export default {
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
   components: {
     OhPlaceholderWidget,
     MasonryGrid,
     MasonryGridItem
+  },
+  setup (props) {
+    const { config, childContext, visible } = useWidgetContext(props.context)
+    return { config, childContext, visible }
   }
 }
 </script>

@@ -42,7 +42,7 @@
 import { nextTick } from 'vue'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
-import mixin from '../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { tileLayer, latLng, Icon } from 'leaflet'
 import { LMap, LTileLayer, LFeatureGroup } from '@vue-leaflet/vue-leaflet'
 import 'leaflet/dist/leaflet.css'
@@ -63,7 +63,9 @@ Icon.Default.mergeOptions({
 })
 
 export default {
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
   components: {
     LMap,
     LTileLayer,
@@ -72,6 +74,10 @@ export default {
     OhMapCircleMarker
   },
   widget: OhMapPageDefinition,
+  setup(props) {
+    const { config, scopedCssUid, childContext } = useWidgetContext(props.context)
+    return { config, scopedCssUid, childContext }
+  },
   data () {
     return {
       zoom: this.context.component.config.initialZoom || 4,

@@ -43,16 +43,22 @@
 </template>
 
 <script>
-import mixin from '../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhPlaceholderWidget from './oh-placeholder-widget.vue'
 
 import { OhGridColDefinition } from '@/assets/definitions/widgets/layout/index'
 
 export default {
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
   components: {
     OhPlaceholderWidget
   },
-  widget: OhGridColDefinition
+  widget: OhGridColDefinition,
+  setup (props) {
+    const { config, childContext, visible, scopedCssUid } = useWidgetContext(props.context)
+    return { config, childContext, visible, scopedCssUid }
+  }
 }
 </script>

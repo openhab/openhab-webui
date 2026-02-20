@@ -5,7 +5,7 @@ import '@/js/logging'
 import '@/js/monkeypatch'
 
 // Import Vue
-import { createApp, reactive } from 'vue'
+import { createApp, reactive, type Component } from 'vue'
 
 // Import globally registered components
 import OhNavContent from '@/components/navigation/oh-nav-content.vue'
@@ -66,14 +66,22 @@ app.use(VueClipboard, {
   appendToBody: true // add this line to append the popup to body
 })
 
-// Register global components
+// Register key components prior to mounting the app to ensure they are available to eliminate warnings
 app.component('OhNavContent', OhNavContent)
-app.component('OhIcon', OHIconComponent)
-app.component('GenericWidgetComponent', GenericWidgetComponent)
 app.component('DeveloperDockIcon', DeveloperDockIcon)
 
-app.mount('#app')
+// statically import all widget components to ensure they are registered globally
+// Note: This is necessary because widget components are used in dynamic contexts with reference by name
+const widgetFiles: Record<string, unknown> = import.meta.glob('./components/widgets/**/*.vue', { eager: true })
+Object.entries(widgetFiles).forEach(([path, module]) => {
+  const componentName = path.split('/').pop()?.replace('.vue', '')
+  if (typeof module === 'object' && module !== null && 'default' in module && componentName) {
+    const component = module.default as Component
+    app.component(componentName, component)
+  }
+})
 
+app.mount('#app')
 performance.mark('app-mounted')
 
 const measure = performance.measure('main', 'main-start', 'app-mounted')

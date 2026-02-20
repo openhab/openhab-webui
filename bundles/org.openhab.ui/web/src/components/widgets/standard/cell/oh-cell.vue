@@ -165,7 +165,7 @@
 import { f7 } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
-import mixin from '../../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { actionsMixin } from '../../widget-actions'
 import { OhCellDefinition } from '@/assets/definitions/widgets/standard/cells'
 import OhTrend from '../../system/oh-trend.vue'
@@ -173,14 +173,19 @@ import OhTrend from '../../system/oh-trend.vue'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
 export default {
-  mixins: [mixin, actionsMixin],
+  mixins: [actionsMixin],
   components: {
     OhTrend
   },
   widget: OhCellDefinition,
   props: {
+    context: Object,
     noSwipeToClose: Boolean,
     state: String
+  },
+  setup (props) {
+    const { config, childContext, hasAction } = useWidgetContext(props.context)
+    return { config, childContext, hasAction }
   },
   data () {
     return {

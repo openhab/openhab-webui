@@ -34,24 +34,19 @@
 
 <style lang="stylus"></style>
 
-<script>
-import mixin from '../widget-mixin'
+<script setup>
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhBlock from './oh-block.vue'
 import OhMasonry from './oh-masonry.vue'
 import OhGridLayout from './oh-grid-layout.vue'
 import OhCanvasLayout from './oh-canvas-layout.vue'
 
-export default {
-  props: {
-    f7router: Object
-  },
-  emits: ['action', 'add-block', 'add-masonry'],
-  mixins: [mixin],
-  components: {
-    OhBlock,
-    OhMasonry,
-    OhGridLayout,
-    OhCanvasLayout
-  }
-}
+const props = defineProps({
+  context: Object,
+  f7router: Object
+})
+
+const emits = defineEmits(['action', 'add-block', 'add-masonry'])
+
+const { config, childContext, scopedCssUid } = useWidgetContext(props.context)
 </script>

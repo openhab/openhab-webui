@@ -51,7 +51,7 @@
 <script>
 import dayjs from 'dayjs'
 
-import mixin from '../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhInputDefinition } from '@/assets/definitions/widgets/system'
 import { getDefaultInputType } from '@/assets/definitions/widgets/system/input.js'
 import { getVariableScope, setVariableKeyValues } from '@/components/widgets/variable'
@@ -59,8 +59,14 @@ import { getVariableScope, setVariableKeyValues } from '@/components/widgets/var
 import { useStatesStore } from '@/js/stores/useStatesStore'
 
 export default {
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
   widget: OhInputDefinition,
+  setup (props) {
+    const { config, childContext } = useWidgetContext(props.context)
+    return { config, childContext }
+  },
   data () {
     return {
       item: null,

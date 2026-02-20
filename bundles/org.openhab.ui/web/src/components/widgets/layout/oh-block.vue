@@ -3,7 +3,7 @@
     v-if="visible"
     class="oh-block"
     :class="scopedCssUid"
-    :style="{ 'z-index': (context.editmode) ? 100 - context.parent.component.slots.default.indexOf(context.component) : 'auto !important', ...config.style }">
+    :style="{ 'z-index': (context.editmode) ? 100 - context.parent?.component.slots.default.indexOf(context.component) : 'auto !important', ...config.style }">
     <hr v-if="context.editmode" />
     <f7-block-title v-if="config.title">
       {{ config.title }}
@@ -47,18 +47,18 @@
   z-index 10
 </style>
 
-<script>
-import mixin from '../widget-mixin'
-import OhGridRow from './oh-grid-row.vue'
-import OhGridCells from './oh-grid-cells.vue'
+<script setup lang="ts">
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
+import type { WidgetContext } from '@/components/widgets/types'
 import { OhBlockDescription } from '@/assets/definitions/widgets/layout'
 
-export default {
-  mixins: [mixin],
-  components: {
-    'oh-grid-row': OhGridRow,
-    'oh-grid-cells': OhGridCells
-  },
+defineOptions({
   widget: OhBlockDescription
-}
+})
+
+const props = defineProps<{
+  context: WidgetContext
+}>()
+
+const { config, childContext, scopedCssUid, visible } = useWidgetContext(props.context)
 </script>

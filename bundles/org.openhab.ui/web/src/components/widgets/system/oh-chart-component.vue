@@ -44,7 +44,6 @@ import { f7 } from 'framework7-vue'
 import { nextTick } from 'vue'
 import { mapStores } from 'pinia'
 
-import mixin from '../widget-mixin'
 import chart from '../chart/chart-mixin'
 import { actionsMixin } from '../widget-actions'
 
@@ -73,18 +72,25 @@ use([CanvasRenderer, LineChart, BarChart, GaugeChart, HeatmapChart, PieChart, Sc
   MarkLineComponent, MarkPointComponent, MarkAreaComponent, VisualMapComponent, CalendarComponent, LabelLayout])
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 
 export default {
-  mixins: [mixin, chart, actionsMixin],
+  mixins: [chart, actionsMixin],
   components: {
     chart: VChart
   },
-  setup () {
+  props: {
+    context: Object
+  },
+  setup (props) {
     let echartsLocale = useRuntimeStore().locale.split('-')[0].toUpperCase()
     let initOptions = echartsLocale ? {
       locale: echartsLocale
     } : null
-    return { echartsLocale, initOptions }
+
+    const { config, evaluateExpression } = useWidgetContext(props.context)
+
+    return { echartsLocale, initOptions, config, evaluateExpression }
   },
   computed: {
     activeHeight () {

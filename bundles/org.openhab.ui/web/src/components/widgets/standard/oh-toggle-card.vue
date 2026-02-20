@@ -16,18 +16,23 @@
 </style>
 
 <script>
-import mixin from '../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhCard from '@/components/widgets/standard/oh-card.vue'
 import OhToggle from '../system/oh-toggle.vue'
 import { OhToggleCardDefinition } from '@/assets/definitions/widgets/standard/cards'
 
 export default {
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
   components: {
     OhCard,
     OhToggle
   },
   widget: OhToggleCardDefinition,
+  setup (props) {
+    useWidgetContext(props.context)
+  },
   data () {
     return {
       value: Math.random()

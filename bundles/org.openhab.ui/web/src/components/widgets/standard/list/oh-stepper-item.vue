@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import mixin from '../../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhListItem from './oh-list-item.vue'
 import { OhStepperItemDefinition } from '@/assets/definitions/widgets/standard/listitems'
 
@@ -17,7 +17,13 @@ export default {
   components: {
     OhListItem
   },
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
+  setup (props) {
+    const { config, childContext } = useWidgetContext(props.context)
+    return { config, childContext }
+  },
   widget: OhStepperItemDefinition,
   computed: {
     afterComponent () {
