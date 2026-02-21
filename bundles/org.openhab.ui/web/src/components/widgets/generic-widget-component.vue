@@ -5,9 +5,9 @@
     <oh-swiper v-if="componentType === 'f7-swiper'" v-bind="$attrs" :context="context" :class="scopedCssUid" ref="component" />
 
     <component
+      :is="componentType"
       v-else-if="componentType && componentType.startsWith('f7-')"
       ref="component"
-      :is="componentType"
       v-bind="{ ...$attrs, ...config }"
       :class="scopedCssUid">
       <!-- eslint-disable-next-line vue/no-unused-vars -->
@@ -47,10 +47,10 @@
       :context="childWidgetContext()"
       :class="scopedCssUid" />
     <component
-      v-else-if="componentType && componentType.startsWith('oh-')"
-      ref="component"
       v-bind="$attrs"
       :is="componentType"
+      v-else-if="componentType && componentType.startsWith('oh-')"
+      ref="component"
       :context="context"
       :class="scopedCssUid" />
     <!-- Label renders text inside <div> element -->
@@ -70,7 +70,7 @@
       style="white-space: pre-wrap"
       >{{ config.error }}</pre
     >
-    <component v-else ref="component" :is="componentType" v-bind="{ ...$attrs, ...config }" :class="scopedCssUid">
+    <component :is="componentType" v-else ref="component" v-bind="{ ...$attrs, ...config }" :class="scopedCssUid">
       {{ config.content }}
       <template v-if="context.component.slots && context.component.slots.default">
         <generic-widget-component

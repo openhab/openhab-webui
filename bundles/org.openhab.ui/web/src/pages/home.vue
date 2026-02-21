@@ -59,7 +59,7 @@
       </f7-nav-right>
     </f7-navbar>
 
-    <f7-toolbar tabbar labels bottom v-if="tabsVisible">
+    <f7-toolbar v-if="tabsVisible" tabbar labels bottom>
       <f7-link
         tab-link="#tab-overview"
         @click="switchTab('overview')"

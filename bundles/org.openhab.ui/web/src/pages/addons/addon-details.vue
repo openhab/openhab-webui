@@ -3,7 +3,7 @@
     <f7-navbar :transparent="true" class="addon-details-nav">
       <oh-nav-content :title="addon?.label" back-link="Add-on Store" :back-link-url="`/addons/${addonId.split('-')[0]}`" :f7router />
     </f7-navbar>
-    <f7-block class="block-narrow addon-details" v-if="ready && addon">
+    <f7-block v-if="ready && addon" class="block-narrow addon-details">
       <f7-row>
         <f7-col class="margin-left">
           <div class="addon-header">
@@ -58,7 +58,7 @@
       </f7-row>
       <f7-row>
         <f7-col>
-          <f7-block strong class="addon-description" v-if="descriptionReady">
+          <f7-block v-if="descriptionReady" strong class="addon-description">
             <div v-show="descriptionExpanded" v-html="parsedDescription" class="addon-description-text" />
             <div v-show="!descriptionExpanded" v-html="addonDescription" class="addon-description-text" />
             <div v-show="!descriptionExpanded" class="text-align-right">

@@ -1,8 +1,8 @@
 <template>
   <div ref="page" :class="scopedCssUid">
     <l-map
-      ref="map"
       v-if="showMap"
+      ref="map"
       :zoom="zoom"
       :min-zoom="minZoom"
       :crs="crs"
@@ -24,11 +24,11 @@
       @update:center="centerUpdate"
       @update:zoom="zoomUpdate">
       <l-image-overlay v-if="backgroundImageUrl" :url="backgroundImageUrl" :bounds="bounds" />
-      <l-feature-group ref="featureGroup" v-if="context.component.slots">
+      <l-feature-group v-if="context.component.slots" ref="featureGroup">
         <component
+          :is="markerComponent(marker)"
           v-for="(marker, idx) in markers"
           :key="idx"
-          :is="markerComponent(marker)"
           :context="childContext(marker)"
           @update="onMarkerUpdate" />
       </l-feature-group>

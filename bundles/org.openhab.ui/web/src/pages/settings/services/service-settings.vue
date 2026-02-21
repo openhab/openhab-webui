@@ -9,7 +9,7 @@
         @save="save()"
         :f7router />
     </f7-navbar>
-    <f7-block form v-if="configDescriptions && config" class="block-narrow">
+    <f7-block v-if="configDescriptions && config" form class="block-narrow">
       <f7-col>
         <config-sheet
           :parameter-groups="configDescriptions.parameterGroups"

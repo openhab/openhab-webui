@@ -18,10 +18,10 @@
         :disabled="!createMode ? true : null">
         <template #inner>
           <f7-link
+            v-if="createMode && $refs.pageId?.state?.inputInvalid && page.uid.trim()"
             icon-f7="hammer_fill"
             style="margin-top: 4px; margin-left: 4px; margin-bottom: auto"
             tooltip="Fix ID"
-            v-if="createMode && $refs.pageId?.state?.inputInvalid && page.uid.trim()"
             @click="$oh.utils.normalizeInput('#input')" />
         </template>
       </f7-list-input>
@@ -35,7 +35,7 @@
         required
         validate
         clear-button />
-      <f7-list-item accordion-item title="Sidebar &amp; Visibility" v-if="page.uid !== 'overview'">
+      <f7-list-item v-if="page.uid !== 'overview'" accordion-item title="Sidebar &amp; Visibility">
         <f7-accordion-content>
           <f7-list-item ref="pageVisibility" title="Visible only to" smart-select :smart-select-params="{ openIn: 'popover' }">
             <select name="pagevisibility" multiple @change="updatePageVisibility">

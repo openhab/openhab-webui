@@ -20,7 +20,7 @@
         </select>
         <select v-else name="classes" @change="updateClasses" :multiple="multiple">
           <option v-if="!multiple" value="" />
-          <optgroup label="Default Attributes" v-if="!multiple">
+          <optgroup v-if="!multiple" label="Default Attributes">
             <option v-for="cl in defaultClasses" :value="cl" :key="cl" :selected="isSelected(cl) ? true : null">
               {{ cl }}
             </option>
@@ -42,7 +42,7 @@
           </optgroup>
         </select>
       </f7-list-item>
-      <f7-block-footer class="padding-left no-padding no-margin" v-if="isPartOfGroupEndpoint">
+      <f7-block-footer v-if="isPartOfGroupEndpoint" class="padding-left no-padding no-margin">
         <small v-html="`Part of group endpoint${item.groups.length > 1 ? 's' : ''}: ${groupLinks}`" />
       </f7-block-footer>
     </f7-list>
@@ -60,7 +60,7 @@
           :disabled="cap.isIgnored || !editable ? true : null"
           :link="`/settings/items/${cap.item}/metadata/alexa`" />
       </f7-list>
-      <f7-block-footer class="padding-left" v-if="!groupCapabilities.length">
+      <f7-block-footer v-if="!groupCapabilities.length" class="padding-left">
         No direct group members of {{ item.name }} configured for Alexa
       </f7-block-footer>
     </f7-block>

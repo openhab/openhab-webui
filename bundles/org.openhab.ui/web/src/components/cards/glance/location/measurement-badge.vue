@@ -1,5 +1,5 @@
 <template>
-  <span class="padding-right location-status-badge" v-show="map.length" :class="{ invert: invertColor }">
+  <span v-show="map.length" class="padding-right location-status-badge" :class="{ invert: invertColor }">
     <oh-icon
       v-if="config.icon.indexOf('oh:') === 0"
       :icon="config.icon.replace('oh:', '')"
@@ -15,7 +15,7 @@
       size="20" />
     <!-- <oh-icon v-if="config.icon.indexOf('oh:') === 0 && config.stateOff" v-show="!reduce" icon="config.icon.replace('oh:', '')"  :state="config.stateOff" class="oh-icon-badge" width="20" height="20" /> -->
     <span class="glance-label">{{ reduce }} {{ config.unit }}</span>
-    <span class="glance-label" v-show="mapAux.length" style="opacity: 0.7">({{ reduceAux }} {{ config.unit }})</span>
+    <span v-show="mapAux.length" class="glance-label" style="opacity: 0.7">({{ reduceAux }} {{ config.unit }})</span>
   </span>
 </template>
 

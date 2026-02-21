@@ -6,7 +6,7 @@
           <f7-link icon-md="material:done_all" @click="toggleCheck()" :text="(!theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
         </template>
       </oh-nav-content>
-      <f7-subnavbar :inner="false" v-show="initSearchbar">
+      <f7-subnavbar v-show="initSearchbar" :inner="false">
         <!-- Only render searchbar, if page is ready. Otherwise searchbar is broken after changes to the Items list. -->
         <f7-searchbar
           v-if="initSearchbar"
@@ -63,8 +63,8 @@
         <f7-list media-list class="col wide">
           <f7-list-group>
             <f7-list-item
-              media-item
               v-for="n in 20"
+              media-item
               :key="n"
               :class="`skeleton-text skeleton-effect-blink`"
               title="Label of the item"

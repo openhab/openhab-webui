@@ -1,5 +1,5 @@
 <template>
-  <div class="loading searchbar-ignore" v-if="!ready">
+  <div v-if="!ready" class="loading searchbar-ignore">
     <div class="list media-list margin-left searchbar-ignore">
       <ul>
         <li class="item-content skeleton-text searchbar-ignore">
@@ -17,7 +17,7 @@
       </ul>
     </div>
   </div>
-  <f7-list media-list v-else inset class="margin-left searchbar-ignore">
+  <f7-list v-else media-list inset class="margin-left searchbar-ignore">
     <f7-list-group v-if="links">
       <f7-list-item
         v-for="link in links"

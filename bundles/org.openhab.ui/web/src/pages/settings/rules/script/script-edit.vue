@@ -39,8 +39,8 @@
           :color="(rule.status.status === 'IDLE') && isMimeTypeAvailable(mode) ? 'blue' : 'gray'"
           @click="runNow" />
         <f7-chip
-          class="margin-left"
           v-if="currentModule && currentModule.configuration.script"
+          class="margin-left"
           :text="ruleStatusBadgeText(rule.status)"
           :color="ruleStatusBadgeColor(rule.status)"
           :tooltip="rule.status.description" />
@@ -168,14 +168,14 @@
         :read-only="isBlockly || !editable"
         :tern-autocompletion-hook="true" />
       <blockly-editor
-        ref="blocklyEditor"
         v-else-if="!createMode && isBlockly"
+        ref="blocklyEditor"
         :blocks="currentModule.configuration.blockSource"
         @change="scriptDirty = true"
         @mounted="onBlocklyMounted"
         @ready="onBlocklyReady" />
       <script-general-settings v-else-if="createMode" :createMode="true" :rule="rule" />
-      <f7-block class="block-narrow" v-if="createMode && !ruleCopy">
+      <f7-block v-if="createMode && !ruleCopy" class="block-narrow">
         <f7-col>
           <f7-block-title medium class="margin-left margin-bottom"> Scripting Method </f7-block-title>
           <f7-list media-list>
@@ -197,13 +197,13 @@
           <f7-block-footer class="margin-vertical margin-left"> or choose the scripting language: </f7-block-footer>
           <f7-list media-list>
             <f7-list-item
+              v-for="language in languages"
               media-item
               radio
               radio-icon="start"
               :value="mode"
               :checked="mode === language.contentType ? true : null"
               @change="mode = language.contentType"
-              v-for="language in languages"
               :key="language.contentType"
               :title="language.name"
               :after="language.version"
@@ -254,7 +254,7 @@
             :mode="mode"
             :languages="languages"
             @new-language="changeLanguage" />
-          <f7-block class="block-narrow" v-if="editable && isScriptRule">
+          <f7-block v-if="editable && isScriptRule" class="block-narrow">
             <f7-col>
               <f7-list>
                 <f7-list-button color="blue" @click="duplicateRule"> Duplicate Script </f7-list-button>

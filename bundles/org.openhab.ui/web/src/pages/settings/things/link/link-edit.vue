@@ -49,7 +49,7 @@
             <f7-button v-if="source === 'thing' && item.editable" color="red" fill @click="unlinkAndDelete()">
               Unlink &amp; Remove Item
             </f7-button>
-            <f7-button color="red" @click="unlink()" v-if="link.editable">
+            <f7-button v-if="link.editable" color="red" @click="unlink()">
               {{ source === 'thing' && link.editable ? 'Unlink Only' : 'Unlink' }}
             </f7-button>
           </f7-card-footer>

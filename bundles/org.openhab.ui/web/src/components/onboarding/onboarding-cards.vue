@@ -10,7 +10,7 @@
         <f7-button color="blue" fill raised href="/setup-wizard/"> Start Setup Wizard </f7-button>
       </f7-card-footer>
     </f7-card>
-    <f7-card title="Suggested Tasks" v-show="showTasks">
+    <f7-card v-show="showTasks" title="Suggested Tasks">
       <f7-card-content :padding="false">
         <ol>
           <li>

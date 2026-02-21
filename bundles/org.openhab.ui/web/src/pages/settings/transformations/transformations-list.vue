@@ -6,7 +6,7 @@
           <f7-link icon-md="material:done_all" @click="toggleCheck()" :text="(!theme.md) ? (showCheckboxes ? 'Done' : 'Select') : ''" />
         </template>
       </oh-nav-content>
-      <f7-subnavbar :inner="false" v-show="initSearchbar">
+      <f7-subnavbar v-show="initSearchbar" :inner="false">
         <f7-searchbar
           v-if="initSearchbar"
           ref="searchbar"
@@ -21,8 +21,8 @@
     <f7-toolbar v-if="showCheckboxes" class="contextual-toolbar" :class="{ navbar: theme.md }" bottom-ios bottom-aurora>
       <f7-link
         v-if="!theme.md"
-        color="red"
         v-show="selectedTransformations.length"
+        color="red"
         class="delete"
         icon-ios="f7:trash"
         icon-aurora="f7:trash"
@@ -38,8 +38,8 @@
 
     <f7-list-index
       v-if="$refs.transformationsList"
-      ref="listIndex"
       v-show="groupBy === 'alphabetical' && !$device.desktop"
+      ref="listIndex"
       listEl=".transformations-list"
       :scroll-list="true"
       :label="true" />

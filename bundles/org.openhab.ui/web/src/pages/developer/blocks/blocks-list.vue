@@ -6,7 +6,7 @@
           <f7-link icon-md="material:done_all" @click="toggleCheck()" :text="!theme.md ? (showCheckboxes ? 'Done' : 'Select') : ''" />
         </template>
       </oh-nav-content>
-      <f7-subnavbar :inner="false" v-show="initSearchbar">
+      <f7-subnavbar v-show="initSearchbar" :inner="false">
         <f7-searchbar
           v-if="initSearchbar"
           ref="searchbar"
@@ -42,7 +42,7 @@
     </f7-list>
 
     <!-- skeleton for not ready -->
-    <f7-block class="block-narrow" v-show="!nowidgetEngine">
+    <f7-block v-show="!nowidgetEngine" class="block-narrow">
       <f7-col v-show="!ready">
         <f7-block-title>&nbsp;Loading...</f7-block-title>
         <f7-list media-list class="col wide">

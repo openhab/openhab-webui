@@ -1,7 +1,7 @@
 <template>
   <div>
     <hr v-if="context.editmode" style="opacity: 0.5; border-top: 1px #777 dashed" />
-    <div width="100%" v-if="context.editmode">
+    <div v-if="context.editmode" width="100%">
       <f7-menu class="configure-layout-menu padding-horizontal">
         <f7-menu-item style="margin-left: auto" icon-f7="rectangle_grid_2x2" dropdown>
           <f7-menu-dropdown right>
