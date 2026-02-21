@@ -9,9 +9,15 @@ import * as hintUtils from './hint-utils'
 // So we import the raw data and parse it manually to avoid it
 // @ts-expect-error - raw import has no type declaration
 import EcmascriptRaw from '@/assets/ecmascript.json?raw'
-const EcmascriptDefs: any = JSON.parse(EcmascriptRaw)
+const EcmascriptDefs = JSON.parse(String(EcmascriptRaw)) as Definitions
+
 import NashornDefs from '@/assets/nashorn-tern-defs.json'
 import OpenhabJsDefs from '@/assets/openhab-js-tern-defs.json'
+
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 
 type Definitions = Record<string, any>
 
@@ -136,7 +142,7 @@ function resolveDefinition(identifier: string, scopedDef: Definitions): Definiti
 function resolveDefinitionFromPath(path: readonly string[]) {
   let def: Definitions | undefined = GlobalIdentifiers
   for (let segment of path) {
-    def = resolveDefinition(segment, def!)
+    def = resolveDefinition(segment, def)
     if (!def) return
   }
   return def

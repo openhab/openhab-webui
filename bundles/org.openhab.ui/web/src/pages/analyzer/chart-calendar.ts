@@ -103,7 +103,7 @@ const calendarCoordSystem: CoordSystem = {
     page.slots.calendar = [calendar]
 
     page.slots.series = items.map((item) => {
-      const seriesOptions = allSeriesOptions[item.name!] as CalendarSeriesOptions
+      const seriesOptions = allSeriesOptions[item.name] as CalendarSeriesOptions
       return {
         component: 'oh-calendar-series',
         config: {

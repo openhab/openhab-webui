@@ -14,14 +14,14 @@ dayjs.extend(DayDuration)
  * @param chartType
  * @param date
  */
-export function startOf(chartType: ChartType, date?: any): Dayjs {
-  if (chartType === 'week') {
+export function startOf(chartType: ChartType, date?: string | number | dayjs.Dayjs | Date): Dayjs {
+  if (chartType === ChartType.week) {
     // Week starting on Sunday & passed-in date is on Sunday: pass through to avoid shifting back by one week
     if (date && dayjs(date).day() === 0) return dayjs(date)
     // Week starting on Sunday
     return dayjs(date).startOf(chartType).subtract(1, 'day')
   }
-  if (chartType === 'isoWeek') {
+  if (chartType === ChartType.isoWeek) {
     // Week starting on Monday
     return dayjs(date).startOf('week')
   }

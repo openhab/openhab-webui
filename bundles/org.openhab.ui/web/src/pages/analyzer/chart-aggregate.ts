@@ -85,7 +85,7 @@ const aggregateCoordSystem: CoordSystem = {
     }
 
     if (
-      item.type!.startsWith('Number') ||
+      item.type.startsWith('Number') ||
       item.type === 'Dimmer' ||
       ('groupType' in item && (item.groupType?.startsWith('Number') || item.groupType === 'Dimmer'))
     ) {

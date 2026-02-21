@@ -71,7 +71,7 @@ export const useSemanticsStore = defineStore('semantics', () => {
 
     // merge labels into i18n once
     try {
-      const locale = (i18n.global as Composer).locale.value as string
+      const locale = (i18n.global as Composer).locale.value
       ;(i18n.global as Composer).mergeLocaleMessage(locale, labels)
     } catch (e) {
       console.warn('Failed to merge semantic labels into i18n globals', e)
@@ -93,10 +93,10 @@ export const useSemanticsStore = defineStore('semantics', () => {
           console.debug('Successfully loaded semantic tags.')
           ready.value = true
         })
-        .catch((e) => {
-          console.error('Failed to load semantic tags:', e.message)
+        .catch((e: unknown) => {
+          console.error('Failed to load semantic tags:', e instanceof Error ? e.message : e)
           ready.value = false
-          return Promise.reject(e)
+          return Promise.reject(e instanceof Error ? e : new Error(String(e)))
         })
     } else {
       ready.value = true

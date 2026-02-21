@@ -32,8 +32,14 @@ export class ApiError extends Error {
  * @param debug whether to return the debug string if available.
  * @returns {string} the error message.
  */
-export function getErrorMessage(err: any, debug: boolean = false): string {
-  return debug && err.toDebugString ? err.toDebugString() : err.toString()
+export function getErrorMessage(err: unknown, debug: boolean = false): string {
+  if (err instanceof ApiError) {
+    return debug ? err.toDebugString() : err.message
+  } else if (err instanceof Error) {
+    return err.message
+  } else {
+    return String(err)
+  }
 }
 
 client.interceptors.request.use((request, options) => {

@@ -54,7 +54,7 @@ const props = withDefaults(defineProps<{
   saveLink?: string,
   saveLinkUrl?: string,
   large?: boolean,
-  f7router?: object,
+  f7router?: Router.Router,
 }>(), {
   backLink: 'Back',
   editable: undefined,

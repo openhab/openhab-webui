@@ -1,5 +1,8 @@
 import { type VNode } from 'vue'
 
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+
 // recursive function to find VNodes with the class 'item'
 export function findChildNodesWithClassName(nodes: any[], className: string): VNode[] {
   let result: VNode[] = []

@@ -16,7 +16,7 @@ class AudioSinkWorklet extends AudioWorkletProcessor {
   constructor() {
     super()
     // Setup message handler
-    this.port.onmessage = (ev) => this.handlePortMessage(ev.data)
+    this.port.onmessage = (ev) => this.handlePortMessage(ev.data as Float32Array | Float32Array[] | boolean)
   }
 
   private handlePortMessage(data: Float32Array | Float32Array[] | boolean) {

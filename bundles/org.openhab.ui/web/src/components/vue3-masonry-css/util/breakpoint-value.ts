@@ -25,5 +25,5 @@ export const breakpointValue = <T>(breakpoint: Breakpoint<T>, windowWidth: numbe
     }
   }
 
-  return matchedValue as T
+  return matchedValue
 }

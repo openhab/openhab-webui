@@ -3,6 +3,12 @@ import { AudioSink } from './audio/audio-sink.ts'
 import { AudioSource } from './audio/audio-source.ts'
 import { WorkerInCmd, WorkerOutCmd, type WorkerOutMessage } from './types.ts'
 
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-floating-promises */
+/* eslint-disable @typescript-eslint/no-misused-promises */
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
+
 export interface AudioMainEvents {
   onMessage?: (message: string, level?: 'info' | 'error', duration?: number) => (() => void) | void
   onRunningChange: (instance: AudioMain) => void
