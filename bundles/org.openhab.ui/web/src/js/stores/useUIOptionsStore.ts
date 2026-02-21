@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { computed, ref, watch } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import { Dom7 } from 'framework7'
 import { f7, f7ready } from 'framework7-vue'
 import type { CodeEditorType } from '@/assets/definitions/media-types.ts'
@@ -60,6 +60,10 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
   const dialogLocationItem = ref<string>(localStorage.getItem('openhab.ui:dialog.locationItem') || '')
   const dialogConnectOnWindowEvent = ref<boolean>(localStorage.getItem('openhab.ui:dialog.connectOnWindowEvent') === 'true')
   const dialogTriggerOnConnect = ref<boolean>(localStorage.getItem('openhab.ui:dialog.triggerOnLaunch') === 'true')
+
+  const codeMirrorSettings = reactive({
+    vimMode: localStorage.getItem('openhab.ui:codeMirror.vimMode') === 'true'
+  })
 
   const darkMode = computed({
     get: (): 'dark' | 'light' => {
@@ -192,6 +196,14 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     localStorage.setItem('openhab.ui:dialog.triggerOnLaunch', newValue ? 'true' : 'false')
   })
 
+  watch(
+    codeMirrorSettings,
+    (newValue) => {
+      localStorage.setItem('openhab.ui:codeMirror.vimMode', newValue.vimMode ? 'true' : 'false')
+    },
+    { deep: true }
+  )
+
   function updateClasses() {
     if (darkMode.value === 'dark') {
       Dom7('html').addClass('dark')
@@ -250,6 +262,8 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     dialogLocationItem,
     dialogConnectOnWindowEvent,
     dialogTriggerOnConnect,
+
+    codeMirrorSettings,
 
     updateClasses,
     themeOptions

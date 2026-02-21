@@ -160,7 +160,8 @@
           class="page-code-editor"
           mode="application/vnd.openhab.uicomponent+yaml;type=home"
           :value="pageYaml"
-          @input="onEditorInput" />
+          @input="onEditorInput"
+          @save="save()" />
         <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
         <div v-if="ready && previewMode" :context="context" :key="pageKey">
           <model-tab style="margin-bottom: 4rem" :context="context" :type="currentModelTab" :page="page" />
