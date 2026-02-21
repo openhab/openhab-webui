@@ -14,7 +14,7 @@
         </f7-button>
       </f7-col>
     </f7-block>
-    <f7-block form v-if="configDescription && config" class="block-narrow">
+    <f7-block v-if="configDescription && config" form class="block-narrow">
       <f7-col>
         <f7-block-title medium> Add-on configuration </f7-block-title>
         <config-sheet
@@ -23,7 +23,7 @@
           :configuration="config" />
       </f7-col>
     </f7-block>
-    <f7-block form v-if="loggerPackages.length > 0" class="block-narrow">
+    <f7-block v-if="loggerPackages.length > 0" form class="block-narrow">
       <f7-col>
         <f7-block-title medium> Add-on log settings </f7-block-title>
         <f7-list class="col wide">

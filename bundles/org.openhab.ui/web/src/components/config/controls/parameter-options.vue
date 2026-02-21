@@ -35,8 +35,8 @@
         @click="updateValue(undefined)" />
     </f7-block-header>
     <f7-list-item
-      radio
       v-for="option in configDescription.options"
+      radio
       no-hairline
       :value="option.value"
       :checked="isSelected(option) ? true : null"

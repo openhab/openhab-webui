@@ -1,6 +1,6 @@
 <template>
   <f7-block v-if="parameters" class="config-sheet no-margin" ref="sheet">
-    <div style="text-align: right" class="padding-right padding-bottom" v-if="hasAdvanced">
+    <div v-if="hasAdvanced" style="text-align: right" class="padding-right padding-bottom">
       <label class="advanced-label">
         <f7-checkbox v-model:checked="showAdvanced" />
         Show advanced
@@ -34,13 +34,13 @@
       </f7-block>
     </f7-col>
     <f7-col v-if="displayedParameterGroups.length">
-      <f7-block width="100" class="parameter-group" v-for="group in displayedParameterGroups" :key="group.name">
+      <f7-block v-for="group in displayedParameterGroups" width="100" class="parameter-group" :key="group.name">
         <f7-row v-if="displayedParameters.some((p) => p.groupName === group.name)">
           <f7-col>
             <f7-block-title class="parameter-group-title">
               {{ group.label }}
             </f7-block-title>
-            <f7-block-footer class="param-description" v-if="group.description">
+            <f7-block-footer v-if="group.description" class="param-description">
               <div v-html="group.description" />
             </f7-block-footer>
 

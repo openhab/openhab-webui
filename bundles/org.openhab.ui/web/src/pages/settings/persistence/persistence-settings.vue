@@ -10,7 +10,7 @@
         :f7router />
     </f7-navbar>
 
-    <f7-block form v-if="ready && persistenceList.length" class="block-narrow">
+    <f7-block v-if="ready && persistenceList.length" form class="block-narrow">
       <f7-col>
         <f7-block-title medium> General Settings </f7-block-title>
         <config-sheet

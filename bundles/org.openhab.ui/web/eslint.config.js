@@ -52,7 +52,11 @@ const rules = {
     'quotes': ['error', 'single'],
     'space-in-parens': 'error',
     'vue/attribute-hyphenation': 'off',
-    'vue/attributes-order': 'off',
+    'vue/attributes-order': ['error', {
+      'order': ['DEFINITION', 'LIST_RENDERING', 'CONDITIONALS', 'RENDER_MODIFIERS', [ 'GLOBAL', 'UNIQUE', 'SLOT', 'TWO_WAY_BINDING', 'OTHER_DIRECTIVES', 'OTHER_ATTR', 'EVENTS', 'CONTENT' ]],
+      'alphabetical': false,
+      "sortLineLength": false
+    }],
     'vue/component-definition-name-casing': 'off',
     'vue/first-attribute-linebreak': 'off',
     'vue/html-closing-bracket-newline': ['error', { 'singleline': 'never', 'multiline': 'never' }],

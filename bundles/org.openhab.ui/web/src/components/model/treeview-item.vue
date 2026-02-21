@@ -54,7 +54,7 @@
       <div class="semantic-class">
         {{ className }}
         <template v-if="includeItemTags">
-          <div class="semantic-class chip" v-for="tag in getNonSemanticTags(model.item)" :key="tag" style="height: 16px; margin-left: 4px">
+          <div v-for="tag in getNonSemanticTags(model.item)" class="semantic-class chip" :key="tag" style="height: 16px; margin-left: 4px">
             <div class="chip-media bg-color-blue" style="height: 16px; width: 16px">
               <f7-icon ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" style="font-size: 8px; height: 16px; line-height: 16px" />
             </div>

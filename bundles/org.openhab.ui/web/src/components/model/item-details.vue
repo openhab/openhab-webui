@@ -8,16 +8,16 @@
         </ul>
       </f7-list>
 
-      <div class="padding-top" v-if="editMode">
+      <div v-if="editMode" class="padding-top">
         <item-form :item="editedItem" :hide-type="true" :force-semantics="forceSemantics" />
       </div>
-      <div class="padding-top" v-else-if="createMode">
+      <div v-else-if="createMode" class="padding-top">
         <item-form :item="editedItem" :items="items" :createMode="true" :force-semantics="forceSemantics" />
       </div>
     </f7-card-content>
     <f7-card-footer v-if="createMode || editMode" key="item-card-buttons">
       <f7-button v-if="createMode" color="blue" fill raised @click="create"> Create </f7-button>
-      <f7-button v-else color="blue" fill raised @click="save" v-show="model.item.editable"> Save </f7-button>
+      <f7-button v-else v-show="model.item.editable" color="blue" fill raised @click="save"> Save </f7-button>
       <f7-button v-if="model.item.editable" color="blue" @click="cancel"> Cancel </f7-button>
       <f7-button
         v-else

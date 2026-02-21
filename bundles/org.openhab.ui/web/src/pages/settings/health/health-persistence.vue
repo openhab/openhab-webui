@@ -26,8 +26,8 @@
         <f7-list contacts-list class="col">
           <f7-list-group>
             <f7-list-item
-              media-item
               v-for="n in 10"
+              media-item
               :key="n"
               :class="`skeleton-text skeleton-effect-blink`"
               title="Type of problem"

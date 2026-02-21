@@ -35,8 +35,8 @@
       </f7-menu-item>
     </f7-menu>
     <component
-      v-for="(component, idx) in context.component.slots?.default"
       :is="component.component"
+      v-for="(component, idx) in context.component.slots?.default"
       :key="idx"
       :context="childContext(component)" />
   </f7-block>

@@ -35,7 +35,7 @@
       @click="openCell"
       class="float-right cell-open-button card-opened-fade-out no-ripple" />
     <f7-card-content ref="cell" class="cell-contents">
-      <f7-card-header class="cell-button card-opened-fade-out no-padding" v-show="!opened">
+      <f7-card-header v-show="!opened" class="cell-button card-opened-fade-out no-padding">
         <slot name="header">
           <f7-list media-list>
             <div v-if="context.component.slots && context.component.slots.header">

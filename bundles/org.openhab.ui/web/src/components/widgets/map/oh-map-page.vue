@@ -11,11 +11,11 @@
       :class="{ 'with-tabbar': context.tab }"
       @update:center="centerUpdate"
       @update:zoom="zoomUpdate">
-      <l-feature-group ref="featureGroup" v-if="showMarkers">
+      <l-feature-group v-if="showMarkers" ref="featureGroup">
         <component
+          :is="markerComponent(marker)"
           v-for="(marker, idx) in context.component.slots.default"
           :key="idx"
-          :is="markerComponent(marker)"
           :context="childContext(marker)"
           @update="onMarkerUpdate" />
       </l-feature-group>

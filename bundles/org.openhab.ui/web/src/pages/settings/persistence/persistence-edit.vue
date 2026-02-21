@@ -87,7 +87,7 @@
                       icon-md="material:remove_circle_outline"
                       @click="showSwipeout" />
                   </template>
-                  <f7-swipeout-actions right v-if="editable">
+                  <f7-swipeout-actions v-if="editable" right>
                     <f7-swipeout-button
                       @click="(ev) => deleteModule(ev, 'configs', index)"
                       style="background-color: var(--f7-swipeout-delete-button-bg-color)">
@@ -132,7 +132,7 @@
                       icon-md="material:remove_circle_outline"
                       @click="showSwipeout" />
                   </template>
-                  <f7-swipeout-actions right v-if="editable">
+                  <f7-swipeout-actions v-if="editable" right>
                     <f7-swipeout-button
                       @click="(ev) => deleteCronStrategy(ev, index)"
                       style="background-color: var(--f7-swipeout-delete-button-bg-color)">
@@ -179,7 +179,7 @@
                           icon-md="material:remove_circle_outline"
                           @click="showSwipeout" />
                       </template>
-                      <f7-swipeout-actions right v-if="editable">
+                      <f7-swipeout-actions v-if="editable" right>
                         <f7-swipeout-button
                           @click="(ev) => deleteFilter(ev, ft.name, index)"
                           style="background-color: var(--f7-swipeout-delete-button-bg-color)">
@@ -232,7 +232,7 @@
                       @input="editAlias($event, i, $event.target.value)"
                       @keydown="keyDown($event, index)" />
                   </div>
-                  <f7-swipeout-actions right v-if="editable">
+                  <f7-swipeout-actions v-if="editable" right>
                     <f7-swipeout-button
                       @click="(ev) => deleteAlias(ev, i)"
                       style="background-color: var(--f7-swipeout-delete-button-bg-color)">

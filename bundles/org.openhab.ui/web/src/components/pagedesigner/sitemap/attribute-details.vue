@@ -32,7 +32,7 @@
         </f7-list-item>
       </f7-list>
     </f7-card-content>
-    <f7-card-footer key="item-card-buttons-edit-mode" v-if="widget.component !== 'Sitemap'">
+    <f7-card-footer v-if="widget.component !== 'Sitemap'" key="item-card-buttons-edit-mode">
       <f7-button color="blue" @click="addAttribute"> Add </f7-button>
     </f7-card-footer>
   </f7-card>

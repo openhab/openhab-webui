@@ -69,7 +69,7 @@
           <!-- <f7-col v-if="isEditable" class="text-align-right justify-content-flex-end">
             </f7-col> -->
           <f7-col class="scene-modules">
-            <div class="no-padding float-right" v-if="rule['actions'].length > 0">
+            <div v-if="rule['actions'].length > 0" class="no-padding float-right">
               <f7-button
                 @click="toggleModuleControls"
                 small

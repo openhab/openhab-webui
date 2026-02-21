@@ -15,7 +15,7 @@
         <oh-trend v-if="config.trendItem" :key="'trend' + config.item" class="trend" :width="trendWidth" :context="context" />
         <f7-list>
           <f7-list-item :link="hasAction ? true : false" no-chevron>
-            <template #media v-if="config.icon">
+            <template v-if="config.icon" #media>
               <oh-icon
                 :icon="config.icon"
                 :height="config.iconSize || 32"

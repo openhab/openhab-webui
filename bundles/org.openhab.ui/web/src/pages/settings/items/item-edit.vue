@@ -16,7 +16,7 @@
 
     <f7-tabs v-if="ready">
       <f7-tab id="design" :tab-active="currentTab === 'design'">
-        <f7-block class="block-narrow" v-if="item.name || item.created === false">
+        <f7-block v-if="item.name || item.created === false" class="block-narrow">
           <f7-col v-if="!editable">
             <div class="padding-left">Note: {{ notEditableMsg }}</div>
           </f7-col>

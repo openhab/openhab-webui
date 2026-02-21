@@ -38,7 +38,7 @@
         <div class="service">
           <addon-logo class="logo-square" :addon="addons.find((addon) => addon.uid === 'persistence-' + service.id)" size="54" />
           <span class="config">
-            <f7-list form v-if="servicesLoaded">
+            <f7-list v-if="servicesLoaded" form>
               <f7-list-item title="Items" smart-select :smart-select-params="{ openIn: 'popup', closeOnSelect: true }">
                 <select :name="'items_' + service.id" v-model="items[service.id]">
                   <option value="*">

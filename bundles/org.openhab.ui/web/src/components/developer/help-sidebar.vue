@@ -39,7 +39,7 @@
         </f7-block>
         <f7-block class="no-margin no-padding">
           <f7-list accordion-list>
-            <f7-list-item class="faq-title" accordion-item v-for="faq in faqs" :key="faq.title" :title="faq.title">
+            <f7-list-item v-for="faq in faqs" class="faq-title" accordion-item :key="faq.title" :title="faq.title">
               <f7-accordion-content>
                 <f7-block>
                   <p v-if="faq.goto">

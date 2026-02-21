@@ -6,7 +6,7 @@
           <f7-link icon-md="material:done_all" @click="toggleCheck()" :text="(!theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
         </template>
       </oh-nav-content>
-      <f7-subnavbar :inner="false" v-show="initSearchbar">
+      <f7-subnavbar v-show="initSearchbar" :inner="false">
         <f7-searchbar
           v-if="initSearchbar"
           ref="searchbar"
@@ -112,8 +112,8 @@
     </f7-toolbar>
 
     <f7-list-index
-      ref="listIndex"
       v-show="groupBy === 'alphabetical' && !$device.desktop"
+      ref="listIndex"
       list-el=".inbox-list"
       :scroll-list="true"
       :label="true" />
@@ -145,7 +145,7 @@
             </label>
           </div>
         </f7-block-title>
-        <div class="searchbar-found padding-left padding-right" v-show="!ready || inboxCount > 0">
+        <div v-show="!ready || inboxCount > 0" class="searchbar-found padding-left padding-right">
           <f7-segmented strong tag="p">
             <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')"> Alphabetical </f7-button>
             <f7-button :active="groupBy === 'binding'" @click="switchGroupOrder('binding')"> By binding </f7-button>
@@ -156,8 +156,8 @@
         <f7-list v-if="!ready" contacts-list class="col inbox-list">
           <f7-list-group>
             <f7-list-item
-              media-item
               v-for="n in 10"
+              media-item
               :key="n"
               :class="`skeleton-text skeleton-effect-blink`"
               title="Label of the thing"

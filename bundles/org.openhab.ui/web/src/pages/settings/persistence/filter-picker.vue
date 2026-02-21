@@ -1,5 +1,5 @@
 <template>
-  <f7-list class="strategy-picker-container" v-if="filters">
+  <f7-list v-if="filters" class="strategy-picker-container">
     <f7-list-item
       title="Select filters"
       :smart-select="disabled !== true && filters.length > 0"

@@ -45,7 +45,7 @@
           {{ t('sidebar.administration') }}
         </f7-block-title>
         <!-- Settings -->
-        <f7-list class="admin-links" v-if="userStore.isAdmin()">
+        <f7-list v-if="userStore.isAdmin()" class="admin-links">
           <f7-list-item
             link="/settings/"
             :title="t('sidebar.settings')"
@@ -293,7 +293,7 @@
         </f7-list>
 
         <template #fixed>
-          <div class="account" v-if="ready && runtimeStore.apiEndpoint('auth')">
+          <div v-if="ready && runtimeStore.apiEndpoint('auth')" class="account">
             <div class="display-flex justify-content-center">
               <div
                 v-if="
@@ -303,8 +303,8 @@
                 <em>{{ t('sidebar.tip.signIn') }}<br /><f7-icon f7="arrow_down" size="20" /></em>
               </div>
               <f7-button
-                @click="authorize()"
                 v-if="!loggedIn"
+                @click="authorize()"
                 icon-f7="lock_shield_fill"
                 large
                 color="gray"
@@ -336,7 +336,7 @@
     </f7-panel>
 
     <!-- Right Panel -->
-    <f7-panel right reveal dark v-if="ready">
+    <f7-panel v-if="ready" right reveal dark>
       <panel-right />
       <!-- <f7-view url="/panel-right/"></f7-view> -->
     </f7-panel>
@@ -369,6 +369,7 @@
      a router bug incorrectly makes the preloaded page visible and hides the current page -->
     <!-- Diable iOS swipe back as it requires preloading previous page -->
     <f7-view
+      v-show="ready"
       url="/"
       :main="true"
       class="safe-areas"
@@ -378,7 +379,6 @@
       browser-history-separator=""
       :preload-previous-page="false"
       :ios-swipe-back="false"
-      v-show="ready"
       :animate="!uiOptionsStore.disablePageTransitionAnimation" />
   </f7-app>
 </template>

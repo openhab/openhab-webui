@@ -216,7 +216,7 @@
               <f7-block-title class="parameter-group-title">
                 {{ actionGroup.group.label }}
               </f7-block-title>
-              <f7-block-footer class="param-description" v-if="actionGroup.group.description">
+              <f7-block-footer v-if="actionGroup.group.description" class="param-description">
                 <div v-html="actionGroup.group.description" />
               </f7-block-footer>
               <f7-list>
@@ -231,7 +231,7 @@
           </f7-block>
         </div>
 
-        <f7-block class="block-narrow no-margin-top" v-if="ready">
+        <f7-block v-if="ready" class="block-narrow no-margin-top">
           <f7-col>
             <f7-list>
               <f7-list-button
@@ -287,7 +287,7 @@
         </f7-block>
       </f7-tab>
 
-      <f7-tab id="code" v-if="thing" :tab-active="currentTab === 'code' ? true : null">
+      <f7-tab v-if="thing" id="code" :tab-active="currentTab === 'code' ? true : null">
         <!-- v-if="ready" ensures that thingType and channelTypes are populated -->
         <code-editor
           v-if="ready"

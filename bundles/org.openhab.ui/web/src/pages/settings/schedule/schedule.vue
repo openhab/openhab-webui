@@ -6,7 +6,7 @@
           <f7-link icon-md="material:done_all" @click="toggleCheck()" :text="(!theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
         </template>
       </oh-nav-content>
-      <f7-subnavbar :inner="false" v-show="initSearchbar">
+      <f7-subnavbar v-show="initSearchbar" :inner="false">
         <f7-searchbar
           v-if="initSearchbar"
           ref="searchbar"
@@ -43,15 +43,15 @@
       text="rules.missingengine.text" />
     <empty-state-placeholder v-else-if="ready && !rules.length" icon="calendar" title="schedule.title" text="schedule.text" />
     <div v-else class="timeline timeline-horizontal col-33 tablet-15">
-      <div class="timeline-year" v-for="(yearObj, year) in calendar" :key="year">
+      <div v-for="(yearObj, year) in calendar" class="timeline-year" :key="year">
         <div class="timeline-year-title">
           <span>{{ year }}</span>
         </div>
-        <div class="timeline-month" v-for="(monthObj, month) in yearObj" :key="month">
+        <div v-for="(monthObj, month) in yearObj" class="timeline-month" :key="month">
           <div class="timeline-month-title">
             <span>{{ month }}</span>
           </div>
-          <div class="timeline-item" v-for="(dayObj, day) in monthObj" :key="day">
+          <div v-for="(dayObj, day) in monthObj" class="timeline-item" :key="day">
             <div class="timeline-item-date">
               <span>{{ day }}</span>
             </div>

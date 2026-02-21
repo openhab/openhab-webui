@@ -124,8 +124,8 @@
             <f7-col>
               <f7-block>
                 <f7-block-title class="after-big-title"> Test SSE connection </f7-block-title>
-                <f7-button text="Stream Events" @click="startSSE()" v-if="!sseClient" />
-                <f7-button text="Stop Streaming" @click="stopSSE()" v-if="sseClient" />
+                <f7-button v-if="!sseClient" text="Stream Events" @click="startSSE()" />
+                <f7-button v-if="sseClient" text="Stop Streaming" @click="stopSSE()" />
                 <f7-list media-list>
                   <f7-list-item
                     v-for="event in sseEvents"
@@ -144,8 +144,8 @@
             <f7-col>
               <f7-block>
                 <f7-block-title class="after-big-title"> Test WebSocket connection </f7-block-title>
-                <f7-button text="Stream Events" @click="startWS()" v-if="!wsClient" />
-                <f7-button text="Stop Streaming" @click="stopWS()" v-if="wsClient" />
+                <f7-button v-if="!wsClient" text="Stream Events" @click="startWS()" />
+                <f7-button v-if="wsClient" text="Stop Streaming" @click="stopWS()" />
                 <f7-list media-list>
                   <f7-list-item
                     v-for="event in wsEvents"
