@@ -4,7 +4,7 @@
       v-if="model.item.created !== false"
       :item="model.item"
       :context="context"
-      :key="f7.utils.id()" />
+      :key="model.item.uid" />
 
     <f7-block-title>Item</f7-block-title>
     <item-details
