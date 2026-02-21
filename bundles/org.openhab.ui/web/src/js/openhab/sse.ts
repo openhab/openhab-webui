@@ -113,6 +113,7 @@ function newSSEConnection(
         console.error('Failed to parse SSE message data:', error)
         return
       }
+      messageCallback(evt)
     }
 
     es.onopen = (event: Event) => {
