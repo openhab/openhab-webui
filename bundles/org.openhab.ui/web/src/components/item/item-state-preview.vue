@@ -17,7 +17,7 @@ import ItemStandaloneControl from '@/components/item/item-standalone-control.vue
 import * as api from '@/api'
 import type { WidgetContext } from '../widgets/types';
 
-const props = defineProps<{
+defineProps<{
   item: api.EnrichedItem
   context: Partial<WidgetContext>
 }>()
