@@ -86,7 +86,7 @@ export const useSemanticsStore = defineStore('semantics', () => {
           if (!data || !data.length) {
             console.warn('No semantic tags found in the API response.')
             ready.value = true
-            return Promise.resolve()
+            return
           }
 
           setSemantics(data, i18n)
@@ -96,11 +96,10 @@ export const useSemanticsStore = defineStore('semantics', () => {
         .catch((e: unknown) => {
           console.error('Failed to load semantic tags:', e instanceof Error ? e.message : e)
           ready.value = false
-          return Promise.reject(e instanceof Error ? e : new Error(String(e)))
+          throw e instanceof Error ? e : new Error(String(e))
         })
     } else {
       ready.value = true
-      return Promise.resolve()
     }
   }
 

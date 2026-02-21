@@ -22,7 +22,7 @@ const fallbackLocale = import.meta.env.VUE_APP_I18N_FALLBACK_LOCALE || 'en'
  * @param mergeLocaleMessage Function to merge the loaded locale messages - should be obtained from useI18n with either 'local' or 'global' useScope from the setup function
  * @returns Promise that resolves when all messages are loaded.
  */
-export async function loadLocaleMessages(dir: string, mergeLocaleMessage: (locale: string, messages: any) => void) {
+export async function loadLocaleMessages(dir: string, mergeLocaleMessage: (locale: string, messages: any) => void): Promise<void> {
   // use set to avoid loading the same locale multiple times
   const localeFiles: Set<string> = new Set([
     useRuntimeStore().locale,
@@ -32,17 +32,19 @@ export async function loadLocaleMessages(dir: string, mergeLocaleMessage: (local
   ])
   const localeFilesArray = Array.from(localeFiles)
 
-  return Promise.allSettled(localeFilesArray.map((locale) => import(`../assets/i18n/${dir}/${locale}.json`))).then((results) => {
-    results.forEach((result, index) => {
-      const locale = localeFilesArray[index]
-      if (locale !== undefined && result.status === 'fulfilled') {
-        const mod: unknown = result.value
-        if (mod && typeof mod === 'object' && 'default' in mod) {
-          const messages = (mod as { default: unknown }).default
-          mergeLocaleMessage(locale, { ...(messages as Record<string, unknown>) })
-        }
+  const results = await Promise.allSettled(
+    localeFilesArray.map(async (locale): Promise<unknown> => import(`../assets/i18n/${dir}/${locale}.json`))
+  )
+
+  results.forEach((result, index) => {
+    const locale = localeFilesArray[index]
+    if (locale !== undefined && result.status === 'fulfilled') {
+      const mod = result.value
+      if (mod && typeof mod === 'object' && 'default' in mod) {
+        const messages = (mod as { default: unknown }).default
+        mergeLocaleMessage(locale, { ...(messages as Record<string, unknown>) })
       }
-    })
+    }
   })
 }
 

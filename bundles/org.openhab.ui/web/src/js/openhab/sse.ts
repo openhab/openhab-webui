@@ -109,11 +109,11 @@ function newSSEConnection(
       let evt: unknown
       try {
         evt = JSON.parse(event.data as string)
-        messageCallback(evt)
       } catch (error) {
         console.error('Failed to parse SSE message data:', error)
         return
       }
+      messageCallback(evt)
     }
 
     es.onopen = (event: Event) => {

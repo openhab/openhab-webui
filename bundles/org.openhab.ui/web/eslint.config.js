@@ -99,6 +99,11 @@ const rules = {
     '@typescript-eslint/no-empty-object-type': 'off'
 }
 
+const typeChekedRuleOverrides = {
+  '@typescript-eslint/no-unsafe-call': 'off',
+  '@typescript-eslint/promise-function-async': 'error'
+}
+
 // Type-checked configs for TypeScript files, which require type information and thus are separated from the main config to avoid performance issues for JavaScript files.
 const tsTypeCheckedConfigs = tseslint.configs.recommendedTypeChecked.map((config) => ({
   ...config,
@@ -106,7 +111,7 @@ const tsTypeCheckedConfigs = tseslint.configs.recommendedTypeChecked.map((config
   ignores: ['**/*.test.ts', '**/*.test.tsx', '**/*.spec.ts', '**/*.spec.tsx'],
   rules: {
     ...config.rules,
-    '@typescript-eslint/no-unsafe-call': 'off'
+    ...typeChekedRuleOverrides
   }
 }))
 
@@ -126,6 +131,10 @@ const vueTsTypeCheckedConfigs = tseslint.configs.recommendedTypeChecked.map((con
       tsconfigRootDir: import.meta.dirname,
       extraFileExtensions: ['.vue']
     }
+  },
+  rules: {
+    ...config.rules,
+    ...typeChekedRuleOverrides
   }
 }))
 

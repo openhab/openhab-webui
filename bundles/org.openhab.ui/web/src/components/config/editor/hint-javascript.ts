@@ -1,5 +1,5 @@
 import { javascriptLanguage } from '@codemirror/lang-javascript'
-import { autocompletion, CompletionContext } from '@codemirror/autocomplete'
+import { autocompletion, CompletionContext, type CompletionResult } from '@codemirror/autocomplete'
 import { syntaxTree } from '@codemirror/language'
 // @ts-expect-error - hint-utils is not typed
 import * as hintUtils from './hint-utils'
@@ -220,10 +220,11 @@ function hintOpenhabJs(context: CompletionContext) {
   }
 }
 
-function hintJsItems(context: any) {
+async function hintJsItems(context: any): Promise<CompletionResult | null> {
   if (context.matchBefore(/(\s|^)items\.(getItem\(['"])?[\w]*/)) {
     return hintUtils.hintItems(context)
   }
+  return null
 }
 
 export default function javascriptAutocompletions(mode: string) {

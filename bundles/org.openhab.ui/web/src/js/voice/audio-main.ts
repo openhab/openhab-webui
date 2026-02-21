@@ -337,7 +337,7 @@ export class AudioMain {
    */
   async updateConfiguration(speakerConfig: SpeakerConfiguration) {
     const audioContext = this.getVoiceAudioContext()
-    const resumeAudioContext = () => audioContext.resume()
+    const resumeAudioContext = async () => audioContext.resume()
     const closeMsg = this.events.onMessage?.('Resuming audio context, click to continue', 'info')
     document.addEventListener('click', resumeAudioContext)
     try {
@@ -362,7 +362,7 @@ export class AudioMain {
   private startSourceCheckInterval() {
     this.stopSourceCheckInterval()
     this.sourceCheckIntervalRef = setInterval(
-      () =>
+      async () =>
         this.getAudioSource()
           .resume()
           .catch((err) => this.events.onMessage?.(`Unable to resume audio source: ${err}`, 'error')),
