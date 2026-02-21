@@ -238,7 +238,7 @@ export const useModelStore = defineStore('model', () => {
         const propertyStruct: { [key: string]: ModelItem[] } = {}
         filteredItems.properties.sort(_compareObjects).forEach((item) => {
           const config: SemanticsConfig = item.metadata?.semantics?.config || {}
-          const property = config.relatesTo?.split('_')[1] || null
+          const property = config.relatesTo?.split('_')[1]
           if (property) {
             if (!propertyStruct[property]) propertyStruct[property] = []
             propertyStruct[property].push(item)

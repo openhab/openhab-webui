@@ -186,7 +186,7 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
   function save(forceSaveThing: boolean = false) {
     if (!editable.value || !thing.value) return
 
-    let endpoint: string, payload: any, successMessage: string
+    let successMessage: string
     let promise: Promise<api.EnrichedThing | undefined>
     // if configDirty flag is set, assume the config has to be saved with PUT /rest/things/:thingId/config
     if (configDirty.value && !thingDirty.value && !forceSaveThing) {
