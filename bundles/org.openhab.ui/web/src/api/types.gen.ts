@@ -137,11 +137,11 @@ export type RuleStatusInfo = {
 };
 
 export type Module = {
-    typeUID: string;
     configuration: Configuration;
+    typeUID: string;
+    id: string;
     label: string;
     description: string;
-    id: string;
 };
 
 export type Configuration = {
@@ -158,9 +158,9 @@ export type RuleExecution = {
 };
 
 export type Template = {
+    uid: string;
     tags: Array<string>;
     visibility: 'VISIBLE' | 'HIDDEN' | 'EXPERT';
-    uid: string;
     label: string;
     description: string;
 };
@@ -590,8 +590,8 @@ export type PersistenceServiceConfiguration = {
 };
 
 export type PersistenceItemInfo = {
-    earliest: string;
     latest: string;
+    earliest: string;
     name: string;
     count: number;
 };
