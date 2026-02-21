@@ -75,11 +75,17 @@
 </style>
 
 <script>
-import mixin from '../widget-mixin'
 import { OhListDefinition } from '@/assets/definitions/widgets/system'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 
 export default {
-  mixins: [mixin],
-  widget: OhListDefinition
+  props: {
+    context: Object
+  },
+  widget: OhListDefinition,
+  setup (props) {
+    const { config, childContext } = useWidgetContext(props.context)
+    return { config, childContext }
+  }
 }
 </script>

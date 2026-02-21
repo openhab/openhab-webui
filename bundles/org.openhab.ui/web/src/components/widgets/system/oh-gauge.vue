@@ -3,14 +3,20 @@
 </template>
 
 <script>
-import mixin from '../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhGaugeDefinition } from '@/assets/definitions/widgets/system'
 
 import { getVariableScope } from '@/components/widgets/variable'
 
 export default {
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
   widget: OhGaugeDefinition,
+  setup (props) {
+    const { config } = useWidgetContext(props.context)
+    return { config }
+  },
   computed: {
     value () {
       if (this.config.variable) {

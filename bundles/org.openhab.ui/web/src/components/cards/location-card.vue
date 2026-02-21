@@ -83,7 +83,7 @@
 </style>
 
 <script>
-import mixin from '@/components/widgets/widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import itemDefaultListComponent, { equipmentListComponent } from '@/components/widgets/standard/list/default-list-item'
 import CardMixin from './card-mixin'
 import ModelCard from './model-card.vue'
@@ -93,15 +93,22 @@ import MeasurementBadge from './glance/location/measurement-badge.vue'
 import { useStatesStore } from '@/js/stores/useStatesStore'
 
 export default {
-  mixins: [mixin, CardMixin],
+  mixins: [CardMixin],
   props: {
+    context: Object,
     parentLocation: String,
-    tabContext: Object
+    tabContext: Object,
+    type: String,
+    element: Object
   },
   components: {
     ModelCard,
     StatusBadge,
     MeasurementBadge
+  },
+  setup (props) {
+    const { config, childContext } = useWidgetContext(props.context)
+    return { config, childContext }
   },
   data () {
     return {

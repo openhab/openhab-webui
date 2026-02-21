@@ -18,17 +18,23 @@
 </style>
 
 <script>
-import mixin from '../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhCard from '@/components/widgets/standard/oh-card.vue'
 import OhSlider from '../system/oh-slider.vue'
 import { OhSliderCardDefinition } from '@/assets/definitions/widgets/standard/cards'
 
 export default {
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
   components: {
     OhCard,
     OhSlider
   },
-  widget: OhSliderCardDefinition
+  widget: OhSliderCardDefinition,
+  setup (props) {
+    const { config, cardChildContext } = useWidgetContext(props.context)
+    return { config, cardChildContext }
+  }
 }
 </script>

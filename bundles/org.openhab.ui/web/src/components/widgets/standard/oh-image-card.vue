@@ -42,18 +42,25 @@
 </style>
 
 <script>
-import mixin from '../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhCard from '@/components/widgets/standard/oh-card.vue'
 import { actionsMixin } from '../widget-actions'
 import OhImage from '../system/oh-image.vue'
 import { OhImageCardDefinition } from '@/assets/definitions/widgets/standard/cards'
 
 export default {
-  mixins: [mixin, actionsMixin],
+  mixins: [actionsMixin],
+  props: {
+    context: Object
+  },
   components: {
     OhCard,
     OhImage
   },
-  widget: OhImageCardDefinition
+  widget: OhImageCardDefinition,
+  setup(props) {
+    const { config, cardChildContext, hasAction } = useWidgetContext(props.context)
+    return { config, cardChildContext, hasAction }
+  }
 }
 </script>

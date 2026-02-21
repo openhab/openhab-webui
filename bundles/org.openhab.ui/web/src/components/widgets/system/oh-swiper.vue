@@ -72,18 +72,24 @@
 <script>
 import { defineAsyncComponent } from 'vue'
 
-import mixin from '@/components/widgets/widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhSwiperDefinition } from '@/assets/definitions/widgets/system'
 import OhPlaceholderWidget from '@/components/widgets/layout/oh-placeholder-widget.vue'
 
 export default {
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
   components: {
     // without the async import, we define a circular reference
     GenericWidgetComponent: defineAsyncComponent(() => import('../generic-widget-component.vue')),
     OhPlaceholderWidget
   },
   widget: OhSwiperDefinition,
+  setup (props) {
+    const { config, childContext } = useWidgetContext(props.context)
+    return { config, childContext }
+  },
   computed: {
     slides () {
       if (!this.context.component.slots || !this.context.component.slots.default) return []
