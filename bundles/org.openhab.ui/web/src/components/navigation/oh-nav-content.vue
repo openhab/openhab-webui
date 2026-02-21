@@ -1,6 +1,7 @@
 <template>
-  <f7-nav-left v-if="backLink">
-    <f7-link v-if="!theme.md" icon-f7="chevron_left" :href="backLinkUrl" @click="back">
+  <f7-nav-left class="oh-nav-content">
+    <f7-link class="menu-icon" icon-ios="f7:menu" icon-aurora="f7:menu" icon-md="material:menu" panel-open="left" />
+    <f7-link v-if="!theme.md && backLink" icon-f7="chevron_left" :href="backLinkUrl" @click="back">
       {{ backLink }}
     </f7-link>
     <f7-link v-else icon-f7="arrow_left_md" :href="backLinkUrl" @click="back" />
@@ -27,6 +28,17 @@
   </f7-nav-right>
   <slot name="after" />
 </template>
+
+<style lang="stylus">
+.aurora .navbar .oh-nav-content.left a + a
+  margin-left: unset
+.ios .navbar .oh-nav-content.left a + a
+  margin-left: unset
+.md .navbar .oh-nav-content.left a + a
+  margin-left: unset
+.navbar .oh-nav-content.left a.menu-icon
+  margin-right: 10px
+</style>
 
 <script setup lang="ts">
 /*
