@@ -9,27 +9,19 @@
         </f7-nav-right>
       </f7-navbar>
       <f7-toolbar tabbar position="top">
-        <f7-link class="padding-left padding-right" :tab-link-active="currentTab === 'seconds'" @click="currentTab = 'seconds'">
-          Seconds
-        </f7-link>
-        <f7-link class="padding-left padding-right" :tab-link-active="currentTab === 'minutes'" @click="currentTab = 'minutes'">
-          Minutes
-        </f7-link>
-        <f7-link class="padding-left padding-right" :tab-link-active="currentTab === 'hours'" @click="currentTab = 'hours'">
-          Hours
-        </f7-link>
-        <f7-link class="padding-left padding-right" :tab-link-active="currentTab === 'days'" @click="currentTab = 'days'"> Days </f7-link>
-        <f7-link class="padding-left padding-right" :tab-link-active="currentTab === 'month'" @click="currentTab = 'month'">
-          Month
-        </f7-link>
-        <f7-link class="padding-left padding-right" :tab-link-active="currentTab === 'year'" @click="currentTab = 'year'"> Year </f7-link>
+        <f7-link class="padding-left padding-right" tab-link="#seconds" tab-link-active> Seconds </f7-link>
+        <f7-link class="padding-left padding-right" tab-link="#minutes"> Minutes </f7-link>
+        <f7-link class="padding-left padding-right" tab-link="#hours"> Hours </f7-link>
+        <f7-link class="padding-left padding-right" tab-link="#days"> Days </f7-link>
+        <f7-link class="padding-left padding-right" tab-link="#month"> Month </f7-link>
+        <f7-link class="padding-left padding-right" tab-link="#year"> Year </f7-link>
       </f7-toolbar>
       <f7-tabs type="border-card">
-        <f7-tab :tab-active="currentTab === 'seconds'">
+        <f7-tab id="seconds" tab-active>
           <template #label>
             <span>
               <i class="el-icon-date" />
-              {{ text.seconds.name }}
+              {{ text.Seconds.name }}
             </span>
           </template>
           <f7-block>
@@ -58,12 +50,8 @@
                 :smart-select-params="smartSelectParams"
                 :checked="second.cronEvery === 3 ? true : null"
                 @click="second.cronEvery = 3">
-                <select multiple @change="second.specificSpecific = $refs.specificSecond.$el.children[0].f7SmartSelect.getValue()">
-                  <option
-                    v-for="val in 60"
-                    :key="val"
-                    :value="val - 1"
-                    :selected="second.specificSpecific.indexOf(val - 1) >= 0 ? true : null">
+                <select multiple v-model="second.specificSpecific">
+                  <option v-for="val in 60" :key="val" :value="val - 1">
                     {{ val - 1 }}
                   </option>
                 </select>
@@ -78,7 +66,7 @@
             </f7-list>
           </f7-block>
         </f7-tab>
-        <f7-tab :tab-active="currentTab === 'minutes'">
+        <f7-tab id="minutes">
           <template #label>
             <span>
               <i class="el-icon-date" />
@@ -111,12 +99,8 @@
                 :smart-select-params="smartSelectParams"
                 :checked="minute.cronEvery === 3 ? true : null"
                 @click="minute.cronEvery = 3">
-                <select multiple @change="minute.specificSpecific = $refs.specificMinute.f7SmartSelect.getValue()">
-                  <option
-                    v-for="val in 60"
-                    :key="val"
-                    :value="val - 1"
-                    :selected="minute.specificSpecific.indexOf(val - 1) >= 0 ? true : null">
+                <select multiple v-model="minute.specificSpecific">
+                  <option v-for="val in 60" :key="val" :value="val - 1">
                     {{ val - 1 }}
                   </option>
                 </select>
@@ -131,7 +115,7 @@
             </f7-list>
           </f7-block>
         </f7-tab>
-        <f7-tab :tab-active="currentTab === 'hours'">
+        <f7-tab id="hours">
           <template #label>
             <span>
               <i class="el-icon-date" />
@@ -164,12 +148,8 @@
                 :smart-select-params="smartSelectParams"
                 :checked="hour.cronEvery === 3 ? true : null"
                 @click="hour.cronEvery = 3">
-                <select multiple @change="hour.specificSpecific = $refs.specificHour.$el.children[0].f7SmartSelect.getValue()">
-                  <option
-                    v-for="val in 24"
-                    :key="val"
-                    :value="val - 1"
-                    :selected="hour.specificSpecific.indexOf(val - 1) >= 0 ? true : null">
+                <select multiple v-model="hour.specificSpecific">
+                  <option v-for="val in 24" :key="val" :value="val - 1">
                     {{ val - 1 }}
                   </option>
                 </select>
@@ -184,7 +164,7 @@
             </f7-list>
           </f7-block>
         </f7-tab>
-        <f7-tab :tab-active="currentTab === 'days'">
+        <f7-tab id="days">
           <template #label>
             <span>
               <i class="el-icon-date" />
@@ -226,12 +206,8 @@
                 :smart-select-params="smartSelectParams"
                 :checked="day.cronEvery === 4 ? true : null"
                 @click="day.cronEvery = 4">
-                <select multiple @change="week.specificSpecific = $refs.specificDayOfWeek.$el.children[0].f7SmartSelect.getValue()">
-                  <option
-                    v-for="val in 7"
-                    :key="val"
-                    :value="['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'][val - 1]"
-                    :selected=" week.specificSpecific.indexOf( ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'][val - 1]) >= 0 ? true : null">
+                <select multiple v-model="week.specificSpecific">
+                  <option v-for="val in 7" :key="val" :value="['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'][val - 1]">
                     {{ text.Week[val - 1] }}
                   </option>
                 </select>
@@ -246,8 +222,8 @@
                 :smart-select-params="smartSelectParams"
                 :checked="day.cronEvery === 5 ? true : null"
                 @click="day.cronEvery = 5">
-                <select multiple @change="day.specificSpecific = $refs.specificDayOfMonth.$el.children[0].f7SmartSelect.getValue()">
-                  <option v-for="val in 31" :key="val" :value="val" :selected="day.specificSpecific.indexOf(val) >= 0 ? true : null">
+                <select multiple v-model="day.specificSpecific">
+                  <option v-for="val in 31" :key="val" :value="val">
                     {{ val }}
                   </option>
                 </select>
@@ -301,7 +277,7 @@
             </f7-list>
           </f7-block>
         </f7-tab>
-        <f7-tab :tab-active="currentTab === 'month'">
+        <f7-tab id="month">
           <f7-block>
             <f7-list>
               <f7-list-item radio :checked="month.cronEvery === 1 ? true : null" @change="month.cronEvery = 1">
@@ -328,8 +304,8 @@
                 :smart-select-params="smartSelectParams"
                 :checked="month.cronEvery === 3 ? true : null"
                 @click="month.cronEvery = 3">
-                <select multiple @change="month.specificSpecific = $refs.specificMonth.$el.children[0].f7SmartSelect.getValue()">
-                  <option v-for="val in 12" :key="val" :value="val" :selected="month.specificSpecific.indexOf(val) >= 0 ? true : null">
+                <select multiple v-model="month.specificSpecific">
+                  <option v-for="val in 12" :key="val" :value="val">
                     {{ val }}
                   </option>
                 </select>
@@ -344,7 +320,7 @@
             </f7-list>
           </f7-block>
         </f7-tab>
-        <f7-tab :tab-active="currentTab === 'year'">
+        <f7-tab id="year">
           <f7-block>
             <f7-list>
               <f7-list-item radio :checked="year.cronEvery === 1 ? true : null" @change="year.cronEvery = 1">
@@ -359,7 +335,12 @@
                   :min="1"
                   :max="99" />
                 {{ text.Year.interval[1] || '' }}
-                <f7-stepper small :value="year.incrementStart" @stepper:change="(v) => year.incrementStart = v" :min="2019" :max="2119" />
+                <f7-stepper
+                  small
+                  :value="year.incrementStart"
+                  @stepper:change="(v) => year.incrementStart = v"
+                  :min="year.currentYear"
+                  :max="year.currentYear + 100" />
                 {{ text.Year.interval[2] || '' }}
               </f7-list-item>
               <f7-list-item
@@ -371,21 +352,27 @@
                 :smart-select-params="smartSelectParams"
                 :checked="year.cronEvery === 3 ? true : null"
                 @click="year.cronEvery = 3">
-                <select multiple @change="year.specificSpecific = $refs.specificYear.$el.children[0].f7SmartSelect.getValue()">
-                  <option
-                    v-for="val in 100"
-                    :key="val"
-                    :value="val + 2018"
-                    :selected="year.specificSpecific.indexOf(val + 2018) >= 0 ? true : null">
-                    {{ val + 2018 }}
+                <select multiple v-model="year.specificSpecific">
+                  <option v-for="val in 100" :key="val" :value="val + year.currentYear - 1">
+                    {{ val + year.currentYear - 1 }}
                   </option>
                 </select>
               </f7-list-item>
               <f7-list-item radio :checked="year.cronEvery === 4 ? true : null" @change="year.cronEvery = 4">
                 {{ text.Year.cycle[0] }}
-                <f7-stepper small :value="year.rangeStart" @stepper:change="v => (year.rangeStart = v)" :min="2019" :max="2119" />
+                <f7-stepper
+                  small
+                  :value="year.rangeStart"
+                  @stepper:change="v => (year.rangeStart = v)"
+                  :min="year.currentYear"
+                  :max="year.currentYear + 100" />
                 {{ text.Year.cycle[1] || '' }}
-                <f7-stepper small :value="year.rangeEnd" @stepper:change="v => (year.rangeEnd = v)" :min="2019" :max="2119" />
+                <f7-stepper
+                  small
+                  :value="year.rangeEnd"
+                  @stepper:change="v => (year.rangeEnd = v)"
+                  :min="year.currentYear"
+                  :max="year.currentYear + 100" />
                 {{ text.Year.cycle[2] || '' }}
               </f7-list-item>
             </f7-list>
@@ -409,9 +396,9 @@
 </style>
 
 <script>
+import { f7 } from 'framework7-vue'
 import Labels from '@/assets/i18n/cron/en.js'
 import { toString } from 'cronstrue'
-import { f7 } from 'framework7-vue'
 
 export default {
   name: 'vueCron',
@@ -424,8 +411,10 @@ export default {
     ]
   },
   data () {
+    const date = new Date()
+    const currentMonth = date.getMonth() + 1
+    const currentYear = date.getFullYear()
     return {
-      currentTab: 'seconds',
       second: {
         cronEvery: 3,
         incrementStart: 0,
@@ -462,7 +451,6 @@ export default {
         cronDaysNearestWeekday: 1
       },
       week: {
-        cronEvery: 1,
         incrementStart: 1,
         incrementIncrement: 1,
         specificSpecific: [],
@@ -471,34 +459,31 @@ export default {
       },
       month: {
         cronEvery: 1,
-        incrementStart: 3,
-        incrementIncrement: 5,
-        rangeStart: 1,
-        rangeEnd: 1,
+        incrementStart: currentMonth,
+        incrementIncrement: 2,
+        rangeStart: currentMonth,
+        rangeEnd: currentMonth,
         specificSpecific: []
       },
       year: {
         cronEvery: 1,
-        incrementStart: 2019,
+        incrementStart: currentYear,
         incrementIncrement: 1,
-        rangeStart: 2019,
-        rangeEnd: 2019,
-        specificSpecific: []
-      },
-      output: {
-        second: 1,
-        minute: 1,
-        hour: 1,
-        day: 1,
-        month: 1,
-        Week: 1,
-        year: 1
+        rangeStart: currentYear,
+        rangeEnd: currentYear,
+        specificSpecific: [],
+        currentYear: currentYear
       }
     }
   },
   watch: {
-    value () {
-      this.rest(this.$data)
+    value: {
+      immediate: true,
+      handler (newVal) {
+        if (!newVal) return
+
+        this.restore(newVal)
+      }
     }
   },
   computed: {
@@ -511,10 +496,7 @@ export default {
     secondsText () {
       let seconds = ''
       let cronEvery = this.second.cronEvery
-      switch (cronEvery.toString(), {
-        use24HourTimeFormat: true,
-        dayOfWeekStartIndexZero: false
-      }) {
+      switch (cronEvery.toString()) {
         case '1':
           seconds = '*'
           break
@@ -584,7 +566,6 @@ export default {
       let cronEvery = this.day.cronEvery
       switch (cronEvery.toString()) {
         case '1':
-          break
         case '2':
         case '4':
         case '11':
@@ -621,6 +602,8 @@ export default {
       let cronEvery = this.day.cronEvery
       switch (cronEvery.toString()) {
         case '1':
+          weeks = '*'
+          break
         case '3':
         case '5':
           weeks = '?'
@@ -677,7 +660,7 @@ export default {
       let cronEvery = this.year.cronEvery
       switch (cronEvery.toString()) {
         case '1':
-          years = '*'
+          years = ''
           break
         case '2':
           years = this.year.incrementStart + '/' + this.year.incrementIncrement
@@ -696,8 +679,8 @@ export default {
     },
     cron () {
       return `${this.secondsText || '*'} ${this.minutesText || '*'} ${this
-        .hoursText || '*'} ${this.daysText || '*'} ${this.monthsText ||
-        '*'} ${this.weeksText || '?'} ${this.yearsText || '*'}`
+        .hoursText || '*'} ${this.daysText || '?'} ${this.monthsText ||
+        '*'} ${this.weeksText || '?'} ${this.yearsText.length ? ' ' : ''}${this.yearsText || ''}`
     },
     translation () {
       return toString(this.cron, {
@@ -707,33 +690,99 @@ export default {
     }
   },
   methods: {
-    getValue () {
-      return this.cron
-    },
     change () {
       f7.emit('cronEditorUpdate', this.cron)
     },
     close () {
       f7.emit('cronEditorClosed')
     },
-    rest (data) {
-      for (let i in data) {
-        if (i === 'currentTab') continue
-        if (data[i] instanceof Object) {
-          this.rest(data[i])
-        } else {
-          switch (typeof data[i]) {
-            case 'object':
-              data[i] = []
-              break
-            case 'string':
-              data[i] = ''
-              break
-          }
+    restore (val) {
+      if (!val) return
+      const cronExpr = val.trim().split(' ')
+      this.second.cronEvery = 1
+      this.minute.cronEvery = 1
+      this.hour.cronEvery = 1
+      this.day.cronEvery = 1
+      this.month.cronEvery = 1
+      this.year.cronEvery = 1
+      cronExpr.forEach((expr, ndx) => {
+        switch (ndx) {
+          case 0:
+            this.second = this.restoreBase(this.second, expr)
+            break
+          case 1:
+            this.minute = this.restoreBase(this.minute, expr)
+            break
+          case 2:
+            this.hour = this.restoreBase(this.hour, expr)
+            break
+          case 4:
+            this.month = this.restoreBase(this.month, expr)
+            break
+          case 6:
+            this.year = this.restoreBase(this.year, expr)
+            break
         }
+      })
+      this.restoreDayAndWeek(cronExpr[3] || '', cronExpr[5] || '')
+    },
+    restoreBase (val, expr) {
+      const newVal = val
+      if (expr === '*') {
+        newVal.cronEvery = 1
+      } else if (expr.includes('/')) {
+        newVal.cronEvery = 2
+        const increment = expr.split('/')
+        newVal.incrementStart = parseInt(increment[0])
+        newVal.incrementIncrement = parseInt(increment[1])
+      } else if (expr.includes('-')) {
+        newVal.cronEvery = 4
+        const range = expr.split('-')
+        newVal.rangeStart = parseInt(range[0])
+        newVal.rangeEnd = parseInt(range[1])
+      } else {
+        newVal.cronEvery = 3
+        newVal.specificSpecific = expr.split(',').map((v) => parseInt(v))
+      }
+      return newVal
+    },
+    restoreDayAndWeek (dayExpr, weekExpr) {
+      if (weekExpr.includes('/')) {
+        this.day.cronEvery = 2
+        const weekIncrement = weekExpr.split('/')
+        this.week.incrementStart = parseInt(weekIncrement[0])
+        this.week.incrementIncrement = parseInt(weekIncrement[1])
+      } else if (dayExpr.includes('/')) {
+        this.day.cronEvery = 3
+        const dayIncrement = dayExpr.split('/')
+        this.day.incrementStart = parseInt(dayIncrement[0])
+        this.day.incrementIncrement = parseInt(dayIncrement[1])
+      } else if (dayExpr === 'L') {
+        this.day.cronEvery = 6
+      } else if (dayExpr === 'LW') {
+        this.day.cronEvery = 7
+      } else if (weekExpr.endsWith('L')) {
+        this.day.cronEvery = 8
+        this.day.cronLastSpecificDomDay = weekExpr.slice(0, -1)
+      } else if (dayExpr.startsWith('L-')) {
+        this.day.cronEvery = 9
+        this.day.cronDaysBeforeEomMinus = dayExpr.slice(2)
+      } else if (dayExpr.endsWith('W')) {
+        this.day.cronEvery = 10
+        this.day.cronDaysNearestWeekday = dayExpr.slice(0, -1)
+      } else if (weekExpr.includes('#')) {
+        this.day.cronEvery = 11
+        const weekNthDay = weekExpr.split('#')
+        this.week.cronNthDayDay = weekNthDay[0]
+        this.week.cronNthDayNth = weekNthDay[1]
+      } else if (weekExpr?.length) {
+        this.day.cronEvery = 4
+        this.week.specificSpecific = weekExpr.split(',').map((v) => v.trim())
+      } else {
+        this.day.cronEvery = 5
+        this.day.specificSpecific = dayExpr.split(',').map((v) => parseInt(v))
       }
     }
-  },
-  mounted () {}
+  }
 }
 </script>

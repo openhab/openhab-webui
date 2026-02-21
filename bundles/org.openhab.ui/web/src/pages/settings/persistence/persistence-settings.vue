@@ -35,7 +35,7 @@
             link="/addons/persistence/"
             no-chevron
             media-item
-            :color="theme.dark ? 'black' : 'white'"
+            :color="uiOptionsStore.darkMode"
             subtitle="Install more persistence add-ons">
             <template #media>
               <f7-icon color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
@@ -72,7 +72,7 @@
 
 <script>
 import { nextTick } from 'vue'
-import { f7, theme } from 'framework7-vue'
+import { f7 } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
 import DirtyMixin from '../dirty-mixin'
@@ -80,6 +80,7 @@ import ConfigSheet from '@/components/config/config-sheet.vue'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+import { useUIOptionsStore } from  '@/js/stores/useUIOptionsStore'
 
 export default {
   mixins: [DirtyMixin],
@@ -89,9 +90,6 @@ export default {
   },
   props: {
     f7router: Object
-  },
-  setup () {
-    return { theme }
   },
   data () {
     return {
@@ -104,7 +102,7 @@ export default {
     }
   },
   computed: {
-    ...mapStores(useRuntimeStore)
+    ...mapStores(useRuntimeStore, useUIOptionsStore)
   },
   watch: {
     config: {
