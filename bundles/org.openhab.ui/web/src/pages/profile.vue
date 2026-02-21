@@ -167,7 +167,6 @@ import { loadLocaleMessages } from '@/js/i18n'
 import { useUserStore } from '@/js/stores/useUserStore'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
-
 export default {
   mixins: [auth],
   props: {

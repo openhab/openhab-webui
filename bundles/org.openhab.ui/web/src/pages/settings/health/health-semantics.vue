@@ -72,39 +72,44 @@
       text-wrap: auto
 </style>
 
-<script>
-export default {
-  props: {
-    f7router: Object
-  },
-  data () {
-    return {
-      ready: false,
-      loading: false,
-      semanticsProblems: []
-    }
-  },
-  methods: {
-    onPageAfterIn () {
-      this.load()
-    },
-    load () {
-      this.loading = true
-      this.$oh.api.get('/rest/items/semantics/health').then((data) => {
-        this.semanticsProblems = data
-        this.loading = false
-        this.ready = true
-      })
-    },
-    problemKey (semanticsProblem) {
-      return semanticsProblem.item + '_' + semanticsProblem.reason
-    },
-    getLinkForProblem (semanticsProblem) {
-      return '/settings/items/' + semanticsProblem.item
-    },
-    plural (count) {
-      return count === 1 ? '' : 's'
-    }
+<script setup lang="ts">
+import type { Router } from 'framework7'
+import * as api from '@/api'
+import { ref } from 'vue'
+
+defineProps<{
+  f7router: Router.Router
+}>()
+
+const ready = ref(false)
+const loading = ref(false)
+const semanticsProblems = ref<api.ItemSemanticsProblem[]>([])
+
+const onPageAfterIn = () => {
+  load()
+}
+
+const load = async () => {
+  if (loading.value) return
+  loading.value = true
+  try {
+    const data = await api.getSemanticsHealth()
+    semanticsProblems.value = data!
+    ready.value = true
+  } finally {
+    loading.value = false
   }
+}
+
+const problemKey = (semanticsProblem: api.ItemSemanticsProblem) => {
+  return `${semanticsProblem.item}_${semanticsProblem.reason}`
+}
+
+const getLinkForProblem = (semanticsProblem: api.ItemSemanticsProblem) => {
+  return '/settings/items/' + semanticsProblem.item
+}
+
+const plural = (count: number): string => {
+  return count === 1 ? '' : 's'
 }
 </script>
