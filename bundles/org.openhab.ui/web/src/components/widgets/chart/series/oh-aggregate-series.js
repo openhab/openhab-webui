@@ -9,13 +9,21 @@ import applyMarkers from '@/components/widgets/chart/series/markers'
 
 function dimensionFromDate (d, dimension, invert) {
   switch (dimension) {
-    case 'minute': return (invert) ? 59 - d.minute() : d.minute()
-    case 'hour': return (invert) ? 23 - d.hour() : d.hour()
-    case 'weekday': return (invert) ? 6 - d.day() : d.day()
-    case 'isoWeekday': return (invert) ? 7 - d.isoWeekday() : d.isoWeekday() - 1
-    case 'date': return (invert) ? 31 - d.date() : d.date() - 1
-    case 'month': return (invert) ? 11 - d.month() : d.month()
-    default: return d
+    case 'minute':
+      return invert ? 59 - d.minute() : d.minute()
+    case 'hour':
+      return invert ? 23 - d.hour() : d.hour()
+    case 'weekday':
+      return invert ? 6 - d.day() : d.day()
+    case 'isoWeekday':
+      return invert ? 7 - d.isoWeekday() : d.isoWeekday() - 1
+    case 'date':
+      const daysInMonth = dayjs(d.time).daysInMonth()
+      return invert ? daysInMonth - d.date() : d.date() - 1
+    case 'month':
+      return invert ? 11 - d.month() : d.month()
+    default:
+      return d
   }
 }
 

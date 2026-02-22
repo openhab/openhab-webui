@@ -47,7 +47,8 @@ export default {
         break
       case 'month':
         if (!config.name) axis.name = 'day'
-        for (let i = 1; i <= 31; i++) {
+        const daysInMonth = dayjs(startTime).daysInMonth()
+        for (let i = 1; i <= daysInMonth; i++) {
           axis.data.push(i)
         }
         break
