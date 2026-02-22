@@ -234,7 +234,7 @@ export default {
     setDate (date) {
       const chartType = this.context.component.config.chartType
       const day = dayjs(date)
-      this.endTime = this.addOrSubtractPeriod(chartType ? startOf(chartType) : day, 1)
+      this.endTime = this.addOrSubtractPeriod(chartType ? startOf(chartType, day) : day, 1)
     },
     earlierPeriod () {
       this.endTime = this.addOrSubtractPeriod(this.endTime, -1)
