@@ -110,7 +110,7 @@ export function storeBasicCredentials(): void {
 }
 
 export async function setAccessToken(token: string, api: { get: (path: string) => Promise<any> }): Promise<void> {
-  if (!token || !api) return Promise.resolve()
+  if (!token || !api) return
   if (requireToken === null) {
     // determine whether the token is required for user operations
     return api

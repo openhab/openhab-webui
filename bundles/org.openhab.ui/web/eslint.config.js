@@ -7,6 +7,7 @@ import parserVue from 'vue-eslint-parser'
 import pluginVue from 'eslint-plugin-vue'
 import pluginVueI18n from '@intlify/eslint-plugin-vue-i18n'
 import pluginImport from 'eslint-plugin-import-x'
+import pluginUnicorn from 'eslint-plugin-unicorn';
 
 import eslintConfigPrettier from 'eslint-config-prettier/flat'
 
@@ -101,7 +102,8 @@ const rules = {
 
 const typeCheckedRuleOverrides = {
   '@typescript-eslint/no-unsafe-call': 'off',
-  '@typescript-eslint/promise-function-async': 'error'
+  '@typescript-eslint/promise-function-async': 'error',
+  'unicorn/no-useless-promise-resolve-reject': 'error'
 }
 
 // Type-checked configs for TypeScript files, which require type information and thus are separated from the main config to avoid performance issues for JavaScript files.
@@ -148,6 +150,11 @@ export default defineConfig([
   pluginImport.flatConfigs.recommended,
   pluginImport.flatConfigs.typescript,
   ...pluginJsonc.configs['flat/recommended-with-jsonc'],
+  {
+    plugins: {
+      unicorn: pluginUnicorn
+    }
+  },
   {
     settings: {
       'vue-i18n': {
