@@ -76,6 +76,7 @@ interface Route {
   rloc16: number
   extAddress: string
 }
+
 interface UnknownDevice {
   extAddress: string
   seenBy: string[]
@@ -95,7 +96,7 @@ interface ProcessedNode extends NetworkNode {
   ownExtAddress: string | null
   isRouter: boolean
   isBorderRouter: boolean
-  routingRole: number
+  routingRole: RoutingRole
   neighbors: UnknownDevice[]
   routes: Route[]
 }
