@@ -125,13 +125,12 @@ const KEYMAP : KeyBinding[] = [
   }
 ]
 
-const props = defineProps({
-  value: String,
-  mode: String,
-  hintContext: Object,
-  ternAutocompletionHook: Boolean,
-  readOnly: Boolean
-})
+const props = defineProps<{
+  value: string | undefined
+  mode: string
+  hintContext?: Record<string, any>
+  readOnly?: boolean
+}>() 
 
 const emit = defineEmits<{
   input: [newCode: string]
@@ -169,7 +168,7 @@ const extensions = [
     tooltipSpace: (view) => view.contentDOM.getBoundingClientRect()
   }),
   dynamicCompartment.of(dynamicExtensions.value),
-  languageCompartment.of(languageCompartmentExtension(props.mode || '')),
+  languageCompartment.of(languageCompartmentExtension(props.mode || '', !props.readOnly)),
   asyncCompartment.of([])
 ]
 
@@ -177,7 +176,7 @@ watch(dynamicExtensions, (newExtensions) => {
   if (cmView.value) {
     cmView.value.dispatch({
       effects: dynamicCompartment.reconfigure(newExtensions)
-    });
+    })
   }
 })
 
@@ -186,7 +185,7 @@ watch(() => props.mode, (newMode) => {
   const extensions = languageCompartmentExtension(newMode)
   cmView.value.dispatch({
     effects: languageCompartment.reconfigure(extensions)
-    });
+    })
 })
 
 function onCmReady ({ view }: { view: EditorView }) {
