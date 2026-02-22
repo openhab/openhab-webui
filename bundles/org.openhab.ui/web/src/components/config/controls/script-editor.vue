@@ -66,7 +66,7 @@
 </style>
 
 <script setup lang="ts">
-import { computed, ref, shallowRef, watch, type ShallowRef } from 'vue'
+import { computed, getCurrentInstance, ref, shallowRef, watch, type ShallowRef } from 'vue'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
 // codemirror core
@@ -84,11 +84,13 @@ import { indentationMarkers } from '@replit/codemirror-indentation-markers'
 import { gruvboxDark } from '@uiw/codemirror-theme-gruvbox-dark'
 
 interface ExtendedEditorView extends EditorView {
-  originalMode?: string
+  originalMode: string
+  $oh: unknown
   hintContext?: Record<string, any>
 }
 
 const uiOptionsStore = useUIOptionsStore()
+const instance = getCurrentInstance()
 
 const KEYMAP : KeyBinding[] = [
   {
@@ -130,7 +132,7 @@ const props = defineProps<{
   mode: string
   hintContext?: Record<string, any>
   readOnly?: boolean
-}>() 
+}>()
 
 const emit = defineEmits<{
   input: [newCode: string]
@@ -191,8 +193,11 @@ watch(() => props.mode, (newMode) => {
 function onCmReady ({ view }: { view: EditorView }) {
   const extendedView = view as ExtendedEditorView
   extendedView.originalMode = props.mode
+  extendedView.$oh = (instance?.proxy as any)?.$oh
+
   if (props.hintContext) extendedView.hintContext = Object.assign({}, props.hintContext)
-  cmView.value = view
+  cmView.value = extendedView
+
   loadAsyncCompartmentExtensions(view)
 }
 
@@ -202,7 +207,12 @@ function onCmCodeChange (newCode : string) {
 
 async function loadAsyncCompartmentExtensions (cmView: EditorView) {
   if (uiOptionsStore.codeMirrorSettings.vimMode) {
-    const { Vim, vim } = await import('@replit/codemirror-vim')
+    const { Vim, vim } = await import('@replit/codemirror-vim').catch(() => {
+      console.error('Failed to load Vim mode for CodeMirror')
+      return { Vim: null, vim: null }
+    })
+    if (!Vim || !vim) return
+
     Vim.defineEx('write', 'w', () => {
       emit('save')
     })
