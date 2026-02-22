@@ -99,7 +99,7 @@ const rules = {
     '@typescript-eslint/no-empty-object-type': 'off'
 }
 
-const typeChekedRuleOverrides = {
+const typeCheckedRuleOverrides = {
   '@typescript-eslint/no-unsafe-call': 'off',
   '@typescript-eslint/promise-function-async': 'error'
 }
@@ -111,7 +111,7 @@ const tsTypeCheckedConfigs = tseslint.configs.recommendedTypeChecked.map((config
   ignores: ['**/*.test.ts', '**/*.test.tsx', '**/*.spec.ts', '**/*.spec.tsx'],
   rules: {
     ...config.rules,
-    ...typeChekedRuleOverrides
+    ...typeCheckedRuleOverrides
   }
 }))
 
@@ -134,7 +134,7 @@ const vueTsTypeCheckedConfigs = tseslint.configs.recommendedTypeChecked.map((con
   },
   rules: {
     ...config.rules,
-    ...typeChekedRuleOverrides
+    ...typeCheckedRuleOverrides
   }
 }))
 
