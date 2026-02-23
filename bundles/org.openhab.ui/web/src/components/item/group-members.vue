@@ -19,7 +19,7 @@
             label="Members"
             :editableOnly="true"
             :filterType="compatibleItemTypes"
-            :filterToggle="true"
+            :showFilterToggle="true"
             @input="(members) => pickedMemberNames = members" />
         </f7-list-group>
       </f7-list>

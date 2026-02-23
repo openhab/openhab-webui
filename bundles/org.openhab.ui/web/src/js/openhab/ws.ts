@@ -160,7 +160,7 @@ function newWSConnection(
     let evt: WebSocketMessage
     try {
       // The message is expected to be JSON, but we handle the case where it's not.
-      evt = JSON.parse(event.data)
+      evt = JSON.parse(event.data as string) as WebSocketMessage
     } catch (e) {
       console.error('Error while parsing message', e)
       return

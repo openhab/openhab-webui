@@ -9,3 +9,7 @@ interface OHApp {
   getBasicCredentialsUsername?: () => string
   getBasicCredentialsPassword?: () => string
 }
+
+interface Window {
+  OHApp?: OHApp
+}
