@@ -122,6 +122,9 @@ const loadService = async (service: api.PersistenceService): Promise<Persistence
     }
   }
 
+  // TODO: Currently, the API returns null entries if the service doesn't know its items
+  itemsPersisted = itemsPersisted.filter((item) => item)
+
   return {
     ...service,
     configs: serviceConfig?.configs ?? [],
