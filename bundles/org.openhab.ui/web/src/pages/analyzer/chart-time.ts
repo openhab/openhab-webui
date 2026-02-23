@@ -99,7 +99,7 @@ const timeCoordSystem: CoordSystem = {
 
     // determine the Y axis for the item
     if (options.type === SeriesType.state) {
-      timeCoordSettings.categoryAxisValues.unshift(item.name!)
+      timeCoordSettings.categoryAxisValues.unshift(item.name)
       options.yValue = timeCoordSettings.categoryAxisValues.length - 1
     } else if (options.type === SeriesType.line || options.type === SeriesType.area || options.type === SeriesType.bar) {
       options.valueAxisIndex = getYAxis(item, timeCoordSettings)
@@ -187,7 +187,7 @@ const timeCoordSystem: CoordSystem = {
     slots.series = items.map((item: api.EnrichedItem | api.EnrichedGroupItem) => {
       const seriesOptions = allSeriesOptions[item.name] as TimeSeriesOptions
 
-      if (seriesOptions.type === 'state') {
+      if (seriesOptions.type === SeriesType.state) {
         return {
           component: 'oh-state-series',
           config: {

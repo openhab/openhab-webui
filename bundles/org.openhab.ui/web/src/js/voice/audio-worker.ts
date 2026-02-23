@@ -2,6 +2,13 @@
 
 import { WebSocketInCmd, WebSocketOutCmd, type WebSocketOutMessage, WorkerInCmd, WorkerOutCmd, type WorkerOutMessage } from './types.ts'
 
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/require-await */
+/* eslint-disable @typescript-eslint/restrict-plus-operands */
+/* eslint-disable @typescript-eslint/no-misused-promises */
+
 /** WebSocket reconnection timeout */
 const RECONNECT_MS = 5000
 
@@ -317,7 +324,7 @@ export default class AudioWorker {
    *
    * Validates that the stream sample rate matches the audio context sample rate.
    */
-  async handleSinkAudioBuffer(buffer: ArrayBuffer) {
+  handleSinkAudioBuffer(buffer: ArrayBuffer) {
     // First 2 bytes from each chunk contains the stream id
     const streamId = new Uint8Array(buffer.slice(0, 2)).join('-')
     // skip packet header

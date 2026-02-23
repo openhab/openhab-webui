@@ -1,7 +1,7 @@
 import { f7 } from 'framework7-vue'
 
 import { useUserStore } from '@/js/stores/useUserStore'
-
+import { ApiError } from '../hey-api'
 export interface BasicCredentials {
   id: string
   password: string
@@ -43,7 +43,7 @@ export function getRequireToken() {
 if (document.cookie.indexOf('X-OPENHAB-AUTH-HEADER') >= 0) tokenInCustomHeader = true
 
 export async function authorize(setup: boolean = false): Promise<void> {
-  import('pkce-challenge').then((PkceChallenge) => {
+  return import('pkce-challenge').then((PkceChallenge) => {
     const pkceChallenge = PkceChallenge.default()
     const authState = (setup ? 'setup-' : '') + f7.utils.id()
 
@@ -71,7 +71,7 @@ export async function setBasicCredentials(username: string, password: string): P
     console.log('Using passed credentials')
     basicCredentials = { id: username, password }
     tokenInCustomHeader = true
-    return Promise.resolve()
+    return
   } else if (
     typeof window.OHApp?.getBasicCredentialsUsername === 'function' &&
     typeof window.OHApp?.getBasicCredentialsPassword === 'function'
@@ -80,20 +80,20 @@ export async function setBasicCredentials(username: string, password: string): P
     const passwordFromApp = window.OHApp.getBasicCredentialsPassword()
     basicCredentials = { id: usernameFromApp, password: passwordFromApp }
     tokenInCustomHeader = true
-    return Promise.resolve()
+    return
   } else if ('credentials' in navigator && 'preventSilentAccess' in navigator.credentials && 'PasswordCredential' in window) {
     // @ts-expect-error PasswordCredential not included in type defs, see https://github.com/microsoft/TypeScript/issues/34550
     return navigator.credentials.get({ password: true }).then((credentials) => {
       if (credentials) {
         console.log('Using stored Basic credentials to sign in to a reverse proxy service')
         // @ts-expect-error PasswordCredential not included in type defs, see https://github.com/microsoft/TypeScript/issues/34550
-        basicCredentials = { id: credentials.id, password: credentials.password }
+        basicCredentials = { id: credentials.id, password: credentials.password as string }
         tokenInCustomHeader = true
       }
-      return Promise.resolve()
+      return
     })
   } else {
-    return Promise.resolve()
+    return
   }
 }
 
@@ -105,12 +105,12 @@ export function clearBasicCredentials(): void {
 export function storeBasicCredentials(): void {
   if (basicCredentials && 'credentials' in navigator && 'preventSilentAccess' in navigator.credentials && 'PasswordCredential' in window) {
     // @ts-expect-error PasswordCredential not included in type defs, see https://github.com/microsoft/TypeScript/issues/34550
-    navigator.credentials.store(new window.PasswordCredential(basicCredentials))
+    void navigator.credentials.store(new window.PasswordCredential(basicCredentials) as Credential)
   }
 }
 
-export function setAccessToken(token: string, api: any): Promise<void> {
-  if (!token || !api) return Promise.resolve()
+export async function setAccessToken(token: string, api: { get: (path: string) => Promise<any> }): Promise<void> {
+  if (!token || !api) return
   if (requireToken === null) {
     // determine whether the token is required for user operations
     return api
@@ -118,16 +118,15 @@ export function setAccessToken(token: string, api: any): Promise<void> {
       .then(() => {
         accessToken = token
         requireToken = false
-        return Promise.resolve()
       })
-      .catch((err: any) => {
-        if (err === 'Unauthorized' || err === 401) requireToken = true
+      .catch((err: unknown) => {
+        if (err instanceof ApiError && (err.response.statusText === 'Unauthorized' || err.response.status === 401)) {
+          requireToken = true
+        }
         accessToken = token
-        return Promise.resolve()
       })
   } else {
     accessToken = token
-    return Promise.resolve()
   }
 }
 
@@ -150,7 +149,7 @@ export function isAdmin(): boolean {
 export function enforceAdminForRoute({ resolve, reject }: { resolve: Function; reject: Function }): void {
   if (!isAdmin()) {
     reject()
-    authorize()
+    void authorize()
   } else {
     resolve()
   }

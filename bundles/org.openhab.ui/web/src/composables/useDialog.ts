@@ -41,7 +41,7 @@ export function useDialog() {
       return
     }
 
-    import('@/js/voice/audio-main').then(({ AudioMain }) => {
+    void import('@/js/voice/audio-main').then(({ AudioMain }) => {
       if (audioMain.value) {
         return
       }
@@ -84,7 +84,7 @@ export function useDialog() {
         const startAudio = () => {
           clean()
           if (audioMain.value && !audioMain.value.isInitialized()) {
-            audioMain.value.initialize(dialogIdentifier, dialogListeningItem, dialogLocationItem)
+            void audioMain.value.initialize(dialogIdentifier, dialogListeningItem, dialogLocationItem)
           }
         }
         const clean = () => events.forEach((e) => document.body.removeEventListener(e, startAudio))
@@ -102,7 +102,7 @@ export function useDialog() {
         audioMain.value.sendSpot()
       } else {
         const { dialogIdentifier, dialogLocationItem, dialogListeningItem } = uiOptionsStore
-        audioMain.value.initialize(dialogIdentifier, dialogListeningItem, dialogLocationItem)
+        void audioMain.value.initialize(dialogIdentifier, dialogListeningItem, dialogLocationItem)
       }
     }
   }

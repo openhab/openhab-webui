@@ -6,6 +6,8 @@
  * into this unified format, which is then rendered by a generic viewer.
  */
 
+import * as api from '@/api'
+
 export interface NetworkLegendRole {
   id: string
   label: string
@@ -103,7 +105,7 @@ export interface NetworkGraphProvider {
   /**
    * Build a NetworkGraph from raw thing data
    */
-  buildGraph(things: any[], bridgeUID: string): NetworkGraph
+  buildGraph(things: api.EnrichedThing[], bridgeUID: string): NetworkGraph
 }
 
 /**

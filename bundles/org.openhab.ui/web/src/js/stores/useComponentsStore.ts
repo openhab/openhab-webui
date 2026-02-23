@@ -39,16 +39,14 @@ export const useComponentsStore = defineStore('components', () => {
   }
 
   async function loadPagesAndWidgets(): Promise<void> {
-    if (useRuntimeStore().apiEndpoint('ui')) {
-      return Promise.all([
-        api.getRegisteredUiComponentsInNamespace({ namespace: 'ui:page' }),
-        api.getRegisteredUiComponentsInNamespace({ namespace: 'ui:widget' })
-      ]).then((data) => {
-        setPagesAndWidgets(data[0] as api.RootUiComponent[], data[1] as api.RootUiComponent[])
-      })
-    } else {
-      return Promise.resolve()
-    }
+    if (!useRuntimeStore().apiEndpoint('ui')) return
+
+    return Promise.all([
+      api.getRegisteredUiComponentsInNamespace({ namespace: 'ui:page' }),
+      api.getRegisteredUiComponentsInNamespace({ namespace: 'ui:widget' })
+    ]).then((data) => {
+      setPagesAndWidgets(data[0] as api.RootUiComponent[], data[1] as api.RootUiComponent[])
+    })
   }
 
   return { ready: readonly(ready), widget, widgets, page, pages, loadPagesAndWidgets }

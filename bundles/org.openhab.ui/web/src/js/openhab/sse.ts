@@ -1,5 +1,6 @@
 import { EventSourcePolyfill, NativeEventSource } from 'event-source-polyfill'
 import { getAccessToken, getTokenInCustomHeader, getBasicCredentials, getRequireToken } from './auth'
+import type { ItemState } from '../stores/useStatesStore'
 
 /**
  * An EventSource that is extended with a keepalive/heartbeat mechanism.
@@ -14,6 +15,7 @@ let openSSEClients: KeepaliveEventSource[] = []
 
 type ReadyCallback = (data: string) => void
 type MessageCallback = (data: any) => void
+type StateMessageCallback = (data: Record<string, ItemState>) => void
 type ErrorCallback = () => void
 type HeartbeatCallback = (isAlive: boolean) => void
 
@@ -84,7 +86,7 @@ function newSSEConnection(
     // Event handlers
     if (readyCallback) {
       es.addEventListener('ready', (e: MessageEvent) => {
-        readyCallback(e.data)
+        readyCallback(e.data as string)
       })
     }
 
@@ -92,7 +94,7 @@ function newSSEConnection(
       // Type 'e.data' is string, parse to get the object with 'interval'
       let evt: { interval: number }
       try {
-        evt = JSON.parse(e.data)
+        evt = JSON.parse(e.data as string) as { interval: number }
         es.setKeepalive(evt.interval)
       } catch (error) {
         console.error('Failed to parse "alive" message data:', error)
@@ -104,9 +106,9 @@ function newSSEConnection(
     })
 
     es.onmessage = (event: MessageEvent) => {
-      let evt: any
+      let evt: unknown
       try {
-        evt = JSON.parse(event.data)
+        evt = JSON.parse(event.data as string)
       } catch (error) {
         console.error('Failed to parse SSE message data:', error)
         return
@@ -187,7 +189,7 @@ const SSEService = {
   connectStateTracker(
     path: string,
     readyCallback: ReadyCallback,
-    updateCallback: MessageCallback,
+    updateCallback: StateMessageCallback,
     errorCallback: ErrorCallback,
     heartbeatCallback?: HeartbeatCallback
   ): KeepaliveEventSource {
