@@ -34,12 +34,12 @@
           <template #inner-start>
             <f7-button
               v-if="showFilterToggle && (filterType || filterGroupType || filterTag)"
-              v-model="filtered"
               style="margin-inline-end: 5px"
               :icon-f7="filtered ? 'funnel_fill' : 'funnel'"
               icon-size="24px"
               :icon-color="color"
-              :tooltip="filtered ? this.$t('dialogs.search.items.tooltip.filtered') : this.$t('dialogs.search.items.tooltip.unfiltered')" />
+              :tooltip="filtered ? this.$t('dialogs.search.items.tooltip.filtered') : this.$t('dialogs.search.items.tooltip.unfiltered')"
+              @click="filtered = !filtered" />
           </template>
         </f7-searchbar>
 
