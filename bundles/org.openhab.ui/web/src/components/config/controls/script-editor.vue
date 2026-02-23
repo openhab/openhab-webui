@@ -85,7 +85,6 @@ import { gruvboxDark } from '@uiw/codemirror-theme-gruvbox-dark'
 
 interface ExtendedEditorView extends EditorView {
   originalMode: string
-  $oh: unknown
   hintContext?: Record<string, any>
 }
 
@@ -193,7 +192,6 @@ watch(() => props.mode, (newMode) => {
 function onCmReady ({ view }: { view: EditorView }) {
   const extendedView = view as ExtendedEditorView
   extendedView.originalMode = props.mode
-  extendedView.$oh = (instance?.proxy as any)?.$oh
 
   if (props.hintContext) extendedView.hintContext = Object.assign({}, props.hintContext)
   cmView.value = extendedView

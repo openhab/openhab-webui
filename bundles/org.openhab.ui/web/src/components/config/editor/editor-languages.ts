@@ -16,7 +16,6 @@ import componentsHint from '../editor/hint-components'
 import rulesHint from '../editor/hint-rules'
 // @ts-expect-error - these modules don't have types, but that's fine since we only use them as CompletionSources
 import thingsHint from '../editor/hint-things'
-// @ts-expect-error - these modules don't have types, but that's fine since we only use them as CompletionSources
 import itemsHint from '../editor/hint-items'
 
 // languages
