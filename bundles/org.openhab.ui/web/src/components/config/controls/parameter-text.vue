@@ -81,6 +81,7 @@ export default {
     pattern () {
       // network-address handler
       if (this.configDescription.context === 'network-address') {
+        // note: previous code failed because regex was too long for F7; this shorter version should be Ok
         // accepts: host name (RFC‑1123), dotted ipv4, and ipv6 (compressed + full) addresses
         const host = /(([a-zA-Z0-9-]+\.)*[a-zA-Z0-9-]+\.[A-Za-z]{2,})/
         const ipv4 = /((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.){3}(25[0-5]|(2[0-4]|1\d|[1-9]|)\d)/
@@ -92,6 +93,18 @@ export default {
         // accepts: AA:BB:CC:DD:ee:ff, AA-BB-CC-DD-ee-ff, aabb.ccdd.EEFF (Cisco style) addresses
         const mac = /^([0-9A-Fa-f]{2}([-:])){5}[0-9A-Fa-f]{2}$|^([0-9A-Fa-f]{4}\.){2}[0-9A-Fa-f]{4}$/
         return mac.source
+      }
+      // host address handler
+      if (this.configDescription.context === 'url') {
+        // accepts:
+        //  - http:// or https:// (the `https?://` part matches both)
+        //  - a hostname (e.g. example.com, sub.domain.co.uk)
+        //  - an IPv4 address (e.g. 192.168.1.10)
+        //  - an IPv6 literal in brackets (e.g. [2001:db8::1])
+        //  - an optional port number (e.g. :8080)
+        //  - an optional path/query string (e.g. /api/status?key=value)
+        const url = /^(https?:\/\/)([a-zA-Z0-9.-]+|\[[0-9A-Fa-f:]+\])(:\d+)?(\/[^\s]*)?$/i
+        return url.source
       }
       return this.configDescription.pattern
     },
