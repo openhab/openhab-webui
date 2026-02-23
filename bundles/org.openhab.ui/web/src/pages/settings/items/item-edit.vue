@@ -1,5 +1,5 @@
 <template>
-  <f7-page class="item-edit-page" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
+  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar>
       <oh-nav-content
         :title="pageTitle + dirtyIndicator"
