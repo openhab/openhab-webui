@@ -79,13 +79,20 @@ export default {
       return 'text'
     },
     pattern () {
-      // validation doesn't work as soon as hostname RegEx is added
-      // if (this.configDescription.context === 'network-address') {
-      //   const hostname = /(?:([a-zA-Z0-9-]+)\.)?([a-zA-Z0-9-]+)\.([a-zA-Z0-9]+)/
-      //   const ipv4 = /((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b){4}/
-      //   const ipv6 = /((?:[0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}|(?:[0-9A-Fa-f]{1,4}:){1,7}:|:(?::[0-9A-Fa-f]{1,4}){1,7}|(?:[0-9A-Fa-f]{1,4}:){1,6}:[0-9A-Fa-f]{1,4}|(?:[0-9A-Fa-f]{1,4}:){1,5}(?::[0-9A-Fa-f]{1,4}){1,2}|(?:[0-9A-Fa-f]{1,4}:){1,4}(?::[0-9A-Fa-f]{1,4}){1,3}|(?:[0-9A-Fa-f]{1,4}:){1,3}(?::[0-9A-Fa-f]{1,4}){1,4}|(?:[0-9A-Fa-f]{1,4}:){1,2}(?::[0-9A-Fa-f]{1,4}){1,5}|[0-9A-Fa-f]{1,4}:(?:(?::[0-9A-Fa-f]{1,4}){1,6})|:(?:(?::[0-9A-Fa-f]{1,4}){1,6}))/
-      //   return `^(?:${ipv4.source}|${ipv6.source}|${hostname.source})$`
-      // }
+      // network-address handler
+      if (this.configDescription.context === 'network-address') {
+        // accepts: host name (RFC‑1123), dotted ipv4, and ipv6 (compressed + full) addresses
+        const host = /(([a-zA-Z0-9-]+\.)*[a-zA-Z0-9-]+\.[A-Za-z]{2,})/
+        const ipv4 = /((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.){3}(25[0-5]|(2[0-4]|1\d|[1-9]|)\d)/
+        const ipv6 = /(([0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}|(([0-9A-Fa-f]{1,4}:){1,7}:)|(:([0-9A-Fa-f]{1,4}:){1,7})|::)/
+        return `^(?:${ipv4.source}|${ipv6.source}|${host.source})$`
+      }
+      // mac-address handler
+      if (this.configDescription.context === 'mac-address') {
+        // accepts: AA:BB:CC:DD:ee:ff, AA-BB-CC-DD-ee-ff, aabb.ccdd.EEFF (Cisco style) addresses
+        const mac = /^([0-9A-Fa-f]{2}([-:])){5}[0-9A-Fa-f]{2}$|^([0-9A-Fa-f]{4}\.){2}[0-9A-Fa-f]{4}$/
+        return mac.source
+      }
       return this.configDescription.pattern
     },
     multiple () {

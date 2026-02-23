@@ -116,7 +116,7 @@ export default {
         return ParameterRule
       } else if (configDescription.type === 'TEXT' && configDescription.context === 'channel') {
         return ParameterTriggerChannel
-      } else if (configDescription.type === 'TEXT' && configDescription.context === 'persistenceService') {
+      } else if (configDescription.type === 'TEXT' && configDescription.context && configDescription.context.indexOf('persistence') == 0) {
         return ParameterPersistenceService
       } else if (configDescription.type === 'TEXT' && configDescription.context === 'qrcode') {
         return ParameterQrcode
