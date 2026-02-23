@@ -39,8 +39,8 @@
       :placeholder="configDescription.placeholder"
       :pattern="pattern"
       :required="configDescription.required"
-      :validate="!(pattern && pattern.length > 40)"
-      :validate-on-blur="pattern && pattern.length > 40"
+      :validate="!(pattern && pattern.length > 500)"
+      :validate-on-blur="pattern && pattern.length > 500"
       :clear-button="!configDescription.required && configDescription.context !== 'password'"
       @input="updateValue"
       :readonly="readOnly || configDescription.readOnly"
@@ -76,35 +76,37 @@ export default {
       if (this.configDescription.context === 'email') return 'email'
       if (this.configDescription.context === 'telephone') return 'tel'
       if (this.configDescription.context === 'color') return 'color'
+      if (this.configDescription.context === 'week') return 'week'
       return 'text'
     },
     pattern () {
-      // network-address handler
-      if (this.configDescription.context === 'network-address') {
-        // note: previous code failed because regex was too long for F7; this shorter version should be Ok
-        // accepts: host name (RFC‑1123), dotted ipv4, and ipv6 (compressed + full) addresses
-        const host = /(([a-zA-Z0-9-]+\.)*[a-zA-Z0-9-]+\.[A-Za-z]{2,})/
-        const ipv4 = /((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.){3}(25[0-5]|(2[0-4]|1\d|[1-9]|)\d)/
-        const ipv6 = /(([0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}|(([0-9A-Fa-f]{1,4}:){1,7}:)|(:([0-9A-Fa-f]{1,4}:){1,7})|::)/
-        return `^(?:${ipv4.source}|${ipv6.source}|${host.source})$`
+      // developer note: previous code failed because regexes were incompatible with browser syntax capabilities
+      const ctx = this.configDescription.context;
+
+      if (ctx === 'mac-address') {
+        // mac-address handler; supports: AA:BB:CC:DD:EE:FF, AA-BB-CC-DD-EE-FF, and AABB.CCDD.EEFF
+        const hex2 = `[0-9A-Fa-f]{2}`;
+        const hex4 = `[0-9A-Fa-f]{4}`;
+        return `(?:(?:${hex2}[:\\-]){5}${hex2}|(?:${hex4}\\.){2}${hex4})`
       }
-      // mac-address handler
-      if (this.configDescription.context === 'mac-address') {
-        // accepts: AA:BB:CC:DD:ee:ff, AA-BB-CC-DD-ee-ff, aabb.ccdd.EEFF (Cisco style) addresses
-        const mac = /^([0-9A-Fa-f]{2}([-:])){5}[0-9A-Fa-f]{2}$|^([0-9A-Fa-f]{4}\.){2}[0-9A-Fa-f]{4}$/
-        return mac.source
-      }
-      // host address handler
-      if (this.configDescription.context === 'url') {
-        // accepts:
-        //  - http:// or https:// (the `https?://` part matches both)
-        //  - a hostname (e.g. example.com, sub.domain.co.uk)
-        //  - an IPv4 address (e.g. 192.168.1.10)
-        //  - an IPv6 literal in brackets (e.g. [2001:db8::1])
-        //  - an optional port number (e.g. :8080)
-        //  - an optional path/query string (e.g. /api/status?key=value)
-        const url = /^(https?:\/\/)([a-zA-Z0-9.-]+|\[[0-9A-Fa-f:]+\])(:\d+)?(\/[^\s]*)?$/i
-        return url.source
+
+      if (ctx === 'url' || ctx === 'network-address') {
+        const host  = `(?:[A-Za-z0-9](?:[A-Za-z0-9\\-]{0,61}[A-Za-z0-9])?(?:\\.[A-Za-z0-9](?:[A-Za-z0-9\\-]{0,61}[A-Za-z0-9])?)*)`
+        const ipv6  = `(?:(?:[A-Fa-f0-9]{1,4}:){7}[A-Fa-f0-9]{1,4}|(?:[A-Fa-f0-9]{1,4}:){1,7}:|:(?::[A-Fa-f0-9]{1,4}){1,7}|(?:[A-Fa-f0-9]{1,4}:){1,6}:[A-Fa-f0-9]{1,4}|::)`
+        const octet = `(?:25[0-5]|2[0-4]\\d|[01]?\\d\\d?)`
+        const ipv4  = `(?:${octet}\\.){3}${octet}`
+
+        if (ctx === 'url') {
+          // url handler; ipv6 must be bracketed in a URL per RFC 3986
+          const hostPart = `(?:${host}|${ipv4}|\\[${ipv6}\\])`
+          const protocol = `(?:https?:\\/\\/)?`
+          const port = `(?::(?:6553[0-5]|655[0-2]\\d|65[0-4]\\d{2}|6[0-4]\\d{3}|[1-5]\\d{4}|\\d{1,4}))?`
+          const path = `(?:\\/[^\\s]*)?`
+          return `${protocol}${hostPart}${port}${path}`
+        } else {
+          // network-address handler; supports: localhost, domains (RFC-1123), dotted IPv4, and optimized IPv6
+          return `${host}|${ipv4}|${ipv6}`
+        }
       }
       return this.configDescription.pattern
     },
