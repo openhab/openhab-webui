@@ -1,11 +1,15 @@
-import { CompletionContext, insertCompletionText, pickedCompletion, type Completion } from '@codemirror/autocomplete'
+import { CompletionContext, insertCompletionText, pickedCompletion, type Completion, type CompletionResult } from '@codemirror/autocomplete'
 import { lineIndent, findParent, isConfig } from './yaml-utils'
 import { completionStart, hintParameterValues, hintParameters } from './hint-utils'
 import type { EditorView } from '@codemirror/view'
 import type { Line } from '@codemirror/state'
 
+import type { HintContext, ExtendedEditorView } from './types'
+
 function hintThingConfig(context: CompletionContext, line: Line, colonPos: number, afterColon: boolean) {
-  const parameters = context.view.hintContext.thingType.configParameters
+  const parameters = (context.view as ExtendedEditorView)?.hintContext?.thingType?.configParameters
+
+  if (!parameters) return undefined
 
   if (afterColon) {
     return hintParameterValues(context, parameters, line, colonPos)
@@ -14,25 +18,25 @@ function hintThingConfig(context: CompletionContext, line: Line, colonPos: numbe
   }
 }
 
-function findChannelTypeUID(context: CompletionContext, configLine: Line, configIndent: number) : string | null {
+function findChannelTypeUID(context: CompletionContext, configLine: Line, configIndent: number) : string | undefined {
   const channelUidLine = findParent(context, configLine)
-  if (!channelUidLine) return null
+  if (!channelUidLine) return undefined
 
   const section = context.state.doc.slice(channelUidLine.to, configLine.from)
   const typeLine = section.text.find((line) => line.match(/^ {8}type: /))
-  if (!typeLine) return null
+  if (!typeLine) return undefined
 
   const type = typeLine.substring(typeLine.indexOf(':') + 1).trim()
   if (type.includes(':')) {
     return type
   }
-  const bindingId = context.view.hintContext.thingType.UID.split(':')[0]
+  const bindingId = (context.view as ExtendedEditorView)?.hintContext?.thingType?.UID.split(':')[0]
   return bindingId + ':' + type
 }
 
 function hintChannelConfig(context: CompletionContext, line: Line, configLine: Line, configIndent: number, colonPos: number, afterColon: boolean) {
   const channelTypeUID = findChannelTypeUID(context, configLine, configIndent)
-  const channelType = context.view.hintContext.channelTypes.find((m) => m.UID === channelTypeUID)
+  const channelType = (context.view as ExtendedEditorView)?.hintContext?.channelTypes.find((m) => m.UID === channelTypeUID)
   if (!channelType) return null
   if (afterColon) {
     return hintParameterValues(context, channelType.parameters, line, colonPos)
@@ -95,7 +99,7 @@ function isChannelType(context: CompletionContext, line: Line, parentLine: Line)
   return isChannelsSection(grandParentLine)
 }
 
-function hintChannelType(context: CompletionContext, line: Line, parentLine: Line) {
+function hintChannelType(context: CompletionContext, line: Line, parentLine: Line) : CompletionResult | null {
   const thingType = context.view.hintContext.thingType
   const bindingId = thingType.UID.split(':')[0]
   const extensibleChannelTypeUIDs = thingType.extensibleChannelTypeIds.map((t) => bindingId + ':' + t)
