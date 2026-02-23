@@ -18,35 +18,35 @@ export const GroupTypes = ['None'].concat(SharedTypes)
 
 export const CommonFunctions = [
   {
-    name: '',
-    value: 'None'
+    name: 'EQUALITY',
+    value: 'Equal or UNDEF'
   }
 ]
 
 export const ArithmeticFunctions = [
   {
     name: 'AVG',
-    value: 'AVG'
+    value: 'Average'
   },
   {
     name: 'MEDIAN',
-    value: 'MEDIAN'
+    value: 'Median'
   },
   {
     name: 'MAX',
-    value: 'MAX'
+    value: 'Maximum'
   },
   {
     name: 'MIN',
-    value: 'MIN'
+    value: 'Minimum'
   },
   {
     name: 'SUM',
-    value: 'SUM'
+    value: 'Sum'
   },
   {
     name: 'COUNT',
-    value: 'COUNT'
+    value: 'Count'
   }
 ]
 
