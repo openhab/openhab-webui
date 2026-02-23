@@ -42,7 +42,7 @@ import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 dayjs.extend(utc)
 
-import { ContentTypes, Formats } from '@/assets/addon-store'
+import { ContentTypes, Formats } from '@/assets/addon-store.ts'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { mapStores } from 'pinia'
 

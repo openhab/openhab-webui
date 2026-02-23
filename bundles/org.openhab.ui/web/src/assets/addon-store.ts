@@ -1,4 +1,8 @@
-export const AddonIcons = {
+import * as api from '@/api'
+
+export type AddonType = 'binding' | 'automation' | 'transformation' | 'persistence' | 'ui' | 'misc' | 'voice'
+
+export const AddonIcons: Record<AddonType, string> = {
   binding: 'circle_grid_hex_fill',
   automation: 'wand_stars',
   transformation: 'function',
@@ -8,7 +12,7 @@ export const AddonIcons = {
   voice: 'chat_bubble_2_fill'
 }
 
-export const AddonTitles = {
+export const AddonTitles: Record<AddonType, string> = {
   binding: 'Bindings',
   automation: 'Automation',
   transformation: 'Transformations',
@@ -18,7 +22,7 @@ export const AddonTitles = {
   voice: 'Voice & Speech'
 }
 
-export const AddonSuggestionLabels = {
+export const AddonSuggestionLabels: Record<string, { title: string; subtitle: string }> = {
   binding: {
     title: 'Suggested Bindings',
     subtitle: 'Suggested bindings, identified from network scan'
@@ -42,7 +46,7 @@ export const AddonSuggestionLabels = {
   }
 }
 
-export const AddonConnectionTypes = {
+export const AddonConnectionTypes: Record<string, { label: string; values: string[] }> = {
   cloud: {
     label: 'Cloud allowed',
     values: ['none', 'local', 'hybrid', 'cloud']
@@ -61,13 +65,13 @@ export const AddonConnectionTypes = {
   }
 }
 
-export const AddonRegionTypes = {
+export const AddonRegionTypes: Record<string, string> = {
   exclude_other: 'All applicable for you',
   only_region: 'Only for your country',
   all: 'All'
 }
 
-export const ContentTypes = {
+export const ContentTypes: Record<string, string> = {
   'application/java-archive': 'Java Archive',
   'application/vnd.openhab.bundle': 'OSGi Bundle',
   'application/vnd.openhab.feature;type=karaf': 'Karaf Feature',
@@ -77,7 +81,7 @@ export const ContentTypes = {
   'application/vnd.openhab.uicomponent;type=blocks': 'Block Library'
 }
 
-export const Formats = {
+export const Formats: Record<string, string> = {
   yaml_content: 'Inline YAML Code',
   json_content: 'Inline JSON Code',
   yaml_download_url: 'Linked YAML File',
@@ -88,22 +92,26 @@ export const Formats = {
   karaf: 'Karaf'
 }
 
-export function compareAddons(a1, a2) {
+export function compareAddons(a1: api.Addon, a2: api.Addon): number {
   if (a1.installed && !a2.installed) return -1
   if (a2.installed && !a1.installed) return 1
   if (a1.verifiedAuthor && !a2.verifiedAuthor) return -1
   if (a2.verifiedAuthor && !a1.verifiedAuthor) return 1
-  if (a2.properties && a2.properties) {
-    if (a1.properties.like_count >= 0 && a2.properties.like_count >= 0 && a1.properties.like_count !== a2.properties.like_count) {
-      return a1.properties.like_count > a2.properties.like_count ? -1 : 1
+  if (a1.properties && a2.properties) {
+    if (typeof a1.properties.like_count === 'number' && typeof a2.properties.like_count === 'number') {
+      if (a1.properties.like_count >= 0 && a2.properties.like_count >= 0 && a1.properties.like_count !== a2.properties.like_count) {
+        return a1.properties.like_count > a2.properties.like_count ? -1 : 1
+      }
     }
 
-    if (a1.properties.views >= 0 && a2.properties.views >= 0 && a1.properties.views !== a2.properties.views) {
-      return a1.properties.views > a2.properties.views ? -1 : 1
+    if (typeof a1.properties.views === 'number' && typeof a2.properties.views === 'number') {
+      if (a1.properties.views >= 0 && a2.properties.views >= 0 && a1.properties.views !== a2.properties.views) {
+        return a1.properties.views > a2.properties.views ? -1 : 1
+      }
     }
   }
 
   const nameOrId1 = a1.label || a1.id
-  const nameOrId2 = a2.label || a2.name
+  const nameOrId2 = a2.label || a2.id
   return nameOrId1.localeCompare(nameOrId2)
 }

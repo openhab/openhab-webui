@@ -133,7 +133,7 @@
 import { f7 } from 'framework7-vue'
 import AddonListItem from './addon-list-item.vue'
 import AddonCard from './addon-card.vue'
-import { compareAddons } from '@/assets/addon-store'
+import { compareAddons } from '@/assets/addon-store.ts'
 import AddonsSwiper from '@/components/addons/addons-swiper.vue'
 
 export default {
