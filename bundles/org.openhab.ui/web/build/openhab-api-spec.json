@@ -6478,7 +6478,7 @@
                 "requestBody": {
                     "description": "items",
                     "content": {
-                        "*/*": {
+                        "application/json": {
                             "schema": {
                                 "uniqueItems": true,
                                 "type": "array",
@@ -8064,19 +8064,19 @@
             "Module": {
                 "type": "object",
                 "properties": {
+                    "configuration": {
+                        "$ref": "#/components/schemas/Configuration"
+                    },
                     "typeUID": {
                         "type": "string"
                     },
-                    "configuration": {
-                        "$ref": "#/components/schemas/Configuration"
+                    "id": {
+                        "type": "string"
                     },
                     "label": {
                         "type": "string"
                     },
                     "description": {
-                        "type": "string"
-                    },
-                    "id": {
                         "type": "string"
                     }
                 }
@@ -8107,6 +8107,9 @@
             "Template": {
                 "type": "object",
                 "properties": {
+                    "uid": {
+                        "type": "string"
+                    },
                     "tags": {
                         "uniqueItems": true,
                         "type": "array",
@@ -8121,9 +8124,6 @@
                             "HIDDEN",
                             "EXPERT"
                         ]
-                    },
-                    "uid": {
-                        "type": "string"
                     },
                     "label": {
                         "type": "string"
@@ -9397,11 +9397,11 @@
             "PersistenceItemInfo": {
                 "type": "object",
                 "properties": {
-                    "earliest": {
+                    "latest": {
                         "type": "string",
                         "format": "date-time"
                     },
-                    "latest": {
+                    "earliest": {
                         "type": "string",
                         "format": "date-time"
                     },
