@@ -1,4 +1,4 @@
-import { insertCompletionText, pickedCompletion } from '@codemirror/autocomplete'
+import { insertCompletionText, pickedCompletion, type CompletionContext } from '@codemirror/autocomplete'
 import { lineIndent, findParent, isConfig, isComponent, isSlots, findComponentType } from './yaml-utils'
 import { completionStart, hintItems, hintParameterValues, hintParameters } from './hint-utils'
 
@@ -42,7 +42,7 @@ function getF7Components() {
   return f7Components
 }
 
-function getWidgetDefinitions(context) {
+function getWidgetDefinitions(context: CompletionContext) {
   const mode = context.view.originalMode
   const componentType = mode.includes(';type=') ? mode.split('=')[1] : undefined
   switch (componentType) {
@@ -77,7 +77,7 @@ function getWidgetDefinitions(context) {
   }
 }
 
-function hintExpression(context, line) {
+function hintExpression(context: CompletionContext, line) {
   const cursor = context.pos - line.from
 
   const lastOp = line.text.substring(0, cursor).replace(/([@#.])[A-Za-z0-9_-]*$/, '$1')
@@ -193,7 +193,7 @@ function hintExpression(context, line) {
   }
 }
 
-function f7ComponentParameters(componentName) {
+function f7ComponentParameters(componentName: string) {
   console.debug(f7vue)
   const f7vueComponent = Object.values(f7vue).find((c) => c.name === componentName)
   console.debug(f7vueComponent)

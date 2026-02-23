@@ -1,4 +1,4 @@
-const SharedTypes = [
+const SharedTypes: string[] = [
   'Call',
   'Color',
   'Contact',
