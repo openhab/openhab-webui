@@ -519,7 +519,8 @@
           component: {
             config: {
               style: {
-                fontFamily: 'monospace'
+                fontFamily: 'monospace',
+                'word-break': 'break-all',
               },
               noBorder: true,
               noShadow: true,
