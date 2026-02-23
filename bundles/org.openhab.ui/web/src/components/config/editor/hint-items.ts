@@ -9,6 +9,7 @@ import Metadata from '@/assets/definitions/metadata/namespaces'
 import { Categories } from '@/assets/categories.js'
 
 import * as api from '@/api'
+import type { Line } from '@codemirror/state'
 
 let dimensions : string[] | null = null
 
@@ -24,7 +25,7 @@ async function getDimensions() {
   return []
 }
 
-function hintTypes(context : CompletionContext, line, position: number) {
+function hintTypes(context : CompletionContext, line: Line, position: number) {
   const apply = (view: EditorView, completion: Completion, _from: number, _to: number) => {
     const insert = completion.label
     const from = line.from + position
@@ -44,7 +45,7 @@ function hintTypes(context : CompletionContext, line, position: number) {
   }
 }
 
-async function hintDimension(context : CompletionContext, line, position) {
+async function hintDimension(context : CompletionContext, line: Line, position: number) {
   const apply = (view: EditorView, completion: Completion, _from: number, _to: number) => {
     const insert = completion.label
     const from = line.from + position
@@ -66,7 +67,7 @@ async function hintDimension(context : CompletionContext, line, position) {
   })
 }
 
-function hintIcon(context : CompletionContext, line) {
+function hintIcon(context : CompletionContext, line: Line) {
   const apply = (view : EditorView, completion: Completion, _from: number, _to: number) => {
     const insert = completion.label
     const from = line.from + 10 // after 'icon: '
@@ -86,7 +87,7 @@ function hintIcon(context : CompletionContext, line) {
   }
 }
 
-const MetadataCompletions = {
+const MetadataCompletions: Record<string, { value: string; config?: Record<string, string> }> = {
   unit: { value: '' },
   stateDescription: { value: '', config: { pattern: '%.2f %unit%' } },
   commandDescription: { value: '', config: { options: '' } },
@@ -107,7 +108,7 @@ const MetadataCompletions = {
 
 const DefaultMetadataCompletion = { value: '', config: {} }
 
-function hintMetadata(context : CompletionContext, line) {
+function hintMetadata(context : CompletionContext, line: Line) {
   const apply = (view: EditorView, completion: Completion, _from: number, _to: number) => {
     const completionStructure = MetadataCompletions[completion.label] || DefaultMetadataCompletion
     const indent = ' '.repeat(6)

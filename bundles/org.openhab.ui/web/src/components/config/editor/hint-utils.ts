@@ -72,7 +72,7 @@ export function getCompletionType(parameterType: string) {
  * @param {number} colonPos The position of the colon
  * @returns {CompletionResult}
  */
-export function hintBooleanValue(context: CompletionContext, line: Line, colonPos: number) {
+export function hintBooleanValue(context: CompletionContext, line: Line, colonPos: number): CompletionResult {
   const trimmedLine = line.text.trimEnd()
   if (trimmedLine.endsWith('true') || trimmedLine.endsWith('false')) return
 

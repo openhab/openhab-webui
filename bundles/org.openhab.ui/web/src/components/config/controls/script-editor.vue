@@ -78,15 +78,11 @@ import { codeFolding, getIndentUnit } from '@codemirror/language'
 import { closeBrackets } from '@codemirror/autocomplete'
 
 import { languageCompartmentExtension } from '../editor/editor-languages'
+import type { ExtendedEditorView, HintContext } from '../editor/types'
 
 // other extensions
 import { indentationMarkers } from '@replit/codemirror-indentation-markers'
 import { gruvboxDark } from '@uiw/codemirror-theme-gruvbox-dark'
-
-interface ExtendedEditorView extends EditorView {
-  originalMode: string
-  hintContext?: Record<string, any>
-}
 
 const uiOptionsStore = useUIOptionsStore()
 const instance = getCurrentInstance()
@@ -129,7 +125,7 @@ const KEYMAP : KeyBinding[] = [
 const props = defineProps<{
   value: string | undefined
   mode: string
-  hintContext?: Record<string, any>
+  hintContext?: HintContext
   readOnly?: boolean
 }>()
 
