@@ -115,7 +115,7 @@ export function useWidgetExpression(properties: { context?: WidgetContext; props
     const vars: Record<string, unknown> = {}
     if (context.vars) {
       for (const varKey in context.vars) {
-        vars[varKey] = context.vars[varKey] as unknown
+        vars[varKey] = context.vars[varKey]
       }
     }
     if (context.varScope) {
@@ -124,7 +124,7 @@ export function useWidgetExpression(properties: { context?: WidgetContext; props
         const scopeKey = scopeIDs.slice(0, scope_idx + 1).join('-')
         if (context.ctxVars?.[scopeKey]) {
           for (const varKey in context.ctxVars[scopeKey]) {
-            vars[varKey] = (context.ctxVars[scopeKey] as Record<string, unknown>)[varKey]
+            vars[varKey] = context.ctxVars[scopeKey][varKey]
           }
         }
       }
@@ -142,7 +142,7 @@ export function useWidgetExpression(properties: { context?: WidgetContext; props
    * @param props the props to make available to the expression (not required if already provided as composable property)
    * @returns the result of the expression evaluation
    */
-  function evaluateExpression(key: string, value: any, context?: WidgetContext, props?: api.ConfigDescription): unknown {
+  function evaluateExpression(key: string, value: any, context?: WidgetContext, props?: Record<string, unknown>): unknown {
     if (value === null) return null
     const ctx = context || properties.context
     if (!ctx) return null

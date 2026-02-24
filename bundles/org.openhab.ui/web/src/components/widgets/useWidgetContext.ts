@@ -24,7 +24,7 @@ export function useWidgetContext(context: WidgetContext) {
   // state
   const vars = ref(context ? context.vars : {})
   const ctxVars = ref(context ? context.ctxVars : {})
-  const widgetVars = ref<Record<string, any>>({})
+  const widgetVars = ref<Record<string, unknown>>({})
   const varScope = ref(null)
   const scopedCssUid = ref<string | null>(null)
   const widgetExpression = useWidgetExpression()
@@ -32,7 +32,7 @@ export function useWidgetContext(context: WidgetContext) {
   // computed
   const componentType = computed<string | null>(() => {
     if (!context?.component?.component) return null
-    return evaluateExpression('type', context.component.component)
+    return (evaluateExpression('type', context.component.component) as string) || null
   })
 
   const childWidgetComponentType = computed<string | null>(() => {
@@ -48,7 +48,7 @@ export function useWidgetContext(context: WidgetContext) {
 
   const config = computed(() => {
     if (!context?.component) return {}
-    let evalConfig: Record<string, any> = {}
+    let evalConfig: Record<string, unknown> = {}
     // Fallback to modelConfig for oh- components to allow configuring them in modals
     const sourceConfig = context.component.config || (componentType.value?.startsWith('oh-') ? context.modalConfig : {})
     if (sourceConfig) {
@@ -61,11 +61,12 @@ export function useWidgetContext(context: WidgetContext) {
     return evalConfig
   })
 
-  const props = computed(() => {
-    if (!context?.component) return {}
+  const props = computed((): Record<string, unknown> => {
+    if (!context?.component || !('props' in context.component)) return {}
     if (context.component.props.parameters) {
-      let defaultValues: api.ConfigDescription = {}
-      context.component.props.parameters.forEach((p: any) => {
+      let defaultValues: Record<string, unknown> = {}
+      // Note api.ConfigDescriptionParameter uses 'defaultValue', but UI widgets just use 'default'
+      context.component.props.parameters.forEach((p: { name: string; default?: unknown }) => {
         if (p.default !== undefined) {
           defaultValues[p.name] = p.default
         }
@@ -95,14 +96,51 @@ export function useWidgetContext(context: WidgetContext) {
     return true
   })
 
+  const defaultSlots = computed(() => {
+    if ('slots' in context.component && context.component.slots.default) {
+      return context.component.slots.default
+    }
+    return []
+  })
+
+  const childWidgetContext = computed((): WidgetContext | null => {
+    if (!componentType.value?.startsWith('widget:')) return null
+    let widget = useComponentsStore().widget(componentType.value.substring(7))
+    if (!widget) {
+      console.warn('widget not found, cannot render: ' + componentType.value)
+      return null
+    }
+    if (context?.vars) {
+      for (const varKey in context.vars) {
+        widgetVars.value[varKey] = context.vars[varKey]
+      }
+    }
+    if (context?.component && 'slots' in context.component) Object.assign(widget.slots, context.component.slots)
+    const widgetContext = {
+      component: widget,
+      props: config.value,
+      fn: context?.fn,
+      const: context?.const,
+      vars: widgetVars.value,
+      varScope: varScope.value || context?.varScope,
+      ctxVars: context?.ctxVars,
+      store: context?.store,
+      config: context?.config,
+      editmode: context?.editmode,
+      clipboardtype: context?.clipboardtype,
+      parent: context?.parent
+    } satisfies WidgetContext
+    return widgetContext
+  })
+
   // methods
-  function evaluateExpression(key: string, value: any, _context?: WidgetContext, _props?: api.ConfigDescription): any {
+  function evaluateExpression(key: string, value: any, _context?: WidgetContext, _props?: Record<string, unknown>): unknown {
     return _evaluateExpression(key, value, _context || context, _props || props.value)
   }
 
-  function childContext(component: api.RootUiComponent): WidgetContext {
+  function childContext(component: api.UiComponent): WidgetContext {
     return {
-      component,
+      component: component,
       props: props.value,
       fn: context?.fn,
       const: context?.const,
@@ -118,37 +156,7 @@ export function useWidgetContext(context: WidgetContext) {
     }
   }
 
-  function childWidgetContext(): WidgetContext {
-    if (!componentType.value?.startsWith('widget:')) return <WidgetContext>{}
-    let widget = useComponentsStore().widget(componentType.value.substring(7))
-    if (!widget) {
-      console.warn('widget not found, cannot render: ' + componentType.value)
-      return <WidgetContext>{}
-    }
-    if (context?.vars) {
-      for (const varKey in context.vars) {
-        widgetVars.value[varKey] = context.vars[varKey]
-      }
-    }
-    if (context?.component.slots) Object.assign(widget.slots, context.component.slots)
-    const widgetContext = {
-      component: widget,
-      props: config.value,
-      fn: context?.fn,
-      const: context?.const,
-      vars: widgetVars.value,
-      varScope: varScope.value || context?.varScope,
-      ctxVars: context?.ctxVars,
-      store: context?.store,
-      config: context?.config,
-      editmode: context?.editmode,
-      clipboardtype: context?.clipboardtype,
-      parent: context?.parent
-    }
-    return widgetContext
-  }
-
-  function cardChildContext(component: RootUiComponent): WidgetContext {
+  function cardChildContext(component: api.RootUiComponent): WidgetContext {
     // clone object to avoid mutating the original object
     const cmp = { ...component }
     if (cmp.config?.style) {
@@ -196,11 +204,12 @@ export function useWidgetContext(context: WidgetContext) {
     props,
     hasAction,
     visible,
+    defaultSlots,
+    childWidgetContext,
 
     // methods
     evaluateExpression,
     childContext,
-    childWidgetContext,
     cardChildContext
   }
 }

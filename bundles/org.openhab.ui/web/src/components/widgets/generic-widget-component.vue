@@ -11,7 +11,7 @@
       v-bind="{ ...$attrs, ...config }"
       :class="scopedCssUid">
       <!-- eslint-disable-next-line vue/no-unused-vars -->
-      <template v-for="(slotComponents, slotName) in context.component.slots" :key="slotName" #[slotName]>
+      <template v-for="(slotComponents, slotName) in (context.component as api.RootUiComponent).slots" :key="slotName" #[slotName]>
         <ul v-if="componentType === 'f7-list'" v-bind="$attrs">
           <generic-widget-component
             v-for="(slotComponent, idx) in slotComponents"
@@ -32,20 +32,23 @@
       v-bind="$attrs"
       :context="context"
       :class="scopedCssUid">
-      <template v-for="(slotComponents, slotName) in context.component.slots" :key="slotName" #[slotName]>
+      <template v-for="(slotComponents, slotName) in (context.component as api.RootUiComponent).slots" :key="slotName" #[slotName]>
         <generic-widget-component
           v-for="(slotComponent, idx) in slotComponents"
           :context="childContext(slotComponent)"
           :key="slotName + '-' + idx " />
       </template>
     </oh-card>
-    <generic-widget-component
-      v-else-if="componentType && componentType.startsWith('widget:')"
-      ref="component"
-      v-bind="isChild ? null : $attrs"
-      :is-child="true"
-      :context="childWidgetContext()"
-      :class="scopedCssUid" />
+    <template v-else-if="componentType && componentType.startsWith('widget:')">
+      <generic-widget-component
+        v-if="childWidgetContext"
+        ref="component"
+        v-bind="isChild ? null : $attrs"
+        :is-child="true"
+        :context="childWidgetContext"
+        :class="scopedCssUid" />
+        <span v-else style="color: red;">Widget not found: {{ componentType }}</span>
+    </template>
     <component
       v-bind="$attrs"
       :is="componentType"
@@ -72,9 +75,9 @@
     >
     <component :is="componentType" v-else ref="component" v-bind="{ ...$attrs, ...config }" :class="scopedCssUid">
       {{ config.content }}
-      <template v-if="context.component.slots && context.component.slots.default">
+      <template v-if="defaultSlots.length > 0">
         <generic-widget-component
-          v-for="(slotComponent, idx) in context.component.slots.default"
+          v-for="(slotComponent, idx) in defaultSlots"
           :context="childContext(slotComponent)"
           :key="'default-' + idx" />
       </template>
@@ -85,6 +88,7 @@
 <script setup lang="ts">
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import type { WidgetContext } from '@/components/widgets/types'
+import * as api from '@/api'
 
 defineOptions({
   inheritAttrs: false
@@ -95,5 +99,5 @@ const props = withDefaults(defineProps<{
   isChild?: boolean
 }>(), { isChild: false })
 
-const { config, childContext, childWidgetContext, scopedCssUid, visible, componentType } = useWidgetContext(props.context)
+const { config, childContext, childWidgetContext, scopedCssUid, visible, componentType, defaultSlots } = useWidgetContext(props.context)
 </script>
