@@ -122,41 +122,33 @@
       object-fit contain
 </style>
 
-<script>
+<script setup lang="ts">
+import { computed } from 'vue'
+import * as api from '@/api'
 import AddonStatsLine from './addon-stats-line.vue'
 import AddonLogo from '@/components/addons/addon-logo.vue'
-import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
-import { mapStores } from 'pinia'
 
-export default {
-  props: {
-    addon: Object,
-    headline: String,
-    installActionText: String,
-    lazyLogo: Boolean
-  },
-  emits: ['addon-button-click'],
-  components: {
-    AddonLogo,
-    AddonStatsLine
-  },
-  computed: {
-    autoHeadline () {
-      if (this.addon.properties && this.addon.properties.like_count && this.addon.properties.like_count >= 20) return 'Top'
-      if (this.addon.properties && this.addon.properties.views && this.addon.properties.views >= 1000) return 'Popular'
-      if (this.addon.properties && this.addon.properties.posts_count && this.addon.properties.posts_count >= 15) return 'Hot'
-      return ''
-    },
-    showInstallActions () {
-      let splitted = this.addon.uid.split(':')
-      return splitted.length < 2 || splitted[0] !== 'eclipse'
-    },
-    ...mapStores(useUIOptionsStore)
-  },
-  methods: {
-    buttonClicked () {
-      this.$emit('addon-button-click', this.addon)
-    }
-  }
-}
+// props
+const props = defineProps<{ addon: api.Addon, headline: string, installActionText?: string, lazyLogo?: boolean }>()
+
+// emits
+const emit = defineEmits(['addon-button-click'])
+
+// computed
+const autoHeadline = computed<string>(() => {
+  // @ts-expect-error: like_count is not typed
+  if (props.addon.properties.like_count && props.addon.properties.like_count >= 20) return 'Top'
+  // @ts-expect-error: views is not typed
+  if (props.addon.properties.views && props.addon.properties.views >= 1000) return 'Popular'
+  // @ts-expect-error: posts_count is not typed
+  if (props.addon.properties.posts_count && props.addon.properties.posts_count >= 15) return 'Hot'
+  return ''
+})
+const showInstallActions = computed<boolean>(() => {
+  let splitted = props.addon.uid.split(':')
+  return splitted.length < 2 || splitted[0] !== 'eclipse'
+})
+
+// methods
+const buttonClicked = () => emit('addon-button-click', props.addon)
 </script>
