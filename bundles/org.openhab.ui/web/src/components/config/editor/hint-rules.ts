@@ -1,4 +1,4 @@
-import { CompletionContext, insertCompletionText } from '@codemirror/autocomplete'
+import { CompletionContext, insertCompletionText, type Completion, type CompletionResult } from '@codemirror/autocomplete'
 import { findParent, findParentRoot, isConfig, isRuleSection } from './yaml-utils'
 import { completionStart, hintItems, hintParameterValues, hintParameters } from './hint-utils'
 import type { Line } from '@codemirror/state'
@@ -32,22 +32,22 @@ function findModuleType(context: CompletionContext, line: Line) {
   }
 }
 
-function hintConfig(context: CompletionContext, line: Line, parentLine: Line) {
+async function hintConfig(context: CompletionContext, line: Line, parentLine: Line) : Promise<CompletionResult | undefined> {
   const cursor = context.pos - line.from
   const moduleTypeUid = findModuleType(context, line)
   console.debug(`hinting config for module type: ${moduleTypeUid}`)
-  if (!moduleTypeUid) return
+  if (!moduleTypeUid) return undefined
 
   const sectionRootLine = findParentRoot(context, parentLine)
   const section = sectionRootLine.text.replace('s:', '').trim()
   console.debug(`section: ${section}`)
-  if (!section) return
+  if (!section) return undefined
 
   const colonPos = line.text.indexOf(':')
   const afterColon = colonPos > 0 && cursor > colonPos
   return getModuleTypes(section).then((moduleTypes) => {
     const moduleType = moduleTypes.find((m) => m.uid === moduleTypeUid)
-    if (!moduleType) return null
+    if (!moduleType) return undefined
     const parameters = moduleType.configDescriptions
     if (afterColon) {
       return hintParameterValues(context, parameters, line, colonPos)
@@ -117,10 +117,12 @@ function hintModuleStructure(context: CompletionContext, line: Line, parentLine:
   })
 }
 
-export default function hint(context: CompletionContext) {
+export default async function hint(context: CompletionContext) : Promise<CompletionResult | undefined> {
   const line = context.state.doc.lineAt(context.pos)
   const parentLine = findParent(context, line)
   console.debug('parent line', parentLine)
+
+  if (!parentLine) return undefined
 
   if (isConfig(parentLine)) {
     return hintConfig(context, line, parentLine)
