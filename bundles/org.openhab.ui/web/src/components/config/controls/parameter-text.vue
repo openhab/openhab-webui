@@ -113,10 +113,10 @@ export default {
         const hostIpv4 = `(?:[A-Za-z0-9](?:[A-Za-z0-9\\-]{0,61}[A-Za-z0-9])?(?:\\.[A-Za-z0-9](?:[A-Za-z0-9\\-]{0,61}[A-Za-z0-9])?)*)`
         const ipv6Addr = `(?:\\[(?:(?:[A-Fa-f0-9]{1,4}:){7}[A-Fa-f0-9]{1,4}|(?:[A-Fa-f0-9]{1,4}:){1,7}:|:(?::[A-Fa-f0-9]{1,4}){1,7}|(?:[A-Fa-f0-9]{1,4}:){1,6}:[A-Fa-f0-9]{1,4}|::)\\])`
         const http = `(?:[Hh][Tt][Tt][Pp][Ss]?:\\/\\/)?`
-        const host = `(?:${hostIpv4}|${ipv6Addr})(?![A-Za-z0-9\\-.])`
+        const host = `(?:${hostIpv4}|${ipv6Addr})(?![A-Za-z0-9\\-\\.])`
         const port = `(?::(?:6553[0-5]|655[0-2]\\d|65[0-4]\\d{2}|6[0-4]\\d{3}|[1-5]\\d{4}|\\d{1,4}))?`
-        const path = `(?:\\/[A-Za-z0-9\\-._~\\!$&'()*+,;=:@%]*)*`
-        return `${http}${host}${port}${path}`
+        const pathQuery = `(?:\\/[A-Za-z0-9\\-\\.\\!\\(\\)\\/\\*\\?+,;=:@%_~$&']*)*`
+        return `${http}${host}${port}${pathQuery}`
       }
       return this.configDescription.pattern
     },
