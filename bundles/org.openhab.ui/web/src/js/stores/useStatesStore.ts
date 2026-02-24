@@ -10,9 +10,16 @@ export interface ItemState {
   numericState?: number
   unit?: string
   type: string
+  toString: () => string
 }
 
-const UndefinedItemState: ItemState = { state: '-', type: '-' }
+const UndefinedItemState: ItemState = {
+  state: '-',
+  type: '-',
+  toString() {
+    return JSON.stringify(this)
+  }
+}
 
 const PendingItemsProcessingInterval = 100
 
@@ -217,6 +224,16 @@ export const useStatesStore = defineStore('states', () => {
   }
 
   function setItemState(itemName: string, itemState: ItemState) {
+    if (!Object.prototype.hasOwnProperty.call(itemState, 'toString')) {
+      Object.defineProperty(itemState, 'toString', {
+        value: function () {
+          return JSON.stringify(this)
+        },
+        enumerable: false, // Hides it from Object.keys and iterations
+        configurable: false, // Prevent changing its type or deleting it
+        writable: false
+      })
+    }
     itemStates.value.set(itemName, itemState)
     return true
   }
