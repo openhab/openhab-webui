@@ -46,7 +46,12 @@ interface PersistenceService extends api.PersistenceService {
   configs: Array<api.PersistenceItemConfiguration>
   aliases: Record<string, string>
   editable: boolean
-  persisted: api.PersistenceItemInfo | null
+  /**
+   * The information about the persisted Item,
+   * or `not_persisted` if the Item is not persisted by the persistence service,
+   * or `unsupported` if the persistence service doesn't support querying for persisted items.
+   */
+  persisted: api.PersistenceItemInfo | 'not_persisted' | 'unsupported'
 }
 
 const services = ref<Array<PersistenceService>>([])
@@ -63,22 +68,22 @@ const persistedBadges = computed(() => {
   const badges: Record<string, string | null> = {}
   services.value.forEach((service) => {
     const persisted = service.persisted
-    if (!persisted) {
+    if (persisted === 'unsupported') {
       // Query for persistence items not supported
       badges[service.id] = null
-    } else if (persisted.count != null && Number.isInteger(Number(persisted.count))) {
-      // Show numeric count when available
-      badges[service.id] = String(persisted.count)
-    } else if (persisted.name) {
-      // No numeric count, but persisted value(s): show a presence indicator (empty badge)
-      badges[service.id] = ' '
-    } else {
+    } else if (persisted === 'not_persisted') {
       // Item has not been persisted
       // badges[service.id] = '0'
       // TODO: Currently, the API call does not distinguish between API call not supported for service and item not persisted.
       // To avoid showing misleading information, don't show badge if we don't get anything back (should be covered by first case if REST API is fixed.)
       // This can be reverted to showing 0 if the API is fixed.
       badges[service.id] = null
+    } else if (persisted.count != null && Number.isInteger(Number(persisted.count))) {
+      // Show numeric count when available
+      badges[service.id] = String(persisted.count)
+    } else {
+      // No numeric count, but persisted value(s): show a presence indicator (empty badge)
+      badges[service.id] = ' '
     }
   })
   return badges
@@ -111,11 +116,11 @@ const loadService = async (service: api.PersistenceService): Promise<Persistence
     }
   }
 
-  let itemsPersisted: Array<api.PersistenceItemInfo> = []
+  let itemsPersisted: Array<api.PersistenceItemInfo> | 'not_persisted' | 'unsupported' = 'unsupported'
   try {
-    itemsPersisted = await api.getItemsForPersistenceService({ serviceId: service.id }) ?? []
+    itemsPersisted = await api.getItemsForPersistenceService({ serviceId: service.id }) ?? 'unsupported'
   } catch (err: unknown) {
-    if (err instanceof ApiError && (err.response.statusText === 'Not Found' || err.response.status === 404)) {
+    if (err instanceof ApiError && (err.response.status === 400)) {
       // Not supported for service, leave itemsPersisted null
     } else {
       console.debug('Error loading persistence items for', service.id, err)
@@ -130,7 +135,7 @@ const loadService = async (service: api.PersistenceService): Promise<Persistence
     configs: serviceConfig?.configs ?? [],
     aliases: serviceConfig?.aliases ?? {},
     editable: serviceConfig?.editable === undefined ? true : serviceConfig?.editable,
-    persisted: itemsPersisted.find((item) => item.name === props.item.name) ?? null
+    persisted: Array.isArray(itemsPersisted) ? (itemsPersisted.find((item) => item.name === props.item.name) ?? 'not_persisted') : itemsPersisted
   } satisfies PersistenceService
 }
 
