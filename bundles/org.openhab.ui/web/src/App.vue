@@ -505,7 +505,7 @@ import { i18n, loadLocaleMessages } from '@/js/i18n'
 
 import { useI18n } from 'vue-i18n'
 
-import { AddonIcons, AddonTitles } from '@/assets/addon-store.ts'
+import { AddonIcons, AddonTitles } from '@/assets/addon-store'
 
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 import { useStatesStore } from '@/js/stores/useStatesStore'

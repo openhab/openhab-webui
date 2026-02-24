@@ -147,11 +147,11 @@ const information = computed(() => {
   }
 
   if (props.addon.properties && props.addon.properties.updated_at) {
+    const updatedAt = props.addon.properties.updated_at as unknown as string
     info.push({
       id: 'updated',
       title: 'Updated At',
-      // @ts-expect-error: updated_at is not typed
-      value: dayjs(props.addon.properties.updated_at).utc('z').local().format('LLL')
+      value: dayjs(updatedAt).utc('z').local().format('LLL')
     })
   }
 

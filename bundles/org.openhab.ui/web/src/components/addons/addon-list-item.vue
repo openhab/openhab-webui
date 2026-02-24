@@ -21,18 +21,10 @@
       <div v-if="showInstallActions">
         <f7-preloader v-if="'pending' in addon && addon.pending" color="blue" />
         <f7-button
-          v-else-if="addon.installed"
-          class="install-button prevent-active-state-propagation"
-          text="Remove"
-          color="red"
-          round
-          small
-          @click="buttonClicked" />
-        <f7-button
           v-else
           class="install-button prevent-active-state-propagation"
-          :text="installActionText || 'Install'"
-          color="blue"
+          :text="addon.installed ? 'Remove' : (installActionText || 'Install')"
+          :color="addon.installed ? 'red' : 'blue'"
           round
           small
           @click="buttonClicked" />
@@ -86,7 +78,9 @@ const uiOptionsStore = useUIOptionsStore()
 const props = defineProps<{ addon: api.Addon, installActionText?: string }>()
 
 // emits
-const emit = defineEmits(['addon-button-click'])
+const emit = defineEmits<{
+  'addon-button-click': [addon: api.Addon]
+}>()
 
 // computed
 const showInstallActions = computed<boolean>(() => {

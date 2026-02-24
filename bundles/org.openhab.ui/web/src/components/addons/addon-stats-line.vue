@@ -30,10 +30,7 @@ import * as api from '@/api'
 const props = defineProps<{ addon: api.Addon, iconSize: string | number }>()
 
 // computed
-// @ts-expect-error: like_count is not typed
-const likes = computed<number>(() => props.addon.properties?.like_count ?? 0)
-// @ts-expect-error: views is not typed
-const views = computed<number>(() => props.addon.properties?.views ?? 0)
-// @ts-expect-error: posts_count is not typed
-const posts = computed<number>(() => props.addon.properties?.posts_count ?? 0)
+const likes = computed<number>(() => (props.addon.properties?.like_count as number | undefined) ?? 0)
+const views = computed<number>(() => (props.addon.properties?.views as number | undefined) ?? 0)
+const posts = computed<number>(() => (props.addon.properties?.posts_count as number | undefined) ?? 0)
 </script>

@@ -8,18 +8,10 @@
         <div v-if="showInstallActions" class="addon-card-title-after">
           <f7-preloader v-if="'pending' in addon && addon.pending" color="blue" />
           <f7-button
-            v-else-if="addon.installed"
-            class="install-button prevent-active-state-propagation"
-            text="Remove"
-            color="red"
-            round
-            small
-            @click="buttonClicked" />
-          <f7-button
             v-else
             class="install-button prevent-active-state-propagation"
-            :text="installActionText || 'Install'"
-            color="blue"
+            :text="addon.installed ? 'Remove' : (installActionText || 'Install')"
+            :color="addon.installed ? 'red' : 'blue'"
             round
             small
             @click="buttonClicked" />
@@ -135,16 +127,18 @@ const uiOptionsStore = useUIOptionsStore()
 const props = defineProps<{ addon: api.Addon, headline?: string, installActionText?: string, lazyLogo?: boolean }>()
 
 // emits
-const emit = defineEmits(['addon-button-click'])
+const emit = defineEmits<{
+  'addon-button-click': [addon: api.Addon]
+}>()
 
 // computed
 const autoHeadline = computed<string>(() => {
-  // @ts-expect-error: like_count is not typed
-  if (props.addon.properties.like_count && props.addon.properties.like_count >= 20) return 'Top'
-  // @ts-expect-error: views is not typed
-  if (props.addon.properties.views && props.addon.properties.views >= 1000) return 'Popular'
-  // @ts-expect-error: posts_count is not typed
-  if (props.addon.properties.posts_count && props.addon.properties.posts_count >= 15) return 'Hot'
+  const likeCount = props.addon.properties.like_count as number | undefined
+  if (likeCount && likeCount >= 20) return 'Top'
+  const views = props.addon.properties.views as number | undefined
+  if (views && views >= 1000) return 'Popular'
+  const postsCount = props.addon.properties.posts_count as number | undefined
+  if (postsCount && postsCount >= 15) return 'Hot'
   return ''
 })
 const showInstallActions = computed<boolean>(() => {
