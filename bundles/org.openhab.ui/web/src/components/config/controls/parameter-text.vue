@@ -11,6 +11,7 @@
       :key="idx"
       :type="controlType"
       :pattern="pattern"
+      :error-message="errorMessage"
       :autocomplete="options ? 'off' : ''"
       :clear-button="true"
       @input:clear="removeValueIdx(idx)"
@@ -22,6 +23,7 @@
       ref="input"
       :type="controlType"
       :pattern="pattern"
+      :error-message="errorMessage"
       :autocomplete="options ? 'off' : ''"
       :clear-button="false"
       @input:notempty="addValue"
@@ -38,6 +40,7 @@
       :autocomplete="options ? 'off' : ''"
       :placeholder="configDescription.placeholder"
       :pattern="pattern"
+      :error-message="errorMessage"
       :required="configDescription.required"
       :validate="!(pattern && pattern.length > 500)"
       :validate-on-blur="pattern && pattern.length > 500"
@@ -79,6 +82,20 @@ export default {
       if (this.configDescription.context === 'week') return 'week'
       return 'text'
     },
+    errorMessage() {
+      const ctx = this.configDescription.context;
+      if (ctx === 'mac-address') {
+        return 'Please enter a valid MAC address (e.g., AA:BB:CC:DD:EE:FF or AABB.CCDD.EEFF).';
+      }
+      if (ctx === 'url' || ctx === 'network-address') {
+        return 'Please enter a valid network address or URL.';
+      }
+      if (ctx === 'email') {
+        return 'Please enter a valid email address.';
+      }
+      // Return a generic message if context is not specific
+      return 'The entered value is invalid.';
+    },
     pattern () {
       // developer note: previous code failed because regexes were incompatible with browser syntax capabilities
       const ctx = this.configDescription.context;
@@ -90,23 +107,16 @@ export default {
         return `(?:(?:${hex2}[:\\-]){5}${hex2}|(?:${hex4}\\.){2}${hex4})`
       }
 
+      // handle network-address and url as synonyms
       if (ctx === 'url' || ctx === 'network-address') {
-        const host  = `(?:[A-Za-z0-9](?:[A-Za-z0-9\\-]{0,61}[A-Za-z0-9])?(?:\\.[A-Za-z0-9](?:[A-Za-z0-9\\-]{0,61}[A-Za-z0-9])?)*)`
-        const ipv6  = `(?:(?:[A-Fa-f0-9]{1,4}:){7}[A-Fa-f0-9]{1,4}|(?:[A-Fa-f0-9]{1,4}:){1,7}:|:(?::[A-Fa-f0-9]{1,4}){1,7}|(?:[A-Fa-f0-9]{1,4}:){1,6}:[A-Fa-f0-9]{1,4}|::)`
-        const octet = `(?:25[0-5]|2[0-4]\\d|[01]?\\d\\d?)`
-        const ipv4  = `(?:${octet}\\.){3}${octet}`
-
-        if (ctx === 'url') {
-          // url handler; ipv6 must be bracketed in a URL per RFC 3986
-          const hostPart = `(?:${host}|${ipv4}|\\[${ipv6}\\])`
-          const protocol = `(?:https?:\\/\\/)?`
-          const port = `(?::(?:6553[0-5]|655[0-2]\\d|65[0-4]\\d{2}|6[0-4]\\d{3}|[1-5]\\d{4}|\\d{1,4}))?`
-          const path = `(?:\\/[^\\s]*)?`
-          return `${protocol}${hostPart}${port}${path}`
-        } else {
-          // network-address handler; supports: localhost, domains (RFC-1123), dotted IPv4, and optimized IPv6
-          return `${host}|${ipv4}|${ipv6}`
-        }
+        // matches both a.b.c.d and 1.2.3.4 so covers ipv4 address pattern as well
+        const hostIpv4 = `(?:[A-Za-z0-9](?:[A-Za-z0-9\\-]{0,61}[A-Za-z0-9])?(?:\\.[A-Za-z0-9](?:[A-Za-z0-9\\-]{0,61}[A-Za-z0-9])?)*)`
+        const ipv6Addr = `(?:\\[(?:(?:[A-Fa-f0-9]{1,4}:){7}[A-Fa-f0-9]{1,4}|(?:[A-Fa-f0-9]{1,4}:){1,7}:|:(?::[A-Fa-f0-9]{1,4}){1,7}|(?:[A-Fa-f0-9]{1,4}:){1,6}:[A-Fa-f0-9]{1,4}|::)\\])`
+        const http = `(?:[Hh][Tt][Tt][Pp][Ss]?:\\/\\/)?`
+        const host = `(?:${hostIpv4}|${ipv6Addr})(?![A-Za-z0-9\\-.])`
+        const port = `(?::(?:6553[0-5]|655[0-2]\\d|65[0-4]\\d{2}|6[0-4]\\d{3}|[1-5]\\d{4}|\\d{1,4}))?`
+        const path = `(?:\\/[A-Za-z0-9\\-._~\\!$&'()*+,;=:@%]*)*`
+        return `${http}${host}${port}${path}`
       }
       return this.configDescription.pattern
     },
