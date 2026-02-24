@@ -151,7 +151,7 @@ const information = computed(() => {
     info.push({
       id: 'updated',
       title: 'Updated At',
-      value: dayjs(updatedAt).utc('z').local().format('LLL')
+      value: dayjs(updatedAt).utc(false).local().format('LLL')
     })
   }
 
