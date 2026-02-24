@@ -165,6 +165,7 @@ export default {
       }
     },
     editable () {
+      if (this.namespace === 'semantics') return false
       return this.metadata.editable !== false
     }
   },
