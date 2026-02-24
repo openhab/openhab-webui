@@ -6,7 +6,7 @@
       </div>
       <div class="addon-card-title">
         <div v-if="showInstallActions" class="addon-card-title-after">
-          <f7-preloader v-if="addon.pending" color="blue" />
+          <f7-preloader v-if="'pending' in addon && addon.pending" color="blue" />
           <f7-button
             v-else-if="addon.installed"
             class="install-button prevent-active-state-propagation"
@@ -127,9 +127,12 @@ import { computed } from 'vue'
 import * as api from '@/api'
 import AddonStatsLine from './addon-stats-line.vue'
 import AddonLogo from '@/components/addons/addon-logo.vue'
+import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore.ts'
+
+const uiOptionsStore = useUIOptionsStore()
 
 // props
-const props = defineProps<{ addon: api.Addon, headline: string, installActionText?: string, lazyLogo?: boolean }>()
+const props = defineProps<{ addon: api.Addon, headline?: string, installActionText?: string, lazyLogo?: boolean }>()
 
 // emits
 const emit = defineEmits(['addon-button-click'])

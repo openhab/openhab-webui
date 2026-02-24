@@ -14,7 +14,7 @@
         v-if="!device.desktop && !device.ipad"
         :addons-list="featuredAddons"
         :install-action-text="installActionText"
-        :headline="'Featured'"
+        headline="Featured"
         @addon-button-click="addonButtonClick" />
       <div v-else class="addons-cards">
         <addon-card

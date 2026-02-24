@@ -2,7 +2,7 @@
   <addon-card
     v-if="addonsList.length === 1"
     class="addons-swiper addon-card-single"
-    :addon="addonsList[0]"
+    :addon="addonsList[0]!"
     :install-action-text="installActionText"
     :headline="headline"
     @addon-button-click="addonButtonClick" />
@@ -36,7 +36,7 @@ const instance = getCurrentInstance()
 const global = instance?.appContext.config.globalProperties
 
 // props
-defineProps<{ addonsList: api.Addon[], installActionText: string, headline: string }>()
+defineProps<{ addonsList: api.Addon[], installActionText?: string, headline?: string }>()
 
 // emits
 const emit = defineEmits(['addon-button-click'])

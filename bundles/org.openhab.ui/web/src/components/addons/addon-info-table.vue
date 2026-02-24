@@ -167,7 +167,7 @@ const information = computed(() => {
       id: 'documentationLink',
       title: 'Documentation',
       afterIcon: 'question_circle_fill',
-      linkUrl: `${useRuntimeStore().websiteUrl}/addons/${props.addon.type.replace('misc', 'integrations').replace('binding', 'bindings').replace('transformation', 'transformations')}/${this.addon.id}` // this.addon.link
+      linkUrl: `${useRuntimeStore().websiteUrl}/addons/${props.addon.type.replace('misc', 'integrations').replace('binding', 'bindings').replace('transformation', 'transformations')}/${props.addon.id}` // this.addon.link
     })
 
     let repository
