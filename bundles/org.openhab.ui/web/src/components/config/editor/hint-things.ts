@@ -4,12 +4,12 @@ import { completionStart, hintParameterValues, hintParameters } from './hint-uti
 import type { EditorView } from '@codemirror/view'
 import type { Line } from '@codemirror/state'
 
-import type { HintContext, ExtendedEditorView } from './types'
+import type { ExtendedEditorView } from './types'
 
 function hintThingConfig(context: CompletionContext, line: Line, colonPos: number, afterColon: boolean) {
   const parameters = (context.view as ExtendedEditorView)?.hintContext?.thingType?.configParameters
 
-  if (!parameters) return undefined
+  if (!parameters) return null
 
   if (afterColon) {
     return hintParameterValues(context, parameters, line, colonPos)
@@ -18,13 +18,13 @@ function hintThingConfig(context: CompletionContext, line: Line, colonPos: numbe
   }
 }
 
-function findChannelTypeUID(context: CompletionContext, configLine: Line, configIndent: number) : string | undefined {
+function findChannelTypeUID(context: CompletionContext, configLine: Line, configIndent: number) : string | null {
   const channelUidLine = findParent(context, configLine)
-  if (!channelUidLine) return undefined
+  if (!channelUidLine) return null
 
   const section = context.state.doc.slice(channelUidLine.to, configLine.from)
   const typeLine = section.text.find((line) => line.match(/^ {8}type: /))
-  if (!typeLine) return undefined
+  if (!typeLine) return null
 
   const type = typeLine.substring(typeLine.indexOf(':') + 1).trim()
   if (type.includes(':')) {
@@ -50,13 +50,19 @@ function isChannelsSection(line: Line) {
   return line.text.match(/^ {4}channels:/)
 }
 
-function hintChannelStructure(context: CompletionContext, line: Line, parentLine: Line) {
-  const thingType = context.view.hintContext.thingType
+function hintChannelStructure(context: CompletionContext, line: Line, parentLine: Line) : CompletionResult | null {
+  const editorView = context.view as ExtendedEditorView
+  const thingType = editorView?.hintContext?.thingType
+  if (!thingType) return null
+
   const bindingId = thingType.UID.split(':')[0]
+  if (!thingType.extensibleChannelTypeIds || thingType.extensibleChannelTypeIds.length === 0) return null
   const extensibleChannelTypeUIDs = thingType.extensibleChannelTypeIds.map((t) => bindingId + ':' + t)
-  const channelTypes = context.view.hintContext.channelTypes
+  const channelTypes = editorView.hintContext?.channelTypes
     .filter((c) => extensibleChannelTypeUIDs.indexOf(c.UID) >= 0)
     .sort((a, b) => a.UID.localeCompare(b.UID))
+
+  if (!channelTypes || channelTypes.length === 0) return null
 
   const apply = (view: EditorView, completion: Completion, _from: number, _to: number) => {
     const insert = [
@@ -100,12 +106,19 @@ function isChannelType(context: CompletionContext, line: Line, parentLine: Line)
 }
 
 function hintChannelType(context: CompletionContext, line: Line, parentLine: Line) : CompletionResult | null {
-  const thingType = context.view.hintContext.thingType
+  const editorView = context.view as ExtendedEditorView
+  const thingType = editorView.hintContext?.thingType
+  if (!thingType) return null
+
   const bindingId = thingType.UID.split(':')[0]
+  if (!thingType.extensibleChannelTypeIds || thingType.extensibleChannelTypeIds.length === 0) return null
+
   const extensibleChannelTypeUIDs = thingType.extensibleChannelTypeIds.map((t) => bindingId + ':' + t)
-  const channelTypes = context.view.hintContext.channelTypes
+  const channelTypes = editorView.hintContext?.channelTypes
     .filter((c) => extensibleChannelTypeUIDs.indexOf(c.UID) >= 0)
     .sort((a, b) => a.UID.localeCompare(b.UID))
+
+  if (!channelTypes || channelTypes.length === 0) return null
 
   const apply = (view: EditorView, completion: Completion, _from: number, _to: number) => {
     const insert = completion.label
@@ -128,9 +141,11 @@ function hintChannelType(context: CompletionContext, line: Line, parentLine: Lin
   }
 }
 
-export default function hint(context: CompletionContext) {
+export default async function hint(context: CompletionContext) {
   const line = context.state.doc.lineAt(context.pos)
   const parentLine = findParent(context, line)
+
+  if (!parentLine) return null
 
   if (isConfig(parentLine)) {
     const cursor = context.pos - line.from

@@ -36,22 +36,22 @@ export function findComponentType(context: CompletionContext, line: Line) {
   }
 }
 
-export function isConfig(line: Line) {
+export function isConfig(line: Line | undefined) {
   if (!line) return false
   return line.text.match(/^ *config(uration)?:/)
 }
 
-export function isSlots(line: Line) {
+export function isSlots(line: Line | undefined) {
   if (!line) return false
   return line.text.match(/^ *slots:/)
 }
 
-export function isComponent(line: Line) {
+export function isComponent(line: Line | undefined) {
   if (!line) return false
   return line.text.match(/^ *-? ?component:/)
 }
 
-export function isRuleSection(line: Line) {
+export function isRuleSection(line: Line | undefined) {
   if (!line) return false
   return line.text.match(/^(triggers|conditions|actions|items):/)
 }

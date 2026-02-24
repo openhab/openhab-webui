@@ -72,9 +72,9 @@ export function getCompletionType(parameterType: string) {
  * @param {number} colonPos The position of the colon
  * @returns {CompletionResult}
  */
-export function hintBooleanValue(context: CompletionContext, line: Line, colonPos: number): CompletionResult {
+export function hintBooleanValue(context: CompletionContext, line: Line, colonPos: number): CompletionResult | undefined {
   const trimmedLine = line.text.trimEnd()
-  if (trimmedLine.endsWith('true') || trimmedLine.endsWith('false')) return
+  if (trimmedLine.endsWith('true') || trimmedLine.endsWith('false')) return undefined
 
   const apply = (view: EditorView, completion: Completion, _from: number, _to: number) => {
     const from = line.from + colonPos + 2
@@ -173,12 +173,12 @@ export async function hintItems(context: CompletionContext, { replaceAfterColon 
  * prepending the requested indentation so the inserted text aligns with the desired column.
  *
  * @param {CompletionContext} context - CodeMirror completion context.
- * @param {Array<{name: string, description?: string, type?: string}>} parameters - Array of parameter descriptors.
+ * @param {Array<api.ConfigDescriptionParameter>} parameters - Array of parameter descriptors.
  *        Each descriptor should have a `name` and may include `description` and `type`.
  * @param {number} indent - Number of spaces to prepend so the inserted parameter lines match the target indent.
  * @returns {CompletionResult} A CompletionResult with `from`, `validFor` and `options`.
  */
-export function hintParameters(context: CompletionContext, parameters, indent: number) {
+export function hintParameters(context: CompletionContext, parameters: Array<api.ConfigDescriptionParameter>, indent: number) {
   const apply = (view: EditorView, completion: Completion, _from: number, _to: number) => {
     const line = view.state.doc.lineAt(context.pos)
     const { from, to } = line
@@ -207,12 +207,12 @@ export function hintParameters(context: CompletionContext, parameters, indent: n
  * Provide completion entries for a parameter's allowed options.
  *
  * @param {CompletionContext} context - CodeMirror completion context.
- * @param {Object} parameter - Parameter descriptor containing an `options` array:
+ * @param {api.ConfigDescriptionParameter} parameter - Parameter descriptor containing an `options` array:
  *        { options: Array<{ value: string, label?: string }> }.
  * @param {number} colonPos - Zero-based index of the colon character on the line; insertion starts after `colonPos + 2`.
  * @returns {CompletionResult} CompletionResult.
  */
-export function hintParameterOptions(context: CompletionContext, parameter, colonPos: number) {
+export function hintParameterOptions(context: CompletionContext, parameter: api.ConfigDescriptionParameter, colonPos: number) {
   const apply = (view: EditorView, completion: Completion, _from: number, _to: number) => {
     const line = view.state.doc.lineAt(context.pos)
     const from = line.from + colonPos + 2
@@ -225,7 +225,7 @@ export function hintParameterOptions(context: CompletionContext, parameter, colo
   return {
     from: completionStart(context, ParameterOptions),
     validFor: ParameterOptions,
-    options: parameter.options
+    options: parameter.options!
       .map((o) => {
         return {
           label: o.value,
@@ -242,13 +242,13 @@ export function hintParameterOptions(context: CompletionContext, parameter, colo
  * Provide completion entries for parameter values based on parameter type.
  *
  * @param {import("@codemirror/autocomplete").CompletionContext} context - CodeMirror completion context.
- * @param {Array<{name: string, description?: string, type?: string}>} parameters - Array of parameter descriptors.
+ * @param {Array<api.ConfigDescriptionParameter>} parameters - Array of parameter descriptors.
  *        Each descriptor should have a `name` and may include `description` and `type`.
  * @param {Line} line The current line
  * @param {number} colonPos The position of the colon
  * @returns {CompletionResult}
  */
-export function hintParameterValues(context: CompletionContext, parameters, line: Line, colonPos: number) {
+export async function hintParameterValues(context: CompletionContext, parameters: Array<api.ConfigDescriptionParameter>, line: Line, colonPos: number) {
   const parameterName = line.text.substring(0, colonPos).trim()
   const parameter = parameters.find((p) => p.name === parameterName)
   if (parameter) {

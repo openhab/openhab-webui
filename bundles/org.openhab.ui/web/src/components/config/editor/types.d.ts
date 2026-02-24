@@ -1,15 +1,9 @@
 import { EditorView } from '@codemirror/view'
+import * as api from '@/api'
 
 export interface HintContext {
-  thingType?: {
-    configParameters: Array<{ name: string, description?: string, type?: string }>
-    UID: string
-    extensibleChannelTypeIds: string[]
-  }
-  channelTypes: Array<{
-    UID: string
-    parameters: Array<{ name: string, description?: string, type?: string, options?: Array<{ value: string, label?: string }> }>
-  }>
+  thingType: api.ThingType
+  channelTypes: api.ChannelType[]
 }
 
 export interface ExtendedEditorView extends EditorView {
