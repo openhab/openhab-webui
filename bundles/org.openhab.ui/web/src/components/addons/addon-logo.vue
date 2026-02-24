@@ -1,7 +1,7 @@
 <template>
   <div>
     <f7-icon
-      v-show="!logoLoaded || svgLogoError || pngLogoError"
+      v-show="!logoLoaded || (svgLogoError && pngLogoError)"
       :size="size"
       color="gray"
       :f7="addonIcon"
