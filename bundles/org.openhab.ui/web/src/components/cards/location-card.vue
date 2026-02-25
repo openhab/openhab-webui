@@ -98,7 +98,6 @@ export default {
     context: Object,
     parentLocation: String,
     tabContext: Object,
-    type: String,
     element: Object
   },
   components: {

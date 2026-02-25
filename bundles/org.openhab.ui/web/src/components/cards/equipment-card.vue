@@ -40,7 +40,6 @@ export default {
   props: {
     context: Object,
     tabContext: Object,
-    type: String,
     element: Object
   },
   components: {
