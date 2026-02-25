@@ -124,8 +124,8 @@ export default {
           const rest = `(?:\\/[^\\s]*)`
           return `${http}${host}${port}${rest}`
         }
-        return this.configDescription.pattern
       }
+      return this.configDescription.pattern
     },
     multiple () {
       return this.configDescription?.multiple
