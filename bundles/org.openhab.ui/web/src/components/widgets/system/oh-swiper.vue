@@ -87,17 +87,15 @@ export default {
   },
   widget: OhSwiperDefinition,
   setup (props) {
-    const { config, childContext } = useWidgetContext(props.context)
-    return { config, childContext }
+    const { config, childContext, defaultSlots } = useWidgetContext(props.context)
+    return { config, childContext, defaultSlots }
   },
   computed: {
     slides () {
-      if (!this.context.component.slots || !this.context.component.slots.default) return []
-      return this.context.component.slots.default.filter((c) => c.component !== 'oh-repeater')
+      return this.defaultSlots.filter((c) => c.component !== 'oh-repeater')
     },
     repeater () {
-      if (!this.context.component.slots || !this.context.component.slots.default) return []
-      return this.context.component.slots.default.filter((c) => c.component === 'oh-repeater')
+      return this.defaultSlots.filter((c) => c.component === 'oh-repeater')
     },
     mergedConfig () {
       const config = Object.assign({}, this.config)

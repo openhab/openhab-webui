@@ -99,6 +99,11 @@ export function useWidgetContext(context: WidgetContext) {
     return true
   })
 
+  const slots = computed(() => {
+    if ('slots' in context.component) return context.component.slots
+    return {}
+  })
+
   const defaultSlots = computed(() => {
     if (context && 'slots' in context.component && context.component.slots.default) {
       return context.component.slots.default
@@ -205,6 +210,7 @@ export function useWidgetContext(context: WidgetContext) {
     props,
     hasAction,
     visible,
+    slots,
     defaultSlots,
     childWidgetContext,
 

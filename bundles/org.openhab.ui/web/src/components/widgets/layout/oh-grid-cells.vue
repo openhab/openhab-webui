@@ -24,7 +24,7 @@
       </f7-menu>
     </div>
     <MasonryGrid v-if="visible" :columns="config.cols || { default: 5, 1400: 4, 1280: 3, 576: 3, 480: 2 }">
-      <MasonryGridItem v-for="(slotComponent, idx) in context.component.slots.default" :key="idx" class="oh-cell-container">
+      <MasonryGridItem v-for="(slotComponent, idx) in defaultSlots" :key="idx" class="oh-cell-container">
         <f7-menu v-if="context.editmode" class="configure-layout-menu margin-bottom">
           <f7-menu-item
             style="margin-left: auto"
@@ -93,8 +93,8 @@ export default {
     MasonryGridItem
   },
   setup (props) {
-    const { config, childContext, visible } = useWidgetContext(props.context)
-    return { config, childContext, visible }
+    const { config, childContext, visible, defaultSlots } = useWidgetContext(props.context)
+    return { config, childContext, visible, defaultSlots }
   }
 }
 </script>

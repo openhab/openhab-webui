@@ -1,6 +1,6 @@
 <template>
   <generic-widget-component
-    v-for="(slotComponent, idx) in children"
+    v-for="(slotComponent, idx) in defaultSlots"
     v-bind="$attrs"
     :key="'default-' + idx"
     :context="childrenContext(slotComponent)" />
@@ -19,8 +19,8 @@ export default {
   },
   widget: OhContextDefinition,
   setup (props) {
-    const { childContext, evaluateExpression } = useWidgetContext(props.context)
-    return { childContext, evaluateExpression }
+    const { childContext, evaluateExpression, defaultSlots } = useWidgetContext(props.context)
+    return { childContext, evaluateExpression, defaultSlots }
   },
   data () {
     return {
@@ -28,10 +28,6 @@ export default {
     }
   },
   computed: {
-    children () {
-      if (!this.context?.component?.slots?.default) return []
-      return this.context.component.slots.default
-    },
     fn () {
       if (!this.context?.component?.config) return {}
       let evalFunc = {}

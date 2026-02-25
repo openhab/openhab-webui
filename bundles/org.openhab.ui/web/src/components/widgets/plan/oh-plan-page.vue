@@ -135,8 +135,8 @@ export default {
   },
   widget: OhPlanPageDefinition,
   setup(props) {
-    const { config, scopedCssUid, childContext } = useWidgetContext(props.context)
-    return { config, scopedCssUid, childContext }
+    const { config, scopedCssUid, childContext, defaultSlots } = useWidgetContext(props.context)
+    return { config, scopedCssUid, childContext, defaultSlots }
   },
   data () {
     return {
@@ -186,7 +186,7 @@ export default {
   methods: {
     zoomUpdate (zoom) {
       this.currentZoom = zoom
-      const allMarkers = this.context.component.slots.default
+      const allMarkers = this.defaultSlots
       const visibleMarkers = allMarkers.filter((e) => {
         const zoomVisibilityMin = parseFloat(e.config.zoomVisibilityMin)
         const zoomVisibilityMax = parseFloat(e.config.zoomVisibilityMax)

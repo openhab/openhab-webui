@@ -11,7 +11,7 @@
       v-bind="{ ...$attrs, ...config }"
       :class="scopedCssUid">
       <!-- eslint-disable-next-line vue/no-unused-vars -->
-      <template v-for="(slotComponents, slotName) in (context.component as api.RootUiComponent).slots" :key="slotName" #[slotName]>
+      <template v-for="(slotComponents, slotName) in slots" :key="slotName" #[slotName]>
         <ul v-if="componentType === 'f7-list'" v-bind="$attrs">
           <generic-widget-component
             v-for="(slotComponent, idx) in slotComponents"
@@ -32,7 +32,7 @@
       v-bind="$attrs"
       :context="context"
       :class="scopedCssUid">
-      <template v-for="(slotComponents, slotName) in (context.component as api.RootUiComponent).slots" :key="slotName" #[slotName]>
+      <template v-for="(slotComponents, slotName) in slots" :key="slotName" #[slotName]>
         <generic-widget-component
           v-for="(slotComponent, idx) in slotComponents"
           :context="childContext(slotComponent)"
@@ -99,5 +99,5 @@ const props = withDefaults(defineProps<{
   isChild?: boolean
 }>(), { isChild: false })
 
-const { config, childContext, childWidgetContext, scopedCssUid, visible, componentType, defaultSlots } = useWidgetContext(props.context)
+const { config, childContext, childWidgetContext, scopedCssUid, visible, componentType, slots, defaultSlots } = useWidgetContext(props.context)
 </script>

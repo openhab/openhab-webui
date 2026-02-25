@@ -32,20 +32,20 @@
               href="#"
               text="Configure container" />
             <f7-menu-dropdown-item
-              v-if="context.component.slots.default.length > 0"
-              @click="context.editmode.configureWidget(context.component.slots.default[0], context)"
+              v-if="defaultSlots.length > 0"
+              @click="context.editmode.configureWidget(defaultSlots[0], context)"
               href="#"
               text="Configure Widget" />
             <f7-menu-dropdown-item @click="context.editmode.editWidgetCode(context.component, context.parent)" href="#" text="Edit YAML" />
-            <f7-menu-dropdown-item v-if="context.component.slots.default.length > 0" @click="toggleAutoSize()" href="#">
+            <f7-menu-dropdown-item v-if="defaultSlots.length > 0" @click="toggleAutoSize()" href="#">
               <span>Auto Size</span>
               <f7-icon class="margin-left" :f7="autosize ? 'checkmark_square' : 'square'" />
             </f7-menu-dropdown-item>
-            <f7-menu-dropdown-item v-if="context.component.slots.default.length > 0" @click="toggleShadow()" href="#">
+            <f7-menu-dropdown-item v-if="defaultSlots.length > 0" @click="toggleShadow()" href="#">
               <span>Shadow</span>
               <f7-icon class="margin-left" :f7="shadow ? 'checkmark_square' : 'square'" />
             </f7-menu-dropdown-item>
-            <f7-menu-dropdown-item v-if="context.component.slots.default.length > 0" divider />
+            <f7-menu-dropdown-item v-if="defaultSlots.length > 0" divider />
             <f7-menu-dropdown-item @click="context.editmode.copyWidget(context.component, context.parent)" href="#" text="Copy" />
             <f7-menu-dropdown-item @click="context.editmode.cutWidget(context.component, context.parent)" href="#" text="Cut" />
             <f7-menu-dropdown-item divider />
@@ -72,12 +72,12 @@
       }"
         class="disable-user-select">
         <oh-placeholder-widget
-          v-if="!context.component.slots.default.length"
+          v-if="!defaultSlots.length"
           @click="context.editmode.addWidget(context.component, null, context.parent)"
           class="oh-canvas-item-content" />
         <generic-widget-component
-          v-else-if="context.component.slots.default.length"
-          :context="childContext(context.component.slots.default[0])"
+          v-else-if="defaultSlots.length"
+          :context="childContext(defaultSlots[0])"
           class="oh-canvas-item-content"
           :class="{
             'oh-canvas-item-styled': styled,
@@ -100,7 +100,7 @@
       class="oh-canvas-item oh-canvas-item-runmode">
       <generic-widget-component
         v-if="ready"
-        :context="childContext(context.component.slots.default[0])"
+        :context="childContext(defaultSlots[0])"
         class="oh-canvas-item-content"
         :class="{
           'oh-canvas-item-styled': styled,
@@ -210,8 +210,8 @@ export default {
   },
   emits: ['oci-selected', 'oci-deselected', 'oci-drag-stop', 'oci-dragged'],
   setup (props) {
-    const { config, childContext } = useWidgetContext(props.context)
-    return { config, childContext }
+    const { config, childContext, defaultSlots } = useWidgetContext(props.context)
+    return { config, childContext, defaultSlots }
   },
   data () {
     return {
@@ -378,7 +378,7 @@ export default {
     eventControl (ev) {
       // Events are captured before bubbling to prevent undesired widget interaction when a widget has been
       // added but the page is in edit mode.
-      if (this.context.editmode && this.context.component.slots.default.length > 0) {
+      if (this.context.editmode && this.defaultSlots.length > 0) {
         ev.stopPropagation()
         ev.preventDefault()
       }

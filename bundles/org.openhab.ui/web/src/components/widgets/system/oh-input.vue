@@ -15,9 +15,9 @@
       @calendar:change="updated"
       @texteditor:change="updated"
       @colorpicker:change="updated">
-      <template v-if="context.component.slots && context.component.slots.default" #default>
+      <template v-if="defaultSlots.length > 0" #default>
         <generic-widget-component
-          v-for="(slotComponent, idx) in context.component.slots.default"
+          v-for="(slotComponent, idx) in defaultSlots"
           :context="childContext(slotComponent)"
           :key="'default-' + idx" />
       </template>
@@ -64,8 +64,8 @@ export default {
   },
   widget: OhInputDefinition,
   setup (props) {
-    const { config, childContext } = useWidgetContext(props.context)
-    return { config, childContext }
+    const { config, childContext, defaultSlots } = useWidgetContext(props.context)
+    return { config, childContext, defaultSlots }
   },
   data () {
     return {

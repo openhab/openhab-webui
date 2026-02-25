@@ -14,7 +14,7 @@
       <l-feature-group v-if="showMarkers" ref="featureGroup">
         <component
           :is="markerComponent(marker)"
-          v-for="(marker, idx) in context.component.slots.default"
+          v-for="(marker, idx) in defaultSlots"
           :key="idx"
           :context="childContext(marker)"
           @update="onMarkerUpdate" />
@@ -75,8 +75,8 @@ export default {
   },
   widget: OhMapPageDefinition,
   setup(props) {
-    const { config, scopedCssUid, childContext } = useWidgetContext(props.context)
-    return { config, scopedCssUid, childContext }
+    const { config, scopedCssUid, childContext, defaultSlots } = useWidgetContext(props.context)
+    return { config, scopedCssUid, childContext, defaultSlots }
   },
   data () {
     return {
@@ -121,7 +121,7 @@ export default {
   methods: {
     initialize () {
       this.setBackgroundLayer()
-      if (this.context.component.slots) {
+      if (this.defaultSlots.length) {
         // "dynamic" markers need to be initialised after the background layer;
         // otherwise Leaflet will throw Invalid LatLng object: (NaN, NaN)
         nextTick(() => {

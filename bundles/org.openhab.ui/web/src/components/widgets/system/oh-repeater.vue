@@ -33,8 +33,8 @@ export default {
   },
   widget: OhRepeaterDefinition,
   setup (props) {
-    const { config, childContext, evaluateExpression } = useWidgetContext(props.context)
-    return { config, childContext, evaluateExpression }
+    const { config, childContext, evaluateExpression, defaultSlots } = useWidgetContext(props.context)
+    return { config, childContext, evaluateExpression, defaultSlots }
   },
   data () {
     return {
@@ -77,7 +77,7 @@ export default {
       let contexts = []
       let idx = 0
       for (let i of source) {
-        contexts.push(...this.context.component.slots.default.map((c) => {
+        contexts.push(...this.defaultSlots.map((c) => {
           return iterationContext(this.childContext(c), i, idx, source)
         }))
 

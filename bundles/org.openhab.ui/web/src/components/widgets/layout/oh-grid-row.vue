@@ -25,11 +25,7 @@
       </f7-menu>
     </div>
     <f7-row v-if="visible" no-gap>
-      <oh-grid-col
-        v-for="(component, idx) in context.component.slots.default"
-        v-bind="$attrs"
-        :key="idx"
-        :context="childContext(component)" />
+      <oh-grid-col v-for="(component, idx) in defaultSlots" v-bind="$attrs" :key="idx" :context="childContext(component)" />
       <f7-block-title v-if="config.title" />
     </f7-row>
     <!-- <f7-row v-if="context.editmode">
@@ -64,8 +60,8 @@ export default {
   },
   widget: OhGridRowDefinition,
   setup(props) {
-    const { config, childContext, scopedCssUid, visible } = useWidgetContext(props.context)
-    return { config, childContext, scopedCssUid, visible }
+    const { config, childContext, scopedCssUid, visible, defaultSlots } = useWidgetContext(props.context)
+    return { config, childContext, scopedCssUid, visible, defaultSlots }
   }
 }
 </script>
