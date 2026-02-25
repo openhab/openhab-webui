@@ -88,9 +88,9 @@ export default {
       locale: echartsLocale
     } : null
 
-    const { config, evaluateExpression } = useWidgetContext(props.context)
+    const { config, evaluateExpression, slots } = useWidgetContext(props.context)
 
-    return { echartsLocale, initOptions, config, evaluateExpression }
+    return { echartsLocale, initOptions, config, evaluateExpression, slots }
   },
   computed: {
     activeHeight () {
@@ -99,8 +99,8 @@ export default {
     },
     periodVisible () {
       if (!this.config || this.config.periodVisible === undefined) {
-        if (this.context.component.slots && this.context.component.slots.series && Array.isArray(this.context.component.slots.series) && this.context.component.slots.series.length) {
-          return this.context.component.slots.series[0].component !== 'oh-data-series'
+        if ('series' in this.slots && Array.isArray(this.slots.series) && this.slots.series.length) {
+          return this.slots.series[0].component !== 'oh-data-series'
         }
         return true
       }
@@ -159,8 +159,8 @@ export default {
   methods: {
     handleClick (evt) {
       if (evt.seriesIndex !== undefined) {
-        if (this.context.component.slots && this.context.component.slots.series && Array.isArray(this.context.component.slots.series) && this.context.component.slots.series.length) {
-          let series = this.context.component.slots.series[evt.seriesIndex]
+        if ('series' in this.slots && Array.isArray(this.slots.series) && this.slots.series.length) {
+          let series = this.slots.series[evt.seriesIndex]
           this.performAction(evt.event, null, series.config, null)
         }
       }

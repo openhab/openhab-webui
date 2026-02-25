@@ -19,9 +19,9 @@
           :style="{ height: `calc(var(--f7-safe-area-top) + ${headerHeight})` }">
           <img v-if="config.backgroundImage" class="card-background lazy" :src="backgroundImageUrl" :style="config.backgroundImageStyle" />
           <slot name="header">
-            <div v-if="context && context.component.slots && context.component.slots.header">
+            <div v-if="'header' in slots">
               <generic-widget-component
-                v-for="(slotComponent, idx) in context.component.slots.header"
+                v-for="(slotComponent, idx) in slots.header"
                 :context="childContext(slotComponent)"
                 :key="'header-' + idx" />
             </div>
@@ -113,8 +113,8 @@ export default {
     element: Object
   },
   setup (props) {
-    const { config, childContext, visible } = useWidgetContext(props.context)
-    return { config, childContext, visible }
+    const { config, childContext, visible, slots } = useWidgetContext(props.context)
+    return { config, childContext, visible, slots }
   },
   computed: {
     ...mapStores(useUIOptionsStore)

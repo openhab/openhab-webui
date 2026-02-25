@@ -166,8 +166,8 @@ export default {
   },
   widget: OhListItemDefinition,
   setup (props) {
-    const { config, childContext, hasAction } = useWidgetContext(props.context)
-    return { config, childContext, hasAction }
+    const { config, childContext, hasAction, slots } = useWidgetContext(props.context)
+    return { config, childContext, hasAction, slots }
   },
   computed: {
     isEquipmentAccordion () {

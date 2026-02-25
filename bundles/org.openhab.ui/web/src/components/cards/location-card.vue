@@ -4,11 +4,9 @@
       <div v-if="!subtitle && parentLocation" class="subtitle">
         <small>{{ parentLocation }}</small>
       </div>
-      <div
-        v-if="context && context.component.slots && context.component.slots.glance"
-        class="display-flex flex-direction-column align-items-flex-start">
+      <div v-if="'glance' in slots" class="display-flex flex-direction-column align-items-flex-start">
         <generic-widget-component
-          v-for="(slotComponent, idx) in context.component.slots.glance"
+          v-for="(slotComponent, idx) in slots.glance"
           :context="childContext(slotComponent)"
           :key="'glance-' + idx" />
       </div>
@@ -106,8 +104,8 @@ export default {
     MeasurementBadge
   },
   setup (props) {
-    const { config, childContext } = useWidgetContext(props.context)
-    return { config, childContext }
+    const { config, childContext, slots } = useWidgetContext(props.context)
+    return { config, childContext, slots }
   },
   data () {
     return {

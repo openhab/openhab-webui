@@ -47,8 +47,8 @@
     </f7-swiper-slide>
 
     <!-- renders slides defined in the slides slot -->
-    <template v-if="context.component.slots && context.component.slots.slides && Array.isArray(context.component.slots.slides)">
-      <f7-swiper-slide v-for="(slide, idx) in context.component.slots.slides" :key="idx">
+    <template v-if="'slides' in slots && Array.isArray(slots.slides)">
+      <f7-swiper-slide v-for="(slide, idx) in slots.slides" :key="idx">
         <generic-widget-component :context="childContext(slide)" />
       </f7-swiper-slide>
     </template>
@@ -87,8 +87,8 @@ export default {
   },
   widget: OhSwiperDefinition,
   setup (props) {
-    const { config, childContext, defaultSlots } = useWidgetContext(props.context)
-    return { config, childContext, defaultSlots }
+    const { config, childContext, slots, defaultSlots } = useWidgetContext(props.context)
+    return { config, childContext, slots, defaultSlots }
   },
   computed: {
     slides () {

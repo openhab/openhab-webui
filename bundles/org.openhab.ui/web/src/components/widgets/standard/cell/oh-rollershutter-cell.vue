@@ -3,18 +3,18 @@
     <f7-row>
       <f7-col width="100" class="cell-rollershutter display-flex flex-direction-column justify-content-center">
         <slot name="beforeRollershutter">
-          <div v-if="context.component.slots" class="margin-top display-flex flex-direction-column justify-content-center">
+          <div v-if="'beforeRollershutter' in slots" class="margin-top display-flex flex-direction-column justify-content-center">
             <generic-widget-component
-              v-for="(slotComponent, idx) in context.component.slots.beforeRollershutter"
+              v-for="(slotComponent, idx) in slots.beforeRollershutter"
               :context="childContext(slotComponent)"
               :key="'beforeRollershutter-' + idx" />
           </div>
         </slot>
         <oh-rollershutter class="rollershutter-controls" :context="rollershutterContext" />
         <slot name="afterRollershutter">
-          <div v-if="context.component.slots" class="margin-top display-flex flex-direction-column justify-content-center">
+          <div v-if="'afterRollershutter' in slots" class="margin-top display-flex flex-direction-column justify-content-center">
             <generic-widget-component
-              v-for="(slotComponent, idx) in context.component.slots.afterRollershutter"
+              v-for="(slotComponent, idx) in slots.afterRollershutter"
               :context="childContext(slotComponent)"
               :key="'afterRollershutter-' + idx" />
           </div>
@@ -54,8 +54,8 @@ export default {
   },
   widget: OhRollershutterCellDefinition,
   setup (props) {
-    const { config, childContext } = useWidgetContext(props.context)
-    return { config, childContext }
+    const { config, childContext, slots } = useWidgetContext(props.context)
+    return { config, childContext, slots }
   },
   computed: {
     rollershutterContext () {

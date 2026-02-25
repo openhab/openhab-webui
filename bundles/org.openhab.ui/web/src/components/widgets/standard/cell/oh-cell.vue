@@ -11,9 +11,9 @@
     @card:close="cellClose"
     @card:closed="cellClosed">
     <slot name="background">
-      <div v-if="context.component.slots && context.component.slots.background">
+      <div v-if="'background' in slots">
         <generic-widget-component
-          v-for="(slotComponent, idx) in context.component.slots.background"
+          v-for="(slotComponent, idx) in slots.background"
           :context="childContext(slotComponent)"
           :key="'background-' + idx" />
       </div>
@@ -38,9 +38,9 @@
       <f7-card-header v-show="!opened" class="cell-button card-opened-fade-out no-padding">
         <slot name="header">
           <f7-list media-list>
-            <div v-if="context.component.slots && context.component.slots.header">
+            <div v-if="'header' in slots">
               <generic-widget-component
-                v-for="(slotComponent, idx) in context.component.slots.header"
+                v-for="(slotComponent, idx) in slots.header"
                 :context="childContext(slotComponent)"
                 :key="'header-' + idx" />
             </div>
@@ -87,9 +87,9 @@
       </f7-card-header>
       <div v-if="opened" class="cell-expanded-contents card-opened-fade-in display-flex flex-direction-column align-items-center">
         <slot>
-          <div v-if="context.component.slots && context.component.slots.default">
+          <div v-if="defaultSlots.length > 0">
             <generic-widget-component
-              v-for="(slotComponent, idx) in context.component.slots.default"
+              v-for="(slotComponent, idx) in defaultSlots"
               :context="childContext(slotComponent)"
               :key="'default-' + idx" />
           </div>
@@ -184,8 +184,8 @@ export default {
     state: String
   },
   setup (props) {
-    const { config, childContext, hasAction } = useWidgetContext(props.context)
-    return { config, childContext, hasAction }
+    const { config, childContext, hasAction, slots, defaultSlots } = useWidgetContext(props.context)
+    return { config, childContext, hasAction, slots, defaultSlots }
   },
   data () {
     return {
@@ -217,7 +217,7 @@ export default {
     },
     hasExpandedControls () {
       return this.config.expandable !== false && (this.context.component.component !== 'oh-cell' ||
-        (this.context.component.slots && this.context.component.slots.default && this.context.component.slots.default.length > 0))
+        (this.defaultSlots.length > 0))
     },
     isOn () {
       if (this.config.on !== undefined) return this.config.on

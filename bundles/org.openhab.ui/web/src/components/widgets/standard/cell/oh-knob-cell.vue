@@ -3,18 +3,18 @@
     <f7-row>
       <f7-col width="100" style="height: 400px" class="cell-knob display-flex flex-direction-column align-items-center">
         <slot name="beforeKnob">
-          <div v-if="context.component.slots" class="margin-top display-flex flex-direction-column justify-content-center">
+          <div v-if="'beforeKnob' in slots" class="margin-top display-flex flex-direction-column justify-content-center">
             <generic-widget-component
-              v-for="(slotComponent, idx) in context.component.slots.beforeKnob"
+              v-for="(slotComponent, idx) in slots.beforeKnob"
               :context="childContext(slotComponent)"
               :key="'beforeKnob-' + idx" />
           </div>
         </slot>
         <oh-knob :context="knobContext" />
         <slot name="afterKnob">
-          <div v-if="context.component.slots" class="margin-top display-flex flex-direction-column justify-content-center">
+          <div v-if="'afterKnob' in slots" class="margin-top display-flex flex-direction-column justify-content-center">
             <generic-widget-component
-              v-for="(slotComponent, idx) in context.component.slots.afterKnob"
+              v-for="(slotComponent, idx) in slots.afterKnob"
               :context="childContext(slotComponent)"
               :key="'afterKnob-' + idx" />
           </div>
@@ -40,8 +40,8 @@ export default {
   },
   widget: OhKnobCellDefinition,
   setup (props) {
-    const { childContext } = useWidgetContext(props.context)
-    return { childContext }
+    const { childContext, slots } = useWidgetContext(props.context)
+    return { childContext, slots }
   },
   computed: {
     knobContext () {
