@@ -113,7 +113,7 @@ export default {
 
         if (ctx === 'ip-address') {
           // handle "pure" ip address cases; ipv4, ipv6, without port suffix
-          return `(?:${ipv4Addr}|${ipv6Addr})(?![A-Za-z0-9\\-\\.])`
+          return `(?:${ipv4Addr}|${ipv6Addr})`
         } else {
           // handle network-address and url (synonyms)
           // hostIpv4 matches both a.b.c.d and 1.2.3.4 so covers ipv4 address pattern as well
