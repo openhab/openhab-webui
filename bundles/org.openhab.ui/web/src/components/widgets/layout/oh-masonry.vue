@@ -29,7 +29,7 @@
             style="margin-left: auto"
             icon-f7="slider_horizontal_below_rectangle"
             dropdown
-            @menu:opened="dropdownMenuOpened = idx"
+            @menu:opened="dropdownMenuOpened = idx as number"
             @menu:closed="dropdownMenuOpened = null">
             <f7-menu-dropdown right>
               <f7-menu-dropdown-item @click="context.editmode.configureWidget(slotComponent, context)" href="#" text="Configure Widget" />
@@ -59,7 +59,7 @@
             style="margin-left: auto"
             icon-f7="slider_horizontal_below_rectangle"
             dropdown
-            @menu:opened="dropdownMenuOpened = idx"
+            @menu:opened="dropdownMenuOpened = idx as number"
             @menu:closed="dropdownMenuOpened = null">
             <f7-menu-dropdown right>
               <f7-menu-dropdown-item @click="context.editmode.configureWidget(slotComponent, context)" href="#" text="Configure Widget" />
@@ -128,7 +128,7 @@ defineOptions({
   widget: OhMasonryDefinition
 })
 
-const { config, childContext, defaultSlots } = useWidgetContext(props.context)
+const { config, childContext, defaultSlots } = useWidgetContext(props.context!)
 
 // reactive state
 const dropdownMenuOpened = ref<number | null>(null)

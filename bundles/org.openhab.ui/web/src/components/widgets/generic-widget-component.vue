@@ -47,7 +47,7 @@
         :is-child="true"
         :context="childWidgetContext"
         :class="scopedCssUid" />
-        <span v-else style="color: red;">Widget not found: {{ componentType }}</span>
+      <span v-else style="color: red;">Widget not found: {{ componentType }}</span>
     </template>
     <component
       v-bind="$attrs"

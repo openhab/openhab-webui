@@ -19,6 +19,9 @@ import * as api from '@/api'
  * - All components using this composable have to add the `scopedCssUid` as a class to their root element.
  */
 export function useWidgetContext(context: WidgetContext) {
+  /* eslint-disable-next-line @typescript-eslint/no-unsafe-return */
+  if (!context) return {} as any
+
   const _evaluateExpression = useWidgetExpression().evaluateExpression
 
   // state
@@ -31,7 +34,7 @@ export function useWidgetContext(context: WidgetContext) {
 
   // computed
   const componentType = computed<string | null>(() => {
-    if (!context?.component?.component) return null
+    if (!context.component?.component) return null
     return (evaluateExpression('type', context.component.component) as string) || null
   })
 
@@ -47,7 +50,7 @@ export function useWidgetContext(context: WidgetContext) {
   })
 
   const config = computed(() => {
-    if (!context?.component) return {}
+    if (!context.component) return {}
     let evalConfig: Record<string, unknown> = {}
     // Fallback to modelConfig for oh- components to allow configuring them in modals
     const sourceConfig = context.component.config || (componentType.value?.startsWith('oh-') ? context.modalConfig : {})
@@ -62,8 +65,8 @@ export function useWidgetContext(context: WidgetContext) {
   })
 
   const props = computed((): Record<string, unknown> => {
-    if (!context?.component || !('props' in context.component)) return {}
-    if (context.component.props.parameters) {
+    if (!context.component) return {}
+    if ('props' in context.component && context.component.props.parameters) {
       let defaultValues: Record<string, unknown> = {}
       // Note api.ConfigDescriptionParameter uses 'defaultValue', but UI widgets just use 'default'
       context.component.props.parameters.forEach((p: { name: string; default?: unknown }) => {
@@ -82,7 +85,7 @@ export function useWidgetContext(context: WidgetContext) {
   })
 
   const visible = computed(() => {
-    if (context?.editmode || !context?.component?.config) return true
+    if (context.editmode || !context.component?.config) return true
     const visible = evaluateExpression('visible', context.component.config.visible)
     const visibleTo = context.component.config.visibleTo as string | undefined
     if (visible === undefined && visibleTo === undefined) return true
@@ -97,7 +100,7 @@ export function useWidgetContext(context: WidgetContext) {
   })
 
   const defaultSlots = computed(() => {
-    if ('slots' in context.component && context.component.slots.default) {
+    if (context && 'slots' in context.component && context.component.slots.default) {
       return context.component.slots.default
     }
     return []
@@ -110,25 +113,25 @@ export function useWidgetContext(context: WidgetContext) {
       console.warn('widget not found, cannot render: ' + componentType.value)
       return null
     }
-    if (context?.vars) {
+    if (context.vars) {
       for (const varKey in context.vars) {
         widgetVars.value[varKey] = context.vars[varKey]
       }
     }
-    if (context?.component && 'slots' in context.component) Object.assign(widget.slots, context.component.slots)
+    if (context.component && 'slots' in context.component) Object.assign(widget.slots, context.component.slots)
     const widgetContext = {
       component: widget,
       props: config.value,
-      fn: context?.fn,
-      const: context?.const,
+      fn: context.fn,
+      const: context.const,
       vars: widgetVars.value,
-      varScope: varScope.value || context?.varScope,
-      ctxVars: context?.ctxVars,
-      store: context?.store,
-      config: context?.config,
-      editmode: context?.editmode,
-      clipboardtype: context?.clipboardtype,
-      parent: context?.parent
+      varScope: varScope.value || context.varScope,
+      ctxVars: context.ctxVars,
+      store: context.store,
+      config: context.config,
+      editmode: context.editmode,
+      clipboardtype: context.clipboardtype,
+      parent: context.parent
     } satisfies WidgetContext
     return widgetContext
   })
@@ -142,16 +145,16 @@ export function useWidgetContext(context: WidgetContext) {
     return {
       component: component,
       props: props.value,
-      fn: context?.fn,
-      const: context?.const,
-      vars: context?.vars,
+      fn: context.fn,
+      const: context.const,
+      vars: context.vars,
       varScope: varScope.value || context?.varScope,
-      ctxVars: context?.ctxVars,
-      loop: context?.loop,
-      store: context?.store,
-      config: context?.config,
-      editmode: context?.editmode,
-      clipboardtype: context?.clipboardtype,
+      ctxVars: context.ctxVars,
+      loop: context.loop,
+      store: context.store,
+      config: context.config,
+      editmode: context.editmode,
+      clipboardtype: context.clipboardtype,
       parent: context
     }
   }
@@ -169,7 +172,7 @@ export function useWidgetContext(context: WidgetContext) {
 
   // lifecycle
   onMounted(() => {
-    const stylesheet = context?.component?.config?.stylesheet as string | undefined
+    const stylesheet = context.component?.config?.stylesheet as string | undefined
     if (stylesheet) {
       scopedCssUid.value = 'scoped-' + f7.utils.id()
       let style = document.createElement('style')
@@ -187,8 +190,6 @@ export function useWidgetContext(context: WidgetContext) {
   })
 
   return {
-    context: context,
-
     // state
     vars,
     ctxVars,

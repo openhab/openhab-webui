@@ -89,6 +89,7 @@ export default {
   },
   asyncComputed: {
     source () {
+      console.log('fetching source for repeater', this.config)
       if (this.config.cacheSource && this.sourceCache) return this.sourceCache
       let sourceResult
       if (this.config.sourceType === 'range') {
