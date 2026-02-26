@@ -90,6 +90,9 @@ export default {
       if (ctx === 'url' || ctx === 'network-address') {
         return 'Please enter a valid network address or URL.';
       }
+      if (ctx === 'ip-address') {
+        return 'Please enter a valid IP address (e.g., 127.0.0.1 or 2001:db8::1).'
+      }
       if (ctx === 'email') {
         return 'Please enter a valid email address.';
       }
@@ -97,7 +100,6 @@ export default {
       return 'The entered value is invalid.';
     },
     pattern () {
-      // developer note: previous code failed because regexes were incompatible with browser syntax capabilities
       const ctx = this.configDescription.context;
 
       if (ctx === 'mac-address') {
