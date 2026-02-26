@@ -22,7 +22,10 @@ export function useWidgetContext(context: WidgetContext) {
   /* eslint-disable-next-line @typescript-eslint/no-unsafe-return */
   if (!context) return {} as any
 
-  const _evaluateExpression = useWidgetExpression().evaluateExpression
+  const widgetExpression = useWidgetExpression()
+  const _evaluateExpression = widgetExpression.evaluateExpression
+  const componentsStore = useComponentsStore()
+  const userStore = useUserStore()
 
   // state
   const vars = ref(context ? context.vars : {})
@@ -30,7 +33,6 @@ export function useWidgetContext(context: WidgetContext) {
   const widgetVars = ref<Record<string, unknown>>({})
   const varScope = ref(null)
   const scopedCssUid = ref<string | null>(null)
-  const widgetExpression = useWidgetExpression()
 
   // computed
   const componentType = computed<string | null>(() => {
@@ -41,7 +43,7 @@ export function useWidgetContext(context: WidgetContext) {
   const childWidgetComponentType = computed<string | null>(() => {
     if (!componentType.value) return null
     if (!componentType.value.startsWith('widget:')) return null
-    const widget = useComponentsStore().widget(componentType.value.substring(7))
+    const widget = componentsStore.widget(componentType.value.substring(7))
     if (!widget) {
       console.warn('widget not found, cannot render: ' + componentType.value)
       return null
@@ -91,7 +93,7 @@ export function useWidgetContext(context: WidgetContext) {
     if (visible === undefined && visibleTo === undefined) return true
     if (visible === false || visible === 'false') return false
     if (visibleTo) {
-      const user = useUserStore().user
+      const user = userStore.user
       if (!user) return false
       if (user.roles && user.roles.some((r) => visibleTo.indexOf('role:' + r) >= 0)) return true
       return visibleTo.indexOf('user:' + user.name) >= 0
@@ -113,7 +115,7 @@ export function useWidgetContext(context: WidgetContext) {
 
   const childWidgetContext = computed((): WidgetContext | null => {
     if (!componentType.value?.startsWith('widget:')) return null
-    let widget = useComponentsStore().widget(componentType.value.substring(7))
+    let widget = componentsStore.widget(componentType.value.substring(7))
     if (!widget) {
       console.warn('widget not found, cannot render: ' + componentType.value)
       return null
