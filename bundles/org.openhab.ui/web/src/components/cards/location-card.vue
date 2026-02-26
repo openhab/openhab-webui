@@ -109,7 +109,8 @@ export default {
   },
   data () {
     return {
-      activeTab: (this.element.equipment.length === 0 && this.element.properties.length > 0) ? 'properties' : 'equipment'
+      activeTab: (this.element.equipment.length === 0 && this.element.properties.length > 0) ? 'properties' : 'equipment',
+      type: 'location'
     }
   },
   computed: {

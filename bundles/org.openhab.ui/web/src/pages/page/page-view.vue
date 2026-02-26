@@ -55,7 +55,7 @@
     </f7-toolbar>
     <f7-tabs v-if="page && pageType === 'tabs' && visibleToCurrentUser">
       <f7-tab v-for="(tab, idx) in page.slots.default" :id="'tab-' + idx" :key="idx" :tab-active="currentTab === idx">
-        <component :is="tabComponent(tab)" v-if="currentTab === idx" :context="tabContext(tab)" />
+        <component :is="tabComponent(tab)" v-if="currentTab === idx" :context="tabContext(tab)" :f7router />
       </f7-tab>
     </f7-tabs>
 
@@ -91,7 +91,7 @@
 </style>
 
 <script>
-import { defineAsyncComponent, provide } from 'vue'
+import { defineAsyncComponent } from 'vue'
 import { f7, theme } from 'framework7-vue'
 
 import OhLayoutPage from '@/components/widgets/layout/oh-layout-page.vue'

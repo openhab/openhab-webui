@@ -48,6 +48,11 @@ export default {
   components: {
     ModelCard
   },
+  data () {
+    return {
+      type: 'property'
+    }
+  },
   setup (props) {
     const { config, childContext, slots } = useWidgetContext(props.context)
     return { config, childContext, slots }
