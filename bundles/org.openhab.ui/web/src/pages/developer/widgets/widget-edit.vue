@@ -125,6 +125,7 @@ import DirtyMixin from '@/pages/settings/dirty-mixin'
 import * as StandardListWidgets from '@/components/widgets/standard/list'
 
 import { useStatesStore } from '@/js/stores/useStatesStore'
+import { useViewArea } from '@/composables/useViewArea'
 
 const toStringOptions = { toStringDefaults: { lineWidth: 0 } }
 
@@ -141,6 +142,7 @@ export default {
     f7route: Object
   },
   setup () {
+    useViewArea()
     return { f7, theme }
   },
   data () {
