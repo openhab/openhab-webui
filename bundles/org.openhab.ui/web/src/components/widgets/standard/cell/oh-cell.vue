@@ -184,8 +184,8 @@ export default {
     state: String
   },
   setup (props) {
-    const { config, childContext, hasAction, slots, defaultSlots } = useWidgetContext(props.context)
-    return { config, childContext, hasAction, slots, defaultSlots }
+    const { config, childContext, evaluateExpression, hasAction, slots, defaultSlots } = useWidgetContext(props.context)
+    return { config, childContext, evaluateExpression, hasAction, slots, defaultSlots }
   },
   data () {
     return {

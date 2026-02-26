@@ -47,8 +47,8 @@ export default {
   },
   widget: OhClockCardDefinition,
   setup(props) {
-    const { config } = useWidgetContext(props.context)
-    return { config }
+    const { config, evaluateExpression } = useWidgetContext(props.context)
+    return { config, evaluateExpression }
   }
 }
 </script>

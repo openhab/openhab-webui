@@ -85,8 +85,8 @@ export default {
   widget: OhPlanMarkerDefinition,
   emits: ['update'],
   setup(props) {
-    const { config, visible } = useWidgetContext(props.context)
-    return { config, visible }
+    const { config, visible, evaluateExpression } = useWidgetContext(props.context)
+    return { config, visible, evaluateExpression }
   },
   data () {
     return {

@@ -45,8 +45,8 @@ export default {
   },
   widget: OhGaugeCardDefinition,
   setup(props) {
-    const { config, cardChildContext, hasAction } = useWidgetContext(props.context)
-    return { config, cardChildContext, hasAction }
+    const { config, cardChildContext, hasAction, evaluateExpression } = useWidgetContext(props.context)
+    return { config, cardChildContext, hasAction, evaluateExpression }
   }
 }
 </script>

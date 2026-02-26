@@ -59,8 +59,8 @@ export default {
   },
   widget: OhImageCardDefinition,
   setup(props) {
-    const { config, cardChildContext, hasAction } = useWidgetContext(props.context)
-    return { config, cardChildContext, hasAction }
+    const { config, cardChildContext, hasAction, evaluateExpression } = useWidgetContext(props.context)
+    return { config, cardChildContext, hasAction, evaluateExpression }
   }
 }
 </script>

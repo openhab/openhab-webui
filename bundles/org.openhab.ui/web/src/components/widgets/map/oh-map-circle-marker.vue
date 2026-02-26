@@ -35,8 +35,8 @@ export default {
   widget: OhMapCircleMarkerDefinition,
   emits: ['update'],
   setup(props) {
-    const { config } = useWidgetContext(props.context)
-    return { config }
+    const { config, evaluateExpression } = useWidgetContext(props.context)
+    return { config, evaluateExpression }
   },
   data () {
     return {
