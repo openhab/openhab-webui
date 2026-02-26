@@ -42,7 +42,7 @@ const rules = {
     'no-case-declarations': 'off',
     'no-console': 'off',
     'no-debugger': 'off',
-    'no-unsed-vars': 'off',
+    'no-unused-vars': 'off',
     'no-irregular-whitespace': 'off',
     // 'es/no-regexp-lookbehind-assertions': 'error', // Supported in Safari  >= 16.4, which breaks iOS 15.x.
     'no-trailing-spaces': 'error',

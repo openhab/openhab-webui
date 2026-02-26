@@ -123,9 +123,11 @@ export function useWidgetContext(context: WidgetContext) {
         widgetVars.value[varKey] = context.vars[varKey]
       }
     }
-    if (context.component && 'slots' in context.component) Object.assign(widget.slots, context.component.slots)
+    const extendedWidget = (context.component && 'slots' in context.component)
+      ? { ...widget, slots: { ...widget.slots, ...context.component.slots } }
+      : widget
     const widgetContext = {
-      component: widget,
+      component: extendedWidget,
       props: config.value,
       fn: context.fn,
       const: context.const,
