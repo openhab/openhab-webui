@@ -203,7 +203,6 @@ export function useWidgetContext(context: WidgetContext) {
     widgetVars,
     varScope,
     scopedCssUid,
-    widgetExpression,
 
     // computed
     componentType,
