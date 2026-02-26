@@ -11,7 +11,7 @@
       <f7-link @click="currentTab = 'tree'" :tab-link-active="currentTab === 'tree'"> Design </f7-link>
       <f7-link @click="currentTab = 'code'" :tab-link-active="currentTab === 'code'"> Code </f7-link>
     </f7-toolbar>
-    <f7-toolbar bottom class="toolbar-details" v-if="currentTab === 'tree'">
+    <f7-toolbar v-if="currentTab === 'tree'" bottom class="toolbar-details">
       <f7-link class="left" :class="{ disabled: selectedWidget == null }" @click="selectedWidget = null"> Clear </f7-link>
       <div class="padding-right text-align-right">
         <label class="advanced-label">
@@ -130,8 +130,8 @@
         <f7-actions ref="widgetTypeSelection" id="widget-type-selection" :grid="true">
           <f7-actions-group>
             <f7-actions-button
-              class="widget-button"
               v-for="widgetType in addableWidgetTypes"
+              class="widget-button"
               :key="widgetType.type"
               @click="addWidget(widgetType.type)">
               <template #media>
@@ -221,7 +221,7 @@
             Colors
           </f7-link>
         </f7-toolbar>
-        <f7-block style="margin-bottom: 6rem" v-if="selectedWidget && detailsTab === 'widget'">
+        <f7-block v-if="selectedWidget && detailsTab === 'widget'" style="margin-bottom: 6rem">
           <widget-details
             :widget="selectedWidget"
             :createMode="createMode"
@@ -230,10 +230,10 @@
             @movedown="moveWidgetDown"
             @moveup="moveWidgetUp" />
         </f7-block>
-        <f7-block style="margin-bottom: 6rem" v-if="selectedWidget && detailsTab === 'visibility'">
+        <f7-block v-if="selectedWidget && detailsTab === 'visibility'" style="margin-bottom: 6rem">
           <attribute-details :widget="selectedWidget" attribute="visibility" placeholder="item_name operator value" />
         </f7-block>
-        <f7-block style="margin-bottom: 6rem" v-if="selectedWidget && detailsTab === 'buttons'">
+        <f7-block v-if="selectedWidget && detailsTab === 'buttons'" style="margin-bottom: 6rem">
           <attribute-details
             :widget="selectedWidget"
             attribute="buttons"
@@ -242,16 +242,16 @@
                                                       {column: {width: '10%', type: 'number', min: 1, placeholder: 'col'}},
                                                       {command: {}}])" />
         </f7-block>
-        <f7-block style="margin-bottom: 6rem" v-if="selectedWidget && detailsTab === 'mappings'">
+        <f7-block v-if="selectedWidget && detailsTab === 'mappings'" style="margin-bottom: 6rem">
           <attribute-details
             :widget="selectedWidget"
             attribute="mappings"
             :placeholder="selectedWidget.component === 'Switch' ? 'cmd:releaseCmd = label = icon' : 'command = label = icon'" />
         </f7-block>
-        <f7-block style="margin-bottom: 6rem" v-if="selectedWidget && detailsTab === 'icons'">
+        <f7-block v-if="selectedWidget && detailsTab === 'icons'" style="margin-bottom: 6rem">
           <attribute-details :widget="selectedWidget" attribute="iconrules" placeholder="item_name operator value = icon" />
         </f7-block>
-        <f7-block style="margin-bottom: 6rem" v-if="selectedWidget && detailsTab === 'colors'">
+        <f7-block v-if="selectedWidget && detailsTab === 'colors'" style="margin-bottom: 6rem">
           <div><f7-block-title>Label Color</f7-block-title></div>
           <attribute-details :widget="selectedWidget" attribute="labelcolor" placeholder="item_name operator value = color" />
           <div v-if="canShowValue">

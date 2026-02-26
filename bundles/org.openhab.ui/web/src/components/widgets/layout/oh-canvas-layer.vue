@@ -21,21 +21,25 @@
 </style>
 
 <script>
-import mixin from '../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhCanvasItem from './oh-canvas-item.vue'
 import { OhCanvasLayerDefinition } from '@/assets/definitions/widgets/layout'
 
 export default {
-  mixins: [mixin],
   widget: OhCanvasLayerDefinition,
   components: {
     OhCanvasItem
   },
   props: {
+    context: Object,
     gridPitch: Number,
     gridEnable: Boolean,
     id: String,
     preventDeactivation: Boolean
+  },
+  setup (props) {
+    const { config, childContext, visible } = useWidgetContext(props.context)
+    return { config, childContext, visible }
   },
   data () {
     return {

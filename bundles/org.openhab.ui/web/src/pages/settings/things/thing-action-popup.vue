@@ -26,7 +26,7 @@
             :parameters="inputConfigDescriptions"
             :configuration="actionInput"
             :read-only="executing" />
-          <div class="margin" v-else>There is no input to be configured for this action.</div>
+          <div v-else class="margin">There is no input to be configured for this action.</div>
         </f7-col>
         <!-- Executing Spinner -->
         <f7-col v-if="executing" class="text-align-center padding-top margin-top">

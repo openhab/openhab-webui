@@ -10,7 +10,7 @@
       :class="{ 'with-tabbar': context.tab, 'with-toolbar': context.analyzer }"
       :theme="uiOptionsStore.darkMode === 'dark' ? 'dark' : undefined"
       autoresize />
-    <f7-menu class="padding float-right" v-if="periodVisible">
+    <f7-menu v-if="periodVisible" class="padding float-right">
       <f7-menu-item @click="earlierPeriod()" icon-f7="chevron_left" />
       <f7-menu-item v-if="context.component.config.chartType" :text="fixedPeriodLabel" type="text" @click="pickFixedStartDate">
         <input ref="calendarInput" type="text" style="width: 40px; height: 0; visibility: hidden" />
@@ -44,7 +44,6 @@ import { f7 } from 'framework7-vue'
 import { nextTick } from 'vue'
 import { mapStores } from 'pinia'
 
-import mixin from '../widget-mixin'
 import chart from '../chart/chart-mixin'
 import { actionsMixin } from '../widget-actions'
 
@@ -73,18 +72,25 @@ use([CanvasRenderer, LineChart, BarChart, GaugeChart, HeatmapChart, PieChart, Sc
   MarkLineComponent, MarkPointComponent, MarkAreaComponent, VisualMapComponent, CalendarComponent, LabelLayout])
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 
 export default {
-  mixins: [mixin, chart, actionsMixin],
+  mixins: [chart, actionsMixin],
   components: {
     chart: VChart
   },
-  setup () {
+  props: {
+    context: Object
+  },
+  setup (props) {
     let echartsLocale = useRuntimeStore().locale.split('-')[0].toUpperCase()
     let initOptions = echartsLocale ? {
       locale: echartsLocale
     } : null
-    return { echartsLocale, initOptions }
+
+    const { config, evaluateExpression, slots } = useWidgetContext(props.context)
+
+    return { echartsLocale, initOptions, config, evaluateExpression, slots }
   },
   computed: {
     activeHeight () {
@@ -93,8 +99,8 @@ export default {
     },
     periodVisible () {
       if (!this.config || this.config.periodVisible === undefined) {
-        if (this.context.component.slots && this.context.component.slots.series && Array.isArray(this.context.component.slots.series) && this.context.component.slots.series.length) {
-          return this.context.component.slots.series[0].component !== 'oh-data-series'
+        if ('series' in this.slots && Array.isArray(this.slots.series) && this.slots.series.length) {
+          return this.slots.series[0].component !== 'oh-data-series'
         }
         return true
       }
@@ -153,8 +159,8 @@ export default {
   methods: {
     handleClick (evt) {
       if (evt.seriesIndex !== undefined) {
-        if (this.context.component.slots && this.context.component.slots.series && Array.isArray(this.context.component.slots.series) && this.context.component.slots.series.length) {
-          let series = this.context.component.slots.series[evt.seriesIndex]
+        if ('series' in this.slots && Array.isArray(this.slots.series) && this.slots.series.length) {
+          let series = this.slots.series[evt.seriesIndex]
           this.performAction(evt.event, null, series.config, null)
         }
       }

@@ -6,45 +6,45 @@
     <f7-row>
       <f7-col width="25" class="theme-picker auto" @click="switchTheme('auto')">
         <span class="text-color-gray"> {{ t('about.theme.auto') }}</span>
-        <f7-checkbox checked disabled v-if="theme === 'auto'" />
+        <f7-checkbox v-if="theme === 'auto'" checked disabled />
       </f7-col>
       <f7-col width="25" class="theme-picker" @click="switchTheme('md')">
         <span><f7-icon f7="logo_android" size="20" color="gray" /></span>
-        <f7-checkbox checked disabled v-if="theme === 'md'" />
+        <f7-checkbox v-if="theme === 'md'" checked disabled />
       </f7-col>
       <f7-col width="25" class="theme-picker" @click="switchTheme('ios')">
         <span><f7-icon f7="logo_ios" size="25" color="gray" /></span>
-        <f7-checkbox checked disabled v-if="theme === 'ios'" />
+        <f7-checkbox v-if="theme === 'ios'" checked disabled />
       </f7-col>
       <f7-col width="25" class="theme-picker" @click="switchTheme('aurora')">
         <span><f7-icon f7="desktopcomputer" size="20" color="gray" /></span>
-        <f7-checkbox checked disabled v-if="theme === 'aurora'" />
+        <f7-checkbox v-if="theme === 'aurora'" checked disabled />
       </f7-col>
     </f7-row>
     <f7-block-title>{{ t('about.darkMode') }}</f7-block-title>
     <f7-row>
       <f7-col width="33" class="theme-picker auto" @click="uiOptionsStore.darkMode = 'auto'">
         <span class="text-color-gray">{{ t('about.darkMode.auto') }}</span>
-        <f7-checkbox checked disabled v-if="uiOptionsStore.storedDarkMode === 'auto'" />
+        <f7-checkbox v-if="uiOptionsStore.storedDarkMode === 'auto'" checked disabled />
       </f7-col>
       <f7-col width="33" class="bg-color-white theme-picker" @click="uiOptionsStore.darkMode = 'light'">
         <span class="text-color-gray">{{ t('about.darkMode.light') }}</span>
-        <f7-checkbox checked disabled v-if="uiOptionsStore.storedDarkMode === 'light'" />
+        <f7-checkbox v-if="uiOptionsStore.storedDarkMode === 'light'" checked disabled />
       </f7-col>
       <f7-col width="33" class="bg-color-black theme-picker" @click="uiOptionsStore.darkMode = 'dark'">
         <span class="text-color-gray">{{ t('about.darkMode.dark') }}</span>
-        <f7-checkbox checked disabled v-if="uiOptionsStore.storedDarkMode === 'dark'" />
+        <f7-checkbox v-if="uiOptionsStore.storedDarkMode === 'dark'" checked disabled />
       </f7-col>
     </f7-row>
     <f7-block-title>{{ t('about.navigationBarsStyle') }}</f7-block-title>
     <f7-row>
       <f7-col width="50" class="nav-bars-picker nav-bars-picker-empty" @click="bars='light'">
         <div class="demo-navbar" />
-        <f7-checkbox checked disabled v-if="bars === 'light'" />
+        <f7-checkbox v-if="bars === 'light'" checked disabled />
       </f7-col>
       <f7-col width="50" class="nav-bars-picker nav-bars-picker-fill" @click="bars='filled'">
         <div class="demo-navbar" />
-        <f7-checkbox checked disabled v-if="bars === 'filled'" />
+        <f7-checkbox v-if="bars === 'filled'" checked disabled />
       </f7-col>
     </f7-row>
 
@@ -104,6 +104,44 @@
         </f7-list>
       </f7-col>
     </f7-row>
+
+    <f7-row v-if="showDialogOptions" class="dialog-options">
+      <f7-col>
+        <f7-block-title>{{ t('about.dialog') }}</f7-block-title>
+        <f7-list>
+          <f7-list-item>
+            <span>{{ t('about.dialog.enable') }}</span>
+            <f7-toggle v-model:checked="dialogEnabled" />
+          </f7-list-item>
+          <f7-list-item>
+            <span>{{ t('about.dialog.id') }}</span>
+            <f7-input type="button" :value="dialogIdentifier" />
+          </f7-list-item>
+          <f7-list-group>
+            <item-picker
+              :label="t('about.dialog.listeningItem')"
+              :multiple="false"
+              :value="dialogListeningItem"
+              @input="setDialogListeningItem" />
+          </f7-list-group>
+          <f7-list-group>
+            <item-picker
+              :label="t('about.dialog.locationItem')"
+              :multiple="false"
+              :value="dialogLocationItem"
+              @input="setDialogLocationItem" />
+          </f7-list-group>
+          <f7-list-item>
+            <span>{{ t('about.dialog.connectOnWindowEvent') }}</span>
+            <f7-toggle v-model:checked="dialogConnectOnWindowEvent" />
+          </f7-list-item>
+          <f7-list-item>
+            <span>{{ t('about.dialog.triggerOnConnect') }}</span>
+            <f7-toggle v-model:checked="dialogTriggerOnConnect" />
+          </f7-list-item>
+        </f7-list>
+      </f7-col>
+    </f7-row>
   </f7-block>
 </template>
 
@@ -112,7 +150,13 @@
   .home-navbar-selection
     .button
       width auto
+  .dialog-options
+    .title-fixed .item-title
+      width 200%
+    .input-right input
+      text-align right
 </style>
+
 <script>
 import { mapStores, mapWritableState } from 'pinia'
 
@@ -145,6 +189,12 @@ export default {
     setCommandItem (value) {
       localStorage.setItem('openhab.ui:commandItem', value)
       setTimeout(() => { location.reload() }, 50) // Delay reload, otherwise it doesn't work
+    },
+    setDialogListeningItem (value) {
+      useUIOptionsStore().dialogListeningItem = value
+    },
+    setDialogLocationItem (value) {
+      useUIOptionsStore().dialogLocationItem = value
     }
   },
   computed: {
@@ -154,8 +204,14 @@ export default {
     commandItem () {
       return localStorage.getItem('openhab.ui:commandItem') || ''
     },
+    showDialogOptions () {
+      const getUserMediaSupported = !!(window.navigator && window.navigator.mediaDevices && window.navigator.mediaDevices.getUserMedia)
+      return getUserMediaSupported &&
+        !!window.AudioContext &&
+        !!window.crypto
+    },
     ...mapStores(useRuntimeStore, useUIOptionsStore),
-    ...mapWritableState(useUIOptionsStore, [ 'disablePageTransitionAnimation',  'bars', 'homeNavBar', 'homeBackground', 'hideChatInput', 'disableExpandableCardAnimation', 'webAudio' ])
+    ...mapWritableState(useUIOptionsStore, [ 'disablePageTransitionAnimation',  'bars', 'homeNavBar', 'homeBackground', 'hideChatInput', 'disableExpandableCardAnimation', 'webAudio', 'dialogEnabled', 'dialogIdentifier', 'dialogListeningItem', 'dialogLocationItem', 'dialogConnectOnWindowEvent', 'dialogTriggerOnConnect' ])
   }
 }
 </script>

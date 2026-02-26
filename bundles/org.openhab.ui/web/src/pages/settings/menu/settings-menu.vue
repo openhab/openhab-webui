@@ -135,10 +135,10 @@
             <f7-list class="search-list">
               <f7-list-item
                 v-for="service in systemSettings"
+                v-show="!service.hidden"
                 :key="service.id"
                 :link="'services/' + service.id"
-                :title="service.label"
-                v-show="!service.hidden" />
+                :title="service.label" />
               <f7-list-button v-if="!expandedTypes.systemSettingsExpanded" color="blue" @click="expand('systemSettingsExpanded')">
                 {{ $t('dialogs.showAll') }}
               </f7-list-button>
@@ -169,7 +169,7 @@
             </div>
           </div>
         </f7-col>
-        <f7-col width="33" class="add-on-col" v-show="$f7dim.width >= 1450">
+        <f7-col v-show="$f7dim.width >= 1450" width="33" class="add-on-col">
           <div v-show="addonsLoaded && addonsInstalled.length > 0">
             <addon-section
               :addonsInstalled="addonsInstalled"

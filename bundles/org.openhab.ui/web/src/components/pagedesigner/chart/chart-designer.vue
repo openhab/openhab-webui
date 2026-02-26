@@ -19,7 +19,7 @@
     </f7-block>
 
     <!-- Grids -->
-    <f7-block strong :style="{ zIndex: 100 - gridIdx }" v-for="(grid, gridIdx) in context.component.slots.grid" :key="gridIdx">
+    <f7-block v-for="(grid, gridIdx) in context.component.slots.grid" strong :style="{ zIndex: 100 - gridIdx }" :key="gridIdx">
       <f7-block-title>Grid {{ gridIdx }}</f7-block-title>
       <div>
         <f7-menu v-if="context.editmode" class="configure-layout-menu">
@@ -277,7 +277,7 @@
 <script>
 import { f7 } from 'framework7-vue'
 
-import widget from '@/components/widgets/widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import EditContextMenu from '@/components/pagedesigner/edit-menu.vue'
 
 import { use } from 'echarts/core'
@@ -310,10 +310,15 @@ const defaultSlotComponentType = {
 }
 
 export default {
-  mixins: [widget],
+  props: {
+    context: Object
+  },
   components: {
     'chart-skeleton': VChart,
     EditContextMenu
+  },
+  setup (props) {
+    useWidgetContext(props.context)
   },
   methods: {
     skeletonGridOptions (grid, gridIdx) {

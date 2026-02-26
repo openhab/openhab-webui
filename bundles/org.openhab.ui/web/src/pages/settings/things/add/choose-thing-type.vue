@@ -2,7 +2,7 @@
   <f7-page class="choose-thing-type" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar>
       <oh-nav-content :title="`Add a new Thing: ${bindingId}`" back-link-url="/settings/things/add/" :f7router />
-      <f7-subnavbar :inner="false" v-show="initSearchbar">
+      <f7-subnavbar v-show="initSearchbar" :inner="false">
         <f7-searchbar
           v-if="initSearchbar"
           ref="searchbar"
@@ -39,7 +39,7 @@
           :parameters="inputParameters"
           :configuration="inputConfig" />
         <f7-block-title v-if="discoverySupported && scanResults.length"> Discovered Things </f7-block-title>
-        <f7-list class="col thing-type-list" v-if="scanResults.length">
+        <f7-list v-if="scanResults.length" class="col thing-type-list">
           <f7-list-item
             v-for="entry in scanResults"
             :key="entry.thingUID"

@@ -15,7 +15,7 @@
         <oh-trend v-if="config.trendItem" :key="'trend' + config.item" class="trend" :width="trendWidth" :context="context" />
         <f7-list>
           <f7-list-item :link="hasAction ? true : false" no-chevron>
-            <template #media v-if="config.icon">
+            <template v-if="config.icon" #media>
               <oh-icon
                 :icon="config.icon"
                 :height="config.iconSize || 32"
@@ -59,19 +59,26 @@
 </style>
 
 <script>
-import mixin from '../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { actionsMixin } from '../widget-actions'
 import OhCard from '@/components/widgets/standard/oh-card.vue'
 import OhTrend from '@/components/widgets/system/oh-trend.vue'
 import { OhLabelCardDefinition } from '@/assets/definitions/widgets/standard/cards'
 
 export default {
-  mixins: [mixin, actionsMixin],
+  mixins: [actionsMixin],
+  props: {
+    context: Object
+  },
   components: {
     OhCard,
     OhTrend
   },
   widget: OhLabelCardDefinition,
+  setup(props) {
+    const { config, hasAction, evaluateExpression } = useWidgetContext(props.context)
+    return { config, hasAction, evaluateExpression }
+  },
   data () {
     return {
       trendWidth: 0

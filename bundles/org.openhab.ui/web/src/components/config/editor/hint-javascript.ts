@@ -1,5 +1,5 @@
 import { javascriptLanguage } from '@codemirror/lang-javascript'
-import { autocompletion, CompletionContext } from '@codemirror/autocomplete'
+import { autocompletion, CompletionContext, type CompletionResult } from '@codemirror/autocomplete'
 import { syntaxTree } from '@codemirror/language'
 // @ts-expect-error - hint-utils is not typed
 import * as hintUtils from './hint-utils'
@@ -7,11 +7,16 @@ import * as hintUtils from './hint-utils'
 // Vite generate named exports for JSON keys by creating JS identifiers for each property
 // This caused a security violation when parsing `eval` inside ecmascript.json!
 // So we import the raw data and parse it manually to avoid it
-// @ts-expect-error - raw import has no type declaration
 import EcmascriptRaw from '@/assets/ecmascript.json?raw'
-const EcmascriptDefs: any = JSON.parse(EcmascriptRaw)
+const EcmascriptDefs = JSON.parse(String(EcmascriptRaw)) as Definitions
+
 import NashornDefs from '@/assets/nashorn-tern-defs.json'
 import OpenhabJsDefs from '@/assets/openhab-js-tern-defs.json'
+
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 
 type Definitions = Record<string, any>
 
@@ -136,7 +141,7 @@ function resolveDefinition(identifier: string, scopedDef: Definitions): Definiti
 function resolveDefinitionFromPath(path: readonly string[]) {
   let def: Definitions | undefined = GlobalIdentifiers
   for (let segment of path) {
-    def = resolveDefinition(segment, def!)
+    def = resolveDefinition(segment, def)
     if (!def) return
   }
   return def
@@ -214,10 +219,11 @@ function hintOpenhabJs(context: CompletionContext) {
   }
 }
 
-function hintJsItems(context: any) {
+async function hintJsItems(context: any): Promise<CompletionResult | null> {
   if (context.matchBefore(/(\s|^)items\.(getItem\(['"])?[\w]*/)) {
     return hintUtils.hintItems(context)
   }
+  return null
 }
 
 export default function javascriptAutocompletions(mode: string) {

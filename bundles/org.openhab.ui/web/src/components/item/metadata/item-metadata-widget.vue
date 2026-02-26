@@ -20,7 +20,7 @@
         ref="widgets">
         <select name="widgets" @change="updateComponent">
           <option value="">Default ({{ defaultComponent.component }})</option>
-          <optgroup label="Standard Library (List)" v-if="namespace === 'listWidget'">
+          <optgroup v-if="namespace === 'listWidget'" label="Standard Library (List)">
             <option
               v-for="widget in standardListWidgets"
               :key="widget.name"
@@ -29,7 +29,7 @@
               {{ widget.label }}
             </option>
           </optgroup>
-          <optgroup label="Standard Library (Cell)" v-else-if="namespace === 'cellWidget'">
+          <optgroup v-else-if="namespace === 'cellWidget'" label="Standard Library (Cell)">
             <option
               v-for="widget in standardCellWidgets"
               :key="widget.name"
@@ -38,7 +38,7 @@
               {{ widget.label }}
             </option>
           </optgroup>
-          <optgroup label="Standard Library" v-else>
+          <optgroup v-else label="Standard Library">
             <option v-for="widget in standardWidgets" :key="widget.name" :value="widget.name" :selected="metadata.value === widget.name">
               {{ widget.label }}
             </option>

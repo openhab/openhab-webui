@@ -6,7 +6,7 @@
           <f7-link icon-md="material:done_all" @click="toggleCheck()" :text="!theme.md ? (showCheckboxes ? 'Done' : 'Select') : ''" />
         </template>
       </oh-nav-content>
-      <f7-subnavbar :inner="false" v-show="initSearchbar">
+      <f7-subnavbar v-show="initSearchbar" :inner="false">
         <f7-searchbar
           v-if="initSearchbar"
           ref="searchbar"
@@ -22,8 +22,8 @@
     <f7-toolbar v-if="showCheckboxes" class="contextual-toolbar" :class="{ navbar: theme.md }" bottom-ios bottom-aurora>
       <div v-if="!theme.md && selectedItems.length > 0" class="display-flex justify-content-center" style="width: 100%">
         <f7-link
-          color="red"
           v-show="selectedItems.length"
+          color="red"
           class="delete display-flex flex-direction-row margin-right"
           icon-ios="f7:trash"
           icon-aurora="f7:trash"
@@ -59,8 +59,8 @@
         </f7-link>
       </div>
       <f7-link v-if="theme.md" icon-md="material:close" icon-color="white" @click="showCheckboxes = false" />
-      <div class="title" v-if="theme.md">{{ selectedItems.length }} selected</div>
-      <div class="right" v-if="theme.md">
+      <div v-if="theme.md" class="title">{{ selectedItems.length }} selected</div>
+      <div v-if="theme.md" class="right">
         <f7-link
           v-show="selectedItems.length"
           tooltip="Disable selected"
@@ -90,8 +90,8 @@
 
     <f7-list-index
       v-if="ready"
-      ref="listIndex"
       v-show="groupBy === 'alphabetical' && !$device.desktop"
+      ref="listIndex"
       list-el=".things-list"
       :scroll-list="true"
       :label="true" />
@@ -113,7 +113,7 @@
             </div>
           </template>
         </f7-block-title>
-        <list-filter ref="filters" v-if="ready" :filters="filters" @toggled="updateFilteredItems" @reset="updateFilteredItems" />
+        <list-filter v-if="ready" ref="filters" :filters="filters" @toggled="updateFilteredItems" @reset="updateFilteredItems" />
       </f7-col>
       <!-- skeleton for not ready -->
       <f7-col v-if="!ready">
@@ -121,8 +121,8 @@
         <f7-list contacts-list class="col things-list">
           <f7-list-group>
             <f7-list-item
-              media-item
               v-for="n in 10"
+              media-item
               :key="n"
               :class="`skeleton-text skeleton-effect-blink`"
               title="Label of the thing"

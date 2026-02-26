@@ -14,7 +14,7 @@
         @click="split = (split === 'horizontal') ? 'vertical' : 'horizontal'; blockKey = f7.utils.id()" />
       <f7-link @click="redrawWidget"> Redraw<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span> </f7-link>
     </f7-toolbar>
-    <f7-block :key="blockKey + '-h'" v-if="split === 'horizontal'" class="widget-editor horizontal">
+    <f7-block v-if="split === 'horizontal'" :key="blockKey + '-h'" class="widget-editor horizontal">
       <f7-row resizable>
         <f7-col style="min-width: 20px" class="widget-code">
           <editor
@@ -114,6 +114,7 @@ import DirtyMixin from '@/pages/settings/dirty-mixin'
 import * as StandardListWidgets from '@/components/widgets/standard/list'
 
 import { useStatesStore } from '@/js/stores/useStatesStore'
+import { useViewArea } from '@/composables/useViewArea'
 
 const toStringOptions = { toStringDefaults: { lineWidth: 0 } }
 
@@ -130,6 +131,7 @@ export default {
     f7route: Object
   },
   setup () {
+    useViewArea()
     return { f7, theme }
   },
   data () {

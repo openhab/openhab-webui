@@ -11,11 +11,11 @@
       :class="{ 'with-tabbar': context.tab }"
       @update:center="centerUpdate"
       @update:zoom="zoomUpdate">
-      <l-feature-group ref="featureGroup" v-if="showMarkers">
+      <l-feature-group v-if="showMarkers" ref="featureGroup">
         <component
-          v-for="(marker, idx) in context.component.slots.default"
-          :key="idx"
           :is="markerComponent(marker)"
+          v-for="(marker, idx) in defaultSlots"
+          :key="idx"
           :context="childContext(marker)"
           @update="onMarkerUpdate" />
       </l-feature-group>
@@ -42,7 +42,7 @@
 import { nextTick } from 'vue'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
-import mixin from '../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { tileLayer, latLng, Icon } from 'leaflet'
 import { LMap, LTileLayer, LFeatureGroup } from '@vue-leaflet/vue-leaflet'
 import 'leaflet/dist/leaflet.css'
@@ -63,7 +63,9 @@ Icon.Default.mergeOptions({
 })
 
 export default {
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
   components: {
     LMap,
     LTileLayer,
@@ -72,6 +74,10 @@ export default {
     OhMapCircleMarker
   },
   widget: OhMapPageDefinition,
+  setup(props) {
+    const { config, scopedCssUid, childContext, defaultSlots } = useWidgetContext(props.context)
+    return { config, scopedCssUid, childContext, defaultSlots }
+  },
   data () {
     return {
       zoom: this.context.component.config.initialZoom || 4,
@@ -115,7 +121,7 @@ export default {
   methods: {
     initialize () {
       this.setBackgroundLayer()
-      if (this.context.component.slots) {
+      if (this.defaultSlots.length) {
         // "dynamic" markers need to be initialised after the background layer;
         // otherwise Leaflet will throw Invalid LatLng object: (NaN, NaN)
         nextTick(() => {

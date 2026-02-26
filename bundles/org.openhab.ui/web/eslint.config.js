@@ -7,6 +7,7 @@ import parserVue from 'vue-eslint-parser'
 import pluginVue from 'eslint-plugin-vue'
 import pluginVueI18n from '@intlify/eslint-plugin-vue-i18n'
 import pluginImport from 'eslint-plugin-import-x'
+import pluginUnicorn from 'eslint-plugin-unicorn';
 
 import eslintConfigPrettier from 'eslint-config-prettier/flat'
 
@@ -41,6 +42,7 @@ const rules = {
     'no-case-declarations': 'off',
     'no-console': 'off',
     'no-debugger': 'off',
+    'no-unused-vars': 'off',
     'no-irregular-whitespace': 'off',
     // 'es/no-regexp-lookbehind-assertions': 'error', // Supported in Safari  >= 16.4, which breaks iOS 15.x.
     'no-trailing-spaces': 'error',
@@ -52,7 +54,11 @@ const rules = {
     'quotes': ['error', 'single'],
     'space-in-parens': 'error',
     'vue/attribute-hyphenation': 'off',
-    'vue/attributes-order': 'off',
+    'vue/attributes-order': ['error', {
+      'order': ['DEFINITION', 'LIST_RENDERING', 'CONDITIONALS', 'RENDER_MODIFIERS', [ 'GLOBAL', 'UNIQUE', 'SLOT', 'TWO_WAY_BINDING', 'OTHER_DIRECTIVES', 'OTHER_ATTR', 'EVENTS', 'CONTENT' ]],
+      'alphabetical': false,
+      "sortLineLength": false
+    }],
     'vue/component-definition-name-casing': 'off',
     'vue/first-attribute-linebreak': 'off',
     'vue/html-closing-bracket-newline': ['error', { 'singleline': 'never', 'multiline': 'never' }],
@@ -72,6 +78,7 @@ const rules = {
     'vue/singleline-html-element-content-newline': 'error',
     'vue/v-on-style': 'error',
     'vue/v-slot-style': 'error',
+    '@typescript-eslint/no-unused-vars': 'warn',
 
     // The following rules should be activated successively. Due to the large amount
     // of required changes, the activations should be clustered in several pull requests.
@@ -99,45 +106,92 @@ const rules = {
     '@typescript-eslint/no-empty-object-type': 'off'
 }
 
+const typeCheckedRuleOverrides = {
+  '@typescript-eslint/no-unsafe-call': 'off',
+  '@typescript-eslint/promise-function-async': 'error',
+  'unicorn/no-useless-promise-resolve-reject': 'error'
+}
+
+// Type-checked configs for TypeScript files, which require type information and thus are separated from the main config to avoid performance issues for JavaScript files.
+const tsTypeCheckedConfigs = tseslint.configs.recommendedTypeChecked.map((config) => ({
+  ...config,
+  files: ['**/*.{ts,tsx}'],
+  ignores: ['**/*.test.ts', '**/*.test.tsx', '**/*.spec.ts', '**/*.spec.tsx'],
+  rules: {
+    ...config.rules,
+    ...typeCheckedRuleOverrides
+  }
+}))
+
+// Type-checked configs for Vue files with TypeScript, which require type information and thus are separated from the main config to avoid performance issues for JavaScript files.
+const vueTsTypeCheckedConfigs = tseslint.configs.recommendedTypeChecked.map((config) => ({
+  ...config,
+  files: [
+    '**/*.vue?vue&type=script&lang=ts',
+    '**/*.vue?vue&type=script&lang.ts',
+    '**/*.vue?vue&type=script&lang=tsx',
+    '**/*.vue?vue&type=script&lang.tsx'
+  ],
+  languageOptions: {
+    parser: tseslint.parser,
+    parserOptions: {
+      project: './tsconfig.eslint.json',
+      tsconfigRootDir: import.meta.dirname,
+      extraFileExtensions: ['.vue']
+    }
+  },
+  rules: {
+    ...config.rules,
+    ...typeCheckedRuleOverrides
+  }
+}))
+
 export default defineConfig([
   ...pluginVue.configs['flat/recommended'],
-  // eslintPluginPrettierRecommended,
   ...pluginVueI18n.configs.recommended,
   eslint.configs.recommended,
   tseslint.configs.recommended,
+  ...tsTypeCheckedConfigs,
+  ...vueTsTypeCheckedConfigs,
   pluginImport.flatConfigs.recommended,
   pluginImport.flatConfigs.typescript,
   ...pluginJsonc.configs['flat/recommended-with-jsonc'],
+  {
+    plugins: {
+      unicorn: pluginUnicorn
+    }
+  },
+  {
+    settings: {
+      'vue-i18n': {
+        localeDir: './src/assets/i18n/**/*.json',
+        messageSyntaxVersion: '^11.0.0',
+      }
+    }
+  },
   {
     files: ['*.vue', '**/*.vue'],
     languageOptions: {
       parser: parserVue,
       parserOptions: {
-        parser: tseslint.parser
+        parser: tseslint.parser,
+        project: './tsconfig.eslint.json',
+        tsconfigRootDir: import.meta.dirname,
+        extraFileExtensions: ['.vue']
       }
     },
-    rules: rules,
-    settings: {
-      'vue-i18n': {
-        localeDir: './src/assets/i18n/**/*.json',
-        messageSyntaxVersion: '^11.0.0'
-      }
-    }
+    rules: rules
   },
   {
-    files: ['**/*.{js,mjs,cjs,jsx,mjsx,ts,tsxn,json}'],
+    files: ['**/*.{js,mjs,cjs,jsx,mjsx,ts,tsx}'],
     languageOptions: {
       parser: tseslint.parser,
       ecmaVersion: 'latest',
       sourceType: 'module',
       parserOptions: {
-        project: './tsconfig.json', // Path to your tsconfig.json
+        project: './tsconfig.eslint.json', // Path to your tsconfig.json
         tsconfigRootDir: import.meta.dirname
-      }
-    },
-    languageOptions: {
-      sourceType: 'module',
-      ecmaVersion: 'latest',
+      },
       globals: {
         ...globals.browser,
         ...globals.node,
@@ -153,6 +207,19 @@ export default defineConfig([
         localeDir: './src/assets/i18n/**/*.json',
         messageSyntaxVersion: '^11.0.0'
       }
+    }
+  },
+  {
+    files: ['src/assets/i18n/**/*.json'],
+    rules: {
+      '@intlify/vue-i18n/no-html-messages': 'off',
+      'no-irregular-whitespace': 'off'
+    }
+  },
+  { // disable js rule for ts files, as they are already covered by the above config
+    files: ['**/*.{ts,tsx}'],
+    rules: {
+      'no-undef': 'off'
     }
   },
   globalIgnores(['dist', 'build', 'public', '**/*.nearley.js', 'src/api/**']),

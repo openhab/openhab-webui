@@ -5,13 +5,13 @@
     </f7-navbar>
 
     <f7-block class="items-add-from-textual-definition">
-      <div class="row items-parser resizable" v-if="ready">
+      <div v-if="ready" class="row items-parser resizable">
         <div class="col">
           <editor class="editor" :value="code" @input="(value: string) => code = value" :mode="mediaType" />
         </div>
         <span class="resize-handler" />
       </div>
-      <div class="row items-results resizable" v-if="ready">
+      <div v-if="ready" class="row items-results resizable">
         <div class="col">
           <div v-if="!code || parseError" class="error">
             <div v-if="!code">
@@ -63,17 +63,17 @@
                     <td class="label-cell">
                       {{ (item.groupNames) ? item.groupNames.join(', ') : '' }}
                     </td>
-                    <td class="label-cell" v-if="item.tags">
+                    <td v-if="item.tags" class="label-cell">
                       <f7-chip v-for="tag in item.tags" class="margin-right" :key="tag" :text="tag" media-bg-color="blue">
                         <template #media>
                           <f7-icon ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
                         </template>
                       </f7-chip>
                     </td>
-                    <td class="label-cell" v-else />
+                    <td v-else class="label-cell" />
                     <!-- links -->
-                    <td class="label-cell" v-if="item.channelLinks">
-                      <div class="margin-right" v-for="link in item.channelLinks" :key="item.name + link.channelUID">
+                    <td v-if="item.channelLinks" class="label-cell">
+                      <div v-for="link in item.channelLinks" class="margin-right" :key="item.name + link.channelUID">
                         <div v-if="link.configuration">
                           <em>{{ link.channelUID }}</em
                           ><br />
@@ -82,9 +82,9 @@
                         <em v-else>{{ link.channelUID }}</em>
                       </div>
                     </td>
-                    <td class="label-cell" v-else />
+                    <td v-else class="label-cell" />
                     <!-- metadata -->
-                    <td class="label-cell" v-if="item.metadata">
+                    <td v-if="item.metadata" class="label-cell">
                       <div
                         v-for="[namespace, value] in Object.entries(item.metadata)"
                         class="margin-right"
@@ -97,7 +97,7 @@
                         <div v-else>{{ namespace }}="{{ value.value }}"</div>
                       </div>
                     </td>
-                    <td class="label-cell" v-else />
+                    <td v-else class="label-cell" />
                   </tr>
                 </tbody>
               </table>

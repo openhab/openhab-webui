@@ -13,7 +13,7 @@
         <f7-login-screen-title>
           <img class="intro-logo" src="@/images/openhab-logo.svg" type="image/svg+xml" />
         </f7-login-screen-title>
-        <f7-list form style="margin-top: 4rem" v-if="i18nReady">
+        <f7-list v-if="i18nReady" form style="margin-top: 4rem">
           <f7-list-item
             :title="t('setupwizard.language')"
             smart-select
@@ -98,7 +98,7 @@
             <small>{{ t('setupwizard.location.footer') }}</small>
           </f7-block-footer>
         </f7-block>
-        <f7-block class="display-flex flex-direction-column padding" v-if="networksReady">
+        <f7-block v-if="networksReady" class="display-flex flex-direction-column padding">
           <div>
             <f7-button v-if="location" large fill color="blue" :text="t('setupwizard.location.setLocation')" @click="setLocation" />
             <f7-button large color="blue" :text="t('setupwizard.configureLater')" class="margin-top" @click="skipLocation" />

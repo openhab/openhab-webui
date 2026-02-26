@@ -133,8 +133,10 @@ export default {
           if (newType !== 'None') {
             this.item.groupType = newType
             if (previousAggregationFunctions !== this.aggregationFunctions) {
-              this.item.functionKey = 'None'
+              this.groupFunctionKey = 'EQUALITY'
             }
+          } else {
+            this.groupFunctionKey = null
           }
         })
       }
@@ -202,7 +204,7 @@ export default {
       }
     },
     aggregationFunctions () {
-      if (this.groupType === 'None') return null
+      if (!this.groupType || this.groupType === 'None' || this.groupType === '') return null
 
       const specificAggregationFunctions = (groupType) => {
         switch (this.groupType) {
@@ -231,7 +233,7 @@ export default {
         this.item.functionKey += '_' + this.item.function.params.join('_')
       }
     } else {
-      this.item.functionKey = 'None'
+      this.item.functionKey = 'EQUALITY'
     }
   },
   methods: {

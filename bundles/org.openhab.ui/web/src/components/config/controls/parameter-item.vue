@@ -5,7 +5,7 @@
     @input="updateValue"
     :multiple="configDescription.multiple"
     :required="configDescription.required"
-    :filterToggle="!!filter('filterToggle')"
+    :showFilterToggle="!!filter('filterToggle')"
     :filterType="filter('type')"
     :filterGroupType="filter('groupType')"
     :filterExcludeSemantic="filter('excludeSemantic')"

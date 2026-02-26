@@ -1,34 +1,41 @@
 <template>
-  <ul v-bind="$attrs" v-if="config.listContainer" :class="config.containerClasses" :style="config.containerStyle">
+  <ul v-if="config.listContainer" v-bind="$attrs" :class="config.containerClasses" :style="config.containerStyle">
     <generic-widget-component v-for="(ctx, idx) in childrenContexts" :context="ctx" :key="'repeater-' + idx" />
   </ul>
   <!-- render without any additional container -->
   <template v-else-if="config.fragment">
     <!-- if parent is oh-swiper, render inside f7-swiper-slide -->
     <template v-if="['oh-swiper', 'f7-swiper'].includes(context.parent.component.component)">
-      <f7-swiper-slide v-bind="$attrs" v-for="(ctx, idx) in childrenContexts" :key="'repeater-' + idx">
+      <f7-swiper-slide v-for="(ctx, idx) in childrenContexts" v-bind="$attrs" :key="'repeater-' + idx">
         <generic-widget-component :context="ctx" />
       </f7-swiper-slide>
     </template>
     <!-- else render -->
     <template v-else>
-      <generic-widget-component v-bind="$attrs" v-for="(ctx, idx) in childrenContexts" :context="ctx" :key="'repeater-' + idx" />
+      <generic-widget-component v-for="(ctx, idx) in childrenContexts" v-bind="$attrs" :context="ctx" :key="'repeater-' + idx" />
     </template>
   </template>
   <div v-else :class="config.containerClasses" :style="config.containerStyle">
-    <generic-widget-component v-bind="$attrs" v-for="(ctx, idx) in childrenContexts" :context="ctx" :key="'repeater-' + idx" />
+    <generic-widget-component v-for="(ctx, idx) in childrenContexts" v-bind="$attrs" :context="ctx" :key="'repeater-' + idx" />
   </div>
 </template>
 
 <script>
-import mixin from '../widget-mixin'
 import { OhRepeaterDefinition } from '@/assets/definitions/widgets/system'
 import { compareItems, compareRules } from '@/components/widgets/widget-order'
 
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
+
 export default {
   inheritAttrs: false,
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
   widget: OhRepeaterDefinition,
+  setup (props) {
+    const { config, childContext, evaluateExpression, defaultSlots } = useWidgetContext(props.context)
+    return { config, childContext, evaluateExpression, defaultSlots }
+  },
   data () {
     return {
       sourceCache: null
@@ -70,7 +77,7 @@ export default {
       let contexts = []
       let idx = 0
       for (let i of source) {
-        contexts.push(...this.context.component.slots.default.map((c) => {
+        contexts.push(...this.defaultSlots.map((c) => {
           return iterationContext(this.childContext(c), i, idx, source)
         }))
 

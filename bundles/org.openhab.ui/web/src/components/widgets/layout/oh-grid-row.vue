@@ -1,7 +1,7 @@
 <template>
   <div class="oh-row" :class="scopedCssUid">
     <hr v-if="context.editmode" style="opacity: 0.5; border-top: 1px #777 dashed" />
-    <div width="100%" v-if="context.editmode">
+    <div v-if="context.editmode" width="100%">
       <f7-menu class="configure-layout-menu margin-bottom padding-horizontal">
         <f7-menu-item @click="context.editmode.addWidget(context.component, 'oh-grid-col')" icon-f7="plus" text="Add Column" />
         <f7-menu-item style="margin-left: auto" icon-f7="square_split_1x2" dropdown>
@@ -24,12 +24,8 @@
         </f7-menu-item>
       </f7-menu>
     </div>
-    <f7-row no-gap v-if="visible">
-      <oh-grid-col
-        v-for="(component, idx) in context.component.slots.default"
-        v-bind="$attrs"
-        :key="idx"
-        :context="childContext(component)" />
+    <f7-row v-if="visible" no-gap>
+      <oh-grid-col v-for="(component, idx) in defaultSlots" v-bind="$attrs" :key="idx" :context="childContext(component)" />
       <f7-block-title v-if="config.title" />
     </f7-row>
     <!-- <f7-row v-if="context.editmode">
@@ -50,16 +46,22 @@
 </style>
 
 <script>
-import mixin from '../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhGridCol from './oh-grid-col.vue'
 
 import { OhGridRowDefinition } from '@/assets/definitions/widgets/layout'
 
 export default {
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
   components: {
     OhGridCol
   },
-  widget: OhGridRowDefinition
+  widget: OhGridRowDefinition,
+  setup(props) {
+    const { config, childContext, scopedCssUid, visible, defaultSlots } = useWidgetContext(props.context)
+    return { config, childContext, scopedCssUid, visible, defaultSlots }
+  }
 }
 </script>

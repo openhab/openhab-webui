@@ -50,7 +50,7 @@ dayjs.extend(isYesterday)
 dayjs.extend(isTomorrow)
 
 interface ExpressionAstCache {
-  [key: string]: any
+  [key: string]: parse.Expression
 }
 
 interface ScreenInfo {
@@ -92,8 +92,8 @@ export function useWidgetExpression(properties: { context?: WidgetContext; props
   const viewAreaHeight = inject('viewAreaHeight', null) as Ref<number> | null
 
   // computed
-  const appWidth = computed(() => global?.$f7dim.width ?? 0)
-  const appHeight = computed(() => global?.$f7dim.height ?? 0)
+  const appWidth = computed(() => (global?.$f7dim as { width: number }).width ?? 0)
+  const appHeight = computed(() => (global?.$f7dim as { height: number }).height ?? 0)
 
   const screenInfo = computed<ScreenInfo>(() => {
     return {
@@ -112,7 +112,7 @@ export function useWidgetExpression(properties: { context?: WidgetContext; props
 
   // methods
   function getAllVars(context: WidgetContext): Record<string, any> {
-    const vars: Record<string, any> = {}
+    const vars: Record<string, unknown> = {}
     if (context.vars) {
       for (const varKey in context.vars) {
         vars[varKey] = context.vars[varKey]
@@ -142,7 +142,7 @@ export function useWidgetExpression(properties: { context?: WidgetContext; props
    * @param props the props to make available to the expression (not required if already provided as composable property)
    * @returns the result of the expression evaluation
    */
-  function evaluateExpression(key: string, value: any, context?: WidgetContext, props?: api.ConfigDescription): any {
+  function evaluateExpression(key: string, value: any, context?: WidgetContext, props?: Record<string, unknown>): unknown {
     if (value === null) return null
     const ctx = context || properties.context
     if (!ctx) return null
@@ -178,8 +178,9 @@ export function useWidgetExpression(properties: { context?: WidgetContext; props
       }
     } else if (typeof value === 'object' && !Array.isArray(value)) {
       const evalObj: Record<string, any> = {}
-      for (const objKey in value) {
-        evalObj[objKey] = evaluateExpression(key + '.' + objKey, value[objKey], ctx, props || properties?.props)
+      const valueObj = value as Record<string, unknown>
+      for (const objKey in valueObj) {
+        evalObj[objKey] = evaluateExpression(key + '.' + objKey, valueObj[objKey], ctx, props || properties?.props)
       }
       return evalObj
     } else if (typeof value === 'object' && Array.isArray(value)) {

@@ -9,7 +9,7 @@
         @save="save()"
         :f7router />
     </f7-navbar>
-    <f7-toolbar tabbar position="top" v-if="ready">
+    <f7-toolbar v-if="ready" tabbar position="top">
       <f7-link @click="switchTab('design', fromYaml)" :tab-link-active="currentTab === 'design' ? true : null" tab-link="#design">
         Design
       </f7-link>
@@ -164,7 +164,7 @@
               </f7-list-item>
             </f7-list>
             <!-- Show radio options only if integrating template (createMode && ruleCopy?.templateUID) -->
-            <f7-list media-list v-if="createMode && ruleCopy?.templateUID">
+            <f7-list v-if="createMode && ruleCopy?.templateUID" media-list>
               <f7-list-item
                 title="Keep template"
                 footer="The rule will still be linked to the template and can be regenerated if the template changes."
@@ -216,10 +216,10 @@
               </template>
               <f7-list sortable swipeout media-list @sortable:sort="(ev) => reorderModule(ev, section)">
                 <f7-list-item
+                  v-for="mod in rule[section]"
                   media
                   :title="mod.label || suggestedModuleTitle(mod, null, section)"
                   :footer="mod.description || suggestedModuleDescription(mod, null, section)"
-                  v-for="mod in rule[section]"
                   :key="mod.id"
                   :link="!showModuleControls && !isOpaqueModule(mod)"
                   @click="(ev) => editModule(ev, section, mod)"
@@ -233,7 +233,7 @@
                       icon-md="material:remove_circle_outline"
                       @click="showSwipeout" />
                   </template>
-                  <f7-swipeout-actions right v-if="isEditable">
+                  <f7-swipeout-actions v-if="isEditable" right>
                     <f7-swipeout-button
                       @click="(ev) => deleteModule(ev, section, mod)"
                       style="background-color: var(--f7-swipeout-delete-button-bg-color)">

@@ -35,7 +35,7 @@
     </template>
 
     <!-- Tabbed Pages -->
-    <f7-toolbar tabbar labels bottom v-if="page && pageType === 'tabs' && visibleToCurrentUser">
+    <f7-toolbar v-if="page && pageType === 'tabs' && visibleToCurrentUser" tabbar labels bottom>
       <f7-link
         v-for="(tab, idx) in page.slots.default"
         :key="idx"
@@ -55,13 +55,13 @@
     </f7-toolbar>
     <f7-tabs v-if="page && pageType === 'tabs' && visibleToCurrentUser">
       <f7-tab v-for="(tab, idx) in page.slots.default" :id="'tab-' + idx" :key="idx" :tab-active="currentTab === idx">
-        <component v-if="currentTab === idx" :is="tabComponent(tab)" :context="tabContext(tab)" />
+        <component :is="tabComponent(tab)" v-if="currentTab === idx" :context="tabContext(tab)" :f7router />
       </f7-tab>
     </f7-tabs>
 
     <component
-      v-else-if="page && visibleToCurrentUser"
       :is="page.component"
+      v-else-if="page && visibleToCurrentUser"
       :context="context"
       :f7router
       @action="performAction($event.ev, $event.prefix, $event.config, $event.context)" />
@@ -91,7 +91,7 @@
 </style>
 
 <script>
-import { defineAsyncComponent, provide } from 'vue'
+import { defineAsyncComponent } from 'vue'
 import { f7, theme } from 'framework7-vue'
 
 import OhLayoutPage from '@/components/widgets/layout/oh-layout-page.vue'

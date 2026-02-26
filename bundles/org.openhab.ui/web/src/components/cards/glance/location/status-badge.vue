@@ -4,8 +4,8 @@
   </f7-chip>
   <span
     v-else
-    class="padding-right location-status-badge"
     v-show="reduce || (type === 'lock' && map.length > 0)"
+    class="padding-right location-status-badge"
     :class="{ invert: invertColor }">
     <oh-icon
       v-if="config.icon.indexOf('oh:') === 0 && reduce > 0"
@@ -29,7 +29,7 @@
       class="oh-icon-badge"
       width="20"
       height="20" />
-    <span class="glance-label" v-show="reduce > 1">{{ reduce }}</span>
+    <span v-show="reduce > 1" class="glance-label">{{ reduce }}</span>
   </span>
 </template>
 

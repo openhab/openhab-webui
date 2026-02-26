@@ -32,20 +32,20 @@
               href="#"
               text="Configure container" />
             <f7-menu-dropdown-item
-              v-if="context.component.slots.default.length > 0"
-              @click="context.editmode.configureWidget(context.component.slots.default[0], context)"
+              v-if="defaultSlots.length > 0"
+              @click="context.editmode.configureWidget(defaultSlots[0], context)"
               href="#"
               text="Configure Widget" />
             <f7-menu-dropdown-item @click="context.editmode.editWidgetCode(context.component, context.parent)" href="#" text="Edit YAML" />
-            <f7-menu-dropdown-item v-if="context.component.slots.default.length > 0" @click="toggleAutoSize()" href="#">
+            <f7-menu-dropdown-item v-if="defaultSlots.length > 0" @click="toggleAutoSize()" href="#">
               <span>Auto Size</span>
               <f7-icon class="margin-left" :f7="autosize ? 'checkmark_square' : 'square'" />
             </f7-menu-dropdown-item>
-            <f7-menu-dropdown-item v-if="context.component.slots.default.length > 0" @click="toggleShadow()" href="#">
+            <f7-menu-dropdown-item v-if="defaultSlots.length > 0" @click="toggleShadow()" href="#">
               <span>Shadow</span>
               <f7-icon class="margin-left" :f7="shadow ? 'checkmark_square' : 'square'" />
             </f7-menu-dropdown-item>
-            <f7-menu-dropdown-item v-if="context.component.slots.default.length > 0" divider />
+            <f7-menu-dropdown-item v-if="defaultSlots.length > 0" divider />
             <f7-menu-dropdown-item @click="context.editmode.copyWidget(context.component, context.parent)" href="#" text="Copy" />
             <f7-menu-dropdown-item @click="context.editmode.cutWidget(context.component, context.parent)" href="#" text="Cut" />
             <f7-menu-dropdown-item divider />
@@ -72,12 +72,12 @@
       }"
         class="disable-user-select">
         <oh-placeholder-widget
-          v-if="!context.component.slots.default.length"
+          v-if="!defaultSlots.length"
           @click="context.editmode.addWidget(context.component, null, context.parent)"
           class="oh-canvas-item-content" />
         <generic-widget-component
-          v-else-if="context.component.slots.default.length"
-          :context="childContext(context.component.slots.default[0])"
+          v-else-if="defaultSlots.length"
+          :context="childContext(defaultSlots[0])"
           class="oh-canvas-item-content"
           :class="{
             'oh-canvas-item-styled': styled,
@@ -90,6 +90,7 @@
     </vue-draggable-resizable>
     <div
       v-else
+      ref="root"
       :style="{
         left: x + 'px',
         top: y + 'px',
@@ -98,7 +99,8 @@
       }"
       class="oh-canvas-item oh-canvas-item-runmode">
       <generic-widget-component
-        :context="childContext(context.component.slots.default[0])"
+        v-if="ready"
+        :context="childContext(defaultSlots[0])"
         class="oh-canvas-item-content"
         :class="{
           'oh-canvas-item-styled': styled,
@@ -216,24 +218,28 @@ import VueDraggableResizable from 'vue-draggable-resizable'
 </script>
 
 <script>
-import mixin from '../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhPlaceholderWidget from './oh-placeholder-widget.vue'
 import { OhCanvasItemDefinition } from '@/assets/definitions/widgets/layout'
 
 export default {
-  mixins: [mixin],
   widget: OhCanvasItemDefinition,
   components: {
     VueDraggableResizable,
     OhPlaceholderWidget
   },
   props: {
+    context: Object,
     gridPitch: Number,
     gridEnable: Boolean,
     id: String,
     preventDeactivation: Boolean
   },
   emits: ['oci-selected', 'oci-deselected', 'oci-drag-stop', 'oci-dragged'],
+  setup (props) {
+    const { config, childContext, defaultSlots } = useWidgetContext(props.context)
+    return { config, childContext, defaultSlots }
+  },
   data () {
     return {
       x: 0,
@@ -245,7 +251,10 @@ export default {
       styled: true,
       dragging: false,
       resizing: false,
-      active: false
+      active: false,
+      // run mode only:
+      ready: false,
+      resizeObserver: null
     }
   },
   created () {
@@ -255,6 +264,36 @@ export default {
     this.h = this.config.h ?? 100
     this.shadow = !this.config.noCanvasShadow
     this.styled = !this.config.notStyled
+  },
+  mounted () {
+    // In Edit Mode: No need to wait for the root element to have actual dimensions
+    if (this.context.editmode) {
+      this.ready = true
+      return
+    }
+
+    // In Run Mode: Wait for the element to have actual dimensions
+    this.resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        // Once width/height is non-zero, the layout is stable enough for f7-swiper
+        if (entry.contentRect.width > 0 && entry.contentRect.height > 0) {
+          this.ready = true
+          this.resizeObserver.disconnect()
+        }
+      }
+    })
+
+    // Start observing the root element of this component
+    if (this.$refs.root) {
+      this.resizeObserver.observe(this.$refs.root)
+    } else {
+      this.ready = true
+    }
+  },
+  beforeUnmount () {
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect()
+    }
   },
   computed: {
     autosize () {
@@ -366,7 +405,7 @@ export default {
     eventControl (ev) {
       // Events are captured before bubbling to prevent undesired widget interaction when a widget has been
       // added but the page is in edit mode.
-      if (this.context.editmode && this.context.component.slots.default.length > 0) {
+      if (this.context.editmode && this.defaultSlots.length > 0) {
         ev.stopPropagation()
         ev.preventDefault()
       }

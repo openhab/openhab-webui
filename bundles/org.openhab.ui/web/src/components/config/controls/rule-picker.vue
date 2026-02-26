@@ -1,6 +1,6 @@
 <template>
   <ul>
-    <f7-list-item :title="title || 'Rule'" smart-select :smart-select-params="smartSelectParams" v-if="ready" ref="smartSelect">
+    <f7-list-item v-if="ready" :title="title || 'Rule'" smart-select :smart-select-params="smartSelectParams" ref="smartSelect">
       <select :name="name" :multiple="multiple" @change="select" :required="required">
         <option v-if="!multiple" value="" />
         <optgroup v-if="scenes.length > 0" label="Scenes">
@@ -33,7 +33,7 @@
       </select>
     </f7-list-item>
     <!-- for placeholder purposes before items are loaded -->
-    <f7-list-item link v-show="!ready" :title="title" />
+    <f7-list-item v-show="!ready" link :title="title" />
   </ul>
 </template>
 

@@ -6,7 +6,7 @@
           <f7-link icon-md="material:done_all" @click="toggleCheck()" :text="(!theme.md) ? (showCheckboxes ? 'Done' : 'Select') : ''" />
         </template>
       </oh-nav-content>
-      <f7-subnavbar :inner="false" v-show="initSearchbar">
+      <f7-subnavbar v-show="initSearchbar" :inner="false">
         <f7-searchbar
           v-if="initSearchbar"
           ref="searchbar"
@@ -21,8 +21,8 @@
     <f7-toolbar v-if="showCheckboxes" class="contextual-toolbar" :class="{ navbar: theme.md }" bottom-ios bottom-aurora>
       <f7-link
         v-if="!theme.md"
-        color="red"
         v-show="selectedTransformations.length"
+        color="red"
         class="delete"
         icon-ios="f7:trash"
         icon-aurora="f7:trash"
@@ -38,8 +38,8 @@
 
     <f7-list-index
       v-if="$refs.transformationsList"
-      ref="listIndex"
       v-show="groupBy === 'alphabetical' && !$device.desktop"
+      ref="listIndex"
       listEl=".transformations-list"
       :scroll-list="true"
       :label="true" />
@@ -151,8 +151,6 @@ import { useLastSearchQueryStore } from '@/js/stores/useLastSearchQueryStore'
 
 import * as api from '@/api'
 
-const lastSearchQueryStore = useLastSearchQueryStore()
-
 export default {
   props: {
     f7router: Object
@@ -162,7 +160,8 @@ export default {
     ClipboardIcon
   },
   setup () {
-    return { f7, theme }
+    const lastSearchQueryStore = useLastSearchQueryStore()
+    return { f7, theme, lastSearchQueryStore }
   },
   data () {
     return {
@@ -211,14 +210,14 @@ export default {
       this.load()
     },
     onPageBeforeOut (event) {
-      lastSearchQueryStore.lastTransformationSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
+      this.lastSearchQueryStore.lastTransformationSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
     },
     load () {
       if (this.loading) return
       this.loading = true
 
       if (this.initSearchbar) {
-        lastSearchQueryStore.lastTransformationSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
+        this.lastSearchQueryStore.lastTransformationSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
       }
       this.initSearchbar = false
 
@@ -231,7 +230,7 @@ export default {
         nextTick(() => {
           if (this.$refs.listIndex) this.$refs.listIndex.update()
           if (this.$device.desktop && this.$refs.searchbar) this.$refs.searchbar.$el.f7Searchbar.$inputEl[0].focus()
-          this.$refs.searchbar?.$el.f7Searchbar.search(lastSearchQueryStore.lastTransformationSearchQuery || '')
+          this.$refs.searchbar?.$el.f7Searchbar.search(this.lastSearchQueryStore.lastTransformationSearchQuery || '')
         })
       })
     },

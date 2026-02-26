@@ -19,10 +19,10 @@
           :style="{ height: `calc(var(--f7-safe-area-top) + ${headerHeight})` }">
           <img v-if="config.backgroundImage" class="card-background lazy" :src="backgroundImageUrl" :style="config.backgroundImageStyle" />
           <slot name="header">
-            <div v-if="context && context.component.slots && context.component.slots.header">
+            <div v-if="'header' in slots">
               <generic-widget-component
+                v-for="(slotComponent, idx) in slots.header"
                 :context="childContext(slotComponent)"
-                v-for="(slotComponent, idx) in context.component.slots.header"
                 :key="'header-' + idx" />
             </div>
             <div v-else>
@@ -100,13 +100,21 @@
 <script>
 import { mapStores } from 'pinia'
 import CardMixin from './card-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
 export default {
   mixins: [CardMixin],
   props: {
-    headerHeight: [String, Number]
+    context: Object,
+    headerHeight: [String, Number],
+    type: String,
+    element: Object
+  },
+  setup (props) {
+    const { config, childContext, visible, slots } = useWidgetContext(props.context)
+    return { config, childContext, visible, slots }
   },
   computed: {
     ...mapStores(useUIOptionsStore)

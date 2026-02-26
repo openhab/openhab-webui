@@ -1,6 +1,6 @@
 <template>
   <f7-block class="developer-sidebar">
-    <f7-row :inner="false" v-if="!theme.md">
+    <f7-row v-if="!theme.md" :inner="false">
       <f7-searchbar
         ref="searchbar"
         style="width: 100%"
@@ -10,7 +10,7 @@
         @searchbar:search="search"
         @searchbar:clear="clearSearch" />
     </f7-row>
-    <f7-row style="width: 100%" :inner="false" v-else>
+    <f7-row v-else style="width: 100%" :inner="false">
       <f7-searchbar
         ref="searchbar"
         custom-search
@@ -50,14 +50,14 @@
             </f7-accordion-content>
           </f7-list-item>
         </f7-list>
-        <f7-block class="no-margin no-padding" v-if="!isAnythingPinned">
+        <f7-block v-if="!isAnythingPinned" class="no-margin no-padding">
           <p class="padding-horizontal">Use the search box above or the button below to temporarily pin objects here for quick access.</p>
           <p class="padding-horizontal">
             <f7-button fill color="blue" @click="openModelPicker"> Pin Items from Model </f7-button>
           </p>
         </f7-block>
         <!-- Pinned Items -->
-        <f7-block class="no-margin no-padding" v-if="developerStore.pinnedObjects.items.length">
+        <f7-block v-if="developerStore.pinnedObjects.items.length" class="no-margin no-padding">
           <f7-block-title class="padding-horizontal display-flex">
             <span>Pinned Items</span>
             <span style="margin-left: auto">
@@ -106,7 +106,7 @@
           </f7-list>
         </f7-block>
         <!-- Pinned Things -->
-        <f7-block class="no-margin no-padding" v-if="developerStore.pinnedObjects.things.length">
+        <f7-block v-if="developerStore.pinnedObjects.things.length" class="no-margin no-padding">
           <f7-block-title class="padding-horizontal display-flex">
             <span>Pinned Things</span>
             <span style="margin-left: auto">
@@ -154,7 +154,7 @@
           </f7-list>
         </f7-block>
         <!-- Pinned Rules -->
-        <f7-block class="no-margin no-padding" v-if="developerStore.pinnedObjects.rules.length">
+        <f7-block v-if="developerStore.pinnedObjects.rules.length" class="no-margin no-padding">
           <f7-block-title class="padding-horizontal display-flex">
             <span>Pinned Rules</span>
             <span style="margin-left: auto">
@@ -209,7 +209,7 @@
           </f7-list>
         </f7-block>
         <!-- Pinned Scenes -->
-        <f7-block class="no-margin no-padding" v-if="developerStore.pinnedObjects.scenes.length">
+        <f7-block v-if="developerStore.pinnedObjects.scenes.length" class="no-margin no-padding">
           <f7-block-title class="padding-horizontal display-flex">
             <span>Pinned Scenes</span>
             <span style="margin-left: auto">
@@ -264,7 +264,7 @@
           </f7-list>
         </f7-block>
         <!-- Pinned Scripts -->
-        <f7-block class="no-margin no-padding" v-if="developerStore.pinnedObjects.scripts.length">
+        <f7-block v-if="developerStore.pinnedObjects.scripts.length" class="no-margin no-padding">
           <f7-block-title class="padding-horizontal display-flex">
             <span>Pinned Scripts</span>
             <span style="margin-left: auto">
@@ -319,7 +319,7 @@
           </f7-list>
         </f7-block>
         <!-- Pinned Pages -->
-        <f7-block class="no-margin no-padding" v-if="developerStore.pinnedObjects.pages.length">
+        <f7-block v-if="developerStore.pinnedObjects.pages.length" class="no-margin no-padding">
           <f7-block-title class="padding-horizontal display-flex">
             <span>Pinned Pages</span>
             <span style="margin-left: auto">
@@ -364,7 +364,7 @@
           </f7-list>
         </f7-block>
         <!-- Pinned Widgets -->
-        <f7-block class="no-margin no-padding" v-if="developerStore.pinnedObjects.widgets.length">
+        <f7-block v-if="developerStore.pinnedObjects.widgets.length" class="no-margin no-padding">
           <f7-block-title class="padding-horizontal display-flex">
             <span>Pinned Widgets</span>
             <span style="margin-left: auto">
@@ -395,7 +395,7 @@
           </f7-list>
         </f7-block>
         <!-- Pinned Transformations -->
-        <f7-block class="no-margin no-padding" v-if="developerStore.pinnedObjects.transformations.length">
+        <f7-block v-if="developerStore.pinnedObjects.transformations.length" class="no-margin no-padding">
           <f7-block-title class="padding-horizontal display-flex">
             <span>Pinned Transformations</span>
             <span style="margin-left: auto">
@@ -436,7 +436,7 @@
           </f7-list>
         </f7-block>
         <!-- Pinned Persistence configs -->
-        <f7-block class="no-margin no-padding" v-if="developerStore.pinnedObjects.persistenceConfigs.length">
+        <f7-block v-if="developerStore.pinnedObjects.persistenceConfigs.length" class="no-margin no-padding">
           <f7-block-title class="padding-horizontal display-flex">
             <span>Pinned Persistence Configs</span>
             <span style="margin-left: auto">
@@ -519,7 +519,8 @@
           component: {
             config: {
               style: {
-                fontFamily: 'monospace'
+                fontFamily: 'monospace',
+                'word-break': 'break-all',
               },
               noBorder: true,
               noShadow: true,

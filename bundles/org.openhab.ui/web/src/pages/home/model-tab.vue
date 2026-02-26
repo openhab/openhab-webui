@@ -1,15 +1,14 @@
 <template>
   <div v-if="ready" class="disable-user-select model-tab">
     <div v-for="(elements, idx) in groups" :key="idx">
-      <f7-block-title medium v-if="elements.length > 0 && elements[0].separator">
+      <f7-block-title v-if="elements.length > 0 && elements[0].separator" medium>
         {{ elements[0].separator }}
       </f7-block-title>
-      <div class="model-cards-section" v-if="elements.length > 0">
+      <div v-if="elements.length > 0" class="model-cards-section">
         <div v-for="(element, idx) in elements.filter((e) => !isCardExcluded(e))" :key="idx">
           <location-card
             v-if="type === 'locations' && !element.separator && (element.equipment.length > 0 || element.properties.length > 0)"
             :key="element.key"
-            type="location"
             :element="element"
             :context="cardContext(element)"
             :parent-location="parentLocationName(element.item)"
@@ -17,14 +16,12 @@
           <equipment-card
             v-if="type === 'equipment' && !element.separator"
             :key="element.key"
-            type="equipment"
             :element="element"
             :context="cardContext(element)"
             :tab-context="tabContext(type)" />
           <property-card
             v-if="type === 'properties' && !element.separator"
             :key="element.key"
-            type="property"
             :element="element"
             :context="cardContext(element)"
             :tab-context="tabContext(type)" />

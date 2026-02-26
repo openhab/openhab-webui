@@ -100,16 +100,22 @@
 import { nextTick, defineAsyncComponent } from 'vue'
 import { f7 } from 'framework7-vue'
 
-import mixin from '../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhGridItem from './oh-grid-item.vue'
 import { OhGridLayoutDefinition } from '@/assets/definitions/widgets/layout'
 
 export default {
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
   widget: OhGridLayoutDefinition,
   components: {
     'grid-layout': defineAsyncComponent(() => import('grid-layout-plus').then((mod) => mod.GridLayout)),
     OhGridItem
+  },
+  setup (props) {
+    const { config, childContext } = useWidgetContext(props.context)
+    return { config, childContext }
   },
   data () {
     return {
@@ -125,7 +131,9 @@ export default {
       style: {
         width: Number,
         height: Number
-      }
+      },
+      windowWidth: Number,
+      windowHeight: Number
     }
   },
   created () {

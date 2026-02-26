@@ -13,7 +13,7 @@
       <f7-link @click="switchTab('tree')" :tab-link-active="currentTab === 'tree'" tab-link="#tree"> Design </f7-link>
       <f7-link @click="switchTab('code')" :tab-link-active="currentTab === 'code'" tab-link="#code"> Code </f7-link>
     </f7-toolbar>
-    <f7-toolbar bottom class="toolbar-details" v-if="currentTab === 'tree'">
+    <f7-toolbar v-if="currentTab === 'tree'" bottom class="toolbar-details">
       <f7-link class="left" :class="{ disabled: selectedTag == null }" @click="selectTag(null)"> Clear </f7-link>
       <div class="padding-left padding-right text-align-center" style="font-size: 12px">
         <div>
@@ -204,7 +204,7 @@
             Synonyms
           </f7-link>
         </f7-toolbar>
-        <f7-block style="margin-bottom: 6rem;" v-if="selectedTag && detailsTab === 'tag'">
+        <f7-block v-if="selectedTag && detailsTab === 'tag'" style="margin-bottom: 6rem;">
           <f7-list class="tag-detail" inline-labels>
             <f7-list-input
               label="Name"
@@ -235,7 +235,7 @@
           </f7-list>
           <f7-button v-if="selectedTag.editable" color="red" @click="removeTag"> Remove </f7-button>
         </f7-block>
-        <f7-block style="margin-bottom: 6rem" v-if="selectedTag && detailsTab === 'synonyms'">
+        <f7-block v-if="selectedTag && detailsTab === 'synonyms'" style="margin-bottom: 6rem">
           <f7-list class="synonyms">
             <f7-list-input
               v-for="(synonym, index) in selectedTag.synonyms"

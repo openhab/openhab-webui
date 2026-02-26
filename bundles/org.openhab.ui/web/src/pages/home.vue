@@ -19,6 +19,13 @@
         {{ title }}
       </f7-nav-title>
       <f7-nav-right>
+        <f7-link
+          v-if="runtimeStore.voiceIcon"
+          :icon-aurora="runtimeStore.voiceIcon"
+          :icon-ios="runtimeStore.voiceIcon"
+          :icon-md="runtimeStore.voiceIcon"
+          :tooltip="$t('home.triggerVoice')"
+          @click="triggerDialog" />
         <developer-dock-icon />
         <f7-link
           v-if="userStore.isAdmin"
@@ -52,7 +59,7 @@
       </f7-nav-right>
     </f7-navbar>
 
-    <f7-toolbar tabbar labels bottom v-if="tabsVisible">
+    <f7-toolbar v-if="tabsVisible" tabbar labels bottom>
       <f7-link
         tab-link="#tab-overview"
         @click="switchTab('overview')"
@@ -292,6 +299,9 @@ export default {
       const hiddenTabs = this.homePageComponent.config.hiddenModelTabs
       if (hiddenTabs === undefined || !hiddenTabs.length) return true
       return hiddenTabs.indexOf(tab) < 0
+    },
+    triggerDialog () {
+      f7.emit('triggerDialog')
     }
   }
 }

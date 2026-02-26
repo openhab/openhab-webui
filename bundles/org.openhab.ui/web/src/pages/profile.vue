@@ -38,9 +38,9 @@
           <f7-card>
             <f7-list media-list swipeout>
               <f7-list-item
+                v-for="session in filteredSessions"
                 media-item
                 swipeout
-                v-for="session in filteredSessions"
                 :key="session.sessionId"
                 :title="session.clientId"
                 :subtitle="t('profile.sessions.created') + new Date(session.createdTime).toLocaleString(runtimeStore.locale)"
@@ -82,9 +82,9 @@
           <f7-card>
             <f7-list media-list swipeout>
               <f7-list-item
+                v-for="apiToken in apiTokens"
                 media-item
                 swipeout
-                v-for="apiToken in apiTokens"
                 :key="apiToken.name"
                 :title="apiToken.name"
                 :subtitle="t('profile.apiTokens.created') + new Date(apiToken.createdTime).toLocaleString(runtimeStore.locale | 'default')"

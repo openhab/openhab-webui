@@ -7,17 +7,23 @@
 </template>
 
 <script>
-import mixin from '../widget-mixin'
 import OhCard from '@/components/widgets/standard/oh-card.vue'
 import OhList from '../system/oh-list.vue'
 import { OhListCardDefinition } from '@/assets/definitions/widgets/standard/cards'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 
 export default {
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
   components: {
     OhCard,
     OhList
   },
-  widget: OhListCardDefinition
+  widget: OhListCardDefinition,
+  setup(props) {
+    const { cardChildContext } = useWidgetContext(props.context)
+    return { cardChildContext }
+  }
 }
 </script>

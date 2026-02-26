@@ -7,7 +7,7 @@
     <f7-block class="block-narrow">
       <f7-col>
         <f7-block-title v-if="parent || thingId"> Parent Group </f7-block-title>
-        <f7-list media-list v-if="parent">
+        <f7-list v-if="parent" media-list>
           <ul>
             <item :item="parent.item" />
           </ul>
@@ -43,7 +43,7 @@
           Select the Thing for which you wish to create Point Items from its Channels. They will be placed under the parent group above, if
           any.
         </f7-block-footer>
-        <f7-list inline-labels no-hairlines-md v-if="!thingId">
+        <f7-list v-if="!thingId" inline-labels no-hairlines-md>
           <f7-list-group>
             <thing-picker title="Thing" name="thing" :value="selectedThingId" @input="(e) => (selectedThingId = e)" />
           </f7-list-group>
@@ -392,6 +392,7 @@ export default {
             })
           }
         }).catch((err) => {
+          console.error('Error loading thing type or channel type', err)
           f7.dialog.alert('Error loading thing type or channel types: ' + err)
 
           this.selectedThingId = ''

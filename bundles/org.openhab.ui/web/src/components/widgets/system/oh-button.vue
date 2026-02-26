@@ -1,8 +1,8 @@
 <template>
   <f7-button v-bind="config" @click.stop="clicked" @taphold="onTaphold($event)" @contextmenu="onContextMenu($event)">
-    <template v-if="context.component.slots && context.component.slots.default">
+    <template v-if="defaultSlots.length > 0">
       <generic-widget-component
-        v-for="(slotComponent, idx) in context.component.slots.default"
+        v-for="(slotComponent, idx) in defaultSlots"
         :context="childContext(slotComponent)"
         :key="'default-' + idx" />
     </template>
@@ -10,14 +10,22 @@
 </template>
 
 <script>
-import mixin from '../widget-mixin'
 import { getVariableScope, setVariableKeyValues } from '@/components/widgets/variable'
 import { OhButtonDefinition } from '@/assets/definitions/widgets/system'
 import { actionsMixin } from '../widget-actions'
 
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
+
 export default {
-  mixins: [mixin, actionsMixin],
+  mixins: [actionsMixin],
+  props: {
+    context: Object
+  },
   widget: OhButtonDefinition,
+  setup (props) {
+    const { config, childContext, evaluateExpression, hasAction, defaultSlots } = useWidgetContext(props.context)
+    return { config, childContext, evaluateExpression, hasAction, defaultSlots }
+  },
   methods: {
     clicked () {
       if (this.hasAction) {

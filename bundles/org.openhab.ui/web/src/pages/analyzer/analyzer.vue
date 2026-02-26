@@ -386,6 +386,8 @@ import ChartCalendar from './chart-calendar'
 import { useUserStore } from '@/js/stores/useUserStore'
 import { useComponentsStore } from '@/js/stores/useComponentsStore'
 
+import type { Framework7Events } from '@/types/framework7-extensions'
+
 import * as api from '@/api'
 
 import { useI18n } from 'vue-i18n'
@@ -479,7 +481,7 @@ export default {
   },
   methods: {
     close () {
-      f7.sheet.close((this.$refs.controlsSheet as Sheet.Sheet).$el)
+      f7.sheet.close((this.$refs.controlsSheet as Sheet.Sheet).el)
     },
     openControls () {
       this.controlsOpened = true
@@ -726,7 +728,7 @@ export default {
             closeTimeout: 2000
           }).open()
         }
-        f7.emit('sidebarRefresh', null)
+        f7.emit('sidebarRefresh' as Framework7Events, null)
       })
     }
   },

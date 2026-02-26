@@ -1,5 +1,5 @@
 <template>
-  <l-marker ref="marker" v-if="coords" :key="markerKey" :lat-lng="coords" @click="performAction">
+  <l-marker v-if="coords" ref="marker" :key="markerKey" :lat-lng="coords" @click="performAction">
     <l-tooltip v-if="config.label">
       {{ config.label }}
     </l-tooltip>
@@ -10,7 +10,7 @@
 <script>
 import { f7 } from 'framework7-vue'
 
-import mixin from '../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { LMarker, LTooltip, LIcon } from '@vue-leaflet/vue-leaflet'
 import { actionsMixin } from '../widget-actions'
 import { OhMapMarkerDefinition } from '@/assets/definitions/widgets/map'
@@ -18,7 +18,10 @@ import { OhMapMarkerDefinition } from '@/assets/definitions/widgets/map'
 import markerIcon from 'leaflet/dist/images/marker-icon.png'
 
 export default {
-  mixins: [mixin, actionsMixin],
+  mixins: [actionsMixin],
+  props: {
+    context: Object
+  },
   components: {
     LMarker,
     LTooltip,
@@ -26,6 +29,10 @@ export default {
   },
   widget: OhMapMarkerDefinition,
   emits: ['update'],
+  setup(props) {
+    const { config, evaluateExpression } = useWidgetContext(props.context)
+    return { config, evaluateExpression }
+  },
   data () {
     return {
       markerKey: f7.utils.id()

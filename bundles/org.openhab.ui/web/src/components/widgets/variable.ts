@@ -24,7 +24,7 @@ function getVariableKeyValues(
 ): { keyArray: VariableName[]; valueArray: (VariableValue | undefined)[] } | undefined {
   let setValue: VariableValue | undefined = variableValue
   let valueArray: (VariableValue | undefined)[] = [setValue]
-  let keyArray = variableKey.split('.').filter((key) => key.trim() !== '') as VariableName[]
+  let keyArray = variableKey.split('.').filter((key) => key.trim() !== '')
 
   if (keyArray.length === 0) {
     throw new Error('Variable key must be a non-empty string')
@@ -66,7 +66,7 @@ function getVariableKeyValue(obj: VariableValue | undefined, key: string): Varia
       // Property array access propName[0]
       if (typeof obj !== 'object' || Array.isArray(obj)) return undefined
 
-      const objAsObject = obj as VariableObject
+      const objAsObject = obj
       const targetArray = objAsObject[propertyName]
       if (!Array.isArray(targetArray)) return undefined
       return targetArray[index]
@@ -76,7 +76,7 @@ function getVariableKeyValue(obj: VariableValue | undefined, key: string): Varia
   } else {
     // simple property access
     if (typeof obj !== 'object' || Array.isArray(obj)) return undefined
-    const objAsObject = obj as VariableObject
+    const objAsObject = obj
     return objAsObject[key]
   }
 }
@@ -151,12 +151,11 @@ export function setVariableKeyValue(
         throw new Error(`Expected object for key ${key}, but got ${typeof obj}`)
       }
 
-      const objAsObject = obj as VariableObject
-      if (!objAsObject[propertyName]) {
-        objAsObject[propertyName] = []
+      if (!obj[propertyName]) {
+        obj[propertyName] = []
       }
 
-      const targetArray = objAsObject[propertyName]
+      const targetArray = obj[propertyName]
       if (!Array.isArray(targetArray)) {
         throw new Error(`Property ${propertyName} is not an array`)
       }
@@ -179,11 +178,10 @@ export function setVariableKeyValue(
       obj = {}
     }
 
-    const objAsObject = obj as VariableObject
     if (value === undefined || value === 'undefined' || value === null) {
-      delete objAsObject[key]
+      delete obj[key]
     } else {
-      objAsObject[key] = value
+      obj[key] = value
     }
   }
 

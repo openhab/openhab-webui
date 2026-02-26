@@ -1,7 +1,7 @@
 <template>
   <div>
     <hr v-if="context.editmode" style="opacity: 0.5; border-top: 1px #777 dashed" />
-    <div width="100%" v-if="context.editmode">
+    <div v-if="context.editmode" width="100%">
       <f7-menu class="configure-layout-menu padding-horizontal">
         <f7-menu-item style="margin-left: auto" icon-f7="rectangle_grid_2x2" dropdown>
           <f7-menu-dropdown right>
@@ -24,7 +24,7 @@
       </f7-menu>
     </div>
     <MasonryGrid v-if="visible" :columns="config.cols || { default: 5, 1400: 4, 1280: 3, 576: 3, 480: 2 }">
-      <MasonryGridItem v-for="(slotComponent, idx) in context.component.slots.default" :key="idx" class="oh-cell-container">
+      <MasonryGridItem v-for="(slotComponent, idx) in defaultSlots" :key="idx" class="oh-cell-container">
         <f7-menu v-if="context.editmode" class="configure-layout-menu margin-bottom">
           <f7-menu-item
             style="margin-left: auto"
@@ -79,16 +79,22 @@
 </style>
 
 <script>
-import mixin from '../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhPlaceholderWidget from './oh-placeholder-widget.vue'
 import { MasonryGrid, MasonryGridItem } from '../../../components/vue3-masonry-css'
 
 export default {
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
   components: {
     OhPlaceholderWidget,
     MasonryGrid,
     MasonryGridItem
+  },
+  setup (props) {
+    const { config, childContext, visible, defaultSlots } = useWidgetContext(props.context)
+    return { config, childContext, visible, defaultSlots }
   }
 }
 </script>

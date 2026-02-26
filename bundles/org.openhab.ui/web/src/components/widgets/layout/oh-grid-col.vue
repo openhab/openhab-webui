@@ -1,17 +1,17 @@
 <template>
-  <f7-col v-bind="config" v-if="visible" class="oh-col" :class="scopedCssUid">
-    <div width="100%" v-if="context.editmode">
+  <f7-col v-if="visible" v-bind="config" class="oh-col" :class="scopedCssUid">
+    <div v-if="context.editmode" width="100%">
       <f7-menu class="configure-layout-menu padding-horizontal">
         <f7-menu-item style="margin-left: auto" icon-f7="rectangle_split_3x1" dropdown>
           <f7-menu-dropdown right>
             <f7-menu-dropdown-item
-              v-if="context.component.slots.default.length > 0"
-              @click="context.editmode.configureWidget(context.component.slots.default[0], context)"
+              v-if="defaultSlots.length > 0"
+              @click="context.editmode.configureWidget(defaultSlots[0], context)"
               href="#"
               text="Configure Widget" />
             <f7-menu-dropdown-item
-              v-if="context.component.slots.default.length > 0"
-              @click="context.editmode.editWidgetCode(context.component.slots.default[0], context)"
+              v-if="defaultSlots.length > 0"
+              @click="context.editmode.editWidgetCode(defaultSlots[0], context)"
               href="#"
               text="Edit YAML" />
             <f7-menu-dropdown-item
@@ -34,25 +34,29 @@
       </f7-menu>
     </div>
     <oh-placeholder-widget
-      v-if="context.editmode && !context.component.slots.default.length"
+      v-if="context.editmode && !defaultSlots.length"
       @click="context.editmode.addWidget(context.component, null, context.parent)" />
-    <generic-widget-component
-      v-else-if="context.component.slots.default.length"
-      :context="childContext(context.component.slots.default[0])" />
+    <generic-widget-component v-else-if="defaultSlots.length" :context="childContext(defaultSlots[0])" />
   </f7-col>
 </template>
 
 <script>
-import mixin from '../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhPlaceholderWidget from './oh-placeholder-widget.vue'
 
 import { OhGridColDefinition } from '@/assets/definitions/widgets/layout/index'
 
 export default {
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
   components: {
     OhPlaceholderWidget
   },
-  widget: OhGridColDefinition
+  widget: OhGridColDefinition,
+  setup (props) {
+    const { config, childContext, visible, scopedCssUid, defaultSlots } = useWidgetContext(props.context)
+    return { config, childContext, visible, scopedCssUid, defaultSlots }
+  }
 }
 </script>
