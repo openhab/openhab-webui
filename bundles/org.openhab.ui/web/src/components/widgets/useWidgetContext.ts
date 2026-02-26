@@ -11,7 +11,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import * as api from '@/api'
 
 /**
- * The useWidgetContext must be used as a composable in all widget components
+ * The useWidgetContext must be used as a composable in all widget components.
  *
  * A few requirements have to be met by components importing this composable:
  * - Widget components have to add a `component` ref to their root.
@@ -28,10 +28,10 @@ export function useWidgetContext(context: WidgetContext) {
   const userStore = useUserStore()
 
   // state
-  const vars = ref(context ? context.vars : {})
-  const ctxVars = ref(context ? context.ctxVars : {})
+  const vars = ref<Record<string, unknown>>(context.vars ?? {})
+  const ctxVars = ref<Record<string, unknown>>(context.ctxVars ?? {})
   const widgetVars = ref<Record<string, unknown>>({})
-  const varScope = ref(null)
+  const varScope = ref<string | null>(null)
   const scopedCssUid = ref<string | null>(null)
 
   // computed
@@ -51,26 +51,26 @@ export function useWidgetContext(context: WidgetContext) {
     return widget.component
   })
 
-  const config = computed(() => {
+  const config = computed<Record<string, unknown>>(() => {
     if (!context.component) return {}
     let evalConfig: Record<string, unknown> = {}
     // Fallback to modelConfig for oh- components to allow configuring them in modals
-    const sourceConfig = context.component.config || (componentType.value?.startsWith('oh-') ? context.modalConfig : {})
+    const sourceConfig: Record<string, unknown> = context.component.config || (componentType.value?.startsWith('oh-') ? context.modalConfig : {})
     if (sourceConfig) {
       if (typeof sourceConfig !== 'object') return {}
       for (const [key, value] of Object.entries(sourceConfig)) {
         if (key === 'visible' || key === 'visibleTo' || key === 'stylesheet' || key === 'constants') continue
-        evalConfig[key] = evaluateExpression(key, sourceConfig[key])
+        evalConfig[key] = evaluateExpression(key, value)
       }
     }
     return evalConfig
   })
 
-  const props = computed((): Record<string, unknown> => {
+  const props = computed<Record<string, unknown>>(()=> {
     if (!context.component) return {}
     if ('props' in context.component && context.component.props.parameters) {
       let defaultValues: Record<string, unknown> = {}
-      // Note api.ConfigDescriptionParameter uses 'defaultValue', but UI widgets just use 'default'
+      // Note: api.ConfigDescriptionParameter uses 'defaultValue', but UI widgets just use 'default'
       context.component.props.parameters.forEach((p: { name: string; default?: unknown }) => {
         if (p.default !== undefined) {
           defaultValues[p.name] = p.default
@@ -82,11 +82,11 @@ export function useWidgetContext(context: WidgetContext) {
     }
   })
 
-  const hasAction = computed(() => {
-    return config.value && (config.value.action || config.value.actionPropsParameterGroup)
+  const hasAction = computed<boolean>(() => {
+    return !!(config.value && (config.value.action || config.value.actionPropsParameterGroup))
   })
 
-  const visible = computed(() => {
+  const visible = computed<boolean>(() => {
     if (context.editmode || !context.component?.config) return true
     const visible = evaluateExpression('visible', context.component.config.visible)
     const visibleTo = context.component.config.visibleTo as string | undefined
@@ -101,13 +101,13 @@ export function useWidgetContext(context: WidgetContext) {
     return true
   })
 
-  const slots = computed(() => {
+  const slots = computed<Record<string, api.UiComponent[]>>(() => {
     if ('slots' in context.component) return context.component.slots
     return {}
   })
 
-  const defaultSlots = computed(() => {
-    if (context && 'slots' in context.component && context.component.slots.default) {
+  const defaultSlots = computed<api.UiComponent[]>(() => {
+    if ('slots' in context.component && context.component.slots.default) {
       return context.component.slots.default
     }
     return []
@@ -127,7 +127,7 @@ export function useWidgetContext(context: WidgetContext) {
     }
     const extendedWidget =
       context.component && 'slots' in context.component ? { ...widget, slots: { ...widget.slots, ...context.component.slots } } : widget
-    const widgetContext = {
+    return {
       component: extendedWidget,
       props: config.value,
       fn: context.fn,
@@ -141,7 +141,6 @@ export function useWidgetContext(context: WidgetContext) {
       clipboardtype: context.clipboardtype,
       parent: context.parent
     } satisfies WidgetContext
-    return widgetContext
   })
 
   // methods
@@ -156,7 +155,7 @@ export function useWidgetContext(context: WidgetContext) {
       fn: context.fn,
       const: context.const,
       vars: context.vars,
-      varScope: varScope.value || context?.varScope,
+      varScope: varScope.value || context.varScope,
       ctxVars: context.ctxVars,
       loop: context.loop,
       store: context.store,
