@@ -106,7 +106,7 @@ dark-tooltip()
 import { nextTick } from 'vue'
 import { f7 } from 'framework7-vue'
 
-import mixin from '../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { Icon, CRS } from 'leaflet'
 import { LMap, LImageOverlay, LFeatureGroup, LControl } from '@vue-leaflet/vue-leaflet'
 import 'leaflet/dist/leaflet.css'
@@ -123,7 +123,9 @@ Icon.Default.mergeOptions({
 })
 
 export default {
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
   components: {
     LMap,
     LImageOverlay,
@@ -132,6 +134,10 @@ export default {
     OhPlanMarker
   },
   widget: OhPlanPageDefinition,
+  setup(props) {
+    const { config, scopedCssUid, childContext, defaultSlots } = useWidgetContext(props.context)
+    return { config, scopedCssUid, childContext, defaultSlots }
+  },
   data () {
     return {
       currentZoom: 13,
@@ -180,7 +186,7 @@ export default {
   methods: {
     zoomUpdate (zoom) {
       this.currentZoom = zoom
-      const allMarkers = this.context.component.slots.default
+      const allMarkers = this.defaultSlots
       const visibleMarkers = allMarkers.filter((e) => {
         const zoomVisibilityMin = parseFloat(e.config.zoomVisibilityMin)
         const zoomVisibilityMax = parseFloat(e.config.zoomVisibilityMax)

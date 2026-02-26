@@ -21,14 +21,20 @@
 <script>
 import { f7 } from 'framework7-vue'
 
-import mixin from '../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhColorpickerDefinition } from '@/assets/definitions/widgets/system'
 
 import { useStatesStore } from '@/js/stores/useStatesStore'
 
 export default {
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
   widget: OhColorpickerDefinition,
+  setup (props) {
+    const { config } = useWidgetContext(props.context)
+    return { config }
+  },
   data () {
     return {
       colorPicker: null,

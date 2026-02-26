@@ -64,7 +64,7 @@
 <script>
 import { f7 } from 'framework7-vue'
 
-import mixin from '../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { LMarker, LTooltip, LIcon, LPopup } from '@vue-leaflet/vue-leaflet'
 import { actionsMixin } from '../widget-actions'
 import { OhPlanMarkerDefinition } from '@/assets/definitions/widgets/plan'
@@ -72,7 +72,10 @@ import { OhPlanMarkerDefinition } from '@/assets/definitions/widgets/plan'
 import markerIcon from 'leaflet/dist/images/marker-icon.png'
 
 export default {
-  mixins: [mixin, actionsMixin],
+  mixins: [actionsMixin],
+  props: {
+    context: Object
+  },
   components: {
     LMarker,
     LTooltip,
@@ -81,6 +84,10 @@ export default {
   },
   widget: OhPlanMarkerDefinition,
   emits: ['update'],
+  setup(props) {
+    const { config, visible, evaluateExpression } = useWidgetContext(props.context)
+    return { config, visible, evaluateExpression }
+  },
   data () {
     return {
       markerKey: 'marker-' + f7.utils.id(),

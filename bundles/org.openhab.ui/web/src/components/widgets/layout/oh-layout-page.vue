@@ -1,7 +1,7 @@
 <template>
   <div ref="page" :class="scopedCssUid">
     <template v-if="!config.layoutType || config.layoutType === 'responsive'">
-      <oh-block v-for="(component, idx) in context.component.slots.default" v-bind="$attrs" :key="idx" :context="childContext(component)" />
+      <oh-block v-for="(component, idx) in defaultSlots" v-bind="$attrs" :key="idx" :context="childContext(component)" />
       <f7-block v-if="context.editmode">
         <f7-list>
           <f7-list-button color="blue" @click="$emit('add-block', context.component)"> Add Block </f7-list-button>
@@ -9,8 +9,8 @@
       </f7-block>
 
       <hr v-if="context.editmode" />
-      <f7-block v-if="context.component.slots.masonry && context.component.slots.masonry.length" style="z-index: auto !important">
-        <oh-masonry v-bind="$attrs" :context="childContext(context.component.slots.masonry[0])" />
+      <f7-block v-if="masonrySlots && masonrySlots.length" style="z-index: auto !important">
+        <oh-masonry v-bind="$attrs" :context="childContext(masonrySlots[0])" />
       </f7-block>
       <template v-else-if="context.editmode">
         <f7-block>
@@ -34,24 +34,24 @@
 
 <style lang="stylus"></style>
 
-<script>
-import mixin from '../widget-mixin'
+<script setup lang="ts">
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhBlock from './oh-block.vue'
 import OhMasonry from './oh-masonry.vue'
 import OhGridLayout from './oh-grid-layout.vue'
 import OhCanvasLayout from './oh-canvas-layout.vue'
+import type { WidgetContext } from '../types'
+import type { Router } from 'framework7'
+import { computed } from 'vue'
 
-export default {
-  props: {
-    f7router: Object
-  },
-  emits: ['action', 'add-block', 'add-masonry'],
-  mixins: [mixin],
-  components: {
-    OhBlock,
-    OhMasonry,
-    OhGridLayout,
-    OhCanvasLayout
-  }
-}
+const props = defineProps<{
+  context: WidgetContext,
+  f7router: Router.Router
+}>()
+
+const emits = defineEmits(['action', 'add-block', 'add-masonry'])
+
+const { config, childContext, scopedCssUid, defaultSlots } = useWidgetContext(props.context)
+
+const masonrySlots = computed(() => 'slots' in props.context.component && props.context.component.slots.masonry || [])
 </script>

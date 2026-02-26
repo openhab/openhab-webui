@@ -32,7 +32,8 @@ export default {
       clipboard: null,
       clipboardType: null,
       currentComponent: null,
-      currentWidget: null
+      currentWidget: null,
+      forceEditMode: false
     }
   },
   computed: {

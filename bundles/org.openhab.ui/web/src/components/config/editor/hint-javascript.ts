@@ -7,7 +7,6 @@ import * as hintUtils from './hint-utils'
 // Vite generate named exports for JSON keys by creating JS identifiers for each property
 // This caused a security violation when parsing `eval` inside ecmascript.json!
 // So we import the raw data and parse it manually to avoid it
-// @ts-expect-error - raw import has no type declaration
 import EcmascriptRaw from '@/assets/ecmascript.json?raw'
 const EcmascriptDefs = JSON.parse(String(EcmascriptRaw)) as Definitions
 

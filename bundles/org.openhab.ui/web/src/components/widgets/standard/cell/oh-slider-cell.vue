@@ -7,18 +7,18 @@
     <f7-row>
       <f7-col width="100" class="cell-slider display-flex flex-direction-column justify-content-center">
         <slot name="beforeSlider">
-          <div v-if="context.component.slots" class="margin-top display-flex flex-direction-column justify-content-center">
+          <div v-if="'beforeSlider' in slots" class="margin-top display-flex flex-direction-column justify-content-center">
             <generic-widget-component
-              v-for="(slotComponent, idx) in context.component.slots.beforeSlider"
+              v-for="(slotComponent, idx) in slots.beforeSlider"
               :context="childContext(slotComponent)"
               :key="'beforeSlider-' + idx" />
           </div>
         </slot>
         <oh-slider class="slider-control" :context="sliderContext" />
-        <div v-if="context.component.slots && context.component.slots.afterSlider" class="after-slider">
+        <div v-if="'afterSlider' in slots" class="after-slider">
           <slot name="afterSlider">
             <generic-widget-component
-              v-for="(slotComponent, idx) in context.component.slots.afterSlider"
+              v-for="(slotComponent, idx) in slots.afterSlider"
               :context="childContext(slotComponent)"
               :key="'afterSlider-' + idx" />
           </slot>
@@ -56,18 +56,24 @@
 </style>
 
 <script>
-import mixin from '../../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhSliderCellDefinition } from '@/assets/definitions/widgets/standard/cells'
 import OhCell from './oh-cell.vue'
 import OhSlider from '../../system/oh-slider.vue'
 
 export default {
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
   components: {
     OhCell,
     OhSlider
   },
   widget: OhSliderCellDefinition,
+  setup (props) {
+    const { config, childContext, slots } = useWidgetContext(props.context)
+    return { config, childContext, slots }
+  },
   computed: {
     sliderContext () {
       return Object.assign({}, this.context, {

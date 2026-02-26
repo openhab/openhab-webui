@@ -19,18 +19,25 @@ import { f7 } from 'framework7-vue'
 
 import { LCircle, LTooltip } from '@vue-leaflet/vue-leaflet'
 
-import mixin from '../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { actionsMixin } from '../widget-actions'
 import { OhMapCircleMarkerDefinition } from '@/assets/definitions/widgets/map'
 
 export default {
-  mixins: [mixin, actionsMixin],
+  mixins: [actionsMixin],
+  props: {
+    context: Object
+  },
   components: {
     LCircle,
     LTooltip
   },
   widget: OhMapCircleMarkerDefinition,
   emits: ['update'],
+  setup(props) {
+    const { config, evaluateExpression } = useWidgetContext(props.context)
+    return { config, evaluateExpression }
+  },
   data () {
     return {
       markerKey: f7.utils.id()

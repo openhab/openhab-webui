@@ -33,17 +33,18 @@
 </style>
 
 <script>
-import mixin from '../widget-mixin'
 import { OhIconDefinition } from '@/assets/definitions/widgets/system'
 import { actionsMixin } from '../widget-actions'
 import { Icon } from '@iconify/vue'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 
 export default {
-  mixins: [mixin, actionsMixin],
+  mixins: [actionsMixin],
   components: {
     'iconify-icon': Icon
   },
   props: {
+    context: Object,
     icon: String,
     width: [String, Number],
     height: [String, Number],
@@ -54,6 +55,10 @@ export default {
     verticalFlip: Boolean
   },
   widget: OhIconDefinition,
+  setup (props) {
+    const { config, hasAction, evaluateExpression } = useWidgetContext(props.context)
+    return { config, hasAction, evaluateExpression }
+  },
   data () {
     return {
       currentState: this.state,

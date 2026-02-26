@@ -1,6 +1,6 @@
 <template>
   <generic-widget-component
-    v-for="(slotComponent, idx) in children"
+    v-for="(slotComponent, idx) in defaultSlots"
     v-bind="$attrs"
     :key="'default-' + idx"
     :context="childrenContext(slotComponent)" />
@@ -9,23 +9,25 @@
 <script>
 import { f7 } from 'framework7-vue'
 
-import mixin from '../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhContextDefinition } from '@/assets/definitions/widgets/system'
 
 export default {
   inheritAttrs: false,
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
   widget: OhContextDefinition,
+  setup (props) {
+    const { childContext, evaluateExpression, defaultSlots } = useWidgetContext(props.context)
+    return { childContext, evaluateExpression, defaultSlots }
+  },
   data () {
     return {
       varScope: (this.context.varScope || 'varScope') + '-' + f7.utils.id()
     }
   },
   computed: {
-    children () {
-      if (!this.context?.component?.slots?.default) return []
-      return this.context.component.slots.default
-    },
     fn () {
       if (!this.context?.component?.config) return {}
       let evalFunc = {}

@@ -4,14 +4,20 @@
 
 <script>
 import LocationCard from '@/components/cards/location-card.vue'
-import mixin from '../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhLocationCardParameters } from '@/assets/definitions/widgets/home'
 
 import { useModelStore } from '@/js/stores/useModelStore'
 
 export default {
   components: { LocationCard },
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
+  setup (props) {
+    const { config } = useWidgetContext(props.context)
+    return { config }
+  },
   computed: {
     element () {
       return useModelStore().getSemanticModelElement(this.config.item, 'location') ||

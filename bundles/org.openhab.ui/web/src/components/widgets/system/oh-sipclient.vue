@@ -92,7 +92,7 @@
 <script>
 import { f7 } from 'framework7-vue'
 
-import mixin from '../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhSIPClientDefinition } from '@/assets/definitions/widgets/system'
 import foregroundService from '../widget-foreground-service'
 import { actionsMixin } from '../widget-actions'
@@ -119,8 +119,15 @@ export default {
       f7router: f7.views.main.router
     }
   },
-  mixins: [mixin, foregroundService, actionsMixin],
+  mixins: [foregroundService, actionsMixin],
+  props: {
+    context: Object
+  },
   widget: OhSIPClientDefinition,
+  setup (props) {
+    const { config, evaluateExpression } = useWidgetContext(props.context)
+    return { config, evaluateExpression }
+  },
   computed: {
     computedButtonStyle () {
       return {
