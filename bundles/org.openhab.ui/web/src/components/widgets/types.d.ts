@@ -1,4 +1,3 @@
-import type { DeepReadonly } from 'vue'
 import type { TrackedItems } from '@/js/stores/useStatesStore'
 import * as api from '@/api'
 
@@ -17,6 +16,7 @@ export interface EditMode {
   bringWidgetToFront: (...args: any[]) => any
   removeWidget: (...args: any[]) => any
 }
+
 export interface WidgetContext {
   component: api.RootUiComponent | api.UiComponent
   config: Record<string, unknown>
@@ -42,7 +42,7 @@ export interface WidgetContext {
   varScope?: string
   vars?: Record<string, unknown>
 
-  modalConfig?: UIComponentConfig
+  modalConfig?: Record<string, unknown>
   clipboardtype?: string | null
 
   parent: WidgetContext | null
