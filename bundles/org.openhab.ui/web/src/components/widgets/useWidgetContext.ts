@@ -55,7 +55,8 @@ export function useWidgetContext(context: WidgetContext) {
     if (!context.component) return {}
     let evalConfig: Record<string, unknown> = {}
     // Fallback to modelConfig for oh- components to allow configuring them in modals
-    const sourceConfig: Record<string, unknown> = context.component.config || (componentType.value?.startsWith('oh-') ? context.modalConfig : {})
+    const sourceConfig: Record<string, unknown> =
+      context.component.config || (componentType.value?.startsWith('oh-') ? context.modalConfig : {})
     if (sourceConfig) {
       if (typeof sourceConfig !== 'object') return {}
       for (const [key, value] of Object.entries(sourceConfig)) {
@@ -66,7 +67,7 @@ export function useWidgetContext(context: WidgetContext) {
     return evalConfig
   })
 
-  const props = computed<Record<string, unknown>>(()=> {
+  const props = computed<Record<string, unknown>>(() => {
     if (!context.component) return {}
     if ('props' in context.component && context.component.props.parameters) {
       let defaultValues: Record<string, unknown> = {}
