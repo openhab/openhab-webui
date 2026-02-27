@@ -23,7 +23,7 @@ export const OhMapPageDefinition = () =>
       'tileLayerProvider',
       'Provider for the background tiles',
       'The provider of tiles to use for the background of the map. ' +
-        'Use one from <a class="external text-color-blue" target="_blank" href="https://leaflet-extras.github.io/leaflet-providers/preview/">Leaflet Providers</a>, ' +
+        'Use one from <a class="external text-color-blue" target="_blank" href="https://leaflet-extras.github.io/leaflet-providers/preview/">Leaflet Providers</a>. ' +
         'Some providers will not work until you set options, like access tokens, in the <code>tileLayerProviderOptions</code> parameter (in Code view). ' +
         'See <a class="external text-color-blue" target="_blank" href="https://github.com/leaflet-extras/leaflet-providers#providers-requiring-registration">here</a> for more info. ' +
         'The default is CartoDB, the variant depending on the dark mode setting.'
@@ -32,9 +32,9 @@ export const OhMapPageDefinition = () =>
       'overlayTileLayerProvider',
       'Provider for the overlay tiles',
       'The provider of tiles to use for the overlay layer above the background of the map. ' +
-        'Use one from <a class="external text-color-blue" target="_blank" href="https://leaflet-extras.github.io/leaflet-providers/preview/">Leaflet Providers</a>, ' +
+        'Use one from <a class="external text-color-blue" target="_blank" href="https://leaflet-extras.github.io/leaflet-providers/preview/">Leaflet Providers</a>. ' +
         'Some providers will not work until you set options, like access tokens, in the <code>overlayTileLayerProviderOptions</code> parameter (in Code view). ' +
-        'See <a class="external text-color-blue" target="_blank" href="https://github.com/leaflet-extras/leaflet-providers#providers-requiring-registration">here</a> for more info. '
+        'See <a class="external text-color-blue" target="_blank" href="https://github.com/leaflet-extras/leaflet-providers#providers-requiring-registration">here</a> for more info.'
     )
   ])
 
