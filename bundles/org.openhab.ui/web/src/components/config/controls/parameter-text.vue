@@ -67,6 +67,7 @@
 <script>
 import { f7, theme } from 'framework7-vue'
 import { nextTick } from 'vue'
+import * as Pattern from './validation-pattern.ts'
 
 export default {
   props: {
@@ -112,29 +113,15 @@ export default {
       }
 
       if (ctx === 'mac-address') {
-        // mac-address handler; supports: AA:BB:CC:DD:EE:FF, AA-BB-CC-DD-EE-FF, and AABB.CCDD.EEFF
-        const hex2 = `[0-9A-Fa-f]{2}`;
-        const hex4 = `[0-9A-Fa-f]{4}`;
-        return `(?:(?:${hex2}[:\\-]){5}${hex2}|(?:${hex4}\\.){2}${hex4})`
+        return Pattern.MacAddress;
       }
 
-      if (ctx === 'url' || ctx === 'network-address' || ctx === 'ip-address') {
-        const ipv4Addr = `(?:(?:25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])`
-        const ipv6Addr = `(?:(?:[A-Fa-f0-9]{1,4}:){7}[A-Fa-f0-9]{1,4}|(?:[A-Fa-f0-9]{1,4}:){1,7}:|:(?::[A-Fa-f0-9]{1,4}){1,7}|(?:[A-Fa-f0-9]{1,4}:){1,6}:[A-Fa-f0-9]{1,4}|::)`
+      if (ctx === 'ip-address') {
+        return Pattern.IpAddress;
+      }
 
-        if (ctx === 'ip-address') {
-          // handle "pure" ip address cases; ipv4, ipv6, without port suffix
-          return `(?:${ipv4Addr}|${ipv6Addr})`
-        } else {
-          // handle network-address and url (synonyms)
-          // hostIpv4 matches both a.b.c.d and 1.2.3.4 so covers ipv4 address pattern as well
-          const hostIpv4 = `(?:[A-Za-z0-9](?:[A-Za-z0-9\\-]{0,61}[A-Za-z0-9])?(?:\\.[A-Za-z0-9](?:[A-Za-z0-9\\-]{0,61}[A-Za-z0-9])?)*)`
-          const http = `(?:[Hh][Tt][Tt][Pp][Ss]?:\\/\\/)?`
-          const host = `(?:${hostIpv4}|(?:\\[${ipv6Addr}\\]))`
-          const port = `(?::(?:6553[0-5]|655[0-2]\\d|65[0-4]\\d{2}|6[0-4]\\d{3}|[1-5]\\d{4}|\\d{1,4}))?`
-          const rest = `(?:\\/[^\\s]*?)?`
-          return `${http}${host}${port}${rest}`
-        }
+      if (ctx === 'url' || ctx === 'network-address') {
+        return Pattern.NetworkAddress;
       }
       return this.configDescription.pattern
     },
