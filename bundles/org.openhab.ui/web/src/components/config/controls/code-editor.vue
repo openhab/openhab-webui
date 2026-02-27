@@ -94,7 +94,7 @@ import Editor from '@/components/config/controls/script-editor.vue'
 
 import MovablePopup from '@/pages/settings/movable-popup-mixin'
 import copyToClipboard from '@/js/clipboard'
-import { MediaType, SupportedMediaTypes } from '@/assets/definitions/media-types.ts'
+import { DefaultMediaTypes, MediaType, SupportedMediaTypes } from '@/assets/definitions/media-types.ts'
 
 export default {
   mixins: [MovablePopup],
@@ -130,7 +130,7 @@ export default {
       return this.mediaTypes[this.uiOptionsStore.codeEditorType]
     },
     mediaTypes () {
-      return SupportedMediaTypes[this.objectType]
+      return SupportedMediaTypes[this.objectType] || DefaultMediaTypes
     },
     ...mapStores(useUIOptionsStore)
   },
