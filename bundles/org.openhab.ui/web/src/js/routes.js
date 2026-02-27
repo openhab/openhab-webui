@@ -4,7 +4,7 @@ import HomePage from '../pages/home.vue'
 import NotFoundPage from '../pages/not-found.vue'
 import PageViewPage from '../pages/page/page-view.vue'
 import AnalyzerPopup from '../pages/analyzer/analyzer-popup.vue'
-import { AddonTitles } from '@/assets/addon-store'
+import { AddonTitles } from '@/assets/addon-store.ts'
 
 const AboutPage = () => import(/* webpackChunkName: "about-page" */ '@/pages/about.vue')
 const UserProfilePage = () => import(/* webpackChunkName: "profile-page" */ '@/pages/profile.vue')

@@ -19,20 +19,12 @@
     </template>
     <template #after>
       <div v-if="showInstallActions">
-        <f7-preloader v-if="addon.pending" color="blue" />
-        <f7-button
-          v-else-if="addon.installed"
-          class="install-button prevent-active-state-propagation"
-          text="Remove"
-          color="red"
-          round
-          small
-          @click="buttonClicked" />
+        <f7-preloader v-if="'pending' in addon && addon.pending" color="blue" />
         <f7-button
           v-else
           class="install-button prevent-active-state-propagation"
-          :text="installActionText || 'Install'"
-          color="blue"
+          :text="addon.installed ? 'Remove' : (installActionText || 'Install')"
+          :color="addon.installed ? 'red' : 'blue'"
           round
           small
           @click="buttonClicked" />
@@ -73,33 +65,29 @@
     --f7-button-bg-color var(--f7-list-item-border-color)
 </style>
 
-<script>
+<script setup lang="ts">
+import { computed } from 'vue'
+import * as api from '@/api'
 import AddonStatsLine from './addon-stats-line.vue'
 import AddonLogo from '@/components/addons/addon-logo.vue'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
-import { mapStores } from 'pinia'
 
-export default {
-  props: {
-    addon: Object,
-    installActionText: String
-  },
-  emits: ['addon-button-click'],
-  components: {
-    AddonLogo,
-    AddonStatsLine
-  },
-  computed: {
-    showInstallActions () {
-      let splitted = this.addon.uid.split(':')
-      return splitted.length < 2 || splitted[0] !== 'eclipse'
-    },
-    ...mapStores(useUIOptionsStore)
-  },
-  methods: {
-    buttonClicked () {
-      this.$emit('addon-button-click', this.addon)
-    }
-  }
-}
+const uiOptionsStore = useUIOptionsStore()
+
+// props
+const props = defineProps<{ addon: api.Addon, installActionText?: string }>()
+
+// emits
+const emit = defineEmits<{
+  'addon-button-click': [addon: api.Addon]
+}>()
+
+// computed
+const showInstallActions = computed<boolean>(() => {
+  let splitted = props.addon.uid.split(':')
+  return splitted.length < 2 || splitted[0] !== 'eclipse'
+})
+
+// methods
+const buttonClicked = () => emit('addon-button-click', props.addon)
 </script>
