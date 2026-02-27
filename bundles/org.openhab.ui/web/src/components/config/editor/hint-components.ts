@@ -3,7 +3,7 @@ import {
   pickedCompletion,
   type Completion,
   type CompletionContext,
-  type CompletionResult,
+  type CompletionResult
 } from '@codemirror/autocomplete'
 import { lineIndent, findParent, isConfig, isComponent, isSlots, findComponentType } from './yaml-utils'
 import { completionStart, hintItems, hintParameterValues, hintParameters } from './hint-utils'

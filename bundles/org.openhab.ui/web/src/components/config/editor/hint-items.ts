@@ -67,7 +67,7 @@ async function hintDimension(context: CompletionContext, line: Line, position: n
   } satisfies CompletionResult
 }
 
-function hintIcon(context: CompletionContext, line: Line) {
+function hintIcon(context: CompletionContext, line: Line): CompletionResult {
   const apply = (view: EditorView, completion: Completion, _from: number, _to: number) => {
     const insert = completion.label
     const from = line.from + 10 // after 'icon: '
@@ -108,7 +108,7 @@ const MetadataCompletions: Record<string, { value: string; config?: Record<strin
 
 const DefaultMetadataCompletion = { value: '', config: {} }
 
-function hintMetadata(context: CompletionContext, line: Line) {
+function hintMetadata(context: CompletionContext, line: Line): CompletionResult {
   const apply = (view: EditorView, completion: Completion, _from: number, _to: number) => {
     const completionStructure = MetadataCompletions[completion.label] || DefaultMetadataCompletion
     const indent = ' '.repeat(6)

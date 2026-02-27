@@ -109,6 +109,14 @@ async function getItems(): Promise<(api.EnrichedItem | api.EnrichedGroupItem)[]>
   return itemsCache
 }
 
+interface HintItemsOptions {
+  replaceAfterColon?: boolean
+  indent?: number | null
+  prefix?: string
+  suffix?: string
+  groupsOnly?: boolean
+}
+
 /**
  * Returns a CodeMirror CompletionResult object for item names
  *
@@ -125,16 +133,10 @@ async function getItems(): Promise<(api.EnrichedItem | api.EnrichedGroupItem)[]>
  * @param {boolean} [options.groupsOnly=false] - If true, only include Group items in the completion list.
  * @returns {Promise<CompletionResult | null>} Promise that resolves to a CompletionResult.
  */
-export function hintItems(
+export async function hintItems(
   context: CompletionContext,
-  {
-    replaceAfterColon = false,
-    indent = null,
-    prefix = '',
-    suffix = '',
-    groupsOnly = false
-  }: { replaceAfterColon?: boolean; indent?: number | null; prefix?: string; suffix?: string; groupsOnly?: boolean } = {}
-): CompletionResult | Promise<CompletionResult | null> {
+  { replaceAfterColon = false, indent = null, prefix = '', suffix = '', groupsOnly = false }: HintItemsOptions = {}
+): Promise<CompletionResult | null> {
   const apply = (view: EditorView, completion: Completion, _from: number, _to: number) => {
     let from, to
     const currentLine = view.state.doc.lineAt(context.pos)
@@ -161,28 +163,20 @@ export function hintItems(
     view.dispatch(insertCompletionText(view.state, insert, from, to))
   }
 
-  const buildResult = (itemsInput: (api.EnrichedItem | api.EnrichedGroupItem)[]) => {
-    const items = groupsOnly ? itemsInput.filter((item) => item.type === 'Group') : itemsInput
-    return {
-      from: completionStart(context),
-      validFor: /\w+/,
-      options: items.map((item) => {
-        return {
-          label: item.name,
-          info: `${item.label ? item.label + ' ' : ''}(${item.type})`,
-          type: item.type === 'Group' ? 'groupitem' : 'item',
-          apply
-        }
-      })
-    } satisfies CompletionResult
-  }
-
-  const itemsOrPromise = getItems()
-  if (itemsOrPromise instanceof Promise) {
-    return itemsOrPromise.then((itemsInput) => buildResult(itemsInput))
-  }
-
-  return buildResult(itemsOrPromise)
+  let items = await getItems()
+  items = groupsOnly ? items.filter((item) => item.type === 'Group') : items
+  return {
+    from: completionStart(context),
+    validFor: /\w+/,
+    options: items.map((item) => {
+      return {
+        label: item.name,
+        info: `${item.label ? item.label + ' ' : ''}(${item.type})`,
+        type: item.type === 'Group' ? 'groupitem' : 'item',
+        apply
+      }
+    })
+  } satisfies CompletionResult
 }
 
 /**
