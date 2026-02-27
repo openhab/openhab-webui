@@ -62,7 +62,7 @@
       <template v-if="softInvalid && !disableValidation" #error-message>
         <div>
           <f7-icon f7="exclamationmark_triangle_fill" size="16" color="yellow"></f7-icon>
-          <span class="text-color-red">Value does not match expected network address format.</span>
+          <span class="text-color-red">This is not a standard URL, IP address, or host name:</span>
           <span @click="disableValidation = true; validateSoft(value)" class="link" style="margin-left: 6px;">Use anyway</span>
         </div>
       </template>
