@@ -33,21 +33,23 @@
   <ul v-else>
     <f7-list-input
       ref="input"
-      :key="'softInvalid=' + softInvalid + '&disableValidation=' + disableValidation"
       :floating-label="theme.md"
       :label="configDescription.label"
       :name="configDescription.name"
       :value="value"
       :autocomplete="options ? 'off' : ''"
       :placeholder="configDescription.placeholder"
-      :pattern="softInvalid ? null : pattern"
-      :error-message="softInvalid || disableValidation ? null : errorMessage"
-      :error-message-force="softInvalid && !disableValidation"
+      :pattern="pattern"
+      :error-message="errorMessage"
+      :error-message-force="configDescription.context === 'network-address' ? (softInvalid && !disableValidation) : false"
       :required="configDescription.required"
-      :validate="!disableValidation && !(pattern && pattern.length > 500)"
-      :validate-on-blur="!disableValidation && pattern && pattern.length > 500"
+      :validate="configDescription.context !== 'network-address'"
+      :validate-on-blur="false"
       :clear-button="!configDescription.required && configDescription.context !== 'password'"
       @input="updateValue"
+      @change="updateValue"
+      @blur="onBlur"
+      @focus="onFocus"
       :readonly="readOnly || configDescription.readOnly"
       :type="controlType">
       <template #content-end>
@@ -59,9 +61,9 @@
       </template>
       <template v-if="softInvalid && !disableValidation" #error-message>
         <div>
-          <f7-icon f7="exclamationmark_triangle_fill" size="16" color="red"></f7-icon>
+          <f7-icon f7="exclamationmark_triangle_fill" size="16" color="yellow"></f7-icon>
           <span class="text-color-red">Value does not match expected network address format.</span>
-          <span @click="disableValidation = true" class="link" style="margin-left: 6px;">Use anyway</span>
+          <span @click="disableValidation = true; validateSoft(value)" class="link" style="margin-left: 6px;">Use anyway</span>
         </div>
       </template>
     </f7-list-input>
@@ -89,6 +91,7 @@ export default {
       if (this.configDescription.context === 'email') return 'email'
       if (this.configDescription.context === 'telephone') return 'tel'
       if (this.configDescription.context === 'color') return 'color'
+      if (this.configDescription.context === 'network-address') return 'text'
       return 'text'
     },
     errorMessage() {
@@ -96,8 +99,8 @@ export default {
       if (ctx === 'mac-address') {
         return 'Please enter a valid MAC address (e.g., AA:BB:CC:DD:EE:FF or AABB.CCDD.EEFF).';
       }
-      if (ctx === 'url' || ctx === 'network-address') {
-        return 'Please enter a valid network address or URL.';
+      if (ctx === 'url') {
+        return 'Please enter a valid URL.';
       }
       if (ctx === 'ip-address') {
         return 'Please enter a valid IP address (e.g., 127.0.0.1 or 2001:db8::1).'
@@ -110,21 +113,13 @@ export default {
     },
     pattern () {
       const ctx = this.configDescription.context;
-
-      if (ctx === 'week') {
-        // week number 1-52
-        return `(?:0?[1-9]|[1-4][0-9]|5[0-2])`
-      }
-
       if (ctx === 'mac-address') {
         return Pattern.MacAddress;
       }
-
       if (ctx === 'ip-address') {
         return Pattern.IpAddress;
       }
-
-      if (ctx === 'url' || ctx === 'network-address') {
+      if (ctx === 'url') {
         return Pattern.NetworkAddress;
       }
       return this.configDescription.pattern
@@ -142,6 +137,14 @@ export default {
         })
       }
       return null
+    }
+  },
+  watch: {
+    value(newVal) {
+      if (!this.multiple) {
+        this.disableValidation = false
+        this.validateSoft(newVal || '')
+      }
     }
   },
   data () {
@@ -178,6 +181,15 @@ export default {
     this.destroyAutoCompleteOptions()
   },
   methods: {
+    onBlur() {
+      this.disableValidation = false
+      this.validateSoft(this.value || '')
+    },
+    onFocus() {
+      this.disableValidation = false
+      this.softInvalid = !Pattern.NetworkAddressCompiled.test(this.value || '')
+      this.validateSoft(this.value || '')
+    },
     updateValue (event) {
       if (this.multiple) return
       const val = event.target.value
@@ -187,6 +199,10 @@ export default {
     validateSoft (value) {
       if (this.configDescription.context === 'network-address') {
         this.softInvalid = value.length > 0 && !Pattern.NetworkAddressCompiled.test(value);
+        const inputEl = this.$refs.input?.$el?.querySelector('input');
+        if (inputEl) {
+          inputEl.setCustomValidity(!this.softInvalid || this.disableValidation ? '' : 'Invalid network address');
+        }
       }
     },
     updateValueIdx (idx, event) {
