@@ -66,7 +66,7 @@
 </style>
 
 <script setup lang="ts">
-import { computed, getCurrentInstance, ref, shallowRef, watch, type ShallowRef } from 'vue'
+import { computed, shallowRef, watch, type ShallowRef } from 'vue'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
 // codemirror core
@@ -85,7 +85,6 @@ import { indentationMarkers } from '@replit/codemirror-indentation-markers'
 import { gruvboxDark } from '@uiw/codemirror-theme-gruvbox-dark'
 
 const uiOptionsStore = useUIOptionsStore()
-const instance = getCurrentInstance()
 
 const KEYMAP : KeyBinding[] = [
   {
