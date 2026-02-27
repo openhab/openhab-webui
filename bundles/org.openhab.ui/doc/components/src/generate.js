@@ -131,6 +131,12 @@ Object.keys(widgetLibraries).forEach((l) => {
 
   })
   index = index.replace('{' + l + '}', table)
+
+  if (l === 'StdCardWidgets') {
+    const additionalLines = '\nAll cards are based on the [`oh-card`](./oh-card.html) component and share the same config options for modifying the card\'s appearance.\n' +
+      'Refer to the [`oh-card` Style](./oh-card.html#style) documentation to learn about card styling options.'
+    index = index.replace(table, table + additionalLines)
+  }
 })
 
 fs.writeFileSync('../index.md', index)
