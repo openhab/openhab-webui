@@ -4,7 +4,6 @@ import {
   type Completion,
   type CompletionContext,
   type CompletionResult,
-  type CompletionSource
 } from '@codemirror/autocomplete'
 import { lineIndent, findParent, isConfig, isComponent, isSlots, findComponentType } from './yaml-utils'
 import { completionStart, hintItems, hintParameterValues, hintParameters } from './hint-utils'
@@ -74,8 +73,8 @@ function getWidgetDefinitions(context: CompletionContext): (WidgetDefinition | F
     case 'chart':
       return [
         OhChartPageDefinition(),
-        ...Object.entries(ChartWidgetsDefinitions).map(([name, widgetDefinition]) => {
-          return Object.assign({}, widgetDefinition, { name })
+        ...Object.entries(ChartWidgetsDefinitions).map(([name, chartWidgetDefinition]) => {
+          return Object.assign({}, chartWidgetDefinition, { name })
         })
       ]
     case 'plan':
@@ -95,8 +94,8 @@ function getWidgetDefinitions(context: CompletionContext): (WidgetDefinition | F
         ...(componentType === 'home' ? [OhLocationCardParameters(), OhEquipmentCardParameters(), OhPropertyCardParameters()] : []),
         ...getOhComponents(),
         ...getF7Components(),
-        ...Object.entries(ChartWidgetsDefinitions).map(([name, widgetDefinition]) => {
-          return Object.assign({}, widgetDefinition, { name })
+        ...Object.entries(ChartWidgetsDefinitions).map(([name, chartWidgetDefinition]) => {
+          return Object.assign({}, chartWidgetDefinition, { name })
         })
       ]
   }
