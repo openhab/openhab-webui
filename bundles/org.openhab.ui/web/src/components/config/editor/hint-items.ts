@@ -11,22 +11,22 @@ import { Categories } from '@/assets/categories.js'
 import * as api from '@/api'
 import type { Line } from '@codemirror/state'
 
-let dimensions : string[] | null = null
+let dimensions: string[] | null = null
 
-async function getDimensions() : Promise<string[]> {
+async function getDimensions(): Promise<string[]> {
   if (dimensions !== null) return dimensions
-  
+
   const result = await api.getUoMInformation()
   if (result?.uomInfo?.dimensions) {
     dimensions = result.uomInfo.dimensions.map((d) => d.dimension)
   } else {
     dimensions = []
   }
-  
+
   return dimensions
 }
 
-function hintTypes(context : CompletionContext, line: Line, position: number) : CompletionResult {
+function hintTypes(context: CompletionContext, line: Line, position: number): CompletionResult {
   const apply = (view: EditorView, completion: Completion, _from: number, _to: number) => {
     const insert = completion.label
     const from = line.from + position
@@ -46,7 +46,7 @@ function hintTypes(context : CompletionContext, line: Line, position: number) : 
   }
 }
 
-async function hintDimension(context : CompletionContext, line: Line, position: number) : Promise<CompletionResult> {
+async function hintDimension(context: CompletionContext, line: Line, position: number): Promise<CompletionResult | null> {
   const apply = (view: EditorView, completion: Completion, _from: number, _to: number) => {
     const insert = completion.label
     const from = line.from + position
@@ -54,7 +54,7 @@ async function hintDimension(context : CompletionContext, line: Line, position: 
     view.dispatch(insertCompletionText(view.state, insert, from, to))
   }
 
-  const dimensions = await getDimensions() 
+  const dimensions = await getDimensions()
   return {
     from: completionStart(context),
     validFor: /\w+/,
@@ -67,8 +67,8 @@ async function hintDimension(context : CompletionContext, line: Line, position: 
   } satisfies CompletionResult
 }
 
-function hintIcon(context : CompletionContext, line: Line) {
-  const apply = (view : EditorView, completion: Completion, _from: number, _to: number) => {
+function hintIcon(context: CompletionContext, line: Line) {
+  const apply = (view: EditorView, completion: Completion, _from: number, _to: number) => {
     const insert = completion.label
     const from = line.from + 10 // after 'icon: '
     const to = view.state.doc.lineAt(context.pos).to
@@ -108,7 +108,7 @@ const MetadataCompletions: Record<string, { value: string; config?: Record<strin
 
 const DefaultMetadataCompletion = { value: '', config: {} }
 
-function hintMetadata(context : CompletionContext, line: Line) {
+function hintMetadata(context: CompletionContext, line: Line) {
   const apply = (view: EditorView, completion: Completion, _from: number, _to: number) => {
     const completionStructure = MetadataCompletions[completion.label] || DefaultMetadataCompletion
     const indent = ' '.repeat(6)
@@ -134,7 +134,7 @@ function hintMetadata(context : CompletionContext, line: Line) {
   }
 }
 
-export default function hint(context : CompletionContext) : CompletionResult | Promise<CompletionResult> | null {
+export default function hint(context: CompletionContext): CompletionResult | Promise<CompletionResult | null> | null {
   const line = context.state.doc.lineAt(context.pos)
   if (!line) return null
   const parentLine = findParent(context, line)

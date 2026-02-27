@@ -45,11 +45,11 @@ function languageExtension(mode: string): StreamLanguage<unknown> | LanguageSupp
       return yaml()
 
     case mode === 'dsl':
-    case mode === MediaType.RULE_DSL as string:
+    case mode === (MediaType.RULE_DSL as string):
       return java()
-    
-    case mode === MediaType.THING_DSL as string:
-    case mode === MediaType.ITEM_DSL as string:
+
+    case mode === (MediaType.THING_DSL as string):
+    case mode === (MediaType.ITEM_DSL as string):
       return javascript()
 
     case mode === 'js':
@@ -100,22 +100,22 @@ function autocompletionExtension(mode: string): Extension | null {
     case mode.startsWith(MediaType.UI_COMPONENT as string):
       return autocompletion({ activateOnCompletion, override: [componentsHint] })
 
-    case mode === MediaType.RULE_DSL as string:
+    case mode === (MediaType.RULE_DSL as string):
       return autocompletion({ activateOnCompletion, override: [rulesHint] })
 
-    case mode === MediaType.THING_YAML as string:
+    case mode === (MediaType.THING_YAML as string):
       return autocompletion({ activateOnCompletion, override: [thingsHint] })
 
-    case mode === MediaType.ITEM_YAML as string:
+    case mode === (MediaType.ITEM_YAML as string):
       return autocompletion({ activateOnCompletion, override: [itemsHint] })
 
     case mode === 'js':
     case mode.startsWith(MediaType.JAVASCRIPT as string):
       return javascriptAutocompletions(mode)
 
-  // CodeMirror supports autocompletion for python by default
+    // CodeMirror supports autocompletion for python by default
     default:
-  return autocompletion()
+      return autocompletion()
   }
 }
 

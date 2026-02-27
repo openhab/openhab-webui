@@ -1,5 +1,5 @@
-import { type CompletionContext } from "@codemirror/autocomplete"
-import { Line } from "@codemirror/state"
+import { type CompletionContext } from '@codemirror/autocomplete'
+import { Line } from '@codemirror/state'
 
 export function lineIndent(line: Line) {
   const match = line.text.match(/^ +/)
@@ -7,7 +7,7 @@ export function lineIndent(line: Line) {
   return 0
 }
 
-export function findParent(context: CompletionContext, line: Line) {
+export function findParent(context: CompletionContext, line: Line): Line | undefined {
   // If the line is all blank, assume the current indent is at the cursor
   const currentIndent = line.text.match(/^\s*$/) ? context.pos - line.from : lineIndent(line)
   for (let l = line.number - 1; l >= 1; l--) {
