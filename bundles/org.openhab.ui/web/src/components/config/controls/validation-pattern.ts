@@ -1,5 +1,5 @@
-const hex2 = `[0-9A-Fa-f]{2}`;
-const hex4 = `[0-9A-Fa-f]{4}`;
+const hex2 = `[0-9A-Fa-f]{2}`
+const hex4 = `[0-9A-Fa-f]{4}`
 /**
  * MAC address handler.
  * Supports:
