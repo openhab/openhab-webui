@@ -57,6 +57,11 @@
       </template>
     </f7-list-input>
   </ul>
+  <div v-if="configDescription.context === 'network-address' && softInvalid" class="input-error-message padding-left" style="display: flex; align-items: center; gap: 6px; margin-top: 4px;">
+    <f7-icon f7="exclamationmark_triangle_fill" size="16" color="red"></f7-icon>
+    <span class="text-color-red">Value does not match expected network address format.</span>
+    <span @click="softInvalid = false" class="link" style="margin-left: 6px;">Use anyway</span>
+  </div>
 </template>
 
 <script>
@@ -79,7 +84,6 @@ export default {
       if (this.configDescription.context === 'email') return 'email'
       if (this.configDescription.context === 'telephone') return 'tel'
       if (this.configDescription.context === 'color') return 'color'
-      if (this.configDescription.context === 'week') return 'week'
       return 'text'
     },
     errorMessage() {
@@ -101,6 +105,11 @@ export default {
     },
     pattern () {
       const ctx = this.configDescription.context;
+
+      if (ctx === 'week') {
+        // week number 1-52
+        return `(?:0?[1-9]|[1-4][0-9]|5[0-2])`
+      }
 
       if (ctx === 'mac-address') {
         // mac-address handler; supports: AA:BB:CC:DD:EE:FF, AA-BB-CC-DD-EE-FF, and AABB.CCDD.EEFF
@@ -149,7 +158,10 @@ export default {
       autoCompleteOptions: null,
       showPassword: false,
       values: [], // Used for multiple values parameters only
-      suspendEvents: false
+      suspendEvents: false,
+      softInvalid: false,
+      compiledPattern: null,
+      lastPattern: null
     }
   },
   created () {
@@ -175,8 +187,24 @@ export default {
     this.destroyAutoCompleteOptions()
   },
   methods: {
+    getCompiledPattern() {
+      if (this.pattern !== this.lastPattern) {
+        try {
+          this.compiledPattern = new RegExp(`^${this.pattern}$`);
+        } catch (e) {
+          this.compiledPattern = null;
+        }
+        this.lastPattern = this.pattern;
+      }
+      return this.compiledPattern;
+    },
     updateValue (event) {
       if (this.multiple) return
+      const val = event.target.value
+      if (this.configDescription.context === 'network-address') {
+        const compiledPattern = this.getCompiledPattern();
+        this.softInvalid = re && val.length > 0 && !compiledPattern.test(val);
+      }
       this.$emit('input', event.target.value)
     },
     updateValueIdx (idx, event) {
