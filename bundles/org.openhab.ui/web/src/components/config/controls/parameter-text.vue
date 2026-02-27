@@ -91,7 +91,6 @@ export default {
       if (this.configDescription.context === 'email') return 'email'
       if (this.configDescription.context === 'telephone') return 'tel'
       if (this.configDescription.context === 'color') return 'color'
-      if (this.configDescription.context === 'network-address') return 'text'
       return 'text'
     },
     errorMessage() {
