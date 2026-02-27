@@ -12,17 +12,23 @@
 </style>
 
 <script>
-import mixin from '../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhCard from '@/components/widgets/standard/oh-card.vue'
 import OhStepper from '../system/oh-stepper.vue'
 import { OhStepperCardDefinition } from '@/assets/definitions/widgets/standard/cards'
 
 export default {
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
   components: {
     OhCard,
     OhStepper
   },
-  widget: OhStepperCardDefinition
+  widget: OhStepperCardDefinition,
+  setup (props) {
+    const { cardChildContext } = useWidgetContext(props.context)
+    return { cardChildContext }
+  }
 }
 </script>

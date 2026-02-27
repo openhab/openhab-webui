@@ -25,18 +25,24 @@
 </style>
 
 <script>
-import mixin from '../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhCard from '@/components/widgets/standard/oh-card.vue'
 import OhRollershutter from '../system/oh-rollershutter.vue'
 import { OhRollershutterCardDefinition } from '@/assets/definitions/widgets/standard/cards'
 
 export default {
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
   components: {
     OhCard,
     OhRollershutter
   },
   widget: OhRollershutterCardDefinition,
+  setup (props) {
+    const { config } = useWidgetContext(props.context)
+    return { config }
+  },
   data () {
     return {
       value: Math.random()

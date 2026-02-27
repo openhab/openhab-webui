@@ -3,7 +3,7 @@
     v-if="visible"
     class="oh-block"
     :class="scopedCssUid"
-    :style="{ 'z-index': (context.editmode) ? 100 - context.parent.component.slots.default.indexOf(context.component) : 'auto !important', ...config.style }">
+    :style="{ 'z-index': (context.editmode) ? 100 - parentDefaultSlots.indexOf(context.component) : 'auto !important', ...(config.style as Record<string, string>) }">
     <hr v-if="context.editmode" />
     <f7-block-title v-if="config.title">
       {{ config.title }}
@@ -34,11 +34,7 @@
         </f7-menu-dropdown>
       </f7-menu-item>
     </f7-menu>
-    <component
-      :is="component.component"
-      v-for="(component, idx) in context.component.slots?.default"
-      :key="idx"
-      :context="childContext(component)" />
+    <component :is="component.component" v-for="(component, idx) in defaultSlots" :key="idx" :context="childContext(component)" />
   </f7-block>
 </template>
 
@@ -47,18 +43,21 @@
   z-index 10
 </style>
 
-<script>
-import mixin from '../widget-mixin'
-import OhGridRow from './oh-grid-row.vue'
-import OhGridCells from './oh-grid-cells.vue'
+<script setup lang="ts">
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
+import type { WidgetContext } from '@/components/widgets/types'
 import { OhBlockDescription } from '@/assets/definitions/widgets/layout'
+import * as api from '@/api'
 
-export default {
-  mixins: [mixin],
-  components: {
-    'oh-grid-row': OhGridRow,
-    'oh-grid-cells': OhGridCells
-  },
+defineOptions({
   widget: OhBlockDescription
-}
+})
+
+const props = defineProps<{
+  context: WidgetContext
+}>()
+
+const parentDefaultSlots = (props.context.parent?.component as api.RootUiComponent).slots?.default || []
+
+const { config, childContext, scopedCssUid, visible, defaultSlots } = useWidgetContext(props.context)
 </script>

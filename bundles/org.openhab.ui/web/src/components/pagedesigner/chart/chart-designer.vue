@@ -277,7 +277,7 @@
 <script>
 import { f7 } from 'framework7-vue'
 
-import widget from '@/components/widgets/widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import EditContextMenu from '@/components/pagedesigner/edit-menu.vue'
 
 import { use } from 'echarts/core'
@@ -310,10 +310,15 @@ const defaultSlotComponentType = {
 }
 
 export default {
-  mixins: [widget],
+  props: {
+    context: Object
+  },
   components: {
     'chart-skeleton': VChart,
     EditContextMenu
+  },
+  setup (props) {
+    useWidgetContext(props.context)
   },
   methods: {
     skeletonGridOptions (grid, gridIdx) {

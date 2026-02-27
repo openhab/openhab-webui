@@ -25,11 +25,7 @@
       </f7-menu>
     </div>
     <f7-row v-if="visible" no-gap>
-      <oh-grid-col
-        v-for="(component, idx) in context.component.slots.default"
-        v-bind="$attrs"
-        :key="idx"
-        :context="childContext(component)" />
+      <oh-grid-col v-for="(component, idx) in defaultSlots" v-bind="$attrs" :key="idx" :context="childContext(component)" />
       <f7-block-title v-if="config.title" />
     </f7-row>
     <!-- <f7-row v-if="context.editmode">
@@ -50,16 +46,22 @@
 </style>
 
 <script>
-import mixin from '../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhGridCol from './oh-grid-col.vue'
 
 import { OhGridRowDefinition } from '@/assets/definitions/widgets/layout'
 
 export default {
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
   components: {
     OhGridCol
   },
-  widget: OhGridRowDefinition
+  widget: OhGridRowDefinition,
+  setup(props) {
+    const { config, childContext, scopedCssUid, visible, defaultSlots } = useWidgetContext(props.context)
+    return { config, childContext, scopedCssUid, visible, defaultSlots }
+  }
 }
 </script>

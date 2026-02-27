@@ -13,24 +13,24 @@
       <f7-popover
         :class="'item-popover-' + uid"
         :backdrop="false"
-        :style="{ width: context.component.slots.default.length > 0 ? '208px' : '76px' }"
+        :style="{ width: defaultSlots.length > 0 ? '208px' : '76px' }"
         :animate="false">
         <div class="display-flex margin justify-content-center">
           <f7-link
-            v-if="context.component.slots.default.length > 0"
+            v-if="defaultSlots.length > 0"
             href="#"
             class="text-color-blue display-flex flex-direction-column margin-right"
             :popover-close="'.item-popover-' + uid"
-            @click="context.editmode.configureWidget(context.component.slots.default[0], context)"
+            @click="context.editmode.configureWidget(defaultSlots[0], context)"
             icon-f7="square_pencil">
             Configure
           </f7-link>
           <f7-link
-            v-if="context.component.slots.default.length > 0"
+            v-if="defaultSlots.length > 0"
             href="#"
             class="text-color-blue display-flex flex-direction-column margin-right"
             :popover-close="'.item-popover-' + uid"
-            @click="context.editmode.editWidgetCode(context.component.slots.default[0], context)"
+            @click="context.editmode.editWidgetCode(defaultSlots[0], context)"
             icon-f7="doc_text">
             YAML
           </f7-link>
@@ -46,13 +46,13 @@
       </f7-popover>
     </template>
     <oh-placeholder-widget
-      v-if="context.editmode && !context.component.slots.default.length"
+      v-if="context.editmode && !defaultSlots.length"
       @click="context.editmode.addWidget(context.component, null, context.parent)"
       class="oh-grid-item-content" />
     <generic-widget-component
-      v-else-if="context.component.slots.default.length"
+      v-else-if="defaultSlots.length"
       class="oh-grid-item-content"
-      :context="childContext(context.component.slots.default[0])"
+      :context="childContext(defaultSlots[0])"
       :style="{ overflow: context.editmode ? 'visible' : 'hidden' }" />
 
     <f7-icon v-if="context.editmode" class="drag-handle" f7="move" />
@@ -150,14 +150,20 @@
 import { defineAsyncComponent } from 'vue'
 import { f7 } from 'framework7-vue'
 
-import mixin from '../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhPlaceholderWidget from '../layout/oh-placeholder-widget.vue'
 
 export default {
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
   components: {
     'grid-item': defineAsyncComponent(() => import('grid-layout-plus').then((mod) => mod.GridItem)),
     OhPlaceholderWidget
+  },
+  setup (props) {
+    const { config, childContext, visible, defaultSlots } = useWidgetContext(props.context)
+    return { config, childContext, visible, defaultSlots }
   },
   data () {
     return {

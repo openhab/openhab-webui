@@ -3,18 +3,18 @@
     <f7-row>
       <f7-col width="100" class="cell-colorpicker display-flex flex-direction-column justify-content-center">
         <slot name="beforeColorpicker">
-          <div v-if="context.component.slots" class="margin-top display-flex flex-direction-column justify-content-center">
+          <div v-if="'beforeColorpicker' in slots" class="margin-top display-flex flex-direction-column justify-content-center">
             <generic-widget-component
-              v-for="(slotComponent, idx) in context.component.slots.beforeColorpicker"
+              v-for="(slotComponent, idx) in slots.beforeColorpicker"
               :context="childContext(slotComponent)"
               :key="'beforeColorpicker-' + idx" />
           </div>
         </slot>
         <oh-colorpicker :context="colorpickerContext" />
         <slot name="afterColorpicker">
-          <div v-if="context.component.slots" class="margin-top display-flex flex-direction-column justify-content-center">
+          <div v-if="'afterColorpicker' in slots" class="margin-top display-flex flex-direction-column justify-content-center">
             <generic-widget-component
-              v-for="(slotComponent, idx) in context.component.slots.afterColorpicker"
+              v-for="(slotComponent, idx) in slots.afterColorpicker"
               :context="childContext(slotComponent)"
               :key="'afterColorpicker-' + idx" />
           </div>
@@ -25,18 +25,24 @@
 </template>
 
 <script>
-import mixin from '../../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhColorpickerCellDefinition } from '@/assets/definitions/widgets/standard/cells'
 import OhCell from './oh-cell.vue'
 import OhColorpicker from '../../system/oh-colorpicker.vue'
 
 export default {
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
   components: {
     OhCell,
     OhColorpicker
   },
   widget: OhColorpickerCellDefinition,
+  setup (props) {
+    const { config, childContext, slots } = useWidgetContext(props.context)
+    return { config, childContext, slots }
+  },
   computed: {
     colorpickerContext () {
       return Object.assign({}, this.context, {

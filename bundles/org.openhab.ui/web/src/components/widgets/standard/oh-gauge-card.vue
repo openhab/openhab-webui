@@ -28,18 +28,25 @@
 </style>
 
 <script>
-import mixin from '../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { actionsMixin } from '@/components/widgets/widget-actions'
 import OhCard from '@/components/widgets/standard/oh-card.vue'
 import OhGauge from '../system/oh-gauge.vue'
 import { OhGaugeCardDefinition } from '@/assets/definitions/widgets/standard/cards'
 
 export default {
-  mixins: [mixin, actionsMixin],
+  mixins: [actionsMixin],
+  props: {
+    context: Object
+  },
   components: {
     OhCard,
     OhGauge
   },
-  widget: OhGaugeCardDefinition
+  widget: OhGaugeCardDefinition,
+  setup(props) {
+    const { config, cardChildContext, hasAction, evaluateExpression } = useWidgetContext(props.context)
+    return { config, cardChildContext, hasAction, evaluateExpression }
+  }
 }
 </script>

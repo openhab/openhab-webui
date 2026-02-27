@@ -1,25 +1,13 @@
-import mixin from '@/components/widgets/widget-mixin'
 import { f7 } from 'framework7-vue'
 
 // TODO: Restore functionality to close card with browser back.
 // This has been removed as the history manipulation caused double-back navigation to the overview page from the analyzer
 export default {
-  mixins: [mixin],
-  props: {
-    type: String,
-    element: Object
-  },
   data() {
     return {
       opened: false,
       cardId: this.title
     }
-  },
-  mounted() {
-    // window.addEventListener('popstate', this.back)
-  },
-  beforeUnmount() {
-    // window.removeEventListener('popstate', this.back)
   },
   computed: {
     title() {

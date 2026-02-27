@@ -47,8 +47,8 @@
     </f7-swiper-slide>
 
     <!-- renders slides defined in the slides slot -->
-    <template v-if="context.component.slots && context.component.slots.slides && Array.isArray(context.component.slots.slides)">
-      <f7-swiper-slide v-for="(slide, idx) in context.component.slots.slides" :key="idx">
+    <template v-if="'slides' in slots && Array.isArray(slots.slides)">
+      <f7-swiper-slide v-for="(slide, idx) in slots.slides" :key="idx">
         <generic-widget-component :context="childContext(slide)" />
       </f7-swiper-slide>
     </template>
@@ -72,26 +72,30 @@
 <script>
 import { defineAsyncComponent } from 'vue'
 
-import mixin from '@/components/widgets/widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhSwiperDefinition } from '@/assets/definitions/widgets/system'
 import OhPlaceholderWidget from '@/components/widgets/layout/oh-placeholder-widget.vue'
 
 export default {
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
   components: {
     // without the async import, we define a circular reference
     GenericWidgetComponent: defineAsyncComponent(() => import('../generic-widget-component.vue')),
     OhPlaceholderWidget
   },
   widget: OhSwiperDefinition,
+  setup (props) {
+    const { config, childContext, slots, defaultSlots } = useWidgetContext(props.context)
+    return { config, childContext, slots, defaultSlots }
+  },
   computed: {
     slides () {
-      if (!this.context.component.slots || !this.context.component.slots.default) return []
-      return this.context.component.slots.default.filter((c) => c.component !== 'oh-repeater')
+      return this.defaultSlots.filter((c) => c.component !== 'oh-repeater')
     },
     repeater () {
-      if (!this.context.component.slots || !this.context.component.slots.default) return []
-      return this.context.component.slots.default.filter((c) => c.component === 'oh-repeater')
+      return this.defaultSlots.filter((c) => c.component === 'oh-repeater')
     },
     mergedConfig () {
       const config = Object.assign({}, this.config)

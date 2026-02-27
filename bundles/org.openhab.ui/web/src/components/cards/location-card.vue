@@ -4,11 +4,9 @@
       <div v-if="!subtitle && parentLocation" class="subtitle">
         <small>{{ parentLocation }}</small>
       </div>
-      <div
-        v-if="context && context.component.slots && context.component.slots.glance"
-        class="display-flex flex-direction-column align-items-flex-start">
+      <div v-if="'glance' in slots" class="display-flex flex-direction-column align-items-flex-start">
         <generic-widget-component
-          v-for="(slotComponent, idx) in context.component.slots.glance"
+          v-for="(slotComponent, idx) in slots.glance"
           :context="childContext(slotComponent)"
           :key="'glance-' + idx" />
       </div>
@@ -83,7 +81,7 @@
 </style>
 
 <script>
-import mixin from '@/components/widgets/widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import itemDefaultListComponent, { equipmentListComponent } from '@/components/widgets/standard/list/default-list-item'
 import CardMixin from './card-mixin'
 import ModelCard from './model-card.vue'
@@ -93,19 +91,26 @@ import MeasurementBadge from './glance/location/measurement-badge.vue'
 import { useStatesStore } from '@/js/stores/useStatesStore'
 
 export default {
-  mixins: [mixin, CardMixin],
+  mixins: [CardMixin],
   props: {
+    context: Object,
     parentLocation: String,
-    tabContext: Object
+    tabContext: Object,
+    element: Object
   },
   components: {
     ModelCard,
     StatusBadge,
     MeasurementBadge
   },
+  setup (props) {
+    const { config, childContext, slots } = useWidgetContext(props.context)
+    return { config, childContext, slots }
+  },
   data () {
     return {
-      activeTab: (this.element.equipment.length === 0 && this.element.properties.length > 0) ? 'properties' : 'equipment'
+      activeTab: (this.element.equipment.length === 0 && this.element.properties.length > 0) ? 'properties' : 'equipment',
+      type: 'location'
     }
   },
   computed: {

@@ -4,7 +4,7 @@
 
 <script>
 import { useSemanticsStore } from '@/js/stores/useSemanticsStore'
-import mixin from '../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhPropertyCardParameters } from '@/assets/definitions/widgets/home'
 import PropertyCard from '@/components/cards/property-card.vue'
 
@@ -12,7 +12,13 @@ import { useModelStore } from '@/js/stores/useModelStore'
 
 export default {
   components: { PropertyCard },
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
+  setup (props) {
+    const { config } = useWidgetContext(props.context)
+    return { config }
+  },
   computed: {
     element () {
       return useModelStore().getSemanticModelElement(this.config.item, 'property') || {

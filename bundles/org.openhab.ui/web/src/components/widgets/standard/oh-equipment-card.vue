@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import mixin from '../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhEquipmentCardParameters } from '@/assets/definitions/widgets/home'
 import EquipmentCard from '@/components/cards/equipment-card.vue'
 
@@ -12,7 +12,13 @@ import { useModelStore } from '@/js/stores/useModelStore'
 
 export default {
   components: { EquipmentCard },
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
+  setup(props) {
+    const { config } = useWidgetContext(props.context)
+    return { config }
+  },
   computed: {
     element () {
       return useModelStore().getSemanticModelElement(this.config.item, 'equipment') || {

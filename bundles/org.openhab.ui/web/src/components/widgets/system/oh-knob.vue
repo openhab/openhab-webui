@@ -13,17 +13,25 @@
 <script>
 import { defineAsyncComponent } from 'vue'
 
-import mixin from '../widget-mixin'
 import slideMixin from './slide-mixin'
 import { OhKnobDefinition } from '@/assets/definitions/widgets/system'
 
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
+
 export default {
-  mixins: [mixin, slideMixin],
+  mixins: [slideMixin],
   components: {
     // See https://roundsliderui.com/document.html for docs
     RoundSlider: defineAsyncComponent(() => import(/* webpackChunkName: "vue-round-slider" */ 'vue-three-round-slider'))
   },
+  props: {
+    context: Object
+  },
   widget: OhKnobDefinition,
+  setup (props) {
+    const { config } = useWidgetContext(props.context)
+    return { config }
+  },
   data () {
     return {
       knobValue: null

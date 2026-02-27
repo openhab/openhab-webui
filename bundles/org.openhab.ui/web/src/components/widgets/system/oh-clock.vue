@@ -4,16 +4,21 @@
 
 <script>
 import dayjs from 'dayjs'
-import mixin from '../widget-mixin'
 import { actionsMixin } from '../widget-actions'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhClockDefinition } from '@/assets/definitions/widgets/system'
 
 export default {
-  mixins: [mixin, actionsMixin],
+  mixins: [actionsMixin],
   props: {
+    context: Object,
     format: String
   },
   widget: OhClockDefinition,
+  setup (props) {
+    const { config, evaluateExpression } = useWidgetContext(props.context)
+    return { config, evaluateExpression }
+  },
   data () {
     return {
       date: ''
