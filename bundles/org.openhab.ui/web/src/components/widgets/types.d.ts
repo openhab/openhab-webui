@@ -1,5 +1,5 @@
 import type { TrackedItems } from '@/js/stores/useStatesStore'
-import { DefineComponent } from "vue"
+import { DefineComponent } from 'vue'
 import * as api from '@/api'
 import type { WidgetDefinition } from '@/assets/definitions/widgets'
 

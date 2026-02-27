@@ -1,4 +1,10 @@
-import { pickedCompletion, insertCompletionText, type CompletionContext, type Completion, type CompletionResult } from '@codemirror/autocomplete'
+import {
+  pickedCompletion,
+  insertCompletionText,
+  type CompletionContext,
+  type Completion,
+  type CompletionResult
+} from '@codemirror/autocomplete'
 import type { Line } from '@codemirror/state'
 import type { EditorView } from '@codemirror/view'
 
@@ -93,11 +99,11 @@ export function hintBooleanValue(context: CompletionContext, line: Line, colonPo
   }
 }
 
-let itemsCache : (api.EnrichedItem | api.EnrichedGroupItem)[] | null = null
+let itemsCache: (api.EnrichedItem | api.EnrichedGroupItem)[] | null = null
 
-async function getItems() : Promise<(api.EnrichedItem | api.EnrichedGroupItem)[]> {
+async function getItems(): Promise<(api.EnrichedItem | api.EnrichedGroupItem)[]> {
   if (itemsCache) return itemsCache
-  
+
   const result = await api.getItems({ staticDataOnly: true })
   itemsCache = result || []
   return itemsCache
@@ -117,9 +123,18 @@ async function getItems() : Promise<(api.EnrichedItem | api.EnrichedGroupItem)[]
  * @param {string} [options.prefix=''] - Prefix to add before the item name when inserting.
  * @param {string} [options.suffix=''] - Suffix to add after the item name when inserting.
  * @param {boolean} [options.groupsOnly=false] - If true, only include Group items in the completion list.
- * @returns {Promise<CompletionResult>} Promise that resolves to a CompletionResult.
+ * @returns {Promise<CompletionResult | null>} Promise that resolves to a CompletionResult.
  */
-export function hintItems(context: CompletionContext, { replaceAfterColon = false, indent = null, prefix = '', suffix = '', groupsOnly = false }: { replaceAfterColon?: boolean; indent?: number | null; prefix?: string; suffix?: string; groupsOnly?: boolean } = {}): Promise<CompletionResult> | CompletionResult {
+export function hintItems(
+  context: CompletionContext,
+  {
+    replaceAfterColon = false,
+    indent = null,
+    prefix = '',
+    suffix = '',
+    groupsOnly = false
+  }: { replaceAfterColon?: boolean; indent?: number | null; prefix?: string; suffix?: string; groupsOnly?: boolean } = {}
+): CompletionResult | Promise<CompletionResult | null> {
   const apply = (view: EditorView, completion: Completion, _from: number, _to: number) => {
     let from, to
     const currentLine = view.state.doc.lineAt(context.pos)
@@ -182,7 +197,11 @@ export function hintItems(context: CompletionContext, { replaceAfterColon = fals
  * @param {number} indent - Number of spaces to prepend so the inserted parameter lines match the target indent.
  * @returns {CompletionResult} A CompletionResult with `from`, `validFor` and `options`.
  */
-export function hintParameters(context: CompletionContext, parameters: Array<api.ConfigDescriptionParameter>, indent: number): CompletionResult {
+export function hintParameters(
+  context: CompletionContext,
+  parameters: Array<api.ConfigDescriptionParameter>,
+  indent: number
+): CompletionResult {
   const apply = (view: EditorView, completion: Completion, _from: number, _to: number) => {
     const line = view.state.doc.lineAt(context.pos)
     const { from, to } = line
@@ -216,7 +235,11 @@ export function hintParameters(context: CompletionContext, parameters: Array<api
  * @param {number} colonPos - Zero-based index of the colon character on the line; insertion starts after `colonPos + 2`.
  * @returns {CompletionResult} CompletionResult.
  */
-export function hintParameterOptions(context: CompletionContext, parameter: api.ConfigDescriptionParameter, colonPos: number): CompletionResult {
+export function hintParameterOptions(
+  context: CompletionContext,
+  parameter: api.ConfigDescriptionParameter,
+  colonPos: number
+): CompletionResult {
   const apply = (view: EditorView, completion: Completion, _from: number, _to: number) => {
     const line = view.state.doc.lineAt(context.pos)
     const from = line.from + colonPos + 2
@@ -229,8 +252,8 @@ export function hintParameterOptions(context: CompletionContext, parameter: api.
   return {
     from: completionStart(context, ParameterOptions),
     validFor: ParameterOptions,
-    options: parameter.options!
-      .map((o) => {
+    options: parameter
+      .options!.map((o) => {
         return {
           label: o.value,
           info: o.label || o.value,
@@ -252,7 +275,12 @@ export function hintParameterOptions(context: CompletionContext, parameter: api.
  * @param {number} colonPos The position of the colon
  * @returns {CompletionResult}
  */
-export function hintParameterValues(context: CompletionContext, parameters: Array<api.ConfigDescriptionParameter>, line: Line, colonPos: number): CompletionResult | Promise<CompletionResult> | null {
+export function hintParameterValues(
+  context: CompletionContext,
+  parameters: Array<api.ConfigDescriptionParameter>,
+  line: Line,
+  colonPos: number
+): CompletionResult | Promise<CompletionResult | null> | null {
   const parameterName = line.text.substring(0, colonPos).trim()
   const parameter = parameters.find((p) => p.name === parameterName)
   if (parameter) {

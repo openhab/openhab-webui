@@ -6,11 +6,11 @@ import type { EditorView } from '@codemirror/view'
 
 import * as api from '@/api'
 
-let moduleTypesCache : api.ModuleType[] | null = null
+let moduleTypesCache: api.ModuleType[] | null = null
 
-async function getModuleTypes(section : string) {
+async function getModuleTypes(section: string) {
   if (moduleTypesCache) return moduleTypesCache
-  
+
   const result = await api.getModuleTypes({ type: section })
 
   if (result) {
@@ -23,16 +23,20 @@ async function getModuleTypes(section : string) {
 
 function findModuleType(context: CompletionContext, line: Line) {
   const parentLine = findParent(context, line)
+  if (!parentLine) return null
   const grandParentLine = findParent(context, parentLine)
+  if (!grandParentLine) return null
   for (let l = grandParentLine.number + 1; l <= context.state.doc.lines; l++) {
     const line = context.state.doc.line(l)
     if (line.text.match(/^ {4}type: /)) {
-      return line.text.split(':')[1].trim()
+      const [, type] = line.text.split(':')
+      return type?.trim() ?? null
     }
   }
+  return null
 }
 
-function hintConfig(context: CompletionContext, line: Line, parentLine: Line) : CompletionResult | Promise<CompletionResult> | null {
+function hintConfig(context: CompletionContext, line: Line, parentLine: Line): CompletionResult | Promise<CompletionResult | null> | null {
   const cursor = context.pos - line.from
   const moduleTypeUid = findModuleType(context, line)
   console.debug(`hinting config for module type: ${moduleTypeUid}`)
@@ -45,7 +49,7 @@ function hintConfig(context: CompletionContext, line: Line, parentLine: Line) : 
 
   const colonPos = line.text.indexOf(':')
   const afterColon = colonPos > 0 && cursor > colonPos
-  return getModuleTypes(section).then((moduleTypes) => {
+  return getModuleTypes(section).then((moduleTypes): CompletionResult | Promise<CompletionResult | null> | null => {
     const moduleType = moduleTypes.find((m) => m.uid === moduleTypeUid)
     if (!moduleType) return null
     const parameters = moduleType.configDescriptions
@@ -63,14 +67,15 @@ function getNextId(view: EditorView) {
   while (!lineIterator.next().done) {
     const line = lineIterator.value
     if (line.match(/^[ -]{4}id: /)) {
-      const id = parseInt(line.split(':')[1].replace('"', '').trim())
+      const [, rawId] = line.split(':')
+      const id = parseInt((rawId ?? '').replace('"', '').trim())
       if (id >= nextId) nextId = id + 1
     }
   }
   return nextId
 }
 
-function buildModuleStructure(view: EditorView, moduleType : api.ModuleType) {
+function buildModuleStructure(view: EditorView, moduleType: api.ModuleType) {
   const nextId = getNextId(view)
   let ret = `  - inputs: {}\n    id: "${nextId}"\n`
   if (moduleType.configDescriptions.some((p) => p.required)) {
@@ -83,24 +88,28 @@ function buildModuleStructure(view: EditorView, moduleType : api.ModuleType) {
   return ret
 }
 
-function hintSceneItems(context: CompletionContext) {
+function hintSceneItems(context: CompletionContext): CompletionResult | Promise<CompletionResult | null> | null {
   console.info('hinting in the items section (scenes)')
   return hintItems(context, { indent: 2, suffix: ': ' })
 }
 
-function hintModuleStructure(context: CompletionContext, line: Line, parentLine: Line) {
+function hintModuleStructure(
+  context: CompletionContext,
+  line: Line,
+  parentLine: Line
+): CompletionResult | Promise<CompletionResult | null> | null {
   const section = parentLine.text.replace('s:', '').trim()
   if (section === 'item') {
     if (!line.text.includes(':')) return hintSceneItems(context)
-    return // todo: hint commands?
+    return null // todo: hint commands?
   }
 
   const apply = (view: EditorView, completion: Completion, _from: number, _to: number) => {
-    const insert = buildModuleStructure(view, completion.moduleType)
+    const insert = buildModuleStructure(view, (completion as Completion & { moduleType: api.ModuleType }).moduleType)
     view.dispatch(insertCompletionText(view.state, insert, line.from, line.to))
   }
 
-  return getModuleTypes(section).then((moduleTypes) => {
+  return getModuleTypes(section).then((moduleTypes): CompletionResult => {
     return {
       from: completionStart(context),
       validFor: /\w+/,
@@ -116,7 +125,7 @@ function hintModuleStructure(context: CompletionContext, line: Line, parentLine:
   })
 }
 
-export default function hint(context: CompletionContext) : CompletionResult | Promise<CompletionResult> | null {
+export default function hint(context: CompletionContext): CompletionResult | Promise<CompletionResult | null> | null {
   const line = context.state.doc.lineAt(context.pos)
   const parentLine = findParent(context, line)
   console.debug('parent line', parentLine)
