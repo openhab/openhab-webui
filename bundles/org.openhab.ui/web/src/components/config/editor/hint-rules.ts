@@ -32,29 +32,28 @@ function findModuleType(context: CompletionContext, line: Line) {
   }
 }
 
-async function hintConfig(context: CompletionContext, line: Line, parentLine: Line) : Promise<CompletionResult | undefined> {
+function hintConfig(context: CompletionContext, line: Line, parentLine: Line) : CompletionResult | Promise<CompletionResult> | null {
   const cursor = context.pos - line.from
   const moduleTypeUid = findModuleType(context, line)
   console.debug(`hinting config for module type: ${moduleTypeUid}`)
-  if (!moduleTypeUid) return undefined
+  if (!moduleTypeUid) return null
 
   const sectionRootLine = findParentRoot(context, parentLine)
   const section = sectionRootLine.text.replace('s:', '').trim()
   console.debug(`section: ${section}`)
-  if (!section) return undefined
+  if (!section) return null
 
   const colonPos = line.text.indexOf(':')
   const afterColon = colonPos > 0 && cursor > colonPos
   return getModuleTypes(section).then((moduleTypes) => {
     const moduleType = moduleTypes.find((m) => m.uid === moduleTypeUid)
-    if (!moduleType) return undefined
+    if (!moduleType) return null
     const parameters = moduleType.configDescriptions
     if (afterColon) {
       return hintParameterValues(context, parameters, line, colonPos)
-    } else {
-      console.debug(moduleType)
-      return hintParameters(context, parameters, 6)
     }
+    console.debug(moduleType)
+    return hintParameters(context, parameters, 6)
   })
 }
 
@@ -117,16 +116,17 @@ function hintModuleStructure(context: CompletionContext, line: Line, parentLine:
   })
 }
 
-export default async function hint(context: CompletionContext) : Promise<CompletionResult | undefined> {
+export default function hint(context: CompletionContext) : CompletionResult | Promise<CompletionResult> | null {
   const line = context.state.doc.lineAt(context.pos)
   const parentLine = findParent(context, line)
   console.debug('parent line', parentLine)
 
-  if (!parentLine) return undefined
+  if (!parentLine) return null
 
   if (isConfig(parentLine)) {
     return hintConfig(context, line, parentLine)
   } else if (isRuleSection(parentLine)) {
     return hintModuleStructure(context, line, parentLine)
   }
+  return null
 }

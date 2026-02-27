@@ -1,5 +1,5 @@
 import { EditorView } from '@codemirror/view'
-import { insertCompletionText, type CompletionContext, type Completion } from '@codemirror/autocomplete'
+import { insertCompletionText, type CompletionContext, type Completion, type CompletionResult } from '@codemirror/autocomplete'
 import { findParent } from './yaml-utils'
 import { completionStart, hintItems } from './hint-utils'
 
@@ -13,19 +13,20 @@ import type { Line } from '@codemirror/state'
 
 let dimensions : string[] | null = null
 
-async function getDimensions() {
-  if (dimensions) return Promise.resolve(dimensions)
-
+async function getDimensions() : Promise<string[]> {
+  if (dimensions !== null) return dimensions
+  
   const result = await api.getUoMInformation()
-  if (result && result.uomInfo && result.uomInfo.dimensions) {
+  if (result?.uomInfo?.dimensions) {
     dimensions = result.uomInfo.dimensions.map((d) => d.dimension)
-    return dimensions
+  } else {
+    dimensions = []
   }
-
-  return []
+  
+  return dimensions
 }
 
-function hintTypes(context : CompletionContext, line: Line, position: number) {
+function hintTypes(context : CompletionContext, line: Line, position: number) : CompletionResult {
   const apply = (view: EditorView, completion: Completion, _from: number, _to: number) => {
     const insert = completion.label
     const from = line.from + position
@@ -45,7 +46,7 @@ function hintTypes(context : CompletionContext, line: Line, position: number) {
   }
 }
 
-async function hintDimension(context : CompletionContext, line: Line, position: number) {
+async function hintDimension(context : CompletionContext, line: Line, position: number) : Promise<CompletionResult> {
   const apply = (view: EditorView, completion: Completion, _from: number, _to: number) => {
     const insert = completion.label
     const from = line.from + position
@@ -53,18 +54,17 @@ async function hintDimension(context : CompletionContext, line: Line, position: 
     view.dispatch(insertCompletionText(view.state, insert, from, to))
   }
 
-  return getDimensions().then((dimensions) => {
-    return {
-      from: completionStart(context),
-      validFor: /\w+/,
-      options: dimensions.map((d) => {
-        return {
-          label: d,
-          apply
-        }
-      })
-    }
-  })
+  const dimensions = await getDimensions() 
+  return {
+    from: completionStart(context),
+    validFor: /\w+/,
+    options: dimensions.map((d) => {
+      return {
+        label: d,
+        apply
+      }
+    })
+  } satisfies CompletionResult
 }
 
 function hintIcon(context : CompletionContext, line: Line) {
@@ -134,9 +134,9 @@ function hintMetadata(context : CompletionContext, line: Line) {
   }
 }
 
-export default function hint(context : CompletionContext) {
+export default function hint(context : CompletionContext) : CompletionResult | Promise<CompletionResult> | null {
   const line = context.state.doc.lineAt(context.pos)
-  if (!line) return
+  if (!line) return null
   const parentLine = findParent(context, line)
 
   if (line.text.match(/^ {4}type: /)) {
@@ -156,4 +156,5 @@ export default function hint(context : CompletionContext) {
   } else if (parentLine && parentLine.text.match(/^ {4}metadata:/)) {
     return hintMetadata(context, line)
   }
+  return null
 }
