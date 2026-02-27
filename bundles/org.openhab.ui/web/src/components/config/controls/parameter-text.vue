@@ -33,17 +33,19 @@
   <ul v-else>
     <f7-list-input
       ref="input"
+      :key="'softInvalid=' + softInvalid + '&disableValidation=' + disableValidation"
       :floating-label="theme.md"
       :label="configDescription.label"
       :name="configDescription.name"
       :value="value"
       :autocomplete="options ? 'off' : ''"
       :placeholder="configDescription.placeholder"
-      :pattern="pattern"
-      :error-message="errorMessage"
+      :pattern="softInvalid ? null : pattern"
+      :error-message="softInvalid || disableValidation ? null : errorMessage"
+      :error-message-force="softInvalid && !disableValidation"
       :required="configDescription.required"
-      :validate="!(pattern && pattern.length > 500)"
-      :validate-on-blur="pattern && pattern.length > 500"
+      :validate="!disableValidation && !(pattern && pattern.length > 500)"
+      :validate-on-blur="!disableValidation && pattern && pattern.length > 500"
       :clear-button="!configDescription.required && configDescription.context !== 'password'"
       @input="updateValue"
       :readonly="readOnly || configDescription.readOnly"
@@ -55,13 +57,15 @@
           </f7-link>
         </div>
       </template>
+      <template v-if="softInvalid && !disableValidation" #error-message>
+        <div>
+          <f7-icon f7="exclamationmark_triangle_fill" size="16" color="red"></f7-icon>
+          <span class="text-color-red">Value does not match expected network address format.</span>
+          <span @click="disableValidation = true" class="link" style="margin-left: 6px;">Use anyway</span>
+        </div>
+      </template>
     </f7-list-input>
   </ul>
-  <div v-if="configDescription.context === 'network-address' && softInvalid" class="input-error-message padding-left" style="display: flex; align-items: center; gap: 6px; margin-top: 4px;">
-    <f7-icon f7="exclamationmark_triangle_fill" size="16" color="red"></f7-icon>
-    <span class="text-color-red">Value does not match expected network address format.</span>
-    <span @click="softInvalid = false" class="link" style="margin-left: 6px;">Use anyway</span>
-  </div>
 </template>
 
 <script>
@@ -147,12 +151,12 @@ export default {
       values: [], // Used for multiple values parameters only
       suspendEvents: false,
       softInvalid: false,
-      compiledPattern: null,
-      lastPattern: null
+      disableValidation: false,
     }
   },
   created () {
     this.setValues()
+    this.validateSoft(this.value)
   },
   mounted () {
     if (!this.multiple && this.options) {
@@ -174,25 +178,16 @@ export default {
     this.destroyAutoCompleteOptions()
   },
   methods: {
-    getCompiledPattern() {
-      if (this.pattern !== this.lastPattern) {
-        try {
-          this.compiledPattern = new RegExp(`^${this.pattern}$`);
-        } catch (e) {
-          this.compiledPattern = null;
-        }
-        this.lastPattern = this.pattern;
-      }
-      return this.compiledPattern;
-    },
     updateValue (event) {
       if (this.multiple) return
       const val = event.target.value
-      if (this.configDescription.context === 'network-address') {
-        const compiledPattern = this.getCompiledPattern();
-        this.softInvalid = re && val.length > 0 && !compiledPattern.test(val);
-      }
+      this.validateSoft(val)
       this.$emit('input', event.target.value)
+    },
+    validateSoft (value) {
+      if (this.configDescription.context === 'network-address') {
+        this.softInvalid = value.length > 0 && !Pattern.NetworkAddressCompiled.test(value);
+      }
     },
     updateValueIdx (idx, event) {
       if (!this.multiple || idx < 0 || !this.values || idx >= this.values.length) return
