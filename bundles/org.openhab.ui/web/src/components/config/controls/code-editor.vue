@@ -94,7 +94,7 @@ import Editor from '@/components/config/controls/script-editor.vue'
 
 import MovablePopup from '@/pages/settings/movable-popup-mixin'
 import copyToClipboard from '@/js/clipboard'
-import { DefaultMediaTypes, MediaType, SupportedMediaTypes } from '@/assets/definitions/media-types.ts'
+import { MediaType, SupportedMediaTypes } from '@/assets/definitions/media-types.ts'
 
 export default {
   mixins: [MovablePopup],
@@ -130,7 +130,7 @@ export default {
       return this.mediaTypes[this.uiOptionsStore.codeEditorType]
     },
     mediaTypes () {
-      return SupportedMediaTypes[this.objectType] || DefaultMediaTypes
+      return SupportedMediaTypes[this.objectType]
     },
     ...mapStores(useUIOptionsStore)
   },
@@ -151,7 +151,8 @@ export default {
     generateCode (codeType, onSuccessCallback) {
       codeType ||= this.uiOptionsStore.codeEditorType
       const sourceMediaType = MediaType.JSON
-      const targetMediaType = this.mediaTypes[codeType]
+      let targetMediaType = this.mediaTypes[codeType]
+      targetMediaType = targetMediaType.substring(0, targetMediaType.lastIndexOf('+')) // remove the +thing or +item suffix
       const payload = {}
       payload[this.objectType] = [this.object]
       this.$oh.api.postPlain('/rest/file-format/create', JSON.stringify(payload), null, sourceMediaType, { accept: targetMediaType })
@@ -179,7 +180,8 @@ export default {
      * @param {function} onFailureCallback - Optional. A callback function to call when parsing fails or no object is found
      */
     parseCode (onSuccessCallback, onFailureCallback) {
-      const sourceMediaType = this.mediaTypes[this.uiOptionsStore.codeEditorType]
+      let sourceMediaType = this.mediaTypes[this.uiOptionsStore.codeEditorType]
+      sourceMediaType = sourceMediaType.substring(0, sourceMediaType.lastIndexOf('+')) // remove the +thing or +item suffix to get the generic media type for the converter endpoint
       const targetMediaType = MediaType.JSON
       this.$oh.api.request({
         method: 'POST',

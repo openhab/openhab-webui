@@ -1,5 +1,5 @@
 import { StreamLanguage, LanguageSupport, getIndentUnit, codeFolding } from '@codemirror/language'
-import { autocompletion, closeBrackets } from '@codemirror/autocomplete'
+import { autocompletion, closeBrackets, CompletionContext, type CompletionResult, type CompletionSource } from '@codemirror/autocomplete'
 import type { Extension } from '@codemirror/state'
 
 // for linting
@@ -10,11 +10,8 @@ import globals from 'globals'
 
 // OH-specific CompletionSources
 import javascriptAutocompletions from '../editor/hint-javascript'
-// @ts-expect-error - these modules don't have types, but that's fine since we only use them as CompletionSources
 import componentsHint from '../editor/hint-components'
-// @ts-expect-error - these modules don't have types, but that's fine since we only use them as CompletionSources
 import rulesHint from '../editor/hint-rules'
-// @ts-expect-error - these modules don't have types, but that's fine since we only use them as CompletionSources
 import thingsHint from '../editor/hint-things'
 import itemsHint from '../editor/hint-items'
 
@@ -29,6 +26,7 @@ import { yaml } from '@codemirror/lang-yaml'
 import { jinja2 } from '@codemirror/legacy-modes/mode/jinja2'
 import { properties } from '@codemirror/legacy-modes/mode/properties'
 import { shell } from '@codemirror/legacy-modes/mode/shell'
+import { MediaType } from '@/assets/definitions/media-types'
 
 /**
  * Provides the CodeMirror language for the given mode.
@@ -47,15 +45,15 @@ function languageExtension(mode: string): StreamLanguage<unknown> | LanguageSupp
       return yaml()
 
     case mode === 'dsl':
-    case mode === 'application/vnd.openhab.dsl.rule':
+    case mode === MediaType.RULE_DSL as string:
       return java()
-
-    case mode === 'text/vnd.openhab.dsl.thing':
-    case mode === 'text/vnd.openhab.dsl.item':
+    
+    case mode === MediaType.THING_DSL as string:
+    case mode === MediaType.ITEM_DSL as string:
       return javascript()
 
     case mode === 'js':
-    case mode.startsWith('application/javascript'):
+    case mode.startsWith(MediaType.JAVASCRIPT as string):
       return javascript()
 
     case mode === 'py':
@@ -99,25 +97,25 @@ function autocompletionExtension(mode: string): Extension | null {
   const activateOnCompletion = () => true
 
   switch (true) {
-    case mode.startsWith('application/vnd.openhab.uicomponent'):
+    case mode.startsWith(MediaType.UI_COMPONENT as string):
       return autocompletion({ activateOnCompletion, override: [componentsHint] })
 
-    case mode === 'application/vnd.openhab.rule+yaml':
+    case mode === MediaType.RULE_DSL as string:
       return autocompletion({ activateOnCompletion, override: [rulesHint] })
 
-    case mode === 'application/vnd.openhab.thing+yaml':
+    case mode === MediaType.THING_YAML as string:
       return autocompletion({ activateOnCompletion, override: [thingsHint] })
 
-    case mode === 'application/vnd.openhab.item+yaml':
+    case mode === MediaType.ITEM_YAML as string:
       return autocompletion({ activateOnCompletion, override: [itemsHint] })
 
     case mode === 'js':
-    case mode.startsWith('application/javascript'):
+    case mode.startsWith(MediaType.JAVASCRIPT as string):
       return javascriptAutocompletions(mode)
 
-    // CodeMirror supports autocompletion for python by default
+  // CodeMirror supports autocompletion for python by default
     default:
-      return autocompletion()
+  return autocompletion()
   }
 }
 

@@ -3,6 +3,7 @@ export interface Namespace {
     label: string
 }
 
-export interface Namespaces {
-    [key: string]: Namespace
-}
+declare const namespaces: Namespace[]
+export default namespaces
+
+

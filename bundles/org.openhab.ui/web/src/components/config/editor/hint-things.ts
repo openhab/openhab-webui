@@ -6,7 +6,7 @@ import type { Line } from '@codemirror/state'
 
 import type { ExtendedEditorView } from './types'
 
-function hintThingConfig(context: CompletionContext, line: Line, colonPos: number, afterColon: boolean) {
+function hintThingConfig(context: CompletionContext, line: Line, colonPos: number, afterColon: boolean) : CompletionResult | Promise<CompletionResult> | null {
   const parameters = (context.view as ExtendedEditorView)?.hintContext?.thingType?.configParameters
 
   if (!parameters) return null
@@ -18,11 +18,17 @@ function hintThingConfig(context: CompletionContext, line: Line, colonPos: numbe
   }
 }
 
+//TODO
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 function findChannelTypeUID(context: CompletionContext, configLine: Line, configIndent: number) : string | null {
   const channelUidLine = findParent(context, configLine)
   if (!channelUidLine) return null
 
   const section = context.state.doc.slice(channelUidLine.to, configLine.from)
+  //TODO text is not a member of type Text
+  /* @ts-expect-error-next-line */
   const typeLine = section.text.find((line) => line.match(/^ {8}type: /))
   if (!typeLine) return null
 
@@ -33,8 +39,11 @@ function findChannelTypeUID(context: CompletionContext, configLine: Line, config
   const bindingId = (context.view as ExtendedEditorView)?.hintContext?.thingType?.UID.split(':')[0]
   return bindingId + ':' + type
 }
+/* eslint-enable @typescript-eslint/no-unsafe-assignment */
+/* eslint-enable @typescript-eslint/no-unsafe-member-access */
+/* eslint-enable @typescript-eslint/no-unsafe-return */
 
-function hintChannelConfig(context: CompletionContext, line: Line, configLine: Line, configIndent: number, colonPos: number, afterColon: boolean) {
+function hintChannelConfig(context: CompletionContext, line: Line, configLine: Line, configIndent: number, colonPos: number, afterColon: boolean) : CompletionResult | Promise<CompletionResult> | null {
   const channelTypeUID = findChannelTypeUID(context, configLine, configIndent)
   const channelType = (context.view as ExtendedEditorView)?.hintContext?.channelTypes.find((m) => m.UID === channelTypeUID)
   if (!channelType) return null
@@ -47,6 +56,7 @@ function hintChannelConfig(context: CompletionContext, line: Line, configLine: L
 
 function isChannelsSection(line: Line) {
   if (!line) return false
+  console.log('isChannelsSection', line.text)
   return line.text.match(/^ {4}channels:/)
 }
 
@@ -141,7 +151,7 @@ function hintChannelType(context: CompletionContext, line: Line, parentLine: Lin
   }
 }
 
-export default async function hint(context: CompletionContext) {
+export default function hint(context: CompletionContext) : CompletionResult | Promise<CompletionResult> | null {
   const line = context.state.doc.lineAt(context.pos)
   const parentLine = findParent(context, line)
 
@@ -164,4 +174,5 @@ export default async function hint(context: CompletionContext) {
   } else if (isChannelType(context, line, parentLine)) {
     return hintChannelType(context, line, parentLine)
   }
+  return null
 }
