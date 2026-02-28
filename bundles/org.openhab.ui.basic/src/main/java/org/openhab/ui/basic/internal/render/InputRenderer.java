@@ -13,6 +13,7 @@
 package org.openhab.ui.basic.internal.render;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,8 +29,8 @@ import org.openhab.core.library.types.DateTimeType;
 import org.openhab.core.library.types.DecimalType;
 import org.openhab.core.library.types.PercentType;
 import org.openhab.core.library.types.StringType;
-import org.openhab.core.model.sitemap.sitemap.Input;
-import org.openhab.core.model.sitemap.sitemap.Widget;
+import org.openhab.core.sitemap.Input;
+import org.openhab.core.sitemap.Widget;
 import org.openhab.core.types.State;
 import org.openhab.core.types.UnDefType;
 import org.openhab.core.ui.items.ItemUIRegistry;
@@ -47,6 +48,7 @@ import org.slf4j.LoggerFactory;
  * can produce HTML code for Input widgets.
  *
  * @author Mark Herwege - Initial contribution
+ * @author Mark Herwege - Implement sitemap registry
  */
 @Component(service = WidgetRenderer.class)
 @NonNullByDefault
@@ -78,8 +80,9 @@ public class InputRenderer extends AbstractWidgetRenderer {
         snippet = preprocessSnippet(snippet, w);
 
         Item item = null;
+        String itemName = Objects.requireNonNull(w.getItem()); // Checked at creation there is an item
         try {
-            item = itemUIRegistry.getItem(w.getItem());
+            item = itemUIRegistry.getItem(itemName);
         } catch (ItemNotFoundException e) {
             logger.debug("Failed to retrieve item during widget rendering: {}", e.getMessage());
             return ECollections.emptyEList();

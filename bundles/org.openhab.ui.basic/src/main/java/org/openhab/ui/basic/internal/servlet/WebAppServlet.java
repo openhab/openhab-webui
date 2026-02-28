@@ -13,9 +13,8 @@
 package org.openhab.ui.basic.internal.servlet;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
@@ -24,14 +23,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.core.config.core.ConfigurableService;
 import org.openhab.core.io.rest.sitemap.SitemapSubscriptionService;
-import org.openhab.core.model.sitemap.SitemapProvider;
-import org.openhab.core.model.sitemap.sitemap.LinkableWidget;
-import org.openhab.core.model.sitemap.sitemap.Sitemap;
-import org.openhab.core.model.sitemap.sitemap.Widget;
+import org.openhab.core.sitemap.LinkableWidget;
+import org.openhab.core.sitemap.Sitemap;
+import org.openhab.core.sitemap.Widget;
+import org.openhab.core.sitemap.registry.SitemapRegistry;
 import org.openhab.ui.basic.internal.WebAppConfig;
 import org.openhab.ui.basic.internal.render.PageRenderer;
 import org.openhab.ui.basic.render.RenderException;
@@ -42,8 +40,6 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
 import org.osgi.service.http.whiteboard.propertytypes.HttpWhiteboardServletAsyncSupported;
 import org.osgi.service.http.whiteboard.propertytypes.HttpWhiteboardServletName;
 import org.osgi.service.http.whiteboard.propertytypes.HttpWhiteboardServletPattern;
@@ -82,22 +78,14 @@ public class WebAppServlet extends HttpServlet {
     private final PageRenderer renderer;
     private final SitemapSubscriptionService subscriptions;
     private final WebAppConfig config = new WebAppConfig();
-    protected final Set<SitemapProvider> sitemapProviders = new CopyOnWriteArraySet<>();
+    protected final SitemapRegistry sitemapRegistry;
 
     @Activate
     public WebAppServlet(final @Reference SitemapSubscriptionService subscriptions,
-            final @Reference PageRenderer renderer) {
+            final @Reference PageRenderer renderer, final @Reference SitemapRegistry sitemapRegistry) {
         this.subscriptions = subscriptions;
         this.renderer = renderer;
-    }
-
-    @Reference(cardinality = ReferenceCardinality.AT_LEAST_ONE, policy = ReferencePolicy.DYNAMIC)
-    public void addSitemapProvider(SitemapProvider sitemapProvider) {
-        sitemapProviders.add(sitemapProvider);
-    }
-
-    public void removeSitemapProvider(SitemapProvider sitemapProvider) {
-        sitemapProviders.remove(sitemapProvider);
+        this.sitemapRegistry = sitemapRegistry;
     }
 
     @Activate
@@ -118,7 +106,7 @@ public class WebAppServlet extends HttpServlet {
 
     private void showSitemapList(ServletResponse res) throws IOException, RenderException {
         res.setContentType(CONTENT_TYPE);
-        res.getWriter().append(renderer.renderSitemapList(sitemapProviders));
+        res.getWriter().append(renderer.renderSitemapList(sitemapRegistry));
     }
 
     private void showSettings(ServletResponse res) throws IOException, RenderException {
@@ -142,14 +130,7 @@ public class WebAppServlet extends HttpServlet {
         }
 
         StringBuilder result = new StringBuilder();
-        Sitemap sitemap = null;
-
-        for (SitemapProvider sitemapProvider : sitemapProviders) {
-            sitemap = sitemapProvider.getSitemap(sitemapName);
-            if (sitemap != null) {
-                break;
-            }
-        }
+        Sitemap sitemap = sitemapRegistry.get(sitemapName);
 
         try {
             if ("/settings".equals(req.getPathInfo())) {
@@ -171,8 +152,9 @@ public class WebAppServlet extends HttpServlet {
                         logger.debug("Basic UI requested a non-existing event subscription id ({})", subscriptionId);
                     }
                 }
-                String label = sitemap.getLabel() != null ? sitemap.getLabel() : sitemapName;
-                EList<Widget> children = renderer.getItemUIRegistry().getChildren(sitemap);
+                String label = sitemap.getLabel();
+                label = label != null ? label : sitemapName;
+                List<Widget> children = renderer.getItemUIRegistry().getChildren(sitemap);
                 result.append(renderer.processPage(sitemapName, sitemapName, label, children, async));
             } else if (!"Colorpicker".equals(widgetId) && !"Colortemperaturepicker".equals(widgetId)) {
                 // we are on some subpage, so we have to render the children of the widget that has been selected
@@ -192,7 +174,7 @@ public class WebAppServlet extends HttpServlet {
                     if (!(w instanceof LinkableWidget)) {
                         throw new RenderException("Widget '" + w + "' can not have any content");
                     }
-                    EList<Widget> children = renderer.getItemUIRegistry().getChildren((LinkableWidget) w);
+                    List<Widget> children = renderer.getItemUIRegistry().getChildren((LinkableWidget) w);
                     result.append(renderer.processPage(renderer.getItemUIRegistry().getWidgetId(w), sitemapName, label,
                             children, async));
                 }
