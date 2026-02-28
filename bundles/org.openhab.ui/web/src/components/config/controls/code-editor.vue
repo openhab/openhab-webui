@@ -152,7 +152,7 @@ export default {
       codeType ||= this.uiOptionsStore.codeEditorType
       const sourceMediaType = MediaType.JSON
       let targetMediaType = this.mediaTypes[codeType]
-      targetMediaType = targetMediaType.substring(0, targetMediaType.lastIndexOf('+')) // remove the +thing or +item suffix
+      targetMediaType = targetMediaType.split('+')[0] // remove the +thing or +item suffix, if present
       const payload = {}
       payload[this.objectType] = [this.object]
       this.$oh.api.postPlain('/rest/file-format/create', JSON.stringify(payload), null, sourceMediaType, { accept: targetMediaType })
