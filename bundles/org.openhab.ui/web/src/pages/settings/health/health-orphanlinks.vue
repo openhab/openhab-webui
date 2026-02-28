@@ -65,60 +65,58 @@
   </f7-page>
 </template>
 
-<script>
-export default {
-  props: {
-    f7router: Object
-  },
-  data () {
-    return {
-      ready: false,
-      loading: false,
-      orphanLinks: [],
+<script setup lang="ts">
+import type { Router } from 'framework7'
+import * as api from '@/api'
+import { computed, ref } from 'vue'
 
-      orphanLinkProblemExplanation: {
-        THING_CHANNEL_MISSING: 'The item is linked to a thing channel that does not exist',
-        ITEM_MISSING: 'The item does not exist',
-        ITEM_AND_THING_CHANNEL_MISSING: 'Neither the item nor thing channel exists'
-      }
-    }
-  },
-  computed: {
-    purgeableLinksCount () {
-      return this.orphanLinks.filter((l) => l.itemChannelLink.editable).length
-    }
-  },
-  methods: {
-    onPageAfterIn () {
-      this.load()
-    },
-    load () {
-      this.loading = true
-      this.$oh.api.get('/rest/links/orphans').then((data) => {
-        this.orphanLinks = data
-        this.loading = false
-        this.ready = true
-      })
-    },
-    getLinkForProblem (orphanLink) {
-      if (orphanLink.problem === 'THING_CHANNEL_MISSING') {
-        return '/settings/items/' + orphanLink.itemChannelLink.itemName
-      }
-      return null
-    },
-    purgeAllManaged () {
-      this.loading = true
-      this.$oh.api.post('/rest/links/purge').catch((e) => {
-        // ignore parseerror due to empty response
-        if (e === 'parseerror') return
-        console.error(e)
-      }).finally(() => {
-        this.load()
-      })
-    },
-    plural (count) {
-      return count === 1 ? '' : 's'
-    }
+defineProps<{
+  f7router: Router.Router
+}>()
+
+const ready = ref(false)
+const loading = ref(false)
+const orphanLinks = ref<api.BrokenItemChannelLink[]>([])
+
+const orphanLinkProblemExplanation: Record<string, string> = {
+  THING_CHANNEL_MISSING: 'The item is linked to a thing channel that does not exist',
+  ITEM_MISSING: 'The item does not exist',
+  ITEM_AND_THING_CHANNEL_MISSING: 'Neither the item nor thing channel exists'
+}
+
+const purgeableLinksCount = computed(() => orphanLinks.value.filter((l) => l.itemChannelLink.editable).length)
+
+const onPageAfterIn = () => {
+  load()
+}
+
+const load = async () => {
+  if (loading.value) return
+  loading.value = true
+  try {
+    const data = await api.getOrphanLinks()
+    orphanLinks.value = data!
+    ready.value = true
+  } finally {
+    loading.value = false
   }
+}
+
+const getLinkForProblem = (orphanLink: api.BrokenItemChannelLink) => {
+  if (orphanLink.problem === 'THING_CHANNEL_MISSING') {
+    return '/settings/items/' + orphanLink.itemChannelLink.itemName
+  }
+  return null
+}
+
+const purgeAllManaged = async () => {
+  loading.value = true
+  await api.purgeDatabase1()
+  loading.value = false
+  await load()
+}
+
+const plural = (count: number): string => {
+  return count === 1 ? '' : 's'
 }
 </script>

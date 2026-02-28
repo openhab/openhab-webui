@@ -1,9 +1,7 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn">
-    <f7-navbar title="Persistence Configuration Issues" back-link="Health Checks" back-link-url="/settings/health/" back-link-force>
-      <f7-nav-right>
-        <developer-dock-icon />
-      </f7-nav-right>
+    <f7-navbar>
+      <oh-nav-content title="Persistence Configuration Issues" back-link="Health Checks" back-link-url="/settings/health/" :f7router />
     </f7-navbar>
 
     <f7-block class="block-narrow">
@@ -60,52 +58,62 @@
   </f7-page>
 </template>
 
-<script>
-export default {
-  data () {
-    return {
-      ready: false,
-      loading: false,
-      persistenceProblems: [],
+<script setup lang="ts">
+import type { Router } from 'framework7'
+import * as api from '@/api'
+import { ref } from 'vue'
 
-      persistenceProblemExplanation: {
-        PERSISTENCE_NO_DEFAULT: 'No default persistence service defined',
-        PERSISTENCE_SERVICE_NO_CONFIG: 'No configuration for persistence service',
-        PERSISTENCE_SERVICE_NO_ITEMS: 'No persistence items defined for persistence service',
-        PERSISTENCE_SERVICE_ITEMS_NO_STRATEGY: 'No persistence strategy set for persistence items',
-        PERSISTENCE_SERVICE_ITEMS_NO_STORE_STRATEGY: 'Persistence strategy for persistence items only has a restore strategy'
-      }
-    }
-  },
-  methods: {
-    onPageAfterIn () {
-      this.load()
-    },
-    load () {
-      this.loading = true
-      this.$oh.api.get('/rest/persistence/health').then((data) => {
-        this.persistenceProblems = data
-        this.loading = false
-        this.ready = true
-      })
-    },
-    problemKey (persistenceProblem) {
-      let key = persistenceProblem.reason
-      if (persistenceProblem.serviceId) key = key + '_' + persistenceProblem.serviceId
-      if (persistenceProblem.items) key = key + '_' + persistenceProblem.items.join('_')
-    },
-    getLinkForProblem (persistenceProblem) {
-      if (persistenceProblem.serviceId) {
-        return '/settings/persistence/' + persistenceProblem.serviceId
-      }
-      return '/settings/persistence/'
-    },
-    explanation (reason) {
-      return this.persistenceProblemExplanation[reason] || reason
-    },
-    plural (count) {
-      return count === 1 ? '' : 's'
-    }
+defineProps<{
+  f7router: Router.Router
+}>()
+
+const ready = ref(false)
+const loading = ref(false)
+const persistenceProblems = ref<api.PersistenceServiceProblem[]>([])
+
+const persistenceProblemExplanation: Record<string, string> = {
+  PERSISTENCE_NO_DEFAULT: 'No default persistence service defined',
+  PERSISTENCE_SERVICE_NO_CONFIG: 'No configuration for persistence service',
+  PERSISTENCE_SERVICE_NO_ITEMS: 'No persistence items defined for persistence service',
+  PERSISTENCE_SERVICE_ITEMS_NO_STRATEGY: 'No persistence strategy set for persistence items',
+  PERSISTENCE_SERVICE_ITEMS_NO_STORE_STRATEGY: 'Persistence strategy for persistence items only has a restore strategy'
+}
+
+const onPageAfterIn = () => {
+  load()
+}
+
+const load = async () => {
+  if (loading.value) return
+  loading.value = true
+  try {
+    const data = await api.getPersistenceHealth()
+    persistenceProblems.value = data!
+    ready.value = true
+  } finally {
+    loading.value = false
   }
+}
+
+const problemKey = (persistenceProblem: api.PersistenceServiceProblem): string => {
+  let key = persistenceProblem.reason
+  if (persistenceProblem.serviceId) key = `${key}_${persistenceProblem.serviceId}`
+  if (persistenceProblem.items) key = `${key}_${persistenceProblem.items.join('_')}`
+  return key
+}
+
+const getLinkForProblem = (persistenceProblem: api.PersistenceServiceProblem): string => {
+  if (persistenceProblem.serviceId) {
+    return `/settings/persistence/${persistenceProblem.serviceId}`
+  }
+  return '/settings/persistence/'
+}
+
+const explanation = (reason: string): string => {
+  return persistenceProblemExplanation[reason] || reason
+}
+
+const plural = (count: number): string => {
+  return count === 1 ? '' : 's'
 }
 </script>
