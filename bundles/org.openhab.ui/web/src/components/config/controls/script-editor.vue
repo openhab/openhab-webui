@@ -146,7 +146,7 @@ const dynamicExtensions = computed((): Extension[] => {
     extensions.push(gruvboxDark)
   }
 
-  extensions.push(EditorState.readOnly.of(props.readOnly))
+  extensions.push(EditorState.readOnly.of(props.readOnly ?? false))
 
   return extensions
 })
