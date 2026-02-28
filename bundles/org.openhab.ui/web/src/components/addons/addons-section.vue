@@ -9,12 +9,12 @@
     <f7-block-footer v-if="subtitle">
       {{ subtitle }}
     </f7-block-footer>
-    <template v-if="featuredAddons?.length > 0">
+    <template v-if="featuredAddons?.length && featuredAddons?.length > 0">
       <addons-swiper
-        v-if="!$device.desktop && !$device.ipad"
+        v-if="!device.desktop && !device.ipad"
         :addons-list="featuredAddons"
         :install-action-text="installActionText"
-        :headline="'Featured'"
+        headline="Featured"
         @addon-button-click="addonButtonClick" />
       <div v-else class="addons-cards">
         <addon-card
@@ -29,7 +29,7 @@
     </template>
     <template v-if="suggested">
       <addons-swiper
-        v-if="!$device.desktop && !$device.ipad"
+        v-if="!device.desktop && !device.ipad"
         :addons-list="addonsList"
         :install-action-text="installActionText"
         :headline="'Suggested'"
@@ -47,7 +47,7 @@
     </template>
     <template v-else-if="showAsCards">
       <addons-swiper
-        v-if="!$device.desktop && !$device.ipad && (this.addons.length < this.addonCollapsedLimit)"
+        v-if="!device.desktop && !device.ipad && (addons.length < addonCollapsedLimit)"
         :addons-list="addonsList"
         :install-action-text="installActionText"
         @addon-button-click="addonButtonClick" />
@@ -129,76 +129,85 @@
     grid-template-columns repeat(auto-fill, minmax(200px, 1fr))
 </style>
 
-<script>
+<script setup lang="ts">
+import { ref, computed, onMounted } from 'vue'
 import { f7 } from 'framework7-vue'
 import AddonListItem from './addon-list-item.vue'
 import AddonCard from './addon-card.vue'
-import { compareAddons } from '@/assets/addon-store'
 import AddonsSwiper from '@/components/addons/addons-swiper.vue'
+import { compareAddons } from '@/assets/addon-store.ts'
+import * as api from '@/api'
 
-export default {
-  props: {
-    addons: Array,
-    title: String,
-    subtitle: String,
-    showAll: Boolean,
-    featured: Array,
-    showAsCards: Boolean,
-    suggested: Boolean,
-    installActionText: String
-  },
-  emits: ['addon-button-click'],
-  components: {
-    AddonsSwiper,
-    AddonListItem,
-    AddonCard
-  },
-  data () {
-    return {
-      collapsed: true
-    }
-  },
-  computed: {
-    featuredAddons () {
-      if (this.featured) {
-        return this.addons.filter((a) => this.featured.indexOf(a.uid) >= 0).sort(compareAddons)
-      }
-      return null
-    },
-    notFeaturedAddons () {
-      return this.featuredAddons && this.featuredAddons.length
-        ? this.addons.filter((a) => this.featuredAddons.indexOf(a) < 0).sort(compareAddons)
-        : [...this.addons].sort(compareAddons)
-    },
-    addonCollapsedLimit () {
-      const installedCount = this.notFeaturedAddons.filter((a) => a.installed).length
-      if (installedCount >= 22) return 36
-      if (installedCount >= 10) return 24
-      return 12
-    },
-    addonsList () {
-      if (this.collapsed) return this.notFeaturedAddons.slice(0, this.addonCollapsedLimit)
-      return this.notFeaturedAddons
-    },
-    canExpand () {
-      if (!this.collapsed) return false
-      if (this.addons.length <= this.addonCollapsedLimit) return false
-      return true
-    }
-  },
-  methods: {
-    expand () {
-      this.collapsed = false
-      setTimeout(() => {
-        f7.lazy.create('.page-addon-store')
-      }, 100)
-    },
-    addonButtonClick (addon) {
-      this.$emit('addon-button-click', addon)
-    }
-  },
-  mounted () {
-    if (this.showAll) this.expand()
+const device = f7.device
+
+// props
+const props = defineProps<{
+  addons: api.Addon[]
+  title: string
+  subtitle: string
+  showAll: boolean
+  featured: string[]
+  showAsCards: boolean
+  suggested: boolean
+  installActionText?: string
+}>()
+
+// emits
+const emit = defineEmits<{ (e: 'addon-button-click', addon: api.Addon): void }>()
+
+// data
+const collapsed = ref(true)
+
+// computed
+const featuredAddons = computed<api.Addon[] | null>(() => {
+  if (props.featured) {
+    return props.addons
+      .filter((a) => props.featured.includes(a.uid))
+      .sort(compareAddons)
   }
+  return null
+})
+
+const notFeaturedAddons = computed<api.Addon[]>(() => {
+  const baseList = (featuredAddons.value && featuredAddons.value.length)
+    ? props.addons.filter((a) => !featuredAddons.value!.includes(a))
+    : [...props.addons]
+
+  return baseList.sort(compareAddons)
+})
+
+const addonCollapsedLimit = computed(() => {
+  const installedCount = notFeaturedAddons.value.filter((a) => a.installed).length
+  if (installedCount >= 22) return 36
+  if (installedCount >= 10) return 24
+  return 12
+})
+
+const addonsList = computed(() => {
+  if (collapsed.value) {
+    return notFeaturedAddons.value.slice(0, addonCollapsedLimit.value)
+  }
+  return notFeaturedAddons.value
+})
+
+const canExpand = computed(() => {
+  if (!collapsed.value) return false
+  return props.addons.length > addonCollapsedLimit.value
+})
+
+// lifecycle
+onMounted(() => {
+  if (props.showAll) expand()
+})
+
+// methods
+const expand = () => {
+  collapsed.value = false
+  // Small delay to allow DOM updates before F7 re-scans for lazy images
+  setTimeout(() => {
+    f7.lazy.create('.page-addon-store')
+  }, 100)
 }
+
+const addonButtonClick = (addon: api.Addon) => emit('addon-button-click', addon)
 </script>

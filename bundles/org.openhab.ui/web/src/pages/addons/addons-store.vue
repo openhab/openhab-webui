@@ -275,7 +275,7 @@ import { mapStores } from 'pinia'
 
 import AddonStoreMixin from './addon-store-mixin'
 import AddonsSection from '@/components/addons/addons-section.vue'
-import { AddonIcons, AddonTitles, AddonSuggestionLabels, AddonConnectionTypes, AddonRegionTypes } from '@/assets/addon-store'
+import { AddonIcons, AddonTitles, AddonSuggestionLabels, AddonConnectionTypes, AddonRegionTypes } from '@/assets/addon-store.ts'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
