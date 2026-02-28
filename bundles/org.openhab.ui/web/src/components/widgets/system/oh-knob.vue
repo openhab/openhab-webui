@@ -34,7 +34,12 @@ export default {
   },
   data () {
     return {
-      knobValue: null
+      knobValue: null,
+      measuredRadiusPx: null,
+      measuredSize: null,
+      boundResizeHandler: null,
+      gridsterResizeHandler: null,
+      resizeObserver: null
     }
   },
   watch: {
@@ -53,23 +58,110 @@ export default {
   },
   computed: {
     resolvedConfig () {
-      const cfg = this.config
+      const cfg = this.config || {}
+      const step = cfg.step !== undefined ? cfg.step : cfg.stepSize
+      const size = cfg.size !== undefined ? cfg.size : 100
+      // compute radius: explicit > responsive measured px > percentage fallback > numeric size
+      let radius
+      if (cfg.radius !== undefined) {
+        radius = cfg.radius
+      } else if (cfg.responsive) {
+        radius = this.measuredRadiusPx || (size / 2 + '%')
+      } else {
+        radius = size / 2
+      }
+
+      const rangeColor = cfg.rangeColor !== undefined ? cfg.rangeColor : cfg.primaryColor
+      const pathColor = cfg.pathColor !== undefined ? cfg.pathColor : cfg.secondaryColor
+      const tooltipColor = cfg.tooltipColor !== undefined ? cfg.tooltipColor : cfg.textColor
+      const width = cfg.strokeWidth
+
+      // if startAngle/endAngle provided use them, otherwise use sensible defaults
+      const startAngle = cfg.startAngle !== undefined ? cfg.startAngle : -50
+      const endAngle = cfg.endAngle !== undefined ? cfg.endAngle : -130
+
       return {
         ...cfg,
-        step: cfg.step !== undefined ? cfg.step : cfg.stepSize,
-        radius: cfg.radius !== undefined ? cfg.radius : (cfg.responsive ? cfg.size / 2 + '%' : cfg.size / 2),
-        rangeColor: cfg.rangeColor !== undefined ? cfg.rangeColor : cfg.primaryColor,
-        pathColor: cfg.pathColor !== undefined ? cfg.pathColor : cfg.secondaryColor,
-        tooltipColor: cfg.tooltipColor !== undefined ? cfg.tooltipColor : cfg.textColor,
-        width: cfg.width !== undefined ? cfg.width : cfg.strokeWidth,
-        // eslint-disable-next-line no-constant-binary-expression
-        startAngle: !cfg.circleShape !== undefined ? (cfg.startAngle !== undefined ? cfg.startAngle : -50) : null,
-        // eslint-disable-next-line no-constant-binary-expression
-        endAngle: !cfg.circleShape !== undefined ? (cfg.endAngle !== undefined ? cfg.endAngle : -130) : null
+        step,
+        radius,
+        rangeColor,
+        pathColor,
+        tooltipColor,
+        knobValue: null,
+        width,
+        startAngle,
+        endAngle
       }
     }
   },
+
+  mounted () {
+    // If widget is configured to be responsive, measure its container and update on resize
+    try {
+      const cfg = this.config || {}
+      if (cfg.responsive) {
+        // initial measurement
+        this.updateMeasuredSize()
+
+        // bind handlers so we can remove them later
+        this.boundResizeHandler = () => { this.updateMeasuredSize() }
+        window.addEventListener('resize', this.boundResizeHandler)
+
+        // some layouts emit a 'gridster-resized' event on this.$root or $root.$el; listen on root Vue instance
+        this.gridsterResizeHandler = () => { this.updateMeasuredSize() }
+        if (this.$root?.$on) this.$root.$on('gridster-resized', this.gridsterResizeHandler)
+
+        // Use ResizeObserver to watch parent container size changes
+        const container = this.$el?.parentElement
+        if (container && typeof ResizeObserver !== 'undefined') {
+          this.resizeObserver = new ResizeObserver(() => {
+            this.updateMeasuredSize()
+          })
+          this.resizeObserver.observe(container)
+        }
+      }
+    } catch (e) {
+      // defensive: don't break if measurement fails
+      console.warn('oh-knob: failed to initialize responsive sizing', e)
+    }
+  },
+  beforeUnmount () {
+    if (this.boundResizeHandler) window.removeEventListener('resize', this.boundResizeHandler)
+    if (this.gridsterResizeHandler && this.$root?.$off) this.$root.$off('gridster-resized', this.gridsterResizeHandler)
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect()
+      this.resizeObserver = null
+    }
+  },
   methods: {
+    updateMeasuredSize () {
+      // measure the component's rendered element and compute an appropriate radius in pixels
+      this.$nextTick(() => {
+        try {
+          const el = this.$el
+          const cfg = this.config || {}
+          // prefer parent element's inner width/height to keep knob within layout
+          const container = el?.parentElement ?? el
+          if (!container) return
+          const rect = container.getBoundingClientRect()
+          // choose smaller dimension to fit circle
+          const size = Math.min(rect.width, rect.height)
+          if (!size || size <= 0) return
+          // Parse cfg.size - if it's a string like "100%" convert to number
+          let sizeValue = cfg.size !== undefined ? cfg.size : 100
+          if (typeof sizeValue === 'string') {
+            const parsed = parseFloat(sizeValue)
+            sizeValue = isNaN(parsed) ? 100 : parsed
+          }
+          // radius for round-slider expects px value or percentage string; use pixels
+          const radius = Math.floor(size / 2)
+          this.measuredSize = size
+          this.measuredRadiusPx = (radius * sizeValue / 100) + 'px'
+        } catch (e) {
+          console.warn('oh-knob: failed to measure size for responsive layout', e)
+        }
+      })
+    },
     computeValue (value) {
       return (typeof this.config.offset === 'number') ? (value + this.config.offset) : value
     },
