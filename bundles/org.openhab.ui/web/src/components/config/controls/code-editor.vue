@@ -181,7 +181,7 @@ export default {
      */
     parseCode (onSuccessCallback, onFailureCallback) {
       let sourceMediaType = this.mediaTypes[this.uiOptionsStore.codeEditorType]
-      sourceMediaType = sourceMediaType.substring(0, sourceMediaType.lastIndexOf('+')) // remove the +thing or +item suffix to get the generic media type for the converter endpoint
+      sourceMediaType = sourceMediaType.split('+')[0] // remove the +thing or +item suffix, if present
       const targetMediaType = MediaType.JSON
       this.$oh.api.request({
         method: 'POST',
