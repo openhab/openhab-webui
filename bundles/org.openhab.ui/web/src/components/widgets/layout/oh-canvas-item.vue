@@ -128,12 +128,39 @@
   pointer-events auto
 
   .oh-canvas-item-content
-    width 100%
-    height 100%
-    margin 0
+    width 100%                // use full width and
+    height 100%               // height of item
+    margin 0                  // without any margin
+    box-sizing border-box     // include padding
 
-  .oh-canvas-item-styled        // override background obscuring styles from system widgets
-    &.card                    // apply to card items
+    &.card
+      display flex            // use flexbox to distribute card elements
+      flex-direction column   // from top to bottom
+      .card-content           // with content centered
+        margin-top auto       // independent of presence
+        margin-bottom auto    // of header or footer
+
+        // oh-swiper-card
+        .swiper-container .placeholder-widget
+          margin 0
+          height 100%
+          width 100%
+        .oh-swiper-slide.edit-mode
+          min-height 0
+
+      // oh-image-card
+      .oh-image-card, .oh-gauge-card
+        flex 1
+        overflow hidden
+        *
+          height 100%
+
+        .oh-image
+          object-fit contain
+          height calc(100% - 10px)
+
+  .oh-canvas-item-styled  // override background obscuring styles from system widgets
+    &.card                // apply to card items
       box-shadow none
       background none
       .card-content, .card-footer
