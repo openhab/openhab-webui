@@ -19,14 +19,19 @@ const ipv6Addr = `(?:(?:[A-Fa-f0-9]{1,4}:){7}[A-Fa-f0-9]{1,4}|(?:[A-Fa-f0-9]{1,4
 export const IpAddress: string = `(?:${ipv4Addr}|${ipv6Addr})`
 export const IpAddressCompiled: RegExp = new RegExp(`^${IpAddress}$`)
 
-// hostIpv4 matches both a.b.c.d and 1.2.3.4 so covers ipv4 address pattern as well
-const hostIpv4 = `(?:[A-Za-z0-9](?:[A-Za-z0-9\\-]{0,61}[A-Za-z0-9])?(?:\\.[A-Za-z0-9](?:[A-Za-z0-9\\-]{0,61}[A-Za-z0-9])?)*)`
-const http = `(?:[Hh][Tt][Tt][Pp][Ss]?:\\/\\/)?`
-const host = `(?:${hostIpv4}|(?:\\[${ipv6Addr}\\]))`
+const hostLabel = `[A-Za-z0-9](?:[A-Za-z0-9\\-]{0,61}[A-Za-z0-9])?`
+const hostIpv4 = `(?:${hostLabel}(?:\\.${hostLabel})*)`
+const host = `(?:${hostIpv4}|\\[${ipv6Addr}\\])`
+const http = `[Hh][Tt][Tt][Pp][Ss]?:\\/\\/`
 const port = `(?::(?:6553[0-5]|655[0-2]\\d|65[0-4]\\d{2}|6[0-4]\\d{3}|[1-5]\\d{4}|\\d{1,4}))?`
-const rest = `(?:\\/[^\\s]*?)?`
+const rest = `(?:\\/[^\\s]*)?`
+const fullUrl = `${http}${host}${port}${rest}`
+const hostWithPort = `${host}${port}`
+
 /**
- * Network address and URL handler (these are synonyms).
+ * Network address and URL handler.
+ * - With scheme: full URL allowed
+ * - Without scheme: host + optional port only (NO path)
  */
-export const NetworkAddress: string = `${http}${host}${port}${rest}`
+export const NetworkAddress: string = `(?:${fullUrl}|${hostWithPort})`
 export const NetworkAddressCompiled: RegExp = new RegExp(`^${NetworkAddress}$`)
