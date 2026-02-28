@@ -1,5 +1,5 @@
-import { StreamLanguage, LanguageSupport, getIndentUnit, codeFolding } from '@codemirror/language'
-import { autocompletion, closeBrackets, CompletionContext, type CompletionResult, type CompletionSource } from '@codemirror/autocomplete'
+import { StreamLanguage, LanguageSupport } from '@codemirror/language'
+import { autocompletion } from '@codemirror/autocomplete'
 import type { Extension } from '@codemirror/state'
 
 // for linting
