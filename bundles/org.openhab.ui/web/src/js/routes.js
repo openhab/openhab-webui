@@ -84,17 +84,32 @@ const checkDirtyBeforeLeave = function ({ router, to, from, resolve, reject }) {
 const loadAsync = (page, props) => {
   return async ({ router, to, from, resolve, reject }) => {
     if (!props) {
-      page().then((c) => {
-        resolve({ component: c.default })
-      })
+      page()
+        .then((c) => {
+          resolve({ component: c.default })
+        })
+        .catch((err) => {
+          console.error('Failed to load page component:', err)
+          reject(err)
+        })
     } else if (typeof props === 'object') {
-      page().then((c) => {
-        resolve({ component: c.default }, { props })
-      })
+      page()
+        .then((c) => {
+          resolve({ component: c.default }, { props })
+        })
+        .catch((err) => {
+          console.error('Failed to load page component:', err)
+          reject(err)
+        })
     } else if (typeof props === 'function') {
-      page().then((c) => {
-        resolve({ component: c.default }, { props: props({ router, to, from, resolve, reject }) })
-      })
+      page()
+        .then((c) => {
+          resolve({ component: c.default }, { props: props({ router, to, from, resolve, reject }) })
+        })
+        .catch((err) => {
+          console.error('Failed to load page component:', err)
+          reject(err)
+        })
     }
   }
 }
