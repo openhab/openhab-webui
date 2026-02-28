@@ -89,7 +89,7 @@ jobs:
         run: npm run webpack-analyzer-report-stats
 
       - name: Upload report artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: webpack-stats
           path: /home/runner/work/openhab-webui/openhab-webui/bundles/org.openhab.ui/web/www/webpack-stats.json
