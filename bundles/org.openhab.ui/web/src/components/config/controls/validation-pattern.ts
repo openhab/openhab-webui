@@ -35,3 +35,9 @@ const hostWithPort = `${host}${port}`
  */
 export const NetworkAddress: string = `(?:${fullUrl}|${hostWithPort})`
 export const NetworkAddressCompiled: RegExp = new RegExp(`^${NetworkAddress}$`)
+
+/**
+ * Full URL only — requires scheme, host, optional port, optional path
+ */
+export const FullUrl: string = fullUrl
+export const FullUrlCompiled: RegExp = new RegExp(`^${FullUrl}$`)

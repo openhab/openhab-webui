@@ -40,7 +40,7 @@
       :autocomplete="options ? 'off' : ''"
       :placeholder="configDescription.placeholder"
       :pattern="pattern"
-      :error-message="errorMessage"
+      :error-message="(configDescription.context === 'network-address' && softInvalid && !disableValidation) ? '' : errorMessage"
       :error-message-force="configDescription.context === 'network-address' ? (softInvalid && !disableValidation) : false"
       :required="configDescription.required"
       :validate="configDescription.context !== 'network-address'"
@@ -48,7 +48,6 @@
       :clear-button="!configDescription.required && configDescription.context !== 'password'"
       @input="updateValue"
       @change="updateValue"
-      @blur="onBlur"
       @focus="onFocus"
       :readonly="readOnly || configDescription.readOnly"
       :type="controlType">
@@ -61,9 +60,8 @@
       </template>
       <template v-if="softInvalid && !disableValidation" #error-message>
         <div>
-          <f7-icon f7="exclamationmark_triangle_fill" size="16" color="yellow"></f7-icon>
-          <span class="text-color-red">This is not a standard URL, IP address, or host name:</span>
-          <span @click="disableValidation = true; validateSoft(value)" class="link" style="margin-left: 6px;">Use anyway</span>
+          <span class="text-color-red">{{ NETWORK_ADDRESS_WARNING_TEXT }}</span>
+          <span @mousedown.prevent="disableValidation = true; validateSoft(value)" class="link" style="margin-left: 6px;">Use anyway</span>
         </div>
       </template>
     </f7-list-input>
@@ -71,6 +69,8 @@
 </template>
 
 <script>
+const NETWORK_ADDRESS_WARNING_TEXT = `⚠ This is not a standard URL, IP address, or host name.`
+
 import { f7, theme } from 'framework7-vue'
 import { nextTick } from 'vue'
 import * as Pattern from './validation-pattern.ts'
@@ -83,7 +83,7 @@ export default {
   },
   emits: ['input'],
   setup () {
-    return { theme }
+    return { theme, NETWORK_ADDRESS_WARNING_TEXT }
   },
   computed: {
     controlType () {
@@ -119,7 +119,7 @@ export default {
         return Pattern.IpAddress;
       }
       if (ctx === 'url') {
-        return Pattern.NetworkAddress;
+        return Pattern.FullUrl;
       }
       return this.configDescription.pattern
     },
@@ -148,6 +148,7 @@ export default {
   },
   data () {
     return {
+      NETWORK_ADDRESS_WARNING_TEXT,
       autoCompleteOptions: null,
       showPassword: false,
       values: [], // Used for multiple values parameters only
@@ -175,33 +176,39 @@ export default {
         }
       })
     }
+    this.f7.on('modalClosed', () => {
+      this.validateSoft(this.value || '')
+    })
   },
   beforeUnmount () {
+    this.f7.off('modalClosed')
     this.destroyAutoCompleteOptions()
   },
   methods: {
-    onBlur() {
-      this.disableValidation = false
-      this.validateSoft(this.value || '')
-    },
     onFocus() {
-      this.disableValidation = false
-      this.softInvalid = !Pattern.NetworkAddressCompiled.test(this.value || '')
       this.validateSoft(this.value || '')
     },
     updateValue (event) {
       if (this.multiple) return
-      const val = event.target.value
-      this.validateSoft(val)
       this.$emit('input', event.target.value)
     },
-    validateSoft (value) {
+    async validateSoft (value) {
       if (this.configDescription.context === 'network-address') {
-        this.softInvalid = value.length > 0 && !Pattern.NetworkAddressCompiled.test(value);
-        const inputEl = this.$refs.input?.$el?.querySelector('input');
-        if (inputEl) {
-          inputEl.setCustomValidity(!this.softInvalid || this.disableValidation ? '' : 'Invalid network address');
+        const inputEl = this.$refs.input?.$el?.querySelector('input')
+        if (this.disableValidation) {
+          this.softInvalid = false
+          if (inputEl) inputEl.setCustomValidity('')
+          return
         }
+        const isInvalid = !Pattern.NetworkAddressCompiled.test(value)
+        if (this.softInvalid && isInvalid) {
+          this.softInvalid = false
+          if (inputEl) inputEl.setCustomValidity('')
+          await nextTick()
+        }
+        this.softInvalid = isInvalid
+        await nextTick()
+        if (inputEl) inputEl.setCustomValidity(isInvalid && !this.disableValidation ? this.NETWORK_ADDRESS_WARNING_TEXT : '')
       }
     },
     updateValueIdx (idx, event) {
