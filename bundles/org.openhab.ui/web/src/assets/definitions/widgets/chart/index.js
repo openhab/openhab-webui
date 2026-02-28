@@ -5,6 +5,8 @@ import { actionGroup, actionParams } from '../actions.js'
 import { pg, pb, pt, pn, pi } from '../helpers.js'
 import { aggregationTypeOptions, dimensionTypeOptions, markerOptions } from './options.js'
 
+export { OhChartPageDefinition } from './page.js'
+
 const positionGroup = pg(
   'position',
   'Position',

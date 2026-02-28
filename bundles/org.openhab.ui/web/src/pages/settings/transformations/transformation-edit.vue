@@ -83,7 +83,8 @@
       :value="transformation.configuration.function"
       @input="onEditorInput"
       :read-only="isBlockly || !isEditable"
-      :tern-autocompletion-hook="true" />
+      :tern-autocompletion-hook="true"
+      @save="createMode ? createTransformation() : save()" />
     <blockly-editor v-else-if="isBlockly" ref="blocklyEditor" :blocks="transformation.configuration.blockSource" @change="dirty = true" />
     <!-- TODO: Enable Blockly after blocks have been adjusted
     <f7-fab v-show="transformation.configuration && !transformation.configuration.function && transformation.configuration.mode === 'application/javascript' && !isBlockly" position="center-bottom" color="blue" @click="convertToBlockly" text="Design with Blockly">

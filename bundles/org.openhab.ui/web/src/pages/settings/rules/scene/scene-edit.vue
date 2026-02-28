@@ -176,7 +176,8 @@
           class="scene-code-editor"
           mode="application/vnd.openhab.rule+yaml"
           :value="ruleYaml"
-          @input="onEditorInput" />
+          @input="onEditorInput"
+          @save="save()" />
         <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
       </f7-tab>
     </f7-tabs>

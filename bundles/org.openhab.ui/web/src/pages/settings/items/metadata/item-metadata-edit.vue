@@ -47,7 +47,8 @@
           mode="text/x-yaml"
           :value="yaml"
           :readOnly="!editable"
-          @input="onEditorInput" />
+          @input="onEditorInput"
+          @save="save()" />
       </f7-tab>
     </f7-tabs>
   </f7-page>

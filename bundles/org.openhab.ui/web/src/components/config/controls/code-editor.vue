@@ -151,7 +151,8 @@ export default {
     generateCode (codeType, onSuccessCallback) {
       codeType ||= this.uiOptionsStore.codeEditorType
       const sourceMediaType = MediaType.JSON
-      const targetMediaType = this.mediaTypes[codeType]
+      let targetMediaType = this.mediaTypes[codeType]
+      targetMediaType = targetMediaType.split('+')[0] // remove the +thing or +item suffix, if present
       const payload = {}
       payload[this.objectType] = [this.object]
       this.$oh.api.postPlain('/rest/file-format/create', JSON.stringify(payload), null, sourceMediaType, { accept: targetMediaType })
@@ -179,7 +180,8 @@ export default {
      * @param {function} onFailureCallback - Optional. A callback function to call when parsing fails or no object is found
      */
     parseCode (onSuccessCallback, onFailureCallback) {
-      const sourceMediaType = this.mediaTypes[this.uiOptionsStore.codeEditorType]
+      let sourceMediaType = this.mediaTypes[this.uiOptionsStore.codeEditorType]
+      sourceMediaType = sourceMediaType.split('+')[0] // remove the +thing or +item suffix, if present
       const targetMediaType = MediaType.JSON
       this.$oh.api.request({
         method: 'POST',
