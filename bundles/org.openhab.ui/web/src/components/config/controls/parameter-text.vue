@@ -148,7 +148,6 @@ export default {
   },
   data () {
     return {
-      NETWORK_ADDRESS_WARNING_TEXT,
       autoCompleteOptions: null,
       showPassword: false,
       values: [], // Used for multiple values parameters only
