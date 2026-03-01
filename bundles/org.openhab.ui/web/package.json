@@ -142,7 +142,7 @@
     "@eslint/compat": "^2.0.2",
     "@eslint/eslintrc": "^3.3.3",
     "@eslint/js": "^9.33.0",
-    "@hey-api/openapi-ts": "^0.92.3",
+    "@hey-api/openapi-ts": "^0.92.4",
     "@intlify/eslint-plugin-vue-i18n": "^4.0.1",
     "@tsconfig/node24": "^24.0.3",
     "@types/audioworklet": "^0.0.94",
