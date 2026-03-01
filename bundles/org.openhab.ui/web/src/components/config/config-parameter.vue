@@ -8,11 +8,11 @@
       <component
         :is="control"
         :read-only="readOnly"
-        :config-description="configDescription"
+        :config-description="normalizedConfig"
         :value="value"
         :parameters="parameters"
         :configuration="configuration"
-        :title="configDescription.title"
+        :title="normalizedConfig.title"
         :f7router
         @input="updateValue" />
     </f7-list-group>
@@ -78,8 +78,17 @@ export default {
     }
   },
   computed: {
+    normalizedConfig() {
+      const cfg = { ... this.configDescription }
+      if (cfg.type === 'INTEGER' && cfg.context === 'week') {
+        cfg.min = 1
+        cfg.max = 53
+        cfg.step = 1
+      }
+      return cfg
+    },
     control () {
-      const configDescription = this.configDescription
+      const configDescription = this.normalizedConfig
       if (configDescription.options?.length && configDescription.limitToOptions && (!configDescription.context || configDescription.context === 'network-interface' || configDescription.context === 'serial-port')) {
         return ParameterOptions
       } else if (configDescription.type === 'INTEGER' || configDescription.type === 'DECIMAL') {
@@ -116,7 +125,7 @@ export default {
         return ParameterRule
       } else if (configDescription.type === 'TEXT' && configDescription.context === 'channel') {
         return ParameterTriggerChannel
-      } else if (configDescription.type === 'TEXT' && configDescription.context === 'persistenceService') {
+      } else if (configDescription.type === 'TEXT' && configDescription.context && configDescription.context.indexOf('persistence') == 0) {
         return ParameterPersistenceService
       } else if (configDescription.type === 'TEXT' && configDescription.context === 'qrcode') {
         return ParameterQrcode

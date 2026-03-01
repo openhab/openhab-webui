@@ -11,6 +11,7 @@
       :key="idx"
       :type="controlType"
       :pattern="pattern"
+      :error-message="errorMessage"
       :autocomplete="options ? 'off' : ''"
       :clear-button="true"
       @input:clear="removeValueIdx(idx)"
@@ -22,6 +23,7 @@
       ref="input"
       :type="controlType"
       :pattern="pattern"
+      :error-message="errorMessage"
       :autocomplete="options ? 'off' : ''"
       :clear-button="false"
       @input:notempty="addValue"
@@ -38,11 +40,15 @@
       :autocomplete="options ? 'off' : ''"
       :placeholder="configDescription.placeholder"
       :pattern="pattern"
+      :error-message="(configDescription.context === 'network-address' && softInvalid && !disableValidation) ? '' : errorMessage"
+      :error-message-force="configDescription.context === 'network-address' ? (softInvalid && !disableValidation) : false"
       :required="configDescription.required"
-      :validate="!(pattern && pattern.length > 40)"
-      :validate-on-blur="pattern && pattern.length > 40"
+      :validate="configDescription.context !== 'network-address'"
+      :validate-on-blur="false"
       :clear-button="!configDescription.required && configDescription.context !== 'password'"
       @input="updateValue"
+      @change="updateValue"
+      @focus="onFocus"
       :readonly="readOnly || configDescription.readOnly"
       :type="controlType">
       <template #content-end>
@@ -52,13 +58,22 @@
           </f7-link>
         </div>
       </template>
+      <template v-if="softInvalid && !disableValidation" #error-message>
+        <div>
+          <span class="text-color-red">{{ NETWORK_ADDRESS_WARNING_TEXT }}</span>
+          <span @mousedown.prevent="disableValidation = true; validateSoft(value)" class="link" style="margin-left: 6px;">Use anyway</span>
+        </div>
+      </template>
     </f7-list-input>
   </ul>
 </template>
 
 <script>
+const NETWORK_ADDRESS_WARNING_TEXT = `⚠ This is not a standard URL, IP address, or host name.`
+
 import { f7, theme } from 'framework7-vue'
 import { nextTick } from 'vue'
+import * as Pattern from './validation-pattern.ts'
 
 export default {
   props: {
@@ -68,7 +83,7 @@ export default {
   },
   emits: ['input'],
   setup () {
-    return { theme }
+    return { theme, NETWORK_ADDRESS_WARNING_TEXT }
   },
   computed: {
     controlType () {
@@ -78,14 +93,34 @@ export default {
       if (this.configDescription.context === 'color') return 'color'
       return 'text'
     },
-    pattern () {
-      // validation doesn't work as soon as hostname RegEx is added
-      // if (this.configDescription.context === 'network-address') {
-      //   const hostname = /(?:([a-zA-Z0-9-]+)\.)?([a-zA-Z0-9-]+)\.([a-zA-Z0-9]+)/
-      //   const ipv4 = /((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b){4}/
-      //   const ipv6 = /((?:[0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}|(?:[0-9A-Fa-f]{1,4}:){1,7}:|:(?::[0-9A-Fa-f]{1,4}){1,7}|(?:[0-9A-Fa-f]{1,4}:){1,6}:[0-9A-Fa-f]{1,4}|(?:[0-9A-Fa-f]{1,4}:){1,5}(?::[0-9A-Fa-f]{1,4}){1,2}|(?:[0-9A-Fa-f]{1,4}:){1,4}(?::[0-9A-Fa-f]{1,4}){1,3}|(?:[0-9A-Fa-f]{1,4}:){1,3}(?::[0-9A-Fa-f]{1,4}){1,4}|(?:[0-9A-Fa-f]{1,4}:){1,2}(?::[0-9A-Fa-f]{1,4}){1,5}|[0-9A-Fa-f]{1,4}:(?:(?::[0-9A-Fa-f]{1,4}){1,6})|:(?:(?::[0-9A-Fa-f]{1,4}){1,6}))/
-      //   return `^(?:${ipv4.source}|${ipv6.source}|${hostname.source})$`
+    errorMessage() {
+      const ctx = this.configDescription.context;
+      if (ctx === 'mac-address') {
+        return 'Please enter a valid MAC address (e.g., AA:BB:CC:DD:EE:FF or AABB.CCDD.EEFF).';
+      }
+      if (ctx === 'url') {
+        return 'Please enter a valid URL.';
+      }
+      // if (ctx === 'ip-address') {
+      //  return 'Please enter a valid IP address (e.g., 127.0.0.1 or 2001:db8::1).'
       // }
+      if (ctx === 'email') {
+        return 'Please enter a valid email address.';
+      }
+      // Return a generic message if context is not specific
+      return 'The entered value is invalid.';
+    },
+    pattern () {
+      const ctx = this.configDescription.context;
+      if (ctx === 'mac-address') {
+        return Pattern.MacAddress;
+      }
+      // if (ctx === 'ip-address') {
+      //  return Pattern.IpAddress;
+      // }
+      if (ctx === 'url') {
+        return Pattern.FullUrl;
+      }
       return this.configDescription.pattern
     },
     multiple () {
@@ -103,16 +138,27 @@ export default {
       return null
     }
   },
+  watch: {
+    value(newVal) {
+      if (!this.multiple) {
+        this.disableValidation = false
+        this.validateSoft(newVal || '')
+      }
+    }
+  },
   data () {
     return {
       autoCompleteOptions: null,
       showPassword: false,
       values: [], // Used for multiple values parameters only
-      suspendEvents: false
+      suspendEvents: false,
+      softInvalid: false,
+      disableValidation: false,
     }
   },
   created () {
     this.setValues()
+    this.validateSoft(this.value)
   },
   mounted () {
     if (!this.multiple && this.options) {
@@ -129,14 +175,40 @@ export default {
         }
       })
     }
+    this.f7.on('modalClosed', () => {
+      this.validateSoft(this.value || '')
+    })
   },
   beforeUnmount () {
+    this.f7.off('modalClosed')
     this.destroyAutoCompleteOptions()
   },
   methods: {
+    onFocus() {
+      this.validateSoft(this.value || '')
+    },
     updateValue (event) {
       if (this.multiple) return
       this.$emit('input', event.target.value)
+    },
+    async validateSoft (value) {
+      if (this.configDescription.context === 'network-address') {
+        const inputEl = this.$refs.input?.$el?.querySelector('input')
+        if (this.disableValidation) {
+          this.softInvalid = false
+          if (inputEl) inputEl.setCustomValidity('')
+          return
+        }
+        const isInvalid = !Pattern.NetworkAddressCompiled.test(value)
+        if (this.softInvalid && isInvalid) {
+          this.softInvalid = false
+          if (inputEl) inputEl.setCustomValidity('')
+          await nextTick()
+        }
+        this.softInvalid = isInvalid
+        await nextTick()
+        if (inputEl) inputEl.setCustomValidity(isInvalid && !this.disableValidation ? this.NETWORK_ADDRESS_WARNING_TEXT : '')
+      }
     },
     updateValueIdx (idx, event) {
       if (!this.multiple || idx < 0 || !this.values || idx >= this.values.length) return
