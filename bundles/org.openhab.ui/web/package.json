@@ -161,7 +161,7 @@
     "@vue/tsconfig": "^0.8.1",
     "chalk": "^5.4.1",
     "cross-env": "^10.1.0",
-    "dependency-cruiser": "^17.3.7",
+    "dependency-cruiser": "^17.3.8",
     "esbuild": "^0.27.3",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
