@@ -101,9 +101,9 @@ export default {
       if (ctx === 'url') {
         return 'Please enter a valid URL.';
       }
-      if (ctx === 'ip-address') {
-        return 'Please enter a valid IP address (e.g., 127.0.0.1 or 2001:db8::1).'
-      }
+      // if (ctx === 'ip-address') {
+      //  return 'Please enter a valid IP address (e.g., 127.0.0.1 or 2001:db8::1).'
+      // }
       if (ctx === 'email') {
         return 'Please enter a valid email address.';
       }
@@ -115,9 +115,9 @@ export default {
       if (ctx === 'mac-address') {
         return Pattern.MacAddress;
       }
-      if (ctx === 'ip-address') {
-        return Pattern.IpAddress;
-      }
+      // if (ctx === 'ip-address') {
+      //  return Pattern.IpAddress;
+      // }
       if (ctx === 'url') {
         return Pattern.FullUrl;
       }
