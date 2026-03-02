@@ -9,7 +9,7 @@
           :title="p.label"
           :subtitle="strategies[p.id]?.join(', ') || 'Not persisted'"
           :badge="persistedBadges[p.id]"
-          badge-color="green"
+          :badge-color="persistedBadges[p.id] === '0' ? 'red' : 'green'"
           :class="!p.editable ? 'item-persistence-badge-non-editable' : ''"
           :link="p.editable ? '/settings/persistence/' + p.id : null">
           <template #media>
@@ -73,11 +73,7 @@ const persistedBadges = computed(() => {
       badges[service.id] = null
     } else if (persisted === 'not_persisted') {
       // Item has not been persisted
-      // badges[service.id] = '0'
-      // TODO: Currently, the API call does not distinguish between API call not supported for service and item not persisted.
-      // To avoid showing misleading information, don't show badge if we don't get anything back (should be covered by first case if REST API is fixed.)
-      // This can be reverted to showing 0 if the API is fixed.
-      badges[service.id] = null
+      badges[service.id] = '0'
     } else if (persisted.count != null && Number.isInteger(Number(persisted.count))) {
       // Show numeric count when available
       badges[service.id] = String(persisted.count)
@@ -109,21 +105,24 @@ const loadService = async (service: api.PersistenceService): Promise<Persistence
   try {
     serviceConfig = (await api.getPersistenceServiceConfiguration({ serviceId: service.id })) ?? null
   } catch (err: unknown) {
-    if (err instanceof ApiError && (err.response.statusText === 'Not Found' || err.response.status === 404)) {
+    if (err instanceof ApiError && err.response.status === 404) {
       // No configuration yet, continue with an empty one
     } else {
       console.debug('Error loading persistence config for', service.id, err)
     }
   }
 
-  let itemsPersisted: Array<api.PersistenceItemInfo> | 'not_persisted' | 'unsupported' = 'unsupported'
+  let itemsPersisted: api.PersistenceItemInfo | 'not_persisted' | 'unsupported' = 'unsupported'
   try {
-    itemsPersisted = await api.getItemsForPersistenceService({ serviceId: service.id }) ?? 'unsupported'
+    itemsPersisted = (await api.getItemsForPersistenceService({ serviceId: service.id, itemname: props.item.name }))![0]!
   } catch (err: unknown) {
-    if (err instanceof ApiError && (err.response.status === 400)) {
-      // Not supported for service, leave itemsPersisted null
+    if (err instanceof ApiError && err.response.status === 404) {
+      itemsPersisted = 'not_persisted'
+    } else if (err instanceof ApiError && err.response.status === 405) {
+      // Persistence service not queryable or getting Item info not allowed
+      itemsPersisted = 'unsupported'
     } else {
-      console.debug('Error loading persistence items for', service.id, err)
+      console.error('Error loading persistence items for', service.id, err)
     }
   }
 
@@ -132,7 +131,7 @@ const loadService = async (service: api.PersistenceService): Promise<Persistence
     configs: serviceConfig?.configs ?? [],
     aliases: serviceConfig?.aliases ?? {},
     editable: serviceConfig?.editable === undefined ? true : serviceConfig?.editable,
-    persisted: Array.isArray(itemsPersisted) ? (itemsPersisted.find((item) => item.name === props.item.name) ?? 'not_persisted') : itemsPersisted
+    persisted: itemsPersisted
   } satisfies PersistenceService
 }
 
