@@ -90,7 +90,7 @@
     </vue-draggable-resizable>
     <div
       v-else
-      ref="root"
+      :ref="root"
       :style="{
         left: x + 'px',
         top: y + 'px',
@@ -185,204 +185,217 @@
       width 0px
 </style>
 
-<script setup>
+<script setup lang="ts">
+import { ref, computed, watch, onMounted, onBeforeUnmount, type VNodeRef } from 'vue'
 import 'vue-draggable-resizable/style.css'
 import VueDraggableResizable from 'vue-draggable-resizable'
-</script>
 
-<script>
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhPlaceholderWidget from './oh-placeholder-widget.vue'
 import { OhCanvasItemDefinition } from '@/assets/definitions/widgets/layout'
+import type { WidgetContext } from '@/components/widgets/types'
 
-export default {
-  widget: OhCanvasItemDefinition,
-  components: {
-    VueDraggableResizable,
-    OhPlaceholderWidget
-  },
-  props: {
-    context: Object,
-    gridPitch: Number,
-    gridEnable: Boolean,
-    id: String,
-    preventDeactivation: Boolean
-  },
-  emits: ['oci-selected', 'oci-deselected', 'oci-drag-stop', 'oci-dragged'],
-  setup (props) {
-    const { config, childContext, defaultSlots } = useWidgetContext(props.context)
-    return { config, childContext, defaultSlots }
-  },
-  data () {
-    return {
-      x: 0,
-      y: 0,
-      w: 0,
-      h: 0,
-      reloadKey: 0,
-      shadow: true,
-      styled: true,
-      dragging: false,
-      resizing: false,
-      active: false,
-      // run mode only:
-      ready: false,
-      resizeObserver: null
-    }
-  },
-  created () {
-    this.x = this.config.x ?? 20
-    this.y = this.config.y ?? 20
-    this.w = this.config.w ?? 100
-    this.h = this.config.h ?? 100
-    this.shadow = !this.config.noCanvasShadow
-    this.styled = !this.config.notStyled
-  },
-  mounted () {
-    // In Edit Mode: No need to wait for the root element to have actual dimensions
-    if (this.context.editmode) {
-      this.ready = true
-      return
-    }
+defineExpose({ widget: OhCanvasItemDefinition })
 
-    // In Run Mode: Wait for the element to have actual dimensions
-    this.resizeObserver = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        // Once width/height is non-zero, the layout is stable enough for f7-swiper
-        if (entry.contentRect.width > 0 && entry.contentRect.height > 0) {
-          this.ready = true
-          this.resizeObserver.disconnect()
-        }
+// props & emits
+const props = defineProps<{
+  context: WidgetContext
+  gridPitch: number
+  gridEnable: boolean
+  id: string
+  preventDeactivation: boolean
+}>()
+const emit = defineEmits(['oci-selected', 'oci-deselected', 'oci-drag-stop', 'oci-dragged'])
+
+// composables
+const { config, visible, childContext, defaultSlots } = useWidgetContext(props.context)
+
+// data (state)
+const root = ref<VNodeRef | null>(null)
+const reloadKey = ref(0)
+const dragging = ref(false)
+const resizing = ref(false)
+const active = ref(false)
+// run mode only:
+const ready = ref(false)
+const resizeObserver = ref<ResizeObserver | null>(null)
+
+// computed
+const x = computed({
+  get: () => (config.value?.x as number) ?? 20,
+  set: (val) => { props.context.component.config.x = val }
+})
+
+const y = computed({
+  get: () => (config.value?.y as number) ?? 20,
+  set: (val) => { props.context.component.config.y = val }
+})
+
+const w = computed({
+  get: () => (config.value?.w as number | string) ?? 100,
+  set: (val) => { props.context.component.config.w = val }
+})
+
+const h = computed({
+  get: () => (config.value?.h as number | string) ?? 100,
+  set: (val) => { props.context.component.config.h = val }
+})
+
+const shadow = computed({
+  get: () => config.value?.noCanvasShadow === false,
+  set: (val) => { props.context.component.config.noCanvasShadow = val }
+})
+
+const styled = computed(() => config.value?.notStyled === false)
+
+const autosize = computed(() => w.value === 'auto')
+
+const editMessage = computed(() => {
+  if (dragging.value) return `(${x.value}, ${y.value})`
+  if (resizing.value) return `${w.value}x${h.value}`
+  return ''
+})
+
+// watchers
+watch(active, (val) => {
+  // TODO: Previously emitted this
+  if (val) emit('oci-selected', { x: x.value, y: y.value })
+  else emit('oci-deselected', { x: x.value, y: y.value })
+})
+
+// lifecycle
+onMounted(() => {
+  // In Edit Mode: No need to wait for the root element to have actual dimensions
+  if (props.context.editmode) {
+    ready.value = true
+    return
+  }
+
+  // In Run Mode: Wait for the element to have actual dimensions
+  resizeObserver.value = new ResizeObserver((entries) => {
+    for (const entry of entries) {
+      // Once width/height is non-zero, the layout is stable enough for f7-swiper
+      if (entry.contentRect.width > 0 && entry.contentRect.height > 0) {
+        ready.value = true
+        resizeObserver.value?.disconnect()
       }
-    })
+    }
+  })
 
-    // Start observing the root element of this component
-    if (this.$refs.root) {
-      this.resizeObserver.observe(this.$refs.root)
+  // Start observing the root element of this component
+  if (root.value) {
+    resizeObserver.value.observe(root.value)
+  } else {
+    ready.value = true
+  }
+})
+
+onBeforeUnmount(() => {
+  if (resizeObserver.value) {
+    resizeObserver.value.disconnect()
+  }
+})
+
+// methods
+const toggleAutoSize = () => {
+  if (w.value === 'auto') {
+    const elem = document.getElementById('oh-canvas-item-vdr-' + props.id)
+    if (elem) {
+      w.value = props.context.component.config.w = Math.max(10, elem.clientWidth)
+      h.value = props.context.component.config.h = Math.max(10, elem.clientHeight)
+    }
+  } else {
+    w.value = props.context.component.config.w = 'auto'
+    h.value = props.context.component.config.h = 'auto'
+    reloadKey.value += 1
+  }
+}
+
+const toggleShadow = () => {
+  shadow.value = !shadow.value
+}
+
+const onResize = (newX: number, newY: number, width: number, height: number) => {
+  x.value = newX
+  y.value = newY
+  w.value = width
+  h.value = height
+}
+
+const onDrag = (newX: number, newY: number) => {
+  // TODO: Previously emitted this as first arg
+  emit('oci-dragged', { x: x.value, y: y.value }, newX - x.value, newY - y.value)
+  moveTo(newX, newY)
+}
+
+const moveTo = (newX: number, newY: number) => {
+  x.value = newX
+  y.value = newY
+}
+
+const onResizeStartCallback = (ev: MouseEvent | TouchEvent) => {
+  if (w.value === 'auto' || h.value === 'auto') return false
+
+  const posOK = onDragStartCallback(ev)
+  if (props.gridEnable) {
+    const snapW = Math.round((w.value as number) / props.gridPitch) * props.gridPitch
+    const snapH = Math.round((h.value as number) / props.gridPitch) * props.gridPitch
+
+    if (w.value === snapW && h.value === snapH) {
+      // Widget already on grid, can continue to resize
+      resizing.value = posOK
     } else {
-      this.ready = true
+      // Widget was not on grid, snap to grid upon first action
+      onResize(x.value, y.value, snapW, snapH)
+      resizing.value = false
     }
-  },
-  beforeUnmount () {
-    if (this.resizeObserver) {
-      this.resizeObserver.disconnect()
+  } else {
+    resizing.value = true
+  }
+
+  if (resizing.value) dragging.value = false
+  return resizing.value
+}
+
+const onDragStartCallback = (ev: MouseEvent | TouchEvent) => {
+  if (!props.context.editmode) return false
+
+  if (props.gridEnable) {
+    const snapX = Math.round(x.value / props.gridPitch) * props.gridPitch
+    const snapY = Math.round(y.value / props.gridPitch) * props.gridPitch
+
+    if (x.value === snapX && y.value === snapY) {
+      // Origin on grid, continue dragging action
+      dragging.value = true
+    } else {
+      // First snap to grid component and stop action
+      onDrag(snapX, snapY)
+      dragging.value = true
     }
-  },
-  computed: {
-    autosize () {
-      return this.w === 'auto'
-    },
-    editMessage () {
-      if (this.dragging) {
-        return `(${this.x}, ${this.y})`
-      } else if (this.resizing) {
-        return `${this.w}x${this.h}`
-      } else {
-        return ''
-      }
-    }
-  },
-  watch: {
-    active (val) {
-      if (val) this.$emit('oci-selected', this)
-      else this.$emit('oci-deselected', this)
-    }
-  },
-  methods: {
-    toggleAutoSize () {
-      if (this.w === 'auto') {
-        const elem = document.getElementById('oh-canvas-item-vdr-' + this.id)
-        this.w = this.context.component.config.w = Math.max(10, elem.clientWidth)
-        this.h = this.context.component.config.h = Math.max(10, elem.clientHeight)
-      } else {
-        this.w = this.context.component.config.w = 'auto'
-        this.h = this.context.component.config.h = 'auto'
-        this.reloadKey += 1
-      }
-    },
-    toggleShadow () {
-      this.shadow = !this.shadow
-      this.context.component.config.noCanvasShadow = !this.shadow
-    },
-    onResize (x, y, width, height) {
-      this.x = this.context.component.config.x = x
-      this.y = this.context.component.config.y = y
-      this.w = this.context.component.config.w = width
-      this.h = this.context.component.config.h = height
-    },
-    onDrag (x, y) {
-      this.$emit('oci-dragged', this, x - this.x, y - this.y)
-      this.moveTo(x, y)
-    },
-    moveTo (x, y) {
-      this.x = this.context.component.config.x = x
-      this.y = this.context.component.config.y = y
-    },
-    onResizeStartCallback (ev) {
-      if (this.w === 'auto' || this.h === 'auto') {
-        return false
-      }
+  } else {
+    dragging.value = true
+  }
 
-      const posOK = this.onDragStartCallback(ev)
-      if (this.gridEnable) {
-        const snapW = Math.round(this.w / this.gridPitch) * this.gridPitch
-        const snapH = Math.round(this.h / this.gridPitch) * this.gridPitch
+  if (dragging.value) resizing.value = false
+  return dragging.value
+}
 
-        if (this.w === snapW && this.h === snapH) {
-          // Widget already on grid, can continue to resize
-          this.resizing = posOK
-        } else {
-          // Widget was not on grid, snap to grid upon first action
-          this.onResize(this.x, this.y, snapW, snapH)
-          this.resizing = false
-        }
-      } else {
-        this.resizing = true
-      }
+const onResizeStop = () => {
+  resizing.value = false
+}
 
-      if (this.resizing) this.dragging = false
-      return this.resizing
-    },
-    onDragStartCallback (ev) {
-      if (!this.context.editmode) return false
+const onDragStop = () => {
+  // TODO: Previously emitted this
+  emit('oci-drag-stop', { x: x.value, y: y.value })
+  dragging.value = false
+}
 
-      if (this.gridEnable) {
-        const snapX = Math.round(this.x / this.gridPitch) * this.gridPitch
-        const snapY = Math.round(this.y / this.gridPitch) * this.gridPitch
-
-        if (this.x === snapX && this.y === snapY) {
-          // Origin on grid, continue dragging action
-          this.dragging = true
-        } else {
-          // First snap to grid component and stop action
-          this.onDrag(snapX, snapY)
-          this.dragging = true
-        }
-      } else {
-        this.dragging = true
-      }
-
-      if (this.dragging) this.resizing = false
-      return this.dragging
-    },
-    onResizeStop () {
-      this.resizing = false
-    },
-    onDragStop () {
-      this.$emit('oci-drag-stop', this)
-      this.stopDrag()
-    },
-    stopDrag () {
-      this.dragging = false
-    },
-    eventControl (ev) {
-      // Events are captured before bubbling to prevent undesired widget interaction when a widget has been
-      // added but the page is in edit mode.
-      if (this.context.editmode && this.defaultSlots.length > 0) {
-        ev.stopPropagation()
-        ev.preventDefault()
-      }
-    }
+const eventControl = (ev: Event) => {
+  // Events are captured before bubbling to prevent undesired widget interaction
+  // when a widget has been added but the page is in edit mode.
+  if (props.context.editmode && defaultSlots.value.length > 0) {
+    ev.stopPropagation()
+    ev.preventDefault()
   }
 }
 </script>
