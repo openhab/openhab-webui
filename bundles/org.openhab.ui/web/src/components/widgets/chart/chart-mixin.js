@@ -272,18 +272,30 @@ export default {
       if (direction === 0) return day
       const fn = direction < 0 ? day.subtract : day.add
       const chartType = this.context.component.config.chartType
-      direction = Math.abs(direction)
-      if (chartType) {
-        const millis = dayjs.duration({ [chartType === 'isoWeek' ? 'week' : chartType]: 1 }).asMilliseconds() * direction
-        day = fn.apply(day, [millis, 'millisecond'])
-      } else {
-        const period = this.period || this.context.component.config.period || DEFAULT_PERIOD
-        const span = period.match(/^([\d]*)([smhdDwWMQyY])$/)
-        if (span) {
-          const millis =
-            dayjs.duration({ [span[2].replace(/[DWY]/, (x) => x.toLowerCase())]: parseInt(span[1]) || 1 }).asMilliseconds() * direction
-          day = fn.apply(day, [millis, 'millisecond'])
+      const absDirection = Math.abs(direction)
+      // Handle full direction units
+      for (let i = 0; i < Math.floor(absDirection); i++) {
+        if (chartType) {
+          day = fn.apply(day, [1, chartType === 'isoWeek' ? 'week' : chartType])
+        } else {
+          const period = this.period || this.context.component.config.period || DEFAULT_PERIOD
+          const span = period.match(/^([\d]*)([smhdDwWMQyY])$/)
+          if (span) {
+            day = fn.apply(day, [parseInt(span[1]) || 1, span[2].replace(/[DWY]/, (x) => x.toLowerCase())])
+          }
         }
+      }
+      // Handle fractional direction
+      const fraction = absDirection % 1
+      if (fraction > 0) {
+        const unit = chartType
+          ? chartType === 'isoWeek'
+            ? 'week'
+            : chartType
+          : (this.period || this.context.component.config.period || DEFAULT_PERIOD).match(/[smhdDwWMQyY]$/)[0].toLowerCase()
+        const nextFullUnit = fn.apply(day, [1, unit])
+        const diff = nextFullUnit.diff(day)
+        day = day.add(diff * fraction, 'ms')
       }
 
       return day
