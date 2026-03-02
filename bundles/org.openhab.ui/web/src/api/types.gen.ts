@@ -138,10 +138,10 @@ export type RuleStatusInfo = {
 
 export type Module = {
     typeUID: string;
-    configuration: Configuration;
-    label: string;
     description: string;
+    label: string;
     id: string;
+    configuration: Configuration;
 };
 
 export type Configuration = {
@@ -158,11 +158,11 @@ export type RuleExecution = {
 };
 
 export type Template = {
+    uid: string;
     tags: Array<string>;
     visibility: 'VISIBLE' | 'HIDDEN' | 'EXPERT';
-    uid: string;
-    label: string;
     description: string;
+    label: string;
 };
 
 export type Input = {
@@ -590,10 +590,10 @@ export type PersistenceServiceConfiguration = {
 };
 
 export type PersistenceItemInfo = {
-    earliest: string;
-    latest: string;
     name: string;
     count: number;
+    earliest: string;
+    latest: string;
 };
 
 export type PersistenceStrategy = {
@@ -1689,18 +1689,15 @@ export type GetAvailableActionsForThingData = {
     url: '/actions/{thingUID}';
 };
 
-export type GetAvailableActionsForThingErrors = {
-    /**
-     * No actions found.
-     */
-    404: unknown;
-};
-
 export type GetAvailableActionsForThingResponses = {
     /**
      * OK
      */
     200: Array<ThingAction>;
+    /**
+     * No actions found
+     */
+    204: void;
 };
 
 export type GetAvailableActionsForThingResponse = GetAvailableActionsForThingResponses[keyof GetAvailableActionsForThingResponses];
@@ -1835,6 +1832,10 @@ export type DeleteSessionData = {
 
 export type DeleteSessionErrors = {
     /**
+     * User authentication is not managed by openHAB
+     */
+    400: unknown;
+    /**
      * User is not authenticated
      */
     401: unknown;
@@ -1859,6 +1860,10 @@ export type GetApiTokensData = {
 };
 
 export type GetApiTokensErrors = {
+    /**
+     * User authentication is not managed by openHAB
+     */
+    400: unknown;
     /**
      * User is not authenticated
      */
@@ -1886,6 +1891,10 @@ export type GetSessionsForCurrentUserData = {
 };
 
 export type GetSessionsForCurrentUserErrors = {
+    /**
+     * User authentication is not managed by openHAB
+     */
+    400: unknown;
     /**
      * User is not authenticated
      */
@@ -1947,6 +1956,10 @@ export type RemoveApiTokenData = {
 };
 
 export type RemoveApiTokenErrors = {
+    /**
+     * User authentication is not managed by openHAB
+     */
+    400: unknown;
     /**
      * User is not authenticated
      */
@@ -2332,14 +2345,18 @@ export type GetChannelTypeByUidData = {
 
 export type GetChannelTypeByUidErrors = {
     /**
-     * No content
+     * Bad request
+     */
+    400: unknown;
+    /**
+     * Channel type with provided channelTypeUID does not exist.
      */
     404: unknown;
 };
 
 export type GetChannelTypeByUidResponses = {
     /**
-     * Channel type with provided channelTypeUID does not exist.
+     * OK
      */
     200: ChannelType;
 };
@@ -3636,11 +3653,11 @@ export type DeletePersistenceServiceConfigurationData = {
 
 export type DeletePersistenceServiceConfigurationErrors = {
     /**
-     * Persistence service configuration not found.
+     * Persistence service configuration not found
      */
     404: unknown;
     /**
-     * Persistence service configuration not editable.
+     * Persistence service configuration not editable
      */
     405: unknown;
 };
@@ -3697,11 +3714,11 @@ export type PutPersistenceServiceConfigurationData = {
 
 export type PutPersistenceServiceConfigurationErrors = {
     /**
-     * Payload invalid.
+     * Payload invalid
      */
     400: unknown;
     /**
-     * PersistenceServiceConfiguration not editable.
+     * PersistenceServiceConfiguration not editable
      */
     405: unknown;
 };
@@ -3712,7 +3729,7 @@ export type PutPersistenceServiceConfigurationResponses = {
      */
     200: PersistenceServiceConfiguration;
     /**
-     * PersistenceServiceConfiguration created.
+     * PersistenceServiceConfiguration created
      */
     201: unknown;
 };
@@ -3723,7 +3740,7 @@ export type DeleteItemFromPersistenceServiceData = {
     body?: never;
     path: {
         /**
-         * The item name.
+         * The Item name.
          */
         itemName: string;
     };
@@ -3768,7 +3785,7 @@ export type GetItemDataFromPersistenceServiceData = {
     body?: never;
     path: {
         /**
-         * The item name
+         * The Item name
          */
         itemName: string;
     };
@@ -3798,7 +3815,7 @@ export type GetItemDataFromPersistenceServiceData = {
          */
         boundary?: boolean;
         /**
-         * Adds the current Item state into the requested period (the item state will be before or at the endtime)
+         * Adds the current Item state into the requested period (the Item state will be before or at the endtime)
          */
         itemState?: boolean;
     };
@@ -3807,9 +3824,13 @@ export type GetItemDataFromPersistenceServiceData = {
 
 export type GetItemDataFromPersistenceServiceErrors = {
     /**
-     * Unknown Item or persistence service
+     * Unknown persistence service or Item not found in persistence store
      */
     404: unknown;
+    /**
+     * Persistence service not queryable
+     */
+    405: unknown;
 };
 
 export type GetItemDataFromPersistenceServiceResponses = {
@@ -3825,7 +3846,7 @@ export type StoreItemDataInPersistenceServiceData = {
     body?: never;
     path: {
         /**
-         * The item name.
+         * The Item name.
          */
         itemName: string;
     };
@@ -3848,7 +3869,7 @@ export type StoreItemDataInPersistenceServiceData = {
 
 export type StoreItemDataInPersistenceServiceErrors = {
     /**
-     * Item not found, invalid state, invalid time format, or persistence service not found or not modifiable.
+     * Item not found, invalid state, invalid time format, or persistence service not found or not modifiable
      */
     400: unknown;
     /**
@@ -3888,8 +3909,23 @@ export type GetItemsForPersistenceServiceData = {
          * Id of the persistence service. If not provided the default service will be used
          */
         serviceId?: string;
+        /**
+         * An Item name, if provided response will only contain information for this Item
+         */
+        itemname?: string;
     };
     url: '/persistence/items';
+};
+
+export type GetItemsForPersistenceServiceErrors = {
+    /**
+     * Unknown persistence service or Item not found in persistence store
+     */
+    404: unknown;
+    /**
+     * Persistence service not queryable or getting Item info not allowed
+     */
+    405: unknown;
 };
 
 export type GetItemsForPersistenceServiceResponses = {
@@ -4826,14 +4862,14 @@ export type GetThingTypeByIdData = {
 
 export type GetThingTypeByIdErrors = {
     /**
-     * No content
+     * Thing type not found.
      */
     404: unknown;
 };
 
 export type GetThingTypeByIdResponses = {
     /**
-     * Thing type with provided thingTypeUID does not exist.
+     * OK
      */
     200: ThingType;
 };
