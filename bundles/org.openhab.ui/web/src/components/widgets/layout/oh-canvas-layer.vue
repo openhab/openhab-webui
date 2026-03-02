@@ -8,7 +8,11 @@
       :grid-enable="gridEnable"
       :grid-pitch="gridPitch"
       :prevent-deactivation="preventDeactivation"
-      :context="childContext(obj.item)" />
+      :context="childContext(obj.item)"
+      @oci-selected="(cid) => emit('oci-selected', cid)"
+      @oci-deselected="(cid) => emit('oci-deselected', cid)"
+      @oci-drag-stop="(cid) => emit('oci-drag-stop', cid)"
+      @oci-dragged="(cid, x, y) => emit('oci-dragged', cid, x, y)" />
   </div>
 </template>
 
@@ -27,6 +31,7 @@ import OhCanvasItem from './oh-canvas-item.vue'
 import { OhCanvasLayerDefinition } from '@/assets/definitions/widgets/layout'
 import type { WidgetContext } from '@/components/widgets/types'
 import type { UiComponent } from '@/api'
+import type { OhCanvasItemEmits } from '@/components/widgets/layout/oh-canvas-item.vue'
 
 defineExpose({ widget: OhCanvasLayerDefinition })
 
@@ -38,6 +43,8 @@ const props = defineProps<{
   id: string,
   preventDeactivation: boolean
 }>()
+
+const emit = defineEmits<OhCanvasItemEmits>()
 
 // composables
 const { config, defaultSlots, childContext, visible } = useWidgetContext(props.context)
