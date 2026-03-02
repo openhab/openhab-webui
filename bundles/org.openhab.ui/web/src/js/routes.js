@@ -123,6 +123,12 @@ const PageRoutes = Object.entries(PageEditors).flatMap(([k, v]) => {
       async: loadAsync(v, { createMode: true })
     },
     {
+      path: `${k}/duplicate`,
+      beforeEnter: [enforceAdminForRoute],
+      beforeLeave: [checkDirtyBeforeLeave],
+      async: loadAsync(v, { createMode: true })
+    },
+    {
       path: `${k}/:uid`,
       beforeEnter: [enforceAdminForRoute],
       beforeLeave: [checkDirtyBeforeLeave],
