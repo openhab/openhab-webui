@@ -191,9 +191,10 @@ import 'vue-draggable-resizable/style.css'
 import VueDraggableResizable from 'vue-draggable-resizable'
 
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
-import OhPlaceholderWidget from './oh-placeholder-widget.vue'
 import { OhCanvasItemDefinition } from '@/assets/definitions/widgets/layout'
 import type { WidgetContext } from '@/components/widgets/types'
+import GenericWidgetComponent from '@/components/widgets/generic-widget-component.vue'
+import OhPlaceholderWidget from '@/components/widgets/layout/oh-placeholder-widget.vue'
 
 defineExpose({ widget: OhCanvasItemDefinition })
 
@@ -239,14 +240,14 @@ const y = computed({
   set: (val) => { props.context.component.config.y = val }
 })
 
-const w = computed({
-  get: () => (config.value?.w as number | string) ?? 100,
-  set: (val) => { props.context.component.config.w = val }
+const w = computed<number | 'auto'>({
+  get: () => (config.value?.w as number | string as 'auto') ?? 100,
+  set: (val: number | 'auto') => { props.context.component.config.w = val }
 })
 
-const h = computed({
-  get: () => (config.value?.h as number | string) ?? 100,
-  set: (val) => { props.context.component.config.h = val }
+const h = computed<number | 'auto'>({
+  get: () => (config.value?.h as number | string as 'auto') ?? 100,
+  set: (val: number | 'auto') => { props.context.component.config.h = val }
 })
 
 const shadow = computed({
@@ -342,10 +343,10 @@ const moveTo = (newX: number, newY: number) => {
   y.value = newY
 }
 
-const onResizeStartCallback = (ev: MouseEvent | TouchEvent) => {
+const onResizeStartCallback = (_handle: unknown, _x: number, _y: number, _width: number, _height: number) => {
   if (w.value === 'auto' || h.value === 'auto') return false
 
-  const posOK = onDragStartCallback(ev)
+  const posOK = onDragStartCallback(_x, _y)
   if (props.gridEnable) {
     const snapW = Math.round((w.value as number) / props.gridPitch) * props.gridPitch
     const snapH = Math.round((h.value as number) / props.gridPitch) * props.gridPitch
@@ -366,7 +367,7 @@ const onResizeStartCallback = (ev: MouseEvent | TouchEvent) => {
   return resizing.value
 }
 
-const onDragStartCallback = (ev: MouseEvent | TouchEvent) => {
+const onDragStartCallback = (_x: number, _y: number) => {
   if (!props.context.editmode) return false
 
   if (props.gridEnable) {
