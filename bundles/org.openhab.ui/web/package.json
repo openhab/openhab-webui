@@ -150,6 +150,7 @@
     "@types/event-source-polyfill": "^1.0.5",
     "@types/lodash": "^4.17.21",
     "@types/node": "^24.10.4",
+    "@types/vue-draggable-resizable": "^3.0.0",
     "@typescript-eslint/eslint-plugin": "^8.55.0",
     "@typescript-eslint/parser": "^8.55.0",
     "@vitejs/plugin-vue": "^6.0.4",
