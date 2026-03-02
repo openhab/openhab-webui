@@ -205,7 +205,12 @@ const props = defineProps<{
   id: string
   preventDeactivation: boolean
 }>()
-const emit = defineEmits(['oci-selected', 'oci-deselected', 'oci-drag-stop', 'oci-dragged'])
+const emit = defineEmits({
+  'oci-selected': (id: string) => true,
+  'oci-deselected': (id: string) => true,
+  'oci-drag-stop': (id: string) => true,
+  'oci-dragged': (id: string, x: number, y: number) => true,
+})
 
 // composables
 const { config, visible, childContext, defaultSlots } = useWidgetContext(props.context)
@@ -258,9 +263,11 @@ const editMessage = computed(() => {
 
 // watchers
 watch(active, (val) => {
-  // TODO: Previously emitted this
-  if (val) emit('oci-selected', { x: x.value, y: y.value })
-  else emit('oci-deselected', { x: x.value, y: y.value })
+  if (val) {
+    emit('oci-selected', props.id)
+  } else {
+    emit('oci-deselected', props.id)
+  }
 })
 
 // lifecycle
@@ -323,8 +330,7 @@ const onResize = (newX: number, newY: number, width: number, height: number) => 
 }
 
 const onDrag = (newX: number, newY: number) => {
-  // TODO: Previously emitted this as first arg
-  emit('oci-dragged', { x: x.value, y: y.value }, newX - x.value, newY - y.value)
+  emit('oci-dragged', props.id, newX - x.value, newY - y.value)
   moveTo(newX, newY)
 }
 
@@ -368,7 +374,7 @@ const onDragStartCallback = (ev: MouseEvent | TouchEvent) => {
       // Origin on grid, continue dragging action
       dragging.value = true
     } else {
-      // First snap to grid component and stop action
+      // Snap to grid and stop action
       onDrag(snapX, snapY)
       dragging.value = true
     }
@@ -385,8 +391,7 @@ const onResizeStop = () => {
 }
 
 const onDragStop = () => {
-  // TODO: Previously emitted this
-  emit('oci-drag-stop', { x: x.value, y: y.value })
+  emit('oci-drag-stop', props.id)
   dragging.value = false
 }
 
