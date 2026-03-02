@@ -20,64 +20,59 @@
   pointer-events none
 </style>
 
-<script>
+<script setup lang="ts">
+import { computed, ref } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhCanvasItem from './oh-canvas-item.vue'
 import { OhCanvasLayerDefinition } from '@/assets/definitions/widgets/layout'
+import type { WidgetContext } from '@/components/widgets/types'
+import type { UiComponent } from '@/api'
 
-export default {
-  widget: OhCanvasLayerDefinition,
-  components: {
-    OhCanvasItem
-  },
-  props: {
-    context: Object,
-    gridPitch: Number,
-    gridEnable: Boolean,
-    id: String,
-    preventDeactivation: Boolean
-  },
-  setup (props) {
-    const { config, childContext, visible } = useWidgetContext(props.context)
-    return { config, childContext, visible }
-  },
-  data () {
-    return {
-      layer: []
-    }
-  },
-  created () {
-    this.computeLayer()
-  },
-  computed: {
-    layerPreload () {
-      return this.config?.preload === true
-    },
-    layerVisible () {
-      return (!this.context.editmode && this.visible) || (this.context.editmode && this.editVisible)
-    },
-    editVisible () {
-      return !(this.config && (this.config.editVisible === false))
-    }
-  },
-  methods: {
-    computeLayer () {
-      let layer = []
-      if (this.context.component.slots) {
-        this.context.component.slots?.default.forEach((item) => {
-          if (item.component === 'oh-canvas-item') {
-            layer.push({
-              item,
-              selected: false,
-              id: Math.random().toString(36).substring(2)
-            })
-          } else {
-            console.log('Wrong component type in canvas layer: ' + item.component)
-          }
-        })
-      }
-      this.layer = layer
-    }
-  }
+defineExpose({ widget: OhCanvasLayerDefinition })
+
+// props & emits
+const props = defineProps<{
+  context: WidgetContext,
+  gridPitch: number,
+  gridEnable: boolean,
+  id: string,
+  preventDeactivation: boolean
+}>()
+
+// composables
+const { config, defaultSlots, childContext, visible } = useWidgetContext(props.context)
+
+// data (state)
+interface Layer {
+  item: UiComponent,
+  selected: boolean,
+  id: string
 }
+
+const layer = ref<Layer[]>([])
+
+// computed
+const layerPreload = computed(() => config.value?.preload === true)
+const layerVisible = computed(() => (!props.context.editmode && visible.value) || (props.context.editmode && editVisible.value))
+const editVisible = computed(() => !(config.value && (config.value.editVisible === false)))
+
+// methods
+const computeLayer = () => {
+  let l: Layer[] = []
+  defaultSlots.value.forEach((item: UiComponent) => {
+    if (item.component === 'oh-canvas-item') {
+      l.push({
+        item,
+        selected: false,
+        id: Math.random().toString(36).substring(2)
+      })
+    } else {
+      console.log('Wrong component type in canvas layer: ' + item.component)
+    }
+  })
+  layer.value = l
+}
+
+// lifecycle
+computeLayer()
 </script>

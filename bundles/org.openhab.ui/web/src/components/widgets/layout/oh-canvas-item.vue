@@ -205,12 +205,15 @@ const props = defineProps<{
   id: string
   preventDeactivation: boolean
 }>()
-const emit = defineEmits({
-  'oci-selected': (id: string) => true,
-  'oci-deselected': (id: string) => true,
-  'oci-drag-stop': (id: string) => true,
-  'oci-dragged': (id: string, x: number, y: number) => true,
-})
+
+export interface OhCanvasItemEmits {
+  (e: 'oci-selected', id: string): void
+  (e: 'oci-deselected', id: string): void
+  (e: 'oci-drag-stop', id: string): void
+  (e: 'oci-dragged', id: string, x: number, y: number): void
+}
+
+const emit = defineEmits<OhCanvasItemEmits>();
 
 // composables
 const { config, visible, childContext, defaultSlots } = useWidgetContext(props.context)
