@@ -114,28 +114,30 @@ const loadAsync = (page, props) => {
   }
 }
 
-const PageRoutes = Object.entries(PageEditors).flatMap(([k, v]) => {
-  return [
-    {
-      path: `${k}/add`,
-      beforeEnter: [enforceAdminForRoute],
-      beforeLeave: [checkDirtyBeforeLeave],
-      async: loadAsync(v, { createMode: true })
-    },
-    {
-      path: `${k}/duplicate`,
-      beforeEnter: [enforceAdminForRoute],
-      beforeLeave: [checkDirtyBeforeLeave],
-      async: loadAsync(v, { createMode: true })
-    },
-    {
-      path: `${k}/:uid`,
-      beforeEnter: [enforceAdminForRoute],
-      beforeLeave: [checkDirtyBeforeLeave],
-      async: loadAsync(v)
-    }
-  ]
-}).reduce((acc, route) => acc.concat(route), [])
+const PageRoutes = Object.entries(PageEditors)
+  .flatMap(([k, v]) => {
+    return [
+      {
+        path: `${k}/add`,
+        beforeEnter: [enforceAdminForRoute],
+        beforeLeave: [checkDirtyBeforeLeave],
+        async: loadAsync(v, { createMode: true })
+      },
+      {
+        path: `${k}/duplicate`,
+        beforeEnter: [enforceAdminForRoute],
+        beforeLeave: [checkDirtyBeforeLeave],
+        async: loadAsync(v, { createMode: true })
+      },
+      {
+        path: `${k}/:uid`,
+        beforeEnter: [enforceAdminForRoute],
+        beforeLeave: [checkDirtyBeforeLeave],
+        async: loadAsync(v)
+      }
+    ]
+  })
+  .reduce((acc, route) => acc.concat(route), [])
 
 export default [
   {
@@ -278,7 +280,7 @@ export default [
         path: 'pages/',
         async: loadAsync(PagesListPage),
         beforeEnter: [enforceAdminForRoute],
-        routes: PageRoutes,
+        routes: PageRoutes
       },
       {
         path: 'transformations/',
