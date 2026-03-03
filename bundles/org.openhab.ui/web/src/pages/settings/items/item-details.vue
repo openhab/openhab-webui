@@ -271,7 +271,7 @@ export default {
         'Delete Item',
         () => {
           this.$oh.api.delete('/rest/items/' + this.item.name).then(() => {
-            this.f7router.back('/settings/items/', { force: true })
+            this.f7router.navigate('/settings/items/')
           })
         }
       )

@@ -292,9 +292,7 @@ export default {
 
         this.dirty = this.itemDirty = this.codeDirty = false
         if (this.createMode) {
-          this.f7router.navigate('/settings/items/' + this.item.name, {
-            reloadCurrent: true
-          })
+          this.f7router.navigate('/settings/items/' + this.item.name)
         } else {
           this.f7router.back()
         }
