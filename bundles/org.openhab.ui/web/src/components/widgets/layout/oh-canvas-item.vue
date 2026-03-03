@@ -90,7 +90,7 @@
     </vue-draggable-resizable>
     <div
       v-else
-      ref="root"
+      :ref="root"
       :style="{
         left: x + 'px',
         top: y + 'px',
@@ -186,7 +186,7 @@
 </style>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onBeforeUnmount, useTemplateRef } from 'vue'
+import { ref, computed, watch, onMounted, onBeforeUnmount, type VNodeRef } from 'vue'
 import 'vue-draggable-resizable/style.css'
 import VueDraggableResizable from 'vue-draggable-resizable'
 
@@ -220,7 +220,7 @@ const emit = defineEmits<OhCanvasItemEmits>();
 const { config, visible, childContext, defaultSlots } = useWidgetContext(props.context)
 
 // data (state)
-const root = useTemplateRef('root')
+const root = ref<VNodeRef | null>(null)
 const reloadKey = ref(0)
 const dragging = ref(false)
 const resizing = ref(false)
