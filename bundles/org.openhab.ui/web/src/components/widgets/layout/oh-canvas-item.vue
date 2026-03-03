@@ -230,6 +230,8 @@ const ready = ref(false)
 const resizeObserver = ref<ResizeObserver | null>(null)
 
 // computed
+// note: direct mutation of props is intentional, parents handle this
+
 const x = computed({
   get: () => (config.value?.x as number) ?? 20,
   set: (val) => { props.context.component.config.x = val }
