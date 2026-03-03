@@ -1,4 +1,4 @@
-// defintions for the tab "widget"
+// definitions for the tab "widget"
 
 import { WidgetDefinition, pt } from '../helpers.js'
 

@@ -1,9 +1,10 @@
 // definitions for the chart widgets
 // TODO: migrate to WidgetDefinition
 
-import { actionGroup, actionParams } from '../actions.js'
-import { pg, pb, pt, pn, pi } from '../helpers.js'
-import { aggregationTypeOptions, dimensionTypeOptions, markerOptions } from './options.js'
+import * as api from '@/api'
+import { actionGroup, actionParams } from '../actions.ts'
+import { pg, pb, pt, pn, pi, type WidgetDefinitionParameter } from '../helpers.ts'
+import { aggregationTypeOptions, dimensionTypeOptions, markerOptions } from './options.ts'
 
 const positionGroup = pg(
   'position',
@@ -15,7 +16,7 @@ const componentRelationsGroup = pg('componentRelations', 'Axis and Coordinate Sy
 
 const nameDisplayGroup = pg('nameDisplay', 'Name Display', '')
 
-const positionParameters = [
+const positionParameters: WidgetDefinitionParameter[] = [
   { name: 'top', type: 'TEXT', label: 'Top', groupName: 'position' },
   { name: 'bottom', type: 'TEXT', label: 'Bottom', groupName: 'position' },
   { name: 'left', type: 'TEXT', label: 'Left', groupName: 'position' },
@@ -24,7 +25,7 @@ const positionParameters = [
   { name: 'height', type: 'TEXT', label: 'Height', groupName: 'position' }
 ]
 
-const orientParameter = pt('orient', 'Orientation', '').o(
+const orientParameter: WidgetDefinitionParameter = pt('orient', 'Orientation', '').o(
   [
     { value: 'horizontal', label: 'Horizontal' },
     { value: 'vertical', label: 'Vertical' }
@@ -75,7 +76,7 @@ const persistenceServiceParameter = pt(
   .c('persistenceService')
   .a()
 
-const markersParameter = (withTime) =>
+const markersParameter = (withTime?: boolean) =>
   pt('markers', 'Markers', 'The markers to display for the series').o(markerOptions(withTime), true, true)
 
 const boundaryParameter = pb(
@@ -129,7 +130,7 @@ const seriesParameters = [
   offsetUnitParameter
 ]
 
-const seriesTypesLabels = {
+const seriesTypesLabels: Record<string, string> = {
   line: 'Line',
   bar: 'Bar',
   gauge: 'Gauge',
@@ -138,7 +139,7 @@ const seriesTypesLabels = {
   scatter: 'Scatter'
 }
 
-const seriesTypeParameter = (...types) => {
+const seriesTypeParameter = (...types: string[]): WidgetDefinitionParameter => {
   return {
     name: 'type',
     type: 'TEXT',
@@ -147,7 +148,7 @@ const seriesTypeParameter = (...types) => {
       'The type of the series.<br/><em>Note: <code>heatmap</code> needs a configured visual map or uses the default and is not supported for time series!</em>',
     limitToOptions: true,
     options: types.map((o) => {
-      return { value: o, label: seriesTypesLabels[o] }
+      return { value: o, label: seriesTypesLabels[o] ?? o }
     })
   }
 }
@@ -158,7 +159,16 @@ const aggregationFunctionParameter = pt(
   'How to reduce the data points in a same aggregation cluster to a single value. If not specified, the average function will be used.'
 ).o(aggregationTypeOptions, true)
 
-export default {
+export interface ChartComponentDefinition {
+  label: string
+  docLink?: string
+  props: {
+    parameterGroups: api.ConfigDescriptionParameterGroup[]
+    parameters: WidgetDefinitionParameter[]
+  }
+}
+
+const chartComponents: Record<string, ChartComponentDefinition> = {
   'oh-chart-grid': {
     label: 'Cartesian Grid',
     docLink: 'https://echarts.apache.org/en/option.html#grid',
@@ -175,8 +185,7 @@ export default {
           name: 'containLabel',
           type: 'BOOLEAN',
           label: 'Contain label',
-          description: 'Whether the grid region contains the axis tick labels',
-          docLink: 'https://echarts.apache.org/en/option.html#grid.containLabel'
+          description: 'Whether the grid region contains the axis tick labels'
         }
       ]
     }
@@ -217,7 +226,7 @@ export default {
             { value: 'short', label: 'Short' },
             { value: 'min', label: 'Minimal' }
           ],
-          visible: (value, configuration, configDescription, parameters) => {
+          visible: (_value, configuration) => {
             return configuration.categoryType === 'week'
           }
         },
@@ -226,7 +235,7 @@ export default {
           label: 'Start Week on Sunday',
           type: 'BOOLEAN',
           description: 'Check to start the week on Sundays instead of Mondays',
-          visible: (value, configuration, configDescription, parameters) => {
+          visible: (_value, configuration) => {
             return configuration.categoryType === 'week'
           }
         },
@@ -241,7 +250,7 @@ export default {
             { value: 'default', label: 'Long (default)' },
             { value: 'short', label: 'Short' }
           ],
-          visible: (value, configuration, configDescription, parameters) => {
+          visible: (_value, configuration) => {
             return configuration.categoryType === 'year'
           }
         },
@@ -251,7 +260,7 @@ export default {
           type: 'TEXT',
           description: 'Category values to display',
           multiple: true,
-          visible: (value, configuration, configDescription, parameters) => {
+          visible: (_value, configuration) => {
             return configuration.categoryType === 'values'
           }
         }
@@ -431,11 +440,13 @@ export default {
           name: 'boundariesGroup',
           label: 'Boundaries',
           description:
-            'Values considered in range for this visual map (by default [0, 200])<br/><strong>These cannot be determined from the series and have to be defined manually!</strong>'
+            'Values considered in range for this visual map (by default [0, 200])<br/><strong>These cannot be determined from the series and have to be defined manually!</strong>',
+          advanced: false
         },
         {
           name: 'appearanceGroup',
-          label: 'Appearance'
+          label: 'Appearance',
+          advanced: false
         },
         positionGroup
       ],
@@ -462,7 +473,7 @@ export default {
           type: 'BOOLEAN',
           groupName: 'appearanceGroup',
           description: 'Show handles to filter data in continuous mode',
-          visible: (value, configuration, configDescription, parameters) => {
+          visible: (_value, configuration) => {
             return configuration.type !== 'piecewise'
           }
         },
@@ -472,7 +483,7 @@ export default {
           type: 'INTEGER',
           groupName: 'appearanceGroup',
           description: 'Number of pieces in piecewise mode',
-          visible: (value, configuration, configDescription, parameters) => {
+          visible: (_value, configuration) => {
             return configuration.type === 'piecewise'
           }
         },
@@ -514,23 +525,25 @@ export default {
             { value: 'inside', label: 'Inside' }
           ]
         },
-        Object.assign({}, showParameter, {
-          visible: (value, configuration, configDescription, parameters) => {
+        {
+          ...showParameter,
+          visible: (_value, configuration) => {
             return configuration.type === 'slider'
           }
-        }),
-        Object.assign({}, orientParameter, {
-          visible: (value, configuration, configDescription, parameters) => {
+        } as WidgetDefinitionParameter,
+        {
+          ...orientParameter,
+          visible: (_value, configuration) => {
             return configuration.type === 'slider'
           }
-        }),
+        } as WidgetDefinitionParameter,
         ...positionParameters.map((o) => {
-          return Object.assign({}, o, {
-            groupName: null,
-            visible: (value, configuration, configDescription, parameters) => {
+          return {
+            ...o,
+            visible: (_value, configuration) => {
               return configuration.type === 'slider'
             }
-          })
+          } as WidgetDefinitionParameter
         })
       ]
     }
@@ -594,3 +607,5 @@ export default {
     }
   }
 }
+
+export default chartComponents

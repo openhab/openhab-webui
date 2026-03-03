@@ -37,11 +37,11 @@ export default () => [
   }),
   pd('future', 'Future Proportion', 'The proportion of the period that should extend into the future')
     .o([
-      { value: 0, label: '0% - Past only' },
-      { value: 0.25, label: '25% - 3/4 past, 1/4 future' },
-      { value: 0.5, label: '50% - 1/2 past, 1/2 future' },
-      { value: 0.75, label: '75% - 1/4 past, 3/4 future' },
-      { value: 1, label: '100% - Future only' }
+      { value: '0', label: '0% - Past only' },
+      { value: '0.25', label: '25% - 3/4 past, 1/4 future' },
+      { value: '0.5', label: '50% - 1/2 past, 1/2 future' },
+      { value: '0.75', label: '75% - 1/4 past, 3/4 future' },
+      { value: '1', label: '100% - Future only' }
     ])
-    .d(0)
+    .d('0')
 ]

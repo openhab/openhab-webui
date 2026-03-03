@@ -1,8 +1,7 @@
-import { WidgetDefinition, pt, pi, pg, pb, pn, po } from '../helpers.js'
-import { actionGroup, actionParams } from '../actions.js'
+import { WidgetDefinition, pt, pi, pg, pb, pn } from '../helpers.js'
 
 export const OhHomePageDefinition = () =>
-  new WidgetDefinition('oh-home-page', 'Home page').params([
+  new WidgetDefinition('oh-home-page', 'Home page', '').params([
     pb('simpleNavbarMobileDefault', 'Default to Simple Navbar on Mobile', 'Use the simple navbar by default on mobile devices'),
     pb('simpleNavbarDesktopDefault', 'Default to Simple Navbar on Desktop', 'Use the simple navbar by default on desktop devices'),
     pb(
@@ -43,7 +42,7 @@ export const OhHomePageDefinition = () =>
 const EquipmentListParameterGroup = () => pg('equipmentList', 'Equipment List', 'General settings for equipment lists in this tab')
 
 const EquipmentListParameters = () => [
-  pt('equipmentNesting', 'Display sub-equipment levels').o([
+  pt('equipmentNesting', 'Display sub-equipment levels', '').o([
     { value: 'nested', label: 'Nested pages for sub-equipment (default)' },
     { value: 'accordion', label: 'Equipment items grouped as accordion cards' }
   ]),
@@ -51,14 +50,14 @@ const EquipmentListParameters = () => [
     'equipmentPromoteSingle',
     'Promote single Points',
     "Flatten equipment which only have a single Point (only display the Point as the Equipment's representation"
-  ).v((value, configuration, configDescription, parameters) => {
+  ).v((_value, configuration) => {
     return configuration.equipmentNesting === 'accordion'
   }),
   pb(
     'equipmentPromoteMain',
     'Promote the main Point of an Equipment',
     "Promote the main Point item of an Equipment (widgetOrder equal to 0) as the Equipment's representation"
-  ).v((value, configuration, configDescription, parameters) => {
+  ).v((_value, configuration) => {
     return configuration.equipmentNesting === 'accordion'
   }),
   pt('equipmentPromotedLabel', 'Label for promoted elements', 'Choose what to include in the labels of promoted items')
@@ -68,7 +67,7 @@ const EquipmentListParameters = () => [
       { value: 'item', label: 'Label of the item within the equipment' }
     ])
     .m()
-    .v((value, configuration, configDescription, parameters) => {
+    .v((_value, configuration) => {
       return (
         (configuration.equipmentPromoteSingle === true || configuration.equipmentPromoteMain === true) &&
         configuration.equipmentNesting === 'accordion'
@@ -90,12 +89,12 @@ const ItemSubtitleParameters = () => [
     { value: 'none', label: 'None' }
   ]),
   pn('contextLabelPathTrimStart', 'Trim start of path', 'Number of parents of the item to trim from the start of the path').v(
-    (value, configuration, configDescription, parameters) => {
+    (_value, configuration) => {
       return configuration.contextLabelSource === 'path'
     }
   ),
   pn('contextLabelPathTrimEnd', 'Trim end of path', 'Number of parents of the item to trim from the end of the path').v(
-    (value, configuration, configDescription, parameters) => {
+    (_value, configuration) => {
       return configuration.contextLabelSource === 'path'
     }
   )
@@ -133,7 +132,7 @@ const ModelCardParameters = () => [
     { value: 'blue', label: 'Blue' },
     { value: 'pink', label: 'Pink' },
     { value: 'yellow', label: 'Yellow' },
-    { color: 'orange', label: 'Orange' },
+    { value: 'orange', label: 'Orange' },
     { value: 'purple', label: 'Purple' },
     { value: 'deeppurple', label: 'Deep Purple' },
     { value: 'lightblue', label: 'Light Blue' },

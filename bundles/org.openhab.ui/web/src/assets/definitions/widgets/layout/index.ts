@@ -46,24 +46,20 @@ export function OhGridLayoutDefinition() {
       pn('colNum', 'Number of Columns', 'Number of columns across the page (default 16, limited to a minimum widget width of 50px)'),
       pn('margin', 'Margin', 'Margin between items and to screen (default 10)'),
       pb('verticalCompact', 'Vertical Compact', 'Automatically align items from top to bottom (default false)').v(
-        (value, configuration, configDescription, parameters) => {
+        (_value, configuration) => {
           return configuration.layoutType !== 'fixed'
         }
       )
     ])
     .paramGroup(pg('screenSettings', 'Screen Settings'), [
-      pn('screenWidth', 'Screen Width', 'Screen width in pixels (default 1280)').v(
-        (value, configuration, configDescription, parameters) => {
-          return configuration.layoutType === 'fixed'
-        }
-      ),
-      pn('screenHeight', 'Screen Height', 'Screen height in pixels (default 720)').v(
-        (value, configuration, configDescription, parameters) => {
-          return configuration.layoutType === 'fixed'
-        }
-      ),
+      pn('screenWidth', 'Screen Width', 'Screen width in pixels (default 1280)').v((_value, configuration) => {
+        return configuration.layoutType === 'fixed'
+      }),
+      pn('screenHeight', 'Screen Height', 'Screen height in pixels (default 720)').v((_value, configuration) => {
+        return configuration.layoutType === 'fixed'
+      }),
       pb('scale', 'Scaling', 'Scale content to other screen widths (can lead to unexpected styling issues) (default false)').v(
-        (value, configuration, configDescription, parameters) => {
+        (_value, configuration) => {
           return configuration.layoutType === 'fixed'
         }
       )
@@ -73,14 +69,14 @@ export function OhGridLayoutDefinition() {
         'hideNavbar',
         'Hide Navigation bar',
         'Hide navigation bar on top when page is displayed (You can additionally hide the sidebar using its pin icon) (default false)'
-      ).v((value, configuration, configDescription, parameters) => {
+      ).v((_value, configuration) => {
         return configuration.layoutType === 'fixed'
       }),
       pb(
         'hideSidebarIcon',
         'Hide Sidebar Icon',
         "Don't show a menu icon in the top left corner when the sidebar is closed (default false)"
-      ).v((value, configuration, configDescription, parameters) => {
+      ).v((_value, configuration) => {
         return configuration.hideNavbar === true
       }),
       pb('showFullscreenIcon', 'Show Fullscreen Icon', 'Show a fullscreen icon on the top right corner (default false)')
@@ -92,11 +88,9 @@ export function OhCanvasItemDefinition() {
     pg('appearance', 'Layout Settings'),
     [
       pb('notStyled', 'Preserve classic style', 'Preserve classic appearance of widgets as in standard layout pages.'),
-      pb('noCanvasShadow', 'No elements shadow', 'Do not shadow inner elements of standard widgets').v(
-        (value, configuration, configDescription, parameters) => {
-          return configuration.notStyled !== true
-        }
-      )
+      pb('noCanvasShadow', 'No elements shadow', 'Do not shadow inner elements of standard widgets').v((_value, configuration) => {
+        return configuration.notStyled !== true
+      })
     ]
   )
 }
@@ -128,14 +122,14 @@ export function OhCanvasLayoutDefinition() {
         'hideNavbar',
         'Hide Navigation bar',
         'Hide navigation bar on top when page is displayed (You can additionally hide the sidebar using its pin icon) (default false)'
-      ).v((value, configuration, configDescription, parameters) => {
+      ).v((_value, configuration) => {
         return configuration.layoutType === 'fixed'
       }),
       pb(
         'hideSidebarIcon',
         'Hide Sidebar Icon',
         "Don't show a menu icon in the top left corner when the sidebar is closed (default false)"
-      ).v((value, configuration, configDescription, parameters) => {
+      ).v((_value, configuration) => {
         return configuration.hideNavbar === true
       }),
       pb('showFullscreenIcon', 'Show Fullscreen Icon', 'Show a fullscreen icon on the top right corner (default false)')

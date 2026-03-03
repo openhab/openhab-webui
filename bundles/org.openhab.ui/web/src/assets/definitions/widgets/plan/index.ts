@@ -22,7 +22,7 @@ export const OhPlanPageDefinition = () =>
       'No Zoom Animation',
       'Change zoom levels without animation, can also avoid graphic glitches with persistent tooltips'
     ),
-    pb('noMarkerZoomAnimation', 'Hide Markers during Zoom Animation').a(),
+    pb('noMarkerZoomAnimation', 'Hide Markers during Zoom Animation', '').a(),
     po(
       'backgroundColor',
       'Background Color',
@@ -99,7 +99,7 @@ export const OhPlanMarkerDefinition = () =>
       ),
       [
         pt('tooltip', 'Tooltip Text', 'The tooltip text - leave blank to display the state of the item'),
-        pb('tooltipPermanent', 'Always display the tooltip'),
+        pb('tooltipPermanent', 'Always display the tooltip', ''),
         pb('useTooltipAsLabel', 'Use Tooltip as Label', 'Put the tooltip text directly over the plan instead of displaying an icon'),
         pt('tooltipFontSize', 'Tooltip Font Size', 'Font size of the tooltip text'),
         pt('tooltipColor', 'Tooltip color', 'Color of the tooltip'),
@@ -120,4 +120,4 @@ export const OhPlanMarkerDefinition = () =>
       pn('zoomVisibilityMin', 'Zoom Visibility Minimum', 'Visible only when zoomed to above this level (no limit if empty)').a(),
       pn('zoomVisibilityMax', 'Zoom Visibility Maximum', 'Visible only when zoomed to below this level (no limit if empty)').a()
     ])
-    .paramGroup(actionGroup(null, 'Action to perform when the marker is clicked'), actionParams())
+    .paramGroup(actionGroup(undefined, undefined, 'Action to perform when the marker is clicked'), actionParams())

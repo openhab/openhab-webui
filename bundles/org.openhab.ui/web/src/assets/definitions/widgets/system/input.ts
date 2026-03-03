@@ -20,7 +20,7 @@ export const inputTypeParam = pt(
  * @param {string|undefined} itemType
  * @return {string}
  */
-export function getDefaultInputType(itemType) {
+export function getDefaultInputType(itemType: string) {
   if (!itemType) return 'text'
   if (itemType.startsWith('Number')) {
     return 'number'

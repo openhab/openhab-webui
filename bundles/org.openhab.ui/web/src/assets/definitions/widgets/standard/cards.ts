@@ -25,8 +25,8 @@ export const OhCardDefinition = () =>
     .paramGroup(CardParameterGroup(), CardParameters())
     .paramGroup(actionGroup(), actionParams())
     .paramGroup(
-      actionGroup('Tap Hold', 'Action performed when tapping and holding card (or calling contextual menu on desktop)', 'taphold'),
-      actionParams(null, 'taphold'),
+      actionGroup('taphold', 'Tap Hold', 'Action performed when tapping and holding card (or calling contextual menu on desktop)'),
+      actionParams('taphold'),
       true
     )
 
@@ -37,8 +37,8 @@ export const OhLabelCardDefinition = () =>
     .paramGroup(CardParameterGroup(), CardParameters())
     .paramGroup(actionGroup(), actionParams())
     .paramGroup(
-      actionGroup('Tap Hold', 'Action performed when tapping and holding card (or calling contextual menu on desktop)', 'taphold'),
-      actionParams(null, 'taphold'),
+      actionGroup('taphold', 'Tap Hold', 'Action performed when tapping and holding card (or calling contextual menu on desktop)'),
+      actionParams('taphold'),
       true
     )
     .paramGroup(pg('label', 'Label', 'Parameters of the label'), [
@@ -123,7 +123,7 @@ export const OhGaugeCardDefinition = () =>
       ),
       GaugeParameters()
     )
-    .paramGroup(actionGroup(null, 'Action to perform when the gauge is clicked'), actionParams())
+    .paramGroup(actionGroup(undefined, undefined, 'Action to perform when the gauge is clicked'), actionParams())
 
 // OhKnobCard
 import KnobParameters from '../system/knob.js'
@@ -170,7 +170,7 @@ export const OhImageCardDefinition = () =>
   new WidgetDefinition('oh-image-card', 'Image Card', 'Display an image (URL or Image item ) in a card')
     .paramGroup(CardParameterGroup(), CardParameters())
     .paramGroup(pg('image', 'Image'), ImageParameters())
-    .paramGroup(actionGroup(null, 'Action to perform when the image is clicked'), actionParams())
+    .paramGroup(actionGroup(undefined, undefined, 'Action to perform when the image is clicked'), actionParams())
 
 // OhVideoCard
 import VideoParameters from '../system/video.js'
@@ -239,7 +239,7 @@ export const OhClockCardDefinition = () =>
         }
       )
     ])
-    .paramGroup(actionGroup(null, 'Action to perform when the clock is clicked'), actionParams())
+    .paramGroup(actionGroup(undefined, undefined, 'Action to perform when the clock is clicked'), actionParams())
 
 // OhSIPClientCard
 import SIPClientParameters from '../system/sipclient.js'

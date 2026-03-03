@@ -1,6 +1,6 @@
 // Standard visibility settings
 
-import { pg, pt } from './helpers.js'
+import { pg, pt } from './helpers.ts'
 
 export const VisibilityGroup = () => pg('visibility', 'Visibility Options')
 

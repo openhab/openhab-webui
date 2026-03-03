@@ -18,7 +18,7 @@ export const OhMapPageDefinition = () =>
       'No Zoom Animation',
       'Change zoom levels without animation, can also avoid graphic glitches with persistent tooltips'
     ),
-    pb('noMarkerZoomAnimation', 'Hide Markers during Zoom Animation').a(),
+    pb('noMarkerZoomAnimation', 'Hide Markers during Zoom Animation', '').a(),
     pt(
       'tileLayerProvider',
       'Provider for the background tiles',
@@ -49,7 +49,7 @@ export const OhMapMarkerDefinition = () =>
       )
     ])
     .paramGroup(pg('position', 'Position', 'Position'), [ItemParam(), LocationParam()])
-    .paramGroup(actionGroup(null, 'Action to perform when the marker is clicked'), actionParams())
+    .paramGroup(actionGroup(undefined, undefined, 'Action to perform when the marker is clicked'), actionParams())
 
 export const OhMapCircleMarkerDefinition = () =>
   new WidgetDefinition('oh-map-circle-marker', 'Circle Marker', 'A circle on a map, to represent a radius', 'map_pin_ellipse')
@@ -62,4 +62,4 @@ export const OhMapCircleMarkerDefinition = () =>
       pi('radiusItem', 'Radius Item', 'The item whose state holds the radius of the circle, in meters'),
       pd('radius', 'Fixed radius', 'The fixed radius of the circle in meters if no item is configured or its state is invalid')
     ])
-    .paramGroup(actionGroup(null, 'Action to perform when the circle is clicked'), actionParams())
+    .paramGroup(actionGroup(undefined, undefined, 'Action to perform when the circle is clicked'), actionParams())
