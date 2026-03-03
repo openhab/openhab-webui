@@ -1,6 +1,6 @@
-import * as api from '@/api'
+import type { ParameterOption } from '@/api'
 
-export const dimensionTypeOptions: api.ParameterOption[] = [
+export const dimensionTypeOptions: ParameterOption[] = [
   { value: 'minute', label: 'Minute of Hour' },
   { value: 'hour', label: 'Hour of Day' },
   { value: 'isoWeekday', label: 'Day of Week (starting on Monday)' },
@@ -9,7 +9,7 @@ export const dimensionTypeOptions: api.ParameterOption[] = [
   { value: 'month', label: 'Month of Year' }
 ]
 
-export const aggregationTypeOptions: api.ParameterOption[] = [
+export const aggregationTypeOptions: ParameterOption[] = [
   { value: 'average', label: 'Average' },
   { value: 'sum', label: 'Sum' },
   { value: 'min', label: 'Minimum' },
@@ -20,7 +20,7 @@ export const aggregationTypeOptions: api.ParameterOption[] = [
   { value: 'diff_last', label: 'Difference of lasts' }
 ]
 
-export function markerOptions(withTime: boolean = false): api.ParameterOption[] {
+export function markerOptions(withTime: boolean = false): ParameterOption[] {
   const opts = [
     { value: 'avg', label: 'Average' },
     { value: 'min', label: 'Minimum' },

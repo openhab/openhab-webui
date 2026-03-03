@@ -1,9 +1,9 @@
-import * as api from '@/api'
+import type { ConfigDescription, ConfigDescriptionParameter, ConfigDescriptionParameterGroup, ParameterOption } from '@/api'
 
 /**
  * Parameter types supported by widget definitions
  */
-export type ParameterType = api.ConfigDescriptionParameter['type']
+export type ParameterType = ConfigDescriptionParameter['type']
 
 /**
  * Visibility function type
@@ -16,11 +16,11 @@ export type ParameterType = api.ConfigDescriptionParameter['type']
 export type VisibilityFunction = (
   value: unknown,
   configuration: Record<string, unknown>,
-  configDescription: api.ConfigDescriptionParameter,
-  parameters: api.ConfigDescription
+  configDescription: ConfigDescriptionParameter,
+  parameters: ConfigDescription
 ) => boolean
 
-export interface WidgetDefinitionParameter extends api.ConfigDescriptionParameter {
+export interface WidgetDefinitionParameter extends ConfigDescriptionParameter {
   visible?: VisibilityFunction
 }
 
@@ -37,7 +37,7 @@ export class Parameter implements WidgetDefinitionParameter {
   context?: string
   groupName?: string
   multiple?: boolean
-  options?: api.ParameterOption[]
+  options?: ParameterOption[]
   limitToOptions?: boolean
   defaultValue?: string
   required?: boolean
@@ -97,7 +97,7 @@ export class Parameter implements WidgetDefinitionParameter {
    * @param limitToOptions whether valid values should be restricted to options
    * @param multiple whether multiple options may be selected
    */
-  o(opts: api.ParameterOption[], limitToOptions: boolean = true, multiple: boolean = false): this {
+  o(opts: ParameterOption[], limitToOptions: boolean = true, multiple: boolean = false): this {
     this.options = opts
     this.limitToOptions = limitToOptions
     this.multiple = multiple
@@ -168,7 +168,7 @@ export function pd(name: string, label: string, description: string): Parameter 
  * @param label the untranslated (English) label of the group
  * @param description the untranslated (English) description of the group
  */
-export function pg(name: string, label: string, description?: string): api.ConfigDescriptionParameterGroup {
+export function pg(name: string, label: string, description?: string): ConfigDescriptionParameterGroup {
   return { name, label, description, advanced: false }
 }
 
@@ -189,7 +189,7 @@ export function pi(name: string, label: string, description: string): Parameter 
  * @param description the untranslated (English) description of the parameter
  * @param options an array of options with untranslated (English) labels
  */
-export function po(name: string, label: string, description: string, options: Array<api.ParameterOption>): Parameter {
+export function po(name: string, label: string, description: string, options: ParameterOption[]): Parameter {
   return new Parameter('TEXT', name, label, description).o(options)
 }
 
@@ -223,7 +223,7 @@ export class WidgetDefinition {
   icon?: string
   hidden: boolean
   props: {
-    parameterGroups: api.ConfigDescriptionParameterGroup[]
+    parameterGroups: ConfigDescriptionParameterGroup[]
     parameters: WidgetDefinitionParameter[]
   }
 
@@ -248,7 +248,7 @@ export class WidgetDefinition {
     }
   }
 
-  paramGroup(group: api.ConfigDescriptionParameterGroup, params?: Parameter[], advanced?: boolean): this {
+  paramGroup(group: ConfigDescriptionParameterGroup, params?: Parameter[], advanced?: boolean): this {
     this.props.parameterGroups.push(group)
     if (params) {
       this.props.parameters.push(...params.map((p) => (advanced ? p.g(group.name).a() : p.g(group.name))))

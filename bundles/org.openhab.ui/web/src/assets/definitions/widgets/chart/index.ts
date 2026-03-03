@@ -1,10 +1,10 @@
 // definitions for the chart widgets
 // TODO: migrate to WidgetDefinition
 
-import * as api from '@/api'
 import { actionGroup, actionParams } from '../actions.ts'
 import { pg, pb, pt, pn, pi, type WidgetDefinitionParameter } from '../helpers.ts'
 import { aggregationTypeOptions, dimensionTypeOptions, markerOptions } from './options.ts'
+import type { ConfigDescriptionParameterGroup } from '@/api'
 
 const positionGroup = pg(
   'position',
@@ -163,7 +163,7 @@ export interface ChartComponentDefinition {
   label: string
   docLink?: string
   props: {
-    parameterGroups: api.ConfigDescriptionParameterGroup[]
+    parameterGroups: ConfigDescriptionParameterGroup[]
     parameters: WidgetDefinitionParameter[]
   }
 }

@@ -1,10 +1,10 @@
 // parameter group & parameters definitions for actions
-import * as api from '@/api'
+import type { ConfigDescriptionParameterGroup } from '@/api'
 
 import { po, pt, pi, pb } from './helpers.ts'
 import { aggregationTypeOptions } from './chart/options.ts'
 
-export const actionGroup = (groupPrefix?: string, label?: string, description?: string): api.ConfigDescriptionParameterGroup => {
+export const actionGroup = (groupPrefix?: string, label?: string, description?: string): ConfigDescriptionParameterGroup => {
   groupPrefix = groupPrefix ? (groupPrefix += '_') : ''
   return {
     name: groupPrefix + 'actions',
