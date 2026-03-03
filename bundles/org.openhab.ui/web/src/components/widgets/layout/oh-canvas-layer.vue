@@ -33,7 +33,7 @@ import type { WidgetContext } from '@/components/widgets/types'
 import type { UiComponent } from '@/api'
 import type { OhCanvasItemEmits } from '@/components/widgets/layout/oh-canvas-item.vue'
 
-defineExpose({ widget: OhCanvasLayerDefinition })
+defineOptions({ widget: OhCanvasLayerDefinition })
 
 // props & emits
 const props = defineProps<{

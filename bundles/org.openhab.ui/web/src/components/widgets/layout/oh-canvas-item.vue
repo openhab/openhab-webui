@@ -196,7 +196,7 @@ import type { WidgetContext } from '@/components/widgets/types'
 import GenericWidgetComponent from '@/components/widgets/generic-widget-component.vue'
 import OhPlaceholderWidget from '@/components/widgets/layout/oh-placeholder-widget.vue'
 
-defineExpose({ widget: OhCanvasItemDefinition })
+defineOptions({ widget: OhCanvasItemDefinition })
 
 // props & emits
 const props = defineProps<{
