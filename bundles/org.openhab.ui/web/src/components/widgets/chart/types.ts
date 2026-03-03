@@ -21,8 +21,15 @@ export interface ChartContext {
   chart: api.RootUiComponent | api.UiComponent
   evaluateExpression: EvaluateExpressionFunction
   numberFormatter?: Intl.NumberFormat
+  series?: {
+    data: number[][]
+  }[]
 }
 
 export interface AxisComponent {
   get(context: ChartContext, component: api.UiComponent, startTime: Dayjs, endTime: Dayjs, inverse?: boolean): any
+}
+
+export interface MiscChartComponent {
+  get(context: ChartContext, component: api.UiComponent, startTime: Dayjs, endTime: Dayjs): any
 }

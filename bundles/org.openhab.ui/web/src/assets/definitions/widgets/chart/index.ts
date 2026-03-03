@@ -426,7 +426,8 @@ const chartComponents: Record<string, ChartComponentDefinition> = {
           label: 'Confine',
           type: 'BOOLEAN',
           description: 'Keep the tooltip within the chart bounds'
-        }
+        },
+        pb('smartFormatter', 'Smart Formatter', '').a() // TODO: Description
       ]
     }
   },

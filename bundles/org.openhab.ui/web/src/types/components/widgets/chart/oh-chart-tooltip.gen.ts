@@ -8,6 +8,7 @@ export interface Config {
   show?: boolean
   orient?: Orient
   confine?: boolean
+  smartFormatter?: boolean
 }
 
 export {
