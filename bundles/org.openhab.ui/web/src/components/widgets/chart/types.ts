@@ -1,4 +1,6 @@
 import type { MarkLineOption, MarkPointOption } from 'echarts/types/dist/shared'
+import type { Dayjs } from 'dayjs'
+import * as api from '@/api'
 
 export enum Marker {
   avg = 'avg',
@@ -11,4 +13,16 @@ export interface Series {
   markers?: Marker[]
   markLine?: MarkLineOption
   markPoint?: MarkPointOption
+}
+
+export type EvaluateExpressionFunction = <T = any>(key: string, value: T) => T
+
+export interface ChartContext {
+  chart: api.RootUiComponent | api.UiComponent
+  evaluateExpression: EvaluateExpressionFunction
+  numberFormatter?: Intl.NumberFormat
+}
+
+export interface AxisComponent {
+  get(context: ChartContext, component: api.UiComponent, startTime: Dayjs, endTime: Dayjs, inverse?: boolean): any
 }
