@@ -1,15 +1,15 @@
 import fs from 'fs'
 
-import * as SystemWidgets from '../../../web/src/assets/definitions/widgets/system/index.js'
-import * as StdCardWidgets from '../../../web/src/assets/definitions/widgets/standard/cards.js'
-import * as StdListItemWidgets from '../../../web/src/assets/definitions/widgets/standard/listitems.js'
-import * as StdCellWidgets from '../../../web/src/assets/definitions/widgets/standard/cells.js'
-import * as LayoutWidgets from '../../../web/src/assets/definitions/widgets/layout/index.js'
-import * as PlanWidgets from '../../../web/src/assets/definitions/widgets/plan/index.js'
-import * as MapWidgets from '../../../web/src/assets/definitions/widgets/map/index.js'
-import { OhChartPageDefinition } from '../../../web/src/assets/definitions/widgets/chart/page.js'
-import ChartWidgetsDefinitions from '../../../web/src/assets/definitions/widgets/chart/index.js'
-import { OhLocationCardParameters, OhEquipmentCardParameters, OhPropertyCardParameters } from '../../../web/src/assets/definitions/widgets/home/index.js'
+import * as SystemWidgets from '../../../web/src/assets/definitions/widgets/system/index.ts'
+import * as StdCardWidgets from '../../../web/src/assets/definitions/widgets/standard/cards.ts'
+import * as StdListItemWidgets from '../../../web/src/assets/definitions/widgets/standard/listitems.ts'
+import * as StdCellWidgets from '../../../web/src/assets/definitions/widgets/standard/cells.ts'
+import * as LayoutWidgets from '../../../web/src/assets/definitions/widgets/layout/index.ts'
+import * as PlanWidgets from '../../../web/src/assets/definitions/widgets/plan/index.ts'
+import * as MapWidgets from '../../../web/src/assets/definitions/widgets/map/index.ts'
+import { OhChartPageDefinition } from '../../../web/src/assets/definitions/widgets/chart/page.ts'
+import ChartWidgetsDefinitions from '../../../web/src/assets/definitions/widgets/chart/index.ts'
+import { OhLocationCardParameters, OhEquipmentCardParameters, OhPropertyCardParameters } from '../../../web/src/assets/definitions/widgets/home/index.ts'
 
 const widgetLibraries = {
   SystemWidgets,
