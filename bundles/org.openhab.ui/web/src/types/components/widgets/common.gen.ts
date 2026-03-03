@@ -277,7 +277,7 @@ export enum BackgroundColor {
   blue = 'blue',
   pink = 'pink',
   yellow = 'yellow',
-  none = '',
+  orange = 'orange',
   purple = 'purple',
   deeppurple = 'deeppurple',
   lightblue = 'lightblue',
