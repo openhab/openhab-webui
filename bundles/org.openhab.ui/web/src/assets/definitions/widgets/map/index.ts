@@ -1,7 +1,7 @@
 // definitions for the map page & markers
 
-import { WidgetDefinition, pt, pb, pi, pg, pd } from '../helpers.js'
-import { actionGroup, actionParams } from '../actions.js'
+import { WidgetDefinition, pt, pb, pi, pg, pd } from '../helpers.ts'
+import { actionGroup, actionParams } from '../actions.ts'
 
 const LabelParam = () => pt('label', 'Label', 'The label on the marker')
 const ItemParam = () => pi('item', 'Item', 'The Location item this marker will be centered on')

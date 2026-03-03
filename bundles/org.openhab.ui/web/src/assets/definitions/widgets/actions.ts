@@ -1,7 +1,7 @@
 // parameter group & parameters definitions for actions
 import * as api from '@/api'
 
-import { po, pt, pi, pb } from './helpers.js'
+import { po, pt, pi, pb } from './helpers.ts'
 import { aggregationTypeOptions } from './chart/options.ts'
 
 export const actionGroup = (groupPrefix?: string, label?: string, description?: string): api.ConfigDescriptionParameterGroup => {

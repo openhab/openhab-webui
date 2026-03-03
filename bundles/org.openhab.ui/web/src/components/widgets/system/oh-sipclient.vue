@@ -97,7 +97,7 @@ import { OhSIPClientDefinition } from '@/assets/definitions/widgets/system'
 import foregroundService from '../widget-foreground-service'
 import { actionsMixin } from '../widget-actions'
 import WidgetConfigPopup from '@/components/pagedesigner/widget-config-popup.vue'
-import { WidgetDefinition, pg, pt, pi } from '@/assets/definitions/widgets/helpers.js'
+import { WidgetDefinition, pg, pt, pi } from '@/assets/definitions/widgets/helpers.ts'
 
 // Thanks to Joseph Sardin, https://bigsoundbank.com
 // ringFile source: https://bigsoundbank.com/detail-0375-phone-ring-5.html

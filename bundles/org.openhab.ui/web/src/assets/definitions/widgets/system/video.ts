@@ -1,4 +1,4 @@
-import { pi, pt, pb, pd } from '../helpers.js'
+import { pi, pt, pb, pd } from '../helpers.ts'
 
 export default () => [
   pi('item', 'Item', 'Item containing the address of the video'),

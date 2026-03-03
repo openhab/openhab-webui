@@ -1,4 +1,4 @@
-import { WidgetDefinition, pt, pi, pg, pb, pn } from '../helpers.js'
+import { WidgetDefinition, pt, pi, pg, pb, pn } from '../helpers.ts'
 
 export const OhHomePageDefinition = () =>
   new WidgetDefinition('oh-home-page', 'Home page', '').params([

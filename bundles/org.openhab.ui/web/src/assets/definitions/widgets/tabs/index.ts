@@ -1,6 +1,6 @@
 // definitions for the tab "widget"
 
-import { WidgetDefinition, pt } from '../helpers.js'
+import { WidgetDefinition, pt } from '../helpers.ts'
 
 export const OhTabDefinition = () =>
   new WidgetDefinition('oh-tab', 'Tab', 'Displays a widget in a tab').params([

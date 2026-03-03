@@ -1,4 +1,4 @@
-import { pi, pt, po, pn } from '../helpers.js'
+import { pi, pt, po, pn } from '../helpers.ts'
 
 export default () => [
   pi('trendItem', 'Trend Line Item', 'Item to show as a trend line in the background'),

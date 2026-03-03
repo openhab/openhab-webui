@@ -1,4 +1,4 @@
-import { pi, pt, pb, pn } from '../helpers.js'
+import { pi, pt, pb, pn } from '../helpers.ts'
 
 export default () => [
   pi('item', 'Item', 'Image item to show - preferred if the image changes'),

@@ -1,4 +1,4 @@
-import { pb } from '../helpers.js'
+import { pb } from '../helpers.ts'
 
 export default () => [
   pb('simpleList', 'Simple List', 'Use for simple lists'),

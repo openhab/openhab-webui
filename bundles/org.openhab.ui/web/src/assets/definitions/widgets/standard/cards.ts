@@ -1,7 +1,7 @@
 /* Definitions for the standard library's standalone (card) widgets */
 
-import { WidgetDefinition, pb, pt, pi, pn, pg } from '../helpers.js'
-import { actionGroup, actionParams } from '../actions.js'
+import { WidgetDefinition, pb, pt, pi, pn, pg } from '../helpers.ts'
+import { actionGroup, actionParams } from '../actions.ts'
 
 export const CardParameterGroup = () => pg('card', 'Card', 'Parameters of the card')
 
@@ -31,7 +31,7 @@ export const OhCardDefinition = () =>
     )
 
 // OhLabelCard
-import TrendParameters from '../system/trend.js'
+import TrendParameters from '../system/trend.ts'
 export const OhLabelCardDefinition = () =>
   new WidgetDefinition('oh-label-card', 'Label Card', 'Display the state of an item in a card')
     .paramGroup(CardParameterGroup(), CardParameters())
@@ -64,28 +64,28 @@ export const OhLabelCardDefinition = () =>
     .paramGroup(pg('trend', 'Trend Line', 'Show a trend line in the background'), TrendParameters())
 
 // OhListCard
-import ListParameters from '../system/list.js'
+import ListParameters from '../system/list.ts'
 export const OhListCardDefinition = () =>
   new WidgetDefinition('oh-list-card', 'List Card', 'Display a list in a card')
     .paramGroup(CardParameterGroup(), CardParameters())
     .paramGroup(pg('list', 'List'), ListParameters())
 
 // OhInputCard
-import InputParameters from '../system/input.js'
+import InputParameters from '../system/input.ts'
 export const OhInputCardDefinition = () =>
   new WidgetDefinition('oh-input-card', 'Input Card', 'Display an input in a card')
     .paramGroup(CardParameterGroup(), CardParameters())
     .paramGroup(pg('input', 'Input'), InputParameters())
 
 // OhColorpickerCard
-import ColorPickerParameters from '../system/colorpicker.js'
+import ColorPickerParameters from '../system/colorpicker.ts'
 export const OhColorpickerCardDefinition = () =>
   new WidgetDefinition('oh-colorpicker-card', 'Color Picker Card', 'Display a color picker in a card')
     .paramGroup(CardParameterGroup(), CardParameters())
     .paramGroup(pg('colorpicker', 'Color picker'), ColorPickerParameters())
 
 // OhPlayerCard
-import PlayerParameters from '../system/player.js'
+import PlayerParameters from '../system/player.ts'
 export const OhPlayerCardDefinition = () =>
   new WidgetDefinition('oh-player-card', 'Player Card', 'Display player controls in a card')
     .paramGroup(CardParameterGroup(), CardParameters())
@@ -96,7 +96,7 @@ export const OhPlayerCardDefinition = () =>
     ])
 
 // OhRollershutterCard
-import RollershutterParameters from '../system/rollershutter.js'
+import RollershutterParameters from '../system/rollershutter.ts'
 export const OhRollershutterCardDefinition = () =>
   new WidgetDefinition('oh-rollershutter-card', 'Rollershutter Card', 'Display rollershutter controls in a card')
     .paramGroup(CardParameterGroup(), CardParameters())
@@ -104,14 +104,14 @@ export const OhRollershutterCardDefinition = () =>
     .paramGroup(pg('controls', 'Rollershutter Controls'), RollershutterParameters())
 
 // OhSliderCard
-import SliderParameters from '../system/slider.js'
+import SliderParameters from '../system/slider.ts'
 export const OhSliderCardDefinition = () =>
   new WidgetDefinition('oh-slider-card', 'Slider Card', 'Display a slider in a card to control an item')
     .paramGroup(CardParameterGroup(), CardParameters())
     .paramGroup(pg('slider', 'Slider'), SliderParameters())
 
 // OhGaugeCard
-import GaugeParameters from '../system/gauge.js'
+import GaugeParameters from '../system/gauge.ts'
 export const OhGaugeCardDefinition = () =>
   new WidgetDefinition('oh-gauge-card', 'Gauge Card', 'Display a read-only gauge in a card to visualize a quantifiable item')
     .paramGroup(CardParameterGroup(), CardParameters())
@@ -126,7 +126,7 @@ export const OhGaugeCardDefinition = () =>
     .paramGroup(actionGroup(undefined, undefined, 'Action to perform when the gauge is clicked'), actionParams())
 
 // OhKnobCard
-import KnobParameters from '../system/knob.js'
+import KnobParameters from '../system/knob.ts'
 export const OhKnobCardDefinition = () =>
   new WidgetDefinition(
     'oh-knob-card',
@@ -144,28 +144,28 @@ export const OhKnobCardDefinition = () =>
     )
 
 // OhStepperCard
-import StepperParameters from '../system/stepper.js'
+import StepperParameters from '../system/stepper.ts'
 export const OhStepperCardDefinition = () =>
   new WidgetDefinition('oh-stepper-card', 'Stepper Card', 'Display a stepper in a card to control an item')
     .paramGroup(CardParameterGroup(), CardParameters())
     .paramGroup(pg('stepper', 'Stepper'), StepperParameters())
 
 // OhSwiperCard
-import SwiperParameters from '../system/swiper.js'
+import SwiperParameters from '../system/swiper.ts'
 export const OhSwiperCardDefinition = () =>
   new WidgetDefinition('oh-swiper-card', 'Swiper Card', 'Display a swiper allowing to browse slides, in a card')
     .paramGroup(CardParameterGroup(), CardParameters())
     .paramGroup(pg('swiper', 'Swiper'), SwiperParameters())
 
 // OhToggleCard
-import ToggleParameters from '../system/toggle.js'
+import ToggleParameters from '../system/toggle.ts'
 export const OhToggleCardDefinition = () =>
   new WidgetDefinition('oh-toggle-card', 'Toggle Card', 'Display a toggle swtich in a card to send ON/OFF commands')
     .paramGroup(CardParameterGroup(), CardParameters())
     .paramGroup(pg('toggle', 'Toggle'), ToggleParameters())
 
 // OhImageCard
-import ImageParameters from '../system/image.js'
+import ImageParameters from '../system/image.ts'
 export const OhImageCardDefinition = () =>
   new WidgetDefinition('oh-image-card', 'Image Card', 'Display an image (URL or Image item ) in a card')
     .paramGroup(CardParameterGroup(), CardParameters())
@@ -173,14 +173,14 @@ export const OhImageCardDefinition = () =>
     .paramGroup(actionGroup(undefined, undefined, 'Action to perform when the image is clicked'), actionParams())
 
 // OhVideoCard
-import VideoParameters from '../system/video.js'
+import VideoParameters from '../system/video.ts'
 export const OhVideoCardDefinition = () =>
   new WidgetDefinition('oh-video-card', 'Video Card', 'Display a video (URL or URL from String item) in a card')
     .paramGroup(CardParameterGroup(), CardParameters())
     .paramGroup(pg('video', 'Video'), VideoParameters())
 
 // OhWebFrameCard
-import WebFrameParameters from '../system/webframe.js'
+import WebFrameParameters from '../system/webframe.ts'
 export const OhWebFrameCardDefinition = () =>
   new WidgetDefinition('oh-webframe-card', 'Web Frame Card', 'Display a web page in a card')
     .paramGroup(CardParameterGroup(), [...CardParameters(), pb('borders', 'Borders', 'Show borders around the frame')])
@@ -242,7 +242,7 @@ export const OhClockCardDefinition = () =>
     .paramGroup(actionGroup(undefined, undefined, 'Action to perform when the clock is clicked'), actionParams())
 
 // OhSIPClientCard
-import SIPClientParameters from '../system/sipclient.js'
+import SIPClientParameters from '../system/sipclient.ts'
 export const OhSIPClientCardDefinition = () =>
   new WidgetDefinition('oh-sipclient-card', 'SIP Client Card', 'SIP Client to start and answer SIP calls')
     .paramGroup(CardParameterGroup(), CardParameters())

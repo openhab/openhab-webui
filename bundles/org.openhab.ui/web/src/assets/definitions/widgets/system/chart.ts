@@ -1,4 +1,4 @@
-import { pd, po } from '../helpers.js'
+import { pd, po } from '../helpers.ts'
 
 export default () => [
   po(

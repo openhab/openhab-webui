@@ -1,5 +1,5 @@
-import { WidgetDefinition, pt, pb } from '../helpers.js'
-import { actionGroup, actionParams } from '../actions.js'
+import { WidgetDefinition, pt, pb } from '../helpers.ts'
+import { actionGroup, actionParams } from '../actions.ts'
 
 const VariableParameter = pt('variable', 'Variable', 'Name of the variable to set on input change')
 const VariableKeyParameter = pt(
@@ -18,7 +18,7 @@ const ClearVariableKeyParameter = pb(
   'Consider the variable value is an object and remove a corresponding deep property within that object using a key syntax. Examples: <code>user.name</code>, <code>user[0].address[1].street</code>, <code>[0]</code>, <code>[0].label</code>. The property will be removed after performing the action.'
 ).a()
 
-import ButtonParameters from './button.js'
+import ButtonParameters from './button.ts'
 export const OhButtonDefinition = () =>
   new WidgetDefinition('oh-button', 'Button', 'Button performing an action')
     .paramGroup(actionGroup(), actionParams())
@@ -29,14 +29,14 @@ export const OhButtonDefinition = () =>
     )
     .params([...ButtonParameters(), VariableParameter, VariableKeyParameter, ClearVariableParameter, ClearVariableKeyParameter])
 
-import ChartParameters from './chart.js'
+import ChartParameters from './chart.ts'
 export const OhChartDefinition = () => new WidgetDefinition('oh-chart', 'Chart', 'Visualize series of data').params(ChartParameters())
 
-import ColorpickerParameters from './colorpicker.js'
+import ColorpickerParameters from './colorpicker.ts'
 export const OhColorpickerDefinition = () =>
   new WidgetDefinition('oh-colorpicker', 'Colorpicker', 'Control to pick a color').params(ColorpickerParameters())
 
-import ContextParameters from './context.js'
+import ContextParameters from './context.ts'
 export const OhContextDefinition = () =>
   new WidgetDefinition(
     'oh-context',
@@ -44,31 +44,31 @@ export const OhContextDefinition = () =>
     'Non-rendered component with functions, constants, and scoped variables for widgets'
   ).params(ContextParameters())
 
-import GaugeParameters from './gauge.js'
+import GaugeParameters from './gauge.ts'
 export const OhGaugeDefinition = () =>
   new WidgetDefinition('oh-gauge', 'Gauge', 'Circular or semi-circular read-only gauge').params(GaugeParameters())
 
-import IconParameters from './icon.js'
+import IconParameters from './icon.ts'
 export const OhIconDefinition = () =>
   new WidgetDefinition('oh-icon', 'Icon', 'Display an openHAB icon').paramGroup(actionGroup(), actionParams()).params(IconParameters())
 
-import ImageParameters from './image.js'
+import ImageParameters from './image.ts'
 export const OhImageDefinition = () =>
   new WidgetDefinition('oh-image', 'Image', 'Displays an image from a URL or an item')
     .paramGroup(actionGroup(), actionParams())
     .params(ImageParameters())
 
-import VideoParameters from './video.js'
+import VideoParameters from './video.ts'
 export const OhVideoDefinition = () =>
   new WidgetDefinition('oh-video', 'Video', 'Displays a video player from a URL or an item')
     .paramGroup(actionGroup(), actionParams())
     .params(VideoParameters())
 
-import InputParameters from './input.js'
+import InputParameters from './input.ts'
 export const OhInputDefinition = () =>
   new WidgetDefinition('oh-input', 'Input', 'Displays an input field, used to set a variable').params(InputParameters())
 
-import KnobParameters from './knob.js'
+import KnobParameters from './knob.ts'
 export const OhKnobDefinition = () =>
   new WidgetDefinition(
     'oh-knob',
@@ -76,28 +76,28 @@ export const OhKnobDefinition = () =>
     'Allows to change a number value on a circular track or a rounded slider'
   ).params([...KnobParameters(), VariableParameter, VariableKeyParameter])
 
-import LinkParameters from './link.js'
+import LinkParameters from './link.ts'
 export const OhLinkDefinition = () =>
   new WidgetDefinition('oh-link', 'Link', 'Link performing an action')
     .paramGroup(actionGroup(), actionParams())
     .params([...LinkParameters(), VariableParameter, VariableKeyParameter, ClearVariableParameter, ClearVariableKeyParameter])
 
-import ListParameters from './list.js'
+import ListParameters from './list.ts'
 export const OhListDefinition = () => new WidgetDefinition('oh-list', 'List', 'List control, hosts list items').params(ListParameters())
 
-import PlayerParameters from './player.js'
+import PlayerParameters from './player.ts'
 export const OhPlayerDefinition = () =>
   new WidgetDefinition('oh-player', 'Media player', 'Media player controls, with previous track/pause/play/next buttons').params(
     PlayerParameters()
   )
 
-import RollershutterParameters from './rollershutter.js'
+import RollershutterParameters from './rollershutter.ts'
 export const OhRollershutterDefinition = () =>
   new WidgetDefinition('oh-rollershutter', 'Rollershutter', 'Rollershutter control, with up/down/stop buttons').params(
     RollershutterParameters()
   )
 
-import SliderParameters from './slider.js'
+import SliderParameters from './slider.ts'
 export const OhSliderDefinition = () =>
   new WidgetDefinition('oh-slider', 'Slider', 'Slider control, allows to pick a number value on a scale').params([
     ...SliderParameters(),
@@ -105,17 +105,17 @@ export const OhSliderDefinition = () =>
     VariableKeyParameter
   ])
 
-import StepperParameters from './stepper.js'
+import StepperParameters from './stepper.ts'
 export const OhStepperDefinition = () =>
   new WidgetDefinition('oh-stepper', 'Stepper', 'Stepper control, allows to input a number or decrement/increment it using buttons').params(
     [...StepperParameters(), VariableParameter, VariableKeyParameter]
   )
 
-import SwiperParameters from './swiper.js'
+import SwiperParameters from './swiper.ts'
 export const OhSwiperDefinition = () =>
   new WidgetDefinition('oh-swiper', 'Swiper', 'Swiper control, allows to display multiple swipeable slides').params(SwiperParameters())
 
-import ToggleParameters from './toggle.js'
+import ToggleParameters from './toggle.ts'
 export const OhToggleDefinition = () =>
   new WidgetDefinition('oh-toggle', 'Toggle', 'Toggle control, allows to switch on or off').params([
     ...ToggleParameters(),
@@ -123,24 +123,24 @@ export const OhToggleDefinition = () =>
     VariableKeyParameter
   ])
 
-import TrendParameters from './trend.js'
+import TrendParameters from './trend.ts'
 export const OhTrendDefinition = () =>
   new WidgetDefinition('oh-trend', 'Trend line', 'Trend line to display the overall recent evolution of an item').params(TrendParameters())
 
-import WebFrameParameters from './webframe.js'
+import WebFrameParameters from './webframe.ts'
 export const OhWebFrameDefinition = () =>
   new WidgetDefinition('oh-webframe', 'Web frame', 'Displays a web page in a frame').params(WebFrameParameters())
 
-import RepeaterParameters from './repeater.js'
+import RepeaterParameters from './repeater.ts'
 export const OhRepeaterDefinition = () =>
   new WidgetDefinition('oh-repeater', 'Repeater', 'Iterate over an array and repeat the children components in the default slot').params(
     RepeaterParameters()
   )
 
-import ClockParameters from './clock.js'
+import ClockParameters from './clock.ts'
 export const OhClockDefinition = () =>
   new WidgetDefinition('oh-clock', 'Digital Clock', 'Display a digital clock').params(ClockParameters())
 
-import SIPClientParameters from './sipclient.js'
+import SIPClientParameters from './sipclient.ts'
 export const OhSIPClientDefinition = () =>
   new WidgetDefinition('oh-sipclient', 'SIP Client', 'SIP Client to start and answer SIP calls').params(SIPClientParameters())

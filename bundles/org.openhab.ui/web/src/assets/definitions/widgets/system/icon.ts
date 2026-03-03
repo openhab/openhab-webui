@@ -1,4 +1,4 @@
-import { pb, pi, pt } from '../helpers.js'
+import { pb, pi, pt } from '../helpers.ts'
 
 export default () => [
   pt(

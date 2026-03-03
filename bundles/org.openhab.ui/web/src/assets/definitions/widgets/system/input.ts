@@ -1,4 +1,4 @@
-import { pi, pb, pt, pd } from '../helpers.js'
+import { pi, pb, pt, pd } from '../helpers.ts'
 
 export const inputTypeParam = pt(
   'type',

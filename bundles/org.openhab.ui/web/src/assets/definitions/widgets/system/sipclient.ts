@@ -1,4 +1,4 @@
-import { pt, pn, pb, pi } from '../helpers.js'
+import { pt, pn, pb, pi } from '../helpers.ts'
 
 export default () => [
   pn('iconSize', 'Icon Size', 'Size of the icon(s) in px'),
