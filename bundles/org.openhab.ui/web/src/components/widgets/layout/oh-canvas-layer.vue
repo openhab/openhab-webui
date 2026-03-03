@@ -25,7 +25,7 @@
 </style>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhCanvasItem from './oh-canvas-item.vue'
 import { OhCanvasLayerDefinition } from '@/assets/definitions/widgets/layout'
@@ -49,37 +49,24 @@ const emit = defineEmits<OhCanvasItemEmits>()
 // composables
 const { config, defaultSlots, childContext, visible } = useWidgetContext(props.context)
 
-// data (state)
+// computed
+const layerPreload = computed(() => config.value?.preload === true)
+const layerVisible = computed(() => (!props.context.editmode && visible.value) || (props.context.editmode && editVisible.value))
+const editVisible = computed(() => !(config.value && (config.value.editVisible === false)))
+
 interface Layer {
   item: UiComponent,
   selected: boolean,
   id: string
 }
 
-const layer = ref<Layer[]>([])
-
-// computed
-const layerPreload = computed(() => config.value?.preload === true)
-const layerVisible = computed(() => (!props.context.editmode && visible.value) || (props.context.editmode && editVisible.value))
-const editVisible = computed(() => !(config.value && (config.value.editVisible === false)))
-
-// methods
-const computeLayer = () => {
-  let l: Layer[] = []
-  defaultSlots.value.forEach((item: UiComponent) => {
-    if (item.component === 'oh-canvas-item') {
-      l.push({
-        item,
-        selected: false,
-        id: Math.random().toString(36).substring(2)
-      })
-    } else {
-      console.log('Wrong component type in canvas layer: ' + item.component)
-    }
-  })
-  layer.value = l
-}
-
-// lifecycle
-computeLayer()
+const layer = computed<Layer[]>(() => {
+  return defaultSlots.value
+    .filter((item: UiComponent) => item.component === 'oh-canvas-item')
+    .map((item: UiComponent) => ({
+      item,
+      selected: false,
+      id: Math.random().toString(36).substring(2)
+    }))
+})
 </script>
