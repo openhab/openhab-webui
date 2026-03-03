@@ -84,20 +84,60 @@ const checkDirtyBeforeLeave = function ({ router, to, from, resolve, reject }) {
 const loadAsync = (page, props) => {
   return async ({ router, to, from, resolve, reject }) => {
     if (!props) {
-      page().then((c) => {
-        resolve({ component: c.default })
-      })
+      page()
+        .then((c) => {
+          resolve({ component: c.default })
+        })
+        .catch((err) => {
+          console.error('Failed to load page component:', err)
+          reject(err)
+        })
     } else if (typeof props === 'object') {
-      page().then((c) => {
-        resolve({ component: c.default }, { props })
-      })
+      page()
+        .then((c) => {
+          resolve({ component: c.default }, { props })
+        })
+        .catch((err) => {
+          console.error('Failed to load page component:', err)
+          reject(err)
+        })
     } else if (typeof props === 'function') {
-      page().then((c) => {
-        resolve({ component: c.default }, { props: props({ router, to, from, resolve, reject }) })
-      })
+      page()
+        .then((c) => {
+          resolve({ component: c.default }, { props: props({ router, to, from, resolve, reject }) })
+        })
+        .catch((err) => {
+          console.error('Failed to load page component:', err)
+          reject(err)
+        })
     }
   }
 }
+
+const PageRoutes = Object.entries(PageEditors)
+  .flatMap(([k, v]) => {
+    return [
+      {
+        path: `${k}/add`,
+        beforeEnter: [enforceAdminForRoute],
+        beforeLeave: [checkDirtyBeforeLeave],
+        async: loadAsync(v, { createMode: true })
+      },
+      {
+        path: `${k}/duplicate`,
+        beforeEnter: [enforceAdminForRoute],
+        beforeLeave: [checkDirtyBeforeLeave],
+        async: loadAsync(v, { createMode: true })
+      },
+      {
+        path: `${k}/:uid`,
+        beforeEnter: [enforceAdminForRoute],
+        beforeLeave: [checkDirtyBeforeLeave],
+        async: loadAsync(v)
+      }
+    ]
+  })
+  .reduce((acc, route) => acc.concat(route), [])
 
 export default [
   {
@@ -240,18 +280,7 @@ export default [
         path: 'pages/',
         async: loadAsync(PagesListPage),
         beforeEnter: [enforceAdminForRoute],
-        routes: [
-          {
-            path: ':type/:uid',
-            beforeEnter: [enforceAdminForRoute],
-            beforeLeave: [checkDirtyBeforeLeave],
-            async: ({ to, resolve }) => {
-              PageEditors[to.params.type]().then((c) => {
-                resolve({ component: c.default }, to.params.uid === 'add' ? { props: { createMode: true } } : {})
-              })
-            }
-          }
-        ]
+        routes: PageRoutes
       },
       {
         path: 'transformations/',

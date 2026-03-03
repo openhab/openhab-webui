@@ -129,7 +129,7 @@ export default {
       const pageClone = cloneDeep(this.page)
       const pageType = pageClone.component.replace(/^oh-|-page$/g, '')
       pageClone.uid = pageClone.uid + '_copy'
-      this.f7router.navigate(`/settings/pages/${pageType}/add`, { props: { createMode: true, pageCopy: pageClone } })
+      this.f7router.navigate(`/settings/pages/${pageType}/duplicate`, { props: { pageCopy: pageClone } })
     },
     deletePage () {
       f7.dialog.confirm(

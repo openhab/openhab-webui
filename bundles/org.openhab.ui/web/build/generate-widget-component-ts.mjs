@@ -2,16 +2,16 @@ import fs from 'fs'
 
 const outDir = './src/types/components/widgets'
 
-import * as SystemWidgets from '../src/assets/definitions/widgets/system/index.js'
-import * as StdCardWidgets from '../src/assets/definitions/widgets/standard/cards.js'
-import * as StdListItemWidgets from '../src/assets/definitions/widgets/standard/listitems.js'
-import * as StdCellWidgets from  '../src/assets/definitions/widgets/standard/cells.js'
-import * as LayoutWidgets from '../src/assets/definitions/widgets/layout/index.js'
-import * as PlanWidgets from '../src/assets/definitions/widgets/plan/index.js'
-import * as MapWidgets from  '../src/assets/definitions/widgets/map/index.js'
-import { OhChartPageDefinition } from '../src/assets/definitions/widgets/chart/page.js'
-import ChartWidgetsDefinitions from '../src/assets/definitions/widgets/chart/index.js'
-import { OhLocationCardParameters, OhEquipmentCardParameters, OhPropertyCardParameters } from '../src/assets/definitions/widgets/home/index.js'
+import * as SystemWidgets from '../src/assets/definitions/widgets/system/index.ts'
+import * as StdCardWidgets from '../src/assets/definitions/widgets/standard/cards.ts'
+import * as StdListItemWidgets from '../src/assets/definitions/widgets/standard/listitems.ts'
+import * as StdCellWidgets from  '../src/assets/definitions/widgets/standard/cells.ts'
+import * as LayoutWidgets from '../src/assets/definitions/widgets/layout/index.ts'
+import * as PlanWidgets from '../src/assets/definitions/widgets/plan/index.ts'
+import * as MapWidgets from  '../src/assets/definitions/widgets/map/index.ts'
+import { OhChartPageDefinition } from '../src/assets/definitions/widgets/chart/page.ts'
+import ChartWidgetsDefinitions from '../src/assets/definitions/widgets/chart/index.ts'
+import { OhLocationCardParameters, OhEquipmentCardParameters, OhPropertyCardParameters } from '../src/assets/definitions/widgets/home/index.ts'
 
 const widgetLibraries = {
   SystemWidgets,
