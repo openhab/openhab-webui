@@ -15,7 +15,6 @@ import { useComponentsStore } from '@/js/stores/useComponentsStore'
 export default {
   mixins: [DirtyMixin],
   props: {
-    pageCopy: Object,
     f7router: Object,
     f7route: Object
   },
