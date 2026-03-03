@@ -1,9 +1,9 @@
-const ids = new WeakMap()
+const ids = new WeakMap<object, number>()
 let index = 1
 
 export default {
-  get(component) {
-    if (!component || typeof component !== 'object') return undefined
+  get(component: object | undefined | null): number | null {
+    if (!component || typeof component !== 'object') return null
 
     let id = ids.get(component)
     if (!id) {
