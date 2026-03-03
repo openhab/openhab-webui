@@ -312,12 +312,12 @@ const toggleAutoSize = () => {
   if (w.value === 'auto') {
     const elem = document.getElementById('oh-canvas-item-vdr-' + props.id)
     if (elem) {
-      w.value = props.context.component.config.w = Math.max(10, elem.clientWidth)
-      h.value = props.context.component.config.h = Math.max(10, elem.clientHeight)
+      w.value = Math.max(10, elem.clientWidth)
+      h.value = Math.max(10, elem.clientHeight)
     }
   } else {
-    w.value = props.context.component.config.w = 'auto'
-    h.value = props.context.component.config.h = 'auto'
+    w.value = 'auto'
+    h.value = 'auto'
     reloadKey.value += 1
   }
 }
