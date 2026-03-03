@@ -1,6 +1,6 @@
 <template>
   <f7-block v-if="addons && addons.length > 0" class="addons-section" ref="addongroup">
-    <f7-block-title medium>
+    <f7-block-title v-if="title" medium>
       {{ title }}
       <!-- <f7-link v-if="canExpand" color="blue" class="see-all-button margin-right" @click="expand">
         Show All
@@ -141,16 +141,21 @@ import * as api from '@/api'
 const device = f7.device
 
 // props
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   addons: api.Addon[]
-  title: string
-  subtitle: string
-  showAll: boolean
-  featured: string[]
-  showAsCards: boolean
-  suggested: boolean
+  title?: string
+  subtitle?: string
+  showAll?: boolean
+  featured?: string[]
+  showAsCards?: boolean
+  suggested?: boolean
   installActionText?: string
-}>()
+}>(), {
+  showAll: false,
+  featured: () => [],
+  showAsCards: false,
+  suggested: false
+})
 
 // emits
 const emit = defineEmits<{ (e: 'addon-button-click', addon: api.Addon): void }>()
